@@ -1,9 +1,8 @@
-import { useChainModal } from '@rainbow-me/rainbowkit';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { components } from 'react-select';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import { chain, useSwitchNetwork, useNetwork } from 'wagmi';
 
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import LinkIcon from 'assets/svg/app/link-blue.svg';
@@ -13,8 +12,6 @@ import Button from 'components/Button';
 import Select from 'components/Select';
 import { IndicatorSeparator } from 'components/Select/Select';
 import { EXTERNAL_LINKS } from 'constants/links';
-import BlockExplorer from 'containers/BlockExplorer';
-import { isL2State, networkState } from 'store/wallet';
 import { ExternalLink, FlexDivRowCentered } from 'styles/common';
 
 type ReactSelectOptionProps = {
@@ -28,15 +25,22 @@ type ReactSelectOptionProps = {
 type NetworksSwitcherProps = {};
 
 const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
-	const { openChainModal } = useChainModal();
+	const { switchNetwork } = useSwitchNetwork();
+	const { chain: activeChain } = useNetwork();
 	const { t } = useTranslation();
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState).id === 69 ? 'testnet' : 'mainnet';
+	const isL2 =
+		activeChain !== undefined
+			? [chain.optimism.id, chain.optimismKovan.id].includes(activeChain?.id)
+			: false;
+	const network = activeChain?.id === 69 ? 'testnet' : 'mainnet';
 	const networkLabel = 'header.networks-switcher.optimism-' + network;
-	const { blockExplorerInstance } = BlockExplorer.useContainer();
 
 	const OPTIMISM_OPTIONS = [
-		{ label: 'header.networks-switcher.l1', postfixIcon: 'Switch', onClick: openChainModal },
+		{
+			label: 'header.networks-switcher.l1',
+			postfixIcon: 'Switch',
+			onClick: () => switchNetwork?.(chain.mainnet.id),
+		},
 		{
 			label: 'header.networks-switcher.optimistic-gateway',
 			postfixIcon: 'Link',
@@ -45,7 +49,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 		{
 			label: 'header.networks-switcher.optimistic-etherscan',
 			postfixIcon: 'Link',
-			link: blockExplorerInstance?.baseLink,
+			link: activeChain?.blockExplorers?.etherscan?.url,
 		},
 		{
 			label: 'header.networks-switcher.learn-more',
@@ -84,7 +88,11 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 	};
 
 	return !isL2 ? (
-		<Container onClick={openChainModal}>
+		<Container
+			onClick={() =>
+				switchNetwork?.(activeChain?.testnet ? chain.optimismKovan.id : chain.optimism.id)
+			}
+		>
 			<StyledButton noOutline size="sm">
 				{t('header.networks-switcher.l2')}
 			</StyledButton>

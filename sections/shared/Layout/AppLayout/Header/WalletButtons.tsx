@@ -1,16 +1,14 @@
-import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
-import { useAccount } from 'wagmi';
+import { useAccount, chain, useSwitchNetwork, useNetwork } from 'wagmi';
 
 import MoonIcon from 'assets/svg/app/moon.svg';
 import SunIcon from 'assets/svg/app/sun.svg';
 import Button from 'components/Button';
 import { currentThemeState } from 'store/ui';
-import { networkState } from 'store/wallet';
-import { isSupportedNetworkId } from 'utils/network';
 
 import BalanceActions from './BalanceActions';
 import ConnectionDot from './ConnectionDot';
@@ -19,11 +17,11 @@ import WalletActions from './WalletActions';
 
 const WalletButtons: React.FC = () => {
 	const { t } = useTranslation();
-	const network = useRecoilValue(networkState);
+	const { chain: activeChain } = useNetwork();
 	const [currentTheme, setTheme] = useRecoilState(currentThemeState);
 	const { openConnectModal } = useConnectModal();
-	const { openChainModal } = useChainModal();
 	const { isConnected } = useAccount();
+	const { switchNetwork } = useSwitchNetwork();
 
 	const ThemeIcon = currentTheme === 'dark' ? SunIcon : MoonIcon;
 
@@ -49,7 +47,7 @@ const WalletButtons: React.FC = () => {
 
 	const walletIsConnectedButNotSupported = (
 		<>
-			<SwitchToL2Button variant="secondary" onClick={openChainModal}>
+			<SwitchToL2Button variant="secondary" onClick={() => switchNetwork?.(chain.optimism.id)}>
 				{t('homepage.l2.cta-buttons.switch-l2')}
 			</SwitchToL2Button>
 			<ConnectButton size="sm" variant="outline" data-testid="unsupported-network" mono>
@@ -70,9 +68,9 @@ const WalletButtons: React.FC = () => {
 	return (
 		<Container>
 			{isConnected
-				? isSupportedNetworkId(network.id)
-					? walletIsConnectedAndSupported
-					: walletIsConnectedButNotSupported
+				? activeChain?.unsupported
+					? walletIsConnectedButNotSupported
+					: walletIsConnectedAndSupported
 				: walletIsNotConnected}
 			<MenuButton
 				onClick={() => {

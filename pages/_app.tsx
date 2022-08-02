@@ -79,6 +79,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 			<RainbowKitProvider
 				chains={chains}
 				theme={currentTheme === 'dark' ? darkTheme() : lightTheme()}
+				initialChain={chain.optimism}
 			>
 				<ThemeProvider theme={Component.layout === undefined ? themes['dark'] : theme}>
 					<MediaContextProvider>
