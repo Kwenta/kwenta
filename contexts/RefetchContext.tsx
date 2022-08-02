@@ -26,8 +26,8 @@ const RefetchContext = React.createContext<RefetchContextType>({
 });
 
 export const RefetchProvider: React.FC = ({ children }) => {
-	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
-	const synthsBalancesQuery = useSynthBalances(selectedFuturesAddress);
+	const walletAddress = useRecoilValue(walletAddressState);
+	const synthsBalancesQuery = useSynthBalances(walletAddress);
 	const openOrdersQuery = useGetFuturesOpenOrders();
 	const positionQuery = useGetFuturesPositionForMarket();
 	const crossMarginAccountOverview = useGetCrossMarginAccountOverview();

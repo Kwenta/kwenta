@@ -50,7 +50,7 @@ const FutureTabs = Object.values(FuturesTab);
 
 const UserInfo: React.FC = () => {
 	const router = useRouter();
-	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
+	const { walletAddress } = useRecoilValue(futuresAccountState);
 	const position = useRecoilValue(positionState);
 	const marketAsset = useRecoilValue(currentMarketState);
 	const openOrders = useRecoilValue(openOrdersState);
@@ -73,7 +73,7 @@ const UserInfo: React.FC = () => {
 		[marginTransfersQuery.isSuccess, marginTransfersQuery.data]
 	);
 
-	const futuresTradesQuery = useGetFuturesTradesForAccount(marketAsset, selectedFuturesAddress);
+	const futuresTradesQuery = useGetFuturesTradesForAccount(marketAsset, walletAddress);
 
 	const history: FuturesTrade[] = useMemo(
 		() => (futuresTradesQuery.isSuccess ? futuresTradesQuery?.data ?? [] : []),
