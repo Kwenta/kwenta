@@ -8,7 +8,6 @@ import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositio
 import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 import useSynthBalances from 'queries/synths/useSynthBalances';
-import { walletAddressState } from 'store/wallet';
 import { futuresAccountState } from 'store/futures';
 
 type RefetchType =
