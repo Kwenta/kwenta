@@ -1,8 +1,9 @@
+import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { components } from 'react-select';
-import { useRecoilValue } from 'recoil';
 import styled, { css, useTheme } from 'styled-components';
+import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from 'wagmi';
 
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import DisconnectIcon from 'assets/svg/app/disconnect.svg';
@@ -10,12 +11,10 @@ import SwitchWalletIcon from 'assets/svg/app/switch-wallet.svg';
 import Select from 'components/Select';
 import { IndicatorSeparator } from 'components/Select/Select';
 import Connector from 'containers/Connector';
-import useENS from 'hooks/useENS';
-import { truncatedWalletAddressState } from 'store/wallet';
 import { FlexDivRow } from 'styles/common';
+import { truncateAddress } from 'utils/formatters/string';
 
 import ConnectionDot from './ConnectionDot';
-import getENSName from './getENSName';
 
 type ReactSelectOptionProps = {
 	label: string;
@@ -29,31 +28,27 @@ type WalletActionsProps = {
 };
 
 export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
-	const [address, setAddress] = useState('');
-	const { ensAvatar } = useENS(address);
+	const { address } = useAccount();
+	const { data: ensAvatar } = useEnsAvatar({ addressOrName: address });
+	const { data: ensName } = useEnsName({ address });
 	const { t } = useTranslation();
 	const theme = useTheme();
-	const {
-		connectWallet,
-		disconnectWallet,
-		switchAccounts,
-		isHardwareWallet,
-		signer,
-		staticMainnetProvider,
-	} = Connector.useContainer();
+	const { isHardwareWallet } = Connector.useContainer();
 	const hardwareWallet = isHardwareWallet();
 
-	const [ensName, setEns] = useState('');
 	const [walletLabel, setWalletLabel] = useState('');
-	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
+	const truncatedWalletAddress = truncateAddress(address!);
+	const { openConnectModal } = useConnectModal();
+	const { openChainModal } = useChainModal();
+	const { disconnect } = useDisconnect();
 
 	const WALLET_OPTIONS = useMemo(() => {
 		let options = [
-			{ label: 'common.wallet.switch-wallet', postfixIcon: 'Switch', onClick: connectWallet },
+			{ label: 'common.wallet.switch-wallet', postfixIcon: 'Switch', onClick: openConnectModal },
 			{
 				label: 'common.wallet.disconnect-wallet',
 				postfixIcon: 'Disconnet',
-				onClick: disconnectWallet,
+				onClick: disconnect,
 			},
 		];
 
@@ -61,7 +56,7 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 			options.push({
 				label: 'common.wallet.switch-accounts',
 				postfixIcon: 'Switch',
-				onClick: switchAccounts,
+				onClick: openChainModal,
 			});
 		}
 
@@ -80,7 +75,7 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 				{ensAvatar ? (
 					<img
 						src={ensAvatar}
-						alt={ensName}
+						alt={ensName?.toString()}
 						width={16}
 						height={16}
 						style={{ borderRadius: '50%', marginRight: '8px' }}
@@ -111,19 +106,9 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 	};
 
 	useEffect(() => {
-		if (signer) {
-			setWalletLabel(truncatedWalletAddress!);
-			signer.getAddress().then((account: string) => {
-				const _account = account;
-				setAddress(account);
-				getENSName(_account, staticMainnetProvider).then((_ensName: string) => {
-					setEns(_ensName);
-					setWalletLabel(_ensName || truncatedWalletAddress!);
-				});
-			});
-		}
+		setWalletLabel(ensName || truncatedWalletAddress!);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [signer, truncatedWalletAddress]);
+	}, [ensName, truncatedWalletAddress]);
 
 	return (
 		<Container isMobile={isMobile}>
@@ -132,7 +117,7 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 				controlHeight={41}
 				options={WALLET_OPTIONS}
 				value={{ label: walletLabel, isMenuLabel: true }}
-				valueContainer={{ 'text-transform': ensName ? 'lowercase' : '' }}
+				valueContainer={{ 'text-transform': ensName ? 'lowercase' : 'q' }}
 				menuWidth={240}
 				optionPadding={'0px'} //override default padding to 0
 				optionBorderBottom={`1px solid ${theme.colors.navy}`}

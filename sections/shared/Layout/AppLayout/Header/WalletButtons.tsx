@@ -1,27 +1,29 @@
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import { useAccount } from 'wagmi';
 
 import MoonIcon from 'assets/svg/app/moon.svg';
 import SunIcon from 'assets/svg/app/sun.svg';
 import Button from 'components/Button';
-import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { currentThemeState } from 'store/ui';
-import { isWalletConnectedState, networkState } from 'store/wallet';
+import { networkState } from 'store/wallet';
 import { isSupportedNetworkId } from 'utils/network';
 
 import BalanceActions from './BalanceActions';
+import ConnectionDot from './ConnectionDot';
 import NetworksSwitcher from './NetworksSwitcher';
 import WalletActions from './WalletActions';
 
 const WalletButtons: React.FC = () => {
 	const { t } = useTranslation();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const network = useRecoilValue(networkState);
 	const [currentTheme, setTheme] = useRecoilState(currentThemeState);
-	const { switchToL2 } = useNetworkSwitcher();
+	const { openConnectModal } = useConnectModal();
+	const { openChainModal } = useChainModal();
+	const { isConnected } = useAccount();
 
 	const ThemeIcon = currentTheme === 'dark' ? SunIcon : MoonIcon;
 
@@ -31,16 +33,29 @@ const WalletButtons: React.FC = () => {
 
 	const walletIsNotConnected = (
 		<>
-			<ConnectButton />
+			<ConnectButton
+				size="sm"
+				variant="outline"
+				noOutline
+				onClick={openConnectModal}
+				data-testid="connect-wallet"
+				mono
+			>
+				<StyledConnectionDot />
+				{t('common.wallet.connect-wallet')}
+			</ConnectButton>
 		</>
 	);
 
 	const walletIsConnectedButNotSupported = (
 		<>
-			<SwitchToL2Button variant="secondary" onClick={switchToL2}>
+			<SwitchToL2Button variant="secondary" onClick={openChainModal}>
 				{t('homepage.l2.cta-buttons.switch-l2')}
 			</SwitchToL2Button>
-			<ConnectButton />
+			<ConnectButton size="sm" variant="outline" data-testid="unsupported-network" mono>
+				<StyledConnectionDot />
+				{t('common.wallet.unsupported-network')}
+			</ConnectButton>
 		</>
 	);
 
@@ -54,7 +69,7 @@ const WalletButtons: React.FC = () => {
 
 	return (
 		<Container>
-			{isWalletConnected
+			{isConnected
 				? isSupportedNetworkId(network.id)
 					? walletIsConnectedAndSupported
 					: walletIsConnectedButNotSupported
@@ -77,6 +92,10 @@ const Container = styled.div`
 	grid-auto-flow: column;
 `;
 
+const StyledConnectionDot = styled(ConnectionDot)`
+	margin-right: 6px;
+`;
+
 const MenuButton = styled(Button)`
 	display: grid;
 	place-items: center;
@@ -97,6 +116,10 @@ const MenuButton = styled(Button)`
 			}
 		}
 	}
+`;
+
+const ConnectButton = styled(Button)`
+	font-size: 13px;
 `;
 
 const SwitchToL2Button = styled(Button)`

@@ -1,3 +1,4 @@
+import { useChainModal } from '@rainbow-me/rainbowkit';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { components } from 'react-select';
@@ -13,7 +14,6 @@ import Select from 'components/Select';
 import { IndicatorSeparator } from 'components/Select/Select';
 import { EXTERNAL_LINKS } from 'constants/links';
 import BlockExplorer from 'containers/BlockExplorer';
-import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { isL2State, networkState } from 'store/wallet';
 import { ExternalLink, FlexDivRowCentered } from 'styles/common';
 
@@ -28,7 +28,7 @@ type ReactSelectOptionProps = {
 type NetworksSwitcherProps = {};
 
 const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
-	const { switchToL1, switchToL2 } = useNetworkSwitcher();
+	const { openChainModal } = useChainModal();
 	const { t } = useTranslation();
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState).id === 69 ? 'testnet' : 'mainnet';
@@ -36,7 +36,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
 
 	const OPTIMISM_OPTIONS = [
-		{ label: 'header.networks-switcher.l1', postfixIcon: 'Switch', onClick: switchToL1 },
+		{ label: 'header.networks-switcher.l1', postfixIcon: 'Switch', onClick: openChainModal },
 		{
 			label: 'header.networks-switcher.optimistic-gateway',
 			postfixIcon: 'Link',
@@ -84,7 +84,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 	};
 
 	return !isL2 ? (
-		<Container onClick={switchToL2}>
+		<Container onClick={openChainModal}>
 			<StyledButton noOutline size="sm">
 				{t('header.networks-switcher.l2')}
 			</StyledButton>
