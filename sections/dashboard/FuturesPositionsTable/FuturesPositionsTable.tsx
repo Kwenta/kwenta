@@ -370,8 +370,8 @@ const OpenPositionsHeader = styled.div`
 	}
 
 	& > div:first-child {
-		width: 120px;
-		margin-right: 35px;
+		width: 125px;
+		margin-right: 30px;
 	}
 `;
 
