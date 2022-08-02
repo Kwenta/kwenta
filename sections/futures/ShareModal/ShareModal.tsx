@@ -14,7 +14,6 @@ import ShareModalButton from './ShareModalButton';
 type ShareModalProps = {
 	position: FuturesPosition | null;
 	marketAsset: FuturesMarketAsset;
-	marketAssetRate: number;
 	setShowShareModal: React.Dispatch<React.SetStateAction<boolean>>;
 	futuresPositionHistory: PositionHistory[];
 };
@@ -22,7 +21,6 @@ type ShareModalProps = {
 const ShareModal: FC<ShareModalProps> = ({
 	position,
 	marketAsset,
-	marketAssetRate,
 	setShowShareModal,
 	futuresPositionHistory,
 }) => {
@@ -43,7 +41,6 @@ const ShareModal: FC<ShareModalProps> = ({
 						<AmountContainer position={position} />
 						<PositionMetadata
 							marketAsset={marketAsset}
-							marketAssetRate={marketAssetRate}
 							futuresPositionHistory={futuresPositionHistory}
 						/>
 					</PNLGraphic>

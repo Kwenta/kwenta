@@ -2,7 +2,7 @@ import Wei from '@synthetixio/wei';
 import { utils as ethersUtils } from 'ethers';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 
 import { ETH_UNIT } from 'constants/network';
 import QUERY_KEYS from 'constants/queryKeys';
@@ -20,7 +20,7 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const futuresEndpoint = getFuturesEndpoint(network);
 	const marketInfo = useRecoilValue(marketInfoState);
-	const [, setOpenOrders] = useRecoilState(openOrdersState);
+	const setOpenOrders = useSetRecoilState(openOrdersState);
 
 	return useQuery<any[]>(
 		QUERY_KEYS.Futures.OpenOrders(network.id, walletAddress),

@@ -11,10 +11,7 @@ import ManagePosition from 'sections/futures/Trade/ManagePosition';
 import NextPrice from 'sections/futures/Trade/NextPrice';
 import { leverageSideState, orderTypeState } from 'store/futures';
 
-import TradeConfirmationDrawer from '../drawers/TradeConfirmationDrawer';
-
 const OpenPositionTab: React.FC = () => {
-	const [modalOpen, setModalOpen] = React.useState(false);
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 
@@ -34,11 +31,9 @@ const OpenPositionTab: React.FC = () => {
 
 			<LeverageInput />
 
-			<ManagePosition openConfirmationModal={() => setModalOpen(true)} />
+			<ManagePosition />
 
 			<FeeInfoBox />
-
-			<TradeConfirmationDrawer open={modalOpen} closeDrawer={() => setModalOpen(false)} />
 		</div>
 	);
 };
