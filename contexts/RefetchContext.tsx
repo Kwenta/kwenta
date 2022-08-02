@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Period, PERIOD_IN_SECONDS } from 'constants/period';
+import useGetAverageFundingRateForMarkets from 'queries/futures/useGetAverageFundingRateForMarkets';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
@@ -24,6 +26,7 @@ export const RefetchProvider: React.FC = ({ children }) => {
 	const positionsQuery = useGetFuturesPositionForMarkets();
 	const marketsQuery = useGetFuturesMarkets();
 	useGetFuturesPotentialTradeDetails();
+	useGetAverageFundingRateForMarkets(PERIOD_IN_SECONDS[Period.ONE_HOUR]);
 
 	const handleRefetch = (refetchType: RefetchType, timeout?: number) => {
 		setTimeout(() => {

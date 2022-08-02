@@ -208,6 +208,7 @@ export const QUERY_KEYS = {
 			networkId,
 			currencyKey,
 		],
+		FundingRates: (networkId: NetworkId) => ['futures', 'fundingRates', networkId],
 		TradingVolumeForAll: (networkId: NetworkId) => ['futures', 'tradingVolumeForAll', networkId],
 		MarketPositionHistory: (networkId: NetworkId, market: string | null, walletAddress: string) => [
 			'futures',
