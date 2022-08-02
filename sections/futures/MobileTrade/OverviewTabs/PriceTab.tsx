@@ -1,14 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import TVChart from 'components/TVChart';
+import PositionChart from 'sections/futures/PositionChart';
 
 import { Pane } from '../common';
 
 const PriceTab: React.FC = () => {
 	return (
 		<StyledPane noPadding>
-			<TVChart />
+			<PositionChart />
 		</StyledPane>
 	);
 };

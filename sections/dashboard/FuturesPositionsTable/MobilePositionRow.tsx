@@ -18,7 +18,7 @@ type MobilePositionRowProps = {
 const MobilePositionRow: React.FC<MobilePositionRowProps> = ({ row, onClick }) => {
 	return (
 		<OpenPositionContainer side={row.position} key={row.asset} onClick={onClick}>
-			<div style={{ display: 'flex', width: 125, marginRight: 30 }}>
+			<CurrencyDetailsContainer>
 				<StyledCurrencyIcon currencyKey={row.marketKey} />
 				<div>
 					<OpenPositionSize>
@@ -31,8 +31,8 @@ const MobilePositionRow: React.FC<MobilePositionRowProps> = ({ row, onClick }) =
 						<span className="leverage">{formatNumber(row.leverage ?? 0, { maxDecimals: 1 })}x</span>
 					</OpenPositionSide>
 				</div>
-			</div>
-			<div style={{ flex: 1, display: 'flex', justifyContent: 'space-between' }}>
+			</CurrencyDetailsContainer>
+			<RightColumnsContainer>
 				<div>
 					<div>
 						<Currency.Price
@@ -61,7 +61,7 @@ const MobilePositionRow: React.FC<MobilePositionRowProps> = ({ row, onClick }) =
 						<Currency.Price currencyKey={Synths.sUSD} price={row.pnl ?? 0} sign="$" />
 					</div>
 				</div>
-			</div>
+			</RightColumnsContainer>
 		</OpenPositionContainer>
 	);
 };
@@ -151,6 +151,18 @@ const StyledCurrencyIcon = styled(Currency.Icon)`
 	width: 30px;
 	height: 30px;
 	margin-right: 8px;
+`;
+
+const CurrencyDetailsContainer = styled.div`
+	display: flex;
+	width: 125px;
+	margin-right: 30px;
+`;
+
+const RightColumnsContainer = styled.div`
+	display: flex;
+	flex: 1;
+	justify-content: space-between;
 `;
 
 export default MobilePositionRow;

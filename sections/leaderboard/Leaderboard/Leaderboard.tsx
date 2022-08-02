@@ -11,6 +11,7 @@ import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Table from 'components/Table';
 import Search from 'components/Table/Search';
 import { Synths } from 'constants/currency';
+import { DEFAULT_LEADERBOARD_ROWS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import useENSAvatar from 'hooks/useENSAvatar';
@@ -308,7 +309,9 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 								compact={compact}
 								data={data}
 								showPagination
-								pageSize={20}
+								pageSize={DEFAULT_LEADERBOARD_ROWS}
+								isLoading={statsQuery.isLoading || ensInfoQuery.isLoading}
+								hideHeaders={compact}
 								columns={[
 									{
 										Header: () => (

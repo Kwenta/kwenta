@@ -204,7 +204,7 @@ export const isMarketCapReachedState = selector({
 });
 
 export const placeOrderTranslationKeyState = selector({
-	key: getFuturesKey('placeOrderTranlationKey'),
+	key: getFuturesKey('placeOrderTranslationKey'),
 	get: ({ get }) => {
 		const position = get(positionState);
 		const isMarketCapReached = get(isMarketCapReachedState);

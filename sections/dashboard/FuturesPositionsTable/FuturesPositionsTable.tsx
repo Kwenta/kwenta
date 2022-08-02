@@ -281,10 +281,10 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 			<MobileOnlyView>
 				<OpenPositionsHeader>
 					<div>{t('dashboard.overview.futures-positions-table.mobile.market')}</div>
-					<div style={{ flex: 1, display: 'flex', justifyContent: 'space-between' }}>
+					<OpenPositionsRightHeader>
 						<div>{t('dashboard.overview.futures-positions-table.mobile.price')}</div>
 						<div>{t('dashboard.overview.futures-positions-table.mobile.pnl')}</div>
-					</div>
+					</OpenPositionsRightHeader>
 				</OpenPositionsHeader>
 				<div style={{ margin: '0 15px' }}>
 					{data.length === 0 ? (
@@ -373,6 +373,12 @@ const OpenPositionsHeader = styled.div`
 		width: 125px;
 		margin-right: 30px;
 	}
+`;
+
+const OpenPositionsRightHeader = styled.div`
+	display: flex;
+	flex: 1;
+	justify-content: space-between;
 `;
 
 const NoPositionsText = styled.div`
