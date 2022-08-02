@@ -62,7 +62,6 @@ const OverviewTabs: React.FC = () => {
 
 const OverviewTabsContainer = styled.div`
 	margin-top: 55px;
-	padding: 0 15px;
 `;
 
 const MainTabButtonsContainer = styled.div`
@@ -70,6 +69,7 @@ const MainTabButtonsContainer = styled.div`
 	grid-template-columns: repeat(4, 1fr);
 	grid-column-gap: 15px;
 	overflow: auto;
+	padding: 0 15px;
 `;
 
 export default OverviewTabs;
