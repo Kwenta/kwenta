@@ -1,4 +1,9 @@
-import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import {
+	darkTheme,
+	getDefaultWallets,
+	lightTheme,
+	RainbowKitProvider,
+} from '@rainbow-me/rainbowkit';
 import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
 import WithAppContainers from 'containers';
 import { NextPage } from 'next';
@@ -71,7 +76,10 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 
 	return isReady ? (
 		<WagmiConfig client={wagmiClient}>
-			<RainbowKitProvider chains={chains}>
+			<RainbowKitProvider
+				chains={chains}
+				theme={currentTheme === 'dark' ? darkTheme() : lightTheme()}
+			>
 				<ThemeProvider theme={Component.layout === undefined ? themes['dark'] : theme}>
 					<MediaContextProvider>
 						<SynthetixQueryContextProvider
