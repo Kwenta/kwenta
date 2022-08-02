@@ -24,7 +24,6 @@ import { isL2State } from 'store/wallet';
 import { formatNumber } from 'utils/formatters/number';
 import {
 	FuturesMarketAsset,
-	getDisplayAsset,
 	getSynthDescription,
 	isEurForex,
 	MarketKeyByAsset,
@@ -64,7 +63,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 				return {
 					asset: position.asset,
-					market: getDisplayAsset(position.asset) + '-PERP',
+					market: market?.marketName,
 					marketKey: MarketKeyByAsset[position.asset],
 					description,
 					price: market?.price,

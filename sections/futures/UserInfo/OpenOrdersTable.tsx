@@ -16,7 +16,12 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import { currentMarketState, marketInfoState, openOrdersState } from 'store/futures';
 import { gasSpeedState, walletAddressState } from 'store/wallet';
 import { formatCurrency } from 'utils/formatters/number';
-import { getDisplayAsset, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
+import {
+	getDisplayAsset,
+	MarketKeyByAsset,
+	FuturesMarketAsset,
+	getMarketName,
+} from 'utils/futures';
 
 import { PositionSide } from '../types';
 
@@ -76,7 +81,7 @@ const OpenOrdersTable: React.FC = () => {
 	const data = React.useMemo(() => {
 		return openOrders.map((order: any) => ({
 			asset: order.asset,
-			market: getDisplayAsset(order.asset) + '-PERP',
+			market: getMarketName(order.asset),
 			marketKey: MarketKeyByAsset[order.asset as FuturesMarketAsset],
 			orderType: order.orderType === 'NextPrice' ? 'Next-Price' : order.orderType,
 			size: formatCurrency(order.asset, order.size.abs(), {

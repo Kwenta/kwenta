@@ -25,7 +25,7 @@ import media from 'styles/media';
 import { isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { formatNumber } from 'utils/formatters/number';
-import { getSynthDescription, isEurForex } from 'utils/futures';
+import { getMarketName, getSynthDescription, isEurForex } from 'utils/futures';
 
 type PositionCardProps = {
 	currencyKeyRate: number;
@@ -35,7 +35,6 @@ type PositionCardProps = {
 };
 
 type PositionData = {
-	currencyIconKey: string;
 	marketShortName: string;
 	marketLongName: string;
 	marketPrice: string;
@@ -138,10 +137,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 			positionDetails?.accruedFunding.add(positionHistory?.netFunding ?? zeroBN) ?? zeroBN;
 
 		return {
-			currencyIconKey: currencyKey ? (currencyKey[0] !== 's' ? 's' : '') + currencyKey : '',
-			marketShortName: currencyKey
-				? (currencyKey[0] === 's' ? currencyKey.slice(1) : currencyKey) + '-PERP'
-				: 'Select a market',
+			marketShortName: currencyKey ? getMarketName(currencyKey) : 'Select a market',
 			marketLongName: getSynthDescription(currencyKey, synthsMap, t),
 			marketPrice: formatCurrency(Synths.sUSD, currencyKeyRate, {
 				sign: '$',

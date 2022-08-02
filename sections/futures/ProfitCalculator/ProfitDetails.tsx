@@ -86,7 +86,7 @@ const ProfitDetails: React.FC<ProfitDetailsProps> = ({
 							? wei(marketAssetPositionSize).toNumber().toFixed(2)
 							: ''}
 					</RowText>
-					<RowText className="gray-font-color">{`${marketAsset}-PERP`}</RowText>
+					<RowText className="gray-font-color">{marketAsset}</RowText>
 				</Details>
 			</StyledProfitDetails>
 		</>

@@ -14,7 +14,7 @@ import { PositionSide } from 'queries/futures/types';
 import { positionState, currentMarketState, openOrdersState, marketInfoState } from 'store/futures';
 import { gasSpeedState, walletAddressState } from 'store/wallet';
 import { formatCurrency } from 'utils/formatters/number';
-import { getDisplayAsset } from 'utils/futures';
+import { getDisplayAsset, getMarketName } from 'utils/futures';
 
 import { SectionHeader, SectionTitle } from '../common';
 import OrderDrawer from '../drawers/OrderDrawer';
@@ -77,7 +77,7 @@ const OrdersTab: React.FC = () => {
 
 		return openOrders.map((order: any) => ({
 			asset: order.asset,
-			market: getDisplayAsset(order.asset) + '-PERP',
+			market: getMarketName(order.asset),
 			orderType: order.orderType === 'NextPrice' ? 'Next-Price' : order.orderType,
 			size: order.size,
 			side: positionSize.add(wei(order.size)).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
