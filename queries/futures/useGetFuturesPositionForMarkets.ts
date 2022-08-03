@@ -60,9 +60,6 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 				})
 			);
 
-			// eslint-disable-next-line no-console
-			console.log(`positionsForMarkets`, positionsForMarkets);
-
 			const futuresPositions = positionsForMarkets.map(([position, canLiquidate], i) =>
 				mapFuturesPosition(position, canLiquidate, assets[i])
 			);
