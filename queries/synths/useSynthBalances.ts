@@ -38,8 +38,6 @@ const useSynthBalances = (options?: UseQueryOptions<Balances>) => {
 				synthsUSDBalances,
 			]: SynthBalancesTuple = await synthetixjs.contracts.SynthUtil.synthsBalances(address);
 
-			// eslint-disable-next-line no-console
-			console.log(`synthsUSDBalances: `, synthsUSDBalances);
 			let totalUSDBalance = wei(0);
 
 			currencyKeys.forEach((currencyKeyBytes32, idx) => {
