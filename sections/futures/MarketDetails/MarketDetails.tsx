@@ -178,7 +178,8 @@ const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	padding: 10px 45px 10px 15px;
 	margin-bottom: 16px;
 	box-sizing: border-box;
-	overflow-y: scroll;
+	overflow-x: scroll;
+	scrollbar-width: none;
 
 	display: flex;
 	justify-content: space-between;
