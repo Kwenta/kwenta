@@ -30,9 +30,14 @@ const TimerTooltip = (props: ToolTipProps) => {
 	const myRef = useRef<HTMLDivElement>(null);
 
 	const setFixedPosition = () => {
+		const isFirefox = /firefox/i.test(navigator.userAgent);
 		if (myRef.current !== null) {
-			const { left, bottom } = myRef.current.getBoundingClientRect();
-			setPosition({ left: `${left}px`, top: `${bottom + 20}px` });
+			const { left, bottom, top } = myRef.current.getBoundingClientRect();
+			if (isFirefox) {
+				setPosition({ left: `${left - 20}px`, top: `${top - 36}px` });
+			} else {
+				setPosition({ left: `${left}px`, top: `${bottom + 20}px` });
+			}
 		}
 	};
 
