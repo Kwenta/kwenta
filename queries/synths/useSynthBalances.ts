@@ -19,13 +19,13 @@ const useSynthBalances = (options?: UseQueryOptions<Balances>) => {
 	const [, setBalances] = useRecoilState(balancesState);
 
 	const synthetixjs = synthetix({
-		provider: getDefaultProvider((activeChain?.id ?? chain.optimism.id) as NetworkId),
+		provider: getDefaultProvider(activeChain?.id as NetworkId),
 		networkId: (activeChain?.id ?? chain.optimism.id) as NetworkId,
 		useOvm: true,
 	});
 
 	return useQuery<Balances>(
-		QUERY_KEYS.Synths.Balances((activeChain?.id ?? '69') as NetworkId, address!),
+		QUERY_KEYS.Synths.Balances(activeChain?.id as NetworkId, address!),
 		async () => {
 			if (!synthetixjs) {
 				// This should never happen since the query is not enabled when synthetixjs is undefined
