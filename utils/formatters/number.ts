@@ -12,19 +12,26 @@ import logError from 'utils/logError';
 
 type WeiSource = Wei | number | string | ethers.BigNumber;
 
+type TruncatedOptions = {
+	truncation?: {
+		unit: string;
+		divisor: number;
+	};
+};
+
 export type FormatNumberOptions = {
 	minDecimals?: number;
 	maxDecimals?: number;
 	prefix?: string;
 	suffix?: string;
-};
+} & TruncatedOptions;
 
 export type FormatCurrencyOptions = {
 	minDecimals?: number;
 	maxDecimals?: number;
 	sign?: string;
 	currencyKey?: string;
-};
+} & TruncatedOptions;
 
 const DEFAULT_CURRENCY_DECIMALS = 2;
 export const SHORT_CRYPTO_CURRENCY_DECIMALS = 4;
@@ -70,6 +77,7 @@ export const commifyAndPadDecimals = (value: string, decimals: number) => {
 export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) => {
 	const prefix = options?.prefix;
 	const suffix = options?.suffix;
+	const truncation = options?.truncation;
 
 	let weiValue = wei(0);
 	try {
@@ -87,9 +95,12 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 		formattedValue.push(prefix);
 	}
 
-	const weiAsStringWithDecimals = weiValue
-		.abs()
-		.toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS);
+	const weiAsStringWithDecimals = truncation
+		? weiValue
+				.abs()
+				.div(truncation.divisor)
+				.toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS)
+		: weiValue.abs().toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS);
 
 	const withCommas = commifyAndPadDecimals(
 		weiAsStringWithDecimals,
@@ -100,6 +111,10 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 
 	if (suffix) {
 		formattedValue.push(` ${suffix}`);
+	}
+
+	if (truncation) {
+		formattedValue.push(truncation.unit);
 	}
 
 	return formattedValue.join('');
@@ -119,6 +134,7 @@ export const formatFiatCurrency = (value: WeiSource, options?: FormatCurrencyOpt
 		suffix: options?.currencyKey,
 		minDecimals: options?.minDecimals ?? DEFAULT_FIAT_DECIMALS,
 		maxDecimals: options?.maxDecimals,
+		truncation: options?.truncation,
 	});
 
 export const formatCurrency = (

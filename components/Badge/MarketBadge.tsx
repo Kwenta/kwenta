@@ -25,7 +25,7 @@ export const TransitionBadge: FC<TransitionBadgeProps> = ({ isOpen }) => {
 	const { t } = useTranslation();
 
 	return (
-		<StyledBadge background={isOpen ? theme.colors.yellow : theme.colors.common.primaryRed}>
+		<StyledBadge background={isOpen ? theme.colors.gold : theme.colors.common.primaryRed}>
 			{t(`futures.market.state.${isOpen ? 'closes-soon' : 'opens-soon'}`)}
 		</StyledBadge>
 	);
