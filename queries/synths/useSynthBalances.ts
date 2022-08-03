@@ -27,6 +27,12 @@ const useSynthBalances = (options?: UseQueryOptions<Balances>) => {
 	return useQuery<Balances>(
 		QUERY_KEYS.Synths.Balances((activeChain?.id ?? '69') as NetworkId, address!),
 		async () => {
+			// eslint-disable-next-line no-console
+			console.log(`wallet address: `, address);
+			// eslint-disable-next-line no-console
+			console.log(`chain: `, activeChain);
+			// eslint-disable-next-line no-console
+			console.log(`synthetixjs: `, synthetixjs);
 			if (!synthetixjs) {
 				// This should never happen since the query is not enabled when synthetixjs is undefined
 				throw Error('synthetixjs is undefined');
@@ -38,6 +44,8 @@ const useSynthBalances = (options?: UseQueryOptions<Balances>) => {
 				synthsUSDBalances,
 			]: SynthBalancesTuple = await synthetixjs.contracts.SynthUtil.synthsBalances(address);
 
+			// eslint-disable-next-line no-console
+			console.log(`synthsUSDBalances: `, synthsUSDBalances);
 			let totalUSDBalance = wei(0);
 
 			currencyKeys.forEach((currencyKeyBytes32, idx) => {
