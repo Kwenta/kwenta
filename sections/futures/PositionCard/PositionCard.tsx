@@ -1,4 +1,5 @@
 import Wei from '@synthetixio/wei';
+import { useFuturesContext } from 'contexts/FuturesContext';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -25,13 +26,10 @@ import media from 'styles/media';
 import { isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { formatNumber } from 'utils/formatters/number';
-import { getSynthDescription, isEurForex } from 'utils/futures';
+import { getDisplayAsset, getSynthDescription, isEurForex, MarketKeyByAsset } from 'utils/futures';
 
 type PositionCardProps = {
-	currencyKeyRate: number;
-	onPositionClose?: () => void;
 	dashboard?: boolean;
-	mobile?: boolean;
 };
 
 type PositionData = {
@@ -64,10 +62,10 @@ type PositionPreviewData = {
 	showStatus: boolean;
 };
 
-const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) => {
+const PositionCard: React.FC<PositionCardProps> = () => {
 	const { t } = useTranslation();
 	const position = useRecoilValue(positionState);
-	const currencyKey = useRecoilValue(currentMarketState);
+	const marketAsset = useRecoilValue(currentMarketState);
 	const marketKey = useRecoilValue(marketKeyState);
 
 	const positionDetails = position?.position ?? null;
@@ -87,8 +85,10 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 			: undefined;
 
 	const positionHistory = futuresPositions?.find(
-		({ asset, isOpen }) => isOpen && asset === currencyKey
+		({ asset, isOpen }) => isOpen && asset === marketAsset
 	);
+
+	const { marketAssetRate } = useFuturesContext();
 
 	const previewTradeData = useRecoilValue(potentialTradeDetailsState);
 
@@ -138,14 +138,12 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 			positionDetails?.accruedFunding.add(positionHistory?.netFunding ?? zeroBN) ?? zeroBN;
 
 		return {
-			currencyIconKey: currencyKey ? (currencyKey[0] !== 's' ? 's' : '') + currencyKey : '',
-			marketShortName: currencyKey
-				? (currencyKey[0] === 's' ? currencyKey.slice(1) : currencyKey) + '-PERP'
-				: 'Select a market',
-			marketLongName: getSynthDescription(currencyKey, synthsMap, t),
-			marketPrice: formatCurrency(Synths.sUSD, currencyKeyRate, {
+			currencyIconKey: MarketKeyByAsset[marketAsset],
+			marketShortName: marketAsset ? getDisplayAsset(marketAsset) + '-PERP' : 'Select a market',
+			marketLongName: getSynthDescription(marketAsset, synthsMap, t),
+			marketPrice: formatCurrency(Synths.sUSD, marketAssetRate, {
 				sign: '$',
-				minDecimals: currencyKeyRate < 0.01 ? 4 : 2,
+				minDecimals: marketAssetRate.lt(0.01) ? 4 : 2,
 			}),
 			positionSide: positionDetails ? (
 				<PositionValue
@@ -273,8 +271,8 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 	}, [
 		positionDetails,
 		positionHistory,
-		currencyKeyRate,
-		currencyKey,
+		marketAssetRate,
+		marketAsset,
 		synthsMap,
 		t,
 		previewData.positionSide,
@@ -290,7 +288,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 
 	return (
 		<>
-			<Container id={isFuturesMarketClosed ? 'closed' : undefined} mobile={mobile}>
+			<Container id={isFuturesMarketClosed ? 'closed' : undefined}>
 				<DataCol>
 					<InfoRow>
 						<StyledSubtitle>{data.marketShortName}</StyledSubtitle>
@@ -321,7 +319,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 						<StyledValue>{data.positionSize}</StyledValue>
 					</InfoRow>
 				</DataCol>
-				<DataColDivider mobile={mobile} />
+				<DataColDivider />
 				<DataCol>
 					<InfoRow>
 						<PositionCardTooltip
@@ -386,7 +384,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 						)}
 					</InfoRow>
 				</DataCol>
-				<DataColDivider mobile={mobile} />
+				<DataColDivider />
 				<DataCol>
 					<InfoRow>
 						<LeftMarginTooltip
@@ -431,7 +429,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 };
 export default PositionCard;
 
-const Container = styled.div<{ mobile?: boolean }>`
+const Container = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 30px 1fr 30px 1fr;
 	background-color: transparent;
@@ -441,30 +439,26 @@ const Container = styled.div<{ mobile?: boolean }>`
 	border-radius: 10px;
 	margin-bottom: 15px;
 
-	${(props) =>
-		props.mobile &&
-		css`
-			display: flex;
-			flex-direction: column;
-		`}
+	${media.lessThan('md')`
+		display: flex;
+		flex-direction: column;
+	`}
 `;
 
 const DataCol = styled(FlexDivCol)`
 	justify-content: space-between;
 `;
 
-const DataColDivider = styled.div<{ mobile?: boolean }>`
+const DataColDivider = styled.div`
 	width: 1px;
 	background-color: #2b2a2a;
 	margin: 0 15px;
 
-	${(props) =>
-		props.mobile &&
-		css`
-			height: 1px;
-			width: 100%;
-			margin: 15px 0;
-		`}
+	${media.lessThan('md')`
+		height: 1px;
+		width: 100%;
+		margin: 15px 0;
+	`}
 `;
 
 const InfoRow = styled.div`

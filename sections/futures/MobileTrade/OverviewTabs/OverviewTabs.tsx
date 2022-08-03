@@ -14,15 +14,15 @@ import TradesTab from './TradesTab';
 
 const TABS = [
 	{
-		title: 'Account',
-		component: <AccountTab />,
-		icon: <AccountIcon />,
-	},
-	{
 		title: 'Price',
 		component: <PriceTab />,
 		icon: <PriceIcon />,
 		nofill: true,
+	},
+	{
+		title: 'Account',
+		component: <AccountTab />,
+		icon: <AccountIcon />,
 	},
 	{
 		title: 'Trades',
@@ -65,16 +65,11 @@ const OverviewTabsContainer = styled.div`
 `;
 
 const MainTabButtonsContainer = styled.div`
-	display: flex;
-	justify-content: space-between;
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	grid-column-gap: 15px;
+	overflow: auto;
 	padding: 0 15px;
-
-	& > button {
-		flex: 1;
-		&:not(:last-child) {
-			margin-right: 10px;
-		}
-	}
 `;
 
 export default OverviewTabs;

@@ -1,17 +1,24 @@
 import { wei } from '@synthetixio/wei';
-import { useCallback, useEffect, useState } from 'react';
+import { useFuturesContext } from 'contexts/FuturesContext';
+import { useCallback, useEffect, useState, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import PositionButtons from 'sections/futures/PositionButtons';
+import { FuturesMarketAsset } from 'utils/futures';
 
 import { PositionSide } from '../types';
 import LabelWithInput from './LabelWithInput';
 import PnLs from './PnLs';
 import ProfitDetails from './ProfitDetails';
 
-const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal }: any) => {
+type ProfitCalculatorProps = {
+	marketAsset: FuturesMarketAsset;
+	setOpenProfitCalcModal(val: boolean): void;
+};
+
+const ProfitCalculator: FC<ProfitCalculatorProps> = ({ marketAsset, setOpenProfitCalcModal }) => {
 	const marketAsset__RemovedSChar = marketAsset[0] === 's' ? marketAsset.slice(1) : marketAsset;
 	const { t } = useTranslation();
 
@@ -25,6 +32,8 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 	const [basePositionSize, setBasePositionSize] = useState('');
 	// Custom type
 	const [leverageSide, setLeverageSide] = useState(PositionSide.LONG);
+
+	const { marketAssetRate } = useFuturesContext();
 
 	const onEntryPriceAmountChange = (value: string) => {
 		setEntryPrice(value);
@@ -109,7 +118,7 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 	);
 
 	useEffect(() => {
-		setEntryPrice(marketAssetRate);
+		setEntryPrice(marketAssetRate.toNumber().toString());
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -138,21 +147,21 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 							<LabelWithInput
 								id={'exit-price'}
 								labelText={'Exit Price: '}
-								placeholder={`${(marketAssetRate + marketAssetRate * 0.05).toFixed(2)}`}
+								placeholder={marketAssetRate.add(marketAssetRate.mul(0.05)).toNumber().toFixed(2)}
 								value={exitPrice}
 								onChange={(_: any, v: any) => onExitPriceAmountChange(v)}
 							/>
 							<LabelWithInput
 								id={'stop-loss'}
 								labelText={'Stop Loss: '}
-								placeholder={`${(marketAssetRate - marketAssetRate * 0.05).toFixed(2)}`}
+								placeholder={marketAssetRate.sub(marketAssetRate.mul(0.05)).toNumber().toFixed(2)}
 								value={stopLoss}
 								onChange={(_: any, v: any) => onStopLossAmountChange(v)}
 							/>
 							<LabelWithInput
 								id={'market-position-size'}
 								labelText={'Position Size: '}
-								placeholder={`10.00`}
+								placeholder="10.00"
 								right={marketAsset__RemovedSChar}
 								value={marketAssetPositionSize}
 								onChange={(_: any, v: any) => onTradeAmountChange(v)}
@@ -162,23 +171,23 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 						<RightColumn>
 							<LabelWithInput
 								id={'gain-percent'}
-								labelText={'Gain %: '}
-								placeholder={`5.00`}
+								labelText="Gain %: "
+								placeholder="5.00"
 								value={gainPercent}
 								onChange={(_: any, v: any) => onGainPercentChange(v)}
 							/>
 							<LabelWithInput
 								id={'loss-percent'}
-								labelText={'Loss %: '}
-								placeholder={`5.00`}
+								labelText="Loss %: "
+								placeholder="5.00"
 								value={lossPercent}
 								onChange={(_: any, v: any) => onLossPercentChange(v)}
 							/>
 							<LabelWithInput
 								id={'base-position-size'}
-								labelText={'Position Size: '}
-								placeholder={`${(marketAssetRate * 10).toFixed(2)}`}
-								right={'sUSD'}
+								labelText="Position Size: "
+								placeholder={marketAssetRate.mul(10).toNumber().toFixed(2)}
+								right="sUSD"
 								value={basePositionSize}
 								onChange={(_: any, v: any) => onTradeAmountSUSDChange(v)}
 							/>
