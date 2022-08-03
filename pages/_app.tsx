@@ -1,8 +1,9 @@
 import {
 	darkTheme,
-	getDefaultWallets,
 	lightTheme,
 	RainbowKitProvider,
+	wallet,
+	connectorsForWallets,
 } from '@rainbow-me/rainbowkit';
 import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
 import WithAppContainers from 'containers';
@@ -27,7 +28,6 @@ import { currentThemeState } from 'store/ui';
 import { MediaContextProvider } from 'styles/media';
 import { themes } from 'styles/theme';
 import { isSupportedNetworkId } from 'utils/network';
-
 import 'styles/main.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -52,10 +52,26 @@ const { chains, provider } = configureChains(
 	[infuraProvider({ infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID }), publicProvider()]
 );
 
-const { connectors } = getDefaultWallets({
-	appName: 'Kwenta',
-	chains,
-});
+const connectors = connectorsForWallets([
+	{
+		groupName: 'Popular',
+		wallets: [
+			wallet.metaMask({ chains }),
+			wallet.rainbow({ chains }),
+			wallet.coinbase({ appName: 'Kwenta', chains }),
+			wallet.walletConnect({ chains }),
+		],
+	},
+	{
+		groupName: 'More',
+		wallets: [
+			wallet.ledger({ chains }),
+			wallet.argent({ chains }),
+			wallet.brave({ chains, shimDisconnect: true }),
+			wallet.trust({ chains }),
+		],
+	},
+]);
 
 const wagmiClient = createClient({
 	autoConnect: true,
