@@ -64,8 +64,12 @@ const loadBlastProvider = (networkId: NetworkId) => {
 	}
 
 	const networkSlug = BLAST_NETWORK_LOOKUP[networkId];
-	const networkUrl = `https://${networkSlug}.blastapi.io/${process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID}/`;
-	return new providers.JsonRpcProvider(networkUrl, networkId);
+	if (!networkSlug) {
+		return loadInfuraProvider(networkId);
+	} else {
+		const networkUrl = `https://${networkSlug}.blastapi.io/${process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID}/`;
+		return new providers.JsonRpcProvider(networkUrl, networkId);
+	}
 };
 
 export const getDefaultProvider = (networkId: NetworkId) => {
