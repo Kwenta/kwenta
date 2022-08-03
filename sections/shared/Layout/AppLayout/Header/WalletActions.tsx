@@ -37,7 +37,7 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 	const hardwareWallet = isHardwareWallet();
 
 	const [walletLabel, setWalletLabel] = useState('');
-	const truncatedWalletAddress = truncateAddress(address!);
+	const truncatedWalletAddress = truncateAddress(address ?? '');
 	const { openConnectModal } = useConnectModal();
 	const { openChainModal } = useChainModal();
 	const { disconnect } = useDisconnect();
@@ -117,7 +117,7 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 				controlHeight={41}
 				options={WALLET_OPTIONS}
 				value={{ label: walletLabel, isMenuLabel: true }}
-				valueContainer={{ 'text-transform': ensName ? 'lowercase' : 'q' }}
+				valueContainer={{ 'text-transform': ensName ? 'lowercase' : '' }}
 				menuWidth={240}
 				optionPadding={'0px'} //override default padding to 0
 				optionBorderBottom={`1px solid ${theme.colors.navy}`}

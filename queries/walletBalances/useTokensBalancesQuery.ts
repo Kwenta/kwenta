@@ -1,3 +1,4 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { TokenBalances } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { Provider, Contract as EthCallContract } from 'ethcall';
@@ -5,11 +6,12 @@ import { BigNumber } from 'ethers';
 import erc20Abi from 'lib/abis/ERC20.json';
 import keyBy from 'lodash/keyBy';
 import { useQuery, UseQueryOptions } from 'react-query';
+import { useNetwork } from 'wagmi';
 
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
 import QUERY_KEYS from 'constants/queryKeys';
-import Connector from 'containers/Connector';
 import { Token } from 'queries/tokenLists/types';
+import { getDefaultProvider } from 'utils/network';
 
 const FILTERED_TOKENS = ['0x4922a015c4407f87432b179bb209e125432e4a2a'];
 
@@ -18,8 +20,8 @@ const useTokensBalancesQuery = (
 	walletAddress: string | null,
 	options?: UseQueryOptions<TokenBalances | null>
 ) => {
-	const { provider, network } = Connector.useContainer();
-
+	const { chain: activeChain } = useNetwork();
+	const provider = getDefaultProvider(activeChain?.id as NetworkId);
 	const filteredTokens = tokens.filter((t) => !FILTERED_TOKENS.includes(t.address.toLowerCase()));
 	const symbols = filteredTokens.map((token) => token.symbol);
 	const tokensMap = keyBy(filteredTokens, 'symbol');
@@ -27,11 +29,10 @@ const useTokensBalancesQuery = (
 	return useQuery<TokenBalances | null>(
 		QUERY_KEYS.WalletBalances.Tokens(
 			walletAddress,
-			network!.id,
+			activeChain!.id as NetworkId,
 			filteredTokens.map((f) => f.address).join()
 		),
 		async () => {
-			if (!provider) return null;
 			const ethcallProvider = new Provider();
 			await ethcallProvider.init(provider);
 
