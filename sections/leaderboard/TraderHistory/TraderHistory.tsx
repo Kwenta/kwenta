@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import Currency from 'components/Currency';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Loader from 'components/Loader';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
 import { Synths } from 'constants/currency';
 import ROUTES from 'constants/routes';
@@ -72,128 +73,222 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 	}
 
 	return (
-		<StyledTable
-			compact={compact}
-			showPagination
-			pageSize={10}
-			isLoading={false}
-			data={data}
-			hideHeaders={compact}
-			columns={[
-				{
-					Header: (
-						<TableTitle>
-							<TitleText
-								onClick={() => {
-									resetSelection();
-									router.push(ROUTES.Leaderboard.Home);
-								}}
-							>
-								{t('leaderboard.leaderboard.table.title')}
-							</TitleText>
-							<TitleSeparator>&gt;</TitleSeparator>
-							<TraderText
-								href={`https://optimistic.etherscan.io/address/${trader}`}
-								target="_blank"
-								rel="noreferrer noopener"
-							>
-								{traderENSName ?? trader}
-							</TraderText>
-						</TableTitle>
-					),
-					accessor: 'title',
-					columns: [
-						{
-							Header: <TableHeader>{t('leaderboard.trader-history.table.timestamp')}</TableHeader>,
-							accessor: 'openTimestamp',
-							Cell: (cellProps: CellProps<any>) => {
-								return (
-									<StyledCell>
-										<TimeDisplay cellPropsValue={cellProps.row.original.openTimestamp} />
-									</StyledCell>
-								);
-							},
-							sortType: 'basic',
-							sortable: true,
-							width: compact ? 40 : 100,
-						},
-						{
-							Header: <TableHeader>{t('leaderboard.trader-history.table.market')}</TableHeader>,
-							accessor: 'asset',
-							Cell: (cellProps: CellProps<any>) => (
-								<CurrencyInfo>
-									<StyledCurrencyIcon currencyKey={cellProps.row.original.currencyIconKey} />
-									<StyledSubtitle>{cellProps.row.original.marketShortName}</StyledSubtitle>
-								</CurrencyInfo>
-							),
-							width: compact ? 40 : 100,
-						},
-						{
-							Header: <TableHeader>{t('leaderboard.trader-history.table.status')}</TableHeader>,
-							accessor: 'status',
-							Cell: (cellProps: CellProps<any>) => {
-								return <StyledCell>{cellProps.row.original.status}</StyledCell>;
-							},
-							width: compact ? 40 : 100,
-						},
+		<>
+			<DesktopOnlyView>
+				<StyledTable
+					compact={compact}
+					showPagination
+					pageSize={10}
+					isLoading={false}
+					data={data}
+					hideHeaders={compact}
+					columns={[
 						{
 							Header: (
-								<TableHeader>{t('leaderboard.trader-history.table.total-trades')}</TableHeader>
-							),
-							accessor: 'trades',
-							width: compact ? 40 : 100,
-							sortType: 'basic',
-							sortable: true,
-						},
-						{
-							Header: (
-								<TableHeader>{t('leaderboard.trader-history.table.total-volume')}</TableHeader>
-							),
-							accessor: 'totalVolume',
-							Cell: (cellProps: CellProps<any>) => (
-								<Currency.Price
-									currencyKey={Synths.sUSD}
-									price={cellProps.row.original.totalVolume}
-									sign={'$'}
-									conversionRate={1}
-								/>
-							),
-							width: compact ? 40 : 100,
-							sortType: 'basic',
-							sortable: true,
-						},
-						{
-							Header: <TableHeader>{t('leaderboard.trader-history.table.total-pnl')}</TableHeader>,
-							accessor: 'pnl',
-							Cell: (cellProps: CellProps<any>) => (
-								<PnlContainer>
-									<ColorCodedPrice
-										currencyKey={Synths.sUSD}
-										price={cellProps.row.original.pnl}
-										sign={'$'}
-										conversionRate={1}
-									/>
-									<StyledValue
-										color={
-											cellProps.row.original.pnl.gt(0)
-												? 'green'
-												: cellProps.row.original.pnl.lt(0)
-												? 'red'
-												: ''
-										}
+								<TableTitle>
+									<TitleText
+										onClick={() => {
+											resetSelection();
+											router.push(ROUTES.Leaderboard.Home);
+										}}
 									>
-										{cellProps.row.original.pnlPct}
-									</StyledValue>
-								</PnlContainer>
+										{t('leaderboard.leaderboard.table.title')}
+									</TitleText>
+									<TitleSeparator>&gt;</TitleSeparator>
+									<TraderText
+										href={`https://optimistic.etherscan.io/address/${trader}`}
+										target="_blank"
+										rel="noreferrer noopener"
+									>
+										{traderENSName ?? trader}
+									</TraderText>
+								</TableTitle>
 							),
-							width: compact ? 40 : 100,
-							sortType: 'basic',
-							sortable: true,
+							accessor: 'title',
+							columns: [
+								{
+									Header: (
+										<TableHeader>{t('leaderboard.trader-history.table.timestamp')}</TableHeader>
+									),
+									accessor: 'openTimestamp',
+									Cell: (cellProps: CellProps<any>) => {
+										return (
+											<StyledCell>
+												<TimeDisplay cellPropsValue={cellProps.row.original.openTimestamp} />
+											</StyledCell>
+										);
+									},
+									sortType: 'basic',
+									sortable: true,
+									width: compact ? 40 : 100,
+								},
+								{
+									Header: <TableHeader>{t('leaderboard.trader-history.table.market')}</TableHeader>,
+									accessor: 'asset',
+									Cell: (cellProps: CellProps<any>) => (
+										<CurrencyInfo>
+											<StyledCurrencyIcon currencyKey={cellProps.row.original.currencyIconKey} />
+											<StyledSubtitle>{cellProps.row.original.marketShortName}</StyledSubtitle>
+										</CurrencyInfo>
+									),
+									width: compact ? 40 : 100,
+								},
+								{
+									Header: <TableHeader>{t('leaderboard.trader-history.table.status')}</TableHeader>,
+									accessor: 'status',
+									Cell: (cellProps: CellProps<any>) => {
+										return <StyledCell>{cellProps.row.original.status}</StyledCell>;
+									},
+									width: compact ? 40 : 100,
+								},
+								{
+									Header: (
+										<TableHeader>{t('leaderboard.trader-history.table.total-trades')}</TableHeader>
+									),
+									accessor: 'trades',
+									width: compact ? 40 : 100,
+									sortType: 'basic',
+									sortable: true,
+								},
+								{
+									Header: (
+										<TableHeader>{t('leaderboard.trader-history.table.total-volume')}</TableHeader>
+									),
+									accessor: 'totalVolume',
+									Cell: (cellProps: CellProps<any>) => (
+										<Currency.Price
+											currencyKey={Synths.sUSD}
+											price={cellProps.row.original.totalVolume}
+											sign={'$'}
+											conversionRate={1}
+										/>
+									),
+									width: compact ? 40 : 100,
+									sortType: 'basic',
+									sortable: true,
+								},
+								{
+									Header: (
+										<TableHeader>{t('leaderboard.trader-history.table.total-pnl')}</TableHeader>
+									),
+									accessor: 'pnl',
+									Cell: (cellProps: CellProps<any>) => (
+										<PnlContainer>
+											<ColorCodedPrice
+												currencyKey={Synths.sUSD}
+												price={cellProps.row.original.pnl}
+												sign={'$'}
+												conversionRate={1}
+											/>
+											<StyledValue
+												color={
+													cellProps.row.original.pnl.gt(0)
+														? 'green'
+														: cellProps.row.original.pnl.lt(0)
+														? 'red'
+														: ''
+												}
+											>
+												{cellProps.row.original.pnlPct}
+											</StyledValue>
+										</PnlContainer>
+									),
+									width: compact ? 40 : 100,
+									sortType: 'basic',
+									sortable: true,
+								},
+							],
 						},
-					],
-				},
-			]}
-		/>
+					]}
+				/>
+			</DesktopOnlyView>
+			<MobileOrTabletView>
+				<StyledTable
+					data={data}
+					compact={compact}
+					hideHeaders={compact}
+					isLoading={false}
+					showPagination
+					pageSize={10}
+					columns={[
+						{
+							Header: (
+								<TableTitle>
+									<TitleText
+										onClick={() => {
+											resetSelection();
+											router.push(ROUTES.Leaderboard.Home);
+										}}
+									>
+										{t('leaderboard.leaderboard.table.title')}
+									</TitleText>
+									<TitleSeparator>&gt;</TitleSeparator>
+									<TraderText
+										href={`https://optimistic.etherscan.io/address/${trader}`}
+										target="_blank"
+										rel="noreferrer noopener"
+									>
+										{traderENSName ?? trader}
+									</TraderText>
+								</TableTitle>
+							),
+							accessor: 'title',
+							columns: [
+								{
+									Header: <TableHeader>{t('leaderboard.trader-history.table.market')}</TableHeader>,
+									accessor: 'asset',
+									Cell: (cellProps: CellProps<any>) => (
+										<CurrencyInfo>
+											<StyledCurrencyIcon currencyKey={cellProps.row.original.currencyIconKey} />
+											<StyledSubtitle>{cellProps.row.original.marketShortName}</StyledSubtitle>
+										</CurrencyInfo>
+									),
+									width: 40,
+								},
+								{
+									Header: <TableHeader>{t('leaderboard.trader-history.table.status')}</TableHeader>,
+									accessor: 'status',
+									Cell: (cellProps: CellProps<any>) => {
+										return <StyledCell>{cellProps.row.original.status}</StyledCell>;
+									},
+									width: 40,
+								},
+								{
+									Header: (
+										<TableHeader>{t('leaderboard.trader-history.table.total-pnl')}</TableHeader>
+									),
+									accessor: 'pnl',
+									Cell: (cellProps: CellProps<any>) => (
+										<PnlContainer>
+											<ColorCodedPrice
+												currencyKey={Synths.sUSD}
+												price={cellProps.row.original.pnl}
+												sign={'$'}
+												conversionRate={1}
+											/>
+											<StyledValue
+												color={
+													cellProps.row.original.pnl.gt(0)
+														? 'green'
+														: cellProps.row.original.pnl.lt(0)
+														? 'red'
+														: ''
+												}
+											>
+												{cellProps.row.original.pnlPct}
+											</StyledValue>
+										</PnlContainer>
+									),
+									width: 40,
+									sortType: 'basic',
+									sortable: true,
+								},
+							],
+						},
+					]}
+				/>
+			</MobileOrTabletView>
+		</>
 	);
 };
 
