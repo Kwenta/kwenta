@@ -18,6 +18,7 @@
 			"earn": "earn"
 		},
 		"networks-switcher": {
+			"chains": "Switch Networks",
 			"l2": "Switch to L2",
 			"l1": "Switch to Layer 1",
 			"optimistic-gateway": "Optimistic L2 Gateway",

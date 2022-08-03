@@ -1,8 +1,9 @@
+import { useChainModal } from '@rainbow-me/rainbowkit';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { components } from 'react-select';
 import styled from 'styled-components';
-import { chain, useSwitchNetwork, useNetwork } from 'wagmi';
+import { chain, useNetwork } from 'wagmi';
 
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import LinkIcon from 'assets/svg/app/link-blue.svg';
@@ -25,8 +26,8 @@ type ReactSelectOptionProps = {
 type NetworksSwitcherProps = {};
 
 const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
-	const { switchNetwork } = useSwitchNetwork();
 	const { chain: activeChain } = useNetwork();
+	const { openChainModal } = useChainModal();
 	const { t } = useTranslation();
 	const isL2 =
 		activeChain !== undefined
@@ -37,9 +38,9 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 
 	const OPTIMISM_OPTIONS = [
 		{
-			label: 'header.networks-switcher.l1',
+			label: 'header.networks-switcher.chains',
 			postfixIcon: 'Switch',
-			onClick: () => switchNetwork?.(chain.mainnet.id),
+			onClick: openChainModal,
 		},
 		{
 			label: 'header.networks-switcher.optimistic-gateway',
@@ -88,13 +89,9 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 	};
 
 	return !isL2 ? (
-		<Container
-			onClick={() =>
-				switchNetwork?.(activeChain?.testnet ? chain.optimismKovan.id : chain.optimism.id)
-			}
-		>
+		<Container onClick={openChainModal}>
 			<StyledButton noOutline size="sm">
-				{t('header.networks-switcher.l2')}
+				{activeChain?.name}
 			</StyledButton>
 		</Container>
 	) : (
