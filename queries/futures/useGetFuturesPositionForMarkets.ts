@@ -1,29 +1,44 @@
+import synthetix, { NetworkId } from '@synthetixio/contracts-interface';
 import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAccount, chain, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
 import { futuresMarketsState, positionsState } from 'store/futures';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
 import { MarketKeyByAsset } from 'utils/futures';
+import { getDefaultProvider } from 'utils/network';
 
 import { FuturesPosition } from './types';
 import { mapFuturesPosition, getFuturesMarketContract } from './utils';
 
 const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPosition[] | []>) => {
 	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
-	const walletAddress = useRecoilValue(walletAddressState);
-	const { synthetixjs } = Connector.useContainer();
+	const { address: walletAddress, isConnected } = useAccount();
+	const { chain: activeChain } = useNetwork();
+	const isL2 =
+		activeChain !== undefined
+			? [chain.optimism.id, chain.optimismKovan.id].includes(activeChain?.id)
+			: false;
+	const synthetixjs = synthetix({
+		provider: getDefaultProvider((activeChain?.id ?? chain.optimism.id) as NetworkId),
+		networkId: (activeChain?.id ?? chain.optimism.id) as NetworkId,
+		useOvm: true,
+	});
 	const [, setFuturesPositions] = useRecoilState(positionsState);
+
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
-	const assets = futuresMarkets.map(({ asset }) => asset);
+	const assets = futuresMarkets
+		.filter(({ asset }) => (activeChain?.id === 69 ? asset !== 'DYDX' : asset)) // Optimism Kovan has no contract FuturesMarketDYDX
+		.map(({ asset }) => asset);
 
 	return useQuery<FuturesPosition[] | []>(
-		QUERY_KEYS.Futures.MarketsPositions(network.id, walletAddress, assets || []),
+		QUERY_KEYS.Futures.MarketsPositions(
+			activeChain?.id as NetworkId,
+			walletAddress ?? '',
+			assets || []
+		),
 		async () => {
 			if (!assets || (walletAddress && !isL2)) {
 				return [];
@@ -45,6 +60,9 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 				})
 			);
 
+			// eslint-disable-next-line no-console
+			console.log(`positionsForMarkets`, positionsForMarkets);
+
 			const futuresPositions = positionsForMarkets.map(([position, canLiquidate], i) =>
 				mapFuturesPosition(position, canLiquidate, assets[i])
 			);
@@ -54,7 +72,7 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 			return futuresPositions;
 		},
 		{
-			enabled: isAppReady && isL2 && !!network && !!walletAddress && !!synthetixjs,
+			enabled: isAppReady && isL2 && !!isConnected && !!walletAddress && !!synthetixjs,
 			...options,
 		}
 	);
