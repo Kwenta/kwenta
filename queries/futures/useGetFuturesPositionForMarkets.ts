@@ -13,7 +13,7 @@ import { getDefaultProvider } from 'utils/network';
 import { FuturesPosition } from './types';
 import { mapFuturesPosition, getFuturesMarketContract } from './utils';
 
-const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPosition[] | []>) => {
+const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPosition[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const { address: walletAddress, isConnected } = useAccount();
 	const { chain: activeChain } = useNetwork();
