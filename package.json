@@ -60,7 +60,7 @@
 		"moment-business-time": "1.1.1",
 		"next": "12.1.6",
 		"next-compose-plugins": "2.2.0",
-		"next-connect": "^0.12.2",
+		"next-connect": "^0.13.0",
 		"next-optimized-images": "^2.6.2",
 		"react": "17.0.1",
 		"react-dom": "17.0.1",

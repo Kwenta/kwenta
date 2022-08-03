@@ -13,14 +13,12 @@ import TransfersIcon from 'assets/svg/futures/icon-transfers.svg';
 import UploadIcon from 'assets/svg/futures/upload-icon.svg';
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
-import { Synths } from 'constants/currency';
 import ROUTES from 'constants/routes';
 import { PositionHistory } from 'queries/futures/types';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
 import {
 	currentMarketState,
@@ -28,7 +26,6 @@ import {
 	openOrdersState,
 	positionState,
 } from 'store/futures';
-import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
 import PositionCard from '../PositionCard';
 import ProfitCalculator from '../ProfitCalculator';
@@ -55,10 +52,6 @@ const UserInfo: React.FC = () => {
 	const marketAsset = useRecoilValue(currentMarketState);
 	const openOrders = useRecoilValue(openOrdersState);
 
-	const exchangeRatesQuery = useExchangeRatesQuery({
-		refetchInterval: 15000,
-	});
-
 	const futuresPositionQuery = useGetFuturesPositionForAccount();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const futuresPositionHistory = futuresPositionQuery?.data ?? [];
@@ -78,16 +71,6 @@ const UserInfo: React.FC = () => {
 	const history: FuturesTrade[] = useMemo(
 		() => (futuresTradesQuery.isSuccess ? futuresTradesQuery?.data ?? [] : []),
 		[futuresTradesQuery.isSuccess, futuresTradesQuery.data]
-	);
-
-	const exchangeRates = useMemo(
-		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
-		[exchangeRatesQuery.isSuccess, exchangeRatesQuery.data]
-	);
-
-	const marketAssetRate = useMemo(
-		() => getExchangeRatesForCurrencies(exchangeRates, marketAsset, Synths.sUSD),
-		[exchangeRates, marketAsset]
 	);
 
 	const tabQuery = useMemo(() => {
@@ -210,7 +193,7 @@ const UserInfo: React.FC = () => {
 			</TabButtonsContainer>
 
 			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}>
-				<PositionCard currencyKeyRate={marketAssetRate} />
+				<PositionCard />
 				<FuturesPositionsTable
 					futuresPositionHistory={futuresPositionHistory}
 					showCurrentMarket={false}
@@ -238,7 +221,6 @@ const UserInfo: React.FC = () => {
 			{openProfitCalcModal && (
 				<ProfitCalculator
 					marketAsset={marketAsset}
-					marketAssetRate={marketAssetRate}
 					setOpenProfitCalcModal={setOpenProfitCalcModal}
 				/>
 			)}
@@ -246,7 +228,6 @@ const UserInfo: React.FC = () => {
 				<ShareModal
 					position={position}
 					marketAsset={marketAsset}
-					marketAssetRate={marketAssetRate}
 					setShowShareModal={setShowShareModal}
 					futuresPositionHistory={futuresPositionHistory}
 				/>

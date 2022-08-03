@@ -174,12 +174,17 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'notionalValue',
 								Cell: (cellProps: CellProps<any>) => {
+									const formatOptions = cellProps.row.original.notionalValue.gte(1e6)
+										? { truncation: { divisor: 1e6, unit: 'M' } }
+										: {};
+
 									return (
 										<Currency.Price
 											currencyKey={Synths.sUSD}
 											price={cellProps.row.original.notionalValue}
 											sign={'$'}
 											conversionRate={1}
+											formatOptions={formatOptions}
 										/>
 									);
 								},
@@ -276,8 +281,10 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 			<MobileOnlyView>
 				<OpenPositionsHeader>
 					<div>{t('dashboard.overview.futures-positions-table.mobile.market')}</div>
-					<div>{t('dashboard.overview.futures-positions-table.mobile.price')}</div>
-					<div>{t('dashboard.overview.futures-positions-table.mobile.pnl')}</div>
+					<OpenPositionsRightHeader>
+						<div>{t('dashboard.overview.futures-positions-table.mobile.price')}</div>
+						<div>{t('dashboard.overview.futures-positions-table.mobile.pnl')}</div>
+					</OpenPositionsRightHeader>
 				</OpenPositionsHeader>
 				<div style={{ margin: '0 15px' }}>
 					{data.length === 0 ? (
@@ -355,7 +362,7 @@ const MarketContainer = styled.div`
 const OpenPositionsHeader = styled.div`
 	display: flex;
 	justify-content: space-between;
-	margin: 15px;
+	margin: 15px 15px 8px;
 	padding: 0 10px;
 
 	& > div {
@@ -363,8 +370,15 @@ const OpenPositionsHeader = styled.div`
 	}
 
 	& > div:first-child {
-		width: 150px;
+		width: 125px;
+		margin-right: 30px;
 	}
+`;
+
+const OpenPositionsRightHeader = styled.div`
+	display: flex;
+	flex: 1;
+	justify-content: space-between;
 `;
 
 const NoPositionsText = styled.div`

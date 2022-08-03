@@ -7,6 +7,7 @@ import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useSynthBalances from 'queries/synths/useSynthBalances';
 import { walletAddressState } from 'store/wallet';
 
@@ -33,7 +34,7 @@ export const RefetchProvider: React.FC = ({ children }) => {
 	const crossMarginAccountOverview = useGetCrossMarginAccountOverview();
 	const positionsQuery = useGetFuturesPositionForMarkets();
 	const marketsQuery = useGetFuturesMarkets();
-
+	useExchangeRatesQuery({ refetchInterval: 15000 });
 	useGetFuturesPotentialTradeDetails();
 
 	const handleRefetch = (refetchType: RefetchType, timeout?: number) => {

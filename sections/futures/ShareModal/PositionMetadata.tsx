@@ -3,12 +3,12 @@ import { FC, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { useFuturesContext } from 'contexts/FuturesContext';
 import { PositionHistory } from 'queries/futures/types';
 import getLocale from 'utils/formatters/getLocale';
 
 type PositionMetadataProps = {
 	marketAsset: string;
-	marketAssetRate: number;
 	futuresPositionHistory: PositionHistory[];
 };
 
@@ -66,13 +66,11 @@ function getFontFamily(props: any) {
 	}
 }
 
-const PositionMetadata: FC<PositionMetadataProps> = ({
-	marketAsset,
-	marketAssetRate,
-	futuresPositionHistory,
-}) => {
+const PositionMetadata: FC<PositionMetadataProps> = ({ marketAsset, futuresPositionHistory }) => {
 	const { t } = useTranslation();
 	const [currentTimestamp, setCurrentTimestamp] = useState<number>(0);
+
+	const { marketAssetRate } = useFuturesContext();
 
 	let avgEntryPrice = '',
 		openAtDate = '',
@@ -124,7 +122,9 @@ const PositionMetadata: FC<PositionMetadataProps> = ({
 				<ContainerText className="header">
 					{t('futures.modals.share.position-metadata.current-price')}
 				</ContainerText>
-				<ContainerText className="date-or-price">{marketAssetRate.toFixed(2)}</ContainerText>
+				<ContainerText className="date-or-price">
+					{marketAssetRate.toNumber().toFixed(2)}
+				</ContainerText>
 			</BottomRightContainer>
 		</>
 	);

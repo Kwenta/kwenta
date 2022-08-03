@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
@@ -16,13 +16,10 @@ import ManagePosition from './ManagePosition';
 import MarketActions from './MarketActions';
 import MarketsDropdown from './MarketsDropdown';
 import NextPrice from './NextPrice';
-import NextPriceConfirmationModal from './NextPriceConfirmationModal';
-import TradeConfirmationModal from './TradeConfirmationModal';
 
 const Trade: React.FC = () => {
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
-	const [openModal, setOpenModal] = useState<'trade' | 'next-price' | null>(null);
 	const futuresAccount = useRecoilValue(futuresAccountState);
 
 	return (
@@ -53,17 +50,9 @@ const Trade: React.FC = () => {
 
 			<LeverageInput />
 
-			<ManagePosition
-				openConfirmationModal={() => setOpenModal(orderType === 1 ? 'next-price' : 'trade')}
-			/>
+			<ManagePosition />
 
 			<FeeInfoBox />
-
-			{openModal === 'trade' && <TradeConfirmationModal onDismiss={() => setOpenModal(null)} />}
-
-			{openModal === 'next-price' && (
-				<NextPriceConfirmationModal onDismiss={() => setOpenModal(null)} />
-			)}
 		</div>
 	);
 };

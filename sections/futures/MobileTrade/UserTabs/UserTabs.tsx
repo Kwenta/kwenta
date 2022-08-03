@@ -53,9 +53,11 @@ const UserTabsContainer = styled.div`
 `;
 
 const TabButtonsContainer = styled.div`
-	display: flex;
-	justify-content: space-between;
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	grid-column-gap: 15px;
 	margin-bottom: 15px;
+	overflow: auto;
 `;
 
 export default UserTabs;

@@ -7,11 +7,12 @@ import {
 import { wei } from '@synthetixio/wei';
 import { BigNumberish, ethers } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
+import { ratesState } from 'store/futures';
 import { networkState } from 'store/wallet';
 
 import { Rates } from './types';
@@ -29,6 +30,7 @@ const useExchangeRatesQuery = (options?: UseQueryOptions<Rates>) => {
 	const network = useRecoilValue(networkState);
 	const { synthetixjs: snxjs, defaultSynthetixjs } = Connector.useContainer();
 	const synthetixjs = window.location.pathname === ROUTES.Home.Root ? defaultSynthetixjs : snxjs;
+	const setRates = useSetRecoilState(ratesState);
 
 	return useQuery<Rates>(
 		['rates', 'exchangeRates2', network.id],
@@ -53,6 +55,8 @@ const useExchangeRatesQuery = (options?: UseQueryOptions<Rates>) => {
 					exchangeRates[synthToAsset(currencyKey)] = wei(rate);
 				}
 			});
+
+			setRates(exchangeRates);
 
 			return exchangeRates;
 		},

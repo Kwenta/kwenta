@@ -33,7 +33,7 @@ const FuturesMarkets = () => {
 					<MarketStat>
 						<div className="title">24h Volume</div>
 						<div className="value">
-							{formatCurrency(Synths.sUSD, dailyTradeStats.data?.totalVolume || zeroBN, {
+							{formatCurrency(Synths.sUSD, dailyTradeStats.data?.totalVolume ?? zeroBN, {
 								sign: '$',
 								minDecimals: 0,
 							})}
@@ -42,14 +42,14 @@ const FuturesMarkets = () => {
 					<MarketStat>
 						<div className="title">Open Interest</div>
 						<div className="value">
-							{formatCurrency(Synths.sUSD, openInterest ?? 0, {
+							{formatCurrency(Synths.sUSD, openInterest, {
 								sign: '$',
 								minDecimals: 0,
 							})}
 						</div>
 					</MarketStat>
 					<MarketStat>
-						<div className="title">Total Trades</div>
+						<div className="title">24H Trades</div>
 						<div className="value">
 							{formatNumber(dailyTradeStats.data?.totalTrades ?? 0, { minDecimals: 0 })}
 						</div>

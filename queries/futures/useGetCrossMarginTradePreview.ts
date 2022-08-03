@@ -15,7 +15,8 @@ import {
 	multiplyDecimal,
 	divideDecimal,
 } from 'utils/formatters/number';
-import { FuturesMarketAsset } from 'utils/futures';
+import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
+import logError from 'utils/logError';
 
 import { getFuturesMarketContract } from './utils';
 
@@ -52,7 +53,12 @@ export default function useGetCrossMarginTradePreview(
 
 	const contractInstance = useMemo(() => {
 		if (!synthetixjs || !provider || !address) return null;
-		return new FuturesMarketInternal(synthetixjs, provider, marketAsset, address);
+		try {
+			return new FuturesMarketInternal(synthetixjs, provider, marketAsset, address);
+		} catch (err) {
+			logError(err);
+			return null;
+		}
 	}, [synthetixjs, provider, address, marketAsset]);
 
 	const getPreview = async (
@@ -91,8 +97,7 @@ class FuturesMarketInternal {
 
 		this._futuresMarketContract = getFuturesMarketContract(marketAsset, synthetixjs.contracts);
 		this._futuresSettingsContract = synthetixjs.contracts.FuturesMarketSettings;
-
-		this._marketKeyBytes = formatBytes32String(marketAsset);
+		this._marketKeyBytes = formatBytes32String(MarketKeyByAsset[marketAsset]);
 		this._account = account;
 		this._cache = {};
 	}

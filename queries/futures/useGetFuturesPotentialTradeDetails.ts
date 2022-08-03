@@ -69,7 +69,8 @@ const useGetFuturesPotentialTradeDetails = (
 			tradeSize,
 			selectedFuturesAddress || '',
 			selectedAccountType,
-			marginDelta.toString()
+			marginDelta.toString(),
+			leverageSide
 		),
 		async () => {
 			if (!marketAsset || !tradeSize || !isL2) {

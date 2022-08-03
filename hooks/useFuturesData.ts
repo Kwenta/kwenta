@@ -3,18 +3,15 @@ import Wei, { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
 import { formatBytes32String } from 'ethers/lib/utils';
 import { useRouter } from 'next/router';
-import React, { useState, useMemo, useEffect } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useSetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
 
-import { Synths } from 'constants/currency';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import useGetCrossMarginAccountOverview from 'queries/futures/useGetCrossMarginAccountOverview';
 import { getFuturesMarketContract } from 'queries/futures/utils';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import { PositionSide } from 'sections/futures/types';
 import {
 	crossMarginAvailableMarginState,
 	currentMarketState,
@@ -23,8 +20,8 @@ import {
 	leverageSideState,
 	leverageState,
 	leverageValueCommittedState,
+	marketAssetRateState,
 	marketInfoState,
-	marketKeyState,
 	maxLeverageState,
 	orderTypeState,
 	positionState,
@@ -34,7 +31,6 @@ import {
 	tradeSizeSUSDState,
 } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
@@ -44,13 +40,11 @@ import useCrossMarginAccountContracts from './useCrossMarginContracts';
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
 const useFuturesData = () => {
-	const exchangeRatesQuery = useExchangeRatesQuery();
 	const router = useRouter();
 	const { synthetixjs } = Connector.useContainer();
 	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
 
 	const marketAsset = useRecoilValue(currentMarketState);
-	const marketKey = useRecoilValue(marketKeyState);
 	const crossMarginAccountOverview = useGetCrossMarginAccountOverview();
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
@@ -60,8 +54,8 @@ const useFuturesData = () => {
 
 	const [leverage, setLeverage] = useRecoilState(leverageState);
 	const [tradeSize, setTradeSize] = useRecoilState(tradeSizeState);
-	const [, setTradeSizeSUSD] = useRecoilState(tradeSizeSUSDState);
-	const [, setFeeCost] = useRecoilState(feeCostState);
+	const setTradeSizeSUSD = useSetRecoilState(tradeSizeSUSDState);
+	const setFeeCost = useSetRecoilState(feeCostState);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const orderType = useRecoilValue(orderTypeState);
 	const sizeDelta = useRecoilValue(sizeDeltaState);
@@ -82,30 +76,13 @@ const useFuturesData = () => {
 		? { freeMargin: crossMarginAccountOverview.data?.freeMargin }
 		: null;
 
-	const exchangeRates = useMemo(() => exchangeRatesQuery.data ?? null, [exchangeRatesQuery.data]);
-
-	const marketAssetRate = useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, marketKey, Synths.sUSD),
-		[exchangeRates, marketKey]
-	);
+	const marketAssetRate = useRecoilValue(marketAssetRateState);
 
 	const positionLeverage = position?.position?.leverage ?? wei(0);
 	const positionSide = position?.position?.side;
 	const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
 
-	const maxMarketValueUSD = market?.marketLimit ?? wei(0);
-	const marketSize = market?.marketSize ?? wei(0);
-	const marketSkew = market?.marketSkew ?? wei(0);
-
 	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed];
-
-	const isMarketCapReached = useMemo(
-		() =>
-			leverageSide === PositionSide.LONG
-				? marketSize.add(marketSkew).div('2').abs().mul(marketAssetRate).gte(maxMarketValueUSD)
-				: marketSize.sub(marketSkew).div('2').abs().mul(marketAssetRate).gte(maxMarketValueUSD),
-		[leverageSide, marketSize, marketSkew, marketAssetRate, maxMarketValueUSD]
-	);
 
 	const remainingMargin: Wei = useMemo(() => {
 		if (selectedAccountType === 'isolated_margin') {
@@ -245,16 +222,6 @@ const useFuturesData = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [orderTxn.hash]);
 
-	const placeOrderTranslationKey = React.useMemo(() => {
-		if (orderType === 1) return 'futures.market.trade.button.place-next-price-order';
-		if (!!position?.position) return 'futures.market.trade.button.modify-position';
-		return remainingMargin.lt('50')
-			? 'futures.market.trade.button.deposit-margin-minimum'
-			: isMarketCapReached
-			? 'futures.market.trade.button.oi-caps-reached'
-			: 'futures.market.trade.button.open-position';
-	}, [position, orderType, isMarketCapReached, remainingMargin]);
-
 	useEffect(() => {
 		const getOrderFee = async () => {
 			if (
@@ -311,13 +278,10 @@ const useFuturesData = () => {
 		marketAssetRate,
 		maxLeverageValue,
 		position,
-		placeOrderTranslationKey,
 		positionLeverage,
 		positionSide,
-		marketMaxLeverage,
 		error,
 		dynamicFee,
-		isMarketCapReached,
 		marketAsset,
 		market,
 		orderTxn,

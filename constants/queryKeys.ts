@@ -261,7 +261,8 @@ export const QUERY_KEYS = {
 			tradeSize: string,
 			walletAddress: string,
 			selectedAccountType: FuturesAccountType,
-			marginDelta: string
+			marginDelta: string,
+			leverageSide: string
 		) => [
 			'futures',
 			'potentialTrade',
@@ -271,6 +272,7 @@ export const QUERY_KEYS = {
 			walletAddress,
 			selectedAccountType,
 			marginDelta,
+			leverageSide,
 		],
 		MarketLimit: (networkId: NetworkId, market: string | null) => [
 			'futures',
