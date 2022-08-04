@@ -8,7 +8,7 @@ export const getMarketAsset = (marketKey: FuturesMarketKey) => {
 	return markets[marketKey].asset;
 };
 
-export const getMarketName = (asset: string | null) => {
+export const getMarketName = (asset: FuturesMarketAsset | null) => {
 	return `${getDisplayAsset(asset)}-PERP`;
 };
 

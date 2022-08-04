@@ -41,7 +41,7 @@ const FuturesHistoryTable: FC = () => {
 	const mappedHistoricalTrades = useMemo(
 		() =>
 			trades.map((trade) => {
-				const parsedAsset = ethersUtils.parseBytes32String(trade.asset);
+				const parsedAsset = ethersUtils.parseBytes32String(trade.asset) as FuturesMarketAsset;
 				return {
 					...trade,
 					asset: parsedAsset,

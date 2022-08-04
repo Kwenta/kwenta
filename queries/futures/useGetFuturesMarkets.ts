@@ -81,7 +81,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 					i: number
 				) => ({
 					market,
-					marketName: getMarketName(utils.parseBytes32String(asset)),
+					marketName: getMarketName(utils.parseBytes32String(asset) as FuturesMarketAsset),
 					asset: utils.parseBytes32String(asset) as FuturesMarketAsset,
 					assetHex: asset,
 					currentFundingRate: wei(currentFundingRate).neg(),
