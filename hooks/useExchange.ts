@@ -34,6 +34,7 @@ import useBaseFeeRateQuery from 'queries/synths/useBaseFeeRateQuery';
 import useExchangeFeeRateQuery from 'queries/synths/useExchangeFeeRateQuery';
 import useNumEntriesQuery from 'queries/synths/useNumEntriesQuery';
 import useRedeemableDeprecatedSynthsQuery from 'queries/synths/useRedeemableDeprecatedSynthsQuery';
+import useSynthBalances from 'queries/synths/useSynthBalances';
 import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
@@ -100,6 +101,8 @@ const useExchange = ({
 		useSynthetixTxn,
 		useContractTxn,
 	} = useSynthetixQueries();
+
+	useSynthBalances();
 
 	const router = useRouter();
 
