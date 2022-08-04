@@ -18,6 +18,7 @@ import {
 import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
+import { KWENTA_TRACKING_CODE } from './constants';
 import { getFuturesMarketContract } from './utils';
 
 // Need to recreate postTradeDetails from the contract here locally
@@ -114,7 +115,7 @@ class FuturesMarketInternal {
 			price: price.price,
 			takerFee,
 			makerFee,
-			trackingCode: formatBytes32String('0'),
+			trackingCode: KWENTA_TRACKING_CODE,
 		};
 
 		const { newPos, fee, status } = await this._postTradeDetails(

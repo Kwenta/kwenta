@@ -9,7 +9,7 @@ import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositi
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useSynthBalances from 'queries/synths/useSynthBalances';
-import { walletAddressState } from 'store/wallet';
+import { futuresAccountState } from 'store/futures';
 
 type RefetchType =
 	| 'modify-position'
@@ -27,8 +27,9 @@ const RefetchContext = React.createContext<RefetchContextType>({
 });
 
 export const RefetchProvider: React.FC = ({ children }) => {
-	const walletAddress = useRecoilValue(walletAddressState);
-	const synthsBalancesQuery = useSynthBalances(walletAddress);
+	const { selectedAccountType } = useRecoilValue(futuresAccountState);
+
+	const synthsBalancesQuery = useSynthBalances();
 	const openOrdersQuery = useGetFuturesOpenOrders();
 	const positionQuery = useGetFuturesPositionForMarket();
 	const crossMarginAccountOverview = useGetCrossMarginAccountOverview();
@@ -43,7 +44,9 @@ export const RefetchProvider: React.FC = ({ children }) => {
 				case 'modify-position':
 					marketsQuery.refetch();
 					openOrdersQuery.refetch();
-					crossMarginAccountOverview.refetch();
+					if (selectedAccountType === 'cross_margin') {
+						crossMarginAccountOverview.refetch();
+					}
 					break;
 				case 'new-order':
 					openOrdersQuery.refetch();
