@@ -1,10 +1,10 @@
-import { ExchangeContext } from 'contexts/ExchangeContext';
 import Head from 'next/head';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import { ExchangeContext } from 'contexts/ExchangeContext';
 import useExchange from 'hooks/useExchange';
 import BasicSwap from 'sections/exchange/BasicSwap';
 import { MobileSwap } from 'sections/exchange/MobileSwap';

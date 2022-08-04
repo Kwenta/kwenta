@@ -1,5 +1,4 @@
 import useSynthetixQueries from '@synthetixio/queries';
-import { useFuturesContext } from 'contexts/FuturesContext';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -10,10 +9,14 @@ import Button from 'components/Button';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { Synths, CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
+import TransactionNotifier from 'containers/TransactionNotifier';
+import { useFuturesContext } from 'contexts/FuturesContext';
+import { useRefetchContext } from 'contexts/RefetchContext';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import {
 	confirmationModalOpenState,
 	currentMarketState,
+	futuresAccountState,
 	potentialTradeDetailsState,
 } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
@@ -28,17 +31,26 @@ import { PositionSide } from '../types';
 const TradeConfirmationModal: FC = () => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
-	const gasSpeed = useRecoilValue(gasSpeedState);
-	const market = useRecoilValue(currentMarketState);
 	const { useExchangeRatesQuery, useEthGasPriceQuery } = useSynthetixQueries();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const { handleRefetch } = useRefetchContext();
+
+	const gasSpeed = useRecoilValue(gasSpeedState);
+	const market = useRecoilValue(currentMarketState);
 	const potentialTradeDetails = useRecoilValue(potentialTradeDetailsState);
+	const { selectedAccountType } = useRecoilValue(futuresAccountState);
+
+	const {
+		orderTxn,
+		submitIsolatedMarginOrder,
+		submitCrossMarginOrder,
+		onLeverageChange,
+	} = useFuturesContext();
 
 	const setConfirmationModalOpen = useSetRecoilState(confirmationModalOpenState);
-
-	const { orderTxn } = useFuturesContext();
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -52,6 +64,7 @@ const TradeConfirmationModal: FC = () => {
 
 	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
 
+	// TODO: Get tx fee for cross margin order
 	const transactionFee = useMemo(
 		() =>
 			newGetTransactionPrice(
@@ -123,7 +136,20 @@ const TradeConfirmationModal: FC = () => {
 	};
 
 	const handleConfirmOrder = async () => {
-		orderTxn.mutate();
+		if (selectedAccountType === 'cross_margin') {
+			const tx = await submitCrossMarginOrder();
+			if (tx?.hash) {
+				monitorTransaction({
+					txHash: tx.hash,
+					onTxConfirmed: () => {
+						onLeverageChange('');
+						handleRefetch('modify-position');
+					},
+				});
+			}
+		} else {
+			submitIsolatedMarginOrder();
+		}
 		onDismiss();
 	};
 

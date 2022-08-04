@@ -7,23 +7,23 @@ import { useSetRecoilState, useRecoilValue } from 'recoil';
 import { ETH_UNIT } from 'constants/network';
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
-import { marketInfoState, openOrdersState } from 'store/futures';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { futuresAccountState, openOrdersState, marketInfoState } from 'store/futures';
+import { isL2State, networkState } from 'store/wallet';
 import logError from 'utils/logError';
 
 import { getFuturesEndpoint } from './utils';
 
 const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
+	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
-	const walletAddress = useRecoilValue(walletAddressState);
 	const futuresEndpoint = getFuturesEndpoint(network);
 	const marketInfo = useRecoilValue(marketInfoState);
 	const setOpenOrders = useSetRecoilState(openOrdersState);
 
 	return useQuery<any[]>(
-		QUERY_KEYS.Futures.OpenOrders(network.id, walletAddress),
+		QUERY_KEYS.Futures.OpenOrders(network.id, selectedFuturesAddress),
 		async () => {
 			try {
 				const marketAddress = marketInfo?.market;
@@ -43,7 +43,7 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 							}
 						}
 					`,
-					{ account: walletAddress, market: marketAddress }
+					{ account: selectedFuturesAddress, market: marketAddress }
 				);
 
 				const openOrders = response
@@ -64,7 +64,7 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 			}
 		},
 		{
-			enabled: isAppReady && isL2 && !!marketInfo?.market && !!walletAddress,
+			enabled: isAppReady && isL2 && !!marketInfo?.market && !!selectedFuturesAddress,
 			refetchInterval: 5000,
 			...options,
 		}
