@@ -12,7 +12,7 @@ import { Synths } from 'constants/currency';
 import { balancesState, positionsState } from 'store/futures';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
-import { FuturesMarketAsset, getDisplayAsset, MarketKeyByAsset } from 'utils/futures';
+import { FuturesMarketAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
 
 type ReactSelectOptionProps = {
 	label: string;
@@ -46,7 +46,7 @@ const BalanceActions: FC = () => {
 				accessiblePositions.find((position) => position.asset === asset)?.remainingMargin ?? zeroBN;
 
 			return {
-				label: `${getDisplayAsset(asset)}-PERP`,
+				label: getMarketName(asset),
 				synthIcon: MarketKeyByAsset[asset],
 				marketRemainingMargin: formatCurrency(Synths.sUSD, remainingMargin, { sign: '$' }),
 				onClick: () => router.push(`/market/${asset}`),

@@ -60,6 +60,7 @@ export type FuturesPosition = {
 
 export type FuturesMarket = {
 	market: string;
+	marketName: string;
 	asset: FuturesMarketAsset;
 	assetHex: string;
 	currentFundingRate: Wei;

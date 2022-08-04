@@ -44,9 +44,7 @@ const MarketInfoBox: React.FC = () => {
 			? position?.accessibleMargin.add(crossMarginFreeMargin) ?? zeroBN
 			: position?.accessibleMargin ?? zeroBN;
 
-	const buyingPower = availableMargin.gt(zeroBN)
-		? availableMargin.mul(maxLeverage ?? zeroBN)
-		: zeroBN;
+	const buyingPower = totalMargin.gt(zeroBN) ? totalMargin.mul(maxLeverage ?? zeroBN) : zeroBN;
 
 	const marginUsage = availableMargin.gt(zeroBN)
 		? totalMargin.sub(availableMargin).div(totalMargin)
@@ -93,11 +91,14 @@ const MarketInfoBox: React.FC = () => {
 	};
 
 	const previewAvailableMargin = React.useMemo(() => {
-		const potentialAvailableMargin = getPotentialAvailableMargin(previewTrade, maxLeverage);
+		const potentialAvailableMargin = getPotentialAvailableMargin(
+			previewTrade,
+			marketInfo?.maxLeverage
+		);
 		return isNextPriceOrder
 			? potentialAvailableMargin?.sub(totalDeposit) ?? zeroBN
 			: potentialAvailableMargin;
-	}, [previewTrade, maxLeverage, isNextPriceOrder, totalDeposit]);
+	}, [previewTrade, marketInfo?.maxLeverage, isNextPriceOrder, totalDeposit]);
 
 	const previewTradeData = React.useMemo(() => {
 		const size = wei(tradeSize || zeroBN);

@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import BaseModal from 'components/BaseModal';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import PositionButtons from 'sections/futures/PositionButtons';
-import { FuturesMarketAsset } from 'utils/futures';
+import { FuturesMarketAsset, getMarketName } from 'utils/futures';
 
 import { PositionSide } from '../types';
 import LabelWithInput from './LabelWithInput';
@@ -19,6 +19,7 @@ type ProfitCalculatorProps = {
 };
 
 const ProfitCalculator: FC<ProfitCalculatorProps> = ({ marketAsset, setOpenProfitCalcModal }) => {
+	const marketName = getMarketName(marketAsset);
 	const marketAsset__RemovedSChar = marketAsset[0] === 's' ? marketAsset.slice(1) : marketAsset;
 	const { t } = useTranslation();
 
@@ -210,7 +211,7 @@ const ProfitCalculator: FC<ProfitCalculatorProps> = ({ marketAsset, setOpenProfi
 					<ProfitDetails
 						stopLoss={stopLoss}
 						exitPrice={exitPrice}
-						marketAsset={marketAsset__RemovedSChar}
+						marketName={marketName}
 						leverageSide={leverageSide}
 						marketAssetPositionSize={marketAssetPositionSize}
 					/>
