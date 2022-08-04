@@ -1,4 +1,3 @@
-import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
@@ -10,10 +9,9 @@ import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import logError from 'utils/logError';
 
 import { DAY_PERIOD, FUTURES_ENDPOINT_MAINNET } from './constants';
+import { getFuturesOneMinStats } from './subgraph';
 import { FuturesDailyTradeStats, FuturesOneMinuteStat } from './types';
 import { getFuturesEndpoint, calculateDailyTradeStats } from './utils';
-
-const PAGE_SIZE = 500;
 
 const useGetFuturesDailyTradeStats = (options?: UseQueryOptions<FuturesDailyTradeStats | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -28,30 +26,21 @@ const useGetFuturesDailyTradeStats = (options?: UseQueryOptions<FuturesDailyTrad
 	): Promise<FuturesOneMinuteStat[]> => {
 		try {
 			const minTimestamp = Math.floor(calculateTimestampForPeriod(DAY_PERIOD) / 1000);
-			const response = await request(
+			const response = await getFuturesOneMinStats(
 				futuresEndpoint,
-				gql`
-					query FutureOneMinStats($skip: Int!) {
-						futuresOneMinStats(
-							skip: $skip
-							first: ${PAGE_SIZE}
-							where: { timestamp_gte: ${minTimestamp} }
-						) {
-							trades
-							volume
-						}
-					}
-				`,
-				{ skip }
-			);
-			if (response) {
-				const combined = [...existing, ...response.futuresOneMinStats];
-				if (response.futuresOneMinStats?.length === PAGE_SIZE) {
-					return queryTrades(skip + PAGE_SIZE, combined);
+				{
+					first: 999999,
+					where: {
+						timestamp_gte: `${minTimestamp}`,
+					},
+				},
+				{
+					trades: true,
+					volume: true,
 				}
-				return combined;
-			}
-			return [];
+			);
+
+			return response;
 		} catch (e) {
 			logError(e);
 			return [];

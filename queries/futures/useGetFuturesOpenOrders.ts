@@ -2,15 +2,13 @@ import Wei from '@synthetixio/wei';
 import { utils as ethersUtils } from 'ethers';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 
 import { ETH_UNIT } from 'constants/network';
 import QUERY_KEYS from 'constants/queryKeys';
-import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
-import { currentMarketState, openOrdersState } from 'store/futures';
+import { marketInfoState, openOrdersState } from 'store/futures';
 import { isL2State, networkState, walletAddressState } from 'store/wallet';
-import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
 import { getFuturesEndpoint } from './utils';
@@ -21,16 +19,14 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const futuresEndpoint = getFuturesEndpoint(network);
-	const { synthetixjs } = Connector.useContainer();
-	const currencyKey = useRecoilValue(currentMarketState);
-	const [, setOpenOrders] = useRecoilState(openOrdersState);
+	const marketInfo = useRecoilValue(marketInfoState);
+	const setOpenOrders = useSetRecoilState(openOrdersState);
 
 	return useQuery<any[]>(
 		QUERY_KEYS.Futures.OpenOrders(network.id, walletAddress),
 		async () => {
 			try {
-				const { contracts } = synthetixjs!;
-				const marketAddress = contracts[`FuturesMarket${getDisplayAsset(currencyKey)}`].address;
+				const marketAddress = marketInfo?.market;
 				const response = await request(
 					futuresEndpoint,
 					gql`
@@ -68,7 +64,7 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 			}
 		},
 		{
-			enabled: isAppReady && isL2 && !!currencyKey && !!walletAddress,
+			enabled: isAppReady && isL2 && !!marketInfo?.market && !!walletAddress,
 			refetchInterval: 5000,
 			...options,
 		}

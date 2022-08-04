@@ -1,31 +1,29 @@
-import { Synth } from '@synthetixio/contracts-interface';
+import Wei from '@synthetixio/wei';
 import * as _ from 'lodash/fp';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
+import { Synths } from 'constants/currency';
 import { FuturesMarket } from 'queries/futures/types';
-import { currentMarketState } from 'store/futures';
-import { formatCurrency } from 'utils/formatters/number';
+import { marketInfoState } from 'store/futures';
+import { formatCurrency, zeroBN } from 'utils/formatters/number';
 
 export type SkewData = {
 	data: {
 		long: number;
-		longValue: number;
+		longValue: Wei;
 		short: number;
-		shortValue: number;
+		shortValue: Wei;
 	};
 	long: string;
 	short: string;
 };
 
-const useGetSkewData = (
-	selectedPriceCurrency: Synth,
-	futuresMarkets: FuturesMarket[]
-): SkewData => {
-	const currencyKey = useRecoilValue(currentMarketState);
-	const skewData = useMemo(() => {
+const useGetSkewData = (): SkewData => {
+	const marketInfo = useRecoilValue(marketInfoState);
+	const [skewData, long, short] = useMemo(() => {
 		const cleanMarket = (i: FuturesMarket) => {
-			const basePriceRate = _.defaultTo(0, Number(i.price));
+			const marketPrice = _.defaultTo(0, Number(i.price));
 			return {
 				short: i.marketSize.eq(0)
 					? 0
@@ -34,28 +32,39 @@ const useGetSkewData = (
 					? 0
 					: i.marketSize.add(i.marketSkew).div('2').div(i.marketSize).toNumber(),
 				shortValue: i.marketSize.eq(0)
-					? 0
-					: i.marketSize.sub(i.marketSkew).div('2').mul(basePriceRate).toNumber(),
+					? zeroBN
+					: i.marketSize.sub(i.marketSkew).div('2').mul(marketPrice),
 				longValue: i.marketSize.eq(0)
-					? 0
-					: i.marketSize.add(i.marketSkew).div('2').mul(basePriceRate).toNumber(),
+					? zeroBN
+					: i.marketSize.add(i.marketSkew).div('2').mul(marketPrice),
 			};
 		};
 
-		const market = futuresMarkets.find((i: FuturesMarket) => i.asset === currencyKey);
-
-		return market
-			? cleanMarket(market)
+		const skewData = marketInfo
+			? cleanMarket(marketInfo)
 			: {
 					short: 0,
 					long: 0,
-					shortValue: 0,
-					longValue: 0,
+					shortValue: zeroBN,
+					longValue: zeroBN,
 			  };
-	}, [futuresMarkets, currencyKey]);
 
-	const long = formatCurrency(selectedPriceCurrency.name, skewData.longValue, { sign: '$' });
-	const short = formatCurrency(selectedPriceCurrency.name, skewData.shortValue, { sign: '$' });
+		const truncationConfig = { truncation: { divisor: 1e6, unit: 'M' } };
+
+		const long = formatCurrency(Synths.sUSD, skewData.longValue, {
+			sign: '$',
+			maxDecimals: 2,
+			...(skewData.longValue.gt(1e6) ? truncationConfig : {}),
+		});
+
+		const short = formatCurrency(Synths.sUSD, skewData.shortValue, {
+			sign: '$',
+			maxDecimals: 2,
+			...(skewData.shortValue.gt(1e6) ? truncationConfig : {}),
+		});
+
+		return [skewData, long, short];
+	}, [marketInfo]);
 
 	return { data: skewData, long, short };
 };

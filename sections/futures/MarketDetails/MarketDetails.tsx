@@ -1,20 +1,14 @@
-import _ from 'lodash';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import TimerTooltip from 'components/Tooltip/TimerTooltip';
-import { Period, PERIOD_IN_SECONDS } from 'constants/period';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { FuturesMarket } from 'queries/futures/types';
-import useGetAverageFundingRateForMarket from 'queries/futures/useGetAverageFundingRateForMarket';
 import useRateUpdateQuery from 'queries/rates/useRateUpdateQuery';
-import { currentMarketState, futuresMarketsState, marketKeyState } from 'store/futures';
+import { currentMarketState, marketInfoState } from 'store/futures';
 import media from 'styles/media';
-import { formatPercent, zeroBN } from 'utils/formatters/number';
-import { getDisplayAsset, MarketKeyByAsset } from 'utils/futures';
+import { formatPercent } from 'utils/formatters/number';
 
 import useGetMarketData from './useGetMarketData';
 import useGetSkewData from './useGetSkewData';
@@ -28,45 +22,21 @@ type MarketDetailsProps = {
 const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	const { t } = useTranslation();
 
+	const marketInfo = useRecoilValue(marketInfoState);
 	const marketAsset = useRecoilValue(currentMarketState);
-	const marketKey = useRecoilValue(marketKeyState);
-	const futuresMarkets = useRecoilValue(futuresMarketsState);
 
-	const marketSummary = futuresMarkets.find(({ asset }) => asset === marketAsset);
+	const pausedClass = marketInfo?.isSuspended ? 'paused' : '';
 
-	const market = futuresMarkets.find(
-		({ asset }: FuturesMarket) => MarketKeyByAsset[asset] === marketKey
-	);
-
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-
-	const basePriceRate = React.useMemo(() => _.defaultTo(market?.price, zeroBN), [market]);
-
-	const fundingRateQuery = useGetAverageFundingRateForMarket(
-		marketAsset,
-		basePriceRate.toNumber(),
-		PERIOD_IN_SECONDS[Period.ONE_HOUR],
-		marketSummary?.currentFundingRate.toNumber()
-	);
-	const avgFundingRate = fundingRateQuery?.data ?? null;
+	const skewData = useGetSkewData();
+	const data: MarketData = useGetMarketData(mobile);
 
 	const lastOracleUpdateTimeQuery = useRateUpdateQuery({
 		baseCurrencyKey: marketAsset,
 	});
 
-	const lastOracleUpdateTime: Date = React.useMemo(
-		() => lastOracleUpdateTimeQuery?.data ?? new Date(),
-		[lastOracleUpdateTimeQuery]
-	);
-
-	const assetName = `${getDisplayAsset(marketAsset)}-PERP`;
-	const fundingTitle = React.useMemo(
-		() =>
-			`${
-				fundingRateQuery.failureCount > 0 && !avgFundingRate && !!marketSummary ? 'Inst.' : '1H'
-			} Funding Rate`,
-		[fundingRateQuery, avgFundingRate, marketSummary]
-	);
+	const lastOracleUpdateTime: Date = useMemo(() => lastOracleUpdateTimeQuery?.data ?? new Date(), [
+		lastOracleUpdateTimeQuery,
+	]);
 
 	const enableTooltip = (key: string, children: React.ReactElement) => {
 		switch (key) {
@@ -125,7 +95,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 						{children}
 					</MarketDetailsTooltip>
 				);
-			case assetName:
+			case marketInfo?.marketName:
 				return (
 					<TimerTooltip
 						key={key}
@@ -136,7 +106,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 						{children}
 					</TimerTooltip>
 				);
-			case fundingTitle:
+			case 'Inst. Funding Rate' || '1H Funding Rate':
 				return (
 					<OneHrFundingRateTooltip
 						key={key}
@@ -150,12 +120,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 				return children;
 		}
 	};
-
-	const skewData = useGetSkewData(selectedPriceCurrency, futuresMarkets);
-
-	const data: MarketData = useGetMarketData(mobile);
-
-	const pausedClass = marketSummary?.isSuspended ? 'paused' : '';
 
 	return (
 		<MarketDetailsContainer mobile={mobile}>

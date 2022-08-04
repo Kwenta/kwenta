@@ -1,11 +1,11 @@
 import React from 'react';
 
-import useGetFuturesMarket from 'queries/futures/useGetFuturesMarket';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useSynthBalances from 'queries/synths/useSynthBalances';
 
 type RefetchType = 'modify-position' | 'new-order' | 'close-position' | 'margin-change';
@@ -22,16 +22,16 @@ export const RefetchProvider: React.FC = ({ children }) => {
 	const synthsBalancesQuery = useSynthBalances();
 	const openOrdersQuery = useGetFuturesOpenOrders();
 	const positionQuery = useGetFuturesPositionForMarket();
-	const positionsQuery = useGetFuturesPositionForMarkets([]);
-	const marketQuery = useGetFuturesMarket();
-	useGetFuturesMarkets();
+	const positionsQuery = useGetFuturesPositionForMarkets();
+	const marketsQuery = useGetFuturesMarkets();
+	useExchangeRatesQuery({ refetchInterval: 15000 });
 	useGetFuturesPotentialTradeDetails();
 
 	const handleRefetch = (refetchType: RefetchType, timeout?: number) => {
 		setTimeout(() => {
 			switch (refetchType) {
 				case 'modify-position':
-					marketQuery.refetch();
+					marketsQuery.refetch();
 					openOrdersQuery.refetch();
 					break;
 				case 'new-order':

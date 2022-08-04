@@ -10,7 +10,7 @@ import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import { appReadyState } from 'store/app';
 import { futuresMarketsState } from 'store/futures';
 import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
-import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
+import { FuturesMarketAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
 
 import { FuturesMarket } from './types';
 import { getReasonFromCode } from './utils';
@@ -35,7 +35,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 			}
 
 			const {
-				contracts: { FuturesMarketData, SystemStatus },
+				contracts: { FuturesMarketData, FuturesMarketSettings, SystemStatus, ExchangeRates },
 				utils,
 			} = synthetixjs!;
 
@@ -44,12 +44,26 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 				FuturesMarketData.globals(),
 			]);
 
-			const { suspensions, reasons } = await SystemStatus.getFuturesMarketSuspensions(
-				markets.map((m: any) => {
-					const asset = utils.parseBytes32String(m.asset) as FuturesMarketAsset;
-					return utils.formatBytes32String(MarketKeyByAsset[asset]);
-				})
+			const assetKeys = markets.map((m: any) => {
+				const asset = utils.parseBytes32String(m.asset) as FuturesMarketAsset;
+				return utils.formatBytes32String(MarketKeyByAsset[asset]);
+			});
+
+			const currentRoundIdPromises = Promise.all(
+				assetKeys.map((key: string) => ExchangeRates.getCurrentRoundId(key))
 			);
+
+			const marketLimitPromises = Promise.all(
+				assetKeys.map((key: string) => FuturesMarketSettings.maxMarketValueUSD(key))
+			);
+
+			const systemStatusPromise = await SystemStatus.getFuturesMarketSuspensions(assetKeys);
+
+			const [currentRoundIds, marketLimits, { suspensions, reasons }] = await Promise.all([
+				currentRoundIdPromises,
+				marketLimitPromises,
+				systemStatusPromise,
+			]);
 
 			const futuresMarkets = markets.map(
 				(
@@ -67,19 +81,25 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 					i: number
 				) => ({
 					market,
+					marketName: getMarketName(utils.parseBytes32String(asset) as FuturesMarketAsset),
 					asset: utils.parseBytes32String(asset) as FuturesMarketAsset,
 					assetHex: asset,
 					currentFundingRate: wei(currentFundingRate).neg(),
+					currentRoundId: wei(currentRoundIds[i], 0),
 					feeRates: {
 						makerFee: wei(feeRates.makerFee),
 						takerFee: wei(feeRates.takerFee),
+						makerFeeNextPrice: wei(feeRates.makerFeeNextPrice),
+						takerFeeNextPrice: wei(feeRates.takerFeeNextPrice),
 					},
 					marketDebt: wei(marketDebt),
 					marketSkew: wei(marketSkew),
 					maxLeverage: wei(maxLeverage),
 					marketSize: wei(marketSize),
+					marketLimit: wei(marketLimits[i]),
 					price: wei(price),
 					minInitialMargin: wei(globals.minInitialMargin),
+					keeperDeposit: wei(globals.minKeeperFee),
 					isSuspended: suspensions[i],
 					marketClosureReason: getReasonFromCode(reasons[i]) as FuturesClosureReason,
 				})

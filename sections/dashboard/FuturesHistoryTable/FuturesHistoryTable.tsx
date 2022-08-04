@@ -22,7 +22,7 @@ import useGetAllFuturesTradesForAccount from 'queries/futures/useGetAllFuturesTr
 import { TradeStatus } from 'sections/futures/types';
 import { isL2State, walletAddressState } from 'store/wallet';
 import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
-import { FuturesMarketAsset, getDisplayAsset, MarketKeyByAsset } from 'utils/futures';
+import { FuturesMarketAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
 
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
 
@@ -41,11 +41,11 @@ const FuturesHistoryTable: FC = () => {
 	const mappedHistoricalTrades = useMemo(
 		() =>
 			trades.map((trade) => {
-				const parsedAsset = ethersUtils.parseBytes32String(trade.asset);
+				const parsedAsset = ethersUtils.parseBytes32String(trade.asset) as FuturesMarketAsset;
 				return {
 					...trade,
 					asset: parsedAsset,
-					market: getDisplayAsset(parsedAsset) + '-PERP',
+					market: getMarketName(parsedAsset),
 					price: Number(trade.price?.div(ETH_UNIT)),
 					size: Number(trade.size.div(ETH_UNIT).abs()),
 					timestamp: Number(trade.timestamp.mul(1000)),

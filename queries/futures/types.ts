@@ -60,12 +60,16 @@ export type FuturesPosition = {
 
 export type FuturesMarket = {
 	market: string;
+	marketName: string;
 	asset: FuturesMarketAsset;
 	assetHex: string;
 	currentFundingRate: Wei;
+	currentRoundId: Wei;
 	feeRates: {
 		makerFee: Wei;
 		takerFee: Wei;
+		makerFeeNextPrice: Wei;
+		takerFeeNextPrice: Wei;
 	};
 	marketDebt: Wei;
 	marketSkew: Wei;
@@ -73,8 +77,10 @@ export type FuturesMarket = {
 	maxLeverage: Wei;
 	price: Wei;
 	minInitialMargin: Wei;
+	keeperDeposit: Wei;
 	isSuspended: boolean;
 	marketClosureReason: FuturesClosureReason;
+	marketLimit: Wei;
 };
 
 export type FuturesOpenInterest = {
@@ -164,8 +170,8 @@ export type Participant = {
 };
 
 export type FuturesOneMinuteStat = {
-	trades: string;
-	volume: string;
+	trades: Wei;
+	volume: Wei;
 };
 
 export type FuturesDailyTradeStats = {

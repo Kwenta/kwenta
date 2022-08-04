@@ -1,5 +1,7 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 
+import { FuturesMarketAsset } from 'utils/futures';
+
 import { CurrencyKey } from './currency';
 import { Period } from './period';
 
@@ -151,7 +153,7 @@ export const QUERY_KEYS = {
 		],
 	},
 	Futures: {
-		DayTradeStats: (networkId: NetworkId, currencyKey: string | null) => [
+		DayTradeStats: (networkId: NetworkId, currencyKey: FuturesMarketAsset | null) => [
 			'futures',
 			'dayTradeStats',
 			networkId,
@@ -200,12 +202,12 @@ export const QUERY_KEYS = {
 			walletAddress: string | null,
 			currencyKey: string | null
 		) => ['futures', 'futuresMarginTransfers', networkId, walletAddress, currencyKey],
-		FundingRate: (
-			networkId: NetworkId,
-			currencyKey: string | null,
-			assetPrice: number | null,
-			currentFundingRate: number | undefined
-		) => ['futures', 'fundingRates', networkId, currencyKey, assetPrice, currentFundingRate],
+		FundingRate: (networkId: NetworkId, currencyKey: string | null) => [
+			'futures',
+			'fundingRates',
+			networkId,
+			currencyKey,
+		],
 		TradingVolumeForAll: (networkId: NetworkId) => ['futures', 'tradingVolumeForAll', networkId],
 		MarketPositionHistory: (networkId: NetworkId, market: string | null, walletAddress: string) => [
 			'futures',
@@ -256,8 +258,9 @@ export const QUERY_KEYS = {
 			networkId: NetworkId,
 			market: string | null,
 			tradeSize: string,
-			walletAddress: string
-		) => ['futures', 'potentialTrade', tradeSize, networkId, market, walletAddress],
+			walletAddress: string,
+			leverageSide: string
+		) => ['futures', 'potentialTrade', tradeSize, networkId, market, walletAddress, leverageSide],
 		MarketLimit: (networkId: NetworkId, market: string | null) => [
 			'futures',
 			'marketLimit',

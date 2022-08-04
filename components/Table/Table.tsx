@@ -105,6 +105,7 @@ export const Table: FC<TableProps> = ({
 				sortBy: sortBy,
 			},
 			autoResetPage: false,
+			autoResetSortBy: false,
 			...options,
 		},
 		useSortBy,

@@ -5,20 +5,26 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import Badge from 'components/Badge';
 import Currency from 'components/Currency';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
-import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
-import { currentMarketState, openOrdersState } from 'store/futures';
+import { currentMarketState, marketInfoState, openOrdersState } from 'store/futures';
 import { gasSpeedState, walletAddressState } from 'store/wallet';
 import { formatCurrency } from 'utils/formatters/number';
-import { getDisplayAsset, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
+import {
+	getDisplayAsset,
+	MarketKeyByAsset,
+	FuturesMarketAsset,
+	getMarketName,
+} from 'utils/futures';
 
+import OrderDrawer from '../MobileTrade/drawers/OrderDrawer';
 import { PositionSide } from '../types';
 
 const OpenOrdersTable: React.FC = () => {
@@ -30,18 +36,17 @@ const OpenOrdersTable: React.FC = () => {
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const currencyKey = useRecoilValue(currentMarketState);
+	const marketInfo = useRecoilValue(marketInfoState);
 	const openOrders = useRecoilValue(openOrdersState);
 
 	const { handleRefetch } = useRefetchContext();
 
 	const [action, setAction] = React.useState<'' | 'cancel' | 'execute'>('');
+	const [selectedOrder, setSelectedOrder] = React.useState<any>();
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
 	const gasPrice = ethGasPriceQuery.data?.[gasSpeed];
-
-	const nextPriceDetailsQuery = useGetNextPriceDetails();
-	const nextPriceDetails = nextPriceDetailsQuery.data;
 
 	const cancelOrExecuteOrderTxn = useSynthetixTxn(
 		`FuturesMarket${getDisplayAsset(currencyKey)}`,
@@ -79,117 +84,161 @@ const OpenOrdersTable: React.FC = () => {
 	const data = React.useMemo(() => {
 		return openOrders.map((order: any) => ({
 			asset: order.asset,
-			market: getDisplayAsset(order.asset) + '-PERP',
+			market: getMarketName(order.asset),
 			marketKey: MarketKeyByAsset[order.asset as FuturesMarketAsset],
 			orderType: order.orderType === 'NextPrice' ? 'Next-Price' : order.orderType,
 			size: formatCurrency(order.asset, order.size.abs(), {
 				sign: order.asset ? synthsMap[order.asset]?.sign : '',
 			}),
 			side: wei(order.size).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
-			isStale: wei(nextPriceDetails?.currentRoundId ?? 0).gte(wei(order.targetRoundId).add(2)),
+			isStale: wei(marketInfo?.currentRoundId ?? 0).gte(wei(order.targetRoundId).add(2)),
 			isExecutable:
-				wei(nextPriceDetails?.currentRoundId ?? 0).eq(order.targetRoundId) ||
-				wei(nextPriceDetails?.currentRoundId ?? 0).eq(order.targetRoundId.add(1)),
+				wei(marketInfo?.currentRoundId ?? 0).eq(order.targetRoundId) ||
+				wei(marketInfo?.currentRoundId ?? 0).eq(order.targetRoundId.add(1)),
 			timestamp: order.timestamp,
 		}));
-	}, [openOrders, nextPriceDetails?.currentRoundId, synthsMap]);
+	}, [openOrders, marketInfo?.currentRoundId, synthsMap]);
 
 	return (
-		<StyledTable
-			data={data}
-			highlightRowsOnHover
-			showPagination
-			noResultsMessage={
-				<TableNoResults>{t('futures.market.user.open-orders.table.no-result')}</TableNoResults>
-			}
-			columns={[
-				{
-					Header: (
-						<StyledTableHeader>
-							{t('futures.market.user.open-orders.table.market-type')}
-						</StyledTableHeader>
-					),
-					accessor: 'market',
-					Cell: (cellProps: CellProps<any>) => {
-						return (
-							<MarketContainer>
-								<IconContainer>
-									<StyledCurrencyIcon currencyKey={cellProps.row.original.marketKey} />
-								</IconContainer>
-								<StyledText>
-									{cellProps.row.original.market}
-									{cellProps.row.original.isStale && (
-										<ExpiredBadge>
-											{t('futures.market.user.open-orders.badges.expired')}
-										</ExpiredBadge>
-									)}
-								</StyledText>
-								<StyledValue>{cellProps.row.original.orderType}</StyledValue>
-							</MarketContainer>
-						);
-					},
-					sortable: true,
-					width: 50,
-				},
-				{
-					Header: (
-						<StyledTableHeader>{t('futures.market.user.open-orders.table.side')}</StyledTableHeader>
-					),
-					accessor: 'side',
-					Cell: (cellProps: CellProps<any>) => {
-						return (
-							<div>
-								<PositionType side={cellProps.row.original.side} />
-							</div>
-						);
-					},
-					sortable: true,
-					width: 50,
-				},
-				{
-					Header: (
-						<StyledTableHeader>{t('futures.market.user.open-orders.table.size')}</StyledTableHeader>
-					),
-					accessor: 'size',
-					Cell: (cellProps: CellProps<any>) => {
-						return <div>{cellProps.row.original.size}</div>;
-					},
-					sortable: true,
-					width: 50,
-				},
-				{
-					Header: (
-						<StyledTableHeader>
-							{t('futures.market.user.open-orders.table.actions')}
-						</StyledTableHeader>
-					),
-					accessor: 'actions',
-					Cell: (cellProps: CellProps<any>) => {
-						return (
-							<div style={{ display: 'flex' }}>
-								<CancelButton
-									onClick={() => {
-										setAction('cancel');
-									}}
-								>
-									{t('futures.market.user.open-orders.actions.cancel')}
-								</CancelButton>
-								{cellProps.row.original.isExecutable && (
-									<EditButton
-										onClick={() => {
-											setAction('execute');
-										}}
-									>
-										{t('futures.market.user.open-orders.actions.execute')}
-									</EditButton>
-								)}
-							</div>
-						);
-					},
-					width: 50,
-				},
-			]}
-		/>
+		<>
+			<DesktopOnlyView>
+				<StyledTable
+					data={data}
+					highlightRowsOnHover
+					showPagination
+					noResultsMessage={
+						<TableNoResults>{t('futures.market.user.open-orders.table.no-result')}</TableNoResults>
+					}
+					columns={[
+						{
+							Header: (
+								<StyledTableHeader>
+									{t('futures.market.user.open-orders.table.market-type')}
+								</StyledTableHeader>
+							),
+							accessor: 'market',
+							Cell: (cellProps: CellProps<any>) => {
+								return (
+									<MarketContainer>
+										<IconContainer>
+											<StyledCurrencyIcon currencyKey={cellProps.row.original.marketKey} />
+										</IconContainer>
+										<StyledText>
+											{cellProps.row.original.market}
+											{cellProps.row.original.isStale && (
+												<ExpiredBadge>
+													{t('futures.market.user.open-orders.badges.expired')}
+												</ExpiredBadge>
+											)}
+										</StyledText>
+										<StyledValue>{cellProps.row.original.orderType}</StyledValue>
+									</MarketContainer>
+								);
+							},
+							sortable: true,
+							width: 50,
+						},
+						{
+							Header: (
+								<StyledTableHeader>
+									{t('futures.market.user.open-orders.table.side')}
+								</StyledTableHeader>
+							),
+							accessor: 'side',
+							Cell: (cellProps: CellProps<any>) => {
+								return (
+									<div>
+										<PositionType side={cellProps.row.original.side} />
+									</div>
+								);
+							},
+							sortable: true,
+							width: 50,
+						},
+						{
+							Header: (
+								<StyledTableHeader>
+									{t('futures.market.user.open-orders.table.size')}
+								</StyledTableHeader>
+							),
+							accessor: 'size',
+							Cell: (cellProps: CellProps<any>) => {
+								return <div>{cellProps.row.original.size}</div>;
+							},
+							sortable: true,
+							width: 50,
+						},
+						{
+							Header: (
+								<StyledTableHeader>
+									{t('futures.market.user.open-orders.table.actions')}
+								</StyledTableHeader>
+							),
+							accessor: 'actions',
+							Cell: (cellProps: CellProps<any>) => {
+								return (
+									<div style={{ display: 'flex' }}>
+										<CancelButton
+											onClick={() => {
+												setAction('cancel');
+											}}
+										>
+											{t('futures.market.user.open-orders.actions.cancel')}
+										</CancelButton>
+										{cellProps.row.original.isExecutable && (
+											<EditButton
+												onClick={() => {
+													setAction('execute');
+												}}
+											>
+												{t('futures.market.user.open-orders.actions.execute')}
+											</EditButton>
+										)}
+									</div>
+								);
+							},
+							width: 50,
+						},
+					]}
+				/>
+			</DesktopOnlyView>
+			<MobileOrTabletView>
+				<StyledTable
+					data={data}
+					noResultsMessage={
+						<TableNoResults>{t('futures.market.user.open-orders.table.no-result')}</TableNoResults>
+					}
+					onTableRowClick={(row) => setSelectedOrder(row.original)}
+					columns={[
+						{
+							Header: <StyledTableHeader>Side/Type</StyledTableHeader>,
+							accessor: 'side/type',
+							Cell: (cellProps: CellProps<any>) => (
+								<div>
+									<MobilePositionSide $side={cellProps.row.original.side}>
+										{cellProps.row.original.side}
+									</MobilePositionSide>
+									<div>{cellProps.row.original.orderType}</div>
+								</div>
+							),
+							width: 100,
+						},
+						{
+							Header: <StyledTableHeader>Size</StyledTableHeader>,
+							accessor: 'size',
+							Cell: (cellProps: CellProps<any>) => <div>{cellProps.row.original.size}</div>,
+						},
+					]}
+				/>
+
+				<OrderDrawer
+					open={!!selectedOrder}
+					order={selectedOrder}
+					closeDrawer={() => setSelectedOrder(undefined)}
+					setAction={setAction}
+				/>
+			</MobileOrTabletView>
+		</>
 	);
 };
 
@@ -260,6 +309,26 @@ const ExpiredBadge = styled(Badge)`
 	background: ${(props) => props.theme.colors.selectedTheme.red};
 	padding: 1px 5px;
 	line-height: 9px;
+`;
+
+const MobilePositionSide = styled.div<{ $side: PositionSide }>`
+	text-transform: uppercase;
+	font-size: 13px;
+	font-family: ${(props) => props.theme.fonts.bold};
+	letter-spacing: 1.4px;
+	margin-bottom: 4px;
+
+	${(props) =>
+		props.$side === 'long' &&
+		css`
+			color: ${(props) => props.theme.colors.selectedTheme.green};
+		`};
+
+	${(props) =>
+		props.$side === 'short' &&
+		css`
+			color: ${(props) => props.theme.colors.selectedTheme.red};
+		`};
 `;
 
 export default OpenOrdersTable;
