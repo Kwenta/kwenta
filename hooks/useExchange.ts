@@ -273,6 +273,7 @@ const useExchange = ({
 	const numEntries = numEntriesQuery.isSuccess ? numEntriesQuery.data ?? null : null;
 
 	const baseCurrency = baseCurrencyKey != null ? synthsMap[baseCurrencyKey]! : null;
+	const quoteCurrency = quoteCurrencyKey != null ? synthsMap[quoteCurrencyKey]! : null;
 
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
@@ -312,7 +313,7 @@ const useExchange = ({
 	// TODO: Fix coingecko prices (optimism issue maybe?)
 	const quotePriceRate = useMemo(
 		() =>
-			txProvider !== 'synthetix' && !isQuoteCurrencyETH
+			txProvider !== 'synthetix' && !isQuoteCurrencyETH && !quoteCurrency
 				? coinGeckoPrices != null &&
 				  quoteCurrencyTokenAddress != null &&
 				  selectPriceCurrencyRate != null &&
@@ -326,18 +327,20 @@ const useExchange = ({
 						selectedPriceCurrency.name
 				  ),
 		[
+			txProvider,
+			isQuoteCurrencyETH,
+			quoteCurrency,
+			coinGeckoPrices,
+			quoteCurrencyTokenAddress,
+			selectPriceCurrencyRate,
 			exchangeRates,
 			quoteCurrencyKey,
 			selectedPriceCurrency.name,
-			txProvider,
-			selectPriceCurrencyRate,
-			coinGeckoPrices,
-			quoteCurrencyTokenAddress,
-			isQuoteCurrencyETH,
 		]
 	);
+
 	const basePriceRate = useMemo(() => {
-		return txProvider !== 'synthetix' && !isBaseCurrencyETH
+		return txProvider !== 'synthetix' && !isBaseCurrencyETH && !baseCurrency
 			? coinGeckoPrices != null &&
 			  baseCurrencyTokenAddress != null &&
 			  selectPriceCurrencyRate != null &&
@@ -352,14 +355,15 @@ const useExchange = ({
 					selectedPriceCurrency.name
 			  );
 	}, [
+		txProvider,
+		isBaseCurrencyETH,
+		baseCurrency,
+		coinGeckoPrices,
+		baseCurrencyTokenAddress,
+		selectPriceCurrencyRate,
 		exchangeRates,
 		baseCurrencyKey,
 		selectedPriceCurrency.name,
-		txProvider,
-		selectPriceCurrencyRate,
-		baseCurrencyTokenAddress,
-		coinGeckoPrices,
-		isBaseCurrencyETH,
 	]);
 
 	const settlementWaitingPeriodQuery = useFeeReclaimPeriodQuery(baseCurrencyKey, walletAddress);
