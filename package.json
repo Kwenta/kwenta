@@ -63,7 +63,7 @@
 		"next-optimized-images": "^2.6.2",
 		"react": "17.0.1",
 		"react-dom": "17.0.1",
-		"react-i18next": "11.17.2",
+		"react-i18next": "11.18.3",
 		"react-infinite-scroll-component": "^6.1.0",
 		"react-input-autosize": "3.0.0",
 		"react-is": "^18.0.0",
