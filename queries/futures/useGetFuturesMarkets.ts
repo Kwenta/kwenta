@@ -10,7 +10,7 @@ import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import { appReadyState } from 'store/app';
 import { futuresMarketsState } from 'store/futures';
 import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
-import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
+import { FuturesMarketAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
 
 import { FuturesMarket } from './types';
 import { getReasonFromCode } from './utils';
@@ -81,6 +81,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 					i: number
 				) => ({
 					market,
+					marketName: getMarketName(utils.parseBytes32String(asset) as FuturesMarketAsset),
 					asset: utils.parseBytes32String(asset) as FuturesMarketAsset,
 					assetHex: asset,
 					currentFundingRate: wei(currentFundingRate).neg(),

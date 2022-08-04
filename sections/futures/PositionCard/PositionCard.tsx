@@ -26,14 +26,13 @@ import media from 'styles/media';
 import { isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { formatNumber } from 'utils/formatters/number';
-import { getDisplayAsset, getSynthDescription, isEurForex, MarketKeyByAsset } from 'utils/futures';
+import { getMarketName, getSynthDescription, isEurForex, MarketKeyByAsset } from 'utils/futures';
 
 type PositionCardProps = {
 	dashboard?: boolean;
 };
 
 type PositionData = {
-	currencyIconKey: string;
 	marketShortName: string;
 	marketLongName: string;
 	marketPrice: string;
@@ -139,7 +138,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 
 		return {
 			currencyIconKey: MarketKeyByAsset[marketAsset],
-			marketShortName: marketAsset ? getDisplayAsset(marketAsset) + '-PERP' : 'Select a market',
+			marketShortName: marketAsset ? getMarketName(marketAsset) : 'Select a market',
 			marketLongName: getSynthDescription(marketAsset, synthsMap, t),
 			marketPrice: formatCurrency(Synths.sUSD, marketAssetRate, {
 				sign: '$',
