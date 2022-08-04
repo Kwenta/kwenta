@@ -246,7 +246,7 @@ export type FuturesPotentialTradeDetails = {
 	statusMessage: string;
 };
 
-export type FuturesAccountType = 'cross_margin' | 'isolated_margin' | 'pending';
+export type FuturesAccountType = 'cross_margin' | 'isolated_margin';
 
 export type FuturesAccountState = {
 	selectedAccountType: FuturesAccountType;
@@ -254,4 +254,5 @@ export type FuturesAccountState = {
 	selectedFuturesAddress: string | null;
 	crossMarginAddress: string | null;
 	crossMarginAvailable: boolean;
+	loading: boolean;
 };

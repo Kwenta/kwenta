@@ -297,6 +297,12 @@ export const QUERY_KEYS = {
 			currencyKey: string | null
 		) => ['futures', 'currentRoundId', networkId, walletAddress, currencyKey],
 		OverviewStats: (networkId: NetworkId) => ['futures', 'overview-stats', networkId],
+		CrossMarginAccount: (networkId: NetworkId, wallet: string) => [
+			'futures',
+			'cross-margin-account',
+			networkId,
+			wallet,
+		],
 	},
 	Files: {
 		Get: (fileName: string) => ['files', 'get', fileName],

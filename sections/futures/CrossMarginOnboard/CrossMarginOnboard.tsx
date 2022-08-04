@@ -15,8 +15,8 @@ import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
-import useQueryCrossMarginAccount from 'hooks/useQueryCrossMarginAccount';
 import useSUSDContract from 'hooks/useSUSDContract';
+import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
 import { futuresAccountState } from 'store/futures';
 import logError from 'utils/logError';
 
@@ -35,7 +35,7 @@ export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Prop
 		crossMarginContractFactory,
 	} = useCrossMarginAccountContracts();
 	const susdContract = useSUSDContract();
-	const { queryAndSetAccount } = useQueryCrossMarginAccount();
+	const query = useQueryCrossMarginAccount();
 
 	const futuresAccount = useRecoilValue(futuresAccountState);
 	const [depositAmount, setDepositAmount] = useState('');
@@ -59,7 +59,7 @@ export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Prop
 				txHash: tx.hash,
 				onTxConfirmed: async () => {
 					try {
-						queryAndSetAccount();
+						query.refetch();
 					} catch (err) {
 						logError(err);
 					} finally {
@@ -79,8 +79,8 @@ export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Prop
 		synthetixjs,
 		crossMarginContractFactory,
 		network,
+		query,
 		setCreatingAccount,
-		queryAndSetAccount,
 		monitorTransaction,
 	]);
 
@@ -148,7 +148,7 @@ export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Prop
 		if (futuresAccount && !futuresAccount.crossMarginAvailable) {
 			return <ErrorView message="Cross margin is not supported on this network" />;
 		}
-		if (creatingAccount || !futuresAccount || futuresAccount?.selectedAccountType === 'pending') {
+		if (creatingAccount || !futuresAccount || futuresAccount.loading) {
 			return <Loader />;
 		}
 

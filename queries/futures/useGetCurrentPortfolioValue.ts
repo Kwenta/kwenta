@@ -8,9 +8,11 @@ import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
 import { futuresAccountState } from 'store/futures';
 import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { zeroBN } from 'utils/formatters/number';
 import { FuturesMarketKey, MarketAssetByKey } from 'utils/futures';
 import logError from 'utils/logError';
 
+import useGetCrossMarginAccountOverview from './useGetCrossMarginAccountOverview';
 import { mapFuturesPosition } from './utils';
 
 const useGetCurrentPortfolioValue = (
@@ -22,6 +24,10 @@ const useGetCurrentPortfolioValue = (
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const futuresAccount = useRecoilValue(futuresAccountState);
+
+	const query = useGetCrossMarginAccountOverview();
+	const freeMargin = query.data?.freeMargin || zeroBN;
+
 	const { synthetixjs } = Connector.useContainer();
 
 	return useQuery<any | null>(
@@ -57,7 +63,6 @@ const useGetCurrentPortfolioValue = (
 					  )
 					: [];
 
-				// TODO: Label positions account types
 				const combined = [...positionsForIsolatedMarkets, ...positionsForCrossMarginMarkets];
 
 				const portfolioValue = combined
@@ -69,7 +74,8 @@ const useGetCurrentPortfolioValue = (
 						);
 						return mappedPosition.remainingMargin;
 					})
-					.reduce((sum, val) => sum.add(val), wei(0));
+					.reduce((sum, val) => sum.add(val), wei(0))
+					.add(freeMargin);
 				return !!portfolioValue ? portfolioValue : wei(0);
 			} catch (e) {
 				logError(e);

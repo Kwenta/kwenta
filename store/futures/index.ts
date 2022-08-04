@@ -175,11 +175,12 @@ export const potentialTradeDetailsState = atom<FuturesPotentialTradeDetails | nu
 export const futuresAccountState = atom<FuturesAccountState>({
 	key: getFuturesKey('futuresAccountState'),
 	default: {
-		selectedAccountType: 'pending',
+		selectedAccountType: 'isolated_margin',
 		crossMarginAddress: null,
 		walletAddress: null,
 		selectedFuturesAddress: null,
 		crossMarginAvailable: false,
+		loading: false,
 	},
 });
 
