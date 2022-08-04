@@ -21,6 +21,7 @@ import useGetStats from 'queries/futures/useGetStats';
 import { walletAddressState } from 'store/wallet';
 import { truncateAddress } from 'utils/formatters/string';
 
+import Competition from '../Competition';
 import TraderHistory from '../TraderHistory';
 
 type LeaderboardProps = {
@@ -34,9 +35,21 @@ type Stat = {
 	totalVolume: Wei;
 };
 
+export const getMedal = (position: number) => {
+	switch (position) {
+		case 1:
+			return <Medal>🥇</Medal>;
+		case 2:
+			return <Medal>🥈</Medal>;
+		case 3:
+			return <Medal>🥉</Medal>;
+	}
+};
+
 const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	const { t } = useTranslation();
 	const [searchTerm, setSearchTerm] = useState<string>('');
+	const [filterCompetition, setFilterCompetition] = useState<boolean>(true);
 	const [selectedTrader, setSelectedTrader] = useState('');
 	const [traderENSName, setTraderENSName] = useState<string | null>(null);
 	const router = useRouter();
@@ -99,6 +112,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 				'24h': 80000,
 				pnl: (pnlMap[stat.account]?.pnl ?? wei(0)).toNumber(),
 			}))
+			.filter((stat: FuturesStat) => stat.totalVolume > 0)
 			.sort((a: FuturesStat, b: FuturesStat) => (b?.pnl || 0) - (a?.pnl || 0))
 			.map((stat: FuturesStat, i: number) => ({
 				rank: i + 1,
@@ -126,17 +140,6 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 		}
 	}
 
-	const getMedal = (position: number) => {
-		switch (position) {
-			case 1:
-				return <Medal>🥇</Medal>;
-			case 2:
-				return <Medal>🥈</Medal>;
-			case 3:
-				return <Medal>🥉</Medal>;
-		}
-	};
-
 	const onClickTrader = (trader: string, ensName: string | null) => {
 		setSearchTerm('');
 		setSelectedTrader(trader);
@@ -150,7 +153,13 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 				<Search value={searchTerm} onChange={onChangeSearch} disabled={false} />
 			</SearchContainer>
 			<TableContainer compact={compact}>
-				{selectedTrader !== '' ? (
+				{filterCompetition ? (
+					<Competition
+						resetSelection={() => setSelectedTrader('')}
+						compact={compact}
+						searchTerm={searchTerm}
+					/>
+				) : selectedTrader !== '' ? (
 					<TraderHistory
 						trader={selectedTrader}
 						traderENSName={traderENSName}
@@ -371,7 +380,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 									},
 									{
 										Header: () => (
-											<TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>
+											<TableHeader>{t('leaderboard.leaderboard.table.pnl')}</TableHeader>
 										),
 										accessor: 'pnl',
 										Cell: (cellProps: CellProps<any>) => (

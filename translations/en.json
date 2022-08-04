@@ -805,7 +805,7 @@
 				"total-volume": "Total Volume",
 				"liquidations": "Liquidations",
 				"24h-pnl": "24H PnL",
-				"total-pnl": "PnL ($)",
+				"pnl": "PnL",
 				"percent-pnl": "PnL (%)",
 				"rank-mobile": "#"
 			}
@@ -820,6 +820,9 @@
 				"total-volume": "Total Volume",
 				"total-pnl": "Realized PnL"
 			}
+		},
+		"competition": {
+			"title": "Competition"
 		}
 	},
 	"not-found": {
