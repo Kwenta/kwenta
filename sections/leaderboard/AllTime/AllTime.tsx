@@ -1,4 +1,4 @@
-import Wei, { wei } from '@synthetixio/wei';
+import { wei } from '@synthetixio/wei';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
@@ -20,24 +20,13 @@ import { truncateAddress } from 'utils/formatters/string';
 
 import { getMedal } from '../common';
 
-type AllTimeLeaderboardProps = {
+type AllTimeProps = {
 	searchTerm: string;
 	onClickTrader: (trader: string, traderEns: string) => void;
 	compact?: boolean;
 };
 
-type Stat = {
-	pnl: Wei;
-	liquidations: Wei;
-	totalTrades: Wei;
-	totalVolume: Wei;
-};
-
-const AllTimeLeaderboard: FC<AllTimeLeaderboardProps> = ({
-	searchTerm,
-	onClickTrader,
-	compact,
-}) => {
+const AllTime: FC<AllTimeProps> = ({ searchTerm, onClickTrader, compact }) => {
 	const { t } = useTranslation();
 	const { staticMainnetProvider } = Connector.useContainer();
 
@@ -56,16 +45,6 @@ const AllTimeLeaderboard: FC<AllTimeLeaderboardProps> = ({
 	const ensInfoQuery = useENSs(traders);
 	const ensInfo = useMemo(() => ensInfoQuery.data ?? [], [ensInfoQuery]);
 
-	const pnlMap = stats.reduce((acc: Record<string, Stat>, stat: FuturesStat) => {
-		acc[stat.account] = {
-			pnl: wei(stat.pnlWithFeesPaid ?? 0, 18, true),
-			liquidations: new Wei(stat.liquidations ?? 0),
-			totalTrades: new Wei(stat.totalTrades ?? 0),
-			totalVolume: wei(stat.totalVolume ?? 0, 18, true),
-		};
-		return acc;
-	}, {});
-
 	let data = useMemo(() => {
 		return stats
 			.map((stat: FuturesStat, i: number) => ({
@@ -77,11 +56,11 @@ const AllTimeLeaderboard: FC<AllTimeLeaderboardProps> = ({
 						? ensInfo[i]
 						: truncateAddress(ensInfo[i])
 					: null,
-				totalTrades: (pnlMap[stat.account]?.totalTrades ?? wei(0)).toNumber(),
-				totalVolume: (pnlMap[stat.account]?.totalVolume ?? wei(0)).toNumber(),
-				liquidations: (pnlMap[stat.account]?.liquidations ?? wei(0)).toNumber(),
+				totalTrades: stat.totalTrades,
+				totalVolume: wei(stat.totalVolume, 18, true).toNumber(),
+				liquidations: stat.liquidations,
 				'24h': 80000,
-				pnl: (pnlMap[stat.account]?.pnl ?? wei(0)).toNumber(),
+				pnl: wei(stat.pnlWithFeesPaid, 18, true).toNumber(),
 			}))
 			.filter((stat: FuturesStat) => stat.totalVolume > 0)
 			.sort((a: FuturesStat, b: FuturesStat) => (b?.pnl || 0) - (a?.pnl || 0))
@@ -95,7 +74,7 @@ const AllTimeLeaderboard: FC<AllTimeLeaderboardProps> = ({
 					  i.traderEns?.toLowerCase().includes(searchTerm)
 					: true
 			);
-	}, [stats, searchTerm, pnlMap, ensInfo]);
+	}, [stats, searchTerm, ensInfo]);
 
 	if (compact) {
 		const ownPosition = data.findIndex((i: { address: string }) => {
@@ -139,7 +118,7 @@ const AllTimeLeaderboard: FC<AllTimeLeaderboardProps> = ({
 									Cell: (cellProps: CellProps<any>) => (
 										<StyledOrderType>{cellProps.row.original.rank}</StyledOrderType>
 									),
-									width: compact ? 40 : 100,
+									width: compact ? 40 : 60,
 								},
 								{
 									Header: !compact ? (
@@ -187,7 +166,7 @@ const AllTimeLeaderboard: FC<AllTimeLeaderboardProps> = ({
 											</StyledOrderType>
 										);
 									},
-									width: 175,
+									width: 120,
 								},
 								{
 									Header: (
@@ -195,7 +174,7 @@ const AllTimeLeaderboard: FC<AllTimeLeaderboardProps> = ({
 									),
 									accessor: 'totalTrades',
 									sortType: 'basic',
-									width: 100,
+									width: 80,
 									sortable: true,
 								},
 								{
@@ -204,7 +183,7 @@ const AllTimeLeaderboard: FC<AllTimeLeaderboardProps> = ({
 									),
 									accessor: 'liquidations',
 									sortType: 'basic',
-									width: 100,
+									width: 80,
 									sortable: true,
 								},
 								{
@@ -221,7 +200,7 @@ const AllTimeLeaderboard: FC<AllTimeLeaderboardProps> = ({
 											conversionRate={1}
 										/>
 									),
-									width: compact ? 'auto' : 125,
+									width: compact ? 'auto' : 100,
 									sortable: true,
 								},
 								{
@@ -367,4 +346,4 @@ const StyledTrader = styled.a`
 	}
 `;
 
-export default AllTimeLeaderboard;
+export default AllTime;

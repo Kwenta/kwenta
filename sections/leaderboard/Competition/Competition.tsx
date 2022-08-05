@@ -1,3 +1,4 @@
+import { wei } from '@synthetixio/wei';
 import router from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +8,6 @@ import styled from 'styled-components';
 
 import Currency from 'components/Currency';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import Loader from 'components/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
 import { Synths } from 'constants/currency';
@@ -15,7 +15,7 @@ import ROUTES from 'constants/routes';
 import useGetFile from 'queries/files/useGetFile';
 import { walletAddressState } from 'store/wallet';
 import { FlexDiv } from 'styles/common';
-import { formatCurrency, formatPercent } from 'utils/formatters/number';
+import { formatPercent } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';
 
 import { getMedal, Tier } from '../common';
@@ -47,10 +47,7 @@ const Competition: FC<CompetitionProps> = ({
 					tier: trader.tier,
 					rank: trader.rank,
 					traderShort: truncateAddress(trader.account),
-					pnl: `${formatCurrency(Synths.sUSD, trader.pnl, {
-						sign: '$',
-						minDecimals: trader?.pnlPct?.abs().lt(0.01) ? 4 : 2,
-					})}`,
+					pnl: wei(trader.pnl),
 					pnlPct: `(${formatPercent(trader?.pnl_pct)})`,
 					totalVolume: trader.volume,
 					totalTrades: trader.trades,
@@ -66,10 +63,6 @@ const Competition: FC<CompetitionProps> = ({
 			);
 	}, [competitionQuery, searchTerm, activeTier]);
 
-	if (competitionQuery.isLoading) {
-		return <Loader />;
-	}
-
 	return (
 		<>
 			<DesktopOnlyView>
@@ -77,7 +70,7 @@ const Competition: FC<CompetitionProps> = ({
 					compact={compact}
 					showPagination
 					pageSize={10}
-					isLoading={false}
+					isLoading={competitionQuery.isLoading}
 					data={data}
 					hideHeaders={compact}
 					columns={[
@@ -92,8 +85,6 @@ const Competition: FC<CompetitionProps> = ({
 									>
 										{t('leaderboard.competition.title')}
 									</TitleText>
-									<TitleSeparator>&gt;</TitleSeparator>
-									<TierText>{activeTier}</TierText>
 								</TableTitle>
 							),
 							accessor: 'title',
@@ -105,7 +96,7 @@ const Competition: FC<CompetitionProps> = ({
 									Cell: (cellProps: CellProps<any>) => (
 										<StyledOrderType>{cellProps.row.original.rank}</StyledOrderType>
 									),
-									width: compact ? 40 : 100,
+									width: compact ? 40 : 60,
 								},
 								{
 									Header: !compact ? (
@@ -123,7 +114,7 @@ const Competition: FC<CompetitionProps> = ({
 											</StyledOrderType>
 										);
 									},
-									width: 175,
+									width: 120,
 								},
 								{
 									Header: (
@@ -131,7 +122,7 @@ const Competition: FC<CompetitionProps> = ({
 									),
 									accessor: 'totalTrades',
 									sortType: 'basic',
-									width: 100,
+									width: 80,
 									sortable: true,
 								},
 								{
@@ -140,7 +131,7 @@ const Competition: FC<CompetitionProps> = ({
 									),
 									accessor: 'liquidations',
 									sortType: 'basic',
-									width: 100,
+									width: 80,
 									sortable: true,
 								},
 								{
@@ -157,7 +148,7 @@ const Competition: FC<CompetitionProps> = ({
 											conversionRate={1}
 										/>
 									),
-									width: compact ? 'auto' : 125,
+									width: compact ? 'auto' : 100,
 									sortable: true,
 								},
 								{
@@ -165,9 +156,15 @@ const Competition: FC<CompetitionProps> = ({
 									accessor: 'pnl',
 									sortType: 'basic',
 									Cell: (cellProps: CellProps<any>) => (
-										<StyledValue>
-											{cellProps.row.original.pnl} {cellProps.row.original.pnlPct}
-										</StyledValue>
+										<PnlContainer direction={'row'}>
+											<ColorCodedPrice
+												currencyKey={Synths.sUSD}
+												price={cellProps.row.original.pnl}
+												sign={'$'}
+												conversionRate={1}
+											/>
+											<StyledValue>{cellProps.row.original.pnlPct}</StyledValue>
+										</PnlContainer>
 									),
 									width: compact ? 'auto' : 100,
 									sortable: true,
@@ -228,7 +225,7 @@ const Competition: FC<CompetitionProps> = ({
 									),
 									accessor: 'pnl',
 									Cell: (cellProps: CellProps<any>) => (
-										<PnlContainer>
+										<PnlContainer direction={'column'}>
 											<ColorCodedPrice
 												currencyKey={Synths.sUSD}
 												price={cellProps.row.original.pnl}
@@ -324,14 +321,16 @@ const StyledSubtitle = styled.div`
 	text-transform: capitalize;
 `;
 
-const PnlContainer = styled.div`
+const PnlContainer = styled.div<{ direction: 'row' | 'column' }>`
 	display: flex;
-	flex-direction: column;
+	flex-direction: ${(props) => props.direction};
 	align-items: center;
 `;
 
 const ColorCodedPrice = styled(Currency.Price)`
 	align-items: right;
+	font-size: 13px;
+	margin-right: 5px;
 	color: ${(props) =>
 		props.price > 0
 			? props.theme.colors.selectedTheme.green

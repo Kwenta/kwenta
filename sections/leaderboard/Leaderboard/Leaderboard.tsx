@@ -1,14 +1,13 @@
-import Wei from '@synthetixio/wei';
 import { useRouter } from 'next/router';
 import { FC, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import TabButton from 'components/Button/TabButton';
 import Search from 'components/Table/Search';
 import ROUTES from 'constants/routes';
 
-import AllTimeLeaderboard from '../AllTimeLeaderboard';
-import { Tier } from '../common';
+import AllTime from '../AllTime';
+import { COMPETITION_TIERS, Tier } from '../common';
 import Competition from '../Competition';
 import TraderHistory from '../TraderHistory';
 
@@ -17,7 +16,6 @@ type LeaderboardProps = {
 };
 
 const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
-	const { t } = useTranslation();
 	const [searchTerm, setSearchTerm] = useState<string>('');
 	const [activeTier, setActiveTier] = useState<Tier>('bronze');
 	const [selectedTrader, setSelectedTrader] = useState('');
@@ -49,6 +47,25 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	return (
 		<>
 			<SearchContainer>
+				<TabButtonContainer>
+					{COMPETITION_TIERS.map((tier) => (
+						<StyledTabButton
+							key={tier}
+							title={tier ?? ''}
+							active={activeTier === tier}
+							onClick={() => setActiveTier(tier)}
+						/>
+					))}
+					<StyledTabButton
+						key={'All'}
+						title={'All'}
+						active={!activeTier}
+						onClick={() => {
+							setActiveTier(null);
+							setSelectedTrader('');
+						}}
+					/>
+				</TabButtonContainer>
 				<Search value={searchTerm} onChange={onChangeSearch} disabled={false} />
 			</SearchContainer>
 			<TableContainer compact={compact}>
@@ -68,16 +85,23 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 						searchTerm={searchTerm}
 					/>
 				) : (
-					<AllTimeLeaderboard
-						compact={compact}
-						onClickTrader={onClickTrader}
-						searchTerm={searchTerm}
-					/>
+					<AllTime compact={compact} onClickTrader={onClickTrader} searchTerm={searchTerm} />
 				)}
 			</TableContainer>
 		</>
 	);
 };
+
+const StyledTabButton = styled(TabButton)`
+	min-width: 65px;
+	height: 35px;
+	margin-right: 5px;
+`;
+
+const TabButtonContainer = styled.div`
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+`;
 
 const SearchContainer = styled.div`
 	display: flex;

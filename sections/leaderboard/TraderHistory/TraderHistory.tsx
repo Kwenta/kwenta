@@ -6,7 +6,6 @@ import styled from 'styled-components';
 
 import Currency from 'components/Currency';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import Loader from 'components/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
 import { Synths } from 'constants/currency';
@@ -68,10 +67,6 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 			);
 	}, [positions, searchTerm]);
 
-	if (positionsQuery.isLoading) {
-		return <Loader />;
-	}
-
 	return (
 		<>
 			<DesktopOnlyView>
@@ -79,7 +74,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 					compact={compact}
 					showPagination
 					pageSize={10}
-					isLoading={false}
+					isLoading={positionsQuery.isLoading}
 					data={data}
 					hideHeaders={compact}
 					columns={[
