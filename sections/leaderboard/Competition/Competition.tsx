@@ -184,72 +184,40 @@ const Competition: FC<CompetitionProps> = ({
 					pageSize={10}
 					columns={[
 						{
-							Header: (
-								<TableTitle>
-									<TitleText
-										onClick={() => {
-											resetSelection();
-											router.push(ROUTES.Leaderboard.Home);
-										}}
-									>
-										{t('leaderboard.leaderboard.table.title')}
-									</TitleText>
-									<TitleSeparator>&gt;</TitleSeparator>
-									<TierText>{activeTier}</TierText>
-								</TableTitle>
+							Header: () => <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
+							accessor: 'rank',
+							Cell: (cellProps: CellProps<any>) => (
+								<StyledOrderType>{cellProps.row.original.rank}</StyledOrderType>
 							),
-							accessor: 'title',
-							columns: [
-								{
-									Header: <TableHeader>{t('leaderboard.trader-history.table.market')}</TableHeader>,
-									accessor: 'asset',
-									Cell: (cellProps: CellProps<any>) => (
-										<CurrencyInfo>
-											<StyledCurrencyIcon currencyKey={cellProps.row.original.currencyIconKey} />
-											<StyledSubtitle>{cellProps.row.original.marketShortName}</StyledSubtitle>
-										</CurrencyInfo>
-									),
-									width: 40,
-								},
-								{
-									Header: <TableHeader>{t('leaderboard.trader-history.table.status')}</TableHeader>,
-									accessor: 'status',
-									Cell: (cellProps: CellProps<any>) => {
-										return <StyledCell>{cellProps.row.original.status}</StyledCell>;
-									},
-									width: 40,
-								},
-								{
-									Header: (
-										<TableHeader>{t('leaderboard.trader-history.table.total-pnl')}</TableHeader>
-									),
-									accessor: 'pnl',
-									Cell: (cellProps: CellProps<any>) => (
-										<PnlContainer direction={'column'}>
-											<ColorCodedPrice
-												currencyKey={Synths.sUSD}
-												price={cellProps.row.original.pnl}
-												sign={'$'}
-												conversionRate={1}
-											/>
-											<StyledValue
-												color={
-													cellProps.row.original.pnl.gt(0)
-														? 'green'
-														: cellProps.row.original.pnl.lt(0)
-														? 'red'
-														: ''
-												}
-											>
-												{cellProps.row.original.pnlPct}
-											</StyledValue>
-										</PnlContainer>
-									),
-									width: 40,
-									sortType: 'basic',
-									sortable: true,
-								},
-							],
+							width: 45,
+						},
+						{
+							Header: () => <TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>,
+							accessor: 'trader',
+							Cell: (cellProps: CellProps<any>) => (
+								<StyledOrderType>
+									{compact && cellProps.row.original.rank + '. '}
+									<StyledValue>{cellProps.row.original.traderShort}</StyledValue>
+									{getMedal(cellProps.row.original.rank)}
+								</StyledOrderType>
+							),
+							width: 150,
+						},
+						{
+							Header: () => <TableHeader>{t('leaderboard.leaderboard.table.pnl')}</TableHeader>,
+							accessor: 'pnl',
+							Cell: (cellProps: CellProps<any>) => (
+								<PnlContainer direction={'column'}>
+									<ColorCodedPrice
+										currencyKey={Synths.sUSD}
+										price={cellProps.row.original.pnl}
+										sign={'$'}
+										conversionRate={1}
+									/>
+									<StyledValue>{cellProps.row.original.pnlPct}</StyledValue>
+								</PnlContainer>
+							),
+							width: 125,
 						},
 					]}
 				/>
@@ -329,7 +297,6 @@ const PnlContainer = styled.div<{ direction: 'row' | 'column' }>`
 
 const ColorCodedPrice = styled(Currency.Price)`
 	align-items: right;
-	font-size: 13px;
 	margin-right: 5px;
 	color: ${(props) =>
 		props.price > 0
@@ -341,7 +308,6 @@ const ColorCodedPrice = styled(Currency.Price)`
 
 const StyledValue = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
-	font-size: 13px;
 	color: ${(props) =>
 		props.color === 'green'
 			? props.theme.colors.selectedTheme.green
