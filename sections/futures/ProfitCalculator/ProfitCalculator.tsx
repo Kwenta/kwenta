@@ -1,10 +1,10 @@
 import { wei } from '@synthetixio/wei';
-import { useFuturesContext } from 'contexts/FuturesContext';
 import { useCallback, useEffect, useState, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
+import { useFuturesContext } from 'contexts/FuturesContext';
 import PositionButtons from 'sections/futures/PositionButtons';
 import { FuturesMarketAsset, getMarketName } from 'utils/futures';
 

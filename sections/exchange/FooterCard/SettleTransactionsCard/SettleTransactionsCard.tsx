@@ -1,5 +1,4 @@
 import Tippy from '@tippyjs/react';
-import { useExchangeContext } from 'contexts/ExchangeContext';
 import { FC, ReactNode } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
@@ -7,6 +6,7 @@ import styled from 'styled-components';
 import Button from 'components/Button';
 import { MobileOrTabletView } from 'components/Media';
 import { EXTERNAL_LINKS } from 'constants/links';
+import { useExchangeContext } from 'contexts/ExchangeContext';
 import { NoTextTransform, ExternalLink } from 'styles/common';
 import { secondsToTime } from 'utils/formatters/date';
 

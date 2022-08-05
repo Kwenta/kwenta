@@ -1,11 +1,11 @@
 import { Contract } from 'ethers';
-import reverseRecordsAbi from 'lib/abis/ReverseRecords.json';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import { ENS_REVERSE_LOOKUP } from 'constants/address';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
+import reverseRecordsAbi from 'lib/abis/ReverseRecords.json';
 import { appReadyState } from 'store/app';
 import { isL2State } from 'store/wallet';
 

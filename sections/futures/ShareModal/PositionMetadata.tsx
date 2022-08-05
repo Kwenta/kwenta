@@ -1,9 +1,9 @@
-import { useFuturesContext } from 'contexts/FuturesContext';
 import { format } from 'date-fns';
 import { FC, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { useFuturesContext } from 'contexts/FuturesContext';
 import { PositionHistory } from 'queries/futures/types';
 import getLocale from 'utils/formatters/getLocale';
 

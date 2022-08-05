@@ -10,6 +10,7 @@ import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
+import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
 import { futuresMarketsState } from 'store/futures';
 import { walletAddressState } from 'store/wallet';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
@@ -38,6 +39,8 @@ const Overview: FC = () => {
 	const { useExchangeRatesQuery, useSynthsBalancesQuery } = useSynthetixQueries();
 
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
+
+	useQueryCrossMarginAccount();
 
 	const markets = futuresMarkets.map(({ asset }) => MarketKeyByAsset[asset]);
 	const portfolioValueQuery = useGetCurrentPortfolioValue(markets);

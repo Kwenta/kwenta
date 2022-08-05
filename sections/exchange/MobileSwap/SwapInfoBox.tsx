@@ -1,5 +1,4 @@
 import useSynthetixQueries from '@synthetixio/queries';
-import { useExchangeContext } from 'contexts/ExchangeContext';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -10,6 +9,7 @@ import InfoBox from 'components/InfoBox';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { Synths } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
+import { useExchangeContext } from 'contexts/ExchangeContext';
 import { parseGasPriceObject } from 'hooks/useGas';
 import { customGasPriceState, gasSpeedState, isL2State, isMainnetState } from 'store/wallet';
 import { formatCurrency, formatNumber, formatPercent, zeroBN } from 'utils/formatters/number';
