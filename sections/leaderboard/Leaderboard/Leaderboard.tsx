@@ -58,8 +58,8 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	const ensInfo = useMemo(() => ensInfoQuery.data ?? [], [ensInfoQuery]);
 
 	useMemo(() => {
-		if (router.query.tab) {
-			const trader = router.query.tab[0];
+		if (router.query.trader) {
+			const trader = router.query.trader as string;
 			setSelectedTrader(trader);
 		} else {
 			setSearchTerm('');
