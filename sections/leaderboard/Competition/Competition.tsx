@@ -1,5 +1,5 @@
 import router from 'next/router';
-import { FC, useMemo, useState } from 'react';
+import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
@@ -18,25 +18,23 @@ import { FlexDiv } from 'styles/common';
 import { formatCurrency, formatPercent } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';
 
-import { getMedal } from '../Leaderboard/Leaderboard';
+import { getMedal, Tier } from '../common';
 import { COMPETITION_DATA_LOCATION } from './constants';
 
 type CompetitionProps = {
+	activeTier: Tier;
 	resetSelection: Function;
 	compact?: boolean;
 	searchTerm?: string | undefined;
 };
 
-type Tier = 'gold' | 'silver' | 'bronze';
-const TIERS: Tier[] = ['bronze', 'silver', 'gold'];
-
 const Competition: FC<CompetitionProps> = ({
+	activeTier,
 	resetSelection,
 	compact,
 	searchTerm,
 }: CompetitionProps) => {
 	const { t } = useTranslation();
-	const [activeTier, setActiveTier] = useState<Tier>('gold');
 	const walletAddress = useRecoilValue(walletAddressState);
 	const competitionQuery = useGetFile(COMPETITION_DATA_LOCATION);
 
@@ -95,11 +93,7 @@ const Competition: FC<CompetitionProps> = ({
 										{t('leaderboard.competition.title')}
 									</TitleText>
 									<TitleSeparator>&gt;</TitleSeparator>
-									{TIERS.map((tier: Tier) => (
-										<TierText active={activeTier === tier} onClick={() => setActiveTier(tier)}>
-											{tier}
-										</TierText>
-									))}
+									<TierText>{activeTier}</TierText>
 								</TableTitle>
 							),
 							accessor: 'title',
@@ -204,11 +198,7 @@ const Competition: FC<CompetitionProps> = ({
 										{t('leaderboard.leaderboard.table.title')}
 									</TitleText>
 									<TitleSeparator>&gt;</TitleSeparator>
-									{TIERS.map((tier: Tier) => (
-										<TierText active={activeTier === tier} onClick={() => setActiveTier(tier)}>
-											{tier}
-										</TierText>
-									))}
+									<TierText>{activeTier}</TierText>
 								</TableTitle>
 							),
 							accessor: 'title',
@@ -287,7 +277,6 @@ const TitleText = styled.a`
 
 	&:hover {
 		text-decoration: underline;
-		cursor: pointer;
 	}
 `;
 
@@ -303,16 +292,13 @@ const TitleSeparator = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
-const TierText = styled.a<{ active: boolean }>`
+const TierText = styled.div`
 	padding: 0px 10px;
-	color: ${(props) =>
-		props.active ? props.theme.colors.selectedTheme.gold : props.theme.colors.selectedTheme.white};
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 
 	&:hover {
 		text-decoration: underline;
-		cursor: pointer;
 	}
 `;
 
