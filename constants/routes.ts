@@ -19,7 +19,6 @@ export const ROUTES = {
 		Transactions: normalizeRoute('/dashboard', 'transactions', 'tab'),
 		Deprecated: normalizeRoute('/dashboard', 'deprecated', 'tab'),
 	},
-	// Trades: normalizeRoute(`/`, 'trades', 'tab'),
 	Exchange: {
 		Home: '/exchange',
 		MarketPair: (baseCurrencyKey: string, quoteCurrencyKey: string) =>
@@ -27,7 +26,7 @@ export const ROUTES = {
 		Into: (currencyKey: string) => `/exchange/?quote${currencyKey}`,
 	},
 	Markets: {
-		Home: '/market/sETH',
+		Home: '/market/?asset=sETH',
 		MarketPair: (marketAsset: FuturesMarketAsset | string) => `/market/?asset=${marketAsset}`,
 		Position: (marketAsset: FuturesMarketAsset) => `/market/?asset=${marketAsset}&tab=position`,
 		Orders: (marketAsset: FuturesMarketAsset) => `/market/?asset=${marketAsset}&tab=orders`,

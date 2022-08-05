@@ -81,12 +81,6 @@ module.exports = withPlugins([
 				'/': {
 					page: '/',
 				},
-				'/dashboard': {
-					page: '/dashboard/[[...tab]]',
-				},
-				'/exchange': {
-					page: '/exchange/[[...market]]',
-				},
 			};
 		},
 		compiler: {

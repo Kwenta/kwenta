@@ -1,5 +1,3 @@
-/* eslint-disable react/forbid-foreign-prop-types */
-import { castArray } from 'lodash';
 import { useRouter } from 'next/router';
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -74,8 +72,8 @@ const UserInfo: React.FC = () => {
 	);
 
 	const tabQuery = useMemo(() => {
-		if (router.query.market) {
-			const tab = castArray(router.query.market)[1] as FuturesTab;
+		if (router.query.tab) {
+			const tab = router.query.tab as FuturesTab;
 			if (FutureTabs.includes(tab)) {
 				return tab;
 			}
@@ -83,7 +81,7 @@ const UserInfo: React.FC = () => {
 		return null;
 	}, [router]);
 
-	const activeTab = tabQuery != null ? tabQuery : FuturesTab.POSITION;
+	const activeTab = tabQuery ?? FuturesTab.POSITION;
 
 	const handleOpenProfitCalc = useCallback(() => {
 		setOpenProfitCalcModal(!openProfitCalcModal);

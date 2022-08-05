@@ -463,16 +463,14 @@ const useExchange = ({
 
 	const routeToMarketPair = (baseCurrencyKey: string, quoteCurrencyKey: string) =>
 		routingEnabled
-			? router.replace(
-					`/exchange/[[...market]]`,
-					ROUTES.Exchange.MarketPair(baseCurrencyKey, quoteCurrencyKey),
-					{ shallow: true }
-			  )
+			? router.replace(`/exchange`, ROUTES.Exchange.MarketPair(baseCurrencyKey, quoteCurrencyKey), {
+					shallow: true,
+			  })
 			: undefined;
 
 	const routeToBaseCurrency = (baseCurrencyKey: string) =>
 		routingEnabled
-			? router.replace(`/exchange/[[...market]]`, ROUTES.Exchange.Into(baseCurrencyKey), {
+			? router.replace(`/exchange`, ROUTES.Exchange.Into(baseCurrencyKey), {
 					shallow: true,
 			  })
 			: false;
