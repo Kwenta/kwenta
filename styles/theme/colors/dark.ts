@@ -95,6 +95,12 @@ const darkTheme = {
 	openInterestBar: {
 		border: '1px solid #2b2a2a',
 	},
+	competitionBanner: {
+		border: '1px solid #2b2a2a',
+		state: {
+			text: common.primaryWhite,
+		},
+	},
 };
 
 export default darkTheme;

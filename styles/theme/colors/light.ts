@@ -96,6 +96,12 @@ const lightTheme = {
 	openInterestBar: {
 		border: '1px solid #F2F2F2',
 	},
+	competitionBanner: {
+		border: '1px solid #C9C9C9',
+		state: {
+			text: '#171002',
+		},
+	},
 };
 
 export default lightTheme;
