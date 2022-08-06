@@ -19,7 +19,7 @@ import { assetToSynth, iStandardSynth } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import {
 	FuturesMarketAsset,
-	getDisplayAsset,
+	getMarketName,
 	getSynthDescription,
 	isEurForex,
 	MarketKeyByAsset,
@@ -56,7 +56,7 @@ type AssetToCurrencyOptionArgs = {
 
 const assetToCurrencyOption = (args: AssetToCurrencyOptionArgs): MarketsCurrencyOption => ({
 	value: args.asset,
-	label: `${getDisplayAsset(args.asset)}-PERP`,
+	label: getMarketName(args.asset),
 	...args,
 });
 

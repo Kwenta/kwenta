@@ -1,9 +1,9 @@
-import { useExchangeContext } from 'contexts/ExchangeContext';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { CurrencyKey } from 'constants/currency';
+import { useExchangeContext } from 'contexts/ExchangeContext';
 import SelectCurrencyModal from 'sections/shared/modals/SelectCurrencyModal';
 import {
 	baseCurrencyKeyState,

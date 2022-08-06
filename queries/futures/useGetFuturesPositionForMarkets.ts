@@ -6,7 +6,7 @@ import { useAccount, chain, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
-import { futuresMarketsState, positionsState } from 'store/futures';
+import { futuresMarketsState, futuresAccountState, positionsState } from 'store/futures';
 import { MarketKeyByAsset } from 'utils/futures';
 import { getDefaultProvider } from 'utils/network';
 
@@ -15,7 +15,7 @@ import { mapFuturesPosition, getFuturesMarketContract } from './utils';
 
 const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPosition[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
-	const { address: walletAddress, isConnected } = useAccount();
+	const { isConnected } = useAccount();
 	const { chain: activeChain } = useNetwork();
 	const isL2 =
 		activeChain !== undefined
@@ -29,6 +29,8 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 	const [, setFuturesPositions] = useRecoilState(positionsState);
 
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
+
 	const assets = futuresMarkets
 		.filter(({ asset }) => (activeChain?.id === 69 ? asset !== 'DYDX' : asset)) // Optimism Kovan has no contract FuturesMarketDYDX
 		.map(({ asset }) => asset);
@@ -36,11 +38,11 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 	return useQuery<FuturesPosition[] | []>(
 		QUERY_KEYS.Futures.MarketsPositions(
 			activeChain?.id as NetworkId,
-			walletAddress ?? '',
-			assets || []
+			assets || [],
+			selectedFuturesAddress ?? '',
 		),
 		async () => {
-			if (!assets || (walletAddress && !isL2)) {
+			if (!assets || (selectedFuturesAddress && !isL2)) {
 				return [];
 			}
 
@@ -53,9 +55,11 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 					return Promise.all([
 						FuturesMarketData.positionDetailsForMarketKey(
 							ethersUtils.formatBytes32String(MarketKeyByAsset[asset]),
-							walletAddress
+							selectedFuturesAddress
 						),
-						getFuturesMarketContract(asset, synthetixjs!.contracts).canLiquidate(walletAddress),
+						getFuturesMarketContract(asset, synthetixjs!.contracts).canLiquidate(
+							selectedFuturesAddress
+						),
 					]);
 				})
 			);
@@ -69,7 +73,7 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 			return futuresPositions;
 		},
 		{
-			enabled: isAppReady && isL2 && !!isConnected && !!walletAddress && !!synthetixjs,
+			enabled: isAppReady && isL2 && !!isConnected && !!selectedFuturesAddress && !!synthetixjs,
 			...options,
 		}
 	);

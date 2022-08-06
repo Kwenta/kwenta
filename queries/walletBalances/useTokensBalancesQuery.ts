@@ -3,13 +3,13 @@ import { TokenBalances } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { Provider, Contract as EthCallContract } from 'ethcall';
 import { BigNumber } from 'ethers';
-import erc20Abi from 'lib/abis/ERC20.json';
 import keyBy from 'lodash/keyBy';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useNetwork } from 'wagmi';
 
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
 import QUERY_KEYS from 'constants/queryKeys';
+import erc20Abi from 'lib/abis/ERC20.json';
 import { Token } from 'queries/tokenLists/types';
 import { getDefaultProvider } from 'utils/network';
 

@@ -1,3 +1,4 @@
+import { RefetchProvider } from 'contexts/RefetchContext';
 import { FC } from 'react';
 import { createGlobalStyle } from 'styled-components';
 
@@ -14,7 +15,7 @@ const HomeLayout: FC<HomeLayoutProps> = ({ children }) => (
 	<FullScreenContainer>
 		<GlobalStyle />
 		<Header />
-		{children}
+		<RefetchProvider>{children}</RefetchProvider>
 		<Footer />
 	</FullScreenContainer>
 );

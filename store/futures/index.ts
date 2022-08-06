@@ -5,6 +5,7 @@ import { atom, selector } from 'recoil';
 import { Synths } from 'constants/currency';
 import { DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import {
+	FuturesAccountState,
 	FuturesMarket,
 	FuturesPosition,
 	FuturesPotentialTradeDetails,
@@ -171,6 +172,23 @@ export const potentialTradeDetailsState = atom<FuturesPotentialTradeDetails | nu
 	default: null,
 });
 
+export const futuresAccountState = atom<FuturesAccountState>({
+	key: getFuturesKey('futuresAccountState'),
+	default: {
+		selectedAccountType: 'isolated_margin',
+		crossMarginAddress: null,
+		walletAddress: null,
+		selectedFuturesAddress: null,
+		crossMarginAvailable: false,
+		loading: false,
+	},
+});
+
+export const crossMarginAvailableMarginState = atom<Wei>({
+	key: getFuturesKey('crossMarginAvailableMarginState'),
+	default: zeroBN,
+});
+
 export const confirmationModalOpenState = atom({
 	key: getFuturesKey('confirmationModalOpen'),
 	default: false,
@@ -209,10 +227,20 @@ export const placeOrderTranslationKeyState = selector({
 		const position = get(positionState);
 		const isMarketCapReached = get(isMarketCapReachedState);
 		const orderType = get(orderTypeState);
+		const { selectedAccountType } = get(futuresAccountState);
+		const freeMargin = get(crossMarginAvailableMarginState);
+
+		let remainingMargin;
+		if (selectedAccountType === 'isolated_margin') {
+			remainingMargin = position?.remainingMargin || zeroBN;
+		} else {
+			const positionMargin = position?.remainingMargin || zeroBN;
+			remainingMargin = positionMargin.add(freeMargin);
+		}
 
 		if (orderType === 1) return 'futures.market.trade.button.place-next-price-order';
 		if (!!position?.position) return 'futures.market.trade.button.modify-position';
-		return !position?.remainingMargin || position.remainingMargin.lt('50')
+		return remainingMargin.lt('50')
 			? 'futures.market.trade.button.deposit-margin-minimum'
 			: isMarketCapReached
 			? 'futures.market.trade.button.oi-caps-reached'

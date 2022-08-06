@@ -26,7 +26,6 @@ export const EXTERNAL_LINKS = {
 		GitHub: 'https://github.com/kwenta/kwenta',
 	},
 	TokenLists: {
-		Synthetix: 'https://synths.snx.eth.link/',
 		Zapper: 'https://zapper.fi/api/token-list',
 	},
 	Docs: {
