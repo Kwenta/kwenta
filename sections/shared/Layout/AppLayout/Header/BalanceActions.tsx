@@ -9,11 +9,11 @@ import Button from 'components/Button';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Select from 'components/Select';
 import { Synths } from 'constants/currency';
+import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 import { balancesState, positionsState } from 'store/futures';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
-import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 
 type ReactSelectOptionProps = {
 	label: string;
