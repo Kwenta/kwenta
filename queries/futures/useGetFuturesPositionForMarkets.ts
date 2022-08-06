@@ -39,7 +39,7 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 		QUERY_KEYS.Futures.MarketsPositions(
 			activeChain?.id as NetworkId,
 			assets || [],
-			selectedFuturesAddress ?? '',
+			selectedFuturesAddress ?? ''
 		),
 		async () => {
 			if (!assets || (selectedFuturesAddress && !isL2)) {
