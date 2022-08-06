@@ -13,6 +13,7 @@ import { balancesState, positionsState } from 'store/futures';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
+import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 
 type ReactSelectOptionProps = {
 	label: string;
@@ -28,6 +29,7 @@ const BalanceActions: FC = () => {
 	const router = useRouter();
 
 	const synthBalances = useRecoilValue(balancesState);
+	useGetFuturesPositionForMarkets();
 	const futuresPositions = useRecoilValue(positionsState);
 
 	const sUSDBalance = synthBalances?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
