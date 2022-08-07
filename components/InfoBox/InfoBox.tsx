@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { NO_VALUE } from 'constants/placeholder';
 
-type DetailedInfo = {
+export type DetailedInfo = {
 	value: string;
 	keyNode?: React.ReactNode;
 	valueNode?: React.ReactNode;

@@ -22,7 +22,6 @@ import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFutur
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { futuresMarketsState } from 'store/futures';
 import {
-	getDisplayAsset,
 	getSynthDescription,
 	isEurForex,
 	MarketKeyByAsset,
@@ -58,7 +57,7 @@ const FuturesMarketsTable: FC = () => {
 
 			return {
 				asset: market.asset,
-				market: getDisplayAsset(market.asset) + '-PERP',
+				market: market.marketName,
 				synth: synthsMap[market.asset],
 				description,
 				price: market.price,

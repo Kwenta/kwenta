@@ -1,6 +1,5 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
-import { useFuturesContext } from 'contexts/FuturesContext';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -12,6 +11,7 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { Synths } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
+import { useFuturesContext } from 'contexts/FuturesContext';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import {

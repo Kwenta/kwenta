@@ -1,10 +1,10 @@
-import { useExchangeContext } from 'contexts/ExchangeContext';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import ArrowIcon from 'assets/svg/app/arrow-down.svg';
 import { zIndex } from 'constants/ui';
+import { useExchangeContext } from 'contexts/ExchangeContext';
 import { SwapCurrenciesButton, BoldText } from 'styles/common';
 
 import BaseCurrencyCard from '../TradeCard/Cards/BaseCurrencyCard';

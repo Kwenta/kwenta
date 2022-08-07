@@ -9,7 +9,6 @@ import useRateUpdateQuery from 'queries/rates/useRateUpdateQuery';
 import { currentMarketState, marketInfoState } from 'store/futures';
 import media from 'styles/media';
 import { formatPercent } from 'utils/formatters/number';
-import { getDisplayAsset } from 'utils/futures';
 
 import useGetMarketData from './useGetMarketData';
 import useGetSkewData from './useGetSkewData';
@@ -26,7 +25,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	const marketInfo = useRecoilValue(marketInfoState);
 	const marketAsset = useRecoilValue(currentMarketState);
 
-	const assetName = `${getDisplayAsset(marketAsset)}-PERP`;
 	const pausedClass = marketInfo?.isSuspended ? 'paused' : '';
 
 	const skewData = useGetSkewData();
@@ -97,7 +95,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 						{children}
 					</MarketDetailsTooltip>
 				);
-			case assetName:
+			case marketInfo?.marketName:
 				return (
 					<TimerTooltip
 						position={'fixed'}

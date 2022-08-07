@@ -1,5 +1,6 @@
 import Wei, { wei } from '@synthetixio/wei';
-import { ethers, utils } from 'ethers';
+import BN from 'bn.js';
+import { BigNumber, ethers, utils } from 'ethers';
 
 import { CurrencyKey } from 'constants/currency';
 import {
@@ -40,6 +41,10 @@ export const LONG_CRYPTO_CURRENCY_DECIMALS = 8;
 export const getDecimalPlaces = (value: WeiSource) => (value.toString().split('.')[1] || '').length;
 
 export const zeroBN = wei(0);
+
+export const UNIT_BN = new BN('10').pow(new BN(18));
+export const UNIT_BIG_NUM = BigNumber.from('10').pow(18);
+export const ZERO_BIG_NUM = BigNumber.from('0');
 
 export const truncateNumbers = (value: WeiSource, maxDecimalDigits: number) => {
 	if (value.toString().includes('.')) {
@@ -181,3 +186,11 @@ export function scale(input: Wei, decimalPlaces: number): Wei {
 }
 
 export const formatGwei = (wei: number) => wei / 1e8 / 10;
+
+export const divideDecimal = (x: BigNumber, y: BigNumber) => {
+	return x.mul(UNIT_BIG_NUM).div(y);
+};
+
+export const multiplyDecimal = (x: BigNumber, y: BigNumber) => {
+	return x.mul(y).div(UNIT_BIG_NUM);
+};

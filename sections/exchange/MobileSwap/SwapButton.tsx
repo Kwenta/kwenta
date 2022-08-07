@@ -1,10 +1,10 @@
-import { useExchangeContext } from 'contexts/ExchangeContext';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
+import { useExchangeContext } from 'contexts/ExchangeContext';
 import { isWalletConnectedState } from 'store/wallet';
 
 const SwapButton: React.FC = () => {

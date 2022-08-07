@@ -15,6 +15,7 @@ import { PositionHistory } from 'queries/futures/types';
 import useGetFuturesAccountPositionHistory from 'queries/futures/useGetFuturesAccountPositionHistory';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { FlexDiv } from 'styles/common';
+import { getMarketName } from 'utils/futures';
 
 type TraderHistoryProps = {
 	trader: string;
@@ -42,7 +43,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 				return {
 					rank: i + 1,
 					currencyIconKey: stat.asset ? (stat.asset[0] !== 's' ? 's' : '') + stat.asset : '',
-					marketShortName: (stat.asset[0] === 's' ? stat.asset.slice(1) : stat.asset) + '-PERP',
+					marketShortName: getMarketName(stat.asset),
 					openTimestamp: stat.openTimestamp,
 					asset: stat.asset,
 					status: stat.isOpen ? 'Open' : stat.isLiquidated ? 'Liquidated' : 'Closed',
