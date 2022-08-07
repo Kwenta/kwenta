@@ -221,7 +221,6 @@ export type FuturesStat = {
 
 export type FuturesCumulativeStats = {
 	totalTrades: string;
-	totalTraders: string;
 	totalVolume: string;
 	totalLiquidations: string;
 	averageTradeSize: string;

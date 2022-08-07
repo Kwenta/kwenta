@@ -26,7 +26,6 @@ const useGetFuturesCumulativeStats = (options?: UseQueryOptions<FuturesCumulativ
 			try {
 				const response = await request(
 					futuresEndpoint,
-					// TODO: add totalTraders in the query
 					gql`
 						query FuturesCumulativeStats {
 							futuresCumulativeStat(id: "0") {
@@ -48,7 +47,6 @@ const useGetFuturesCumulativeStats = (options?: UseQueryOptions<FuturesCumulativ
 								true
 							).toString(),
 							totalTrades: response.futuresCumulativeStat.totalTrades,
-							totalTraders: response.futuresCumulativeStat.totalTraders,
 							totalLiquidations: response.futuresCumulativeStat.totalLiquidations,
 					  }
 					: null;

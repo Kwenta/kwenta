@@ -404,7 +404,6 @@ export type FuturesCumulativeStatResult = {
 	id: string;
 	totalLiquidations: Wei;
 	totalTrades: Wei;
-	totalTraders: number;
 	totalVolume: Wei;
 	averageTradeSize: Wei;
 };
@@ -412,7 +411,6 @@ export type FuturesCumulativeStatFields = {
 	id: true;
 	totalLiquidations: true;
 	totalTrades: true;
-	totalTraders: true;
 	totalVolume: true;
 	averageTradeSize: true;
 };
@@ -439,7 +437,6 @@ export const getFuturesCumulativeStatById = async function <
 	if (obj['totalLiquidations'])
 		formattedObj['totalLiquidations'] = wei(obj['totalLiquidations'], 0);
 	if (obj['totalTrades']) formattedObj['totalTrades'] = wei(obj['totalTrades'], 0);
-	if (obj['totalTraders']) formattedObj['totalTraders'] = obj['totalTraders'] ?? 0;
 	if (obj['totalVolume']) formattedObj['totalVolume'] = wei(obj['totalVolume'], 0);
 	if (obj['averageTradeSize']) formattedObj['averageTradeSize'] = wei(obj['averageTradeSize'], 0);
 	return formattedObj as Pick<FuturesCumulativeStatResult, K>;
@@ -485,7 +482,6 @@ export const getFuturesCumulativeStats = async function <
 			if (obj['totalLiquidations'])
 				formattedObj['totalLiquidations'] = wei(obj['totalLiquidations'], 0);
 			if (obj['totalTrades']) formattedObj['totalTrades'] = wei(obj['totalTrades'], 0);
-			if (obj['totalTraders']) formattedObj['totalTraders'] = obj['totalTraders'] ?? 0;
 			if (obj['totalVolume']) formattedObj['totalVolume'] = wei(obj['totalVolume'], 0);
 			if (obj['averageTradeSize'])
 				formattedObj['averageTradeSize'] = wei(obj['averageTradeSize'], 0);
