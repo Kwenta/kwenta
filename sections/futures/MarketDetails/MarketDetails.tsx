@@ -128,7 +128,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 
 				return enableTooltip(
 					key,
-					<WithCursor cursor="help">
+					<WithCursor cursor="help" key={key}>
 						<div key={key}>
 							<p className="heading">{key}</p>
 							<span className={`value ${colorClass} ${pausedClass}`}>{value}</span>
