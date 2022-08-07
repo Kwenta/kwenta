@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { breakpoints } from 'styles/media';
@@ -53,6 +54,7 @@ const CTA = styled.a`
 	font-size: 8px;
 	line-height: 8px;
 	color: #080808;
+	text-transform: capitalize;
 
 	&:hover {
 		cursor: pointer;
@@ -60,11 +62,13 @@ const CTA = styled.a`
 `;
 
 export const CompetitionBanner = () => {
+	const { t } = useTranslation();
+
 	return (
 		<BannerContainer>
 			<CompetitionPeriod>August 10-12</CompetitionPeriod>
-			<CompetitionState>Competition Live</CompetitionState>
-			<CTA>Learn More</CTA>
+			<CompetitionState>{t('common.competition.during-competition')}</CompetitionState>
+			<CTA>{t('common.learn-more')}</CTA>
 		</BannerContainer>
 	);
 };

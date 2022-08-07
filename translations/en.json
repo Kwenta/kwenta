@@ -1062,7 +1062,14 @@
 			"n-week-ago": "{{ timeDelta }}w ago",
 			"n-year-ago": "{{ timeDelta }}y ago"
 		},
-		"min": "min"
+		"min": "min",
+		"competition": {
+			"before-launch-date": "Competition starting in",
+			"during-competition": "Competition Live",
+			"24h-before-end-date": "Competition ending in",
+			"after-end-date": "Competition ended"
+		},
+		"learn-more": "learn more"
 	},
 	"mobile-menu": {
 		"currency": "Currency",
