@@ -2,8 +2,8 @@ import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import StakeToEarnIcon from 'assets/svg/earn/stake-to-earn.svg';
-import TradeToEarnIcon from 'assets/svg/earn/trade-to-earn.svg';
+import StakeNEarnIcon from 'assets/svg/earn/stake-n-earn.svg';
+import TradeNEarnIcon from 'assets/svg/earn/trade-n-earn.svg';
 import VoteNGovernIcon from 'assets/svg/earn/vote-n-govern.svg';
 import {
 	FlexDivCentered,
@@ -29,13 +29,13 @@ const EARNINGS = [
 		id: 'stake-to-earn',
 		title: 'homepage.earning.stake-and-earn.title',
 		copy: 'homepage.earning.stake-and-earn.copy',
-		image: <StakeToEarnIcon />,
+		image: <StakeNEarnIcon />,
 	},
 	{
 		id: 'trade-to-earn',
 		title: 'homepage.earning.trade-and-earn.title',
 		copy: 'homepage.earning.trade-and-earn.copy',
-		image: <TradeToEarnIcon />,
+		image: <TradeNEarnIcon />,
 	},
 ];
 
@@ -114,6 +114,7 @@ const Emphasis = styled.b`
 const CenteredCopy = styled(Copy)`
 	font-size: 15px;
 	text-align: center;
+	width: 300px;
 	line-height: 150%;
 	letter-spacing: -0.03em;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
