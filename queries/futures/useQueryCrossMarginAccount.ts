@@ -1,11 +1,12 @@
 import { useCallback } from 'react';
 import { useQuery } from 'react-query';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAccount } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { FuturesAccountType } from 'queries/futures/types';
 import { futuresAccountState } from 'store/futures';
-import { networkState, walletAddressState } from 'store/wallet';
+import { networkState } from 'store/wallet';
 
 import useCrossMarginAccountContracts from '../../hooks/useCrossMarginContracts';
 
@@ -14,9 +15,12 @@ const supportedNetworks = [69];
 export default function useQueryCrossMarginAccount() {
 	const { crossMarginContractFactory } = useCrossMarginAccountContracts();
 
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { address } = useAccount();
 	const network = useRecoilValue(networkState);
 	const [futuresAccount, setFuturesAccount] = useRecoilState(futuresAccountState);
+	// eslint-disable-next-line no-console
+	console.log(`futuresAccount: `, futuresAccount);
+	const walletAddress = address ?? null;
 
 	const queryAccountLogs = useCallback(async () => {
 		if (!walletAddress || !crossMarginContractFactory) return null;

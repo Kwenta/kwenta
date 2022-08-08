@@ -9,6 +9,7 @@ import Button from 'components/Button';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Select from 'components/Select';
 import { Synths } from 'constants/currency';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 import { balancesState, positionsState } from 'store/futures';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
@@ -29,6 +30,7 @@ const BalanceActions: FC = () => {
 	const router = useRouter();
 
 	const synthBalances = useRecoilValue(balancesState);
+	useGetFuturesMarkets();
 	useGetFuturesPositionForMarkets();
 	const futuresPositions = useRecoilValue(positionsState);
 	// eslint-disable-next-line no-console
