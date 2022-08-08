@@ -24,7 +24,6 @@ import { isL2State } from 'store/wallet';
 import { formatNumber } from 'utils/formatters/number';
 import {
 	FuturesMarketAsset,
-	getDisplayAsset,
 	getSynthDescription,
 	isEurForex,
 	MarketKeyByAsset,
@@ -64,7 +63,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 				return {
 					asset: position.asset,
-					market: getDisplayAsset(position.asset) + '-PERP',
+					market: market?.marketName,
 					marketKey: MarketKeyByAsset[position.asset],
 					description,
 					price: market?.price,
@@ -281,8 +280,10 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 			<MobileOnlyView>
 				<OpenPositionsHeader>
 					<div>{t('dashboard.overview.futures-positions-table.mobile.market')}</div>
-					<div>{t('dashboard.overview.futures-positions-table.mobile.price')}</div>
-					<div>{t('dashboard.overview.futures-positions-table.mobile.pnl')}</div>
+					<OpenPositionsRightHeader>
+						<div>{t('dashboard.overview.futures-positions-table.mobile.price')}</div>
+						<div>{t('dashboard.overview.futures-positions-table.mobile.pnl')}</div>
+					</OpenPositionsRightHeader>
 				</OpenPositionsHeader>
 				<div style={{ margin: '0 15px' }}>
 					{data.length === 0 ? (
@@ -360,7 +361,7 @@ const MarketContainer = styled.div`
 const OpenPositionsHeader = styled.div`
 	display: flex;
 	justify-content: space-between;
-	margin: 15px;
+	margin: 15px 15px 8px;
 	padding: 0 10px;
 
 	& > div {
@@ -368,8 +369,15 @@ const OpenPositionsHeader = styled.div`
 	}
 
 	& > div:first-child {
-		width: 150px;
+		width: 125px;
+		margin-right: 30px;
 	}
+`;
+
+const OpenPositionsRightHeader = styled.div`
+	display: flex;
+	flex: 1;
+	justify-content: space-between;
 `;
 
 const NoPositionsText = styled.div`

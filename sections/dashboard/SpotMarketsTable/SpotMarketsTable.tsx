@@ -140,6 +140,15 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 							);
 						},
 						width: 130,
+						sortable: true,
+						sortType: useMemo(
+							() => (rowA: any, rowB: any) => {
+								const rowOne = rowA.original.price ?? 0;
+								const rowTwo = rowB.original.price ?? 0;
+								return rowOne > rowTwo ? 1 : -1;
+							},
+							[]
+						),
 					},
 					{
 						Header: (
@@ -158,6 +167,15 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 							);
 						},
 						width: 105,
+						sortable: true,
+						sortType: useMemo(
+							() => (rowA: any, rowB: any) => {
+								const rowOne = rowA.original.change;
+								const rowTwo = rowB.original.change;
+								return rowOne > rowTwo ? 1 : -1;
+							},
+							[]
+						),
 					},
 					{
 						Header: <TableHeader>{t('dashboard.overview.spot-markets-table.24h-vol')}</TableHeader>,
@@ -173,6 +191,7 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 							);
 						},
 						width: 125,
+						sortable: true,
 						sortType: useMemo(
 							() => (rowA: any, rowB: any) => {
 								const rowOne = rowA.original.volume;

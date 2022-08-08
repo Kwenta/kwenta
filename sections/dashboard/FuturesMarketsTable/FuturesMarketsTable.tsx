@@ -1,3 +1,4 @@
+import { wei } from '@synthetixio/wei';
 import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -21,7 +22,6 @@ import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFutur
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { futuresMarketsState } from 'store/futures';
 import {
-	getDisplayAsset,
 	getSynthDescription,
 	isEurForex,
 	MarketKeyByAsset,
@@ -51,12 +51,13 @@ const FuturesMarketsTable: FC = () => {
 			const volume = futuresVolume[market.assetHex];
 			const pastPrice = dailyPriceChanges.find((price) => price.synth === market.asset);
 			const fundingRateResponse = fundingRates.find(
-				({ data: fundingData }) => (fundingData as FundingRateResponse)?.asset === market.asset
+				({ data: fundingData }) =>
+					(fundingData as FundingRateResponse)?.asset === MarketKeyByAsset[market.asset]
 			);
 
 			return {
 				asset: market.asset,
-				market: getDisplayAsset(market.asset) + '-PERP',
+				market: market.marketName,
 				synth: synthsMap[market.asset],
 				description,
 				price: market.price,
@@ -146,6 +147,15 @@ const FuturesMarketsTable: FC = () => {
 									);
 								},
 								width: 130,
+								sortable: true,
+								sortType: useMemo(
+									() => (rowA: any, rowB: any) => {
+										const rowOne = rowA.original.price ?? wei(0);
+										const rowTwo = rowB.original.price ?? wei(0);
+										return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1;
+									},
+									[]
+								),
 							},
 							{
 								Header: (
@@ -164,6 +174,15 @@ const FuturesMarketsTable: FC = () => {
 									);
 								},
 								width: 105,
+								sortable: true,
+								sortType: useMemo(
+									() => (rowA: any, rowB: any) => {
+										const rowOne = rowA.original.priceChange ?? wei(0);
+										const rowTwo = rowB.original.priceChange ?? wei(0);
+										return rowOne.toNumber() > rowTwo.toNumber() ? -1 : 1;
+									},
+									[]
+								),
 							},
 							{
 								Header: (
@@ -182,6 +201,15 @@ const FuturesMarketsTable: FC = () => {
 									);
 								},
 								width: 125,
+								sortable: true,
+								sortType: useMemo(
+									() => (rowA: any, rowB: any) => {
+										const rowOne = rowA.original.fundingRate ?? wei(0);
+										const rowTwo = rowB.original.fundingRate ?? wei(0);
+										return rowOne.toNumber() > rowTwo.toNumber() ? -1 : 1;
+									},
+									[]
+								),
 							},
 							{
 								Header: (
@@ -207,6 +235,17 @@ const FuturesMarketsTable: FC = () => {
 									);
 								},
 								width: 125,
+								sortable: true,
+								sortType: useMemo(
+									() => (rowA: any, rowB: any) => {
+										const rowOne =
+											rowA.original.longInterest.add(rowA.original.shortInterest) ?? wei(0);
+										const rowTwo =
+											rowB.original.longInterest.add(rowB.original.shortInterest) ?? wei(0);
+										return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1;
+									},
+									[]
+								),
 							},
 							{
 								Header: (
@@ -226,6 +265,7 @@ const FuturesMarketsTable: FC = () => {
 									);
 								},
 								width: 125,
+								sortable: true,
 								sortType: useMemo(
 									() => (rowA: any, rowB: any) => {
 										const rowOne = rowA.original.volume;

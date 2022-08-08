@@ -7,15 +7,18 @@ import Connector from 'containers/Connector';
 import { PotentialTradeStatus, POTENTIAL_TRADE_STATUS_TO_MESSAGE } from 'sections/futures/types';
 import { appReadyState } from 'store/app';
 import {
+	crossMarginAvailableMarginState,
 	currentMarketState,
+	futuresAccountState,
 	leverageSideState,
 	leverageState,
 	potentialTradeDetailsState,
 	tradeSizeState,
 } from 'store/futures';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { isL2State, networkState } from 'store/wallet';
 
 import { FuturesPotentialTradeDetails } from './types';
+import useGetCrossMarginPotentialTrade from './useGetCrossMarginTradePreview';
 import { getFuturesMarketContract } from './utils';
 
 const SUCCESS = 'Success';
@@ -24,16 +27,24 @@ const UNKNOWN = 'Unknown';
 const useGetFuturesPotentialTradeDetails = (
 	options?: UseQueryOptions<FuturesPotentialTradeDetails | null>
 ) => {
+	const { selectedFuturesAddress, selectedAccountType } = useRecoilValue(futuresAccountState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
-	const walletAddress = useRecoilValue(walletAddressState);
 	const { synthetixjs } = Connector.useContainer();
 
 	const tradeSize = useRecoilValue(tradeSizeState);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const leverage = useRecoilValue(leverageState);
 	const marketAsset = useRecoilValue(currentMarketState);
+	const crossMarginFreeMargin = useRecoilValue(crossMarginAvailableMarginState);
+
+	// TODO: This should become variable once cross margin fully implemented
+	const marginDelta = crossMarginFreeMargin;
+
+	const newSize = leverageSide === 'long' ? tradeSize : -tradeSize;
+
+	const getPreview = useGetCrossMarginPotentialTrade(marketAsset, selectedFuturesAddress);
 
 	const [, setPotentialTradeDetails] = useRecoilState(potentialTradeDetailsState);
 
@@ -56,7 +67,10 @@ const useGetFuturesPotentialTradeDetails = (
 			network.id,
 			marketAsset || null,
 			tradeSize,
-			walletAddress || ''
+			selectedFuturesAddress || '',
+			selectedAccountType,
+			marginDelta.toString(),
+			leverageSide
 		),
 		async () => {
 			if (!marketAsset || !tradeSize || !isL2) {
@@ -69,12 +83,23 @@ const useGetFuturesPotentialTradeDetails = (
 			} = synthetixjs!;
 
 			const FuturesMarketContract = getFuturesMarketContract(marketAsset, synthetixjs!.contracts);
-			const newSize = leverageSide === 'long' ? tradeSize : -tradeSize;
 
-			const [globals, { fee, liqPrice, margin, price, size, status }] = await Promise.all([
-				await FuturesMarketData.globals(),
-				await FuturesMarketContract.postTradeDetails(wei(newSize).toBN(), walletAddress),
-			]);
+			const globals = await FuturesMarketData.globals();
+
+			const preview =
+				selectedAccountType === 'cross_margin'
+					? await getPreview(newSize, crossMarginFreeMargin)
+					: await FuturesMarketContract.postTradeDetails(
+							wei(newSize).toBN(),
+							selectedFuturesAddress
+					  );
+
+			if (!preview) {
+				setPotentialTradeDetails(null);
+				return null;
+			}
+
+			const { fee, liqPrice, margin, price, size, status } = preview;
 
 			const potentialTradeDetails = {
 				fee: wei(fee),
@@ -96,7 +121,7 @@ const useGetFuturesPotentialTradeDetails = (
 			return potentialTradeDetails;
 		},
 		{
-			enabled: isAppReady && isL2 && !!walletAddress && !!marketAsset && !!synthetixjs,
+			enabled: isAppReady && isL2 && !!selectedFuturesAddress && !!marketAsset && !!synthetixjs,
 			...options,
 		}
 	);

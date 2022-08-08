@@ -9,7 +9,6 @@ import useRateUpdateQuery from 'queries/rates/useRateUpdateQuery';
 import { currentMarketState, marketInfoState } from 'store/futures';
 import media from 'styles/media';
 import { formatPercent } from 'utils/formatters/number';
-import { getDisplayAsset } from 'utils/futures';
 
 import useGetMarketData from './useGetMarketData';
 import useGetSkewData from './useGetSkewData';
@@ -26,7 +25,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	const marketInfo = useRecoilValue(marketInfoState);
 	const marketAsset = useRecoilValue(currentMarketState);
 
-	const assetName = `${getDisplayAsset(marketAsset)}-PERP`;
 	const pausedClass = marketInfo?.isSuspended ? 'paused' : '';
 
 	const skewData = useGetSkewData();
@@ -45,8 +43,8 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 			case 'External Price':
 				return (
 					<MarketDetailsTooltip
+						position={'fixed'}
 						key={key}
-						preset="bottom"
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.external-price')}
 					>
@@ -57,7 +55,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 				return (
 					<MarketDetailsTooltip
 						key={key}
-						preset="bottom"
+						position={'fixed'}
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.24h-change')}
 					>
@@ -68,7 +66,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 				return (
 					<MarketDetailsTooltip
 						key={key}
-						preset="bottom"
+						position={'fixed'}
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.24h-vol')}
 					>
@@ -79,7 +77,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 				return (
 					<MarketDetailsTooltip
 						key={key}
-						preset="bottom"
+						position={'fixed'}
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.24h-trades')}
 					>
@@ -90,33 +88,35 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 				return (
 					<MarketDetailsTooltip
 						key={key}
-						preset="bottom"
+						position={'fixed'}
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.open-interest')}
 					>
 						{children}
 					</MarketDetailsTooltip>
 				);
-			case assetName:
+			case marketInfo?.marketName:
 				return (
 					<TimerTooltip
+						position={'fixed'}
 						key={key}
-						preset="bottom"
 						startTimeDate={lastOracleUpdateTime}
 						width={'131px'}
 					>
 						{children}
 					</TimerTooltip>
 				);
-			case 'Inst. Funding Rate' || '1H Funding Rate':
+			case 'Inst. Funding Rate':
+			case '1H Funding Rate':
 				return (
-					<OneHrFundingRateTooltip
+					<MarketDetailsTooltip
 						key={key}
+						position={'fixed'}
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.1h-funding-rate')}
 					>
 						{children}
-					</OneHrFundingRateTooltip>
+					</MarketDetailsTooltip>
 				);
 			default:
 				return children;
@@ -165,15 +165,6 @@ const SkewDataContainer = styled.div`
 	grid-row: 1;
 `;
 
-const OneHrFundingRateTooltip = styled(StyledTooltip)`
-	${media.greaterThan('sm')`
-		bottom: -115px;
-		z-index: 2;
-		left: -200px;
-		padding: 10px;
-	`}
-`;
-
 const MarketDetailsTooltip = styled(StyledTooltip)`
 	z-index: 2;
 	padding: 10px;
@@ -185,6 +176,8 @@ const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	padding: 10px 45px 10px 15px;
 	margin-bottom: 16px;
 	box-sizing: border-box;
+	overflow-x: scroll;
+	scrollbar-width: none;
 
 	display: flex;
 	justify-content: space-between;
@@ -194,10 +187,21 @@ const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	border-radius: 10px;
 	box-sizing: border-box;
 
+	${media.lessThan('xl')`
+		& > div {
+			margin-right: 10px;
+		}
+	`}
+
 	p,
 	span {
 		margin: 0;
 		text-align: left;
+	}
+
+	.heading,
+	.value {
+		white-space: nowrap;
 	}
 
 	.heading {

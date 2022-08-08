@@ -1,10 +1,10 @@
-import { RefetchProvider } from 'contexts/RefetchContext';
 import Head from 'next/head';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import { RefetchProvider } from 'contexts/RefetchContext';
 import DashboardContainer from 'sections/dashboard/DashboardContainer';
 import MobileDashboard from 'sections/dashboard/MobileDashboard';
 import AppLayout from 'sections/shared/Layout/AppLayout';

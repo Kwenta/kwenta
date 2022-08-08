@@ -2,7 +2,6 @@ import Link from 'next/link';
 import router from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right-tg.svg';
@@ -14,7 +13,6 @@ import Button from 'components/Button';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
-import { isL2State } from 'store/wallet';
 import { FlexDivRow, FlexDivRowCentered, GridDivCenteredCol } from 'styles/common';
 import media from 'styles/media';
 
@@ -23,7 +21,6 @@ import Logo from '../Logo';
 
 const Header: FC = () => {
 	const { t } = useTranslation();
-	const isL2 = useRecoilValue(isL2State);
 
 	const LINKS = useMemo(
 		() => [
@@ -136,7 +133,7 @@ const Header: FC = () => {
 			<MobileOnlyView>
 				<MobileContainer>
 					<LogoContainer>
-						<Logo isL2={isL2} />
+						<Logo />
 					</LogoContainer>
 					<MobileUserMenu />
 				</MobileContainer>

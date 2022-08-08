@@ -5,8 +5,8 @@ import { useRecoilValue } from 'recoil';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
-import { currentMarketState } from 'store/futures';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { currentMarketState, futuresAccountState } from 'store/futures';
+import { isL2State, networkState } from 'store/wallet';
 import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
@@ -17,7 +17,8 @@ import { getFuturesEndpoint, mapTradeHistory } from './utils';
 const useGetFuturesMarketPositionHistory = (options?: UseQueryOptions<any | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
+
 	const network = useRecoilValue(networkState);
 	const { synthetixjs } = Connector.useContainer();
 	const futuresEndpoint = getFuturesEndpoint(network);
@@ -25,7 +26,11 @@ const useGetFuturesMarketPositionHistory = (options?: UseQueryOptions<any | null
 	const currencyKey = useRecoilValue(currentMarketState);
 
 	return useQuery<PositionHistory[] | null>(
-		QUERY_KEYS.Futures.MarketPositionHistory(network.id, currencyKey || null, walletAddress || ''),
+		QUERY_KEYS.Futures.MarketPositionHistory(
+			network.id,
+			currencyKey || null,
+			selectedFuturesAddress || ''
+		),
 		async () => {
 			if (!currencyKey) return null;
 			try {
@@ -46,7 +51,7 @@ const useGetFuturesMarketPositionHistory = (options?: UseQueryOptions<any | null
 							}
 						}
 					`,
-					{ market: marketAddress, account: walletAddress }
+					{ market: marketAddress, account: selectedFuturesAddress }
 				);
 
 				return response ? mapTradeHistory(response.futuresPositions, false) : [];
@@ -55,7 +60,10 @@ const useGetFuturesMarketPositionHistory = (options?: UseQueryOptions<any | null
 				return null;
 			}
 		},
-		{ enabled: isAppReady && isL2 && !!walletAddress && !!currencyKey && !!synthetixjs, ...options }
+		{
+			enabled: isAppReady && isL2 && !!selectedFuturesAddress && !!currencyKey && !!synthetixjs,
+			...options,
+		}
 	);
 };
 

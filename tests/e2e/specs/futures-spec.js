@@ -23,11 +23,9 @@ describe('Futures Page', () => {
 							// Deposit 100 sUSD
 							futures.getDepositBtn().click();
 
-							console.log('---- totalMarginText', totalMarginText);
 							const originalTotalMargin = parseFloat(
 								totalMarginText.split(' sUSD')[0].slice('1').replace(',', '')
 							);
-							console.log('---- originalTotalMargin', originalTotalMargin);
 
 							futures.enterDepositMarginInsUSD(depositValue);
 							futures.getDepositMarginBtn().click();

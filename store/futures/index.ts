@@ -2,8 +2,10 @@ import { Balances } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { atom, selector } from 'recoil';
 
+import { Synths } from 'constants/currency';
 import { DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import {
+	FuturesAccountState,
 	FuturesMarket,
 	FuturesPosition,
 	FuturesPotentialTradeDetails,
@@ -11,6 +13,7 @@ import {
 import { Rates } from 'queries/rates/types';
 import { PositionSide } from 'sections/futures/types';
 import { getFuturesKey, getSynthsKey } from 'store/utils';
+import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN } from 'utils/formatters/number';
 import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
 
@@ -81,9 +84,9 @@ export const leverageSideState = atom<PositionSide>({
 	default: PositionSide.LONG,
 });
 
-export const ratesState = atom<Rates | null>({
+export const ratesState = atom<Rates>({
 	key: getFuturesKey('rates'),
-	default: null,
+	default: {},
 });
 
 export const orderTypeState = atom({
@@ -167,4 +170,80 @@ export const nextPriceDisclaimerState = selector({
 export const potentialTradeDetailsState = atom<FuturesPotentialTradeDetails | null>({
 	key: getFuturesKey('potentialTradeDetails'),
 	default: null,
+});
+
+export const futuresAccountState = atom<FuturesAccountState>({
+	key: getFuturesKey('futuresAccountState'),
+	default: {
+		selectedAccountType: 'isolated_margin',
+		crossMarginAddress: null,
+		walletAddress: null,
+		selectedFuturesAddress: null,
+		crossMarginAvailable: false,
+		loading: false,
+	},
+});
+
+export const crossMarginAvailableMarginState = atom<Wei>({
+	key: getFuturesKey('crossMarginAvailableMarginState'),
+	default: zeroBN,
+});
+
+export const confirmationModalOpenState = atom({
+	key: getFuturesKey('confirmationModalOpen'),
+	default: false,
+});
+
+export const marketAssetRateState = selector({
+	key: getFuturesKey('marketAssetRate'),
+	get: ({ get }) => {
+		const exchangeRates = get(ratesState);
+		const marketKey = get(marketKeyState);
+
+		return newGetExchangeRatesForCurrencies(exchangeRates, marketKey, Synths.sUSD);
+	},
+});
+
+export const isMarketCapReachedState = selector({
+	key: getFuturesKey('isMarketCapReached'),
+	get: ({ get }) => {
+		const leverageSide = get(leverageSideState);
+		const market = get(marketInfoState);
+		const marketAssetRate = get(marketAssetRateState);
+
+		const maxMarketValueUSD = market?.marketLimit ?? wei(0);
+		const marketSize = market?.marketSize ?? wei(0);
+		const marketSkew = market?.marketSkew ?? wei(0);
+
+		return leverageSide === PositionSide.LONG
+			? marketSize.add(marketSkew).div('2').abs().mul(marketAssetRate).gte(maxMarketValueUSD)
+			: marketSize.sub(marketSkew).div('2').abs().mul(marketAssetRate).gte(maxMarketValueUSD);
+	},
+});
+
+export const placeOrderTranslationKeyState = selector({
+	key: getFuturesKey('placeOrderTranslationKey'),
+	get: ({ get }) => {
+		const position = get(positionState);
+		const isMarketCapReached = get(isMarketCapReachedState);
+		const orderType = get(orderTypeState);
+		const { selectedAccountType } = get(futuresAccountState);
+		const freeMargin = get(crossMarginAvailableMarginState);
+
+		let remainingMargin;
+		if (selectedAccountType === 'isolated_margin') {
+			remainingMargin = position?.remainingMargin || zeroBN;
+		} else {
+			const positionMargin = position?.remainingMargin || zeroBN;
+			remainingMargin = positionMargin.add(freeMargin);
+		}
+
+		if (orderType === 1) return 'futures.market.trade.button.place-next-price-order';
+		if (!!position?.position) return 'futures.market.trade.button.modify-position';
+		return remainingMargin.lt('50')
+			? 'futures.market.trade.button.deposit-margin-minimum'
+			: isMarketCapReached
+			? 'futures.market.trade.button.oi-caps-reached'
+			: 'futures.market.trade.button.open-position';
+	},
 });

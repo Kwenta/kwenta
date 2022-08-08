@@ -42,7 +42,7 @@ jobs:
         continue-on-error: true
 
       - name: Cache node modules
-        uses: actions/cache@0865c47f36e68161719c5b124609996bb5c40129 # pin@v3
+        uses: actions/cache@f4278025ab0f432ce369118909e46deec636f50c # pin@v3
         with:
           path: |
             .npm-cache
@@ -70,7 +70,7 @@ jobs:
       - name: Upload lint results
         # run if lint failed and only on main/dev branch and pull requests
         if: always() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request')
-        uses: github/codeql-action/upload-sarif@0c670bbf0414f39666df6ce8e718ec5662c21e03 # pin@codeql-bundle-20220322
+        uses: github/codeql-action/upload-sarif@2ca79b6fa8d3ec278944088b4aa5f46912db5d63 # pin@codeql-bundle-20220322
         with:
           sarif_file: lint-results.sarif
         continue-on-error: true
@@ -98,7 +98,7 @@ jobs:
         continue-on-error: true
 
       - name: Cache node modules
-        uses: actions/cache@0865c47f36e68161719c5b124609996bb5c40129 # pin@v3
+        uses: actions/cache@f4278025ab0f432ce369118909e46deec636f50c # pin@v3
         with:
           path: |
             .npm-cache
@@ -119,7 +119,7 @@ jobs:
           npm install --prefer-offline --no-audit --legacy-peer-deps
 
       - name: Cache next.js build cache
-        uses: actions/cache@0865c47f36e68161719c5b124609996bb5c40129 # pin@v2
+        uses: actions/cache@f4278025ab0f432ce369118909e46deec636f50c # pin@v2
         with:
           path: .next/cache
           key: ${{ runner.os }}-next-cache-${{ hashFiles('**/package-lock.json') }}

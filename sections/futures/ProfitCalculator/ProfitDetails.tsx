@@ -16,7 +16,7 @@ function textColor(props: any) {
 type ProfitDetailsProps = {
 	stopLoss: string;
 	exitPrice: string;
-	marketAsset: string;
+	marketName: string;
 	leverageSide: PositionSide;
 	marketAssetPositionSize: string;
 };
@@ -24,7 +24,7 @@ type ProfitDetailsProps = {
 const ProfitDetails: React.FC<ProfitDetailsProps> = ({
 	stopLoss,
 	exitPrice,
-	marketAsset,
+	marketName,
 	leverageSide,
 	marketAssetPositionSize,
 }) => {
@@ -86,7 +86,7 @@ const ProfitDetails: React.FC<ProfitDetailsProps> = ({
 							? wei(marketAssetPositionSize).toNumber().toFixed(2)
 							: ''}
 					</RowText>
-					<RowText className="gray-font-color">{`${marketAsset}-PERP`}</RowText>
+					<RowText className="gray-font-color">{marketName}</RowText>
 				</Details>
 			</StyledProfitDetails>
 		</>

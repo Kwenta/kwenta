@@ -16,7 +16,7 @@ import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFutur
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { futuresMarketsState } from 'store/futures';
 import { FlexDivCol } from 'styles/common';
-import { FuturesMarketAsset, getDisplayAsset, isEurForex, MarketKeyByAsset } from 'utils/futures';
+import { FuturesMarketAsset, isEurForex, MarketKeyByAsset } from 'utils/futures';
 
 enum TableColumnAccessor {
 	Market = 'market',
@@ -49,7 +49,7 @@ const FuturesMarketsTable: FC = () => {
 
 				return {
 					asset: market.asset,
-					market: getDisplayAsset(market.asset) + '-PERP',
+					market: market.marketName,
 					price: market.price,
 					volume: volume?.toNumber() ?? 0,
 					priceChange: market.price.sub(pastPrice?.price ?? 0).div(market.price) || 0,

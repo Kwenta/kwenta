@@ -14,7 +14,7 @@ import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { currentMarketState, marketInfoState, marketKeyState } from 'store/futures';
 import { isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
-import { getDisplayAsset, isEurForex } from 'utils/futures';
+import { isEurForex } from 'utils/futures';
 
 type MarketData = Record<string, { value: string | JSX.Element; color?: string }>;
 
@@ -46,7 +46,6 @@ const useGetMarketData = (mobile?: boolean) => {
 
 	const pastPrice = dailyPriceChanges.find((price) => price.synth === marketAsset);
 
-	const assetName = `${getDisplayAsset(marketAsset)}-PERP`;
 	const fundingTitle = React.useMemo(
 		() =>
 			`${
@@ -120,7 +119,7 @@ const useGetMarketData = (mobile?: boolean) => {
 			};
 		} else {
 			return {
-				[assetName]: {
+				[marketInfo?.marketName ?? '']: {
 					value: formatCurrency(selectedPriceCurrency.name, marketPrice, {
 						sign: '$',
 						minDecimals,

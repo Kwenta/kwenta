@@ -1,4 +1,3 @@
-import { useFuturesContext } from 'contexts/FuturesContext';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -8,6 +7,7 @@ import TimerIcon from 'assets/svg/app/timer.svg';
 import InfoBox from 'components/InfoBox';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { NO_VALUE } from 'constants/placeholder';
+import { useFuturesContext } from 'contexts/FuturesContext';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { feeCostState, marketInfoState, orderTypeState, sizeDeltaState } from 'store/futures';
 import { computeNPFee, computeMarketFee } from 'utils/costCalculations';

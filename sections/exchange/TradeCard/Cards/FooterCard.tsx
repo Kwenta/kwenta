@@ -1,10 +1,10 @@
-import { useExchangeContext } from 'contexts/ExchangeContext';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
 import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 import Button from 'components/Button';
+import { useExchangeContext } from 'contexts/ExchangeContext';
 import useMarketClosed from 'hooks/useMarketClosed';
 import RedeemTxModal from 'sections/dashboard/Deprecated/RedeemTxModal';
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
