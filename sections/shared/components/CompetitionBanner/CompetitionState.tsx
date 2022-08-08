@@ -8,7 +8,7 @@ import { keepDoublePlaceholder } from 'utils/formatters/date';
 const Container = styled.p`
 	font-family: ${(props) => props.theme.fonts.monoBold};
 	font-style: normal;
-	font-size: 21px;
+	font-size: 23px;
 	line-height: 25px;
 	text-align: center;
 	color: ${(props) => props.theme.colors.selectedTheme.competitionBanner.state.text};

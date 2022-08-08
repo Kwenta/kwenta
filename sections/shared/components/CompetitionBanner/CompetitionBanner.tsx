@@ -33,7 +33,7 @@ const BannerContainer = styled.div`
 const CompetitionPeriod = styled.p`
 	font-family: ${(props) => props.theme.fonts.monoBold};
 	font-style: normal;
-	font-size: 8px;
+	font-size: 10px;
 	line-height: 10px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	// clear UA style.
@@ -47,7 +47,7 @@ const CTA = styled(ExternalLink)`
 	border: none;
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-style: normal;
-	font-size: 8px;
+	font-size: 10px;
 	line-height: 8px;
 	color: #080808;
 	text-transform: capitalize;
