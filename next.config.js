@@ -75,14 +75,11 @@ module.exports = withPlugins([
 			return config;
 		},
 		trailingSlash: !!process.env.NEXT_PUBLIC_DISABLE_PRETTY_URLS,
-		exportPathMap: function (defaultPathMap) {
-			return {
-				...defaultPathMap,
-				'/': {
-					page: '/',
-				},
-			};
-		},
+		// exportPathMap: function (defaultPathMap) {
+		// 	return {
+		// 		...defaultPathMap,
+		// 	};
+		// },
 		compiler: {
 			// ssr and displayName are configured by default
 			styledComponents: true,
