@@ -125,7 +125,7 @@ const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, 
 	if (!firstFallbackError) {
 		const src = SYNTH_ICONS[currencyKey as FuturesMarketKey];
 		return src ? (
-			<Image src={src} layout="raw" {...props} />
+			<Image src={src} layout="fixed" {...props} />
 		) : (
 			<TokenIcon
 				{...{ isDeprecated }}
