@@ -49,11 +49,15 @@ const CTA = styled(ExternalLink)`
 	font-style: normal;
 	font-size: 10px;
 	line-height: 8px;
-	color: #080808;
+	color: #ffb800;
+	background-color: #252525;
 	text-transform: capitalize;
+	transition: color 0.2s, background-color 0.2s;
 
 	&:hover {
 		cursor: pointer;
+		color: #171002;
+		background-color: #ffb800;
 	}
 `;
 
