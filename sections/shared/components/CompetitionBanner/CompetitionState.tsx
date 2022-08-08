@@ -1,12 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { COMPETITION_DATES } from 'constants/competition';
-import { PERIOD_IN_SECONDS } from 'constants/period';
-import { calculatedTimeDifference, keepDoublePlaceholder } from 'utils/formatters/date';
-
-type TCompetitionSate = 'comingSoon' | 'live' | 'comingToEnd' | 'ended';
+import { useDashboardCompetition } from 'hooks/useDashboardCompetition';
+import { keepDoublePlaceholder } from 'utils/formatters/date';
 
 const Container = styled.p`
 	font-family: ${(props) => props.theme.fonts.mono};
@@ -23,35 +20,7 @@ const Container = styled.p`
 export const CompetitionState = () => {
 	const { t } = useTranslation();
 
-	const [state, setState] = useState<TCompetitionSate>('comingSoon');
-	const [difference, setDifference] = useState<number>(0);
-
-	useEffect(() => {
-		const interval = setInterval(() => {
-			const now = new Date();
-			const start = new Date(COMPETITION_DATES.START_DATE);
-			const end = new Date(COMPETITION_DATES.END_DATE);
-
-			let _difference = calculatedTimeDifference(start, now);
-			if (_difference > 0) {
-				setState('comingSoon');
-				setDifference(_difference);
-			} else {
-				_difference = calculatedTimeDifference(end, now);
-				if (_difference > 0) {
-					if (_difference < PERIOD_IN_SECONDS.ONE_DAY) {
-						setState('comingToEnd');
-						setDifference(_difference);
-					} else {
-						setState('live');
-					}
-				} else {
-					setState('ended');
-				}
-			}
-		}, 1000);
-		return () => clearInterval(interval);
-	}, []);
+	const { state, difference } = useDashboardCompetition();
 
 	const secondsToMinutes = difference / 60;
 	const hours = keepDoublePlaceholder(Math.floor(secondsToMinutes / 60));
