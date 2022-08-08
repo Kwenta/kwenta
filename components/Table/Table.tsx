@@ -87,6 +87,10 @@ export const Table: FC<TableProps> = ({
 		// @ts-ignore
 		previousPage,
 		// @ts-ignore
+		getCanPreviousPage,
+		// @ts-ignore
+		getCanNextPage,
+		// @ts-ignore
 		state: { pageIndex },
 		setHiddenColumns,
 	} = useTable(
@@ -117,6 +121,15 @@ export const Table: FC<TableProps> = ({
 		setHiddenColumns(hiddenColumns);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	// reset to the first page
+	// this fires when filters are applied that change the data
+	// if a filter is applied that reduces the data size below max pages for that filter, reset to the first page
+	useEffect(() => {
+		if (pageIndex > pageCount) {
+			gotoPage(0);
+		}
+	}, [pageIndex, pageCount]);
 
 	const defaultRef = useRef(null);
 
