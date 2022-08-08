@@ -7,14 +7,12 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Currency from 'components/Currency';
-import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
 import { Synths } from 'constants/currency';
 import ROUTES from 'constants/routes';
 import useGetFile from 'queries/files/useGetFile';
 import { walletAddressState } from 'store/wallet';
-import { FlexDiv } from 'styles/common';
 import { formatPercent } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';
 
@@ -245,48 +243,9 @@ const TitleText = styled.a`
 	}
 `;
 
-const StyledCell = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	display: flex;
-`;
-
-const TitleSeparator = styled.div`
-	margin-left: 10px;
-	margin-right: 10px;
-	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
-
-const TierText = styled.div`
-	padding: 0px 10px;
-	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-
-	&:hover {
-		text-decoration: underline;
-	}
-`;
-
 const TableHeader = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
-
-const StyledCurrencyIcon = styled(CurrencyIcon)`
-	width: 30px;
-	height: 30px;
-	margin-right: 5px;
-`;
-
-const CurrencyInfo = styled(FlexDiv)`
-	align-items: center;
-`;
-
-const StyledSubtitle = styled.div`
-	font-family: ${(props) => props.theme.fonts.regular};
-	font-size: 13px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	text-transform: capitalize;
 `;
 
 const PnlContainer = styled.div<{ direction: 'row' | 'column' }>`

@@ -87,10 +87,6 @@ export const Table: FC<TableProps> = ({
 		// @ts-ignore
 		previousPage,
 		// @ts-ignore
-		getCanPreviousPage,
-		// @ts-ignore
-		getCanNextPage,
-		// @ts-ignore
 		state: { pageIndex },
 		setHiddenColumns,
 	} = useTable(
@@ -129,7 +125,7 @@ export const Table: FC<TableProps> = ({
 		if (pageIndex > pageCount) {
 			gotoPage(0);
 		}
-	}, [pageIndex, pageCount]);
+	}, [pageIndex, pageCount, gotoPage]);
 
 	const defaultRef = useRef(null);
 
