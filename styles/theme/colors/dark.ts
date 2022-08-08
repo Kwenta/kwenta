@@ -100,6 +100,7 @@ const darkTheme = {
 		state: {
 			text: common.primaryWhite,
 		},
+		bg: '#fff',
 	},
 };
 

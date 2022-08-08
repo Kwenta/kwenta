@@ -2,16 +2,19 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import CompetitionBannerBg from 'assets/svg/app/competition-banner-bg.svg';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { ExternalLink } from 'styles/common';
 import { breakpoints } from 'styles/media';
 
 const BannerContainer = styled.div`
+	position: relative;
 	width: 100%;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	background-image: url('assets/svg/app/competition-banner-bg.svg');
 	padding: 22px 0;
 	border: ${(props) => props.theme.colors.selectedTheme.competitionBanner.border};
 	border-radius: 8px;
@@ -63,6 +66,24 @@ const CTA = styled(ExternalLink)`
 	}
 `;
 
+const StyledBg = styled(CompetitionBannerBg)`
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+
+	@media (max-width: ${breakpoints.sm}px) {
+		// FIXME: This is a hack to make the background image fit the container.
+		left: -52%;
+
+		width: auto;
+	}
+
+	& > g {
+		stroke: ${(props) => props.theme.colors.selectedTheme.competitionBanner.bg};
+	}
+`;
+
 export const CompetitionBanner = () => {
 	const { t } = useTranslation();
 
@@ -71,6 +92,7 @@ export const CompetitionBanner = () => {
 			<CompetitionPeriod>August 10-12</CompetitionPeriod>
 			<CompetitionState>{t('common.competition.during-competition')}</CompetitionState>
 			<CTA href={EXTERNAL_LINKS.Competition.LearnMore}>{t('common.learn-more')}</CTA>
+			<StyledBg />
 		</BannerContainer>
 	);
 };

@@ -101,6 +101,7 @@ const lightTheme = {
 		state: {
 			text: '#171002',
 		},
+		bg: '#000',
 	},
 };
 
