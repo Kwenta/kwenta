@@ -29,6 +29,8 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 	const [, setFuturesPositions] = useRecoilState(positionsState);
 
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	// eslint-disable-next-line no-console
+	console.log(`futuresMarkets: `, futuresMarkets);
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 
 	const assets = futuresMarkets

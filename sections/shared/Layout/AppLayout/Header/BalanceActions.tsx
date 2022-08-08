@@ -31,7 +31,8 @@ const BalanceActions: FC = () => {
 	const synthBalances = useRecoilValue(balancesState);
 	useGetFuturesPositionForMarkets();
 	const futuresPositions = useRecoilValue(positionsState);
-
+	// eslint-disable-next-line no-console
+	console.log(`futurePostions: `, futuresPositions);
 	const sUSDBalance = synthBalances?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
 
 	const OPTIONS = useMemo(() => {
