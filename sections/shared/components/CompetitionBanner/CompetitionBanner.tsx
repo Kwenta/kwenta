@@ -92,6 +92,7 @@ export const CompetitionBanner = () => {
 			<CompetitionPeriod>August 10-12</CompetitionPeriod>
 			<CompetitionState>{t('common.competition.during-competition')}</CompetitionState>
 			<CTA href={EXTERNAL_LINKS.Competition.LearnMore}>{t('common.learn-more')}</CTA>
+
 			<StyledBg />
 		</BannerContainer>
 	);
