@@ -6,9 +6,8 @@ import { useDashboardCompetition } from 'hooks/useDashboardCompetition';
 import { keepDoublePlaceholder } from 'utils/formatters/date';
 
 const Container = styled.p`
-	font-family: ${(props) => props.theme.fonts.mono};
+	font-family: ${(props) => props.theme.fonts.monoBold};
 	font-style: normal;
-	font-weight: 700;
 	font-size: 21px;
 	line-height: 25px;
 	text-align: center;

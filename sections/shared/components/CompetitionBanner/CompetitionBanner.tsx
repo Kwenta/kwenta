@@ -31,9 +31,8 @@ const BannerContainer = styled.div`
 `;
 
 const CompetitionPeriod = styled.p`
-	font-family: ${(props) => props.theme.fonts.mono};
+	font-family: ${(props) => props.theme.fonts.monoBold};
 	font-style: normal;
-	font-weight: 700;
 	font-size: 8px;
 	line-height: 10px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
@@ -46,9 +45,8 @@ const CTA = styled(ExternalLink)`
 	background: #ffb800;
 	border-radius: 15px;
 	border: none;
-	font-family: ${(props) => props.theme.fonts.regular};
+	font-family: ${(props) => props.theme.fonts.bold};
 	font-style: normal;
-	font-weight: 900;
 	font-size: 8px;
 	line-height: 8px;
 	color: #080808;
