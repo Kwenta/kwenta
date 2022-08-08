@@ -14,6 +14,7 @@ const Container = styled.p`
 	font-weight: 700;
 	font-size: 21px;
 	line-height: 25px;
+	text-align: center;
 	color: ${(props) => props.theme.colors.selectedTheme.competitionBanner.state.text};
 	// clear UA style.
 	margin: 0;
