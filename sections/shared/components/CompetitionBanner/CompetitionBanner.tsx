@@ -60,6 +60,10 @@ const CTA = styled(ExternalLink)`
 const StyledBg = styled(CompetitionBannerBg)`
 	width: 100%;
 	height: 100%;
+
+	// prevent background-image from covering the text.
+	z-index: -1;
+
 	position: absolute;
 	top: 0;
 
