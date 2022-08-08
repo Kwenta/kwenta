@@ -200,6 +200,7 @@ const FuturesMarketsTable: FC = () => {
 										/>
 									);
 								},
+								sortable: true,
 								width: 125,
 								sortType: useMemo(
 									() => (rowA: any, rowB: any) => {
