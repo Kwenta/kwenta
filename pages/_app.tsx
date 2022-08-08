@@ -20,6 +20,7 @@ import { chain, configureChains, createClient, WagmiConfig } from 'wagmi';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { publicProvider } from 'wagmi/providers/public';
 
+import Safe from 'components/Rainbowkit/Gnosis';
 import Connector from 'containers/Connector';
 import Layout from 'sections/shared/Layout';
 import AppLayout from 'sections/shared/Layout/AppLayout';
@@ -60,6 +61,7 @@ const connectors = connectorsForWallets([
 			wallet.rainbow({ chains }),
 			wallet.coinbase({ appName: 'Kwenta', chains }),
 			wallet.walletConnect({ chains }),
+			Safe({ chains }),
 		],
 	},
 	{
