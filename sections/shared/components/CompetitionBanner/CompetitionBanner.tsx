@@ -2,6 +2,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { EXTERNAL_LINKS } from 'constants/links';
+import { ExternalLink } from 'styles/common';
 import { breakpoints } from 'styles/media';
 
 const BannerContainer = styled.div`
@@ -43,7 +45,7 @@ const CompetitionState = styled.p`
 	margin: 0;
 `;
 
-const CTA = styled.a`
+const CTA = styled(ExternalLink)`
 	padding: 6px 11.5px;
 	background: #ffb800;
 	border-radius: 15px;
@@ -68,7 +70,7 @@ export const CompetitionBanner = () => {
 		<BannerContainer>
 			<CompetitionPeriod>August 10-12</CompetitionPeriod>
 			<CompetitionState>{t('common.competition.during-competition')}</CompetitionState>
-			<CTA>{t('common.learn-more')}</CTA>
+			<CTA href={EXTERNAL_LINKS.Competition.LearnMore}>{t('common.learn-more')}</CTA>
 		</BannerContainer>
 	);
 };
