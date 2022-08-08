@@ -66,9 +66,8 @@ const StyledBg = styled(CompetitionBannerBg)`
 	top: 0;
 
 	@media (max-width: ${breakpoints.sm}px) {
-		// FIXME: This is a hack to make the background image fit the container.
-		left: -52%;
-
+		left: 50%;
+		transform: translateX(-50%);
 		width: auto;
 	}
 
