@@ -68,7 +68,7 @@ const StyledDialogContent = styled(DialogContent)`
 	`}
 `;
 
-const StyledCard = styled(Card)`
+export const StyledCard = styled(Card)`
 	background-color: ${(props) => props.theme.colors.selectedTheme.background};
 	border-radius: 10px;
 	position: relative;
@@ -82,7 +82,7 @@ const StyledCard = styled(Card)`
 	`}
 `;
 
-const StyledCardHeader = styled(Card.Header)`
+export const StyledCardHeader = styled(Card.Header)`
 	justify-content: center;
 	height: 45px;
 	font-size: 16px;

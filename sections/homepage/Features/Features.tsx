@@ -393,7 +393,7 @@ const SectionFeatureCopy = styled(FeatureCopy)`
 	`}
 `;
 
-const BigWhiteHeader = styled(WhiteHeader)`
+export const BigWhiteHeader = styled(WhiteHeader)`
 	${media.lessThan('sm')`
 		width: 336px;
 	`}

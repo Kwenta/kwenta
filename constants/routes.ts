@@ -41,6 +41,9 @@ export const ROUTES = {
 		Transfers: (marketAsset: FuturesMarketAsset) =>
 			normalizeRoute(`/market/${marketAsset}`, 'transfers', 'tab'),
 	},
+	Stats: {
+		Home: '/stats',
+	},
 	Leaderboard: {
 		Home: '/leaderboard',
 		Trader: (trader: string) => normalizeRoute('/leaderboard', `${trader}`, 'trader'),

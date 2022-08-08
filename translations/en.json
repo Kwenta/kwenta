@@ -40,6 +40,7 @@
 			"trade-now": "Trade now",
 			"wallet": "Connect Wallet",
 			"markets": "Markets",
+			"stats": "Stats",
 			"governance": {
 				"title": "Governance",
 				"overview": "Overview",
@@ -124,7 +125,7 @@
 			"description": "Take Back The Market, Trade Like A Whale",
 			"categories": "Commodities, Forex, Crypto and more."
 		},
-		"features": { 
+		"features": {
 			"title": "FEATURES",
 			"description": "Trading Without The Limits Of A Centralized Exchange",
 			"blazing-fast": {
@@ -391,7 +392,6 @@
 		"1inch": {
 			"unsupported-network": "Synth Swap is not supported on this network",
 			"wallet-not-connected": "Wallet not connected"
-
 		}
 	},
 	"dashboard": {
@@ -492,6 +492,12 @@
 				"redeeming": "Pending"
 			},
 			"susd-total": "sUSD Total"
+		}
+	},
+	"stats": {
+		"header": "Kwenta Stats",
+		"volume": {
+			"title": "Volume"
 		}
 	},
 	"futures": {
