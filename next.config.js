@@ -74,7 +74,8 @@ module.exports = withPlugins([
 
 			return config;
 		},
-		trailingSlash: !!process.env.NEXT_PUBLIC_DISABLE_PRETTY_URLS,
+		trailingSlash: true,
+		exportTrailingSlash: true,
 		// exportPathMap: function (defaultPathMap) {
 		// 	return {
 		// 		...defaultPathMap,
