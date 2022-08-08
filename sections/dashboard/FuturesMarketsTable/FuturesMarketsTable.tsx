@@ -190,7 +190,6 @@ const FuturesMarketsTable: FC = () => {
 										{t('dashboard.overview.futures-markets-table.funding-rate')}
 									</TableHeader>
 								),
-								sortable: false,
 								accessor: 'fundingRate',
 								Cell: (cellProps: CellProps<any>) => {
 									return (
@@ -341,6 +340,7 @@ const FuturesMarketsTable: FC = () => {
 										/>
 										<div>
 											<ChangePercent
+												showArrow={false}
 												value={cellProps.row.original.fundingRate}
 												decimals={6}
 												className="change-pct"

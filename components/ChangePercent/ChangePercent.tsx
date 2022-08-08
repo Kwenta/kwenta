@@ -11,14 +11,15 @@ type ChangePercentProps = {
 	value: WeiSource;
 	className?: string;
 	decimals?: number;
+	showArrow?: boolean;
 };
 
-export const ChangePercent: FC<ChangePercentProps> = ({ value, decimals = 2, ...rest }) => {
+export const ChangePercent: FC<ChangePercentProps> = ({ value, decimals = 2, showArrow = true, ...rest }) => {
 	const isPositive = wei(value ?? 0).gt(0);
 
 	return (
 		<CurrencyChange isPositive={isPositive} {...rest}>
-			{isPositive ? <ChangePositiveIcon /> : <ChangeNegativeIcon />}
+			{isPositive && showArrow ? <ChangePositiveIcon /> : <ChangeNegativeIcon />}
 			{formatPercent(wei(value ?? 0).abs(), { minDecimals: decimals })}
 		</CurrencyChange>
 	);
@@ -39,9 +40,9 @@ const CurrencyChange = styled.span<{ isPositive: boolean }>`
 		height: 10px;
 		path {
 			fill: ${(props) =>
-				props.isPositive
-					? props.theme.colors.selectedTheme.green
-					: props.theme.colors.selectedTheme.red};
+		props.isPositive
+			? props.theme.colors.selectedTheme.green
+			: props.theme.colors.selectedTheme.red};
 		}
 	}
 
