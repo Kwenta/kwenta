@@ -24,7 +24,6 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	const [searchTerm, setSearchTerm] = useState<string>('');
 	const [activeTier, setActiveTier] = useState<Tier>('bronze');
 	const [selectedTrader, setSelectedTrader] = useState('');
-	const [traderENSName, setTraderENSName] = useState<string | null>(null);
 	const router = useRouter();
 
 	const statsQuery = useGetStats();
@@ -75,11 +74,16 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 		setSearchTerm(text?.toLowerCase());
 	};
 
-	const onClickTrader = (trader: string, ensName: string | null) => {
+	const onClickTrader = (trader: string) => {
 		setSearchTerm('');
 		setSelectedTrader(trader);
-		setTraderENSName(ensName);
 		router.push(ROUTES.Leaderboard.Trader(trader));
+	};
+
+	const resetSelection = () => {
+		setSearchTerm('');
+		setSelectedTrader('');
+		router.push(ROUTES.Leaderboard.Home);
 	};
 
 	return (
@@ -91,7 +95,10 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 							key={tier}
 							title={tier ?? ''}
 							active={activeTier === tier}
-							onClick={() => setActiveTier(tier)}
+							onClick={() => {
+								setActiveTier(tier);
+								setSelectedTrader('');
+							}}
 						/>
 					))}
 					<StyledTabButton
@@ -107,21 +114,20 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 				<Search value={searchTerm} onChange={onChangeSearch} disabled={false} />
 			</SearchContainer>
 			<TableContainer compact={compact}>
-				{activeTier ? (
-					<Competition
-						activeTier={activeTier}
+				{selectedTrader !== '' ? (
+					<TraderHistory
+						trader={selectedTrader}
 						ensInfo={ensInfo}
-						isLoading={ensInfoQuery.isLoading}
-						resetSelection={() => setSelectedTrader('')}
+						resetSelection={resetSelection}
 						compact={compact}
 						searchTerm={searchTerm}
 					/>
-				) : selectedTrader !== '' ? (
-					<TraderHistory
-						trader={selectedTrader}
-						traderENSName={traderENSName}
-						resetSelection={() => setSelectedTrader('')}
+				) : activeTier ? (
+					<Competition
+						activeTier={activeTier}
+						ensInfo={ensInfo}
 						compact={compact}
+						onClickTrader={onClickTrader}
 						searchTerm={searchTerm}
 					/>
 				) : (

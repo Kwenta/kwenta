@@ -16,11 +16,6 @@ export const getMedal = (position: number) => {
 
 export const COMPETITION_TIERS: Tier[] = ['bronze', 'silver', 'gold'];
 
-const Medal = styled.span`
-	font-size: 16px;
-	margin-left: 4px;
-`;
-
 export type AccountStat = {
 	account: string;
 	trader: string;
@@ -31,3 +26,18 @@ export type AccountStat = {
 	liquidation: Wei;
 	pnl: Wei;
 };
+
+const Medal = styled.span`
+	font-size: 16px;
+	margin-left: 4px;
+`;
+
+export const StyledTrader = styled.a`
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	display: flex;
+
+	&:hover {
+		text-decoration: underline;
+		cursor: pointer;
+	}
+`;

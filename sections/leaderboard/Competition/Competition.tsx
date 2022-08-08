@@ -1,5 +1,4 @@
 import { wei } from '@synthetixio/wei';
-import router from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
@@ -10,30 +9,27 @@ import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
 import { Synths } from 'constants/currency';
-import ROUTES from 'constants/routes';
 import useGetFile from 'queries/files/useGetFile';
 import { walletAddressState } from 'store/wallet';
 import { formatPercent } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';
 
-import { getMedal, Tier } from '../common';
+import { getMedal, StyledTrader, Tier } from '../common';
 import { COMPETITION_DATA_LOCATION } from './constants';
 
 type CompetitionProps = {
 	activeTier: Tier;
 	ensInfo: Record<string, string>;
-	isLoading: boolean;
-	resetSelection: Function;
 	compact?: boolean;
+	onClickTrader: (trader: string) => void;
 	searchTerm?: string | undefined;
 };
 
 const Competition: FC<CompetitionProps> = ({
 	activeTier,
 	ensInfo,
-	isLoading,
-	resetSelection,
 	compact,
+	onClickTrader,
 	searchTerm,
 }: CompetitionProps) => {
 	const { t } = useTranslation();
@@ -73,21 +69,14 @@ const Competition: FC<CompetitionProps> = ({
 					compact={compact}
 					showPagination
 					pageSize={10}
-					isLoading={competitionQuery.isLoading || isLoading}
+					isLoading={competitionQuery.isLoading}
 					data={data}
 					hideHeaders={compact}
 					columns={[
 						{
 							Header: (
 								<TableTitle>
-									<TitleText
-										onClick={() => {
-											resetSelection();
-											router.push(ROUTES.Leaderboard.Home);
-										}}
-									>
-										{t('leaderboard.competition.title')}
-									</TitleText>
+									<TitleText>{t('leaderboard.competition.title')}</TitleText>
 								</TableTitle>
 							),
 							accessor: 'title',
@@ -110,11 +99,11 @@ const Competition: FC<CompetitionProps> = ({
 									accessor: 'trader',
 									Cell: (cellProps: CellProps<any>) => {
 										return (
-											<StyledOrderType>
+											<StyledOrderType onClick={() => onClickTrader(cellProps.row.original.trader)}>
 												{compact && cellProps.row.original.rank + '. '}
-												<StyledValue>
+												<StyledTrader>
 													{cellProps.row.original.traderEns ?? cellProps.row.original.traderShort}
-												</StyledValue>
+												</StyledTrader>
 												{getMedal(cellProps.row.original.rank)}
 											</StyledOrderType>
 										);
@@ -244,10 +233,6 @@ const TableTitle = styled.div`
 const TitleText = styled.a`
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-
-	&:hover {
-		text-decoration: underline;
-	}
 `;
 
 const TableHeader = styled.div`

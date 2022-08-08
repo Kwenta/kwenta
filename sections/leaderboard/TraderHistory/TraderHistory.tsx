@@ -18,7 +18,7 @@ import { getMarketName } from 'utils/futures';
 
 type TraderHistoryProps = {
 	trader: string;
-	traderENSName: string | null;
+	ensInfo: Record<string, string>;
 	resetSelection: Function;
 	compact?: boolean;
 	searchTerm?: string | undefined;
@@ -26,7 +26,7 @@ type TraderHistoryProps = {
 
 const TraderHistory: FC<TraderHistoryProps> = ({
 	trader,
-	traderENSName,
+	ensInfo,
 	resetSelection,
 	compact,
 	searchTerm,
@@ -34,6 +34,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 	const { t } = useTranslation();
 	const positionsQuery = useGetFuturesAccountPositionHistory(trader);
 	const positions = useMemo(() => positionsQuery.data ?? [], [positionsQuery]);
+	const traderENSName = useMemo(() => ensInfo[trader] ?? null, [trader, ensInfo]);
 
 	let data = useMemo(() => {
 		return positions
@@ -84,10 +85,9 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 									<TitleText
 										onClick={() => {
 											resetSelection();
-											router.push(ROUTES.Leaderboard.Home);
 										}}
 									>
-										{t('leaderboard.leaderboard.table.title')}
+										{t('leaderboard.trader-history.table.back')}
 									</TitleText>
 									<TitleSeparator>&gt;</TitleSeparator>
 									<TraderText

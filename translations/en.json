@@ -815,6 +815,7 @@
 		},
 		"trader-history": {
 			"table": {
+				"back": "Back",
 				"timestamp": "Date/Time",
 				"market": "Market",
 				"status": "Status",

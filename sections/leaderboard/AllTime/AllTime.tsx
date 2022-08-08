@@ -13,13 +13,13 @@ import Connector from 'containers/Connector';
 import useENSAvatar from 'hooks/useENSAvatar';
 import { walletAddressState } from 'store/wallet';
 
-import { AccountStat, getMedal } from '../common';
+import { AccountStat, getMedal, StyledTrader } from '../common';
 
 type AllTimeProps = {
 	stats: AccountStat[];
 	isLoading: boolean;
 	searchTerm: string;
-	onClickTrader: (trader: string, traderEns: string) => void;
+	onClickTrader: (trader: string) => void;
 	compact?: boolean;
 };
 
@@ -95,14 +95,7 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 											cellProps.row.original.traderEns
 										);
 										return (
-											<StyledOrderType
-												onClick={() =>
-													onClickTrader(
-														cellProps.row.original.trader,
-														cellProps.row.original.traderEns
-													)
-												}
-											>
+											<StyledOrderType onClick={() => onClickTrader(cellProps.row.original.trader)}>
 												{compact && cellProps.row.original.rank + '. '}
 												<StyledTrader>
 													{avatar?.data ? (
@@ -122,7 +115,6 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 														</>
 													) : (
 														cellProps.row.original.traderEns ?? cellProps.row.original.traderShort
-														// cellProps.row.original.traderShort
 													)}
 												</StyledTrader>
 												{getMedal(cellProps.row.original.rank)}
@@ -212,11 +204,7 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 									cellProps.row.original.traderEns
 								);
 								return (
-									<StyledOrderType
-										onClick={() =>
-											onClickTrader(cellProps.row.original.trader, cellProps.row.original.traderEns)
-										}
-									>
+									<StyledOrderType onClick={() => onClickTrader(cellProps.row.original.trader)}>
 										{compact && cellProps.row.original.rank + '. '}
 										<StyledTrader>
 											{avatar ? (
@@ -297,16 +285,6 @@ const StyledOrderType = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	display: flex;
 	align-items: center;
-`;
-
-const StyledTrader = styled.a`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	display: flex;
-
-	&:hover {
-		text-decoration: underline;
-		cursor: pointer;
-	}
 `;
 
 export default AllTime;
