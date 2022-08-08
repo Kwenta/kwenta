@@ -111,6 +111,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 					<Competition
 						activeTier={activeTier}
 						ensInfo={ensInfo}
+						isLoading={ensInfoQuery.isLoading}
 						resetSelection={() => setSelectedTrader('')}
 						compact={compact}
 						searchTerm={searchTerm}

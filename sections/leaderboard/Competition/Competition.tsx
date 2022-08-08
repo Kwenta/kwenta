@@ -22,6 +22,7 @@ import { COMPETITION_DATA_LOCATION } from './constants';
 type CompetitionProps = {
 	activeTier: Tier;
 	ensInfo: Record<string, string>;
+	isLoading: boolean;
 	resetSelection: Function;
 	compact?: boolean;
 	searchTerm?: string | undefined;
@@ -30,6 +31,7 @@ type CompetitionProps = {
 const Competition: FC<CompetitionProps> = ({
 	activeTier,
 	ensInfo,
+	isLoading,
 	resetSelection,
 	compact,
 	searchTerm,
@@ -71,7 +73,7 @@ const Competition: FC<CompetitionProps> = ({
 					compact={compact}
 					showPagination
 					pageSize={10}
-					isLoading={competitionQuery.isLoading}
+					isLoading={competitionQuery.isLoading || isLoading}
 					data={data}
 					hideHeaders={compact}
 					columns={[
