@@ -2,16 +2,14 @@ import { CurrencyKey } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import { useAccount } from 'wagmi';
 
 import Currency from 'components/Currency';
 import { NO_VALUE } from 'constants/placeholder';
 import useMarketClosed from 'hooks/useMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { isWalletConnectedState } from 'store/wallet';
 import { SelectableCurrencyRow } from 'styles/common';
-import { useAccount } from 'wagmi';
 
 type Token = {
 	name: string;
