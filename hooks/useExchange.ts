@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { chain, useAccount, useNetwork } from 'wagmi';
 
 import { SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
 import {
@@ -49,13 +50,7 @@ import {
 } from 'store/exchange';
 import { ordersState } from 'store/orders';
 import { hasOrdersNotificationState, slippageState } from 'store/ui';
-import {
-	isWalletConnectedState,
-	walletAddressState,
-	isL2State,
-	networkState,
-	gasSpeedState,
-} from 'store/wallet';
+import { gasSpeedState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { truncateNumbers, zeroBN } from 'utils/formatters/number';
 import { hexToAsciiV2 } from 'utils/formatters/string';
@@ -103,7 +98,6 @@ const useExchange = ({
 	} = useSynthetixQueries();
 
 	useSynthBalances();
-
 	const router = useRouter();
 
 	const marketQuery = useMemo(
@@ -122,15 +116,18 @@ const useExchange = ({
 	const [quoteCurrencyAmount, setQuoteCurrencyAmount] = useRecoilState(quoteCurrencyAmountState);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [ratio, setRatio] = useRecoilState(ratioState);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const walletAddress = useRecoilValue(walletAddressState);
-	const isL2 = useRecoilValue(isL2State);
+	const { isConnected: isWalletConnected, address } = useAccount();
+	const walletAddress = address ?? null;
+	const { chain: activeChain } = useNetwork();
+	const isL2 =
+		activeChain !== undefined
+			? [chain.optimism.id, chain.optimismKovan.id].includes(activeChain?.id)
+			: false;
 	const setTxError = useSetRecoilState(txErrorState);
 	const [atomicExchangeSlippage] = useState('0.01');
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
-	const network = useRecoilValue(networkState);
 	const slippage = useRecoilValue(slippageState);
 	const getL1SecurityFee = useGetL1SecurityFee();
 
@@ -511,7 +508,7 @@ const useExchange = ({
 			quote: (quoteCurrencyKey && synthsMap[quoteCurrencyKey]?.name) || Synths.sUSD,
 		});
 		// eslint-disable-next-line
-	}, [network.id, walletAddress, setCurrencyPair, synthsMap]);
+	}, [activeChain?.id, walletAddress, setCurrencyPair, synthsMap]);
 
 	useEffect(() => {
 		if (

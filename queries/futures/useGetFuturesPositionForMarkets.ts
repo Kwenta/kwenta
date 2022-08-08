@@ -30,8 +30,6 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
-	// eslint-disable-next-line no-console
-	console.log(`selectedFuturesAddress`, selectedFuturesAddress);
 
 	const assets = futuresMarkets
 		.filter(({ asset }) => (activeChain?.id === 69 ? asset !== 'DYDX' : asset)) // Optimism Kovan has no contract FuturesMarketDYDX

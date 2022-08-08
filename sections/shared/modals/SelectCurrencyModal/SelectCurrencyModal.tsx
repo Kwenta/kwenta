@@ -1,22 +1,22 @@
+import synthetix, { NetworkId } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
+import { getDefaultProvider } from 'ethers';
 import orderBy from 'lodash/orderBy';
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
+import { chain, useAccount, useNetwork } from 'wagmi';
 
 import Button from 'components/Button';
 import SearchInput from 'components/Input/SearchInput';
 import Loader from 'components/Loader';
 import { CurrencyKey, CATEGORY_MAP } from 'constants/currency';
 import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
-import Connector from 'containers/Connector';
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
 import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
-import { networkState, walletAddressState } from 'store/wallet';
 import { FlexDivCentered } from 'styles/common';
 
 import { RowsHeader, CenteredModal } from '../common';
@@ -43,21 +43,25 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	onSelect,
 }) => {
 	const { t } = useTranslation();
-	const network = useRecoilValue(networkState);
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { address } = useAccount();
+	const { chain: activeChain } = useNetwork();
+	const walletAddress = address ?? null;
 
-	const { synthetixjs } = Connector.useContainer();
+	const synthetixjs = synthetix({
+		provider: getDefaultProvider(activeChain?.id as NetworkId),
+		networkId: (activeChain?.id ?? chain.optimism.id) as NetworkId,
+		useOvm: true,
+	});
 
 	const [assetSearch, setAssetSearch] = useState<string>('');
 	const [synthCategory, setSynthCategory] = useState<string | null>(null);
 	const [page, setPage] = useState(1);
 
 	// Only available on Optimism mainnet
-	const oneInchEnabled = network.id === 10;
+	const oneInchEnabled = activeChain?.id === 10;
 
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
 
-	// eslint-disable-next-line
 	const allSynths = synthetixjs?.synths ?? [];
 	const synths =
 		synthsOverride != null
@@ -65,7 +69,6 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 			: allSynths;
 
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery(walletAddress);
-
 	const synthBalances = synthsWalletBalancesQuery.isSuccess
 		? synthsWalletBalancesQuery.data ?? null
 		: null;
@@ -223,7 +226,6 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 						// TODO: use `Synth` type from contracts-interface
 						synthsResults.map((synth) => {
 							const currencyKey = synth.name;
-
 							return (
 								<CurrencyRow
 									key={currencyKey}

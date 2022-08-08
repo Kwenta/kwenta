@@ -18,8 +18,6 @@ export default function useQueryCrossMarginAccount() {
 	const { address } = useAccount();
 	const network = useRecoilValue(networkState);
 	const [futuresAccount, setFuturesAccount] = useRecoilState(futuresAccountState);
-	// eslint-disable-next-line no-console
-	console.log(`futuresAccount: `, futuresAccount);
 	const walletAddress = address ?? null;
 
 	const queryAccountLogs = useCallback(async () => {

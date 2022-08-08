@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
+import { chain, useAccount, useNetwork } from 'wagmi';
 
 import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 import Button from 'components/Button';
@@ -21,7 +22,6 @@ import {
 	quoteCurrencyKeyState,
 	txErrorState,
 } from 'store/exchange';
-import { isL2State, isWalletConnectedState } from 'store/wallet';
 import { NoTextTransform } from 'styles/common';
 
 import SettleTransactionsCard from '../../FooterCard/SettleTransactionsCard';
@@ -32,8 +32,12 @@ const FooterCard: React.FC = () => {
 	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
 	const quoteCurrencyAmount = useRecoilValue(quoteCurrencyAmountState);
 	const baseCurrencyAmount = useRecoilValue(baseCurrencyAmountState);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isL2 = useRecoilValue(isL2State);
+	const { isConnected: isWalletConnected } = useAccount();
+	const { chain: activeChain } = useNetwork();
+	const isL2 =
+		activeChain !== undefined
+			? [chain.optimism.id, chain.optimismKovan.id].includes(activeChain?.id)
+			: false;
 	const txError = useRecoilValue(txErrorState);
 
 	const quoteCurrencyMarketClosed = useMarketClosed(quoteCurrencyKey);

@@ -11,6 +11,7 @@ import useMarketClosed from 'hooks/useMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { isWalletConnectedState } from 'store/wallet';
 import { SelectableCurrencyRow } from 'styles/common';
+import { useAccount } from 'wagmi';
 
 type Token = {
 	name: string;
@@ -33,7 +34,7 @@ type SynthRowProps = {
 const CurrencyRow: FC<SynthRowProps> = ({ token, onClick, balance }) => {
 	const { t } = useTranslation();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const { isConnected: isWalletConnected } = useAccount();
 
 	const currencyKey = token.symbol;
 
