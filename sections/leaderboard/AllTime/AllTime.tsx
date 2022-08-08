@@ -1,4 +1,3 @@
-import { wei } from '@synthetixio/wei';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
@@ -12,83 +11,46 @@ import { Synths } from 'constants/currency';
 import { DEFAULT_LEADERBOARD_ROWS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import useENSAvatar from 'hooks/useENSAvatar';
-import useENSs from 'hooks/useENSs';
-import { FuturesStat } from 'queries/futures/types';
-import useGetStats from 'queries/futures/useGetStats';
 import { walletAddressState } from 'store/wallet';
-import { truncateAddress } from 'utils/formatters/string';
 
-import { getMedal } from '../common';
+import { AccountStat, getMedal } from '../common';
 
 type AllTimeProps = {
+	stats: AccountStat[];
+	isLoading: boolean;
 	searchTerm: string;
 	onClickTrader: (trader: string, traderEns: string) => void;
 	compact?: boolean;
 };
 
-const AllTime: FC<AllTimeProps> = ({ searchTerm, onClickTrader, compact }) => {
+const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader, compact }) => {
 	const { t } = useTranslation();
-	const { staticMainnetProvider } = Connector.useContainer();
-
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	const statsQuery = useGetStats();
-	const stats = useMemo(() => statsQuery.data ?? [], [statsQuery]);
-
-	const traders = useMemo(
-		() =>
-			stats.map((stat: FuturesStat) => {
-				return stat.account;
-			}) ?? [],
-		[stats]
-	);
-	const ensInfoQuery = useENSs(traders);
-	const ensInfo = useMemo(() => ensInfoQuery.data ?? [], [ensInfoQuery]);
-
-	let data = useMemo(() => {
-		return stats
-			.map((stat: FuturesStat, i: number) => ({
-				address: stat.account,
-				trader: stat.account,
-				traderShort: truncateAddress(stat.account),
-				traderEns: ensInfo[i]
-					? ensInfo[i].endsWith('.eth')
-						? ensInfo[i]
-						: truncateAddress(ensInfo[i])
-					: null,
-				totalTrades: stat.totalTrades,
-				totalVolume: wei(stat.totalVolume, 18, true).toNumber(),
-				liquidations: stat.liquidations,
-				'24h': 80000,
-				pnl: wei(stat.pnlWithFeesPaid, 18, true).toNumber(),
-			}))
-			.filter((stat: FuturesStat) => stat.totalVolume > 0)
-			.sort((a: FuturesStat, b: FuturesStat) => (b?.pnl || 0) - (a?.pnl || 0))
-			.map((stat: FuturesStat, i: number) => ({
-				rank: i + 1,
-				...stat,
-			}))
-			.filter((i: { trader: string; traderEns: string }) =>
-				searchTerm?.length
-					? i.trader.toLowerCase().includes(searchTerm) ||
-					  i.traderEns?.toLowerCase().includes(searchTerm)
-					: true
-			);
-	}, [stats, searchTerm, ensInfo]);
+	const { staticMainnetProvider } = Connector.useContainer();
 
 	if (compact) {
-		const ownPosition = data.findIndex((i: { address: string }) => {
-			return i.address.toLowerCase() === walletAddress?.toLowerCase();
+		const ownPosition = stats.findIndex((i: { account: string }) => {
+			return i.account.toLowerCase() === walletAddress?.toLowerCase();
 		});
 
-		const anchorPosition = ownPosition !== -1 && ownPosition > 10 ? data[ownPosition] : null;
+		const anchorPosition = ownPosition !== -1 && ownPosition > 10 ? stats[ownPosition] : null;
 
-		data = data.slice(0, 10);
+		stats = stats.slice(0, 10);
 
 		if (anchorPosition) {
-			data.push(anchorPosition);
+			stats.push(anchorPosition);
 		}
 	}
+
+	const data = useMemo(() => {
+		return stats.filter((i: AccountStat) =>
+			searchTerm?.length
+				? i.trader.toLowerCase().includes(searchTerm) ||
+				  i.traderEns?.toLowerCase().includes(searchTerm)
+				: true
+		);
+	}, [stats, searchTerm]);
 
 	return (
 		<>
@@ -96,9 +58,9 @@ const AllTime: FC<AllTimeProps> = ({ searchTerm, onClickTrader, compact }) => {
 				<StyledTable
 					compact={compact}
 					showPagination
-					isLoading={statsQuery.isLoading || ensInfoQuery.isLoading}
+					isLoading={isLoading}
 					data={data}
-					pageSize={20}
+					pageSize={10}
 					hideHeaders={compact}
 					hiddenColumns={
 						compact ? ['rank', 'totalTrades', 'liquidations', 'totalVolume', 'pnl'] : undefined
@@ -143,7 +105,7 @@ const AllTime: FC<AllTimeProps> = ({ searchTerm, onClickTrader, compact }) => {
 											>
 												{compact && cellProps.row.original.rank + '. '}
 												<StyledTrader>
-													{avatar ? (
+													{avatar?.data ? (
 														<>
 															{!avatar.isLoading && avatar.data && (
 																<img
@@ -160,6 +122,7 @@ const AllTime: FC<AllTimeProps> = ({ searchTerm, onClickTrader, compact }) => {
 														</>
 													) : (
 														cellProps.row.original.traderEns ?? cellProps.row.original.traderShort
+														// cellProps.row.original.traderShort
 													)}
 												</StyledTrader>
 												{getMedal(cellProps.row.original.rank)}
@@ -229,7 +192,7 @@ const AllTime: FC<AllTimeProps> = ({ searchTerm, onClickTrader, compact }) => {
 					data={data}
 					showPagination
 					pageSize={DEFAULT_LEADERBOARD_ROWS}
-					isLoading={statsQuery.isLoading || ensInfoQuery.isLoading}
+					isLoading={false}
 					hideHeaders={compact}
 					columns={[
 						{

@@ -1,3 +1,4 @@
+import { wei } from '@synthetixio/wei';
 import { useRouter } from 'next/router';
 import { FC, useMemo, useState } from 'react';
 import styled from 'styled-components';
@@ -5,9 +6,13 @@ import styled from 'styled-components';
 import TabButton from 'components/Button/TabButton';
 import Search from 'components/Table/Search';
 import ROUTES from 'constants/routes';
+import useENSs from 'hooks/useENSs';
+import { FuturesStat } from 'queries/futures/types';
+import useGetStats from 'queries/futures/useGetStats';
+import { truncateAddress } from 'utils/formatters/string';
 
 import AllTime from '../AllTime';
-import { COMPETITION_TIERS, Tier } from '../common';
+import { AccountStat, COMPETITION_TIERS, Tier } from '../common';
 import Competition from '../Competition';
 import TraderHistory from '../TraderHistory';
 
@@ -21,6 +26,39 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	const [selectedTrader, setSelectedTrader] = useState('');
 	const [traderENSName, setTraderENSName] = useState<string | null>(null);
 	const router = useRouter();
+
+	const statsQuery = useGetStats();
+	const statsData = useMemo(() => statsQuery.data ?? [], [statsQuery]);
+
+	const traders = useMemo(
+		() =>
+			statsData.map((stat: FuturesStat) => {
+				return stat.account;
+			}) ?? [],
+		[statsData]
+	);
+	const ensInfoQuery = useENSs(traders);
+	const ensInfo = useMemo(() => ensInfoQuery.data ?? {}, [ensInfoQuery]);
+
+	let stats: AccountStat[] = useMemo(() => {
+		return statsData
+			.map((stat: FuturesStat, i: number) => ({
+				account: stat.account,
+				trader: stat.account,
+				traderShort: truncateAddress(stat.account),
+				traderEns: ensInfo[stat.account] ?? null,
+				totalTrades: stat.totalTrades,
+				totalVolume: wei(stat.totalVolume, 18, true).toNumber(),
+				liquidations: stat.liquidations,
+				pnl: wei(stat.pnlWithFeesPaid, 18, true).toNumber(),
+			}))
+			.filter((stat: FuturesStat) => stat.totalVolume > 0)
+			.sort((a: FuturesStat, b: FuturesStat) => (b?.pnl || 0) - (a?.pnl || 0))
+			.map((stat: FuturesStat, i: number) => ({
+				rank: i + 1,
+				...stat,
+			}));
+	}, [statsData, ensInfo]);
 
 	useMemo(() => {
 		if (router.query.tab) {
@@ -72,6 +110,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 				{activeTier ? (
 					<Competition
 						activeTier={activeTier}
+						ensInfo={ensInfo}
 						resetSelection={() => setSelectedTrader('')}
 						compact={compact}
 						searchTerm={searchTerm}
@@ -85,7 +124,13 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 						searchTerm={searchTerm}
 					/>
 				) : (
-					<AllTime compact={compact} onClickTrader={onClickTrader} searchTerm={searchTerm} />
+					<AllTime
+						stats={stats}
+						isLoading={statsQuery.isLoading || ensInfoQuery.isLoading}
+						compact={compact}
+						onClickTrader={onClickTrader}
+						searchTerm={searchTerm}
+					/>
 				)}
 			</TableContainer>
 		</>

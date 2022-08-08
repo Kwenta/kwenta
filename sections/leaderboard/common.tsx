@@ -1,3 +1,4 @@
+import Wei from '@synthetixio/wei';
 import styled from 'styled-components';
 
 export type Tier = 'gold' | 'silver' | 'bronze' | null;
@@ -19,3 +20,14 @@ const Medal = styled.span`
 	font-size: 16px;
 	margin-left: 4px;
 `;
+
+export type AccountStat = {
+	account: string;
+	trader: string;
+	traderShort: string;
+	traderEns: string | null;
+	totalTrades: Wei;
+	totalVolume: Wei;
+	liquidation: Wei;
+	pnl: Wei;
+};

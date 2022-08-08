@@ -21,6 +21,7 @@ import { COMPETITION_DATA_LOCATION } from './constants';
 
 type CompetitionProps = {
 	activeTier: Tier;
+	ensInfo: Record<string, string>;
 	resetSelection: Function;
 	compact?: boolean;
 	searchTerm?: string | undefined;
@@ -28,6 +29,7 @@ type CompetitionProps = {
 
 const Competition: FC<CompetitionProps> = ({
 	activeTier,
+	ensInfo,
 	resetSelection,
 	compact,
 	searchTerm,
@@ -42,6 +44,7 @@ const Competition: FC<CompetitionProps> = ({
 			.map((trader: any, i: number) => {
 				return {
 					trader: trader.account,
+					traderEns: ensInfo[trader.account],
 					tier: trader.tier,
 					rank: trader.rank,
 					traderShort: truncateAddress(trader.account),
@@ -59,7 +62,7 @@ const Competition: FC<CompetitionProps> = ({
 					  i.traderEns?.toLowerCase().includes(searchTerm)
 					: true
 			);
-	}, [competitionQuery, searchTerm, activeTier]);
+	}, [competitionQuery, ensInfo, searchTerm, activeTier]);
 
 	return (
 		<>
@@ -107,7 +110,9 @@ const Competition: FC<CompetitionProps> = ({
 										return (
 											<StyledOrderType>
 												{compact && cellProps.row.original.rank + '. '}
-												<StyledValue>{cellProps.row.original.traderShort}</StyledValue>
+												<StyledValue>
+													{cellProps.row.original.traderEns ?? cellProps.row.original.traderShort}
+												</StyledValue>
 												{getMedal(cellProps.row.original.rank)}
 											</StyledOrderType>
 										);
