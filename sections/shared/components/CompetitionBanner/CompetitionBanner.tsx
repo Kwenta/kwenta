@@ -22,7 +22,7 @@ const BannerContainer = styled.div`
 `;
 
 const CompetitionPeriod = styled.p`
-	font-family: 'Akkurat Mono LL';
+	font-family: ${(props) => props.theme.fonts.mono};
 	font-style: normal;
 	font-weight: 700;
 	font-size: 8px;
@@ -33,7 +33,7 @@ const CompetitionPeriod = styled.p`
 `;
 
 const CompetitionState = styled.p`
-	font-family: 'Akkurat Mono LL';
+	font-family: ${(props) => props.theme.fonts.mono};
 	font-style: normal;
 	font-weight: 700;
 	font-size: 21px;
@@ -48,7 +48,7 @@ const CTA = styled.a`
 	background: #ffb800;
 	border-radius: 15px;
 	border: none;
-	font-family: 'Akkurat LL';
+	font-family: ${(props) => props.theme.fonts.regular};
 	font-style: normal;
 	font-weight: 900;
 	font-size: 8px;
