@@ -190,6 +190,7 @@ const FuturesMarketsTable: FC = () => {
 										{t('dashboard.overview.futures-markets-table.funding-rate')}
 									</TableHeader>
 								),
+								sortable: false,
 								accessor: 'fundingRate',
 								Cell: (cellProps: CellProps<any>) => {
 									return (
@@ -201,7 +202,6 @@ const FuturesMarketsTable: FC = () => {
 									);
 								},
 								width: 125,
-								sortable: true,
 								sortType: useMemo(
 									() => (rowA: any, rowB: any) => {
 										const rowOne = rowA.original.fundingRate ?? wei(0);
