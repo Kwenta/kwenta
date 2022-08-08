@@ -3,9 +3,13 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import CompetitionBannerBg from 'assets/svg/app/competition-banner-bg.svg';
+import { COMPETITION_DATES } from 'constants/competition';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { ExternalLink } from 'styles/common';
 import { breakpoints } from 'styles/media';
+import { formatDateWithoutYear } from 'utils/formatters/date';
+
+import { CompetitionState } from './CompetitionState';
 
 const BannerContainer = styled.div`
 	position: relative;
@@ -33,17 +37,6 @@ const CompetitionPeriod = styled.p`
 	font-size: 8px;
 	line-height: 10px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	// clear UA style.
-	margin: 0;
-`;
-
-const CompetitionState = styled.p`
-	font-family: ${(props) => props.theme.fonts.mono};
-	font-style: normal;
-	font-weight: 700;
-	font-size: 21px;
-	line-height: 25px;
-	color: ${(props) => props.theme.colors.selectedTheme.competitionBanner.state.text};
 	// clear UA style.
 	margin: 0;
 `;
@@ -87,10 +80,15 @@ const StyledBg = styled(CompetitionBannerBg)`
 export const CompetitionBanner = () => {
 	const { t } = useTranslation();
 
+	const formatedStartDate = formatDateWithoutYear(COMPETITION_DATES.START_DATE);
+	const formatedEndDate = formatDateWithoutYear(COMPETITION_DATES.END_DATE);
+
+	const competitionPeriod = `${formatedStartDate}-${formatedEndDate.split(' ')[1]}`;
+
 	return (
 		<BannerContainer>
-			<CompetitionPeriod>August 10-12</CompetitionPeriod>
-			<CompetitionState>{t('common.competition.during-competition')}</CompetitionState>
+			<CompetitionPeriod>{competitionPeriod}</CompetitionPeriod>
+			<CompetitionState />
 			<CTA href={EXTERNAL_LINKS.Competition.LearnMore}>{t('common.learn-more')}</CTA>
 
 			<StyledBg />
