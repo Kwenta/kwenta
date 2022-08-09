@@ -1,6 +1,6 @@
 import { Chain, Wallet, getWalletConnectConnector } from '@rainbow-me/rainbowkit';
 
-import GnosisIcon from 'assets/svg/rainbowkit/gnosis.svg';
+import GnosisIcon from 'assets/png/rainbowkit/gnosis.png';
 
 type SafeOptions = {
 	chains: Chain[];
@@ -10,7 +10,7 @@ const Safe = ({ chains }: SafeOptions): Wallet => ({
 	id: 'safe',
 	iconBackground: '#FFF',
 	name: 'Gnosis Safe',
-	iconUrl: GnosisIcon,
+	iconUrl: async () => GnosisIcon,
 	downloadUrls: {
 		android: 'https://play.google.com/store/apps/details?id=io.gnosis.safe',
 		ios: 'https://apps.apple.com/us/app/gnosis-safe/idid1515759131',
