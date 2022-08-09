@@ -7,13 +7,16 @@ import CloseIcon from 'assets/svg/app/close.svg';
 import MenuIcon from 'assets/svg/app/menu.svg';
 import Button from 'components/Button';
 import ROUTES from 'constants/routes';
+import type { HeaderProps } from 'sections/shared/Layout/HomeLayout/Header';
 import { FixedFooterMixin } from 'styles/common';
 
 import MobileMenuModal from './MobileMenuModal';
 import MobileSettingsModal from './MobileSettingsModal';
 import MobileWalletButton from './MobileWalletButton';
 
-const MobileUserMenu: FC = () => {
+type MobileUserMenuProps = Partial<HeaderProps>;
+
+const MobileUserMenu: FC<MobileUserMenuProps> = ({ setCurrentPage = () => {} }) => {
 	const [isOpen, setIsOpen] = useState<'menu' | 'settings' | undefined>();
 	const { t } = useTranslation();
 	const closeModal = () => {
@@ -55,7 +58,9 @@ const MobileUserMenu: FC = () => {
 					)}
 				</MobileFooterRight>
 			</MobileFooterContainer>
-			{isOpen === 'menu' && <MobileMenuModal onDismiss={closeModal} />}
+			{isOpen === 'menu' && (
+				<MobileMenuModal setCurrentPage={setCurrentPage} onDismiss={closeModal} />
+			)}
 			{isOpen === 'settings' && <MobileSettingsModal onDismiss={closeModal} />}
 		</>
 	);

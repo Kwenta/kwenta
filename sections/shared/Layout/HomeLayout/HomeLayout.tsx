@@ -6,15 +6,16 @@ import { FullScreenContainer } from 'styles/common';
 
 import Footer from './Footer';
 import Header from './Header';
+import type { HeaderProps } from './Header';
 
-type HomeLayoutProps = {
+type HomeLayoutProps = HeaderProps & {
 	children: React.ReactNode;
 };
 
-const HomeLayout: FC<HomeLayoutProps> = ({ children }) => (
+const HomeLayout: FC<HomeLayoutProps> = ({ setCurrentPage, children }) => (
 	<FullScreenContainer>
 		<GlobalStyle />
-		<Header />
+		<Header setCurrentPage={setCurrentPage} />
 		<RefetchProvider>{children}</RefetchProvider>
 		<Footer />
 	</FullScreenContainer>

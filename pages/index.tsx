@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -11,6 +11,7 @@ import Learn from 'sections/homepage/Learn';
 import ShortList from 'sections/homepage/ShortList';
 import TradeNow from 'sections/homepage/TradeNow';
 import HomeLayout from 'sections/shared/Layout/HomeLayout';
+import type { TPages } from 'sections/shared/Layout/HomeLayout/Header';
 import media from 'styles/media';
 
 type AppLayoutProps = {
@@ -21,6 +22,9 @@ type HomePageComponent = FC & { layout?: FC<AppLayoutProps> };
 
 const HomePage: HomePageComponent = () => {
 	const { t } = useTranslation();
+
+	const [currentPage, setCurrentPage] = useState<TPages>('landing-page');
+
 	const Assets = dynamic(() => import('../sections/homepage/Assets'), {
 		ssr: false,
 	});
@@ -30,16 +34,21 @@ const HomePage: HomePageComponent = () => {
 			<Head>
 				<title>{t('homepage.page-title')}</title>
 			</Head>
-			<HomeLayout>
-				<Container>
-					<Hero />
-					<Assets />
-					<ShortList />
-					<Earning />
-					<Features />
-					<Learn />
-					<TradeNow />
-				</Container>
+			<HomeLayout setCurrentPage={setCurrentPage}>
+				{currentPage === 'landing-page' ? (
+					<Container>
+						<Hero />
+						<Assets />
+						<ShortList />
+						<Earning />
+						<Features />
+						<Learn />
+						<TradeNow />
+					</Container>
+				) : (
+					// TODO
+					<></>
+				)}
 			</HomeLayout>
 		</>
 	);

@@ -8,17 +8,18 @@ import MobileMenuArrow from 'assets/svg/app/mobile-menu-arrow.svg';
 import FullScreenModal from 'components/FullScreenModal';
 import ROUTES from 'constants/routes';
 import Links from 'sections/dashboard/Links';
+import type { HeaderProps } from 'sections/shared/Layout/HomeLayout/Header';
 import Logo from 'sections/shared/Layout/Logo';
 
 import { HOMEPAGE_MENU_LINKS, MENU_LINKS } from '../constants';
 import { MenuButton, SUB_MENUS } from './common';
 import MobileSubMenu from './MobileSubMenu';
 
-type MobileMenuModalProps = {
+type MobileMenuModalProps = HeaderProps & {
 	onDismiss(): void;
 };
 
-export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
+export const MobileMenuModal: FC<MobileMenuModalProps> = ({ setCurrentPage, onDismiss }) => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
 	const menuLinks =
@@ -30,6 +31,11 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
 		setExpanded((l) => (l === link ? undefined : link));
 	};
 
+	const showStatsPage = () => {
+		setCurrentPage('stats-page');
+		onDismiss();
+	};
+
 	return (
 		<StyledFullScreenModal isOpen>
 			<Container>
@@ -39,7 +45,12 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
 				<div>
 					{menuLinks.map(({ i18nLabel, link }) => (
 						<div key={link}>
-							{SUB_MENUS[link] ? (
+							{link === ROUTES.Stats.Home ? (
+								<MenuButton isActive={asPath.includes(link)} onClick={showStatsPage}>
+									{t(i18nLabel)}
+									<MobileMenuArrow />
+								</MenuButton>
+							) : SUB_MENUS[link] ? (
 								<MobileSubMenu
 									active={expanded === link}
 									i18nLabel={i18nLabel}
