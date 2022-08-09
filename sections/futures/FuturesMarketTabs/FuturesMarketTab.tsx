@@ -13,8 +13,7 @@ import { Synths } from 'constants/currency';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
-import { futuresMarketsState } from 'store/futures';
+import { futuresMarketsState, pastRatesState } from 'store/futures';
 import { FlexDivCol } from 'styles/common';
 import { FuturesMarketAsset, isEurForex, MarketKeyByAsset } from 'utils/futures';
 
@@ -32,19 +31,17 @@ const FuturesMarketsTable: FC = () => {
 	const router = useRouter();
 
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
-
-	const dailyPriceChangesQuery = useLaggedDailyPrice();
+	const pastRates = useRecoilValue(pastRatesState);
 
 	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
 
 	let data = useMemo(() => {
-		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
 		const futuresVolume = futuresVolumeQuery?.data ?? {};
 
 		return (
 			futuresMarkets?.map((market) => {
 				const volume = futuresVolume[market.assetHex];
-				const pastPrice = dailyPriceChanges.find((price) => price.synth === market.asset);
+				const pastPrice = pastRates.find((price) => price.synth === market.asset);
 
 				return {
 					asset: market.asset,
@@ -55,7 +52,7 @@ const FuturesMarketsTable: FC = () => {
 				};
 			}) ?? []
 		);
-	}, [futuresMarkets, dailyPriceChangesQuery?.data, futuresVolumeQuery?.data]);
+	}, [futuresMarkets, pastRates, futuresVolumeQuery?.data]);
 
 	return (
 		<TableContainer>

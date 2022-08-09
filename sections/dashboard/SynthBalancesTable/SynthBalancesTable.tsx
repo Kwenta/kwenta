@@ -5,6 +5,7 @@ import * as _ from 'lodash/fp';
 import { FC, ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps, Row } from 'react-table';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import ChangePercent from 'components/ChangePercent';
@@ -14,7 +15,7 @@ import Table, { TableNoResults } from 'components/Table';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import { Price } from 'queries/rates/types';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
+import { pastRatesState } from 'store/futures';
 import { formatNumber, zeroBN } from 'utils/formatters/number';
 import { isEurForex } from 'utils/futures';
 
@@ -51,16 +52,14 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 }: SynthBalancesTableProps) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
-
-	const dailyPriceChangesQuery = useLaggedDailyPrice();
+	const pastRates = useRecoilValue(pastRatesState);
 
 	let data = useMemo(() => {
-		const dailyPriceChanges: Price[] = dailyPriceChangesQuery?.data ?? [];
 		return synthBalances.map((synthBalance: SynthBalance) => {
 			const { currencyKey, balance, usdBalance } = synthBalance;
 
 			const price = exchangeRates && exchangeRates[currencyKey];
-			const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === currencyKey);
+			const pastPrice = pastRates.find((price: Price) => price.synth === currencyKey);
 
 			const description = synthsMap != null ? synthsMap[currencyKey]?.description : '';
 			return {
@@ -72,7 +71,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 				priceChange: calculatePriceChange(price, pastPrice),
 			};
 		});
-	}, [dailyPriceChangesQuery?.data, exchangeRates, synthBalances, synthsMap]);
+	}, [pastRates, exchangeRates, synthBalances, synthsMap]);
 
 	return (
 		<>

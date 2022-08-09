@@ -2,13 +2,13 @@ import EthDater from 'ethereum-block-by-date';
 import request, { gql } from 'graphql-request';
 import { values } from 'lodash';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
-import { marketAssetsState } from 'store/futures';
+import { marketAssetsState, pastRatesState } from 'store/futures';
 import { networkState } from 'store/wallet';
 import logError from 'utils/logError';
 
@@ -20,6 +20,7 @@ const useLaggedDailyPrice = (options?: UseQueryOptions<Price[] | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
 	const marketAssets = useRecoilValue(marketAssetsState);
+	const setPastRates = useSetRecoilState(pastRatesState);
 	const { provider, synthsMap } = Connector.useContainer();
 
 	const minTimestamp = Math.floor(Date.now()) - 60 * 60 * 24 * 1000;
@@ -58,13 +59,16 @@ const useLaggedDailyPrice = (options?: UseQueryOptions<Price[] | null>) => {
 						synths: synths,
 					}
 				);
-				return response ? mapLaggedDailyPrices(response.latestRates) : null;
+				const pastRates = response ? mapLaggedDailyPrices(response.latestRates) : [];
+
+				setPastRates(pastRates);
+				return pastRates;
 			} catch (e) {
 				logError(e);
 				return null;
 			}
 		},
-		{ enabled: isAppReady && synths.length > 0, refetchInterval: 60000, ...options }
+		{ enabled: isAppReady && synths.length > 0, refetchInterval: 1000 * 60 * 15, ...options }
 	);
 };
 

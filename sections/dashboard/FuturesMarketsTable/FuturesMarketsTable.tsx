@@ -19,8 +19,7 @@ import useGetAverageFundingRateForMarkets, {
 	FundingRateResponse,
 } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
-import { futuresMarketsState } from 'store/futures';
+import { futuresMarketsState, pastRatesState } from 'store/futures';
 import {
 	getSynthDescription,
 	isEurForex,
@@ -34,21 +33,19 @@ const FuturesMarketsTable: FC = () => {
 	const { synthsMap } = Connector.useContainer();
 
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
-
-	const dailyPriceChangesQuery = useLaggedDailyPrice();
+	const pastRates = useRecoilValue(pastRatesState);
 
 	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
 
 	const fundingRates = useGetAverageFundingRateForMarkets(PERIOD_IN_SECONDS[Period.ONE_HOUR]);
 
 	let data = useMemo(() => {
-		const dailyPriceChanges = dailyPriceChangesQuery.data ?? [];
 		const futuresVolume = futuresVolumeQuery.data ?? {};
 
 		return futuresMarkets.map((market) => {
 			const description = getSynthDescription(market.asset, synthsMap, t);
 			const volume = futuresVolume[market.assetHex];
-			const pastPrice = dailyPriceChanges.find((price) => price.synth === market.asset);
+			const pastPrice = pastRates.find((price) => price.synth === market.asset);
 			const fundingRateResponse = fundingRates.find(
 				({ data: fundingData }) =>
 					(fundingData as FundingRateResponse)?.asset === MarketKeyByAsset[market.asset]
@@ -73,14 +70,7 @@ const FuturesMarketsTable: FC = () => {
 				marketClosureReason: market.marketClosureReason,
 			};
 		});
-	}, [
-		synthsMap,
-		futuresMarkets,
-		fundingRates,
-		dailyPriceChangesQuery?.data,
-		futuresVolumeQuery?.data,
-		t,
-	]);
+	}, [synthsMap, futuresMarkets, fundingRates, pastRates, futuresVolumeQuery?.data, t]);
 
 	return (
 		<>

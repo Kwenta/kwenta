@@ -17,8 +17,8 @@ import { CurrencyKey } from 'constants/currency';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import { Price, Rates } from 'queries/rates/types';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
+import { pastRatesState } from 'store/futures';
 import { networkState } from 'store/wallet';
 import { isEurForex, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
@@ -30,6 +30,8 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const network = useRecoilValue(networkState);
+	const pastRates = useRecoilValue(pastRatesState);
+
 	const { synthsMap } = Connector.useContainer();
 
 	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
@@ -45,13 +47,10 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 			  )
 			: synths;
 
-	const dailyPriceChangesQuery = useLaggedDailyPrice();
-
 	const yesterday = Math.floor(new Date().setDate(new Date().getDate() - 1) / 1000);
 	const synthVolumesQuery = useGetSynthsTradingVolumeForAllMarkets(yesterday);
 
 	let data = useMemo(() => {
-		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
 		return unfrozenSynths.map((synth: Synth) => {
 			const description = synth.description
 				? t('common.currency.synthetic-currency-name', {
@@ -60,7 +59,7 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 				: '';
 			const rate = exchangeRates && exchangeRates[synth.name];
 			const price = _.isNil(rate) ? 0 : rate.toNumber();
-			const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === synth.name);
+			const pastPrice = pastRates.find((price: Price) => price.synth === synth.name);
 			const synthVolumes = synthVolumesQuery?.data ?? {};
 			return {
 				asset: synth.asset,
@@ -76,7 +75,7 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 				volume: synthVolumes[synth.name] ?? 0,
 			};
 		});
-	}, [synthsMap, unfrozenSynths, synthVolumesQuery, dailyPriceChangesQuery, exchangeRates, t]);
+	}, [synthsMap, unfrozenSynths, synthVolumesQuery, pastRates, exchangeRates, t]);
 
 	return (
 		<TableContainer>

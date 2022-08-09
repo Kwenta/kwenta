@@ -8,6 +8,7 @@ import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositio
 import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useSynthBalances from 'queries/synths/useSynthBalances';
 import { futuresAccountState } from 'store/futures';
 
@@ -37,6 +38,7 @@ export const RefetchProvider: React.FC = ({ children }) => {
 	const marketsQuery = useGetFuturesMarkets();
 	useExchangeRatesQuery({ refetchInterval: 15000 });
 	useGetFuturesPotentialTradeDetails();
+	useLaggedDailyPrice();
 
 	const handleRefetch = (refetchType: RefetchType, timeout?: number) => {
 		setTimeout(() => {

@@ -10,8 +10,7 @@ import useGetAverageFundingRateForMarket from 'queries/futures/useGetAverageFund
 import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
 import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolume';
 import useExternalPriceQuery from 'queries/rates/useExternalPriceQuery';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
-import { currentMarketState, marketInfoState, marketKeyState } from 'store/futures';
+import { currentMarketState, marketInfoState, marketKeyState, pastRatesState } from 'store/futures';
 import { isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { isEurForex } from 'utils/futures';
@@ -22,6 +21,7 @@ const useGetMarketData = (mobile?: boolean) => {
 	const marketAsset = useRecoilValue(currentMarketState);
 	const marketKey = useRecoilValue(marketKeyState);
 	const marketInfo = useRecoilValue(marketInfoState);
+	const pastRates = useRecoilValue(pastRatesState);
 
 	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(marketAsset);
 
@@ -41,10 +41,7 @@ const useGetMarketData = (mobile?: boolean) => {
 			? DEFAULT_FIAT_EURO_DECIMALS
 			: undefined;
 
-	const dailyPriceChangesQuery = useLaggedDailyPrice();
-	const dailyPriceChanges = dailyPriceChangesQuery.data ?? [];
-
-	const pastPrice = dailyPriceChanges.find((price) => price.synth === marketAsset);
+	const pastPrice = pastRates.find((price) => price.synth === marketAsset);
 
 	const fundingTitle = React.useMemo(
 		() =>

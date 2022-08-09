@@ -10,7 +10,7 @@ import {
 	FuturesPosition,
 	FuturesPotentialTradeDetails,
 } from 'queries/futures/types';
-import { Rates } from 'queries/rates/types';
+import { Price, Rates } from 'queries/rates/types';
 import { PositionSide } from 'sections/futures/types';
 import { getFuturesKey, getSynthsKey } from 'store/utils';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
@@ -99,6 +99,11 @@ export const leverageSideState = atom<PositionSide>({
 export const ratesState = atom<Rates>({
 	key: getFuturesKey('rates'),
 	default: {},
+});
+
+export const pastRatesState = atom<Price[] | []>({
+	key: getFuturesKey('pastRates'),
+	default: [],
 });
 
 export const orderTypeState = atom({

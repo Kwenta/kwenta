@@ -20,9 +20,8 @@ import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFutur
 import { Price } from 'queries/rates/types';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
-import { futuresMarketsState } from 'store/futures';
+import { futuresMarketsState, pastRatesState } from 'store/futures';
 import {
 	FlexDiv,
 	FlexDivColCentered,
@@ -149,6 +148,7 @@ const Assets = () => {
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	const pastRates = useRecoilValue(pastRatesState);
 
 	const MARKETS_TABS = useMemo(
 		() => [
@@ -177,7 +177,6 @@ const Assets = () => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
-	const dailyPriceChangesQuery = useLaggedDailyPrice();
 	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
 
 	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
@@ -196,14 +195,13 @@ const Assets = () => {
 	const synthVolumesQuery = useGetSynthsTradingVolumeForAllMarkets(yesterday);
 
 	const PERPS = useMemo(() => {
-		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
 		const futuresVolume = futuresVolumeQuery?.data ?? {};
 
 		return (
 			futuresMarkets?.map((market, i) => {
 				const description = getSynthDescription(market.asset, synthsMap, t);
 				const volume = futuresVolume[market.assetHex];
-				const pastPrice = dailyPriceChanges.find(
+				const pastPrice = pastRates.find(
 					(price: Price) => price.synth === market.asset || price.synth === market.asset.slice(1)
 				);
 				return {
@@ -222,10 +220,9 @@ const Assets = () => {
 			}) ?? []
 		);
 		// eslint-disable-next-line
-	}, [futuresMarkets, synthsMap, dailyPriceChangesQuery?.data, futuresVolumeQuery?.data, t]);
+	}, [futuresMarkets, synthsMap, pastRates, futuresVolumeQuery?.data, t]);
 
 	const SPOTS = useMemo(() => {
-		const spotDailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
 		const synthVolumes = synthVolumesQuery?.data ?? {};
 
 		return unfrozenSynths.map((synth) => {
@@ -237,7 +234,7 @@ const Assets = () => {
 			const rate = exchangeRates && exchangeRates[synth.name];
 			const price = isNil(rate) ? 0 : rate.toNumber();
 
-			const pastPrice = spotDailyPriceChanges.find((price: Price) => {
+			const pastPrice = pastRates.find((price: Price) => {
 				return price.synth === synth.asset || price.synth === synth.name;
 			});
 
@@ -254,7 +251,7 @@ const Assets = () => {
 				),
 			};
 		});
-	}, [unfrozenSynths, synthVolumesQuery, dailyPriceChangesQuery, exchangeRates, t]);
+	}, [unfrozenSynths, synthVolumesQuery, pastRates, exchangeRates, t]);
 
 	const title = (
 		<>
