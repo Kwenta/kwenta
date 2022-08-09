@@ -51,7 +51,7 @@ const FuturesMarketsTable: FC = () => {
 					market: market.marketName,
 					price: market.price,
 					volume: volume?.toNumber() ?? 0,
-					priceChange: market.price.sub(pastPrice?.price ?? 0).div(market.price) || 0,
+					priceChange: pastPrice?.price && market.price.sub(pastPrice?.price).div(market.price),
 				};
 			}) ?? []
 		);
