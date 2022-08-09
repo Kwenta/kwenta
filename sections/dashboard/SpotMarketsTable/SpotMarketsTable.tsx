@@ -45,13 +45,13 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 			  )
 			: synths;
 
-	const synthNames = synths.map((synth) => synth.name);
-	const dailyPriceChangesQuery = useLaggedDailyPrice(synthNames);
+	const dailyPriceChangesQuery = useLaggedDailyPrice();
 
 	const yesterday = Math.floor(new Date().setDate(new Date().getDate() - 1) / 1000);
 	const synthVolumesQuery = useGetSynthsTradingVolumeForAllMarkets(yesterday);
 
 	let data = useMemo(() => {
+		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
 		return unfrozenSynths.map((synth: Synth) => {
 			const description = synth.description
 				? t('common.currency.synthetic-currency-name', {
@@ -60,7 +60,6 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 				: '';
 			const rate = exchangeRates && exchangeRates[synth.name];
 			const price = _.isNil(rate) ? 0 : rate.toNumber();
-			const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
 			const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === synth.name);
 			const synthVolumes = synthVolumesQuery?.data ?? {};
 			return {

@@ -33,8 +33,7 @@ const FuturesMarketsTable: FC = () => {
 
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 
-	const synthList = futuresMarkets.map(({ asset }) => asset);
-	const dailyPriceChangesQuery = useLaggedDailyPrice(synthList);
+	const dailyPriceChangesQuery = useLaggedDailyPrice();
 
 	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
 

@@ -177,9 +177,7 @@ const Assets = () => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
-	const synthList = futuresMarkets.map(({ asset }) => asset);
-
-	const dailyPriceChangesQuery = useLaggedDailyPrice(synthList);
+	const dailyPriceChangesQuery = useLaggedDailyPrice();
 	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
 
 	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
@@ -194,8 +192,6 @@ const Assets = () => {
 			  )
 			: synths;
 
-	const synthNames = synths.map((synth) => synth.name);
-	const spotDailyPriceChangesQuery = useLaggedDailyPrice(synthNames);
 	const yesterday = Math.floor(new Date().setDate(new Date().getDate() - 1) / 1000);
 	const synthVolumesQuery = useGetSynthsTradingVolumeForAllMarkets(yesterday);
 
@@ -229,7 +225,7 @@ const Assets = () => {
 	}, [futuresMarkets, synthsMap, dailyPriceChangesQuery?.data, futuresVolumeQuery?.data, t]);
 
 	const SPOTS = useMemo(() => {
-		const spotDailyPriceChanges = spotDailyPriceChangesQuery?.data ?? [];
+		const spotDailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
 		const synthVolumes = synthVolumesQuery?.data ?? {};
 
 		return unfrozenSynths.map((synth) => {
@@ -258,7 +254,7 @@ const Assets = () => {
 				),
 			};
 		});
-	}, [unfrozenSynths, synthVolumesQuery, spotDailyPriceChangesQuery, exchangeRates, t]);
+	}, [unfrozenSynths, synthVolumesQuery, dailyPriceChangesQuery, exchangeRates, t]);
 
 	const title = (
 		<>

@@ -41,7 +41,7 @@ const useGetMarketData = (mobile?: boolean) => {
 			? DEFAULT_FIAT_EURO_DECIMALS
 			: undefined;
 
-	const dailyPriceChangesQuery = useLaggedDailyPrice([marketKey]);
+	const dailyPriceChangesQuery = useLaggedDailyPrice();
 	const dailyPriceChanges = dailyPriceChangesQuery.data ?? [];
 
 	const pastPrice = dailyPriceChanges.find((price) => price.synth === marketAsset);

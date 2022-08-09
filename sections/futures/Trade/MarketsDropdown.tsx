@@ -66,10 +66,8 @@ type MarketsDropdownProps = {
 
 const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
-	const markets = futuresMarkets.map(({ asset }) => MarketKeyByAsset[asset]);
 
-	const dailyPriceChangesQuery = useLaggedDailyPrice(markets);
-
+	const dailyPriceChangesQuery = useLaggedDailyPrice();
 	const dailyPriceChanges = React.useMemo(() => dailyPriceChangesQuery?.data ?? [], [
 		dailyPriceChangesQuery,
 	]);

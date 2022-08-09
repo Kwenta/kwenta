@@ -1,9 +1,5 @@
 import { CurrencyKey } from '@synthetixio/contracts-interface';
-import {
-	CRYPTO_CURRENCY_MAP,
-	iStandardSynth,
-	synthToAsset,
-} from '@synthetixio/queries/build/node/src/currency';
+import { CRYPTO_CURRENCY_MAP } from '@synthetixio/queries/build/node/src/currency';
 import { wei } from '@synthetixio/wei';
 import { BigNumberish, ethers } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
@@ -14,6 +10,7 @@ import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
 import { ratesState } from 'store/futures';
 import { networkState } from 'store/wallet';
+import { FuturesMarketKey, MarketAssetByKey } from 'utils/futures';
 
 import { Rates } from './types';
 
@@ -46,14 +43,11 @@ const useExchangeRatesQuery = (options?: UseQueryOptions<Rates>) => {
 			const rates = [...synthsRates[1], ...ratesForCurrencies] as CurrencyRate[];
 
 			synths.forEach((currencyKeyBytes32: CurrencyKey, idx: number) => {
-				const currencyKey = ethers.utils.parseBytes32String(currencyKeyBytes32) as CurrencyKey;
+				const currencyKey = ethers.utils.parseBytes32String(currencyKeyBytes32) as FuturesMarketKey;
+				const marketAsset = MarketAssetByKey[currencyKey];
 				const rate = Number(ethers.utils.formatEther(rates[idx]));
 
-				exchangeRates[currencyKey] = wei(rate);
-				// only interested in the standard synths (sETH -> ETH, etc)
-				if (iStandardSynth(currencyKey)) {
-					exchangeRates[synthToAsset(currencyKey)] = wei(rate);
-				}
+				exchangeRates[marketAsset] = wei(rate);
 			});
 
 			setRates(exchangeRates);

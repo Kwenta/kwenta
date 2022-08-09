@@ -15,7 +15,7 @@ import { PositionSide } from 'sections/futures/types';
 import { getFuturesKey, getSynthsKey } from 'store/utils';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN } from 'utils/formatters/number';
-import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
+import { FuturesMarketAsset, MarketAssetByKey, MarketKeyByAsset } from 'utils/futures';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
@@ -36,6 +36,18 @@ export const marketKeysState = selector({
 		return futuresMarkets.map(({ asset }) => {
 			return MarketKeyByAsset[asset];
 		});
+	},
+});
+
+export const marketAssetsState = selector({
+	key: getFuturesKey('marketAssets'),
+	get: ({ get }) => {
+		const marketKeys = get(marketKeysState);
+		return marketKeys.map(
+			(key): FuturesMarketAsset => {
+				return MarketAssetByKey[key];
+			}
+		);
 	},
 });
 

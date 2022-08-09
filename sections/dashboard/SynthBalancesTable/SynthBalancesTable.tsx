@@ -52,8 +52,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
 
-	const synthNames = synthBalances.map(({ currencyKey }) => currencyKey);
-	const dailyPriceChangesQuery = useLaggedDailyPrice(synthNames);
+	const dailyPriceChangesQuery = useLaggedDailyPrice();
 
 	let data = useMemo(() => {
 		const dailyPriceChanges: Price[] = dailyPriceChangesQuery?.data ?? [];

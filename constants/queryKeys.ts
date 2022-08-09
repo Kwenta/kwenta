@@ -23,6 +23,12 @@ export const QUERY_KEYS = {
 		],
 		MarketCap: (currencyKey: string) => ['marketCap', currencyKey],
 		ExchangeRates: ['rates', 'exchangeRates'],
+		PastRates: (networkId: NetworkId, assets: (FuturesMarketAsset | CurrencyKey)[]) => [
+			'rates',
+			'pastRates',
+			networkId,
+			assets,
+		],
 		ExternalPrice: (currencyKey: string) => ['rates', 'externalPrice', currencyKey],
 		Candlesticks: (currencyKey: string, period: Period) => [
 			'rates',
