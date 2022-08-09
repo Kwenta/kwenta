@@ -71,6 +71,12 @@ export type FuturesMarket = {
 		makerFeeNextPrice: Wei;
 		takerFeeNextPrice: Wei;
 	};
+	openInterest?: {
+		short: number;
+		long: number;
+		shortUSD: Wei;
+		longUSD: Wei;
+	};
 	marketDebt: Wei;
 	marketSkew: Wei;
 	marketSize: Wei;
