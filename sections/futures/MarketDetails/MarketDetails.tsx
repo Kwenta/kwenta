@@ -38,18 +38,18 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	]);
 
 	// skew text
-	const truncationConfig = { truncation: { divisor: 1e6, unit: 'M' } };
-
 	const longText = useMemo(() => {
 		return (
 			marketInfo?.openInterest &&
 			formatCurrency(Synths.sUSD, marketInfo.openInterest.longUSD, {
 				sign: '$',
 				maxDecimals: 2,
-				...(marketInfo?.openInterest?.longUSD.gt(1e6) ? truncationConfig : {}),
+				...(marketInfo?.openInterest?.longUSD.gt(1e6)
+					? { truncation: { divisor: 1e6, unit: 'M' } }
+					: {}),
 			})
 		);
-	}, [marketInfo, truncationConfig]);
+	}, [marketInfo]);
 
 	const shortText = useMemo(() => {
 		return (
@@ -57,10 +57,12 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 			formatCurrency(Synths.sUSD, marketInfo.openInterest.shortUSD, {
 				sign: '$',
 				maxDecimals: 2,
-				...(marketInfo?.openInterest?.shortUSD.gt(1e6) ? truncationConfig : {}),
+				...(marketInfo?.openInterest?.shortUSD.gt(1e6)
+					? { truncation: { divisor: 1e6, unit: 'M' } }
+					: {}),
 			})
 		);
-	}, [marketInfo, truncationConfig]);
+	}, [marketInfo]);
 
 	const enableTooltip = (key: string, children: React.ReactElement) => {
 		switch (key) {
