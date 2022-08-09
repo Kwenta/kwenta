@@ -13,7 +13,7 @@ import Connector from 'containers/Connector';
 import useENSAvatar from 'hooks/useENSAvatar';
 import { walletAddressState } from 'store/wallet';
 
-import { AccountStat, getMedal, StyledTrader } from '../common';
+import { AccountStat, getMedal, PIN, StyledTrader } from '../common';
 
 type AllTimeProps = {
 	stats: AccountStat[];
@@ -44,13 +44,32 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 	}
 
 	const data = useMemo(() => {
-		return stats.filter((i: AccountStat) =>
-			searchTerm?.length
-				? i.trader.toLowerCase().includes(searchTerm) ||
-				  i.traderEns?.toLowerCase().includes(searchTerm)
-				: true
-		);
-	}, [stats, searchTerm]);
+		const statsData = stats
+			.sort((a: AccountStat, b: AccountStat) => a.rank - b.rank)
+			.map((trader: any, i: number) => {
+				const pinText = trader.account === walletAddress ? PIN : '';
+
+				return {
+					...trader,
+					rankText: `${trader.rank}${pinText}`,
+				};
+			})
+			.filter((i: { trader: string; traderEns: string }) =>
+				searchTerm?.length
+					? i.trader.toLowerCase().includes(searchTerm) ||
+					  i.traderEns?.toLowerCase().includes(searchTerm)
+					: true
+			);
+
+		return [
+			...statsData.filter(
+				(trader) => trader.account.toLowerCase() === walletAddress?.toLowerCase()
+			),
+			...statsData.filter(
+				(trader) => trader.account.toLowerCase() !== walletAddress?.toLowerCase()
+			),
+		];
+	}, [stats, searchTerm, walletAddress]);
 
 	return (
 		<>
@@ -78,7 +97,7 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 									Header: <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
 									accessor: 'rank',
 									Cell: (cellProps: CellProps<any>) => (
-										<StyledOrderType>{cellProps.row.original.rank}</StyledOrderType>
+										<StyledOrderType>{cellProps.row.original.rankText}</StyledOrderType>
 									),
 									width: compact ? 40 : 60,
 								},

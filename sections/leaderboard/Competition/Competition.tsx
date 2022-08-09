@@ -14,7 +14,7 @@ import { walletAddressState } from 'store/wallet';
 import { formatPercent } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';
 
-import { getMedal, StyledTrader, Tier } from '../common';
+import { AccountStat, getMedal, PIN, StyledTrader, Tier } from '../common';
 import { COMPETITION_DATA_LOCATION } from './constants';
 
 type CompetitionProps = {
@@ -38,13 +38,18 @@ const Competition: FC<CompetitionProps> = ({
 
 	let data = useMemo(() => {
 		const competitionData = competitionQuery?.data ?? [];
-		return competitionData
+
+		const cleanCompetitionData: AccountStat[] = competitionData
+			.sort((a: AccountStat, b: AccountStat) => a.rank - b.rank)
 			.map((trader: any, i: number) => {
+				const pinText = trader.account === walletAddress ? PIN : '';
+
 				return {
 					trader: trader.account,
 					traderEns: ensInfo[trader.account],
 					tier: trader.tier,
 					rank: trader.rank,
+					rankText: `${trader.rank}${pinText}`,
 					traderShort: truncateAddress(trader.account),
 					pnl: wei(trader.pnl),
 					pnlPct: `(${formatPercent(trader?.pnl_pct)})`,
@@ -60,7 +65,16 @@ const Competition: FC<CompetitionProps> = ({
 					  i.traderEns?.toLowerCase().includes(searchTerm)
 					: true
 			);
-	}, [competitionQuery, ensInfo, searchTerm, activeTier]);
+
+		return [
+			...cleanCompetitionData.filter(
+				(trader) => trader.account.toLowerCase() === walletAddress?.toLowerCase()
+			),
+			...cleanCompetitionData.filter(
+				(trader) => trader.account.toLowerCase() !== walletAddress?.toLowerCase()
+			),
+		];
+	}, [competitionQuery, ensInfo, searchTerm, activeTier, walletAddress]);
 
 	return (
 		<>
@@ -86,7 +100,7 @@ const Competition: FC<CompetitionProps> = ({
 									accessor: 'rank',
 									sortType: 'basic',
 									Cell: (cellProps: CellProps<any>) => (
-										<StyledOrderType>{cellProps.row.original.rank}</StyledOrderType>
+										<StyledOrderType>{cellProps.row.original.rankText}</StyledOrderType>
 									),
 									width: compact ? 40 : 60,
 								},
@@ -99,7 +113,9 @@ const Competition: FC<CompetitionProps> = ({
 									accessor: 'trader',
 									Cell: (cellProps: CellProps<any>) => {
 										return (
-											<StyledOrderType onClick={() => onClickTrader(cellProps.row.original.trader)}>
+											<StyledOrderType
+												onClick={() => onClickTrader(cellProps.row.original.account)}
+											>
 												{compact && cellProps.row.original.rank + '. '}
 												<StyledTrader>
 													{cellProps.row.original.traderEns ?? cellProps.row.original.traderShort}
@@ -150,7 +166,7 @@ const Competition: FC<CompetitionProps> = ({
 									accessor: 'pnl',
 									sortType: 'basic',
 									Cell: (cellProps: CellProps<any>) => (
-										<PnlContainer direction={'row'}>
+										<PnlContainer direction={'column'}>
 											<ColorCodedPrice
 												currencyKey={Synths.sUSD}
 												price={cellProps.row.original.pnl}

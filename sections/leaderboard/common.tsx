@@ -17,6 +17,7 @@ export const getMedal = (position: number) => {
 export const COMPETITION_TIERS: Tier[] = ['bronze', 'silver', 'gold'];
 
 export type AccountStat = {
+	rank: number;
 	account: string;
 	trader: string;
 	traderShort: string;
@@ -26,6 +27,8 @@ export type AccountStat = {
 	liquidation: Wei;
 	pnl: Wei;
 };
+
+export const PIN = ' 📌';
 
 const Medal = styled.span`
 	font-size: 16px;
