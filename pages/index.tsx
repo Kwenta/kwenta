@@ -12,6 +12,7 @@ import ShortList from 'sections/homepage/ShortList';
 import TradeNow from 'sections/homepage/TradeNow';
 import HomeLayout from 'sections/shared/Layout/HomeLayout';
 import type { TPages } from 'sections/shared/Layout/HomeLayout/Header';
+import { Stats } from 'sections/stats';
 import media from 'styles/media';
 
 type AppLayoutProps = {
@@ -46,8 +47,7 @@ const HomePage: HomePageComponent = () => {
 						<TradeNow />
 					</Container>
 				) : (
-					// TODO
-					<></>
+					<Stats />
 				)}
 			</HomeLayout>
 		</>

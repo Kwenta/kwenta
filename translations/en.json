@@ -278,6 +278,9 @@
 			}
 		}
 	},
+	"stats": {
+		"title": "kwenta stats"
+	},
 	"exchange": {
 		"page-title": "Exchange | Kwenta",
 		"page-title-currency-pair": "{{baseCurrencyKey}}/{{quoteCurrencyKey}} - {{rate}} | Kwenta",
