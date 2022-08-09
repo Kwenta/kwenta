@@ -7,6 +7,7 @@ import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
+import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useSynthBalances from 'queries/synths/useSynthBalances';
 import { futuresAccountState } from 'store/futures';
@@ -16,7 +17,8 @@ type RefetchType =
 	| 'new-order'
 	| 'close-position'
 	| 'margin-change'
-	| 'account-margin-change';
+	| 'account-margin-change'
+	| 'cross-margin-account-change';
 
 type RefetchContextType = {
 	handleRefetch: (refetchType: RefetchType, timeout?: number) => void;
@@ -35,6 +37,8 @@ export const RefetchProvider: React.FC = ({ children }) => {
 	const crossMarginAccountOverview = useGetCrossMarginAccountOverview();
 	const positionsQuery = useGetFuturesPositionForMarkets();
 	const marketsQuery = useGetFuturesMarkets();
+	const crossMarginAccountQuery = useQueryCrossMarginAccount();
+
 	useExchangeRatesQuery({ refetchInterval: 15000 });
 	useGetFuturesPotentialTradeDetails();
 
@@ -63,6 +67,9 @@ export const RefetchProvider: React.FC = ({ children }) => {
 					break;
 				case 'account-margin-change':
 					crossMarginAccountOverview.refetch();
+					break;
+				case 'cross-margin-account-change':
+					crossMarginAccountQuery.refetch();
 					break;
 			}
 		}, timeout ?? 5000);

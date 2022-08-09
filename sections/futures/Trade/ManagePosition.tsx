@@ -11,7 +11,7 @@ import {
 	confirmationModalOpenState,
 	isMarketCapReachedState,
 	leverageSideState,
-	leverageState,
+	isolatedMarginleverageState,
 	marketInfoState,
 	maxLeverageState,
 	orderTypeState,
@@ -20,6 +20,7 @@ import {
 	potentialTradeDetailsState,
 	sizeDeltaState,
 	tradeSizeState,
+	futuresAccountState,
 } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 
@@ -33,13 +34,13 @@ type OrderTxnError = {
 
 const ManagePosition: React.FC = () => {
 	const { t } = useTranslation();
-	const leverage = useRecoilValue(leverageState);
+	const isolatedMarginLeverage = useRecoilValue(isolatedMarginleverageState);
 	const sizeDelta = useRecoilValue(sizeDeltaState);
 	const position = useRecoilValue(positionState);
 	const maxLeverageValue = useRecoilValue(maxLeverageState);
 	const marketInfo = useRecoilValue(marketInfoState);
+	const { selectedAccountType } = useRecoilValue(futuresAccountState);
 	const previewTrade = useRecoilValue(potentialTradeDetailsState);
-	const positionDetails = position?.position;
 	const orderType = useRecoilValue(orderTypeState);
 	const setLeverageSide = useSetRecoilState(leverageSideState);
 	const setTradeSize = useSetRecoilState(tradeSizeState);
@@ -51,6 +52,8 @@ const ManagePosition: React.FC = () => {
 	const isMarketCapReached = useRecoilValue(isMarketCapReachedState);
 	const placeOrderTranslationKey = useRecoilValue(placeOrderTranslationKeyState);
 
+	const positionDetails = position?.position;
+
 	const orderError = useMemo(() => {
 		const orderTxnError = orderTxn.error as OrderTxnError;
 		if (orderTxnError) return orderTxnError.reason;
@@ -58,6 +61,12 @@ const ManagePosition: React.FC = () => {
 		if (previewTrade?.showStatus) return previewTrade?.statusMessage;
 		return null;
 	}, [orderTxn.error, error, previewTrade?.showStatus, previewTrade?.statusMessage]);
+
+	const leverageValid = useMemo(() => {
+		if (selectedAccountType === 'cross_margin') return true;
+		const leverage = Number(isolatedMarginLeverage || 0);
+		return leverage > 0 && leverage < maxLeverageValue.toNumber();
+	}, [isolatedMarginLeverage, selectedAccountType, maxLeverageValue]);
 
 	return (
 		<>
@@ -72,9 +81,7 @@ const ManagePosition: React.FC = () => {
 						noOutline
 						fullWidth
 						disabled={
-							!leverage ||
-							Number(leverage) < 0 ||
-							Number(leverage) > maxLeverageValue.toNumber() ||
+							!leverageValid ||
 							sizeDelta.eq(zeroBN) ||
 							!!error ||
 							placeOrderTranslationKey === 'futures.market.trade.button.deposit-margin-minimum' ||

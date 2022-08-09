@@ -30,6 +30,7 @@ const SliderComponent: React.FC<SliderProps> = ({
 				min={minValue}
 				max={maxValue}
 				step={steps}
+				marks
 				defaultValue={defaultValue ?? minValue}
 				value={value}
 				onChange={onChange}

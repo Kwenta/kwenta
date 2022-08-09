@@ -641,7 +641,9 @@
 						"deposit": {
 							"title": "Deposit Margin",
 							"button": "Deposit Margin",
-							"disclaimer": "A $50 margin minimum is required to open a position."
+							"disclaimer": "A $50 margin minimum is required to open a position.",
+							"min-deposit": "$50 minimum margin to open a position",
+							"exceeds-balance": "Amount exceeds balance"
 						},
 						"withdraw": {
 							"title": "Withdraw Margin",

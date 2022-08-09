@@ -1,17 +1,15 @@
 import React from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import SegmentedControl from 'components/SegmentedControl';
-import { futuresAccountState, leverageSideState, orderTypeState } from 'store/futures';
+import { leverageSideState, orderTypeState } from 'store/futures';
 
 import FeeInfoBox from '../FeeInfoBox';
 import LeverageInput from '../LeverageInput';
 import MarketInfoBox from '../MarketInfoBox';
 import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
-import AccountTypeToggle from './AccountTypeToggle';
-import CrossMarginAccountActions from './CrossMarginAccountActions';
 import ManagePosition from './ManagePosition';
 import MarketActions from './MarketActions';
 import MarketsDropdown from './MarketsDropdown';
@@ -20,24 +18,11 @@ import NextPrice from './NextPrice';
 const Trade: React.FC = () => {
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
-	const futuresAccount = useRecoilValue(futuresAccountState);
 
 	return (
 		<div>
-			{
-				//TODO: Remove dev check
-				process?.env?.NODE_ENV === 'development' && futuresAccount.crossMarginAvailable && (
-					<AccountTypeToggle />
-				)
-			}
-
 			<MarketsDropdown />
-
-			{futuresAccount.selectedAccountType === 'isolated_margin' ? (
-				<MarketActions />
-			) : (
-				<CrossMarginAccountActions />
-			)}
+			<MarketActions />
 
 			<MarketInfoBox />
 

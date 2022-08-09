@@ -6,12 +6,16 @@ import CustomInput from 'components/Input/CustomInput';
 import { Synths } from 'constants/currency';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import {
+	crossMarginAvailableMarginState,
 	currentMarketState,
+	futuresAccountState,
 	maxLeverageState,
+	positionState,
 	tradeSizeState,
 	tradeSizeSUSDState,
 } from 'store/futures';
 import { FlexDivRow } from 'styles/common';
+import { zeroBN } from 'utils/formatters/number';
 
 type OrderSizingProps = {
 	disabled?: boolean;
@@ -20,25 +24,29 @@ type OrderSizingProps = {
 const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 	const tradeSize = useRecoilValue(tradeSizeState);
 	const tradeSizeSUSD = useRecoilValue(tradeSizeSUSDState);
+	const position = useRecoilValue(positionState);
 	const marketAsset = useRecoilValue(currentMarketState);
 	const maxLeverage = useRecoilValue(maxLeverageState);
+	const account = useRecoilValue(futuresAccountState);
+	const freeCrossMargin = useRecoilValue(crossMarginAvailableMarginState);
 
-	const {
-		onTradeAmountChange,
-		onTradeAmountSUSDChange,
-		onLeverageChange,
-		remainingMargin,
-	} = useFuturesContext();
+	const { onTradeAmountChange, onTradeAmountSUSDChange, onLeverageChange } = useFuturesContext();
 
 	const handleSetMax = () => {
-		const maxOrderSizeUSDValue = Number(maxLeverage.mul(remainingMargin)).toFixed(0);
+		const maxOrderSizeUSDValue = Number(
+			maxLeverage.mul(position?.remainingMargin ?? zeroBN)
+		).toFixed(0);
 		onTradeAmountSUSDChange(maxOrderSizeUSDValue);
 		onLeverageChange(Number(maxLeverage).toString().substring(0, 4));
 	};
 
 	const isDisabled = React.useMemo(() => {
-		return remainingMargin.lte(0) || disabled;
-	}, [remainingMargin, disabled]);
+		const remaining =
+			account.selectedAccountType === 'isolated_margin'
+				? position?.remainingMargin || zeroBN
+				: freeCrossMargin;
+		return remaining.lte(0) || disabled;
+	}, [position?.remainingMargin, disabled, account.selectedAccountType, freeCrossMargin]);
 
 	return (
 		<OrderSizingContainer>

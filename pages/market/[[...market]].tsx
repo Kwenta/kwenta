@@ -2,19 +2,20 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { FuturesContext } from 'contexts/FuturesContext';
 import { RefetchProvider } from 'contexts/RefetchContext';
 import useFuturesData from 'hooks/useFuturesData';
-import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
 import MarketInfo from 'sections/futures/MarketInfo';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
 import Trade from 'sections/futures/Trade';
+import AccountTypeToggle from 'sections/futures/Trade/AccountTypeToggle';
+import TradeCrossMargin from 'sections/futures/TradeCrossMargin';
 import AppLayout from 'sections/shared/Layout/AppLayout';
-import { currentMarketState } from 'store/futures';
+import { currentMarketState, futuresAccountState } from 'store/futures';
 import {
 	PageContent,
 	FullHeightContainer,
@@ -36,11 +37,11 @@ const Market: MarketComponent = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 
-	useQueryCrossMarginAccount();
-
 	const marketAsset = router.query.market?.[0] as FuturesMarketAsset;
 
 	const setCurrentMarket = useSetRecoilState(currentMarketState);
+	const { selectedAccountType } = useRecoilValue(futuresAccountState);
+	const futuresAccount = useRecoilValue(futuresAccountState);
 
 	const futuresData = useFuturesData();
 
@@ -64,7 +65,12 @@ const Market: MarketComponent = () => {
 								<MarketInfo />
 							</StyledMainContent>
 							<StyledRightSideContent>
-								<Trade />
+								{
+									//TODO: Remove dev check
+									process?.env?.NODE_ENV === 'development' &&
+										futuresAccount.crossMarginAvailable && <AccountTypeToggle />
+								}
+								{selectedAccountType === 'cross_margin' ? <TradeCrossMargin /> : <Trade />}
 							</StyledRightSideContent>
 						</StyledFullHeightContainer>
 					</PageContent>

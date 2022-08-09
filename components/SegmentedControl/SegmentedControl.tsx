@@ -34,8 +34,8 @@ const SegmentedControlContainer = styled.div<{ $length: number }>`
 	box-sizing: border-box;
 	grid-gap: 14px;
 	width: 100%;
-	height: 46px;
-	padding: 6px;
+	height: 38px;
+	padding: 4px;
 	background: ${(props) => props.theme.colors.selectedTheme.segmented.background};
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 8px;

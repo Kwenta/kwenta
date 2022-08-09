@@ -8,7 +8,7 @@ import CustomNumericInput from 'components/Input/CustomNumericInput';
 import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import {
-	leverageState,
+	isolatedMarginleverageState,
 	leverageValueCommittedState,
 	marketInfoState,
 	maxLeverageState,
@@ -24,7 +24,7 @@ import LeverageSlider from '../LeverageSlider';
 const LeverageInput: FC = () => {
 	const { t } = useTranslation();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
-	const leverage = useRecoilValue(leverageState);
+	const leverage = useRecoilValue(isolatedMarginleverageState);
 	const maxLeverage = useRecoilValue(maxLeverageState);
 	const orderType = useRecoilValue(orderTypeState);
 	const isDisclaimerDisplayed = useRecoilValue(nextPriceDisclaimerState);

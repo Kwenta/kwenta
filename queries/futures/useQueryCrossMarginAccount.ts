@@ -31,7 +31,7 @@ export default function useQueryCrossMarginAccount() {
 	}, [walletAddress, crossMarginContractFactory]);
 
 	return useQuery<any | null>(
-		QUERY_KEYS.Futures.CrossMarginAccount(network.id, walletAddress + 't' || ''),
+		QUERY_KEYS.Futures.CrossMarginAccount(network.id, walletAddress || ''),
 		async () => {
 			if (!supportedNetworks.includes(network.id)) {
 				const accountState = {
@@ -47,11 +47,12 @@ export default function useQueryCrossMarginAccount() {
 			}
 
 			setFuturesAccount({
+				...futuresAccount,
+				crossMarginAddress:
+					walletAddress === futuresAccount.walletAddress ? futuresAccount.crossMarginAddress : null,
 				crossMarginAvailable: true,
-				crossMarginAddress: null,
 				walletAddress,
 				selectedFuturesAddress: futuresAccount?.selectedFuturesAddress || walletAddress,
-				selectedAccountType: futuresAccount?.selectedAccountType || 'isolated_margin',
 				loading: true,
 			});
 
@@ -65,7 +66,7 @@ export default function useQueryCrossMarginAccount() {
 				crossMarginAddress: crossMarginAccount,
 				walletAddress,
 				selectedFuturesAddress: crossMarginAccount || walletAddress,
-				selectedAccountType: (crossMarginAccount
+				selectedAccountType: (crossMarginAccount && !futuresAccount.crossMarginAddress
 					? 'cross_margin'
 					: 'isolated_margin') as FuturesAccountType,
 			};

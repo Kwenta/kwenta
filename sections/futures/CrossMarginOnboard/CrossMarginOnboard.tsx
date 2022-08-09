@@ -16,7 +16,6 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useSUSDContract from 'hooks/useSUSDContract';
-import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
 import { futuresAccountState } from 'store/futures';
 import logError from 'utils/logError';
 
@@ -35,14 +34,12 @@ export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Prop
 		crossMarginContractFactory,
 	} = useCrossMarginAccountContracts();
 	const susdContract = useSUSDContract();
-	const query = useQueryCrossMarginAccount();
+	const { handleRefetch } = useRefetchContext();
 
 	const futuresAccount = useRecoilValue(futuresAccountState);
 	const [depositAmount, setDepositAmount] = useState('');
 	const [depositComplete, setDepositComplete] = useState(false);
 	const [creatingAccount, setCreatingAccount] = useState(false);
-
-	const { handleRefetch } = useRefetchContext();
 
 	const createAccount = useCallback(async () => {
 		try {
@@ -59,7 +56,7 @@ export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Prop
 				txHash: tx.hash,
 				onTxConfirmed: async () => {
 					try {
-						query.refetch();
+						handleRefetch('cross-margin-account-change', 1000);
 					} catch (err) {
 						logError(err);
 					} finally {
@@ -79,7 +76,7 @@ export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Prop
 		synthetixjs,
 		crossMarginContractFactory,
 		network,
-		query,
+		handleRefetch,
 		setCreatingAccount,
 		monitorTransaction,
 	]);

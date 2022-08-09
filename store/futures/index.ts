@@ -1,4 +1,3 @@
-import { Balances } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { atom, selector } from 'recoil';
 
@@ -9,6 +8,7 @@ import {
 	FuturesMarket,
 	FuturesPosition,
 	FuturesPotentialTradeDetails,
+	SynthBalances,
 } from 'queries/futures/types';
 import { Rates } from 'queries/rates/types';
 import { PositionSide } from 'sections/futures/types';
@@ -39,7 +39,7 @@ export const marketKeysState = selector({
 	},
 });
 
-export const balancesState = atom<Balances | null>({
+export const balancesState = atom<SynthBalances | null>({
 	key: getSynthsKey('balances'),
 	default: null,
 });
@@ -74,9 +74,19 @@ export const tradeSizeSUSDState = atom({
 	default: '',
 });
 
-export const leverageState = atom({
-	key: getFuturesKey('leverage'),
+export const isolatedMarginleverageState = atom({
+	key: getFuturesKey('isolatedMarginleverage'),
 	default: '',
+});
+
+export const crossMarginLeverageState = atom({
+	key: getFuturesKey('crossMarginLeverage'),
+	default: '10',
+});
+
+export const crossMarginMarginDeltaState = atom({
+	key: getFuturesKey('crossMarginMarginDelta'),
+	default: '0',
 });
 
 export const leverageSideState = atom<PositionSide>({
@@ -160,7 +170,7 @@ export const maxLeverageState = selector({
 export const nextPriceDisclaimerState = selector({
 	key: getFuturesKey('nextPriceDisclaimer'),
 	get: ({ get }) => {
-		const leverage = get(leverageState);
+		const leverage = get(isolatedMarginleverageState);
 		const maxLeverage = get(maxLeverageState);
 
 		return wei(leverage || 0).gte(maxLeverage.sub(wei(1))) && wei(leverage || 0).lte(maxLeverage);

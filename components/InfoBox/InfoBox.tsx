@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { NO_VALUE } from 'constants/placeholder';
 
 export type DetailedInfo = {
-	value: string;
+	value: string | React.ReactNode;
 	keyNode?: React.ReactNode;
 	valueNode?: React.ReactNode;
 	color?: 'green' | 'red' | 'gold';

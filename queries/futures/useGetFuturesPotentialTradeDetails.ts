@@ -7,11 +7,11 @@ import Connector from 'containers/Connector';
 import { PotentialTradeStatus, POTENTIAL_TRADE_STATUS_TO_MESSAGE } from 'sections/futures/types';
 import { appReadyState } from 'store/app';
 import {
-	crossMarginAvailableMarginState,
+	crossMarginMarginDeltaState,
 	currentMarketState,
 	futuresAccountState,
 	leverageSideState,
-	leverageState,
+	isolatedMarginleverageState,
 	potentialTradeDetailsState,
 	tradeSizeState,
 } from 'store/futures';
@@ -34,13 +34,11 @@ const useGetFuturesPotentialTradeDetails = (
 	const { synthetixjs } = Connector.useContainer();
 
 	const tradeSize = useRecoilValue(tradeSizeState);
-	const leverageSide = useRecoilValue(leverageSideState);
-	const leverage = useRecoilValue(leverageState);
-	const marketAsset = useRecoilValue(currentMarketState);
-	const crossMarginFreeMargin = useRecoilValue(crossMarginAvailableMarginState);
 
-	// TODO: This should become variable once cross margin fully implemented
-	const marginDelta = crossMarginFreeMargin;
+	const leverageSide = useRecoilValue(leverageSideState);
+	const leverage = useRecoilValue(isolatedMarginleverageState);
+	const marketAsset = useRecoilValue(currentMarketState);
+	const positionMarginDelta = useRecoilValue(crossMarginMarginDeltaState);
 
 	const newSize = leverageSide === 'long' ? tradeSize : -tradeSize;
 
@@ -69,7 +67,7 @@ const useGetFuturesPotentialTradeDetails = (
 			tradeSize,
 			selectedFuturesAddress || '',
 			selectedAccountType,
-			marginDelta.toString(),
+			positionMarginDelta,
 			leverageSide
 		),
 		async () => {
@@ -88,7 +86,7 @@ const useGetFuturesPotentialTradeDetails = (
 
 			const preview =
 				selectedAccountType === 'cross_margin'
-					? await getPreview(newSize, crossMarginFreeMargin)
+					? await getPreview(newSize, wei(positionMarginDelta).toBN())
 					: await FuturesMarketContract.postTradeDetails(
 							wei(newSize).toBN(),
 							selectedFuturesAddress

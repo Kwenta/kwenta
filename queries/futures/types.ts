@@ -1,3 +1,4 @@
+import { Balances } from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
 
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
@@ -256,4 +257,8 @@ export type FuturesAccountState = {
 	crossMarginAddress: string | null;
 	crossMarginAvailable: boolean;
 	loading: boolean;
+};
+
+export type SynthBalances = Balances & {
+	susdWalletBalance: Wei;
 };
