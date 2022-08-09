@@ -24,7 +24,7 @@ export const ChangePercent: FC<ChangePercentProps> = ({
 
 	return (
 		<CurrencyChange isPositive={isPositive} {...rest}>
-			{isPositive && showArrow ? <ChangePositiveIcon /> : <ChangeNegativeIcon />}
+			{showArrow ? isPositive ? <ChangePositiveIcon /> : <ChangeNegativeIcon /> : ''}
 			{formatPercent(wei(value ?? 0).abs(), { minDecimals: decimals })}
 		</CurrencyChange>
 	);
