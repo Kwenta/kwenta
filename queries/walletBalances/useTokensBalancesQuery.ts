@@ -5,7 +5,7 @@ import { Provider, Contract as EthCallContract } from 'ethcall';
 import { BigNumber } from 'ethers';
 import keyBy from 'lodash/keyBy';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useNetwork } from 'wagmi';
+import { chain, useAccount, useNetwork } from 'wagmi';
 
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
 import QUERY_KEYS from 'constants/queryKeys';
@@ -21,6 +21,7 @@ const useTokensBalancesQuery = (
 	options?: UseQueryOptions<TokenBalances | null>
 ) => {
 	const { chain: activeChain } = useNetwork();
+	const { isConnected } = useAccount();
 	const provider = getDefaultProvider(activeChain?.id as NetworkId);
 	const filteredTokens = tokens.filter((t) => !FILTERED_TOKENS.includes(t.address.toLowerCase()));
 	const symbols = filteredTokens.map((token) => token.symbol);
@@ -29,7 +30,7 @@ const useTokensBalancesQuery = (
 	return useQuery<TokenBalances | null>(
 		QUERY_KEYS.WalletBalances.Tokens(
 			walletAddress,
-			activeChain!.id as NetworkId,
+			(activeChain?.id ?? chain.optimism.id) as NetworkId,
 			filteredTokens.map((f) => f.address).join()
 		),
 		async () => {
@@ -61,7 +62,7 @@ const useTokensBalancesQuery = (
 			return tokenBalances;
 		},
 		{
-			enabled: !!provider && tokens.length > 0 && !!walletAddress,
+			enabled: !!provider && tokens.length > 0 && !!walletAddress && isConnected,
 			...options,
 		}
 	);

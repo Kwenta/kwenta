@@ -1,12 +1,11 @@
+import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
+import { NetworkId } from '@synthetixio/contracts-interface';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import { useAccount, useNetwork } from 'wagmi';
 
 import Button from 'components/Button';
-import Connector from 'containers/Connector';
-import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { isWalletConnectedState, networkState } from 'store/wallet';
 import { isSupportedNetworkId } from 'utils/network';
 
 import ConnectionDot from '../ConnectionDot';
@@ -19,20 +18,17 @@ type MobileWalletButtonProps = {
 
 const MobileWalletButton: React.FC<MobileWalletButtonProps> = ({ toggleModal, closeModal }) => {
 	const { t } = useTranslation();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const network = useRecoilValue(networkState);
-	const { connectWallet } = Connector.useContainer();
-	const { switchToL2 } = useNetworkSwitcher();
+	const { isConnected: isWalletConnected } = useAccount();
+	const { chain: network } = useNetwork();
+	const { openConnectModal: connectWallet } = useConnectModal();
+	const { openChainModal } = useChainModal();
 
 	const walletIsNotConnected = (
 		<ConnectButton
 			size="sm"
 			variant="outline"
 			noOutline
-			onClick={() => {
-				closeModal();
-				connectWallet();
-			}}
+			onClick={connectWallet}
 			data-testid="connect-wallet"
 			mono
 		>
@@ -47,7 +43,7 @@ const MobileWalletButton: React.FC<MobileWalletButtonProps> = ({ toggleModal, cl
 			variant="outline"
 			data-testid="unsupported-network"
 			mono
-			onClick={switchToL2}
+			onClick={openChainModal}
 		>
 			<StyledConnectionDot />
 			{t('common.wallet.unsupported-network')}
@@ -57,7 +53,7 @@ const MobileWalletButton: React.FC<MobileWalletButtonProps> = ({ toggleModal, cl
 	const walletIsConnectedAndSupported = <MobileWalletActions toggleModal={toggleModal} />;
 
 	return isWalletConnected
-		? isSupportedNetworkId(network.id)
+		? isSupportedNetworkId(network?.id as NetworkId)
 			? walletIsConnectedAndSupported
 			: walletIsConnectedButNotSupported
 		: walletIsNotConnected;
