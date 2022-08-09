@@ -196,6 +196,7 @@ const FuturesMarketsTable: FC = () => {
 										<ChangePercent
 											value={cellProps.row.original.fundingRate}
 											decimals={6}
+											showArrow={false}
 											className="change-pct"
 										/>
 									);
