@@ -26,7 +26,6 @@ const SwapButton: React.FC = () => {
 			size="md"
 			data-testid="submit-order"
 			fullWidth
-			variant="primary"
 		>
 			{!!submissionDisabledReason
 				? submissionDisabledReason

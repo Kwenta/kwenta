@@ -1,13 +1,12 @@
 import Link from 'next/link';
 import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
+import { chain, useNetwork } from 'wagmi';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { Synths } from 'constants/currency';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
-import { isL2State } from 'store/wallet';
 import { NoTextTransform, ExternalLink } from 'styles/common';
 
 import { MessageContainer, Message, MessageButton, FixedMessageContainerSpacer } from '../common';
@@ -20,7 +19,11 @@ type NoSynthsCardProps = {
 
 const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 	const { t } = useTranslation();
-	const isL2 = useRecoilValue(isL2State);
+	const { chain: activeChain } = useNetwork();
+	const isL2 =
+		activeChain !== undefined
+			? [chain.optimism.id, chain.optimismKovan.id].includes(activeChain?.id)
+			: false;
 
 	return (
 		<>
@@ -40,7 +43,7 @@ const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 				</DesktopOnlyView>
 				{isL2 ? (
 					<ExternalLink href={EXTERNAL_LINKS.Trading.OneInch}>
-						<MessageButton size="lg" variant="primary" isRounded>
+						<MessageButton>
 							<Trans
 								t={t}
 								i18nKey="exchange.onboard.1inch-button"
