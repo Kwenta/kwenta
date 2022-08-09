@@ -4,7 +4,7 @@ import { COMPETITION_DATES } from 'constants/competition';
 import { PERIOD_IN_SECONDS } from 'constants/period';
 import { calculatedTimeDifference } from 'utils/formatters/date';
 
-type TCompetitionSate = 'comingSoon' | 'live' | 'comingToEnd' | 'ended';
+type TCompetitionSate = 'comingSoon' | 'comingToStart' | 'live' | 'comingToEnd' | 'ended';
 
 /**
  * @example
@@ -12,8 +12,11 @@ type TCompetitionSate = 'comingSoon' | 'live' | 'comingToEnd' | 'ended';
  * const START_DATE = new Date(2022, 7, 18);
  * const END_DATE = new Date(2022, 7, 22);
  *
- * const diff_1 = differenceInSeconds(START_DATE, new Date(2022, 7, 9));
- * console.log('coming soon: ', diff_1); // 777600
+ * const diff_0 = differenceInSeconds(START_DATE, new Date(2022, 7, 9));
+ * console.log('coming soon: ', diff_0); // 777600
+ *
+ * const diff_1 = differenceInSeconds(START_DATE, new Date(2022, 7, 17, 1));
+ * console.log('coming to start in 24h: ', diff_1); // 82800
  *
  * const diff_2_1 = differenceInSeconds(START_DATE, new Date(2022, 7, 19));
  * const diff_2_2 = differenceInSeconds(END_DATE, new Date(2022, 7, 19));
@@ -32,14 +35,18 @@ export const useDashboardCompetition = () => {
 
 	useEffect(() => {
 		const interval = setInterval(() => {
-			const now = new Date();
+			const now = new Date(2022, 7, 23, 1);
 			const start = new Date(COMPETITION_DATES.START_DATE);
 			const end = new Date(COMPETITION_DATES.END_DATE);
 
 			let _difference = calculatedTimeDifference(start, now);
 			if (_difference > 0) {
-				setState('comingSoon');
-				setDifference(_difference);
+				if (_difference < PERIOD_IN_SECONDS.ONE_DAY) {
+					setState('comingToStart');
+					setDifference(_difference);
+				} else {
+					setState('comingSoon');
+				}
 			} else {
 				_difference = calculatedTimeDifference(end, now);
 				if (_difference > 0) {

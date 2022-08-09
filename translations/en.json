@@ -1064,10 +1064,11 @@
 		},
 		"min": "min",
 		"competition": {
-			"before-launch-date": "Competition starting in",
+			"before-launch-date": "Competition coming soon",
+			"24h-before-launch-date": "Competition starting in",
 			"during-competition": "Competition Live",
 			"24h-before-end-date": "Competition ending in",
-			"after-end-date": "Competition ended"
+			"24h-after-end-date": "Competition ended"
 		},
 		"learn-more": "learn more"
 	},

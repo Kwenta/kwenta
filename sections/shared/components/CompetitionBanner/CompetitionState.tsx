@@ -29,7 +29,11 @@ export const CompetitionState = () => {
 
 	switch (state) {
 		case 'comingSoon':
-			copying = `${t('common.competition.before-launch-date')} ${hours}:${minutes}`;
+			copying = `${t('common.competition.before-launch-date')}`;
+			break;
+
+		case 'comingToStart':
+			copying = `${t('common.competition.24h-before-launch-date')} ${hours}:${minutes}`;
 			break;
 
 		case 'live':
@@ -41,7 +45,7 @@ export const CompetitionState = () => {
 			break;
 
 		case 'ended':
-			copying = `${t('common.competition.after-end-date')}`;
+			copying = `${t('common.competition.24h-after-end-date')}`;
 			break;
 
 		default:
