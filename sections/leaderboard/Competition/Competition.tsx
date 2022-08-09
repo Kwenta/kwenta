@@ -45,6 +45,7 @@ const Competition: FC<CompetitionProps> = ({
 				const pinText = trader.account === walletAddress ? PIN : '';
 
 				return {
+					account: trader.account,
 					trader: trader.account,
 					traderEns: ensInfo[trader.account],
 					tier: trader.tier,

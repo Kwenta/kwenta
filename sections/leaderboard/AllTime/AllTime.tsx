@@ -54,9 +54,9 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 					rankText: `${trader.rank}${pinText}`,
 				};
 			})
-			.filter((i: { trader: string; traderEns: string }) =>
+			.filter((i: { account: string; traderEns: string }) =>
 				searchTerm?.length
-					? i.trader.toLowerCase().includes(searchTerm) ||
+					? i.account.toLowerCase().includes(searchTerm) ||
 					  i.traderEns?.toLowerCase().includes(searchTerm)
 					: true
 			);
