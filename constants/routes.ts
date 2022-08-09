@@ -23,7 +23,7 @@ export const ROUTES = {
 		Home: '/exchange',
 		MarketPair: (baseCurrencyKey: string, quoteCurrencyKey: string) =>
 			`/exchange/?base=${baseCurrencyKey}&quote=${quoteCurrencyKey}`,
-		Into: (currencyKey: string) => `/exchange/?quote${currencyKey}`,
+		Into: (currencyKey: string) => `/exchange/?quote=${currencyKey}`,
 	},
 	Markets: {
 		Home: '/market/?asset=sETH',
