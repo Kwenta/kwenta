@@ -15,7 +15,7 @@ type ChangePercentProps = {
 };
 
 export const ChangePercent: FC<ChangePercentProps> = ({ value, decimals = 2, ...rest }) => {
-	const isValid = value;
+	const isValid = !!value;
 	const isZero = value && wei(value).eq(0);
 	const isPositive = value && wei(value).gt(0);
 
