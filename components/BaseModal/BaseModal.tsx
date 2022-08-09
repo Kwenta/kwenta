@@ -1,5 +1,6 @@
 import { DialogOverlay, DialogContent } from '@reach/dialog';
 import { FC, ReactNode } from 'react';
+import { Rnd, Props } from 'react-rnd';
 import styled from 'styled-components';
 
 import CrossIcon from 'assets/svg/app/cross.svg';
@@ -15,6 +16,7 @@ type BaseModalProps = {
 	children: ReactNode;
 	showCross?: boolean;
 	lowercase?: boolean;
+	resizableAnDraggableProps?: Props;
 };
 
 export const BaseModal: FC<BaseModalProps> = ({
@@ -24,21 +26,24 @@ export const BaseModal: FC<BaseModalProps> = ({
 	isOpen,
 	showCross = true,
 	lowercase,
+	resizableAnDraggableProps = { disableDragging: true, enableResizing: false },
 	...rest
 }) => (
 	<StyledDialogOverlay onDismiss={onDismiss} isOpen={isOpen} {...rest}>
 		<StyledDialogContent aria-label="modal">
-			<StyledCard className="card">
-				<StyledCardHeader lowercase={lowercase} noBorder className="card-header">
-					{title}
-					{showCross && (
-						<DismissButton onClick={onDismiss}>
-							<CrossIcon />
-						</DismissButton>
-					)}
-				</StyledCardHeader>
-				<StyledCardBody className="card-body">{children}</StyledCardBody>
-			</StyledCard>
+			<StyledResizableAndDraggableContainer {...resizableAnDraggableProps}>
+				<StyledCard className="card">
+					<StyledCardHeader lowercase={lowercase} noBorder className="card-header">
+						{title}
+						{showCross && (
+							<DismissButton onClick={onDismiss}>
+								<CrossIcon />
+							</DismissButton>
+						)}
+					</StyledCardHeader>
+					<StyledCardBody className="card-body">{children}</StyledCardBody>
+				</StyledCard>
+			</StyledResizableAndDraggableContainer>
 		</StyledDialogContent>
 	</StyledDialogOverlay>
 );
@@ -92,6 +97,8 @@ const StyledCardHeader = styled(Card.Header)`
 const StyledCardBody = styled(Card.Body)`
 	overflow-y: scroll;
 `;
+
+const StyledResizableAndDraggableContainer = styled(Rnd)``;
 
 const DismissButton = styled.button`
 	${resetButtonCSS};

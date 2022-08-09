@@ -131,10 +131,14 @@ const ProfitCalculator: FC<ProfitCalculatorProps> = ({ marketAsset, setOpenProfi
 
 	return (
 		<>
-			<BaseModal
+			<StyledBaseModal
 				onDismiss={() => setOpenProfitCalcModal(false)}
 				isOpen
 				title={t('futures.modals.profit-calculator.title')}
+				resizableAnDraggableProps={{
+					enableResizing: true,
+					disableDragging: false,
+				}}
 			>
 				<ModalWindow>
 					<LabelWithInput
@@ -216,10 +220,19 @@ const ProfitCalculator: FC<ProfitCalculatorProps> = ({ marketAsset, setOpenProfi
 						marketAssetPositionSize={marketAssetPositionSize}
 					/>
 				</ModalWindow>
-			</BaseModal>
+			</StyledBaseModal>
 		</>
 	);
 };
+
+export const StyledBaseModal = styled(BaseModal)`
+	[data-reach-dialog-content] {
+		width: 750px;
+	}
+	.card-body {
+		padding: 28px;
+	}
+`;
 
 const StatsGrid = styled.div`
 	display: grid;
