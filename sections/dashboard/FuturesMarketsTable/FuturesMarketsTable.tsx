@@ -62,7 +62,7 @@ const FuturesMarketsTable: FC = () => {
 				price: market.price,
 				volume: volume?.toNumber() ?? 0,
 				pastPrice: pastPrice?.price,
-				priceChange: market.price.sub(pastPrice?.price ?? 0).div(market.price),
+				priceChange: pastPrice?.price && market.price.sub(pastPrice?.price).div(market.price),
 				fundingRate: (fundingRateResponse?.data as FundingRateResponse)?.fundingRate ?? null,
 				openInterest: market.marketSize.mul(market.price),
 				openInterestNative: market.marketSize,
