@@ -30,6 +30,11 @@ const Header: FC = () => {
 				onClick: () => router.push(ROUTES.Home.Markets),
 			},
 			{
+				id: 'stats',
+				label: t('homepage.nav.stats'),
+				onClick: () => router.push(ROUTES.Home.Stats),
+			},
+			{
 				id: 'governance',
 				label: t('homepage.nav.governance.title'),
 				icon: <CaretDownGrayIcon />,

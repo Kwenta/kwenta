@@ -37,6 +37,10 @@ export const HOMEPAGE_MENU_LINKS: MenuLinks = [
 		link: ROUTES.Markets.Home,
 	},
 	{
+		i18nLabel: 'homepage.nav.stats',
+		link: ROUTES.Stats.Home,
+	},
+	{
 		i18nLabel: 'homepage.nav.governance.title',
 		link: ROUTES.Home.Root,
 	},
