@@ -7,7 +7,7 @@ import styled from 'styled-components';
 
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import Table from 'components/Table';
+import Table, { TableNoResults } from 'components/Table';
 import { Synths } from 'constants/currency';
 import useGetFile from 'queries/files/useGetFile';
 import { walletAddressState } from 'store/wallet';
@@ -87,11 +87,15 @@ const Competition: FC<CompetitionProps> = ({
 					isLoading={competitionQuery.isLoading}
 					data={data}
 					hideHeaders={compact}
+					noResultsMessage={
+						<TableNoResults>{t('leaderboard.competition.table.no-result')}</TableNoResults>
+					}
 					columns={[
 						{
 							Header: (
 								<TableTitle>
 									<TitleText>{t('leaderboard.competition.title')}</TitleText>
+									<TitleText>{t('leaderboard.competition.table.table-updates')}</TitleText>
 								</TableTitle>
 							),
 							accessor: 'title',
@@ -244,7 +248,7 @@ const StyledTable = styled(Table)<{ compact: boolean | undefined }>`
 const TableTitle = styled.div`
 	width: 100%;
 	display: flex;
-	justify-content: flex-start;
+	justify-content: space-between;
 `;
 
 const TitleText = styled.a`

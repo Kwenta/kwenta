@@ -826,7 +826,11 @@
 			}
 		},
 		"competition": {
-			"title": "Competition"
+			"title": "Competition",
+			"table": {
+				"table-updates": "Table data updates daily",
+				"no-result": "Competition starting soon"
+			}
 		}
 	},
 	"not-found": {
