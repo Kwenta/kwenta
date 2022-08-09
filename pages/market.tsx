@@ -24,11 +24,7 @@ import {
 } from 'styles/common';
 import { FuturesMarketAsset } from 'utils/futures';
 
-type AppLayoutProps = {
-	children: React.ReactNode;
-};
-
-type MarketComponent = FC & { layout: FC<AppLayoutProps> };
+type MarketComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
 const Market: MarketComponent = () => {
 	const { t } = useTranslation();
@@ -73,7 +69,7 @@ const Market: MarketComponent = () => {
 	);
 };
 
-Market.layout = AppLayout;
+Market.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default Market;
 

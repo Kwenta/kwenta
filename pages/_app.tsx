@@ -12,7 +12,6 @@ import { ThemeProvider } from 'styled-components';
 
 import Connector from 'containers/Connector';
 import Layout from 'sections/shared/Layout';
-import AppLayout from 'sections/shared/Layout/AppLayout';
 import SystemStatus from 'sections/shared/SystemStatus';
 import { currentThemeState } from 'store/ui';
 import { MediaContextProvider } from 'styles/media';
@@ -30,7 +29,7 @@ import 'tippy.js/dist/tippy.css';
 import '../i18n';
 
 type NextPageWithLayout = NextPage & {
-	layout?: (page: ReactElement) => ReactNode;
+	getLayout?: (page: ReactElement) => ReactNode;
 };
 
 type AppPropsWithLayout = AppProps & {
@@ -39,17 +38,14 @@ type AppPropsWithLayout = AppProps & {
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {
 	const { provider, signer, network } = Connector.useContainer();
-	const getLayout =
-		Component.layout === undefined
-			? (page: ReactElement) => <>{page}</>
-			: (page: ReactElement) => <AppLayout>{page}</AppLayout>;
+	const getLayout = Component.getLayout || ((page) => page);
 
 	const currentTheme = useRecoilValue(currentThemeState);
 	const theme = useMemo(() => themes[currentTheme], [currentTheme]);
 	const isReady = useMemo(() => typeof window !== 'undefined', []);
 
 	return isReady ? (
-		<ThemeProvider theme={Component.layout === undefined ? themes['dark'] : theme}>
+		<ThemeProvider theme={theme}>
 			<MediaContextProvider>
 				<SynthetixQueryContextProvider
 					value={

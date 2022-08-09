@@ -1,5 +1,12 @@
-const Markets = () => {
-	<div></div>;
+import DashboardLayout from 'sections/dashboard/DashboardContainer/DashboardLayout';
+import MarketsPage from 'sections/dashboard/Markets';
+
+type MarketsProps = React.FC & { getLayout: (page: HTMLElement) => JSX.Element };
+
+const Markets: MarketsProps = () => {
+	return <MarketsPage />;
 };
+
+Markets.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default Markets;

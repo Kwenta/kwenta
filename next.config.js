@@ -75,16 +75,10 @@ module.exports = withPlugins([
 			return config;
 		},
 		trailingSlash: true,
-		exportTrailingSlash: true,
-		// exportPathMap: function (defaultPathMap) {
-		// 	return {
-		// 		...defaultPathMap,
-		// 	};
-		// },
 		compiler: {
 			// ssr and displayName are configured by default
 			styledComponents: true,
 		},
-		experimental: { images: { layoutRaw: true, unoptimized: true } },
+		experimental: { images: { unoptimized: true } },
 	},
 ]);

@@ -7,6 +7,7 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { TabPanel } from 'components/Tab';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
@@ -18,6 +19,7 @@ import { MarketKeyByAsset } from 'utils/futures';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
 import FuturesPositionsTable from '../FuturesPositionsTable';
+import MobileDashboard from '../MobileDashboard';
 import PortfolioChart from '../PortfolioChart';
 import SpotMarketsTable from '../SpotMarketsTable';
 import SynthBalancesTable from '../SynthBalancesTable';
@@ -129,36 +131,41 @@ const Overview: FC = () => {
 
 	return (
 		<>
-			<PortfolioChart />
+			<DesktopOnlyView>
+				<PortfolioChart />
 
-			<TabButtonsContainer>
-				{POSITIONS_TABS.map(({ name, label, ...rest }) => (
-					<TabButton key={name} title={label} {...rest} />
-				))}
-			</TabButtonsContainer>
-			<TabPanel name={PositionsTab.FUTURES} activeTab={activePositionsTab}>
-				<FuturesPositionsTable futuresPositionHistory={futuresPositionHistory} />
-			</TabPanel>
+				<TabButtonsContainer>
+					{POSITIONS_TABS.map(({ name, label, ...rest }) => (
+						<TabButton key={name} title={label} {...rest} />
+					))}
+				</TabButtonsContainer>
+				<TabPanel name={PositionsTab.FUTURES} activeTab={activePositionsTab}>
+					<FuturesPositionsTable futuresPositionHistory={futuresPositionHistory} />
+				</TabPanel>
 
-			<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}>
-				<SynthBalancesTable
-					synthBalances={synthBalances?.balances ?? []}
-					exchangeRates={exchangeRates}
-				/>
-			</TabPanel>
+				<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}>
+					<SynthBalancesTable
+						synthBalances={synthBalances?.balances ?? []}
+						exchangeRates={exchangeRates}
+					/>
+				</TabPanel>
 
-			<TabButtonsContainer>
-				{MARKETS_TABS.map(({ name, label, active, onClick }) => (
-					<TabButton key={name} title={label} active={active} onClick={onClick} />
-				))}
-			</TabButtonsContainer>
-			<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
-				<FuturesMarketsTable />
-			</TabPanel>
+				<TabButtonsContainer>
+					{MARKETS_TABS.map(({ name, label, active, onClick }) => (
+						<TabButton key={name} title={label} active={active} onClick={onClick} />
+					))}
+				</TabButtonsContainer>
+				<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
+					<FuturesMarketsTable />
+				</TabPanel>
 
-			<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
-				<SpotMarketsTable exchangeRates={exchangeRates} />
-			</TabPanel>
+				<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
+					<SpotMarketsTable exchangeRates={exchangeRates} />
+				</TabPanel>
+			</DesktopOnlyView>
+			<MobileOrTabletView>
+				<MobileDashboard />
+			</MobileOrTabletView>
 		</>
 	);
 };
