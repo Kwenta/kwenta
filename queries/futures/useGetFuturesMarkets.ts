@@ -94,14 +94,18 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 						takerFeeNextPrice: wei(feeRates.takerFeeNextPrice),
 					},
 					openInterest: {
-						short: marketSize.eq(0)
+						shortPct: wei(marketSize).eq(0)
 							? 0
-							: marketSize.sub(marketSkew).div('2').div(marketSize).toNumber(),
-						long: marketSize.eq(0)
+							: wei(marketSize).sub(marketSkew).div('2').div(marketSize).toNumber(),
+						longPct: wei(marketSize).eq(0)
 							? 0
-							: marketSize.add(marketSkew).div('2').div(marketSize).toNumber(),
-						shortUSD: marketSize.eq(0) ? zeroBN : marketSize.sub(marketSkew).div('2').mul(price),
-						longUSD: marketSize.eq(0) ? zeroBN : marketSize.add(marketSkew).div('2').mul(price),
+							: wei(marketSize).add(marketSkew).div('2').div(marketSize).toNumber(),
+						shortUSD: wei(marketSize).eq(0)
+							? zeroBN
+							: wei(marketSize).sub(marketSkew).div('2').mul(price),
+						longUSD: wei(marketSize).eq(0)
+							? zeroBN
+							: wei(marketSize).add(marketSkew).div('2').mul(price),
 					},
 					marketDebt: wei(marketDebt),
 					marketSkew: wei(marketSkew),

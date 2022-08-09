@@ -171,12 +171,12 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 					<SkewDataContainer>
 						<div className={`value green ${pausedClass}`}>
 							{marketInfo?.openInterest &&
-								formatPercent(marketInfo.openInterest.long ?? 0, { minDecimals: 0 })}{' '}
+								formatPercent(marketInfo.openInterest.longPct ?? 0, { minDecimals: 0 })}{' '}
 							({longText})
 						</div>
 						<div className={`value red ${pausedClass}`}>
 							{marketInfo?.openInterest &&
-								formatPercent(marketInfo.openInterest.short ?? 0, { minDecimals: 0 })}{' '}
+								formatPercent(marketInfo.openInterest.shortPct ?? 0, { minDecimals: 0 })}{' '}
 							({shortText})
 						</div>
 					</SkewDataContainer>
