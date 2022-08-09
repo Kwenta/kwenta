@@ -232,6 +232,10 @@ export type FundingRateUpdate = {
 	timestamp: number;
 };
 
+export type FundingRates = {
+	[key in FuturesMarketAsset]: Wei;
+};
+
 export type FuturesPotentialTradeDetails = {
 	size: Wei;
 	liqPrice: Wei;
