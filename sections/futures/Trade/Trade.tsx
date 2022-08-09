@@ -26,9 +26,7 @@ const Trade: React.FC = () => {
 		<div>
 			{
 				//TODO: Remove dev check
-				process?.env?.NODE_ENV === 'development' && futuresAccount.crossMarginAvailable && (
-					<AccountTypeToggle />
-				)
+				futuresAccount.crossMarginAvailable && <AccountTypeToggle />
 			}
 
 			<MarketsDropdown />

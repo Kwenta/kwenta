@@ -33,7 +33,8 @@ export default function useQueryCrossMarginAccount() {
 	return useQuery<any | null>(
 		QUERY_KEYS.Futures.CrossMarginAccount(network.id, walletAddress + 't' || ''),
 		async () => {
-			if (!supportedNetworks.includes(network.id)) {
+			//TODO: Remove dev check
+			if (!supportedNetworks.includes(network.id) || process?.env?.NODE_ENV !== 'development') {
 				const accountState = {
 					loading: false,
 					crossMarginAvailable: false,
