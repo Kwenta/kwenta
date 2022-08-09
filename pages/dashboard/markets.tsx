@@ -1,4 +1,4 @@
-import DashboardLayout from 'sections/dashboard/DashboardContainer/DashboardLayout';
+import DashboardLayout from 'sections/dashboard/DashboardLayout';
 import MarketsPage from 'sections/dashboard/Markets';
 
 type MarketsProps = React.FC & { getLayout: (page: HTMLElement) => JSX.Element };

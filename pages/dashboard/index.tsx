@@ -1,12 +1,11 @@
 import Head from 'next/head';
-import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { RefetchProvider } from 'contexts/RefetchContext';
-import DashboardLayout from 'sections/dashboard/DashboardContainer/DashboardLayout';
+import DashboardLayout from 'sections/dashboard/DashboardLayout';
 import Overview from 'sections/dashboard/Overview';
 
-type DashboardComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
+type DashboardComponent = React.FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
 const Dashboard: DashboardComponent = () => {
 	const { t } = useTranslation();
