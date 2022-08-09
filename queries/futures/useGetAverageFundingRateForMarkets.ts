@@ -48,7 +48,7 @@ const useGetAverageFundingRateForMarkets = (
 	);
 
 	return useQuery<any>(
-		QUERY_KEYS.Futures.FundingRates(network.id),
+		QUERY_KEYS.Futures.FundingRates(network.id, periodLength),
 		async () => {
 			const minTimestamp = Math.floor(Date.now() / 1000) - periodLength;
 
