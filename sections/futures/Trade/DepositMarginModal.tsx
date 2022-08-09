@@ -1,6 +1,5 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
-import { useRefetchContext } from 'contexts/RefetchContext';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -13,6 +12,7 @@ import CustomInput from 'components/Input/CustomInput';
 import { Synths } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 import TransactionNotifier from 'containers/TransactionNotifier';
+import { useRefetchContext } from 'contexts/RefetchContext';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { currentMarketState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';

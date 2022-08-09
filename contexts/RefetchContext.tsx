@@ -1,15 +1,24 @@
 import React from 'react';
+import { useRecoilValue } from 'recoil';
 
 import { Period, PERIOD_IN_SECONDS } from 'constants/period';
 import useGetAverageFundingRateForMarkets from 'queries/futures/useGetAverageFundingRateForMarkets';
+import useGetCrossMarginAccountOverview from 'queries/futures/useGetCrossMarginAccountOverview';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useSynthBalances from 'queries/synths/useSynthBalances';
+import { futuresAccountState } from 'store/futures';
 
-type RefetchType = 'modify-position' | 'new-order' | 'close-position' | 'margin-change';
+type RefetchType =
+	| 'modify-position'
+	| 'new-order'
+	| 'close-position'
+	| 'margin-change'
+	| 'account-margin-change';
 
 type RefetchContextType = {
 	handleRefetch: (refetchType: RefetchType, timeout?: number) => void;
@@ -20,11 +29,15 @@ const RefetchContext = React.createContext<RefetchContextType>({
 });
 
 export const RefetchProvider: React.FC = ({ children }) => {
+	const { selectedAccountType } = useRecoilValue(futuresAccountState);
+
 	const synthsBalancesQuery = useSynthBalances();
 	const openOrdersQuery = useGetFuturesOpenOrders();
 	const positionQuery = useGetFuturesPositionForMarket();
+	const crossMarginAccountOverview = useGetCrossMarginAccountOverview();
 	const positionsQuery = useGetFuturesPositionForMarkets();
 	const marketsQuery = useGetFuturesMarkets();
+	useExchangeRatesQuery({ refetchInterval: 15000 });
 	useGetFuturesPotentialTradeDetails();
 	useGetAverageFundingRateForMarkets(PERIOD_IN_SECONDS[Period.ONE_HOUR]);
 
@@ -34,6 +47,9 @@ export const RefetchProvider: React.FC = ({ children }) => {
 				case 'modify-position':
 					marketsQuery.refetch();
 					openOrdersQuery.refetch();
+					if (selectedAccountType === 'cross_margin') {
+						crossMarginAccountOverview.refetch();
+					}
 					break;
 				case 'new-order':
 					openOrdersQuery.refetch();
@@ -47,6 +63,9 @@ export const RefetchProvider: React.FC = ({ children }) => {
 					positionQuery.refetch();
 					openOrdersQuery.refetch();
 					synthsBalancesQuery.refetch();
+					break;
+				case 'account-margin-change':
+					crossMarginAccountOverview.refetch();
 					break;
 			}
 		}, timeout ?? 5000);

@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { createGlobalStyle } from 'styled-components';
 
+import { RefetchProvider } from 'contexts/RefetchContext';
 import { FullScreenContainer } from 'styles/common';
 
 import Footer from './Footer';
@@ -14,7 +15,7 @@ const HomeLayout: FC<HomeLayoutProps> = ({ children }) => (
 	<FullScreenContainer>
 		<GlobalStyle />
 		<Header />
-		{children}
+		<RefetchProvider>{children}</RefetchProvider>
 		<Footer />
 	</FullScreenContainer>
 );

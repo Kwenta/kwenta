@@ -1,5 +1,4 @@
 import useSynthetixQueries from '@synthetixio/queries';
-import { useFuturesContext } from 'contexts/FuturesContext';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -8,6 +7,7 @@ import styled from 'styled-components';
 import Button from 'components/Button';
 import { Synths, CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
+import { useFuturesContext } from 'contexts/FuturesContext';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { PositionSide } from 'sections/futures/types';
 import { currentMarketState, potentialTradeDetailsState } from 'store/futures';

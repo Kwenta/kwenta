@@ -3,7 +3,6 @@ import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';
 import { PositionSide } from 'sections/futures/types';
-import { formatCurrency } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 
 import BaseDrawer from './BaseDrawer';
@@ -30,9 +29,7 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer, set
 			},
 			{
 				label: 'Size',
-				value: formatCurrency(order.asset, order.size, {
-					sign: order.asset,
-				}),
+				value: order.size,
 			},
 			{
 				label: 'Type',
@@ -47,12 +44,12 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer, set
 			closeDrawer={closeDrawer}
 			items={items}
 			buttons={
-				<div>
+				<>
 					{order?.isExecutable && (
 						<ExecuteButton onClick={() => setAction('execute')}>Execute</ExecuteButton>
 					)}
 					<CancelOrderButton onClick={() => setAction('cancel')}>Cancel</CancelOrderButton>
-				</div>
+				</>
 			}
 		/>
 	);
@@ -77,6 +74,7 @@ const StyledPositionSide = styled.div<{ side: PositionSide }>`
 const ExecuteButton = styled(Button)`
 	margin-right: 10px;
 	height: 41px;
+	flex: 1;
 `;
 
 const CancelOrderButton = styled(Button)`
@@ -88,6 +86,7 @@ const CancelOrderButton = styled(Button)`
 	border: 1px solid #ef6868;
 	box-shadow: none;
 	transition: all 0s ease-in-out;
+	flex: 1;
 
 	&:hover {
 		background: ${(props) => props.theme.colors.common.primaryRed};

@@ -250,3 +250,14 @@ export type FuturesPotentialTradeDetails = {
 	showStatus: boolean;
 	statusMessage: string;
 };
+
+export type FuturesAccountType = 'cross_margin' | 'isolated_margin';
+
+export type FuturesAccountState = {
+	selectedAccountType: FuturesAccountType;
+	walletAddress: string | null;
+	selectedFuturesAddress: string | null;
+	crossMarginAddress: string | null;
+	crossMarginAvailable: boolean;
+	loading: boolean;
+};
