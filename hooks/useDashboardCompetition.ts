@@ -35,7 +35,7 @@ export const useDashboardCompetition = () => {
 
 	useEffect(() => {
 		const interval = setInterval(() => {
-			const now = new Date(2022, 7, 23, 1);
+			const now = new Date();
 			const start = new Date(COMPETITION_DATES.START_DATE);
 			const end = new Date(COMPETITION_DATES.END_DATE);
 
