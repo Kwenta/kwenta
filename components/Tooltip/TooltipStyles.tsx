@@ -12,6 +12,7 @@ interface ToolTipStyleProps {
 	bottom?: string;
 	left?: string;
 	right?: string;
+	position?: string;
 }
 
 export const Tooltip = styled.div<ToolTipStyleProps>`
@@ -23,7 +24,7 @@ export const Tooltip = styled.div<ToolTipStyleProps>`
 	border-radius: 8px;
 	padding: 10px;
 	margin: 0;
-	position: absolute;
+	position: ${(props) => props.position || 'absolute'};
 	top: ${(props) => props.top};
 	bottom: ${(props) => props.bottom};
 	left: ${(props) => props.left};

@@ -11,10 +11,8 @@ import { Synths } from 'constants/currency';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
-import { futuresMarketsState } from 'store/futures';
 import { walletAddressState } from 'store/wallet';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
-import { MarketKeyByAsset } from 'utils/futures';
 
 import FuturesPositionsTable from '../FuturesPositionsTable';
 import SynthBalancesTable from '../SynthBalancesTable';
@@ -29,10 +27,7 @@ const OpenPositions: React.FC = () => {
 
 	const { useExchangeRatesQuery, useSynthsBalancesQuery } = useSynthetixQueries();
 
-	const futuresMarkets = useRecoilValue(futuresMarketsState);
-
-	const markets = futuresMarkets.map(({ asset }) => MarketKeyByAsset[asset]);
-	const portfolioValueQuery = useGetCurrentPortfolioValue(markets);
+	const portfolioValueQuery = useGetCurrentPortfolioValue();
 	const portfolioValue = portfolioValueQuery?.data ?? null;
 
 	const futuresPositionQuery = useGetFuturesPositionForAccount();

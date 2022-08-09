@@ -24,18 +24,21 @@ type OrderSizingProps = {
 const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 	const tradeSize = useRecoilValue(tradeSizeState);
 	const tradeSizeSUSD = useRecoilValue(tradeSizeSUSDState);
-	const position = useRecoilValue(positionState);
 	const marketAsset = useRecoilValue(currentMarketState);
 	const maxLeverage = useRecoilValue(maxLeverageState);
 	const account = useRecoilValue(futuresAccountState);
 	const freeCrossMargin = useRecoilValue(crossMarginAvailableMarginState);
+	const position = useRecoilValue(positionState);
 
-	const { onTradeAmountChange, onTradeAmountSUSDChange, onLeverageChange } = useFuturesContext();
+	const {
+		onTradeAmountChange,
+		onTradeAmountSUSDChange,
+		onLeverageChange,
+		remainingMargin,
+	} = useFuturesContext();
 
 	const handleSetMax = () => {
-		const maxOrderSizeUSDValue = Number(
-			maxLeverage.mul(position?.remainingMargin ?? zeroBN)
-		).toFixed(0);
+		const maxOrderSizeUSDValue = Number(maxLeverage.mul(remainingMargin)).toFixed(0);
 		onTradeAmountSUSDChange(maxOrderSizeUSDValue);
 		onLeverageChange(Number(maxLeverage).toString().substring(0, 4));
 	};
