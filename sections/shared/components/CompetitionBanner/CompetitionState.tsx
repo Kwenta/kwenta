@@ -23,7 +23,7 @@ export const CompetitionState = () => {
 
 	const secondsToMinutes = difference / 60;
 	const hours = keepDoublePlaceholder(Math.floor(secondsToMinutes / 60));
-	const minutes = keepDoublePlaceholder(Math.floor(secondsToMinutes % 60));
+	const minutes = keepDoublePlaceholder(Math.ceil(secondsToMinutes % 60));
 
 	let copying = '';
 
