@@ -100,8 +100,8 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 						long: marketSize.eq(0)
 							? 0
 							: marketSize.add(marketSkew).div('2').div(marketSize).toNumber(),
-						shortUsd: marketSize.eq(0) ? zeroBN : marketSize.sub(marketSkew).div('2').mul(price),
-						longUsd: marketSize.eq(0) ? zeroBN : marketSize.add(marketSkew).div('2').mul(price),
+						shortUSD: marketSize.eq(0) ? zeroBN : marketSize.sub(marketSkew).div('2').mul(price),
+						longUSD: marketSize.eq(0) ? zeroBN : marketSize.add(marketSkew).div('2').mul(price),
 					},
 					marketDebt: wei(marketDebt),
 					marketSkew: wei(marketSkew),
