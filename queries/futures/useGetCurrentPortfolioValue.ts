@@ -6,24 +6,22 @@ import { useRecoilValue } from 'recoil';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
-import { futuresAccountState } from 'store/futures';
+import { futuresAccountState, marketKeysState } from 'store/futures';
 import { isL2State, networkState, walletAddressState } from 'store/wallet';
 import { zeroBN } from 'utils/formatters/number';
-import { FuturesMarketKey, MarketAssetByKey } from 'utils/futures';
+import { MarketAssetByKey } from 'utils/futures';
 import logError from 'utils/logError';
 
 import useGetCrossMarginAccountOverview from './useGetCrossMarginAccountOverview';
 import { mapFuturesPosition } from './utils';
 
-const useGetCurrentPortfolioValue = (
-	markets: FuturesMarketKey[] | [],
-	options?: UseQueryOptions<any | null>
-) => {
+const useGetCurrentPortfolioValue = (options?: UseQueryOptions<any | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const futuresAccount = useRecoilValue(futuresAccountState);
+	const marketKeys = useRecoilValue(marketKeysState);
 
 	const query = useGetCrossMarginAccountOverview();
 	const freeMargin = query.data?.freeMargin || zeroBN;
@@ -33,18 +31,16 @@ const useGetCurrentPortfolioValue = (
 	return useQuery<any | null>(
 		QUERY_KEYS.Futures.Positions(
 			network.id,
-			markets || [],
+			marketKeys || [],
 			futuresAccount?.crossMarginAddress || ''
 		),
 		async () => {
 			const {
 				contracts: { FuturesMarketData },
 			} = synthetixjs!;
-			if (!markets) return null;
-
 			try {
 				const positionsForIsolatedMarkets = await Promise.all(
-					markets.map((market) =>
+					marketKeys.map((market) =>
 						FuturesMarketData.positionDetailsForMarketKey(
 							ethersUtils.formatBytes32String(market),
 							walletAddress
@@ -54,7 +50,7 @@ const useGetCurrentPortfolioValue = (
 
 				const positionsForCrossMarginMarkets = futuresAccount?.crossMarginAddress
 					? await Promise.all(
-							markets.map((market) =>
+							marketKeys.map((market) =>
 								FuturesMarketData.positionDetailsForMarketKey(
 									ethersUtils.formatBytes32String(market),
 									futuresAccount.crossMarginAddress
@@ -70,7 +66,7 @@ const useGetCurrentPortfolioValue = (
 						const mappedPosition = mapFuturesPosition(
 							position,
 							false,
-							MarketAssetByKey[markets[i]]
+							MarketAssetByKey[marketKeys[i]]
 						);
 						return mappedPosition.remainingMargin;
 					})
@@ -83,12 +79,7 @@ const useGetCurrentPortfolioValue = (
 			}
 		},
 		{
-			enabled:
-				isAppReady &&
-				isL2 &&
-				!!futuresAccount?.crossMarginAddress &&
-				markets.length > 0 &&
-				!!synthetixjs,
+			enabled: isAppReady && isL2 && !!walletAddress && marketKeys.length > 0 && !!synthetixjs,
 			...options,
 		}
 	);
