@@ -138,6 +138,7 @@ const ProfitCalculator: FC<ProfitCalculatorProps> = ({ marketAsset, setOpenProfi
 				resizableAnDraggableProps={{
 					enableResizing: true,
 					disableDragging: false,
+					minWidth: 500,
 				}}
 			>
 				<ModalWindow>
