@@ -196,12 +196,13 @@ const FuturesMarketsTable: FC = () => {
 										<ChangePercent
 											value={cellProps.row.original.fundingRate}
 											decimals={6}
+											showArrow={false}
 											className="change-pct"
 										/>
 									);
 								},
-								width: 125,
 								sortable: true,
+								width: 125,
 								sortType: useMemo(
 									() => (rowA: any, rowB: any) => {
 										const rowOne = rowA.original.fundingRate ?? wei(0);
@@ -341,6 +342,7 @@ const FuturesMarketsTable: FC = () => {
 										/>
 										<div>
 											<ChangePercent
+												showArrow={false}
 												value={cellProps.row.original.fundingRate}
 												decimals={6}
 												className="change-pct"
