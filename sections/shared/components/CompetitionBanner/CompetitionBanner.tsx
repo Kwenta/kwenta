@@ -6,7 +6,7 @@ import CompetitionBannerBg from 'assets/svg/app/competition-banner-bg.svg';
 import { COMPETITION_DATES } from 'constants/competition';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { ExternalLink } from 'styles/common';
-import { breakpoints } from 'styles/media';
+import media from 'styles/media';
 import { formatDateWithoutYear } from 'utils/formatters/date';
 
 import { CompetitionState } from './CompetitionState';
@@ -23,10 +23,10 @@ const BannerContainer = styled.div`
 	border: ${(props) => props.theme.colors.selectedTheme.competitionBanner.border};
 	border-radius: 8px;
 	margin-bottom: 35px;
-	@media (max-width: ${breakpoints.sm}px) {
+	${media.lessThan('sm')`
 		border-radius: 0;
 		margin-bottom: 0;
-	}
+	`}
 	gap: 10px;
 `;
 
@@ -71,11 +71,11 @@ const StyledBg = styled(CompetitionBannerBg)`
 	position: absolute;
 	top: 0;
 
-	@media (max-width: ${breakpoints.sm}px) {
+	${media.lessThan('sm')`
 		left: 50%;
 		transform: translateX(-50%);
 		width: auto;
-	}
+	`}
 
 	& > g {
 		stroke: ${(props) => props.theme.colors.selectedTheme.competitionBanner.bg};
