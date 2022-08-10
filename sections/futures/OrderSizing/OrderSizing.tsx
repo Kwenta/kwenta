@@ -56,6 +56,10 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 		[debounce, onTradeAmountSUSDChange]
 	);
 
+	useEffect(() => {
+		return () => debounceOnChangeUsd?.cancel();
+	}, [debounceOnChangeUsd]);
+
 	// eslint-disable-next-line
 	const debounceOnChangeAssetValue = useCallback(
 		debounce((value) => {

@@ -14,7 +14,6 @@ import {
 	crossMarginMarginDeltaState,
 	leverageSideState,
 	marketInfoState,
-	maxLeverageState,
 	orderTypeState,
 	positionState,
 	potentialTradeDetailsState,
@@ -33,7 +32,6 @@ import { PositionSide } from '../types';
 import DepositWithdrawCrossMargin from './DepositWithdrawCrossMargin';
 
 const MarginInfoBox: React.FC = () => {
-	const maxLeverage = useRecoilValue(maxLeverageState);
 	const position = useRecoilValue(positionState);
 	const marketInfo = useRecoilValue(marketInfoState);
 	const orderType = useRecoilValue(orderTypeState);
@@ -48,8 +46,6 @@ const MarginInfoBox: React.FC = () => {
 	const totalMargin = position?.remainingMargin.add(crossMarginFreeMargin) ?? zeroBN;
 
 	const availableMargin = position?.accessibleMargin.add(crossMarginFreeMargin) ?? zeroBN;
-
-	const buyingPower = totalMargin.gt(zeroBN) ? totalMargin.mul(maxLeverage ?? zeroBN) : zeroBN;
 
 	const marginUsage = availableMargin.gt(zeroBN)
 		? totalMargin.sub(availableMargin).div(totalMargin)
@@ -88,7 +84,6 @@ const MarginInfoBox: React.FC = () => {
 			}
 
 			const remainingMargin = crossMarginFreeMargin.sub(marginDelta);
-
 			const previewTotalMargin = remainingMargin.add(previewTrade?.margin || zeroBN);
 
 			// check if available margin will be less than 0
@@ -119,28 +114,20 @@ const MarginInfoBox: React.FC = () => {
 	const previewTradeData = React.useMemo(() => {
 		const size = wei(tradeSize || zeroBN);
 
+		// TODO: Potential margin usage is slightly off (maybe fees)?
 		const potentialMarginUsage = previewTrade?.margin.gt(0)
-			? previewTrade?.margin.sub(previewAvailableMargin)?.div(previewTrade?.margin)?.abs() ?? zeroBN
+			? previewTrade?.margin?.sub(previewAvailableMargin)?.div(previewTrade?.margin)?.abs() ??
+			  zeroBN
 			: zeroBN;
-
-		const potentialBuyingPower =
-			previewAvailableMargin?.mul(maxLeverage ?? zeroBN)?.abs() ?? zeroBN;
 
 		return {
 			showPreview: size && !size.eq(0),
 			totalMargin: previewTrade?.margin || zeroBN,
-			buyingPower: potentialBuyingPower.gt(0) ? potentialBuyingPower : zeroBN,
 			availableMargin: previewAvailableMargin.gt(0) ? previewAvailableMargin : zeroBN,
 			leverage: previewTrade?.leverage,
 			marginUsage: potentialMarginUsage.gt(1) ? wei(1) : potentialMarginUsage,
 		};
-	}, [
-		tradeSize,
-		previewTrade?.margin,
-		previewAvailableMargin,
-		maxLeverage,
-		previewTrade?.leverage,
-	]);
+	}, [tradeSize, previewTrade?.margin, previewAvailableMargin, previewTrade?.leverage]);
 
 	return (
 		<>
@@ -167,16 +154,6 @@ const MarginInfoBox: React.FC = () => {
 					},
 					'accessible market Margin': {
 						value: `${formatDollars(position?.accessibleMargin)}`,
-					},
-					'Buying Power': {
-						value: `${formatDollars(buyingPower)}`,
-						valueNode: previewTradeData?.buyingPower && (
-							<PreviewArrow showPreview={previewTradeData.showPreview && !previewTrade?.showStatus}>
-								{formatCurrency(Synths.sUSD, previewTradeData?.buyingPower, {
-									sign: '$',
-								})}
-							</PreviewArrow>
-						),
 					},
 					'Margin Usage': {
 						value: `${formatPercent(marginUsage)}`,
