@@ -1,4 +1,5 @@
 import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -153,6 +154,11 @@ const TradeConfirmationModal: FC = () => {
 		onDismiss();
 	};
 
+	const disabledReason = useMemo(() => {
+		if (positionDetails?.margin.lt(wei(50)))
+			return t('futures.market.trade.confirmation.modal.disabled-min-margin');
+	}, [positionDetails?.margin, t]);
+
 	return (
 		<>
 			<DesktopOnlyView>
@@ -172,9 +178,9 @@ const TradeConfirmationModal: FC = () => {
 						variant="primary"
 						isRounded
 						onClick={handleConfirmOrder}
-						disabled={!positionDetails}
+						disabled={!positionDetails || !!disabledReason}
 					>
-						{t('futures.market.trade.confirmation.modal.confirm-order')}
+						{disabledReason || t('futures.market.trade.confirmation.modal.confirm-order')}
 					</ConfirmTradeButton>
 				</StyledBaseModal>
 			</DesktopOnlyView>
@@ -188,9 +194,9 @@ const TradeConfirmationModal: FC = () => {
 							variant="primary"
 							isRounded
 							onClick={handleConfirmOrder}
-							disabled={!positionDetails}
+							disabled={!positionDetails || !!disabledReason}
 						>
-							{t('futures.market.trade.confirmation.modal.confirm-order')}
+							{disabledReason || t('futures.market.trade.confirmation.modal.confirm-order')}
 						</MobileConfirmTradeButton>
 					}
 				/>
@@ -232,6 +238,7 @@ const ConfirmTradeButton = styled(Button)`
 	overflow: hidden;
 	white-space: nowrap;
 	height: 55px;
+	font-size: 15px;
 `;
 
 export const MobileConfirmTradeButton = styled(Button)`
@@ -240,6 +247,7 @@ export const MobileConfirmTradeButton = styled(Button)`
 	white-space: nowrap;
 	height: 45px;
 	width: 100%;
+	font-size: 15px;
 `;
 
 export default TradeConfirmationModal;

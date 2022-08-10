@@ -1,4 +1,5 @@
-import React from 'react';
+import { debounce } from 'lodash';
+import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
@@ -9,7 +10,6 @@ import {
 	crossMarginAvailableMarginState,
 	currentMarketState,
 	futuresAccountState,
-	maxLeverageState,
 	positionState,
 	tradeSizeState,
 	tradeSizeSUSDState,
@@ -25,25 +25,56 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 	const tradeSize = useRecoilValue(tradeSizeState);
 	const tradeSizeSUSD = useRecoilValue(tradeSizeSUSDState);
 	const marketAsset = useRecoilValue(currentMarketState);
-	const maxLeverage = useRecoilValue(maxLeverageState);
 	const account = useRecoilValue(futuresAccountState);
 	const freeCrossMargin = useRecoilValue(crossMarginAvailableMarginState);
 	const position = useRecoilValue(positionState);
 
-	const {
-		onTradeAmountChange,
-		onTradeAmountSUSDChange,
-		onLeverageChange,
-		remainingMargin,
-	} = useFuturesContext();
+	const [usdValue, setUsdValue] = useState(tradeSizeSUSD);
+	const [assetValue, setAssetValue] = useState(tradeSize);
+
+	useEffect(() => {
+		if (tradeSizeSUSD !== usdValue) {
+			setUsdValue(tradeSizeSUSD);
+		}
+		if (assetValue !== tradeSize) {
+			setAssetValue(tradeSize);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [tradeSizeSUSD, tradeSize]);
+
+	const { onTradeAmountChange, onTradeAmountSUSDChange, maxUsdInputAmount } = useFuturesContext();
 
 	const handleSetMax = () => {
-		const maxOrderSizeUSDValue = Number(maxLeverage.mul(remainingMargin)).toFixed(0);
-		onTradeAmountSUSDChange(maxOrderSizeUSDValue);
-		onLeverageChange(Number(maxLeverage).toString().substring(0, 4));
+		onTradeAmountSUSDChange(Number(maxUsdInputAmount).toFixed(0));
 	};
 
-	const isDisabled = React.useMemo(() => {
+	// eslint-disable-next-line
+	const debounceOnChangeUsd = useCallback(
+		debounce((value) => {
+			onTradeAmountSUSDChange(value);
+		}, 1000),
+		[debounce, onTradeAmountSUSDChange]
+	);
+
+	// eslint-disable-next-line
+	const debounceOnChangeAssetValue = useCallback(
+		debounce((value) => {
+			onTradeAmountChange(value);
+		}, 1000),
+		[debounce, onTradeAmountChange]
+	);
+
+	const onChangeUsdValue = (_: ChangeEvent<HTMLInputElement>, v: string) => {
+		setUsdValue(v);
+		debounceOnChangeUsd(v);
+	};
+
+	const onChangeAssetValue = (_: ChangeEvent<HTMLInputElement>, v: string) => {
+		setAssetValue(v);
+		debounceOnChangeAssetValue(v);
+	};
+
+	const isDisabled = useMemo(() => {
 		const remaining =
 			account.selectedAccountType === 'isolated_margin'
 				? position?.remainingMargin || zeroBN
@@ -63,9 +94,9 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 			<CustomInput
 				disabled={isDisabled}
 				right={marketAsset || Synths.sUSD}
-				value={tradeSize}
+				value={assetValue}
 				placeholder="0.0"
-				onChange={(_, v) => onTradeAmountChange(v)}
+				onChange={onChangeAssetValue}
 				style={{
 					marginBottom: '-1px',
 					borderBottom: 'none',
@@ -78,9 +109,9 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 				dataTestId="set-order-size-amount-susd"
 				disabled={isDisabled}
 				right={Synths.sUSD}
-				value={tradeSizeSUSD}
+				value={usdValue}
 				placeholder="0.0"
-				onChange={(_, v) => onTradeAmountSUSDChange(v)}
+				onChange={onChangeUsdValue}
 				style={{
 					borderTopRightRadius: '0px',
 					borderTopLeftRadius: '0px',

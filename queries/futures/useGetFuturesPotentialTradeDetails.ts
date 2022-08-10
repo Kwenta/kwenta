@@ -83,7 +83,6 @@ const useGetFuturesPotentialTradeDetails = (
 			const FuturesMarketContract = getFuturesMarketContract(marketAsset, synthetixjs!.contracts);
 
 			const globals = await FuturesMarketData.globals();
-
 			const preview =
 				selectedAccountType === 'cross_margin'
 					? await getPreview(newSize, wei(positionMarginDelta).toBN())
