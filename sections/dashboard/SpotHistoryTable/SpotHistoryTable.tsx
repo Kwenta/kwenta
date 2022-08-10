@@ -6,8 +6,8 @@ import Link from 'next/link';
 import { FC, useMemo, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import { useAccount, useNetwork } from 'wagmi';
 
 import LinkIcon from 'assets/svg/app/link.svg';
 import Currency from 'components/Currency';
@@ -15,11 +15,9 @@ import Table, { TableNoResults } from 'components/Table';
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
-import BlockExplorer from 'containers/BlockExplorer';
 import Connector from 'containers/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetWalletTrades from 'queries/synths/useGetWalletTrades';
-import { walletAddressState } from 'store/wallet';
 import { ExternalLink } from 'styles/common';
 import { isFiatCurrency } from 'utils/currencies';
 
@@ -35,9 +33,10 @@ type WalletTradesExchangeResult = Omit<SynthTradesExchangeResult, 'timestamp'> &
 
 const SpotHistoryTable: FC = () => {
 	const { t } = useTranslation();
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { chain } = useNetwork();
+	const { address } = useAccount();
+	const walletAddress = address || null;
 
-	const { blockExplorerInstance } = BlockExplorer.useContainer();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const walletTradesQuery = useGetWalletTrades(walletAddress!);
 	const { synthsMap } = Connector.useContainer();
@@ -194,9 +193,9 @@ const SpotHistoryTable: FC = () => {
 					{
 						id: 'link',
 						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) =>
-							blockExplorerInstance != null && cellProps.row.original.hash ? (
+							chain != null && cellProps.row.original.hash ? (
 								<StyledExternalLink
-									href={blockExplorerInstance.txLink(cellProps.row.original.hash)}
+									href={`${chain?.blockExplorers?.etherscan?.url}/tx/${cellProps.row.original.hash}`}
 								>
 									<StyledLinkIcon />
 								</StyledExternalLink>
