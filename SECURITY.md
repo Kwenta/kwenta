@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-Pleas have a look at [Releases](https://github.com/Kwenta/kwenta/releases). We recommend using the most recently released version.
+Please have a look at [Releases](https://github.com/Kwenta/kwenta/releases). We recommend using the most recently released version.
 
 | Version | Supported          |
 | ------- | ------------------ |
@@ -13,7 +13,7 @@ Pleas have a look at [Releases](https://github.com/Kwenta/kwenta/releases). We r
 
 Please send vulnerability reports to kwenta@proton.me and encrypt sensitive messages using our PGP key.
 
-Please do not file a public ticket mentioning the vulnerability, as doing so could increase the likelihood of the vulnerability being used before a fix has been created and released.
+Please do not file a public ticket mentioning the vulnerability, as doing so could increase the likelihood of the vulnerability being exploited before a fix has been created and released.
 
 ```
 -----BEGIN PGP PUBLIC KEY BLOCK-----
