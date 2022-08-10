@@ -36,6 +36,14 @@ const Competition: FC<CompetitionProps> = ({
 	const walletAddress = useRecoilValue(walletAddressState);
 	const competitionQuery = useGetFile(COMPETITION_DATA_LOCATION);
 
+	const walletTier = useMemo(() => {
+		const competitionData = competitionQuery?.data ?? [];
+		const walletStat = competitionData.find(
+			({ account }: AccountStat) => account === walletAddress
+		);
+		return walletStat ? walletStat.tier : null;
+	}, [walletAddress, competitionQuery]);
+
 	let data = useMemo(() => {
 		const competitionData = competitionQuery?.data ?? [];
 
@@ -59,7 +67,9 @@ const Competition: FC<CompetitionProps> = ({
 					liquidations: trader.liquidations,
 				};
 			})
-			.filter((trader: { tier: string }) => trader.tier === activeTier)
+			.filter((trader: { tier: string }) => {
+				return compact && !!walletTier ? trader.tier === walletTier : trader.tier === activeTier;
+			})
 			.filter((i: { trader: string; traderEns: string }) =>
 				searchTerm?.length
 					? i.trader.toLowerCase().includes(searchTerm) ||
@@ -75,7 +85,7 @@ const Competition: FC<CompetitionProps> = ({
 				(trader) => trader.account.toLowerCase() !== walletAddress?.toLowerCase()
 			),
 		];
-	}, [competitionQuery, ensInfo, searchTerm, activeTier, walletAddress]);
+	}, [competitionQuery, ensInfo, searchTerm, activeTier, walletAddress, walletTier, compact]);
 
 	return (
 		<>
@@ -86,7 +96,7 @@ const Competition: FC<CompetitionProps> = ({
 					pageSize={10}
 					isLoading={competitionQuery.isLoading}
 					data={data}
-					hideHeaders={compact}
+					hiddenColumns={!compact ? undefined : ['totalTrades', 'liquidations', 'totalVolume']}
 					noResultsMessage={
 						<TableNoResults>{t('leaderboard.competition.table.no-result')}</TableNoResults>
 					}
@@ -95,7 +105,6 @@ const Competition: FC<CompetitionProps> = ({
 							Header: (
 								<TableTitle>
 									<TitleText>{t('leaderboard.competition.title')}</TitleText>
-									<TitleText>{t('leaderboard.competition.table.table-updates')}</TitleText>
 								</TableTitle>
 							),
 							accessor: 'title',
@@ -107,21 +116,16 @@ const Competition: FC<CompetitionProps> = ({
 									Cell: (cellProps: CellProps<any>) => (
 										<StyledOrderType>{cellProps.row.original.rankText}</StyledOrderType>
 									),
-									width: compact ? 40 : 60,
+									width: compact ? 100 : 60,
 								},
 								{
-									Header: !compact ? (
-										<TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>
-									) : (
-										<></>
-									),
+									Header: <TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>,
 									accessor: 'trader',
 									Cell: (cellProps: CellProps<any>) => {
 										return (
 											<StyledOrderType
 												onClick={() => onClickTrader(cellProps.row.original.account)}
 											>
-												{compact && cellProps.row.original.rank + '. '}
 												<StyledTrader>
 													{cellProps.row.original.traderEns ?? cellProps.row.original.traderShort}
 												</StyledTrader>
@@ -129,7 +133,7 @@ const Competition: FC<CompetitionProps> = ({
 											</StyledOrderType>
 										);
 									},
-									width: 120,
+									width: compact ? 180 : 120,
 								},
 								{
 									Header: (
@@ -137,7 +141,7 @@ const Competition: FC<CompetitionProps> = ({
 									),
 									accessor: 'totalTrades',
 									sortType: 'basic',
-									width: 80,
+									width: compact ? 'auto' : 80,
 									sortable: true,
 								},
 								{
@@ -146,7 +150,7 @@ const Competition: FC<CompetitionProps> = ({
 									),
 									accessor: 'liquidations',
 									sortType: 'basic',
-									width: 80,
+									width: compact ? 'auto' : 80,
 									sortable: true,
 								},
 								{
@@ -181,7 +185,7 @@ const Competition: FC<CompetitionProps> = ({
 											<StyledValue>{cellProps.row.original.pnlPct}</StyledValue>
 										</PnlContainer>
 									),
-									width: compact ? 'auto' : 100,
+									width: compact ? 120 : 100,
 									sortable: true,
 								},
 							],

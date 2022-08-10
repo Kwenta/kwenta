@@ -9,6 +9,7 @@ import ROUTES from 'constants/routes';
 import useENSs from 'hooks/useENSs';
 import { FuturesStat } from 'queries/futures/types';
 import useGetStats from 'queries/futures/useGetStats';
+import { FlexDivCol } from 'styles/common';
 import { truncateAddress } from 'utils/formatters/string';
 
 import AllTime from '../AllTime';
@@ -60,7 +61,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	}, [statsData, ensInfo]);
 
 	useMemo(() => {
-		if (router.query.tab) {
+		if (router.asPath.startsWith(ROUTES.Leaderboard.Home) && router.query.tab) {
 			const trader = router.query.tab[0];
 			setSelectedTrader(trader);
 		} else {
@@ -68,7 +69,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 			setSelectedTrader('');
 		}
 		return null;
-	}, [router.query]);
+	}, [router.query, router.asPath]);
 
 	const onChangeSearch = (text: string) => {
 		setSearchTerm(text?.toLowerCase());
@@ -87,8 +88,8 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	};
 
 	return (
-		<>
-			<SearchContainer>
+		<LeaderboardContainer>
+			<SearchContainer compact={compact}>
 				<TabButtonContainer>
 					{COMPETITION_TIERS.map((tier) => (
 						<StyledTabButton
@@ -114,7 +115,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 				<Search value={searchTerm} onChange={onChangeSearch} disabled={false} />
 			</SearchContainer>
 			<TableContainer compact={compact}>
-				{selectedTrader !== '' ? (
+				{!compact && selectedTrader !== '' ? (
 					<TraderHistory
 						trader={selectedTrader}
 						ensInfo={ensInfo}
@@ -140,9 +141,13 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 					/>
 				)}
 			</TableContainer>
-		</>
+		</LeaderboardContainer>
 	);
 };
+
+const LeaderboardContainer = styled(FlexDivCol)`
+	min-width: 400px;
+`;
 
 const StyledTabButton = styled(TabButton)`
 	min-width: 65px;
@@ -155,14 +160,14 @@ const TabButtonContainer = styled.div`
 	grid-template-columns: repeat(4, 1fr);
 `;
 
-const SearchContainer = styled.div`
-	display: flex;
-	margin-top: 16px;
+const SearchContainer = styled.div<{ compact: boolean | undefined }>`
+	display: ${({ compact }) => (compact ? 'none' : 'flex')};
+	margin-top: ${({ compact }) => (compact ? '0' : '16px')};
 	height: 35px;
 `;
 
 const TableContainer = styled.div<{ compact: boolean | undefined }>`
-	margin-top: 6px;
+	margin-top: ${({ compact }) => (compact ? '0' : '6px')};
 	margin-bottom: ${({ compact }) => (compact ? '0' : '40px')};
 `;
 

@@ -194,16 +194,18 @@ export const Table: FC<TableProps> = ({
 					{!!noResultsMessage && !isLoading && data.length === 0 && noResultsMessage}
 				</ReactTable>
 			</TableContainer>
-			{!showShortList && showPagination && data.length > (pageSize ? pageSize : MAX_PAGE_ROWS) ? (
-				<Pagination
-					pageIndex={pageIndex}
-					pageCount={pageCount}
-					canNextPage={canNextPage}
-					canPreviousPage={canPreviousPage}
-					setPage={gotoPage}
-					previousPage={previousPage}
-					nextPage={nextPage}
-				/>
+			{!showShortList && data.length > (pageSize ? pageSize : MAX_PAGE_ROWS) ? (
+				<HideContent hide={showPagination}>
+					<Pagination
+						pageIndex={pageIndex}
+						pageCount={pageCount}
+						canNextPage={canNextPage}
+						canPreviousPage={canPreviousPage}
+						setPage={gotoPage}
+						previousPage={previousPage}
+						nextPage={nextPage}
+					/>
+				</HideContent>
 			) : undefined}
 		</>
 	);
@@ -216,6 +218,10 @@ const TableContainer = styled.div`
 const StyledSpinner = styled(Spinner)`
 	display: block;
 	margin: 30px auto;
+`;
+
+const HideContent = styled.div<{ hide: boolean }>`
+	visibility: ${(props) => (props.hide ? 'hidden' : 'default')};
 `;
 
 export const TableRow = styled.div``;
