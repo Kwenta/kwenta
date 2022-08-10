@@ -11,10 +11,8 @@ import { TabPanel } from 'components/Tab';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
-import { futuresMarketsState } from 'store/futures';
 import { walletAddressState } from 'store/wallet';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
-import { MarketKeyByAsset } from 'utils/futures';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
 import FuturesPositionsTable from '../FuturesPositionsTable';
@@ -38,12 +36,9 @@ const Overview: FC = () => {
 
 	const { useExchangeRatesQuery, useSynthsBalancesQuery } = useSynthetixQueries();
 
-	const futuresMarkets = useRecoilValue(futuresMarketsState);
-
 	useQueryCrossMarginAccount();
 
-	const markets = futuresMarkets.map(({ asset }) => MarketKeyByAsset[asset]);
-	const portfolioValueQuery = useGetCurrentPortfolioValue(markets);
+	const portfolioValueQuery = useGetCurrentPortfolioValue();
 	const portfolioValue = portfolioValueQuery?.data ?? null;
 
 	const futuresPositionQuery = useGetFuturesPositionForAccount();
