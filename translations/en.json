@@ -829,7 +829,8 @@
 			"title": "Competition",
 			"table": {
 				"table-updates": "Table data updates daily",
-				"no-result": "Competition starting soon"
+				"starting-soon": "Competition starting soon",
+				"started": "Competition started, leaderboard updates at 00:00 UTC"
 			}
 		}
 	},

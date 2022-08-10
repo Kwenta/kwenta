@@ -275,7 +275,8 @@ const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
 `;
 
 export const TableNoResults = styled(GridDivCenteredRow)`
-	padding: 50px 0;
+	padding: 50px 60px;
+	text-align: center;
 	justify-content: center;
 	margin-top: -2px;
 	justify-items: center;

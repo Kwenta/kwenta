@@ -15,7 +15,7 @@ import { formatPercent } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';
 
 import { AccountStat, getMedal, PIN, StyledTrader, Tier } from '../common';
-import { COMPETITION_DATA_LOCATION } from './constants';
+import { COMPETITION_DATA_LOCATION, MOBILE_COMPETITION_START } from './constants';
 
 type CompetitionProps = {
 	activeTier: Tier;
@@ -87,6 +87,11 @@ const Competition: FC<CompetitionProps> = ({
 		];
 	}, [competitionQuery, ensInfo, searchTerm, activeTier, walletAddress, walletTier, compact]);
 
+	const noResultsMessage =
+		Date.now() > MOBILE_COMPETITION_START.getTime()
+			? t('leaderboard.competition.table.started')
+			: t('leaderboard.competition.table.starting-soon');
+
 	return (
 		<>
 			<DesktopOnlyView>
@@ -97,9 +102,7 @@ const Competition: FC<CompetitionProps> = ({
 					isLoading={competitionQuery.isLoading}
 					data={data}
 					hiddenColumns={!compact ? undefined : ['totalTrades', 'liquidations', 'totalVolume']}
-					noResultsMessage={
-						<TableNoResults>{t('leaderboard.competition.table.no-result')}</TableNoResults>
-					}
+					noResultsMessage={<TableNoResults>{noResultsMessage}</TableNoResults>}
 					columns={[
 						{
 							Header: (
