@@ -13,6 +13,9 @@ export const SectionTitle = styled.div`
 	text-transform: uppercase;
 	font-size: 13px;
 	text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4);
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
 `;
 
 export const SectionSubTitle = styled.div`
