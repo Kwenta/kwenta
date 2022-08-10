@@ -1,11 +1,11 @@
 import Wei, { wei } from '@synthetixio/wei';
 import request, { gql } from 'graphql-request';
-import { useQueries, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
+import { useQuery, UseQueryOptions } from 'react-query';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
-import { futuresMarketsState } from 'store/futures';
+import { fundingRatesState, futuresMarketsState } from 'store/futures';
 import { isL2State, networkState } from 'store/wallet';
 import { FuturesMarketKey, MarketKeyByAsset } from 'utils/futures';
 import logError from 'utils/logError';
@@ -21,7 +21,7 @@ type FundingRateInput = {
 };
 
 export type FundingRateResponse = {
-	asset: string;
+	asset: FuturesMarketKey;
 	fundingRate: Wei | null;
 };
 
@@ -34,6 +34,7 @@ const useGetAverageFundingRateForMarkets = (
 	const network = useRecoilValue(networkState);
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 	const futuresEndpoint = getFuturesEndpoint(network);
+	const setFundingRates = useSetRecoilState(fundingRatesState);
 
 	const fundingRateInputs: FundingRateInput[] = futuresMarkets.map(
 		({ asset, market, price, currentFundingRate }) => {
@@ -46,15 +47,15 @@ const useGetAverageFundingRateForMarkets = (
 		}
 	);
 
-	return useQueries(
-		fundingRateInputs.map(({ marketAddress, marketKey, price, currentFundingRate }) => {
-			return {
-				queryKey: QUERY_KEYS.Futures.FundingRate(network.id, marketKey || ''),
-				queryFn: async () => {
-					if (!marketKey || !price || !marketAddress) return null;
-					const minTimestamp = Math.floor(Date.now() / 1000) - periodLength;
+	return useQuery<any>(
+		QUERY_KEYS.Futures.FundingRates(network.id, periodLength),
+		async () => {
+			const minTimestamp = Math.floor(Date.now() / 1000) - periodLength;
+
+			const fundingRatePromises = fundingRateInputs.map(
+				({ marketAddress, marketKey, price, currentFundingRate }) => {
 					try {
-						const response: { string: FundingRateUpdate[] } = await request(
+						const response = request(
 							futuresEndpoint,
 							gql`
 								query fundingRateUpdates($market: String!, $minTimestamp: BigInt!) {
@@ -93,35 +94,47 @@ const useGetAverageFundingRateForMarkets = (
 								}
 							`,
 							{ market: marketAddress, minTimestamp: minTimestamp }
-						);
-						const responseFilt = Object.values(response)
-							.filter((value: FundingRateUpdate[]) => value.length > 0)
-							.map((entry: FundingRateUpdate[]): FundingRateUpdate => entry[0])
-							.sort((a: FundingRateUpdate, b: FundingRateUpdate) => a.timestamp - b.timestamp);
+						).then((response: { string: FundingRateUpdate[] }): FundingRateResponse | null => {
+							if (!price) return null;
+							const responseFilt = Object.values(response)
+								.filter((value: FundingRateUpdate[]) => value.length > 0)
+								.map((entry: FundingRateUpdate[]): FundingRateUpdate => entry[0])
+								.sort((a: FundingRateUpdate, b: FundingRateUpdate) => a.timestamp - b.timestamp);
 
-						const fundingRateResponse: FundingRateResponse = {
-							asset: marketKey,
-							fundingRate:
-								responseFilt && !!currentFundingRate
-									? calculateFundingRate(
-											minTimestamp,
-											periodLength,
-											responseFilt,
-											price,
-											currentFundingRate
-									  )
-									: wei(0),
-						};
-						return fundingRateResponse;
+							const fundingRateResponse: FundingRateResponse = {
+								asset: marketKey,
+								fundingRate:
+									responseFilt && !!currentFundingRate
+										? calculateFundingRate(
+												minTimestamp,
+												periodLength,
+												responseFilt,
+												price,
+												currentFundingRate
+										  )
+										: wei(0),
+							};
+							return fundingRateResponse;
+						});
+						return response;
 					} catch (e) {
 						logError(e);
 						return null;
 					}
-				},
-				enabled: isAppReady && isL2 && !!futuresMarkets,
-				...options,
-			};
-		})
+				}
+			);
+
+			const fundingRateResponses = await Promise.all(fundingRatePromises);
+			const fundingRates: FundingRateResponse[] = fundingRateResponses.filter(
+				(funding): funding is FundingRateResponse => !!funding
+			);
+
+			setFundingRates(fundingRates);
+		},
+		{
+			enabled: isAppReady && isL2 && futuresMarkets.length > 0,
+			...options,
+		}
 	);
 };
 

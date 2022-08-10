@@ -1,4 +1,3 @@
-import * as _ from 'lodash/fp';
 import React from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,54 +5,41 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { FuturesMarket } from 'queries/futures/types';
-import { currentMarketState, futuresMarketsState } from 'store/futures';
+import { currentMarketState, marketInfoState } from 'store/futures';
 import { CapitalizedText, NumericValue } from 'styles/common';
 import { formatCurrency, formatPercent } from 'utils/formatters/number';
 
 import OpenInterestBar from './OpenInterestBar';
 
+const DEFAULT_DATA = {
+	short: 0,
+	long: 0,
+	shortValue: 0,
+	longValue: 0,
+	shortText: '',
+	longText: '',
+};
+
 const SkewInfo: React.FC = () => {
 	const { t } = useTranslation();
 
-	const currencyKey = useRecoilValue(currentMarketState);
-	const futuresMarkets = useRecoilValue(futuresMarketsState);
-
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+	const marketInfo = useRecoilValue(marketInfoState);
+	const currentMarket = useRecoilValue(currentMarketState);
 
 	const data = useMemo(() => {
-		const cleanMarket = (i: FuturesMarket) => {
-			const basePriceRate = _.defaultTo(0, Number(i.price));
-			return {
-				short: i.marketSize.eq(0)
-					? 0
-					: i.marketSize.sub(i.marketSkew).div('2').div(i.marketSize).toNumber(),
-				long: i.marketSize.eq(0)
-					? 0
-					: i.marketSize.add(i.marketSkew).div('2').div(i.marketSize).toNumber(),
-				shortValue: i.marketSize.eq(0)
-					? 0
-					: i.marketSize.sub(i.marketSkew).div('2').mul(basePriceRate).toNumber(),
-				longValue: i.marketSize.eq(0)
-					? 0
-					: i.marketSize.add(i.marketSkew).div('2').mul(basePriceRate).toNumber(),
-			};
-		};
-
-		const market = futuresMarkets.find((i: FuturesMarket) => i.asset === currencyKey);
-		return market
-			? cleanMarket(market)
-			: {
-					short: 0,
-					long: 0,
-					shortValue: 0,
-					longValue: 0,
-			  };
-	}, [futuresMarkets, currencyKey]);
-
-	const long = formatCurrency(selectedPriceCurrency.name, data.longValue, { sign: '$' });
-	const short = formatCurrency(selectedPriceCurrency.name, data.shortValue, { sign: '$' });
+		return marketInfo?.openInterest
+			? {
+					short: marketInfo?.openInterest?.shortPct,
+					long: marketInfo?.openInterest?.longPct,
+					shortValue: marketInfo?.openInterest?.shortUSD,
+					longValue: marketInfo?.openInterest?.longUSD,
+					shortText: formatCurrency(currentMarket, marketInfo?.openInterest?.shortUSD, {
+						sign: '$',
+					}),
+					longText: formatCurrency(currentMarket, marketInfo?.openInterest?.longUSD, { sign: '$' }),
+			  }
+			: DEFAULT_DATA;
+	}, [marketInfo, currentMarket]);
 
 	return (
 		<SkewContainer>
@@ -73,8 +59,8 @@ const SkewInfo: React.FC = () => {
 			</SkewHeader>
 			<OpenInterestBar skew={data} />
 			<OpenInterestRow>
-				<p className="red">{short}</p>
-				<p className="green">{long}</p>
+				<p className="red">{data.shortText}</p>
+				<p className="green">{data.longText}</p>
 			</OpenInterestRow>
 		</SkewContainer>
 	);

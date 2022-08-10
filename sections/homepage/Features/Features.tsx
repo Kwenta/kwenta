@@ -61,7 +61,6 @@ const FEATURES = [
 		title: 'homepage.features.mobile.title',
 		copy: 'homepage.features.mobile.copy',
 		image: <MobileIcon />,
-		comingSoon: true,
 	},
 	{
 		key: 'easy-ramping',
