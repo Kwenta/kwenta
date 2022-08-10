@@ -832,7 +832,7 @@
 			"table": {
 				"table-updates": "Table data updates daily",
 				"starting-soon": "Competition starting soon",
-				"started": "Competition started, leaderboard updates at 00:00 UTC"
+				"started": "Competition started, leaderboard updates every 3 hours"
 			}
 		}
 	},
