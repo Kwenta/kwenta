@@ -97,7 +97,8 @@ const Competition: FC<CompetitionProps> = ({
 			<DesktopOnlyView>
 				<StyledTable
 					compact={compact}
-					showPagination
+					showPagination={!compact}
+					showShortList={compact}
 					pageSize={10}
 					isLoading={competitionQuery.isLoading}
 					data={data}

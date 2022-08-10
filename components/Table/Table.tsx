@@ -195,17 +195,15 @@ export const Table: FC<TableProps> = ({
 				</ReactTable>
 			</TableContainer>
 			{!showShortList && data.length > (pageSize ? pageSize : MAX_PAGE_ROWS) ? (
-				<HideContent hide={showPagination}>
-					<Pagination
-						pageIndex={pageIndex}
-						pageCount={pageCount}
-						canNextPage={canNextPage}
-						canPreviousPage={canPreviousPage}
-						setPage={gotoPage}
-						previousPage={previousPage}
-						nextPage={nextPage}
-					/>
-				</HideContent>
+				<Pagination
+					pageIndex={pageIndex}
+					pageCount={pageCount}
+					canNextPage={canNextPage}
+					canPreviousPage={canPreviousPage}
+					setPage={gotoPage}
+					previousPage={previousPage}
+					nextPage={nextPage}
+				/>
 			) : undefined}
 		</>
 	);
@@ -218,10 +216,6 @@ const TableContainer = styled.div`
 const StyledSpinner = styled(Spinner)`
 	display: block;
 	margin: 30px auto;
-`;
-
-const HideContent = styled.div<{ hide: boolean }>`
-	visibility: ${(props) => (props.hide ? 'hidden' : 'default')};
 `;
 
 export const TableRow = styled.div``;
@@ -275,7 +269,7 @@ const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
 `;
 
 export const TableNoResults = styled(GridDivCenteredRow)`
-	padding: 50px 60px;
+	padding: 50px 40px;
 	text-align: center;
 	justify-content: center;
 	margin-top: -2px;
