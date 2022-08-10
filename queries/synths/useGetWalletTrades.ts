@@ -54,8 +54,9 @@ const useGetWalletTrades = (
 							}
 						}
 					`,
-					{ walletAddress: walletAddress }
+					{ walletAddress: walletAddress.toLowerCase() }
 				);
+
 				return response;
 			} catch (e) {
 				logError(e);
