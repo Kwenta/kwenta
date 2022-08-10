@@ -22,77 +22,82 @@ intercept(interceptStdout);
 
 const withPlugins = require('next-compose-plugins');
 const optimizedImages = require('next-optimized-images');
+const withTM = require('next-transpile-modules')(['echarts', 'zrender']);
 
-module.exports = withPlugins([
-	[
-		optimizedImages,
-		{
-			/* config for next-optimized-images (use default) */
-			imagesFolder: 'images',
-			imagePublicPolder: '/_next/static/images',
-			imageOutputPath: '/static/images',
-		},
-	],
-	{
-		env: {
-			GIT_HASH_ID: gitRevision,
-		},
-		images: {
-			disableStaticImages: true,
-		},
-		webpack: (config, options) => {
-			config.resolve.mainFields = ['module', 'browser', 'main'];
+const plugins = [
+	withTM,
+	// [
+	// 	optimizedImages,
+	// 	{
+	// 		/* config for next-optimized-images (use default) */
+	// 		imagesFolder: 'images',
+	// 		imagePublicPolder: '/_next/static/images',
+	// 		imageOutputPath: '/static/images',
+	// 	},
+	// ],
+];
 
-			config.module.rules.push(
-				{
-					test: /\.svg$/,
-					loader: '@svgr/webpack',
-					options: {
-						prettier: false,
-						svgo: true,
-						svgoConfig: {
-							plugins: [
-								{
-									name: 'preset-default',
-									params: {
-										overrides: {
-											removeViewBox: false,
-											cleanupIDs: false,
-										},
+const nextConfig = {
+	env: {
+		GIT_HASH_ID: gitRevision,
+	},
+	images: {
+		disableStaticImages: true,
+	},
+	webpack: (config, options) => {
+		config.resolve.mainFields = ['module', 'browser', 'main'];
+
+		config.module.rules.push(
+			{
+				test: /\.svg$/,
+				loader: '@svgr/webpack',
+				options: {
+					prettier: false,
+					svgo: true,
+					svgoConfig: {
+						plugins: [
+							{
+								name: 'preset-default',
+								params: {
+									overrides: {
+										removeViewBox: false,
+										cleanupIDs: false,
 									},
 								},
-							],
-						},
-						titleProp: true,
+							},
+						],
 					},
+					titleProp: true,
 				},
-				{
-					test: /\.png/,
-					type: 'asset/resource',
-				}
-			);
+			},
+			{
+				test: /\.png/,
+				type: 'asset/resource',
+			}
+		);
 
-			return config;
-		},
-		trailingSlash: !!process.env.NEXT_PUBLIC_DISABLE_PRETTY_URLS,
-		exportPathMap: function (defaultPathMap) {
-			return {
-				...defaultPathMap,
-				'/': {
-					page: '/',
-				},
-				'/dashboard': {
-					page: '/dashboard/[[...tab]]',
-				},
-				'/exchange': {
-					page: '/exchange/[[...market]]',
-				},
-			};
-		},
-		compiler: {
-			// ssr and displayName are configured by default
-			styledComponents: true,
-		},
-		experimental: { images: { layoutRaw: true } },
+		return config;
 	},
-]);
+	trailingSlash: !!process.env.NEXT_PUBLIC_DISABLE_PRETTY_URLS,
+	exportPathMap: function (defaultPathMap) {
+		return {
+			...defaultPathMap,
+			'/': {
+				page: '/',
+			},
+			'/dashboard': {
+				page: '/dashboard/[[...tab]]',
+			},
+			'/exchange': {
+				page: '/exchange/[[...market]]',
+			},
+		};
+	},
+	compiler: {
+		// ssr and displayName are configured by default
+		styledComponents: true,
+	},
+	experimental: { images: { layoutRaw: true } },
+};
+
+module.exports = withPlugins([...plugins], nextConfig);
