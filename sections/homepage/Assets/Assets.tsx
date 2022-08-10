@@ -867,7 +867,7 @@ const Container = styled.div`
 	`}
 `;
 
-const StyledCurrencyIcon = styled(Currency.Icon)`
+const StyledCurrencyIcon = styled(Currency.Icon).attrs({ width: '45px', height: '45px' })`
 	width: 45px;
 	height: 45px;
 	margin-right: 15px;
