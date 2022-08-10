@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { components } from 'react-select';
 import { useRecoilValue } from 'recoil';
@@ -32,16 +32,18 @@ const BalanceActions: FC = () => {
 
 	const sUSDBalance = synthBalances?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
 
-	const OPTIONS = useMemo(() => {
-		const accessiblePositions =
-			futuresPositions?.filter((position) => position.remainingMargin.gt(zeroBN)) ?? [];
+	const accessiblePositions = useMemo(
+		() => futuresPositions?.filter((position) => position.remainingMargin.gt(zeroBN)) ?? [],
+		[futuresPositions]
+	);
 
-		const totalRemainingMargin = accessiblePositions.reduce(
-			(prev, position) => prev.add(position.remainingMargin),
-			zeroBN
-		);
+	const totalRemainingMargin = accessiblePositions.reduce(
+		(prev, position) => prev.add(position.remainingMargin),
+		zeroBN
+	);
 
-		const setMarketConfig = (asset: FuturesMarketAsset): ReactSelectOptionProps => {
+	const setMarketConfig = useCallback(
+		(asset: FuturesMarketAsset): ReactSelectOptionProps => {
 			const remainingMargin =
 				accessiblePositions.find((position) => position.asset === asset)?.remainingMargin ?? zeroBN;
 
@@ -49,23 +51,27 @@ const BalanceActions: FC = () => {
 				label: getMarketName(asset),
 				synthIcon: MarketKeyByAsset[asset],
 				marketRemainingMargin: formatCurrency(Synths.sUSD, remainingMargin, { sign: '$' }),
-				onClick: () => router.push(`/market/${asset}`),
+				onClick: () => router.push(`/market/?asset=${asset}`),
 			};
-		};
+		},
+		[accessiblePositions, router]
+	);
 
-		return [
+	const OPTIONS = useMemo(
+		() => [
 			{
 				label: 'header.balance.total-margin-label',
 				totalAvailableMargin: formatCurrency(Synths.sUSD, totalRemainingMargin, { sign: '$' }),
 				options: accessiblePositions.map((market) => setMarketConfig(market.asset)),
 			},
-		];
-	}, [futuresPositions, router]);
+		],
+		[accessiblePositions, setMarketConfig, totalRemainingMargin]
+	);
 
-	const OptionsGroupLabel: FC<{
-		label: string;
-		totalAvailableMargin?: string;
-	}> = ({ label, totalAvailableMargin }) => {
+	const OptionsGroupLabel: FC<{ label: string; totalAvailableMargin?: string }> = ({
+		label,
+		totalAvailableMargin,
+	}) => {
 		return (
 			<FlexDivRow>
 				<Container>{t(label)}</Container>
@@ -90,7 +96,7 @@ const BalanceActions: FC = () => {
 	);
 
 	const GetUsdButton = () => (
-		<StyledButton textTransform="none" onClick={() => router.push(`/exchange/sUSD`)}>
+		<StyledButton textTransform="none" onClick={() => router.push(`/exchange/?quote=sUSD`)}>
 			{t('header.balance.get-more-susd')}
 		</StyledButton>
 	);
@@ -124,7 +130,7 @@ const BalanceActions: FC = () => {
 			{sUSDBalance.eq(zeroBN) && futuresPositions?.length === 0 ? (
 				<StyledWidgetButton
 					textTransform="none"
-					onClick={() => router.push(`/exchange/sUSD`)}
+					onClick={() => router.push(`/exchange/?quote=sUSD`)}
 					noOutline
 				>
 					<StyledCurrencyIcon currencyKey={Synths.sUSD} width="20px" height="20px" />
@@ -144,12 +150,12 @@ const BalanceActions: FC = () => {
 					components={{
 						Group,
 						NoOptionsMessage,
-						DropdownIndicator: () => null,
-						IndicatorSeparator: () => null,
+						DropdownIndicator: undefined,
+						IndicatorSeparator: undefined,
 					}}
 					isSearchable={false}
 					noOutline
-				></BalanceSelect>
+				/>
 			)}
 		</Container>
 	);

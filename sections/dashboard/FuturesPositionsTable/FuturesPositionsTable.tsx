@@ -295,7 +295,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					) : (
 						data.map((row) => (
 							<MobilePositionRow
-								onClick={() => router.push(`/market/${row.asset}`)}
+								onClick={() => router.push(`/market/?asset=${row.asset}`)}
 								key={row.asset}
 								row={row}
 							/>

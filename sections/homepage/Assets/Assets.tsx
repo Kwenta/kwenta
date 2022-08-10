@@ -301,7 +301,7 @@ const Assets = () => {
 									<StatsCard
 										noOutline
 										onClick={() => {
-											router.push(`/market/${key}`);
+											router.push(`/market/?asset=${key}`);
 										}}
 									>
 										<GridSvg className="bg" objectfit="cover" layout="fill" />
@@ -360,7 +360,7 @@ const Assets = () => {
 										noOutline
 										onClick={() => {
 											market !== 'sUSD'
-												? router.push(`/exchange/${market}-sUSD`)
+												? router.push(`/exchange/?quote=sUSD&base=${market}`)
 												: router.push(`/exchange/`);
 										}}
 									>
@@ -431,7 +431,7 @@ const Assets = () => {
 										className={key}
 										noOutline={false}
 										onClick={() => {
-											router.push(`/market/${key}`);
+											router.push(`/market/?asset=${key}`);
 										}}
 									>
 										<GridSvg className="bg" objectfit="cover" layout="fill" />
@@ -489,7 +489,7 @@ const Assets = () => {
 										noOutline={false}
 										onClick={() => {
 											market !== 'sUSD'
-												? router.push(`/exchange/${market}-sUSD`)
+												? router.push(`/exchange/?quote=sUSD&base=${market}`)
 												: router.push(`/exchange/`);
 										}}
 									>
