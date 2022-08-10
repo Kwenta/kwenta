@@ -228,10 +228,13 @@ const ProfitCalculator: FC<ProfitCalculatorProps> = ({ marketAsset, setOpenProfi
 
 export const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
-		width: 750px;
+		width: 500px;
+		.react-draggable {
+			width: 400px !important;
+		}
 	}
 	.card-body {
-		padding: 28px;
+		padding: 12px 28px 28px 28px;
 	}
 `;
 
@@ -240,7 +243,7 @@ const StatsGrid = styled.div`
 	grid-gap: 1.1rem;
 	grid-template-columns: repeat(3, 1fr);
 
-	margin-top: 20px;
+	margin-top: 10px;
 `;
 
 const LeftColumn = styled.div`
@@ -263,9 +266,6 @@ const ProfitCalcGrid = styled.div`
 	grid-template-columns: repeat(2, 1fr);
 `;
 
-const ModalWindow = styled.div`
-	height: 729px;
-	padding: 0px 25px;
-`;
+const ModalWindow = styled.div``;
 
 export default ProfitCalculator;
