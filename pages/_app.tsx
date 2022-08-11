@@ -19,9 +19,11 @@ import { RecoilRoot, useRecoilValue } from 'recoil';
 import { ThemeProvider } from 'styled-components';
 import { chain, configureChains, createClient, useNetwork, useProvider, WagmiConfig } from 'wagmi';
 import { infuraProvider } from 'wagmi/providers/infura';
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { publicProvider } from 'wagmi/providers/public';
 
 import Safe from 'components/Rainbowkit/Gnosis';
+import { BLAST_NETWORK_LOOKUP } from 'constants/network';
 import Connector from 'containers/Connector';
 import Layout from 'sections/shared/Layout';
 import AppLayout from 'sections/shared/Layout/AppLayout';
@@ -52,12 +54,24 @@ type AppPropsWithLayout = AppProps & {
 const { chains, provider } = configureChains(
 	[chain.mainnet, chain.optimism, chain.goerli, chain.kovan, chain.optimismKovan],
 	[
-		infuraProvider({
-			infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-			stallTimeout: 1_000,
+		jsonRpcProvider({
+			rpc: (chain) => ({
+				http: `https://${BLAST_NETWORK_LOOKUP[chain.id]}.blastapi.io/${
+					process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID
+				}`,
+				webSocket: `wss://${BLAST_NETWORK_LOOKUP[chain.id]}.blastapi.io/${
+					process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID
+				}`,
+			}),
+			stallTimeout: 1000,
 			priority: 0,
 		}),
-		publicProvider({ stallTimeout: 1_000, priority: 5 }),
+		infuraProvider({
+			infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+			stallTimeout: 1000,
+			priority: 1,
+		}),
+		publicProvider({ stallTimeout: 1000, priority: 5 }),
 	]
 );
 
@@ -69,14 +83,13 @@ const connectors = connectorsForWallets([
 			wallet.rainbow({ chains }),
 			wallet.coinbase({ appName: 'Kwenta', chains }),
 			wallet.walletConnect({ chains }),
-			Safe({ chains }),
 		],
 	},
 	{
 		groupName: 'More',
 		wallets: [
+			Safe({ chains }),
 			wallet.ledger({ chains }),
-			wallet.argent({ chains }),
 			wallet.brave({ chains, shimDisconnect: true }),
 			wallet.trust({ chains }),
 		],
