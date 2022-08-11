@@ -100,12 +100,16 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 		formattedValue.push(prefix);
 	}
 
-	const weiAsStringWithDecimals = truncation
+	let weiAsStringWithDecimals = truncation
 		? weiValue
 				.abs()
 				.div(truncation.divisor)
 				.toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS)
 		: weiValue.abs().toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS);
+
+	if (options?.maxDecimals || options?.maxDecimals === 0) {
+		weiAsStringWithDecimals = wei(weiAsStringWithDecimals).toString(options.maxDecimals);
+	}
 
 	const withCommas = commifyAndPadDecimals(
 		weiAsStringWithDecimals,

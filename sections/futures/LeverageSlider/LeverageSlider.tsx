@@ -9,7 +9,7 @@ type LeverageSliderProps = SliderProps & {
 	value?: number;
 	defaultValue?: number;
 	disabled?: boolean;
-	onChangeCommitted: (event: React.ChangeEvent<{}>, value: number | number[]) => void;
+	onChangeCommitted?: (event: React.ChangeEvent<{}>, value: number | number[]) => void;
 };
 
 const LeverageSlider: React.FC<LeverageSliderProps> = ({

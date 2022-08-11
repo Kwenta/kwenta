@@ -4,14 +4,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import SegmentedControl from 'components/SegmentedControl';
 import StyledSlider from 'components/Slider/StyledSlider';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import {
 	crossMarginAvailableMarginState,
 	crossMarginLeverageState,
 	leverageSideState,
-	orderTypeState,
 	positionState,
 } from 'store/futures';
 import { FlexDivRow } from 'styles/common';
@@ -25,7 +23,6 @@ import MarginInfoBox from './MarginInfoBox';
 
 export default function TradeCrossMargin() {
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
-	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const freeMargin = useRecoilValue(crossMarginAvailableMarginState);
 	const position = useRecoilValue(positionState);
 	const leverage = useRecoilValue(crossMarginLeverageState);
@@ -48,7 +45,7 @@ export default function TradeCrossMargin() {
 			const fraction = value / 100;
 			const usdAmount = sizeRange.mul(fraction).toString();
 			onTradeAmountSUSDChange(Number(usdAmount).toFixed(0));
-		}, 1000),
+		}, 500),
 		[debounce, onTradeAmountSUSDChange]
 	);
 
@@ -65,11 +62,6 @@ export default function TradeCrossMargin() {
 		<>
 			<MarketsDropdown />
 			<MarginInfoBox />
-			<StyledSegmentedControl
-				values={['Market', 'Next-Price']}
-				selectedIndex={orderType}
-				onChange={setOrderType}
-			/>
 			<OrderSizing />
 			<SliderRow>
 				<StyledSlider
@@ -94,10 +86,6 @@ export default function TradeCrossMargin() {
 		</>
 	);
 }
-
-const StyledSegmentedControl = styled(SegmentedControl)`
-	margin-bottom: 16px;
-`;
 
 const SliderRow = styled(FlexDivRow)`
 	margin-top: 8px;

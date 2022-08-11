@@ -8,6 +8,7 @@ const eliteTheme = {
 	black: '#171002',
 	white: '',
 	gray: '#787878',
+	yellow: '#FFB800',
 	table: { fill: 'rgba(255, 255, 255, 0.01)', hover: '#EDEDED' },
 	gold: '#E4B378',
 	button: {

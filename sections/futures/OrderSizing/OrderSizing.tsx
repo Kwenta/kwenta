@@ -64,7 +64,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 	const debounceOnChangeAssetValue = useCallback(
 		debounce((value) => {
 			onTradeAmountChange(value);
-		}, 1000),
+		}, 500),
 		[debounce, onTradeAmountChange]
 	);
 

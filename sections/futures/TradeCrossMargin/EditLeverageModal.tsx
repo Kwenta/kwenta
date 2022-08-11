@@ -1,13 +1,24 @@
-import React, { useState } from 'react';
+import { wei } from '@synthetixio/wei';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import ErrorView from 'components/Error';
 import CustomInput from 'components/Input/CustomInput';
+import { NumberSpan } from 'components/Text/NumberLabel';
 import { useFuturesContext } from 'contexts/FuturesContext';
-import { FlexDivRowCentered } from 'styles/common';
+import {
+	crossMarginLeverageState,
+	crossMarginTotalMarginState,
+	marketInfoState,
+} from 'store/futures';
+import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
+import { formatDollars } from 'utils/formatters/number';
+
+import LeverageSlider from '../LeverageSlider';
 
 type DepositMarginModalProps = {
 	onDismiss(): void;
@@ -15,13 +26,33 @@ type DepositMarginModalProps = {
 
 export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps) {
 	const { t } = useTranslation();
+	const [crossMarginLeverage, setCrossMarginLeverage] = useRecoilState(crossMarginLeverageState);
+	const market = useRecoilValue(marketInfoState);
+	const totalMargin = useRecoilValue(crossMarginTotalMarginState);
 
-	const [leverage, setLeverage] = useState<number>(10);
+	const [leverage, setLeverage] = useState<number>(Number(crossMarginLeverage));
 
 	const { orderTxn } = useFuturesContext();
 
+	const maxLeverage = Number((market?.maxLeverage || wei(10)).toString(2));
+
+	const maxPositionUsd = useMemo(() => {
+		return totalMargin.mul(crossMarginLeverage);
+	}, [totalMargin, crossMarginLeverage]);
+
 	const handleIncrease = () => {
-		setLeverage(leverage + 1);
+		const newLeverage = leverage + 1;
+		setLeverage(Math.min(newLeverage, maxLeverage));
+	};
+
+	const handleDecrease = () => {
+		const newLeverage = leverage - 1;
+		setLeverage(Math.max(newLeverage, 1));
+	};
+
+	const onConfirm = () => {
+		setCrossMarginLeverage(String(leverage));
+		onDismiss();
 	};
 
 	return (
@@ -30,21 +61,41 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 			isOpen
 			onDismiss={onDismiss}
 		>
-			<BalanceText>{t('futures.market.trade.leverage.modal.balance')}:</BalanceText>
-
+			<Label>{t('futures.market.trade.leverage.modal.input-label')}:</Label>
 			<InputContainer
 				dataTestId="futures-market-trade-leverage-modal-input"
 				value={leverage}
 				onChange={(_, v) => setLeverage(Number(v))}
 				right={<MaxButton onClick={handleIncrease}>+</MaxButton>}
+				left={<MaxButton onClick={handleDecrease}>-</MaxButton>}
+				textAlign="center"
 			/>
+
+			<SliderRow>
+				<LeverageSlider
+					minValue={1}
+					maxValue={maxLeverage}
+					value={leverage}
+					onChange={(_, newValue) => {
+						setLeverage(newValue as number);
+					}}
+					onChangeCommitted={() => {}}
+				/>
+			</SliderRow>
+
+			<MaxPosContainer>
+				<Label>{t('futures.market.trade.leverage.modal.max-pos')}</Label>
+				<Label>
+					<NumberSpan fontWeight="bold">{formatDollars(maxPositionUsd)}</NumberSpan> sUSD
+				</Label>
+			</MaxPosContainer>
 
 			<MarginActionButton
 				data-testid="futures-market-trade-deposit-margin-button"
 				fullWidth
-				onClick={() => orderTxn.mutate()}
+				onClick={onConfirm}
 			>
-				t('futures.market.trade.leverage.modal.submit')
+				{t('futures.market.trade.leverage.modal.confirm')}
 			</MarginActionButton>
 
 			{orderTxn.errorMessage && <ErrorView message={orderTxn.errorMessage} formatter="revert" />}
@@ -52,25 +103,22 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 	);
 }
 
-export const StyledBaseModal = styled(BaseModal)`
+const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
 		width: 400px;
 	}
 `;
 
-export const BalanceContainer = styled(FlexDivRowCentered)`
-	margin-top: 12px;
+const MaxPosContainer = styled(FlexDivRowCentered)`
+	margin-top: 24px;
 	margin-bottom: 8px;
 	p {
 		margin: 0;
 	}
 `;
 
-export const BalanceText = styled.p`
+const Label = styled.p`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	span {
-		color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	}
 `;
 
 const MarginActionButton = styled(Button)`
@@ -79,19 +127,20 @@ const MarginActionButton = styled(Button)`
 	font-size: 15px;
 `;
 
-const MaxButton = styled.button`
-	height: 22px;
+const MaxButton = styled.div`
 	padding: 4px 10px;
-	background: ${(props) => props.theme.colors.selectedTheme.button.background};
-	border-radius: 11px;
+	font-size: 18px;
+	font-weight: 400;
 	font-family: ${(props) => props.theme.fonts.mono};
-	font-size: 13px;
-	line-height: 13px;
-	border: ${(props) => props.theme.colors.selectedTheme.border};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	cursor: pointer;
 `;
 
 const InputContainer = styled(CustomInput)`
-	margin-bottom: 40px;
+	margin-bottom: 30px;
+`;
+
+const SliderRow = styled(FlexDivRow)`
+	margin-bottom: 14px;
+	position: relative;
 `;

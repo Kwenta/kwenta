@@ -178,7 +178,7 @@ const useFuturesData = () => {
 	]);
 
 	useEffect(() => {
-		// Set to max when leverage side changes
+		// Set to max when leverage or leverage side changes
 		if (wei(tradeSizeSUSD || 0).gt(maxUsdInputAmount)) {
 			const amount = wei(Math.min(Number(tradeSizeSUSD), Number(maxUsdInputAmount)));
 			onTradeAmountSUSDChange(Number(amount).toFixed(0));

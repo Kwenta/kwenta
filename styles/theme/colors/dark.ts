@@ -8,6 +8,7 @@ const darkTheme = {
 	black: '#171002',
 	white: '#ECE8E3',
 	gray: '#787878',
+	yellow: '#FFB800',
 	table: { fill: 'rgba(255, 255, 255, 0.01)', hover: 'rgba(255, 255, 255, 0.05)' },
 	gold: '#E4B378',
 	badge: { background: '#EF6868', text: 'black' },

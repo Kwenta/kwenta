@@ -30,6 +30,7 @@ import {
 
 import { PositionSide } from '../types';
 import DepositWithdrawCrossMargin from './DepositWithdrawCrossMargin';
+import EditLeverageModal from './EditLeverageModal';
 
 const MarginInfoBox: React.FC = () => {
 	const position = useRecoilValue(positionState);
@@ -41,7 +42,7 @@ const MarginInfoBox: React.FC = () => {
 	const previewTrade = useRecoilValue(potentialTradeDetailsState);
 	const marginDelta = useRecoilValue(crossMarginMarginDeltaState);
 	const crossMarginFreeMargin = useRecoilValue(crossMarginAvailableMarginState);
-	const [openModal, setOpenModal] = useState<string | null>(null);
+	const [openModal, setOpenModal] = useState<'leverage' | 'deposit' | null>(null);
 
 	const totalMargin = position?.remainingMargin.add(crossMarginFreeMargin) ?? zeroBN;
 
@@ -140,19 +141,21 @@ const MarginInfoBox: React.FC = () => {
 							sign: '$',
 						}),
 					},
-					'Available Account Margin': {
+					'Free Account Margin': {
 						value: (
-							<AccountMarginRow>
+							<Row>
 								{formatDollars(crossMarginFreeMargin)}
-								<DepositWithdrawButton onClick={() => setOpenModal('deposit')} />
-							</AccountMarginRow>
+								<HoverDiv>
+									<DepositWithdrawButton onClick={() => setOpenModal('deposit')} />
+								</HoverDiv>
+							</Row>
 						),
 					},
 					'Market Margin': {
 						value: `${formatDollars(position?.remainingMargin)}`,
 						valueNode: ` (${formatNumber(marginDelta)})`,
 					},
-					'accessible market Margin': {
+					'Free market Margin': {
 						value: `${formatDollars(position?.accessibleMargin)}`,
 					},
 					'Margin Usage': {
@@ -164,12 +167,12 @@ const MarginInfoBox: React.FC = () => {
 						),
 					},
 					Leverage: {
-						value: position?.position?.leverage
-							? `${formatNumber(position.position.leverage)}x`
-							: `${formatNumber(selectedLeverage)}x`,
-						valueNode: position?.position?.leverage ? (
-							<PreviewArrow showPreview>{formatNumber(selectedLeverage)}x</PreviewArrow>
-						) : null,
+						value: (
+							<Row>
+								{formatNumber(selectedLeverage, { maxDecimals: 2 })}x
+								<EditButton onClick={() => setOpenModal('leverage')}>Edit</EditButton>
+							</Row>
+						),
 					},
 				}}
 				disabled={marketInfo?.isSuspended}
@@ -177,6 +180,7 @@ const MarginInfoBox: React.FC = () => {
 			{openModal === 'deposit' && (
 				<DepositWithdrawCrossMargin onDismiss={() => setOpenModal(null)} />
 			)}
+			{openModal === 'leverage' && <EditLeverageModal onDismiss={() => setOpenModal(null)} />}
 		</>
 	);
 };
@@ -189,13 +193,26 @@ const StyledInfoBox = styled(InfoBox)`
 	}
 `;
 
-const AccountMarginRow = styled.div`
+const Row = styled.div`
 	display: flex;
+`;
+
+const HoverDiv = styled.div`
+	transition: all 0.1s ease-in-out;
+	&:hover {
+		opacity: 0.7;
+	}
 `;
 
 const DepositWithdrawButton = styled(DepositWithdrawIcon)`
 	margin-left: 10px;
 	cursor: pointer;
+`;
+
+const EditButton = styled(HoverDiv)`
+	margin-left: 8px;
+	cursor: pointer;
+	color: ${(props) => props.theme.colors.selectedTheme.yellow};
 `;
 
 export default MarginInfoBox;
