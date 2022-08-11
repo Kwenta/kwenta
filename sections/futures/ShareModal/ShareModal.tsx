@@ -11,7 +11,7 @@ import AmountContainer from './AmountContainer';
 import PositionMetadata from './PositionMetadata';
 import ShareModalButton from './ShareModalButton';
 
-type ShareModalProps = {
+export type ShareModalProps = {
 	position: FuturesPosition | null;
 	marketAsset: FuturesMarketAsset;
 	setShowShareModal: React.Dispatch<React.SetStateAction<boolean>>;
