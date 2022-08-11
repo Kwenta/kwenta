@@ -20,7 +20,22 @@ echarts.use([
 
 type EChartsOption = echarts.ComposeOption<GridComponentOption | BarSeriesOption>;
 
-export const initBarChart = (dom: HTMLDivElement) => {
+/**
+ * initialize a bar chart.
+ *
+ * @param dom mount point of the chart.
+ * @param title chart title.
+ * @param subtext optional
+ * @param subtextStyle optional
+ * @param legend optional
+ */
+export const initBarChart = (
+	dom: HTMLDivElement,
+	title: string,
+	subtext = '',
+	subtextStyle = {},
+	legend = {}
+) => {
 	// do not use 'dark' theme here, or the external background css will not be effective.
 	const chart = echarts.init(dom, 'light');
 
@@ -28,18 +43,17 @@ export const initBarChart = (dom: HTMLDivElement) => {
 
 	option = {
 		title: {
-			text: 'Volumn',
+			text: title,
 			textStyle: {},
 			left: 20,
-			top: 20,
+			top: 40,
+			subtext,
+			subtextStyle,
+			itemGap: 10,
 		},
-		legend: {
-			icon: 'circle',
-			top: 50,
-			left: 20,
-		},
+		legend,
 		grid: {
-			top: 120,
+			top: 137,
 		},
 		xAxis: {
 			type: 'category',

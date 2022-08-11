@@ -2,6 +2,9 @@ import { FC, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import colors from 'styles/theme/colors/common';
+import fonts from 'styles/theme/fonts';
+
 import { initBarChart } from './initBarChart';
 
 const Container = styled.div`
@@ -24,9 +27,23 @@ const StatsTitle = styled.h3`
 	font-size: 24px;
 	color: ${(props) => props.theme.colors.common.primaryWhite};
 	text-transform: uppercase;
+
+	@media only screen and (min-width: 600px) {
+		text-align: center;
+	}
 `;
 
-const VolumnContainer = styled.div`
+const ChartContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+
+	@media only screen and (min-width: 600px) {
+		gap: 20px;
+	}
+`;
+
+const ChartWrapper = styled.div`
 	width: 345px;
 	height: 380px;
 
@@ -38,7 +55,35 @@ const VolumnContainer = styled.div`
 			inset 0px 0px 20px rgba(255, 255, 255, 0.03);
 		border-radius: 15px;
 	}
+
+	@media only screen and (min-width: 600px) {
+		// width: auto;
+		// max-width: 1160px;
+	}
 `;
+
+const VolumnWrapper = styled(ChartWrapper)``;
+
+const TradeContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+
+	@media only screen and (min-width: 600px) {
+		flex-direction: row;
+		gap: 20px;
+	}
+`;
+
+const TradesWrapper = styled(ChartWrapper)`
+	@media only screen and (min-width: 600px) {
+		// width: 570px;
+	}
+`;
+
+const TradersWrapper = styled(ChartWrapper)``;
+
+const TvlWrapper = styled(ChartWrapper)``;
 
 export type StatsProps = {};
 
@@ -46,15 +91,67 @@ export const Stats: FC<StatsProps> = () => {
 	const { t } = useTranslation();
 
 	const volumnRef = useRef<HTMLDivElement | null>(null);
+	const tradesRef = useRef<HTMLDivElement | null>(null);
+	const tradersRef = useRef<HTMLDivElement | null>(null);
+	const tvlRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
-		volumnRef?.current && initBarChart(volumnRef.current);
-	}, [volumnRef]);
+		const subtext = '$40,461,472';
+		const subtextStyle = {
+			color: colors.primaryWhite,
+			fontStyle: 'normal',
+			fontFamily: fonts.monoBold,
+			fontSize: 28,
+		};
+
+		volumnRef?.current &&
+			initBarChart(volumnRef.current, t('stats.volumn.title'), subtext, subtextStyle);
+	}, [volumnRef, t]);
+
+	useEffect(() => {
+		const legend = {
+			icon: 'circle',
+			top: 71,
+			left: 20,
+		};
+
+		tradesRef?.current && initBarChart(tradesRef.current, t('stats.trades.title'), '', {}, legend);
+	}, [tradesRef, t]);
+
+	useEffect(() => {
+		const legend = {
+			icon: 'circle',
+			top: 71,
+			left: 20,
+		};
+
+		tradersRef?.current &&
+			initBarChart(tradersRef.current, t('stats.traders.title'), '', {}, legend);
+	}, [tradersRef, t]);
+
+	useEffect(() => {
+		const subtext = '$40,461,472';
+		const subtextStyle = {
+			color: colors.primaryWhite,
+			fontStyle: 'normal',
+			fontFamily: fonts.monoBold,
+			fontSize: 28,
+		};
+
+		tvlRef?.current && initBarChart(tvlRef.current, t('stats.tvl.title'), subtext, subtextStyle);
+	}, [tvlRef, t]);
 
 	return (
 		<Container>
 			<StatsTitle>{t('stats.title')}</StatsTitle>
-			<VolumnContainer ref={volumnRef} />
+			<ChartContainer>
+				<VolumnWrapper ref={volumnRef} />
+				<TradeContainer>
+					<TradesWrapper ref={tradesRef} />
+					<TradersWrapper ref={tradersRef} />
+				</TradeContainer>
+				<TvlWrapper ref={tvlRef} />
+			</ChartContainer>
 		</Container>
 	);
 };

@@ -279,7 +279,19 @@
 		}
 	},
 	"stats": {
-		"title": "kwenta stats"
+		"title": "kwenta stats",
+		"volumn": {
+			"title": "Volumn"
+		},
+		"trades": {
+			"title": "Trades"
+		},
+		"traders": {
+			"title": "Traders"
+		},
+		"tvl": {
+			"title": "TVL"
+		}
 	},
 	"exchange": {
 		"page-title": "Exchange | Kwenta",
