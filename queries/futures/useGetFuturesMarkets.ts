@@ -10,6 +10,7 @@ import ROUTES from 'constants/routes';
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import { appReadyState } from 'store/app';
 import { futuresMarketsState } from 'store/futures';
+import { zeroBN } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
 import { getDefaultProvider } from 'utils/network';
 
@@ -105,6 +106,20 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 						takerFee: wei(feeRates.takerFee),
 						makerFeeNextPrice: wei(feeRates.makerFeeNextPrice),
 						takerFeeNextPrice: wei(feeRates.takerFeeNextPrice),
+					},
+					openInterest: {
+						shortPct: wei(marketSize).eq(0)
+							? 0
+							: wei(marketSize).sub(marketSkew).div('2').div(marketSize).toNumber(),
+						longPct: wei(marketSize).eq(0)
+							? 0
+							: wei(marketSize).add(marketSkew).div('2').div(marketSize).toNumber(),
+						shortUSD: wei(marketSize).eq(0)
+							? zeroBN
+							: wei(marketSize).sub(marketSkew).div('2').mul(price),
+						longUSD: wei(marketSize).eq(0)
+							? zeroBN
+							: wei(marketSize).add(marketSkew).div('2').mul(price),
 					},
 					marketDebt: wei(marketDebt),
 					marketSkew: wei(marketSkew),

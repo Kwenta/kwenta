@@ -1,3 +1,4 @@
+import { Synths } from '@synthetixio/contracts-interface';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -8,10 +9,9 @@ import TimerTooltip from 'components/Tooltip/TimerTooltip';
 import useRateUpdateQuery from 'queries/rates/useRateUpdateQuery';
 import { currentMarketState, marketInfoState } from 'store/futures';
 import media from 'styles/media';
-import { formatPercent } from 'utils/formatters/number';
+import { formatCurrency, formatPercent } from 'utils/formatters/number';
 
 import useGetMarketData from './useGetMarketData';
-import useGetSkewData from './useGetSkewData';
 
 type MarketData = Record<string, { value: string | JSX.Element; color?: string }>;
 
@@ -27,7 +27,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 
 	const pausedClass = marketInfo?.isSuspended ? 'paused' : '';
 
-	const skewData = useGetSkewData();
 	const data: MarketData = useGetMarketData(mobile);
 
 	const lastOracleUpdateTimeQuery = useRateUpdateQuery({
@@ -37,6 +36,33 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	const lastOracleUpdateTime: Date = useMemo(() => lastOracleUpdateTimeQuery?.data ?? new Date(), [
 		lastOracleUpdateTimeQuery,
 	]);
+
+	// skew text
+	const longText = useMemo(() => {
+		return (
+			marketInfo?.openInterest &&
+			formatCurrency(Synths.sUSD, marketInfo.openInterest.longUSD, {
+				sign: '$',
+				maxDecimals: 2,
+				...(marketInfo?.openInterest?.longUSD.gt(1e6)
+					? { truncation: { divisor: 1e6, unit: 'M' } }
+					: {}),
+			})
+		);
+	}, [marketInfo]);
+
+	const shortText = useMemo(() => {
+		return (
+			marketInfo?.openInterest &&
+			formatCurrency(Synths.sUSD, marketInfo.openInterest.shortUSD, {
+				sign: '$',
+				maxDecimals: 2,
+				...(marketInfo?.openInterest?.shortUSD.gt(1e6)
+					? { truncation: { divisor: 1e6, unit: 'M' } }
+					: {}),
+			})
+		);
+	}, [marketInfo]);
 
 	const enableTooltip = (key: string, children: React.ReactElement) => {
 		switch (key) {
@@ -144,10 +170,14 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 					<p className="heading">Skew</p>
 					<SkewDataContainer>
 						<div className={`value green ${pausedClass}`}>
-							{formatPercent(skewData.data.long, { minDecimals: 0 })} ({skewData.long})
+							{marketInfo?.openInterest &&
+								formatPercent(marketInfo.openInterest.longPct ?? 0, { minDecimals: 0 })}{' '}
+							({longText})
 						</div>
 						<div className={`value red ${pausedClass}`}>
-							{formatPercent(skewData.data.short, { minDecimals: 0 })} ({skewData.short})
+							{marketInfo?.openInterest &&
+								formatPercent(marketInfo.openInterest.shortPct ?? 0, { minDecimals: 0 })}{' '}
+							({shortText})
 						</div>
 					</SkewDataContainer>
 				</div>
