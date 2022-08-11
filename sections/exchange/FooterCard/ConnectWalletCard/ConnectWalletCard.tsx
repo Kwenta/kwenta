@@ -24,7 +24,7 @@ const ConnectWalletCard: FC<ConnectWalletCardProps> = ({ attached, ...rest }) =>
 				<DesktopOnlyView>
 					<Message>{t('exchange.connect-wallet-card.message')}</Message>
 				</DesktopOnlyView>
-				<MessageButton onClick={connectWallet} data-testid="connect-wallet-btn">
+				<MessageButton onClick={connectWallet} data-testid="connect-wallet-btn" noOutline>
 					{t('common.wallet.connect-wallet')}
 				</MessageButton>
 			</MessageContainer>

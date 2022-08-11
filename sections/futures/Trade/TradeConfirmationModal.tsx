@@ -170,6 +170,7 @@ const TradeConfirmationModal: FC = () => {
 					<ConfirmTradeButton
 						data-testid="trade-open-position-confirm-order-button"
 						isRounded
+						noOutline
 						onClick={handleConfirmOrder}
 						disabled={!positionDetails}
 					>
