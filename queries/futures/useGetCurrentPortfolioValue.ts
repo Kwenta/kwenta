@@ -1,13 +1,13 @@
+import synthetix, { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
-import { utils as ethersUtils } from 'ethers';
+import { getDefaultProvider, utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
+import { chain, useAccount, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
 import { futuresAccountState, marketKeysState } from 'store/futures';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
 import { zeroBN } from 'utils/formatters/number';
 import { MarketAssetByKey } from 'utils/futures';
 import logError from 'utils/logError';
@@ -17,20 +17,28 @@ import { mapFuturesPosition } from './utils';
 
 const useGetCurrentPortfolioValue = (options?: UseQueryOptions<any | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { chain: activeChain } = useNetwork();
+	const isL2 =
+		activeChain !== undefined
+			? [chain.optimism.id, chain.optimismKovan.id].includes(activeChain?.id)
+			: false;
+	const { address } = useAccount();
+	const walletAddress = address || null;
 	const futuresAccount = useRecoilValue(futuresAccountState);
 	const marketKeys = useRecoilValue(marketKeysState);
 
 	const query = useGetCrossMarginAccountOverview();
 	const freeMargin = query.data?.freeMargin || zeroBN;
 
-	const { synthetixjs } = Connector.useContainer();
+	const synthetixjs = synthetix({
+		provider: getDefaultProvider((activeChain?.id ?? chain.optimism.id) as NetworkId),
+		networkId: (activeChain?.id ?? chain.optimism.id) as NetworkId,
+		useOvm: true,
+	});
 
 	return useQuery<any | null>(
 		QUERY_KEYS.Futures.Positions(
-			network.id,
+			activeChain?.id as NetworkId,
 			marketKeys || [],
 			futuresAccount?.crossMarginAddress || ''
 		),

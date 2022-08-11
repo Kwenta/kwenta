@@ -1,10 +1,11 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
+import { chain, useAccount, useNetwork } from 'wagmi';
 
 import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
-import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
+import { networkState } from 'store/wallet';
 
 import { getFuturesTrades } from './subgraph';
 import { FuturesTrade } from './types';
@@ -17,8 +18,12 @@ const useGetAllFuturesTradesForAccount = (
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
 	const futuresEndpoint = getFuturesEndpoint(network);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isL2 = useRecoilValue(isL2State);
+	const { isConnected: isWalletConnected } = useAccount();
+	const { chain: activeChain } = useNetwork();
+	const isL2 =
+		activeChain !== undefined
+			? [chain.optimism.id, chain.optimismKovan.id].includes(activeChain?.id)
+			: false;
 
 	return useQuery<FuturesTrade[] | null>(
 		QUERY_KEYS.Futures.AllTradesAccount(network.id, account || null),

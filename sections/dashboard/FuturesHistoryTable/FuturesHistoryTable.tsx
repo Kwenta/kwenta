@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import { chain, useNetwork } from 'wagmi';
 
 import Currency from 'components/Currency';
 import Table, { TableNoResults } from 'components/Table';
@@ -21,7 +22,6 @@ import { FuturesTrade } from 'queries/futures/types';
 import useGetAllFuturesTradesForAccount from 'queries/futures/useGetAllFuturesTradesForAccount';
 import { TradeStatus } from 'sections/futures/types';
 import { futuresAccountState } from 'store/futures';
-import { isL2State } from 'store/wallet';
 import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
 
@@ -30,7 +30,11 @@ import TimeDisplay from '../../futures/Trades/TimeDisplay';
 const FuturesHistoryTable: FC = () => {
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 	const { t } = useTranslation();
-	const isL2 = useRecoilValue(isL2State);
+	const { chain: activeChain } = useNetwork();
+	const isL2 =
+		activeChain !== undefined
+			? [chain.optimism.id, chain.optimismKovan.id].includes(activeChain?.id)
+			: false;
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { switchToL2 } = useNetworkSwitcher();
 	const futuresTradesQuery = useGetAllFuturesTradesForAccount(selectedFuturesAddress);
