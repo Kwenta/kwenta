@@ -35,7 +35,7 @@ const SwapButton: React.FC = () => {
 				: t('exchange.summary-info.button.submit-order')}
 		</Button>
 	) : (
-		<Button onClick={connectWallet} size="md" fullWidth variant="primary">
+		<Button onClick={connectWallet} size="md" fullWidth noOutline>
 			{t('common.wallet.connect-wallet')}
 		</Button>
 	);

@@ -16,7 +16,7 @@ type MobileWalletButtonProps = {
 	closeModal(): void;
 };
 
-const MobileWalletButton: React.FC<MobileWalletButtonProps> = ({ toggleModal, closeModal }) => {
+const MobileWalletButton: React.FC<MobileWalletButtonProps> = ({ toggleModal }) => {
 	const { t } = useTranslation();
 	const { isConnected: isWalletConnected } = useAccount();
 	const { chain: network } = useNetwork();

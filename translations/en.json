@@ -1075,9 +1075,8 @@
 		"language": "Language",
 		"connect": "Connect",
 		"disconnect": "Disconnect",
-		"switch": "Switch",
-		"switch-to-l1": "Switch to L1",
-		"switch-to-l2": "Switch to L2",
+		"account-info": "Account Info",
+		"switch-network": "Switch Network",
 		"bridge": "Bridge"
 	}
 }

@@ -51,7 +51,14 @@ type AppPropsWithLayout = AppProps & {
 
 const { chains, provider } = configureChains(
 	[chain.mainnet, chain.optimism, chain.goerli, chain.kovan, chain.optimismKovan],
-	[infuraProvider({ infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID }), publicProvider()]
+	[
+		infuraProvider({
+			infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+			stallTimeout: 1_000,
+			priority: 0,
+		}),
+		publicProvider({ stallTimeout: 1_000, priority: 5 }),
+	]
 );
 
 const connectors = connectorsForWallets([

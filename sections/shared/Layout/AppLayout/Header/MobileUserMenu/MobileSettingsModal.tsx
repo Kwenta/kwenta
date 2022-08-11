@@ -1,22 +1,20 @@
+import { useAccountModal, useChainModal } from '@rainbow-me/rainbowkit';
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 import { Language } from 'translations/constants';
+import { useDisconnect } from 'wagmi';
 
+import MobileAccountInfoIcon from 'assets/svg/app/mobile-account-info.svg';
 import MobileMenuBridgeIcon from 'assets/svg/app/mobile-menu-bridge.svg';
 import MobileMenuDisconnectIcon from 'assets/svg/app/mobile-menu-disconnect.svg';
 import MobileSwitchToL1Icon from 'assets/svg/app/mobile-switch-to-l1.svg';
-import MobileSwitchWalletIcon from 'assets/svg/app/mobile-switch-wallet.svg';
 import FullScreenModal from 'components/FullScreenModal';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
-import Connector from 'containers/Connector';
-import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 import Logo from 'sections/shared/Layout/Logo';
 import { languageState } from 'store/app';
-import { isL2State } from 'store/wallet';
 
 import { lanugageIcons } from './common';
 import MobileSubMenu from './MobileSubMenu';
@@ -29,7 +27,6 @@ type SettingCategories = 'wallet' | 'network' | 'language' | 'currency';
 
 export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
-	const isL2 = useRecoilValue(isL2State);
 	const [language, setLanguage] = usePersistedRecoilState(languageState);
 
 	const languages = t('languages', { returnObjects: true }) as Record<Language, string>;
@@ -43,9 +40,11 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 		[languages]
 	);
 
-	const { connectWallet, disconnectWallet } = Connector.useContainer();
+	const { openAccountModal } = useAccountModal();
+	const { openChainModal } = useChainModal();
+	const { disconnect } = useDisconnect();
+
 	const [expanded, setExpanded] = useState<SettingCategories>();
-	const { switchToL1, switchToL2 } = useNetworkSwitcher();
 
 	const handleToggle = (category: SettingCategories) => () => {
 		setExpanded((c) => (category === c ? undefined : category));
@@ -69,14 +68,14 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 									onToggle={handleToggle('wallet')}
 									options={[
 										{
-											label: t('mobile-menu.switch'),
-											icon: <MobileSwitchWalletIcon />,
-											onClick: connectWallet,
+											label: t('mobile-menu.account-info'),
+											icon: <MobileAccountInfoIcon />,
+											onClick: openAccountModal,
 										},
 										{
 											label: t('mobile-menu.disconnect'),
 											icon: <MobileMenuDisconnectIcon />,
-											onClick: disconnectWallet,
+											onClick: disconnect,
 										},
 									]}
 								/>
@@ -90,9 +89,9 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 									onToggle={handleToggle('network')}
 									options={[
 										{
-											label: isL2 ? t('mobile-menu.switch-to-l1') : t('mobile-menu.switch-to-l2'),
+											label: t('mobile-menu.switch-network'),
 											icon: <MobileSwitchToL1Icon />,
-											onClick: isL2 ? switchToL1 : switchToL2,
+											onClick: openChainModal,
 										},
 										{
 											label: `${t('mobile-menu.bridge')} ↗`,

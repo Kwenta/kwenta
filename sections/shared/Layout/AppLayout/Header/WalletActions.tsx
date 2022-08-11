@@ -107,7 +107,6 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 
 	useEffect(() => {
 		setWalletLabel(ensName || truncatedWalletAddress!);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ensName, truncatedWalletAddress]);
 
 	return (

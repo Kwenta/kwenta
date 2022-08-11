@@ -1,47 +1,31 @@
 import { FC, useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import { useAccount, useEnsAvatar, useEnsName } from 'wagmi';
 
 import Button from 'components/Button';
-import Connector from 'containers/Connector';
-import useENS from 'hooks/useENS';
-import { truncatedWalletAddressState } from 'store/wallet';
+import { truncateAddress } from 'utils/formatters/string';
 
 import ConnectionDot from '../ConnectionDot';
-import getENSName from '../getENSName';
 
 type MobileWalletButtonProps = {
 	toggleModal(): void;
 };
 
 export const MobileWalletActions: FC<MobileWalletButtonProps> = ({ toggleModal }) => {
-	const [address, setAddress] = useState('');
-	const { ensAvatar } = useENS(address);
-	const { signer, staticMainnetProvider } = Connector.useContainer();
-
-	const [ensName, setEns] = useState<string>('');
+	const { address } = useAccount();
+	const { data: ensAvatar } = useEnsAvatar({ addressOrName: address, chainId: 1 });
+	const { data: ensName } = useEnsName({ address, chainId: 1 });
 	const [walletLabel, setWalletLabel] = useState<string>('');
-	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
+	const truncatedWalletAddress = truncateAddress(address ?? '');
 
 	useEffect(() => {
-		if (signer) {
-			setWalletLabel(truncatedWalletAddress!);
-			signer.getAddress().then((account: string) => {
-				const _account = account;
-				setAddress(account);
-				getENSName(_account, staticMainnetProvider).then((_ensName: string) => {
-					setEns(_ensName);
-					setWalletLabel(_ensName || truncatedWalletAddress!);
-				});
-			});
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [signer, truncatedWalletAddress]);
+		setWalletLabel(ensName || truncatedWalletAddress!);
+	}, [ensName, truncatedWalletAddress]);
 
 	return (
 		<StyledButton mono noOutline onClick={toggleModal}>
 			{ensAvatar ? (
-				<StyledImage src={ensAvatar} alt={ensName} width={16} height={16} />
+				<StyledImage src={ensAvatar} alt={ensName || address} width={16} height={16} />
 			) : (
 				<StyledConnectionDot />
 			)}
