@@ -148,7 +148,7 @@ const ModalWindow = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	box-shadow: 0 0 0.1px ${(props) => props.theme.colors.common.primaryGold};
+	// box-shadow: 0 0 0.1px ${(props) => props.theme.colors.common.primaryGold};
 	width: 80vw;
 	height: 40vh;
 `;

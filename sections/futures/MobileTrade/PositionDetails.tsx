@@ -28,7 +28,7 @@ const PositionDetails = () => {
 				<SectionHeader>
 					<SectionTitle>
 						Open Position
-						<ShareIcon onClick={handleOpenShareModal} />
+						{futuresPositionHistory.length && <ShareIcon onClick={handleOpenShareModal} />}
 					</SectionTitle>
 				</SectionHeader>
 				<PositionCard />
