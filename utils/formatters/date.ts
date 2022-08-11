@@ -62,3 +62,10 @@ export const timePresentation = (timestamp: string, t: TFunction) => {
 
 	return format(actionTime, 'MM/dd/yyyy');
 };
+
+export const formatDateWithoutYear = (date: Date) => formatDate(date, 'MMMM dd');
+
+export const calculatedTimeDifference = (dateLeft: Date, dateRight: Date) =>
+	differenceInSeconds(dateLeft, dateRight);
+
+export const keepDoublePlaceholder = (num: number) => (num < 9 ? `0${num}` : num);
