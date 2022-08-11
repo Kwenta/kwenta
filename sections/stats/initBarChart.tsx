@@ -1,10 +1,15 @@
 import { BarChart, BarSeriesOption } from 'echarts/charts';
 import {
 	GridComponent,
-	GridComponentOption,
 	TitleComponent,
 	LegendComponent,
 	TooltipComponent,
+} from 'echarts/components';
+import type {
+	GridComponentOption,
+	TitleComponentOption,
+	LegendComponentOption,
+	TooltipComponentOption,
 } from 'echarts/components';
 import * as echarts from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
@@ -18,23 +23,31 @@ echarts.use([
 	CanvasRenderer,
 ]);
 
-type EChartsOption = echarts.ComposeOption<GridComponentOption | BarSeriesOption>;
+type EChartsOption = echarts.ComposeOption<
+	| GridComponentOption
+	| TitleComponentOption
+	| LegendComponentOption
+	| TooltipComponentOption
+	| BarSeriesOption
+>;
 
 /**
  * initialize a bar chart.
  *
  * @param dom mount point of the chart.
  * @param title chart title.
+ * @param textStyle title style.
  * @param subtext optional
  * @param subtextStyle optional
  * @param legend optional
  */
 export const initBarChart = (
 	dom: HTMLDivElement,
-	title: string,
-	subtext = '',
-	subtextStyle = {},
-	legend = {}
+	title: Extract<Pick<TitleComponentOption, 'text'>, string> | undefined,
+	textStyle: Record<string, any> | null,
+	subtext: string | undefined,
+	subtextStyle: Record<string, any> | null,
+	legend: LegendComponentOption | null
 ) => {
 	// do not use 'dark' theme here, or the external background css will not be effective.
 	const chart = echarts.init(dom, 'light');
@@ -42,16 +55,6 @@ export const initBarChart = (
 	let option: EChartsOption;
 
 	option = {
-		title: {
-			text: title,
-			textStyle: {},
-			left: 20,
-			top: 40,
-			subtext,
-			subtextStyle,
-			itemGap: 10,
-		},
-		legend,
 		grid: {
 			top: 137,
 		},
@@ -91,6 +94,34 @@ export const initBarChart = (
 			},
 		],
 	};
+
+	if (title) {
+		option = {
+			...option,
+			title: {
+				text: title,
+				left: 20,
+				top: 40,
+				itemGap: 10,
+			},
+		};
+	}
+
+	if (textStyle) {
+		option.title = { ...option.title, textStyle };
+	}
+
+	if (subtext) {
+		option.title = { ...option.title, subtext };
+	}
+
+	if (subtextStyle) {
+		option.title = { ...option.title, subtextStyle };
+	}
+
+	if (legend) {
+		option = { ...option, legend };
+	}
 
 	option && chart.setOption(option);
 };

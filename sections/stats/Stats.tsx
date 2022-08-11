@@ -96,49 +96,93 @@ export const Stats: FC<StatsProps> = () => {
 	const tvlRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
+		const textStyle = {
+			color: colors.primaryWhite,
+			fontFamily: fonts.regular,
+			fontSize: 18,
+		};
 		const subtext = '$40,461,472';
 		const subtextStyle = {
 			color: colors.primaryWhite,
-			fontStyle: 'normal',
 			fontFamily: fonts.monoBold,
 			fontSize: 28,
 		};
 
 		volumnRef?.current &&
-			initBarChart(volumnRef.current, t('stats.volumn.title'), subtext, subtextStyle);
+			initBarChart(
+				volumnRef.current,
+				t('stats.volumn.title'),
+				textStyle,
+				subtext,
+				subtextStyle,
+				null
+			);
 	}, [volumnRef, t]);
 
 	useEffect(() => {
+		const textStyle = {
+			color: colors.primaryWhite,
+			fontFamily: fonts.regular,
+			fontSize: 18,
+		};
 		const legend = {
 			icon: 'circle',
 			top: 71,
 			left: 20,
+			textStyle: {
+				color: colors.primaryWhite,
+				fontFamily: fonts.regular,
+				fontSize: 15,
+			},
 		};
 
-		tradesRef?.current && initBarChart(tradesRef.current, t('stats.trades.title'), '', {}, legend);
+		tradesRef?.current &&
+			initBarChart(tradesRef.current, t('stats.trades.title'), textStyle, undefined, null, legend);
 	}, [tradesRef, t]);
 
 	useEffect(() => {
+		const textStyle = {
+			color: colors.primaryWhite,
+			fontFamily: fonts.regular,
+			fontSize: 18,
+		};
 		const legend = {
 			icon: 'circle',
 			top: 71,
 			left: 20,
+			textStyle: {
+				color: colors.primaryWhite,
+				fontFamily: fonts.regular,
+				fontSize: 15,
+			},
 		};
 
 		tradersRef?.current &&
-			initBarChart(tradersRef.current, t('stats.traders.title'), '', {}, legend);
+			initBarChart(
+				tradersRef.current,
+				t('stats.traders.title'),
+				textStyle,
+				undefined,
+				null,
+				legend
+			);
 	}, [tradersRef, t]);
 
 	useEffect(() => {
+		const textStyle = {
+			color: colors.primaryWhite,
+			fontFamily: fonts.regular,
+			fontSize: 18,
+		};
 		const subtext = '$40,461,472';
 		const subtextStyle = {
 			color: colors.primaryWhite,
-			fontStyle: 'normal',
 			fontFamily: fonts.monoBold,
 			fontSize: 28,
 		};
 
-		tvlRef?.current && initBarChart(tvlRef.current, t('stats.tvl.title'), subtext, subtextStyle);
+		tvlRef?.current &&
+			initBarChart(tvlRef.current, t('stats.tvl.title'), textStyle, subtext, subtextStyle, null);
 	}, [tvlRef, t]);
 
 	return (
