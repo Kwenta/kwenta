@@ -5,6 +5,7 @@ import {
 	wallet,
 	connectorsForWallets,
 } from '@rainbow-me/rainbowkit';
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
 import WithAppContainers from 'containers';
 import { NextPage } from 'next';
@@ -16,7 +17,7 @@ import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 import { ThemeProvider } from 'styled-components';
-import { chain, configureChains, createClient, WagmiConfig } from 'wagmi';
+import { chain, configureChains, createClient, useNetwork, useProvider, WagmiConfig } from 'wagmi';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { publicProvider } from 'wagmi/providers/public';
 
@@ -82,7 +83,11 @@ const wagmiClient = createClient({
 });
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {
-	const { provider, signer, network } = Connector.useContainer();
+	const { signer } = Connector.useContainer();
+	const provider = useProvider();
+	const { chain: activeChain } = useNetwork();
+	const network = activeChain || undefined;
+
 	const getLayout =
 		Component.layout === undefined
 			? (page: ReactElement) => <>{page}</>
@@ -103,11 +108,11 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 					<MediaContextProvider>
 						<SynthetixQueryContextProvider
 							value={
-								provider && isSupportedNetworkId(network.id)
+								provider && isSupportedNetworkId(network?.id as NetworkId)
 									? createQueryContext({
 											provider,
 											signer: signer || undefined,
-											networkId: network!.id,
+											networkId: network!.id as NetworkId,
 									  })
 									: createQueryContext({ networkId: null })
 							}

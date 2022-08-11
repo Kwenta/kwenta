@@ -67,7 +67,6 @@ const SettleTransactionsCard: FC<SettleTransactionsCardProps> = ({
 				>
 					<span>
 						<Button
-							variant="primary"
 							isRounded
 							disabled={!!settlementDisabledReason}
 							onClick={onSubmit}
