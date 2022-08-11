@@ -14,25 +14,12 @@ const Nav: FC = () => {
 	const { asPath } = useRouter();
 	const menuLinks = useRecoilValue(menuLinksState);
 
-	function getLastVisited(): string | null | undefined {
-		if (typeof window !== 'undefined') {
-			const lastVisited = localStorage.getItem('lastVisited');
-			return lastVisited;
-		}
+	function getLastVisited(): string | null {
+		return localStorage.getItem('lastVisited');
 	}
 
 	function getLink(link: string) {
-		if (link.slice(0, 7) === '/market') {
-			const lastVisited: string | null | undefined = getLastVisited();
-
-			if (lastVisited !== null && lastVisited !== undefined) {
-				return lastVisited;
-			} else {
-				return link;
-			}
-		} else {
-			return link;
-		}
+		return link.slice(0, 7) === '/market' ? getLastVisited() ?? link : link;
 	}
 
 	return (
