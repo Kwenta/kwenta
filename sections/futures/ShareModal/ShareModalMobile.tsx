@@ -13,6 +13,7 @@ import { getMarketName } from 'utils/futures';
 
 import { PositionSide } from '../types';
 import { ShareModalProps } from './ShareModal';
+import ShareModalButton from './ShareModalButton';
 
 const Separator = () => <StyledPositionDetail margin="0 1.07vw">{`|`}</StyledPositionDetail>;
 
@@ -129,6 +130,7 @@ const ShareModalMobile: FC<ShareModalProps> = ({
 							/>
 						</HistoryRow>
 					</PNLGraphic>
+					<ShareModalButton />
 				</ModalWindow>
 			</BaseModal>
 		</>
@@ -138,7 +140,8 @@ const ShareModalMobile: FC<ShareModalProps> = ({
 export default ShareModalMobile;
 
 const PNLGraphic = styled.div`
-	position: relative;
+	width: 100%;
+	height: 100%;
 `;
 
 const ModalWindow = styled.div`
@@ -172,6 +175,7 @@ const StyledPositionLeverage = styled.div`
 `;
 
 const RoiContainer = styled.div<{ isGreater: boolean }>`
+	text-align: center;
 	font-size: 14.35vw;
 	color: ${(props) =>
 		props.isGreater && props.isGreater ? props.theme.colors.green : props.theme.colors.red};
@@ -187,9 +191,11 @@ const HistoryRow = styled.div<{ margin?: string }>`
 	gap: 6.94vw;
 	justify-content: center;
 	margin: ${(props) => props.margin || ''};
+	width: 100%;
 `;
 
 const HistoryDetailContainer = styled.div<{ textAlign: string }>`
+	width: 100%;
 	text-align: ${(props) => props.textAlign || 'left'};
 	.label {
 		font-family: ${(props) => props.theme.fonts.regular};
