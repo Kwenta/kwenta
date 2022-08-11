@@ -30,6 +30,7 @@ import {
 	sizeDeltaState,
 	tradeSizeState,
 	tradeSizeSUSDState,
+	crossMarginSettingsState,
 } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { zeroBN } from 'utils/formatters/number';
@@ -70,6 +71,7 @@ const useFuturesData = () => {
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const crossMarginLeverage = useRecoilValue(crossMarginLeverageState);
 	const maxLeverage = useRecoilValue(maxLeverageState);
+	const { tradeFee: crossMarginTradeFee } = useRecoilValue(crossMarginSettingsState);
 
 	const { selectedFuturesAddress, crossMarginAvailable, selectedAccountType } = useRecoilValue(
 		futuresAccountState
@@ -177,6 +179,27 @@ const useFuturesData = () => {
 		selectedAccountType,
 	]);
 
+	const tradeFees = useMemo(() => {
+		const base = {
+			baseFee: feeCost,
+			dynamicFee,
+		};
+		if (selectedAccountType === 'isolated_margin')
+			return {
+				...base,
+				crossMarginFee: zeroBN,
+				total: zeroBN,
+			};
+
+		const crossMarginFee = wei(tradeSizeSUSD || '0').mul(crossMarginTradeFee);
+
+		return {
+			...base,
+			crossMarginFee: crossMarginFee,
+			total: crossMarginFee.add(feeCost || 0).add(dynamicFee || 0),
+		};
+	}, [selectedAccountType, tradeSizeSUSD, crossMarginTradeFee, feeCost, dynamicFee]);
+
 	useEffect(() => {
 		// Set to max when leverage or leverage side changes
 		if (wei(tradeSizeSUSD || 0).gt(maxUsdInputAmount)) {
@@ -194,13 +217,12 @@ const useFuturesData = () => {
 
 		const fullMargin = newNotionalValue.abs().div(crossMarginLeverage);
 		let marginDelta = fullMargin.sub(position?.remainingMargin || '0');
-		marginDelta = marginDelta.add(feeCost || zeroBN);
-
+		marginDelta = marginDelta.add(tradeFees.total);
 		setCrossMarginMarginDelta(marginDelta.toString());
 	}, [
 		tradeSizeSUSD,
 		crossMarginLeverage,
-		feeCost,
+		tradeFees.total,
 		leverageSide,
 		position?.position?.notionalValue,
 		position?.remainingMargin,
@@ -342,6 +364,7 @@ const useFuturesData = () => {
 		orderTxn,
 		previewTrade,
 		maxUsdInputAmount,
+		tradeFees,
 	};
 };
 

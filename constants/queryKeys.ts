@@ -297,12 +297,19 @@ export const QUERY_KEYS = {
 			currencyKey: string | null
 		) => ['futures', 'currentRoundId', networkId, walletAddress, currencyKey],
 		OverviewStats: (networkId: NetworkId) => ['futures', 'overview-stats', networkId],
+		CrossMarginAccountOverview: (networkId: NetworkId, wallet: string) => [
+			'futures',
+			'cross-margin-account-overview',
+			networkId,
+			wallet,
+		],
 		CrossMarginAccount: (networkId: NetworkId, wallet: string) => [
 			'futures',
 			'cross-margin-account',
 			networkId,
 			wallet,
 		],
+		CrossMarginSettings: (networkId: NetworkId) => ['futures', 'cross-margin-settings', networkId],
 	},
 	Files: {
 		Get: (fileName: string) => ['files', 'get', fileName],

@@ -19,6 +19,7 @@ import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
 import ManagePosition from '../Trade/ManagePosition';
 import MarketsDropdown from '../Trade/MarketsDropdown';
+import FeesBox from './CrossMarginFeesBox';
 import MarginInfoBox from './MarginInfoBox';
 
 export default function TradeCrossMargin() {
@@ -46,7 +47,7 @@ export default function TradeCrossMargin() {
 			const usdAmount = sizeRange.mul(fraction).toString();
 			onTradeAmountSUSDChange(Number(usdAmount).toFixed(0));
 		}, 500),
-		[debounce, onTradeAmountSUSDChange]
+		[debounce, onTradeAmountSUSDChange, leverage, totalMargin]
 	);
 
 	useEffect(() => {
@@ -83,6 +84,7 @@ export default function TradeCrossMargin() {
 			</SliderRow>
 			<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
 			<ManagePosition />
+			<FeesBox />
 		</>
 	);
 }

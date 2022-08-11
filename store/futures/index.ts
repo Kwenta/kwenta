@@ -89,6 +89,15 @@ export const crossMarginMarginDeltaState = atom({
 	default: '0',
 });
 
+export const crossMarginSettingsState = atom({
+	key: getFuturesKey('crossMarginSettings'),
+	default: {
+		tradeFee: zeroBN,
+		limitOrderFee: zeroBN,
+		stopLossFee: zeroBN,
+	},
+});
+
 export const leverageSideState = atom<PositionSide>({
 	key: getFuturesKey('leverageSide'),
 	default: PositionSide.LONG,

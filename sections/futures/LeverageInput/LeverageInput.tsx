@@ -124,7 +124,6 @@ const LeverageRow = styled(FlexDivRow)`
 	width: 100%;
 	align-items: center;
 	margin-bottom: 8px;
-	padding: 0 14px;
 `;
 
 const LeverageTitle = styled.div`

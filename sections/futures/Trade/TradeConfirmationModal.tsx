@@ -49,6 +49,7 @@ const TradeConfirmationModal: FC = () => {
 		submitIsolatedMarginOrder,
 		submitCrossMarginOrder,
 		onLeverageChange,
+		tradeFees,
 	} = useFuturesContext();
 
 	const setConfirmationModalOpen = useSetRecoilState(confirmationModalOpenState);
@@ -93,6 +94,8 @@ const TradeConfirmationModal: FC = () => {
 			: null;
 	}, [potentialTradeDetails]);
 
+	const fee = tradeFees.crossMarginFee.add(positionDetails?.fee || 0);
+
 	const dataRows = useMemo(
 		() => [
 			{ label: 'side', value: (positionDetails?.side ?? PositionSide.LONG).toUpperCase() },
@@ -119,7 +122,7 @@ const TradeConfirmationModal: FC = () => {
 			},
 			{
 				label: 'protocol fee',
-				value: formatCurrency(Synths.sUSD, positionDetails?.fee ?? zeroBN, { sign: '$' }),
+				value: formatCurrency(Synths.sUSD, fee, { sign: '$' }),
 			},
 			{
 				label: 'network gas fee',
@@ -129,7 +132,7 @@ const TradeConfirmationModal: FC = () => {
 				}),
 			},
 		],
-		[positionDetails, market, synthsMap, transactionFee, selectedPriceCurrency]
+		[positionDetails, market, synthsMap, transactionFee, selectedPriceCurrency, fee]
 	);
 
 	const onDismiss = () => {
