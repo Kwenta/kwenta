@@ -90,6 +90,7 @@ export const Message = styled.div`
 
 export const MessageButton = styled(Button).attrs({
 	size: 'lg',
+	noOutline: true,
 	isRounded: true,
 	fullwidth: true,
 })`

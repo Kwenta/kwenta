@@ -43,7 +43,7 @@ const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 				</DesktopOnlyView>
 				{isL2 ? (
 					<ExternalLink href={EXTERNAL_LINKS.Trading.OneInch}>
-						<MessageButton noOutline>
+						<MessageButton>
 							<Trans
 								t={t}
 								i18nKey="exchange.onboard.1inch-button"
@@ -54,7 +54,7 @@ const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 					</ExternalLink>
 				) : (
 					<Link href={ROUTES.Dashboard.Convert}>
-						<MessageButton noOutline>
+						<MessageButton>
 							<Trans
 								t={t}
 								i18nKey="common.currency.buy-currency"
