@@ -1,4 +1,4 @@
-import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
+import { useAccountModal, useChainModal } from '@rainbow-me/rainbowkit';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { components } from 'react-select';
@@ -7,7 +7,7 @@ import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from 'wagmi';
 
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import DisconnectIcon from 'assets/svg/app/disconnect.svg';
-import SwitchWalletIcon from 'assets/svg/app/switch-wallet.svg';
+import LinkIcon from 'assets/svg/app/link-blue.svg';
 import Select from 'components/Select';
 import { IndicatorSeparator } from 'components/Select/Select';
 import Connector from 'containers/Connector';
@@ -38,13 +38,17 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 
 	const [walletLabel, setWalletLabel] = useState('');
 	const truncatedWalletAddress = truncateAddress(address ?? '');
-	const { openConnectModal } = useConnectModal();
+	const { openAccountModal } = useAccountModal();
 	const { openChainModal } = useChainModal();
 	const { disconnect } = useDisconnect();
 
 	const WALLET_OPTIONS = useMemo(() => {
 		let options = [
-			{ label: 'common.wallet.switch-wallet', postfixIcon: 'Switch', onClick: openConnectModal },
+			{
+				label: 'common.wallet.account-info',
+				postfixIcon: 'Link',
+				onClick: openAccountModal,
+			},
 			{
 				label: 'common.wallet.disconnect-wallet',
 				postfixIcon: 'Disconnet',
@@ -89,11 +93,7 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 			<LabelContainer onClick={onClick}>
 				{t(label)}
 				{postfixIcon &&
-					(postfixIcon === 'Switch' ? (
-						<SwitchWalletIcon height={17} />
-					) : (
-						<DisconnectIcon height={17} />
-					))}
+					(postfixIcon === 'Link' ? <LinkIcon height={17} /> : <DisconnectIcon height={17} />)}
 			</LabelContainer>
 		);
 

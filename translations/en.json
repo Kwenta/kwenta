@@ -995,7 +995,7 @@
 		},
 		"wallet": {
 			"connect-wallet": "connect wallet",
-			"switch-wallet": "Switch Wallet",
+			"account-info": "Account Info",
 			"switch-accounts": "Switch Accounts",
 			"disconnect-wallet": "Disconnect Wallet",
 			"unsupported-network": "Unsupported Network"
