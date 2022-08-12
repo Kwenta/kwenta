@@ -36,7 +36,7 @@ export const ROUTES = {
 	},
 	Leaderboard: {
 		Home: '/leaderboard',
-		Trader: (trader: string) => `/leaderboard?trader=${trader}`,
+		Trader: (trader: string) => `/leaderboard/?trader=${trader}`,
 	},
 	Earn: {
 		Home: '/earn',
