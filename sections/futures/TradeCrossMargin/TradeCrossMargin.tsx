@@ -4,17 +4,21 @@ import { useCallback, useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
+import Button from 'components/Button';
+import Card from 'components/Card';
 import StyledSlider from 'components/Slider/StyledSlider';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import {
 	crossMarginAvailableMarginState,
 	crossMarginLeverageState,
+	futuresAccountState,
 	leverageSideState,
 	positionState,
 } from 'store/futures';
 import { FlexDivRow } from 'styles/common';
 import { zeroBN } from 'utils/formatters/number';
 
+import CrossMarginOnboard from '../CrossMarginOnboard';
 import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
 import ManagePosition from '../Trade/ManagePosition';
@@ -27,6 +31,7 @@ export default function TradeCrossMargin() {
 	const freeMargin = useRecoilValue(crossMarginAvailableMarginState);
 	const position = useRecoilValue(positionState);
 	const leverage = useRecoilValue(crossMarginLeverageState);
+	const { crossMarginAddress } = useRecoilValue(futuresAccountState);
 
 	const { onTradeAmountSUSDChange } = useFuturesContext();
 
@@ -34,6 +39,7 @@ export default function TradeCrossMargin() {
 	const totalMargin = freeMargin.add(currentMargin).toNumber();
 
 	const [percent, setPercent] = useState(0);
+	const [showOnboard, setShowOnboard] = useState(!crossMarginAddress);
 
 	// eslint-disable-next-line
 	const onChangeMarginPercent = useCallback(
@@ -61,30 +67,42 @@ export default function TradeCrossMargin() {
 
 	return (
 		<>
-			<MarketsDropdown />
-			<MarginInfoBox />
-			<OrderSizing />
-			<SliderRow>
-				<StyledSlider
-					minValue={0}
-					maxValue={100}
-					step={1}
-					defaultValue={percent}
-					value={percent}
-					onChange={onChangeSlider}
-					onChangeCommitted={() => {}}
-					marks={[
-						{ value: 0, label: `0%` },
-						{ value: 100, label: `100%` },
-					]}
-					valueLabelDisplay="on"
-					valueLabelFormat={(v) => `${v}%`}
-					$currentMark={percent}
-				/>
-			</SliderRow>
-			<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
-			<ManagePosition />
-			<FeesBox />
+			<CrossMarginOnboard onClose={() => setShowOnboard(false)} isOpen={showOnboard} />
+			{!crossMarginAddress ? (
+				<CreateAccountContainer>
+					<Title>Cross Margin</Title>
+					<CreateAccountButton onClick={() => setShowOnboard(true)}>
+						Create Account
+					</CreateAccountButton>
+				</CreateAccountContainer>
+			) : (
+				<>
+					<MarketsDropdown />
+					<MarginInfoBox />
+					<OrderSizing />
+					<SliderRow>
+						<StyledSlider
+							minValue={0}
+							maxValue={100}
+							step={1}
+							defaultValue={percent}
+							value={percent}
+							onChange={onChangeSlider}
+							onChangeCommitted={() => {}}
+							marks={[
+								{ value: 0, label: `0%` },
+								{ value: 100, label: `100%` },
+							]}
+							valueLabelDisplay="on"
+							valueLabelFormat={(v) => `${v}%`}
+							$currentMark={percent}
+						/>
+					</SliderRow>
+					<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
+					<ManagePosition />
+					<FeesBox />
+				</>
+			)}
 		</>
 	);
 }
@@ -94,3 +112,31 @@ const SliderRow = styled(FlexDivRow)`
 	margin-bottom: 32px;
 	position: relative;
 `;
+
+const CreateAccountContainer = styled(Card)`
+	border: ${(props) => props.theme.colors.selectedTheme.border};
+	color: white;
+	text-align: center;
+	padding: 30px;
+	align-items: center;
+	border-radius: 8px;
+`;
+
+const Title = styled.div`
+	font-family: ${(props) => props.theme.fonts.monoBold};
+	font-size: 23px;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+`;
+
+const CreateAccountButton = styled(Button)`
+	color: ${(props) => props.theme.colors.selectedTheme.yellow};
+	font-size: 11px;
+	padding: 12px 14px;
+	width: 120px;
+	margin-top: 14px;
+`;
+
+// const SwitchButton = styled(TextButton)`
+// 	margin-top: 20px;
+// 	color: ${(props) => props.theme.colors.selectedTheme.gray};
+// `;

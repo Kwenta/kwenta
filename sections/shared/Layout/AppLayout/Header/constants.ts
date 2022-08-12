@@ -36,7 +36,7 @@ export const MENU_LINKS: MenuLinks = [
 export const NAV_SUB_MENUS = {
 	[ROUTES.Markets.Home]: [
 		{
-			link: formatUrl(ROUTES.Markets.Home, { accountType: 'isolated-margin' }),
+			link: formatUrl(ROUTES.Markets.Home, { accountType: 'isolated_margin' }),
 			i18nLabel: 'header.nav.isolated-margin',
 			Icon: IsolatedMarginIcon,
 		},
