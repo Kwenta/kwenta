@@ -86,7 +86,7 @@ const FuturesMarketsTable: FC = () => {
 						data={data}
 						showPagination
 						onTableRowClick={(row) => {
-							router.push(`/market/${row.original.asset}`);
+							router.push(`/market/?asset=${row.original.asset}`);
 						}}
 						highlightRowsOnHover
 						sortBy={[{ id: 'dailyVolume', desc: true }]}
@@ -280,7 +280,7 @@ const FuturesMarketsTable: FC = () => {
 					data={data}
 					showPagination
 					onTableRowClick={(row) => {
-						router.push(`/market/${row.original.asset}`);
+						router.push(`/market/?asset=${row.original.asset}`);
 					}}
 					columns={[
 						{

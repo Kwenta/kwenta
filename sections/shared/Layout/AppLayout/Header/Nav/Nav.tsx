@@ -17,7 +17,7 @@ const Nav: FC = () => {
 	const currentMarket = useRecoilValue(currentMarketState);
 
 	function getLink(link: string) {
-		return link.slice(0, 7) === '/market' ? `market/?asset=${currentMarket}` : link;
+		return link.slice(0, 7) === '/market' ? `/market/?asset=${currentMarket}` : link;
 	}
 
 	return (
