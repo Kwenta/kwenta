@@ -1,5 +1,6 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 
+import { FuturesAccountType } from 'queries/futures/types';
 import { FuturesMarketAsset } from 'utils/futures';
 
 import { CurrencyKey } from './currency';
@@ -39,7 +40,7 @@ export const QUERY_KEYS = {
 	Network: {
 		EthGasPrice: ['network', 'ethGasPrice'],
 		ENSNames: (addresses: string[]) => ['network', 'ensNames', addresses],
-		ENSAvatar: (ensName: string) => ['network', 'ensNames', ensName],
+		ENSAvatar: (ensName: string | null) => ['network', 'ensNames', ensName],
 	},
 	WalletBalances: {
 		Synths: (walletAddress: string, networkId: NetworkId) => [
@@ -171,13 +172,12 @@ export const QUERY_KEYS = {
 			networkId,
 			currencyKey,
 		],
-		TradesAccount: (networkId: NetworkId, currencyKey: string | null, account: string | null) => [
-			'futures',
-			'trades',
-			networkId,
-			currencyKey,
-			account,
-		],
+		TradesAccount: (
+			networkId: NetworkId,
+			currencyKey: string | null,
+			account: string | null,
+			selectedAccountType: string
+		) => ['futures', 'trades', networkId, currencyKey, account, selectedAccountType],
 		AllTradesAccount: (networkId: NetworkId, account: string | null) => [
 			'futures',
 			'trades',
@@ -208,6 +208,12 @@ export const QUERY_KEYS = {
 			networkId,
 			currencyKey,
 		],
+		FundingRates: (networkId: NetworkId, periodLength: number) => [
+			'futures',
+			'fundingRates',
+			networkId,
+			periodLength,
+		],
 		TradingVolumeForAll: (networkId: NetworkId) => ['futures', 'tradingVolumeForAll', networkId],
 		MarketPositionHistory: (networkId: NetworkId, market: string | null, walletAddress: string) => [
 			'futures',
@@ -230,9 +236,9 @@ export const QUERY_KEYS = {
 		],
 		MarketsPositions: (
 			networkId: NetworkId,
-			walletAddress: string | null,
-			markets: string[] | []
-		) => ['futures', 'marketsPositions', networkId, walletAddress, markets],
+			markets: string[] | [],
+			selectedFuturesAddress: string
+		) => ['futures', 'marketsPositions', networkId, markets, selectedFuturesAddress],
 		Positions: (networkId: NetworkId, markets: string[] | [], walletAddress: string) => [
 			'futures',
 			'positions',
@@ -259,8 +265,20 @@ export const QUERY_KEYS = {
 			market: string | null,
 			tradeSize: string,
 			walletAddress: string,
+			selectedAccountType: FuturesAccountType,
+			marginDelta: string,
 			leverageSide: string
-		) => ['futures', 'potentialTrade', tradeSize, networkId, market, walletAddress, leverageSide],
+		) => [
+			'futures',
+			'potentialTrade',
+			tradeSize,
+			networkId,
+			market,
+			walletAddress,
+			selectedAccountType,
+			marginDelta,
+			leverageSide,
+		],
 		MarketLimit: (networkId: NetworkId, market: string | null) => [
 			'futures',
 			'marketLimit',
@@ -285,6 +303,12 @@ export const QUERY_KEYS = {
 			currencyKey: string | null
 		) => ['futures', 'currentRoundId', networkId, walletAddress, currencyKey],
 		OverviewStats: (networkId: NetworkId) => ['futures', 'overview-stats', networkId],
+		CrossMarginAccount: (networkId: NetworkId, wallet: string) => [
+			'futures',
+			'cross-margin-account',
+			networkId,
+			wallet,
+		],
 	},
 	Files: {
 		Get: (fileName: string) => ['files', 'get', fileName],

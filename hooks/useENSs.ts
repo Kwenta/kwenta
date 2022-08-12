@@ -1,15 +1,19 @@
 import { Contract } from 'ethers';
-import reverseRecordsAbi from 'lib/abis/ReverseRecords.json';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import { ENS_REVERSE_LOOKUP } from 'constants/address';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
+import reverseRecordsAbi from 'lib/abis/ReverseRecords.json';
 import { appReadyState } from 'store/app';
 import { isL2State } from 'store/wallet';
 
 const ADDRESSES_PER_LOOKUP = 1500;
+
+type EnsInfo = {
+	[account: string]: string;
+};
 
 const useENSs = (addresses: string[], options?: UseQueryOptions<any | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -17,7 +21,7 @@ const useENSs = (addresses: string[], options?: UseQueryOptions<any | null>) => 
 
 	const { staticMainnetProvider } = Connector.useContainer();
 
-	return useQuery<string[]>(
+	return useQuery<EnsInfo>(
 		QUERY_KEYS.Network.ENSNames(addresses),
 		async () => {
 			const ReverseLookup = new Contract(
@@ -34,9 +38,13 @@ const useENSs = (addresses: string[], options?: UseQueryOptions<any | null>) => 
 				ensPromises.push(ensNamesPromise);
 			}
 
+			let ensInfo: EnsInfo = {};
+
 			const ensPromiseResult = await Promise.all(ensPromises);
-			const ensInfo = ensPromiseResult.flat(1).map((val: string, ind: number) => {
-				return val !== '' ? val : addresses[ind];
+			ensPromiseResult.flat(1).forEach((val: string, ind: number) => {
+				if (val !== '') {
+					ensInfo[addresses[ind]] = val;
+				}
 			});
 
 			return ensInfo;

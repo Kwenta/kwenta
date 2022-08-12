@@ -1,7 +1,7 @@
-import { RefetchProvider } from 'contexts/RefetchContext';
 import { FC } from 'react';
 import { createGlobalStyle } from 'styled-components';
 
+import { RefetchProvider } from 'contexts/RefetchContext';
 import { FullScreenContainer } from 'styles/common';
 
 import Footer from './Footer';

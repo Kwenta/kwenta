@@ -1,6 +1,5 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
-import { useRefetchContext } from 'contexts/RefetchContext';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
@@ -14,8 +13,14 @@ import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
-import { currentMarketState, marketInfoState, openOrdersState } from 'store/futures';
-import { gasSpeedState, walletAddressState } from 'store/wallet';
+import { useRefetchContext } from 'contexts/RefetchContext';
+import {
+	currentMarketState,
+	futuresAccountState,
+	marketInfoState,
+	openOrdersState,
+} from 'store/futures';
+import { gasSpeedState } from 'store/wallet';
 import { formatCurrency } from 'utils/formatters/number';
 import {
 	getDisplayAsset,
@@ -34,10 +39,10 @@ const OpenOrdersTable: React.FC = () => {
 	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
 
 	const gasSpeed = useRecoilValue(gasSpeedState);
-	const walletAddress = useRecoilValue(walletAddressState);
 	const currencyKey = useRecoilValue(currentMarketState);
 	const marketInfo = useRecoilValue(marketInfoState);
 	const openOrders = useRecoilValue(openOrdersState);
+	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 
 	const { handleRefetch } = useRefetchContext();
 
@@ -51,7 +56,7 @@ const OpenOrdersTable: React.FC = () => {
 	const cancelOrExecuteOrderTxn = useSynthetixTxn(
 		`FuturesMarket${getDisplayAsset(currencyKey)}`,
 		`${action}NextPriceOrder`,
-		[walletAddress],
+		[selectedFuturesAddress],
 		gasPrice,
 		{
 			enabled: !!action,

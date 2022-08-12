@@ -4,7 +4,8 @@ import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { futuresAccountState } from 'store/futures';
+import { isL2State, networkState } from 'store/wallet';
 import logError from 'utils/logError';
 
 import { FUTURES_POSITION_FRAGMENT } from './constants';
@@ -12,14 +13,14 @@ import { PositionHistory } from './types';
 import { getFuturesEndpoint, mapTradeHistory } from './utils';
 
 const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
 	const futuresEndpoint = getFuturesEndpoint(network);
 
 	return useQuery<PositionHistory[] | null>(
-		QUERY_KEYS.Futures.AccountPositions(walletAddress, network.id),
+		QUERY_KEYS.Futures.AccountPositions(selectedFuturesAddress, network.id),
 		async () => {
 			try {
 				const response = await request(
@@ -32,7 +33,7 @@ const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
 							}
 						}
 					`,
-					{ account: walletAddress }
+					{ account: selectedFuturesAddress }
 				);
 				return response?.futuresPositions ? mapTradeHistory(response.futuresPositions, true) : [];
 			} catch (e) {
@@ -41,7 +42,7 @@ const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
 			}
 		},
 		{
-			enabled: isAppReady && isL2 && !!walletAddress,
+			enabled: isAppReady && isL2 && !!selectedFuturesAddress,
 			refetchInterval: 5000,
 			...options,
 		}

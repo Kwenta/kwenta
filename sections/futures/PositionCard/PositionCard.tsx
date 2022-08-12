@@ -1,5 +1,4 @@
 import Wei from '@synthetixio/wei';
-import { useFuturesContext } from 'contexts/FuturesContext';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -11,6 +10,7 @@ import { Synths } from 'constants/currency';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
+import { useFuturesContext } from 'contexts/FuturesContext';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { PositionSide } from 'queries/futures/types';

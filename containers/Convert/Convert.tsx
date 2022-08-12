@@ -4,8 +4,6 @@ import { wei } from '@synthetixio/wei';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import { formatBytes32String, formatEther, parseEther } from 'ethers/lib/utils';
-import erc20Abi from 'lib/abis/ERC20.json';
-import synthSwapAbi from 'lib/abis/SynthSwap.json';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -15,6 +13,8 @@ import { KWENTA_REFERRAL_ADDRESS, SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/
 import { CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
 import use1InchApiUrl from 'hooks/use1InchApiUrl';
+import erc20Abi from 'lib/abis/ERC20.json';
+import synthSwapAbi from 'lib/abis/SynthSwap.json';
 import { walletAddressState } from 'store/wallet';
 
 type Token = {

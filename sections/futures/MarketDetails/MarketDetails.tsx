@@ -1,3 +1,4 @@
+import { Synths } from '@synthetixio/contracts-interface';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -8,10 +9,9 @@ import TimerTooltip from 'components/Tooltip/TimerTooltip';
 import useRateUpdateQuery from 'queries/rates/useRateUpdateQuery';
 import { currentMarketState, marketInfoState } from 'store/futures';
 import media from 'styles/media';
-import { formatPercent } from 'utils/formatters/number';
+import { formatCurrency, formatPercent } from 'utils/formatters/number';
 
 import useGetMarketData from './useGetMarketData';
-import useGetSkewData from './useGetSkewData';
 
 type MarketData = Record<string, { value: string | JSX.Element; color?: string }>;
 
@@ -27,7 +27,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 
 	const pausedClass = marketInfo?.isSuspended ? 'paused' : '';
 
-	const skewData = useGetSkewData();
 	const data: MarketData = useGetMarketData(mobile);
 
 	const lastOracleUpdateTimeQuery = useRateUpdateQuery({
@@ -38,13 +37,40 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 		lastOracleUpdateTimeQuery,
 	]);
 
+	// skew text
+	const longText = useMemo(() => {
+		return (
+			marketInfo?.openInterest &&
+			formatCurrency(Synths.sUSD, marketInfo.openInterest.longUSD, {
+				sign: '$',
+				maxDecimals: 2,
+				...(marketInfo?.openInterest?.longUSD.gt(1e6)
+					? { truncation: { divisor: 1e6, unit: 'M' } }
+					: {}),
+			})
+		);
+	}, [marketInfo]);
+
+	const shortText = useMemo(() => {
+		return (
+			marketInfo?.openInterest &&
+			formatCurrency(Synths.sUSD, marketInfo.openInterest.shortUSD, {
+				sign: '$',
+				maxDecimals: 2,
+				...(marketInfo?.openInterest?.shortUSD.gt(1e6)
+					? { truncation: { divisor: 1e6, unit: 'M' } }
+					: {}),
+			})
+		);
+	}, [marketInfo]);
+
 	const enableTooltip = (key: string, children: React.ReactElement) => {
 		switch (key) {
 			case 'External Price':
 				return (
 					<MarketDetailsTooltip
+						position={'fixed'}
 						key={key}
-						preset="bottom"
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.external-price')}
 					>
@@ -55,7 +81,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 				return (
 					<MarketDetailsTooltip
 						key={key}
-						preset="bottom"
+						position={'fixed'}
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.24h-change')}
 					>
@@ -66,7 +92,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 				return (
 					<MarketDetailsTooltip
 						key={key}
-						preset="bottom"
+						position={'fixed'}
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.24h-vol')}
 					>
@@ -77,7 +103,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 				return (
 					<MarketDetailsTooltip
 						key={key}
-						preset="bottom"
+						position={'fixed'}
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.24h-trades')}
 					>
@@ -88,7 +114,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 				return (
 					<MarketDetailsTooltip
 						key={key}
-						preset="bottom"
+						position={'fixed'}
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.open-interest')}
 					>
@@ -98,23 +124,25 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 			case marketInfo?.marketName:
 				return (
 					<TimerTooltip
+						position={'fixed'}
 						key={key}
-						preset="bottom"
 						startTimeDate={lastOracleUpdateTime}
 						width={'131px'}
 					>
 						{children}
 					</TimerTooltip>
 				);
-			case 'Inst. Funding Rate' || '1H Funding Rate':
+			case 'Inst. Funding Rate':
+			case '1H Funding Rate':
 				return (
-					<OneHrFundingRateTooltip
+					<MarketDetailsTooltip
 						key={key}
+						position={'fixed'}
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.1h-funding-rate')}
 					>
 						{children}
-					</OneHrFundingRateTooltip>
+					</MarketDetailsTooltip>
 				);
 			default:
 				return children;
@@ -128,7 +156,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 
 				return enableTooltip(
 					key,
-					<WithCursor cursor="help">
+					<WithCursor cursor="help" key={key}>
 						<div key={key}>
 							<p className="heading">{key}</p>
 							<span className={`value ${colorClass} ${pausedClass}`}>{value}</span>
@@ -142,10 +170,14 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 					<p className="heading">Skew</p>
 					<SkewDataContainer>
 						<div className={`value green ${pausedClass}`}>
-							{formatPercent(skewData.data.long, { minDecimals: 0 })} ({skewData.long})
+							{marketInfo?.openInterest &&
+								formatPercent(marketInfo.openInterest.longPct ?? 0, { minDecimals: 0 })}{' '}
+							({longText})
 						</div>
 						<div className={`value red ${pausedClass}`}>
-							{formatPercent(skewData.data.short, { minDecimals: 0 })} ({skewData.short})
+							{marketInfo?.openInterest &&
+								formatPercent(marketInfo.openInterest.shortPct ?? 0, { minDecimals: 0 })}{' '}
+							({shortText})
 						</div>
 					</SkewDataContainer>
 				</div>
@@ -163,15 +195,6 @@ const SkewDataContainer = styled.div`
 	grid-row: 1;
 `;
 
-const OneHrFundingRateTooltip = styled(StyledTooltip)`
-	${media.greaterThan('sm')`
-		bottom: -115px;
-		z-index: 2;
-		left: -200px;
-		padding: 10px;
-	`}
-`;
-
 const MarketDetailsTooltip = styled(StyledTooltip)`
 	z-index: 2;
 	padding: 10px;
@@ -183,6 +206,8 @@ const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	padding: 10px 45px 10px 15px;
 	margin-bottom: 16px;
 	box-sizing: border-box;
+	overflow-x: scroll;
+	scrollbar-width: none;
 
 	display: flex;
 	justify-content: space-between;
@@ -192,10 +217,21 @@ const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	border-radius: 10px;
 	box-sizing: border-box;
 
+	${media.lessThan('xl')`
+		& > div {
+			margin-right: 10px;
+		}
+	`}
+
 	p,
 	span {
 		margin: 0;
 		text-align: left;
+	}
+
+	.heading,
+	.value {
+		white-space: nowrap;
 	}
 
 	.heading {

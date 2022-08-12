@@ -71,6 +71,12 @@ export type FuturesMarket = {
 		makerFeeNextPrice: Wei;
 		takerFeeNextPrice: Wei;
 	};
+	openInterest?: {
+		shortPct: number;
+		longPct: number;
+		shortUSD: Wei;
+		longUSD: Wei;
+	};
 	marketDebt: Wei;
 	marketSkew: Wei;
 	marketSize: Wei;
@@ -232,6 +238,10 @@ export type FundingRateUpdate = {
 	timestamp: number;
 };
 
+export type FundingRates = {
+	[key in FuturesMarketAsset]: Wei;
+};
+
 export type FuturesPotentialTradeDetails = {
 	size: Wei;
 	liqPrice: Wei;
@@ -245,4 +255,15 @@ export type FuturesPotentialTradeDetails = {
 	status: PotentialTradeStatus;
 	showStatus: boolean;
 	statusMessage: string;
+};
+
+export type FuturesAccountType = 'cross_margin' | 'isolated_margin';
+
+export type FuturesAccountState = {
+	selectedAccountType: FuturesAccountType;
+	walletAddress: string | null;
+	selectedFuturesAddress: string | null;
+	crossMarginAddress: string | null;
+	crossMarginAvailable: boolean;
+	loading: boolean;
 };
