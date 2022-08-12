@@ -9,7 +9,9 @@ import ROUTES from 'constants/routes';
 import useENSs from 'hooks/useENSs';
 import { FuturesStat } from 'queries/futures/types';
 import useGetStats from 'queries/futures/useGetStats';
+import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
 import { FlexDivCol } from 'styles/common';
+import media from 'styles/media';
 import { truncateAddress } from 'utils/formatters/string';
 
 import AllTime from '../AllTime';
@@ -88,65 +90,71 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	};
 
 	return (
-		<LeaderboardContainer>
-			<SearchContainer compact={compact}>
-				<TabButtonContainer>
-					{COMPETITION_TIERS.map((tier) => (
+		<>
+			<CompetitionBanner compact={true} hideBanner={compact} />
+			<LeaderboardContainer>
+				<SearchContainer compact={compact}>
+					<TabButtonContainer>
+						{COMPETITION_TIERS.map((tier) => (
+							<StyledTabButton
+								key={tier}
+								title={tier ?? ''}
+								active={activeTier === tier}
+								onClick={() => {
+									setActiveTier(tier);
+									setSelectedTrader('');
+								}}
+							/>
+						))}
 						<StyledTabButton
-							key={tier}
-							title={tier ?? ''}
-							active={activeTier === tier}
+							key={'All'}
+							title={'All'}
+							active={!activeTier}
 							onClick={() => {
-								setActiveTier(tier);
+								setActiveTier(null);
 								setSelectedTrader('');
 							}}
 						/>
-					))}
-					<StyledTabButton
-						key={'All'}
-						title={'All'}
-						active={!activeTier}
-						onClick={() => {
-							setActiveTier(null);
-							setSelectedTrader('');
-						}}
-					/>
-				</TabButtonContainer>
-				<Search value={searchTerm} onChange={onChangeSearch} disabled={false} />
-			</SearchContainer>
-			<TableContainer compact={compact}>
-				{!compact && selectedTrader !== '' ? (
-					<TraderHistory
-						trader={selectedTrader}
-						ensInfo={ensInfo}
-						resetSelection={resetSelection}
-						compact={compact}
-						searchTerm={searchTerm}
-					/>
-				) : activeTier ? (
-					<Competition
-						activeTier={activeTier}
-						ensInfo={ensInfo}
-						compact={compact}
-						onClickTrader={onClickTrader}
-						searchTerm={searchTerm}
-					/>
-				) : (
-					<AllTime
-						stats={stats}
-						isLoading={statsQuery.isLoading || ensInfoQuery.isLoading}
-						compact={compact}
-						onClickTrader={onClickTrader}
-						searchTerm={searchTerm}
-					/>
-				)}
-			</TableContainer>
-		</LeaderboardContainer>
+					</TabButtonContainer>
+					<Search value={searchTerm} onChange={onChangeSearch} disabled={false} />
+				</SearchContainer>
+				<TableContainer compact={compact}>
+					{!compact && selectedTrader !== '' ? (
+						<TraderHistory
+							trader={selectedTrader}
+							ensInfo={ensInfo}
+							resetSelection={resetSelection}
+							compact={compact}
+							searchTerm={searchTerm}
+						/>
+					) : activeTier ? (
+						<Competition
+							activeTier={activeTier}
+							ensInfo={ensInfo}
+							compact={compact}
+							onClickTrader={onClickTrader}
+							searchTerm={searchTerm}
+						/>
+					) : (
+						<AllTime
+							stats={stats}
+							isLoading={statsQuery.isLoading || ensInfoQuery.isLoading}
+							compact={compact}
+							onClickTrader={onClickTrader}
+							searchTerm={searchTerm}
+						/>
+					)}
+				</TableContainer>
+			</LeaderboardContainer>
+		</>
 	);
 };
 
 const LeaderboardContainer = styled(FlexDivCol)`
 	min-width: 400px;
+	${media.lessThan('sm')`
+		min-width: unset;
+	`}
 `;
 
 const StyledTabButton = styled(TabButton)`
