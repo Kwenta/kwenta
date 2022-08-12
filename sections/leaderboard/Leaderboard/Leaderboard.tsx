@@ -17,6 +17,7 @@ import AllTime from '../AllTime';
 import { AccountStat, COMPETITION_TIERS, Tier } from '../common';
 import Competition from '../Competition';
 import TraderHistory from '../TraderHistory';
+import media from 'styles/media';
 
 type LeaderboardProps = {
 	compact?: boolean;
@@ -89,66 +90,71 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	};
 
 	return (
-		<LeaderboardContainer>
+		<>
 			<CompetitionBanner compact={true} hideBanner={compact} />
-			<SearchContainer compact={compact}>
-				<TabButtonContainer>
-					{COMPETITION_TIERS.map((tier) => (
+			<LeaderboardContainer>
+				<SearchContainer compact={compact}>
+					<TabButtonContainer>
+						{COMPETITION_TIERS.map((tier) => (
+							<StyledTabButton
+								key={tier}
+								title={tier ?? ''}
+								active={activeTier === tier}
+								onClick={() => {
+									setActiveTier(tier);
+									setSelectedTrader('');
+								}}
+							/>
+						))}
 						<StyledTabButton
-							key={tier}
-							title={tier ?? ''}
-							active={activeTier === tier}
+							key={'All'}
+							title={'All'}
+							active={!activeTier}
 							onClick={() => {
-								setActiveTier(tier);
+								setActiveTier(null);
 								setSelectedTrader('');
 							}}
 						/>
-					))}
-					<StyledTabButton
-						key={'All'}
-						title={'All'}
-						active={!activeTier}
-						onClick={() => {
-							setActiveTier(null);
-							setSelectedTrader('');
-						}}
-					/>
-				</TabButtonContainer>
-				<Search value={searchTerm} onChange={onChangeSearch} disabled={false} />
-			</SearchContainer>
-			<TableContainer compact={compact}>
-				{!compact && selectedTrader !== '' ? (
-					<TraderHistory
-						trader={selectedTrader}
-						ensInfo={ensInfo}
-						resetSelection={resetSelection}
-						compact={compact}
-						searchTerm={searchTerm}
-					/>
-				) : activeTier ? (
-					<Competition
-						activeTier={activeTier}
-						ensInfo={ensInfo}
-						compact={compact}
-						onClickTrader={onClickTrader}
-						searchTerm={searchTerm}
-					/>
-				) : (
-					<AllTime
-						stats={stats}
-						isLoading={statsQuery.isLoading || ensInfoQuery.isLoading}
-						compact={compact}
-						onClickTrader={onClickTrader}
-						searchTerm={searchTerm}
-					/>
-				)}
-			</TableContainer>
-		</LeaderboardContainer>
+					</TabButtonContainer>
+					<Search value={searchTerm} onChange={onChangeSearch} disabled={false} />
+				</SearchContainer>
+				<TableContainer compact={compact}>
+					{!compact && selectedTrader !== '' ? (
+						<TraderHistory
+							trader={selectedTrader}
+							ensInfo={ensInfo}
+							resetSelection={resetSelection}
+							compact={compact}
+							searchTerm={searchTerm}
+						/>
+					) : activeTier ? (
+						<Competition
+							activeTier={activeTier}
+							ensInfo={ensInfo}
+							compact={compact}
+							onClickTrader={onClickTrader}
+							searchTerm={searchTerm}
+						/>
+					) : (
+						<AllTime
+							stats={stats}
+							isLoading={statsQuery.isLoading || ensInfoQuery.isLoading}
+							compact={compact}
+							onClickTrader={onClickTrader}
+							searchTerm={searchTerm}
+						/>
+					)}
+				</TableContainer>
+			</LeaderboardContainer>
+		</>
 	);
 };
 
 const LeaderboardContainer = styled(FlexDivCol)`
 	min-width: 400px;
+	${media.lessThan('sm')`
+		min-width: unset;
+	`}
 `;
 
 const StyledTabButton = styled(TabButton)`

@@ -104,7 +104,7 @@ const StyledBg = styled(CompetitionBannerBg)`
 	${media.lessThan('sm')`
 		left: 50%;
 		transform: translateX(-50%);
-		width: auto;
+		width: 100%;
 	`}
 
 	& > g {
