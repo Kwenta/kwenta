@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -11,10 +11,41 @@ import { formatDateWithoutYear } from 'utils/formatters/date';
 
 import { CompetitionState } from './CompetitionState';
 
-const BannerContainer = styled.div`
+type CompetitionBannerProps = {
+	compact?: boolean;
+	hideBanner?: boolean;
+};
+
+export const CompetitionBanner: FC<CompetitionBannerProps> = ({
+	compact,
+	hideBanner,
+}: CompetitionBannerProps) => {
+	const { t } = useTranslation();
+
+	const formatedStartDate = formatDateWithoutYear(COMPETITION_DATES.START_DATE);
+	const formatedEndDate = formatDateWithoutYear(COMPETITION_DATES.END_DATE);
+
+	const competitionPeriod = `${formatedStartDate}-${formatedEndDate.split(' ')[1]}`;
+
+	return (
+		<BannerContainer compact={compact} hideBanner={hideBanner}>
+			<CompetitionPeriod>{competitionPeriod}</CompetitionPeriod>
+			<CompetitionState />
+			<CTA href={EXTERNAL_LINKS.Competition.LearnMore}>{t('common.learn-more')}</CTA>
+
+			<StyledBg />
+		</BannerContainer>
+	);
+};
+
+const BannerContainer = styled.div<{
+	compact: boolean | undefined;
+	hideBanner: boolean | undefined;
+}>`
 	position: relative;
 	width: 100%;
-	display: flex;
+	display: ${({ hideBanner }) => (hideBanner ? 'none' : 'flex')};
+	margin-bottom: ${({ compact }) => (compact ? '5px' : '35px')};
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
@@ -22,7 +53,6 @@ const BannerContainer = styled.div`
 	padding: 22px 0;
 	border: ${(props) => props.theme.colors.selectedTheme.competitionBanner.border};
 	border-radius: 8px;
-	margin-bottom: 35px;
 	${media.lessThan('sm')`
 		border-radius: 0;
 		margin-bottom: 0;
@@ -74,29 +104,9 @@ const StyledBg = styled(CompetitionBannerBg)`
 	${media.lessThan('sm')`
 		left: 50%;
 		transform: translateX(-50%);
-		width: auto;
 	`}
 
 	& > g {
 		stroke: ${(props) => props.theme.colors.selectedTheme.competitionBanner.bg};
 	}
 `;
-
-export const CompetitionBanner = () => {
-	const { t } = useTranslation();
-
-	const formatedStartDate = formatDateWithoutYear(COMPETITION_DATES.START_DATE);
-	const formatedEndDate = formatDateWithoutYear(COMPETITION_DATES.END_DATE);
-
-	const competitionPeriod = `${formatedStartDate}-${formatedEndDate.split(' ')[1]}`;
-
-	return (
-		<BannerContainer>
-			<CompetitionPeriod>{competitionPeriod}</CompetitionPeriod>
-			<CompetitionState />
-			<CTA href={EXTERNAL_LINKS.Competition.LearnMore}>{t('common.learn-more')}</CTA>
-
-			<StyledBg />
-		</BannerContainer>
-	);
-};
