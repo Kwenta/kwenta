@@ -7,6 +7,7 @@ import NavButton from 'components/Button/NavButton';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { TabList, TabPanel } from 'components/Tab';
 import ROUTES from 'constants/routes';
+import Leaderboard from 'sections/leaderboard/Leaderboard';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import { MainContent, LeftSideContent, FullHeightContainer, PageContent } from 'styles/common';
 
@@ -126,6 +127,7 @@ const DashboardLayout: FC = ({ children }) => {
 								{children}
 							</TabPanel>
 						</MainContent>
+						<Leaderboard compact />
 					</StyledFullHeightContainer>
 				</PageContent>
 			</DesktopOnlyView>

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
+import { currentMarketState } from 'store/futures';
 import { linkCSS } from 'styles/common';
 
 import { menuLinksState } from '../states';
@@ -13,13 +14,10 @@ const Nav: FC = () => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
 	const menuLinks = useRecoilValue(menuLinksState);
-
-	function getLastVisited(): string | null {
-		return localStorage.getItem('lastVisited');
-	}
+	const currentMarket = useRecoilValue(currentMarketState);
 
 	function getLink(link: string) {
-		return link.slice(0, 7) === '/market' ? getLastVisited() ?? link : link;
+		return link.slice(0, 7) === '/market' ? `market/?asset=${currentMarket}` : link;
 	}
 
 	return (
@@ -32,9 +30,7 @@ const Nav: FC = () => {
 
 					return (
 						<MenuLinkItem key={getLink(link)} isActive={isActive}>
-							<Link href={getLink(link)}>
-								<a>{t(i18nLabel)}</a>
-							</Link>
+							<Link href={getLink(link)}>{t(i18nLabel)}</Link>
 						</MenuLinkItem>
 					);
 				})}

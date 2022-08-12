@@ -12,6 +12,7 @@ import { TabPanel } from 'components/Tab';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
+import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
 import { walletAddressState } from 'store/wallet';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 
@@ -127,6 +128,8 @@ const Overview: FC = () => {
 	return (
 		<>
 			<DesktopOnlyView>
+				<CompetitionBanner />
+
 				<PortfolioChart />
 
 				<TabButtonsContainer>

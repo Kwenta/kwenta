@@ -810,13 +810,14 @@
 				"total-volume": "Total Volume",
 				"liquidations": "Liquidations",
 				"24h-pnl": "24H PnL",
-				"total-pnl": "PnL ($)",
+				"pnl": "PnL",
 				"percent-pnl": "PnL (%)",
 				"rank-mobile": "#"
 			}
 		},
 		"trader-history": {
 			"table": {
+				"back": "Back",
 				"timestamp": "Date/Time",
 				"market": "Market",
 				"status": "Status",
@@ -824,6 +825,14 @@
 				"total-trades": "Trades",
 				"total-volume": "Total Volume",
 				"total-pnl": "Realized PnL"
+			}
+		},
+		"competition": {
+			"title": "Competition",
+			"table": {
+				"table-updates": "Table data updates daily",
+				"starting-soon": "Competition starting soon",
+				"started": "Competition started, leaderboard updates every 3 hours"
 			}
 		}
 	},
@@ -1064,7 +1073,15 @@
 			"n-week-ago": "{{ timeDelta }}w ago",
 			"n-year-ago": "{{ timeDelta }}y ago"
 		},
-		"min": "min"
+		"min": "min",
+		"competition": {
+			"before-launch-date": "Competition coming soon",
+			"24h-before-launch-date": "Competition starting in",
+			"during-competition": "Competition Live",
+			"24h-before-end-date": "Competition ending in",
+			"24h-after-end-date": "Competition ended"
+		},
+		"learn-more": "learn more"
 	},
 	"mobile-menu": {
 		"currency": "Currency",
