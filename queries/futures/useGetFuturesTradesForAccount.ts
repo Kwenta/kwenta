@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
-import { futuresAccountState } from 'store/futures';
+import { futuresAccountTypeState } from 'store/futures';
 import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
 import logError from 'utils/logError';
 
@@ -23,7 +23,7 @@ const useGetFuturesTradesForAccount = (
 	const futuresEndpoint = getFuturesEndpoint(network);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isL2 = useRecoilValue(isL2State);
-	const { selectedAccountType } = useRecoilValue(futuresAccountState);
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 
 	return useQuery<FuturesTrade[] | null>(
 		QUERY_KEYS.Futures.TradesAccount(

@@ -26,7 +26,10 @@ export default function useGetCrossMarginAccountOverview() {
 	return useQuery(
 		QUERY_KEYS.Futures.CrossMarginAccountOverview(network.id, crossMarginAddress || ''),
 		async () => {
-			if (!crossMarginAddress || !crossMarginAccountContract) return { freeMargin: zeroBN };
+			if (!crossMarginAddress || !crossMarginAccountContract) {
+				setFreeMargin(zeroBN);
+				return { freeMargin: zeroBN };
+			}
 
 			const freeMargin = await crossMarginAccountContract.freeMargin();
 			const tradeFee = await crossMarginBaseSettings?.tradeFee();
@@ -45,7 +48,7 @@ export default function useGetCrossMarginAccountOverview() {
 			return { freeMargin: wei(freeMargin), settings: settings };
 		},
 		{
-			enabled: isAppReady && isL2 && !!crossMarginAddress,
+			enabled: isAppReady && isL2,
 		}
 	);
 }

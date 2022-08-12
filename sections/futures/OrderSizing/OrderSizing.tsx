@@ -9,7 +9,7 @@ import { useFuturesContext } from 'contexts/FuturesContext';
 import {
 	crossMarginAvailableMarginState,
 	currentMarketState,
-	futuresAccountState,
+	futuresAccountTypeState,
 	positionState,
 	tradeSizeState,
 	tradeSizeSUSDState,
@@ -25,9 +25,9 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 	const tradeSize = useRecoilValue(tradeSizeState);
 	const tradeSizeSUSD = useRecoilValue(tradeSizeSUSDState);
 	const marketAsset = useRecoilValue(currentMarketState);
-	const account = useRecoilValue(futuresAccountState);
 	const freeCrossMargin = useRecoilValue(crossMarginAvailableMarginState);
 	const position = useRecoilValue(positionState);
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 
 	const [usdValue, setUsdValue] = useState(tradeSizeSUSD);
 	const [assetValue, setAssetValue] = useState(tradeSize);
@@ -80,11 +80,11 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 
 	const isDisabled = useMemo(() => {
 		const remaining =
-			account.selectedAccountType === 'isolated_margin'
+			selectedAccountType === 'isolated_margin'
 				? position?.remainingMargin || zeroBN
 				: freeCrossMargin;
 		return remaining.lte(0) || disabled;
-	}, [position?.remainingMargin, disabled, account.selectedAccountType, freeCrossMargin]);
+	}, [position?.remainingMargin, disabled, selectedAccountType, freeCrossMargin]);
 
 	return (
 		<OrderSizingContainer>

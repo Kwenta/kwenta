@@ -22,6 +22,7 @@ const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
 	return useQuery<PositionHistory[] | null>(
 		QUERY_KEYS.Futures.AccountPositions(selectedFuturesAddress, network.id),
 		async () => {
+			if (!selectedFuturesAddress) return [];
 			try {
 				const response = await request(
 					futuresEndpoint,
@@ -42,7 +43,7 @@ const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
 			}
 		},
 		{
-			enabled: isAppReady && isL2 && !!selectedFuturesAddress,
+			enabled: isAppReady && isL2,
 			refetchInterval: 5000,
 			...options,
 		}

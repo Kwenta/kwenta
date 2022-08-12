@@ -18,7 +18,7 @@ import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { getFuturesMarketContract } from 'queries/futures/utils';
-import { currentMarketState, futuresAccountState, positionState } from 'store/futures';
+import { currentMarketState, futuresAccountTypeState, positionState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { FlexDivCentered, FlexDivCol } from 'styles/common';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
@@ -49,7 +49,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 	const currencyKey = useRecoilValue(currentMarketState);
 	const position = useRecoilValue(positionState);
 	const positionDetails = position?.position;
-	const { selectedAccountType } = useRecoilValue(futuresAccountState);
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),

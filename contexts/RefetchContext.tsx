@@ -10,7 +10,7 @@ import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPot
 import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useSynthBalances from 'queries/synths/useSynthBalances';
-import { futuresAccountState } from 'store/futures';
+import { futuresAccountTypeState } from 'store/futures';
 
 type RefetchType =
 	| 'modify-position'
@@ -29,7 +29,7 @@ const RefetchContext = React.createContext<RefetchContextType>({
 });
 
 export const RefetchProvider: React.FC = ({ children }) => {
-	const { selectedAccountType } = useRecoilValue(futuresAccountState);
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 
 	const synthsBalancesQuery = useSynthBalances();
 	const openOrdersQuery = useGetFuturesOpenOrders();

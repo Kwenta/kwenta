@@ -36,7 +36,7 @@ const useGetFuturesMarketPositionHistory = (options?: UseQueryOptions<any | null
 			try {
 				const { contracts } = synthetixjs!;
 				const marketAddress = contracts[`FuturesMarket${getDisplayAsset(currencyKey)}`].address;
-				if (!marketAddress) return null;
+				if (!marketAddress || !selectedFuturesAddress) return null;
 				const response = await request(
 					futuresEndpoint,
 					gql`
@@ -61,7 +61,7 @@ const useGetFuturesMarketPositionHistory = (options?: UseQueryOptions<any | null
 			}
 		},
 		{
-			enabled: isAppReady && isL2 && !!selectedFuturesAddress && !!currencyKey && !!synthetixjs,
+			enabled: isAppReady && isL2 && !!currencyKey && !!synthetixjs,
 			...options,
 		}
 	);

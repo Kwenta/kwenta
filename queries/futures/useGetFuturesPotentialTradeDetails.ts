@@ -14,6 +14,7 @@ import {
 	isolatedMarginleverageState,
 	potentialTradeDetailsState,
 	tradeSizeState,
+	futuresAccountTypeState,
 } from 'store/futures';
 import { isL2State, networkState } from 'store/wallet';
 
@@ -27,7 +28,8 @@ const UNKNOWN = 'Unknown';
 const useGetFuturesPotentialTradeDetails = (
 	options?: UseQueryOptions<FuturesPotentialTradeDetails | null>
 ) => {
-	const { selectedFuturesAddress, selectedAccountType } = useRecoilValue(futuresAccountState);
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
+	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
@@ -71,7 +73,7 @@ const useGetFuturesPotentialTradeDetails = (
 			leverageSide
 		),
 		async () => {
-			if (!marketAsset || !tradeSize || !isL2) {
+			if (!marketAsset || !tradeSize || !isL2 || !selectedFuturesAddress) {
 				setPotentialTradeDetails(null);
 				return null;
 			}
@@ -118,7 +120,7 @@ const useGetFuturesPotentialTradeDetails = (
 			return potentialTradeDetails;
 		},
 		{
-			enabled: isAppReady && isL2 && !!selectedFuturesAddress && !!marketAsset && !!synthetixjs,
+			enabled: isAppReady && isL2 && !!marketAsset && !!synthetixjs,
 			...options,
 		}
 	);

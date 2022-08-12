@@ -17,7 +17,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import {
 	confirmationModalOpenState,
 	currentMarketState,
-	futuresAccountState,
+	futuresAccountTypeState,
 	potentialTradeDetailsState,
 } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
@@ -42,7 +42,7 @@ const TradeConfirmationModal: FC = () => {
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const market = useRecoilValue(currentMarketState);
 	const potentialTradeDetails = useRecoilValue(potentialTradeDetailsState);
-	const { selectedAccountType } = useRecoilValue(futuresAccountState);
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 
 	const {
 		orderTxn,

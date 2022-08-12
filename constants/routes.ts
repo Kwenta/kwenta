@@ -5,6 +5,10 @@ const prettyURLsDisabled = !!process.env.NEXT_PUBLIC_DISABLE_PRETTY_URLS;
 const normalizeRoute = (baseURL: string, path: string, queryParam: string) =>
 	prettyURLsDisabled ? `${baseURL}?${queryParam}=${path}` : `${baseURL}/${path}`;
 
+export const formatUrl = (route: string, params: Record<string, string>) => {
+	return route + '?' + new URLSearchParams(params);
+};
+
 export const ROUTES = {
 	Home: {
 		Root: '/',

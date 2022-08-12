@@ -9,7 +9,7 @@ import { Synths } from 'constants/currency';
 import { FuturesPotentialTradeDetails } from 'queries/futures/types';
 import {
 	crossMarginAvailableMarginState,
-	futuresAccountState,
+	futuresAccountTypeState,
 	leverageSideState,
 	marketInfoState,
 	maxLeverageState,
@@ -32,7 +32,7 @@ const MarketInfoBox: React.FC = () => {
 	const tradeSize = useRecoilValue(tradeSizeState);
 	const previewTrade = useRecoilValue(potentialTradeDetailsState);
 	const crossMarginFreeMargin = useRecoilValue(crossMarginAvailableMarginState);
-	const { selectedAccountType } = useRecoilValue(futuresAccountState);
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 
 	const totalMargin =
 		selectedAccountType === 'cross_margin'

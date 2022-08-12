@@ -5,6 +5,7 @@ import { Synths } from 'constants/currency';
 import { DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import {
 	FuturesAccountState,
+	FuturesAccountType,
 	FuturesMarket,
 	FuturesPosition,
 	FuturesPotentialTradeDetails,
@@ -194,13 +195,17 @@ export const potentialTradeDetailsState = atom<FuturesPotentialTradeDetails | nu
 export const futuresAccountState = atom<FuturesAccountState>({
 	key: getFuturesKey('futuresAccountState'),
 	default: {
-		selectedAccountType: 'isolated_margin',
 		crossMarginAddress: null,
 		walletAddress: null,
 		selectedFuturesAddress: null,
 		crossMarginAvailable: false,
 		loading: false,
 	},
+});
+
+export const futuresAccountTypeState = atom<FuturesAccountType>({
+	key: getFuturesKey('futuresAccountType'),
+	default: 'cross_margin',
 });
 
 export const crossMarginAvailableMarginState = atom<Wei>({
@@ -255,7 +260,7 @@ export const placeOrderTranslationKeyState = selector({
 		const position = get(positionState);
 		const isMarketCapReached = get(isMarketCapReachedState);
 		const orderType = get(orderTypeState);
-		const { selectedAccountType } = get(futuresAccountState);
+		const selectedAccountType = get(futuresAccountTypeState);
 		const freeMargin = get(crossMarginAvailableMarginState);
 
 		let remainingMargin;

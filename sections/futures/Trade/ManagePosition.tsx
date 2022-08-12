@@ -20,7 +20,7 @@ import {
 	potentialTradeDetailsState,
 	sizeDeltaState,
 	tradeSizeState,
-	futuresAccountState,
+	futuresAccountTypeState,
 } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 
@@ -39,7 +39,7 @@ const ManagePosition: React.FC = () => {
 	const position = useRecoilValue(positionState);
 	const maxLeverageValue = useRecoilValue(maxLeverageState);
 	const marketInfo = useRecoilValue(marketInfoState);
-	const { selectedAccountType } = useRecoilValue(futuresAccountState);
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 	const previewTrade = useRecoilValue(potentialTradeDetailsState);
 	const orderType = useRecoilValue(orderTypeState);
 	const setLeverageSide = useSetRecoilState(leverageSideState);

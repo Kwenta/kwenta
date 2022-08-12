@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { FuturesAccountType } from 'queries/futures/types';
-import { futuresAccountState } from 'store/futures';
+import { futuresAccountState, futuresAccountTypeState } from 'store/futures';
 import { networkState, walletAddressState } from 'store/wallet';
 
 import useCrossMarginAccountContracts from '../../hooks/useCrossMarginContracts';
@@ -14,6 +14,7 @@ const supportedNetworks = [69];
 export default function useQueryCrossMarginAccount() {
 	const { crossMarginContractFactory } = useCrossMarginAccountContracts();
 
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const [futuresAccount, setFuturesAccount] = useRecoilState(futuresAccountState);
@@ -52,11 +53,9 @@ export default function useQueryCrossMarginAccount() {
 					walletAddress === futuresAccount.walletAddress ? futuresAccount.crossMarginAddress : null,
 				crossMarginAvailable: true,
 				walletAddress,
-				selectedFuturesAddress: futuresAccount?.selectedFuturesAddress || walletAddress,
+				selectedFuturesAddress: futuresAccount?.selectedFuturesAddress,
 				loading: true,
 			});
-
-			// TODO: Get selected type from persisted state
 
 			const crossMarginAccount = await queryAccountLogs();
 
@@ -65,10 +64,8 @@ export default function useQueryCrossMarginAccount() {
 				crossMarginAvailable: true,
 				crossMarginAddress: crossMarginAccount,
 				walletAddress,
-				selectedFuturesAddress: crossMarginAccount || walletAddress,
-				selectedAccountType: (crossMarginAccount && !futuresAccount.crossMarginAddress
-					? 'cross_margin'
-					: 'isolated_margin') as FuturesAccountType,
+				selectedFuturesAddress:
+					selectedAccountType === 'cross_margin' ? crossMarginAccount : walletAddress,
 			};
 			setFuturesAccount(accountState);
 			return accountState;

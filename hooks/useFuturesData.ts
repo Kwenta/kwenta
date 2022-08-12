@@ -10,6 +10,7 @@ import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
+import { FuturesAccountType } from 'queries/futures/types';
 import useGetCrossMarginAccountOverview from 'queries/futures/useGetCrossMarginAccountOverview';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import {
@@ -31,6 +32,7 @@ import {
 	tradeSizeState,
 	tradeSizeSUSDState,
 	crossMarginSettingsState,
+	futuresAccountTypeState,
 } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { zeroBN } from 'utils/formatters/number';
@@ -73,12 +75,15 @@ const useFuturesData = () => {
 	const maxLeverage = useRecoilValue(maxLeverageState);
 	const { tradeFee: crossMarginTradeFee } = useRecoilValue(crossMarginSettingsState);
 
-	const { selectedFuturesAddress, crossMarginAvailable, selectedAccountType } = useRecoilValue(
-		futuresAccountState
-	);
+	const { selectedFuturesAddress, crossMarginAvailable } = useRecoilValue(futuresAccountState);
+
+	// TODO: default based on selected chain
+	const routerAccountType =
+		typeof router.query.accountType === 'string' ? router.query.accountType : 'cross_margin';
 
 	const [dynamicFee, setDynamicFee] = useState<Wei | null>(null);
 	const [error, setError] = useState<string | null>(null);
+	const [selectedAccountType, setSelectedAccountType] = useRecoilState(futuresAccountTypeState);
 
 	const crossMarginAccount = crossMarginAvailable
 		? { freeMargin: crossMarginAccountOverview.data?.freeMargin }
@@ -100,6 +105,13 @@ const useFuturesData = () => {
 		const accountMargin = crossMarginAccount?.freeMargin || zeroBN;
 		return positionMargin.add(accountMargin);
 	}, [position?.remainingMargin, crossMarginAccount?.freeMargin, selectedAccountType]);
+
+	useEffect(() => {
+		const validType = ['cross_margin', 'isolated_margin'].includes(routerAccountType);
+		if (validType) {
+			setSelectedAccountType(routerAccountType as FuturesAccountType);
+		}
+	}, [routerAccountType, setSelectedAccountType]);
 
 	const onTradeAmountChange = React.useCallback(
 		(value: string, fromLeverage: boolean = false) => {
@@ -365,6 +377,7 @@ const useFuturesData = () => {
 		previewTrade,
 		maxUsdInputAmount,
 		tradeFees,
+		selectedAccountType,
 	};
 };
 

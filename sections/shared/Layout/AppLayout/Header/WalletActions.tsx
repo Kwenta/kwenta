@@ -1,18 +1,16 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { components } from 'react-select';
 import { useRecoilValue } from 'recoil';
 import styled, { css, useTheme } from 'styled-components';
 
-import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import DisconnectIcon from 'assets/svg/app/disconnect.svg';
 import SwitchWalletIcon from 'assets/svg/app/switch-wallet.svg';
+import LabelContainer from 'components/Nav/DropDownLabel';
 import Select from 'components/Select';
-import { IndicatorSeparator } from 'components/Select/Select';
+import { IndicatorSeparator, DropdownIndicator } from 'components/Select/Select';
 import Connector from 'containers/Connector';
 import useENS from 'hooks/useENS';
 import { truncatedWalletAddressState } from 'store/wallet';
-import { FlexDivRow } from 'styles/common';
 
 import ConnectionDot from './ConnectionDot';
 import getENSName from './getENSName';
@@ -102,14 +100,6 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 			</LabelContainer>
 		);
 
-	const DropdownIndicator = (props: any) => {
-		return (
-			<components.DropdownIndicator {...props}>
-				<StyledCaretDownIcon />
-			</components.DropdownIndicator>
-		);
-	};
-
 	useEffect(() => {
 		if (signer) {
 			setWalletLabel(truncatedWalletAddress!);
@@ -174,30 +164,6 @@ const WalletOptionsSelect = styled(Select)`
 
 	.react-select__value-container {
 		padding-right: 0;
-	}
-`;
-
-const StyledCaretDownIcon = styled(CaretDownIcon)`
-	width: 11px;
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
-
-const LabelContainer = styled(FlexDivRow)`
-	padding: 16px;
-	font-size: 13px;
-	width: 100%;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	:hover {
-		> svg {
-			path {
-				fill: ${(props) => props.theme.colors.selectedTheme.icon.hover};
-			}
-		}
-	}
-	> svg {
-		path {
-			fill: ${(props) => props.theme.colors.selectedTheme.icon.fill};
-		}
 	}
 `;
 

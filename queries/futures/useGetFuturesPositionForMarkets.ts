@@ -25,7 +25,8 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 	return useQuery<FuturesPosition[]>(
 		QUERY_KEYS.Futures.MarketsPositions(network.id, assets || [], selectedFuturesAddress || ''),
 		async () => {
-			if (!assets || (selectedFuturesAddress && !isL2)) {
+			if (!assets || !selectedFuturesAddress || (selectedFuturesAddress && !isL2)) {
+				setFuturesPositions([]);
 				return [];
 			}
 
@@ -56,7 +57,7 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 			return futuresPositions;
 		},
 		{
-			enabled: isAppReady && isL2 && !!network && !!selectedFuturesAddress && !!synthetixjs,
+			enabled: isAppReady && isL2 && !!network && !!synthetixjs,
 			...options,
 		}
 	);

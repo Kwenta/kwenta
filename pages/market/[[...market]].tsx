@@ -13,10 +13,9 @@ import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccou
 import MarketInfo from 'sections/futures/MarketInfo';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
 import Trade from 'sections/futures/Trade';
-import AccountTypeToggle from 'sections/futures/Trade/AccountTypeToggle';
 import TradeCrossMargin from 'sections/futures/TradeCrossMargin';
 import AppLayout from 'sections/shared/Layout/AppLayout';
-import { currentMarketState, futuresAccountState } from 'store/futures';
+import { currentMarketState, futuresAccountTypeState } from 'store/futures';
 import {
 	PageContent,
 	FullHeightContainer,
@@ -43,8 +42,7 @@ const Market: MarketComponent = () => {
 	const marketAsset = router.query.market?.[0] as FuturesMarketAsset;
 
 	const setCurrentMarket = useSetRecoilState(currentMarketState);
-	const { selectedAccountType } = useRecoilValue(futuresAccountState);
-	const futuresAccount = useRecoilValue(futuresAccountState);
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 
 	const futuresData = useFuturesData();
 
@@ -68,11 +66,6 @@ const Market: MarketComponent = () => {
 								<MarketInfo />
 							</StyledMainContent>
 							<StyledRightSideContent>
-								{
-									//TODO: Remove dev check
-									process?.env?.NODE_ENV === 'development' &&
-										futuresAccount.crossMarginAvailable && <AccountTypeToggle />
-								}
 								{selectedAccountType === 'cross_margin' ? <TradeCrossMargin /> : <Trade />}
 							</StyledRightSideContent>
 						</StyledFullHeightContainer>

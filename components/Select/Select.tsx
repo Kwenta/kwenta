@@ -1,7 +1,24 @@
+import { merge } from 'lodash';
 import React, { FC, useContext, useMemo } from 'react';
-import ReactSelect, { Props, StylesConfig } from 'react-select';
-import { ThemeContext } from 'styled-components';
+import ReactSelect, { Props, StylesConfig, components } from 'react-select';
+import styled, { ThemeContext } from 'styled-components';
+
+import CaretDownIcon from 'assets/svg/app/caret-down.svg';
+
 export const IndicatorSeparator: FC = () => null;
+
+export const DropdownIndicator = (props: any) => {
+	return (
+		<components.DropdownIndicator {...props}>
+			<StyledCaretDownIcon />
+		</components.DropdownIndicator>
+	);
+};
+
+const StyledCaretDownIcon = styled(CaretDownIcon)`
+	width: 11px;
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
+`;
 
 function Select<T>(props: Props<T>) {
 	const { colors, fonts } = useContext(ThemeContext);
@@ -121,9 +138,11 @@ function Select<T>(props: Props<T>) {
 		return styles;
 	}, [colors, fonts, props]);
 
+	const styles = merge(computedStyles, props.customStyles);
+
 	return (
 		<ReactSelect
-			styles={computedStyles}
+			styles={styles}
 			classNamePrefix="react-select"
 			{...props}
 			components={{ IndicatorSeparator, ...props.components }}

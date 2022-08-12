@@ -1,5 +1,7 @@
+import CrossMarginIcon from 'assets/svg/futures/cross-margin-icon.svg';
+import IsolatedMarginIcon from 'assets/svg/futures/isolated-margin-icon.svg';
 import { EXTERNAL_LINKS } from 'constants/links';
-import ROUTES from 'constants/routes';
+import ROUTES, { formatUrl } from 'constants/routes';
 
 export type MenuLink = {
 	i18nLabel: string;
@@ -30,6 +32,21 @@ export const MENU_LINKS: MenuLinks = [
 	// 	link: ROUTES.Earn.Home,
 	// },
 ];
+
+export const NAV_SUB_MENUS = {
+	[ROUTES.Markets.Home]: [
+		{
+			link: formatUrl(ROUTES.Markets.Home, { accountType: 'isolated-margin' }),
+			i18nLabel: 'header.nav.isolated-margin',
+			Icon: IsolatedMarginIcon,
+		},
+		{
+			link: formatUrl(ROUTES.Markets.Home, { accountType: 'cross_margin' }),
+			i18nLabel: 'header.nav.cross-margin',
+			Icon: CrossMarginIcon,
+		},
+	],
+};
 
 export const HOMEPAGE_MENU_LINKS: MenuLinks = [
 	{

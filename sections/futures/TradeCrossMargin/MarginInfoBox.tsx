@@ -153,11 +153,20 @@ const MarginInfoBox: React.FC = () => {
 					},
 					'Market Margin': {
 						value: `${formatDollars(position?.remainingMargin)}`,
-						valueNode: ` (${formatNumber(marginDelta)})`,
+						valueNode: (
+							<PreviewArrow showPreview={previewTradeData.showPreview && !previewTrade?.showStatus}>
+								{formatDollars(previewTradeData.totalMargin)}
+							</PreviewArrow>
+						),
 					},
-					'Free market Margin': {
-						value: `${formatDollars(position?.accessibleMargin)}`,
-					},
+					// 'Free market Margin': {
+					// 	value: `${formatDollars(position?.accessibleMargin)}`,
+					// 	valueNode: (
+					// 		<PreviewArrow showPreview={previewTradeData.showPreview && !previewTrade?.showStatus}>
+					// 			{formatDollars(previewTradeData.availableMargin)}
+					// 		</PreviewArrow>
+					// 	),
+					// },
 					'Margin Usage': {
 						value: `${formatPercent(marginUsage)}`,
 						valueNode: (

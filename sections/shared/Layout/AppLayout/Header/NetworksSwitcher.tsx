@@ -1,21 +1,20 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { components } from 'react-select';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import LinkIcon from 'assets/svg/app/link-blue.svg';
 import SwitchIcon from 'assets/svg/app/switch.svg';
 import OptimismIcon from 'assets/svg/providers/optimism.svg';
 import Button from 'components/Button';
+import LabelContainer from 'components/Nav/DropDownLabel';
 import Select from 'components/Select';
-import { IndicatorSeparator } from 'components/Select/Select';
+import { IndicatorSeparator, DropdownIndicator } from 'components/Select/Select';
 import { EXTERNAL_LINKS } from 'constants/links';
 import BlockExplorer from 'containers/BlockExplorer';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { isL2State, networkState } from 'store/wallet';
-import { ExternalLink, FlexDivRowCentered } from 'styles/common';
+import { ExternalLink } from 'styles/common';
 
 type ReactSelectOptionProps = {
 	label: string;
@@ -75,14 +74,6 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 		</ExternalLink>
 	);
 
-	const DropdownIndicator = (props: any) => {
-		return (
-			<components.DropdownIndicator {...props}>
-				<StyledCaretDownIcon />
-			</components.DropdownIndicator>
-		);
-	};
-
 	return !isL2 ? (
 		<Container onClick={switchToL2}>
 			<StyledButton noOutline size="sm">
@@ -141,28 +132,4 @@ const L2Select = styled(Select)`
 const PrefixIcon = styled.span`
 	display: flex;
 	padding-right: 6px;
-`;
-
-const StyledCaretDownIcon = styled(CaretDownIcon)`
-	width: 11px;
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
-
-const LabelContainer = styled(FlexDivRowCentered)<{ noPadding: boolean }>`
-	padding: ${(props) => !props.noPadding && '16px'};
-	font-size: 13px;
-	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	:hover {
-		> svg {
-			path {
-				fill: ${(props) => props.theme.colors.selectedTheme.icon.hover};
-			}
-		}
-	}
-	> svg {
-		path {
-			fill: ${(props) => props.theme.colors.selectedTheme.icon.fill};
-		}
-	}
 `;
