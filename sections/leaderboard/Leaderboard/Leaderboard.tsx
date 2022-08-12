@@ -16,6 +16,7 @@ import AllTime from '../AllTime';
 import { AccountStat, COMPETITION_TIERS, Tier } from '../common';
 import Competition from '../Competition';
 import TraderHistory from '../TraderHistory';
+import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
 
 type LeaderboardProps = {
 	compact?: boolean;
