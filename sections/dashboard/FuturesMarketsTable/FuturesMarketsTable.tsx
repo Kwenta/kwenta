@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import MarketBadge from 'components/Badge/MarketBadge';
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
-import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
 import { Synths } from 'constants/currency';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
@@ -80,7 +80,7 @@ const FuturesMarketsTable: FC = () => {
 
 	return (
 		<>
-			<MobileHiddenView>
+			<DesktopOnlyView>
 				<TableContainer>
 					<StyledTable
 						data={data}
@@ -274,8 +274,8 @@ const FuturesMarketsTable: FC = () => {
 						]}
 					/>
 				</TableContainer>
-			</MobileHiddenView>
-			<MobileOnlyView>
+			</DesktopOnlyView>
+			<MobileOrTabletView>
 				<StyledMobileTable
 					data={data}
 					showPagination
@@ -380,7 +380,7 @@ const FuturesMarketsTable: FC = () => {
 						},
 					]}
 				/>
-			</MobileOnlyView>
+			</MobileOrTabletView>
 		</>
 	);
 };

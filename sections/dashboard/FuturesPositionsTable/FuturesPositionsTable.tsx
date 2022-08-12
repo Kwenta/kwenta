@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import MarketBadge from 'components/Badge/MarketBadge';
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
-import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
 import { Synths } from 'constants/currency';
@@ -96,7 +96,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 	return (
 		<>
-			<MobileHiddenView>
+			<DesktopOnlyView>
 				<TableContainer>
 					<Table
 						data={data}
@@ -276,8 +276,8 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						]}
 					/>
 				</TableContainer>
-			</MobileHiddenView>
-			<MobileOnlyView>
+			</DesktopOnlyView>
+			<MobileOrTabletView>
 				<OpenPositionsHeader>
 					<div>{t('dashboard.overview.futures-positions-table.mobile.market')}</div>
 					<OpenPositionsRightHeader>
@@ -302,7 +302,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						))
 					)}
 				</div>
-			</MobileOnlyView>
+			</MobileOrTabletView>
 		</>
 	);
 };
