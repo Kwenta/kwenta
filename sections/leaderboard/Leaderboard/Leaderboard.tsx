@@ -11,13 +11,13 @@ import { FuturesStat } from 'queries/futures/types';
 import useGetStats from 'queries/futures/useGetStats';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
 import { FlexDivCol } from 'styles/common';
+import media from 'styles/media';
 import { truncateAddress } from 'utils/formatters/string';
 
 import AllTime from '../AllTime';
 import { AccountStat, COMPETITION_TIERS, Tier } from '../common';
 import Competition from '../Competition';
 import TraderHistory from '../TraderHistory';
-import media from 'styles/media';
 
 type LeaderboardProps = {
 	compact?: boolean;
