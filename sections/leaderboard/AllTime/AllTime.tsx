@@ -226,7 +226,7 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 									<StyledOrderType onClick={() => onClickTrader(cellProps.row.original.trader)}>
 										{compact && cellProps.row.original.rank + '. '}
 										<StyledTrader>
-											{avatar ? (
+											{avatar?.data ? (
 												<>
 													{!avatar.isLoading && avatar.data && (
 														<img
