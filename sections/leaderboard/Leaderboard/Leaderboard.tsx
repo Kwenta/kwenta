@@ -90,6 +90,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 
 	return (
 		<LeaderboardContainer>
+			<CompetitionBanner />
 			<SearchContainer compact={compact}>
 				<TabButtonContainer>
 					{COMPETITION_TIERS.map((tier) => (
