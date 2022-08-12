@@ -48,7 +48,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 
 	const { synthetixjs } = Connector.useContainer();
 
-	const [assetSearch, setAssetSearch] = useState<string>('');
+	const [assetSearch, setAssetSearch] = useState('');
 	const [synthCategory, setSynthCategory] = useState<string | null>(null);
 	const [page, setPage] = useState(1);
 

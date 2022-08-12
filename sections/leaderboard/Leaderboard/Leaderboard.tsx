@@ -22,7 +22,7 @@ type LeaderboardProps = {
 };
 
 const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
-	const [searchTerm, setSearchTerm] = useState<string>('');
+	const [searchTerm, setSearchTerm] = useState('');
 	const [activeTier, setActiveTier] = useState<Tier>('bronze');
 	const [selectedTrader, setSelectedTrader] = useState('');
 	const router = useRouter();

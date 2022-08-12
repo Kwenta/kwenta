@@ -54,9 +54,9 @@ const UserInfo: React.FC = () => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const futuresPositionHistory = futuresPositionQuery?.data ?? [];
 
-	const [showShareModal, setShowShareModal] = useState<boolean>(false);
-	const [hasOpenPosition, setHasOpenPosition] = useState<boolean>(false);
-	const [openProfitCalcModal, setOpenProfitCalcModal] = useState<boolean>(false);
+	const [showShareModal, setShowShareModal] = useState(false);
+	const [hasOpenPosition, setHasOpenPosition] = useState(false);
+	const [openProfitCalcModal, setOpenProfitCalcModal] = useState(false);
 
 	const marginTransfersQuery = useGetFuturesMarginTransfers(marketAsset);
 	const marginTransfers = useMemo(

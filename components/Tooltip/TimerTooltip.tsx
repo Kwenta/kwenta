@@ -62,9 +62,9 @@ const TimerTooltip = (props: ToolTipProps) => {
 		return (nowTime - startTime) / 1000;
 	}, [startTimeDate]);
 
-	const [totalSeconds, setTotalSeconds] = useState<number>(calcTime());
+	const [totalSeconds, setTotalSeconds] = useState(calcTime());
 	const [currentStartTime, setCurrentStartTime] = useState<Date | undefined>(startTimeDate);
-	const [newUpdate, setNewUpdate] = useState<Boolean>(false);
+	const [newUpdate, setNewUpdate] = useState(false);
 
 	useEffect(() => {
 		if (currentStartTime !== startTimeDate) {

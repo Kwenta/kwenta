@@ -24,7 +24,7 @@ const SlippageSelect: React.FC<SlippageSelectProps> = ({
 }) => {
 	const { t } = useTranslation();
 
-	const [customSlippageTolerance, setCustomSlippageTolerance] = useState<string>('');
+	const [customSlippageTolerance, setCustomSlippageTolerance] = useState('');
 
 	const SLIPPAGE_VALUES = useMemo(
 		() => [
