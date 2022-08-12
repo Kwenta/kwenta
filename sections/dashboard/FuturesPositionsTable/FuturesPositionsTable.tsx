@@ -101,7 +101,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					<Table
 						data={data}
 						showPagination
-						onTableRowClick={(row) => router.push(`/market/${row.original.asset}`)}
+						onTableRowClick={(row) => router.push(`/market/?asset=${row.original.asset}`)}
 						noResultsMessage={
 							!isL2 ? (
 								<TableNoResults>
