@@ -122,13 +122,19 @@ const MarginInfoBox: React.FC = () => {
 			: zeroBN;
 
 		return {
-			showPreview: size && !size.eq(0),
+			showPreview: !size.eq(0) || !marginDelta.eq(0),
 			totalMargin: previewTrade?.margin || zeroBN,
 			availableMargin: previewAvailableMargin.gt(0) ? previewAvailableMargin : zeroBN,
 			leverage: previewTrade?.leverage,
 			marginUsage: potentialMarginUsage.gt(1) ? wei(1) : potentialMarginUsage,
 		};
-	}, [tradeSize, previewTrade?.margin, previewAvailableMargin, previewTrade?.leverage]);
+	}, [
+		tradeSize,
+		marginDelta,
+		previewTrade?.margin,
+		previewAvailableMargin,
+		previewTrade?.leverage,
+	]);
 
 	return (
 		<>

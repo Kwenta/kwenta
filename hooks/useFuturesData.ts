@@ -230,7 +230,7 @@ const useFuturesData = () => {
 		const fullMargin = newNotionalValue.abs().div(crossMarginLeverage);
 		let marginDelta = fullMargin.sub(position?.remainingMargin || '0');
 		marginDelta = marginDelta.add(tradeFees.total);
-		setCrossMarginMarginDelta(marginDelta.toString());
+		setCrossMarginMarginDelta(marginDelta);
 	}, [
 		tradeSizeSUSD,
 		crossMarginLeverage,
@@ -286,7 +286,7 @@ const useFuturesData = () => {
 		const newPosition = [
 			{
 				marketKey: formatBytes32String(marketAsset),
-				marginDelta: wei(crossMarginMarginDelta).toBN(),
+				marginDelta: crossMarginMarginDelta.toBN(),
 				sizeDelta: sizeDelta.toBN(),
 			},
 		];

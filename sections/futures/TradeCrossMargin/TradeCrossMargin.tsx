@@ -39,7 +39,7 @@ export default function TradeCrossMargin() {
 	const totalMargin = freeMargin.add(currentMargin).toNumber();
 
 	const [percent, setPercent] = useState(0);
-	const [showOnboard, setShowOnboard] = useState(!crossMarginAddress);
+	const [showOnboard, setShowOnboard] = useState(false);
 
 	// eslint-disable-next-line
 	const onChangeMarginPercent = useCallback(

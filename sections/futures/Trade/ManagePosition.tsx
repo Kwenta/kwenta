@@ -21,6 +21,7 @@ import {
 	sizeDeltaState,
 	tradeSizeState,
 	futuresAccountTypeState,
+	crossMarginMarginDeltaState,
 } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 
@@ -36,6 +37,7 @@ const ManagePosition: React.FC = () => {
 	const { t } = useTranslation();
 	const isolatedMarginLeverage = useRecoilValue(isolatedMarginleverageState);
 	const sizeDelta = useRecoilValue(sizeDeltaState);
+	const marginDelta = useRecoilValue(crossMarginMarginDeltaState);
 	const position = useRecoilValue(positionState);
 	const maxLeverageValue = useRecoilValue(maxLeverageState);
 	const marketInfo = useRecoilValue(marketInfoState);
@@ -82,7 +84,10 @@ const ManagePosition: React.FC = () => {
 						fullWidth
 						disabled={
 							!leverageValid ||
-							sizeDelta.eq(zeroBN) ||
+							(selectedAccountType === 'isolated_margin' && sizeDelta.eq(zeroBN)) ||
+							(selectedAccountType === 'cross_margin' &&
+								marginDelta.eq(zeroBN) &&
+								sizeDelta.eq(zeroBN)) ||
 							!!error ||
 							placeOrderTranslationKey === 'futures.market.trade.button.deposit-margin-minimum' ||
 							marketInfo?.isSuspended ||

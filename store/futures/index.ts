@@ -87,7 +87,7 @@ export const crossMarginLeverageState = atom({
 
 export const crossMarginMarginDeltaState = atom({
 	key: getFuturesKey('crossMarginMarginDelta'),
-	default: '0',
+	default: wei('0'),
 });
 
 export const crossMarginSettingsState = atom({

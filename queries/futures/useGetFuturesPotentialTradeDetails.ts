@@ -69,11 +69,16 @@ const useGetFuturesPotentialTradeDetails = (
 			tradeSize,
 			selectedFuturesAddress || '',
 			selectedAccountType,
-			positionMarginDelta,
+			positionMarginDelta.toString(),
 			leverageSide
 		),
 		async () => {
-			if (!marketAsset || !tradeSize || !isL2 || !selectedFuturesAddress) {
+			if (
+				!marketAsset ||
+				(!tradeSize && selectedAccountType === 'isolated_margin') ||
+				!isL2 ||
+				!selectedFuturesAddress
+			) {
 				setPotentialTradeDetails(null);
 				return null;
 			}
