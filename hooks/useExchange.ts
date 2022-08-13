@@ -1171,7 +1171,6 @@ const useExchange = ({
 		footerCardAttached,
 		quoteCurrencyBalance,
 		quotePriceRate,
-		rate,
 		baseFeeRate,
 		needsApproval,
 		baseCurrency,
