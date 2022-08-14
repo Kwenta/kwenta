@@ -811,6 +811,7 @@
 				"liquidations": "Liquidations",
 				"24h-pnl": "24H PnL",
 				"pnl": "PnL",
+				"total-pnl": "PnL ($)",
 				"percent-pnl": "PnL (%)",
 				"rank-mobile": "#"
 			}
