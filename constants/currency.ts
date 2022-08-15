@@ -8,16 +8,9 @@ export type { CurrencyKey } from '@synthetixio/contracts-interface';
 export { Synths } from '@synthetixio/contracts-interface';
 
 // TODO: standardize this
-export type Category = 'crypto' | 'forex' | 'equities' | 'index' | 'commodity' | 'inverse';
+export type Category = 'crypto' | 'forex' | 'index' | 'commodity' | 'inverse';
 
-export const CATEGORY: Category[] = [
-	'crypto',
-	'forex',
-	'equities',
-	'index',
-	'commodity',
-	'inverse',
-];
+export const CATEGORY: Category[] = ['crypto', 'forex', 'index', 'commodity', 'inverse'];
 export const CATEGORY_MAP = keyBy(CATEGORY);
 
 export const CRYPTO_CURRENCY = [

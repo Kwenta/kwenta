@@ -22,12 +22,7 @@ import { walletAddressState } from 'store/wallet';
 import { useRecoilValue } from 'recoil';
 import Connector from 'containers/Connector';
 
-export const CATEGORY_FILTERS = [
-	CATEGORY_MAP.crypto,
-	CATEGORY_MAP.forex,
-	CATEGORY_MAP.equities,
-	CATEGORY_MAP.commodity,
-];
+export const CATEGORY_FILTERS = [CATEGORY_MAP.crypto, CATEGORY_MAP.forex, CATEGORY_MAP.commodity];
 
 type SelectCurrencyModalProps = {
 	onDismiss: () => void;
@@ -218,7 +213,8 @@ const AssetSearchInput = styled(SearchInput)`
 const CategoryFilters = styled.div`
 	display: grid;
 	grid-auto-flow: column;
-	justify-content: space-between;
+	justify-content: flex-start;
+	column-gap: 10px;
 	padding: 0 16px;
 	margin-bottom: 18px;
 `;

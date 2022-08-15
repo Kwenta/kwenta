@@ -51,7 +51,6 @@ const Transactions: FC = () => {
 			{ label: t('common.currency-category.crypto'), key: CATEGORY_MAP['crypto'] },
 			{ label: t('common.currency-category.forex'), key: CATEGORY_MAP['forex'] },
 			{ label: t('common.currency-category.commodity'), key: CATEGORY_MAP['commodity'] },
-			{ label: t('common.currency-category.equities'), key: CATEGORY_MAP['equities'] },
 		],
 		[t]
 	);
