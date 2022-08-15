@@ -2,6 +2,19 @@ import { FC, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import AAVEIcon from 'assets/png/currencies/sAAVE.png';
+import APEIcon from 'assets/png/currencies/sAPECOIN.png';
+import AVAXIcon from 'assets/png/currencies/sAVAX.png';
+import BTCIcon from 'assets/png/currencies/sBTC.png';
+import DYDXIcon from 'assets/png/currencies/sDYDX.png';
+import ETHIcon from 'assets/png/currencies/sETH.png';
+import EURIcon from 'assets/png/currencies/sEUR.png';
+import LINKIcon from 'assets/png/currencies/sLINK.png';
+import MATICIcon from 'assets/png/currencies/sMATIC.png';
+import SOLIcon from 'assets/png/currencies/sSOL.png';
+import UNIIcon from 'assets/png/currencies/sUNI.png';
+import XAGIcon from 'assets/png/currencies/sXAG.png';
+import XAUIcon from 'assets/png/currencies/sXAU.png';
 import colors from 'styles/theme/colors/common';
 import fonts from 'styles/theme/fonts';
 
@@ -108,6 +121,8 @@ export const Stats: FC<StatsProps> = () => {
 			fontSize: 28,
 		};
 
+		const data = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
 		volumnRef?.current &&
 			initBarChart(
 				volumnRef.current,
@@ -115,6 +130,8 @@ export const Stats: FC<StatsProps> = () => {
 				textStyle,
 				subtext,
 				subtextStyle,
+				null,
+				data,
 				null
 			);
 	}, [volumnRef, t]);
@@ -136,8 +153,19 @@ export const Stats: FC<StatsProps> = () => {
 			},
 		};
 
+		const data = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
 		tradesRef?.current &&
-			initBarChart(tradesRef.current, t('stats.trades.title'), textStyle, undefined, null, legend);
+			initBarChart(
+				tradesRef.current,
+				t('stats.trades.title'),
+				textStyle,
+				undefined,
+				null,
+				legend,
+				data,
+				null
+			);
 	}, [tradesRef, t]);
 
 	useEffect(() => {
@@ -157,6 +185,8 @@ export const Stats: FC<StatsProps> = () => {
 			},
 		};
 
+		const data = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
 		tradersRef?.current &&
 			initBarChart(
 				tradersRef.current,
@@ -164,7 +194,9 @@ export const Stats: FC<StatsProps> = () => {
 				textStyle,
 				undefined,
 				null,
-				legend
+				legend,
+				data,
+				null
 			);
 	}, [tradersRef, t]);
 
@@ -180,9 +212,189 @@ export const Stats: FC<StatsProps> = () => {
 			fontFamily: fonts.monoBold,
 			fontSize: 28,
 		};
+		const ASSETS: any = {
+			sETH: {
+				underlying: 'Ether',
+				icon: ETHIcon,
+			},
+			sBTC: {
+				underlying: 'Bitcoin',
+				icon: BTCIcon,
+			},
+			sSOL: {
+				underlying: 'Solana',
+				icon: SOLIcon,
+			},
+			sEUR: {
+				underlying: 'Euros',
+				icon: EURIcon,
+			},
+			sXAG: {
+				underlying: 'Silver',
+				icon: XAGIcon,
+			},
+			sMATIC: {
+				underlying: 'Matic',
+				icon: MATICIcon,
+			},
+			sXAU: {
+				underlying: 'Gold',
+				icon: XAUIcon,
+			},
+			sAPE: {
+				underlying: 'APE',
+				icon: APEIcon,
+			},
+			sLINK: {
+				underlying: 'Chainlink',
+				icon: LINKIcon,
+			},
+			sDYDX: {
+				underlying: 'DYDX',
+				icon: DYDXIcon,
+			},
+			sUNI: {
+				underlying: 'Uniswap',
+				icon: UNIIcon,
+			},
+			sAVAX: {
+				underlying: 'Avalanche',
+				icon: AVAXIcon,
+			},
+			sAAVE: {
+				underlying: 'Aave',
+				icon: AAVEIcon,
+			},
+		};
+
+		const data = Object.keys(ASSETS);
+		const richTextXAxisLabel = {
+			margin: 20,
+			formatter: (syntheticAsset: any) => {
+				return [
+					`{${syntheticAsset}| }`,
+					`{syntheticAsset|${syntheticAsset}}`,
+					`{underlyingAsset|${ASSETS[syntheticAsset].underlying}}`,
+				].join('\n');
+			},
+			rich: {
+				syntheticAsset: {
+					fontFamily: fonts.regular,
+					fontSize: 15,
+					color: colors.primaryWhite,
+					width: 35,
+					height: 23,
+					padding: [9, 0, 0, 0],
+				},
+				underlyingAsset: {
+					fontFamily: fonts.regular,
+					fontSize: 12,
+				},
+				sETH: {
+					width: 40,
+					height: 40,
+					backgroundColor: {
+						image: ASSETS.sETH.icon,
+					},
+				},
+				sBTC: {
+					width: 40,
+					height: 40,
+					backgroundColor: {
+						image: ASSETS.sBTC.icon,
+					},
+				},
+				sSOL: {
+					width: 40,
+					height: 40,
+					backgroundColor: {
+						image: ASSETS.sSOL.icon,
+					},
+				},
+				sEUR: {
+					width: 40,
+					height: 40,
+					backgroundColor: {
+						image: ASSETS.sEUR.icon,
+					},
+				},
+				sXAG: {
+					width: 40,
+					height: 40,
+					backgroundColor: {
+						image: ASSETS.sXAG.icon,
+					},
+				},
+				sMATIC: {
+					width: 40,
+					height: 40,
+					backgroundColor: {
+						image: ASSETS.sMATIC.icon,
+					},
+				},
+				sXAU: {
+					width: 40,
+					height: 40,
+					backgroundColor: {
+						image: ASSETS.sXAU.icon,
+					},
+				},
+				sAPE: {
+					width: 40,
+					height: 40,
+					backgroundColor: {
+						image: ASSETS.sAPE.icon,
+					},
+				},
+				sLINK: {
+					width: 40,
+					height: 40,
+					backgroundColor: {
+						image: ASSETS.sLINK.icon,
+					},
+				},
+				sDYDX: {
+					width: 40,
+					height: 40,
+					backgroundColor: {
+						image: ASSETS.sDYDX.icon,
+					},
+				},
+				sUNI: {
+					width: 40,
+					height: 40,
+					backgroundColor: {
+						image: ASSETS.sUNI.icon,
+					},
+				},
+				sAVAX: {
+					width: 40,
+					height: 40,
+					backgroundColor: {
+						image: ASSETS.sAVAX.icon,
+					},
+				},
+				sAAVE: {
+					width: 40,
+					height: 40,
+					backgroundColor: {
+						image: ASSETS.sAAVE.icon,
+					},
+				},
+			},
+		};
 
 		tvlRef?.current &&
-			initBarChart(tvlRef.current, t('stats.tvl.title'), textStyle, subtext, subtextStyle, null);
+			initBarChart(
+				tvlRef.current,
+				t('stats.tvl.title'),
+				textStyle,
+				subtext,
+				subtextStyle,
+				null,
+				data,
+				richTextXAxisLabel
+			);
 	}, [tvlRef, t]);
 
 	return (

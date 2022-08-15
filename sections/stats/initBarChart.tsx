@@ -40,6 +40,8 @@ type EChartsOption = echarts.ComposeOption<
  * @param subtext optional
  * @param subtextStyle optional
  * @param legend optional
+ * @param xAxisData optional
+ * @param richTextXAxisLabel optional
  */
 export const initBarChart = (
 	dom: HTMLDivElement,
@@ -47,7 +49,9 @@ export const initBarChart = (
 	textStyle: Record<string, any> | null,
 	subtext: string | undefined,
 	subtextStyle: Record<string, any> | null,
-	legend: LegendComponentOption | null
+	legend: LegendComponentOption | null,
+	xAxisData: any[],
+	richTextXAxisLabel?: Record<string, any> | null
 ) => {
 	// do not use 'dark' theme here, or the external background css will not be effective.
 	const chart = echarts.init(dom, 'light');
@@ -57,13 +61,12 @@ export const initBarChart = (
 	option = {
 		grid: {
 			top: 137,
+			bottom: 160,
 		},
 		xAxis: {
 			type: 'category',
-			data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-			axisLabel: {
-				color: '#ECE8E3',
-			},
+			data: [...xAxisData],
+			axisLabel: {},
 			axisTick: {
 				show: false,
 			},
@@ -121,6 +124,15 @@ export const initBarChart = (
 
 	if (legend) {
 		option = { ...option, legend };
+	}
+
+	if (richTextXAxisLabel && option) {
+		(option.xAxis as any).axisLabel = { ...(option.xAxis as any).axisLabel, ...richTextXAxisLabel };
+	} else {
+		(option.xAxis as any).axisLabel = {
+			...(option.xAxis as any).axisLabel,
+			...{ color: '#ECE8E3' },
+		};
 	}
 
 	option && chart.setOption(option);
