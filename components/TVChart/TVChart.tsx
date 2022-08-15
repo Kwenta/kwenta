@@ -122,7 +122,7 @@ export function TVChart({
 			clearExistingWidget();
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network.id, currentTheme]);
+	}, [network.id, currentTheme, marketAsset]);
 
 	useEffect(() => {
 		_widget.current?.onChartReady(() => {
