@@ -1,6 +1,8 @@
 import React from 'react';
 import { useRecoilValue } from 'recoil';
 
+import { Period, PERIOD_IN_SECONDS } from 'constants/period';
+import useGetAverageFundingRateForMarkets from 'queries/futures/useGetAverageFundingRateForMarkets';
 import useGetCrossMarginAccountOverview from 'queries/futures/useGetCrossMarginAccountOverview';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
@@ -38,6 +40,7 @@ export const RefetchProvider: React.FC = ({ children }) => {
 	const marketsQuery = useGetFuturesMarkets();
 	useExchangeRatesQuery({ refetchInterval: 15000 });
 	useGetFuturesPotentialTradeDetails();
+	useGetAverageFundingRateForMarkets(PERIOD_IN_SECONDS[Period.ONE_HOUR]);
 	useLaggedDailyPrice();
 
 	const handleRefetch = (refetchType: RefetchType, timeout?: number) => {

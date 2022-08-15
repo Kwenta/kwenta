@@ -3,7 +3,7 @@
 		"en": "English"
 	},
 	"meta": {
-		"description": "Gain exposure to cryptocurrencies, forex, equities, indices, and commodities on Ethereum with zero slippage",
+		"description": "Gain exposure to cryptocurrencies, forex, indices, and commodities on Ethereum with zero slippage",
 		"og": {
 			"title": "Kwenta",
 			"site-name": "Kwenta"
@@ -51,15 +51,16 @@
 				"mirror": "Mirror",
 				"twitter": "Twitter"
 			},
-			"blog": "Blog"
+			"blog": "Blog",
+			"learn-more": "Learn more"
 		},
 		"hero": {
 			"title": "UNSTOPPABLE SYNTHETIC LEVERAGE",
-			"copy": "Trade commodities, forex, crypto, and more with up to <0>25x leverage</0> and <0>deep liquidity</0>."
+			"copy": "Trade commodities, forex, crypto, and more with up to <0>25x leverage</0> and <0>deep liquidity</0> without the risk of your assets being frozen."
 		},
 		"assets": {
-			"title": "TRENDING MARKETS",
-			"description": "Start Trading Synths now",
+			"title": "UNIQUE MARKETS",
+			"description": "Backed by Chainlink Oracles",
 			"index": "Unique Indices",
 			"forex": "Forex",
 			"equities": "Traditional Equities",
@@ -69,30 +70,31 @@
 		},
 		"shortlist": {
 			"title": "Leaderboard",
-			"description": "Overview Of Current Most Profitable Accounts",
+			"description": "Follow Top Traders",
 			"stats": {
-				"title": "Last 24H Stats",
-				"copy": "Access to decentralized trading tools",
-				"volume": "Trading Volume",
-				"trades": "Total Daily Trades",
+				"title": "Fostering a growing community of traders",
+				"copy": "Zero withdrawals frozen",
+				"volume": "Total Volume",
+				"traders": "Total Traders",
+				"trades": "Total Trades",
 				"open-interest": "Open Interest"
 			}
 		},
 		"earning": {
-			"title": "Earnings",
-			"description": "See What You Can Do With <0>$KWENTA</0>",
-			"copy": "Stake to earn, receive trading bonuses and participate in KwentaDAO governance.",
-			"stake-to-earn": {
-				"title": "stake to earn",
-				"copy": "Staking $KWENTA earns weekly rewards which include protocol fees and inflationary rewards"
-			},
-			"trade-to-earn": {
-				"title": "trade to earn",
-				"copy": "Stakers who trade actively will receive increased staking rewards"
-			},
+			"title": "Community Run",
+			"description": "GOVERNED BY THE <0>$KWENTA</0> TOKEN",
+			"copy": "Community members earn and vote with $KWENTA",
 			"vote-and-govern": {
 				"title": "vote & govern",
-				"copy": "Token-managed governance empowers the community to help steer Kwenta"
+				"copy": "Token-managed governance empowers the community to steer Kwenta"
+			},
+			"stake-and-earn": {
+				"title": "stake & earn",
+				"copy": "$KWENTA stakers earn protocol fees and inflationary rewards"
+			},
+			"trade-and-earn": {
+				"title": "trade & earn",
+				"copy": "Trade on Kwenta to begin earning tokens"
 			},
 			"how-to-earn": "How to earn",
 			"stake-kwenta": "Coming Soon",
@@ -125,8 +127,8 @@
 			"categories": "Commodities, Forex, Crypto and more."
 		},
 		"features": { 
-			"title": "FEATURES",
-			"description": "Trading Without The Limits Of A Centralized Exchange",
+			"title": "ADVANTAGES",
+			"description": "Trade without the limits of a centralized exchange",
 			"blazing-fast": {
 				"title": "Blazing Fast",
 				"copy": "Near-instant trade confirmations using Optimism's Layer 2 scalability"
@@ -141,22 +143,22 @@
 			},
 			"permissionless": {
 				"title": "Permissionless",
-				"copy": "A fully on-chain DeFi futures trading experience"
+				"copy": "A full on-chain DeFi futures trading experience"
 			},
 			"mobile": {
 				"title": "Mobile",
 				"copy": "Manage your trades at home or on the go"
 			},
 			"easy-ramping": {
-				"title": "Easy Ramping",
-				"copy": "Deposit any asset to get started"
+				"title": "Easy On/Off Ramping",
+				"copy": "Deposit or withdraw assets freely"
 			},
 			"zero-slippage": {
 				"title": "Zero slippage",
-				"copy": "Trade any available market with little to no slippage regardless of size"
+				"copy": "Trade with no slippage on any market"
 			},
 			"partners": {
-				"title": "Kwenta Ecosystem",
+				"title": "Partners",
 				"copy": "Collaborating with industry leaders to deliver the best trading experience in DeFi."
 			}
 		},
@@ -808,6 +810,7 @@
 				"total-volume": "Total Volume",
 				"liquidations": "Liquidations",
 				"24h-pnl": "24H PnL",
+				"pnl": "PnL",
 				"total-pnl": "PnL ($)",
 				"percent-pnl": "PnL (%)",
 				"rank-mobile": "#"
@@ -815,6 +818,7 @@
 		},
 		"trader-history": {
 			"table": {
+				"back": "Back",
 				"timestamp": "Date/Time",
 				"market": "Market",
 				"status": "Status",
@@ -822,6 +826,14 @@
 				"total-trades": "Trades",
 				"total-volume": "Total Volume",
 				"total-pnl": "Realized PnL"
+			}
+		},
+		"competition": {
+			"title": "Competition",
+			"table": {
+				"table-updates": "Table data updates daily",
+				"starting-soon": "Competition starting soon",
+				"started": "Competition started, leaderboard updates every 3 hours"
 			}
 		}
 	},
@@ -963,8 +975,7 @@
 		"currency-category": {
 			"crypto": "crypto",
 			"forex": "forex",
-			"commodity": "commodities",
-			"equities": "equities"
+			"commodity": "commodities"
 		},
 		"contract": "contract",
 		"chart-periods": {
@@ -1062,7 +1073,15 @@
 			"n-week-ago": "{{ timeDelta }}w ago",
 			"n-year-ago": "{{ timeDelta }}y ago"
 		},
-		"min": "min"
+		"min": "min",
+		"competition": {
+			"before-launch-date": "Competition coming soon",
+			"24h-before-launch-date": "Competition starting in",
+			"during-competition": "Competition Live",
+			"24h-before-end-date": "Competition ending in",
+			"24h-after-end-date": "Competition ended"
+		},
+		"learn-more": "learn more"
 	},
 	"mobile-menu": {
 		"currency": "Currency",

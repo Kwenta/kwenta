@@ -164,7 +164,7 @@ const Assets = () => {
 			{
 				key: 'synths',
 				name: MarketsTab.SPOT,
-				label: t('dashboard.overview.markets-tabs.synths').replace('Markets', ''),
+				label: t('dashboard.overview.markets-tabs.spot').replace('Markets', ''),
 				active: activeMarketsTab === MarketsTab.SPOT,
 				onClick: () => {
 					setActiveMarketsTab(MarketsTab.SPOT);

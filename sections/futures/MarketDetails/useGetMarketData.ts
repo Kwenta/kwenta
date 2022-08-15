@@ -3,14 +3,18 @@ import React from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
-import { Period, PERIOD_IN_SECONDS } from 'constants/period';
 import { NO_VALUE } from 'constants/placeholder';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useGetAverageFundingRateForMarket from 'queries/futures/useGetAverageFundingRateForMarket';
 import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
 import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolume';
 import useExternalPriceQuery from 'queries/rates/useExternalPriceQuery';
-import { currentMarketState, marketInfoState, marketKeyState, pastRatesState } from 'store/futures';
+import {
+	currentMarketState,
+	fundingRateState,
+	marketInfoState,
+	marketKeyState,
+	pastRatesState,
+} from 'store/futures';
 import { isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { isEurForex } from 'utils/futures';
@@ -22,13 +26,11 @@ const useGetMarketData = (mobile?: boolean) => {
 	const marketKey = useRecoilValue(marketKeyState);
 	const marketInfo = useRecoilValue(marketInfoState);
 	const pastRates = useRecoilValue(pastRatesState);
+	const fundingRate = useRecoilValue(fundingRateState);
 
 	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(marketAsset);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-
-	const fundingRateQuery = useGetAverageFundingRateForMarket(PERIOD_IN_SECONDS[Period.ONE_HOUR]);
-	const avgFundingRate = fundingRateQuery?.data ?? null;
 
 	const futuresTradingVolume = futuresTradingVolumeQuery?.data ?? null;
 	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(marketAsset);
@@ -44,18 +46,13 @@ const useGetMarketData = (mobile?: boolean) => {
 	const pastPrice = pastRates.find((price) => price.synth === marketAsset);
 
 	const fundingTitle = React.useMemo(
-		() =>
-			`${
-				fundingRateQuery.failureCount > 0 && !avgFundingRate && !!marketInfo ? 'Inst.' : '1H'
-			} Funding Rate`,
-		[fundingRateQuery, avgFundingRate, marketInfo]
+		() => `${!fundingRate?.fundingRate && !!marketInfo ? 'Inst.' : '1H'} Funding Rate`,
+		[fundingRate, marketInfo]
 	);
 
 	const data: MarketData = React.useMemo(() => {
 		const fundingValue =
-			fundingRateQuery.failureCount > 0 && !avgFundingRate && !!marketInfo
-				? marketInfo?.currentFundingRate
-				: avgFundingRate;
+			!fundingRate && !!marketInfo ? marketInfo?.currentFundingRate : fundingRate?.fundingRate;
 
 		const marketPrice = wei(marketInfo?.price ?? 0);
 
@@ -184,9 +181,9 @@ const useGetMarketData = (mobile?: boolean) => {
 		selectedPriceCurrency.name,
 		externalPrice,
 		pastPrice?.price,
-		avgFundingRate,
-		fundingRateQuery,
+		fundingRate,
 		minDecimals,
+		fundingTitle,
 	]);
 
 	return data;

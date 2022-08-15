@@ -46,7 +46,7 @@ export const QUERY_KEYS = {
 	Network: {
 		EthGasPrice: ['network', 'ethGasPrice'],
 		ENSNames: (addresses: string[]) => ['network', 'ensNames', addresses],
-		ENSAvatar: (ensName: string) => ['network', 'ensNames', ensName],
+		ENSAvatar: (ensName: string | null) => ['network', 'ensNames', ensName],
 	},
 	WalletBalances: {
 		Synths: (walletAddress: string, networkId: NetworkId) => [
@@ -213,6 +213,12 @@ export const QUERY_KEYS = {
 			'fundingRates',
 			networkId,
 			currencyKey,
+		],
+		FundingRates: (networkId: NetworkId, periodLength: number) => [
+			'futures',
+			'fundingRates',
+			networkId,
+			periodLength,
 		],
 		TradingVolumeForAll: (networkId: NetworkId) => ['futures', 'tradingVolumeForAll', networkId],
 		MarketPositionHistory: (networkId: NetworkId, market: string | null, walletAddress: string) => [

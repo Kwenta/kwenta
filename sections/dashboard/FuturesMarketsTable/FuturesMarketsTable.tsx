@@ -13,13 +13,10 @@ import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Table from 'components/Table';
 import { Synths } from 'constants/currency';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
-import { Period, PERIOD_IN_SECONDS } from 'constants/period';
 import Connector from 'containers/Connector';
-import useGetAverageFundingRateForMarkets, {
-	FundingRateResponse,
-} from 'queries/futures/useGetAverageFundingRateForMarkets';
+import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
-import { futuresMarketsState, pastRatesState } from 'store/futures';
+import { futuresMarketsState, pastRatesState, fundingRatesState } from 'store/futures';
 import {
 	getSynthDescription,
 	isEurForex,
@@ -33,11 +30,10 @@ const FuturesMarketsTable: FC = () => {
 	const { synthsMap } = Connector.useContainer();
 
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	const fundingRates = useRecoilValue(fundingRatesState);
 	const pastRates = useRecoilValue(pastRatesState);
 
 	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
-
-	const fundingRates = useGetAverageFundingRateForMarkets(PERIOD_IN_SECONDS[Period.ONE_HOUR]);
 
 	let data = useMemo(() => {
 		const futuresVolume = futuresVolumeQuery.data ?? {};
@@ -46,9 +42,8 @@ const FuturesMarketsTable: FC = () => {
 			const description = getSynthDescription(market.asset, synthsMap, t);
 			const volume = futuresVolume[market.assetHex];
 			const pastPrice = pastRates.find((price) => price.synth === market.asset);
-			const fundingRateResponse = fundingRates.find(
-				({ data: fundingData }) =>
-					(fundingData as FundingRateResponse)?.asset === MarketKeyByAsset[market.asset]
+			const fundingRate = fundingRates.find(
+				(funding) => (funding as FundingRateResponse)?.asset === MarketKeyByAsset[market.asset]
 			);
 
 			return {
@@ -60,7 +55,7 @@ const FuturesMarketsTable: FC = () => {
 				volume: volume?.toNumber() ?? 0,
 				pastPrice: pastPrice?.price,
 				priceChange: pastPrice?.price && market.price.sub(pastPrice?.price).div(market.price),
-				fundingRate: (fundingRateResponse?.data as FundingRateResponse)?.fundingRate ?? null,
+				fundingRate: fundingRate?.fundingRate ?? null,
 				openInterest: market.marketSize.mul(market.price),
 				openInterestNative: market.marketSize,
 				longInterest: market.marketSize.add(market.marketSkew).div('2').abs().mul(market.price),
@@ -185,12 +180,13 @@ const FuturesMarketsTable: FC = () => {
 										<ChangePercent
 											value={cellProps.row.original.fundingRate}
 											decimals={6}
+											showArrow={false}
 											className="change-pct"
 										/>
 									);
 								},
-								width: 125,
 								sortable: true,
+								width: 125,
 								sortType: useMemo(
 									() => (rowA: any, rowB: any) => {
 										const rowOne = rowA.original.fundingRate ?? wei(0);
@@ -330,6 +326,7 @@ const FuturesMarketsTable: FC = () => {
 										/>
 										<div>
 											<ChangePercent
+												showArrow={false}
 												value={cellProps.row.original.fundingRate}
 												decimals={6}
 												className="change-pct"

@@ -10,6 +10,7 @@ import {
 	FuturesPosition,
 	FuturesPotentialTradeDetails,
 } from 'queries/futures/types';
+import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import { Price, Rates } from 'queries/rates/types';
 import { PositionSide } from 'sections/futures/types';
 import { getFuturesKey, getSynthsKey } from 'store/utils';
@@ -99,6 +100,23 @@ export const leverageSideState = atom<PositionSide>({
 export const ratesState = atom<Rates>({
 	key: getFuturesKey('rates'),
 	default: {},
+});
+
+export const fundingRateState = selector({
+	key: getFuturesKey('fundingRate'),
+	get: ({ get }) => {
+		const currentMarket = get(currentMarketState);
+		const fundingRates = get(fundingRatesState);
+
+		return fundingRates.find(
+			(fundingRate: FundingRateResponse) => fundingRate.asset === MarketKeyByAsset[currentMarket]
+		);
+	},
+});
+
+export const fundingRatesState = atom<FundingRateResponse[]>({
+	key: getFuturesKey('fundingRates'),
+	default: [],
 });
 
 export const pastRatesState = atom<Price[] | []>({
