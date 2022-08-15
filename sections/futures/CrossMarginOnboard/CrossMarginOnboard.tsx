@@ -145,7 +145,7 @@ export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Prop
 		if (futuresAccount && !futuresAccount.crossMarginAvailable) {
 			return <ErrorView message="Cross margin is not supported on this network" />;
 		}
-		if (creatingAccount || !futuresAccount || futuresAccount.loading) {
+		if (creatingAccount || !futuresAccount || !futuresAccount.ready) {
 			return <Loader />;
 		}
 

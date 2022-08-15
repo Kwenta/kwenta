@@ -76,6 +76,9 @@ const useGetFuturesPotentialTradeDetails = (
 			if (
 				!marketAsset ||
 				(!tradeSize && selectedAccountType === 'isolated_margin') ||
+				(!tradeSize &&
+					(!positionMarginDelta || positionMarginDelta.eq(0)) &&
+					selectedAccountType === 'cross_margin') ||
 				!isL2 ||
 				!selectedFuturesAddress
 			) {

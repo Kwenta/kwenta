@@ -75,7 +75,8 @@ const MarketInfoBox: React.FC = () => {
 	) => {
 		let inaccessible;
 
-		inaccessible = previewTrade?.notionalValue.div(marketMaxLeverage).abs() ?? zeroBN;
+		inaccessible =
+			(marketMaxLeverage && previewTrade?.notionalValue.div(marketMaxLeverage).abs()) ?? zeroBN;
 
 		// If the user has a position open, we'll enforce a min initial margin requirement.
 		if (inaccessible.gt(0)) {

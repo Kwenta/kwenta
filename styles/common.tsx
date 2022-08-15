@@ -348,3 +348,9 @@ export const WhiteHeader = styled.div`
 		text-shadow: none;
 	`}
 `;
+
+export const BorderedPanel = styled.div`
+	border: ${(props) => props.theme.colors.selectedTheme.border};
+	border-radius: 10px;
+	color: ${(props) => props.theme.colors.selectedTheme.text.value};
+`;

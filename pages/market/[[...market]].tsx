@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
+import Loader from 'components/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { FuturesContext } from 'contexts/FuturesContext';
 import { RefetchProvider } from 'contexts/RefetchContext';
@@ -15,7 +16,8 @@ import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
 import Trade from 'sections/futures/Trade';
 import TradeCrossMargin from 'sections/futures/TradeCrossMargin';
 import AppLayout from 'sections/shared/Layout/AppLayout';
-import { currentMarketState, futuresAccountTypeState } from 'store/futures';
+import { currentMarketState, futuresAccountState, futuresAccountTypeState } from 'store/futures';
+import { walletAddressState } from 'store/wallet';
 import {
 	PageContent,
 	FullHeightContainer,
@@ -43,6 +45,8 @@ const Market: MarketComponent = () => {
 
 	const setCurrentMarket = useSetRecoilState(currentMarketState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
+	const walletAddress = useRecoilValue(walletAddressState);
+	const { ready } = useRecoilValue(futuresAccountState);
 
 	const futuresData = useFuturesData();
 
@@ -66,7 +70,13 @@ const Market: MarketComponent = () => {
 								<MarketInfo />
 							</StyledMainContent>
 							<StyledRightSideContent>
-								{selectedAccountType === 'cross_margin' ? <TradeCrossMargin /> : <Trade />}
+								{walletAddress && !ready ? (
+									<Loader />
+								) : selectedAccountType === 'cross_margin' ? (
+									<TradeCrossMargin />
+								) : (
+									<Trade />
+								)}
 							</StyledRightSideContent>
 						</StyledFullHeightContainer>
 					</PageContent>

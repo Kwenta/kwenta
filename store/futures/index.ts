@@ -199,7 +199,7 @@ export const futuresAccountState = atom<FuturesAccountState>({
 		walletAddress: null,
 		selectedFuturesAddress: null,
 		crossMarginAvailable: false,
-		loading: false,
+		ready: false,
 	},
 });
 

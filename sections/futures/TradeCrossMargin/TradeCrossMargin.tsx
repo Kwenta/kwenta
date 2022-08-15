@@ -5,7 +5,6 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
-import Card from 'components/Card';
 import StyledSlider from 'components/Slider/StyledSlider';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import {
@@ -15,7 +14,8 @@ import {
 	leverageSideState,
 	positionState,
 } from 'store/futures';
-import { FlexDivRow } from 'styles/common';
+import { walletAddressState } from 'store/wallet';
+import { BorderedPanel, FlexDivRow } from 'styles/common';
 import { zeroBN } from 'utils/formatters/number';
 
 import CrossMarginOnboard from '../CrossMarginOnboard';
@@ -32,6 +32,7 @@ export default function TradeCrossMargin() {
 	const position = useRecoilValue(positionState);
 	const leverage = useRecoilValue(crossMarginLeverageState);
 	const { crossMarginAddress } = useRecoilValue(futuresAccountState);
+	const walletAddress = useRecoilValue(walletAddressState);
 
 	const { onTradeAmountSUSDChange } = useFuturesContext();
 
@@ -68,7 +69,9 @@ export default function TradeCrossMargin() {
 	return (
 		<>
 			<CrossMarginOnboard onClose={() => setShowOnboard(false)} isOpen={showOnboard} />
-			{!crossMarginAddress ? (
+			{!walletAddress ? (
+				<ConnectWallet>Connect your wallet to start trading</ConnectWallet>
+			) : !crossMarginAddress ? (
 				<CreateAccountContainer>
 					<Title>Cross Margin</Title>
 					<CreateAccountButton onClick={() => setShowOnboard(true)}>
@@ -113,13 +116,11 @@ const SliderRow = styled(FlexDivRow)`
 	position: relative;
 `;
 
-const CreateAccountContainer = styled(Card)`
-	border: ${(props) => props.theme.colors.selectedTheme.border};
+const CreateAccountContainer = styled(BorderedPanel)`
 	color: white;
 	text-align: center;
 	padding: 30px;
 	align-items: center;
-	border-radius: 8px;
 `;
 
 const Title = styled.div`
@@ -136,7 +137,7 @@ const CreateAccountButton = styled(Button)`
 	margin-top: 14px;
 `;
 
-// const SwitchButton = styled(TextButton)`
-// 	margin-top: 20px;
-// 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-// `;
+const ConnectWallet = styled(BorderedPanel)`
+	text-align: center;
+	padding: 20px;
+`;

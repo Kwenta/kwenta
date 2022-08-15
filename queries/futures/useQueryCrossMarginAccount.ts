@@ -3,7 +3,6 @@ import { useQuery } from 'react-query';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { FuturesAccountType } from 'queries/futures/types';
 import { futuresAccountState, futuresAccountTypeState } from 'store/futures';
 import { networkState, walletAddressState } from 'store/wallet';
 
@@ -14,10 +13,10 @@ const supportedNetworks = [69];
 export default function useQueryCrossMarginAccount() {
 	const { crossMarginContractFactory } = useCrossMarginAccountContracts();
 
-	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const [futuresAccount, setFuturesAccount] = useRecoilState(futuresAccountState);
+	const [selectedAccountType, setSelectedAccountType] = useRecoilState(futuresAccountTypeState);
 
 	const queryAccountLogs = useCallback(async () => {
 		if (!walletAddress || !crossMarginContractFactory) return null;
@@ -36,13 +35,13 @@ export default function useQueryCrossMarginAccount() {
 		async () => {
 			if (!supportedNetworks.includes(network.id)) {
 				const accountState = {
-					loading: false,
+					ready: true,
 					crossMarginAvailable: false,
 					crossMarginAddress: null,
 					walletAddress,
 					selectedFuturesAddress: walletAddress,
-					selectedAccountType: 'isolated_margin' as FuturesAccountType,
 				};
+				setSelectedAccountType('isolated_margin');
 				setFuturesAccount(accountState);
 				return accountState;
 			}
@@ -54,13 +53,12 @@ export default function useQueryCrossMarginAccount() {
 				crossMarginAvailable: true,
 				walletAddress,
 				selectedFuturesAddress: futuresAccount?.selectedFuturesAddress,
-				loading: true,
 			});
 
 			const crossMarginAccount = await queryAccountLogs();
 
 			const accountState = {
-				loading: false,
+				ready: true,
 				crossMarginAvailable: true,
 				crossMarginAddress: crossMarginAccount,
 				walletAddress,
@@ -69,6 +67,7 @@ export default function useQueryCrossMarginAccount() {
 			};
 			setFuturesAccount(accountState);
 			return accountState;
-		}
+		},
+		{ enabled: !!walletAddress }
 	);
 }
