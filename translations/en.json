@@ -3,7 +3,7 @@
 		"en": "English"
 	},
 	"meta": {
-		"description": "Gain exposure to cryptocurrencies, forex, equities, indices, and commodities on Ethereum with zero slippage",
+		"description": "Gain exposure to cryptocurrencies, forex, indices, and commodities on Ethereum with zero slippage",
 		"og": {
 			"title": "Kwenta",
 			"site-name": "Kwenta"
@@ -811,6 +811,7 @@
 				"liquidations": "Liquidations",
 				"24h-pnl": "24H PnL",
 				"pnl": "PnL",
+				"total-pnl": "PnL ($)",
 				"percent-pnl": "PnL (%)",
 				"rank-mobile": "#"
 			}
@@ -974,8 +975,7 @@
 		"currency-category": {
 			"crypto": "crypto",
 			"forex": "forex",
-			"commodity": "commodities",
-			"equities": "equities"
+			"commodity": "commodities"
 		},
 		"contract": "contract",
 		"chart-periods": {

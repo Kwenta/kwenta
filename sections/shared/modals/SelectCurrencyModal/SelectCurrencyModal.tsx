@@ -18,18 +18,14 @@ import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
 import { networkState, walletAddressState } from 'store/wallet';
 import { FlexDivCentered } from 'styles/common';
+import media from 'styles/media';
 
 import { RowsHeader, CenteredModal } from '../common';
 import CurrencyRow from './CurrencyRow';
 
 const PAGE_LENGTH = 50;
 
-export const CATEGORY_FILTERS = [
-	CATEGORY_MAP.crypto,
-	CATEGORY_MAP.forex,
-	CATEGORY_MAP.equities,
-	CATEGORY_MAP.commodity,
-];
+export const CATEGORY_FILTERS = [CATEGORY_MAP.crypto, CATEGORY_MAP.forex, CATEGORY_MAP.commodity];
 
 type SelectCurrencyModalProps = {
 	synthsOverride?: Array<CurrencyKey>;
@@ -323,7 +319,11 @@ const AssetSearchInput = styled(SearchInput)`
 const CategoryFilters = styled.div`
 	display: grid;
 	grid-auto-flow: column;
-	justify-content: space-between;
+	${media.lessThan('sm')`
+		justify-content: space-between;
+	`}
+	justify-content: flex-start;
+	column-gap: 10px;
 	padding: 0 16px;
 	margin-bottom: 18px;
 `;
