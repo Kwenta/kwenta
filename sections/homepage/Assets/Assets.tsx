@@ -23,10 +23,6 @@ const ASSETS = [
 		label: 'homepage.assets.forex',
 	},
 	{
-		id: 'equities',
-		label: 'homepage.assets.equities',
-	},
-	{
 		id: 'crypto',
 		label: 'homepage.assets.crypto',
 	},
