@@ -55,7 +55,6 @@ export const EXTERNAL_LINKS = {
 		Home: 'https://kips.kwenta.io/all-kip/',
 	},
 	Competition: {
-		// TODO: add missing CTA link.
-		LearnMore: 'https://kwenta.io/',
+		LearnMore: 'https://mirror.xyz/kwenta.eth/WghvQFjEslsC0kwnGVP0QZnY1F7ZU3w5hpWxDPLbBsE',
 	},
 };

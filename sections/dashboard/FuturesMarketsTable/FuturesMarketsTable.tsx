@@ -16,8 +16,7 @@ import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
-import { fundingRatesState, futuresMarketsState } from 'store/futures';
+import { futuresMarketsState, pastRatesState, fundingRatesState } from 'store/futures';
 import {
 	getSynthDescription,
 	isEurForex,
@@ -32,20 +31,17 @@ const FuturesMarketsTable: FC = () => {
 
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 	const fundingRates = useRecoilValue(fundingRatesState);
-
-	const synthList = futuresMarkets.map(({ asset }) => asset);
-	const dailyPriceChangesQuery = useLaggedDailyPrice(synthList);
+	const pastRates = useRecoilValue(pastRatesState);
 
 	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
 
 	let data = useMemo(() => {
-		const dailyPriceChanges = dailyPriceChangesQuery.data ?? [];
 		const futuresVolume = futuresVolumeQuery.data ?? {};
 
 		return futuresMarkets.map((market) => {
 			const description = getSynthDescription(market.asset, synthsMap, t);
 			const volume = futuresVolume[market.assetHex];
-			const pastPrice = dailyPriceChanges.find((price) => price.synth === market.asset);
+			const pastPrice = pastRates.find((price) => price.synth === market.asset);
 			const fundingRate = fundingRates.find(
 				(funding) => (funding as FundingRateResponse)?.asset === MarketKeyByAsset[market.asset]
 			);
@@ -58,7 +54,7 @@ const FuturesMarketsTable: FC = () => {
 				price: market.price,
 				volume: volume?.toNumber() ?? 0,
 				pastPrice: pastPrice?.price,
-				priceChange: market.price.sub(pastPrice?.price ?? 0).div(market.price),
+				priceChange: pastPrice?.price && market.price.sub(pastPrice?.price).div(market.price),
 				fundingRate: fundingRate?.fundingRate ?? null,
 				openInterest: market.marketSize.mul(market.price),
 				openInterestNative: market.marketSize,
@@ -69,14 +65,7 @@ const FuturesMarketsTable: FC = () => {
 				marketClosureReason: market.marketClosureReason,
 			};
 		});
-	}, [
-		synthsMap,
-		futuresMarkets,
-		fundingRates,
-		dailyPriceChangesQuery?.data,
-		futuresVolumeQuery?.data,
-		t,
-	]);
+	}, [synthsMap, futuresMarkets, fundingRates, pastRates, futuresVolumeQuery?.data, t]);
 
 	return (
 		<>
