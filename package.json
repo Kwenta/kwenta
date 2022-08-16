@@ -33,8 +33,6 @@
 		"@rainbow-me/rainbowkit": "^0.4.4",
 		"@reach/accordion": "0.15.1",
 		"@reach/dialog": "0.15.0",
-		"@reach/tabs": "0.15.0",
-		"@synthetixio/assets": "2.0.13",
 		"@synthetixio/contracts-interface": "2.74.1",
 		"@synthetixio/optimism-networks": "2.74.1",
 		"@synthetixio/providers": "2.74.1",
@@ -60,7 +58,7 @@
 		"lightweight-charts": "^3.8.0",
 		"lodash": "4.17.21",
 		"moment-business-time": "1.1.1",
-		"next": "12.1.6",
+		"next": "12.2.4",
 		"next-compose-plugins": "2.2.0",
 		"next-connect": "^0.13.0",
 		"next-optimized-images": "^2.6.2",
@@ -71,8 +69,6 @@
 		"react-input-autosize": "3.0.0",
 		"react-is": "^18.0.0",
 		"react-query": "3.35.0",
-		"react-redux": "^7.2.8",
-		"react-responsive": "8.2.0",
 		"react-rnd": "^10.3.7",
 		"react-select": "4.3.1",
 		"react-slick": "0.29.0",
@@ -85,7 +81,8 @@
 		"styled-media-query": "2.1.2",
 		"synthetix": "2.74.1",
 		"unstated-next": "1.1.0",
-		"wagmi": "^0.5.12"
+		"wagmi": "^0.5.12",
+		"unstated-next": "1.1.0"
 	},
 	"devDependencies": {
 		"@microsoft/eslint-formatter-sarif": "2.1.7",

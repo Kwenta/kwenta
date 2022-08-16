@@ -54,7 +54,7 @@ const FEATURES = [
 		key: 'permissionless',
 		title: 'homepage.features.permissionless.title',
 		copy: 'homepage.features.permissionless.copy',
-		image: <Image src={PermissionlessIcon} layout="raw" height="64px" width="64px" />,
+		image: <Image src={PermissionlessIcon} layout="fixed" height="64px" width="64px" />,
 	},
 	{
 		key: 'mobile',

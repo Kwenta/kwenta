@@ -22,10 +22,6 @@ enum TableColumnAccessor {
 	DailyVolume = 'dailyVolume',
 }
 
-function setLastVisited(baseCurrencyPair: string): void {
-	localStorage.setItem('lastVisited', ROUTES.Markets.MarketPair(baseCurrencyPair));
-}
-
 const FuturesMarketsTable: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
@@ -61,7 +57,6 @@ const FuturesMarketsTable: FC = () => {
 				showPagination
 				onTableRowClick={(row) => {
 					router.push(ROUTES.Markets.MarketPair(row.original.asset));
-					setLastVisited(row.original.asset);
 				}}
 				highlightRowsOnHover
 				sortBy={[{ id: 'dailyVolume', desc: true }]}
@@ -177,6 +172,7 @@ const TableContainer = styled.div`
 		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
 `;
+
 const TableAlignment = css`
 	justify-content: space-between;
 
@@ -226,6 +222,7 @@ const MarketContainer = styled.div`
 const DataCol = styled(FlexDivCol)`
 	justify-content: space-between;
 `;
+
 const DataRow = styled.div`
 	align-items: 'flex-end';
 `;

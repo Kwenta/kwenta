@@ -33,7 +33,6 @@ import { publicProvider } from 'wagmi/providers/public';
 import Safe from 'components/Rainbowkit/Gnosis';
 import { BLAST_NETWORK_LOOKUP } from 'constants/network';
 import Layout from 'sections/shared/Layout';
-import AppLayout from 'sections/shared/Layout/AppLayout';
 import SystemStatus from 'sections/shared/SystemStatus';
 import { currentThemeState } from 'store/ui';
 import { MediaContextProvider } from 'styles/media';
@@ -43,15 +42,13 @@ import 'styles/main.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import '@reach/dialog/styles.css';
-import '@reach/tabs/styles.css';
-import '@reach/accordion/styles.css';
 import 'tippy.js/dist/tippy.css';
 import '@rainbow-me/rainbowkit/styles.css';
 
 import '../i18n';
 
 type NextPageWithLayout = NextPage & {
-	layout?: (page: ReactElement) => ReactNode;
+	getLayout?: (page: ReactElement) => ReactNode;
 };
 
 type AppPropsWithLayout = AppProps & {
@@ -112,11 +109,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 	const { data: newSigner } = useSigner();
 	const { chain: activeChain } = useNetwork();
 	const network = activeChain || undefined;
-
-	const getLayout =
-		Component.layout === undefined
-			? (page: ReactElement) => <>{page}</>
-			: (page: ReactElement) => <AppLayout>{page}</AppLayout>;
+	const getLayout = Component.getLayout || ((page) => page);
 
 	const isReady = useMemo(() => typeof window !== 'undefined', []);
 	const currentTheme = useRecoilValue(currentThemeState);
@@ -128,7 +121,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 			theme={currentTheme === 'dark' ? darkTheme() : lightTheme()}
 			initialChain={chain.optimism}
 		>
-			<ThemeProvider theme={Component.layout === undefined ? themes['dark'] : theme}>
+			<ThemeProvider theme={theme}>
 				<MediaContextProvider>
 					<SynthetixQueryContextProvider
 						value={
@@ -137,7 +130,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 										provider,
 										signer: newSigner || undefined,
 										networkId: network!.id as NetworkId,
-								  })
+								})
 								: createQueryContext({ networkId: null })
 						}
 					>

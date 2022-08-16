@@ -43,11 +43,11 @@ const useExchangeRatesQuery = (options?: UseQueryOptions<Rates>) => {
 			const rates = [...synthsRates[1], ...ratesForCurrencies] as CurrencyRate[];
 
 			synths.forEach((currencyKeyBytes32: CurrencyKey, idx: number) => {
-				const currencyKey = ethers.utils.parseBytes32String(currencyKeyBytes32) as FuturesMarketKey;
-				const marketAsset = MarketAssetByKey[currencyKey];
-				const rate = Number(ethers.utils.formatEther(rates[idx]));
+				const currencyKey = ethers.utils.parseBytes32String(currencyKeyBytes32) as CurrencyKey;
+				const marketAsset = MarketAssetByKey[currencyKey as FuturesMarketKey];
 
-				exchangeRates[marketAsset] = wei(rate);
+				const rate = Number(ethers.utils.formatEther(rates[idx]));
+				exchangeRates[marketAsset ?? currencyKey] = wei(rate);
 			});
 
 			setRates(exchangeRates);

@@ -127,7 +127,7 @@
 			"description": "Take Back The Market, Trade Like A Whale",
 			"categories": "Commodities, Forex, Crypto and more."
 		},
-		"features": { 
+		"features": {
 			"title": "ADVANTAGES",
 			"description": "Trade without the limits of a centralized exchange",
 			"blazing-fast": {
@@ -394,7 +394,6 @@
 		"1inch": {
 			"unsupported-network": "Synth Swap is not supported on this network",
 			"wallet-not-connected": "Wallet not connected"
-
 		}
 	},
 	"dashboard": {
@@ -497,6 +496,12 @@
 			"susd-total": "sUSD Total"
 		}
 	},
+	"dashboard-markets": {
+		"page-title": "Markets | Kwenta"
+	},
+	"dashboard-history": {
+		"page-title": "Trade History | Kwenta"
+	},
 	"futures": {
 		"page-title": "Futures | Kwenta",
 		"wallet-overview": {
@@ -521,7 +526,7 @@
 		},
 		"market": {
 			"page-title": "{{baseCurrencyKey}} Futures | Kwenta",
-			"page-title-rate": "{{baseCurrencyKey}} - {{rate}} Futures | Kwenta",
+			"page-title-rate": "{{marketName}} - {{rate}} Futures | Kwenta",
 			"sidebar-tab": {
 				"markets": "Markets",
 				"history": "History",
@@ -1097,3 +1102,4 @@
 		"bridge": "Bridge"
 	}
 }
+

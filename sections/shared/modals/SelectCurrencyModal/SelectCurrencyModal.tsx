@@ -53,7 +53,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 		useOvm: isL2,
 	});
 
-	const [assetSearch, setAssetSearch] = useState<string>('');
+	const [assetSearch, setAssetSearch] = useState('');
 	const [synthCategory, setSynthCategory] = useState<string | null>(null);
 	const [page, setPage] = useState(1);
 

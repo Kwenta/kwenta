@@ -28,10 +28,6 @@ import MarketsDropdownIndicator from './MarketsDropdownIndicator';
 import MarketsDropdownOption from './MarketsDropdownOption';
 import MarketsDropdownSingleValue from './MarketsDropdownSingleValue';
 
-function setLastVisited(baseCurrencyPair: string): void {
-	localStorage.setItem('lastVisited', ROUTES.Markets.MarketPair(baseCurrencyPair));
-}
-
 export type MarketsCurrencyOption = {
 	value: FuturesMarketAsset;
 	label: string;
@@ -156,7 +152,6 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 					// Types are not perfect from react-select, this should always be true (just helping typescript)
 					if (x && 'value' in x) {
 						router.push(ROUTES.Markets.MarketPair(x.value));
-						setLastVisited(x.value);
 					}
 				}}
 				value={assetToCurrencyOption({

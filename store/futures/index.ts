@@ -13,6 +13,7 @@ import {
 import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import { Price, Rates } from 'queries/rates/types';
 import { PositionSide } from 'sections/futures/types';
+import { localStorageEffect } from 'store/effects';
 import { getFuturesKey, getSynthsKey } from 'store/utils';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN } from 'utils/formatters/number';
@@ -23,6 +24,7 @@ const DEFAULT_MAX_LEVERAGE = wei(10);
 export const currentMarketState = atom({
 	key: getFuturesKey('currentMarket'),
 	default: FuturesMarketAsset.sETH,
+	effects: [localStorageEffect('currentMarketAsset')],
 });
 
 export const marketKeyState = selector({
@@ -233,9 +235,9 @@ export const marketAssetRateState = selector({
 	key: getFuturesKey('marketAssetRate'),
 	get: ({ get }) => {
 		const exchangeRates = get(ratesState);
-		const marketKey = get(marketKeyState);
+		const marketAsset = get(currentMarketState);
 
-		return newGetExchangeRatesForCurrencies(exchangeRates, marketKey, Synths.sUSD);
+		return newGetExchangeRatesForCurrencies(exchangeRates, marketAsset, Synths.sUSD);
 	},
 });
 
