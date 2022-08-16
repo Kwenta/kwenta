@@ -11,7 +11,6 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { TabPanel } from 'components/Tab';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
-import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
 import { walletAddressState } from 'store/wallet';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
@@ -38,8 +37,6 @@ const Overview: FC = () => {
 	const { t } = useTranslation();
 
 	const { useExchangeRatesQuery, useSynthsBalancesQuery } = useSynthetixQueries();
-
-	useQueryCrossMarginAccount();
 
 	const portfolioValueQuery = useGetCurrentPortfolioValue();
 	const portfolioValue = portfolioValueQuery?.data ?? null;
