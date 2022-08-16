@@ -24,7 +24,7 @@ type LeaderboardProps = {
 };
 
 const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
-	const [searchTerm, setSearchTerm] = useState<string>('');
+	const [searchTerm, setSearchTerm] = useState('');
 	const [activeTier, setActiveTier] = useState<Tier>('bronze');
 	const [selectedTrader, setSelectedTrader] = useState('');
 	const router = useRouter();
@@ -63,8 +63,8 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	}, [statsData, ensInfo]);
 
 	useMemo(() => {
-		if (router.asPath.startsWith(ROUTES.Leaderboard.Home) && router.query.tab) {
-			const trader = router.query.tab[0];
+		if (router.asPath.startsWith(ROUTES.Leaderboard.Home) && router.query.trader) {
+			const trader = router.query.trader as string;
 			setSelectedTrader(trader);
 		} else {
 			setSearchTerm('');

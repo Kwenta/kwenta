@@ -6,7 +6,7 @@ import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { FuturesPosition } from 'queries/futures/types';
 import { currentMarketState } from 'store/futures';
 import { formatNumber, zeroBN } from 'utils/formatters/number';
-import { getMarketName } from 'utils/futures';
+import { getMarketName, MarketKeyByAsset } from 'utils/futures';
 
 import { PositionSide } from '../types';
 
@@ -44,7 +44,7 @@ const AmountContainer: FC<AmountContainerProps> = ({ position }) => {
 		<>
 			<Container>
 				<StyledPositionType>
-					<CurrencyIcon style={currencyIconStyle} currencyKey={marketAsset} />
+					<CurrencyIcon style={currencyIconStyle} currencyKey={MarketKeyByAsset[marketAsset]} />
 					<StyledPositionDetails>{marketName}</StyledPositionDetails>
 					<StyledPositionDetails className="line-separator">{`|`}</StyledPositionDetails>
 					<StyledPositionSide className={side}>{side.toUpperCase()}</StyledPositionSide>

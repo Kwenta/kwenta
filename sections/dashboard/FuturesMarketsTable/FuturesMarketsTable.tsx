@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import MarketBadge from 'components/Badge/MarketBadge';
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
-import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
 import { Synths } from 'constants/currency';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
@@ -69,13 +69,13 @@ const FuturesMarketsTable: FC = () => {
 
 	return (
 		<>
-			<MobileHiddenView>
+			<DesktopOnlyView>
 				<TableContainer>
 					<StyledTable
 						data={data}
 						showPagination
 						onTableRowClick={(row) => {
-							router.push(`/market/${row.original.asset}`);
+							router.push(`/market/?asset=${row.original.asset}`);
 						}}
 						highlightRowsOnHover
 						sortBy={[{ id: 'dailyVolume', desc: true }]}
@@ -263,13 +263,13 @@ const FuturesMarketsTable: FC = () => {
 						]}
 					/>
 				</TableContainer>
-			</MobileHiddenView>
-			<MobileOnlyView>
+			</DesktopOnlyView>
+			<MobileOrTabletView>
 				<StyledMobileTable
 					data={data}
 					showPagination
 					onTableRowClick={(row) => {
-						router.push(`/market/${row.original.asset}`);
+						router.push(`/market/?asset=${row.original.asset}`);
 					}}
 					columns={[
 						{
@@ -369,7 +369,7 @@ const FuturesMarketsTable: FC = () => {
 						},
 					]}
 				/>
-			</MobileOnlyView>
+			</MobileOrTabletView>
 		</>
 	);
 };
