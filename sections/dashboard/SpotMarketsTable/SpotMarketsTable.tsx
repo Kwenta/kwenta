@@ -84,7 +84,7 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 				showPagination
 				onTableRowClick={(row) => {
 					row.original.market !== 'sUSD'
-						? router.push(`/exchange/${row.original.market}-sUSD`)
+						? router.push(`/exchange/?quote=sUSD&base=${row.original.market}`)
 						: router.push(`/exchange/`);
 				}}
 				highlightRowsOnHover
