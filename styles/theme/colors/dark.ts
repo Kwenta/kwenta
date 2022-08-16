@@ -8,6 +8,7 @@ const darkTheme = {
 	black: '#171002',
 	white: '#ECE8E3',
 	gray: '#787878',
+	gray2: '#3F3F3F',
 	yellow: '#FFB800',
 	table: { fill: 'rgba(255, 255, 255, 0.01)', hover: 'rgba(255, 255, 255, 0.05)' },
 	gold: '#E4B378',
@@ -95,6 +96,9 @@ const darkTheme = {
 	},
 	openInterestBar: {
 		border: '1px solid #2b2a2a',
+	},
+	modal: {
+		background: '#252525',
 	},
 };
 

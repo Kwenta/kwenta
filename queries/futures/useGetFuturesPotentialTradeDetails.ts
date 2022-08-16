@@ -73,6 +73,7 @@ const useGetFuturesPotentialTradeDetails = (
 			leverageSide
 		),
 		async () => {
+			console.log(positionMarginDelta.toString());
 			if (
 				!marketAsset ||
 				(!tradeSize && selectedAccountType === 'isolated_margin') ||

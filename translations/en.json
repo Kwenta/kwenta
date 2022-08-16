@@ -806,7 +806,14 @@
 				}
 			},
 			"onboard": {
-				"title": "Open Futures Account"
+				"title": "Cross-Margin",
+				"step1-intro": "To Get started you must first create your cross margin account",
+				"step2-intro": "Now, approve the contract to spend sUSD",
+				"step3-intro": "Lastly, deposit your sUSD into the contact",
+				"step3-complete": "Your cross-margin account has been successfully created!",
+				"faq1": "What is cross-margin?",
+				"faq2": "Is cross-margin better than isolated margin",
+				"faq3": "How will cross margin account affect my trading"
 			}
 		}
 	},

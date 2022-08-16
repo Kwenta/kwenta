@@ -70,10 +70,9 @@ const StyledDialogContent = styled(DialogContent)`
 `;
 
 const StyledCard = styled(Card)`
-	background-color: ${(props) => props.theme.colors.selectedTheme.background};
+	background-color: ${(props) => props.theme.colors.selectedTheme.modal.background};
 	border-radius: 10px;
 	position: relative;
-	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	${media.lessThan('sm')`
 		&&& {

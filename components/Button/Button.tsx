@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 
 type ButtonProps = {
 	size?: 'sm' | 'md' | 'lg' | 'xl';
-	variant?: 'primary' | 'secondary' | 'outline' | 'alt' | 'success' | 'danger' | 'text' | 'select';
+	variant?: 'primary' | 'secondary' | 'flat' | 'alt' | 'success' | 'danger' | 'text' | 'select';
 	isActive?: boolean;
 	isRounded?: boolean;
 	mono?: boolean;
@@ -63,7 +63,7 @@ const Button = styled.button<ButtonProps>`
 		`};
 
 	${(props) =>
-		props.noOutline &&
+		(props.noOutline || props.variant === 'flat') &&
 		css`
 			background: ${(props) => props.theme.colors.selectedTheme.button.fill};
 			border: ${(props) => props.theme.colors.selectedTheme.border};

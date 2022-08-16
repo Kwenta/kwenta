@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
+import CrossMarginIcon from 'assets/svg/futures/cross-margin-icon.svg';
 import Button from 'components/Button';
 import StyledSlider from 'components/Slider/StyledSlider';
 import { useFuturesContext } from 'contexts/FuturesContext';
@@ -73,7 +74,8 @@ export default function TradeCrossMargin() {
 				<ConnectWallet>Connect your wallet to start trading</ConnectWallet>
 			) : !crossMarginAddress ? (
 				<CreateAccountContainer>
-					<Title>Cross Margin</Title>
+					<CrossMarginIcon height="21px" width="30px" />
+					<Title>Cross Margin FAQ's</Title>
 					<CreateAccountButton onClick={() => setShowOnboard(true)}>
 						Create Account
 					</CreateAccountButton>
@@ -118,9 +120,7 @@ const SliderRow = styled(FlexDivRow)`
 
 const CreateAccountContainer = styled(BorderedPanel)`
 	color: white;
-	text-align: center;
 	padding: 30px;
-	align-items: center;
 `;
 
 const Title = styled.div`

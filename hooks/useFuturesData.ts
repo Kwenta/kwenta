@@ -45,7 +45,7 @@ const DEFAULT_MAX_LEVERAGE = wei(10);
 
 const useFuturesData = () => {
 	const router = useRouter();
-	const { synthetixjs } = Connector.useContainer();
+	const { synthetixjs, network } = Connector.useContainer();
 	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
 
 	const marketAsset = useRecoilValue(currentMarketState);
@@ -111,7 +111,7 @@ const useFuturesData = () => {
 		if (validType) {
 			setSelectedAccountType(routerAccountType as FuturesAccountType);
 		}
-	}, [routerAccountType, setSelectedAccountType]);
+	}, [routerAccountType, setSelectedAccountType, network.id]);
 
 	const onTradeAmountChange = React.useCallback(
 		(value: string, fromLeverage: boolean = false) => {

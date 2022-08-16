@@ -11,7 +11,6 @@ import ErrorView from 'components/Error';
 import CustomInput from 'components/Input/CustomInput';
 import Loader from 'components/Loader';
 import SegmentedControl from 'components/SegmentedControl';
-import { Synths } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
@@ -20,7 +19,7 @@ import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useSUSDContract from 'hooks/useSUSDContract';
 import { balancesState, crossMarginAvailableMarginState } from 'store/futures';
 import { FlexDivRowCentered } from 'styles/common';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { formatDollars, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
 type DepositMarginModalProps = {
@@ -180,7 +179,7 @@ export default function DepositWithdrawCrossMargin({
 			<BalanceContainer>
 				<BalanceText>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
 				<BalanceText>
-					<span>{formatCurrency(Synths.sUSD, susdBal, { sign: '$' })}</span> sUSD
+					<span>{formatDollars(susdBal)}</span> sUSD
 				</BalanceText>
 			</BalanceContainer>
 
@@ -197,11 +196,7 @@ export default function DepositWithdrawCrossMargin({
 			<GasFeeContainer>
 				<BalanceText>{t('futures.market.trade.margin.modal.gas-fee')}:</BalanceText>
 				<BalanceText>
-					<span>
-						{transactionFee
-							? formatCurrency(Synths.sUSD, transactionFee, { sign: '$', maxDecimals: 1 })
-							: NO_VALUE}
-					</span>
+					<span>{transactionFee ? formatDollars(transactionFee) : NO_VALUE}</span>
 				</BalanceText>
 			</GasFeeContainer>
 
