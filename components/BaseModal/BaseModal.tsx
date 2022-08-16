@@ -31,7 +31,7 @@ export const BaseModal: FC<BaseModalProps> = ({
 }) => (
 	<StyledDialogOverlay onDismiss={onDismiss} isOpen={isOpen} {...rest}>
 		<StyledDialogContent aria-label="modal">
-			<Rnd {...rndProps}>
+			{rndProps.disableDragging ? (
 				<StyledCard className="card">
 					<StyledCardHeader lowercase={lowercase} noBorder className="card-header">
 						{title}
@@ -43,7 +43,21 @@ export const BaseModal: FC<BaseModalProps> = ({
 					</StyledCardHeader>
 					<StyledCardBody className="card-body">{children}</StyledCardBody>
 				</StyledCard>
-			</Rnd>
+			) : (
+				<Rnd {...rndProps}>
+					<StyledCard className="card">
+						<StyledCardHeader lowercase={lowercase} noBorder className="card-header">
+							{title}
+							{showCross && (
+								<DismissButton onClick={onDismiss}>
+									<CrossIcon />
+								</DismissButton>
+							)}
+						</StyledCardHeader>
+						<StyledCardBody className="card-body">{children}</StyledCardBody>
+					</StyledCard>
+				</Rnd>
+			)}
 		</StyledDialogContent>
 	</StyledDialogOverlay>
 );
