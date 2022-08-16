@@ -68,7 +68,11 @@ const useLaggedDailyPrice = (options?: UseQueryOptions<Price[] | null>) => {
 				return null;
 			}
 		},
-		{ enabled: isAppReady && synths.length > 0, refetchInterval: 1000 * 60 * 15, ...options }
+		{
+			enabled: isAppReady && synths.length > 0 && marketAssets.length > 0,
+			refetchInterval: 1000 * 60 * 15,
+			...options,
+		}
 	);
 };
 

@@ -233,9 +233,9 @@ export const marketAssetRateState = selector({
 	key: getFuturesKey('marketAssetRate'),
 	get: ({ get }) => {
 		const exchangeRates = get(ratesState);
-		const marketKey = get(marketKeyState);
+		const marketAsset = get(currentMarketState);
 
-		return newGetExchangeRatesForCurrencies(exchangeRates, marketKey, Synths.sUSD);
+		return newGetExchangeRatesForCurrencies(exchangeRates, marketAsset, Synths.sUSD);
 	},
 });
 
