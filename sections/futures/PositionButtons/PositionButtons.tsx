@@ -55,8 +55,8 @@ const PositionButtonsContainer = styled.div`
 `;
 
 const StyledPositionButton = styled(Button)<PositionButtonProps>`
-	font-size: 16px;
-	height: 55px;
+	font-size: 14px;
+	height: 40px;
 
 	&:active {
 		transform: scale(0.96);

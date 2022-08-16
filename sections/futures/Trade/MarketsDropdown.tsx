@@ -13,8 +13,7 @@ import Connector from 'containers/Connector';
 import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { Price, Rates } from 'queries/rates/types';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
-import { currentMarketState, futuresMarketsState } from 'store/futures';
+import { currentMarketState, futuresMarketsState, pastRatesState } from 'store/futures';
 import { assetToSynth, iStandardSynth } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import {
@@ -62,13 +61,7 @@ type MarketsDropdownProps = {
 
 const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
-	const markets = futuresMarkets.map(({ asset }) => MarketKeyByAsset[asset]);
-
-	const dailyPriceChangesQuery = useLaggedDailyPrice(markets);
-
-	const dailyPriceChanges = React.useMemo(() => dailyPriceChangesQuery?.data ?? [], [
-		dailyPriceChangesQuery,
-	]);
+	const pastRates = useRecoilValue(pastRatesState);
 
 	const asset = useRecoilValue(currentMarketState);
 
@@ -102,8 +95,8 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	);
 
 	const getPastPrice = React.useCallback(
-		(asset: string) => dailyPriceChanges.find((price: Price) => price.synth === asset),
-		[dailyPriceChanges]
+		(asset: string) => pastRates.find((price: Price) => price.synth === asset),
+		[pastRates]
 	);
 
 	const selectedBasePriceRate = getBasePriceRate(asset);
