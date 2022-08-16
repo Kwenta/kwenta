@@ -31,7 +31,6 @@ export const ROUTES = {
 		Position: (marketAsset: FuturesMarketAsset) => `/market/?asset=${marketAsset}&tab=position`,
 		Orders: (marketAsset: FuturesMarketAsset) => `/market/?asset=${marketAsset}&tab=orders`,
 		Trades: (marketAsset: FuturesMarketAsset) => `/market/?asset=${marketAsset}&tab=trades`,
-		Calculator: (marketAsset: FuturesMarketAsset) => `/market/?asset=${marketAsset}&tab=calculator`,
 		Transfers: (marketAsset: FuturesMarketAsset) => `/market/?asset=${marketAsset}&tab=transfers`,
 	},
 	Leaderboard: {
