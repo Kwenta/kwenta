@@ -7,6 +7,7 @@ import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import { RefetchProvider } from 'contexts/RefetchContext';
 import DashboardContainer from 'sections/dashboard/DashboardContainer';
 import MobileDashboard from 'sections/dashboard/MobileDashboard';
+import Leaderboard from 'sections/leaderboard/Leaderboard';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import { PageContent, FullHeightContainer } from 'styles/common';
 
@@ -28,6 +29,7 @@ const Dashboard: DashboardComponent = () => {
 				<PageContent>
 					<StyledFullHeightContainer>
 						<DashboardContainer />
+						<Leaderboard compact />
 					</StyledFullHeightContainer>
 				</PageContent>
 			</MobileHiddenView>
