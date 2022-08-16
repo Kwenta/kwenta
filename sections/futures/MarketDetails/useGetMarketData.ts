@@ -8,12 +8,12 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
 import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolume';
 import useExternalPriceQuery from 'queries/rates/useExternalPriceQuery';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import {
 	currentMarketState,
 	fundingRateState,
 	marketInfoState,
 	marketKeyState,
+	pastRatesState,
 } from 'store/futures';
 import { isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
@@ -25,6 +25,7 @@ const useGetMarketData = (mobile?: boolean) => {
 	const marketAsset = useRecoilValue(currentMarketState);
 	const marketKey = useRecoilValue(marketKeyState);
 	const marketInfo = useRecoilValue(marketInfoState);
+	const pastRates = useRecoilValue(pastRatesState);
 	const fundingRate = useRecoilValue(fundingRateState);
 
 	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(marketAsset);
@@ -42,10 +43,7 @@ const useGetMarketData = (mobile?: boolean) => {
 			? DEFAULT_FIAT_EURO_DECIMALS
 			: undefined;
 
-	const dailyPriceChangesQuery = useLaggedDailyPrice([marketKey]);
-	const dailyPriceChanges = dailyPriceChangesQuery.data ?? [];
-
-	const pastPrice = dailyPriceChanges.find((price) => price.synth === marketAsset);
+	const pastPrice = pastRates.find((price) => price.synth === marketAsset);
 
 	const fundingTitle = React.useMemo(
 		() => `${!fundingRate?.fundingRate && !!marketInfo ? 'Inst.' : '1H'} Funding Rate`,
