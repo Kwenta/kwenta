@@ -16,7 +16,7 @@ type BaseModalProps = {
 	children: ReactNode;
 	showCross?: boolean;
 	lowercase?: boolean;
-	resizableAnDraggableProps?: Props;
+	rndProps?: Props;
 };
 
 export const BaseModal: FC<BaseModalProps> = ({
@@ -26,12 +26,12 @@ export const BaseModal: FC<BaseModalProps> = ({
 	isOpen,
 	showCross = true,
 	lowercase,
-	resizableAnDraggableProps = { disableDragging: true, enableResizing: false },
+	rndProps = { disableDragging: true, enableResizing: false },
 	...rest
 }) => (
 	<StyledDialogOverlay onDismiss={onDismiss} isOpen={isOpen} {...rest}>
 		<StyledDialogContent aria-label="modal">
-			<StyledResizableAndDraggableContainer {...resizableAnDraggableProps}>
+			<Rnd {...rndProps}>
 				<StyledCard className="card">
 					<StyledCardHeader lowercase={lowercase} noBorder className="card-header">
 						{title}
@@ -43,7 +43,7 @@ export const BaseModal: FC<BaseModalProps> = ({
 					</StyledCardHeader>
 					<StyledCardBody className="card-body">{children}</StyledCardBody>
 				</StyledCard>
-			</StyledResizableAndDraggableContainer>
+			</Rnd>
 		</StyledDialogContent>
 	</StyledDialogOverlay>
 );
@@ -97,8 +97,6 @@ const StyledCardHeader = styled(Card.Header)`
 const StyledCardBody = styled(Card.Body)`
 	overflow-y: scroll;
 `;
-
-const StyledResizableAndDraggableContainer = styled(Rnd)``;
 
 const DismissButton = styled.button`
 	${resetButtonCSS};

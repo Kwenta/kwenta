@@ -135,7 +135,7 @@ const ProfitCalculator: FC<ProfitCalculatorProps> = ({ marketAsset, setOpenProfi
 				onDismiss={() => setOpenProfitCalcModal(false)}
 				isOpen
 				title={t('futures.modals.profit-calculator.title')}
-				resizableAnDraggableProps={{
+				rndProps={{
 					enableResizing: true,
 					disableDragging: false,
 					minWidth: 500,
