@@ -25,7 +25,7 @@ import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { isUserDeniedError } from 'utils/formatters/error';
 import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
-import { newGetTransactionPrice } from 'utils/network';
+import { getTransactionPrice } from 'utils/network';
 
 import { PositionSide } from '../types';
 
@@ -74,12 +74,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 	// TODO: Get fee for cross margin
 	const transactionFee = useMemo(
 		() =>
-			newGetTransactionPrice(
-				gasPrice,
-				closeTxn.gasLimit,
-				ethPriceRate,
-				closeTxn.optimismLayerOneFee
-			),
+			getTransactionPrice(gasPrice, closeTxn.gasLimit, ethPriceRate, closeTxn.optimismLayerOneFee),
 		[gasPrice, ethPriceRate, closeTxn.gasLimit, closeTxn.optimismLayerOneFee]
 	);
 
