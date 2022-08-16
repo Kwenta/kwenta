@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useRef, useContext, useEffect, useCallback, useState } from 'react';
+import { useRef, useContext, useEffect, useCallback, useState, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ThemeContext } from 'styled-components';
 
@@ -64,7 +64,9 @@ export function TVChart({
 		'paneProperties.backgroundType': 'solid',
 	};
 
-	const marketAsset = router.query.asset as string;
+	const [marketAsset, marketAssetLoaded] = useMemo(() => {
+		return router.query.asset ? [router.query.asset, true] : [null, false];
+	}, [router.query.asset]);
 
 	useEffect(() => {
 		const widgetOptions = {
@@ -124,7 +126,7 @@ export function TVChart({
 			clearExistingWidget();
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network.id, currentTheme]);
+	}, [network.id, currentTheme, marketAssetLoaded]);
 
 	useEffect(() => {
 		_widget.current?.onChartReady(() => {
