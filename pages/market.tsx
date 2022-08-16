@@ -7,7 +7,6 @@ import styled from 'styled-components';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { FuturesContext } from 'contexts/FuturesContext';
-import { RefetchProvider } from 'contexts/RefetchContext';
 import useFuturesData from 'hooks/useFuturesData';
 import LeftSidebar from 'sections/futures/LeftSidebar/LeftSidebar';
 import MarketInfo from 'sections/futures/MarketInfo';
@@ -42,29 +41,27 @@ const Market: MarketComponent = () => {
 
 	return (
 		<FuturesContext.Provider value={futuresData}>
-			<RefetchProvider>
-				<Head>
-					<title>{t('futures.market.page-title', { pair: router.query.marketAsset })}</title>
-				</Head>
-				<DesktopOnlyView>
-					<PageContent>
-						<StyledFullHeightContainer>
-							<StyledLeftSideContent>
-								<LeftSidebar />
-							</StyledLeftSideContent>
-							<StyledMainContent>
-								<MarketInfo />
-							</StyledMainContent>
-							<StyledRightSideContent>
-								<Trade />
-							</StyledRightSideContent>
-						</StyledFullHeightContainer>
-					</PageContent>
-				</DesktopOnlyView>
-				<MobileOrTabletView>
-					<MobileTrade />
-				</MobileOrTabletView>
-			</RefetchProvider>
+			<Head>
+				<title>{t('futures.market.page-title', { pair: router.query.marketAsset })}</title>
+			</Head>
+			<DesktopOnlyView>
+				<PageContent>
+					<StyledFullHeightContainer>
+						<StyledLeftSideContent>
+							<LeftSidebar />
+						</StyledLeftSideContent>
+						<StyledMainContent>
+							<MarketInfo />
+						</StyledMainContent>
+						<StyledRightSideContent>
+							<Trade />
+						</StyledRightSideContent>
+					</StyledFullHeightContainer>
+				</PageContent>
+			</DesktopOnlyView>
+			<MobileOrTabletView>
+				<MobileTrade />
+			</MobileOrTabletView>
 		</FuturesContext.Provider>
 	);
 };

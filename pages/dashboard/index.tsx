@@ -1,7 +1,6 @@
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 
-import { RefetchProvider } from 'contexts/RefetchContext';
 import DashboardLayout from 'sections/dashboard/DashboardLayout';
 import Overview from 'sections/dashboard/Overview';
 
@@ -11,12 +10,12 @@ const Dashboard: DashboardComponent = () => {
 	const { t } = useTranslation();
 
 	return (
-		<RefetchProvider>
+		<>
 			<Head>
 				<title>{t('dashboard.page-title')}</title>
 			</Head>
 			<Overview />
-		</RefetchProvider>
+		</>
 	);
 };
 
