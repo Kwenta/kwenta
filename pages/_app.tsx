@@ -17,14 +17,21 @@ import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 import { ThemeProvider } from 'styled-components';
-import { chain, configureChains, createClient, useNetwork, useProvider, WagmiConfig } from 'wagmi';
+import {
+	chain,
+	configureChains,
+	createClient,
+	useNetwork,
+	useProvider,
+	useSigner,
+	WagmiConfig,
+} from 'wagmi';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { publicProvider } from 'wagmi/providers/public';
 
 import Safe from 'components/Rainbowkit/Gnosis';
 import { BLAST_NETWORK_LOOKUP } from 'constants/network';
-import Connector from 'containers/Connector';
 import Layout from 'sections/shared/Layout';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import SystemStatus from 'sections/shared/SystemStatus';
@@ -63,12 +70,10 @@ const { chains, provider } = configureChains(
 					process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID
 				}`,
 			}),
-			stallTimeout: 1000,
 			priority: 0,
 		}),
 		infuraProvider({
 			infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-			stallTimeout: 1000,
 			priority: 1,
 		}),
 		publicProvider({ stallTimeout: 1000, priority: 5 }),
@@ -103,8 +108,8 @@ const wagmiClient = createClient({
 });
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {
-	const { signer } = Connector.useContainer();
 	const provider = useProvider();
+	const { data: newSigner } = useSigner();
 	const { chain: activeChain } = useNetwork();
 	const network = activeChain || undefined;
 
@@ -113,39 +118,37 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 			? (page: ReactElement) => <>{page}</>
 			: (page: ReactElement) => <AppLayout>{page}</AppLayout>;
 
+	const isReady = useMemo(() => typeof window !== 'undefined', []);
 	const currentTheme = useRecoilValue(currentThemeState);
 	const theme = useMemo(() => themes[currentTheme], [currentTheme]);
-	const isReady = useMemo(() => typeof window !== 'undefined', []);
 
 	return isReady ? (
-		<WagmiConfig client={wagmiClient}>
-			<RainbowKitProvider
-				chains={chains}
-				theme={currentTheme === 'dark' ? darkTheme() : lightTheme()}
-				initialChain={chain.optimism}
-			>
-				<ThemeProvider theme={Component.layout === undefined ? themes['dark'] : theme}>
-					<MediaContextProvider>
-						<SynthetixQueryContextProvider
-							value={
-								provider && isSupportedNetworkId(network?.id as NetworkId)
-									? createQueryContext({
-											provider,
-											signer: signer || undefined,
-											networkId: network!.id as NetworkId,
-									  })
-									: createQueryContext({ networkId: null })
-							}
-						>
-							<Layout>
-								<SystemStatus>{getLayout(<Component {...pageProps} />)}</SystemStatus>
-							</Layout>
-							<ReactQueryDevtools position="top-left" />
-						</SynthetixQueryContextProvider>
-					</MediaContextProvider>
-				</ThemeProvider>
-			</RainbowKitProvider>
-		</WagmiConfig>
+		<RainbowKitProvider
+			chains={chains}
+			theme={currentTheme === 'dark' ? darkTheme() : lightTheme()}
+			initialChain={chain.optimism}
+		>
+			<ThemeProvider theme={Component.layout === undefined ? themes['dark'] : theme}>
+				<MediaContextProvider>
+					<SynthetixQueryContextProvider
+						value={
+							provider && isSupportedNetworkId(network?.id as NetworkId)
+								? createQueryContext({
+										provider,
+										signer: newSigner || undefined,
+										networkId: network!.id as NetworkId,
+								  })
+								: createQueryContext({ networkId: null })
+						}
+					>
+						<Layout>
+							<SystemStatus>{getLayout(<Component {...pageProps} />)}</SystemStatus>
+						</Layout>
+						<ReactQueryDevtools position="top-left" />
+					</SynthetixQueryContextProvider>
+				</MediaContextProvider>
+			</ThemeProvider>
+		</RainbowKitProvider>
 	) : null;
 };
 
@@ -177,7 +180,9 @@ const App: FC<AppProps> = (props) => {
 			<RecoilRoot>
 				<QueryClientProvider client={new QueryClient()}>
 					<WithAppContainers>
-						<InnerApp {...props} />
+						<WagmiConfig client={wagmiClient}>
+							<InnerApp {...props} />
+						</WagmiConfig>
 					</WithAppContainers>
 				</QueryClientProvider>
 			</RecoilRoot>

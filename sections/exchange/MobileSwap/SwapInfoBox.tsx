@@ -3,6 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import { chain, useNetwork } from 'wagmi';
 
 import TimerIcon from 'assets/svg/app/timer.svg';
 import InfoBox from 'components/InfoBox';
@@ -11,15 +12,22 @@ import { Synths } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 import { useExchangeContext } from 'contexts/ExchangeContext';
 import { parseGasPriceObject } from 'hooks/useGas';
-import { customGasPriceState, gasSpeedState, isL2State, isMainnetState } from 'store/wallet';
+import { customGasPriceState, gasSpeedState } from 'store/wallet';
 import { formatCurrency, formatNumber, formatPercent, zeroBN } from 'utils/formatters/number';
 
 const SwapInfoBox: React.FC = () => {
 	const { t } = useTranslation();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const customGasPrice = useRecoilValue(customGasPriceState);
-	const isMainnet = useRecoilValue(isMainnetState);
-	const isL2 = useRecoilValue(isL2State);
+	const { chain: activeChain } = useNetwork();
+	const isL2 =
+		activeChain !== undefined
+			? [chain.optimism.id, chain.optimismKovan.id].includes(activeChain?.id)
+			: false;
+	const isMainnet =
+		activeChain !== undefined
+			? [chain.mainnet.id, chain.kovan.id].includes(activeChain?.id)
+			: false;
 	const { transactionFee, feeCost, exchangeFeeRate, baseFeeRate } = useExchangeContext();
 	const { useEthGasPriceQuery } = useSynthetixQueries();
 
