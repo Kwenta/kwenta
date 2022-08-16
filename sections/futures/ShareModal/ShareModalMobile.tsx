@@ -3,6 +3,7 @@ import { FC, useState, useLayoutEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import PNLGraphicPNG from 'assets/png/pnl-graphic-mobile.png';
 import BaseModal from 'components/BaseModal';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { useFuturesContext } from 'contexts/FuturesContext';
@@ -142,21 +143,22 @@ export default ShareModalMobile;
 const PNLGraphic = styled.div`
 	width: 100%;
 	height: 100%;
+	background: top/contain no-repeat url(${PNLGraphicPNG});
 `;
 
 const ModalWindow = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	// box-shadow: 0 0 0.1px ${(props) => props.theme.colors.common.primaryGold};
 	width: 80vw;
-	height: 40vh;
+	height: 56vh;
 `;
 
 const AmountContainer = styled.div`
 	display: flex;
 	font-size: 3.07vw;
 	justify-content: center;
+	padding-top: 10vh;
 `;
 
 type Color = 'green' | 'red';
