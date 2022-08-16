@@ -130,7 +130,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 										provider,
 										signer: newSigner || undefined,
 										networkId: network!.id as NetworkId,
-								})
+								  })
 								: createQueryContext({ networkId: null })
 						}
 					>
