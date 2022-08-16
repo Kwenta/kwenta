@@ -194,3 +194,7 @@ export const divideDecimal = (x: BigNumber, y: BigNumber) => {
 export const multiplyDecimal = (x: BigNumber, y: BigNumber) => {
 	return x.mul(y).div(UNIT_BIG_NUM);
 };
+
+export const weiFromWei = (ethAmount: WeiSource) => {
+	return wei(ethAmount, 18, true);
+};
