@@ -2,8 +2,8 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import { useAccount } from 'wagmi';
 
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
@@ -11,7 +11,6 @@ import { Synths } from 'constants/currency';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
-import { walletAddressState } from 'store/wallet';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 
 import FuturesPositionsTable from '../FuturesPositionsTable';
@@ -36,7 +35,8 @@ const OpenPositions: React.FC = () => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { address } = useAccount();
+	const walletAddress = address || null;
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const synthBalances =
 		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
