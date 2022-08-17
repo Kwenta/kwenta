@@ -210,9 +210,9 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 							Header: () => <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
 							accessor: 'rank',
 							Cell: (cellProps: CellProps<any>) => (
-								<StyledOrderType>{cellProps.row.original.rank}</StyledOrderType>
+								<StyledOrderType>{cellProps.row.original.rankText}</StyledOrderType>
 							),
-							width: 45,
+							width: 60,
 						},
 						{
 							Header: () => <TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>,
