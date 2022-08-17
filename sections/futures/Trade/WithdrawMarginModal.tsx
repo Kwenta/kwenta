@@ -15,7 +15,7 @@ import { currentMarketState, positionState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { formatCurrency } from 'utils/formatters/number';
-import { newGetTransactionPrice } from 'utils/network';
+import { getTransactionPrice } from 'utils/network';
 
 import {
 	StyledBaseModal,
@@ -82,7 +82,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 
 	const transactionFee = React.useMemo(
 		() =>
-			newGetTransactionPrice(
+			getTransactionPrice(
 				gasPrice,
 				withdrawTxn.gasLimit,
 				ethPriceRate,
