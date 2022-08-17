@@ -45,7 +45,13 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 				FuturesMarketData.globals(),
 			]);
 
-			const assetKeys = markets.map((m: any) => {
+			// filter to markets enabled by the config
+			const enabledMarkets = markets.filter((m: any) => {
+				const asset = utils.parseBytes32String(m.asset) as FuturesMarketAsset;
+				return !!MarketKeyByAsset[asset];
+			});
+
+			const assetKeys = enabledMarkets.map((m: any) => {
 				const asset = utils.parseBytes32String(m.asset) as FuturesMarketAsset;
 				return utils.formatBytes32String(MarketKeyByAsset[asset]);
 			});
@@ -66,7 +72,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 				systemStatusPromise,
 			]);
 
-			const futuresMarkets = markets.map(
+			const futuresMarkets = enabledMarkets.map(
 				(
 					{
 						market,
