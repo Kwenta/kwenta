@@ -129,7 +129,7 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 				components={{ IndicatorSeparator, DropdownIndicator }}
 				isSearchable={false}
 				data-testid="wallet-btn"
-				noOutline
+				variant="flat"
 			/>
 		</Container>
 	);

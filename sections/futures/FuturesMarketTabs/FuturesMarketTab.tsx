@@ -11,10 +11,11 @@ import Currency from 'components/Currency';
 import Table from 'components/Table';
 import { Synths } from 'constants/currency';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
-import ROUTES from 'constants/routes';
+import ROUTES, { setLastVisited } from 'constants/routes';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
+import { FuturesAccountType } from 'queries/futures/types';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
-import { futuresMarketsState } from 'store/futures';
+import { futuresAccountTypeState, futuresMarketsState } from 'store/futures';
 import { FlexDivCol } from 'styles/common';
 import { FuturesMarketAsset, isEurForex, MarketKeyByAsset } from 'utils/futures';
 
@@ -23,15 +24,12 @@ enum TableColumnAccessor {
 	DailyVolume = 'dailyVolume',
 }
 
-function setLastVisited(baseCurrencyPair: string): void {
-	localStorage.setItem('lastVisited', ROUTES.Markets.MarketPair(baseCurrencyPair));
-}
-
 const FuturesMarketsTable: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	const accountType = useRecoilValue(futuresAccountTypeState);
 
 	const synthList = futuresMarkets.map(({ asset }) => asset);
 	const dailyPriceChangesQuery = useLaggedDailyPrice(synthList);
@@ -64,8 +62,8 @@ const FuturesMarketsTable: FC = () => {
 				data={data}
 				showPagination
 				onTableRowClick={(row) => {
-					router.push(ROUTES.Markets.MarketPair(row.original.asset));
-					setLastVisited(row.original.asset);
+					router.push(ROUTES.Markets.MarketPair(row.original.asset, accountType));
+					setLastVisited(row.original.asset, accountType);
 				}}
 				highlightRowsOnHover
 				sortBy={[{ id: 'dailyVolume', desc: true }]}

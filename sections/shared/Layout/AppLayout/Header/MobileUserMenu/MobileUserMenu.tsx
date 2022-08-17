@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import CloseIcon from 'assets/svg/app/close.svg';
 import MenuIcon from 'assets/svg/app/menu.svg';
 import Button from 'components/Button';
+import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import { FixedFooterMixin } from 'styles/common';
 
@@ -45,7 +46,7 @@ const MobileUserMenu: FC = () => {
 				<MobileFooterSeparator />
 				<MobileFooterRight>
 					{window.location.pathname === ROUTES.Home.Root ? (
-						<Link href={ROUTES.Markets.Home}>
+						<Link href={ROUTES.Markets.Home(DEFAULT_FUTURES_MARGIN_TYPE)}>
 							<Button isRounded={false} size="sm">
 								{t('homepage.nav.start-trade')}
 							</Button>

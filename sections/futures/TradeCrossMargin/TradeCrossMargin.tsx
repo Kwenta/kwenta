@@ -1,6 +1,8 @@
 import { wei } from '@synthetixio/wei';
 import { debounce } from 'lodash';
+import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
@@ -26,15 +28,18 @@ import ManagePosition from '../Trade/ManagePosition';
 import MarketsDropdown from '../Trade/MarketsDropdown';
 import FeesBox from './CrossMarginFeesBox';
 import MarginInfoBox from './MarginInfoBox';
+import ErrorView from 'components/Error';
+import ROUTES from 'constants/routes';
 
 export default function TradeCrossMargin() {
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const freeMargin = useRecoilValue(crossMarginAvailableMarginState);
 	const position = useRecoilValue(positionState);
 	const leverage = useRecoilValue(crossMarginLeverageState);
-	const { crossMarginAddress } = useRecoilValue(futuresAccountState);
+	const { crossMarginAddress, crossMarginAvailable } = useRecoilValue(futuresAccountState);
 	const walletAddress = useRecoilValue(walletAddressState);
 
+	const { t } = useTranslation();
 	const { onTradeAmountSUSDChange } = useFuturesContext();
 
 	const currentMargin = (position?.remainingMargin || zeroBN).toNumber();
@@ -71,13 +76,20 @@ export default function TradeCrossMargin() {
 		<>
 			<CrossMarginOnboard onClose={() => setShowOnboard(false)} isOpen={showOnboard} />
 			{!walletAddress ? (
-				<ConnectWallet>Connect your wallet to start trading</ConnectWallet>
+				<MessageContainer>{t('futures.market.trade.cross-margin.connect-wallet')}</MessageContainer>
+			) : !crossMarginAvailable ? (
+				<MessageContainer>
+					{t('futures.market.trade.cross-margin.unsupported')}{' '}
+					<IsolatedLink>
+						<Link href={ROUTES.Markets.Home('isolated_margin')}>Switch to isolated margin</Link>
+					</IsolatedLink>
+				</MessageContainer>
 			) : !crossMarginAddress ? (
 				<CreateAccountContainer>
 					<CrossMarginIcon height="21px" width="30px" />
-					<Title>Cross Margin FAQ's</Title>
-					<CreateAccountButton onClick={() => setShowOnboard(true)}>
-						Create Account
+					<Title>{t('futures.market.trade.cross-margin.title')}</Title>
+					<CreateAccountButton variant="flat" onClick={() => setShowOnboard(true)}>
+						{t('futures.market.trade.cross-margin.create-account')}
 					</CreateAccountButton>
 				</CreateAccountContainer>
 			) : (
@@ -131,13 +143,19 @@ const Title = styled.div`
 
 const CreateAccountButton = styled(Button)`
 	color: ${(props) => props.theme.colors.selectedTheme.yellow};
-	font-size: 11px;
-	padding: 12px 14px;
+	font-size: 12px;
+	padding: 8px 11px;
 	width: 120px;
 	margin-top: 14px;
+	border-radius: 30px;
 `;
 
-const ConnectWallet = styled(BorderedPanel)`
+const MessageContainer = styled(BorderedPanel)`
 	text-align: center;
 	padding: 20px;
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
+`;
+
+const IsolatedLink = styled.div`
+	margin-top: 12px;
 `;

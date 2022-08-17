@@ -8,13 +8,13 @@ import styled, { css } from 'styled-components';
 
 import Select from 'components/Select';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
-import ROUTES from 'constants/routes';
+import ROUTES, { setLastVisited } from 'constants/routes';
 import Connector from 'containers/Connector';
 import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { Price, Rates } from 'queries/rates/types';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
-import { currentMarketState, futuresMarketsState } from 'store/futures';
+import { currentMarketState, futuresAccountTypeState, futuresMarketsState } from 'store/futures';
 import { assetToSynth, iStandardSynth } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import {
@@ -28,10 +28,6 @@ import {
 import MarketsDropdownIndicator from './MarketsDropdownIndicator';
 import MarketsDropdownOption from './MarketsDropdownOption';
 import MarketsDropdownSingleValue from './MarketsDropdownSingleValue';
-
-function setLastVisited(baseCurrencyPair: string): void {
-	localStorage.setItem('lastVisited', ROUTES.Markets.MarketPair(baseCurrencyPair));
-}
 
 export type MarketsCurrencyOption = {
 	value: FuturesMarketAsset;
@@ -66,6 +62,9 @@ type MarketsDropdownProps = {
 
 const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	const asset = useRecoilValue(currentMarketState);
+	const accountType = useRecoilValue(futuresAccountTypeState);
+
 	const markets = futuresMarkets.map(({ asset }) => MarketKeyByAsset[asset]);
 
 	const dailyPriceChangesQuery = useLaggedDailyPrice(markets);
@@ -73,8 +72,6 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const dailyPriceChanges = React.useMemo(() => dailyPriceChangesQuery?.data ?? [], [
 		dailyPriceChangesQuery,
 	]);
-
-	const asset = useRecoilValue(currentMarketState);
 
 	const { isFuturesMarketClosed, futuresClosureReason } = useFuturesMarketClosed(
 		MarketKeyByAsset[asset]
@@ -162,8 +159,8 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				onChange={(x) => {
 					// Types are not perfect from react-select, this should always be true (just helping typescript)
 					if (x && 'value' in x) {
-						router.push(ROUTES.Markets.MarketPair(x.value));
-						setLastVisited(x.value);
+						router.push(ROUTES.Markets.MarketPair(x.value, accountType));
+						setLastVisited(x.value, accountType);
 					}
 				}}
 				value={assetToCurrencyOption({
@@ -194,6 +191,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				})}
 				options={options}
 				isSearchable={false}
+				variant="gradient"
 				components={{
 					SingleValue: MarketsDropdownSingleValue,
 					Option: MarketsDropdownOption,

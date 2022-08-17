@@ -7,9 +7,12 @@ import Button from 'components/Button';
 import ROUTES from 'constants/routes';
 import { FlexDivColCentered, Paragraph, SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media from 'styles/media';
+import { futuresAccountTypeState } from 'store/futures';
+import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 
 const TradeNow = () => {
 	const { t } = useTranslation();
+	const [accountType] = usePersistedRecoilState(futuresAccountTypeState);
 
 	const title = (
 		<TransparentCard>
@@ -17,7 +20,7 @@ const TradeNow = () => {
 			<BigWhiteHeader>{t('homepage.tradenow.description')}</BigWhiteHeader>
 			<GrayDescription>{t('homepage.tradenow.categories')}</GrayDescription>
 			<CTAContainer>
-				<Link href={ROUTES.Markets.Home}>
+				<Link href={ROUTES.Markets.Home(accountType)}>
 					<Button variant="primary" isRounded={false} size="md">
 						{t('homepage.nav.trade-now')}
 					</Button>

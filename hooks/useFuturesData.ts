@@ -40,6 +40,7 @@ import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
 import useCrossMarginAccountContracts from './useCrossMarginContracts';
+import usePersistedRecoilState from './usePersistedRecoilState';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
@@ -74,7 +75,9 @@ const useFuturesData = () => {
 	const crossMarginLeverage = useRecoilValue(crossMarginLeverageState);
 	const maxLeverage = useRecoilValue(maxLeverageState);
 	const { tradeFee: crossMarginTradeFee } = useRecoilValue(crossMarginSettingsState);
-
+	const [selectedAccountType, setSelectedAccountType] = usePersistedRecoilState(
+		futuresAccountTypeState
+	);
 	const { selectedFuturesAddress, crossMarginAvailable } = useRecoilValue(futuresAccountState);
 
 	// TODO: default based on selected chain
@@ -83,7 +86,6 @@ const useFuturesData = () => {
 
 	const [dynamicFee, setDynamicFee] = useState<Wei | null>(null);
 	const [error, setError] = useState<string | null>(null);
-	const [selectedAccountType, setSelectedAccountType] = useRecoilState(futuresAccountTypeState);
 
 	const crossMarginAccount = crossMarginAvailable
 		? { freeMargin: crossMarginAccountOverview.data?.freeMargin }

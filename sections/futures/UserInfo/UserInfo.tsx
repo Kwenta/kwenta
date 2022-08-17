@@ -23,6 +23,7 @@ import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
 import {
 	currentMarketState,
 	futuresAccountState,
+	futuresAccountTypeState,
 	openOrdersState,
 	positionState,
 } from 'store/futures';
@@ -51,6 +52,7 @@ const UserInfo: React.FC = () => {
 	const position = useRecoilValue(positionState);
 	const marketAsset = useRecoilValue(currentMarketState);
 	const openOrders = useRecoilValue(openOrdersState);
+	const accountType = useRecoilValue(futuresAccountTypeState);
 
 	const futuresPositionQuery = useGetFuturesPositionForAccount();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -112,7 +114,9 @@ const UserInfo: React.FC = () => {
 				active: activeTab === FuturesTab.POSITION,
 				icon: <PositionIcon />,
 				onClick: () =>
-					router.push(ROUTES.Markets.Position(marketAsset), undefined, { scroll: false }),
+					router.push(ROUTES.Markets.Position(marketAsset, accountType), undefined, {
+						scroll: false,
+					}),
 			},
 			{
 				name: FuturesTab.ORDERS,
@@ -121,7 +125,9 @@ const UserInfo: React.FC = () => {
 				active: activeTab === FuturesTab.ORDERS,
 				icon: <OpenPositionsIcon />,
 				onClick: () =>
-					router.push(ROUTES.Markets.Orders(marketAsset), undefined, { scroll: false }),
+					router.push(ROUTES.Markets.Orders(marketAsset, accountType), undefined, {
+						scroll: false,
+					}),
 			},
 			{
 				name: FuturesTab.TRADES,
@@ -130,7 +136,9 @@ const UserInfo: React.FC = () => {
 				active: activeTab === FuturesTab.TRADES,
 				icon: <OrderHistoryIcon />,
 				onClick: () =>
-					router.push(ROUTES.Markets.Trades(marketAsset), undefined, { scroll: false }),
+					router.push(ROUTES.Markets.Trades(marketAsset, accountType), undefined, {
+						scroll: false,
+					}),
 			},
 			{
 				name: FuturesTab.TRANSFERS,
@@ -140,7 +148,9 @@ const UserInfo: React.FC = () => {
 				active: activeTab === FuturesTab.TRANSFERS,
 				icon: <TransfersIcon />,
 				onClick: () =>
-					router.push(ROUTES.Markets.Transfers(marketAsset), undefined, { scroll: false }),
+					router.push(ROUTES.Markets.Transfers(marketAsset, accountType), undefined, {
+						scroll: false,
+					}),
 			},
 		],
 		[activeTab, router, marketAsset, openOrders?.length]

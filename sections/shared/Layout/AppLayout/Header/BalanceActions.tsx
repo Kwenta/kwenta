@@ -148,7 +148,7 @@ const BalanceActions: FC = () => {
 						IndicatorSeparator: () => null,
 					}}
 					isSearchable={false}
-					noOutline
+					variant="flat"
 				></BalanceSelect>
 			)}
 		</Container>

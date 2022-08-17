@@ -54,7 +54,7 @@ export default function DepositWithdrawCrossMargin({
 
 	const submitDeposit = useCallback(async () => {
 		try {
-			if (!crossMarginAccountContract) throw new Error('No cross margin account');
+			if (!crossMarginAccountContract) throw new Error('No cross-margin account');
 
 			setTxState('submitting');
 			const tx = await crossMarginAccountContract.deposit(wei(amount).toBN());
@@ -83,9 +83,10 @@ export default function DepositWithdrawCrossMargin({
 
 	const depositMargin = useCallback(async () => {
 		try {
-			if (!crossMarginAccountContract) throw new Error('No cross margin account');
-			const weiAmount = wei(amount ?? 0, 18);
 			const wallet = await signer?.getAddress();
+
+			if (!crossMarginAccountContract || !wallet) throw new Error('No cross margin account');
+			const weiAmount = wei(amount ?? 0, 18);
 			const allowance = await susdContract?.allowance(wallet, crossMarginAccountContract.address);
 
 			if (wei(allowance).lt(weiAmount)) {
@@ -94,12 +95,14 @@ export default function DepositWithdrawCrossMargin({
 					crossMarginAccountContract.address,
 					constants.MaxUint256
 				);
-				monitorTransaction({
-					txHash: tx.hash,
-					onTxConfirmed: () => {
-						submitDeposit();
-					},
-				});
+				if (tx?.hash) {
+					monitorTransaction({
+						txHash: tx.hash,
+						onTxConfirmed: () => {
+							submitDeposit();
+						},
+					});
+				}
 			} else {
 				submitDeposit();
 			}
@@ -112,7 +115,7 @@ export default function DepositWithdrawCrossMargin({
 
 	const withdrawMargin = useCallback(async () => {
 		try {
-			if (!crossMarginAccountContract) throw new Error('No cross margin account');
+			if (!crossMarginAccountContract) throw new Error('No cross-margin account');
 			setTxState('submitting');
 			const tx = await crossMarginAccountContract.withdraw(wei(amount).toBN());
 			monitorTransaction({

@@ -27,7 +27,7 @@ const MobileWalletButton: React.FC<MobileWalletButtonProps> = ({ toggleModal, cl
 	const walletIsNotConnected = (
 		<ConnectButton
 			size="sm"
-			variant="outline"
+			variant="flat"
 			noOutline
 			onClick={() => {
 				closeModal();
@@ -44,7 +44,7 @@ const MobileWalletButton: React.FC<MobileWalletButtonProps> = ({ toggleModal, cl
 	const walletIsConnectedButNotSupported = (
 		<ConnectButton
 			size="sm"
-			variant="outline"
+			variant="flat"
 			data-testid="unsupported-network"
 			mono
 			onClick={switchToL2}

@@ -19,7 +19,12 @@ import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { PositionHistory } from 'queries/futures/types';
-import { currentMarketState, futuresMarketsState, positionsState } from 'store/futures';
+import {
+	currentMarketState,
+	futuresAccountTypeState,
+	futuresMarketsState,
+	positionsState,
+} from 'store/futures';
 import { isL2State } from 'store/wallet';
 import { formatNumber } from 'utils/formatters/number';
 import {
@@ -49,6 +54,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	const futuresPositions = useRecoilValue(positionsState);
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 	const currentMarket = useRecoilValue(currentMarketState);
+	const accountType = useRecoilValue(futuresAccountTypeState);
 
 	let data = useMemo(() => {
 		const activePositions = futuresPositions?.filter((position) => position?.position) ?? [];
@@ -113,7 +119,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									{!showCurrentMarket ? (
 										t('dashboard.overview.futures-positions-table.no-result')
 									) : (
-										<Link href={ROUTES.Markets.Home}>
+										<Link href={ROUTES.Markets.Home(accountType)}>
 											<div>{t('common.perp-cta')}</div>
 										</Link>
 									)}
@@ -288,7 +294,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				<div style={{ margin: '0 15px' }}>
 					{data.length === 0 ? (
 						<NoPositionsText>
-							<Link href={ROUTES.Markets.Home}>
+							<Link href={ROUTES.Markets.Home(accountType)}>
 								<div>{t('common.perp-cta')}</div>
 							</Link>
 						</NoPositionsText>

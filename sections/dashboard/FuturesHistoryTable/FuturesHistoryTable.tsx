@@ -20,7 +20,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetAllFuturesTradesForAccount from 'queries/futures/useGetAllFuturesTradesForAccount';
 import { TradeStatus } from 'sections/futures/types';
-import { futuresAccountState } from 'store/futures';
+import { futuresAccountState, futuresAccountTypeState } from 'store/futures';
 import { isL2State } from 'store/wallet';
 import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
@@ -29,6 +29,8 @@ import TimeDisplay from '../../futures/Trades/TimeDisplay';
 
 const FuturesHistoryTable: FC = () => {
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
+	const accountType = useRecoilValue(futuresAccountTypeState);
+
 	const { t } = useTranslation();
 	const isL2 = useRecoilValue(isL2State);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
@@ -78,7 +80,7 @@ const FuturesHistoryTable: FC = () => {
 					) : (
 						<TableNoResults>
 							{t('dashboard.history.futures-history-table.no-result')}
-							<Link href={ROUTES.Markets.Home}>
+							<Link href={ROUTES.Markets.Home(accountType)}>
 								<div>{t('common.perp-cta')}</div>
 							</Link>
 						</TableNoResults>

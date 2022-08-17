@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import { FC, FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StylesConfig } from 'react-select';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import LabelContainer from 'components/Nav/DropDownLabel';
@@ -11,8 +10,7 @@ import Select from 'components/Select';
 import { DropdownIndicator, IndicatorSeparator } from 'components/Select/Select';
 import { linkCSS } from 'styles/common';
 
-import { NAV_SUB_MENUS } from '../constants';
-import { menuLinksState } from '../states';
+import { MENU_LINKS } from '../constants';
 
 type ReactSelectOptionProps = {
 	label: string;
@@ -26,8 +24,6 @@ type ReactSelectOptionProps = {
 const Nav: FC = () => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
-
-	const menuLinks = useRecoilValue(menuLinksState);
 
 	function getLastVisited(): string | null | undefined {
 		if (typeof window !== 'undefined') {
@@ -50,18 +46,10 @@ const Nav: FC = () => {
 		}
 	}
 
-	const styles: StylesConfig = {
-		dropdownIndicator: () => ({
-			display: 'none',
-		}),
-		singleValue: () => ({}),
-		control: () => ({}),
-	};
-
 	const formatOptionLabel = ({ label, Icon, link, isActive, onClick }: ReactSelectOptionProps) => {
 		if (label === 'header.nav.markets')
 			return (
-				<MenuInside isActive={isActive} onClick={onClick}>
+				<MenuInside isDropDown isActive={isActive} onClick={onClick}>
 					{t(label)}
 				</MenuInside>
 			);
@@ -78,12 +66,11 @@ const Nav: FC = () => {
 	return (
 		<nav>
 			<MenuLinks>
-				{menuLinks.map(({ i18nLabel, link }) => {
+				{MENU_LINKS.map(({ i18nLabel, link, links }) => {
 					const routeBase = asPath.split('/')[1];
 					const linkBase = link.split('/')[1];
 					const isActive = routeBase === linkBase;
-					const subLinks = NAV_SUB_MENUS[link];
-					if (!subLinks) {
+					if (!links) {
 						return (
 							<div key={getLink(link)}>
 								<Link href={getLink(link)}>
@@ -93,21 +80,20 @@ const Nav: FC = () => {
 						);
 					}
 
-					const options = subLinks.map((l) => {
+					const options = links.map((l) => {
 						return { label: l.i18nLabel, Icon: l.Icon, link: l.link, onClick: () => {} };
 					});
 
 					return (
 						<DropDownSelect
+							variant="transparent"
 							formatOptionLabel={formatOptionLabel}
-							customStyles={styles}
-							controlHeight={41}
+							controlHeight={34}
 							options={options}
 							value={{ label: i18nLabel, isActive }}
 							menuWidth={240}
 							components={{ IndicatorSeparator, DropdownIndicator }}
 							isSearchable={false}
-							noOutline
 						/>
 					);
 				})}
@@ -125,9 +111,9 @@ const NavLabel = styled.div`
 	font-size: 15px;
 `;
 
-const MenuInside = styled.div<{ isActive: boolean }>`
+const MenuInside = styled.div<{ isActive: boolean; isDropDown?: boolean }>`
 	${linkCSS};
-	padding: 8px 13px;
+	padding: 8px ${(props) => (props.isDropDown ? '0px' : '13px')};
 	margin-right: 2px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 15px;
@@ -140,13 +126,15 @@ const MenuInside = styled.div<{ isActive: boolean }>`
 			? props.theme.colors.selectedTheme.button.text
 			: props.theme.colors.selectedTheme.gray};
 	&:hover {
-		background: ${(props) => props.theme.colors.selectedTheme.button.fill};
+		background: ${(props) =>
+			!props.isDropDown ? props.theme.colors.selectedTheme.button.fill : 'transparent'};
 	}
 `;
 
 const DropDownSelect = styled(Select)`
 	.react-select__control {
 		padding: 0;
+		width: 92px;
 	}
 
 	.react-select__group {
@@ -159,6 +147,11 @@ const DropDownSelect = styled(Select)`
 			margin-bottom: 15px;
 			text-transform: none;
 		}
+	}
+
+	.react-select__dropdown-indicator {
+		margin-right: 5px;
+		padding: 0;
 	}
 
 	.react-select__value-container {

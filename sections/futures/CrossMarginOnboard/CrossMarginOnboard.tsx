@@ -108,7 +108,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 	const submitDeposit = useCallback(
 		async (weiAmount: string) => {
 			try {
-				if (!crossMarginAccountContract) throw new Error('No cross margin account');
+				if (!crossMarginAccountContract) throw new Error('No cross-margin account');
 				setSubmitting('deposit');
 				const tx = await crossMarginAccountContract.deposit(weiAmount);
 				monitorTransaction({
@@ -189,7 +189,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 
 	const renderContent = () => {
 		if (futuresAccount && !futuresAccount.crossMarginAvailable) {
-			return <ErrorView message="Cross margin is not supported on this network" />;
+			return <ErrorView message={t('futures.modals.onboard.unsupported-network')} />;
 		}
 		if (!futuresAccount || !futuresAccount.ready) {
 			return <Loader />;

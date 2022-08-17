@@ -14,7 +14,6 @@ const ProgressSteps: FC<Props> = ({ step, totalSteps, complete }) => {
 			<Container>
 				{stepList.map((_, i) => {
 					const relStep = step - 1;
-					console.log('render circle', i, relStep);
 					return (
 						<Circle
 							status={complete || i < relStep ? 'complete' : relStep === i ? 'current' : 'pending'}
@@ -64,10 +63,9 @@ const Circle = styled.div<{ status: 'current' | 'complete' | 'pending' }>`
 	border-radius: ${CIRCLE_HEIGHT / 2}px;
 	border: 3px solid ${({ theme }) => theme.colors.selectedTheme.gray2};
 	background-color: ${({ theme, status }) => {
-		console.log('status', status);
 		switch (status) {
 			case 'pending':
-				return theme.colors.selectedTheme.modal.background;
+				return theme.colors.selectedTheme.background;
 			case 'complete':
 				return theme.colors.selectedTheme.green;
 			case 'current':

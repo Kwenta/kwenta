@@ -2,7 +2,7 @@ import Wei, { wei } from '@synthetixio/wei';
 import { atom, selector } from 'recoil';
 
 import { Synths } from 'constants/currency';
-import { DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
+import { DEFAULT_FUTURES_MARGIN_TYPE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import {
 	FuturesAccountState,
 	FuturesAccountType,
@@ -205,7 +205,7 @@ export const futuresAccountState = atom<FuturesAccountState>({
 
 export const futuresAccountTypeState = atom<FuturesAccountType>({
 	key: getFuturesKey('futuresAccountType'),
-	default: 'cross_margin',
+	default: DEFAULT_FUTURES_MARGIN_TYPE,
 });
 
 export const crossMarginAvailableMarginState = atom<Wei>({

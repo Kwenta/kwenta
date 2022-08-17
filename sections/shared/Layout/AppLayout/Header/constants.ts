@@ -1,11 +1,21 @@
+import { FunctionComponent } from 'react';
+
 import CrossMarginIcon from 'assets/svg/futures/cross-margin-icon.svg';
 import IsolatedMarginIcon from 'assets/svg/futures/isolated-margin-icon.svg';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES, { formatUrl } from 'constants/routes';
+import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
+
+type SubMenuLink = {
+	i18nLabel: string;
+	link: string;
+	Icon?: FunctionComponent<any>;
+};
 
 export type MenuLink = {
 	i18nLabel: string;
 	link: string;
+	links?: SubMenuLink[];
 };
 
 export type MenuLinks = MenuLink[];
@@ -17,7 +27,19 @@ export const MENU_LINKS: MenuLinks = [
 	},
 	{
 		i18nLabel: 'header.nav.markets',
-		link: ROUTES.Markets.Home,
+		link: ROUTES.Markets.Home(DEFAULT_FUTURES_MARGIN_TYPE),
+		links: [
+			{
+				link: ROUTES.Markets.Home('isolated_margin'),
+				i18nLabel: 'header.nav.isolated-margin',
+				Icon: IsolatedMarginIcon,
+			},
+			{
+				link: ROUTES.Markets.Home('cross_margin'),
+				i18nLabel: 'header.nav.cross-margin',
+				Icon: CrossMarginIcon,
+			},
+		],
 	},
 	{
 		i18nLabel: 'header.nav.exchange',
@@ -33,25 +55,10 @@ export const MENU_LINKS: MenuLinks = [
 	// },
 ];
 
-export const NAV_SUB_MENUS = {
-	[ROUTES.Markets.Home]: [
-		{
-			link: formatUrl(ROUTES.Markets.Home, { accountType: 'isolated_margin' }),
-			i18nLabel: 'header.nav.isolated-margin',
-			Icon: IsolatedMarginIcon,
-		},
-		{
-			link: formatUrl(ROUTES.Markets.Home, { accountType: 'cross_margin' }),
-			i18nLabel: 'header.nav.cross-margin',
-			Icon: CrossMarginIcon,
-		},
-	],
-};
-
 export const HOMEPAGE_MENU_LINKS: MenuLinks = [
 	{
 		i18nLabel: 'homepage.nav.markets',
-		link: ROUTES.Markets.Home,
+		link: ROUTES.Markets.Home('cross_margin'),
 	},
 	{
 		i18nLabel: 'homepage.nav.governance.title',

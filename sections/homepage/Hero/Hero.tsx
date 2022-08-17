@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import MarketOrderPreview from 'assets/png/marketing/market-order-preview.png';
@@ -9,6 +10,8 @@ import Button from 'components/Button';
 import PoweredBySynthetix from 'components/PoweredBySynthetix';
 import Webp from 'components/Webp';
 import ROUTES from 'constants/routes';
+import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
+import { futuresAccountTypeState } from 'store/futures';
 import { FlexDivColCentered, GridDiv, Paragraph } from 'styles/common';
 import media from 'styles/media';
 
@@ -16,6 +19,7 @@ import { StackSection } from '../common';
 
 const Hero = () => {
 	const { t } = useTranslation();
+	const [accountType] = usePersistedRecoilState(futuresAccountTypeState);
 
 	return (
 		<StackSection>
@@ -31,7 +35,7 @@ const Hero = () => {
 					<PoweredBySynthetix />
 				</SynthetixContainer>
 				<CTAContainer>
-					<Link href={ROUTES.Markets.Home}>
+					<Link href={ROUTES.Markets.Home(accountType)}>
 						<Button variant="primary" isRounded={false} size="md">
 							{t('homepage.nav.trade-now')}
 						</Button>

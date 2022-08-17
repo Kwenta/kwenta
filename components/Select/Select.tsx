@@ -1,4 +1,3 @@
-import { merge } from 'lodash';
 import React, { FC, useContext, useMemo } from 'react';
 import ReactSelect, { Props, StylesConfig, components } from 'react-select';
 import styled, { ThemeContext } from 'styled-components';
@@ -20,7 +19,7 @@ const StyledCaretDownIcon = styled(CaretDownIcon)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
-function Select<T>(props: Props<T>) {
+function Select<T>({ variant, ...props }: Props<T>) {
 	const { colors, fonts } = useContext(ThemeContext);
 
 	const computedStyles = useMemo(() => {
@@ -42,17 +41,18 @@ function Select<T>(props: Props<T>) {
 				...provided,
 				color: colors.selectedTheme.button.text,
 				cursor: 'pointer',
-				boxShadow: props.noOutline ? 'none' : colors.selectedTheme.button.shadow,
-				border: props.noOutline ? colors.selectedTheme.border : 'none',
+				boxShadow: variant === 'gradient' ? colors.selectedTheme.button.shadow : 'none',
+				border: variant === 'flat' ? colors.selectedTheme.border : 'none',
 				outline: 'none',
 				minHeight: 'unset',
 				height: state.selectProps.controlHeight ?? 'unset',
 				'&:hover': {
-					background: props.noOutline
-						? colors.selectedTheme.button.fillHover
-						: colors.selectedTheme.button.hover,
+					background:
+						variant === 'flat' || variant === 'transparent'
+							? colors.selectedTheme.button.fillHover
+							: colors.selectedTheme.button.hover,
 				},
-				'&::before': !props.noOutline && {
+				'&::before': variant === 'gradient' && {
 					content: '""',
 					position: 'absolute',
 					top: 0,
@@ -69,10 +69,13 @@ function Select<T>(props: Props<T>) {
 					maskComposite: 'exclude',
 				},
 				fontSize: '12px',
-				background: props.noOutline
-					? colors.selectedTheme.button.fill
-					: colors.selectedTheme.button.background,
-				borderRadius: 10,
+				background:
+					variant === 'transparent'
+						? 'none'
+						: variant === 'flat'
+						? colors.selectedTheme.button.fill
+						: colors.selectedTheme.button.background,
+				borderRadius: variant === 'transparent' ? 30 : 10,
 			}),
 			menu: (provided, state) => ({
 				...provided,
@@ -138,11 +141,9 @@ function Select<T>(props: Props<T>) {
 		return styles;
 	}, [colors, fonts, props]);
 
-	const styles = merge(computedStyles, props.customStyles);
-
 	return (
 		<ReactSelect
-			styles={styles}
+			styles={computedStyles}
 			classNamePrefix="react-select"
 			{...props}
 			components={{ IndicatorSeparator, ...props.components }}

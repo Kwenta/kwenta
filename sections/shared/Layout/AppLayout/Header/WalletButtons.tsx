@@ -35,7 +35,7 @@ const WalletButtons: React.FC = () => {
 		<>
 			<ConnectButton
 				size="sm"
-				variant="outline"
+				variant="flat"
 				noOutline
 				onClick={connectWallet}
 				data-testid="connect-wallet"
@@ -52,7 +52,7 @@ const WalletButtons: React.FC = () => {
 			<SwitchToL2Button variant="secondary" onClick={switchToL2}>
 				{t('homepage.l2.cta-buttons.switch-l2')}
 			</SwitchToL2Button>
-			<ConnectButton size="sm" variant="outline" data-testid="unsupported-network" mono>
+			<ConnectButton size="sm" variant="flat" data-testid="unsupported-network" mono>
 				<StyledConnectionDot />
 				{t('common.wallet.unsupported-network')}
 			</ConnectButton>
