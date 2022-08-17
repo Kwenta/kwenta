@@ -8,6 +8,7 @@ import { chain, useNetwork } from 'wagmi';
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import LinkIcon from 'assets/svg/app/link-blue.svg';
 import SwitchIcon from 'assets/svg/app/switch.svg';
+import EthereumIcon from 'assets/svg/providers/ethereum.svg';
 import OptimismIcon from 'assets/svg/providers/optimism.svg';
 import Button from 'components/Button';
 import Select from 'components/Select';
@@ -91,6 +92,9 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 	return !isL2 ? (
 		<Container onClick={openChainModal}>
 			<StyledButton noOutline size="sm">
+				<PrefixIcon>
+					<EthereumIcon width={20} height={14} />
+				</PrefixIcon>
 				{activeChain?.name}
 			</StyledButton>
 		</Container>
@@ -121,6 +125,9 @@ const StyledButton = styled(Button)`
 	font-size: 13px;
 	min-width: 0px;
 	font-family: ${(props) => props.theme.fonts.mono};
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 `;
 
 const L2Select = styled(Select)`

@@ -12,6 +12,7 @@ import { Synths } from 'constants/currency';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
+import useSynthBalances from 'queries/synths/useSynthBalances';
 import { balancesState, positionsState } from 'store/futures';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
@@ -31,10 +32,11 @@ const BalanceActions: FC = () => {
 	const router = useRouter();
 
 	useQueryCrossMarginAccount();
-
-	const synthBalances = useRecoilValue(balancesState);
+	useSynthBalances();
 	useGetFuturesMarkets();
 	useGetFuturesPositionForMarkets();
+
+	const synthBalances = useRecoilValue(balancesState);
 	const futuresPositions = useRecoilValue(positionsState);
 	const sUSDBalance = synthBalances?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
 

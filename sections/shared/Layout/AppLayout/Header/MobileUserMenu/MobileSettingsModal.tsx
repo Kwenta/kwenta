@@ -5,10 +5,10 @@ import styled, { css } from 'styled-components';
 import { Language } from 'translations/constants';
 import { useDisconnect } from 'wagmi';
 
-import MobileAccountInfoIcon from 'assets/svg/app/mobile-account-info.svg';
+import MobileAccountIcon from 'assets/svg/app/account-info.svg';
 import MobileMenuBridgeIcon from 'assets/svg/app/mobile-menu-bridge.svg';
 import MobileMenuDisconnectIcon from 'assets/svg/app/mobile-menu-disconnect.svg';
-import MobileSwitchToL1Icon from 'assets/svg/app/mobile-switch-to-l1.svg';
+import MobileSwitchIcon from 'assets/svg/app/switch.svg';
 import FullScreenModal from 'components/FullScreenModal';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
@@ -69,7 +69,7 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 									options={[
 										{
 											label: t('mobile-menu.account-info'),
-											icon: <MobileAccountInfoIcon />,
+											icon: <MobileAccountIcon />,
 											onClick: openAccountModal,
 										},
 										{
@@ -90,7 +90,7 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 									options={[
 										{
 											label: t('mobile-menu.switch-network'),
-											icon: <MobileSwitchToL1Icon />,
+											icon: <MobileSwitchIcon />,
 											onClick: openChainModal,
 										},
 										{

@@ -5,9 +5,9 @@ import { components } from 'react-select';
 import styled, { css, useTheme } from 'styled-components';
 import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from 'wagmi';
 
+import AccountIcon from 'assets/svg/app/account-info.svg';
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import DisconnectIcon from 'assets/svg/app/disconnect.svg';
-import LinkIcon from 'assets/svg/app/link-blue.svg';
 import Select from 'components/Select';
 import { IndicatorSeparator } from 'components/Select/Select';
 import Connector from 'containers/Connector';
@@ -46,7 +46,7 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 		let options = [
 			{
 				label: 'common.wallet.account-info',
-				postfixIcon: 'Link',
+				postfixIcon: 'Account',
 				onClick: openAccountModal,
 			},
 			{
@@ -93,7 +93,11 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 			<LabelContainer onClick={onClick}>
 				{t(label)}
 				{postfixIcon &&
-					(postfixIcon === 'Link' ? <LinkIcon height={17} /> : <DisconnectIcon height={17} />)}
+					(postfixIcon === 'Account' ? (
+						<AccountIcon height={17} />
+					) : (
+						<DisconnectIcon height={17} />
+					))}
 			</LabelContainer>
 		);
 

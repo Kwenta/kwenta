@@ -1098,7 +1098,7 @@
 		"connect": "Connect",
 		"disconnect": "Disconnect",
 		"account-info": "Account Info",
-		"switch-network": "Switch Network",
+		"switch-network": "Switch Networks",
 		"bridge": "Bridge"
 	}
 }

@@ -79,10 +79,8 @@
 		"slick-carousel": "1.8.1",
 		"styled-components": "5.1.1",
 		"styled-media-query": "2.1.2",
-		"synthetix": "2.74.1",
 		"unstated-next": "1.1.0",
-		"wagmi": "^0.5.12",
-		"unstated-next": "1.1.0"
+		"wagmi": "^0.5.12"
 	},
 	"devDependencies": {
 		"@microsoft/eslint-formatter-sarif": "2.1.7",
