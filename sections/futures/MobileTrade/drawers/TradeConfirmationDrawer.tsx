@@ -14,7 +14,7 @@ import { currentMarketState, potentialTradeDetailsState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
-import { newGetTransactionPrice } from 'utils/network';
+import { getTransactionPrice } from 'utils/network';
 
 import BaseDrawer from './BaseDrawer';
 
@@ -50,12 +50,7 @@ const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({ open,
 
 	const transactionFee = useMemo(
 		() =>
-			newGetTransactionPrice(
-				gasPrice,
-				orderTxn.gasLimit,
-				ethPriceRate,
-				orderTxn.optimismLayerOneFee
-			),
+			getTransactionPrice(gasPrice, orderTxn.gasLimit, ethPriceRate, orderTxn.optimismLayerOneFee),
 		[gasPrice, orderTxn.gasLimit, ethPriceRate, orderTxn.optimismLayerOneFee]
 	);
 
