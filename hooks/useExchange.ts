@@ -2,7 +2,6 @@ import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
 import produce from 'immer';
-import castArray from 'lodash/castArray';
 import get from 'lodash/get';
 import { useRouter } from 'next/router';
 import { useState, useEffect, useMemo, useCallback } from 'react';
@@ -105,11 +104,6 @@ const useExchange = ({
 	useSynthBalances();
 
 	const router = useRouter();
-
-	const marketQuery = useMemo(
-		() => (router.query.market ? castArray(router.query.market)[0] : null),
-		[router.query]
-	);
 
 	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
 	const quoteCurrencyKey = useRecoilValue(quoteCurrencyKeyState);
@@ -463,16 +457,14 @@ const useExchange = ({
 
 	const routeToMarketPair = (baseCurrencyKey: string, quoteCurrencyKey: string) =>
 		routingEnabled
-			? router.replace(
-					`/exchange/[[...market]]`,
-					ROUTES.Exchange.MarketPair(baseCurrencyKey, quoteCurrencyKey),
-					{ shallow: true }
-			  )
+			? router.replace(`/exchange`, ROUTES.Exchange.MarketPair(baseCurrencyKey, quoteCurrencyKey), {
+					shallow: true,
+			  })
 			: undefined;
 
 	const routeToBaseCurrency = (baseCurrencyKey: string) =>
 		routingEnabled
-			? router.replace(`/exchange/[[...market]]`, ROUTES.Exchange.Into(baseCurrencyKey), {
+			? router.replace(`/exchange`, ROUTES.Exchange.Into(baseCurrencyKey), {
 					shallow: true,
 			  })
 			: false;
@@ -997,11 +989,9 @@ const useExchange = ({
 	]);
 
 	useEffect(() => {
-		if (routingEnabled && marketQuery != null) {
-			const [baseCurrencyFromQuery, quoteCurrencyFromQuery] = marketQuery.split('-') as [
-				CurrencyKey,
-				CurrencyKey
-			];
+		if (routingEnabled) {
+			const baseCurrencyFromQuery = router.query.base as CurrencyKey | null;
+			const quoteCurrencyFromQuery = router.query.quote as CurrencyKey | null;
 
 			const tokens = oneInchTokensMap || {};
 
@@ -1025,7 +1015,7 @@ const useExchange = ({
 			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [marketQuery, routingEnabled, synthsMap, oneInchQuery.data]);
+	}, [routingEnabled, synthsMap, oneInchQuery.data]);
 
 	const slippagePercent = useMemo(() => {
 		if (txProvider === '1inch' && totalTradePrice.gt(0) && estimatedBaseTradePrice.gt(0)) {
@@ -1181,7 +1171,6 @@ const useExchange = ({
 		footerCardAttached,
 		quoteCurrencyBalance,
 		quotePriceRate,
-		rate,
 		baseFeeRate,
 		needsApproval,
 		baseCurrency,

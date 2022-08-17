@@ -1,18 +1,17 @@
-import castArray from 'lodash/castArray';
 import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import NavButton from 'components/Button/NavButton';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { TabList, TabPanel } from 'components/Tab';
 import ROUTES from 'constants/routes';
-import { MainContent, LeftSideContent } from 'styles/common';
+import Leaderboard from 'sections/leaderboard/Leaderboard';
+import AppLayout from 'sections/shared/Layout/AppLayout';
+import { MainContent, LeftSideContent, FullHeightContainer, PageContent } from 'styles/common';
 
-import History from '../History';
 import Links from '../Links';
-import Markets from '../Markets';
-import Overview from '../Overview';
 
 enum Tab {
 	Overview = 'overview',
@@ -25,21 +24,20 @@ enum Tab {
 
 const Tabs = Object.values(Tab);
 
-const DashboardContainer: FC = () => {
+const DashboardLayout: FC = ({ children }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 
 	const tabQuery = useMemo(() => {
-		if (router.query.tab) {
-			const tab = castArray(router.query.tab)[0] as Tab;
-			if (Tabs.includes(tab)) {
-				return tab;
-			}
+		if (router.pathname) {
+			const tab = router.pathname.split('/')[2] as Tab;
+			if (Tabs.includes(tab)) return tab;
 		}
-		return null;
-	}, [router.query]);
 
-	const activeTab = tabQuery != null ? tabQuery : Tab.Overview;
+		return null;
+	}, [router.pathname]);
+
+	const activeTab = tabQuery ?? Tab.Overview;
 
 	const TABS = useMemo(
 		() => [
@@ -47,7 +45,7 @@ const DashboardContainer: FC = () => {
 				name: Tab.Overview,
 				label: t('dashboard.tabs.overview'),
 				active: activeTab === Tab.Overview,
-				onClick: () => router.push(ROUTES.Home.Overview),
+				onClick: () => router.push(ROUTES.Dashboard.Home),
 			},
 			{
 				name: Tab.History,
@@ -88,51 +86,53 @@ const DashboardContainer: FC = () => {
 	);
 
 	return (
-		<>
-			<LeftSideContent>
-				<StyledTabList>
-					<TabGroupTitle>{t('dashboard.titles.trading')}</TabGroupTitle>
-					{TABS.slice(0, 4).map(({ name, label, active, disabled, onClick }) => (
-						<NavButton
-							key={name}
-							title={name}
-							isActive={active}
-							disabled={disabled}
-							onClick={onClick}
-							noOutline
-						>
-							{label}
-						</NavButton>
-					))}
+		<AppLayout>
+			<DesktopOnlyView>
+				<PageContent>
+					<StyledFullHeightContainer>
+						<LeftSideContent>
+							<StyledTabList>
+								<TabGroupTitle>{t('dashboard.titles.trading')}</TabGroupTitle>
+								{TABS.slice(0, 4).map(({ name, label, active, disabled, onClick }) => (
+									<NavButton
+										key={name}
+										title={name}
+										isActive={active}
+										disabled={disabled}
+										onClick={onClick}
+										noOutline
+									>
+										{label}
+									</NavButton>
+								))}
 
-					<TabGroupTitle>{t('dashboard.titles.community')}</TabGroupTitle>
-					{TABS.slice(4).map(({ name, label, active, disabled, onClick }) => (
-						<NavButton
-							key={name}
-							title={name}
-							isActive={active}
-							disabled={disabled}
-							onClick={onClick}
-							noOutline
-						>
-							{label}
-						</NavButton>
-					))}
-				</StyledTabList>
-				<Links />
-			</LeftSideContent>
-			<MainContent>
-				<TabPanel name={Tab.Overview} activeTab={activeTab}>
-					<Overview />
-				</TabPanel>
-				<TabPanel name={Tab.History} activeTab={activeTab}>
-					<History />
-				</TabPanel>
-				<TabPanel name={Tab.Markets} activeTab={activeTab}>
-					<Markets />
-				</TabPanel>
-			</MainContent>
-		</>
+								<TabGroupTitle>{t('dashboard.titles.community')}</TabGroupTitle>
+								{TABS.slice(4).map(({ name, label, active, disabled, onClick }) => (
+									<NavButton
+										key={name}
+										title={name}
+										isActive={active}
+										disabled={disabled}
+										onClick={onClick}
+										noOutline
+									>
+										{label}
+									</NavButton>
+								))}
+							</StyledTabList>
+							<Links />
+						</LeftSideContent>
+						<MainContent>
+							<TabPanel name={activeTab} activeTab={activeTab}>
+								{children}
+							</TabPanel>
+						</MainContent>
+						<Leaderboard compact />
+					</StyledFullHeightContainer>
+				</PageContent>
+			</DesktopOnlyView>
+			<MobileOrTabletView>{children}</MobileOrTabletView>
+		</AppLayout>
 	);
 };
 
@@ -155,4 +155,8 @@ const TabGroupTitle = styled.div`
 	}
 `;
 
-export default DashboardContainer;
+const StyledFullHeightContainer = styled(FullHeightContainer)`
+	padding-top: 14px;
+`;
+
+export default DashboardLayout;

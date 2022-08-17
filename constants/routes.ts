@@ -19,31 +19,23 @@ export const ROUTES = {
 		Transactions: normalizeRoute('/dashboard', 'transactions', 'tab'),
 		Deprecated: normalizeRoute('/dashboard', 'deprecated', 'tab'),
 	},
-	Trades: normalizeRoute(`/`, 'trades', 'tab'),
 	Exchange: {
 		Home: '/exchange',
 		MarketPair: (baseCurrencyKey: string, quoteCurrencyKey: string) =>
-			normalizeRoute('/exchange', `${baseCurrencyKey}-${quoteCurrencyKey}`, 'market'),
-		Into: (currencyKey: string) => normalizeRoute(`/exchange`, currencyKey, 'market'),
+			`/exchange/?quote=${quoteCurrencyKey}&base=${baseCurrencyKey}`,
+		Into: (currencyKey: string) => `/exchange/?quote=${currencyKey}`,
 	},
 	Markets: {
-		Home: '/market/sETH',
-		MarketPair: (marketAsset: FuturesMarketAsset | string) =>
-			normalizeRoute('/market', `${marketAsset}`, 'market'),
-		Position: (marketAsset: FuturesMarketAsset) =>
-			normalizeRoute(`/market/${marketAsset}`, 'position', 'tab'),
-		Orders: (marketAsset: FuturesMarketAsset) =>
-			normalizeRoute(`/market/${marketAsset}`, 'orders', 'tab'),
-		Trades: (marketAsset: FuturesMarketAsset) =>
-			normalizeRoute(`/market/${marketAsset}`, 'trades', 'tab'),
-		Calculator: (marketAsset: FuturesMarketAsset) =>
-			normalizeRoute(`/market/${marketAsset}`, 'calculator', 'tab'),
-		Transfers: (marketAsset: FuturesMarketAsset) =>
-			normalizeRoute(`/market/${marketAsset}`, 'transfers', 'tab'),
+		Home: '/market/?asset=sETH',
+		MarketPair: (marketAsset: FuturesMarketAsset | string) => `/market/?asset=${marketAsset}`,
+		Position: (marketAsset: FuturesMarketAsset) => `/market/?asset=${marketAsset}&tab=position`,
+		Orders: (marketAsset: FuturesMarketAsset) => `/market/?asset=${marketAsset}&tab=orders`,
+		Trades: (marketAsset: FuturesMarketAsset) => `/market/?asset=${marketAsset}&tab=trades`,
+		Transfers: (marketAsset: FuturesMarketAsset) => `/market/?asset=${marketAsset}&tab=transfers`,
 	},
 	Leaderboard: {
 		Home: '/leaderboard',
-		Trader: (trader: string) => normalizeRoute('/leaderboard', `${trader}`, 'trader'),
+		Trader: (trader: string) => `/leaderboard/?trader=${trader}`,
 	},
 	Earn: {
 		Home: '/earn',
