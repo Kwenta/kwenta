@@ -1,10 +1,10 @@
-import { useRef, useContext, useEffect, useCallback, useState } from 'react';
+import { useRouter } from 'next/router';
+import { useRef, useContext, useEffect, useCallback, useState, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ThemeContext } from 'styled-components';
 
 import { Synths } from 'constants/currency';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
-import { currentMarketState } from 'store/futures';
 import { currentThemeState } from 'store/ui';
 import { networkState } from 'store/wallet';
 import { formatNumber } from 'utils/formatters/number';
@@ -53,16 +53,20 @@ export function TVChart({
 	const _widget = useRef<IChartingLibraryWidget | null>(null);
 	const _entryLine = useRef<IPositionLineAdapter | null | undefined>(null);
 	const _liquidationLine = useRef<IPositionLineAdapter | null | undefined>(null);
+	const router = useRouter();
 
 	const { colors } = useContext(ThemeContext);
 	let network = useRecoilValue(networkState);
-	const marketAsset = useRecoilValue(currentMarketState);
 
 	const DEFAULT_OVERRIDES = {
 		'paneProperties.background': colors.selectedTheme.background,
 		'chartProperties.background': colors.selectedTheme.background,
 		'paneProperties.backgroundType': 'solid',
 	};
+
+	const [marketAsset, marketAssetLoaded] = useMemo(() => {
+		return router.query.asset ? [router.query.asset, true] : [null, false];
+	}, [router.query.asset]);
 
 	useEffect(() => {
 		const widgetOptions = {
@@ -122,7 +126,7 @@ export function TVChart({
 			clearExistingWidget();
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network.id, currentTheme, marketAsset]);
+	}, [network.id, currentTheme, marketAssetLoaded]);
 
 	useEffect(() => {
 		_widget.current?.onChartReady(() => {
