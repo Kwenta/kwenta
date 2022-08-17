@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 
 import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg';
 import DiscordLogo from 'assets/svg/social/discord.svg';
@@ -10,6 +10,7 @@ import { EXTERNAL_LINKS } from 'constants/links';
 import { GridContainer } from 'sections/homepage/common';
 import { FlexDivCentered, ExternalLink } from 'styles/common';
 import media from 'styles/media';
+import { themes } from 'styles/theme';
 
 import Logo from '../Logo';
 
@@ -96,43 +97,46 @@ const Footer: React.FC = () => {
 		},
 	];
 	return (
-		<StyledGridContainer>
-			<LogoFooter>
-				<Logo />
-				<SocialIcons>
-					<ExternalLink href={EXTERNAL_LINKS.Social.Twitter}>
-						<TwitterLogo />
-					</ExternalLink>
-					<ExternalLink href={EXTERNAL_LINKS.Social.Discord}>
-						<DiscordLogo />
-					</ExternalLink>
-					<ExternalLink href={EXTERNAL_LINKS.Social.Mirror}>
-						<MirrorLogo />
-					</ExternalLink>
-				</SocialIcons>
-			</LogoFooter>
-			<MultiListContainer>
-				{DOC_LINKS.map(({ key, title, links }) => (
-					<ListContainer key={key}>
-						<ListTitle>{title}</ListTitle>
-						{links.map(({ key, title, link }) => (
-							<StyledLink key={key} href={link} target="_blank">
-								<p>{title}</p>
-							</StyledLink>
-						))}
-					</ListContainer>
-				))}
-			</MultiListContainer>
-			<PowerContainer>
-				<PoweredBySynthetix />
-				<CopyRight>{t('homepage.footer.copyright')}</CopyRight>
-			</PowerContainer>
-		</StyledGridContainer>
+		<ThemeProvider theme={themes['dark']}>
+			<StyledGridContainer>
+				<LogoFooter>
+					<Logo />
+					<SocialIcons>
+						<ExternalLink href={EXTERNAL_LINKS.Social.Twitter}>
+							<TwitterLogo />
+						</ExternalLink>
+						<ExternalLink href={EXTERNAL_LINKS.Social.Discord}>
+							<DiscordLogo />
+						</ExternalLink>
+						<ExternalLink href={EXTERNAL_LINKS.Social.Mirror}>
+							<MirrorLogo />
+						</ExternalLink>
+					</SocialIcons>
+				</LogoFooter>
+				<MultiListContainer>
+					{DOC_LINKS.map(({ key, title, links }) => (
+						<ListContainer key={key}>
+							<ListTitle>{title}</ListTitle>
+							{links.map(({ key, title, link }) => (
+								<StyledLink key={key} href={link} target="_blank">
+									<p>{title}</p>
+								</StyledLink>
+							))}
+						</ListContainer>
+					))}
+				</MultiListContainer>
+				<PowerContainer>
+					<PoweredBySynthetix />
+					<CopyRight>{t('homepage.footer.copyright')}</CopyRight>
+				</PowerContainer>
+			</StyledGridContainer>
+		</ThemeProvider>
 	);
 };
 
 const StyledLink = styled.a`
 	cursor: pointer;
+	color: ${(props) => props.theme.colors.common.primaryWhite};
 `;
 
 const CopyRight = styled.div`
@@ -237,6 +241,10 @@ const SocialIcons = styled(FlexDivCentered)`
 	${media.lessThan('sm')`
 		padding-top: 5px;
 	`};
+
+	svg {
+		color: ${(props) => props.theme.colors.common.primaryWhite};
+	}
 `;
 
 export default Footer;
