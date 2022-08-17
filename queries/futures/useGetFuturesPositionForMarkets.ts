@@ -24,7 +24,7 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 	const synthetixjs = synthetix({
 		provider: getDefaultProvider((activeChain?.id ?? chain.optimism.id) as NetworkId),
 		networkId: (activeChain?.id ?? chain.optimism.id) as NetworkId,
-		useOvm: true,
+		useOvm: isL2,
 	});
 	const [, setFuturesPositions] = useRecoilState(positionsState);
 

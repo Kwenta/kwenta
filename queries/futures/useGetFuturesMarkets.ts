@@ -27,7 +27,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 	const snxjs = synthetix({
 		provider: getDefaultProvider((activeChain?.id ?? chain.optimism.id) as NetworkId),
 		networkId: (activeChain?.id ?? chain.optimism.id) as NetworkId,
-		useOvm: true,
+		useOvm: isL2,
 	});
 	const defaultSynthetixjs = synthetix({
 		provider: getDefaultProvider(chain.optimism.id as NetworkId),

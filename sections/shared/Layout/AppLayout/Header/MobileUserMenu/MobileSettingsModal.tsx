@@ -8,7 +8,7 @@ import { useDisconnect } from 'wagmi';
 import MobileAccountIcon from 'assets/svg/app/account-info.svg';
 import MobileMenuBridgeIcon from 'assets/svg/app/mobile-menu-bridge.svg';
 import MobileMenuDisconnectIcon from 'assets/svg/app/mobile-menu-disconnect.svg';
-import MobileSwitchIcon from 'assets/svg/app/switch.svg';
+import MobileSwitchIcon from 'assets/svg/app/mobile-switch.svg';
 import FullScreenModal from 'components/FullScreenModal';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';

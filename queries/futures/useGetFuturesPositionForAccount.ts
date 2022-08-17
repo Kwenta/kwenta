@@ -1,11 +1,12 @@
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
+import { chain, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
 import { futuresAccountState } from 'store/futures';
-import { isL2State, networkState } from 'store/wallet';
+import { networkState } from 'store/wallet';
 import logError from 'utils/logError';
 
 import { FUTURES_POSITION_FRAGMENT } from './constants';
@@ -15,7 +16,11 @@ import { getFuturesEndpoint, mapTradeHistory } from './utils';
 const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
+	const { chain: activeChain } = useNetwork();
+	const isL2 =
+		activeChain !== undefined
+			? [chain.optimism.id, chain.optimismKovan.id].includes(activeChain?.id)
+			: false;
 	const network = useRecoilValue(networkState);
 	const futuresEndpoint = getFuturesEndpoint(network);
 
