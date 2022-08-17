@@ -1,10 +1,10 @@
+import useSynthetixQueries from '@synthetixio/queries';
 import { FC, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
 import SpotMarketsTable from '../SpotMarketsTable';
@@ -16,6 +16,7 @@ enum MarketsTab {
 
 const Markets: FC = () => {
 	const { t } = useTranslation();
+	const { useExchangeRatesQuery } = useSynthetixQueries();
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;

@@ -31,7 +31,7 @@ type TCompetitionSate = 'comingSoon' | 'comingToStart' | 'live' | 'comingToEnd' 
  */
 export const useDashboardCompetition = () => {
 	const [state, setState] = useState<TCompetitionSate>('comingSoon');
-	const [difference, setDifference] = useState<number>(0);
+	const [difference, setDifference] = useState(0);
 
 	useEffect(() => {
 		const interval = setInterval(() => {

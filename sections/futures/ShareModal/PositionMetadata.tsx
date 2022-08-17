@@ -68,7 +68,7 @@ function getFontFamily(props: any) {
 
 const PositionMetadata: FC<PositionMetadataProps> = ({ marketAsset, futuresPositionHistory }) => {
 	const { t } = useTranslation();
-	const [currentTimestamp, setCurrentTimestamp] = useState<number>(0);
+	const [currentTimestamp, setCurrentTimestamp] = useState(0);
 
 	const { marketAssetRate } = useFuturesContext();
 
