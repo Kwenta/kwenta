@@ -278,8 +278,8 @@ const useExchange = ({
 
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
-	const [baseRate, quoteRate] = useMemo(
-		() => newGetExchangeRatesTupleForCurrencies(exchangeRates, baseCurrencyKey, quoteCurrencyKey),
+	const [quoteRate, baseRate] = useMemo(
+		() => newGetExchangeRatesTupleForCurrencies(exchangeRates, quoteCurrencyKey, baseCurrencyKey),
 		[exchangeRates, quoteCurrencyKey, baseCurrencyKey]
 	);
 
@@ -290,7 +290,7 @@ const useExchange = ({
 		const quote = quoteRate.lte(0)
 			? newGetCoinGeckoPricesForCurrencies(coinGeckoPrices, quoteCurrencyTokenAddress)
 			: quoteRate;
-		return base.gt(0) && quote.gt(0) ? base.div(quote) : wei(0);
+		return base.gt(0) && quote.gt(0) ? quote.div(base) : wei(0);
 	}, [baseCurrencyTokenAddress, baseRate, coinGeckoPrices, quoteCurrencyTokenAddress, quoteRate]);
 
 	const inverseRate = useMemo(() => (rate.gt(0) ? wei(1).div(rate) : wei(0)), [rate]);
@@ -1157,7 +1157,6 @@ const useExchange = ({
 	return {
 		baseCurrencyKey,
 		handleCurrencySwap,
-		rate,
 		inverseRate,
 		quoteCurrencyKey,
 		txProvider,

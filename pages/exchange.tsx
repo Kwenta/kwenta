@@ -22,7 +22,7 @@ const Exchange: ExchangeComponent = () => {
 		showNoSynthsCard: true,
 	});
 
-	const { baseCurrencyKey, quoteCurrencyKey, rate } = exchangeData;
+	const { baseCurrencyKey, quoteCurrencyKey, inverseRate } = exchangeData;
 
 	return (
 		<ExchangeContext.Provider value={exchangeData}>
@@ -32,7 +32,7 @@ const Exchange: ExchangeComponent = () => {
 						? t('exchange.page-title-currency-pair', {
 								baseCurrencyKey,
 								quoteCurrencyKey,
-								rate: formatCurrency(quoteCurrencyKey, rate, {
+								rate: formatCurrency(quoteCurrencyKey, inverseRate, {
 									currencyKey: quoteCurrencyKey,
 								}),
 						  })
