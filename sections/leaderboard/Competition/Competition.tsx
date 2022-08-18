@@ -213,8 +213,10 @@ const Competition: FC<CompetitionProps> = ({
 							Header: () => <TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>,
 							accessor: 'trader',
 							Cell: (cellProps: CellProps<any>) => (
-								<StyledOrderType>
-									<StyledValue>{cellProps.row.original.traderShort}</StyledValue>
+								<StyledOrderType onClick={() => onClickTrader(cellProps.row.original.account)}>
+									<StyledValue>
+										{cellProps.row.original.traderEns ?? cellProps.row.original.traderShort}
+									</StyledValue>
 									{getMedal(cellProps.row.original.rank)}
 								</StyledOrderType>
 							),
