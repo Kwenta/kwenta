@@ -77,7 +77,7 @@ export const COMMODITY_SYNTHS = new Set<CurrencyKey | 'XAU' | 'XAG' | 'WTI'>(['X
 export const sUSD_EXCHANGE_RATE = new Wei(1);
 export const SYNTH_DECIMALS = 18;
 
-export const ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
+export const ETH_ADDRESS = '0x4200000000000000000000000000000000000006';
 
 export const ATOMIC_EXCHANGES_L1 = [
 	'sBTC',

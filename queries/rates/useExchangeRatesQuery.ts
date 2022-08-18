@@ -47,7 +47,12 @@ const useExchangeRatesQuery = (options?: UseQueryOptions<Rates>) => {
 				const marketAsset = MarketAssetByKey[currencyKey as FuturesMarketKey];
 
 				const rate = Number(ethers.utils.formatEther(rates[idx]));
-				exchangeRates[marketAsset ?? currencyKey] = wei(rate);
+
+				// add rates for each synth
+				exchangeRates[currencyKey] = wei(rate);
+
+				// if a futures market exists, add the market asset rate
+				if (marketAsset) exchangeRates[marketAsset] = wei(rate);
 			});
 
 			setRates(exchangeRates);
