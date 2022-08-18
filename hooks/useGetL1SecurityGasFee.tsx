@@ -1,10 +1,12 @@
 import { getContractFactory, predeploys } from '@eth-optimism/contracts';
+import Wei from '@synthetixio/wei';
 import { BytesLike, ethers } from 'ethers';
 import { omit } from 'lodash';
 import { useRecoilValue } from 'recoil';
 
 import Connector from 'containers/Connector';
 import { isL2State } from 'store/wallet';
+import { weiFromWei, zeroBN } from 'utils/formatters/number';
 
 type MetaTx = {
 	data?: BytesLike | undefined;
@@ -26,8 +28,8 @@ export const useGetL1SecurityFee = () => {
 	const isL2 = useRecoilValue(isL2State);
 	const { signer } = Connector.useContainer();
 
-	return async (metaTx: MetaTx): Promise<number> => {
-		if (!isL2) return 0;
+	return async (metaTx: MetaTx): Promise<Wei> => {
+		if (!isL2) return zeroBN;
 
 		if (!signer) return Promise.reject('Wallet not connected');
 		const contract = new ethers.Contract(OVMGasPriceOracle.address, contractAbi, signer);
@@ -41,6 +43,7 @@ export const useGetL1SecurityFee = () => {
 		};
 		const serializedTx = ethers.utils.serializeTransaction(txParams);
 		const gasFee = await contract.functions.getL1Fee(serializedTx);
-		return Number(gasFee.toString());
+
+		return weiFromWei(gasFee.toString());
 	};
 };

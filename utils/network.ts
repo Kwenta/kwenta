@@ -7,7 +7,6 @@ import { providers } from 'ethers';
 
 import { DEFAULT_GAS_BUFFER, DEFAULT_NETWORK_ID } from 'constants/defaults';
 import {
-	ETH_UNIT,
 	GWEI_UNIT,
 	GWEI_DECIMALS,
 	GasLimitEstimate,
@@ -41,11 +40,6 @@ export async function getDefaultNetworkId(walletConnected: boolean = true): Prom
 		return DEFAULT_NETWORK_ID;
 	}
 }
-
-export type GasInfo = {
-	limit: number;
-	l1Fee: number;
-};
 
 const loadInfuraProvider = (networkId: NetworkId) => {
 	if (!process.env.NEXT_PUBLIC_INFURA_PROJECT_ID) {
@@ -89,18 +83,6 @@ export const getDefaultProvider = (networkId: NetworkId) => {
 	return ethersProvider;
 };
 
-export const getTransactionPrice = (
-	gasPrice: number | null,
-	gasLimit: number | null | undefined,
-	ethPrice: number | null,
-	l1SecurityFeeWei: number = 0
-) => {
-	if (!gasPrice || !gasLimit || !ethPrice) return null;
-	const gasFeeEth = (gasLimit * gasPrice) / GWEI_UNIT;
-	const l1FeeEth = l1SecurityFeeWei / ETH_UNIT;
-	return (gasFeeEth + l1FeeEth) * ethPrice;
-};
-
 export const getTotalGasPrice = (gasPriceObj?: GasPrice | null) => {
 	if (!gasPriceObj) return wei(0);
 	const { gasPrice, baseFeePerGas, maxPriorityFeePerGas } = gasPriceObj;
@@ -110,7 +92,7 @@ export const getTotalGasPrice = (gasPriceObj?: GasPrice | null) => {
 	return wei(baseFeePerGas || 0, GWEI_DECIMALS).add(wei(maxPriorityFeePerGas || 0, GWEI_DECIMALS));
 };
 
-export const newGetTransactionPrice = (
+export const getTransactionPrice = (
 	gasPrice: GasPrice | null,
 	gasLimit: GasLimitEstimate,
 	ethPrice: Wei | null,
@@ -118,13 +100,10 @@ export const newGetTransactionPrice = (
 ) => {
 	if (!gasPrice || !gasLimit || !ethPrice) return null;
 	const totalGasPrice = getTotalGasPrice(gasPrice);
-
 	const extraLayer1Fees = optimismLayerOneFee;
 	const gasPriceCost = totalGasPrice.mul(wei(gasLimit, GWEI_DECIMALS)).mul(ethPrice);
 	const l1Cost = ethPrice.mul(extraLayer1Fees || 0);
-
 	const txPrice = gasPriceCost.add(l1Cost);
-
 	return txPrice;
 };
 
