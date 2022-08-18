@@ -306,7 +306,7 @@ const useExchange = ({
 	// TODO: Fix coingecko prices (optimism issue maybe?)
 	const quotePriceRate = useMemo(
 		() =>
-			txProvider !== 'synthetix' && !isQuoteCurrencyETH && !quoteCurrency
+			txProvider !== 'synthetix' && !quoteCurrency
 				? coinGeckoPrices != null &&
 				  quoteCurrencyTokenAddress != null &&
 				  selectPriceCurrencyRate != null &&
@@ -321,7 +321,6 @@ const useExchange = ({
 				  ),
 		[
 			txProvider,
-			isQuoteCurrencyETH,
 			quoteCurrency,
 			coinGeckoPrices,
 			quoteCurrencyTokenAddress,
@@ -333,7 +332,7 @@ const useExchange = ({
 	);
 
 	const basePriceRate = useMemo(() => {
-		return txProvider !== 'synthetix' && !isBaseCurrencyETH && !baseCurrency
+		return txProvider !== 'synthetix' && !baseCurrency
 			? coinGeckoPrices != null &&
 			  baseCurrencyTokenAddress != null &&
 			  selectPriceCurrencyRate != null &&
@@ -349,7 +348,6 @@ const useExchange = ({
 			  );
 	}, [
 		txProvider,
-		isBaseCurrencyETH,
 		baseCurrency,
 		coinGeckoPrices,
 		baseCurrencyTokenAddress,
@@ -1111,7 +1109,7 @@ const useExchange = ({
 	const onQuoteBalanceClick = useCallback(async () => {
 		if (quoteCurrencyBalance != null) {
 			if ((quoteCurrencyKey as string) === 'ETH') {
-				const ETH_TX_BUFFER = 0.1;
+				const ETH_TX_BUFFER = 0.006;
 				const balanceWithBuffer = quoteCurrencyBalance.sub(wei(ETH_TX_BUFFER));
 				setQuoteCurrencyAmount(
 					balanceWithBuffer.lt(0)

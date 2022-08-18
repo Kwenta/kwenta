@@ -47,11 +47,9 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 		const statsData = stats
 			.sort((a: AccountStat, b: AccountStat) => a.rank - b.rank)
 			.map((trader: any, i: number) => {
-				const pinText = trader.account === walletAddress ? PIN : '';
-
 				return {
 					...trader,
-					rankText: `${trader.rank}${pinText}`,
+					rankText: trader.rank.toString(),
 				};
 			})
 			.filter((i: { account: string; traderEns: string }) =>
@@ -61,14 +59,14 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 					: true
 			);
 
-		return [
-			...statsData.filter(
-				(trader) => trader.account.toLowerCase() === walletAddress?.toLowerCase()
-			),
-			...statsData.filter(
-				(trader) => trader.account.toLowerCase() !== walletAddress?.toLowerCase()
-			),
-		];
+		const pinRow = statsData
+			.filter((trader) => trader.account.toLowerCase() === walletAddress?.toLowerCase())
+			.map((trader) => ({
+				...trader,
+				rankText: `${trader.rank}${PIN}`,
+			}));
+
+		return [...pinRow, ...statsData];
 	}, [stats, searchTerm, walletAddress]);
 
 	return (
