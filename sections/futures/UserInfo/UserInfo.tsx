@@ -30,7 +30,8 @@ import ProfitCalculator from '../ProfitCalculator';
 import ShareModal from '../ShareModal';
 import Trades from '../Trades';
 import Transfers from '../Transfers';
-import OpenOrdersTable from './OpenOrdersTable';
+import OrderHistory from './OrderHistory';
+// import OpenOrdersTable from './OpenOrdersTable';
 
 enum FuturesTab {
 	POSITION = 'position',
@@ -198,7 +199,7 @@ const UserInfo: React.FC = () => {
 				/>
 			</TabPanel>
 			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}>
-				<OpenOrdersTable />
+				<OrderHistory />
 			</TabPanel>
 			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab}>
 				<Trades

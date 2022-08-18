@@ -724,6 +724,7 @@
 						"market-type": "Market/Type",
 						"side": "Side",
 						"size": "Size",
+						"status": "Status",
 						"parameters": "Parameters",
 						"actions": "Actions",
 						"no-result": "You have no open orders"
