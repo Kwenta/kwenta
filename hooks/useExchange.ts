@@ -309,7 +309,7 @@ const useExchange = ({
 	// TODO: Fix coingecko prices (optimism issue maybe?)
 	const quotePriceRate = useMemo(
 		() =>
-			txProvider !== 'synthetix' && !isQuoteCurrencyETH && !quoteCurrency
+			txProvider !== 'synthetix' && !quoteCurrency
 				? coinGeckoPrices != null &&
 				  quoteCurrencyTokenAddress != null &&
 				  selectPriceCurrencyRate != null &&
@@ -324,7 +324,6 @@ const useExchange = ({
 				  ),
 		[
 			txProvider,
-			isQuoteCurrencyETH,
 			quoteCurrency,
 			coinGeckoPrices,
 			quoteCurrencyTokenAddress,
@@ -336,7 +335,7 @@ const useExchange = ({
 	);
 
 	const basePriceRate = useMemo(() => {
-		return txProvider !== 'synthetix' && !isBaseCurrencyETH && !baseCurrency
+		return txProvider !== 'synthetix' && !baseCurrency
 			? coinGeckoPrices != null &&
 			  baseCurrencyTokenAddress != null &&
 			  selectPriceCurrencyRate != null &&
@@ -352,7 +351,6 @@ const useExchange = ({
 			  );
 	}, [
 		txProvider,
-		isBaseCurrencyETH,
 		baseCurrency,
 		coinGeckoPrices,
 		baseCurrencyTokenAddress,
