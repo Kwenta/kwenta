@@ -13,8 +13,6 @@ import { formatCurrency, formatPercent } from 'utils/formatters/number';
 
 import useGetMarketData from './useGetMarketData';
 
-type MarketData = Record<string, { value: string | JSX.Element; color?: string }>;
-
 type MarketDetailsProps = {
 	mobile?: boolean;
 };
@@ -27,7 +25,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 
 	const pausedClass = marketInfo?.isSuspended ? 'paused' : '';
 
-	const data: MarketData = useGetMarketData(mobile);
+	const data = useGetMarketData(mobile);
 
 	const lastOracleUpdateTimeQuery = useRateUpdateQuery({
 		baseCurrencyKey: marketAsset,

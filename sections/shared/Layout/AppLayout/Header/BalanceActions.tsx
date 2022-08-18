@@ -9,7 +9,6 @@ import Button from 'components/Button';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Select from 'components/Select';
 import { Synths } from 'constants/currency';
-import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
 import { balancesState, positionsState } from 'store/futures';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
@@ -27,8 +26,6 @@ const BalanceActions: FC = () => {
 	const { t } = useTranslation();
 	const theme = useTheme();
 	const router = useRouter();
-
-	useQueryCrossMarginAccount();
 
 	const synthBalances = useRecoilValue(balancesState);
 	const futuresPositions = useRecoilValue(positionsState);
