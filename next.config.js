@@ -88,8 +88,13 @@ module.exports = withPlugins([
 					permanent: true,
 				},
 				{
-					source: '/market/sETH/',
-					destination: '/market/?asset=ETH',
+					source: '/market/:key',
+					destination: '/market/?asset=:key',
+					permanent: true,
+				},
+				{
+					source: '/exchange/:base-:quote',
+					destination: '/exchange/?quote=:quote&base=:base',
 					permanent: true,
 				},
 			];
