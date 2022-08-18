@@ -28,7 +28,7 @@ const Exchange: ExchangeComponent = () => {
 		<ExchangeContext.Provider value={exchangeData}>
 			<Head>
 				<title>
-					{baseCurrencyKey != null && quoteCurrencyKey != null
+					{!!baseCurrencyKey && !!quoteCurrencyKey && inverseRate.gt(0)
 						? t('exchange.page-title-currency-pair', {
 								baseCurrencyKey,
 								quoteCurrencyKey,
