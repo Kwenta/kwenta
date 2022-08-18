@@ -1157,6 +1157,7 @@ const useExchange = ({
 	return {
 		baseCurrencyKey,
 		handleCurrencySwap,
+		rate,
 		inverseRate,
 		quoteCurrencyKey,
 		txProvider,
