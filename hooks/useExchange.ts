@@ -1112,7 +1112,7 @@ const useExchange = ({
 	const onQuoteBalanceClick = useCallback(async () => {
 		if (quoteCurrencyBalance != null) {
 			if ((quoteCurrencyKey as string) === 'ETH') {
-				const ETH_TX_BUFFER = 0.1;
+				const ETH_TX_BUFFER = 0.006;
 				const balanceWithBuffer = quoteCurrencyBalance.sub(wei(ETH_TX_BUFFER));
 				setQuoteCurrencyAmount(
 					balanceWithBuffer.lt(0)
