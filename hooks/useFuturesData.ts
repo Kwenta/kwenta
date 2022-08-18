@@ -81,27 +81,33 @@ const useFuturesData = () => {
 	);
 	const [preferredLeverage] = usePersistedRecoilState(preferredLeverageState);
 	const { selectedFuturesAddress, crossMarginAvailable } = useRecoilValue(futuresAccountState);
-
-	// TODO: default based on selected chain
-	const routerAccountType =
-		typeof router.query.accountType === 'string' ? router.query.accountType : 'cross_margin';
+	const marketAssetRate = useRecoilValue(marketAssetRateState);
 
 	const [dynamicFee, setDynamicFee] = useState<Wei | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [maxFee, setMaxFee] = useState(zeroBN);
 
-	const crossMarginAccount = crossMarginAvailable
-		? { freeMargin: crossMarginAccountOverview.data?.freeMargin }
-		: null;
+	// TODO: default based on selected chain
+	const routerAccountType = useMemo(() => {
+		return typeof router.query.accountType === 'string' ? router.query.accountType : 'cross_margin';
+	}, [router.query.accountType]);
 
-	const marketAssetRate = useRecoilValue(marketAssetRateState);
+	const crossMarginAccount = useMemo(() => {
+		return crossMarginAvailable
+			? { freeMargin: crossMarginAccountOverview.data?.freeMargin }
+			: null;
+	}, [crossMarginAccountOverview.data?.freeMargin, crossMarginAvailable]);
 
 	const positionLeverage = position?.position?.leverage ?? wei(0);
 	const positionSide = position?.position?.side;
-	const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
+	const marketMaxLeverage = useMemo(() => {
+		return market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
+	}, [market?.maxLeverage]);
 
-	const effectiveLeverage = position?.position?.leverage.toString() || '';
-	const selectedLeverage = crossMarginLeverageInput || effectiveLeverage || preferredLeverage;
+	const selectedLeverage = useMemo(() => {
+		const effectiveLeverage = position?.position?.leverage.toString() || '';
+		return crossMarginLeverageInput || effectiveLeverage || preferredLeverage;
+	}, [crossMarginLeverageInput, position?.position?.leverage, preferredLeverage]);
 
 	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed];
 
@@ -233,7 +239,8 @@ const useFuturesData = () => {
 	useEffect(() => {
 		// Update margin requirement for cross margin
 		// but only when user has edited leverage if they already have a position open
-		if (!tradeSizeSUSD && position?.position && !crossMarginLeverageInput) return;
+		if ((!tradeSizeSUSD && !crossMarginLeverageInput) || selectedAccountType !== 'cross_margin')
+			return;
 		const weiSizeUsd = wei(tradeSizeSUSD || 0);
 		const sizeDeltaUsd = leverageSide === 'long' ? weiSizeUsd : weiSizeUsd.neg();
 		const currentSize = position?.position?.notionalValue || zeroBN;
@@ -252,6 +259,7 @@ const useFuturesData = () => {
 		position?.position,
 		position?.position?.notionalValue,
 		position?.remainingMargin,
+		selectedAccountType,
 		setCrossMarginMarginDelta,
 	]);
 

@@ -47,6 +47,7 @@ const use1InchQuoteQuery = (
 			quoteCurrency?.address,
 			baseCurrency?.address,
 			amount,
+			synthUsdRate || 0,
 			network?.id!
 		),
 		async () => {
@@ -75,6 +76,7 @@ const use1InchQuoteQuery = (
 					usdAmount.toString(),
 					decimals
 				);
+
 				return estimatedAmount;
 			} else {
 				const estimatedAmount = await quote1Inch(

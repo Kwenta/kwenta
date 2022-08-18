@@ -110,6 +110,13 @@ const darkTheme = {
 	modal: {
 		background: '#252525',
 	},
+	competitionBanner: {
+		border: '1px solid #2b2a2a',
+		state: {
+			text: common.primaryWhite,
+		},
+		bg: '#fff',
+	},
 };
 
 export default darkTheme;

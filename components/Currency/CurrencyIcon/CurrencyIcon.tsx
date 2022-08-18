@@ -91,9 +91,9 @@ const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = {
 	[CRYPTO_CURRENCY_MAP.SNX]: SNXIcon,
 };
 
-const CurrencyIconContainer: FC<CurrencyIconProps> = (props) => (
-	<Container>
-		<CurrencyIcon style={props.style} {...props} />
+const CurrencyIconContainer: FC<CurrencyIconProps> = ({ className, ...props }) => (
+	<Container className={className}>
+		<CurrencyIcon {...props} />
 		{!props.isDeprecated ? null : (
 			<DeprecatedXIconContainer>
 				<DeprecatedXIcon />
@@ -103,8 +103,8 @@ const CurrencyIconContainer: FC<CurrencyIconProps> = (props) => (
 );
 
 const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, isDeprecated, url, ...rest }) => {
-	const [firstFallbackError, setFirstFallbackError] = useState<boolean>(false);
-	const [secondFallbackError, setSecondFallbackError] = useState<boolean>(false);
+	const [firstFallbackError, setFirstFallbackError] = useState(false);
+	const [secondFallbackError, setSecondFallbackError] = useState(false);
 
 	const OneInchTokenListQuery = useOneInchTokenList();
 	const OneInchTokenListMap = OneInchTokenListQuery.isSuccess
@@ -125,7 +125,7 @@ const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, isDeprecated, url, .
 	if (!firstFallbackError) {
 		const src = SYNTH_ICONS[currencyKey as FuturesMarketKey];
 		return src ? (
-			<Image src={src} layout="raw" {...props} />
+			<Image src={src} {...props} />
 		) : (
 			<TokenIcon
 				{...{ isDeprecated }}

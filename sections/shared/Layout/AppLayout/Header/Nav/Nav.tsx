@@ -2,11 +2,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FC, FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import LabelContainer from 'components/Nav/DropDownLabel';
 import Select from 'components/Select';
 import { DropdownIndicator, IndicatorSeparator } from 'components/Select/Select';
+import { currentMarketState } from 'store/futures';
 import { linkCSS } from 'styles/common';
 
 import { MENU_LINKS } from '../constants';
@@ -23,26 +25,10 @@ type ReactSelectOptionProps = {
 const Nav: FC = () => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
-
-	function getLastVisited(): string | null | undefined {
-		if (typeof window !== 'undefined') {
-			const lastVisited = localStorage.getItem('lastVisited');
-			return lastVisited;
-		}
-	}
+	const currentMarket = useRecoilValue(currentMarketState);
 
 	function getLink(link: string) {
-		if (link.slice(0, 7) === '/market') {
-			const lastVisited: string | null | undefined = getLastVisited();
-
-			if (lastVisited !== null && lastVisited !== undefined) {
-				return lastVisited;
-			} else {
-				return link;
-			}
-		} else {
-			return link;
-		}
+		return link.slice(0, 7) === '/market' ? `/market/?asset=${currentMarket}` : link;
 	}
 
 	const formatOptionLabel = ({ label, Icon, link, isActive, onClick }: ReactSelectOptionProps) => {

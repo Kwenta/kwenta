@@ -20,7 +20,7 @@ import { FlexDivRowCentered } from 'styles/common';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { formatCurrency } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
-import { newGetTransactionPrice } from 'utils/network';
+import { getTransactionPrice } from 'utils/network';
 
 type DepositMarginModalProps = {
 	onDismiss(): void;
@@ -36,8 +36,8 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const market = useRecoilValue(currentMarketState);
 	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
-	const [amount, setAmount] = React.useState<string>('');
-	const [isDisabled, setDisabled] = React.useState<boolean>(true);
+	const [amount, setAmount] = React.useState('');
+	const [isDisabled, setDisabled] = React.useState(true);
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -66,7 +66,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 
 	const transactionFee = React.useMemo(
 		() =>
-			newGetTransactionPrice(
+			getTransactionPrice(
 				gasPrice,
 				depositTxn.gasLimit,
 				ethPriceRate,
@@ -170,7 +170,6 @@ export const StyledBaseModal = styled(BaseModal)`
 
 export const BalanceContainer = styled(FlexDivRowCentered)`
 	margin-bottom: 8px;
-	padding: 0 14px;
 	p {
 		margin: 0;
 	}
@@ -185,7 +184,6 @@ export const BalanceText = styled.p<{ $gold?: boolean }>`
 `;
 
 export const MarginActionButton = styled(Button)`
-	margin-top: 16px;
 	height: 55px;
 `;
 
@@ -204,7 +202,7 @@ export const MaxButton = styled.button`
 
 const MinimumAmountDisclaimer = styled.div`
 	font-size: 12px;
-	margin-top: 8px;
+	margin: 20px 0;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	text-align: center;
 `;

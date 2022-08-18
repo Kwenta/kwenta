@@ -1,7 +1,7 @@
 import { wei } from '@synthetixio/wei';
 import { debounce } from 'lodash';
 import Link from 'next/link';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -12,7 +12,6 @@ import StyledSlider from 'components/Slider/StyledSlider';
 import ROUTES from 'constants/routes';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import {
-	crossMarginAvailableMarginState,
 	futuresAccountState,
 	leverageSideState,
 	positionState,
@@ -20,7 +19,6 @@ import {
 } from 'store/futures';
 import { walletAddressState } from 'store/wallet';
 import { BorderedPanel, FlexDivRow } from 'styles/common';
-import { zeroBN } from 'utils/formatters/number';
 
 import CrossMarginOnboard from '../CrossMarginOnboard';
 import CrossMarginFAQ from '../CrossMarginOnboard/CrossMarginFAQ';
@@ -33,37 +31,34 @@ import MarginInfoBox from './MarginInfoBox';
 
 export default function TradeCrossMargin() {
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
-	const freeMargin = useRecoilValue(crossMarginAvailableMarginState);
 	const position = useRecoilValue(positionState);
 	const { crossMarginAddress, crossMarginAvailable } = useRecoilValue(futuresAccountState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const usdSize = useRecoilValue(tradeSizeSUSDState);
 
 	const { t } = useTranslation();
-	const { onTradeAmountSUSDChange, selectedLeverage, maxUsdInputAmount } = useFuturesContext();
-
-	const currentMargin = (position?.remainingMargin || zeroBN).toNumber();
-	const totalMargin = freeMargin.add(currentMargin).toNumber();
+	const { onTradeAmountSUSDChange, maxUsdInputAmount } = useFuturesContext();
 
 	const [percent, setPercent] = useState(0);
 	const [showOnboard, setShowOnboard] = useState(false);
 	const [usdAmount, setUsdAmount] = useState(usdSize);
 
-	const sizeRange =
-		leverageSide === 'long'
+	const sizeRange = useMemo(() => {
+		return leverageSide === 'long'
 			? maxUsdInputAmount.sub(position?.position?.notionalValue || '0')
 			: maxUsdInputAmount.add(position?.position?.notionalValue || '0');
+	}, [leverageSide, maxUsdInputAmount, position?.position?.notionalValue]);
 
 	// eslint-disable-next-line
 	const onChangeMarginPercent = useCallback(
-		debounce((value) => {
+		debounce((value, max) => {
 			const fraction = value / 100;
-			const usdAmount = sizeRange.mul(fraction).toString();
+			const usdAmount = max.mul(fraction).toString();
 			const usdValue = Number(usdAmount).toFixed(0);
 			setUsdAmount(usdValue);
 			onTradeAmountSUSDChange(usdValue);
 		}, 500),
-		[debounce, onTradeAmountSUSDChange, selectedLeverage, totalMargin, sizeRange, usdAmount]
+		[debounce, onTradeAmountSUSDChange]
 	);
 
 	useEffect(() => {
@@ -83,10 +78,13 @@ export default function TradeCrossMargin() {
 		return () => onChangeMarginPercent?.cancel();
 	}, [onChangeMarginPercent]);
 
-	const onChangeSlider = (_: React.ChangeEvent<{}>, value: number | number[]) => {
-		setPercent(value as number);
-		onChangeMarginPercent(value);
-	};
+	const onChangeSlider = useCallback(
+		(_: React.ChangeEvent<{}>, value: number | number[]) => {
+			setPercent(value as number);
+			onChangeMarginPercent(value, sizeRange);
+		},
+		[onChangeMarginPercent, sizeRange]
+	);
 
 	return (
 		<>

@@ -46,6 +46,12 @@ const Header: FC = () => {
 				icon: <ArrowUpRightIcon />,
 				onClick: () => window.open(EXTERNAL_LINKS.Social.Mirror, '_blank'),
 			},
+			{
+				id: 'learn-more',
+				label: t('homepage.nav.learn-more'),
+				icon: <ArrowUpRightIcon />,
+				onClick: () => window.open(EXTERNAL_LINKS.Docs.DocsRoot, '_blank'),
+			},
 		],
 		// eslint-disable-next-line
 		[t]

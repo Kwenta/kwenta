@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 type PreviewArrowProps = {
@@ -6,17 +5,7 @@ type PreviewArrowProps = {
 };
 
 const PreviewArrow: React.FC<PreviewArrowProps> = ({ showPreview, children }) => {
-	const [showPotentialTrade, setShowPotentialTrade] = useState(false);
-
-	useEffect(() => {
-		if (showPreview) {
-			setShowPotentialTrade(true);
-		} else {
-			setShowPotentialTrade(false);
-		}
-	}, [showPreview]);
-
-	return showPotentialTrade ? (
+	return showPreview ? (
 		<>
 			<StyledArrow />
 			<StyledPreviewGold>{children}</StyledPreviewGold>

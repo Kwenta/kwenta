@@ -24,31 +24,32 @@ export const ROUTES = {
 		Transactions: normalizeRoute('/dashboard', 'transactions', 'tab'),
 		Deprecated: normalizeRoute('/dashboard', 'deprecated', 'tab'),
 	},
-	Trades: normalizeRoute(`/`, 'trades', 'tab'),
 	Exchange: {
 		Home: '/exchange',
 		MarketPair: (baseCurrencyKey: string, quoteCurrencyKey: string) =>
-			normalizeRoute('/exchange', `${baseCurrencyKey}-${quoteCurrencyKey}`, 'market'),
-		Into: (currencyKey: string) => normalizeRoute(`/exchange`, currencyKey, 'market'),
+			`/exchange/?quote=${quoteCurrencyKey}&base=${baseCurrencyKey}`,
+		Into: (currencyKey: string) => `/exchange/?quote=${currencyKey}`,
 	},
 	Markets: {
-		Home: (accountType: FuturesAccountType) => formatUrl('/market/sETH', { accountType }),
-		MarketPair: (marketAsset: FuturesMarketAsset | string, accountType: FuturesAccountType) =>
-			formatUrl(normalizeRoute('/market', `${marketAsset}`, 'market'), { accountType }),
-		Position: (marketAsset: FuturesMarketAsset, accountType: FuturesAccountType) =>
-			formatUrl(normalizeRoute(`/market/${marketAsset}`, 'position', 'tab'), { accountType }),
-		Orders: (marketAsset: FuturesMarketAsset, accountType: FuturesAccountType) =>
-			formatUrl(normalizeRoute(`/market/${marketAsset}`, 'orders', 'tab'), { accountType }),
-		Trades: (marketAsset: FuturesMarketAsset, accountType: FuturesAccountType) =>
-			formatUrl(normalizeRoute(`/market/${marketAsset}`, 'trades', 'tab'), { accountType }),
-		Calculator: (marketAsset: FuturesMarketAsset, accountType: FuturesAccountType) =>
-			formatUrl(normalizeRoute(`/market/${marketAsset}`, 'calculator', 'tab'), { accountType }),
-		Transfers: (marketAsset: FuturesMarketAsset, accountType: FuturesAccountType) =>
-			formatUrl(normalizeRoute(`/market/${marketAsset}`, 'transfers', 'tab'), { accountType }),
+		Home: (accountType: FuturesAccountType) => formatUrl('/market', { accountType, asset: 'sETH' }),
+		MarketPair: (asset: FuturesMarketAsset | string, accountType: FuturesAccountType) =>
+			formatUrl('/market', { asset, accountType }),
+		Position: (asset: FuturesMarketAsset, accountType: FuturesAccountType) =>
+			formatUrl('/market', {
+				asset,
+				accountType,
+				tab: 'position',
+			}),
+		Orders: (asset: FuturesMarketAsset, accountType: FuturesAccountType) =>
+			formatUrl('/market', { asset, accountType, tab: 'orders' }),
+		Trades: (asset: FuturesMarketAsset, accountType: FuturesAccountType) =>
+			formatUrl('/market', { asset, accountType, tab: 'trades' }),
+		Transfers: (asset: FuturesMarketAsset, accountType: FuturesAccountType) =>
+			formatUrl('/market', { asset, accountType, tab: 'transfers' }),
 	},
 	Leaderboard: {
 		Home: '/leaderboard',
-		Trader: (trader: string) => normalizeRoute('/leaderboard', `${trader}`, 'trader'),
+		Trader: (trader: string) => `/leaderboard/?trader=${trader}`,
 	},
 	Earn: {
 		Home: '/earn',

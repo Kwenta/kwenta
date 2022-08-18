@@ -111,6 +111,13 @@ const lightTheme = {
 	modal: {
 		background: '#F2F2F2',
 	},
+	competitionBanner: {
+		border: '1px solid #C9C9C9',
+		state: {
+			text: '#171002',
+		},
+		bg: '#515151',
+	},
 };
 
 export default lightTheme;

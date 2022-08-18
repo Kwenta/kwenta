@@ -249,6 +249,7 @@ export const FullHeightContainer = styled(FlexDiv)`
 	flex-grow: 1;
 	height: auto;
 	position: relative;
+	gap: 10px;
 `;
 
 export const MainContent = styled(FlexDiv)`

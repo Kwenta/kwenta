@@ -106,8 +106,8 @@ const RowText = styled.p`
 
 	color: ${(props) => textColor(props)};
 
-	font-size: 14px;
-	line-height: 17px;
+	font-size: 12px;
+	line-height: 10px;
 	text-align: ${(props) => (props.className === 'row-name' ? 'left' : 'right')};
 `;
 

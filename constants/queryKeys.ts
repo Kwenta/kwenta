@@ -23,6 +23,12 @@ export const QUERY_KEYS = {
 		],
 		MarketCap: (currencyKey: string) => ['marketCap', currencyKey],
 		ExchangeRates: ['rates', 'exchangeRates'],
+		PastRates: (networkId: NetworkId, assets: (FuturesMarketAsset | CurrencyKey)[]) => [
+			'rates',
+			'pastRates',
+			networkId,
+			assets,
+		],
 		ExternalPrice: (currencyKey: string) => ['rates', 'externalPrice', currencyKey],
 		Candlesticks: (currencyKey: string, period: Period) => [
 			'rates',
@@ -40,7 +46,7 @@ export const QUERY_KEYS = {
 	Network: {
 		EthGasPrice: ['network', 'ethGasPrice'],
 		ENSNames: (addresses: string[]) => ['network', 'ensNames', addresses],
-		ENSAvatar: (ensName: string) => ['network', 'ensNames', ensName],
+		ENSAvatar: (ensName: string | null) => ['network', 'ensNames', ensName],
 	},
 	WalletBalances: {
 		Synths: (walletAddress: string, networkId: NetworkId) => [
@@ -124,8 +130,9 @@ export const QUERY_KEYS = {
 			quoteCurrencyKey: string | undefined,
 			baseCurrencyKey: string | undefined,
 			amount: string,
+			synthUsdRate: number,
 			networkId: NetworkId
-		) => ['convert', '1inch', quoteCurrencyKey, baseCurrencyKey, amount, networkId],
+		) => ['convert', '1inch', quoteCurrencyKey, baseCurrencyKey, amount, networkId, synthUsdRate],
 		quoteSynthSwap: (
 			quoteCurrencyKey: string | undefined,
 			baseCurrencyKey: string | undefined,
@@ -207,6 +214,12 @@ export const QUERY_KEYS = {
 			'fundingRates',
 			networkId,
 			currencyKey,
+		],
+		FundingRates: (networkId: NetworkId, periodLength: number) => [
+			'futures',
+			'fundingRates',
+			networkId,
+			periodLength,
 		],
 		TradingVolumeForAll: (networkId: NetworkId) => ['futures', 'tradingVolumeForAll', networkId],
 		MarketPositionHistory: (networkId: NetworkId, market: string | null, walletAddress: string) => [
@@ -303,11 +316,12 @@ export const QUERY_KEYS = {
 			networkId,
 			wallet,
 		],
-		CrossMarginAccount: (networkId: NetworkId, wallet: string) => [
+		CrossMarginAccount: (networkId: NetworkId, wallet: string, selectedAccountType: string) => [
 			'futures',
 			'cross-margin-account',
 			networkId,
 			wallet,
+			selectedAccountType,
 		],
 		CrossMarginSettings: (networkId: NetworkId) => ['futures', 'cross-margin-settings', networkId],
 	},

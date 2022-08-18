@@ -72,6 +72,12 @@ export type FuturesMarket = {
 		makerFeeNextPrice: Wei;
 		takerFeeNextPrice: Wei;
 	};
+	openInterest?: {
+		shortPct: number;
+		longPct: number;
+		shortUSD: Wei;
+		longUSD: Wei;
+	};
 	marketDebt: Wei;
 	marketSkew: Wei;
 	marketSize: Wei;
@@ -231,6 +237,10 @@ export type FuturesCumulativeStats = {
 export type FundingRateUpdate = {
 	funding: Wei;
 	timestamp: number;
+};
+
+export type FundingRates = {
+	[key in FuturesMarketAsset]: Wei;
 };
 
 export type FuturesPotentialTradeDetails = {
