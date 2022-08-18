@@ -28,7 +28,7 @@ const Leader: LeaderComponent = () => {
 				</MobileHiddenView>
 				<MobileOnlyView>
 					<MobileMainContent>
-						<Leaderboard />
+						<Leaderboard mobile />
 					</MobileMainContent>
 				</MobileOnlyView>
 			</PageContent>
