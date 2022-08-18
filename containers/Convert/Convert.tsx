@@ -6,8 +6,8 @@ import { ethers } from 'ethers';
 import { formatBytes32String, formatEther, parseEther } from 'ethers/lib/utils';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import { createContainer } from 'unstated-next';
+import { useAccount, useSigner } from 'wagmi';
 
 import { KWENTA_REFERRAL_ADDRESS, SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
 import { CurrencyKey } from 'constants/currency';
@@ -15,7 +15,6 @@ import Connector from 'containers/Connector';
 import use1InchApiUrl from 'hooks/use1InchApiUrl';
 import erc20Abi from 'lib/abis/ERC20.json';
 import synthSwapAbi from 'lib/abis/SynthSwap.json';
-import { walletAddressState } from 'store/wallet';
 
 type Token = {
 	symbol: CurrencyKey;
@@ -48,8 +47,10 @@ type OneInchApproveSpenderResponse = {
 };
 
 const useConvert = () => {
-	const { signer, network, tokensMap, synthetixjs } = Connector.useContainer();
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { network, tokensMap, synthetixjs } = Connector.useContainer();
+	const { data: signer } = useSigner();
+	const { address } = useAccount();
+	const walletAddress = address || null;
 	const oneInchApiUrl = use1InchApiUrl();
 	const { t } = useTranslation();
 

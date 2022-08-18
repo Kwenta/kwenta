@@ -172,11 +172,11 @@ const App: FC<AppProps> = (props) => {
 			</Head>
 			<RecoilRoot>
 				<QueryClientProvider client={new QueryClient()}>
-					<WithAppContainers>
-						<WagmiConfig client={wagmiClient}>
+					<WagmiConfig client={wagmiClient}>
+						<WithAppContainers>
 							<InnerApp {...props} />
-						</WagmiConfig>
-					</WithAppContainers>
+						</WithAppContainers>
+					</WagmiConfig>
 				</QueryClientProvider>
 			</RecoilRoot>
 		</>
