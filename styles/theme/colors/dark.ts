@@ -71,8 +71,17 @@ const darkTheme = {
 	},
 	slider: {
 		label: '#787878',
-		thumb: { shadow: 'inset 0px 1px 0px rgba(255, 255, 255, 0.5)' },
-		track: { shadow: 'inset 0px 0.5px 0px rgba(255, 255, 255, 0.5)' },
+		thumb: {
+			border: '3px solid rgba(43, 42, 42, 0.5)',
+			shadow: 'inset 0px 1px 0px rgba(255, 255, 255, 0.5)',
+		},
+		rail: {
+			background: 'rgba(255, 255, 255, 0.2)',
+		},
+		track: {
+			background: 'rgba(255, 255, 255, 0.2)',
+			shadow: 'inset 0px 0.5px 0px rgba(255, 255, 255, 0.5)',
+		},
 	},
 	select: {
 		control: {
@@ -89,6 +98,7 @@ const darkTheme = {
 	text: {
 		title: common.secondaryGray,
 		value: common.primaryWhite,
+		label: common.secondaryGray,
 	},
 	icon: {
 		fill: '#787878',

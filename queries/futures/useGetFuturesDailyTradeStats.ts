@@ -21,8 +21,8 @@ const useGetFuturesDailyTradeStats = (options?: UseQueryOptions<FuturesDailyTrad
 	const futuresEndpoint = homepage ? FUTURES_ENDPOINT_MAINNET : getFuturesEndpoint(network);
 
 	const queryTrades = async (
-		skip: number,
-		existing: FuturesOneMinuteStat[]
+		_skip: number,
+		_existing: FuturesOneMinuteStat[]
 	): Promise<FuturesOneMinuteStat[]> => {
 		try {
 			const minTimestamp = Math.floor(calculateTimestampForPeriod(DAY_PERIOD) / 1000);

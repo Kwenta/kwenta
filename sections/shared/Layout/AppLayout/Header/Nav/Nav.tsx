@@ -2,7 +2,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FC, FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StylesConfig } from 'react-select';
 import styled from 'styled-components';
 
 import LabelContainer from 'components/Nav/DropDownLabel';

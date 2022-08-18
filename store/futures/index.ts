@@ -80,8 +80,13 @@ export const isolatedMarginleverageState = atom({
 	default: '',
 });
 
-export const crossMarginLeverageState = atom({
-	key: getFuturesKey('crossMarginLeverage'),
+export const crossMarginLeverageInputState = atom({
+	key: getFuturesKey('crossMarginLeverageInput'),
+	default: '',
+});
+
+export const preferredLeverageState = atom({
+	key: getFuturesKey('preferredLeverage'),
 	default: '10',
 });
 

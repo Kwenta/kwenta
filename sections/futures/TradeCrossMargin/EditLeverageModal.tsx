@@ -1,7 +1,7 @@
 import { wei } from '@synthetixio/wei';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
@@ -10,10 +10,12 @@ import ErrorView from 'components/Error';
 import CustomInput from 'components/Input/CustomInput';
 import { NumberSpan } from 'components/Text/NumberLabel';
 import { useFuturesContext } from 'contexts/FuturesContext';
+import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 import {
-	crossMarginLeverageState,
+	crossMarginLeverageInputState,
 	crossMarginTotalMarginState,
 	marketInfoState,
+	preferredLeverageState,
 } from 'store/futures';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { formatDollars } from 'utils/formatters/number';
@@ -26,19 +28,20 @@ type DepositMarginModalProps = {
 
 export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps) {
 	const { t } = useTranslation();
-	const [crossMarginLeverage, setCrossMarginLeverage] = useRecoilState(crossMarginLeverageState);
+	const { orderTxn, selectedLeverage } = useFuturesContext();
+
+	const setCrossMarginLeverage = useSetRecoilState(crossMarginLeverageInputState);
 	const market = useRecoilValue(marketInfoState);
 	const totalMargin = useRecoilValue(crossMarginTotalMarginState);
+	const [_, setPrefferedLeverage] = usePersistedRecoilState(preferredLeverageState);
 
-	const [leverage, setLeverage] = useState<number>(Number(crossMarginLeverage));
-
-	const { orderTxn } = useFuturesContext();
+	const [leverage, setLeverage] = useState<number>(Number(Number(selectedLeverage).toFixed(2)));
 
 	const maxLeverage = Number((market?.maxLeverage || wei(10)).toString(2));
 
 	const maxPositionUsd = useMemo(() => {
-		return totalMargin.mul(crossMarginLeverage);
-	}, [totalMargin, crossMarginLeverage]);
+		return totalMargin.mul(leverage);
+	}, [totalMargin, leverage]);
 
 	const handleIncrease = () => {
 		const newLeverage = leverage + 1;
@@ -51,6 +54,7 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 	};
 
 	const onConfirm = () => {
+		setPrefferedLeverage(String(leverage));
 		setCrossMarginLeverage(String(leverage));
 		onDismiss();
 	};

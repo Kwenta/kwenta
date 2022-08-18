@@ -153,7 +153,7 @@ const UserInfo: React.FC = () => {
 					}),
 			},
 		],
-		[activeTab, router, marketAsset, openOrders?.length]
+		[activeTab, router, marketAsset, openOrders?.length, accountType]
 	);
 
 	useEffect(() => {

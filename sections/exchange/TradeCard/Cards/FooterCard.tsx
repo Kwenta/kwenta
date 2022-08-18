@@ -47,7 +47,6 @@ const FooterCard: React.FC = () => {
 		baseFeeRate,
 		handleSettle,
 		needsApproval,
-		baseCurrency,
 		handleApprove,
 		isApproved,
 		handleSubmit,
@@ -55,7 +54,6 @@ const FooterCard: React.FC = () => {
 		balances,
 		txProvider,
 		openModal,
-		basePriceRate,
 		transactionFee,
 		totalUSDBalance,
 		setOpenModal,
@@ -66,7 +64,6 @@ const FooterCard: React.FC = () => {
 		settlementWaitingPeriodInSeconds,
 		submissionDisabledReason,
 		feeReclaimPeriodInSeconds,
-		totalTradePrice,
 	} = useExchangeContext();
 
 	return (
@@ -94,10 +91,6 @@ const FooterCard: React.FC = () => {
 					attached={footerCardAttached}
 					submissionDisabledReason={submissionDisabledReason}
 					onSubmit={needsApproval ? (isApproved ? handleSubmit : handleApprove) : handleSubmit}
-					totalTradePrice={baseCurrencyAmount ? totalTradePrice.toString() : null}
-					baseCurrencyAmount={baseCurrencyAmount}
-					basePriceRate={basePriceRate}
-					baseCurrency={baseCurrency}
 					feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
 					quoteCurrencyKey={quoteCurrencyKey}
 					totalFeeRate={exchangeFeeRate}

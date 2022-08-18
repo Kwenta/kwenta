@@ -10,7 +10,7 @@ const TradesTab: React.FC = () => {
 			<SectionHeader>
 				<SectionTitle>Trade History</SectionTitle>
 			</SectionHeader>
-			<TradesHistoryTable numberOfTrades={50} mobile />
+			<TradesHistoryTable mobile />
 		</Pane>
 	);
 };

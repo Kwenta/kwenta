@@ -683,6 +683,7 @@
 				"cross-margin": {
 					"connect-wallet": "Connect your wallet to start trading",
 					"title": "Cross-Margin",
+					"faq-title": "Cross-Margin FAQ's",
 					"create-account": "Create Account",
 					"unsupported": "Cross-margin is not supported on this network"
 				}

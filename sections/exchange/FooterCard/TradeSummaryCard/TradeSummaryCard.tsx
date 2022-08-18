@@ -1,4 +1,3 @@
-import { Synth } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
 import Tippy from '@tippyjs/react';
@@ -20,11 +19,7 @@ import { SummaryItems } from '../common';
 
 type TradeSummaryCardProps = {
 	submissionDisabledReason: ReactNode;
-	baseCurrencyAmount: string;
 	onSubmit: () => void;
-	totalTradePrice: string | null;
-	basePriceRate: Wei;
-	baseCurrency: Synth | null;
 	feeReclaimPeriodInSeconds: number;
 	quoteCurrencyKey: CurrencyKey | null;
 	showFee?: boolean;
@@ -39,11 +34,7 @@ type TradeSummaryCardProps = {
 
 const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	submissionDisabledReason,
-	baseCurrencyAmount,
 	onSubmit,
-	totalTradePrice,
-	basePriceRate,
-	baseCurrency,
 	feeReclaimPeriodInSeconds,
 	quoteCurrencyKey,
 	showFee = true,

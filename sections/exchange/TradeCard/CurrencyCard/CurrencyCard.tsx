@@ -17,7 +17,6 @@ import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { SectionHeader, SectionSubTitle, SectionTitle } from 'sections/futures/MobileTrade/common';
-import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
 import { ratioState } from 'store/exchange';
 import {
 	FlexDivRowCentered,
@@ -47,7 +46,6 @@ type CurrencyCardProps = {
 	disableInput?: boolean;
 	slippagePercent?: Wei | null;
 	isLoading?: boolean;
-	txProvider?: TxProvider | null;
 	disabled?: boolean;
 };
 
@@ -66,7 +64,6 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	interactive = true,
 	disableInput = false,
 	isLoading = false,
-	txProvider = 'synthetix',
 	disabled,
 	...rest
 }) => {

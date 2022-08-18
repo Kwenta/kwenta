@@ -102,7 +102,7 @@ const CurrencyIconContainer: FC<CurrencyIconProps> = (props) => (
 	</Container>
 );
 
-const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, url, ...rest }) => {
+const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, isDeprecated, url, ...rest }) => {
 	const [firstFallbackError, setFirstFallbackError] = useState<boolean>(false);
 	const [secondFallbackError, setSecondFallbackError] = useState<boolean>(false);
 

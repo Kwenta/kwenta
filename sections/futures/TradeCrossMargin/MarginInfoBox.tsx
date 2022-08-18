@@ -7,10 +7,10 @@ import DepositWithdrawIcon from 'assets/svg/futures/deposit-withdraw-arrows.svg'
 import InfoBox from 'components/InfoBox';
 import PreviewArrow from 'components/PreviewArrow';
 import { Synths } from 'constants/currency';
+import { useFuturesContext } from 'contexts/FuturesContext';
 import { FuturesPotentialTradeDetails } from 'queries/futures/types';
 import {
 	crossMarginAvailableMarginState,
-	crossMarginLeverageState,
 	crossMarginMarginDeltaState,
 	leverageSideState,
 	marketInfoState,
@@ -37,12 +37,13 @@ const MarginInfoBox: React.FC = () => {
 	const marketInfo = useRecoilValue(marketInfoState);
 	const orderType = useRecoilValue(orderTypeState);
 	const leverageSide = useRecoilValue(leverageSideState);
-	const selectedLeverage = useRecoilValue(crossMarginLeverageState);
 	const tradeSize = useRecoilValue(tradeSizeState);
 	const previewTrade = useRecoilValue(potentialTradeDetailsState);
 	const marginDelta = useRecoilValue(crossMarginMarginDeltaState);
 	const crossMarginFreeMargin = useRecoilValue(crossMarginAvailableMarginState);
 	const [openModal, setOpenModal] = useState<'leverage' | 'deposit' | null>(null);
+
+	const { selectedLeverage } = useFuturesContext();
 
 	const totalMargin = position?.remainingMargin.add(crossMarginFreeMargin) ?? zeroBN;
 

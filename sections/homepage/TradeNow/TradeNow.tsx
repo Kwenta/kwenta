@@ -5,10 +5,10 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import ROUTES from 'constants/routes';
+import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
+import { futuresAccountTypeState } from 'store/futures';
 import { FlexDivColCentered, Paragraph, SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media from 'styles/media';
-import { futuresAccountTypeState } from 'store/futures';
-import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 
 const TradeNow = () => {
 	const { t } = useTranslation();

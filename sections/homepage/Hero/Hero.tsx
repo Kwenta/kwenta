@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import MarketOrderPreview from 'assets/png/marketing/market-order-preview.png';

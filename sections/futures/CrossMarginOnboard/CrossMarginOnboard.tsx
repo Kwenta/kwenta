@@ -9,8 +9,10 @@ import CompleteCheck from 'assets/svg/futures/onboard-complete-check.svg';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import ErrorView from 'components/Error';
+import InputBalanceLabel from 'components/Input/InputBalanceLabel';
 import NumericInput from 'components/Input/NumericInput';
 import Loader from 'components/Loader';
+import ProgressSteps from 'components/ProgressSteps';
 import { CROSS_MARGIN_BASE_SETTINGS } from 'constants/address';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
@@ -18,13 +20,12 @@ import { useRefetchContext } from 'contexts/RefetchContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useSUSDContract from 'hooks/useSUSDContract';
 import { balancesState, futuresAccountState } from 'store/futures';
-import logError from 'utils/logError';
-import CrossMarginFAQ from './CrossMarginFAQ';
-import ProgressSteps from 'components/ProgressSteps';
-import { zeroBN } from 'utils/formatters/number';
-import { FlexDivRowCentered } from 'styles/common';
-import InputBalanceLabel from 'components/Input/InputBalanceLabel';
 import { walletAddressState } from 'store/wallet';
+import { FlexDivRowCentered } from 'styles/common';
+import { zeroBN } from 'utils/formatters/number';
+import logError from 'utils/logError';
+
+import CrossMarginFAQ from './CrossMarginFAQ';
 
 type Props = {
 	isOpen: boolean;
@@ -53,7 +54,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 
 	const susdBal = balances?.susdWalletBalance;
 
-	const fetchAllowance = async () => {
+	const fetchAllowance = useCallback(async () => {
 		if (!crossMarginAccountContract || !susdContract || !wallet) return;
 		try {
 			const allowance = await susdContract.allowance(wallet, crossMarginAccountContract.address);
@@ -61,10 +62,11 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 		} catch (err) {
 			logError(err);
 		}
-	};
+	}, [crossMarginAccountContract, susdContract, wallet]);
 
 	useEffect(() => {
 		fetchAllowance();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [crossMarginAccountContract?.address, wallet]);
 
 	const createAccount = useCallback(async () => {
@@ -124,7 +126,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 				logError(err);
 			}
 		},
-		[crossMarginAccountContract, monitorTransaction, handleRefetch, onClose]
+		[crossMarginAccountContract, monitorTransaction, handleRefetch]
 	);
 
 	const onClickApprove = useCallback(async () => {
@@ -147,14 +149,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 			setSubmitting(null);
 			logError(err);
 		}
-	}, [
-		crossMarginAccountContract,
-		depositAmount,
-		susdContract,
-		allowance,
-		monitorTransaction,
-		submitDeposit,
-	]);
+	}, [crossMarginAccountContract, susdContract, monitorTransaction, fetchAllowance]);
 
 	const depositToAccount = useCallback(async () => {
 		try {
@@ -166,14 +161,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 		} catch (err) {
 			logError(err);
 		}
-	}, [
-		crossMarginAccountContract,
-		depositAmount,
-		susdContract,
-		allowance,
-		monitorTransaction,
-		submitDeposit,
-	]);
+	}, [crossMarginAccountContract, depositAmount, susdContract, submitDeposit]);
 
 	const onEditAmount = (_: ChangeEvent<HTMLInputElement>, value: string) => {
 		setDepositAmount(value);

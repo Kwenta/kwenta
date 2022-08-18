@@ -17,7 +17,6 @@ import { formatNumber } from 'utils/formatters/number';
 import { isEurForex } from 'utils/futures';
 
 type TradesHistoryTableProps = {
-	numberOfTrades: number;
 	mobile?: boolean;
 };
 
@@ -27,7 +26,7 @@ enum TableColumnAccessor {
 	Time = 'time',
 }
 
-const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobile }) => {
+const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 	const { t } = useTranslation();
 	const currencyKey = useRecoilValue(currentMarketState);
 	const futuresTradesQuery = useGetFuturesTrades(currencyKey);

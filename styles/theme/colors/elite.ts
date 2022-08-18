@@ -91,6 +91,7 @@ const eliteTheme = {
 	text: {
 		title: common.secondaryGray,
 		value: common.primaryWhite,
+		label: common.secondaryGray,
 	},
 	icon: {
 		fill: '',

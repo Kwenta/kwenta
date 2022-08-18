@@ -1,4 +1,3 @@
-import { Contract } from 'ethers';
 import { useMemo } from 'react';
 
 import Connector from 'containers/Connector';

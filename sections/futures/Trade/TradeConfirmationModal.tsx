@@ -1,12 +1,13 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
+import ErrorView from 'components/Error';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { Synths, CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
@@ -24,6 +25,7 @@ import { gasSpeedState } from 'store/wallet';
 import { FlexDivCentered } from 'styles/common';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
+import logError from 'utils/logError';
 import { newGetTransactionPrice } from 'utils/network';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
@@ -53,6 +55,8 @@ const TradeConfirmationModal: FC = () => {
 	} = useFuturesContext();
 
 	const setConfirmationModalOpen = useSetRecoilState(confirmationModalOpenState);
+
+	const [error, setError] = useState<null | string>(null);
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -140,21 +144,31 @@ const TradeConfirmationModal: FC = () => {
 	};
 
 	const handleConfirmOrder = async () => {
+		setError(null);
 		if (selectedAccountType === 'cross_margin') {
-			const tx = await submitCrossMarginOrder();
-			if (tx?.hash) {
-				monitorTransaction({
-					txHash: tx.hash,
-					onTxConfirmed: () => {
-						onLeverageChange('');
-						handleRefetch('modify-position');
-					},
-				});
+			try {
+				const tx = await submitCrossMarginOrder();
+				if (tx?.hash) {
+					monitorTransaction({
+						txHash: tx.hash,
+						onTxFailed(failureMessage) {
+							setError(failureMessage?.failureReason || t('common.transaction.transaction-failed'));
+						},
+						onTxConfirmed: () => {
+							onLeverageChange('');
+							handleRefetch('modify-position');
+						},
+					});
+					onDismiss();
+				}
+			} catch (err) {
+				logError(err);
+				setError(t('common.transaction.transaction-failed'));
 			}
 		} else {
 			submitIsolatedMarginOrder();
+			onDismiss();
 		}
-		onDismiss();
 	};
 
 	const disabledReason = useMemo(() => {
@@ -185,6 +199,11 @@ const TradeConfirmationModal: FC = () => {
 					>
 						{disabledReason || t('futures.market.trade.confirmation.modal.confirm-order')}
 					</ConfirmTradeButton>
+					{error && (
+						<ErrorContainer>
+							<ErrorView message={error} />
+						</ErrorContainer>
+					)}
 				</StyledBaseModal>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
@@ -203,6 +222,11 @@ const TradeConfirmationModal: FC = () => {
 						</MobileConfirmTradeButton>
 					}
 				/>
+				{error && (
+					<ErrorContainer>
+						<ErrorView message={error} />
+					</ErrorContainer>
+				)}
 			</MobileOrTabletView>
 		</>
 	);
@@ -251,6 +275,10 @@ export const MobileConfirmTradeButton = styled(Button)`
 	height: 45px;
 	width: 100%;
 	font-size: 15px;
+`;
+
+const ErrorContainer = styled.div`
+	margin-top: 20px;
 `;
 
 export default TradeConfirmationModal;

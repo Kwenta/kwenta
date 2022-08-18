@@ -13,7 +13,6 @@ import { Synths } from 'constants/currency';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import ROUTES, { setLastVisited } from 'constants/routes';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
-import { FuturesAccountType } from 'queries/futures/types';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { futuresAccountTypeState, futuresMarketsState } from 'store/futures';
 import { FlexDivCol } from 'styles/common';

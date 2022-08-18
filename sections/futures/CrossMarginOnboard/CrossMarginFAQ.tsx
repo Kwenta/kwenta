@@ -10,15 +10,15 @@ export default function CrossMarginFAQ() {
 
 	return (
 		<ul>
-			<FAQListItem>
+			<FAQListItem onClick={onClick}>
 				<div>{t('futures.modals.onboard.faq1')}</div>
 				<div>↗</div>
 			</FAQListItem>
-			<FAQListItem>
+			<FAQListItem onClick={onClick}>
 				<div>{t('futures.modals.onboard.faq2')}</div>
 				<div>↗</div>
 			</FAQListItem>
-			<FAQListItem>
+			<FAQListItem onClick={onClick}>
 				<div>{t('futures.modals.onboard.faq3')}</div>
 				<div>↗</div>
 			</FAQListItem>
@@ -27,10 +27,11 @@ export default function CrossMarginFAQ() {
 }
 
 const FAQListItem = styled.ul`
-	margin: 5px 0;
+	margin: 6px 0;
 	cursor: pointer;
 	display: flex;
 	justify-content: space-between;
+	color: ${(props) => props.theme.colors.selectedTheme.text.label};
 	&:hover {
 		color: ${(props) => props.theme.colors.selectedTheme.text.value};
 	}

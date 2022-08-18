@@ -139,7 +139,7 @@ function Select<T>({ variant, ...props }: Props<T>) {
 			}),
 		};
 		return styles;
-	}, [colors, fonts, props]);
+	}, [colors, fonts, variant]);
 
 	return (
 		<ReactSelect

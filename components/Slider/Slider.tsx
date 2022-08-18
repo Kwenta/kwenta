@@ -70,7 +70,7 @@ const StyledSlider = styled(Slider)`
 		width: 102%;
 		margin-top: -2px;
 		border-radius: 2px;
-		background-color: #7d6b54;
+		background-color: ${(props) => props.theme.colors.selectedTheme.slider.rail.background};
 		height: 4px;
 		left: 0;
 		right: 0;
@@ -78,7 +78,7 @@ const StyledSlider = styled(Slider)`
 
 	.MuiSlider-track {
 		height: 6px;
-		background-color: #7d6b54;
+		background-color: ${(props) => props.theme.colors.selectedTheme.slider.track.background};
 		margin-top: -3px;
 		border-top-left-radius: 3px;
 		border-bottom-left-radius: 3px;
@@ -94,11 +94,12 @@ const StyledSlider = styled(Slider)`
 	}
 
 	.MuiSlider-thumb {
-		background-color: ${(props) => props.theme.colors.selectedTheme.button.text};
-		width: 14px;
-		height: 14px;
-		margin-left: -2px;
-		margin-top: -8px;
+		background-color: ${(props) => props.theme.colors.selectedTheme.yellow};
+		border: ${(props) => props.theme.colors.selectedTheme.slider.thumb.border};
+		width: 18px;
+		height: 18px;
+		margin-left: -4px;
+		margin-top: -10px;
 		&.Mui-disabled {
 			background-color: transparent;
 		}
