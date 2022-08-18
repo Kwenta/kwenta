@@ -80,5 +80,19 @@ module.exports = withPlugins([
 			styledComponents: true,
 		},
 		experimental: { images: { unoptimized: true } },
+		async redirects() {
+			return [
+				{
+					source: '/dashboard/overview',
+					destination: '/dashboard',
+					permanent: true,
+				},
+				{
+					source: '/market/sETH/',
+					destination: '/market/?asset=ETH',
+					permanent: true,
+				},
+			];
+		},
 	},
 ]);
