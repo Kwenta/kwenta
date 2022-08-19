@@ -285,7 +285,7 @@ const useExchange = ({
 			if (currencyKey != null) {
 				if (isETH) {
 					return ETHBalance;
-				} else if (synthTokensMap[currencyKey]) {
+				} else if (synthsMap[currencyKey]) {
 					return synthsWalletBalance != null
 						? (get(synthsWalletBalance, ['balancesMap', currencyKey, 'balance'], zeroBN) as Wei)
 						: null;
@@ -295,7 +295,7 @@ const useExchange = ({
 			}
 			return null;
 		},
-		[ETHBalance, synthsWalletBalance, tokenBalances, synthTokensMap]
+		[synthsMap, ETHBalance, synthsWalletBalance, tokenBalances]
 	);
 
 	const quoteCurrencyBalance = useMemo(() => {
