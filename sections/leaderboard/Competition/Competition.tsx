@@ -2,15 +2,14 @@ import { wei } from '@synthetixio/wei';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import { useAccount } from 'wagmi';
 
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import { Synths } from 'constants/currency';
 import useGetFile from 'queries/files/useGetFile';
-import { walletAddressState } from 'store/wallet';
 import { formatPercent } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';
 
@@ -33,7 +32,8 @@ const Competition: FC<CompetitionProps> = ({
 	searchTerm,
 }: CompetitionProps) => {
 	const { t } = useTranslation();
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { address } = useAccount();
+	const walletAddress = address || null;
 	const competitionQuery = useGetFile(COMPETITION_DATA_LOCATION);
 
 	const walletTier = useMemo(() => {
