@@ -1,11 +1,12 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
+import { Checkbox } from 'components/Checkbox';
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
@@ -29,6 +30,8 @@ import { PositionSide } from '../types';
 
 const OrderHistory: React.FC = () => {
 	const { t } = useTranslation();
+	const [openFilter, setOpenFilter] = useState(true);
+
 	const { synthsMap } = Connector.useContainer();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
@@ -83,30 +86,43 @@ const OrderHistory: React.FC = () => {
 	}, [cancelOrExecuteOrderTxn.hash]);
 
 	const data = React.useMemo(() => {
-		return orders.map((order: any) => ({
-			...order,
-			status:
-				wei(marketInfo?.currentRoundId ?? 0).gte(wei(order.targetRoundId).add(2)) &&
-				order.status === 'Pending'
-					? 'Expired'
-					: order.status,
-			market: getMarketName(order.asset),
-			marketKey: MarketKeyByAsset[order.asset as FuturesMarketAsset],
-			orderType: order.orderType === 'NextPrice' ? 'Next-Price' : order.orderType,
-			size: formatCurrency(order.asset, order.size.abs(), {
-				sign: order.asset ? synthsMap[order.asset]?.sign : '',
-			}),
-			side: wei(order.size).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
-			isExecutable:
-				order.status === 'Pending' &&
-				(wei(marketInfo?.currentRoundId ?? 0).eq(order.targetRoundId) ||
-					wei(marketInfo?.currentRoundId ?? 0).eq(order.targetRoundId.add(1))),
-		}));
-	}, [orders, marketInfo?.currentRoundId, synthsMap]);
+		return orders
+			.map((order: any) => ({
+				...order,
+				status:
+					wei(marketInfo?.currentRoundId ?? 0).gte(wei(order.targetRoundId).add(2)) &&
+					order.status === 'Pending'
+						? 'Expired'
+						: order.status,
+				market: getMarketName(order.asset),
+				marketKey: MarketKeyByAsset[order.asset as FuturesMarketAsset],
+				orderType: order.orderType === 'NextPrice' ? 'Next-Price' : order.orderType,
+				size: formatCurrency(order.asset, order.size.abs(), {
+					sign: order.asset ? synthsMap[order.asset]?.sign : '',
+				}),
+				side: wei(order.size).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
+				isFilled: order.status === 'Filled',
+				isExecutable:
+					order.status === 'Pending' &&
+					(wei(marketInfo?.currentRoundId ?? 0).eq(order.targetRoundId) ||
+						wei(marketInfo?.currentRoundId ?? 0).eq(order.targetRoundId.add(1))),
+			}))
+			.filter((order: any) => !openFilter || order.status === 'Pending');
+	}, [orders, marketInfo?.currentRoundId, synthsMap, openFilter]);
 
 	return (
 		<>
 			<DesktopOnlyView>
+				<FilterContainer>
+					<Checkbox
+						id={'openFilter'}
+						label={t('futures.market.user.open-orders.table.open-filter')}
+						checked={openFilter}
+						onChange={() => {
+							setOpenFilter(!openFilter);
+						}}
+					/>
+				</FilterContainer>
 				<StyledTable
 					data={data}
 					highlightRowsOnHover
@@ -191,13 +207,15 @@ const OrderHistory: React.FC = () => {
 							Cell: (cellProps: CellProps<any>) => {
 								return (
 									<div style={{ display: 'flex' }}>
-										<CancelButton
-											onClick={() => {
-												setAction('cancel');
-											}}
-										>
-											{t('futures.market.user.open-orders.actions.cancel')}
-										</CancelButton>
+										{cellProps.row.original.isExecutable && (
+											<CancelButton
+												onClick={() => {
+													setAction('cancel');
+												}}
+											>
+												{t('futures.market.user.open-orders.actions.cancel')}
+											</CancelButton>
+										)}
 										{cellProps.row.original.isExecutable && (
 											<EditButton
 												onClick={() => {
@@ -273,6 +291,12 @@ const StyledCurrencyIcon = styled(Currency.Icon)`
 const IconContainer = styled.div`
 	grid-column: 1;
 	grid-row: 1 / span 2;
+`;
+
+const FilterContainer = styled.div`
+	display: flex;
+	justify-content: flex-end;
+	padding: 2px 0;
 `;
 
 const StyledValue = styled.div`

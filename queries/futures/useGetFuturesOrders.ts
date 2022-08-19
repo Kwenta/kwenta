@@ -30,7 +30,11 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 					futuresEndpoint,
 					gql`
 						query Orders($account: String!, $market: String!) {
-							futuresOrders(where: { account: $account, market: $market }) {
+							futuresOrders(
+								where: { account: $account, market: $market }
+								orderBy: timestamp
+								orderDirection: desc
+							) {
 								id
 								account
 								size

@@ -727,7 +727,8 @@
 						"status": "Status",
 						"parameters": "Parameters",
 						"actions": "Actions",
-						"no-result": "You have no open orders"
+						"no-result": "You have no open orders",
+						"open-filter": "Only show open orders"
 					},
 					"actions": {
 						"cancel": "Cancel",

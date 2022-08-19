@@ -31,7 +31,6 @@ import ShareModal from '../ShareModal';
 import Trades from '../Trades';
 import Transfers from '../Transfers';
 import OrderHistory from './OrderHistory';
-// import OpenOrdersTable from './OpenOrdersTable';
 
 enum FuturesTab {
 	POSITION = 'position',
