@@ -93,6 +93,8 @@ const OrderHistory: React.FC = () => {
 					wei(marketInfo?.currentRoundId ?? 0).gte(wei(order.targetRoundId).add(2)) &&
 					order.status === 'Pending'
 						? 'Expired'
+						: order.status === 'Pending'
+						? 'Open'
 						: order.status,
 				market: getMarketName(order.asset),
 				marketKey: MarketKeyByAsset[order.asset as FuturesMarketAsset],
@@ -102,12 +104,13 @@ const OrderHistory: React.FC = () => {
 				}),
 				side: wei(order.size).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
 				isFilled: order.status === 'Filled',
+				isCancellable: order.status === 'Pending',
 				isExecutable:
 					order.status === 'Pending' &&
 					(wei(marketInfo?.currentRoundId ?? 0).eq(order.targetRoundId) ||
 						wei(marketInfo?.currentRoundId ?? 0).eq(order.targetRoundId.add(1))),
 			}))
-			.filter((order: any) => !openFilter || order.status === 'Pending');
+			.filter((order: any) => !openFilter || order.status === 'Open' || order.status === 'Expired');
 	}, [orders, marketInfo?.currentRoundId, synthsMap, openFilter]);
 
 	return (
@@ -207,7 +210,7 @@ const OrderHistory: React.FC = () => {
 							Cell: (cellProps: CellProps<any>) => {
 								return (
 									<div style={{ display: 'flex' }}>
-										{cellProps.row.original.isExecutable && (
+										{cellProps.row.original.isCancellable && (
 											<CancelButton
 												onClick={() => {
 													setAction('cancel');
