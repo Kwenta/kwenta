@@ -31,7 +31,7 @@ const SwapButton: React.FC = () => {
 		>
 			{!!submissionDisabledReason
 				? submissionDisabledReason
-				: !isApproved
+				: needsApproval && !isApproved
 				? t('exchange.summary-info.button.approve')
 				: t('exchange.summary-info.button.submit-order')}
 		</Button>
