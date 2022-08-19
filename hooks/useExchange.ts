@@ -1,4 +1,4 @@
-import useSynthetixQueries from '@synthetixio/queries';
+import useSynthetixQueries, { Token } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { BigNumber, ethers } from 'ethers';
 import produce from 'immer';
@@ -55,7 +55,11 @@ import {
 	networkState,
 	gasSpeedState,
 } from 'store/wallet';
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import {
+	newGetCoinGeckoPricesForCurrencies,
+	newGetExchangeRatesForCurrencies,
+	newGetExchangeRatesTupleForCurrencies,
+} from 'utils/currencies';
 import { truncateNumbers, zeroBN } from 'utils/formatters/number';
 import { hexToAsciiV2 } from 'utils/formatters/string';
 import logError from 'utils/logError';
@@ -190,7 +194,7 @@ const useExchange = ({
 		: null;
 
 	const quoteCurrencyTokenAddress = useMemo(
-		() =>
+		(): Token['address'] | null =>
 			quoteCurrencyKey != null
 				? isQuoteCurrencyETH
 					? ETH_ADDRESS
@@ -200,7 +204,7 @@ const useExchange = ({
 	);
 
 	const baseCurrencyTokenAddress = useMemo(
-		() =>
+		(): Token['address'] | null =>
 			baseCurrencyKey != null
 				? isBaseCurrencyETH
 					? ETH_ADDRESS
@@ -273,10 +277,20 @@ const useExchange = ({
 
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
-	const rate = useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, quoteCurrencyKey, baseCurrencyKey),
+	const [quoteRate, baseRate] = useMemo(
+		() => newGetExchangeRatesTupleForCurrencies(exchangeRates, quoteCurrencyKey, baseCurrencyKey),
 		[exchangeRates, quoteCurrencyKey, baseCurrencyKey]
 	);
+
+	const rate = useMemo(() => {
+		const base = baseRate.lte(0)
+			? newGetCoinGeckoPricesForCurrencies(coinGeckoPrices, baseCurrencyTokenAddress)
+			: baseRate;
+		const quote = quoteRate.lte(0)
+			? newGetCoinGeckoPricesForCurrencies(coinGeckoPrices, quoteCurrencyTokenAddress)
+			: quoteRate;
+		return base.gt(0) && quote.gt(0) ? quote.div(base) : wei(0);
+	}, [baseCurrencyTokenAddress, baseRate, coinGeckoPrices, quoteCurrencyTokenAddress, quoteRate]);
 
 	const inverseRate = useMemo(() => (rate.gt(0) ? wei(1).div(rate) : wei(0)), [rate]);
 
