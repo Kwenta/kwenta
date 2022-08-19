@@ -118,6 +118,15 @@ export const Table: FC<TableProps> = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	// reset to the first page
+	// this fires when filters are applied that change the data
+	// if a filter is applied that reduces the data size below max pages for that filter, reset to the first page
+	useEffect(() => {
+		if (pageIndex > pageCount) {
+			gotoPage(0);
+		}
+	}, [pageIndex, pageCount, gotoPage]);
+
 	const defaultRef = useRef(null);
 
 	return (
@@ -185,7 +194,7 @@ export const Table: FC<TableProps> = ({
 					{!!noResultsMessage && !isLoading && data.length === 0 && noResultsMessage}
 				</ReactTable>
 			</TableContainer>
-			{!showShortList && showPagination && data.length > (pageSize ? pageSize : MAX_PAGE_ROWS) ? (
+			{!showShortList && data.length > (pageSize ? pageSize : MAX_PAGE_ROWS) ? (
 				<Pagination
 					pageIndex={pageIndex}
 					pageCount={pageCount}
@@ -260,7 +269,8 @@ const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
 `;
 
 export const TableNoResults = styled(GridDivCenteredRow)`
-	padding: 50px 0;
+	padding: 50px 40px;
+	text-align: center;
 	justify-content: center;
 	margin-top: -2px;
 	justify-items: center;

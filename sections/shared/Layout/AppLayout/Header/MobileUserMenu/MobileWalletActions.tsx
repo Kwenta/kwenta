@@ -19,8 +19,8 @@ export const MobileWalletActions: FC<MobileWalletButtonProps> = ({ toggleModal }
 	const { ensAvatar } = useENS(address);
 	const { signer, staticMainnetProvider } = Connector.useContainer();
 
-	const [ensName, setEns] = useState<string>('');
-	const [walletLabel, setWalletLabel] = useState<string>('');
+	const [ensName, setEns] = useState('');
+	const [walletLabel, setWalletLabel] = useState('');
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
 
 	useEffect(() => {

@@ -1,4 +1,3 @@
-import { castArray } from 'lodash';
 import { useRouter } from 'next/router';
 import { useRef, useContext, useEffect, useCallback, useState, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -54,10 +53,10 @@ export function TVChart({
 	const _widget = useRef<IChartingLibraryWidget | null>(null);
 	const _entryLine = useRef<IPositionLineAdapter | null | undefined>(null);
 	const _liquidationLine = useRef<IPositionLineAdapter | null | undefined>(null);
+	const router = useRouter();
 
 	const { colors } = useContext(ThemeContext);
 	let network = useRecoilValue(networkState);
-	const router = useRouter();
 
 	const DEFAULT_OVERRIDES = {
 		'paneProperties.background': colors.selectedTheme.background,
@@ -66,8 +65,8 @@ export function TVChart({
 	};
 
 	const [marketAsset, marketAssetLoaded] = useMemo(() => {
-		return router.query.market ? [castArray(router.query.market)[0], true] : [null, false];
-	}, [router.query]);
+		return router.query.asset ? [router.query.asset, true] : [null, false];
+	}, [router.query.asset]);
 
 	useEffect(() => {
 		const widgetOptions = {

@@ -1,9 +1,5 @@
 import { CurrencyKey } from '@synthetixio/contracts-interface';
-import {
-	CRYPTO_CURRENCY_MAP,
-	iStandardSynth,
-	synthToAsset,
-} from '@synthetixio/queries/build/node/src/currency';
+import { CRYPTO_CURRENCY_MAP } from '@synthetixio/queries/build/node/src/currency';
 import { wei } from '@synthetixio/wei';
 import { BigNumberish, ethers } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
@@ -14,6 +10,7 @@ import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
 import { ratesState } from 'store/futures';
 import { networkState } from 'store/wallet';
+import { FuturesMarketKey, MarketAssetByKey } from 'utils/futures';
 
 import { Rates } from './types';
 
@@ -47,13 +44,15 @@ const useExchangeRatesQuery = (options?: UseQueryOptions<Rates>) => {
 
 			synths.forEach((currencyKeyBytes32: CurrencyKey, idx: number) => {
 				const currencyKey = ethers.utils.parseBytes32String(currencyKeyBytes32) as CurrencyKey;
+				const marketAsset = MarketAssetByKey[currencyKey as FuturesMarketKey];
+
 				const rate = Number(ethers.utils.formatEther(rates[idx]));
 
+				// add rates for each synth
 				exchangeRates[currencyKey] = wei(rate);
-				// only interested in the standard synths (sETH -> ETH, etc)
-				if (iStandardSynth(currencyKey)) {
-					exchangeRates[synthToAsset(currencyKey)] = wei(rate);
-				}
+
+				// if a futures market exists, add the market asset rate
+				if (marketAsset) exchangeRates[marketAsset] = wei(rate);
 			});
 
 			setRates(exchangeRates);

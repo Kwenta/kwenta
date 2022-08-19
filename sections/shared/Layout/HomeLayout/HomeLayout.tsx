@@ -1,8 +1,10 @@
 import { FC } from 'react';
-import { createGlobalStyle } from 'styled-components';
+import { ThemeProvider, createGlobalStyle } from 'styled-components';
 
 import { RefetchProvider } from 'contexts/RefetchContext';
 import { FullScreenContainer } from 'styles/common';
+import { themes } from 'styles/theme';
+import darkTheme from 'styles/theme/colors/dark';
 
 import Footer from './Footer';
 import Header from './Header';
@@ -13,17 +15,21 @@ type HomeLayoutProps = HeaderProps & {
 };
 
 const HomeLayout: FC<HomeLayoutProps> = ({ setCurrentPage, children }) => (
-	<FullScreenContainer>
-		<GlobalStyle />
-		<Header setCurrentPage={setCurrentPage} />
-		<RefetchProvider>{children}</RefetchProvider>
-		<Footer />
-	</FullScreenContainer>
+	<ThemeProvider theme={themes['dark']}>
+		<FullScreenContainer>
+			<GlobalStyle />
+			<Header setCurrentPage={setCurrentPage} />
+			<RefetchProvider>{children}</RefetchProvider>
+			<Footer />
+		</FullScreenContainer>
+	</ThemeProvider>
 );
 
 const GlobalStyle = createGlobalStyle`
 	body {
 		overflow-x: hidden;
+		background-color: ${darkTheme.background};
+		color: ${darkTheme.text.value};
 	}
 `;
 

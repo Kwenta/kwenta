@@ -7,7 +7,6 @@ import styled from 'styled-components';
 import Earning from 'sections/homepage/Earning';
 import Features from 'sections/homepage/Features';
 import Hero from 'sections/homepage/Hero';
-import Learn from 'sections/homepage/Learn';
 import ShortList from 'sections/homepage/ShortList';
 import TradeNow from 'sections/homepage/TradeNow';
 import HomeLayout from 'sections/shared/Layout/HomeLayout';
@@ -48,7 +47,6 @@ const HomePage: HomePageComponent = () => {
 						<ShortList />
 						<Earning />
 						<Features />
-						<Learn />
 						<TradeNow />
 					</Container>
 				) : (

@@ -23,7 +23,7 @@ import { gasSpeedState } from 'store/wallet';
 import { FlexDivCentered } from 'styles/common';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
-import { newGetTransactionPrice } from 'utils/network';
+import { getTransactionPrice } from 'utils/network';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
 import { PositionSide } from '../types';
@@ -67,12 +67,7 @@ const TradeConfirmationModal: FC = () => {
 	// TODO: Get tx fee for cross margin order
 	const transactionFee = useMemo(
 		() =>
-			newGetTransactionPrice(
-				gasPrice,
-				orderTxn.gasLimit,
-				ethPriceRate,
-				orderTxn.optimismLayerOneFee
-			),
+			getTransactionPrice(gasPrice, orderTxn.gasLimit, ethPriceRate, orderTxn.optimismLayerOneFee),
 		[gasPrice, orderTxn.gasLimit, ethPriceRate, orderTxn.optimismLayerOneFee]
 	);
 

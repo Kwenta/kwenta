@@ -15,7 +15,7 @@ import { currentMarketState, positionState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { formatCurrency } from 'utils/formatters/number';
-import { newGetTransactionPrice } from 'utils/network';
+import { getTransactionPrice } from 'utils/network';
 
 import {
 	StyledBaseModal,
@@ -39,8 +39,8 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const market = useRecoilValue(currentMarketState);
 	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
-	const [amount, setAmount] = React.useState<string>('');
-	const [isDisabled, setDisabled] = React.useState<boolean>(true);
+	const [amount, setAmount] = React.useState('');
+	const [isDisabled, setDisabled] = React.useState(true);
 	const [isMax, setMax] = React.useState(false);
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
@@ -82,7 +82,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 
 	const transactionFee = React.useMemo(
 		() =>
-			newGetTransactionPrice(
+			getTransactionPrice(
 				gasPrice,
 				withdrawTxn.gasLimit,
 				ethPriceRate,

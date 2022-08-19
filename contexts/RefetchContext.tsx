@@ -1,13 +1,17 @@
 import React from 'react';
 import { useRecoilValue } from 'recoil';
 
+import { Period, PERIOD_IN_SECONDS } from 'constants/period';
+import useGetAverageFundingRateForMarkets from 'queries/futures/useGetAverageFundingRateForMarkets';
 import useGetCrossMarginAccountOverview from 'queries/futures/useGetCrossMarginAccountOverview';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
+import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useSynthBalances from 'queries/synths/useSynthBalances';
 import { futuresAccountState } from 'store/futures';
 
@@ -37,6 +41,9 @@ export const RefetchProvider: React.FC = ({ children }) => {
 	const marketsQuery = useGetFuturesMarkets();
 	useExchangeRatesQuery({ refetchInterval: 15000 });
 	useGetFuturesPotentialTradeDetails();
+	useGetAverageFundingRateForMarkets(PERIOD_IN_SECONDS[Period.ONE_HOUR]);
+	useLaggedDailyPrice();
+	useQueryCrossMarginAccount();
 
 	const handleRefetch = (refetchType: RefetchType, timeout?: number) => {
 		setTimeout(() => {

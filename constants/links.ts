@@ -54,4 +54,7 @@ export const EXTERNAL_LINKS = {
 	Kips: {
 		Home: 'https://kips.kwenta.io/all-kip/',
 	},
+	Competition: {
+		LearnMore: 'https://mirror.xyz/kwenta.eth/WghvQFjEslsC0kwnGVP0QZnY1F7ZU3w5hpWxDPLbBsE',
+	},
 };

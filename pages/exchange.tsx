@@ -12,11 +12,7 @@ import AppLayout from 'sections/shared/Layout/AppLayout';
 import { PageContent, FullHeightContainer, MainContent } from 'styles/common';
 import { formatCurrency } from 'utils/formatters/number';
 
-type AppLayoutProps = {
-	children: React.ReactNode;
-};
-
-type ExchangeComponent = FC & { layout: FC<AppLayoutProps> };
+type ExchangeComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
 const Exchange: ExchangeComponent = () => {
 	const { t } = useTranslation();
@@ -32,7 +28,7 @@ const Exchange: ExchangeComponent = () => {
 		<ExchangeContext.Provider value={exchangeData}>
 			<Head>
 				<title>
-					{baseCurrencyKey != null && quoteCurrencyKey != null
+					{!!baseCurrencyKey && !!quoteCurrencyKey && inverseRate.gt(0)
 						? t('exchange.page-title-currency-pair', {
 								baseCurrencyKey,
 								quoteCurrencyKey,
@@ -59,7 +55,7 @@ const Exchange: ExchangeComponent = () => {
 	);
 };
 
-Exchange.layout = AppLayout;
+Exchange.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 const StyledFullHeightContainer = styled(FullHeightContainer)`
 	padding-top: 14px;

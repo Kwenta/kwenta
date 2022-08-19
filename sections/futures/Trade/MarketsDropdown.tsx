@@ -13,8 +13,7 @@ import Connector from 'containers/Connector';
 import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { Price, Rates } from 'queries/rates/types';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
-import { currentMarketState, futuresMarketsState } from 'store/futures';
+import { currentMarketState, futuresMarketsState, pastRatesState } from 'store/futures';
 import { assetToSynth, iStandardSynth } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import {
@@ -28,10 +27,6 @@ import {
 import MarketsDropdownIndicator from './MarketsDropdownIndicator';
 import MarketsDropdownOption from './MarketsDropdownOption';
 import MarketsDropdownSingleValue from './MarketsDropdownSingleValue';
-
-function setLastVisited(baseCurrencyPair: string): void {
-	localStorage.setItem('lastVisited', ROUTES.Markets.MarketPair(baseCurrencyPair));
-}
 
 export type MarketsCurrencyOption = {
 	value: FuturesMarketAsset;
@@ -66,13 +61,7 @@ type MarketsDropdownProps = {
 
 const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
-	const markets = futuresMarkets.map(({ asset }) => MarketKeyByAsset[asset]);
-
-	const dailyPriceChangesQuery = useLaggedDailyPrice(markets);
-
-	const dailyPriceChanges = React.useMemo(() => dailyPriceChangesQuery?.data ?? [], [
-		dailyPriceChangesQuery,
-	]);
+	const pastRates = useRecoilValue(pastRatesState);
 
 	const asset = useRecoilValue(currentMarketState);
 
@@ -106,8 +95,8 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	);
 
 	const getPastPrice = React.useCallback(
-		(asset: string) => dailyPriceChanges.find((price: Price) => price.synth === asset),
-		[dailyPriceChanges]
+		(asset: string) => pastRates.find((price: Price) => price.synth === asset),
+		[pastRates]
 	);
 
 	const selectedBasePriceRate = getBasePriceRate(asset);
@@ -163,7 +152,6 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 					// Types are not perfect from react-select, this should always be true (just helping typescript)
 					if (x && 'value' in x) {
 						router.push(ROUTES.Markets.MarketPair(x.value));
-						setLastVisited(x.value);
 					}
 				}}
 				value={assetToCurrencyOption({

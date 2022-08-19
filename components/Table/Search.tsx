@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import SearchIconPath from 'assets/svg/app/search.svg';
 import SearchInput from 'components/Input/SearchInput';
+import media from 'styles/media';
 
 type Props = {
 	value: string | undefined;
@@ -38,6 +39,10 @@ const StyledSearchInput = styled(SearchInput)`
 	text-indent: 16px;
 	border-radius: 8px;
 	padding: 10px 15px;
+
+	${media.lessThan('sm')`
+		font-size: 13px;
+	`}
 `;
 
 const SearchBar = styled.div`

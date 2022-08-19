@@ -20,7 +20,7 @@ import { FlexDivRowCentered } from 'styles/common';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { formatCurrency } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
-import { newGetTransactionPrice } from 'utils/network';
+import { getTransactionPrice } from 'utils/network';
 
 type DepositMarginModalProps = {
 	onDismiss(): void;
@@ -36,8 +36,8 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const market = useRecoilValue(currentMarketState);
 	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
-	const [amount, setAmount] = React.useState<string>('');
-	const [isDisabled, setDisabled] = React.useState<boolean>(true);
+	const [amount, setAmount] = React.useState('');
+	const [isDisabled, setDisabled] = React.useState(true);
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -66,7 +66,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 
 	const transactionFee = React.useMemo(
 		() =>
-			newGetTransactionPrice(
+			getTransactionPrice(
 				gasPrice,
 				depositTxn.gasLimit,
 				ethPriceRate,

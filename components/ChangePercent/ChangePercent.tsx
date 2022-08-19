@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import ChangeNegativeIcon from 'assets/svg/app/change-negative.svg';
 import ChangePositiveIcon from 'assets/svg/app/change-positive.svg';
+import { NO_VALUE } from 'constants/placeholder';
 import media from 'styles/media';
 import { formatPercent } from 'utils/formatters/number';
 
@@ -11,24 +12,42 @@ type ChangePercentProps = {
 	value: WeiSource;
 	className?: string;
 	decimals?: number;
+	showArrow?: boolean;
 };
 
-export const ChangePercent: FC<ChangePercentProps> = ({ value, decimals = 2, ...rest }) => {
-	const isPositive = wei(value ?? 0).gt(0);
+export const ChangePercent: FC<ChangePercentProps> = ({
+	value,
+	decimals = 2,
+	showArrow = true,
+	...rest
+}) => {
+	const isValid = !!value;
+	const isZero = value && wei(value).eq(0);
+	const isPositive = value && wei(value).gt(0);
 
 	return (
-		<CurrencyChange isPositive={isPositive} {...rest}>
-			{isPositive ? <ChangePositiveIcon /> : <ChangeNegativeIcon />}
-			{formatPercent(wei(value ?? 0).abs(), { minDecimals: decimals })}
+		<CurrencyChange isValid={isValid} isPositive={isPositive} {...rest}>
+			{!isValid ? (
+				<>{NO_VALUE}</>
+			) : !showArrow ? (
+				<></>
+			) : !isZero && isPositive ? (
+				<ChangePositiveIcon />
+			) : (
+				<ChangeNegativeIcon />
+			)}
+			{value && formatPercent(wei(value).abs(), { minDecimals: decimals })}
 		</CurrencyChange>
 	);
 };
 
-const CurrencyChange = styled.span<{ isPositive: boolean }>`
+const CurrencyChange = styled.span<{ isValid: boolean; isPositive: boolean }>`
 	display: inline-flex;
 	align-items: center;
 	color: ${(props) =>
-		props.isPositive
+		!props.isValid
+			? props.theme.colors.selectedTheme.white
+			: props.isPositive
 			? props.theme.colors.selectedTheme.green
 			: props.theme.colors.selectedTheme.red};
 	font-family: ${(props) => props.theme.fonts.mono};

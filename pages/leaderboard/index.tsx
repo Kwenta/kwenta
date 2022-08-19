@@ -8,11 +8,7 @@ import Leaderboard from 'sections/leaderboard/Leaderboard';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import { PageContent, MainContent, FullHeightContainer } from 'styles/common';
 
-type AppLayoutProps = {
-	children: React.ReactNode;
-};
-
-type LeaderComponent = FC & { layout: FC<AppLayoutProps> };
+type LeaderComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
 const Leader: LeaderComponent = () => {
 	const { t } = useTranslation();
@@ -32,7 +28,7 @@ const Leader: LeaderComponent = () => {
 				</MobileHiddenView>
 				<MobileOnlyView>
 					<MobileMainContent>
-						<Leaderboard />
+						<Leaderboard mobile />
 					</MobileMainContent>
 				</MobileOnlyView>
 			</PageContent>
@@ -45,6 +41,6 @@ const MobileMainContent = styled.div`
 	padding: 15px;
 `;
 
-Leader.layout = AppLayout;
+Leader.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default Leader;

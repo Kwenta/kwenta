@@ -28,7 +28,7 @@ import { FlexDivCol, FlexDivCentered } from 'styles/common';
 import { computeNPFee } from 'utils/costCalculations';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN, formatCurrency } from 'utils/formatters/number';
-import { newGetTransactionPrice } from 'utils/network';
+import { getTransactionPrice } from 'utils/network';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
 import { PositionSide } from '../types';
@@ -73,12 +73,7 @@ const NextPriceConfirmationModal: FC = () => {
 
 	const transactionFee = useMemo(
 		() =>
-			newGetTransactionPrice(
-				gasPrice,
-				orderTxn.gasLimit,
-				ethPriceRate,
-				orderTxn.optimismLayerOneFee
-			),
+			getTransactionPrice(gasPrice, orderTxn.gasLimit, ethPriceRate, orderTxn.optimismLayerOneFee),
 		[gasPrice, orderTxn.gasLimit, ethPriceRate, orderTxn.optimismLayerOneFee]
 	);
 

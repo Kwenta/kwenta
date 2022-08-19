@@ -10,6 +10,7 @@ import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import { appReadyState } from 'store/app';
 import { futuresMarketsState } from 'store/futures';
 import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
+import { zeroBN } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
 
 import { FuturesMarket } from './types';
@@ -44,7 +45,12 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 				FuturesMarketData.globals(),
 			]);
 
-			const assetKeys = markets.map((m: any) => {
+			const enabledMarkets = markets.filter((m: any) => {
+				const asset = utils.parseBytes32String(m.asset) as FuturesMarketAsset;
+				return !!MarketKeyByAsset[asset];
+			});
+
+			const assetKeys = enabledMarkets.map((m: any) => {
 				const asset = utils.parseBytes32String(m.asset) as FuturesMarketAsset;
 				return utils.formatBytes32String(MarketKeyByAsset[asset]);
 			});
@@ -65,7 +71,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 				systemStatusPromise,
 			]);
 
-			const futuresMarkets = markets.map(
+			const futuresMarkets = enabledMarkets.map(
 				(
 					{
 						market,
@@ -91,6 +97,20 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 						takerFee: wei(feeRates.takerFee),
 						makerFeeNextPrice: wei(feeRates.makerFeeNextPrice),
 						takerFeeNextPrice: wei(feeRates.takerFeeNextPrice),
+					},
+					openInterest: {
+						shortPct: wei(marketSize).eq(0)
+							? 0
+							: wei(marketSize).sub(marketSkew).div('2').div(marketSize).toNumber(),
+						longPct: wei(marketSize).eq(0)
+							? 0
+							: wei(marketSize).add(marketSkew).div('2').div(marketSize).toNumber(),
+						shortUSD: wei(marketSize).eq(0)
+							? zeroBN
+							: wei(marketSize).sub(marketSkew).div('2').mul(price),
+						longUSD: wei(marketSize).eq(0)
+							? zeroBN
+							: wei(marketSize).add(marketSkew).div('2').mul(price),
 					},
 					marketDebt: wei(marketDebt),
 					marketSkew: wei(marketSkew),

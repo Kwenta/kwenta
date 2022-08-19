@@ -10,18 +10,21 @@ import {
 	FuturesPosition,
 	FuturesPotentialTradeDetails,
 } from 'queries/futures/types';
-import { Rates } from 'queries/rates/types';
+import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
+import { Price, Rates } from 'queries/rates/types';
 import { PositionSide } from 'sections/futures/types';
+import { localStorageEffect } from 'store/effects';
 import { getFuturesKey, getSynthsKey } from 'store/utils';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN } from 'utils/formatters/number';
-import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
+import { FuturesMarketAsset, MarketAssetByKey, MarketKeyByAsset } from 'utils/futures';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
 export const currentMarketState = atom({
 	key: getFuturesKey('currentMarket'),
 	default: FuturesMarketAsset.sETH,
+	effects: [localStorageEffect('currentMarketAsset')],
 });
 
 export const marketKeyState = selector({
@@ -36,6 +39,18 @@ export const marketKeysState = selector({
 		return futuresMarkets.map(({ asset }) => {
 			return MarketKeyByAsset[asset];
 		});
+	},
+});
+
+export const marketAssetsState = selector({
+	key: getFuturesKey('marketAssets'),
+	get: ({ get }) => {
+		const marketKeys = get(marketKeysState);
+		return marketKeys.map(
+			(key): FuturesMarketAsset => {
+				return MarketAssetByKey[key];
+			}
+		);
 	},
 });
 
@@ -87,6 +102,28 @@ export const leverageSideState = atom<PositionSide>({
 export const ratesState = atom<Rates>({
 	key: getFuturesKey('rates'),
 	default: {},
+});
+
+export const fundingRateState = selector({
+	key: getFuturesKey('fundingRate'),
+	get: ({ get }) => {
+		const currentMarket = get(currentMarketState);
+		const fundingRates = get(fundingRatesState);
+
+		return fundingRates.find(
+			(fundingRate: FundingRateResponse) => fundingRate.asset === MarketKeyByAsset[currentMarket]
+		);
+	},
+});
+
+export const fundingRatesState = atom<FundingRateResponse[]>({
+	key: getFuturesKey('fundingRates'),
+	default: [],
+});
+
+export const pastRatesState = atom<Price[] | []>({
+	key: getFuturesKey('pastRates'),
+	default: [],
 });
 
 export const orderTypeState = atom({
@@ -198,9 +235,9 @@ export const marketAssetRateState = selector({
 	key: getFuturesKey('marketAssetRate'),
 	get: ({ get }) => {
 		const exchangeRates = get(ratesState);
-		const marketKey = get(marketKeyState);
+		const marketAsset = get(currentMarketState);
 
-		return newGetExchangeRatesForCurrencies(exchangeRates, marketKey, Synths.sUSD);
+		return newGetExchangeRatesForCurrencies(exchangeRates, marketAsset, Synths.sUSD);
 	},
 });
 
