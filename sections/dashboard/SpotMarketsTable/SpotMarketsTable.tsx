@@ -8,6 +8,7 @@ import { useQueryClient } from 'react-query';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import { useNetwork } from 'wagmi';
 
 import MarketBadge from 'components/Badge/MarketBadge';
 import ChangePercent from 'components/ChangePercent';
@@ -19,7 +20,6 @@ import Connector from 'containers/Connector';
 import { Price, Rates } from 'queries/rates/types';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
 import { pastRatesState } from 'store/futures';
-import { networkState } from 'store/wallet';
 import { isEurForex, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
 type SpotMarketsTableProps = {
@@ -29,7 +29,7 @@ type SpotMarketsTableProps = {
 const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const network = useRecoilValue(networkState);
+	const { chain: activeChain } = useNetwork();
 	const pastRates = useRecoilValue(pastRatesState);
 
 	const { synthsMap } = Connector.useContainer();
@@ -38,7 +38,7 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 
 	const queryCache = useQueryClient().getQueryCache();
 	// KM-NOTE: come back and delete
-	const frozenSynthsQuery = queryCache.find(['synths', 'frozenSynths', network.id]);
+	const frozenSynthsQuery = queryCache.find(['synths', 'frozenSynths', activeChain?.id]);
 
 	const unfrozenSynths =
 		frozenSynthsQuery && frozenSynthsQuery.state.status === 'success'

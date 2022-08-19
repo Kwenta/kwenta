@@ -36,8 +36,8 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 	});
 
 	const homepage = window.location.pathname === ROUTES.Home.Root;
-	const synthetixjs = homepage ? defaultSynthetixjs : snxjs;
-	const networkId = homepage ? DEFAULT_NETWORK_ID : activeChain?.id;
+	const synthetixjs = homepage || !isL2 ? defaultSynthetixjs : snxjs;
+	const networkId = homepage || !isL2 ? DEFAULT_NETWORK_ID : activeChain?.id;
 	const { isConnected: isWalletConnected } = useAccount();
 	const [, setFuturesMarkets] = useRecoilState(futuresMarketsState);
 	const isReady = isAppReady && !!synthetixjs;
@@ -45,7 +45,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 	return useQuery<FuturesMarket[]>(
 		QUERY_KEYS.Futures.Markets(networkId as NetworkId),
 		async () => {
-			if (!homepage && isWalletConnected && !isL2) {
+			if (!homepage && isWalletConnected) {
 				return null;
 			}
 
