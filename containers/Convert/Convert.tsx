@@ -57,10 +57,10 @@ const useConvert = () => {
 		quoteTokenAddress: string,
 		baseTokenAddress: string,
 		amount: string,
+		decimals: number,
 		slippage: number
 	) => {
-		const params = get1InchQuoteSwapParams(quoteTokenAddress, baseTokenAddress, amount);
-
+		const params = get1InchQuoteSwapParams(quoteTokenAddress, baseTokenAddress, amount, decimals);
 		const res = await axios.get<OneInchSwapResponse>(oneInchApiUrl + 'swap', {
 			params: {
 				fromTokenAddress: params.fromTokenAddress,
@@ -93,7 +93,6 @@ const useConvert = () => {
 		decimals?: number
 	) => {
 		const params = get1InchQuoteSwapParams(quoteTokenAddress, baseTokenAddress, amount, decimals);
-
 		const response = await axios.get<OneInchQuoteResponse>(oneInchApiUrl + 'quote', {
 			params: {
 				fromTokenAddress: params.fromTokenAddress,
@@ -102,7 +101,6 @@ const useConvert = () => {
 				disableEstimate: true,
 			},
 		});
-
 		return ethers.utils
 			.formatUnits(response.data.toTokenAmount, response.data.toToken.decimals)
 			.toString();
@@ -112,15 +110,17 @@ const useConvert = () => {
 		fromToken: Token,
 		toToken: Token,
 		fromAmount: string,
+		decimals: number,
 		slippage: number = 1
 	) => {
-		return swapSynthSwap(fromToken, toToken, fromAmount, slippage, 'estimate_gas');
+		return swapSynthSwap(fromToken, toToken, fromAmount, decimals, slippage, 'estimate_gas');
 	};
 
 	const swapSynthSwap = async (
 		fromToken: Token,
 		toToken: Token,
 		fromAmount: string,
+		decimals: number,
 		slippage: number = 1,
 		metaOnly?: 'meta_tx' | 'estimate_gas'
 	) => {
@@ -149,7 +149,13 @@ const useConvert = () => {
 			synthAmountEth = formatEther(usdValue);
 		}
 
-		const params = await get1InchSwapParams(oneInchFrom, oneInchTo, synthAmountEth, slippage);
+		const params = await get1InchSwapParams(
+			oneInchFrom,
+			oneInchTo,
+			synthAmountEth,
+			decimals,
+			slippage
+		);
 
 		const formattedData = getFormattedSwapData(params, SYNTH_SWAP_OPTIMISM_ADDRESS);
 
@@ -202,10 +208,17 @@ const useConvert = () => {
 		quoteTokenAddress: string,
 		baseTokenAddress: string,
 		amount: string,
+		decimals: number,
 		slippage: number = 1,
 		metaOnly = false
 	) => {
-		const params = await get1InchSwapParams(quoteTokenAddress, baseTokenAddress, amount, slippage);
+		const params = await get1InchSwapParams(
+			quoteTokenAddress,
+			baseTokenAddress,
+			amount,
+			decimals,
+			slippage
+		);
 
 		const { from, to, data, value } = params.tx;
 
@@ -229,9 +242,16 @@ const useConvert = () => {
 		quoteTokenAddress: string,
 		baseTokenAddress: string,
 		amount: string,
+		decimals: number,
 		slippage: number = 1
 	) => {
-		const params = await get1InchSwapParams(quoteTokenAddress, baseTokenAddress, amount, slippage);
+		const params = await get1InchSwapParams(
+			quoteTokenAddress,
+			baseTokenAddress,
+			amount,
+			decimals,
+			slippage
+		);
 
 		const { gas } = params.tx;
 

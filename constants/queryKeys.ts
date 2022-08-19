@@ -130,8 +130,9 @@ export const QUERY_KEYS = {
 			quoteCurrencyKey: string | undefined,
 			baseCurrencyKey: string | undefined,
 			amount: string,
+			synthUsdRate: number,
 			networkId: NetworkId
-		) => ['convert', '1inch', quoteCurrencyKey, baseCurrencyKey, amount, networkId],
+		) => ['convert', '1inch', quoteCurrencyKey, baseCurrencyKey, amount, networkId, synthUsdRate],
 		quoteSynthSwap: (
 			quoteCurrencyKey: string | undefined,
 			baseCurrencyKey: string | undefined,
