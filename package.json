@@ -32,7 +32,7 @@
 		"@reach/dialog": "0.15.0",
 		"@synthetixio/contracts-interface": "2.74.1",
 		"@synthetixio/optimism-networks": "2.74.1",
-		"@synthetixio/providers": "2.74.1",
+		"@synthetixio/providers": "2.74.5",
 		"@synthetixio/queries": "2.74.3",
 		"@synthetixio/transaction-notifier": "2.74.1",
 		"@synthetixio/wei": "2.74.1",
