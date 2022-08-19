@@ -19,6 +19,7 @@ import colors from 'styles/theme/colors/common';
 import fonts from 'styles/theme/fonts';
 
 import { initBarChart } from './initBarChart';
+import { TimeRangeSwitcher } from './TimeRangeSwitcher';
 
 const Container = styled.div`
 	@media only screen and (min-width: 600px) {
@@ -70,9 +71,13 @@ const ChartWrapper = styled.div`
 	}
 
 	@media only screen and (min-width: 600px) {
-		// width: auto;
-		// max-width: 1160px;
+		width: 100%;
+		max-width: 1160px;
 	}
+`;
+
+const Wrapper = styled.div`
+	position: relative;
 `;
 
 const VolumnWrapper = styled(ChartWrapper)``;
@@ -401,10 +406,19 @@ export const Stats: FC<StatsProps> = () => {
 		<Container>
 			<StatsTitle>{t('stats.title')}</StatsTitle>
 			<ChartContainer>
-				<VolumnWrapper ref={volumnRef} />
+				<Wrapper>
+					<TimeRangeSwitcher />
+					<VolumnWrapper ref={volumnRef} />
+				</Wrapper>
 				<TradeContainer>
-					<TradesWrapper ref={tradesRef} />
-					<TradersWrapper ref={tradersRef} />
+					<Wrapper style={{ width: '100%' }}>
+						<TimeRangeSwitcher />
+						<TradesWrapper ref={tradesRef} />
+					</Wrapper>
+					<Wrapper style={{ width: '100%' }}>
+						<TimeRangeSwitcher />
+						<TradersWrapper ref={tradersRef} />
+					</Wrapper>
 				</TradeContainer>
 				<TvlWrapper ref={tvlRef} />
 			</ChartContainer>

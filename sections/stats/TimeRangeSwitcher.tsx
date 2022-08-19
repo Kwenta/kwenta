@@ -5,6 +5,10 @@ import Button from 'components/Button';
 const Container = styled.div`
 	display: flex;
 	gap: 4px;
+	position: absolute;
+	right: 20px;
+	top: 20px;
+	z-index: 1;
 `;
 
 const StyledBtn = styled(Button)`
