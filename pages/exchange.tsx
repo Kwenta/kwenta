@@ -9,6 +9,7 @@ import useExchange from 'hooks/useExchange';
 import BasicSwap from 'sections/exchange/BasicSwap';
 import { MobileSwap } from 'sections/exchange/MobileSwap';
 import AppLayout from 'sections/shared/Layout/AppLayout';
+import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { PageContent, FullHeightContainer, MainContent } from 'styles/common';
 import { formatCurrency } from 'utils/formatters/number';
 
@@ -44,11 +45,15 @@ const Exchange: ExchangeComponent = () => {
 					<StyledFullHeightContainer>
 						<MainContent>
 							<BasicSwap />
+							<br />
+							<GitHashID />
 						</MainContent>
 					</StyledFullHeightContainer>
 				</DesktopOnlyView>
 				<MobileOrTabletView>
 					<MobileSwap />
+					<br />
+					<GitHashID />
 				</MobileOrTabletView>
 			</PageContent>
 		</ExchangeContext.Provider>
