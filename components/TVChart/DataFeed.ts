@@ -253,6 +253,7 @@ const DataFeedFactory = (
 				subscribeLastCandle(base, quote, _resolution, networkId, onTick);
 			}, 10000);
 
+			//@ts-ignore FIXME
 			onSubscribe(intervalId);
 		},
 		unsubscribeBars: (subscriberUID) => {},
