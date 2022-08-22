@@ -12,7 +12,7 @@
 		"lint:sarif": "node tests/lint.js . --ext ts,.tsx && tsc",
 		"lint:fix": "eslint . --ext ts,.tsx --fix",
 		"test:unit": "jest",
-		"test:e2e": "start-server-and-test 'npm run build && npm run start' http-get://localhost:3000 'synpress run'",
+		"test:e2e": "start-server-and-test 'pnpm run build && pnpm run start' http-get://localhost:3000 'synpress run'",
 		"test:e2e:only:tests": "synpress run",
 		"test:e2e:open:testrunner": "synpress open",
 		"test:e2e:ci": "synpress run --group smoke-tests --record --parallel",
@@ -139,7 +139,7 @@
 	},
 	"husky": {
 		"hooks": {
-			"pre-commit": "npm run lint"
+			"pre-commit": "pnpm run lint"
 		}
 	},
 	"lint-staged": {
