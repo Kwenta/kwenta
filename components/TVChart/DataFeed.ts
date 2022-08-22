@@ -9,7 +9,6 @@ import {
 	SubscribeBarsCallback,
 } from 'public/static/charting_library/charting_library';
 
-import { Synths } from 'constants/currency';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import { combineDataToPair } from 'sections/exchange/TradeCard/Charts/hooks/useCombinedCandleSticksChartData';
 import { getDisplayAsset } from 'utils/futures';
@@ -55,8 +54,8 @@ const fetchCombinedCandles = async (
 	resolution: ResolutionString,
 	networkId: number
 ) => {
-	const baseCurrencyIsSUSD = base === Synths.sUSD;
-	const quoteCurrencyIsSUSD = quote === Synths.sUSD;
+	const baseCurrencyIsSUSD = base === 'sUSD';
+	const quoteCurrencyIsSUSD = quote === 'sUSD';
 	const baseDataPromise = requestCandlesticks(
 		base,
 		from,
@@ -83,8 +82,8 @@ const fetchLastCandle = async (
 	resolution: ResolutionString,
 	networkId: number
 ) => {
-	const baseCurrencyIsSUSD = base === Synths.sUSD;
-	const quoteCurrencyIsSUSD = quote === Synths.sUSD;
+	const baseCurrencyIsSUSD = base === 'sUSD';
+	const quoteCurrencyIsSUSD = quote === 'sUSD';
 	const to = Math.floor(Date.now() / 1000);
 	const from = 0;
 

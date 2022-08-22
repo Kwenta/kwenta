@@ -32,3 +32,7 @@ export const getSynthsEndpoint = (network: Network): string => {
 		? SYNTHS_ENDPOINT_OPTIMISM_KOVAN
 		: SYNTHS_ENDPOINT_MAIN;
 };
+
+export function notNill<Value>(value: Value | null | undefined): value is Value {
+	return value !== null && value !== undefined;
+}
