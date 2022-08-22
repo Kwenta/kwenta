@@ -5,7 +5,6 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
-import { Synths } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 import { parseGasPriceObject } from 'hooks/useGas';
 import { customGasPriceState, gasSpeedState, isL2State, isMainnetState } from 'store/wallet';
@@ -28,7 +27,7 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 
 	const formattedTransactionFee = useMemo(() => {
 		return transactionFee
-			? formatCurrency(Synths.sUSD, transactionFee, { sign: '$', maxDecimals: 1 })
+			? formatCurrency('sUSD', transactionFee, { sign: '$', maxDecimals: 1 })
 			: NO_VALUE;
 	}, [transactionFee]);
 

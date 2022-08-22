@@ -3,7 +3,6 @@ import { useRef, useContext, useEffect, useCallback, useState, useMemo } from 'r
 import { useRecoilValue } from 'recoil';
 import { ThemeContext } from 'styled-components';
 
-import { Synths } from 'constants/currency';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
 import { currentThemeState } from 'store/ui';
 import { networkState } from 'store/wallet';
@@ -70,7 +69,7 @@ export function TVChart({
 
 	useEffect(() => {
 		const widgetOptions = {
-			symbol: marketAsset + ':' + Synths.sUSD,
+			symbol: marketAsset + ':sUSD',
 			datafeed: DataFeedFactory(network.id, onSubscribe),
 			interval: interval,
 			container: containerId,
@@ -180,7 +179,7 @@ export function TVChart({
 		_widget.current?.onChartReady(() => {
 			const symbolInterval = _widget.current?.symbolInterval();
 			_widget.current?.setSymbol(
-				marketAsset + ':' + Synths.sUSD,
+				marketAsset + ':sUSD',
 				symbolInterval?.interval ?? DEFAULT_RESOLUTION,
 				() => {}
 			);

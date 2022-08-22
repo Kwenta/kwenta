@@ -35,7 +35,7 @@ type AppPropsWithLayout = AppProps & {
 };
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {
-	const { provider, signer, network } = Connector.useContainer();
+	const { provider, signer, network, synthetixjs } = Connector.useContainer();
 	const getLayout = Component.getLayout || ((page) => page);
 
 	const currentTheme = useRecoilValue(currentThemeState);
@@ -47,13 +47,14 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 			<MediaContextProvider>
 				<SynthetixQueryContextProvider
 					value={
-						provider && isSupportedNetworkId(network.id)
+						provider && isSupportedNetworkId(network.id) && synthetixjs
 							? createQueryContext({
-									provider,
+									provider: provider,
 									signer: signer || undefined,
 									networkId: network.id,
+									synthetixjs: synthetixjs,
 							  })
-							: createQueryContext({ networkId: null })
+							: createQueryContext({ networkId: null, synthetixjs: null })
 					}
 				>
 					<Layout>

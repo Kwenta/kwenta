@@ -5,7 +5,6 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
-import { Synths } from 'constants/currency';
 import { futuresAccountState, marketInfoState, positionState } from 'store/futures';
 import { isL2State } from 'store/wallet';
 import { zeroBN } from 'utils/formatters/number';
@@ -23,7 +22,7 @@ const MarketActions: React.FC = () => {
 
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
 	const synthsBalancesQuery = useSynthsBalancesQuery(selectedFuturesAddress);
-	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
+	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap?.['sUSD']?.balance ?? zeroBN;
 
 	return (
 		<>

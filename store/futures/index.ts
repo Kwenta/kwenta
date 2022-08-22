@@ -2,7 +2,6 @@ import { Balances } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { atom, selector } from 'recoil';
 
-import { Synths } from 'constants/currency';
 import { DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import {
 	FuturesAccountState,
@@ -237,7 +236,7 @@ export const marketAssetRateState = selector({
 		const exchangeRates = get(ratesState);
 		const marketAsset = get(currentMarketState);
 
-		return newGetExchangeRatesForCurrencies(exchangeRates, marketAsset, Synths.sUSD);
+		return newGetExchangeRatesForCurrencies(exchangeRates, marketAsset, 'sUSD');
 	},
 });
 
