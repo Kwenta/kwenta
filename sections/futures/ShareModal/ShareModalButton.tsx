@@ -1,28 +1,44 @@
-import { toPng } from 'html-to-image';
+import { toJpeg } from 'html-to-image';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
 
-function downloadPng(dataUrl: string) {
+function downloadPng(dataUrl: string): void {
 	const link = document.createElement('a');
 
-	link.download = 'my-pnl-on-kwenta.png';
+	link.download = 'my-pnl-on-kwenta.jpeg';
 	link.href = dataUrl;
 	link.pathname = 'assets/png/' + link.download;
 	link.click();
+}
+
+async function createImg(): Promise<string> {
+	const element = document.getElementById('pnl-graphic') as HTMLDivElement;
+	const imageSettings = { quality: 1 };
+
+	const url = await toJpeg(element, imageSettings);
+
+	let img = document.createElement('img');
+	img.src = url;
+
+	const image = await new Promise((resolve) => {
+		img.onload = () => {
+			toJpeg(element, imageSettings).then((dataUrl: string) => {
+				resolve(dataUrl);
+			});
+		};
+	});
+
+	return image as string;
 }
 
 const ShareModalButton = () => {
 	const { t } = useTranslation();
 
 	const handleDownloadImage = async () => {
-		let node = document.getElementById('pnl-graphic');
-
-		if (node) {
-			const dataUrl = await toPng(node, { cacheBust: true });
-			downloadPng(dataUrl);
-		}
+		const result = await createImg();
+		downloadPng(result);
 	};
 
 	return (
