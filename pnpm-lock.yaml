@@ -43,6 +43,7 @@ specifiers:
   '@types/react-slick': 0.23.10
   '@types/react-table': 7.0.22
   '@types/styled-components': 5.1.2
+  '@types/testing-library__jest-dom': ^5.14.5
   '@typescript-eslint/eslint-plugin': 4.33.0
   '@typescript-eslint/parser': 4.33.0
   axios: 0.27.2
@@ -196,6 +197,7 @@ devDependencies:
   '@types/react-slick': 0.23.10
   '@types/react-table': 7.0.22
   '@types/styled-components': 5.1.2
+  '@types/testing-library__jest-dom': 5.14.5
   '@typescript-eslint/eslint-plugin': 4.33.0_25jyngjfztuw2pvscqpo5wx6k4
   '@typescript-eslint/parser': 4.33.0_sek7ybhoe3wua6y4z6v7featku
   babel-eslint: 10.1.0_eslint@7.32.0
