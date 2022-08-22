@@ -32,8 +32,8 @@ const useRedeemDeprecatedSynths = (
 		? redeemableDeprecatedSynthsQuery.data ?? null
 		: null;
 
-	const [redeemTxModalOpen, setRedeemTxModalOpen] = useState<boolean>(false);
-	const [isRedeeming, setIsRedeeming] = useState<boolean>(false);
+	const [redeemTxModalOpen, setRedeemTxModalOpen] = useState(false);
+	const [isRedeeming, setIsRedeeming] = useState(false);
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 	const [txError, setTxError] = useState<string | null>(null);
 	const { gasPrice, gasPriceWei, getGasLimitEstimate } = useGas();

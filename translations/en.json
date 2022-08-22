@@ -3,7 +3,7 @@
 		"en": "English"
 	},
 	"meta": {
-		"description": "Gain exposure to cryptocurrencies, forex, equities, indices, and commodities on Ethereum with zero slippage",
+		"description": "Gain exposure to cryptocurrencies, forex, indices, and commodities on Ethereum with zero slippage",
 		"og": {
 			"title": "Kwenta",
 			"site-name": "Kwenta"
@@ -126,7 +126,7 @@
 			"description": "Take Back The Market, Trade Like A Whale",
 			"categories": "Commodities, Forex, Crypto and more."
 		},
-		"features": { 
+		"features": {
 			"title": "ADVANTAGES",
 			"description": "Trade without the limits of a centralized exchange",
 			"blazing-fast": {
@@ -393,7 +393,6 @@
 		"1inch": {
 			"unsupported-network": "Synth Swap is not supported on this network",
 			"wallet-not-connected": "Wallet not connected"
-
 		}
 	},
 	"dashboard": {
@@ -496,6 +495,12 @@
 			"susd-total": "sUSD Total"
 		}
 	},
+	"dashboard-markets": {
+		"page-title": "Markets | Kwenta"
+	},
+	"dashboard-history": {
+		"page-title": "Trade History | Kwenta"
+	},
 	"futures": {
 		"page-title": "Futures | Kwenta",
 		"wallet-overview": {
@@ -520,7 +525,7 @@
 		},
 		"market": {
 			"page-title": "{{baseCurrencyKey}} Futures | Kwenta",
-			"page-title-rate": "{{baseCurrencyKey}} - {{rate}} Futures | Kwenta",
+			"page-title-rate": "{{marketName}} - {{rate}} Futures | Kwenta",
 			"sidebar-tab": {
 				"markets": "Markets",
 				"history": "History",
@@ -810,6 +815,7 @@
 				"total-volume": "Total Volume",
 				"liquidations": "Liquidations",
 				"24h-pnl": "24H PnL",
+				"pnl": "PnL",
 				"total-pnl": "PnL ($)",
 				"percent-pnl": "PnL (%)",
 				"rank-mobile": "#"
@@ -817,6 +823,7 @@
 		},
 		"trader-history": {
 			"table": {
+				"back": "Back",
 				"timestamp": "Date/Time",
 				"market": "Market",
 				"status": "Status",
@@ -824,6 +831,14 @@
 				"total-trades": "Trades",
 				"total-volume": "Total Volume",
 				"total-pnl": "Realized PnL"
+			}
+		},
+		"competition": {
+			"title": "Competition",
+			"table": {
+				"table-updates": "Table data updates daily",
+				"starting-soon": "Competition starting soon",
+				"started": "Competition started, leaderboard updates every 3 hours"
 			}
 		}
 	},
@@ -965,8 +980,7 @@
 		"currency-category": {
 			"crypto": "crypto",
 			"forex": "forex",
-			"commodity": "commodities",
-			"equities": "equities"
+			"commodity": "commodities"
 		},
 		"contract": "contract",
 		"chart-periods": {
@@ -1064,7 +1078,15 @@
 			"n-week-ago": "{{ timeDelta }}w ago",
 			"n-year-ago": "{{ timeDelta }}y ago"
 		},
-		"min": "min"
+		"min": "min",
+		"competition": {
+			"before-launch-date": "Competition coming soon",
+			"24h-before-launch-date": "Competition starting in",
+			"during-competition": "Competition Live",
+			"24h-before-end-date": "Competition ending in",
+			"24h-after-end-date": "Competition ended"
+		},
+		"learn-more": "learn more"
 	},
 	"mobile-menu": {
 		"currency": "Currency",
@@ -1080,3 +1102,4 @@
 		"bridge": "Bridge"
 	}
 }
+

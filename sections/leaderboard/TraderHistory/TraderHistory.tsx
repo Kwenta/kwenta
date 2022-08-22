@@ -6,7 +6,6 @@ import styled from 'styled-components';
 
 import Currency from 'components/Currency';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import Loader from 'components/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
 import { Synths } from 'constants/currency';
@@ -19,7 +18,7 @@ import { getMarketName } from 'utils/futures';
 
 type TraderHistoryProps = {
 	trader: string;
-	traderENSName: string | null;
+	ensInfo: Record<string, string>;
 	resetSelection: Function;
 	compact?: boolean;
 	searchTerm?: string | undefined;
@@ -27,7 +26,7 @@ type TraderHistoryProps = {
 
 const TraderHistory: FC<TraderHistoryProps> = ({
 	trader,
-	traderENSName,
+	ensInfo,
 	resetSelection,
 	compact,
 	searchTerm,
@@ -35,6 +34,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 	const { t } = useTranslation();
 	const positionsQuery = useGetFuturesAccountPositionHistory(trader);
 	const positions = useMemo(() => positionsQuery.data ?? [], [positionsQuery]);
+	const traderENSName = useMemo(() => ensInfo[trader] ?? null, [trader, ensInfo]);
 
 	let data = useMemo(() => {
 		return positions
@@ -68,10 +68,6 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 			);
 	}, [positions, searchTerm]);
 
-	if (positionsQuery.isLoading) {
-		return <Loader />;
-	}
-
 	return (
 		<>
 			<DesktopOnlyView>
@@ -79,7 +75,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 					compact={compact}
 					showPagination
 					pageSize={10}
-					isLoading={false}
+					isLoading={positionsQuery.isLoading}
 					data={data}
 					hideHeaders={compact}
 					columns={[
@@ -89,10 +85,9 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 									<TitleText
 										onClick={() => {
 											resetSelection();
-											router.push(ROUTES.Leaderboard.Home);
 										}}
 									>
-										{t('leaderboard.leaderboard.table.title')}
+										{t('leaderboard.trader-history.table.back')}
 									</TitleText>
 									<TitleSeparator>&gt;</TitleSeparator>
 									<TraderText

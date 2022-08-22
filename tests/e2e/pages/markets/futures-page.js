@@ -14,7 +14,7 @@ export default class FuturesPage extends Page {
 	}
 
 	visit(marketKey = 'sETH') {
-		cy.visit(`/market/${marketKey}`);
+		cy.visit(`/market/?asset=${marketKey}`);
 	}
 
 	connectBrowserWallet() {
