@@ -1,6 +1,6 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import produce from 'immer';
 import get from 'lodash/get';
 import { useRouter } from 'next/router';
@@ -59,12 +59,7 @@ import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { truncateNumbers, zeroBN } from 'utils/formatters/number';
 import { hexToAsciiV2 } from 'utils/formatters/string';
 import logError from 'utils/logError';
-import {
-	normalizeGasLimit,
-	newGetTransactionPrice,
-	getTransactionPrice,
-	GasInfo,
-} from 'utils/network';
+import { normalizeGasLimit, getTransactionPrice } from 'utils/network';
 
 type ExchangeCardProps = {
 	footerCardAttached?: boolean;
@@ -112,6 +107,8 @@ const useExchange = ({
 
 	const [isApproving, setIsApproving] = useState(false);
 	const [isApproved, setIsApproved] = useState(false);
+	const [gasInfo, setGasInfo] = useState<{ limit: number; l1Fee: Wei } | null>();
+
 	const [baseCurrencyAmount, setBaseCurrencyAmount] = useRecoilState(baseCurrencyAmountState);
 	const [quoteCurrencyAmount, setQuoteCurrencyAmount] = useRecoilState(quoteCurrencyAmountState);
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -154,10 +151,10 @@ const useExchange = ({
 
 	const txProvider: TxProvider | null = useMemo(() => {
 		if (!baseCurrencyKey || !quoteCurrencyKey) return null;
-		if (synthTokensMap[baseCurrencyKey] && synthTokensMap[quoteCurrencyKey]) return 'synthetix';
+		if (synthsMap[baseCurrencyKey] && synthsMap[quoteCurrencyKey]) return 'synthetix';
 		if (oneInchTokensMap?.[baseCurrencyKey] && oneInchTokensMap?.[quoteCurrencyKey]) return '1inch';
 		return 'synthswap';
-	}, [baseCurrencyKey, quoteCurrencyKey, synthTokensMap, oneInchTokensMap]);
+	}, [synthsMap, baseCurrencyKey, quoteCurrencyKey, oneInchTokensMap]);
 
 	// TODO: these queries break when `txProvider` is not `synthetix` and should not be called.
 	// however, condition would break rule of hooks here
@@ -180,6 +177,8 @@ const useExchange = ({
 		[quoteCurrencyAmount],
 		300
 	);
+
+	const quoteDecimals = get(allTokensMap, [quoteCurrencyKey!, 'decimals'], undefined);
 
 	const selectedTokens = tokenList.filter(
 		(t) => t.symbol === baseCurrencyKey || t.symbol === quoteCurrencyKey
@@ -238,7 +237,7 @@ const useExchange = ({
 			  }
 			: null,
 		quoteCurrencyAmountDebounced,
-		get(allTokensMap, [quoteCurrencyKey!, 'decimals'], undefined)
+		quoteDecimals
 	);
 
 	const oneInchApproveAddressQuery = use1InchApproveSpenderQuery({
@@ -286,7 +285,7 @@ const useExchange = ({
 			if (currencyKey != null) {
 				if (isETH) {
 					return ETHBalance;
-				} else if (synthTokensMap[currencyKey]) {
+				} else if (synthsMap[currencyKey]) {
 					return synthsWalletBalance != null
 						? (get(synthsWalletBalance, ['balancesMap', currencyKey, 'balance'], zeroBN) as Wei)
 						: null;
@@ -296,7 +295,7 @@ const useExchange = ({
 			}
 			return null;
 		},
-		[ETHBalance, synthsWalletBalance, tokenBalances, synthTokensMap]
+		[synthsMap, ETHBalance, synthsWalletBalance, tokenBalances]
 	);
 
 	const quoteCurrencyBalance = useMemo(() => {
@@ -310,7 +309,7 @@ const useExchange = ({
 	// TODO: Fix coingecko prices (optimism issue maybe?)
 	const quotePriceRate = useMemo(
 		() =>
-			txProvider !== 'synthetix' && !isQuoteCurrencyETH && !quoteCurrency
+			txProvider !== 'synthetix' && !quoteCurrency
 				? coinGeckoPrices != null &&
 				  quoteCurrencyTokenAddress != null &&
 				  selectPriceCurrencyRate != null &&
@@ -325,7 +324,6 @@ const useExchange = ({
 				  ),
 		[
 			txProvider,
-			isQuoteCurrencyETH,
 			quoteCurrency,
 			coinGeckoPrices,
 			quoteCurrencyTokenAddress,
@@ -337,7 +335,7 @@ const useExchange = ({
 	);
 
 	const basePriceRate = useMemo(() => {
-		return txProvider !== 'synthetix' && !isBaseCurrencyETH && !baseCurrency
+		return txProvider !== 'synthetix' && !baseCurrency
 			? coinGeckoPrices != null &&
 			  baseCurrencyTokenAddress != null &&
 			  selectPriceCurrencyRate != null &&
@@ -353,7 +351,6 @@ const useExchange = ({
 			  );
 	}, [
 		txProvider,
-		isBaseCurrencyETH,
 		baseCurrency,
 		coinGeckoPrices,
 		baseCurrencyTokenAddress,
@@ -641,8 +638,6 @@ const useExchange = ({
 		// eslint-disable-next-line
 	}, [exchangeTxn.hash]);
 
-	const [gasInfo, setGasInfo] = useState<GasInfo | null>();
-
 	const oneInchSlippage = useMemo(() => {
 		// ETH swaps often fail with lower slippage
 		if (
@@ -655,18 +650,21 @@ const useExchange = ({
 	}, [txProvider, baseCurrencyKey, quoteCurrencyKey, slippage]);
 
 	const getGasEstimateForExchange = useCallback(async () => {
-		if (isL2) return null;
+		if (!isL2) return null;
 		if (txProvider === 'synthswap') {
 			const gasEstimate = await swapSynthSwapGasEstimate(
 				allTokensMap[quoteCurrencyKey!],
 				allTokensMap[baseCurrencyKey!],
 				quoteCurrencyAmount,
+				quoteDecimals,
 				slippage
 			);
+
 			const metaTx = await swapSynthSwap(
 				allTokensMap[quoteCurrencyKey!],
 				allTokensMap[baseCurrencyKey!],
 				quoteCurrencyAmount,
+				quoteDecimals,
 				slippage,
 				'meta_tx'
 			);
@@ -682,12 +680,15 @@ const useExchange = ({
 				quoteCurrencyTokenAddress!,
 				baseCurrencyTokenAddress!,
 				quoteCurrencyAmount,
+				quoteDecimals,
 				oneInchSlippage
 			);
+
 			const metaTx = await swap1Inch(
 				quoteCurrencyTokenAddress!,
 				baseCurrencyTokenAddress!,
 				quoteCurrencyAmount,
+				quoteDecimals,
 				oneInchSlippage,
 				true
 			);
@@ -703,33 +704,40 @@ const useExchange = ({
 		allTokensMap,
 		baseCurrencyKey,
 		baseCurrencyTokenAddress,
-		getL1SecurityFee,
 		isL2,
 		quoteCurrencyAmount,
 		quoteCurrencyKey,
 		quoteCurrencyTokenAddress,
 		slippage,
+		txProvider,
+		gasPrice?.gasPrice,
+		oneInchSlippage,
+		quoteDecimals,
 		swap1Inch,
 		swap1InchGasEstimate,
 		swapSynthSwap,
 		swapSynthSwapGasEstimate,
-		txProvider,
-		gasPrice?.gasPrice,
-		oneInchSlippage,
+		getL1SecurityFee,
 	]);
 
 	// An attempt to show correct gas fees while making as few calls as possible. (as soon as the submission is "valid", compute it once)
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (gasInfo == null && submissionDisabledReason == null) {
-				const gasEstimate = await getGasEstimateForExchange();
-				setGasInfo(gasEstimate);
+			if (submissionDisabledReason == null) {
+				try {
+					const gasEstimate = await getGasEstimateForExchange();
+					setGasInfo(gasEstimate);
+				} catch (err) {
+					logError(err);
+				}
+			} else {
+				setGasInfo(null);
 			}
 		};
 		getGasLimitEstimate();
 
 		// eslint-disable-next-line
-	}, [submissionDisabledReason, gasInfo, txProvider]);
+	}, [submissionDisabledReason, txProvider, quoteCurrencyAmount, gasPrice?.gasPrice]);
 
 	const redeemableDeprecatedSynthsQuery = useRedeemableDeprecatedSynthsQuery(walletAddress);
 	const redeemableDeprecatedSynths =
@@ -864,20 +872,20 @@ const useExchange = ({
 		if (txProvider === 'synthswap' || txProvider === '1inch') {
 			// TODO: We should refactor this to use Wei, instead of numbers.
 			return getTransactionPrice(
-				gasPrice?.gasPrice?.toNumber() ?? null,
-				gasInfo?.limit,
-				ethPriceRate.toNumber(),
-				gasInfo?.l1Fee
+				gasPrice,
+				BigNumber.from(gasInfo?.limit || 0),
+				ethPriceRate,
+				gasInfo?.l1Fee || zeroBN
 			);
 		} else {
-			return newGetTransactionPrice(
+			return getTransactionPrice(
 				gasPrice,
 				exchangeTxn.gasLimit,
 				ethPriceRate,
 				exchangeTxn.optimismLayerOneFee
 			);
 		}
-	}, [gasPrice, ethPriceRate, exchangeTxn, gasInfo, txProvider]);
+	}, [gasPrice, ethPriceRate, exchangeTxn, gasInfo?.limit, gasInfo?.l1Fee, txProvider]);
 
 	const handleApprove = async () => {
 		setTxError(null);
@@ -919,10 +927,12 @@ const useExchange = ({
 
 			if (txProvider === '1inch' && oneInchTokensMap != null) {
 				// @ts-ignore is correct tx type
+
 				tx = await swap1Inch(
 					quoteCurrencyTokenAddress!,
 					baseCurrencyTokenAddress!,
 					quoteCurrencyAmount,
+					quoteDecimals,
 					oneInchSlippage
 				);
 			} else if (txProvider === 'synthswap') {
@@ -930,6 +940,7 @@ const useExchange = ({
 					allTokensMap[quoteCurrencyKey!],
 					allTokensMap[baseCurrencyKey!],
 					quoteCurrencyAmount,
+					quoteDecimals,
 					slippage
 				);
 			} else {
@@ -974,18 +985,19 @@ const useExchange = ({
 		quoteCurrencyAmount,
 		quoteCurrencyKey,
 		quoteCurrencyTokenAddress,
-		setHasOrdersNotification,
-		setOrders,
-		swap1Inch,
+		quoteDecimals,
 		txProvider,
 		slippage,
 		oneInchTokensMap,
 		allTokensMap,
-		swapSynthSwap,
-		setTxError,
 		exchangeTxn,
 		oneInchSlippage,
 		monitorExchangeTxn,
+		setHasOrdersNotification,
+		setOrders,
+		swap1Inch,
+		swapSynthSwap,
+		setTxError,
 	]);
 
 	useEffect(() => {
@@ -1100,7 +1112,7 @@ const useExchange = ({
 	const onQuoteBalanceClick = useCallback(async () => {
 		if (quoteCurrencyBalance != null) {
 			if ((quoteCurrencyKey as string) === 'ETH') {
-				const ETH_TX_BUFFER = 0.1;
+				const ETH_TX_BUFFER = 0.006;
 				const balanceWithBuffer = quoteCurrencyBalance.sub(wei(ETH_TX_BUFFER));
 				setQuoteCurrencyAmount(
 					balanceWithBuffer.lt(0)

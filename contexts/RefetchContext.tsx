@@ -9,6 +9,7 @@ import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
+import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useSynthBalances from 'queries/synths/useSynthBalances';
@@ -42,6 +43,7 @@ export const RefetchProvider: React.FC = ({ children }) => {
 	useGetFuturesPotentialTradeDetails();
 	useGetAverageFundingRateForMarkets(PERIOD_IN_SECONDS[Period.ONE_HOUR]);
 	useLaggedDailyPrice();
+	useQueryCrossMarginAccount();
 
 	const handleRefetch = (refetchType: RefetchType, timeout?: number) => {
 		setTimeout(() => {

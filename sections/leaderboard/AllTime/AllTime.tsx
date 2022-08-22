@@ -47,11 +47,9 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 		const statsData = stats
 			.sort((a: AccountStat, b: AccountStat) => a.rank - b.rank)
 			.map((trader: any, i: number) => {
-				const pinText = trader.account === walletAddress ? PIN : '';
-
 				return {
 					...trader,
-					rankText: `${trader.rank}${pinText}`,
+					rankText: trader.rank.toString(),
 				};
 			})
 			.filter((i: { account: string; traderEns: string }) =>
@@ -61,14 +59,14 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 					: true
 			);
 
-		return [
-			...statsData.filter(
-				(trader) => trader.account.toLowerCase() === walletAddress?.toLowerCase()
-			),
-			...statsData.filter(
-				(trader) => trader.account.toLowerCase() !== walletAddress?.toLowerCase()
-			),
-		];
+		const pinRow = statsData
+			.filter((trader) => trader.account.toLowerCase() === walletAddress?.toLowerCase())
+			.map((trader) => ({
+				...trader,
+				rankText: `${trader.rank}${PIN}`,
+			}));
+
+		return [...pinRow, ...statsData];
 	}, [stats, searchTerm, walletAddress]);
 
 	return (
@@ -210,9 +208,9 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 							Header: () => <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
 							accessor: 'rank',
 							Cell: (cellProps: CellProps<any>) => (
-								<StyledOrderType>{cellProps.row.original.rank}</StyledOrderType>
+								<StyledOrderType>{cellProps.row.original.rankText}</StyledOrderType>
 							),
-							width: 45,
+							width: 60,
 						},
 						{
 							Header: () => <TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>,
