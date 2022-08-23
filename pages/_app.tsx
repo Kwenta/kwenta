@@ -105,7 +105,7 @@ const wagmiClient = createClient({
 });
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {
-	const { synthetixjs } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const provider = useProvider();
 	const { data: newSigner } = useSigner();
 	const { chain: activeChain } = useNetwork();

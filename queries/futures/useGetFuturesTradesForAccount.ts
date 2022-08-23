@@ -1,10 +1,10 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
-import { appReadyState } from 'store/app';
 import { futuresAccountState } from 'store/futures';
 import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
 import logError from 'utils/logError';
@@ -18,9 +18,8 @@ const useGetFuturesTradesForAccount = (
 	account?: string | null,
 	options?: UseQueryOptions<FuturesTrade[] | null> & { forceAccount: boolean }
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network);
+	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isL2 = useRecoilValue(isL2State);
 	const { selectedAccountType } = useRecoilValue(futuresAccountState);
@@ -72,7 +71,7 @@ const useGetFuturesTradesForAccount = (
 				return null;
 			}
 		},
-		{ enabled: isWalletConnected ? isL2 && isAppReady && !!account : isAppReady, ...options }
+		{ enabled: isWalletConnected || (isL2 && !!account), ...options }
 	);
 };
 

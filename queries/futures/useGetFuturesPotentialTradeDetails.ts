@@ -5,7 +5,6 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { PotentialTradeStatus, POTENTIAL_TRADE_STATUS_TO_MESSAGE } from 'sections/futures/types';
-import { appReadyState } from 'store/app';
 import {
 	crossMarginAvailableMarginState,
 	currentMarketState,
@@ -28,10 +27,10 @@ const useGetFuturesPotentialTradeDetails = (
 	options?: UseQueryOptions<FuturesPotentialTradeDetails | null>
 ) => {
 	const { selectedFuturesAddress, selectedAccountType } = useRecoilValue(futuresAccountState);
-	const isAppReady = useRecoilValue(appReadyState);
+
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
-	const { synthetixjs } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 
 	const tradeSize = useRecoilValue(tradeSizeState);
 	const leverageSide = useRecoilValue(leverageSideState);
@@ -121,7 +120,7 @@ const useGetFuturesPotentialTradeDetails = (
 			return potentialTradeDetails;
 		},
 		{
-			enabled: isAppReady && isL2 && !!selectedFuturesAddress && !!marketAsset && !!synthetixjs,
+			enabled: isL2 && !!selectedFuturesAddress && !!marketAsset && !!synthetixjs,
 			...options,
 		}
 	);

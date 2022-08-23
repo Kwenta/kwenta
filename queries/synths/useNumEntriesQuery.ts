@@ -1,15 +1,12 @@
 import { ethers } from 'ethers';
 import { useQuery } from 'react-query';
-import { useRecoilValue } from 'recoil';
 
 import { CurrencyKey } from 'constants/currency';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import { appReadyState } from 'store/app';
 
 const useNumEntriesQuery = (walletAddress: string, currencyKey: CurrencyKey | null) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const { synthetixjs } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 
 	return useQuery(
 		QUERY_KEYS.Synths.NumEntries(walletAddress, currencyKey!),
@@ -24,7 +21,7 @@ const useNumEntriesQuery = (walletAddress: string, currencyKey: CurrencyKey | nu
 			return numEntries ? numEntries : null;
 		},
 		{
-			enabled: isAppReady && !!synthetixjs && !!walletAddress && currencyKey != null,
+			enabled: !!synthetixjs && !!walletAddress && currencyKey != null,
 		}
 	);
 };

@@ -1,12 +1,11 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import { ContractsMap } from '@synthetixio/contracts-interface/build/node/src/types';
+import { ContractsMap, NetworkId } from '@synthetixio/contracts-interface/build/node/src/types';
 import Wei, { wei } from '@synthetixio/wei';
 import { utils } from 'ethers';
 
 import { ETH_UNIT } from 'constants/network';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
-import { Network } from 'store/wallet';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { FuturesMarketAsset } from 'utils/futures';
 
@@ -26,10 +25,10 @@ import {
 	MarginTransfer,
 } from './types';
 
-export const getFuturesEndpoint = (network: Network): string => {
-	return network && network.id === 10
+export const getFuturesEndpoint = (networkId: NetworkId): string => {
+	return networkId === 10
 		? FUTURES_ENDPOINT_MAINNET
-		: network.id === 69
+		: networkId === 420
 		? FUTURES_ENDPOINT_TESTNET
 		: FUTURES_ENDPOINT_MAINNET;
 };

@@ -4,7 +4,6 @@ import { useRecoilValue } from 'recoil';
 
 import { DEFAULT_NUMBER_OF_TRADES, MAX_TIMESTAMP } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
-import { appReadyState } from 'store/app';
 import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
 import logError from 'utils/logError';
 
@@ -16,9 +15,8 @@ const useGetFuturesTrades = (
 	currencyKey: string | undefined,
 	options?: UseInfiniteQueryOptions<FuturesTrade[] | null> & { forceAccount: boolean }
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network);
+	const futuresEndpoint = getFuturesEndpoint(network?.id);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isL2 = useRecoilValue(isL2State);
 
@@ -66,7 +64,7 @@ const useGetFuturesTrades = (
 		},
 		{
 			...options,
-			enabled: isWalletConnected ? isL2 && isAppReady : isAppReady,
+			enabled: isWalletConnected && isL2,
 			refetchInterval: 15000,
 			getNextPageParam: (lastPage, _) => {
 				return lastPage

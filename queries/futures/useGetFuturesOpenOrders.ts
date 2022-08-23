@@ -6,7 +6,6 @@ import { useSetRecoilState, useRecoilValue } from 'recoil';
 
 import { ETH_UNIT } from 'constants/network';
 import QUERY_KEYS from 'constants/queryKeys';
-import { appReadyState } from 'store/app';
 import { futuresAccountState, openOrdersState, marketInfoState } from 'store/futures';
 import { isL2State, networkState } from 'store/wallet';
 import logError from 'utils/logError';
@@ -15,10 +14,10 @@ import { getFuturesEndpoint } from './utils';
 
 const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
-	const isAppReady = useRecoilValue(appReadyState);
+
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network);
+	const futuresEndpoint = getFuturesEndpoint(network?.id);
 	const marketInfo = useRecoilValue(marketInfoState);
 	const setOpenOrders = useSetRecoilState(openOrdersState);
 
@@ -64,7 +63,7 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 			}
 		},
 		{
-			enabled: isAppReady && isL2 && !!marketInfo?.market && !!selectedFuturesAddress,
+			enabled: isL2 && !!marketInfo?.market && !!selectedFuturesAddress,
 			refetchInterval: 5000,
 			...options,
 		}

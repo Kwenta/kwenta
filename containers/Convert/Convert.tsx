@@ -6,9 +6,8 @@ import { ethers } from 'ethers';
 import { formatBytes32String, formatEther, parseEther } from 'ethers/lib/utils';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import { createContainer } from 'unstated-next';
-import { useAccount, useSigner } from 'wagmi';
+import { useAccount, useNetwork, useSigner } from 'wagmi';
 
 import { KWENTA_REFERRAL_ADDRESS, SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
 import { CurrencyKey } from 'constants/currency';
@@ -16,7 +15,6 @@ import Connector from 'containers/Connector';
 import use1InchApiUrl from 'hooks/use1InchApiUrl';
 import erc20Abi from 'lib/abis/ERC20.json';
 import synthSwapAbi from 'lib/abis/SynthSwap.json';
-import { networkState } from 'store/wallet';
 
 type Token = {
 	symbol: CurrencyKey;
@@ -49,8 +47,8 @@ type OneInchApproveSpenderResponse = {
 };
 
 const useConvert = () => {
-	const { tokensMap, synthetixjs } = Connector.useContainer();
-	const network = useRecoilValue(networkState);
+	const { tokensMap, defaultSynthetixjs: synthetixjs } = Connector.useContainer();
+	const { chain: network } = useNetwork();
 	const { data: signer } = useSigner();
 	const { address } = useAccount();
 	const walletAddress = address || null;
@@ -129,7 +127,7 @@ const useConvert = () => {
 		metaOnly?: 'meta_tx' | 'estimate_gas'
 	) => {
 		if (!signer) throw new Error(t('exchange.1inch.wallet-not-connected'));
-		if (network.id !== 10) throw new Error(t('exchange.1inch.unsupported-network'));
+		if (network?.id !== 10) throw new Error(t('exchange.1inch.unsupported-network'));
 
 		const sUsd = tokensMap['sUSD'];
 

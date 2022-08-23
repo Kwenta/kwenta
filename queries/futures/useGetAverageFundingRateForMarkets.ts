@@ -1,12 +1,12 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { chain, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { appReadyState } from 'store/app';
 import { fundingRatesState, futuresMarketsState } from 'store/futures';
-import { isL2State, networkState } from 'store/wallet';
 import { FuturesMarketKey, MarketKeyByAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
@@ -29,11 +29,14 @@ const useGetAverageFundingRateForMarkets = (
 	periodLength: number,
 	options?: UseQueryOptions<any | null>
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
+	const { chain: network } = useNetwork();
+	const isL2 =
+		network !== undefined
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
+			: false;
+
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
-	const futuresEndpoint = getFuturesEndpoint(network);
+	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 	const setFundingRates = useSetRecoilState(fundingRatesState);
 
 	const fundingRateInputs: FundingRateInput[] = futuresMarkets.map(
@@ -48,7 +51,7 @@ const useGetAverageFundingRateForMarkets = (
 	);
 
 	return useQuery<any>(
-		QUERY_KEYS.Futures.FundingRates(network.id, periodLength),
+		QUERY_KEYS.Futures.FundingRates(network?.id as NetworkId, periodLength),
 		async () => {
 			const minTimestamp = Math.floor(Date.now() / 1000) - periodLength;
 
@@ -132,7 +135,7 @@ const useGetAverageFundingRateForMarkets = (
 			setFundingRates(fundingRates);
 		},
 		{
-			enabled: isAppReady && isL2 && futuresMarkets.length > 0,
+			enabled: isL2 && futuresMarkets.length > 0,
 			...options,
 		}
 	);

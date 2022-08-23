@@ -30,8 +30,6 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 
 	if (compact) {
 		const ownPosition = stats.findIndex((i: { account: string }) => {
-			// eslint-disable-next-line no-console
-			console.log(walletAddress);
 			return i.account.toLowerCase() === walletAddress?.toLowerCase();
 		});
 

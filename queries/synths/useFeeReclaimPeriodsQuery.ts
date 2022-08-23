@@ -27,7 +27,7 @@ const useFeeReclaimPeriodsQuery = (
 	walletAddress: string,
 	options?: UseQueryOptions<SynthFeeAndWaitingPeriod[]>
 ) => {
-	const { synthetixjs } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const network = useRecoilValue(networkState);
 	const provider = useProvider();
 

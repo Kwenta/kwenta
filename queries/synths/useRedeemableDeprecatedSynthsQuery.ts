@@ -18,7 +18,7 @@ const useRedeemableDeprecatedSynthsQuery = (
 	walletAddress: string | null,
 	options?: UseQueryOptions<DeprecatedSynthsBalances>
 ) => {
-	const { synthetixjs } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const provider = useProvider();
 	const network = useRecoilValue(networkState);
 

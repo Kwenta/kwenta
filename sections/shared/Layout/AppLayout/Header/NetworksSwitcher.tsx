@@ -32,7 +32,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 	const { t } = useTranslation();
 	const isL2 =
 		activeChain !== undefined
-			? [chain.optimism.id, chain.optimismKovan.id].includes(activeChain?.id)
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
 			: false;
 	const network = activeChain?.id === 69 ? 'testnet' : 'mainnet';
 	const networkLabel = 'header.networks-switcher.optimism-' + network;

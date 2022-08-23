@@ -6,7 +6,6 @@ import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import { useProvider } from 'wagmi';
 
-import { appReadyState } from 'store/app';
 import { isL2State, networkState, walletAddressState } from 'store/wallet';
 import logError from 'utils/logError';
 
@@ -22,11 +21,10 @@ type PortfolioData = {
 // The chart basically plots margin against block number.
 
 const usePortfolioData = (options?: UseQueryOptions<PortfolioData | null>) => {
-	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
-	const futuresEndpoint = getFuturesEndpoint(network);
+	const futuresEndpoint = getFuturesEndpoint(network?.id);
 	const provider = useProvider();
 
 	return useQuery<PortfolioData | null>(
@@ -74,7 +72,7 @@ const usePortfolioData = (options?: UseQueryOptions<PortfolioData | null>) => {
 
 			return [];
 		},
-		{ enabled: isAppReady && isL2, ...options }
+		{ enabled: isL2, ...options }
 	);
 };
 

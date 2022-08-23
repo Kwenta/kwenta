@@ -4,7 +4,6 @@ import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { appReadyState } from 'store/app';
 import { marketInfoState, marketKeyState } from 'store/futures';
 import { isL2State, networkState } from 'store/wallet';
 import logError from 'utils/logError';
@@ -16,12 +15,11 @@ const useGetAverageFundingRateForMarket = (
 	periodLength: number,
 	options?: UseQueryOptions<any | null>
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
 	const marketKey = useRecoilValue(marketKeyState);
 	const marketInfo = useRecoilValue(marketInfoState);
-	const futuresEndpoint = getFuturesEndpoint(network);
+	const futuresEndpoint = getFuturesEndpoint(network?.id);
 
 	const price = marketInfo?.price;
 	const currentFundingRate = marketInfo?.currentFundingRate;
@@ -93,7 +91,7 @@ const useGetAverageFundingRateForMarket = (
 			}
 		},
 		{
-			enabled: isAppReady && isL2 && !!marketInfo && !!currentFundingRate,
+			enabled: isL2 && !!marketInfo && !!currentFundingRate,
 			...options,
 		}
 	);

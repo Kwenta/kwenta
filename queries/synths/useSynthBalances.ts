@@ -5,7 +5,7 @@ import { ethers } from 'ethers';
 import orderBy from 'lodash/orderBy';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilState } from 'recoil';
-import { useAccount, useNetwork, chain } from 'wagmi';
+import { useAccount, useNetwork, chain, useProvider } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { balancesState } from 'store/futures';
@@ -15,18 +15,21 @@ import { notNill } from './utils';
 type SynthBalancesTuple = [string[], ethers.BigNumber[], ethers.BigNumber[]];
 
 const useSynthBalances = (options?: UseQueryOptions<Balances>) => {
+	const provider = useProvider();
 	const { address } = useAccount();
+	const walletAddress = address || null;
 	const { chain: activeChain } = useNetwork();
 	const [, setBalances] = useRecoilState(balancesState);
 
 	const synthetixjs = synthetix({
+		provider: provider,
 		networkId: (activeChain?.unsupported
 			? undefined
 			: activeChain?.id ?? chain.optimism.id) as NetworkId,
 	});
 
 	return useQuery<Balances>(
-		QUERY_KEYS.Synths.Balances(activeChain?.id as NetworkId, address!),
+		QUERY_KEYS.Synths.Balances(activeChain?.id as NetworkId, walletAddress),
 		async () => {
 			if (!synthetixjs) {
 				// This should never happen since the query is not enabled when synthetixjs is undefined

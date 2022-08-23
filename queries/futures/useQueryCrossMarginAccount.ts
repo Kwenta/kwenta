@@ -1,22 +1,20 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { useCallback } from 'react';
 import { useQuery } from 'react-query';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { useAccount } from 'wagmi';
+import { useRecoilState } from 'recoil';
+import { useAccount, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { FuturesAccountType } from 'queries/futures/types';
 import { futuresAccountState } from 'store/futures';
-import { networkState } from 'store/wallet';
 
 import useCrossMarginAccountContracts from '../../hooks/useCrossMarginContracts';
-
-const supportedNetworks = [69];
 
 export default function useQueryCrossMarginAccount() {
 	const { crossMarginContractFactory } = useCrossMarginAccountContracts();
 
 	const { address } = useAccount();
-	const network = useRecoilValue(networkState);
+	const { chain: network } = useNetwork();
 	const [futuresAccount, setFuturesAccount] = useRecoilState(futuresAccountState);
 	const walletAddress = address ?? null;
 
@@ -33,10 +31,10 @@ export default function useQueryCrossMarginAccount() {
 	}, [walletAddress, crossMarginContractFactory]);
 
 	return useQuery<any | null>(
-		QUERY_KEYS.Futures.CrossMarginAccount(network.id, walletAddress + 't' || ''),
+		QUERY_KEYS.Futures.CrossMarginAccount(network?.id as NetworkId, walletAddress + 't' || ''),
 		async () => {
 			//TODO: Remove dev check
-			if (!supportedNetworks.includes(network.id) || process?.env?.NODE_ENV !== 'development') {
+			if (!(network?.id === 69) || process?.env?.NODE_ENV !== 'development') {
 				const accountState = {
 					loading: false,
 					crossMarginAvailable: false,

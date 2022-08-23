@@ -111,7 +111,7 @@ const useExchange = ({
 	const { chain: activeChain } = useNetwork();
 	const isL2 =
 		activeChain !== undefined
-			? [chain.optimism.id, chain.optimismKovan.id].includes(activeChain?.id)
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
 			: false;
 	const setTxError = useSetRecoilState(txErrorState);
 	const [atomicExchangeSlippage] = useState('0.01');

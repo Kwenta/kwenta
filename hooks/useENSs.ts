@@ -6,7 +6,6 @@ import { ENS_REVERSE_LOOKUP } from 'constants/address';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import reverseRecordsAbi from 'lib/abis/ReverseRecords.json';
-import { appReadyState } from 'store/app';
 import { isL2State } from 'store/wallet';
 
 const ADDRESSES_PER_LOOKUP = 1500;
@@ -16,7 +15,6 @@ type EnsInfo = {
 };
 
 const useENSs = (addresses: string[], options?: UseQueryOptions<any | null>) => {
-	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 
 	const { staticMainnetProvider } = Connector.useContainer();
@@ -50,7 +48,7 @@ const useENSs = (addresses: string[], options?: UseQueryOptions<any | null>) => 
 			return ensInfo;
 		},
 		{
-			enabled: isAppReady && isL2 && addresses.length > 0,
+			enabled: isL2 && addresses.length > 0,
 			...options,
 		}
 	);

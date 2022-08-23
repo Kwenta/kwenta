@@ -3,7 +3,6 @@ import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { appReadyState } from 'store/app';
 import { isL2State, networkState } from 'store/wallet';
 import logError from 'utils/logError';
 
@@ -15,10 +14,9 @@ const useGetFuturesAccountPositionHistory = (
 	account: string,
 	options?: UseQueryOptions<any | null>
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network);
+	const futuresEndpoint = getFuturesEndpoint(network?.id);
 
 	return useQuery<PositionHistory[] | null>(
 		QUERY_KEYS.Futures.AllPositionHistory(network.id, account || ''),
@@ -47,7 +45,7 @@ const useGetFuturesAccountPositionHistory = (
 				return null;
 			}
 		},
-		{ enabled: isAppReady && isL2, ...options }
+		{ enabled: isL2, ...options }
 	);
 };
 

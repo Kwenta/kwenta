@@ -18,15 +18,13 @@ const SwapInfoBox: React.FC = () => {
 	const { t } = useTranslation();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const customGasPrice = useRecoilValue(customGasPriceState);
-	const { chain: activeChain } = useNetwork();
+	const { chain: network } = useNetwork();
 	const isL2 =
-		activeChain !== undefined
-			? [chain.optimism.id, chain.optimismKovan.id].includes(activeChain?.id)
+		network !== undefined
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
 			: false;
 	const isMainnet =
-		activeChain !== undefined
-			? [chain.mainnet.id, chain.kovan.id].includes(activeChain?.id)
-			: false;
+		network !== undefined ? [chain.mainnet.id, chain.goerli.id].includes(network?.id) : false;
 	const { transactionFee, feeCost, exchangeFeeRate, baseFeeRate } = useExchangeContext();
 	const { useEthGasPriceQuery } = useSynthetixQueries();
 

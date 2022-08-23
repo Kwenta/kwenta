@@ -3,7 +3,6 @@ import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { appReadyState } from 'store/app';
 import { isL2State, networkState } from 'store/wallet';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import { FuturesMarketAsset } from 'utils/futures';
@@ -17,10 +16,9 @@ const useGetFuturesDailyTradeStatsForMarket = (
 	marketAsset: FuturesMarketAsset | null,
 	options?: UseQueryOptions<number | null>
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network);
+	const futuresEndpoint = getFuturesEndpoint(network?.id);
 
 	return useQuery<number | null>(
 		QUERY_KEYS.Futures.DayTradeStats(network.id, marketAsset),
@@ -55,7 +53,7 @@ const useGetFuturesDailyTradeStatsForMarket = (
 				return null;
 			}
 		},
-		{ enabled: isAppReady && isL2 && !!marketAsset, ...options }
+		{ enabled: isL2 && !!marketAsset, ...options }
 	);
 };
 

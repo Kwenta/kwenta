@@ -35,7 +35,7 @@ type ClosePositionModalProps = {
 const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
 	const { handleRefetch } = useRefetchContext();
-	const { synthetixjs, synthsMap } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs, synthsMap } = Connector.useContainer();
 	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const ethGasPriceQuery = useEthGasPriceQuery();

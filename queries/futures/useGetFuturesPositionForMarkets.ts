@@ -5,7 +5,6 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { useAccount, chain, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { appReadyState } from 'store/app';
 import { futuresMarketsState, futuresAccountState, positionsState } from 'store/futures';
 import { MarketKeyByAsset } from 'utils/futures';
 
@@ -13,12 +12,11 @@ import { FuturesPosition } from './types';
 import { mapFuturesPosition, getFuturesMarketContract } from './utils';
 
 const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPosition[]>) => {
-	const isAppReady = useRecoilValue(appReadyState);
 	const { isConnected } = useAccount();
 	const { chain: activeChain } = useNetwork();
 	const isL2 =
 		activeChain !== undefined
-			? [chain.optimism.id, chain.optimismKovan.id].includes(activeChain?.id)
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
 			: false;
 	const synthetixjs = synthetix({
 		networkId: (activeChain?.unsupported
@@ -72,7 +70,7 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 			return futuresPositions;
 		},
 		{
-			enabled: isAppReady && isL2 && !!isConnected && !!selectedFuturesAddress && !!synthetixjs,
+			enabled: isL2 && !!isConnected && !!selectedFuturesAddress && !!synthetixjs,
 			...options,
 		}
 	);

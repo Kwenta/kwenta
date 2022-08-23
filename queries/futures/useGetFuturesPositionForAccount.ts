@@ -4,7 +4,6 @@ import { useRecoilValue } from 'recoil';
 import { chain, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { appReadyState } from 'store/app';
 import { futuresAccountState } from 'store/futures';
 import { networkState } from 'store/wallet';
 import logError from 'utils/logError';
@@ -15,14 +14,14 @@ import { getFuturesEndpoint, mapTradeHistory } from './utils';
 
 const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
-	const isAppReady = useRecoilValue(appReadyState);
+
 	const { chain: activeChain } = useNetwork();
 	const isL2 =
 		activeChain !== undefined
-			? [chain.optimism.id, chain.optimismKovan.id].includes(activeChain?.id)
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
 			: false;
 	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network);
+	const futuresEndpoint = getFuturesEndpoint(network?.id);
 
 	return useQuery<PositionHistory[] | null>(
 		QUERY_KEYS.Futures.AccountPositions(selectedFuturesAddress, network.id),
@@ -47,7 +46,7 @@ const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
 			}
 		},
 		{
-			enabled: isAppReady && isL2 && !!selectedFuturesAddress,
+			enabled: isL2 && !!selectedFuturesAddress,
 			refetchInterval: 5000,
 			...options,
 		}

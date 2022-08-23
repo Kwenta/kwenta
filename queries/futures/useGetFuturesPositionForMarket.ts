@@ -4,7 +4,6 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import { appReadyState } from 'store/app';
 import { marketKeyState, futuresAccountState, positionState } from 'store/futures';
 import { isL2State, networkState } from 'store/wallet';
 import { MarketAssetByKey } from 'utils/futures';
@@ -13,11 +12,10 @@ import { FuturesPosition } from './types';
 import { mapFuturesPosition, getFuturesMarketContract } from './utils';
 
 const useGetFuturesPositionForMarket = (options?: UseQueryOptions<FuturesPosition | null>) => {
-	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
-	const { synthetixjs } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const market = useRecoilValue(marketKeyState);
 	const setPosition = useSetRecoilState(positionState);
 
@@ -50,7 +48,7 @@ const useGetFuturesPositionForMarket = (options?: UseQueryOptions<FuturesPositio
 			return position;
 		},
 		{
-			enabled: isAppReady && isL2 && !!selectedFuturesAddress && !!market && !!synthetixjs,
+			enabled: isL2 && !!selectedFuturesAddress && !!market && !!synthetixjs,
 			refetchInterval: 5000,
 			...options,
 		}

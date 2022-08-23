@@ -3,7 +3,6 @@ import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { appReadyState } from 'store/app';
 import { networkState } from 'store/wallet';
 import logError from 'utils/logError';
 
@@ -14,7 +13,6 @@ const useGetWalletTrades = (
 	walletAddress: string,
 	options?: UseQueryOptions<SynthsVolumes | null>
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
 	const synthsEndpoint = getSynthsEndpoint(network);
 
@@ -63,7 +61,7 @@ const useGetWalletTrades = (
 				return null;
 			}
 		},
-		{ enabled: isAppReady && !!walletAddress, ...options }
+		{ enabled: !!walletAddress, ...options }
 	);
 };
 

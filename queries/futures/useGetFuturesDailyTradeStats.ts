@@ -3,7 +3,6 @@ import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
-import { appReadyState } from 'store/app';
 import { isL2State, networkState } from 'store/wallet';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import logError from 'utils/logError';
@@ -14,11 +13,10 @@ import { FuturesDailyTradeStats, FuturesOneMinuteStat } from './types';
 import { getFuturesEndpoint, calculateDailyTradeStats } from './utils';
 
 const useGetFuturesDailyTradeStats = (options?: UseQueryOptions<FuturesDailyTradeStats | null>) => {
-	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
 	const homepage = window.location.pathname === ROUTES.Home.Root;
-	const futuresEndpoint = homepage ? FUTURES_ENDPOINT_MAINNET : getFuturesEndpoint(network);
+	const futuresEndpoint = homepage ? FUTURES_ENDPOINT_MAINNET : getFuturesEndpoint(network?.id);
 
 	const queryTrades = async (
 		skip: number,
@@ -54,7 +52,7 @@ const useGetFuturesDailyTradeStats = (options?: UseQueryOptions<FuturesDailyTrad
 
 			return calculateDailyTradeStats(trades);
 		},
-		{ enabled: homepage ? isAppReady : isAppReady && isL2, ...options }
+		{ enabled: homepage || isL2, ...options }
 	);
 };
 

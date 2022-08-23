@@ -1,15 +1,13 @@
-import { CurrencyKey } from '@synthetixio/contracts-interface';
+import synthetix, { CurrencyKey, NetworkId } from '@synthetixio/contracts-interface';
 import { CRYPTO_CURRENCY_MAP } from '@synthetixio/queries/build/node/src/currency';
 import { wei } from '@synthetixio/wei';
 import { BigNumberish, ethers } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
+import { chain, useNetwork, useProvider } from 'wagmi';
 
 import ROUTES from 'constants/routes';
-import Connector from 'containers/Connector';
-import { appReadyState } from 'store/app';
 import { ratesState } from 'store/futures';
-import { networkState } from 'store/wallet';
 import { FuturesMarketKey, MarketAssetByKey } from 'utils/futures';
 
 import { Rates } from './types';
@@ -23,14 +21,23 @@ const additionalCurrencies = [CRYPTO_CURRENCY_MAP.SNX, 'XAU', 'XAG', 'DYDX', 'AP
 );
 
 const useExchangeRatesQuery = (options?: UseQueryOptions<Rates>) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const network = useRecoilValue(networkState);
-	const { synthetixjs: snxjs, defaultSynthetixjs } = Connector.useContainer();
-	const synthetixjs = window.location.pathname === ROUTES.Home.Root ? defaultSynthetixjs : snxjs;
+	const { chain: activeChain } = useNetwork();
+	const homepage = window.location.pathname === ROUTES.Home.Root;
+	const isL2 =
+		activeChain !== undefined
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
+			: false;
+	const network = homepage || !isL2 ? chain.optimism : activeChain;
+	const provider = useProvider({ chainId: network?.id });
+	const synthetixjs = synthetix({
+		provider: provider,
+		networkId: network?.id as NetworkId,
+	});
+
 	const setRates = useSetRecoilState(ratesState);
 
 	return useQuery<Rates>(
-		['rates', 'exchangeRates2', network.id],
+		['rates', 'exchangeRates2', network?.id],
 		async () => {
 			const exchangeRates: Rates = {};
 
@@ -60,7 +67,7 @@ const useExchangeRatesQuery = (options?: UseQueryOptions<Rates>) => {
 			return exchangeRates;
 		},
 		{
-			enabled: isAppReady && !!synthetixjs,
+			enabled: !!synthetixjs,
 			refetchInterval: 60000,
 			...options,
 		}

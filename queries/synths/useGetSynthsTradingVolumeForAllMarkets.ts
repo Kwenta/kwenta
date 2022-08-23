@@ -5,7 +5,6 @@ import { useRecoilValue } from 'recoil';
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
 import { calculateTradeVolumeForAllSynths } from 'queries/futures/utils';
-import { appReadyState } from 'store/app';
 import { networkState } from 'store/wallet';
 import logError from 'utils/logError';
 
@@ -17,7 +16,6 @@ const useGetSynthsTradingVolumeForAllMarkets = (
 	yesterday: number,
 	options?: UseQueryOptions<SynthsVolumes | null>
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
 	const synthsEndpoint =
 		window.location.pathname === ROUTES.Home.Root
@@ -54,8 +52,7 @@ const useGetSynthsTradingVolumeForAllMarkets = (
 				logError(e);
 				return null;
 			}
-		},
-		{ enabled: isAppReady, ...options }
+		}
 	);
 };
 

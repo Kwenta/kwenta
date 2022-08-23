@@ -3,7 +3,6 @@ import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { appReadyState } from 'store/app';
 import { isL2State, networkState } from 'store/wallet';
 import logError from 'utils/logError';
 
@@ -17,7 +16,6 @@ const useRateUpdateQuery = (
 	{ baseCurrencyKey }: RateUpdate,
 	options?: UseQueryOptions<any | null>
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 
 	const network = useRecoilValue(networkState);
@@ -62,7 +60,7 @@ const useRateUpdateQuery = (
 				return null;
 			}
 		},
-		{ enabled: isAppReady && isL2 && !!baseCurrencyKey, ...options }
+		{ enabled: isL2 && !!baseCurrencyKey, ...options }
 	);
 };
 

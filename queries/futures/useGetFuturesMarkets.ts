@@ -1,14 +1,12 @@
 import synthetix, { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { chain, useAccount, useNetwork } from 'wagmi';
+import { useRecoilState } from 'recoil';
+import { chain, useAccount, useNetwork, useProvider } from 'wagmi';
 
-import { DEFAULT_NETWORK_ID } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
-import { appReadyState } from 'store/app';
 import { futuresMarketsState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
@@ -17,30 +15,24 @@ import { FuturesMarket } from './types';
 import { getReasonFromCode } from './utils';
 
 const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
-	const isAppReady = useRecoilValue(appReadyState);
 	const { chain: activeChain } = useNetwork();
+	const homepage = window.location.pathname === ROUTES.Home.Root;
 	const isL2 =
 		activeChain !== undefined
-			? [chain.optimism.id, chain.optimismKovan.id].includes(activeChain?.id)
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
 			: false;
-	const snxjs = synthetix({
-		networkId: (activeChain?.unsupported
-			? undefined
-			: activeChain?.id ?? chain.optimism.id) as NetworkId,
-	});
-	const defaultSynthetixjs = synthetix({
-		networkId: chain.optimism.id as NetworkId,
+	const network = homepage || !isL2 ? chain.optimism : activeChain;
+	const provider = useProvider({ chainId: network?.id });
+	const synthetixjs = synthetix({
+		provider: provider,
+		networkId: network?.id as NetworkId,
 	});
 
-	const homepage = window.location.pathname === ROUTES.Home.Root;
-	const synthetixjs = homepage || !isL2 ? defaultSynthetixjs : snxjs;
-	const networkId = homepage || !isL2 ? DEFAULT_NETWORK_ID : activeChain?.id;
 	const { isConnected: isWalletConnected } = useAccount();
 	const [, setFuturesMarkets] = useRecoilState(futuresMarketsState);
-	const isReady = isAppReady && !!synthetixjs;
 
 	return useQuery<FuturesMarket[]>(
-		QUERY_KEYS.Futures.Markets(networkId as NetworkId),
+		QUERY_KEYS.Futures.Markets(network?.id as NetworkId),
 		async () => {
 			if (!homepage && isWalletConnected) {
 				return null;
@@ -141,7 +133,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 			return futuresMarkets;
 		},
 		{
-			enabled: !homepage && isWalletConnected ? isL2 && isReady : isReady,
+			enabled: !homepage && isWalletConnected ? isL2 && !!synthetixjs : !!synthetixjs,
 			refetchInterval: 15000,
 			...options,
 		}

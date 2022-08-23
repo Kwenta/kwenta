@@ -33,7 +33,7 @@ export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Prop
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { data: signer } = useSigner();
 	const network = useRecoilValue(networkState);
-	const { synthetixjs } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const {
 		crossMarginAccountContract,
 		crossMarginContractFactory,

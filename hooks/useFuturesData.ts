@@ -41,7 +41,7 @@ const DEFAULT_MAX_LEVERAGE = wei(10);
 
 const useFuturesData = () => {
 	const router = useRouter();
-	const { synthetixjs } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
 
 	const marketAsset = useRecoilValue(currentMarketState);

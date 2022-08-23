@@ -32,7 +32,7 @@ const FuturesHistoryTable: FC = () => {
 	const { chain: activeChain } = useNetwork();
 	const isL2 =
 		activeChain !== undefined
-			? [chain.optimism.id, chain.optimismKovan.id].includes(activeChain?.id)
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
 			: false;
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { switchToL2 } = useNetworkSwitcher();

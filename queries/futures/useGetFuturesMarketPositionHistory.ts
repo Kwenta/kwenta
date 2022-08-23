@@ -4,7 +4,6 @@ import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import { appReadyState } from 'store/app';
 import { currentMarketState, futuresAccountState } from 'store/futures';
 import { isL2State, networkState } from 'store/wallet';
 import { getDisplayAsset } from 'utils/futures';
@@ -15,13 +14,12 @@ import { PositionHistory } from './types';
 import { getFuturesEndpoint, mapTradeHistory } from './utils';
 
 const useGetFuturesMarketPositionHistory = (options?: UseQueryOptions<any | null>) => {
-	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 
 	const network = useRecoilValue(networkState);
-	const { synthetixjs } = Connector.useContainer();
-	const futuresEndpoint = getFuturesEndpoint(network);
+	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
+	const futuresEndpoint = getFuturesEndpoint(network?.id);
 
 	const currencyKey = useRecoilValue(currentMarketState);
 
@@ -61,7 +59,7 @@ const useGetFuturesMarketPositionHistory = (options?: UseQueryOptions<any | null
 			}
 		},
 		{
-			enabled: isAppReady && isL2 && !!selectedFuturesAddress && !!currencyKey && !!synthetixjs,
+			enabled: isL2 && !!selectedFuturesAddress && !!currencyKey && !!synthetixjs,
 			...options,
 		}
 	);

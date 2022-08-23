@@ -6,7 +6,6 @@ import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import { getReasonFromCode } from 'queries/futures/utils';
-import { appReadyState } from 'store/app';
 import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
 import { FuturesMarketKey } from 'utils/futures';
 
@@ -20,12 +19,10 @@ const useFuturesSuspensionQuery = (
 	marketKey: FuturesMarketKey | null,
 	options?: UseQueryOptions<FuturesMarketClosure>
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const { synthetixjs } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
-	const isReady = isAppReady && !!synthetixjs;
 
 	return useQuery<any>(
 		QUERY_KEYS.Futures.MarketClosure(network.id, marketKey),
@@ -54,7 +51,7 @@ const useFuturesSuspensionQuery = (
 			}
 		},
 		{
-			enabled: isWalletConnected ? isL2 && isReady : isReady,
+			enabled: isWalletConnected ? isL2 && !!synthetixjs : !!synthetixjs,
 			...options,
 		}
 	);

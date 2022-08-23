@@ -51,7 +51,7 @@ export default function useGetCrossMarginTradePreview(
 	marketAsset: FuturesMarketAsset,
 	address: string | null | undefined
 ) {
-	const { synthetixjs } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const provider = useProvider();
 
 	const contractInstance = useMemo(() => {
