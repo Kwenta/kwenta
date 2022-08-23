@@ -9,7 +9,6 @@ import MarketBadge from 'components/Badge/MarketBadge';
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import Table from 'components/Table';
-import { Synths } from 'constants/currency';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
@@ -87,7 +86,7 @@ const FuturesMarketsTable: FC = () => {
 									</StyledText>
 									<StyledPrice isPositive={cellProps.row.original.priceChange > 0}>
 										<Currency.Price
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.price}
 											sign={'$'}
 											conversionRate={1}
@@ -107,7 +106,7 @@ const FuturesMarketsTable: FC = () => {
 								<DataCol>
 									<DataRow>
 										<Currency.Price
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.volume}
 											sign={'$'}
 											conversionRate={1}
