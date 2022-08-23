@@ -39,7 +39,5 @@ export type EChartsOption = echarts.ComposeOption<
  */
 export const initBarChart = (dom: HTMLDivElement, option: EChartsOption) => {
 	// do not use 'dark' theme here, or the external background css will not be effective.
-	const chart = echarts.init(dom, 'light');
-
-	option && chart.setOption(option);
+	echarts.init(dom, 'light').setOption(option);
 };
