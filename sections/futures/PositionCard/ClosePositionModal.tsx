@@ -166,7 +166,10 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 					{
 						marketKey: formatBytes32String(currencyKey),
 						marginDelta: zeroBN.toBN(),
-						sizeDelta: positionSize.neg().toBN(),
+						sizeDelta:
+							position?.position?.side === PositionSide.LONG
+								? positionSize.neg().toBN()
+								: positionSize.toBN(),
 					},
 				]);
 				monitorTx(tx.hash);
