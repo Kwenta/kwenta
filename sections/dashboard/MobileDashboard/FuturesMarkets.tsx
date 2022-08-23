@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { Synths } from 'constants/currency';
 import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
 import { futuresMarketsState } from 'store/futures';
@@ -33,7 +32,7 @@ const FuturesMarkets = () => {
 					<MarketStat>
 						<div className="title">24h Volume</div>
 						<div className="value">
-							{formatCurrency(Synths.sUSD, dailyTradeStats.data?.totalVolume ?? zeroBN, {
+							{formatCurrency('sUSD', dailyTradeStats.data?.totalVolume ?? zeroBN, {
 								sign: '$',
 								minDecimals: 0,
 							})}
@@ -42,7 +41,7 @@ const FuturesMarkets = () => {
 					<MarketStat>
 						<div className="title">Open Interest</div>
 						<div className="value">
-							{formatCurrency(Synths.sUSD, openInterest, {
+							{formatCurrency('sUSD', openInterest, {
 								sign: '$',
 								minDecimals: 0,
 							})}

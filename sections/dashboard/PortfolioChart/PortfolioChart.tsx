@@ -5,7 +5,6 @@ import styled from 'styled-components';
 
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-import { Synths } from 'constants/currency';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import { walletAddressState } from 'store/wallet';
 import { zeroBN } from 'utils/formatters/number';
@@ -26,11 +25,11 @@ const PortfolioChart: FC = () => {
 			<MobileHiddenView>
 				<Chart>
 					<PortfolioTitle>Portfolio Value</PortfolioTitle>
-					<PortfolioText currencyKey={Synths.sUSD} price={total} sign="$" />
+					<PortfolioText currencyKey={'sUSD'} price={total} sign="$" />
 				</Chart>
 			</MobileHiddenView>
 			<MobileOnlyView>
-				<PortfolioText currencyKey={Synths.sUSD} price={total} sign="$" />
+				<PortfolioText currencyKey={'sUSD'} price={total} sign="$" />
 				<MobileChartPlaceholder />
 			</MobileOnlyView>
 		</>

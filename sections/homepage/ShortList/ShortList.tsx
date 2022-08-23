@@ -1,4 +1,3 @@
-import { Synths } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { useRouter } from 'next/router';
 import React, { useMemo } from 'react';
@@ -178,7 +177,7 @@ const ShortList = () => {
 								accessor: 'pnl',
 								Cell: (cellProps: CellProps<any>) => (
 									<ColorCodedPrice
-										currencyKey={Synths.sUSD}
+										currencyKey={'sUSD'}
 										price={cellProps.row.original.pnl}
 										sign={'$'}
 										conversionRate={1}
@@ -240,7 +239,7 @@ const ShortList = () => {
 								accessor: 'pnl',
 								Cell: (cellProps: CellProps<any>) => (
 									<ColorCodedPrice
-										currencyKey={Synths.sUSD}
+										currencyKey={'sUSD'}
 										price={cellProps.row.original.pnl}
 										sign={'$'}
 										conversionRate={1}
@@ -259,7 +258,7 @@ const ShortList = () => {
 							{totalTradeStats.isLoading ? (
 								<Loader />
 							) : (
-								formatCurrency(Synths.sUSD, totalTradeStats.data?.totalVolume || zeroBN, {
+								formatCurrency('sUSD', totalTradeStats.data?.totalVolume || zeroBN, {
 									sign: '$',
 									minDecimals: 0,
 								})

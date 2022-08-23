@@ -14,7 +14,6 @@ import {
 	CRYPTO_CURRENCY_MAP,
 	CurrencyKey,
 	ETH_ADDRESS,
-	Synths,
 } from 'constants/currency';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
@@ -151,10 +150,10 @@ const useExchange = ({
 
 	const txProvider: TxProvider | null = useMemo(() => {
 		if (!baseCurrencyKey || !quoteCurrencyKey) return null;
-		if (synthTokensMap[baseCurrencyKey] && synthTokensMap[quoteCurrencyKey]) return 'synthetix';
+		if (synthsMap[baseCurrencyKey] && synthsMap[quoteCurrencyKey]) return 'synthetix';
 		if (oneInchTokensMap?.[baseCurrencyKey] && oneInchTokensMap?.[quoteCurrencyKey]) return '1inch';
 		return 'synthswap';
-	}, [baseCurrencyKey, quoteCurrencyKey, synthTokensMap, oneInchTokensMap]);
+	}, [synthsMap, baseCurrencyKey, quoteCurrencyKey, oneInchTokensMap]);
 
 	// TODO: these queries break when `txProvider` is not `synthetix` and should not be called.
 	// however, condition would break rule of hooks here
@@ -285,7 +284,7 @@ const useExchange = ({
 			if (currencyKey != null) {
 				if (isETH) {
 					return ETHBalance;
-				} else if (synthTokensMap[currencyKey]) {
+				} else if (synthsMap[currencyKey]) {
 					return synthsWalletBalance != null
 						? (get(synthsWalletBalance, ['balancesMap', currencyKey, 'balance'], zeroBN) as Wei)
 						: null;
@@ -295,7 +294,7 @@ const useExchange = ({
 			}
 			return null;
 		},
-		[ETHBalance, synthsWalletBalance, tokenBalances, synthTokensMap]
+		[synthsMap, ETHBalance, synthsWalletBalance, tokenBalances]
 	);
 
 	const quoteCurrencyBalance = useMemo(() => {
@@ -372,7 +371,7 @@ const useExchange = ({
 			: null;
 
 	const ethPriceRate = useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
+		() => newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
@@ -497,7 +496,7 @@ const useExchange = ({
 
 		setCurrencyPair({
 			base: (baseCurrencyKey && synthsMap[baseCurrencyKey]?.name) || null,
-			quote: (quoteCurrencyKey && synthsMap[quoteCurrencyKey]?.name) || Synths.sUSD,
+			quote: (quoteCurrencyKey && synthsMap[quoteCurrencyKey]?.name) || 'sUSD',
 		});
 		// eslint-disable-next-line
 	}, [network.id, walletAddress, setCurrencyPair, synthsMap]);
