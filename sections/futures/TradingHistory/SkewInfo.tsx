@@ -44,7 +44,9 @@ const SkewInfo: React.FC = () => {
 	return (
 		<SkewContainer>
 			<SkewHeader>
-				<SkewValue>{formatPercent(data.short, { minDecimals: 0 })}</SkewValue>
+				<SkewTooltip preset="right" width={'310px'} height={'auto'} content={data.shortText ?? 0}>
+					<SkewValue>{formatPercent(data.short, { minDecimals: 0 })}</SkewValue>
+				</SkewTooltip>
 				<SkewTooltip
 					preset="bottom"
 					width={'310px'}
@@ -55,13 +57,11 @@ const SkewInfo: React.FC = () => {
 						<SkewLabel>{t('futures.market.history.skew-label')}</SkewLabel>
 					</WithCursor>
 				</SkewTooltip>
-				<SkewValue>{formatPercent(data.long, { minDecimals: 0 })}</SkewValue>
+				<SkewTooltip preset="left" width={'310px'} height={'auto'} content={data.longText ?? 0}>
+					<SkewValue>{formatPercent(data.long, { minDecimals: 0 })}</SkewValue>
+				</SkewTooltip>
 			</SkewHeader>
 			<OpenInterestBar skew={data} />
-			<OpenInterestRow>
-				<p className="red">{data.shortText}</p>
-				<p className="green">{data.longText}</p>
-			</OpenInterestRow>
 		</SkewContainer>
 	);
 };
@@ -70,28 +70,6 @@ export default SkewInfo;
 
 const WithCursor = styled.div<{ cursor: 'help' }>`
 	cursor: ${(props) => props.cursor};
-`;
-
-const OpenInterestRow = styled.div`
-	display: flex;
-	width: 100%;
-	justify-content: space-between;
-	line-height: 16px;
-	padding-bottom: 10px;
-	padding-top: 10px;
-	font-size: 13px;
-	font-family: ${(props) => props.theme.fonts.mono};
-
-	:last-child {
-		padding-bottom: 0;
-	}
-	.green {
-		color: ${(props) => props.theme.colors.selectedTheme.green};
-	}
-
-	.red {
-		color: ${(props) => props.theme.colors.selectedTheme.red};
-	}
 `;
 
 const SkewTooltip = styled(StyledTooltip)`
