@@ -4,6 +4,7 @@ import { ChangeEvent, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import { useSigner } from 'wagmi';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
@@ -18,6 +19,7 @@ import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useSUSDContract from 'hooks/useSUSDContract';
 import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
 import { futuresAccountState } from 'store/futures';
+import { networkState } from 'store/wallet';
 import logError from 'utils/logError';
 
 type Props = {
@@ -29,7 +31,9 @@ type Props = {
 export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Props) {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { synthetixjs, signer, network } = Connector.useContainer();
+	const { data: signer } = useSigner();
+	const network = useRecoilValue(networkState);
+	const { synthetixjs } = Connector.useContainer();
 	const {
 		crossMarginAccountContract,
 		crossMarginContractFactory,

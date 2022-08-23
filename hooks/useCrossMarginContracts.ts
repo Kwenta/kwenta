@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
+import { useSigner } from 'wagmi';
 
 import { CROSS_MARGIN_ACCOUNT_FACTORY } from 'constants/address';
-import Connector from 'containers/Connector';
 import {
 	CrossMarginAccountFactory__factory,
 	CrossMarginBase__factory,
@@ -10,6 +10,7 @@ import {
 	CrossMarginBase,
 } from 'lib/abis/types';
 import { futuresAccountState } from 'store/futures';
+import { networkState } from 'store/wallet';
 
 export default function useCrossMarginContracts(): {
 	crossMarginAccountContract: CrossMarginBase | null;
@@ -17,7 +18,8 @@ export default function useCrossMarginContracts(): {
 } {
 	const futuresAccount = useRecoilValue(futuresAccountState);
 
-	const { signer, network } = Connector.useContainer();
+	const { data: signer } = useSigner();
+	const network = useRecoilValue(networkState);
 
 	const crossMarginAccountContract = useMemo(() => {
 		if (!signer || !futuresAccount?.crossMarginAddress) return null;

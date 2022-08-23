@@ -4,8 +4,8 @@ import request, { gql } from 'graphql-request';
 import moment from 'moment';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
+import { useProvider } from 'wagmi';
 
-import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
 import { isL2State, networkState, walletAddressState } from 'store/wallet';
 import logError from 'utils/logError';
@@ -27,7 +27,7 @@ const usePortfolioData = (options?: UseQueryOptions<PortfolioData | null>) => {
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const futuresEndpoint = getFuturesEndpoint(network);
-	const { provider } = Connector.useContainer();
+	const provider = useProvider();
 
 	return useQuery<PortfolioData | null>(
 		['futures', 'portfolio', network.id, walletAddress],

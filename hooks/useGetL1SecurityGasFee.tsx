@@ -3,8 +3,8 @@ import Wei from '@synthetixio/wei';
 import { BytesLike, ethers } from 'ethers';
 import { omit } from 'lodash';
 import { useRecoilValue } from 'recoil';
+import { useSigner } from 'wagmi';
 
-import Connector from 'containers/Connector';
 import { isL2State } from 'store/wallet';
 import { weiFromWei, zeroBN } from 'utils/formatters/number';
 
@@ -26,7 +26,7 @@ const contractAbi = JSON.parse(
 
 export const useGetL1SecurityFee = () => {
 	const isL2 = useRecoilValue(isL2State);
-	const { signer } = Connector.useContainer();
+	const { data: signer } = useSigner();
 
 	return async (metaTx: MetaTx): Promise<Wei> => {
 		if (!isL2) return zeroBN;

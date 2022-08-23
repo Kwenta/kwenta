@@ -10,7 +10,6 @@ import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import DisconnectIcon from 'assets/svg/app/disconnect.svg';
 import Select from 'components/Select';
 import { IndicatorSeparator } from 'components/Select/Select';
-import Connector from 'containers/Connector';
 import { FlexDivRow } from 'styles/common';
 import { truncateAddress } from 'utils/formatters/string';
 
@@ -33,8 +32,6 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 	const { data: ensName } = useEnsName({ address, chainId: 1 });
 	const { t } = useTranslation();
 	const theme = useTheme();
-	const { isHardwareWallet } = Connector.useContainer();
-	const hardwareWallet = isHardwareWallet();
 
 	const [walletLabel, setWalletLabel] = useState('');
 	const truncatedWalletAddress = truncateAddress(address ?? '');
@@ -56,17 +53,20 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 			},
 		];
 
-		if (hardwareWallet) {
-			options.push({
-				label: 'common.wallet.switch-accounts',
-				postfixIcon: 'Switch',
-				onClick: openChainModal,
-			});
-		}
+		// TODO: Find a way to check if the connected wallet is a hardware one.
+		// Also, this new functionality isn't similar to the previous one.
+
+		// if (hardwareWallet) {
+		options.push({
+			label: 'common.wallet.switch-accounts',
+			postfixIcon: 'Switch',
+			onClick: openChainModal,
+		});
+		// }
 
 		return options;
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [hardwareWallet]);
+	}, []);
 
 	const formatOptionLabel = ({
 		label,

@@ -42,7 +42,6 @@
 		"@tippyjs/react": "4.1.0",
 		"axios": "0.27.2",
 		"bignumber.js": "9.0.0",
-		"bnc-onboard": "1.37.3",
 		"codegen-graph-ts": "^0.1.4",
 		"cors": "^2.8.5",
 		"date-fns": "2.21.3",

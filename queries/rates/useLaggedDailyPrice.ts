@@ -3,6 +3,7 @@ import request, { gql } from 'graphql-request';
 import { values } from 'lodash';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useProvider } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
@@ -21,7 +22,8 @@ const useLaggedDailyPrice = (options?: UseQueryOptions<Price[] | null>) => {
 	const network = useRecoilValue(networkState);
 	const marketAssets = useRecoilValue(marketAssetsState);
 	const setPastRates = useSetRecoilState(pastRatesState);
-	const { provider, synthsMap } = Connector.useContainer();
+	const { synthsMap } = Connector.useContainer();
+	const provider = useProvider();
 
 	const minTimestamp = Math.floor(Date.now()) - 60 * 60 * 24 * 1000;
 	const synths = [...marketAssets, ...values(synthsMap).map(({ name }) => name)];

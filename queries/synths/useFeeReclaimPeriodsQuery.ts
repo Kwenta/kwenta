@@ -4,8 +4,11 @@ import Wei, { wei } from '@synthetixio/wei';
 import { Provider, Contract } from 'ethcall';
 import { BigNumber, ethers } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
+import { useRecoilValue } from 'recoil';
+import { useProvider } from 'wagmi';
 
 import Connector from 'containers/Connector';
+import { networkState } from 'store/wallet';
 
 const ethcallProvider = new Provider();
 
@@ -24,7 +27,9 @@ const useFeeReclaimPeriodsQuery = (
 	walletAddress: string,
 	options?: UseQueryOptions<SynthFeeAndWaitingPeriod[]>
 ) => {
-	const { synthetixjs, network, provider } = Connector.useContainer();
+	const { synthetixjs } = Connector.useContainer();
+	const network = useRecoilValue(networkState);
+	const provider = useProvider();
 
 	return useQuery<SynthFeeAndWaitingPeriod[]>(
 		['synths', 'feeReclaimPeriods', network.id],
