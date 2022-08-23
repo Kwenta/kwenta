@@ -18,7 +18,7 @@ import XAUIcon from 'assets/png/currencies/sXAU.png';
 import colors from 'styles/theme/colors/common';
 import fonts from 'styles/theme/fonts';
 
-import { initBarChart } from './initBarChart';
+import { EChartsOption, initBarChart } from './initBarChart';
 import { TimeRangeSwitcher } from './TimeRangeSwitcher';
 
 const Container = styled.div`
@@ -114,109 +114,215 @@ export const Stats: FC<StatsProps> = () => {
 	const tvlRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
-		const textStyle = {
-			color: colors.primaryWhite,
-			fontFamily: fonts.regular,
-			fontSize: 18,
-		};
+		const text = t('stats.volumn.title');
 		const subtext = '$40,461,472';
-		const subtextStyle = {
-			color: colors.primaryWhite,
-			fontFamily: fonts.monoBold,
-			fontSize: 28,
-		};
 
 		const data = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
-		volumnRef?.current &&
-			initBarChart(
-				volumnRef.current,
-				t('stats.volumn.title'),
-				textStyle,
+		const option: EChartsOption = {
+			title: {
+				text,
 				subtext,
-				subtextStyle,
-				null,
+				left: 20,
+				top: 40,
+				itemGap: 10,
+				textStyle: {
+					color: colors.primaryWhite,
+					fontFamily: fonts.regular,
+					fontSize: 18,
+				},
+				subtextStyle: {
+					color: colors.primaryWhite,
+					fontFamily: fonts.monoBold,
+					fontSize: 28,
+				},
+			},
+			grid: {
+				top: 137,
+				bottom: 160,
+			},
+			xAxis: {
+				type: 'category',
 				data,
-				null
-			);
+				axisLabel: {
+					color: '#ECE8E3',
+				},
+				axisTick: {
+					show: false,
+				},
+			},
+			yAxis: {
+				type: 'value',
+				splitLine: {
+					lineStyle: {
+						color: '#C9975B',
+					},
+				},
+				position: 'right',
+			},
+			tooltip: {
+				show: true,
+				backgroundColor: '#0C0C0C',
+				extraCssText:
+					'box-shadow: 0px 24px 40px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.08), inset 0px 0px 20px rgba(255, 255, 255, 0.03);backdrop-filter: blur(60px);/* Note: backdrop-filter has minimal browser support */border-radius: 15px;',
+			},
+			series: [
+				{
+					data: [120, 200, 150, 80, 70, 110, 130],
+					type: 'bar',
+					name: 'Total Trades',
+					itemStyle: {
+						color: '#C9975B',
+					},
+				},
+			],
+		};
+
+		volumnRef?.current && initBarChart(volumnRef.current, option);
 	}, [volumnRef, t]);
 
 	useEffect(() => {
-		const textStyle = {
-			color: colors.primaryWhite,
-			fontFamily: fonts.regular,
-			fontSize: 18,
-		};
-		const legend = {
-			icon: 'circle',
-			top: 71,
-			left: 20,
-			textStyle: {
-				color: colors.primaryWhite,
-				fontFamily: fonts.regular,
-				fontSize: 15,
+		const text = t('stats.trades.title');
+
+		const data = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+		const option: EChartsOption = {
+			title: {
+				text,
+				left: 20,
+				top: 40,
+				itemGap: 10,
+				textStyle: {
+					color: colors.primaryWhite,
+					fontFamily: fonts.regular,
+					fontSize: 18,
+				},
+			},
+			grid: {
+				top: 137,
+				bottom: 160,
+			},
+			xAxis: {
+				type: 'category',
+				data,
+				axisLabel: {
+					color: '#ECE8E3',
+				},
+				axisTick: {
+					show: false,
+				},
+			},
+			yAxis: {
+				type: 'value',
+				splitLine: {
+					lineStyle: {
+						color: '#C9975B',
+					},
+				},
+				position: 'right',
+			},
+			tooltip: {
+				show: true,
+				backgroundColor: '#0C0C0C',
+				extraCssText:
+					'box-shadow: 0px 24px 40px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.08), inset 0px 0px 20px rgba(255, 255, 255, 0.03);backdrop-filter: blur(60px);/* Note: backdrop-filter has minimal browser support */border-radius: 15px;',
+			},
+			series: [
+				{
+					data: [120, 200, 150, 80, 70, 110, 130],
+					type: 'bar',
+					name: 'Total Trades',
+					itemStyle: {
+						color: '#C9975B',
+					},
+				},
+			],
+			legend: {
+				icon: 'circle',
+				top: 71,
+				left: 20,
+				textStyle: {
+					color: colors.primaryWhite,
+					fontFamily: fonts.regular,
+					fontSize: 15,
+				},
 			},
 		};
 
-		const data = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
-		tradesRef?.current &&
-			initBarChart(
-				tradesRef.current,
-				t('stats.trades.title'),
-				textStyle,
-				undefined,
-				null,
-				legend,
-				data,
-				null
-			);
+		tradesRef?.current && initBarChart(tradesRef.current, option);
 	}, [tradesRef, t]);
 
 	useEffect(() => {
-		const textStyle = {
-			color: colors.primaryWhite,
-			fontFamily: fonts.regular,
-			fontSize: 18,
-		};
-		const legend = {
-			icon: 'circle',
-			top: 71,
-			left: 20,
-			textStyle: {
-				color: colors.primaryWhite,
-				fontFamily: fonts.regular,
-				fontSize: 15,
+		const text = t('stats.traders.title');
+
+		const data = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+		const option: EChartsOption = {
+			title: {
+				text,
+				left: 20,
+				top: 40,
+				itemGap: 10,
+				textStyle: {
+					color: colors.primaryWhite,
+					fontFamily: fonts.regular,
+					fontSize: 18,
+				},
+			},
+			grid: {
+				top: 137,
+				bottom: 160,
+			},
+			xAxis: {
+				type: 'category',
+				data,
+				axisLabel: {
+					color: '#ECE8E3',
+				},
+				axisTick: {
+					show: false,
+				},
+			},
+			yAxis: {
+				type: 'value',
+				splitLine: {
+					lineStyle: {
+						color: '#C9975B',
+					},
+				},
+				position: 'right',
+			},
+			tooltip: {
+				show: true,
+				backgroundColor: '#0C0C0C',
+				extraCssText:
+					'box-shadow: 0px 24px 40px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.08), inset 0px 0px 20px rgba(255, 255, 255, 0.03);backdrop-filter: blur(60px);/* Note: backdrop-filter has minimal browser support */border-radius: 15px;',
+			},
+			series: [
+				{
+					data: [120, 200, 150, 80, 70, 110, 130],
+					type: 'bar',
+					name: 'Total Trades',
+					itemStyle: {
+						color: '#C9975B',
+					},
+				},
+			],
+			legend: {
+				icon: 'circle',
+				top: 71,
+				left: 20,
+				textStyle: {
+					color: colors.primaryWhite,
+					fontFamily: fonts.regular,
+					fontSize: 15,
+				},
 			},
 		};
 
-		const data = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
-		tradersRef?.current &&
-			initBarChart(
-				tradersRef.current,
-				t('stats.traders.title'),
-				textStyle,
-				undefined,
-				null,
-				legend,
-				data,
-				null
-			);
+		tradersRef?.current && initBarChart(tradersRef.current, option);
 	}, [tradersRef, t]);
 
 	useEffect(() => {
-		const textStyle = {
-			color: colors.primaryWhite,
-			fontFamily: fonts.regular,
-			fontSize: 18,
-		};
+		const text = t('stats.tvl.title');
 		const subtext = '$40,461,472';
-		const subtextStyle = {
-			color: colors.primaryWhite,
-			fontFamily: fonts.monoBold,
-			fontSize: 28,
-		};
 		const ASSETS: any = {
 			sETH: {
 				underlying: 'Ether',
@@ -273,133 +379,178 @@ export const Stats: FC<StatsProps> = () => {
 		};
 
 		const data = Object.keys(ASSETS);
-		const richTextXAxisLabel = {
-			margin: 20,
-			formatter: (syntheticAsset: any) => {
-				return [
-					`{${syntheticAsset}| }`,
-					`{syntheticAsset|${syntheticAsset}}`,
-					`{underlyingAsset|${ASSETS[syntheticAsset].underlying}}`,
-				].join('\n');
-			},
-			rich: {
-				syntheticAsset: {
-					fontFamily: fonts.regular,
-					fontSize: 15,
+		const option: EChartsOption = {
+			title: {
+				text,
+				subtext,
+				left: 20,
+				top: 40,
+				itemGap: 10,
+				textStyle: {
 					color: colors.primaryWhite,
-					width: 35,
-					height: 23,
-					padding: [9, 0, 0, 0],
-				},
-				underlyingAsset: {
 					fontFamily: fonts.regular,
-					fontSize: 12,
+					fontSize: 18,
 				},
-				sETH: {
-					width: 40,
-					height: 40,
-					backgroundColor: {
-						image: ASSETS.sETH.icon,
-					},
-				},
-				sBTC: {
-					width: 40,
-					height: 40,
-					backgroundColor: {
-						image: ASSETS.sBTC.icon,
-					},
-				},
-				sSOL: {
-					width: 40,
-					height: 40,
-					backgroundColor: {
-						image: ASSETS.sSOL.icon,
-					},
-				},
-				sEUR: {
-					width: 40,
-					height: 40,
-					backgroundColor: {
-						image: ASSETS.sEUR.icon,
-					},
-				},
-				sXAG: {
-					width: 40,
-					height: 40,
-					backgroundColor: {
-						image: ASSETS.sXAG.icon,
-					},
-				},
-				sMATIC: {
-					width: 40,
-					height: 40,
-					backgroundColor: {
-						image: ASSETS.sMATIC.icon,
-					},
-				},
-				sXAU: {
-					width: 40,
-					height: 40,
-					backgroundColor: {
-						image: ASSETS.sXAU.icon,
-					},
-				},
-				sAPE: {
-					width: 40,
-					height: 40,
-					backgroundColor: {
-						image: ASSETS.sAPE.icon,
-					},
-				},
-				sLINK: {
-					width: 40,
-					height: 40,
-					backgroundColor: {
-						image: ASSETS.sLINK.icon,
-					},
-				},
-				sDYDX: {
-					width: 40,
-					height: 40,
-					backgroundColor: {
-						image: ASSETS.sDYDX.icon,
-					},
-				},
-				sUNI: {
-					width: 40,
-					height: 40,
-					backgroundColor: {
-						image: ASSETS.sUNI.icon,
-					},
-				},
-				sAVAX: {
-					width: 40,
-					height: 40,
-					backgroundColor: {
-						image: ASSETS.sAVAX.icon,
-					},
-				},
-				sAAVE: {
-					width: 40,
-					height: 40,
-					backgroundColor: {
-						image: ASSETS.sAAVE.icon,
-					},
+				subtextStyle: {
+					color: colors.primaryWhite,
+					fontFamily: fonts.monoBold,
+					fontSize: 28,
 				},
 			},
+			grid: {
+				top: 137,
+				bottom: 160,
+			},
+			xAxis: {
+				type: 'category',
+				data,
+				axisLabel: {
+					margin: 20,
+					formatter: (sAsset: any) => {
+						return [
+							`{${sAsset}| }`,
+							`{syntheticAsset|${sAsset}}`,
+							`{underlyingAsset|${ASSETS[sAsset].underlying}}`,
+						].join('\n');
+					},
+					rich: {
+						syntheticAsset: {
+							fontFamily: fonts.regular,
+							fontSize: 15,
+							color: colors.primaryWhite,
+							width: 35,
+							height: 23,
+							padding: [9, 0, 0, 0],
+						},
+						underlyingAsset: {
+							fontFamily: fonts.regular,
+							fontSize: 12,
+						},
+						sETH: {
+							width: 40,
+							height: 40,
+							backgroundColor: {
+								image: ASSETS.sETH.icon,
+							},
+						},
+						sBTC: {
+							width: 40,
+							height: 40,
+							backgroundColor: {
+								image: ASSETS.sBTC.icon,
+							},
+						},
+						sSOL: {
+							width: 40,
+							height: 40,
+							backgroundColor: {
+								image: ASSETS.sSOL.icon,
+							},
+						},
+						sEUR: {
+							width: 40,
+							height: 40,
+							backgroundColor: {
+								image: ASSETS.sEUR.icon,
+							},
+						},
+						sXAG: {
+							width: 40,
+							height: 40,
+							backgroundColor: {
+								image: ASSETS.sXAG.icon,
+							},
+						},
+						sMATIC: {
+							width: 40,
+							height: 40,
+							backgroundColor: {
+								image: ASSETS.sMATIC.icon,
+							},
+						},
+						sXAU: {
+							width: 40,
+							height: 40,
+							backgroundColor: {
+								image: ASSETS.sXAU.icon,
+							},
+						},
+						sAPE: {
+							width: 40,
+							height: 40,
+							backgroundColor: {
+								image: ASSETS.sAPE.icon,
+							},
+						},
+						sLINK: {
+							width: 40,
+							height: 40,
+							backgroundColor: {
+								image: ASSETS.sLINK.icon,
+							},
+						},
+						sDYDX: {
+							width: 40,
+							height: 40,
+							backgroundColor: {
+								image: ASSETS.sDYDX.icon,
+							},
+						},
+						sUNI: {
+							width: 40,
+							height: 40,
+							backgroundColor: {
+								image: ASSETS.sUNI.icon,
+							},
+						},
+						sAVAX: {
+							width: 40,
+							height: 40,
+							backgroundColor: {
+								image: ASSETS.sAVAX.icon,
+							},
+						},
+						sAAVE: {
+							width: 40,
+							height: 40,
+							backgroundColor: {
+								image: ASSETS.sAAVE.icon,
+							},
+						},
+					},
+				},
+				axisTick: {
+					show: false,
+				},
+			},
+			yAxis: {
+				type: 'value',
+				splitLine: {
+					lineStyle: {
+						color: '#C9975B',
+					},
+				},
+				position: 'right',
+			},
+			tooltip: {
+				show: true,
+				backgroundColor: '#0C0C0C',
+				extraCssText:
+					'box-shadow: 0px 24px 40px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.08), inset 0px 0px 20px rgba(255, 255, 255, 0.03);backdrop-filter: blur(60px);/* Note: backdrop-filter has minimal browser support */border-radius: 15px;',
+			},
+			series: [
+				{
+					data: [120, 200, 150, 80, 70, 110, 130],
+					type: 'bar',
+					name: 'Total Trades',
+					itemStyle: {
+						color: '#C9975B',
+					},
+				},
+			],
 		};
 
-		tvlRef?.current &&
-			initBarChart(
-				tvlRef.current,
-				t('stats.tvl.title'),
-				textStyle,
-				subtext,
-				subtextStyle,
-				null,
-				data,
-				richTextXAxisLabel
-			);
+		tvlRef?.current && initBarChart(tvlRef.current, option);
 	}, [tvlRef, t]);
 
 	return (
