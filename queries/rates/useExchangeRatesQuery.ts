@@ -18,9 +18,15 @@ type CurrencyRate = BigNumberish;
 type SynthRatesTuple = [string[], CurrencyRate[]];
 
 // Additional commonly used currencies to fetch, besides the one returned by the SynthUtil.synthsRates
-const additionalCurrencies = [CRYPTO_CURRENCY_MAP.SNX, 'XAU', 'XAG', 'DYDX', 'APE'].map(
-	ethers.utils.formatBytes32String
-);
+const additionalCurrencies = [
+	CRYPTO_CURRENCY_MAP.SNX,
+	'XAU',
+	'XAG',
+	'DYDX',
+	'APE',
+	'BNB',
+	'DOGE',
+].map(ethers.utils.formatBytes32String);
 
 const useExchangeRatesQuery = (options?: UseQueryOptions<Rates>) => {
 	const isAppReady = useRecoilValue(appReadyState);

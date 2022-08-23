@@ -42,6 +42,8 @@ const markets = new Set<FuturesMarketKey>([
 	FuturesMarketKey.sWTI,
 	FuturesMarketKey.sDYDX,
 	FuturesMarketKey.sAPE,
+	FuturesMarketKey.sBNB,
+	FuturesMarketKey.sDOGE,
 ]);
 
 const map: Record<FuturesMarketKey, string> = {
@@ -60,6 +62,8 @@ const map: Record<FuturesMarketKey, string> = {
 	[FuturesMarketKey.sDYDX]: 'dydx',
 	[FuturesMarketKey.sAPE]: 'apecoin',
 	[FuturesMarketKey.sAXS]: '',
+	[FuturesMarketKey.sDOGE]: 'dogecoin',
+	[FuturesMarketKey.sBNB]: 'binancecoin',
 };
 
 export const synthToCoingeckoPriceId = (marketKey: FuturesMarketKey) => {

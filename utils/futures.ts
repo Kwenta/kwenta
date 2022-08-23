@@ -58,6 +58,8 @@ export enum FuturesMarketKey {
 	sDYDX = 'sDYDX',
 	sWTI = 'sWTI',
 	sAXS = 'sAXS',
+	sBNB = 'sBNB',
+	sDOGE = 'sDOGE',
 }
 
 export enum FuturesMarketAsset {
@@ -76,6 +78,8 @@ export enum FuturesMarketAsset {
 	DYDX = 'DYDX',
 	WTI = 'WTI',
 	AXS = 'AXS',
+	BNB = 'BNB',
+	DOGE = 'DOGE',
 }
 
 export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
@@ -94,6 +98,8 @@ export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
 	[FuturesMarketKey.sDYDX]: FuturesMarketAsset.DYDX,
 	[FuturesMarketKey.sWTI]: FuturesMarketAsset.WTI,
 	[FuturesMarketKey.sAXS]: FuturesMarketAsset.AXS,
+	[FuturesMarketKey.sBNB]: FuturesMarketAsset.BNB,
+	[FuturesMarketKey.sDOGE]: FuturesMarketAsset.DOGE,
 } as const;
 
 export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
@@ -112,6 +118,8 @@ export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 	[FuturesMarketAsset.DYDX]: FuturesMarketKey.sDYDX,
 	[FuturesMarketAsset.WTI]: FuturesMarketKey.sWTI,
 	[FuturesMarketAsset.AXS]: FuturesMarketKey.sAXS,
+	[FuturesMarketAsset.BNB]: FuturesMarketKey.sBNB,
+	[FuturesMarketAsset.DOGE]: FuturesMarketKey.sDOGE,
 } as const;
 
 export interface FuturesMarketConfig {
@@ -185,6 +193,16 @@ export const markets: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sDYDX]: {
 		key: FuturesMarketKey.sDYDX,
 		asset: FuturesMarketAsset.DYDX,
+		supports: 'mainnet',
+	},
+	[FuturesMarketKey.sBNB]: {
+		key: FuturesMarketKey.sBNB,
+		asset: FuturesMarketAsset.BNB,
+		supports: 'mainnet',
+	},
+	[FuturesMarketKey.sDOGE]: {
+		key: FuturesMarketKey.sDOGE,
+		asset: FuturesMarketAsset.DOGE,
 		supports: 'mainnet',
 	},
 	[FuturesMarketKey.sWTI]: {
