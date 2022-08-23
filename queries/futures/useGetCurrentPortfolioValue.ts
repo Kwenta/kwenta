@@ -1,6 +1,6 @@
 import synthetix, { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
-import { getDefaultProvider, utils as ethersUtils } from 'ethers';
+import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import { chain, useAccount, useNetwork } from 'wagmi';
@@ -31,9 +31,9 @@ const useGetCurrentPortfolioValue = (options?: UseQueryOptions<any | null>) => {
 	const freeMargin = query.data?.freeMargin || zeroBN;
 
 	const synthetixjs = synthetix({
-		provider: getDefaultProvider((activeChain?.id ?? chain.optimism.id) as NetworkId),
-		networkId: (activeChain?.id ?? chain.optimism.id) as NetworkId,
-		useOvm: true,
+		networkId: (activeChain?.unsupported
+			? undefined
+			: activeChain?.id ?? chain.optimism.id) as NetworkId,
 	});
 
 	return useQuery<any | null>(

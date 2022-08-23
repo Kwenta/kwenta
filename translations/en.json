@@ -171,7 +171,8 @@
 			"disclaimer": "* These statistics are approximations. User experience will vary.",
 			"cta-buttons": {
 				"learn-more": "Learn more",
-				"switch-l2": "Switch to L2"
+				"switch-l2": "Switch to L2",
+				"switch-networks": "Switch Networks"
 			},
 			"markets": {
 				"title": "Live markets",

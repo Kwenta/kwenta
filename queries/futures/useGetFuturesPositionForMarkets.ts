@@ -8,7 +8,6 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
 import { futuresMarketsState, futuresAccountState, positionsState } from 'store/futures';
 import { MarketKeyByAsset } from 'utils/futures';
-import { getDefaultProvider } from 'utils/network';
 
 import { FuturesPosition } from './types';
 import { mapFuturesPosition, getFuturesMarketContract } from './utils';
@@ -22,9 +21,9 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 			? [chain.optimism.id, chain.optimismKovan.id].includes(activeChain?.id)
 			: false;
 	const synthetixjs = synthetix({
-		provider: getDefaultProvider((activeChain?.id ?? chain.optimism.id) as NetworkId),
-		networkId: (activeChain?.id ?? chain.optimism.id) as NetworkId,
-		useOvm: isL2,
+		networkId: (activeChain?.unsupported
+			? undefined
+			: activeChain?.id ?? chain.optimism.id) as NetworkId,
 	});
 	const [, setFuturesPositions] = useRecoilState(positionsState);
 

@@ -9,7 +9,6 @@ import { useAccount, useNetwork, chain } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { balancesState } from 'store/futures';
-import { getDefaultProvider } from 'utils/network';
 
 import { notNill } from './utils';
 
@@ -18,16 +17,12 @@ type SynthBalancesTuple = [string[], ethers.BigNumber[], ethers.BigNumber[]];
 const useSynthBalances = (options?: UseQueryOptions<Balances>) => {
 	const { address } = useAccount();
 	const { chain: activeChain } = useNetwork();
-	const isL2 =
-		activeChain !== undefined
-			? [chain.optimism.id, chain.optimismKovan.id].includes(activeChain?.id)
-			: false;
 	const [, setBalances] = useRecoilState(balancesState);
 
 	const synthetixjs = synthetix({
-		provider: getDefaultProvider(activeChain?.id as NetworkId),
-		networkId: (activeChain?.id ?? chain.optimism.id) as NetworkId,
-		useOvm: isL2,
+		networkId: (activeChain?.unsupported
+			? undefined
+			: activeChain?.id ?? chain.optimism.id) as NetworkId,
 	});
 
 	return useQuery<Balances>(

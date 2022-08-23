@@ -1,9 +1,9 @@
-import { useConnectModal } from '@rainbow-me/rainbowkit';
+import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
-import { useAccount, chain, useSwitchNetwork, useNetwork } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
 
 import MoonIcon from 'assets/svg/app/moon.svg';
 import SunIcon from 'assets/svg/app/sun.svg';
@@ -21,7 +21,7 @@ const WalletButtons: React.FC = () => {
 	const [currentTheme, setTheme] = useRecoilState(currentThemeState);
 	const { openConnectModal } = useConnectModal();
 	const { isConnected } = useAccount();
-	const { switchNetwork } = useSwitchNetwork();
+	const { openChainModal } = useChainModal();
 
 	const ThemeIcon = currentTheme === 'dark' ? SunIcon : MoonIcon;
 
@@ -47,9 +47,9 @@ const WalletButtons: React.FC = () => {
 
 	const walletIsConnectedButNotSupported = (
 		<>
-			<SwitchToL2Button variant="secondary" onClick={() => switchNetwork?.(chain.optimism.id)}>
-				{t('homepage.l2.cta-buttons.switch-l2')}
-			</SwitchToL2Button>
+			<SwitchNetworkButton variant="secondary" onClick={openChainModal}>
+				{t('homepage.l2.cta-buttons.switch-networks')}
+			</SwitchNetworkButton>
 			<ConnectButton size="sm" variant="outline" data-testid="unsupported-network" mono>
 				<StyledConnectionDot />
 				{t('common.wallet.unsupported-network')}
@@ -120,7 +120,7 @@ const ConnectButton = styled(Button)`
 	font-size: 13px;
 `;
 
-const SwitchToL2Button = styled(Button)`
+const SwitchNetworkButton = styled(Button)`
 	font-size: 13px;
 	color: ${(props) => props.theme.colors.common.primaryWhite};
 	font-family: ${(props) => props.theme.fonts.mono};

@@ -12,7 +12,6 @@ import { appReadyState } from 'store/app';
 import { futuresMarketsState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
-import { getDefaultProvider } from 'utils/network';
 
 import { FuturesMarket } from './types';
 import { getReasonFromCode } from './utils';
@@ -25,14 +24,12 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 			? [chain.optimism.id, chain.optimismKovan.id].includes(activeChain?.id)
 			: false;
 	const snxjs = synthetix({
-		provider: getDefaultProvider((activeChain?.id ?? chain.optimism.id) as NetworkId),
-		networkId: (activeChain?.id ?? chain.optimism.id) as NetworkId,
-		useOvm: isL2,
+		networkId: (activeChain?.unsupported
+			? undefined
+			: activeChain?.id ?? chain.optimism.id) as NetworkId,
 	});
 	const defaultSynthetixjs = synthetix({
-		provider: getDefaultProvider(chain.optimism.id as NetworkId),
 		networkId: chain.optimism.id as NetworkId,
-		useOvm: true,
 	});
 
 	const homepage = window.location.pathname === ROUTES.Home.Root;

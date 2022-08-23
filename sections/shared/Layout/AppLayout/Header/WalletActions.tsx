@@ -1,4 +1,4 @@
-import { useAccountModal, useChainModal } from '@rainbow-me/rainbowkit';
+import { useAccountModal } from '@rainbow-me/rainbowkit';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { components } from 'react-select';
@@ -36,7 +36,6 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 	const [walletLabel, setWalletLabel] = useState('');
 	const truncatedWalletAddress = truncateAddress(address ?? '');
 	const { openAccountModal } = useAccountModal();
-	const { openChainModal } = useChainModal();
 	const { disconnect } = useDisconnect();
 
 	const WALLET_OPTIONS = useMemo(() => {
@@ -52,17 +51,6 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 				onClick: disconnect,
 			},
 		];
-
-		// TODO: Find a way to check if the connected wallet is a hardware one.
-		// Also, this new functionality isn't similar to the previous one.
-
-		// if (hardwareWallet) {
-		options.push({
-			label: 'common.wallet.switch-accounts',
-			postfixIcon: 'Switch',
-			onClick: openChainModal,
-		});
-		// }
 
 		return options;
 		// eslint-disable-next-line react-hooks/exhaustive-deps

@@ -38,7 +38,6 @@ import SystemStatus from 'sections/shared/SystemStatus';
 import { currentThemeState } from 'store/ui';
 import { MediaContextProvider } from 'styles/media';
 import { themes } from 'styles/theme';
-import { isSupportedNetworkId } from 'utils/network';
 import 'styles/main.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -127,7 +126,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 				<MediaContextProvider>
 					<SynthetixQueryContextProvider
 						value={
-							provider && isSupportedNetworkId(network?.id as NetworkId) && synthetixjs
+							provider && !activeChain?.unsupported && synthetixjs
 								? createQueryContext({
 										provider,
 										signer: newSigner || undefined,

@@ -18,7 +18,6 @@ import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
 import { FlexDivCentered } from 'styles/common';
 import media from 'styles/media';
-import { getDefaultProvider } from 'utils/network';
 
 import { RowsHeader, CenteredModal } from '../common';
 import CurrencyRow from './CurrencyRow';
@@ -41,16 +40,12 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	const { t } = useTranslation();
 	const { address } = useAccount();
 	const { chain: activeChain } = useNetwork();
-	const isL2 =
-		activeChain !== undefined
-			? [chain.optimism.id, chain.optimismKovan.id].includes(activeChain?.id)
-			: false;
 	const walletAddress = address ?? null;
 
 	const synthetixjs = synthetix({
-		provider: getDefaultProvider(activeChain?.id as NetworkId),
-		networkId: (activeChain?.id ?? chain.optimism.id) as NetworkId,
-		useOvm: isL2,
+		networkId: (activeChain?.unsupported
+			? undefined
+			: activeChain?.id ?? chain.optimism.id) as NetworkId,
 	});
 
 	const [assetSearch, setAssetSearch] = useState('');
