@@ -6,7 +6,6 @@ import styled, { css } from 'styled-components';
 
 import PreviewArrow from 'components/PreviewArrow';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
-import { Synths } from 'constants/currency';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
@@ -140,7 +139,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			currencyIconKey: MarketKeyByAsset[marketAsset],
 			marketShortName: marketAsset ? getMarketName(marketAsset) : 'Select a market',
 			marketLongName: getSynthDescription(marketAsset, synthsMap, t),
-			marketPrice: formatCurrency(Synths.sUSD, marketAssetRate, {
+			marketPrice: formatCurrency('sUSD', marketAssetRate, {
 				sign: '$',
 				minDecimals: marketAssetRate.lt(0.01) ? 4 : 2,
 			}),
@@ -170,7 +169,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 				<>
 					{`${formatNumber(positionDetails.size ?? 0, {
 						minDecimals: positionDetails.size.abs().lt(0.01) ? 4 : 2,
-					})} (${formatCurrency(Synths.sUSD, positionDetails.notionalValue?.abs() ?? zeroBN, {
+					})} (${formatCurrency('sUSD', positionDetails.notionalValue?.abs() ?? zeroBN, {
 						sign: '$',
 						minDecimals: positionDetails.notionalValue?.abs()?.lt(0.01) ? 4 : 2,
 					})})`}
@@ -181,7 +180,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 					>
 						{`${formatNumber(previewData.positionSize ?? 0, {
 							minDecimals: 2,
-						})} (${formatCurrency(Synths.sUSD, previewData.notionalValue?.abs() ?? zeroBN, {
+						})} (${formatCurrency('sUSD', previewData.notionalValue?.abs() ?? zeroBN, {
 							sign: '$',
 							minDecimals: 2,
 						})})`}
@@ -204,13 +203,13 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			),
 			liquidationPrice: positionDetails ? (
 				<>
-					{formatCurrency(Synths.sUSD, positionDetails?.liquidationPrice ?? zeroBN, {
+					{formatCurrency('sUSD', positionDetails?.liquidationPrice ?? zeroBN, {
 						sign: '$',
 						minDecimals,
 					})}
 					{
 						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
-							{formatCurrency(Synths.sUSD, previewData?.liquidationPrice ?? zeroBN, {
+							{formatCurrency('sUSD', previewData?.liquidationPrice ?? zeroBN, {
 								sign: '$',
 								minDecimals,
 							})}
@@ -224,39 +223,39 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			realizedPnl: realizedPnl,
 			pnlText:
 				positionDetails && pnl
-					? `${formatCurrency(Synths.sUSD, pnl, {
+					? `${formatCurrency('sUSD', pnl, {
 							sign: '$',
 							minDecimals: pnl.abs().lt(0.01) ? 4 : 2,
 					  })} (${formatPercent(pnlPct)})`
 					: NO_VALUE,
 			realizedPnlText:
 				positionHistory && realizedPnl
-					? `${formatCurrency(Synths.sUSD, realizedPnl, {
+					? `${formatCurrency('sUSD', realizedPnl, {
 							sign: '$',
 							minDecimals: realizedPnl.abs().lt(0.01) ? 4 : 2,
 					  })} (${formatPercent(realizedPnlPct)})`
 					: NO_VALUE,
 			netFunding: netFunding,
 			netFundingText: netFunding
-				? `${formatCurrency(Synths.sUSD, netFunding, {
+				? `${formatCurrency('sUSD', netFunding, {
 						sign: '$',
 						minDecimals: netFunding.abs().lt(0.01) ? 4 : 2,
 				  })}`
 				: null,
 			fees: positionDetails
-				? formatCurrency(Synths.sUSD, positionHistory?.feesPaid ?? zeroBN, {
+				? formatCurrency('sUSD', positionHistory?.feesPaid ?? zeroBN, {
 						sign: '$',
 				  })
 				: NO_VALUE,
 			avgEntryPrice: positionDetails ? (
 				<>
-					{formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
+					{formatCurrency('sUSD', positionHistory?.entryPrice ?? zeroBN, {
 						sign: '$',
 						minDecimals,
 					})}
 					{
 						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
-							{formatCurrency(Synths.sUSD, previewData.avgEntryPrice ?? zeroBN, {
+							{formatCurrency('sUSD', previewData.avgEntryPrice ?? zeroBN, {
 								sign: '$',
 								minDecimals,
 							})}

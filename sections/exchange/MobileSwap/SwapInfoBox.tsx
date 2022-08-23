@@ -8,7 +8,6 @@ import { chain, useNetwork } from 'wagmi';
 import TimerIcon from 'assets/svg/app/timer.svg';
 import InfoBox from 'components/InfoBox';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
-import { Synths } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 import { useExchangeContext } from 'contexts/ExchangeContext';
 import { parseGasPriceObject } from 'hooks/useGas';
@@ -43,7 +42,7 @@ const SwapInfoBox: React.FC = () => {
 
 	const formattedTransactionFee = React.useMemo(() => {
 		return transactionFee
-			? formatCurrency(Synths.sUSD, transactionFee, { sign: '$', maxDecimals: 1 })
+			? formatCurrency('sUSD', transactionFee, { sign: '$', maxDecimals: 1 })
 			: NO_VALUE;
 	}, [transactionFee]);
 
@@ -91,7 +90,7 @@ const SwapInfoBox: React.FC = () => {
 				[t('common.summary.fee-cost')]: {
 					value:
 						feeCost != null
-							? formatCurrency(Synths.sUSD, feeCost, {
+							? formatCurrency('sUSD', feeCost, {
 									sign: '$',
 									minDecimals: feeCost.lt(0.01) ? 4 : 2,
 							  })

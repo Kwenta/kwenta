@@ -1,4 +1,4 @@
-import { Synth, Synths } from '@synthetixio/contracts-interface';
+import { Synth } from '@synthetixio/contracts-interface';
 import * as _ from 'lodash/fp';
 import values from 'lodash/values';
 import { useRouter } from 'next/router';
@@ -132,7 +132,7 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 								: {};
 							return (
 								<Currency.Price
-									currencyKey={Synths.sUSD}
+									currencyKey={'sUSD'}
 									price={cellProps.row.original.price}
 									sign={'$'}
 									conversionRate={1}
@@ -184,7 +184,7 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 						Cell: (cellProps: CellProps<any>) => {
 							return (
 								<Currency.Price
-									currencyKey={Synths.sUSD}
+									currencyKey={'sUSD'}
 									price={cellProps.row.original.volume}
 									sign={'$'}
 									conversionRate={1}

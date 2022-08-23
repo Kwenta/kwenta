@@ -32,6 +32,7 @@ import { publicProvider } from 'wagmi/providers/public';
 
 import Safe from 'components/Rainbowkit/Gnosis';
 import { BLAST_NETWORK_LOOKUP } from 'constants/network';
+import Connector from 'containers/Connector';
 import Layout from 'sections/shared/Layout';
 import SystemStatus from 'sections/shared/SystemStatus';
 import { currentThemeState } from 'store/ui';
@@ -105,6 +106,7 @@ const wagmiClient = createClient({
 });
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {
+	const { synthetixjs } = Connector.useContainer();
 	const provider = useProvider();
 	const { data: newSigner } = useSigner();
 	const { chain: activeChain } = useNetwork();
@@ -125,13 +127,14 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 				<MediaContextProvider>
 					<SynthetixQueryContextProvider
 						value={
-							provider && isSupportedNetworkId(network?.id as NetworkId)
+							provider && isSupportedNetworkId(network?.id as NetworkId) && synthetixjs
 								? createQueryContext({
 										provider,
 										signer: newSigner || undefined,
 										networkId: network!.id as NetworkId,
+										synthetixjs,
 								  })
-								: createQueryContext({ networkId: null })
+								: createQueryContext({ networkId: null, synthetixjs: null })
 						}
 					>
 						<Layout>

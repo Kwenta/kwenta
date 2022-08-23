@@ -15,7 +15,6 @@ import {
 	CRYPTO_CURRENCY_MAP,
 	CurrencyKey,
 	ETH_ADDRESS,
-	Synths,
 } from 'constants/currency';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
@@ -369,7 +368,7 @@ const useExchange = ({
 			: null;
 
 	const ethPriceRate = useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
+		() => newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
@@ -494,7 +493,7 @@ const useExchange = ({
 
 		setCurrencyPair({
 			base: (baseCurrencyKey && synthsMap[baseCurrencyKey]?.name) || null,
-			quote: (quoteCurrencyKey && synthsMap[quoteCurrencyKey]?.name) || Synths.sUSD,
+			quote: (quoteCurrencyKey && synthsMap[quoteCurrencyKey]?.name) || 'sUSD',
 		});
 		// eslint-disable-next-line
 	}, [activeChain?.id, walletAddress, setCurrencyPair, synthsMap]);

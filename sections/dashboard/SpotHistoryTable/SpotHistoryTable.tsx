@@ -1,4 +1,3 @@
-import { Synths } from '@synthetixio/contracts-interface';
 import type { SynthExchangeResult } from '@synthetixio/queries/build/node/generated/mainSubgraphQueries';
 import * as _ from 'lodash/fp';
 import values from 'lodash/values';
@@ -118,7 +117,7 @@ const SpotHistoryTable: FC = () => {
 
 									<StyledText>
 										<Currency.Amount
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											amount={cellProps.row.original.fromAmount}
 											totalValue={0}
 											conversionRate={selectPriceCurrencyRate}
@@ -148,7 +147,7 @@ const SpotHistoryTable: FC = () => {
 
 									<StyledText>
 										<Currency.Amount
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											amount={cellProps.row.original.toAmount}
 											totalValue={0}
 											conversionRate={selectPriceCurrencyRate}

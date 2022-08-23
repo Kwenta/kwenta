@@ -8,7 +8,6 @@ import { useAccount } from 'wagmi';
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
-import { Synths } from 'constants/currency';
 import useGetFile from 'queries/files/useGetFile';
 import { formatPercent } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';
@@ -160,7 +159,7 @@ const Competition: FC<CompetitionProps> = ({
 									sortType: 'basic',
 									Cell: (cellProps: CellProps<any>) => (
 										<Currency.Price
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.totalVolume}
 											sign={'$'}
 											conversionRate={1}
@@ -176,7 +175,7 @@ const Competition: FC<CompetitionProps> = ({
 									Cell: (cellProps: CellProps<any>) => (
 										<PnlContainer direction={'column'}>
 											<ColorCodedPrice
-												currencyKey={Synths.sUSD}
+												currencyKey={'sUSD'}
 												price={cellProps.row.original.pnl}
 												sign={'$'}
 												conversionRate={1}
@@ -228,7 +227,7 @@ const Competition: FC<CompetitionProps> = ({
 							Cell: (cellProps: CellProps<any>) => (
 								<PnlContainer direction={'column'}>
 									<ColorCodedPrice
-										currencyKey={Synths.sUSD}
+										currencyKey={'sUSD'}
 										price={cellProps.row.original.pnl}
 										sign={'$'}
 										conversionRate={1}

@@ -11,7 +11,6 @@ import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
-import { Synths } from 'constants/currency';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
@@ -122,7 +121,7 @@ const FuturesMarketsTable: FC = () => {
 										: {};
 									return (
 										<Currency.Price
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.price}
 											sign={'$'}
 											conversionRate={1}
@@ -207,12 +206,12 @@ const FuturesMarketsTable: FC = () => {
 									return (
 										<OpenInterestContainer>
 											<StyledLongPrice
-												currencyKey={Synths.sUSD}
+												currencyKey={'sUSD'}
 												price={cellProps.row.original.longInterest}
 												sign={'$'}
 											/>
 											<StyledShortPrice
-												currencyKey={Synths.sUSD}
+												currencyKey={'sUSD'}
 												price={cellProps.row.original.shortInterest}
 												sign={'$'}
 											/>
@@ -242,7 +241,7 @@ const FuturesMarketsTable: FC = () => {
 								Cell: (cellProps: CellProps<any>) => {
 									return (
 										<Currency.Price
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.volume}
 											sign={'$'}
 											conversionRate={1}
@@ -293,7 +292,7 @@ const FuturesMarketsTable: FC = () => {
 											</IconContainer>
 											<StyledText>{cellProps.row.original.market}</StyledText>
 											<Currency.Price
-												currencyKey={Synths.sUSD}
+												currencyKey={'sUSD'}
 												price={cellProps.row.original.price}
 												sign="$"
 												formatOptions={
@@ -320,7 +319,7 @@ const FuturesMarketsTable: FC = () => {
 								return (
 									<div>
 										<Currency.Price
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.openInterest}
 											sign="$"
 										/>
@@ -357,7 +356,7 @@ const FuturesMarketsTable: FC = () => {
 										</div>
 										<div>
 											<Currency.Price
-												currencyKey={Synths.sUSD}
+												currencyKey={'sUSD'}
 												price={cellProps.row.original.volume ?? 0}
 												sign="$"
 											/>

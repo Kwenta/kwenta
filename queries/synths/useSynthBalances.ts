@@ -11,6 +11,8 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { balancesState } from 'store/futures';
 import { getDefaultProvider } from 'utils/network';
 
+import { notNill } from './utils';
+
 type SynthBalancesTuple = [string[], ethers.BigNumber[], ethers.BigNumber[]];
 
 const useSynthBalances = (options?: UseQueryOptions<Balances>) => {
@@ -65,7 +67,7 @@ const useSynthBalances = (options?: UseQueryOptions<Balances>) => {
 			const balances = {
 				balancesMap: balancesMap,
 				balances: orderBy(
-					Object.values(balancesMap),
+					Object.values(balancesMap).filter(notNill),
 					(balance) => balance.usdBalance.toNumber(),
 					'desc'
 				),

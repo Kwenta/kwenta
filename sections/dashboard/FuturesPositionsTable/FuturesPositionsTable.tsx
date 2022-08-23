@@ -12,7 +12,6 @@ import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
-import { Synths } from 'constants/currency';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
@@ -179,7 +178,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 									return (
 										<Currency.Price
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.notionalValue}
 											sign={'$'}
 											conversionRate={1}
@@ -214,7 +213,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 											<ChangePercent value={cellProps.row.original.pnlPct} />
 											<div>
 												<Currency.Price
-													currencyKey={Synths.sUSD}
+													currencyKey={'sUSD'}
 													price={cellProps.row.original.pnl}
 													sign={'$'}
 													conversionRate={1}
@@ -240,7 +239,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 										<DefaultCell>{NO_VALUE}</DefaultCell>
 									) : (
 										<Currency.Price
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.avgEntryPrice}
 											sign={'$'}
 											conversionRate={1}
@@ -263,7 +262,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 										: {};
 									return (
 										<Currency.Price
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.liquidationPrice}
 											sign={'$'}
 											conversionRate={1}

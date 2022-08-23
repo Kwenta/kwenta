@@ -4,14 +4,11 @@ import { useTranslation, Trans } from 'react-i18next';
 import { chain, useNetwork } from 'wagmi';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { Synths } from 'constants/currency';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
 import { NoTextTransform, ExternalLink } from 'styles/common';
 
 import { MessageContainer, Message, MessageButton, FixedMessageContainerSpacer } from '../common';
-
-const { sUSD } = Synths;
 
 type NoSynthsCardProps = {
 	attached?: boolean;
@@ -36,7 +33,7 @@ const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 						<Trans
 							t={t}
 							i18nKey={'futures.wallet-overview.no-positions'}
-							values={{ currencyKey: sUSD }}
+							values={{ currencyKey: 'sUSD' }}
 							components={[<NoTextTransform />]}
 						/>
 					</Message>
@@ -47,7 +44,7 @@ const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 							<Trans
 								t={t}
 								i18nKey="exchange.onboard.1inch-button"
-								values={{ currencyKey: sUSD }}
+								values={{ currencyKey: 'sUSD' }}
 								components={[<NoTextTransform />]}
 							/>
 						</MessageButton>
@@ -58,7 +55,7 @@ const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 							<Trans
 								t={t}
 								i18nKey="common.currency.buy-currency"
-								values={{ currencyKey: sUSD }}
+								values={{ currencyKey: 'sUSD' }}
 								components={[<NoTextTransform />]}
 							/>
 						</MessageButton>

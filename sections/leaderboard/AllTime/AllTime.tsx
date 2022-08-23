@@ -7,7 +7,6 @@ import { useAccount } from 'wagmi';
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Table from 'components/Table';
-import { Synths } from 'constants/currency';
 import { DEFAULT_LEADERBOARD_ROWS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import useENSAvatar from 'hooks/useENSAvatar';
@@ -168,7 +167,7 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 									sortType: 'basic',
 									Cell: (cellProps: CellProps<any>) => (
 										<Currency.Price
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.totalVolume}
 											sign={'$'}
 											conversionRate={1}
@@ -183,7 +182,7 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 									sortType: 'basic',
 									Cell: (cellProps: CellProps<any>) => (
 										<ColorCodedPrice
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.pnl}
 											sign={'$'}
 											conversionRate={1}
@@ -255,11 +254,7 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 							Header: () => <TableHeader>{t('leaderboard.leaderboard.table.pnl')}</TableHeader>,
 							accessor: 'pnl',
 							Cell: (cellProps: CellProps<any>) => (
-								<ColorCodedPrice
-									currencyKey={Synths.sUSD}
-									price={cellProps.row.original.pnl}
-									sign="$"
-								/>
+								<ColorCodedPrice currencyKey={'sUSD'} price={cellProps.row.original.pnl} sign="$" />
 							),
 							width: 125,
 						},

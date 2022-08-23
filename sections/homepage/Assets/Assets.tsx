@@ -14,7 +14,7 @@ import Button from 'components/Button';
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { TabPanel } from 'components/Tab';
-import { CurrencyKey, Synths } from 'constants/currency';
+import { CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
 import { Price } from 'queries/rates/types';
@@ -308,7 +308,7 @@ const Assets = () => {
 										<ChartContainer>{image}</ChartContainer>
 										<AssetPrice>
 											<Currency.Price
-												currencyKey={Synths.sUSD}
+												currencyKey={'sUSD'}
 												price={price}
 												sign={'$'}
 												conversionRate={1}
@@ -329,7 +329,7 @@ const Assets = () => {
 													<>-</>
 												) : (
 													<Currency.Price
-														currencyKey={Synths.sUSD}
+														currencyKey={'sUSD'}
 														price={volume}
 														sign={'$'}
 														conversionRate={1}
@@ -368,7 +368,7 @@ const Assets = () => {
 										<ChartContainer>{image}</ChartContainer>
 										<AssetPrice>
 											<Currency.Price
-												currencyKey={Synths.sUSD}
+												currencyKey={'sUSD'}
 												price={price}
 												sign={'$'}
 												conversionRate={1}
@@ -389,7 +389,7 @@ const Assets = () => {
 													<>-</>
 												) : (
 													<Currency.Price
-														currencyKey={Synths.sUSD}
+														currencyKey={'sUSD'}
 														price={volume}
 														sign={'$'}
 														conversionRate={1}
@@ -438,7 +438,7 @@ const Assets = () => {
 										<ChartContainer>{image}</ChartContainer>
 										<AssetPrice>
 											<Currency.Price
-												currencyKey={Synths.sUSD}
+												currencyKey={'sUSD'}
 												price={price}
 												sign={'$'}
 												conversionRate={1}
@@ -459,7 +459,7 @@ const Assets = () => {
 													<>-</>
 												) : (
 													<Currency.Price
-														currencyKey={Synths.sUSD}
+														currencyKey={'sUSD'}
 														price={volume}
 														sign={'$'}
 														conversionRate={1}
@@ -497,7 +497,7 @@ const Assets = () => {
 										<ChartContainer>{image}</ChartContainer>
 										<AssetPrice>
 											<Currency.Price
-												currencyKey={Synths.sUSD}
+												currencyKey={'sUSD'}
 												price={price}
 												sign={'$'}
 												conversionRate={1}
@@ -518,7 +518,7 @@ const Assets = () => {
 													<>-</>
 												) : (
 													<Currency.Price
-														currencyKey={Synths.sUSD}
+														currencyKey={'sUSD'}
 														price={volume}
 														sign={'$'}
 														conversionRate={1}

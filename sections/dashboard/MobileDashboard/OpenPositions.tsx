@@ -7,7 +7,6 @@ import { useAccount } from 'wagmi';
 
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
-import { Synths } from 'constants/currency';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
@@ -48,12 +47,12 @@ const OpenPositions: React.FC = () => {
 	);
 
 	const totalSpotBalancesValue = formatCurrency(
-		Synths.sUSD,
+		'sUSD',
 		wei(synthBalances?.totalUSDBalance ?? zeroBN),
 		{ sign: '$' }
 	);
 
-	const totalFuturesPortfolioValue = formatCurrency(Synths.sUSD, wei(portfolioValue ?? zeroBN), {
+	const totalFuturesPortfolioValue = formatCurrency('sUSD', wei(portfolioValue ?? zeroBN), {
 		sign: '$',
 	});
 
