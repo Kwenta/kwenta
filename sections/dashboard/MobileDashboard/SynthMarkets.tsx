@@ -2,7 +2,6 @@ import useSynthetixQueries from '@synthetixio/queries';
 import React from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { Synths } from 'constants/currency';
 import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
 import { futuresMarketsState } from 'store/futures';
@@ -37,7 +36,7 @@ const SynthMarkets: React.FC = () => {
 					<MarketStat>
 						<div className="title">24h Volume</div>
 						<div className="value">
-							{formatCurrency(Synths.sUSD, dailyTradeStats.data?.totalVolume || zeroBN, {
+							{formatCurrency('sUSD', dailyTradeStats.data?.totalVolume || zeroBN, {
 								sign: '$',
 								minDecimals: 0,
 							})}
@@ -46,7 +45,7 @@ const SynthMarkets: React.FC = () => {
 					<MarketStat>
 						<div className="title">Open Interest</div>
 						<div className="value">
-							{formatCurrency(Synths.sUSD, openInterest ?? 0, {
+							{formatCurrency('sUSD', openInterest ?? 0, {
 								sign: '$',
 								minDecimals: 0,
 							})}

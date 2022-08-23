@@ -6,7 +6,6 @@ import { useRecoilValue } from 'recoil';
 
 import Error from 'components/Error';
 import CustomInput from 'components/Input/CustomInput';
-import { Synths } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
@@ -55,7 +54,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 	);
 
 	const ethPriceRate = React.useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
+		() => newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
@@ -133,7 +132,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 			<BalanceContainer>
 				<BalanceText $gold>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
 				<BalanceText>
-					<span>{formatCurrency(Synths.sUSD, accessibleMargin, { sign: '$' })}</span> sUSD
+					<span>{formatCurrency('sUSD', accessibleMargin, { sign: '$' })}</span> sUSD
 				</BalanceText>
 			</BalanceContainer>
 
@@ -166,7 +165,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 				<BalanceText>
 					<span>
 						{transactionFee
-							? formatCurrency(Synths.sUSD, transactionFee, { sign: '$', maxDecimals: 1 })
+							? formatCurrency('sUSD', transactionFee, { sign: '$', maxDecimals: 1 })
 							: NO_VALUE}
 					</span>
 				</BalanceText>

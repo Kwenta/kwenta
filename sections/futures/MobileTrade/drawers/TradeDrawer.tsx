@@ -2,7 +2,6 @@ import { wei } from '@synthetixio/wei';
 import React from 'react';
 import styled, { css } from 'styled-components';
 
-import { Synths } from 'constants/currency';
 import { PositionSide } from 'queries/futures/types';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
@@ -39,7 +38,7 @@ const TradeDrawer: React.FC<TradeDrawerProps> = ({ trade, closeDrawer }) => {
 			{ label: 'Size', value: formatCryptoCurrency(trade.amount) },
 			{
 				label: 'Price',
-				value: formatCurrency(Synths.sUSD, trade.value, {
+				value: formatCurrency('sUSD', trade.value, {
 					sign: '$',
 				}),
 			},
@@ -50,7 +49,7 @@ const TradeDrawer: React.FC<TradeDrawerProps> = ({ trade, closeDrawer }) => {
 					<PNL normal>--</PNL>
 				) : (
 					<PNL negative={trade.pnl.lt(wei(0))}>
-						{formatCurrency(Synths.sUSD, trade.pnl, {
+						{formatCurrency('sUSD', trade.pnl, {
 							sign: '$',
 						})}
 					</PNL>
@@ -60,7 +59,7 @@ const TradeDrawer: React.FC<TradeDrawerProps> = ({ trade, closeDrawer }) => {
 				label: 'Fees',
 				value: trade.feesPaid.eq(0)
 					? '--'
-					: formatCurrency(Synths.sUSD, trade.feesPaid, {
+					: formatCurrency('sUSD', trade.feesPaid, {
 							sign: '$',
 					  }),
 			},
