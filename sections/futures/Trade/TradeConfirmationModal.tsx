@@ -24,6 +24,7 @@ import {
 import { gasSpeedState } from 'store/wallet';
 import { FlexDivCentered } from 'styles/common';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import { isUserDeniedError } from 'utils/formatters/error';
 import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
 import logError from 'utils/logError';
 import { getTransactionPrice } from 'utils/network';
@@ -43,7 +44,7 @@ const TradeConfirmationModal: FC = () => {
 
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const market = useRecoilValue(currentMarketState);
-	const potentialTradeDetails = useRecoilValue(potentialTradeDetailsState);
+	const { data: potentialTradeDetails } = useRecoilValue(potentialTradeDetailsState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 
 	const {
@@ -157,8 +158,10 @@ const TradeConfirmationModal: FC = () => {
 					onDismiss();
 				}
 			} catch (err) {
-				logError(err);
-				setError(t('common.transaction.transaction-failed'));
+				if (!isUserDeniedError(err.message)) {
+					logError(err);
+					setError(t('common.transaction.transaction-failed'));
+				}
 			}
 		} else {
 			submitIsolatedMarginOrder();

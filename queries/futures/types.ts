@@ -258,6 +258,12 @@ export type FuturesPotentialTradeDetails = {
 	statusMessage: string;
 };
 
+export type FuturesPotentialTradeDetailsQuery = {
+	data: FuturesPotentialTradeDetails | null;
+	error: string | null;
+	status: 'fetching' | 'complete' | 'idle' | 'error';
+};
+
 export type FuturesAccountType = 'cross_margin' | 'isolated_margin';
 
 export type FuturesAccountState = {
@@ -270,4 +276,18 @@ export type FuturesAccountState = {
 
 export type SynthBalances = Balances & {
 	susdWalletBalance: Wei;
+};
+
+export type TradeFees = {
+	baseFee: Wei;
+	dynamicFeeRate: Wei;
+	crossMarginFee: Wei;
+	total: Wei;
+};
+
+export type TradeSize = {
+	nativeSize: string;
+	susdSize: string;
+	leverage: string;
+	nativeSizeDelta: Wei;
 };

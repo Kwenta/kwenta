@@ -11,7 +11,6 @@ import {
 	confirmationModalOpenState,
 	isMarketCapReachedState,
 	leverageSideState,
-	isolatedMarginleverageState,
 	marketInfoState,
 	maxLeverageState,
 	orderTypeState,
@@ -35,17 +34,16 @@ type OrderTxnError = {
 
 const ManagePosition: React.FC = () => {
 	const { t } = useTranslation();
-	const isolatedMarginLeverage = useRecoilValue(isolatedMarginleverageState);
 	const sizeDelta = useRecoilValue(sizeDeltaState);
 	const marginDelta = useRecoilValue(crossMarginMarginDeltaState);
 	const position = useRecoilValue(positionState);
 	const maxLeverageValue = useRecoilValue(maxLeverageState);
 	const marketInfo = useRecoilValue(marketInfoState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
-	const previewTrade = useRecoilValue(potentialTradeDetailsState);
+	const { data: previewTrade, error: previewError } = useRecoilValue(potentialTradeDetailsState);
 	const orderType = useRecoilValue(orderTypeState);
 	const setLeverageSide = useSetRecoilState(leverageSideState);
-	const setTradeSize = useSetRecoilState(tradeSizeState);
+	const { leverage } = useRecoilValue(tradeSizeState);
 	const [isCancelModalOpen, setCancelModalOpen] = React.useState(false);
 	const [isConfirmationModalOpen, setConfirmationModalOpen] = useRecoilState(
 		confirmationModalOpenState
@@ -57,18 +55,26 @@ const ManagePosition: React.FC = () => {
 	const positionDetails = position?.position;
 
 	const orderError = useMemo(() => {
+		if (previewError) return t('futures.market.trade.preview.error');
 		const orderTxnError = orderTxn.error as OrderTxnError;
-		if (orderTxnError) return orderTxnError.reason;
+		if (orderTxnError?.reason) return orderTxnError.reason;
 		if (error) return error;
 		if (previewTrade?.showStatus) return previewTrade?.statusMessage;
 		return null;
-	}, [orderTxn.error, error, previewTrade?.showStatus, previewTrade?.statusMessage]);
+	}, [
+		orderTxn.error,
+		error,
+		previewTrade?.showStatus,
+		previewTrade?.statusMessage,
+		previewError,
+		t,
+	]);
 
 	const leverageValid = useMemo(() => {
 		if (selectedAccountType === 'cross_margin') return true;
-		const leverage = Number(isolatedMarginLeverage || 0);
-		return leverage > 0 && leverage < maxLeverageValue.toNumber();
-	}, [isolatedMarginLeverage, selectedAccountType, maxLeverageValue]);
+		const leverageNum = Number(leverage || 0);
+		return leverageNum > 0 && leverageNum < maxLeverageValue.toNumber();
+	}, [leverage, selectedAccountType, maxLeverageValue]);
 
 	return (
 		<>
@@ -111,7 +117,6 @@ const ManagePosition: React.FC = () => {
 										? PositionSide.SHORT
 										: PositionSide.LONG;
 								setLeverageSide(newLeverageSide);
-								setTradeSize(newTradeSize.toString());
 								onTradeAmountChange(newTradeSize.toString(), true);
 								setConfirmationModalOpen(true);
 							} else {

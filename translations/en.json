@@ -693,6 +693,9 @@
 					"faq-title": "Cross-Margin FAQ's",
 					"create-account": "Create Account",
 					"unsupported": "Cross-margin is not supported on this network"
+				},
+				"preview": {
+					"error": "Error generating preview"
 				}
 			},
 			"history": {

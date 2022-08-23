@@ -12,7 +12,6 @@ import {
 	futuresAccountTypeState,
 	positionState,
 	tradeSizeState,
-	tradeSizeSUSDState,
 } from 'store/futures';
 import { FlexDivRow } from 'styles/common';
 import { zeroBN } from 'utils/formatters/number';
@@ -22,25 +21,24 @@ type OrderSizingProps = {
 };
 
 const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
-	const tradeSize = useRecoilValue(tradeSizeState);
-	const tradeSizeSUSD = useRecoilValue(tradeSizeSUSDState);
+	const { nativeSize, susdSize } = useRecoilValue(tradeSizeState);
 	const marketAsset = useRecoilValue(currentMarketState);
 	const freeCrossMargin = useRecoilValue(crossMarginAvailableMarginState);
 	const position = useRecoilValue(positionState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 
-	const [usdValue, setUsdValue] = useState(tradeSizeSUSD);
-	const [assetValue, setAssetValue] = useState(tradeSize);
+	const [usdValue, setUsdValue] = useState(susdSize);
+	const [assetValue, setAssetValue] = useState(nativeSize);
 
 	useEffect(() => {
-		if (tradeSizeSUSD !== usdValue) {
-			setUsdValue(tradeSizeSUSD);
+		if (susdSize !== usdValue) {
+			setUsdValue(susdSize);
 		}
-		if (assetValue !== tradeSize) {
-			setAssetValue(tradeSize);
+		if (assetValue !== nativeSize) {
+			setAssetValue(nativeSize);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [tradeSizeSUSD, tradeSize]);
+	}, [susdSize, nativeSize]);
 
 	const { onTradeAmountChange, onTradeAmountSUSDChange, maxUsdInputAmount } = useFuturesContext();
 
@@ -52,7 +50,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 	const debounceOnChangeUsd = useCallback(
 		debounce((value) => {
 			onTradeAmountSUSDChange(value);
-		}, 1000),
+		}, 500),
 		[debounce, onTradeAmountSUSDChange]
 	);
 

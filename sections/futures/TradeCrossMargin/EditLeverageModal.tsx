@@ -28,7 +28,7 @@ type DepositMarginModalProps = {
 
 export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps) {
 	const { t } = useTranslation();
-	const { orderTxn, selectedLeverage } = useFuturesContext();
+	const { orderTxn, selectedLeverage, onTradeAmountSUSDChange } = useFuturesContext();
 
 	const setCrossMarginLeverage = useSetRecoilState(crossMarginLeverageInputState);
 	const market = useRecoilValue(marketInfoState);
@@ -56,6 +56,7 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 	const onConfirm = () => {
 		setPrefferedLeverage(String(leverage));
 		setCrossMarginLeverage(String(leverage));
+		onTradeAmountSUSDChange('');
 		onDismiss();
 	};
 

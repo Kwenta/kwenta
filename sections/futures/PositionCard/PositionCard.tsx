@@ -89,20 +89,20 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 
 	const { marketAssetRate } = useFuturesContext();
 
-	const previewTradeData = useRecoilValue(potentialTradeDetailsState);
+	const { data: previewTradeData } = useRecoilValue(potentialTradeDetailsState);
 
 	const modifiedAverage = useMemo(() => {
-		if (positionHistory && previewTradeData && potentialTrade) {
-			const totalSize = positionHistory.size.add(potentialTrade.size);
+		if (positionHistory && previewTradeData && potentialTrade.data) {
+			const totalSize = positionHistory.size.add(potentialTrade.data.size);
 
 			const existingValue = positionHistory.avgEntryPrice.mul(positionHistory.size);
-			const newValue = previewTradeData.price.mul(potentialTrade.size);
+			const newValue = previewTradeData.price.mul(potentialTrade.data.size);
 			const totalValue = existingValue.add(newValue);
 
 			return totalSize.gt(0) ? totalValue.div(totalSize) : null;
 		}
 		return null;
-	}, [positionHistory, previewTradeData, potentialTrade]);
+	}, [positionHistory, previewTradeData, potentialTrade.data]);
 
 	const previewData: PositionPreviewData = React.useMemo(() => {
 		if (positionDetails === null || previewTradeData === null) {

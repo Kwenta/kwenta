@@ -3,7 +3,7 @@ import { wei, WeiSource } from '@synthetixio/wei';
 import BN from 'bn.js';
 import { BigNumber, Contract, ethers } from 'ethers';
 import { formatBytes32String } from 'ethers/lib/utils';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import Connector from 'containers/Connector';
 import { PotentialTradeStatus } from 'sections/futures/types';
@@ -62,17 +62,17 @@ export default function useGetCrossMarginTradePreview(
 		}
 	}, [synthetixjs, provider, address, marketAsset]);
 
-	const getPreview = async (
-		sizeDelta: WeiSource | null | undefined,
-		marginDelta: WeiSource | null | undefined
-	) => {
-		if (contractInstance) {
-			const sizeBN = wei(sizeDelta || 0).toBN();
-			const marginBN = wei(marginDelta || 0).toBN();
-			const res = await contractInstance.getTradePreview(sizeBN, marginBN);
-			return res;
-		}
-	};
+	const getPreview = useCallback(
+		async (sizeDelta: WeiSource | null | undefined, marginDelta: WeiSource | null | undefined) => {
+			if (contractInstance) {
+				const sizeBN = wei(sizeDelta || 0).toBN();
+				const marginBN = wei(marginDelta || 0).toBN();
+				const res = await contractInstance.getTradePreview(sizeBN, marginBN);
+				return res;
+			}
+		},
+		[contractInstance]
+	);
 
 	return getPreview;
 }

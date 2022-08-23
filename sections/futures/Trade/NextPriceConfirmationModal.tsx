@@ -44,7 +44,7 @@ const NextPriceConfirmationModal: FC = () => {
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
-	const tradeSize = useRecoilValue(tradeSizeState);
+	const { nativeSize } = useRecoilValue(tradeSizeState);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const position = useRecoilValue(positionState);
 	const market = useRecoilValue(currentMarketState);
@@ -80,10 +80,10 @@ const NextPriceConfirmationModal: FC = () => {
 	const positionSize = position?.position?.size ?? zeroBN;
 
 	const orderDetails = useMemo(() => {
-		const newSize = leverageSide === PositionSide.LONG ? wei(tradeSize) : wei(tradeSize).neg();
+		const newSize = leverageSide === PositionSide.LONG ? wei(nativeSize) : wei(nativeSize).neg();
 
 		return { newSize, size: (positionSize ?? zeroBN).add(newSize).abs() };
-	}, [leverageSide, tradeSize, positionSize]);
+	}, [leverageSide, nativeSize, positionSize]);
 
 	const { commitDeposit, nextPriceFee } = useMemo(
 		() => computeNPFee(marketInfo, wei(orderDetails.newSize)),

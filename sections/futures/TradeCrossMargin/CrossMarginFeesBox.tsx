@@ -1,14 +1,10 @@
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import InfoBox from 'components/InfoBox';
 import { useFuturesContext } from 'contexts/FuturesContext';
-import { crossMarginMarginDeltaState } from 'store/futures';
 import { formatDollars } from 'utils/formatters/number';
 
 export default function CrossMarginFeesBox() {
-	const marginDelta = useRecoilValue(crossMarginMarginDeltaState);
-
 	const { tradeFees } = useFuturesContext();
 
 	return (
@@ -17,9 +13,6 @@ export default function CrossMarginFeesBox() {
 			details={{
 				Fees: {
 					value: formatDollars(tradeFees.total),
-				},
-				Cost: {
-					value: formatDollars(marginDelta),
 				},
 			}}
 		/>

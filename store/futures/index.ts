@@ -8,8 +8,9 @@ import {
 	FuturesAccountType,
 	FuturesMarket,
 	FuturesPosition,
-	FuturesPotentialTradeDetails,
+	FuturesPotentialTradeDetailsQuery,
 	SynthBalances,
+	TradeFees,
 } from 'queries/futures/types';
 import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import { Price, Rates } from 'queries/rates/types';
@@ -82,17 +83,12 @@ export const futuresMarketsState = atom<FuturesMarket[]>({
 
 export const tradeSizeState = atom({
 	key: getFuturesKey('tradeSize'),
-	default: '',
-});
-
-export const tradeSizeSUSDState = atom({
-	key: getFuturesKey('tradeSizeSUSD'),
-	default: '',
-});
-
-export const isolatedMarginleverageState = atom({
-	key: getFuturesKey('isolatedMarginleverage'),
-	default: '',
+	default: {
+		nativeSize: '',
+		susdSize: '',
+		leverage: '',
+		nativeSizeDelta: zeroBN,
+	},
 });
 
 export const crossMarginLeverageInputState = atom({
@@ -156,13 +152,26 @@ export const orderTypeState = atom({
 	default: 0,
 });
 
-export const feeCostState = atom<Wei | null>({
-	key: getFuturesKey('feeCost'),
-	default: null,
+export const tradeFeesState = atom<TradeFees>({
+	key: getFuturesKey('tradeFees'),
+	default: {
+		baseFee: zeroBN,
+		dynamicFeeRate: zeroBN,
+		crossMarginFee: zeroBN,
+		total: zeroBN,
+	},
 });
 
-export const dynamicFeeState = atom({
-	key: getFuturesKey('dynamicFee'),
+// export const totalTradeFeesState = selector({
+// 	key: getFuturesKey('tradeFees'),
+// 	get: ({ get }) => {
+// 		const { baseFee, dynamicFee, crossMarginFee } = get(tradeFeesState);
+// 		return baseFee.add(dynamicFee).add(crossMarginFee);
+// 	},
+// });
+
+export const dynamicFeeRateState = atom({
+	key: getFuturesKey('dynamicFeeRate'),
 	default: null,
 });
 
@@ -179,10 +188,10 @@ export const openOrdersState = atom<any[]>({
 export const sizeDeltaState = selector({
 	key: getFuturesKey('sizeDelta'),
 	get: ({ get }) => {
-		const tradeSize = get(tradeSizeState);
+		const { nativeSize } = get(tradeSizeState);
 		const leverageSide = get(leverageSideState);
 
-		return tradeSize ? wei(leverageSide === PositionSide.LONG ? tradeSize : -tradeSize) : zeroBN;
+		return nativeSize ? wei(leverageSide === PositionSide.LONG ? nativeSize : -nativeSize) : zeroBN;
 	},
 });
 
@@ -222,16 +231,20 @@ export const maxLeverageState = selector({
 export const nextPriceDisclaimerState = selector({
 	key: getFuturesKey('nextPriceDisclaimer'),
 	get: ({ get }) => {
-		const leverage = get(isolatedMarginleverageState);
+		const { leverage } = get(tradeSizeState);
 		const maxLeverage = get(maxLeverageState);
 
 		return wei(leverage || 0).gte(maxLeverage.sub(wei(1))) && wei(leverage || 0).lte(maxLeverage);
 	},
 });
 
-export const potentialTradeDetailsState = atom<FuturesPotentialTradeDetails | null>({
+export const potentialTradeDetailsState = atom<FuturesPotentialTradeDetailsQuery>({
 	key: getFuturesKey('potentialTradeDetails'),
-	default: null,
+	default: {
+		data: null,
+		status: 'idle',
+		error: null,
+	},
 });
 
 export const futuresAccountState = atom<FuturesAccountState>({
