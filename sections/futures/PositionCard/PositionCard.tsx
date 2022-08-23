@@ -6,7 +6,7 @@ import styled, { css } from 'styled-components';
 
 import PreviewArrow from 'components/PreviewArrow';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
-import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import { useFuturesContext } from 'contexts/FuturesContext';
@@ -25,7 +25,7 @@ import media from 'styles/media';
 import { isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { formatNumber } from 'utils/formatters/number';
-import { getMarketName, getSynthDescription, isEurForex, MarketKeyByAsset } from 'utils/futures';
+import { getMarketName, getSynthDescription, isDecimalFour, MarketKeyByAsset } from 'utils/futures';
 
 type PositionCardProps = {
 	dashboard?: boolean;
@@ -78,8 +78,8 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const minDecimals =
-		isFiatCurrency(selectedPriceCurrency.name) && isEurForex(marketKey)
-			? DEFAULT_FIAT_EURO_DECIMALS
+		isFiatCurrency(selectedPriceCurrency.name) && isDecimalFour(marketKey)
+			? DEFAULT_CRYPTO_DECIMALS
 			: undefined;
 
 	const positionHistory = futuresPositions?.find(

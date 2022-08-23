@@ -2,8 +2,6 @@ import { NetworkId, NetworkNameById, Synth } from '@synthetixio/contracts-interf
 import { TFunction } from 'i18next';
 import { Dictionary } from 'lodash';
 
-import { Synths } from 'constants/currency';
-
 export const getMarketAsset = (marketKey: FuturesMarketKey) => {
 	return markets[marketKey].asset;
 };
@@ -18,7 +16,6 @@ export const getDisplayAsset = (asset: string | null) => {
 
 export const getSynthDescription = (synth: string, synthsMap: Dictionary<Synth>, t: TFunction) => {
 	const parsedSynthKey = synth ? (synth[0] !== 's' ? `s${synth}` : synth) : '';
-
 	switch (parsedSynthKey) {
 		case 'sWTI':
 			return t('common.currency.futures-market-oil-short-name');
@@ -27,6 +24,11 @@ export const getSynthDescription = (synth: string, synthsMap: Dictionary<Synth>,
 		case 'sXAG':
 			return t('common.currency.futures-market-silver-short-name');
 		case 'sAPE':
+			return t('common.currency.futures-market-ape-short-name');
+		case 'sBNB':
+			return t('common.currency.futures-market-bnb-short-name');
+		case 'sDOGE':
+			return t('common.currency.futures-market-doge-short-name');
 		case 'sDYDX':
 			return t('common.currency.futures-market-short-name', {
 				currencyName: getDisplayAsset(synth),
@@ -39,8 +41,11 @@ export const getSynthDescription = (synth: string, synthsMap: Dictionary<Synth>,
 	}
 };
 
-export const isEurForex = (marketKeyOrAsset: string | undefined): boolean =>
-	marketKeyOrAsset === Synths.sEUR || marketKeyOrAsset === 'EUR';
+export const isDecimalFour = (marketKeyOrAsset: string | undefined): boolean =>
+	marketKeyOrAsset === 'sEUR' ||
+	marketKeyOrAsset === 'EUR' ||
+	marketKeyOrAsset === 'sDOGE' ||
+	marketKeyOrAsset === 'DOGE';
 
 export enum FuturesMarketKey {
 	sBTC = 'sBTC',

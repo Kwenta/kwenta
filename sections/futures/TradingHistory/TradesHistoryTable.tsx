@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import Table from 'components/Table';
-import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { NO_VALUE } from 'constants/placeholder';
 import { FuturesTrade } from 'queries/futures/types';
@@ -14,7 +14,7 @@ import { currentMarketState } from 'store/futures';
 import { isL2MainnetState } from 'store/wallet';
 import { CapitalizedText, NumericValue } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
-import { isEurForex } from 'utils/futures';
+import { isDecimalFour } from 'utils/futures';
 
 type TradesHistoryTableProps = {
 	numberOfTrades: number;
@@ -147,8 +147,8 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 							Header: <TableHeader>{t('futures.market.history.price-label')}</TableHeader>,
 							accessor: TableColumnAccessor.Price,
 							Cell: (cellProps: CellProps<any>) => {
-								const formatOptions = isEurForex(cellProps.row.original.currencyKey)
-									? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
+								const formatOptions = isDecimalFour(cellProps.row.original.currencyKey)
+									? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
 									: {};
 
 								return (
