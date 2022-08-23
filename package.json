@@ -30,7 +30,7 @@
 		"@kwenta/synthswap": "^1.0.3",
 		"@material-ui/core": "^4.12.3",
 		"@metamask/detect-provider": "1.2.0",
-		"@rainbow-me/rainbowkit": "^0.4.4",
+		"@rainbow-me/rainbowkit": "0.5.0",
 		"@reach/accordion": "0.15.1",
 		"@reach/dialog": "0.15.0",
 		"@synthetixio/contracts-interface": "2.76.1",
@@ -79,7 +79,7 @@
 		"styled-components": "5.1.1",
 		"styled-media-query": "2.1.2",
 		"unstated-next": "1.1.0",
-		"wagmi": "^0.5.12"
+		"wagmi": "0.6.2"
 	},
 	"devDependencies": {
 		"@microsoft/eslint-formatter-sarif": "2.1.7",

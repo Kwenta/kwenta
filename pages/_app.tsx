@@ -56,7 +56,7 @@ type AppPropsWithLayout = AppProps & {
 };
 
 const { chains, provider } = configureChains(
-	[chain.mainnet, chain.optimism, chain.goerli, chain.kovan, chain.optimismKovan],
+	[chain.mainnet, chain.optimism, chain.goerli, chain.optimismGoerli],
 	[
 		jsonRpcProvider({
 			rpc: (chain) => ({
@@ -70,7 +70,7 @@ const { chains, provider } = configureChains(
 			priority: 0,
 		}),
 		infuraProvider({
-			infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+			apiKey: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
 			priority: 1,
 		}),
 		publicProvider({ stallTimeout: 1000, priority: 5 }),
