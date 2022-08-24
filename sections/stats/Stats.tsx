@@ -23,16 +23,16 @@ import { TimeRangeSwitcher } from './TimeRangeSwitcher';
 
 const Container = styled.div`
 	@media only screen and (min-width: 600px) {
-		// TODO: add media query for desktop
 	}
 	@media only screen and (min-width: 768px) {
-		// TODO: add media query for tablet
 	}
 	@media only screen and (min-width: 992px) {
-		// TODO: add media query for desktop
+		max-width: 1040px;
+		margin-left: calc((100vw - 1040px) / 2);
 	}
 	@media only screen and (min-width: 1200px) {
-		// TODO: add media query for desktop
+		max-width: 1400px;
+		margin-left: calc((100vw - 1400px - 50px) / 2);
 	}
 `;
 
@@ -58,7 +58,7 @@ const ChartContainer = styled.div`
 `;
 
 const ChartWrapper = styled.div`
-	width: 345px;
+	width: 100%;
 	height: 380px;
 
 	canvas {
@@ -68,11 +68,6 @@ const ChartWrapper = styled.div`
 		box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.08),
 			inset 0px 0px 20px rgba(255, 255, 255, 0.03);
 		border-radius: 15px;
-	}
-
-	@media only screen and (min-width: 600px) {
-		width: 100%;
-		max-width: 1160px;
 	}
 `;
 
@@ -93,15 +88,18 @@ const TradeContainer = styled.div`
 	}
 `;
 
-const TradesWrapper = styled(ChartWrapper)`
-	@media only screen and (min-width: 600px) {
-		// width: 570px;
-	}
-`;
+const TradesWrapper = styled(ChartWrapper)``;
 
 const TradersWrapper = styled(ChartWrapper)``;
 
-const TvlWrapper = styled(ChartWrapper)``;
+const TvlWrapper = styled(ChartWrapper)`
+	overflow: scroll;
+`;
+
+const ScrollableWrapper = styled.div`
+	width: 1160px;
+	height: 380px;
+`;
 
 export type StatsProps = {};
 
@@ -571,7 +569,9 @@ export const Stats: FC<StatsProps> = () => {
 						<TradersWrapper ref={tradersRef} />
 					</Wrapper>
 				</TradeContainer>
-				<TvlWrapper ref={tvlRef} />
+				<TvlWrapper>
+					<ScrollableWrapper ref={tvlRef} />
+				</TvlWrapper>
 			</ChartContainer>
 		</Container>
 	);
