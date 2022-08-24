@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -35,8 +36,12 @@ const SkewInfo: React.FC = () => {
 					longValue: marketInfo?.openInterest?.longUSD,
 					shortText: formatCurrency(currentMarket, marketInfo?.openInterest?.shortUSD, {
 						sign: '$',
+						minDecimals: 0,
 					}),
-					longText: formatCurrency(currentMarket, marketInfo?.openInterest?.longUSD, { sign: '$' }),
+					longText: formatCurrency(currentMarket, marketInfo?.openInterest?.longUSD, {
+						sign: '$',
+						minDecimals: 0,
+					}),
 			  }
 			: DEFAULT_DATA;
 	}, [marketInfo, currentMarket]);
