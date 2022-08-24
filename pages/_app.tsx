@@ -67,13 +67,15 @@ const { chains, provider } = configureChains(
 					process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID
 				}`,
 			}),
+			stallTimeout: 5000,
 			priority: 0,
 		}),
 		infuraProvider({
 			apiKey: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+			stallTimeout: 5000,
 			priority: 1,
 		}),
-		publicProvider({ stallTimeout: 1000, priority: 5 }),
+		publicProvider({ stallTimeout: 5000, priority: 5 }),
 	]
 );
 
