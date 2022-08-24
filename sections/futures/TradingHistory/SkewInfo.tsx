@@ -116,7 +116,6 @@ const SkewContainer = styled.div`
 	align-items: center;
 
 	width: 100%;
-	height: auto;
 	padding: 10px;
 	margin-bottom: 16px;
 	box-sizing: border-box;
