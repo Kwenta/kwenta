@@ -1,4 +1,4 @@
-import { BarChart, BarSeriesOption } from 'echarts/charts';
+import { BarChart, BarSeriesOption, LineChart, LineSeriesOption } from 'echarts/charts';
 import {
 	GridComponent,
 	TitleComponent,
@@ -20,6 +20,7 @@ echarts.use([
 	LegendComponent,
 	TooltipComponent,
 	BarChart,
+	LineChart,
 	CanvasRenderer,
 ]);
 
@@ -29,6 +30,7 @@ export type EChartsOption = echarts.ComposeOption<
 	| LegendComponentOption
 	| TooltipComponentOption
 	| BarSeriesOption
+	| LineSeriesOption
 >;
 
 /**

@@ -28,6 +28,10 @@ const StyledBtn = styled(Button)`
 	&:active {
 		border-color: ${(props) => props.theme.colors.common.primaryGold};
 	}
+
+	&:before {
+		content: unset;
+	}
 `;
 
 export const TimeRangeSwitcher = () => {

@@ -99,6 +99,10 @@ const TvlWrapper = styled(ChartWrapper)`
 const ScrollableWrapper = styled.div`
 	width: 1160px;
 	height: 380px;
+
+	@media only screen and (min-width: 992px) {
+		width: 100%;
+	}
 `;
 
 export type StatsProps = {};
@@ -232,6 +236,16 @@ export const Stats: FC<StatsProps> = () => {
 						color: '#C9975B',
 					},
 				},
+				{
+					name: 'Trades by Period',
+					type: 'line',
+					data: [20, 22, 33, 45, 63, 102, 20, 234, 230, 165, 120, 62],
+					lineStyle: {
+						color: '#02E1FF',
+						cap: 'square',
+					},
+					symbol: 'none',
+				},
 			],
 			legend: {
 				icon: 'circle',
@@ -301,6 +315,16 @@ export const Stats: FC<StatsProps> = () => {
 					itemStyle: {
 						color: '#C9975B',
 					},
+				},
+				{
+					name: 'Traders by Period',
+					type: 'line',
+					data: [20, 22, 33, 45, 63, 102, 20, 234, 230, 165, 120, 62],
+					lineStyle: {
+						color: '#02E1FF',
+						cap: 'square',
+					},
+					symbol: 'none',
 				},
 			],
 			legend: {
