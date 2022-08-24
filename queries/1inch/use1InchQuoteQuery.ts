@@ -8,6 +8,7 @@ import { useNetwork } from 'wagmi';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import Convert from 'containers/Convert';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
@@ -27,7 +28,6 @@ const use1InchQuoteQuery = (
 	const { quote1Inch } = Convert.useContainer();
 	const { chain: network } = useNetwork();
 
-	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { tokensMap } = Connector.useContainer();
 

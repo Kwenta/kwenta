@@ -9,6 +9,7 @@ import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 
@@ -23,7 +24,7 @@ enum PositionsTab {
 const OpenPositions: React.FC = () => {
 	const { t } = useTranslation();
 
-	const { useExchangeRatesQuery, useSynthsBalancesQuery } = useSynthetixQueries();
+	const { useSynthsBalancesQuery } = useSynthetixQueries();
 
 	const portfolioValueQuery = useGetCurrentPortfolioValue();
 	const portfolioValue = portfolioValueQuery?.data ?? null;

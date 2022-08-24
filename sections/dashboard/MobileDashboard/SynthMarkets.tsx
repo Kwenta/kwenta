@@ -1,8 +1,8 @@
-import useSynthetixQueries from '@synthetixio/queries';
 import React from 'react';
 import { useRecoilValue } from 'recoil';
 
 import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
 import { futuresMarketsState } from 'store/futures';
 import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
@@ -12,8 +12,6 @@ import { HeaderContainer, MarketStatsContainer, MarketStat } from './common';
 
 const SynthMarkets: React.FC = () => {
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
-
-	const { useExchangeRatesQuery } = useSynthetixQueries();
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.data ?? null;

@@ -10,13 +10,15 @@ import { DEFAULT_NETWORK_ID } from 'constants/defaults';
 const useConnector = () => {
 	const { chain: network } = useNetwork();
 	const provider = useProvider({
-		chainId: !network?.unsupported ? network?.id : DEFAULT_NETWORK_ID,
+		chainId: network !== undefined && network?.unsupported ? network?.id : DEFAULT_NETWORK_ID,
 	});
 	// Provides a default mainnet provider, irrespective of the current network
 	const staticMainnetProvider = new ethers.providers.InfuraProvider();
 	const defaultSynthetixjs = synthetix({
 		provider: provider,
-		networkId: (!network?.unsupported ? network?.id : DEFAULT_NETWORK_ID) as NetworkId,
+		networkId: (network !== undefined && network?.unsupported
+			? network?.id
+			: DEFAULT_NETWORK_ID) as NetworkId,
 	});
 
 	const [synthsMap, tokensMap] = useMemo(() => {
