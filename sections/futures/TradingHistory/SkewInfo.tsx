@@ -44,8 +44,16 @@ const SkewInfo: React.FC = () => {
 	return (
 		<SkewContainer>
 			<SkewHeader>
-				<SkewTooltip preset="right" width={'310px'} height={'auto'} content={data.shortText ?? 0}>
-					<SkewValue>{formatPercent(data.short, { minDecimals: 0 })}</SkewValue>
+				<SkewTooltip
+					isNumber={true}
+					preset="bottom"
+					width={'310px'}
+					height={'auto'}
+					content={data.shortText ?? 0}
+				>
+					<WithCursor cursor="help">
+						<SkewValue>{formatPercent(data.short, { minDecimals: 0 })}</SkewValue>
+					</WithCursor>
 				</SkewTooltip>
 				<SkewTooltip
 					preset="bottom"
@@ -57,8 +65,16 @@ const SkewInfo: React.FC = () => {
 						<SkewLabel>{t('futures.market.history.skew-label')}</SkewLabel>
 					</WithCursor>
 				</SkewTooltip>
-				<SkewTooltip preset="left" width={'310px'} height={'auto'} content={data.longText ?? 0}>
-					<SkewValue>{formatPercent(data.long, { minDecimals: 0 })}</SkewValue>
+				<SkewTooltip
+					isNumber={true}
+					preset="bottom"
+					width={'310px'}
+					height={'auto'}
+					content={data.longText ?? 0}
+				>
+					<WithCursor cursor="help">
+						<SkewValue>{formatPercent(data.long, { minDecimals: 0 })}</SkewValue>
+					</WithCursor>
 				</SkewTooltip>
 			</SkewHeader>
 			<OpenInterestBar skew={data} />
@@ -72,10 +88,19 @@ const WithCursor = styled.div<{ cursor: 'help' }>`
 	cursor: ${(props) => props.cursor};
 `;
 
-const SkewTooltip = styled(StyledTooltip)`
+const SkewTooltip = styled(StyledTooltip)<{ isNumber?: boolean }>`
 	left: -30px;
 	z-index: 2;
 	padding: 10px;
+	color: red;
+
+	p,
+	span {
+		font-size: 13px;
+		font-family: ${(props) =>
+			props.isNumber ? props.theme.fonts.mono : props.theme.fonts.regular};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	}
 `;
 
 const SkewContainer = styled.div`
