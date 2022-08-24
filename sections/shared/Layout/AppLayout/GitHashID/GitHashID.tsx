@@ -3,7 +3,12 @@ import styled from 'styled-components';
 
 const GitHashID: FC = () => {
 	const gitID = process.env.GIT_HASH_ID!.toString();
-	return <Container>{gitID}</Container>;
+	return (
+		<div>
+			<br />
+			<Container>{gitID}</Container>
+		</div>
+	);
 };
 
 const Container = styled.div`
@@ -12,9 +17,10 @@ const Container = styled.div`
 	color: #2b3035;
 
 	position: absolute;
-	bottom: 10px;
+	bottom: 0px;
 	left: 50%;
 	transform: translate(-50%, -50%);
+	z-index: 1000;
 `;
 
 export default GitHashID;
