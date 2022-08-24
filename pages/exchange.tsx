@@ -53,6 +53,7 @@ const Exchange: ExchangeComponent = () => {
 				<MobileOrTabletView>
 					<MobileSwap />
 					<br />
+					<br />
 					<GitHashID />
 				</MobileOrTabletView>
 			</PageContent>
