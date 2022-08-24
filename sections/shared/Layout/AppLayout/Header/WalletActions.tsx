@@ -1,26 +1,12 @@
 import { useAccountModal } from '@rainbow-me/rainbowkit';
-import { FC, useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { components } from 'react-select';
-import styled, { css, useTheme } from 'styled-components';
-import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from 'wagmi';
+import { FC, useEffect, useState } from 'react';
+import styled, { css } from 'styled-components';
+import { useAccount, useEnsAvatar, useEnsName } from 'wagmi';
 
-import AccountIcon from 'assets/svg/app/account-info.svg';
-import CaretDownIcon from 'assets/svg/app/caret-down.svg';
-import DisconnectIcon from 'assets/svg/app/disconnect.svg';
-import Select from 'components/Select';
-import { IndicatorSeparator } from 'components/Select/Select';
-import { FlexDivRow } from 'styles/common';
+import Button from 'components/Button';
 import { truncateAddress } from 'utils/formatters/string';
 
 import ConnectionDot from './ConnectionDot';
-
-type ReactSelectOptionProps = {
-	label: string;
-	postfixIcon?: string;
-	isMenuLabel?: boolean;
-	onClick?: () => {};
-};
 
 type WalletActionsProps = {
 	isMobile?: boolean;
@@ -30,40 +16,26 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 	const { address } = useAccount();
 	const { data: ensAvatar } = useEnsAvatar({ addressOrName: address, chainId: 1 });
 	const { data: ensName } = useEnsName({ address, chainId: 1 });
-	const { t } = useTranslation();
-	const theme = useTheme();
 
 	const [walletLabel, setWalletLabel] = useState('');
 	const truncatedWalletAddress = truncateAddress(address ?? '');
 	const { openAccountModal } = useAccountModal();
-	const { disconnect } = useDisconnect();
 
-	const WALLET_OPTIONS = useMemo(() => {
-		let options = [
-			{
-				label: 'common.wallet.account-info',
-				postfixIcon: 'Account',
-				onClick: openAccountModal,
-			},
-			{
-				label: 'common.wallet.disconnect-wallet',
-				postfixIcon: 'Disconnet',
-				onClick: disconnect,
-			},
-		];
+	useEffect(() => {
+		setWalletLabel(ensName || truncatedWalletAddress!);
+	}, [ensName, truncatedWalletAddress]);
 
-		return options;
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	const formatOptionLabel = ({
-		label,
-		isMenuLabel,
-		postfixIcon,
-		onClick,
-	}: ReactSelectOptionProps) =>
-		isMenuLabel ? (
-			<>
+	return (
+		<Container isMobile={isMobile}>
+			<ConnectButton
+				size="sm"
+				variant="outline"
+				noOutline
+				onClick={openAccountModal}
+				data-testid="connect-wallet"
+				mono
+				isName={!!ensName}
+			>
 				{ensAvatar ? (
 					<img
 						src={ensAvatar}
@@ -75,48 +47,8 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 				) : (
 					<StyledConnectionDot />
 				)}
-				{label}
-			</>
-		) : (
-			<LabelContainer onClick={onClick}>
-				{t(label)}
-				{postfixIcon &&
-					(postfixIcon === 'Account' ? (
-						<AccountIcon height={17} />
-					) : (
-						<DisconnectIcon height={17} />
-					))}
-			</LabelContainer>
-		);
-
-	const DropdownIndicator = (props: any) => {
-		return (
-			<components.DropdownIndicator {...props}>
-				<StyledCaretDownIcon />
-			</components.DropdownIndicator>
-		);
-	};
-
-	useEffect(() => {
-		setWalletLabel(ensName || truncatedWalletAddress!);
-	}, [ensName, truncatedWalletAddress]);
-
-	return (
-		<Container isMobile={isMobile}>
-			<WalletOptionsSelect
-				formatOptionLabel={formatOptionLabel}
-				controlHeight={41}
-				options={WALLET_OPTIONS}
-				value={{ label: walletLabel, isMenuLabel: true }}
-				valueContainer={{ 'text-transform': ensName ? 'lowercase' : '' }}
-				menuWidth={240}
-				optionPadding={'0px'} //override default padding to 0
-				optionBorderBottom={`1px solid ${theme.colors.navy}`}
-				components={{ IndicatorSeparator, DropdownIndicator }}
-				isSearchable={false}
-				data-testid="wallet-btn"
-				noOutline
-			/>
+				{walletLabel}
+			</ConnectButton>
 		</Container>
 	);
 };
@@ -136,45 +68,15 @@ const Container = styled.div<{ isMobile?: boolean }>`
 		`};
 `;
 
-const WalletOptionsSelect = styled(Select)`
-	min-width: 155px;
-
-	.react-select__control {
-		width: 155px;
-		border-radius: 10px;
-	}
-
-	.react-select__dropdown-indicator {
-		margin-right: 5px;
-	}
-
-	.react-select__value-container {
-		padding-right: 0;
-	}
-`;
-
-const StyledCaretDownIcon = styled(CaretDownIcon)`
-	width: 11px;
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
-
-const LabelContainer = styled(FlexDivRow)`
-	padding: 16px;
+const ConnectButton = styled(Button)<{ isName?: boolean }>`
 	font-size: 13px;
-	width: 100%;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	:hover {
-		> svg {
-			path {
-				fill: ${(props) => props.theme.colors.selectedTheme.icon.hover};
-			}
-		}
-	}
-	> svg {
-		path {
-			fill: ${(props) => props.theme.colors.selectedTheme.icon.fill};
-		}
-	}
+	min-width: unset;
+	text-transform: none;
+	${(props) =>
+		props.isName &&
+		css`
+			text-transform: lowercase;
+		`};
 `;
 
 export default WalletActions;
