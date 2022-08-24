@@ -3,10 +3,10 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import { useNetwork, chain } from 'wagmi';
 
 import Button from 'components/Button';
 import { futuresAccountState, marketInfoState, positionState } from 'store/futures';
-import { isL2State } from 'store/wallet';
 import { zeroBN } from 'utils/formatters/number';
 
 import DepositMarginModal from './DepositMarginModal';
@@ -17,7 +17,11 @@ const MarketActions: React.FC = () => {
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 	const position = useRecoilValue(positionState);
 	const marketInfo = useRecoilValue(marketInfoState);
-	const isL2 = useRecoilValue(isL2State);
+	const { chain: network } = useNetwork();
+	const isL2 =
+		network !== undefined
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
+			: false;
 	const [openModal, setOpenModal] = React.useState<'deposit' | 'withdraw' | null>(null);
 
 	const { useSynthsBalancesQuery } = useSynthetixQueries();

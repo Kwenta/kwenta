@@ -1,9 +1,9 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
+import { useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { networkState } from 'store/wallet';
 import logError from 'utils/logError';
 
 import { SynthsVolumes } from './type';
@@ -13,11 +13,11 @@ const useGetWalletTrades = (
 	walletAddress: string,
 	options?: UseQueryOptions<SynthsVolumes | null>
 ) => {
-	const network = useRecoilValue(networkState);
-	const synthsEndpoint = getSynthsEndpoint(network);
+	const { chain: network } = useNetwork();
+	const synthsEndpoint = getSynthsEndpoint(network?.id as NetworkId);
 
 	return useQuery<any>(
-		QUERY_KEYS.Trades.WalletTrades(walletAddress, network.id),
+		QUERY_KEYS.Trades.WalletTrades(walletAddress, network?.id as NetworkId),
 		async () => {
 			try {
 				const response = await request(

@@ -1,10 +1,11 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { constants } from 'ethers';
 import { ChangeEvent, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { useSigner } from 'wagmi';
+import { useNetwork, useSigner } from 'wagmi';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
@@ -19,7 +20,6 @@ import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useSUSDContract from 'hooks/useSUSDContract';
 import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
 import { futuresAccountState } from 'store/futures';
-import { networkState } from 'store/wallet';
 import logError from 'utils/logError';
 
 type Props = {
@@ -32,7 +32,7 @@ export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Prop
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { data: signer } = useSigner();
-	const network = useRecoilValue(networkState);
+	const { chain: network } = useNetwork();
 	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const {
 		crossMarginAccountContract,
@@ -53,7 +53,8 @@ export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Prop
 			if (!signer || !synthetixjs || !crossMarginContractFactory)
 				throw new Error('Signer or snx lib missing');
 
-			const crossMarginSettingsAddress = CROSS_MARGIN_BASE_SETTINGS[String(network.id)];
+			const crossMarginSettingsAddress =
+				CROSS_MARGIN_BASE_SETTINGS[String(network?.id as NetworkId)];
 
 			if (!crossMarginSettingsAddress) throw new Error('Unsupported network');
 

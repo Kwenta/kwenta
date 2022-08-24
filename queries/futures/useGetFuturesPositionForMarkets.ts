@@ -2,7 +2,7 @@ import synthetix, { NetworkId } from '@synthetixio/contracts-interface';
 import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { useAccount, chain, useNetwork } from 'wagmi';
+import { useAccount, chain, useNetwork, useProvider } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { futuresMarketsState, futuresAccountState, positionsState } from 'store/futures';
@@ -18,14 +18,19 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 		activeChain !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
 			: false;
+	const provider = useProvider({
+		chainId: isL2 && activeChain != null ? activeChain.id : chain.optimism.id,
+	});
 	const synthetixjs = synthetix({
+		provider: provider,
 		networkId: (activeChain?.unsupported
-			? undefined
+			? chain.optimism.id
 			: activeChain?.id ?? chain.optimism.id) as NetworkId,
 	});
 	const [, setFuturesPositions] = useRecoilState(positionsState);
 
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
+
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 
 	const assets = futuresMarkets

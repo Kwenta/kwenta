@@ -1,6 +1,8 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { useNetwork, chain } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
@@ -14,7 +16,6 @@ import {
 	potentialTradeDetailsState,
 	tradeSizeState,
 } from 'store/futures';
-import { isL2State, networkState } from 'store/wallet';
 
 import { FuturesPotentialTradeDetails } from './types';
 import useGetCrossMarginPotentialTrade from './useGetCrossMarginTradePreview';
@@ -28,8 +29,11 @@ const useGetFuturesPotentialTradeDetails = (
 ) => {
 	const { selectedFuturesAddress, selectedAccountType } = useRecoilValue(futuresAccountState);
 
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
+	const { chain: network } = useNetwork();
+	const isL2 =
+		network !== undefined
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
+			: false;
 	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 
 	const tradeSize = useRecoilValue(tradeSizeState);
@@ -63,7 +67,7 @@ const useGetFuturesPotentialTradeDetails = (
 
 	return useQuery<FuturesPotentialTradeDetails | null>(
 		QUERY_KEYS.Futures.PotentialTrade(
-			network.id,
+			network?.id as NetworkId,
 			marketAsset || null,
 			tradeSize,
 			selectedFuturesAddress || '',

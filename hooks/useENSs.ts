@@ -1,12 +1,11 @@
 import { Contract } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
+import { chain, useNetwork } from 'wagmi';
 
 import { ENS_REVERSE_LOOKUP } from 'constants/address';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import reverseRecordsAbi from 'lib/abis/ReverseRecords.json';
-import { isL2State } from 'store/wallet';
 
 const ADDRESSES_PER_LOOKUP = 1500;
 
@@ -15,7 +14,11 @@ type EnsInfo = {
 };
 
 const useENSs = (addresses: string[], options?: UseQueryOptions<any | null>) => {
-	const isL2 = useRecoilValue(isL2State);
+	const { chain: network } = useNetwork();
+	const isL2 =
+		network !== undefined
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
+			: false;
 
 	const { staticMainnetProvider } = Connector.useContainer();
 

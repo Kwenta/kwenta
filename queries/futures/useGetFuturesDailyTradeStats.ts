@@ -1,9 +1,9 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
+import { chain, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
-import { isL2State, networkState } from 'store/wallet';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import logError from 'utils/logError';
 
@@ -13,10 +13,15 @@ import { FuturesDailyTradeStats, FuturesOneMinuteStat } from './types';
 import { getFuturesEndpoint, calculateDailyTradeStats } from './utils';
 
 const useGetFuturesDailyTradeStats = (options?: UseQueryOptions<FuturesDailyTradeStats | null>) => {
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
+	const { chain: network } = useNetwork();
+	const isL2 =
+		network !== undefined
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
+			: false;
 	const homepage = window.location.pathname === ROUTES.Home.Root;
-	const futuresEndpoint = homepage ? FUTURES_ENDPOINT_MAINNET : getFuturesEndpoint(network?.id);
+	const futuresEndpoint = homepage
+		? FUTURES_ENDPOINT_MAINNET
+		: getFuturesEndpoint(network?.id as NetworkId);
 
 	const queryTrades = async (
 		skip: number,
@@ -46,7 +51,7 @@ const useGetFuturesDailyTradeStats = (options?: UseQueryOptions<FuturesDailyTrad
 	};
 
 	return useQuery<FuturesDailyTradeStats | null>(
-		QUERY_KEYS.Futures.DayTradeStats(network.id, null),
+		QUERY_KEYS.Futures.DayTradeStats(network?.id as NetworkId, null),
 		async () => {
 			const trades = await queryTrades(0, []);
 

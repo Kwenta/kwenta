@@ -1,9 +1,8 @@
 import axios from 'axios';
 import { UseQueryOptions, useQuery } from 'react-query';
-import { useRecoilValue } from 'recoil';
+import { chain, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { isL2State } from 'store/wallet';
 
 import { CG_BASE_API_URL } from './constants';
 import { PriceResponse } from './types';
@@ -12,7 +11,11 @@ const useCoinGeckoTokenPricesQuery = (
 	tokenAddresses: string[],
 	options?: UseQueryOptions<PriceResponse>
 ) => {
-	const isL2 = useRecoilValue(isL2State);
+	const { chain: network } = useNetwork();
+	const isL2 =
+		network !== undefined
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
+			: false;
 
 	const platform = isL2 ? 'optimistic-ethereum' : 'ethereum';
 	return useQuery<PriceResponse>(

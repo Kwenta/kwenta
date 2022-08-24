@@ -1,10 +1,10 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { utils as ethersUtils } from 'ethers';
 import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
+import { useNetwork, chain, useAccount } from 'wagmi';
 
 import { DEFAULT_NUMBER_OF_TRADES, MAX_TIMESTAMP } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
-import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
 import logError from 'utils/logError';
 
 import { getFuturesTrades } from './subgraph';
@@ -15,13 +15,16 @@ const useGetFuturesTrades = (
 	currencyKey: string | undefined,
 	options?: UseInfiniteQueryOptions<FuturesTrade[] | null> & { forceAccount: boolean }
 ) => {
-	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network?.id);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isL2 = useRecoilValue(isL2State);
+	const { chain: network } = useNetwork();
+	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
+	const { isConnected: isWalletConnected } = useAccount();
+	const isL2 =
+		network !== undefined
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
+			: false;
 
 	return useInfiniteQuery<FuturesTrade[] | null>(
-		QUERY_KEYS.Futures.Trades(network.id, currencyKey || null),
+		QUERY_KEYS.Futures.Trades(network?.id as NetworkId, currencyKey || null),
 		async ({ pageParam = { maxTs: Math.floor(Date.now() / 1000), minTs: 0 } }) => {
 			if (!currencyKey) return null;
 

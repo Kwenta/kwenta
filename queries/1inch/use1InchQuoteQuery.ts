@@ -1,14 +1,14 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { useMemo } from 'react';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
+import { useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import Convert from 'containers/Convert';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
-import { networkState } from 'store/wallet';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
 type Currency = {
@@ -25,7 +25,7 @@ const use1InchQuoteQuery = (
 	options?: UseQueryOptions<string | null>
 ) => {
 	const { quote1Inch } = Convert.useContainer();
-	const network = useRecoilValue(networkState);
+	const { chain: network } = useNetwork();
 
 	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -48,7 +48,7 @@ const use1InchQuoteQuery = (
 			baseCurrency?.address,
 			amount,
 			synthUsdRate || 0,
-			network?.id!
+			network?.id as NetworkId
 		),
 		async () => {
 			const sUsd = tokensMap['sUSD'];

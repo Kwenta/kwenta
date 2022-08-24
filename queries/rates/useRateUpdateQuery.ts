@@ -1,9 +1,9 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
+import { chain, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { isL2State, networkState } from 'store/wallet';
 import logError from 'utils/logError';
 
 import { getRatesEndpoint } from './utils';
@@ -16,13 +16,15 @@ const useRateUpdateQuery = (
 	{ baseCurrencyKey }: RateUpdate,
 	options?: UseQueryOptions<any | null>
 ) => {
-	const isL2 = useRecoilValue(isL2State);
-
-	const network = useRecoilValue(networkState);
-	const ratesEndpoint = getRatesEndpoint(network.id);
+	const { chain: network } = useNetwork();
+	const isL2 =
+		network !== undefined
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
+			: false;
+	const ratesEndpoint = getRatesEndpoint(network?.id as NetworkId);
 
 	return useQuery<any | null>(
-		QUERY_KEYS.Futures.LatestUpdate(network.id, baseCurrencyKey),
+		QUERY_KEYS.Futures.LatestUpdate(network?.id as NetworkId, baseCurrencyKey),
 		async () => {
 			try {
 				const response = await request(

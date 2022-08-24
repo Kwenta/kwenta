@@ -1,9 +1,9 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
+import { useNetwork, chain } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { isL2State, networkState } from 'store/wallet';
 import logError from 'utils/logError';
 
 import { FUTURES_POSITION_FRAGMENT } from './constants';
@@ -14,12 +14,14 @@ const useGetFuturesAccountPositionHistory = (
 	account: string,
 	options?: UseQueryOptions<any | null>
 ) => {
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network?.id);
-
+	const { chain: network } = useNetwork();
+	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
+	const isL2 =
+		network !== undefined
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
+			: false;
 	return useQuery<PositionHistory[] | null>(
-		QUERY_KEYS.Futures.AllPositionHistory(network.id, account || ''),
+		QUERY_KEYS.Futures.AllPositionHistory(network?.id as NetworkId, account || ''),
 		async () => {
 			try {
 				const response = await request(

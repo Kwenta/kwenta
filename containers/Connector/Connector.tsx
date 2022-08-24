@@ -1,18 +1,22 @@
-import { synthetix } from '@synthetixio/contracts-interface';
-import { getOptimismProvider } from '@synthetixio/providers';
+import { NetworkId, synthetix } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
 import { keyBy } from 'lodash';
 import { useMemo } from 'react';
 import { createContainer } from 'unstated-next';
+import { useNetwork, useProvider } from 'wagmi';
 
 import { DEFAULT_NETWORK_ID } from 'constants/defaults';
 
 const useConnector = () => {
+	const { chain: network } = useNetwork();
+	const provider = useProvider({
+		chainId: !network?.unsupported ? network?.id : DEFAULT_NETWORK_ID,
+	});
 	// Provides a default mainnet provider, irrespective of the current network
 	const staticMainnetProvider = new ethers.providers.InfuraProvider();
 	const defaultSynthetixjs = synthetix({
-		provider: getOptimismProvider({ networkId: DEFAULT_NETWORK_ID }),
-		networkId: DEFAULT_NETWORK_ID,
+		provider: provider,
+		networkId: (!network?.unsupported ? network?.id : DEFAULT_NETWORK_ID) as NetworkId,
 	});
 
 	const [synthsMap, tokensMap] = useMemo(() => {

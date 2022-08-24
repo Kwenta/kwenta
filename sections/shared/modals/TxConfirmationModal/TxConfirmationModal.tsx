@@ -3,8 +3,8 @@ import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { FC, ReactNode, useMemo } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import { chain, useNetwork, useAccount } from 'wagmi';
 
 import InfoIcon from 'assets/svg/app/info.svg';
 import OneInchImage from 'assets/svg/providers/1inch.svg';
@@ -15,7 +15,6 @@ import { ESTIMATE_VALUE } from 'constants/placeholder';
 import useCurrencyPrice from 'hooks/useCurrencyPrice';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
-import { isL2State, walletAddressState } from 'store/wallet';
 import {
 	FlexDivRowCentered,
 	numericValueCSS,
@@ -60,9 +59,14 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 	icon,
 }) => {
 	const { t } = useTranslation();
-	const isL2 = useRecoilValue(isL2State);
+	const { chain: network } = useNetwork();
+	const isL2 =
+		network !== undefined
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
+			: false;
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { address } = useAccount();
+	const walletAddress = address || null;
 	const { subgraph } = useSynthetixQueries();
 	const getBaseCurrencyAmount = (decimals?: number) =>
 		formatCurrency(baseCurrencyKey, baseCurrencyAmount, {

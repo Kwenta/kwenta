@@ -107,7 +107,7 @@ const wagmiClient = createClient({
 const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {
 	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const provider = useProvider();
-	const { data: newSigner } = useSigner();
+	const { data: signer } = useSigner();
 	const { chain: activeChain } = useNetwork();
 	const network = activeChain || undefined;
 	const getLayout = Component.getLayout || ((page) => page);
@@ -129,8 +129,8 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 							provider && !activeChain?.unsupported && synthetixjs
 								? createQueryContext({
 										provider,
-										signer: newSigner || undefined,
-										networkId: network!.id as NetworkId,
+										signer: signer || undefined,
+										networkId: (network?.id ?? chain.optimism.id) as NetworkId,
 										synthetixjs,
 								  })
 								: createQueryContext({ networkId: null, synthetixjs: null })

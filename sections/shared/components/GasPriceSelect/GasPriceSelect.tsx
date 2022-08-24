@@ -4,10 +4,11 @@ import { FC } from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
+import { useNetwork, chain } from 'wagmi';
 
 import { NO_VALUE } from 'constants/placeholder';
 import { parseGasPriceObject } from 'hooks/useGas';
-import { customGasPriceState, gasSpeedState, isL2State, isMainnetState } from 'store/wallet';
+import { customGasPriceState, gasSpeedState } from 'store/wallet';
 import { formatCurrency, formatNumber } from 'utils/formatters/number';
 
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
@@ -22,8 +23,13 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 	const { t } = useTranslation();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const customGasPrice = useRecoilValue(customGasPriceState);
-	const isMainnet = useRecoilValue(isMainnetState);
-	const isL2 = useRecoilValue(isL2State);
+	const { chain: network } = useNetwork();
+	const isL2 =
+		network !== undefined
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
+			: false;
+	const isMainnet =
+		network !== undefined ? [chain.mainnet.id, chain.goerli.id].includes(network?.id) : false;
 
 	const formattedTransactionFee = useMemo(() => {
 		return transactionFee

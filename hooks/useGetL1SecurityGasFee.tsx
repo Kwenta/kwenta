@@ -2,10 +2,8 @@ import { getContractFactory, predeploys } from '@eth-optimism/contracts';
 import Wei from '@synthetixio/wei';
 import { BytesLike, ethers } from 'ethers';
 import { omit } from 'lodash';
-import { useRecoilValue } from 'recoil';
-import { useSigner } from 'wagmi';
+import { chain, useNetwork, useSigner } from 'wagmi';
 
-import { isL2State } from 'store/wallet';
 import { weiFromWei, zeroBN } from 'utils/formatters/number';
 
 type MetaTx = {
@@ -25,8 +23,12 @@ const contractAbi = JSON.parse(
 );
 
 export const useGetL1SecurityFee = () => {
-	const isL2 = useRecoilValue(isL2State);
 	const { data: signer } = useSigner();
+	const { chain: network } = useNetwork();
+	const isL2 =
+		network !== undefined
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
+			: false;
 
 	return async (metaTx: MetaTx): Promise<Wei> => {
 		if (!isL2) return zeroBN;

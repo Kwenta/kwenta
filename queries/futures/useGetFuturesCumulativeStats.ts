@@ -1,11 +1,11 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
+import { chain, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
-import { isL2State, networkState } from 'store/wallet';
 import logError from 'utils/logError';
 
 import { FUTURES_ENDPOINT_MAINNET } from './constants';
@@ -13,13 +13,18 @@ import { FuturesCumulativeStats } from './types';
 import { getFuturesEndpoint } from './utils';
 
 const useGetFuturesCumulativeStats = (options?: UseQueryOptions<FuturesCumulativeStats | null>) => {
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
+	const { chain: network } = useNetwork();
+	const isL2 =
+		network !== undefined
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
+			: false;
 	const homepage = window.location.pathname === ROUTES.Home.Root;
-	const futuresEndpoint = homepage ? FUTURES_ENDPOINT_MAINNET : getFuturesEndpoint(network?.id);
+	const futuresEndpoint = homepage
+		? FUTURES_ENDPOINT_MAINNET
+		: getFuturesEndpoint(network?.id as NetworkId);
 
 	return useQuery<FuturesCumulativeStats | null>(
-		QUERY_KEYS.Futures.TotalTrades(network.id),
+		QUERY_KEYS.Futures.TotalTrades(network?.id as NetworkId),
 		async () => {
 			try {
 				const response = await request(

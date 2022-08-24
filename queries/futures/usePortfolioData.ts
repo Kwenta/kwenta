@@ -1,12 +1,11 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
 import EthDater from 'ethereum-block-by-date';
 import request, { gql } from 'graphql-request';
 import moment from 'moment';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
-import { useProvider } from 'wagmi';
+import { chain, useAccount, useNetwork, useProvider } from 'wagmi';
 
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
 import logError from 'utils/logError';
 
 import { getFuturesEndpoint } from './utils';
@@ -21,14 +20,18 @@ type PortfolioData = {
 // The chart basically plots margin against block number.
 
 const usePortfolioData = (options?: UseQueryOptions<PortfolioData | null>) => {
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
-	const walletAddress = useRecoilValue(walletAddressState);
-	const futuresEndpoint = getFuturesEndpoint(network?.id);
+	const { chain: network } = useNetwork();
+	const isL2 =
+		network !== undefined
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
+			: false;
+	const { address } = useAccount();
+	const walletAddress = address || null;
+	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 	const provider = useProvider();
 
 	return useQuery<PortfolioData | null>(
-		['futures', 'portfolio', network.id, walletAddress],
+		['futures', 'portfolio', network?.id as NetworkId, walletAddress],
 		async () => {
 			if (!provider || !walletAddress) return null;
 			const dater = new EthDater(provider);

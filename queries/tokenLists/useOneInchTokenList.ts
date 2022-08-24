@@ -2,21 +2,23 @@ import { NetworkId } from '@synthetixio/contracts-interface';
 import axios from 'axios';
 import keyBy from 'lodash/keyBy';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
+import { chain, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import use1InchApiUrl from 'hooks/use1InchApiUrl';
-import { isL2State, networkState } from 'store/wallet';
 
 import { TokenListQueryResponse, OneInchTokenListResponse } from './types';
 
 const useOneInchTokenList = (options?: UseQueryOptions<TokenListQueryResponse>) => {
-	const isL2 = useRecoilValue(isL2State);
 	const oneInchApiUrl = use1InchApiUrl();
-	const network = useRecoilValue(networkState);
+	const { chain: network } = useNetwork();
+	const isL2 =
+		network !== undefined
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
+			: false;
 
 	return useQuery<TokenListQueryResponse>(
-		QUERY_KEYS.TokenLists.OneInch(network.id),
+		QUERY_KEYS.TokenLists.OneInch(network?.id as NetworkId),
 		async () => {
 			const response = await axios.get<OneInchTokenListResponse>(oneInchApiUrl + 'tokens');
 

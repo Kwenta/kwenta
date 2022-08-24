@@ -1,10 +1,10 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
 import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
+import { chain, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { isL2State, networkState } from 'store/wallet';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import logError from 'utils/logError';
 
@@ -16,12 +16,15 @@ const useGetFuturesTradingVolume = (
 	currencyKey: string | null,
 	options?: UseQueryOptions<Wei | null>
 ) => {
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network?.id);
+	const { chain: network } = useNetwork();
+	const isL2 =
+		network !== undefined
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
+			: false;
+	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
 	return useQuery<Wei | null>(
-		QUERY_KEYS.Futures.TradingVolume(network.id, currencyKey || null),
+		QUERY_KEYS.Futures.TradingVolume(network?.id as NetworkId, currencyKey || null),
 		async () => {
 			if (!currencyKey) return null;
 			try {

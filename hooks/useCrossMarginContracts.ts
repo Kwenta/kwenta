@@ -1,6 +1,7 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { useSigner } from 'wagmi';
+import { useNetwork, useSigner } from 'wagmi';
 
 import { CROSS_MARGIN_ACCOUNT_FACTORY } from 'constants/address';
 import {
@@ -10,7 +11,6 @@ import {
 	CrossMarginBase,
 } from 'lib/abis/types';
 import { futuresAccountState } from 'store/futures';
-import { networkState } from 'store/wallet';
 
 export default function useCrossMarginContracts(): {
 	crossMarginAccountContract: CrossMarginBase | null;
@@ -19,7 +19,7 @@ export default function useCrossMarginContracts(): {
 	const futuresAccount = useRecoilValue(futuresAccountState);
 
 	const { data: signer } = useSigner();
-	const network = useRecoilValue(networkState);
+	const { chain: network } = useNetwork();
 
 	const crossMarginAccountContract = useMemo(() => {
 		if (!signer || !futuresAccount?.crossMarginAddress) return null;
@@ -28,7 +28,7 @@ export default function useCrossMarginContracts(): {
 	}, [futuresAccount?.crossMarginAddress, signer]);
 
 	const crossMarginContractFactory = useMemo(() => {
-		const address = CROSS_MARGIN_ACCOUNT_FACTORY[network.id];
+		const address = CROSS_MARGIN_ACCOUNT_FACTORY[network?.id as NetworkId];
 		if (!signer || !address) return null;
 
 		return CrossMarginAccountFactory__factory.connect(address, signer);

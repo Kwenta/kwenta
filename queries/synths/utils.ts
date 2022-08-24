@@ -1,6 +1,5 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { Contract } from 'ethcall';
-
-import { Network } from 'store/wallet';
 
 import {
 	SYNTHS_ENDPOINT_MAIN,
@@ -25,10 +24,10 @@ export const getProxySynthSymbol = (address: string) => {
 	return c.symbol();
 };
 
-export const getSynthsEndpoint = (network: Network): string => {
-	return network && network.id === 10
+export const getSynthsEndpoint = (networkId: NetworkId): string => {
+	return networkId === 10
 		? SYNTHS_ENDPOINT_OPTIMISM_MAIN
-		: network.id === 69
+		: networkId === 69
 		? SYNTHS_ENDPOINT_OPTIMISM_KOVAN
 		: SYNTHS_ENDPOINT_MAIN;
 };

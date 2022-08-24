@@ -1,11 +1,12 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
+import { chain, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { currentMarketState, futuresAccountState } from 'store/futures';
-import { isL2State, networkState } from 'store/wallet';
 import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
@@ -14,18 +15,21 @@ import { PositionHistory } from './types';
 import { getFuturesEndpoint, mapTradeHistory } from './utils';
 
 const useGetFuturesMarketPositionHistory = (options?: UseQueryOptions<any | null>) => {
-	const isL2 = useRecoilValue(isL2State);
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 
-	const network = useRecoilValue(networkState);
+	const { chain: network } = useNetwork();
+	const isL2 =
+		network !== undefined
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
+			: false;
 	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
-	const futuresEndpoint = getFuturesEndpoint(network?.id);
+	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
 	const currencyKey = useRecoilValue(currentMarketState);
 
 	return useQuery<PositionHistory[] | null>(
 		QUERY_KEYS.Futures.MarketPositionHistory(
-			network.id,
+			network?.id as NetworkId,
 			currencyKey || null,
 			selectedFuturesAddress || ''
 		),

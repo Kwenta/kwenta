@@ -1,14 +1,12 @@
-import { CurrencyKey } from '@synthetixio/contracts-interface';
+import { CurrencyKey, NetworkId } from '@synthetixio/contracts-interface';
 import { DeprecatedSynthBalance, DeprecatedSynthsBalances } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { Provider, Contract } from 'ethcall';
 import { ethers } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
-import { useProvider } from 'wagmi';
+import { useNetwork, useProvider } from 'wagmi';
 
 import Connector from 'containers/Connector';
-import { networkState } from 'store/wallet';
 
 import { getProxySynthSymbol } from './utils';
 
@@ -20,10 +18,10 @@ const useRedeemableDeprecatedSynthsQuery = (
 ) => {
 	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const provider = useProvider();
-	const network = useRecoilValue(networkState);
+	const { chain: network } = useNetwork();
 
 	return useQuery<DeprecatedSynthsBalances>(
-		['WalletBalances', 'RedeemableDeprecatedSynths', network.id, walletAddress],
+		['WalletBalances', 'RedeemableDeprecatedSynths', network?.id as NetworkId, walletAddress],
 		async () => {
 			await ethCallProvider.init(provider as any);
 
@@ -75,7 +73,7 @@ const useRedeemableDeprecatedSynthsQuery = (
 			};
 		},
 		{
-			enabled: !!network.id && !!walletAddress,
+			enabled: !!network?.id && !!walletAddress,
 			...options,
 		}
 	);

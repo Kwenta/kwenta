@@ -1,11 +1,12 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { useRouter } from 'next/router';
 import { useRef, useContext, useEffect, useCallback, useState, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ThemeContext } from 'styled-components';
+import { useNetwork } from 'wagmi';
 
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
 import { currentThemeState } from 'store/ui';
-import { networkState } from 'store/wallet';
 import { formatNumber } from 'utils/formatters/number';
 
 import {
@@ -55,7 +56,7 @@ export function TVChart({
 	const router = useRouter();
 
 	const { colors } = useContext(ThemeContext);
-	let network = useRecoilValue(networkState);
+	const { chain: network } = useNetwork();
 
 	const DEFAULT_OVERRIDES = {
 		'paneProperties.background': colors.selectedTheme.background,
@@ -70,7 +71,7 @@ export function TVChart({
 	useEffect(() => {
 		const widgetOptions = {
 			symbol: marketAsset + ':sUSD',
-			datafeed: DataFeedFactory(network.id, onSubscribe),
+			datafeed: DataFeedFactory(network?.id as NetworkId, onSubscribe),
 			interval: interval,
 			container: containerId,
 			library_path: libraryPath,
@@ -125,7 +126,7 @@ export function TVChart({
 			clearExistingWidget();
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network.id, currentTheme, marketAssetLoaded]);
+	}, [network?.id as NetworkId, currentTheme, marketAssetLoaded]);
 
 	useEffect(() => {
 		_widget.current?.onChartReady(() => {
@@ -200,7 +201,7 @@ export function TVChart({
 			_widget.current?.chart()?.resetData();
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [lastSubscription, onSubscribe, network.id]);
+	}, [lastSubscription, onSubscribe, network?.id as NetworkId]);
 
 	return <ChartBody id={containerId} />;
 }

@@ -1,24 +1,26 @@
-import { NetworkIdByName } from '@synthetixio/contracts-interface';
+import { NetworkId, NetworkIdByName } from '@synthetixio/contracts-interface';
 import React from 'react';
-import { useRecoilValue } from 'recoil';
 import styled, { useTheme } from 'styled-components';
-
-import { networkState, isWalletConnectedState } from 'store/wallet';
+import { useAccount, useNetwork, chain } from 'wagmi';
 
 type ConnectionDotProps = {
 	className?: string;
 };
 
 const ConnectionDot: React.FC<ConnectionDotProps> = (props) => {
-	const network = useRecoilValue(networkState);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const { chain: network } = useNetwork();
+	const isL2 =
+		network !== undefined
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
+			: false;
+	const { isConnected: isWalletConnected } = useAccount();
 
 	const theme = useTheme();
 
 	let background = theme.colors.noNetwork;
 
 	if (network && isWalletConnected) {
-		switch (network.id) {
+		switch (network?.id as NetworkId) {
 			case NetworkIdByName.mainnet:
 				background = theme.colors.mainnet;
 				break;
@@ -32,7 +34,7 @@ const ConnectionDot: React.FC<ConnectionDotProps> = (props) => {
 				background = theme.colors.optimism;
 				break;
 			default:
-				if (network.useOvm) {
+				if (isL2) {
 					background = theme.colors.connectedDefault;
 				}
 		}

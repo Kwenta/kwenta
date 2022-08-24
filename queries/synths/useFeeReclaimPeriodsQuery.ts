@@ -1,14 +1,12 @@
-import { CurrencyKey } from '@synthetixio/contracts-interface';
+import { CurrencyKey, NetworkId } from '@synthetixio/contracts-interface';
 import { SynthFeeAndWaitingPeriod } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { Provider, Contract } from 'ethcall';
 import { BigNumber, ethers } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
-import { useProvider } from 'wagmi';
+import { useNetwork, useProvider } from 'wagmi';
 
 import Connector from 'containers/Connector';
-import { networkState } from 'store/wallet';
 
 const ethcallProvider = new Provider();
 
@@ -28,11 +26,11 @@ const useFeeReclaimPeriodsQuery = (
 	options?: UseQueryOptions<SynthFeeAndWaitingPeriod[]>
 ) => {
 	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
-	const network = useRecoilValue(networkState);
+	const { chain: network } = useNetwork();
 	const provider = useProvider();
 
 	return useQuery<SynthFeeAndWaitingPeriod[]>(
-		['synths', 'feeReclaimPeriods', network.id],
+		['synths', 'feeReclaimPeriods', network?.id as NetworkId],
 		async () => {
 			if (!synthetixjs) return [];
 			await ethcallProvider.init(provider as any);

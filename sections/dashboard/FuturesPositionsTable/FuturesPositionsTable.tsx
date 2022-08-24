@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import { chain, useNetwork } from 'wagmi';
 
 import MarketBadge from 'components/Badge/MarketBadge';
 import ChangePercent from 'components/ChangePercent';
@@ -18,8 +19,9 @@ import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { PositionHistory } from 'queries/futures/types';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 import { currentMarketState, futuresMarketsState, positionsState } from 'store/futures';
-import { isL2State } from 'store/wallet';
 import { formatNumber } from 'utils/formatters/number';
 import {
 	FuturesMarketAsset,
@@ -44,7 +46,14 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	const router = useRouter();
 	const { switchToL2 } = useNetworkSwitcher();
 
-	const isL2 = useRecoilValue(isL2State);
+	const { chain: network } = useNetwork();
+	const isL2 =
+		network !== undefined
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
+			: false;
+
+	useGetFuturesMarkets();
+	useGetFuturesPositionForMarkets();
 	const futuresPositions = useRecoilValue(positionsState);
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 	const currentMarket = useRecoilValue(currentMarketState);

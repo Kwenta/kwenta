@@ -1,13 +1,14 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
 import { utils as ethersUtils } from 'ethers';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
+import { chain, useNetwork } from 'wagmi';
 
 import { ETH_UNIT } from 'constants/network';
 import QUERY_KEYS from 'constants/queryKeys';
 import { futuresAccountState, openOrdersState, marketInfoState } from 'store/futures';
-import { isL2State, networkState } from 'store/wallet';
 import logError from 'utils/logError';
 
 import { getFuturesEndpoint } from './utils';
@@ -15,14 +16,17 @@ import { getFuturesEndpoint } from './utils';
 const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network?.id);
+	const { chain: network } = useNetwork();
+	const isL2 =
+		network !== undefined
+			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
+			: false;
+	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 	const marketInfo = useRecoilValue(marketInfoState);
 	const setOpenOrders = useSetRecoilState(openOrdersState);
 
 	return useQuery<any[]>(
-		QUERY_KEYS.Futures.OpenOrders(network.id, selectedFuturesAddress),
+		QUERY_KEYS.Futures.OpenOrders(network?.id as NetworkId, selectedFuturesAddress),
 		async () => {
 			try {
 				const marketAddress = marketInfo?.market;

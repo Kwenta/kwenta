@@ -1,11 +1,11 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
+import { useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
 import { calculateTradeVolumeForAllSynths } from 'queries/futures/utils';
-import { networkState } from 'store/wallet';
 import logError from 'utils/logError';
 
 import { SYNTHS_ENDPOINT_OPTIMISM_MAIN } from './constants';
@@ -16,14 +16,14 @@ const useGetSynthsTradingVolumeForAllMarkets = (
 	yesterday: number,
 	options?: UseQueryOptions<SynthsVolumes | null>
 ) => {
-	const network = useRecoilValue(networkState);
+	const { chain: network } = useNetwork();
 	const synthsEndpoint =
 		window.location.pathname === ROUTES.Home.Root
 			? SYNTHS_ENDPOINT_OPTIMISM_MAIN
-			: getSynthsEndpoint(network);
+			: getSynthsEndpoint(network?.id as NetworkId);
 
 	return useQuery<SynthsVolumes | null>(
-		QUERY_KEYS.Synths.TradingVolumeForAllSynths(network.id),
+		QUERY_KEYS.Synths.TradingVolumeForAllSynths(network?.id as NetworkId),
 		async () => {
 			try {
 				const response = await request(

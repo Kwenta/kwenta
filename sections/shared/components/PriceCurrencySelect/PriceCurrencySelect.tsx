@@ -1,17 +1,16 @@
 import { useMemo, FC } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useNetwork } from 'wagmi';
 
 import Select from 'components/Select';
 import Connector from 'containers/Connector';
 import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 import { priceCurrencyState, PRICE_CURRENCIES } from 'store/app';
-import { networkState } from 'store/wallet';
 
 export const PriceCurrencySelect: FC = () => {
 	const [priceCurrency, setPriceCurrency] = usePersistedRecoilState(priceCurrencyState);
 
 	const { synthsMap } = Connector.useContainer();
-	const network = useRecoilValue(networkState);
+	const { chain: network } = useNetwork();
 
 	const currencyOptions = useMemo(() => {
 		if (network != null && synthsMap != null) {
