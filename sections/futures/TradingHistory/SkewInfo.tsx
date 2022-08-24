@@ -46,7 +46,7 @@ const SkewInfo: React.FC = () => {
 			<SkewHeader>
 				<SkewTooltip
 					isNumber={true}
-					preset="bottom"
+					preset="bottom-right"
 					width={'310px'}
 					height={'auto'}
 					content={data.shortText ?? 0}
@@ -67,7 +67,7 @@ const SkewInfo: React.FC = () => {
 				</SkewTooltip>
 				<SkewTooltip
 					isNumber={true}
-					preset="bottom"
+					preset="bottom-rigth"
 					width={'310px'}
 					height={'auto'}
 					content={data.longText ?? 0}
