@@ -109,6 +109,7 @@ const SkewTooltip = styled(StyledTooltip)<{ isNumber?: boolean }>`
 `;
 
 const SkewContainer = styled.div`
+	height: 55px;
 	display: flex;
 	flex-direction: column;
 	column-gap: 5px;
