@@ -16,7 +16,6 @@ const HistoryPage: HistoryPageProps = () => {
 				<title>{t('dashboard-history.page-title')}</title>
 			</Head>
 			<History />
-			<br />
 			<GitHashID />
 		</>
 	);

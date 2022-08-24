@@ -16,7 +16,6 @@ const Dashboard: DashboardComponent = () => {
 				<title>{t('dashboard.page-title')}</title>
 			</Head>
 			<Overview />
-			<br />
 			<GitHashID />
 		</>
 	);

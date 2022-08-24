@@ -16,7 +16,6 @@ const MarketsPage: MarketsProps = () => {
 				<title>{t('dashboard-markets.page-title')}</title>
 			</Head>
 			<Markets />
-			<br />
 			<GitHashID />
 		</>
 	);

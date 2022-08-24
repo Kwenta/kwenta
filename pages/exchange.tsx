@@ -45,15 +45,12 @@ const Exchange: ExchangeComponent = () => {
 					<StyledFullHeightContainer>
 						<MainContent>
 							<BasicSwap />
-							<br />
 							<GitHashID />
 						</MainContent>
 					</StyledFullHeightContainer>
 				</DesktopOnlyView>
 				<MobileOrTabletView>
 					<MobileSwap />
-					<br />
-					<br />
 					<GitHashID />
 				</MobileOrTabletView>
 			</PageContent>
