@@ -1,17 +1,26 @@
 import React from 'react';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
+import { FuturesAccountType } from 'queries/futures/subgraph';
+import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
+import TradeCrossMargin from 'sections/futures/TradeCrossMargin';
+import { futuresAccountTypeState } from 'store/futures';
 
-import OpenPositionTab from './OpenPositionTab';
 import OrdersTab from './OrdersTab';
 import TradesTab from './TradesTab';
 import TransfersTab from './TransfersTab';
 
-const TABS = [
+const getTabs = (accountType: FuturesAccountType) => [
 	{
 		title: 'Position',
-		component: <OpenPositionTab />,
+		component:
+			accountType === 'isolated_margin' ? (
+				<TradeIsolatedMargin isMobile />
+			) : (
+				<TradeCrossMargin isMobile />
+			),
 	},
 	{
 		title: 'Orders',
@@ -29,11 +38,14 @@ const TABS = [
 
 const UserTabs: React.FC = () => {
 	const [activeTab, setActiveTab] = React.useState(0);
+	const accountType = useRecoilValue(futuresAccountTypeState);
+
+	const tabs = getTabs(accountType);
 
 	return (
 		<UserTabsContainer>
 			<TabButtonsContainer>
-				{TABS.map(({ title }, i) => (
+				{tabs.map(({ title }, i) => (
 					<TabButton
 						key={title}
 						title={title}
@@ -42,7 +54,7 @@ const UserTabs: React.FC = () => {
 					/>
 				))}
 			</TabButtonsContainer>
-			<div>{TABS[activeTab].component}</div>
+			<div>{tabs[activeTab].component}</div>
 		</UserTabsContainer>
 	);
 };

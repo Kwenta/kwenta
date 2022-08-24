@@ -289,7 +289,7 @@ export const BalanceContainer = styled(FlexDivRowCentered)`
 export const BalanceText = styled.p`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	span {
-		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	}
 `;
 

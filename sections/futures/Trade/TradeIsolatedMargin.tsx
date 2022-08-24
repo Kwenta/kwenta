@@ -14,17 +14,28 @@ import ManagePosition from './ManagePosition';
 import MarketActions from './MarketActions';
 import MarketsDropdown from './MarketsDropdown';
 import NextPrice from './NextPrice';
+import TradePanelHeader from './TradePanelHeader';
 
-const Trade: React.FC = () => {
+type Props = {
+	isMobile?: boolean;
+};
+
+const TradeIsolatedMargin = ({ isMobile }: Props) => {
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 
 	return (
 		<div>
-			<MarketsDropdown />
-			<MarketActions />
+			{!isMobile && <MarketsDropdown />}
 
-			<MarketInfoBox />
+			<TradePanelHeader accountType={'isolated_margin'} />
+
+			{!isMobile && (
+				<>
+					<MarketActions />
+					<MarketInfoBox />
+				</>
+			)}
 
 			<StyledSegmentedControl
 				values={['Market', 'Next-Price']}
@@ -47,7 +58,7 @@ const Trade: React.FC = () => {
 	);
 };
 
-export default Trade;
+export default TradeIsolatedMargin;
 
 const StyledSegmentedControl = styled(SegmentedControl)`
 	margin-bottom: 16px;

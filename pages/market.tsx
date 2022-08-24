@@ -12,7 +12,7 @@ import useFuturesData from 'hooks/useFuturesData';
 import LeftSidebar from 'sections/futures/LeftSidebar/LeftSidebar';
 import MarketInfo from 'sections/futures/MarketInfo';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
-import Trade from 'sections/futures/Trade';
+import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
 import TradeCrossMargin from 'sections/futures/TradeCrossMargin';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import { currentMarketState, futuresAccountState, futuresAccountTypeState } from 'store/futures';
@@ -65,14 +65,14 @@ const Market: MarketComponent = () => {
 							) : selectedAccountType === 'cross_margin' ? (
 								<TradeCrossMargin />
 							) : (
-								<Trade />
+								<TradeIsolatedMargin />
 							)}
 						</StyledRightSideContent>
 					</StyledFullHeightContainer>
 				</PageContent>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
-				<MobileTrade />
+				{walletAddress && !ready ? <Loader /> : <MobileTrade />}
 			</MobileOrTabletView>
 		</FuturesContext.Provider>
 	);

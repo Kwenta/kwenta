@@ -336,7 +336,7 @@ const useFuturesData = () => {
 				onTradeAmountChange(newTradeSize.toString(), true);
 			}
 		},
-		[remainingMargin, marketAssetRate, onTradeAmountChange, setTradeSize]
+		[remainingMargin, marketAssetRate, setTradeSize, onTradeAmountChange]
 	);
 
 	const orderTxn = useSynthetixTxn(
@@ -376,12 +376,19 @@ const useFuturesData = () => {
 			monitorTransaction({
 				txHash: orderTxn.hash,
 				onTxConfirmed: () => {
-					onLeverageChange('');
+					setTradeSize({
+						nativeSize: '',
+						susdSize: '',
+						leverage: '',
+						nativeSizeDelta: zeroBN,
+					});
 					handleRefetch('modify-position');
 				},
 			});
 		}
-	}, [orderTxn.hash, monitorTransaction, handleRefetch, onLeverageChange]);
+		// TODO: Wrap handleRefetch in usecallback?
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [orderTxn.hash, monitorTransaction, setTradeSize]);
 
 	useEffect(() => {
 		const getMaxFee = async () => {

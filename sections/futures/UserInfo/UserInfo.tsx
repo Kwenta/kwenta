@@ -20,11 +20,11 @@ import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesFo
 import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
 import {
 	currentMarketState,
-	futuresAccountState,
 	futuresAccountTypeState,
 	openOrdersState,
 	positionState,
 } from 'store/futures';
+import { walletAddressState } from 'store/wallet';
 
 import PositionCard from '../PositionCard';
 import ProfitCalculator from '../ProfitCalculator';
@@ -46,7 +46,7 @@ const FutureTabs = Object.values(FuturesTab);
 
 const UserInfo: React.FC = () => {
 	const router = useRouter();
-	const { walletAddress } = useRecoilValue(futuresAccountState);
+	const walletAddress = useRecoilValue(walletAddressState);
 	const position = useRecoilValue(positionState);
 	const marketAsset = useRecoilValue(currentMarketState);
 	const openOrders = useRecoilValue(openOrdersState);

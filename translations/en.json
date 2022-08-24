@@ -695,7 +695,8 @@
 					"title": "Cross-Margin",
 					"faq-title": "Cross-Margin FAQ's",
 					"create-account": "Create Account",
-					"unsupported": "Cross-margin is not supported on this network"
+					"unsupported": "Cross-margin is not supported on this network",
+					"switch-type": "Switch to isolated margin"
 				},
 				"preview": {
 					"error": "Error generating preview"

@@ -6,6 +6,7 @@ import { useRecoilValue } from 'recoil';
 
 import Error from 'components/Error';
 import CustomInput from 'components/Input/CustomInput';
+import Spacer from 'components/Spacer';
 import { Synths } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 import TransactionNotifier from 'containers/TransactionNotifier';
@@ -151,6 +152,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 					</MaxButton>
 				}
 			/>
+			<Spacer height={20} />
 
 			<MarginActionButton
 				data-testid="futures-market-trade-withdraw-margin-button"
