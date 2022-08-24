@@ -192,7 +192,6 @@ const StyledTable = styled(Table)`
 	.table-body-row {
 		${TableAlignment}
 		padding: 6px 0px;
-		height: 55px;
 	}
 	margin-bottom: 20px;
 `;
