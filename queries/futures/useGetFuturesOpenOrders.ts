@@ -20,7 +20,7 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 	const isL2 =
 		network !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: false;
+			: true;
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 	const marketInfo = useRecoilValue(marketInfoState);
 	const setOpenOrders = useSetRecoilState(openOrdersState);

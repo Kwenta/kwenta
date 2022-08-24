@@ -19,7 +19,7 @@ const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
 	const isL2 =
 		activeChain !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
-			: false;
+			: true;
 	const { chain: network } = useNetwork();
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 

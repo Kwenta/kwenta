@@ -15,7 +15,7 @@ const useCoinGeckoTokenPricesQuery = (
 	const isL2 =
 		network !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: false;
+			: true;
 
 	const platform = isL2 ? 'optimistic-ethereum' : 'ethereum';
 	return useQuery<PriceResponse>(

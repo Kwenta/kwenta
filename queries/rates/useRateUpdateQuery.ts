@@ -20,7 +20,7 @@ const useRateUpdateQuery = (
 	const isL2 =
 		network !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: false;
+			: true;
 	const ratesEndpoint = getRatesEndpoint(network?.id as NetworkId);
 
 	return useQuery<any | null>(

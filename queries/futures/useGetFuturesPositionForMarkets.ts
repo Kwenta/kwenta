@@ -17,7 +17,7 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 	const isL2 =
 		activeChain !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
-			: false;
+			: true;
 	const provider = useProvider({
 		chainId: isL2 && activeChain != null ? activeChain.id : chain.optimism.id,
 	});

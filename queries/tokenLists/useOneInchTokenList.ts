@@ -15,7 +15,7 @@ const useOneInchTokenList = (options?: UseQueryOptions<TokenListQueryResponse>) 
 	const isL2 =
 		network !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: false;
+			: true;
 
 	return useQuery<TokenListQueryResponse>(
 		QUERY_KEYS.TokenLists.OneInch(network?.id as NetworkId),

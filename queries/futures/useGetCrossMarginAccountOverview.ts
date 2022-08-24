@@ -14,7 +14,7 @@ export default function useGetCrossMarginAccountOverview() {
 	const isL2 =
 		network !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: false;
+			: true;
 	const { crossMarginAddress } = useRecoilValue(futuresAccountState);
 	const setFreeMargin = useSetRecoilState(crossMarginAvailableMarginState);
 

@@ -33,7 +33,7 @@ const FuturesHistoryTable: FC = () => {
 	const isL2 =
 		activeChain !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
-			: false;
+			: true;
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { switchToL2 } = useNetworkSwitcher();
 	const futuresTradesQuery = useGetAllFuturesTradesForAccount(selectedFuturesAddress);

@@ -63,7 +63,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 	const isL2 =
 		network !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: false;
+			: true;
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { address } = useAccount();
 	const walletAddress = address || null;

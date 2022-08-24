@@ -112,7 +112,7 @@ const useExchange = ({
 	const isL2 =
 		activeChain !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
-			: false;
+			: true;
 	const setTxError = useSetRecoilState(txErrorState);
 	const [atomicExchangeSlippage] = useState('0.01');
 	const setOrders = useSetRecoilState(ordersState);

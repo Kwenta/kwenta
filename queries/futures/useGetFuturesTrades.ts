@@ -21,7 +21,7 @@ const useGetFuturesTrades = (
 	const isL2 =
 		network !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: false;
+			: true;
 
 	return useInfiniteQuery<FuturesTrade[] | null>(
 		QUERY_KEYS.Futures.Trades(network?.id as NetworkId, currencyKey || null),

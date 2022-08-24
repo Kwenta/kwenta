@@ -20,7 +20,7 @@ const useGetFuturesTradingVolumeForAllMarkets = (
 	const isL2 =
 		activeChain !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
-			: false;
+			: true;
 	const network = homepage || !isL2 ? chain.optimism : activeChain;
 
 	const futuresEndpoint = homepage

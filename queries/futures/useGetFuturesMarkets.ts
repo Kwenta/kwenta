@@ -20,7 +20,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 	const isL2 =
 		activeChain !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
-			: false;
+			: true;
 	const network = homepage || !isL2 ? chain.optimism : activeChain;
 	const provider = useProvider({ chainId: network?.id });
 	const synthetixjs = synthetix({

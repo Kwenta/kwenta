@@ -18,7 +18,7 @@ const useENSs = (addresses: string[], options?: UseQueryOptions<any | null>) => 
 	const isL2 =
 		network !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: false;
+			: true;
 
 	const { staticMainnetProvider } = Connector.useContainer();
 

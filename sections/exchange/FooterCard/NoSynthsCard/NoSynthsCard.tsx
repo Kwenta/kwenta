@@ -20,7 +20,7 @@ const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 	const isL2 =
 		activeChain !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
-			: false;
+			: true;
 
 	return (
 		<>

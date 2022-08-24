@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useRef, useContext, useEffect, useCallback, useState, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ThemeContext } from 'styled-components';
-import { useNetwork } from 'wagmi';
+import { chain, useNetwork } from 'wagmi';
 
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
 import { currentThemeState } from 'store/ui';
@@ -71,7 +71,7 @@ export function TVChart({
 	useEffect(() => {
 		const widgetOptions = {
 			symbol: marketAsset + ':sUSD',
-			datafeed: DataFeedFactory(network?.id as NetworkId, onSubscribe),
+			datafeed: DataFeedFactory((network?.id ?? chain.optimism.id) as NetworkId, onSubscribe),
 			interval: interval,
 			container: containerId,
 			library_path: libraryPath,

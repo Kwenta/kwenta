@@ -20,7 +20,7 @@ const useGetCurrentPortfolioValue = (options?: UseQueryOptions<any | null>) => {
 	const isL2 =
 		activeChain !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
-			: false;
+			: true;
 	const { address } = useAccount();
 	const walletAddress = address || null;
 	const futuresAccount = useRecoilValue(futuresAccountState);

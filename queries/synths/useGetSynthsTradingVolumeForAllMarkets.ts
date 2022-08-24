@@ -1,7 +1,7 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useNetwork } from 'wagmi';
+import { chain, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
@@ -18,12 +18,12 @@ const useGetSynthsTradingVolumeForAllMarkets = (
 ) => {
 	const { chain: network } = useNetwork();
 	const synthsEndpoint =
-		window.location.pathname === ROUTES.Home.Root
+		window.location.pathname === ROUTES.Home.Root || network === undefined
 			? SYNTHS_ENDPOINT_OPTIMISM_MAIN
 			: getSynthsEndpoint(network?.id as NetworkId);
 
 	return useQuery<SynthsVolumes | null>(
-		QUERY_KEYS.Synths.TradingVolumeForAllSynths(network?.id as NetworkId),
+		QUERY_KEYS.Synths.TradingVolumeForAllSynths((network?.id ?? chain.optimism.id) as NetworkId),
 		async () => {
 			try {
 				const response = await request(

@@ -28,7 +28,7 @@ export const useGetL1SecurityFee = () => {
 	const isL2 =
 		network !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: false;
+			: true;
 
 	return async (metaTx: MetaTx): Promise<Wei> => {
 		if (!isL2) return zeroBN;

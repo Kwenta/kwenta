@@ -17,7 +17,7 @@ const useGetFuturesPositionForMarket = (options?: UseQueryOptions<FuturesPositio
 	const isL2 =
 		network !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: false;
+			: true;
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const market = useRecoilValue(marketKeyState);

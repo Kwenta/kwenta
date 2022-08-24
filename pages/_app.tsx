@@ -26,7 +26,9 @@ import {
 	useSigner,
 	WagmiConfig,
 } from 'wagmi';
+import { infuraProvider } from 'wagmi/providers/infura';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
+import { publicProvider } from 'wagmi/providers/public';
 
 import Safe from 'components/Rainbowkit/Gnosis';
 import { BLAST_NETWORK_LOOKUP } from 'constants/network';
@@ -61,8 +63,19 @@ const { chains, provider } = configureChains(
 				http: `https://${BLAST_NETWORK_LOOKUP[chain.id]}.blastapi.io/${
 					process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID
 				}`,
+				webSocket: `wss://${BLAST_NETWORK_LOOKUP[chain.id]}.blastapi.io/${
+					process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID
+				}`,
 			}),
+			stallTimeout: 5000,
+			priority: 0,
 		}),
+		infuraProvider({
+			apiKey: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+			stallTimeout: 5000,
+			priority: 1,
+		}),
+		publicProvider({ stallTimeout: 5000, priority: 5 }),
 	]
 );
 

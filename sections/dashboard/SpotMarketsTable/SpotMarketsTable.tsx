@@ -8,7 +8,7 @@ import { useQueryClient } from 'react-query';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { useNetwork } from 'wagmi';
+import { chain, useNetwork } from 'wagmi';
 
 import MarketBadge from 'components/Badge/MarketBadge';
 import ChangePercent from 'components/ChangePercent';
@@ -38,7 +38,7 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 
 	const queryCache = useQueryClient().getQueryCache();
 	// KM-NOTE: come back and delete
-	const frozenSynthsQuery = queryCache.find(['synths', 'frozenSynths', activeChain?.id]);
+	const frozenSynthsQuery = queryCache.find(['synths', 'frozenSynths', 10]);
 
 	const unfrozenSynths =
 		frozenSynthsQuery && frozenSynthsQuery.state.status === 'success'

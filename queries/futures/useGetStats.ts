@@ -16,7 +16,7 @@ const useGetStats = (homepage?: boolean, options?: UseQueryOptions<any>) => {
 	const isL2 =
 		network !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: false;
+			: true;
 	const futuresEndpoint = homepage
 		? FUTURES_ENDPOINT_MAINNET
 		: getFuturesEndpoint(network?.id as NetworkId);

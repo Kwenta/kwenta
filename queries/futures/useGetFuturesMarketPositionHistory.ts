@@ -21,7 +21,7 @@ const useGetFuturesMarketPositionHistory = (options?: UseQueryOptions<any | null
 	const isL2 =
 		network !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: false;
+			: true;
 	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 

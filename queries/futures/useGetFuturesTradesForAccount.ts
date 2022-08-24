@@ -24,7 +24,7 @@ const useGetFuturesTradesForAccount = (
 	const isL2 =
 		network !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: false;
+			: true;
 	const { selectedAccountType } = useRecoilValue(futuresAccountState);
 
 	return useQuery<FuturesTrade[] | null>(

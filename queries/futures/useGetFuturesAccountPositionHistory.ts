@@ -19,7 +19,7 @@ const useGetFuturesAccountPositionHistory = (
 	const isL2 =
 		network !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: false;
+			: true;
 	return useQuery<PositionHistory[] | null>(
 		QUERY_KEYS.Futures.AllPositionHistory(network?.id as NetworkId, account || ''),
 		async () => {

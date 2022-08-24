@@ -34,7 +34,7 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 	const isL2 =
 		network !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: false;
+			: true;
 	const isMainnet =
 		network !== undefined ? [chain.mainnet.id, chain.goerli.id].includes(network?.id) : false;
 	const {

@@ -24,7 +24,7 @@ const usePortfolioData = (options?: UseQueryOptions<PortfolioData | null>) => {
 	const isL2 =
 		network !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: false;
+			: true;
 	const { address } = useAccount();
 	const walletAddress = address || null;
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);

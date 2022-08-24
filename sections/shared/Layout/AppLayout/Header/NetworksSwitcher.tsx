@@ -33,7 +33,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 	const isL2 =
 		activeChain !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
-			: false;
+			: true;
 	const network = activeChain?.id === 69 ? 'testnet' : 'mainnet';
 	const networkLabel = 'header.networks-switcher.optimism-' + network;
 

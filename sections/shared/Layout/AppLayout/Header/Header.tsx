@@ -14,7 +14,7 @@ const Header: FC = () => {
 	const isL2 =
 		network !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: false;
+			: true;
 
 	return (
 		<Container isL2={isL2}>
