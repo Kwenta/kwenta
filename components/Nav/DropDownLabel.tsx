@@ -7,7 +7,7 @@ export const LabelContainer = styled(FlexDivRow)<{ noPadding?: boolean }>`
 	font-size: 13px;
 	font-family: ${(props) => props.theme.fonts.regular};
 	width: 100%;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	:hover {
 		> svg {
 			path {

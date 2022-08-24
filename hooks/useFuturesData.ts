@@ -2,11 +2,13 @@ import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
 import { formatBytes32String } from 'ethers/lib/utils';
+import { debounce } from 'lodash';
 import { useRouter } from 'next/router';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { DEFAULT_LEVERAGE } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
@@ -31,6 +33,7 @@ import {
 	crossMarginSettingsState,
 	futuresAccountTypeState,
 	preferredLeverageState,
+	pendingTradeSizeState,
 } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { zeroBN } from 'utils/formatters/number';
@@ -39,7 +42,6 @@ import logError from 'utils/logError';
 
 import useCrossMarginAccountContracts from './useCrossMarginContracts';
 import usePersistedRecoilState from './usePersistedRecoilState';
-import { DEFAULT_LEVERAGE } from 'constants/defaults';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
@@ -59,6 +61,8 @@ const useFuturesData = () => {
 
 	const marketAsset = useRecoilValue(currentMarketState);
 	const [tradeSize, setTradeSize] = useRecoilState(tradeSizeState);
+	const setPendingTradeSize = useSetRecoilState(pendingTradeSizeState);
+
 	const [crossMarginMarginDelta, setCrossMarginMarginDelta] = useRecoilState(
 		crossMarginMarginDeltaState
 	);
@@ -142,7 +146,7 @@ const useFuturesData = () => {
 		return () => {
 			router.events.off('routeChangeStart', handleRouteChange);
 		};
-	}, [router.events, setTradeSize]);
+	}, [router.events, setTradeSize, setCrossMarginLeverageInput]);
 
 	const onTradeAmountChange = React.useCallback(
 		(value: string, fromLeverage: boolean = false) => {
@@ -152,6 +156,7 @@ const useFuturesData = () => {
 				value === '' || remainingMargin.eq(0)
 					? ''
 					: marketAssetRate.mul(Number(value)).div(remainingMargin);
+
 			setTradeSize({
 				nativeSize: size,
 				susdSize: sizeSUSD,
@@ -166,7 +171,7 @@ const useFuturesData = () => {
 	);
 
 	const onTradeAmountSUSDChange = useCallback(
-		(value: string) => {
+		(value: string, commitChange = true) => {
 			if (marketAssetRate.gt(0)) {
 				const valueIsNull = value === '' || Number(value) === 0;
 				const size = valueIsNull ? '' : wei(value).div(marketAssetRate).toNumber().toString();
@@ -174,16 +179,23 @@ const useFuturesData = () => {
 					valueIsNull || remainingMargin.eq(0)
 						? ''
 						: wei(value).div(remainingMargin).toString().substring(0, 4);
-
-				setTradeSize({
+				const newSize = {
 					nativeSize: size,
 					susdSize: value,
 					nativeSizeDelta: size ? wei(leverageSide === PositionSide.LONG ? size : -size) : zeroBN,
 					leverage: leverage,
-				});
+				};
+
+				if (commitChange) {
+					setTradeSize(newSize);
+					setPendingTradeSize(null);
+				} else {
+					// Allows us to keep it snappy updating the input values
+					setPendingTradeSize(newSize);
+				}
 			}
 		},
-		[marketAssetRate, remainingMargin, leverageSide, setTradeSize]
+		[marketAssetRate, remainingMargin, leverageSide, setTradeSize, setPendingTradeSize]
 	);
 
 	const maxUsdInputAmount = useMemo(() => {
@@ -247,34 +259,6 @@ const useFuturesData = () => {
 		[crossMarginTradeFee, selectedAccountType, marketAsset, synthetixjs, setTradeFees]
 	);
 
-	useEffect(() => {
-		// Set to max when leverage or leverage side changes
-		if (wei(tradeSize.susdSize || 0).gt(maxUsdInputAmount)) {
-			const amount = wei(Math.min(Number(tradeSize.susdSize), Number(maxUsdInputAmount)));
-			onTradeAmountSUSDChange(Number(amount).toFixed(0));
-		}
-	}, [maxUsdInputAmount, tradeSize.susdSize, onTradeAmountSUSDChange]);
-
-	useEffect(() => {
-		const updateTradePreview = async (nextTradeSize: TradeSize) => {
-			try {
-				setError(null);
-				const fees = await calculateFees(nextTradeSize);
-				let nextMarginDelta = zeroBN;
-				if (selectedAccountType === 'cross_margin') {
-					nextMarginDelta = await calculateMarginDelta(nextTradeSize, fees);
-					setCrossMarginMarginDelta(nextMarginDelta);
-				}
-				getPotentialTrade(wei(nextTradeSize.nativeSize || '0'), nextMarginDelta);
-			} catch (err) {
-				setError(t('futures.market.trade.preview.error'));
-				logError(err);
-			}
-		};
-		updateTradePreview(tradeSize);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [tradeSize]);
-
 	const calculateMarginDelta = useCallback(
 		async (tradeSize: TradeSize, fees: TradeFees) => {
 			// Update margin requirement for cross margin
@@ -303,6 +287,38 @@ const useFuturesData = () => {
 			selectedAccountType,
 		]
 	);
+
+	useEffect(() => {
+		// Set to max when leverage or leverage side changes
+		if (wei(tradeSize.susdSize || 0).gt(maxUsdInputAmount)) {
+			const amount = wei(Math.min(Number(tradeSize.susdSize), Number(maxUsdInputAmount)));
+			onTradeAmountSUSDChange(Number(amount).toFixed(0));
+		}
+	}, [maxUsdInputAmount, tradeSize.susdSize, onTradeAmountSUSDChange]);
+
+	// eslint-disable-next-line
+	const debounceFetchPreview = useCallback(
+		debounce(async (nextTradeSize: TradeSize) => {
+			try {
+				setError(null);
+				const fees = await calculateFees(nextTradeSize);
+				let nextMarginDelta = zeroBN;
+				if (selectedAccountType === 'cross_margin') {
+					nextMarginDelta = await calculateMarginDelta(nextTradeSize, fees);
+					setCrossMarginMarginDelta(nextMarginDelta);
+				}
+				getPotentialTrade(wei(nextTradeSize.nativeSize || '0'), nextMarginDelta);
+			} catch (err) {
+				setError(t('futures.market.trade.preview.error'));
+				logError(err);
+			}
+		}, 500),
+		[logError, setError, calculateFees, setCrossMarginMarginDelta, getPotentialTrade]
+	);
+
+	useEffect(() => {
+		debounceFetchPreview(tradeSize);
+	}, [tradeSize, debounceFetchPreview]);
 
 	const onLeverageChange = useCallback(
 		(value: string) => {
@@ -365,9 +381,7 @@ const useFuturesData = () => {
 				},
 			});
 		}
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [orderTxn.hash]);
+	}, [orderTxn.hash, monitorTransaction, handleRefetch, onLeverageChange]);
 
 	useEffect(() => {
 		const getMaxFee = async () => {

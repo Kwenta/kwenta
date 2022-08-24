@@ -198,8 +198,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 				))}
 				<StyledButton
 					data-testid="trade-close-position-confirm-order-button"
-					variant="primary"
-					isRounded
+					variant="flat"
 					size="lg"
 					onClick={closePosition}
 					disabled={
@@ -241,7 +240,7 @@ const Label = styled.div`
 
 const Value = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 12px;
 	margin-top: 6px;
 `;

@@ -687,6 +687,9 @@
 						"confirm": "Confirm"
 					}
 				},
+				"isolated-margin": {
+					"title": "Isolated Margin"
+				},
 				"cross-margin": {
 					"connect-wallet": "Connect your wallet to start trading",
 					"title": "Cross-Margin",

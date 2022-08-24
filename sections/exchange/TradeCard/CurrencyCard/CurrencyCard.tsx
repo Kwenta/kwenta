@@ -318,7 +318,7 @@ const CurrencySelector = styled.div<{
 	font-size: 18px;
 	line-height: 1em;
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	svg {
 		color: ${(props) => props.theme.colors.goldColors.color1};
 	}
@@ -402,7 +402,7 @@ const CurrencyAmountValue = styled.div`
 	line-height: 1.25em;
 	width: 150px;
 	overflow: hidden;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const Slippage = styled.div`
@@ -449,7 +449,7 @@ const WalletBalance = styled.div<{ insufficientBalance: boolean }>`
 		css`
 			color: ${props.theme.colors.selectedTheme.red};
 		`}
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const StyledLoader = styled(Loader)`

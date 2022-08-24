@@ -1,13 +1,14 @@
 import styled, { css } from 'styled-components';
 
 type ButtonProps = {
-	size?: 'sm' | 'md' | 'lg' | 'xl';
+	size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 	variant?: 'primary' | 'secondary' | 'flat' | 'alt' | 'success' | 'danger' | 'text' | 'select';
 	isActive?: boolean;
 	isRounded?: boolean;
 	mono?: boolean;
 	fullWidth?: boolean;
 	noOutline?: boolean;
+	textColor?: 'yellow';
 	textTransform?: 'none' | 'uppercase' | 'capitalize' | 'lowercase';
 };
 
@@ -38,14 +39,16 @@ const Button = styled.button<ButtonProps>`
 	height: auto;
 	cursor: pointer;
 	position: relative;
-	border-radius: 10px;
+	border-radius: ${(props) => (props.isRounded ? '50px' : '8px')};
 	padding: 0 14px;
 	box-sizing: border-box;
 	text-transform: ${(props) => props.textTransform || 'capitalize'};
 	outline: none;
 	white-space: nowrap;
 	font-size: 17px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) =>
+		(props.textColor && props.theme.colors.selectedTheme.button.text[props.textColor]) ||
+		props.theme.colors.selectedTheme.button.text.primary};
 	transition: all 0.1s ease-in-out;
 	${border}
 	&:hover {
@@ -95,6 +98,14 @@ const Button = styled.button<ButtonProps>`
 		props.variant === 'danger' &&
 		css`
 			color: ${props.theme.colors.selectedTheme.red};
+		`};
+
+	${(props) =>
+		props.size === 'xs' &&
+		css`
+			height: 22px;
+			min-width: 60px;
+			font-size: 11px;
 		`};
 
 	${(props) =>

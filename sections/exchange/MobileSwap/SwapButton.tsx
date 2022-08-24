@@ -21,7 +21,6 @@ const SwapButton: React.FC = () => {
 
 	return isWalletConnected ? (
 		<Button
-			isRounded
 			disabled={!!submissionDisabledReason}
 			onClick={needsApproval && !isApproved ? handleApprove : handleSubmit}
 			size="md"

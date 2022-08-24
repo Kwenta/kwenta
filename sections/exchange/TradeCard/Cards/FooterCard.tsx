@@ -104,7 +104,6 @@ const FooterCard: React.FC = () => {
 			{balances.length !== 0 && totalUSDBalance.gt(0) && (
 				<Button
 					variant="primary"
-					isRounded
 					disabled={false}
 					onClick={handleRedeem}
 					size="lg"

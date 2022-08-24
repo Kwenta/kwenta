@@ -179,7 +179,7 @@ export const BalanceText = styled.p<{ $gold?: boolean }>`
 	color: ${(props) =>
 		props.$gold ? props.theme.colors.common.primaryGold : props.theme.colors.selectedTheme.gray};
 	span {
-		color: ${(props) => props.theme.colors.selectedTheme.button.text};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
 `;
 
@@ -196,14 +196,14 @@ export const MaxButton = styled.button`
 	font-size: 13px;
 	line-height: 13px;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	cursor: pointer;
 `;
 
 const MinimumAmountDisclaimer = styled.div`
 	font-size: 12px;
 	margin: 20px 0;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	text-align: center;
 `;
 

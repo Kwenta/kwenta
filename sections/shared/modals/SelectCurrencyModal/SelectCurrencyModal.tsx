@@ -336,7 +336,7 @@ const CategoryButton = styled(Button)`
 	${(props) =>
 		props.isActive &&
 		css`
-			color: ${props.theme.colors.selectedTheme.button.text};
+			color: ${props.theme.colors.selectedTheme.button.text.primary};
 			background: ${props.theme.colors.selectedTheme.button.fill};
 		`};
 	${(props) =>
@@ -354,7 +354,7 @@ const EmptyDisplay = styled(FlexDivCentered)`
 	text-align: center;
 	margin: 24px 0px;
 	height: 50px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const LoadingMore = styled.div`

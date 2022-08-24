@@ -180,7 +180,7 @@ const NextPriceConfirmationModal: FC = () => {
 							{t('futures.market.trade.confirmation.modal.max-leverage-disclaimer')}
 						</Disclaimer>
 					)}
-					<ConfirmTradeButton variant="primary" isRounded onClick={handleConfirmOrder}>
+					<ConfirmTradeButton variant="primary" onClick={handleConfirmOrder}>
 						{t('futures.market.trade.confirmation.modal.confirm-order')}
 					</ConfirmTradeButton>
 				</StyledBaseModal>
@@ -191,7 +191,7 @@ const NextPriceConfirmationModal: FC = () => {
 					items={dataRows}
 					closeDrawer={onDismiss}
 					buttons={
-						<MobileConfirmTradeButton variant="primary" isRounded onClick={handleConfirmOrder}>
+						<MobileConfirmTradeButton variant="primary" onClick={handleConfirmOrder}>
 							{t('futures.market.trade.confirmation.modal.confirm-order')}
 						</MobileConfirmTradeButton>
 					}
@@ -223,7 +223,7 @@ const Label = styled.div`
 
 const Value = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 12px;
 	margin-top: 6px;
 `;

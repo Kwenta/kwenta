@@ -204,6 +204,7 @@ export default function DepositWithdrawCrossMargin({
 			</GasFeeContainer>
 
 			<MarginActionButton
+				variant="flat"
 				data-testid="futures-market-trade-deposit-margin-button"
 				disabled={!!disabledReason || !amount || txState !== 'none'}
 				fullWidth
@@ -243,7 +244,7 @@ export const BalanceContainer = styled(FlexDivRowCentered)`
 export const BalanceText = styled.p`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	span {
-		color: ${(props) => props.theme.colors.selectedTheme.button.text};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
 `;
 
@@ -262,7 +263,7 @@ export const MaxButton = styled.button`
 	font-size: 13px;
 	line-height: 13px;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	cursor: pointer;
 `;
 

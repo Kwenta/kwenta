@@ -180,7 +180,7 @@ const CloseOrderButton = styled(Button)`
 `;
 
 const ManageOrderTitle = styled.p`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 13px;
 	margin-bottom: 8px;
 

@@ -511,7 +511,7 @@ const LeftMarginTooltip = styled(StyledTooltip)`
 const StyledValue = styled.p`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 13px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	margin: 0;
 	text-align: end;
 	${Container}#closed & {
@@ -523,7 +523,7 @@ const PositionValue = styled.span<{ side?: PositionSide }>`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 13px;
 	text-transform: uppercase;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	margin: 0;
 	${Container}#closed & {
 		color: ${(props) => props.theme.colors.selectedTheme.gray};

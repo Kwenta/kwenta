@@ -9,7 +9,7 @@ const lightTheme = {
 	white: '#F2F2F2',
 	gray: '#515151',
 	gray2: '#D2D2D2', // TODO: Update once added to designs
-	yellow: '#FFB800',
+	yellow: common.primaryYellow,
 	table: { fill: '#EEE', hover: '#E6E6E6' },
 	gold: '#724713',
 	badge: { background: '#A80300', text: 'white' },
@@ -23,7 +23,10 @@ const lightTheme = {
 		hover: 'linear-gradient(180deg, rgba(231, 231, 231, 0.8) 0%, rgba(203, 203, 203, 0.8) 100%)',
 		shadow:
 			'0px 2px 2px rgb(0 0 0 / 5%), inset 0px 1px 0px rgb(255 255 255 / 8%), inset 0px 0px 20px rgb(255 255 255 / 3%)',
-		text: '#171002',
+		text: {
+			primary: '#171002',
+			yellow: common.primaryYellow,
+		},
 		primary: {
 			background: 'linear-gradient(180deg, #BE9461 0%, #9C6C3C 100%)',
 			hover: 'linear-gradient(180deg, #E4B378 0%, #B98C55 100%)',

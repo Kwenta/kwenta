@@ -40,7 +40,7 @@ const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 				</DesktopOnlyView>
 				{isL2 ? (
 					<ExternalLink href={EXTERNAL_LINKS.Trading.OneInch}>
-						<MessageButton size="lg" variant="primary" isRounded>
+						<MessageButton size="lg" variant="primary">
 							<Trans
 								t={t}
 								i18nKey="exchange.onboard.1inch-button"

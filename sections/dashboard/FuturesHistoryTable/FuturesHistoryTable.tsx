@@ -250,7 +250,7 @@ const StyledText = styled.div`
 	align-items: center;
 	grid-column: 2;
 	grid-row: 1;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 const SynthContainer = styled.div`
 	display: flex;
@@ -264,7 +264,7 @@ const SynthContainer = styled.div`
 const PNL = styled.div<{ negative?: boolean; normal?: boolean }>`
 	color: ${(props) =>
 		props.normal
-			? props.theme.colors.selectedTheme.button.text
+			? props.theme.colors.selectedTheme.button.text.primary
 			: props.negative
 			? props.theme.colors.selectedTheme.red
 			: props.theme.colors.selectedTheme.green};

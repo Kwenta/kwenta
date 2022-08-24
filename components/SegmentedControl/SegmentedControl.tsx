@@ -53,7 +53,7 @@ const SegmentedControlOption = styled.button<{ isSelected: boolean }>`
 					position: relative;
 					border: ${(props) => props.theme.colors.selectedTheme.border};
 					border-radius: 6px;
-					color: ${(props) => props.theme.colors.selectedTheme.button.text};
+					color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 					font-family: ${(props) => props.theme.fonts.bold};
 					&::before {
 						border-radius: 6px;

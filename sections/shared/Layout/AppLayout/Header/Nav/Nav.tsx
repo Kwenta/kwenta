@@ -108,7 +108,7 @@ const MenuInside = styled.div<{ isActive: boolean; isDropDown?: boolean }>`
 	cursor: pointer;
 	color: ${(props) =>
 		props.isActive
-			? props.theme.colors.selectedTheme.button.text
+			? props.theme.colors.selectedTheme.button.text.primary
 			: props.theme.colors.selectedTheme.gray};
 	&:hover {
 		background: ${(props) =>
@@ -126,7 +126,7 @@ const DropDownSelect = styled(Select)`
 		padding: 20px;
 
 		.react-select__group-heading {
-			color: ${(props) => props.theme.colors.selectedTheme.button.text};
+			color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 			font-size: 12px;
 			padding: 0;
 			margin-bottom: 15px;

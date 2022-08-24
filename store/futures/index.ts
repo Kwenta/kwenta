@@ -11,6 +11,7 @@ import {
 	FuturesPotentialTradeDetailsQuery,
 	SynthBalances,
 	TradeFees,
+	TradeSize,
 } from 'queries/futures/types';
 import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import { Price, Rates } from 'queries/rates/types';
@@ -83,6 +84,16 @@ export const futuresMarketsState = atom<FuturesMarket[]>({
 
 export const tradeSizeState = atom({
 	key: getFuturesKey('tradeSize'),
+	default: {
+		nativeSize: '',
+		susdSize: '',
+		leverage: '',
+		nativeSizeDelta: zeroBN,
+	},
+});
+
+export const pendingTradeSizeState = atom<TradeSize | null>({
+	key: getFuturesKey('pendingTradeSize'),
 	default: {
 		nativeSize: '',
 		susdSize: '',

@@ -117,7 +117,6 @@ const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({ open,
 			buttons={
 				<ConfirmTradeButton
 					variant="primary"
-					isRounded
 					onClick={() => {
 						orderTxn.mutate();
 						closeDrawer();

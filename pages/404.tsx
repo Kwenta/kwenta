@@ -45,7 +45,7 @@ const Container = styled(FlexDivRowCentered)`
 `;
 
 const Content = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-family: ${(props) => props.theme.fonts.mono};
 	padding: 0 48px;
 	text-align: center;

@@ -47,9 +47,7 @@ const MobileUserMenu: FC = () => {
 				<MobileFooterRight>
 					{window.location.pathname === ROUTES.Home.Root ? (
 						<Link href={ROUTES.Markets.Home(DEFAULT_FUTURES_MARGIN_TYPE)}>
-							<Button isRounded={false} size="sm">
-								{t('homepage.nav.start-trade')}
-							</Button>
+							<Button size="sm">{t('homepage.nav.start-trade')}</Button>
 						</Link>
 					) : (
 						<MobileWalletButton closeModal={closeModal} toggleModal={toggleModal('settings')} />

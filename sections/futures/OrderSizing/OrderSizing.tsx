@@ -10,6 +10,7 @@ import {
 	crossMarginAvailableMarginState,
 	currentMarketState,
 	futuresAccountTypeState,
+	pendingTradeSizeState,
 	positionState,
 	tradeSizeState,
 } from 'store/futures';
@@ -22,6 +23,8 @@ type OrderSizingProps = {
 
 const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 	const { nativeSize, susdSize } = useRecoilValue(tradeSizeState);
+	const pendingSize = useRecoilValue(pendingTradeSizeState);
+
 	const marketAsset = useRecoilValue(currentMarketState);
 	const freeCrossMargin = useRecoilValue(crossMarginAvailableMarginState);
 	const position = useRecoilValue(positionState);
@@ -30,15 +33,31 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 	const [usdValue, setUsdValue] = useState(susdSize);
 	const [assetValue, setAssetValue] = useState(nativeSize);
 
-	useEffect(() => {
-		if (susdSize !== usdValue) {
-			setUsdValue(susdSize);
-		}
-		if (assetValue !== nativeSize) {
-			setAssetValue(nativeSize);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [susdSize, nativeSize]);
+	useEffect(
+		() => {
+			if (pendingSize && pendingSize.susdSize !== susdSize) {
+				setUsdValue(pendingSize.susdSize);
+			} else if (susdSize !== usdValue) {
+				setUsdValue(susdSize);
+			}
+
+			if (pendingSize && pendingSize.nativeSize !== nativeSize) {
+				setAssetValue(pendingSize.nativeSize);
+			} else if (assetValue !== nativeSize) {
+				setAssetValue(nativeSize);
+			}
+		},
+		// Don't want to react to internal value changes
+		// eslint-disable-next-line
+		[
+			susdSize,
+			nativeSize,
+			pendingSize?.susdSize,
+			pendingSize?.nativeSize,
+			setUsdValue,
+			setAssetValue,
+		]
+	);
 
 	const { onTradeAmountChange, onTradeAmountSUSDChange, maxUsdInputAmount } = useFuturesContext();
 
@@ -129,7 +148,7 @@ const OrderSizingContainer = styled.div`
 `;
 
 const OrderSizingTitle = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 13px;
 
 	span {

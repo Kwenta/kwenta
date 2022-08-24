@@ -9,7 +9,7 @@ const darkTheme = {
 	white: '#ECE8E3',
 	gray: '#787878',
 	gray2: '#3F3F3F',
-	yellow: '#FFB800',
+	yellow: common.primaryYellow,
 	table: { fill: 'rgba(255, 255, 255, 0.01)', hover: 'rgba(255, 255, 255, 0.05)' },
 	gold: '#E4B378',
 	badge: { background: '#EF6868', text: 'black' },
@@ -22,7 +22,10 @@ const darkTheme = {
 		hover: 'linear-gradient(180deg, #383838 0%, #383838 0.01%, #1E1E1E 100%)',
 		shadow:
 			'rgb(0 0 0 / 25%) 0px 2px 2px, rgb(255 255 255 / 10%) 0px 1px 0px inset, rgb(255 255 255 / 3%) 0px 0px 20px inset',
-		text: common.primaryWhite,
+		text: {
+			primary: common.primaryWhite,
+			yellow: common.primaryYellow,
+		},
 		primary: {
 			background: 'linear-gradient(180deg, #BE9461 0%, #9C6C3C 100%)',
 			hover: 'linear-gradient(180deg, #E4B378 0%, #B98C55 100%)',

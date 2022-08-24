@@ -121,7 +121,7 @@ const StyledSlider = styled(Slider)`
 
 	.MuiSlider-valueLabel {
 		span[class^='PrivateValueLabel-label'] {
-			color: ${(props) => props.theme.colors.selectedTheme.button.text};
+			color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 		}
 		font-family: ${(props) => props.theme.fonts.mono};
 		font-size: 11px;

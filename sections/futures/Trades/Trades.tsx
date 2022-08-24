@@ -209,7 +209,7 @@ const StyledPositionSide = styled.div<{ side: PositionSide }>`
 const PNL = styled.div<{ negative?: boolean; normal?: boolean }>`
 	color: ${(props) =>
 		props.normal
-			? props.theme.colors.selectedTheme.button.text
+			? props.theme.colors.selectedTheme.button.text.primary
 			: props.negative
 			? props.theme.colors.selectedTheme.red
 			: props.theme.colors.selectedTheme.green};
@@ -220,7 +220,7 @@ const StyledExternalLink = styled(ExternalLink)`
 	&:hover {
 		svg {
 			path {
-				fill: ${(props) => props.theme.colors.selectedTheme.button.text};
+				fill: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 			}
 		}
 	}

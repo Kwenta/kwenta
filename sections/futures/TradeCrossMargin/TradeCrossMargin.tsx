@@ -1,5 +1,4 @@
 import { wei } from '@synthetixio/wei';
-import { debounce } from 'lodash';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +10,12 @@ import Button from 'components/Button';
 import StyledSlider from 'components/Slider/StyledSlider';
 import ROUTES from 'constants/routes';
 import { useFuturesContext } from 'contexts/FuturesContext';
-import { futuresAccountState, leverageSideState, tradeSizeState } from 'store/futures';
+import {
+	futuresAccountState,
+	futuresAccountTypeState,
+	leverageSideState,
+	tradeSizeState,
+} from 'store/futures';
 import { walletAddressState } from 'store/wallet';
 import { BorderedPanel, FlexDivRow } from 'styles/common';
 
@@ -21,12 +25,16 @@ import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
 import ManagePosition from '../Trade/ManagePosition';
 import MarketsDropdown from '../Trade/MarketsDropdown';
+import TradePanelHeader from '../Trade/TradePanelHeader';
 import FeesBox from './CrossMarginFeesBox';
+import DepositWithdrawCrossMargin from './DepositWithdrawCrossMargin';
 import MarginInfoBox from './MarginInfoBox';
 
 export default function TradeCrossMargin() {
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const { crossMarginAddress, crossMarginAvailable } = useRecoilValue(futuresAccountState);
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
+
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { susdSize } = useRecoilValue(tradeSizeState);
 
@@ -36,22 +44,24 @@ export default function TradeCrossMargin() {
 	const [percent, setPercent] = useState(0);
 	const [showOnboard, setShowOnboard] = useState(false);
 	const [usdAmount, setUsdAmount] = useState(susdSize);
+	const [openDepositModal, setOpenDepositModal] = useState(false);
 
 	// eslint-disable-next-line
 	const onChangeMarginPercent = useCallback(
-		debounce((value, max) => {
+		(value, commit = false) => {
+			setPercent(value);
 			const fraction = value / 100;
-			const usdAmount = max.mul(fraction).toString();
+			const usdAmount = maxUsdInputAmount.mul(fraction).toString();
 			const usdValue = Number(usdAmount).toFixed(0);
 			setUsdAmount(usdValue);
-			onTradeAmountSUSDChange(usdValue);
-		}, 500),
-		[debounce, onTradeAmountSUSDChange]
+			onTradeAmountSUSDChange(usdValue, commit);
+		},
+		[onTradeAmountSUSDChange, maxUsdInputAmount]
 	);
 
 	useEffect(() => {
 		if (susdSize !== usdAmount) {
-			if (!susdSize) {
+			if (!susdSize || maxUsdInputAmount.eq(0)) {
 				setPercent(0);
 				return;
 			}
@@ -61,18 +71,6 @@ export default function TradeCrossMargin() {
 		}
 		// eslint-disable-next-line
 	}, [susdSize]);
-
-	useEffect(() => {
-		return () => onChangeMarginPercent?.cancel();
-	}, [onChangeMarginPercent]);
-
-	const onChangeSlider = useCallback(
-		(_: React.ChangeEvent<{}>, value: number | number[]) => {
-			setPercent(value as number);
-			onChangeMarginPercent(value, maxUsdInputAmount);
-		},
-		[onChangeMarginPercent, maxUsdInputAmount]
-	);
 
 	return (
 		<>
@@ -109,6 +107,13 @@ export default function TradeCrossMargin() {
 			) : (
 				<>
 					<MarketsDropdown />
+					<TradePanelHeader
+						accountType={selectedAccountType}
+						button={{
+							i18nTitle: 'futures.market.trade.button.deposit',
+							onClick: () => setOpenDepositModal(true),
+						}}
+					/>
 					<MarginInfoBox />
 					<OrderSizing />
 					<SliderRow>
@@ -118,8 +123,8 @@ export default function TradeCrossMargin() {
 							step={1}
 							defaultValue={percent}
 							value={percent}
-							onChange={onChangeSlider}
-							onChangeCommitted={() => {}}
+							onChange={(_, value) => onChangeMarginPercent(value, false)}
+							onChangeCommitted={(_, value) => onChangeMarginPercent(value, true)}
 							marks={[
 								{ value: 0, label: `0%` },
 								{ value: 100, label: `100%` },
@@ -132,6 +137,9 @@ export default function TradeCrossMargin() {
 					<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
 					<ManagePosition />
 					<FeesBox />
+					{openDepositModal && (
+						<DepositWithdrawCrossMargin onDismiss={() => setOpenDepositModal(false)} />
+					)}
 				</>
 			)}
 		</>
@@ -162,7 +170,7 @@ const Title = styled.div<{ yellow?: boolean }>`
 	color: ${(props) =>
 		props.yellow
 			? props.theme.colors.selectedTheme.yellow
-			: props.theme.colors.selectedTheme.button.text};
+			: props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const CreateAccountButton = styled(Button)`

@@ -34,7 +34,7 @@ const GlobalStyle = createGlobalStyle`
 
 	a {
 		${linkCSS};
-		color: ${(props) => props.theme.colors.selectedTheme.button.text};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
 
 	/* blocknative onboard style overrides */

@@ -30,7 +30,7 @@ function Select<T>({ variant, ...props }: Props<T>) {
 			}),
 			singleValue: (provided) => ({
 				...provided,
-				color: colors.selectedTheme.button.text,
+				color: colors.selectedTheme.button.text.primary,
 				boxShadow: 'none',
 				fontSize: '12px',
 				border: 'none',
@@ -39,7 +39,7 @@ function Select<T>({ variant, ...props }: Props<T>) {
 			}),
 			control: (provided, state) => ({
 				...provided,
-				color: colors.selectedTheme.button.text,
+				color: colors.selectedTheme.button.text.primary,
 				cursor: 'pointer',
 				boxShadow: variant === 'gradient' ? colors.selectedTheme.button.shadow : 'none',
 				border: variant === 'flat' ? colors.selectedTheme.border : 'none',
@@ -110,7 +110,9 @@ function Select<T>({ variant, ...props }: Props<T>) {
 				...provided,
 				border: 'none',
 				fontFamily: fonts.regular,
-				color: state.isSelected ? colors.common.secondaryGold : colors.selectedTheme.button.text,
+				color: state.isSelected
+					? colors.common.secondaryGold
+					: colors.selectedTheme.button.text.primary,
 				cursor: 'pointer',
 				fontSize: '12px',
 				backgroundColor: 'transparent',
@@ -126,7 +128,7 @@ function Select<T>({ variant, ...props }: Props<T>) {
 			placeholder: (provided) => ({
 				...provided,
 				fontSize: '12px',
-				color: colors.selectedTheme.button.text,
+				color: colors.selectedTheme.button.text.primary,
 			}),
 			dropdownIndicator: (provided, state) => ({
 				...provided,

@@ -77,7 +77,7 @@ const ArrowButton = styled.button`
 	svg {
 		width: 14px;
 		height: 14px;
-		fill: ${(props) => props.theme.colors.selectedTheme.button.text};
+		fill: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
 `;
 

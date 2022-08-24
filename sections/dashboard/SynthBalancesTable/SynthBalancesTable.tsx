@@ -342,7 +342,7 @@ const StyledValue = styled.div`
 `;
 
 const DefaultCell = styled.p`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const TableContainer = styled.div``;
@@ -355,7 +355,7 @@ const StyledText = styled.div`
 	grid-column: 2;
 	grid-row: 1;
 	margin-bottom: -4px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
@@ -368,7 +368,7 @@ const MarketContainer = styled.div`
 
 const AmountCol = styled.div`
 	justify-self: flex-end;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const StyledMobileTable = styled(Table)`

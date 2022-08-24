@@ -70,7 +70,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 const Container = styled.span`
 	${ContainerRowMixin};
 	font-family: ${(props) => props.theme.fonts.mono};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const Price = styled.span``;

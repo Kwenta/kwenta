@@ -190,8 +190,7 @@ const TradeConfirmationModal: FC = () => {
 					))}
 					<ConfirmTradeButton
 						data-testid="trade-open-position-confirm-order-button"
-						variant="primary"
-						isRounded
+						variant="flat"
 						onClick={handleConfirmOrder}
 						disabled={!positionDetails || !!disabledReason}
 					>
@@ -212,7 +211,6 @@ const TradeConfirmationModal: FC = () => {
 					buttons={
 						<MobileConfirmTradeButton
 							variant="primary"
-							isRounded
 							onClick={handleConfirmOrder}
 							disabled={!positionDetails || !!disabledReason}
 						>
@@ -252,7 +250,7 @@ const Label = styled.div`
 
 const Value = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 12px;
 	margin-top: 6px;
 `;

@@ -76,7 +76,7 @@ const Currencies = styled.div`
 
 const CurrencyItem = styled.div`
 	text-align: center;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const CurrencyItemTitle = styled.div`
@@ -95,7 +95,7 @@ const Actions = styled(FlexDivColCentered)`
 `;
 
 const Message = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	flex-grow: 1;

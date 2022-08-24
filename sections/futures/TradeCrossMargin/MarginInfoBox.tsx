@@ -148,32 +148,30 @@ const MarginInfoBox: React.FC = () => {
 						),
 					},
 					'Market Margin': {
-						value: (
-							<>
-								{potentialTrade.status === 'fetching' && <MiniLoader />}
-								{formatDollars(position?.remainingMargin)}
-							</>
-						),
+						value: formatDollars(position?.remainingMargin),
 						valueNode: (
 							<PreviewArrow
 								showPreview={previewTradeData.showPreview && !potentialTrade.data?.showStatus}
 							>
-								{formatDollars(previewTradeData.totalMargin)}
+								{potentialTrade.status === 'fetching' ? (
+									<MiniLoader />
+								) : (
+									formatDollars(previewTradeData.totalMargin)
+								)}
 							</PreviewArrow>
 						),
 					},
 					'Margin Usage': {
-						value: (
-							<>
-								{potentialTrade.status === 'fetching' && <MiniLoader />}
-								{formatPercent(marginUsage)}
-							</>
-						),
+						value: formatPercent(marginUsage),
 						valueNode: (
 							<PreviewArrow
 								showPreview={previewTradeData.showPreview && !potentialTrade.data?.showStatus}
 							>
-								{formatPercent(previewTradeData?.marginUsage)}
+								{potentialTrade.status === 'fetching' ? (
+									<MiniLoader />
+								) : (
+									formatPercent(previewTradeData?.marginUsage)
+								)}
 							</PreviewArrow>
 						),
 					},
@@ -197,7 +195,7 @@ const MarginInfoBox: React.FC = () => {
 };
 
 const MiniLoader = () => {
-	return <Loader inline height="11px" width="11px" style={{ marginRight: '10px' }} />;
+	return <Loader inline height="11px" width="11px" style={{ marginLeft: '10px' }} />;
 };
 
 const StyledInfoBox = styled(InfoBox)`

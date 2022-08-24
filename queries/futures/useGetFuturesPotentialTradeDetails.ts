@@ -1,6 +1,6 @@
 import Wei, { wei } from '@synthetixio/wei';
 import { useCallback } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import Connector from 'containers/Connector';
 import { PotentialTradeStatus, POTENTIAL_TRADE_STATUS_TO_MESSAGE } from 'sections/futures/types';
@@ -34,21 +34,7 @@ const useGetFuturesPotentialTradeDetails = () => {
 
 	const getPreview = useGetCrossMarginPotentialTrade(marketAsset, selectedFuturesAddress);
 
-	const [existingPreview, setPotentialTradeDetails] = useRecoilState(potentialTradeDetailsState);
-
-	const getStatusMessage = (status: PotentialTradeStatus): string => {
-		if (typeof status !== 'number') {
-			return UNKNOWN;
-		}
-
-		if (status === 0) {
-			return SUCCESS;
-		} else if (PotentialTradeStatus[status]) {
-			return POTENTIAL_TRADE_STATUS_TO_MESSAGE[PotentialTradeStatus[status]];
-		} else {
-			return UNKNOWN;
-		}
-	};
+	const setPotentialTradeDetails = useSetRecoilState(potentialTradeDetailsState);
 
 	const generatePreview = useCallback(
 		async (
@@ -123,22 +109,43 @@ const useGetFuturesPotentialTradeDetails = () => {
 		]
 	);
 
-	const getTradeDetails = async (nativeSize: Wei, positionMarginDelta: Wei) => {
-		try {
-			setPotentialTradeDetails({
-				data: existingPreview.data,
-				status: 'fetching',
-				error: null,
-			});
-			const data = await generatePreview(nativeSize, positionMarginDelta);
-			setPotentialTradeDetails({ data, status: 'complete', error: null });
-		} catch (err) {
-			logError(err);
-			setPotentialTradeDetails({ data: existingPreview.data, status: 'error', error: err.message });
-		}
-	};
+	const getTradeDetails = useCallback(
+		async (nativeSize: Wei, positionMarginDelta: Wei) => {
+			try {
+				setPotentialTradeDetails({
+					data: null,
+					status: 'fetching',
+					error: null,
+				});
+				const data = await generatePreview(nativeSize, positionMarginDelta);
+				setPotentialTradeDetails({ data, status: 'complete', error: null });
+			} catch (err) {
+				logError(err);
+				setPotentialTradeDetails({
+					data: null,
+					status: 'error',
+					error: err.message,
+				});
+			}
+		},
+		[setPotentialTradeDetails, generatePreview]
+	);
 
 	return getTradeDetails;
+};
+
+const getStatusMessage = (status: PotentialTradeStatus): string => {
+	if (typeof status !== 'number') {
+		return UNKNOWN;
+	}
+
+	if (status === 0) {
+		return SUCCESS;
+	} else if (PotentialTradeStatus[status]) {
+		return POTENTIAL_TRADE_STATUS_TO_MESSAGE[PotentialTradeStatus[status]];
+	} else {
+		return UNKNOWN;
+	}
 };
 
 export default useGetFuturesPotentialTradeDetails;

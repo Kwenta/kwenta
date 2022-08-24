@@ -82,7 +82,7 @@ const CustomInputContainer = styled.div<{ textAlign: string }>`
 		background-color: transparent;
 		border: none;
 		text-align: ${(props) => props.textAlign || 'left'};
-		color: ${(props) => props.theme.colors.selectedTheme.button.text};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 		width: 100%;
 
 		&:focus {

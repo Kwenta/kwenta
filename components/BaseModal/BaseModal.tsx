@@ -119,7 +119,7 @@ const DismissButton = styled.button`
 	right: 20px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	&:hover {
-		color: ${(props) => props.theme.colors.selectedTheme.button.text};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
 `;
 

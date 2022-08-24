@@ -190,7 +190,7 @@ export const Tooltip = styled(Tippy)`
 export const InfoTooltip = styled(Tippy)`
 	font-size: 12px;
 	background-color: ${(props) => props.theme.colors.navy};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	.tippy-arrow {
 		color: ${(props) => props.theme.colors.navy};
 	}
@@ -274,7 +274,7 @@ export const LeftSideContent = styled.div`
 
 export const SwapCurrenciesButton = styled.button`
 	${resetButtonCSS};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	height: 32px;
 	width: 32px;
 	display: flex;
@@ -313,7 +313,7 @@ export const SwapCurrenciesButton = styled.button`
 		transition-timing-function: ease-in-out;
 		z-index: 1;
 		path {
-			fill: ${(props) => props.theme.colors.selectedTheme.button.text};
+			fill: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 		}
 	}
 `;

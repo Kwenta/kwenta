@@ -287,7 +287,7 @@ const Currencies = styled.div`
 
 const CurrencyItem = styled.div`
 	text-align: center;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const CurrencyItemTitle = styled.div`
@@ -319,7 +319,7 @@ const SummaryItemLabel = styled.div`
 `;
 
 const SummaryItemValue = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	${numericValueCSS};
 `;
 
