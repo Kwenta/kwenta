@@ -8,7 +8,6 @@ import { useQueryClient } from 'react-query';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { chain, useNetwork } from 'wagmi';
 
 import MarketBadge from 'components/Badge/MarketBadge';
 import ChangePercent from 'components/ChangePercent';
@@ -29,7 +28,6 @@ type SpotMarketsTableProps = {
 const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const { chain: activeChain } = useNetwork();
 	const pastRates = useRecoilValue(pastRatesState);
 
 	const { synthsMap } = Connector.useContainer();
