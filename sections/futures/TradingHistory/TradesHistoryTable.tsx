@@ -239,7 +239,6 @@ const StyledTable = styled(Table)<{ mobile?: boolean }>`
 	.table-body-row {
 		${TableAlignment}
 		padding: 0;
-		height: 55px;
 	}
 
 	.table-body-row {
