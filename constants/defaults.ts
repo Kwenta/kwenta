@@ -43,3 +43,5 @@ export const DEFAULT_NP_LEVERAGE_ADJUSTMENT: number = 0.9975;
 export const DEFAULT_LEADERBOARD_ROWS = 20;
 
 export const DEFAULT_FUTURES_MARGIN_TYPE = 'cross_margin';
+
+export const DEFAULT_LEVERAGE = '10';

@@ -39,6 +39,7 @@ import logError from 'utils/logError';
 
 import useCrossMarginAccountContracts from './useCrossMarginContracts';
 import usePersistedRecoilState from './usePersistedRecoilState';
+import { DEFAULT_LEVERAGE } from 'constants/defaults';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
@@ -68,7 +69,9 @@ const useFuturesData = () => {
 	const position = useRecoilValue(positionState);
 	const market = useRecoilValue(marketInfoState);
 	const gasSpeed = useRecoilValue(gasSpeedState);
-	const crossMarginLeverageInput = useRecoilValue(crossMarginLeverageInputState);
+	const [crossMarginLeverageInput, setCrossMarginLeverageInput] = useRecoilState(
+		crossMarginLeverageInputState
+	);
 	const maxLeverage = useRecoilValue(maxLeverageState);
 	const { tradeFee: crossMarginTradeFee } = useRecoilValue(crossMarginSettingsState);
 	const [selectedAccountType, setSelectedAccountType] = usePersistedRecoilState(
@@ -97,8 +100,13 @@ const useFuturesData = () => {
 
 	const selectedLeverage = useMemo(() => {
 		const effectiveLeverage = position?.position?.leverage.toString() || '';
-		return crossMarginLeverageInput || effectiveLeverage || preferredLeverage;
-	}, [crossMarginLeverageInput, position?.position?.leverage, preferredLeverage]);
+		return (
+			crossMarginLeverageInput ||
+			effectiveLeverage ||
+			preferredLeverage[marketAsset] ||
+			DEFAULT_LEVERAGE
+		);
+	}, [crossMarginLeverageInput, position?.position?.leverage, preferredLeverage, marketAsset]);
 
 	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed];
 
@@ -126,6 +134,7 @@ const useFuturesData = () => {
 				leverage: '',
 				nativeSizeDelta: zeroBN,
 			});
+			setCrossMarginLeverageInput('');
 		};
 
 		router.events.on('routeChangeStart', handleRouteChange);

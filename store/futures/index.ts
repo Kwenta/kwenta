@@ -96,9 +96,9 @@ export const crossMarginLeverageInputState = atom({
 	default: '',
 });
 
-export const preferredLeverageState = atom({
+export const preferredLeverageState = atom<Record<string, string>>({
 	key: getFuturesKey('preferredLeverage'),
-	default: '10',
+	default: {},
 });
 
 export const crossMarginMarginDeltaState = atom({

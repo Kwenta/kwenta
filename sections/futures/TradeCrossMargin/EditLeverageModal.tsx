@@ -14,6 +14,7 @@ import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 import {
 	crossMarginLeverageInputState,
 	crossMarginTotalMarginState,
+	currentMarketState,
 	marketInfoState,
 	preferredLeverageState,
 } from 'store/futures';
@@ -32,8 +33,9 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 
 	const setCrossMarginLeverage = useSetRecoilState(crossMarginLeverageInputState);
 	const market = useRecoilValue(marketInfoState);
+	const marketAsset = useRecoilValue(currentMarketState);
 	const totalMargin = useRecoilValue(crossMarginTotalMarginState);
-	const [_, setPrefferedLeverage] = usePersistedRecoilState(preferredLeverageState);
+	const [perferredLeverage, setPreferredLeverage] = usePersistedRecoilState(preferredLeverageState);
 
 	const [leverage, setLeverage] = useState<number>(Number(Number(selectedLeverage).toFixed(2)));
 
@@ -54,7 +56,10 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 	};
 
 	const onConfirm = () => {
-		setPrefferedLeverage(String(leverage));
+		setPreferredLeverage({
+			...perferredLeverage,
+			[marketAsset]: String(leverage),
+		});
 		setCrossMarginLeverage(String(leverage));
 		onTradeAmountSUSDChange('');
 		onDismiss();
