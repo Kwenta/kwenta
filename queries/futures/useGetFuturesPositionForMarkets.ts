@@ -1,10 +1,11 @@
-import synthetix, { NetworkId } from '@synthetixio/contracts-interface';
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { useAccount, chain, useNetwork, useProvider } from 'wagmi';
+import { useAccount, chain, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
+import Connector from 'containers/Connector';
 import { futuresMarketsState, futuresAccountState, positionsState } from 'store/futures';
 import { MarketKeyByAsset } from 'utils/futures';
 
@@ -12,30 +13,21 @@ import { FuturesPosition } from './types';
 import { mapFuturesPosition, getFuturesMarketContract } from './utils';
 
 const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPosition[]>) => {
+	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const { isConnected } = useAccount();
 	const { chain: activeChain } = useNetwork();
 	const isL2 =
 		activeChain !== undefined
 			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
 			: true;
-	const provider = useProvider({
-		chainId: isL2 && activeChain != null ? activeChain.id : chain.optimism.id,
-	});
-	const synthetixjs = synthetix({
-		provider: provider,
-		networkId: (activeChain?.unsupported
-			? chain.optimism.id
-			: activeChain?.id ?? chain.optimism.id) as NetworkId,
-	});
+
 	const [, setFuturesPositions] = useRecoilState(positionsState);
 
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 
-	const assets = futuresMarkets
-		.filter(({ asset }) => (activeChain?.id === 69 ? asset !== 'DYDX' : asset)) // Optimism Kovan has no contract FuturesMarketDYDX
-		.map(({ asset }) => asset);
+	const assets = futuresMarkets.map(({ asset }) => asset);
 
 	return useQuery<FuturesPosition[] | []>(
 		QUERY_KEYS.Futures.MarketsPositions(

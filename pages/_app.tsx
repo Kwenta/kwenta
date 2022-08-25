@@ -63,9 +63,6 @@ const { chains, provider } = configureChains(
 				http: `https://${BLAST_NETWORK_LOOKUP[chain.id]}.blastapi.io/${
 					process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID
 				}`,
-				webSocket: `wss://${BLAST_NETWORK_LOOKUP[chain.id]}.blastapi.io/${
-					process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID
-				}`,
 			}),
 			stallTimeout: 5000,
 			priority: 0,
@@ -108,10 +105,14 @@ const wagmiClient = createClient({
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {
 	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
-	const provider = useProvider();
-	const { data: signer } = useSigner();
 	const { chain: activeChain } = useNetwork();
-	const network = activeChain || undefined;
+	const network =
+		activeChain !== undefined && activeChain.unsupported
+			? chain.optimism
+			: activeChain ?? chain.optimism;
+	const provider = useProvider({ chainId: network.id });
+	const L2Provider = useProvider({ chainId: chain.optimism.id });
+	const { data: signer } = useSigner();
 	const getLayout = Component.getLayout || ((page) => page);
 
 	const isReady = useMemo(() => typeof window !== 'undefined', []);
@@ -128,14 +129,18 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 				<MediaContextProvider>
 					<SynthetixQueryContextProvider
 						value={
-							provider && !activeChain?.unsupported && synthetixjs
+							provider && network && synthetixjs
 								? createQueryContext({
-										provider,
+										provider: provider,
 										signer: signer || undefined,
-										networkId: (network?.id ?? chain.optimism.id) as NetworkId,
-										synthetixjs,
+										networkId: network.id as NetworkId,
+										synthetixjs: synthetixjs,
 								  })
-								: createQueryContext({ networkId: null, synthetixjs: null })
+								: createQueryContext({
+										provider: L2Provider,
+										networkId: chain.optimism.id as NetworkId,
+										synthetixjs: synthetixjs,
+								  })
 						}
 					>
 						<Layout>

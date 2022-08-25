@@ -1,5 +1,4 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
-import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { useMemo } from 'react';
 import { useQuery, UseQueryOptions } from 'react-query';

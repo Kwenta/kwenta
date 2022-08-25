@@ -3,22 +3,24 @@ import { ethers } from 'ethers';
 import { keyBy } from 'lodash';
 import { useMemo } from 'react';
 import { createContainer } from 'unstated-next';
-import { useNetwork, useProvider } from 'wagmi';
+import { chain, useNetwork, useProvider } from 'wagmi';
 
 import { DEFAULT_NETWORK_ID } from 'constants/defaults';
 
 const useConnector = () => {
-	const { chain: network } = useNetwork();
+	const { chain: activeChain } = useNetwork();
+	const network =
+		activeChain !== undefined && activeChain.unsupported
+			? chain.optimism
+			: activeChain ?? chain.optimism;
 	const provider = useProvider({
-		chainId: network !== undefined && network?.unsupported ? network?.id : DEFAULT_NETWORK_ID,
+		chainId: network.id,
 	});
 	// Provides a default mainnet provider, irrespective of the current network
 	const staticMainnetProvider = new ethers.providers.InfuraProvider();
 	const defaultSynthetixjs = synthetix({
 		provider: provider,
-		networkId: (network !== undefined && network?.unsupported
-			? network?.id
-			: DEFAULT_NETWORK_ID) as NetworkId,
+		networkId: network.id as NetworkId,
 	});
 
 	const [synthsMap, tokensMap] = useMemo(() => {

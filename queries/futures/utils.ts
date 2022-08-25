@@ -2,6 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { ContractsMap, NetworkId } from '@synthetixio/contracts-interface/build/node/src/types';
 import Wei, { wei } from '@synthetixio/wei';
 import { utils } from 'ethers';
+import { chain } from 'wagmi';
 
 import { ETH_UNIT } from 'constants/network';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
@@ -26,9 +27,9 @@ import {
 } from './types';
 
 export const getFuturesEndpoint = (networkId: NetworkId): string => {
-	return networkId === 10
+	return networkId === chain.optimism.id
 		? FUTURES_ENDPOINT_MAINNET
-		: networkId === 420
+		: networkId === chain.optimismGoerli.id
 		? FUTURES_ENDPOINT_TESTNET
 		: FUTURES_ENDPOINT_MAINNET;
 };
