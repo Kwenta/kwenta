@@ -1,11 +1,13 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { Contract } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { chain, useNetwork } from 'wagmi';
+import { useNetwork } from 'wagmi';
 
 import { ENS_REVERSE_LOOKUP } from 'constants/address';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import reverseRecordsAbi from 'lib/abis/ReverseRecords.json';
+import useIsL2 from './useIsL2';
 
 const ADDRESSES_PER_LOOKUP = 1500;
 
@@ -15,10 +17,7 @@ type EnsInfo = {
 
 const useENSs = (addresses: string[], options?: UseQueryOptions<any | null>) => {
 	const { chain: network } = useNetwork();
-	const isL2 =
-		network !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: true;
+	const isL2 = useIsL2(network?.id as NetworkId);
 
 	const { staticMainnetProvider } = Connector.useContainer();
 

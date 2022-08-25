@@ -1,4 +1,3 @@
-import synthetix, { NetworkId } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import orderBy from 'lodash/orderBy';
@@ -6,13 +5,14 @@ import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import styled, { css } from 'styled-components';
-import { chain, useAccount, useNetwork } from 'wagmi';
+import { useAccount } from 'wagmi';
 
 import Button from 'components/Button';
 import SearchInput from 'components/Input/SearchInput';
 import Loader from 'components/Loader';
 import { CurrencyKey, CATEGORY_MAP } from 'constants/currency';
 import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
+import Connector from 'containers/Connector';
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
 import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
@@ -37,23 +37,17 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	onDismiss,
 	onSelect,
 }) => {
+	const { defaultSynthetixjs: synthetixjs, network } = Connector.useContainer();
 	const { t } = useTranslation();
 	const { address } = useAccount();
-	const { chain: activeChain } = useNetwork();
 	const walletAddress = address ?? null;
-
-	const synthetixjs = synthetix({
-		networkId: (activeChain?.unsupported
-			? undefined
-			: activeChain?.id ?? chain.optimism.id) as NetworkId,
-	});
 
 	const [assetSearch, setAssetSearch] = useState('');
 	const [synthCategory, setSynthCategory] = useState<string | null>(null);
 	const [page, setPage] = useState(1);
 
 	// Only available on Optimism mainnet
-	const oneInchEnabled = activeChain?.id === 10;
+	const oneInchEnabled = network.id === 10;
 
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
 

@@ -28,7 +28,14 @@ const useConnector = () => {
 		return [keyBy(defaultSynthetixjs.synths, 'name'), keyBy(defaultSynthetixjs.tokens, 'symbol')];
 	}, [defaultSynthetixjs]);
 
-	return { synthsMap, tokensMap, staticMainnetProvider, defaultSynthetixjs };
+	return {
+		provider,
+		network,
+		synthsMap,
+		tokensMap,
+		staticMainnetProvider,
+		defaultSynthetixjs,
+	};
 };
 
 const Connector = createContainer(useConnector);
