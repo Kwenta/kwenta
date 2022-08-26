@@ -978,7 +978,8 @@
 			"futures-market-silver-short-name": "Silver Perpetual",
 			"futures-market-ape-short-name": "ApeCoin Perpetual",
 			"futures-market-bnb-short-name": "Binance Coin Perpetual",
-			"futures-market-doge-short-name": "Dogecoin Perpetual"
+			"futures-market-doge-short-name": "Dogecoin Perpetual",
+			"futures-market-debtratio-short-name": "dSNX Perpetual"
 		},
 		"currency-category": {
 			"crypto": "crypto",

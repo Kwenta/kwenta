@@ -29,6 +29,8 @@ export const getSynthDescription = (synth: string, synthsMap: Dictionary<Synth>,
 			return t('common.currency.futures-market-bnb-short-name');
 		case 'sDOGE':
 			return t('common.currency.futures-market-doge-short-name');
+		case 'sDebtRatio':
+			return t('common.currency.futures-market-debtratio-short-name');
 		case 'sDYDX':
 			return t('common.currency.futures-market-short-name', {
 				currencyName: getDisplayAsset(synth),
@@ -65,6 +67,7 @@ export enum FuturesMarketKey {
 	sAXS = 'sAXS',
 	sBNB = 'sBNB',
 	sDOGE = 'sDOGE',
+	sDebtRatio = 'sDebtRatio',
 }
 
 export enum FuturesMarketAsset {
@@ -85,6 +88,7 @@ export enum FuturesMarketAsset {
 	AXS = 'AXS',
 	BNB = 'BNB',
 	DOGE = 'DOGE',
+	DebtRatio = 'DebtRatio',
 }
 
 export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
@@ -105,6 +109,7 @@ export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
 	[FuturesMarketKey.sAXS]: FuturesMarketAsset.AXS,
 	[FuturesMarketKey.sBNB]: FuturesMarketAsset.BNB,
 	[FuturesMarketKey.sDOGE]: FuturesMarketAsset.DOGE,
+	[FuturesMarketKey.sDebtRatio]: FuturesMarketAsset.DebtRatio,
 } as const;
 
 export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
@@ -125,6 +130,7 @@ export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 	[FuturesMarketAsset.AXS]: FuturesMarketKey.sAXS,
 	[FuturesMarketAsset.BNB]: FuturesMarketKey.sBNB,
 	[FuturesMarketAsset.DOGE]: FuturesMarketKey.sDOGE,
+	[FuturesMarketAsset.DebtRatio]: FuturesMarketKey.sDebtRatio,
 } as const;
 
 export interface FuturesMarketConfig {
@@ -208,6 +214,11 @@ export const markets: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sDOGE]: {
 		key: FuturesMarketKey.sDOGE,
 		asset: FuturesMarketAsset.DOGE,
+		supports: 'mainnet',
+	},
+	[FuturesMarketKey.sDebtRatio]: {
+		key: FuturesMarketKey.sDebtRatio,
+		asset: FuturesMarketAsset.DebtRatio,
 		supports: 'mainnet',
 	},
 	[FuturesMarketKey.sWTI]: {

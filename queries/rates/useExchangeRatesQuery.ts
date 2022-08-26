@@ -26,6 +26,7 @@ const additionalCurrencies = [
 	'APE',
 	'BNB',
 	'DOGE',
+	'DebtRatio',
 ].map(ethers.utils.formatBytes32String);
 
 const useExchangeRatesQuery = (options?: UseQueryOptions<Rates>) => {
