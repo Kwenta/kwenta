@@ -1,14 +1,14 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { useMemo } from 'react';
-import { chain } from 'wagmi';
+import { chain, useNetwork } from 'wagmi';
 
 import { notNill } from 'queries/synths/utils';
 
-const useIsL2 = (networkId: NetworkId) => {
+const useIsL2 = () => {
+	const { chain: network } = useNetwork();
 	const isL2 = useMemo(
 		() =>
-			notNill(networkId) ? [chain.optimism.id, chain.optimismGoerli.id].includes(networkId) : true,
-		[networkId]
+			notNill(network) ? [chain.optimism.id, chain.optimismGoerli.id].includes(network.id) : true,
+		[network]
 	);
 	return isL2;
 };

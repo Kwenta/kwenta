@@ -19,7 +19,7 @@ const useGetFuturesTrades = (
 	const { chain: network } = useNetwork();
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 	const { isConnected: isWalletConnected } = useAccount();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 
 	return useInfiniteQuery<FuturesTrade[] | null>(
 		QUERY_KEYS.Futures.Trades(network?.id as NetworkId, currencyKey || null),

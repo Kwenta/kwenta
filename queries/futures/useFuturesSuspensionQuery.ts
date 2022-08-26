@@ -22,7 +22,7 @@ const useFuturesSuspensionQuery = (
 	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const { chain: network } = useNetwork();
 	const { isConnected: isWalletConnected } = useAccount();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 	return useQuery<any>(
 		QUERY_KEYS.Futures.MarketClosure(network?.id as NetworkId, marketKey),
 		async () => {

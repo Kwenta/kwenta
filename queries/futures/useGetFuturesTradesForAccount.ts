@@ -22,7 +22,7 @@ const useGetFuturesTradesForAccount = (
 	const { chain: network } = useNetwork();
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 	const { isConnected: isWalletConnected } = useAccount();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 	const { selectedAccountType } = useRecoilValue(futuresAccountState);
 
 	return useQuery<FuturesTrade[] | null>(

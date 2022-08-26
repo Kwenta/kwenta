@@ -1,12 +1,13 @@
-import synthetix, { CurrencyKey, NetworkId } from '@synthetixio/contracts-interface';
+import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { CRYPTO_CURRENCY_MAP } from '@synthetixio/queries/build/node/src/currency';
 import { wei } from '@synthetixio/wei';
 import { BigNumberish, ethers } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useSetRecoilState } from 'recoil';
-import { chain, useNetwork, useProvider } from 'wagmi';
+import { chain, useNetwork } from 'wagmi';
 
 import ROUTES from 'constants/routes';
+import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import { ratesState } from 'store/futures';
 import { FuturesMarketKey, MarketAssetByKey } from 'utils/futures';
@@ -22,15 +23,11 @@ const additionalCurrencies = [CRYPTO_CURRENCY_MAP.SNX, 'XAU', 'XAG', 'DYDX', 'AP
 );
 
 const useExchangeRatesQuery = (options?: UseQueryOptions<Rates>) => {
+	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const { chain: activeChain } = useNetwork();
-	const isL2 = useIsL2(activeChain?.id as NetworkId);
+	const isL2 = useIsL2();
 	const homepage = window.location.pathname === ROUTES.Home.Root;
 	const network = homepage || isL2 ? chain.optimism : activeChain;
-	const provider = useProvider({ chainId: network?.id });
-	const synthetixjs = synthetix({
-		provider: provider,
-		networkId: network?.id as NetworkId,
-	});
 
 	const setRates = useSetRecoilState(ratesState);
 

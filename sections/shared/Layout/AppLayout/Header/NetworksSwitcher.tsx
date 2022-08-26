@@ -1,5 +1,4 @@
 import { useChainModal } from '@rainbow-me/rainbowkit';
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { components } from 'react-select';
@@ -32,7 +31,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 	const { chain: activeChain } = useNetwork();
 	const { openChainModal } = useChainModal();
 	const { t } = useTranslation();
-	const isL2 = useIsL2(activeChain?.id as NetworkId);
+	const isL2 = useIsL2();
 	const network = activeChain?.id === 69 ? 'testnet' : 'mainnet';
 	const networkLabel = 'header.networks-switcher.optimism-' + network;
 

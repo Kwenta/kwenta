@@ -22,7 +22,7 @@ type PortfolioData = {
 
 const usePortfolioData = (options?: UseQueryOptions<PortfolioData | null>) => {
 	const { chain: network } = useNetwork();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 	const { address } = useAccount();
 	const walletAddress = address || null;
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);

@@ -13,7 +13,7 @@ import { TokenListQueryResponse, OneInchTokenListResponse } from './types';
 const useOneInchTokenList = (options?: UseQueryOptions<TokenListQueryResponse>) => {
 	const oneInchApiUrl = use1InchApiUrl();
 	const { chain: network } = useNetwork();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 
 	return useQuery<TokenListQueryResponse>(
 		QUERY_KEYS.TokenLists.OneInch(network?.id as NetworkId),

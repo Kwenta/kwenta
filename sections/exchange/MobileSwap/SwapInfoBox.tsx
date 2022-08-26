@@ -1,4 +1,3 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -21,7 +20,7 @@ const SwapInfoBox: React.FC = () => {
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const customGasPrice = useRecoilValue(customGasPriceState);
 	const { chain: network } = useNetwork();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 	const isMainnet =
 		network !== undefined ? [chain.mainnet.id, chain.goerli.id].includes(network?.id) : false;
 	const { transactionFee, feeCost, exchangeFeeRate, baseFeeRate } = useExchangeContext();

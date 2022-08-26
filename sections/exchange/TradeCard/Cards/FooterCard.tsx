@@ -1,8 +1,7 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { useAccount, useNetwork } from 'wagmi';
+import { useAccount } from 'wagmi';
 
 import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 import Button from 'components/Button';
@@ -35,8 +34,7 @@ const FooterCard: React.FC = () => {
 	const quoteCurrencyAmount = useRecoilValue(quoteCurrencyAmountState);
 	const baseCurrencyAmount = useRecoilValue(baseCurrencyAmountState);
 	const { isConnected: isWalletConnected } = useAccount();
-	const { chain: network } = useNetwork();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 	const txError = useRecoilValue(txErrorState);
 
 	const quoteCurrencyMarketClosed = useMarketClosed(quoteCurrencyKey);

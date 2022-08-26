@@ -18,7 +18,7 @@ const useRateUpdateQuery = (
 	options?: UseQueryOptions<any | null>
 ) => {
 	const { chain: network } = useNetwork();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 	const ratesEndpoint = getRatesEndpoint(network?.id as NetworkId);
 
 	return useQuery<any | null>(

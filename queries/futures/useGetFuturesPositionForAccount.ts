@@ -16,7 +16,7 @@ import { getFuturesEndpoint, mapTradeHistory } from './utils';
 const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 	const { chain: network } = useNetwork();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 

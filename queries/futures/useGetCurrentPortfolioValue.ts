@@ -1,11 +1,12 @@
-import synthetix, { NetworkId } from '@synthetixio/contracts-interface';
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import { chain, useAccount, useNetwork, useProvider } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
+import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import { futuresAccountState, marketKeysState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
@@ -16,9 +17,9 @@ import useGetCrossMarginAccountOverview from './useGetCrossMarginAccountOverview
 import { mapFuturesPosition } from './utils';
 
 const useGetCurrentPortfolioValue = (options?: UseQueryOptions<any | null>) => {
-	const { chain: activeChain } = useNetwork();
-	const provider = useProvider();
-	const isL2 = useIsL2(activeChain?.id as NetworkId);
+	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
+	const { chain: network } = useNetwork();
+	const isL2 = useIsL2();
 	const { address } = useAccount();
 	const walletAddress = address || null;
 	const futuresAccount = useRecoilValue(futuresAccountState);
@@ -27,16 +28,9 @@ const useGetCurrentPortfolioValue = (options?: UseQueryOptions<any | null>) => {
 	const query = useGetCrossMarginAccountOverview();
 	const freeMargin = query.data?.freeMargin || zeroBN;
 
-	const synthetixjs = synthetix({
-		provider: provider,
-		networkId: (activeChain?.unsupported
-			? undefined
-			: activeChain?.id ?? chain.optimism.id) as NetworkId,
-	});
-
 	return useQuery<any | null>(
 		QUERY_KEYS.Futures.Positions(
-			activeChain?.id as NetworkId,
+			network?.id as NetworkId,
 			marketKeys || [],
 			futuresAccount?.crossMarginAddress || ''
 		),

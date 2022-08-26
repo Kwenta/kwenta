@@ -17,7 +17,7 @@ const useGetFuturesAccountPositionHistory = (
 ) => {
 	const { chain: network } = useNetwork();
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 	return useQuery<PositionHistory[] | null>(
 		QUERY_KEYS.Futures.AllPositionHistory(network?.id as NetworkId, account || ''),
 		async () => {

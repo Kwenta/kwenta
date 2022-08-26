@@ -18,7 +18,7 @@ const useGetFuturesTradingVolumeForAllMarkets = (
 ) => {
 	const homepage = window.location.pathname === ROUTES.Home.Root;
 	const { chain: activeChain } = useNetwork();
-	const isL2 = useIsL2(activeChain?.id as NetworkId);
+	const isL2 = useIsL2();
 	const network = homepage || isL2 ? chain.optimism : activeChain;
 	const futuresEndpoint = homepage
 		? FUTURES_ENDPOINT_MAINNET

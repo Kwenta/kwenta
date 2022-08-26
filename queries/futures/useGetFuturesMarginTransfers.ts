@@ -21,7 +21,7 @@ const useGetFuturesMarginTransfers = (
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 
 	const { chain: network } = useNetwork();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 

@@ -1,7 +1,5 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { Contract } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useNetwork } from 'wagmi';
 
 import { ENS_REVERSE_LOOKUP } from 'constants/address';
 import QUERY_KEYS from 'constants/queryKeys';
@@ -17,8 +15,7 @@ type EnsInfo = {
 };
 
 const useENSs = (addresses: string[], options?: UseQueryOptions<any | null>) => {
-	const { chain: network } = useNetwork();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 
 	const { staticMainnetProvider } = Connector.useContainer();
 

@@ -12,7 +12,7 @@ import { zeroBN } from 'utils/formatters/number';
 
 export default function useGetCrossMarginAccountOverview() {
 	const { chain: network } = useNetwork();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 	const { crossMarginAddress } = useRecoilValue(futuresAccountState);
 	const setFreeMargin = useSetRecoilState(crossMarginAvailableMarginState);
 

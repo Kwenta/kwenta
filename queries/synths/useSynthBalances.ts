@@ -1,13 +1,14 @@
-import synthetix, { CurrencyKey, NetworkId } from '@synthetixio/contracts-interface';
+import { CurrencyKey, NetworkId } from '@synthetixio/contracts-interface';
 import { Balances, SynthBalancesMap } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
 import orderBy from 'lodash/orderBy';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilState } from 'recoil';
-import { useAccount, useNetwork, chain, useProvider } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
+import Connector from 'containers/Connector';
 import { balancesState } from 'store/futures';
 
 import { notNill } from './utils';
@@ -15,21 +16,14 @@ import { notNill } from './utils';
 type SynthBalancesTuple = [string[], ethers.BigNumber[], ethers.BigNumber[]];
 
 const useSynthBalances = (options?: UseQueryOptions<Balances>) => {
-	const provider = useProvider();
+	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const { address } = useAccount();
 	const walletAddress = address || null;
-	const { chain: activeChain } = useNetwork();
+	const { chain: network } = useNetwork();
 	const [, setBalances] = useRecoilState(balancesState);
 
-	const synthetixjs = synthetix({
-		provider: provider,
-		networkId: (activeChain?.unsupported
-			? undefined
-			: activeChain?.id ?? chain.optimism.id) as NetworkId,
-	});
-
 	return useQuery<Balances>(
-		QUERY_KEYS.Synths.Balances(activeChain?.id as NetworkId, walletAddress),
+		QUERY_KEYS.Synths.Balances(network?.id as NetworkId, walletAddress),
 		async () => {
 			if (!synthetixjs) {
 				// This should never happen since the query is not enabled when synthetixjs is undefined

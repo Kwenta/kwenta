@@ -1,4 +1,3 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
@@ -6,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { useNetwork } from 'wagmi';
 
 import MarketBadge from 'components/Badge/MarketBadge';
 import ChangePercent from 'components/ChangePercent';
@@ -48,8 +46,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	const router = useRouter();
 	const { switchToL2 } = useNetworkSwitcher();
 
-	const { chain: network } = useNetwork();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 
 	useGetFuturesMarkets();
 	useGetFuturesPositionForMarkets();

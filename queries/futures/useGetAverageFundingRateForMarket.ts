@@ -18,7 +18,7 @@ const useGetAverageFundingRateForMarket = (
 	options?: UseQueryOptions<any | null>
 ) => {
 	const { chain: network } = useNetwork();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 	const marketKey = useRecoilValue(marketKeyState);
 	const marketInfo = useRecoilValue(marketInfoState);
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);

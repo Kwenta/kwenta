@@ -1,7 +1,5 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import axios from 'axios';
 import { UseQueryOptions, useQuery } from 'react-query';
-import { useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import useIsL2 from 'hooks/useIsL2';
@@ -13,8 +11,7 @@ const useCoinGeckoTokenPricesQuery = (
 	tokenAddresses: string[],
 	options?: UseQueryOptions<PriceResponse>
 ) => {
-	const { chain: network } = useNetwork();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 
 	const platform = isL2 ? 'optimistic-ethereum' : 'ethereum';
 	return useQuery<PriceResponse>(

@@ -1,11 +1,12 @@
-import synthetix, { NetworkId } from '@synthetixio/contracts-interface';
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilState } from 'recoil';
-import { chain, useAccount, useNetwork, useProvider } from 'wagmi';
+import { chain, useAccount, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
+import Connector from 'containers/Connector';
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import useIsL2 from 'hooks/useIsL2';
 import { futuresMarketsState } from 'store/futures';
@@ -16,15 +17,11 @@ import { FuturesMarket } from './types';
 import { getReasonFromCode } from './utils';
 
 const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
+	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const { chain: activeChain } = useNetwork();
 	const homepage = window.location.pathname === ROUTES.Home.Root;
-	const isL2 = useIsL2(activeChain?.id as NetworkId);
+	const isL2 = useIsL2();
 	const network = homepage || isL2 ? chain.optimism : activeChain;
-	const provider = useProvider({ chainId: network?.id });
-	const synthetixjs = synthetix({
-		provider: provider,
-		networkId: network?.id as NetworkId,
-	});
 
 	const { isConnected: isWalletConnected } = useAccount();
 	const [, setFuturesMarkets] = useRecoilState(futuresMarketsState);

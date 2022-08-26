@@ -15,7 +15,7 @@ import { getFuturesEndpoint } from './utils';
 
 const useGetFuturesCumulativeStats = (options?: UseQueryOptions<FuturesCumulativeStats | null>) => {
 	const { chain: network } = useNetwork();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 	const homepage = window.location.pathname === ROUTES.Home.Root;
 	const futuresEndpoint = homepage
 		? FUTURES_ENDPOINT_MAINNET

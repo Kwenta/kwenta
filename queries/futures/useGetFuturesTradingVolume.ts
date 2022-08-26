@@ -18,7 +18,7 @@ const useGetFuturesTradingVolume = (
 	options?: UseQueryOptions<Wei | null>
 ) => {
 	const { chain: network } = useNetwork();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
 	return useQuery<Wei | null>(

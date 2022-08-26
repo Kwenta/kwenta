@@ -11,7 +11,7 @@ type ConnectionDotProps = {
 
 const ConnectionDot: React.FC<ConnectionDotProps> = (props) => {
 	const { chain: network } = useNetwork();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 	const { isConnected: isWalletConnected } = useAccount();
 
 	const theme = useTheme();

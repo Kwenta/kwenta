@@ -15,7 +15,7 @@ import { mapFuturesPosition, getFuturesMarketContract } from './utils';
 
 const useGetFuturesPositionForMarket = (options?: UseQueryOptions<FuturesPosition | null>) => {
 	const { chain: network } = useNetwork();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const market = useRecoilValue(marketKeyState);

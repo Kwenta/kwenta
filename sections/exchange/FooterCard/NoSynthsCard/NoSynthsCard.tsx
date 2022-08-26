@@ -1,8 +1,6 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import Link from 'next/link';
 import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { useNetwork } from 'wagmi';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { EXTERNAL_LINKS } from 'constants/links';
@@ -18,8 +16,7 @@ type NoSynthsCardProps = {
 
 const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 	const { t } = useTranslation();
-	const { chain: network } = useNetwork();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 
 	return (
 		<>

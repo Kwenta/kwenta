@@ -1,4 +1,3 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { utils as ethersUtils } from 'ethers';
 import * as _ from 'lodash/fp';
@@ -8,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { useNetwork } from 'wagmi';
 
 import Currency from 'components/Currency';
 import Table, { TableNoResults } from 'components/Table';
@@ -31,8 +29,7 @@ import TimeDisplay from '../../futures/Trades/TimeDisplay';
 const FuturesHistoryTable: FC = () => {
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 	const { t } = useTranslation();
-	const { chain: network } = useNetwork();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { switchToL2 } = useNetworkSwitcher();
 	const futuresTradesQuery = useGetAllFuturesTradesForAccount(selectedFuturesAddress);

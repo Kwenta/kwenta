@@ -1,4 +1,3 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import useSynthetixQueries, { Token } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { BigNumber, ethers } from 'ethers';
@@ -116,7 +115,7 @@ const useExchange = ({
 	const { isConnected: isWalletConnected, address } = useAccount();
 	const walletAddress = address ?? null;
 	const { chain: network } = useNetwork();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 	const setTxError = useSetRecoilState(txErrorState);
 	const [atomicExchangeSlippage] = useState('0.01');
 	const setOrders = useSetRecoilState(ordersState);

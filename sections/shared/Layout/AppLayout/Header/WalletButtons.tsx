@@ -17,7 +17,7 @@ import WalletActions from './WalletActions';
 
 const WalletButtons: React.FC = () => {
 	const { t } = useTranslation();
-	const { chain: activeChain } = useNetwork();
+	const { chain: network } = useNetwork();
 	const [currentTheme, setTheme] = useRecoilState(currentThemeState);
 	const { openConnectModal } = useConnectModal();
 	const { isConnected } = useAccount();
@@ -68,7 +68,7 @@ const WalletButtons: React.FC = () => {
 	return (
 		<Container>
 			{isConnected
-				? activeChain?.unsupported
+				? network?.unsupported
 					? walletIsConnectedButNotSupported
 					: walletIsConnectedAndSupported
 				: walletIsNotConnected}

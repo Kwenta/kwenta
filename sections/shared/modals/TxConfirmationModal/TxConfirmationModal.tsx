@@ -1,10 +1,10 @@
-import { CurrencyKey, NetworkId } from '@synthetixio/contracts-interface';
+import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { FC, ReactNode, useMemo } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
-import { useNetwork, useAccount } from 'wagmi';
+import { useAccount } from 'wagmi';
 
 import InfoIcon from 'assets/svg/app/info.svg';
 import OneInchImage from 'assets/svg/providers/1inch.svg';
@@ -60,8 +60,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 	icon,
 }) => {
 	const { t } = useTranslation();
-	const { chain: network } = useNetwork();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { address } = useAccount();
 	const walletAddress = address || null;

@@ -20,9 +20,9 @@ const useTokensBalancesQuery = (
 	walletAddress: string | null,
 	options?: UseQueryOptions<TokenBalances | null>
 ) => {
-	const { chain: activeChain } = useNetwork();
+	const { chain: network } = useNetwork();
 	const { isConnected } = useAccount();
-	const provider = getDefaultProvider(activeChain?.id as NetworkId);
+	const provider = getDefaultProvider(network?.id as NetworkId);
 	const filteredTokens = tokens.filter((t) => !FILTERED_TOKENS.includes(t.address.toLowerCase()));
 	const symbols = filteredTokens.map((token) => token.symbol);
 	const tokensMap = keyBy(filteredTokens, 'symbol');
@@ -30,7 +30,7 @@ const useTokensBalancesQuery = (
 	return useQuery<TokenBalances | null>(
 		QUERY_KEYS.WalletBalances.Tokens(
 			walletAddress,
-			(activeChain?.id ?? chain.optimism.id) as NetworkId,
+			(network?.id ?? chain.optimism.id) as NetworkId,
 			filteredTokens.map((f) => f.address).join()
 		),
 		async () => {

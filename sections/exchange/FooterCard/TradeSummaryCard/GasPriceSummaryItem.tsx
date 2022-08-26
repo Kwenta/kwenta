@@ -1,4 +1,3 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { GasPrices, GAS_SPEEDS } from '@synthetixio/queries';
 import Tippy from '@tippyjs/react';
 import { FC } from 'react';
@@ -33,7 +32,7 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 	const { t } = useTranslation();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { chain: network } = useNetwork();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 	const isMainnet =
 		network !== undefined ? [chain.mainnet.id, chain.goerli.id].includes(network?.id) : false;
 	const {

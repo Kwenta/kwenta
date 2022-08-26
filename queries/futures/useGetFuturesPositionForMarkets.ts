@@ -22,7 +22,7 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const { isConnected } = useAccount();
 	const { chain: network } = useNetwork();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 	const provider = useProvider();
 	const setFuturesPositions = useSetRecoilState(positionsState);
 

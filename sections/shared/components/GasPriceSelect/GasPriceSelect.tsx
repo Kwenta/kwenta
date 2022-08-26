@@ -1,11 +1,9 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { GasPrices } from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
 import { FC } from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { useNetwork, chain } from 'wagmi';
 
 import { NO_VALUE } from 'constants/placeholder';
 import { parseGasPriceObject } from 'hooks/useGas';
@@ -14,6 +12,7 @@ import { customGasPriceState, gasSpeedState } from 'store/wallet';
 import { formatCurrency, formatNumber } from 'utils/formatters/number';
 
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
+import useIsL1 from 'hooks/useIsL1';
 
 type GasPriceSelectProps = {
 	gasPrices: GasPrices | undefined;
@@ -25,10 +24,8 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 	const { t } = useTranslation();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const customGasPrice = useRecoilValue(customGasPriceState);
-	const { chain: network } = useNetwork();
-	const isL2 = useIsL2(network?.id as NetworkId);
-	const isMainnet =
-		network !== undefined ? [chain.mainnet.id, chain.goerli.id].includes(network?.id) : false;
+	const isL2 = useIsL2();
+	const isMainnet = useIsL1();
 
 	const formattedTransactionFee = useMemo(() => {
 		return transactionFee

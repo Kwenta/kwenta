@@ -31,7 +31,7 @@ const useGetFuturesPotentialTradeDetails = (
 	const { selectedFuturesAddress, selectedAccountType } = useRecoilValue(futuresAccountState);
 
 	const { chain: network } = useNetwork();
-	const isL2 = useIsL2(network?.id as NetworkId);
+	const isL2 = useIsL2();
 	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 
 	const tradeSize = useRecoilValue(tradeSizeState);
