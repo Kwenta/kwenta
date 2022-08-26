@@ -45,7 +45,7 @@ const MarketInfo: FC = () => {
 };
 
 const Container = styled.div`
-	padding-bottom: 48px;
+	padding-bottom: 20px;
 `;
 
 export default MarketInfo;
