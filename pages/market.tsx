@@ -74,7 +74,7 @@ Market.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 export default Market;
 
 const StyledMainContent = styled(MainContent)`
-	margin-bottom: 0px;
+	margin: unset;
 	max-width: unset;
 `;
 
