@@ -20,7 +20,6 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetWalletTrades from 'queries/synths/useGetWalletTrades';
 import { walletAddressState } from 'store/wallet';
 import { ExternalLink } from 'styles/common';
-import { isFiatCurrency } from 'utils/currencies';
 
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
 
