@@ -174,17 +174,10 @@ const SpotHistoryTable: FC = () => {
 									price={cellProps.row.original.toAmountInUSD}
 									sign={selectedPriceCurrency.sign}
 									conversionRate={selectPriceCurrencyRate}
-									formatOptions={
-										isFiatCurrency(currencyKey)
-											? {
-													currencyKey: undefined,
-													sign: selectedPriceCurrency.sign,
-											  }
-											: {
-													currencyKey: selectedPriceCurrency.sign,
-													sign: undefined,
-											  }
-									}
+									formatOptions={{
+										currencyKey: undefined,
+										sign: selectedPriceCurrency.sign,
+									}}
 								/>
 							);
 						},
