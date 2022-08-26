@@ -3,7 +3,6 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { components } from 'react-select';
 import styled from 'styled-components';
-import { useNetwork } from 'wagmi';
 
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import LinkIcon from 'assets/svg/app/link-blue.svg';
@@ -14,6 +13,7 @@ import Button from 'components/Button';
 import Select from 'components/Select';
 import { IndicatorSeparator } from 'components/Select/Select';
 import { EXTERNAL_LINKS } from 'constants/links';
+import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import { ExternalLink, FlexDivRowCentered } from 'styles/common';
 
@@ -28,7 +28,7 @@ type ReactSelectOptionProps = {
 type NetworksSwitcherProps = {};
 
 const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
-	const { chain: activeChain } = useNetwork();
+	const { network: activeChain } = Connector.useContainer();
 	const { openChainModal } = useChainModal();
 	const { t } = useTranslation();
 	const isL2 = useIsL2();

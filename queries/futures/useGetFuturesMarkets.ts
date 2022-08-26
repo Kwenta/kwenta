@@ -2,7 +2,7 @@ import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilState } from 'recoil';
-import { chain, useAccount, useNetwork } from 'wagmi';
+import { chain, useAccount } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
@@ -17,8 +17,8 @@ import { FuturesMarket } from './types';
 import { getReasonFromCode } from './utils';
 
 const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
-	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
-	const { chain: activeChain } = useNetwork();
+	const { network: activeChain, defaultSynthetixjs: synthetixjs } = Connector.useContainer();
+
 	const homepage = window.location.pathname === ROUTES.Home.Root;
 	const isL2 = useIsL2();
 	const network = homepage || isL2 ? chain.optimism : activeChain;

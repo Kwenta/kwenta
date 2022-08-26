@@ -1,10 +1,4 @@
-import {
-	darkTheme,
-	lightTheme,
-	RainbowKitProvider,
-	wallet,
-	connectorsForWallets,
-} from '@rainbow-me/rainbowkit';
+import { darkTheme, lightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
 import WithAppContainers from 'containers';
@@ -17,22 +11,10 @@ import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 import { ThemeProvider } from 'styled-components';
-import {
-	chain,
-	configureChains,
-	createClient,
-	useNetwork,
-	useProvider,
-	useSigner,
-	WagmiConfig,
-} from 'wagmi';
-import { infuraProvider } from 'wagmi/providers/infura';
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
-import { publicProvider } from 'wagmi/providers/public';
+import { chain, WagmiConfig } from 'wagmi';
 
-import Safe from 'components/Rainbowkit/Gnosis';
-import { BLAST_NETWORK_LOOKUP } from 'constants/network';
 import Connector from 'containers/Connector';
+import { initRainbowkit } from 'containers/Connector/Config';
 import Layout from 'sections/shared/Layout';
 import SystemStatus from 'sections/shared/SystemStatus';
 import { currentThemeState } from 'store/ui';
@@ -55,64 +37,17 @@ type AppPropsWithLayout = AppProps & {
 	Component: NextPageWithLayout;
 };
 
-const { chains, provider } = configureChains(
-	[chain.mainnet, chain.optimism, chain.goerli, chain.optimismGoerli],
-	[
-		jsonRpcProvider({
-			rpc: (chain) => ({
-				http: `https://${BLAST_NETWORK_LOOKUP[chain.id]}.blastapi.io/${
-					process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID
-				}`,
-			}),
-			stallTimeout: 5000,
-			priority: 0,
-		}),
-		infuraProvider({
-			apiKey: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-			stallTimeout: 5000,
-			priority: 1,
-		}),
-		publicProvider({ stallTimeout: 5000, priority: 5 }),
-	]
-);
-
-const connectors = connectorsForWallets([
-	{
-		groupName: 'Popular',
-		wallets: [
-			wallet.metaMask({ chains }),
-			wallet.rainbow({ chains }),
-			wallet.coinbase({ appName: 'Kwenta', chains }),
-			wallet.walletConnect({ chains }),
-		],
-	},
-	{
-		groupName: 'More',
-		wallets: [
-			Safe({ chains }),
-			wallet.ledger({ chains }),
-			wallet.brave({ chains, shimDisconnect: true }),
-			wallet.trust({ chains }),
-		],
-	},
-]);
-
-const wagmiClient = createClient({
-	autoConnect: false,
-	connectors,
-	provider,
-});
+const { chains, wagmiClient } = initRainbowkit();
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {
-	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
-	const { chain: activeChain } = useNetwork();
-	const network =
-		activeChain !== undefined && activeChain.unsupported
-			? chain.optimism
-			: activeChain ?? chain.optimism;
-	const provider = useProvider({ chainId: network.id });
-	const L2Provider = useProvider({ chainId: chain.optimism.id });
-	const { data: signer } = useSigner();
+	const {
+		signer,
+		provider,
+		L2Provider,
+		network,
+		defaultSynthetixjs: synthetixjs,
+	} = Connector.useContainer();
+
 	const getLayout = Component.getLayout || ((page) => page);
 
 	const isReady = useMemo(() => typeof window !== 'undefined', []);

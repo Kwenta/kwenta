@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import { keyBy } from 'lodash';
 import { useMemo } from 'react';
 import { createContainer } from 'unstated-next';
-import { chain, useNetwork, useProvider } from 'wagmi';
+import { chain, useNetwork, useProvider, useSigner } from 'wagmi';
 
 const useConnector = () => {
 	const { chain: activeChain } = useNetwork();
@@ -13,7 +13,8 @@ const useConnector = () => {
 			: activeChain ?? chain.optimism;
 
 	const provider = useProvider({ chainId: network.id });
-
+	const L2Provider = useProvider({ chainId: chain.optimism.id });
+	const { data: signer } = useSigner();
 	// Provides a default mainnet provider, irrespective of the current network
 	const staticMainnetProvider = new ethers.providers.InfuraProvider();
 
@@ -30,6 +31,8 @@ const useConnector = () => {
 
 	return {
 		provider,
+		L2Provider,
+		signer,
 		network,
 		synthsMap,
 		tokensMap,

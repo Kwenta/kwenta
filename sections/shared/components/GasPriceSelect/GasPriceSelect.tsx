@@ -7,12 +7,12 @@ import { useRecoilValue } from 'recoil';
 
 import { NO_VALUE } from 'constants/placeholder';
 import { parseGasPriceObject } from 'hooks/useGas';
+import useIsL1 from 'hooks/useIsL1';
 import useIsL2 from 'hooks/useIsL2';
 import { customGasPriceState, gasSpeedState } from 'store/wallet';
 import { formatCurrency, formatNumber } from 'utils/formatters/number';
 
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
-import useIsL1 from 'hooks/useIsL1';
 
 type GasPriceSelectProps = {
 	gasPrices: GasPrices | undefined;

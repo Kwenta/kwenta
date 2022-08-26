@@ -4,7 +4,7 @@ import { wei } from '@synthetixio/wei';
 import { BigNumberish, ethers } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useSetRecoilState } from 'recoil';
-import { chain, useNetwork } from 'wagmi';
+import { chain } from 'wagmi';
 
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
@@ -23,8 +23,7 @@ const additionalCurrencies = [CRYPTO_CURRENCY_MAP.SNX, 'XAU', 'XAG', 'DYDX', 'AP
 );
 
 const useExchangeRatesQuery = (options?: UseQueryOptions<Rates>) => {
-	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
-	const { chain: activeChain } = useNetwork();
+	const { network: activeChain, defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const isL2 = useIsL2();
 	const homepage = window.location.pathname === ROUTES.Home.Root;
 	const network = homepage || isL2 ? chain.optimism : activeChain;
