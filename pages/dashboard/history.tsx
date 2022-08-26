@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import DashboardLayout from 'sections/dashboard/DashboardLayout';
 import History from 'sections/dashboard/History';
+import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 
 type HistoryPageProps = React.FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
@@ -15,6 +16,7 @@ const HistoryPage: HistoryPageProps = () => {
 				<title>{t('dashboard-history.page-title')}</title>
 			</Head>
 			<History />
+			<GitHashID />
 		</>
 	);
 };
