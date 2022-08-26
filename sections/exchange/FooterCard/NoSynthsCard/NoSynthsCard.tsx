@@ -1,11 +1,13 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import Link from 'next/link';
 import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { chain, useNetwork } from 'wagmi';
+import { useNetwork } from 'wagmi';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
+import useIsL2 from 'hooks/useIsL2';
 import { NoTextTransform, ExternalLink } from 'styles/common';
 
 import { MessageContainer, Message, MessageButton, FixedMessageContainerSpacer } from '../common';
@@ -16,11 +18,8 @@ type NoSynthsCardProps = {
 
 const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 	const { t } = useTranslation();
-	const { chain: activeChain } = useNetwork();
-	const isL2 =
-		activeChain !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
-			: true;
+	const { chain: network } = useNetwork();
+	const isL2 = useIsL2(network?.id as NetworkId);
 
 	return (
 		<>

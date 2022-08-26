@@ -2,10 +2,11 @@ import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import { chain, useNetwork } from 'wagmi';
+import { useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
 import { futuresAccountState } from 'store/futures';
 import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
@@ -20,10 +21,7 @@ const useGetFuturesMarginTransfers = (
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 
 	const { chain: network } = useNetwork();
-	const isL2 =
-		network !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: true;
+	const isL2 = useIsL2(network?.id as NetworkId);
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 

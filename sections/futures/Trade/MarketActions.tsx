@@ -1,11 +1,13 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { useNetwork, chain } from 'wagmi';
+import { useNetwork } from 'wagmi';
 
 import Button from 'components/Button';
+import useIsL2 from 'hooks/useIsL2';
 import { futuresAccountState, marketInfoState, positionState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 
@@ -18,10 +20,7 @@ const MarketActions: React.FC = () => {
 	const position = useRecoilValue(positionState);
 	const marketInfo = useRecoilValue(marketInfoState);
 	const { chain: network } = useNetwork();
-	const isL2 =
-		network !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: true;
+	const isL2 = useIsL2(network?.id as NetworkId);
 	const [openModal, setOpenModal] = React.useState<'deposit' | 'withdraw' | null>(null);
 
 	const { useSynthsBalancesQuery } = useSynthetixQueries();

@@ -1,3 +1,4 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { GasPrices, GAS_SPEEDS } from '@synthetixio/queries';
 import Tippy from '@tippyjs/react';
 import { FC } from 'react';
@@ -11,6 +12,7 @@ import NumericInput from 'components/Input/NumericInput';
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE, ESTIMATE_VALUE } from 'constants/placeholder';
 import useGas, { parseGasPriceObject } from 'hooks/useGas';
+import useIsL2 from 'hooks/useIsL2';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { NumericValue } from 'styles/common';
 import { formatCurrency, formatNumber } from 'utils/formatters/number';
@@ -31,10 +33,7 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 	const { t } = useTranslation();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { chain: network } = useNetwork();
-	const isL2 =
-		network !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: true;
+	const isL2 = useIsL2(network?.id as NetworkId);
 	const isMainnet =
 		network !== undefined ? [chain.mainnet.id, chain.goerli.id].includes(network?.id) : false;
 	const {

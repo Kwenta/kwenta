@@ -1,9 +1,10 @@
 import { useChainModal } from '@rainbow-me/rainbowkit';
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { components } from 'react-select';
 import styled from 'styled-components';
-import { chain, useNetwork } from 'wagmi';
+import { useNetwork } from 'wagmi';
 
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import LinkIcon from 'assets/svg/app/link-blue.svg';
@@ -14,6 +15,7 @@ import Button from 'components/Button';
 import Select from 'components/Select';
 import { IndicatorSeparator } from 'components/Select/Select';
 import { EXTERNAL_LINKS } from 'constants/links';
+import useIsL2 from 'hooks/useIsL2';
 import { ExternalLink, FlexDivRowCentered } from 'styles/common';
 
 type ReactSelectOptionProps = {
@@ -30,10 +32,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 	const { chain: activeChain } = useNetwork();
 	const { openChainModal } = useChainModal();
 	const { t } = useTranslation();
-	const isL2 =
-		activeChain !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
-			: true;
+	const isL2 = useIsL2(activeChain?.id as NetworkId);
 	const network = activeChain?.id === 69 ? 'testnet' : 'mainnet';
 	const networkLabel = 'header.networks-switcher.optimism-' + network;
 

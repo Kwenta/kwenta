@@ -1,3 +1,4 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
@@ -5,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { chain, useNetwork } from 'wagmi';
+import { useNetwork } from 'wagmi';
 
 import MarketBadge from 'components/Badge/MarketBadge';
 import ChangePercent from 'components/ChangePercent';
@@ -17,6 +18,7 @@ import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { PositionHistory } from 'queries/futures/types';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
@@ -47,10 +49,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	const { switchToL2 } = useNetworkSwitcher();
 
 	const { chain: network } = useNetwork();
-	const isL2 =
-		network !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: true;
+	const isL2 = useIsL2(network?.id as NetworkId);
 
 	useGetFuturesMarkets();
 	useGetFuturesPositionForMarkets();

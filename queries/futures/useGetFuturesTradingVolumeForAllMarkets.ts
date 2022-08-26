@@ -4,6 +4,7 @@ import { chain, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
+import useIsL2 from 'hooks/useIsL2';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import logError from 'utils/logError';
 
@@ -17,12 +18,8 @@ const useGetFuturesTradingVolumeForAllMarkets = (
 ) => {
 	const homepage = window.location.pathname === ROUTES.Home.Root;
 	const { chain: activeChain } = useNetwork();
-	const isL2 =
-		activeChain !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
-			: true;
+	const isL2 = useIsL2(activeChain?.id as NetworkId);
 	const network = homepage || isL2 ? chain.optimism : activeChain;
-
 	const futuresEndpoint = homepage
 		? FUTURES_ENDPOINT_MAINNET
 		: getFuturesEndpoint(network?.id as NetworkId);

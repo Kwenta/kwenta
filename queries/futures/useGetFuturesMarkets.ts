@@ -7,6 +7,7 @@ import { chain, useAccount, useNetwork, useProvider } from 'wagmi';
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
+import useIsL2 from 'hooks/useIsL2';
 import { futuresMarketsState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
@@ -17,10 +18,7 @@ import { getReasonFromCode } from './utils';
 const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 	const { chain: activeChain } = useNetwork();
 	const homepage = window.location.pathname === ROUTES.Home.Root;
-	const isL2 =
-		activeChain !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
-			: true;
+	const isL2 = useIsL2(activeChain?.id as NetworkId);
 	const network = homepage || isL2 ? chain.optimism : activeChain;
 	const provider = useProvider({ chainId: network?.id });
 	const synthetixjs = synthetix({

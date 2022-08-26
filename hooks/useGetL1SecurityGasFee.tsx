@@ -1,10 +1,13 @@
 import { getContractFactory, predeploys } from '@eth-optimism/contracts';
+import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
 import { BytesLike, ethers } from 'ethers';
 import { omit } from 'lodash';
-import { chain, useNetwork, useSigner } from 'wagmi';
+import { useNetwork, useSigner } from 'wagmi';
 
 import { weiFromWei, zeroBN } from 'utils/formatters/number';
+
+import useIsL2 from './useIsL2';
 
 type MetaTx = {
 	data?: BytesLike | undefined;
@@ -25,10 +28,7 @@ const contractAbi = JSON.parse(
 export const useGetL1SecurityFee = () => {
 	const { data: signer } = useSigner();
 	const { chain: network } = useNetwork();
-	const isL2 =
-		network !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: true;
+	const isL2 = useIsL2(network?.id as NetworkId);
 
 	return async (metaTx: MetaTx): Promise<Wei> => {
 		if (!isL2) return zeroBN;

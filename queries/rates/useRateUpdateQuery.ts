@@ -1,9 +1,10 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { chain, useNetwork } from 'wagmi';
+import { useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
+import useIsL2 from 'hooks/useIsL2';
 import logError from 'utils/logError';
 
 import { getRatesEndpoint } from './utils';
@@ -17,10 +18,7 @@ const useRateUpdateQuery = (
 	options?: UseQueryOptions<any | null>
 ) => {
 	const { chain: network } = useNetwork();
-	const isL2 =
-		network !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: true;
+	const isL2 = useIsL2(network?.id as NetworkId);
 	const ratesEndpoint = getRatesEndpoint(network?.id as NetworkId);
 
 	return useQuery<any | null>(

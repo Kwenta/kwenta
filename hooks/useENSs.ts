@@ -7,6 +7,7 @@ import { ENS_REVERSE_LOOKUP } from 'constants/address';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import reverseRecordsAbi from 'lib/abis/ReverseRecords.json';
+
 import useIsL2 from './useIsL2';
 
 const ADDRESSES_PER_LOOKUP = 1500;

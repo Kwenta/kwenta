@@ -1,9 +1,10 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useNetwork, chain } from 'wagmi';
+import { useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
+import useIsL2 from 'hooks/useIsL2';
 import logError from 'utils/logError';
 
 import { FUTURES_POSITION_FRAGMENT } from './constants';
@@ -16,10 +17,7 @@ const useGetFuturesAccountPositionHistory = (
 ) => {
 	const { chain: network } = useNetwork();
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
-	const isL2 =
-		network !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: true;
+	const isL2 = useIsL2(network?.id as NetworkId);
 	return useQuery<PositionHistory[] | null>(
 		QUERY_KEYS.Futures.AllPositionHistory(network?.id as NetworkId, account || ''),
 		async () => {

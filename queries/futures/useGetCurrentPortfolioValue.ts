@@ -6,6 +6,7 @@ import { useRecoilValue } from 'recoil';
 import { chain, useAccount, useNetwork, useProvider } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
+import useIsL2 from 'hooks/useIsL2';
 import { futuresAccountState, marketKeysState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 import { MarketAssetByKey } from 'utils/futures';
@@ -17,10 +18,7 @@ import { mapFuturesPosition } from './utils';
 const useGetCurrentPortfolioValue = (options?: UseQueryOptions<any | null>) => {
 	const { chain: activeChain } = useNetwork();
 	const provider = useProvider();
-	const isL2 =
-		activeChain !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
-			: true;
+	const isL2 = useIsL2(activeChain?.id as NetworkId);
 	const { address } = useAccount();
 	const walletAddress = address || null;
 	const futuresAccount = useRecoilValue(futuresAccountState);

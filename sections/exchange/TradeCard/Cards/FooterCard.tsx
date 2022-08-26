@@ -1,11 +1,13 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { chain, useAccount, useNetwork } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
 
 import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 import Button from 'components/Button';
 import { useExchangeContext } from 'contexts/ExchangeContext';
+import useIsL2 from 'hooks/useIsL2';
 import useMarketClosed from 'hooks/useMarketClosed';
 import RedeemTxModal from 'sections/dashboard/Deprecated/RedeemTxModal';
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
@@ -33,11 +35,8 @@ const FooterCard: React.FC = () => {
 	const quoteCurrencyAmount = useRecoilValue(quoteCurrencyAmountState);
 	const baseCurrencyAmount = useRecoilValue(baseCurrencyAmountState);
 	const { isConnected: isWalletConnected } = useAccount();
-	const { chain: activeChain } = useNetwork();
-	const isL2 =
-		activeChain !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
-			: true;
+	const { chain: network } = useNetwork();
+	const isL2 = useIsL2(network?.id as NetworkId);
 	const txError = useRecoilValue(txErrorState);
 
 	const quoteCurrencyMarketClosed = useMarketClosed(quoteCurrencyKey);

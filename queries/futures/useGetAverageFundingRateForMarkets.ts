@@ -3,9 +3,10 @@ import Wei, { wei } from '@synthetixio/wei';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { chain, useNetwork } from 'wagmi';
+import { useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
+import useIsL2 from 'hooks/useIsL2';
 import { fundingRatesState, futuresMarketsState } from 'store/futures';
 import { FuturesMarketKey, MarketKeyByAsset } from 'utils/futures';
 import logError from 'utils/logError';
@@ -30,10 +31,7 @@ const useGetAverageFundingRateForMarkets = (
 	options?: UseQueryOptions<any | null>
 ) => {
 	const { chain: network } = useNetwork();
-	const isL2 =
-		network !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: true;
+	const isL2 = useIsL2(network?.id as NetworkId);
 
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);

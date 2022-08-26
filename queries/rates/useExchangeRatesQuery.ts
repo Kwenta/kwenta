@@ -7,6 +7,7 @@ import { useSetRecoilState } from 'recoil';
 import { chain, useNetwork, useProvider } from 'wagmi';
 
 import ROUTES from 'constants/routes';
+import useIsL2 from 'hooks/useIsL2';
 import { ratesState } from 'store/futures';
 import { FuturesMarketKey, MarketAssetByKey } from 'utils/futures';
 
@@ -22,11 +23,8 @@ const additionalCurrencies = [CRYPTO_CURRENCY_MAP.SNX, 'XAU', 'XAG', 'DYDX', 'AP
 
 const useExchangeRatesQuery = (options?: UseQueryOptions<Rates>) => {
 	const { chain: activeChain } = useNetwork();
+	const isL2 = useIsL2(activeChain?.id as NetworkId);
 	const homepage = window.location.pathname === ROUTES.Home.Root;
-	const isL2 =
-		activeChain !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
-			: true;
 	const network = homepage || isL2 ? chain.optimism : activeChain;
 	const provider = useProvider({ chainId: network?.id });
 	const synthetixjs = synthetix({

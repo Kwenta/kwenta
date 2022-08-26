@@ -1,3 +1,4 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { GasPrices } from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
 import { FC } from 'react';
@@ -8,6 +9,7 @@ import { useNetwork, chain } from 'wagmi';
 
 import { NO_VALUE } from 'constants/placeholder';
 import { parseGasPriceObject } from 'hooks/useGas';
+import useIsL2 from 'hooks/useIsL2';
 import { customGasPriceState, gasSpeedState } from 'store/wallet';
 import { formatCurrency, formatNumber } from 'utils/formatters/number';
 
@@ -24,10 +26,7 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const customGasPrice = useRecoilValue(customGasPriceState);
 	const { chain: network } = useNetwork();
-	const isL2 =
-		network !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: true;
+	const isL2 = useIsL2(network?.id as NetworkId);
 	const isMainnet =
 		network !== undefined ? [chain.mainnet.id, chain.goerli.id].includes(network?.id) : false;
 

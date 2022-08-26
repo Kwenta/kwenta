@@ -4,8 +4,9 @@ import EthDater from 'ethereum-block-by-date';
 import request, { gql } from 'graphql-request';
 import moment from 'moment';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { chain, useAccount, useNetwork, useProvider } from 'wagmi';
+import { useAccount, useNetwork, useProvider } from 'wagmi';
 
+import useIsL2 from 'hooks/useIsL2';
 import logError from 'utils/logError';
 
 import { getFuturesEndpoint } from './utils';
@@ -21,10 +22,7 @@ type PortfolioData = {
 
 const usePortfolioData = (options?: UseQueryOptions<PortfolioData | null>) => {
 	const { chain: network } = useNetwork();
-	const isL2 =
-		network !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: true;
+	const isL2 = useIsL2(network?.id as NetworkId);
 	const { address } = useAccount();
 	const walletAddress = address || null;
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);

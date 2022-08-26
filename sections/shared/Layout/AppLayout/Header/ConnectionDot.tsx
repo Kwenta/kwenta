@@ -1,7 +1,9 @@
 import { NetworkId, NetworkIdByName } from '@synthetixio/contracts-interface';
 import React from 'react';
 import styled, { useTheme } from 'styled-components';
-import { useAccount, useNetwork, chain } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
+
+import useIsL2 from 'hooks/useIsL2';
 
 type ConnectionDotProps = {
 	className?: string;
@@ -9,10 +11,7 @@ type ConnectionDotProps = {
 
 const ConnectionDot: React.FC<ConnectionDotProps> = (props) => {
 	const { chain: network } = useNetwork();
-	const isL2 =
-		network !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: true;
+	const isL2 = useIsL2(network?.id as NetworkId);
 	const { isConnected: isWalletConnected } = useAccount();
 
 	const theme = useTheme();

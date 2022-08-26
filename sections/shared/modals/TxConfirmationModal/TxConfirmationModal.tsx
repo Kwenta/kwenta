@@ -1,10 +1,10 @@
-import { CurrencyKey } from '@synthetixio/contracts-interface';
+import { CurrencyKey, NetworkId } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { FC, ReactNode, useMemo } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
-import { chain, useNetwork, useAccount } from 'wagmi';
+import { useNetwork, useAccount } from 'wagmi';
 
 import InfoIcon from 'assets/svg/app/info.svg';
 import OneInchImage from 'assets/svg/providers/1inch.svg';
@@ -13,6 +13,7 @@ import Currency from 'components/Currency';
 import Error from 'components/Error';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
 import useCurrencyPrice from 'hooks/useCurrencyPrice';
+import useIsL2 from 'hooks/useIsL2';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
 import {
@@ -60,10 +61,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const { chain: network } = useNetwork();
-	const isL2 =
-		network !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: true;
+	const isL2 = useIsL2(network?.id as NetworkId);
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { address } = useAccount();
 	const walletAddress = address || null;

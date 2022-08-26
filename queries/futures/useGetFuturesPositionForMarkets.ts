@@ -2,10 +2,11 @@ import { NetworkId } from '@synthetixio/contracts-interface';
 import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { useAccount, chain, useNetwork } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
 import { futuresMarketsState, futuresAccountState, positionsState } from 'store/futures';
 import { MarketKeyByAsset } from 'utils/futures';
 
@@ -15,11 +16,8 @@ import { mapFuturesPosition, getFuturesMarketContract } from './utils';
 const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPosition[]>) => {
 	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const { isConnected } = useAccount();
-	const { chain: activeChain } = useNetwork();
-	const isL2 =
-		activeChain !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
-			: true;
+	const { chain: network } = useNetwork();
+	const isL2 = useIsL2(network?.id as NetworkId);
 
 	const [, setFuturesPositions] = useRecoilState(positionsState);
 
@@ -31,7 +29,7 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 
 	return useQuery<FuturesPosition[] | []>(
 		QUERY_KEYS.Futures.MarketsPositions(
-			activeChain?.id as NetworkId,
+			network?.id as NetworkId,
 			assets || [],
 			selectedFuturesAddress ?? ''
 		),

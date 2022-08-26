@@ -1,9 +1,10 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { chain, useNetwork } from 'wagmi';
+import { useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
+import useIsL2 from 'hooks/useIsL2';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import logError from 'utils/logError';
 
@@ -14,10 +15,7 @@ import { getFuturesEndpoint, calculateDailyTradeStats } from './utils';
 
 const useGetFuturesDailyTradeStats = (options?: UseQueryOptions<FuturesDailyTradeStats | null>) => {
 	const { chain: network } = useNetwork();
-	const isL2 =
-		network !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: true;
+	const isL2 = useIsL2(network?.id as NetworkId);
 	const homepage = window.location.pathname === ROUTES.Home.Root;
 	const futuresEndpoint = homepage
 		? FUTURES_ENDPOINT_MAINNET

@@ -131,15 +131,15 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 						value={
 							provider && network && synthetixjs
 								? createQueryContext({
-										provider: provider,
+										provider,
 										signer: signer || undefined,
 										networkId: network.id as NetworkId,
-										synthetixjs: synthetixjs,
+										synthetixjs,
 								  })
 								: createQueryContext({
 										provider: L2Provider,
 										networkId: chain.optimism.id as NetworkId,
-										synthetixjs: synthetixjs,
+										synthetixjs,
 								  })
 						}
 					>

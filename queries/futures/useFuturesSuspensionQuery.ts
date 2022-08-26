@@ -1,11 +1,12 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { chain, useAccount, useNetwork } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
+import useIsL2 from 'hooks/useIsL2';
 import { getReasonFromCode } from 'queries/futures/utils';
 
 interface FuturesMarketClosure {
@@ -21,11 +22,7 @@ const useFuturesSuspensionQuery = (
 	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const { chain: network } = useNetwork();
 	const { isConnected: isWalletConnected } = useAccount();
-	const isL2 =
-		network !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: true;
-
+	const isL2 = useIsL2(network?.id as NetworkId);
 	return useQuery<any>(
 		QUERY_KEYS.Futures.MarketClosure(network?.id as NetworkId, marketKey),
 		async () => {

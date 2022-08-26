@@ -1,3 +1,4 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import useSynthetixQueries, { Token } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { BigNumber, ethers } from 'ethers';
@@ -7,7 +8,7 @@ import { useRouter } from 'next/router';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { chain, useAccount, useNetwork } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
 
 import { SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
 import {
@@ -58,6 +59,8 @@ import { truncateNumbers, zeroBN } from 'utils/formatters/number';
 import { hexToAsciiV2 } from 'utils/formatters/string';
 import logError from 'utils/logError';
 import { normalizeGasLimit, getTransactionPrice } from 'utils/network';
+
+import useIsL2 from './useIsL2';
 
 type ExchangeCardProps = {
 	footerCardAttached?: boolean;
@@ -112,11 +115,8 @@ const useExchange = ({
 	const [ratio, setRatio] = useRecoilState(ratioState);
 	const { isConnected: isWalletConnected, address } = useAccount();
 	const walletAddress = address ?? null;
-	const { chain: activeChain } = useNetwork();
-	const isL2 =
-		activeChain !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
-			: true;
+	const { chain: network } = useNetwork();
+	const isL2 = useIsL2(network?.id as NetworkId);
 	const setTxError = useSetRecoilState(txErrorState);
 	const [atomicExchangeSlippage] = useState('0.01');
 	const setOrders = useSetRecoilState(ordersState);
@@ -510,7 +510,7 @@ const useExchange = ({
 			quote: (quoteCurrencyKey && synthsMap[quoteCurrencyKey]?.name) || 'sUSD',
 		});
 		// eslint-disable-next-line
-	}, [activeChain?.id, walletAddress, setCurrencyPair, synthsMap]);
+	}, [network?.id, walletAddress, setCurrencyPair, synthsMap]);
 
 	useEffect(() => {
 		if (

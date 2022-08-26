@@ -1,3 +1,4 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +12,7 @@ import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { NO_VALUE } from 'constants/placeholder';
 import { useExchangeContext } from 'contexts/ExchangeContext';
 import { parseGasPriceObject } from 'hooks/useGas';
+import useIsL2 from 'hooks/useIsL2';
 import { customGasPriceState, gasSpeedState } from 'store/wallet';
 import { formatCurrency, formatNumber, formatPercent, zeroBN } from 'utils/formatters/number';
 
@@ -19,10 +21,7 @@ const SwapInfoBox: React.FC = () => {
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const customGasPrice = useRecoilValue(customGasPriceState);
 	const { chain: network } = useNetwork();
-	const isL2 =
-		network !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(network?.id)
-			: true;
+	const isL2 = useIsL2(network?.id as NetworkId);
 	const isMainnet =
 		network !== undefined ? [chain.mainnet.id, chain.goerli.id].includes(network?.id) : false;
 	const { transactionFee, feeCost, exchangeFeeRate, baseFeeRate } = useExchangeContext();

@@ -1,3 +1,4 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { utils as ethersUtils } from 'ethers';
 import * as _ from 'lodash/fp';
@@ -7,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { chain, useNetwork } from 'wagmi';
+import { useNetwork } from 'wagmi';
 
 import Currency from 'components/Currency';
 import Table, { TableNoResults } from 'components/Table';
@@ -15,6 +16,7 @@ import PositionType from 'components/Text/PositionType';
 import { ETH_UNIT } from 'constants/network';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
+import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { FuturesTrade } from 'queries/futures/types';
@@ -29,11 +31,8 @@ import TimeDisplay from '../../futures/Trades/TimeDisplay';
 const FuturesHistoryTable: FC = () => {
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 	const { t } = useTranslation();
-	const { chain: activeChain } = useNetwork();
-	const isL2 =
-		activeChain !== undefined
-			? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain?.id)
-			: true;
+	const { chain: network } = useNetwork();
+	const isL2 = useIsL2(network?.id as NetworkId);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { switchToL2 } = useNetworkSwitcher();
 	const futuresTradesQuery = useGetAllFuturesTradesForAccount(selectedFuturesAddress);
