@@ -79,7 +79,9 @@
 		"styled-components": "5.1.1",
 		"styled-media-query": "2.1.2",
 		"unstated-next": "1.1.0",
-		"wagmi": "0.6.2"
+		"wagmi": "0.6.2",
+		"@gnosis.pm/safe-apps-provider": "0.13.0",
+		"@gnosis.pm/safe-apps-sdk": "7.7.0"
 	},
 	"devDependencies": {
 		"@microsoft/eslint-formatter-sarif": "2.1.7",
@@ -136,7 +138,8 @@
 		"typechain": "^8.1.0",
 		"typescript": "4.7.2",
 		"url-loader": "4.1.0",
-		"webp-loader": "0.6.0"
+		"webp-loader": "0.6.0",
+		"@wagmi/core": "0.5.4"
 	},
 	"husky": {
 		"hooks": {
