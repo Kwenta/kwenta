@@ -1,25 +1,30 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
+import { Provider, Contract } from 'ethcall';
 import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { useAccount, useNetwork } from 'wagmi';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAccount, useNetwork, useProvider } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
+import FuturesMarketABI from 'lib/abis/FuturesMarket.json';
+import FuturesMarketDataABI from 'lib/abis/FuturesMarketData.json';
 import { futuresMarketsState, futuresAccountState, positionsState } from 'store/futures';
 import { MarketKeyByAsset } from 'utils/futures';
 
-import { FuturesPosition } from './types';
-import { mapFuturesPosition, getFuturesMarketContract } from './utils';
+import { FuturesPosition, PositionDetail } from './types';
+import { mapFuturesPosition } from './utils';
+
+const ethCallProvider = new Provider();
 
 const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPosition[]>) => {
 	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const { isConnected } = useAccount();
 	const { chain: network } = useNetwork();
 	const isL2 = useIsL2(network?.id as NetworkId);
-
-	const [, setFuturesPositions] = useRecoilState(positionsState);
+	const provider = useProvider();
+	const setFuturesPositions = useSetRecoilState(positionsState);
 
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 
@@ -34,31 +39,41 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 			selectedFuturesAddress ?? ''
 		),
 		async () => {
-			if (!assets || (selectedFuturesAddress && !isL2)) {
-				return [];
-			}
+			if (!assets || !provider || (selectedFuturesAddress && !isL2)) return [];
+
+			await ethCallProvider.init(provider);
 
 			const {
 				contracts: { FuturesMarketData },
 			} = synthetixjs!;
 
-			const positionsForMarkets = await Promise.all(
-				assets.map((asset) => {
-					return Promise.all([
-						FuturesMarketData.positionDetailsForMarketKey(
-							ethersUtils.formatBytes32String(MarketKeyByAsset[asset]),
-							selectedFuturesAddress
-						),
-						getFuturesMarketContract(asset, synthetixjs!.contracts).canLiquidate(
-							selectedFuturesAddress
-						),
-					]);
-				})
-			);
+			const FMD = new Contract(FuturesMarketData.address, FuturesMarketDataABI);
 
-			const futuresPositions = positionsForMarkets.map(([position, canLiquidate], i) =>
-				mapFuturesPosition(position, canLiquidate, assets[i])
-			);
+			const positionCalls = [];
+			const liquidationCalls = [];
+
+			for (const { market, asset } of futuresMarkets) {
+				positionCalls.push(
+					FMD.positionDetailsForMarketKey(
+						ethersUtils.formatBytes32String(MarketKeyByAsset[asset]),
+						selectedFuturesAddress
+					)
+				);
+				const marketContract = new Contract(market, FuturesMarketABI);
+				liquidationCalls.push(marketContract.canLiquidate(selectedFuturesAddress));
+			}
+
+			const positions = (await ethCallProvider.all(positionCalls)) as PositionDetail[];
+			const canLiquidateState = (await ethCallProvider.all(liquidationCalls)) as boolean[];
+
+			const futuresPositions = [];
+
+			for (let i = 0; i < futuresMarkets.length; i++) {
+				const position = positions[i];
+				const canLiquidate = canLiquidateState[i];
+
+				futuresPositions.push(mapFuturesPosition(position, canLiquidate, assets[i]));
+			}
 
 			setFuturesPositions(futuresPositions);
 
