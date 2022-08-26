@@ -57,8 +57,8 @@ const Market: MarketComponent = () => {
 						<StyledRightSideContent>
 							<Trade />
 						</StyledRightSideContent>
-						<GitHashID />
 					</StyledFullHeightContainer>
+					<GitHashID />
 				</PageContent>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
@@ -74,7 +74,7 @@ Market.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 export default Market;
 
 const StyledMainContent = styled(MainContent)`
-	margin: unset;
+	margin-bottom: 0px;
 	max-width: unset;
 `;
 
