@@ -18,7 +18,7 @@ const Safe = ({ chains }: SafeOptions): Wallet => ({
 		ios: 'https://apps.apple.com/us/app/gnosis-safe/idid1515759131',
 	},
 	createConnector: () => {
-		const connector = new SafeConnector({ chains }) as any;
+		const connector = new SafeConnector({ chains });
 		return {
 			connector,
 		};

@@ -14,7 +14,7 @@ import { ThemeProvider } from 'styled-components';
 import { chain, WagmiConfig } from 'wagmi';
 
 import Connector from 'containers/Connector';
-import { initRainbowkit } from 'containers/Connector/Config';
+import { initRainbowkit } from 'containers/Connector/config';
 import Layout from 'sections/shared/Layout';
 import SystemStatus from 'sections/shared/SystemStatus';
 import { currentThemeState } from 'store/ui';
