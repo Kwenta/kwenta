@@ -55,10 +55,11 @@ const Nav: FC = () => {
 					const routeBase = asPath.split('/')[1];
 					const linkBase = link.split('/')[1];
 					const isActive = routeBase === linkBase;
+					const url = getLink(link);
 					if (!links) {
 						return (
-							<div key={getLink(link)}>
-								<Link href={getLink(link)}>
+							<div key={url}>
+								<Link href={url}>
 									<MenuInside isActive={isActive}>{t(i18nLabel)}</MenuInside>
 								</Link>
 							</div>
@@ -71,6 +72,7 @@ const Nav: FC = () => {
 
 					return (
 						<DropDownSelect
+							key={url}
 							variant="transparent"
 							formatOptionLabel={formatOptionLabel}
 							controlHeight={34}

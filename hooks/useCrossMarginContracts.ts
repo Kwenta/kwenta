@@ -33,14 +33,14 @@ export default function useCrossMarginContracts(): {
 		if (!signer || !address) return null;
 
 		return CrossMarginAccountFactory__factory.connect(address, signer);
-	}, [network, signer]);
+	}, [network.id, signer]);
 
 	const crossMarginBaseSettings = useMemo(() => {
 		const address = CROSS_MARGIN_BASE_SETTINGS[network.id];
 		if (!signer || !address) return null;
 
 		return CrossMarginBaseSettings__factory.connect(address, signer);
-	}, [network, signer]);
+	}, [network.id, signer]);
 
 	return { crossMarginAccountContract, crossMarginContractFactory, crossMarginBaseSettings };
 }

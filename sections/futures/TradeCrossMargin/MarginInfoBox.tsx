@@ -23,7 +23,6 @@ import { computeNPFee } from 'utils/costCalculations';
 import { formatDollars, formatNumber, formatPercent, zeroBN } from 'utils/formatters/number';
 
 import { PositionSide } from '../types';
-import DepositWithdrawCrossMargin from './DepositWithdrawCrossMargin';
 import EditLeverageModal from './EditLeverageModal';
 
 const MarginInfoBox: React.FC = () => {
@@ -141,9 +140,9 @@ const MarginInfoBox: React.FC = () => {
 						value: (
 							<Row>
 								{formatDollars(crossMarginFreeMargin)}
-								<HoverDiv>
+								<Button>
 									<DepositWithdrawButton onClick={() => setOpenModal('deposit')} />
-								</HoverDiv>
+								</Button>
 							</Row>
 						),
 					},
@@ -186,9 +185,7 @@ const MarginInfoBox: React.FC = () => {
 				}}
 				disabled={marketInfo?.isSuspended}
 			/>
-			{openModal === 'deposit' && (
-				<DepositWithdrawCrossMargin onDismiss={() => setOpenModal(null)} />
-			)}
+
 			{openModal === 'leverage' && <EditLeverageModal onDismiss={() => setOpenModal(null)} />}
 		</>
 	);
@@ -206,11 +203,11 @@ const StyledInfoBox = styled(InfoBox)`
 	}
 `;
 
-const Row = styled.div`
+const Row = styled.span`
 	display: flex;
 `;
 
-const HoverDiv = styled.div`
+const Button = styled.span`
 	transition: all 0.1s ease-in-out;
 	&:hover {
 		opacity: 0.7;
@@ -222,7 +219,7 @@ const DepositWithdrawButton = styled(DepositWithdrawIcon)`
 	cursor: pointer;
 `;
 
-const EditButton = styled(HoverDiv)`
+const EditButton = styled(Button)`
 	margin-left: 8px;
 	cursor: pointer;
 	color: ${(props) => props.theme.colors.selectedTheme.yellow};

@@ -31,7 +31,11 @@ export default function useQueryCrossMarginAccount() {
 	}, [walletAddress, crossMarginContractFactory]);
 
 	return useQuery<any | null>(
-		QUERY_KEYS.Futures.CrossMarginAccount(network.id, walletAddress || '', selectedAccountType),
+		QUERY_KEYS.Futures.CrossMarginAccount(
+			crossMarginContractFactory?.address || '',
+			walletAddress || '',
+			selectedAccountType
+		),
 		async () => {
 			if (!supportedNetworks.includes(network.id)) {
 				const accountState = {
