@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -35,8 +36,12 @@ const SkewInfo: React.FC = () => {
 					longValue: marketInfo?.openInterest?.longUSD,
 					shortText: formatCurrency(currentMarket, marketInfo?.openInterest?.shortUSD, {
 						sign: '$',
+						minDecimals: 0,
 					}),
-					longText: formatCurrency(currentMarket, marketInfo?.openInterest?.longUSD, { sign: '$' }),
+					longText: formatCurrency(currentMarket, marketInfo?.openInterest?.longUSD, {
+						sign: '$',
+						minDecimals: 0,
+					}),
 			  }
 			: DEFAULT_DATA;
 	}, [marketInfo, currentMarket]);
@@ -44,7 +49,17 @@ const SkewInfo: React.FC = () => {
 	return (
 		<SkewContainer>
 			<SkewHeader>
-				<SkewValue>{formatPercent(data.short, { minDecimals: 0 })}</SkewValue>
+				<SkewTooltip
+					isNumber={true}
+					preset="bottom-right"
+					width={'310px'}
+					height={'auto'}
+					content={data.shortText ?? 0}
+				>
+					<WithCursor cursor="help">
+						<SkewValue>{formatPercent(data.short, { minDecimals: 0 })}</SkewValue>
+					</WithCursor>
+				</SkewTooltip>
 				<SkewTooltip
 					preset="bottom"
 					width={'310px'}
@@ -55,13 +70,19 @@ const SkewInfo: React.FC = () => {
 						<SkewLabel>{t('futures.market.history.skew-label')}</SkewLabel>
 					</WithCursor>
 				</SkewTooltip>
-				<SkewValue>{formatPercent(data.long, { minDecimals: 0 })}</SkewValue>
+				<SkewTooltip
+					isNumber={true}
+					preset="bottom-rigth"
+					width={'310px'}
+					height={'auto'}
+					content={data.longText ?? 0}
+				>
+					<WithCursor cursor="help">
+						<SkewValue>{formatPercent(data.long, { minDecimals: 0 })}</SkewValue>
+					</WithCursor>
+				</SkewTooltip>
 			</SkewHeader>
 			<OpenInterestBar skew={data} />
-			<OpenInterestRow>
-				<p className="red">{data.shortText}</p>
-				<p className="green">{data.longText}</p>
-			</OpenInterestRow>
 		</SkewContainer>
 	);
 };
@@ -72,42 +93,29 @@ const WithCursor = styled.div<{ cursor: 'help' }>`
 	cursor: ${(props) => props.cursor};
 `;
 
-const OpenInterestRow = styled.div`
-	display: flex;
-	width: 100%;
-	justify-content: space-between;
-	line-height: 16px;
-	padding-bottom: 10px;
-	padding-top: 10px;
-	font-size: 13px;
-	font-family: ${(props) => props.theme.fonts.mono};
-
-	:last-child {
-		padding-bottom: 0;
-	}
-	.green {
-		color: ${(props) => props.theme.colors.selectedTheme.green};
-	}
-
-	.red {
-		color: ${(props) => props.theme.colors.selectedTheme.red};
-	}
-`;
-
-const SkewTooltip = styled(StyledTooltip)`
+const SkewTooltip = styled(StyledTooltip)<{ isNumber?: boolean }>`
 	left: -30px;
 	z-index: 2;
 	padding: 10px;
+	color: red;
+
+	p,
+	span {
+		font-size: 13px;
+		font-family: ${(props) =>
+			props.isNumber ? props.theme.fonts.mono : props.theme.fonts.regular};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	}
 `;
 
 const SkewContainer = styled.div`
+	height: 55px;
 	display: flex;
 	flex-direction: column;
 	column-gap: 5px;
 	align-items: center;
 
 	width: 100%;
-	height: auto;
 	padding: 10px;
 	margin-bottom: 16px;
 	box-sizing: border-box;
