@@ -15,8 +15,6 @@ function normalizeChainId(chainId: string | number) {
 
 const __IS_SERVER__ = typeof window === 'undefined';
 const __IS_IFRAME__ = !__IS_SERVER__ && window?.parent !== window;
-// eslint-disable-next-line no-console
-console.log(`__IS_SERVER__`, __IS_SERVER__, `__IS_IFRAME__`, __IS_IFRAME__);
 class SafeConnector extends Connector<SafeAppProvider, SafeOpts | undefined> {
 	readonly id = 'safe';
 	readonly name = 'Safe';
@@ -99,6 +97,8 @@ class SafeConnector extends Connector<SafeAppProvider, SafeOpts | undefined> {
 			this.#getSafeInfo(),
 			new Promise<void>((resolve) => setTimeout(resolve, 300)),
 		]);
+		// eslint-disable-next-line no-console
+		console.log(`#isSafeApp`, safe);
 		return !!safe;
 	}
 
