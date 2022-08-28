@@ -1,6 +1,6 @@
 import { wei } from '@synthetixio/wei';
-import { DEBT_RATIO_UNIT } from 'constants/network';
 
+import { DEBT_RATIO_UNIT } from 'constants/network';
 import { CandleResult } from 'queries/futures/subgraph';
 import { SYNTHS_ENDPOINT_MAIN } from 'queries/synths/constants';
 import { FuturesMarketKey } from 'utils/futures';
@@ -87,8 +87,8 @@ export const mapCandles = (candles: CandleResult[]): Candle[] => {
 			synth: synth,
 			open: synth === 'DebtRatio' ? open.div(DEBT_RATIO_UNIT).toNumber() : open.toNumber(),
 			high: synth === 'DebtRatio' ? high.div(DEBT_RATIO_UNIT).toNumber() : high.toNumber(),
-			low: synth === 'DebtRatio' ? low.div(DEBT_RATIO_UNIT).toNumber() : high.toNumber(),
-			close: synth === 'DebtRatio' ? close.div(DEBT_RATIO_UNIT).toNumber() : high.toNumber(),
+			low: synth === 'DebtRatio' ? low.div(DEBT_RATIO_UNIT).toNumber() : low.toNumber(),
+			close: synth === 'DebtRatio' ? close.div(DEBT_RATIO_UNIT).toNumber() : close.toNumber(),
 			timestamp: timestamp.toNumber(),
 		};
 	});
@@ -101,8 +101,8 @@ export const mapPriceChart = (candles: CandleResult[]): Candle[] => {
 			synth: synth,
 			open: synth === 'DebtRatio' ? open.div(DEBT_RATIO_UNIT).toNumber() : open.toNumber(),
 			high: synth === 'DebtRatio' ? high.div(DEBT_RATIO_UNIT).toNumber() : high.toNumber(),
-			low: synth === 'DebtRatio' ? low.div(DEBT_RATIO_UNIT).toNumber() : high.toNumber(),
-			close: synth === 'DebtRatio' ? close.div(DEBT_RATIO_UNIT).toNumber() : high.toNumber(),
+			low: synth === 'DebtRatio' ? low.div(DEBT_RATIO_UNIT).toNumber() : low.toNumber(),
+			close: synth === 'DebtRatio' ? close.div(DEBT_RATIO_UNIT).toNumber() : close.toNumber(),
 			average: synth === 'DebtRatio' ? average.div(DEBT_RATIO_UNIT).toNumber() : average.toNumber(),
 			timestamp: timestamp.toNumber(),
 		};
