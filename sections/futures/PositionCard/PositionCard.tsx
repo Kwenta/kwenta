@@ -141,7 +141,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			marketLongName: getSynthDescription(marketAsset, synthsMap, t),
 			marketPrice: formatCurrency('sUSD', marketAssetRate, {
 				sign: '$',
-				minDecimals: marketAssetRate.lt(0.01) ? 4 : 2,
+				minDecimals,
 			}),
 			positionSide: positionDetails ? (
 				<PositionValue

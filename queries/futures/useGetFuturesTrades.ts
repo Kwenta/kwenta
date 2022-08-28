@@ -12,6 +12,8 @@ import { getFuturesTrades } from './subgraph';
 import { FuturesTrade } from './types';
 import { getFuturesEndpoint, mapTrades } from './utils';
 
+import { notNill } from 'queries/synths/utils';
+
 const useGetFuturesTrades = (
 	currencyKey: string | undefined,
 	options?: UseInfiniteQueryOptions<FuturesTrade[] | null> & { forceAccount: boolean }
@@ -69,7 +71,7 @@ const useGetFuturesTrades = (
 			enabled: isWalletConnected ? isL2 && isAppReady : isAppReady,
 			refetchInterval: 15000,
 			getNextPageParam: (lastPage, _) => {
-				return lastPage
+				return notNill(lastPage) && lastPage?.length > 0
 					? {
 							minTs: 0,
 							maxTs: lastPage[lastPage.length - 1].timestamp.toNumber(),
@@ -77,7 +79,7 @@ const useGetFuturesTrades = (
 					: null;
 			},
 			getPreviousPageParam: (firstPage, _) => {
-				return firstPage
+				return notNill(firstPage) && firstPage?.length > 0
 					? {
 							minTs: firstPage[0].timestamp.toNumber(),
 							maxTs: MAX_TIMESTAMP,
