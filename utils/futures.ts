@@ -52,7 +52,9 @@ export const isDecimalFour = (marketKeyOrAsset: string | undefined): boolean =>
 	marketKeyOrAsset === 'sEUR' ||
 	marketKeyOrAsset === 'EUR' ||
 	marketKeyOrAsset === 'sDOGE' ||
-	marketKeyOrAsset === 'DOGE';
+	marketKeyOrAsset === 'DOGE' ||
+	marketKeyOrAsset === 'sDebtRatio' ||
+	marketKeyOrAsset === 'DebtRatio';
 
 export enum FuturesMarketKey {
 	sBTC = 'sBTC',
