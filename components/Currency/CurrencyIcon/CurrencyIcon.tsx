@@ -155,7 +155,7 @@ const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, 
 	} else {
 		return (
 			<Placeholder {...{ isDeprecated }} {...props}>
-				{currencyKey}
+				{currencyKey === 'sDebtRatio' ? 'DEBT' : currencyKey}
 			</Placeholder>
 		);
 	}

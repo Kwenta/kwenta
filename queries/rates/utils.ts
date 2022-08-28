@@ -1,4 +1,5 @@
 import { wei } from '@synthetixio/wei';
+import { DEBT_RATIO_UNIT } from 'constants/network';
 
 import { CandleResult } from 'queries/futures/subgraph';
 import { SYNTHS_ENDPOINT_MAIN } from 'queries/synths/constants';
@@ -22,7 +23,10 @@ export const mapLaggedDailyPrices = (rates: LatestRate[]): Prices => {
 	return rates.map((rate) => {
 		return {
 			synth: rate.id,
-			price: wei(rate.rate).toNumber(),
+			price:
+				rate.id === 'DebtRatio'
+					? wei(rate.rate).div(DEBT_RATIO_UNIT).toNumber()
+					: wei(rate.rate).toNumber(),
 		};
 	});
 };
@@ -81,10 +85,10 @@ export const mapCandles = (candles: CandleResult[]): Candle[] => {
 		return {
 			id: id,
 			synth: synth,
-			open: open.toNumber(),
-			high: high.toNumber(),
-			low: low.toNumber(),
-			close: close.toNumber(),
+			open: synth === 'DebtRatio' ? open.div(DEBT_RATIO_UNIT).toNumber() : open.toNumber(),
+			high: synth === 'DebtRatio' ? high.div(DEBT_RATIO_UNIT).toNumber() : high.toNumber(),
+			low: synth === 'DebtRatio' ? low.div(DEBT_RATIO_UNIT).toNumber() : high.toNumber(),
+			close: synth === 'DebtRatio' ? close.div(DEBT_RATIO_UNIT).toNumber() : high.toNumber(),
 			timestamp: timestamp.toNumber(),
 		};
 	});
@@ -95,11 +99,11 @@ export const mapPriceChart = (candles: CandleResult[]): Candle[] => {
 		return {
 			id: id,
 			synth: synth,
-			open: open.toNumber(),
-			high: high.toNumber(),
-			low: low.toNumber(),
-			close: close.toNumber(),
-			average: average.toNumber(),
+			open: synth === 'DebtRatio' ? open.div(DEBT_RATIO_UNIT).toNumber() : open.toNumber(),
+			high: synth === 'DebtRatio' ? high.div(DEBT_RATIO_UNIT).toNumber() : high.toNumber(),
+			low: synth === 'DebtRatio' ? low.div(DEBT_RATIO_UNIT).toNumber() : high.toNumber(),
+			close: synth === 'DebtRatio' ? close.div(DEBT_RATIO_UNIT).toNumber() : high.toNumber(),
+			average: synth === 'DebtRatio' ? average.div(DEBT_RATIO_UNIT).toNumber() : average.toNumber(),
 			timestamp: timestamp.toNumber(),
 		};
 	});

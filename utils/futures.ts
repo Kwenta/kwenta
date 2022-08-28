@@ -7,7 +7,12 @@ export const getMarketAsset = (marketKey: FuturesMarketKey) => {
 };
 
 export const getMarketName = (asset: FuturesMarketAsset | null) => {
-	return `${getDisplayAsset(asset)}-PERP`;
+	switch (asset) {
+		case 'DebtRatio':
+			return `DEBT-PERP`;
+		default:
+			return `${getDisplayAsset(asset)}-PERP`;
+	}
 };
 
 export const getDisplayAsset = (asset: string | null) => {
