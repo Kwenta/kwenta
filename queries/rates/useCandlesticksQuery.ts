@@ -1,3 +1,5 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
+
 import { getCandles } from 'queries/futures/subgraph';
 
 import { getRatesEndpoint, mapCandles, mapPriceChart } from './utils';
@@ -12,7 +14,7 @@ export const requestCandlesticks = async (
 	orderDirection: 'asc' | 'desc' | undefined = 'asc',
 	priceChart?: boolean | null
 ) => {
-	const ratesEndpoint = getRatesEndpoint(networkId);
+	const ratesEndpoint = getRatesEndpoint(networkId as NetworkId);
 
 	const response = await getCandles(
 		ratesEndpoint,

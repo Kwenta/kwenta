@@ -8,7 +8,7 @@ import useIsL2 from 'hooks/useIsL2';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import logError from 'utils/logError';
 
-import { DAY_PERIOD, FUTURES_ENDPOINT_MAINNET } from './constants';
+import { DAY_PERIOD, FUTURES_ENDPOINT_OP_MAINNET } from './constants';
 import { getFuturesTrades } from './subgraph';
 import { FuturesVolumes } from './types';
 import { calculateTradeVolumeForAll, getFuturesEndpoint } from './utils';
@@ -21,7 +21,7 @@ const useGetFuturesTradingVolumeForAllMarkets = (
 	const isL2 = useIsL2();
 	const network = homepage || isL2 ? chain.optimism : activeChain;
 	const futuresEndpoint = homepage
-		? FUTURES_ENDPOINT_MAINNET
+		? FUTURES_ENDPOINT_OP_MAINNET
 		: getFuturesEndpoint(network?.id as NetworkId);
 
 	return useQuery<FuturesVolumes | null>(

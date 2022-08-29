@@ -9,7 +9,7 @@ import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
 import logError from 'utils/logError';
 
-import { FUTURES_ENDPOINT_MAINNET } from './constants';
+import { FUTURES_ENDPOINT_OP_MAINNET } from './constants';
 import { FuturesCumulativeStats } from './types';
 import { getFuturesEndpoint } from './utils';
 
@@ -18,7 +18,7 @@ const useGetFuturesCumulativeStats = (options?: UseQueryOptions<FuturesCumulativ
 	const isL2 = useIsL2();
 	const homepage = window.location.pathname === ROUTES.Home.Root;
 	const futuresEndpoint = homepage
-		? FUTURES_ENDPOINT_MAINNET
+		? FUTURES_ENDPOINT_OP_MAINNET
 		: getFuturesEndpoint(network?.id as NetworkId);
 
 	return useQuery<FuturesCumulativeStats | null>(

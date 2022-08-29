@@ -8,7 +8,7 @@ import useIsL2 from 'hooks/useIsL2';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import logError from 'utils/logError';
 
-import { DAY_PERIOD, FUTURES_ENDPOINT_MAINNET } from './constants';
+import { DAY_PERIOD, FUTURES_ENDPOINT_OP_MAINNET } from './constants';
 import { getFuturesOneMinStats } from './subgraph';
 import { FuturesDailyTradeStats, FuturesOneMinuteStat } from './types';
 import { getFuturesEndpoint, calculateDailyTradeStats } from './utils';
@@ -18,7 +18,7 @@ const useGetFuturesDailyTradeStats = (options?: UseQueryOptions<FuturesDailyTrad
 	const isL2 = useIsL2();
 	const homepage = window.location.pathname === ROUTES.Home.Root;
 	const futuresEndpoint = homepage
-		? FUTURES_ENDPOINT_MAINNET
+		? FUTURES_ENDPOINT_OP_MAINNET
 		: getFuturesEndpoint(network?.id as NetworkId);
 
 	const queryTrades = async (

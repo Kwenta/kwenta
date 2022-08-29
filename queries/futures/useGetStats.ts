@@ -6,7 +6,7 @@ import { useNetwork } from 'wagmi';
 import QUERY_KEYS from 'constants/queryKeys';
 import useIsL2 from 'hooks/useIsL2';
 
-import { FUTURES_ENDPOINT_MAINNET } from './constants';
+import { FUTURES_ENDPOINT_OP_MAINNET } from './constants';
 import { FuturesStat } from './types';
 import { getFuturesEndpoint } from './utils';
 
@@ -16,7 +16,7 @@ const useGetStats = (homepage?: boolean, options?: UseQueryOptions<any>) => {
 	const { chain: network } = useNetwork();
 	const isL2 = useIsL2();
 	const futuresEndpoint = homepage
-		? FUTURES_ENDPOINT_MAINNET
+		? FUTURES_ENDPOINT_OP_MAINNET
 		: getFuturesEndpoint(network?.id as NetworkId);
 
 	const query = async (existing: FuturesStat[], skip: number): Promise<FuturesStat[]> => {
