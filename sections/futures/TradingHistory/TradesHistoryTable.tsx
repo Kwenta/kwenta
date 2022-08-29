@@ -41,16 +41,19 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 
 		const futuresTrades =
 			futuresTradesPages.length > 0
-				? futuresTradesPages.flat().map((trade: FuturesTrade | null) => {
-						return {
-							value: Number(trade?.price),
-							amount: Number(trade?.size),
-							time: Number(trade?.timestamp),
-							id: trade?.txnHash,
-							currencyKey,
-							orderType: trade?.orderType,
-						};
-				  })
+				? futuresTradesPages
+						.flat()
+						.filter((value) => !!value)
+						.map((trade: FuturesTrade | null) => {
+							return {
+								value: Number(trade?.price),
+								amount: Number(trade?.size),
+								time: Number(trade?.timestamp),
+								id: trade?.txnHash,
+								currencyKey,
+								orderType: trade?.orderType,
+							};
+						})
 				: [];
 		return [...new Set(futuresTrades)];
 	}, [futuresTradesQuery.data, currencyKey]);
@@ -58,7 +61,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 	const observer = useRef<IntersectionObserver | null>(null);
 	const lastElementRef = useCallback(
 		(node) => {
-			if (futuresTradesQuery.isLoading) return;
+			if (futuresTradesQuery.isLoading || data.length < 16) return;
 			if (observer) {
 				if (observer.current) {
 					observer.current.disconnect();
