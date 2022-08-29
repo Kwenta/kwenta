@@ -1,7 +1,7 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useNetwork } from 'wagmi';
+import { chain, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import useIsL2 from 'hooks/useIsL2';
@@ -60,7 +60,7 @@ const useRateUpdateQuery = (
 				return null;
 			}
 		},
-		{ enabled: isL2 && !!baseCurrencyKey, ...options }
+		{ enabled: isL2 && !!baseCurrencyKey && network?.id !== chain.optimismGoerli.id, ...options }
 	);
 };
 

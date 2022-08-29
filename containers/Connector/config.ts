@@ -9,14 +9,20 @@ import { BLAST_NETWORK_LOOKUP } from 'constants/network';
 
 export const initRainbowkit = () => {
 	const { chains, provider } = configureChains(
-		[chain.mainnet, chain.optimism, chain.goerli],
+		[chain.mainnet, chain.optimism, chain.goerli, chain.optimismGoerli],
 		[
 			jsonRpcProvider({
-				rpc: (chain) => ({
-					http: `https://${BLAST_NETWORK_LOOKUP[chain.id]}.blastapi.io/${
-						process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID
-					}`,
-				}),
+				rpc: (networkChain) => {
+					return !BLAST_NETWORK_LOOKUP[networkChain.id]
+						? {
+								http: networkChain.rpcUrls.default,
+						  }
+						: {
+								http: `https://${BLAST_NETWORK_LOOKUP[networkChain.id]}.blastapi.io/${
+									process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID
+								}`,
+						  };
+				},
 				stallTimeout: 5000,
 				priority: 0,
 			}),
