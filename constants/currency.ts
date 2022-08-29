@@ -1,5 +1,4 @@
 import { CurrencyKey } from '@synthetixio/contracts-interface';
-import { Synths } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
 import keyBy from 'lodash/keyBy';
 
@@ -44,12 +43,12 @@ export const CRYPTO_CURRENCY = [
 export const CRYPTO_CURRENCY_MAP = keyBy(CRYPTO_CURRENCY);
 export type FUTURES_FIAT = 'EUR' | 'JPY' | 'USD' | 'AUD' | 'GBP' | 'CHF';
 export const FIAT_SYNTHS: Set<CurrencyKey | FUTURES_FIAT> = new Set([
-	Synths.sEUR,
-	Synths.sJPY,
-	Synths.sUSD,
-	Synths.sAUD,
-	Synths.sGBP,
-	Synths.sCHF,
+	'sEUR',
+	'sJPY',
+	'sUSD',
+	'sAUD',
+	'sGBP',
+	'sCHF',
 	'EUR',
 	'JPY',
 	'USD',
@@ -73,6 +72,8 @@ export const MARKET_HOURS_SYNTHS = new Set([
 
 // Commodity synths are not listed in the CurrencyKey currently. This is a temporary workaround.
 export const COMMODITY_SYNTHS = new Set<CurrencyKey | 'XAU' | 'XAG' | 'WTI'>(['XAU', 'XAG', 'WTI']);
+
+export const INDEX_SYNTHS = new Set<CurrencyKey | 'DebtRatio'>(['DebtRatio']);
 
 export const sUSD_EXCHANGE_RATE = new Wei(1);
 export const SYNTH_DECIMALS = 18;

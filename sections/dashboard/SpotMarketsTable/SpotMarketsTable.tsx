@@ -1,4 +1,4 @@
-import { Synth, Synths } from '@synthetixio/contracts-interface';
+import { Synth } from '@synthetixio/contracts-interface';
 import * as _ from 'lodash/fp';
 import values from 'lodash/values';
 import { useRouter } from 'next/router';
@@ -14,13 +14,13 @@ import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import Table from 'components/Table';
 import { CurrencyKey } from 'constants/currency';
-import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import { Price, Rates } from 'queries/rates/types';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
 import { pastRatesState } from 'store/futures';
 import { networkState } from 'store/wallet';
-import { isEurForex, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
+import { isDecimalFour, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
 type SpotMarketsTableProps = {
 	exchangeRates: Rates | null;
@@ -127,12 +127,12 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 						Header: <TableHeader>{t('dashboard.overview.spot-markets-table.price')}</TableHeader>,
 						accessor: 'price',
 						Cell: (cellProps: CellProps<any>) => {
-							const formatOptions = isEurForex(cellProps.row.original.asset)
-								? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
+							const formatOptions = isDecimalFour(cellProps.row.original.asset)
+								? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
 								: {};
 							return (
 								<Currency.Price
-									currencyKey={Synths.sUSD}
+									currencyKey={'sUSD'}
 									price={cellProps.row.original.price}
 									sign={'$'}
 									conversionRate={1}
@@ -184,7 +184,7 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 						Cell: (cellProps: CellProps<any>) => {
 							return (
 								<Currency.Price
-									currencyKey={Synths.sUSD}
+									currencyKey={'sUSD'}
 									price={cellProps.row.original.volume}
 									sign={'$'}
 									conversionRate={1}

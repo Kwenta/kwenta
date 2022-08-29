@@ -3,7 +3,6 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import CustomInput from 'components/Input/CustomInput';
-import { Synths } from 'constants/currency';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import {
 	currentMarketState,
@@ -51,7 +50,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 
 			<CustomInput
 				disabled={isDisabled}
-				right={marketAsset || Synths.sUSD}
+				right={marketAsset || 'sUSD'}
 				value={tradeSize}
 				placeholder="0.0"
 				onChange={(_, v) => onTradeAmountChange(v)}
@@ -66,7 +65,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 			<CustomInput
 				dataTestId="set-order-size-amount-susd"
 				disabled={isDisabled}
-				right={Synths.sUSD}
+				right={'sUSD'}
 				value={tradeSizeSUSD}
 				placeholder="0.0"
 				onChange={(_, v) => onTradeAmountSUSDChange(v)}

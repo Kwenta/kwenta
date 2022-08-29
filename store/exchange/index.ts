@@ -1,6 +1,6 @@
 import { atom, selector } from 'recoil';
 
-import { Synths, CurrencyKey, CRYPTO_CURRENCY_MAP } from 'constants/currency';
+import { CurrencyKey, CRYPTO_CURRENCY_MAP } from 'constants/currency';
 import { SwapRatio } from 'hooks/useExchange';
 import { localStorageEffect } from 'store/effects';
 import { getExchangeKey } from 'store/utils';
@@ -14,7 +14,7 @@ export const currencyPairState = atom<CurrencyPair>({
 	key: getExchangeKey('currencyPair'),
 	default: {
 		base: null,
-		quote: Synths.sUSD,
+		quote: 'sUSD',
 	},
 	effects: [localStorageEffect('exchange/currencyPair')],
 });

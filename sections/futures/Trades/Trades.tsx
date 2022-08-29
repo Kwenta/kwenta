@@ -7,12 +7,13 @@ import styled, { css } from 'styled-components';
 import LinkIcon from 'assets/svg/app/link-blue.svg';
 import Card from 'components/Card';
 import Table, { TableNoResults } from 'components/Table';
-import { Synths } from 'constants/currency';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { ETH_UNIT } from 'constants/network';
 import BlockExplorer from 'containers/BlockExplorer';
 import { FuturesTrade } from 'queries/futures/types';
 import { ExternalLink, GridDivCenteredRow } from 'styles/common';
 import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
+import { isDecimalFour } from 'utils/futures';
 
 import { PositionSide, TradeStatus } from '../types';
 import TimeDisplay from './TimeDisplay';
@@ -85,13 +86,12 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						),
 						accessor: 'value',
 						sortType: 'basic',
-						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<>
-								{formatCurrency(Synths.sUSD, cellProps.value, {
-									sign: '$',
-								})}
-							</>
-						),
+						Cell: (cellProps: CellProps<FuturesTrade>) => {
+							const formatOptions = isDecimalFour(cellProps.row.original.asset)
+								? { sign: '$', minDecimals: DEFAULT_CRYPTO_DECIMALS }
+								: { sign: '$' };
+							return <>{formatCurrency('sUSD', cellProps.value, formatOptions)}</>;
+						},
 						width: 80,
 						sortable: true,
 					},
@@ -120,7 +120,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 								<PNL normal>--</PNL>
 							) : (
 								<PNL negative={cellProps.value.lt(wei(0))}>
-									{formatCurrency(Synths.sUSD, cellProps.value, {
+									{formatCurrency('sUSD', cellProps.value, {
 										sign: '$',
 									})}
 								</PNL>
@@ -138,7 +138,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 							<>
 								{cellProps.value.eq(0)
 									? '--'
-									: formatCurrency(Synths.sUSD, cellProps.value, {
+									: formatCurrency('sUSD', cellProps.value, {
 											sign: '$',
 									  })}
 							</>

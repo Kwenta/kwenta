@@ -7,6 +7,7 @@ import Text from 'components/Text';
 import PoolGrid from 'sections/earn/Grids/PoolGrid';
 import StakeGrid from 'sections/earn/Grids/StakeGrid';
 import Rewards from 'sections/earn/Rewards/Rewards';
+import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { PageContent, FullHeightContainer } from 'styles/common';
 
 const Earn: React.FC = () => {
@@ -28,6 +29,7 @@ const Earn: React.FC = () => {
 							<PoolGrid />
 						</GridsContainer>
 						<Rewards />
+						<GitHashID />
 					</MainContainer>
 				</FullHeightContainer>
 			</PageContent>

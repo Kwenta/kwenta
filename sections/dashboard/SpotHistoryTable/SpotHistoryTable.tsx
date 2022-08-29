@@ -1,4 +1,3 @@
-import { Synths } from '@synthetixio/contracts-interface';
 import type { SynthExchangeResult } from '@synthetixio/queries/build/node/generated/mainSubgraphQueries';
 import * as _ from 'lodash/fp';
 import values from 'lodash/values';
@@ -21,7 +20,6 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetWalletTrades from 'queries/synths/useGetWalletTrades';
 import { walletAddressState } from 'store/wallet';
 import { ExternalLink } from 'styles/common';
-import { isFiatCurrency } from 'utils/currencies';
 
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
 
@@ -119,7 +117,7 @@ const SpotHistoryTable: FC = () => {
 
 									<StyledText>
 										<Currency.Amount
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											amount={cellProps.row.original.fromAmount}
 											totalValue={0}
 											conversionRate={selectPriceCurrencyRate}
@@ -149,7 +147,7 @@ const SpotHistoryTable: FC = () => {
 
 									<StyledText>
 										<Currency.Amount
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											amount={cellProps.row.original.toAmount}
 											totalValue={0}
 											conversionRate={selectPriceCurrencyRate}
@@ -175,17 +173,10 @@ const SpotHistoryTable: FC = () => {
 									price={cellProps.row.original.toAmountInUSD}
 									sign={selectedPriceCurrency.sign}
 									conversionRate={selectPriceCurrencyRate}
-									formatOptions={
-										isFiatCurrency(currencyKey)
-											? {
-													currencyKey: undefined,
-													sign: selectedPriceCurrency.sign,
-											  }
-											: {
-													currencyKey: selectedPriceCurrency.sign,
-													sign: undefined,
-											  }
-									}
+									formatOptions={{
+										currencyKey: undefined,
+										sign: selectedPriceCurrency.sign,
+									}}
 								/>
 							);
 						},

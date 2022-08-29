@@ -1,5 +1,4 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import { Synths } from '@synthetixio/contracts-interface';
 import { ContractsMap } from '@synthetixio/contracts-interface/build/node/src/types';
 import Wei, { wei } from '@synthetixio/wei';
 import { utils } from 'ethers';
@@ -280,7 +279,7 @@ export const mapMarginTransfers = (
 			const sizeWei = new Wei(size);
 			const cleanSize = sizeWei.div(ETH_UNIT).abs();
 			const isPositive = sizeWei.gt(0);
-			const amount = `${isPositive ? '+' : '-'}${formatCurrency(Synths.sUSD, cleanSize, {
+			const amount = `${isPositive ? '+' : '-'}${formatCurrency('sUSD', cleanSize, {
 				sign: '$',
 			})}`;
 			const numTimestamp = wei(timestamp).toNumber();

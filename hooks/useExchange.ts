@@ -1,4 +1,4 @@
-import useSynthetixQueries from '@synthetixio/queries';
+import useSynthetixQueries, { Token } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { BigNumber, ethers } from 'ethers';
 import produce from 'immer';
@@ -14,7 +14,6 @@ import {
 	CRYPTO_CURRENCY_MAP,
 	CurrencyKey,
 	ETH_ADDRESS,
-	Synths,
 } from 'constants/currency';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
@@ -55,7 +54,11 @@ import {
 	networkState,
 	gasSpeedState,
 } from 'store/wallet';
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import {
+	newGetCoinGeckoPricesForCurrencies,
+	newGetExchangeRatesForCurrencies,
+	newGetExchangeRatesTupleForCurrencies,
+} from 'utils/currencies';
 import { truncateNumbers, zeroBN } from 'utils/formatters/number';
 import { hexToAsciiV2 } from 'utils/formatters/string';
 import logError from 'utils/logError';
@@ -190,7 +193,7 @@ const useExchange = ({
 		: null;
 
 	const quoteCurrencyTokenAddress = useMemo(
-		() =>
+		(): Token['address'] | null =>
 			quoteCurrencyKey != null
 				? isQuoteCurrencyETH
 					? ETH_ADDRESS
@@ -200,7 +203,7 @@ const useExchange = ({
 	);
 
 	const baseCurrencyTokenAddress = useMemo(
-		() =>
+		(): Token['address'] | null =>
 			baseCurrencyKey != null
 				? isBaseCurrencyETH
 					? ETH_ADDRESS
@@ -273,10 +276,20 @@ const useExchange = ({
 
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
-	const rate = useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, quoteCurrencyKey, baseCurrencyKey),
+	const [quoteRate, baseRate] = useMemo(
+		() => newGetExchangeRatesTupleForCurrencies(exchangeRates, quoteCurrencyKey, baseCurrencyKey),
 		[exchangeRates, quoteCurrencyKey, baseCurrencyKey]
 	);
+
+	const rate = useMemo(() => {
+		const base = baseRate.lte(0)
+			? newGetCoinGeckoPricesForCurrencies(coinGeckoPrices, baseCurrencyTokenAddress)
+			: baseRate;
+		const quote = quoteRate.lte(0)
+			? newGetCoinGeckoPricesForCurrencies(coinGeckoPrices, quoteCurrencyTokenAddress)
+			: quoteRate;
+		return base.gt(0) && quote.gt(0) ? quote.div(base) : wei(0);
+	}, [baseCurrencyTokenAddress, baseRate, coinGeckoPrices, quoteCurrencyTokenAddress, quoteRate]);
 
 	const inverseRate = useMemo(() => (rate.gt(0) ? wei(1).div(rate) : wei(0)), [rate]);
 
@@ -372,7 +385,7 @@ const useExchange = ({
 			: null;
 
 	const ethPriceRate = useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
+		() => newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
@@ -497,7 +510,7 @@ const useExchange = ({
 
 		setCurrencyPair({
 			base: (baseCurrencyKey && synthsMap[baseCurrencyKey]?.name) || null,
-			quote: (quoteCurrencyKey && synthsMap[quoteCurrencyKey]?.name) || Synths.sUSD,
+			quote: (quoteCurrencyKey && synthsMap[quoteCurrencyKey]?.name) || 'sUSD',
 		});
 		// eslint-disable-next-line
 	}, [network.id, walletAddress, setCurrencyPair, synthsMap]);

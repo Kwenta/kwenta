@@ -1,4 +1,3 @@
-import { Synths } from '@synthetixio/contracts-interface';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -39,7 +38,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	const longText = useMemo(() => {
 		return (
 			marketInfo?.openInterest &&
-			formatCurrency(Synths.sUSD, marketInfo.openInterest.longUSD, {
+			formatCurrency('sUSD', marketInfo.openInterest.longUSD, {
 				sign: '$',
 				maxDecimals: 2,
 				...(marketInfo?.openInterest?.longUSD.gt(1e6)
@@ -52,7 +51,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	const shortText = useMemo(() => {
 		return (
 			marketInfo?.openInterest &&
-			formatCurrency(Synths.sUSD, marketInfo.openInterest.shortUSD, {
+			formatCurrency('sUSD', marketInfo.openInterest.shortUSD, {
 				sign: '$',
 				maxDecimals: 2,
 				...(marketInfo?.openInterest?.shortUSD.gt(1e6)
