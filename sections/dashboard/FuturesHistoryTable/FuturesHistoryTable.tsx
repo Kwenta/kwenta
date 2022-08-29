@@ -11,6 +11,7 @@ import styled from 'styled-components';
 import Currency from 'components/Currency';
 import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { ETH_UNIT } from 'constants/network';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
@@ -22,7 +23,7 @@ import { TradeStatus } from 'sections/futures/types';
 import { futuresAccountState } from 'store/futures';
 import { isL2State } from 'store/wallet';
 import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
-import { FuturesMarketAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
+import { FuturesMarketAsset, getMarketName, isDecimalFour, MarketKeyByAsset } from 'utils/futures';
 
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
 
@@ -149,13 +150,12 @@ const FuturesHistoryTable: FC = () => {
 						Header: <div>{t('dashboard.history.futures-history-table.price')}</div>,
 						accessor: 'price',
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
+							const formatOptions = isDecimalFour(cellProps.row.original.asset)
+								? { sign: '$', minDecimals: DEFAULT_CRYPTO_DECIMALS }
+								: { sign: '$' };
 							return conditionalRender(
 								cellProps.row.original.price,
-								<>
-									{formatCurrency('sUSD', cellProps.value, {
-										sign: '$',
-									})}
-								</>
+								<>{formatCurrency('sUSD', cellProps.value, formatOptions)}</>
 							);
 						},
 						width: 120,

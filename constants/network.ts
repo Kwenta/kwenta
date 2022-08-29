@@ -12,6 +12,7 @@ export const SUPPORTED_NETWORKS = [
 	10, // Optimism (mainnet)
 	42, // Ethereum Kovan (testnet)
 	69, // Optimism Kovan (testnet)
+	420, // Optimism Goerli (testnet)
 ];
 
 export enum BlastNetwork {
