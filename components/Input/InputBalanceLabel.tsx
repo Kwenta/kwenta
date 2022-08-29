@@ -1,4 +1,3 @@
-import { Synths } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -21,7 +20,7 @@ export default function InputBalanceLabel({ balance, currencyKey }: Props) {
 			<BalanceText>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
 			<BalanceText>
 				<span>
-					{formatCurrency(Synths.sUSD, balance, {
+					{formatCurrency('sUSD', balance, {
 						sign: isUsd ? '$' : '',
 						maxDecimals: isUsd ? 2 : undefined,
 					})}

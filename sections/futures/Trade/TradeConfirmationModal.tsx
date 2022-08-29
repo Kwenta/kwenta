@@ -9,7 +9,7 @@ import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import ErrorView from 'components/Error';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { Synths, CurrencyKey } from 'constants/currency';
+import { CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useFuturesContext } from 'contexts/FuturesContext';
@@ -65,7 +65,7 @@ const TradeConfirmationModal: FC = () => {
 	);
 
 	const ethPriceRate = useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
+		() => newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
@@ -108,21 +108,21 @@ const TradeConfirmationModal: FC = () => {
 			{ label: 'leverage', value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x` },
 			{
 				label: 'current price',
-				value: formatCurrency(Synths.sUSD, positionDetails?.price ?? zeroBN, { sign: '$' }),
+				value: formatCurrency('sUSD', positionDetails?.price ?? zeroBN, { sign: '$' }),
 			},
 			{
 				label: 'liquidation price',
-				value: formatCurrency(Synths.sUSD, positionDetails?.liqPrice ?? zeroBN, {
+				value: formatCurrency('sUSD', positionDetails?.liqPrice ?? zeroBN, {
 					sign: '$',
 				}),
 			},
 			{
 				label: 'margin',
-				value: formatCurrency(Synths.sUSD, positionDetails?.margin ?? zeroBN, { sign: '$' }),
+				value: formatCurrency('sUSD', positionDetails?.margin ?? zeroBN, { sign: '$' }),
 			},
 			{
 				label: 'protocol fee',
-				value: formatCurrency(Synths.sUSD, fee, { sign: '$' }),
+				value: formatCurrency('sUSD', fee, { sign: '$' }),
 			},
 			{
 				label: 'network gas fee',

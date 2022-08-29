@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
-import { CurrencyKey, Synths } from 'constants/currency';
+import { CurrencyKey } from 'constants/currency';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
 import { FlexDivColCentered, numericValueCSS } from 'styles/common';
 import { formatCryptoCurrency } from 'utils/formatters/number';
@@ -42,7 +42,7 @@ export const RedeemTxModal: FC<RedeemTxModalProps> = ({
 					/>
 				))}
 				<Title topPad>{t('modals.deprecated-synths.to')}</Title>
-				<BalanceItem currencyKey={Synths.sUSD} amount={totalUSDBalance} />
+				<BalanceItem currencyKey={'sUSD'} amount={totalUSDBalance} />
 			</Balances>
 			<Subtitle>{t('modals.confirm-transaction.confirm-with-provider')}</Subtitle>
 			{txError != null && (
@@ -68,7 +68,7 @@ const BalanceItem: FC<{ currencyKey: CurrencyKey; amount: Wei | null }> = ({
 		</BalanceItemTitle>
 
 		<BalanceItemAmount>
-			{formatCryptoCurrency(amount ?? wei(0), { maxDecimals: 2 })} {Synths.sUSD}
+			{formatCryptoCurrency(amount ?? wei(0), { maxDecimals: 2 })} {'sUSD'}
 		</BalanceItemAmount>
 	</StyledBalanceItem>
 );

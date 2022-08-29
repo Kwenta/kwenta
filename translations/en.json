@@ -288,7 +288,7 @@
 			"from": "from",
 			"into": "into"
 		},
-		"synth-exchange": "Synth Exchange",
+		"synth-exchange": "Spot Exchange",
 		"currency-card": {
 			"synth-name": "-",
 			"amount-placeholder": "0.0000",

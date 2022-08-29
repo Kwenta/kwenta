@@ -15,6 +15,5 @@ const TradingHistory: React.FC = () => {
 export default TradingHistory;
 
 const Panel = styled.div`
-	height: 100%;
-	padding-bottom: 48px;
+	padding-bottom: 20px;
 `;

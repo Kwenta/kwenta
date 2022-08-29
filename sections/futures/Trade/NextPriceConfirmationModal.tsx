@@ -8,7 +8,6 @@ import styled from 'styled-components';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { Synths } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import { useFuturesContext } from 'contexts/FuturesContext';
@@ -65,7 +64,7 @@ const NextPriceConfirmationModal: FC = () => {
 	);
 
 	const ethPriceRate = useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
+		() => newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
@@ -116,12 +115,12 @@ const NextPriceConfirmationModal: FC = () => {
 			},
 			{
 				label: t('futures.market.user.position.modal.deposit'),
-				value: formatCurrency(Synths.sUSD, totalDeposit, { sign: '$' }),
+				value: formatCurrency('sUSD', totalDeposit, { sign: '$' }),
 			},
 			{
 				label: t('futures.market.user.position.modal.np-discount'),
 				value: !!nextPriceDiscount
-					? formatCurrency(Synths.sUSD, nextPriceDiscount, { sign: '$' })
+					? formatCurrency('sUSD', nextPriceDiscount, { sign: '$' })
 					: NO_VALUE,
 			},
 			{

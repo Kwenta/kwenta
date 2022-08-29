@@ -5,7 +5,6 @@ import styled from 'styled-components';
 
 import InfoBox from 'components/InfoBox';
 import PreviewArrow from 'components/PreviewArrow';
-import { Synths } from 'constants/currency';
 import { FuturesPotentialTradeDetails } from 'queries/futures/types';
 import {
 	crossMarginAvailableMarginState,
@@ -126,13 +125,13 @@ const MarketInfoBox: React.FC = () => {
 			dataTestId="market-info-box"
 			details={{
 				'Total Margin': {
-					value: `${formatCurrency(Synths.sUSD, totalMargin, {
-						currencyKey: Synths.sUSD,
+					value: `${formatCurrency('sUSD', totalMargin, {
+						currencyKey: 'sUSD',
 						sign: '$',
 					})}`,
 				},
 				'Available Margin': {
-					value: `${formatCurrency(Synths.sUSD, availableMargin, {
+					value: `${formatCurrency('sUSD', availableMargin, {
 						currencyKey: undefined,
 						sign: '$',
 					})}`,
@@ -140,14 +139,14 @@ const MarketInfoBox: React.FC = () => {
 						<PreviewArrow
 							showPreview={previewTradeData.showPreview && !potentialTrade.data?.showStatus}
 						>
-							{formatCurrency(Synths.sUSD, previewTradeData?.availableMargin, {
+							{formatCurrency('sUSD', previewTradeData?.availableMargin, {
 								sign: '$',
 							})}
 						</PreviewArrow>
 					),
 				},
 				'Buying Power': {
-					value: `${formatCurrency(Synths.sUSD, buyingPower, {
+					value: `${formatCurrency('sUSD', buyingPower, {
 						currencyKey: undefined,
 						sign: '$',
 					})}`,
@@ -155,7 +154,7 @@ const MarketInfoBox: React.FC = () => {
 						<PreviewArrow
 							showPreview={previewTradeData.showPreview && !potentialTrade.data?.showStatus}
 						>
-							{formatCurrency(Synths.sUSD, previewTradeData?.buyingPower, {
+							{formatCurrency('sUSD', previewTradeData?.buyingPower, {
 								sign: '$',
 							})}
 						</PreviewArrow>

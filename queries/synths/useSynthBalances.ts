@@ -1,4 +1,4 @@
-import { CurrencyKey, Synths } from '@synthetixio/contracts-interface';
+import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { Balances, SynthBalancesMap } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
@@ -11,6 +11,8 @@ import Connector from 'containers/Connector';
 import { balancesState } from 'store/futures';
 import { networkState, walletAddressState } from 'store/wallet';
 import { zeroBN } from 'utils/formatters/number';
+
+import { notNill } from './utils';
 
 type SynthBalancesTuple = [string[], ethers.BigNumber[], ethers.BigNumber[]];
 
@@ -58,12 +60,12 @@ const useSynthBalances = (options?: UseQueryOptions<Balances>) => {
 			const balances = {
 				balancesMap: balancesMap,
 				balances: orderBy(
-					Object.values(balancesMap),
+					Object.values(balancesMap).filter(notNill),
 					(balance) => balance.usdBalance.toNumber(),
 					'desc'
 				),
 				totalUSDBalance,
-				susdWalletBalance: balancesMap?.[Synths.sUSD]?.balance ?? zeroBN,
+				susdWalletBalance: balancesMap?.['sUSD']?.balance ?? zeroBN,
 			};
 			setBalances(balances);
 

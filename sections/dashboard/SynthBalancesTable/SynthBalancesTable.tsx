@@ -1,4 +1,4 @@
-import { CurrencyKey, Synths } from '@synthetixio/contracts-interface';
+import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { Rates, SynthBalance } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import * as _ from 'lodash/fp';
@@ -145,7 +145,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 									return conditionalRender<Cell['usdBalance']>(
 										cellProps.row.original.usdBalance,
 										<Currency.Price
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.usdBalance}
 											sign={'$'}
 											conversionRate={1}
@@ -174,7 +174,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 									return conditionalRender<Cell['price']>(
 										cellProps.row.original.price,
 										<Currency.Price
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.price!}
 											sign={'$'}
 											conversionRate={1}
@@ -254,7 +254,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 											</IconContainer>
 											<StyledText>{cellProps.row.original.synth}</StyledText>
 											<Currency.Price
-												currencyKey={Synths.sUSD}
+												currencyKey={'sUSD'}
 												price={cellProps.row.original.price ?? 0}
 												sign="$"
 												formatOptions={{
@@ -280,7 +280,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 									<div>
 										<div>{formatNumber(cellProps.row.original.balance ?? 0)}</div>
 										<Currency.Price
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.usdBalance ?? 0}
 											sign="$"
 										/>

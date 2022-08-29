@@ -4,7 +4,6 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import CustomInput from 'components/Input/CustomInput';
-import { Synths } from 'constants/currency';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import {
 	crossMarginAvailableMarginState,
@@ -114,7 +113,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 
 			<CustomInput
 				disabled={isDisabled}
-				right={marketAsset || Synths.sUSD}
+				right={marketAsset || 'sUSD'}
 				value={assetValue}
 				placeholder="0.0"
 				onChange={onChangeAssetValue}
@@ -129,7 +128,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 			<CustomInput
 				dataTestId="set-order-size-amount-susd"
 				disabled={isDisabled}
-				right={Synths.sUSD}
+				right={'sUSD'}
 				value={usdValue}
 				placeholder="0.0"
 				onChange={onChangeUsdValue}

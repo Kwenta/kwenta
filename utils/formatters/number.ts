@@ -2,7 +2,7 @@ import Wei, { wei } from '@synthetixio/wei';
 import BN from 'bn.js';
 import { BigNumber, ethers, utils } from 'ethers';
 
-import { CurrencyKey, Synths } from 'constants/currency';
+import { CurrencyKey } from 'constants/currency';
 import {
 	DEFAULT_CRYPTO_DECIMALS,
 	DEFAULT_FIAT_DECIMALS,
@@ -186,7 +186,7 @@ export const formatCurrencyWithKey = (
 ) => `${formatCurrency(String(value), decimals || getPrecision(value))} ${currencyKey}`;
 
 export const formatDollars = (value: WeiSource | null | undefined) =>
-	formatCurrency(Synths.sUSD, value || zeroBN, {
+	formatCurrency('sUSD', value || zeroBN, {
 		currencyKey: undefined,
 		sign: '$',
 	});

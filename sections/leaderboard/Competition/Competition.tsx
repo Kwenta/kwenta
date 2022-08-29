@@ -8,7 +8,6 @@ import styled from 'styled-components';
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
-import { Synths } from 'constants/currency';
 import useGetFile from 'queries/files/useGetFile';
 import { walletAddressState } from 'store/wallet';
 import { formatPercent } from 'utils/formatters/number';
@@ -50,21 +49,16 @@ const Competition: FC<CompetitionProps> = ({
 		const cleanCompetitionData: AccountStat[] = competitionData
 			.sort((a: AccountStat, b: AccountStat) => a.rank - b.rank)
 			.map((trader: any) => {
-				const pinText = trader.account === walletAddress ? PIN : '';
-
 				return {
-					account: trader.account,
+					...trader,
 					trader: trader.account,
 					traderEns: ensInfo[trader.account],
-					tier: trader.tier,
-					rank: trader.rank,
-					rankText: `${trader.rank}${pinText}`,
+					rankText: trader.rank.toString(),
 					traderShort: truncateAddress(trader.account),
 					pnl: wei(trader.pnl),
 					pnlPct: `(${formatPercent(trader?.pnl_pct)})`,
 					totalVolume: trader.volume,
 					totalTrades: trader.trades,
-					liquidations: trader.liquidations,
 				};
 			})
 			.filter((trader: { tier: string }) => {
@@ -77,14 +71,14 @@ const Competition: FC<CompetitionProps> = ({
 					: true
 			);
 
-		return [
-			...cleanCompetitionData.filter(
-				(trader) => trader.account.toLowerCase() === walletAddress?.toLowerCase()
-			),
-			...cleanCompetitionData.filter(
-				(trader) => trader.account.toLowerCase() !== walletAddress?.toLowerCase()
-			),
-		];
+		const pinRow = cleanCompetitionData
+			.filter((trader) => trader.account.toLowerCase() === walletAddress?.toLowerCase())
+			.map((trader) => ({
+				...trader,
+				rankText: `${trader.rank}${PIN}`,
+			}));
+
+		return [...pinRow, ...cleanCompetitionData];
 	}, [competitionQuery, ensInfo, searchTerm, activeTier, walletAddress, walletTier, compact]);
 
 	const noResultsMessage =
@@ -165,7 +159,7 @@ const Competition: FC<CompetitionProps> = ({
 									sortType: 'basic',
 									Cell: (cellProps: CellProps<any>) => (
 										<Currency.Price
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.totalVolume}
 											sign={'$'}
 											conversionRate={1}
@@ -181,7 +175,7 @@ const Competition: FC<CompetitionProps> = ({
 									Cell: (cellProps: CellProps<any>) => (
 										<PnlContainer direction={'column'}>
 											<ColorCodedPrice
-												currencyKey={Synths.sUSD}
+												currencyKey={'sUSD'}
 												price={cellProps.row.original.pnl}
 												sign={'$'}
 												conversionRate={1}
@@ -218,8 +212,10 @@ const Competition: FC<CompetitionProps> = ({
 							Header: () => <TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>,
 							accessor: 'trader',
 							Cell: (cellProps: CellProps<any>) => (
-								<StyledOrderType>
-									<StyledValue>{cellProps.row.original.traderShort}</StyledValue>
+								<StyledOrderType onClick={() => onClickTrader(cellProps.row.original.account)}>
+									<StyledValue>
+										{cellProps.row.original.traderEns ?? cellProps.row.original.traderShort}
+									</StyledValue>
 									{getMedal(cellProps.row.original.rank)}
 								</StyledOrderType>
 							),
@@ -231,7 +227,7 @@ const Competition: FC<CompetitionProps> = ({
 							Cell: (cellProps: CellProps<any>) => (
 								<PnlContainer direction={'column'}>
 									<ColorCodedPrice
-										currencyKey={Synths.sUSD}
+										currencyKey={'sUSD'}
 										price={cellProps.row.original.pnl}
 										sign={'$'}
 										conversionRate={1}

@@ -21,9 +21,10 @@ import TraderHistory from '../TraderHistory';
 
 type LeaderboardProps = {
 	compact?: boolean;
+	mobile?: boolean;
 };
 
-const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
+const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps) => {
 	const [searchTerm, setSearchTerm] = useState('');
 	const [activeTier, setActiveTier] = useState<Tier>('bronze');
 	const [selectedTrader, setSelectedTrader] = useState('');
@@ -93,8 +94,8 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 		<>
 			<CompetitionBanner compact={true} hideBanner={compact} />
 			<LeaderboardContainer>
-				<SearchContainer compact={compact}>
-					<TabButtonContainer>
+				<SearchContainer compact={compact} mobile={mobile}>
+					<TabButtonContainer mobile={mobile}>
 						{COMPETITION_TIERS.map((tier) => (
 							<StyledTabButton
 								key={tier}
@@ -163,19 +164,20 @@ const StyledTabButton = styled(TabButton)`
 	margin-right: 5px;
 `;
 
-const TabButtonContainer = styled.div`
+const TabButtonContainer = styled.div<{ mobile: boolean | undefined }>`
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
+	margin-bottom: ${({ mobile }) => (mobile ? '16px' : '0px')};
 `;
 
-const SearchContainer = styled.div<{ compact: boolean | undefined }>`
+const SearchContainer = styled.div<{ compact: boolean | undefined; mobile: boolean | undefined }>`
 	display: ${({ compact }) => (compact ? 'none' : 'flex')};
-	margin-top: ${({ compact }) => (compact ? '0' : '16px')};
-	height: 35px;
+	flex-direction: ${({ mobile }) => (mobile ? 'column' : 'row')};
+	margin-top: ${({ compact }) => (compact ? '0px' : '16px')};
+	height: ${({ mobile }) => (mobile ? '85px' : '35px')};
 `;
 
 const TableContainer = styled.div<{ compact: boolean | undefined }>`
-	margin-top: ${({ compact }) => (compact ? '0' : '6px')};
 	margin-bottom: ${({ compact }) => (compact ? '0' : '40px')};
 `;
 

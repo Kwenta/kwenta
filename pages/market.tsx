@@ -15,6 +15,7 @@ import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
 import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
 import TradeCrossMargin from 'sections/futures/TradeCrossMargin';
 import AppLayout from 'sections/shared/Layout/AppLayout';
+import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { currentMarketState, futuresAccountState, futuresAccountTypeState } from 'store/futures';
 import { walletAddressState } from 'store/wallet';
 import {
@@ -69,10 +70,12 @@ const Market: MarketComponent = () => {
 							)}
 						</StyledRightSideContent>
 					</StyledFullHeightContainer>
+					<GitHashID />
 				</PageContent>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				{walletAddress && !ready ? <Loader /> : <MobileTrade />}
+				<GitHashID />
 			</MobileOrTabletView>
 		</FuturesContext.Provider>
 	);

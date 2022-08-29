@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
-import { Synths, CurrencyKey } from 'constants/currency';
+import { CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -42,7 +42,7 @@ const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({ open,
 	);
 
 	const ethPriceRate = useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
+		() => newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
@@ -82,21 +82,21 @@ const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({ open,
 			{ label: 'leverage', value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x` },
 			{
 				label: 'current price',
-				value: formatCurrency(Synths.sUSD, positionDetails?.price ?? zeroBN, { sign: '$' }),
+				value: formatCurrency('sUSD', positionDetails?.price ?? zeroBN, { sign: '$' }),
 			},
 			{
 				label: 'liquidation price',
-				value: formatCurrency(Synths.sUSD, positionDetails?.liqPrice ?? zeroBN, {
+				value: formatCurrency('sUSD', positionDetails?.liqPrice ?? zeroBN, {
 					sign: '$',
 				}),
 			},
 			{
 				label: 'margin',
-				value: formatCurrency(Synths.sUSD, positionDetails?.margin ?? zeroBN, { sign: '$' }),
+				value: formatCurrency('sUSD', positionDetails?.margin ?? zeroBN, { sign: '$' }),
 			},
 			{
 				label: 'protocol fee',
-				value: formatCurrency(Synths.sUSD, positionDetails?.fee ?? zeroBN, { sign: '$' }),
+				value: formatCurrency('sUSD', positionDetails?.fee ?? zeroBN, { sign: '$' }),
 			},
 			{
 				label: 'network gas fee',

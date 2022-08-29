@@ -8,7 +8,6 @@ import Currency from 'components/Currency';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
-import { Synths } from 'constants/currency';
 import ROUTES from 'constants/routes';
 import { PositionHistory } from 'queries/futures/types';
 import useGetFuturesAccountPositionHistory from 'queries/futures/useGetFuturesAccountPositionHistory';
@@ -152,7 +151,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 									accessor: 'totalVolume',
 									Cell: (cellProps: CellProps<any>) => (
 										<Currency.Price
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.totalVolume}
 											sign={'$'}
 											conversionRate={1}
@@ -170,7 +169,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 									Cell: (cellProps: CellProps<any>) => (
 										<PnlContainer>
 											<ColorCodedPrice
-												currencyKey={Synths.sUSD}
+												currencyKey={'sUSD'}
 												price={cellProps.row.original.pnl}
 												sign={'$'}
 												conversionRate={1}
@@ -256,7 +255,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 									Cell: (cellProps: CellProps<any>) => (
 										<PnlContainer>
 											<ColorCodedPrice
-												currencyKey={Synths.sUSD}
+												currencyKey={'sUSD'}
 												price={cellProps.row.original.pnl}
 												sign={'$'}
 												conversionRate={1}

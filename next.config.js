@@ -80,5 +80,24 @@ module.exports = withPlugins([
 			styledComponents: true,
 		},
 		experimental: { images: { unoptimized: true } },
+		async redirects() {
+			return [
+				{
+					source: '/dashboard/overview',
+					destination: '/dashboard',
+					permanent: true,
+				},
+				{
+					source: '/market/:key',
+					destination: '/market/?asset=:key',
+					permanent: true,
+				},
+				{
+					source: '/exchange/:base-:quote',
+					destination: '/exchange/?quote=:quote&base=:base',
+					permanent: true,
+				},
+			];
+		},
 	},
 ]);

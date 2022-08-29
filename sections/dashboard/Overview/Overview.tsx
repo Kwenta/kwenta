@@ -1,4 +1,3 @@
-import { Synths } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { FC, useState, useMemo } from 'react';
@@ -58,12 +57,12 @@ const Overview: FC = () => {
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
 	const totalSpotBalancesValue = formatCurrency(
-		Synths.sUSD,
+		'sUSD',
 		wei(synthBalances?.totalUSDBalance ?? zeroBN),
 		{ sign: '$' }
 	);
 
-	const totalFuturesPortfolioValue = formatCurrency(Synths.sUSD, wei(portfolioValue ?? zeroBN), {
+	const totalFuturesPortfolioValue = formatCurrency('sUSD', wei(portfolioValue ?? zeroBN), {
 		sign: '$',
 	});
 

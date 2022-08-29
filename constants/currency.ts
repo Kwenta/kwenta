@@ -1,5 +1,4 @@
 import { CurrencyKey } from '@synthetixio/contracts-interface';
-import { Synths } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
 import keyBy from 'lodash/keyBy';
 
@@ -44,12 +43,12 @@ export const CRYPTO_CURRENCY = [
 export const CRYPTO_CURRENCY_MAP = keyBy(CRYPTO_CURRENCY);
 export type FUTURES_FIAT = 'EUR' | 'JPY' | 'USD' | 'AUD' | 'GBP' | 'CHF';
 export const FIAT_SYNTHS: Set<CurrencyKey | FUTURES_FIAT> = new Set([
-	Synths.sEUR,
-	Synths.sJPY,
-	Synths.sUSD,
-	Synths.sAUD,
-	Synths.sGBP,
-	Synths.sCHF,
+	'sEUR',
+	'sJPY',
+	'sUSD',
+	'sAUD',
+	'sGBP',
+	'sCHF',
 	'EUR',
 	'JPY',
 	'USD',
@@ -77,7 +76,7 @@ export const COMMODITY_SYNTHS = new Set<CurrencyKey | 'XAU' | 'XAG' | 'WTI'>(['X
 export const sUSD_EXCHANGE_RATE = new Wei(1);
 export const SYNTH_DECIMALS = 18;
 
-export const ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
+export const ETH_ADDRESS = '0x4200000000000000000000000000000000000006';
 
 export const ATOMIC_EXCHANGES_L1 = [
 	'sBTC',

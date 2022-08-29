@@ -9,6 +9,7 @@ import useExchange from 'hooks/useExchange';
 import BasicSwap from 'sections/exchange/BasicSwap';
 import { MobileSwap } from 'sections/exchange/MobileSwap';
 import AppLayout from 'sections/shared/Layout/AppLayout';
+import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { PageContent, FullHeightContainer, MainContent } from 'styles/common';
 import { formatCurrency } from 'utils/formatters/number';
 
@@ -28,7 +29,7 @@ const Exchange: ExchangeComponent = () => {
 		<ExchangeContext.Provider value={exchangeData}>
 			<Head>
 				<title>
-					{baseCurrencyKey != null && quoteCurrencyKey != null
+					{!!baseCurrencyKey && !!quoteCurrencyKey && inverseRate.gt(0)
 						? t('exchange.page-title-currency-pair', {
 								baseCurrencyKey,
 								quoteCurrencyKey,
@@ -44,11 +45,13 @@ const Exchange: ExchangeComponent = () => {
 					<StyledFullHeightContainer>
 						<MainContent>
 							<BasicSwap />
+							<GitHashID />
 						</MainContent>
 					</StyledFullHeightContainer>
 				</DesktopOnlyView>
 				<MobileOrTabletView>
 					<MobileSwap />
+					<GitHashID />
 				</MobileOrTabletView>
 			</PageContent>
 		</ExchangeContext.Provider>

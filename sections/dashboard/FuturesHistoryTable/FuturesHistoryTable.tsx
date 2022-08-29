@@ -11,7 +11,6 @@ import styled from 'styled-components';
 import Currency from 'components/Currency';
 import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
-import { Synths } from 'constants/currency';
 import { ETH_UNIT } from 'constants/network';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
@@ -155,7 +154,7 @@ const FuturesHistoryTable: FC = () => {
 							return conditionalRender(
 								cellProps.row.original.price,
 								<>
-									{formatCurrency(Synths.sUSD, cellProps.value, {
+									{formatCurrency('sUSD', cellProps.value, {
 										sign: '$',
 									})}
 								</>
@@ -173,7 +172,7 @@ const FuturesHistoryTable: FC = () => {
 									<PNL normal>--</PNL>
 								) : (
 									<PNL negative={cellProps.value.lt(wei(0))}>
-										{formatCurrency(Synths.sUSD, cellProps.value, {
+										{formatCurrency('sUSD', cellProps.value, {
 											sign: '$',
 										})}
 									</PNL>
@@ -189,7 +188,7 @@ const FuturesHistoryTable: FC = () => {
 							return conditionalRender(
 								cellProps.row.original.feesPaid,
 								<Currency.Price
-									currencyKey={Synths.sUSD}
+									currencyKey={'sUSD'}
 									price={cellProps.row.original.feesPaid}
 									sign={selectedPriceCurrency.sign}
 									conversionRate={selectPriceCurrencyRate}

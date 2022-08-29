@@ -7,7 +7,6 @@ import styled from 'styled-components';
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Table from 'components/Table';
-import { Synths } from 'constants/currency';
 import { DEFAULT_LEADERBOARD_ROWS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import useENSAvatar from 'hooks/useENSAvatar';
@@ -47,11 +46,9 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 		const statsData = stats
 			.sort((a: AccountStat, b: AccountStat) => a.rank - b.rank)
 			.map((trader: any) => {
-				const pinText = trader.account === walletAddress ? PIN : '';
-
 				return {
 					...trader,
-					rankText: `${trader.rank}${pinText}`,
+					rankText: trader.rank.toString(),
 				};
 			})
 			.filter((i: { account: string; traderEns: string }) =>
@@ -61,14 +58,14 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 					: true
 			);
 
-		return [
-			...statsData.filter(
-				(trader) => trader.account.toLowerCase() === walletAddress?.toLowerCase()
-			),
-			...statsData.filter(
-				(trader) => trader.account.toLowerCase() !== walletAddress?.toLowerCase()
-			),
-		];
+		const pinRow = statsData
+			.filter((trader) => trader.account.toLowerCase() === walletAddress?.toLowerCase())
+			.map((trader) => ({
+				...trader,
+				rankText: `${trader.rank}${PIN}`,
+			}));
+
+		return [...pinRow, ...statsData];
 	}, [stats, searchTerm, walletAddress]);
 
 	return (
@@ -168,7 +165,7 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 									sortType: 'basic',
 									Cell: (cellProps: CellProps<any>) => (
 										<Currency.Price
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.totalVolume}
 											sign={'$'}
 											conversionRate={1}
@@ -183,7 +180,7 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 									sortType: 'basic',
 									Cell: (cellProps: CellProps<any>) => (
 										<ColorCodedPrice
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.pnl}
 											sign={'$'}
 											conversionRate={1}
@@ -255,11 +252,7 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 							Header: () => <TableHeader>{t('leaderboard.leaderboard.table.pnl')}</TableHeader>,
 							accessor: 'pnl',
 							Cell: (cellProps: CellProps<any>) => (
-								<ColorCodedPrice
-									currencyKey={Synths.sUSD}
-									price={cellProps.row.original.pnl}
-									sign="$"
-								/>
+								<ColorCodedPrice currencyKey={'sUSD'} price={cellProps.row.original.pnl} sign="$" />
 							),
 							width: 125,
 						},

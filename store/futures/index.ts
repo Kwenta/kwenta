@@ -1,7 +1,6 @@
 import Wei, { wei } from '@synthetixio/wei';
 import { atom, selector } from 'recoil';
 
-import { Synths } from 'constants/currency';
 import { DEFAULT_FUTURES_MARGIN_TYPE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import {
 	FuturesAccountState,
@@ -114,7 +113,7 @@ export const preferredLeverageState = atom<Record<string, string>>({
 
 export const crossMarginMarginDeltaState = atom({
 	key: getFuturesKey('crossMarginMarginDelta'),
-	default: wei('0'),
+	default: zeroBN,
 });
 
 export const crossMarginSettingsState = atom({
@@ -299,7 +298,7 @@ export const marketAssetRateState = selector({
 		const exchangeRates = get(ratesState);
 		const marketAsset = get(currentMarketState);
 
-		return newGetExchangeRatesForCurrencies(exchangeRates, marketAsset, Synths.sUSD);
+		return newGetExchangeRatesForCurrencies(exchangeRates, marketAsset, 'sUSD');
 	},
 });
 

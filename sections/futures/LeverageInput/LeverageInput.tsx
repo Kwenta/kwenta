@@ -102,6 +102,7 @@ const LeverageInput: FC = () => {
 						<LeverageButton
 							key={l}
 							mono
+							variant="flat"
 							onClick={() => {
 								onLeverageChange(l);
 							}}
