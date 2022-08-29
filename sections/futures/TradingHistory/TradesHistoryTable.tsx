@@ -77,7 +77,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 				observer.current?.observe(node);
 			}
 		},
-		[futuresTradesQuery]
+		[futuresTradesQuery, data]
 	);
 
 	const calTimeDelta = (time: number) => {
