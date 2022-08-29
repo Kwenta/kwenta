@@ -11,14 +11,14 @@ import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
-import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
 import { futuresMarketsState, pastRatesState, fundingRatesState } from 'store/futures';
 import {
 	getSynthDescription,
-	isEurForex,
+	isDecimalFour,
 	MarketKeyByAsset,
 	FuturesMarketAsset,
 } from 'utils/futures';
@@ -116,8 +116,8 @@ const FuturesMarketsTable: FC = () => {
 								),
 								accessor: 'oraclePrice',
 								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = isEurForex(cellProps.row.original.asset)
-										? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
+									const formatOptions = isDecimalFour(cellProps.row.original.asset)
+										? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
 										: {};
 									return (
 										<Currency.Price
@@ -296,8 +296,8 @@ const FuturesMarketsTable: FC = () => {
 												price={cellProps.row.original.price}
 												sign="$"
 												formatOptions={
-													isEurForex(cellProps.row.original.asset)
-														? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
+													isDecimalFour(cellProps.row.original.asset)
+														? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
 														: {}
 												}
 											/>

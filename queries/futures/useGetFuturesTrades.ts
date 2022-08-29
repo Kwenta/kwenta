@@ -6,6 +6,7 @@ import { useNetwork, useAccount } from 'wagmi';
 import { DEFAULT_NUMBER_OF_TRADES, MAX_TIMESTAMP } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
 import useIsL2 from 'hooks/useIsL2';
+import { notNill } from 'queries/synths/utils';
 import logError from 'utils/logError';
 
 import { getFuturesTrades } from './subgraph';
@@ -68,7 +69,7 @@ const useGetFuturesTrades = (
 			enabled: isWalletConnected && isL2,
 			refetchInterval: 15000,
 			getNextPageParam: (lastPage, _) => {
-				return lastPage
+				return notNill(lastPage) && lastPage?.length > 0
 					? {
 							minTs: 0,
 							maxTs: lastPage[lastPage.length - 1].timestamp.toNumber(),
@@ -76,7 +77,7 @@ const useGetFuturesTrades = (
 					: null;
 			},
 			getPreviousPageParam: (firstPage, _) => {
-				return firstPage
+				return notNill(firstPage) && firstPage?.length > 0
 					? {
 							minTs: firstPage[0].timestamp.toNumber(),
 							maxTs: MAX_TIMESTAMP,

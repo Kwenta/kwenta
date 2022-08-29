@@ -18,7 +18,6 @@ import Connector from 'containers/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetWalletTrades from 'queries/synths/useGetWalletTrades';
 import { ExternalLink } from 'styles/common';
-import { isFiatCurrency } from 'utils/currencies';
 
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
 
@@ -173,17 +172,10 @@ const SpotHistoryTable: FC = () => {
 									price={cellProps.row.original.toAmountInUSD}
 									sign={selectedPriceCurrency.sign}
 									conversionRate={selectPriceCurrencyRate}
-									formatOptions={
-										isFiatCurrency(currencyKey)
-											? {
-													currencyKey: undefined,
-													sign: selectedPriceCurrency.sign,
-											  }
-											: {
-													currencyKey: selectedPriceCurrency.sign,
-													sign: undefined,
-											  }
-									}
+									formatOptions={{
+										currencyKey: undefined,
+										sign: selectedPriceCurrency.sign,
+									}}
 								/>
 							);
 						},
