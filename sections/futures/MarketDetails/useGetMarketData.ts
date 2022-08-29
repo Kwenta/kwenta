@@ -2,7 +2,7 @@ import { wei } from '@synthetixio/wei';
 import React from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
@@ -17,7 +17,7 @@ import {
 } from 'store/futures';
 import { isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
-import { isEurForex } from 'utils/futures';
+import { isDecimalFour } from 'utils/futures';
 
 type MarketData = Record<string, { value: string | JSX.Element; color?: string }>;
 
@@ -39,8 +39,8 @@ const useGetMarketData = (mobile?: boolean) => {
 	const externalPriceQuery = useExternalPriceQuery(marketKey);
 	const externalPrice = externalPriceQuery?.data ?? 0;
 	const minDecimals =
-		isFiatCurrency(selectedPriceCurrency.name) && isEurForex(marketKey)
-			? DEFAULT_FIAT_EURO_DECIMALS
+		isFiatCurrency(selectedPriceCurrency.name) && isDecimalFour(marketKey)
+			? DEFAULT_CRYPTO_DECIMALS
 			: undefined;
 
 	const pastPrice = pastRates.find((price) => price.synth === marketAsset);

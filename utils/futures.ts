@@ -2,14 +2,17 @@ import { NetworkId, NetworkNameById, Synth } from '@synthetixio/contracts-interf
 import { TFunction } from 'i18next';
 import { Dictionary } from 'lodash';
 
-import { Synths } from 'constants/currency';
-
 export const getMarketAsset = (marketKey: FuturesMarketKey) => {
 	return markets[marketKey].asset;
 };
 
 export const getMarketName = (asset: FuturesMarketAsset | null) => {
-	return `${getDisplayAsset(asset)}-PERP`;
+	switch (asset) {
+		case 'DebtRatio':
+			return `DEBT-PERP`;
+		default:
+			return `${getDisplayAsset(asset)}-PERP`;
+	}
 };
 
 export const getDisplayAsset = (asset: string | null) => {
@@ -18,7 +21,6 @@ export const getDisplayAsset = (asset: string | null) => {
 
 export const getSynthDescription = (synth: string, synthsMap: Dictionary<Synth>, t: TFunction) => {
 	const parsedSynthKey = synth ? (synth[0] !== 's' ? `s${synth}` : synth) : '';
-
 	switch (parsedSynthKey) {
 		case 'sWTI':
 			return t('common.currency.futures-market-oil-short-name');
@@ -27,6 +29,13 @@ export const getSynthDescription = (synth: string, synthsMap: Dictionary<Synth>,
 		case 'sXAG':
 			return t('common.currency.futures-market-silver-short-name');
 		case 'sAPE':
+			return t('common.currency.futures-market-ape-short-name');
+		case 'sBNB':
+			return t('common.currency.futures-market-bnb-short-name');
+		case 'sDOGE':
+			return t('common.currency.futures-market-doge-short-name');
+		case 'sDebtRatio':
+			return t('common.currency.futures-market-debtratio-short-name');
 		case 'sDYDX':
 			return t('common.currency.futures-market-short-name', {
 				currencyName: getDisplayAsset(synth),
@@ -39,8 +48,13 @@ export const getSynthDescription = (synth: string, synthsMap: Dictionary<Synth>,
 	}
 };
 
-export const isEurForex = (marketKeyOrAsset: string | undefined): boolean =>
-	marketKeyOrAsset === Synths.sEUR || marketKeyOrAsset === 'EUR';
+export const isDecimalFour = (marketKeyOrAsset: string | undefined): boolean =>
+	marketKeyOrAsset === 'sEUR' ||
+	marketKeyOrAsset === 'EUR' ||
+	marketKeyOrAsset === 'sDOGE' ||
+	marketKeyOrAsset === 'DOGE' ||
+	marketKeyOrAsset === 'sDebtRatio' ||
+	marketKeyOrAsset === 'DebtRatio';
 
 export enum FuturesMarketKey {
 	sBTC = 'sBTC',
@@ -58,6 +72,9 @@ export enum FuturesMarketKey {
 	sDYDX = 'sDYDX',
 	sWTI = 'sWTI',
 	sAXS = 'sAXS',
+	sBNB = 'sBNB',
+	sDOGE = 'sDOGE',
+	sDebtRatio = 'sDebtRatio',
 }
 
 export enum FuturesMarketAsset {
@@ -76,6 +93,9 @@ export enum FuturesMarketAsset {
 	DYDX = 'DYDX',
 	WTI = 'WTI',
 	AXS = 'AXS',
+	BNB = 'BNB',
+	DOGE = 'DOGE',
+	DebtRatio = 'DebtRatio',
 }
 
 export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
@@ -94,6 +114,9 @@ export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
 	[FuturesMarketKey.sDYDX]: FuturesMarketAsset.DYDX,
 	[FuturesMarketKey.sWTI]: FuturesMarketAsset.WTI,
 	[FuturesMarketKey.sAXS]: FuturesMarketAsset.AXS,
+	[FuturesMarketKey.sBNB]: FuturesMarketAsset.BNB,
+	[FuturesMarketKey.sDOGE]: FuturesMarketAsset.DOGE,
+	[FuturesMarketKey.sDebtRatio]: FuturesMarketAsset.DebtRatio,
 } as const;
 
 export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
@@ -112,6 +135,9 @@ export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 	[FuturesMarketAsset.DYDX]: FuturesMarketKey.sDYDX,
 	[FuturesMarketAsset.WTI]: FuturesMarketKey.sWTI,
 	[FuturesMarketAsset.AXS]: FuturesMarketKey.sAXS,
+	[FuturesMarketAsset.BNB]: FuturesMarketKey.sBNB,
+	[FuturesMarketAsset.DOGE]: FuturesMarketKey.sDOGE,
+	[FuturesMarketAsset.DebtRatio]: FuturesMarketKey.sDebtRatio,
 } as const;
 
 export interface FuturesMarketConfig {
@@ -185,6 +211,21 @@ export const markets: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sDYDX]: {
 		key: FuturesMarketKey.sDYDX,
 		asset: FuturesMarketAsset.DYDX,
+		supports: 'mainnet',
+	},
+	[FuturesMarketKey.sBNB]: {
+		key: FuturesMarketKey.sBNB,
+		asset: FuturesMarketAsset.BNB,
+		supports: 'mainnet',
+	},
+	[FuturesMarketKey.sDOGE]: {
+		key: FuturesMarketKey.sDOGE,
+		asset: FuturesMarketAsset.DOGE,
+		supports: 'mainnet',
+	},
+	[FuturesMarketKey.sDebtRatio]: {
+		key: FuturesMarketKey.sDebtRatio,
+		asset: FuturesMarketAsset.DebtRatio,
 		supports: 'mainnet',
 	},
 	[FuturesMarketKey.sWTI]: {
