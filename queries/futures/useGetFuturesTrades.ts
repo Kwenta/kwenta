@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 
 import { DEFAULT_NUMBER_OF_TRADES, MAX_TIMESTAMP } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
+import { notNill } from 'queries/synths/utils';
 import { appReadyState } from 'store/app';
 import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
 import logError from 'utils/logError';
@@ -11,8 +12,6 @@ import logError from 'utils/logError';
 import { getFuturesTrades } from './subgraph';
 import { FuturesTrade } from './types';
 import { getFuturesEndpoint, mapTrades } from './utils';
-
-import { notNill } from 'queries/synths/utils';
 
 const useGetFuturesTrades = (
 	currencyKey: string | undefined,
