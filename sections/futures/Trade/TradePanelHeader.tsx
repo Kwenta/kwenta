@@ -7,13 +7,13 @@ import { BorderedPanel } from 'styles/common';
 
 type Props = {
 	accountType: FuturesAccountType;
-	button?: {
+	buttons?: {
 		onClick: () => any;
 		i18nTitle: string;
-	};
+	}[];
 };
 
-export default function TradePanelHeader({ accountType, button }: Props) {
+export default function TradePanelHeader({ accountType, buttons }: Props) {
 	const { t } = useTranslation();
 	return (
 		<Container>
@@ -24,11 +24,21 @@ export default function TradePanelHeader({ accountType, button }: Props) {
 						: 'futures.market.trade.isolated-margin.title'
 				)}
 			</Title>
-			{button && (
-				<Button variant="flat" size="xs" onClick={button.onClick} isRounded textColor="yellow">
-					{t(button.i18nTitle)}
-				</Button>
-			)}
+			<Buttons>
+				{buttons &&
+					buttons.map((b) => (
+						<HeaderButton
+							key={b.i18nTitle}
+							variant="flat"
+							size="xs"
+							onClick={b.onClick}
+							isRounded
+							textColor="yellow"
+						>
+							{t(b.i18nTitle)}
+						</HeaderButton>
+					))}
+			</Buttons>
 		</Container>
 	);
 }
@@ -43,4 +53,12 @@ const Container = styled(BorderedPanel)`
 const Title = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 17px;
+`;
+
+const Buttons = styled.div`
+	display: flex;
+`;
+
+const HeaderButton = styled(Button)`
+	margin-left: 10px;
 `;

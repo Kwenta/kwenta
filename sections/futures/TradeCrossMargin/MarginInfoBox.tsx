@@ -3,7 +3,6 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import DepositWithdrawIcon from 'assets/svg/futures/deposit-withdraw-arrows.svg';
 import InfoBox from 'components/InfoBox';
 import Loader from 'components/Loader';
 import PreviewArrow from 'components/PreviewArrow';
@@ -137,14 +136,7 @@ const MarginInfoBox: React.FC = () => {
 				dataTestId="market-info-box"
 				details={{
 					'Free Account Margin': {
-						value: (
-							<Row>
-								{formatDollars(crossMarginFreeMargin)}
-								<Button>
-									<DepositWithdrawButton onClick={() => setOpenModal('deposit')} />
-								</Button>
-							</Row>
-						),
+						value: formatDollars(crossMarginFreeMargin),
 					},
 					'Market Margin': {
 						value: formatDollars(position?.remainingMargin),
@@ -212,11 +204,6 @@ const Button = styled.span`
 	&:hover {
 		opacity: 0.7;
 	}
-`;
-
-const DepositWithdrawButton = styled(DepositWithdrawIcon)`
-	margin-left: 10px;
-	cursor: pointer;
 `;
 
 const EditButton = styled(Button)`

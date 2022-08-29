@@ -44,7 +44,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 
 	const [percent, setPercent] = useState(0);
 	const [usdAmount, setUsdAmount] = useState(susdSize);
-	const [openDepositModal, setOpenDepositModal] = useState(false);
+	const [openTransferModal, setOpenTransferModal] = useState<'deposit' | 'withdraw' | null>(null);
 
 	// eslint-disable-next-line
 	const onChangeMarginPercent = useCallback(
@@ -86,10 +86,16 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 
 					<TradePanelHeader
 						accountType={selectedAccountType}
-						button={{
-							i18nTitle: 'futures.market.trade.button.deposit',
-							onClick: () => setOpenDepositModal(true),
-						}}
+						buttons={[
+							{
+								i18nTitle: 'futures.market.trade.button.deposit',
+								onClick: () => setOpenTransferModal('deposit'),
+							},
+							{
+								i18nTitle: 'futures.market.trade.button.withdraw',
+								onClick: () => setOpenTransferModal('withdraw'),
+							},
+						]}
 					/>
 					{}
 					<MarginInfoBox />
@@ -115,8 +121,11 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 					<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
 					<ManagePosition />
 					<FeesBox />
-					{openDepositModal && (
-						<DepositWithdrawCrossMargin onDismiss={() => setOpenDepositModal(false)} />
+					{openTransferModal && (
+						<DepositWithdrawCrossMargin
+							defaultTab={openTransferModal}
+							onDismiss={() => setOpenTransferModal(null)}
+						/>
 					)}
 				</>
 			)}
