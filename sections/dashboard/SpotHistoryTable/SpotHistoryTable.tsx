@@ -1,4 +1,4 @@
-import type { SynthExchangeResult } from '@synthetixio/queries/build/node/generated/mainSubgraphQueries';
+import type { SynthExchangeResult } from '@synthetixio/queries/build/subgraph/mainSubgraphQueries';
 import * as _ from 'lodash/fp';
 import values from 'lodash/values';
 import Link from 'next/link';

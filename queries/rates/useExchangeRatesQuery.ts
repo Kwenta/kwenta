@@ -1,5 +1,4 @@
 import { CurrencyKey } from '@synthetixio/contracts-interface';
-import { CRYPTO_CURRENCY_MAP } from '@synthetixio/queries/build/node/src/currency';
 import { wei } from '@synthetixio/wei';
 import { BigNumberish, ethers } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
@@ -18,7 +17,7 @@ type CurrencyRate = BigNumberish;
 type SynthRatesTuple = [string[], CurrencyRate[]];
 
 // Additional commonly used currencies to fetch, besides the one returned by the SynthUtil.synthsRates
-const additionalCurrencies = [CRYPTO_CURRENCY_MAP.SNX, 'XAU', 'XAG', 'DYDX', 'APE'].map(
+const additionalCurrencies = ['SNX', 'XAU', 'XAG', 'DYDX', 'APE'].map(
 	ethers.utils.formatBytes32String
 );
 
