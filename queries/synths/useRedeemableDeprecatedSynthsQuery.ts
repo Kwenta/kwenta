@@ -4,7 +4,6 @@ import { wei } from '@synthetixio/wei';
 import { Provider, Contract } from 'ethcall';
 import { ethers } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useNetwork, useProvider } from 'wagmi';
 
 import Connector from 'containers/Connector';
 
@@ -16,9 +15,7 @@ const useRedeemableDeprecatedSynthsQuery = (
 	walletAddress: string | null,
 	options?: UseQueryOptions<DeprecatedSynthsBalances>
 ) => {
-	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
-	const provider = useProvider();
-	const { chain: network } = useNetwork();
+	const { defaultSynthetixjs: synthetixjs, provider, network } = Connector.useContainer();
 
 	return useQuery<DeprecatedSynthsBalances>(
 		['WalletBalances', 'RedeemableDeprecatedSynths', network?.id as NetworkId, walletAddress],

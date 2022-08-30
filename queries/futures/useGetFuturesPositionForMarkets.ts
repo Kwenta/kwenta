@@ -3,7 +3,7 @@ import { Provider, Contract } from 'ethcall';
 import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { useAccount, useNetwork, useProvider } from 'wagmi';
+import { useAccount } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
@@ -19,11 +19,9 @@ import { mapFuturesPosition } from './utils';
 const ethCallProvider = new Provider();
 
 const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPosition[]>) => {
-	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs, provider, network } = Connector.useContainer();
 	const { isConnected } = useAccount();
-	const { chain: network } = useNetwork();
 	const isL2 = useIsL2();
-	const provider = useProvider();
 	const setFuturesPositions = useSetRecoilState(positionsState);
 
 	const futuresMarkets = useRecoilValue(futuresMarketsState);

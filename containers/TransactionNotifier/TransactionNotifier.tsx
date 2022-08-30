@@ -5,7 +5,6 @@ import {
 import { useMemo } from 'react';
 import { toast } from 'react-toastify';
 import { createContainer } from 'unstated-next';
-import { useProvider } from 'wagmi';
 
 import {
 	NotificationSuccess,
@@ -13,10 +12,11 @@ import {
 	NotificationError,
 } from 'components/TransactionNotification';
 import BlockExplorer from 'containers/BlockExplorer';
+import Connector from 'containers/Connector';
 
 const useTransactionNotifier = () => {
+	const { provider } = Connector.useContainer();
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
-	const provider = useProvider();
 
 	const transactionNotifier = useMemo(() => new BaseTN(provider), [provider]);
 

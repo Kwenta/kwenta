@@ -4,12 +4,14 @@ import EthDater from 'ethereum-block-by-date';
 import request, { gql } from 'graphql-request';
 import moment from 'moment';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useAccount, useNetwork, useProvider } from 'wagmi';
+import { useAccount } from 'wagmi';
 
+import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import logError from 'utils/logError';
 
 import { getFuturesEndpoint } from './utils';
+
 // @ts-ignore
 
 type PortfolioData = {
@@ -21,12 +23,11 @@ type PortfolioData = {
 // The chart basically plots margin against block number.
 
 const usePortfolioData = (options?: UseQueryOptions<PortfolioData | null>) => {
-	const { chain: network } = useNetwork();
+	const { provider, network } = Connector.useContainer();
 	const isL2 = useIsL2();
 	const { address } = useAccount();
 	const walletAddress = address || null;
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
-	const provider = useProvider();
 
 	return useQuery<PortfolioData | null>(
 		['futures', 'portfolio', network?.id as NetworkId, walletAddress],

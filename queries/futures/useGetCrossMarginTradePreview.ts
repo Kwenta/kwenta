@@ -4,7 +4,6 @@ import BN from 'bn.js';
 import { BigNumber, Contract, ethers } from 'ethers';
 import { formatBytes32String } from 'ethers/lib/utils';
 import { useMemo } from 'react';
-import { useProvider } from 'wagmi';
 
 import Connector from 'containers/Connector';
 import { PotentialTradeStatus } from 'sections/futures/types';
@@ -51,8 +50,7 @@ export default function useGetCrossMarginTradePreview(
 	marketAsset: FuturesMarketAsset,
 	address: string | null | undefined
 ) {
-	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
-	const provider = useProvider();
+	const { defaultSynthetixjs: synthetixjs, provider } = Connector.useContainer();
 
 	const contractInstance = useMemo(() => {
 		if (!synthetixjs || !provider || !address) return null;

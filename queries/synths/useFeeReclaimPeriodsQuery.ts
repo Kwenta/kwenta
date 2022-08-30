@@ -4,7 +4,6 @@ import Wei, { wei } from '@synthetixio/wei';
 import { Provider, Contract } from 'ethcall';
 import { BigNumber, ethers } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useNetwork, useProvider } from 'wagmi';
 
 import Connector from 'containers/Connector';
 
@@ -25,9 +24,7 @@ const useFeeReclaimPeriodsQuery = (
 	walletAddress: string,
 	options?: UseQueryOptions<SynthFeeAndWaitingPeriod[]>
 ) => {
-	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
-	const { chain: network } = useNetwork();
-	const provider = useProvider();
+	const { defaultSynthetixjs: synthetixjs, network, provider } = Connector.useContainer();
 
 	return useQuery<SynthFeeAndWaitingPeriod[]>(
 		['synths', 'feeReclaimPeriods', network?.id as NetworkId],
