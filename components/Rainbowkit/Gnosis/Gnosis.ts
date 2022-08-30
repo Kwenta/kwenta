@@ -18,6 +18,8 @@ const Safe = ({ chains }: SafeOptions): Wallet => ({
 		ios: 'https://apps.apple.com/us/app/gnosis-safe/idid1515759131',
 	},
 	createConnector: () => {
+		// eslint-disable-next-line no-console
+		console.log(`createConnector`);
 		const connector = new SafeConnector({ chains });
 		return {
 			connector,
