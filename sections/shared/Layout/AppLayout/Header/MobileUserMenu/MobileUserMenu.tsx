@@ -1,12 +1,14 @@
 import Link from 'next/link';
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import CloseIcon from 'assets/svg/app/close.svg';
 import MenuIcon from 'assets/svg/app/menu.svg';
 import Button from 'components/Button';
 import ROUTES from 'constants/routes';
+import { currentThemeState } from 'store/ui';
 import { FixedFooterMixin } from 'styles/common';
 
 import MobileMenuModal from './MobileMenuModal';
@@ -16,6 +18,9 @@ import MobileWalletButton from './MobileWalletButton';
 const MobileUserMenu: FC = () => {
 	const [isOpen, setIsOpen] = useState<'menu' | 'settings'>();
 	const { t } = useTranslation();
+
+	const currentTheme = useRecoilValue(currentThemeState);
+
 	const closeModal = () => {
 		setIsOpen(undefined);
 	};
@@ -44,7 +49,9 @@ const MobileUserMenu: FC = () => {
 				</MobileFooterIconContainer>
 				<MobileFooterSeparator />
 				{!(window.location.pathname === ROUTES.Home.Root) && (
-					<SettingsWrapper>{t('modals.settings.title')}</SettingsWrapper>
+					<SettingsWrapper currentTheme={currentTheme}>
+						{t('modals.settings.title')}
+					</SettingsWrapper>
 				)}
 				<MobileFooterRight>
 					{window.location.pathname === ROUTES.Home.Root ? (
@@ -92,11 +99,14 @@ const MobileFooterRight = styled.div`
 	align-items: center;
 `;
 
-const SettingsWrapper = styled.div`
+const SettingsWrapper = styled.div<{ currentTheme: 'dark' | 'light' }>`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 19px;
 	line-height: 19px;
-	color: ${(props) => props.theme.colors.selectedTheme.white};
+	color: ${(props) =>
+		props.currentTheme === 'dark'
+			? props.theme.colors.selectedTheme.white
+			: props.theme.colors.selectedTheme.black};
 	text-transform: capitalize;
 `;
 
