@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
+import DepositArrow from 'assets/svg/futures/deposit-arrow.svg';
+import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import StyledSlider from 'components/Slider/StyledSlider';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import {
@@ -82,17 +84,19 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 				<CreateAccount />
 			) : (
 				<>
-					{isMobile && <MarketsDropdown />}
+					{!isMobile && <MarketsDropdown />}
 
 					<TradePanelHeader
 						accountType={selectedAccountType}
 						buttons={[
 							{
 								i18nTitle: 'futures.market.trade.button.deposit',
+								Icon: DepositArrow,
 								onClick: () => setOpenTransferModal('deposit'),
 							},
 							{
 								i18nTitle: 'futures.market.trade.button.withdraw',
+								Icon: WithdrawArrow,
 								onClick: () => setOpenTransferModal('withdraw'),
 							},
 						]}

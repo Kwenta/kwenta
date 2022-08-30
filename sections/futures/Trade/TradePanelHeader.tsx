@@ -1,15 +1,18 @@
+import { FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
 import { FuturesAccountType } from 'queries/futures/subgraph';
 import { BorderedPanel } from 'styles/common';
+import media from 'styles/media';
 
 type Props = {
 	accountType: FuturesAccountType;
 	buttons?: {
 		onClick: () => any;
 		i18nTitle: string;
+		Icon?: FunctionComponent<any>;
 	}[];
 };
 
@@ -26,16 +29,21 @@ export default function TradePanelHeader({ accountType, buttons }: Props) {
 			</Title>
 			<Buttons>
 				{buttons &&
-					buttons.map((b) => (
+					buttons.map(({ Icon, i18nTitle, onClick }) => (
 						<HeaderButton
-							key={b.i18nTitle}
+							key={i18nTitle}
 							variant="flat"
 							size="xs"
-							onClick={b.onClick}
+							onClick={onClick}
 							isRounded
 							textColor="yellow"
 						>
-							{t(b.i18nTitle)}
+							<Label>{t(i18nTitle)}</Label>
+							{Icon && (
+								<IconContainer>
+									<Icon />
+								</IconContainer>
+							)}
 						</HeaderButton>
 					))}
 			</Buttons>
@@ -52,7 +60,7 @@ const Container = styled(BorderedPanel)`
 
 const Title = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 17px;
+	font-size: 16px;
 `;
 
 const Buttons = styled.div`
@@ -61,4 +69,17 @@ const Buttons = styled.div`
 
 const HeaderButton = styled(Button)`
 	margin-left: 10px;
+`;
+
+const Label = styled.span`
+	${media.lessThan('xl')`
+        display: none;
+    `}
+`;
+
+const IconContainer = styled.span`
+	margin-left: 5px;
+	${media.lessThan('xl')`
+        margin-left: 0;
+    `}
 `;

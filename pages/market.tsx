@@ -97,7 +97,7 @@ const StyledLeftSideContent = styled(LeftSideContent)`
 
 const StyledFullHeightContainer = styled(FullHeightContainer)`
 	display: grid;
-	grid-template-columns: 20% 60% 20%;
+	grid-template-columns: 20% 55% 25%;
 	column-gap: 15px;
 	width: calc(100% - 30px);
 	@media (min-width: 1725px) {
