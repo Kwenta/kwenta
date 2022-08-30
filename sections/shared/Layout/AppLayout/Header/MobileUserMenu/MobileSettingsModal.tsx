@@ -140,12 +140,13 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 										label: 'Dark',
 										icon: <MoonIcon />,
 										onClick: toggleTheme,
-										selected: true,
+										selected: currentTheme === 'dark',
 									},
 									{
 										label: 'Light',
 										icon: <SunIcon />,
 										onClick: toggleTheme,
+										selected: currentTheme === 'light',
 									},
 								]}
 							/>
