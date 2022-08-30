@@ -79,7 +79,11 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 									options={[
 										{
 											label: t('mobile-menu.switch'),
-											icon: <MobileSwitchWalletIcon />,
+											icon: (
+												<MobileSwitchWalletIcon
+													fill={currentTheme === 'light' ? colors.common.secondaryGray : 'none'}
+												/>
+											),
 											onClick: connectWallet,
 										},
 										{
@@ -144,7 +148,7 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 												fill={
 													currentTheme === 'dark'
 														? colors.common.secondaryGold
-														: colors.common.primaryWhite
+														: colors.common.secondaryGray
 												}
 											/>
 										),
@@ -158,7 +162,7 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 												fill={
 													currentTheme === 'light'
 														? colors.common.secondaryGold
-														: colors.common.primaryWhite
+														: colors.common.secondaryGray
 												}
 											/>
 										),

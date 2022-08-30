@@ -1,10 +1,12 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import ChevronDown from 'assets/svg/app/chevron-down.svg';
 import ChevronUp from 'assets/svg/app/chevron-up.svg';
+import { currentThemeState } from 'store/ui';
 
 import { SUB_MENUS, MenuButton } from './common';
 
@@ -37,9 +39,11 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
 
+	const currentTheme = useRecoilValue(currentThemeState);
+
 	return (
 		<>
-			<SubMenuButton isActive={active} onClick={onToggle}>
+			<SubMenuButton currentTheme={currentTheme} isActive={active} onClick={onToggle}>
 				{t(i18nLabel)}
 				{active ? <ChevronUp /> : <ChevronDown />}
 			</SubMenuButton>
