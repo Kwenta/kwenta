@@ -13,7 +13,6 @@ import {
 	NotificationError,
 } from 'components/TransactionNotification';
 import BlockExplorer from 'containers/BlockExplorer';
-// import Connector from 'containers/Connector';
 
 const useTransactionNotifier = () => {
 	const { blockExplorerInstance } = BlockExplorer.useContainer();

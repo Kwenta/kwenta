@@ -30,13 +30,13 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 	const router = useRouter();
 	const pastRates = useRecoilValue(pastRatesState);
 
-	const { synthsMap } = Connector.useContainer();
+	const { network, synthsMap } = Connector.useContainer();
 
 	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
 
 	const queryCache = useQueryClient().getQueryCache();
 	// KM-NOTE: come back and delete
-	const frozenSynthsQuery = queryCache.find(['synths', 'frozenSynths', 10]);
+	const frozenSynthsQuery = queryCache.find(['synths', 'frozenSynths', network.id]);
 
 	const unfrozenSynths =
 		frozenSynthsQuery && frozenSynthsQuery.state.status === 'success'

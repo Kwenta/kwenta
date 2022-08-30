@@ -13,7 +13,7 @@ const useConnector = () => {
 			: activeChain ?? chain.optimism;
 
 	const provider = useProvider({ chainId: network.id });
-	const L2Provider = useProvider({ chainId: chain.optimism.id });
+	const l2Provider = useProvider({ chainId: chain.optimism.id });
 	const { data: signer } = useSigner();
 	// Provides a default mainnet provider, irrespective of the current network
 	const staticMainnetProvider = new ethers.providers.InfuraProvider();
@@ -31,7 +31,7 @@ const useConnector = () => {
 
 	return {
 		provider,
-		L2Provider,
+		l2Provider,
 		signer,
 		network,
 		synthsMap,

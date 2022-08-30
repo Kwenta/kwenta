@@ -1,6 +1,5 @@
 import { connectorsForWallets, wallet } from '@rainbow-me/rainbowkit';
 import { chain, configureChains, createClient } from 'wagmi';
-import { infuraProvider } from 'wagmi/providers/infura';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { publicProvider } from 'wagmi/providers/public';
 
@@ -25,11 +24,6 @@ export const initRainbowkit = () => {
 				},
 				stallTimeout: 5000,
 				priority: 0,
-			}),
-			infuraProvider({
-				apiKey: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-				stallTimeout: 5000,
-				priority: 1,
 			}),
 			publicProvider({ stallTimeout: 5000, priority: 5 }),
 		]

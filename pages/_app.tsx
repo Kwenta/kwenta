@@ -43,7 +43,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 	const {
 		signer,
 		provider,
-		L2Provider,
+		l2Provider,
 		network,
 		defaultSynthetixjs: synthetixjs,
 	} = Connector.useContainer();
@@ -72,7 +72,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 										synthetixjs,
 								  })
 								: createQueryContext({
-										provider: L2Provider,
+										provider: l2Provider,
 										networkId: chain.optimism.id as NetworkId,
 										synthetixjs,
 								  })

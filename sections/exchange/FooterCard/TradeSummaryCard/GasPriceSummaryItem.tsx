@@ -3,7 +3,6 @@ import Tippy from '@tippyjs/react';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { chain, useNetwork } from 'wagmi';
 
 import InfoIcon from 'assets/svg/app/info.svg';
 import Button from 'components/Button';
@@ -11,6 +10,7 @@ import NumericInput from 'components/Input/NumericInput';
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE, ESTIMATE_VALUE } from 'constants/placeholder';
 import useGas, { parseGasPriceObject } from 'hooks/useGas';
+import useIsL1 from 'hooks/useIsL1';
 import useIsL2 from 'hooks/useIsL2';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { NumericValue } from 'styles/common';
@@ -31,10 +31,8 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const { chain: network } = useNetwork();
 	const isL2 = useIsL2();
-	const isMainnet =
-		network !== undefined ? [chain.mainnet.id, chain.goerli.id].includes(network?.id) : false;
+	const isMainnet = useIsL1();
 	const {
 		gasPrice,
 		gasSpeed,

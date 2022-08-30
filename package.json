@@ -26,7 +26,6 @@
 	"dependencies": {
 		"@artsy/fresnel": "1.7.0",
 		"@eth-optimism/contracts": "^0.5.1",
-		"@gnosis.pm/safe-apps-wagmi": "1.0.2",
 		"@kwenta/synthswap": "^1.0.3",
 		"@material-ui/core": "^4.12.3",
 		"@metamask/detect-provider": "1.2.0",
@@ -36,7 +35,7 @@
 		"@synthetixio/contracts-interface": "2.76.1",
 		"@synthetixio/optimism-networks": "2.74.2",
 		"@synthetixio/providers": "2.74.7",
-		"@synthetixio/queries": "3.0.5",
+		"@synthetixio/queries": "3.0.7",
 		"@synthetixio/transaction-notifier": "2.74.9",
 		"@synthetixio/wei": "2.74.2",
 		"@tippyjs/react": "4.1.0",

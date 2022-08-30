@@ -25,7 +25,7 @@
 			"optimistic-etherscan": "Optimistic Etherscan",
 			"learn-more": "Learn more",
 			"optimism-mainnet": "Optimism",
-			"optimism-testnet": "OΞ Kovan"
+			"optimism-testnet": "OP Goerli"
 		},
 		"balance": {
 			"get-susd": "Get sUSD",

@@ -3,6 +3,7 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { components } from 'react-select';
 import styled from 'styled-components';
+import { chain } from 'wagmi';
 
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import LinkIcon from 'assets/svg/app/link-blue.svg';
@@ -32,7 +33,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 	const { openChainModal } = useChainModal();
 	const { t } = useTranslation();
 	const isL2 = useIsL2();
-	const network = activeChain?.id === 69 ? 'testnet' : 'mainnet';
+	const network = activeChain?.id === chain.optimismGoerli.id ? 'testnet' : 'mainnet';
 	const networkLabel = 'header.networks-switcher.optimism-' + network;
 
 	const OPTIMISM_OPTIONS = [
@@ -174,5 +175,8 @@ const LabelContainer = styled(FlexDivRowCentered)<{ noPadding: boolean }>`
 		path {
 			fill: ${(props) => props.theme.colors.selectedTheme.icon.fill};
 		}
+	}
+	span {
+		margin-right: -2px;
 	}
 `;
