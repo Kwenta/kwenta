@@ -241,7 +241,7 @@ const Assets = () => {
 			return {
 				key: synth.asset,
 				market: synth.name,
-				description: description.split(' ')[1],
+				description: description.slice(10),
 				price,
 				change: price !== 0 ? (price - (pastPrice?.price ?? 0)) / price || 0 : 0,
 				volume: !isNil(synthVolumes[synth.name]) ? Number(synthVolumes[synth.name]) ?? 0 : 0,
