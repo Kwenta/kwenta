@@ -5,13 +5,13 @@ import { Provider, Contract as EthCallContract } from 'ethcall';
 import { BigNumber } from 'ethers';
 import keyBy from 'lodash/keyBy';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { chain, useAccount, useNetwork } from 'wagmi';
+import { chain, useAccount } from 'wagmi';
 
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
 import QUERY_KEYS from 'constants/queryKeys';
+import Connector from 'containers/Connector';
 import erc20Abi from 'lib/abis/ERC20.json';
 import { Token } from 'queries/tokenLists/types';
-import { getDefaultProvider } from 'utils/network';
 
 const FILTERED_TOKENS = ['0x4922a015c4407f87432b179bb209e125432e4a2a'];
 
@@ -20,9 +20,8 @@ const useTokensBalancesQuery = (
 	walletAddress: string | null,
 	options?: UseQueryOptions<TokenBalances | null>
 ) => {
-	const { chain: network } = useNetwork();
+	const { network, provider } = Connector.useContainer();
 	const { isConnected } = useAccount();
-	const provider = getDefaultProvider(network?.id as NetworkId);
 	const filteredTokens = tokens.filter((t) => !FILTERED_TOKENS.includes(t.address.toLowerCase()));
 	const symbols = filteredTokens.map((token) => token.symbol);
 	const tokensMap = keyBy(filteredTokens, 'symbol');

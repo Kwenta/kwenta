@@ -2,7 +2,6 @@ import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
@@ -29,10 +28,8 @@ const useGetFuturesPotentialTradeDetails = (
 	options?: UseQueryOptions<FuturesPotentialTradeDetails | null>
 ) => {
 	const { selectedFuturesAddress, selectedAccountType } = useRecoilValue(futuresAccountState);
-
-	const { chain: network } = useNetwork();
+	const { defaultSynthetixjs: synthetixjs, network } = Connector.useContainer();
 	const isL2 = useIsL2();
-	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 
 	const tradeSize = useRecoilValue(tradeSizeState);
 	const leverageSide = useRecoilValue(leverageSideState);

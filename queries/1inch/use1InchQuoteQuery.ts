@@ -2,7 +2,6 @@ import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { useMemo } from 'react';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
@@ -25,10 +24,9 @@ const use1InchQuoteQuery = (
 	options?: UseQueryOptions<string | null>
 ) => {
 	const { quote1Inch } = Convert.useContainer();
-	const { chain: network } = useNetwork();
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const { tokensMap } = Connector.useContainer();
+	const { tokensMap, network } = Connector.useContainer();
 
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 

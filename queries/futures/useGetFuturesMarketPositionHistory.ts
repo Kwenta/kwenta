@@ -2,7 +2,6 @@ import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import { useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
@@ -17,10 +16,8 @@ import { getFuturesEndpoint, mapTradeHistory } from './utils';
 
 const useGetFuturesMarketPositionHistory = (options?: UseQueryOptions<any | null>) => {
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
-
-	const { chain: network } = useNetwork();
+	const { defaultSynthetixjs: synthetixjs, network } = Connector.useContainer();
 	const isL2 = useIsL2();
-	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
 	const currencyKey = useRecoilValue(currentMarketState);
