@@ -208,7 +208,7 @@ const useFuturesData = () => {
 			const maxCrossMarginFee = maxUsd.mul(crossMarginTradeFee);
 			const fees = maxFee.add(maxCrossMarginFee) || zeroBN;
 			maxUsd = maxUsd.sub(fees);
-			const buffer = maxUsd.mul(0.03);
+			const buffer = maxUsd.mul(0.05);
 			return maxUsd.abs().sub(buffer);
 		}
 	}, [
@@ -289,10 +289,9 @@ const useFuturesData = () => {
 	);
 
 	useEffect(() => {
-		// Set to max when leverage or leverage side changes
+		// Check within max
 		if (wei(tradeSize.susdSize || 0).gt(maxUsdInputAmount)) {
-			const amount = wei(Math.min(Number(tradeSize.susdSize), Number(maxUsdInputAmount)));
-			onTradeAmountSUSDChange(Number(amount).toFixed(0));
+			onTradeAmountSUSDChange(Math.floor(Number(maxUsdInputAmount)).toString());
 		}
 	}, [maxUsdInputAmount, tradeSize.susdSize, onTradeAmountSUSDChange]);
 
