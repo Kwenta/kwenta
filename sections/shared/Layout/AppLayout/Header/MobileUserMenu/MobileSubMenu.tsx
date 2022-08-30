@@ -116,7 +116,7 @@ const SubMenuItem = styled.div<{ active?: boolean; selected?: boolean }>`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	box-sizing: border-box;
 	padding: 15px;
-	background-color: rgba(255, 255, 255, 0.05);
+	background-color: ${(props) => props.theme.colors.selectedTheme.gray};
 	border-radius: 8px;
 	width: 100%;
 
