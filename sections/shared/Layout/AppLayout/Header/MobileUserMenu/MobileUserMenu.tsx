@@ -43,6 +43,9 @@ const MobileUserMenu: FC = () => {
 					{!!isOpen ? <CloseIcon /> : <MenuIcon />}
 				</MobileFooterIconContainer>
 				<MobileFooterSeparator />
+				{!(window.location.pathname === ROUTES.Home.Root) && (
+					<SettingsWrapper>{t('modals.settings.title')}</SettingsWrapper>
+				)}
 				<MobileFooterRight>
 					{window.location.pathname === ROUTES.Home.Root ? (
 						<Link href={ROUTES.Markets.Home}>
@@ -87,6 +90,14 @@ const MobileFooterRight = styled.div`
 	flex-grow: 1;
 	justify-content: flex-end;
 	align-items: center;
+`;
+
+const SettingsWrapper = styled.div`
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 19px;
+	line-height: 19px;
+	color: ${(props) => props.theme.colors.selectedTheme.white};
+	text-transform: capitalize;
 `;
 
 export default MobileUserMenu;

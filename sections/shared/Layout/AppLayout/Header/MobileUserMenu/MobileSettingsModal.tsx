@@ -20,6 +20,7 @@ import Logo from 'sections/shared/Layout/Logo';
 import { languageState } from 'store/app';
 import { currentThemeState } from 'store/ui';
 import { isL2State } from 'store/wallet';
+import colors from 'styles/theme/colors';
 
 import { lanugageIcons } from './common';
 import MobileSubMenu from './MobileSubMenu';
@@ -131,20 +132,36 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 					{!(window.location.pathname === ROUTES.Home.Root) && (
 						<MenuButtonContainer>
 							<MobileSubMenu
-								i18nLabel={t('mobile-menu.theme')}
+								i18nLabel={t('mobile-menu.theme.title')}
 								onDismiss={onDismiss}
 								active={expanded === 'theme'}
 								onToggle={handleToggle('theme')}
 								options={[
 									{
-										label: 'Dark',
-										icon: <MoonIcon />,
+										label: t('mobile-menu.theme.options.dark'),
+										icon: (
+											<MoonIcon
+												fill={
+													currentTheme === 'dark'
+														? colors.common.secondaryGold
+														: colors.common.primaryWhite
+												}
+											/>
+										),
 										onClick: toggleTheme,
 										selected: currentTheme === 'dark',
 									},
 									{
-										label: 'Light',
-										icon: <SunIcon />,
+										label: t('mobile-menu.theme.options.light'),
+										icon: (
+											<SunIcon
+												fill={
+													currentTheme === 'light'
+														? colors.common.secondaryGold
+														: colors.common.primaryWhite
+												}
+											/>
+										),
 										onClick: toggleTheme,
 										selected: currentTheme === 'light',
 									},
