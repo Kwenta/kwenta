@@ -6,6 +6,7 @@ import styled, { css } from 'styled-components';
 
 import ChevronDown from 'assets/svg/app/chevron-down.svg';
 import ChevronUp from 'assets/svg/app/chevron-up.svg';
+import ROUTES from 'constants/routes';
 import { currentThemeState } from 'store/ui';
 
 import { SUB_MENUS, MenuButton } from './common';
@@ -116,7 +117,10 @@ const SubMenuItem = styled.div<{ active?: boolean; selected?: boolean }>`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	box-sizing: border-box;
 	padding: 15px;
-	background-color: ${(props) => props.theme.colors.selectedTheme.gray};
+	background-color: ${(props) =>
+		window.location.pathname === ROUTES.Home.Root
+			? 'rgba(255, 255, 255, 0.05)'
+			: props.theme.colors.selectedTheme.gray};
 	border-radius: 8px;
 	width: 100%;
 
