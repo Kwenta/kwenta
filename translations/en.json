@@ -1093,6 +1093,7 @@
 		"learn-more": "learn more"
 	},
 	"mobile-menu": {
+		"theme": "theme",
 		"currency": "Currency",
 		"cancel": "Cancel",
 		"wallet": "Wallet",
