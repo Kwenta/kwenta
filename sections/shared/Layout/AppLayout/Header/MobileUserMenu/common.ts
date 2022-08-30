@@ -26,7 +26,7 @@ export const MenuButton = styled.div<{
 				? props.theme.colors.common.primaryWhite
 				: props.theme.colors.selectedTheme.black};
 			path {
-				stroke: ${window.location.pathname === ROUTES.Home.Root || props.currentTheme === 'dark'
+				fill: ${window.location.pathname === ROUTES.Home.Root || props.currentTheme === 'dark'
 					? props.theme.colors.common.primaryWhite
 					: props.theme.colors.selectedTheme.black};
 			}
