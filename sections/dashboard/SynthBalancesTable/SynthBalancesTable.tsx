@@ -17,7 +17,7 @@ import Connector from 'containers/Connector';
 import { Price } from 'queries/rates/types';
 import { pastRatesState } from 'store/futures';
 import { formatNumber, zeroBN } from 'utils/formatters/number';
-import { isEurForex } from 'utils/futures';
+import { isDecimalFour } from 'utils/futures';
 
 type SynthBalancesTableProps = {
 	exchangeRates: Rates | null;
@@ -179,7 +179,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 											sign={'$'}
 											conversionRate={1}
 											formatOptions={{
-												minDecimals: isEurForex(cellProps.row.original.synth) ? 4 : 2,
+												minDecimals: isDecimalFour(cellProps.row.original.synth) ? 4 : 2,
 											}}
 										/>
 									);
@@ -258,7 +258,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 												price={cellProps.row.original.price ?? 0}
 												sign="$"
 												formatOptions={{
-													minDecimals: isEurForex(cellProps.row.original.synth) ? 4 : 2,
+													minDecimals: isDecimalFour(cellProps.row.original.synth) ? 4 : 2,
 												}}
 											/>
 										</MarketContainer>

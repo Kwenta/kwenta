@@ -9,12 +9,12 @@ import MarketBadge from 'components/Badge/MarketBadge';
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import Table from 'components/Table';
-import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
 import { futuresMarketsState, pastRatesState } from 'store/futures';
 import { FlexDivCol } from 'styles/common';
-import { FuturesMarketAsset, isEurForex, MarketKeyByAsset } from 'utils/futures';
+import { FuturesMarketAsset, isDecimalFour, MarketKeyByAsset } from 'utils/futures';
 
 enum TableColumnAccessor {
 	Market = 'market',
@@ -64,8 +64,8 @@ const FuturesMarketsTable: FC = () => {
 						Header: <TableHeader>{t('futures.market.sidebar-tab.market-price')}</TableHeader>,
 						accessor: TableColumnAccessor.Market,
 						Cell: (cellProps: CellProps<any>) => {
-							const formatOptions = isEurForex(cellProps.row.original.asset)
-								? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
+							const formatOptions = isDecimalFour(cellProps.row.original.asset)
+								? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
 								: {};
 							return (
 								<MarketContainer>

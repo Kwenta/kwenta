@@ -13,6 +13,7 @@ import MarketInfo from 'sections/futures/MarketInfo';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
 import Trade from 'sections/futures/Trade';
 import AppLayout from 'sections/shared/Layout/AppLayout';
+import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { currentMarketState } from 'store/futures';
 import {
 	PageContent,
@@ -57,10 +58,12 @@ const Market: MarketComponent = () => {
 							<Trade />
 						</StyledRightSideContent>
 					</StyledFullHeightContainer>
+					<GitHashID />
 				</PageContent>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<MobileTrade />
+				<GitHashID />
 			</MobileOrTabletView>
 		</FuturesContext.Provider>
 	);

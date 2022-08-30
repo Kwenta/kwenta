@@ -9,6 +9,7 @@ import Features from 'sections/homepage/Features';
 import Hero from 'sections/homepage/Hero';
 import ShortList from 'sections/homepage/ShortList';
 import TradeNow from 'sections/homepage/TradeNow';
+import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import HomeLayout from 'sections/shared/Layout/HomeLayout';
 import type { TPages } from 'sections/shared/Layout/HomeLayout/Header';
 import type { StatsProps } from 'sections/stats';
@@ -48,6 +49,7 @@ const HomePage: HomePageComponent = () => {
 						<Earning />
 						<Features />
 						<TradeNow />
+					  <GitHashID />
 					</Container>
 				) : (
 					<Stats />
