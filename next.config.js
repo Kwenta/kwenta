@@ -20,22 +20,21 @@ function interceptStdout(text) {
 // Intercept in dev and prod
 intercept(interceptStdout);
 
-const withPlugins = require('next-compose-plugins');
+const { withPlugins, extend } = require('next-compose-plugins');
 const optimizedImages = require('next-optimized-images');
 const withTM = require('next-transpile-modules')(['echarts', 'zrender']);
 
-const plugins = [
-	withTM,
-	// [
-	// 	optimizedImages,
-	// 	{
-	// 		/* config for next-optimized-images (use default) */
-	// 		imagesFolder: 'images',
-	// 		imagePublicPolder: '/_next/static/images',
-	// 		imageOutputPath: '/static/images',
-	// 	},
-	// ],
-];
+const baseConfig = withPlugins([
+	[
+		optimizedImages,
+		{
+			/* config for next-optimized-images (use default) */
+			imagesFolder: 'images',
+			imagePublicPolder: '/_next/static/images',
+			imageOutputPath: '/static/images',
+		},
+	],
+]);
 
 const nextConfig = {
 	env: {
@@ -105,4 +104,4 @@ const nextConfig = {
 	},
 };
 
-module.exports = withPlugins([...plugins], nextConfig);
+module.exports = extend(baseConfig).withPlugins([withTM], nextConfig);
