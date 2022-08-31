@@ -17,6 +17,7 @@ import {
 import { walletAddressState } from 'store/wallet';
 import { BorderedPanel, FlexDivRow } from 'styles/common';
 
+import CrossMarginOnboard from '../CrossMarginOnboard';
 import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
 import ManagePosition from '../Trade/ManagePosition';
@@ -46,6 +47,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 
 	const [percent, setPercent] = useState(0);
 	const [usdAmount, setUsdAmount] = useState(susdSize);
+	const [showOnboard, setShowOnboard] = useState(false);
 	const [openTransferModal, setOpenTransferModal] = useState<'deposit' | 'withdraw' | null>(null);
 
 	// eslint-disable-next-line
@@ -76,12 +78,14 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 
 	return (
 		<>
+			<CrossMarginOnboard onClose={() => setShowOnboard(false)} isOpen={showOnboard} />
+
 			{!walletAddress ? (
 				<MessageContainer>{t('futures.market.trade.cross-margin.connect-wallet')}</MessageContainer>
 			) : !crossMarginAvailable ? (
 				<CrossMarginUnsupported />
 			) : !crossMarginAddress ? (
-				<CreateAccount />
+				<CreateAccount onShowOnboard={() => setShowOnboard(true)} />
 			) : (
 				<>
 					{!isMobile && <MarketsDropdown />}
