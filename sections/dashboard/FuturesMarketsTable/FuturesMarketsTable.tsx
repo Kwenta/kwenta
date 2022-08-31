@@ -274,8 +274,8 @@ const FuturesMarketsTable: FC = () => {
 						{
 							Header: () => (
 								<div>
-									<TableHeader>Market</TableHeader>
-									<TableHeader>Oracle</TableHeader>
+									<TableHeader>{t('dashboard.overview.futures-markets-table.market')}</TableHeader>
+									<TableHeader>{t('dashboard.overview.futures-markets-table.oracle')}</TableHeader>
 								</div>
 							),
 							accessor: 'market',
@@ -310,8 +310,12 @@ const FuturesMarketsTable: FC = () => {
 						{
 							Header: () => (
 								<div>
-									<TableHeader>Open Interest</TableHeader>
-									<TableHeader>1H Funding</TableHeader>
+									<TableHeader>
+										{t('dashboard.overview.futures-markets-table.open-interest')}
+									</TableHeader>
+									<TableHeader>
+										{t('dashboard.overview.futures-markets-table.funding-rate')}
+									</TableHeader>
 								</div>
 							),
 							accessor: 'openInterest',
@@ -339,8 +343,12 @@ const FuturesMarketsTable: FC = () => {
 						{
 							Header: () => (
 								<div>
-									<TableHeader>24H Change</TableHeader>
-									<TableHeader>24H Volume</TableHeader>
+									<TableHeader>
+										{t('dashboard.overview.futures-markets-table.daily-change')}
+									</TableHeader>
+									<TableHeader>
+										{t('dashboard.overview.futures-markets-table.daily-volume')}
+									</TableHeader>
 								</div>
 							),
 							accessor: '24h-change',
