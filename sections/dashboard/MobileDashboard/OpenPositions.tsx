@@ -21,7 +21,15 @@ enum PositionsTab {
 	SPOT = 'spot',
 }
 
-const OpenPositions: React.FC = () => {
+type OpenPositionsProps = {
+	activePositionsTabInParent: PositionsTab;
+	setActivePositionsTabInParent: React.Dispatch<React.SetStateAction<PositionsTab>>;
+};
+
+const OpenPositions: React.FC<OpenPositionsProps> = ({
+	activePositionsTabInParent,
+	setActivePositionsTabInParent,
+}) => {
 	const { t } = useTranslation();
 
 	const { useExchangeRatesQuery, useSynthsBalancesQuery } = useSynthetixQueries();
@@ -67,6 +75,7 @@ const OpenPositions: React.FC = () => {
 				disabled: false,
 				onClick: () => {
 					setActivePositionsTab(PositionsTab.FUTURES);
+					setActivePositionsTabInParent(PositionsTab.FUTURES);
 				},
 			},
 			{
@@ -77,12 +86,14 @@ const OpenPositions: React.FC = () => {
 				disabled: false,
 				onClick: () => {
 					setActivePositionsTab(PositionsTab.SPOT);
+					setActivePositionsTabInParent(PositionsTab.SPOT);
 				},
 			},
 		],
 		[
 			activePositionsTab,
 			futuresPositionQuery?.data?.length,
+			setActivePositionsTabInParent,
 			t,
 			totalFuturesPortfolioValue,
 			totalSpotBalancesValue,
