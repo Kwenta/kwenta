@@ -1,5 +1,6 @@
 import { wei } from '@synthetixio/wei';
-import React, { useMemo, useState } from 'react';
+import { debounce } from 'lodash';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
@@ -12,16 +13,18 @@ import { NumberSpan } from 'components/Text/NumberLabel';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 import {
-	crossMarginLeverageInputState,
+	confirmationModalOpenState,
 	crossMarginTotalMarginState,
 	currentMarketState,
 	marketInfoState,
+	positionState,
 	preferredLeverageState,
 } from 'store/futures';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { formatDollars } from 'utils/formatters/number';
 
 import LeverageSlider from '../LeverageSlider';
+import MarginInfoBox from './MarginInfoBox';
 
 type DepositMarginModalProps = {
 	onDismiss(): void;
@@ -29,13 +32,14 @@ type DepositMarginModalProps = {
 
 export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps) {
 	const { t } = useTranslation();
-	const { orderTxn, selectedLeverage, onTradeAmountSUSDChange } = useFuturesContext();
+	const { orderTxn, selectedLeverage, onLeverageChange, resetTradeState } = useFuturesContext();
 
-	const setCrossMarginLeverage = useSetRecoilState(crossMarginLeverageInputState);
 	const market = useRecoilValue(marketInfoState);
+	const position = useRecoilValue(positionState);
 	const marketAsset = useRecoilValue(currentMarketState);
 	const totalMargin = useRecoilValue(crossMarginTotalMarginState);
-	const [perferredLeverage, setPreferredLeverage] = usePersistedRecoilState(preferredLeverageState);
+	const setConfirmationModalOpen = useSetRecoilState(confirmationModalOpenState);
+	const [preferredLeverage, setPreferredLeverage] = usePersistedRecoilState(preferredLeverageState);
 
 	const [leverage, setLeverage] = useState<number>(Number(Number(selectedLeverage).toFixed(2)));
 
@@ -46,24 +50,44 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 	}, [totalMargin, leverage]);
 
 	const handleIncrease = () => {
-		const newLeverage = leverage + 1;
+		const newLeverage = Math.max(leverage + 1, 1);
 		setLeverage(Math.min(newLeverage, maxLeverage));
+		previewPositionChange(newLeverage);
 	};
 
 	const handleDecrease = () => {
-		const newLeverage = leverage - 1;
-		setLeverage(Math.max(newLeverage, 1));
+		const newLeverage = Math.max(leverage - 1, 1);
+		setLeverage(newLeverage);
+		previewPositionChange(newLeverage);
 	};
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const previewPositionChange = useCallback(
+		debounce((leverage: number) => {
+			onLeverageChange(leverage);
+		}, 200),
+		[onLeverageChange]
+	);
 
 	const onConfirm = () => {
 		setPreferredLeverage({
-			...perferredLeverage,
+			...preferredLeverage,
 			[marketAsset]: String(leverage),
 		});
-		setCrossMarginLeverage(String(leverage));
-		onTradeAmountSUSDChange('');
+		onLeverageChange(leverage);
+		if (position?.position) {
+			setConfirmationModalOpen(true);
+		}
 		onDismiss();
 	};
+
+	useEffect(() => {
+		if (position?.position) {
+			// Clear size inputs if there is a position open
+			resetTradeState();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return (
 		<StyledBaseModal
@@ -99,6 +123,8 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 					<NumberSpan fontWeight="bold">{formatDollars(maxPositionUsd)}</NumberSpan> sUSD
 				</Label>
 			</MaxPosContainer>
+
+			{position?.position && <MarginInfoBox editingLeverage />}
 
 			<MarginActionButton
 				data-testid="futures-market-trade-deposit-margin-button"

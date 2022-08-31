@@ -24,7 +24,11 @@ import { formatDollars, formatNumber, formatPercent, zeroBN } from 'utils/format
 import { PositionSide } from '../types';
 import EditLeverageModal from './EditLeverageModal';
 
-const MarginInfoBox: React.FC = () => {
+type Props = {
+	editingLeverage?: boolean;
+};
+
+function MarginInfoBox({ editingLeverage }: Props) {
 	const position = useRecoilValue(positionState);
 	const marketInfo = useRecoilValue(marketInfoState);
 	const orderType = useRecoilValue(orderTypeState);
@@ -117,6 +121,7 @@ const MarginInfoBox: React.FC = () => {
 		return {
 			showPreview: !size.eq(0) || !marginDelta.eq(0),
 			totalMargin: potentialTrade.data?.margin || zeroBN,
+			freeAccountMargin: crossMarginFreeMargin.sub(marginDelta),
 			availableMargin: previewAvailableMargin.gt(0) ? previewAvailableMargin : zeroBN,
 			leverage: potentialTrade.data?.leverage,
 			marginUsage: potentialMarginUsage.gt(1) ? wei(1) : potentialMarginUsage,
@@ -128,7 +133,10 @@ const MarginInfoBox: React.FC = () => {
 		previewAvailableMargin,
 		potentialTrade.data?.leverage,
 		previewTotalMargin,
+		crossMarginFreeMargin,
 	]);
+
+	const showPreview = previewTradeData.showPreview && !potentialTrade.data?.showStatus;
 
 	return (
 		<>
@@ -137,13 +145,20 @@ const MarginInfoBox: React.FC = () => {
 				details={{
 					'Free Account Margin': {
 						value: formatDollars(crossMarginFreeMargin),
+						valueNode: (
+							<PreviewArrow showPreview={showPreview}>
+								{potentialTrade.status === 'fetching' ? (
+									<MiniLoader />
+								) : (
+									formatDollars(previewTradeData.freeAccountMargin)
+								)}
+							</PreviewArrow>
+						),
 					},
 					'Market Margin': {
 						value: formatDollars(position?.remainingMargin),
 						valueNode: (
-							<PreviewArrow
-								showPreview={previewTradeData.showPreview && !potentialTrade.data?.showStatus}
-							>
+							<PreviewArrow showPreview={showPreview}>
 								{potentialTrade.status === 'fetching' ? (
 									<MiniLoader />
 								) : (
@@ -155,9 +170,7 @@ const MarginInfoBox: React.FC = () => {
 					'Margin Usage': {
 						value: formatPercent(marginUsage),
 						valueNode: (
-							<PreviewArrow
-								showPreview={previewTradeData.showPreview && !potentialTrade.data?.showStatus}
-							>
+							<PreviewArrow showPreview={showPreview}>
 								{potentialTrade.status === 'fetching' ? (
 									<MiniLoader />
 								) : (
@@ -168,10 +181,17 @@ const MarginInfoBox: React.FC = () => {
 					},
 					Leverage: {
 						value: (
-							<Row>
+							<>
 								{formatNumber(selectedLeverage, { maxDecimals: 2 })}x
-								<EditButton onClick={() => setOpenModal('leverage')}>Edit</EditButton>
-							</Row>
+								{!editingLeverage && (
+									<EditButton onClick={() => setOpenModal('leverage')}>Edit</EditButton>
+								)}
+							</>
+						),
+						valueNode: (
+							<PreviewArrow showPreview={showPreview && !!editingLeverage}>
+								{formatNumber(previewTradeData.leverage || 0)}
+							</PreviewArrow>
 						),
 					},
 				}}
@@ -181,7 +201,7 @@ const MarginInfoBox: React.FC = () => {
 			{openModal === 'leverage' && <EditLeverageModal onDismiss={() => setOpenModal(null)} />}
 		</>
 	);
-};
+}
 
 const MiniLoader = () => {
 	return <Loader inline height="11px" width="11px" style={{ marginLeft: '10px' }} />;
@@ -193,10 +213,6 @@ const StyledInfoBox = styled(InfoBox)`
 	.value {
 		font-family: ${(props) => props.theme.fonts.regular};
 	}
-`;
-
-const Row = styled.span`
-	display: flex;
 `;
 
 const Button = styled.span`
@@ -212,4 +228,4 @@ const EditButton = styled(Button)`
 	color: ${(props) => props.theme.colors.selectedTheme.yellow};
 `;
 
-export default MarginInfoBox;
+export default React.memo(MarginInfoBox);

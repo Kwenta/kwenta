@@ -89,6 +89,7 @@ export const tradeSizeState = atom({
 		susdSize: '',
 		leverage: '',
 		nativeSizeDelta: zeroBN,
+		susdSizeDelta: zeroBN,
 	},
 });
 
@@ -99,6 +100,7 @@ export const pendingTradeSizeState = atom<TradeSize | null>({
 		susdSize: '',
 		leverage: '',
 		nativeSizeDelta: zeroBN,
+		susdSizeDelta: zeroBN,
 	},
 });
 

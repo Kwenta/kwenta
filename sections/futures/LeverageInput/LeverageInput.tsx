@@ -79,7 +79,7 @@ const LeverageInput: FC = () => {
 						value={Number(truncateLeverage)}
 						onChange={(_, newValue) => {
 							setIsLeverageValueCommitted(false);
-							onLeverageChange(newValue.toString());
+							onLeverageChange(newValue as number);
 						}}
 						onChangeCommitted={() => setIsLeverageValueCommitted(true)}
 					/>
@@ -94,7 +94,7 @@ const LeverageInput: FC = () => {
 						maxValue={maxLeverage.toNumber()}
 						onChange={(_, newValue) => {
 							setIsLeverageValueCommitted(true);
-							onLeverageChange(newValue.toString());
+							onLeverageChange(Number(newValue));
 						}}
 						disabled={isDisabled}
 					/>
@@ -103,7 +103,7 @@ const LeverageInput: FC = () => {
 							key={l}
 							mono
 							onClick={() => {
-								onLeverageChange(l);
+								onLeverageChange(Number(l));
 							}}
 							disabled={maxLeverage.lt(Number(l)) || marketInfo?.isSuspended}
 						>

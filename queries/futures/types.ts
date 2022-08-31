@@ -290,4 +290,5 @@ export type TradeSize = {
 	susdSize: string;
 	leverage: string;
 	nativeSizeDelta: Wei;
+	susdSizeDelta: Wei;
 };
