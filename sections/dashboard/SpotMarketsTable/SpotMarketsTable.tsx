@@ -12,6 +12,7 @@ import styled from 'styled-components';
 import MarketBadge from 'components/Badge/MarketBadge';
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
 import { CurrencyKey } from 'constants/currency';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
@@ -78,133 +79,245 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 	}, [synthsMap, unfrozenSynths, synthVolumesQuery, pastRates, exchangeRates, t]);
 
 	return (
-		<TableContainer>
-			<StyledTable
-				data={data}
-				showPagination
-				onTableRowClick={(row) => {
-					row.original.market !== 'sUSD'
-						? router.push(`/exchange/?quote=sUSD&base=${row.original.market}`)
-						: router.push(`/exchange/`);
-				}}
-				highlightRowsOnHover
-				sortBy={[
-					{
-						id: 'price',
-						desc: true,
-					},
-				]}
-				columns={[
-					{
-						Header: <TableHeader>{t('dashboard.overview.spot-markets-table.market')}</TableHeader>,
-						accessor: 'market',
-						Cell: (cellProps: CellProps<any>) => {
-							return (
-								<MarketContainer>
-									<IconContainer>
-										<StyledCurrencyIcon
-											currencyKey={
-												(cellProps.row.original.asset[0] !== 's' ? 's' : '') +
-												cellProps.row.original.asset
-											}
+		<>
+			<DesktopOnlyView>
+				<TableContainer>
+					<StyledTable
+						data={data}
+						showPagination
+						onTableRowClick={(row) => {
+							row.original.market !== 'sUSD'
+								? router.push(`/exchange/?quote=sUSD&base=${row.original.market}`)
+								: router.push(`/exchange/`);
+						}}
+						highlightRowsOnHover
+						sortBy={[
+							{
+								id: 'price',
+								desc: true,
+							},
+						]}
+						columns={[
+							{
+								Header: (
+									<TableHeader>{t('dashboard.overview.spot-markets-table.market')}</TableHeader>
+								),
+								accessor: 'market',
+								Cell: (cellProps: CellProps<any>) => {
+									return (
+										<MarketContainer>
+											<IconContainer>
+												<StyledCurrencyIcon
+													currencyKey={
+														(cellProps.row.original.asset[0] !== 's' ? 's' : '') +
+														cellProps.row.original.asset
+													}
+												/>
+											</IconContainer>
+											<StyledText>
+												{cellProps.row.original.market}
+												<MarketBadge
+													currencyKey={cellProps.row.original.asset}
+													isFuturesMarketClosed={cellProps.row.original.isSuspended}
+													futuresClosureReason={cellProps.row.original.marketClosureReason}
+												/>
+											</StyledText>
+											<StyledValue>{cellProps.row.original.description}</StyledValue>
+										</MarketContainer>
+									);
+								},
+								width: 190,
+							},
+							{
+								Header: (
+									<TableHeader>{t('dashboard.overview.spot-markets-table.price')}</TableHeader>
+								),
+								accessor: 'price',
+								Cell: (cellProps: CellProps<any>) => {
+									const formatOptions = isDecimalFour(cellProps.row.original.asset)
+										? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
+										: {};
+									return (
+										<Currency.Price
+											currencyKey={'sUSD'}
+											price={cellProps.row.original.price}
+											sign={'$'}
+											conversionRate={1}
+											formatOptions={formatOptions}
 										/>
-									</IconContainer>
-									<StyledText>
-										{cellProps.row.original.market}
-										<MarketBadge
-											currencyKey={cellProps.row.original.asset}
-											isFuturesMarketClosed={cellProps.row.original.isSuspended}
-											futuresClosureReason={cellProps.row.original.marketClosureReason}
+									);
+								},
+								width: 130,
+								sortable: true,
+								sortType: useMemo(
+									() => (rowA: any, rowB: any) => {
+										const rowOne = rowA.original.price ?? 0;
+										const rowTwo = rowB.original.price ?? 0;
+										return rowOne > rowTwo ? 1 : -1;
+									},
+									[]
+								),
+							},
+							{
+								Header: (
+									<TableHeader>{t('dashboard.overview.spot-markets-table.24h-change')}</TableHeader>
+								),
+								accessor: '24hChange',
+								Cell: (cellProps: CellProps<any>) => {
+									return cellProps.row.original.change === '-' ? (
+										<p>-</p>
+									) : (
+										<ChangePercent
+											value={cellProps.row.original.change}
+											decimals={2}
+											className="change-pct"
 										/>
-									</StyledText>
-									<StyledValue>{cellProps.row.original.description}</StyledValue>
-								</MarketContainer>
-							);
-						},
-						width: 190,
-					},
-					{
-						Header: <TableHeader>{t('dashboard.overview.spot-markets-table.price')}</TableHeader>,
-						accessor: 'price',
-						Cell: (cellProps: CellProps<any>) => {
-							const formatOptions = isDecimalFour(cellProps.row.original.asset)
-								? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
-								: {};
-							return (
-								<Currency.Price
-									currencyKey={'sUSD'}
-									price={cellProps.row.original.price}
-									sign={'$'}
-									conversionRate={1}
-									formatOptions={formatOptions}
-								/>
-							);
-						},
-						width: 130,
-						sortable: true,
-						sortType: useMemo(
-							() => (rowA: any, rowB: any) => {
-								const rowOne = rowA.original.price ?? 0;
-								const rowTwo = rowB.original.price ?? 0;
-								return rowOne > rowTwo ? 1 : -1;
+									);
+								},
+								width: 105,
+								sortable: true,
+								sortType: useMemo(
+									() => (rowA: any, rowB: any) => {
+										const rowOne = rowA.original.change;
+										const rowTwo = rowB.original.change;
+										return rowOne > rowTwo ? 1 : -1;
+									},
+									[]
+								),
 							},
-							[]
-						),
-					},
-					{
-						Header: (
-							<TableHeader>{t('dashboard.overview.spot-markets-table.24h-change')}</TableHeader>
-						),
-						accessor: '24hChange',
-						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.change === '-' ? (
-								<p>-</p>
-							) : (
-								<ChangePercent
-									value={cellProps.row.original.change}
-									decimals={2}
-									className="change-pct"
-								/>
-							);
-						},
-						width: 105,
-						sortable: true,
-						sortType: useMemo(
-							() => (rowA: any, rowB: any) => {
-								const rowOne = rowA.original.change;
-								const rowTwo = rowB.original.change;
-								return rowOne > rowTwo ? 1 : -1;
+							{
+								Header: (
+									<TableHeader>{t('dashboard.overview.spot-markets-table.24h-vol')}</TableHeader>
+								),
+								accessor: '24hVolume',
+								Cell: (cellProps: CellProps<any>) => {
+									return (
+										<Currency.Price
+											currencyKey={'sUSD'}
+											price={cellProps.row.original.volume}
+											sign={'$'}
+											conversionRate={1}
+										/>
+									);
+								},
+								width: 125,
+								sortable: true,
+								sortType: useMemo(
+									() => (rowA: any, rowB: any) => {
+										const rowOne = rowA.original.volume;
+										const rowTwo = rowB.original.volume;
+										return rowOne > rowTwo ? 1 : -1;
+									},
+									[]
+								),
 							},
-							[]
-						),
-					},
-					{
-						Header: <TableHeader>{t('dashboard.overview.spot-markets-table.24h-vol')}</TableHeader>,
-						accessor: '24hVolume',
-						Cell: (cellProps: CellProps<any>) => {
-							return (
-								<Currency.Price
-									currencyKey={'sUSD'}
-									price={cellProps.row.original.volume}
-									sign={'$'}
-									conversionRate={1}
-								/>
-							);
+						]}
+					/>
+				</TableContainer>
+			</DesktopOnlyView>
+			<MobileOrTabletView>
+				<StyledMobileTable
+					data={data}
+					showPagination
+					onTableRowClick={(row) => {
+						row.original.market !== 'sUSD'
+							? router.push(`/exchange/?quote=sUSD&base=${row.original.market}`)
+							: router.push(`/exchange/`);
+					}}
+					sortBy={[
+						{
+							id: 'price',
+							desc: true,
 						},
-						width: 125,
-						sortable: true,
-						sortType: useMemo(
-							() => (rowA: any, rowB: any) => {
-								const rowOne = rowA.original.volume;
-								const rowTwo = rowB.original.volume;
-								return rowOne > rowTwo ? 1 : -1;
+					]}
+					columns={[
+						{
+							Header: (
+								<TableHeader>{t('dashboard.overview.spot-markets-table.market')}</TableHeader>
+							),
+							accessor: 'market',
+							Cell: (cellProps: CellProps<any>) => {
+								return (
+									<MarketContainer>
+										<IconContainer>
+											<StyledCurrencyIcon
+												currencyKey={
+													(cellProps.row.original.asset[0] !== 's' ? 's' : '') +
+													cellProps.row.original.asset
+												}
+											/>
+										</IconContainer>
+										<StyledText>
+											{cellProps.row.original.market}
+											<MarketBadge
+												currencyKey={cellProps.row.original.asset}
+												isFuturesMarketClosed={cellProps.row.original.isSuspended}
+												futuresClosureReason={cellProps.row.original.marketClosureReason}
+											/>
+										</StyledText>
+										<StyledValue>{cellProps.row.original.description}</StyledValue>
+									</MarketContainer>
+								);
 							},
-							[]
-						),
-					},
-				]}
-			/>
-		</TableContainer>
+							width: 190,
+						},
+						{
+							Header: (
+								<TableHeader>{t('dashboard.overview.spot-markets-table.24h-change')}</TableHeader>
+							),
+							accessor: '24hChange',
+							Cell: (cellProps: CellProps<any>) => {
+								return cellProps.row.original.change === '-' ? (
+									<p>-</p>
+								) : (
+									<ChangePercent
+										value={cellProps.row.original.change}
+										decimals={2}
+										className="change-pct"
+									/>
+								);
+							},
+							width: 105,
+							sortable: true,
+							sortType: useMemo(
+								() => (rowA: any, rowB: any) => {
+									const rowOne = rowA.original.change;
+									const rowTwo = rowB.original.change;
+									return rowOne > rowTwo ? 1 : -1;
+								},
+								[]
+							),
+						},
+						{
+							Header: (
+								<TableHeader>{t('dashboard.overview.spot-markets-table.24h-vol')}</TableHeader>
+							),
+							accessor: '24hVolume',
+							Cell: (cellProps: CellProps<any>) => {
+								return (
+									<Currency.Price
+										currencyKey={'sUSD'}
+										price={cellProps.row.original.volume}
+										sign={'$'}
+										conversionRate={1}
+									/>
+								);
+							},
+							width: 125,
+							sortable: true,
+							sortType: useMemo(
+								() => (rowA: any, rowB: any) => {
+									const rowOne = rowA.original.volume;
+									const rowTwo = rowB.original.volume;
+									return rowOne > rowTwo ? 1 : -1;
+								},
+								[]
+							),
+						},
+					]}
+				/>
+			</MobileOrTabletView>
+		</>
 	);
 };
 
@@ -257,6 +370,13 @@ const MarketContainer = styled.div`
 	grid-template-rows: auto auto;
 	grid-template-columns: auto auto;
 	align-items: center;
+`;
+
+const StyledMobileTable = styled(StyledTable)`
+	border-radius: initial;
+	border-top: none;
+	border-left: none;
+	border-right: none;
 `;
 
 export default SpotMarketsTable;
