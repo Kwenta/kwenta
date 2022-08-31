@@ -49,7 +49,7 @@ const HomePage: HomePageComponent = () => {
 						<Earning />
 						<Features />
 						<TradeNow />
-					  <GitHashID />
+						<GitHashID />
 					</Container>
 				) : (
 					<Stats />
