@@ -1,6 +1,7 @@
 import { useAccountModal, useChainModal } from '@rainbow-me/rainbowkit';
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecoilState } from 'recoil';
 import styled, { css } from 'styled-components';
 import { Language } from 'translations/constants';
 import { useDisconnect } from 'wagmi';
@@ -9,12 +10,16 @@ import MobileAccountIcon from 'assets/svg/app/account-info.svg';
 import MobileMenuBridgeIcon from 'assets/svg/app/mobile-menu-bridge.svg';
 import MobileMenuDisconnectIcon from 'assets/svg/app/mobile-menu-disconnect.svg';
 import MobileSwitchIcon from 'assets/svg/app/mobile-switch.svg';
+import MoonIcon from 'assets/svg/app/moon.svg';
+import SunIcon from 'assets/svg/app/sun.svg';
 import FullScreenModal from 'components/FullScreenModal';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
 import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 import Logo from 'sections/shared/Layout/Logo';
 import { languageState } from 'store/app';
+import { currentThemeState } from 'store/ui';
+import colors from 'styles/theme/colors';
 
 import { lanugageIcons } from './common';
 import MobileSubMenu from './MobileSubMenu';
@@ -23,7 +28,7 @@ type MobileSettingsModalProps = {
 	onDismiss: () => void;
 };
 
-type SettingCategories = 'wallet' | 'network' | 'language' | 'currency';
+type SettingCategories = 'wallet' | 'network' | 'language' | 'currency' | 'theme';
 
 export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
@@ -45,6 +50,11 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 	const { disconnect } = useDisconnect();
 
 	const [expanded, setExpanded] = useState<SettingCategories>();
+	const [currentTheme, setTheme] = useRecoilState(currentThemeState);
+
+	const toggleTheme = () => {
+		setTheme((curr) => (curr === 'light' ? 'dark' : 'light'));
+	};
 
 	const handleToggle = (category: SettingCategories) => () => {
 		setExpanded((c) => (category === c ? undefined : category));
@@ -69,7 +79,11 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 									options={[
 										{
 											label: t('mobile-menu.account-info'),
-											icon: <MobileAccountIcon />,
+											icon: (
+												<MobileAccountIcon
+													fill={currentTheme === 'light' ? colors.common.secondaryGray : 'none'}
+												/>
+											),
 											onClick: openAccountModal,
 										},
 										{
@@ -118,6 +132,47 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 							}))}
 						/>
 					</MenuButtonContainer>
+
+					{!(window.location.pathname === ROUTES.Home.Root) && (
+						<MenuButtonContainer>
+							<MobileSubMenu
+								i18nLabel={t('mobile-menu.theme.title')}
+								onDismiss={onDismiss}
+								active={expanded === 'theme'}
+								onToggle={handleToggle('theme')}
+								options={[
+									{
+										label: t('mobile-menu.theme.options.dark'),
+										icon: (
+											<MoonIcon
+												fill={
+													currentTheme === 'dark'
+														? colors.common.secondaryGold
+														: colors.common.secondaryGray
+												}
+											/>
+										),
+										onClick: toggleTheme,
+										selected: currentTheme === 'dark',
+									},
+									{
+										label: t('mobile-menu.theme.options.light'),
+										icon: (
+											<SunIcon
+												fill={
+													currentTheme === 'light'
+														? colors.common.secondaryGold
+														: colors.common.secondaryGray
+												}
+											/>
+										),
+										onClick: toggleTheme,
+										selected: currentTheme === 'light',
+									},
+								]}
+							/>
+						</MenuButtonContainer>
+					)}
 				</div>
 			</Container>
 		</StyledFullScreenModal>
