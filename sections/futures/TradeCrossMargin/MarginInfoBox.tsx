@@ -123,7 +123,9 @@ function MarginInfoBox({ editingLeverage }: Props) {
 			totalMargin: potentialTrade.data?.margin || zeroBN,
 			freeAccountMargin: crossMarginFreeMargin.sub(marginDelta),
 			availableMargin: previewAvailableMargin.gt(0) ? previewAvailableMargin : zeroBN,
-			leverage: potentialTrade.data?.leverage,
+			leverage: potentialTrade.data?.margin.gt(0)
+				? potentialTrade.data.notionalValue.div(potentialTrade.data.margin).abs()
+				: zeroBN,
 			marginUsage: potentialMarginUsage.gt(1) ? wei(1) : potentialMarginUsage,
 		};
 	}, [
@@ -131,7 +133,7 @@ function MarginInfoBox({ editingLeverage }: Props) {
 		marginDelta,
 		potentialTrade.data?.margin,
 		previewAvailableMargin,
-		potentialTrade.data?.leverage,
+		potentialTrade.data?.notionalValue,
 		previewTotalMargin,
 		crossMarginFreeMargin,
 	]);
@@ -190,7 +192,11 @@ function MarginInfoBox({ editingLeverage }: Props) {
 						),
 						valueNode: (
 							<PreviewArrow showPreview={showPreview && !!editingLeverage}>
-								{formatNumber(previewTradeData.leverage || 0)}
+								{potentialTrade.status === 'fetching' ? (
+									<MiniLoader />
+								) : (
+									formatNumber(previewTradeData.leverage || 0) + 'x'
+								)}
 							</PreviewArrow>
 						),
 					},

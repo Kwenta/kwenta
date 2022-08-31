@@ -247,7 +247,14 @@ const useFuturesData = () => {
 				logError(err);
 			}
 		}, 500),
-		[logError, setError, calculateFees, setCrossMarginMarginDelta, getPotentialTrade]
+		[
+			logError,
+			setError,
+			calculateFees,
+			setCrossMarginMarginDelta,
+			getPotentialTrade,
+			calculateMarginDelta,
+		]
 	);
 
 	const onStagePositionChange = useCallback(
@@ -336,14 +343,18 @@ const useFuturesData = () => {
 	const onChangeOpenPosLeverage = useCallback(
 		async (leverage: number) => {
 			const notionalValue = position?.position?.notionalValue || zeroBN;
-			const adjustedMargin = notionalValue.div(leverage);
+			const adjustedMargin = notionalValue.abs().div(leverage);
 			const newMargin = adjustedMargin.gt(totalMargin) ? totalMargin : adjustedMargin;
-			const newUsdSize = newMargin.mul(leverage).mul(0.99);
-			const usdSizeDelta = newUsdSize.sub(notionalValue);
 
+			let newUsdSize = newMargin.mul(leverage);
+			newUsdSize = position?.position?.side === 'long' ? newUsdSize : newUsdSize.neg();
+			const usdSizeDelta = newUsdSize.sub(notionalValue);
 			const nativeSizeDelta = usdSizeDelta.div(marketAssetRate);
 			const fees = await calculateFees(usdSizeDelta.abs(), nativeSizeDelta);
-			const adjustedSusdDelta = usdSizeDelta.sub(fees.total);
+
+			// TODO: Make this size calc accurate
+
+			const adjustedSusdDelta = usdSizeDelta.add(fees.total.mul(leverage)).mul(1.03);
 			const adjustedNativeDelta = adjustedSusdDelta.div(marketAssetRate);
 			debounceFetchPreview({
 				leverage: String(leverage),
@@ -358,6 +369,7 @@ const useFuturesData = () => {
 			marketAssetRate,
 			calculateFees,
 			position?.position?.notionalValue,
+			position?.position?.side,
 			debounceFetchPreview,
 		]
 	);
