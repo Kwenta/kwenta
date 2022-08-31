@@ -1,11 +1,10 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { utils as ethersUtils } from 'ethers';
 import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query';
-import { useNetwork, useAccount } from 'wagmi';
+import { useNetwork } from 'wagmi';
 
 import { DEFAULT_NUMBER_OF_TRADES, MAX_TIMESTAMP } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
-import useIsL2 from 'hooks/useIsL2';
 import { notNill } from 'queries/synths/utils';
 import logError from 'utils/logError';
 
@@ -19,8 +18,6 @@ const useGetFuturesTrades = (
 ) => {
 	const { chain: network } = useNetwork();
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
-	const { isConnected: isWalletConnected } = useAccount();
-	const isL2 = useIsL2();
 
 	return useInfiniteQuery<FuturesTrade[] | null>(
 		QUERY_KEYS.Futures.Trades(network?.id as NetworkId, currencyKey || null),
@@ -66,7 +63,6 @@ const useGetFuturesTrades = (
 		},
 		{
 			...options,
-			enabled: isWalletConnected && isL2,
 			refetchInterval: 15000,
 			getNextPageParam: (lastPage, _) => {
 				return notNill(lastPage) && lastPage?.length > 0

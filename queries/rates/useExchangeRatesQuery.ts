@@ -3,11 +3,9 @@ import { wei } from '@synthetixio/wei';
 import { BigNumberish, ethers } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useSetRecoilState } from 'recoil';
-import { chain } from 'wagmi';
 
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
-import useIsL2 from 'hooks/useIsL2';
 import { ratesState } from 'store/futures';
 import { FuturesMarketKey, MarketAssetByKey } from 'utils/futures';
 
