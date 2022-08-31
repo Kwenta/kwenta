@@ -10,7 +10,7 @@ import AVAXIcon from 'assets/png/currencies/sAVAX.png';
 import BNBIcon from 'assets/png/currencies/sBNB.png';
 import BTCIcon from 'assets/png/currencies/sBTC.png';
 import CHFIcon from 'assets/png/currencies/sCHF.png';
-import DEBTIcon from 'assets/png/currencies/sDEBT.png';
+import DEBTIcon from 'assets/png/currencies/sDebt.png';
 import DOGEIcon from 'assets/png/currencies/sDOGE.png';
 import DOTIcon from 'assets/png/currencies/sDOT.png';
 import DYDXIcon from 'assets/png/currencies/sDYDX.png';
