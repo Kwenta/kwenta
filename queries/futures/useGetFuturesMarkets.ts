@@ -2,7 +2,7 @@ import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilState } from 'recoil';
-import { chain, useAccount } from 'wagmi';
+import { chain } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
@@ -21,15 +21,14 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 
 	const homepage = window.location.pathname === ROUTES.Home.Root;
 	const isL2 = useIsL2();
-	const network = homepage ? chain.optimism : activeChain;
+	const network = homepage || !isL2 ? chain.optimism : activeChain;
 
-	const { isConnected: isWalletConnected } = useAccount();
 	const [, setFuturesMarkets] = useRecoilState(futuresMarketsState);
 
 	return useQuery<FuturesMarket[]>(
 		QUERY_KEYS.Futures.Markets(network?.id as NetworkId),
 		async () => {
-			if (!homepage && isWalletConnected && !isL2) {
+			if (!synthetixjs) {
 				setFuturesMarkets([]);
 				return null;
 			}
