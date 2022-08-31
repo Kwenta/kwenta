@@ -22,10 +22,9 @@ const additionalCurrencies = ['SNX', 'XAU', 'XAG', 'DYDX', 'APE', 'BNB', 'DOGE',
 );
 
 const useExchangeRatesQuery = (options?: UseQueryOptions<Rates>) => {
-	const { network: activeChain, defaultSynthetixjs: synthetixjs } = Connector.useContainer();
-	const isL2 = useIsL2();
+	const { network, defaultSynthetixjs, l2Synthetixjs } = Connector.useContainer();
 	const homepage = window.location.pathname === ROUTES.Home.Root;
-	const network = homepage || isL2 ? chain.optimism : activeChain;
+	const synthetixjs = homepage ? l2Synthetixjs : defaultSynthetixjs;
 
 	const setRates = useSetRecoilState(ratesState);
 

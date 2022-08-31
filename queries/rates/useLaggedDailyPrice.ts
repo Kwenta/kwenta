@@ -16,10 +16,9 @@ import { Price } from './types';
 import { getRatesEndpoint, mapLaggedDailyPrices } from './utils';
 
 const useLaggedDailyPrice = (options?: UseQueryOptions<Price[] | null>) => {
-	const { provider, network } = Connector.useContainer();
+	const { provider, network, synthsMap } = Connector.useContainer();
 	const marketAssets = useRecoilValue(marketAssetsState);
 	const setPastRates = useSetRecoilState(pastRatesState);
-	const { synthsMap } = Connector.useContainer();
 
 	const minTimestamp = Math.floor(Date.now()) - 60 * 60 * 24 * 1000;
 	const synths = [...marketAssets, ...values(synthsMap).map(({ name }) => name)];
