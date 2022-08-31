@@ -1,10 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { useAccount } from 'wagmi';
 
 import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 import Button from 'components/Button';
+import Connector from 'containers/Connector';
 import { useExchangeContext } from 'contexts/ExchangeContext';
 import useIsL2 from 'hooks/useIsL2';
 import useMarketClosed from 'hooks/useMarketClosed';
@@ -29,12 +29,13 @@ import SettleTransactionsCard from '../../FooterCard/SettleTransactionsCard';
 
 const FooterCard: React.FC = () => {
 	const { t } = useTranslation();
+	const { isWalletConnected } = Connector.useContainer();
+	const isL2 = useIsL2();
+
 	const quoteCurrencyKey = useRecoilValue(quoteCurrencyKeyState);
 	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
 	const quoteCurrencyAmount = useRecoilValue(quoteCurrencyAmountState);
 	const baseCurrencyAmount = useRecoilValue(baseCurrencyAmountState);
-	const { isConnected: isWalletConnected } = useAccount();
-	const isL2 = useIsL2();
 	const txError = useRecoilValue(txErrorState);
 
 	const quoteCurrencyMarketClosed = useMarketClosed(quoteCurrencyKey);

@@ -1,8 +1,8 @@
 import { NetworkId, NetworkIdByName } from '@synthetixio/contracts-interface';
 import React from 'react';
 import styled, { useTheme } from 'styled-components';
-import { useAccount, useNetwork } from 'wagmi';
 
+import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 
 type ConnectionDotProps = {
@@ -10,9 +10,8 @@ type ConnectionDotProps = {
 };
 
 const ConnectionDot: React.FC<ConnectionDotProps> = (props) => {
-	const { chain: network } = useNetwork();
+	const { network, isWalletConnected } = Connector.useContainer();
 	const isL2 = useIsL2();
-	const { isConnected: isWalletConnected } = useAccount();
 
 	const theme = useTheme();
 

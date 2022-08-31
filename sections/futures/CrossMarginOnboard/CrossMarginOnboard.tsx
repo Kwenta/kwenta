@@ -5,7 +5,6 @@ import { ChangeEvent, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { useSigner } from 'wagmi';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
@@ -31,8 +30,7 @@ type Props = {
 export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Props) {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { data: signer } = useSigner();
-	const { defaultSynthetixjs: synthetixjs, network } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs, network, signer } = Connector.useContainer();
 	const {
 		crossMarginAccountContract,
 		crossMarginContractFactory,

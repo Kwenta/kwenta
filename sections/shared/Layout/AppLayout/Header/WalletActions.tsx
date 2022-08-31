@@ -1,9 +1,10 @@
 import { useAccountModal } from '@rainbow-me/rainbowkit';
 import { FC, useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { useAccount, useEnsAvatar, useEnsName } from 'wagmi';
+import { useEnsAvatar, useEnsName } from 'wagmi';
 
 import Button from 'components/Button';
+import Connector from 'containers/Connector';
 import { truncateAddress } from 'utils/formatters/string';
 
 import ConnectionDot from './ConnectionDot';
@@ -13,12 +14,12 @@ type WalletActionsProps = {
 };
 
 export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
-	const { address } = useAccount();
-	const { data: ensAvatar } = useEnsAvatar({ addressOrName: address, chainId: 1 });
-	const { data: ensName } = useEnsName({ address, chainId: 1 });
+	const { walletAddress } = Connector.useContainer();
+	const { data: ensAvatar } = useEnsAvatar({ addressOrName: walletAddress!, chainId: 1 });
+	const { data: ensName } = useEnsName({ address: walletAddress!, chainId: 1 });
 
 	const [walletLabel, setWalletLabel] = useState('');
-	const truncatedWalletAddress = truncateAddress(address ?? '');
+	const truncatedWalletAddress = truncateAddress(walletAddress! ?? '');
 	const { openAccountModal } = useAccountModal();
 
 	useEffect(() => {

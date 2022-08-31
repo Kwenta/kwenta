@@ -1,8 +1,9 @@
 import { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useAccount, useEnsAvatar, useEnsName } from 'wagmi';
+import { useEnsAvatar, useEnsName } from 'wagmi';
 
 import Button from 'components/Button';
+import Connector from 'containers/Connector';
 import { truncateAddress } from 'utils/formatters/string';
 
 import ConnectionDot from '../ConnectionDot';
@@ -12,11 +13,11 @@ type MobileWalletButtonProps = {
 };
 
 export const MobileWalletActions: FC<MobileWalletButtonProps> = ({ toggleModal }) => {
-	const { address } = useAccount();
-	const { data: ensAvatar } = useEnsAvatar({ addressOrName: address, chainId: 1 });
-	const { data: ensName } = useEnsName({ address, chainId: 1 });
+	const { walletAddress } = Connector.useContainer();
+	const { data: ensAvatar } = useEnsAvatar({ addressOrName: walletAddress!, chainId: 1 });
+	const { data: ensName } = useEnsName({ address: walletAddress!, chainId: 1 });
 	const [walletLabel, setWalletLabel] = useState<string>('');
-	const truncatedWalletAddress = truncateAddress(address ?? '');
+	const truncatedWalletAddress = truncateAddress(walletAddress! ?? '');
 
 	useEffect(() => {
 		setWalletLabel(ensName || truncatedWalletAddress!);
@@ -25,7 +26,7 @@ export const MobileWalletActions: FC<MobileWalletButtonProps> = ({ toggleModal }
 	return (
 		<StyledButton mono noOutline onClick={toggleModal}>
 			{ensAvatar ? (
-				<StyledImage src={ensAvatar} alt={ensName || address} width={16} height={16} />
+				<StyledImage src={ensAvatar} alt={ensName || walletAddress!} width={16} height={16} />
 			) : (
 				<StyledConnectionDot />
 			)}

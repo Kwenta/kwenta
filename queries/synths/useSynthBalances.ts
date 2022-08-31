@@ -5,7 +5,6 @@ import { ethers } from 'ethers';
 import orderBy from 'lodash/orderBy';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilState } from 'recoil';
-import { useAccount, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
@@ -16,10 +15,8 @@ import { notNill } from './utils';
 type SynthBalancesTuple = [string[], ethers.BigNumber[], ethers.BigNumber[]];
 
 const useSynthBalances = (options?: UseQueryOptions<Balances>) => {
-	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
-	const { address } = useAccount();
-	const walletAddress = address || null;
-	const { chain: network } = useNetwork();
+	const { network, defaultSynthetixjs: synthetixjs, walletAddress } = Connector.useContainer();
+
 	const [, setBalances] = useRecoilState(balancesState);
 
 	return useQuery<Balances>(
@@ -34,7 +31,7 @@ const useSynthBalances = (options?: UseQueryOptions<Balances>) => {
 				currencyKeys,
 				synthsBalances,
 				synthsUSDBalances,
-			]: SynthBalancesTuple = await synthetixjs.contracts.SynthUtil.synthsBalances(address);
+			]: SynthBalancesTuple = await synthetixjs.contracts.SynthUtil.synthsBalances(walletAddress);
 
 			let totalUSDBalance = wei(0);
 
@@ -70,7 +67,7 @@ const useSynthBalances = (options?: UseQueryOptions<Balances>) => {
 			return balances;
 		},
 		{
-			enabled: !!synthetixjs && !!address,
+			enabled: !!synthetixjs && !!walletAddress,
 			...options,
 		}
 	);

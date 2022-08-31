@@ -1,18 +1,17 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { FC } from 'react';
 import styled from 'styled-components';
-import { useAccount } from 'wagmi';
 
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import Connector from 'containers/Connector';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import { zeroBN } from 'utils/formatters/number';
 
 const PortfolioChart: FC = () => {
 	const portfolioValueQuery = useGetCurrentPortfolioValue();
 	const portfolioValue = portfolioValueQuery?.data ?? null;
-	const { address } = useAccount();
-	const walletAddress = address || null;
+	const { walletAddress } = Connector.useContainer();
 
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);

@@ -4,11 +4,10 @@ import { utils as ethersUtils } from 'ethers';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
-import { useNetwork } from 'wagmi';
 
 import { ETH_UNIT } from 'constants/network';
 import QUERY_KEYS from 'constants/queryKeys';
-import useIsL2 from 'hooks/useIsL2';
+import Connector from 'containers/Connector';
 import { futuresAccountState, openOrdersState, marketInfoState } from 'store/futures';
 import logError from 'utils/logError';
 
@@ -16,10 +15,9 @@ import { getFuturesEndpoint } from './utils';
 
 const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
-
-	const { chain: network } = useNetwork();
-	const isL2 = useIsL2();
+	const { network } = Connector.useContainer();
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
+
 	const marketInfo = useRecoilValue(marketInfoState);
 	const setOpenOrders = useSetRecoilState(openOrdersState);
 
@@ -65,7 +63,7 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 			}
 		},
 		{
-			enabled: isL2 && !!marketInfo?.market && !!selectedFuturesAddress,
+			enabled: !!marketInfo?.market && !!selectedFuturesAddress,
 			refetchInterval: 5000,
 			...options,
 		}

@@ -3,15 +3,16 @@ import { L2_TO_L1_NETWORK_MAPPER } from '@synthetixio/optimism-networks';
 import { utils, BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { chain, useAccount, useConnect, useNetwork } from 'wagmi';
+import { chain, useConnect } from 'wagmi';
+
+import Connector from 'containers/Connector';
 
 const useNetworkSwitcher = () => {
+	const { network, isWalletConnected } = Connector.useContainer();
+	const { connect: connectWallet } = useConnect();
 	const [, setNetworkError] = useState<string | null>(null);
 
 	const { t } = useTranslation();
-	const { chain: activeChain } = useNetwork();
-	const { isConnected: isWalletConnected } = useAccount();
-	const { connect: connectWallet } = useConnect();
 
 	const switchToL1 = async () => {
 		if (!isWalletConnected) await connectWallet();
@@ -22,7 +23,7 @@ const useNetworkSwitcher = () => {
 			setNetworkError(null);
 
 			const formattedChainId = utils.hexStripZeros(
-				BigNumber.from(L2_TO_L1_NETWORK_MAPPER[activeChain?.id ?? chain.optimism.id]).toHexString()
+				BigNumber.from(L2_TO_L1_NETWORK_MAPPER[network?.id ?? chain.optimism.id]).toHexString()
 			);
 			(window.ethereum as any).request({
 				method: 'wallet_switchEthereumChain',

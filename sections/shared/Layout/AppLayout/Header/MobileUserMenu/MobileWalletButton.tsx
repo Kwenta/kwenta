@@ -3,9 +3,9 @@ import { NetworkId } from '@synthetixio/contracts-interface';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useAccount, useNetwork } from 'wagmi';
 
 import Button from 'components/Button';
+import Connector from 'containers/Connector';
 import { isSupportedNetworkId } from 'utils/network';
 
 import ConnectionDot from '../ConnectionDot';
@@ -18,8 +18,7 @@ type MobileWalletButtonProps = {
 
 const MobileWalletButton: React.FC<MobileWalletButtonProps> = ({ toggleModal }) => {
 	const { t } = useTranslation();
-	const { isConnected: isWalletConnected } = useAccount();
-	const { chain: network } = useNetwork();
+	const { network, isWalletConnected } = Connector.useContainer();
 	const { openConnectModal: connectWallet } = useConnectModal();
 	const { openChainModal } = useChainModal();
 

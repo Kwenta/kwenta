@@ -5,7 +5,6 @@ import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import styled, { css } from 'styled-components';
-import { useAccount } from 'wagmi';
 
 import Button from 'components/Button';
 import SearchInput from 'components/Input/SearchInput';
@@ -37,10 +36,8 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	onDismiss,
 	onSelect,
 }) => {
-	const { defaultSynthetixjs: synthetixjs, network } = Connector.useContainer();
 	const { t } = useTranslation();
-	const { address } = useAccount();
-	const walletAddress = address ?? null;
+	const { defaultSynthetixjs: synthetixjs, network, walletAddress } = Connector.useContainer();
 
 	const [assetSearch, setAssetSearch] = useState('');
 	const [synthCategory, setSynthCategory] = useState<string | null>(null);

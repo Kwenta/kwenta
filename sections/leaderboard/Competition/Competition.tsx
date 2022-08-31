@@ -3,11 +3,11 @@ import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
-import { useAccount } from 'wagmi';
 
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
+import Connector from 'containers/Connector';
 import useGetFile from 'queries/files/useGetFile';
 import { formatPercent } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';
@@ -31,8 +31,7 @@ const Competition: FC<CompetitionProps> = ({
 	searchTerm,
 }: CompetitionProps) => {
 	const { t } = useTranslation();
-	const { address } = useAccount();
-	const walletAddress = address || null;
+	const { walletAddress } = Connector.useContainer();
 	const competitionQuery = useGetFile(COMPETITION_DATA_LOCATION);
 
 	const walletTier = useMemo(() => {

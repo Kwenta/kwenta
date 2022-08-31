@@ -1,9 +1,9 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
+import Connector from 'containers/Connector';
 import logError from 'utils/logError';
 
 import { SynthsVolumes } from './type';
@@ -13,7 +13,7 @@ const useGetWalletTrades = (
 	walletAddress: string,
 	options?: UseQueryOptions<SynthsVolumes | null>
 ) => {
-	const { chain: network } = useNetwork();
+	const { network } = Connector.useContainer();
 	const synthsEndpoint = getSynthsEndpoint(network?.id as NetworkId);
 
 	return useQuery<any>(

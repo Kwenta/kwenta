@@ -3,7 +3,6 @@ import { wei } from '@synthetixio/wei';
 import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import { useAccount, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
@@ -17,11 +16,9 @@ import useGetCrossMarginAccountOverview from './useGetCrossMarginAccountOverview
 import { mapFuturesPosition } from './utils';
 
 const useGetCurrentPortfolioValue = (options?: UseQueryOptions<any | null>) => {
-	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
-	const { chain: network } = useNetwork();
+	const { defaultSynthetixjs: synthetixjs, network, walletAddress } = Connector.useContainer();
 	const isL2 = useIsL2();
-	const { address } = useAccount();
-	const walletAddress = address || null;
+
 	const futuresAccount = useRecoilValue(futuresAccountState);
 	const marketKeys = useRecoilValue(marketKeysState);
 

@@ -1,10 +1,10 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { utils as ethersUtils } from 'ethers';
 import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query';
-import { useNetwork } from 'wagmi';
 
 import { DEFAULT_NUMBER_OF_TRADES, MAX_TIMESTAMP } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
+import Connector from 'containers/Connector';
 import { notNill } from 'queries/synths/utils';
 import logError from 'utils/logError';
 
@@ -16,7 +16,7 @@ const useGetFuturesTrades = (
 	currencyKey: string | undefined,
 	options?: UseInfiniteQueryOptions<FuturesTrade[] | null> & { forceAccount: boolean }
 ) => {
-	const { chain: network } = useNetwork();
+	const { network } = Connector.useContainer();
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
 	return useInfiniteQuery<FuturesTrade[] | null>(

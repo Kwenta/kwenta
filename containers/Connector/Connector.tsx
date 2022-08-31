@@ -3,14 +3,20 @@ import { ethers } from 'ethers';
 import { keyBy } from 'lodash';
 import { useMemo } from 'react';
 import { createContainer } from 'unstated-next';
-import { chain, useNetwork, useProvider, useSigner } from 'wagmi';
+import { chain, useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
 
 const useConnector = () => {
 	const { chain: activeChain } = useNetwork();
-	const network =
-		activeChain !== undefined && activeChain.unsupported
-			? chain.optimism
-			: activeChain ?? chain.optimism;
+	const { address, isConnected: isWalletConnected } = useAccount();
+	const network = useMemo(
+		() =>
+			activeChain !== undefined && activeChain.unsupported
+				? chain.optimism
+				: activeChain ?? chain.optimism,
+		[activeChain]
+	);
+
+	const walletAddress = useMemo(() => address ?? null, [address]);
 
 	const provider = useProvider({ chainId: network.id });
 	const l2Provider = useProvider({ chainId: chain.optimism.id });
@@ -35,6 +41,8 @@ const useConnector = () => {
 	}, [defaultSynthetixjs]);
 
 	return {
+		isWalletConnected,
+		walletAddress,
 		provider,
 		l2Provider,
 		signer,

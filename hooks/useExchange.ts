@@ -7,7 +7,6 @@ import { useRouter } from 'next/router';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { useAccount, useNetwork } from 'wagmi';
 
 import { SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
 import {
@@ -97,6 +96,9 @@ const useExchange = ({
 	} = useSynthetixQueries();
 
 	useSynthBalances();
+	const { isWalletConnected, network, walletAddress } = Connector.useContainer();
+	const isL2 = useIsL2();
+
 	const router = useRouter();
 
 	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
@@ -112,10 +114,7 @@ const useExchange = ({
 	const [quoteCurrencyAmount, setQuoteCurrencyAmount] = useRecoilState(quoteCurrencyAmountState);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [ratio, setRatio] = useRecoilState(ratioState);
-	const { isConnected: isWalletConnected, address } = useAccount();
-	const walletAddress = address ?? null;
-	const { chain: network } = useNetwork();
-	const isL2 = useIsL2();
+
 	const setTxError = useSetRecoilState(txErrorState);
 	const [atomicExchangeSlippage] = useState('0.01');
 	const setOrders = useSetRecoilState(ordersState);

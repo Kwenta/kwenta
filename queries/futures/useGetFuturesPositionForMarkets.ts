@@ -3,7 +3,6 @@ import { Provider, Contract } from 'ethcall';
 import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { useAccount } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
@@ -19,9 +18,17 @@ import { mapFuturesPosition } from './utils';
 const ethCallProvider = new Provider();
 
 const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPosition[]>) => {
-	const { defaultSynthetixjs: synthetixjs, provider, network } = Connector.useContainer();
-	const { isConnected } = useAccount();
+	const {
+		defaultSynthetixjs,
+		l2Synthetixjs,
+		provider,
+		l2Provider,
+		network,
+		isWalletConnected,
+	} = Connector.useContainer();
 	const isL2 = useIsL2();
+	const synthetixjs = isL2 ? defaultSynthetixjs : l2Synthetixjs;
+
 	const setFuturesPositions = useSetRecoilState(positionsState);
 
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
@@ -37,9 +44,9 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 			selectedFuturesAddress ?? ''
 		),
 		async () => {
-			if (!assets || !provider || (selectedFuturesAddress && !isL2)) return [];
+			if (!assets || (!provider && !l2Provider) || !selectedFuturesAddress) return [];
 
-			await ethCallProvider.init(provider);
+			await ethCallProvider.init(isL2 ? provider : l2Provider);
 
 			const {
 				contracts: { FuturesMarketData },
@@ -78,7 +85,7 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 			return futuresPositions;
 		},
 		{
-			enabled: isL2 && !!isConnected && !!selectedFuturesAddress && !!synthetixjs,
+			enabled: isL2 && !!isWalletConnected && !!selectedFuturesAddress && !!synthetixjs,
 			...options,
 		}
 	);

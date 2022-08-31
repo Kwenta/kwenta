@@ -1,9 +1,9 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useAccount, useNetwork } from 'wagmi';
 
 import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
+import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 
 import { getFuturesTrades } from './subgraph';
@@ -14,11 +14,10 @@ const useGetAllFuturesTradesForAccount = (
 	account?: string | null,
 	options?: UseQueryOptions<FuturesTrade[] | null> & { forceAccount: boolean }
 ) => {
-	const { chain: network } = useNetwork();
-	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
-	const { isConnected: isWalletConnected } = useAccount();
-
+	const { network, isWalletConnected } = Connector.useContainer();
 	const isL2 = useIsL2();
+
+	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
 	return useQuery<FuturesTrade[] | null>(
 		QUERY_KEYS.Futures.AllTradesAccount(network?.id as NetworkId, account || null),

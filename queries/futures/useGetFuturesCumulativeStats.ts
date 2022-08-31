@@ -2,10 +2,10 @@ import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
+import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import logError from 'utils/logError';
 
@@ -14,7 +14,7 @@ import { FuturesCumulativeStats } from './types';
 import { getFuturesEndpoint } from './utils';
 
 const useGetFuturesCumulativeStats = (options?: UseQueryOptions<FuturesCumulativeStats | null>) => {
-	const { chain: network } = useNetwork();
+	const { network } = Connector.useContainer();
 	const isL2 = useIsL2();
 	const homepage = window.location.pathname === ROUTES.Home.Root;
 	const futuresEndpoint = homepage

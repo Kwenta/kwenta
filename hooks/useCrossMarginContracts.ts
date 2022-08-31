@@ -1,9 +1,9 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { useNetwork, useSigner } from 'wagmi';
 
 import { CROSS_MARGIN_ACCOUNT_FACTORY } from 'constants/address';
+import Connector from 'containers/Connector';
 import {
 	CrossMarginAccountFactory__factory,
 	CrossMarginBase__factory,
@@ -18,8 +18,7 @@ export default function useCrossMarginContracts(): {
 } {
 	const futuresAccount = useRecoilValue(futuresAccountState);
 
-	const { data: signer } = useSigner();
-	const { chain: network } = useNetwork();
+	const { signer, network } = Connector.useContainer();
 
 	const crossMarginAccountContract = useMemo(() => {
 		if (!signer || !futuresAccount?.crossMarginAddress) return null;

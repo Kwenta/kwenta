@@ -1,9 +1,9 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
+import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 
 import { FUTURES_ENDPOINT_OP_MAINNET } from './constants';
@@ -13,7 +13,7 @@ import { getFuturesEndpoint } from './utils';
 const PAGE_SIZE = 500;
 
 const useGetStats = (homepage?: boolean, options?: UseQueryOptions<any>) => {
-	const { chain: network } = useNetwork();
+	const { network } = Connector.useContainer();
 	const isL2 = useIsL2();
 	const futuresEndpoint = homepage
 		? FUTURES_ENDPOINT_OP_MAINNET

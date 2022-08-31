@@ -3,10 +3,10 @@ import Wei from '@synthetixio/wei';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useAccount } from 'wagmi';
 
 import Currency from 'components/Currency';
 import { NO_VALUE } from 'constants/placeholder';
+import Connector from 'containers/Connector';
 import useMarketClosed from 'hooks/useMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { SelectableCurrencyRow } from 'styles/common';
@@ -31,8 +31,8 @@ type SynthRowProps = {
 };
 const CurrencyRow: FC<SynthRowProps> = ({ token, onClick, balance }) => {
 	const { t } = useTranslation();
+	const { isWalletConnected } = Connector.useContainer();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
-	const { isConnected: isWalletConnected } = useAccount();
 
 	const currencyKey = token.symbol;
 

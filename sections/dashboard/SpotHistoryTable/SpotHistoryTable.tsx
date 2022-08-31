@@ -6,7 +6,6 @@ import { FC, useMemo, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
-import { useAccount, useNetwork } from 'wagmi';
 
 import LinkIcon from 'assets/svg/app/link.svg';
 import Currency from 'components/Currency';
@@ -31,13 +30,10 @@ type WalletTradesExchangeResult = Omit<SynthTradesExchangeResult, 'timestamp'> &
 
 const SpotHistoryTable: FC = () => {
 	const { t } = useTranslation();
-	const { chain } = useNetwork();
-	const { address } = useAccount();
-	const walletAddress = address || null;
+	const { network, walletAddress, synthsMap } = Connector.useContainer();
 
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const walletTradesQuery = useGetWalletTrades(walletAddress!);
-	const { synthsMap } = Connector.useContainer();
 
 	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
 	const trades = useMemo(() => {
@@ -184,9 +180,9 @@ const SpotHistoryTable: FC = () => {
 					{
 						id: 'link',
 						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) =>
-							chain != null && cellProps.row.original.hash ? (
+							network != null && cellProps.row.original.hash ? (
 								<StyledExternalLink
-									href={`${chain?.blockExplorers?.etherscan?.url}/tx/${cellProps.row.original.hash}`}
+									href={`${network?.blockExplorers?.etherscan?.url}/tx/${cellProps.row.original.hash}`}
 								>
 									<StyledLinkIcon />
 								</StyledExternalLink>

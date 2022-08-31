@@ -3,11 +3,12 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
-import { useAccount, useNetwork } from 'wagmi';
+import { useNetwork } from 'wagmi';
 
 import MoonIcon from 'assets/svg/app/moon.svg';
 import SunIcon from 'assets/svg/app/sun.svg';
 import Button from 'components/Button';
+import Connector from 'containers/Connector';
 import { currentThemeState } from 'store/ui';
 
 import BalanceActions from './BalanceActions';
@@ -17,10 +18,10 @@ import WalletActions from './WalletActions';
 
 const WalletButtons: React.FC = () => {
 	const { t } = useTranslation();
+	const { isWalletConnected } = Connector.useContainer();
 	const { chain: network } = useNetwork();
 	const [currentTheme, setTheme] = useRecoilState(currentThemeState);
 	const { openConnectModal } = useConnectModal();
-	const { isConnected } = useAccount();
 	const { openChainModal } = useChainModal();
 
 	const ThemeIcon = currentTheme === 'dark' ? SunIcon : MoonIcon;
@@ -67,7 +68,7 @@ const WalletButtons: React.FC = () => {
 
 	return (
 		<Container>
-			{isConnected
+			{isWalletConnected
 				? network?.unsupported
 					? walletIsConnectedButNotSupported
 					: walletIsConnectedAndSupported

@@ -2,7 +2,6 @@ import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
-import { useAccount } from 'wagmi';
 
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
@@ -23,10 +22,7 @@ type AllTimeProps = {
 
 const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader, compact }) => {
 	const { t } = useTranslation();
-	const { address } = useAccount();
-	const walletAddress = address || null;
-
-	const { staticMainnetProvider } = Connector.useContainer();
+	const { staticMainnetProvider, walletAddress } = Connector.useContainer();
 
 	if (compact) {
 		const ownPosition = stats.findIndex((i: { account: string }) => {

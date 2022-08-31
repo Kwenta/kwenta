@@ -3,8 +3,9 @@ import { useRouter } from 'next/router';
 import { useRef, useContext, useEffect, useCallback, useState, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ThemeContext } from 'styled-components';
-import { chain, useNetwork } from 'wagmi';
+import { chain } from 'wagmi';
 
+import Connector from 'containers/Connector';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
 import { currentThemeState } from 'store/ui';
 import { formatNumber } from 'utils/formatters/number';
@@ -56,7 +57,7 @@ export function TVChart({
 	const router = useRouter();
 
 	const { colors } = useContext(ThemeContext);
-	const { chain: network } = useNetwork();
+	const { network } = Connector.useContainer();
 
 	const DEFAULT_OVERRIDES = {
 		'paneProperties.background': colors.selectedTheme.background,

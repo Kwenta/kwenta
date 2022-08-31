@@ -7,7 +7,6 @@ import { formatBytes32String, formatEther, parseEther } from 'ethers/lib/utils';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { createContainer } from 'unstated-next';
-import { useAccount, useSigner } from 'wagmi';
 
 import { KWENTA_REFERRAL_ADDRESS, SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
 import { CurrencyKey } from 'constants/currency';
@@ -47,10 +46,13 @@ type OneInchApproveSpenderResponse = {
 };
 
 const useConvert = () => {
-	const { tokensMap, defaultSynthetixjs: synthetixjs, network } = Connector.useContainer();
-	const { data: signer } = useSigner();
-	const { address } = useAccount();
-	const walletAddress = address || null;
+	const {
+		tokensMap,
+		defaultSynthetixjs: synthetixjs,
+		network,
+		signer,
+		walletAddress,
+	} = Connector.useContainer();
 	const oneInchApiUrl = use1InchApiUrl();
 	const { t } = useTranslation();
 

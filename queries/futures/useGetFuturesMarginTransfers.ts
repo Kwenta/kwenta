@@ -2,11 +2,9 @@ import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import { useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import useIsL2 from 'hooks/useIsL2';
 import { futuresAccountState } from 'store/futures';
 import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
@@ -19,11 +17,8 @@ const useGetFuturesMarginTransfers = (
 	options?: UseQueryOptions<MarginTransfer[]>
 ) => {
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
-
-	const { chain: network } = useNetwork();
-	const isL2 = useIsL2();
+	const { defaultSynthetixjs: synthetixjs, network } = Connector.useContainer();
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
-	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 
 	const gqlQuery = gql`
 		query userFuturesMarginTransfers($market: String!, $walletAddress: String!) {
@@ -69,7 +64,7 @@ const useGetFuturesMarginTransfers = (
 			}
 		},
 		{
-			enabled: isL2 && !!currencyKey && !!synthetixjs && !!selectedFuturesAddress,
+			enabled: !!currencyKey && !!synthetixjs && !!selectedFuturesAddress,
 			...options,
 		}
 	);
