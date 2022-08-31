@@ -1,6 +1,7 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
 import { utils as ethersUtils } from 'ethers';
+import { chain } from 'lodash';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useNetwork } from 'wagmi';
 
@@ -17,8 +18,9 @@ const useGetFuturesTradingVolume = (
 	currencyKey: string | null,
 	options?: UseQueryOptions<Wei | null>
 ) => {
-	const { chain: network } = useNetwork();
+	const { chain: activeChain } = useNetwork();
 	const isL2 = useIsL2();
+	const network = isL2 ? activeChain : chain.optimism;
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
 	return useQuery<Wei | null>(
@@ -60,7 +62,7 @@ const useGetFuturesTradingVolume = (
 				return null;
 			}
 		},
-		{ enabled: isL2 && !!currencyKey, ...options }
+		{ enabled: !!currencyKey, ...options }
 	);
 };
 

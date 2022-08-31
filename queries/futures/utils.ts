@@ -12,7 +12,6 @@ import { FuturesMarketAsset } from 'utils/futures';
 
 import {
 	FUTURES_ENDPOINT_OP_MAINNET,
-	FUTURES_ENDPOINT_OP_KOVAN,
 	FUTURES_ENDPOINT_OP_GOERLI,
 	SECONDS_PER_DAY,
 } from './constants';
@@ -36,8 +35,6 @@ export const getFuturesEndpoint = (networkId: NetworkId): string => {
 		? FUTURES_ENDPOINT_OP_MAINNET
 		: networkId === chain.optimismGoerli.id
 		? FUTURES_ENDPOINT_OP_GOERLI
-		: networkId === chain.optimismKovan.id
-		? FUTURES_ENDPOINT_OP_KOVAN
 		: FUTURES_ENDPOINT_OP_MAINNET;
 };
 

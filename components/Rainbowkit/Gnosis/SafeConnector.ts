@@ -33,12 +33,9 @@ class SafeConnector extends Connector<SafeAppProvider, SafeOpts | undefined> {
 	async connect() {
 		const runningAsSafeApp = await this.#isSafeApp();
 		if (!runningAsSafeApp) {
-			// eslint-disable-next-line no-console
-			console.log(`runningAsSafeApp error:`, runningAsSafeApp);
 			throw new ConnectorNotFoundError();
 		}
-		// eslint-disable-next-line no-console
-		console.log(`runningAsSafeApp is running`, runningAsSafeApp);
+
 		const provider = await this.getProvider();
 		if (provider.on) {
 			provider.on('accountsChanged', this.onAccountsChanged);
@@ -99,8 +96,7 @@ class SafeConnector extends Connector<SafeAppProvider, SafeOpts | undefined> {
 			this.#getSafeInfo(),
 			new Promise<void>((resolve) => setTimeout(resolve, 300)),
 		]);
-		// eslint-disable-next-line no-console
-		console.log(`#isSafeApp`, safe);
+
 		return !!safe;
 	}
 

@@ -1,7 +1,7 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { utils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useNetwork } from 'wagmi';
+import { chain, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import useIsL2 from 'hooks/useIsL2';
@@ -17,8 +17,9 @@ const useGetFuturesDailyTradeStatsForMarket = (
 	marketAsset: FuturesMarketAsset | null,
 	options?: UseQueryOptions<number | null>
 ) => {
-	const { chain: network } = useNetwork();
+	const { chain: activeChain } = useNetwork();
 	const isL2 = useIsL2();
+	const network = isL2 ? activeChain : chain.optimism;
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
 	return useQuery<number | null>(
@@ -54,7 +55,7 @@ const useGetFuturesDailyTradeStatsForMarket = (
 				return null;
 			}
 		},
-		{ enabled: isL2 && !!marketAsset, ...options }
+		{ enabled: !!marketAsset, ...options }
 	);
 };
 

@@ -61,7 +61,7 @@ const useGetFuturesTradingVolumeForAllMarkets = (
 				return null;
 			}
 		},
-		{ enabled: homepage || isL2, ...options }
+		{ ...options }
 	);
 };
 
