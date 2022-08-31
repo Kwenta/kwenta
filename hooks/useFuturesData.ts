@@ -35,12 +35,14 @@ import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
 import useCrossMarginAccountContracts from './useCrossMarginContracts';
+import useIsL2 from './useIsL2';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
 const useFuturesData = () => {
 	const router = useRouter();
 	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
+	const isL2 = useIsL2();
 	const { useSynthetixTxn } = useSynthetixQueries();
 
 	const marketAsset = useRecoilValue(currentMarketState);
@@ -224,7 +226,8 @@ const useFuturesData = () => {
 				!marketAsset ||
 				!selectedFuturesAddress ||
 				!isLeverageValueCommitted ||
-				!remainingMargin
+				!remainingMargin ||
+				!isL2
 			) {
 				return;
 			}
@@ -258,6 +261,7 @@ const useFuturesData = () => {
 		sizeDelta,
 		remainingMargin,
 		setFeeCost,
+		isL2,
 	]);
 
 	const previewTrade = useRecoilValue(potentialTradeDetailsState);

@@ -6,6 +6,7 @@ import { formatBytes32String } from 'ethers/lib/utils';
 import { useMemo } from 'react';
 
 import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
 import { PotentialTradeStatus } from 'sections/futures/types';
 import {
 	zeroBN,
@@ -51,16 +52,17 @@ export default function useGetCrossMarginTradePreview(
 	address: string | null | undefined
 ) {
 	const { defaultSynthetixjs: synthetixjs, provider } = Connector.useContainer();
+	const isL2 = useIsL2();
 
 	const contractInstance = useMemo(() => {
-		if (!synthetixjs || !provider || !address) return null;
+		if (!synthetixjs || !provider || !address || !isL2) return null;
 		try {
 			return new FuturesMarketInternal(synthetixjs, provider, marketAsset, address);
 		} catch (err) {
 			logError(err);
 			return null;
 		}
-	}, [synthetixjs, provider, address, marketAsset]);
+	}, [synthetixjs, provider, address, isL2, marketAsset]);
 
 	const getPreview = async (
 		sizeDelta: WeiSource | null | undefined,

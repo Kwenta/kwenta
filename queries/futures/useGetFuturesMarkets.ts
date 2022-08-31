@@ -17,12 +17,12 @@ import { FuturesMarket } from './types';
 import { getReasonFromCode } from './utils';
 
 const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
-	const { network: activeChain, defaultSynthetixjs: synthetixjs } = Connector.useContainer();
+	const { network: activeChain, defaultSynthetixjs, l2Synthetixjs } = Connector.useContainer();
 
 	const homepage = window.location.pathname === ROUTES.Home.Root;
 	const isL2 = useIsL2();
 	const network = homepage || !isL2 ? chain.optimism : activeChain;
-
+	const synthetixjs = homepage || !isL2 ? l2Synthetixjs : defaultSynthetixjs;
 	const [, setFuturesMarkets] = useRecoilState(futuresMarketsState);
 
 	return useQuery<FuturesMarket[]>(

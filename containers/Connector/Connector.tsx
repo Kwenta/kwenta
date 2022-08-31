@@ -23,6 +23,11 @@ const useConnector = () => {
 		[provider, network.id]
 	);
 
+	const l2Synthetixjs = useMemo(
+		() => synthetix({ provider: l2Provider, networkId: chain.optimism.id as NetworkId }),
+		[l2Provider]
+	);
+
 	const [synthsMap, tokensMap] = useMemo(() => {
 		if (defaultSynthetixjs == null) return [{}, {}];
 
@@ -38,6 +43,7 @@ const useConnector = () => {
 		tokensMap,
 		staticMainnetProvider,
 		defaultSynthetixjs,
+		l2Synthetixjs,
 	};
 };
 
