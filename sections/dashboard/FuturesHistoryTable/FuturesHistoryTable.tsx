@@ -22,7 +22,7 @@ import useGetAllFuturesTradesForAccount from 'queries/futures/useGetAllFuturesTr
 import { TradeStatus } from 'sections/futures/types';
 import { futuresAccountState } from 'store/futures';
 import { isL2State } from 'store/wallet';
-import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
+import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName, isDecimalFour, MarketKeyByAsset } from 'utils/futures';
 
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
@@ -155,7 +155,7 @@ const FuturesHistoryTable: FC = () => {
 								: { sign: '$' };
 							return conditionalRender(
 								cellProps.row.original.price,
-								<>{formatCurrency('sUSD', cellProps.value, formatOptions)}</>
+								<>{formatDollars(cellProps.value, formatOptions)}</>
 							);
 						},
 						width: 120,
@@ -169,11 +169,7 @@ const FuturesHistoryTable: FC = () => {
 								cellProps.row.original.pnl.eq(wei(0)) ? (
 									<PNL normal>--</PNL>
 								) : (
-									<PNL negative={cellProps.value.lt(wei(0))}>
-										{formatCurrency('sUSD', cellProps.value, {
-											sign: '$',
-										})}
-									</PNL>
+									<PNL negative={cellProps.value.lt(wei(0))}>{formatDollars(cellProps.value)}</PNL>
 								)
 							);
 						},

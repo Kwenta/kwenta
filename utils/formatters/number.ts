@@ -1,3 +1,4 @@
+import { Synths } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import BN from 'bn.js';
 import { BigNumber, ethers, utils } from 'ethers';
@@ -150,6 +151,9 @@ export const formatCurrency = (
 	isFiatCurrency(currencyKey as CurrencyKey)
 		? formatFiatCurrency(value, options)
 		: formatCryptoCurrency(value, options);
+
+export const formatDollars = (value: WeiSource, options?: FormatCurrencyOptions) =>
+	formatCurrency(Synths.sUSD?.name as string, value, { sign: '$', ...options });
 
 export const formatPercent = (value: WeiSource, options?: { minDecimals: number }) => {
 	const decimals = options?.minDecimals ?? 2;

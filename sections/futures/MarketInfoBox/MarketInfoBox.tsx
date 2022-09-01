@@ -18,7 +18,7 @@ import {
 	tradeSizeState,
 } from 'store/futures';
 import { computeNPFee } from 'utils/costCalculations';
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 import { PositionSide } from '../types';
 
@@ -124,34 +124,27 @@ const MarketInfoBox: React.FC = () => {
 			dataTestId="market-info-box"
 			details={{
 				'Total Margin': {
-					value: `${formatCurrency('sUSD', totalMargin, {
+					value: `${formatDollars(totalMargin, {
 						currencyKey: 'sUSD',
-						sign: '$',
 					})}`,
 				},
 				'Available Margin': {
-					value: `${formatCurrency('sUSD', availableMargin, {
+					value: `${formatDollars(availableMargin, {
 						currencyKey: undefined,
-						sign: '$',
 					})}`,
 					valueNode: (
 						<PreviewArrow showPreview={previewTradeData.showPreview && !previewTrade?.showStatus}>
-							{formatCurrency('sUSD', previewTradeData?.availableMargin, {
-								sign: '$',
-							})}
+							{formatDollars(previewTradeData?.availableMargin)}
 						</PreviewArrow>
 					),
 				},
 				'Buying Power': {
-					value: `${formatCurrency('sUSD', buyingPower, {
+					value: `${formatDollars(buyingPower, {
 						currencyKey: undefined,
-						sign: '$',
 					})}`,
 					valueNode: previewTradeData?.buyingPower && (
 						<PreviewArrow showPreview={previewTradeData.showPreview && !previewTrade?.showStatus}>
-							{formatCurrency('sUSD', previewTradeData?.buyingPower, {
-								sign: '$',
-							})}
+							{formatDollars(previewTradeData?.buyingPower)}
 						</PreviewArrow>
 					),
 				},

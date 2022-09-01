@@ -8,7 +8,7 @@ import TimerTooltip from 'components/Tooltip/TimerTooltip';
 import useRateUpdateQuery from 'queries/rates/useRateUpdateQuery';
 import { currentMarketState, marketInfoState } from 'store/futures';
 import media from 'styles/media';
-import { formatCurrency, formatPercent } from 'utils/formatters/number';
+import { formatDollars, formatPercent } from 'utils/formatters/number';
 
 import useGetMarketData from './useGetMarketData';
 
@@ -38,8 +38,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	const longText = useMemo(() => {
 		return (
 			marketInfo?.openInterest &&
-			formatCurrency('sUSD', marketInfo.openInterest.longUSD, {
-				sign: '$',
+			formatDollars(marketInfo.openInterest.longUSD, {
 				maxDecimals: 2,
 				...(marketInfo?.openInterest?.longUSD.gt(1e6)
 					? { truncation: { divisor: 1e6, unit: 'M' } }
@@ -51,8 +50,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	const shortText = useMemo(() => {
 		return (
 			marketInfo?.openInterest &&
-			formatCurrency('sUSD', marketInfo.openInterest.shortUSD, {
-				sign: '$',
+			formatDollars(marketInfo.openInterest.shortUSD, {
 				maxDecimals: 2,
 				...(marketInfo?.openInterest?.shortUSD.gt(1e6)
 					? { truncation: { divisor: 1e6, unit: 'M' } }
