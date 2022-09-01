@@ -1094,6 +1094,13 @@
 		"learn-more": "learn more"
 	},
 	"mobile-menu": {
+		"theme": {
+			"title": "Theme",
+			"options": {
+				"dark": "Dark",
+				"light": "Light"
+			}
+		},
 		"currency": "Currency",
 		"cancel": "Cancel",
 		"wallet": "Wallet",
