@@ -24,7 +24,11 @@ export default function useGetCrossMarginAccountOverview() {
 	const { crossMarginAccountContract, crossMarginBaseSettings } = useCrossMarginAccountContracts();
 
 	return useQuery(
-		QUERY_KEYS.Futures.CrossMarginAccountOverview(network.id, crossMarginAddress || ''),
+		QUERY_KEYS.Futures.CrossMarginAccountOverview(
+			network.id,
+			crossMarginAddress || '',
+			crossMarginAccountContract?.address || ''
+		),
 		async () => {
 			if (!crossMarginAddress || !crossMarginAccountContract) {
 				setFreeMargin(zeroBN);

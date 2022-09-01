@@ -7,8 +7,9 @@ import { futuresAccountState, futuresAccountTypeState } from 'store/futures';
 import { networkState, walletAddressState } from 'store/wallet';
 
 import useCrossMarginAccountContracts from '../../hooks/useCrossMarginContracts';
+import { CROSS_MARGIN_ACCOUNT_FACTORY } from 'constants/address';
 
-const supportedNetworks = [69];
+const SUPPORTED_NETWORKS = Object.keys(CROSS_MARGIN_ACCOUNT_FACTORY);
 
 export default function useQueryCrossMarginAccount() {
 	const { crossMarginContractFactory } = useCrossMarginAccountContracts();
@@ -37,7 +38,7 @@ export default function useQueryCrossMarginAccount() {
 			selectedAccountType
 		),
 		async () => {
-			if (!supportedNetworks.includes(network.id)) {
+			if (!SUPPORTED_NETWORKS.includes(String(network.id))) {
 				const accountState = {
 					ready: true,
 					crossMarginAvailable: false,

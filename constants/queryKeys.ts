@@ -303,12 +303,11 @@ export const QUERY_KEYS = {
 			currencyKey: string | null
 		) => ['futures', 'currentRoundId', networkId, walletAddress, currencyKey],
 		OverviewStats: (networkId: NetworkId) => ['futures', 'overview-stats', networkId],
-		CrossMarginAccountOverview: (networkId: NetworkId, wallet: string) => [
-			'futures',
-			'cross-margin-account-overview',
-			networkId,
-			wallet,
-		],
+		CrossMarginAccountOverview: (
+			networkId: NetworkId,
+			wallet: string,
+			crossMarginBaseAddress: string
+		) => ['futures', 'cross-margin-account-overview', networkId, wallet, crossMarginBaseAddress],
 		CrossMarginAccount: (
 			crossMarginAddress: string,
 			wallet: string,

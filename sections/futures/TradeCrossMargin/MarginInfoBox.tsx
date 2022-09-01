@@ -85,7 +85,7 @@ function MarginInfoBox({ editingLeverage }: Props) {
 
 	const potentialMarginUsage = useMemo(() => {
 		if (!potentialTrade.data) return zeroBN;
-		const notionalValue = potentialTrade.data.notionalValue || zeroBN;
+		const notionalValue = potentialTrade.data.notionalValue.abs();
 		const maxSize = totalMargin.mul(potentialTrade.data.leverage);
 		return notionalValue.div(maxSize);
 	}, [potentialTrade.data, totalMargin]);

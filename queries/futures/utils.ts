@@ -10,7 +10,12 @@ import { Network } from 'store/wallet';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { FuturesMarketAsset } from 'utils/futures';
 
-import { FUTURES_ENDPOINT_MAINNET, FUTURES_ENDPOINT_TESTNET, SECONDS_PER_DAY } from './constants';
+import {
+	FUTURES_ENDPOINTS,
+	FUTURES_ENDPOINT_MAINNET,
+	FUTURES_ENDPOINT_TESTNET,
+	SECONDS_PER_DAY,
+} from './constants';
 import { FuturesMarginTransferResult, FuturesTradeResult } from './subgraph';
 import {
 	FuturesPosition,
@@ -27,11 +32,7 @@ import {
 } from './types';
 
 export const getFuturesEndpoint = (network: Network): string => {
-	return network && network.id === 10
-		? FUTURES_ENDPOINT_MAINNET
-		: network.id === 69
-		? FUTURES_ENDPOINT_TESTNET
-		: FUTURES_ENDPOINT_MAINNET;
+	return FUTURES_ENDPOINTS[network.id] || FUTURES_ENDPOINTS[10];
 };
 
 export const getFuturesMarketContract = (asset: string | null, contracts: ContractsMap) => {
