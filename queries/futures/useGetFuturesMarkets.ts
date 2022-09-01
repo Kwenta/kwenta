@@ -11,7 +11,12 @@ import { appReadyState } from 'store/app';
 import { futuresMarketsState } from 'store/futures';
 import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
 import { zeroBN } from 'utils/formatters/number';
-import { FuturesMarketAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
+import {
+	FuturesMarketAsset,
+	getMarketName,
+	MarketKeyByAsset,
+	marketsForNetwork,
+} from 'utils/futures';
 
 import { FuturesMarket } from './types';
 import { getReasonFromCode } from './utils';
@@ -34,6 +39,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 			if (!homepage && isWalletConnected && !isL2) {
 				return null;
 			}
+			const enabledMarkets = marketsForNetwork(network.id);
 
 			const {
 				contracts: { FuturesMarketData, FuturesMarketSettings, SystemStatus, ExchangeRates },
@@ -45,12 +51,15 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 				FuturesMarketData.globals(),
 			]);
 
-			const enabledMarkets = markets.filter((m: any) => {
+			const filteredMarkets = markets.filter((m: any) => {
 				const asset = utils.parseBytes32String(m.asset) as FuturesMarketAsset;
-				return !!MarketKeyByAsset[asset];
+				const market = enabledMarkets.find((market) => {
+					return asset === market.asset;
+				});
+				return !!market;
 			});
 
-			const assetKeys = enabledMarkets.map((m: any) => {
+			const assetKeys = filteredMarkets.map((m: any) => {
 				const asset = utils.parseBytes32String(m.asset) as FuturesMarketAsset;
 				return utils.formatBytes32String(MarketKeyByAsset[asset]);
 			});
@@ -71,7 +80,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 				systemStatusPromise,
 			]);
 
-			const futuresMarkets = enabledMarkets.map(
+			const futuresMarkets = filteredMarkets.map(
 				(
 					{
 						market,
