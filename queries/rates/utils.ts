@@ -2,21 +2,17 @@ import { wei } from '@synthetixio/wei';
 
 import { DEBT_RATIO_UNIT } from 'constants/network';
 import { CandleResult } from 'queries/futures/subgraph';
-import { SYNTHS_ENDPOINT_MAIN } from 'queries/synths/constants';
+import { SYNTHS_ENDPOINT } from 'queries/synths/constants';
 import { FuturesMarketKey } from 'utils/futures';
 
-import { RATES_ENDPOINT_MAINNET, RATES_ENDPOINT_TESTNET } from './constants';
+import { RATES_ENDPOINT } from './constants';
 import { Candle, LatestRate } from './types';
 import { Prices } from './types';
 
 export const getRatesEndpoint = (networkId: number): string => {
 	return networkId === 1 || networkId === 42
-		? SYNTHS_ENDPOINT_MAIN
-		: networkId === 10
-		? RATES_ENDPOINT_MAINNET
-		: networkId === 69
-		? RATES_ENDPOINT_TESTNET
-		: RATES_ENDPOINT_MAINNET;
+		? SYNTHS_ENDPOINT[1]
+		: RATES_ENDPOINT[networkId] || RATES_ENDPOINT[10];
 };
 
 export const mapLaggedDailyPrices = (rates: LatestRate[]): Prices => {

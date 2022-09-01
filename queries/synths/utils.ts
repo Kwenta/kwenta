@@ -2,11 +2,7 @@ import { Contract } from 'ethcall';
 
 import { Network } from 'store/wallet';
 
-import {
-	SYNTHS_ENDPOINT_MAIN,
-	SYNTHS_ENDPOINT_OPTIMISM_KOVAN,
-	SYNTHS_ENDPOINT_OPTIMISM_MAIN,
-} from './constants';
+import { SYNTHS_ENDPOINT } from './constants';
 
 const abi = [
 	{
@@ -26,11 +22,7 @@ export const getProxySynthSymbol = (address: string) => {
 };
 
 export const getSynthsEndpoint = (network: Network): string => {
-	return network && network.id === 10
-		? SYNTHS_ENDPOINT_OPTIMISM_MAIN
-		: network.id === 69
-		? SYNTHS_ENDPOINT_OPTIMISM_KOVAN
-		: SYNTHS_ENDPOINT_MAIN;
+	return SYNTHS_ENDPOINT[network.id] || SYNTHS_ENDPOINT[1];
 };
 
 export function notNill<Value>(value: Value | null | undefined): value is Value {

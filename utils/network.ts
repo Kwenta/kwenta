@@ -107,4 +107,4 @@ export const normalizeGasLimit = (gasLimit: number) => gasLimit + DEFAULT_GAS_BU
 
 export const gasPriceInWei = (gasPrice: number) => Math.ceil(gasPrice * GWEI_UNIT); // 🤔 sometimes a float on kovan
 
-export const getIsOVM = (networkId: number): boolean => !!~[10, 69].indexOf(networkId);
+export const getIsOVM = (networkId: number): boolean => [10, 69, 420].includes(networkId);

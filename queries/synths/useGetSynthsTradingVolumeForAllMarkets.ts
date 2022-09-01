@@ -9,7 +9,7 @@ import { appReadyState } from 'store/app';
 import { networkState } from 'store/wallet';
 import logError from 'utils/logError';
 
-import { SYNTHS_ENDPOINT_OPTIMISM_MAIN } from './constants';
+import { SYNTHS_ENDPOINT } from './constants';
 import { SynthsVolumes } from './type';
 import { getSynthsEndpoint } from './utils';
 
@@ -21,7 +21,7 @@ const useGetSynthsTradingVolumeForAllMarkets = (
 	const network = useRecoilValue(networkState);
 	const synthsEndpoint =
 		window.location.pathname === ROUTES.Home.Root
-			? SYNTHS_ENDPOINT_OPTIMISM_MAIN
+			? SYNTHS_ENDPOINT[10]
 			: getSynthsEndpoint(network);
 
 	return useQuery<SynthsVolumes | null>(

@@ -12,7 +12,7 @@ import { marketAssetsState, pastRatesState } from 'store/futures';
 import { networkState } from 'store/wallet';
 import logError from 'utils/logError';
 
-import { RATES_ENDPOINT_MAINNET } from './constants';
+import { RATES_ENDPOINT } from './constants';
 import { Price } from './types';
 import { getRatesEndpoint, mapLaggedDailyPrices } from './utils';
 
@@ -28,7 +28,7 @@ const useLaggedDailyPrice = (options?: UseQueryOptions<Price[] | null>) => {
 
 	const ratesEndpoint =
 		window.location.pathname === ROUTES.Home.Root
-			? RATES_ENDPOINT_MAINNET
+			? RATES_ENDPOINT[10]
 			: getRatesEndpoint(network.id);
 
 	return useQuery<Price[] | null>(
