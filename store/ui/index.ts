@@ -21,3 +21,8 @@ export const currentThemeState = atom<ThemeName>({
 	default: 'dark',
 	effects: [localStorageEffect('currentTheme')],
 });
+
+export const isCompetitionActive = atom<boolean>({
+	key: getUIKey('isCompetitionActive'),
+	default: process.env.NEXT_PUBLIC_COMPETITION_ACTIVE === 'true',
+});
