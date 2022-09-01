@@ -78,9 +78,9 @@
 		"styled-components": "5.1.1",
 		"styled-media-query": "2.1.2",
 		"unstated-next": "1.1.0",
-		"wagmi": "0.6.2",
-		"@gnosis.pm/safe-apps-provider": "0.13.0",
-		"@gnosis.pm/safe-apps-sdk": "7.7.0"
+		"wagmi": "0.6.4",
+		"@gnosis.pm/safe-apps-provider": "0.13.1",
+		"@gnosis.pm/safe-apps-sdk": "7.8.0"
 	},
 	"devDependencies": {
 		"@microsoft/eslint-formatter-sarif": "2.1.7",
