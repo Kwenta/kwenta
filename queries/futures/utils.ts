@@ -10,12 +10,7 @@ import { Network } from 'store/wallet';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { FuturesMarketAsset } from 'utils/futures';
 
-import {
-	FUTURES_ENDPOINTS,
-	FUTURES_ENDPOINT_MAINNET,
-	FUTURES_ENDPOINT_TESTNET,
-	SECONDS_PER_DAY,
-} from './constants';
+import { FUTURES_ENDPOINTS, SECONDS_PER_DAY } from './constants';
 import { FuturesMarginTransferResult, FuturesTradeResult } from './subgraph';
 import {
 	FuturesPosition,

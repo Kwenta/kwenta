@@ -2,12 +2,12 @@ import { useCallback } from 'react';
 import { useQuery } from 'react-query';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { CROSS_MARGIN_ACCOUNT_FACTORY } from 'constants/address';
 import QUERY_KEYS from 'constants/queryKeys';
 import { futuresAccountState, futuresAccountTypeState } from 'store/futures';
 import { networkState, walletAddressState } from 'store/wallet';
 
 import useCrossMarginAccountContracts from '../../hooks/useCrossMarginContracts';
-import { CROSS_MARGIN_ACCOUNT_FACTORY } from 'constants/address';
 
 const SUPPORTED_NETWORKS = Object.keys(CROSS_MARGIN_ACCOUNT_FACTORY);
 
