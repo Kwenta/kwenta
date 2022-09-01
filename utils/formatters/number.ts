@@ -1,4 +1,3 @@
-import { Synths } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import BN from 'bn.js';
 import { BigNumber, ethers, utils } from 'ethers';
