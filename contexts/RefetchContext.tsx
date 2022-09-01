@@ -70,6 +70,7 @@ export const RefetchProvider: React.FC = ({ children }) => {
 					break;
 				case 'account-margin-change':
 					crossMarginAccountOverview.refetch();
+					synthsBalancesQuery.refetch();
 					break;
 				case 'cross-margin-account-change':
 					crossMarginAccountQuery.refetch();
