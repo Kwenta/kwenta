@@ -19,8 +19,10 @@ const Safe = ({ chains }: SafeOptions): Wallet => ({
 	},
 	createConnector: () => {
 		// eslint-disable-next-line no-console
-		console.log(`createConnector`);
+		console.log(`before createConnector`);
 		const connector = new SafeConnector({ chains }) as any;
+		// eslint-disable-next-line no-console
+		console.log(`after createConnector`);
 		return {
 			connector,
 		};
