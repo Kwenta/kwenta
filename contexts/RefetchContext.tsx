@@ -51,6 +51,7 @@ export const RefetchProvider: React.FC = ({ children }) => {
 				case 'modify-position':
 					marketsQuery.refetch();
 					openOrdersQuery.refetch();
+					positionsQuery.refetch();
 					if (selectedAccountType === 'cross_margin') {
 						crossMarginAccountOverview.refetch();
 					}
@@ -61,6 +62,7 @@ export const RefetchProvider: React.FC = ({ children }) => {
 				case 'close-position':
 					positionQuery.refetch();
 					openOrdersQuery.refetch();
+					positionsQuery.refetch();
 					break;
 				case 'margin-change':
 					positionsQuery.refetch();
