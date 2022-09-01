@@ -7,8 +7,11 @@ import ADAIcon from 'assets/png/currencies/sADA.png';
 import APEIcon from 'assets/png/currencies/sAPECOIN.png';
 import AUDIcon from 'assets/png/currencies/sAUD.png';
 import AVAXIcon from 'assets/png/currencies/sAVAX.png';
+import BNBIcon from 'assets/png/currencies/sBNB.png';
 import BTCIcon from 'assets/png/currencies/sBTC.png';
 import CHFIcon from 'assets/png/currencies/sCHF.png';
+import DEBTIcon from 'assets/png/currencies/sDebt.png';
+import DOGEIcon from 'assets/png/currencies/sDOGE.png';
 import DOTIcon from 'assets/png/currencies/sDOT.png';
 import DYDXIcon from 'assets/png/currencies/sDYDX.png';
 import ETHIcon from 'assets/png/currencies/sETH.png';
@@ -88,6 +91,9 @@ const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = {
 	sETHBTC: ETHBTCIcon,
 	sADA: ADAIcon,
 	sAUD: AUDIcon,
+	sBNB: BNBIcon,
+	sDOGE: DOGEIcon,
+	sDebtRatio: DEBTIcon,
 	[CRYPTO_CURRENCY_MAP.SNX]: SNXIcon,
 };
 
@@ -151,7 +157,7 @@ const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, isDeprecated, url, .
 	} else {
 		return (
 			<Placeholder {...{ isDeprecated }} {...props}>
-				{currencyKey}
+				{currencyKey === 'sDebtRatio' ? 'DEBT' : currencyKey}
 			</Placeholder>
 		);
 	}

@@ -7,11 +7,13 @@ import styled, { css } from 'styled-components';
 import LinkIcon from 'assets/svg/app/link-blue.svg';
 import Card from 'components/Card';
 import Table, { TableNoResults } from 'components/Table';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { ETH_UNIT } from 'constants/network';
 import BlockExplorer from 'containers/BlockExplorer';
 import { FuturesTrade } from 'queries/futures/types';
 import { ExternalLink, GridDivCenteredRow } from 'styles/common';
 import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
+import { isDecimalFour } from 'utils/futures';
 
 import { PositionSide, TradeStatus } from '../types';
 import TimeDisplay from './TimeDisplay';
@@ -84,13 +86,12 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						),
 						accessor: 'value',
 						sortType: 'basic',
-						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<>
-								{formatCurrency('sUSD', cellProps.value, {
-									sign: '$',
-								})}
-							</>
-						),
+						Cell: (cellProps: CellProps<FuturesTrade>) => {
+							const formatOptions = isDecimalFour(cellProps.row.original.asset)
+								? { sign: '$', minDecimals: DEFAULT_CRYPTO_DECIMALS }
+								: { sign: '$' };
+							return <>{formatCurrency('sUSD', cellProps.value, formatOptions)}</>;
+						},
 						width: 80,
 						sortable: true,
 					},

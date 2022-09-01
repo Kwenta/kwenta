@@ -12,7 +12,7 @@ import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
-import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
@@ -29,7 +29,7 @@ import { formatNumber } from 'utils/formatters/number';
 import {
 	FuturesMarketAsset,
 	getSynthDescription,
-	isEurForex,
+	isDecimalFour,
 	MarketKeyByAsset,
 } from 'utils/futures';
 
@@ -240,8 +240,8 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'avgEntryPrice',
 								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = isEurForex(cellProps.row.original.asset)
-										? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
+									const formatOptions = isDecimalFour(cellProps.row.original.asset)
+										? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
 										: {};
 									return cellProps.row.original.avgEntryPrice === undefined ? (
 										<DefaultCell>{NO_VALUE}</DefaultCell>
@@ -265,8 +265,8 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'liquidationPrice',
 								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = isEurForex(cellProps.row.original.asset)
-										? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
+									const formatOptions = isDecimalFour(cellProps.row.original.asset)
+										? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
 										: {};
 									return (
 										<Currency.Price

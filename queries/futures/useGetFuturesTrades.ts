@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 
 import { DEFAULT_NUMBER_OF_TRADES, MAX_TIMESTAMP } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
+import { notNill } from 'queries/synths/utils';
 import { appReadyState } from 'store/app';
 import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
 import logError from 'utils/logError';
@@ -69,7 +70,7 @@ const useGetFuturesTrades = (
 			enabled: isWalletConnected ? isL2 && isAppReady : isAppReady,
 			refetchInterval: 15000,
 			getNextPageParam: (lastPage, _) => {
-				return lastPage
+				return notNill(lastPage) && lastPage?.length > 0
 					? {
 							minTs: 0,
 							maxTs: lastPage[lastPage.length - 1].timestamp.toNumber(),
@@ -77,7 +78,7 @@ const useGetFuturesTrades = (
 					: null;
 			},
 			getPreviousPageParam: (firstPage, _) => {
-				return firstPage
+				return notNill(firstPage) && firstPage?.length > 0
 					? {
 							minTs: firstPage[0].timestamp.toNumber(),
 							maxTs: MAX_TIMESTAMP,

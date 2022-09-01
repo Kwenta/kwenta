@@ -7,7 +7,7 @@ import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import Select from 'components/Select';
-import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
@@ -25,7 +25,7 @@ import {
 	FuturesMarketAsset,
 	getMarketName,
 	getSynthDescription,
-	isEurForex,
+	isDecimalFour,
 	MarketKeyByAsset,
 } from 'utils/futures';
 
@@ -108,7 +108,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const selectedPastPrice = getPastPrice(asset);
 
 	const getMinDecimals = React.useCallback(
-		(asset: string) => (isEurForex(asset) ? DEFAULT_FIAT_EURO_DECIMALS : undefined),
+		(asset: string) => (isDecimalFour(asset) ? DEFAULT_CRYPTO_DECIMALS : undefined),
 		[]
 	);
 
