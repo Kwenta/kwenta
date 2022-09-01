@@ -255,6 +255,7 @@ const useFuturesData = () => {
 			setCrossMarginMarginDelta,
 			getPotentialTrade,
 			calculateMarginDelta,
+			selectedAccountType,
 		]
 	);
 
