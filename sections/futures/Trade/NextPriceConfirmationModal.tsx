@@ -27,7 +27,7 @@ import { gasSpeedState } from 'store/wallet';
 import { FlexDivCol, FlexDivCentered } from 'styles/common';
 import { computeNPFee } from 'utils/costCalculations';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
-import { zeroBN, formatCurrency } from 'utils/formatters/number';
+import { zeroBN, formatCurrency, formatDollars } from 'utils/formatters/number';
 import { getTransactionPrice } from 'utils/network';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
@@ -116,13 +116,11 @@ const NextPriceConfirmationModal: FC = () => {
 			},
 			{
 				label: t('futures.market.user.position.modal.deposit'),
-				value: formatCurrency('sUSD', totalDeposit, { sign: '$' }),
+				value: formatDollars(totalDeposit),
 			},
 			{
 				label: t('futures.market.user.position.modal.np-discount'),
-				value: !!nextPriceDiscount
-					? formatCurrency('sUSD', nextPriceDiscount, { sign: '$' })
-					: NO_VALUE,
+				value: !!nextPriceDiscount ? formatDollars(nextPriceDiscount) : NO_VALUE,
 			},
 			{
 				label: t('futures.market.user.position.modal.fee-total'),

@@ -7,7 +7,7 @@ import { chain } from 'wagmi';
 import { ETH_UNIT } from 'constants/network';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { formatDollars, zeroBN } from 'utils/formatters/number';
 import { FuturesMarketAsset } from 'utils/futures';
 
 import {
@@ -283,9 +283,7 @@ export const mapMarginTransfers = (
 			const sizeWei = new Wei(size);
 			const cleanSize = sizeWei.div(ETH_UNIT).abs();
 			const isPositive = sizeWei.gt(0);
-			const amount = `${isPositive ? '+' : '-'}${formatCurrency('sUSD', cleanSize, {
-				sign: '$',
-			})}`;
+			const amount = `${isPositive ? '+' : '-'}${formatDollars(cleanSize)}`;
 			const numTimestamp = wei(timestamp).toNumber();
 
 			return {

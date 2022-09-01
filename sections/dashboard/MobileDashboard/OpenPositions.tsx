@@ -11,7 +11,7 @@ import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioV
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { formatDollars, zeroBN } from 'utils/formatters/number';
 
 import FuturesPositionsTable from '../FuturesPositionsTable';
 import SynthBalancesTable from '../SynthBalancesTable';
@@ -45,15 +45,9 @@ const OpenPositions: React.FC = () => {
 		PositionsTab.FUTURES
 	);
 
-	const totalSpotBalancesValue = formatCurrency(
-		'sUSD',
-		wei(synthBalances?.totalUSDBalance ?? zeroBN),
-		{ sign: '$' }
-	);
+	const totalSpotBalancesValue = formatDollars(wei(synthBalances?.totalUSDBalance ?? zeroBN));
 
-	const totalFuturesPortfolioValue = formatCurrency('sUSD', wei(portfolioValue ?? zeroBN), {
-		sign: '$',
-	});
+	const totalFuturesPortfolioValue = formatDollars(wei(portfolioValue ?? zeroBN));
 
 	const POSITIONS_TABS = React.useMemo(
 		() => [

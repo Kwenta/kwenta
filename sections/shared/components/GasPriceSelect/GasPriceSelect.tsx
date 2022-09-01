@@ -10,7 +10,7 @@ import { parseGasPriceObject } from 'hooks/useGas';
 import useIsL1 from 'hooks/useIsL1';
 import useIsL2 from 'hooks/useIsL2';
 import { customGasPriceState, gasSpeedState } from 'store/wallet';
-import { formatCurrency, formatNumber } from 'utils/formatters/number';
+import { formatNumber, formatDollars } from 'utils/formatters/number';
 
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
 
@@ -28,9 +28,7 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 	const isMainnet = useIsL1();
 
 	const formattedTransactionFee = useMemo(() => {
-		return transactionFee
-			? formatCurrency('sUSD', transactionFee, { sign: '$', maxDecimals: 1 })
-			: NO_VALUE;
+		return transactionFee ? formatDollars(transactionFee, { maxDecimals: 1 }) : NO_VALUE;
 	}, [transactionFee]);
 
 	const hasCustomGasPrice = customGasPrice !== '';

@@ -12,7 +12,7 @@ import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioV
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { formatDollars, zeroBN } from 'utils/formatters/number';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
 import FuturesPositionsTable from '../FuturesPositionsTable';
@@ -56,15 +56,9 @@ const Overview: FC = () => {
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(PositionsTab.FUTURES);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
-	const totalSpotBalancesValue = formatCurrency(
-		'sUSD',
-		wei(synthBalances?.totalUSDBalance ?? zeroBN),
-		{ sign: '$' }
-	);
+	const totalSpotBalancesValue = formatDollars(wei(synthBalances?.totalUSDBalance ?? zeroBN));
 
-	const totalFuturesPortfolioValue = formatCurrency('sUSD', wei(portfolioValue ?? zeroBN), {
-		sign: '$',
-	});
+	const totalFuturesPortfolioValue = formatDollars(wei(portfolioValue ?? zeroBN));
 
 	const POSITIONS_TABS = useMemo(
 		() => [

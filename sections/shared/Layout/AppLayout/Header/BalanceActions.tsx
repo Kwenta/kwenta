@@ -10,7 +10,7 @@ import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Select from 'components/Select';
 import { balancesState, positionsState } from 'store/futures';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { zeroBN, formatDollars } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
 
 type ReactSelectOptionProps = {
@@ -48,7 +48,7 @@ const BalanceActions: FC = () => {
 			return {
 				label: getMarketName(asset),
 				synthIcon: MarketKeyByAsset[asset],
-				marketRemainingMargin: formatCurrency('sUSD', remainingMargin, { sign: '$' }),
+				marketRemainingMargin: formatDollars(remainingMargin),
 				onClick: () => router.push(`/market/?asset=${asset}`),
 			};
 		},
@@ -59,7 +59,7 @@ const BalanceActions: FC = () => {
 		() => [
 			{
 				label: 'header.balance.total-margin-label',
-				totalAvailableMargin: formatCurrency('sUSD', totalRemainingMargin, { sign: '$' }),
+				totalAvailableMargin: formatDollars(totalRemainingMargin),
 				options: accessiblePositions.map((market) => setMarketConfig(market.asset)),
 			},
 		],
@@ -116,7 +116,7 @@ const BalanceActions: FC = () => {
 	};
 
 	useEffect(() => {
-		setBalanceLabel(formatCurrency('sUSD', sUSDBalance, { sign: '$' }));
+		setBalanceLabel(formatDollars(sUSDBalance, { sign: '$' }));
 	}, [balanceLabel, sUSDBalance]);
 
 	if (!balanceLabel) {

@@ -22,7 +22,7 @@ import { gasSpeedState } from 'store/wallet';
 import { FlexDivCentered, FlexDivCol } from 'styles/common';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { isUserDeniedError } from 'utils/formatters/error';
-import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
+import { formatCurrency, formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 import { getTransactionPrice } from 'utils/network';
 
@@ -121,11 +121,11 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 			},
 			{
 				label: t('futures.market.user.position.modal.ROI'),
-				value: formatCurrency('sUSD', positionDetails?.roi ?? zeroBN, { sign: '$' }),
+				value: formatDollars(positionDetails?.roi ?? zeroBN),
 			},
 			{
 				label: t('futures.market.user.position.modal.fee'),
-				value: formatCurrency('sUSD', orderFee, { sign: '$' }),
+				value: formatDollars(orderFee),
 			},
 			{
 				label: t('futures.market.user.position.modal.gas-fee'),

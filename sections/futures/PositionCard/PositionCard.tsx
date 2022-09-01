@@ -23,7 +23,7 @@ import {
 import { FlexDivCol } from 'styles/common';
 import media from 'styles/media';
 import { isFiatCurrency } from 'utils/currencies';
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 import { formatNumber } from 'utils/formatters/number';
 import { getMarketName, getSynthDescription, isDecimalFour, MarketKeyByAsset } from 'utils/futures';
 
@@ -139,8 +139,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			currencyIconKey: MarketKeyByAsset[marketAsset],
 			marketShortName: marketAsset ? getMarketName(marketAsset) : 'Select a market',
 			marketLongName: getSynthDescription(marketAsset, synthsMap, t),
-			marketPrice: formatCurrency('sUSD', marketAssetRate, {
-				sign: '$',
+			marketPrice: formatDollars(marketAssetRate, {
 				minDecimals,
 			}),
 			positionSide: positionDetails ? (
@@ -169,8 +168,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 				<>
 					{`${formatNumber(positionDetails.size ?? 0, {
 						minDecimals: positionDetails.size.abs().lt(0.01) ? 4 : 2,
-					})} (${formatCurrency('sUSD', positionDetails.notionalValue?.abs() ?? zeroBN, {
-						sign: '$',
+					})} (${formatDollars(positionDetails.notionalValue?.abs() ?? zeroBN, {
 						minDecimals: positionDetails.notionalValue?.abs()?.lt(0.01) ? 4 : 2,
 					})})`}
 					<PreviewArrow
@@ -180,8 +178,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 					>
 						{`${formatNumber(previewData.positionSize ?? 0, {
 							minDecimals: 2,
-						})} (${formatCurrency('sUSD', previewData.notionalValue?.abs() ?? zeroBN, {
-							sign: '$',
+						})} (${formatDollars(previewData.notionalValue?.abs() ?? zeroBN, {
 							minDecimals: 2,
 						})})`}
 					</PreviewArrow>
@@ -203,14 +200,12 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			),
 			liquidationPrice: positionDetails ? (
 				<>
-					{formatCurrency('sUSD', positionDetails?.liquidationPrice ?? zeroBN, {
-						sign: '$',
+					{formatDollars(positionDetails?.liquidationPrice ?? zeroBN, {
 						minDecimals,
 					})}
 					{
 						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
-							{formatCurrency('sUSD', previewData?.liquidationPrice ?? zeroBN, {
-								sign: '$',
+							{formatDollars(previewData?.liquidationPrice ?? zeroBN, {
 								minDecimals,
 							})}
 						</PreviewArrow>
@@ -223,40 +218,31 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			realizedPnl: realizedPnl,
 			pnlText:
 				positionDetails && pnl
-					? `${formatCurrency('sUSD', pnl, {
-							sign: '$',
+					? `${formatDollars(pnl, {
 							minDecimals: pnl.abs().lt(0.01) ? 4 : 2,
 					  })} (${formatPercent(pnlPct)})`
 					: NO_VALUE,
 			realizedPnlText:
 				positionHistory && realizedPnl
-					? `${formatCurrency('sUSD', realizedPnl, {
-							sign: '$',
+					? `${formatDollars(realizedPnl, {
 							minDecimals: realizedPnl.abs().lt(0.01) ? 4 : 2,
 					  })} (${formatPercent(realizedPnlPct)})`
 					: NO_VALUE,
 			netFunding: netFunding,
 			netFundingText: netFunding
-				? `${formatCurrency('sUSD', netFunding, {
-						sign: '$',
+				? `${formatDollars(netFunding, {
 						minDecimals: netFunding.abs().lt(0.01) ? 4 : 2,
 				  })}`
 				: null,
-			fees: positionDetails
-				? formatCurrency('sUSD', positionHistory?.feesPaid ?? zeroBN, {
-						sign: '$',
-				  })
-				: NO_VALUE,
+			fees: positionDetails ? formatDollars(positionHistory?.feesPaid ?? zeroBN) : NO_VALUE,
 			avgEntryPrice: positionDetails ? (
 				<>
-					{formatCurrency('sUSD', positionHistory?.entryPrice ?? zeroBN, {
-						sign: '$',
+					{formatDollars(positionHistory?.entryPrice ?? zeroBN, {
 						minDecimals,
 					})}
 					{
 						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
-							{formatCurrency('sUSD', previewData.avgEntryPrice ?? zeroBN, {
-								sign: '$',
+							{formatDollars(previewData.avgEntryPrice ?? zeroBN, {
 								minDecimals,
 							})}
 						</PreviewArrow>
