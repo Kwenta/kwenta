@@ -1,4 +1,4 @@
-import { Chain, Wallet } from '@rainbow-me/rainbowkit';
+import { Chain, getWalletConnectConnector, Wallet } from '@rainbow-me/rainbowkit';
 
 import GnosisIcon from 'assets/png/rainbowkit/gnosis.png';
 
@@ -18,11 +18,7 @@ const Safe = ({ chains }: SafeOptions): Wallet => ({
 		ios: 'https://apps.apple.com/us/app/gnosis-safe/idid1515759131',
 	},
 	createConnector: () => {
-		// eslint-disable-next-line no-console
-		console.log(`before createConnector`);
-		const connector = new SafeConnector({ chains }) as any;
-		// eslint-disable-next-line no-console
-		console.log(`after createConnector`);
+		const connector = getWalletConnectConnector({ chains });
 		return {
 			connector,
 		};
