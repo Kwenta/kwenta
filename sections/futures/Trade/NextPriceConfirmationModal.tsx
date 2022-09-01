@@ -12,6 +12,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import {
 	confirmationModalOpenState,
@@ -38,7 +39,7 @@ const NextPriceConfirmationModal: FC = () => {
 	const { synthsMap } = Connector.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const isDisclaimerDisplayed = useRecoilValue(nextPriceDisclaimerState);
-	const { useExchangeRatesQuery, useEthGasPriceQuery } = useSynthetixQueries();
+	const { useEthGasPriceQuery } = useSynthetixQueries();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();

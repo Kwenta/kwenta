@@ -1,8 +1,13 @@
-export const RATES_ENDPOINT_MAINNET =
+export const RATES_ENDPOINT_OP_MAINNET =
 	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-main';
 
-export const RATES_ENDPOINT_TESTNET =
+export const RATES_ENDPOINT_OP_KOVAN =
 	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-kovan-main';
+
+export const RATES_ENDPOINT_OP_GOERLI =
+	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-goerli-main';
+
+export const RATES_ENDPOINT_GOERLI = 'https://api.thegraph.com/subgraphs/name/kwenta/goerli-main';
 
 export const DAY_PERIOD = 24 * 3600;
 

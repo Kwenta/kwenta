@@ -1,15 +1,15 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
+import { chain } from 'wagmi';
 
-import { DEFAULT_NETWORK_ID } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
-import { appReadyState } from 'store/app';
+import useIsL2 from 'hooks/useIsL2';
 import { futuresMarketsState } from 'store/futures';
-import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
 import { zeroBN } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
 
@@ -17,21 +17,19 @@ import { FuturesMarket } from './types';
 import { getReasonFromCode } from './utils';
 
 const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const network = useRecoilValue(networkState);
-	const { synthetixjs: snxjs, defaultSynthetixjs } = Connector.useContainer();
+	const { network: activeChain, defaultSynthetixjs, l2Synthetixjs } = Connector.useContainer();
+
 	const homepage = window.location.pathname === ROUTES.Home.Root;
-	const synthetixjs = homepage ? defaultSynthetixjs : snxjs;
-	const networkId = homepage ? DEFAULT_NETWORK_ID : network.id;
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isL2 = useRecoilValue(isL2State);
+	const isL2 = useIsL2();
+	const network = homepage || !isL2 ? chain.optimism : activeChain;
+	const synthetixjs = homepage || !isL2 ? l2Synthetixjs : defaultSynthetixjs;
 	const [, setFuturesMarkets] = useRecoilState(futuresMarketsState);
-	const isReady = isAppReady && !!synthetixjs;
 
 	return useQuery<FuturesMarket[]>(
-		QUERY_KEYS.Futures.Markets(networkId),
+		QUERY_KEYS.Futures.Markets(network?.id as NetworkId),
 		async () => {
-			if (!homepage && isWalletConnected && !isL2) {
+			if (!synthetixjs) {
+				setFuturesMarkets([]);
 				return null;
 			}
 
@@ -130,7 +128,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 			return futuresMarkets;
 		},
 		{
-			enabled: !homepage && isWalletConnected ? isL2 && isReady : isReady,
+			enabled: !!synthetixjs,
 			refetchInterval: 15000,
 			...options,
 		}

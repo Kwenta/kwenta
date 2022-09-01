@@ -1,11 +1,14 @@
 import { utils as ethersUtils } from 'ethers';
 import { gql } from 'graphql-request';
 
-export const FUTURES_ENDPOINT_MAINNET =
+export const FUTURES_ENDPOINT_OP_MAINNET =
 	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-futures';
 
-export const FUTURES_ENDPOINT_TESTNET =
+export const FUTURES_ENDPOINT_OP_KOVAN =
 	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-kovan-futures';
+
+export const FUTURES_ENDPOINT_OP_GOERLI =
+	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-goerli-futures';
 
 export const DAY_PERIOD = 24;
 

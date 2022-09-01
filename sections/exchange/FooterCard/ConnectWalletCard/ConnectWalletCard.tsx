@@ -1,8 +1,8 @@
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import Connector from 'containers/Connector';
 
 import { MessageButton, MessageContainer, Message, FixedMessageContainerSpacer } from '../common';
 
@@ -13,7 +13,7 @@ type ConnectWalletCardProps = {
 
 const ConnectWalletCard: FC<ConnectWalletCardProps> = ({ attached, ...rest }) => {
 	const { t } = useTranslation();
-	const { connectWallet } = Connector.useContainer();
+	const { openConnectModal: connectWallet } = useConnectModal();
 
 	return (
 		<>

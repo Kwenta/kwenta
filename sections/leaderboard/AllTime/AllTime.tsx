@@ -1,7 +1,6 @@
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Currency from 'components/Currency';
@@ -10,7 +9,6 @@ import Table from 'components/Table';
 import { DEFAULT_LEADERBOARD_ROWS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import useENSAvatar from 'hooks/useENSAvatar';
-import { walletAddressState } from 'store/wallet';
 
 import { AccountStat, getMedal, PIN, StyledTrader } from '../common';
 
@@ -24,9 +22,7 @@ type AllTimeProps = {
 
 const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader, compact }) => {
 	const { t } = useTranslation();
-	const walletAddress = useRecoilValue(walletAddressState);
-
-	const { staticMainnetProvider } = Connector.useContainer();
+	const { staticMainnetProvider, walletAddress } = Connector.useContainer();
 
 	if (compact) {
 		const ownPosition = stats.findIndex((i: { account: string }) => {
