@@ -13,7 +13,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { currentMarketState, positionState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
-import { formatCurrency } from 'utils/formatters/number';
+import { formatDollars } from 'utils/formatters/number';
 import { getTransactionPrice } from 'utils/network';
 
 import {
@@ -132,7 +132,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 			<BalanceContainer>
 				<BalanceText $gold>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
 				<BalanceText>
-					<span>{formatCurrency('sUSD', accessibleMargin, { sign: '$' })}</span> sUSD
+					<span>{formatDollars(accessibleMargin)}</span> sUSD
 				</BalanceText>
 			</BalanceContainer>
 
@@ -164,9 +164,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 				<BalanceText>{t('futures.market.trade.margin.modal.gas-fee')}:</BalanceText>
 				<BalanceText>
 					<span>
-						{transactionFee
-							? formatCurrency('sUSD', transactionFee, { sign: '$', maxDecimals: 1 })
-							: NO_VALUE}
+						{transactionFee ? formatDollars(transactionFee, { maxDecimals: 1 }) : NO_VALUE}
 					</span>
 				</BalanceText>
 			</GasFeeContainer>

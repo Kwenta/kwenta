@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
 import { futuresMarketsState } from 'store/futures';
-import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
+import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
 import { HeaderContainer, MarketStatsContainer, MarketStat } from './common';
@@ -32,8 +32,7 @@ const FuturesMarkets = () => {
 					<MarketStat>
 						<div className="title">24h Volume</div>
 						<div className="value">
-							{formatCurrency('sUSD', dailyTradeStats.data?.totalVolume ?? zeroBN, {
-								sign: '$',
+							{formatDollars(dailyTradeStats.data?.totalVolume ?? zeroBN, {
 								minDecimals: 0,
 							})}
 						</div>
@@ -41,8 +40,7 @@ const FuturesMarkets = () => {
 					<MarketStat>
 						<div className="title">Open Interest</div>
 						<div className="value">
-							{formatCurrency('sUSD', openInterest, {
-								sign: '$',
+							{formatDollars(openInterest, {
 								minDecimals: 0,
 							})}
 						</div>
