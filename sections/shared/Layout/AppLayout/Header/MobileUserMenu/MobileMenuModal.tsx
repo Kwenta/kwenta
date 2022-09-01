@@ -10,8 +10,8 @@ import ROUTES from 'constants/routes';
 import Links from 'sections/dashboard/Links';
 import Logo from 'sections/shared/Layout/Logo';
 
-import { HOMEPAGE_MENU_LINKS, MENU_LINKS } from '../constants';
-import { MenuButton, SUB_MENUS } from './common';
+import { HOMEPAGE_MENU_LINKS, MOBILE_NAV_LINKS } from '../constants';
+import { MenuButton } from './common';
 import MobileSubMenu from './MobileSubMenu';
 
 type MobileMenuModalProps = {
@@ -21,8 +21,9 @@ type MobileMenuModalProps = {
 export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
+
 	const menuLinks =
-		window.location.pathname === ROUTES.Home.Root ? HOMEPAGE_MENU_LINKS : MENU_LINKS;
+		window.location.pathname === ROUTES.Home.Root ? HOMEPAGE_MENU_LINKS : MOBILE_NAV_LINKS;
 
 	const [expanded, setExpanded] = useState<string | undefined>();
 
@@ -37,13 +38,13 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
 					<Logo />
 				</LogoContainer>
 				<div>
-					{menuLinks.map(({ i18nLabel, link }) => (
+					{menuLinks.map(({ i18nLabel, link, links }) => (
 						<div key={link}>
-							{SUB_MENUS[link] ? (
+							{links?.length ? (
 								<MobileSubMenu
+									links={links}
 									active={expanded === link}
 									i18nLabel={i18nLabel}
-									link={link}
 									defaultOpen={asPath.includes(link)}
 									onDismiss={onDismiss}
 									onToggle={handleToggle(link)}

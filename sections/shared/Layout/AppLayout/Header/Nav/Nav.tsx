@@ -11,7 +11,7 @@ import { DropdownIndicator, IndicatorSeparator } from 'components/Select/Select'
 import { currentMarketState } from 'store/futures';
 import { linkCSS } from 'styles/common';
 
-import { MENU_LINKS } from '../constants';
+import { DESKTOP_NAV_LINKS } from '../constants';
 
 type ReactSelectOptionProps = {
 	label: string;
@@ -51,7 +51,7 @@ const Nav: FC = () => {
 	return (
 		<nav>
 			<MenuLinks>
-				{MENU_LINKS.map(({ i18nLabel, link, links }) => {
+				{DESKTOP_NAV_LINKS.map(({ i18nLabel, link, links }) => {
 					const routeBase = asPath.split('/')[1];
 					const linkBase = link.split('/')[1];
 					const isActive = routeBase === linkBase;

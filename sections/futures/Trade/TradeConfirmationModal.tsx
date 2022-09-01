@@ -51,7 +51,7 @@ const TradeConfirmationModal: FC = () => {
 		orderTxn,
 		submitIsolatedMarginOrder,
 		submitCrossMarginOrder,
-		onLeverageChange,
+		resetTradeState,
 		tradeFees,
 	} = useFuturesContext();
 
@@ -151,7 +151,7 @@ const TradeConfirmationModal: FC = () => {
 							setError(failureMessage?.failureReason || t('common.transaction.transaction-failed'));
 						},
 						onTxConfirmed: () => {
-							onLeverageChange('');
+							resetTradeState();
 							handleRefetch('modify-position');
 						},
 					});

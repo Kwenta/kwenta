@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
+import DepositArrow from 'assets/svg/futures/deposit-arrow.svg';
+import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import StyledSlider from 'components/Slider/StyledSlider';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import {
@@ -15,6 +17,7 @@ import {
 import { walletAddressState } from 'store/wallet';
 import { BorderedPanel, FlexDivRow } from 'styles/common';
 
+import CrossMarginOnboard from '../CrossMarginOnboard';
 import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
 import ManagePosition from '../Trade/ManagePosition';
@@ -44,7 +47,8 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 
 	const [percent, setPercent] = useState(0);
 	const [usdAmount, setUsdAmount] = useState(susdSize);
-	const [openDepositModal, setOpenDepositModal] = useState(false);
+	const [showOnboard, setShowOnboard] = useState(false);
+	const [openTransferModal, setOpenTransferModal] = useState<'deposit' | 'withdraw' | null>(null);
 
 	// eslint-disable-next-line
 	const onChangeMarginPercent = useCallback(
@@ -74,22 +78,32 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 
 	return (
 		<>
+			<CrossMarginOnboard onClose={() => setShowOnboard(false)} isOpen={showOnboard} />
+
 			{!walletAddress ? (
 				<MessageContainer>{t('futures.market.trade.cross-margin.connect-wallet')}</MessageContainer>
 			) : !crossMarginAvailable ? (
 				<CrossMarginUnsupported />
 			) : !crossMarginAddress ? (
-				<CreateAccount />
+				<CreateAccount onShowOnboard={() => setShowOnboard(true)} />
 			) : (
 				<>
-					{isMobile && <MarketsDropdown />}
+					{!isMobile && <MarketsDropdown />}
 
 					<TradePanelHeader
 						accountType={selectedAccountType}
-						button={{
-							i18nTitle: 'futures.market.trade.button.deposit',
-							onClick: () => setOpenDepositModal(true),
-						}}
+						buttons={[
+							{
+								i18nTitle: 'futures.market.trade.button.deposit',
+								Icon: DepositArrow,
+								onClick: () => setOpenTransferModal('deposit'),
+							},
+							{
+								i18nTitle: 'futures.market.trade.button.withdraw',
+								Icon: WithdrawArrow,
+								onClick: () => setOpenTransferModal('withdraw'),
+							},
+						]}
 					/>
 					{}
 					<MarginInfoBox />
@@ -115,8 +129,11 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 					<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
 					<ManagePosition />
 					<FeesBox />
-					{openDepositModal && (
-						<DepositWithdrawCrossMargin onDismiss={() => setOpenDepositModal(false)} />
+					{openTransferModal && (
+						<DepositWithdrawCrossMargin
+							defaultTab={openTransferModal}
+							onDismiss={() => setOpenTransferModal(null)}
+						/>
 					)}
 				</>
 			)}

@@ -104,7 +104,7 @@ const Button = styled.button<ButtonProps>`
 		props.size === 'xs' &&
 		css`
 			height: 22px;
-			min-width: 60px;
+			min-width: 50px;
 			font-size: 11px;
 		`};
 

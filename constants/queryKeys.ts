@@ -222,12 +222,6 @@ export const QUERY_KEYS = {
 			periodLength,
 		],
 		TradingVolumeForAll: (networkId: NetworkId) => ['futures', 'tradingVolumeForAll', networkId],
-		MarketPositionHistory: (networkId: NetworkId, market: string | null, walletAddress: string) => [
-			'futures',
-			'marketPositionHistory',
-			market,
-			walletAddress,
-		],
 		AllPositionHistory: (networkId: NetworkId, walletAddress: string) => [
 			'futures',
 			'allPositionHistory',
@@ -253,12 +247,11 @@ export const QUERY_KEYS = {
 			markets,
 			walletAddress,
 		],
-		AccountPositions: (walletAddress: string | null, networkId: NetworkId) => [
-			'futures',
-			'accountPositions',
-			walletAddress,
-			networkId,
-		],
+		AccountPositions: (
+			walletAddress: string | null,
+			networkId: NetworkId,
+			accountType: FuturesAccountType
+		) => ['futures', 'accountPositions', walletAddress, networkId, accountType],
 		Participants: () => ['futures', 'participants'],
 		Participant: (walletAddress: string) => ['futures', 'participant', walletAddress],
 		Stats: (networkId: NetworkId) => ['futures', 'stats', networkId],

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -6,22 +5,20 @@ import CrossMarginIcon from 'assets/svg/futures/cross-margin-icon.svg';
 import Button from 'components/Button';
 import { BorderedPanel } from 'styles/common';
 
-import CrossMarginOnboard from '../CrossMarginOnboard';
 import CrossMarginFAQ from '../CrossMarginOnboard/CrossMarginFAQ';
 
-export default function CreateAccount() {
-	const { t } = useTranslation();
+type Props = {
+	onShowOnboard: () => void;
+};
 
-	const [showOnboard, setShowOnboard] = useState(false);
+export default function CreateAccount({ onShowOnboard }: Props) {
+	const { t } = useTranslation();
 
 	return (
 		<>
-			<CrossMarginOnboard onClose={() => setShowOnboard(false)} isOpen={showOnboard} />
-
 			<CreateAccountContainer>
 				<Title>{t('futures.market.trade.cross-margin.title')}</Title>
-
-				<CreateAccountButton variant="flat" onClick={() => setShowOnboard(true)}>
+				<CreateAccountButton variant="flat" onClick={onShowOnboard}>
 					{t('futures.market.trade.cross-margin.create-account')}
 				</CreateAccountButton>
 			</CreateAccountContainer>

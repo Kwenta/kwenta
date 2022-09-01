@@ -1,6 +1,6 @@
 import { wei } from '@synthetixio/wei';
 import { constants } from 'ethers';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -23,6 +23,7 @@ import { formatDollars, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
 type DepositMarginModalProps = {
+	defaultTab: 'deposit' | 'withdraw';
 	onDismiss(): void;
 	onComplete?(): void;
 };
@@ -31,6 +32,7 @@ const PLACEHOLDER = '$0.00';
 const MIN_DEPOSIT_AMOUNT = wei('50');
 
 export default function DepositWithdrawCrossMargin({
+	defaultTab = 'deposit',
 	onDismiss,
 	onComplete,
 }: DepositMarginModalProps) {
@@ -49,6 +51,10 @@ export default function DepositWithdrawCrossMargin({
 	const [error, setError] = useState<string | null>(null);
 
 	const { handleRefetch } = useRefetchContext();
+
+	useEffect(() => {
+		setTransferType(defaultTab === 'deposit' ? 0 : 1);
+	}, [defaultTab]);
 
 	const susdBal = transferType === 0 ? balances?.susdWalletBalance || zeroBN : freeMargin;
 

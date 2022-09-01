@@ -4,8 +4,8 @@ import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
-import { futuresAccountState } from 'store/futures';
-import { isL2State, networkState } from 'store/wallet';
+import { futuresAccountTypeState } from 'store/futures';
+import { isL2State, networkState, walletAddressState } from 'store/wallet';
 import logError from 'utils/logError';
 
 import { FUTURES_POSITION_FRAGMENT } from './constants';
@@ -13,28 +13,30 @@ import { PositionHistory } from './types';
 import { getFuturesEndpoint, mapTradeHistory } from './utils';
 
 const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
-	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
+	const walletAddress = useRecoilValue(walletAddressState);
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
+
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
 	const futuresEndpoint = getFuturesEndpoint(network);
 
 	return useQuery<PositionHistory[] | null>(
-		QUERY_KEYS.Futures.AccountPositions(selectedFuturesAddress, network.id),
+		QUERY_KEYS.Futures.AccountPositions(walletAddress, network.id, selectedAccountType),
 		async () => {
-			if (!selectedFuturesAddress) return [];
+			if (!walletAddress) return [];
 			try {
 				const response = await request(
 					futuresEndpoint,
 					gql`
 						${FUTURES_POSITION_FRAGMENT}
-						query userAllPositions($account: String!) {
-							futuresPositions(where: { account: $account }) {
+						query userAllPositions($account: String!, $accountType: String!) {
+							futuresPositions(where: { account: $account, accountType: $accountType }) {
 								...FuturesPositionFragment
 							}
 						}
 					`,
-					{ account: selectedFuturesAddress }
+					{ account: walletAddress, accountType: selectedAccountType }
 				);
 				return response?.futuresPositions ? mapTradeHistory(response.futuresPositions, true) : [];
 			} catch (e) {

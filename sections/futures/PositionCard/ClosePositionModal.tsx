@@ -12,6 +12,7 @@ import Button from 'components/Button';
 import Error from 'components/Error';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
+import { useFuturesContext } from 'contexts/FuturesContext';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -42,9 +43,12 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const { resetTradeState } = useFuturesContext();
+
 	const [error, setError] = useState<string | null>(null);
 	const [orderFee, setOrderFee] = useState<Wei>(wei(0));
-	const { monitorTransaction } = TransactionNotifier.useContainer();
+
 	const currencyKey = useRecoilValue(currentMarketState);
 	const position = useRecoilValue(positionState);
 	const positionDetails = position?.position;
@@ -150,6 +154,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 				txHash: txHash,
 				onTxConfirmed: () => {
 					onDismiss();
+					resetTradeState();
 					handleRefetch('close-position');
 					handleRefetch('account-margin-change');
 				},
