@@ -1,4 +1,5 @@
 import { Chain, getWalletConnectConnector, Wallet } from '@rainbow-me/rainbowkit';
+import { InjectedConnector } from '@wagmi/core';
 
 import GnosisIcon from 'assets/png/rainbowkit/gnosis.png';
 
@@ -18,7 +19,7 @@ const Safe = ({ chains }: SafeOptions): Wallet => ({
 		ios: 'https://apps.apple.com/us/app/gnosis-safe/idid1515759131',
 	},
 	createConnector: () => {
-		const connector = getWalletConnectConnector({ chains });
+		const connector = new InjectedConnector({ chains });
 		return {
 			connector,
 		};
