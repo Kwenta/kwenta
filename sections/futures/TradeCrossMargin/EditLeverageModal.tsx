@@ -82,7 +82,6 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 	);
 
 	const onConfirm = async () => {
-		onLeverageChange(leverage);
 		if (position?.position) {
 			try {
 				setSubmitting(true);
@@ -107,6 +106,7 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 			}
 			resetTradeState();
 		} else {
+			onLeverageChange(leverage);
 			setPreferredLeverage({
 				...preferredLeverage,
 				[marketAsset]: String(leverage),

@@ -193,6 +193,7 @@ const useFuturesData = () => {
 				),
 				FuturesMarketContract.orderFee(nativeSizeDelta.toBN()),
 			]);
+
 			const crossMarginFee =
 				selectedAccountType === 'cross_margin'
 					? susdSizeDelta.abs().mul(crossMarginTradeFee)
@@ -497,7 +498,6 @@ const useFuturesData = () => {
 		onTradeAmountSUSDChange,
 		submitIsolatedMarginOrder,
 		submitCrossMarginOrder,
-		calculateFees,
 		resetTradeState,
 		marketAssetRate,
 		position,
