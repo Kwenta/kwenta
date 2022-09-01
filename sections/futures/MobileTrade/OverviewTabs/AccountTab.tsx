@@ -22,9 +22,7 @@ const AccountTab: React.FC = () => {
 					<MarketActions />
 				</>
 			) : (
-				<>
-					<MarginInfoBox />
-				</>
+				<MarginInfoBox />
 			)}
 		</Pane>
 	);

@@ -20,7 +20,7 @@ export default function InputBalanceLabel({ balance, currencyKey }: Props) {
 			<BalanceText>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
 			<BalanceText>
 				<span>
-					{formatCurrency('sUSD', balance, {
+					{formatCurrency(currencyKey, balance, {
 						sign: isUsd ? '$' : '',
 						maxDecimals: isUsd ? 2 : undefined,
 					})}
