@@ -1,10 +1,14 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import ChevronDown from 'assets/svg/app/chevron-down.svg';
 import ChevronUp from 'assets/svg/app/chevron-up.svg';
+import ROUTES from 'constants/routes';
+import { currentThemeState } from 'store/ui';
+import { ThemeName } from 'styles/theme';
 
 import { SUB_MENUS, MenuButton } from './common';
 
@@ -37,9 +41,11 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
 
+	const currentTheme = useRecoilValue(currentThemeState);
+
 	return (
 		<>
-			<SubMenuButton isActive={active} onClick={onToggle}>
+			<SubMenuButton currentTheme={currentTheme} isActive={active} onClick={onToggle}>
 				{t(i18nLabel)}
 				{active ? <ChevronUp /> : <ChevronDown />}
 			</SubMenuButton>
@@ -50,7 +56,9 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 								<SubMenuItemContainer key={label}>
 									<SubMenuIcon>·</SubMenuIcon>
 									<StyledLink href={subLink}>
-										<SubMenuItem active={asPath.includes(subLink)}>{label}</SubMenuItem>
+										<SubMenuItem currentTheme={currentTheme} active={asPath.includes(subLink)}>
+											{label}
+										</SubMenuItem>
 									</StyledLink>
 								</SubMenuItemContainer>
 						  ))
@@ -59,11 +67,17 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 									<SubMenuIcon selected={selected}>{icon ?? '·'}</SubMenuIcon>
 									{externalLink ? (
 										<SubMenuExternalLink href={externalLink} target="_blank" rel="noreferrer">
-											<SubMenuItem selected={selected}>{label}</SubMenuItem>
+											<SubMenuItem currentTheme={currentTheme} selected={selected}>
+												{label}
+											</SubMenuItem>
 										</SubMenuExternalLink>
 									) : (
 										<SubMenuFlex>
-											<SubMenuItem onClick={onClick} selected={selected}>
+											<SubMenuItem
+												currentTheme={currentTheme}
+												onClick={onClick}
+												selected={selected}
+											>
 												{label}
 											</SubMenuItem>
 										</SubMenuFlex>
@@ -107,12 +121,15 @@ const SubMenuExternalLink = styled.a`
 	text-decoration: none;
 `;
 
-const SubMenuItem = styled.div<{ active?: boolean; selected?: boolean }>`
+const SubMenuItem = styled.div<{ currentTheme: ThemeName; active?: boolean; selected?: boolean }>`
 	font-size: 19px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	box-sizing: border-box;
 	padding: 15px;
-	background-color: rgba(255, 255, 255, 0.05);
+	background-color: ${(props) =>
+		window.location.pathname === ROUTES.Home.Root || props.currentTheme === 'dark'
+			? 'rgba(255, 255, 255, 0.05)'
+			: 'rgb(232, 232, 232)'};
 	border-radius: 8px;
 	width: 100%;
 

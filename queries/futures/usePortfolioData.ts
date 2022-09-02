@@ -1,16 +1,16 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
 import EthDater from 'ethereum-block-by-date';
 import request, { gql } from 'graphql-request';
 import moment from 'moment';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
 
 import Connector from 'containers/Connector';
-import { appReadyState } from 'store/app';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import useIsL2 from 'hooks/useIsL2';
 import logError from 'utils/logError';
 
 import { getFuturesEndpoint } from './utils';
+
 // @ts-ignore
 
 type PortfolioData = {
@@ -22,15 +22,12 @@ type PortfolioData = {
 // The chart basically plots margin against block number.
 
 const usePortfolioData = (options?: UseQueryOptions<PortfolioData | null>) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
-	const walletAddress = useRecoilValue(walletAddressState);
-	const futuresEndpoint = getFuturesEndpoint(network);
-	const { provider } = Connector.useContainer();
+	const { provider, network, walletAddress } = Connector.useContainer();
+	const isL2 = useIsL2();
+	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
 	return useQuery<PortfolioData | null>(
-		['futures', 'portfolio', network.id, walletAddress],
+		['futures', 'portfolio', network?.id as NetworkId, walletAddress],
 		async () => {
 			if (!provider || !walletAddress) return null;
 			const dater = new EthDater(provider);
@@ -74,7 +71,7 @@ const usePortfolioData = (options?: UseQueryOptions<PortfolioData | null>) => {
 
 			return [];
 		},
-		{ enabled: isAppReady && isL2, ...options }
+		{ enabled: isL2, ...options }
 	);
 };
 

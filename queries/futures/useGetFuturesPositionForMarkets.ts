@@ -1,15 +1,15 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { Provider, Contract } from 'ethcall';
 import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useSetRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
 import FuturesMarketABI from 'lib/abis/FuturesMarket.json';
 import FuturesMarketDataABI from 'lib/abis/FuturesMarketData.json';
-import { appReadyState } from 'store/app';
 import { futuresMarketsState, futuresAccountState, positionsState } from 'store/futures';
-import { isL2State } from 'store/wallet';
 import { MarketKeyByAsset } from 'utils/futures';
 
 import { FuturesPosition, PositionDetail } from './types';
@@ -18,21 +18,35 @@ import { mapFuturesPosition } from './utils';
 const ethCallProvider = new Provider();
 
 const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPosition[]>) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
-	const { synthetixjs, network, provider } = Connector.useContainer();
+	const {
+		defaultSynthetixjs,
+		l2Synthetixjs,
+		provider,
+		l2Provider,
+		network,
+		isWalletConnected,
+	} = Connector.useContainer();
+	const isL2 = useIsL2();
+	const synthetixjs = isL2 ? defaultSynthetixjs : l2Synthetixjs;
+
 	const setFuturesPositions = useSetRecoilState(positionsState);
+
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
+
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 
 	const assets = futuresMarkets.map(({ asset }) => asset);
 
-	return useQuery<FuturesPosition[]>(
-		QUERY_KEYS.Futures.MarketsPositions(network.id, assets || [], selectedFuturesAddress || ''),
+	return useQuery<FuturesPosition[] | []>(
+		QUERY_KEYS.Futures.MarketsPositions(
+			network?.id as NetworkId,
+			assets || [],
+			selectedFuturesAddress ?? ''
+		),
 		async () => {
-			if (!assets || !provider || (selectedFuturesAddress && !isL2)) return [];
+			if (!assets || (!provider && !l2Provider) || !selectedFuturesAddress) return [];
 
-			await ethCallProvider.init(provider);
+			await ethCallProvider.init(isL2 ? provider : l2Provider);
 
 			const {
 				contracts: { FuturesMarketData },
@@ -71,7 +85,7 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 			return futuresPositions;
 		},
 		{
-			enabled: isAppReady && isL2 && !!network && !!selectedFuturesAddress && !!synthetixjs,
+			enabled: isL2 && !!isWalletConnected && !!selectedFuturesAddress && !!synthetixjs,
 			...options,
 		}
 	);

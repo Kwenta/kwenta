@@ -1,20 +1,21 @@
+import { useChainModal } from '@rainbow-me/rainbowkit';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { components } from 'react-select';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import { chain } from 'wagmi';
 
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import LinkIcon from 'assets/svg/app/link-blue.svg';
 import SwitchIcon from 'assets/svg/app/switch.svg';
+import EthereumIcon from 'assets/svg/providers/ethereum.svg';
 import OptimismIcon from 'assets/svg/providers/optimism.svg';
 import Button from 'components/Button';
 import Select from 'components/Select';
 import { IndicatorSeparator } from 'components/Select/Select';
 import { EXTERNAL_LINKS } from 'constants/links';
-import BlockExplorer from 'containers/BlockExplorer';
-import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { isL2State, networkState } from 'store/wallet';
+import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
 import { ExternalLink, FlexDivRowCentered } from 'styles/common';
 
 type ReactSelectOptionProps = {
@@ -28,15 +29,19 @@ type ReactSelectOptionProps = {
 type NetworksSwitcherProps = {};
 
 const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
-	const { switchToL1, switchToL2 } = useNetworkSwitcher();
+	const { network: activeChain } = Connector.useContainer();
+	const { openChainModal } = useChainModal();
 	const { t } = useTranslation();
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState).id === 69 ? 'testnet' : 'mainnet';
+	const isL2 = useIsL2();
+	const network = activeChain?.id === chain.optimismGoerli.id ? 'testnet' : 'mainnet';
 	const networkLabel = 'header.networks-switcher.optimism-' + network;
-	const { blockExplorerInstance } = BlockExplorer.useContainer();
 
 	const OPTIMISM_OPTIONS = [
-		{ label: 'header.networks-switcher.l1', postfixIcon: 'Switch', onClick: switchToL1 },
+		{
+			label: 'header.networks-switcher.chains',
+			postfixIcon: 'Switch',
+			onClick: openChainModal,
+		},
 		{
 			label: 'header.networks-switcher.optimistic-gateway',
 			postfixIcon: 'Link',
@@ -45,7 +50,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 		{
 			label: 'header.networks-switcher.optimistic-etherscan',
 			postfixIcon: 'Link',
-			link: blockExplorerInstance?.baseLink,
+			link: activeChain?.blockExplorers?.etherscan?.url,
 		},
 		{
 			label: 'header.networks-switcher.learn-more',
@@ -84,9 +89,12 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 	};
 
 	return !isL2 ? (
-		<Container onClick={switchToL2}>
+		<Container onClick={openChainModal}>
 			<StyledButton noOutline size="sm">
-				{t('header.networks-switcher.l2')}
+				<PrefixIcon>
+					<EthereumIcon width={20} height={14} />
+				</PrefixIcon>
+				{activeChain?.name}
 			</StyledButton>
 		</Container>
 	) : (
@@ -116,6 +124,9 @@ const StyledButton = styled(Button)`
 	font-size: 13px;
 	min-width: 0px;
 	font-family: ${(props) => props.theme.fonts.mono};
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 `;
 
 const L2Select = styled(Select)`
@@ -164,5 +175,8 @@ const LabelContainer = styled(FlexDivRowCentered)<{ noPadding: boolean }>`
 		path {
 			fill: ${(props) => props.theme.colors.selectedTheme.icon.fill};
 		}
+	}
+	span {
+		margin-right: -2px;
 	}
 `;

@@ -2,14 +2,13 @@ import { CurrencyKey } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Currency from 'components/Currency';
 import { NO_VALUE } from 'constants/placeholder';
+import Connector from 'containers/Connector';
 import useMarketClosed from 'hooks/useMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { isWalletConnectedState } from 'store/wallet';
 import { SelectableCurrencyRow } from 'styles/common';
 
 type Token = {
@@ -32,8 +31,8 @@ type SynthRowProps = {
 };
 const CurrencyRow: FC<SynthRowProps> = ({ token, onClick, balance }) => {
 	const { t } = useTranslation();
+	const { isWalletConnected } = Connector.useContainer();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	const currencyKey = token.symbol;
 

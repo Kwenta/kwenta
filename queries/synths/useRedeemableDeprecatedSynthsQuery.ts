@@ -1,4 +1,4 @@
-import { CurrencyKey } from '@synthetixio/contracts-interface';
+import { CurrencyKey, NetworkId } from '@synthetixio/contracts-interface';
 import { DeprecatedSynthBalance, DeprecatedSynthsBalances } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { Provider, Contract } from 'ethcall';
@@ -15,9 +15,10 @@ const useRedeemableDeprecatedSynthsQuery = (
 	walletAddress: string | null,
 	options?: UseQueryOptions<DeprecatedSynthsBalances>
 ) => {
-	const { synthetixjs, network, provider } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs, provider, network } = Connector.useContainer();
+
 	return useQuery<DeprecatedSynthsBalances>(
-		['WalletBalances', 'RedeemableDeprecatedSynths', network.id, walletAddress],
+		['WalletBalances', 'RedeemableDeprecatedSynths', network?.id as NetworkId, walletAddress],
 		async () => {
 			await ethCallProvider.init(provider as any);
 
@@ -69,7 +70,7 @@ const useRedeemableDeprecatedSynthsQuery = (
 			};
 		},
 		{
-			enabled: !!network.id && !!walletAddress,
+			enabled: !!network?.id && !!walletAddress,
 			...options,
 		}
 	);

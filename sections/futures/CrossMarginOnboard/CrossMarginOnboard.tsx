@@ -1,3 +1,4 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { constants } from 'ethers';
 import { ChangeEvent, useCallback, useState } from 'react';
@@ -29,7 +30,7 @@ type Props = {
 export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Props) {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { synthetixjs, signer, network } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs, network, signer } = Connector.useContainer();
 	const {
 		crossMarginAccountContract,
 		crossMarginContractFactory,
@@ -49,7 +50,8 @@ export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Prop
 			if (!signer || !synthetixjs || !crossMarginContractFactory)
 				throw new Error('Signer or snx lib missing');
 
-			const crossMarginSettingsAddress = CROSS_MARGIN_BASE_SETTINGS[String(network.id)];
+			const crossMarginSettingsAddress =
+				CROSS_MARGIN_BASE_SETTINGS[String(network?.id as NetworkId)];
 
 			if (!crossMarginSettingsAddress) throw new Error('Unsupported network');
 

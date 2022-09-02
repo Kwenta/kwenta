@@ -1,4 +1,4 @@
-import { SynthResult } from '@synthetixio/queries/build/node/generated/mainSubgraphQueries';
+import { SynthResult } from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
 
 export type SynthsVolumes = {

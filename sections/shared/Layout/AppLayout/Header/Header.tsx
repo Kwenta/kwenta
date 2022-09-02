@@ -1,18 +1,16 @@
 import { FC } from 'react';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import { MobileHiddenView } from 'components/Media';
 import { zIndex } from 'constants/ui';
-import { isL2State } from 'store/wallet';
+import useIsL2 from 'hooks/useIsL2';
 
 import Logo from '../../Logo';
 import Nav from './Nav';
 import WalletButtons from './WalletButtons';
 
 const Header: FC = () => {
-	const isL2 = useRecoilValue(isL2State);
-
+	const isL2 = useIsL2();
 	return (
 		<Container isL2={isL2}>
 			<MobileHiddenView>

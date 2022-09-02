@@ -1,16 +1,15 @@
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import { useExchangeContext } from 'contexts/ExchangeContext';
-import { isWalletConnectedState } from 'store/wallet';
 
 const SwapButton: React.FC = () => {
+	const { isWalletConnected } = Connector.useContainer();
 	const { t } = useTranslation();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const { connectWallet } = Connector.useContainer();
+	const { openConnectModal: connectWallet } = useConnectModal();
 	const {
 		isApproved,
 		needsApproval,
@@ -22,12 +21,12 @@ const SwapButton: React.FC = () => {
 	return isWalletConnected ? (
 		<Button
 			isRounded
+			noOutline
 			disabled={!!submissionDisabledReason}
 			onClick={needsApproval && !isApproved ? handleApprove : handleSubmit}
 			size="md"
 			data-testid="submit-order"
 			fullWidth
-			variant="primary"
 		>
 			{!!submissionDisabledReason
 				? submissionDisabledReason
@@ -36,7 +35,7 @@ const SwapButton: React.FC = () => {
 				: t('exchange.summary-info.button.submit-order')}
 		</Button>
 	) : (
-		<Button onClick={connectWallet} size="md" fullWidth variant="primary">
+		<Button onClick={connectWallet} size="md" fullWidth noOutline>
 			{t('common.wallet.connect-wallet')}
 		</Button>
 	);

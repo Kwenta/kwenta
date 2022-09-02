@@ -89,8 +89,8 @@ export const Message = styled.div`
 `;
 
 export const MessageButton = styled(Button).attrs({
-	variant: 'primary',
 	size: 'lg',
+	noOutline: true,
 	isRounded: true,
 	fullwidth: true,
 })`

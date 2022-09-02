@@ -251,7 +251,7 @@ const Assets = () => {
 				),
 			};
 		});
-	}, [unfrozenSynths, synthVolumesQuery, pastRates, exchangeRates, t]);
+	}, [synthVolumesQuery?.data, unfrozenSynths, t, exchangeRates, pastRates]);
 
 	const title = (
 		<>

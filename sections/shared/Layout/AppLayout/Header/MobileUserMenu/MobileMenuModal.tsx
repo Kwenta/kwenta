@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import MobileMenuArrow from 'assets/svg/app/mobile-menu-arrow.svg';
@@ -10,6 +11,7 @@ import ROUTES from 'constants/routes';
 import Links from 'sections/dashboard/Links';
 import type { HeaderProps } from 'sections/shared/Layout/HomeLayout/Header';
 import Logo from 'sections/shared/Layout/Logo';
+import { currentThemeState } from 'store/ui';
 
 import { HOMEPAGE_MENU_LINKS, MENU_LINKS } from '../constants';
 import { MenuButton, SUB_MENUS } from './common';
@@ -24,6 +26,8 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ setCurrentPage, onDi
 	const { asPath } = useRouter();
 	const menuLinks =
 		window.location.pathname === ROUTES.Home.Root ? HOMEPAGE_MENU_LINKS : MENU_LINKS;
+
+	const currentTheme = useRecoilValue(currentThemeState);
 
 	const [expanded, setExpanded] = useState<string | undefined>();
 
@@ -46,7 +50,11 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ setCurrentPage, onDi
 					{menuLinks.map(({ i18nLabel, link }) => (
 						<div key={link}>
 							{link === ROUTES.Stats.Home ? (
-								<MenuButton isActive={asPath.includes(link)} onClick={showStatsPage}>
+								<MenuButton
+									currentTheme={currentTheme}
+									isActive={asPath.includes(link)}
+									onClick={showStatsPage}
+								>
 									{t(i18nLabel)}
 									<MobileMenuArrow />
 								</MenuButton>
@@ -61,7 +69,11 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ setCurrentPage, onDi
 								/>
 							) : (
 								<Link href={link}>
-									<MenuButton isActive={asPath.includes(link)} onClick={onDismiss}>
+									<MenuButton
+										currentTheme={currentTheme}
+										isActive={asPath.includes(link)}
+										onClick={onDismiss}
+									>
 										{t(i18nLabel)}
 										<MobileMenuArrow />
 									</MenuButton>

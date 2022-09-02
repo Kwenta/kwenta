@@ -1,14 +1,14 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
+import { chain, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
-import { appReadyState } from 'store/app';
-import { isL2State, networkState } from 'store/wallet';
+import useIsL2 from 'hooks/useIsL2';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import logError from 'utils/logError';
 
-import { DAY_PERIOD, FUTURES_ENDPOINT_MAINNET } from './constants';
+import { DAY_PERIOD, FUTURES_ENDPOINT_OP_MAINNET } from './constants';
 import { getFuturesTrades } from './subgraph';
 import { FuturesVolumes } from './types';
 import { calculateTradeVolumeForAll, getFuturesEndpoint } from './utils';
@@ -16,14 +16,16 @@ import { calculateTradeVolumeForAll, getFuturesEndpoint } from './utils';
 const useGetFuturesTradingVolumeForAllMarkets = (
 	options?: UseQueryOptions<FuturesVolumes | null>
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
 	const homepage = window.location.pathname === ROUTES.Home.Root;
-	const futuresEndpoint = homepage ? FUTURES_ENDPOINT_MAINNET : getFuturesEndpoint(network);
+	const { chain: activeChain } = useNetwork();
+	const isL2 = useIsL2();
+	const network = homepage || !isL2 ? chain.optimism : activeChain;
+	const futuresEndpoint = homepage
+		? FUTURES_ENDPOINT_OP_MAINNET
+		: getFuturesEndpoint(network?.id as NetworkId);
 
 	return useQuery<FuturesVolumes | null>(
-		QUERY_KEYS.Futures.TradingVolumeForAll(network.id),
+		QUERY_KEYS.Futures.TradingVolumeForAll(network?.id as NetworkId),
 		async () => {
 			try {
 				const minTimestamp = Math.floor(calculateTimestampForPeriod(DAY_PERIOD) / 1000);
@@ -59,7 +61,7 @@ const useGetFuturesTradingVolumeForAllMarkets = (
 				return null;
 			}
 		},
-		{ enabled: homepage ? isAppReady : isAppReady && isL2, ...options }
+		{ ...options }
 	);
 };
 

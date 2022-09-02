@@ -18,13 +18,14 @@
 			"earn": "earn"
 		},
 		"networks-switcher": {
+			"chains": "Switch Networks",
 			"l2": "Switch to L2",
 			"l1": "Switch to Layer 1",
 			"optimistic-gateway": "Optimistic L2 Gateway",
 			"optimistic-etherscan": "Optimistic Etherscan",
 			"learn-more": "Learn more",
 			"optimism-mainnet": "Optimism",
-			"optimism-testnet": "OΞ Kovan"
+			"optimism-testnet": "OP Goerli"
 		},
 		"balance": {
 			"get-susd": "Get sUSD",
@@ -171,7 +172,8 @@
 			"disclaimer": "* These statistics are approximations. User experience will vary.",
 			"cta-buttons": {
 				"learn-more": "Learn more",
-				"switch-l2": "Switch to L2"
+				"switch-l2": "Switch to L2",
+				"switch-networks": "Switch Networks"
 			},
 			"markets": {
 				"title": "Live markets",
@@ -1030,7 +1032,7 @@
 		},
 		"wallet": {
 			"connect-wallet": "connect wallet",
-			"switch-wallet": "Switch Wallet",
+			"account-info": "Account Info",
 			"switch-accounts": "Switch Accounts",
 			"disconnect-wallet": "Disconnect Wallet",
 			"unsupported-network": "Unsupported Network"
@@ -1109,6 +1111,13 @@
 		"learn-more": "learn more"
 	},
 	"mobile-menu": {
+		"theme": {
+			"title": "Theme",
+			"options": {
+				"dark": "Dark",
+				"light": "Light"
+			}
+		},
 		"currency": "Currency",
 		"cancel": "Cancel",
 		"wallet": "Wallet",
@@ -1116,9 +1125,8 @@
 		"language": "Language",
 		"connect": "Connect",
 		"disconnect": "Disconnect",
-		"switch": "Switch",
-		"switch-to-l1": "Switch to L1",
-		"switch-to-l2": "Switch to L2",
+		"account-info": "Account Info",
+		"switch-network": "Switch Networks",
 		"bridge": "Bridge"
 	}
 }

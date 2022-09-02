@@ -1,3 +1,4 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
@@ -5,9 +6,8 @@ import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import { appReadyState } from 'store/app';
+import useIsL2 from 'hooks/useIsL2';
 import { futuresAccountState, marketKeysState } from 'store/futures';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
 import { zeroBN } from 'utils/formatters/number';
 import { MarketAssetByKey } from 'utils/futures';
 import logError from 'utils/logError';
@@ -16,21 +16,18 @@ import useGetCrossMarginAccountOverview from './useGetCrossMarginAccountOverview
 import { mapFuturesPosition } from './utils';
 
 const useGetCurrentPortfolioValue = (options?: UseQueryOptions<any | null>) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { defaultSynthetixjs: synthetixjs, network, walletAddress } = Connector.useContainer();
+	const isL2 = useIsL2();
+
 	const futuresAccount = useRecoilValue(futuresAccountState);
 	const marketKeys = useRecoilValue(marketKeysState);
 
 	const query = useGetCrossMarginAccountOverview();
 	const freeMargin = query.data?.freeMargin || zeroBN;
 
-	const { synthetixjs } = Connector.useContainer();
-
 	return useQuery<any | null>(
 		QUERY_KEYS.Futures.Positions(
-			network.id,
+			network?.id as NetworkId,
 			marketKeys || [],
 			futuresAccount?.crossMarginAddress || ''
 		),
@@ -79,7 +76,7 @@ const useGetCurrentPortfolioValue = (options?: UseQueryOptions<any | null>) => {
 			}
 		},
 		{
-			enabled: isAppReady && isL2 && !!walletAddress && marketKeys.length > 0 && !!synthetixjs,
+			enabled: isL2 && !!walletAddress && marketKeys.length > 0 && !!synthetixjs,
 			...options,
 		}
 	);
