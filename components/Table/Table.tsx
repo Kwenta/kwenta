@@ -1,5 +1,5 @@
 import React, { FC, useMemo, DependencyList, useEffect, useRef } from 'react';
-import { useTable, useFlexLayout, useSortBy, Column, Row, usePagination, Cell } from 'react-table';
+import { useTable, useFlexLayout, useSortBy, Column, Row, usePagination } from 'react-table';
 import styled, { css } from 'styled-components';
 
 import SortDownIcon from 'assets/svg/app/caret-down.svg';
@@ -8,6 +8,7 @@ import Spinner from 'assets/svg/app/loader.svg';
 import { FlexDivCentered, GridDivCenteredRow } from 'styles/common';
 
 import Pagination from './Pagination';
+import TableBodyRow from './TableBodyRow';
 
 export type TablePalette = 'primary';
 
@@ -172,20 +173,15 @@ export const Table: FC<TableProps> = ({
 									prepareRow(row);
 									const props = row.getRowProps();
 									const localRef = lastRef && idx === page.length - 1 ? lastRef : defaultRef;
+									const handleClick = onTableRowClick ? () => onTableRowClick(row) : undefined;
 									return (
 										<TableBodyRow
-											className="table-body-row"
+											localRef={localRef}
+											highlightRowsOnHover={highlightRowsOnHover}
+											row={row}
+											onClick={handleClick}
 											{...props}
-											ref={localRef}
-											onClick={onTableRowClick ? () => onTableRowClick(row) : undefined}
-											$highlightRowsOnHover={highlightRowsOnHover}
-										>
-											{row.cells.map((cell: Cell) => (
-												<TableCell className="table-body-cell" {...cell.getCellProps()}>
-													{cell.render('Cell')}
-												</TableCell>
-											))}
-										</TableBodyRow>
+										/>
 									);
 								})}
 							</TableBody>
@@ -223,28 +219,6 @@ export const TableRow = styled.div``;
 const TableBody = styled.div`
 	overflow-y: auto;
 	overflow-x: hidden;
-`;
-
-const TableBodyRow = styled.div<{ $highlightRowsOnHover?: boolean }>`
-	cursor: ${(props) => (props.onClick ? 'pointer' : 'default')};
-	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
-	padding: 6px 0;
-
-	&:last-child {
-		border: none;
-	}
-
-	&:nth-child(odd) {
-		background-color: ${(props) => props.theme.colors.selectedTheme.table.fill};
-	}
-
-	${(props) =>
-		props.$highlightRowsOnHover &&
-		css`
-			&:hover {
-				background-color: ${(props) => props.theme.colors.selectedTheme.table.hover};
-			}
-		`}
 `;
 
 const TableCell = styled(FlexDivCentered)`
@@ -316,8 +290,6 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 				color: ${(props) => props.theme.colors.selectedTheme.gray};
 				font-family: ${(props) => props.theme.fonts.regular};
 				border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
-			}
-			${TableBodyRow} {
 			}
 		`}
 `;
