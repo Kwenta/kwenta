@@ -26,8 +26,6 @@
 	"dependencies": {
 		"@artsy/fresnel": "1.7.0",
 		"@eth-optimism/contracts": "^0.5.1",
-		"@gnosis.pm/safe-apps-provider": "0.13.0",
-		"@gnosis.pm/safe-apps-sdk": "7.7.0",
 		"@gnosis.pm/safe-apps-wagmi": "^1.0.3",
 		"@kwenta/synthswap": "^1.0.3",
 		"@material-ui/core": "^4.12.3",
@@ -42,7 +40,6 @@
 		"@synthetixio/transaction-notifier": "2.74.9",
 		"@synthetixio/wei": "2.74.2",
 		"@tippyjs/react": "4.1.0",
-		"@wagmi/core": "^0.5.4",
 		"axios": "0.27.2",
 		"bignumber.js": "9.0.0",
 		"codegen-graph-ts": "^0.1.4",
@@ -84,6 +81,9 @@
 		"unstated-next": "1.1.0",
 		"wagmi": "0.6.2"
 	},
+	"peerDependencies": {
+		"@wagmi/core": "^0.3.8"
+	  },
 	"devDependencies": {
 		"@microsoft/eslint-formatter-sarif": "2.1.7",
 		"@next/eslint-plugin-next": "^12.1.6",
