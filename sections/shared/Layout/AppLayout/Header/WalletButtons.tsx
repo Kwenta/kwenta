@@ -9,6 +9,7 @@ import MoonIcon from 'assets/svg/app/moon.svg';
 import SunIcon from 'assets/svg/app/sun.svg';
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
+import { useAutoConnect } from 'hooks/useAutoConnect';
 import { currentThemeState } from 'store/ui';
 
 import BalanceActions from './BalanceActions';
@@ -30,6 +31,7 @@ const WalletButtons: React.FC = () => {
 		setTheme((curr) => (curr === 'light' ? 'dark' : 'light'));
 	};
 
+	useAutoConnect();
 	const walletIsNotConnected = (
 		<>
 			<ConnectButton
