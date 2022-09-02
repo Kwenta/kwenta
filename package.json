@@ -2,7 +2,7 @@
 	"name": "kwenta",
 	"version": "3.1.3",
 	"scripts": {
-		"dev": "next",
+		"dev": "set NODE_OPTIONS=--max-old-space-size=8192 && next",
 		"build": "next build",
 		"start": "next start",
 		"export": "next export",
@@ -81,9 +81,6 @@
 		"unstated-next": "1.1.0",
 		"wagmi": "0.6.2"
 	},
-	"peerDependencies": {
-		"@wagmi/core": "^0.3.8"
-	  },
 	"devDependencies": {
 		"@microsoft/eslint-formatter-sarif": "2.1.7",
 		"@next/eslint-plugin-next": "^12.1.6",
