@@ -8,10 +8,8 @@ import SkewInfo from '../TradingHistory/SkewInfo';
 
 const TradingHistory: React.FC = React.memo(() => (
 	<StyledLeftSideContent>
-		<Panel>
-			<SkewInfo />
-			<FuturesMarketTabs />
-		</Panel>
+		<SkewInfo />
+		<FuturesMarketTabs />
 	</StyledLeftSideContent>
 ));
 
@@ -19,12 +17,9 @@ export default TradingHistory;
 
 const StyledLeftSideContent = styled(LeftSideContent)`
 	width: 100%;
+	padding-bottom: 20px;
 
 	@media (max-width: 1200px) {
 		display: none;
 	}
-`;
-
-const Panel = styled.div`
-	padding-bottom: 20px;
 `;
