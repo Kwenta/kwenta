@@ -20,7 +20,7 @@ const Exchange: ExchangeComponent = () => {
 	const exchangeData = useExchange({
 		footerCardAttached: false,
 		routingEnabled: true,
-		showNoSynthsCard: true,
+		showNoSynthsCard: false,
 	});
 
 	const { baseCurrencyKey, quoteCurrencyKey, inverseRate } = exchangeData;

@@ -14,6 +14,7 @@ import {
 	CRYPTO_CURRENCY_MAP,
 	CurrencyKey,
 	ETH_ADDRESS,
+	ETH_COINGECKO_ADDRESS,
 } from 'constants/currency';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
@@ -76,7 +77,7 @@ export type SwapRatio = 25 | 50 | 75 | 100;
 const useExchange = ({
 	footerCardAttached = false,
 	routingEnabled = false,
-	showNoSynthsCard = true,
+	showNoSynthsCard = false,
 }: ExchangeCardProps) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
@@ -320,42 +321,50 @@ const useExchange = ({
 	}, [getBalance, baseCurrencyKey, isBaseCurrencyETH]);
 
 	// TODO: Fix coingecko prices (optimism issue maybe?)
-	const quotePriceRate = useMemo(
-		() =>
-			txProvider !== 'synthetix' && !quoteCurrency
-				? coinGeckoPrices != null &&
-				  quoteCurrencyTokenAddress != null &&
-				  selectPriceCurrencyRate != null &&
-				  coinGeckoPrices[quoteCurrencyTokenAddress.toLowerCase()] != null
-					? coinGeckoPrices[quoteCurrencyTokenAddress.toLowerCase()].usd /
-					  selectPriceCurrencyRate.toNumber()
-					: wei(0)
-				: newGetExchangeRatesForCurrencies(
-						exchangeRates,
-						quoteCurrencyKey,
-						selectedPriceCurrency.name
-				  ),
-		[
-			txProvider,
-			quoteCurrency,
-			coinGeckoPrices,
-			quoteCurrencyTokenAddress,
-			selectPriceCurrencyRate,
-			exchangeRates,
-			quoteCurrencyKey,
-			selectedPriceCurrency.name,
-		]
-	);
+	const quotePriceRate = useMemo(() => {
+		const quoteCurrencyTokenAddresLower = (isQuoteCurrencyETH
+			? ETH_COINGECKO_ADDRESS
+			: quoteCurrencyTokenAddress
+		)?.toLowerCase();
+
+		return txProvider !== 'synthetix' && !quoteCurrency
+			? coinGeckoPrices != null &&
+			  quoteCurrencyTokenAddress != null &&
+			  selectPriceCurrencyRate != null &&
+			  quoteCurrencyTokenAddresLower != null &&
+			  coinGeckoPrices[quoteCurrencyTokenAddresLower] != null
+				? coinGeckoPrices[quoteCurrencyTokenAddresLower].usd / selectPriceCurrencyRate.toNumber()
+				: wei(0)
+			: newGetExchangeRatesForCurrencies(
+					exchangeRates,
+					quoteCurrencyKey,
+					selectedPriceCurrency.name
+			  );
+	}, [
+		isQuoteCurrencyETH,
+		quoteCurrencyTokenAddress,
+		txProvider,
+		quoteCurrency,
+		coinGeckoPrices,
+		selectPriceCurrencyRate,
+		exchangeRates,
+		quoteCurrencyKey,
+		selectedPriceCurrency.name,
+	]);
 
 	const basePriceRate = useMemo(() => {
+		const baseCurrencyTokenAddresLower = (isQuoteCurrencyETH
+			? ETH_COINGECKO_ADDRESS
+			: baseCurrencyTokenAddress
+		)?.toLowerCase();
+
 		return txProvider !== 'synthetix' && !baseCurrency
 			? coinGeckoPrices != null &&
 			  baseCurrencyTokenAddress != null &&
 			  selectPriceCurrencyRate != null &&
-			  coinGeckoPrices[baseCurrencyTokenAddress.toLowerCase()] != null
-				? wei(coinGeckoPrices[baseCurrencyTokenAddress.toLowerCase()].usd).div(
-						selectPriceCurrencyRate
-				  )
+			  baseCurrencyTokenAddresLower != null &&
+			  coinGeckoPrices[baseCurrencyTokenAddresLower] != null
+				? wei(coinGeckoPrices[baseCurrencyTokenAddresLower].usd).div(selectPriceCurrencyRate)
 				: wei(0)
 			: newGetExchangeRatesForCurrencies(
 					exchangeRates,
@@ -363,10 +372,11 @@ const useExchange = ({
 					selectedPriceCurrency.name
 			  );
 	}, [
+		isQuoteCurrencyETH,
+		baseCurrencyTokenAddress,
 		txProvider,
 		baseCurrency,
 		coinGeckoPrices,
-		baseCurrencyTokenAddress,
 		selectPriceCurrencyRate,
 		exchangeRates,
 		baseCurrencyKey,
