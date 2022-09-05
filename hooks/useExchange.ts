@@ -172,7 +172,8 @@ const useExchange = ({
 	const isBaseCurrencyETH = baseCurrencyKey === CRYPTO_CURRENCY_MAP.ETH;
 	const isQuoteCurrencyETH = quoteCurrencyKey === CRYPTO_CURRENCY_MAP.ETH;
 
-	const needsApproval = txProvider === '1inch' || txProvider === 'synthswap';
+	const needsApproval =
+		(txProvider === '1inch' || txProvider === 'synthswap') && !isQuoteCurrencyETH;
 
 	const quoteCurrencyAmountDebounced = useDebouncedMemo(
 		() => quoteCurrencyAmount,
