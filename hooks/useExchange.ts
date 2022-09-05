@@ -76,7 +76,7 @@ export type SwapRatio = 25 | 50 | 75 | 100;
 const useExchange = ({
 	footerCardAttached = false,
 	routingEnabled = false,
-	showNoSynthsCard = true,
+	showNoSynthsCard = false,
 }: ExchangeCardProps) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
@@ -172,8 +172,7 @@ const useExchange = ({
 	const isBaseCurrencyETH = baseCurrencyKey === CRYPTO_CURRENCY_MAP.ETH;
 	const isQuoteCurrencyETH = quoteCurrencyKey === CRYPTO_CURRENCY_MAP.ETH;
 
-	const needsApproval =
-		(txProvider === '1inch' || txProvider === 'synthswap') && !isQuoteCurrencyETH;
+	const needsApproval = txProvider === '1inch' || txProvider === 'synthswap';
 
 	const quoteCurrencyAmountDebounced = useDebouncedMemo(
 		() => quoteCurrencyAmount,
