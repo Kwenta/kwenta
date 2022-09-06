@@ -26,5 +26,5 @@ export const BLAST_NETWORK_LOOKUP: Record<number, BlastNetwork> = {
 	1: BlastNetwork.ETHEREUM_MAINNET,
 	10: BlastNetwork.OPTIMISM_MAINNET,
 	42: BlastNetwork.ETHEREUM_KOVAN,
-	420: BlastNetwork.OPTIMISM_MAINNET,
+	420: BlastNetwork.OPTIMISM_GOERLI,
 };
