@@ -45,6 +45,9 @@ type OneInchApproveSpenderResponse = {
 	address: string;
 };
 
+const protocols =
+	'OPTIMISM_UNISWAP_V3, OPTIMISM_SYNTHETIX, OPTIMISM_SYNTHETIX_WRAPPER, OPTIMISM_ONE_INCH_LIMIT_ORDER, OPTIMISM_ONE_INCH_LIMIT_ORDER_V2, OPTIMISM_CURVE, OPTIMISM_BALANCER_V2, OPTIMISM_VELODROME, OPTIMISM_KYBERSWAP_ELASTIC';
+
 const useConvert = () => {
 	const {
 		tokensMap,
@@ -71,6 +74,7 @@ const useConvert = () => {
 				amount: params.amount,
 				fromAddress: walletAddress,
 				slippage,
+				protocols,
 				referrerAddress: KWENTA_REFERRAL_ADDRESS,
 				disableEstimate: true,
 			},
@@ -102,6 +106,7 @@ const useConvert = () => {
 				toTokenAddress: params.toTokenAddress,
 				amount: params.amount,
 				disableEstimate: true,
+				protocols,
 			},
 		});
 		return ethers.utils
