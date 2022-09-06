@@ -37,7 +37,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 				setFuturesMarkets([]);
 				return null;
 			}
-			const enabledMarkets = marketsForNetwork(network.id);
+			const enabledMarkets = marketsForNetwork(network.id as NetworkId);
 
 			const {
 				contracts: { FuturesMarketData, FuturesMarketSettings, SystemStatus, ExchangeRates },
