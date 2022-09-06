@@ -51,7 +51,7 @@ export const initRainbowkit = () => {
 	]);
 
 	const wagmiClient = createClient({
-		autoConnect: true,
+		autoConnect: false,
 		connectors,
 		provider,
 	});
