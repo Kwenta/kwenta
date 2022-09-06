@@ -69,7 +69,7 @@ const useFuturesData = () => {
 	);
 	const [tradeFees, setTradeFees] = useRecoilState(tradeFeesState);
 	const leverageSide = useRecoilValue(leverageSideState);
-	const orderType = useRecoilValue(orderTypeState);
+	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const position = useRecoilValue(positionState);
 	const market = useRecoilValue(marketInfoState);
 	const gasSpeed = useRecoilValue(gasSpeedState);
@@ -130,15 +130,24 @@ const useFuturesData = () => {
 			status: 'idle',
 			error: null,
 		});
+		setTradeFees({
+			staticFee: zeroBN,
+			crossMarginFee: zeroBN,
+			dynamicFeeRate: zeroBN,
+			total: zeroBN,
+		});
 		setCrossMarginMarginDelta(zeroBN);
-	}, [setTradeSize, setPotentialTradeDetails, setCrossMarginMarginDelta]);
+	}, [setTradeSize, setPotentialTradeDetails, setCrossMarginMarginDelta, setTradeFees]);
 
 	useEffect(() => {
 		const validType = ['cross_margin', 'isolated_margin'].includes(routerAccountType);
 		if (validType) {
 			setSelectedAccountType(routerAccountType as FuturesAccountType);
+			if (routerAccountType === 'cross_margin' && orderType === 1) {
+				setOrderType(0);
+			}
 		}
-	}, [routerAccountType, setSelectedAccountType, network.id]);
+	}, [routerAccountType, orderType, network.id, setSelectedAccountType, setOrderType]);
 
 	useEffect(() => {
 		const handleRouteChange = () => {
@@ -179,7 +188,7 @@ const useFuturesData = () => {
 		async (susdSizeDelta: Wei, nativeSizeDelta: Wei) => {
 			if (!synthetixjs)
 				return {
-					baseFee: zeroBN,
+					staticFee: zeroBN,
 					dynamicFeeRate: zeroBN,
 					crossMarginFee: zeroBN,
 					total: zeroBN,
@@ -202,7 +211,7 @@ const useFuturesData = () => {
 			const volatilityFeeWei = wei(volatilityFee.feeRate);
 
 			const fees = {
-				baseFee: orderFeeWei,
+				staticFee: orderFeeWei,
 				crossMarginFee: crossMarginFee,
 				dynamicFeeRate: volatilityFeeWei,
 				total: orderFeeWei.add(crossMarginFee),
@@ -439,17 +448,6 @@ const useFuturesData = () => {
 	};
 
 	useEffect(() => {
-		// Check within max
-		if (wei(tradeSize.susdSize || 0).gt(maxUsdInputAmount)) {
-			onTradeAmountSUSDChange(
-				Math.floor(Number(maxUsdInputAmount)).toString(),
-				true,
-				selectedLeverage
-			);
-		}
-	}, [maxUsdInputAmount, tradeSize.susdSize, selectedLeverage, onTradeAmountSUSDChange]);
-
-	useEffect(() => {
 		if (orderTxn.hash) {
 			monitorTransaction({
 				txHash: orderTxn.hash,
@@ -464,7 +462,7 @@ const useFuturesData = () => {
 
 	useEffect(() => {
 		const getMaxFee = async () => {
-			if (!synthetixjs || !marketAsset || !remainingMargin) {
+			if (!synthetixjs || !marketAsset || remainingMargin.eq(0) || marketAssetRate.eq(0)) {
 				return;
 			}
 			try {

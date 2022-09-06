@@ -279,7 +279,7 @@ export type SynthBalances = Balances & {
 };
 
 export type TradeFees = {
-	baseFee: Wei;
+	staticFee: Wei;
 	dynamicFeeRate: Wei;
 	crossMarginFee: Wei;
 	total: Wei;

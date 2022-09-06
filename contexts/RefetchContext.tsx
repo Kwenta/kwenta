@@ -1,5 +1,5 @@
-import React from 'react';
-import { useRecoilValue } from 'recoil';
+import React, { useEffect } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { Period, PERIOD_IN_SECONDS } from 'constants/period';
 import useGetAverageFundingRateForMarkets from 'queries/futures/useGetAverageFundingRateForMarkets';
@@ -12,7 +12,7 @@ import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccou
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useSynthBalances from 'queries/synths/useSynthBalances';
-import { futuresAccountTypeState } from 'store/futures';
+import { futuresAccountTypeState, positionState } from 'store/futures';
 
 type RefetchType =
 	| 'modify-position'
@@ -32,6 +32,7 @@ const RefetchContext = React.createContext<RefetchContextType>({
 
 export const RefetchProvider: React.FC = ({ children }) => {
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
+	const setPosition = useSetRecoilState(positionState);
 
 	const synthsBalancesQuery = useSynthBalances();
 	const openOrdersQuery = useGetFuturesOpenOrders();
@@ -44,6 +45,12 @@ export const RefetchProvider: React.FC = ({ children }) => {
 	useExchangeRatesQuery({ refetchInterval: 15000 });
 	useGetAverageFundingRateForMarkets(PERIOD_IN_SECONDS[Period.ONE_HOUR]);
 	useLaggedDailyPrice();
+
+	useEffect(() => {
+		if (positionQuery.error) {
+			setPosition(null);
+		}
+	}, [positionQuery.error, setPosition]);
 
 	const handleRefetch = (refetchType: RefetchType, timeout?: number) => {
 		setTimeout(() => {

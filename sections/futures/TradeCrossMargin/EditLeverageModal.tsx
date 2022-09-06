@@ -21,6 +21,7 @@ import {
 	marketInfoState,
 	positionState,
 	preferredLeverageState,
+	tradeFeesState,
 } from 'store/futures';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { formatDollars } from 'utils/formatters/number';
@@ -49,6 +50,8 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 	const position = useRecoilValue(positionState);
 	const marketAsset = useRecoilValue(currentMarketState);
 	const totalMargin = useRecoilValue(crossMarginTotalMarginState);
+	const tradeFees = useRecoilValue(tradeFeesState);
+
 	const [preferredLeverage, setPreferredLeverage] = usePersistedRecoilState(preferredLeverageState);
 
 	const [leverage, setLeverage] = useState<number>(Number(Number(selectedLeverage).toFixed(2)));
@@ -165,7 +168,7 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 			{position?.position && (
 				<>
 					<MarginInfoBox editingLeverage />
-					<FeeInfoBox />
+					{tradeFees.total.gt(0) && <FeeInfoBox />}
 				</>
 			)}
 

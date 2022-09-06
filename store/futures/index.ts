@@ -167,20 +167,12 @@ export const orderTypeState = atom({
 export const tradeFeesState = atom<TradeFees>({
 	key: getFuturesKey('tradeFees'),
 	default: {
-		baseFee: zeroBN,
+		staticFee: zeroBN,
 		dynamicFeeRate: zeroBN,
 		crossMarginFee: zeroBN,
 		total: zeroBN,
 	},
 });
-
-// export const totalTradeFeesState = selector({
-// 	key: getFuturesKey('tradeFees'),
-// 	get: ({ get }) => {
-// 		const { baseFee, dynamicFee, crossMarginFee } = get(tradeFeesState);
-// 		return baseFee.add(dynamicFee).add(crossMarginFee);
-// 	},
-// });
 
 export const dynamicFeeRateState = atom({
 	key: getFuturesKey('dynamicFeeRate'),

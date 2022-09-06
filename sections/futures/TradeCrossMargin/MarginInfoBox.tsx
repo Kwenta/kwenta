@@ -14,6 +14,7 @@ import {
 	marketInfoState,
 	positionState,
 	potentialTradeDetailsState,
+	tradeFeesState,
 	tradeSizeState,
 } from 'store/futures';
 import {
@@ -37,6 +38,8 @@ function MarginInfoBox({ editingLeverage }: Props) {
 	const potentialTrade = useRecoilValue(potentialTradeDetailsState);
 	const marginDelta = useRecoilValue(crossMarginMarginDeltaState);
 	const crossMarginFreeMargin = useRecoilValue(crossMarginAvailableMarginState);
+	const { crossMarginFee } = useRecoilValue(tradeFeesState);
+
 	const [openModal, setOpenModal] = useState<'leverage' | 'deposit' | null>(null);
 
 	const { selectedLeverage } = useFuturesContext();
@@ -87,7 +90,7 @@ function MarginInfoBox({ editingLeverage }: Props) {
 		if (!potentialTrade.data) return zeroBN;
 		const notionalValue = potentialTrade.data.notionalValue.abs();
 		const maxSize = totalMargin.mul(potentialTrade.data.leverage);
-		return notionalValue.div(maxSize);
+		return maxSize.gt(0) ? notionalValue.div(maxSize) : zeroBN;
 	}, [potentialTrade.data, totalMargin]);
 
 	const previewTradeData = React.useMemo(() => {
@@ -95,7 +98,7 @@ function MarginInfoBox({ editingLeverage }: Props) {
 
 		return {
 			showPreview: !size.eq(0) || !marginDelta.eq(0),
-			totalMargin: potentialTrade.data?.margin || zeroBN,
+			totalMargin: potentialTrade.data?.margin.sub(crossMarginFee) || zeroBN,
 			freeAccountMargin: crossMarginFreeMargin.sub(marginDelta),
 			availableMargin: previewAvailableMargin.gt(0) ? previewAvailableMargin : zeroBN,
 			size: potentialTrade.data?.size || zeroBN,
@@ -107,6 +110,7 @@ function MarginInfoBox({ editingLeverage }: Props) {
 	}, [
 		nativeSize,
 		marginDelta,
+		crossMarginFee,
 		potentialTrade.data?.margin,
 		previewAvailableMargin,
 		potentialTrade.data?.notionalValue,

@@ -18,13 +18,13 @@ import { walletAddressState } from 'store/wallet';
 import { BorderedPanel, FlexDivRow } from 'styles/common';
 
 import CrossMarginOnboard from '../CrossMarginOnboard';
+import FeeInfoBox from '../FeeInfoBox';
 import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
 import ManagePosition from '../Trade/ManagePosition';
 import MarketsDropdown from '../Trade/MarketsDropdown';
 import TradePanelHeader from '../Trade/TradePanelHeader';
 import CreateAccount from './CreateAccount';
-import FeesBox from './CrossMarginFeesBox';
 import CrossMarginUnsupported from './CrossMarginUnsupported';
 import DepositWithdrawCrossMargin from './DepositWithdrawCrossMargin';
 import MarginInfoBox from './MarginInfoBox';
@@ -128,7 +128,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 					</SliderRow>
 					<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
 					<ManagePosition />
-					<FeesBox />
+					<FeeInfoBox />
 					{openTransferModal && (
 						<DepositWithdrawCrossMargin
 							defaultTab={openTransferModal}
