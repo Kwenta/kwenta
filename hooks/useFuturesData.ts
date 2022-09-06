@@ -459,9 +459,8 @@ const useFuturesData = () => {
 				},
 			});
 		}
-		// TODO: Wrap handleRefetch in usecallback?
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [orderTxn.hash, monitorTransaction, setTradeSize]);
+	}, [orderTxn.hash]);
 
 	useEffect(() => {
 		const getMaxFee = async () => {
