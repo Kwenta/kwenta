@@ -19,10 +19,12 @@ export enum BlastNetwork {
 	ETHEREUM_MAINNET = 'eth-mainnet',
 	OPTIMISM_MAINNET = 'optimism-mainnet',
 	ETHEREUM_KOVAN = 'eth-kovan',
+	OPTIMISM_GOERLI = 'optimism-goerli',
 }
 
 export const BLAST_NETWORK_LOOKUP: Record<number, BlastNetwork> = {
 	1: BlastNetwork.ETHEREUM_MAINNET,
 	10: BlastNetwork.OPTIMISM_MAINNET,
 	42: BlastNetwork.ETHEREUM_KOVAN,
+	420: BlastNetwork.OPTIMISM_MAINNET,
 };
