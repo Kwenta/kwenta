@@ -37,7 +37,7 @@ import {
 	potentialTradeDetailsState,
 } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
-import { zeroBN } from 'utils/formatters/number';
+import { floorNumber, zeroBN } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
@@ -276,9 +276,9 @@ const useFuturesData = () => {
 			const isolatedMarginLeverage = changeEnabled ? sizeSusdWei.div(remainingMargin) : zeroBN;
 			const leverage =
 				value === '' || remainingMargin.eq(0)
-					? ''
+					? zeroBN
 					: selectedAccountType === 'cross_margin'
-					? selectedLeverage
+					? wei(selectedLeverage)
 					: isolatedMarginLeverage;
 
 			onStagePositionChange({
@@ -287,9 +287,7 @@ const useFuturesData = () => {
 				nativeSizeDelta: size ? wei(leverageSide === PositionSide.LONG ? size : -size) : zeroBN,
 				susdSizeDelta: leverageSide === PositionSide.LONG ? sizeSusdWei : sizeSusdWei.neg(),
 				leverage:
-					leverage !== '' && marketMaxLeverage.gt(leverage)
-						? leverage.toString().substring(0, 4)
-						: '',
+					leverage.gt(0) && marketMaxLeverage.gt(leverage) ? String(floorNumber(leverage)) : '',
 			});
 		},
 		[
@@ -312,7 +310,7 @@ const useFuturesData = () => {
 					selectedAccountType === 'cross_margin'
 						? crossMarginLeverage || selectedLeverage
 						: changeEnabled
-						? wei(value).div(remainingMargin).toString().substring(0, 4)
+						? String(floorNumber(wei(value).div(remainingMargin)))
 						: '';
 
 				const newSize = {
