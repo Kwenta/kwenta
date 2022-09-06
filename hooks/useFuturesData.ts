@@ -139,28 +139,6 @@ const useFuturesData = () => {
 		setCrossMarginMarginDelta(zeroBN);
 	}, [setTradeSize, setPotentialTradeDetails, setCrossMarginMarginDelta, setTradeFees]);
 
-	useEffect(() => {
-		const validType = ['cross_margin', 'isolated_margin'].includes(routerAccountType);
-		if (validType) {
-			setSelectedAccountType(routerAccountType as FuturesAccountType);
-			if (routerAccountType === 'cross_margin' && orderType === 1) {
-				setOrderType(0);
-			}
-		}
-	}, [routerAccountType, orderType, network.id, setSelectedAccountType, setOrderType]);
-
-	useEffect(() => {
-		const handleRouteChange = () => {
-			resetTradeState();
-		};
-
-		router.events.on('routeChangeStart', handleRouteChange);
-
-		return () => {
-			router.events.off('routeChangeStart', handleRouteChange);
-		};
-	}, [router.events, setTradeSize, resetTradeState]);
-
 	const maxUsdInputAmount = useMemo(() => {
 		if (selectedAccountType === 'isolated_margin') {
 			return maxLeverage.mul(remainingMargin);
@@ -235,7 +213,7 @@ const useFuturesData = () => {
 
 	// eslint-disable-next-line
 	const debounceFetchPreview = useCallback(
-		debounce(async (nextTradeSize: TradeSize) => {
+		debounce(async (nextTradeSize: TradeSize, fromLeverage = false) => {
 			try {
 				setError(null);
 				const fees = await calculateFees(
@@ -244,7 +222,10 @@ const useFuturesData = () => {
 				);
 				let nextMarginDelta = zeroBN;
 				if (selectedAccountType === 'cross_margin') {
-					nextMarginDelta = await calculateMarginDelta(nextTradeSize, fees);
+					nextMarginDelta =
+						nextTradeSize.nativeSizeDelta.gt(0) || fromLeverage
+							? await calculateMarginDelta(nextTradeSize, fees)
+							: zeroBN;
 					setCrossMarginMarginDelta(nextMarginDelta);
 				}
 				getPotentialTrade(
@@ -365,13 +346,16 @@ const useFuturesData = () => {
 
 			const adjustedSusdDelta = usdSizeDelta.add(fees.total.mul(leverage)).mul(1.03);
 			const adjustedNativeDelta = adjustedSusdDelta.div(marketAssetRate);
-			debounceFetchPreview({
-				leverage: String(leverage),
-				nativeSize: adjustedNativeDelta.abs().toString(),
-				susdSize: adjustedSusdDelta.abs().toString(),
-				susdSizeDelta: adjustedSusdDelta,
-				nativeSizeDelta: adjustedNativeDelta,
-			});
+			debounceFetchPreview(
+				{
+					leverage: String(leverage),
+					nativeSize: adjustedNativeDelta.abs().toString(),
+					susdSize: adjustedSusdDelta.abs().toString(),
+					susdSizeDelta: adjustedSusdDelta,
+					nativeSizeDelta: adjustedNativeDelta,
+				},
+				true
+			);
 		},
 		[
 			totalMargin,
@@ -487,6 +471,28 @@ const useFuturesData = () => {
 		marketAssetRate,
 		selectedLeverage,
 	]);
+
+	useEffect(() => {
+		const validType = ['cross_margin', 'isolated_margin'].includes(routerAccountType);
+		if (validType) {
+			setSelectedAccountType(routerAccountType as FuturesAccountType);
+			if (routerAccountType === 'cross_margin' && orderType === 1) {
+				setOrderType(0);
+			}
+		}
+	}, [routerAccountType, orderType, network.id, setSelectedAccountType, setOrderType]);
+
+	useEffect(() => {
+		const handleRouteChange = () => {
+			resetTradeState();
+		};
+
+		router.events.on('routeChangeStart', handleRouteChange);
+
+		return () => {
+			router.events.off('routeChangeStart', handleRouteChange);
+		};
+	}, [router.events, setTradeSize, resetTradeState]);
 
 	return {
 		onLeverageChange,
