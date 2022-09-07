@@ -13,6 +13,7 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import {
 	confirmationModalOpenState,
 	currentMarketState,
@@ -22,7 +23,7 @@ import {
 import { gasSpeedState } from 'store/wallet';
 import { FlexDivCentered } from 'styles/common';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
-import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
+import { zeroBN, formatCurrency, formatDollars, formatNumber } from 'utils/formatters/number';
 import { getTransactionPrice } from 'utils/network';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
@@ -31,7 +32,7 @@ import { PositionSide } from '../types';
 const TradeConfirmationModal: FC = () => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
-	const { useExchangeRatesQuery, useEthGasPriceQuery } = useSynthetixQueries();
+	const { useEthGasPriceQuery } = useSynthetixQueries();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -99,21 +100,19 @@ const TradeConfirmationModal: FC = () => {
 			{ label: 'leverage', value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x` },
 			{
 				label: 'current price',
-				value: formatCurrency('sUSD', positionDetails?.price ?? zeroBN, { sign: '$' }),
+				value: formatDollars(positionDetails?.price ?? zeroBN),
 			},
 			{
 				label: 'liquidation price',
-				value: formatCurrency('sUSD', positionDetails?.liqPrice ?? zeroBN, {
-					sign: '$',
-				}),
+				value: formatDollars(positionDetails?.liqPrice ?? zeroBN),
 			},
 			{
 				label: 'margin',
-				value: formatCurrency('sUSD', positionDetails?.margin ?? zeroBN, { sign: '$' }),
+				value: formatDollars(positionDetails?.margin ?? zeroBN),
 			},
 			{
 				label: 'protocol fee',
-				value: formatCurrency('sUSD', positionDetails?.fee ?? zeroBN, { sign: '$' }),
+				value: formatDollars(positionDetails?.fee ?? zeroBN),
 			},
 			{
 				label: 'network gas fee',
@@ -164,8 +163,8 @@ const TradeConfirmationModal: FC = () => {
 					))}
 					<ConfirmTradeButton
 						data-testid="trade-open-position-confirm-order-button"
-						variant="primary"
 						isRounded
+						noOutline
 						onClick={handleConfirmOrder}
 						disabled={!positionDetails}
 					>

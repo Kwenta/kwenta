@@ -105,6 +105,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 					<span>
 						<Button
 							isRounded
+							noOutline
 							disabled={isSubmissionDisabled}
 							onClick={onSubmit}
 							size="lg"

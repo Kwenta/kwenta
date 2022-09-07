@@ -54,7 +54,7 @@ const BannerContainer = styled.div<{
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	background-image: url('assets/svg/app/competition-banner-bg.svg');
+	background: transaparent;
 	padding: 22px 0;
 	border: ${(props) => props.theme.colors.selectedTheme.competitionBanner.border};
 	border-radius: 8px;

@@ -15,10 +15,7 @@ export const PriceCurrencySelect: FC = () => {
 			return PRICE_CURRENCIES.filter((currencyKey) => synthsMap![currencyKey]).map(
 				(currencyKey) => {
 					const synth = synthsMap![currencyKey]!;
-					return {
-						label: synth.asset,
-						value: synth,
-					};
+					return { label: synth.asset, value: synth };
 				}
 			);
 		}

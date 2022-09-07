@@ -2,17 +2,17 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { FC, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { TabPanel } from 'components/Tab';
+import Connector from 'containers/Connector';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
-import { walletAddressState } from 'store/wallet';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { formatDollars, zeroBN } from 'utils/formatters/number';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
 import FuturesPositionsTable from '../FuturesPositionsTable';
@@ -35,7 +35,7 @@ enum MarketsTab {
 const Overview: FC = () => {
 	const { t } = useTranslation();
 
-	const { useExchangeRatesQuery, useSynthsBalancesQuery } = useSynthetixQueries();
+	const { useSynthsBalancesQuery } = useSynthetixQueries();
 
 	const portfolioValueQuery = useGetCurrentPortfolioValue();
 	const portfolioValue = portfolioValueQuery?.data ?? null;
@@ -46,7 +46,7 @@ const Overview: FC = () => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const synthBalances =
 		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
@@ -56,15 +56,9 @@ const Overview: FC = () => {
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(PositionsTab.FUTURES);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
-	const totalSpotBalancesValue = formatCurrency(
-		'sUSD',
-		wei(synthBalances?.totalUSDBalance ?? zeroBN),
-		{ sign: '$' }
-	);
+	const totalSpotBalancesValue = formatDollars(wei(synthBalances?.totalUSDBalance ?? zeroBN));
 
-	const totalFuturesPortfolioValue = formatCurrency('sUSD', wei(portfolioValue ?? zeroBN), {
-		sign: '$',
-	});
+	const totalFuturesPortfolioValue = formatDollars(wei(portfolioValue ?? zeroBN));
 
 	const POSITIONS_TABS = useMemo(
 		() => [

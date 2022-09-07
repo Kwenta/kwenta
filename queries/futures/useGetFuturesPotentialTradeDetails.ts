@@ -1,11 +1,12 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
 import { PotentialTradeStatus, POTENTIAL_TRADE_STATUS_TO_MESSAGE } from 'sections/futures/types';
-import { appReadyState } from 'store/app';
 import {
 	crossMarginAvailableMarginState,
 	currentMarketState,
@@ -15,7 +16,6 @@ import {
 	potentialTradeDetailsState,
 	tradeSizeState,
 } from 'store/futures';
-import { isL2State, networkState } from 'store/wallet';
 
 import { FuturesPotentialTradeDetails } from './types';
 import useGetCrossMarginPotentialTrade from './useGetCrossMarginTradePreview';
@@ -28,10 +28,8 @@ const useGetFuturesPotentialTradeDetails = (
 	options?: UseQueryOptions<FuturesPotentialTradeDetails | null>
 ) => {
 	const { selectedFuturesAddress, selectedAccountType } = useRecoilValue(futuresAccountState);
-	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
-	const { synthetixjs } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs, network } = Connector.useContainer();
+	const isL2 = useIsL2();
 
 	const tradeSize = useRecoilValue(tradeSizeState);
 	const leverageSide = useRecoilValue(leverageSideState);
@@ -64,7 +62,7 @@ const useGetFuturesPotentialTradeDetails = (
 
 	return useQuery<FuturesPotentialTradeDetails | null>(
 		QUERY_KEYS.Futures.PotentialTrade(
-			network.id,
+			network?.id as NetworkId,
 			marketAsset || null,
 			tradeSize,
 			selectedFuturesAddress || '',
@@ -121,7 +119,7 @@ const useGetFuturesPotentialTradeDetails = (
 			return potentialTradeDetails;
 		},
 		{
-			enabled: isAppReady && isL2 && !!selectedFuturesAddress && !!marketAsset && !!synthetixjs,
+			enabled: isL2 && !!selectedFuturesAddress && !!marketAsset && !!synthetixjs,
 			...options,
 		}
 	);
