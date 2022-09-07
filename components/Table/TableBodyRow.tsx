@@ -51,7 +51,7 @@ const BaseTableBodyRow = styled.div<{ $highlightRowsOnHover?: boolean }>`
 		`}
 `;
 
-const TableCell = styled(FlexDivCentered)`
+export const TableCell = styled(FlexDivCentered)`
 	box-sizing: border-box;
 	&:first-child {
 		padding-left: 14px;

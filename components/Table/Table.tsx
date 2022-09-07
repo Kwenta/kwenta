@@ -5,10 +5,10 @@ import styled, { css } from 'styled-components';
 import SortDownIcon from 'assets/svg/app/caret-down.svg';
 import SortUpIcon from 'assets/svg/app/caret-up.svg';
 import Spinner from 'assets/svg/app/loader.svg';
-import { FlexDivCentered, GridDivCenteredRow } from 'styles/common';
+import { GridDivCenteredRow } from 'styles/common';
 
 import Pagination from './Pagination';
-import TableBodyRow from './TableBodyRow';
+import TableBodyRow, { TableCell } from './TableBodyRow';
 
 export type TablePalette = 'primary';
 
@@ -219,16 +219,6 @@ export const TableRow = styled.div``;
 const TableBody = styled.div`
 	overflow-y: auto;
 	overflow-x: hidden;
-`;
-
-const TableCell = styled(FlexDivCentered)`
-	box-sizing: border-box;
-	&:first-child {
-		padding-left: 14px;
-	}
-	&:last-child {
-		padding-right: 14px;
-	}
 `;
 
 const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`

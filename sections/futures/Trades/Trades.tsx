@@ -51,7 +51,6 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 	return (
 		<Card>
 			<StyledTable
-				palette="primary"
 				columns={[
 					{
 						Header: (
