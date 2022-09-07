@@ -4,30 +4,14 @@ import { chain } from 'wagmi';
 
 import { DEBT_RATIO_UNIT } from 'constants/network';
 import { CandleResult } from 'queries/futures/subgraph';
-import { SYNTHS_ENDPOINT_MAIN } from 'queries/synths/constants';
 import { FuturesMarketKey } from 'utils/futures';
 
-import {
-	RATES_ENDPOINT_OP_MAINNET,
-	RATES_ENDPOINT_OP_KOVAN,
-	RATES_ENDPOINT_OP_GOERLI,
-	RATES_ENDPOINT_GOERLI,
-} from './constants';
+import { RATES_ENDPOINTS } from './constants';
 import { Candle, LatestRate } from './types';
 import { Prices } from './types';
 
 export const getRatesEndpoint = (networkId: NetworkId): string => {
-	return networkId === chain.mainnet.id
-		? SYNTHS_ENDPOINT_MAIN
-		: networkId === chain.goerli.id
-		? RATES_ENDPOINT_GOERLI
-		: networkId === chain.optimism.id
-		? RATES_ENDPOINT_OP_MAINNET
-		: networkId === chain.optimismGoerli.id
-		? RATES_ENDPOINT_OP_GOERLI
-		: networkId === chain.optimismKovan.id
-		? RATES_ENDPOINT_OP_KOVAN
-		: RATES_ENDPOINT_OP_MAINNET;
+	return RATES_ENDPOINTS[networkId] || RATES_ENDPOINTS[chain.optimism.id];
 };
 
 export const mapLaggedDailyPrices = (rates: LatestRate[]): Prices => {
@@ -59,6 +43,7 @@ const markets = new Set<FuturesMarketKey>([
 	FuturesMarketKey.sBNB,
 	FuturesMarketKey.sDOGE,
 	FuturesMarketKey.sDebtRatio,
+	FuturesMarketKey.sXMR,
 ]);
 
 const map: Record<FuturesMarketKey, string> = {
@@ -78,6 +63,7 @@ const map: Record<FuturesMarketKey, string> = {
 	[FuturesMarketKey.sDOGE]: 'dogecoin',
 	[FuturesMarketKey.sBNB]: 'binancecoin',
 	[FuturesMarketKey.sDebtRatio]: '',
+	[FuturesMarketKey.sXMR]: 'monero',
 };
 
 export const synthToCoingeckoPriceId = (marketKey: FuturesMarketKey) => {

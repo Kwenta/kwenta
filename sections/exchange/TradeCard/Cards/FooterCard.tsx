@@ -146,7 +146,6 @@ const FooterCard: React.FC = () => {
 					attemptRetry={handleApprove}
 					currencyKey={quoteCurrencyKey!}
 					currencyLabel={<NoTextTransform>{quoteCurrencyKey}</NoTextTransform>}
-					txProvider={txProvider}
 				/>
 			)}
 			{openModal === 'settle' && (
@@ -156,7 +155,6 @@ const FooterCard: React.FC = () => {
 					attemptRetry={handleSettle}
 					currencyKey={baseCurrencyKey!}
 					currencyLabel={<NoTextTransform>{baseCurrencyKey}</NoTextTransform>}
-					txProvider={txProvider}
 				/>
 			)}
 		</>

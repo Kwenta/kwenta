@@ -147,7 +147,11 @@ const TradeConfirmationModal: FC = () => {
 					monitorTransaction({
 						txHash: tx.hash,
 						onTxFailed(failureMessage) {
-							setError(failureMessage?.failureReason || t('common.transaction.transaction-failed'));
+							if (!isUserDeniedError(failureMessage?.failureReason)) {
+								setError(
+									failureMessage?.failureReason || t('common.transaction.transaction-failed')
+								);
+							}
 						},
 						onTxConfirmed: () => {
 							resetTradeState();

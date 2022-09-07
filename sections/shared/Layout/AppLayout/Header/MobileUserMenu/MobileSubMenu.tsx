@@ -76,7 +76,7 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 										<SubMenuFlex>
 											<SubMenuItem
 												currentTheme={currentTheme}
-												onClick={onClick}
+												onClick={selected ? undefined : onClick}
 												selected={selected}
 											>
 												{label}

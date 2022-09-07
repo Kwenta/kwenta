@@ -44,18 +44,14 @@ export default function PositionChart() {
 		return {
 			// As there's often a delay in subgraph sync we use the contract last
 			// price until we get average price to keep it snappy on opening a position
-			price: subgraphPosition?.avgEntryPrice || position.position.lastPrice,
+			price: subgraphPosition?.avgEntryPrice ?? position.position.lastPrice,
 			size: position.position.size,
 			liqPrice: position.position?.liquidationPrice,
 		};
 	}, [subgraphPosition, position]);
 
-	const visible = useMemo(() => {
-		return isChartReady ? 'visible' : 'hidden';
-	}, [isChartReady]);
-
 	return (
-		<Container visible={visible}>
+		<Container visible={isChartReady}>
 			<TVChart
 				activePosition={activePosition}
 				potentialTrade={
@@ -75,8 +71,8 @@ export default function PositionChart() {
 	);
 }
 
-const Container = styled.div<{ visible: 'hidden' | 'visible' }>`
+const Container = styled.div<{ visible: boolean }>`
 	min-height: 450px;
 	background: ${(props) => props.theme.colors.selectedTheme.background};
-	visibility: ${(props) => props.visible};
+	visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
 `;

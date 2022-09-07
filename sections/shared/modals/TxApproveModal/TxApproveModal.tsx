@@ -8,15 +8,12 @@ import { MessageButton } from 'sections/exchange/FooterCard/common';
 import { FlexDivColCentered } from 'styles/common';
 import { formatRevert } from 'utils/formatters/error';
 
-import { TxProvider } from '../TxConfirmationModal/TxConfirmationModal';
-
 type TxApproveModalProps = {
 	onDismiss: () => void;
 	txError: string | null;
 	attemptRetry: () => void;
 	currencyKey: string;
 	currencyLabel: ReactNode;
-	txProvider?: TxProvider | null;
 };
 
 export const TxApproveModal: FC<TxApproveModalProps> = ({
@@ -25,7 +22,6 @@ export const TxApproveModal: FC<TxApproveModalProps> = ({
 	attemptRetry,
 	currencyKey,
 	currencyLabel,
-	txProvider,
 }) => {
 	const { t } = useTranslation();
 
@@ -39,7 +35,6 @@ export const TxApproveModal: FC<TxApproveModalProps> = ({
 						width="40px"
 						height="40px"
 						data-testid="currency-img"
-						type={txProvider === '1inch' ? 'token' : 'synth'}
 					/>
 				</CurrencyItem>
 			</Currencies>
