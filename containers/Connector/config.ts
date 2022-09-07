@@ -8,7 +8,7 @@ import { BLAST_NETWORK_LOOKUP } from 'constants/network';
 
 export const initRainbowkit = () => {
 	const { chains, provider } = configureChains(
-		[chain.optimism, chain.optimismGoerli, chain.mainnet, chain.goerli],
+		[chain.optimism, chain.mainnet, chain.optimismGoerli, chain.goerli],
 		[
 			jsonRpcProvider({
 				rpc: (networkChain) => {
