@@ -1,11 +1,12 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { appReadyState } from 'store/app';
+import Connector from 'containers/Connector';
 import { futuresAccountTypeState } from 'store/futures';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { futuresAccountState } from 'store/futures';
 import logError from 'utils/logError';
 
 import { FUTURES_POSITION_FRAGMENT } from './constants';
@@ -13,16 +14,18 @@ import { PositionHistory } from './types';
 import { getFuturesEndpoint, mapTradeHistory } from './utils';
 
 const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
-	const walletAddress = useRecoilValue(walletAddressState);
-	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
+	const { network, walletAddress } = Connector.useContainer();
 
-	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network);
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
+	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
+	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
 	return useQuery<PositionHistory[] | null>(
-		QUERY_KEYS.Futures.AccountPositions(walletAddress, network.id, selectedAccountType),
+		QUERY_KEYS.Futures.AccountPositions(
+			walletAddress,
+			network.id as NetworkId,
+			selectedAccountType
+		),
 		async () => {
 			if (!walletAddress) return [];
 			try {
@@ -45,7 +48,7 @@ const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
 			}
 		},
 		{
-			enabled: isAppReady && isL2,
+			enabled: !!selectedFuturesAddress,
 			refetchInterval: 5000,
 			...options,
 		}

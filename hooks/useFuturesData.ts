@@ -41,8 +41,7 @@ import {
 	crossMarginTotalMarginState,
 	potentialTradeDetailsState,
 } from 'store/futures';
-import { gasSpeedState } from 'store/wallet';
-import { floorNumber, zeroBN } from 'utils/formatters/number';
+import { zeroBN, floorNumber } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
@@ -61,17 +60,15 @@ const ZERO_TRADE_INPUTS = {
 
 const useFuturesData = () => {
 	const router = useRouter();
-	const { synthetixjs, network } = Connector.useContainer();
-	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
 	const { t } = useTranslation();
+	const { defaultSynthetixjs: synthetixjs, network } = Connector.useContainer();
+	const { useSynthetixTxn } = useSynthetixQueries();
 
 	const getPotentialTrade = useGetFuturesPotentialTradeDetails();
 	const crossMarginAccountOverview = useGetCrossMarginAccountOverview();
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { handleRefetch } = useRefetchContext();
-
-	const ethGasPriceQuery = useEthGasPriceQuery();
 
 	const marketAsset = useRecoilValue(currentMarketState);
 	const [tradeInputs, setTradeInputs] = useRecoilState(futuresTradeInputsState);
@@ -85,7 +82,6 @@ const useFuturesData = () => {
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const position = useRecoilValue(positionState);
 	const market = useRecoilValue(marketInfoState);
-	const gasSpeed = useRecoilValue(gasSpeedState);
 	const totalMargin = useRecoilValue(crossMarginTotalMarginState);
 	const maxLeverage = useRecoilValue(maxLeverageState);
 	const { tradeFee: crossMarginTradeFee } = useRecoilValue(crossMarginSettingsState);
@@ -118,8 +114,6 @@ const useFuturesData = () => {
 		const effectiveLeverage = position?.position?.leverage.toString() || '';
 		return effectiveLeverage || preferredLeverage[marketAsset] || DEFAULT_LEVERAGE;
 	}, [position?.position?.leverage, preferredLeverage, marketAsset]);
-
-	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed];
 
 	const remainingMargin: Wei = useMemo(() => {
 		if (selectedAccountType === 'isolated_margin') {
@@ -410,7 +404,7 @@ const useFuturesData = () => {
 		`FuturesMarket${getDisplayAsset(marketAsset)}`,
 		orderType === 1 ? 'submitNextPriceOrderWithTracking' : 'modifyPositionWithTracking',
 		[tradeInputs.nativeSizeDelta.toBN(), KWENTA_TRACKING_CODE],
-		gasPrice,
+		{},
 		{
 			enabled:
 				selectedAccountType === 'isolated_margin' &&
@@ -475,6 +469,7 @@ const useFuturesData = () => {
 		};
 		getMaxFee();
 	}, [
+		setMaxFee,
 		synthetixjs,
 		marketAsset,
 		leverageSide,

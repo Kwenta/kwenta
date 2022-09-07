@@ -1,15 +1,33 @@
+import { NetworkId } from '@synthetixio/contracts-interface/build/node/src/types';
 import { wei } from '@synthetixio/wei';
+import { chain } from 'wagmi';
 
 import { DEBT_RATIO_UNIT } from 'constants/network';
 import { CandleResult } from 'queries/futures/subgraph';
-import { SUBGRAPH_ENDPOINT } from 'queries/synths/constants';
+import { SYNTHS_ENDPOINT_MAIN } from 'queries/synths/constants';
 import { FuturesMarketKey } from 'utils/futures';
 
+import {
+	RATES_ENDPOINT_OP_MAINNET,
+	RATES_ENDPOINT_OP_KOVAN,
+	RATES_ENDPOINT_OP_GOERLI,
+	RATES_ENDPOINT_GOERLI,
+} from './constants';
 import { Candle, LatestRate } from './types';
 import { Prices } from './types';
 
-export const getRatesEndpoint = (networkId: number): string => {
-	return SUBGRAPH_ENDPOINT[networkId] || SUBGRAPH_ENDPOINT[1];
+export const getRatesEndpoint = (networkId: NetworkId): string => {
+	return networkId === chain.mainnet.id
+		? SYNTHS_ENDPOINT_MAIN
+		: networkId === chain.goerli.id
+		? RATES_ENDPOINT_GOERLI
+		: networkId === chain.optimism.id
+		? RATES_ENDPOINT_OP_MAINNET
+		: networkId === chain.optimismGoerli.id
+		? RATES_ENDPOINT_OP_GOERLI
+		: networkId === chain.optimismKovan.id
+		? RATES_ENDPOINT_OP_KOVAN
+		: RATES_ENDPOINT_OP_MAINNET;
 };
 
 export const mapLaggedDailyPrices = (rates: LatestRate[]): Prices => {
@@ -36,7 +54,6 @@ const markets = new Set<FuturesMarketKey>([
 	FuturesMarketKey.sEUR,
 	FuturesMarketKey.sXAU,
 	FuturesMarketKey.sXAG,
-	FuturesMarketKey.sWTI,
 	FuturesMarketKey.sDYDX,
 	FuturesMarketKey.sAPE,
 	FuturesMarketKey.sBNB,
@@ -56,10 +73,8 @@ const map: Record<FuturesMarketKey, string> = {
 	[FuturesMarketKey.sEUR]: 'euro',
 	[FuturesMarketKey.sXAU]: '',
 	[FuturesMarketKey.sXAG]: '',
-	[FuturesMarketKey.sWTI]: '',
 	[FuturesMarketKey.sDYDX]: 'dydx',
 	[FuturesMarketKey.sAPE]: 'apecoin',
-	[FuturesMarketKey.sAXS]: '',
 	[FuturesMarketKey.sDOGE]: 'dogecoin',
 	[FuturesMarketKey.sBNB]: 'binancecoin',
 	[FuturesMarketKey.sDebtRatio]: '',

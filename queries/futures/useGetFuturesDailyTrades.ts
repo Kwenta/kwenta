@@ -1,10 +1,9 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { utils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { appReadyState } from 'store/app';
-import { isL2State, networkState } from 'store/wallet';
+import Connector from 'containers/Connector';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import { FuturesMarketAsset } from 'utils/futures';
 import logError from 'utils/logError';
@@ -17,13 +16,11 @@ const useGetFuturesDailyTradeStatsForMarket = (
 	marketAsset: FuturesMarketAsset | null,
 	options?: UseQueryOptions<number | null>
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network);
+	const { network } = Connector.useContainer();
+	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
 	return useQuery<number | null>(
-		QUERY_KEYS.Futures.DayTradeStats(network.id, marketAsset),
+		QUERY_KEYS.Futures.DayTradeStats(network?.id as NetworkId, marketAsset),
 		async () => {
 			if (!marketAsset) return null;
 
@@ -55,7 +52,7 @@ const useGetFuturesDailyTradeStatsForMarket = (
 				return null;
 			}
 		},
-		{ enabled: isAppReady && isL2 && !!marketAsset, ...options }
+		{ enabled: !!marketAsset, ...options }
 	);
 };
 

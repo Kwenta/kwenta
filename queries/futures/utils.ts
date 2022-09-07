@@ -1,16 +1,20 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import { ContractsMap } from '@synthetixio/contracts-interface/build/node/src/types';
+import { ContractsMap, NetworkId } from '@synthetixio/contracts-interface/build/node/src/types';
 import Wei, { wei } from '@synthetixio/wei';
 import { utils } from 'ethers';
+import { chain } from 'wagmi';
 
 import { ETH_UNIT } from 'constants/network';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
-import { Network } from 'store/wallet';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { formatDollars, zeroBN } from 'utils/formatters/number';
 import { FuturesMarketAsset } from 'utils/futures';
 
-import { FUTURES_ENDPOINTS, SECONDS_PER_DAY } from './constants';
+import {
+	FUTURES_ENDPOINT_OP_MAINNET,
+	FUTURES_ENDPOINT_OP_GOERLI,
+	SECONDS_PER_DAY,
+} from './constants';
 import { FuturesMarginTransferResult, FuturesTradeResult } from './subgraph';
 import {
 	FuturesPosition,
@@ -26,8 +30,12 @@ import {
 	MarginTransfer,
 } from './types';
 
-export const getFuturesEndpoint = (network: Network): string => {
-	return FUTURES_ENDPOINTS[network.id] || FUTURES_ENDPOINTS[10];
+export const getFuturesEndpoint = (networkId: NetworkId): string => {
+	return networkId === chain.optimism.id
+		? FUTURES_ENDPOINT_OP_MAINNET
+		: networkId === chain.optimismGoerli.id
+		? FUTURES_ENDPOINT_OP_GOERLI
+		: FUTURES_ENDPOINT_OP_MAINNET;
 };
 
 export const getFuturesMarketContract = (asset: string | null, contracts: ContractsMap) => {
@@ -275,9 +283,7 @@ export const mapMarginTransfers = (
 			const sizeWei = new Wei(size);
 			const cleanSize = sizeWei.div(ETH_UNIT).abs();
 			const isPositive = sizeWei.gt(0);
-			const amount = `${isPositive ? '+' : '-'}${formatCurrency('sUSD', cleanSize, {
-				sign: '$',
-			})}`;
+			const amount = `${isPositive ? '+' : '-'}${formatDollars(cleanSize)}`;
 			const numTimestamp = wei(timestamp).toNumber();
 
 			return {

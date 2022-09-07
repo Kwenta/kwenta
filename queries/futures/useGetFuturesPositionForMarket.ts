@@ -1,28 +1,30 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import { appReadyState } from 'store/app';
+import useIsL2 from 'hooks/useIsL2';
 import { marketKeyState, futuresAccountState, positionState } from 'store/futures';
-import { isL2State, networkState } from 'store/wallet';
 import { MarketAssetByKey } from 'utils/futures';
 
 import { FuturesPosition } from './types';
 import { mapFuturesPosition, getFuturesMarketContract } from './utils';
 
 const useGetFuturesPositionForMarket = (options?: UseQueryOptions<FuturesPosition | null>) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
+	const { defaultSynthetixjs: synthetixjs, network } = Connector.useContainer();
+	const isL2 = useIsL2();
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
-	const { synthetixjs } = Connector.useContainer();
 	const market = useRecoilValue(marketKeyState);
 	const setPosition = useSetRecoilState(positionState);
 
 	return useQuery<FuturesPosition | null>(
-		QUERY_KEYS.Futures.Position(network.id, market || null, selectedFuturesAddress || ''),
+		QUERY_KEYS.Futures.Position(
+			network?.id as NetworkId,
+			market || null,
+			selectedFuturesAddress || ''
+		),
 		async () => {
 			const {
 				contracts: { FuturesMarketData },
@@ -54,7 +56,7 @@ const useGetFuturesPositionForMarket = (options?: UseQueryOptions<FuturesPositio
 			return position;
 		},
 		{
-			enabled: isAppReady && isL2 && !!market && !!synthetixjs,
+			enabled: isL2 && !!selectedFuturesAddress && !!market && !!synthetixjs,
 			refetchInterval: 5000,
 			...options,
 		}

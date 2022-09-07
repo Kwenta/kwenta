@@ -17,7 +17,7 @@ import { currentMarketState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { FlexDivRowCentered } from 'styles/common';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
-import { formatCurrency } from 'utils/formatters/number';
+import { formatDollars } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 import { getTransactionPrice } from 'utils/network';
 
@@ -116,7 +116,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 			<BalanceContainer>
 				<BalanceText $gold>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
 				<BalanceText>
-					<span>{formatCurrency('sUSD', sUSDBalance, { sign: '$' })}</span> sUSD
+					<span>{formatDollars(sUSDBalance)}</span> sUSD
 				</BalanceText>
 			</BalanceContainer>
 			<CustomInput
@@ -146,9 +146,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 				<BalanceText>{t('futures.market.trade.margin.modal.gas-fee')}:</BalanceText>
 				<BalanceText>
 					<span>
-						{transactionFee
-							? formatCurrency('sUSD', transactionFee, { sign: '$', maxDecimals: 1 })
-							: NO_VALUE}
+						{transactionFee ? formatDollars(transactionFee, { maxDecimals: 1 }) : NO_VALUE}
 					</span>
 				</BalanceText>
 			</GasFeeContainer>

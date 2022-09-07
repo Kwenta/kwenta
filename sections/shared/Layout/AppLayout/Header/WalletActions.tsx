@@ -1,84 +1,45 @@
-import { FC, useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
-import styled, { css, useTheme } from 'styled-components';
+import { useAccountModal } from '@rainbow-me/rainbowkit';
+import { FC, useEffect, useState } from 'react';
+import styled, { css } from 'styled-components';
+import { useEnsAvatar, useEnsName } from 'wagmi';
 
-import DisconnectIcon from 'assets/svg/app/disconnect.svg';
-import SwitchWalletIcon from 'assets/svg/app/switch-wallet.svg';
-import LabelContainer from 'components/Nav/DropDownLabel';
-import Select from 'components/Select';
-import { IndicatorSeparator, DropdownIndicator } from 'components/Select/Select';
+import Button from 'components/Button';
 import Connector from 'containers/Connector';
-import useENS from 'hooks/useENS';
-import { truncatedWalletAddressState } from 'store/wallet';
+import { truncateAddress } from 'utils/formatters/string';
 
 import ConnectionDot from './ConnectionDot';
-import getENSName from './getENSName';
-
-type ReactSelectOptionProps = {
-	label: string;
-	postfixIcon?: string;
-	isMenuLabel?: boolean;
-	onClick?: () => {};
-};
 
 type WalletActionsProps = {
 	isMobile?: boolean;
 };
 
 export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
-	const [address, setAddress] = useState('');
-	const { ensAvatar } = useENS(address);
-	const { t } = useTranslation();
-	const theme = useTheme();
-	const {
-		connectWallet,
-		disconnectWallet,
-		switchAccounts,
-		isHardwareWallet,
-		signer,
-		staticMainnetProvider,
-	} = Connector.useContainer();
-	const hardwareWallet = isHardwareWallet();
+	const { walletAddress } = Connector.useContainer();
+	const { data: ensAvatar } = useEnsAvatar({ addressOrName: walletAddress!, chainId: 1 });
+	const { data: ensName } = useEnsName({ address: walletAddress!, chainId: 1 });
 
-	const [ensName, setEns] = useState('');
 	const [walletLabel, setWalletLabel] = useState('');
-	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
+	const truncatedWalletAddress = truncateAddress(walletAddress! ?? '');
+	const { openAccountModal } = useAccountModal();
 
-	const WALLET_OPTIONS = useMemo(() => {
-		let options = [
-			{ label: 'common.wallet.switch-wallet', postfixIcon: 'Switch', onClick: connectWallet },
-			{
-				label: 'common.wallet.disconnect-wallet',
-				postfixIcon: 'Disconnet',
-				onClick: disconnectWallet,
-			},
-		];
+	useEffect(() => {
+		setWalletLabel(ensName || truncatedWalletAddress!);
+	}, [ensName, truncatedWalletAddress]);
 
-		if (hardwareWallet) {
-			options.push({
-				label: 'common.wallet.switch-accounts',
-				postfixIcon: 'Switch',
-				onClick: switchAccounts,
-			});
-		}
-
-		return options;
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [hardwareWallet]);
-
-	const formatOptionLabel = ({
-		label,
-		isMenuLabel,
-		postfixIcon,
-		onClick,
-	}: ReactSelectOptionProps) =>
-		isMenuLabel ? (
-			<>
+	return (
+		<Container isMobile={isMobile}>
+			<ConnectButton
+				size="sm"
+				variant="flat"
+				onClick={openAccountModal}
+				data-testid="connect-wallet"
+				mono
+				isName={!!ensName}
+			>
 				{ensAvatar ? (
 					<img
 						src={ensAvatar}
-						alt={ensName}
+						alt={ensName?.toString()}
 						width={16}
 						height={16}
 						style={{ borderRadius: '50%', marginRight: '8px' }}
@@ -86,51 +47,8 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 				) : (
 					<StyledConnectionDot />
 				)}
-				{label}
-			</>
-		) : (
-			<LabelContainer onClick={onClick}>
-				{t(label)}
-				{postfixIcon &&
-					(postfixIcon === 'Switch' ? (
-						<SwitchWalletIcon height={17} />
-					) : (
-						<DisconnectIcon height={17} />
-					))}
-			</LabelContainer>
-		);
-
-	useEffect(() => {
-		if (signer) {
-			setWalletLabel(truncatedWalletAddress!);
-			signer.getAddress().then((account: string) => {
-				const _account = account;
-				setAddress(account);
-				getENSName(_account, staticMainnetProvider).then((_ensName: string) => {
-					setEns(_ensName);
-					setWalletLabel(_ensName || truncatedWalletAddress!);
-				});
-			});
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [signer, truncatedWalletAddress]);
-
-	return (
-		<Container isMobile={isMobile}>
-			<WalletOptionsSelect
-				formatOptionLabel={formatOptionLabel}
-				controlHeight={41}
-				options={WALLET_OPTIONS}
-				value={{ label: walletLabel, isMenuLabel: true }}
-				valueContainer={{ 'text-transform': ensName ? 'lowercase' : '' }}
-				menuWidth={240}
-				optionPadding={'0px'} //override default padding to 0
-				optionBorderBottom={`1px solid ${theme.colors.navy}`}
-				components={{ IndicatorSeparator, DropdownIndicator }}
-				isSearchable={false}
-				data-testid="wallet-btn"
-				variant="flat"
-			/>
+				{walletLabel}
+			</ConnectButton>
 		</Container>
 	);
 };
@@ -150,21 +68,15 @@ const Container = styled.div<{ isMobile?: boolean }>`
 		`};
 `;
 
-const WalletOptionsSelect = styled(Select)`
-	min-width: 155px;
-
-	.react-select__control {
-		width: 155px;
-		border-radius: 10px;
-	}
-
-	.react-select__dropdown-indicator {
-		margin-right: 5px;
-	}
-
-	.react-select__value-container {
-		padding-right: 0;
-	}
+const ConnectButton = styled(Button)<{ isName?: boolean }>`
+	font-size: 13px;
+	min-width: unset;
+	text-transform: none;
+	${(props) =>
+		props.isName &&
+		css`
+			text-transform: lowercase;
+		`};
 `;
 
 export default WalletActions;

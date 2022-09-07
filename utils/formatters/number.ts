@@ -155,6 +155,9 @@ export const formatCurrency = (
 		? formatFiatCurrency(value, options)
 		: formatCryptoCurrency(value, options);
 
+export const formatDollars = (value: WeiSource, options?: FormatCurrencyOptions) =>
+	formatCurrency('sUSD', value, { sign: '$', ...options });
+
 export const formatPercent = (value: WeiSource, options?: { minDecimals: number }) => {
 	const decimals = options?.minDecimals ?? 2;
 
@@ -184,12 +187,6 @@ export const formatCurrencyWithKey = (
 	value: WeiSource,
 	decimals?: number
 ) => `${formatCurrency(String(value), decimals || getPrecision(value))} ${currencyKey}`;
-
-export const formatDollars = (value: WeiSource | null | undefined) =>
-	formatCurrency('sUSD', value || zeroBN, {
-		currencyKey: undefined,
-		sign: '$',
-	});
 
 export function scale(input: Wei, decimalPlaces: number): Wei {
 	return input.mul(wei(10).pow(decimalPlaces));

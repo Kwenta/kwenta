@@ -3,7 +3,6 @@ import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { FC, ReactNode, useMemo } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import InfoIcon from 'assets/svg/app/info.svg';
@@ -12,10 +11,11 @@ import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
 import Error from 'components/Error';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
+import Connector from 'containers/Connector';
 import useCurrencyPrice from 'hooks/useCurrencyPrice';
+import useIsL2 from 'hooks/useIsL2';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
-import { isL2State, walletAddressState } from 'store/wallet';
 import {
 	FlexDivRowCentered,
 	numericValueCSS,
@@ -60,9 +60,10 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 	icon,
 }) => {
 	const { t } = useTranslation();
-	const isL2 = useRecoilValue(isL2State);
+	const { walletAddress } = Connector.useContainer();
+	const isL2 = useIsL2();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const walletAddress = useRecoilValue(walletAddressState);
+
 	const { subgraph } = useSynthetixQueries();
 	const getBaseCurrencyAmount = (decimals?: number) =>
 		formatCurrency(baseCurrencyKey, baseCurrencyAmount, {

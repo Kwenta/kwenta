@@ -1,81 +1,63 @@
-import { NetworkIdByName } from '@synthetixio/contracts-interface';
-import onboard from 'bnc-onboard';
-import { Subscriptions } from 'bnc-onboard/dist/src/interfaces';
+import { connectorsForWallets, wallet } from '@rainbow-me/rainbowkit';
+import { chain, configureChains, createClient } from 'wagmi';
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
+import { publicProvider } from 'wagmi/providers/public';
 
-import { Network } from 'store/wallet';
-import { getInfuraRpcURL } from 'utils/infura';
+import Safe from 'components/Rainbowkit/Gnosis';
+import { BLAST_NETWORK_LOOKUP } from 'constants/network';
 
-export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
-	const infuraRpc = getInfuraRpcURL(network.id);
+export const initRainbowkit = () => {
+	const { chains, provider } = configureChains(
+		[chain.mainnet, chain.optimism, chain.goerli, chain.optimismGoerli],
+		[
+			jsonRpcProvider({
+				rpc: (networkChain) => {
+					return !BLAST_NETWORK_LOOKUP[networkChain.id]
+						? {
+								http: networkChain.rpcUrls.default,
+						  }
+						: {
+								http: `https://${BLAST_NETWORK_LOOKUP[networkChain.id]}.blastapi.io/${
+									process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID
+								}`,
+						  };
+				},
+				stallTimeout: 1000,
+				priority: 0,
+			}),
+			publicProvider({ stallTimeout: 1000, priority: 5 }),
+		]
+	);
 
-	return onboard({
-		dappId: process.env.NEXT_PUBLIC_BN_ONBOARD_API_KEY,
-		hideBranding: true,
-		networkId: Number(network.id),
-		subscriptions,
-		darkMode: true,
-		walletSelect: {
+	const connectors = connectorsForWallets([
+		{
+			groupName: 'Popular',
 			wallets: [
-				{
-					name: 'Browser Wallet',
-					iconSrc: '/images/wallet-icons/browserWallet.svg',
-					type: 'injected',
-					link: 'https://metamask.io',
-					wallet: async (helpers) => {
-						const { createModernProviderInterface } = helpers;
-						const provider = window.ethereum;
-						return {
-							provider,
-							interface: provider ? createModernProviderInterface(provider) : null,
-						};
-					},
-					preferred: true,
-					desktop: true,
-					mobile: true,
-				},
-				{
-					walletName: 'ledger',
-					rpcUrl: infuraRpc,
-					preferred: true,
-				},
-				{
-					walletName: 'lattice',
-					appName: 'Kwenta',
-					rpcUrl: infuraRpc,
-				},
-				{
-					walletName: 'trezor',
-					appUrl: 'https://www.synthetix.io',
-					email: 'info@synthetix.io',
-					rpcUrl: infuraRpc,
-					preferred: true,
-				},
-				{
-					walletName: 'walletConnect',
-					rpc: Object.values(NetworkIdByName).reduce((acc, id) => {
-						acc[id] = getInfuraRpcURL(id);
-						return acc;
-					}, {} as Record<string, string>),
-					preferred: true,
-				},
-				{ walletName: 'imToken', rpcUrl: infuraRpc, preferred: true },
-				{
-					walletName: 'portis',
-					apiKey: process.env.NEXT_PUBLIC_PORTIS_APP_ID,
-				},
-				{ walletName: 'gnosis', rpcUrl: infuraRpc },
-				{ walletName: 'trust', rpcUrl: infuraRpc },
-				{ walletName: 'walletLink', rpcUrl: infuraRpc, preferred: true },
-				{ walletName: 'torus' },
-				{ walletName: 'status' },
-				{ walletName: 'authereum' },
-				{ walletName: 'tally' },
+				wallet.metaMask({ chains }),
+				wallet.rainbow({ chains }),
+				wallet.coinbase({ appName: 'Kwenta', chains }),
+				wallet.walletConnect({ chains }),
 			],
 		},
-		walletCheck: [
-			{ checkName: 'derivationPath' },
-			{ checkName: 'accounts' },
-			{ checkName: 'connect' },
-		],
+		{
+			groupName: 'More',
+			wallets: [
+				Safe({ chains }),
+				wallet.ledger({ chains }),
+				wallet.brave({ chains, shimDisconnect: true }),
+				wallet.trust({ chains }),
+			],
+		},
+	]);
+
+	const wagmiClient = createClient({
+		autoConnect: false,
+		connectors,
+		provider,
 	});
+
+	return {
+		wagmiClient,
+		chains,
+	};
 };

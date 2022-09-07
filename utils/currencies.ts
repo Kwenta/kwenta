@@ -1,7 +1,14 @@
 import { Rates, Token } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 
-import { CurrencyKey, Synths, CRYPTO_CURRENCY_MAP, FIAT_SYNTHS } from 'constants/currency';
+import {
+	CurrencyKey,
+	Synths,
+	CRYPTO_CURRENCY_MAP,
+	FIAT_SYNTHS,
+	ETH_ADDRESS,
+	ETH_COINGECKO_ADDRESS,
+} from 'constants/currency';
 
 import { PriceResponse } from '../queries/coingecko/types';
 import { FuturesMarketKey } from './futures';
@@ -83,7 +90,10 @@ export const newGetCoinGeckoPricesForCurrencies = (
 	if (!coinGeckoPrices || !baseCurrencyTokenAddress) {
 		return wei(0);
 	}
-	const base = baseCurrencyTokenAddress.toLowerCase();
+	const base = (baseCurrencyTokenAddress === ETH_ADDRESS
+		? ETH_COINGECKO_ADDRESS
+		: baseCurrencyTokenAddress
+	).toLowerCase();
 
 	if (!coinGeckoPrices[base]) {
 		return wei(0);

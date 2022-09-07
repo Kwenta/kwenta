@@ -1,22 +1,20 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { useQuery } from 'react-query';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
+import Connector from 'containers/Connector';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
-import { appReadyState } from 'store/app';
 import {
 	crossMarginAvailableMarginState,
 	crossMarginSettingsState,
 	futuresAccountState,
 } from 'store/futures';
-import { isL2State, networkState } from 'store/wallet';
 import { zeroBN } from 'utils/formatters/number';
 
 export default function useGetCrossMarginAccountOverview() {
-	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
+	const { network } = Connector.useContainer();
 	const { crossMarginAddress } = useRecoilValue(futuresAccountState);
 	const setFreeMargin = useSetRecoilState(crossMarginAvailableMarginState);
 	const setCrossMarginSettings = useSetRecoilState(crossMarginSettingsState);
@@ -25,7 +23,7 @@ export default function useGetCrossMarginAccountOverview() {
 
 	return useQuery(
 		QUERY_KEYS.Futures.CrossMarginAccountOverview(
-			network.id,
+			network.id as NetworkId,
 			crossMarginAddress || '',
 			crossMarginAccountContract?.address || ''
 		),
@@ -52,7 +50,7 @@ export default function useGetCrossMarginAccountOverview() {
 			return { freeMargin: wei(freeMargin), settings: settings };
 		},
 		{
-			enabled: isAppReady && isL2,
+			enabled: !!crossMarginAddress,
 		}
 	);
 }

@@ -1,3 +1,4 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { constants } from 'ethers';
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
@@ -20,7 +21,6 @@ import { useRefetchContext } from 'contexts/RefetchContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useSUSDContract from 'hooks/useSUSDContract';
 import { balancesState, futuresAccountState } from 'store/futures';
-import { walletAddressState } from 'store/wallet';
 import { FlexDivRowCentered } from 'styles/common';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -35,7 +35,7 @@ type Props = {
 export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { synthetixjs, network } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs, network, walletAddress } = Connector.useContainer();
 	const {
 		crossMarginAccountContract,
 		crossMarginContractFactory,
@@ -45,7 +45,6 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 
 	const futuresAccount = useRecoilValue(futuresAccountState);
 	const balances = useRecoilValue(balancesState);
-	const wallet = useRecoilValue(walletAddressState);
 
 	const [depositAmount, setDepositAmount] = useState('');
 	const [depositComplete, setDepositComplete] = useState(false);
@@ -55,25 +54,29 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 	const susdBal = balances?.susdWalletBalance;
 
 	const fetchAllowance = useCallback(async () => {
-		if (!crossMarginAccountContract || !susdContract || !wallet) return;
+		if (!crossMarginAccountContract || !susdContract || !walletAddress) return;
 		try {
-			const allowance = await susdContract.allowance(wallet, crossMarginAccountContract.address);
+			const allowance = await susdContract.allowance(
+				walletAddress,
+				crossMarginAccountContract.address
+			);
 			setAllowance(wei(allowance));
 		} catch (err) {
 			logError(err);
 		}
-	}, [crossMarginAccountContract, susdContract, wallet]);
+	}, [crossMarginAccountContract, susdContract, walletAddress]);
 
 	useEffect(() => {
 		fetchAllowance();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [crossMarginAccountContract?.address, wallet]);
+	}, [crossMarginAccountContract?.address, walletAddress]);
 
 	const createAccount = useCallback(async () => {
 		try {
 			if (!synthetixjs || !crossMarginContractFactory) throw new Error('Signer or snx lib missing');
 
-			const crossMarginSettingsAddress = CROSS_MARGIN_BASE_SETTINGS[String(network.id)];
+			const crossMarginSettingsAddress =
+				CROSS_MARGIN_BASE_SETTINGS[String(network?.id as NetworkId)];
 
 			if (!crossMarginSettingsAddress) throw new Error('Unsupported network');
 

@@ -7,6 +7,7 @@ import styled from 'styled-components';
 
 import Loader from 'components/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import Connector from 'containers/Connector';
 import { FuturesContext } from 'contexts/FuturesContext';
 import useFuturesData from 'hooks/useFuturesData';
 import LeftSidebar from 'sections/futures/LeftSidebar/LeftSidebar';
@@ -17,7 +18,6 @@ import TradeCrossMargin from 'sections/futures/TradeCrossMargin';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { currentMarketState, futuresAccountState, futuresAccountTypeState } from 'store/futures';
-import { walletAddressState } from 'store/wallet';
 import {
 	PageContent,
 	FullHeightContainer,
@@ -32,12 +32,12 @@ type MarketComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 const Market: MarketComponent = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
+	const { walletAddress } = Connector.useContainer();
 
 	const marketAsset = router.query.asset as FuturesMarketAsset;
 
 	const setCurrentMarket = useSetRecoilState(currentMarketState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
-	const walletAddress = useRecoilValue(walletAddressState);
 	const { ready } = useRecoilValue(futuresAccountState);
 
 	const futuresData = useFuturesData();

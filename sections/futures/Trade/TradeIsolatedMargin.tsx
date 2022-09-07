@@ -6,8 +6,8 @@ import styled from 'styled-components';
 import DepositArrow from 'assets/svg/futures/deposit-arrow.svg';
 import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import SegmentedControl from 'components/SegmentedControl';
+import Connector from 'containers/Connector';
 import { leverageSideState, marketInfoState, orderTypeState, positionState } from 'store/futures';
-import { walletAddressState } from 'store/wallet';
 import { zeroBN } from 'utils/formatters/number';
 
 import FeeInfoBox from '../FeeInfoBox';
@@ -27,8 +27,9 @@ type Props = {
 };
 
 const TradeIsolatedMargin = ({ isMobile }: Props) => {
+	const { walletAddress } = Connector.useContainer();
+
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
-	const walletAddress = useRecoilValue(walletAddressState);
 	const position = useRecoilValue(positionState);
 	const marketInfo = useRecoilValue(marketInfoState);
 

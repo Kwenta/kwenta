@@ -1,9 +1,11 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { TokenBalances } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { Provider, Contract as EthCallContract } from 'ethcall';
 import { BigNumber } from 'ethers';
 import keyBy from 'lodash/keyBy';
 import { useQuery, UseQueryOptions } from 'react-query';
+import { chain } from 'wagmi';
 
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
 import QUERY_KEYS from 'constants/queryKeys';
@@ -18,7 +20,7 @@ const useTokensBalancesQuery = (
 	walletAddress: string | null,
 	options?: UseQueryOptions<TokenBalances | null>
 ) => {
-	const { provider, network } = Connector.useContainer();
+	const { network, provider, isWalletConnected } = Connector.useContainer();
 
 	const filteredTokens = tokens.filter((t) => !FILTERED_TOKENS.includes(t.address.toLowerCase()));
 	const symbols = filteredTokens.map((token) => token.symbol);
@@ -27,11 +29,10 @@ const useTokensBalancesQuery = (
 	return useQuery<TokenBalances | null>(
 		QUERY_KEYS.WalletBalances.Tokens(
 			walletAddress,
-			network!.id,
+			(network?.id ?? chain.optimism.id) as NetworkId,
 			filteredTokens.map((f) => f.address).join()
 		),
 		async () => {
-			if (!provider) return null;
 			const ethcallProvider = new Provider();
 			await ethcallProvider.init(provider);
 
@@ -60,7 +61,7 @@ const useTokensBalancesQuery = (
 			return tokenBalances;
 		},
 		{
-			enabled: !!provider && tokens.length > 0 && !!walletAddress,
+			enabled: !!provider && tokens.length > 0 && !!walletAddress && isWalletConnected,
 			...options,
 		}
 	);

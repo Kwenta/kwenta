@@ -12,6 +12,7 @@ import UploadIcon from 'assets/svg/futures/upload-icon.svg';
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
 import ROUTES from 'constants/routes';
+import Connector from 'containers/Connector';
 import { PositionHistory } from 'queries/futures/types';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
@@ -24,7 +25,6 @@ import {
 	openOrdersState,
 	positionState,
 } from 'store/futures';
-import { walletAddressState } from 'store/wallet';
 
 import PositionCard from '../PositionCard';
 import ProfitCalculator from '../ProfitCalculator';
@@ -46,7 +46,8 @@ const FutureTabs = Object.values(FuturesTab);
 
 const UserInfo: React.FC = () => {
 	const router = useRouter();
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
+
 	const position = useRecoilValue(positionState);
 	const marketAsset = useRecoilValue(currentMarketState);
 	const openOrders = useRecoilValue(openOrdersState);

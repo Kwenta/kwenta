@@ -140,7 +140,7 @@ function MarginInfoBox({ editingLeverage }: Props) {
 					},
 					'Market Margin': !editingLeverage
 						? {
-								value: formatDollars(position?.remainingMargin),
+								value: formatDollars(position?.remainingMargin || 0),
 								valueNode: (
 									<PreviewArrow showPreview={showPreview}>
 										{potentialTrade.status === 'fetching' ? (

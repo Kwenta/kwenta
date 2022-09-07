@@ -15,14 +15,14 @@ import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { ETH_UNIT } from 'constants/network';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
+import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetAllFuturesTradesForAccount from 'queries/futures/useGetAllFuturesTradesForAccount';
 import { TradeStatus } from 'sections/futures/types';
 import { futuresAccountState, futuresAccountTypeState } from 'store/futures';
-import { isL2State } from 'store/wallet';
-import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
+import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName, isDecimalFour, MarketKeyByAsset } from 'utils/futures';
 
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
@@ -32,7 +32,7 @@ const FuturesHistoryTable: FC = () => {
 	const accountType = useRecoilValue(futuresAccountTypeState);
 
 	const { t } = useTranslation();
-	const isL2 = useRecoilValue(isL2State);
+	const isL2 = useIsL2();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { switchToL2 } = useNetworkSwitcher();
 	const futuresTradesQuery = useGetAllFuturesTradesForAccount(selectedFuturesAddress);
@@ -157,7 +157,7 @@ const FuturesHistoryTable: FC = () => {
 								: { sign: '$' };
 							return conditionalRender(
 								cellProps.row.original.price,
-								<>{formatCurrency('sUSD', cellProps.value, formatOptions)}</>
+								<>{formatDollars(cellProps.value, formatOptions)}</>
 							);
 						},
 						width: 120,
@@ -171,11 +171,7 @@ const FuturesHistoryTable: FC = () => {
 								cellProps.row.original.pnl.eq(wei(0)) ? (
 									<PNL normal>--</PNL>
 								) : (
-									<PNL negative={cellProps.value.lt(wei(0))}>
-										{formatCurrency('sUSD', cellProps.value, {
-											sign: '$',
-										})}
-									</PNL>
+									<PNL negative={cellProps.value.lt(wei(0))}>{formatDollars(cellProps.value)}</PNL>
 								)
 							);
 						},

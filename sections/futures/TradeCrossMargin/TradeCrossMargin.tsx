@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import DepositArrow from 'assets/svg/futures/deposit-arrow.svg';
 import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import StyledSlider from 'components/Slider/StyledSlider';
+import Connector from 'containers/Connector';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import {
 	futuresAccountState,
@@ -14,7 +15,6 @@ import {
 	leverageSideState,
 	futuresTradeInputsState,
 } from 'store/futures';
-import { walletAddressState } from 'store/wallet';
 import { BorderedPanel, FlexDivRow } from 'styles/common';
 
 import CrossMarginOnboard from '../CrossMarginOnboard';
@@ -35,12 +35,11 @@ type Props = {
 
 export default function TradeCrossMargin({ isMobile }: Props) {
 	const { t } = useTranslation();
+	const { walletAddress } = Connector.useContainer();
 
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const { crossMarginAddress, crossMarginAvailable } = useRecoilValue(futuresAccountState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
-
-	const walletAddress = useRecoilValue(walletAddressState);
 	const { susdSize } = useRecoilValue(futuresTradeInputsState);
 
 	const { onTradeAmountSUSDChange, maxUsdInputAmount } = useFuturesContext();

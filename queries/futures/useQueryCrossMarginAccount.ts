@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
 import { useQuery } from 'react-query';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { CROSS_MARGIN_ACCOUNT_FACTORY } from 'constants/address';
 import QUERY_KEYS from 'constants/queryKeys';
+import Connector from 'containers/Connector';
 import { futuresAccountState, futuresAccountTypeState } from 'store/futures';
-import { networkState, walletAddressState } from 'store/wallet';
 
 import useCrossMarginAccountContracts from '../../hooks/useCrossMarginContracts';
 
@@ -13,9 +13,7 @@ const SUPPORTED_NETWORKS = Object.keys(CROSS_MARGIN_ACCOUNT_FACTORY);
 
 export default function useQueryCrossMarginAccount() {
 	const { crossMarginContractFactory } = useCrossMarginAccountContracts();
-
-	const walletAddress = useRecoilValue(walletAddressState);
-	const network = useRecoilValue(networkState);
+	const { network, walletAddress } = Connector.useContainer();
 	const [futuresAccount, setFuturesAccount] = useRecoilState(futuresAccountState);
 	const [selectedAccountType, setSelectedAccountType] = useRecoilState(futuresAccountTypeState);
 

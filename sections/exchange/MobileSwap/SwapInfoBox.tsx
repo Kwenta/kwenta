@@ -10,15 +10,17 @@ import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { NO_VALUE } from 'constants/placeholder';
 import { useExchangeContext } from 'contexts/ExchangeContext';
 import { parseGasPriceObject } from 'hooks/useGas';
-import { customGasPriceState, gasSpeedState, isL2State, isMainnetState } from 'store/wallet';
-import { formatCurrency, formatNumber, formatPercent, zeroBN } from 'utils/formatters/number';
+import useIsL1 from 'hooks/useIsL1';
+import useIsL2 from 'hooks/useIsL2';
+import { customGasPriceState, gasSpeedState } from 'store/wallet';
+import { formatDollars, formatNumber, formatPercent, zeroBN } from 'utils/formatters/number';
 
 const SwapInfoBox: React.FC = () => {
 	const { t } = useTranslation();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const customGasPrice = useRecoilValue(customGasPriceState);
-	const isMainnet = useRecoilValue(isMainnetState);
-	const isL2 = useRecoilValue(isL2State);
+	const isL2 = useIsL2();
+	const isMainnet = useIsL1();
 	const { transactionFee, feeCost, exchangeFeeRate, baseFeeRate } = useExchangeContext();
 	const { useEthGasPriceQuery } = useSynthetixQueries();
 
@@ -33,9 +35,7 @@ const SwapInfoBox: React.FC = () => {
 	const gasPrice = gasPrices ? parseGasPriceObject(gasPrices[gasSpeed]) : null;
 
 	const formattedTransactionFee = React.useMemo(() => {
-		return transactionFee
-			? formatCurrency('sUSD', transactionFee, { sign: '$', maxDecimals: 1 })
-			: NO_VALUE;
+		return transactionFee ? formatDollars(transactionFee, { maxDecimals: 1 }) : NO_VALUE;
 	}, [transactionFee]);
 
 	const gasPriceItem = isL2
@@ -82,8 +82,7 @@ const SwapInfoBox: React.FC = () => {
 				[t('common.summary.fee-cost')]: {
 					value:
 						feeCost != null
-							? formatCurrency('sUSD', feeCost, {
-									sign: '$',
+							? formatDollars(feeCost, {
 									minDecimals: feeCost.lt(0.01) ? 4 : 2,
 							  })
 							: NO_VALUE,

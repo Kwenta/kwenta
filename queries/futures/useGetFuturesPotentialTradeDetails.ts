@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
 import { PotentialTradeStatus, POTENTIAL_TRADE_STATUS_TO_MESSAGE } from 'sections/futures/types';
 import {
 	currentMarketState,
@@ -11,7 +12,6 @@ import {
 	potentialTradeDetailsState,
 	futuresAccountTypeState,
 } from 'store/futures';
-import { isL2State } from 'store/wallet';
 import logError from 'utils/logError';
 
 import { FuturesPotentialTradeDetails } from './types';
@@ -24,8 +24,8 @@ const UNKNOWN = 'Unknown';
 const useGetFuturesPotentialTradeDetails = () => {
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
-	const isL2 = useRecoilValue(isL2State);
-	const { synthetixjs } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
+	const isL2 = useIsL2();
 
 	const leverageSide = useRecoilValue(leverageSideState);
 	const marketAsset = useRecoilValue(currentMarketState);
