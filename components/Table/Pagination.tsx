@@ -18,42 +18,50 @@ type PaginationProps = {
 	nextPage: () => void;
 };
 
-const Pagination: FC<PaginationProps> = ({
-	pageIndex,
-	pageCount,
-	canNextPage = true,
-	canPreviousPage = true,
-	setPage,
-	nextPage,
-	previousPage,
-}) => {
-	const { t } = useTranslation();
+const Pagination: FC<PaginationProps> = React.memo(
+	({
+		pageIndex,
+		pageCount,
+		canNextPage = true,
+		canPreviousPage = true,
+		setPage,
+		nextPage,
+		previousPage,
+	}) => {
+		const { t } = useTranslation();
 
-	return (
-		<PaginationContainer>
-			<span>
-				<ArrowButton onClick={() => setPage(0)} disabled={!canPreviousPage}>
-					<LeftEndArrowIcon />
-				</ArrowButton>
-				<ArrowButton onClick={() => previousPage()} disabled={!canPreviousPage}>
-					<LeftArrowIcon />
-				</ArrowButton>
-			</span>
-			<PageInfo>
-				{t('common.pagination.page')}{' '}
-				{t('common.pagination.page-of-total-pages', { page: pageIndex + 1, totalPages: pageCount })}
-			</PageInfo>
-			<span>
-				<ArrowButton onClick={() => nextPage()} disabled={!canNextPage}>
-					<RightArrowIcon />
-				</ArrowButton>
-				<ArrowButton onClick={() => setPage(pageCount - 1)} disabled={!canNextPage}>
-					<RightEndArrowIcon />
-				</ArrowButton>
-			</span>
-		</PaginationContainer>
-	);
-};
+		const firstPage = () => setPage(0);
+		const toLastPage = () => setPage(pageCount - 1);
+
+		return (
+			<PaginationContainer>
+				<span>
+					<ArrowButton onClick={firstPage} disabled={!canPreviousPage}>
+						<LeftEndArrowIcon />
+					</ArrowButton>
+					<ArrowButton onClick={previousPage} disabled={!canPreviousPage}>
+						<LeftArrowIcon />
+					</ArrowButton>
+				</span>
+				<PageInfo>
+					{t('common.pagination.page')}{' '}
+					{t('common.pagination.page-of-total-pages', {
+						page: pageIndex + 1,
+						totalPages: pageCount,
+					})}
+				</PageInfo>
+				<span>
+					<ArrowButton onClick={nextPage} disabled={!canNextPage}>
+						<RightArrowIcon />
+					</ArrowButton>
+					<ArrowButton onClick={toLastPage} disabled={!canNextPage}>
+						<RightEndArrowIcon />
+					</ArrowButton>
+				</span>
+			</PaginationContainer>
+		);
+	}
+);
 
 const PageInfo = styled.span`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
