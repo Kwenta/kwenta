@@ -26,6 +26,7 @@ import UNIIcon from 'assets/png/currencies/sUNI.png';
 import USDIcon from 'assets/png/currencies/sUSD.png';
 import XAGIcon from 'assets/png/currencies/sXAG.png';
 import XAUIcon from 'assets/png/currencies/sXAU.png';
+import XMRIcon from 'assets/png/currencies/sXMR.png';
 import { CRYPTO_CURRENCY_MAP, SynthsName } from 'constants/currency';
 
 import { FuturesMarketKey } from './futures';
@@ -59,5 +60,6 @@ export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = 
 	sBNB: BNBIcon,
 	sDOGE: DOGEIcon,
 	sDebtRatio: DEBTIcon,
+	sXMR: XMRIcon,
 	[CRYPTO_CURRENCY_MAP.SNX]: SNXIcon,
 };
