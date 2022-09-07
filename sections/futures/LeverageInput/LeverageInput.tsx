@@ -14,7 +14,7 @@ import {
 	nextPriceDisclaimerState,
 	orderTypeState,
 	positionState,
-	tradeSizeState,
+	futuresTradeInputsState,
 } from 'store/futures';
 import { FlexDivCol, FlexDivRow } from 'styles/common';
 import { truncateNumbers } from 'utils/formatters/number';
@@ -24,7 +24,7 @@ import LeverageSlider from '../LeverageSlider';
 const LeverageInput: FC = () => {
 	const { t } = useTranslation();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
-	const { leverage } = useRecoilValue(tradeSizeState);
+	const { leverage } = useRecoilValue(futuresTradeInputsState);
 	const maxLeverage = useRecoilValue(maxLeverageState);
 	const orderType = useRecoilValue(orderTypeState);
 	const isDisclaimerDisplayed = useRecoilValue(nextPriceDisclaimerState);

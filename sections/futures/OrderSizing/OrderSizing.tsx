@@ -9,9 +9,9 @@ import {
 	crossMarginAvailableMarginState,
 	currentMarketState,
 	futuresAccountTypeState,
-	pendingTradeSizeState,
+	simulatedTradeState,
 	positionState,
-	tradeSizeState,
+	futuresTradeInputsState,
 } from 'store/futures';
 import { FlexDivRow } from 'styles/common';
 import { zeroBN } from 'utils/formatters/number';
@@ -21,8 +21,8 @@ type OrderSizingProps = {
 };
 
 const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
-	const { nativeSize, susdSize } = useRecoilValue(tradeSizeState);
-	const pendingSize = useRecoilValue(pendingTradeSizeState);
+	const { nativeSize, susdSize } = useRecoilValue(futuresTradeInputsState);
+	const simulatedTrade = useRecoilValue(simulatedTradeState);
 
 	const marketAsset = useRecoilValue(currentMarketState);
 	const freeCrossMargin = useRecoilValue(crossMarginAvailableMarginState);
@@ -34,14 +34,14 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 
 	useEffect(
 		() => {
-			if (pendingSize && pendingSize.susdSize !== susdSize) {
-				setUsdValue(pendingSize.susdSize);
+			if (simulatedTrade && simulatedTrade.susdSize !== susdSize) {
+				setUsdValue(simulatedTrade.susdSize);
 			} else if (susdSize !== usdValue) {
 				setUsdValue(susdSize);
 			}
 
-			if (pendingSize && pendingSize.nativeSize !== nativeSize) {
-				setAssetValue(pendingSize.nativeSize);
+			if (simulatedTrade && simulatedTrade.nativeSize !== nativeSize) {
+				setAssetValue(simulatedTrade.nativeSize);
 			} else if (assetValue !== nativeSize) {
 				setAssetValue(nativeSize);
 			}
@@ -51,8 +51,8 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 		[
 			susdSize,
 			nativeSize,
-			pendingSize?.susdSize,
-			pendingSize?.nativeSize,
+			simulatedTrade?.susdSize,
+			simulatedTrade?.nativeSize,
 			setUsdValue,
 			setAssetValue,
 		]

@@ -10,7 +10,7 @@ import {
 	FuturesPotentialTradeDetailsQuery,
 	SynthBalances,
 	TradeFees,
-	TradeSize,
+	FuturesTradeInputs,
 } from 'queries/futures/types';
 import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import { Price, Rates } from 'queries/rates/types';
@@ -81,8 +81,8 @@ export const futuresMarketsState = atom<FuturesMarket[]>({
 	default: [],
 });
 
-export const tradeSizeState = atom({
-	key: getFuturesKey('tradeSize'),
+export const futuresTradeInputsState = atom<FuturesTradeInputs>({
+	key: getFuturesKey('pendingTrade'),
 	default: {
 		nativeSize: '',
 		susdSize: '',
@@ -92,8 +92,10 @@ export const tradeSizeState = atom({
 	},
 });
 
-export const pendingTradeSizeState = atom<TradeSize | null>({
-	key: getFuturesKey('pendingTradeSize'),
+// We use this object to store raw user inputs to feedback to the UI
+// before all params have been calculated
+export const simulatedTradeState = atom<FuturesTradeInputs | null>({
+	key: getFuturesKey('simulatedTrade'),
 	default: {
 		nativeSize: '',
 		susdSize: '',
@@ -192,7 +194,7 @@ export const openOrdersState = atom<any[]>({
 export const sizeDeltaState = selector({
 	key: getFuturesKey('sizeDelta'),
 	get: ({ get }) => {
-		const { nativeSize } = get(tradeSizeState);
+		const { nativeSize } = get(futuresTradeInputsState);
 		const leverageSide = get(leverageSideState);
 
 		return nativeSize ? wei(leverageSide === PositionSide.LONG ? nativeSize : -nativeSize) : zeroBN;
@@ -235,7 +237,7 @@ export const maxLeverageState = selector({
 export const nextPriceDisclaimerState = selector({
 	key: getFuturesKey('nextPriceDisclaimer'),
 	get: ({ get }) => {
-		const { leverage } = get(tradeSizeState);
+		const { leverage } = get(futuresTradeInputsState);
 		const maxLeverage = get(maxLeverageState);
 
 		return wei(leverage || 0).gte(maxLeverage.sub(wei(1))) && wei(leverage || 0).lte(maxLeverage);

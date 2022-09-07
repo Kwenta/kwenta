@@ -12,7 +12,7 @@ import {
 	futuresAccountState,
 	futuresAccountTypeState,
 	leverageSideState,
-	tradeSizeState,
+	futuresTradeInputsState,
 } from 'store/futures';
 import { walletAddressState } from 'store/wallet';
 import { BorderedPanel, FlexDivRow } from 'styles/common';
@@ -41,7 +41,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 
 	const walletAddress = useRecoilValue(walletAddressState);
-	const { susdSize } = useRecoilValue(tradeSizeState);
+	const { susdSize } = useRecoilValue(futuresTradeInputsState);
 
 	const { onTradeAmountSUSDChange, maxUsdInputAmount } = useFuturesContext();
 

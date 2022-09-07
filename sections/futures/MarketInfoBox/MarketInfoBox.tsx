@@ -15,7 +15,7 @@ import {
 	orderTypeState,
 	positionState,
 	potentialTradeDetailsState,
-	tradeSizeState,
+	futuresTradeInputsState,
 } from 'store/futures';
 import { computeNPFee } from 'utils/costCalculations';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
@@ -28,7 +28,7 @@ const MarketInfoBox: React.FC = () => {
 	const marketInfo = useRecoilValue(marketInfoState);
 	const orderType = useRecoilValue(orderTypeState);
 	const leverageSide = useRecoilValue(leverageSideState);
-	const { nativeSize } = useRecoilValue(tradeSizeState);
+	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
 	const potentialTrade = useRecoilValue(potentialTradeDetailsState);
 	const crossMarginFreeMargin = useRecoilValue(crossMarginAvailableMarginState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);

@@ -13,7 +13,12 @@ import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
-import { FuturesAccountType, PositionSide, TradeFees, TradeSize } from 'queries/futures/types';
+import {
+	FuturesAccountType,
+	PositionSide,
+	TradeFees,
+	FuturesTradeInputs,
+} from 'queries/futures/types';
 import useGetCrossMarginAccountOverview from 'queries/futures/useGetCrossMarginAccountOverview';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 import { getFuturesMarketContract } from 'queries/futures/utils';
@@ -28,11 +33,11 @@ import {
 	maxLeverageState,
 	orderTypeState,
 	positionState,
-	tradeSizeState,
+	futuresTradeInputsState,
 	crossMarginSettingsState,
 	futuresAccountTypeState,
 	preferredLeverageState,
-	pendingTradeSizeState,
+	simulatedTradeState,
 	crossMarginTotalMarginState,
 	potentialTradeDetailsState,
 } from 'store/futures';
@@ -45,6 +50,14 @@ import useCrossMarginAccountContracts from './useCrossMarginContracts';
 import usePersistedRecoilState from './usePersistedRecoilState';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
+
+const ZERO_TRADE_INPUTS = {
+	nativeSize: '',
+	susdSize: '',
+	nativeSizeDelta: zeroBN,
+	susdSizeDelta: zeroBN,
+	leverage: '',
+};
 
 const useFuturesData = () => {
 	const router = useRouter();
@@ -61,8 +74,8 @@ const useFuturesData = () => {
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
 	const marketAsset = useRecoilValue(currentMarketState);
-	const [tradeSize, setTradeSize] = useRecoilState(tradeSizeState);
-	const setPendingTradeSize = useSetRecoilState(pendingTradeSizeState);
+	const [tradeInputs, setTradeInputs] = useRecoilState(futuresTradeInputsState);
+	const setSimulatedTrade = useSetRecoilState(simulatedTradeState);
 
 	const [crossMarginMarginDelta, setCrossMarginMarginDelta] = useRecoilState(
 		crossMarginMarginDeltaState
@@ -118,13 +131,8 @@ const useFuturesData = () => {
 	}, [position?.remainingMargin, crossMarginAccount?.freeMargin, selectedAccountType]);
 
 	const resetTradeState = useCallback(() => {
-		setTradeSize({
-			nativeSize: '',
-			susdSize: '',
-			nativeSizeDelta: zeroBN,
-			susdSizeDelta: zeroBN,
-			leverage: '',
-		});
+		setSimulatedTrade(ZERO_TRADE_INPUTS);
+		setTradeInputs(ZERO_TRADE_INPUTS);
 		setPotentialTradeDetails({
 			data: null,
 			status: 'idle',
@@ -137,7 +145,13 @@ const useFuturesData = () => {
 			total: zeroBN,
 		});
 		setCrossMarginMarginDelta(zeroBN);
-	}, [setTradeSize, setPotentialTradeDetails, setCrossMarginMarginDelta, setTradeFees]);
+	}, [
+		setSimulatedTrade,
+		setPotentialTradeDetails,
+		setCrossMarginMarginDelta,
+		setTradeFees,
+		setTradeInputs,
+	]);
 
 	const maxUsdInputAmount = useMemo(() => {
 		if (selectedAccountType === 'isolated_margin') {
@@ -201,10 +215,10 @@ const useFuturesData = () => {
 	);
 
 	const calculateMarginDelta = useCallback(
-		async (tradeSize: TradeSize, fees: TradeFees) => {
+		async (nextTrade: FuturesTradeInputs, fees: TradeFees) => {
 			const currentSize = position?.position?.notionalValue || zeroBN;
-			const newNotionalValue = currentSize.add(tradeSize.susdSizeDelta);
-			const fullMargin = newNotionalValue.abs().div(tradeSize.leverage);
+			const newNotionalValue = currentSize.add(nextTrade.susdSizeDelta);
+			const fullMargin = newNotionalValue.abs().div(nextTrade.leverage);
 			let marginDelta = fullMargin.sub(position?.remainingMargin || '0');
 			return marginDelta.add(fees.total);
 		},
@@ -213,26 +227,19 @@ const useFuturesData = () => {
 
 	// eslint-disable-next-line
 	const debounceFetchPreview = useCallback(
-		debounce(async (nextTradeSize: TradeSize, fromLeverage = false) => {
+		debounce(async (nextTrade: FuturesTradeInputs, fromLeverage = false) => {
 			try {
 				setError(null);
-				const fees = await calculateFees(
-					nextTradeSize.susdSizeDelta,
-					nextTradeSize.nativeSizeDelta
-				);
+				const fees = await calculateFees(nextTrade.susdSizeDelta, nextTrade.nativeSizeDelta);
 				let nextMarginDelta = zeroBN;
 				if (selectedAccountType === 'cross_margin') {
 					nextMarginDelta =
-						nextTradeSize.nativeSizeDelta.gt(0) || fromLeverage
-							? await calculateMarginDelta(nextTradeSize, fees)
+						nextTrade.nativeSizeDelta.abs().gt(0) || fromLeverage
+							? await calculateMarginDelta(nextTrade, fees)
 							: zeroBN;
 					setCrossMarginMarginDelta(nextMarginDelta);
 				}
-				getPotentialTrade(
-					nextTradeSize.nativeSizeDelta,
-					nextMarginDelta,
-					Number(nextTradeSize.leverage)
-				);
+				getPotentialTrade(nextTrade.nativeSizeDelta, nextMarginDelta, Number(nextTrade.leverage));
 			} catch (err) {
 				setError(t('futures.market.trade.preview.error'));
 				logError(err);
@@ -250,12 +257,12 @@ const useFuturesData = () => {
 	);
 
 	const onStagePositionChange = useCallback(
-		(tradeSize: TradeSize) => {
-			setTradeSize(tradeSize);
-			setPendingTradeSize(null);
-			debounceFetchPreview(tradeSize);
+		(trade: FuturesTradeInputs) => {
+			setTradeInputs(trade);
+			setSimulatedTrade(null);
+			debounceFetchPreview(trade);
 		},
-		[setTradeSize, setPendingTradeSize, debounceFetchPreview]
+		[setTradeInputs, setSimulatedTrade, debounceFetchPreview]
 	);
 
 	const onTradeAmountChange = React.useCallback(
@@ -315,7 +322,7 @@ const useFuturesData = () => {
 					onStagePositionChange(newSize);
 				} else {
 					// Allows us to keep it snappy updating the input values
-					setPendingTradeSize(newSize);
+					setSimulatedTrade(newSize);
 				}
 			}
 		},
@@ -325,7 +332,7 @@ const useFuturesData = () => {
 			leverageSide,
 			selectedLeverage,
 			selectedAccountType,
-			setPendingTradeSize,
+			setSimulatedTrade,
 			onStagePositionChange,
 		]
 	);
@@ -402,34 +409,39 @@ const useFuturesData = () => {
 	const orderTxn = useSynthetixTxn(
 		`FuturesMarket${getDisplayAsset(marketAsset)}`,
 		orderType === 1 ? 'submitNextPriceOrderWithTracking' : 'modifyPositionWithTracking',
-		[tradeSize.nativeSizeDelta.toBN(), KWENTA_TRACKING_CODE],
+		[tradeInputs.nativeSizeDelta.toBN(), KWENTA_TRACKING_CODE],
 		gasPrice,
 		{
 			enabled:
 				selectedAccountType === 'isolated_margin' &&
 				!!marketAsset &&
-				!!tradeSize.leverage &&
-				Number(tradeSize.leverage) >= 0 &&
-				maxLeverage.gte(tradeSize.leverage) &&
-				!tradeSize.nativeSizeDelta.eq(zeroBN),
+				!!tradeInputs.leverage &&
+				Number(tradeInputs.leverage) >= 0 &&
+				maxLeverage.gte(tradeInputs.leverage) &&
+				!tradeInputs.nativeSizeDelta.eq(zeroBN),
 		}
 	);
 
-	const submitCrossMarginOrder = async () => {
+	const submitCrossMarginOrder = useCallback(async () => {
 		if (!crossMarginAccountContract) return;
 		const newPosition = [
 			{
 				marketKey: formatBytes32String(marketAsset),
 				marginDelta: crossMarginMarginDelta.toBN(),
-				sizeDelta: tradeSize.nativeSizeDelta.toBN(),
+				sizeDelta: tradeInputs.nativeSizeDelta.toBN(),
 			},
 		];
 		return await crossMarginAccountContract.distributeMargin(newPosition);
-	};
+	}, [
+		crossMarginAccountContract,
+		marketAsset,
+		crossMarginMarginDelta,
+		tradeInputs.nativeSizeDelta,
+	]);
 
-	const submitIsolatedMarginOrder = () => {
+	const submitIsolatedMarginOrder = useCallback(() => {
 		orderTxn.mutate();
-	};
+	}, [orderTxn]);
 
 	useEffect(() => {
 		if (orderTxn.hash) {
@@ -492,7 +504,25 @@ const useFuturesData = () => {
 		return () => {
 			router.events.off('routeChangeStart', handleRouteChange);
 		};
-	}, [router.events, setTradeSize, resetTradeState]);
+	}, [router.events, resetTradeState]);
+
+	useEffect(() => {
+		if (tradeInputs.susdSizeDelta.eq(0)) return;
+		const nextTrade = {
+			...tradeInputs,
+			susdSizeDelta:
+				leverageSide === PositionSide.LONG
+					? tradeInputs.susdSizeDelta.abs()
+					: tradeInputs.susdSizeDelta.neg(),
+			nativeSizeDelta:
+				leverageSide === PositionSide.LONG
+					? tradeInputs.nativeSizeDelta.abs()
+					: tradeInputs.nativeSizeDelta.neg(),
+		};
+		onStagePositionChange(nextTrade);
+		// Only want to react to leverage side change
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [leverageSide]);
 
 	return {
 		onLeverageChange,

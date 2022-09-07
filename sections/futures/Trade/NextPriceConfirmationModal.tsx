@@ -20,7 +20,7 @@ import {
 	marketInfoState,
 	nextPriceDisclaimerState,
 	positionState,
-	tradeSizeState,
+	futuresTradeInputsState,
 } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { FlexDivCol, FlexDivCentered } from 'styles/common';
@@ -43,7 +43,7 @@ const NextPriceConfirmationModal: FC = () => {
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
-	const { nativeSize } = useRecoilValue(tradeSizeState);
+	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const position = useRecoilValue(positionState);
 	const market = useRecoilValue(currentMarketState);

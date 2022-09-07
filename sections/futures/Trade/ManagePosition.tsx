@@ -18,7 +18,7 @@ import {
 	positionState,
 	potentialTradeDetailsState,
 	sizeDeltaState,
-	tradeSizeState,
+	futuresTradeInputsState,
 	futuresAccountTypeState,
 	crossMarginMarginDeltaState,
 } from 'store/futures';
@@ -43,7 +43,7 @@ const ManagePosition: React.FC = () => {
 	const { data: previewTrade, error: previewError } = useRecoilValue(potentialTradeDetailsState);
 	const orderType = useRecoilValue(orderTypeState);
 	const setLeverageSide = useSetRecoilState(leverageSideState);
-	const { leverage } = useRecoilValue(tradeSizeState);
+	const { leverage } = useRecoilValue(futuresTradeInputsState);
 	const [isCancelModalOpen, setCancelModalOpen] = React.useState(false);
 	const [isConfirmationModalOpen, setConfirmationModalOpen] = useRecoilState(
 		confirmationModalOpenState

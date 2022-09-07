@@ -285,7 +285,7 @@ export type TradeFees = {
 	total: Wei;
 };
 
-export type TradeSize = {
+export type FuturesTradeInputs = {
 	nativeSize: string;
 	susdSize: string;
 	leverage: string;

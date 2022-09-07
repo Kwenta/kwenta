@@ -8,7 +8,7 @@ import {
 	currentMarketState,
 	positionState,
 	potentialTradeDetailsState,
-	tradeSizeState,
+	futuresTradeInputsState,
 } from 'store/futures';
 
 export default function PositionChart() {
@@ -22,7 +22,7 @@ export default function PositionChart() {
 	const positionHistory = futuresPositionsQuery.data ?? [];
 	const subgraphPosition = positionHistory.find((p) => p.isOpen && p.asset === marketAsset);
 
-	const { nativeSize } = useRecoilValue(tradeSizeState);
+	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
 
 	const modifiedAverage = useMemo(() => {
 		if (subgraphPosition && previewTrade && !!nativeSize) {

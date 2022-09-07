@@ -15,7 +15,7 @@ import {
 	positionState,
 	potentialTradeDetailsState,
 	tradeFeesState,
-	tradeSizeState,
+	futuresTradeInputsState,
 } from 'store/futures';
 import {
 	formatCurrency,
@@ -34,7 +34,7 @@ type Props = {
 function MarginInfoBox({ editingLeverage }: Props) {
 	const position = useRecoilValue(positionState);
 	const marketInfo = useRecoilValue(marketInfoState);
-	const { nativeSize } = useRecoilValue(tradeSizeState);
+	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
 	const potentialTrade = useRecoilValue(potentialTradeDetailsState);
 	const marginDelta = useRecoilValue(crossMarginMarginDeltaState);
 	const crossMarginFreeMargin = useRecoilValue(crossMarginAvailableMarginState);
