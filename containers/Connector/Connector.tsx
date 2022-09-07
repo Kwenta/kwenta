@@ -40,6 +40,12 @@ const useConnector = () => {
 		return [keyBy(defaultSynthetixjs.synths, 'name'), keyBy(defaultSynthetixjs.tokens, 'symbol')];
 	}, [defaultSynthetixjs]);
 
+	const l2SynthsMap = useMemo(() => {
+		if (l2Synthetixjs == null) return {};
+
+		return keyBy(l2Synthetixjs.synths, 'name');
+	}, [l2Synthetixjs]);
+
 	return {
 		isWalletConnected,
 		walletAddress,
@@ -52,6 +58,7 @@ const useConnector = () => {
 		staticMainnetProvider,
 		defaultSynthetixjs,
 		l2Synthetixjs,
+		l2SynthsMap,
 	};
 };
 
