@@ -33,6 +33,7 @@ export const initRainbowkit = () => {
 		{
 			groupName: 'Popular',
 			wallets: [
+				Safe({ chains }),
 				wallet.metaMask({ chains }),
 				wallet.rainbow({ chains }),
 				wallet.coinbase({ appName: 'Kwenta', chains }),
@@ -42,7 +43,6 @@ export const initRainbowkit = () => {
 		{
 			groupName: 'More',
 			wallets: [
-				Safe({ chains }),
 				wallet.ledger({ chains }),
 				wallet.brave({ chains, shimDisconnect: true }),
 				wallet.trust({ chains }),
@@ -51,7 +51,7 @@ export const initRainbowkit = () => {
 	]);
 
 	const wagmiClient = createClient({
-		autoConnect: false,
+		autoConnect: true,
 		connectors,
 		provider,
 	});
