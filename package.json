@@ -1,6 +1,6 @@
 {
 	"name": "kwenta",
-	"version": "3.1.2",
+	"version": "3.2.0",
 	"scripts": {
 		"dev": "next",
 		"build": "next build",
@@ -26,20 +26,22 @@
 	"dependencies": {
 		"@artsy/fresnel": "1.7.0",
 		"@eth-optimism/contracts": "^0.5.1",
+		"@gnosis.pm/safe-apps-wagmi": "^1.0.3",
 		"@kwenta/synthswap": "^1.0.3",
 		"@material-ui/core": "^4.12.3",
 		"@metamask/detect-provider": "1.2.0",
+		"@rainbow-me/rainbowkit": "0.5.1",
+		"@reach/accordion": "0.15.1",
 		"@reach/dialog": "0.15.0",
 		"@synthetixio/contracts-interface": "2.76.1",
 		"@synthetixio/optimism-networks": "2.74.2",
 		"@synthetixio/providers": "2.74.7",
-		"@synthetixio/queries": "3.0.5",
+		"@synthetixio/queries": "3.0.7",
 		"@synthetixio/transaction-notifier": "2.74.9",
 		"@synthetixio/wei": "2.74.2",
 		"@tippyjs/react": "4.1.0",
 		"axios": "0.27.2",
 		"bignumber.js": "9.0.0",
-		"bnc-onboard": "1.37.3",
 		"codegen-graph-ts": "^0.1.4",
 		"cors": "^2.8.5",
 		"date-fns": "2.21.3",
@@ -76,7 +78,8 @@
 		"slick-carousel": "1.8.1",
 		"styled-components": "5.1.1",
 		"styled-media-query": "2.1.2",
-		"unstated-next": "1.1.0"
+		"unstated-next": "1.1.0",
+		"wagmi": "0.6.2"
 	},
 	"devDependencies": {
 		"@microsoft/eslint-formatter-sarif": "2.1.7",
@@ -131,7 +134,7 @@
 		"prettier": "2.0.5",
 		"react-test-renderer": "17.0.1",
 		"typechain": "^8.1.0",
-		"typescript": "4.4.3",
+		"typescript": "4.7.2",
 		"url-loader": "4.1.0",
 		"webp-loader": "0.6.0"
 	},

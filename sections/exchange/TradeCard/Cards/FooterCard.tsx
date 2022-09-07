@@ -4,7 +4,9 @@ import { useRecoilValue } from 'recoil';
 
 import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 import Button from 'components/Button';
+import Connector from 'containers/Connector';
 import { useExchangeContext } from 'contexts/ExchangeContext';
+import useIsL2 from 'hooks/useIsL2';
 import useMarketClosed from 'hooks/useMarketClosed';
 import RedeemTxModal from 'sections/dashboard/Deprecated/RedeemTxModal';
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
@@ -21,19 +23,19 @@ import {
 	quoteCurrencyKeyState,
 	txErrorState,
 } from 'store/exchange';
-import { isL2State, isWalletConnectedState } from 'store/wallet';
 import { NoTextTransform } from 'styles/common';
 
 import SettleTransactionsCard from '../../FooterCard/SettleTransactionsCard';
 
 const FooterCard: React.FC = () => {
 	const { t } = useTranslation();
+	const { isWalletConnected } = Connector.useContainer();
+	const isL2 = useIsL2();
+
 	const quoteCurrencyKey = useRecoilValue(quoteCurrencyKeyState);
 	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
 	const quoteCurrencyAmount = useRecoilValue(quoteCurrencyAmountState);
 	const baseCurrencyAmount = useRecoilValue(baseCurrencyAmountState);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isL2 = useRecoilValue(isL2State);
 	const txError = useRecoilValue(txErrorState);
 
 	const quoteCurrencyMarketClosed = useMarketClosed(quoteCurrencyKey);
@@ -110,8 +112,8 @@ const FooterCard: React.FC = () => {
 			)}
 			{balances.length !== 0 && totalUSDBalance.gt(0) && (
 				<Button
-					variant="primary"
 					isRounded
+					noOutline
 					disabled={false}
 					onClick={handleRedeem}
 					size="lg"
@@ -152,7 +154,6 @@ const FooterCard: React.FC = () => {
 					attemptRetry={handleApprove}
 					currencyKey={quoteCurrencyKey!}
 					currencyLabel={<NoTextTransform>{quoteCurrencyKey}</NoTextTransform>}
-					txProvider={txProvider}
 				/>
 			)}
 			{openModal === 'settle' && (
@@ -162,7 +163,6 @@ const FooterCard: React.FC = () => {
 					attemptRetry={handleSettle}
 					currencyKey={baseCurrencyKey!}
 					currencyLabel={<NoTextTransform>{baseCurrencyKey}</NoTextTransform>}
-					txProvider={txProvider}
 				/>
 			)}
 		</>

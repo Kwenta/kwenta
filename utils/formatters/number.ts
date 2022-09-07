@@ -151,6 +151,9 @@ export const formatCurrency = (
 		? formatFiatCurrency(value, options)
 		: formatCryptoCurrency(value, options);
 
+export const formatDollars = (value: WeiSource, options?: FormatCurrencyOptions) =>
+	formatCurrency('sUSD', value, { sign: '$', ...options });
+
 export const formatPercent = (value: WeiSource, options?: { minDecimals: number }) => {
 	const decimals = options?.minDecimals ?? 2;
 

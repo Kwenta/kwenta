@@ -16,7 +16,6 @@ type TxSettleModalProps = {
 	attemptRetry: () => void;
 	currencyKey: string;
 	currencyLabel: ReactNode;
-	txProvider?: TxProvider | null;
 };
 
 export const TxSettleModal: FC<TxSettleModalProps> = ({
@@ -25,7 +24,6 @@ export const TxSettleModal: FC<TxSettleModalProps> = ({
 	attemptRetry,
 	currencyKey,
 	currencyLabel,
-	txProvider,
 }) => {
 	const { t } = useTranslation();
 
@@ -39,7 +37,6 @@ export const TxSettleModal: FC<TxSettleModalProps> = ({
 						width="40px"
 						height="40px"
 						data-testid="currency-img"
-						type={txProvider === '1inch' ? 'token' : 'synth'}
 					/>
 				</CurrencyItem>
 			</Currencies>

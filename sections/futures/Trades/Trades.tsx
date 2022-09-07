@@ -12,7 +12,7 @@ import { ETH_UNIT } from 'constants/network';
 import BlockExplorer from 'containers/BlockExplorer';
 import { FuturesTrade } from 'queries/futures/types';
 import { ExternalLink, GridDivCenteredRow } from 'styles/common';
-import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
+import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
 
 import { PositionSide, TradeStatus } from '../types';
@@ -51,7 +51,6 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 	return (
 		<Card>
 			<StyledTable
-				palette="primary"
 				columns={[
 					{
 						Header: (
@@ -90,7 +89,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 							const formatOptions = isDecimalFour(cellProps.row.original.asset)
 								? { sign: '$', minDecimals: DEFAULT_CRYPTO_DECIMALS }
 								: { sign: '$' };
-							return <>{formatCurrency('sUSD', cellProps.value, formatOptions)}</>;
+							return <>{formatDollars(cellProps.value, formatOptions)}</>;
 						},
 						width: 80,
 						sortable: true,
@@ -119,11 +118,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 							cellProps.row.original.pnl.eq(wei(0)) ? (
 								<PNL normal>--</PNL>
 							) : (
-								<PNL negative={cellProps.value.lt(wei(0))}>
-									{formatCurrency('sUSD', cellProps.value, {
-										sign: '$',
-									})}
-								</PNL>
+								<PNL negative={cellProps.value.lt(wei(0))}>{formatDollars(cellProps.value)}</PNL>
 							),
 						width: 80,
 						sortable: true,
@@ -135,13 +130,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						sortType: 'basic',
 						accessor: 'feesPaid',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<>
-								{cellProps.value.eq(0)
-									? '--'
-									: formatCurrency('sUSD', cellProps.value, {
-											sign: '$',
-									  })}
-							</>
+							<>{cellProps.value.eq(0) ? '--' : formatDollars(cellProps.value)}</>
 						),
 						width: 80,
 						sortable: true,

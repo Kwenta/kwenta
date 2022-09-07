@@ -2,6 +2,8 @@ import { NetworkId, NetworkNameById, Synth } from '@synthetixio/contracts-interf
 import { TFunction } from 'i18next';
 import { Dictionary } from 'lodash';
 
+import logError from 'utils/logError';
+
 export const getMarketAsset = (marketKey: FuturesMarketKey) => {
 	return markets[marketKey].asset;
 };
@@ -22,8 +24,6 @@ export const getDisplayAsset = (asset: string | null) => {
 export const getSynthDescription = (synth: string, synthsMap: Dictionary<Synth>, t: TFunction) => {
 	const parsedSynthKey = synth ? (synth[0] !== 's' ? `s${synth}` : synth) : '';
 	switch (parsedSynthKey) {
-		case 'sWTI':
-			return t('common.currency.futures-market-oil-short-name');
 		case 'sXAU':
 			return t('common.currency.futures-market-gold-short-name');
 		case 'sXAG':
@@ -34,6 +34,8 @@ export const getSynthDescription = (synth: string, synthsMap: Dictionary<Synth>,
 			return t('common.currency.futures-market-bnb-short-name');
 		case 'sDOGE':
 			return t('common.currency.futures-market-doge-short-name');
+		case 'sXMR':
+			return t('common.currency.futures-market-xmr-short-name');
 		case 'sDebtRatio':
 			return t('common.currency.futures-market-debtratio-short-name');
 		case 'sDYDX':
@@ -70,11 +72,10 @@ export enum FuturesMarketKey {
 	sEUR = 'sEUR',
 	sAPE = 'sAPE',
 	sDYDX = 'sDYDX',
-	sWTI = 'sWTI',
-	sAXS = 'sAXS',
 	sBNB = 'sBNB',
 	sDOGE = 'sDOGE',
 	sDebtRatio = 'sDebtRatio',
+	sXMR = 'sXMR',
 }
 
 export enum FuturesMarketAsset {
@@ -91,11 +92,10 @@ export enum FuturesMarketAsset {
 	EUR = 'EUR',
 	APE = 'APE',
 	DYDX = 'DYDX',
-	WTI = 'WTI',
-	AXS = 'AXS',
 	BNB = 'BNB',
 	DOGE = 'DOGE',
 	DebtRatio = 'DebtRatio',
+	XMR = 'XMR',
 }
 
 export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
@@ -112,11 +112,10 @@ export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
 	[FuturesMarketKey.sEUR]: FuturesMarketAsset.EUR,
 	[FuturesMarketKey.sAPE]: FuturesMarketAsset.APE,
 	[FuturesMarketKey.sDYDX]: FuturesMarketAsset.DYDX,
-	[FuturesMarketKey.sWTI]: FuturesMarketAsset.WTI,
-	[FuturesMarketKey.sAXS]: FuturesMarketAsset.AXS,
 	[FuturesMarketKey.sBNB]: FuturesMarketAsset.BNB,
 	[FuturesMarketKey.sDOGE]: FuturesMarketAsset.DOGE,
 	[FuturesMarketKey.sDebtRatio]: FuturesMarketAsset.DebtRatio,
+	[FuturesMarketKey.sXMR]: FuturesMarketAsset.XMR,
 } as const;
 
 export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
@@ -133,11 +132,10 @@ export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 	[FuturesMarketAsset.EUR]: FuturesMarketKey.sEUR,
 	[FuturesMarketAsset.APE]: FuturesMarketKey.sAPE,
 	[FuturesMarketAsset.DYDX]: FuturesMarketKey.sDYDX,
-	[FuturesMarketAsset.WTI]: FuturesMarketKey.sWTI,
-	[FuturesMarketAsset.AXS]: FuturesMarketKey.sAXS,
 	[FuturesMarketAsset.BNB]: FuturesMarketKey.sBNB,
 	[FuturesMarketAsset.DOGE]: FuturesMarketKey.sDOGE,
 	[FuturesMarketAsset.DebtRatio]: FuturesMarketKey.sDebtRatio,
+	[FuturesMarketAsset.XMR]: FuturesMarketKey.sXMR,
 } as const;
 
 export interface FuturesMarketConfig {
@@ -161,52 +159,52 @@ export const markets: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sLINK]: {
 		key: FuturesMarketKey.sLINK,
 		asset: FuturesMarketAsset.sLINK,
-		supports: 'both',
+		supports: 'mainnet',
 	},
 	[FuturesMarketKey.sSOL]: {
 		key: FuturesMarketKey.sSOL,
 		asset: FuturesMarketAsset.SOL,
-		supports: 'both',
+		supports: 'mainnet',
 	},
 	[FuturesMarketKey.sAVAX]: {
 		key: FuturesMarketKey.sAVAX,
 		asset: FuturesMarketAsset.AVAX,
-		supports: 'both',
+		supports: 'mainnet',
 	},
 	[FuturesMarketKey.sAAVE]: {
 		key: FuturesMarketKey.sAAVE,
 		asset: FuturesMarketAsset.AAVE,
-		supports: 'both',
+		supports: 'mainnet',
 	},
 	[FuturesMarketKey.sUNI]: {
 		key: FuturesMarketKey.sUNI,
 		asset: FuturesMarketAsset.UNI,
-		supports: 'both',
+		supports: 'mainnet',
 	},
 	[FuturesMarketKey.sMATIC]: {
 		key: FuturesMarketKey.sMATIC,
 		asset: FuturesMarketAsset.MATIC,
-		supports: 'both',
+		supports: 'mainnet',
 	},
 	[FuturesMarketKey.sXAU]: {
 		key: FuturesMarketKey.sXAU,
 		asset: FuturesMarketAsset.XAU,
-		supports: 'both',
+		supports: 'mainnet',
 	},
 	[FuturesMarketKey.sXAG]: {
 		key: FuturesMarketKey.sXAG,
 		asset: FuturesMarketAsset.XAG,
-		supports: 'both',
+		supports: 'mainnet',
 	},
 	[FuturesMarketKey.sEUR]: {
 		key: FuturesMarketKey.sEUR,
 		asset: FuturesMarketAsset.EUR,
-		supports: 'both',
+		supports: 'mainnet',
 	},
 	[FuturesMarketKey.sAPE]: {
 		key: FuturesMarketKey.sAPE,
 		asset: FuturesMarketAsset.APE,
-		supports: 'both',
+		supports: 'mainnet',
 	},
 	[FuturesMarketKey.sDYDX]: {
 		key: FuturesMarketKey.sDYDX,
@@ -228,15 +226,10 @@ export const markets: Record<FuturesMarketKey, FuturesMarketConfig> = {
 		asset: FuturesMarketAsset.DebtRatio,
 		supports: 'mainnet',
 	},
-	[FuturesMarketKey.sWTI]: {
-		key: FuturesMarketKey.sWTI,
-		asset: FuturesMarketAsset.WTI,
-		supports: 'testnet',
-	},
-	[FuturesMarketKey.sAXS]: {
-		key: FuturesMarketKey.sAXS,
-		asset: FuturesMarketAsset.AXS,
-		supports: 'testnet',
+	[FuturesMarketKey.sXMR]: {
+		key: FuturesMarketKey.sXMR,
+		asset: FuturesMarketAsset.XMR,
+		supports: 'mainnet',
 	},
 };
 
@@ -256,9 +249,10 @@ export const marketsForNetwork = (networkId: NetworkId) => {
 	switch (network) {
 		case 'mainnet-ovm':
 			return mainnetMarkets;
-		case 'kovan-ovm':
+		case 'goerli-ovm':
 			return testnetMarkets;
 		default:
-			throw new Error('You cannot use futures on this network.');
+			logError('You cannot use futures on this network.');
+			return [];
 	}
 };

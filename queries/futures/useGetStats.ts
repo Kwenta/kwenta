@@ -1,22 +1,23 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { appReadyState } from 'store/app';
-import { isL2State, networkState } from 'store/wallet';
+import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
 
-import { FUTURES_ENDPOINT_MAINNET } from './constants';
+import { FUTURES_ENDPOINT_OP_MAINNET } from './constants';
 import { FuturesStat } from './types';
 import { getFuturesEndpoint } from './utils';
 
 const PAGE_SIZE = 500;
 
 const useGetStats = (homepage?: boolean, options?: UseQueryOptions<any>) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
-	const futuresEndpoint = homepage ? FUTURES_ENDPOINT_MAINNET : getFuturesEndpoint(network);
+	const { network } = Connector.useContainer();
+	const isL2 = useIsL2();
+	const futuresEndpoint = homepage
+		? FUTURES_ENDPOINT_OP_MAINNET
+		: getFuturesEndpoint(network?.id as NetworkId);
 
 	const query = async (existing: FuturesStat[], skip: number): Promise<FuturesStat[]> => {
 		const response = await request(
@@ -45,9 +46,9 @@ const useGetStats = (homepage?: boolean, options?: UseQueryOptions<any>) => {
 	};
 
 	return useQuery({
-		queryKey: QUERY_KEYS.Futures.Stats(network.id),
+		queryKey: QUERY_KEYS.Futures.Stats(network?.id as NetworkId),
 		queryFn: () => query([], 0),
-		enabled: homepage ? isAppReady : isAppReady && isL2,
+		enabled: homepage || isL2,
 		...options,
 	});
 };

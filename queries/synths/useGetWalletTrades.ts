@@ -1,25 +1,23 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { appReadyState } from 'store/app';
-import { networkState } from 'store/wallet';
+import Connector from 'containers/Connector';
+import { getRatesEndpoint } from 'queries/rates/utils';
 import logError from 'utils/logError';
 
 import { SynthsVolumes } from './type';
-import { getSynthsEndpoint } from './utils';
 
 const useGetWalletTrades = (
 	walletAddress: string,
 	options?: UseQueryOptions<SynthsVolumes | null>
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const network = useRecoilValue(networkState);
-	const synthsEndpoint = getSynthsEndpoint(network);
+	const { network } = Connector.useContainer();
+	const synthsEndpoint = getRatesEndpoint(network?.id as NetworkId);
 
 	return useQuery<any>(
-		QUERY_KEYS.Trades.WalletTrades(walletAddress, network.id),
+		QUERY_KEYS.Trades.WalletTrades(walletAddress, network?.id as NetworkId),
 		async () => {
 			try {
 				const response = await request(
@@ -54,15 +52,16 @@ const useGetWalletTrades = (
 							}
 						}
 					`,
-					{ walletAddress: walletAddress }
+					{ walletAddress: walletAddress.toLowerCase() }
 				);
+
 				return response;
 			} catch (e) {
 				logError(e);
 				return null;
 			}
 		},
-		{ enabled: isAppReady && !!walletAddress, ...options }
+		{ enabled: !!walletAddress, ...options }
 	);
 };
 
