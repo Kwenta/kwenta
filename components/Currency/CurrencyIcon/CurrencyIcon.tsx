@@ -30,6 +30,7 @@ import UNIIcon from 'assets/png/currencies/sUNI.png';
 import USDIcon from 'assets/png/currencies/sUSD.png';
 import XAGIcon from 'assets/png/currencies/sXAG.png';
 import XAUIcon from 'assets/png/currencies/sXAU.png';
+import XMRIcon from 'assets/png/currencies/sXMR.png';
 import DeprecatedXIcon from 'assets/svg/app/deprecated-x.svg';
 import { CRYPTO_CURRENCY_MAP, CurrencyKey, SynthsName } from 'constants/currency';
 import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
@@ -94,6 +95,7 @@ const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = {
 	sBNB: BNBIcon,
 	sDOGE: DOGEIcon,
 	sDebtRatio: DEBTIcon,
+	sXMR: XMRIcon,
 	[CRYPTO_CURRENCY_MAP.SNX]: SNXIcon,
 };
 
