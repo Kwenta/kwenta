@@ -114,7 +114,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 						row.original.id !== NO_VALUE
 							? isL2Mainnet
 								? window.open(`${EXTERNAL_LINKS.Explorer.Optimism}/${row.original.id}`)
-								: window.open(`${EXTERNAL_LINKS.Explorer.OptimismKovan}/${row.original.id}`)
+								: window.open(`${EXTERNAL_LINKS.Explorer.OptimismGoerli}/${row.original.id}`)
 							: undefined
 					}
 					highlightRowsOnHover

@@ -43,7 +43,7 @@ export const EXTERNAL_LINKS = {
 	},
 	Explorer: {
 		Optimism: 'https://optimistic.etherscan.io/tx',
-		OptimismKovan: 'https://kovan-optimistic.etherscan.io/tx',
+		OptimismGoerli: 'https://goerli-optimism.etherscan.io/tx',
 	},
 	Optimism: {
 		Home: 'https://optimism.io/',

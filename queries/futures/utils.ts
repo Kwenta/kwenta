@@ -10,11 +10,7 @@ import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 import { FuturesMarketAsset } from 'utils/futures';
 
-import {
-	FUTURES_ENDPOINT_OP_MAINNET,
-	FUTURES_ENDPOINT_OP_GOERLI,
-	SECONDS_PER_DAY,
-} from './constants';
+import { SECONDS_PER_DAY, FUTURES_ENDPOINTS } from './constants';
 import { FuturesMarginTransferResult, FuturesTradeResult } from './subgraph';
 import {
 	FuturesPosition,
@@ -31,11 +27,7 @@ import {
 } from './types';
 
 export const getFuturesEndpoint = (networkId: NetworkId): string => {
-	return networkId === chain.optimism.id
-		? FUTURES_ENDPOINT_OP_MAINNET
-		: networkId === chain.optimismGoerli.id
-		? FUTURES_ENDPOINT_OP_GOERLI
-		: FUTURES_ENDPOINT_OP_MAINNET;
+	return FUTURES_ENDPOINTS[networkId] || FUTURES_ENDPOINTS[chain.optimism.id];
 };
 
 export const getFuturesMarketContract = (asset: string | null, contracts: ContractsMap) => {
