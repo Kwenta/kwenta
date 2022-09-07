@@ -190,7 +190,7 @@ export const Table: FC<TableProps> = ({
 					{!!noResultsMessage && !isLoading && data.length === 0 && noResultsMessage}
 				</ReactTable>
 			</TableContainer>
-			{!showShortList && data.length > (pageSize ? pageSize : MAX_PAGE_ROWS) ? (
+			{!showShortList && data.length > (pageSize ?? MAX_PAGE_ROWS) ? (
 				<Pagination
 					pageIndex={pageIndex}
 					pageCount={pageCount}

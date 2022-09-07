@@ -17,7 +17,6 @@ import { formatNumber } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
 
 type TradesHistoryTableProps = {
-	numberOfTrades: number;
 	mobile?: boolean;
 };
 
@@ -27,7 +26,7 @@ enum TableColumnAccessor {
 	Time = 'time',
 }
 
-const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobile }) => {
+const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 	const { t } = useTranslation();
 	const currencyKey = useRecoilValue(currentMarketState);
 	const futuresTradesQuery = useGetFuturesTrades(currencyKey);
@@ -104,7 +103,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 
 	return (
 		<HistoryContainer mobile={mobile}>
-			<TableContainer>
+			<div>
 				<StyledTable
 					data={data}
 					isLoading={futuresTradesQuery.isLoading}
@@ -181,7 +180,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 						},
 					]}
 				/>
-			</TableContainer>
+			</div>
 		</HistoryContainer>
 	);
 };
@@ -202,8 +201,6 @@ const HistoryContainer = styled.div<{ mobile?: boolean }>`
 			margin-bottom: 0;
 		`}
 `;
-
-const TableContainer = styled.div``;
 
 const TableAlignment = css`
 	justify-content: space-between;
