@@ -1,5 +1,7 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
+import mainnetOneInchTokenList from 'data/token-lists/mainnet.json';
+import optimismOneInchTokenList from 'data/token-lists/optimism.json';
 import orderBy from 'lodash/orderBy';
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +15,7 @@ import { CurrencyKey, CATEGORY_MAP } from 'constants/currency';
 import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
-import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
+import useIsL2 from 'hooks/useIsL2';
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
 import { FlexDivCentered } from 'styles/common';
 import media from 'styles/media';
@@ -55,9 +57,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 			: allSynths;
 
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery(walletAddress);
-	const synthBalances = synthsWalletBalancesQuery.isSuccess
-		? synthsWalletBalancesQuery.data ?? null
-		: null;
+	const synthBalances = synthsWalletBalancesQuery.data ?? null;
 
 	const categoryFilteredSynths = useMemo(
 		() =>
@@ -104,16 +104,22 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 
 	const synthKeys = useMemo(() => synthsResults.map((s) => s.name), [synthsResults]);
 
-	const oneInchQuery = useOneInchTokenList({ enabled: oneInchEnabled });
-	const oneInchTokenList = useMemo(() => {
-		if (!oneInchQuery.isSuccess || !oneInchQuery.data) return [];
-		return oneInchQuery.data.tokens.filter((i) => !synthKeys.includes(i.symbol as CurrencyKey));
-	}, [oneInchQuery.isSuccess, oneInchQuery.data, synthKeys]);
+	const isL2 = useIsL2();
+
+	const tokens = useMemo(
+		() => (isL2 ? optimismOneInchTokenList.tokens : mainnetOneInchTokenList.tokens),
+		[isL2]
+	);
+
+	const oneInchTokenList: any = useMemo(
+		() => tokens.filter((i) => !synthKeys.includes(i.symbol as CurrencyKey)),
+		[tokens, synthKeys]
+	);
 
 	const searchFilteredTokens = useDebouncedMemo(
 		() =>
 			assetSearch
-				? oneInchTokenList.filter(({ name, symbol }) => {
+				? oneInchTokenList.filter(({ name, symbol }: any) => {
 						const assetSearchLC = assetSearch.toLowerCase();
 						return (
 							name.toLowerCase().includes(assetSearchLC) ||
@@ -128,7 +134,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	const oneInchTokensPaged = useMemo(() => {
 		if (!oneInchEnabled || (synthCategory && synthCategory !== 'crypto')) return [];
 		const items =
-			searchFilteredTokens.map((t) => ({
+			searchFilteredTokens.map((t: any) => ({
 				...t,
 				isSynth: false,
 			})) || [];
@@ -243,9 +249,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 								</span>
 								<span>{t('modals.select-currency.header.holdings')}</span>
 							</TokensHeader>
-							{oneInchQuery.isLoading ? (
-								<Loader />
-							) : oneInchTokensPaged.length > 0 ? (
+							{oneInchTokensPaged.length > 0 ? (
 								oneInchTokensPaged.map((token) => {
 									const currencyKey = token.symbol;
 									return (

@@ -1,5 +1,7 @@
 import useSynthetixQueries, { Token } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
+import mainnetOneInchTokenList from 'data/token-lists/mainnet.json';
+import optimismOneInchTokenList from 'data/token-lists/optimism.json';
 import { BigNumber, ethers } from 'ethers';
 import produce from 'immer';
 import get from 'lodash/get';
@@ -34,7 +36,6 @@ import useExchangeFeeRateQuery from 'queries/synths/useExchangeFeeRateQuery';
 import useNumEntriesQuery from 'queries/synths/useNumEntriesQuery';
 import useRedeemableDeprecatedSynthsQuery from 'queries/synths/useRedeemableDeprecatedSynthsQuery';
 import useSynthBalances from 'queries/synths/useSynthBalances';
-import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
 import {
@@ -139,10 +140,11 @@ const useExchange = ({
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
-	const oneInchQuery = useOneInchTokenList();
+	const tokenList = isL2 ? optimismOneInchTokenList.tokens : mainnetOneInchTokenList.tokens;
+	const oneInchTokensMap: any = isL2
+		? optimismOneInchTokenList.tokensMap
+		: mainnetOneInchTokenList.tokensMap;
 
-	const tokenList = oneInchQuery.data?.tokens || [];
-	const oneInchTokensMap = oneInchQuery.data?.tokensMap || null;
 	const allTokensMap = useMemo(() => ({ ...oneInchTokensMap, ...synthTokensMap }), [
 		oneInchTokensMap,
 		synthTokensMap,
@@ -151,7 +153,7 @@ const useExchange = ({
 	const txProvider: TxProvider | null = useMemo(() => {
 		if (!baseCurrencyKey || !quoteCurrencyKey) return null;
 		if (synthsMap[baseCurrencyKey] && synthsMap[quoteCurrencyKey]) return 'synthetix';
-		if (oneInchTokensMap?.[baseCurrencyKey] && oneInchTokensMap?.[quoteCurrencyKey]) return '1inch';
+		if (oneInchTokensMap[baseCurrencyKey] && oneInchTokensMap[quoteCurrencyKey]) return '1inch';
 		return 'synthswap';
 	}, [synthsMap, baseCurrencyKey, quoteCurrencyKey, oneInchTokensMap]);
 
@@ -179,14 +181,12 @@ const useExchange = ({
 
 	const quoteDecimals = get(allTokensMap, [quoteCurrencyKey!, 'decimals'], undefined);
 
-	const selectedTokens = tokenList.filter(
+	const selectedTokens: any = tokenList.filter(
 		(t) => t.symbol === baseCurrencyKey || t.symbol === quoteCurrencyKey
 	);
 
 	const tokensWalletBalancesQuery = useTokensBalancesQuery(selectedTokens, walletAddress || '');
-	const tokenBalances = tokensWalletBalancesQuery.isSuccess
-		? tokensWalletBalancesQuery.data ?? null
-		: null;
+	const tokenBalances = tokensWalletBalancesQuery.data ?? null;
 
 	const quoteCurrencyTokenAddress = useMemo(
 		(): Token['address'] | null =>
@@ -212,28 +212,18 @@ const useExchange = ({
 		quoteCurrencyTokenAddress != null && baseCurrencyTokenAddress != null
 			? [quoteCurrencyTokenAddress, baseCurrencyTokenAddress]
 			: [],
-		{
-			enabled: txProvider !== 'synthetix',
-		}
+		{ enabled: txProvider !== 'synthetix' }
 	);
 
-	const coinGeckoPrices = coinGeckoTokenPricesQuery.isSuccess
-		? coinGeckoTokenPricesQuery.data ?? null
-		: null;
+	const coinGeckoPrices = coinGeckoTokenPricesQuery.data ?? null;
 
 	const oneInchQuoteQuery = use1InchQuoteQuery(
 		txProvider,
 		quoteCurrencyKey && quoteCurrencyTokenAddress
-			? {
-					key: quoteCurrencyKey,
-					address: quoteCurrencyTokenAddress,
-			  }
+			? { key: quoteCurrencyKey, address: quoteCurrencyTokenAddress }
 			: null,
 		baseCurrencyKey && baseCurrencyTokenAddress
-			? {
-					key: baseCurrencyKey,
-					address: baseCurrencyTokenAddress,
-			  }
+			? { key: baseCurrencyKey, address: baseCurrencyTokenAddress }
 			: null,
 		quoteCurrencyAmountDebounced,
 		quoteDecimals
@@ -243,9 +233,7 @@ const useExchange = ({
 		enabled: txProvider === '1inch',
 	});
 
-	const oneInchApproveAddress = oneInchApproveAddressQuery.isSuccess
-		? oneInchApproveAddressQuery.data ?? null
-		: null;
+	const oneInchApproveAddress = oneInchApproveAddressQuery.data ?? null;
 
 	const approveAddress =
 		txProvider === '1inch' ? oneInchApproveAddress : SYNTH_SWAP_OPTIMISM_ADDRESS;
@@ -258,19 +246,17 @@ const useExchange = ({
 		return null;
 	}, [quoteCurrencyKey, createERC20Contract, needsApproval, allTokensMap]);
 
-	const exchangeFeeRate = exchangeFeeRateQuery.isSuccess ? exchangeFeeRateQuery.data ?? null : null;
-	const baseFeeRate = baseFeeRateQuery.isSuccess ? baseFeeRateQuery.data ?? null : null;
+	const exchangeFeeRate = exchangeFeeRateQuery.data ?? null;
+	const baseFeeRate = baseFeeRateQuery.data ?? null;
 
-	const feeReclaimPeriodInSeconds = feeReclaimPeriodQuery.isSuccess
-		? feeReclaimPeriodQuery.data ?? 0
-		: 0;
+	const feeReclaimPeriodInSeconds = feeReclaimPeriodQuery.data ?? 0;
 
-	const numEntries = numEntriesQuery.isSuccess ? numEntriesQuery.data ?? null : null;
+	const numEntries = numEntriesQuery.data ?? null;
 
 	const baseCurrency = baseCurrencyKey != null ? synthsMap[baseCurrencyKey]! : null;
 	const quoteCurrency = quoteCurrencyKey != null ? synthsMap[quoteCurrencyKey]! : null;
 
-	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
+	const exchangeRates = exchangeRatesQuery.data ?? null;
 
 	const [quoteRate, baseRate] = useMemo(
 		() => newGetExchangeRatesTupleForCurrencies(exchangeRates, quoteCurrencyKey, baseCurrencyKey),
@@ -380,9 +366,7 @@ const useExchange = ({
 
 	const settlementWaitingPeriodQuery = useFeeReclaimPeriodQuery(baseCurrencyKey, walletAddress);
 
-	const settlementWaitingPeriodInSeconds = settlementWaitingPeriodQuery.isSuccess
-		? settlementWaitingPeriodQuery.data ?? 0
-		: 0;
+	const settlementWaitingPeriodInSeconds = settlementWaitingPeriodQuery.data ?? 0;
 
 	const settlementDisabledReason =
 		settlementWaitingPeriodInSeconds > 0
@@ -1045,7 +1029,7 @@ const useExchange = ({
 			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [routingEnabled, synthsMap, oneInchQuery.data]);
+	}, [routingEnabled, synthsMap]);
 
 	const slippagePercent = useMemo(() => {
 		if (txProvider === '1inch' && totalTradePrice.gt(0) && estimatedBaseTradePrice.gt(0)) {

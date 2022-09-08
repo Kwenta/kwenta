@@ -21,7 +21,8 @@
 		"postpublish": "pinst --enable",
 		"storybook": "start-storybook -p 6006",
 		"build-storybook": "build-storybook",
-		"generate-types": "typechain --target ethers-v5 --out-dir ./lib/abis/types './lib/abis/*.json'"
+		"generate-types": "typechain --target ethers-v5 --out-dir ./lib/abis/types './lib/abis/*.json'",
+		"load-extras": "node scripts/load-extras.js"
 	},
 	"dependencies": {
 		"@artsy/fresnel": "1.7.0",
