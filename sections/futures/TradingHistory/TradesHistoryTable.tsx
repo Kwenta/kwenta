@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import Table from 'components/Table';
-import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { NO_VALUE } from 'constants/placeholder';
 import { FuturesTrade } from 'queries/futures/types';
@@ -14,10 +14,9 @@ import { currentMarketState } from 'store/futures';
 import { isL2MainnetState } from 'store/wallet';
 import { CapitalizedText, NumericValue } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
-import { isEurForex } from 'utils/futures';
+import { isDecimalFour } from 'utils/futures';
 
 type TradesHistoryTableProps = {
-	numberOfTrades: number;
 	mobile?: boolean;
 };
 
@@ -27,7 +26,7 @@ enum TableColumnAccessor {
 	Time = 'time',
 }
 
-const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobile }) => {
+const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 	const { t } = useTranslation();
 	const currencyKey = useRecoilValue(currentMarketState);
 	const futuresTradesQuery = useGetFuturesTrades(currencyKey);
@@ -41,16 +40,19 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 
 		const futuresTrades =
 			futuresTradesPages.length > 0
-				? futuresTradesPages.flat().map((trade: FuturesTrade | null) => {
-						return {
-							value: Number(trade?.price),
-							amount: Number(trade?.size),
-							time: Number(trade?.timestamp),
-							id: trade?.txnHash,
-							currencyKey,
-							orderType: trade?.orderType,
-						};
-				  })
+				? futuresTradesPages
+						.flat()
+						.filter((value) => !!value)
+						.map((trade: FuturesTrade | null) => {
+							return {
+								value: Number(trade?.price),
+								amount: Number(trade?.size),
+								time: Number(trade?.timestamp),
+								id: trade?.txnHash,
+								currencyKey,
+								orderType: trade?.orderType,
+							};
+						})
 				: [];
 		return [...new Set(futuresTrades)];
 	}, [futuresTradesQuery.data, currencyKey]);
@@ -58,7 +60,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 	const observer = useRef<IntersectionObserver | null>(null);
 	const lastElementRef = useCallback(
 		(node) => {
-			if (futuresTradesQuery.isLoading) return;
+			if (futuresTradesQuery.isLoading || data.length < 16) return;
 			if (observer) {
 				if (observer.current) {
 					observer.current.disconnect();
@@ -74,7 +76,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 				observer.current?.observe(node);
 			}
 		},
-		[futuresTradesQuery]
+		[futuresTradesQuery, data]
 	);
 
 	const calTimeDelta = (time: number) => {
@@ -101,7 +103,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 
 	return (
 		<HistoryContainer mobile={mobile}>
-			<TableContainer>
+			<div>
 				<StyledTable
 					data={data}
 					isLoading={futuresTradesQuery.isLoading}
@@ -111,7 +113,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 						row.original.id !== NO_VALUE
 							? isL2Mainnet
 								? window.open(`${EXTERNAL_LINKS.Explorer.Optimism}/${row.original.id}`)
-								: window.open(`${EXTERNAL_LINKS.Explorer.OptimismKovan}/${row.original.id}`)
+								: window.open(`${EXTERNAL_LINKS.Explorer.OptimismGoerli}/${row.original.id}`)
 							: undefined
 					}
 					highlightRowsOnHover
@@ -147,8 +149,8 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 							Header: <TableHeader>{t('futures.market.history.price-label')}</TableHeader>,
 							accessor: TableColumnAccessor.Price,
 							Cell: (cellProps: CellProps<any>) => {
-								const formatOptions = isEurForex(cellProps.row.original.currencyKey)
-									? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
+								const formatOptions = isDecimalFour(cellProps.row.original.currencyKey)
+									? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
 									: {};
 
 								return (
@@ -178,7 +180,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 						},
 					]}
 				/>
-			</TableContainer>
+			</div>
 		</HistoryContainer>
 	);
 };
@@ -199,8 +201,6 @@ const HistoryContainer = styled.div<{ mobile?: boolean }>`
 			margin-bottom: 0;
 		`}
 `;
-
-const TableContainer = styled.div``;
 
 const TableAlignment = css`
 	justify-content: space-between;

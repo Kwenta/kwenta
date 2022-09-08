@@ -1,8 +1,16 @@
-import { Rates } from '@synthetixio/queries';
+import { Rates, Token } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 
-import { CurrencyKey, Synths, CRYPTO_CURRENCY_MAP, FIAT_SYNTHS } from 'constants/currency';
+import {
+	CurrencyKey,
+	Synths,
+	CRYPTO_CURRENCY_MAP,
+	FIAT_SYNTHS,
+	ETH_ADDRESS,
+	ETH_COINGECKO_ADDRESS,
+} from 'constants/currency';
 
+import { PriceResponse } from '../queries/coingecko/types';
 import { FuturesMarketKey } from './futures';
 
 export const isSynth = (currencyKey: CurrencyKey) => !!Synths[currencyKey];
@@ -52,6 +60,46 @@ export const newGetExchangeRatesForCurrencies = (
 		rates[quote] === undefined
 		? wei(0)
 		: rates[base].div(rates[quote]);
+};
+
+export const newGetExchangeRatesTupleForCurrencies = (
+	rates: Rates | null,
+	base: CurrencyKey | FuturesMarketKey | string | null,
+	quote: CurrencyKey | FuturesMarketKey | null
+) => {
+	base = new Set([
+		FuturesMarketKey.sAPE,
+		FuturesMarketKey.sDYDX,
+		FuturesMarketKey.sXAU,
+		FuturesMarketKey.sXAG,
+	]).has(base as FuturesMarketKey)
+		? synthToAsset(base as CurrencyKey)
+		: base;
+	const baseRate =
+		rates == null || base == null || rates[base] === undefined ? wei(0) : rates[base];
+	const quoteRate =
+		rates == null || quote == null || rates[quote] === undefined ? wei(0) : rates[quote];
+
+	return [baseRate, quoteRate];
+};
+
+export const newGetCoinGeckoPricesForCurrencies = (
+	coinGeckoPrices: PriceResponse | null,
+	baseCurrencyTokenAddress: Token['address'] | null
+) => {
+	if (!coinGeckoPrices || !baseCurrencyTokenAddress) {
+		return wei(0);
+	}
+	const base = (baseCurrencyTokenAddress === ETH_ADDRESS
+		? ETH_COINGECKO_ADDRESS
+		: baseCurrencyTokenAddress
+	).toLowerCase();
+
+	if (!coinGeckoPrices[base]) {
+		return wei(0);
+	}
+
+	return wei(coinGeckoPrices[base].usd);
 };
 
 export const getCurrencyKeyURLPath = (currencyKey: CurrencyKey) =>

@@ -1,27 +1,26 @@
-import { CurrencyKey } from '@synthetixio/contracts-interface';
+import { CurrencyKey, NetworkId } from '@synthetixio/contracts-interface';
 import { Balances, SynthBalancesMap } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
 import orderBy from 'lodash/orderBy';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { balancesState } from 'store/futures';
-import { networkState, walletAddressState } from 'store/wallet';
+
+import { notNill } from './utils';
 
 type SynthBalancesTuple = [string[], ethers.BigNumber[], ethers.BigNumber[]];
 
 const useSynthBalances = (options?: UseQueryOptions<Balances>) => {
-	const walletAddress = useRecoilValue(walletAddressState);
-	const network = useRecoilValue(networkState);
+	const { network, defaultSynthetixjs: synthetixjs, walletAddress } = Connector.useContainer();
+
 	const [, setBalances] = useRecoilState(balancesState);
 
-	const { synthetixjs } = Connector.useContainer();
-
 	return useQuery<Balances>(
-		QUERY_KEYS.Synths.Balances(network.id, walletAddress),
+		QUERY_KEYS.Synths.Balances(network?.id as NetworkId, walletAddress),
 		async () => {
 			if (!synthetixjs) {
 				// This should never happen since the query is not enabled when synthetixjs is undefined
@@ -57,7 +56,7 @@ const useSynthBalances = (options?: UseQueryOptions<Balances>) => {
 			const balances = {
 				balancesMap: balancesMap,
 				balances: orderBy(
-					Object.values(balancesMap),
+					Object.values(balancesMap).filter(notNill),
 					(balance) => balance.usdBalance.toNumber(),
 					'desc'
 				),

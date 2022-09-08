@@ -1,17 +1,14 @@
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Table from 'components/Table';
-import { Synths } from 'constants/currency';
 import { DEFAULT_LEADERBOARD_ROWS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import useENSAvatar from 'hooks/useENSAvatar';
-import { walletAddressState } from 'store/wallet';
 
 import { AccountStat, getMedal, PIN, StyledTrader } from '../common';
 
@@ -25,9 +22,7 @@ type AllTimeProps = {
 
 const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader, compact }) => {
 	const { t } = useTranslation();
-	const walletAddress = useRecoilValue(walletAddressState);
-
-	const { staticMainnetProvider } = Connector.useContainer();
+	const { staticMainnetProvider, walletAddress } = Connector.useContainer();
 
 	if (compact) {
 		const ownPosition = stats.findIndex((i: { account: string }) => {
@@ -166,7 +161,7 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 									sortType: 'basic',
 									Cell: (cellProps: CellProps<any>) => (
 										<Currency.Price
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.totalVolume}
 											sign={'$'}
 											conversionRate={1}
@@ -181,7 +176,7 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 									sortType: 'basic',
 									Cell: (cellProps: CellProps<any>) => (
 										<ColorCodedPrice
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.pnl}
 											sign={'$'}
 											conversionRate={1}
@@ -253,11 +248,7 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 							Header: () => <TableHeader>{t('leaderboard.leaderboard.table.pnl')}</TableHeader>,
 							accessor: 'pnl',
 							Cell: (cellProps: CellProps<any>) => (
-								<ColorCodedPrice
-									currencyKey={Synths.sUSD}
-									price={cellProps.row.original.pnl}
-									sign="$"
-								/>
+								<ColorCodedPrice currencyKey={'sUSD'} price={cellProps.row.original.pnl} sign="$" />
 							),
 							width: 125,
 						},

@@ -30,27 +30,26 @@ import {
 	tradeSizeState,
 	tradeSizeSUSDState,
 } from 'store/futures';
-import { gasSpeedState } from 'store/wallet';
 import { zeroBN } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
 import useCrossMarginAccountContracts from './useCrossMarginContracts';
+import useIsL2 from './useIsL2';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
 const useFuturesData = () => {
 	const router = useRouter();
-	const { synthetixjs } = Connector.useContainer();
-	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
+	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
+	const isL2 = useIsL2();
+	const { useSynthetixTxn } = useSynthetixQueries();
 
 	const marketAsset = useRecoilValue(currentMarketState);
 	const crossMarginAccountOverview = useGetCrossMarginAccountOverview();
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { handleRefetch } = useRefetchContext();
-
-	const ethGasPriceQuery = useEthGasPriceQuery();
 
 	const [leverage, setLeverage] = useRecoilState(leverageState);
 	const [tradeSize, setTradeSize] = useRecoilState(tradeSizeState);
@@ -63,7 +62,7 @@ const useFuturesData = () => {
 	const maxLeverageValue = useRecoilValue(maxLeverageState);
 	const position = useRecoilValue(positionState);
 	const market = useRecoilValue(marketInfoState);
-	const gasSpeed = useRecoilValue(gasSpeedState);
+
 	const { selectedFuturesAddress, crossMarginAvailable, selectedAccountType } = useRecoilValue(
 		futuresAccountState
 	);
@@ -81,8 +80,6 @@ const useFuturesData = () => {
 	const positionLeverage = position?.position?.leverage ?? wei(0);
 	const positionSide = position?.position?.side;
 	const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
-
-	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed];
 
 	const remainingMargin: Wei = useMemo(() => {
 		if (selectedAccountType === 'isolated_margin') {
@@ -173,7 +170,7 @@ const useFuturesData = () => {
 		`FuturesMarket${getDisplayAsset(marketAsset)}`,
 		orderType === 1 ? 'submitNextPriceOrderWithTracking' : 'modifyPositionWithTracking',
 		[sizeDelta.toBN(), KWENTA_TRACKING_CODE],
-		gasPrice,
+		{},
 		{
 			enabled:
 				selectedAccountType === 'isolated_margin' &&
@@ -229,7 +226,8 @@ const useFuturesData = () => {
 				!marketAsset ||
 				!selectedFuturesAddress ||
 				!isLeverageValueCommitted ||
-				!remainingMargin
+				!remainingMargin ||
+				!isL2
 			) {
 				return;
 			}
@@ -263,6 +261,7 @@ const useFuturesData = () => {
 		sizeDelta,
 		remainingMargin,
 		setFeeCost,
+		isL2,
 	]);
 
 	const previewTrade = useRecoilValue(potentialTradeDetailsState);

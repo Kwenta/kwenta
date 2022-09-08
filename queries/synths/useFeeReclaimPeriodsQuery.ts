@@ -1,4 +1,4 @@
-import { CurrencyKey } from '@synthetixio/contracts-interface';
+import { CurrencyKey, NetworkId } from '@synthetixio/contracts-interface';
 import { SynthFeeAndWaitingPeriod } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { Provider, Contract } from 'ethcall';
@@ -24,10 +24,10 @@ const useFeeReclaimPeriodsQuery = (
 	walletAddress: string,
 	options?: UseQueryOptions<SynthFeeAndWaitingPeriod[]>
 ) => {
-	const { synthetixjs, network, provider } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs, network, provider } = Connector.useContainer();
 
 	return useQuery<SynthFeeAndWaitingPeriod[]>(
-		['synths', 'feeReclaimPeriods', network.id],
+		['synths', 'feeReclaimPeriods', network?.id as NetworkId],
 		async () => {
 			if (!synthetixjs) return [];
 			await ethcallProvider.init(provider as any);

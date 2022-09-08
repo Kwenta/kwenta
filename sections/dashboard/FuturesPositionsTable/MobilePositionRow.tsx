@@ -4,11 +4,10 @@ import styled, { css } from 'styled-components';
 import { border } from 'components/Button';
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
-import { Synths } from 'constants/currency';
-import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { PositionSide } from 'sections/futures/types';
 import { formatNumber } from 'utils/formatters/number';
-import { getDisplayAsset, isEurForex } from 'utils/futures';
+import { getDisplayAsset, isDecimalFour } from 'utils/futures';
 
 type MobilePositionRowProps = {
 	row: any;
@@ -36,21 +35,21 @@ const MobilePositionRow: React.FC<MobilePositionRowProps> = ({ row, onClick }) =
 				<div>
 					<div>
 						<Currency.Price
-							currencyKey={Synths.sUSD}
+							currencyKey={'sUSD'}
 							price={row.price ?? 0}
 							sign="$"
 							formatOptions={
-								isEurForex(row.asset) ? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS } : {}
+								isDecimalFour(row.asset) ? { minDecimals: DEFAULT_CRYPTO_DECIMALS } : {}
 							}
 						/>
 					</div>
 					<EntryPrice>
 						<Currency.Price
-							currencyKey={Synths.sUSD}
+							currencyKey={'sUSD'}
 							price={row.avgEntryPrice ?? 0}
 							sign="$"
 							formatOptions={
-								isEurForex(row.asset) ? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS } : {}
+								isDecimalFour(row.asset) ? { minDecimals: DEFAULT_CRYPTO_DECIMALS } : {}
 							}
 						/>
 					</EntryPrice>
@@ -58,7 +57,7 @@ const MobilePositionRow: React.FC<MobilePositionRowProps> = ({ row, onClick }) =
 				<div>
 					<ChangePercent value={row.pnlPct ?? 0} />
 					<div>
-						<Currency.Price currencyKey={Synths.sUSD} price={row.pnl ?? 0} sign="$" />
+						<Currency.Price currencyKey={'sUSD'} price={row.pnl ?? 0} sign="$" />
 					</div>
 				</div>
 			</RightColumnsContainer>

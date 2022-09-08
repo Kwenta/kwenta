@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { UseQueryOptions, useQuery } from 'react-query';
 
-import { FIAT_SYNTHS, COMMODITY_SYNTHS, CurrencyKey } from 'constants/currency';
+import { FIAT_SYNTHS, COMMODITY_SYNTHS, INDEX_SYNTHS, CurrencyKey } from 'constants/currency';
 import QUERY_KEYS from 'constants/queryKeys';
 import { synthToAsset } from 'utils/currencies';
 import { FuturesMarketKey } from 'utils/futures';
@@ -45,10 +45,12 @@ const useExternalPriceQuery = (
 	return useQuery<number | null>(
 		QUERY_KEYS.Rates.ExternalPrice(marketKey),
 		async () => {
-			return COMMODITY_SYNTHS.has(synthToAsset(marketKey) as any)
-				? getCommodityPrice(synthToAsset(marketKey) as any)
-				: FIAT_SYNTHS.has(marketKey as any)
-				? getForexPrice(marketKey as any)
+			return INDEX_SYNTHS.has(synthToAsset(marketKey))
+				? null
+				: COMMODITY_SYNTHS.has(synthToAsset(marketKey))
+				? getCommodityPrice(synthToAsset(marketKey))
+				: FIAT_SYNTHS.has(marketKey)
+				? getForexPrice(marketKey)
 				: getCoinGeckoPrice(marketKey);
 		},
 		{

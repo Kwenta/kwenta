@@ -1,20 +1,18 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { FC } from 'react';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-import { Synths } from 'constants/currency';
+import Connector from 'containers/Connector';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
-import { walletAddressState } from 'store/wallet';
 import { zeroBN } from 'utils/formatters/number';
 
 const PortfolioChart: FC = () => {
 	const portfolioValueQuery = useGetCurrentPortfolioValue();
 	const portfolioValue = portfolioValueQuery?.data ?? null;
+	const { walletAddress } = Connector.useContainer();
 
-	const walletAddress = useRecoilValue(walletAddressState);
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const synthBalances = synthsBalancesQuery.data ?? null;
@@ -26,11 +24,11 @@ const PortfolioChart: FC = () => {
 			<MobileHiddenView>
 				<Chart>
 					<PortfolioTitle>Portfolio Value</PortfolioTitle>
-					<PortfolioText currencyKey={Synths.sUSD} price={total} sign="$" />
+					<PortfolioText currencyKey={'sUSD'} price={total} sign="$" />
 				</Chart>
 			</MobileHiddenView>
 			<MobileOnlyView>
-				<PortfolioText currencyKey={Synths.sUSD} price={total} sign="$" />
+				<PortfolioText currencyKey={'sUSD'} price={total} sign="$" />
 				<MobileChartPlaceholder />
 			</MobileOnlyView>
 		</>

@@ -13,14 +13,9 @@ import MarketInfo from 'sections/futures/MarketInfo';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
 import Trade from 'sections/futures/Trade';
 import AppLayout from 'sections/shared/Layout/AppLayout';
+import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { currentMarketState } from 'store/futures';
-import {
-	PageContent,
-	FullHeightContainer,
-	MainContent,
-	RightSideContent,
-	LeftSideContent,
-} from 'styles/common';
+import { PageContent, FullHeightContainer, RightSideContent } from 'styles/common';
 import { FuturesMarketAsset } from 'utils/futures';
 
 type MarketComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
@@ -47,20 +42,18 @@ const Market: MarketComponent = () => {
 			<DesktopOnlyView>
 				<PageContent>
 					<StyledFullHeightContainer>
-						<StyledLeftSideContent>
-							<LeftSidebar />
-						</StyledLeftSideContent>
-						<StyledMainContent>
-							<MarketInfo />
-						</StyledMainContent>
+						<LeftSidebar />
+						<MarketInfo />
 						<StyledRightSideContent>
 							<Trade />
 						</StyledRightSideContent>
 					</StyledFullHeightContainer>
+					<GitHashID />
 				</PageContent>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<MobileTrade />
+				<GitHashID />
 			</MobileOrTabletView>
 		</FuturesContext.Provider>
 	);
@@ -70,16 +63,7 @@ Market.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default Market;
 
-const StyledMainContent = styled(MainContent)`
-	margin: unset;
-	max-width: unset;
-`;
-
 const StyledRightSideContent = styled(RightSideContent)`
-	width: 100%;
-`;
-
-const StyledLeftSideContent = styled(LeftSideContent)`
 	width: 100%;
 `;
 
@@ -95,9 +79,6 @@ const StyledFullHeightContainer = styled(FullHeightContainer)`
 		width: 100%;
 	}
 	@media (max-width: 1200px) {
-		${StyledLeftSideContent} {
-			display: none;
-		}
 		grid-template-columns: 70% 30%;
 		width: calc(100% - 15px);
 	}

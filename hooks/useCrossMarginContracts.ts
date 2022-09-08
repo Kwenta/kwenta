@@ -1,3 +1,4 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
@@ -26,7 +27,7 @@ export default function useCrossMarginContracts(): {
 	}, [futuresAccount?.crossMarginAddress, signer]);
 
 	const crossMarginContractFactory = useMemo(() => {
-		const address = CROSS_MARGIN_ACCOUNT_FACTORY[network.id];
+		const address = CROSS_MARGIN_ACCOUNT_FACTORY[network?.id as NetworkId];
 		if (!signer || !address) return null;
 
 		return CrossMarginAccountFactory__factory.connect(address, signer);

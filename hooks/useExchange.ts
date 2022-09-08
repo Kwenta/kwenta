@@ -1,4 +1,4 @@
-import useSynthetixQueries from '@synthetixio/queries';
+import useSynthetixQueries, { Token } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { BigNumber, ethers } from 'ethers';
 import produce from 'immer';
@@ -14,7 +14,7 @@ import {
 	CRYPTO_CURRENCY_MAP,
 	CurrencyKey,
 	ETH_ADDRESS,
-	Synths,
+	ETH_COINGECKO_ADDRESS,
 } from 'constants/currency';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
@@ -48,18 +48,18 @@ import {
 } from 'store/exchange';
 import { ordersState } from 'store/orders';
 import { hasOrdersNotificationState, slippageState } from 'store/ui';
+import { gasSpeedState } from 'store/wallet';
 import {
-	isWalletConnectedState,
-	walletAddressState,
-	isL2State,
-	networkState,
-	gasSpeedState,
-} from 'store/wallet';
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+	newGetCoinGeckoPricesForCurrencies,
+	newGetExchangeRatesForCurrencies,
+	newGetExchangeRatesTupleForCurrencies,
+} from 'utils/currencies';
 import { truncateNumbers, zeroBN } from 'utils/formatters/number';
 import { hexToAsciiV2 } from 'utils/formatters/string';
 import logError from 'utils/logError';
 import { normalizeGasLimit, getTransactionPrice } from 'utils/network';
+
+import useIsL2 from './useIsL2';
 
 type ExchangeCardProps = {
 	footerCardAttached?: boolean;
@@ -73,7 +73,7 @@ export type SwapRatio = 25 | 50 | 75 | 100;
 const useExchange = ({
 	footerCardAttached = false,
 	routingEnabled = false,
-	showNoSynthsCard = true,
+	showNoSynthsCard = false,
 }: ExchangeCardProps) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
@@ -97,6 +97,8 @@ const useExchange = ({
 	} = useSynthetixQueries();
 
 	useSynthBalances();
+	const { isWalletConnected, network, walletAddress } = Connector.useContainer();
+	const isL2 = useIsL2();
 
 	const router = useRouter();
 
@@ -113,15 +115,12 @@ const useExchange = ({
 	const [quoteCurrencyAmount, setQuoteCurrencyAmount] = useRecoilState(quoteCurrencyAmountState);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [ratio, setRatio] = useRecoilState(ratioState);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const walletAddress = useRecoilValue(walletAddressState);
-	const isL2 = useRecoilValue(isL2State);
+
 	const setTxError = useSetRecoilState(txErrorState);
 	const [atomicExchangeSlippage] = useState('0.01');
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
-	const network = useRecoilValue(networkState);
 	const slippage = useRecoilValue(slippageState);
 	const getL1SecurityFee = useGetL1SecurityFee();
 
@@ -151,10 +150,10 @@ const useExchange = ({
 
 	const txProvider: TxProvider | null = useMemo(() => {
 		if (!baseCurrencyKey || !quoteCurrencyKey) return null;
-		if (synthTokensMap[baseCurrencyKey] && synthTokensMap[quoteCurrencyKey]) return 'synthetix';
+		if (synthsMap[baseCurrencyKey] && synthsMap[quoteCurrencyKey]) return 'synthetix';
 		if (oneInchTokensMap?.[baseCurrencyKey] && oneInchTokensMap?.[quoteCurrencyKey]) return '1inch';
 		return 'synthswap';
-	}, [baseCurrencyKey, quoteCurrencyKey, synthTokensMap, oneInchTokensMap]);
+	}, [synthsMap, baseCurrencyKey, quoteCurrencyKey, oneInchTokensMap]);
 
 	// TODO: these queries break when `txProvider` is not `synthetix` and should not be called.
 	// however, condition would break rule of hooks here
@@ -190,7 +189,7 @@ const useExchange = ({
 		: null;
 
 	const quoteCurrencyTokenAddress = useMemo(
-		() =>
+		(): Token['address'] | null =>
 			quoteCurrencyKey != null
 				? isQuoteCurrencyETH
 					? ETH_ADDRESS
@@ -200,7 +199,7 @@ const useExchange = ({
 	);
 
 	const baseCurrencyTokenAddress = useMemo(
-		() =>
+		(): Token['address'] | null =>
 			baseCurrencyKey != null
 				? isBaseCurrencyETH
 					? ETH_ADDRESS
@@ -273,10 +272,20 @@ const useExchange = ({
 
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
-	const rate = useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, quoteCurrencyKey, baseCurrencyKey),
+	const [quoteRate, baseRate] = useMemo(
+		() => newGetExchangeRatesTupleForCurrencies(exchangeRates, quoteCurrencyKey, baseCurrencyKey),
 		[exchangeRates, quoteCurrencyKey, baseCurrencyKey]
 	);
+
+	const rate = useMemo(() => {
+		const base = baseRate.lte(0)
+			? newGetCoinGeckoPricesForCurrencies(coinGeckoPrices, baseCurrencyTokenAddress)
+			: baseRate;
+		const quote = quoteRate.lte(0)
+			? newGetCoinGeckoPricesForCurrencies(coinGeckoPrices, quoteCurrencyTokenAddress)
+			: quoteRate;
+		return base.gt(0) && quote.gt(0) ? quote.div(base) : wei(0);
+	}, [baseCurrencyTokenAddress, baseRate, coinGeckoPrices, quoteCurrencyTokenAddress, quoteRate]);
 
 	const inverseRate = useMemo(() => (rate.gt(0) ? wei(1).div(rate) : wei(0)), [rate]);
 
@@ -285,7 +294,7 @@ const useExchange = ({
 			if (currencyKey != null) {
 				if (isETH) {
 					return ETHBalance;
-				} else if (synthTokensMap[currencyKey]) {
+				} else if (synthsMap[currencyKey]) {
 					return synthsWalletBalance != null
 						? (get(synthsWalletBalance, ['balancesMap', currencyKey, 'balance'], zeroBN) as Wei)
 						: null;
@@ -295,7 +304,7 @@ const useExchange = ({
 			}
 			return null;
 		},
-		[ETHBalance, synthsWalletBalance, tokenBalances, synthTokensMap]
+		[synthsMap, ETHBalance, synthsWalletBalance, tokenBalances]
 	);
 
 	const quoteCurrencyBalance = useMemo(() => {
@@ -307,42 +316,50 @@ const useExchange = ({
 	}, [getBalance, baseCurrencyKey, isBaseCurrencyETH]);
 
 	// TODO: Fix coingecko prices (optimism issue maybe?)
-	const quotePriceRate = useMemo(
-		() =>
-			txProvider !== 'synthetix' && !quoteCurrency
-				? coinGeckoPrices != null &&
-				  quoteCurrencyTokenAddress != null &&
-				  selectPriceCurrencyRate != null &&
-				  coinGeckoPrices[quoteCurrencyTokenAddress.toLowerCase()] != null
-					? coinGeckoPrices[quoteCurrencyTokenAddress.toLowerCase()].usd /
-					  selectPriceCurrencyRate.toNumber()
-					: wei(0)
-				: newGetExchangeRatesForCurrencies(
-						exchangeRates,
-						quoteCurrencyKey,
-						selectedPriceCurrency.name
-				  ),
-		[
-			txProvider,
-			quoteCurrency,
-			coinGeckoPrices,
-			quoteCurrencyTokenAddress,
-			selectPriceCurrencyRate,
-			exchangeRates,
-			quoteCurrencyKey,
-			selectedPriceCurrency.name,
-		]
-	);
+	const quotePriceRate = useMemo(() => {
+		const quoteCurrencyTokenAddresLower = (isQuoteCurrencyETH
+			? ETH_COINGECKO_ADDRESS
+			: quoteCurrencyTokenAddress
+		)?.toLowerCase();
+
+		return txProvider !== 'synthetix' && !quoteCurrency
+			? coinGeckoPrices != null &&
+			  quoteCurrencyTokenAddress != null &&
+			  selectPriceCurrencyRate != null &&
+			  quoteCurrencyTokenAddresLower != null &&
+			  coinGeckoPrices[quoteCurrencyTokenAddresLower] != null
+				? coinGeckoPrices[quoteCurrencyTokenAddresLower].usd / selectPriceCurrencyRate.toNumber()
+				: wei(0)
+			: newGetExchangeRatesForCurrencies(
+					exchangeRates,
+					quoteCurrencyKey,
+					selectedPriceCurrency.name
+			  );
+	}, [
+		isQuoteCurrencyETH,
+		quoteCurrencyTokenAddress,
+		txProvider,
+		quoteCurrency,
+		coinGeckoPrices,
+		selectPriceCurrencyRate,
+		exchangeRates,
+		quoteCurrencyKey,
+		selectedPriceCurrency.name,
+	]);
 
 	const basePriceRate = useMemo(() => {
+		const baseCurrencyTokenAddresLower = (isQuoteCurrencyETH
+			? ETH_COINGECKO_ADDRESS
+			: baseCurrencyTokenAddress
+		)?.toLowerCase();
+
 		return txProvider !== 'synthetix' && !baseCurrency
 			? coinGeckoPrices != null &&
 			  baseCurrencyTokenAddress != null &&
 			  selectPriceCurrencyRate != null &&
-			  coinGeckoPrices[baseCurrencyTokenAddress.toLowerCase()] != null
-				? wei(coinGeckoPrices[baseCurrencyTokenAddress.toLowerCase()].usd).div(
-						selectPriceCurrencyRate
-				  )
+			  baseCurrencyTokenAddresLower != null &&
+			  coinGeckoPrices[baseCurrencyTokenAddresLower] != null
+				? wei(coinGeckoPrices[baseCurrencyTokenAddresLower].usd).div(selectPriceCurrencyRate)
 				: wei(0)
 			: newGetExchangeRatesForCurrencies(
 					exchangeRates,
@@ -350,10 +367,11 @@ const useExchange = ({
 					selectedPriceCurrency.name
 			  );
 	}, [
+		isQuoteCurrencyETH,
+		baseCurrencyTokenAddress,
 		txProvider,
 		baseCurrency,
 		coinGeckoPrices,
-		baseCurrencyTokenAddress,
 		selectPriceCurrencyRate,
 		exchangeRates,
 		baseCurrencyKey,
@@ -372,7 +390,7 @@ const useExchange = ({
 			: null;
 
 	const ethPriceRate = useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
+		() => newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
@@ -497,10 +515,10 @@ const useExchange = ({
 
 		setCurrencyPair({
 			base: (baseCurrencyKey && synthsMap[baseCurrencyKey]?.name) || null,
-			quote: (quoteCurrencyKey && synthsMap[quoteCurrencyKey]?.name) || Synths.sUSD,
+			quote: (quoteCurrencyKey && synthsMap[quoteCurrencyKey]?.name) || 'sUSD',
 		});
 		// eslint-disable-next-line
-	}, [network.id, walletAddress, setCurrencyPair, synthsMap]);
+	}, [network?.id, walletAddress, setCurrencyPair, synthsMap]);
 
 	useEffect(() => {
 		if (

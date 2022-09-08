@@ -2,7 +2,6 @@ import { GasPrices, GAS_SPEEDS } from '@synthetixio/queries';
 import Tippy from '@tippyjs/react';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import InfoIcon from 'assets/svg/app/info.svg';
@@ -11,8 +10,9 @@ import NumericInput from 'components/Input/NumericInput';
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE, ESTIMATE_VALUE } from 'constants/placeholder';
 import useGas, { parseGasPriceObject } from 'hooks/useGas';
+import useIsL1 from 'hooks/useIsL1';
+import useIsL2 from 'hooks/useIsL2';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { isL2State, isMainnetState } from 'store/wallet';
 import { NumericValue } from 'styles/common';
 import { formatCurrency, formatNumber } from 'utils/formatters/number';
 
@@ -31,8 +31,8 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const isL2 = useRecoilValue(isL2State);
-	const isMainnet = useRecoilValue(isMainnetState);
+	const isL2 = useIsL2();
+	const isMainnet = useIsL1();
 	const {
 		gasPrice,
 		gasSpeed,
