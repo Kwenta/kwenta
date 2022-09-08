@@ -9,6 +9,7 @@ import { useRecoilState } from 'recoil';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { balancesState } from 'store/futures';
+import { zeroBN } from 'utils/formatters/number';
 
 import { notNill } from './utils';
 
@@ -61,6 +62,7 @@ const useSynthBalances = (options?: UseQueryOptions<Balances>) => {
 					'desc'
 				),
 				totalUSDBalance,
+				susdWalletBalance: balancesMap?.['sUSD']?.balance ?? zeroBN,
 			};
 			setBalances(balances);
 

@@ -1,3 +1,4 @@
+import { Balances } from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
 
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
@@ -257,13 +258,37 @@ export type FuturesPotentialTradeDetails = {
 	statusMessage: string;
 };
 
+export type FuturesPotentialTradeDetailsQuery = {
+	data: FuturesPotentialTradeDetails | null;
+	error: string | null;
+	status: 'fetching' | 'complete' | 'idle' | 'error';
+};
+
 export type FuturesAccountType = 'cross_margin' | 'isolated_margin';
 
 export type FuturesAccountState = {
-	selectedAccountType: FuturesAccountType;
 	walletAddress: string | null;
 	selectedFuturesAddress: string | null;
 	crossMarginAddress: string | null;
 	crossMarginAvailable: boolean;
-	loading: boolean;
+	ready: boolean;
+};
+
+export type SynthBalances = Balances & {
+	susdWalletBalance: Wei;
+};
+
+export type TradeFees = {
+	staticFee: Wei;
+	dynamicFeeRate: Wei;
+	crossMarginFee: Wei;
+	total: Wei;
+};
+
+export type FuturesTradeInputs = {
+	nativeSize: string;
+	susdSize: string;
+	leverage: string;
+	nativeSizeDelta: Wei;
+	susdSizeDelta: Wei;
 };

@@ -1,20 +1,21 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { useCallback } from 'react';
 import { useQuery } from 'react-query';
 import { useRecoilState } from 'recoil';
-import { chain } from 'wagmi';
 
+import { CROSS_MARGIN_ACCOUNT_FACTORY } from 'constants/address';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import { FuturesAccountType } from 'queries/futures/types';
-import { futuresAccountState } from 'store/futures';
+import { futuresAccountState, futuresAccountTypeState } from 'store/futures';
 
 import useCrossMarginAccountContracts from '../../hooks/useCrossMarginContracts';
+
+const SUPPORTED_NETWORKS = Object.keys(CROSS_MARGIN_ACCOUNT_FACTORY);
 
 export default function useQueryCrossMarginAccount() {
 	const { crossMarginContractFactory } = useCrossMarginAccountContracts();
 	const { network, walletAddress } = Connector.useContainer();
 	const [futuresAccount, setFuturesAccount] = useRecoilState(futuresAccountState);
+	const [selectedAccountType, setSelectedAccountType] = useRecoilState(futuresAccountTypeState);
 
 	const queryAccountLogs = useCallback(async () => {
 		if (!walletAddress || !crossMarginContractFactory) return null;
@@ -29,47 +30,47 @@ export default function useQueryCrossMarginAccount() {
 	}, [walletAddress, crossMarginContractFactory]);
 
 	return useQuery<any | null>(
-		QUERY_KEYS.Futures.CrossMarginAccount(network?.id as NetworkId, walletAddress + 't' || ''),
+		QUERY_KEYS.Futures.CrossMarginAccount(
+			crossMarginContractFactory?.address || '',
+			walletAddress || '',
+			selectedAccountType
+		),
 		async () => {
-			//TODO: Remove dev check
-			if (!(network?.id === chain.optimismGoerli.id) || process?.env?.NODE_ENV !== 'development') {
+			if (!SUPPORTED_NETWORKS.includes(String(network.id))) {
 				const accountState = {
-					loading: false,
+					ready: true,
 					crossMarginAvailable: false,
 					crossMarginAddress: null,
 					walletAddress,
 					selectedFuturesAddress: walletAddress,
-					selectedAccountType: 'isolated_margin' as FuturesAccountType,
 				};
+				setSelectedAccountType('isolated_margin');
 				setFuturesAccount(accountState);
 				return accountState;
 			}
 
 			setFuturesAccount({
+				...futuresAccount,
+				crossMarginAddress:
+					walletAddress === futuresAccount.walletAddress ? futuresAccount.crossMarginAddress : null,
 				crossMarginAvailable: true,
-				crossMarginAddress: null,
 				walletAddress,
-				selectedFuturesAddress: futuresAccount?.selectedFuturesAddress || walletAddress,
-				selectedAccountType: futuresAccount?.selectedAccountType || 'isolated_margin',
-				loading: true,
+				selectedFuturesAddress: futuresAccount?.selectedFuturesAddress,
 			});
-
-			// TODO: Get selected type from persisted state
 
 			const crossMarginAccount = await queryAccountLogs();
 
 			const accountState = {
-				loading: false,
+				ready: true,
 				crossMarginAvailable: true,
 				crossMarginAddress: crossMarginAccount,
 				walletAddress,
-				selectedFuturesAddress: crossMarginAccount || walletAddress,
-				selectedAccountType: (crossMarginAccount
-					? 'cross_margin'
-					: 'isolated_margin') as FuturesAccountType,
+				selectedFuturesAddress:
+					selectedAccountType === 'cross_margin' ? crossMarginAccount : walletAddress,
 			};
 			setFuturesAccount(accountState);
 			return accountState;
-		}
+		},
+		{ enabled: !!walletAddress }
 	);
 }

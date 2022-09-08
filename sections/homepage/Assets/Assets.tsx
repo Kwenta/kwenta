@@ -198,7 +198,7 @@ const Assets = () => {
 		const futuresVolume = futuresVolumeQuery?.data ?? {};
 
 		return (
-			futuresMarkets?.map((market, i) => {
+			futuresMarkets?.map((market) => {
 				const description = getSynthDescription(market.asset, l2SynthsMap, t);
 				const volume = futuresVolume[market.assetHex];
 				const pastPrice = pastRates.find(
@@ -724,7 +724,7 @@ const AssetPrice = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
 	align-self: flex-end;
 	font-size: 20px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	width: 120px;
 	padding-left: 5px;
 	text-align: left;

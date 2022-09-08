@@ -88,20 +88,20 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 
 	const { marketAssetRate } = useFuturesContext();
 
-	const previewTradeData = useRecoilValue(potentialTradeDetailsState);
+	const { data: previewTradeData } = useRecoilValue(potentialTradeDetailsState);
 
 	const modifiedAverage = useMemo(() => {
-		if (positionHistory && previewTradeData && potentialTrade) {
-			const totalSize = positionHistory.size.add(potentialTrade.size);
+		if (positionHistory && previewTradeData && potentialTrade.data) {
+			const totalSize = positionHistory.size.add(potentialTrade.data.size);
 
 			const existingValue = positionHistory.avgEntryPrice.mul(positionHistory.size);
-			const newValue = previewTradeData.price.mul(potentialTrade.size);
+			const newValue = previewTradeData.price.mul(potentialTrade.data.size);
 			const totalValue = existingValue.add(newValue);
 
 			return totalSize.gt(0) ? totalValue.div(totalSize) : null;
 		}
 		return null;
-	}, [positionHistory, previewTradeData, potentialTrade]);
+	}, [positionHistory, previewTradeData, potentialTrade.data]);
 
 	const previewData: PositionPreviewData = React.useMemo(() => {
 		if (positionDetails === null || previewTradeData === null) {
@@ -116,7 +116,9 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			positionSide: newSide,
 			positionSize: size?.abs(),
 			notionalValue: previewTradeData.notionalValue,
-			leverage: previewTradeData.notionalValue.div(previewTradeData.margin).abs(),
+			leverage: previewTradeData.margin.gt(0)
+				? previewTradeData.notionalValue.div(previewTradeData.margin).abs()
+				: zeroBN,
 			liquidationPrice: previewTradeData.liqPrice,
 			avgEntryPrice: modifiedAverage || zeroBN,
 			showStatus: previewTradeData.showStatus,
@@ -494,7 +496,7 @@ const LeftMarginTooltip = styled(StyledTooltip)`
 const StyledValue = styled.p`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 13px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	margin: 0;
 	text-align: end;
 	${Container}#closed & {
@@ -506,7 +508,7 @@ const PositionValue = styled.span<{ side?: PositionSide }>`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 13px;
 	text-transform: uppercase;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	margin: 0;
 	${Container}#closed & {
 		color: ${(props) => props.theme.colors.selectedTheme.gray};

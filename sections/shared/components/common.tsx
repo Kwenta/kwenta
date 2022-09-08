@@ -20,7 +20,7 @@ export const SummaryItemLabel = styled.div`
 `;
 
 export const SummaryItemValue = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	${numericValueCSS};
 	max-width: 100px;
 	overflow: hidden;
