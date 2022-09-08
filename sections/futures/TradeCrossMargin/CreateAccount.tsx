@@ -1,8 +1,11 @@
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import CrossMarginIcon from 'assets/svg/futures/cross-margin-icon.svg';
+import CrossMarginIconDark from 'assets/svg/futures/cross-margin-icon-dark.svg';
+import CrossMarginIconLight from 'assets/svg/futures/cross-margin-icon-light.svg';
 import Button from 'components/Button';
+import { currentThemeState } from 'store/ui';
 import { BorderedPanel } from 'styles/common';
 
 import CrossMarginFAQ from '../CrossMarginOnboard/CrossMarginFAQ';
@@ -13,6 +16,9 @@ type Props = {
 
 export default function CreateAccount({ onShowOnboard }: Props) {
 	const { t } = useTranslation();
+	const currentTheme = useRecoilValue(currentThemeState);
+
+	const Icon = currentTheme === 'dark' ? CrossMarginIconDark : CrossMarginIconLight;
 
 	return (
 		<>
@@ -23,7 +29,7 @@ export default function CreateAccount({ onShowOnboard }: Props) {
 				</CreateAccountButton>
 			</CreateAccountContainer>
 			<FAQContainer>
-				<CrossMarginIcon height="21px" width="30px" />
+				<Icon height="21px" width="30px" />
 				<Title yellow>{t('futures.market.trade.cross-margin.faq-title')}</Title>
 				<Questions>
 					<CrossMarginFAQ />

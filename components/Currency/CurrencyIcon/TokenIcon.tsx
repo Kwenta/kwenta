@@ -39,10 +39,12 @@ const Placeholder = styled(FlexDivCentered)<{
 	width?: string;
 }>`
 	border-radius: 100%;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	border: 2px solid
 		${(props) =>
-			props.isDeprecated ? props.theme.colors.red : props.theme.colors.selectedTheme.button.text};
+			props.isDeprecated
+				? props.theme.colors.red
+				: props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 7px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	justify-content: center;

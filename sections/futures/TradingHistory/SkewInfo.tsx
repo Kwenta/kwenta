@@ -104,7 +104,7 @@ const SkewTooltip = styled(StyledTooltip)<{ isNumber?: boolean }>`
 		font-size: 13px;
 		font-family: ${(props) =>
 			props.isNumber ? props.theme.fonts.mono : props.theme.fonts.regular};
-		color: ${(props) => props.theme.colors.selectedTheme.button.text};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
 `;
 

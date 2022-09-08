@@ -1,7 +1,6 @@
 import { FunctionComponent } from 'react';
 
-import CrossMarginIcon from 'assets/svg/futures/cross-margin-icon.svg';
-import IsolatedMarginIcon from 'assets/svg/futures/isolated-margin-icon.svg';
+import { CrossMarginIcon, IsolatedMarginIcon } from 'components/Nav/FuturesIcon';
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';

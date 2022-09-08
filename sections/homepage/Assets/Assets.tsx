@@ -198,7 +198,7 @@ const Assets = () => {
 		const futuresVolume = futuresVolumeQuery?.data ?? {};
 
 		return (
-			futuresMarkets?.map((market, i) => {
+			futuresMarkets?.map((market) => {
 				const description = getSynthDescription(market.asset, l2SynthsMap, t);
 				const volume = futuresVolume[market.assetHex];
 				const pastPrice = pastRates.find(
