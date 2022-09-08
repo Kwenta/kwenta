@@ -13,6 +13,7 @@ import LabelContainer from 'components/Nav/DropDownLabel';
 import Select from 'components/Select';
 import { IndicatorSeparator, DropdownIndicator } from 'components/Select/Select';
 import { EXTERNAL_LINKS } from 'constants/links';
+import BlockExplorer from 'containers/BlockExplorer';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import { ExternalLink } from 'styles/common';
@@ -34,6 +35,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 	const isL2 = useIsL2();
 	const network = activeChain?.id === chain.optimismGoerli.id ? 'testnet' : 'mainnet';
 	const networkLabel = 'header.networks-switcher.optimism-' + network;
+	const { blockExplorerInstance } = BlockExplorer.useContainer();
 
 	const OPTIMISM_OPTIONS = [
 		{
@@ -49,7 +51,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 		{
 			label: 'header.networks-switcher.optimistic-etherscan',
 			postfixIcon: 'Link',
-			link: activeChain?.blockExplorers?.etherscan?.url,
+			link: blockExplorerInstance?.baseLink,
 		},
 		{
 			label: 'header.networks-switcher.learn-more',
