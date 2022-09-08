@@ -7,7 +7,9 @@ import { useRecoilValue } from 'recoil';
 
 import { NO_VALUE } from 'constants/placeholder';
 import { parseGasPriceObject } from 'hooks/useGas';
-import { customGasPriceState, gasSpeedState, isL2State, isMainnetState } from 'store/wallet';
+import useIsL1 from 'hooks/useIsL1';
+import useIsL2 from 'hooks/useIsL2';
+import { customGasPriceState, gasSpeedState } from 'store/wallet';
 import { formatNumber, formatDollars } from 'utils/formatters/number';
 
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
@@ -22,8 +24,8 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 	const { t } = useTranslation();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const customGasPrice = useRecoilValue(customGasPriceState);
-	const isMainnet = useRecoilValue(isMainnetState);
-	const isL2 = useRecoilValue(isL2State);
+	const isL2 = useIsL2();
+	const isMainnet = useIsL1();
 
 	const formattedTransactionFee = useMemo(() => {
 		return transactionFee ? formatDollars(transactionFee, { maxDecimals: 1 }) : NO_VALUE;

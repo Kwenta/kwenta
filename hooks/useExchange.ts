@@ -48,13 +48,7 @@ import {
 } from 'store/exchange';
 import { ordersState } from 'store/orders';
 import { hasOrdersNotificationState, slippageState } from 'store/ui';
-import {
-	isWalletConnectedState,
-	walletAddressState,
-	isL2State,
-	networkState,
-	gasSpeedState,
-} from 'store/wallet';
+import { gasSpeedState } from 'store/wallet';
 import {
 	newGetCoinGeckoPricesForCurrencies,
 	newGetExchangeRatesForCurrencies,
@@ -64,6 +58,8 @@ import { truncateNumbers, zeroBN } from 'utils/formatters/number';
 import { hexToAsciiV2 } from 'utils/formatters/string';
 import logError from 'utils/logError';
 import { normalizeGasLimit, getTransactionPrice } from 'utils/network';
+
+import useIsL2 from './useIsL2';
 
 type ExchangeCardProps = {
 	footerCardAttached?: boolean;
@@ -101,6 +97,8 @@ const useExchange = ({
 	} = useSynthetixQueries();
 
 	useSynthBalances();
+	const { isWalletConnected, network, walletAddress } = Connector.useContainer();
+	const isL2 = useIsL2();
 
 	const router = useRouter();
 
@@ -117,15 +115,12 @@ const useExchange = ({
 	const [quoteCurrencyAmount, setQuoteCurrencyAmount] = useRecoilState(quoteCurrencyAmountState);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [ratio, setRatio] = useRecoilState(ratioState);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const walletAddress = useRecoilValue(walletAddressState);
-	const isL2 = useRecoilValue(isL2State);
+
 	const setTxError = useSetRecoilState(txErrorState);
 	const [atomicExchangeSlippage] = useState('0.01');
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
-	const network = useRecoilValue(networkState);
 	const slippage = useRecoilValue(slippageState);
 	const getL1SecurityFee = useGetL1SecurityFee();
 
@@ -523,7 +518,7 @@ const useExchange = ({
 			quote: (quoteCurrencyKey && synthsMap[quoteCurrencyKey]?.name) || 'sUSD',
 		});
 		// eslint-disable-next-line
-	}, [network.id, walletAddress, setCurrencyPair, synthsMap]);
+	}, [network?.id, walletAddress, setCurrencyPair, synthsMap]);
 
 	useEffect(() => {
 		if (

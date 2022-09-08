@@ -19,7 +19,6 @@ import Connector from 'containers/Connector';
 import { Price, Rates } from 'queries/rates/types';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
 import { pastRatesState } from 'store/futures';
-import { networkState } from 'store/wallet';
 import { isDecimalFour, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
 type SpotMarketsTableProps = {
@@ -29,10 +28,9 @@ type SpotMarketsTableProps = {
 const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const network = useRecoilValue(networkState);
 	const pastRates = useRecoilValue(pastRatesState);
 
-	const { synthsMap } = Connector.useContainer();
+	const { network, synthsMap } = Connector.useContainer();
 
 	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
 

@@ -28,7 +28,6 @@ const BalanceActions: FC = () => {
 
 	const synthBalances = useRecoilValue(balancesState);
 	const futuresPositions = useRecoilValue(positionsState);
-
 	const sUSDBalance = synthBalances?.balancesMap?.['sUSD']?.balance ?? zeroBN;
 
 	const accessiblePositions = useMemo(

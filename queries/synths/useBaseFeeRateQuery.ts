@@ -1,18 +1,15 @@
 import { ethers } from 'ethers';
 import { useQuery } from 'react-query';
-import { useRecoilValue } from 'recoil';
 
 import { CurrencyKey } from 'constants/currency';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import { appReadyState } from 'store/app';
 
 const useBaseFeeRateQuery = (
 	sourceCurrencyKey: CurrencyKey | null,
 	destinationCurrencyKey: CurrencyKey | null
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const { synthetixjs } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 
 	return useQuery(
 		QUERY_KEYS.Synths.BaseFeeRate(sourceCurrencyKey!, destinationCurrencyKey!),
@@ -33,8 +30,7 @@ const useBaseFeeRateQuery = (
 				: null;
 		},
 		{
-			enabled:
-				isAppReady && !!synthetixjs && sourceCurrencyKey != null && destinationCurrencyKey != null,
+			enabled: !!synthetixjs && sourceCurrencyKey != null && destinationCurrencyKey != null,
 		}
 	);
 };

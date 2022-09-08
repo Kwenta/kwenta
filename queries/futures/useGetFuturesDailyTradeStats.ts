@@ -1,24 +1,25 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
-import { appReadyState } from 'store/app';
-import { isL2State, networkState } from 'store/wallet';
+import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import logError from 'utils/logError';
 
-import { DAY_PERIOD, FUTURES_ENDPOINT_MAINNET } from './constants';
+import { DAY_PERIOD, FUTURES_ENDPOINT_OP_MAINNET } from './constants';
 import { getFuturesOneMinStats } from './subgraph';
 import { FuturesDailyTradeStats, FuturesOneMinuteStat } from './types';
 import { getFuturesEndpoint, calculateDailyTradeStats } from './utils';
 
 const useGetFuturesDailyTradeStats = (options?: UseQueryOptions<FuturesDailyTradeStats | null>) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
+	const { network } = Connector.useContainer();
+	const isL2 = useIsL2();
 	const homepage = window.location.pathname === ROUTES.Home.Root;
-	const futuresEndpoint = homepage ? FUTURES_ENDPOINT_MAINNET : getFuturesEndpoint(network);
+	const futuresEndpoint = homepage
+		? FUTURES_ENDPOINT_OP_MAINNET
+		: getFuturesEndpoint(network?.id as NetworkId);
 
 	const queryTrades = async (
 		skip: number,
@@ -48,13 +49,13 @@ const useGetFuturesDailyTradeStats = (options?: UseQueryOptions<FuturesDailyTrad
 	};
 
 	return useQuery<FuturesDailyTradeStats | null>(
-		QUERY_KEYS.Futures.DayTradeStats(network.id, null),
+		QUERY_KEYS.Futures.DayTradeStats(network?.id as NetworkId, null),
 		async () => {
 			const trades = await queryTrades(0, []);
 
 			return calculateDailyTradeStats(trades);
 		},
-		{ enabled: homepage ? isAppReady : isAppReady && isL2, ...options }
+		{ enabled: homepage || isL2, ...options }
 	);
 };
 

@@ -16,10 +16,12 @@ import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { PositionHistory } from 'queries/futures/types';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 import { currentMarketState, futuresMarketsState, positionsState } from 'store/futures';
-import { isL2State } from 'store/wallet';
 import { formatNumber } from 'utils/formatters/number';
 import {
 	FuturesMarketAsset,
@@ -44,7 +46,10 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	const router = useRouter();
 	const { switchToL2 } = useNetworkSwitcher();
 
-	const isL2 = useRecoilValue(isL2State);
+	const isL2 = useIsL2();
+
+	useGetFuturesMarkets();
+	useGetFuturesPositionForMarkets();
 	const futuresPositions = useRecoilValue(positionsState);
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 	const currentMarket = useRecoilValue(currentMarketState);
