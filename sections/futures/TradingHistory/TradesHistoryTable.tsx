@@ -6,12 +6,11 @@ import styled, { css } from 'styled-components';
 
 import Table from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
-import { EXTERNAL_LINKS } from 'constants/links';
 import { NO_VALUE } from 'constants/placeholder';
+import BlockExplorer from 'containers/BlockExplorer';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
 import { currentMarketState } from 'store/futures';
-import { isL2MainnetState } from 'store/wallet';
 import { CapitalizedText, NumericValue } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
@@ -30,7 +29,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 	const { t } = useTranslation();
 	const currencyKey = useRecoilValue(currentMarketState);
 	const futuresTradesQuery = useGetFuturesTrades(currencyKey);
-	const isL2Mainnet = useRecoilValue(isL2MainnetState);
+	const { blockExplorerInstance } = BlockExplorer.useContainer();
 
 	let data = useMemo(() => {
 		const futuresTradesPages = futuresTradesQuery?.data?.pages ?? [];
@@ -111,9 +110,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 					mobile={mobile}
 					onTableRowClick={(row) =>
 						row.original.id !== NO_VALUE
-							? isL2Mainnet
-								? window.open(`${EXTERNAL_LINKS.Explorer.Optimism}/tx/${row.original.id}`)
-								: window.open(`${EXTERNAL_LINKS.Explorer.OptimismGoerli}/tx/${row.original.id}`)
+							? window.open(`${blockExplorerInstance?.txLink(row.original.id)}`)
 							: undefined
 					}
 					highlightRowsOnHover
