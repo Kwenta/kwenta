@@ -33,7 +33,7 @@ const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({ open,
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const potentialTradeDetails = useRecoilValue(potentialTradeDetailsState);
+	const { data: potentialTradeDetails } = useRecoilValue(potentialTradeDetailsState);
 
 	const { orderTxn } = useFuturesContext();
 
@@ -116,7 +116,6 @@ const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({ open,
 			buttons={
 				<ConfirmTradeButton
 					variant="primary"
-					isRounded
 					onClick={() => {
 						orderTxn.mutate();
 						closeDrawer();

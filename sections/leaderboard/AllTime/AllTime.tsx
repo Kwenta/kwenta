@@ -41,7 +41,7 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 	const data = useMemo(() => {
 		const statsData = stats
 			.sort((a: AccountStat, b: AccountStat) => a.rank - b.rank)
-			.map((trader: any, i: number) => {
+			.map((trader: any) => {
 				return {
 					...trader,
 					rankText: trader.rank.toString(),
@@ -266,7 +266,7 @@ const ColorCodedPrice = styled(Currency.Price)`
 			? props.theme.colors.selectedTheme.green
 			: props.price < 0
 			? props.theme.colors.selectedTheme.red
-			: props.theme.colors.selectedTheme.button.text};
+			: props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const StyledTable = styled(Table)<{ compact: boolean | undefined }>`
@@ -290,7 +290,7 @@ const TableHeader = styled.div`
 `;
 
 const StyledOrderType = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	display: flex;
 	align-items: center;
 `;

@@ -1,173 +1,249 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { constants } from 'ethers';
-import { ChangeEvent, useCallback, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
+import CompleteCheck from 'assets/svg/futures/onboard-complete-check.svg';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import ErrorView from 'components/Error';
+import InputBalanceLabel from 'components/Input/InputBalanceLabel';
 import NumericInput from 'components/Input/NumericInput';
 import Loader from 'components/Loader';
+import ProgressSteps from 'components/ProgressSteps';
 import { CROSS_MARGIN_BASE_SETTINGS } from 'constants/address';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useSUSDContract from 'hooks/useSUSDContract';
-import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
-import { futuresAccountState } from 'store/futures';
+import { balancesState, futuresAccountState } from 'store/futures';
+import { FlexDivRowCentered } from 'styles/common';
+import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
+
+import CrossMarginFAQ from './CrossMarginFAQ';
 
 type Props = {
 	isOpen: boolean;
 	onClose: () => any;
-	onComplete?: () => void;
 };
 
-export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Props) {
+export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { defaultSynthetixjs: synthetixjs, network, signer } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs, network, walletAddress } = Connector.useContainer();
 	const {
 		crossMarginAccountContract,
 		crossMarginContractFactory,
 	} = useCrossMarginAccountContracts();
 	const susdContract = useSUSDContract();
-	const query = useQueryCrossMarginAccount();
+	const { handleRefetch } = useRefetchContext();
 
 	const futuresAccount = useRecoilValue(futuresAccountState);
+	const balances = useRecoilValue(balancesState);
+
 	const [depositAmount, setDepositAmount] = useState('');
 	const [depositComplete, setDepositComplete] = useState(false);
-	const [creatingAccount, setCreatingAccount] = useState(false);
+	const [submitting, setSubmitting] = useState<null | 'approve' | 'create' | 'deposit'>(null);
+	const [allowance, setAllowance] = useState(zeroBN);
 
-	const { handleRefetch } = useRefetchContext();
+	const susdBal = balances?.susdWalletBalance;
+
+	const fetchAllowance = useCallback(async () => {
+		if (!crossMarginAccountContract || !susdContract || !walletAddress) return;
+		try {
+			const allowance = await susdContract.allowance(
+				walletAddress,
+				crossMarginAccountContract.address
+			);
+			setAllowance(wei(allowance));
+		} catch (err) {
+			logError(err);
+		}
+	}, [crossMarginAccountContract, susdContract, walletAddress]);
+
+	useEffect(() => {
+		fetchAllowance();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [crossMarginAccountContract?.address, walletAddress]);
 
 	const createAccount = useCallback(async () => {
 		try {
-			if (!signer || !synthetixjs || !crossMarginContractFactory)
-				throw new Error('Signer or snx lib missing');
+			if (!synthetixjs || !crossMarginContractFactory) throw new Error('Signer or snx lib missing');
 
 			const crossMarginSettingsAddress =
 				CROSS_MARGIN_BASE_SETTINGS[String(network?.id as NetworkId)];
 
 			if (!crossMarginSettingsAddress) throw new Error('Unsupported network');
 
-			setCreatingAccount(true);
+			setSubmitting('create');
 			const tx = await crossMarginContractFactory.newAccount();
 			monitorTransaction({
 				txHash: tx.hash,
 				onTxConfirmed: async () => {
 					try {
-						query.refetch();
+						handleRefetch('cross-margin-account-change', 1000);
 					} catch (err) {
 						logError(err);
 					} finally {
-						setCreatingAccount(false);
+						setSubmitting(null);
 					}
 				},
 				onTxFailed: () => {
-					setCreatingAccount(false);
+					setSubmitting(null);
 				},
 			});
 		} catch (err) {
-			setCreatingAccount(false);
+			setSubmitting(null);
 			logError(err);
 		}
 	}, [
-		signer,
 		synthetixjs,
 		crossMarginContractFactory,
 		network,
-		query,
-		setCreatingAccount,
+		handleRefetch,
+		setSubmitting,
 		monitorTransaction,
 	]);
 
 	const submitDeposit = useCallback(
 		async (weiAmount: string) => {
 			try {
-				if (!crossMarginAccountContract) throw new Error('No cross margin account');
-
+				if (!crossMarginAccountContract) throw new Error('No cross-margin account');
+				setSubmitting('deposit');
 				const tx = await crossMarginAccountContract.deposit(weiAmount);
 				monitorTransaction({
 					txHash: tx.hash,
 					onTxConfirmed: () => {
+						setSubmitting(null);
 						setDepositComplete(true);
 						handleRefetch('account-margin-change');
-						onComplete?.();
-						onClose();
 					},
 				});
 			} catch (err) {
+				setSubmitting(null);
 				logError(err);
 			}
 		},
-		[crossMarginAccountContract, monitorTransaction, handleRefetch, onComplete, onClose]
+		[crossMarginAccountContract, monitorTransaction, handleRefetch]
 	);
+
+	const onClickApprove = useCallback(async () => {
+		try {
+			if (!crossMarginAccountContract || !susdContract)
+				throw new Error('Smart contracts not initialized');
+			setSubmitting('approve');
+			const tx = await susdContract.approve(
+				crossMarginAccountContract.address,
+				constants.MaxUint256
+			);
+			monitorTransaction({
+				txHash: tx.hash,
+				onTxConfirmed: () => {
+					setSubmitting(null);
+					fetchAllowance();
+				},
+			});
+		} catch (err) {
+			setSubmitting(null);
+			logError(err);
+		}
+	}, [crossMarginAccountContract, susdContract, monitorTransaction, fetchAllowance]);
 
 	const depositToAccount = useCallback(async () => {
 		try {
-			if (!crossMarginAccountContract) throw new Error('No cross margin account');
+			if (!crossMarginAccountContract || !susdContract)
+				throw new Error('Smart contracts not initialized');
 			const weiAmount = wei(depositAmount ?? 0, 18);
 			const weiAmountString = weiAmount.toString(18, true);
-			const wallet = await signer?.getAddress();
-			const allowance = await susdContract?.allowance(wallet, crossMarginAccountContract.address);
-
-			if (wei(allowance).lt(weiAmount)) {
-				const tx = await susdContract?.approve(
-					crossMarginAccountContract.address,
-					constants.MaxUint256
-				);
-				monitorTransaction({
-					txHash: tx.hash,
-					onTxConfirmed: () => {
-						submitDeposit(weiAmountString);
-					},
-				});
-			} else {
-				submitDeposit(weiAmountString);
-			}
+			submitDeposit(weiAmountString);
 		} catch (err) {
 			logError(err);
 		}
-	}, [
-		crossMarginAccountContract,
-		depositAmount,
-		signer,
-		susdContract,
-		monitorTransaction,
-		submitDeposit,
-	]);
+	}, [crossMarginAccountContract, depositAmount, susdContract, submitDeposit]);
 
 	const onEditAmount = (_: ChangeEvent<HTMLInputElement>, value: string) => {
 		setDepositAmount(value);
 	};
 
+	const renderProgress = (step: number, complete?: boolean) => {
+		return (
+			<ProgressContainer>
+				<ProgressSteps step={step} totalSteps={3} complete={complete} />
+			</ProgressContainer>
+		);
+	};
+
 	const renderContent = () => {
 		if (futuresAccount && !futuresAccount.crossMarginAvailable) {
-			return <ErrorView message="Cross margin is not supported on this network" />;
+			return <ErrorView message={t('futures.modals.onboard.unsupported-network')} />;
 		}
-		if (creatingAccount || !futuresAccount || futuresAccount.loading) {
+		if (!futuresAccount || !futuresAccount.ready) {
 			return <Loader />;
 		}
 
-		if (futuresAccount?.crossMarginAddress && depositComplete) {
-			return <OpenAccountButton onClick={onClose}>Done</OpenAccountButton>;
+		if (depositComplete) {
+			return (
+				<>
+					<Intro>{t('futures.modals.onboard.step3-complete')}</Intro>
+					<Complete>
+						<CompleteCheck />
+					</Complete>
+					{renderProgress(3, true)}
+					<StyledButton variant="flat" onClick={onClose}>
+						Done
+					</StyledButton>
+				</>
+			);
+		}
+
+		if (futuresAccount?.crossMarginAddress && allowance.eq(0)) {
+			return (
+				<>
+					<Intro>{t('futures.modals.onboard.step2-intro')}</Intro>
+					<FAQs>
+						<FAQHeader>FAQ:</FAQHeader>
+						<CrossMarginFAQ />
+					</FAQs>
+					{renderProgress(2)}
+					<StyledButton variant="flat" onClick={onClickApprove}>
+						{submitting === 'approve' ? <Loader /> : 'Approve'}
+					</StyledButton>
+				</>
+			);
 		}
 
 		if (futuresAccount?.crossMarginAddress) {
 			return (
 				<>
+					<Intro>{t('futures.modals.onboard.step3-intro')}</Intro>
+					<InputBalanceLabel balance={susdBal || zeroBN} currencyKey="sUSD" />
 					<NumericInput placeholder="0.00" value={depositAmount} onChange={onEditAmount} />
-					<OpenAccountButton onClick={depositToAccount}>Deposit sUSD</OpenAccountButton>
+					{renderProgress(3)}
+					<StyledButton variant="flat" onClick={depositToAccount}>
+						{submitting === 'deposit' ? <Loader /> : 'Deposit sUSD'}
+					</StyledButton>
 				</>
 			);
 		}
 
-		return <OpenAccountButton onClick={createAccount}>Create Account</OpenAccountButton>;
+		return (
+			<>
+				<Intro>{t('futures.modals.onboard.step1-intro')}</Intro>
+				<FAQs>
+					<FAQHeader>FAQ:</FAQHeader>
+					<CrossMarginFAQ />
+				</FAQs>
+				{renderProgress(1)}
+				<StyledButton noOutline onClick={createAccount}>
+					{submitting === 'create' ? <Loader /> : 'Create Account'}
+				</StyledButton>
+			</>
+		);
 	};
 
 	return (
@@ -178,17 +254,49 @@ export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Prop
 }
 
 const StyledBaseModal = styled(BaseModal)`
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	[data-reach-dialog-content] {
 		width: 400px;
 	}
-	.card-body {
-		padding: 28px;
+`;
+
+const StyledButton = styled(Button)`
+	margin-top: 24px;
+	height: 50px;
+	width: 100%;
+`;
+
+const FAQs = styled.div``;
+
+const FAQHeader = styled.div`
+	padding-bottom: 4px;
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+	margin-bottom: 5px;
+`;
+
+const ProgressContainer = styled.div`
+	margin-top: 30px;
+`;
+
+const Intro = styled.div`
+	margin-bottom: 30px;
+`;
+
+export const BalanceContainer = styled(FlexDivRowCentered)`
+	margin-bottom: 8px;
+	p {
+		margin: 0;
 	}
 `;
 
-const OpenAccountButton = styled(Button)`
-	margin-top: 24px;
-	overflow: hidden;
-	white-space: nowrap;
-	height: 55px;
+export const BalanceText = styled.p`
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
+	span {
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+	}
+`;
+
+const Complete = styled.div`
+	padding: 40px;
+	text-align: center;
 `;

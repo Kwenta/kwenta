@@ -10,7 +10,7 @@ export const inputCSS = css`
 	padding: 0 12px;
 	font-size: 18px;
 	border-radius: 10px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	outline: none;
 
 	::placeholder {

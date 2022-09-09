@@ -44,7 +44,10 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 			selectedFuturesAddress ?? ''
 		),
 		async () => {
-			if (!assets || (!provider && !l2Provider) || !selectedFuturesAddress) return [];
+			if (!assets || (!provider && !l2Provider) || !selectedFuturesAddress) {
+				setFuturesPositions([]);
+				return [];
+			}
 
 			await ethCallProvider.init(isL2 ? provider : l2Provider);
 

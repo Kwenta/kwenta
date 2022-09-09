@@ -28,18 +28,16 @@ const CurrencyIconContainer: FC<CurrencyIconProps> = React.memo(({ className, ..
 	</Container>
 ));
 
-const CurrencyIcon: FC<CurrencyIconProps> = React.memo(
-	({ currencyKey, isDeprecated, url, ...rest }) => {
-		const props = { width: '30px', height: '30px', alt: currencyKey, ...rest };
-		const src = SYNTH_ICONS[currencyKey];
+const CurrencyIcon: FC<CurrencyIconProps> = React.memo(({ currencyKey, ...rest }) => {
+	const props = { width: '30px', height: '30px', alt: currencyKey, ...rest };
+	const src = SYNTH_ICONS[currencyKey];
 
-		if (src) {
-			return <Image src={src} {...props} />;
-		} else {
-			return <TokenIcon currencyKey={currencyKey} {...props} />;
-		}
+	if (src) {
+		return <Image src={src} {...props} />;
+	} else {
+		return <TokenIcon currencyKey={currencyKey} {...props} />;
 	}
-);
+});
 
 const Container = styled.div`
 	position: relative;

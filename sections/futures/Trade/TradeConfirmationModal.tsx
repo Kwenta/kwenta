@@ -1,11 +1,13 @@
 import useSynthetixQueries from '@synthetixio/queries';
-import { FC, useMemo } from 'react';
+import { wei } from '@synthetixio/wei';
+import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
+import ErrorView from 'components/Error';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
@@ -17,13 +19,15 @@ import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import {
 	confirmationModalOpenState,
 	currentMarketState,
-	futuresAccountState,
+	futuresAccountTypeState,
 	potentialTradeDetailsState,
 } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { FlexDivCentered } from 'styles/common';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import { isUserDeniedError } from 'utils/formatters/error';
 import { zeroBN, formatCurrency, formatDollars, formatNumber } from 'utils/formatters/number';
+import logError from 'utils/logError';
 import { getTransactionPrice } from 'utils/network';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
@@ -41,17 +45,20 @@ const TradeConfirmationModal: FC = () => {
 
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const market = useRecoilValue(currentMarketState);
-	const potentialTradeDetails = useRecoilValue(potentialTradeDetailsState);
-	const { selectedAccountType } = useRecoilValue(futuresAccountState);
+	const { data: potentialTradeDetails } = useRecoilValue(potentialTradeDetailsState);
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 
 	const {
 		orderTxn,
 		submitIsolatedMarginOrder,
 		submitCrossMarginOrder,
-		onLeverageChange,
+		resetTradeState,
+		tradeFees,
 	} = useFuturesContext();
 
 	const setConfirmationModalOpen = useSetRecoilState(confirmationModalOpenState);
+
+	const [error, setError] = useState<null | string>(null);
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -88,6 +95,8 @@ const TradeConfirmationModal: FC = () => {
 			: null;
 	}, [potentialTradeDetails]);
 
+	const fee = tradeFees.crossMarginFee.add(positionDetails?.fee || 0);
+
 	const dataRows = useMemo(
 		() => [
 			{ label: 'side', value: (positionDetails?.side ?? PositionSide.LONG).toUpperCase() },
@@ -112,7 +121,7 @@ const TradeConfirmationModal: FC = () => {
 			},
 			{
 				label: 'protocol fee',
-				value: formatDollars(positionDetails?.fee ?? zeroBN),
+				value: formatDollars(fee),
 			},
 			{
 				label: 'network gas fee',
@@ -122,7 +131,7 @@ const TradeConfirmationModal: FC = () => {
 				}),
 			},
 		],
-		[positionDetails, market, synthsMap, transactionFee, selectedPriceCurrency]
+		[positionDetails, market, synthsMap, transactionFee, selectedPriceCurrency, fee]
 	);
 
 	const onDismiss = () => {
@@ -130,22 +139,43 @@ const TradeConfirmationModal: FC = () => {
 	};
 
 	const handleConfirmOrder = async () => {
+		setError(null);
 		if (selectedAccountType === 'cross_margin') {
-			const tx = await submitCrossMarginOrder();
-			if (tx?.hash) {
-				monitorTransaction({
-					txHash: tx.hash,
-					onTxConfirmed: () => {
-						onLeverageChange('');
-						handleRefetch('modify-position');
-					},
-				});
+			try {
+				const tx = await submitCrossMarginOrder();
+				if (tx?.hash) {
+					monitorTransaction({
+						txHash: tx.hash,
+						onTxFailed(failureMessage) {
+							if (!isUserDeniedError(failureMessage?.failureReason)) {
+								setError(
+									failureMessage?.failureReason || t('common.transaction.transaction-failed')
+								);
+							}
+						},
+						onTxConfirmed: () => {
+							resetTradeState();
+							handleRefetch('modify-position');
+						},
+					});
+					onDismiss();
+				}
+			} catch (err) {
+				if (!isUserDeniedError(err.message)) {
+					logError(err);
+					setError(t('common.transaction.transaction-failed'));
+				}
 			}
 		} else {
 			submitIsolatedMarginOrder();
+			onDismiss();
 		}
-		onDismiss();
 	};
+
+	const disabledReason = useMemo(() => {
+		if (positionDetails?.margin.lt(wei(50)))
+			return t('futures.market.trade.confirmation.modal.disabled-min-margin');
+	}, [positionDetails?.margin, t]);
 
 	return (
 		<>
@@ -163,13 +193,17 @@ const TradeConfirmationModal: FC = () => {
 					))}
 					<ConfirmTradeButton
 						data-testid="trade-open-position-confirm-order-button"
-						isRounded
-						noOutline
+						variant="flat"
 						onClick={handleConfirmOrder}
-						disabled={!positionDetails}
+						disabled={!positionDetails || !!disabledReason}
 					>
-						{t('futures.market.trade.confirmation.modal.confirm-order')}
+						{disabledReason || t('futures.market.trade.confirmation.modal.confirm-order')}
 					</ConfirmTradeButton>
+					{error && (
+						<ErrorContainer>
+							<ErrorView message={error} />
+						</ErrorContainer>
+					)}
 				</StyledBaseModal>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
@@ -180,14 +214,18 @@ const TradeConfirmationModal: FC = () => {
 					buttons={
 						<MobileConfirmTradeButton
 							variant="primary"
-							isRounded
 							onClick={handleConfirmOrder}
-							disabled={!positionDetails}
+							disabled={!positionDetails || !!disabledReason}
 						>
-							{t('futures.market.trade.confirmation.modal.confirm-order')}
+							{disabledReason || t('futures.market.trade.confirmation.modal.confirm-order')}
 						</MobileConfirmTradeButton>
 					}
 				/>
+				{error && (
+					<ErrorContainer>
+						<ErrorView message={error} />
+					</ErrorContainer>
+				)}
 			</MobileOrTabletView>
 		</>
 	);
@@ -215,7 +253,7 @@ const Label = styled.div`
 
 const Value = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 12px;
 	margin-top: 6px;
 `;
@@ -226,6 +264,7 @@ const ConfirmTradeButton = styled(Button)`
 	overflow: hidden;
 	white-space: nowrap;
 	height: 55px;
+	font-size: 15px;
 `;
 
 export const MobileConfirmTradeButton = styled(Button)`
@@ -234,6 +273,11 @@ export const MobileConfirmTradeButton = styled(Button)`
 	white-space: nowrap;
 	height: 45px;
 	width: 100%;
+	font-size: 15px;
+`;
+
+const ErrorContainer = styled.div`
+	margin-top: 20px;
 `;
 
 export default TradeConfirmationModal;

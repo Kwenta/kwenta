@@ -29,7 +29,7 @@ const StyledToastContainer = styled(ToastContainer)`
 	.Toastify__toast {
 		border: ${(props) => props.theme.colors.selectedTheme.border};
 		background: ${(props) => props.theme.colors.selectedTheme.button.background};
-		color: ${(props) => props.theme.colors.selectedTheme.button.text};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
 	.Toastify__toast-body {
 		font-family: ${(props) => props.theme.fonts.regular};

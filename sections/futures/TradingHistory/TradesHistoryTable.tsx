@@ -112,8 +112,8 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 					onTableRowClick={(row) =>
 						row.original.id !== NO_VALUE
 							? isL2Mainnet
-								? window.open(`${EXTERNAL_LINKS.Explorer.Optimism}/${row.original.id}`)
-								: window.open(`${EXTERNAL_LINKS.Explorer.OptimismGoerli}/${row.original.id}`)
+								? window.open(`${EXTERNAL_LINKS.Explorer.Optimism}/tx/${row.original.id}`)
+								: window.open(`${EXTERNAL_LINKS.Explorer.OptimismGoerli}/tx/${row.original.id}`)
 							: undefined
 					}
 					highlightRowsOnHover
@@ -253,14 +253,14 @@ const TableHeader = styled(CapitalizedText)`
 
 const PriceValue = styled(NumericValue)`
 	font-size: 13px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	padding-left: 5px;
 `;
 
 const TimeValue = styled.p`
 	font-size: 13px;
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	text-decoration: underline;
 `;
 
@@ -268,7 +268,7 @@ const DirectionalValue = styled(PriceValue)<{ negative?: boolean; normal?: boole
 	padding-left: 4px;
 	color: ${(props) =>
 		props.normal
-			? props.theme.colors.selectedTheme.button.text
+			? props.theme.colors.selectedTheme.button.text.primary
 			: props.negative
 			? props.theme.colors.selectedTheme.green
 			: props.theme.colors.selectedTheme.red};

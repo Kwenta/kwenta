@@ -239,7 +239,7 @@ export const TableNoResults = styled(GridDivCenteredRow)`
 	margin-top: -2px;
 	justify-items: center;
 	grid-gap: 10px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 16px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	div {
@@ -271,7 +271,7 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 				max-height: calc(100% - ${CARD_HEIGHT});
 			}
 			${TableCell} {
-				color: ${(props) => props.theme.colors.selectedTheme.button.text};
+				color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 				font-size: 12px;
 				height: ${CARD_HEIGHT};
 				font-family: ${(props) => props.theme.fonts.mono};

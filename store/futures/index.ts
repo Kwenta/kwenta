@@ -1,13 +1,16 @@
-import { Balances } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { atom, selector } from 'recoil';
 
-import { DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
+import { DEFAULT_FUTURES_MARGIN_TYPE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import {
 	FuturesAccountState,
+	FuturesAccountType,
 	FuturesMarket,
 	FuturesPosition,
-	FuturesPotentialTradeDetails,
+	FuturesPotentialTradeDetailsQuery,
+	SynthBalances,
+	TradeFees,
+	FuturesTradeInputs,
 } from 'queries/futures/types';
 import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import { Price, Rates } from 'queries/rates/types';
@@ -53,7 +56,7 @@ export const marketAssetsState = selector({
 	},
 });
 
-export const balancesState = atom<Balances | null>({
+export const balancesState = atom<SynthBalances | null>({
 	key: getSynthsKey('balances'),
 	default: null,
 });
@@ -78,19 +81,52 @@ export const futuresMarketsState = atom<FuturesMarket[]>({
 	default: [],
 });
 
-export const tradeSizeState = atom({
-	key: getFuturesKey('tradeSize'),
+export const futuresTradeInputsState = atom<FuturesTradeInputs>({
+	key: getFuturesKey('pendingTrade'),
+	default: {
+		nativeSize: '',
+		susdSize: '',
+		leverage: '',
+		nativeSizeDelta: zeroBN,
+		susdSizeDelta: zeroBN,
+	},
+});
+
+// We use this object to store raw user inputs to feedback to the UI
+// before all params have been calculated
+export const simulatedTradeState = atom<FuturesTradeInputs | null>({
+	key: getFuturesKey('simulatedTrade'),
+	default: {
+		nativeSize: '',
+		susdSize: '',
+		leverage: '',
+		nativeSizeDelta: zeroBN,
+		susdSizeDelta: zeroBN,
+	},
+});
+
+export const crossMarginLeverageInputState = atom({
+	key: getFuturesKey('crossMarginLeverageInput'),
 	default: '',
 });
 
-export const tradeSizeSUSDState = atom({
-	key: getFuturesKey('tradeSizeSUSD'),
-	default: '',
+export const preferredLeverageState = atom<Record<string, string>>({
+	key: getFuturesKey('preferredLeverage'),
+	default: {},
 });
 
-export const leverageState = atom({
-	key: getFuturesKey('leverage'),
-	default: '',
+export const crossMarginMarginDeltaState = atom({
+	key: getFuturesKey('crossMarginMarginDelta'),
+	default: zeroBN,
+});
+
+export const crossMarginSettingsState = atom({
+	key: getFuturesKey('crossMarginSettings'),
+	default: {
+		tradeFee: zeroBN,
+		limitOrderFee: zeroBN,
+		stopLossFee: zeroBN,
+	},
 });
 
 export const leverageSideState = atom<PositionSide>({
@@ -130,13 +166,18 @@ export const orderTypeState = atom({
 	default: 0,
 });
 
-export const feeCostState = atom<Wei | null>({
-	key: getFuturesKey('feeCost'),
-	default: null,
+export const tradeFeesState = atom<TradeFees>({
+	key: getFuturesKey('tradeFees'),
+	default: {
+		staticFee: zeroBN,
+		dynamicFeeRate: zeroBN,
+		crossMarginFee: zeroBN,
+		total: zeroBN,
+	},
 });
 
-export const dynamicFeeState = atom({
-	key: getFuturesKey('dynamicFee'),
+export const dynamicFeeRateState = atom({
+	key: getFuturesKey('dynamicFeeRate'),
 	default: null,
 });
 
@@ -153,10 +194,10 @@ export const openOrdersState = atom<any[]>({
 export const sizeDeltaState = selector({
 	key: getFuturesKey('sizeDelta'),
 	get: ({ get }) => {
-		const tradeSize = get(tradeSizeState);
+		const { nativeSize } = get(futuresTradeInputsState);
 		const leverageSide = get(leverageSideState);
 
-		return tradeSize ? wei(leverageSide === PositionSide.LONG ? tradeSize : -tradeSize) : zeroBN;
+		return nativeSize ? wei(leverageSide === PositionSide.LONG ? nativeSize : -nativeSize) : zeroBN;
 	},
 });
 
@@ -196,33 +237,50 @@ export const maxLeverageState = selector({
 export const nextPriceDisclaimerState = selector({
 	key: getFuturesKey('nextPriceDisclaimer'),
 	get: ({ get }) => {
-		const leverage = get(leverageState);
+		const { leverage } = get(futuresTradeInputsState);
 		const maxLeverage = get(maxLeverageState);
 
 		return wei(leverage || 0).gte(maxLeverage.sub(wei(1))) && wei(leverage || 0).lte(maxLeverage);
 	},
 });
 
-export const potentialTradeDetailsState = atom<FuturesPotentialTradeDetails | null>({
+export const potentialTradeDetailsState = atom<FuturesPotentialTradeDetailsQuery>({
 	key: getFuturesKey('potentialTradeDetails'),
-	default: null,
+	default: {
+		data: null,
+		status: 'idle',
+		error: null,
+	},
 });
 
 export const futuresAccountState = atom<FuturesAccountState>({
 	key: getFuturesKey('futuresAccountState'),
 	default: {
-		selectedAccountType: 'isolated_margin',
 		crossMarginAddress: null,
 		walletAddress: null,
 		selectedFuturesAddress: null,
 		crossMarginAvailable: false,
-		loading: false,
+		ready: false,
 	},
 });
 
+export const futuresAccountTypeState = atom<FuturesAccountType>({
+	key: getFuturesKey('futuresAccountType'),
+	default: DEFAULT_FUTURES_MARGIN_TYPE,
+});
+
 export const crossMarginAvailableMarginState = atom<Wei>({
-	key: getFuturesKey('crossMarginAvailableMarginState'),
+	key: getFuturesKey('crossMarginAvailableMargin'),
 	default: zeroBN,
+});
+
+export const crossMarginTotalMarginState = selector({
+	key: getFuturesKey('crossMarginTotalMargin'),
+	get: ({ get }) => {
+		const position = get(positionState);
+		const freeMargin = get(crossMarginAvailableMarginState);
+		return position?.remainingMargin.add(freeMargin) ?? zeroBN;
+	},
 });
 
 export const confirmationModalOpenState = atom({
@@ -263,7 +321,7 @@ export const placeOrderTranslationKeyState = selector({
 		const position = get(positionState);
 		const isMarketCapReached = get(isMarketCapReachedState);
 		const orderType = get(orderTypeState);
-		const { selectedAccountType } = get(futuresAccountState);
+		const selectedAccountType = get(futuresAccountTypeState);
 		const freeMargin = get(crossMarginAvailableMarginState);
 
 		let remainingMargin;

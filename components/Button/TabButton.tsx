@@ -60,7 +60,7 @@ const StyledButton = styled(Button)<{
 		text-align: center;
 		color: ${(props) =>
 			props.active
-				? props.theme.colors.selectedTheme.button.text
+				? props.theme.colors.selectedTheme.button.text.primary
 				: props.theme.colors.selectedTheme.gray};
 	}
 
@@ -91,7 +91,7 @@ const StyledButton = styled(Button)<{
 			${(props) =>
 				css`
 					${props.nofill ? 'stroke' : 'fill'}: ${props.active
-						? props.theme.colors.selectedTheme.button.text
+						? props.theme.colors.selectedTheme.button.text.primary
 						: props.theme.colors.selectedTheme.gray};
 				`}
 		}

@@ -7,7 +7,7 @@ import { PositionSide } from '../types';
 
 function textColor(props: any) {
 	if (!props.className || props.className === 'row-name')
-		return props.theme.colors.selectedTheme.button.text;
+		return props.theme.colors.selectedTheme.button.text.primary;
 	if (props.className === 'long') return props.theme.colors.selectedTheme.green;
 	if (props.className === 'short') return props.theme.colors.selectedTheme.red;
 	if (props.className === 'gray-font-color') return props.theme.colors.selectedTheme.gray;
