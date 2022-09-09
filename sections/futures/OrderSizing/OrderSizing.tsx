@@ -113,7 +113,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 
 			<CustomInput
 				disabled={isDisabled}
-				right={marketAsset || 'sUSD'}
+				right={marketAsset?.replace(/^s/, '') || 'sUSD'}
 				value={assetValue}
 				placeholder="0.0"
 				onChange={onChangeAssetValue}
