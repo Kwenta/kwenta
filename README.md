@@ -30,7 +30,7 @@ ENS link: [kwenta.eth](https://app.ens.domains/name/kwenta.eth).
 ### Install dependencies
 
 ```bash
-npm install --legacy-peer-deps
+pnpm install
 ```
 
 ### Set up environment variables
@@ -55,7 +55,7 @@ Optional:
 ### Run
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
@@ -63,8 +63,8 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 ### Build
 
 ```bash
-npm run build
-npm start
+pnpm run build
+pnpm start
 ```
 
 ### End-2-End testing
@@ -96,9 +96,9 @@ A Bash convenience script [has been made available here](https://gist.github.com
 #### Run the tests
 
 ```bash
-npm run build
-npm start
-npm run test:e2e:only:tests
+pnpm run build
+pnpm start
+pnpm run test:e2e:only:tests
 ```
 
 ## Contributing
