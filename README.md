@@ -23,7 +23,7 @@ The latest IPFS hash can be found under [releases](https://github.com/Kwenta/kwe
 ## Ethereum stack
 
 - ethers.js v5 - Ethereum wallet implementation.
-- Blocknative Onboard - for ethereum wallet connectivity.
+- [Rainbowkit](https://github.com/rainbow-me/rainbowkit) - for ethereum wallet onboarding.
 - [@synthetixio/contracts-interface](https://github.com/Synthetixio/js-monorepo/tree/master/packages/contracts-interface) - for interactions with the Synthetix protocol.
 - [@synthetixio/queries](https://github.com/Synthetixio/js-monorepo/tree/master/packages/queries) - for historical data (powered by [TheGraph](https://thegraph.com/))
 
