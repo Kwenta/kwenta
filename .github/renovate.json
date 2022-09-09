@@ -1,0 +1,6 @@
+{
+  "labels": ["dependencies"],
+  "baseBranches": ["dev"],
+  "prConcurrentLimit": 3,
+  "schedule": ["every day"]
+}
