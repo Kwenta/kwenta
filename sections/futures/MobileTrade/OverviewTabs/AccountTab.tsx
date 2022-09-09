@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 
 import MarketInfoBox from 'sections/futures/MarketInfoBox';
 import MarketActions from 'sections/futures/Trade/MarketActions';
-import MarginInfoBox from 'sections/futures/TradeCrossMargin/MarginInfoBox';
+import MarginInfoBox from 'sections/futures/TradeCrossMargin/CrossMarginInfoBox';
 import { futuresAccountTypeState } from 'store/futures';
 
 import { Pane, SectionHeader, SectionTitle } from '../common';

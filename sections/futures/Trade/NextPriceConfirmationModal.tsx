@@ -11,8 +11,8 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import { useFuturesContext } from 'contexts/FuturesContext';
+import useEstimateGasCost from 'hooks/useEstimateGasCost';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import {
 	confirmationModalOpenState,
@@ -23,12 +23,9 @@ import {
 	positionState,
 	futuresTradeInputsState,
 } from 'store/futures';
-import { gasSpeedState } from 'store/wallet';
 import { FlexDivCol, FlexDivCentered } from 'styles/common';
 import { computeNPFee } from 'utils/costCalculations';
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN, formatCurrency, formatDollars } from 'utils/formatters/number';
-import { getTransactionPrice } from 'utils/network';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
 import { PositionSide } from '../types';
@@ -37,12 +34,11 @@ import { MobileConfirmTradeButton } from './TradeConfirmationModal';
 const NextPriceConfirmationModal: FC = () => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
-	const gasSpeed = useRecoilValue(gasSpeedState);
 	const isDisclaimerDisplayed = useRecoilValue(nextPriceDisclaimerState);
 	const { useEthGasPriceQuery } = useSynthetixQueries();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const ethGasPriceQuery = useEthGasPriceQuery();
-	const exchangeRatesQuery = useExchangeRatesQuery();
+	const { estimateSnxTxGasCost } = useEstimateGasCost();
 
 	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
 	const leverageSide = useRecoilValue(leverageSideState);
@@ -59,23 +55,7 @@ const NextPriceConfirmationModal: FC = () => {
 		[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data]
 	);
 
-	const exchangeRates = useMemo(
-		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
-		[exchangeRatesQuery.isSuccess, exchangeRatesQuery.data]
-	);
-
-	const ethPriceRate = useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', selectedPriceCurrency.name),
-		[exchangeRates, selectedPriceCurrency.name]
-	);
-
-	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
-
-	const transactionFee = useMemo(
-		() =>
-			getTransactionPrice(gasPrice, orderTxn.gasLimit, ethPriceRate, orderTxn.optimismLayerOneFee),
-		[gasPrice, orderTxn.gasLimit, ethPriceRate, orderTxn.optimismLayerOneFee]
-	);
+	const transactionFee = estimateSnxTxGasCost(orderTxn);
 
 	const positionSize = position?.position?.size ?? zeroBN;
 

@@ -8,7 +8,8 @@ import styled, { useTheme } from 'styled-components';
 import Button from 'components/Button';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Select from 'components/Select';
-import { balancesState, positionsState } from 'store/futures';
+import useSUSDBalance from 'hooks/useSUSDBalance';
+import { positionsState } from 'store/futures';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { zeroBN, formatDollars } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
@@ -25,10 +26,9 @@ const BalanceActions: FC = () => {
 	const { t } = useTranslation();
 	const theme = useTheme();
 	const router = useRouter();
+	const sUSDBalance = useSUSDBalance();
 
-	const synthBalances = useRecoilValue(balancesState);
 	const futuresPositions = useRecoilValue(positionsState);
-	const sUSDBalance = synthBalances?.balancesMap?.['sUSD']?.balance ?? zeroBN;
 
 	const accessiblePositions = useMemo(
 		() => futuresPositions?.filter((position) => position.remainingMargin.gt(zeroBN)) ?? [],

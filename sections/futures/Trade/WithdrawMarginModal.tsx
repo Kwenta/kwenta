@@ -10,12 +10,10 @@ import Spacer from 'components/Spacer';
 import { NO_VALUE } from 'constants/placeholder';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useEstimateGasCost from 'hooks/useEstimateGasCost';
 import { currentMarketState, positionState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { formatDollars } from 'utils/formatters/number';
-import { getTransactionPrice } from 'utils/network';
 
 import {
 	StyledBaseModal,
@@ -38,26 +36,15 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const market = useRecoilValue(currentMarketState);
-	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
+	const { useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();
 	const [amount, setAmount] = React.useState('');
 	const [isDisabled, setDisabled] = React.useState(true);
 	const [isMax, setMax] = React.useState(false);
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
-	const exchangeRatesQuery = useExchangeRatesQuery();
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+	const { estimateSnxTxGasCost } = useEstimateGasCost();
 
 	const { handleRefetch } = useRefetchContext();
-
-	const exchangeRates = React.useMemo(
-		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
-		[exchangeRatesQuery.isSuccess, exchangeRatesQuery.data]
-	);
-
-	const ethPriceRate = React.useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', selectedPriceCurrency.name),
-		[exchangeRates, selectedPriceCurrency.name]
-	);
 
 	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
 
@@ -80,16 +67,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 		{ enabled: !!market && !!amount }
 	);
 
-	const transactionFee = React.useMemo(
-		() =>
-			getTransactionPrice(
-				gasPrice,
-				withdrawTxn.gasLimit,
-				ethPriceRate,
-				withdrawTxn.optimismLayerOneFee
-			),
-		[gasPrice, ethPriceRate, withdrawTxn.gasLimit, withdrawTxn.optimismLayerOneFee]
-	);
+	const transactionFee = estimateSnxTxGasCost(withdrawTxn);
 
 	React.useEffect(() => {
 		if (withdrawTxn.hash) {

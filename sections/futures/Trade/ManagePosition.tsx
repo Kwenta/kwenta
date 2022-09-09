@@ -24,9 +24,11 @@ import {
 } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 
-import ClosePositionModal from '../PositionCard/ClosePositionModal';
+import ClosePositionModalCrossMargin from '../PositionCard/ClosePositionModalCrossMargin';
+import ClosePositionModalIsolatedMargin from '../PositionCard/ClosePositionModalIsolatedMargin';
 import NextPriceConfirmationModal from './NextPriceConfirmationModal';
-import TradeConfirmationModal from './TradeConfirmationModal';
+import TradeConfirmationModalCrossMargin from './TradeConfirmationModalCrossMargin';
+import TradeConfirmationModalIsolatedMargin from './TradeConfirmationModalIsolatedMargin';
 
 type OrderTxnError = {
 	reason: string;
@@ -134,9 +136,20 @@ const ManagePosition: React.FC = () => {
 				<Error message={orderError} formatter={orderTxn.error ? 'revert' : undefined} />
 			)}
 
-			{isCancelModalOpen && <ClosePositionModal onDismiss={() => setCancelModalOpen(false)} />}
+			{isCancelModalOpen &&
+				(selectedAccountType === 'cross_margin' ? (
+					<ClosePositionModalCrossMargin onDismiss={() => setCancelModalOpen(false)} />
+				) : (
+					<ClosePositionModalIsolatedMargin onDismiss={() => setCancelModalOpen(false)} />
+				))}
 
-			{isConfirmationModalOpen && orderType === 0 && <TradeConfirmationModal />}
+			{isConfirmationModalOpen &&
+				orderType === 0 &&
+				(selectedAccountType === 'cross_margin' ? (
+					<TradeConfirmationModalCrossMargin />
+				) : (
+					<TradeConfirmationModalIsolatedMargin />
+				))}
 
 			{isConfirmationModalOpen && orderType === 1 && <NextPriceConfirmationModal />}
 		</>
