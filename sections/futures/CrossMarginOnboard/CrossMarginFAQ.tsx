@@ -5,7 +5,7 @@ export default function CrossMarginFAQ() {
 	const { t } = useTranslation();
 
 	const onClick = () => {
-		// TODO: Open faq content
+		window.open('https://docs.kwenta.io/products/futures/cross-margin-accounts');
 	};
 
 	return (
