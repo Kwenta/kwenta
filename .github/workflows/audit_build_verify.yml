@@ -19,10 +19,11 @@ jobs:
         uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v2
 
       - name: Audit dependencies
-        run: npm audit --audit-level=critical
+        run: pnpm audit --audit-level=critical
 
+      # currently not support pnpm: https://github.com/lirantal/lockfile-lint/issues/48
       - name: Lockfile lint
-        run: lockfile-lint -p package-lock.json --type npm --allowed-hosts npm github.com --allowed-schemes "https:" "git+ssh:" "npm:"
+        run: lockfile-lint -p pnpm-lock.yaml --type npm --allowed-hosts npm github.com --allowed-schemes "https:" "git+ssh:" "npm:"
 
   lint:
     needs: audit
@@ -33,39 +34,24 @@ jobs:
     container:
       image: synthetixio/docker-node:16.14-alpine
 
+    # see more: https://pnpm.io/continuous-integration#github-actions
     steps:
-      - name: Checkout
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v2
-
-      - name: Set npm cache directory
-        run: npm config set cache .npm-cache --global
-        continue-on-error: true
-
-      - name: Cache node modules
-        uses: actions/cache@fd5de65bc895cf536527842281bea11763fefd77 # pin@v3
+      - uses: actions/checkout@v2
+      - uses: pnpm/action-setup@v2.2.2
         with:
-          path: |
-            .npm-cache
-            node_modules
-          key: ${{ runner.os }}-alpine-cache-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-alpine-cache-
-        continue-on-error: true
-
-      # fixes permission issues on gh actions + docker + npm@8
-      - name: Chown workspace
-        run: chown -R $(whoami) .
-
-      # mkdir -p node_modules fixes https://github.com/npm/cli/issues/3208 starting from npm@7
+          version: 7
+      - name: Use Node.js 16
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: 'pnpm'
       - name: Install dependencies
-        run: |
-          mkdir -p node_modules
-          npm install --prefer-offline --no-audit --legacy-peer-deps
+        run: pnpm install
 
       - name: Lint
         # run only on main/dev branch and pull requests
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
-        run: npm run lint:sarif
+        run: pnpm run lint:sarif
 
       - name: Upload lint results
         # run if lint failed and only on main/dev branch and pull requests
@@ -78,7 +64,7 @@ jobs:
       - name: Unit tests
         # run only on main/dev branch and pull requests
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
-        run: npm run test:unit
+        run: pnpm run test:unit
 
   build:
     needs: lint
@@ -90,33 +76,17 @@ jobs:
       image: synthetixio/docker-node:16.14-alpine
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v2
-
-      - name: Set npm cache directory
-        run: npm config set cache .npm-cache --global
-        continue-on-error: true
-
-      - name: Cache node modules
-        uses: actions/cache@fd5de65bc895cf536527842281bea11763fefd77 # pin@v3
+      - uses: actions/checkout@v2
+      - uses: pnpm/action-setup@v2.2.2
         with:
-          path: |
-            .npm-cache
-            node_modules
-          key: ${{ runner.os }}-alpine-cache-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-alpine-cache-
-        continue-on-error: true
-
-      # fixes permission issues on gh actions + docker + npm@8
-      - name: Chown workspace
-        run: chown -R $(whoami) .
-
-      # mkdir -p node_modules fixes https://github.com/npm/cli/issues/3208 starting from npm@7
+          version: 7
+      - name: Use Node.js 16
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: 'pnpm'
       - name: Install dependencies
-        run: |
-          mkdir -p node_modules
-          npm install --prefer-offline --no-audit --legacy-peer-deps
+        run: pnpm install
 
       - name: Cache next.js build cache
         uses: actions/cache@fd5de65bc895cf536527842281bea11763fefd77 # pin@v2
@@ -128,7 +98,7 @@ jobs:
         continue-on-error: true
 
       - name: Build
-        run: npm run build
+        run: pnpm run build
 
       - name: Compress build
         run: tar -zcvf build.tar.gz .next
