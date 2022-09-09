@@ -5,7 +5,10 @@ export const formatRevert = (revertMsg: string) => {
 	return revertMsg.replace(REVERT_REGEX, '');
 };
 
-export const isUserDeniedError = (message: string) => {
+export const isUserDeniedError = (message: string | undefined) => {
 	if (!message) return false;
-	return message.includes('User denied transaction signature');
+	return (
+		message.includes('User denied transaction signature') ||
+		message.includes('user rejected transaction')
+	);
 };

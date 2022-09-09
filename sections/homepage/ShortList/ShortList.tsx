@@ -1,4 +1,3 @@
-import { Synths } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { useRouter } from 'next/router';
 import React, { useMemo } from 'react';
@@ -18,7 +17,7 @@ import useGetFuturesCumulativeStats from 'queries/futures/useGetFuturesCumulativ
 import useGetStats from 'queries/futures/useGetStats';
 import { FlexDivColCentered, FlexDivRow, SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media, { Media } from 'styles/media';
-import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
+import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';
 
 import { Copy, StackSection, Title } from '../common';
@@ -178,7 +177,7 @@ const ShortList = () => {
 								accessor: 'pnl',
 								Cell: (cellProps: CellProps<any>) => (
 									<ColorCodedPrice
-										currencyKey={Synths.sUSD}
+										currencyKey={'sUSD'}
 										price={cellProps.row.original.pnl}
 										sign={'$'}
 										conversionRate={1}
@@ -240,7 +239,7 @@ const ShortList = () => {
 								accessor: 'pnl',
 								Cell: (cellProps: CellProps<any>) => (
 									<ColorCodedPrice
-										currencyKey={Synths.sUSD}
+										currencyKey={'sUSD'}
 										price={cellProps.row.original.pnl}
 										sign={'$'}
 										conversionRate={1}
@@ -259,8 +258,7 @@ const ShortList = () => {
 							{totalTradeStats.isLoading ? (
 								<Loader />
 							) : (
-								formatCurrency(Synths.sUSD, totalTradeStats.data?.totalVolume || zeroBN, {
-									sign: '$',
+								formatDollars(totalTradeStats.data?.totalVolume || zeroBN, {
 									minDecimals: 0,
 								})
 							)}

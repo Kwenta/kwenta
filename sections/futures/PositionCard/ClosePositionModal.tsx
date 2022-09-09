@@ -10,20 +10,20 @@ import styled from 'styled-components';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import Error from 'components/Error';
-import { Synths } from 'constants/currency';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
+import { useFuturesContext } from 'contexts/FuturesContext';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { getFuturesMarketContract } from 'queries/futures/utils';
-import { currentMarketState, futuresAccountState, positionState } from 'store/futures';
+import { currentMarketState, futuresAccountTypeState, positionState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { FlexDivCentered, FlexDivCol } from 'styles/common';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { isUserDeniedError } from 'utils/formatters/error';
-import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
+import { formatCurrency, formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 import { getTransactionPrice } from 'utils/network';
 
@@ -36,20 +36,23 @@ type ClosePositionModalProps = {
 const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
 	const { handleRefetch } = useRefetchContext();
-	const { synthetixjs, synthsMap } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs, synthsMap } = Connector.useContainer();
 	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const { resetTradeState } = useFuturesContext();
+
 	const [error, setError] = useState<string | null>(null);
 	const [orderFee, setOrderFee] = useState<Wei>(wei(0));
-	const { monitorTransaction } = TransactionNotifier.useContainer();
+
 	const currencyKey = useRecoilValue(currentMarketState);
 	const position = useRecoilValue(positionState);
 	const positionDetails = position?.position;
-	const { selectedAccountType } = useRecoilValue(futuresAccountState);
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -57,7 +60,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 	);
 
 	const ethPriceRate = useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
+		() => newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
@@ -122,11 +125,11 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 			},
 			{
 				label: t('futures.market.user.position.modal.ROI'),
-				value: formatCurrency(Synths.sUSD, positionDetails?.roi ?? zeroBN, { sign: '$' }),
+				value: formatDollars(positionDetails?.roi ?? zeroBN),
 			},
 			{
 				label: t('futures.market.user.position.modal.fee'),
-				value: formatCurrency(Synths.sUSD, orderFee, { sign: '$' }),
+				value: formatDollars(orderFee),
 			},
 			{
 				label: t('futures.market.user.position.modal.gas-fee'),
@@ -151,6 +154,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 				txHash: txHash,
 				onTxConfirmed: () => {
 					onDismiss();
+					resetTradeState();
 					handleRefetch('close-position');
 					handleRefetch('account-margin-change');
 				},
@@ -166,7 +170,10 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 					{
 						marketKey: formatBytes32String(currencyKey),
 						marginDelta: zeroBN.toBN(),
-						sizeDelta: positionSize.neg().toBN(),
+						sizeDelta:
+							position?.position?.side === PositionSide.LONG
+								? positionSize.neg().toBN()
+								: positionSize.toBN(),
 					},
 				]);
 				monitorTx(tx.hash);
@@ -195,8 +202,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 				))}
 				<StyledButton
 					data-testid="trade-close-position-confirm-order-button"
-					variant="primary"
-					isRounded
+					variant="flat"
 					size="lg"
 					onClick={closePosition}
 					disabled={
@@ -238,7 +244,7 @@ const Label = styled.div`
 
 const Value = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 12px;
 	margin-top: 6px;
 `;

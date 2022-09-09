@@ -6,7 +6,7 @@ import { useRecoilValue } from 'recoil';
 
 import Error from 'components/Error';
 import CustomInput from 'components/Input/CustomInput';
-import { Synths } from 'constants/currency';
+import Spacer from 'components/Spacer';
 import { NO_VALUE } from 'constants/placeholder';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
@@ -14,7 +14,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { currentMarketState, positionState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
-import { formatCurrency } from 'utils/formatters/number';
+import { formatDollars } from 'utils/formatters/number';
 import { getTransactionPrice } from 'utils/network';
 
 import {
@@ -55,7 +55,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 	);
 
 	const ethPriceRate = React.useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
+		() => newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
@@ -133,7 +133,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 			<BalanceContainer>
 				<BalanceText $gold>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
 				<BalanceText>
-					<span>{formatCurrency(Synths.sUSD, accessibleMargin, { sign: '$' })}</span> sUSD
+					<span>{formatDollars(accessibleMargin)}</span> sUSD
 				</BalanceText>
 			</BalanceContainer>
 
@@ -151,6 +151,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 					</MaxButton>
 				}
 			/>
+			<Spacer height={20} />
 
 			<MarginActionButton
 				data-testid="futures-market-trade-withdraw-margin-button"
@@ -165,9 +166,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 				<BalanceText>{t('futures.market.trade.margin.modal.gas-fee')}:</BalanceText>
 				<BalanceText>
 					<span>
-						{transactionFee
-							? formatCurrency(Synths.sUSD, transactionFee, { sign: '$', maxDecimals: 1 })
-							: NO_VALUE}
+						{transactionFee ? formatDollars(transactionFee, { maxDecimals: 1 }) : NO_VALUE}
 					</span>
 				</BalanceText>
 			</GasFeeContainer>

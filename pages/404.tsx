@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import CaretLeftXLIcon from 'assets/svg/app/caret-left-xl.svg';
 import CaretRightXLICon from 'assets/svg/app/caret-right-xl.svg';
+import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { FlexDivRowCentered } from 'styles/common';
 import media from 'styles/media';
 
@@ -20,6 +21,7 @@ const NotFoundPage = () => {
 				<Content>
 					<Title>{t('not-found.title')}</Title>
 					<Subtitle>{t('not-found.subtitle')}</Subtitle>
+					<GitHashID />
 				</Content>
 				<CaretRightXLICon />
 			</Container>
@@ -45,7 +47,7 @@ const Container = styled(FlexDivRowCentered)`
 `;
 
 const Content = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-family: ${(props) => props.theme.fonts.mono};
 	padding: 0 48px;
 	text-align: center;

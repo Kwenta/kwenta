@@ -1,4 +1,4 @@
-import { CurrencyKey, Synths } from '@synthetixio/contracts-interface';
+import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { Rates, SynthBalance } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import * as _ from 'lodash/fp';
@@ -17,7 +17,7 @@ import Connector from 'containers/Connector';
 import { Price } from 'queries/rates/types';
 import { pastRatesState } from 'store/futures';
 import { formatNumber, zeroBN } from 'utils/formatters/number';
-import { isEurForex } from 'utils/futures';
+import { isDecimalFour } from 'utils/futures';
 
 type SynthBalancesTableProps = {
 	exchangeRates: Rates | null;
@@ -145,7 +145,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 									return conditionalRender<Cell['usdBalance']>(
 										cellProps.row.original.usdBalance,
 										<Currency.Price
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.usdBalance}
 											sign={'$'}
 											conversionRate={1}
@@ -174,12 +174,12 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 									return conditionalRender<Cell['price']>(
 										cellProps.row.original.price,
 										<Currency.Price
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.price!}
 											sign={'$'}
 											conversionRate={1}
 											formatOptions={{
-												minDecimals: isEurForex(cellProps.row.original.synth) ? 4 : 2,
+												minDecimals: isDecimalFour(cellProps.row.original.synth) ? 4 : 2,
 											}}
 										/>
 									);
@@ -254,11 +254,11 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 											</IconContainer>
 											<StyledText>{cellProps.row.original.synth}</StyledText>
 											<Currency.Price
-												currencyKey={Synths.sUSD}
+												currencyKey={'sUSD'}
 												price={cellProps.row.original.price ?? 0}
 												sign="$"
 												formatOptions={{
-													minDecimals: isEurForex(cellProps.row.original.synth) ? 4 : 2,
+													minDecimals: isDecimalFour(cellProps.row.original.synth) ? 4 : 2,
 												}}
 											/>
 										</MarketContainer>
@@ -280,7 +280,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 									<div>
 										<div>{formatNumber(cellProps.row.original.balance ?? 0)}</div>
 										<Currency.Price
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.usdBalance ?? 0}
 											sign="$"
 										/>
@@ -342,7 +342,7 @@ const StyledValue = styled.div`
 `;
 
 const DefaultCell = styled.p`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const TableContainer = styled.div``;
@@ -355,7 +355,7 @@ const StyledText = styled.div`
 	grid-column: 2;
 	grid-row: 1;
 	margin-bottom: -4px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
@@ -368,7 +368,7 @@ const MarketContainer = styled.div`
 
 const AmountCol = styled.div`
 	justify-self: flex-end;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const StyledMobileTable = styled(Table)`

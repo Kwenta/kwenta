@@ -1,16 +1,16 @@
+import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
+import { useNetwork } from 'wagmi';
 
 import MoonIcon from 'assets/svg/app/moon.svg';
 import SunIcon from 'assets/svg/app/sun.svg';
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
-import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import { useAutoConnect } from 'hooks/useAutoConnect';
 import { currentThemeState } from 'store/ui';
-import { isWalletConnectedState, networkState } from 'store/wallet';
-import { isSupportedNetworkId } from 'utils/network';
 
 import BalanceActions from './BalanceActions';
 import ConnectionDot from './ConnectionDot';
@@ -19,11 +19,11 @@ import WalletActions from './WalletActions';
 
 const WalletButtons: React.FC = () => {
 	const { t } = useTranslation();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const network = useRecoilValue(networkState);
-	const { connectWallet } = Connector.useContainer();
+	const { isWalletConnected } = Connector.useContainer();
+	const { chain: network } = useNetwork();
 	const [currentTheme, setTheme] = useRecoilState(currentThemeState);
-	const { switchToL2 } = useNetworkSwitcher();
+	const { openConnectModal } = useConnectModal();
+	const { openChainModal } = useChainModal();
 
 	const ThemeIcon = currentTheme === 'dark' ? SunIcon : MoonIcon;
 
@@ -31,13 +31,14 @@ const WalletButtons: React.FC = () => {
 		setTheme((curr) => (curr === 'light' ? 'dark' : 'light'));
 	};
 
+	useAutoConnect();
 	const walletIsNotConnected = (
 		<>
 			<ConnectButton
 				size="sm"
-				variant="outline"
+				variant="flat"
 				noOutline
-				onClick={connectWallet}
+				onClick={openConnectModal}
 				data-testid="connect-wallet"
 				mono
 			>
@@ -49,10 +50,10 @@ const WalletButtons: React.FC = () => {
 
 	const walletIsConnectedButNotSupported = (
 		<>
-			<SwitchToL2Button variant="secondary" onClick={switchToL2}>
-				{t('homepage.l2.cta-buttons.switch-l2')}
-			</SwitchToL2Button>
-			<ConnectButton size="sm" variant="outline" data-testid="unsupported-network" mono>
+			<SwitchNetworkButton variant="secondary" onClick={openChainModal}>
+				{t('homepage.l2.cta-buttons.switch-networks')}
+			</SwitchNetworkButton>
+			<ConnectButton size="sm" variant="flat" data-testid="unsupported-network" mono>
 				<StyledConnectionDot />
 				{t('common.wallet.unsupported-network')}
 			</ConnectButton>
@@ -70,9 +71,9 @@ const WalletButtons: React.FC = () => {
 	return (
 		<Container>
 			{isWalletConnected
-				? isSupportedNetworkId(network.id)
-					? walletIsConnectedAndSupported
-					: walletIsConnectedButNotSupported
+				? network?.unsupported
+					? walletIsConnectedButNotSupported
+					: walletIsConnectedAndSupported
 				: walletIsNotConnected}
 			<MenuButton
 				onClick={() => {
@@ -122,7 +123,7 @@ const ConnectButton = styled(Button)`
 	font-size: 13px;
 `;
 
-const SwitchToL2Button = styled(Button)`
+const SwitchNetworkButton = styled(Button)`
 	font-size: 13px;
 	color: ${(props) => props.theme.colors.common.primaryWhite};
 	font-family: ${(props) => props.theme.fonts.mono};

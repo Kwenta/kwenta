@@ -1,10 +1,12 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import CompetitionBannerBg from 'assets/svg/app/competition-banner-bg.svg';
 import { COMPETITION_DATES } from 'constants/competition';
 import { EXTERNAL_LINKS } from 'constants/links';
+import { isCompetitionActive } from 'store/ui';
 import { ExternalLink } from 'styles/common';
 import media from 'styles/media';
 import { formatDateWithoutYear } from 'utils/formatters/date';
@@ -21,6 +23,9 @@ export const CompetitionBanner: FC<CompetitionBannerProps> = ({
 	hideBanner,
 }: CompetitionBannerProps) => {
 	const { t } = useTranslation();
+
+	const competitionActive = useRecoilValue(isCompetitionActive);
+	if (!competitionActive) return null;
 
 	const formatedStartDate = formatDateWithoutYear(COMPETITION_DATES.START_DATE);
 	const formatedEndDate = formatDateWithoutYear(COMPETITION_DATES.END_DATE);
@@ -49,7 +54,7 @@ const BannerContainer = styled.div<{
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	background-image: url('assets/svg/app/competition-banner-bg.svg');
+	background: transaparent;
 	padding: 22px 0;
 	border: ${(props) => props.theme.colors.selectedTheme.competitionBanner.border};
 	border-radius: 8px;

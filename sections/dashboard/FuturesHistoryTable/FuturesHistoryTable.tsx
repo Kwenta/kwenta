@@ -11,26 +11,28 @@ import styled from 'styled-components';
 import Currency from 'components/Currency';
 import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
-import { Synths } from 'constants/currency';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { ETH_UNIT } from 'constants/network';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
+import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetAllFuturesTradesForAccount from 'queries/futures/useGetAllFuturesTradesForAccount';
 import { TradeStatus } from 'sections/futures/types';
-import { futuresAccountState } from 'store/futures';
-import { isL2State } from 'store/wallet';
-import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
-import { FuturesMarketAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
+import { futuresAccountState, futuresAccountTypeState } from 'store/futures';
+import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
+import { FuturesMarketAsset, getMarketName, isDecimalFour, MarketKeyByAsset } from 'utils/futures';
 
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
 
 const FuturesHistoryTable: FC = () => {
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
+	const accountType = useRecoilValue(futuresAccountTypeState);
+
 	const { t } = useTranslation();
-	const isL2 = useRecoilValue(isL2State);
+	const isL2 = useIsL2();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { switchToL2 } = useNetworkSwitcher();
 	const futuresTradesQuery = useGetAllFuturesTradesForAccount(selectedFuturesAddress);
@@ -78,7 +80,7 @@ const FuturesHistoryTable: FC = () => {
 					) : (
 						<TableNoResults>
 							{t('dashboard.history.futures-history-table.no-result')}
-							<Link href={ROUTES.Markets.Home}>
+							<Link href={ROUTES.Markets.Home(accountType)}>
 								<div>{t('common.perp-cta')}</div>
 							</Link>
 						</TableNoResults>
@@ -150,13 +152,12 @@ const FuturesHistoryTable: FC = () => {
 						Header: <div>{t('dashboard.history.futures-history-table.price')}</div>,
 						accessor: 'price',
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
+							const formatOptions = isDecimalFour(cellProps.row.original.asset)
+								? { sign: '$', minDecimals: DEFAULT_CRYPTO_DECIMALS }
+								: { sign: '$' };
 							return conditionalRender(
 								cellProps.row.original.price,
-								<>
-									{formatCurrency(Synths.sUSD, cellProps.value, {
-										sign: '$',
-									})}
-								</>
+								<>{formatDollars(cellProps.value, formatOptions)}</>
 							);
 						},
 						width: 120,
@@ -170,11 +171,7 @@ const FuturesHistoryTable: FC = () => {
 								cellProps.row.original.pnl.eq(wei(0)) ? (
 									<PNL normal>--</PNL>
 								) : (
-									<PNL negative={cellProps.value.lt(wei(0))}>
-										{formatCurrency(Synths.sUSD, cellProps.value, {
-											sign: '$',
-										})}
-									</PNL>
+									<PNL negative={cellProps.value.lt(wei(0))}>{formatDollars(cellProps.value)}</PNL>
 								)
 							);
 						},
@@ -187,7 +184,7 @@ const FuturesHistoryTable: FC = () => {
 							return conditionalRender(
 								cellProps.row.original.feesPaid,
 								<Currency.Price
-									currencyKey={Synths.sUSD}
+									currencyKey={'sUSD'}
 									price={cellProps.row.original.feesPaid}
 									sign={selectedPriceCurrency.sign}
 									conversionRate={selectPriceCurrencyRate}
@@ -248,7 +245,7 @@ const StyledText = styled.div`
 	align-items: center;
 	grid-column: 2;
 	grid-row: 1;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 const SynthContainer = styled.div`
 	display: flex;

@@ -4,7 +4,6 @@ import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import { TabPanel } from 'components/Tab';
-import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
 
 import SegmentedControl from '../../../components/SegmentedControl';
 import { activeTabState } from '../../../store/futures';
@@ -32,7 +31,7 @@ const FuturesMarketTabs: FC = () => {
 				<FuturesMarketTab />
 			</TabPanel>
 			<TabPanel name={DETAIL_TABS[1]} activeTab={DETAIL_TABS[activeTab]}>
-				<TradesHistoryTable numberOfTrades={DEFAULT_NUMBER_OF_TRADES} />
+				<TradesHistoryTable />
 			</TabPanel>
 		</>
 	);

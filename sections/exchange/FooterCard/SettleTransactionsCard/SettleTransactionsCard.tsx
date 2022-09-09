@@ -68,7 +68,6 @@ const SettleTransactionsCard: FC<SettleTransactionsCardProps> = ({
 					<span>
 						<Button
 							variant="primary"
-							isRounded
 							disabled={!!settlementDisabledReason}
 							onClick={onSubmit}
 							size="lg"
@@ -100,7 +99,7 @@ export const MessageItems = styled.span`
 export const ErrorTooltip = styled(Tippy)`
 	font-size: 12px;
 	background-color: ${(props) => props.theme.colors.red};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	.tippy-arrow {
 		color: ${(props) => props.theme.colors.red};
 	}

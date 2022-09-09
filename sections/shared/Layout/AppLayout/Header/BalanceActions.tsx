@@ -8,10 +8,9 @@ import styled, { useTheme } from 'styled-components';
 import Button from 'components/Button';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Select from 'components/Select';
-import { Synths } from 'constants/currency';
 import { balancesState, positionsState } from 'store/futures';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { zeroBN, formatDollars } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
 
 type ReactSelectOptionProps = {
@@ -29,8 +28,7 @@ const BalanceActions: FC = () => {
 
 	const synthBalances = useRecoilValue(balancesState);
 	const futuresPositions = useRecoilValue(positionsState);
-
-	const sUSDBalance = synthBalances?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
+	const sUSDBalance = synthBalances?.balancesMap?.['sUSD']?.balance ?? zeroBN;
 
 	const accessiblePositions = useMemo(
 		() => futuresPositions?.filter((position) => position.remainingMargin.gt(zeroBN)) ?? [],
@@ -50,7 +48,7 @@ const BalanceActions: FC = () => {
 			return {
 				label: getMarketName(asset),
 				synthIcon: MarketKeyByAsset[asset],
-				marketRemainingMargin: formatCurrency(Synths.sUSD, remainingMargin, { sign: '$' }),
+				marketRemainingMargin: formatDollars(remainingMargin),
 				onClick: () => router.push(`/market/?asset=${asset}`),
 			};
 		},
@@ -61,7 +59,7 @@ const BalanceActions: FC = () => {
 		() => [
 			{
 				label: 'header.balance.total-margin-label',
-				totalAvailableMargin: formatCurrency(Synths.sUSD, totalRemainingMargin, { sign: '$' }),
+				totalAvailableMargin: formatDollars(totalRemainingMargin),
 				options: accessiblePositions.map((market) => setMarketConfig(market.asset)),
 			},
 		],
@@ -118,7 +116,7 @@ const BalanceActions: FC = () => {
 	};
 
 	useEffect(() => {
-		setBalanceLabel(formatCurrency(Synths.sUSD, sUSDBalance, { sign: '$' }));
+		setBalanceLabel(formatDollars(sUSDBalance, { sign: '$' }));
 	}, [balanceLabel, sUSDBalance]);
 
 	if (!balanceLabel) {
@@ -133,7 +131,7 @@ const BalanceActions: FC = () => {
 					onClick={() => router.push(`/exchange/?quote=sUSD`)}
 					noOutline
 				>
-					<StyledCurrencyIcon currencyKey={Synths.sUSD} width="20px" height="20px" />
+					<StyledCurrencyIcon currencyKey={'sUSD'} width="20px" height="20px" />
 					{t('header.balance.get-susd')}
 				</StyledWidgetButton>
 			) : (
@@ -142,7 +140,7 @@ const BalanceActions: FC = () => {
 					formatGroupLabel={OptionsGroupLabel}
 					controlHeight={41}
 					options={OPTIONS}
-					value={{ label: balanceLabel, synthIcon: Synths.sUSD }}
+					value={{ label: balanceLabel, synthIcon: 'sUSD' }}
 					menuWidth={290}
 					maxMenuHeight={500}
 					optionPadding={'0px'} //override default padding to 0
@@ -154,8 +152,8 @@ const BalanceActions: FC = () => {
 						IndicatorSeparator: undefined,
 					}}
 					isSearchable={false}
-					noOutline
-				/>
+					variant="flat"
+				></BalanceSelect>
 			)}
 		</Container>
 	);
@@ -177,7 +175,7 @@ const BalanceSelect = styled(Select)<{ value: { label: string } }>`
 		padding: 20px;
 
 		.react-select__group-heading {
-			color: ${(props) => props.theme.colors.selectedTheme.button.text};
+			color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 			font-size: 12px;
 			padding: 0;
 			margin-bottom: 15px;
@@ -212,7 +210,7 @@ const StyledLabel = styled.div<{ noPadding: boolean }>`
 `;
 
 const LabelContainer = styled(FlexDivRowCentered)`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 13px;
 	padding: 10px;
 	> div {

@@ -5,15 +5,16 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
-import { Synths, CurrencyKey } from 'constants/currency';
+import { CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { PositionSide } from 'sections/futures/types';
 import { currentMarketState, potentialTradeDetailsState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
-import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
+import { zeroBN, formatDollars, formatCurrency, formatNumber } from 'utils/formatters/number';
 import { getTransactionPrice } from 'utils/network';
 
 import BaseDrawer from './BaseDrawer';
@@ -28,11 +29,11 @@ const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({ open,
 	const { synthsMap } = Connector.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const market = useRecoilValue(currentMarketState);
-	const { useExchangeRatesQuery, useEthGasPriceQuery } = useSynthetixQueries();
+	const { useEthGasPriceQuery } = useSynthetixQueries();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const potentialTradeDetails = useRecoilValue(potentialTradeDetailsState);
+	const { data: potentialTradeDetails } = useRecoilValue(potentialTradeDetailsState);
 
 	const { orderTxn } = useFuturesContext();
 
@@ -42,7 +43,7 @@ const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({ open,
 	);
 
 	const ethPriceRate = useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
+		() => newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
@@ -82,21 +83,19 @@ const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({ open,
 			{ label: 'leverage', value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x` },
 			{
 				label: 'current price',
-				value: formatCurrency(Synths.sUSD, positionDetails?.price ?? zeroBN, { sign: '$' }),
+				value: formatDollars(positionDetails?.price ?? zeroBN),
 			},
 			{
 				label: 'liquidation price',
-				value: formatCurrency(Synths.sUSD, positionDetails?.liqPrice ?? zeroBN, {
-					sign: '$',
-				}),
+				value: formatDollars(positionDetails?.liqPrice ?? zeroBN),
 			},
 			{
 				label: 'margin',
-				value: formatCurrency(Synths.sUSD, positionDetails?.margin ?? zeroBN, { sign: '$' }),
+				value: formatDollars(positionDetails?.margin ?? zeroBN),
 			},
 			{
 				label: 'protocol fee',
-				value: formatCurrency(Synths.sUSD, positionDetails?.fee ?? zeroBN, { sign: '$' }),
+				value: formatDollars(positionDetails?.fee ?? zeroBN),
 			},
 			{
 				label: 'network gas fee',
@@ -117,7 +116,6 @@ const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({ open,
 			buttons={
 				<ConfirmTradeButton
 					variant="primary"
-					isRounded
 					onClick={() => {
 						orderTxn.mutate();
 						closeDrawer();

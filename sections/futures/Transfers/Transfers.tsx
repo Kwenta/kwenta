@@ -91,7 +91,7 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: 
 export default Transfers;
 
 const DefaultCell = styled.p`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const StyledActionCell = styled(DefaultCell)`
@@ -99,13 +99,13 @@ const StyledActionCell = styled(DefaultCell)`
 `;
 
 const StyledTitle = styled.p`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 16px;
 	margin: 0;
 `;
 
 const StyledExternalLink = styled(ExternalLink)`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	text-decoration: underline;
 	&:hover {
 		text-decoration: underline;

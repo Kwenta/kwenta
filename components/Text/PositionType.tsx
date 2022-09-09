@@ -4,7 +4,7 @@ type PositionProps = {
 	side: 'long' | 'short';
 };
 
-const PositionType: React.FC<PositionProps> = ({ side = 'long', children }) => {
+const PositionType: React.FC<PositionProps> = ({ side = 'long' }) => {
 	return <StyledText $side={side}>{side}</StyledText>;
 };
 

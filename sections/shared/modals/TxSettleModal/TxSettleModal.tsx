@@ -8,15 +8,12 @@ import { MessageButton } from 'sections/exchange/FooterCard/common';
 import { FlexDivColCentered } from 'styles/common';
 import { formatRevert } from 'utils/formatters/error';
 
-import { TxProvider } from '../TxConfirmationModal/TxConfirmationModal';
-
 type TxSettleModalProps = {
 	onDismiss: () => void;
 	txError: string | null;
 	attemptRetry: () => void;
 	currencyKey: string;
 	currencyLabel: ReactNode;
-	txProvider?: TxProvider | null;
 };
 
 export const TxSettleModal: FC<TxSettleModalProps> = ({
@@ -25,7 +22,6 @@ export const TxSettleModal: FC<TxSettleModalProps> = ({
 	attemptRetry,
 	currencyKey,
 	currencyLabel,
-	txProvider,
 }) => {
 	const { t } = useTranslation();
 
@@ -39,7 +35,6 @@ export const TxSettleModal: FC<TxSettleModalProps> = ({
 						width="40px"
 						height="40px"
 						data-testid="currency-img"
-						type={txProvider === '1inch' ? 'token' : 'synth'}
 					/>
 				</CurrencyItem>
 			</Currencies>
@@ -76,7 +71,7 @@ const Currencies = styled.div`
 
 const CurrencyItem = styled.div`
 	text-align: center;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const CurrencyItemTitle = styled.div`
@@ -95,7 +90,7 @@ const Actions = styled(FlexDivColCentered)`
 `;
 
 const Message = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	flex-grow: 1;

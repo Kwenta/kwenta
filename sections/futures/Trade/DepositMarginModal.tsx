@@ -9,7 +9,6 @@ import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import Error from 'components/Error';
 import CustomInput from 'components/Input/CustomInput';
-import { Synths } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
@@ -18,7 +17,7 @@ import { currentMarketState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { FlexDivRowCentered } from 'styles/common';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
-import { formatCurrency } from 'utils/formatters/number';
+import { formatDollars } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 import { getTransactionPrice } from 'utils/network';
 
@@ -50,7 +49,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 	);
 
 	const ethPriceRate = React.useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
+		() => newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
@@ -117,7 +116,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 			<BalanceContainer>
 				<BalanceText $gold>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
 				<BalanceText>
-					<span>{formatCurrency(Synths.sUSD, sUSDBalance, { sign: '$' })}</span> sUSD
+					<span>{formatDollars(sUSDBalance)}</span> sUSD
 				</BalanceText>
 			</BalanceContainer>
 			<CustomInput
@@ -147,9 +146,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 				<BalanceText>{t('futures.market.trade.margin.modal.gas-fee')}:</BalanceText>
 				<BalanceText>
 					<span>
-						{transactionFee
-							? formatCurrency(Synths.sUSD, transactionFee, { sign: '$', maxDecimals: 1 })
-							: NO_VALUE}
+						{transactionFee ? formatDollars(transactionFee, { maxDecimals: 1 }) : NO_VALUE}
 					</span>
 				</BalanceText>
 			</GasFeeContainer>
@@ -170,7 +167,6 @@ export const StyledBaseModal = styled(BaseModal)`
 
 export const BalanceContainer = styled(FlexDivRowCentered)`
 	margin-bottom: 8px;
-	padding: 0 14px;
 	p {
 		margin: 0;
 	}
@@ -180,12 +176,11 @@ export const BalanceText = styled.p<{ $gold?: boolean }>`
 	color: ${(props) =>
 		props.$gold ? props.theme.colors.common.primaryGold : props.theme.colors.selectedTheme.gray};
 	span {
-		color: ${(props) => props.theme.colors.selectedTheme.button.text};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
 `;
 
 export const MarginActionButton = styled(Button)`
-	margin-top: 16px;
 	height: 55px;
 `;
 
@@ -198,14 +193,14 @@ export const MaxButton = styled.button`
 	font-size: 13px;
 	line-height: 13px;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	cursor: pointer;
 `;
 
 const MinimumAmountDisclaimer = styled.div`
 	font-size: 12px;
-	margin-top: 8px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	margin: 20px 0;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	text-align: center;
 `;
 

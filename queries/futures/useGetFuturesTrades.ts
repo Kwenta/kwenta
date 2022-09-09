@@ -1,11 +1,11 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { utils as ethersUtils } from 'ethers';
 import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
 
 import { DEFAULT_NUMBER_OF_TRADES, MAX_TIMESTAMP } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
-import { appReadyState } from 'store/app';
-import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
+import Connector from 'containers/Connector';
+import { notNill } from 'queries/synths/utils';
 import logError from 'utils/logError';
 
 import { getFuturesTrades } from './subgraph';
@@ -16,14 +16,11 @@ const useGetFuturesTrades = (
 	currencyKey: string | undefined,
 	options?: UseInfiniteQueryOptions<FuturesTrade[] | null> & { forceAccount: boolean }
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isL2 = useRecoilValue(isL2State);
+	const { network } = Connector.useContainer();
+	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
 	return useInfiniteQuery<FuturesTrade[] | null>(
-		QUERY_KEYS.Futures.Trades(network.id, currencyKey || null),
+		QUERY_KEYS.Futures.Trades(network?.id as NetworkId, currencyKey || null),
 		async ({ pageParam = { maxTs: Math.floor(Date.now() / 1000), minTs: 0 } }) => {
 			if (!currencyKey) return null;
 
@@ -66,10 +63,9 @@ const useGetFuturesTrades = (
 		},
 		{
 			...options,
-			enabled: isWalletConnected ? isL2 && isAppReady : isAppReady,
 			refetchInterval: 15000,
 			getNextPageParam: (lastPage, _) => {
-				return lastPage
+				return notNill(lastPage) && lastPage?.length > 0
 					? {
 							minTs: 0,
 							maxTs: lastPage[lastPage.length - 1].timestamp.toNumber(),
@@ -77,7 +73,7 @@ const useGetFuturesTrades = (
 					: null;
 			},
 			getPreviousPageParam: (firstPage, _) => {
-				return firstPage
+				return notNill(firstPage) && firstPage?.length > 0
 					? {
 							minTs: firstPage[0].timestamp.toNumber(),
 							maxTs: MAX_TIMESTAMP,

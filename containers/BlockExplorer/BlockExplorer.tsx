@@ -1,11 +1,10 @@
-import { NetworkIdByName } from '@synthetixio/contracts-interface';
-import { OPTIMISM_NETWORKS, MAINNET_OPTIMISM_EXPLORER } from '@synthetixio/optimism-networks';
+import { NetworkId, NetworkIdByName, NetworkNameById } from '@synthetixio/contracts-interface';
+import { MAINNET_OPTIMISM_EXPLORER } from '@synthetixio/optimism-networks';
 import { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { createContainer } from 'unstated-next';
+import { chain, useNetwork } from 'wagmi';
 
-import { Network } from 'store/wallet';
-import { networkState } from 'store/wallet';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 type BlockExplorerInstance = {
 	baseLink: string;
@@ -15,13 +14,18 @@ type BlockExplorerInstance = {
 	blockLink: (blockNumber: string) => string;
 };
 
-const getBaseUrl = (network: Network) => {
-	if (network.useOvm) {
-		return OPTIMISM_NETWORKS[network.id]?.blockExplorerUrls[0] ?? MAINNET_OPTIMISM_EXPLORER;
-	} else if (network.id === NetworkIdByName.mainnet) {
+export const OPTIMISM_NETWORKS = {
+	[chain.optimism.id]: EXTERNAL_LINKS.Explorer.Optimism,
+	[chain.optimismGoerli.id]: EXTERNAL_LINKS.Explorer.OptimismGoerli,
+};
+
+const getBaseUrl = (networkId: NetworkId) => {
+	if (networkId === 10 || networkId === 420) {
+		return OPTIMISM_NETWORKS[networkId as NetworkId] ?? MAINNET_OPTIMISM_EXPLORER;
+	} else if ((networkId as NetworkId) === NetworkIdByName.mainnet) {
 		return 'https://etherscan.io';
 	}
-	return `https://${network.name}.etherscan.io`;
+	return `https://${NetworkNameById[networkId]}.etherscan.io`;
 };
 
 const generateExplorerFunctions = (baseUrl: string) => {
@@ -35,7 +39,7 @@ const generateExplorerFunctions = (baseUrl: string) => {
 };
 
 const useBlockExplorer = () => {
-	const network = useRecoilValue(networkState);
+	const { chain: network } = useNetwork();
 
 	const [blockExplorerInstance, setBlockExplorerInstance] = useState<BlockExplorerInstance | null>(
 		null
@@ -43,7 +47,7 @@ const useBlockExplorer = () => {
 
 	useEffect(() => {
 		if (network) {
-			const baseUrl = getBaseUrl(network);
+			const baseUrl = getBaseUrl(network?.id as NetworkId);
 			setBlockExplorerInstance(generateExplorerFunctions(baseUrl));
 		}
 	}, [network]);

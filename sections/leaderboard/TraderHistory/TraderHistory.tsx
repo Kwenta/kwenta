@@ -8,7 +8,6 @@ import Currency from 'components/Currency';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
-import { Synths } from 'constants/currency';
 import ROUTES from 'constants/routes';
 import { PositionHistory } from 'queries/futures/types';
 import useGetFuturesAccountPositionHistory from 'queries/futures/useGetFuturesAccountPositionHistory';
@@ -152,7 +151,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 									accessor: 'totalVolume',
 									Cell: (cellProps: CellProps<any>) => (
 										<Currency.Price
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.totalVolume}
 											sign={'$'}
 											conversionRate={1}
@@ -170,7 +169,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 									Cell: (cellProps: CellProps<any>) => (
 										<PnlContainer>
 											<ColorCodedPrice
-												currencyKey={Synths.sUSD}
+												currencyKey={'sUSD'}
 												price={cellProps.row.original.pnl}
 												sign={'$'}
 												conversionRate={1}
@@ -256,7 +255,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 									Cell: (cellProps: CellProps<any>) => (
 										<PnlContainer>
 											<ColorCodedPrice
-												currencyKey={Synths.sUSD}
+												currencyKey={'sUSD'}
 												price={cellProps.row.original.pnl}
 												sign={'$'}
 												conversionRate={1}
@@ -308,7 +307,7 @@ const TitleText = styled.a`
 `;
 
 const StyledCell = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	display: flex;
 `;
 
@@ -321,7 +320,7 @@ const TitleSeparator = styled.div`
 
 const TraderText = styled.a`
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 
 	&:hover {
 		text-decoration: underline;
@@ -346,7 +345,7 @@ const CurrencyInfo = styled(FlexDiv)`
 const StyledSubtitle = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
 	font-size: 13px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	text-transform: capitalize;
 `;
 
@@ -363,7 +362,7 @@ const ColorCodedPrice = styled(Currency.Price)`
 			? props.theme.colors.selectedTheme.green
 			: props.price < 0
 			? props.theme.colors.selectedTheme.red
-			: props.theme.colors.selectedTheme.button.text};
+			: props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const StyledValue = styled.div`
@@ -374,7 +373,7 @@ const StyledValue = styled.div`
 			? props.theme.colors.selectedTheme.green
 			: props.color === 'red'
 			? props.theme.colors.selectedTheme.red
-			: props.theme.colors.selectedTheme.button.text};
+			: props.theme.colors.selectedTheme.button.text.primary};
 	margin: 0;
 	text-align: end;
 `;

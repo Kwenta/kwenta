@@ -42,8 +42,8 @@ export const EXTERNAL_LINKS = {
 		Faq: 'https://docs.kwenta.io/resources/faq',
 	},
 	Explorer: {
-		Optimism: 'https://optimistic.etherscan.io/tx',
-		OptimismKovan: 'https://kovan-optimistic.etherscan.io/tx',
+		Optimism: 'https://optimistic.etherscan.io',
+		OptimismGoerli: 'https://goerli-optimism.etherscan.io',
 	},
 	Optimism: {
 		Home: 'https://optimism.io/',

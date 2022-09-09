@@ -56,7 +56,7 @@ const Container = styled.span`
 `;
 
 const Amount = styled.span`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 const TotalValue = styled.span`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};

@@ -1,13 +1,14 @@
 import React, { FC, useMemo, DependencyList, useEffect, useRef } from 'react';
-import { useTable, useFlexLayout, useSortBy, Column, Row, usePagination, Cell } from 'react-table';
+import { useTable, useFlexLayout, useSortBy, Column, Row, usePagination } from 'react-table';
 import styled, { css } from 'styled-components';
 
 import SortDownIcon from 'assets/svg/app/caret-down.svg';
 import SortUpIcon from 'assets/svg/app/caret-up.svg';
 import Spinner from 'assets/svg/app/loader.svg';
-import { FlexDivCentered, GridDivCenteredRow } from 'styles/common';
+import { GridDivCenteredRow } from 'styles/common';
 
 import Pagination from './Pagination';
+import TableBodyRow, { TableCell } from './TableBodyRow';
 
 export type TablePalette = 'primary';
 
@@ -172,20 +173,15 @@ export const Table: FC<TableProps> = ({
 									prepareRow(row);
 									const props = row.getRowProps();
 									const localRef = lastRef && idx === page.length - 1 ? lastRef : defaultRef;
+									const handleClick = onTableRowClick ? () => onTableRowClick(row) : undefined;
 									return (
 										<TableBodyRow
-											className="table-body-row"
+											localRef={localRef}
+											highlightRowsOnHover={highlightRowsOnHover}
+											row={row}
+											onClick={handleClick}
 											{...props}
-											ref={localRef}
-											onClick={onTableRowClick ? () => onTableRowClick(row) : undefined}
-											$highlightRowsOnHover={highlightRowsOnHover}
-										>
-											{row.cells.map((cell: Cell) => (
-												<TableCell className="table-body-cell" {...cell.getCellProps()}>
-													{cell.render('Cell')}
-												</TableCell>
-											))}
-										</TableBodyRow>
+										/>
 									);
 								})}
 							</TableBody>
@@ -194,7 +190,7 @@ export const Table: FC<TableProps> = ({
 					{!!noResultsMessage && !isLoading && data.length === 0 && noResultsMessage}
 				</ReactTable>
 			</TableContainer>
-			{!showShortList && data.length > (pageSize ? pageSize : MAX_PAGE_ROWS) ? (
+			{!showShortList && data.length > (pageSize ?? MAX_PAGE_ROWS) ? (
 				<Pagination
 					pageIndex={pageIndex}
 					pageCount={pageCount}
@@ -225,38 +221,6 @@ const TableBody = styled.div`
 	overflow-x: hidden;
 `;
 
-const TableBodyRow = styled.div<{ $highlightRowsOnHover?: boolean }>`
-	cursor: ${(props) => (props.onClick ? 'pointer' : 'default')};
-	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
-	padding: 6px 0;
-
-	&:last-child {
-		border: none;
-	}
-
-	&:nth-child(odd) {
-		background-color: ${(props) => props.theme.colors.selectedTheme.table.fill};
-	}
-
-	${(props) =>
-		props.$highlightRowsOnHover &&
-		css`
-			&:hover {
-				background-color: ${(props) => props.theme.colors.selectedTheme.table.hover};
-			}
-		`}
-`;
-
-const TableCell = styled(FlexDivCentered)`
-	box-sizing: border-box;
-	&:first-child {
-		padding-left: 14px;
-	}
-	&:last-child {
-		padding-right: 14px;
-	}
-`;
-
 const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
 	user-select: none;
 	&:first-child {
@@ -275,7 +239,7 @@ export const TableNoResults = styled(GridDivCenteredRow)`
 	margin-top: -2px;
 	justify-items: center;
 	grid-gap: 10px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 16px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	div {
@@ -307,7 +271,7 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 				max-height: calc(100% - ${CARD_HEIGHT});
 			}
 			${TableCell} {
-				color: ${(props) => props.theme.colors.selectedTheme.button.text};
+				color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 				font-size: 12px;
 				height: ${CARD_HEIGHT};
 				font-family: ${(props) => props.theme.fonts.mono};
@@ -316,8 +280,6 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 				color: ${(props) => props.theme.colors.selectedTheme.gray};
 				font-family: ${(props) => props.theme.fonts.regular};
 				border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
-			}
-			${TableBodyRow} {
 			}
 		`}
 `;

@@ -1,6 +1,7 @@
 import { wei } from '@synthetixio/wei';
 import { useRouter } from 'next/router';
 import { FC, useMemo, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
@@ -10,6 +11,7 @@ import useENSs from 'hooks/useENSs';
 import { FuturesStat } from 'queries/futures/types';
 import useGetStats from 'queries/futures/useGetStats';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
+import { isCompetitionActive } from 'store/ui';
 import { FlexDivCol } from 'styles/common';
 import media from 'styles/media';
 import { truncateAddress } from 'utils/formatters/string';
@@ -25,8 +27,9 @@ type LeaderboardProps = {
 };
 
 const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps) => {
+	const competitionActive = useRecoilValue(isCompetitionActive);
 	const [searchTerm, setSearchTerm] = useState('');
-	const [activeTier, setActiveTier] = useState<Tier>('bronze');
+	const [activeTier, setActiveTier] = useState<Tier>(competitionActive ? 'bronze' : null);
 	const [selectedTrader, setSelectedTrader] = useState('');
 	const router = useRouter();
 
@@ -45,7 +48,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 
 	let stats: AccountStat[] = useMemo(() => {
 		return statsData
-			.map((stat: FuturesStat, i: number) => ({
+			.map((stat: FuturesStat) => ({
 				account: stat.account,
 				trader: stat.account,
 				traderShort: truncateAddress(stat.account),
@@ -95,29 +98,33 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 			<CompetitionBanner compact={true} hideBanner={compact} />
 			<LeaderboardContainer>
 				<SearchContainer compact={compact} mobile={mobile}>
-					<TabButtonContainer mobile={mobile}>
-						{COMPETITION_TIERS.map((tier) => (
+					{competitionActive && (
+						<TabButtonContainer mobile={mobile}>
+							{COMPETITION_TIERS.map((tier) => (
+								<StyledTabButton
+									key={tier}
+									title={tier ?? ''}
+									active={activeTier === tier}
+									onClick={() => {
+										setActiveTier(tier);
+										setSelectedTrader('');
+									}}
+								/>
+							))}
 							<StyledTabButton
-								key={tier}
-								title={tier ?? ''}
-								active={activeTier === tier}
+								key={'All'}
+								title={'All'}
+								active={!activeTier}
 								onClick={() => {
-									setActiveTier(tier);
+									setActiveTier(null);
 									setSelectedTrader('');
 								}}
 							/>
-						))}
-						<StyledTabButton
-							key={'All'}
-							title={'All'}
-							active={!activeTier}
-							onClick={() => {
-								setActiveTier(null);
-								setSelectedTrader('');
-							}}
-						/>
-					</TabButtonContainer>
-					<Search value={searchTerm} onChange={onChangeSearch} disabled={false} />
+						</TabButtonContainer>
+					)}
+					<SearchBarContainer>
+						<Search value={searchTerm} onChange={onChangeSearch} disabled={false} />
+					</SearchBarContainer>
 				</SearchContainer>
 				<TableContainer compact={compact}>
 					{!compact && selectedTrader !== '' ? (
@@ -164,20 +171,25 @@ const StyledTabButton = styled(TabButton)`
 	margin-right: 5px;
 `;
 
-const TabButtonContainer = styled.div<{ mobile: boolean | undefined }>`
+const TabButtonContainer = styled.div<{ mobile?: boolean }>`
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
 	margin-bottom: ${({ mobile }) => (mobile ? '16px' : '0px')};
 `;
 
-const SearchContainer = styled.div<{ compact: boolean | undefined; mobile: boolean | undefined }>`
+const SearchContainer = styled.div<{ compact?: boolean; mobile?: boolean }>`
 	display: ${({ compact }) => (compact ? 'none' : 'flex')};
 	flex-direction: ${({ mobile }) => (mobile ? 'column' : 'row')};
 	margin-top: ${({ compact }) => (compact ? '0px' : '16px')};
-	height: ${({ mobile }) => (mobile ? '85px' : '35px')};
 `;
 
-const TableContainer = styled.div<{ compact: boolean | undefined }>`
+const SearchBarContainer = styled.div`
+	display: flex;
+	height: 35px;
+	width: 100%;
+`;
+
+const TableContainer = styled.div<{ compact?: boolean }>`
 	margin-bottom: ${({ compact }) => (compact ? '0' : '40px')};
 `;
 

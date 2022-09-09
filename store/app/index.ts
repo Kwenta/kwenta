@@ -2,27 +2,11 @@ import { Synth } from '@synthetixio/contracts-interface';
 import { atom } from 'recoil';
 import { Language } from 'translations/constants';
 
-import { Synths } from 'constants/currency';
 import { DEFAULT_LANGUAGE, DEFAULT_PRICE_CURRENCY } from 'constants/defaults';
 
-import { getAppKey } from '../utils';
 import { languageStateKey, priceCurrencyStateKey } from './constants';
 
-export const PRICE_CURRENCIES = [
-	Synths.sUSD,
-	Synths.sEUR,
-	Synths.sCHF,
-	Synths.sAUD,
-	Synths.sJPY,
-	Synths.sGBP,
-	Synths.sBTC,
-	Synths.sETH,
-];
-
-export const appReadyState = atom({
-	key: getAppKey('appReady'),
-	default: false,
-});
+export const PRICE_CURRENCIES = ['sUSD', 'sEUR', 'sCHF', 'sAUD', 'sJPY', 'sGBP', 'sBTC', 'sETH'];
 
 export const languageState = atom<Language>({
 	key: languageStateKey,

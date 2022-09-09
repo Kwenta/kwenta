@@ -60,7 +60,6 @@ const BaseCurrencyCard: React.FC<BaseCurrencyCardProps> = ({ allowBaseCurrencySe
 				label={t('exchange.common.into')}
 				slippagePercent={slippagePercent}
 				isLoading={txProvider === '1inch' && oneInchQuoteQuery.isFetching}
-				txProvider={txProvider}
 			/>
 			{openModal === 'base-select' && (
 				<SelectCurrencyModal

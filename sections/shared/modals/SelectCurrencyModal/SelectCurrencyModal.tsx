@@ -4,7 +4,6 @@ import orderBy from 'lodash/orderBy';
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';
@@ -16,7 +15,6 @@ import Connector from 'containers/Connector';
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
 import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
-import { networkState, walletAddressState } from 'store/wallet';
 import { FlexDivCentered } from 'styles/common';
 import media from 'styles/media';
 
@@ -39,10 +37,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	onSelect,
 }) => {
 	const { t } = useTranslation();
-	const network = useRecoilValue(networkState);
-	const walletAddress = useRecoilValue(walletAddressState);
-
-	const { synthetixjs } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs, network, walletAddress } = Connector.useContainer();
 
 	const [assetSearch, setAssetSearch] = useState('');
 	const [synthCategory, setSynthCategory] = useState<string | null>(null);
@@ -53,7 +48,6 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
 
-	// eslint-disable-next-line
 	const allSynths = synthetixjs?.synths ?? [];
 	const synths =
 		synthsOverride != null
@@ -61,7 +55,6 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 			: allSynths;
 
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery(walletAddress);
-
 	const synthBalances = synthsWalletBalancesQuery.isSuccess
 		? synthsWalletBalancesQuery.data ?? null
 		: null;
@@ -219,7 +212,6 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 						// TODO: use `Synth` type from contracts-interface
 						synthsResults.map((synth) => {
 							const currencyKey = synth.name;
-
 							return (
 								<CurrencyRow
 									key={currencyKey}
@@ -336,7 +328,7 @@ const CategoryButton = styled(Button)`
 	${(props) =>
 		props.isActive &&
 		css`
-			color: ${props.theme.colors.selectedTheme.button.text};
+			color: ${props.theme.colors.selectedTheme.button.text.primary};
 			background: ${props.theme.colors.selectedTheme.button.fill};
 		`};
 	${(props) =>
@@ -354,7 +346,7 @@ const EmptyDisplay = styled(FlexDivCentered)`
 	text-align: center;
 	margin: 24px 0px;
 	height: 50px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const LoadingMore = styled.div`

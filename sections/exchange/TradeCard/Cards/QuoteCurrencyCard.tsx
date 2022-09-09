@@ -28,7 +28,6 @@ const QuoteCurrencyCard: React.FC<QuoteCurrencyCardProps> = ({ allowQuoteCurrenc
 	const setCurrencyPair = useSetRecoilState(currencyPairState);
 
 	const {
-		txProvider,
 		quoteCurrencyBalance,
 		openModal,
 		setOpenModal,
@@ -54,7 +53,6 @@ const QuoteCurrencyCard: React.FC<QuoteCurrencyCardProps> = ({ allowQuoteCurrenc
 				}
 				priceRate={quotePriceRate}
 				label={t('exchange.common.from')}
-				txProvider={txProvider}
 			/>
 			{openModal === 'quote-select' && (
 				<SelectCurrencyModal

@@ -3,9 +3,10 @@ import { wei, WeiSource } from '@synthetixio/wei';
 import BN from 'bn.js';
 import { BigNumber, Contract, ethers } from 'ethers';
 import { formatBytes32String } from 'ethers/lib/utils';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
 import { PotentialTradeStatus } from 'sections/futures/types';
 import {
 	zeroBN,
@@ -50,29 +51,30 @@ export default function useGetCrossMarginTradePreview(
 	marketAsset: FuturesMarketAsset,
 	address: string | null | undefined
 ) {
-	const { synthetixjs, provider } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs, provider } = Connector.useContainer();
+	const isL2 = useIsL2();
 
 	const contractInstance = useMemo(() => {
-		if (!synthetixjs || !provider || !address) return null;
+		if (!synthetixjs || !provider || !address || !isL2) return null;
 		try {
 			return new FuturesMarketInternal(synthetixjs, provider, marketAsset, address);
 		} catch (err) {
 			logError(err);
 			return null;
 		}
-	}, [synthetixjs, provider, address, marketAsset]);
+	}, [synthetixjs, provider, address, isL2, marketAsset]);
 
-	const getPreview = async (
-		sizeDelta: WeiSource | null | undefined,
-		marginDelta: WeiSource | null | undefined
-	) => {
-		if (contractInstance) {
-			const sizeBN = wei(sizeDelta || 0).toBN();
-			const marginBN = wei(marginDelta || 0).toBN();
-			const res = await contractInstance.getTradePreview(sizeBN, marginBN);
-			return res;
-		}
-	};
+	const getPreview = useCallback(
+		async (sizeDelta: WeiSource | null | undefined, marginDelta: WeiSource | null | undefined) => {
+			if (contractInstance) {
+				const sizeBN = wei(sizeDelta || 0).toBN();
+				const marginBN = wei(marginDelta || 0).toBN();
+				const res = await contractInstance.getTradePreview(sizeBN, marginBN);
+				return res;
+			}
+		},
+		[contractInstance]
+	);
 
 	return getPreview;
 }

@@ -1,3 +1,4 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import EthDater from 'ethereum-block-by-date';
 import request, { gql } from 'graphql-request';
 import { values } from 'lodash';
@@ -7,32 +8,28 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
-import { appReadyState } from 'store/app';
 import { marketAssetsState, pastRatesState } from 'store/futures';
-import { networkState } from 'store/wallet';
 import logError from 'utils/logError';
 
-import { RATES_ENDPOINT_MAINNET } from './constants';
+import { RATES_ENDPOINT_OP_MAINNET } from './constants';
 import { Price } from './types';
 import { getRatesEndpoint, mapLaggedDailyPrices } from './utils';
 
 const useLaggedDailyPrice = (options?: UseQueryOptions<Price[] | null>) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const network = useRecoilValue(networkState);
+	const { provider, network, synthsMap } = Connector.useContainer();
 	const marketAssets = useRecoilValue(marketAssetsState);
 	const setPastRates = useSetRecoilState(pastRatesState);
-	const { provider, synthsMap } = Connector.useContainer();
 
 	const minTimestamp = Math.floor(Date.now()) - 60 * 60 * 24 * 1000;
 	const synths = [...marketAssets, ...values(synthsMap).map(({ name }) => name)];
 
 	const ratesEndpoint =
 		window.location.pathname === ROUTES.Home.Root
-			? RATES_ENDPOINT_MAINNET
-			: getRatesEndpoint(network.id);
+			? RATES_ENDPOINT_OP_MAINNET
+			: getRatesEndpoint(network?.id as NetworkId);
 
 	return useQuery<Price[] | null>(
-		QUERY_KEYS.Rates.PastRates(network.id, synths),
+		QUERY_KEYS.Rates.PastRates(network?.id as NetworkId, synths),
 		async () => {
 			if (!provider) return null;
 			const dater = new EthDater(provider);
@@ -69,7 +66,7 @@ const useLaggedDailyPrice = (options?: UseQueryOptions<Price[] | null>) => {
 			}
 		},
 		{
-			enabled: isAppReady && synths.length > 0 && marketAssets.length > 0,
+			enabled: synths.length > 0 && marketAssets.length > 0,
 			refetchInterval: 1000 * 60 * 15,
 			...options,
 		}

@@ -8,11 +8,11 @@ import styled from 'styled-components';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { Synths } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import {
 	confirmationModalOpenState,
@@ -21,13 +21,13 @@ import {
 	marketInfoState,
 	nextPriceDisclaimerState,
 	positionState,
-	tradeSizeState,
+	futuresTradeInputsState,
 } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { FlexDivCol, FlexDivCentered } from 'styles/common';
 import { computeNPFee } from 'utils/costCalculations';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
-import { zeroBN, formatCurrency } from 'utils/formatters/number';
+import { zeroBN, formatCurrency, formatDollars } from 'utils/formatters/number';
 import { getTransactionPrice } from 'utils/network';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
@@ -39,12 +39,12 @@ const NextPriceConfirmationModal: FC = () => {
 	const { synthsMap } = Connector.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const isDisclaimerDisplayed = useRecoilValue(nextPriceDisclaimerState);
-	const { useExchangeRatesQuery, useEthGasPriceQuery } = useSynthetixQueries();
+	const { useEthGasPriceQuery } = useSynthetixQueries();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
-	const tradeSize = useRecoilValue(tradeSizeState);
+	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const position = useRecoilValue(positionState);
 	const market = useRecoilValue(currentMarketState);
@@ -65,7 +65,7 @@ const NextPriceConfirmationModal: FC = () => {
 	);
 
 	const ethPriceRate = useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
+		() => newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
@@ -80,10 +80,10 @@ const NextPriceConfirmationModal: FC = () => {
 	const positionSize = position?.position?.size ?? zeroBN;
 
 	const orderDetails = useMemo(() => {
-		const newSize = leverageSide === PositionSide.LONG ? wei(tradeSize) : wei(tradeSize).neg();
+		const newSize = leverageSide === PositionSide.LONG ? wei(nativeSize) : wei(nativeSize).neg();
 
 		return { newSize, size: (positionSize ?? zeroBN).add(newSize).abs() };
-	}, [leverageSide, tradeSize, positionSize]);
+	}, [leverageSide, nativeSize, positionSize]);
 
 	const { commitDeposit, nextPriceFee } = useMemo(
 		() => computeNPFee(marketInfo, wei(orderDetails.newSize)),
@@ -116,13 +116,11 @@ const NextPriceConfirmationModal: FC = () => {
 			},
 			{
 				label: t('futures.market.user.position.modal.deposit'),
-				value: formatCurrency(Synths.sUSD, totalDeposit, { sign: '$' }),
+				value: formatDollars(totalDeposit),
 			},
 			{
 				label: t('futures.market.user.position.modal.np-discount'),
-				value: !!nextPriceDiscount
-					? formatCurrency(Synths.sUSD, nextPriceDiscount, { sign: '$' })
-					: NO_VALUE,
+				value: !!nextPriceDiscount ? formatDollars(nextPriceDiscount) : NO_VALUE,
 			},
 			{
 				label: t('futures.market.user.position.modal.fee-total'),
@@ -180,7 +178,7 @@ const NextPriceConfirmationModal: FC = () => {
 							{t('futures.market.trade.confirmation.modal.max-leverage-disclaimer')}
 						</Disclaimer>
 					)}
-					<ConfirmTradeButton variant="primary" isRounded onClick={handleConfirmOrder}>
+					<ConfirmTradeButton variant="primary" onClick={handleConfirmOrder}>
 						{t('futures.market.trade.confirmation.modal.confirm-order')}
 					</ConfirmTradeButton>
 				</StyledBaseModal>
@@ -191,7 +189,7 @@ const NextPriceConfirmationModal: FC = () => {
 					items={dataRows}
 					closeDrawer={onDismiss}
 					buttons={
-						<MobileConfirmTradeButton variant="primary" isRounded onClick={handleConfirmOrder}>
+						<MobileConfirmTradeButton variant="primary" onClick={handleConfirmOrder}>
 							{t('futures.market.trade.confirmation.modal.confirm-order')}
 						</MobileConfirmTradeButton>
 					}
@@ -223,7 +221,7 @@ const Label = styled.div`
 
 const Value = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 12px;
 	margin-top: 6px;
 `;

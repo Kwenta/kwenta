@@ -1,12 +1,11 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import { appReadyState } from 'store/app';
 import { futuresAccountState } from 'store/futures';
-import { isL2State, networkState } from 'store/wallet';
 import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
@@ -18,11 +17,8 @@ const useGetFuturesMarginTransfers = (
 	options?: UseQueryOptions<MarginTransfer[]>
 ) => {
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
-	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network);
-	const { synthetixjs } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs, network } = Connector.useContainer();
+	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
 	const gqlQuery = gql`
 		query userFuturesMarginTransfers($market: String!, $walletAddress: String!) {
@@ -45,7 +41,7 @@ const useGetFuturesMarginTransfers = (
 
 	return useQuery<MarginTransfer[]>(
 		QUERY_KEYS.Futures.MarginTransfers(
-			network.id,
+			network?.id as NetworkId,
 			selectedFuturesAddress ?? '',
 			currencyKey || null
 		),
@@ -53,7 +49,7 @@ const useGetFuturesMarginTransfers = (
 			if (!currencyKey || !synthetixjs) return [];
 			const { contracts } = synthetixjs!;
 			const marketAddress = contracts[`FuturesMarket${getDisplayAsset(currencyKey)}`].address;
-			if (!marketAddress) return [];
+			if (!marketAddress || !selectedFuturesAddress) return [];
 
 			try {
 				const response = await request(futuresEndpoint, gqlQuery, {
@@ -68,7 +64,7 @@ const useGetFuturesMarginTransfers = (
 			}
 		},
 		{
-			enabled: isAppReady && isL2 && !!currencyKey && !!synthetixjs && !!selectedFuturesAddress,
+			enabled: !!currencyKey && !!synthetixjs && !!selectedFuturesAddress,
 			...options,
 		}
 	);

@@ -2,17 +2,16 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
-import { Synths } from 'constants/currency';
+import Connector from 'containers/Connector';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
-import { walletAddressState } from 'store/wallet';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { formatDollars, zeroBN } from 'utils/formatters/number';
 
 import FuturesPositionsTable from '../FuturesPositionsTable';
 import SynthBalancesTable from '../SynthBalancesTable';
@@ -24,8 +23,8 @@ enum PositionsTab {
 
 const OpenPositions: React.FC = () => {
 	const { t } = useTranslation();
-
-	const { useExchangeRatesQuery, useSynthsBalancesQuery } = useSynthetixQueries();
+	const { walletAddress } = Connector.useContainer();
+	const { useSynthsBalancesQuery } = useSynthetixQueries();
 
 	const portfolioValueQuery = useGetCurrentPortfolioValue();
 	const portfolioValue = portfolioValueQuery?.data ?? null;
@@ -36,7 +35,6 @@ const OpenPositions: React.FC = () => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
-	const walletAddress = useRecoilValue(walletAddressState);
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const synthBalances =
 		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
@@ -47,15 +45,9 @@ const OpenPositions: React.FC = () => {
 		PositionsTab.FUTURES
 	);
 
-	const totalSpotBalancesValue = formatCurrency(
-		Synths.sUSD,
-		wei(synthBalances?.totalUSDBalance ?? zeroBN),
-		{ sign: '$' }
-	);
+	const totalSpotBalancesValue = formatDollars(wei(synthBalances?.totalUSDBalance ?? zeroBN));
 
-	const totalFuturesPortfolioValue = formatCurrency(Synths.sUSD, wei(portfolioValue ?? zeroBN), {
-		sign: '$',
-	});
+	const totalFuturesPortfolioValue = formatDollars(wei(portfolioValue ?? zeroBN));
 
 	const POSITIONS_TABS = React.useMemo(
 		() => [
