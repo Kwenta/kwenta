@@ -1,4 +1,4 @@
-import { NetworkId } from '@synthetixio/contracts-interface/build/node/src/types';
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { chain } from 'wagmi';
 
