@@ -1,34 +1,41 @@
 import Tippy from '@tippyjs/react';
-import { FC, ReactNode } from 'react';
+import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
 import { MobileOrTabletView } from 'components/Media';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { useExchangeContext } from 'contexts/ExchangeContext';
+import TxSettleModal from 'sections/shared/modals/TxSettleModal';
+import { txErrorState } from 'store/exchange';
 import { NoTextTransform, ExternalLink } from 'styles/common';
 import { secondsToTime } from 'utils/formatters/date';
 
 import { MessageContainer, Message, FixedMessageContainerSpacer } from '../common';
 
 type SettleTransactionsCardProps = {
-	submissionDisabledReason?: ReactNode;
 	attached?: boolean;
-	onSubmit: () => void;
 	settleCurrency: string | null;
 	numEntries: number | null;
-	settlementWaitingPeriodInSeconds: number;
 };
 
 const SettleTransactionsCard: FC<SettleTransactionsCardProps> = ({
 	attached,
-	onSubmit,
 	settleCurrency,
 	numEntries,
 }) => {
 	const { t } = useTranslation();
-	const { settlementWaitingPeriodInSeconds, settlementDisabledReason } = useExchangeContext();
+	const txError = useRecoilValue(txErrorState);
+	const {
+		settlementWaitingPeriodInSeconds,
+		settlementDisabledReason,
+		openModal,
+		handleSettle,
+		baseCurrencyKey,
+		setOpenModal,
+	} = useExchangeContext();
 
 	return (
 		<>
@@ -41,7 +48,7 @@ const SettleTransactionsCard: FC<SettleTransactionsCardProps> = ({
 						<Trans
 							t={t}
 							i18nKey={'exchange.footer-card.settle.message'}
-							values={{ currencyKey: settleCurrency, numEntries: numEntries }}
+							values={{ currencyKey: settleCurrency, numEntries }}
 							components={[<NoTextTransform />]}
 						/>
 					</MessageItem>
@@ -69,7 +76,7 @@ const SettleTransactionsCard: FC<SettleTransactionsCardProps> = ({
 						<Button
 							variant="primary"
 							disabled={!!settlementDisabledReason}
-							onClick={onSubmit}
+							onClick={handleSettle}
 							size="lg"
 							data-testid="settle"
 						>
@@ -78,6 +85,15 @@ const SettleTransactionsCard: FC<SettleTransactionsCardProps> = ({
 					</span>
 				</ErrorTooltip>
 			</MessageContainer>
+			{openModal === 'settle' && (
+				<TxSettleModal
+					onDismiss={() => setOpenModal(undefined)}
+					txError={txError}
+					attemptRetry={handleSettle}
+					currencyKey={baseCurrencyKey!}
+					currencyLabel={<NoTextTransform>{baseCurrencyKey}</NoTextTransform>}
+				/>
+			)}
 		</>
 	);
 };

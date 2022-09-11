@@ -15,7 +15,6 @@ import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
 import TxApproveModal from 'sections/shared/modals/TxApproveModal';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-import TxSettleModal from 'sections/shared/modals/TxSettleModal';
 import {
 	baseCurrencyAmountState,
 	baseCurrencyKeyState,
@@ -47,7 +46,6 @@ const FooterCard: React.FC = () => {
 		footerCardAttached,
 		showNoSynthsCard,
 		baseFeeRate,
-		handleSettle,
 		needsApproval,
 		handleApprove,
 		isApproved,
@@ -63,7 +61,6 @@ const FooterCard: React.FC = () => {
 		feeCost,
 		exchangeFeeRate,
 		estimatedBaseTradePrice,
-		settlementWaitingPeriodInSeconds,
 		submissionDisabledReason,
 		feeReclaimPeriodInSeconds,
 	} = useExchangeContext();
@@ -83,8 +80,6 @@ const FooterCard: React.FC = () => {
 			) : !isL2 && numEntries >= 12 ? (
 				<SettleTransactionsCard
 					attached={footerCardAttached}
-					settlementWaitingPeriodInSeconds={settlementWaitingPeriodInSeconds}
-					onSubmit={handleSettle}
 					settleCurrency={baseCurrencyKey}
 					numEntries={numEntries}
 				/>
@@ -146,15 +141,6 @@ const FooterCard: React.FC = () => {
 					attemptRetry={handleApprove}
 					currencyKey={quoteCurrencyKey!}
 					currencyLabel={<NoTextTransform>{quoteCurrencyKey}</NoTextTransform>}
-				/>
-			)}
-			{openModal === 'settle' && (
-				<TxSettleModal
-					onDismiss={() => setOpenModal(undefined)}
-					txError={txError}
-					attemptRetry={handleSettle}
-					currencyKey={baseCurrencyKey!}
-					currencyLabel={<NoTextTransform>{baseCurrencyKey}</NoTextTransform>}
 				/>
 			)}
 		</>

@@ -1,4 +1,4 @@
-import useSynthetixQueries, { Token } from '@synthetixio/queries';
+import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import mainnetOneInchTokenList from 'data/token-lists/mainnet.json';
 import optimismOneInchTokenList from 'data/token-lists/optimism.json';
@@ -107,18 +107,17 @@ const useExchange = ({
 	const quoteCurrencyKey = useRecoilValue(quoteCurrencyKeyState);
 
 	const [openModal, setOpenModal] = useState<ExchangeModal>();
-
 	const [isApproving, setIsApproving] = useState(false);
 	const [isApproved, setIsApproved] = useState(false);
 	const [gasInfo, setGasInfo] = useState<{ limit: number; l1Fee: Wei } | null>();
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [atomicExchangeSlippage] = useState('0.01');
 
 	const [baseCurrencyAmount, setBaseCurrencyAmount] = useRecoilState(baseCurrencyAmountState);
 	const [quoteCurrencyAmount, setQuoteCurrencyAmount] = useRecoilState(quoteCurrencyAmountState);
-	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [ratio, setRatio] = useRecoilState(ratioState);
 
 	const setTxError = useSetRecoilState(txErrorState);
-	const [atomicExchangeSlippage] = useState('0.01');
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
@@ -134,9 +133,7 @@ const useExchange = ({
 	const ETHBalance = ETHBalanceQuery.isSuccess ? ETHBalanceQuery.data ?? zeroBN : null;
 
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery(walletAddress);
-	const synthsWalletBalance = synthsWalletBalancesQuery.isSuccess
-		? synthsWalletBalancesQuery.data
-		: null;
+	const synthsWalletBalance = synthsWalletBalancesQuery.data ?? null;
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
@@ -189,7 +186,7 @@ const useExchange = ({
 	const tokenBalances = tokensWalletBalancesQuery.data ?? null;
 
 	const quoteCurrencyTokenAddress = useMemo(
-		(): Token['address'] | null =>
+		(): string | null =>
 			quoteCurrencyKey != null
 				? isQuoteCurrencyETH
 					? ETH_ADDRESS
@@ -199,7 +196,7 @@ const useExchange = ({
 	);
 
 	const baseCurrencyTokenAddress = useMemo(
-		(): Token['address'] | null =>
+		(): string | null =>
 			baseCurrencyKey != null
 				? isBaseCurrencyETH
 					? ETH_ADDRESS
@@ -742,10 +739,7 @@ const useExchange = ({
 	}, [submissionDisabledReason, txProvider, quoteCurrencyAmount, gasPrice?.gasPrice]);
 
 	const redeemableDeprecatedSynthsQuery = useRedeemableDeprecatedSynthsQuery(walletAddress);
-	const redeemableDeprecatedSynths =
-		redeemableDeprecatedSynthsQuery.isSuccess && redeemableDeprecatedSynthsQuery.data != null
-			? redeemableDeprecatedSynthsQuery.data
-			: null;
+	const redeemableDeprecatedSynths = redeemableDeprecatedSynthsQuery.data ?? null;
 	const balances = redeemableDeprecatedSynths?.balances ?? [];
 	const totalUSDBalance = wei(redeemableDeprecatedSynths?.totalUSDBalance ?? 0);
 
