@@ -843,27 +843,6 @@ const useExchange = ({
 		// eslint-disable-next-line
 	}, [approveTxn.hash]);
 
-	const settleTxn = useSynthetixTxn(
-		'Exchanger',
-		'settle',
-		[walletAddress, destinationCurrencyKey],
-		undefined,
-		{ enabled: !isL2 && numEntries >= 12 }
-	);
-
-	useEffect(() => {
-		if (settleTxn.hash) {
-			monitorTransaction({
-				txHash: settleTxn.hash,
-				onTxConfirmed: () => {
-					numEntriesQuery.refetch();
-				},
-			});
-		}
-
-		// eslint-disable-next-line
-	}, [settleTxn.hash]);
-
 	const transactionFee = useMemo(() => {
 		if (txProvider === 'synthswap' || txProvider === '1inch') {
 			// TODO: We should refactor this to use Wei, instead of numbers.
@@ -894,20 +873,6 @@ const useExchange = ({
 		} catch (e) {
 			logError(e);
 			setIsApproving(false);
-			setTxError(e.message);
-		}
-	};
-
-	const handleSettle = async () => {
-		setTxError(null);
-		setOpenModal('settle');
-
-		try {
-			await settleTxn.mutateAsync();
-
-			setOpenModal(undefined);
-		} catch (e) {
-			logError(e);
 			setTxError(e.message);
 		}
 	};
@@ -1159,7 +1124,6 @@ const useExchange = ({
 		slippagePercent,
 		baseCurrencyBalance,
 		handleSubmit,
-		handleSettle,
 		handleApprove,
 		handleRedeem,
 		transactionFee,

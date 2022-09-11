@@ -78,11 +78,7 @@ const FooterCard: React.FC = () => {
 			) : showNoSynthsCard && noSynths ? (
 				<NoSynthsCard attached={footerCardAttached} />
 			) : !isL2 && numEntries >= 12 ? (
-				<SettleTransactionsCard
-					attached={footerCardAttached}
-					settleCurrency={baseCurrencyKey}
-					numEntries={numEntries}
-				/>
+				<SettleTransactionsCard attached={footerCardAttached} numEntries={numEntries} />
 			) : (
 				<TradeSummaryCard
 					attached={footerCardAttached}

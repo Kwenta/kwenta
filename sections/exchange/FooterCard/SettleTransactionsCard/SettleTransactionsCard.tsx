@@ -1,41 +1,85 @@
+import useSynthetixQueries from '@synthetixio/queries';
 import Tippy from '@tippyjs/react';
-import { FC } from 'react';
+import React from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
 import { MobileOrTabletView } from 'components/Media';
 import { EXTERNAL_LINKS } from 'constants/links';
+import Connector from 'containers/Connector';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import { useExchangeContext } from 'contexts/ExchangeContext';
+import useIsL2 from 'hooks/useIsL2';
+import useNumEntriesQuery from 'queries/synths/useNumEntriesQuery';
 import TxSettleModal from 'sections/shared/modals/TxSettleModal';
-import { txErrorState } from 'store/exchange';
+import { baseCurrencyKeyState, destinationCurrencyKeyState, txErrorState } from 'store/exchange';
 import { NoTextTransform, ExternalLink } from 'styles/common';
 import { secondsToTime } from 'utils/formatters/date';
+import logError from 'utils/logError';
 
 import { MessageContainer, Message, FixedMessageContainerSpacer } from '../common';
 
 type SettleTransactionsCardProps = {
 	attached?: boolean;
-	settleCurrency: string | null;
 	numEntries: number | null;
 };
 
-const SettleTransactionsCard: FC<SettleTransactionsCardProps> = ({
+const SettleTransactionsCard: React.FC<SettleTransactionsCardProps> = ({
 	attached,
-	settleCurrency,
 	numEntries,
 }) => {
 	const { t } = useTranslation();
-	const txError = useRecoilValue(txErrorState);
+	const [txError, setTxError] = useRecoilState(txErrorState);
 	const {
 		settlementWaitingPeriodInSeconds,
 		settlementDisabledReason,
 		openModal,
-		handleSettle,
-		baseCurrencyKey,
 		setOpenModal,
 	} = useExchangeContext();
+	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
+	const destinationCurrencyKey = useRecoilValue(destinationCurrencyKeyState);
+	const { useSynthetixTxn } = useSynthetixQueries();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const { walletAddress } = Connector.useContainer();
+	const numEntriesQuery = useNumEntriesQuery(walletAddress ?? '', baseCurrencyKey);
+	const isL2 = useIsL2();
+
+	const settleTxn = useSynthetixTxn(
+		'Exchanger',
+		'settle',
+		[walletAddress, destinationCurrencyKey],
+		undefined,
+		{ enabled: !isL2 && (numEntries ?? 0) >= 12 }
+	);
+
+	React.useEffect(() => {
+		if (settleTxn.hash) {
+			monitorTransaction({
+				txHash: settleTxn.hash,
+				onTxConfirmed: () => {
+					numEntriesQuery.refetch();
+				},
+			});
+		}
+
+		// eslint-disable-next-line
+	}, [settleTxn.hash]);
+
+	const handleSettle = async () => {
+		setTxError(null);
+		setOpenModal('settle');
+
+		try {
+			await settleTxn.mutateAsync();
+
+			setOpenModal(undefined);
+		} catch (e) {
+			logError(e);
+			setTxError(e.message);
+		}
+	};
 
 	return (
 		<>
@@ -48,7 +92,7 @@ const SettleTransactionsCard: FC<SettleTransactionsCardProps> = ({
 						<Trans
 							t={t}
 							i18nKey={'exchange.footer-card.settle.message'}
-							values={{ currencyKey: settleCurrency, numEntries }}
+							values={{ currencyKey: baseCurrencyKey, numEntries }}
 							components={[<NoTextTransform />]}
 						/>
 					</MessageItem>
@@ -67,7 +111,7 @@ const SettleTransactionsCard: FC<SettleTransactionsCardProps> = ({
 						<div>
 							{t('exchange.errors.settlement-waiting', {
 								waitingPeriod: secondsToTime(settlementWaitingPeriodInSeconds),
-								currencyKey: settleCurrency,
+								currencyKey: baseCurrencyKey,
 							})}
 						</div>
 					}

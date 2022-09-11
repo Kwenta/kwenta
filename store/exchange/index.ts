@@ -1,3 +1,4 @@
+import { ethers } from 'ethers';
 import { atom, selector } from 'recoil';
 
 import { CurrencyKey, CRYPTO_CURRENCY_MAP } from 'constants/currency';
@@ -65,4 +66,20 @@ export const quoteCurrencyAmountState = atom<string>({
 export const ratioState = atom<SwapRatio | undefined>({
 	key: getExchangeKey('ratio'),
 	default: undefined,
+});
+
+export const destinationCurrencyKeyState = selector({
+	key: getExchangeKey('destinationCurrencyKey'),
+	get: ({ get }) => {
+		const baseCurrencyKey = get(baseCurrencyKeyState);
+		return baseCurrencyKey ? ethers.utils.formatBytes32String(baseCurrencyKey) : null;
+	},
+});
+
+export const sourceCurrencyKeyState = selector({
+	key: getExchangeKey('sourceCurrencyKey'),
+	get: ({ get }) => {
+		const quoteCurrencyKey = get(quoteCurrencyKeyState);
+		return quoteCurrencyKey ? ethers.utils.formatBytes32String(quoteCurrencyKey) : null;
+	},
 });
