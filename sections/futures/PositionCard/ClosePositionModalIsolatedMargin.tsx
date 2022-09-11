@@ -9,6 +9,7 @@ import useEstimateGasCost from 'hooks/useEstimateGasCost';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { currentMarketState, futuresAccountTypeState, positionState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
+import { getDisplayAsset } from 'utils/futures';
 
 import ClosePositionModal from './ClosePositionModal';
 
@@ -33,7 +34,7 @@ export default function ClosePositionModalIsolatedMargin({ onDismiss }: Props) {
 	const gasPrice = ethGasPriceQuery.data?.[gasSpeed] ?? null;
 
 	const closeTxn = useSynthetixTxn(
-		`FuturesMarket${currencyKey?.[0] === 's' ? currencyKey.substring(1) : currencyKey}`,
+		`FuturesMarket${getDisplayAsset(currencyKey)}`,
 		'closePositionWithTracking',
 		[KWENTA_TRACKING_CODE],
 		gasPrice ?? undefined,

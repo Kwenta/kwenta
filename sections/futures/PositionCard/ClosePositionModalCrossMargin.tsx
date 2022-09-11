@@ -1,4 +1,4 @@
-import Wei, { wei } from '@synthetixio/wei';
+import { wei } from '@synthetixio/wei';
 import { formatBytes32String } from 'ethers/lib/utils';
 import { useMemo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -29,7 +29,7 @@ export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 	const { resetTradeState } = useFuturesContext();
 	const { estimateEthersContractTxCost } = useEstimateGasCost();
 
-	const [crossMarginGasFee, setCrossMarginGasFee] = useState<Wei>(wei(0));
+	const [crossMarginGasFee, setCrossMarginGasFee] = useState(wei(0));
 	const [error, setError] = useState<null | string>(null);
 
 	const currencyKey = useRecoilValue(currentMarketState);

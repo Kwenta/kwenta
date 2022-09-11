@@ -67,7 +67,7 @@ export default function DepositWithdrawCrossMargin({
 			if (!amount) return;
 			const method = transferType === 0 ? 'deposit' : 'withdraw';
 			const fee = await estimateEthersContractTxCost(crossMarginAccountContract, method, [
-				wei(amount || 0).toBN(),
+				wei(amount).toBN(),
 			]);
 			setTransactionFee(fee);
 		};

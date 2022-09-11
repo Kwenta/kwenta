@@ -22,10 +22,7 @@ export default function useEstimateGasCost() {
 
 	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
 
-	const exchangeRates = useMemo(
-		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
-		[exchangeRatesQuery.isSuccess, exchangeRatesQuery.data]
-	);
+	const exchangeRates = useMemo(() => exchangeRatesQuery.data ?? null, [exchangeRatesQuery.data]);
 
 	const ethPriceRate = useMemo(
 		() => newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', 'sUSD'),
