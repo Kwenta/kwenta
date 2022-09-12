@@ -219,3 +219,7 @@ export const floorNumber = (num: WeiSource, decimals?: number) => {
 	const precision = 10 ** (decimals ?? suggestedDecimals(num));
 	return Math.floor(Number(num) * precision) / precision;
 };
+
+export const isZero = (num: WeiSource) => {
+	return wei(num || 0).eq(0);
+};

@@ -6,7 +6,10 @@ import styled from 'styled-components';
 
 import DepositArrow from 'assets/svg/futures/deposit-arrow.svg';
 import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
+import SegmentedControl from 'components/SegmentedControl';
 import StyledSlider from 'components/Slider/StyledSlider';
+import Spacer from 'components/Spacer';
+import { CROSS_MARGIN_ORDER_TYPES } from 'constants/futures';
 import Connector from 'containers/Connector';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import {
@@ -14,11 +17,16 @@ import {
 	futuresAccountTypeState,
 	leverageSideState,
 	futuresTradeInputsState,
+	orderTypeState,
+	futuresOrderPriceState,
+	marketAssetRateState,
 } from 'store/futures';
 import { BorderedPanel, FlexDivRow } from 'styles/common';
+import { orderPriceValid } from 'utils/futures';
 
 import CrossMarginOnboard from '../CrossMarginOnboard';
 import FeeInfoBox from '../FeeInfoBox';
+import OrderPriceInput from '../OrderPriceInput/OrderPriceInput';
 import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
 import ManagePosition from '../Trade/ManagePosition';
@@ -41,8 +49,15 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 	const { crossMarginAddress, crossMarginAvailable } = useRecoilValue(futuresAccountState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 	const { susdSize } = useRecoilValue(futuresTradeInputsState);
+	const marketAssetRate = useRecoilValue(marketAssetRateState);
+	const [orderType, setOrderType] = useRecoilState(orderTypeState);
+	const [orderPrice, setOrderPrice] = useRecoilState(futuresOrderPriceState);
 
-	const { onTradeAmountSUSDChange, maxUsdInputAmount } = useFuturesContext();
+	const {
+		onTradeAmountSUSDChange,
+		maxUsdInputAmount,
+		onTradeOrderPriceChange,
+	} = useFuturesContext();
 
 	const [percent, setPercent] = useState(0);
 	const [usdAmount, setUsdAmount] = useState(susdSize);
@@ -60,6 +75,17 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 			onTradeAmountSUSDChange(usdValue, commit);
 		},
 		[onTradeAmountSUSDChange, maxUsdInputAmount]
+	);
+
+	const onChangeOrderPrice = useCallback(
+		(price: string) => {
+			const validPrice = orderPriceValid(price, leverageSide, marketAssetRate);
+			if (validPrice || !price) {
+				onTradeOrderPriceChange(price);
+			}
+			setOrderPrice(price);
+		},
+		[onTradeOrderPriceChange, setOrderPrice, leverageSide, marketAssetRate]
 	);
 
 	useEffect(() => {
@@ -106,6 +132,25 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 					/>
 					{}
 					<MarginInfoBox />
+					<SegmentedControl
+						styleType="check"
+						values={CROSS_MARGIN_ORDER_TYPES}
+						selectedIndex={CROSS_MARGIN_ORDER_TYPES.indexOf(orderType)}
+						onChange={(oType: number) => {
+							switch (oType) {
+								case 0:
+									setOrderType('market');
+									break;
+								case 1:
+									setOrderType('stop');
+									break;
+								case 2:
+									setOrderType('limit');
+									break;
+							}
+							setOrderPrice('');
+						}}
+					/>
 					<OrderSizing />
 					<SliderRow>
 						<StyledSlider
@@ -125,6 +170,16 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 							$currentMark={percent}
 						/>
 					</SliderRow>
+					{orderType !== 'market' && (
+						<>
+							<OrderPriceInput
+								onChangeOrderPrice={onChangeOrderPrice}
+								value={orderPrice}
+								orderType={orderType}
+							/>
+							<Spacer height={16} />
+						</>
+					)}
 					<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
 					<ManagePosition />
 					<FeeInfoBox />

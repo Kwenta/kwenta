@@ -38,7 +38,8 @@ const useGetFuturesPotentialTradeDetails = () => {
 		async (
 			nativeSizeDelta: Wei,
 			positionMarginDelta: Wei,
-			leverage: number
+			leverage: number,
+			orderPrice?: Wei
 		): Promise<FuturesPotentialTradeDetails | null> => {
 			if (
 				!synthetixjs ||
@@ -60,7 +61,11 @@ const useGetFuturesPotentialTradeDetails = () => {
 			const globals = await FuturesMarketData.globals();
 			const preview =
 				selectedAccountType === 'cross_margin'
-					? await getPreview(nativeSizeDelta, wei(positionMarginDelta).toBN())
+					? await getPreview(
+							nativeSizeDelta.toBN(),
+							wei(positionMarginDelta).toBN(),
+							orderPrice ? wei(orderPrice).toBN() : undefined
+					  )
 					: await FuturesMarketContract.postTradeDetails(
 							wei(nativeSizeDelta).toBN(),
 							selectedFuturesAddress
@@ -106,14 +111,14 @@ const useGetFuturesPotentialTradeDetails = () => {
 	);
 
 	const getTradeDetails = useCallback(
-		async (nativeSize: Wei, positionMarginDelta: Wei, leverage: number) => {
+		async (nativeSize: Wei, positionMarginDelta: Wei, leverage: number, orderPrice?: Wei) => {
 			try {
 				setPotentialTradeDetails({
 					data: null,
 					status: 'fetching',
 					error: null,
 				});
-				const data = await generatePreview(nativeSize, positionMarginDelta, leverage);
+				const data = await generatePreview(nativeSize, positionMarginDelta, leverage, orderPrice);
 				setPotentialTradeDetails({ data, status: 'complete', error: null });
 			} catch (err) {
 				logError(err);

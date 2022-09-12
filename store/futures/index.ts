@@ -11,6 +11,7 @@ import {
 	SynthBalances,
 	TradeFees,
 	FuturesTradeInputs,
+	FuturesOrderType,
 } from 'queries/futures/types';
 import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import { Price, Rates } from 'queries/rates/types';
@@ -161,9 +162,14 @@ export const pastRatesState = atom<Price[] | []>({
 	default: [],
 });
 
-export const orderTypeState = atom({
+export const orderTypeState = atom<FuturesOrderType>({
 	key: getFuturesKey('orderType'),
-	default: 0,
+	default: 'market',
+});
+
+export const futuresOrderPriceState = atom({
+	key: getFuturesKey('futuresOrderPrice'),
+	default: '',
 });
 
 export const tradeFeesState = atom<TradeFees>({
@@ -223,7 +229,9 @@ export const maxLeverageState = selector({
 		const positionSide = position?.position?.side;
 		const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
 		const adjustedMaxLeverage =
-			orderType === 1 ? marketMaxLeverage.mul(DEFAULT_NP_LEVERAGE_ADJUSTMENT) : marketMaxLeverage;
+			orderType === 'next-price'
+				? marketMaxLeverage.mul(DEFAULT_NP_LEVERAGE_ADJUSTMENT)
+				: marketMaxLeverage;
 
 		if (!positionLeverage || positionLeverage.eq(wei(0))) return adjustedMaxLeverage;
 		if (positionSide === leverageSide) {
@@ -332,7 +340,7 @@ export const placeOrderTranslationKeyState = selector({
 			remainingMargin = positionMargin.add(freeMargin);
 		}
 
-		if (orderType === 1) return 'futures.market.trade.button.place-next-price-order';
+		if (orderType === 'next-price') return 'futures.market.trade.button.place-next-price-order';
 		if (!!position?.position) return 'futures.market.trade.button.modify-position';
 		return remainingMargin.lt('50')
 			? 'futures.market.trade.button.deposit-margin-minimum'

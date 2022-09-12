@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import CustomInput from 'components/Input/CustomInput';
+import InputTitle from 'components/Input/InputTitle';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import {
 	crossMarginAvailableMarginState,
@@ -105,9 +106,9 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 	return (
 		<OrderSizingContainer>
 			<OrderSizingRow>
-				<OrderSizingTitle>
+				<InputTitle>
 					Amount&nbsp; —<span>&nbsp; Set order size</span>
-				</OrderSizingTitle>
+				</InputTitle>
 				<MaxButton onClick={handleSetMax}>Max</MaxButton>
 			</OrderSizingRow>
 
@@ -144,15 +145,6 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 const OrderSizingContainer = styled.div`
 	margin-top: 28px;
 	margin-bottom: 16px;
-`;
-
-const OrderSizingTitle = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	font-size: 13px;
-
-	span {
-		color: ${(props) => props.theme.colors.selectedTheme.gray};
-	}
 `;
 
 const OrderSizingRow = styled(FlexDivRow)`

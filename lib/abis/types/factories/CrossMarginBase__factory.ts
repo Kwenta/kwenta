@@ -17,7 +17,33 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "CannotPayFee",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "CannotRescueMarginAsset",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "EthWithdrawalFailed",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "balance",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "minimum",
+        type: "uint256",
+      },
+    ],
+    name: "InsufficientEthBalance",
     type: "error",
   },
   {
@@ -37,6 +63,11 @@ const _abi = [
     type: "error",
   },
   {
+    inputs: [],
+    name: "InvalidPrice",
+    type: "error",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
@@ -45,17 +76,6 @@ const _abi = [
       },
     ],
     name: "MaxNewPositionsExceeded",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "marketKey",
-        type: "bytes32",
-      },
-    ],
-    name: "MissingMarketKey",
     type: "error",
   },
   {
@@ -99,6 +119,124 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
+        name: "account",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "FeeImposed",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "orderId",
+        type: "uint256",
+      },
+    ],
+    name: "OrderCancelled",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "orderId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "fillPrice",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "keeperFee",
+        type: "uint256",
+      },
+    ],
+    name: "OrderFilled",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "orderId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "bytes32",
+        name: "marketKey",
+        type: "bytes32",
+      },
+      {
+        indexed: false,
+        internalType: "int256",
+        name: "marginDelta",
+        type: "int256",
+      },
+      {
+        indexed: false,
+        internalType: "int256",
+        name: "sizeDelta",
+        type: "int256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "targetPrice",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "enum IMarginBaseTypes.OrderTypes",
+        name: "orderType",
+        type: "uint8",
+      },
+    ],
+    name: "OrderPlaced",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
         name: "previousOwner",
         type: "address",
       },
@@ -110,6 +248,25 @@ const _abi = [
       },
     ],
     name: "OwnershipTransferred",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "Rescued",
     type: "event",
   },
   {
@@ -158,35 +315,6 @@ const _abi = [
         internalType: "bytes32",
         name: "",
         type: "bytes32",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
-    name: "activeMarketPositions",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "marketKey",
-        type: "bytes32",
-      },
-      {
-        internalType: "uint128",
-        name: "margin",
-        type: "uint128",
-      },
-      {
-        internalType: "int128",
-        name: "size",
-        type: "int128",
       },
     ],
     stateMutability: "view",
@@ -258,6 +386,11 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "_amount",
+        type: "uint256",
+      },
+      {
         components: [
           {
             internalType: "bytes32",
@@ -275,7 +408,37 @@ const _abi = [
             type: "int256",
           },
         ],
-        internalType: "struct IMarginBaseTypes.UpdateMarketPositionSpec[]",
+        internalType: "struct IMarginBaseTypes.NewPosition[]",
+        name: "_newPositions",
+        type: "tuple[]",
+      },
+    ],
+    name: "depositAndDistribute",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "bytes32",
+            name: "marketKey",
+            type: "bytes32",
+          },
+          {
+            internalType: "int256",
+            name: "marginDelta",
+            type: "int256",
+          },
+          {
+            internalType: "int256",
+            name: "sizeDelta",
+            type: "int256",
+          },
+        ],
+        internalType: "struct IMarginBaseTypes.NewPosition[]",
         name: "_newPositions",
         type: "tuple[]",
       },
@@ -326,42 +489,51 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "getAllActiveMarketPositions",
+    name: "getNumberOfInternalPositions",
     outputs: [
       {
-        components: [
-          {
-            internalType: "bytes32",
-            name: "marketKey",
-            type: "bytes32",
-          },
-          {
-            internalType: "uint128",
-            name: "margin",
-            type: "uint128",
-          },
-          {
-            internalType: "int128",
-            name: "size",
-            type: "int128",
-          },
-        ],
-        internalType: "struct IMarginBaseTypes.ActiveMarketPosition[]",
+        internalType: "uint256",
         name: "",
-        type: "tuple[]",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [],
-    name: "getNumberOfActivePositions",
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "_marketKey",
+        type: "bytes32",
+      },
+    ],
+    name: "getPosition",
     outputs: [
       {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
+        internalType: "uint64",
+        name: "id",
+        type: "uint64",
+      },
+      {
+        internalType: "uint64",
+        name: "fundingIndex",
+        type: "uint64",
+      },
+      {
+        internalType: "uint128",
+        name: "margin",
+        type: "uint128",
+      },
+      {
+        internalType: "uint128",
+        name: "lastPrice",
+        type: "uint128",
+      },
+      {
+        internalType: "int128",
+        name: "size",
+        type: "int128",
       },
     ],
     stateMutability: "view",
@@ -429,6 +601,25 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    name: "marketKeyIndex",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "ops",
     outputs: [
@@ -481,13 +672,23 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "desiredPrice",
+        name: "targetPrice",
         type: "uint256",
       },
       {
         internalType: "bytes32",
         name: "gelatoTaskId",
         type: "bytes32",
+      },
+      {
+        internalType: "enum IMarginBaseTypes.OrderTypes",
+        name: "orderType",
+        type: "uint8",
+      },
+      {
+        internalType: "uint256",
+        name: "maxDynamicFee",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -525,8 +726,13 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "_limitPrice",
+        name: "_targetPrice",
         type: "uint256",
+      },
+      {
+        internalType: "enum IMarginBaseTypes.OrderTypes",
+        name: "_orderType",
+        type: "uint8",
       },
     ],
     name: "placeOrder",
@@ -541,8 +747,70 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "_marketKey",
+        type: "bytes32",
+      },
+      {
+        internalType: "int256",
+        name: "_marginDelta",
+        type: "int256",
+      },
+      {
+        internalType: "int256",
+        name: "_sizeDelta",
+        type: "int256",
+      },
+      {
+        internalType: "uint256",
+        name: "_targetPrice",
+        type: "uint256",
+      },
+      {
+        internalType: "enum IMarginBaseTypes.OrderTypes",
+        name: "_orderType",
+        type: "uint8",
+      },
+      {
+        internalType: "uint256",
+        name: "_maxDynamicFee",
+        type: "uint256",
+      },
+    ],
+    name: "placeOrderWithFeeCap",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "renounceOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "tokenAddress",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "tokenAmount",
+        type: "uint256",
+      },
+    ],
+    name: "rescueERC20",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -574,6 +842,11 @@ const _abi = [
         internalType: "bool",
         name: "",
         type: "bool",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",

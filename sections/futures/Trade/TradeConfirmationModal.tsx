@@ -11,7 +11,12 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { currentMarketState, potentialTradeDetailsState } from 'store/futures';
+import {
+	currentMarketState,
+	futuresOrderPriceState,
+	orderTypeState,
+	potentialTradeDetailsState,
+} from 'store/futures';
 import { FlexDivCentered } from 'styles/common';
 import { zeroBN, formatCurrency, formatDollars, formatNumber } from 'utils/formatters/number';
 
@@ -39,6 +44,8 @@ export default function TradeConfirmationModal({
 
 	const market = useRecoilValue(currentMarketState);
 	const { data: potentialTradeDetails } = useRecoilValue(potentialTradeDetailsState);
+	const orderType = useRecoilValue(orderTypeState);
+	const orderPrice = useRecoilValue(futuresOrderPriceState);
 
 	const positionDetails = useMemo(() => {
 		return potentialTradeDetails
@@ -66,10 +73,16 @@ export default function TradeConfirmationModal({
 				}),
 			},
 			{ label: 'leverage', value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x` },
-			{
-				label: 'current price',
-				value: formatDollars(positionDetails?.price ?? zeroBN),
-			},
+
+			orderType === 'limit' || orderType === 'stop'
+				? {
+						label: orderType + ' order price',
+						value: formatDollars(orderPrice),
+				  }
+				: {
+						label: 'current price',
+						value: formatDollars(positionDetails?.price ?? zeroBN),
+				  },
 			{
 				label: 'liquidation price',
 				value: formatDollars(positionDetails?.liqPrice ?? zeroBN),
@@ -90,7 +103,16 @@ export default function TradeConfirmationModal({
 				}),
 			},
 		],
-		[positionDetails, market, synthsMap, gasFee, selectedPriceCurrency, tradeFee]
+		[
+			positionDetails,
+			market,
+			synthsMap,
+			gasFee,
+			selectedPriceCurrency,
+			tradeFee,
+			orderType,
+			orderPrice,
+		]
 	);
 
 	const disabledReason = useMemo(() => {

@@ -291,4 +291,7 @@ export type FuturesTradeInputs = {
 	leverage: string;
 	nativeSizeDelta: Wei;
 	susdSizeDelta: Wei;
+	orderPrice?: Wei | undefined;
 };
+
+export type FuturesOrderType = 'market' | 'next-price' | 'stop' | 'limit';

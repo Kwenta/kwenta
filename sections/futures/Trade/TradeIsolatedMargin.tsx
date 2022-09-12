@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import DepositArrow from 'assets/svg/futures/deposit-arrow.svg';
 import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import SegmentedControl from 'components/SegmentedControl';
+import { ISOLATED_MARGIN_ORDER_TYPES } from 'constants/futures';
 import useSUSDBalance from 'hooks/useSUSDBalance';
 import { leverageSideState, marketInfoState, orderTypeState, positionState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
@@ -62,12 +63,15 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 			{!isMobile && <MarketInfoBox />}
 
 			<StyledSegmentedControl
-				values={['Market', 'Next-Price']}
-				selectedIndex={orderType}
-				onChange={setOrderType}
+				styleType="check"
+				values={ISOLATED_MARGIN_ORDER_TYPES}
+				selectedIndex={ISOLATED_MARGIN_ORDER_TYPES.indexOf(orderType)}
+				onChange={(oType: number) => {
+					setOrderType(oType === 0 ? 'market' : 'next-price');
+				}}
 			/>
 
-			{orderType === 1 && <NextPrice />}
+			{orderType === 'next-price' && <NextPrice />}
 
 			<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
 

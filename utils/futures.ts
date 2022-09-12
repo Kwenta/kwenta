@@ -1,7 +1,9 @@
 import { NetworkId, NetworkNameById, Synth } from '@synthetixio/contracts-interface';
+import Wei, { wei } from '@synthetixio/wei';
 import { TFunction } from 'i18next';
 import { Dictionary } from 'lodash';
 
+import { PositionSide } from 'sections/futures/types';
 import logError from 'utils/logError';
 
 export const getMarketAsset = (marketKey: FuturesMarketKey) => {
@@ -255,4 +257,12 @@ export const marketsForNetwork = (networkId: NetworkId) => {
 			logError('You cannot use futures on this network.');
 			return [];
 	}
+};
+
+export const orderPriceValid = (orderPrice: string, leverageSide: PositionSide, assetRate: Wei) => {
+	if (!orderPrice || Number(orderPrice) <= 0) return false;
+	const isLong = leverageSide === 'long';
+	if ((isLong && wei(orderPrice).gt(assetRate)) || (!isLong && wei(orderPrice).lt(assetRate)))
+		return false;
+	return true;
 };

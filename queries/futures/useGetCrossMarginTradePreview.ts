@@ -1,5 +1,5 @@
 import { SynthetixJS } from '@synthetixio/contracts-interface';
-import { wei, WeiSource } from '@synthetixio/wei';
+import { wei } from '@synthetixio/wei';
 import BN from 'bn.js';
 import { BigNumber, Contract, ethers } from 'ethers';
 import { formatBytes32String } from 'ethers/lib/utils';
@@ -65,11 +65,11 @@ export default function useGetCrossMarginTradePreview(
 	}, [synthetixjs, provider, address, isL2, marketAsset]);
 
 	const getPreview = useCallback(
-		async (sizeDelta: WeiSource | null | undefined, marginDelta: WeiSource | null | undefined) => {
+		async (sizeDelta: BigNumber, marginDelta: BigNumber, orderPrice?: BigNumber) => {
 			if (contractInstance) {
 				const sizeBN = wei(sizeDelta || 0).toBN();
 				const marginBN = wei(marginDelta || 0).toBN();
-				const res = await contractInstance.getTradePreview(sizeBN, marginBN);
+				const res = await contractInstance.getTradePreview(sizeBN, marginBN, orderPrice);
 				return res;
 			}
 		},
@@ -105,16 +105,20 @@ class FuturesMarketInternal {
 		this._cache = {};
 	}
 
-	getTradePreview = async (sizeDelta: BigNumber, marginDelta: BigNumber) => {
+	getTradePreview = async (
+		sizeDelta: BigNumber,
+		marginDelta: BigNumber,
+		limitPrice?: BigNumber
+	) => {
 		const position = await this._futuresMarketContract.positions(this._account);
-		const price = await this._futuresMarketContract.assetPrice();
+		const price = limitPrice || (await this._futuresMarketContract.assetPrice()).price;
 
 		const takerFee = await this._getSetting('takerFee', [this._marketKeyBytes]);
 		const makerFee = await this._getSetting('makerFee', [this._marketKeyBytes]);
 
 		const tradeParams = {
 			sizeDelta,
-			price: price.price,
+			price: price,
 			takerFee,
 			makerFee,
 			trackingCode: KWENTA_TRACKING_CODE,
