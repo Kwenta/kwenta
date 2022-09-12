@@ -1,3 +1,4 @@
+import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
 import { atom, selector } from 'recoil';
 
@@ -5,6 +6,7 @@ import { CurrencyKey, CRYPTO_CURRENCY_MAP } from 'constants/currency';
 import { SwapRatio } from 'hooks/useExchange';
 import { localStorageEffect } from 'store/effects';
 import { getExchangeKey } from 'store/utils';
+import { zeroBN } from 'utils/formatters/number';
 
 type CurrencyPair = {
 	base: CurrencyKey | null;
@@ -92,4 +94,20 @@ export const isApprovingState = atom({
 export const isApprovedState = atom({
 	key: getExchangeKey('isApproved'),
 	default: false,
+});
+
+export const quoteCurrencyAmountBNState = selector({
+	key: getExchangeKey('quoteCurrencyAmountBN'),
+	get: ({ get }) => {
+		const quoteCurrencyAmount = get(quoteCurrencyAmountState);
+		return quoteCurrencyAmount === '' ? zeroBN : wei(quoteCurrencyAmount);
+	},
+});
+
+export const baseCurrencyAmountBNState = selector({
+	key: getExchangeKey('baseCurrencyAmountBN'),
+	get: ({ get }) => {
+		const baseCurrencyAmount = get(baseCurrencyAmountState);
+		return baseCurrencyAmount === '' ? zeroBN : wei(baseCurrencyAmount);
+	},
 });

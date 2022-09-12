@@ -37,12 +37,14 @@ import useSynthBalances from 'queries/synths/useSynthBalances';
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
 import {
+	baseCurrencyAmountBNState,
 	baseCurrencyAmountState,
 	baseCurrencyKeyState,
 	currencyPairState,
 	destinationCurrencyKeyState,
 	isApprovedState,
 	isApprovingState,
+	quoteCurrencyAmountBNState,
 	quoteCurrencyAmountState,
 	quoteCurrencyKeyState,
 	ratioState,
@@ -352,14 +354,8 @@ const useExchange = ({ routingEnabled = false, showNoSynthsCard = false }: Excha
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
-	const quoteCurrencyAmountBN = useMemo(
-		() => (quoteCurrencyAmount === '' ? zeroBN : wei(quoteCurrencyAmount)),
-		[quoteCurrencyAmount]
-	);
-	const baseCurrencyAmountBN = useMemo(
-		() => (baseCurrencyAmount === '' ? zeroBN : wei(baseCurrencyAmount)),
-		[baseCurrencyAmount]
-	);
+	const quoteCurrencyAmountBN = useRecoilValue(quoteCurrencyAmountBNState);
+	const baseCurrencyAmountBN = useRecoilValue(baseCurrencyAmountBNState);
 
 	const totalTradePrice = useMemo(() => {
 		let tradePrice = quoteCurrencyAmountBN.mul(quotePriceRate || 0);
@@ -379,7 +375,7 @@ const useExchange = ({ routingEnabled = false, showNoSynthsCard = false }: Excha
 		return tradePrice;
 	}, [baseCurrencyAmountBN, basePriceRate, selectPriceCurrencyRate]);
 
-	const selectedBothSides = baseCurrencyKey != null && quoteCurrencyKey != null;
+	const selectedBothSides = !!baseCurrencyKey && !!quoteCurrencyKey;
 
 	const submissionDisabledReason = useMemo(() => {
 		const insufficientBalance =

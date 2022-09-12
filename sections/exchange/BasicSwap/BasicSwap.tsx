@@ -1,19 +1,16 @@
-import { FC } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import ArrowIcon from 'assets/svg/app/arrow-down.svg';
-import { zIndex } from 'constants/ui';
-import { useExchangeContext } from 'contexts/ExchangeContext';
-import { SwapCurrenciesButton, BoldText } from 'styles/common';
+import { BoldText } from 'styles/common';
 
 import BaseCurrencyCard from '../TradeCard/Cards/BaseCurrencyCard';
 import FooterCard from '../TradeCard/Cards/FooterCard';
 import QuoteCurrencyCard from '../TradeCard/Cards/QuoteCurrencyCard';
+import SwapCurrencies from './SwapCurrencies';
 
-const BasicSwap: FC = () => {
+const BasicSwap: React.FC = React.memo(() => {
 	const { t } = useTranslation();
-	const { handleCurrencySwap } = useExchangeContext();
 
 	return (
 		<>
@@ -21,11 +18,7 @@ const BasicSwap: FC = () => {
 			<PageWidthContainer>
 				<DesktopCardsContainer>
 					<QuoteCurrencyCard allowQuoteCurrencySelection />
-					<SwapCurrenciesButtonContainer>
-						<SwapCurrenciesButton onClick={handleCurrencySwap} data-testid="swap-btn">
-							<ArrowIcon className="arrow" />
-						</SwapCurrenciesButton>
-					</SwapCurrenciesButtonContainer>
+					<SwapCurrencies />
 					<BaseCurrencyCard allowBaseCurrencySelection />
 				</DesktopCardsContainer>
 			</PageWidthContainer>
@@ -34,7 +27,7 @@ const BasicSwap: FC = () => {
 			</PageWidthContainer>
 		</>
 	);
-};
+});
 
 export default BasicSwap;
 
@@ -58,12 +51,4 @@ const DesktopCardsContainer = styled.div`
 const PageWidthContainer = styled.div`
 	width: 565px;
 	margin: 0 auto;
-`;
-
-const SwapCurrenciesButtonContainer = styled.div`
-	align-self: flex-start;
-	margin-top: 170px;
-	position: absolute;
-	left: calc(50% - 16px);
-	z-index: ${zIndex.BASE + 10};
 `;
