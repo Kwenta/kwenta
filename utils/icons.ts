@@ -21,13 +21,13 @@ import LINKIcon from 'assets/png/currencies/sLINK.png';
 import MATICIcon from 'assets/png/currencies/sMATIC.png';
 import SNXIcon from 'assets/png/currencies/SNX.png';
 import OILIcon from 'assets/png/currencies/sOIL.png';
+import OPIcon from 'assets/png/currencies/sOP.png';
 import SOLIcon from 'assets/png/currencies/sSOL.png';
 import UNIIcon from 'assets/png/currencies/sUNI.png';
 import USDIcon from 'assets/png/currencies/sUSD.png';
 import XAGIcon from 'assets/png/currencies/sXAG.png';
 import XAUIcon from 'assets/png/currencies/sXAU.png';
 import XMRIcon from 'assets/png/currencies/sXMR.png';
-//import OPIcon from 'assets/png/currencies/sOP.png';
 import { CRYPTO_CURRENCY_MAP, SynthsName } from 'constants/currency';
 
 import { FuturesMarketKey } from './futures';
@@ -62,5 +62,6 @@ export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = 
 	sDOGE: DOGEIcon,
 	sDebtRatio: DEBTIcon,
 	sXMR: XMRIcon,
+	sOP: OPIcon,
 	[CRYPTO_CURRENCY_MAP.SNX]: SNXIcon,
 };
