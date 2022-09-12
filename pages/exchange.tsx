@@ -18,7 +18,6 @@ type ExchangeComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 const Exchange: ExchangeComponent = () => {
 	const { t } = useTranslation();
 	const exchangeData = useExchange({
-		footerCardAttached: false,
 		routingEnabled: true,
 		showNoSynthsCard: false,
 	});

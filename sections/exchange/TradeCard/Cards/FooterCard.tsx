@@ -6,8 +6,10 @@ import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import { useExchangeContext } from 'contexts/ExchangeContext';
+import useApproveExchange from 'hooks/useApproveExchange';
 import useIsL2 from 'hooks/useIsL2';
 import useMarketClosed from 'hooks/useMarketClosed';
+import useRedeem from 'hooks/useRedeem';
 import RedeemTxModal from 'sections/dashboard/Deprecated/RedeemTxModal';
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
 import MarketClosureCard from 'sections/exchange/FooterCard/MarketClosureCard';
@@ -18,6 +20,7 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import {
 	baseCurrencyAmountState,
 	baseCurrencyKeyState,
+	isApprovedState,
 	quoteCurrencyAmountState,
 	quoteCurrencyKeyState,
 	txErrorState,
@@ -40,17 +43,15 @@ const FooterCard: React.FC = () => {
 	const quoteCurrencyMarketClosed = useMarketClosed(quoteCurrencyKey);
 	const baseCurrencyMarketClosed = useMarketClosed(baseCurrencyKey);
 
+	const isApproved = useRecoilValue(isApprovedState);
+
 	const {
 		noSynths,
 		numEntries,
-		footerCardAttached,
 		showNoSynthsCard,
 		baseFeeRate,
 		needsApproval,
-		handleApprove,
-		isApproved,
 		handleSubmit,
-		handleRedeem,
 		balances,
 		txProvider,
 		openModal,
@@ -65,23 +66,21 @@ const FooterCard: React.FC = () => {
 		feeReclaimPeriodInSeconds,
 	} = useExchangeContext();
 
+	const { handleApprove } = useApproveExchange();
+	const { handleRedeem } = useRedeem();
+
 	return (
 		<>
 			{!isWalletConnected ? (
-				<ConnectWalletCard attached={footerCardAttached} />
+				<ConnectWalletCard />
 			) : baseCurrencyMarketClosed.isMarketClosed || quoteCurrencyMarketClosed.isMarketClosed ? (
-				<MarketClosureCard
-					baseCurrencyMarketClosed={baseCurrencyMarketClosed}
-					quoteCurrencyMarketClosed={quoteCurrencyMarketClosed}
-					attached={footerCardAttached}
-				/>
+				<MarketClosureCard />
 			) : showNoSynthsCard && noSynths ? (
-				<NoSynthsCard attached={footerCardAttached} />
+				<NoSynthsCard />
 			) : !isL2 && numEntries >= 12 ? (
-				<SettleTransactionsCard attached={footerCardAttached} numEntries={numEntries} />
+				<SettleTransactionsCard numEntries={numEntries} />
 			) : (
 				<TradeSummaryCard
-					attached={footerCardAttached}
 					submissionDisabledReason={submissionDisabledReason}
 					onSubmit={needsApproval ? (isApproved ? handleSubmit : handleApprove) : handleSubmit}
 					feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}

@@ -7,11 +7,10 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { MessageButton, MessageContainer, Message, FixedMessageContainerSpacer } from '../common';
 
 type ConnectWalletCardProps = {
-	attached?: boolean;
 	className?: string;
 };
 
-const ConnectWalletCard: FC<ConnectWalletCardProps> = ({ attached, ...rest }) => {
+const ConnectWalletCard: FC<ConnectWalletCardProps> = ({ ...rest }) => {
 	const { t } = useTranslation();
 	const { openConnectModal: connectWallet } = useConnectModal();
 
@@ -20,7 +19,7 @@ const ConnectWalletCard: FC<ConnectWalletCardProps> = ({ attached, ...rest }) =>
 			<MobileOrTabletView>
 				<FixedMessageContainerSpacer />
 			</MobileOrTabletView>
-			<MessageContainer attached={attached} className="footer-card" {...rest}>
+			<MessageContainer className="footer-card" {...rest}>
 				<DesktopOnlyView>
 					<Message>{t('exchange.connect-wallet-card.message')}</Message>
 				</DesktopOnlyView>

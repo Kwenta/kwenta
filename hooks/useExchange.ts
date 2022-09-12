@@ -10,7 +10,6 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
 import {
 	ATOMIC_EXCHANGES_L1,
 	CRYPTO_CURRENCY_MAP,
@@ -26,7 +25,6 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
 import { useGetL1SecurityFee } from 'hooks/useGetL1SecurityGasFee';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import use1InchApproveSpenderQuery from 'queries/1inch/use1InchApproveAddressQuery';
 import use1InchQuoteQuery from 'queries/1inch/use1InchQuoteQuery';
 import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
@@ -42,9 +40,13 @@ import {
 	baseCurrencyAmountState,
 	baseCurrencyKeyState,
 	currencyPairState,
+	destinationCurrencyKeyState,
+	isApprovedState,
+	isApprovingState,
 	quoteCurrencyAmountState,
 	quoteCurrencyKeyState,
 	ratioState,
+	sourceCurrencyKeyState,
 	txErrorState,
 } from 'store/exchange';
 import { ordersState } from 'store/orders';
@@ -56,14 +58,12 @@ import {
 	newGetExchangeRatesTupleForCurrencies,
 } from 'utils/currencies';
 import { truncateNumbers, zeroBN } from 'utils/formatters/number';
-import { hexToAsciiV2 } from 'utils/formatters/string';
 import logError from 'utils/logError';
 import { normalizeGasLimit, getTransactionPrice } from 'utils/network';
 
 import useIsL2 from './useIsL2';
 
 type ExchangeCardProps = {
-	footerCardAttached?: boolean;
 	routingEnabled?: boolean;
 	showNoSynthsCard?: boolean;
 };
@@ -71,11 +71,7 @@ type ExchangeCardProps = {
 type ExchangeModal = 'settle' | 'confirm' | 'approve' | 'redeem' | 'base-select' | 'quote-select';
 export type SwapRatio = 25 | 50 | 75 | 100;
 
-const useExchange = ({
-	footerCardAttached = false,
-	routingEnabled = false,
-	showNoSynthsCard = false,
-}: ExchangeCardProps) => {
+const useExchange = ({ routingEnabled = false, showNoSynthsCard = false }: ExchangeCardProps) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
@@ -94,7 +90,6 @@ const useExchange = ({
 		useFeeReclaimPeriodQuery,
 		useEthGasPriceQuery,
 		useSynthetixTxn,
-		useContractTxn,
 	} = useSynthetixQueries();
 
 	useSynthBalances();
@@ -107,8 +102,8 @@ const useExchange = ({
 	const quoteCurrencyKey = useRecoilValue(quoteCurrencyKeyState);
 
 	const [openModal, setOpenModal] = useState<ExchangeModal>();
-	const [isApproving, setIsApproving] = useState(false);
-	const [isApproved, setIsApproved] = useState(false);
+	const isApproved = useRecoilValue(isApprovedState);
+	const isApproving = useRecoilValue(isApprovingState);
 	const [gasInfo, setGasInfo] = useState<{ limit: number; l1Fee: Wei } | null>();
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [atomicExchangeSlippage] = useState('0.01');
@@ -225,15 +220,6 @@ const useExchange = ({
 		quoteCurrencyAmountDebounced,
 		quoteDecimals
 	);
-
-	const oneInchApproveAddressQuery = use1InchApproveSpenderQuery({
-		enabled: txProvider === '1inch',
-	});
-
-	const oneInchApproveAddress = oneInchApproveAddressQuery.data ?? null;
-
-	const approveAddress =
-		txProvider === '1inch' ? oneInchApproveAddress : SYNTH_SWAP_OPTIMISM_ADDRESS;
 
 	const quoteCurrencyContract = useMemo(() => {
 		if (quoteCurrencyKey && allTokensMap[quoteCurrencyKey] && needsApproval) {
@@ -446,10 +432,7 @@ const useExchange = ({
 		oneInchQuoteQuery,
 	]);
 
-	const noSynths =
-		synthsWalletBalancesQuery.isSuccess && synthsWalletBalancesQuery.data
-			? synthsWalletBalancesQuery.data.balances.length === 0
-			: false;
+	const noSynths = synthsWalletBalancesQuery.data?.balances.length === 0;
 
 	const routeToMarketPair = (baseCurrencyKey: string, quoteCurrencyKey: string) =>
 		routingEnabled
@@ -532,15 +515,8 @@ const useExchange = ({
 		// eslint-disable-next-line
 	}, [baseCurrencyKey, exchangeFeeRate]);
 
-	const destinationCurrencyKey = useMemo(
-		() => (baseCurrencyKey ? ethers.utils.formatBytes32String(baseCurrencyKey) : null),
-		[baseCurrencyKey]
-	);
-
-	const sourceCurrencyKey = useMemo(
-		() => (quoteCurrencyKey ? ethers.utils.formatBytes32String(quoteCurrencyKey) : null),
-		[quoteCurrencyKey]
-	);
+	const destinationCurrencyKey = useRecoilValue(destinationCurrencyKeyState);
+	const sourceCurrencyKey = useRecoilValue(sourceCurrencyKeyState);
 
 	const isAtomic = useMemo(() => {
 		if (isL2 || !baseCurrencyKey || !quoteCurrencyKey) {
@@ -743,114 +719,17 @@ const useExchange = ({
 	const balances = redeemableDeprecatedSynths?.balances ?? [];
 	const totalUSDBalance = wei(redeemableDeprecatedSynths?.totalUSDBalance ?? 0);
 
-	const redeemTxn = useSynthetixTxn(
-		'SynthRedeemer',
-		'redeemAll',
-		[redeemableDeprecatedSynths?.balances.map((b) => b.proxyAddress)],
-		undefined,
-		{ enabled: !!redeemableDeprecatedSynths && redeemableDeprecatedSynths?.totalUSDBalance.gt(0) }
-	);
-
-	useEffect(() => {
-		if (redeemTxn.hash) {
-			monitorTransaction({
-				txHash: redeemTxn.hash,
-				onTxConfirmed: () => {
-					setOpenModal(undefined);
-					redeemableDeprecatedSynthsQuery.refetch();
-					synthsWalletBalancesQuery.refetch();
-				},
-			});
-		}
-
-		// eslint-disable-next-line
-	}, [redeemTxn.hash]);
-
-	const handleRedeem = async () => {
-		setTxError(null);
-		setOpenModal('redeem');
-
-		try {
-			await redeemTxn.mutateAsync();
-		} catch (e) {
-			logError(e);
-			setTxError(
-				e.data ? t('common.transaction.revert-reason', { reason: hexToAsciiV2(e.data) }) : e.message
-			);
-		}
-	};
-
 	const handleDismiss = () => {
 		setOpenModal(undefined);
 	};
 
-	const checkAllowance = useCallback(async () => {
-		if (
-			isWalletConnected &&
-			quoteCurrencyKey != null &&
-			quoteCurrencyAmount &&
-			allTokensMap[quoteCurrencyKey] != null &&
-			approveAddress != null
-		) {
-			try {
-				if (quoteCurrencyContract != null) {
-					const allowance = (await quoteCurrencyContract.allowance(
-						walletAddress,
-						approveAddress
-					)) as ethers.BigNumber;
-
-					setIsApproved(wei(ethers.utils.formatEther(allowance)).gte(quoteCurrencyAmount));
-				}
-			} catch (e) {
-				logError(e);
-			}
-		}
-	}, [
-		quoteCurrencyAmount,
-		isWalletConnected,
-		quoteCurrencyKey,
-		walletAddress,
-		quoteCurrencyContract,
-		allTokensMap,
-		approveAddress,
-	]);
-
-	useEffect(() => {
-		if (needsApproval) {
-			checkAllowance();
-		}
-	}, [checkAllowance, needsApproval]);
-
-	const approveTxn = useContractTxn(
-		quoteCurrencyContract,
-		'approve',
-		[approveAddress, ethers.constants.MaxUint256],
-		undefined,
-		{ enabled: !!approveAddress && !!quoteCurrencyKey && !!oneInchTokensMap && needsApproval }
-	);
-
-	useEffect(() => {
-		if (approveTxn.hash) {
-			monitorTransaction({
-				txHash: approveTxn.hash,
-				onTxConfirmed: () => {
-					setIsApproving(false);
-					setIsApproved(true);
-				},
-			});
-		}
-
-		// eslint-disable-next-line
-	}, [approveTxn.hash]);
-
 	const transactionFee = useMemo(() => {
 		if (txProvider === 'synthswap' || txProvider === '1inch') {
-			// TODO: We should refactor this to use Wei, instead of numbers.
 			return getTransactionPrice(
 				gasPrice,
 				BigNumber.from(gasInfo?.limit || 0),
 				ethPriceRate,
-				gasInfo?.l1Fee || zeroBN
+				gasInfo?.l1Fee ?? zeroBN
 			);
 		} else {
 			return getTransactionPrice(
@@ -861,21 +740,6 @@ const useExchange = ({
 			);
 		}
 	}, [gasPrice, ethPriceRate, exchangeTxn, gasInfo?.limit, gasInfo?.l1Fee, txProvider]);
-
-	const handleApprove = async () => {
-		setTxError(null);
-		setOpenModal('approve');
-
-		try {
-			await approveTxn.mutateAsync();
-
-			setOpenModal(undefined);
-		} catch (e) {
-			logError(e);
-			setIsApproving(false);
-			setTxError(e.message);
-		}
-	};
 
 	const handleSubmit = useCallback(async () => {
 		setTxError(null);
@@ -927,11 +791,8 @@ const useExchange = ({
 				setHasOrdersNotification(true);
 			}
 
-			const hash = tx?.hash;
+			if (tx?.hash) monitorExchangeTxn(tx.hash);
 
-			if (hash) {
-				monitorExchangeTxn(hash);
-			}
 			setOpenModal(undefined);
 		} catch (e) {
 			logError(e);
@@ -1124,8 +985,6 @@ const useExchange = ({
 		slippagePercent,
 		baseCurrencyBalance,
 		handleSubmit,
-		handleApprove,
-		handleRedeem,
 		transactionFee,
 		totalUSDBalance,
 		feeCost,
@@ -1140,13 +999,11 @@ const useExchange = ({
 		oneInchQuoteQuery,
 		numEntries,
 		showNoSynthsCard,
-		footerCardAttached,
 		quoteCurrencyBalance,
 		quotePriceRate,
 		baseFeeRate,
 		needsApproval,
 		baseCurrency,
-		isApproved,
 		estimatedBaseTradePrice,
 		settlementWaitingPeriodInSeconds,
 		settlementDisabledReason,
@@ -1160,6 +1017,7 @@ const useExchange = ({
 		ratio,
 		onRatioChange,
 		setRatio,
+		quoteCurrencyContract,
 	};
 };
 

@@ -22,14 +22,10 @@ import logError from 'utils/logError';
 import { MessageContainer, Message, FixedMessageContainerSpacer } from '../common';
 
 type SettleTransactionsCardProps = {
-	attached?: boolean;
 	numEntries: number | null;
 };
 
-const SettleTransactionsCard: React.FC<SettleTransactionsCardProps> = ({
-	attached,
-	numEntries,
-}) => {
+const SettleTransactionsCard: React.FC<SettleTransactionsCardProps> = ({ numEntries }) => {
 	const { t } = useTranslation();
 	const [txError, setTxError] = useRecoilState(txErrorState);
 	const {
@@ -86,7 +82,7 @@ const SettleTransactionsCard: React.FC<SettleTransactionsCardProps> = ({
 			<MobileOrTabletView>
 				<FixedMessageContainerSpacer />
 			</MobileOrTabletView>
-			<MessageContainer attached={attached} className="footer-card">
+			<MessageContainer className="footer-card">
 				<MessageItems>
 					<MessageItem>
 						<Trans

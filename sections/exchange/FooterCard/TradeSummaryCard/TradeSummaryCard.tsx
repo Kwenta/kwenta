@@ -23,7 +23,6 @@ type TradeSummaryCardProps = {
 	feeReclaimPeriodInSeconds: number;
 	quoteCurrencyKey: CurrencyKey | null;
 	showFee?: boolean;
-	attached?: boolean;
 	className?: string;
 	totalFeeRate: Wei | null;
 	baseFeeRate?: Wei | null;
@@ -38,7 +37,6 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	feeReclaimPeriodInSeconds,
 	quoteCurrencyKey,
 	showFee = true,
-	attached,
 	totalFeeRate,
 	baseFeeRate,
 	transactionFee,
@@ -61,7 +59,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	);
 
 	const summaryItems = (
-		<SummaryItems attached={attached}>
+		<SummaryItems>
 			<GasPriceSelect gasPrices={gasPrices} transactionFee={transactionFee} />
 			{showFee && (
 				<>
@@ -79,7 +77,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 					<Card.Body>{summaryItems}</Card.Body>
 				</MobileCard>
 			</MobileOrTabletView>
-			<MessageContainer attached={attached} className="footer-card" {...rest}>
+			<MessageContainer className="footer-card" {...rest}>
 				<DesktopOnlyView>{summaryItems}</DesktopOnlyView>
 				<ErrorTooltip
 					visible={feeReclaimPeriodInSeconds > 0}

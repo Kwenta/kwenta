@@ -76,7 +76,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 
 	const isBase = useMemo(() => side === 'base', [side]);
 
-	const hasWalletBalance = useMemo(() => walletBalance != null && currencyKey != null, [
+	const hasWalletBalance = useMemo(() => !!walletBalance && !!currencyKey, [
 		walletBalance,
 		currencyKey,
 	]);
@@ -152,8 +152,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 											</CurrencyAmountValue>
 											<Slippage>
 												{!isLoading &&
-													slippagePercent != null &&
-													slippagePercent.lt(0) &&
+													slippagePercent?.lt(0) &&
 													formatPercent(slippagePercent) + t('exchange.currency-card.slippage')}
 											</Slippage>
 										</FlexDivRowCentered>

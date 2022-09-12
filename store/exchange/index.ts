@@ -83,3 +83,13 @@ export const sourceCurrencyKeyState = selector({
 		return quoteCurrencyKey ? ethers.utils.formatBytes32String(quoteCurrencyKey) : null;
 	},
 });
+
+export const isApprovingState = atom({
+	key: getExchangeKey('isApproving'),
+	default: false,
+});
+
+export const isApprovedState = atom({
+	key: getExchangeKey('isApproved'),
+	default: false,
+});
