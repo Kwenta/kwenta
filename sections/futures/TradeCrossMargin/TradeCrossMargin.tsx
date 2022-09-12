@@ -25,9 +25,9 @@ import ManagePosition from '../Trade/ManagePosition';
 import MarketsDropdown from '../Trade/MarketsDropdown';
 import TradePanelHeader from '../Trade/TradePanelHeader';
 import CreateAccount from './CreateAccount';
+import MarginInfoBox from './CrossMarginInfoBox';
 import CrossMarginUnsupported from './CrossMarginUnsupported';
 import DepositWithdrawCrossMargin from './DepositWithdrawCrossMargin';
-import MarginInfoBox from './MarginInfoBox';
 
 type Props = {
 	isMobile?: boolean;
