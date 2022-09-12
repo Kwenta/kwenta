@@ -41,10 +41,6 @@ export const EXTERNAL_LINKS = {
 		MarketingDao: 'https://docs.kwenta.io/dao/contribute/marketingDAO',
 		Faq: 'https://docs.kwenta.io/resources/faq',
 	},
-	Explorer: {
-		Optimism: 'https://optimistic.etherscan.io',
-		OptimismGoerli: 'https://goerli-optimism.etherscan.io',
-	},
 	Optimism: {
 		Home: 'https://optimism.io/',
 	},
