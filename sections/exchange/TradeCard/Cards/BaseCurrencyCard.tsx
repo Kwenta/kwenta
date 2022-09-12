@@ -1,17 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
-import { CurrencyKey } from 'constants/currency';
 import { useExchangeContext } from 'contexts/ExchangeContext';
 import SelectCurrencyModal from 'sections/shared/modals/SelectCurrencyModal';
-import {
-	baseCurrencyKeyState,
-	baseCurrencyAmountState,
-	quoteCurrencyAmountState,
-	quoteCurrencyKeyState,
-	currencyPairState,
-} from 'store/exchange';
+import { baseCurrencyKeyState, baseCurrencyAmountState } from 'store/exchange';
 
 import CurrencyCard from '../CurrencyCard';
 
@@ -22,10 +15,7 @@ type BaseCurrencyCardProps = {
 const BaseCurrencyCard: React.FC<BaseCurrencyCardProps> = ({ allowBaseCurrencySelection }) => {
 	const { t } = useTranslation();
 	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
-	const quoteCurrencyKey = useRecoilValue(quoteCurrencyKeyState);
 	const baseCurrencyAmount = useRecoilValue(baseCurrencyAmountState);
-	const setQuoteCurrencyAmount = useSetRecoilState(quoteCurrencyAmountState);
-	const setCurrencyPair = useSetRecoilState(currencyPairState);
 
 	const {
 		txProvider,
@@ -33,13 +23,12 @@ const BaseCurrencyCard: React.FC<BaseCurrencyCardProps> = ({ allowBaseCurrencySe
 		openModal,
 		setOpenModal,
 		slippagePercent,
-		routeToBaseCurrency,
-		routeToMarketPair,
 		basePriceRate,
 		allTokensMap,
 		oneInchQuoteQuery,
 		onBaseCurrencyAmountChange,
 		onBaseBalanceClick,
+		onBaseCurrencyChange,
 	} = useExchangeContext();
 
 	return (
@@ -64,19 +53,7 @@ const BaseCurrencyCard: React.FC<BaseCurrencyCardProps> = ({ allowBaseCurrencySe
 			{openModal === 'base-select' && (
 				<SelectCurrencyModal
 					onDismiss={() => setOpenModal(undefined)}
-					onSelect={(currencyKey) => {
-						setQuoteCurrencyAmount('');
-						setCurrencyPair((pair) => ({
-							base: currencyKey as CurrencyKey,
-							quote: pair.quote === currencyKey ? null : pair.quote,
-						}));
-
-						if (quoteCurrencyKey != null && quoteCurrencyKey !== currencyKey) {
-							routeToMarketPair(currencyKey, quoteCurrencyKey);
-						} else {
-							routeToBaseCurrency(currencyKey);
-						}
-					}}
+					onSelect={onBaseCurrencyChange}
 				/>
 			)}
 		</>

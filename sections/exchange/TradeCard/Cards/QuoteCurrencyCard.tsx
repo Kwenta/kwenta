@@ -1,17 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
-import { CurrencyKey } from 'constants/currency';
 import { useExchangeContext } from 'contexts/ExchangeContext';
 import SelectCurrencyModal from 'sections/shared/modals/SelectCurrencyModal';
-import {
-	baseCurrencyKeyState,
-	quoteCurrencyKeyState,
-	baseCurrencyAmountState,
-	quoteCurrencyAmountState,
-	currencyPairState,
-} from 'store/exchange';
+import { quoteCurrencyKeyState, quoteCurrencyAmountState } from 'store/exchange';
 
 import CurrencyCard from '../CurrencyCard';
 
@@ -21,21 +14,18 @@ type QuoteCurrencyCardProps = {
 
 const QuoteCurrencyCard: React.FC<QuoteCurrencyCardProps> = ({ allowQuoteCurrencySelection }) => {
 	const { t } = useTranslation();
-	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
 	const quoteCurrencyKey = useRecoilValue(quoteCurrencyKeyState);
-	const setBaseCurrencyAmount = useSetRecoilState(baseCurrencyAmountState);
 	const quoteCurrencyAmount = useRecoilValue(quoteCurrencyAmountState);
-	const setCurrencyPair = useSetRecoilState(currencyPairState);
 
 	const {
 		quoteCurrencyBalance,
 		openModal,
 		setOpenModal,
-		routeToMarketPair,
 		allTokensMap,
 		quotePriceRate,
 		onQuoteCurrencyAmountChange,
 		onQuoteBalanceClick,
+		onQuoteCurrencyChange,
 	} = useExchangeContext();
 
 	return (
@@ -57,17 +47,7 @@ const QuoteCurrencyCard: React.FC<QuoteCurrencyCardProps> = ({ allowQuoteCurrenc
 			{openModal === 'quote-select' && (
 				<SelectCurrencyModal
 					onDismiss={() => setOpenModal(undefined)}
-					onSelect={(currencyKey) => {
-						setBaseCurrencyAmount('');
-
-						setCurrencyPair((pair) => ({
-							base: pair.base === currencyKey ? null : pair.base,
-							quote: currencyKey as CurrencyKey,
-						}));
-						if (baseCurrencyKey && baseCurrencyKey !== currencyKey) {
-							routeToMarketPair(baseCurrencyKey, currencyKey);
-						}
-					}}
+					onSelect={onQuoteCurrencyChange}
 				/>
 			)}
 		</>

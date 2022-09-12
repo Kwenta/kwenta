@@ -347,15 +347,6 @@ const useExchange = ({ routingEnabled = false, showNoSynthsCard = false }: Excha
 		selectedPriceCurrency.name,
 	]);
 
-	const settlementWaitingPeriodQuery = useFeeReclaimPeriodQuery(baseCurrencyKey, walletAddress);
-
-	const settlementWaitingPeriodInSeconds = settlementWaitingPeriodQuery.data ?? 0;
-
-	const settlementDisabledReason =
-		settlementWaitingPeriodInSeconds > 0
-			? t('exchange.summary-info.button.settle-waiting-period')
-			: null;
-
 	const ethPriceRate = useMemo(
 		() => newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
@@ -457,7 +448,7 @@ const useExchange = ({ routingEnabled = false, showNoSynthsCard = false }: Excha
 		setBaseCurrencyAmount(txProvider === 'synthetix' ? quoteAmount : '');
 		setQuoteCurrencyAmount('');
 
-		if (quoteCurrencyKey != null && baseCurrencyKey != null) {
+		if (!!quoteCurrencyKey && !!baseCurrencyKey) {
 			routeToMarketPair(quoteCurrencyKey, baseCurrencyKey);
 		}
 	};
@@ -484,6 +475,7 @@ const useExchange = ({ routingEnabled = false, showNoSynthsCard = false }: Excha
 		// eslint-disable-next-line
 	}, [network?.id, walletAddress, setCurrencyPair, synthsMap]);
 
+	// TODO: Move this into use1InchQuoteQuery.
 	useEffect(() => {
 		if (
 			oneInchQuoteQuery.isSuccess &&
@@ -493,27 +485,52 @@ const useExchange = ({ routingEnabled = false, showNoSynthsCard = false }: Excha
 		) {
 			setBaseCurrencyAmount(oneInchQuoteQuery.data);
 		}
-
-		if (txProvider === 'synthetix' && quoteCurrencyAmount !== '' && baseCurrencyKey != null) {
-			const baseCurrencyAmountNoFee = wei(quoteCurrencyAmount).mul(rate);
-			const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
-			setBaseCurrencyAmount(
-				truncateNumbers(baseCurrencyAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS)
-			);
-		}
 		// eslint-disable-next-line
-	}, [quoteCurrencyKey, exchangeFeeRate, oneInchQuoteQuery.isSuccess, oneInchQuoteQuery.data]);
+	}, [oneInchQuoteQuery.isSuccess, oneInchQuoteQuery.data]);
 
-	useEffect(() => {
-		if (txProvider === 'synthetix' && baseCurrencyAmount !== '' && quoteCurrencyKey != null) {
+	const onBaseCurrencyChange = (currencyKey: string) => {
+		setQuoteCurrencyAmount('');
+
+		setCurrencyPair((pair) => ({
+			base: currencyKey as CurrencyKey,
+			quote: pair.quote === currencyKey ? null : pair.quote,
+		}));
+
+		if (!!quoteCurrencyKey && quoteCurrencyKey !== currencyKey) {
+			routeToMarketPair(currencyKey, quoteCurrencyKey);
+		} else {
+			routeToBaseCurrency(currencyKey);
+		}
+
+		if (txProvider === 'synthetix' && !!baseCurrencyAmount && !!quoteCurrencyKey) {
 			const quoteCurrencyAmountNoFee = wei(baseCurrencyAmount).mul(inverseRate);
 			const fee = quoteCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
 			setQuoteCurrencyAmount(
 				truncateNumbers(quoteCurrencyAmountNoFee.add(fee), DEFAULT_CRYPTO_DECIMALS)
 			);
 		}
-		// eslint-disable-next-line
-	}, [baseCurrencyKey, exchangeFeeRate]);
+	};
+
+	const onQuoteCurrencyChange = (currencyKey: string) => {
+		setBaseCurrencyAmount('');
+
+		setCurrencyPair((pair) => ({
+			base: pair.base === currencyKey ? null : pair.base,
+			quote: currencyKey as CurrencyKey,
+		}));
+
+		if (baseCurrencyKey && baseCurrencyKey !== currencyKey) {
+			routeToMarketPair(baseCurrencyKey, currencyKey);
+		}
+
+		if (txProvider === 'synthetix' && !!quoteCurrencyAmount && !!baseCurrencyKey) {
+			const baseCurrencyAmountNoFee = wei(quoteCurrencyAmount).mul(rate);
+			const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
+			setBaseCurrencyAmount(
+				truncateNumbers(baseCurrencyAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS)
+			);
+		}
+	};
 
 	const destinationCurrencyKey = useRecoilValue(destinationCurrencyKeyState);
 	const sourceCurrencyKey = useRecoilValue(sourceCurrencyKeyState);
@@ -532,9 +549,7 @@ const useExchange = ({ routingEnabled = false, showNoSynthsCard = false }: Excha
 		const sourceAmount = quoteCurrencyAmountBN.toBN();
 		const minAmount = baseCurrencyAmountBN.mul(wei(1).sub(atomicExchangeSlippage)).toBN();
 
-		if (!sourceCurrencyKey || !destinationCurrencyKey) {
-			return null;
-		}
+		if (!sourceCurrencyKey || !destinationCurrencyKey) return null;
 
 		if (isAtomic) {
 			return [
@@ -615,10 +630,7 @@ const useExchange = ({ routingEnabled = false, showNoSynthsCard = false }: Excha
 
 	const oneInchSlippage = useMemo(() => {
 		// ETH swaps often fail with lower slippage
-		if (
-			txProvider === '1inch' &&
-			((baseCurrencyKey as string) === 'ETH' || (quoteCurrencyKey as string) === 'ETH')
-		) {
+		if (txProvider === '1inch' && (baseCurrencyKey === 'ETH' || quoteCurrencyKey === 'ETH')) {
 			return 3;
 		}
 		return slippage;
@@ -1005,8 +1017,6 @@ const useExchange = ({ routingEnabled = false, showNoSynthsCard = false }: Excha
 		needsApproval,
 		baseCurrency,
 		estimatedBaseTradePrice,
-		settlementWaitingPeriodInSeconds,
-		settlementDisabledReason,
 		submissionDisabledReason,
 		feeReclaimPeriodInSeconds,
 		totalTradePrice,
@@ -1018,6 +1028,8 @@ const useExchange = ({ routingEnabled = false, showNoSynthsCard = false }: Excha
 		onRatioChange,
 		setRatio,
 		quoteCurrencyContract,
+		onBaseCurrencyChange,
+		onQuoteCurrencyChange,
 	};
 };
 

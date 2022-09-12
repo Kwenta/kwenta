@@ -28,19 +28,23 @@ type SettleTransactionsCardProps = {
 const SettleTransactionsCard: React.FC<SettleTransactionsCardProps> = ({ numEntries }) => {
 	const { t } = useTranslation();
 	const [txError, setTxError] = useRecoilState(txErrorState);
-	const {
-		settlementWaitingPeriodInSeconds,
-		settlementDisabledReason,
-		openModal,
-		setOpenModal,
-	} = useExchangeContext();
+	const { openModal, setOpenModal } = useExchangeContext();
 	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
 	const destinationCurrencyKey = useRecoilValue(destinationCurrencyKeyState);
-	const { useSynthetixTxn } = useSynthetixQueries();
+	const { useSynthetixTxn, useFeeReclaimPeriodQuery } = useSynthetixQueries();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { walletAddress } = Connector.useContainer();
 	const numEntriesQuery = useNumEntriesQuery(walletAddress ?? '', baseCurrencyKey);
 	const isL2 = useIsL2();
+
+	const settlementWaitingPeriodQuery = useFeeReclaimPeriodQuery(baseCurrencyKey, walletAddress);
+
+	const settlementWaitingPeriodInSeconds = settlementWaitingPeriodQuery.data ?? 0;
+
+	const settlementDisabledReason =
+		settlementWaitingPeriodInSeconds > 0
+			? t('exchange.summary-info.button.settle-waiting-period')
+			: null;
 
 	const settleTxn = useSynthetixTxn(
 		'Exchanger',
