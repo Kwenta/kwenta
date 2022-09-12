@@ -8,7 +8,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { DEFAULT_LEVERAGE } from 'constants/defaults';
+import { CROSS_MARGIN_ENABLED, DEFAULT_LEVERAGE } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
@@ -479,9 +479,18 @@ const useFuturesData = () => {
 	]);
 
 	useEffect(() => {
+		// TODO: Can remove once cross margin is fully integrated
+		if (!CROSS_MARGIN_ENABLED && selectedAccountType === 'cross_margin') {
+			setSelectedAccountType('isolated_margin');
+		}
+	}, [selectedAccountType, setSelectedAccountType]);
+
+	useEffect(() => {
 		const validType = ['cross_margin', 'isolated_margin'].includes(routerAccountType);
 		if (validType) {
-			setSelectedAccountType(routerAccountType as FuturesAccountType);
+			setSelectedAccountType(
+				CROSS_MARGIN_ENABLED ? (routerAccountType as FuturesAccountType) : 'isolated_margin'
+			);
 			if (routerAccountType === 'cross_margin' && orderType === 1) {
 				setOrderType(0);
 			}
