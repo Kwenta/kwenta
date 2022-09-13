@@ -2,6 +2,7 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { SetterOrUpdater } from 'recoil';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
@@ -14,21 +15,17 @@ import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 
 import FuturesPositionsTable from '../FuturesPositionsTable';
+import { MarketsTab } from '../Markets/Markets';
 import SynthBalancesTable from '../SynthBalancesTable';
 
-enum PositionsTab {
-	FUTURES = 'futures',
-	SPOT = 'spot',
-}
-
 type OpenPositionsProps = {
-	activePositionsTabInParent: PositionsTab;
-	setActivePositionsTabInParent: React.Dispatch<React.SetStateAction<PositionsTab>>;
+	activePositionsTab: MarketsTab;
+	setActivePositionsTab: SetterOrUpdater<MarketsTab>;
 };
 
 const OpenPositions: React.FC<OpenPositionsProps> = ({
-	activePositionsTabInParent,
-	setActivePositionsTabInParent,
+	activePositionsTab,
+	setActivePositionsTab,
 }) => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
@@ -49,10 +46,6 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 			? synthsBalancesQuery.data
 			: null;
 
-	const [activePositionsTab, setActivePositionsTab] = React.useState<PositionsTab>(
-		PositionsTab.FUTURES
-	);
-
 	const totalSpotBalancesValue = formatDollars(wei(synthBalances?.totalUSDBalance ?? zeroBN));
 
 	const totalFuturesPortfolioValue = formatDollars(wei(portfolioValue ?? zeroBN));
@@ -60,33 +53,27 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 	const POSITIONS_TABS = React.useMemo(
 		() => [
 			{
-				name: PositionsTab.FUTURES,
+				name: MarketsTab.FUTURES,
 				label: t('dashboard.overview.positions-tabs.futures'),
 				badge: futuresPositionQuery?.data?.length,
-				active: activePositionsTab === PositionsTab.FUTURES,
+				active: activePositionsTab === MarketsTab.FUTURES,
 				detail: totalFuturesPortfolioValue,
 				disabled: false,
-				onClick: () => {
-					setActivePositionsTab(PositionsTab.FUTURES);
-					setActivePositionsTabInParent(PositionsTab.FUTURES);
-				},
+				onClick: () => setActivePositionsTab(MarketsTab.FUTURES),
 			},
 			{
-				name: PositionsTab.SPOT,
+				name: MarketsTab.SPOT,
 				label: t('dashboard.overview.positions-tabs.spot'),
-				active: activePositionsTab === PositionsTab.SPOT,
+				active: activePositionsTab === MarketsTab.SPOT,
 				detail: totalSpotBalancesValue,
 				disabled: false,
-				onClick: () => {
-					setActivePositionsTab(PositionsTab.SPOT);
-					setActivePositionsTabInParent(PositionsTab.SPOT);
-				},
+				onClick: () => setActivePositionsTab(MarketsTab.SPOT),
 			},
 		],
 		[
-			activePositionsTab,
 			futuresPositionQuery?.data?.length,
-			setActivePositionsTabInParent,
+			activePositionsTab,
+			setActivePositionsTab,
 			t,
 			totalFuturesPortfolioValue,
 			totalSpotBalancesValue,
@@ -107,14 +94,14 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 				</TabButtonsContainer>
 			</div>
 
-			<TabPanel name={PositionsTab.FUTURES} activeTab={activePositionsTab}>
+			<TabPanel name={MarketsTab.FUTURES} activeTab={activePositionsTab}>
 				<FuturesPositionsTable
 					futuresPositionHistory={futuresPositionHistory}
 					showCurrentMarket={true}
 				/>
 			</TabPanel>
 
-			<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}>
+			<TabPanel name={MarketsTab.SPOT} activeTab={activePositionsTab}>
 				<SynthBalancesTable
 					synthBalances={synthBalances?.balances ?? []}
 					exchangeRates={exchangeRates}

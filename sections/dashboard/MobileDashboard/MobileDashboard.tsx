@@ -1,32 +1,29 @@
 import React from 'react';
+import { useRecoilState } from 'recoil';
 
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
+import { activeMarketsTabState } from 'store/ui';
 
+import { MarketsTab } from '../Markets/Markets';
 import FuturesMarkets from './FuturesMarkets';
 import OpenPositions from './OpenPositions';
 import Portfolio from './Portfolio';
 import SpotMarkets from './SpotMarkets';
 
-enum PositionsTab {
-	FUTURES = 'futures',
-	SPOT = 'spot',
-}
-
 const MobileDashboard: React.FC = () => {
-	const [activePositionsTabInParent, setActivePositionsTabInParent] = React.useState<PositionsTab>(
-		PositionsTab.FUTURES
-	);
+	// in the mobile dashboard, there are no differences between positions and markets tab
+	const [activePositionsTab, setActivePositionsTab] = useRecoilState(activeMarketsTabState);
 
 	return (
 		<div>
 			<CompetitionBanner />
 			<Portfolio />
 			<OpenPositions
-				activePositionsTabInParent={activePositionsTabInParent}
-				setActivePositionsTabInParent={setActivePositionsTabInParent}
+				activePositionsTab={activePositionsTab}
+				setActivePositionsTab={setActivePositionsTab}
 			/>
-			{activePositionsTabInParent === PositionsTab.FUTURES && <FuturesMarkets />}
-			{activePositionsTabInParent === PositionsTab.SPOT && <SpotMarkets />}
+			{activePositionsTab === MarketsTab.FUTURES && <FuturesMarkets />}
+			{activePositionsTab === MarketsTab.SPOT && <SpotMarkets />}
 		</div>
 	);
 };
