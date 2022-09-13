@@ -8,7 +8,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { DEFAULT_LEVERAGE } from 'constants/defaults';
+import { CROSS_MARGIN_ENABLED, DEFAULT_LEVERAGE } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
@@ -56,6 +56,13 @@ const ZERO_TRADE_INPUTS = {
 	nativeSizeDelta: zeroBN,
 	susdSizeDelta: zeroBN,
 	leverage: '',
+};
+
+const ZERO_FEES = {
+	staticFee: zeroBN,
+	crossMarginFee: zeroBN,
+	dynamicFeeRate: zeroBN,
+	total: zeroBN,
 };
 
 const useFuturesData = () => {
@@ -132,12 +139,7 @@ const useFuturesData = () => {
 			status: 'idle',
 			error: null,
 		});
-		setTradeFees({
-			staticFee: zeroBN,
-			crossMarginFee: zeroBN,
-			dynamicFeeRate: zeroBN,
-			total: zeroBN,
-		});
+		setTradeFees(ZERO_FEES);
 		setCrossMarginMarginDelta(zeroBN);
 	}, [
 		setSimulatedTrade,
@@ -170,23 +172,25 @@ const useFuturesData = () => {
 		position?.position?.notionalValue,
 	]);
 
+	const getTradeFee = useCallback(
+		(size: Wei) => {
+			if (!synthetixjs) return ZERO_FEES;
+			const FuturesMarketContract = getFuturesMarketContract(marketAsset, synthetixjs.contracts);
+			return FuturesMarketContract.orderFee(size.toBN());
+		},
+		[synthetixjs, marketAsset]
+	);
+
 	const calculateFees = useCallback(
 		async (susdSizeDelta: Wei, nativeSizeDelta: Wei) => {
-			if (!synthetixjs)
-				return {
-					staticFee: zeroBN,
-					dynamicFeeRate: zeroBN,
-					crossMarginFee: zeroBN,
-					total: zeroBN,
-				};
+			if (!synthetixjs) return ZERO_FEES;
 
-			const FuturesMarketContract = getFuturesMarketContract(marketAsset, synthetixjs!.contracts);
 			const [volatilityFee, orderFee] = await Promise.all([
 				synthetixjs.contracts.Exchanger.dynamicFeeRateForExchange(
 					ethers.utils.formatBytes32String('sUSD'),
 					ethers.utils.formatBytes32String(marketAsset)
 				),
-				FuturesMarketContract.orderFee(nativeSizeDelta.toBN()),
+				getTradeFee(nativeSizeDelta),
 			]);
 
 			const crossMarginFee =
@@ -205,7 +209,7 @@ const useFuturesData = () => {
 			setTradeFees(fees);
 			return fees;
 		},
-		[crossMarginTradeFee, selectedAccountType, marketAsset, synthetixjs, setTradeFees]
+		[crossMarginTradeFee, selectedAccountType, marketAsset, synthetixjs, setTradeFees, getTradeFee]
 	);
 
 	const calculateMarginDelta = useCallback(
@@ -240,13 +244,13 @@ const useFuturesData = () => {
 			}
 		}, 500),
 		[
-			logError,
 			setError,
 			calculateFees,
-			setCrossMarginMarginDelta,
 			getPotentialTrade,
 			calculateMarginDelta,
 			selectedAccountType,
+			logError,
+			setCrossMarginMarginDelta,
 		]
 	);
 
@@ -265,12 +269,9 @@ const useFuturesData = () => {
 			const size = fromLeverage ? (value === '' ? '' : wei(value).toNumber().toString()) : value;
 			const sizeSusdWei = marketAssetRate.mul(value || 0);
 			const isolatedMarginLeverage = changeEnabled ? sizeSusdWei.div(remainingMargin) : zeroBN;
-			const leverage =
-				value === '' || remainingMargin.eq(0)
-					? zeroBN
-					: selectedAccountType === 'cross_margin'
-					? wei(selectedLeverage)
-					: isolatedMarginLeverage;
+			const inputLeverage =
+				selectedAccountType === 'cross_margin' ? wei(selectedLeverage) : isolatedMarginLeverage;
+			const leverage = value === '' || remainingMargin.eq(0) ? zeroBN : inputLeverage;
 
 			onStagePositionChange({
 				nativeSize: size,
@@ -452,7 +453,7 @@ const useFuturesData = () => {
 
 	useEffect(() => {
 		const getMaxFee = async () => {
-			if (!synthetixjs || !marketAsset || remainingMargin.eq(0) || marketAssetRate.eq(0)) {
+			if (remainingMargin.eq(0) || marketAssetRate.eq(0)) {
 				return;
 			}
 			try {
@@ -460,8 +461,7 @@ const useFuturesData = () => {
 				let maxUsd = remainingMargin.mul(selectedLeverage);
 				maxUsd = leverageSide === 'long' ? maxUsd.sub(currentValue) : maxUsd.add(currentValue);
 				const maxSize = maxUsd.gt(0) ? maxUsd.div(marketAssetRate) : zeroBN;
-				const FuturesMarketContract = getFuturesMarketContract(marketAsset, synthetixjs!.contracts);
-				const maxOrderFee = await FuturesMarketContract.orderFee(maxSize.toBN());
+				const maxOrderFee = await getTradeFee(maxSize);
 				setMaxFee(wei(maxOrderFee.fee));
 			} catch (e) {
 				logError(e);
@@ -470,9 +470,8 @@ const useFuturesData = () => {
 		getMaxFee();
 	}, [
 		setMaxFee,
-		synthetixjs,
-		marketAsset,
 		leverageSide,
+		getTradeFee,
 		position?.position?.notionalValue,
 		remainingMargin,
 		marketAssetRate,
@@ -480,9 +479,18 @@ const useFuturesData = () => {
 	]);
 
 	useEffect(() => {
+		// TODO: Can remove once cross margin is fully integrated
+		if (!CROSS_MARGIN_ENABLED && selectedAccountType === 'cross_margin') {
+			setSelectedAccountType('isolated_margin');
+		}
+	}, [selectedAccountType, setSelectedAccountType]);
+
+	useEffect(() => {
 		const validType = ['cross_margin', 'isolated_margin'].includes(routerAccountType);
 		if (validType) {
-			setSelectedAccountType(routerAccountType as FuturesAccountType);
+			setSelectedAccountType(
+				CROSS_MARGIN_ENABLED ? (routerAccountType as FuturesAccountType) : 'isolated_margin'
+			);
 			if (routerAccountType === 'cross_margin' && orderType === 1) {
 				setOrderType(0);
 			}

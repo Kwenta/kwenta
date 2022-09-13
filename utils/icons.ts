@@ -21,6 +21,7 @@ import LINKIcon from 'assets/png/currencies/sLINK.png';
 import MATICIcon from 'assets/png/currencies/sMATIC.png';
 import SNXIcon from 'assets/png/currencies/SNX.png';
 import OILIcon from 'assets/png/currencies/sOIL.png';
+import OPIcon from 'assets/png/currencies/sOP.png';
 import SOLIcon from 'assets/png/currencies/sSOL.png';
 import UNIIcon from 'assets/png/currencies/sUNI.png';
 import USDIcon from 'assets/png/currencies/sUSD.png';
@@ -61,5 +62,6 @@ export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = 
 	sDOGE: DOGEIcon,
 	sDebtRatio: DEBTIcon,
 	sXMR: XMRIcon,
+	sOP: OPIcon,
 	[CRYPTO_CURRENCY_MAP.SNX]: SNXIcon,
 };
