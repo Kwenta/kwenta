@@ -15,6 +15,7 @@ import {
 } from 'store/futures';
 import { FlexDivRow } from 'styles/common';
 import { zeroBN } from 'utils/formatters/number';
+import { getDisplayAsset } from 'utils/futures';
 
 type OrderSizingProps = {
 	disabled?: boolean;
@@ -113,7 +114,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 
 			<CustomInput
 				disabled={isDisabled}
-				right={marketAsset?.replace(/^s/, '') || 'sUSD'}
+				right={getDisplayAsset(marketAsset) || 'sUSD'}
 				value={assetValue}
 				placeholder="0.0"
 				onChange={onChangeAssetValue}
