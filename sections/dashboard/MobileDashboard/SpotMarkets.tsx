@@ -1,17 +1,15 @@
-import useSynthetixQueries from '@synthetixio/queries';
 import React from 'react';
 import styled from 'styled-components';
 
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
 
 import SpotMarketsTable from '../SpotMarketsTable';
 import { HeaderContainer } from './common';
 
 const SpotMarkets: React.FC = () => {
-	const { useExchangeRatesQuery } = useSynthetixQueries();
-
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const exchangeRates = exchangeRatesQuery.data ?? null;
+	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
 	return (
 		<>
