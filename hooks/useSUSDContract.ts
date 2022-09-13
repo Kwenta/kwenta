@@ -1,15 +1,15 @@
-import { Contract } from 'ethers';
 import { useMemo } from 'react';
 
 import Connector from 'containers/Connector';
-import erc20Abi from 'lib/abis/ERC20.json';
+import { ERC20, ERC20__factory } from 'lib/abis/types';
 
-export default function useSUSDContract(): Contract | null {
+export default function useSUSDContract(): ERC20 | null {
 	const { tokensMap: synthTokensMap, signer } = Connector.useContainer();
 
 	const susdContract = useMemo(() => {
 		if (!signer || !synthTokensMap.sUSD) return null;
-		return new Contract(synthTokensMap.sUSD.address, erc20Abi, signer);
+
+		return ERC20__factory.connect(synthTokensMap.sUSD.address, signer);
 	}, [synthTokensMap.sUSD, signer]);
 
 	return susdContract;

@@ -47,7 +47,7 @@ const Competition: FC<CompetitionProps> = ({
 
 		const cleanCompetitionData: AccountStat[] = competitionData
 			.sort((a: AccountStat, b: AccountStat) => a.rank - b.rank)
-			.map((trader: any, i: number) => {
+			.map((trader: any) => {
 				return {
 					...trader,
 					trader: trader.account,
@@ -277,7 +277,7 @@ const ColorCodedPrice = styled(Currency.Price)`
 			? props.theme.colors.selectedTheme.green
 			: props.price < 0
 			? props.theme.colors.selectedTheme.red
-			: props.theme.colors.selectedTheme.button.text};
+			: props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const StyledValue = styled.div`
@@ -287,13 +287,13 @@ const StyledValue = styled.div`
 			? props.theme.colors.selectedTheme.green
 			: props.color === 'red'
 			? props.theme.colors.selectedTheme.red
-			: props.theme.colors.selectedTheme.button.text};
+			: props.theme.colors.selectedTheme.button.text.primary};
 	margin: 0;
 	text-align: end;
 `;
 
 const StyledOrderType = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	display: flex;
 	align-items: center;
 `;

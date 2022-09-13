@@ -222,12 +222,6 @@ export const QUERY_KEYS = {
 			periodLength,
 		],
 		TradingVolumeForAll: (networkId: NetworkId) => ['futures', 'tradingVolumeForAll', networkId],
-		MarketPositionHistory: (networkId: NetworkId, market: string | null, walletAddress: string) => [
-			'futures',
-			'marketPositionHistory',
-			market,
-			walletAddress,
-		],
 		AllPositionHistory: (networkId: NetworkId, walletAddress: string) => [
 			'futures',
 			'allPositionHistory',
@@ -253,12 +247,11 @@ export const QUERY_KEYS = {
 			markets,
 			walletAddress,
 		],
-		AccountPositions: (walletAddress: string | null, networkId: NetworkId) => [
-			'futures',
-			'accountPositions',
-			walletAddress,
-			networkId,
-		],
+		AccountPositions: (
+			walletAddress: string | null,
+			networkId: NetworkId,
+			accountType: FuturesAccountType
+		) => ['futures', 'accountPositions', walletAddress, networkId, accountType],
 		Participants: () => ['futures', 'participants'],
 		Participant: (walletAddress: string) => ['futures', 'participant', walletAddress],
 		Stats: (networkId: NetworkId) => ['futures', 'stats', networkId],
@@ -316,12 +309,17 @@ export const QUERY_KEYS = {
 			currencyKey: string | null
 		) => ['futures', 'currentRoundId', networkId, walletAddress, currencyKey],
 		OverviewStats: (networkId: NetworkId) => ['futures', 'overview-stats', networkId],
-		CrossMarginAccount: (networkId: NetworkId, wallet: string) => [
-			'futures',
-			'cross-margin-account',
-			networkId,
-			wallet,
-		],
+		CrossMarginAccountOverview: (
+			networkId: NetworkId,
+			wallet: string,
+			crossMarginBaseAddress: string
+		) => ['futures', 'cross-margin-account-overview', networkId, wallet, crossMarginBaseAddress],
+		CrossMarginAccount: (
+			crossMarginAddress: string,
+			wallet: string,
+			selectedAccountType: string
+		) => ['futures', 'cross-margin-account', crossMarginAddress, wallet, selectedAccountType],
+		CrossMarginSettings: (networkId: NetworkId) => ['futures', 'cross-margin-settings', networkId],
 	},
 	Files: {
 		Get: (fileName: string) => ['files', 'get', fileName],

@@ -10,33 +10,34 @@ import ROUTES from 'constants/routes';
 import { currentThemeState } from 'store/ui';
 import { ThemeName } from 'styles/theme';
 
-import { SUB_MENUS, MenuButton } from './common';
+import { SubMenuLink } from '../constants';
+import { MenuButton } from './common';
 
 type MobileSubMenuOption = {
 	label: string;
 	icon?: React.ReactNode;
-	onClick?: () => void;
 	selected?: boolean;
 	externalLink?: string;
+	onClick?: () => void;
 };
 
 type MobileSubMenuProps = {
 	i18nLabel: string;
-	link?: string;
-	onDismiss(): void;
 	defaultOpen?: boolean;
 	active: boolean;
-	onToggle(): void;
 	options?: MobileSubMenuOption[];
+	links?: SubMenuLink[];
+	onDismiss(): void;
+	onToggle(): void;
 };
 
 const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 	i18nLabel,
-	link,
-	onDismiss,
 	active,
-	onToggle,
 	options,
+	links,
+	onDismiss,
+	onToggle,
 }) => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
@@ -51,13 +52,13 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 			</SubMenuButton>
 			{active && (
 				<SubMenuContainer onClick={onDismiss}>
-					{link
-						? SUB_MENUS[link].map(({ label, link: subLink }) => (
-								<SubMenuItemContainer key={label}>
+					{links
+						? links.map(({ i18nLabel, link: subLink }) => (
+								<SubMenuItemContainer key={i18nLabel}>
 									<SubMenuIcon>·</SubMenuIcon>
 									<StyledLink href={subLink}>
 										<SubMenuItem currentTheme={currentTheme} active={asPath.includes(subLink)}>
-											{label}
+											{t(i18nLabel)}
 										</SubMenuItem>
 									</StyledLink>
 								</SubMenuItemContainer>

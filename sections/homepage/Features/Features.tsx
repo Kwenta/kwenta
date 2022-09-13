@@ -357,7 +357,7 @@ const FeatureContentTitle = styled(FlexDivRow)`
 const ComingSoonTag = styled(FlexDivCentered)`
 	width: 50px;
 	height: 24px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-family: ${(props) => props.theme.fonts.bold};
 	justify-content: center;
 	margin-left: 16px;

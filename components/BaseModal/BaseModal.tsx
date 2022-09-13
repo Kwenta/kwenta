@@ -75,6 +75,7 @@ const StyledDialogContent = styled(DialogContent)`
 	padding: 0;
 	border: 0;
 	background: none;
+
 	${media.lessThan('sm')`
 		&&& {
 			width: 100%;
@@ -91,9 +92,7 @@ const StyledCard = styled(Card)`
 	background-color: ${(props) => props.theme.colors.selectedTheme.background};
 	border-radius: 10px;
 	position: relative;
-	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-
 	${media.lessThan('sm')`
 		&&& {
 			margin-top: 30px;
@@ -102,14 +101,16 @@ const StyledCard = styled(Card)`
 `;
 
 const StyledCardHeader = styled(Card.Header)`
-	justify-content: center;
 	height: 45px;
 	font-size: 16px;
-	font-family: ${(props) => props.theme.fonts.bold};
+	font-family: ${(props) => props.theme.fonts.regular};
+	padding: 20px;
 `;
 
 const StyledCardBody = styled(Card.Body)`
 	overflow-y: scroll;
+	padding: 0 20px;
+	padding-bottom: 20px;
 `;
 
 const DismissButton = styled.button`
@@ -118,7 +119,7 @@ const DismissButton = styled.button`
 	right: 20px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	&:hover {
-		color: ${(props) => props.theme.colors.selectedTheme.button.text};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
 `;
 

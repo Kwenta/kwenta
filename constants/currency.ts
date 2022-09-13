@@ -114,4 +114,5 @@ export enum SynthsName {
 	sDOT = 'sDOT',
 	sETHBTC = 'sETHBTC',
 	sXMR = 'sXMR',
+	sOP = 'sOP',
 }

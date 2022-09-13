@@ -1,6 +1,6 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery } from 'react-query';
 import { chain } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
@@ -13,10 +13,7 @@ import logError from 'utils/logError';
 
 import { SynthsVolumes } from './type';
 
-const useGetSynthsTradingVolumeForAllMarkets = (
-	yesterday: number,
-	options?: UseQueryOptions<SynthsVolumes | null>
-) => {
+const useGetSynthsTradingVolumeForAllMarkets = (yesterday: number) => {
 	const { network } = Connector.useContainer();
 	const synthsEndpoint =
 		window.location.pathname === ROUTES.Home.Root || network === undefined
