@@ -8,9 +8,9 @@ export type CardBodyProps = {
 	className?: string;
 };
 
-const CardBody: FC<CardBodyProps> = ({ children, ...rest }) => (
+const CardBody: FC<CardBodyProps> = React.memo(({ children, ...rest }) => (
 	<Container {...rest}>{children}</Container>
-);
+));
 
 const Container = styled(FlexDivCol)`
 	position: relative;

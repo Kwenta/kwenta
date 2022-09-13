@@ -17,9 +17,9 @@ const BasicSwap: React.FC = React.memo(() => {
 			<ExchangeTitle>{t('exchange.synth-exchange')}</ExchangeTitle>
 			<PageWidthContainer>
 				<DesktopCardsContainer>
-					<QuoteCurrencyCard allowQuoteCurrencySelection />
+					<QuoteCurrencyCard />
 					<SwapCurrencies />
-					<BaseCurrencyCard allowBaseCurrencySelection />
+					<BaseCurrencyCard />
 				</DesktopCardsContainer>
 			</PageWidthContainer>
 			<PageWidthContainer>

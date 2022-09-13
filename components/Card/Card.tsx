@@ -16,11 +16,11 @@ interface StaticComponents {
 }
 
 // @ts-ignore
-const Card: FC<CardProps> & StaticComponents = ({ children, isRounded, ...rest }) => (
+const Card: FC<CardProps> & StaticComponents = React.memo(({ children, isRounded, ...rest }) => (
 	<Container isRounded={isRounded} {...rest}>
 		{children}
 	</Container>
-);
+));
 
 Card.Header = CardHeader;
 Card.Body = CardBody;

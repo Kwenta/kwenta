@@ -6,6 +6,7 @@ import { ExchangeContext } from 'contexts/ExchangeContext';
 import useExchange from 'hooks/useExchange';
 import BasicSwap from 'sections/exchange/BasicSwap';
 import ExchangeHead from 'sections/exchange/ExchangeHead';
+import ExchangeModals from 'sections/exchange/ExchangeModals';
 import { MobileSwap } from 'sections/exchange/MobileSwap';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
@@ -27,6 +28,7 @@ const ExchangeContent = React.memo(() => (
 			<MobileSwap />
 			<GitHashID />
 		</MobileOrTabletView>
+		<ExchangeModals />
 	</PageContent>
 ));
 

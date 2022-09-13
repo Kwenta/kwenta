@@ -868,6 +868,8 @@ const useExchange = ({ routingEnabled = false, showNoSynthsCard = false }: Excha
 
 	const onBaseCurrencyAmountChange = useCallback(
 		async (value: string) => {
+			setRatio(undefined);
+
 			if (value === '') {
 				setBaseCurrencyAmount('');
 				setQuoteCurrencyAmount('');
@@ -889,6 +891,7 @@ const useExchange = ({ routingEnabled = false, showNoSynthsCard = false }: Excha
 			exchangeFeeRate,
 			inverseRate,
 			txProvider,
+			setRatio,
 		]
 	);
 
@@ -915,6 +918,8 @@ const useExchange = ({ routingEnabled = false, showNoSynthsCard = false }: Excha
 
 	const onQuoteCurrencyAmountChange = useCallback(
 		async (value: string) => {
+			setRatio(undefined);
+
 			if (value === '') {
 				setQuoteCurrencyAmount('');
 				setBaseCurrencyAmount('');
@@ -936,6 +941,7 @@ const useExchange = ({ routingEnabled = false, showNoSynthsCard = false }: Excha
 			baseCurrencyKey,
 			exchangeFeeRate,
 			rate,
+			setRatio,
 		]
 	);
 
