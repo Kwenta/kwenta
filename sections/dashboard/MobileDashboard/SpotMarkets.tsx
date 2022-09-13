@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
@@ -8,6 +9,7 @@ import SpotMarketsTable from '../SpotMarketsTable';
 import { HeaderContainer } from './common';
 
 const SpotMarkets: React.FC = () => {
+	const { t } = useTranslation();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
@@ -15,7 +17,7 @@ const SpotMarkets: React.FC = () => {
 		<>
 			<CustomHeaderContainer>
 				<CustomSectionHeader>
-					<SectionTitle>Spot Markets</SectionTitle>
+					<SectionTitle>{t('dashboard.overview.markets-tabs.spot')}</SectionTitle>
 				</CustomSectionHeader>
 			</CustomHeaderContainer>
 

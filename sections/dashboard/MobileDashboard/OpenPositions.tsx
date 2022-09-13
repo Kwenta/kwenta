@@ -84,7 +84,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 		<div>
 			<div style={{ margin: '15px 15px 30px 15px' }}>
 				<SectionHeader>
-					<SectionTitle>Open Positions</SectionTitle>
+					<SectionTitle>{t('dashboard.overview.mobile.open-positions')}</SectionTitle>
 				</SectionHeader>
 
 				<TabButtonsContainer>
