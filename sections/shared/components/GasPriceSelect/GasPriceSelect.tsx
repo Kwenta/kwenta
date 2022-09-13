@@ -1,7 +1,7 @@
 import { GasPrices } from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
 import { FC } from 'react';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
@@ -20,40 +20,45 @@ type GasPriceSelectProps = {
 	className?: string;
 };
 
-const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ...rest }) => {
-	const { t } = useTranslation();
-	const gasSpeed = useRecoilValue(gasSpeedState);
-	const customGasPrice = useRecoilValue(customGasPriceState);
-	const isL2 = useIsL2();
-	const isMainnet = useIsL1();
+const GasPriceSelect: FC<GasPriceSelectProps> = React.memo(
+	({ gasPrices, transactionFee, ...rest }) => {
+		const { t } = useTranslation();
+		const gasSpeed = useRecoilValue(gasSpeedState);
+		const customGasPrice = useRecoilValue(customGasPriceState);
+		const isL2 = useIsL2();
+		const isMainnet = useIsL1();
 
-	const formattedTransactionFee = useMemo(() => {
-		return transactionFee ? formatDollars(transactionFee, { maxDecimals: 1 }) : NO_VALUE;
-	}, [transactionFee]);
+		const formattedTransactionFee = useMemo(() => {
+			return transactionFee ? formatDollars(transactionFee, { maxDecimals: 1 }) : NO_VALUE;
+		}, [transactionFee]);
 
-	const hasCustomGasPrice = customGasPrice !== '';
-	const gasPrice = gasPrices ? parseGasPriceObject(gasPrices[gasSpeed]) : null;
+		const hasCustomGasPrice = customGasPrice !== '';
+		const gasPrice = gasPrices ? parseGasPriceObject(gasPrices[gasSpeed]) : null;
 
-	const gasPriceItem = (
-		<span data-testid="gas-price">
-			{isL2
-				? formattedTransactionFee
-				: `${formatNumber(hasCustomGasPrice ? +customGasPrice : gasPrice ?? 0, {
-						minDecimals: 2,
-				  })} Gwei`}
-		</span>
-	);
+		const gasPriceItem = useMemo(
+			() => (
+				<span data-testid="gas-price">
+					{isL2
+						? formattedTransactionFee
+						: `${formatNumber(hasCustomGasPrice ? +customGasPrice : gasPrice ?? 0, {
+								minDecimals: 2,
+						  })} Gwei`}
+				</span>
+			),
+			[isL2, formattedTransactionFee, hasCustomGasPrice, customGasPrice, gasPrice]
+		);
 
-	return (
-		<SummaryItem {...rest}>
-			<SummaryItemLabel>
-				{isMainnet
-					? t('common.summary.gas-prices.max-fee')
-					: t('common.summary.gas-prices.gas-price')}
-			</SummaryItemLabel>
-			<SummaryItemValue>{gasPrice != null ? gasPriceItem : NO_VALUE}</SummaryItemValue>
-		</SummaryItem>
-	);
-};
+		return (
+			<SummaryItem {...rest}>
+				<SummaryItemLabel>
+					{isMainnet
+						? t('common.summary.gas-prices.max-fee')
+						: t('common.summary.gas-prices.gas-price')}
+				</SummaryItemLabel>
+				<SummaryItemValue>{gasPrice != null ? gasPriceItem : NO_VALUE}</SummaryItemValue>
+			</SummaryItem>
+		);
+	}
+);
 
 export default GasPriceSelect;

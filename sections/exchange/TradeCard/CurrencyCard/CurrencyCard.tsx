@@ -5,7 +5,6 @@ import styled, { css } from 'styled-components';
 
 import Card from 'components/Card';
 import Connector from 'containers/Connector';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { FlexDivRowCentered } from 'styles/common';
 import { zeroBN } from 'utils/formatters/number';
 
@@ -22,10 +21,9 @@ type CurrencyCardProps = {
 	walletBalance: Wei | null;
 	onBalanceClick: () => void;
 	onCurrencySelect?: () => void;
-	priceRate: Wei | number | string | null;
+	priceRate: Wei | number | null;
 	className?: string;
 	label: string;
-	interactive?: boolean;
 	disableInput?: boolean;
 	slippagePercent?: Wei | null;
 	isLoading?: boolean;
@@ -45,14 +43,12 @@ const CurrencyCard: FC<CurrencyCardProps> = React.memo(
 		onCurrencySelect,
 		priceRate,
 		label,
-		interactive = true,
 		disableInput = false,
 		isLoading = false,
 		disabled,
 		...rest
 	}) => {
 		const { t } = useTranslation();
-		const { selectPriceCurrencyRate, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 		const { synthsMap } = Connector.useContainer();
 
 		const isBase = useMemo(() => side === 'base', [side]);
@@ -69,15 +65,6 @@ const CurrencyCard: FC<CurrencyCardProps> = React.memo(
 			[isBase, hasWalletBalance, amountBN, walletBalance]
 		);
 
-		const tradeAmount = useMemo(() => {
-			let current = priceRate ? amountBN.mul(priceRate) : null;
-
-			if (selectPriceCurrencyRate != null && tradeAmount != null) {
-				current = getPriceAtCurrentRate(tradeAmount);
-			}
-			return current;
-		}, [priceRate, amountBN, selectPriceCurrencyRate, getPriceAtCurrentRate]);
-
 		const hasCurrencySelectCallback = onCurrencySelect != null;
 
 		const tokenName = useMemo(() => {
@@ -93,7 +80,7 @@ const CurrencyCard: FC<CurrencyCardProps> = React.memo(
 				<StyledCard
 					data-testid={'currency-card-' + side}
 					className={`currency-card currency-card-${side}`}
-					interactive={interactive}
+					interactive
 					{...rest}
 				>
 					<StyledCardBody className="currency-card-body">
@@ -101,7 +88,6 @@ const CurrencyCard: FC<CurrencyCardProps> = React.memo(
 							<CurrencyCardInput
 								disableInput={disableInput}
 								disabled={disabled}
-								tradeAmount={tradeAmount}
 								label={label}
 								amount={amount}
 								isBase={isBase}
@@ -111,6 +97,7 @@ const CurrencyCard: FC<CurrencyCardProps> = React.memo(
 								hasWalletBalance={hasWalletBalance}
 								onBalanceClick={onBalanceClick}
 								slippagePercent={slippagePercent}
+								priceRate={priceRate}
 							/>
 
 							<CurrencyCardSelector

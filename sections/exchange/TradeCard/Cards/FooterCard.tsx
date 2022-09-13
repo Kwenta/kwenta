@@ -29,7 +29,7 @@ import { NoTextTransform } from 'styles/common';
 
 import SettleTransactionsCard from '../../FooterCard/SettleTransactionsCard';
 
-const FooterCard: React.FC = () => {
+const FooterCard: React.FC = React.memo(() => {
 	const { t } = useTranslation();
 	const { isWalletConnected } = Connector.useContainer();
 	const isL2 = useIsL2();
@@ -140,6 +140,6 @@ const FooterCard: React.FC = () => {
 			)}
 		</>
 	);
-};
+});
 
 export default FooterCard;

@@ -1,6 +1,6 @@
 import Wei from '@synthetixio/wei';
 import Tippy from '@tippyjs/react';
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -15,44 +15,48 @@ type FeeRateSummaryItemProps = {
 	baseFeeRate?: Wei | null;
 };
 
-const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = ({ totalFeeRate, baseFeeRate }) => {
-	const { t } = useTranslation();
+const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = React.memo(
+	({ totalFeeRate, baseFeeRate }) => {
+		const { t } = useTranslation();
 
-	return (
-		<SummaryItem>
-			<SummaryItemLabel>{t('exchange.summary-info.fee')}</SummaryItemLabel>
-			<SummaryItemValue>
-				<FeeRateItem data-testid="exchange-fee-rate">
-					<span>
-						{baseFeeRate != null
-							? formatPercent(baseFeeRate, { minDecimals: 2 })
-							: totalFeeRate != null
-							? formatPercent(totalFeeRate, { minDecimals: 2 })
-							: NO_VALUE}
-					</span>
-					{totalFeeRate != null && baseFeeRate != null ? (
-						totalFeeRate.sub(baseFeeRate).gt(0) ? (
-							<>
-								<DynamicFeeLabel>+</DynamicFeeLabel>
-								<DynamicFeeRateTooltip
-									content="This transaction will incur an additional dynamic fee due to market volatility."
-									trigger="mouseenter focus"
-									arrow={false}
-									placement="bottom"
-								>
-									<DynamicFeeRateItem>
-										<span>{formatPercent(totalFeeRate.sub(baseFeeRate), { minDecimals: 2 })}</span>
-										<TimerIcon />
-									</DynamicFeeRateItem>
-								</DynamicFeeRateTooltip>
-							</>
-						) : null
-					) : null}
-				</FeeRateItem>
-			</SummaryItemValue>
-		</SummaryItem>
-	);
-};
+		return (
+			<SummaryItem>
+				<SummaryItemLabel>{t('exchange.summary-info.fee')}</SummaryItemLabel>
+				<SummaryItemValue>
+					<FeeRateItem data-testid="exchange-fee-rate">
+						<span>
+							{baseFeeRate != null
+								? formatPercent(baseFeeRate, { minDecimals: 2 })
+								: totalFeeRate != null
+								? formatPercent(totalFeeRate, { minDecimals: 2 })
+								: NO_VALUE}
+						</span>
+						{totalFeeRate != null && baseFeeRate != null ? (
+							totalFeeRate.sub(baseFeeRate).gt(0) ? (
+								<>
+									<DynamicFeeLabel>+</DynamicFeeLabel>
+									<DynamicFeeRateTooltip
+										content="This transaction will incur an additional dynamic fee due to market volatility."
+										trigger="mouseenter focus"
+										arrow={false}
+										placement="bottom"
+									>
+										<DynamicFeeRateItem>
+											<span>
+												{formatPercent(totalFeeRate.sub(baseFeeRate), { minDecimals: 2 })}
+											</span>
+											<TimerIcon />
+										</DynamicFeeRateItem>
+									</DynamicFeeRateTooltip>
+								</>
+							) : null
+						) : null}
+					</FeeRateItem>
+				</SummaryItemValue>
+			</SummaryItem>
+		);
+	}
+);
 
 export const FeeRateItem = styled.span`
 	display: flex;

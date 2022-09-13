@@ -66,14 +66,13 @@ import { normalizeGasLimit, getTransactionPrice } from 'utils/network';
 import useIsL2 from './useIsL2';
 
 type ExchangeCardProps = {
-	routingEnabled?: boolean;
 	showNoSynthsCard?: boolean;
 };
 
 type ExchangeModal = 'settle' | 'confirm' | 'approve' | 'redeem' | 'base-select' | 'quote-select';
 export type SwapRatio = 25 | 50 | 75 | 100;
 
-const useExchange = ({ routingEnabled = false, showNoSynthsCard = false }: ExchangeCardProps) => {
+const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
@@ -421,33 +420,39 @@ const useExchange = ({ routingEnabled = false, showNoSynthsCard = false }: Excha
 
 	const noSynths = synthsWalletBalancesQuery.data?.balances.length === 0;
 
-	const routeToMarketPair = (baseCurrencyKey: string, quoteCurrencyKey: string) =>
-		routingEnabled
-			? router.replace(`/exchange`, ROUTES.Exchange.MarketPair(baseCurrencyKey, quoteCurrencyKey), {
-					shallow: true,
-			  })
-			: undefined;
+	const routeToMarketPair = useCallback(
+		(baseCurrencyKey: string, quoteCurrencyKey: string) =>
+			router.replace('/exchange', ROUTES.Exchange.MarketPair(baseCurrencyKey, quoteCurrencyKey), {
+				shallow: true,
+			}),
+		[router]
+	);
 
 	const routeToBaseCurrency = (baseCurrencyKey: string) =>
-		routingEnabled
-			? router.replace(`/exchange`, ROUTES.Exchange.Into(baseCurrencyKey), {
-					shallow: true,
-			  })
-			: false;
+		router.replace(`/exchange`, ROUTES.Exchange.Into(baseCurrencyKey), {
+			shallow: true,
+		});
 
-	const handleCurrencySwap = () => {
-		const quoteAmount = quoteCurrencyAmount;
-
+	const handleCurrencySwap = useCallback(() => {
 		setCurrencyPair({ base: quoteCurrencyKey, quote: baseCurrencyKey });
 
 		// TODO: Allow reverse quote for other tx providers
-		setBaseCurrencyAmount(txProvider === 'synthetix' ? quoteAmount : '');
+		setBaseCurrencyAmount(txProvider === 'synthetix' ? quoteCurrencyAmount : '');
 		setQuoteCurrencyAmount('');
 
 		if (!!quoteCurrencyKey && !!baseCurrencyKey) {
 			routeToMarketPair(quoteCurrencyKey, baseCurrencyKey);
 		}
-	};
+	}, [
+		quoteCurrencyAmount,
+		baseCurrencyKey,
+		quoteCurrencyKey,
+		routeToMarketPair,
+		setCurrencyPair,
+		setBaseCurrencyAmount,
+		setQuoteCurrencyAmount,
+		txProvider,
+	]);
 
 	const feeAmountInQuoteCurrency = useMemo(() => {
 		if (exchangeFeeRate != null && quoteCurrencyAmount) {
@@ -831,33 +836,31 @@ const useExchange = ({ routingEnabled = false, showNoSynthsCard = false }: Excha
 	]);
 
 	useEffect(() => {
-		if (routingEnabled) {
-			const baseCurrencyFromQuery = router.query.base as CurrencyKey | null;
-			const quoteCurrencyFromQuery = router.query.quote as CurrencyKey | null;
+		const baseCurrencyFromQuery = router.query.base as CurrencyKey | null;
+		const quoteCurrencyFromQuery = router.query.quote as CurrencyKey | null;
 
-			const tokens = oneInchTokensMap || {};
+		const tokens = oneInchTokensMap || {};
 
-			const validBaseCurrency =
-				baseCurrencyFromQuery != null &&
-				(synthsMap[baseCurrencyFromQuery] != null || tokens[baseCurrencyFromQuery]);
-			const validQuoteCurrency =
-				quoteCurrencyFromQuery != null &&
-				(synthsMap[quoteCurrencyFromQuery] != null || tokens[quoteCurrencyFromQuery]);
+		const validBaseCurrency =
+			baseCurrencyFromQuery != null &&
+			(synthsMap[baseCurrencyFromQuery] != null || tokens[baseCurrencyFromQuery]);
+		const validQuoteCurrency =
+			quoteCurrencyFromQuery != null &&
+			(synthsMap[quoteCurrencyFromQuery] != null || tokens[quoteCurrencyFromQuery]);
 
-			if (validBaseCurrency && validQuoteCurrency) {
-				setCurrencyPair({
-					base: baseCurrencyFromQuery,
-					quote: quoteCurrencyFromQuery,
-				});
-			} else if (validBaseCurrency) {
-				setCurrencyPair({
-					base: baseCurrencyFromQuery,
-					quote: null,
-				});
-			}
+		if (validBaseCurrency && validQuoteCurrency) {
+			setCurrencyPair({
+				base: baseCurrencyFromQuery,
+				quote: quoteCurrencyFromQuery,
+			});
+		} else if (validBaseCurrency) {
+			setCurrencyPair({
+				base: baseCurrencyFromQuery,
+				quote: null,
+			});
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [routingEnabled, synthsMap]);
+	}, [synthsMap]);
 
 	const slippagePercent = useMemo(() => {
 		if (txProvider === '1inch' && totalTradePrice.gt(0) && estimatedBaseTradePrice.gt(0)) {

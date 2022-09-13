@@ -1,4 +1,4 @@
-import Wei from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
@@ -6,8 +6,9 @@ import styled, { css } from 'styled-components';
 import Button from 'components/Button';
 import NumericInput from 'components/Input/NumericInput';
 import Loader from 'components/Loader';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { CapitalizedText, FlexDivCol, FlexDivRowCentered, numericValueCSS } from 'styles/common';
-import { formatCurrency, formatPercent } from 'utils/formatters/number';
+import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 
 type CurrencyCardInputProps = {
 	label: string;
@@ -19,13 +20,23 @@ type CurrencyCardInputProps = {
 	onBalanceClick(): void;
 	isLoading: boolean;
 	disableInput: boolean;
-	tradeAmount: Wei | null;
 	slippagePercent?: Wei | null;
 	currencyKeySelected: boolean;
+	priceRate: Wei | number | null;
 };
 
 const CurrencyCardInputLabel: React.FC<{ label: string }> = React.memo(({ label }) => {
 	return <InputLabel data-testid="destination">{label}</InputLabel>;
+});
+
+const CurrencyCardInputMaxButton: React.FC<{ onClick?: () => void }> = React.memo(({ onClick }) => {
+	const { t } = useTranslation();
+
+	return (
+		<MaxButton onClick={onClick} noOutline>
+			<CapitalizedText>{t('exchange.currency-card.max-button')}</CapitalizedText>
+		</MaxButton>
+	);
 });
 
 const CurrencyCardInput: React.FC<CurrencyCardInputProps> = React.memo(
@@ -39,11 +50,23 @@ const CurrencyCardInput: React.FC<CurrencyCardInputProps> = React.memo(
 		onBalanceClick,
 		isLoading,
 		disableInput,
-		tradeAmount,
 		slippagePercent,
 		currencyKeySelected,
+		priceRate,
 	}) => {
 		const { t } = useTranslation();
+		const { selectPriceCurrencyRate, getPriceAtCurrentRate } = useSelectedPriceCurrency();
+
+		const tradeAmount = React.useMemo(() => {
+			const amountBN = amount === '' ? zeroBN : wei(amount);
+			let current = priceRate ? amountBN.mul(priceRate) : null;
+
+			if (!!selectPriceCurrencyRate && !!current) {
+				current = getPriceAtCurrentRate(current);
+			}
+
+			return current;
+		}, [priceRate, selectPriceCurrencyRate, getPriceAtCurrentRate, amount]);
 
 		return (
 			<InputContainer>
@@ -60,9 +83,7 @@ const CurrencyCardInput: React.FC<CurrencyCardInputProps> = React.memo(
 							data-testid="currency-amount"
 						/>
 						{!isBase && (
-							<MaxButton onClick={hasWalletBalance ? onBalanceClick : undefined} noOutline>
-								<CapitalizedText>{t('exchange.currency-card.max-button')}</CapitalizedText>
-							</MaxButton>
+							<CurrencyCardInputMaxButton onClick={hasWalletBalance ? onBalanceClick : undefined} />
 						)}
 					</FlexDivRowCentered>
 					<FlexDivRowCentered>

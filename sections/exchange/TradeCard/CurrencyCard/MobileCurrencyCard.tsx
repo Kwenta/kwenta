@@ -48,9 +48,10 @@ const MobileCurrencyCard: React.FC<MobileCurrencyCardProps> = React.memo(
 		const tradeAmount = React.useMemo(() => {
 			let current = priceRate ? amountBN.mul(priceRate) : null;
 
-			if (selectPriceCurrencyRate != null && tradeAmount != null) {
-				current = getPriceAtCurrentRate(tradeAmount);
+			if (!!selectPriceCurrencyRate && !!current) {
+				current = getPriceAtCurrentRate(current);
 			}
+
 			return current;
 		}, [priceRate, amountBN, selectPriceCurrencyRate, getPriceAtCurrentRate]);
 

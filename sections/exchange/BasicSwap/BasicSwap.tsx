@@ -21,8 +21,6 @@ const BasicSwap: React.FC = React.memo(() => {
 					<SwapCurrencies />
 					<BaseCurrencyCard />
 				</DesktopCardsContainer>
-			</PageWidthContainer>
-			<PageWidthContainer>
 				<FooterCard />
 			</PageWidthContainer>
 		</>
