@@ -1,4 +1,4 @@
-import { NetworkId } from '@synthetixio/contracts-interface/build/node/src/types';
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { chain } from 'wagmi';
 
@@ -43,6 +43,8 @@ const markets = new Set<FuturesMarketKey>([
 	FuturesMarketKey.sBNB,
 	FuturesMarketKey.sDOGE,
 	FuturesMarketKey.sDebtRatio,
+	FuturesMarketKey.sXMR,
+	FuturesMarketKey.sOP,
 ]);
 
 const map: Record<FuturesMarketKey, string> = {
@@ -62,6 +64,8 @@ const map: Record<FuturesMarketKey, string> = {
 	[FuturesMarketKey.sDOGE]: 'dogecoin',
 	[FuturesMarketKey.sBNB]: 'binancecoin',
 	[FuturesMarketKey.sDebtRatio]: '',
+	[FuturesMarketKey.sXMR]: 'monero',
+	[FuturesMarketKey.sOP]: 'optimism',
 };
 
 export const synthToCoingeckoPriceId = (marketKey: FuturesMarketKey) => {

@@ -7,20 +7,26 @@ import TimerIcon from 'assets/svg/app/timer.svg';
 import InfoBox from 'components/InfoBox';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { NO_VALUE } from 'constants/placeholder';
-import { useFuturesContext } from 'contexts/FuturesContext';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { feeCostState, marketInfoState, orderTypeState, sizeDeltaState } from 'store/futures';
+import {
+	tradeFeesState,
+	marketInfoState,
+	orderTypeState,
+	sizeDeltaState,
+	futuresAccountTypeState,
+	crossMarginSettingsState,
+} from 'store/futures';
 import { computeNPFee, computeMarketFee } from 'utils/costCalculations';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 
 const FeeInfoBox: React.FC = () => {
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const { t } = useTranslation();
 	const orderType = useRecoilValue(orderTypeState);
-	const feeCost = useRecoilValue(feeCostState);
+	const fees = useRecoilValue(tradeFeesState);
 	const sizeDelta = useRecoilValue(sizeDeltaState);
 	const marketInfo = useRecoilValue(marketInfoState);
-	const { dynamicFee } = useFuturesContext();
+	const accountType = useRecoilValue(futuresAccountTypeState);
+	const { tradeFee: crossMarginTradeFee } = useRecoilValue(crossMarginSettingsState);
 
 	const { commitDeposit, nextPriceFee } = React.useMemo(() => computeNPFee(marketInfo, sizeDelta), [
 		marketInfo,
@@ -40,27 +46,14 @@ const FeeInfoBox: React.FC = () => {
 		sizeDelta,
 	]);
 
-	const ToolTip: FC = (props) => (
-		<DynamicStyledToolTip
-			height={'auto'}
-			preset="bottom"
-			width="300px"
-			content={t('futures.market.trade.cost-basis.tooltip')}
-			style={{ textTransform: 'none' }}
-		>
-			{props.children}
-			<StyledTimerIcon />
-		</DynamicStyledToolTip>
-	);
-
 	const marketCostTooltip = (
 		<>
 			{formatPercent(staticRate ?? zeroBN)}
-			{dynamicFee?.gt(0) && (
+			{fees.dynamicFeeRate?.gt(0) && (
 				<>
 					{' + '}
 					<ToolTip>
-						<StyledDynamicFee>{formatPercent(dynamicFee)}</StyledDynamicFee>
+						<StyledDynamicFee>{formatPercent(fees.dynamicFeeRate)}</StyledDynamicFee>
 					</ToolTip>
 				</>
 			)}
@@ -117,22 +110,61 @@ const FeeInfoBox: React.FC = () => {
 										sign: selectedPriceCurrency.sign,
 									}
 								),
-								keyNode: dynamicFee?.gt(0) ? <ToolTip /> : null,
+								keyNode: fees.dynamicFeeRate?.gt(0) ? <ToolTip /> : null,
+							},
+					  }
+					: accountType === 'isolated_margin'
+					? {
+							Fee: {
+								value: formatCurrency(selectedPriceCurrency.name, fees.total, {
+									sign: selectedPriceCurrency.sign,
+									minDecimals: fees.total.lt(0.01) ? 4 : 2,
+								}),
+								keyNode: marketCostTooltip,
 							},
 					  }
 					: {
-							Fee: {
-								value: !!feeCost
-									? formatCurrency(selectedPriceCurrency.name, feeCost, {
-											sign: selectedPriceCurrency.sign,
-											minDecimals: feeCost.lt(0.01) ? 4 : 2,
-									  })
-									: NO_VALUE,
+							'Protocol Fee': {
+								value: formatCurrency(selectedPriceCurrency.name, fees.staticFee, {
+									sign: selectedPriceCurrency.sign,
+									minDecimals: fees.total.lt(0.01) ? 4 : 2,
+								}),
 								keyNode: marketCostTooltip,
+							},
+							'Cross Margin Fee': {
+								value: formatCurrency(selectedPriceCurrency.name, fees.crossMarginFee, {
+									sign: selectedPriceCurrency.sign,
+									minDecimals: fees.total.lt(0.01) ? 4 : 2,
+								}),
+								spaceBeneath: true,
+								keyNode: formatPercent(crossMarginTradeFee),
+							},
+							'Total Fee': {
+								value: formatCurrency(selectedPriceCurrency.name, fees.total, {
+									sign: selectedPriceCurrency.sign,
+									minDecimals: fees.total.lt(0.01) ? 4 : 2,
+								}),
 							},
 					  }),
 			}}
 		/>
+	);
+};
+
+const ToolTip: FC = (props) => {
+	const { t } = useTranslation();
+
+	return (
+		<DynamicStyledToolTip
+			height={'auto'}
+			preset="bottom"
+			width="300px"
+			content={t('futures.market.trade.cost-basis.tooltip')}
+			style={{ textTransform: 'none' }}
+		>
+			{props.children}
+			<StyledTimerIcon />
+		</DynamicStyledToolTip>
 	);
 };
 

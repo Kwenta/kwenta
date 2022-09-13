@@ -1,6 +1,6 @@
 import { CurrencyKey } from './currency';
 
-export const PROD_HOSTNAME = 'kwenta.io';
+export const PROD_HOSTNAME = 'kwenta.eth.limo';
 
 export const EXTERNAL_LINKS = {
 	Trading: {
@@ -40,10 +40,6 @@ export const EXTERNAL_LINKS = {
 		DevDao: 'https://docs.kwenta.io/dao/contribute/devdao-contribute',
 		MarketingDao: 'https://docs.kwenta.io/dao/contribute/marketingDAO',
 		Faq: 'https://docs.kwenta.io/resources/faq',
-	},
-	Explorer: {
-		Optimism: 'https://optimistic.etherscan.io/tx',
-		OptimismGoerli: 'https://goerli-optimism.etherscan.io/tx',
 	},
 	Optimism: {
 		Home: 'https://optimism.io/',

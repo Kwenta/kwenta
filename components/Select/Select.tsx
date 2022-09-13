@@ -1,9 +1,25 @@
 import React, { FC, useContext, useMemo } from 'react';
-import ReactSelect, { Props, StylesConfig } from 'react-select';
-import { ThemeContext } from 'styled-components';
+import ReactSelect, { Props, StylesConfig, components } from 'react-select';
+import styled, { ThemeContext } from 'styled-components';
+
+import CaretDownIcon from 'assets/svg/app/caret-down.svg';
+
 export const IndicatorSeparator: FC = () => null;
 
-function Select<T>(props: Props<T>) {
+export const DropdownIndicator = (props: any) => {
+	return (
+		<components.DropdownIndicator {...props}>
+			<StyledCaretDownIcon />
+		</components.DropdownIndicator>
+	);
+};
+
+const StyledCaretDownIcon = styled(CaretDownIcon)`
+	width: 11px;
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
+`;
+
+function Select<T>({ variant, ...props }: Props<T>) {
 	const { colors, fonts } = useContext(ThemeContext);
 
 	const computedStyles = useMemo(() => {
@@ -14,7 +30,7 @@ function Select<T>(props: Props<T>) {
 			}),
 			singleValue: (provided) => ({
 				...provided,
-				color: colors.selectedTheme.button.text,
+				color: colors.selectedTheme.button.text.primary,
 				boxShadow: 'none',
 				fontSize: '12px',
 				border: 'none',
@@ -23,19 +39,20 @@ function Select<T>(props: Props<T>) {
 			}),
 			control: (provided, state) => ({
 				...provided,
-				color: colors.selectedTheme.button.text,
+				color: colors.selectedTheme.button.text.primary,
 				cursor: 'pointer',
-				boxShadow: props.noOutline ? 'none' : colors.selectedTheme.button.shadow,
-				border: props.noOutline ? colors.selectedTheme.border : 'none',
+				boxShadow: variant === 'gradient' ? colors.selectedTheme.button.shadow : 'none',
+				border: variant === 'flat' ? colors.selectedTheme.border : 'none',
 				outline: 'none',
 				minHeight: 'unset',
 				height: state.selectProps.controlHeight ?? 'unset',
 				'&:hover': {
-					background: props.noOutline
-						? colors.selectedTheme.button.fillHover
-						: colors.selectedTheme.button.hover,
+					background:
+						variant === 'flat' || variant === 'transparent'
+							? colors.selectedTheme.button.fillHover
+							: colors.selectedTheme.button.hover,
 				},
-				'&::before': !props.noOutline && {
+				'&::before': variant === 'gradient' && {
 					content: '""',
 					position: 'absolute',
 					top: 0,
@@ -52,10 +69,13 @@ function Select<T>(props: Props<T>) {
 					maskComposite: 'exclude',
 				},
 				fontSize: '12px',
-				background: props.noOutline
-					? colors.selectedTheme.button.fill
-					: colors.selectedTheme.button.background,
-				borderRadius: 10,
+				background:
+					variant === 'transparent'
+						? 'none'
+						: variant === 'flat'
+						? colors.selectedTheme.button.fill
+						: colors.selectedTheme.button.background,
+				borderRadius: variant === 'transparent' ? 30 : 10,
 			}),
 			menu: (provided, state) => ({
 				...provided,
@@ -90,7 +110,9 @@ function Select<T>(props: Props<T>) {
 				...provided,
 				border: 'none',
 				fontFamily: fonts.regular,
-				color: state.isSelected ? colors.common.secondaryGold : colors.selectedTheme.button.text,
+				color: state.isSelected
+					? colors.common.secondaryGold
+					: colors.selectedTheme.button.text.primary,
 				cursor: 'pointer',
 				fontSize: '12px',
 				backgroundColor: 'transparent',
@@ -106,7 +128,7 @@ function Select<T>(props: Props<T>) {
 			placeholder: (provided) => ({
 				...provided,
 				fontSize: '12px',
-				color: colors.selectedTheme.button.text,
+				color: colors.selectedTheme.button.text.primary,
 			}),
 			dropdownIndicator: (provided, state) => ({
 				...provided,
@@ -119,7 +141,7 @@ function Select<T>(props: Props<T>) {
 			}),
 		};
 		return styles;
-	}, [colors, fonts, props]);
+	}, [colors, fonts, variant]);
 
 	return (
 		<ReactSelect

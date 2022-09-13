@@ -48,7 +48,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 
 	let stats: AccountStat[] = useMemo(() => {
 		return statsData
-			.map((stat: FuturesStat, i: number) => ({
+			.map((stat: FuturesStat) => ({
 				account: stat.account,
 				trader: stat.account,
 				traderShort: truncateAddress(stat.account),

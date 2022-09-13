@@ -49,7 +49,6 @@ const FooterCard: React.FC = () => {
 		baseFeeRate,
 		handleSettle,
 		needsApproval,
-		baseCurrency,
 		handleApprove,
 		isApproved,
 		handleSubmit,
@@ -57,7 +56,6 @@ const FooterCard: React.FC = () => {
 		balances,
 		txProvider,
 		openModal,
-		basePriceRate,
 		transactionFee,
 		totalUSDBalance,
 		setOpenModal,
@@ -68,7 +66,6 @@ const FooterCard: React.FC = () => {
 		settlementWaitingPeriodInSeconds,
 		submissionDisabledReason,
 		feeReclaimPeriodInSeconds,
-		totalTradePrice,
 	} = useExchangeContext();
 
 	return (
@@ -96,10 +93,6 @@ const FooterCard: React.FC = () => {
 					attached={footerCardAttached}
 					submissionDisabledReason={submissionDisabledReason}
 					onSubmit={needsApproval ? (isApproved ? handleSubmit : handleApprove) : handleSubmit}
-					totalTradePrice={baseCurrencyAmount ? totalTradePrice.toString() : null}
-					baseCurrencyAmount={baseCurrencyAmount}
-					basePriceRate={basePriceRate}
-					baseCurrency={baseCurrency}
 					feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
 					quoteCurrencyKey={quoteCurrencyKey}
 					totalFeeRate={exchangeFeeRate}
@@ -112,8 +105,7 @@ const FooterCard: React.FC = () => {
 			)}
 			{balances.length !== 0 && totalUSDBalance.gt(0) && (
 				<Button
-					isRounded
-					noOutline
+					variant="primary"
 					disabled={false}
 					onClick={handleRedeem}
 					size="lg"
@@ -154,7 +146,6 @@ const FooterCard: React.FC = () => {
 					attemptRetry={handleApprove}
 					currencyKey={quoteCurrencyKey!}
 					currencyLabel={<NoTextTransform>{quoteCurrencyKey}</NoTextTransform>}
-					txProvider={txProvider}
 				/>
 			)}
 			{openModal === 'settle' && (
@@ -164,7 +155,6 @@ const FooterCard: React.FC = () => {
 					attemptRetry={handleSettle}
 					currencyKey={baseCurrencyKey!}
 					currencyLabel={<NoTextTransform>{baseCurrencyKey}</NoTextTransform>}
-					txProvider={txProvider}
 				/>
 			)}
 		</>

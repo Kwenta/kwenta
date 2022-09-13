@@ -56,7 +56,6 @@ const TradesTab: React.FC = () => {
 				<SectionTitle>Trades</SectionTitle>
 			</SectionHeader>
 			<StyledTable
-				palette="primary"
 				onTableRowClick={(row) => {
 					setSelectedTrade(row.original);
 				}}

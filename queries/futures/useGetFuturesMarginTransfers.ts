@@ -49,12 +49,12 @@ const useGetFuturesMarginTransfers = (
 			if (!currencyKey || !synthetixjs) return [];
 			const { contracts } = synthetixjs!;
 			const marketAddress = contracts[`FuturesMarket${getDisplayAsset(currencyKey)}`].address;
-			if (!marketAddress) return [];
+			if (!marketAddress || !selectedFuturesAddress) return [];
 
 			try {
 				const response = await request(futuresEndpoint, gqlQuery, {
 					market: marketAddress,
-					walletAddress: selectedFuturesAddress ?? '',
+					walletAddress: selectedFuturesAddress,
 				});
 
 				return response ? mapMarginTransfers(response.futuresMarginTransfers) : [];

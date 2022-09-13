@@ -184,7 +184,7 @@ const DataFeedFactory = (
 		getBars: function (
 			symbolInfo: LibrarySymbolInfo,
 			_resolution: ResolutionString,
-			{ from, to, countBack }: PeriodParams,
+			{ from, to }: PeriodParams,
 			onHistoryCallback: HistoryCallback,
 			onErrorCallback: (error: any) => any
 		) {
@@ -254,7 +254,7 @@ const DataFeedFactory = (
 
 			onSubscribe(intervalId);
 		},
-		unsubscribeBars: (subscriberUID) => {},
+		unsubscribeBars: () => {},
 		searchSymbols: (
 			userInput: string,
 			exchange: string,

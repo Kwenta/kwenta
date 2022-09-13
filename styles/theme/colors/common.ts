@@ -8,6 +8,7 @@ const common = {
 	secondaryGray: '#787878',
 	tertiaryGray: '#999999',
 	secondaryGold: '#E4B378',
+	primaryYellow: '#FFB800',
 };
 
 export default common;
