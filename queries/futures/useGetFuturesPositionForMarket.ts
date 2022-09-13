@@ -29,7 +29,11 @@ const useGetFuturesPositionForMarket = (options?: UseQueryOptions<FuturesPositio
 			const {
 				contracts: { FuturesMarketData },
 			} = synthetixjs!;
-			if (!market) return null;
+
+			if (!market || !selectedFuturesAddress) {
+				setPosition(null);
+				return null;
+			}
 
 			const [futuresPosition, canLiquidatePosition] = await Promise.all([
 				FuturesMarketData.positionDetailsForMarketKey(

@@ -8,7 +8,7 @@ import {
 	currentMarketState,
 	positionState,
 	potentialTradeDetailsState,
-	tradeSizeState,
+	futuresTradeInputsState,
 } from 'store/futures';
 
 export default function PositionChart() {
@@ -16,25 +16,25 @@ export default function PositionChart() {
 	const marketAsset = useRecoilValue(currentMarketState);
 	const position = useRecoilValue(positionState);
 
-	const previewTrade = useRecoilValue(potentialTradeDetailsState);
+	const { data: previewTrade } = useRecoilValue(potentialTradeDetailsState);
 
 	const futuresPositionsQuery = useGetFuturesPositionForAccount();
 	const positionHistory = futuresPositionsQuery.data ?? [];
 	const subgraphPosition = positionHistory.find((p) => p.isOpen && p.asset === marketAsset);
 
-	const tradeSize = useRecoilValue(tradeSizeState);
+	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
 
 	const modifiedAverage = useMemo(() => {
-		if (subgraphPosition && previewTrade && !!tradeSize) {
-			const totalSize = subgraphPosition.size.add(tradeSize);
+		if (subgraphPosition && previewTrade && !!nativeSize) {
+			const totalSize = subgraphPosition.size.add(nativeSize);
 
 			const existingValue = subgraphPosition.avgEntryPrice.mul(subgraphPosition.size);
-			const newValue = previewTrade.price.mul(tradeSize);
+			const newValue = previewTrade.price.mul(nativeSize);
 			const totalValue = existingValue.add(newValue);
 			return totalValue.div(totalSize);
 		}
 		return null;
-	}, [subgraphPosition, previewTrade, tradeSize]);
+	}, [subgraphPosition, previewTrade, nativeSize]);
 
 	const activePosition = useMemo(() => {
 		if (!position?.position) {

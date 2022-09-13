@@ -27,7 +27,7 @@ const NextPriceContainer = styled.div`
 		margin: 0 8px;
 
 		a {
-			color: ${(props) => props.theme.colors.selectedTheme.button.text};
+			color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 		}
 	}
 `;

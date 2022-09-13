@@ -8,13 +8,13 @@ import CustomNumericInput from 'components/Input/CustomNumericInput';
 import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import {
-	leverageState,
 	leverageValueCommittedState,
 	marketInfoState,
 	maxLeverageState,
 	nextPriceDisclaimerState,
 	orderTypeState,
 	positionState,
+	futuresTradeInputsState,
 } from 'store/futures';
 import { FlexDivCol, FlexDivRow } from 'styles/common';
 import { truncateNumbers } from 'utils/formatters/number';
@@ -24,7 +24,7 @@ import LeverageSlider from '../LeverageSlider';
 const LeverageInput: FC = () => {
 	const { t } = useTranslation();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
-	const leverage = useRecoilValue(leverageState);
+	const { leverage } = useRecoilValue(futuresTradeInputsState);
 	const maxLeverage = useRecoilValue(maxLeverageState);
 	const orderType = useRecoilValue(orderTypeState);
 	const isDisclaimerDisplayed = useRecoilValue(nextPriceDisclaimerState);
@@ -79,7 +79,7 @@ const LeverageInput: FC = () => {
 						value={Number(truncateLeverage)}
 						onChange={(_, newValue) => {
 							setIsLeverageValueCommitted(false);
-							onLeverageChange(newValue.toString());
+							onLeverageChange(newValue as number);
 						}}
 						onChangeCommitted={() => setIsLeverageValueCommitted(true)}
 					/>
@@ -94,7 +94,7 @@ const LeverageInput: FC = () => {
 						maxValue={maxLeverage.toNumber()}
 						onChange={(_, newValue) => {
 							setIsLeverageValueCommitted(true);
-							onLeverageChange(newValue.toString());
+							onLeverageChange(Number(newValue));
 						}}
 						disabled={isDisabled}
 					/>
@@ -102,8 +102,9 @@ const LeverageInput: FC = () => {
 						<LeverageButton
 							key={l}
 							mono
+							variant="flat"
 							onClick={() => {
-								onLeverageChange(l);
+								onLeverageChange(Number(l));
 							}}
 							disabled={maxLeverage.lt(Number(l)) || marketInfo?.isSuspended}
 						>
@@ -124,12 +125,11 @@ const LeverageRow = styled(FlexDivRow)`
 	width: 100%;
 	align-items: center;
 	margin-bottom: 8px;
-	padding: 0 14px;
 `;
 
 const LeverageTitle = styled.div`
 	font-size: 13px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	text-transform: capitalize;
 
 	span {

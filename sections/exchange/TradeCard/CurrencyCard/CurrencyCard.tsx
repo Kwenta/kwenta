@@ -17,7 +17,6 @@ import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { SectionHeader, SectionSubTitle, SectionTitle } from 'sections/futures/MobileTrade/common';
-import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
 import { ratioState } from 'store/exchange';
 import {
 	FlexDivRowCentered,
@@ -47,7 +46,6 @@ type CurrencyCardProps = {
 	disableInput?: boolean;
 	slippagePercent?: Wei | null;
 	isLoading?: boolean;
-	txProvider?: TxProvider | null;
 	disabled?: boolean;
 };
 
@@ -66,7 +64,6 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	interactive = true,
 	disableInput = false,
 	isLoading = false,
-	txProvider = 'synthetix',
 	disabled,
 	...rest
 }) => {
@@ -321,7 +318,7 @@ const CurrencySelector = styled.div<{
 	font-size: 18px;
 	line-height: 1em;
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	svg {
 		color: ${(props) => props.theme.colors.goldColors.color1};
 	}
@@ -405,7 +402,7 @@ const CurrencyAmountValue = styled.div`
 	line-height: 1.25em;
 	width: 150px;
 	overflow: hidden;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const Slippage = styled.div`
@@ -452,7 +449,7 @@ const WalletBalance = styled.div<{ insufficientBalance: boolean }>`
 		css`
 			color: ${props.theme.colors.selectedTheme.red};
 		`}
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const StyledLoader = styled(Loader)`

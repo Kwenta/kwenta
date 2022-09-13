@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import { ContractsMap, NetworkId } from '@synthetixio/contracts-interface/build/node/src/types';
+import { ContractsMap, NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { utils } from 'ethers';
 import { chain } from 'wagmi';

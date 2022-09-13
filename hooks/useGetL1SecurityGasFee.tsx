@@ -2,6 +2,7 @@ import { getContractFactory, predeploys } from '@eth-optimism/contracts';
 import Wei from '@synthetixio/wei';
 import { BytesLike, ethers } from 'ethers';
 import { omit } from 'lodash';
+import { useCallback } from 'react';
 import { useSigner } from 'wagmi';
 
 import { weiFromWei, zeroBN } from 'utils/formatters/number';
@@ -28,22 +29,25 @@ export const useGetL1SecurityFee = () => {
 	const { data: signer } = useSigner();
 	const isL2 = useIsL2();
 
-	return async (metaTx: MetaTx): Promise<Wei> => {
-		if (!isL2) return zeroBN;
+	return useCallback(
+		async (metaTx: MetaTx): Promise<Wei> => {
+			if (!isL2) return zeroBN;
 
-		if (!signer) return Promise.reject('Wallet not connected');
-		const contract = new ethers.Contract(OVMGasPriceOracle.address, contractAbi, signer);
-		const nonce = await signer.getTransactionCount();
-		const chainId = await signer.getChainId();
-		const txParams = {
-			...omit(metaTx, 'from'),
-			nonce: nonce,
-			chainId: Number(chainId) || 1,
-			value: 0,
-		};
-		const serializedTx = ethers.utils.serializeTransaction(txParams);
-		const gasFee = await contract.functions.getL1Fee(serializedTx);
+			if (!signer) return Promise.reject('Wallet not connected');
+			const contract = new ethers.Contract(OVMGasPriceOracle.address, contractAbi, signer);
+			const nonce = await signer.getTransactionCount();
+			const chainId = await signer.getChainId();
+			const txParams = {
+				...omit(metaTx, 'from'),
+				nonce: nonce,
+				chainId: Number(chainId) || 1,
+				value: 0,
+			};
+			const serializedTx = ethers.utils.serializeTransaction(txParams);
+			const gasFee = await contract.functions.getL1Fee(serializedTx);
 
-		return weiFromWei(gasFee.toString());
-	};
+			return weiFromWei(gasFee.toString());
+		},
+		[signer, isL2]
+	);
 };

@@ -104,7 +104,7 @@ const SkewTooltip = styled(StyledTooltip)<{ isNumber?: boolean }>`
 		font-size: 13px;
 		font-family: ${(props) =>
 			props.isNumber ? props.theme.fonts.mono : props.theme.fonts.regular};
-		color: ${(props) => props.theme.colors.selectedTheme.button.text};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
 `;
 
@@ -139,7 +139,7 @@ const SkewContainer = styled.div`
 	.value {
 		font-family: ${(props) => props.theme.fonts.mono};
 		font-size: 13px;
-		color: ${(props) => props.theme.colors.selectedTheme.button.text};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
 `;
 
@@ -158,7 +158,7 @@ const SkewLabel = styled(CapitalizedText)`
 
 const SkewValue = styled(NumericValue)`
 	text-align: center;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 13px;
 	font-family: ${(props) => props.theme.fonts.mono};
 `;

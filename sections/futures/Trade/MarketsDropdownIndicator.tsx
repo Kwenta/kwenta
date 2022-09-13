@@ -12,7 +12,7 @@ const MarketsDropdownIndicator: React.FC<IndicatorProps<any>> = (props) => (
 
 const StyledDropdownArrow = styled(DropdownArrow)`
 	path {
-		fill: ${(props) => props.theme.colors.selectedTheme.button.text};
+		fill: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
 `;
 

@@ -14,6 +14,8 @@
 			"exchange": "exchange",
 			"dashboard": "dashboard",
 			"markets": "futures",
+			"isolated-margin": "Isolated Margin",
+			"cross-margin": "Cross Margin",
 			"leaderboard": "leaderboard",
 			"earn": "earn"
 		},
@@ -650,7 +652,9 @@
 						"deposit": {
 							"title": "Deposit Margin",
 							"button": "Deposit Margin",
-							"disclaimer": "A $50 margin minimum is required to open a position."
+							"disclaimer": "A $50 margin minimum is required to open a position.",
+							"min-deposit": "$50 minimum margin to open a position",
+							"exceeds-balance": "Amount exceeds balance"
 						},
 						"withdraw": {
 							"title": "Withdraw Margin",
@@ -673,8 +677,31 @@
 				"confirmation": {
 					"modal": {
 						"confirm-order": "Confirm order",
-						"max-leverage-disclaimer": "Note: A next price update could cause your order to exceed maximum leverage resulting in the order being dropped by the keeper."
+						"max-leverage-disclaimer": "Note: A next price update could cause your order to exceed maximum leverage resulting in the order being dropped by the keeper.",
+						"disabled-min-margin": "Minimum $50 margin required" 
 					}
+				},
+				"leverage": {
+					"modal": {
+						"max-pos": "Maximum position at current leverage:",
+						"title": "Adjust Leverage",
+						"input-label": "Leverage",
+						"confirm": "Confirm"
+					}
+				},
+				"isolated-margin": {
+					"title": "Isolated Margin"
+				},
+				"cross-margin": {
+					"connect-wallet": "Connect your wallet to start trading",
+					"title": "Cross-Margin",
+					"faq-title": "Cross-Margin FAQ's",
+					"create-account": "Create Account",
+					"unsupported": "Cross-margin is not supported on this network",
+					"switch-type": "Switch to isolated margin"
+				},
+				"preview": {
+					"error": "Error generating preview"
 				}
 			},
 			"history": {
@@ -802,7 +829,15 @@
 				}
 			},
 			"onboard": {
-				"title": "Open Futures Account"
+				"title": "Cross-Margin",
+				"step1-intro": "To Get started you must first create your cross-margin account",
+				"step2-intro": "Now, approve the contract to spend sUSD",
+				"step3-intro": "Lastly, deposit your sUSD into the contact",
+				"step3-complete": "Your cross-margin account has been successfully created!",
+				"faq1": "What is cross-margin?",
+				"faq2": "Is cross-margin better than isolated margin",
+				"faq3": "How will a cross-margin account affect my trading",
+				"unsupported-network": "Cross-margin is not supported on this network"
 			}
 		}
 	},
@@ -982,7 +1017,8 @@
 			"futures-market-bnb-short-name": "Binance Coin Perpetual",
 			"futures-market-doge-short-name": "Dogecoin Perpetual",
 			"futures-market-debtratio-short-name": "Debt Ratio Perpetual",
-			"futures-market-xmr-short-name": "Monero Perpetual"
+			"futures-market-xmr-short-name": "Monero Perpetual",
+			"futures-market-op-short-name": "Optimism Perpetual"
 		},
 		"currency-category": {
 			"crypto": "crypto",

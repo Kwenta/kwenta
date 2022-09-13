@@ -13,7 +13,12 @@ import Connector from 'containers/Connector';
 import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { Price, Rates } from 'queries/rates/types';
-import { currentMarketState, futuresMarketsState, pastRatesState } from 'store/futures';
+import {
+	currentMarketState,
+	futuresAccountTypeState,
+	futuresMarketsState,
+	pastRatesState,
+} from 'store/futures';
 import { assetToSynth, iStandardSynth } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import {
@@ -62,7 +67,7 @@ type MarketsDropdownProps = {
 const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 	const pastRates = useRecoilValue(pastRatesState);
-
+	const accountType = useRecoilValue(futuresAccountTypeState);
 	const asset = useRecoilValue(currentMarketState);
 
 	const { isFuturesMarketClosed, futuresClosureReason } = useFuturesMarketClosed(
@@ -151,7 +156,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				onChange={(x) => {
 					// Types are not perfect from react-select, this should always be true (just helping typescript)
 					if (x && 'value' in x) {
-						router.push(ROUTES.Markets.MarketPair(x.value));
+						router.push(ROUTES.Markets.MarketPair(x.value, accountType));
 					}
 				}}
 				value={assetToCurrencyOption({
@@ -182,6 +187,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				})}
 				options={options}
 				isSearchable={false}
+				variant="gradient"
 				components={{
 					SingleValue: MarketsDropdownSingleValue,
 					Option: MarketsDropdownOption,

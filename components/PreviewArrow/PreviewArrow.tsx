@@ -24,7 +24,7 @@ const StyledArrow = styled.span`
 `;
 
 const StyledPreviewGold = styled.span`
-	color: ${(props) => props.theme.colors.selectedTheme.gold};
+	color: ${(props) => props.theme.colors.selectedTheme.yellow};
 `;
 
 export default PreviewArrow;
