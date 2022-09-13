@@ -29,7 +29,7 @@ import logError from 'utils/logError';
 
 import FeeInfoBox from '../FeeInfoBox';
 import LeverageSlider from '../LeverageSlider';
-import MarginInfoBox from './MarginInfoBox';
+import MarginInfoBox from './CrossMarginInfoBox';
 
 type DepositMarginModalProps = {
 	onDismiss(): void;
@@ -84,7 +84,7 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 		[onLeverageChange]
 	);
 
-	const onConfirm = async () => {
+	const onConfirm = useCallback(async () => {
 		if (position?.position) {
 			try {
 				setSubmitting(true);
@@ -116,6 +116,28 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 			});
 			onDismiss();
 		}
+	}, [
+		marketAsset,
+		leverage,
+		position?.position,
+		preferredLeverage,
+		setSubmitting,
+		resetTradeState,
+		t,
+		monitorTransaction,
+		setPreferredLeverage,
+		onLeverageChange,
+		submitCrossMarginOrder,
+		setError,
+		handleRefetch,
+		onDismiss,
+	]);
+
+	const onClose = () => {
+		if (position?.position) {
+			resetTradeState();
+		}
+		onDismiss();
 	};
 
 	useEffect(() => {
@@ -130,7 +152,7 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 		<StyledBaseModal
 			title={t(`futures.market.trade.leverage.modal.title`)}
 			isOpen
-			onDismiss={onDismiss}
+			onDismiss={onClose}
 		>
 			<Label>{t('futures.market.trade.leverage.modal.input-label')}:</Label>
 			<InputContainer

@@ -1,4 +1,3 @@
-import useSynthetixQueries from '@synthetixio/queries';
 import React from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -6,7 +5,7 @@ import styled from 'styled-components';
 import DepositArrow from 'assets/svg/futures/deposit-arrow.svg';
 import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import SegmentedControl from 'components/SegmentedControl';
-import Connector from 'containers/Connector';
+import useSUSDBalance from 'hooks/useSUSDBalance';
 import { leverageSideState, marketInfoState, orderTypeState, positionState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 
@@ -27,7 +26,7 @@ type Props = {
 };
 
 const TradeIsolatedMargin = ({ isMobile }: Props) => {
-	const { walletAddress } = Connector.useContainer();
+	const sUSDBalance = useSUSDBalance();
 
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const position = useRecoilValue(positionState);
@@ -35,10 +34,6 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const [openModal, setOpenModal] = React.useState<'deposit' | 'withdraw' | null>(null);
-
-	const { useSynthsBalancesQuery } = useSynthetixQueries();
-	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
-	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap?.['sUSD']?.balance ?? zeroBN;
 
 	const transferButtons = !marketInfo?.isSuspended
 		? [

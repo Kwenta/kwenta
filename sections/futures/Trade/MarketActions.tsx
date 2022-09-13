@@ -1,4 +1,3 @@
-import useSynthetixQueries from '@synthetixio/queries';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -7,6 +6,7 @@ import styled from 'styled-components';
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
+import useSUSDBalance from 'hooks/useSUSDBalance';
 import { marketInfoState, positionState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 
@@ -16,15 +16,12 @@ import WithdrawMarginModal from './WithdrawMarginModal';
 const MarketActions: React.FC = () => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
+	const sUSDBalance = useSUSDBalance();
 
 	const position = useRecoilValue(positionState);
 	const marketInfo = useRecoilValue(marketInfoState);
 	const isL2 = useIsL2();
 	const [openModal, setOpenModal] = React.useState<'deposit' | 'withdraw' | null>(null);
-
-	const { useSynthsBalancesQuery } = useSynthetixQueries();
-	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
-	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap?.['sUSD']?.balance ?? zeroBN;
 
 	return (
 		<>

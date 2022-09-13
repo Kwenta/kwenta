@@ -16,6 +16,7 @@ import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
+import useEstimateGasCost from 'hooks/useEstimateGasCost';
 import useSUSDContract from 'hooks/useSUSDContract';
 import { balancesState, crossMarginAvailableMarginState } from 'store/futures';
 import { FlexDivRowCentered } from 'styles/common';
@@ -49,6 +50,7 @@ export default function DepositWithdrawCrossMargin({
 	const [transferType, setTransferType] = useState(0);
 	const [txState, setTxState] = useState<'none' | 'approving' | 'submitting' | 'complete'>('none');
 	const [error, setError] = useState<string | null>(null);
+	const [transactionFee, setTransactionFee] = useState(zeroBN);
 
 	const { handleRefetch } = useRefetchContext();
 
@@ -57,13 +59,27 @@ export default function DepositWithdrawCrossMargin({
 	}, [defaultTab]);
 
 	const susdBal = transferType === 0 ? balances?.susdWalletBalance || zeroBN : freeMargin;
+	const { estimateEthersContractTxCost } = useEstimateGasCost();
+
+	useEffect(() => {
+		if (!crossMarginAccountContract) return;
+		const estimateGas = async () => {
+			if (!amount) return;
+			const method = transferType === 0 ? 'deposit' : 'withdraw';
+			const fee = await estimateEthersContractTxCost(crossMarginAccountContract, method, [
+				wei(amount).toBN(),
+			]);
+			setTransactionFee(fee);
+		};
+		estimateGas();
+	}, [crossMarginAccountContract, amount, transferType, estimateEthersContractTxCost]);
 
 	const submitDeposit = useCallback(async () => {
 		try {
 			if (!crossMarginAccountContract) throw new Error('No cross-margin account');
 
 			setTxState('submitting');
-			const tx = await crossMarginAccountContract.deposit(wei(amount).toBN());
+			const tx = await crossMarginAccountContract.deposit(wei(amount || 0).toBN());
 			monitorTransaction({
 				txHash: tx.hash,
 				onTxConfirmed: () => {
@@ -146,9 +162,6 @@ export default function DepositWithdrawCrossMargin({
 		onComplete,
 		onDismiss,
 	]);
-
-	// TODO: Get tx fee
-	const transactionFee = wei('0.1');
 
 	const disabledReason = useMemo(() => {
 		const amtWei = wei(amount || 0);

@@ -54,7 +54,7 @@ const useGetFuturesMarginTransfers = (
 			try {
 				const response = await request(futuresEndpoint, gqlQuery, {
 					market: marketAddress,
-					walletAddress: selectedFuturesAddress ?? '',
+					walletAddress: selectedFuturesAddress,
 				});
 
 				return response ? mapMarginTransfers(response.futuresMarginTransfers) : [];
