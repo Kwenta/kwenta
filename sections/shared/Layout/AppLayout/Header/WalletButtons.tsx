@@ -9,6 +9,7 @@ import MoonIcon from 'assets/svg/app/moon.svg';
 import SunIcon from 'assets/svg/app/sun.svg';
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
+import { useAutoConnect } from 'hooks/useAutoConnect';
 import { currentThemeState } from 'store/ui';
 
 import BalanceActions from './BalanceActions';
@@ -30,11 +31,12 @@ const WalletButtons: React.FC = () => {
 		setTheme((curr) => (curr === 'light' ? 'dark' : 'light'));
 	};
 
+	useAutoConnect();
 	const walletIsNotConnected = (
 		<>
 			<ConnectButton
 				size="sm"
-				variant="outline"
+				variant="flat"
 				noOutline
 				onClick={openConnectModal}
 				data-testid="connect-wallet"
@@ -51,7 +53,7 @@ const WalletButtons: React.FC = () => {
 			<SwitchNetworkButton variant="secondary" onClick={openChainModal}>
 				{t('homepage.l2.cta-buttons.switch-networks')}
 			</SwitchNetworkButton>
-			<ConnectButton size="sm" variant="outline" data-testid="unsupported-network" mono>
+			<ConnectButton size="sm" variant="flat" data-testid="unsupported-network" mono>
 				<StyledConnectionDot />
 				{t('common.wallet.unsupported-network')}
 			</ConnectButton>

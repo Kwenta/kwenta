@@ -78,7 +78,8 @@ export const INDEX_SYNTHS = new Set<CurrencyKey | 'DebtRatio'>(['DebtRatio']);
 export const sUSD_EXCHANGE_RATE = new Wei(1);
 export const SYNTH_DECIMALS = 18;
 
-export const ETH_ADDRESS = '0x4200000000000000000000000000000000000006';
+export const ETH_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'; // For 1inch API
+export const ETH_COINGECKO_ADDRESS = '0x4200000000000000000000000000000000000006'; // For coingecko API
 
 export const ATOMIC_EXCHANGES_L1 = [
 	'sBTC',
@@ -112,4 +113,6 @@ export enum SynthsName {
 	sAUD = 'sAUD',
 	sDOT = 'sDOT',
 	sETHBTC = 'sETHBTC',
+	sXMR = 'sXMR',
+	sOP = 'sOP',
 }

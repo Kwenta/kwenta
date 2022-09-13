@@ -1,1 +1,1 @@
-export { default } from './Trade';
+export { default } from './TradeIsolatedMargin';

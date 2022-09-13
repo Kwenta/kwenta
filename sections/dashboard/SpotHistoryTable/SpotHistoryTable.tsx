@@ -13,6 +13,7 @@ import Table, { TableNoResults } from 'components/Table';
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
+import BlockExplorer from 'containers/BlockExplorer';
 import Connector from 'containers/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetWalletTrades from 'queries/synths/useGetWalletTrades';
@@ -31,7 +32,7 @@ type WalletTradesExchangeResult = Omit<SynthTradesExchangeResult, 'timestamp'> &
 const SpotHistoryTable: FC = () => {
 	const { t } = useTranslation();
 	const { network, walletAddress, synthsMap } = Connector.useContainer();
-
+	const { blockExplorerInstance } = BlockExplorer.useContainer();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const walletTradesQuery = useGetWalletTrades(walletAddress!);
 
@@ -182,7 +183,7 @@ const SpotHistoryTable: FC = () => {
 						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) =>
 							network != null && cellProps.row.original.hash ? (
 								<StyledExternalLink
-									href={`${network?.blockExplorers?.etherscan?.url}/tx/${cellProps.row.original.hash}`}
+									href={`${blockExplorerInstance?.txLink(cellProps.row.original.hash)}`}
 								>
 									<StyledLinkIcon />
 								</StyledExternalLink>

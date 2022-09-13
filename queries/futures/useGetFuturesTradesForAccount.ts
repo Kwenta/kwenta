@@ -7,7 +7,7 @@ import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
-import { futuresAccountState } from 'store/futures';
+import { futuresAccountTypeState } from 'store/futures';
 import logError from 'utils/logError';
 
 import { FuturesAccountType, getFuturesTrades } from './subgraph';
@@ -19,11 +19,10 @@ const useGetFuturesTradesForAccount = (
 	account?: string | null,
 	options?: UseQueryOptions<FuturesTrade[] | null> & { forceAccount: boolean }
 ) => {
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 	const { network, isWalletConnected } = Connector.useContainer();
 	const isL2 = useIsL2();
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
-
-	const { selectedAccountType } = useRecoilValue(futuresAccountState);
 
 	return useQuery<FuturesTrade[] | null>(
 		QUERY_KEYS.Futures.TradesAccount(

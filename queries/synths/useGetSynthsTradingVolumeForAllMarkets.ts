@@ -1,27 +1,24 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery } from 'react-query';
 import { chain } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import { calculateTradeVolumeForAllSynths } from 'queries/futures/utils';
+import { RATES_ENDPOINT_OP_MAINNET } from 'queries/rates/constants';
+import { getRatesEndpoint } from 'queries/rates/utils';
 import logError from 'utils/logError';
 
-import { SYNTHS_ENDPOINT_OPTIMISM_MAIN } from './constants';
 import { SynthsVolumes } from './type';
-import { getSynthsEndpoint } from './utils';
 
-const useGetSynthsTradingVolumeForAllMarkets = (
-	yesterday: number,
-	options?: UseQueryOptions<SynthsVolumes | null>
-) => {
+const useGetSynthsTradingVolumeForAllMarkets = (yesterday: number) => {
 	const { network } = Connector.useContainer();
 	const synthsEndpoint =
 		window.location.pathname === ROUTES.Home.Root || network === undefined
-			? SYNTHS_ENDPOINT_OPTIMISM_MAIN
-			: getSynthsEndpoint(network?.id as NetworkId);
+			? RATES_ENDPOINT_OP_MAINNET
+			: getRatesEndpoint(network?.id as NetworkId);
 
 	return useQuery<SynthsVolumes | null>(
 		QUERY_KEYS.Synths.TradingVolumeForAllSynths((network?.id ?? chain.optimism.id) as NetworkId),

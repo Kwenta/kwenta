@@ -6,18 +6,16 @@ import styled, { css } from 'styled-components';
 
 import Table from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
-import { EXTERNAL_LINKS } from 'constants/links';
 import { NO_VALUE } from 'constants/placeholder';
+import BlockExplorer from 'containers/BlockExplorer';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
 import { currentMarketState } from 'store/futures';
-import { isL2MainnetState } from 'store/wallet';
 import { CapitalizedText, NumericValue } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
 
 type TradesHistoryTableProps = {
-	numberOfTrades: number;
 	mobile?: boolean;
 };
 
@@ -27,11 +25,11 @@ enum TableColumnAccessor {
 	Time = 'time',
 }
 
-const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobile }) => {
+const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 	const { t } = useTranslation();
 	const currencyKey = useRecoilValue(currentMarketState);
 	const futuresTradesQuery = useGetFuturesTrades(currencyKey);
-	const isL2Mainnet = useRecoilValue(isL2MainnetState);
+	const { blockExplorerInstance } = BlockExplorer.useContainer();
 
 	let data = useMemo(() => {
 		const futuresTradesPages = futuresTradesQuery?.data?.pages ?? [];
@@ -104,7 +102,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 
 	return (
 		<HistoryContainer mobile={mobile}>
-			<TableContainer>
+			<div>
 				<StyledTable
 					data={data}
 					isLoading={futuresTradesQuery.isLoading}
@@ -112,9 +110,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 					mobile={mobile}
 					onTableRowClick={(row) =>
 						row.original.id !== NO_VALUE
-							? isL2Mainnet
-								? window.open(`${EXTERNAL_LINKS.Explorer.Optimism}/${row.original.id}`)
-								: window.open(`${EXTERNAL_LINKS.Explorer.OptimismKovan}/${row.original.id}`)
+							? window.open(`${blockExplorerInstance?.txLink(row.original.id)}`)
 							: undefined
 					}
 					highlightRowsOnHover
@@ -181,7 +177,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 						},
 					]}
 				/>
-			</TableContainer>
+			</div>
 		</HistoryContainer>
 	);
 };
@@ -202,8 +198,6 @@ const HistoryContainer = styled.div<{ mobile?: boolean }>`
 			margin-bottom: 0;
 		`}
 `;
-
-const TableContainer = styled.div``;
 
 const TableAlignment = css`
 	justify-content: space-between;
@@ -256,14 +250,14 @@ const TableHeader = styled(CapitalizedText)`
 
 const PriceValue = styled(NumericValue)`
 	font-size: 13px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	padding-left: 5px;
 `;
 
 const TimeValue = styled.p`
 	font-size: 13px;
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	text-decoration: underline;
 `;
 
@@ -271,7 +265,7 @@ const DirectionalValue = styled(PriceValue)<{ negative?: boolean; normal?: boole
 	padding-left: 4px;
 	color: ${(props) =>
 		props.normal
-			? props.theme.colors.selectedTheme.button.text
+			? props.theme.colors.selectedTheme.button.text.primary
 			: props.negative
 			? props.theme.colors.selectedTheme.green
 			: props.theme.colors.selectedTheme.red};

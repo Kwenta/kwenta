@@ -8,7 +8,7 @@ import { BLAST_NETWORK_LOOKUP } from 'constants/network';
 
 export const initRainbowkit = () => {
 	const { chains, provider } = configureChains(
-		[chain.mainnet, chain.optimism, chain.goerli, chain.optimismGoerli],
+		[chain.optimism, chain.mainnet, chain.optimismGoerli, chain.goerli],
 		[
 			jsonRpcProvider({
 				rpc: (networkChain) => {
@@ -33,6 +33,7 @@ export const initRainbowkit = () => {
 		{
 			groupName: 'Popular',
 			wallets: [
+				Safe({ chains }),
 				wallet.metaMask({ chains }),
 				wallet.rainbow({ chains }),
 				wallet.coinbase({ appName: 'Kwenta', chains }),
@@ -42,7 +43,6 @@ export const initRainbowkit = () => {
 		{
 			groupName: 'More',
 			wallets: [
-				Safe({ chains }),
 				wallet.ledger({ chains }),
 				wallet.brave({ chains, shimDisconnect: true }),
 				wallet.trust({ chains }),

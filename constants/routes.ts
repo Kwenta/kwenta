@@ -1,9 +1,14 @@
+import { FuturesAccountType } from 'queries/futures/types';
 import { FuturesMarketAsset } from 'utils/futures';
 
 const prettyURLsDisabled = !!process.env.NEXT_PUBLIC_DISABLE_PRETTY_URLS;
 
 const normalizeRoute = (baseURL: string, path: string, queryParam: string) =>
 	prettyURLsDisabled ? `${baseURL}?${queryParam}=${path}` : `${baseURL}/${path}`;
+
+export const formatUrl = (route: string, params: Record<string, string>) => {
+	return route + '?' + new URLSearchParams(params);
+};
 
 export const ROUTES = {
 	Home: {
@@ -26,12 +31,21 @@ export const ROUTES = {
 		Into: (currencyKey: string) => `/exchange/?quote=${currencyKey}`,
 	},
 	Markets: {
-		Home: '/market/?asset=sETH',
-		MarketPair: (marketAsset: FuturesMarketAsset | string) => `/market/?asset=${marketAsset}`,
-		Position: (marketAsset: FuturesMarketAsset) => `/market/?asset=${marketAsset}&tab=position`,
-		Orders: (marketAsset: FuturesMarketAsset) => `/market/?asset=${marketAsset}&tab=orders`,
-		Trades: (marketAsset: FuturesMarketAsset) => `/market/?asset=${marketAsset}&tab=trades`,
-		Transfers: (marketAsset: FuturesMarketAsset) => `/market/?asset=${marketAsset}&tab=transfers`,
+		Home: (accountType: FuturesAccountType) => formatUrl('/market', { accountType, asset: 'sETH' }),
+		MarketPair: (asset: FuturesMarketAsset | string, accountType: FuturesAccountType) =>
+			formatUrl('/market', { asset, accountType }),
+		Position: (asset: FuturesMarketAsset, accountType: FuturesAccountType) =>
+			formatUrl('/market', {
+				asset,
+				accountType,
+				tab: 'position',
+			}),
+		Orders: (asset: FuturesMarketAsset, accountType: FuturesAccountType) =>
+			formatUrl('/market', { asset, accountType, tab: 'orders' }),
+		Trades: (asset: FuturesMarketAsset, accountType: FuturesAccountType) =>
+			formatUrl('/market', { asset, accountType, tab: 'trades' }),
+		Transfers: (asset: FuturesMarketAsset, accountType: FuturesAccountType) =>
+			formatUrl('/market', { asset, accountType, tab: 'transfers' }),
 	},
 	Stats: {
 		Home: '/stats',
@@ -43,6 +57,10 @@ export const ROUTES = {
 	Earn: {
 		Home: '/earn',
 	},
+};
+
+export const setLastVisited = (baseCurrencyPair: string, accountType: FuturesAccountType): void => {
+	localStorage.setItem('lastVisited', ROUTES.Markets.MarketPair(baseCurrencyPair, accountType));
 };
 
 export default ROUTES;

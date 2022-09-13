@@ -16,17 +16,8 @@ export type TabButtonProps = {
 	nofill?: boolean;
 };
 
-const TabButton: React.FC<TabButtonProps> = ({
-	title,
-	detail,
-	badge,
-	active,
-	icon,
-	vertical,
-	nofill,
-	...props
-}) => {
-	return (
+const TabButton: React.FC<TabButtonProps> = React.memo(
+	({ title, detail, badge, active, icon, vertical, nofill, ...props }) => (
 		<StyledButton {...props} {...{ active, vertical, nofill }} noOutline>
 			{!!icon && <div>{icon}</div>}
 			<div>
@@ -38,8 +29,8 @@ const TabButton: React.FC<TabButtonProps> = ({
 				{detail && <p className="detail">{detail}</p>}
 			</div>
 		</StyledButton>
-	);
-};
+	)
+);
 
 const StyledButton = styled(Button)<{
 	active?: boolean;
@@ -69,7 +60,7 @@ const StyledButton = styled(Button)<{
 		text-align: center;
 		color: ${(props) =>
 			props.active
-				? props.theme.colors.selectedTheme.button.text
+				? props.theme.colors.selectedTheme.button.text.primary
 				: props.theme.colors.selectedTheme.gray};
 	}
 
@@ -100,7 +91,7 @@ const StyledButton = styled(Button)<{
 			${(props) =>
 				css`
 					${props.nofill ? 'stroke' : 'fill'}: ${props.active
-						? props.theme.colors.selectedTheme.button.text
+						? props.theme.colors.selectedTheme.button.text.primary
 						: props.theme.colors.selectedTheme.gray};
 				`}
 		}

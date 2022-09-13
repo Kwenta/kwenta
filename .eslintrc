@@ -20,6 +20,15 @@
 		"import/no-anonymous-default-export": "off",
 		"@next/next/no-img-element": "off",
 		"no-console": "error",
+		"no-unused-vars": "off",
+		"@typescript-eslint/no-unused-vars": [
+			"warn",
+			{ 
+				"argsIgnorePattern": "^_",
+				"varsIgnorePattern": "^_",
+				"caughtErrorsIgnorePattern": "^_"
+			}
+		],
 		"import/order": [
 			"warn",
 			{
@@ -89,7 +98,8 @@
 					}
 				],
 				"pathGroupsExcludedImportTypes": []
-			}
+			},
 		]
-	}
+	},
+
 }

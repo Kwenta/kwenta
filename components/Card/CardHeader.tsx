@@ -23,7 +23,7 @@ const CardHeader: FC<CardHeaderProps> = ({
 
 const Container = styled(FlexDivCentered)<{ lowercase: boolean; noBorder: boolean }>`
 	position: relative;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	border-bottom: ${(props) => (props.noBorder ? 'none' : `1px solid ${props.theme.colors.navy}`)};
 	height: 32px;
 	padding: 0 18px;

@@ -34,7 +34,7 @@ export const Tooltip = styled.div<ToolTipStyleProps>`
 	p, span {
 		font-size: 13px;
 		font-family: ${(props) => props.theme.fonts.regular};
-		color: ${(props) => props.theme.colors.selectedTheme.button.text};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
 
 	${(props) =>

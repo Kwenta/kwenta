@@ -3,6 +3,7 @@
 /* eslint-disable */
 export { CrossMarginAccountFactory__factory } from "./CrossMarginAccountFactory__factory";
 export { CrossMarginBase__factory } from "./CrossMarginBase__factory";
+export { CrossMarginBaseSettings__factory } from "./CrossMarginBaseSettings__factory";
 export { ERC20__factory } from "./ERC20__factory";
 export { ReverseRecords__factory } from "./ReverseRecords__factory";
 export { SynthSwap__factory } from "./SynthSwap__factory";

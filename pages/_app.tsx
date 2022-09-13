@@ -58,7 +58,6 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 		<RainbowKitProvider
 			chains={chains}
 			theme={currentTheme === 'dark' ? darkTheme() : lightTheme()}
-			initialChain={chain.optimism}
 		>
 			<ThemeProvider theme={theme}>
 				<MediaContextProvider>
@@ -99,7 +98,7 @@ const App: FC<AppProps> = (props) => {
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 				<meta name="description" content={t('meta.description')} />
 				{/* open graph */}
-				<meta property="og:url" content="https://kwenta.io/" />
+				<meta property="og:url" content="https://kwenta.eth.limo/" />
 				<meta property="og:type" content="website" />
 				<meta property="og:title" content={t('meta.og.title')} />
 				<meta property="og:description" content={t('meta.description')} />
@@ -110,8 +109,8 @@ const App: FC<AppProps> = (props) => {
 				<meta name="twitter:card" content="summary_large_image" />
 				<meta name="twitter:site" content="@kwenta_io" />
 				<meta name="twitter:creator" content="@kwenta_io" />
-				<meta name="twitter:image" content="https://kwenta.io/images/kwenta-twitter.jpg" />
-				<meta name="twitter:url" content="https://kwenta.io" />
+				<meta name="twitter:image" content="https://kwenta.eth.limo/images/kwenta-twitter.jpg" />
+				<meta name="twitter:url" content="https://kwenta.eth.limo" />
 				<link rel="icon" href="/images/favicon.svg" />
 			</Head>
 			<RecoilRoot>

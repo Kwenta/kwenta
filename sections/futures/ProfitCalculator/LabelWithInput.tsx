@@ -48,7 +48,7 @@ const LabelText = styled.p`
 	font-size: 12px;
 	line-height: 12px;
 
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 export default LabelWithInput;

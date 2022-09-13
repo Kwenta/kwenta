@@ -13,8 +13,8 @@ import type { HeaderProps } from 'sections/shared/Layout/HomeLayout/Header';
 import Logo from 'sections/shared/Layout/Logo';
 import { currentThemeState } from 'store/ui';
 
-import { HOMEPAGE_MENU_LINKS, MENU_LINKS } from '../constants';
-import { MenuButton, SUB_MENUS } from './common';
+import { HOMEPAGE_MENU_LINKS, MOBILE_NAV_LINKS } from '../constants';
+import { MenuButton } from './common';
 import MobileSubMenu from './MobileSubMenu';
 
 type MobileMenuModalProps = HeaderProps & {
@@ -24,8 +24,9 @@ type MobileMenuModalProps = HeaderProps & {
 export const MobileMenuModal: FC<MobileMenuModalProps> = ({ setCurrentPage, onDismiss }) => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
+
 	const menuLinks =
-		window.location.pathname === ROUTES.Home.Root ? HOMEPAGE_MENU_LINKS : MENU_LINKS;
+		window.location.pathname === ROUTES.Home.Root ? HOMEPAGE_MENU_LINKS : MOBILE_NAV_LINKS;
 
 	const currentTheme = useRecoilValue(currentThemeState);
 
@@ -47,9 +48,18 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ setCurrentPage, onDi
 					<Logo />
 				</LogoContainer>
 				<div>
-					{menuLinks.map(({ i18nLabel, link }) => (
+					{menuLinks.map(({ i18nLabel, link, links }) => (
 						<div key={link}>
-							{link === ROUTES.Stats.Home ? (
+							{links?.length ? (
+								<MobileSubMenu
+									links={links}
+									active={expanded === link}
+									i18nLabel={i18nLabel}
+									defaultOpen={asPath.includes(link)}
+									onDismiss={onDismiss}
+									onToggle={handleToggle(link)}
+								/>
+							) : link === ROUTES.Stats.Home ? (
 								<MenuButton
 									currentTheme={currentTheme}
 									isActive={asPath.includes(link)}
@@ -58,15 +68,6 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ setCurrentPage, onDi
 									{t(i18nLabel)}
 									<MobileMenuArrow />
 								</MenuButton>
-							) : SUB_MENUS[link] ? (
-								<MobileSubMenu
-									active={expanded === link}
-									i18nLabel={i18nLabel}
-									link={link}
-									defaultOpen={asPath.includes(link)}
-									onDismiss={onDismiss}
-									onToggle={handleToggle(link)}
-								/>
 							) : (
 								<Link href={link}>
 									<MenuButton

@@ -21,7 +21,12 @@ import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { PositionHistory } from 'queries/futures/types';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
-import { currentMarketState, futuresMarketsState, positionsState } from 'store/futures';
+import {
+	currentMarketState,
+	futuresAccountTypeState,
+	futuresMarketsState,
+	positionsState,
+} from 'store/futures';
 import { formatNumber } from 'utils/formatters/number';
 import {
 	FuturesMarketAsset,
@@ -53,6 +58,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	const futuresPositions = useRecoilValue(positionsState);
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 	const currentMarket = useRecoilValue(currentMarketState);
+	const accountType = useRecoilValue(futuresAccountTypeState);
 
 	let data = useMemo(() => {
 		const activePositions = futuresPositions?.filter((position) => position?.position) ?? [];
@@ -105,7 +111,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					<Table
 						data={data}
 						showPagination
-						onTableRowClick={(row) => router.push(`/market/?asset=${row.original.asset}`)}
+						onTableRowClick={(row) =>
+							router.push(ROUTES.Markets.MarketPair(row.original.asset, accountType))
+						}
 						noResultsMessage={
 							!isL2 ? (
 								<TableNoResults>
@@ -117,7 +125,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									{!showCurrentMarket ? (
 										t('dashboard.overview.futures-positions-table.no-result')
 									) : (
-										<Link href={ROUTES.Markets.Home}>
+										<Link href={ROUTES.Markets.Home(accountType)}>
 											<div>{t('common.perp-cta')}</div>
 										</Link>
 									)}
@@ -292,7 +300,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				<div style={{ margin: '0 15px' }}>
 					{data.length === 0 ? (
 						<NoPositionsText>
-							<Link href={ROUTES.Markets.Home}>
+							<Link href={ROUTES.Markets.Home(accountType)}>
 								<div>{t('common.perp-cta')}</div>
 							</Link>
 						</NoPositionsText>
@@ -336,7 +344,7 @@ const StyledValue = styled.div`
 `;
 
 const DefaultCell = styled.p`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const TableContainer = styled.div``;
@@ -351,7 +359,7 @@ const StyledText = styled.div`
 	grid-column: 2;
 	grid-row: 1;
 	margin-bottom: -4px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-family: ${(props) => props.theme.fonts.bold};
 `;
 

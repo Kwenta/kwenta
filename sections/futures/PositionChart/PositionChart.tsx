@@ -8,7 +8,7 @@ import {
 	currentMarketState,
 	positionState,
 	potentialTradeDetailsState,
-	tradeSizeState,
+	futuresTradeInputsState,
 } from 'store/futures';
 
 export default function PositionChart() {
@@ -16,25 +16,25 @@ export default function PositionChart() {
 	const marketAsset = useRecoilValue(currentMarketState);
 	const position = useRecoilValue(positionState);
 
-	const previewTrade = useRecoilValue(potentialTradeDetailsState);
+	const { data: previewTrade } = useRecoilValue(potentialTradeDetailsState);
 
 	const futuresPositionsQuery = useGetFuturesPositionForAccount();
 	const positionHistory = futuresPositionsQuery.data ?? [];
 	const subgraphPosition = positionHistory.find((p) => p.isOpen && p.asset === marketAsset);
 
-	const tradeSize = useRecoilValue(tradeSizeState);
+	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
 
 	const modifiedAverage = useMemo(() => {
-		if (subgraphPosition && previewTrade && !!tradeSize) {
-			const totalSize = subgraphPosition.size.add(tradeSize);
+		if (subgraphPosition && previewTrade && !!nativeSize) {
+			const totalSize = subgraphPosition.size.add(nativeSize);
 
 			const existingValue = subgraphPosition.avgEntryPrice.mul(subgraphPosition.size);
-			const newValue = previewTrade.price.mul(tradeSize);
+			const newValue = previewTrade.price.mul(nativeSize);
 			const totalValue = existingValue.add(newValue);
 			return totalValue.div(totalSize);
 		}
 		return null;
-	}, [subgraphPosition, previewTrade, tradeSize]);
+	}, [subgraphPosition, previewTrade, nativeSize]);
 
 	const activePosition = useMemo(() => {
 		if (!position?.position) {
@@ -44,18 +44,14 @@ export default function PositionChart() {
 		return {
 			// As there's often a delay in subgraph sync we use the contract last
 			// price until we get average price to keep it snappy on opening a position
-			price: subgraphPosition?.avgEntryPrice || position.position.lastPrice,
+			price: subgraphPosition?.avgEntryPrice ?? position.position.lastPrice,
 			size: position.position.size,
 			liqPrice: position.position?.liquidationPrice,
 		};
 	}, [subgraphPosition, position]);
 
-	const visible = useMemo(() => {
-		return isChartReady ? 'visible' : 'hidden';
-	}, [isChartReady]);
-
 	return (
-		<Container visible={visible}>
+		<Container visible={isChartReady}>
 			<TVChart
 				activePosition={activePosition}
 				potentialTrade={
@@ -75,8 +71,8 @@ export default function PositionChart() {
 	);
 }
 
-const Container = styled.div<{ visible: 'hidden' | 'visible' }>`
+const Container = styled.div<{ visible: boolean }>`
 	min-height: 450px;
 	background: ${(props) => props.theme.colors.selectedTheme.background};
-	visibility: ${(props) => props.visible};
+	visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
 `;

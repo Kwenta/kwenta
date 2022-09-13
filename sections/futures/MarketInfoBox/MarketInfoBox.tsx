@@ -8,14 +8,14 @@ import PreviewArrow from 'components/PreviewArrow';
 import { FuturesPotentialTradeDetails } from 'queries/futures/types';
 import {
 	crossMarginAvailableMarginState,
-	futuresAccountState,
+	futuresAccountTypeState,
 	leverageSideState,
 	marketInfoState,
 	maxLeverageState,
 	orderTypeState,
 	positionState,
 	potentialTradeDetailsState,
-	tradeSizeState,
+	futuresTradeInputsState,
 } from 'store/futures';
 import { computeNPFee } from 'utils/costCalculations';
 import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
@@ -28,10 +28,10 @@ const MarketInfoBox: React.FC = () => {
 	const marketInfo = useRecoilValue(marketInfoState);
 	const orderType = useRecoilValue(orderTypeState);
 	const leverageSide = useRecoilValue(leverageSideState);
-	const tradeSize = useRecoilValue(tradeSizeState);
-	const previewTrade = useRecoilValue(potentialTradeDetailsState);
+	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
+	const potentialTrade = useRecoilValue(potentialTradeDetailsState);
 	const crossMarginFreeMargin = useRecoilValue(crossMarginAvailableMarginState);
-	const { selectedAccountType } = useRecoilValue(futuresAccountState);
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 
 	const totalMargin =
 		selectedAccountType === 'cross_margin'
@@ -54,7 +54,7 @@ const MarketInfoBox: React.FC = () => {
 	const positionSize = position?.position?.size ? wei(position?.position?.size) : zeroBN;
 	const orderDetails = useMemo(() => {
 		const newSize =
-			leverageSide === PositionSide.LONG ? wei(tradeSize || 0) : wei(tradeSize || 0).neg();
+			leverageSide === PositionSide.LONG ? wei(nativeSize || 0) : wei(nativeSize || 0).neg();
 		return { newSize, size: (positionSize ?? zeroBN).add(newSize).abs() };
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [leverageSide, positionSize]);
@@ -69,42 +69,43 @@ const MarketInfoBox: React.FC = () => {
 	}, [commitDeposit, marketInfo?.keeperDeposit]);
 
 	const getPotentialAvailableMargin = (
-		previewTrade: FuturesPotentialTradeDetails | null,
+		trade: FuturesPotentialTradeDetails | null,
 		marketMaxLeverage: Wei | undefined
 	) => {
 		let inaccessible;
 
-		inaccessible = previewTrade?.notionalValue.div(marketMaxLeverage).abs() ?? zeroBN;
+		inaccessible =
+			(marketMaxLeverage && trade?.notionalValue.div(marketMaxLeverage).abs()) ?? zeroBN;
 
 		// If the user has a position open, we'll enforce a min initial margin requirement.
 		if (inaccessible.gt(0)) {
-			if (inaccessible.lt(previewTrade?.minInitialMargin ?? zeroBN)) {
-				inaccessible = previewTrade?.minInitialMargin ?? zeroBN;
+			if (inaccessible.lt(trade?.minInitialMargin ?? zeroBN)) {
+				inaccessible = trade?.minInitialMargin ?? zeroBN;
 			}
 		}
 
 		// check if available margin will be less than 0
-		return previewTrade?.margin?.sub(inaccessible).gt(0)
-			? previewTrade?.margin?.sub(inaccessible).abs()
-			: zeroBN;
+		return trade?.margin?.sub(inaccessible).gt(0) ? trade?.margin?.sub(inaccessible).abs() : zeroBN;
 	};
 
 	const previewAvailableMargin = React.useMemo(() => {
 		const potentialAvailableMargin = getPotentialAvailableMargin(
-			previewTrade,
+			potentialTrade.data,
 			marketInfo?.maxLeverage
 		);
 		return isNextPriceOrder
 			? potentialAvailableMargin?.sub(totalDeposit) ?? zeroBN
 			: potentialAvailableMargin;
-	}, [previewTrade, marketInfo?.maxLeverage, isNextPriceOrder, totalDeposit]);
+	}, [potentialTrade.data, marketInfo?.maxLeverage, isNextPriceOrder, totalDeposit]);
 
 	const previewTradeData = React.useMemo(() => {
-		const size = wei(tradeSize || zeroBN);
+		const size = wei(nativeSize || zeroBN);
 
-		const potentialMarginUsage = previewTrade?.margin.gt(0)
-			? previewTrade?.margin?.sub(previewAvailableMargin)?.div(previewTrade?.margin)?.abs() ??
-			  zeroBN
+		const potentialMarginUsage = potentialTrade.data?.margin.gt(0)
+			? potentialTrade.data?.margin
+					?.sub(previewAvailableMargin)
+					?.div(potentialTrade.data?.margin)
+					?.abs() ?? zeroBN
 			: zeroBN;
 
 		const potentialBuyingPower =
@@ -112,12 +113,12 @@ const MarketInfoBox: React.FC = () => {
 
 		return {
 			showPreview: size && !size.eq(0),
-			totalMargin: previewTrade?.margin || zeroBN,
+			totalMargin: potentialTrade.data?.margin || zeroBN,
 			availableMargin: previewAvailableMargin.gt(0) ? previewAvailableMargin : zeroBN,
 			buyingPower: potentialBuyingPower.gt(0) ? potentialBuyingPower : zeroBN,
 			marginUsage: potentialMarginUsage.gt(1) ? wei(1) : potentialMarginUsage,
 		};
-	}, [tradeSize, previewTrade?.margin, previewAvailableMargin, maxLeverage]);
+	}, [nativeSize, potentialTrade.data?.margin, previewAvailableMargin, maxLeverage]);
 
 	return (
 		<StyledInfoBox
@@ -133,7 +134,9 @@ const MarketInfoBox: React.FC = () => {
 						currencyKey: undefined,
 					})}`,
 					valueNode: (
-						<PreviewArrow showPreview={previewTradeData.showPreview && !previewTrade?.showStatus}>
+						<PreviewArrow
+							showPreview={previewTradeData.showPreview && !potentialTrade.data?.showStatus}
+						>
 							{formatDollars(previewTradeData?.availableMargin)}
 						</PreviewArrow>
 					),
@@ -143,7 +146,9 @@ const MarketInfoBox: React.FC = () => {
 						currencyKey: undefined,
 					})}`,
 					valueNode: previewTradeData?.buyingPower && (
-						<PreviewArrow showPreview={previewTradeData.showPreview && !previewTrade?.showStatus}>
+						<PreviewArrow
+							showPreview={previewTradeData.showPreview && !potentialTrade.data?.showStatus}
+						>
 							{formatDollars(previewTradeData?.buyingPower)}
 						</PreviewArrow>
 					),
@@ -151,7 +156,9 @@ const MarketInfoBox: React.FC = () => {
 				'Margin Usage': {
 					value: `${formatPercent(marginUsage)}`,
 					valueNode: (
-						<PreviewArrow showPreview={previewTradeData.showPreview && !previewTrade?.showStatus}>
+						<PreviewArrow
+							showPreview={previewTradeData.showPreview && !potentialTrade.data?.showStatus}
+						>
 							{formatPercent(previewTradeData?.marginUsage)}
 						</PreviewArrow>
 					),

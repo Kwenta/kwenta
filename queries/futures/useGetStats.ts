@@ -11,6 +11,7 @@ import { FuturesStat } from './types';
 import { getFuturesEndpoint } from './utils';
 
 const PAGE_SIZE = 500;
+const MAX_QUERY_LIMIT = 5000;
 
 const useGetStats = (homepage?: boolean, options?: UseQueryOptions<any>) => {
 	const { network } = Connector.useContainer();
@@ -37,7 +38,7 @@ const useGetStats = (homepage?: boolean, options?: UseQueryOptions<any>) => {
 		);
 		if (response) {
 			const combined = [...existing, ...response.futuresStats];
-			if (response.futuresStats?.length === PAGE_SIZE) {
+			if (response.futuresStats?.length === PAGE_SIZE && skip + PAGE_SIZE < MAX_QUERY_LIMIT) {
 				return query(combined, skip + PAGE_SIZE);
 			}
 			return combined;

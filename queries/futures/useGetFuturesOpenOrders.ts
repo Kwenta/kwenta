@@ -24,6 +24,10 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 	return useQuery<any[]>(
 		QUERY_KEYS.Futures.OpenOrders(network?.id as NetworkId, selectedFuturesAddress),
 		async () => {
+			if (!selectedFuturesAddress) {
+				setOpenOrders([]);
+				return [];
+			}
 			try {
 				const marketAddress = marketInfo?.market;
 				const response = await request(
