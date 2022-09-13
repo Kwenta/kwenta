@@ -1,16 +1,16 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import { ContractsMap } from '@synthetixio/contracts-interface/build/node/src/types';
+import { ContractsMap, NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { utils } from 'ethers';
+import { chain } from 'wagmi';
 
 import { ETH_UNIT } from 'constants/network';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
-import { Network } from 'store/wallet';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { formatDollars, zeroBN } from 'utils/formatters/number';
 import { FuturesMarketAsset } from 'utils/futures';
 
-import { FUTURES_ENDPOINT_MAINNET, FUTURES_ENDPOINT_TESTNET, SECONDS_PER_DAY } from './constants';
+import { SECONDS_PER_DAY, FUTURES_ENDPOINTS } from './constants';
 import { FuturesMarginTransferResult, FuturesTradeResult } from './subgraph';
 import {
 	FuturesPosition,
@@ -26,12 +26,8 @@ import {
 	MarginTransfer,
 } from './types';
 
-export const getFuturesEndpoint = (network: Network): string => {
-	return network && network.id === 10
-		? FUTURES_ENDPOINT_MAINNET
-		: network.id === 69
-		? FUTURES_ENDPOINT_TESTNET
-		: FUTURES_ENDPOINT_MAINNET;
+export const getFuturesEndpoint = (networkId: NetworkId): string => {
+	return FUTURES_ENDPOINTS[networkId] || FUTURES_ENDPOINTS[chain.optimism.id];
 };
 
 export const getFuturesMarketContract = (asset: string | null, contracts: ContractsMap) => {
@@ -279,9 +275,7 @@ export const mapMarginTransfers = (
 			const sizeWei = new Wei(size);
 			const cleanSize = sizeWei.div(ETH_UNIT).abs();
 			const isPositive = sizeWei.gt(0);
-			const amount = `${isPositive ? '+' : '-'}${formatCurrency('sUSD', cleanSize, {
-				sign: '$',
-			})}`;
+			const amount = `${isPositive ? '+' : '-'}${formatDollars(cleanSize)}`;
 			const numTimestamp = wei(timestamp).toNumber();
 
 			return {

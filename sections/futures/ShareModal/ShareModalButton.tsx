@@ -44,13 +44,7 @@ const ShareModalButton = () => {
 	return (
 		<>
 			<ButtonContainer>
-				<Button
-					variant="primary"
-					isRounded
-					onClick={handleDownloadImage}
-					size="sm"
-					disabled={false}
-				>
+				<Button variant="primary" onClick={handleDownloadImage} size="sm" disabled={false}>
 					{t('futures.modals.share.buttons.download')}
 				</Button>
 			</ButtonContainer>

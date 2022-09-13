@@ -1,12 +1,13 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
-import { appReadyState } from 'store/app';
-import { futuresAccountState } from 'store/futures';
-import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
+import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
+import { futuresAccountTypeState } from 'store/futures';
 import logError from 'utils/logError';
 
 import { FuturesAccountType, getFuturesTrades } from './subgraph';
@@ -18,16 +19,14 @@ const useGetFuturesTradesForAccount = (
 	account?: string | null,
 	options?: UseQueryOptions<FuturesTrade[] | null> & { forceAccount: boolean }
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isL2 = useRecoilValue(isL2State);
-	const { selectedAccountType } = useRecoilValue(futuresAccountState);
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
+	const { network, isWalletConnected } = Connector.useContainer();
+	const isL2 = useIsL2();
+	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
 	return useQuery<FuturesTrade[] | null>(
 		QUERY_KEYS.Futures.TradesAccount(
-			network.id,
+			network?.id as NetworkId,
 			currencyKey || null,
 			account || null,
 			selectedAccountType
@@ -72,7 +71,7 @@ const useGetFuturesTradesForAccount = (
 				return null;
 			}
 		},
-		{ enabled: isWalletConnected ? isL2 && isAppReady && !!account : isAppReady, ...options }
+		{ enabled: isWalletConnected || (isL2 && !!account), ...options }
 	);
 };
 

@@ -11,6 +11,7 @@ import DiscordLogo from 'assets/svg/social/discord.svg';
 import MirrorLogo from 'assets/svg/social/mirror.svg';
 import Button from 'components/Button';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
 import { FlexDivRow, FlexDivRowCentered, GridDivCenteredCol } from 'styles/common';
@@ -123,7 +124,7 @@ const Header: FC = () => {
 						))}
 					</Links>
 					<MenuContainer>
-						<Link href={ROUTES.Markets.Home}>
+						<Link href={ROUTES.Markets.Home(DEFAULT_FUTURES_MARGIN_TYPE)}>
 							<Button noOutline size="sm">
 								{t('homepage.nav.start-trade')}
 							</Button>

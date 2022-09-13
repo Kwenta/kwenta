@@ -12,19 +12,26 @@ import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
-import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { PositionHistory } from 'queries/futures/types';
-import { currentMarketState, futuresMarketsState, positionsState } from 'store/futures';
-import { isL2State } from 'store/wallet';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
+import {
+	currentMarketState,
+	futuresAccountTypeState,
+	futuresMarketsState,
+	positionsState,
+} from 'store/futures';
 import { formatNumber } from 'utils/formatters/number';
 import {
 	FuturesMarketAsset,
 	getSynthDescription,
-	isEurForex,
+	isDecimalFour,
 	MarketKeyByAsset,
 } from 'utils/futures';
 
@@ -44,10 +51,14 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	const router = useRouter();
 	const { switchToL2 } = useNetworkSwitcher();
 
-	const isL2 = useRecoilValue(isL2State);
+	const isL2 = useIsL2();
+
+	useGetFuturesMarkets();
+	useGetFuturesPositionForMarkets();
 	const futuresPositions = useRecoilValue(positionsState);
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 	const currentMarket = useRecoilValue(currentMarketState);
+	const accountType = useRecoilValue(futuresAccountTypeState);
 
 	let data = useMemo(() => {
 		const activePositions = futuresPositions?.filter((position) => position?.position) ?? [];
@@ -100,7 +111,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					<Table
 						data={data}
 						showPagination
-						onTableRowClick={(row) => router.push(`/market/?asset=${row.original.asset}`)}
+						onTableRowClick={(row) =>
+							router.push(ROUTES.Markets.MarketPair(row.original.asset, accountType))
+						}
 						noResultsMessage={
 							!isL2 ? (
 								<TableNoResults>
@@ -112,7 +125,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									{!showCurrentMarket ? (
 										t('dashboard.overview.futures-positions-table.no-result')
 									) : (
-										<Link href={ROUTES.Markets.Home}>
+										<Link href={ROUTES.Markets.Home(accountType)}>
 											<div>{t('common.perp-cta')}</div>
 										</Link>
 									)}
@@ -232,8 +245,8 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'avgEntryPrice',
 								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = isEurForex(cellProps.row.original.asset)
-										? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
+									const formatOptions = isDecimalFour(cellProps.row.original.asset)
+										? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
 										: {};
 									return cellProps.row.original.avgEntryPrice === undefined ? (
 										<DefaultCell>{NO_VALUE}</DefaultCell>
@@ -257,8 +270,8 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'liquidationPrice',
 								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = isEurForex(cellProps.row.original.asset)
-										? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
+									const formatOptions = isDecimalFour(cellProps.row.original.asset)
+										? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
 										: {};
 									return (
 										<Currency.Price
@@ -287,7 +300,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				<div style={{ margin: '0 15px' }}>
 					{data.length === 0 ? (
 						<NoPositionsText>
-							<Link href={ROUTES.Markets.Home}>
+							<Link href={ROUTES.Markets.Home(accountType)}>
 								<div>{t('common.perp-cta')}</div>
 							</Link>
 						</NoPositionsText>
@@ -331,7 +344,7 @@ const StyledValue = styled.div`
 `;
 
 const DefaultCell = styled.p`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const TableContainer = styled.div``;
@@ -346,7 +359,7 @@ const StyledText = styled.div`
 	grid-column: 2;
 	grid-row: 1;
 	margin-bottom: -4px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-family: ${(props) => props.theme.fonts.bold};
 `;
 

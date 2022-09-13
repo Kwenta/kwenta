@@ -14,13 +14,12 @@ import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import Table from 'components/Table';
 import { CurrencyKey } from 'constants/currency';
-import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import { Price, Rates } from 'queries/rates/types';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
 import { pastRatesState } from 'store/futures';
-import { networkState } from 'store/wallet';
-import { isEurForex, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
+import { isDecimalFour, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
 type SpotMarketsTableProps = {
 	exchangeRates: Rates | null;
@@ -29,10 +28,9 @@ type SpotMarketsTableProps = {
 const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const network = useRecoilValue(networkState);
 	const pastRates = useRecoilValue(pastRatesState);
 
-	const { synthsMap } = Connector.useContainer();
+	const { network, synthsMap } = Connector.useContainer();
 
 	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
 
@@ -127,8 +125,8 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 						Header: <TableHeader>{t('dashboard.overview.spot-markets-table.price')}</TableHeader>,
 						accessor: 'price',
 						Cell: (cellProps: CellProps<any>) => {
-							const formatOptions = isEurForex(cellProps.row.original.asset)
-								? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
+							const formatOptions = isDecimalFour(cellProps.row.original.asset)
+								? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
 								: {};
 							return (
 								<Currency.Price
@@ -248,7 +246,7 @@ const StyledText = styled.div`
 	margin-bottom: -4px;
 	grid-column: 2;
 	grid-row: 1;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-family: ${(props) => props.theme.fonts.bold};
 `;
 

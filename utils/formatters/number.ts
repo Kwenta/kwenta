@@ -100,12 +100,16 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 		formattedValue.push(prefix);
 	}
 
-	const weiAsStringWithDecimals = truncation
+	let weiAsStringWithDecimals = truncation
 		? weiValue
 				.abs()
 				.div(truncation.divisor)
 				.toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS)
 		: weiValue.abs().toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS);
+
+	if (options?.maxDecimals || options?.maxDecimals === 0) {
+		weiAsStringWithDecimals = wei(weiAsStringWithDecimals).toString(options.maxDecimals);
+	}
 
 	const withCommas = commifyAndPadDecimals(
 		weiAsStringWithDecimals,
@@ -150,6 +154,9 @@ export const formatCurrency = (
 	isFiatCurrency(currencyKey as CurrencyKey)
 		? formatFiatCurrency(value, options)
 		: formatCryptoCurrency(value, options);
+
+export const formatDollars = (value: WeiSource, options?: FormatCurrencyOptions) =>
+	formatCurrency('sUSD', value, { sign: '$', ...options });
 
 export const formatPercent = (value: WeiSource, options?: { minDecimals: number }) => {
 	const decimals = options?.minDecimals ?? 2;
@@ -197,4 +204,18 @@ export const multiplyDecimal = (x: BigNumber, y: BigNumber) => {
 
 export const weiFromWei = (weiAmount: WeiSource) => {
 	return wei(weiAmount, 18, true);
+};
+
+export const suggestedDecimals = (value: WeiSource) => {
+	value = wei(value).toNumber();
+	if (value >= 10000) return 0;
+	if (value >= 1) return 2;
+	if (value >= 0.01) return 3;
+	if (value >= 0.001) return 4;
+	return 5;
+};
+
+export const floorNumber = (num: WeiSource, decimals?: number) => {
+	const precision = 10 ** (decimals ?? suggestedDecimals(num));
+	return Math.floor(Number(num) * precision) / precision;
 };

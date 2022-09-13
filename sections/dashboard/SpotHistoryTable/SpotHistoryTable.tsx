@@ -1,11 +1,10 @@
-import type { SynthExchangeResult } from '@synthetixio/queries/build/node/generated/mainSubgraphQueries';
+import { SynthExchangeResult } from '@synthetixio/queries';
 import * as _ from 'lodash/fp';
 import values from 'lodash/values';
 import Link from 'next/link';
 import { FC, useMemo, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import LinkIcon from 'assets/svg/app/link.svg';
@@ -18,9 +17,7 @@ import BlockExplorer from 'containers/BlockExplorer';
 import Connector from 'containers/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetWalletTrades from 'queries/synths/useGetWalletTrades';
-import { walletAddressState } from 'store/wallet';
 import { ExternalLink } from 'styles/common';
-import { isFiatCurrency } from 'utils/currencies';
 
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
 
@@ -34,12 +31,10 @@ type WalletTradesExchangeResult = Omit<SynthTradesExchangeResult, 'timestamp'> &
 
 const SpotHistoryTable: FC = () => {
 	const { t } = useTranslation();
-	const walletAddress = useRecoilValue(walletAddressState);
-
+	const { network, walletAddress, synthsMap } = Connector.useContainer();
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const walletTradesQuery = useGetWalletTrades(walletAddress!);
-	const { synthsMap } = Connector.useContainer();
 
 	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
 	const trades = useMemo(() => {
@@ -174,17 +169,10 @@ const SpotHistoryTable: FC = () => {
 									price={cellProps.row.original.toAmountInUSD}
 									sign={selectedPriceCurrency.sign}
 									conversionRate={selectPriceCurrencyRate}
-									formatOptions={
-										isFiatCurrency(currencyKey)
-											? {
-													currencyKey: undefined,
-													sign: selectedPriceCurrency.sign,
-											  }
-											: {
-													currencyKey: selectedPriceCurrency.sign,
-													sign: undefined,
-											  }
-									}
+									formatOptions={{
+										currencyKey: undefined,
+										sign: selectedPriceCurrency.sign,
+									}}
 								/>
 							);
 						},
@@ -193,9 +181,9 @@ const SpotHistoryTable: FC = () => {
 					{
 						id: 'link',
 						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) =>
-							blockExplorerInstance != null && cellProps.row.original.hash ? (
+							network != null && cellProps.row.original.hash ? (
 								<StyledExternalLink
-									href={blockExplorerInstance.txLink(cellProps.row.original.hash)}
+									href={`${blockExplorerInstance?.txLink(cellProps.row.original.hash)}`}
 								>
 									<StyledLinkIcon />
 								</StyledExternalLink>

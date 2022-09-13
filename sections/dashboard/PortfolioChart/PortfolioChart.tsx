@@ -1,19 +1,18 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { FC } from 'react';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import Connector from 'containers/Connector';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
-import { walletAddressState } from 'store/wallet';
 import { zeroBN } from 'utils/formatters/number';
 
 const PortfolioChart: FC = () => {
 	const portfolioValueQuery = useGetCurrentPortfolioValue();
 	const portfolioValue = portfolioValueQuery?.data ?? null;
+	const { walletAddress } = Connector.useContainer();
 
-	const walletAddress = useRecoilValue(walletAddressState);
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const synthBalances = synthsBalancesQuery.data ?? null;
@@ -52,7 +51,7 @@ const PortfolioTitle = styled.p`
 	margin-bottom: 10px;
 `;
 const PortfolioText = styled(Currency.Price)`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-family: ${(props) => props.theme.fonts.monoBold};
 	letter-spacing: -1.2px;
 	font-size: 27px;

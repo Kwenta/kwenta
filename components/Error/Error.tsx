@@ -2,6 +2,7 @@ import React, { FC, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { formatRevert, isUserDeniedError } from 'utils/formatters/error';
+import { truncateString } from 'utils/formatters/string';
 
 type ErrorProps = {
 	message: string;
@@ -20,7 +21,7 @@ export const Error: FC<ErrorProps> = ({ message, formatter }) => {
 
 	if (isUserDeniedError(message) || !message) return null;
 
-	return <ErrorContainer>{formattedMessage}</ErrorContainer>;
+	return <ErrorContainer>{truncateString(formattedMessage)}</ErrorContainer>;
 };
 
 const ErrorContainer = styled.div`

@@ -17,7 +17,7 @@ import Connector from 'containers/Connector';
 import { Price } from 'queries/rates/types';
 import { pastRatesState } from 'store/futures';
 import { formatNumber, zeroBN } from 'utils/formatters/number';
-import { isEurForex } from 'utils/futures';
+import { isDecimalFour } from 'utils/futures';
 
 type SynthBalancesTableProps = {
 	exchangeRates: Rates | null;
@@ -179,7 +179,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 											sign={'$'}
 											conversionRate={1}
 											formatOptions={{
-												minDecimals: isEurForex(cellProps.row.original.synth) ? 4 : 2,
+												minDecimals: isDecimalFour(cellProps.row.original.synth) ? 4 : 2,
 											}}
 										/>
 									);
@@ -258,7 +258,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 												price={cellProps.row.original.price ?? 0}
 												sign="$"
 												formatOptions={{
-													minDecimals: isEurForex(cellProps.row.original.synth) ? 4 : 2,
+													minDecimals: isDecimalFour(cellProps.row.original.synth) ? 4 : 2,
 												}}
 											/>
 										</MarketContainer>
@@ -342,7 +342,7 @@ const StyledValue = styled.div`
 `;
 
 const DefaultCell = styled.p`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const TableContainer = styled.div``;
@@ -355,7 +355,7 @@ const StyledText = styled.div`
 	grid-column: 2;
 	grid-row: 1;
 	margin-bottom: -4px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
@@ -368,7 +368,7 @@ const MarketContainer = styled.div`
 
 const AmountCol = styled.div`
 	justify-self: flex-end;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const StyledMobileTable = styled(Table)`

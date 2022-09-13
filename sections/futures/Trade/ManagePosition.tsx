@@ -11,7 +11,6 @@ import {
 	confirmationModalOpenState,
 	isMarketCapReachedState,
 	leverageSideState,
-	leverageState,
 	marketInfoState,
 	maxLeverageState,
 	orderTypeState,
@@ -19,13 +18,17 @@ import {
 	positionState,
 	potentialTradeDetailsState,
 	sizeDeltaState,
-	tradeSizeState,
+	futuresTradeInputsState,
+	futuresAccountTypeState,
+	crossMarginMarginDeltaState,
 } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 
-import ClosePositionModal from '../PositionCard/ClosePositionModal';
+import ClosePositionModalCrossMargin from '../PositionCard/ClosePositionModalCrossMargin';
+import ClosePositionModalIsolatedMargin from '../PositionCard/ClosePositionModalIsolatedMargin';
 import NextPriceConfirmationModal from './NextPriceConfirmationModal';
-import TradeConfirmationModal from './TradeConfirmationModal';
+import TradeConfirmationModalCrossMargin from './TradeConfirmationModalCrossMargin';
+import TradeConfirmationModalIsolatedMargin from './TradeConfirmationModalIsolatedMargin';
 
 type OrderTxnError = {
 	reason: string;
@@ -33,16 +36,16 @@ type OrderTxnError = {
 
 const ManagePosition: React.FC = () => {
 	const { t } = useTranslation();
-	const leverage = useRecoilValue(leverageState);
 	const sizeDelta = useRecoilValue(sizeDeltaState);
+	const marginDelta = useRecoilValue(crossMarginMarginDeltaState);
 	const position = useRecoilValue(positionState);
 	const maxLeverageValue = useRecoilValue(maxLeverageState);
 	const marketInfo = useRecoilValue(marketInfoState);
-	const previewTrade = useRecoilValue(potentialTradeDetailsState);
-	const positionDetails = position?.position;
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
+	const { data: previewTrade, error: previewError } = useRecoilValue(potentialTradeDetailsState);
 	const orderType = useRecoilValue(orderTypeState);
 	const setLeverageSide = useSetRecoilState(leverageSideState);
-	const setTradeSize = useSetRecoilState(tradeSizeState);
+	const { leverage } = useRecoilValue(futuresTradeInputsState);
 	const [isCancelModalOpen, setCancelModalOpen] = React.useState(false);
 	const [isConfirmationModalOpen, setConfirmationModalOpen] = useRecoilState(
 		confirmationModalOpenState
@@ -51,13 +54,29 @@ const ManagePosition: React.FC = () => {
 	const isMarketCapReached = useRecoilValue(isMarketCapReachedState);
 	const placeOrderTranslationKey = useRecoilValue(placeOrderTranslationKeyState);
 
+	const positionDetails = position?.position;
+
 	const orderError = useMemo(() => {
+		if (previewError) return t('futures.market.trade.preview.error');
 		const orderTxnError = orderTxn.error as OrderTxnError;
-		if (orderTxnError) return orderTxnError.reason;
+		if (orderTxnError?.reason) return orderTxnError.reason;
 		if (error) return error;
 		if (previewTrade?.showStatus) return previewTrade?.statusMessage;
 		return null;
-	}, [orderTxn.error, error, previewTrade?.showStatus, previewTrade?.statusMessage]);
+	}, [
+		orderTxn.error,
+		error,
+		previewTrade?.showStatus,
+		previewTrade?.statusMessage,
+		previewError,
+		t,
+	]);
+
+	const leverageValid = useMemo(() => {
+		if (selectedAccountType === 'cross_margin') return true;
+		const leverageNum = Number(leverage || 0);
+		return leverageNum > 0 && leverageNum < maxLeverageValue.toNumber();
+	}, [leverage, selectedAccountType, maxLeverageValue]);
 
 	return (
 		<>
@@ -72,10 +91,11 @@ const ManagePosition: React.FC = () => {
 						noOutline
 						fullWidth
 						disabled={
-							!leverage ||
-							Number(leverage) < 0 ||
-							Number(leverage) > maxLeverageValue.toNumber() ||
-							sizeDelta.eq(zeroBN) ||
+							!leverageValid ||
+							(selectedAccountType === 'isolated_margin' && sizeDelta.eq(zeroBN)) ||
+							(selectedAccountType === 'cross_margin' &&
+								marginDelta.eq(zeroBN) &&
+								sizeDelta.eq(zeroBN)) ||
 							!!error ||
 							placeOrderTranslationKey === 'futures.market.trade.button.deposit-margin-minimum' ||
 							marketInfo?.isSuspended ||
@@ -99,7 +119,6 @@ const ManagePosition: React.FC = () => {
 										? PositionSide.SHORT
 										: PositionSide.LONG;
 								setLeverageSide(newLeverageSide);
-								setTradeSize(newTradeSize.toString());
 								onTradeAmountChange(newTradeSize.toString(), true);
 								setConfirmationModalOpen(true);
 							} else {
@@ -117,9 +136,20 @@ const ManagePosition: React.FC = () => {
 				<Error message={orderError} formatter={orderTxn.error ? 'revert' : undefined} />
 			)}
 
-			{isCancelModalOpen && <ClosePositionModal onDismiss={() => setCancelModalOpen(false)} />}
+			{isCancelModalOpen &&
+				(selectedAccountType === 'cross_margin' ? (
+					<ClosePositionModalCrossMargin onDismiss={() => setCancelModalOpen(false)} />
+				) : (
+					<ClosePositionModalIsolatedMargin onDismiss={() => setCancelModalOpen(false)} />
+				))}
 
-			{isConfirmationModalOpen && orderType === 0 && <TradeConfirmationModal />}
+			{isConfirmationModalOpen &&
+				orderType === 0 &&
+				(selectedAccountType === 'cross_margin' ? (
+					<TradeConfirmationModalCrossMargin />
+				) : (
+					<TradeConfirmationModalIsolatedMargin />
+				))}
 
 			{isConfirmationModalOpen && orderType === 1 && <NextPriceConfirmationModal />}
 		</>
@@ -163,10 +193,9 @@ const CloseOrderButton = styled(Button)`
 `;
 
 const ManageOrderTitle = styled.p`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 13px;
 	margin-bottom: 8px;
-	margin-left: 14px;
 
 	span {
 		color: ${(props) => props.theme.colors.selectedTheme.gray};

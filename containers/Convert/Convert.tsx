@@ -6,7 +6,6 @@ import { ethers } from 'ethers';
 import { formatBytes32String, formatEther, parseEther } from 'ethers/lib/utils';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import { createContainer } from 'unstated-next';
 
 import { KWENTA_REFERRAL_ADDRESS, SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
@@ -15,7 +14,6 @@ import Connector from 'containers/Connector';
 import use1InchApiUrl from 'hooks/use1InchApiUrl';
 import erc20Abi from 'lib/abis/ERC20.json';
 import synthSwapAbi from 'lib/abis/SynthSwap.json';
-import { walletAddressState } from 'store/wallet';
 
 type Token = {
 	symbol: CurrencyKey;
@@ -47,9 +45,17 @@ type OneInchApproveSpenderResponse = {
 	address: string;
 };
 
+const protocols =
+	'OPTIMISM_UNISWAP_V3, OPTIMISM_SYNTHETIX, OPTIMISM_SYNTHETIX_WRAPPER, OPTIMISM_ONE_INCH_LIMIT_ORDER, OPTIMISM_ONE_INCH_LIMIT_ORDER_V2, OPTIMISM_CURVE, OPTIMISM_BALANCER_V2, OPTIMISM_VELODROME, OPTIMISM_KYBERSWAP_ELASTIC';
+
 const useConvert = () => {
-	const { signer, network, tokensMap, synthetixjs } = Connector.useContainer();
-	const walletAddress = useRecoilValue(walletAddressState);
+	const {
+		tokensMap,
+		defaultSynthetixjs: synthetixjs,
+		network,
+		signer,
+		walletAddress,
+	} = Connector.useContainer();
 	const oneInchApiUrl = use1InchApiUrl();
 	const { t } = useTranslation();
 
@@ -68,6 +74,7 @@ const useConvert = () => {
 				amount: params.amount,
 				fromAddress: walletAddress,
 				slippage,
+				protocols,
 				referrerAddress: KWENTA_REFERRAL_ADDRESS,
 				disableEstimate: true,
 			},
@@ -99,6 +106,7 @@ const useConvert = () => {
 				toTokenAddress: params.toTokenAddress,
 				amount: params.amount,
 				disableEstimate: true,
+				protocols,
 			},
 		});
 		return ethers.utils
@@ -125,7 +133,7 @@ const useConvert = () => {
 		metaOnly?: 'meta_tx' | 'estimate_gas'
 	) => {
 		if (!signer) throw new Error(t('exchange.1inch.wallet-not-connected'));
-		if (network.id !== 10) throw new Error(t('exchange.1inch.unsupported-network'));
+		if (network?.id !== 10) throw new Error(t('exchange.1inch.unsupported-network'));
 
 		const sUsd = tokensMap['sUSD'];
 

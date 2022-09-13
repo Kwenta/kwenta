@@ -1,12 +1,14 @@
-![Kwenta CI](https://github.com/Synthetixio/kwenta/workflows/Kwenta%20CI/badge.svg?branch=master) [![Discord](https://img.shields.io/discord/413890591840272394.svg?color=768AD4&label=discord&logo=https%3A%2F%2Fdiscordapp.com%2Fassets%2F8c9701b98ad4372b58f13fd9f65f966e.svg)](https://discordapp.com/channels/413890591840272394/)
+![Kwenta CI](https://github.com/kwenta/kwenta/workflows/Kwenta%20CI/badge.svg?branch=main) [![Discord](https://img.shields.io/discord/413890591840272394.svg?color=768AD4&label=discord&logo=https%3A%2F%2Fdiscordapp.com%2Fassets%2F8c9701b98ad4372b58f13fd9f65f966e.svg)](https://discordapp.com/channels/413890591840272394/)
 [![Twitter Follow](https://img.shields.io/twitter/follow/kwenta_io.svg?label=kwenta_io&style=social)](https://twitter.com/kwenta_io)
 
 # Kwenta
 
 A dApp enabling derivatives trading with infinite liquidity — powered by the Synthetix protocol.
 
-The trading UI is available on [kwenta.io](https://kwenta.io).<br />
+The decentralized trading UI is available at [kwenta.eth.limo](https://kwenta.eth.limo).<br />
 ENS link: [kwenta.eth](https://app.ens.domains/name/kwenta.eth).
+
+The latest IPFS hash can be found under [releases](https://github.com/Kwenta/kwenta/releases).
 
 ## Tech stack
 
@@ -21,7 +23,7 @@ ENS link: [kwenta.eth](https://app.ens.domains/name/kwenta.eth).
 ## Ethereum stack
 
 - ethers.js v5 - Ethereum wallet implementation.
-- Blocknative Onboard - for ethereum wallet connectivity.
+- [Rainbowkit](https://github.com/rainbow-me/rainbowkit) - for ethereum wallet onboarding.
 - [@synthetixio/contracts-interface](https://github.com/Synthetixio/js-monorepo/tree/master/packages/contracts-interface) - for interactions with the Synthetix protocol.
 - [@synthetixio/queries](https://github.com/Synthetixio/js-monorepo/tree/master/packages/queries) - for historical data (powered by [TheGraph](https://thegraph.com/))
 

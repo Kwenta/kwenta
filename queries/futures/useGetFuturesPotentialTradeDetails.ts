@@ -1,21 +1,18 @@
-import { wei } from '@synthetixio/wei';
-import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import Wei, { wei } from '@synthetixio/wei';
+import { useCallback } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
 import { PotentialTradeStatus, POTENTIAL_TRADE_STATUS_TO_MESSAGE } from 'sections/futures/types';
-import { appReadyState } from 'store/app';
 import {
-	crossMarginAvailableMarginState,
 	currentMarketState,
 	futuresAccountState,
 	leverageSideState,
-	leverageState,
 	potentialTradeDetailsState,
-	tradeSizeState,
+	futuresAccountTypeState,
 } from 'store/futures';
-import { isL2State, networkState } from 'store/wallet';
+import logError from 'utils/logError';
 
 import { FuturesPotentialTradeDetails } from './types';
 import useGetCrossMarginPotentialTrade from './useGetCrossMarginTradePreview';
@@ -24,57 +21,33 @@ import { getFuturesMarketContract } from './utils';
 const SUCCESS = 'Success';
 const UNKNOWN = 'Unknown';
 
-const useGetFuturesPotentialTradeDetails = (
-	options?: UseQueryOptions<FuturesPotentialTradeDetails | null>
-) => {
-	const { selectedFuturesAddress, selectedAccountType } = useRecoilValue(futuresAccountState);
-	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
-	const { synthetixjs } = Connector.useContainer();
+const useGetFuturesPotentialTradeDetails = () => {
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
+	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
+	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
+	const isL2 = useIsL2();
 
-	const tradeSize = useRecoilValue(tradeSizeState);
 	const leverageSide = useRecoilValue(leverageSideState);
-	const leverage = useRecoilValue(leverageState);
 	const marketAsset = useRecoilValue(currentMarketState);
-	const crossMarginFreeMargin = useRecoilValue(crossMarginAvailableMarginState);
-
-	// TODO: This should become variable once cross margin fully implemented
-	const marginDelta = crossMarginFreeMargin;
-
-	const newSize = leverageSide === 'long' ? tradeSize : -tradeSize;
 
 	const getPreview = useGetCrossMarginPotentialTrade(marketAsset, selectedFuturesAddress);
 
-	const [, setPotentialTradeDetails] = useRecoilState(potentialTradeDetailsState);
+	const setPotentialTradeDetails = useSetRecoilState(potentialTradeDetailsState);
 
-	const getStatusMessage = (status: PotentialTradeStatus): string => {
-		if (typeof status !== 'number') {
-			return UNKNOWN;
-		}
-
-		if (status === 0) {
-			return SUCCESS;
-		} else if (PotentialTradeStatus[status]) {
-			return POTENTIAL_TRADE_STATUS_TO_MESSAGE[PotentialTradeStatus[status]];
-		} else {
-			return UNKNOWN;
-		}
-	};
-
-	return useQuery<FuturesPotentialTradeDetails | null>(
-		QUERY_KEYS.Futures.PotentialTrade(
-			network.id,
-			marketAsset || null,
-			tradeSize,
-			selectedFuturesAddress || '',
-			selectedAccountType,
-			marginDelta.toString(),
-			leverageSide
-		),
-		async () => {
-			if (!marketAsset || !tradeSize || !isL2) {
-				setPotentialTradeDetails(null);
+	const generatePreview = useCallback(
+		async (
+			nativeSizeDelta: Wei,
+			positionMarginDelta: Wei,
+			leverage: number
+		): Promise<FuturesPotentialTradeDetails | null> => {
+			if (
+				!synthetixjs ||
+				!marketAsset ||
+				(!nativeSizeDelta && selectedAccountType === 'isolated_margin') ||
+				(!nativeSizeDelta && (!positionMarginDelta || positionMarginDelta.eq(0))) ||
+				!isL2 ||
+				!selectedFuturesAddress
+			) {
 				return null;
 			}
 
@@ -85,17 +58,20 @@ const useGetFuturesPotentialTradeDetails = (
 			const FuturesMarketContract = getFuturesMarketContract(marketAsset, synthetixjs!.contracts);
 
 			const globals = await FuturesMarketData.globals();
-
 			const preview =
 				selectedAccountType === 'cross_margin'
-					? await getPreview(newSize, crossMarginFreeMargin)
+					? await getPreview(nativeSizeDelta, wei(positionMarginDelta).toBN())
 					: await FuturesMarketContract.postTradeDetails(
-							wei(newSize).toBN(),
+							wei(nativeSizeDelta).toBN(),
 							selectedFuturesAddress
 					  );
 
 			if (!preview) {
-				setPotentialTradeDetails(null);
+				return null;
+			}
+
+			if (nativeSizeDelta.eq(0) && positionMarginDelta.eq(0)) {
+				// Size and margin changed to zero before query completed
 				return null;
 			}
 
@@ -108,7 +84,7 @@ const useGetFuturesPotentialTradeDetails = (
 				price: wei(price),
 				size: wei(size),
 				side: leverageSide,
-				leverage: wei(leverage !== '' ? leverage : 1),
+				leverage: wei(leverage ? leverage : 1),
 				notionalValue: wei(size).mul(wei(price)),
 				minInitialMargin: wei(globals.minInitialMargin),
 				status,
@@ -116,15 +92,56 @@ const useGetFuturesPotentialTradeDetails = (
 				statusMessage: getStatusMessage(status),
 			};
 
-			setPotentialTradeDetails(potentialTradeDetails);
-
 			return potentialTradeDetails;
 		},
-		{
-			enabled: isAppReady && isL2 && !!selectedFuturesAddress && !!marketAsset && !!synthetixjs,
-			...options,
-		}
+		[
+			selectedFuturesAddress,
+			marketAsset,
+			selectedAccountType,
+			isL2,
+			leverageSide,
+			synthetixjs,
+			getPreview,
+		]
 	);
+
+	const getTradeDetails = useCallback(
+		async (nativeSize: Wei, positionMarginDelta: Wei, leverage: number) => {
+			try {
+				setPotentialTradeDetails({
+					data: null,
+					status: 'fetching',
+					error: null,
+				});
+				const data = await generatePreview(nativeSize, positionMarginDelta, leverage);
+				setPotentialTradeDetails({ data, status: 'complete', error: null });
+			} catch (err) {
+				logError(err);
+				setPotentialTradeDetails({
+					data: null,
+					status: 'error',
+					error: err.message,
+				});
+			}
+		},
+		[setPotentialTradeDetails, generatePreview]
+	);
+
+	return getTradeDetails;
+};
+
+const getStatusMessage = (status: PotentialTradeStatus): string => {
+	if (typeof status !== 'number') {
+		return UNKNOWN;
+	}
+
+	if (status === 0) {
+		return SUCCESS;
+	} else if (PotentialTradeStatus[status]) {
+		return POTENTIAL_TRADE_STATUS_TO_MESSAGE[PotentialTradeStatus[status]];
+	} else {
+		return UNKNOWN;
+	}
 };
 
 export default useGetFuturesPotentialTradeDetails;

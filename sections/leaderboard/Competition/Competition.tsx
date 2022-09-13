@@ -2,14 +2,13 @@ import { wei } from '@synthetixio/wei';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
+import Connector from 'containers/Connector';
 import useGetFile from 'queries/files/useGetFile';
-import { walletAddressState } from 'store/wallet';
 import { formatPercent } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';
 
@@ -32,7 +31,7 @@ const Competition: FC<CompetitionProps> = ({
 	searchTerm,
 }: CompetitionProps) => {
 	const { t } = useTranslation();
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { walletAddress } = Connector.useContainer();
 	const competitionQuery = useGetFile(COMPETITION_DATA_LOCATION);
 
 	const walletTier = useMemo(() => {
@@ -48,7 +47,7 @@ const Competition: FC<CompetitionProps> = ({
 
 		const cleanCompetitionData: AccountStat[] = competitionData
 			.sort((a: AccountStat, b: AccountStat) => a.rank - b.rank)
-			.map((trader: any, i: number) => {
+			.map((trader: any) => {
 				return {
 					...trader,
 					trader: trader.account,
@@ -278,7 +277,7 @@ const ColorCodedPrice = styled(Currency.Price)`
 			? props.theme.colors.selectedTheme.green
 			: props.price < 0
 			? props.theme.colors.selectedTheme.red
-			: props.theme.colors.selectedTheme.button.text};
+			: props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const StyledValue = styled.div`
@@ -288,13 +287,13 @@ const StyledValue = styled.div`
 			? props.theme.colors.selectedTheme.green
 			: props.color === 'red'
 			? props.theme.colors.selectedTheme.red
-			: props.theme.colors.selectedTheme.button.text};
+			: props.theme.colors.selectedTheme.button.text.primary};
 	margin: 0;
 	text-align: end;
 `;
 
 const StyledOrderType = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	display: flex;
 	align-items: center;
 `;

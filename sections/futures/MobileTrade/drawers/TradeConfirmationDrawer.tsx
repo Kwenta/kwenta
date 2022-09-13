@@ -1,4 +1,3 @@
-import useSynthetixQueries from '@synthetixio/queries';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -8,13 +7,11 @@ import Button from 'components/Button';
 import { CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
 import { useFuturesContext } from 'contexts/FuturesContext';
+import useEstimateGasCost from 'hooks/useEstimateGasCost';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { PositionSide } from 'sections/futures/types';
 import { currentMarketState, potentialTradeDetailsState } from 'store/futures';
-import { gasSpeedState } from 'store/wallet';
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
-import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
-import { getTransactionPrice } from 'utils/network';
+import { zeroBN, formatDollars, formatCurrency, formatNumber } from 'utils/formatters/number';
 
 import BaseDrawer from './BaseDrawer';
 
@@ -26,33 +23,14 @@ type TradeConfirmationDrawerProps = {
 const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({ open, closeDrawer }) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
-	const gasSpeed = useRecoilValue(gasSpeedState);
 	const market = useRecoilValue(currentMarketState);
-	const { useExchangeRatesQuery, useEthGasPriceQuery } = useSynthetixQueries();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const ethGasPriceQuery = useEthGasPriceQuery();
-	const exchangeRatesQuery = useExchangeRatesQuery();
-	const potentialTradeDetails = useRecoilValue(potentialTradeDetailsState);
+	const { data: potentialTradeDetails } = useRecoilValue(potentialTradeDetailsState);
+	const { estimateSnxTxGasCost } = useEstimateGasCost();
 
 	const { orderTxn } = useFuturesContext();
 
-	const exchangeRates = useMemo(
-		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
-		[exchangeRatesQuery.isSuccess, exchangeRatesQuery.data]
-	);
-
-	const ethPriceRate = useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', selectedPriceCurrency.name),
-		[exchangeRates, selectedPriceCurrency.name]
-	);
-
-	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
-
-	const transactionFee = useMemo(
-		() =>
-			getTransactionPrice(gasPrice, orderTxn.gasLimit, ethPriceRate, orderTxn.optimismLayerOneFee),
-		[gasPrice, orderTxn.gasLimit, ethPriceRate, orderTxn.optimismLayerOneFee]
-	);
+	const transactionFee = estimateSnxTxGasCost(orderTxn);
 
 	const positionDetails = useMemo(() => {
 		return potentialTradeDetails
@@ -82,21 +60,19 @@ const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({ open,
 			{ label: 'leverage', value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x` },
 			{
 				label: 'current price',
-				value: formatCurrency('sUSD', positionDetails?.price ?? zeroBN, { sign: '$' }),
+				value: formatDollars(positionDetails?.price ?? zeroBN),
 			},
 			{
 				label: 'liquidation price',
-				value: formatCurrency('sUSD', positionDetails?.liqPrice ?? zeroBN, {
-					sign: '$',
-				}),
+				value: formatDollars(positionDetails?.liqPrice ?? zeroBN),
 			},
 			{
 				label: 'margin',
-				value: formatCurrency('sUSD', positionDetails?.margin ?? zeroBN, { sign: '$' }),
+				value: formatDollars(positionDetails?.margin ?? zeroBN),
 			},
 			{
 				label: 'protocol fee',
-				value: formatCurrency('sUSD', positionDetails?.fee ?? zeroBN, { sign: '$' }),
+				value: formatDollars(positionDetails?.fee ?? zeroBN),
 			},
 			{
 				label: 'network gas fee',
@@ -117,7 +93,6 @@ const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({ open,
 			buttons={
 				<ConfirmTradeButton
 					variant="primary"
-					isRounded
 					onClick={() => {
 						orderTxn.mutate();
 						closeDrawer();

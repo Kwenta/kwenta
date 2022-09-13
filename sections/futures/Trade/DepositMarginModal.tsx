@@ -1,6 +1,6 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -12,14 +12,12 @@ import CustomInput from 'components/Input/CustomInput';
 import { NO_VALUE } from 'constants/placeholder';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useEstimateGasCost from 'hooks/useEstimateGasCost';
 import { currentMarketState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { FlexDivRowCentered } from 'styles/common';
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
-import { formatCurrency } from 'utils/formatters/number';
+import { formatDollars } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
-import { getTransactionPrice } from 'utils/network';
 
 type DepositMarginModalProps = {
 	onDismiss(): void;
@@ -34,25 +32,14 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const market = useRecoilValue(currentMarketState);
-	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
-	const [amount, setAmount] = React.useState('');
-	const [isDisabled, setDisabled] = React.useState(true);
+	const { useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();
+	const { estimateSnxTxGasCost } = useEstimateGasCost();
+
+	const [amount, setAmount] = useState('');
+	const [isDisabled, setDisabled] = useState(true);
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
-	const exchangeRatesQuery = useExchangeRatesQuery();
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { handleRefetch } = useRefetchContext();
-
-	const exchangeRates = React.useMemo(
-		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
-		[exchangeRatesQuery.isSuccess, exchangeRatesQuery.data]
-	);
-
-	const ethPriceRate = React.useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', selectedPriceCurrency.name),
-		[exchangeRates, selectedPriceCurrency.name]
-	);
-
 	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
 
 	const depositTxn = useSynthetixTxn(
@@ -63,16 +50,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 		{ enabled: !!market && !!amount && !isDisabled }
 	);
 
-	const transactionFee = React.useMemo(
-		() =>
-			getTransactionPrice(
-				gasPrice,
-				depositTxn.gasLimit,
-				ethPriceRate,
-				depositTxn.optimismLayerOneFee
-			),
-		[gasPrice, ethPriceRate, depositTxn.gasLimit, depositTxn.optimismLayerOneFee]
-	);
+	const transactionFee = estimateSnxTxGasCost(depositTxn);
 
 	React.useEffect(() => {
 		if (!amount) {
@@ -116,7 +94,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 			<BalanceContainer>
 				<BalanceText $gold>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
 				<BalanceText>
-					<span>{formatCurrency('sUSD', sUSDBalance, { sign: '$' })}</span> sUSD
+					<span>{formatDollars(sUSDBalance)}</span> sUSD
 				</BalanceText>
 			</BalanceContainer>
 			<CustomInput
@@ -146,9 +124,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 				<BalanceText>{t('futures.market.trade.margin.modal.gas-fee')}:</BalanceText>
 				<BalanceText>
 					<span>
-						{transactionFee
-							? formatCurrency('sUSD', transactionFee, { sign: '$', maxDecimals: 1 })
-							: NO_VALUE}
+						{transactionFee ? formatDollars(transactionFee, { maxDecimals: 1 }) : NO_VALUE}
 					</span>
 				</BalanceText>
 			</GasFeeContainer>
@@ -169,7 +145,6 @@ export const StyledBaseModal = styled(BaseModal)`
 
 export const BalanceContainer = styled(FlexDivRowCentered)`
 	margin-bottom: 8px;
-	padding: 0 14px;
 	p {
 		margin: 0;
 	}
@@ -179,12 +154,11 @@ export const BalanceText = styled.p<{ $gold?: boolean }>`
 	color: ${(props) =>
 		props.$gold ? props.theme.colors.common.primaryGold : props.theme.colors.selectedTheme.gray};
 	span {
-		color: ${(props) => props.theme.colors.selectedTheme.button.text};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
 `;
 
 export const MarginActionButton = styled(Button)`
-	margin-top: 16px;
 	height: 55px;
 `;
 
@@ -197,14 +171,14 @@ export const MaxButton = styled.button`
 	font-size: 13px;
 	line-height: 13px;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	cursor: pointer;
 `;
 
 const MinimumAmountDisclaimer = styled.div`
 	font-size: 12px;
-	margin-top: 8px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	margin: 20px 0;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	text-align: center;
 `;
 

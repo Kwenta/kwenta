@@ -52,7 +52,7 @@ const CurrencyMeta = styled(FlexDivCentered)<{ $isSelected: boolean }>`
 		props.$isSelected &&
 		css`
 			${StyledCurrencyLabel} {
-				color: ${(props) => props.theme.colors.selectedTheme.button.text};
+				color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 				font-family: ${(props) => props.theme.fonts.bold};
 			}
 		`}
@@ -83,12 +83,12 @@ const OptionDetailsContainer = styled(SingleValueContainer)<{ $isSelected: boole
 
 	&:hover {
 		background-color: rgba(255, 255, 255, 0.05);
-		color: ${(props) => props.theme.colors.selectedTheme.button.text};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 		${StyledCurrencyLabel} {
-			color: ${(props) => props.theme.colors.selectedTheme.button.text};
+			color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 		}
 		.name {
-			color: ${(props) => props.theme.colors.selectedTheme.button.text};
+			color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 		}
 	}
 

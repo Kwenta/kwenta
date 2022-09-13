@@ -144,7 +144,7 @@ export const PriceChart = ({ asset }: PriceChartProps) => {
 
 const Assets = () => {
 	const { t } = useTranslation();
-	const { synthsMap } = Connector.useContainer();
+	const { l2SynthsMap } = Connector.useContainer();
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
@@ -179,7 +179,7 @@ const Assets = () => {
 
 	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
 
-	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
+	const synths = useMemo(() => values(l2SynthsMap) || [], [l2SynthsMap]);
 	const queryCache = useQueryClient().getQueryCache();
 	// KM-NOTE: come back and delete
 	const frozenSynthsQuery = queryCache.find(['synths', 'frozenSynths', 10]);
@@ -198,8 +198,8 @@ const Assets = () => {
 		const futuresVolume = futuresVolumeQuery?.data ?? {};
 
 		return (
-			futuresMarkets?.map((market, i) => {
-				const description = getSynthDescription(market.asset, synthsMap, t);
+			futuresMarkets?.map((market) => {
+				const description = getSynthDescription(market.asset, l2SynthsMap, t);
 				const volume = futuresVolume[market.assetHex];
 				const pastPrice = pastRates.find(
 					(price: Price) => price.synth === market.asset || price.synth === market.asset.slice(1)
@@ -220,7 +220,7 @@ const Assets = () => {
 			}) ?? []
 		);
 		// eslint-disable-next-line
-	}, [futuresMarkets, synthsMap, pastRates, futuresVolumeQuery?.data, t]);
+	}, [futuresMarkets, l2SynthsMap, pastRates, futuresVolumeQuery?.data, t]);
 
 	const SPOTS = useMemo(() => {
 		const synthVolumes = synthVolumesQuery?.data ?? {};
@@ -241,7 +241,7 @@ const Assets = () => {
 			return {
 				key: synth.asset,
 				market: synth.name,
-				description: description.split(' ')[1],
+				description: description.slice(10),
 				price,
 				change: price !== 0 ? (price - (pastPrice?.price ?? 0)) / price || 0 : 0,
 				volume: !isNil(synthVolumes[synth.name]) ? Number(synthVolumes[synth.name]) ?? 0 : 0,
@@ -251,7 +251,7 @@ const Assets = () => {
 				),
 			};
 		});
-	}, [unfrozenSynths, synthVolumesQuery, pastRates, exchangeRates, t]);
+	}, [synthVolumesQuery?.data, unfrozenSynths, t, exchangeRates, pastRates]);
 
 	const title = (
 		<>
@@ -724,7 +724,7 @@ const AssetPrice = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
 	align-self: flex-end;
 	font-size: 20px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	width: 120px;
 	padding-left: 5px;
 	text-align: left;

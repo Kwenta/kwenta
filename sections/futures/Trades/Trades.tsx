@@ -7,11 +7,13 @@ import styled, { css } from 'styled-components';
 import LinkIcon from 'assets/svg/app/link-blue.svg';
 import Card from 'components/Card';
 import Table, { TableNoResults } from 'components/Table';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { ETH_UNIT } from 'constants/network';
 import BlockExplorer from 'containers/BlockExplorer';
 import { FuturesTrade } from 'queries/futures/types';
 import { ExternalLink, GridDivCenteredRow } from 'styles/common';
-import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
+import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
+import { isDecimalFour } from 'utils/futures';
 
 import { PositionSide, TradeStatus } from '../types';
 import TimeDisplay from './TimeDisplay';
@@ -49,7 +51,6 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 	return (
 		<Card>
 			<StyledTable
-				palette="primary"
 				columns={[
 					{
 						Header: (
@@ -84,13 +85,12 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						),
 						accessor: 'value',
 						sortType: 'basic',
-						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<>
-								{formatCurrency('sUSD', cellProps.value, {
-									sign: '$',
-								})}
-							</>
-						),
+						Cell: (cellProps: CellProps<FuturesTrade>) => {
+							const formatOptions = isDecimalFour(cellProps.row.original.asset)
+								? { sign: '$', minDecimals: DEFAULT_CRYPTO_DECIMALS }
+								: { sign: '$' };
+							return <>{formatDollars(cellProps.value, formatOptions)}</>;
+						},
 						width: 80,
 						sortable: true,
 					},
@@ -118,11 +118,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 							cellProps.row.original.pnl.eq(wei(0)) ? (
 								<PNL normal>--</PNL>
 							) : (
-								<PNL negative={cellProps.value.lt(wei(0))}>
-									{formatCurrency('sUSD', cellProps.value, {
-										sign: '$',
-									})}
-								</PNL>
+								<PNL negative={cellProps.value.lt(wei(0))}>{formatDollars(cellProps.value)}</PNL>
 							),
 						width: 80,
 						sortable: true,
@@ -134,13 +130,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						sortType: 'basic',
 						accessor: 'feesPaid',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<>
-								{cellProps.value.eq(0)
-									? '--'
-									: formatCurrency('sUSD', cellProps.value, {
-											sign: '$',
-									  })}
-							</>
+							<>{cellProps.value.eq(0) ? '--' : formatDollars(cellProps.value)}</>
 						),
 						width: 80,
 						sortable: true,
@@ -208,7 +198,7 @@ const StyledPositionSide = styled.div<{ side: PositionSide }>`
 const PNL = styled.div<{ negative?: boolean; normal?: boolean }>`
 	color: ${(props) =>
 		props.normal
-			? props.theme.colors.selectedTheme.button.text
+			? props.theme.colors.selectedTheme.button.text.primary
 			: props.negative
 			? props.theme.colors.selectedTheme.red
 			: props.theme.colors.selectedTheme.green};
@@ -219,7 +209,7 @@ const StyledExternalLink = styled(ExternalLink)`
 	&:hover {
 		svg {
 			path {
-				fill: ${(props) => props.theme.colors.selectedTheme.button.text};
+				fill: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 			}
 		}
 	}

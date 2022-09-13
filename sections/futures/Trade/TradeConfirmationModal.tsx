@@ -1,75 +1,44 @@
-import useSynthetixQueries from '@synthetixio/queries';
-import { FC, useMemo } from 'react';
+import Wei, { wei } from '@synthetixio/wei';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
+import ErrorView from 'components/Error';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
-import TransactionNotifier from 'containers/TransactionNotifier';
-import { useFuturesContext } from 'contexts/FuturesContext';
-import { useRefetchContext } from 'contexts/RefetchContext';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import {
-	confirmationModalOpenState,
-	currentMarketState,
-	futuresAccountState,
-	potentialTradeDetailsState,
-} from 'store/futures';
-import { gasSpeedState } from 'store/wallet';
+import { currentMarketState, potentialTradeDetailsState } from 'store/futures';
 import { FlexDivCentered } from 'styles/common';
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
-import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
-import { getTransactionPrice } from 'utils/network';
+import { zeroBN, formatCurrency, formatDollars, formatNumber } from 'utils/formatters/number';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
 import { PositionSide } from '../types';
 
-const TradeConfirmationModal: FC = () => {
+type Props = {
+	gasFee: Wei;
+	tradeFee: Wei;
+	errorMessage?: string | null | undefined;
+	onConfirmOrder: () => any;
+	onDismiss: () => void;
+};
+
+export default function TradeConfirmationModal({
+	tradeFee,
+	gasFee,
+	errorMessage,
+	onConfirmOrder,
+	onDismiss,
+}: Props) {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
-	const { useExchangeRatesQuery, useEthGasPriceQuery } = useSynthetixQueries();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const ethGasPriceQuery = useEthGasPriceQuery();
-	const exchangeRatesQuery = useExchangeRatesQuery();
-	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { handleRefetch } = useRefetchContext();
 
-	const gasSpeed = useRecoilValue(gasSpeedState);
 	const market = useRecoilValue(currentMarketState);
-	const potentialTradeDetails = useRecoilValue(potentialTradeDetailsState);
-	const { selectedAccountType } = useRecoilValue(futuresAccountState);
-
-	const {
-		orderTxn,
-		submitIsolatedMarginOrder,
-		submitCrossMarginOrder,
-		onLeverageChange,
-	} = useFuturesContext();
-
-	const setConfirmationModalOpen = useSetRecoilState(confirmationModalOpenState);
-
-	const exchangeRates = useMemo(
-		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
-		[exchangeRatesQuery.isSuccess, exchangeRatesQuery.data]
-	);
-
-	const ethPriceRate = useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', selectedPriceCurrency.name),
-		[exchangeRates, selectedPriceCurrency.name]
-	);
-
-	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
-
-	// TODO: Get tx fee for cross margin order
-	const transactionFee = useMemo(
-		() =>
-			getTransactionPrice(gasPrice, orderTxn.gasLimit, ethPriceRate, orderTxn.optimismLayerOneFee),
-		[gasPrice, orderTxn.gasLimit, ethPriceRate, orderTxn.optimismLayerOneFee]
-	);
+	const { data: potentialTradeDetails } = useRecoilValue(potentialTradeDetailsState);
 
 	const positionDetails = useMemo(() => {
 		return potentialTradeDetails
@@ -99,54 +68,35 @@ const TradeConfirmationModal: FC = () => {
 			{ label: 'leverage', value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x` },
 			{
 				label: 'current price',
-				value: formatCurrency('sUSD', positionDetails?.price ?? zeroBN, { sign: '$' }),
+				value: formatDollars(positionDetails?.price ?? zeroBN),
 			},
 			{
 				label: 'liquidation price',
-				value: formatCurrency('sUSD', positionDetails?.liqPrice ?? zeroBN, {
-					sign: '$',
-				}),
+				value: formatDollars(positionDetails?.liqPrice ?? zeroBN),
 			},
 			{
 				label: 'margin',
-				value: formatCurrency('sUSD', positionDetails?.margin ?? zeroBN, { sign: '$' }),
+				value: formatDollars(positionDetails?.margin ?? zeroBN),
 			},
 			{
 				label: 'protocol fee',
-				value: formatCurrency('sUSD', positionDetails?.fee ?? zeroBN, { sign: '$' }),
+				value: formatDollars(tradeFee),
 			},
 			{
 				label: 'network gas fee',
-				value: formatCurrency(selectedPriceCurrency.name as CurrencyKey, transactionFee ?? zeroBN, {
+				value: formatCurrency(selectedPriceCurrency.name as CurrencyKey, gasFee ?? zeroBN, {
 					sign: '$',
 					minDecimals: 2,
 				}),
 			},
 		],
-		[positionDetails, market, synthsMap, transactionFee, selectedPriceCurrency]
+		[positionDetails, market, synthsMap, gasFee, selectedPriceCurrency, tradeFee]
 	);
 
-	const onDismiss = () => {
-		setConfirmationModalOpen(false);
-	};
-
-	const handleConfirmOrder = async () => {
-		if (selectedAccountType === 'cross_margin') {
-			const tx = await submitCrossMarginOrder();
-			if (tx?.hash) {
-				monitorTransaction({
-					txHash: tx.hash,
-					onTxConfirmed: () => {
-						onLeverageChange('');
-						handleRefetch('modify-position');
-					},
-				});
-			}
-		} else {
-			submitIsolatedMarginOrder();
-		}
-		onDismiss();
-	};
+	const disabledReason = useMemo(() => {
+		if (positionDetails?.margin.lt(wei(50)))
+			return t('futures.market.trade.confirmation.modal.disabled-min-margin');
+	}, [positionDetails?.margin, t]);
 
 	return (
 		<>
@@ -164,13 +114,17 @@ const TradeConfirmationModal: FC = () => {
 					))}
 					<ConfirmTradeButton
 						data-testid="trade-open-position-confirm-order-button"
-						variant="primary"
-						isRounded
-						onClick={handleConfirmOrder}
-						disabled={!positionDetails}
+						variant="flat"
+						onClick={onConfirmOrder}
+						disabled={!positionDetails || !!disabledReason}
 					>
-						{t('futures.market.trade.confirmation.modal.confirm-order')}
+						{disabledReason || t('futures.market.trade.confirmation.modal.confirm-order')}
 					</ConfirmTradeButton>
+					{errorMessage && (
+						<ErrorContainer>
+							<ErrorView message={errorMessage} />
+						</ErrorContainer>
+					)}
 				</StyledBaseModal>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
@@ -181,18 +135,22 @@ const TradeConfirmationModal: FC = () => {
 					buttons={
 						<MobileConfirmTradeButton
 							variant="primary"
-							isRounded
-							onClick={handleConfirmOrder}
-							disabled={!positionDetails}
+							onClick={onConfirmOrder}
+							disabled={!positionDetails || !!disabledReason}
 						>
-							{t('futures.market.trade.confirmation.modal.confirm-order')}
+							{disabledReason || t('futures.market.trade.confirmation.modal.confirm-order')}
 						</MobileConfirmTradeButton>
 					}
 				/>
+				{errorMessage && (
+					<ErrorContainer>
+						<ErrorView message={errorMessage} />
+					</ErrorContainer>
+				)}
 			</MobileOrTabletView>
 		</>
 	);
-};
+}
 
 const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
@@ -216,7 +174,7 @@ const Label = styled.div`
 
 const Value = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 12px;
 	margin-top: 6px;
 `;
@@ -227,6 +185,7 @@ const ConfirmTradeButton = styled(Button)`
 	overflow: hidden;
 	white-space: nowrap;
 	height: 55px;
+	font-size: 15px;
 `;
 
 export const MobileConfirmTradeButton = styled(Button)`
@@ -235,6 +194,9 @@ export const MobileConfirmTradeButton = styled(Button)`
 	white-space: nowrap;
 	height: 45px;
 	width: 100%;
+	font-size: 15px;
 `;
 
-export default TradeConfirmationModal;
+const ErrorContainer = styled.div`
+	margin-top: 20px;
+`;
