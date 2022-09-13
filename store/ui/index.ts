@@ -28,7 +28,7 @@ export const isCompetitionActive = atom<boolean>({
 	default: process.env.NEXT_PUBLIC_COMPETITION_ACTIVE === 'true',
 });
 
-export const activeMarketsTabState = atom<MarketsTab>({
-	key: getUIKey('activeMarketsTabState'),
+export const activePositionsTabState = atom<MarketsTab>({
+	key: getUIKey('activePositionsTabState'),
 	default: MarketsTab.FUTURES,
 });

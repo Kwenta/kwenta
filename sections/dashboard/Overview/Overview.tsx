@@ -13,7 +13,7 @@ import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioV
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
-import { activeMarketsTabState } from 'store/ui';
+import { activePositionsTabState } from 'store/ui';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
@@ -45,8 +45,8 @@ const Overview: FC = () => {
 			? synthsBalancesQuery.data
 			: null;
 
-	const [activePositionsTab, setActivePositionsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
-	const [activeMarketsTab, setActiveMarketsTab] = useRecoilState(activeMarketsTabState);
+	const [activePositionsTab, setActivePositionsTab] = useRecoilState(activePositionsTabState);
+	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
 	const totalSpotBalancesValue = formatDollars(wei(synthBalances?.totalUSDBalance ?? zeroBN));
 
