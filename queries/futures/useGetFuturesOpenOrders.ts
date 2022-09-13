@@ -29,24 +29,26 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 				return [];
 			}
 			try {
-				const marketAddress = marketInfo?.market;
+				const marketAsset = marketInfo?.assetHex;
 				const response = await request(
 					futuresEndpoint,
 					gql`
-						query OpenOrders($account: String!, $market: String!) {
-							futuresOrders(where: { account: $account, market: $market, status: Pending }) {
+						query OpenOrders($account: String!, $asset: String!) {
+							futuresOrders(where: { account: $account, asset: $asset, status: Pending }) {
 								id
 								account
+								abstractAccount
 								size
 								market
 								asset
+								orderId
 								targetRoundId
 								timestamp
 								orderType
 							}
 						}
 					`,
-					{ account: selectedFuturesAddress, market: marketAddress }
+					{ account: selectedFuturesAddress, asset: marketAsset }
 				);
 
 				const openOrders = response
@@ -57,7 +59,6 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 							size: new Wei(o.size).div(ETH_UNIT),
 					  }))
 					: [];
-
 				setOpenOrders(openOrders);
 
 				return openOrders;

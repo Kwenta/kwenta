@@ -25,21 +25,23 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 		QUERY_KEYS.Futures.Orders(network.id as NetworkId, selectedFuturesAddress),
 		async () => {
 			try {
-				const marketAddress = marketInfo?.market;
+				const marketAsset = marketInfo?.assetHex;
 				const response = await request(
 					futuresEndpoint,
 					gql`
-						query Orders($account: String!, $market: String!) {
+						query Orders($account: String!, $asset: String!) {
 							futuresOrders(
-								where: { account: $account, market: $market }
+								where: { abstractAccount: $account, asset: $asset }
 								orderBy: timestamp
 								orderDirection: desc
 							) {
 								id
 								account
+								abstractAccount
 								size
 								market
 								asset
+								orderId
 								targetRoundId
 								timestamp
 								orderType
@@ -47,7 +49,7 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 							}
 						}
 					`,
-					{ account: selectedFuturesAddress, market: marketAddress }
+					{ account: selectedFuturesAddress, asset: marketAsset }
 				);
 
 				const orders = response
