@@ -29,7 +29,7 @@ const FuturesMarkets = () => {
 		<div>
 			<HeaderContainer>
 				<SectionHeader>
-					<SectionTitle>{t('dashboard.overview.positions-tabs.futures')}</SectionTitle>
+					<SectionTitle>{t('dashboard.overview.markets-tabs.futures')}</SectionTitle>
 				</SectionHeader>
 				<MarketStatsContainer>
 					<MarketStat>
