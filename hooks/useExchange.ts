@@ -1,7 +1,5 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
-import mainnetOneInchTokenList from 'data/token-lists/mainnet.json';
-import optimismOneInchTokenList from 'data/token-lists/optimism.json';
 import { BigNumber, ethers } from 'ethers';
 import produce from 'immer';
 import get from 'lodash/get';
@@ -35,6 +33,7 @@ import useExchangeFeeRateQuery from 'queries/synths/useExchangeFeeRateQuery';
 import useNumEntriesQuery from 'queries/synths/useNumEntriesQuery';
 import useRedeemableDeprecatedSynthsQuery from 'queries/synths/useRedeemableDeprecatedSynthsQuery';
 import useSynthBalances from 'queries/synths/useSynthBalances';
+import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
 import {
@@ -135,11 +134,10 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
-	const tokenList = isL2 ? optimismOneInchTokenList.tokens : mainnetOneInchTokenList.tokens;
-	const oneInchTokensMap: any = isL2
-		? optimismOneInchTokenList.tokensMap
-		: mainnetOneInchTokenList.tokensMap;
+	const oneInchQuery = useOneInchTokenList();
 
+	const tokenList = oneInchQuery.data?.tokens || [];
+	const oneInchTokensMap = oneInchQuery.data?.tokensMap || null;
 	const allTokensMap = useMemo(() => ({ ...oneInchTokensMap, ...synthTokensMap }), [
 		oneInchTokensMap,
 		synthTokensMap,
@@ -148,7 +146,7 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 	const txProvider: TxProvider | null = useMemo(() => {
 		if (!baseCurrencyKey || !quoteCurrencyKey) return null;
 		if (synthsMap[baseCurrencyKey] && synthsMap[quoteCurrencyKey]) return 'synthetix';
-		if (oneInchTokensMap[baseCurrencyKey] && oneInchTokensMap[quoteCurrencyKey]) return '1inch';
+		if (oneInchTokensMap?.[baseCurrencyKey] && oneInchTokensMap?.[quoteCurrencyKey]) return '1inch';
 		return 'synthswap';
 	}, [synthsMap, baseCurrencyKey, quoteCurrencyKey, oneInchTokensMap]);
 
@@ -176,7 +174,7 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 
 	const quoteDecimals = get(allTokensMap, [quoteCurrencyKey!, 'decimals'], undefined);
 
-	const selectedTokens: any = tokenList.filter(
+	const selectedTokens = tokenList.filter(
 		(t) => t.symbol === baseCurrencyKey || t.symbol === quoteCurrencyKey
 	);
 

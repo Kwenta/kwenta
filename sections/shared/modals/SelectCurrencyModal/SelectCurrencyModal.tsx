@@ -1,7 +1,5 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
-import mainnetOneInchTokenList from 'data/token-lists/mainnet.json';
-import optimismOneInchTokenList from 'data/token-lists/optimism.json';
 import orderBy from 'lodash/orderBy';
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +13,7 @@ import { CurrencyKey, CATEGORY_MAP } from 'constants/currency';
 import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
-import useIsL2 from 'hooks/useIsL2';
+import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
 import { FlexDivCentered } from 'styles/common';
 import media from 'styles/media';
@@ -104,17 +102,11 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 
 	const synthKeys = useMemo(() => synthsResults.map((s) => s.name), [synthsResults]);
 
-	const isL2 = useIsL2();
-
-	const tokens = useMemo(
-		() => (isL2 ? optimismOneInchTokenList.tokens : mainnetOneInchTokenList.tokens),
-		[isL2]
-	);
-
-	const oneInchTokenList: any = useMemo(
-		() => tokens.filter((i) => !synthKeys.includes(i.symbol as CurrencyKey)),
-		[tokens, synthKeys]
-	);
+	const oneInchQuery = useOneInchTokenList({ enabled: oneInchEnabled });
+	const oneInchTokenList = useMemo(() => {
+		if (!oneInchQuery.isSuccess || !oneInchQuery.data) return [];
+		return oneInchQuery.data.tokens.filter((i) => !synthKeys.includes(i.symbol as CurrencyKey));
+	}, [oneInchQuery.isSuccess, oneInchQuery.data, synthKeys]);
 
 	const searchFilteredTokens = useDebouncedMemo(
 		() =>

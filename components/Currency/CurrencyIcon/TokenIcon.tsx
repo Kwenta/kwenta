@@ -1,9 +1,6 @@
-import mainnetOneInchTokenList from 'data/token-lists/mainnet.json';
-import optimismOneInchTokenList from 'data/token-lists/optimism.json';
-import { useMemo } from 'react';
 import styled from 'styled-components';
 
-import useIsL2 from 'hooks/useIsL2';
+import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 import { FlexDivCentered } from 'styles/common';
 
 export type TokenIconProps = {
@@ -18,15 +15,11 @@ export type TokenIconProps = {
 };
 
 const TokenIcon: React.FC<TokenIconProps> = ({ currencyKey, ...props }) => {
-	// TODO: Find a way to do this without checking if we're on L2 or not.
-	const isL2 = useIsL2();
-	const tokenMap: any = useMemo(
-		() => (isL2 ? optimismOneInchTokenList.tokensMap : mainnetOneInchTokenList.tokensMap),
-		[isL2]
-	);
+	const OneInchTokenListQuery = useOneInchTokenList();
+	const OneInchTokenListMap = OneInchTokenListQuery.data?.tokensMap ?? null;
 
-	if (tokenMap[currencyKey] != null) {
-		return <TokenImage src={tokenMap[currencyKey].logoURI} {...props} />;
+	if (!!OneInchTokenListMap && OneInchTokenListMap[currencyKey] != null) {
+		return <TokenImage src={OneInchTokenListMap[currencyKey].logoURI} {...props} />;
 	} else {
 		return (
 			<Placeholder {...props}>{currencyKey === 'sDebtRatio' ? 'DEBT' : currencyKey}</Placeholder>
