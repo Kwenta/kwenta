@@ -1,7 +1,7 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
@@ -10,8 +10,7 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import { useExchangeContext } from 'contexts/ExchangeContext';
 import use1InchApproveAddressQuery from 'queries/1inch/use1InchApproveAddressQuery';
 import {
-	isApprovedState,
-	isApprovingState,
+	approveStatusState,
 	quoteCurrencyAmountState,
 	quoteCurrencyKeyState,
 	txErrorState,
@@ -19,8 +18,7 @@ import {
 import logError from 'utils/logError';
 
 const useApproveExchange = () => {
-	const [isApproving, setIsApproving] = useRecoilState(isApprovingState);
-	const [isApproved, setIsApproved] = useRecoilState(isApprovedState);
+	const [approveStatus, setApproveStatus] = useRecoilState(approveStatusState);
 	const quoteCurrencyAmount = useRecoilValue(quoteCurrencyAmountState);
 	const setTxError = useSetRecoilState(txErrorState);
 
@@ -59,8 +57,7 @@ const useApproveExchange = () => {
 			monitorTransaction({
 				txHash: approveTxn.hash,
 				onTxConfirmed: () => {
-					setIsApproving(false);
-					setIsApproved(true);
+					setApproveStatus('approved');
 				},
 			});
 		}
@@ -77,10 +74,10 @@ const useApproveExchange = () => {
 			setOpenModal(undefined);
 		} catch (e) {
 			logError(e);
-			setIsApproving(false);
+			setApproveStatus('pending');
 			setTxError(e.message);
 		}
-	}, [setTxError, approveTxn, setIsApproving, setOpenModal]);
+	}, [setTxError, approveTxn, setApproveStatus, setOpenModal]);
 
 	const checkAllowance = useCallback(async () => {
 		if (
@@ -96,7 +93,9 @@ const useApproveExchange = () => {
 						walletAddress,
 						approveAddress
 					)) as ethers.BigNumber;
-					setIsApproved(wei(ethers.utils.formatEther(allowance)).gte(quoteCurrencyAmount));
+					if (wei(ethers.utils.formatEther(allowance)).gte(quoteCurrencyAmount)) {
+						setApproveStatus('approved');
+					}
 				}
 			} catch (e) {
 				logError(e);
@@ -110,7 +109,7 @@ const useApproveExchange = () => {
 		quoteCurrencyContract,
 		allTokensMap,
 		approveAddress,
-		setIsApproved,
+		setApproveStatus,
 	]);
 
 	useEffect(() => {
@@ -118,6 +117,9 @@ const useApproveExchange = () => {
 			checkAllowance();
 		}
 	}, [checkAllowance, needsApproval]);
+
+	const isApproving = useMemo(() => approveStatus === 'approving', [approveStatus]);
+	const isApproved = useMemo(() => approveStatus === 'approved', [approveStatus]);
 
 	return { isApproving, isApproved, handleApprove };
 };

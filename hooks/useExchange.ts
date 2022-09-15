@@ -37,13 +37,12 @@ import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
 import {
+	approveStatusState,
 	baseCurrencyAmountBNState,
 	baseCurrencyAmountState,
 	baseCurrencyKeyState,
 	currencyPairState,
 	destinationCurrencyKeyState,
-	isApprovedState,
-	isApprovingState,
 	quoteCurrencyAmountBNState,
 	quoteCurrencyAmountState,
 	quoteCurrencyKeyState,
@@ -103,8 +102,9 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 	const quoteCurrencyKey = useRecoilValue(quoteCurrencyKeyState);
 
 	const [openModal, setOpenModal] = useState<ExchangeModal>();
-	const isApproved = useRecoilValue(isApprovedState);
-	const isApproving = useRecoilValue(isApprovingState);
+	const approveStatus = useRecoilValue(approveStatusState);
+	const isApproved = useMemo(() => approveStatus === 'approved', [approveStatus]);
+	const isApproving = useMemo(() => approveStatus === 'approving', [approveStatus]);
 	const [gasInfo, setGasInfo] = useState<{ limit: number; l1Fee: Wei } | null>();
 	const [isSubmitting, setIsSubmitting] = useState(false);
 

@@ -20,7 +20,6 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import {
 	baseCurrencyAmountState,
 	baseCurrencyKeyState,
-	isApprovedState,
 	quoteCurrencyAmountState,
 	quoteCurrencyKeyState,
 	txErrorState,
@@ -43,8 +42,6 @@ const FooterCard: React.FC = React.memo(() => {
 	const quoteCurrencyMarketClosed = useMarketClosed(quoteCurrencyKey);
 	const baseCurrencyMarketClosed = useMarketClosed(baseCurrencyKey);
 
-	const isApproved = useRecoilValue(isApprovedState);
-
 	const {
 		noSynths,
 		numEntries,
@@ -66,7 +63,7 @@ const FooterCard: React.FC = React.memo(() => {
 		feeReclaimPeriodInSeconds,
 	} = useExchangeContext();
 
-	const { handleApprove } = useApproveExchange();
+	const { handleApprove, isApproved } = useApproveExchange();
 	const { handleRedeem } = useRedeem();
 
 	return (
