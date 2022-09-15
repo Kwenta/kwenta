@@ -70,9 +70,7 @@ const useApproveExchange = () => {
 		setOpenModal('approve');
 
 		try {
-			setApproveStatus('approving');
 			await approveTxn.mutateAsync();
-			setApproveStatus('approved');
 			setOpenModal(undefined);
 		} catch (e) {
 			logError(e);
