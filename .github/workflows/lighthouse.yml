@@ -6,7 +6,7 @@ on:
       url:
         description: Url of website to scan
         required: true
-        default: https://kwenta.io
+        default: https://kwenta.eth.limo
 
 jobs:
   lighthouse_scan:

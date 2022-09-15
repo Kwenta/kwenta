@@ -441,17 +441,21 @@
 			},
 			"futures-markets-table": {
 				"market": "Market",
+				"oracle": "Oracle",
 				"oracle-price": "Oracle Price",
 				"daily-change": "24H Change",
 				"funding-rate": "1H Funding Rate",
 				"open-interest": "Open Interest",
-				"daily-volume": "24H Volume"
+				"daily-volume": "24H Volume",
+				"daily-trades": "24H Trades"
 			},
 			"spot-markets-table": {
 				"market": "Market",
 				"price": "Price",
 				"24h-vol": "24H Volume",
-				"24h-change": "24H Change"
+				"24h-change": "24H Change",
+				"open-interest": "Open Interest",
+				"total-trades": "Total Trades"
 			},
 			"positions-tabs": {
 				"futures": "Futures Positions",
@@ -462,6 +466,10 @@
 				"futures": "Futures Markets",
 				"spot": "Spot Markets",
 				"synths": "Synths Markets"
+			},
+			"mobile": {
+				"portfolio": "Portfolio",
+				"open-positions": "Open Positions"
 			}
 		},
 		"history": {
@@ -1019,7 +1027,8 @@
 			"futures-market-bnb-short-name": "Binance Coin Perpetual",
 			"futures-market-doge-short-name": "Dogecoin Perpetual",
 			"futures-market-debtratio-short-name": "Debt Ratio Perpetual",
-			"futures-market-xmr-short-name": "Monero Perpetual"
+			"futures-market-xmr-short-name": "Monero Perpetual",
+			"futures-market-op-short-name": "Optimism Perpetual"
 		},
 		"currency-category": {
 			"crypto": "crypto",

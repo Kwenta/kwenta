@@ -43,6 +43,8 @@ export const getSynthDescription = (synth: string, synthsMap: Dictionary<Synth>,
 			return t('common.currency.futures-market-xmr-short-name');
 		case 'sDebtRatio':
 			return t('common.currency.futures-market-debtratio-short-name');
+		case 'sOP':
+			return t('common.currency.futures-market-op-short-name');
 		case 'sDYDX':
 			return t('common.currency.futures-market-short-name', {
 				currencyName: getDisplayAsset(synth),
@@ -81,6 +83,7 @@ export enum FuturesMarketKey {
 	sDOGE = 'sDOGE',
 	sDebtRatio = 'sDebtRatio',
 	sXMR = 'sXMR',
+	sOP = 'sOP',
 }
 
 export enum FuturesMarketAsset {
@@ -101,6 +104,7 @@ export enum FuturesMarketAsset {
 	DOGE = 'DOGE',
 	DebtRatio = 'DebtRatio',
 	XMR = 'XMR',
+	OP = 'OP',
 }
 
 export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
@@ -121,6 +125,7 @@ export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
 	[FuturesMarketKey.sDOGE]: FuturesMarketAsset.DOGE,
 	[FuturesMarketKey.sDebtRatio]: FuturesMarketAsset.DebtRatio,
 	[FuturesMarketKey.sXMR]: FuturesMarketAsset.XMR,
+	[FuturesMarketKey.sOP]: FuturesMarketAsset.OP,
 } as const;
 
 export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
@@ -141,6 +146,7 @@ export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 	[FuturesMarketAsset.DOGE]: FuturesMarketKey.sDOGE,
 	[FuturesMarketAsset.DebtRatio]: FuturesMarketKey.sDebtRatio,
 	[FuturesMarketAsset.XMR]: FuturesMarketKey.sXMR,
+	[FuturesMarketAsset.OP]: FuturesMarketKey.sOP,
 } as const;
 
 export interface FuturesMarketConfig {
@@ -234,6 +240,11 @@ export const markets: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sXMR]: {
 		key: FuturesMarketKey.sXMR,
 		asset: FuturesMarketAsset.XMR,
+		supports: 'mainnet',
+	},
+	[FuturesMarketKey.sOP]: {
+		key: FuturesMarketKey.sOP,
+		asset: FuturesMarketAsset.OP,
 		supports: 'mainnet',
 	},
 };

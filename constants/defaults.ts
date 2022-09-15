@@ -41,6 +41,10 @@ export const DEFAULT_NP_LEVERAGE_ADJUSTMENT: number = 0.9975;
 // for mobile leaderboard
 export const DEFAULT_LEADERBOARD_ROWS = 20;
 
-export const DEFAULT_FUTURES_MARGIN_TYPE = 'cross_margin';
+export const CROSS_MARGIN_ENABLED = process.env.NODE_ENV === 'development';
+
+export const DEFAULT_FUTURES_MARGIN_TYPE = CROSS_MARGIN_ENABLED
+	? 'cross_margin'
+	: 'isolated_margin';
 
 export const DEFAULT_LEVERAGE = '10';
