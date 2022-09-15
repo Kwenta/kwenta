@@ -1,5 +1,5 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
-import Wei, { wei } from '@synthetixio/wei';
+import Wei from '@synthetixio/wei';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -111,7 +111,7 @@ const useGetAverageFundingRateForMarkets = (
 												price,
 												currentFundingRate
 										  )
-										: wei(0),
+										: null,
 							};
 							return fundingRateResponse;
 						});

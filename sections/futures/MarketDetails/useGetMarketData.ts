@@ -46,13 +46,15 @@ const useGetMarketData = (mobile?: boolean) => {
 	const pastPrice = pastRates.find((price) => price.synth === marketAsset);
 
 	const fundingTitle = React.useMemo(
-		() => `${!fundingRate?.fundingRate && !!marketInfo ? 'Inst.' : '1H'} Funding Rate`,
-		[fundingRate, marketInfo]
+		() => `${!fundingRate?.fundingRate && !!fundingRate ? 'Inst.' : '1H'} Funding Rate`,
+		[fundingRate]
 	);
 
 	const data: MarketData = React.useMemo(() => {
 		const fundingValue =
-			!fundingRate && !!marketInfo ? marketInfo?.currentFundingRate : fundingRate?.fundingRate;
+			!fundingRate?.fundingRate && !!fundingRate
+				? marketInfo?.currentFundingRate
+				: fundingRate?.fundingRate;
 
 		const marketPrice = wei(marketInfo?.price ?? 0);
 
