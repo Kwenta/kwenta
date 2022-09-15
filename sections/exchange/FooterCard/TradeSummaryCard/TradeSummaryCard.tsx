@@ -54,7 +54,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = React.memo(
 
 		const ethGasPriceQuery = useEthGasPriceQuery();
 
-		const gasPrices = useMemo(() => ethGasPriceQuery?.data ?? undefined, [ethGasPriceQuery.data]);
+		const gasPrices = useMemo(() => ethGasPriceQuery?.data, [ethGasPriceQuery.data]);
 
 		const summaryItems = useMemo(
 			() => (

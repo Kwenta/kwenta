@@ -18,6 +18,7 @@ import {
 	ETH_COINGECKO_ADDRESS,
 } from 'constants/currency';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
+import { ATOMIC_EXCHANGE_SLIPPAGE } from 'constants/exchange';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import Convert from 'containers/Convert';
@@ -107,7 +108,6 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 	const isApproving = useRecoilValue(isApprovingState);
 	const [gasInfo, setGasInfo] = useState<{ limit: number; l1Fee: Wei } | null>();
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [atomicExchangeSlippage] = useState('0.01');
 
 	const [baseCurrencyAmount, setBaseCurrencyAmount] = useRecoilState(baseCurrencyAmountState);
 	const [quoteCurrencyAmount, setQuoteCurrencyAmount] = useRecoilState(quoteCurrencyAmountState);
@@ -116,6 +116,8 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 	const setTxError = useSetRecoilState(txErrorState);
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
+	const quoteCurrencyAmountBN = useRecoilValue(quoteCurrencyAmountBNState);
+	const baseCurrencyAmountBN = useRecoilValue(baseCurrencyAmountBNState);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const slippage = useRecoilValue(slippageState);
 	const getL1SecurityFee = useGetL1SecurityFee();
@@ -353,9 +355,6 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
-	const quoteCurrencyAmountBN = useRecoilValue(quoteCurrencyAmountBNState);
-	const baseCurrencyAmountBN = useRecoilValue(baseCurrencyAmountBNState);
-
 	const totalTradePrice = useMemo(() => {
 		let tradePrice = quoteCurrencyAmountBN.mul(quotePriceRate || 0);
 		if (selectPriceCurrencyRate) {
@@ -428,10 +427,13 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 		[router]
 	);
 
-	const routeToBaseCurrency = (baseCurrencyKey: string) =>
-		router.replace(`/exchange`, ROUTES.Exchange.Into(baseCurrencyKey), {
-			shallow: true,
-		});
+	const routeToBaseCurrency = useCallback(
+		(baseCurrencyKey: string) =>
+			router.replace(`/exchange`, ROUTES.Exchange.Into(baseCurrencyKey), {
+				shallow: true,
+			}),
+		[router]
+	);
 
 	const handleCurrencySwap = useCallback(() => {
 		setCurrencyPair({ base: quoteCurrencyKey, quote: baseCurrencyKey });
@@ -489,49 +491,74 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 		// eslint-disable-next-line
 	}, [oneInchQuoteQuery.isSuccess, oneInchQuoteQuery.data]);
 
-	const onBaseCurrencyChange = (currencyKey: string) => {
-		setQuoteCurrencyAmount('');
+	const onBaseCurrencyChange = useCallback(
+		(currencyKey: string) => {
+			setQuoteCurrencyAmount('');
 
-		setCurrencyPair((pair) => ({
-			base: currencyKey as CurrencyKey,
-			quote: pair.quote === currencyKey ? null : pair.quote,
-		}));
+			setCurrencyPair((pair) => ({
+				base: currencyKey as CurrencyKey,
+				quote: pair.quote === currencyKey ? null : pair.quote,
+			}));
 
-		if (!!quoteCurrencyKey && quoteCurrencyKey !== currencyKey) {
-			routeToMarketPair(currencyKey, quoteCurrencyKey);
-		} else {
-			routeToBaseCurrency(currencyKey);
-		}
+			if (!!quoteCurrencyKey && quoteCurrencyKey !== currencyKey) {
+				routeToMarketPair(currencyKey, quoteCurrencyKey);
+			} else {
+				routeToBaseCurrency(currencyKey);
+			}
 
-		if (txProvider === 'synthetix' && !!baseCurrencyAmount && !!quoteCurrencyKey) {
-			const quoteCurrencyAmountNoFee = wei(baseCurrencyAmount).mul(inverseRate);
-			const fee = quoteCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
-			setQuoteCurrencyAmount(
-				truncateNumbers(quoteCurrencyAmountNoFee.add(fee), DEFAULT_CRYPTO_DECIMALS)
-			);
-		}
-	};
+			if (txProvider === 'synthetix' && !!baseCurrencyAmount && !!quoteCurrencyKey) {
+				const quoteCurrencyAmountNoFee = wei(baseCurrencyAmount).mul(inverseRate);
+				const fee = quoteCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
+				setQuoteCurrencyAmount(
+					truncateNumbers(quoteCurrencyAmountNoFee.add(fee), DEFAULT_CRYPTO_DECIMALS)
+				);
+			}
+		},
+		[
+			baseCurrencyAmount,
+			exchangeFeeRate,
+			inverseRate,
+			quoteCurrencyKey,
+			routeToBaseCurrency,
+			routeToMarketPair,
+			setCurrencyPair,
+			setQuoteCurrencyAmount,
+			txProvider,
+		]
+	);
 
-	const onQuoteCurrencyChange = (currencyKey: string) => {
-		setBaseCurrencyAmount('');
+	const onQuoteCurrencyChange = useCallback(
+		(currencyKey: string) => {
+			setBaseCurrencyAmount('');
 
-		setCurrencyPair((pair) => ({
-			base: pair.base === currencyKey ? null : pair.base,
-			quote: currencyKey as CurrencyKey,
-		}));
+			setCurrencyPair((pair) => ({
+				base: pair.base === currencyKey ? null : pair.base,
+				quote: currencyKey as CurrencyKey,
+			}));
 
-		if (baseCurrencyKey && baseCurrencyKey !== currencyKey) {
-			routeToMarketPair(baseCurrencyKey, currencyKey);
-		}
+			if (baseCurrencyKey && baseCurrencyKey !== currencyKey) {
+				routeToMarketPair(baseCurrencyKey, currencyKey);
+			}
 
-		if (txProvider === 'synthetix' && !!quoteCurrencyAmount && !!baseCurrencyKey) {
-			const baseCurrencyAmountNoFee = wei(quoteCurrencyAmount).mul(rate);
-			const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
-			setBaseCurrencyAmount(
-				truncateNumbers(baseCurrencyAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS)
-			);
-		}
-	};
+			if (txProvider === 'synthetix' && !!quoteCurrencyAmount && !!baseCurrencyKey) {
+				const baseCurrencyAmountNoFee = wei(quoteCurrencyAmount).mul(rate);
+				const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
+				setBaseCurrencyAmount(
+					truncateNumbers(baseCurrencyAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS)
+				);
+			}
+		},
+		[
+			baseCurrencyKey,
+			exchangeFeeRate,
+			quoteCurrencyAmount,
+			rate,
+			routeToMarketPair,
+			setBaseCurrencyAmount,
+			setCurrencyPair,
+			txProvider,
+		]
+	);
 
 	const destinationCurrencyKey = useRecoilValue(destinationCurrencyKeyState);
 	const sourceCurrencyKey = useRecoilValue(sourceCurrencyKeyState);
@@ -548,7 +575,7 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 
 	const exchangeParams = useMemo(() => {
 		const sourceAmount = quoteCurrencyAmountBN.toBN();
-		const minAmount = baseCurrencyAmountBN.mul(wei(1).sub(atomicExchangeSlippage)).toBN();
+		const minAmount = baseCurrencyAmountBN.mul(wei(1).sub(ATOMIC_EXCHANGE_SLIPPAGE)).toBN();
 
 		if (!sourceCurrencyKey || !destinationCurrencyKey) return null;
 
@@ -573,7 +600,6 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 		quoteCurrencyAmountBN,
 		walletAddress,
 		baseCurrencyAmountBN,
-		atomicExchangeSlippage,
 		isAtomic,
 		sourceCurrencyKey,
 		destinationCurrencyKey,

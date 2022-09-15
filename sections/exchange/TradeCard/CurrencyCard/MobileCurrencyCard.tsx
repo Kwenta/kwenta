@@ -1,5 +1,5 @@
 import Wei, { wei } from '@synthetixio/wei';
-import React from 'react';
+import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -23,7 +23,7 @@ type MobileCurrencyCardProps = {
 	disabled?: boolean;
 };
 
-const MobileCurrencyCard: React.FC<MobileCurrencyCardProps> = React.memo(
+const MobileCurrencyCard: React.FC<MobileCurrencyCardProps> = memo(
 	({
 		currencyKey,
 		amount,
@@ -38,14 +38,14 @@ const MobileCurrencyCard: React.FC<MobileCurrencyCardProps> = React.memo(
 		const { t } = useTranslation();
 		const { selectPriceCurrencyRate, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 
-		const hasWalletBalance = React.useMemo(() => !!walletBalance && !!currencyKey, [
+		const hasWalletBalance = useMemo(() => !!walletBalance && !!currencyKey, [
 			walletBalance,
 			currencyKey,
 		]);
 
-		const amountBN = React.useMemo(() => (amount === '' ? zeroBN : wei(amount)), [amount]);
+		const amountBN = useMemo(() => (amount === '' ? zeroBN : wei(amount)), [amount]);
 
-		const tradeAmount = React.useMemo(() => {
+		const tradeAmount = useMemo(() => {
 			let current = priceRate ? amountBN.mul(priceRate) : null;
 
 			if (!!selectPriceCurrencyRate && !!current) {
@@ -55,7 +55,7 @@ const MobileCurrencyCard: React.FC<MobileCurrencyCardProps> = React.memo(
 			return current;
 		}, [priceRate, amountBN, selectPriceCurrencyRate, getPriceAtCurrentRate]);
 
-		const hasCurrencySelectCallback = React.useMemo(() => !!onCurrencySelect, [onCurrencySelect]);
+		const hasCurrencySelectCallback = useMemo(() => !!onCurrencySelect, [onCurrencySelect]);
 
 		return (
 			<div>

@@ -1,7 +1,7 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
-import React from 'react';
+import { useCallback, useEffect } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
@@ -54,7 +54,7 @@ const useApproveExchange = () => {
 		{ enabled: !!approveAddress && !!quoteCurrencyKey && needsApproval }
 	);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (approveTxn.hash) {
 			monitorTransaction({
 				txHash: approveTxn.hash,
@@ -68,22 +68,21 @@ const useApproveExchange = () => {
 		// eslint-disable-next-line
 	}, [approveTxn.hash]);
 
-	const handleApprove = async () => {
+	const handleApprove = useCallback(async () => {
 		setTxError(null);
 		setOpenModal('approve');
 
 		try {
 			await approveTxn.mutateAsync();
-
 			setOpenModal(undefined);
 		} catch (e) {
 			logError(e);
 			setIsApproving(false);
 			setTxError(e.message);
 		}
-	};
+	}, [setTxError, approveTxn, setIsApproving, setOpenModal]);
 
-	const checkAllowance = React.useCallback(async () => {
+	const checkAllowance = useCallback(async () => {
 		if (
 			isWalletConnected &&
 			quoteCurrencyKey != null &&
@@ -97,7 +96,6 @@ const useApproveExchange = () => {
 						walletAddress,
 						approveAddress
 					)) as ethers.BigNumber;
-
 					setIsApproved(wei(ethers.utils.formatEther(allowance)).gte(quoteCurrencyAmount));
 				}
 			} catch (e) {
@@ -115,7 +113,7 @@ const useApproveExchange = () => {
 		setIsApproved,
 	]);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (needsApproval) {
 			checkAllowance();
 		}

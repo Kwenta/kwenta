@@ -36,7 +36,7 @@ const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = React.memo(
 								<>
 									<DynamicFeeLabel>+</DynamicFeeLabel>
 									<DynamicFeeRateTooltip
-										content="This transaction will incur an additional dynamic fee due to market volatility."
+										content={t('exchange.summary-info.dynamic-fee-tooltip')}
 										trigger="mouseenter focus"
 										arrow={false}
 										placement="bottom"

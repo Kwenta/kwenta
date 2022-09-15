@@ -1,6 +1,6 @@
 import mainnetOneInchTokenList from 'data/token-lists/mainnet.json';
 import optimismOneInchTokenList from 'data/token-lists/optimism.json';
-import React from 'react';
+import { useMemo } from 'react';
 import styled from 'styled-components';
 
 import useIsL2 from 'hooks/useIsL2';
@@ -20,7 +20,7 @@ export type TokenIconProps = {
 const TokenIcon: React.FC<TokenIconProps> = ({ currencyKey, ...props }) => {
 	// TODO: Find a way to do this without checking if we're on L2 or not.
 	const isL2 = useIsL2();
-	const tokenMap: any = React.useMemo(
+	const tokenMap: any = useMemo(
 		() => (isL2 ? optimismOneInchTokenList.tokensMap : mainnetOneInchTokenList.tokensMap),
 		[isL2]
 	);

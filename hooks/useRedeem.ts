@@ -1,5 +1,5 @@
 import useSynthetixQueries from '@synthetixio/queries';
-import React from 'react';
+import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSetRecoilState } from 'recoil';
 
@@ -35,7 +35,7 @@ const useRedeem = () => {
 		{ enabled: !!redeemableDeprecatedSynths?.totalUSDBalance.gt(0) }
 	);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (redeemTxn.hash) {
 			monitorTransaction({
 				txHash: redeemTxn.hash,
@@ -50,7 +50,7 @@ const useRedeem = () => {
 		// eslint-disable-next-line
 	}, [redeemTxn.hash]);
 
-	const handleRedeem = async () => {
+	const handleRedeem = useCallback(async () => {
 		setTxError(null);
 		setOpenModal('redeem');
 
@@ -62,7 +62,7 @@ const useRedeem = () => {
 				e.data ? t('common.transaction.revert-reason', { reason: hexToAsciiV2(e.data) }) : e.message
 			);
 		}
-	};
+	}, [redeemTxn, setOpenModal, setTxError, t]);
 
 	return { handleRedeem };
 };

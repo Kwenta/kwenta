@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
@@ -7,7 +7,7 @@ import { baseCurrencyKeyState, baseCurrencyAmountState } from 'store/exchange';
 
 import MobileCurrencyCard from '../TradeCard/CurrencyCard/MobileCurrencyCard';
 
-const MobileBaseCurrencyCard: React.FC = React.memo(() => {
+const MobileBaseCurrencyCard: React.FC = memo(() => {
 	const { t } = useTranslation();
 	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
 	const baseCurrencyAmount = useRecoilValue(baseCurrencyAmountState);
@@ -21,7 +21,7 @@ const MobileBaseCurrencyCard: React.FC = React.memo(() => {
 		onBaseBalanceClick,
 	} = useExchangeContext();
 
-	const openBaseModal = React.useCallback(() => setOpenModal('base-select'), [setOpenModal]);
+	const openBaseModal = useCallback(() => setOpenModal('base-select'), [setOpenModal]);
 
 	return (
 		<MobileCurrencyCard
