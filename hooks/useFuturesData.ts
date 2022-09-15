@@ -68,13 +68,14 @@ const ZERO_FEES = {
 	staticFee: zeroBN,
 	crossMarginFee: zeroBN,
 	dynamicFeeRate: zeroBN,
+	keeperEthDeposit: zeroBN,
 	total: zeroBN,
 };
 
 const useFuturesData = () => {
 	const router = useRouter();
 	const { t } = useTranslation();
-	const { defaultSynthetixjs: synthetixjs, network } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs, network, provider } = Connector.useContainer();
 	const { useSynthetixTxn } = useSynthetixQueries();
 
 	const getPotentialTrade = useGetFuturesPotentialTradeDetails();
@@ -98,7 +99,7 @@ const useFuturesData = () => {
 	const totalMargin = useRecoilValue(crossMarginTotalMarginState);
 	const maxLeverage = useRecoilValue(maxLeverageState);
 	const { tradeFee: crossMarginTradeFee } = useRecoilValue(crossMarginSettingsState);
-	const { crossMarginAvailable } = useRecoilValue(futuresAccountState);
+	const { crossMarginAvailable, crossMarginAddress } = useRecoilValue(futuresAccountState);
 	const marketAssetRate = useRecoilValue(marketAssetRateState);
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
 	const setPotentialTradeDetails = useSetRecoilState(potentialTradeDetailsState);
@@ -188,6 +189,12 @@ const useFuturesData = () => {
 		[synthetixjs, marketAsset]
 	);
 
+	const getCrossMarginEthBal = useCallback(async () => {
+		if (!crossMarginAddress) return zeroBN;
+		const bal = await provider.getBalance(crossMarginAddress);
+		return wei(bal);
+	}, [crossMarginAddress, provider]);
+
 	const calculateFees = useCallback(
 		async (susdSizeDelta: Wei, nativeSizeDelta: Wei) => {
 			if (!synthetixjs) return ZERO_FEES;
@@ -200,6 +207,12 @@ const useFuturesData = () => {
 				getTradeFee(nativeSizeDelta),
 			]);
 
+			const currentDeposit =
+				orderType === 'limit' || orderType === 'market' ? await getCrossMarginEthBal() : zeroBN;
+			const requiredDeposit = currentDeposit.lt(ORDER_KEEPER_ETH_DEPOSIT)
+				? ORDER_KEEPER_ETH_DEPOSIT.sub(currentDeposit)
+				: zeroBN;
+
 			const crossMarginFee =
 				selectedAccountType === 'cross_margin'
 					? susdSizeDelta.abs().mul(crossMarginTradeFee)
@@ -211,23 +224,34 @@ const useFuturesData = () => {
 				staticFee: orderFeeWei,
 				crossMarginFee: crossMarginFee,
 				dynamicFeeRate: volatilityFeeWei,
+				keeperEthDeposit: requiredDeposit,
 				total: orderFeeWei.add(crossMarginFee),
 			};
 			setTradeFees(fees);
 			return fees;
 		},
-		[crossMarginTradeFee, selectedAccountType, marketAsset, synthetixjs, setTradeFees, getTradeFee]
+		[
+			crossMarginTradeFee,
+			selectedAccountType,
+			marketAsset,
+			synthetixjs,
+			orderType,
+			setTradeFees,
+			getTradeFee,
+			getCrossMarginEthBal,
+		]
 	);
 
 	const calculateMarginDelta = useCallback(
 		async (nextTrade: FuturesTradeInputs, fees: TradeFees) => {
+			if (nextTrade.nativeSizeDelta.add(position?.position?.size || 0).eq(zeroBN)) return zeroBN;
 			const currentSize = position?.position?.notionalValue || zeroBN;
 			const newNotionalValue = currentSize.add(nextTrade.susdSizeDelta);
 			const fullMargin = newNotionalValue.abs().div(nextTrade.leverage);
 			let marginDelta = fullMargin.sub(position?.remainingMargin || '0');
 			return marginDelta.add(fees.total);
 		},
-		[position?.position?.notionalValue, position?.remainingMargin]
+		[position?.position?.notionalValue, position?.position?.size, position?.remainingMargin]
 	);
 
 	// eslint-disable-next-line
@@ -275,12 +299,7 @@ const useFuturesData = () => {
 		[setTradeInputs, setSimulatedTrade, debounceFetchPreview]
 	);
 
-	const positiveTrade = useMemo(
-		() =>
-			(leverageSide === PositionSide.LONG && orderType !== 'stop') ||
-			(leverageSide === PositionSide.SHORT && orderType === 'stop'),
-		[leverageSide, orderType]
-	);
+	const positiveTrade = useMemo(() => leverageSide === PositionSide.LONG, [leverageSide]);
 
 	const onTradeAmountChange = useCallback(
 		(value: string, fromLeverage: boolean = false) => {

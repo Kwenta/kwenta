@@ -13,6 +13,7 @@ import {
 	simulatedTradeState,
 	positionState,
 	futuresTradeInputsState,
+	orderTypeState,
 } from 'store/futures';
 import { FlexDivRow } from 'styles/common';
 import { zeroBN } from 'utils/formatters/number';
@@ -29,6 +30,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 	const freeCrossMargin = useRecoilValue(crossMarginAvailableMarginState);
 	const position = useRecoilValue(positionState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
+	const orderType = useRecoilValue(orderTypeState);
 
 	const [usdValue, setUsdValue] = useState(susdSize);
 	const [assetValue, setAssetValue] = useState(nativeSize);
@@ -63,6 +65,10 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 
 	const handleSetMax = () => {
 		onTradeAmountSUSDChange(Number(maxUsdInputAmount).toFixed(0));
+	};
+
+	const handleSetPositionSize = () => {
+		onTradeAmountChange(position?.position?.size.toString() ?? '0');
 	};
 
 	// eslint-disable-next-line
@@ -103,13 +109,21 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 		return remaining.lte(0) || disabled;
 	}, [position?.remainingMargin, disabled, selectedAccountType, freeCrossMargin]);
 
+	const showPosSizeHelper =
+		position?.position?.size && (orderType === 'limit' || orderType === 'stop');
+
 	return (
 		<OrderSizingContainer>
 			<OrderSizingRow>
 				<InputTitle>
 					Amount&nbsp; —<span>&nbsp; Set order size</span>
 				</InputTitle>
-				<MaxButton onClick={handleSetMax}>Max</MaxButton>
+				<InputHelpers>
+					<MaxButton onClick={handleSetMax}>Max</MaxButton>
+					{showPosSizeHelper && (
+						<MaxButton onClick={handleSetPositionSize}>Position Size</MaxButton>
+					)}
+				</InputHelpers>
 			</OrderSizingRow>
 
 			<CustomInput
@@ -161,6 +175,10 @@ const MaxButton = styled.button`
 	background-color: transparent;
 	border: none;
 	cursor: pointer;
+`;
+
+const InputHelpers = styled.div`
+	display: flex;
 `;
 
 export default OrderSizing;

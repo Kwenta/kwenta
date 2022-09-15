@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import TimerIcon from 'assets/svg/app/timer.svg';
 import InfoBox, { DetailedInfo } from 'components/InfoBox/InfoBox';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
-import { ORDER_KEEPER_ETH_DEPOSIT } from 'constants/futures';
 import { NO_VALUE } from 'constants/placeholder';
 import {
 	tradeFeesState,
@@ -88,7 +87,7 @@ const FeeInfoBox: React.FC = () => {
 				...crossMarginFeeInfo,
 				'Keeper Deposit': {
 					value: !!marketInfo?.keeperDeposit
-						? formatCurrency('ETH', ORDER_KEEPER_ETH_DEPOSIT, { currencyKey: 'ETH' })
+						? formatCurrency('ETH', fees.keeperEthDeposit, { currencyKey: 'ETH' })
 						: NO_VALUE,
 				},
 			};

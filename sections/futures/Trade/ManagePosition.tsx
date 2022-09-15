@@ -25,7 +25,7 @@ import {
 	marketAssetRateState,
 } from 'store/futures';
 import { isZero } from 'utils/formatters/number';
-import { orderPriceValid } from 'utils/futures';
+import { orderPriceInvalidLabel } from 'utils/futures';
 
 import ClosePositionModalCrossMargin from '../PositionCard/ClosePositionModalCrossMargin';
 import ClosePositionModalIsolatedMargin from '../PositionCard/ClosePositionModalIsolatedMargin';
@@ -86,10 +86,15 @@ const ManagePosition: React.FC = () => {
 	}, [leverage, selectedAccountType, maxLeverageValue]);
 
 	const placeOrderDisabled = useMemo(() => {
-		const validPrice = orderPriceValid(orderPrice, leverageSide, marketAssetRate);
+		const invalidReason = orderPriceInvalidLabel(
+			orderPrice,
+			leverageSide,
+			marketAssetRate,
+			orderType
+		);
 
 		if (!leverageValid || !!error || marketInfo?.isSuspended || isMarketCapReached) return true;
-		if ((orderType === 'limit' || orderType === 'stop') && !validPrice) return true;
+		if ((orderType === 'limit' || orderType === 'stop') && !!invalidReason) return true;
 		if (placeOrderTranslationKey === 'futures.market.trade.button.deposit-margin-minimum')
 			return true;
 		if (selectedAccountType === 'cross_margin') {

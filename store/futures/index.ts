@@ -178,6 +178,7 @@ export const tradeFeesState = atom<TradeFees>({
 		staticFee: zeroBN,
 		dynamicFeeRate: zeroBN,
 		crossMarginFee: zeroBN,
+		keeperEthDeposit: zeroBN,
 		total: zeroBN,
 	},
 });
@@ -341,6 +342,8 @@ export const placeOrderTranslationKeyState = selector({
 		}
 
 		if (orderType === 'next-price') return 'futures.market.trade.button.place-next-price-order';
+		if (orderType === 'limit') return 'futures.market.trade.button.place-limit-order';
+		if (orderType === 'stop') return 'futures.market.trade.button.place-stop-order';
 		if (!!position?.position) return 'futures.market.trade.button.modify-position';
 		return remainingMargin.lt('50')
 			? 'futures.market.trade.button.deposit-margin-minimum'

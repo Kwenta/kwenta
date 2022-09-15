@@ -108,10 +108,10 @@ class FuturesMarketInternal {
 	getTradePreview = async (
 		sizeDelta: BigNumber,
 		marginDelta: BigNumber,
-		limitPrice?: BigNumber
+		limitStopPrice?: BigNumber
 	) => {
 		const position = await this._futuresMarketContract.positions(this._account);
-		const price = limitPrice || (await this._futuresMarketContract.assetPrice()).price;
+		const price = limitStopPrice || (await this._futuresMarketContract.assetPrice()).price;
 
 		const takerFee = await this._getSetting('takerFee', [this._marketKeyBytes]);
 		const makerFee = await this._getSetting('makerFee', [this._marketKeyBytes]);
@@ -149,11 +149,13 @@ class FuturesMarketInternal {
 		}
 
 		const fee = await this._orderFee(tradeParams, dynamicFee.feeRate);
+
 		const { margin, status } = await this._recomputeMarginWithDelta(
 			oldPos,
 			tradeParams.price,
 			marginDelta.add(fee.mul(-1))
 		);
+
 		if (status !== PotentialTradeStatus.OK) {
 			return { newPos: oldPos, fee: ZERO_BIG_NUM, status };
 		}

@@ -22,7 +22,7 @@ import {
 	marketAssetRateState,
 } from 'store/futures';
 import { BorderedPanel, FlexDivRow } from 'styles/common';
-import { orderPriceValid } from 'utils/futures';
+import { orderPriceInvalidLabel } from 'utils/futures';
 
 import CrossMarginOnboard from '../CrossMarginOnboard';
 import FeeInfoBox from '../FeeInfoBox';
@@ -79,13 +79,13 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 
 	const onChangeOrderPrice = useCallback(
 		(price: string) => {
-			const validPrice = orderPriceValid(price, leverageSide, marketAssetRate);
-			if (validPrice || !price) {
+			const invalidLabel = orderPriceInvalidLabel(price, leverageSide, marketAssetRate, orderType);
+			if (!invalidLabel || !price) {
 				onTradeOrderPriceChange(price);
 			}
 			setOrderPrice(price);
 		},
-		[onTradeOrderPriceChange, setOrderPrice, leverageSide, marketAssetRate]
+		[onTradeOrderPriceChange, setOrderPrice, leverageSide, marketAssetRate, orderType]
 	);
 
 	useEffect(() => {
@@ -140,6 +140,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 							switch (oType) {
 								case 0:
 									setOrderType('market');
+
 									break;
 								case 1:
 									setOrderType('stop');
@@ -148,7 +149,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 									setOrderType('limit');
 									break;
 							}
-							setOrderPrice('');
+							onChangeOrderPrice('');
 						}}
 					/>
 					<OrderSizing />

@@ -1,4 +1,5 @@
 import Wei, { wei } from '@synthetixio/wei';
+import { capitalize } from 'lodash';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -66,6 +67,7 @@ export default function TradeConfirmationModal({
 	const dataRows = useMemo(
 		() => [
 			{ label: 'side', value: (positionDetails?.side ?? PositionSide.LONG).toUpperCase() },
+			{ label: 'order Type', value: capitalize(orderType) },
 			{
 				label: 'size',
 				value: formatCurrency(market || '', positionDetails?.size ?? zeroBN, {
