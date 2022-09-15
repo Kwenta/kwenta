@@ -76,7 +76,7 @@ const useApproveExchange = () => {
 			setOpenModal(undefined);
 		} catch (e) {
 			logError(e);
-			setApproveStatus('pending');
+			setApproveStatus('none');
 			setTxError(e.message);
 		}
 	}, [setTxError, approveTxn, setApproveStatus, setOpenModal]);

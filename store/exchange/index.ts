@@ -86,9 +86,9 @@ export const sourceCurrencyKeyState = selector({
 	},
 });
 
-export const approveStatusState = atom<'pending' | 'approving' | 'approved'>({
+export const approveStatusState = atom<'none' | 'approving' | 'approved'>({
 	key: getExchangeKey('approveStatus'),
-	default: 'pending',
+	default: 'none',
 });
 
 export const quoteCurrencyAmountBNState = selector({
