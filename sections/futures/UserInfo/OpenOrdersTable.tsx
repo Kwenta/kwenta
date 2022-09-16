@@ -1,6 +1,6 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
-import React from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
@@ -46,8 +46,8 @@ const OpenOrdersTable: React.FC = () => {
 
 	const { handleRefetch } = useRefetchContext();
 
-	const [action, setAction] = React.useState<'' | 'cancel' | 'execute'>('');
-	const [selectedOrder, setSelectedOrder] = React.useState<any>();
+	const [action, setAction] = useState<'' | 'cancel' | 'execute'>('');
+	const [selectedOrder, setSelectedOrder] = useState<any>();
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
@@ -66,14 +66,14 @@ const OpenOrdersTable: React.FC = () => {
 		}
 	);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (!!action) {
 			cancelOrExecuteOrderTxn.mutate();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [action]);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (cancelOrExecuteOrderTxn.hash) {
 			monitorTransaction({
 				txHash: cancelOrExecuteOrderTxn.hash,
@@ -86,7 +86,7 @@ const OpenOrdersTable: React.FC = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [cancelOrExecuteOrderTxn.hash]);
 
-	const data = React.useMemo(() => {
+	const data = useMemo(() => {
 		return openOrders.map((order: any) => ({
 			asset: order.asset,
 			market: getMarketName(order.asset),
@@ -96,10 +96,13 @@ const OpenOrdersTable: React.FC = () => {
 				sign: order.asset ? synthsMap[order.asset]?.sign : '',
 			}),
 			side: wei(order.size).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
-			isStale: wei(marketInfo?.currentRoundId ?? 0).gte(wei(order.targetRoundId).add(2)),
+			isStale:
+				order.orderType === 'NextPrice' &&
+				wei(marketInfo?.currentRoundId ?? 0).gte(wei(order.targetRoundId).add(2)),
 			isExecutable:
-				wei(marketInfo?.currentRoundId ?? 0).eq(order.targetRoundId) ||
-				wei(marketInfo?.currentRoundId ?? 0).eq(order.targetRoundId.add(1)),
+				order.orderType === 'NextPrice' &&
+				(wei(marketInfo?.currentRoundId ?? 0).eq(order.targetRoundId) ||
+					wei(marketInfo?.currentRoundId ?? 0).eq(order.targetRoundId.add(1))),
 			timestamp: order.timestamp,
 		}));
 	}, [openOrders, marketInfo?.currentRoundId, synthsMap]);

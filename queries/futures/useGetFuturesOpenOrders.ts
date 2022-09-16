@@ -34,7 +34,7 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 					futuresEndpoint,
 					gql`
 						query OpenOrders($account: String!, $asset: String!) {
-							futuresOrders(where: { account: $account, asset: $asset, status: Pending }) {
+							futuresOrders(where: { abstractAccount: $account, asset: $asset, status: Pending }) {
 								id
 								account
 								abstractAccount
