@@ -546,7 +546,9 @@
 			},
 			"info": {
 				"default-market": "ETH-PERP",
-				"funding": "1H Funding Rate"
+				"hourly-funding": "1H Funding Rate",
+				"instant-funding": "Inst. Funding Rate",
+				"fallback-funding": "Funding Rate"
  			},
 			"position-card": {
 				"position-side": "Side",

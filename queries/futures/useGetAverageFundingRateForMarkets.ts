@@ -1,6 +1,7 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
 import request, { gql } from 'graphql-request';
+import { useTranslation } from 'react-i18next';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
@@ -31,6 +32,7 @@ const useGetAverageFundingRateForMarkets = (
 	period: Period,
 	options?: UseQueryOptions<any | null>
 ) => {
+	const { t } = useTranslation();
 	const { network } = Connector.useContainer();
 
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
@@ -51,7 +53,10 @@ const useGetAverageFundingRateForMarkets = (
 
 	const periodLength = PERIOD_IN_SECONDS[period];
 
-	const periodTitle = period === Period.ONE_HOUR ? '1H Funding Rate' : 'Funding Rate';
+	const periodTitle =
+		period === Period.ONE_HOUR
+			? t('futures.market.info.hourly-funding')
+			: t('futures.market.info.fallback-funding');
 
 	return useQuery<any>(
 		QUERY_KEYS.Futures.FundingRates(network?.id as NetworkId, periodLength, marketAssets),
@@ -119,7 +124,9 @@ const useGetAverageFundingRateForMarkets = (
 									: currentFundingRate ?? null;
 
 							const fundingPeriod =
-								responseFilt && !!currentFundingRate ? periodTitle : 'Inst. Funding Rate';
+								responseFilt && !!currentFundingRate
+									? periodTitle
+									: t('futures.markets.info.instant-funding');
 
 							const fundingRateResponse: FundingRateResponse = {
 								asset: marketKey,

@@ -49,7 +49,7 @@ const useGetMarketData = (mobile?: boolean) => {
 	const pastPrice = pastRates.find((price) => price.synth === marketAsset);
 
 	const fundingTitle = useMemo(
-		() => `${fundingRate?.fundingTitle ?? t('futures.market.info.funding')}`,
+		() => `${fundingRate?.fundingTitle ?? t('futures.market.info.hourly-funding')}`,
 		[fundingRate, t]
 	);
 
