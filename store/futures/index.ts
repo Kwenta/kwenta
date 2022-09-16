@@ -2,6 +2,7 @@ import Wei, { wei } from '@synthetixio/wei';
 import { atom, selector } from 'recoil';
 
 import { DEFAULT_FUTURES_MARGIN_TYPE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
+import { DEFAULT_MAX_LEVERAGE } from 'constants/futures';
 import {
 	FuturesAccountState,
 	FuturesAccountType,
@@ -21,8 +22,6 @@ import { getFuturesKey, getSynthsKey } from 'store/utils';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN } from 'utils/formatters/number';
 import { FuturesMarketAsset, MarketAssetByKey, MarketKeyByAsset } from 'utils/futures';
-
-const DEFAULT_MAX_LEVERAGE = wei(10);
 
 export const currentMarketState = atom({
 	key: getFuturesKey('currentMarket'),

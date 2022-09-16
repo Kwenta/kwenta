@@ -47,7 +47,7 @@ import {
 	potentialTradeDetailsState,
 	futuresOrderPriceState,
 } from 'store/futures';
-import { zeroBN, floorNumber } from 'utils/formatters/number';
+import { zeroBN, floorNumber, weiToString } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
@@ -110,6 +110,11 @@ const useFuturesData = () => {
 
 	const [maxFee, setMaxFee] = useState(zeroBN);
 	const [error, setError] = useState<string | null>(null);
+
+	const tradePrice = useMemo(() => wei(orderPrice || marketAssetRate), [
+		orderPrice,
+		marketAssetRate,
+	]);
 
 	const routerAccountType = useMemo(() => {
 		return typeof router.query.accountType === 'string' ? router.query.accountType : 'cross_margin';
@@ -248,10 +253,18 @@ const useFuturesData = () => {
 			const currentSize = position?.position?.notionalValue || zeroBN;
 			const newNotionalValue = currentSize.add(nextTrade.susdSizeDelta);
 			const fullMargin = newNotionalValue.abs().div(nextTrade.leverage);
-			let marginDelta = fullMargin.sub(position?.remainingMargin || '0');
-			return marginDelta.add(fees.total);
+
+			let marginDelta = fullMargin.sub(position?.remainingMargin || '0').add(fees.total);
+			return crossMarginAccount?.freeMargin?.sub(marginDelta).lt(0)
+				? crossMarginAccount?.freeMargin
+				: marginDelta;
 		},
-		[position?.position?.notionalValue, position?.position?.size, position?.remainingMargin]
+		[
+			position?.position?.notionalValue,
+			position?.position?.size,
+			position?.remainingMargin,
+			crossMarginAccount?.freeMargin,
+		]
 	);
 
 	// eslint-disable-next-line
@@ -302,69 +315,52 @@ const useFuturesData = () => {
 	const positiveTrade = useMemo(() => leverageSide === PositionSide.LONG, [leverageSide]);
 
 	const onTradeAmountChange = useCallback(
-		(value: string, fromLeverage: boolean = false) => {
-			const changeEnabled = remainingMargin.gt(0) && value !== '';
-			const size = fromLeverage ? (value === '' ? '' : wei(value).toNumber().toString()) : value;
-			const sizeSusdWei = marketAssetRate.mul(value || 0);
-			const isolatedMarginLeverage = changeEnabled ? sizeSusdWei.div(remainingMargin) : zeroBN;
-			const inputLeverage =
-				selectedAccountType === 'cross_margin' ? wei(selectedLeverage) : isolatedMarginLeverage;
-			const leverage = value === '' || remainingMargin.eq(0) ? zeroBN : inputLeverage;
+		(
+			value: string,
+			currencyType: 'usd' | 'native',
+			options?: { simulateChange?: boolean; crossMarginLeverage?: Wei }
+		) => {
+			if (!value) {
+				resetTradeState();
+				return;
+			}
 
-			onStagePositionChange({
-				nativeSize: size,
-				susdSize: changeEnabled ? sizeSusdWei.toString() : '',
-				nativeSizeDelta: size ? wei(positiveTrade ? size : -size) : zeroBN,
-				susdSizeDelta: positiveTrade ? sizeSusdWei : sizeSusdWei.neg(),
-				leverage:
-					leverage.gt(0) && marketMaxLeverage.gt(leverage) ? String(floorNumber(leverage)) : '',
-			});
+			const nativeSize = currencyType === 'native' ? wei(value) : wei(value).div(tradePrice);
+			const usdSize = currencyType === 'native' ? tradePrice.mul(value || 0) : wei(value);
+			const changeEnabled = remainingMargin.gt(0) && value !== '';
+			const isolatedMarginLeverage = changeEnabled ? usdSize.div(remainingMargin) : zeroBN;
+
+			const inputLeverage =
+				selectedAccountType === 'cross_margin'
+					? options?.crossMarginLeverage ?? wei(selectedLeverage)
+					: isolatedMarginLeverage;
+			let leverage = remainingMargin.eq(0) ? zeroBN : inputLeverage;
+			leverage = marketMaxLeverage.gt(leverage) ? leverage : marketMaxLeverage;
+
+			const newTradeInputs = {
+				nativeSize: nativeSize.toString(),
+				susdSize: changeEnabled ? weiToString(usdSize) : '',
+				nativeSizeDelta: positiveTrade ? nativeSize : nativeSize.neg(),
+				susdSizeDelta: positiveTrade ? usdSize : usdSize.neg(),
+				orderPrice: tradePrice,
+				leverage: String(floorNumber(leverage)),
+			};
+
+			if (options?.simulateChange) {
+				// Allows us to keep it snappy updating the input values
+				setSimulatedTrade(newTradeInputs);
+			} else {
+				onStagePositionChange(newTradeInputs);
+			}
 		},
 		[
-			marketAssetRate,
+			tradePrice,
 			remainingMargin,
 			marketMaxLeverage,
 			selectedLeverage,
 			selectedAccountType,
 			positiveTrade,
-			onStagePositionChange,
-		]
-	);
-
-	const onTradeAmountSUSDChange = useCallback(
-		(value: string, commitChange = true, crossMarginLeverage?: string) => {
-			if (marketAssetRate.gt(0)) {
-				const changeEnabled = remainingMargin.gt(0) && value !== '';
-				const size = changeEnabled ? wei(value).div(marketAssetRate).toNumber().toString() : '';
-				const leverage =
-					selectedAccountType === 'cross_margin'
-						? crossMarginLeverage || selectedLeverage
-						: changeEnabled
-						? String(floorNumber(wei(value).div(remainingMargin)))
-						: '';
-
-				const newSize = {
-					nativeSize: size,
-					susdSize: value,
-					susdSizeDelta: value ? wei(positiveTrade ? value : -value) : zeroBN,
-					nativeSizeDelta: size ? wei(positiveTrade ? size : -size) : zeroBN,
-					leverage: leverage,
-				};
-
-				if (commitChange) {
-					onStagePositionChange(newSize);
-				} else {
-					// Allows us to keep it snappy updating the input values
-					setSimulatedTrade(newSize);
-				}
-			}
-		},
-		[
-			marketAssetRate,
-			remainingMargin,
-			selectedLeverage,
-			selectedAccountType,
-			positiveTrade,
+			resetTradeState,
 			setSimulatedTrade,
 			onStagePositionChange,
 		]
@@ -413,7 +409,9 @@ const useFuturesData = () => {
 				if (position?.position) {
 					onChangeOpenPosLeverage(leverage);
 				} else {
-					onTradeAmountSUSDChange('', true, String(leverage));
+					onTradeAmountChange('', 'usd', {
+						crossMarginLeverage: wei(leverage),
+					});
 				}
 			} else {
 				if (leverage <= 0) {
@@ -423,7 +421,7 @@ const useFuturesData = () => {
 						marketAssetRate.eq(0) || remainingMargin.eq(0)
 							? ''
 							: wei(leverage).mul(remainingMargin).div(marketAssetRate).toString();
-					onTradeAmountChange(newTradeSize, true);
+					onTradeAmountChange(newTradeSize, 'native');
 				}
 			}
 		},
@@ -435,16 +433,17 @@ const useFuturesData = () => {
 			resetTradeState,
 			onTradeAmountChange,
 			onChangeOpenPosLeverage,
-			onTradeAmountSUSDChange,
 		]
 	);
 
 	const onTradeOrderPriceChange = useCallback(
 		(price: string) => {
-			const nextTrade = { ...tradeInputs, orderPrice: wei(price || marketAssetRate) };
-			onStagePositionChange(nextTrade);
+			if (price && tradeInputs.susdSize) {
+				// Recalc the trade
+				onTradeAmountChange(tradeInputs.susdSize, 'usd');
+			}
 		},
-		[onStagePositionChange, tradeInputs, marketAssetRate]
+		[tradeInputs, onTradeAmountChange]
 	);
 
 	const orderTxn = useSynthetixTxn(
@@ -463,36 +462,40 @@ const useFuturesData = () => {
 		}
 	);
 
-	const submitCrossMarginOrder = useCallback(async () => {
-		if (!crossMarginAccountContract) return;
-		if (orderType === 'market') {
-			const newPosition = [
-				{
-					marketKey: formatBytes32String(marketAsset),
-					marginDelta: crossMarginMarginDelta.toBN(),
-					sizeDelta: tradeInputs.nativeSizeDelta.toBN(),
-				},
-			];
-			return await crossMarginAccountContract.distributeMargin(newPosition);
-		}
-		const enumType = orderType === 'limit' ? 0 : 1;
+	const submitCrossMarginOrder = useCallback(
+		async (fromEditLeverage?: boolean) => {
+			if (!crossMarginAccountContract) return;
+			if (orderType === 'market' || fromEditLeverage) {
+				const newPosition = [
+					{
+						marketKey: formatBytes32String(marketAsset),
+						marginDelta: crossMarginMarginDelta.toBN(),
+						sizeDelta: tradeInputs.nativeSizeDelta.toBN(),
+					},
+				];
+				return await crossMarginAccountContract.distributeMargin(newPosition);
+			}
+			const enumType = orderType === 'limit' ? 0 : 1;
 
-		return await crossMarginAccountContract.placeOrder(
-			formatBytes32String(marketAsset),
-			crossMarginMarginDelta.toBN(),
-			tradeInputs.nativeSizeDelta.toBN(),
-			wei(orderPrice).toBN(),
-			enumType,
-			{ value: wei(ORDER_KEEPER_ETH_DEPOSIT).toBN() }
-		);
-	}, [
-		crossMarginAccountContract,
-		marketAsset,
-		orderPrice,
-		orderType,
-		crossMarginMarginDelta,
-		tradeInputs.nativeSizeDelta,
-	]);
+			return await crossMarginAccountContract.placeOrder(
+				formatBytes32String(marketAsset),
+				crossMarginMarginDelta.toBN(),
+				tradeInputs.nativeSizeDelta.toBN(),
+				wei(orderPrice).toBN(),
+				enumType,
+				{ value: tradeFees.keeperEthDeposit.toBN() }
+			);
+		},
+		[
+			crossMarginAccountContract,
+			marketAsset,
+			orderPrice,
+			orderType,
+			crossMarginMarginDelta,
+			tradeInputs.nativeSizeDelta,
+			tradeFees.keeperEthDeposit,
+		]
+	);
 
 	const submitIsolatedMarginOrder = useCallback(() => {
 		orderTxn.mutate();
@@ -513,14 +516,14 @@ const useFuturesData = () => {
 
 	useEffect(() => {
 		const getMaxFee = async () => {
-			if (remainingMargin.eq(0) || marketAssetRate.eq(0)) {
+			if (remainingMargin.eq(0) || tradePrice.eq(0)) {
 				return;
 			}
 			try {
 				const currentValue = position?.position?.notionalValue || zeroBN;
 				let maxUsd = remainingMargin.mul(selectedLeverage);
 				maxUsd = leverageSide === 'long' ? maxUsd.sub(currentValue) : maxUsd.add(currentValue);
-				const maxSize = maxUsd.gt(0) ? maxUsd.div(marketAssetRate) : zeroBN;
+				const maxSize = maxUsd.gt(0) ? maxUsd.div(tradePrice) : zeroBN;
 				const maxOrderFee = await getTradeFee(maxSize);
 				setMaxFee(wei(maxOrderFee.fee));
 			} catch (e) {
@@ -534,7 +537,7 @@ const useFuturesData = () => {
 		leverageSide,
 		position?.position?.notionalValue,
 		remainingMargin,
-		marketAssetRate,
+		tradePrice,
 		selectedLeverage,
 	]);
 
@@ -559,8 +562,10 @@ const useFuturesData = () => {
 			) {
 				setOrderType('market');
 			}
+			onTradeAmountChange(tradeInputs.susdSize, 'usd');
 		}
-	}, [routerAccountType, orderType, network.id, setSelectedAccountType, setOrderType]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [routerAccountType, orderType, network.id]);
 
 	useEffect(() => {
 		const handleRouteChange = () => {
@@ -595,7 +600,6 @@ const useFuturesData = () => {
 	return {
 		onLeverageChange,
 		onTradeAmountChange,
-		onTradeAmountSUSDChange,
 		submitIsolatedMarginOrder,
 		submitCrossMarginOrder,
 		resetTradeState,

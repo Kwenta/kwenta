@@ -12,6 +12,7 @@ import Spacer from 'components/Spacer';
 import { CROSS_MARGIN_ORDER_TYPES } from 'constants/futures';
 import Connector from 'containers/Connector';
 import { useFuturesContext } from 'contexts/FuturesContext';
+import { FuturesOrderType } from 'queries/futures/types';
 import {
 	futuresAccountState,
 	futuresAccountTypeState,
@@ -53,11 +54,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const [orderPrice, setOrderPrice] = useRecoilState(futuresOrderPriceState);
 
-	const {
-		onTradeAmountSUSDChange,
-		maxUsdInputAmount,
-		onTradeOrderPriceChange,
-	} = useFuturesContext();
+	const { onTradeAmountChange, maxUsdInputAmount, onTradeOrderPriceChange } = useFuturesContext();
 
 	const [percent, setPercent] = useState(0);
 	const [usdAmount, setUsdAmount] = useState(susdSize);
@@ -72,9 +69,9 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 			const usdAmount = maxUsdInputAmount.mul(fraction).toString();
 			const usdValue = Number(usdAmount).toFixed(0);
 			setUsdAmount(usdValue);
-			onTradeAmountSUSDChange(usdValue, commit);
+			onTradeAmountChange(usdValue, 'usd', { simulateChange: !commit });
 		},
-		[onTradeAmountSUSDChange, maxUsdInputAmount]
+		[onTradeAmountChange, maxUsdInputAmount]
 	);
 
 	const onChangeOrderPrice = useCallback(
@@ -136,19 +133,9 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 						styleType="check"
 						values={CROSS_MARGIN_ORDER_TYPES}
 						selectedIndex={CROSS_MARGIN_ORDER_TYPES.indexOf(orderType)}
-						onChange={(oType: number) => {
-							switch (oType) {
-								case 0:
-									setOrderType('market');
-
-									break;
-								case 1:
-									setOrderType('stop');
-									break;
-								case 2:
-									setOrderType('limit');
-									break;
-							}
+						onChange={(index: number) => {
+							const type = CROSS_MARGIN_ORDER_TYPES[index];
+							setOrderType(type as FuturesOrderType);
 							onChangeOrderPrice('');
 						}}
 					/>

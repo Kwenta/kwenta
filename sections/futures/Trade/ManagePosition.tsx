@@ -39,6 +39,8 @@ type OrderTxnError = {
 
 const ManagePosition: React.FC = () => {
 	const { t } = useTranslation();
+	const { error, orderTxn, onTradeAmountChange, maxUsdInputAmount } = useFuturesContext();
+
 	const sizeDelta = useRecoilValue(sizeDeltaState);
 	const marginDelta = useRecoilValue(crossMarginMarginDeltaState);
 	const position = useRecoilValue(positionState);
@@ -52,12 +54,12 @@ const ManagePosition: React.FC = () => {
 	const [isConfirmationModalOpen, setConfirmationModalOpen] = useRecoilState(
 		confirmationModalOpenState
 	);
-	const { error, orderTxn, onTradeAmountChange } = useFuturesContext();
 	const isMarketCapReached = useRecoilValue(isMarketCapReachedState);
 	const placeOrderTranslationKey = useRecoilValue(placeOrderTranslationKeyState);
 	const potentialTradeDetails = useRecoilValue(potentialTradeDetailsState);
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
 	const marketAssetRate = useRecoilValue(marketAssetRateState);
+	const tradeInputs = useRecoilValue(futuresTradeInputsState);
 
 	const [isCancelModalOpen, setCancelModalOpen] = React.useState(false);
 
@@ -95,6 +97,7 @@ const ManagePosition: React.FC = () => {
 
 		if (!leverageValid || !!error || marketInfo?.isSuspended || isMarketCapReached) return true;
 		if ((orderType === 'limit' || orderType === 'stop') && !!invalidReason) return true;
+		if (tradeInputs.susdSizeDelta.abs().gt(maxUsdInputAmount)) return true;
 		if (placeOrderTranslationKey === 'futures.market.trade.button.deposit-margin-minimum')
 			return true;
 		if (selectedAccountType === 'cross_margin') {
@@ -116,6 +119,8 @@ const ManagePosition: React.FC = () => {
 		marketAssetRate,
 		marketInfo?.isSuspended,
 		placeOrderTranslationKey,
+		tradeInputs.susdSizeDelta,
+		maxUsdInputAmount,
 		selectedAccountType,
 		isMarketCapReached,
 		potentialTradeDetails,
@@ -152,7 +157,7 @@ const ManagePosition: React.FC = () => {
 										? PositionSide.SHORT
 										: PositionSide.LONG;
 								setLeverageSide(newLeverageSide);
-								onTradeAmountChange(newTradeSize.toString(), true);
+								onTradeAmountChange(newTradeSize.toString(), 'native');
 								setConfirmationModalOpen(true);
 							} else {
 								setCancelModalOpen(true);
