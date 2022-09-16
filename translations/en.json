@@ -330,6 +330,7 @@
 			"max-fee-gwei": "Max Fee (GWEI)",
 			"fee": "Exchange fee",
 			"fee-cost": "fee cost",
+			"dynamic-fee-tooltip": "This transaction will incur an additional dynamic fee due to market volatility.",
 			"button": {
 				"approve": "approve",
 				"approving": "approving",

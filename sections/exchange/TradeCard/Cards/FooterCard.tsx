@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
@@ -6,8 +6,10 @@ import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import { useExchangeContext } from 'contexts/ExchangeContext';
+import useApproveExchange from 'hooks/useApproveExchange';
 import useIsL2 from 'hooks/useIsL2';
 import useMarketClosed from 'hooks/useMarketClosed';
+import useRedeem from 'hooks/useRedeem';
 import RedeemTxModal from 'sections/dashboard/Deprecated/RedeemTxModal';
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
 import MarketClosureCard from 'sections/exchange/FooterCard/MarketClosureCard';
@@ -15,7 +17,6 @@ import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
 import TxApproveModal from 'sections/shared/modals/TxApproveModal';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-import TxSettleModal from 'sections/shared/modals/TxSettleModal';
 import {
 	baseCurrencyAmountState,
 	baseCurrencyKeyState,
@@ -27,7 +28,7 @@ import { NoTextTransform } from 'styles/common';
 
 import SettleTransactionsCard from '../../FooterCard/SettleTransactionsCard';
 
-const FooterCard: React.FC = () => {
+const FooterCard: FC = memo(() => {
 	const { t } = useTranslation();
 	const { isWalletConnected } = Connector.useContainer();
 	const isL2 = useIsL2();
@@ -44,15 +45,10 @@ const FooterCard: React.FC = () => {
 	const {
 		noSynths,
 		numEntries,
-		footerCardAttached,
 		showNoSynthsCard,
 		baseFeeRate,
-		handleSettle,
 		needsApproval,
-		handleApprove,
-		isApproved,
 		handleSubmit,
-		handleRedeem,
 		balances,
 		txProvider,
 		openModal,
@@ -63,34 +59,25 @@ const FooterCard: React.FC = () => {
 		feeCost,
 		exchangeFeeRate,
 		estimatedBaseTradePrice,
-		settlementWaitingPeriodInSeconds,
 		submissionDisabledReason,
 		feeReclaimPeriodInSeconds,
 	} = useExchangeContext();
 
+	const { handleApprove, isApproved } = useApproveExchange();
+	const { handleRedeem } = useRedeem();
+
 	return (
 		<>
 			{!isWalletConnected ? (
-				<ConnectWalletCard attached={footerCardAttached} />
+				<ConnectWalletCard />
 			) : baseCurrencyMarketClosed.isMarketClosed || quoteCurrencyMarketClosed.isMarketClosed ? (
-				<MarketClosureCard
-					baseCurrencyMarketClosed={baseCurrencyMarketClosed}
-					quoteCurrencyMarketClosed={quoteCurrencyMarketClosed}
-					attached={footerCardAttached}
-				/>
+				<MarketClosureCard />
 			) : showNoSynthsCard && noSynths ? (
-				<NoSynthsCard attached={footerCardAttached} />
+				<NoSynthsCard />
 			) : !isL2 && numEntries >= 12 ? (
-				<SettleTransactionsCard
-					attached={footerCardAttached}
-					settlementWaitingPeriodInSeconds={settlementWaitingPeriodInSeconds}
-					onSubmit={handleSettle}
-					settleCurrency={baseCurrencyKey}
-					numEntries={numEntries}
-				/>
+				<SettleTransactionsCard numEntries={numEntries} />
 			) : (
 				<TradeSummaryCard
-					attached={footerCardAttached}
 					submissionDisabledReason={submissionDisabledReason}
 					onSubmit={needsApproval ? (isApproved ? handleSubmit : handleApprove) : handleSubmit}
 					feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
@@ -148,17 +135,8 @@ const FooterCard: React.FC = () => {
 					currencyLabel={<NoTextTransform>{quoteCurrencyKey}</NoTextTransform>}
 				/>
 			)}
-			{openModal === 'settle' && (
-				<TxSettleModal
-					onDismiss={() => setOpenModal(undefined)}
-					txError={txError}
-					attemptRetry={handleSettle}
-					currencyKey={baseCurrencyKey!}
-					currencyLabel={<NoTextTransform>{baseCurrencyKey}</NoTextTransform>}
-				/>
-			)}
 		</>
 	);
-};
+});
 
 export default FooterCard;
