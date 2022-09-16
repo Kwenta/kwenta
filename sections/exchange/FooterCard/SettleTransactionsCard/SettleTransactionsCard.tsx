@@ -1,6 +1,6 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import Tippy from '@tippyjs/react';
-import React from 'react';
+import { FC, useEffect } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -25,7 +25,7 @@ type SettleTransactionsCardProps = {
 	numEntries: number | null;
 };
 
-const SettleTransactionsCard: React.FC<SettleTransactionsCardProps> = ({ numEntries }) => {
+const SettleTransactionsCard: FC<SettleTransactionsCardProps> = ({ numEntries }) => {
 	const { t } = useTranslation();
 	const [txError, setTxError] = useRecoilState(txErrorState);
 	const { openModal, setOpenModal } = useExchangeContext();
@@ -54,7 +54,7 @@ const SettleTransactionsCard: React.FC<SettleTransactionsCardProps> = ({ numEntr
 		{ enabled: !isL2 && (numEntries ?? 0) >= 12 }
 	);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (settleTxn.hash) {
 			monitorTransaction({
 				txHash: settleTxn.hash,

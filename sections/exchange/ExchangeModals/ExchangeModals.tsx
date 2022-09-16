@@ -1,9 +1,9 @@
-import React from 'react';
+import { memo } from 'react';
 
 import { useExchangeContext } from 'contexts/ExchangeContext';
 import SelectCurrencyModal from 'sections/shared/modals/SelectCurrencyModal';
 
-const ExchangeModals = React.memo(() => {
+const ExchangeModals = memo(() => {
 	const {
 		openModal,
 		setOpenModal,

@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
@@ -28,7 +28,7 @@ import { NoTextTransform } from 'styles/common';
 
 import SettleTransactionsCard from '../../FooterCard/SettleTransactionsCard';
 
-const FooterCard: React.FC = React.memo(() => {
+const FooterCard: FC = memo(() => {
 	const { t } = useTranslation();
 	const { isWalletConnected } = Connector.useContainer();
 	const isL2 = useIsL2();

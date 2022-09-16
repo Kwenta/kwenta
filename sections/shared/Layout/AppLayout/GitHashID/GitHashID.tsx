@@ -1,7 +1,7 @@
-import React from 'react';
+import { FC, memo } from 'react';
 import styled from 'styled-components';
 
-const GitHashID: React.FC = React.memo(() => {
+const GitHashID: FC = memo(() => {
 	const gitID = process.env.GIT_HASH_ID!.toString();
 
 	return (

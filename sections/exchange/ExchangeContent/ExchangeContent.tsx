@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 import styled from 'styled-components';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
@@ -8,7 +8,7 @@ import { MobileSwap } from 'sections/exchange/MobileSwap';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { PageContent, FullHeightContainer, MainContent } from 'styles/common';
 
-const ExchangeContent = React.memo(() => (
+const ExchangeContent = memo(() => (
 	<PageContent>
 		<DesktopOnlyView>
 			<StyledFullHeightContainer>

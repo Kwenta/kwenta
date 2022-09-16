@@ -1,5 +1,5 @@
 import Wei, { wei } from '@synthetixio/wei';
-import React from 'react';
+import { FC, memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
@@ -25,11 +25,11 @@ type CurrencyCardInputProps = {
 	priceRate: Wei | number | null;
 };
 
-const CurrencyCardInputLabel: React.FC<{ label: string }> = React.memo(({ label }) => {
+const CurrencyCardInputLabel: FC<{ label: string }> = memo(({ label }) => {
 	return <InputLabel data-testid="destination">{label}</InputLabel>;
 });
 
-const CurrencyCardInputMaxButton: React.FC<{ onClick?: () => void }> = React.memo(({ onClick }) => {
+const CurrencyCardInputMaxButton: FC<{ onClick?: () => void }> = memo(({ onClick }) => {
 	const { t } = useTranslation();
 
 	return (
@@ -39,7 +39,7 @@ const CurrencyCardInputMaxButton: React.FC<{ onClick?: () => void }> = React.mem
 	);
 });
 
-const CurrencyCardInput: React.FC<CurrencyCardInputProps> = React.memo(
+const CurrencyCardInput: FC<CurrencyCardInputProps> = memo(
 	({
 		label,
 		isBase,
@@ -57,7 +57,7 @@ const CurrencyCardInput: React.FC<CurrencyCardInputProps> = React.memo(
 		const { t } = useTranslation();
 		const { selectPriceCurrencyRate, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 
-		const tradeAmount = React.useMemo(() => {
+		const tradeAmount = useMemo(() => {
 			const amountBN = amount === '' ? zeroBN : wei(amount);
 			let current = priceRate ? amountBN.mul(priceRate) : null;
 

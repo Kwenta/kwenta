@@ -1,5 +1,5 @@
 import Wei from '@synthetixio/wei';
-import React from 'react';
+import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
@@ -22,7 +22,7 @@ type CurrencyCardSelectorProps = {
 	walletBalance: Wei | null;
 };
 
-const CurrencyCardSelector: React.FC<CurrencyCardSelectorProps> = React.memo(
+const CurrencyCardSelector: FC<CurrencyCardSelectorProps> = memo(
 	({
 		tokenName,
 		hasCurrencySelectCallback,

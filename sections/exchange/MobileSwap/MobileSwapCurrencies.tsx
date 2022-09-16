@@ -1,11 +1,11 @@
-import React from 'react';
+import { memo } from 'react';
 import styled from 'styled-components';
 
 import ArrowIcon from 'assets/svg/app/arrow-down.svg';
 import { useExchangeContext } from 'contexts/ExchangeContext';
 import { SwapCurrenciesButton } from 'styles/common';
 
-const MobileSwapCurrencies = React.memo(() => {
+const MobileSwapCurrencies = memo(() => {
 	const { handleCurrencySwap } = useExchangeContext();
 
 	return (

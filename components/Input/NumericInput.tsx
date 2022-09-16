@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC } from 'react';
+import { ChangeEvent, FC, memo } from 'react';
 import styled from 'styled-components';
 
 import Input from './Input';
@@ -15,7 +15,7 @@ type NumericInputProps = {
 
 const INVALID_CHARS = ['-', '+', 'e'];
 
-const NumericInput: FC<NumericInputProps> = React.memo(
+const NumericInput: FC<NumericInputProps> = memo(
 	({ value, onChange, placeholder, className, defaultValue, disabled, id, ...rest }) => {
 		const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
 			const { value } = e.target;

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { ExchangeContext } from 'contexts/ExchangeContext';
 import useExchange from 'hooks/useExchange';
 import ExchangeContent from 'sections/exchange/ExchangeContent';

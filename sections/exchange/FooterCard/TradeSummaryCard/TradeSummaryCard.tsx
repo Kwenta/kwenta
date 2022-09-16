@@ -1,7 +1,7 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
 import Tippy from '@tippyjs/react';
-import React, { FC, ReactNode, useMemo } from 'react';
+import { FC, ReactNode, useMemo, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -31,7 +31,7 @@ type TradeSummaryCardProps = {
 	isApproved?: boolean;
 };
 
-const TradeSummaryCard: FC<TradeSummaryCardProps> = React.memo(
+const TradeSummaryCard: FC<TradeSummaryCardProps> = memo(
 	({
 		submissionDisabledReason,
 		onSubmit,

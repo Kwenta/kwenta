@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC, memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
@@ -7,7 +7,7 @@ import { quoteCurrencyKeyState, quoteCurrencyAmountState } from 'store/exchange'
 
 import CurrencyCard from '../CurrencyCard';
 
-const QuoteCurrencyCard: React.FC = React.memo(() => {
+const QuoteCurrencyCard: FC = memo(() => {
 	const { t } = useTranslation();
 	const quoteCurrencyKey = useRecoilValue(quoteCurrencyKeyState);
 	const quoteCurrencyAmount = useRecoilValue(quoteCurrencyAmountState);
@@ -21,7 +21,7 @@ const QuoteCurrencyCard: React.FC = React.memo(() => {
 		onQuoteBalanceClick,
 	} = useExchangeContext();
 
-	const openQuoteModal = React.useCallback(() => setOpenModal('quote-select'), [setOpenModal]);
+	const openQuoteModal = useCallback(() => setOpenModal('quote-select'), [setOpenModal]);
 
 	return (
 		<CurrencyCard

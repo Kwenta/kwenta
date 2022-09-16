@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC, memo } from 'react';
 import styled from 'styled-components';
 
 import MobileBaseCurrencyCard from './MobileBaseCurrencyCard';
@@ -8,7 +8,7 @@ import RatioSelect from './RatioSelect';
 import SwapButton from './SwapButton';
 import SwapInfoBox from './SwapInfoBox';
 
-const MobileSwap: React.FC = React.memo(() => (
+const MobileSwap: FC = memo(() => (
 	<MobileSwapContainer>
 		<MobileQuoteCurrencyCard />
 		<RatioSelect />

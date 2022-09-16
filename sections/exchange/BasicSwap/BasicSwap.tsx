@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -9,7 +9,7 @@ import FooterCard from '../TradeCard/Cards/FooterCard';
 import QuoteCurrencyCard from '../TradeCard/Cards/QuoteCurrencyCard';
 import SwapCurrencies from './SwapCurrencies';
 
-const BasicSwap: React.FC = React.memo(() => {
+const BasicSwap: React.FC = memo(() => {
 	const { t } = useTranslation();
 
 	return (

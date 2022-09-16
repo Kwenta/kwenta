@@ -1,5 +1,5 @@
 import Wei, { wei } from '@synthetixio/wei';
-import React, { FC, useMemo } from 'react';
+import { FC, useMemo, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
@@ -30,7 +30,7 @@ type CurrencyCardProps = {
 	disabled?: boolean;
 };
 
-const CurrencyCard: FC<CurrencyCardProps> = React.memo(
+const CurrencyCard: FC<CurrencyCardProps> = memo(
 	({
 		side,
 		currencyKey,
