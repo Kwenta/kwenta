@@ -9,7 +9,7 @@ import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import FuturesMarketsTable from '../FuturesMarketsTable';
 import SpotMarketsTable from '../SpotMarketsTable';
 
-enum MarketsTab {
+export enum MarketsTab {
 	FUTURES = 'futures',
 	SPOT = 'spot',
 }

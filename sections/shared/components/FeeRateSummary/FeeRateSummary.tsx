@@ -1,6 +1,6 @@
 import Wei from '@synthetixio/wei';
 import Tippy from '@tippyjs/react';
-import { FC } from 'react';
+import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -15,7 +15,7 @@ type FeeRateSummaryItemProps = {
 	baseFeeRate?: Wei | null;
 };
 
-const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = ({ totalFeeRate, baseFeeRate }) => {
+const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = memo(({ totalFeeRate, baseFeeRate }) => {
 	const { t } = useTranslation();
 
 	return (
@@ -35,7 +35,7 @@ const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = ({ totalFeeRate, baseFee
 							<>
 								<DynamicFeeLabel>+</DynamicFeeLabel>
 								<DynamicFeeRateTooltip
-									content="This transaction will incur an additional dynamic fee due to market volatility."
+									content={t('exchange.summary-info.dynamic-fee-tooltip')}
 									trigger="mouseenter focus"
 									arrow={false}
 									placement="bottom"
@@ -52,7 +52,7 @@ const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = ({ totalFeeRate, baseFee
 			</SummaryItemValue>
 		</SummaryItem>
 	);
-};
+});
 
 export const FeeRateItem = styled.span`
 	display: flex;

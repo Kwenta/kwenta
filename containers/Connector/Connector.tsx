@@ -9,10 +9,7 @@ const useConnector = () => {
 	const { chain: activeChain } = useNetwork();
 	const { address, isConnected: isWalletConnected } = useAccount();
 	const network = useMemo(
-		() =>
-			activeChain !== undefined && activeChain.unsupported
-				? chain.optimism
-				: activeChain ?? chain.optimism,
+		() => (activeChain?.unsupported ? chain.optimism : activeChain ?? chain.optimism),
 		[activeChain]
 	);
 

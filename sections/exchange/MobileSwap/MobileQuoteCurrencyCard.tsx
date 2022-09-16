@@ -5,29 +5,26 @@ import { useRecoilValue } from 'recoil';
 import { useExchangeContext } from 'contexts/ExchangeContext';
 import { quoteCurrencyKeyState, quoteCurrencyAmountState } from 'store/exchange';
 
-import CurrencyCard from '../CurrencyCard';
+import MobileCurrencyCard from '../TradeCard/CurrencyCard/MobileCurrencyCard';
 
-const QuoteCurrencyCard: FC = memo(() => {
+const MobileQuoteCurrencyCard: FC = memo(() => {
 	const { t } = useTranslation();
 	const quoteCurrencyKey = useRecoilValue(quoteCurrencyKeyState);
 	const quoteCurrencyAmount = useRecoilValue(quoteCurrencyAmountState);
 
 	const {
-		quoteCurrencyBalance,
 		setOpenModal,
-		allTokensMap,
-		quotePriceRate,
 		onQuoteCurrencyAmountChange,
 		onQuoteBalanceClick,
+		quoteCurrencyBalance,
+		quotePriceRate,
 	} = useExchangeContext();
 
 	const openQuoteModal = useCallback(() => setOpenModal('quote-select'), [setOpenModal]);
 
 	return (
-		<CurrencyCard
-			side="quote"
+		<MobileCurrencyCard
 			currencyKey={quoteCurrencyKey}
-			currencyName={quoteCurrencyKey ? allTokensMap[quoteCurrencyKey]?.name : null}
 			amount={quoteCurrencyAmount}
 			onAmountChange={onQuoteCurrencyAmountChange}
 			walletBalance={quoteCurrencyBalance}
@@ -39,4 +36,4 @@ const QuoteCurrencyCard: FC = memo(() => {
 	);
 });
 
-export default QuoteCurrencyCard;
+export default MobileQuoteCurrencyCard;

@@ -55,9 +55,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 			: allSynths;
 
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery(walletAddress);
-	const synthBalances = synthsWalletBalancesQuery.isSuccess
-		? synthsWalletBalancesQuery.data ?? null
-		: null;
+	const synthBalances = synthsWalletBalancesQuery.data ?? null;
 
 	const categoryFilteredSynths = useMemo(
 		() =>
@@ -113,7 +111,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	const searchFilteredTokens = useDebouncedMemo(
 		() =>
 			assetSearch
-				? oneInchTokenList.filter(({ name, symbol }) => {
+				? oneInchTokenList.filter(({ name, symbol }: any) => {
 						const assetSearchLC = assetSearch.toLowerCase();
 						return (
 							name.toLowerCase().includes(assetSearchLC) ||
@@ -128,7 +126,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	const oneInchTokensPaged = useMemo(() => {
 		if (!oneInchEnabled || (synthCategory && synthCategory !== 'crypto')) return [];
 		const items =
-			searchFilteredTokens.map((t) => ({
+			searchFilteredTokens.map((t: any) => ({
 				...t,
 				isSynth: false,
 			})) || [];
@@ -243,9 +241,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 								</span>
 								<span>{t('modals.select-currency.header.holdings')}</span>
 							</TokensHeader>
-							{oneInchQuery.isLoading ? (
-								<Loader />
-							) : oneInchTokensPaged.length > 0 ? (
+							{oneInchTokensPaged.length > 0 ? (
 								oneInchTokensPaged.map((token) => {
 									const currencyKey = token.symbol;
 									return (

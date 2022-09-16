@@ -1,7 +1,8 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
-import { FC, useState, useMemo } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
@@ -12,25 +13,16 @@ import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioV
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
+import { activePositionsTabState } from 'store/ui';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
 import FuturesPositionsTable from '../FuturesPositionsTable';
+import { MarketsTab } from '../Markets/Markets';
 import MobileDashboard from '../MobileDashboard';
 import PortfolioChart from '../PortfolioChart';
 import SpotMarketsTable from '../SpotMarketsTable';
 import SynthBalancesTable from '../SynthBalancesTable';
-
-enum PositionsTab {
-	FUTURES = 'futures',
-	SHORTS = 'shorts',
-	SPOT = 'spot',
-}
-
-enum MarketsTab {
-	FUTURES = 'futures',
-	SPOT = 'spot',
-}
 
 const Overview: FC = () => {
 	const { t } = useTranslation();
@@ -53,7 +45,7 @@ const Overview: FC = () => {
 			? synthsBalancesQuery.data
 			: null;
 
-	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(PositionsTab.FUTURES);
+	const [activePositionsTab, setActivePositionsTab] = useRecoilState(activePositionsTabState);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
 	const totalSpotBalancesValue = formatDollars(wei(synthBalances?.totalUSDBalance ?? zeroBN));
@@ -63,30 +55,27 @@ const Overview: FC = () => {
 	const POSITIONS_TABS = useMemo(
 		() => [
 			{
-				name: PositionsTab.FUTURES,
+				name: MarketsTab.FUTURES,
 				label: t('dashboard.overview.positions-tabs.futures'),
 				badge: futuresPositionQuery?.data?.length,
-				active: activePositionsTab === PositionsTab.FUTURES,
+				active: activePositionsTab === MarketsTab.FUTURES,
 				detail: totalFuturesPortfolioValue,
 				disabled: false,
-				onClick: () => {
-					setActivePositionsTab(PositionsTab.FUTURES);
-				},
+				onClick: () => setActivePositionsTab(MarketsTab.FUTURES),
 			},
 			{
-				name: PositionsTab.SPOT,
+				name: MarketsTab.SPOT,
 				label: t('dashboard.overview.positions-tabs.spot'),
-				active: activePositionsTab === PositionsTab.SPOT,
+				active: activePositionsTab === MarketsTab.SPOT,
 				detail: totalSpotBalancesValue,
 				disabled: false,
-				onClick: () => {
-					setActivePositionsTab(PositionsTab.SPOT);
-				},
+				onClick: () => setActivePositionsTab(MarketsTab.SPOT),
 			},
 		],
 		[
-			activePositionsTab,
 			futuresPositionQuery?.data?.length,
+			activePositionsTab,
+			setActivePositionsTab,
 			t,
 			totalFuturesPortfolioValue,
 			totalSpotBalancesValue,
@@ -99,20 +88,16 @@ const Overview: FC = () => {
 				name: MarketsTab.FUTURES,
 				label: t('dashboard.overview.markets-tabs.futures'),
 				active: activeMarketsTab === MarketsTab.FUTURES,
-				onClick: () => {
-					setActiveMarketsTab(MarketsTab.FUTURES);
-				},
+				onClick: () => setActiveMarketsTab(MarketsTab.FUTURES),
 			},
 			{
 				name: MarketsTab.SPOT,
 				label: t('dashboard.overview.markets-tabs.spot'),
 				active: activeMarketsTab === MarketsTab.SPOT,
-				onClick: () => {
-					setActiveMarketsTab(MarketsTab.SPOT);
-				},
+				onClick: () => setActiveMarketsTab(MarketsTab.SPOT),
 			},
 		],
-		[activeMarketsTab, t]
+		[activeMarketsTab, setActiveMarketsTab, t]
 	);
 
 	return (
@@ -127,11 +112,11 @@ const Overview: FC = () => {
 						<TabButton key={name} title={label} {...rest} />
 					))}
 				</TabButtonsContainer>
-				<TabPanel name={PositionsTab.FUTURES} activeTab={activePositionsTab}>
+				<TabPanel name={MarketsTab.FUTURES} activeTab={activePositionsTab}>
 					<FuturesPositionsTable futuresPositionHistory={futuresPositionHistory} />
 				</TabPanel>
 
-				<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}>
+				<TabPanel name={MarketsTab.SPOT} activeTab={activePositionsTab}>
 					<SynthBalancesTable
 						synthBalances={synthBalances?.balances ?? []}
 						exchangeRates={exchangeRates}
