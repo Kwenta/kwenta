@@ -81,8 +81,7 @@ const DashboardLayout: FC = ({ children }) => {
 				name: Tab.Staking,
 				label: t('dashboard.tabs.staking'),
 				active: activeTab === Tab.Staking,
-				disabled: true,
-				onClick: () => {},
+				onClick: () => router.push(ROUTES.Home.Staking),
 			},
 		],
 		[t, activeTab, router]

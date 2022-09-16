@@ -1,21 +1,24 @@
 import React from 'react';
+import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
 
-type Tab = 'staking' | 'trading-rewards' | 'escrow';
+import EscrowTab from './EscrowTab';
+import StakingTab from './StakingTab';
+import TradingRewardsTab from './TradingRewardsTab';
 
-enum StakingTab {
+enum StakeTab {
 	Staking = 'staking',
 	TradingRewards = 'trading-rewards',
 	Escrow = 'escrow',
 }
 
 const StakingTabs: React.FC = () => {
-	const [activeTab, setActiveTab] = React.useState<Tab>('staking');
+	const [activeTab, setActiveTab] = React.useState<StakeTab>(StakeTab.Staking);
 
 	const handleTabSwitch = React.useCallback(
-		(tab: Tab) => () => {
+		(tab: StakeTab) => () => {
 			setActiveTab(tab);
 		},
 		[]
@@ -23,37 +26,46 @@ const StakingTabs: React.FC = () => {
 
 	return (
 		<div>
-			<div>
+			<TabButtons>
 				<TabButton
 					title="Staking"
-					onClick={handleTabSwitch('staking')}
-					active={activeTab === 'staking'}
+					onClick={handleTabSwitch(StakeTab.Staking)}
+					active={activeTab === StakeTab.Staking}
 				/>
 				<TabButton
 					title="Trading Rewards"
-					onClick={handleTabSwitch('trading-rewards')}
-					active={activeTab === 'trading-rewards'}
+					onClick={handleTabSwitch(StakeTab.TradingRewards)}
+					active={activeTab === StakeTab.TradingRewards}
 				/>
 				<TabButton
 					title="Escrow"
-					onClick={handleTabSwitch('escrow')}
-					active={activeTab === 'escrow'}
+					onClick={handleTabSwitch(StakeTab.Escrow)}
+					active={activeTab === StakeTab.Escrow}
 				/>
-			</div>
+			</TabButtons>
 
 			<div>
-				<TabPanel name="staking" activeTab={activeTab}>
-					<div />
+				<TabPanel name={StakeTab.Staking} activeTab={activeTab}>
+					<StakingTab />
 				</TabPanel>
-				<TabPanel name="trading-rewards" activeTab={activeTab}>
-					<div />
+				<TabPanel name={StakeTab.TradingRewards} activeTab={activeTab}>
+					<TradingRewardsTab />
 				</TabPanel>
-				<TabPanel name="escrow" activeTab={activeTab}>
-					<div />
+				<TabPanel name={StakeTab.Escrow} activeTab={activeTab}>
+					<EscrowTab />
 				</TabPanel>
 			</div>
 		</div>
 	);
 };
+
+const TabButtons = styled.div`
+	display: flex;
+	margin-bottom: 20px;
+
+	& > button:not(:last-of-type) {
+		margin-right: 8px;
+	}
+`;
 
 export default StakingTabs;
