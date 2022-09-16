@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, memo } from 'react';
 import styled from 'styled-components';
 
 import CardBody, { CardBodyProps } from './CardBody';
@@ -16,7 +16,7 @@ interface StaticComponents {
 }
 
 // @ts-ignore
-const Card: FC<CardProps> & StaticComponents = React.memo(({ children, isRounded, ...rest }) => (
+const Card: FC<CardProps> & StaticComponents = memo(({ children, isRounded, ...rest }) => (
 	<Container isRounded={isRounded} {...rest}>
 		{children}
 	</Container>

@@ -1,3 +1,4 @@
+import { FC } from 'react';
 import styled from 'styled-components';
 
 import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
@@ -14,7 +15,7 @@ export type TokenIconProps = {
 	url?: string;
 };
 
-const TokenIcon: React.FC<TokenIconProps> = ({ currencyKey, ...props }) => {
+const TokenIcon: FC<TokenIconProps> = ({ currencyKey, ...props }) => {
 	const OneInchTokenListQuery = useOneInchTokenList();
 	const OneInchTokenListMap = OneInchTokenListQuery.data?.tokensMap ?? null;
 

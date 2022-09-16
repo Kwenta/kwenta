@@ -1,4 +1,4 @@
-import { memo, useCallback } from 'react';
+import { FC, memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
@@ -7,7 +7,7 @@ import { baseCurrencyKeyState, baseCurrencyAmountState } from 'store/exchange';
 
 import MobileCurrencyCard from '../TradeCard/CurrencyCard/MobileCurrencyCard';
 
-const MobileBaseCurrencyCard: React.FC = memo(() => {
+const MobileBaseCurrencyCard: FC = memo(() => {
 	const { t } = useTranslation();
 	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
 	const baseCurrencyAmount = useRecoilValue(baseCurrencyAmountState);
