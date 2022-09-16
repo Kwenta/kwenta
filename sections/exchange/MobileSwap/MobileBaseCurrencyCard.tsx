@@ -5,9 +5,9 @@ import { useRecoilValue } from 'recoil';
 import { useExchangeContext } from 'contexts/ExchangeContext';
 import { baseCurrencyKeyState, baseCurrencyAmountState } from 'store/exchange';
 
-import CurrencyCard from '../CurrencyCard';
+import MobileCurrencyCard from '../TradeCard/CurrencyCard/MobileCurrencyCard';
 
-const BaseCurrencyCard: FC = memo(() => {
+const MobileBaseCurrencyCard: FC = memo(() => {
 	const { t } = useTranslation();
 	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
 	const baseCurrencyAmount = useRecoilValue(baseCurrencyAmountState);
@@ -16,10 +16,7 @@ const BaseCurrencyCard: FC = memo(() => {
 		txProvider,
 		baseCurrencyBalance,
 		setOpenModal,
-		slippagePercent,
 		basePriceRate,
-		allTokensMap,
-		oneInchQuoteQuery,
 		onBaseCurrencyAmountChange,
 		onBaseBalanceClick,
 	} = useExchangeContext();
@@ -27,10 +24,8 @@ const BaseCurrencyCard: FC = memo(() => {
 	const openBaseModal = useCallback(() => setOpenModal('base-select'), [setOpenModal]);
 
 	return (
-		<CurrencyCard
-			side="base"
+		<MobileCurrencyCard
 			currencyKey={baseCurrencyKey}
-			currencyName={baseCurrencyKey ? allTokensMap[baseCurrencyKey]?.name : null}
 			disabled={txProvider !== 'synthetix'}
 			amount={baseCurrencyAmount}
 			onAmountChange={onBaseCurrencyAmountChange}
@@ -39,10 +34,8 @@ const BaseCurrencyCard: FC = memo(() => {
 			onCurrencySelect={openBaseModal}
 			priceRate={basePriceRate}
 			label={t('exchange.common.into')}
-			slippagePercent={slippagePercent}
-			isLoading={txProvider === '1inch' && oneInchQuoteQuery.isFetching}
 		/>
 	);
 });
 
-export default BaseCurrencyCard;
+export default MobileBaseCurrencyCard;
