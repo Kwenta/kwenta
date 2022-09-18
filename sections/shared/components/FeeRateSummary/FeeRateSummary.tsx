@@ -1,10 +1,10 @@
 import Wei from '@synthetixio/wei';
-import Tippy from '@tippyjs/react';
 import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import TimerIcon from 'assets/svg/app/timer.svg';
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { NO_VALUE } from 'constants/placeholder';
 import { formatPercent } from 'utils/formatters/number';
 
@@ -35,10 +35,8 @@ const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = memo(({ totalFeeRate, ba
 							<>
 								<DynamicFeeLabel>+</DynamicFeeLabel>
 								<DynamicFeeRateTooltip
+									preset="bottom"
 									content={t('exchange.summary-info.dynamic-fee-tooltip')}
-									trigger="mouseenter focus"
-									arrow={false}
-									placement="bottom"
 								>
 									<DynamicFeeRateItem>
 										<span>{formatPercent(totalFeeRate.sub(baseFeeRate), { minDecimals: 2 })}</span>
@@ -64,7 +62,7 @@ export const DynamicFeeLabel = styled.span`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
-export const DynamicFeeRateTooltip = styled(Tippy)`
+export const DynamicFeeRateTooltip = styled(StyledTooltip)`
 	width: auto;
 	text-align: justify;
 	font-size: 12px;

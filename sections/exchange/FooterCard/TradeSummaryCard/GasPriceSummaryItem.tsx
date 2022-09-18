@@ -1,5 +1,4 @@
 import { GasPrices, GAS_SPEEDS } from '@synthetixio/queries';
-import Tippy from '@tippyjs/react';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -7,6 +6,7 @@ import styled from 'styled-components';
 import InfoIcon from 'assets/svg/app/info.svg';
 import Button from 'components/Button';
 import NumericInput from 'components/Input/NumericInput';
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE, ESTIMATE_VALUE } from 'constants/placeholder';
 import useGas, { parseGasPriceObject } from 'hooks/useGas';
@@ -80,7 +80,6 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 										{gasEstimateInfo}
 									</GasEstimateUSD>
 								}
-								arrow={false}
 							>
 								<GasPriceItem>
 									{gasPriceItem}
@@ -92,8 +91,6 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 						)}
 						{isL2 ? null : (
 							<GasPriceTooltip
-								trigger="click"
-								arrow={false}
 								content={
 									<GasSelectContainer>
 										<CustomGasPriceContainer>
@@ -123,7 +120,6 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 										))}
 									</GasSelectContainer>
 								}
-								interactive
 							>
 								<StyledGasEditButton role="button">{t('common.edit')}</StyledGasEditButton>
 							</GasPriceTooltip>
@@ -137,7 +133,7 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 	);
 };
 
-export const GasPriceTooltip = styled(Tippy)`
+export const GasPriceTooltip = styled(StyledTooltip)`
 	background: ${(props) => props.theme.colors.elderberry};
 	border: 0.5px solid ${(props) => props.theme.colors.navy};
 	border-radius: 4px;
@@ -211,7 +207,7 @@ export const StyledGasEditButton = styled.span`
 	text-transform: uppercase;
 `;
 
-export const ErrorTooltip = styled(Tippy)`
+export const ErrorTooltip = styled(StyledTooltip)`
 	font-size: 12px;
 	background-color: ${(props) => props.theme.colors.red};
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
