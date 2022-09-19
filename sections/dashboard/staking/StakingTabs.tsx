@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useCallback } from 'react';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
@@ -15,14 +15,9 @@ enum StakeTab {
 }
 
 const StakingTabs: React.FC = () => {
-	const [activeTab, setActiveTab] = React.useState<StakeTab>(StakeTab.Staking);
+	const [activeTab, setActiveTab] = useState(StakeTab.Staking);
 
-	const handleTabSwitch = React.useCallback(
-		(tab: StakeTab) => () => {
-			setActiveTab(tab);
-		},
-		[]
-	);
+	const handleTabSwitch = useCallback((tab: StakeTab) => () => setActiveTab(tab), []);
 
 	return (
 		<div>
