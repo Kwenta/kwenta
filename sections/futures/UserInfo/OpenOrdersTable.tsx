@@ -13,12 +13,12 @@ import PositionType from 'components/Text/PositionType';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
+import { FuturesOrder, PositionSide } from 'queries/futures/types';
 import { currentMarketState, futuresAccountState, openOrdersState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { getDisplayAsset, isDecimalFour } from 'utils/futures';
 
 import OrderDrawer from '../MobileTrade/drawers/OrderDrawer';
-import { PositionSide } from '../types';
 
 const OpenOrdersTable: React.FC = () => {
 	const { t } = useTranslation();
@@ -33,7 +33,7 @@ const OpenOrdersTable: React.FC = () => {
 	const { handleRefetch } = useRefetchContext();
 
 	const [action, setAction] = useState<'' | 'cancel' | 'execute'>('');
-	const [selectedOrder, setSelectedOrder] = useState<any>();
+	const [selectedOrder, setSelectedOrder] = useState<FuturesOrder>();
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
