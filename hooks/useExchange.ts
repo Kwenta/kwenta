@@ -337,7 +337,7 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 					selectedPriceCurrency.name
 			  );
 	}, [
-		isQuoteCurrencyETH,
+		isBaseCurrencyETH,
 		baseCurrencyTokenAddress,
 		txProvider,
 		baseCurrency,
