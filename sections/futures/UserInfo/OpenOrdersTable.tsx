@@ -1,6 +1,5 @@
 import useSynthetixQueries from '@synthetixio/queries';
-import { wei } from '@synthetixio/wei';
-import { useMemo, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
@@ -11,36 +10,23 @@ import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
-import Connector from 'containers/Connector';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
-import {
-	currentMarketState,
-	futuresAccountState,
-	marketInfoState,
-	openOrdersState,
-} from 'store/futures';
+import { currentMarketState, futuresAccountState, openOrdersState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
-import { formatCurrency } from 'utils/formatters/number';
-import {
-	getDisplayAsset,
-	MarketKeyByAsset,
-	FuturesMarketAsset,
-	getMarketName,
-} from 'utils/futures';
+import { getDisplayAsset, isDecimalFour } from 'utils/futures';
 
 import OrderDrawer from '../MobileTrade/drawers/OrderDrawer';
 import { PositionSide } from '../types';
 
 const OpenOrdersTable: React.FC = () => {
 	const { t } = useTranslation();
-	const { synthsMap } = Connector.useContainer();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
 
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const currencyKey = useRecoilValue(currentMarketState);
-	const marketInfo = useRecoilValue(marketInfoState);
 	const openOrders = useRecoilValue(openOrdersState);
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 
@@ -86,32 +72,11 @@ const OpenOrdersTable: React.FC = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [cancelOrExecuteOrderTxn.hash]);
 
-	const data = useMemo(() => {
-		return openOrders.map((order: any) => ({
-			asset: order.asset,
-			market: getMarketName(order.asset),
-			marketKey: MarketKeyByAsset[order.asset as FuturesMarketAsset],
-			orderType: order.orderType === 'NextPrice' ? 'Next-Price' : order.orderType,
-			size: formatCurrency(order.asset, order.size.abs(), {
-				sign: order.asset ? synthsMap[order.asset]?.sign : '',
-			}),
-			side: wei(order.size).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
-			isStale:
-				order.orderType === 'NextPrice' &&
-				wei(marketInfo?.currentRoundId ?? 0).gte(wei(order.targetRoundId).add(2)),
-			isExecutable:
-				order.orderType === 'NextPrice' &&
-				(wei(marketInfo?.currentRoundId ?? 0).eq(order.targetRoundId) ||
-					wei(marketInfo?.currentRoundId ?? 0).eq(order.targetRoundId.add(1))),
-			timestamp: order.timestamp,
-		}));
-	}, [openOrders, marketInfo?.currentRoundId, synthsMap]);
-
 	return (
 		<>
 			<DesktopOnlyView>
 				<StyledTable
-					data={data}
+					data={openOrders}
 					highlightRowsOnHover
 					showPagination
 					noResultsMessage={
@@ -166,12 +131,29 @@ const OpenOrdersTable: React.FC = () => {
 						{
 							Header: (
 								<StyledTableHeader>
-									{t('futures.market.user.open-orders.table.size')}
+									{t('futures.market.user.open-orders.table.size-price')}
 								</StyledTableHeader>
 							),
 							accessor: 'size',
 							Cell: (cellProps: CellProps<any>) => {
-								return <div>{cellProps.row.original.size}</div>;
+								const formatOptions = isDecimalFour(cellProps.row.original.asset)
+									? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
+									: {};
+
+								return (
+									<div>
+										<div>{cellProps.row.original.sizeTxt}</div>
+										{cellProps.row.original.targetPrice && (
+											<Currency.Price
+												currencyKey={'sUSD'}
+												price={cellProps.row.original.targetPrice}
+												sign={'$'}
+												conversionRate={1}
+												formatOptions={formatOptions}
+											/>
+										)}
+									</div>
+								);
 							},
 							sortable: true,
 							width: 50,
@@ -212,7 +194,7 @@ const OpenOrdersTable: React.FC = () => {
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<StyledTable
-					data={data}
+					data={openOrders}
 					noResultsMessage={
 						<TableNoResults>{t('futures.market.user.open-orders.table.no-result')}</TableNoResults>
 					}
@@ -234,7 +216,7 @@ const OpenOrdersTable: React.FC = () => {
 						{
 							Header: <StyledTableHeader>Size</StyledTableHeader>,
 							accessor: 'size',
-							Cell: (cellProps: CellProps<any>) => <div>{cellProps.row.original.size}</div>,
+							Cell: (cellProps: CellProps<any>) => <div>{cellProps.row.original.sizeTxt}</div>,
 						},
 					]}
 				/>
