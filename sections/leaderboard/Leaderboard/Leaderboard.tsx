@@ -1,4 +1,3 @@
-import { wei } from '@synthetixio/wei';
 import { useRouter } from 'next/router';
 import { FC, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -8,16 +7,15 @@ import TabButton from 'components/Button/TabButton';
 import Search from 'components/Table/Search';
 import ROUTES from 'constants/routes';
 import useENSs from 'hooks/useENSs';
-import { FuturesStat } from 'queries/futures/types';
+import { AccountStat } from 'queries/futures/types';
 import useGetStats from 'queries/futures/useGetStats';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
 import { isCompetitionActive } from 'store/ui';
 import { FlexDivCol } from 'styles/common';
 import media from 'styles/media';
-import { truncateAddress } from 'utils/formatters/string';
 
 import AllTime from '../AllTime';
-import { AccountStat, COMPETITION_TIERS, Tier } from '../common';
+import { COMPETITION_TIERS, Tier } from '../common';
 import Competition from '../Competition';
 import TraderHistory from '../TraderHistory';
 
@@ -38,7 +36,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 
 	const traders = useMemo(
 		() =>
-			statsData.map((stat: FuturesStat) => {
+			statsData.map((stat: AccountStat) => {
 				return stat.account;
 			}) ?? [],
 		[statsData]
@@ -47,23 +45,10 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 	const ensInfo = useMemo(() => ensInfoQuery.data ?? {}, [ensInfoQuery]);
 
 	let stats: AccountStat[] = useMemo(() => {
-		return statsData
-			.map((stat: FuturesStat) => ({
-				account: stat.account,
-				trader: stat.account,
-				traderShort: truncateAddress(stat.account),
-				traderEns: ensInfo[stat.account] ?? null,
-				totalTrades: stat.totalTrades,
-				totalVolume: wei(stat.totalVolume, 18, true).toNumber(),
-				liquidations: stat.liquidations,
-				pnl: wei(stat.pnlWithFeesPaid, 18, true).toNumber(),
-			}))
-			.filter((stat: FuturesStat) => stat.totalVolume > 0)
-			.sort((a: FuturesStat, b: FuturesStat) => (b?.pnl || 0) - (a?.pnl || 0))
-			.map((stat: FuturesStat, i: number) => ({
-				rank: i + 1,
-				...stat,
-			}));
+		return statsData.map((stat: AccountStat) => ({
+			...stat,
+			traderEns: ensInfo[stat.account] ?? null,
+		}));
 	}, [statsData, ensInfo]);
 
 	useMemo(() => {
@@ -146,7 +131,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 					) : (
 						<AllTime
 							stats={stats}
-							isLoading={statsQuery.isLoading || ensInfoQuery.isLoading}
+							isLoading={statsQuery.isLoading}
 							compact={compact}
 							onClickTrader={onClickTrader}
 							searchTerm={searchTerm}

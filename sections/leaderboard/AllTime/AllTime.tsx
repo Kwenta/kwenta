@@ -9,8 +9,9 @@ import Table from 'components/Table';
 import { DEFAULT_LEADERBOARD_ROWS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import useENSAvatar from 'hooks/useENSAvatar';
+import { AccountStat } from 'queries/futures/types';
 
-import { AccountStat, getMedal, PIN, StyledTrader } from '../common';
+import { getMedal, PIN, StyledTrader } from '../common';
 
 type AllTimeProps = {
 	stats: AccountStat[];
@@ -39,20 +40,12 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 	}
 
 	const data = useMemo(() => {
-		const statsData = stats
-			.sort((a: AccountStat, b: AccountStat) => a.rank - b.rank)
-			.map((trader: any) => {
-				return {
-					...trader,
-					rankText: trader.rank.toString(),
-				};
-			})
-			.filter((i: { account: string; traderEns: string }) =>
-				searchTerm?.length
-					? i.account.toLowerCase().includes(searchTerm) ||
-					  i.traderEns?.toLowerCase().includes(searchTerm)
-					: true
-			);
+		const statsData = stats.filter((stat) =>
+			searchTerm?.length
+				? stat.account.toLowerCase().includes(searchTerm) ||
+				  stat.traderEns?.toLowerCase().includes(searchTerm)
+				: true
+		);
 
 		const pinRow = statsData
 			.filter((trader) => trader.account.toLowerCase() === walletAddress?.toLowerCase())

@@ -220,11 +220,23 @@ export type FuturesVolumes = {
 
 export type FuturesStat = {
 	account: string;
-	pnlWithFeesPaid: string;
-	liquidations: number;
+	pnlWithFeesPaid: Wei;
+	liquidations: Wei;
+	totalTrades: Wei;
+	totalVolume: Wei;
+	pnl?: Wei;
+};
+
+export type AccountStat = {
+	rank: number;
+	account: string;
+	trader: string;
+	traderShort: string;
+	traderEns?: string | null;
 	totalTrades: number;
-	totalVolume: number;
-	pnl?: number;
+	totalVolume: Wei;
+	liquidations: number;
+	pnl: Wei;
 };
 
 export type FuturesCumulativeStats = {
