@@ -1,5 +1,6 @@
 import { wei } from '@synthetixio/wei';
-import React from 'react';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
@@ -22,6 +23,8 @@ import { isDecimalFour } from 'utils/futures';
 type MarketData = Record<string, { value: string | JSX.Element; color?: string }>;
 
 const useGetMarketData = (mobile?: boolean) => {
+	const { t } = useTranslation();
+
 	const marketAsset = useRecoilValue(currentMarketState);
 	const marketKey = useRecoilValue(marketKeyState);
 	const marketInfo = useRecoilValue(marketInfoState);
@@ -45,16 +48,19 @@ const useGetMarketData = (mobile?: boolean) => {
 
 	const pastPrice = pastRates.find((price) => price.synth === marketAsset);
 
-	const fundingTitle = React.useMemo(
-		() => `${!fundingRate?.fundingRate && !!marketInfo ? 'Inst.' : '1H'} Funding Rate`,
-		[fundingRate, marketInfo]
+	const fundingTitle = useMemo(
+		() => `${fundingRate?.fundingTitle ?? t('futures.market.info.hourly-funding')}`,
+		[fundingRate, t]
 	);
 
-	const data: MarketData = React.useMemo(() => {
+	const data: MarketData = useMemo(() => {
 		const fundingValue =
-			!fundingRate && !!marketInfo ? marketInfo?.currentFundingRate : fundingRate?.fundingRate;
+			!fundingRate?.fundingRate && !!fundingRate
+				? marketInfo?.currentFundingRate
+				: fundingRate?.fundingRate;
 
 		const marketPrice = wei(marketInfo?.price ?? 0);
+		const marketName = `${marketInfo?.marketName ?? t('futures.market.info.default-market')}`;
 
 		if (mobile) {
 			return {
@@ -113,7 +119,7 @@ const useGetMarketData = (mobile?: boolean) => {
 			};
 		} else {
 			return {
-				[marketInfo?.marketName ?? '']: {
+				[marketName]: {
 					value: formatCurrency(selectedPriceCurrency.name, marketPrice, {
 						sign: '$',
 						minDecimals,
@@ -184,6 +190,7 @@ const useGetMarketData = (mobile?: boolean) => {
 		fundingRate,
 		minDecimals,
 		fundingTitle,
+		t,
 	]);
 
 	return data;

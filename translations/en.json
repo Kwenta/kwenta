@@ -546,13 +546,11 @@
 				"daily-volume": "24H Vol"
 			},
 			"info": {
-				"asset": "asset",
-				"size": "market size",
-				"volume": "24H volume",
-				"skew": "market skew",
-				"debt": "market debt",
-				"rate": "24H funding rate"
-			},
+				"default-market": "ETH-PERP",
+				"hourly-funding": "1H Funding Rate",
+				"instant-funding": "Inst. Funding Rate",
+				"fallback-funding": "Funding Rate"
+ 			},
 			"position-card": {
 				"position-side": "Side",
 				"position-size": "Size",
