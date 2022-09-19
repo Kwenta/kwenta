@@ -11,7 +11,7 @@ const StakingPage: StakingComponent = () => {
 	return (
 		<>
 			<Head>
-				<title>Token | Kwenta</title>
+				<title>Staking | Kwenta</title>
 			</Head>
 			<div>
 				<StakingPortfolio />
