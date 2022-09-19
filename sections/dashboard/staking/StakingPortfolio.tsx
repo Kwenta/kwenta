@@ -9,7 +9,7 @@ type PortfolioItemIndividual = {
 
 type PortfolioItem = [PortfolioItemIndividual, PortfolioItemIndividual];
 
-const DEFAULT_CARDS = [
+const DEFAULT_CARDS: PortfolioItem[] = [
 	[
 		{
 			title: 'Liquid',
@@ -51,8 +51,10 @@ const StakingPortfolio = () => {
 					<PortfolioCard>
 						{card.map(({ title, value }) => (
 							<div>
-								<div className="title">{title}</div>
-								<div className="value">{value}</div>
+								<div>
+									<div className="title">{title}</div>
+									<div className="value">{value}</div>
+								</div>
 							</div>
 						))}
 					</PortfolioCard>
@@ -74,7 +76,7 @@ const PortfolioCard = styled.div`
 		padding: 30px 0;
 		display: flex;
 		flex-direction: column;
-		/* align-items: center; */
+		align-items: center;
 
 		&:first-of-type {
 			border-right: ${(props) => props.theme.colors.selectedTheme.border};
@@ -84,7 +86,6 @@ const PortfolioCard = styled.div`
 	.title {
 		color: ${(props) => props.theme.colors.selectedTheme.text.title};
 		font-size: 15px;
-		margin-left: 30px;
 	}
 
 	.value {
