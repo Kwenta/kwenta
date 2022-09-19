@@ -72,6 +72,11 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 								orderType: o.orderType === 'NextPrice' ? 'Next-Price' : o.orderType,
 								sizeTxt: formatCurrency(asset, size.abs(), {
 									sign: asset ? synthsMap[asset]?.sign : '',
+									minDecimals: size.abs().lt(0.01) ? 4 : 2,
+								}),
+								targetPriceTxt: formatCurrency(asset, targetPrice, {
+									sign: '$',
+									minDecimals: targetPrice.lt(0.01) ? 4 : 2,
 								}),
 								side: size.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
 								isStale:

@@ -33,7 +33,7 @@ const OpenOrdersTable: React.FC = () => {
 	const { handleRefetch } = useRefetchContext();
 
 	const [action, setAction] = useState<'' | 'cancel' | 'execute'>('');
-	const [selectedOrder, setSelectedOrder] = useState<FuturesOrder>();
+	const [selectedOrder, setSelectedOrder] = useState<FuturesOrder | undefined>();
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
@@ -201,7 +201,11 @@ const OpenOrdersTable: React.FC = () => {
 					onTableRowClick={(row) => setSelectedOrder(row.original)}
 					columns={[
 						{
-							Header: <StyledTableHeader>Side/Type</StyledTableHeader>,
+							Header: (
+								<StyledTableHeader>
+									{t('futures.market.user.open-orders.table.side-type')}
+								</StyledTableHeader>
+							),
 							accessor: 'side/type',
 							Cell: (cellProps: CellProps<any>) => (
 								<div>
@@ -214,9 +218,32 @@ const OpenOrdersTable: React.FC = () => {
 							width: 100,
 						},
 						{
-							Header: <StyledTableHeader>Size</StyledTableHeader>,
+							Header: (
+								<StyledTableHeader>
+									{t('futures.market.user.open-orders.table.size-price')}
+								</StyledTableHeader>
+							),
 							accessor: 'size',
-							Cell: (cellProps: CellProps<any>) => <div>{cellProps.row.original.sizeTxt}</div>,
+							Cell: (cellProps: CellProps<any>) => {
+								const formatOptions = isDecimalFour(cellProps.row.original.asset)
+									? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
+									: {};
+
+								return (
+									<div>
+										<div>{cellProps.row.original.sizeTxt}</div>
+										{cellProps.row.original.targetPrice && (
+											<Currency.Price
+												currencyKey={'sUSD'}
+												price={cellProps.row.original.targetPrice}
+												sign={'$'}
+												conversionRate={1}
+												formatOptions={formatOptions}
+											/>
+										)}
+									</div>
+								);
+							},
 						},
 					]}
 				/>

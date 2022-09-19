@@ -752,6 +752,7 @@
 					"table": {
 						"market-type": "Market/Type",
 						"side": "Side",
+						"side-type": "Side/Type",
 						"size-price": "Size/Price",
 						"status": "Status",
 						"parameters": "Parameters",

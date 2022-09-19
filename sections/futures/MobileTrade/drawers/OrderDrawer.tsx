@@ -2,21 +2,30 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';
-import { PositionSide } from 'sections/futures/types';
+import { FuturesOrder, PositionSide } from 'queries/futures/types';
 import { getDisplayAsset } from 'utils/futures';
 
 import BaseDrawer from './BaseDrawer';
 
 type OrderDrawerProps = {
 	open: boolean;
-	order: any;
+	order: FuturesOrder | undefined;
 	closeDrawer(): void;
 	setAction(action: 'execute' | 'cancel'): void;
 };
 
 const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer, setAction }) => {
 	const items = React.useMemo(() => {
-		if (!order) return [];
+		if (!order || !order.side) return [];
+
+		const price = order.targetPrice
+			? [
+					{
+						label: 'Price',
+						value: order.targetPriceTxt,
+					},
+			  ]
+			: [];
 
 		return [
 			{
@@ -29,8 +38,9 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer, set
 			},
 			{
 				label: 'Size',
-				value: order.size,
+				value: order.sizeTxt,
 			},
+			...price,
 			{
 				label: 'Type',
 				value: order.orderType,

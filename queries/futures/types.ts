@@ -225,8 +225,9 @@ export type FuturesOrder = {
 	targetRoundId: Wei | null;
 	timestamp: Wei;
 	orderType: 'NextPrice' | 'Next-Price' | 'Limit' | 'Stop';
-	sizeFormatted?: string;
-	side?: PositionSide | null;
+	sizeTxt?: string;
+	targetPriceTxt?: string;
+	side?: PositionSide;
 	isStale?: boolean;
 	isExecutable?: boolean;
 };
