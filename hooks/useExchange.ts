@@ -318,7 +318,7 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 	]);
 
 	const basePriceRate = useMemo(() => {
-		const baseCurrencyTokenAddresLower = (isQuoteCurrencyETH
+		const baseCurrencyTokenAddresLower = (isBaseCurrencyETH
 			? ETH_COINGECKO_ADDRESS
 			: baseCurrencyTokenAddress
 		)?.toLowerCase();
