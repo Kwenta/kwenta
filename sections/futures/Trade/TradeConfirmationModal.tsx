@@ -16,6 +16,7 @@ import {
 	currentMarketState,
 	futuresOrderPriceState,
 	orderTypeState,
+	positionState,
 	potentialTradeDetailsState,
 } from 'store/futures';
 import { FlexDivCentered } from 'styles/common';
@@ -47,13 +48,23 @@ export default function TradeConfirmationModal({
 	const { data: potentialTradeDetails } = useRecoilValue(potentialTradeDetailsState);
 	const orderType = useRecoilValue(orderTypeState);
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
+	const position = useRecoilValue(positionState);
+
+	const positionSide = useMemo(() => {
+		if (potentialTradeDetails?.size.eq(zeroBN)) {
+			return position?.position?.side === PositionSide.LONG
+				? PositionSide.SHORT
+				: PositionSide.LONG;
+		}
+		return potentialTradeDetails?.size.gte(zeroBN) ? PositionSide.LONG : PositionSide.SHORT;
+	}, [potentialTradeDetails, position?.position?.side]);
 
 	const positionDetails = useMemo(() => {
 		return potentialTradeDetails
 			? {
 					...potentialTradeDetails,
 					size: potentialTradeDetails.size.abs(),
-					side: potentialTradeDetails.size.gte(zeroBN) ? PositionSide.LONG : PositionSide.SHORT,
+					side: positionSide,
 					leverage: potentialTradeDetails.margin.eq(zeroBN)
 						? zeroBN
 						: potentialTradeDetails.size
@@ -62,7 +73,7 @@ export default function TradeConfirmationModal({
 								.abs(),
 			  }
 			: null;
-	}, [potentialTradeDetails]);
+	}, [potentialTradeDetails, positionSide]);
 
 	const dataRows = useMemo(
 		() => [
@@ -179,9 +190,6 @@ export default function TradeConfirmationModal({
 const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
 		width: 400px;
-	}
-	.card-body {
-		padding: 28px;
 	}
 `;
 

@@ -712,6 +712,12 @@
 				},
 				"preview": {
 					"error": "Error generating preview"
+				},
+				"orders": {
+					"withdraw-keeper-deposit": {
+						"title": "Withdraw Keeper Deposit",
+						"button": "Withdraw"
+					}
 				}
 			},
 			"history": {

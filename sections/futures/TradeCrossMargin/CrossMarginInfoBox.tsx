@@ -3,10 +3,12 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
+import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import InfoBox from 'components/InfoBox';
 import Loader from 'components/Loader';
 import PreviewArrow from 'components/PreviewArrow';
 import { useFuturesContext } from 'contexts/FuturesContext';
+import useCrossMarginKeeperDeposit from 'hooks/useCrossMarginKeeperEthBal';
 import { FuturesPotentialTradeDetails } from 'queries/futures/types';
 import {
 	crossMarginAvailableMarginState,
@@ -16,6 +18,8 @@ import {
 	potentialTradeDetailsState,
 	tradeFeesState,
 	futuresTradeInputsState,
+	orderTypeState,
+	futuresOrderPriceState,
 } from 'store/futures';
 import {
 	formatCurrency,
@@ -26,23 +30,28 @@ import {
 } from 'utils/formatters/number';
 
 import EditLeverageModal from './EditLeverageModal';
+import WithdrawKeeperDepositModal from './WithdrawKeeperDepositModal';
 
 type Props = {
 	editingLeverage?: boolean;
 };
 
 function MarginInfoBox({ editingLeverage }: Props) {
+	const { keeperEthBal } = useCrossMarginKeeperDeposit();
+
+	const { selectedLeverage } = useFuturesContext();
+
 	const position = useRecoilValue(positionState);
 	const marketInfo = useRecoilValue(marketInfoState);
 	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
 	const potentialTrade = useRecoilValue(potentialTradeDetailsState);
 	const marginDelta = useRecoilValue(crossMarginMarginDeltaState);
 	const crossMarginFreeMargin = useRecoilValue(crossMarginAvailableMarginState);
+	const orderType = useRecoilValue(orderTypeState);
+	const orderPrice = useRecoilValue(futuresOrderPriceState);
 	const { crossMarginFee } = useRecoilValue(tradeFeesState);
 
-	const [openModal, setOpenModal] = useState<'leverage' | 'deposit' | null>(null);
-
-	const { selectedLeverage } = useFuturesContext();
+	const [openModal, setOpenModal] = useState<'leverage' | 'keeper-deposit' | null>(null);
 
 	const totalMargin = position?.remainingMargin.add(crossMarginFreeMargin) ?? zeroBN;
 	const availableMargin = position?.accessibleMargin.add(crossMarginFreeMargin) ?? zeroBN;
@@ -97,7 +106,10 @@ function MarginInfoBox({ editingLeverage }: Props) {
 		const size = wei(nativeSize || zeroBN);
 
 		return {
-			showPreview: !size.eq(0) || !marginDelta.eq(0),
+			showPreview:
+				!size.eq(0) ||
+				!marginDelta.eq(0) ||
+				((orderType === 'limit' || orderType === 'stop') && !!orderPrice),
 			totalMargin: potentialTrade.data?.margin.sub(crossMarginFee) || zeroBN,
 			freeAccountMargin: crossMarginFreeMargin.sub(marginDelta),
 			availableMargin: previewAvailableMargin.gt(0) ? previewAvailableMargin : zeroBN,
@@ -111,6 +123,8 @@ function MarginInfoBox({ editingLeverage }: Props) {
 		nativeSize,
 		marginDelta,
 		crossMarginFee,
+		orderType,
+		orderPrice,
 		potentialTrade.data?.margin,
 		previewAvailableMargin,
 		potentialTrade.data?.notionalValue,
@@ -164,12 +178,27 @@ function MarginInfoBox({ editingLeverage }: Props) {
 							</PreviewArrow>
 						),
 					},
+					'Keeper ETH Deposit':
+						orderType === 'limit' || orderType === 'stop'
+							? {
+									value: formatCurrency('ETH', keeperEthBal) + 'Ξ',
+									valueNode: (
+										<>
+											{keeperEthBal.gt(0) && (
+												<ActionButton hideBorder onClick={() => setOpenModal('keeper-deposit')}>
+													<WithdrawArrow width="10px" height="10px" />
+												</ActionButton>
+											)}
+										</>
+									),
+							  }
+							: null,
 					Leverage: {
 						value: (
 							<>
 								{formatNumber(selectedLeverage, { maxDecimals: 2 })}x
 								{!editingLeverage && (
-									<EditButton onClick={() => setOpenModal('leverage')}>Edit</EditButton>
+									<ActionButton onClick={() => setOpenModal('leverage')}>Edit</ActionButton>
 								)}
 							</>
 						),
@@ -202,6 +231,9 @@ function MarginInfoBox({ editingLeverage }: Props) {
 			/>
 
 			{openModal === 'leverage' && <EditLeverageModal onDismiss={() => setOpenModal(null)} />}
+			{openModal === 'keeper-deposit' && (
+				<WithdrawKeeperDepositModal onDismiss={() => setOpenModal(null)} />
+			)}
 		</>
 	);
 }
@@ -225,10 +257,16 @@ const Button = styled.span`
 	}
 `;
 
-const EditButton = styled(Button)`
+const ActionButton = styled(Button)<{ hideBorder?: boolean }>`
 	margin-left: 8px;
 	cursor: pointer;
+	font-size: 10px;
+	font-family: ${(props) => props.theme.fonts.bold};
+	border: 1px solid
+		${(props) => (!props.hideBorder ? props.theme.colors.selectedTheme.yellow : 'none')};
 	color: ${(props) => props.theme.colors.selectedTheme.yellow};
+	border-radius: 10px;
+	padding: ${(props) => (props.hideBorder ? '3px 2px 3px 0px' : '3px 5px')};
 `;
 
 export default React.memo(MarginInfoBox);

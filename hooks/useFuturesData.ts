@@ -270,8 +270,9 @@ const useFuturesData = () => {
 	// eslint-disable-next-line
 	const debounceFetchPreview = useCallback(
 		debounce(async (nextTrade: FuturesTradeInputs, fromLeverage = false) => {
+			setError(null);
+			if ((orderType === 'stop' || orderType === 'limit') && !orderPrice) return;
 			try {
-				setError(null);
 				const fees = await calculateFees(nextTrade.susdSizeDelta, nextTrade.nativeSizeDelta);
 				let nextMarginDelta = zeroBN;
 				if (selectedAccountType === 'cross_margin') {
@@ -297,6 +298,8 @@ const useFuturesData = () => {
 			calculateFees,
 			getPotentialTrade,
 			calculateMarginDelta,
+			orderPrice,
+			orderType,
 			selectedAccountType,
 			logError,
 			setCrossMarginMarginDelta,
@@ -312,8 +315,6 @@ const useFuturesData = () => {
 		[setTradeInputs, setSimulatedTrade, debounceFetchPreview]
 	);
 
-	const positiveTrade = useMemo(() => leverageSide === PositionSide.LONG, [leverageSide]);
-
 	const onTradeAmountChange = useCallback(
 		(
 			value: string,
@@ -325,6 +326,7 @@ const useFuturesData = () => {
 				return;
 			}
 
+			const positiveTrade = leverageSide === PositionSide.LONG;
 			const nativeSize = currencyType === 'native' ? wei(value) : wei(value).div(tradePrice);
 			const usdSize = currencyType === 'native' ? tradePrice.mul(value || 0) : wei(value);
 			const changeEnabled = remainingMargin.gt(0) && value !== '';
@@ -338,7 +340,7 @@ const useFuturesData = () => {
 			leverage = marketMaxLeverage.gt(leverage) ? leverage : marketMaxLeverage;
 
 			const newTradeInputs = {
-				nativeSize: nativeSize.toString(),
+				nativeSize: changeEnabled ? weiToString(nativeSize) : '',
 				susdSize: changeEnabled ? weiToString(usdSize) : '',
 				nativeSizeDelta: positiveTrade ? nativeSize : nativeSize.neg(),
 				susdSizeDelta: positiveTrade ? usdSize : usdSize.neg(),
@@ -359,7 +361,7 @@ const useFuturesData = () => {
 			marketMaxLeverage,
 			selectedLeverage,
 			selectedAccountType,
-			positiveTrade,
+			leverageSide,
 			resetTradeState,
 			setSimulatedTrade,
 			onStagePositionChange,
@@ -571,9 +573,7 @@ const useFuturesData = () => {
 		const handleRouteChange = () => {
 			resetTradeState();
 		};
-
 		router.events.on('routeChangeStart', handleRouteChange);
-
 		return () => {
 			router.events.off('routeChangeStart', handleRouteChange);
 		};
@@ -581,18 +581,7 @@ const useFuturesData = () => {
 
 	useEffect(() => {
 		if (tradeInputs.susdSizeDelta.eq(0)) return;
-		const nextTrade = {
-			...tradeInputs,
-			susdSizeDelta:
-				leverageSide === PositionSide.LONG
-					? tradeInputs.susdSizeDelta.abs()
-					: tradeInputs.susdSizeDelta.neg(),
-			nativeSizeDelta:
-				leverageSide === PositionSide.LONG
-					? tradeInputs.nativeSizeDelta.abs()
-					: tradeInputs.nativeSizeDelta.neg(),
-		};
-		onStagePositionChange(nextTrade);
+		onTradeAmountChange(tradeInputs.susdSize, 'usd');
 		// Only want to react to leverage side change
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [leverageSide]);
