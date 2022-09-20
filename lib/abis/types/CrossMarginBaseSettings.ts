@@ -33,10 +33,10 @@ export interface CrossMarginBaseSettingsInterface extends utils.Interface {
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setLimitOrderFee(uint256)": FunctionFragment;
-    "setStopLossFee(uint256)": FunctionFragment;
+    "setStopOrderFee(uint256)": FunctionFragment;
     "setTradeFee(uint256)": FunctionFragment;
     "setTreasury(address)": FunctionFragment;
-    "stopLossFee()": FunctionFragment;
+    "stopOrderFee()": FunctionFragment;
     "tradeFee()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "treasury()": FunctionFragment;
@@ -48,10 +48,10 @@ export interface CrossMarginBaseSettingsInterface extends utils.Interface {
       | "owner"
       | "renounceOwnership"
       | "setLimitOrderFee"
-      | "setStopLossFee"
+      | "setStopOrderFee"
       | "setTradeFee"
       | "setTreasury"
-      | "stopLossFee"
+      | "stopOrderFee"
       | "tradeFee"
       | "transferOwnership"
       | "treasury"
@@ -71,7 +71,7 @@ export interface CrossMarginBaseSettingsInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "setStopLossFee",
+    functionFragment: "setStopOrderFee",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -83,7 +83,7 @@ export interface CrossMarginBaseSettingsInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "stopLossFee",
+    functionFragment: "stopOrderFee",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "tradeFee", values?: undefined): string;
@@ -107,7 +107,7 @@ export interface CrossMarginBaseSettingsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setStopLossFee",
+    functionFragment: "setStopOrderFee",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -119,7 +119,7 @@ export interface CrossMarginBaseSettingsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "stopLossFee",
+    functionFragment: "stopOrderFee",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "tradeFee", data: BytesLike): Result;
@@ -132,14 +132,14 @@ export interface CrossMarginBaseSettingsInterface extends utils.Interface {
   events: {
     "LimitOrderFeeChanged(uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "StopLossFeeChanged(uint256)": EventFragment;
+    "StopOrderFeeChanged(uint256)": EventFragment;
     "TradeFeeChanged(uint256)": EventFragment;
     "TreasuryAddressChanged(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "LimitOrderFeeChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "StopLossFeeChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "StopOrderFeeChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TradeFeeChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TreasuryAddressChanged"): EventFragment;
 }
@@ -167,16 +167,16 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface StopLossFeeChangedEventObject {
+export interface StopOrderFeeChangedEventObject {
   fee: BigNumber;
 }
-export type StopLossFeeChangedEvent = TypedEvent<
+export type StopOrderFeeChangedEvent = TypedEvent<
   [BigNumber],
-  StopLossFeeChangedEventObject
+  StopOrderFeeChangedEventObject
 >;
 
-export type StopLossFeeChangedEventFilter =
-  TypedEventFilter<StopLossFeeChangedEvent>;
+export type StopOrderFeeChangedEventFilter =
+  TypedEventFilter<StopOrderFeeChangedEvent>;
 
 export interface TradeFeeChangedEventObject {
   fee: BigNumber;
@@ -239,7 +239,7 @@ export interface CrossMarginBaseSettings extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setStopLossFee(
+    setStopOrderFee(
       _fee: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -254,7 +254,7 @@ export interface CrossMarginBaseSettings extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    stopLossFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+    stopOrderFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     tradeFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -279,7 +279,7 @@ export interface CrossMarginBaseSettings extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setStopLossFee(
+  setStopOrderFee(
     _fee: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -294,7 +294,7 @@ export interface CrossMarginBaseSettings extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  stopLossFee(overrides?: CallOverrides): Promise<BigNumber>;
+  stopOrderFee(overrides?: CallOverrides): Promise<BigNumber>;
 
   tradeFee(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -317,7 +317,7 @@ export interface CrossMarginBaseSettings extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setStopLossFee(
+    setStopOrderFee(
       _fee: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -332,7 +332,7 @@ export interface CrossMarginBaseSettings extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    stopLossFee(overrides?: CallOverrides): Promise<BigNumber>;
+    stopOrderFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     tradeFee(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -359,8 +359,8 @@ export interface CrossMarginBaseSettings extends BaseContract {
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
 
-    "StopLossFeeChanged(uint256)"(fee?: null): StopLossFeeChangedEventFilter;
-    StopLossFeeChanged(fee?: null): StopLossFeeChangedEventFilter;
+    "StopOrderFeeChanged(uint256)"(fee?: null): StopOrderFeeChangedEventFilter;
+    StopOrderFeeChanged(fee?: null): StopOrderFeeChangedEventFilter;
 
     "TradeFeeChanged(uint256)"(fee?: null): TradeFeeChangedEventFilter;
     TradeFeeChanged(fee?: null): TradeFeeChangedEventFilter;
@@ -385,7 +385,7 @@ export interface CrossMarginBaseSettings extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setStopLossFee(
+    setStopOrderFee(
       _fee: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -400,7 +400,7 @@ export interface CrossMarginBaseSettings extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    stopLossFee(overrides?: CallOverrides): Promise<BigNumber>;
+    stopOrderFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     tradeFee(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -426,7 +426,7 @@ export interface CrossMarginBaseSettings extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    setStopLossFee(
+    setStopOrderFee(
       _fee: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -441,7 +441,7 @@ export interface CrossMarginBaseSettings extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    stopLossFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    stopOrderFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     tradeFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

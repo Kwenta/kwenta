@@ -13,6 +13,8 @@ import {
 } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 
+const BPS_CONVERSION = 10000;
+
 export default function useGetCrossMarginAccountOverview() {
 	const { network } = Connector.useContainer();
 	const { crossMarginAddress } = useRecoilValue(futuresAccountState);
@@ -36,12 +38,12 @@ export default function useGetCrossMarginAccountOverview() {
 			const freeMargin = await crossMarginAccountContract.freeMargin();
 			const tradeFee = await crossMarginBaseSettings?.tradeFee();
 			const limitOrderFee = await crossMarginBaseSettings?.limitOrderFee();
-			const stopLossFee = await crossMarginBaseSettings?.stopLossFee();
+			const stopOrderFee = await crossMarginBaseSettings?.stopOrderFee();
 
 			const settings = {
-				tradeFee: tradeFee ? wei(tradeFee.toNumber() / 10000) : zeroBN,
-				limitOrderFee: limitOrderFee ? wei(limitOrderFee.toNumber() / 10000) : zeroBN,
-				stopLossFee: stopLossFee ? wei(stopLossFee.toNumber() / 1000) : zeroBN,
+				tradeFee: tradeFee ? wei(tradeFee.toNumber() / BPS_CONVERSION) : zeroBN,
+				limitOrderFee: limitOrderFee ? wei(limitOrderFee.toNumber() / BPS_CONVERSION) : zeroBN,
+				stopOrderFee: stopOrderFee ? wei(stopOrderFee.toNumber() / BPS_CONVERSION) : zeroBN,
 			};
 
 			setFreeMargin(wei(freeMargin));

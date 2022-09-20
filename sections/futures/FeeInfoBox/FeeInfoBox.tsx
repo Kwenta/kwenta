@@ -24,7 +24,9 @@ const FeeInfoBox: React.FC = () => {
 	const sizeDelta = useRecoilValue(sizeDeltaState);
 	const marketInfo = useRecoilValue(marketInfoState);
 	const accountType = useRecoilValue(futuresAccountTypeState);
-	const { tradeFee: crossMarginTradeFee } = useRecoilValue(crossMarginSettingsState);
+	const { tradeFee: crossMarginTradeFee, limitOrderFee, stopOrderFee } = useRecoilValue(
+		crossMarginSettingsState
+	);
 
 	const { commitDeposit, nextPriceFee } = useMemo(() => computeNPFee(marketInfo, sizeDelta), [
 		marketInfo,
@@ -43,6 +45,11 @@ const FeeInfoBox: React.FC = () => {
 		marketInfo,
 		sizeDelta,
 	]);
+
+	const orderFeeRate = useMemo(
+		() => (orderType === 'limit' ? limitOrderFee : orderType === 'stop' ? stopOrderFee : null),
+		[orderType, stopOrderFee, limitOrderFee]
+	);
 
 	const marketCostTooltip = useMemo(
 		() => (
@@ -65,17 +72,27 @@ const FeeInfoBox: React.FC = () => {
 		const crossMarginFeeInfo = {
 			'Protocol Fee': {
 				value: formatDollars(fees.staticFee, {
-					minDecimals: fees.total.lt(0.01) ? 4 : 2,
+					minDecimals: fees.staticFee.lt(0.01) ? 4 : 2,
 				}),
 				keyNode: marketCostTooltip,
 			},
+			'Limit / Stop Fee':
+				fees.limitStopOrderFee.gt(0) && orderFeeRate
+					? {
+							value: formatDollars(fees.limitStopOrderFee, {
+								minDecimals: fees.limitStopOrderFee.lt(0.01) ? 4 : 2,
+							}),
+							keyNode: formatPercent(orderFeeRate),
+					  }
+					: null,
 			'Cross Margin Fee': {
 				value: formatDollars(fees.crossMarginFee, {
-					minDecimals: fees.total.lt(0.01) ? 4 : 2,
+					minDecimals: fees.crossMarginFee.lt(0.01) ? 4 : 2,
 				}),
 				spaceBeneath: true,
 				keyNode: formatPercent(crossMarginTradeFee),
 			},
+
 			'Total Fee': {
 				value: formatDollars(fees.total, {
 					minDecimals: fees.total.lt(0.01) ? 4 : 2,
@@ -130,6 +147,7 @@ const FeeInfoBox: React.FC = () => {
 		orderType,
 		crossMarginTradeFee,
 		fees,
+		orderFeeRate,
 		commitDeposit,
 		accountType,
 		marketInfo?.keeperDeposit,

@@ -70,6 +70,7 @@ const ZERO_FEES = {
 	crossMarginFee: zeroBN,
 	dynamicFeeRate: zeroBN,
 	keeperEthDeposit: zeroBN,
+	limitStopOrderFee: zeroBN,
 	total: zeroBN,
 };
 
@@ -100,8 +101,10 @@ const useFuturesData = () => {
 	const market = useRecoilValue(marketInfoState);
 	const totalMargin = useRecoilValue(crossMarginTotalMarginState);
 	const maxLeverage = useRecoilValue(maxLeverageState);
-	const { tradeFee: crossMarginTradeFee } = useRecoilValue(crossMarginSettingsState);
 	const { crossMarginAvailable, crossMarginAddress } = useRecoilValue(futuresAccountState);
+	const { tradeFee: crossMarginTradeFee, stopOrderFee, limitOrderFee } = useRecoilValue(
+		crossMarginSettingsState
+	);
 	const marketAssetRate = useRecoilValue(marketAssetRateState);
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
 	const setPotentialTradeDetails = useSetRecoilState(potentialTradeDetailsState);
@@ -202,6 +205,15 @@ const useFuturesData = () => {
 		return wei(bal);
 	}, [crossMarginAddress, provider]);
 
+	const calculateCrossMarginFee = useCallback(
+		(susdSizeDelta: Wei) => {
+			if (orderType !== 'limit' && orderType !== 'stop') return zeroBN;
+			const advancedOrderFeeRate = orderType === 'limit' ? limitOrderFee : stopOrderFee;
+			return susdSizeDelta.abs().mul(advancedOrderFeeRate);
+		},
+		[orderType, stopOrderFee, limitOrderFee]
+	);
+
 	const calculateFees = useCallback(
 		async (susdSizeDelta: Wei, nativeSizeDelta: Wei) => {
 			if (!synthetixjs) return ZERO_FEES;
@@ -224,6 +236,7 @@ const useFuturesData = () => {
 				selectedAccountType === 'cross_margin'
 					? susdSizeDelta.abs().mul(crossMarginTradeFee)
 					: zeroBN;
+			const limitStopOrderFee = calculateCrossMarginFee(susdSizeDelta);
 			const orderFeeWei = wei(orderFee.fee);
 			const volatilityFeeWei = wei(volatilityFee.feeRate);
 
@@ -232,7 +245,8 @@ const useFuturesData = () => {
 				crossMarginFee: crossMarginFee,
 				dynamicFeeRate: volatilityFeeWei,
 				keeperEthDeposit: requiredDeposit,
-				total: orderFeeWei.add(crossMarginFee),
+				limitStopOrderFee: limitStopOrderFee,
+				total: orderFeeWei.add(crossMarginFee).add(limitStopOrderFee),
 			};
 			setTradeFees(fees);
 			return fees;
@@ -243,6 +257,7 @@ const useFuturesData = () => {
 			marketAsset,
 			synthetixjs,
 			orderType,
+			calculateCrossMarginFee,
 			setTradeFees,
 			getTradeFee,
 			getCrossMarginEthBal,

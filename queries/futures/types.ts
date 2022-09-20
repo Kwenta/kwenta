@@ -283,6 +283,7 @@ export type TradeFees = {
 	dynamicFeeRate: Wei;
 	crossMarginFee: Wei;
 	keeperEthDeposit: Wei;
+	limitStopOrderFee: Wei;
 	total: Wei;
 };
 

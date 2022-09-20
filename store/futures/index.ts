@@ -125,7 +125,7 @@ export const crossMarginSettingsState = atom({
 	default: {
 		tradeFee: zeroBN,
 		limitOrderFee: zeroBN,
-		stopLossFee: zeroBN,
+		stopOrderFee: zeroBN,
 	},
 });
 
@@ -183,6 +183,7 @@ export const tradeFeesState = atom<TradeFees>({
 		dynamicFeeRate: zeroBN,
 		crossMarginFee: zeroBN,
 		keeperEthDeposit: zeroBN,
+		limitStopOrderFee: zeroBN,
 		total: zeroBN,
 	},
 });
