@@ -757,12 +757,19 @@
 				"open-orders": {
 					"tab": "Open Orders",
 					"table": {
+						"market": "Market",
 						"market-type": "Market/Type",
 						"side": "Side",
+						"side-type": "Side/Type",
+						"type": "Type",
 						"size": "Size",
+						"size-price": "Size/Price",
+						"price": "Price",
+						"status": "Status",
 						"parameters": "Parameters",
 						"actions": "Actions",
-						"no-result": "You have no open orders"
+						"no-result": "You have no open orders",
+						"open-filter": "Only show open orders"
 					},
 					"actions": {
 						"cancel": "Cancel",
