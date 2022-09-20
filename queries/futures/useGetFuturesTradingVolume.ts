@@ -9,7 +9,7 @@ import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import logError from 'utils/logError';
 
 import { DAY_PERIOD } from './constants';
-import { getFuturesTrades } from './subgraph';
+import { FuturesHourlyStatResult, getFuturesHourlyStats } from './subgraph';
 import { calculateTradeVolume, getFuturesEndpoint } from './utils';
 
 const useGetFuturesTradingVolume = (
@@ -25,7 +25,7 @@ const useGetFuturesTradingVolume = (
 			if (!currencyKey) return null;
 			try {
 				const minTimestamp = Math.floor(calculateTimestampForPeriod(DAY_PERIOD) / 1000);
-				const response = await getFuturesTrades(
+				const response = await getFuturesHourlyStats(
 					futuresEndpoint,
 					{
 						first: 999999,
@@ -35,24 +35,14 @@ const useGetFuturesTradingVolume = (
 						},
 					},
 					{
-						size: true,
-						price: true,
 						id: true,
-						timestamp: true,
-						account: true,
-						abstractAccount: true,
-						accountType: true,
-						margin: true,
 						asset: true,
-						positionId: true,
-						positionSize: true,
-						positionClosed: true,
-						pnl: true,
-						feesPaid: true,
-						orderType: true,
+						volume: true,
+						trades: true,
+						timestamp: true,
 					}
 				);
-				return response ? calculateTradeVolume(response) : null;
+				return response ? calculateTradeVolume(response as FuturesHourlyStatResult[]) : null;
 			} catch (e) {
 				logError(e);
 				return null;

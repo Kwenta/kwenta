@@ -9,7 +9,7 @@ import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import logError from 'utils/logError';
 
 import { DAY_PERIOD, FUTURES_ENDPOINT_OP_MAINNET } from './constants';
-import { getFuturesTrades } from './subgraph';
+import { getFuturesHourlyStats } from './subgraph';
 import { FuturesVolumes } from './types';
 import { calculateTradeVolumeForAll, getFuturesEndpoint } from './utils';
 
@@ -29,7 +29,7 @@ const useGetFuturesTradingVolumeForAllMarkets = (
 		async () => {
 			try {
 				const minTimestamp = Math.floor(calculateTimestampForPeriod(DAY_PERIOD) / 1000);
-				const response = await getFuturesTrades(
+				const response = await getFuturesHourlyStats(
 					futuresEndpoint,
 					{
 						first: 999999,
@@ -38,21 +38,11 @@ const useGetFuturesTradingVolumeForAllMarkets = (
 						},
 					},
 					{
-						size: true,
-						price: true,
 						id: true,
-						timestamp: true,
-						account: true,
-						abstractAccount: true,
-						accountType: true,
-						margin: true,
 						asset: true,
-						positionId: true,
-						positionSize: true,
-						positionClosed: true,
-						pnl: true,
-						feesPaid: true,
-						orderType: true,
+						volume: true,
+						trades: true,
+						timestamp: true,
 					}
 				);
 				return response ? calculateTradeVolumeForAll(response) : null;
