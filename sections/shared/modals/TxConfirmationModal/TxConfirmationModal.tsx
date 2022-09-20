@@ -168,7 +168,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 								values={{ currencyKey: baseCurrencyKey }}
 								components={[<NoTextTransform />]}
 							/>
-							<CustomStyledTooltip2
+							<CustomStyledTooltip
 								preset="top"
 								content={
 									<Trans
@@ -181,7 +181,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 								<TooltipItem>
 									<InfoIcon />
 								</TooltipItem>
-							</CustomStyledTooltip2>
+							</CustomStyledTooltip>
 						</SummaryItemLabel>
 						<SummaryItemValue data-testid="base-currency-value">
 							<span>
@@ -332,11 +332,6 @@ const TxProviderContainer = styled.div`
 const CustomStyledTooltip = styled(StyledTooltip)`
 	width: 100%;
 	word-break: all;
-`;
-
-const CustomStyledTooltip2 = styled(StyledTooltip)`
-	padding: 5px;
-	margin-left: 40px;
 `;
 
 export const TooltipItem = styled.span`
