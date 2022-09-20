@@ -2,14 +2,14 @@ import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { useMemo } from 'react';
 import { useQuery, UseQueryOptions } from 'react-query';
+import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import Convert from 'containers/Convert';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
-import { getExchangeRatesForCurrencies } from 'utils/currencies';
-import { useRecoilValue } from 'recoil';
 import { ratesState } from 'store/futures';
+import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
 type Currency = {
 	key: string;

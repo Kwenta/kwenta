@@ -19,9 +19,8 @@ import Connector from 'containers/Connector';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
 import { Price } from 'queries/rates/types';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
-import { futuresMarketsState, pastRatesState } from 'store/futures';
+import { futuresMarketsState, pastRatesState, ratesState } from 'store/futures';
 import {
 	FlexDiv,
 	FlexDivColCentered,
@@ -174,8 +173,7 @@ const Assets = () => {
 		[activeMarketsTab, t]
 	);
 
-	const exchangeRatesQuery = useExchangeRatesQuery();
-	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
+	const exchangeRates = useRecoilValue(ratesState);
 
 	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
 
