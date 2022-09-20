@@ -13,7 +13,10 @@ const Tally = ({ chains, shimDisconnect }: TallyOptions): Wallet => ({
 	iconBackground: '#D08E39',
 	name: 'Tally Ho',
 	iconUrl: async () => TallyIcon,
-	// @ts-ignore
+	downloadUrls: {
+		browserExtension:
+			'https://chrome.google.com/webstore/detail/tally-ho/eajafomhmkipbjmfmhebemolkcicgfmd',
+	},
 	createConnector: () => {
 		const connector = new InjectedConnector({ chains, options: { shimDisconnect } });
 		return {
