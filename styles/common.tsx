@@ -208,9 +208,6 @@ export const SolidTooltip = styled(Tooltip).attrs({
 	interactive: true,
 })`
 	width: 150px;
-	.tippy-content {
-		padding: 0;
-	}
 `;
 
 export const SolidTooltipContent = styled.div`

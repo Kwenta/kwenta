@@ -114,9 +114,6 @@ const SlippageHelperTooltip = styled(StyledTooltip)`
 	border: 0.5px solid ${(props) => props.theme.colors.navy};
 	border-radius: 4px;
 	width: 120px;
-	.tippy-content {
-		padding: 0;
-	}
 `;
 
 const CustomSlippage = styled(NumericInput)`
