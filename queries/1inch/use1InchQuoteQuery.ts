@@ -6,9 +6,10 @@ import { useQuery, UseQueryOptions } from 'react-query';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import Convert from 'containers/Convert';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
+import { useRecoilValue } from 'recoil';
+import { ratesState } from 'store/futures';
 
 type Currency = {
 	key: string;
@@ -25,10 +26,9 @@ const use1InchQuoteQuery = (
 ) => {
 	const { quote1Inch } = Convert.useContainer();
 
-	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { tokensMap, network } = Connector.useContainer();
 
-	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
+	const exchangeRates = useRecoilValue(ratesState);
 
 	const synthUsdRate = useMemo(() => {
 		if (!quoteCurrency || !baseCurrency) return null;
