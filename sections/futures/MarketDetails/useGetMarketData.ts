@@ -6,7 +6,6 @@ import { useRecoilValue } from 'recoil';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
 import useExternalPriceQuery from 'queries/rates/useExternalPriceQuery';
 import {
 	currentMarketState,
@@ -34,10 +33,6 @@ const useGetMarketData = (mobile?: boolean) => {
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
-	const futuresTradingVolume = marketInfo?.assetHex ? futuresVolumes[marketInfo.assetHex] : null;
-	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(marketAsset);
-	const futuresDailyTradeStats = futuresDailyTradeStatsQuery?.data ?? null;
-
 	const externalPriceQuery = useExternalPriceQuery(marketKey);
 	const externalPrice = externalPriceQuery?.data ?? 0;
 	const minDecimals =
@@ -61,6 +56,13 @@ const useGetMarketData = (mobile?: boolean) => {
 		const marketPrice = wei(marketInfo?.price ?? 0);
 		const marketName = `${marketInfo?.marketName ?? t('futures.market.info.default-market')}`;
 
+		const futuresTradingVolume = marketInfo?.assetHex
+			? futuresVolumes[marketInfo.assetHex]?.volume ?? wei(0)
+			: wei(0);
+		const futuresTradeCount = marketInfo?.assetHex
+			? futuresVolumes[marketInfo.assetHex]?.trades.toNumber() ?? 0
+			: 0;
+
 		if (mobile) {
 			return {
 				'Live Price': {
@@ -73,7 +75,7 @@ const useGetMarketData = (mobile?: boolean) => {
 							  }),
 				},
 				'24H Trades': {
-					value: !!futuresDailyTradeStats ? `${futuresDailyTradeStats ?? 0}` : NO_VALUE,
+					value: `${futuresTradeCount}`,
 				},
 				'Open Interest': {
 					value: marketInfo?.marketSize?.mul(marketPrice)
@@ -85,11 +87,9 @@ const useGetMarketData = (mobile?: boolean) => {
 						: NO_VALUE,
 				},
 				'24H Volume': {
-					value: !!futuresTradingVolume
-						? formatCurrency(selectedPriceCurrency.name, futuresTradingVolume ?? zeroBN, {
-								sign: '$',
-						  })
-						: NO_VALUE,
+					value: formatCurrency(selectedPriceCurrency.name, futuresTradingVolume ?? zeroBN, {
+						sign: '$',
+					}),
 				},
 				[fundingTitle]: {
 					value: fundingValue
@@ -152,14 +152,12 @@ const useGetMarketData = (mobile?: boolean) => {
 							: undefined,
 				},
 				'24H Volume': {
-					value: !!futuresTradingVolume
-						? formatCurrency(selectedPriceCurrency.name, futuresTradingVolume ?? zeroBN, {
-								sign: '$',
-						  })
-						: NO_VALUE,
+					value: formatCurrency(selectedPriceCurrency.name, futuresTradingVolume ?? zeroBN, {
+						sign: '$',
+					}),
 				},
 				'24H Trades': {
-					value: !!futuresDailyTradeStats ? `${futuresDailyTradeStats ?? 0}` : NO_VALUE,
+					value: `${futuresTradeCount}`,
 				},
 				'Open Interest': {
 					value: marketInfo?.marketSize?.mul(marketPrice)
@@ -181,8 +179,7 @@ const useGetMarketData = (mobile?: boolean) => {
 	}, [
 		marketAsset,
 		marketInfo,
-		futuresTradingVolume,
-		futuresDailyTradeStats,
+		futuresVolumes,
 		selectedPriceCurrency.name,
 		externalPrice,
 		pastPrice?.price,

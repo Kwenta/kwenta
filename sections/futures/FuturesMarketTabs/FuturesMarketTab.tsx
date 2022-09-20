@@ -37,14 +37,14 @@ const FuturesMarketsTable: FC = () => {
 	let data = useMemo(() => {
 		return (
 			futuresMarkets?.map((market) => {
-				const volume = futuresVolumes[market.assetHex];
+				const volume = futuresVolumes[market.assetHex]?.volume?.toNumber() ?? 0;
 				const pastPrice = pastRates.find((price) => price.synth === market.asset);
 
 				return {
 					asset: market.asset,
 					market: market.marketName,
 					price: market.price,
-					volume: volume?.toNumber() ?? 0,
+					volume,
 					priceChange: pastPrice?.price && market.price.sub(pastPrice?.price).div(market.price),
 				};
 			}) ?? []

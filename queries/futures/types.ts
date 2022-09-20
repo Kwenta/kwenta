@@ -233,7 +233,10 @@ export type FuturesOrder = {
 };
 
 export type FuturesVolumes = {
-	[asset: string]: Wei;
+	[asset: string]: {
+		volume: Wei;
+		trades: Wei;
+	};
 };
 
 export type FuturesStat = {

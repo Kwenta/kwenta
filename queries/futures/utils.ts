@@ -146,25 +146,19 @@ export const mapOpenInterest = async (
 	return openInterest;
 };
 
-export const calculateTradeVolume = (futuresHourlyStats: FuturesHourlyStatResult[]): Wei => {
-	return futuresHourlyStats.reduce((acc: Wei, { volume }: FuturesHourlyStatResult) => {
-		const volumeAdd = volume.div(ETH_UNIT);
-		return acc.add(volumeAdd);
-	}, wei(0));
-};
-
-export const calculateTradeVolumeForAll = (
-	futuresHourlyStats: FuturesHourlyStatResult[]
-): FuturesVolumes => {
-	const volumes = {} as FuturesVolumes;
-
-	futuresHourlyStats.forEach(({ asset, volume }) => {
-		const volumeAdd = volume.div(ETH_UNIT);
-
-		volumes[asset]
-			? (volumes[asset] = volumes[asset].add(volumeAdd))
-			: (volumes[asset] = volumeAdd);
-	});
+export const calculateVolumes = (futuresHourlyStats: FuturesHourlyStatResult[]): FuturesVolumes => {
+	const volumes: FuturesVolumes = futuresHourlyStats.reduce(
+		(acc: FuturesVolumes, { asset, volume, trades }) => {
+			return {
+				...acc,
+				[asset]: {
+					volume: volume.div(ETH_UNIT).add(acc[asset]?.volume ?? 0),
+					trades: trades.add(acc[asset]?.trades ?? 0),
+				},
+			};
+		},
+		{}
+	);
 	return volumes;
 };
 

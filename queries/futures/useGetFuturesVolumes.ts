@@ -13,11 +13,9 @@ import logError from 'utils/logError';
 import { DAY_PERIOD, FUTURES_ENDPOINT_OP_MAINNET } from './constants';
 import { getFuturesHourlyStats } from './subgraph';
 import { FuturesVolumes } from './types';
-import { calculateTradeVolumeForAll, getFuturesEndpoint } from './utils';
+import { calculateVolumes, getFuturesEndpoint } from './utils';
 
-const useGetFuturesTradingVolumeForAllMarkets = (
-	options?: UseQueryOptions<FuturesVolumes | null>
-) => {
+const useGetFuturesVolumes = (options?: UseQueryOptions<FuturesVolumes | null>) => {
 	const homepage = window.location.pathname === ROUTES.Home.Root;
 	const { chain: activeChain } = useNetwork();
 	const isL2 = useIsL2();
@@ -48,7 +46,7 @@ const useGetFuturesTradingVolumeForAllMarkets = (
 						timestamp: true,
 					}
 				);
-				const futuresVolumes = response ? calculateTradeVolumeForAll(response) : {};
+				const futuresVolumes = response ? calculateVolumes(response) : {};
 				setFuturesVolumes(futuresVolumes);
 				return futuresVolumes;
 			} catch (e) {
@@ -56,11 +54,8 @@ const useGetFuturesTradingVolumeForAllMarkets = (
 				return null;
 			}
 		},
-		{
-			refetchInterval: 120000,
-			...options,
-		}
+		{ ...options }
 	);
 };
 
-export default useGetFuturesTradingVolumeForAllMarkets;
+export default useGetFuturesVolumes;

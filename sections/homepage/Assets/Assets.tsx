@@ -196,7 +196,7 @@ const Assets = () => {
 		return (
 			futuresMarkets?.map((market) => {
 				const description = getSynthDescription(market.asset, l2SynthsMap, t);
-				const volume = futuresVolumes[market.assetHex];
+				const volume = futuresVolumes[market.assetHex]?.volume?.toNumber() ?? 0;
 				const pastPrice = pastRates.find(
 					(price: Price) => price.synth === market.asset || price.synth === market.asset.slice(1)
 				);
@@ -205,7 +205,7 @@ const Assets = () => {
 					name: market.asset[0] === 's' ? market.asset.slice(1) : market.asset,
 					description: description.split(' ')[0],
 					price: market.price.toNumber(),
-					volume: volume?.toNumber() || 0,
+					volume,
 					priceChange:
 						(market.price.toNumber() - (pastPrice?.price ?? 0)) / market.price.toNumber() || 0,
 					image: <PriceChart asset={market.asset} />,
