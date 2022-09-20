@@ -10,13 +10,9 @@ type TallyOptions = {
 
 const Tally = ({ chains, shimDisconnect }: TallyOptions): Wallet => ({
 	id: 'tally',
-	iconBackground: '#FFF',
+	iconBackground: '#D08E39',
 	name: 'Tally Ho',
 	iconUrl: async () => TallyIcon,
-	downloadUrls: {
-		android: 'https://play.google.com/store/apps/details?id=io.gnosis.Tally',
-		ios: 'https://apps.apple.com/us/app/gnosis-Tally/idid1515759131',
-	},
 	// @ts-ignore
 	createConnector: () => {
 		const connector = new InjectedConnector({ chains, options: { shimDisconnect } });
