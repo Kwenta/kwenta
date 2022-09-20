@@ -2,6 +2,8 @@ import styled from 'styled-components';
 
 import Text from 'components/Text';
 
+import { SplitStakingCard } from './common';
+
 type PortfolioItemIndividual = {
 	title: string;
 	value: string;
@@ -48,7 +50,7 @@ const StakingPortfolio = () => {
 			<Header variant="h4">Portfolio</Header>
 			<CardsContainer>
 				{DEFAULT_CARDS.map((card) => (
-					<PortfolioCard>
+					<SplitStakingCard>
 						{card.map(({ title, value }) => (
 							<div>
 								<div>
@@ -57,45 +59,12 @@ const StakingPortfolio = () => {
 								</div>
 							</div>
 						))}
-					</PortfolioCard>
+					</SplitStakingCard>
 				))}
 			</CardsContainer>
 		</div>
 	);
 };
-
-const PortfolioCard = styled.div`
-	display: flex;
-	background: linear-gradient(0deg, #181818, #181818),
-		linear-gradient(0deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1));
-	border: ${(props) => props.theme.colors.selectedTheme.border};
-	border-radius: 15px;
-
-	& > div {
-		flex: 1;
-		padding: 30px 0;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-
-		&:first-of-type {
-			border-right: ${(props) => props.theme.colors.selectedTheme.border};
-		}
-	}
-
-	.title {
-		color: ${(props) => props.theme.colors.selectedTheme.text.title};
-		font-size: 15px;
-	}
-
-	.value {
-		margin-top: 10px;
-		color: ${(props) => props.theme.colors.selectedTheme.yellow};
-		font-family: ${(props) => props.theme.fonts.monoBold};
-		font-size: 26px;
-		align-self: center;
-	}
-`;
 
 const Header = styled(Text.Heading)`
 	color: ${(props) => props.theme.colors.selectedTheme.text.title};

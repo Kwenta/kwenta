@@ -42,7 +42,6 @@ const StakingTab = () => {
 };
 
 const StakingTabContainer = styled.div`
-	width: 100%;
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	grid-gap: 15px;
@@ -56,16 +55,8 @@ const LeftCardGrid = styled.div`
 		margin-bottom: 20px;
 	}
 
-	.title {
-		font-size: 15px;
-		color: ${(props) => props.theme.colors.selectedTheme.text.title};
-		margin-bottom: 5px;
-	}
-
 	.value {
-		color: ${(props) => props.theme.colors.selectedTheme.yellow};
-		font-family: ${(props) => props.theme.fonts.monoBold};
-		font-size: 26px;
+		margin-top: 5px;
 	}
 `;
 

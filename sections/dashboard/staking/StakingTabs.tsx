@@ -16,7 +16,6 @@ enum StakeTab {
 
 const StakingTabs: React.FC = () => {
 	const [activeTab, setActiveTab] = useState(StakeTab.Staking);
-
 	const handleTabSwitch = useCallback((tab: StakeTab) => () => setActiveTab(tab), []);
 
 	return (
