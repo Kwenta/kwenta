@@ -5,11 +5,10 @@ import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
 
-import { ETH_UNIT } from 'constants/network';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { futuresAccountState, openOrdersState, marketInfoState } from 'store/futures';
-import { formatCurrency } from 'utils/formatters/number';
+import { formatCurrency, formatDollars, weiFromWei } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
@@ -58,9 +57,10 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 							const asset: FuturesMarketAsset = ethersUtils.parseBytes32String(
 								o.asset
 							) as FuturesMarketAsset;
-							const size = new Wei(o.size).div(ETH_UNIT);
-							const targetPrice = new Wei(o.targetPrice).div(ETH_UNIT);
+							const size = weiFromWei(o.size);
+							const targetPrice = weiFromWei(o.targetPrice ?? 0);
 							const targetRoundId = new Wei(o.targetRoundId, 0);
+							const currentRoundId = wei(marketInfo?.currentRoundId ?? 0);
 							return {
 								...o,
 								asset: asset,
@@ -74,17 +74,12 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 									sign: asset ? synthsMap[asset]?.sign : '',
 									minDecimals: size.abs().lt(0.01) ? 4 : 2,
 								}),
-								targetPriceTxt: formatCurrency(asset, targetPrice, {
-									sign: '$',
-									minDecimals: targetPrice.lt(0.01) ? 4 : 2,
-								}),
+								targetPriceTxt: formatDollars(targetPrice),
 								side: size.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
 								isStale:
-									o.orderType === 'NextPrice' &&
-									wei(marketInfo?.currentRoundId ?? 0).gte(wei(o.targetRoundId).add(2)),
+									o.orderType === 'NextPrice' && currentRoundId.gte(wei(o.targetRoundId).add(2)),
 								isExecutable: targetRoundId
-									? wei(marketInfo?.currentRoundId ?? 0).eq(targetRoundId) ||
-									  wei(marketInfo?.currentRoundId ?? 0).eq(targetRoundId.add(1))
+									? currentRoundId.eq(targetRoundId) || currentRoundId.eq(targetRoundId.add(1))
 									: false,
 							};
 					  })

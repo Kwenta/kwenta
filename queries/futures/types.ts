@@ -26,7 +26,7 @@ export type PositionDetail = {
 	profitLoss: Wei;
 };
 
-export type FuturesPositionOrder = {
+type FuturesPositionOrder = {
 	pending: boolean;
 	fee: Wei;
 	leverage: Wei;
