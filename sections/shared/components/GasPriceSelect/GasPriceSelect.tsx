@@ -1,7 +1,6 @@
 import { GasPrices } from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
-import { FC } from 'react';
-import { useMemo } from 'react';
+import { FC, useMemo, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
@@ -20,7 +19,7 @@ type GasPriceSelectProps = {
 	className?: string;
 };
 
-const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ...rest }) => {
+const GasPriceSelect: FC<GasPriceSelectProps> = memo(({ gasPrices, transactionFee, ...rest }) => {
 	const { t } = useTranslation();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const customGasPrice = useRecoilValue(customGasPriceState);
@@ -34,14 +33,17 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 	const hasCustomGasPrice = customGasPrice !== '';
 	const gasPrice = gasPrices ? parseGasPriceObject(gasPrices[gasSpeed]) : null;
 
-	const gasPriceItem = (
-		<span data-testid="gas-price">
-			{isL2
-				? formattedTransactionFee
-				: `${formatNumber(hasCustomGasPrice ? +customGasPrice : gasPrice ?? 0, {
-						minDecimals: 2,
-				  })} Gwei`}
-		</span>
+	const gasPriceItem = useMemo(
+		() => (
+			<span data-testid="gas-price">
+				{isL2
+					? formattedTransactionFee
+					: `${formatNumber(hasCustomGasPrice ? +customGasPrice : gasPrice ?? 0, {
+							minDecimals: 2,
+					  })} Gwei`}
+			</span>
+		),
+		[isL2, formattedTransactionFee, hasCustomGasPrice, customGasPrice, gasPrice]
 	);
 
 	return (
@@ -54,6 +56,6 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 			<SummaryItemValue>{gasPrice != null ? gasPriceItem : NO_VALUE}</SummaryItemValue>
 		</SummaryItem>
 	);
-};
+});
 
 export default GasPriceSelect;

@@ -3,18 +3,12 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import useMarketClosed, { MarketClosure } from 'hooks/useMarketClosed';
+import useMarketClosed from 'hooks/useMarketClosed';
 import { baseCurrencyKeyState, quoteCurrencyKeyState } from 'store/exchange';
 
 import { MessageContainer, Message, MessageButton, FixedMessageContainerSpacer } from '../common';
 
-type MarketClosureCardProps = {
-	attached?: boolean;
-	baseCurrencyMarketClosed: MarketClosure;
-	quoteCurrencyMarketClosed: MarketClosure;
-};
-
-const MarketClosureCard: FC<MarketClosureCardProps> = ({ attached }) => {
+const MarketClosureCard: FC = () => {
 	const { t } = useTranslation();
 
 	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
@@ -37,7 +31,7 @@ const MarketClosureCard: FC<MarketClosureCardProps> = ({ attached }) => {
 			<MobileOrTabletView>
 				<FixedMessageContainerSpacer />
 			</MobileOrTabletView>
-			<MessageContainer attached={attached} className="footer-card">
+			<MessageContainer className="footer-card">
 				<DesktopOnlyView>
 					<Message>
 						<Trans
