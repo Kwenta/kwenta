@@ -11,8 +11,12 @@ import Currency from 'components/Currency';
 import Table from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
-import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
-import { futuresAccountTypeState, futuresMarketsState, pastRatesState } from 'store/futures';
+import {
+	futuresAccountTypeState,
+	futuresMarketsState,
+	futuresVolumesState,
+	pastRatesState,
+} from 'store/futures';
 import { FlexDivCol } from 'styles/common';
 import { FuturesMarketAsset, isDecimalFour, MarketKeyByAsset } from 'utils/futures';
 
@@ -28,15 +32,12 @@ const FuturesMarketsTable: FC = () => {
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 	const accountType = useRecoilValue(futuresAccountTypeState);
 	const pastRates = useRecoilValue(pastRatesState);
-
-	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
+	const futuresVolumes = useRecoilValue(futuresVolumesState);
 
 	let data = useMemo(() => {
-		const futuresVolume = futuresVolumeQuery?.data ?? {};
-
 		return (
 			futuresMarkets?.map((market) => {
-				const volume = futuresVolume[market.assetHex];
+				const volume = futuresVolumes[market.assetHex];
 				const pastPrice = pastRates.find((price) => price.synth === market.asset);
 
 				return {
@@ -48,7 +49,7 @@ const FuturesMarketsTable: FC = () => {
 				};
 			}) ?? []
 		);
-	}, [futuresMarkets, pastRates, futuresVolumeQuery?.data]);
+	}, [futuresMarkets, pastRates, futuresVolumes]);
 
 	return (
 		<TableContainer>

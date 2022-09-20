@@ -1,10 +1,12 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { useQuery, UseQueryOptions } from 'react-query';
+import { useSetRecoilState } from 'recoil';
 import { chain, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
+import { futuresVolumesState } from 'store/futures';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import logError from 'utils/logError';
 
@@ -23,6 +25,7 @@ const useGetFuturesTradingVolumeForAllMarkets = (
 	const futuresEndpoint = homepage
 		? FUTURES_ENDPOINT_OP_MAINNET
 		: getFuturesEndpoint(network?.id as NetworkId);
+	const setFuturesVolumes = useSetRecoilState(futuresVolumesState);
 
 	return useQuery<FuturesVolumes | null>(
 		QUERY_KEYS.Futures.TradingVolumeForAll(network?.id as NetworkId),
@@ -45,13 +48,18 @@ const useGetFuturesTradingVolumeForAllMarkets = (
 						timestamp: true,
 					}
 				);
-				return response ? calculateTradeVolumeForAll(response) : null;
+				const futuresVolumes = response ? calculateTradeVolumeForAll(response) : {};
+				setFuturesVolumes(futuresVolumes);
+				return futuresVolumes;
 			} catch (e) {
 				logError(e);
 				return null;
 			}
 		},
-		{ ...options }
+		{
+			refetchInterval: 120000,
+			...options,
+		}
 	);
 };
 

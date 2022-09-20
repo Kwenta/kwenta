@@ -7,11 +7,11 @@ import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
-import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolume';
 import useExternalPriceQuery from 'queries/rates/useExternalPriceQuery';
 import {
 	currentMarketState,
 	fundingRateState,
+	futuresVolumesState,
 	marketInfoState,
 	marketKeyState,
 	pastRatesState,
@@ -30,12 +30,11 @@ const useGetMarketData = (mobile?: boolean) => {
 	const marketInfo = useRecoilValue(marketInfoState);
 	const pastRates = useRecoilValue(pastRatesState);
 	const fundingRate = useRecoilValue(fundingRateState);
-
-	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(marketAsset);
+	const futuresVolumes = useRecoilValue(futuresVolumesState);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
-	const futuresTradingVolume = futuresTradingVolumeQuery?.data ?? null;
+	const futuresTradingVolume = marketInfo?.assetHex ? futuresVolumes[marketInfo.assetHex] : null;
 	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(marketAsset);
 	const futuresDailyTradeStats = futuresDailyTradeStatsQuery?.data ?? null;
 
