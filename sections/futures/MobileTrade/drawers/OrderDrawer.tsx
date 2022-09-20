@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';
@@ -6,7 +7,6 @@ import { FuturesOrder, PositionSide } from 'queries/futures/types';
 import { getDisplayAsset } from 'utils/futures';
 
 import BaseDrawer from './BaseDrawer';
-import { useTranslation } from 'react-i18next';
 
 type OrderDrawerProps = {
 	open: boolean;
@@ -49,7 +49,7 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer, set
 				value: order.orderType,
 			},
 		];
-	}, [order]);
+	}, [t, order]);
 
 	return (
 		<BaseDrawer

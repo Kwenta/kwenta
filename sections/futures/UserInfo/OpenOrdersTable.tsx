@@ -10,13 +10,12 @@ import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
-import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import { FuturesOrder, PositionSide } from 'queries/futures/types';
 import { currentMarketState, futuresAccountState, openOrdersState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
-import { getDisplayAsset, isDecimalFour } from 'utils/futures';
+import { getDisplayAsset } from 'utils/futures';
 
 import OrderDrawer from '../MobileTrade/drawers/OrderDrawer';
 
@@ -136,10 +135,6 @@ const OpenOrdersTable: React.FC = () => {
 							),
 							accessor: 'size',
 							Cell: (cellProps: CellProps<any>) => {
-								const formatOptions = isDecimalFour(cellProps.row.original.asset)
-									? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
-									: {};
-
 								return (
 									<div>
 										<div>{cellProps.row.original.sizeTxt}</div>
@@ -149,7 +144,6 @@ const OpenOrdersTable: React.FC = () => {
 												price={cellProps.row.original.targetPrice}
 												sign={'$'}
 												conversionRate={1}
-												formatOptions={formatOptions}
 											/>
 										)}
 									</div>
@@ -225,10 +219,6 @@ const OpenOrdersTable: React.FC = () => {
 							),
 							accessor: 'size',
 							Cell: (cellProps: CellProps<any>) => {
-								const formatOptions = isDecimalFour(cellProps.row.original.asset)
-									? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
-									: {};
-
 								return (
 									<div>
 										<div>{cellProps.row.original.sizeTxt}</div>
@@ -238,7 +228,6 @@ const OpenOrdersTable: React.FC = () => {
 												price={cellProps.row.original.targetPrice}
 												sign={'$'}
 												conversionRate={1}
-												formatOptions={formatOptions}
 											/>
 										)}
 									</div>
