@@ -151,7 +151,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 					</SummaryItemLabel>
 					<SummaryItemValue data-testid="base-currency-value">
 						<CustomStyledTooltip
-							preset="right"
+							preset="top"
 							content={<span>{getBaseCurrencyAmount(LONG_CRYPTO_CURRENCY_DECIMALS)}</span>}
 						>
 							<span>
@@ -168,23 +168,20 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 								values={{ currencyKey: baseCurrencyKey }}
 								components={[<NoTextTransform />]}
 							/>
-							<CustomStyledTooltip
+							<CustomStyledTooltip2
 								preset="top"
 								content={
 									<Trans
 										i18nKey="modals.confirm-transaction.exchange-fee-hint"
 										values={{ currencyKey: baseCurrencyKey }}
-										components={[
-											<NoTextTransform />,
-											<ExternalLink href="https://synthetix.io/synths" />,
-										]}
+										components={[<NoTextTransform />]}
 									/>
 								}
 							>
 								<TooltipItem>
 									<InfoIcon />
 								</TooltipItem>
-							</CustomStyledTooltip>
+							</CustomStyledTooltip2>
 						</SummaryItemLabel>
 						<SummaryItemValue data-testid="base-currency-value">
 							<span>
@@ -333,11 +330,13 @@ const TxProviderContainer = styled.div`
 `;
 
 const CustomStyledTooltip = styled(StyledTooltip)`
-	.tippy-content {
-		padding: 5px;
-		font-family: ${(props) => props.theme.fonts.mono};
-		font-size: 12px;
-	}
+	width: 100%;
+	word-break: all;
+`;
+
+const CustomStyledTooltip2 = styled(StyledTooltip)`
+	padding: 5px;
+	margin-left: 40px;
 `;
 
 export const TooltipItem = styled.span`
