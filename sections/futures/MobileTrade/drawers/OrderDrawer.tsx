@@ -6,6 +6,7 @@ import { FuturesOrder, PositionSide } from 'queries/futures/types';
 import { getDisplayAsset } from 'utils/futures';
 
 import BaseDrawer from './BaseDrawer';
+import { useTranslation } from 'react-i18next';
 
 type OrderDrawerProps = {
 	open: boolean;
@@ -15,13 +16,15 @@ type OrderDrawerProps = {
 };
 
 const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer, setAction }) => {
+	const { t } = useTranslation();
+
 	const items = React.useMemo(() => {
 		if (!order || !order.side) return [];
 
 		const price = order.targetPrice
 			? [
 					{
-						label: 'Price',
+						label: t('futures.market.user.open-orders.table.price'),
 						value: order.targetPriceTxt,
 					},
 			  ]
@@ -29,20 +32,20 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer, set
 
 		return [
 			{
-				label: 'Market',
+				label: t('futures.market.user.open-orders.table.market'),
 				value: getDisplayAsset(order.asset),
 			},
 			{
-				label: 'Side',
+				label: t('futures.market.user.open-orders.table.side'),
 				value: <StyledPositionSide side={order.side}>{order.side}</StyledPositionSide>,
 			},
 			{
-				label: 'Size',
+				label: t('futures.market.user.open-orders.table.size'),
 				value: order.sizeTxt,
 			},
 			...price,
 			{
-				label: 'Type',
+				label: t('futures.market.user.open-orders.table.type'),
 				value: order.orderType,
 			},
 		];
