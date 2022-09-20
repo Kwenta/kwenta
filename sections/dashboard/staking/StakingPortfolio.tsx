@@ -67,8 +67,8 @@ const StakingPortfolio = () => {
 };
 
 const Header = styled(Text.Heading)`
-	color: ${(props) => props.theme.colors.selectedTheme.text.title};
-	margin-bottom: 8px;
+	color: ${(props) => props.theme.colors.selectedTheme.text.value};
+	margin-bottom: 15px;
 `;
 
 const CardsContainer = styled.div`
