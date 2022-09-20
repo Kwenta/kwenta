@@ -46,6 +46,7 @@ import {
 	crossMarginTotalMarginState,
 	potentialTradeDetailsState,
 	futuresOrderPriceState,
+	orderFeeCapState,
 } from 'store/futures';
 import { zeroBN, floorNumber, weiToString } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
@@ -94,6 +95,7 @@ const useFuturesData = () => {
 	const [tradeFees, setTradeFees] = useRecoilState(tradeFeesState);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
+	const feeCap = useRecoilValue(orderFeeCapState);
 	const position = useRecoilValue(positionState);
 	const market = useRecoilValue(marketInfoState);
 	const totalMargin = useRecoilValue(crossMarginTotalMarginState);
@@ -328,7 +330,7 @@ const useFuturesData = () => {
 
 			const positiveTrade = leverageSide === PositionSide.LONG;
 			const nativeSize = currencyType === 'native' ? wei(value) : wei(value).div(tradePrice);
-			const usdSize = currencyType === 'native' ? tradePrice.mul(value || 0) : wei(value);
+			const usdSize = currencyType === 'native' ? tradePrice.mul(value) : wei(value);
 			const changeEnabled = remainingMargin.gt(0) && value !== '';
 			const isolatedMarginLeverage = changeEnabled ? usdSize.div(remainingMargin) : zeroBN;
 
@@ -479,12 +481,13 @@ const useFuturesData = () => {
 			}
 			const enumType = orderType === 'limit' ? 0 : 1;
 
-			return await crossMarginAccountContract.placeOrder(
+			return await crossMarginAccountContract.placeOrderWithFeeCap(
 				formatBytes32String(marketAsset),
 				crossMarginMarginDelta.toBN(),
 				tradeInputs.nativeSizeDelta.toBN(),
 				wei(orderPrice).toBN(),
 				enumType,
+				feeCap.toBN(),
 				{ value: tradeFees.keeperEthDeposit.toBN() }
 			);
 		},
@@ -493,6 +496,7 @@ const useFuturesData = () => {
 			marketAsset,
 			orderPrice,
 			orderType,
+			feeCap,
 			crossMarginMarginDelta,
 			tradeInputs.nativeSizeDelta,
 			tradeFees.keeperEthDeposit,

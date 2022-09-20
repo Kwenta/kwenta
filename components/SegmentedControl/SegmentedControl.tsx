@@ -1,7 +1,7 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
-type StyleType = 'tab' | 'check';
+type StyleType = 'tab' | 'check' | 'button';
 
 interface SegmentedControlProps {
 	values: string[];
@@ -9,12 +9,14 @@ interface SegmentedControlProps {
 	style?: React.CSSProperties;
 	className?: string;
 	styleType?: StyleType;
+	suffix?: string;
 	onChange(index: number): void;
 }
 
 function SegmentedControl({
 	values,
 	selectedIndex,
+	suffix,
 	onChange,
 	styleType = 'tab',
 	...props
@@ -30,6 +32,7 @@ function SegmentedControl({
 				>
 					{styleType === 'check' && <CheckBox selected={selectedIndex === index} />}
 					{value}
+					{suffix}
 				</SegmentedControlOption>
 			))}
 		</SegmentedControlContainer>
@@ -53,33 +56,36 @@ const SegmentedControlContainer = styled.div<{ $length: number; styleType: Style
 
 const SegmentedControlOption = styled.button<{ isSelected: boolean; styleType: StyleType }>`
 	font-size: 13px;
-	font-family: ${(props) => props.theme.fonts.regular};
+	font-family: ${(props) =>
+		(props.styleType === 'tab' && props.isSelected) || props.styleType === 'button'
+			? props.theme.fonts.bold
+			: props.theme.fonts.regular};
 	cursor: pointer;
 	text-transform: capitalize;
 	text-align: ${(props) => (props.styleType === 'check' ? 'left' : 'center')};
 	display: ${(props) => (props.styleType === 'check' ? 'flex' : 'inherit')};
 	align-items: center;
+	border: ${(props) => {
+		if ((props.isSelected && props.styleType === 'tab') || props.styleType === 'button')
+			return props.theme.colors.selectedTheme.border;
+		return 'none';
+	}};
+	border-radius: ${(props) => (props.styleType === 'button' ? '20px' : '6px')};
+	border-color: ${(props) =>
+		props.styleType === 'button' && props.isSelected
+			? props.theme.colors.selectedTheme.yellow
+			: undefined};
 	color: ${(props) =>
-		props.isSelected
+		props.isSelected && props.styleType === 'button'
+			? props.theme.colors.selectedTheme.yellow
+			: props.isSelected
 			? props.theme.colors.selectedTheme.button.text.primary
 			: props.theme.colors.selectedTheme.segmented.button.inactive.color};
 
-	${(props) =>
+	background: ${(props) =>
 		props.isSelected && props.styleType === 'tab'
-			? css`
-					background: ${(props) => props.theme.colors.selectedTheme.segmented.button.background};
-					position: relative;
-					border: ${(props) => props.theme.colors.selectedTheme.border};
-					border-radius: 6px;
-					font-family: ${(props) => props.theme.fonts.bold};
-					&::before {
-						border-radius: 6px;
-					}
-			  `
-			: css`
-					background: transparent;
-					border: none;
-			  `}
+			? props.theme.colors.selectedTheme.segmented.button.background
+			: 'transparent'};
 `;
 
 const CheckBox = styled.div<{ selected: boolean }>`

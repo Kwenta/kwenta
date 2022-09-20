@@ -717,7 +717,8 @@
 					"withdraw-keeper-deposit": {
 						"title": "Withdraw Keeper Deposit",
 						"button": "Withdraw"
-					}
+					},
+					"fee-rejection-label": "Fee Rejection"
 				}
 			},
 			"history": {

@@ -116,8 +116,8 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 		position?.position?.size && (orderType === 'limit' || orderType === 'stop');
 
 	const invalid =
-		(assetInputType === 'usd' && !!usdValue && maxUsdInputAmount.lte(usdValue || 0)) ||
-		(assetInputType === 'native' && !!assetValue && maxNativeValue.lte(assetValue || 0));
+		(assetInputType === 'usd' && usdValue !== '' && maxUsdInputAmount.lte(usdValue || 0)) ||
+		(assetInputType === 'native' && assetValue !== '' && maxNativeValue.lte(assetValue || 0));
 
 	return (
 		<OrderSizingContainer>

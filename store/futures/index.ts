@@ -166,6 +166,11 @@ export const orderTypeState = atom<FuturesOrderType>({
 	default: 'market',
 });
 
+export const orderFeeCapState = atom({
+	key: getFuturesKey('orderFeeCapState'),
+	default: zeroBN,
+});
+
 export const futuresOrderPriceState = atom({
 	key: getFuturesKey('futuresOrderPrice'),
 	default: '',
