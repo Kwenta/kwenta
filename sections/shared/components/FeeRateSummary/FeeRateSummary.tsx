@@ -34,15 +34,15 @@ const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = memo(({ totalFeeRate, ba
 						totalFeeRate.sub(baseFeeRate).gt(0) ? (
 							<>
 								<DynamicFeeLabel>+</DynamicFeeLabel>
-								<DynamicFeeRateTooltip
-									preset="bottom"
+								<StyledTooltip
+									preset="top"
 									content={t('exchange.summary-info.dynamic-fee-tooltip')}
 								>
 									<DynamicFeeRateItem>
 										<span>{formatPercent(totalFeeRate.sub(baseFeeRate), { minDecimals: 2 })}</span>
 										<TimerIcon />
 									</DynamicFeeRateItem>
-								</DynamicFeeRateTooltip>
+								</StyledTooltip>
 							</>
 						) : null
 					) : null}
@@ -60,16 +60,6 @@ export const FeeRateItem = styled.span`
 
 export const DynamicFeeLabel = styled.span`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
-`;
-
-export const DynamicFeeRateTooltip = styled(StyledTooltip)`
-	width: auto;
-	text-align: justify;
-	font-size: 12px;
-	.tippy-content {
-		padding: 15px;
-		font-family: ${(props) => props.theme.fonts.mono};
-	}
 `;
 
 export const DynamicFeeRateItem = styled.span`
