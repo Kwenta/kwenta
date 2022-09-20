@@ -337,9 +337,8 @@ const CustomStyledTooltip = styled(StyledTooltip)`
 
 const CustomStyledTooltip2 = styled(StyledTooltip)`
 	width: 240px;
-	padding: 10px;
-	margin: 0px;
-	margin-left: 40px;
+	padding: 0px 10px;
+	margin: 0px 00px 0px 40px;
 `;
 
 export const TooltipItem = styled.span`
