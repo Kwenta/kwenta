@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const StakingCard = styled.div`
+export const StakingCard = styled.div<{ $noPadding?: boolean }>`
 	background: linear-gradient(0deg, #181818, #181818),
 		linear-gradient(0deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1));
 	padding: 20px;
@@ -18,6 +18,13 @@ export const StakingCard = styled.div`
 		color: ${(props) => props.theme.colors.selectedTheme.yellow};
 		margin-top: 10px;
 	}
+
+	${(props) =>
+		props.$noPadding &&
+		css`
+			padding: 0;
+			overflow: hidden;
+		`}
 `;
 
 export const SplitStakingCard = styled(StakingCard)`
@@ -28,8 +35,9 @@ export const SplitStakingCard = styled(StakingCard)`
 		display: flex;
 		flex: 1;
 		flex-direction: column;
-		align-items: center;
+		/* align-items: center; */
 		padding: 30px 0;
+		padding-left: 30px;
 
 		&:first-of-type {
 			border-right: ${(props) => props.theme.colors.selectedTheme.border};
