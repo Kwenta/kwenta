@@ -50,6 +50,7 @@ import {
 	sourceCurrencyKeyState,
 	txErrorState,
 } from 'store/exchange';
+import { ratesState } from 'store/futures';
 import { ordersState } from 'store/orders';
 import { hasOrdersNotificationState, slippageState } from 'store/ui';
 import { gasSpeedState } from 'store/wallet';
@@ -117,6 +118,7 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const quoteCurrencyAmountBN = useRecoilValue(quoteCurrencyAmountBNState);
 	const baseCurrencyAmountBN = useRecoilValue(baseCurrencyAmountBNState);
+	useExchangeRatesQuery({ refetchInterval: 15000 });
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const slippage = useRecoilValue(slippageState);
 	const getL1SecurityFee = useGetL1SecurityFee();
@@ -131,8 +133,6 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const synthsWalletBalance = synthsWalletBalancesQuery.data ?? null;
-
-	const exchangeRatesQuery = useExchangeRatesQuery();
 
 	const oneInchQuery = useOneInchTokenList();
 
@@ -240,7 +240,7 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 	const baseCurrency = baseCurrencyKey != null ? synthsMap[baseCurrencyKey]! : null;
 	const quoteCurrency = quoteCurrencyKey != null ? synthsMap[quoteCurrencyKey]! : null;
 
-	const exchangeRates = exchangeRatesQuery.data ?? null;
+	const exchangeRates = useRecoilValue(ratesState);
 
 	const [quoteRate, baseRate] = useMemo(
 		() => newGetExchangeRatesTupleForCurrencies(exchangeRates, quoteCurrencyKey, baseCurrencyKey),

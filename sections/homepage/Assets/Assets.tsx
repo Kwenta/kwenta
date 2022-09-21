@@ -18,9 +18,8 @@ import { CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
 import { Price } from 'queries/rates/types';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
-import { futuresMarketsState, futuresVolumesState, pastRatesState } from 'store/futures';
+import { futuresMarketsState, futuresVolumesState, ratesState, pastRatesState } from 'store/futures';
 import {
 	FlexDiv,
 	FlexDivColCentered,
@@ -174,8 +173,7 @@ const Assets = () => {
 		[activeMarketsTab, t]
 	);
 
-	const exchangeRatesQuery = useExchangeRatesQuery();
-	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
+	const exchangeRates = useRecoilValue(ratesState);
 
 	const synths = useMemo(() => values(l2SynthsMap) || [], [l2SynthsMap]);
 	const queryCache = useQueryClient().getQueryCache();
