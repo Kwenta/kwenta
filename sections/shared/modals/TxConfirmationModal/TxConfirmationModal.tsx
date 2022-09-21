@@ -22,7 +22,6 @@ import {
 	numericValueCSS,
 	NoTextTransform,
 	FlexDivColCentered,
-	ExternalLink,
 } from 'styles/common';
 import { formatCurrency, LONG_CRYPTO_CURRENCY_DECIMALS } from 'utils/formatters/number';
 
@@ -223,7 +222,6 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 									<Trans
 										i18nKey="modals.confirm-transaction.price-adjustment-hint"
 										values={{ currencyKey: baseCurrencyKey }}
-										components={[<ExternalLink href="https://synthetix.io/synths" />]}
 									/>
 								}
 							>
