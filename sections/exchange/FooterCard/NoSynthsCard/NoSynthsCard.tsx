@@ -10,11 +10,7 @@ import { NoTextTransform, ExternalLink } from 'styles/common';
 
 import { MessageContainer, Message, MessageButton, FixedMessageContainerSpacer } from '../common';
 
-type NoSynthsCardProps = {
-	attached?: boolean;
-};
-
-const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
+const NoSynthsCard: FC = () => {
 	const { t } = useTranslation();
 	const isL2 = useIsL2();
 
@@ -23,7 +19,7 @@ const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 			<MobileOrTabletView>
 				<FixedMessageContainerSpacer />
 			</MobileOrTabletView>
-			<MessageContainer attached={attached} className="footer-card">
+			<MessageContainer className="footer-card">
 				<DesktopOnlyView>
 					<Message>
 						<Trans

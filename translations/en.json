@@ -330,6 +330,7 @@
 			"max-fee-gwei": "Max Fee (GWEI)",
 			"fee": "Exchange fee",
 			"fee-cost": "fee cost",
+			"dynamic-fee-tooltip": "This transaction will incur an additional dynamic fee due to market volatility.",
 			"button": {
 				"approve": "approve",
 				"approving": "approving",
@@ -545,13 +546,11 @@
 				"daily-volume": "24H Vol"
 			},
 			"info": {
-				"asset": "asset",
-				"size": "market size",
-				"volume": "24H volume",
-				"skew": "market skew",
-				"debt": "market debt",
-				"rate": "24H funding rate"
-			},
+				"default-market": "ETH-PERP",
+				"hourly-funding": "1H Funding Rate",
+				"instant-funding": "Inst. Funding Rate",
+				"fallback-funding": "Funding Rate"
+ 			},
 			"position-card": {
 				"position-side": "Side",
 				"position-size": "Size",
@@ -767,12 +766,19 @@
 				"open-orders": {
 					"tab": "Open Orders",
 					"table": {
+						"market": "Market",
 						"market-type": "Market/Type",
 						"side": "Side",
+						"side-type": "Side/Type",
+						"type": "Type",
 						"size": "Size",
+						"size-price": "Size/Price",
+						"price": "Price",
+						"status": "Status",
 						"parameters": "Parameters",
 						"actions": "Actions",
-						"no-result": "You have no open orders"
+						"no-result": "You have no open orders",
+						"open-filter": "Only show open orders"
 					},
 					"actions": {
 						"cancel": "Cancel",

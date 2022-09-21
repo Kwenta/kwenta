@@ -1,22 +1,18 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit';
-import React from 'react';
+import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import { useExchangeContext } from 'contexts/ExchangeContext';
+import useApproveExchange from 'hooks/useApproveExchange';
 
-const SwapButton: React.FC = () => {
+const SwapButton: FC = () => {
 	const { isWalletConnected } = Connector.useContainer();
 	const { t } = useTranslation();
 	const { openConnectModal: connectWallet } = useConnectModal();
-	const {
-		isApproved,
-		needsApproval,
-		handleSubmit,
-		handleApprove,
-		submissionDisabledReason,
-	} = useExchangeContext();
+	const { needsApproval, handleSubmit, submissionDisabledReason } = useExchangeContext();
+	const { isApproved, handleApprove } = useApproveExchange();
 
 	return isWalletConnected ? (
 		<Button

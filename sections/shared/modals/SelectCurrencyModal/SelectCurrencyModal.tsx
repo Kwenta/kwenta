@@ -9,10 +9,11 @@ import styled, { css } from 'styled-components';
 import Button from 'components/Button';
 import SearchInput from 'components/Input/SearchInput';
 import Loader from 'components/Loader';
-import { CurrencyKey, CATEGORY_MAP } from 'constants/currency';
+import { CurrencyKey, CATEGORY_MAP, ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'constants/currency';
 import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
+import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
 import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
 import { FlexDivCentered } from 'styles/common';
@@ -55,9 +56,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 			: allSynths;
 
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery(walletAddress);
-	const synthBalances = synthsWalletBalancesQuery.isSuccess
-		? synthsWalletBalancesQuery.data ?? null
-		: null;
+	const synthBalances = synthsWalletBalancesQuery.data ?? null;
 
 	const categoryFilteredSynths = useMemo(
 		() =>
@@ -113,7 +112,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	const searchFilteredTokens = useDebouncedMemo(
 		() =>
 			assetSearch
-				? oneInchTokenList.filter(({ name, symbol }) => {
+				? oneInchTokenList.filter(({ name, symbol }: any) => {
 						const assetSearchLC = assetSearch.toLowerCase();
 						return (
 							name.toLowerCase().includes(assetSearchLC) ||
@@ -128,7 +127,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	const oneInchTokensPaged = useMemo(() => {
 		if (!oneInchEnabled || (synthCategory && synthCategory !== 'crypto')) return [];
 		const items =
-			searchFilteredTokens.map((t) => ({
+			searchFilteredTokens.map((t: any) => ({
 				...t,
 				isSynth: false,
 			})) || [];
@@ -136,6 +135,11 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 		if (ordered.length > PAGE_LENGTH) return ordered.slice(0, PAGE_LENGTH * page);
 		return ordered;
 	}, [searchFilteredTokens, page, oneInchEnabled, synthCategory]);
+
+	const coinGeckoTokenPricesQuery = useCoinGeckoTokenPricesQuery(
+		oneInchTokensPaged.map((f) => f.address)
+	);
+	const coinGeckoPrices = coinGeckoTokenPricesQuery.data ?? null;
 
 	const tokenBalancesQuery = useTokensBalancesQuery(oneInchTokensPaged, walletAddress);
 	const tokenBalances = tokenBalancesQuery.isSuccess ? tokenBalancesQuery.data ?? {} : {};
@@ -243,11 +247,12 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 								</span>
 								<span>{t('modals.select-currency.header.holdings')}</span>
 							</TokensHeader>
-							{oneInchQuery.isLoading ? (
-								<Loader />
-							) : oneInchTokensPaged.length > 0 ? (
+							{oneInchTokensPaged.length > 0 ? (
 								oneInchTokensPaged.map((token) => {
 									const currencyKey = token.symbol;
+									const tokenAddress =
+										token.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : token.address;
+
 									return (
 										<CurrencyRow
 											key={currencyKey}
@@ -256,10 +261,16 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 												onDismiss();
 											}}
 											balance={
-												tokenBalances[currencyKey]
+												tokenBalances[currencyKey] &&
+												coinGeckoPrices !== null &&
+												coinGeckoPrices[tokenAddress]
 													? {
-															currencyKey: currencyKey,
+															currencyKey,
 															balance: tokenBalances[currencyKey]?.balance || wei(0),
+															usdBalance:
+																wei(coinGeckoPrices[tokenAddress]?.usd).mul(
+																	tokenBalances[currencyKey]?.balance
+																) || wei(0),
 													  }
 													: undefined
 											}
