@@ -40,7 +40,7 @@ const OpenOrdersTable: React.FC = () => {
 	const gasPrice = ethGasPriceQuery.data?.[gasSpeed];
 
 	const synthetixTxCb = {
-		enabled: true,
+		enabled: !!selectedFuturesAddress,
 		onError: () => {
 			setCancelling(null);
 		},
