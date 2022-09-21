@@ -19,7 +19,12 @@ import Connector from 'containers/Connector';
 import { Price } from 'queries/rates/types';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
-import { futuresMarketsState, futuresVolumesState, ratesState, pastRatesState } from 'store/futures';
+import {
+	futuresMarketsState,
+	futuresVolumesState,
+	ratesState,
+	pastRatesState,
+} from 'store/futures';
 import {
 	FlexDiv,
 	FlexDivColCentered,
