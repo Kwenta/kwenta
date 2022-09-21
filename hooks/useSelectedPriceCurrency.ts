@@ -1,13 +1,12 @@
 import Wei from '@synthetixio/wei';
 import { useRecoilValue } from 'recoil';
 
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { priceCurrencyState } from 'store/app';
+import { ratesState } from 'store/futures';
 
 const useSelectedPriceCurrency = () => {
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
-	const exchangeRatesQuery = useExchangeRatesQuery();
-	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
+	const exchangeRates = useRecoilValue(ratesState);
 	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
 
 	const getPriceAtCurrentRate = (price: Wei) =>
