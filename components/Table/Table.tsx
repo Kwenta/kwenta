@@ -221,7 +221,7 @@ const TableBody = styled.div`
 	overflow-x: hidden;
 `;
 
-const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
+export const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
 	user-select: none;
 	&:first-child {
 		padding-left: 18px;

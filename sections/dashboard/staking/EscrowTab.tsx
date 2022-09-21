@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import Button from 'components/Button';
 import SegmentedControl from 'components/SegmentedControl';
 import Table from 'components/Table';
+import { TableCellHead } from 'components/Table/Table';
 
 import { StakingCard } from './common';
 
@@ -13,60 +14,73 @@ const EscrowTab = () => {
 	return (
 		<EscrowTabContainer>
 			<StakingCard $noPadding>
-				<Table
+				<StyledTable
 					data={data}
 					columns={[
 						{
-							Header: () => <input type="checkbox" style={{ marginLeft: -4 }} />,
-							Cell: () => <input type="checkbox" />,
+							Header: () => (
+								<div>
+									<input type="checkbox" />
+								</div>
+							),
+							Cell: () => (
+								<div>
+									<input type="checkbox" />
+								</div>
+							),
 							accessor: 'selected',
-							width: 30,
+							width: 40,
 						},
 						{
-							Header: () => <div>Date/Time</div>,
+							Header: () => <TableHeader>Date/Time</TableHeader>,
 							Cell: () => <div />,
 							accessor: 'date',
-							width: 150,
+							width: 70,
 						},
 						{
 							Header: () => (
-								<div>
+								<TableHeader>
 									<div>Time Until</div>
 									<div>Vestable</div>
-								</div>
+								</TableHeader>
 							),
 							Cell: () => <div />,
 							accessor: 'timeUntilVestable',
-							width: 120,
+							width: 90,
 						},
 						{
 							Header: () => (
-								<div>
+								<TableHeader>
 									<div>Immediately</div>
 									<div>Vestable</div>
-								</div>
+								</TableHeader>
 							),
 							Cell: () => <div />,
 							accessor: 'immediatelyVestable',
-							width: 120,
+							width: 90,
 						},
 						{
-							Header: () => <div>Amount</div>,
+							Header: () => <TableHeader>Amount</TableHeader>,
 							Cell: () => <div />,
 							accessor: 'amount',
-							width: 200,
+							width: 80,
 						},
 						{
-							Header: () => <div>Early Vest Fee</div>,
+							Header: () => (
+								<TableHeader>
+									<div>Early</div>
+									<div>Vest Fee</div>
+								</TableHeader>
+							),
 							Cell: () => <div />,
 							accessor: 'earlyVestFee',
-							width: 120,
+							width: 80,
 						},
 						{
-							Header: () => <div>Status</div>,
+							Header: () => <TableHeader>Status</TableHeader>,
 							Cell: () => <div />,
 							accessor: 'status',
-							width: 150,
+							width: 50,
 						},
 					]}
 				/>
@@ -85,6 +99,23 @@ const EscrowTabContainer = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	grid-gap: 15px;
+`;
+
+const StyledTable = styled(Table)`
+	width: 100%;
+	border: none;
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+
+	${TableCellHead} {
+		&:first-child {
+			padding-left: 14px;
+		}
+	}
+`;
+
+export const TableHeader = styled.div`
+	font-size: 10px;
 `;
 
 export default EscrowTab;
