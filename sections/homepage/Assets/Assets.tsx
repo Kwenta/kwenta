@@ -16,11 +16,15 @@ import Currency from 'components/Currency';
 import { TabPanel } from 'components/Tab';
 import { CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
-import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
 import { Price } from 'queries/rates/types';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
-import { futuresMarketsState, pastRatesState, ratesState } from 'store/futures';
+import {
+	futuresMarketsState,
+	futuresVolumesState,
+	ratesState,
+	pastRatesState,
+} from 'store/futures';
 import {
 	FlexDiv,
 	FlexDivColCentered,
@@ -148,6 +152,7 @@ const Assets = () => {
 
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 	const pastRates = useRecoilValue(pastRatesState);
+	const futuresVolumes = useRecoilValue(futuresVolumesState);
 
 	const MARKETS_TABS = useMemo(
 		() => [
@@ -175,8 +180,6 @@ const Assets = () => {
 
 	const exchangeRates = useRecoilValue(ratesState);
 
-	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
-
 	const synths = useMemo(() => values(l2SynthsMap) || [], [l2SynthsMap]);
 	const queryCache = useQueryClient().getQueryCache();
 	// KM-NOTE: come back and delete
@@ -193,12 +196,10 @@ const Assets = () => {
 	const synthVolumesQuery = useGetSynthsTradingVolumeForAllMarkets(yesterday);
 
 	const PERPS = useMemo(() => {
-		const futuresVolume = futuresVolumeQuery?.data ?? {};
-
 		return (
 			futuresMarkets?.map((market) => {
 				const description = getSynthDescription(market.asset, l2SynthsMap, t);
-				const volume = futuresVolume[market.assetHex];
+				const volume = futuresVolumes[market.assetHex]?.volume?.toNumber() ?? 0;
 				const pastPrice = pastRates.find(
 					(price: Price) => price.synth === market.asset || price.synth === market.asset.slice(1)
 				);
@@ -207,7 +208,7 @@ const Assets = () => {
 					name: market.asset[0] === 's' ? market.asset.slice(1) : market.asset,
 					description: description.split(' ')[0],
 					price: market.price.toNumber(),
-					volume: volume?.toNumber() || 0,
+					volume,
 					priceChange:
 						(market.price.toNumber() - (pastPrice?.price ?? 0)) / market.price.toNumber() || 0,
 					image: <PriceChart asset={market.asset} />,
@@ -218,7 +219,7 @@ const Assets = () => {
 			}) ?? []
 		);
 		// eslint-disable-next-line
-	}, [futuresMarkets, l2SynthsMap, pastRates, futuresVolumeQuery?.data, t]);
+	}, [futuresMarkets, l2SynthsMap, pastRates, futuresVolumes, t]);
 
 	const SPOTS = useMemo(() => {
 		const synthVolumes = synthVolumesQuery?.data ?? {};
