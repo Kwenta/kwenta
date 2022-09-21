@@ -146,7 +146,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 						const tokenAddress =
 							token.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : token.address;
 						if (coinGeckoPrices !== null && tokenBalances !== null) {
-							const price = wei(coinGeckoPrices[tokenAddress]?.usd) ?? wei(0);
+							const price = wei(coinGeckoPrices[tokenAddress]?.usd ?? 0);
 							const balance = tokenBalances[token.name as CurrencyKey]?.balance ?? wei(0);
 							return price.mul(balance).toNumber();
 						}
