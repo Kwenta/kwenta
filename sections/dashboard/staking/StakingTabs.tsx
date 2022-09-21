@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
+import media from 'styles/media';
 
 import EscrowTab from './EscrowTab';
 import StakingTab from './StakingTab';
@@ -19,7 +20,7 @@ const StakingTabs: React.FC = () => {
 	const handleTabSwitch = useCallback((tab: StakeTab) => () => setActiveTab(tab), []);
 
 	return (
-		<div>
+		<StakingTabsContainer>
 			<TabButtons>
 				<TabButton
 					title="Staking"
@@ -49,9 +50,16 @@ const StakingTabs: React.FC = () => {
 					<EscrowTab />
 				</TabPanel>
 			</div>
-		</div>
+		</StakingTabsContainer>
 	);
 };
+
+const StakingTabsContainer = styled.div`
+	${media.lessThan('md')`
+padding: 15px;
+
+`}
+`;
 
 const TabButtons = styled.div`
 	display: flex;

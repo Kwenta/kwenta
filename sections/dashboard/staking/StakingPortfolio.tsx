@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import Text from 'components/Text';
+import media from 'styles/media';
 
 import { SplitStakingCard } from './common';
 
@@ -46,7 +47,7 @@ const DEFAULT_CARDS: PortfolioItem[] = [
 
 const StakingPortfolio = () => {
 	return (
-		<div>
+		<StakingPortfolioContainer>
 			<Header variant="h4">Portfolio</Header>
 			<CardsContainer>
 				{DEFAULT_CARDS.map((card) => (
@@ -62,9 +63,19 @@ const StakingPortfolio = () => {
 					</SplitStakingCard>
 				))}
 			</CardsContainer>
-		</div>
+		</StakingPortfolioContainer>
 	);
 };
+
+const StakingPortfolioContainer = styled.div`
+	${media.lessThan('mdUp')`
+		padding: 15px;
+	`}
+
+	${media.greaterThan('mdUp')`
+		margin-bottom: 100px;
+	`}
+`;
 
 const Header = styled(Text.Heading)`
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
@@ -74,9 +85,8 @@ const Header = styled(Text.Heading)`
 const CardsContainer = styled.div`
 	width: 100%;
 	display: grid;
-	grid-template-columns: repeat(3, minmax(334px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(334px, 1fr));
 	grid-gap: 15px;
-	margin-bottom: 100px;
 `;
 
 export default StakingPortfolio;

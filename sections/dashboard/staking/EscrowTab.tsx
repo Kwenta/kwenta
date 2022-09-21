@@ -5,6 +5,7 @@ import Button from 'components/Button';
 import SegmentedControl from 'components/SegmentedControl';
 import Table from 'components/Table';
 import { TableCellHead } from 'components/Table/Table';
+import media from 'styles/media';
 
 import { StakingCard } from './common';
 
@@ -96,9 +97,23 @@ const EscrowTab = () => {
 };
 
 const EscrowTabContainer = styled.div`
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	grid-gap: 15px;
+	${media.greaterThan('mdUp')`
+		display: flex;
+
+		& > div {
+			flex: 1;
+
+			&:first-child {
+				margin-right: 15px;
+			}
+		}
+	`}
+
+	${media.lessThan('mdUp')`
+		& > div:first-child {
+			margin-bottom: 15px;
+		}
+	`}
 `;
 
 const StyledTable = styled(Table)`

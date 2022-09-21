@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import SegmentedControl from 'components/SegmentedControl';
+import media from 'styles/media';
 
 import { StakingCard } from './common';
 
@@ -42,9 +43,23 @@ const StakingTab = () => {
 };
 
 const StakingTabContainer = styled.div`
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	grid-gap: 15px;
+	${media.greaterThan('mdUp')`
+		display: flex;
+
+		& > div {
+			flex: 1;
+
+			&:first-child {
+				margin-right: 15px;
+			}
+		}
+	`}
+
+	${media.lessThan('mdUp')`
+		& > div:first-child {
+			margin-bottom: 15px;
+		}
+	`}
 `;
 
 const LeftCardGrid = styled.div`
