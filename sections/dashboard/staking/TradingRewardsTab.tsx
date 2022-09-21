@@ -26,9 +26,17 @@ const TradingRewardsTab: React.FC = () => {
 };
 
 const TradingRewardsContainer = styled.div`
-	display: grid;
-	grid-template-columns: repeat(minmax(auto-fill, 2), 1fr);
-	grid-gap: 15px;
+	display: flex;
+	flex-wrap: wrap;
+	margin: -15px 0 0 -15px;
+	width: calc(100% + 15px);
+
+	& > div {
+		flex: 1;
+		min-width: 220px;
+		max-width: 100%;
+		margin: 15px 0 0 15px;
+	}
 `;
 
 export default TradingRewardsTab;
