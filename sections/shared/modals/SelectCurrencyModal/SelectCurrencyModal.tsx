@@ -141,20 +141,26 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 		if (!oneInchEnabled || (synthCategory && synthCategory !== 'crypto')) return [];
 		const ordered = tokenBalancesQuery.isSuccess
 			? orderBy(
-					searchFilteredTokens,
-					(token) => {
+					searchFilteredTokens.map((token) => {
 						const tokenAddress =
 							token.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : token.address;
-						if (coinGeckoPrices !== null && tokenBalances !== null) {
-							const price = wei(coinGeckoPrices[tokenAddress]?.usd ?? 0);
-							const balance = tokenBalances[token.name as CurrencyKey]?.balance ?? wei(0);
-							return price.mul(balance).toNumber();
-						}
-						return 0;
-					},
+						const balance = tokenBalances?.[token.name as CurrencyKey]?.balance;
+						const usdBalance =
+							balance && coinGeckoPrices !== null && coinGeckoPrices[tokenAddress]
+								? wei(coinGeckoPrices[tokenAddress].usd).mul(balance)
+								: undefined;
+
+						return {
+							...token,
+							balance,
+							usdBalance,
+						};
+					}),
+					({ usdBalance }) => (usdBalance ? usdBalance.toNumber() : 0),
 					'desc'
 			  )
 			: searchFilteredTokens;
+
 		if (ordered.length > PAGE_LENGTH) return ordered.slice(0, PAGE_LENGTH * page);
 		return ordered;
 	}, [
@@ -272,12 +278,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 							</TokensHeader>
 							{oneInchTokensPaged.length > 0 ? (
 								oneInchTokensPaged.map((token) => {
-									const currencyKey = token.symbol;
-									const tokenAddress =
-										token.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : token.address;
-									const tokenBalance = tokenBalancesQuery.isSuccess
-										? tokenBalances?.[currencyKey]
-										: undefined;
+									const { symbol: currencyKey, balance, usdBalance } = token;
 									return (
 										<CurrencyRow
 											key={currencyKey}
@@ -286,14 +287,11 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 												onDismiss();
 											}}
 											balance={
-												tokenBalance && coinGeckoPrices !== null && coinGeckoPrices[tokenAddress]
+												balance && usdBalance
 													? {
 															currencyKey,
-															balance: tokenBalance?.balance || wei(0),
-															usdBalance:
-																wei(coinGeckoPrices[tokenAddress]?.usd).mul(
-																	tokenBalance?.balance
-																) || wei(0),
+															balance,
+															usdBalance,
 													  }
 													: undefined
 											}
