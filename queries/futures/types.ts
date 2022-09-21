@@ -289,7 +289,7 @@ export type FuturesAccountState = {
 	selectedFuturesAddress: string | null;
 	crossMarginAddress: string | null;
 	crossMarginAvailable: boolean;
-	ready: boolean;
+	status: 'fetching' | 'complete' | 'error';
 };
 
 export type SynthBalances = Balances & {

@@ -274,13 +274,18 @@ export const futuresAccountState = atom<FuturesAccountState>({
 		walletAddress: null,
 		selectedFuturesAddress: null,
 		crossMarginAvailable: false,
-		ready: false,
+		status: 'fetching',
 	},
 });
 
 export const futuresAccountTypeState = atom<FuturesAccountType>({
 	key: getFuturesKey('futuresAccountType'),
 	default: DEFAULT_FUTURES_MARGIN_TYPE,
+});
+
+export const showCrossMarginOnboardState = atom({
+	key: getFuturesKey('showCrossMarginOnboard'),
+	default: false,
 });
 
 export const crossMarginAvailableMarginState = atom<Wei>({

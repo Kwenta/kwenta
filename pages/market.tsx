@@ -2,14 +2,18 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
+import Error from 'components/Error';
 import Loader from 'components/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Connector from 'containers/Connector';
 import { FuturesContext } from 'contexts/FuturesContext';
+import { useRefetchContext } from 'contexts/RefetchContext';
 import useFuturesData from 'hooks/useFuturesData';
+import { FuturesAccountState, FuturesAccountType } from 'queries/futures/types';
+import CrossMarginOnboard from 'sections/futures/CrossMarginOnboard';
 import LeftSidebar from 'sections/futures/LeftSidebar/LeftSidebar';
 import MarketInfo from 'sections/futures/MarketInfo';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
@@ -17,7 +21,12 @@ import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
 import TradeCrossMargin from 'sections/futures/TradeCrossMargin';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
-import { currentMarketState, futuresAccountState, futuresAccountTypeState } from 'store/futures';
+import {
+	currentMarketState,
+	futuresAccountState,
+	futuresAccountTypeState,
+	showCrossMarginOnboardState,
+} from 'store/futures';
 import { PageContent, FullHeightContainer, RightSideContent } from 'styles/common';
 import { FuturesMarketAsset } from 'utils/futures';
 
@@ -27,14 +36,14 @@ const Market: MarketComponent = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const { walletAddress } = Connector.useContainer();
+	const futuresData = useFuturesData();
 
 	const marketAsset = router.query.asset as FuturesMarketAsset;
 
 	const setCurrentMarket = useSetRecoilState(currentMarketState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
-	const { ready } = useRecoilValue(futuresAccountState);
-
-	const futuresData = useFuturesData();
+	const account = useRecoilValue(futuresAccountState);
+	const [showOnboard, setShowOnboard] = useRecoilState(showCrossMarginOnboardState);
 
 	useEffect(() => {
 		if (marketAsset) setCurrentMarket(marketAsset);
@@ -45,31 +54,61 @@ const Market: MarketComponent = () => {
 			<Head>
 				<title>{t('futures.market.page-title', { pair: router.query.market })}</title>
 			</Head>
+			<CrossMarginOnboard onClose={() => setShowOnboard(false)} isOpen={showOnboard} />
 			<DesktopOnlyView>
 				<PageContent>
 					<StyledFullHeightContainer>
 						<LeftSidebar />
 						<MarketInfo />
 						<StyledRightSideContent>
-							{walletAddress && !ready ? (
-								<Loader />
-							) : selectedAccountType === 'cross_margin' ? (
-								<TradeCrossMargin />
-							) : (
-								<TradeIsolatedMargin />
-							)}
+							<TradePanelDesktop
+								walletAddress={walletAddress}
+								account={account}
+								selectedAccountType={selectedAccountType}
+							/>
 						</StyledRightSideContent>
 					</StyledFullHeightContainer>
 					<GitHashID />
 				</PageContent>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
-				{walletAddress && !ready ? <Loader /> : <MobileTrade />}
+				{walletAddress && account.status === 'fetching' ? <Loader /> : <MobileTrade />}
 				<GitHashID />
 			</MobileOrTabletView>
 		</FuturesContext.Provider>
 	);
 };
+
+type TradePanelProps = {
+	walletAddress: string | null;
+	account: FuturesAccountState;
+	selectedAccountType: FuturesAccountType;
+};
+
+function TradePanelDesktop({ walletAddress, account, selectedAccountType }: TradePanelProps) {
+	const { t } = useTranslation();
+	const { handleRefetch } = useRefetchContext();
+
+	if (walletAddress && account.status === 'fetching') {
+		return <Loader />;
+	}
+	if (selectedAccountType === 'cross_margin') {
+		return account.status === 'error' && !account.crossMarginAddress ? (
+			<div>
+				<Error
+					message={t('futures.market.trade.cross-margin.account-query-failed')}
+					retryButton={{
+						onClick: () => handleRefetch('cross-margin-account-change', 5),
+						label: 'Retry',
+					}}
+				/>
+			</div>
+		) : (
+			<TradeCrossMargin />
+		);
+	}
+	return <TradeIsolatedMargin />;
+}
 
 Market.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 

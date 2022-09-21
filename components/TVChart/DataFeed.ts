@@ -155,8 +155,7 @@ const DataFeedFactory = (
 ): IBasicDataFeed => {
 	return {
 		onReady: (cb: OnReadyCallback) => {
-			// TODO: Fix crash when no delay
-			setTimeout(() => cb(config), 5000);
+			setTimeout(() => cb(config), 0);
 		},
 		resolveSymbol: (symbolName: string, onSymbolResolvedCallback: (val: any) => any) => {
 			const { base, quote } = splitBaseQuote(symbolName);

@@ -182,7 +182,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 		if (futuresAccount && !futuresAccount.crossMarginAvailable) {
 			return <ErrorView message={t('futures.modals.onboard.unsupported-network')} />;
 		}
-		if (!futuresAccount || !futuresAccount.ready) {
+		if (!futuresAccount || futuresAccount.status === 'fetching') {
 			return <Loader />;
 		}
 

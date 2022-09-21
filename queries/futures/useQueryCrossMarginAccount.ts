@@ -1,13 +1,13 @@
-import { useCallback } from 'react';
-import { useQuery } from 'react-query';
-import { useRecoilState } from 'recoil';
+import { useCallback, useEffect } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { CROSS_MARGIN_ACCOUNT_FACTORY } from 'constants/address';
-import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { futuresAccountState, futuresAccountTypeState } from 'store/futures';
+import logError from 'utils/logError';
 
 import useCrossMarginAccountContracts from '../../hooks/useCrossMarginContracts';
+import { FuturesAccountState } from './types';
 
 const SUPPORTED_NETWORKS = Object.keys(CROSS_MARGIN_ACCOUNT_FACTORY);
 
@@ -15,7 +15,7 @@ export default function useQueryCrossMarginAccount() {
 	const { crossMarginContractFactory } = useCrossMarginAccountContracts();
 	const { network, walletAddress } = Connector.useContainer();
 	const [futuresAccount, setFuturesAccount] = useRecoilState(futuresAccountState);
-	const [selectedAccountType, setSelectedAccountType] = useRecoilState(futuresAccountTypeState);
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 
 	const queryAccountLogs = useCallback(async () => {
 		if (!walletAddress || !crossMarginContractFactory) return null;
@@ -29,39 +29,34 @@ export default function useQueryCrossMarginAccount() {
 		return null;
 	}, [walletAddress, crossMarginContractFactory]);
 
-	return useQuery<any | null>(
-		QUERY_KEYS.Futures.CrossMarginAccount(
-			crossMarginContractFactory?.address || '',
-			walletAddress || '',
-			selectedAccountType
-		),
-		async () => {
-			if (!SUPPORTED_NETWORKS.includes(String(network.id))) {
-				const accountState = {
-					ready: true,
-					crossMarginAvailable: false,
-					crossMarginAddress: null,
-					walletAddress,
-					selectedFuturesAddress: walletAddress,
-				};
-				setSelectedAccountType('isolated_margin');
-				setFuturesAccount(accountState);
-				return accountState;
-			}
-
-			setFuturesAccount({
-				...futuresAccount,
-				crossMarginAddress:
-					walletAddress === futuresAccount.walletAddress ? futuresAccount.crossMarginAddress : null,
-				crossMarginAvailable: true,
+	const queryCrossMarginAccount = useCallback(async () => {
+		if (!SUPPORTED_NETWORKS.includes(String(network.id))) {
+			const accountState: FuturesAccountState = {
+				crossMarginAvailable: false,
+				crossMarginAddress: null,
 				walletAddress,
-				selectedFuturesAddress: futuresAccount?.selectedFuturesAddress,
-			});
+				status: 'complete',
+				selectedFuturesAddress: walletAddress,
+			};
+			setFuturesAccount(accountState);
+			return;
+		}
 
+		setFuturesAccount({
+			...futuresAccount,
+			status: futuresAccount.crossMarginAddress ? 'complete' : 'fetching',
+			crossMarginAddress:
+				walletAddress === futuresAccount.walletAddress ? futuresAccount.crossMarginAddress : null,
+			crossMarginAvailable: true,
+			walletAddress,
+			selectedFuturesAddress: futuresAccount?.selectedFuturesAddress,
+		});
+
+		try {
 			const crossMarginAccount = await queryAccountLogs();
 
-			const accountState = {
-				ready: true,
+			const accountState: FuturesAccountState = {
+				status: 'complete',
 				crossMarginAvailable: true,
 				crossMarginAddress: crossMarginAccount,
 				walletAddress,
@@ -69,8 +64,26 @@ export default function useQueryCrossMarginAccount() {
 					selectedAccountType === 'cross_margin' ? crossMarginAccount : walletAddress,
 			};
 			setFuturesAccount(accountState);
-			return accountState;
-		},
-		{ enabled: !!walletAddress }
-	);
+		} catch (err) {
+			logError(err);
+			setFuturesAccount({
+				...futuresAccount,
+				status: 'error',
+			});
+		}
+	}, [
+		walletAddress,
+		network.id,
+		futuresAccount,
+		selectedAccountType,
+		setFuturesAccount,
+		queryAccountLogs,
+	]);
+
+	useEffect(() => {
+		queryCrossMarginAccount();
+		// eslint-disable-next-line
+	}, [walletAddress, network.id, crossMarginContractFactory?.address]);
+
+	return { futuresAccount, queryCrossMarginAccount };
 }

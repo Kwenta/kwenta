@@ -21,6 +21,7 @@ import {
 	orderTypeState,
 	futuresOrderPriceState,
 	marketAssetRateState,
+	showCrossMarginOnboardState,
 } from 'store/futures';
 import { BorderedPanel, FlexDivRow } from 'styles/common';
 import { orderPriceInvalidLabel } from 'utils/futures';
@@ -58,7 +59,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 
 	const [percent, setPercent] = useState(0);
 	const [usdAmount, setUsdAmount] = useState(susdSize);
-	const [showOnboard, setShowOnboard] = useState(false);
+	const [showOnboard, setShowOnboard] = useRecoilState(showCrossMarginOnboardState);
 	const [openTransferModal, setOpenTransferModal] = useState<'deposit' | 'withdraw' | null>(null);
 
 	// eslint-disable-next-line
