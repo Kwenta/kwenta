@@ -9,10 +9,11 @@ import styled, { css } from 'styled-components';
 import Button from 'components/Button';
 import SearchInput from 'components/Input/SearchInput';
 import Loader from 'components/Loader';
-import { CurrencyKey, CATEGORY_MAP } from 'constants/currency';
+import { CurrencyKey, CATEGORY_MAP, ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'constants/currency';
 import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
+import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
 import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
 import { FlexDivCentered } from 'styles/common';
@@ -111,32 +112,70 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	const searchFilteredTokens = useDebouncedMemo(
 		() =>
 			assetSearch
-				? oneInchTokenList.filter(({ name, symbol }: any) => {
-						const assetSearchLC = assetSearch.toLowerCase();
-						return (
-							name.toLowerCase().includes(assetSearchLC) ||
-							symbol.toLowerCase().includes(assetSearchLC)
-						);
-				  })
+				? oneInchTokenList
+						.filter(({ name, symbol }: any) => {
+							const assetSearchLC = assetSearch.toLowerCase();
+							return (
+								name.toLowerCase().includes(assetSearchLC) ||
+								symbol.toLowerCase().includes(assetSearchLC)
+							);
+						})
+						.map((t: any) => ({
+							...t,
+							isSynth: false,
+						})) || []
 				: oneInchTokenList,
 		[oneInchTokenList, assetSearch],
 		DEFAULT_SEARCH_DEBOUNCE_MS
 	);
 
+	const tokenBalancesQuery = useTokensBalancesQuery(searchFilteredTokens, walletAddress);
+	const tokenBalances = tokenBalancesQuery.data ?? null;
+
+	const coinGeckoTokenPricesQuery = useCoinGeckoTokenPricesQuery(
+		searchFilteredTokens.map((f) => f.address)
+	);
+	const coinGeckoPrices = coinGeckoTokenPricesQuery.data ?? null;
+
 	const oneInchTokensPaged = useMemo(() => {
 		if (!oneInchEnabled || (synthCategory && synthCategory !== 'crypto')) return [];
-		const items =
-			searchFilteredTokens.map((t: any) => ({
-				...t,
-				isSynth: false,
-			})) || [];
-		const ordered = orderBy(items, (i) => i.symbol);
+		const ordered = tokenBalancesQuery.isSuccess
+			? orderBy(
+					searchFilteredTokens.map((token) => {
+						const tokenAddress =
+							token.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : token.address;
+						if (
+							coinGeckoPrices !== null &&
+							coinGeckoPrices[tokenAddress] &&
+							tokenBalances !== null
+						) {
+							const price = wei(coinGeckoPrices[tokenAddress].usd ?? 0);
+							const balance = tokenBalances[token.symbol as CurrencyKey]?.balance ?? wei(0);
+							const usdBalance = price.mul(balance);
+
+							return {
+								...token,
+								usdBalance,
+								balance,
+							};
+						}
+						return token;
+					}),
+					({ usdBalance }) => (usdBalance ? usdBalance.toNumber() : 0),
+					'desc'
+			  )
+			: searchFilteredTokens;
 		if (ordered.length > PAGE_LENGTH) return ordered.slice(0, PAGE_LENGTH * page);
 		return ordered;
-	}, [searchFilteredTokens, page, oneInchEnabled, synthCategory]);
-
-	const tokenBalancesQuery = useTokensBalancesQuery(oneInchTokensPaged, walletAddress);
-	const tokenBalances = tokenBalancesQuery.isSuccess ? tokenBalancesQuery.data ?? {} : {};
+	}, [
+		oneInchEnabled,
+		synthCategory,
+		tokenBalancesQuery,
+		searchFilteredTokens,
+		page,
+		coinGeckoPrices,
+		tokenBalances,
+	]);
 
 	return (
 		<StyledCenteredModal onDismiss={onDismiss} isOpen title={t('modals.select-currency.title')}>
@@ -243,7 +282,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 							</TokensHeader>
 							{oneInchTokensPaged.length > 0 ? (
 								oneInchTokensPaged.map((token) => {
-									const currencyKey = token.symbol;
+									const { symbol: currencyKey, balance, usdBalance } = token;
 									return (
 										<CurrencyRow
 											key={currencyKey}
@@ -252,10 +291,11 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 												onDismiss();
 											}}
 											balance={
-												tokenBalances[currencyKey]
+												balance && usdBalance
 													? {
-															currencyKey: currencyKey,
-															balance: tokenBalances[currencyKey]?.balance || wei(0),
+															currencyKey,
+															balance,
+															usdBalance,
 													  }
 													: undefined
 											}

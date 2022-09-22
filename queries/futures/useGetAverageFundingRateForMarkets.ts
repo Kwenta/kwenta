@@ -1,12 +1,14 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
-import Wei, { wei } from '@synthetixio/wei';
+import Wei from '@synthetixio/wei';
 import request, { gql } from 'graphql-request';
+import { useTranslation } from 'react-i18next';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { Period, PERIOD_IN_SECONDS } from 'constants/period';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import { fundingRatesState, futuresMarketsState } from 'store/futures';
+import { fundingRatesState, futuresMarketsState, marketAssetsState } from 'store/futures';
 import { FuturesMarketKey, MarketKeyByAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
@@ -22,16 +24,19 @@ type FundingRateInput = {
 
 export type FundingRateResponse = {
 	asset: FuturesMarketKey;
+	fundingTitle: string;
 	fundingRate: Wei | null;
 };
 
 const useGetAverageFundingRateForMarkets = (
-	periodLength: number,
+	period: Period,
 	options?: UseQueryOptions<any | null>
 ) => {
+	const { t } = useTranslation();
 	const { network } = Connector.useContainer();
 
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	const marketAssets = useRecoilValue(marketAssetsState);
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 	const setFundingRates = useSetRecoilState(fundingRatesState);
 
@@ -46,8 +51,15 @@ const useGetAverageFundingRateForMarkets = (
 		}
 	);
 
+	const periodLength = PERIOD_IN_SECONDS[period];
+
+	const periodTitle =
+		period === Period.ONE_HOUR
+			? t('futures.market.info.hourly-funding')
+			: t('futures.market.info.fallback-funding');
+
 	return useQuery<any>(
-		QUERY_KEYS.Futures.FundingRates(network?.id as NetworkId, periodLength),
+		QUERY_KEYS.Futures.FundingRates(network?.id as NetworkId, periodLength, marketAssets),
 		async () => {
 			const minTimestamp = Math.floor(Date.now() / 1000) - periodLength;
 
@@ -100,18 +112,26 @@ const useGetAverageFundingRateForMarkets = (
 								.map((entry: FundingRateUpdate[]): FundingRateUpdate => entry[0])
 								.sort((a: FundingRateUpdate, b: FundingRateUpdate) => a.timestamp - b.timestamp);
 
+							const fundingRate =
+								responseFilt && !!currentFundingRate
+									? calculateFundingRate(
+											minTimestamp,
+											periodLength,
+											responseFilt,
+											price,
+											currentFundingRate
+									  )
+									: currentFundingRate ?? null;
+
+							const fundingPeriod =
+								responseFilt && !!currentFundingRate
+									? periodTitle
+									: t('futures.markets.info.instant-funding');
+
 							const fundingRateResponse: FundingRateResponse = {
 								asset: marketKey,
-								fundingRate:
-									responseFilt && !!currentFundingRate
-										? calculateFundingRate(
-												minTimestamp,
-												periodLength,
-												responseFilt,
-												price,
-												currentFundingRate
-										  )
-										: wei(0),
+								fundingTitle: fundingPeriod,
+								fundingRate: fundingRate,
 							};
 							return fundingRateResponse;
 						});
@@ -131,7 +151,7 @@ const useGetAverageFundingRateForMarkets = (
 			setFundingRates(fundingRates);
 		},
 		{
-			enabled: futuresMarkets.length > 0,
+			enabled: futuresMarkets.length > 0 && futuresMarkets.length === marketAssets.length,
 			...options,
 		}
 	);
