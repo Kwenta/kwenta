@@ -297,6 +297,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 										if (
 											coinGeckoPrices !== null &&
 											coinGeckoPrices[tokenAddress1] &&
+											coinGeckoPrices[tokenAddress2] &&
 											tokenBalances !== null
 										) {
 											const price1 = wei(coinGeckoPrices[tokenAddress1].usd ?? 0);
