@@ -158,10 +158,10 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 							tokenBalances !== null
 						) {
 							const price1 = wei(coinGeckoPrices[tokenAddress].usd ?? 0);
-							const balance = tokenBalances[token.name as CurrencyKey]?.balance ?? wei(0);
+							const balance = tokenBalances[token.symbol as CurrencyKey]?.balance ?? wei(0);
 
 							// eslint-disable-next-line no-console
-							console.log(`${token.name}: ${price1.toNumber()}: ${balance.toNumber()}`);
+							console.log(`${token.symbol}: ${price1.toNumber()}: ${balance.toNumber()}`);
 							return price1.mul(balance).toNumber();
 						}
 						return 0;
@@ -288,60 +288,36 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 								<span>{t('modals.select-currency.header.holdings')}</span>
 							</TokensHeader>
 							{oneInchTokensPaged.length > 0 ? (
-								oneInchTokensPaged
-									.sort((token1, token2) => {
-										const tokenAddress1 =
-											token1.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : token1.address;
-										const tokenAddress2 =
-											token2.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : token2.address;
-										if (
-											coinGeckoPrices !== null &&
-											coinGeckoPrices[tokenAddress1] &&
-											coinGeckoPrices[tokenAddress2] &&
-											tokenBalances !== null
-										) {
-											const price1 = wei(coinGeckoPrices[tokenAddress1].usd ?? 0);
-											const balance1 = tokenBalances[token1.name as CurrencyKey]?.balance ?? wei(0);
-											const price2 = wei(coinGeckoPrices[tokenAddress2].usd ?? 0);
-											const balance2 = tokenBalances[token2.name as CurrencyKey]?.balance ?? wei(0);
-
-											const usdBalance1 = price1.mul(balance1).toNumber();
-											const usdBalance2 = price2.mul(balance2).toNumber();
-
-											return usdBalance2 - usdBalance1;
-										}
-										return 0;
-									})
-									.map((token) => {
-										const currencyKey = token.symbol;
-										const tokenAddress =
-											token.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : token.address;
-										const tokenBalance = tokenBalancesQuery.isSuccess
-											? tokenBalances?.[currencyKey]
-											: undefined;
-										return (
-											<CurrencyRow
-												key={currencyKey}
-												onClick={() => {
-													onSelect(currencyKey, true);
-													onDismiss();
-												}}
-												balance={
-													tokenBalance && coinGeckoPrices !== null && coinGeckoPrices[tokenAddress]
-														? {
-																currencyKey,
-																balance: tokenBalance?.balance || wei(0),
-																usdBalance:
-																	wei(coinGeckoPrices[tokenAddress]?.usd).mul(
-																		tokenBalance?.balance
-																	) || wei(0),
-														  }
-														: undefined
-												}
-												token={{ ...token, isSynth: false }}
-											/>
-										);
-									})
+								oneInchTokensPaged.map((token) => {
+									const currencyKey = token.symbol;
+									const tokenAddress =
+										token.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : token.address;
+									const tokenBalance = tokenBalancesQuery.isSuccess
+										? tokenBalances?.[currencyKey]
+										: undefined;
+									return (
+										<CurrencyRow
+											key={currencyKey}
+											onClick={() => {
+												onSelect(currencyKey, true);
+												onDismiss();
+											}}
+											balance={
+												tokenBalance && coinGeckoPrices !== null && coinGeckoPrices[tokenAddress]
+													? {
+															currencyKey,
+															balance: tokenBalance?.balance || wei(0),
+															usdBalance:
+																wei(coinGeckoPrices[tokenAddress]?.usd).mul(
+																	tokenBalance?.balance
+																) || wei(0),
+													  }
+													: undefined
+											}
+											token={{ ...token, isSynth: false }}
+										/>
+									);
+								})
 							) : (
 								<EmptyDisplay>{t('modals.select-currency.search.empty-results')}</EmptyDisplay>
 							)}
