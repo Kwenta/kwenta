@@ -287,6 +287,11 @@ export type FuturesPotentialTradeDetailsQuery = {
 
 export type FuturesAccountType = 'cross_margin' | 'isolated_margin';
 
+type Wallet = string;
+type CrossMarginAccount = string;
+type FactoryAddress = string;
+export type CrossMarginAccounts = Record<FactoryAddress, Record<Wallet, CrossMarginAccount>>;
+
 export type FuturesAccountState = {
 	walletAddress: string | null;
 	selectedFuturesAddress: string | null;

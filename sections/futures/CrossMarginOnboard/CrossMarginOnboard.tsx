@@ -86,11 +86,13 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 				txHash: tx.hash,
 				onTxConfirmed: async () => {
 					try {
-						handleRefetch('cross-margin-account-change', 1000);
+						handleRefetch('cross-margin-account-change');
 					} catch (err) {
 						logError(err);
 					} finally {
-						setSubmitting(null);
+						setTimeout(() => {
+							setSubmitting(null);
+						}, 4000);
 					}
 				},
 				onTxFailed: () => {
@@ -183,7 +185,11 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 			return <ErrorView message={t('futures.modals.onboard.unsupported-network')} />;
 		}
 		if (!futuresAccount || futuresAccount.status === 'fetching') {
-			return <Loader />;
+			return (
+				<LoaderContainer>
+					<Loader />
+				</LoaderContainer>
+			);
 		}
 
 		if (depositComplete) {
@@ -299,4 +305,8 @@ export const BalanceText = styled.p`
 const Complete = styled.div`
 	padding: 40px;
 	text-align: center;
+`;
+
+const LoaderContainer = styled.div`
+	height: 120px;
 `;

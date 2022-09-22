@@ -41,7 +41,7 @@ export const RefetchProvider: React.FC = ({ children }) => {
 	const crossMarginAccountOverview = useGetCrossMarginAccountOverview();
 	const positionsQuery = useGetFuturesPositionForMarkets();
 	const marketsQuery = useGetFuturesMarkets();
-	const { queryCrossMarginAccount } = useQueryCrossMarginAccount();
+	const crossMarginAccountQuery = useQueryCrossMarginAccount();
 
 	useExchangeRatesQuery({ refetchInterval: 15000 });
 	useGetAverageFundingRateForMarkets(Period.ONE_HOUR);
@@ -84,7 +84,7 @@ export const RefetchProvider: React.FC = ({ children }) => {
 					synthsBalancesQuery.refetch();
 					break;
 				case 'cross-margin-account-change':
-					queryCrossMarginAccount();
+					crossMarginAccountQuery.refetch();
 					break;
 			}
 		}, timeout ?? 5000);

@@ -14,6 +14,7 @@ import {
 	FuturesTradeInputs,
 	FuturesOrderType,
 	FuturesVolumes,
+	CrossMarginAccounts,
 } from 'queries/futures/types';
 import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import { Price, Rates } from 'queries/rates/types';
@@ -282,6 +283,11 @@ export const futuresAccountState = atom<FuturesAccountState>({
 		crossMarginAvailable: false,
 		status: 'fetching',
 	},
+});
+
+export const crossMarginAccountsState = atom<CrossMarginAccounts>({
+	key: getFuturesKey('crossMarginAccounts'),
+	default: {},
 });
 
 export const futuresAccountTypeState = atom<FuturesAccountType>({

@@ -1,7 +1,7 @@
 import { wei } from '@synthetixio/wei';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import DepositArrow from 'assets/svg/futures/deposit-arrow.svg';
@@ -26,7 +26,6 @@ import {
 import { BorderedPanel, FlexDivRow } from 'styles/common';
 import { orderPriceInvalidLabel } from 'utils/futures';
 
-import CrossMarginOnboard from '../CrossMarginOnboard';
 import FeeInfoBox from '../FeeInfoBox';
 import OrderPriceInput from '../OrderPriceInput/OrderPriceInput';
 import OrderSizing from '../OrderSizing';
@@ -59,7 +58,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 
 	const [percent, setPercent] = useState(0);
 	const [usdAmount, setUsdAmount] = useState(susdSize);
-	const [showOnboard, setShowOnboard] = useRecoilState(showCrossMarginOnboardState);
+	const setShowOnboard = useSetRecoilState(showCrossMarginOnboardState);
 	const [openTransferModal, setOpenTransferModal] = useState<'deposit' | 'withdraw' | null>(null);
 
 	// eslint-disable-next-line
@@ -101,8 +100,6 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 
 	return (
 		<>
-			<CrossMarginOnboard onClose={() => setShowOnboard(false)} isOpen={showOnboard} />
-
 			{!walletAddress ? (
 				<MessageContainer>{t('futures.market.trade.cross-margin.connect-wallet')}</MessageContainer>
 			) : !crossMarginAvailable ? (
