@@ -9,10 +9,8 @@ import StakingInputCard from './StakingInputCard';
 const StakingTab = () => {
 	return (
 		<StakingTabContainer>
-			<StakingCard
-				style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
-			>
-				<LeftCardGrid>
+			<CardGridContainer>
+				<CardGrid>
 					<div>
 						<div className="title">Claimable Rewards</div>
 						<div className="value">150</div>
@@ -29,11 +27,11 @@ const StakingTab = () => {
 						<div className="title">Annual Percentage Yield</div>
 						<div className="value">68.23%</div>
 					</div>
-				</LeftCardGrid>
+				</CardGrid>
 				<Button fullWidth variant="flat" size="sm">
 					Claim
 				</Button>
-			</StakingCard>
+			</CardGridContainer>
 			<StakingInputCard inputLabel="KWENTA" />
 		</StakingTabContainer>
 	);
@@ -59,7 +57,13 @@ const StakingTabContainer = styled.div`
 	`}
 `;
 
-const LeftCardGrid = styled.div`
+const CardGridContainer = styled(StakingCard)`
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+`;
+
+const CardGrid = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 
