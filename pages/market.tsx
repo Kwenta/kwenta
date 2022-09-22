@@ -13,6 +13,7 @@ import useFuturesData from 'hooks/useFuturesData';
 import LeftSidebar from 'sections/futures/LeftSidebar/LeftSidebar';
 import MarketInfo from 'sections/futures/MarketInfo';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
+import FuturesUnsupported from 'sections/futures/Trade/FuturesUnsupported';
 import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
 import TradeCrossMargin from 'sections/futures/TradeCrossMargin';
 import AppLayout from 'sections/shared/Layout/AppLayout';
@@ -26,7 +27,7 @@ type MarketComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 const Market: MarketComponent = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const { walletAddress } = Connector.useContainer();
+	const { walletAddress, isWalletConnected, unsupportedNetwork } = Connector.useContainer();
 
 	const marketAsset = router.query.asset as FuturesMarketAsset;
 
@@ -51,7 +52,9 @@ const Market: MarketComponent = () => {
 						<LeftSidebar />
 						<MarketInfo />
 						<StyledRightSideContent>
-							{walletAddress && !ready ? (
+							{!isWalletConnected || unsupportedNetwork ? (
+								<FuturesUnsupported isWalletConnected={isWalletConnected} />
+							) : walletAddress && !ready ? (
 								<Loader />
 							) : selectedAccountType === 'cross_margin' ? (
 								<TradeCrossMargin />
