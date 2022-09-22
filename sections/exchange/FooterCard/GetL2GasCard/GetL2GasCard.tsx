@@ -7,11 +7,7 @@ import { NoTextTransform, ExternalLink } from 'styles/common';
 
 import { MessageContainer, Message, MessageButton, FixedMessageContainerSpacer } from '../common';
 
-type GetL2GasCardProps = {
-	attached?: boolean;
-};
-
-const GetL2GasCard: FC<GetL2GasCardProps> = ({ attached }) => {
+const GetL2GasCard: FC = () => {
 	const { t } = useTranslation();
 
 	return (
@@ -19,7 +15,7 @@ const GetL2GasCard: FC<GetL2GasCardProps> = ({ attached }) => {
 			<MobileOrTabletView>
 				<FixedMessageContainerSpacer />
 			</MobileOrTabletView>
-			<MessageContainer attached={attached} className="footer-card">
+			<MessageContainer className="footer-card">
 				<DesktopOnlyView>
 					<Message>
 						<Trans

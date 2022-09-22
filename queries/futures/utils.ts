@@ -11,7 +11,11 @@ import { formatDollars, zeroBN } from 'utils/formatters/number';
 import { FuturesMarketAsset } from 'utils/futures';
 
 import { SECONDS_PER_DAY, FUTURES_ENDPOINTS } from './constants';
-import { FuturesMarginTransferResult, FuturesTradeResult } from './subgraph';
+import {
+	FuturesHourlyStatResult,
+	FuturesMarginTransferResult,
+	FuturesTradeResult,
+} from './subgraph';
 import {
 	FuturesPosition,
 	FuturesOpenInterest,
@@ -142,26 +146,19 @@ export const mapOpenInterest = async (
 	return openInterest;
 };
 
-export const calculateTradeVolume = (futuresTrades: FuturesTradeResult[]): Wei => {
-	return futuresTrades.reduce((acc: Wei, { size, price }: FuturesTradeResult) => {
-		const cleanSize = new Wei(size).div(ETH_UNIT).abs();
-		const cleanPrice = new Wei(price).div(ETH_UNIT);
-		return acc.add(cleanSize.mul(cleanPrice));
-	}, wei(0));
-};
-
-export const calculateTradeVolumeForAll = (futuresTrades: FuturesTradeResult[]): FuturesVolumes => {
-	const volumes = {} as FuturesVolumes;
-
-	futuresTrades.forEach(({ asset, size, price }) => {
-		const sizeAdd = new Wei(size).div(ETH_UNIT);
-		const priceAdd = new Wei(price).div(ETH_UNIT);
-		const volumeAdd = sizeAdd.mul(priceAdd).abs();
-
-		volumes[asset]
-			? (volumes[asset] = volumes[asset].add(volumeAdd))
-			: (volumes[asset] = volumeAdd);
-	});
+export const calculateVolumes = (futuresHourlyStats: FuturesHourlyStatResult[]): FuturesVolumes => {
+	const volumes: FuturesVolumes = futuresHourlyStats.reduce(
+		(acc: FuturesVolumes, { asset, volume, trades }) => {
+			return {
+				...acc,
+				[asset]: {
+					volume: volume.div(ETH_UNIT).add(acc[asset]?.volume ?? 0),
+					trades: trades.add(acc[asset]?.trades ?? 0),
+				},
+			};
+		},
+		{}
+	);
 	return volumes;
 };
 

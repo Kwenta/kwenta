@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
 import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
@@ -10,6 +11,8 @@ import FuturesMarketsTable from '../FuturesMarketsTable';
 import { HeaderContainer, MarketStatsContainer, MarketStat } from './common';
 
 const FuturesMarkets = () => {
+	const { t } = useTranslation();
+
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 
 	const dailyTradeStats = useGetFuturesDailyTradeStats();
@@ -26,11 +29,13 @@ const FuturesMarkets = () => {
 		<div>
 			<HeaderContainer>
 				<SectionHeader>
-					<SectionTitle>Futures Markets</SectionTitle>
+					<SectionTitle>{t('dashboard.overview.markets-tabs.futures')}</SectionTitle>
 				</SectionHeader>
 				<MarketStatsContainer>
 					<MarketStat>
-						<div className="title">24h Volume</div>
+						<div className="title">
+							{t('dashboard.overview.futures-markets-table.daily-volume')}
+						</div>
 						<div className="value">
 							{formatDollars(dailyTradeStats.data?.totalVolume ?? zeroBN, {
 								minDecimals: 0,
@@ -38,7 +43,9 @@ const FuturesMarkets = () => {
 						</div>
 					</MarketStat>
 					<MarketStat>
-						<div className="title">Open Interest</div>
+						<div className="title">
+							{t('dashboard.overview.futures-markets-table.open-interest')}
+						</div>
 						<div className="value">
 							{formatDollars(openInterest, {
 								minDecimals: 0,
@@ -46,7 +53,9 @@ const FuturesMarkets = () => {
 						</div>
 					</MarketStat>
 					<MarketStat>
-						<div className="title">24H Trades</div>
+						<div className="title">
+							{t('dashboard.overview.futures-markets-table.daily-trades')}
+						</div>
 						<div className="value">
 							{formatNumber(dailyTradeStats.data?.totalTrades ?? 0, { minDecimals: 0 })}
 						</div>

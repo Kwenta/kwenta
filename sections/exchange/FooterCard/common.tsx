@@ -1,11 +1,11 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import Button from 'components/Button';
 import { zIndex } from 'constants/ui';
 import { FixedFooterMixin, GridDivCenteredRow, numericValueCSS } from 'styles/common';
 import media from 'styles/media';
 
-export const SummaryItems = styled.div<{ attached?: boolean }>`
+export const SummaryItems = styled.div`
 	display: grid;
 	grid-auto-flow: column;
 	flex-grow: 1;
@@ -17,13 +17,6 @@ export const SummaryItems = styled.div<{ attached?: boolean }>`
 		grid-template-rows: auto auto;
 		grid-gap: 20px;
 	`}
-	${(props) =>
-		props.attached &&
-		css`
-			& {
-				grid-template-rows: unset;
-			}
-		`}
 `;
 
 export const SummaryItem = styled.div`
@@ -52,7 +45,6 @@ export const SummaryItemValue = styled.div`
 `;
 
 export const MessageContainer = styled(GridDivCenteredRow)<{
-	attached?: boolean;
 	showProvider?: boolean;
 }>`
 	-webkit-box-align: center;
@@ -62,11 +54,6 @@ export const MessageContainer = styled(GridDivCenteredRow)<{
 	grid-template-rows: 99px 70px;
 	margin: 0 0 20px;
 
-	${(props) =>
-		props.attached &&
-		css`
-			border-radius: 4px;
-		`}
 	${media.lessThan('md')`
 		${FixedFooterMixin};
 		box-shadow: 0 -8px 8px 0 ${(props) => props.theme.colors.black};

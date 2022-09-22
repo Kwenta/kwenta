@@ -1,15 +1,16 @@
 import { FC, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import { ratesState } from 'store/futures';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
 import SpotMarketsTable from '../SpotMarketsTable';
 
-enum MarketsTab {
+export enum MarketsTab {
 	FUTURES = 'futures',
 	SPOT = 'spot',
 }
@@ -17,8 +18,7 @@ enum MarketsTab {
 const Markets: FC = () => {
 	const { t } = useTranslation();
 
-	const exchangeRatesQuery = useExchangeRatesQuery();
-	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
+	const exchangeRates = useRecoilValue(ratesState);
 
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 

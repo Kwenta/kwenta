@@ -4,6 +4,7 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { publicProvider } from 'wagmi/providers/public';
 
 import Safe from 'components/Rainbowkit/Gnosis';
+import Tally from 'components/Rainbowkit/Tally';
 import { BLAST_NETWORK_LOOKUP } from 'constants/network';
 
 export const initRainbowkit = () => {
@@ -46,6 +47,7 @@ export const initRainbowkit = () => {
 				wallet.ledger({ chains }),
 				wallet.brave({ chains, shimDisconnect: true }),
 				wallet.trust({ chains }),
+				Tally({ chains, shimDisconnect: true }),
 			],
 		},
 	]);
