@@ -141,8 +141,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 		if (!oneInchEnabled || (synthCategory && synthCategory !== 'crypto')) return [];
 		const ordered = tokenBalancesQuery.isSuccess
 			? orderBy(
-					searchFilteredTokens,
-					(token) => {
+					searchFilteredTokens.map((token) => {
 						const tokenAddress =
 							token.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : token.address;
 						if (
@@ -152,11 +151,17 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 						) {
 							const price = wei(coinGeckoPrices[tokenAddress].usd ?? 0);
 							const balance = tokenBalances[token.symbol as CurrencyKey]?.balance ?? wei(0);
+							const usdBalance = price.mul(balance);
 
-							return price.mul(balance).toNumber();
+							return {
+								...token,
+								usdBalance,
+								balance,
+							};
 						}
-						return 0;
-					},
+						return token;
+					}),
+					({ usdBalance }) => (usdBalance ? usdBalance.toNumber() : 0),
 					'desc'
 			  )
 			: searchFilteredTokens;
@@ -277,12 +282,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 							</TokensHeader>
 							{oneInchTokensPaged.length > 0 ? (
 								oneInchTokensPaged.map((token) => {
-									const currencyKey = token.symbol;
-									const tokenAddress =
-										token.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : token.address;
-									const tokenBalance = tokenBalancesQuery.isSuccess
-										? tokenBalances?.[currencyKey]
-										: undefined;
+									const { symbol: currencyKey, balance, usdBalance } = token;
 									return (
 										<CurrencyRow
 											key={currencyKey}
@@ -291,14 +291,11 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 												onDismiss();
 											}}
 											balance={
-												tokenBalance && coinGeckoPrices !== null && coinGeckoPrices[tokenAddress]
+												balance && usdBalance
 													? {
 															currencyKey,
-															balance: tokenBalance?.balance || wei(0),
-															usdBalance:
-																wei(coinGeckoPrices[tokenAddress]?.usd).mul(
-																	tokenBalance?.balance
-																) || wei(0),
+															balance,
+															usdBalance,
 													  }
 													: undefined
 											}
