@@ -10,6 +10,7 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Connector from 'containers/Connector';
 import { FuturesContext } from 'contexts/FuturesContext';
 import useFuturesData from 'hooks/useFuturesData';
+import useIsL1 from 'hooks/useIsL1';
 import LeftSidebar from 'sections/futures/LeftSidebar/LeftSidebar';
 import MarketInfo from 'sections/futures/MarketInfo';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
@@ -28,6 +29,7 @@ const Market: MarketComponent = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const { walletAddress, isWalletConnected, unsupportedNetwork } = Connector.useContainer();
+	const isL1 = useIsL1();
 
 	const marketAsset = router.query.asset as FuturesMarketAsset;
 
@@ -52,7 +54,7 @@ const Market: MarketComponent = () => {
 						<LeftSidebar />
 						<MarketInfo />
 						<StyledRightSideContent>
-							{!isWalletConnected || unsupportedNetwork ? (
+							{!isWalletConnected || unsupportedNetwork || isL1 ? (
 								<FuturesUnsupported isWalletConnected={isWalletConnected} />
 							) : walletAddress && !ready ? (
 								<Loader />

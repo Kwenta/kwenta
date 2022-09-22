@@ -15,7 +15,7 @@ const FuturesUnsupported: React.FC<FuturesUnsupportedProps> = ({ isWalletConnect
 	const { openConnectModal: connectWallet } = useConnectModal();
 	return (
 		<MessageContainer>
-			<Title>{t('futures.market.trade.page-title')}</Title>
+			<Title>{t('futures.page-title')}</Title>
 			{isWalletConnected ? (
 				<>
 					<UnsupportedMessage>{t('common.l2-cta')}</UnsupportedMessage>
