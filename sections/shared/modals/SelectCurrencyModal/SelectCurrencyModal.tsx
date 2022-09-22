@@ -137,13 +137,6 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	);
 	const coinGeckoPrices = coinGeckoTokenPricesQuery.data ?? null;
 
-	// eslint-disable-next-line no-console
-	console.log('filtered ', searchFilteredTokens);
-	// eslint-disable-next-line no-console
-	console.log('tokenBalancesQuery.isSuccess ', tokenBalancesQuery.isSuccess);
-	// eslint-disable-next-line no-console
-	console.log('tokenBalances ', tokenBalances);
-
 	const oneInchTokensPaged = useMemo(() => {
 		if (!oneInchEnabled || (synthCategory && synthCategory !== 'crypto')) return [];
 		const ordered = tokenBalancesQuery.isSuccess
@@ -157,12 +150,10 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 							coinGeckoPrices[tokenAddress] &&
 							tokenBalances !== null
 						) {
-							const price1 = wei(coinGeckoPrices[tokenAddress].usd ?? 0);
+							const price = wei(coinGeckoPrices[tokenAddress].usd ?? 0);
 							const balance = tokenBalances[token.symbol as CurrencyKey]?.balance ?? wei(0);
 
-							// eslint-disable-next-line no-console
-							console.log(`${token.symbol}: ${price1.toNumber()}: ${balance.toNumber()}`);
-							return price1.mul(balance).toNumber();
+							return price.mul(balance).toNumber();
 						}
 						return 0;
 					},
@@ -180,9 +171,6 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 		coinGeckoPrices,
 		tokenBalances,
 	]);
-
-	// eslint-disable-next-line no-console
-	console.log('pre-sorted ', oneInchTokensPaged);
 
 	return (
 		<StyledCenteredModal onDismiss={onDismiss} isOpen title={t('modals.select-currency.title')}>
