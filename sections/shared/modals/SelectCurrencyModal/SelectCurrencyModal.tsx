@@ -290,9 +290,6 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 							{oneInchTokensPaged.length > 0 ? (
 								oneInchTokensPaged
 									.sort((token1, token2) => {
-										if (!tokenBalances) {
-											return 0;
-										}
 										const tokenAddress1 =
 											token1.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : token1.address;
 										const tokenAddress2 =
