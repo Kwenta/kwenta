@@ -1,4 +1,4 @@
-import { ReactNode, FC } from 'react';
+import { FC, memo } from 'react';
 import styled from 'styled-components';
 
 export const TabList: FC = ({ children, ...props }) => (
@@ -7,16 +7,12 @@ export const TabList: FC = ({ children, ...props }) => (
 	</div>
 );
 
-export const TabPanel = ({
-	name,
-	activeTab,
-	children,
-	...props
-}: {
+type TabPanelProps = {
 	name: string;
 	activeTab: string;
-	children?: ReactNode;
-}) =>
+};
+
+export const TabPanel: React.FC<TabPanelProps> = memo(({ name, activeTab, children, ...props }) =>
 	activeTab === name ? (
 		<TabPanelContainer
 			id={`${name}-tabpanel`}
@@ -27,7 +23,8 @@ export const TabPanel = ({
 		>
 			{children}
 		</TabPanelContainer>
-	) : null;
+	) : null
+);
 
 const TabPanelContainer = styled.div`
 	outline: none;

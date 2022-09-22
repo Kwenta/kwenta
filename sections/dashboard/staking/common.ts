@@ -35,7 +35,6 @@ export const SplitStakingCard = styled(StakingCard)`
 		display: flex;
 		flex: 1;
 		flex-direction: column;
-		/* align-items: center; */
 		padding: 30px 0;
 		padding-left: 30px;
 

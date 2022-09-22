@@ -5,11 +5,13 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
 import { TableCellHead } from 'components/Table/Table';
 
+import { StakingCard } from './common';
+
 const EscrowTable = () => {
 	const data = useMemo(() => [], []);
 
 	return (
-		<>
+		<StakingCard $noPadding>
 			<DesktopOnlyView>
 				<StyledTable
 					data={data}
@@ -126,7 +128,7 @@ const EscrowTable = () => {
 					]}
 				/>
 			</MobileOrTabletView>
-		</>
+		</StakingCard>
 	);
 };
 

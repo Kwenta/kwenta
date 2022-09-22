@@ -52,7 +52,7 @@ const CustomNumericInput: FC<CustomNumericInputProps> = ({
 			<StyledInput
 				type="number"
 				value={value}
-				placeholder={placeholder + suffix}
+				placeholder={placeholder ? `${placeholder} ${suffix}` : suffix}
 				onChange={handleOnChange}
 				className={className}
 				defaultValue={defaultValue}

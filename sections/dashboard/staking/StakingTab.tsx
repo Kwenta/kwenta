@@ -1,15 +1,17 @@
 import styled from 'styled-components';
 
 import Button from 'components/Button';
-import SegmentedControl from 'components/SegmentedControl';
 import media from 'styles/media';
 
 import { StakingCard } from './common';
+import StakingInputCard from './StakingInputCard';
 
 const StakingTab = () => {
 	return (
 		<StakingTabContainer>
-			<StakingCard>
+			<StakingCard
+				style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+			>
 				<LeftCardGrid>
 					<div>
 						<div className="title">Claimable Rewards</div>
@@ -32,12 +34,7 @@ const StakingTab = () => {
 					Claim
 				</Button>
 			</StakingCard>
-			<StakingCard>
-				<SegmentedControl values={['Stake', 'Unstake']} onChange={() => {}} selectedIndex={0} />
-				<Button fullWidth variant="flat" size="sm">
-					Stake
-				</Button>
-			</StakingCard>
+			<StakingInputCard />
 		</StakingTabContainer>
 	);
 };
