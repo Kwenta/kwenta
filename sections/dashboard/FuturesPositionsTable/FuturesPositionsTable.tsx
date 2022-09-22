@@ -19,8 +19,6 @@ import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { PositionHistory } from 'queries/futures/types';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 import {
 	currentMarketState,
 	futuresAccountTypeState,
@@ -53,8 +51,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 	const isL2 = useIsL2();
 
-	useGetFuturesMarkets();
-	useGetFuturesPositionForMarkets();
 	const futuresPositions = useRecoilValue(positionsState);
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 	const currentMarket = useRecoilValue(currentMarketState);

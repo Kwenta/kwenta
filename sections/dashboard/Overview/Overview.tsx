@@ -2,7 +2,7 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
@@ -11,8 +11,8 @@ import { TabPanel } from 'components/Tab';
 import Connector from 'containers/Connector';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
+import { ratesState } from 'store/futures';
 import { activePositionsTabState } from 'store/ui';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 
@@ -35,8 +35,7 @@ const Overview: FC = () => {
 	const futuresPositionQuery = useGetFuturesPositionForAccount();
 	const futuresPositionHistory = futuresPositionQuery?.data ?? [];
 
-	const exchangeRatesQuery = useExchangeRatesQuery();
-	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
+	const exchangeRates = useRecoilValue(ratesState);
 
 	const { walletAddress } = Connector.useContainer();
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);

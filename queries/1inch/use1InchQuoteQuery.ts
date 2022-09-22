@@ -2,12 +2,13 @@ import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { useMemo } from 'react';
 import { useQuery, UseQueryOptions } from 'react-query';
+import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import Convert from 'containers/Convert';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
+import { ratesState } from 'store/futures';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
 type Currency = {
@@ -25,10 +26,9 @@ const use1InchQuoteQuery = (
 ) => {
 	const { quote1Inch } = Convert.useContainer();
 
-	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { tokensMap, network } = Connector.useContainer();
 
-	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
+	const exchangeRates = useRecoilValue(ratesState);
 
 	const synthUsdRate = useMemo(() => {
 		if (!quoteCurrency || !baseCurrency) return null;
