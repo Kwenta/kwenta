@@ -138,7 +138,11 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	const coinGeckoPrices = coinGeckoTokenPricesQuery.data ?? null;
 
 	// eslint-disable-next-line no-console
-	console.log('searchFilteredTokens ', searchFilteredTokens);
+	console.log('filtered ', searchFilteredTokens);
+	// eslint-disable-next-line no-console
+	console.log('tokenBalancesQuery.isSuccess ', tokenBalancesQuery.isSuccess);
+	// eslint-disable-next-line no-console
+	console.log('tokenBalances ', tokenBalances);
 
 	const oneInchTokensPaged = useMemo(() => {
 		if (!oneInchEnabled || (synthCategory && synthCategory !== 'crypto')) return [];
@@ -153,12 +157,12 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 							coinGeckoPrices[tokenAddress] &&
 							tokenBalances !== null
 						) {
-							const price = wei(coinGeckoPrices[tokenAddress].usd ?? 0);
+							const price1 = wei(coinGeckoPrices[tokenAddress].usd ?? 0);
 							const balance = tokenBalances[token.name as CurrencyKey]?.balance ?? wei(0);
 
 							// eslint-disable-next-line no-console
-							console.log(`${token.name}: ${price.toNumber()}: ${balance.toNumber()}`);
-							return price.mul(balance).toNumber();
+							console.log(`${token.name}: ${price1.toNumber()}: ${balance.toNumber()}`);
+							return price1.mul(balance).toNumber();
 						}
 						return 0;
 					},
@@ -170,7 +174,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	}, [
 		oneInchEnabled,
 		synthCategory,
-		tokenBalancesQuery.isSuccess,
+		tokenBalancesQuery,
 		searchFilteredTokens,
 		page,
 		coinGeckoPrices,
@@ -178,7 +182,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	]);
 
 	// eslint-disable-next-line no-console
-	console.log('oneInchTokensPaged ', oneInchTokensPaged);
+	console.log('pre-sorted ', oneInchTokensPaged);
 
 	return (
 		<StyledCenteredModal onDismiss={onDismiss} isOpen title={t('modals.select-currency.title')}>
@@ -284,36 +288,62 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 								<span>{t('modals.select-currency.header.holdings')}</span>
 							</TokensHeader>
 							{oneInchTokensPaged.length > 0 ? (
-								oneInchTokensPaged.map((token) => {
-									const currencyKey = token.symbol;
-									const tokenAddress =
-										token.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : token.address;
-									const tokenBalance = tokenBalancesQuery.isSuccess
-										? tokenBalances?.[currencyKey]
-										: undefined;
-									return (
-										<CurrencyRow
-											key={currencyKey}
-											onClick={() => {
-												onSelect(currencyKey, true);
-												onDismiss();
-											}}
-											balance={
-												tokenBalance && coinGeckoPrices !== null && coinGeckoPrices[tokenAddress]
-													? {
-															currencyKey,
-															balance: tokenBalance?.balance || wei(0),
-															usdBalance:
-																wei(coinGeckoPrices[tokenAddress]?.usd).mul(
-																	tokenBalance?.balance
-																) || wei(0),
-													  }
-													: undefined
-											}
-											token={{ ...token, isSynth: false }}
-										/>
-									);
-								})
+								oneInchTokensPaged
+									.sort((token1, token2) => {
+										if (!tokenBalances) {
+											return 0;
+										}
+										const tokenAddress1 =
+											token1.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : token1.address;
+										const tokenAddress2 =
+											token2.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : token2.address;
+										if (
+											coinGeckoPrices !== null &&
+											coinGeckoPrices[tokenAddress1] &&
+											tokenBalances !== null
+										) {
+											const price1 = wei(coinGeckoPrices[tokenAddress1].usd ?? 0);
+											const balance1 = tokenBalances[token1.name as CurrencyKey]?.balance ?? wei(0);
+											const price2 = wei(coinGeckoPrices[tokenAddress2].usd ?? 0);
+											const balance2 = tokenBalances[token2.name as CurrencyKey]?.balance ?? wei(0);
+
+											const usdBalance1 = price1.mul(balance1).toNumber();
+											const usdBalance2 = price2.mul(balance2).toNumber();
+
+											return usdBalance2 - usdBalance1;
+										}
+										return 0;
+									})
+									.map((token) => {
+										const currencyKey = token.symbol;
+										const tokenAddress =
+											token.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : token.address;
+										const tokenBalance = tokenBalancesQuery.isSuccess
+											? tokenBalances?.[currencyKey]
+											: undefined;
+										return (
+											<CurrencyRow
+												key={currencyKey}
+												onClick={() => {
+													onSelect(currencyKey, true);
+													onDismiss();
+												}}
+												balance={
+													tokenBalance && coinGeckoPrices !== null && coinGeckoPrices[tokenAddress]
+														? {
+																currencyKey,
+																balance: tokenBalance?.balance || wei(0),
+																usdBalance:
+																	wei(coinGeckoPrices[tokenAddress]?.usd).mul(
+																		tokenBalance?.balance
+																	) || wei(0),
+														  }
+														: undefined
+												}
+												token={{ ...token, isSynth: false }}
+											/>
+										);
+									})
 							) : (
 								<EmptyDisplay>{t('modals.select-currency.search.empty-results')}</EmptyDisplay>
 							)}
