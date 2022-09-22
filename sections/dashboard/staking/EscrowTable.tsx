@@ -11,7 +11,7 @@ const EscrowTable = () => {
 	const data = useMemo(() => [], []);
 
 	return (
-		<StakingCard $noPadding>
+		<EscrowTableContainer $noPadding>
 			<DesktopOnlyView>
 				<StyledTable
 					data={data}
@@ -34,7 +34,7 @@ const EscrowTable = () => {
 							Header: () => <TableHeader>Date/Time</TableHeader>,
 							Cell: () => <div />,
 							accessor: 'date',
-							width: 70,
+							width: 65,
 						},
 						{
 							Header: () => (
@@ -56,7 +56,7 @@ const EscrowTable = () => {
 							),
 							Cell: () => <div />,
 							accessor: 'immediatelyVestable',
-							width: 90,
+							width: 80,
 						},
 						{
 							Header: () => <TableHeader>Amount</TableHeader>,
@@ -109,12 +109,7 @@ const EscrowTable = () => {
 							width: 80,
 						},
 						{
-							Header: () => (
-								<TableHeader>
-									<div>Early</div>
-									<div>Vest Fee</div>
-								</TableHeader>
-							),
+							Header: () => <TableHeader>Early Vest Fee</TableHeader>,
 							Cell: () => <div />,
 							accessor: 'earlyVestFee',
 							width: 80,
@@ -128,9 +123,28 @@ const EscrowTable = () => {
 					]}
 				/>
 			</MobileOrTabletView>
-		</StakingCard>
+			<EscrowStats>
+				<div>
+					<div>
+						<div className="stat-title">Total</div>
+						<div className="stat-value">10 KWENTA</div>
+					</div>
+					<div>
+						<div className="stat-title">Fee</div>
+						<div className="stat-value">10 KWENTA</div>
+					</div>
+					<VestButton>Vest</VestButton>
+				</div>
+			</EscrowStats>
+		</EscrowTableContainer>
 	);
 };
+
+const EscrowTableContainer = styled(StakingCard)`
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+`;
 
 const StyledTable = styled(Table)`
 	width: 100%;
@@ -147,6 +161,50 @@ const StyledTable = styled(Table)`
 
 const TableHeader = styled.div`
 	font-size: 10px;
+`;
+
+const EscrowStats = styled.div`
+	display: flex;
+	justify-content: flex-end;
+	margin-top: 22px;
+	padding: 18px;
+	border-top: ${(props) => props.theme.colors.selectedTheme.border};
+
+	.stat-title {
+		font-size: 10px;
+		color: ${(props) => props.theme.colors.selectedTheme.text.title};
+	}
+
+	.stat-value {
+		font-size: 11px;
+		font-family: ${(props) => props.theme.fonts.mono};
+		color: ${(props) => props.theme.colors.selectedTheme.text.value};
+		margin-top: 4px;
+	}
+
+	& > div {
+		display: flex;
+		align-items: center;
+
+		& > *:not(:last-child) {
+			margin-right: 15px;
+		}
+	}
+`;
+
+const VestButton = styled.button`
+	border: 1px solid ${(props) => props.theme.colors.selectedTheme.yellow};
+	height: 24px;
+	box-sizing: border-box;
+	border-radius: 14px;
+	cursor: pointer;
+	background-color: transparent;
+	color: ${(props) => props.theme.colors.selectedTheme.yellow};
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 12px;
+	padding-left: 12px;
+	padding-right: 12px;
+	text-transform: uppercase;
 `;
 
 export default EscrowTable;

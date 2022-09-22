@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC, memo } from 'react';
 import styled, { css } from 'styled-components';
 
 interface SegmentedControlProps {
@@ -9,23 +9,20 @@ interface SegmentedControlProps {
 	className?: string;
 }
 
-const SegmentedControl: React.FC<SegmentedControlProps> = ({
-	values,
-	selectedIndex,
-	onChange,
-	...props
-}) => (
-	<SegmentedControlContainer $length={values.length} {...props}>
-		{values.map((value, index) => (
-			<SegmentedControlOption
-				key={value}
-				isSelected={selectedIndex === index}
-				onClick={() => onChange(index)}
-			>
-				{value}
-			</SegmentedControlOption>
-		))}
-	</SegmentedControlContainer>
+const SegmentedControl: FC<SegmentedControlProps> = memo(
+	({ values, selectedIndex, onChange, ...props }) => (
+		<SegmentedControlContainer $length={values.length} {...props}>
+			{values.map((value, index) => (
+				<SegmentedControlOption
+					key={value}
+					isSelected={selectedIndex === index}
+					onClick={() => onChange(index)}
+				>
+					{value}
+				</SegmentedControlOption>
+			))}
+		</SegmentedControlContainer>
+	)
 );
 
 const SegmentedControlContainer = styled.div<{ $length: number }>`

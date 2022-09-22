@@ -1,15 +1,19 @@
-import { useState } from 'react';
+import { FC, useState } from 'react';
 import styled from 'styled-components';
 
 import CustomNumericInput from 'components/Input/CustomNumericInput';
 
-const StakeInput = () => {
+type StakeInputProps = {
+	label: string;
+};
+
+const StakeInput: FC<StakeInputProps> = ({ label }) => {
 	const [amount, setAmount] = useState('');
 
 	return (
 		<StakeInputContainer>
-			<StakeInputHeader style={{}}>
-				<div>eKWENTA</div>
+			<StakeInputHeader>
+				<div>{label}</div>
 				<div className="max">Max</div>
 			</StakeInputHeader>
 			<StyledInput

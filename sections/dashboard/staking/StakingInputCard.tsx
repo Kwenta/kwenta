@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { FC, useState } from 'react';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
@@ -11,7 +11,7 @@ type StakingInputCardProps = {
 	inputLabel: string;
 };
 
-const StakingInputCard = () => {
+const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel }) => {
 	const [activeTab, setActiveTab] = useState(0);
 
 	const handleTabChange = (tabIndex: number) => {
@@ -25,7 +25,7 @@ const StakingInputCard = () => {
 				onChange={handleTabChange}
 				selectedIndex={activeTab}
 			/>
-			<StakeInput />
+			<StakeInput label={inputLabel} />
 			<Button fullWidth variant="flat" size="sm">
 				{activeTab === 0 ? 'Stake' : 'Unstake'}
 			</Button>

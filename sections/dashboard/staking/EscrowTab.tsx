@@ -9,7 +9,7 @@ const EscrowTab = () => {
 	return (
 		<EscrowTabContainer>
 			<EscrowTable />
-			<StakingInputCard />
+			<StakingInputCard inputLabel="eKWENTA" />
 		</EscrowTabContainer>
 	);
 };

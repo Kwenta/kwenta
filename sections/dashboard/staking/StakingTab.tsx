@@ -34,7 +34,7 @@ const StakingTab = () => {
 					Claim
 				</Button>
 			</StakingCard>
-			<StakingInputCard />
+			<StakingInputCard inputLabel="KWENTA" />
 		</StakingTabContainer>
 	);
 };
