@@ -72,6 +72,7 @@ export default function useQueryCrossMarginAccount() {
 					status: 'complete',
 					crossMarginAddress: existing,
 					crossMarginAvailable: true,
+					selectedFuturesAddress: existing,
 					walletAddress,
 				});
 				return existing;
