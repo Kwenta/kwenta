@@ -19,16 +19,16 @@ const FuturesUnsupported: React.FC<FuturesUnsupportedProps> = ({ isWalletConnect
 			{isWalletConnected ? (
 				<>
 					<UnsupportedMessage>{t('common.l2-cta')}</UnsupportedMessage>
-					<IsolatedLink>
+					<LinkContainer>
 						<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
-					</IsolatedLink>
+					</LinkContainer>
 				</>
 			) : (
 				<>
 					<UnsupportedMessage>{t('common.perp-cta')}</UnsupportedMessage>
-					<IsolatedLink>
+					<LinkContainer>
 						<div onClick={connectWallet}>{t('common.wallet.connect-wallet')}</div>
-					</IsolatedLink>
+					</LinkContainer>
 				</>
 			)}
 		</MessageContainer>
@@ -39,7 +39,7 @@ const UnsupportedMessage = styled.div`
 	margin-top: 12px;
 `;
 
-const IsolatedLink = styled.div`
+const LinkContainer = styled.div`
 	margin-top: 12px;
 	div {
 		cursor: pointer;
