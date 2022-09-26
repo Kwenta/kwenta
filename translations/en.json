@@ -295,8 +295,8 @@
 		"traders": {
 			"title": "Traders"
 		},
-		"tvl": {
-			"title": "TVL"
+		"open-interest": {
+			"title": "Open Interest"
 		}
 	},
 	"exchange": {

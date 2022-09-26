@@ -1,4 +1,5 @@
-import { BarChart, BarSeriesOption, LineChart, LineSeriesOption } from 'echarts/charts';
+import { BarChart, LineChart } from 'echarts/charts';
+import type { BarSeriesOption, LineSeriesOption } from 'echarts/charts';
 import {
 	GridComponent,
 	TitleComponent,
@@ -39,7 +40,7 @@ export type EChartsOption = echarts.ComposeOption<
  * @param dom mount point of the chart.
  * @param option options of the chart.
  */
-export const initBarChart = (dom: HTMLDivElement, option: EChartsOption) => {
+export const initBarChart = (dom: HTMLDivElement) => {
 	// do not use 'dark' theme here, or the external background css will not be effective.
-	echarts.init(dom, 'light').setOption(option);
+	return echarts.init(dom, 'light');
 };
