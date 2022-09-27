@@ -1,5 +1,20 @@
 import styled, { css } from 'styled-components';
 
+import KwentaLogo from 'assets/svg/earn/KWENTA.svg';
+
+export const KwentaLabel: React.FC = ({ children }) => {
+	return (
+		<div className="value">
+			{children}
+			<StyledKwentaLogo />
+		</div>
+	);
+};
+
+const StyledKwentaLogo = styled(KwentaLogo)`
+	margin-left: 8px;
+`;
+
 export const StakingCard = styled.div<{ $noPadding?: boolean }>`
 	background: linear-gradient(0deg, #181818, #181818),
 		linear-gradient(0deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1));

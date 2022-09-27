@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import KwentaLogo from 'assets/svg/earn/KWENTA.svg';
 import media from 'styles/media';
 
-import { StakingCard } from './common';
+import { KwentaLabel, StakingCard } from './common';
 
 const TradingRewardsTab: React.FC = () => {
 	const { t } = useTranslation();
@@ -17,10 +17,7 @@ const TradingRewardsTab: React.FC = () => {
 			</StakingCard>
 			<StakingCard>
 				<div className="title">{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}</div>
-				<div className="value">
-					2923.39
-					<StyledKwentaLogo />
-				</div>
+				<KwentaLabel>2923.39</KwentaLabel>
 			</StakingCard>
 			<StakingCard>
 				<div className="title">{t('dashboard.stake.tabs.trading-rewards.estimated-fee-share')}</div>

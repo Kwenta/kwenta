@@ -5,7 +5,7 @@ import KwentaLogo from 'assets/svg/earn/KWENTA.svg';
 import Button from 'components/Button';
 import media from 'styles/media';
 
-import { StakingCard } from './common';
+import { KwentaLabel, StakingCard } from './common';
 import StakingInputCard from './StakingInputCard';
 
 const StakingTab = () => {
@@ -17,24 +17,15 @@ const StakingTab = () => {
 				<CardGrid>
 					<div>
 						<div className="title">{t('dashboard.stake.tabs.staking.claimable-rewards')}</div>
-						<div className="value">
-							150
-							<StyledKwentaLogo />
-						</div>
+						<KwentaLabel>150</KwentaLabel>
 					</div>
 					<div>
 						<div className="title">{t('dashboard.stake.tabs.staking.escrowed-rewards')}</div>
-						<div className="value">
-							100
-							<StyledKwentaLogo />
-						</div>
+						<KwentaLabel>100</KwentaLabel>
 					</div>
 					<div>
 						<div className="title">{t('dashboard.stake.tabs.staking.liquid-rewards')}</div>
-						<div className="value">
-							50
-							<StyledKwentaLogo />
-						</div>
+						<KwentaLabel>50</KwentaLabel>
 					</div>
 					<div>
 						<div className="title">{t('dashboard.stake.tabs.staking.annual-percentage-yield')}</div>
