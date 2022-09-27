@@ -3,8 +3,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import DashboardLayout from 'sections/dashboard/DashboardLayout';
-import StakingPortfolio from 'sections/dashboard/Staking/StakingPortfolio';
-import StakingTabs from 'sections/dashboard/Staking/StakingTabs';
+import StakingPortfolio from 'sections/dashboard/Stake/StakingPortfolio';
+import StakingTabs from 'sections/dashboard/Stake/StakingTabs';
 
 type StakingComponent = React.FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
