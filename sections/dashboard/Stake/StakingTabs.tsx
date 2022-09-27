@@ -1,16 +1,16 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
+import { currentThemeState } from 'store/ui';
 import media from 'styles/media';
 
 import EscrowTab from './EscrowTab';
 import StakingTab from './StakingTab';
 import TradingRewardsTab from './TradingRewardsTab';
-import { currentThemeState } from 'store/ui';
-import { useRecoilValue } from 'recoil';
 
 enum StakeTab {
 	Staking = 'staking',
