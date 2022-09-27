@@ -151,7 +151,7 @@ const EscrowTable = () => {
 					]}
 				/>
 			</MobileOrTabletView>
-			<EscrowStats>
+			<EscrowStats $darkTheme={isDarkTheme}>
 				<div>
 					<div>
 						<div className="stat-title">{t('dashboard.stake.tabs.escrow.total')}</div>
