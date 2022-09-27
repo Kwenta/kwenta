@@ -50,7 +50,7 @@ const WalletButtons: React.FC = () => {
 
 	const walletIsConnectedButNotSupported = (
 		<>
-			<SwitchNetworkButton variant="secondary" onClick={openChainModal}>
+			<SwitchNetworkButton size="sm" variant="flat" onClick={openChainModal}>
 				{t('homepage.l2.cta-buttons.switch-networks')}
 			</SwitchNetworkButton>
 			<ConnectButton size="sm" variant="flat" data-testid="unsupported-network" mono>
@@ -125,7 +125,6 @@ const ConnectButton = styled(Button)`
 
 const SwitchNetworkButton = styled(Button)`
 	font-size: 13px;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
 	font-family: ${(props) => props.theme.fonts.mono};
 `;
 

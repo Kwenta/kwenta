@@ -16,12 +16,15 @@ interface ToolTipProps {
 	right?: string;
 	style?: React.CSSProperties;
 	position?: string;
+	visible?: boolean;
 }
 
 const StyledTooltip = (props: ToolTipProps) => {
 	const [activeMouse, setActiveMouse] = useState(false);
 	const [position, setPosition] = useState({});
 	const myRef = useRef<HTMLDivElement>(null);
+
+	const isVisible = props.visible === undefined ? true : props.visible;
 
 	const setFixedPosition = () => {
 		const isFirefox = /firefox/i.test(navigator.userAgent);
@@ -45,10 +48,11 @@ const StyledTooltip = (props: ToolTipProps) => {
 	const closeToolTip = () => {
 		setActiveMouse(false);
 	};
+
 	return (
 		<ToolTipWrapper ref={myRef} onMouseEnter={openToolTip} onMouseLeave={closeToolTip}>
 			{props.children}
-			{activeMouse && (
+			{activeMouse && isVisible && (
 				<Tooltip {...position} {...props} style={props.style}>
 					<p>{props.content}</p>
 				</Tooltip>

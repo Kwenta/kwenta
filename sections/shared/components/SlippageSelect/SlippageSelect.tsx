@@ -1,4 +1,3 @@
-import Tippy from '@tippyjs/react';
 import React, { useMemo } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +6,8 @@ import styled from 'styled-components';
 import InfoIcon from 'assets/svg/app/info.svg';
 import Button from 'components/Button';
 import NumericInput from 'components/Input/NumericInput';
-import { Tooltip, NumericValue, FlexDivRowCentered } from 'styles/common';
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
+import { NumericValue, FlexDivRowCentered } from 'styles/common';
 import { formatPercent } from 'utils/formatters/number';
 
 import { SummaryItem, SummaryItemLabel, SummaryItemValue } from '../common';
@@ -58,7 +58,6 @@ const SlippageSelect: React.FC<SlippageSelectProps> = ({
 				<SummaryItemLabel>{t('common.summary.max-slippage-tolerance.title')}</SummaryItemLabel>
 				<SlippageHelperTooltip
 					content={<span>{t('common.summary.max-slippage-tolerance.helper')}</span>}
-					arrow={false}
 				>
 					<InfoIconWrapper>
 						<InfoIcon />
@@ -67,9 +66,7 @@ const SlippageSelect: React.FC<SlippageSelectProps> = ({
 			</FlexDivRowCentered>
 			<SummaryItemValue>
 				{slippageItem}
-				<Tooltip
-					trigger="click"
-					arrow={false}
+				<StyledTooltip
 					content={
 						<SlippageSelectContainer>
 							<CustomSlippageContainer>
@@ -95,10 +92,9 @@ const SlippageSelect: React.FC<SlippageSelectProps> = ({
 							))}
 						</SlippageSelectContainer>
 					}
-					interactive
 				>
 					<StyledSlippageEditButton role="button">{t('common.edit')}</StyledSlippageEditButton>
-				</Tooltip>
+				</StyledTooltip>
 			</SummaryItemValue>
 		</SummaryItem>
 	);
@@ -113,14 +109,11 @@ const CustomSlippageContainer = styled.div`
 	margin: 0 10px 5px 10px;
 `;
 
-const SlippageHelperTooltip = styled(Tippy)`
+const SlippageHelperTooltip = styled(StyledTooltip)`
 	background: ${(props) => props.theme.colors.elderberry};
 	border: 0.5px solid ${(props) => props.theme.colors.navy};
 	border-radius: 4px;
 	width: 120px;
-	.tippy-content {
-		padding: 0;
-	}
 `;
 
 const CustomSlippage = styled(NumericInput)`

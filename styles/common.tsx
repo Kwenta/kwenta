@@ -1,8 +1,8 @@
-import Tippy from '@tippyjs/react';
 import styled, { css } from 'styled-components';
 
 import Button, { border } from 'components/Button';
 import NumericInput from 'components/Input/NumericInput';
+import { Tooltip as DefaultTooltip } from 'components/Tooltip/TooltipStyles';
 import { zIndex } from 'constants/ui';
 import media from 'styles/media';
 
@@ -181,13 +181,13 @@ export const MobileScreenContainer = styled.div`
 	padding-bottom: 80px;
 `;
 
-export const Tooltip = styled(Tippy)`
+export const Tooltip = styled(DefaultTooltip)`
 	background-color: ${(props) => props.theme.colors.cellGradient};
 	border: 0.5px solid ${(props) => props.theme.colors.navy};
 	border-radius: 4px;
 `;
 
-export const InfoTooltip = styled(Tippy)`
+export const InfoTooltip = styled(DefaultTooltip)`
 	font-size: 12px;
 	background-color: ${(props) => props.theme.colors.navy};
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
@@ -208,9 +208,6 @@ export const SolidTooltip = styled(Tooltip).attrs({
 	interactive: true,
 })`
 	width: 150px;
-	.tippy-content {
-		padding: 0;
-	}
 `;
 
 export const SolidTooltipContent = styled.div`
