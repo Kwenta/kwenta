@@ -14,6 +14,7 @@ export type TabButtonProps = {
 	noOutline?: boolean;
 	vertical?: boolean;
 	nofill?: boolean;
+	isRounded?: boolean;
 };
 
 const TabButton: React.FC<TabButtonProps> = React.memo(
@@ -40,6 +41,7 @@ const StyledButton = styled(Button)<{
 	height: initial;
 	display: flex;
 	align-items: center;
+	border-radius: ${(props) => (props.isRounded ? '100px' : '8px')};
 	padding-top: 10px;
 	padding-bottom: 10px;
 	justify-content: center;

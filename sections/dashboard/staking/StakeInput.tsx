@@ -18,7 +18,7 @@ const StakeInput: FC<StakeInputProps> = ({ label }) => {
 			</StakeInputHeader>
 			<StyledInput
 				value={amount}
-				suffix="($222.39)"
+				suffix="($23,928.31)"
 				onChange={(_, newValue) => {
 					setAmount(newValue);
 				}}

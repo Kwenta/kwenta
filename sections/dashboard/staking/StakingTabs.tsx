@@ -21,23 +21,26 @@ const StakingTabs: React.FC = () => {
 
 	return (
 		<StakingTabsContainer>
-			<TabButtons>
-				<TabButton
-					title="Staking"
-					onClick={handleTabSwitch(StakeTab.Staking)}
-					active={activeTab === StakeTab.Staking}
-				/>
-				<TabButton
-					title="Trading Rewards"
-					onClick={handleTabSwitch(StakeTab.TradingRewards)}
-					active={activeTab === StakeTab.TradingRewards}
-				/>
-				<TabButton
-					title="Escrow"
-					onClick={handleTabSwitch(StakeTab.Escrow)}
-					active={activeTab === StakeTab.Escrow}
-				/>
-			</TabButtons>
+			<StakingTabsHeader>
+				<TabButtons>
+					<TabButton
+						title="Staking"
+						onClick={handleTabSwitch(StakeTab.Staking)}
+						active={activeTab === StakeTab.Staking}
+					/>
+					<TabButton
+						title="Trading Rewards"
+						onClick={handleTabSwitch(StakeTab.TradingRewards)}
+						active={activeTab === StakeTab.TradingRewards}
+					/>
+					<TabButton
+						title="Escrow"
+						onClick={handleTabSwitch(StakeTab.Escrow)}
+						active={activeTab === StakeTab.Escrow}
+					/>
+				</TabButtons>
+				<EpochLabel title="Epoch 10" active={activeTab === StakeTab.TradingRewards} isRounded />
+			</StakingTabsHeader>
 
 			<div>
 				<TabPanel name={StakeTab.Staking} activeTab={activeTab}>
@@ -54,16 +57,33 @@ const StakingTabs: React.FC = () => {
 	);
 };
 
+const EpochLabel = styled(TabButton)`
+	& p {
+		font-size: 10px;
+		line-height: 100%;
+	}
+	margin-top: 4px;
+	margin-bottom: 4px;
+	align-items: center;
+	visibility: ${(props) => (props.active ? 'visible' : 'hidden')};
+	border-radius: ${(props) => (props.isRounded ? '50px' : '8px')};
+	transition-duration: 0s;
+`;
+
+const StakingTabsHeader = styled.div`
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 20px;
+`;
+
 const StakingTabsContainer = styled.div`
 	${media.lessThan('md')`
-padding: 15px;
-
-`}
+		padding: 15px;
+	`}
 `;
 
 const TabButtons = styled.div`
 	display: flex;
-	margin-bottom: 20px;
 
 	& > button:not(:last-of-type) {
 		margin-right: 8px;

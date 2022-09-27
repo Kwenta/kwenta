@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 
+import KwentaLogo from 'assets/svg/earn/KWENTA.svg';
 import Button from 'components/Button';
 import media from 'styles/media';
 
@@ -13,15 +14,24 @@ const StakingTab = () => {
 				<CardGrid>
 					<div>
 						<div className="title">Claimable Rewards</div>
-						<div className="value">150</div>
+						<div className="value">
+							150
+							<StyledKwentaLogo />
+						</div>
 					</div>
 					<div>
 						<div className="title">Escrowed Rewards</div>
-						<div className="value">100</div>
+						<div className="value">
+							100
+							<StyledKwentaLogo />
+						</div>
 					</div>
 					<div>
 						<div className="title">Liquid Rewards</div>
-						<div className="value">50</div>
+						<div className="value">
+							50
+							<StyledKwentaLogo />
+						</div>
 					</div>
 					<div>
 						<div className="title">Annual Percentage Yield</div>
@@ -55,6 +65,10 @@ const StakingTabContainer = styled.div`
 			margin-bottom: 15px;
 		}
 	`}
+`;
+
+const StyledKwentaLogo = styled(KwentaLogo)`
+	margin-left: 8px;
 `;
 
 const CardGridContainer = styled(StakingCard)`

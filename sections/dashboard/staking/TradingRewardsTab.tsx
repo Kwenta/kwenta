@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 
+import KwentaLogo from 'assets/svg/earn/KWENTA.svg';
+
 import { StakingCard } from './common';
 
 const TradingRewardsTab: React.FC = () => {
@@ -11,7 +13,10 @@ const TradingRewardsTab: React.FC = () => {
 			</StakingCard>
 			<StakingCard>
 				<div className="title">Estimated Rewards</div>
-				<div className="value">2923.39</div>
+				<div className="value">
+					2923.39
+					<StyledKwentaLogo />
+				</div>
 			</StakingCard>
 			<StakingCard>
 				<div className="title">Estimated Fee Share</div>
@@ -27,8 +32,12 @@ const TradingRewardsTab: React.FC = () => {
 
 const TradingRewardsContainer = styled.div`
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+	grid-template-columns: repeat(4, 1fr);
 	grid-gap: 15px;
+`;
+
+const StyledKwentaLogo = styled(KwentaLogo)`
+	margin-left: 8px;
 `;
 
 export default TradingRewardsTab;
