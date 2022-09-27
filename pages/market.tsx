@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useEffect, FC } from 'react';
+import { useEffect, FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
@@ -8,12 +8,13 @@ import styled from 'styled-components';
 import Error from 'components/Error';
 import Loader from 'components/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import { CROSS_MARGIN_ENABLED, DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import { FuturesContext } from 'contexts/FuturesContext';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import useFuturesData from 'hooks/useFuturesData';
 import useIsL2 from 'hooks/useIsL2';
-import { FuturesAccountState } from 'queries/futures/types';
+import { FuturesAccountState, FuturesAccountType } from 'queries/futures/types';
 import CrossMarginOnboard from 'sections/futures/CrossMarginOnboard';
 import LeftSidebar from 'sections/futures/LeftSidebar/LeftSidebar';
 import MarketInfo from 'sections/futures/MarketInfo';
@@ -69,7 +70,7 @@ const Market: MarketComponent = () => {
 				</PageContent>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
-				{walletAddress && account.status === 'fetching' ? <Loader /> : <MobileTrade />}
+				{walletAddress && account.status === 'initial-fetch' ? <Loader /> : <MobileTrade />}
 				<GitHashID />
 			</MobileOrTabletView>
 		</FuturesContext.Provider>
@@ -86,8 +87,23 @@ function TradePanelDesktop({ walletAddress, account }: TradePanelProps) {
 	const { handleRefetch } = useRefetchContext();
 	const router = useRouter();
 	const isL2 = useIsL2();
+	const setSelectedAccountType = useSetRecoilState(futuresAccountTypeState);
 
-	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
+	const accountType = useMemo(() => {
+		if (!CROSS_MARGIN_ENABLED) return DEFAULT_FUTURES_MARGIN_TYPE;
+		const routerType =
+			typeof router.query.accountType === 'string'
+				? (router.query.accountType as FuturesAccountType)
+				: DEFAULT_FUTURES_MARGIN_TYPE;
+		return ['cross_margin', 'isolated_margin'].includes(routerType)
+			? routerType
+			: DEFAULT_FUTURES_MARGIN_TYPE;
+	}, [router.query.accountType]);
+
+	useEffect(() => {
+		setSelectedAccountType(accountType);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [accountType]);
 
 	if (!isL2) {
 		return <FuturesUnsupportedNetwork />;
@@ -95,12 +111,12 @@ function TradePanelDesktop({ walletAddress, account }: TradePanelProps) {
 
 	if (
 		!router.isReady ||
-		(selectedAccountType === 'cross_margin' && walletAddress && account.status === 'fetching')
+		(accountType === 'cross_margin' && walletAddress && account.status === 'initial-fetch')
 	) {
 		return <Loader />;
 	}
 
-	if (selectedAccountType === 'cross_margin') {
+	if (accountType === 'cross_margin') {
 		return account.status === 'error' && !account.crossMarginAddress ? (
 			<div>
 				<Error

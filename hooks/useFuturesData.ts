@@ -8,7 +8,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { DEFAULT_LEVERAGE, CROSS_MARGIN_ENABLED } from 'constants/defaults';
+import { DEFAULT_LEVERAGE } from 'constants/defaults';
 import {
 	CROSS_MARGIN_ORDER_TYPES,
 	ISOLATED_MARGIN_ORDER_TYPES,
@@ -18,12 +18,7 @@ import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
-import {
-	FuturesAccountType,
-	PositionSide,
-	TradeFees,
-	FuturesTradeInputs,
-} from 'queries/futures/types';
+import { PositionSide, TradeFees, FuturesTradeInputs } from 'queries/futures/types';
 import useGetCrossMarginAccountOverview from 'queries/futures/useGetCrossMarginAccountOverview';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 import { getFuturesMarketContract } from 'queries/futures/utils';
@@ -108,9 +103,7 @@ const useFuturesData = () => {
 	const marketAssetRate = useRecoilValue(marketAssetRateState);
 	const [orderPrice, setOrderPrice] = useRecoilState(futuresOrderPriceState);
 	const setPotentialTradeDetails = useSetRecoilState(potentialTradeDetailsState);
-	const [selectedAccountType, setSelectedAccountType] = usePersistedRecoilState(
-		futuresAccountTypeState
-	);
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 	const [preferredLeverage] = usePersistedRecoilState(preferredLeverageState);
 
 	const [maxFee, setMaxFee] = useState(zeroBN);
@@ -120,10 +113,6 @@ const useFuturesData = () => {
 		orderPrice,
 		marketAssetRate,
 	]);
-
-	const routerAccountType = useMemo(() => {
-		return typeof router.query.accountType === 'string' ? router.query.accountType : 'cross_margin';
-	}, [router.query.accountType]);
 
 	const crossMarginAccount = useMemo(() => {
 		return crossMarginAvailable
@@ -565,23 +554,18 @@ const useFuturesData = () => {
 	]);
 
 	useEffect(() => {
-		const validType = ['cross_margin', 'isolated_margin'].includes(routerAccountType);
-		if (validType) {
-			setSelectedAccountType(
-				CROSS_MARGIN_ENABLED ? (routerAccountType as FuturesAccountType) : 'isolated_margin'
-			);
-			if (routerAccountType === 'cross_margin' && !CROSS_MARGIN_ORDER_TYPES.includes(orderType)) {
-				setOrderType('market');
-			} else if (
-				routerAccountType === 'isolated_margin' &&
-				!ISOLATED_MARGIN_ORDER_TYPES.includes(orderType)
-			) {
-				setOrderType('market');
-			}
-			onTradeAmountChange(tradeInputs.susdSize, 'usd');
+		if (selectedAccountType === 'cross_margin' && !CROSS_MARGIN_ORDER_TYPES.includes(orderType)) {
+			setOrderType('market');
+		} else if (
+			selectedAccountType === 'isolated_margin' &&
+			!ISOLATED_MARGIN_ORDER_TYPES.includes(orderType)
+		) {
+			setOrderType('market');
 		}
+		onTradeAmountChange(tradeInputs.susdSize, 'usd');
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [routerAccountType, orderType, network.id]);
+	}, [selectedAccountType, orderType, network.id]);
 
 	useEffect(() => {
 		const handleRouteChange = () => {

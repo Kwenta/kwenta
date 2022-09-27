@@ -48,7 +48,7 @@ export default function useQueryCrossMarginAccount() {
 			if (!crossMarginContractFactory?.address || !walletAddress) {
 				setFuturesAccount({
 					...futuresAccount,
-					status: 'complete',
+					status: 'idle',
 					crossMarginAddress: null,
 					crossMarginAvailable: true,
 					walletAddress,
@@ -73,7 +73,7 @@ export default function useQueryCrossMarginAccount() {
 
 			setFuturesAccount({
 				...futuresAccount,
-				status: 'fetching',
+				status: futuresAccount.status === 'initial-fetch' ? 'initial-fetch' : 'refetching',
 				crossMarginAddress: null,
 				crossMarginAvailable: true,
 				walletAddress,

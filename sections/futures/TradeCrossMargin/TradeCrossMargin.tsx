@@ -1,8 +1,7 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { wei } from '@synthetixio/wei';
 import { useCallback, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import DepositArrow from 'assets/svg/futures/deposit-arrow.svg';
@@ -62,7 +61,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 
 	const [percent, setPercent] = useState(0);
 	const [usdAmount, setUsdAmount] = useState(susdSize);
-	const setShowOnboard = useSetRecoilState(showCrossMarginOnboardState);
+	const [showOnboard, setShowOnboard] = useRecoilState(showCrossMarginOnboardState);
 	const [openTransferModal, setOpenTransferModal] = useState<'deposit' | 'withdraw' | null>(null);
 
 	// eslint-disable-next-line
@@ -126,7 +125,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 		<>
 			{walletAddress && !crossMarginAvailable ? (
 				<CrossMarginUnsupported />
-			) : walletAddress && !crossMarginAddress ? (
+			) : (walletAddress && !crossMarginAddress) || showOnboard ? (
 				<CreateAccount onShowOnboard={() => setShowOnboard(true)} />
 			) : (
 				<>

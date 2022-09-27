@@ -280,7 +280,7 @@ export const futuresAccountState = atom<FuturesAccountState>({
 		crossMarginAddress: null,
 		walletAddress: null,
 		crossMarginAvailable: false,
-		status: 'fetching',
+		status: 'initial-fetch',
 	},
 });
 

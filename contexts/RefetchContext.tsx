@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { UseQueryResult } from 'react-query';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { Period } from 'constants/period';
@@ -25,10 +26,12 @@ type RefetchType =
 
 type RefetchContextType = {
 	handleRefetch: (refetchType: RefetchType, timeout?: number) => void;
+	refetchUntilUpdate: (refetchType: RefetchType) => Promise<any>;
 };
 
 const RefetchContext = React.createContext<RefetchContextType>({
 	handleRefetch: () => {},
+	refetchUntilUpdate: () => Promise.resolve(),
 });
 
 export const RefetchProvider: React.FC = ({ children }) => {
@@ -90,7 +93,57 @@ export const RefetchProvider: React.FC = ({ children }) => {
 		}, timeout ?? 5000);
 	};
 
-	return <RefetchContext.Provider value={{ handleRefetch }}>{children}</RefetchContext.Provider>;
+	const refetchUntilUpdate = async (refetchType: RefetchType) => {
+		switch (refetchType) {
+			case 'cross-margin-account-change':
+				return refetchWithComparator(crossMarginAccountQuery, (prev, next) => {
+					return !next || prev === next;
+				});
+		}
+	};
+
+	return (
+		<RefetchContext.Provider value={{ handleRefetch, refetchUntilUpdate }}>
+			{children}
+		</RefetchContext.Provider>
+	);
+};
+
+// Takes a comparitor which should return a bool condition to
+// signal to continue retrying, comparing prev and new query result
+
+const refetchWithComparator = async (
+	query: UseQueryResult<any>,
+	comparator: (previous: any, current: any) => boolean,
+	interval = 1000,
+	max = 20
+) => {
+	const prev = query?.data;
+
+	return new Promise((res, rej) => {
+		let count = 1;
+
+		const refetch = async () => {
+			const timeout = setTimeout(async () => {
+				if (count > max) {
+					clearTimeout(timeout);
+					rej(new Error('Refetch timed out'));
+				} else {
+					const cur = query?.data || null;
+					const next = await query.refetch();
+
+					count += 1;
+					if (!comparator(prev, next.data)) {
+						clearTimeout(timeout);
+						res(cur);
+					} else {
+						refetch();
+					}
+				}
+			}, interval);
+		};
+		refetch();
+	});
 };
 
 export const useRefetchContext = () => {

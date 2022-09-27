@@ -296,7 +296,7 @@ export type FuturesAccountState = {
 	walletAddress: string | null;
 	crossMarginAddress: string | null;
 	crossMarginAvailable: boolean;
-	status: 'fetching' | 'complete' | 'error';
+	status: 'initial-fetch' | 'complete' | 'error' | 'refetching' | 'idle';
 };
 
 export type SynthBalances = Balances & {
