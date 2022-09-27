@@ -1,4 +1,5 @@
-import React from 'react';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
+import { useMemo, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
@@ -6,6 +7,7 @@ import DepositArrow from 'assets/svg/futures/deposit-arrow.svg';
 import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import SegmentedControl from 'components/SegmentedControl';
 import { ISOLATED_MARGIN_ORDER_TYPES } from 'constants/futures';
+import Connector from 'containers/Connector';
 import useSUSDBalance from 'hooks/useSUSDBalance';
 import { leverageSideState, marketInfoState, orderTypeState, positionState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
@@ -28,37 +30,50 @@ type Props = {
 
 const TradeIsolatedMargin = ({ isMobile }: Props) => {
 	const sUSDBalance = useSUSDBalance();
+	const { openConnectModal: connectWallet } = useConnectModal();
+	const { walletAddress } = Connector.useContainer();
 
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const position = useRecoilValue(positionState);
 	const marketInfo = useRecoilValue(marketInfoState);
 
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
-	const [openModal, setOpenModal] = React.useState<'deposit' | 'withdraw' | null>(null);
+	const [openModal, setOpenModal] = useState<'deposit' | 'withdraw' | null>(null);
 
-	const transferButtons = !marketInfo?.isSuspended
-		? [
+	const headerButtons = useMemo(() => {
+		if (!walletAddress) {
+			return [
 				{
-					i18nTitle: 'futures.market.trade.button.deposit',
-					Icon: DepositArrow,
-					onClick: () => setOpenModal('deposit'),
+					i18nTitle: 'futures.market.trade.button.connect-wallet',
+					onClick: connectWallet,
 				},
-		  ]
-		: [];
+			];
+		}
+		const transferButtons = !marketInfo?.isSuspended
+			? [
+					{
+						i18nTitle: 'futures.market.trade.button.deposit',
+						Icon: DepositArrow,
+						onClick: () => setOpenModal('deposit'),
+					},
+			  ]
+			: [];
 
-	if (position?.remainingMargin?.gt(zeroBN) && !marketInfo?.isSuspended) {
-		transferButtons.push({
-			i18nTitle: 'futures.market.trade.button.withdraw',
-			Icon: WithdrawArrow,
-			onClick: () => setOpenModal('withdraw'),
-		});
-	}
+		if (position?.remainingMargin?.gt(zeroBN) && !marketInfo?.isSuspended) {
+			transferButtons.push({
+				i18nTitle: 'futures.market.trade.button.withdraw',
+				Icon: WithdrawArrow,
+				onClick: () => setOpenModal('withdraw'),
+			});
+		}
+		return transferButtons;
+	}, [walletAddress, position?.remainingMargin, marketInfo?.isSuspended, connectWallet]);
 
 	return (
 		<div>
 			{!isMobile && <MarketsDropdown />}
 
-			<TradePanelHeader accountType={'isolated_margin'} buttons={transferButtons} />
+			<TradePanelHeader accountType={'isolated_margin'} buttons={headerButtons} />
 
 			{!isMobile && <MarketInfoBox />}
 

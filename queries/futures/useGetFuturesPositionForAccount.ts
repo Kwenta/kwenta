@@ -5,8 +5,7 @@ import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import { futuresAccountTypeState } from 'store/futures';
-import { futuresAccountState } from 'store/futures';
+import { futuresAccountTypeState, selectedFuturesAddressState } from 'store/futures';
 import logError from 'utils/logError';
 
 import { FUTURES_POSITION_FRAGMENT } from './constants';
@@ -17,7 +16,7 @@ const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
 	const { network, walletAddress } = Connector.useContainer();
 
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
-	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
+	const selectedFuturesAddress = useRecoilValue(selectedFuturesAddressState);
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
 	return useQuery<PositionHistory[] | null>(

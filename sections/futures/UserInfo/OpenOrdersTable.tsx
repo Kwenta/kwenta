@@ -14,7 +14,7 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import useCrossMarginContracts from 'hooks/useCrossMarginContracts';
 import { FuturesOrder, PositionSide } from 'queries/futures/types';
-import { currentMarketState, futuresAccountState, openOrdersState } from 'store/futures';
+import { currentMarketState, openOrdersState, selectedFuturesAddressState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
@@ -32,7 +32,7 @@ const OpenOrdersTable: React.FC = () => {
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const currencyKey = useRecoilValue(currentMarketState);
 	const openOrders = useRecoilValue(openOrdersState);
-	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
+	const selectedFuturesAddress = useRecoilValue(selectedFuturesAddressState);
 
 	const [cancelling, setCancelling] = useState<string | null>(null);
 	const [selectedOrder, setSelectedOrder] = useState<FuturesOrder | undefined>();

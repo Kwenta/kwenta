@@ -1,8 +1,19 @@
 import styled, { css } from 'styled-components';
 
+// TODO: Clean up these styles
+export type ButtonVariant =
+	| 'primary'
+	| 'secondary'
+	| 'flat'
+	| 'alt'
+	| 'success'
+	| 'danger'
+	| 'text'
+	| 'select';
+
 type ButtonProps = {
 	size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-	variant?: 'primary' | 'secondary' | 'flat' | 'alt' | 'success' | 'danger' | 'text' | 'select';
+	variant?: ButtonVariant;
 	isActive?: boolean;
 	isRounded?: boolean;
 	mono?: boolean;

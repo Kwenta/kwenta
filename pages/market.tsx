@@ -12,11 +12,13 @@ import Connector from 'containers/Connector';
 import { FuturesContext } from 'contexts/FuturesContext';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import useFuturesData from 'hooks/useFuturesData';
-import { FuturesAccountState, FuturesAccountType } from 'queries/futures/types';
+import useIsL2 from 'hooks/useIsL2';
+import { FuturesAccountState } from 'queries/futures/types';
 import CrossMarginOnboard from 'sections/futures/CrossMarginOnboard';
 import LeftSidebar from 'sections/futures/LeftSidebar/LeftSidebar';
 import MarketInfo from 'sections/futures/MarketInfo';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
+import FuturesUnsupportedNetwork from 'sections/futures/Trade/FuturesUnsupported';
 import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
 import TradeCrossMargin from 'sections/futures/TradeCrossMargin';
 import AppLayout from 'sections/shared/Layout/AppLayout';
@@ -41,7 +43,6 @@ const Market: MarketComponent = () => {
 	const marketAsset = router.query.asset as FuturesMarketAsset;
 
 	const setCurrentMarket = useSetRecoilState(currentMarketState);
-	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 	const account = useRecoilValue(futuresAccountState);
 	const [showOnboard, setShowOnboard] = useRecoilState(showCrossMarginOnboardState);
 
@@ -61,11 +62,7 @@ const Market: MarketComponent = () => {
 						<LeftSidebar />
 						<MarketInfo />
 						<StyledRightSideContent>
-							<TradePanelDesktop
-								walletAddress={walletAddress}
-								account={account}
-								selectedAccountType={selectedAccountType}
-							/>
+							<TradePanelDesktop walletAddress={walletAddress} account={account} />
 						</StyledRightSideContent>
 					</StyledFullHeightContainer>
 					<GitHashID />
@@ -82,16 +79,27 @@ const Market: MarketComponent = () => {
 type TradePanelProps = {
 	walletAddress: string | null;
 	account: FuturesAccountState;
-	selectedAccountType: FuturesAccountType;
 };
 
-function TradePanelDesktop({ walletAddress, account, selectedAccountType }: TradePanelProps) {
+function TradePanelDesktop({ walletAddress, account }: TradePanelProps) {
 	const { t } = useTranslation();
 	const { handleRefetch } = useRefetchContext();
+	const router = useRouter();
+	const isL2 = useIsL2();
 
-	if (walletAddress && account.status === 'fetching') {
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
+
+	if (!isL2) {
+		return <FuturesUnsupportedNetwork />;
+	}
+
+	if (
+		!router.isReady ||
+		(selectedAccountType === 'cross_margin' && walletAddress && account.status === 'fetching')
+	) {
 		return <Loader />;
 	}
+
 	if (selectedAccountType === 'cross_margin') {
 		return account.status === 'error' && !account.crossMarginAddress ? (
 			<div>

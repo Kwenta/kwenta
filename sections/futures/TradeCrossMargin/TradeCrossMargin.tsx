@@ -1,3 +1,4 @@
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { wei } from '@synthetixio/wei';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -22,8 +23,9 @@ import {
 	futuresOrderPriceState,
 	marketAssetRateState,
 	showCrossMarginOnboardState,
+	crossMarginAvailableMarginState,
 } from 'store/futures';
-import { BorderedPanel, FlexDivRow } from 'styles/common';
+import { FlexDivRow } from 'styles/common';
 import { orderPriceInvalidLabel } from 'utils/futures';
 
 import FeeInfoBox from '../FeeInfoBox';
@@ -43,18 +45,20 @@ type Props = {
 };
 
 export default function TradeCrossMargin({ isMobile }: Props) {
-	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
 
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const { crossMarginAddress, crossMarginAvailable } = useRecoilValue(futuresAccountState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
+	const availableMargin = useRecoilValue(crossMarginAvailableMarginState);
+
 	const { susdSize } = useRecoilValue(futuresTradeInputsState);
 	const marketAssetRate = useRecoilValue(marketAssetRateState);
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const [orderPrice, setOrderPrice] = useRecoilState(futuresOrderPriceState);
 
 	const { onTradeAmountChange, maxUsdInputAmount, onTradeOrderPriceChange } = useFuturesContext();
+	const { openConnectModal: connectWallet } = useConnectModal();
 
 	const [percent, setPercent] = useState(0);
 	const [usdAmount, setUsdAmount] = useState(susdSize);
@@ -98,33 +102,37 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 		// eslint-disable-next-line
 	}, [susdSize]);
 
+	const headerButtons = walletAddress
+		? [
+				{
+					i18nTitle: 'futures.market.trade.button.deposit',
+					Icon: DepositArrow,
+					onClick: () => setOpenTransferModal('deposit'),
+				},
+				{
+					i18nTitle: 'futures.market.trade.button.withdraw',
+					Icon: WithdrawArrow,
+					onClick: () => setOpenTransferModal('withdraw'),
+				},
+		  ]
+		: [
+				{
+					i18nTitle: 'futures.market.trade.button.connect-wallet',
+					onClick: connectWallet,
+				},
+		  ];
+
 	return (
 		<>
-			{!walletAddress ? (
-				<MessageContainer>{t('futures.market.trade.cross-margin.connect-wallet')}</MessageContainer>
-			) : !crossMarginAvailable ? (
+			{walletAddress && !crossMarginAvailable ? (
 				<CrossMarginUnsupported />
-			) : !crossMarginAddress ? (
+			) : walletAddress && !crossMarginAddress ? (
 				<CreateAccount onShowOnboard={() => setShowOnboard(true)} />
 			) : (
 				<>
 					{!isMobile && <MarketsDropdown />}
 
-					<TradePanelHeader
-						accountType={selectedAccountType}
-						buttons={[
-							{
-								i18nTitle: 'futures.market.trade.button.deposit',
-								Icon: DepositArrow,
-								onClick: () => setOpenTransferModal('deposit'),
-							},
-							{
-								i18nTitle: 'futures.market.trade.button.withdraw',
-								Icon: WithdrawArrow,
-								onClick: () => setOpenTransferModal('withdraw'),
-							},
-						]}
-					/>
+					<TradePanelHeader accountType={selectedAccountType} buttons={headerButtons} />
 					{}
 					<MarginInfoBox />
 					<SegmentedControl
@@ -143,6 +151,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 							minValue={0}
 							maxValue={100}
 							step={1}
+							disabled={availableMargin.eq(0)}
 							defaultValue={percent}
 							value={percent}
 							onChange={(_, value) => onChangeMarginPercent(value, false)}
@@ -159,6 +168,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 					{orderType !== 'market' && (
 						<>
 							<OrderPriceInput
+								isDisabled={availableMargin.eq(0)}
 								onChangeOrderPrice={onChangeOrderPrice}
 								value={orderPrice}
 								orderType={orderType}
@@ -185,10 +195,4 @@ const SliderRow = styled(FlexDivRow)`
 	margin-top: 8px;
 	margin-bottom: 32px;
 	position: relative;
-`;
-
-const MessageContainer = styled(BorderedPanel)`
-	text-align: center;
-	padding: 20px;
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;

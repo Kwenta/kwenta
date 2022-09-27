@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import { futuresAccountState } from 'store/futures';
+import { selectedFuturesAddressState } from 'store/futures';
 import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
@@ -16,7 +16,7 @@ const useGetFuturesMarginTransfers = (
 	currencyKey: string | null,
 	options?: UseQueryOptions<MarginTransfer[]>
 ) => {
-	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
+	const selectedFuturesAddress = useRecoilValue(selectedFuturesAddressState);
 	const { defaultSynthetixjs: synthetixjs, network } = Connector.useContainer();
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 

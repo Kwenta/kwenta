@@ -279,9 +279,17 @@ export const futuresAccountState = atom<FuturesAccountState>({
 	default: {
 		crossMarginAddress: null,
 		walletAddress: null,
-		selectedFuturesAddress: null,
 		crossMarginAvailable: false,
 		status: 'fetching',
+	},
+});
+
+export const selectedFuturesAddressState = selector<string | null>({
+	key: getFuturesKey('selectedFuturesAddress'),
+	get: ({ get }) => {
+		const futuresType = get(futuresAccountTypeState);
+		const account = get(futuresAccountState);
+		return futuresType === 'cross_margin' ? account.crossMarginAddress : account.walletAddress;
 	},
 });
 

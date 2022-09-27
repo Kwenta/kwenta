@@ -645,7 +645,8 @@
 					"oi-caps-reached": "Open Interest Cap Reached",
 					"place-next-price-order": "Place Next-Price Order",
 					"place-limit-order": "Place Limit Order",
-					"place-stop-order": "Place Stop Order"
+					"place-stop-order": "Place Stop Order",
+					"connect-wallet": "Connect Wallet"
 				},
 				"margin": {
 					"deposit-susd": "Deposit your sUSD to start trading",

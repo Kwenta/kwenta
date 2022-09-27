@@ -7,10 +7,10 @@ import useIsL2 from 'hooks/useIsL2';
 import { PotentialTradeStatus, POTENTIAL_TRADE_STATUS_TO_MESSAGE } from 'sections/futures/types';
 import {
 	currentMarketState,
-	futuresAccountState,
 	leverageSideState,
 	potentialTradeDetailsState,
 	futuresAccountTypeState,
+	selectedFuturesAddressState,
 } from 'store/futures';
 import logError from 'utils/logError';
 
@@ -23,7 +23,7 @@ const UNKNOWN = 'Unknown';
 
 const useGetFuturesPotentialTradeDetails = () => {
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
-	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
+	const selectedFuturesAddress = useRecoilValue(selectedFuturesAddressState);
 	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const isL2 = useIsL2();
 

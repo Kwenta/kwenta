@@ -1,17 +1,13 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
 import { useQuery } from 'react-query';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { CROSS_MARGIN_ACCOUNT_FACTORY } from 'constants/address';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
-import {
-	crossMarginAccountsState,
-	futuresAccountState,
-	futuresAccountTypeState,
-} from 'store/futures';
+import { crossMarginAccountsState, futuresAccountState } from 'store/futures';
 import logError from 'utils/logError';
 
 import useCrossMarginAccountContracts from '../../hooks/useCrossMarginContracts';
@@ -26,7 +22,6 @@ export default function useQueryCrossMarginAccount() {
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
 	const [futuresAccount, setFuturesAccount] = useRecoilState(futuresAccountState);
-	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 	const [storedCrossMarginAccounts, setStoredCrossMarginAccount] = usePersistedRecoilState(
 		crossMarginAccountsState
 	);
@@ -45,7 +40,6 @@ export default function useQueryCrossMarginAccount() {
 					crossMarginAddress: null,
 					walletAddress,
 					status: 'complete',
-					selectedFuturesAddress: walletAddress,
 				};
 				setFuturesAccount(accountState);
 				return null;
@@ -72,7 +66,6 @@ export default function useQueryCrossMarginAccount() {
 					status: 'complete',
 					crossMarginAddress: existing,
 					crossMarginAvailable: true,
-					selectedFuturesAddress: existing,
 					walletAddress,
 				});
 				return existing;
@@ -80,9 +73,8 @@ export default function useQueryCrossMarginAccount() {
 
 			setFuturesAccount({
 				...futuresAccount,
-				status: futuresAccount.crossMarginAddress ? 'complete' : 'fetching',
-				crossMarginAddress:
-					walletAddress === futuresAccount.walletAddress ? futuresAccount.crossMarginAddress : null,
+				status: 'fetching',
+				crossMarginAddress: null,
 				crossMarginAvailable: true,
 				walletAddress,
 			});
@@ -120,8 +112,6 @@ export default function useQueryCrossMarginAccount() {
 					crossMarginAvailable: true,
 					crossMarginAddress: crossMarginAccount,
 					walletAddress,
-					selectedFuturesAddress:
-						selectedAccountType === 'cross_margin' ? crossMarginAccount : walletAddress,
 				};
 				setFuturesAccount(accountState);
 				return crossMarginAccount;

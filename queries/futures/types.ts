@@ -294,7 +294,6 @@ export type CrossMarginAccounts = Record<FactoryAddress, Record<Wallet, CrossMar
 
 export type FuturesAccountState = {
 	walletAddress: string | null;
-	selectedFuturesAddress: string | null;
 	crossMarginAddress: string | null;
 	crossMarginAvailable: boolean;
 	status: 'fetching' | 'complete' | 'error';

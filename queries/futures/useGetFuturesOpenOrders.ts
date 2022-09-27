@@ -7,7 +7,7 @@ import { useSetRecoilState, useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import { futuresAccountState, openOrdersState, marketInfoState } from 'store/futures';
+import { openOrdersState, marketInfoState, selectedFuturesAddressState } from 'store/futures';
 import { formatCurrency, formatDollars, weiFromWei } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
 import logError from 'utils/logError';
@@ -16,7 +16,7 @@ import { PositionSide, FuturesOrder } from './types';
 import { getFuturesEndpoint } from './utils';
 
 const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
-	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
+	const selectedFuturesAddress = useRecoilValue(selectedFuturesAddressState);
 	const { network, synthsMap } = Connector.useContainer();
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 

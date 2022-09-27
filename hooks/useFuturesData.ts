@@ -106,7 +106,7 @@ const useFuturesData = () => {
 		crossMarginSettingsState
 	);
 	const marketAssetRate = useRecoilValue(marketAssetRateState);
-	const orderPrice = useRecoilValue(futuresOrderPriceState);
+	const [orderPrice, setOrderPrice] = useRecoilState(futuresOrderPriceState);
 	const setPotentialTradeDetails = useSetRecoilState(potentialTradeDetailsState);
 	const [selectedAccountType, setSelectedAccountType] = usePersistedRecoilState(
 		futuresAccountTypeState
@@ -159,12 +159,14 @@ const useFuturesData = () => {
 		});
 		setTradeFees(ZERO_FEES);
 		setCrossMarginMarginDelta(zeroBN);
+		setOrderPrice('');
 	}, [
 		setSimulatedTrade,
 		setPotentialTradeDetails,
 		setCrossMarginMarginDelta,
 		setTradeFees,
 		setTradeInputs,
+		setOrderPrice,
 	]);
 
 	const maxUsdInputAmount = useMemo(() => {
@@ -563,13 +565,6 @@ const useFuturesData = () => {
 	]);
 
 	useEffect(() => {
-		// TODO: Can remove once cross margin is fully integrated
-		if (!CROSS_MARGIN_ENABLED && selectedAccountType === 'cross_margin') {
-			setSelectedAccountType('isolated_margin');
-		}
-	}, [selectedAccountType, setSelectedAccountType]);
-
-	useEffect(() => {
 		const validType = ['cross_margin', 'isolated_margin'].includes(routerAccountType);
 		if (validType) {
 			setSelectedAccountType(
@@ -604,6 +599,12 @@ const useFuturesData = () => {
 		// Only want to react to leverage side change
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [leverageSide]);
+
+	useEffect(() => {
+		resetTradeState();
+		// Clear trade state when switching address
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [crossMarginAddress]);
 
 	return {
 		onLeverageChange,
