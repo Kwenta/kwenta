@@ -1,8 +1,10 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import KwentaLogo from 'assets/svg/earn/KWENTA.svg';
 import Button from 'components/Button';
+import { currentThemeState } from 'store/ui';
 import media from 'styles/media';
 
 import { KwentaLabel, StakingCard } from './common';
@@ -10,10 +12,12 @@ import StakingInputCard from './StakingInputCard';
 
 const StakingTab = () => {
 	const { t } = useTranslation();
+	const currentTheme = useRecoilValue(currentThemeState);
+	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
 
 	return (
 		<StakingTabContainer>
-			<CardGridContainer>
+			<CardGridContainer $darkTheme={isDarkTheme}>
 				<CardGrid>
 					<div>
 						<div className="title">{t('dashboard.stake.tabs.staking.claimable-rewards')}</div>
@@ -61,11 +65,7 @@ const StakingTabContainer = styled.div`
 	`}
 `;
 
-const StyledKwentaLogo = styled(KwentaLogo)`
-	margin-left: 8px;
-`;
-
-const CardGridContainer = styled(StakingCard)`
+const CardGridContainer = styled(StakingCard)<{ $darkTheme: boolean }>`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -9,6 +9,8 @@ import media from 'styles/media';
 import EscrowTab from './EscrowTab';
 import StakingTab from './StakingTab';
 import TradingRewardsTab from './TradingRewardsTab';
+import { currentThemeState } from 'store/ui';
+import { useRecoilValue } from 'recoil';
 
 enum StakeTab {
 	Staking = 'staking',
@@ -18,6 +20,9 @@ enum StakeTab {
 
 const StakingTabs: React.FC = () => {
 	const { t } = useTranslation();
+
+	const currentTheme = useRecoilValue(currentThemeState);
+	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
 
 	const [activeTab, setActiveTab] = useState(StakeTab.Staking);
 	const handleTabSwitch = useCallback((tab: StakeTab) => () => setActiveTab(tab), []);
@@ -30,16 +35,19 @@ const StakingTabs: React.FC = () => {
 						title={t('dashboard.stake.tabs.staking.title')}
 						onClick={handleTabSwitch(StakeTab.Staking)}
 						active={activeTab === StakeTab.Staking}
+						lightStakePage={!isDarkTheme}
 					/>
 					<TabButton
 						title={t('dashboard.stake.tabs.trading-rewards.title')}
 						onClick={handleTabSwitch(StakeTab.TradingRewards)}
 						active={activeTab === StakeTab.TradingRewards}
+						lightStakePage={!isDarkTheme}
 					/>
 					<TabButton
 						title={t('dashboard.stake.tabs.escrow.title')}
 						onClick={handleTabSwitch(StakeTab.Escrow)}
 						active={activeTab === StakeTab.Escrow}
+						lightStakePage={!isDarkTheme}
 					/>
 				</TabButtons>
 				<EpochLabel

@@ -1,7 +1,9 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import KwentaLogo from 'assets/svg/earn/KWENTA.svg';
+import { currentThemeState } from 'store/ui';
 import media from 'styles/media';
 
 import { KwentaLabel, StakingCard } from './common';
@@ -9,21 +11,24 @@ import { KwentaLabel, StakingCard } from './common';
 const TradingRewardsTab: React.FC = () => {
 	const { t } = useTranslation();
 
+	const currentTheme = useRecoilValue(currentThemeState);
+	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
+
 	return (
 		<TradingRewardsContainer>
-			<StakingCard>
+			<StakingCard $darkTheme={isDarkTheme}>
 				<div className="title">{t('dashboard.stake.tabs.trading-rewards.fees-paid')}</div>
 				<div className="value">$2923.39</div>
 			</StakingCard>
-			<StakingCard>
+			<StakingCard $darkTheme={isDarkTheme}>
 				<div className="title">{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}</div>
 				<KwentaLabel>2923.39</KwentaLabel>
 			</StakingCard>
-			<StakingCard>
+			<StakingCard $darkTheme={isDarkTheme}>
 				<div className="title">{t('dashboard.stake.tabs.trading-rewards.estimated-fee-share')}</div>
 				<div className="value">0.0002%</div>
 			</StakingCard>
-			<StakingCard>
+			<StakingCard $darkTheme={isDarkTheme}>
 				<div className="title">
 					{t('dashboard.stake.tabs.trading-rewards.trading-activity-reset')}
 				</div>
@@ -40,10 +45,6 @@ const TradingRewardsContainer = styled.div`
 		grid-template-columns: repeat(2, 1fr);
 	`}
 	grid-gap: 15px;
-`;
-
-const StyledKwentaLogo = styled(KwentaLogo)`
-	margin-left: 8px;
 `;
 
 export default TradingRewardsTab;

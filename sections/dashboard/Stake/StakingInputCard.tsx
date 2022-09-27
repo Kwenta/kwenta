@@ -1,9 +1,11 @@
-import { FC, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
 import SegmentedControl from 'components/SegmentedControl';
+import { currentThemeState } from 'store/ui';
 
 import { StakingCard } from './common';
 import StakeInput from './StakeInput';
@@ -15,6 +17,9 @@ type StakingInputCardProps = {
 const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel }) => {
 	const { t } = useTranslation();
 
+	const currentTheme = useRecoilValue(currentThemeState);
+	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
+
 	const [activeTab, setActiveTab] = useState(0);
 
 	const handleTabChange = (tabIndex: number) => {
@@ -22,7 +27,7 @@ const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel }) => {
 	};
 
 	return (
-		<StakingInputCardContainer>
+		<StakingInputCardContainer $darkTheme={isDarkTheme}>
 			<SegmentedControl
 				values={[
 					t('dashboard.stake.tabs.stake-table.stake'),
@@ -41,7 +46,7 @@ const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel }) => {
 	);
 };
 
-const StakingInputCardContainer = styled(StakingCard)`
+const StakingInputCardContainer = styled(StakingCard)<{ $darkTheme: boolean }>`
 	min-height: 250px;
 	display: flex;
 	flex-direction: column;
