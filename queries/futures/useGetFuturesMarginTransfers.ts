@@ -18,7 +18,7 @@ const useGetFuturesMarginTransfers = (
 	options?: UseQueryOptions<MarginTransfer[]>
 ) => {
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
-	const { defaultSynthetixjs: synthetixjs, network } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs, network, isWalletConnected } = Connector.useContainer();
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 	const isL2 = useIsL2();
 
@@ -48,7 +48,7 @@ const useGetFuturesMarginTransfers = (
 			currencyKey || null
 		),
 		async () => {
-			if (!currencyKey || !synthetixjs || !isL2) return [];
+			if (!currencyKey || !synthetixjs || !isL2 || !isWalletConnected) return [];
 			const { contracts } = synthetixjs!;
 			const marketAddress = contracts[`FuturesMarket${getDisplayAsset(currencyKey)}`].address;
 			if (!marketAddress || !selectedFuturesAddress) return [];
