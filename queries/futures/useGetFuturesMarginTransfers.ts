@@ -5,6 +5,7 @@ import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
 import { futuresAccountState } from 'store/futures';
 import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
@@ -19,6 +20,7 @@ const useGetFuturesMarginTransfers = (
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 	const { defaultSynthetixjs: synthetixjs, network } = Connector.useContainer();
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
+	const isL2 = useIsL2();
 
 	const gqlQuery = gql`
 		query userFuturesMarginTransfers($market: String!, $walletAddress: String!) {
@@ -46,7 +48,7 @@ const useGetFuturesMarginTransfers = (
 			currencyKey || null
 		),
 		async () => {
-			if (!currencyKey || !synthetixjs) return [];
+			if (!currencyKey || !synthetixjs || !isL2) return [];
 			const { contracts } = synthetixjs!;
 			const marketAddress = contracts[`FuturesMarket${getDisplayAsset(currencyKey)}`].address;
 			if (!marketAddress || !selectedFuturesAddress) return [];
