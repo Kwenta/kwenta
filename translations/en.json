@@ -413,7 +413,7 @@
 			"rewards": "Rewards",
 			"markets": "Markets",
 			"governance": "Governance",
-			"staking": "Staking"
+			"stake": "Stake"
 		},
 		"overview": {
 			"futures-positions-table": {
@@ -473,6 +473,54 @@
 				"open-positions": "Open Positions"
 			}
 		},
+		"stake": {
+			"portfolio": {
+				"title": "Portfolio",
+				"liquid": "Liquid",
+				"escrow": "Escrow",
+				"staked": "Staked",
+				"staked-escrow": "Staked Escrow",
+				"claimable": "Claimable",
+				"vestable": "Vestable"
+			},
+			"tabs": {
+				"staking": {
+					"title": "Staking",
+					"claimable-rewards": "Claimable Rewards",
+					"escrowed-rewards": "Escrowed Rewards",
+					"liquid-rewards": "Liquid Rewards",
+					"annual-percentage-yield": "Annual Percentage Yield",
+					"claim": "Claim"
+				},
+				"trading-rewards": {
+					"title": "Trading Rewards",
+					"fees-paid": "Fees Paid: Epoch 10",
+					"estimated-rewards": "Estimated Rewards",
+					"estimated-fee-share": "Estimated Fee Share",
+					"trading-activity-reset": "Trading Activity Reset",
+					"epoch": "Epoch 10"
+				},
+				"escrow": {
+					"title": "Escrow",
+					"date-time": "Date/Time",
+					"time-until-vestable": "Time Until Vestable",
+					"immediately-vestable": "immediately Vestable",
+					"amount": "Amount",
+					"early-vest-fee": "Early Vest Fee",
+					"status": "Status",
+					"total": "Total",
+					"fee": "Fee",
+					"vest": "VEST"
+				},
+				"stake-table": {
+					"stake": "Stake",
+					"unstake": "Unstake",
+					"kwenta-token": "KWENTA",
+					"max": "MAX",
+					"ekwenta-token": "eKWENTA"
+				}
+			}
+		},
 		"history": {
 			"tabs": {
 				"futures": "Futures History",
@@ -513,6 +561,9 @@
 	},
 	"dashboard-history": {
 		"page-title": "Trade History | Kwenta"
+	},
+	"dashboard-stake": {
+		"page-title": "Stake | Kwenta"
 	},
 	"futures": {
 		"page-title": "Futures | Kwenta",
