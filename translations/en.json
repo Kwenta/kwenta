@@ -286,8 +286,8 @@
 	},
 	"stats": {
 		"title": "kwenta stats",
-		"volumn": {
-			"title": "Volumn"
+		"volume": {
+			"title": "Volume"
 		},
 		"trades": {
 			"title": "Trades"

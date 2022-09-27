@@ -20,7 +20,7 @@ export const Volume = () => {
 	const { data: volumeData } = useGetFuturesVolumesStats();
 
 	useEffect(() => {
-		const text = t('stats.volumn.title');
+		const text = t('stats.volume.title');
 		const subtext = '$40,461,472';
 
 		const data: any = [];
