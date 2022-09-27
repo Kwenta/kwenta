@@ -6,6 +6,7 @@ import styled from 'styled-components';
 
 import DepositArrow from 'assets/svg/futures/deposit-arrow.svg';
 import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
+import Loader from 'components/Loader';
 import SegmentedControl from 'components/SegmentedControl';
 import StyledSlider from 'components/Slider/StyledSlider';
 import Spacer from 'components/Spacer';
@@ -47,7 +48,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 	const { walletAddress } = Connector.useContainer();
 
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
-	const { crossMarginAddress, crossMarginAvailable } = useRecoilValue(futuresAccountState);
+	const { crossMarginAddress, crossMarginAvailable, status } = useRecoilValue(futuresAccountState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 	const availableMargin = useRecoilValue(crossMarginAvailableMarginState);
 
@@ -121,11 +122,13 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 				},
 		  ];
 
+	if (!showOnboard && (status === 'refetching' || status === 'initial-fetch')) return <Loader />;
+
 	return (
 		<>
 			{walletAddress && !crossMarginAvailable ? (
 				<CrossMarginUnsupported />
-			) : (walletAddress && !crossMarginAddress) || showOnboard ? (
+			) : (walletAddress && !crossMarginAddress && status !== 'idle') || showOnboard ? (
 				<CreateAccount onShowOnboard={() => setShowOnboard(true)} />
 			) : (
 				<>
