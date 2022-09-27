@@ -941,7 +941,7 @@
 			"title": "confirm transaction",
 			"confirm-with-provider": "Confirm your transaction through your wallet.",
 			"exchange-fee-hint": "The Synthetix protocol exchange fee for <0>{{currencyKey}}</0>.",
-			"price-adjustment-hint": "This transaction is subject to a price adjustment period. <0>Learn more.</0>"
+			"price-adjustment-hint": "This transaction is subject to a price adjustment period."
 		},
 		"approve-transaction": {
 			"title": "approve transaction",
