@@ -32,7 +32,7 @@ const useGetFuturesTradesForAccount = (
 			selectedAccountType
 		),
 		async () => {
-			if (!currencyKey || !account) return null;
+			if (!currencyKey || !account || !isL2) return null;
 
 			try {
 				const response = await getFuturesTrades(
