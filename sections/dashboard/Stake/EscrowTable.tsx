@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
@@ -58,7 +59,6 @@ const EscrowTable = () => {
 		],
 		[]
 	);
-
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
 
@@ -88,8 +88,8 @@ const EscrowTable = () => {
 									{t('dashboard.stake.tabs.escrow.date-time')}
 								</TableHeader>
 							),
-							Cell: (cellProps: EscrowRow) => (
-								<TableCell $darkTheme={isDarkTheme}>{cellProps.date}</TableCell>
+							Cell: (cellProps: CellProps<EscrowRow>) => (
+								<TableCell $darkTheme={isDarkTheme}>{cellProps.row.original.date}</TableCell>
 							),
 							accessor: 'date',
 							width: 65,
@@ -100,8 +100,8 @@ const EscrowTable = () => {
 									<div>{t('dashboard.stake.tabs.escrow.time-until-vestable')}</div>
 								</TableHeader>
 							),
-							Cell: (cellProps: EscrowRow) => (
-								<TableCell $darkTheme={isDarkTheme}>{cellProps.time}</TableCell>
+							Cell: (cellProps: CellProps<EscrowRow>) => (
+								<TableCell $darkTheme={isDarkTheme}>{cellProps.row.original.time}</TableCell>
 							),
 							accessor: 'timeUntilVestable',
 							width: 80,
@@ -112,8 +112,8 @@ const EscrowTable = () => {
 									<div>{t('dashboard.stake.tabs.escrow.immediately-vestable')}</div>
 								</TableHeader>
 							),
-							Cell: (cellProps: EscrowRow) => (
-								<TableCell $darkTheme={isDarkTheme}>{cellProps.vestable}</TableCell>
+							Cell: (cellProps: CellProps<EscrowRow>) => (
+								<TableCell $darkTheme={isDarkTheme}>{cellProps.row.original.vestable}</TableCell>
 							),
 							accessor: 'immediatelyVestable',
 							width: 80,
@@ -124,8 +124,8 @@ const EscrowTable = () => {
 									{t('dashboard.stake.tabs.escrow.amount')}
 								</TableHeader>
 							),
-							Cell: (cellProps: EscrowRow) => (
-								<TableCell $darkTheme={isDarkTheme}>{cellProps.amount}</TableCell>
+							Cell: (cellProps: CellProps<EscrowRow>) => (
+								<TableCell $darkTheme={isDarkTheme}>{cellProps.row.original.amount}</TableCell>
 							),
 							accessor: 'amount',
 							width: 80,
@@ -136,8 +136,8 @@ const EscrowTable = () => {
 									<div>{t('dashboard.stake.tabs.escrow.early-vest-fee')}</div>
 								</TableHeader>
 							),
-							Cell: (cellProps: EscrowRow) => (
-								<TableCell $darkTheme={isDarkTheme}>{cellProps.fee}</TableCell>
+							Cell: (cellProps: CellProps<EscrowRow>) => (
+								<TableCell $darkTheme={isDarkTheme}>{cellProps.row.original.fee}</TableCell>
 							),
 							accessor: 'earlyVestFee',
 							width: 80,
@@ -148,8 +148,8 @@ const EscrowTable = () => {
 									{t('dashboard.stake.tabs.escrow.status')}
 								</TableHeader>
 							),
-							Cell: (cellProps: EscrowRow) => (
-								<TableCell $darkTheme={isDarkTheme}>{cellProps.status}</TableCell>
+							Cell: (cellProps: CellProps<EscrowRow>) => (
+								<TableCell $darkTheme={isDarkTheme}>{cellProps.row.original.status}</TableCell>
 							),
 							accessor: 'status',
 							width: 80,
@@ -181,8 +181,8 @@ const EscrowTable = () => {
 									{t('dashboard.stake.tabs.escrow.amount')}
 								</TableHeader>
 							),
-							Cell: (cellProps: EscrowRow) => (
-								<TableCell $darkTheme={isDarkTheme}>{cellProps.amount}</TableCell>
+							Cell: (cellProps: CellProps<EscrowRow>) => (
+								<TableCell $darkTheme={isDarkTheme}>{cellProps.row.original.amount}</TableCell>
 							),
 							accessor: 'amount',
 							width: 80,
@@ -193,8 +193,8 @@ const EscrowTable = () => {
 									{t('dashboard.stake.tabs.escrow.early-vest-fee')}
 								</TableHeader>
 							),
-							Cell: (cellProps: EscrowRow) => (
-								<TableCell $darkTheme={isDarkTheme}>{cellProps.fee}</TableCell>
+							Cell: (cellProps: CellProps<EscrowRow>) => (
+								<TableCell $darkTheme={isDarkTheme}>{cellProps.row.original.fee}</TableCell>
 							),
 							accessor: 'earlyVestFee',
 							width: 80,
@@ -205,8 +205,8 @@ const EscrowTable = () => {
 									{t('dashboard.stake.tabs.escrow.status')}
 								</TableHeader>
 							),
-							Cell: (cellProps: EscrowRow) => (
-								<TableCell $darkTheme={isDarkTheme}>{cellProps.status}</TableCell>
+							Cell: (cellProps: CellProps<EscrowRow>) => (
+								<TableCell $darkTheme={isDarkTheme}>{cellProps.row.original.status}</TableCell>
 							),
 							accessor: 'status',
 							width: 80,
