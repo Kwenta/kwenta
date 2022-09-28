@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useGetFuturesTradersStats } from 'queries/futures/useGetFuturesTradersStats';
 import colors from 'styles/theme/colors/common';
 import fonts from 'styles/theme/fonts';
 
@@ -16,10 +17,17 @@ export const Traders = () => {
 
 	const tradersRef = useRef<HTMLDivElement | null>(null);
 
+	const { data: tradersData } = useGetFuturesTradersStats();
+
 	useEffect(() => {
+		if (!tradersRef || !tradersRef.current || !tradersData || !tradersData.length) {
+			return;
+		}
+
 		const text = t('stats.traders.title');
 
-		const data = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+		const data: any = [];
+		tradersData?.forEach(({ date }) => data.push(date));
 		const option: EChartsOption = {
 			title: {
 				text,
@@ -34,7 +42,7 @@ export const Traders = () => {
 			},
 			grid: {
 				top: 137,
-				bottom: 160,
+				bottom: 40,
 			},
 			xAxis: {
 				type: 'category',
@@ -46,26 +54,48 @@ export const Traders = () => {
 					show: false,
 				},
 			},
-			yAxis: {
-				type: 'value',
-				splitLine: {
-					lineStyle: {
-						color: '#C9975B',
+			yAxis: [
+				{
+					type: 'value',
+					splitLine: {
+						lineStyle: {
+							color: '#C9975B',
+						},
 					},
+					axisLabel: {
+						formatter: (value: any) => {
+							const val = Math.floor(value / 1000);
+							return val + (val === 0 ? '' : 'K');
+						},
+					},
+					position: 'right',
 				},
-				position: 'right',
-			},
+				{
+					type: 'value',
+					splitLine: {
+						lineStyle: {
+							color: '#C9975B',
+						},
+					},
+					max: 1000,
+					show: false,
+				},
+			],
 			tooltip: {
 				show: true,
 				backgroundColor: '#0C0C0C',
 				extraCssText:
 					'box-shadow: 0px 24px 40px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.08), inset 0px 0px 20px rgba(255, 255, 255, 0.03);backdrop-filter: blur(60px);/* Note: backdrop-filter has minimal browser support */border-radius: 15px;',
+				trigger: 'axis',
+				axisPointer: {
+					type: 'cross',
+				},
 			},
 			series: [
 				{
-					data: [120, 200, 150, 80, 70, 110, 130],
+					data: tradersData?.map((data) => data.totalUniqueTraders),
 					type: 'bar',
-					name: 'Total Trades',
+					name: 'Unique Traders',
 					itemStyle: {
 						color: '#C9975B',
 					},
@@ -73,11 +103,12 @@ export const Traders = () => {
 				{
 					name: 'Traders by Period',
 					type: 'line',
-					data: [20, 22, 33, 45, 63, 102, 20, 234, 230, 165, 120, 62],
+					data: tradersData?.map((data) => data.uniqueTradersByPeriod),
 					lineStyle: {
 						color: '#02E1FF',
 						cap: 'square',
 					},
+					yAxisIndex: 1,
 					symbol: 'none',
 				},
 			],
@@ -93,14 +124,12 @@ export const Traders = () => {
 			},
 		};
 
-		if (tradersRef?.current) {
-			if (chartInstance) {
-				chartInstance.dispose();
-			}
-			chartInstance = initBarChart(tradersRef.current);
-			chartInstance.setOption(option);
+		if (chartInstance) {
+			chartInstance.dispose();
 		}
-	}, [tradersRef, t]);
+		chartInstance = initBarChart(tradersRef.current);
+		chartInstance.setOption(option);
+	}, [tradersRef, t, tradersData]);
 	return (
 		<Wrapper style={{ width: '100%' }}>
 			<TimeRangeSwitcher />
