@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useGetFuturesTradersStats } from 'queries/futures/useGetFuturesTradersStats';
@@ -16,6 +16,11 @@ export const Traders = () => {
 	const { t } = useTranslation();
 
 	const tradersRef = useRef<HTMLDivElement | null>(null);
+
+	const [is24H, setIs24H] = useState<boolean>(false);
+	const [isWeek, setIsWeek] = useState<boolean>(false);
+	const [isMonth, setIsMonth] = useState<boolean>(false);
+	const [isMax, setIsMax] = useState<boolean>(false);
 
 	const { data: tradersData } = useGetFuturesTradersStats();
 
@@ -132,7 +137,16 @@ export const Traders = () => {
 	}, [tradersRef, t, tradersData]);
 	return (
 		<Wrapper style={{ width: '100%' }}>
-			<TimeRangeSwitcher />
+			<TimeRangeSwitcher
+				is24H={is24H}
+				isWeek={isWeek}
+				isMonth={isMonth}
+				isMax={isMax}
+				setIs24H={setIs24H}
+				setIsWeek={setIsWeek}
+				setIsMonth={setIsMonth}
+				setIsMax={setIsMax}
+			/>
 			<TradersWrapper ref={tradersRef} />
 		</Wrapper>
 	);
