@@ -1,6 +1,5 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
-import Tippy from '@tippyjs/react';
 import { FC, ReactNode, useMemo, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -8,6 +7,7 @@ import styled from 'styled-components';
 import Button from 'components/Button';
 import Card from 'components/Card';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { CurrencyKey } from 'constants/currency';
 import FeeCostSummaryItem from 'sections/shared/components/FeeCostSummary';
 import FeeRateSummaryItem from 'sections/shared/components/FeeRateSummary';
@@ -82,7 +82,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = memo(
 					<DesktopOnlyView>{summaryItems}</DesktopOnlyView>
 					<ErrorTooltip
 						visible={feeReclaimPeriodInSeconds > 0}
-						placement="top"
+						preset="top"
 						content={
 							<div>
 								{t('exchange.errors.fee-reclamation', {
@@ -114,7 +114,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = memo(
 	}
 );
 
-export const ErrorTooltip = styled(Tippy)`
+export const ErrorTooltip = styled(StyledTooltip)`
 	font-size: 12px;
 	background-color: ${(props) => props.theme.colors.red};
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
