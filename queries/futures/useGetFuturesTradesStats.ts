@@ -12,7 +12,7 @@ interface T {
 	totalTrades: number;
 }
 
-export const useGetFuturesTradeStats = () => {
+export const useGetFuturesTradesStats = () => {
 	const futuresEndpoint = getFuturesEndpoint(chainId.optimism);
 
 	const query = async () => {

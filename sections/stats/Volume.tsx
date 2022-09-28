@@ -20,6 +20,10 @@ export const Volume = () => {
 	const { data: volumeData } = useGetFuturesVolumesStats();
 
 	useEffect(() => {
+		if (!volumeRef || !volumeRef.current || !volumeData || !volumeData.length) {
+			return;
+		}
+
 		const text = t('stats.volume.title');
 		const subtext = '$40,461,472';
 
@@ -96,13 +100,11 @@ export const Volume = () => {
 			],
 		};
 
-		if (volumeRef?.current) {
-			if (chartInstance) {
-				chartInstance.dispose();
-			}
-			chartInstance = initBarChart(volumeRef.current);
-			chartInstance.setOption(option);
+		if (chartInstance) {
+			chartInstance.dispose();
 		}
+		chartInstance = initBarChart(volumeRef.current);
+		chartInstance.setOption(option);
 	}, [volumeRef, t, volumeData]);
 
 	return (

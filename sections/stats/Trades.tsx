@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useGetFuturesTradeStats } from 'queries/futures/useGetFuturesTradeStats';
+import { useGetFuturesTradesStats } from 'queries/futures/useGetFuturesTradesStats';
 import colors from 'styles/theme/colors/common';
 import fonts from 'styles/theme/fonts';
 
@@ -17,9 +17,13 @@ export const Trades = () => {
 
 	const tradesRef = useRef<HTMLDivElement | null>(null);
 
-	const { data: tradesData } = useGetFuturesTradeStats();
+	const { data: tradesData } = useGetFuturesTradesStats();
 
 	useEffect(() => {
+		if (!tradesRef || !tradesRef.current || !tradesData || !tradesData.length) {
+			return;
+		}
+
 		const text = t('stats.trades.title');
 
 		const data: any = [];
@@ -74,7 +78,6 @@ export const Trades = () => {
 						},
 					},
 					max: 2000,
-					// position: 'right',
 					show: false,
 				},
 			],
@@ -123,13 +126,11 @@ export const Trades = () => {
 			},
 		};
 
-		if (tradesRef?.current) {
-			if (chartInstance) {
-				chartInstance.dispose();
-			}
-			chartInstance = initBarChart(tradesRef.current);
-			chartInstance.setOption(option);
+		if (chartInstance) {
+			chartInstance.dispose();
 		}
+		chartInstance = initBarChart(tradesRef.current);
+		chartInstance.setOption(option);
 	}, [tradesRef, t, tradesData]);
 
 	return (

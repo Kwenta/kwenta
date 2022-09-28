@@ -53,6 +53,10 @@ export const OpenInterest = () => {
 	}, [futuresMarkets]);
 
 	useEffect(() => {
+		if (!openInterestRef || !openInterestRef.current || !openInterests || !openInterests.length) {
+			return;
+		}
+
 		const text = t('stats.open-interest.title');
 		const subtext = '$40,461,472';
 		const ASSETS: any = {
@@ -285,13 +289,11 @@ export const OpenInterest = () => {
 			],
 		};
 
-		if (openInterestRef?.current) {
-			if (chartInstance) {
-				chartInstance.dispose();
-			}
-			chartInstance = initBarChart(openInterestRef.current);
-			chartInstance.setOption(option);
+		if (chartInstance) {
+			chartInstance.dispose();
 		}
+		chartInstance = initBarChart(openInterestRef.current);
+		chartInstance.setOption(option);
 	}, [openInterestRef, t, openInterests]);
 
 	return (
