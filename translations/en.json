@@ -515,7 +515,7 @@
 		"page-title": "Trade History | Kwenta"
 	},
 	"futures": {
-		"page-title": "Futures | Kwenta",
+		"page-title": "Kwenta Futures",
 		"wallet-overview": {
 			"no-positions": "You have no open positions. Open a position now: ",
 			"title": "wallet overview",
@@ -1066,7 +1066,7 @@
 			"coming-soon": "Soon"
 		},
 		"wallet": {
-			"connect-wallet": "connect wallet",
+			"connect-wallet": "Connect Wallet",
 			"account-info": "Account Info",
 			"switch-accounts": "Switch Accounts",
 			"disconnect-wallet": "Disconnect Wallet",
