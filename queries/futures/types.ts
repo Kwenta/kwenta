@@ -46,8 +46,8 @@ export type FuturesFilledPosition = {
 	liquidationPrice: Wei;
 	initialLeverage: Wei;
 	leverage: Wei;
-	roi: Wei;
-	roiChange: Wei;
+	pnl: Wei;
+	pnlPct: Wei;
 	marginRatio: Wei;
 };
 
@@ -61,6 +61,7 @@ export type FuturesPosition = {
 
 export type FuturesMarket = {
 	market: string;
+	marketKey?: FuturesMarketKey;
 	marketName: string;
 	asset: FuturesMarketAsset;
 	assetHex: string;

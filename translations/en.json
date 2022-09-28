@@ -418,7 +418,7 @@
 		"overview": {
 			"futures-positions-table": {
 				"market": "Market",
-				"position": "Side",
+				"side": "Side",
 				"avg-entry": "Avg. Entry Price",
 				"last-entry": "Last Entry Price",
 				"leverage": "Leverage",

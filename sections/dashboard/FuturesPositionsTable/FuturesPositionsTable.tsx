@@ -26,12 +26,7 @@ import {
 	positionsState,
 } from 'store/futures';
 import { formatNumber } from 'utils/formatters/number';
-import {
-	FuturesMarketAsset,
-	getSynthDescription,
-	isDecimalFour,
-	MarketKeyByAsset,
-} from 'utils/futures';
+import { getSynthDescription, isDecimalFour } from 'utils/futures';
 
 import MobilePositionRow from './MobilePositionRow';
 
@@ -57,9 +52,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	const accountType = useRecoilValue(futuresAccountTypeState);
 
 	let data = useMemo(() => {
-		const activePositions = futuresPositions?.filter((position) => position?.position) ?? [];
-
-		return activePositions
+		return futuresPositions
 			.map((position) => {
 				const market = futuresMarkets.find((market) => market.asset === position.asset);
 				const description = getSynthDescription(position.asset, synthsMap, t);
@@ -68,28 +61,16 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				});
 
 				return {
-					asset: position.asset,
-					market: market?.marketName,
-					marketKey: MarketKeyByAsset[position.asset],
+					market,
+					position: position.position,
 					description,
-					price: market?.price,
-					size: position?.position?.size,
-					notionalValue: position?.position?.notionalValue.abs(),
-					position: position?.position?.side,
-					lastPrice: position?.position?.lastPrice,
 					avgEntryPrice: positionHistory?.entryPrice,
-					liquidationPrice: position?.position?.liquidationPrice,
-					pnl: position?.position?.profitLoss.add(position?.position?.accruedFunding),
-					pnlPct: position?.position?.profitLoss
-						.add(position?.position?.accruedFunding)
-						.div(position?.position?.initialMargin),
-					margin: position.accessibleMargin,
-					leverage: position?.position?.leverage,
-					isSuspended: market?.isSuspended,
-					marketClosureReason: market?.marketClosureReason,
 				};
 			})
-			.filter((position) => position.asset !== currentMarket || showCurrentMarket);
+			.filter(
+				(position) =>
+					position.position && (position?.market?.asset !== currentMarket || showCurrentMarket)
+			);
 	}, [
 		futuresPositions,
 		futuresMarkets,
@@ -108,7 +89,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						data={data}
 						showPagination
 						onTableRowClick={(row) =>
-							router.push(ROUTES.Markets.MarketPair(row.original.asset, accountType))
+							router.push(ROUTES.Markets.MarketPair(row.original.market.asset, accountType))
 						}
 						noResultsMessage={
 							!isL2 ? (
@@ -141,18 +122,14 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									return (
 										<MarketContainer>
 											<IconContainer>
-												<StyledCurrencyIcon
-													currencyKey={
-														MarketKeyByAsset[cellProps.row.original.asset as FuturesMarketAsset]
-													}
-												/>
+												<StyledCurrencyIcon currencyKey={cellProps.row.original.market.marketKey} />
 											</IconContainer>
 											<StyledText>
-												{cellProps.row.original.market}
+												{cellProps.row.original.market.marketName}
 												<MarketBadge
-													currencyKey={cellProps.row.original.asset}
-													isFuturesMarketClosed={cellProps.row.original.isSuspended}
-													futuresClosureReason={cellProps.row.original.marketClosureReason}
+													currencyKey={cellProps.row.original.market.marketKey}
+													isFuturesMarketClosed={cellProps.row.original.market.isSuspended}
+													futuresClosureReason={cellProps.row.original.market.marketClosureReason}
 												/>
 											</StyledText>
 											<StyledValue>{cellProps.row.original.description}</StyledValue>
@@ -163,13 +140,11 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 							},
 							{
 								Header: (
-									<TableHeader>
-										{t('dashboard.overview.futures-positions-table.position')}
-									</TableHeader>
+									<TableHeader>{t('dashboard.overview.futures-positions-table.side')}</TableHeader>
 								),
 								accessor: 'position',
 								Cell: (cellProps: CellProps<any>) => {
-									return <PositionType side={cellProps.row.original.position} />;
+									return <PositionType side={cellProps.row.original.position.side} />;
 								},
 								width: 90,
 							},
@@ -181,14 +156,14 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'notionalValue',
 								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = cellProps.row.original.notionalValue.gte(1e6)
+									const formatOptions = cellProps.row.original.position.notionalValue.gte(1e6)
 										? { truncation: { divisor: 1e6, unit: 'M' } }
 										: {};
 
 									return (
 										<Currency.Price
 											currencyKey={'sUSD'}
-											price={cellProps.row.original.notionalValue}
+											price={cellProps.row.original.position.notionalValue}
 											sign={'$'}
 											conversionRate={1}
 											formatOptions={formatOptions}
@@ -206,7 +181,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								accessor: 'leverage',
 								Cell: (cellProps: CellProps<any>) => {
 									return (
-										<DefaultCell>{formatNumber(cellProps.row.original.leverage ?? 0)}x</DefaultCell>
+										<DefaultCell>
+											{formatNumber(cellProps.row.original.position.leverage ?? 0)}x
+										</DefaultCell>
 									);
 								},
 								width: 90,
@@ -241,7 +218,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'avgEntryPrice',
 								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = isDecimalFour(cellProps.row.original.asset)
+									const formatOptions = isDecimalFour(cellProps.row.original.market.asset)
 										? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
 										: {};
 									return cellProps.row.original.avgEntryPrice === undefined ? (
@@ -266,13 +243,13 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'liquidationPrice',
 								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = isDecimalFour(cellProps.row.original.asset)
+									const formatOptions = isDecimalFour(cellProps.row.original.market.asset)
 										? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
 										: {};
 									return (
 										<Currency.Price
 											currencyKey={'sUSD'}
-											price={cellProps.row.original.liquidationPrice}
+											price={cellProps.row.original.position.liquidationPrice}
 											sign={'$'}
 											conversionRate={1}
 											formatOptions={formatOptions}
@@ -303,8 +280,8 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					) : (
 						data.map((row) => (
 							<MobilePositionRow
-								onClick={() => router.push(`/market/?asset=${row.asset}`)}
-								key={row.asset}
+								onClick={() => router.push(`/market/?asset=${row.market?.asset}`)}
+								key={row.market?.asset}
 								row={row}
 							/>
 						))

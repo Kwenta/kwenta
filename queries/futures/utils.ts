@@ -58,7 +58,8 @@ export const mapFuturesPosition = (
 		liquidationPrice,
 		profitLoss,
 	} = positionDetail;
-	const roi = wei(profitLoss).add(wei(accruedFunding));
+	const pnl = wei(profitLoss).add(wei(accruedFunding));
+	const pnlPct = pnl.div(wei(margin));
 	return {
 		asset,
 		order: !!orderPending
@@ -85,8 +86,8 @@ export const mapFuturesPosition = (
 					size: wei(size).abs(),
 					liquidationPrice: wei(liquidationPrice),
 					initialLeverage: wei(size).mul(wei(lastPrice)).div(wei(margin)).abs(),
-					roi,
-					roiChange: wei(margin).eq(zeroBN) ? zeroBN : roi.div(wei(margin)),
+					pnl,
+					pnlPct,
 					marginRatio: wei(notionalValue).eq(zeroBN)
 						? zeroBN
 						: wei(remainingMargin).div(wei(notionalValue).abs()),

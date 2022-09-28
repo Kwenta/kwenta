@@ -12,7 +12,7 @@ import FuturesMarketDataABI from 'lib/abis/FuturesMarketData.json';
 import { futuresMarketsState, futuresAccountState, positionsState } from 'store/futures';
 import { MarketKeyByAsset } from 'utils/futures';
 
-import { FuturesPosition, PositionDetail } from './types';
+import { FuturesMarket, FuturesPosition, PositionDetail } from './types';
 import { mapFuturesPosition } from './utils';
 
 const ethCallProvider = new Provider();
@@ -74,15 +74,12 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 			const positions = (await ethCallProvider.all(positionCalls)) as PositionDetail[];
 			const canLiquidateState = (await ethCallProvider.all(liquidationCalls)) as boolean[];
 
-			const futuresPositions = [];
-
-			for (let i = 0; i < futuresMarkets.length; i++) {
-				const position = positions[i];
-				const canLiquidate = canLiquidateState[i];
-
-				futuresPositions.push(mapFuturesPosition(position, canLiquidate, assets[i]));
-			}
-
+			const futuresPositions = futuresMarkets.map((futuresMarket: FuturesMarket, ind: number) => {
+				const position = positions[ind];
+				const canLiquidate = canLiquidateState[ind];
+				const asset = assets[ind];
+				return mapFuturesPosition(position, canLiquidate, asset);
+			});
 			setFuturesPositions(futuresPositions);
 
 			return futuresPositions;
