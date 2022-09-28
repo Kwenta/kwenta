@@ -70,64 +70,60 @@ export function TVChart({
 	}, [router.query.asset]);
 
 	useEffect(() => {
-		const widgetOptions = {
-			symbol: marketAsset + ':sUSD',
-			datafeed: DataFeedFactory((network?.id ?? chain.optimism.id) as NetworkId, onSubscribe),
-			interval: interval,
-			container: containerId,
-			library_path: libraryPath,
-			locale: 'en',
-			enabled_features: ['hide_left_toolbar_by_default'],
-			disabled_features: [
-				'header_compare',
-				'study_templates',
-				'header_symbol_search',
-				'display_market_status',
-				'create_volume_indicator_by_default',
-			],
-			fullscreen: fullscreen,
-			autosize: autosize,
-			studies_overrides: studiesOverrides,
-			theme: 'dark',
-			custom_css_url: './theme.css',
-			loading_screen: {
-				backgroundColor: colors.selectedTheme.background,
-			},
-			overrides: DEFAULT_OVERRIDES,
-			toolbar_bg: colors.selectedTheme.background,
-			time_frames: [
-				{ text: '4H', resolution: '5', description: '4 hours' },
-				{ text: '12H', resolution: '5', description: '1 Day' },
-				{ text: '1D', resolution: '15', description: '1 Day' },
-				{ text: '5D', resolution: '15', description: '5 Days' },
-				{ text: '30D', resolution: '1H', description: '30 Days' },
-				{ text: '3M', resolution: '1H', description: '3 Months' },
-			],
-		};
+		if (marketAssetLoaded) {
+			const widgetOptions = {
+				symbol: marketAsset + ':sUSD',
+				datafeed: DataFeedFactory(network.id, onSubscribe),
+				interval: interval,
+				container: containerId,
+				library_path: libraryPath,
+				locale: 'en',
+				enabled_features: ['hide_left_toolbar_by_default'],
+				disabled_features: [
+					'header_compare',
+					'study_templates',
+					'header_symbol_search',
+					'display_market_status',
+					'create_volume_indicator_by_default',
+				],
+				fullscreen: fullscreen,
+				autosize: autosize,
+				studies_overrides: studiesOverrides,
+				theme: 'dark',
+				custom_css_url: './theme.css',
+				loading_screen: {
+					backgroundColor: colors.selectedTheme.background,
+				},
+				overrides: DEFAULT_OVERRIDES,
+				toolbar_bg: colors.selectedTheme.background,
+				time_frames: [
+					{ text: '4H', resolution: '5', description: '4 hours' },
+					{ text: '12H', resolution: '5', description: '1 Day' },
+					{ text: '1D', resolution: '15', description: '1 Day' },
+					{ text: '5D', resolution: '15', description: '5 Days' },
+					{ text: '30D', resolution: '1H', description: '30 Days' },
+					{ text: '3M', resolution: '1H', description: '3 Months' },
+				],
+			};
 
-		const clearExistingWidget = () => {
-			if (_widget.current !== null) {
-				_widget.current.remove();
-				_widget.current = null;
-			}
-		};
+			const setWidget = () => {
+				if (_widget.current !== null) {
+					_widget.current.remove();
+					_widget.current = null;
+				}
 
-		clearExistingWidget();
-
-		// @ts-ignore complains about `container` item missing
-		const tvWidget = new widget(widgetOptions);
-		_widget.current = tvWidget;
-
-		_widget.current?.onChartReady(() => {
-			_widget.current?.applyOverrides(DEFAULT_OVERRIDES);
-			onChartReady();
-		});
-
-		return () => {
-			clearExistingWidget();
-		};
+				// @ts-ignore complains about `container` item missing
+				const tvWidget = new widget(widgetOptions);
+				tvWidget.onChartReady(() => {
+					tvWidget.applyOverrides(DEFAULT_OVERRIDES);
+					onChartReady();
+				});
+				_widget.current = tvWidget;
+			};
+			setWidget();
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network?.id as NetworkId, currentTheme, marketAssetLoaded]);
+	}, [network, currentTheme, marketAssetLoaded]);
 
 	useEffect(() => {
 		_widget.current?.onChartReady(() => {

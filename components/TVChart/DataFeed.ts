@@ -155,7 +155,7 @@ const DataFeedFactory = (
 ): IBasicDataFeed => {
 	return {
 		onReady: (cb: OnReadyCallback) => {
-			setTimeout(() => cb(config), 0);
+			setTimeout(() => cb(config), 1000);
 		},
 		resolveSymbol: (symbolName: string, onSymbolResolvedCallback: (val: any) => any) => {
 			const { base, quote } = splitBaseQuote(symbolName);
