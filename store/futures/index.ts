@@ -58,9 +58,14 @@ export const marketAssetsState = selector({
 	},
 });
 
-export const balancesState = atom<SynthBalances | null>({
+export const balancesState = atom<SynthBalances>({
 	key: getSynthsKey('balances'),
-	default: null,
+	default: {
+		balancesMap: {},
+		balances: [],
+		totalUSDBalance: zeroBN,
+		susdWalletBalance: zeroBN,
+	},
 });
 
 export const activeTabState = atom<number>({

@@ -41,6 +41,7 @@ export default function DepositWithdrawCrossMargin({
 	const { signer } = Connector.useContainer();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
+	const { handleRefetch, refetchUntilUpdate } = useRefetchContext();
 	const susdContract = useSUSDContract();
 
 	const balances = useRecoilValue(balancesState);
@@ -51,8 +52,6 @@ export default function DepositWithdrawCrossMargin({
 	const [txState, setTxState] = useState<'none' | 'approving' | 'submitting' | 'complete'>('none');
 	const [error, setError] = useState<string | null>(null);
 	const [transactionFee, setTransactionFee] = useState(zeroBN);
-
-	const { handleRefetch } = useRefetchContext();
 
 	useEffect(() => {
 		setTransferType(defaultTab === 'deposit' ? 0 : 1);
@@ -82,11 +81,17 @@ export default function DepositWithdrawCrossMargin({
 			const tx = await crossMarginAccountContract.deposit(wei(amount || 0).toBN());
 			monitorTransaction({
 				txHash: tx.hash,
-				onTxConfirmed: () => {
-					setTxState('complete');
-					handleRefetch('account-margin-change');
-					onComplete?.();
-					onDismiss();
+				onTxConfirmed: async () => {
+					try {
+						await refetchUntilUpdate('wallet-balance-change');
+						handleRefetch('account-margin-change');
+					} catch (err) {
+						logError(err);
+					} finally {
+						setTxState('complete');
+						onComplete?.();
+						onDismiss();
+					}
 				},
 			});
 		} catch (err) {
@@ -97,6 +102,7 @@ export default function DepositWithdrawCrossMargin({
 	}, [
 		crossMarginAccountContract,
 		amount,
+		refetchUntilUpdate,
 		monitorTransaction,
 		handleRefetch,
 		onComplete,

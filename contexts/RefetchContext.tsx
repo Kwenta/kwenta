@@ -24,9 +24,11 @@ type RefetchType =
 	| 'account-margin-change'
 	| 'cross-margin-account-change';
 
+type RefetchUntilType = 'wallet-balance-change' | 'cross-margin-account-change';
+
 type RefetchContextType = {
 	handleRefetch: (refetchType: RefetchType, timeout?: number) => void;
-	refetchUntilUpdate: (refetchType: RefetchType) => Promise<any>;
+	refetchUntilUpdate: (refetchType: RefetchUntilType) => Promise<any>;
 };
 
 const RefetchContext = React.createContext<RefetchContextType>({
@@ -93,11 +95,15 @@ export const RefetchProvider: React.FC = ({ children }) => {
 		}, timeout ?? 5000);
 	};
 
-	const refetchUntilUpdate = async (refetchType: RefetchType) => {
+	const refetchUntilUpdate = async (refetchType: RefetchUntilType) => {
 		switch (refetchType) {
 			case 'cross-margin-account-change':
 				return refetchWithComparator(crossMarginAccountQuery, (prev, next) => {
 					return !next || prev === next;
+				});
+			case 'wallet-balance-change':
+				return refetchWithComparator(synthsBalancesQuery, (prev, next) => {
+					return !next || prev?.susdWalletBalance === next?.susdWalletBalance;
 				});
 		}
 	};

@@ -8,8 +8,13 @@ import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import SegmentedControl from 'components/SegmentedControl';
 import { ISOLATED_MARGIN_ORDER_TYPES } from 'constants/futures';
 import Connector from 'containers/Connector';
-import useSUSDBalance from 'hooks/useSUSDBalance';
-import { leverageSideState, marketInfoState, orderTypeState, positionState } from 'store/futures';
+import {
+	balancesState,
+	leverageSideState,
+	marketInfoState,
+	orderTypeState,
+	positionState,
+} from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 
 import FeeInfoBox from '../FeeInfoBox';
@@ -29,13 +34,13 @@ type Props = {
 };
 
 const TradeIsolatedMargin = ({ isMobile }: Props) => {
-	const sUSDBalance = useSUSDBalance();
 	const { openConnectModal: connectWallet } = useConnectModal();
 	const { walletAddress } = Connector.useContainer();
 
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const position = useRecoilValue(positionState);
 	const marketInfo = useRecoilValue(marketInfoState);
+	const { susdWalletBalance } = useRecoilValue(balancesState);
 
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const [openModal, setOpenModal] = useState<'deposit' | 'withdraw' | null>(null);
@@ -98,7 +103,7 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 
 			<FeeInfoBox />
 			{openModal === 'deposit' && (
-				<DepositMarginModal sUSDBalance={sUSDBalance} onDismiss={() => setOpenModal(null)} />
+				<DepositMarginModal sUSDBalance={susdWalletBalance} onDismiss={() => setOpenModal(null)} />
 			)}
 
 			{openModal === 'withdraw' && <WithdrawMarginModal onDismiss={() => setOpenModal(null)} />}

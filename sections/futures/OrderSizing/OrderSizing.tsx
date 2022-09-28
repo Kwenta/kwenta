@@ -3,7 +3,7 @@ import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'r
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import DropdownArrow from 'assets/svg/app/dropdown-arrow.svg';
+import SwitchAssetArrows from 'assets/svg/futures/switch-arrows.svg';
 import CustomInput from 'components/Input/CustomInput';
 import InputTitle from 'components/Input/InputTitle';
 import { useFuturesContext } from 'contexts/FuturesContext';
@@ -141,8 +141,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 					<InputButton
 						onClick={() => setAssetInputType(assetInputType === 'usd' ? 'native' : 'usd')}
 					>
-						{assetInputType === 'usd' ? 'sUSD' : marketKey}{' '}
-						<span>{<DropdownArrow fill="#787878" width="8px" height="8px" />}</span>
+						{assetInputType === 'usd' ? 'sUSD' : marketKey} <span>{<SwitchAssetArrows />}</span>
 					</InputButton>
 				}
 				value={assetInputType === 'usd' ? usdValue : assetValue}
