@@ -23,10 +23,10 @@ export const initRainbowkit = () => {
 								}`,
 						  };
 				},
-				stallTimeout: 1000,
+				stallTimeout: 5000,
 				priority: 0,
 			}),
-			publicProvider({ stallTimeout: 1000, priority: 5 }),
+			publicProvider({ stallTimeout: 5000, priority: 5 }),
 		]
 	);
 
