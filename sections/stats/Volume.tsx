@@ -17,7 +17,8 @@ export const Volume = () => {
 
 	const volumeRef = useRef<HTMLDivElement | null>(null);
 
-	const [is24H, setIs24H] = useState<boolean>(false);
+	// show 24h data by default
+	const [is24H, setIs24H] = useState<boolean>(true);
 	const [isWeek, setIsWeek] = useState<boolean>(false);
 	const [isMonth, setIsMonth] = useState<boolean>(false);
 	const [isMax, setIsMax] = useState<boolean>(false);
