@@ -14,8 +14,12 @@ import Table from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
-import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
-import { futuresMarketsState, pastRatesState, fundingRatesState } from 'store/futures';
+import {
+	futuresMarketsState,
+	pastRatesState,
+	fundingRatesState,
+	futuresVolumesState,
+} from 'store/futures';
 import {
 	getSynthDescription,
 	isDecimalFour,
@@ -31,15 +35,12 @@ const FuturesMarketsTable: FC = () => {
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 	const fundingRates = useRecoilValue(fundingRatesState);
 	const pastRates = useRecoilValue(pastRatesState);
-
-	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
+	const futuresVolumes = useRecoilValue(futuresVolumesState);
 
 	let data = useMemo(() => {
-		const futuresVolume = futuresVolumeQuery.data ?? {};
-
 		return futuresMarkets.map((market) => {
 			const description = getSynthDescription(market.asset, synthsMap, t);
-			const volume = futuresVolume[market.assetHex];
+			const volume = futuresVolumes[market.assetHex]?.volume;
 			const pastPrice = pastRates.find((price) => price.synth === market.asset);
 			const fundingRate = fundingRates.find(
 				(funding) => (funding as FundingRateResponse)?.asset === MarketKeyByAsset[market.asset]
@@ -64,7 +65,7 @@ const FuturesMarketsTable: FC = () => {
 				marketClosureReason: market.marketClosureReason,
 			};
 		});
-	}, [synthsMap, futuresMarkets, fundingRates, pastRates, futuresVolumeQuery?.data, t]);
+	}, [synthsMap, futuresMarkets, fundingRates, pastRates, futuresVolumes, t]);
 
 	return (
 		<>

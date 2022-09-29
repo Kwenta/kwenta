@@ -1,10 +1,10 @@
 import Wei from '@synthetixio/wei';
-import Tippy from '@tippyjs/react';
 import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import TimerIcon from 'assets/svg/app/timer.svg';
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { NO_VALUE } from 'constants/placeholder';
 import { formatPercent } from 'utils/formatters/number';
 
@@ -34,17 +34,15 @@ const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = memo(({ totalFeeRate, ba
 						totalFeeRate.sub(baseFeeRate).gt(0) ? (
 							<>
 								<DynamicFeeLabel>+</DynamicFeeLabel>
-								<DynamicFeeRateTooltip
+								<CustomStyledTooltip
+									position="fixed"
 									content={t('exchange.summary-info.dynamic-fee-tooltip')}
-									trigger="mouseenter focus"
-									arrow={false}
-									placement="bottom"
 								>
 									<DynamicFeeRateItem>
 										<span>{formatPercent(totalFeeRate.sub(baseFeeRate), { minDecimals: 2 })}</span>
 										<TimerIcon />
 									</DynamicFeeRateItem>
-								</DynamicFeeRateTooltip>
+								</CustomStyledTooltip>
 							</>
 						) : null
 					) : null}
@@ -64,16 +62,6 @@ export const DynamicFeeLabel = styled.span`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
-export const DynamicFeeRateTooltip = styled(Tippy)`
-	width: auto;
-	text-align: justify;
-	font-size: 12px;
-	.tippy-content {
-		padding: 15px;
-		font-family: ${(props) => props.theme.fonts.mono};
-	}
-`;
-
 export const DynamicFeeRateItem = styled.span`
 	color: ${(props) => props.theme.colors.selectedTheme.gold};
 	display: flex;
@@ -86,6 +74,12 @@ export const DynamicFeeRateItem = styled.span`
 			fill: ${(props) => props.theme.colors.selectedTheme.gold};
 		}
 	}
+`;
+
+const CustomStyledTooltip = styled(StyledTooltip)`
+	width: 300px;
+	padding: 0px 4px;
+	text-align: center;
 `;
 
 export default FeeRateSummaryItem;

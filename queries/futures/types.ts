@@ -3,7 +3,7 @@ import Wei from '@synthetixio/wei';
 
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import { PotentialTradeStatus } from 'sections/futures/types';
-import { FuturesMarketAsset } from 'utils/futures';
+import { FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
 
 export type PositionDetail = {
 	remainingMargin: Wei;
@@ -26,7 +26,7 @@ export type PositionDetail = {
 	profitLoss: Wei;
 };
 
-export type FuturesOrder = {
+type FuturesPositionOrder = {
 	pending: boolean;
 	fee: Wei;
 	leverage: Wei;
@@ -53,7 +53,7 @@ export type FuturesFilledPosition = {
 
 export type FuturesPosition = {
 	asset: FuturesMarketAsset;
-	order: FuturesOrder | null;
+	order: FuturesPositionOrder | null;
 	remainingMargin: Wei;
 	accessibleMargin: Wei;
 	position: FuturesFilledPosition | null;
@@ -214,8 +214,29 @@ export type FuturesTrade = {
 	orderType: 'NextPrice' | 'Limit' | 'Market' | 'Liquidation';
 };
 
+export type FuturesOrder = {
+	id: string;
+	account: string;
+	asset: string;
+	market: string;
+	marketKey: FuturesMarketKey;
+	size: Wei;
+	targetPrice: Wei | null;
+	targetRoundId: Wei | null;
+	timestamp: Wei;
+	orderType: 'NextPrice' | 'Next-Price' | 'Limit' | 'Stop';
+	sizeTxt?: string;
+	targetPriceTxt?: string;
+	side?: PositionSide;
+	isStale?: boolean;
+	isExecutable?: boolean;
+};
+
 export type FuturesVolumes = {
-	[asset: string]: Wei;
+	[asset: string]: {
+		volume: Wei;
+		trades: Wei;
+	};
 };
 
 export type FuturesStat = {

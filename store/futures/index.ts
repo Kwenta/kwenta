@@ -11,6 +11,7 @@ import {
 	SynthBalances,
 	TradeFees,
 	FuturesTradeInputs,
+	FuturesVolumes,
 } from 'queries/futures/types';
 import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import { Price, Rates } from 'queries/rates/types';
@@ -79,6 +80,11 @@ export const positionsState = atom<FuturesPosition[] | null>({
 export const futuresMarketsState = atom<FuturesMarket[]>({
 	key: getFuturesKey('markets'),
 	default: [],
+});
+
+export const futuresVolumesState = atom<FuturesVolumes>({
+	key: getFuturesKey('volumes'),
+	default: {},
 });
 
 export const futuresTradeInputsState = atom<FuturesTradeInputs>({
