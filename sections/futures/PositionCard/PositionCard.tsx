@@ -124,8 +124,8 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 	}, [positionDetails, previewTradeData, modifiedAverage]);
 
 	const data: PositionData = React.useMemo(() => {
-		const pnl = positionDetails?.profitLoss.add(positionDetails?.accruedFunding) ?? zeroBN;
-		const pnlPct = pnl.abs().gt(0) ? pnl.div(positionDetails?.initialMargin) : zeroBN;
+		const pnl = positionDetails?.pnl ?? zeroBN;
+		const pnlPct = positionDetails?.pnlPct ?? zeroBN;
 		const realizedPnl =
 			thisPositionHistory?.pnl
 				.add(thisPositionHistory?.netFunding)
