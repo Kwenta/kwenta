@@ -18,11 +18,11 @@ import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { PositionHistory } from 'queries/futures/types';
 import {
 	currentMarketState,
 	futuresAccountTypeState,
 	futuresMarketsState,
+	positionHistoryState,
 	positionsState,
 } from 'store/futures';
 import { formatNumber } from 'utils/formatters/number';
@@ -31,12 +31,10 @@ import { getSynthDescription, isDecimalFour } from 'utils/futures';
 import MobilePositionRow from './MobilePositionRow';
 
 type FuturesPositionTableProps = {
-	futuresPositionHistory: PositionHistory[];
 	showCurrentMarket?: boolean;
 };
 
 const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
-	futuresPositionHistory,
 	showCurrentMarket = true,
 }: FuturesPositionTableProps) => {
 	const { t } = useTranslation();
@@ -47,6 +45,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	const isL2 = useIsL2();
 
 	const futuresPositions = useRecoilValue(positionsState);
+	const positionHistory = useRecoilValue(positionHistoryState);
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 	const currentMarket = useRecoilValue(currentMarketState);
 	const accountType = useRecoilValue(futuresAccountTypeState);
@@ -56,7 +55,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 			.map((position) => {
 				const market = futuresMarkets.find((market) => market.asset === position.asset);
 				const description = getSynthDescription(position.asset, synthsMap, t);
-				const positionHistory = futuresPositionHistory?.find((positionHistory) => {
+				const thisPositionHistory = positionHistory.find((positionHistory) => {
 					return positionHistory.isOpen && positionHistory.asset === position.asset;
 				});
 
@@ -64,7 +63,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					market,
 					position: position.position,
 					description,
-					avgEntryPrice: positionHistory?.entryPrice,
+					avgEntryPrice: thisPositionHistory?.entryPrice,
 				};
 			})
 			.filter(
@@ -74,11 +73,11 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	}, [
 		futuresPositions,
 		futuresMarkets,
+		positionHistory,
 		currentMarket,
 		synthsMap,
 		t,
 		showCurrentMarket,
-		futuresPositionHistory,
 	]);
 
 	return (
@@ -196,11 +195,11 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								Cell: (cellProps: CellProps<any>) => {
 									return (
 										<PnlContainer>
-											<ChangePercent value={cellProps.row.original.pnlPct} />
+											<ChangePercent value={cellProps.row.original.position.pnlPct} />
 											<div>
 												<Currency.Price
 													currencyKey={'sUSD'}
-													price={cellProps.row.original.pnl}
+													price={cellProps.row.original.position.pnl}
 													sign={'$'}
 													conversionRate={1}
 												/>

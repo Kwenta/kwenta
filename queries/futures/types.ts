@@ -99,33 +99,6 @@ export type FuturesOpenInterest = {
 	};
 };
 
-export type RawPosition = {
-	id: string;
-	lastTxHash: string;
-	timestamp: number;
-	openTimestamp: number;
-	closeTimestamp: number;
-	market: string;
-	asset: string;
-	account: string;
-	isOpen: boolean;
-	isLiquidated: boolean;
-	size: Wei;
-	feesPaid: Wei;
-	netFunding: Wei;
-	netTransfers: Wei;
-	totalDeposits: Wei;
-	initialMargin: Wei;
-	margin: Wei;
-	entryPrice: Wei;
-	avgEntryPrice: Wei;
-	exitPrice: Wei;
-	pnl: Wei;
-	pnlWithFeesPaid: Wei;
-	totalVolume: Wei;
-	trades: number;
-};
-
 export type MarginTransfer = {
 	timestamp: number;
 	market: string;
@@ -143,10 +116,12 @@ export type PositionHistory = {
 	transactionHash: string;
 	timestamp: number;
 	openTimestamp: number;
-	closeTimestamp: number;
+	closeTimestamp: number | undefined;
 	market: string;
 	asset: FuturesMarketAsset;
 	account: string;
+	abstractAccount: string;
+	accountType: FuturesAccountType;
 	isOpen: boolean;
 	isLiquidated: boolean;
 	size: Wei;

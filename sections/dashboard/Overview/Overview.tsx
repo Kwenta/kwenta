@@ -10,9 +10,8 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { TabPanel } from 'components/Tab';
 import Connector from 'containers/Connector';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
-import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
-import { ratesState } from 'store/futures';
+import { positionsState, ratesState } from 'store/futures';
 import { activePositionsTabState } from 'store/ui';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 
@@ -32,10 +31,8 @@ const Overview: FC = () => {
 	const portfolioValueQuery = useGetCurrentPortfolioValue();
 	const portfolioValue = portfolioValueQuery?.data ?? null;
 
-	const futuresPositionQuery = useGetFuturesPositionForAccount();
-	const futuresPositionHistory = futuresPositionQuery?.data ?? [];
-
 	const exchangeRates = useRecoilValue(ratesState);
+	const futuresPositions = useRecoilValue(positionsState);
 
 	const { walletAddress } = Connector.useContainer();
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
@@ -56,7 +53,7 @@ const Overview: FC = () => {
 			{
 				name: MarketsTab.FUTURES,
 				label: t('dashboard.overview.positions-tabs.futures'),
-				badge: futuresPositionQuery?.data?.length,
+				badge: futuresPositions.length,
 				active: activePositionsTab === MarketsTab.FUTURES,
 				detail: totalFuturesPortfolioValue,
 				disabled: false,
@@ -72,7 +69,7 @@ const Overview: FC = () => {
 			},
 		],
 		[
-			futuresPositionQuery?.data?.length,
+			futuresPositions,
 			activePositionsTab,
 			setActivePositionsTab,
 			t,
@@ -112,7 +109,7 @@ const Overview: FC = () => {
 					))}
 				</TabButtonsContainer>
 				<TabPanel name={MarketsTab.FUTURES} activeTab={activePositionsTab}>
-					<FuturesPositionsTable futuresPositionHistory={futuresPositionHistory} />
+					<FuturesPositionsTable />
 				</TabPanel>
 
 				<TabPanel name={MarketsTab.SPOT} activeTab={activePositionsTab}>

@@ -6,6 +6,7 @@ import useGetAverageFundingRateForMarkets from 'queries/futures/useGetAverageFun
 import useGetCrossMarginAccountOverview from 'queries/futures/useGetCrossMarginAccountOverview';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
+import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 import useGetFuturesVolumes from 'queries/futures/useGetFuturesVolumes';
@@ -40,6 +41,7 @@ export const RefetchProvider: React.FC = ({ children }) => {
 	const positionQuery = useGetFuturesPositionForMarket();
 	const crossMarginAccountOverview = useGetCrossMarginAccountOverview();
 	const positionsQuery = useGetFuturesPositionForMarkets();
+	const positionHistoryQuery = useGetFuturesPositionForAccount();
 	const marketsQuery = useGetFuturesMarkets();
 	const crossMarginAccountQuery = useQueryCrossMarginAccount();
 
@@ -61,21 +63,24 @@ export const RefetchProvider: React.FC = ({ children }) => {
 					marketsQuery.refetch();
 					openOrdersQuery.refetch();
 					positionsQuery.refetch();
+					positionHistoryQuery.refetch();
 					if (selectedAccountType === 'cross_margin') {
 						crossMarginAccountOverview.refetch();
 					}
 					break;
 				case 'new-order':
+					positionsQuery.refetch();
 					openOrdersQuery.refetch();
 					break;
 				case 'close-position':
 					positionQuery.refetch();
+					positionHistoryQuery.refetch();
 					openOrdersQuery.refetch();
-					positionsQuery.refetch();
 					break;
 				case 'margin-change':
-					positionsQuery.refetch();
 					positionQuery.refetch();
+					positionsQuery.refetch();
+					positionHistoryQuery.refetch();
 					openOrdersQuery.refetch();
 					synthsBalancesQuery.refetch();
 					break;

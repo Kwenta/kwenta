@@ -1,55 +1,83 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
-import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import { futuresAccountTypeState } from 'store/futures';
+import { positionHistoryState } from 'store/futures';
 import { futuresAccountState } from 'store/futures';
 import logError from 'utils/logError';
 
-import { FUTURES_POSITION_FRAGMENT } from './constants';
+import { getFuturesPositions } from './subgraph';
 import { PositionHistory } from './types';
-import { getFuturesEndpoint, mapTradeHistory } from './utils';
+import { getFuturesEndpoint, mapFuturesPositions } from './utils';
 
-const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
+const useGetFuturesPositionForAccount = (account?: string, options?: UseQueryOptions<any>) => {
 	const { network, walletAddress } = Connector.useContainer();
 
-	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
+	const setPositionHistory = useSetRecoilState(positionHistoryState);
+
 	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
-	return useQuery<PositionHistory[] | null>(
-		QUERY_KEYS.Futures.AccountPositions(
-			walletAddress,
-			network.id as NetworkId,
-			selectedAccountType
-		),
+	return useQuery<PositionHistory[]>(
+		QUERY_KEYS.Futures.AccountPositions(account ?? walletAddress, network.id as NetworkId),
 		async () => {
-			if (!walletAddress) return [];
+			if (!walletAddress) {
+				if (!account) setPositionHistory([]);
+				return [];
+			}
+
 			try {
-				const response = await request(
+				const response = await getFuturesPositions(
 					futuresEndpoint,
-					gql`
-						${FUTURES_POSITION_FRAGMENT}
-						query userAllPositions($account: String!, $accountType: String!) {
-							futuresPositions(where: { account: $account, accountType: $accountType }) {
-								...FuturesPositionFragment
-							}
-						}
-					`,
-					{ account: walletAddress, accountType: selectedAccountType }
+					{
+						where: {
+							account: account ?? walletAddress,
+						},
+					},
+					{
+						id: true,
+						lastTxHash: true,
+						openTimestamp: true,
+						closeTimestamp: true,
+						timestamp: true,
+						market: true,
+						asset: true,
+						account: true,
+						abstractAccount: true,
+						accountType: true,
+						isOpen: true,
+						isLiquidated: true,
+						trades: true,
+						totalVolume: true,
+						size: true,
+						initialMargin: true,
+						margin: true,
+						pnl: true,
+						feesPaid: true,
+						netFunding: true,
+						pnlWithFeesPaid: true,
+						netTransfers: true,
+						totalDeposits: true,
+						fundingIndex: true,
+						entryPrice: true,
+						avgEntryPrice: true,
+						lastPrice: true,
+						exitPrice: true,
+					}
 				);
-				return response?.futuresPositions ? mapTradeHistory(response.futuresPositions, true) : [];
+				const positionHistory = response ? mapFuturesPositions(response) : [];
+				if (!account) setPositionHistory(positionHistory);
+				return positionHistory;
 			} catch (e) {
 				logError(e);
-				return null;
+				if (!account) setPositionHistory([]);
+				return [];
 			}
 		},
 		{
 			enabled: !!selectedFuturesAddress,
-			refetchInterval: 5000,
 			...options,
 		}
 	);

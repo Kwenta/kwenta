@@ -10,7 +10,7 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
 import ROUTES from 'constants/routes';
 import { PositionHistory } from 'queries/futures/types';
-import useGetFuturesAccountPositionHistory from 'queries/futures/useGetFuturesAccountPositionHistory';
+import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { FlexDiv } from 'styles/common';
 import { getMarketName } from 'utils/futures';
@@ -31,7 +31,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 	searchTerm,
 }: TraderHistoryProps) => {
 	const { t } = useTranslation();
-	const positionsQuery = useGetFuturesAccountPositionHistory(trader);
+	const positionsQuery = useGetFuturesPositionForAccount(trader);
 	const positions = useMemo(() => positionsQuery.data ?? [], [positionsQuery]);
 	const traderENSName = useMemo(() => ensInfo[trader] ?? null, [trader, ensInfo]);
 

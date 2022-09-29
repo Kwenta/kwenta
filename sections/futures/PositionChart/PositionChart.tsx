@@ -3,24 +3,25 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import TVChart from 'components/TVChart';
-import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import {
 	currentMarketState,
 	positionState,
 	potentialTradeDetailsState,
 	futuresTradeInputsState,
+	positionHistoryState,
 } from 'store/futures';
 
 export default function PositionChart() {
 	const [isChartReady, setIsChartReady] = useState(false);
 	const marketAsset = useRecoilValue(currentMarketState);
 	const position = useRecoilValue(positionState);
+	const positionHistory = useRecoilValue(positionHistoryState);
 
 	const { data: previewTrade } = useRecoilValue(potentialTradeDetailsState);
 
-	const futuresPositionsQuery = useGetFuturesPositionForAccount();
-	const positionHistory = futuresPositionsQuery.data ?? [];
-	const subgraphPosition = positionHistory.find((p) => p.isOpen && p.asset === marketAsset);
+	const subgraphPosition = useMemo(() => {
+		return positionHistory.find((p) => p.isOpen && p.asset === marketAsset);
+	}, [positionHistory, marketAsset]);
 
 	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
 

@@ -9,9 +9,8 @@ import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
 import Connector from 'containers/Connector';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
-import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
-import { ratesState } from 'store/futures';
+import { positionsState, ratesState } from 'store/futures';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 
 import FuturesPositionsTable from '../FuturesPositionsTable';
@@ -34,10 +33,8 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 	const portfolioValueQuery = useGetCurrentPortfolioValue();
 	const portfolioValue = portfolioValueQuery?.data ?? null;
 
-	const futuresPositionQuery = useGetFuturesPositionForAccount();
-	const futuresPositionHistory = futuresPositionQuery?.data ?? [];
-
 	const exchangeRates = useRecoilValue(ratesState);
+	const futuresPositions = useRecoilValue(positionsState);
 
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const synthBalances =
@@ -54,7 +51,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 			{
 				name: MarketsTab.FUTURES,
 				label: t('dashboard.overview.positions-tabs.futures'),
-				badge: futuresPositionQuery?.data?.length,
+				badge: futuresPositions.length,
 				active: activePositionsTab === MarketsTab.FUTURES,
 				detail: totalFuturesPortfolioValue,
 				disabled: false,
@@ -70,7 +67,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 			},
 		],
 		[
-			futuresPositionQuery?.data?.length,
+			futuresPositions,
 			activePositionsTab,
 			setActivePositionsTab,
 			t,
@@ -94,10 +91,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 			</div>
 
 			<TabPanel name={MarketsTab.FUTURES} activeTab={activePositionsTab}>
-				<FuturesPositionsTable
-					futuresPositionHistory={futuresPositionHistory}
-					showCurrentMarket={true}
-				/>
+				<FuturesPositionsTable showCurrentMarket={true} />
 			</TabPanel>
 
 			<TabPanel name={MarketsTab.SPOT} activeTab={activePositionsTab}>

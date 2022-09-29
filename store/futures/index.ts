@@ -12,6 +12,7 @@ import {
 	TradeFees,
 	FuturesTradeInputs,
 	FuturesVolumes,
+	PositionHistory,
 } from 'queries/futures/types';
 import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import { Price, Rates } from 'queries/rates/types';
@@ -70,6 +71,11 @@ export const activeTabState = atom<number>({
 export const positionState = atom<FuturesPosition | null>({
 	key: getFuturesKey('position'),
 	default: null,
+});
+
+export const positionHistoryState = atom<PositionHistory[]>({
+	key: getFuturesKey('positionHistory'),
+	default: [],
 });
 
 export const positionsState = atom<FuturesPosition[]>({
