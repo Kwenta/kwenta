@@ -74,12 +74,14 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 			const positions = (await ethCallProvider.all(positionCalls)) as PositionDetail[];
 			const canLiquidateState = (await ethCallProvider.all(liquidationCalls)) as boolean[];
 
-			const futuresPositions = futuresMarkets.map((futuresMarket: FuturesMarket, ind: number) => {
-				const position = positions[ind];
-				const canLiquidate = canLiquidateState[ind];
-				const asset = assets[ind];
-				return mapFuturesPosition(position, canLiquidate, asset);
-			});
+			const futuresPositions = futuresMarkets
+				.map((futuresMarket: FuturesMarket, ind: number) => {
+					const position = positions[ind];
+					const canLiquidate = canLiquidateState[ind];
+					const asset = assets[ind];
+					return mapFuturesPosition(position, canLiquidate, asset);
+				})
+				.filter(({ remainingMargin }) => remainingMargin.gt(0));
 			setFuturesPositions(futuresPositions);
 
 			return futuresPositions;

@@ -239,12 +239,20 @@ export const QUERY_KEYS = {
 			markets: string[] | [],
 			selectedFuturesAddress: string
 		) => ['futures', 'marketsPositions', networkId, markets, selectedFuturesAddress],
-		Positions: (networkId: NetworkId, markets: string[] | [], walletAddress: string) => [
+		Portfolio: (
+			networkId: NetworkId,
+			markets: string[] | [],
+			walletAddress: string | null,
+			crossMarginAddress: string | null,
+			freeMargin: number
+		) => [
 			'futures',
 			'positions',
 			networkId,
 			markets,
 			walletAddress,
+			crossMarginAddress,
+			freeMargin,
 		],
 		AccountPositions: (walletAddress: string | null, networkId: NetworkId) => [
 			'futures',

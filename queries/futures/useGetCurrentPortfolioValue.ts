@@ -7,12 +7,14 @@ import { useRecoilValue } from 'recoil';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
-import { futuresAccountState, marketKeysState } from 'store/futures';
-import { zeroBN } from 'utils/formatters/number';
+import {
+	crossMarginAvailableMarginState,
+	futuresAccountState,
+	marketKeysState,
+} from 'store/futures';
 import { MarketAssetByKey } from 'utils/futures';
 import logError from 'utils/logError';
 
-import useGetCrossMarginAccountOverview from './useGetCrossMarginAccountOverview';
 import { mapFuturesPosition } from './utils';
 
 const useGetCurrentPortfolioValue = (options?: UseQueryOptions<any | null>) => {
@@ -21,15 +23,15 @@ const useGetCurrentPortfolioValue = (options?: UseQueryOptions<any | null>) => {
 
 	const futuresAccount = useRecoilValue(futuresAccountState);
 	const marketKeys = useRecoilValue(marketKeysState);
-
-	const query = useGetCrossMarginAccountOverview();
-	const freeMargin = query.data?.freeMargin || zeroBN;
+	const freeMargin = useRecoilValue(crossMarginAvailableMarginState);
 
 	return useQuery<any | null>(
-		QUERY_KEYS.Futures.Positions(
+		QUERY_KEYS.Futures.Portfolio(
 			network?.id as NetworkId,
 			marketKeys || [],
-			futuresAccount?.crossMarginAddress || ''
+			walletAddress,
+			futuresAccount?.crossMarginAddress,
+			freeMargin.toNumber()
 		),
 		async () => {
 			const {
