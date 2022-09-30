@@ -1,11 +1,10 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { positionHistoryState } from 'store/futures';
-import { futuresAccountState } from 'store/futures';
 import logError from 'utils/logError';
 
 import { getFuturesPositions } from './subgraph';
@@ -16,8 +15,6 @@ const useGetFuturesPositionForAccount = (account?: string, options?: UseQueryOpt
 	const { network, walletAddress } = Connector.useContainer();
 
 	const setPositionHistory = useSetRecoilState(positionHistoryState);
-
-	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
 	return useQuery<PositionHistory[]>(
@@ -77,7 +74,7 @@ const useGetFuturesPositionForAccount = (account?: string, options?: UseQueryOpt
 			}
 		},
 		{
-			enabled: !!selectedFuturesAddress,
+			enabled: !!walletAddress,
 			...options,
 		}
 	);

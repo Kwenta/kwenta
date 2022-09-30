@@ -316,11 +316,12 @@ export const QUERY_KEYS = {
 			wallet: string,
 			crossMarginBaseAddress: string
 		) => ['futures', 'cross-margin-account-overview', networkId, wallet, crossMarginBaseAddress],
-		CrossMarginAccount: (
-			crossMarginAddress: string,
-			wallet: string,
-			selectedAccountType: string
-		) => ['futures', 'cross-margin-account', crossMarginAddress, wallet, selectedAccountType],
+		CrossMarginAccount: (wallet: string, factoryAddress: string) => [
+			'futures',
+			'cross-margin-account',
+			wallet,
+			factoryAddress,
+		],
 		CrossMarginSettings: (networkId: NetworkId) => ['futures', 'cross-margin-settings', networkId],
 	},
 	Files: {

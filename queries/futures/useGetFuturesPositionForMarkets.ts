@@ -9,7 +9,7 @@ import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import FuturesMarketABI from 'lib/abis/FuturesMarket.json';
 import FuturesMarketDataABI from 'lib/abis/FuturesMarketData.json';
-import { futuresMarketsState, futuresAccountState, positionsState } from 'store/futures';
+import { futuresMarketsState, positionsState, selectedFuturesAddressState } from 'store/futures';
 import { MarketKeyByAsset } from 'utils/futures';
 
 import { FuturesMarket, FuturesPosition, PositionDetail } from './types';
@@ -24,16 +24,13 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 		provider,
 		l2Provider,
 		network,
-		isWalletConnected,
 	} = Connector.useContainer();
 	const isL2 = useIsL2();
 	const synthetixjs = isL2 ? defaultSynthetixjs : l2Synthetixjs;
 
 	const setFuturesPositions = useSetRecoilState(positionsState);
-
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
-
-	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
+	const selectedFuturesAddress = useRecoilValue(selectedFuturesAddressState);
 
 	const assets = futuresMarkets.map(({ asset }) => asset);
 
@@ -87,7 +84,6 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 			return futuresPositions;
 		},
 		{
-			enabled: isL2 && !!isWalletConnected && !!selectedFuturesAddress && !!synthetixjs,
 			...options,
 		}
 	);

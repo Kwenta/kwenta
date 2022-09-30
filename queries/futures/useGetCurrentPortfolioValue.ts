@@ -8,7 +8,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import {
-	crossMarginAvailableMarginState,
+	crossMarginAccountOverviewState,
 	futuresAccountState,
 	marketKeysState,
 } from 'store/futures';
@@ -23,7 +23,8 @@ const useGetCurrentPortfolioValue = (options?: UseQueryOptions<any | null>) => {
 
 	const futuresAccount = useRecoilValue(futuresAccountState);
 	const marketKeys = useRecoilValue(marketKeysState);
-	const freeMargin = useRecoilValue(crossMarginAvailableMarginState);
+	const crossMarginAccountOverview = useRecoilValue(crossMarginAccountOverviewState);
+	const freeMargin = crossMarginAccountOverview?.freeMargin ?? wei(0);
 
 	return useQuery<any | null>(
 		QUERY_KEYS.Futures.Portfolio(
