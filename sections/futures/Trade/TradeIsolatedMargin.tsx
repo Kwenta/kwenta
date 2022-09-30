@@ -1,12 +1,20 @@
-import React from 'react';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
+import { useMemo, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import DepositArrow from 'assets/svg/futures/deposit-arrow.svg';
 import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import SegmentedControl from 'components/SegmentedControl';
-import useSUSDBalance from 'hooks/useSUSDBalance';
-import { leverageSideState, marketInfoState, orderTypeState, positionState } from 'store/futures';
+import { ISOLATED_MARGIN_ORDER_TYPES } from 'constants/futures';
+import Connector from 'containers/Connector';
+import {
+	balancesState,
+	leverageSideState,
+	marketInfoState,
+	orderTypeState,
+	positionState,
+} from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 
 import FeeInfoBox from '../FeeInfoBox';
@@ -26,48 +34,64 @@ type Props = {
 };
 
 const TradeIsolatedMargin = ({ isMobile }: Props) => {
-	const sUSDBalance = useSUSDBalance();
+	const { openConnectModal: connectWallet } = useConnectModal();
+	const { walletAddress } = Connector.useContainer();
 
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const position = useRecoilValue(positionState);
 	const marketInfo = useRecoilValue(marketInfoState);
+	const { susdWalletBalance } = useRecoilValue(balancesState);
 
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
-	const [openModal, setOpenModal] = React.useState<'deposit' | 'withdraw' | null>(null);
+	const [openModal, setOpenModal] = useState<'deposit' | 'withdraw' | null>(null);
 
-	const transferButtons = !marketInfo?.isSuspended
-		? [
+	const headerButtons = useMemo(() => {
+		if (!walletAddress) {
+			return [
 				{
-					i18nTitle: 'futures.market.trade.button.deposit',
-					Icon: DepositArrow,
-					onClick: () => setOpenModal('deposit'),
+					i18nTitle: 'futures.market.trade.button.connect-wallet',
+					onClick: connectWallet,
 				},
-		  ]
-		: [];
+			];
+		}
+		const transferButtons = !marketInfo?.isSuspended
+			? [
+					{
+						i18nTitle: 'futures.market.trade.button.deposit',
+						Icon: DepositArrow,
+						onClick: () => setOpenModal('deposit'),
+					},
+			  ]
+			: [];
 
-	if (position?.remainingMargin?.gt(zeroBN) && !marketInfo?.isSuspended) {
-		transferButtons.push({
-			i18nTitle: 'futures.market.trade.button.withdraw',
-			Icon: WithdrawArrow,
-			onClick: () => setOpenModal('withdraw'),
-		});
-	}
+		if (position?.remainingMargin?.gt(zeroBN) && !marketInfo?.isSuspended) {
+			transferButtons.push({
+				i18nTitle: 'futures.market.trade.button.withdraw',
+				Icon: WithdrawArrow,
+				onClick: () => setOpenModal('withdraw'),
+			});
+		}
+		return transferButtons;
+	}, [walletAddress, position?.remainingMargin, marketInfo?.isSuspended, connectWallet]);
 
 	return (
 		<div>
 			{!isMobile && <MarketsDropdown />}
 
-			<TradePanelHeader accountType={'isolated_margin'} buttons={transferButtons} />
+			<TradePanelHeader accountType={'isolated_margin'} buttons={headerButtons} />
 
 			{!isMobile && <MarketInfoBox />}
 
 			<StyledSegmentedControl
-				values={['Market', 'Next-Price']}
-				selectedIndex={orderType}
-				onChange={setOrderType}
+				styleType="check"
+				values={ISOLATED_MARGIN_ORDER_TYPES}
+				selectedIndex={ISOLATED_MARGIN_ORDER_TYPES.indexOf(orderType)}
+				onChange={(oType: number) => {
+					setOrderType(oType === 0 ? 'market' : 'next-price');
+				}}
 			/>
 
-			{orderType === 1 && <NextPrice />}
+			{orderType === 'next-price' && <NextPrice />}
 
 			<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
 
@@ -79,7 +103,7 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 
 			<FeeInfoBox />
 			{openModal === 'deposit' && (
-				<DepositMarginModal sUSDBalance={sUSDBalance} onDismiss={() => setOpenModal(null)} />
+				<DepositMarginModal sUSDBalance={susdWalletBalance} onDismiss={() => setOpenModal(null)} />
 			)}
 
 			{openModal === 'withdraw' && <WithdrawMarginModal onDismiss={() => setOpenModal(null)} />}

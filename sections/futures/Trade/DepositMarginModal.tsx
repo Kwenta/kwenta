@@ -1,6 +1,6 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -13,10 +13,10 @@ import { NO_VALUE } from 'constants/placeholder';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import useEstimateGasCost from 'hooks/useEstimateGasCost';
-import { currentMarketState } from 'store/futures';
+import { currentMarketState, positionState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { FlexDivRowCentered } from 'styles/common';
-import { formatDollars } from 'utils/formatters/number';
+import { formatDollars, zeroBN } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 
 type DepositMarginModalProps = {
@@ -25,22 +25,40 @@ type DepositMarginModalProps = {
 };
 
 const PLACEHOLDER = '$0.00';
-const MIN_DEPOSIT_AMOUNT = wei('50');
+const MIN_MARGIN_AMOUNT = wei('50');
 
 const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSDBalance }) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const gasSpeed = useRecoilValue(gasSpeedState);
-	const market = useRecoilValue(currentMarketState);
 	const { useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();
 	const { estimateSnxTxGasCost } = useEstimateGasCost();
 
+	const gasSpeed = useRecoilValue(gasSpeedState);
+	const position = useRecoilValue(positionState);
+	const market = useRecoilValue(currentMarketState);
+
+	const minDeposit = useMemo(() => {
+		const accessibleMargin = position?.accessibleMargin ?? zeroBN;
+		const min = MIN_MARGIN_AMOUNT.sub(accessibleMargin);
+		return min.lt(zeroBN) ? zeroBN : min;
+	}, [position?.accessibleMargin]);
+
 	const [amount, setAmount] = useState('');
-	const [isDisabled, setDisabled] = useState(true);
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const { handleRefetch } = useRefetchContext();
 	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
+
+	const isDisabled = useMemo(() => {
+		if (!amount) {
+			return true;
+		}
+		const amtWei = wei(amount);
+		if (amtWei.eq(0) || amtWei.gt(sUSDBalance) || amtWei.lt(minDeposit)) {
+			return true;
+		}
+		return false;
+	}, [amount, sUSDBalance, minDeposit]);
 
 	const depositTxn = useSynthetixTxn(
 		`FuturesMarket${getDisplayAsset(market)}`,
@@ -52,22 +70,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 
 	const transactionFee = estimateSnxTxGasCost(depositTxn);
 
-	React.useEffect(() => {
-		if (!amount) {
-			setDisabled(true);
-			return;
-		}
-
-		const amtWei = wei(amount);
-
-		if (amtWei.gte(MIN_DEPOSIT_AMOUNT) && amtWei.lte(sUSDBalance)) {
-			setDisabled(false);
-		} else {
-			setDisabled(true);
-		}
-	}, [amount, isDisabled, sUSDBalance, setDisabled]);
-
-	React.useEffect(() => {
+	useEffect(() => {
 		if (depositTxn.hash) {
 			monitorTransaction({
 				txHash: depositTxn.hash,
@@ -81,7 +84,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [depositTxn.hash]);
 
-	const handleSetMax = React.useCallback(() => {
+	const handleSetMax = useCallback(() => {
 		setAmount(sUSDBalance.toString());
 	}, [sUSDBalance]);
 
@@ -137,9 +140,6 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 export const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
 		width: 400px;
-	}
-	.card-body {
-		padding: 28px;
 	}
 `;
 

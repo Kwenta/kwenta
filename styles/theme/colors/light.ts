@@ -3,6 +3,7 @@ import common from './common';
 const lightTheme = {
 	background: '#F2F2F2',
 	border: '1px solid rgba(0,0,0,0.17)',
+	outlineBorder: '1px solid rgba(0,0,0,0.17)',
 	red: '#A80300',
 	green: '#1D5D1F',
 	black: '#171002',

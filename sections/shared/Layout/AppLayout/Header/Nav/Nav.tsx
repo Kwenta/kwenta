@@ -120,8 +120,8 @@ const MenuInside = styled.div<{ isActive: boolean; isDropDown?: boolean }>`
 
 const DropDownSelect = styled(Select)`
 	.react-select__control {
-		padding: 0;
-		width: 92px;
+		padding: 0 6px;
+		width: 98px;
 	}
 
 	.react-select__group {
@@ -138,6 +138,7 @@ const DropDownSelect = styled(Select)`
 
 	.react-select__dropdown-indicator {
 		margin-right: 5px;
+		margin-top: 2px;
 		padding: 0;
 	}
 
