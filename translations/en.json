@@ -515,7 +515,7 @@
 		"page-title": "Trade History | Kwenta"
 	},
 	"futures": {
-		"page-title": "Futures | Kwenta",
+		"page-title": "Kwenta Futures",
 		"wallet-overview": {
 			"no-positions": "You have no open positions. Open a position now: ",
 			"title": "wallet overview",
@@ -554,8 +554,8 @@
 			"position-card": {
 				"position-side": "Side",
 				"position-size": "Size",
-				"r-pnl": "Realized PnL",
-				"u-pnl": "Unrealized PnL",
+				"r-pnl": "Realized P&L",
+				"u-pnl": "Unrealized P&L",
 				"leverage": "Leverage",
 				"liquidation-price": "Liq Price",
 				"net-funding": "Net Funding",
@@ -877,10 +877,10 @@
 				"total-trades": "Total Trades",
 				"total-volume": "Total Volume",
 				"liquidations": "Liquidations",
-				"24h-pnl": "24H PnL",
-				"pnl": "PnL",
-				"total-pnl": "PnL ($)",
-				"percent-pnl": "PnL (%)",
+				"24h-pnl": "24H P&L",
+				"pnl": "P&L",
+				"total-pnl": "P&L ($)",
+				"percent-pnl": "P&L (%)",
 				"rank-mobile": "#"
 			}
 		},
@@ -893,7 +893,7 @@
 				"liquidated": "Liquidated",
 				"total-trades": "Trades",
 				"total-volume": "Total Volume",
-				"total-pnl": "Realized PnL"
+				"total-pnl": "Realized P&L"
 			}
 		},
 		"competition": {
@@ -953,7 +953,7 @@
 			"title": "confirm transaction",
 			"confirm-with-provider": "Confirm your transaction through your wallet.",
 			"exchange-fee-hint": "The Synthetix protocol exchange fee for <0>{{currencyKey}}</0>.",
-			"price-adjustment-hint": "This transaction is subject to a price adjustment period. <0>Learn more.</0>"
+			"price-adjustment-hint": "This transaction is subject to a price adjustment period."
 		},
 		"approve-transaction": {
 			"title": "approve transaction",
@@ -1078,7 +1078,7 @@
 			"coming-soon": "Soon"
 		},
 		"wallet": {
-			"connect-wallet": "connect wallet",
+			"connect-wallet": "Connect Wallet",
 			"account-info": "Account Info",
 			"switch-accounts": "Switch Accounts",
 			"disconnect-wallet": "Disconnect Wallet",

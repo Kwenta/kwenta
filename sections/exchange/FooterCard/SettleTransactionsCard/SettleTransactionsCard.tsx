@@ -1,5 +1,4 @@
 import useSynthetixQueries from '@synthetixio/queries';
-import Tippy from '@tippyjs/react';
 import { FC, useEffect } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -7,6 +6,7 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import { MobileOrTabletView } from 'components/Media';
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { EXTERNAL_LINKS } from 'constants/links';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
@@ -106,7 +106,7 @@ const SettleTransactionsCard: FC<SettleTransactionsCardProps> = ({ numEntries })
 				</MessageItems>
 				<ErrorTooltip
 					visible={settlementWaitingPeriodInSeconds > 0}
-					placement="top"
+					preset="top"
 					content={
 						<div>
 							{t('exchange.errors.settlement-waiting', {
@@ -156,7 +156,7 @@ export const MessageItems = styled.span`
 	display: grid;
 `;
 
-export const ErrorTooltip = styled(Tippy)`
+export const ErrorTooltip = styled(StyledTooltip)`
 	font-size: 12px;
 	background-color: ${(props) => props.theme.colors.red};
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};

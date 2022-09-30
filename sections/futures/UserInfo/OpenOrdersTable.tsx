@@ -13,6 +13,8 @@ import PositionType from 'components/Text/PositionType';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import useCrossMarginContracts from 'hooks/useCrossMarginContracts';
+import useIsL2 from 'hooks/useIsL2';
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesOrder, PositionSide } from 'queries/futures/types';
 import { currentMarketState, openOrdersState, selectedFuturesAddressState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
@@ -28,7 +30,9 @@ const OpenOrdersTable: React.FC = () => {
 	const { crossMarginAccountContract } = useCrossMarginContracts();
 	const { handleRefetch } = useRefetchContext();
 	const ethGasPriceQuery = useEthGasPriceQuery();
+	const { switchToL2 } = useNetworkSwitcher();
 
+	const isL2 = useIsL2();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const currencyKey = useRecoilValue(currentMarketState);
 	const openOrders = useRecoilValue(openOrdersState);
@@ -123,7 +127,16 @@ const OpenOrdersTable: React.FC = () => {
 					highlightRowsOnHover
 					showPagination
 					noResultsMessage={
-						<TableNoResults>{t('futures.market.user.open-orders.table.no-result')}</TableNoResults>
+						!isL2 ? (
+							<TableNoResults>
+								{t('common.l2-cta')}
+								<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+							</TableNoResults>
+						) : (
+							<TableNoResults>
+								{t('futures.market.user.open-orders.table.no-result')}
+							</TableNoResults>
+						)
 					}
 					columns={[
 						{
@@ -230,7 +243,16 @@ const OpenOrdersTable: React.FC = () => {
 				<StyledTable
 					data={openOrders}
 					noResultsMessage={
-						<TableNoResults>{t('futures.market.user.open-orders.table.no-result')}</TableNoResults>
+						!isL2 ? (
+							<TableNoResults>
+								{t('common.l2-cta')}
+								<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+							</TableNoResults>
+						) : (
+							<TableNoResults>
+								{t('futures.market.user.open-orders.table.no-result')}
+							</TableNoResults>
+						)
 					}
 					onTableRowClick={(row) => setSelectedOrder(row.original)}
 					columns={[
