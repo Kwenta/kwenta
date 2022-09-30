@@ -8,7 +8,6 @@ import CustomInput from 'components/Input/CustomInput';
 import InputTitle from 'components/Input/InputTitle';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import {
-	crossMarginAvailableMarginState,
 	futuresAccountTypeState,
 	simulatedTradeState,
 	positionState,
@@ -17,9 +16,11 @@ import {
 	marketAssetRateState,
 	futuresOrderPriceState,
 	marketKeyState,
+	crossMarginAccountOverviewState,
 } from 'store/futures';
 import { FlexDivRow } from 'styles/common';
 import { floorNumber, isZero, zeroBN } from 'utils/formatters/number';
+import { getDisplayAsset } from 'utils/futures';
 
 type OrderSizingProps = {
 	disabled?: boolean;
@@ -31,7 +32,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 	const { nativeSize, susdSize } = useRecoilValue(futuresTradeInputsState);
 	const simulatedTrade = useRecoilValue(simulatedTradeState);
 
-	const freeCrossMargin = useRecoilValue(crossMarginAvailableMarginState);
+	const { freeMargin: freeCrossMargin } = useRecoilValue(crossMarginAccountOverviewState);
 	const position = useRecoilValue(positionState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 	const orderType = useRecoilValue(orderTypeState);
@@ -141,7 +142,8 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 					<InputButton
 						onClick={() => setAssetInputType(assetInputType === 'usd' ? 'native' : 'usd')}
 					>
-						{assetInputType === 'usd' ? 'sUSD' : marketKey} <span>{<SwitchAssetArrows />}</span>
+						{assetInputType === 'usd' ? 'sUSD' : getDisplayAsset(marketKey)}{' '}
+						<span>{<SwitchAssetArrows />}</span>
 					</InputButton>
 				}
 				value={assetInputType === 'usd' ? usdValue : assetValue}

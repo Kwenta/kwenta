@@ -8,10 +8,8 @@ import InfoBox from 'components/InfoBox';
 import Loader from 'components/Loader';
 import PreviewArrow from 'components/PreviewArrow';
 import { useFuturesContext } from 'contexts/FuturesContext';
-import useCrossMarginKeeperDeposit from 'hooks/useCrossMarginKeeperEthBal';
 import { FuturesPotentialTradeDetails } from 'queries/futures/types';
 import {
-	crossMarginAvailableMarginState,
 	crossMarginMarginDeltaState,
 	marketInfoState,
 	positionState,
@@ -20,6 +18,7 @@ import {
 	futuresTradeInputsState,
 	orderTypeState,
 	futuresOrderPriceState,
+	crossMarginAccountOverviewState,
 } from 'store/futures';
 import {
 	formatCurrency,
@@ -30,15 +29,13 @@ import {
 } from 'utils/formatters/number';
 
 import EditLeverageModal from './EditLeverageModal';
-import WithdrawKeeperDepositModal from './WithdrawKeeperDepositModal';
+import ManageKeeperBalanceModal from './ManageKeeperBalanceModal';
 
 type Props = {
 	editingLeverage?: boolean;
 };
 
 function MarginInfoBox({ editingLeverage }: Props) {
-	const { keeperEthBal } = useCrossMarginKeeperDeposit();
-
 	const { selectedLeverage } = useFuturesContext();
 
 	const position = useRecoilValue(positionState);
@@ -46,7 +43,9 @@ function MarginInfoBox({ editingLeverage }: Props) {
 	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
 	const potentialTrade = useRecoilValue(potentialTradeDetailsState);
 	const marginDelta = useRecoilValue(crossMarginMarginDeltaState);
-	const crossMarginFreeMargin = useRecoilValue(crossMarginAvailableMarginState);
+	const { freeMargin: crossMarginFreeMargin, keeperEthBal } = useRecoilValue(
+		crossMarginAccountOverviewState
+	);
 	const orderType = useRecoilValue(orderTypeState);
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
 	const { crossMarginFee } = useRecoilValue(tradeFeesState);
@@ -107,9 +106,9 @@ function MarginInfoBox({ editingLeverage }: Props) {
 
 		return {
 			showPreview:
-				!size.eq(0) ||
-				!marginDelta.eq(0) ||
-				((orderType === 'limit' || orderType === 'stop') && !!orderPrice),
+				((orderType === 'market' || orderType === 'next-price') &&
+					(!size.eq(0) || !marginDelta.eq(0))) ||
+				((orderType === 'limit' || orderType === 'stop') && !!orderPrice && !size.eq(0)),
 			totalMargin: potentialTrade.data?.margin.sub(crossMarginFee) || zeroBN,
 			freeAccountMargin: crossMarginFreeMargin.sub(marginDelta),
 			availableMargin: previewAvailableMargin.gt(0) ? previewAvailableMargin : zeroBN,
@@ -178,10 +177,10 @@ function MarginInfoBox({ editingLeverage }: Props) {
 							</PreviewArrow>
 						),
 					},
-					'Keeper ETH Deposit':
+					'Keeper ETH Balance':
 						orderType === 'limit' || orderType === 'stop'
 							? {
-									value: formatCurrency('ETH', keeperEthBal) + 'Ξ',
+									value: formatCurrency('ETH', keeperEthBal, { currencyKey: 'ETH' }),
 									valueNode: (
 										<>
 											{keeperEthBal.gt(0) && (
@@ -232,7 +231,7 @@ function MarginInfoBox({ editingLeverage }: Props) {
 
 			{openModal === 'leverage' && <EditLeverageModal onDismiss={() => setOpenModal(null)} />}
 			{openModal === 'keeper-deposit' && (
-				<WithdrawKeeperDepositModal onDismiss={() => setOpenModal(null)} />
+				<ManageKeeperBalanceModal defaultType="withdraw" onDismiss={() => setOpenModal(null)} />
 			)}
 		</>
 	);

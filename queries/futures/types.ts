@@ -266,6 +266,7 @@ export type FundingRates = {
 
 export type FuturesPotentialTradeDetails = {
 	size: Wei;
+	sizeDelta: Wei;
 	liqPrice: Wei;
 	margin: Wei;
 	price: Wei;

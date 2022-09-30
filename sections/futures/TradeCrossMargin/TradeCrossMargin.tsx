@@ -23,9 +23,10 @@ import {
 	futuresOrderPriceState,
 	marketAssetRateState,
 	showCrossMarginOnboardState,
-	crossMarginAvailableMarginState,
+	crossMarginAccountOverviewState,
 } from 'store/futures';
 import { FlexDivRow } from 'styles/common';
+import { ceilNumber, floorNumber } from 'utils/formatters/number';
 import { orderPriceInvalidLabel } from 'utils/futures';
 
 import FeeInfoBox from '../FeeInfoBox';
@@ -50,7 +51,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const { crossMarginAddress, crossMarginAvailable, status } = useRecoilValue(futuresAccountState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
-	const availableMargin = useRecoilValue(crossMarginAvailableMarginState);
+	const { freeMargin } = useRecoilValue(crossMarginAccountOverviewState);
 
 	const { susdSize } = useRecoilValue(futuresTradeInputsState);
 	const marketAssetRate = useRecoilValue(marketAssetRateState);
@@ -144,7 +145,13 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 						onChange={(index: number) => {
 							const type = CROSS_MARGIN_ORDER_TYPES[index];
 							setOrderType(type as FuturesOrderType);
-							onChangeOrderPrice('');
+							const price =
+								type === 'limit'
+									? floorNumber(marketAssetRate)
+									: type === 'stop'
+									? ceilNumber(marketAssetRate)
+									: '';
+							onChangeOrderPrice(String(price));
 						}}
 					/>
 					<OrderSizing />
@@ -153,7 +160,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 							minValue={0}
 							maxValue={100}
 							step={1}
-							disabled={availableMargin.eq(0)}
+							disabled={freeMargin.eq(0)}
 							defaultValue={percent}
 							value={percent}
 							onChange={(_, value) => onChangeMarginPercent(value, false)}
@@ -170,7 +177,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 					{orderType !== 'market' && (
 						<>
 							<OrderPriceInput
-								isDisabled={availableMargin.eq(0)}
+								isDisabled={freeMargin.eq(0)}
 								onChangeOrderPrice={onChangeOrderPrice}
 								value={orderPrice}
 								orderType={orderType}

@@ -7,7 +7,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import {
-	crossMarginAvailableMarginState,
+	crossMarginAccountOverviewState,
 	crossMarginSettingsState,
 	futuresAccountState,
 } from 'store/futures';
@@ -16,10 +16,10 @@ import { zeroBN } from 'utils/formatters/number';
 const BPS_CONVERSION = 10000;
 
 export default function useGetCrossMarginAccountOverview() {
-	const { network } = Connector.useContainer();
+	const { network, provider } = Connector.useContainer();
 	const { crossMarginAddress } = useRecoilValue(futuresAccountState);
-	const setFreeMargin = useSetRecoilState(crossMarginAvailableMarginState);
 	const setCrossMarginSettings = useSetRecoilState(crossMarginSettingsState);
+	const setAccountOverview = useSetRecoilState(crossMarginAccountOverviewState);
 
 	const { crossMarginAccountContract, crossMarginBaseSettings } = useCrossMarginAccountContracts();
 
@@ -31,14 +31,18 @@ export default function useGetCrossMarginAccountOverview() {
 		),
 		async () => {
 			if (!crossMarginAddress || !crossMarginAccountContract) {
-				setFreeMargin(zeroBN);
-				return { freeMargin: zeroBN };
+				setAccountOverview({
+					freeMargin: zeroBN,
+					keeperEthBal: zeroBN,
+				});
+				return { freeMargin: zeroBN, keeperEthBal: zeroBN };
 			}
 
 			const freeMargin = await crossMarginAccountContract.freeMargin();
 			const tradeFee = await crossMarginBaseSettings?.tradeFee();
 			const limitOrderFee = await crossMarginBaseSettings?.limitOrderFee();
 			const stopOrderFee = await crossMarginBaseSettings?.stopOrderFee();
+			const keeperEthBal = await provider.getBalance(crossMarginAddress);
 
 			const settings = {
 				tradeFee: tradeFee ? wei(tradeFee.toNumber() / BPS_CONVERSION) : zeroBN,
@@ -46,10 +50,13 @@ export default function useGetCrossMarginAccountOverview() {
 				stopOrderFee: stopOrderFee ? wei(stopOrderFee.toNumber() / BPS_CONVERSION) : zeroBN,
 			};
 
-			setFreeMargin(wei(freeMargin));
+			setAccountOverview({
+				freeMargin: wei(freeMargin),
+				keeperEthBal: wei(keeperEthBal),
+			});
 			setCrossMarginSettings(settings);
 
-			return { freeMargin: wei(freeMargin), settings: settings };
+			return { freeMargin: wei(freeMargin), settings: settings, keeperEthBal };
 		},
 		{
 			enabled: !!crossMarginAddress,

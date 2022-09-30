@@ -1,4 +1,4 @@
-import Wei, { wei } from '@synthetixio/wei';
+import { wei } from '@synthetixio/wei';
 import { atom, selector } from 'recoil';
 
 import { DEFAULT_FUTURES_MARGIN_TYPE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
@@ -141,6 +141,14 @@ export const crossMarginSettingsState = atom({
 	},
 });
 
+export const crossMarginAccountOverviewState = atom({
+	key: getFuturesKey('crossMarginAccountOverview'),
+	default: {
+		freeMargin: zeroBN,
+		keeperEthBal: zeroBN,
+	},
+});
+
 export const leverageSideState = atom<PositionSide>({
 	key: getFuturesKey('leverageSide'),
 	default: PositionSide.LONG,
@@ -176,6 +184,14 @@ export const pastRatesState = atom<Price[] | []>({
 export const orderTypeState = atom<FuturesOrderType>({
 	key: getFuturesKey('orderType'),
 	default: 'market',
+});
+
+export const isAdvancedOrderState = selector({
+	key: getFuturesKey('isAdvancedOrder'),
+	get: ({ get }) => {
+		const orderType = get(orderTypeState);
+		return orderType === 'limit' || orderType === 'stop';
+	},
 });
 
 export const orderFeeCapState = atom({
@@ -313,16 +329,11 @@ export const showCrossMarginOnboardState = atom({
 	default: false,
 });
 
-export const crossMarginAvailableMarginState = atom<Wei>({
-	key: getFuturesKey('crossMarginAvailableMargin'),
-	default: zeroBN,
-});
-
 export const crossMarginTotalMarginState = selector({
 	key: getFuturesKey('crossMarginTotalMargin'),
 	get: ({ get }) => {
 		const position = get(positionState);
-		const freeMargin = get(crossMarginAvailableMarginState);
+		const { freeMargin } = get(crossMarginAccountOverviewState);
 		return position?.remainingMargin.add(freeMargin) ?? zeroBN;
 	},
 });
@@ -366,7 +377,7 @@ export const placeOrderTranslationKeyState = selector({
 		const isMarketCapReached = get(isMarketCapReachedState);
 		const orderType = get(orderTypeState);
 		const selectedAccountType = get(futuresAccountTypeState);
-		const freeMargin = get(crossMarginAvailableMarginState);
+		const { freeMargin } = get(crossMarginAccountOverviewState);
 
 		let remainingMargin;
 		if (selectedAccountType === 'isolated_margin') {

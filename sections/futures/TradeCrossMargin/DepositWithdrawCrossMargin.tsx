@@ -11,14 +11,12 @@ import ErrorView from 'components/Error';
 import CustomInput from 'components/Input/CustomInput';
 import Loader from 'components/Loader';
 import SegmentedControl from 'components/SegmentedControl';
-import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
-import useEstimateGasCost from 'hooks/useEstimateGasCost';
 import useSUSDContract from 'hooks/useSUSDContract';
-import { balancesState, crossMarginAvailableMarginState } from 'store/futures';
+import { balancesState, crossMarginAccountOverviewState } from 'store/futures';
 import { FlexDivRowCentered } from 'styles/common';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -45,33 +43,18 @@ export default function DepositWithdrawCrossMargin({
 	const susdContract = useSUSDContract();
 
 	const balances = useRecoilValue(balancesState);
-	const freeMargin = useRecoilValue(crossMarginAvailableMarginState);
+	const { freeMargin } = useRecoilValue(crossMarginAccountOverviewState);
 
 	const [amount, setAmount] = useState<string>('');
 	const [transferType, setTransferType] = useState(0);
 	const [txState, setTxState] = useState<'none' | 'approving' | 'submitting' | 'complete'>('none');
 	const [error, setError] = useState<string | null>(null);
-	const [transactionFee, setTransactionFee] = useState(zeroBN);
 
 	useEffect(() => {
 		setTransferType(defaultTab === 'deposit' ? 0 : 1);
 	}, [defaultTab]);
 
 	const susdBal = transferType === 0 ? balances?.susdWalletBalance || zeroBN : freeMargin;
-	const { estimateEthersContractTxCost } = useEstimateGasCost();
-
-	useEffect(() => {
-		if (!crossMarginAccountContract) return;
-		const estimateGas = async () => {
-			if (!amount) return;
-			const method = transferType === 0 ? 'deposit' : 'withdraw';
-			const fee = await estimateEthersContractTxCost(crossMarginAccountContract, method, [
-				wei(amount).toBN(),
-			]);
-			setTransactionFee(fee);
-		};
-		estimateGas();
-	}, [crossMarginAccountContract, amount, transferType, estimateEthersContractTxCost]);
 
 	const submitDeposit = useCallback(async () => {
 		try {
@@ -221,13 +204,6 @@ export default function DepositWithdrawCrossMargin({
 				}
 			/>
 
-			<GasFeeContainer>
-				<BalanceText>{t('futures.market.trade.margin.modal.gas-fee')}:</BalanceText>
-				<BalanceText>
-					<span>{transactionFee ? formatDollars(transactionFee) : NO_VALUE}</span>
-				</BalanceText>
-			</GasFeeContainer>
-
 			<MarginActionButton
 				variant="flat"
 				data-testid="futures-market-trade-deposit-margin-button"
@@ -292,17 +268,10 @@ export const MaxButton = styled.button`
 	cursor: pointer;
 `;
 
-export const GasFeeContainer = styled(FlexDivRowCentered)`
-	margin-bottom: 20px;
-	p {
-		margin: 0;
-	}
-`;
-
 const StyledSegmentedControl = styled(SegmentedControl)`
 	margin-bottom: 16px;
 `;
 
 const InputContainer = styled(CustomInput)`
-	margin-bottom: 40px;
+	margin-bottom: 10px;
 `;

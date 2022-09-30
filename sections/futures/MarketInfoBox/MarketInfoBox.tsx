@@ -7,8 +7,6 @@ import InfoBox from 'components/InfoBox';
 import PreviewArrow from 'components/PreviewArrow';
 import { FuturesPotentialTradeDetails } from 'queries/futures/types';
 import {
-	crossMarginAvailableMarginState,
-	futuresAccountTypeState,
 	leverageSideState,
 	marketInfoState,
 	maxLeverageState,
@@ -30,18 +28,9 @@ const MarketInfoBox: React.FC = () => {
 	const leverageSide = useRecoilValue(leverageSideState);
 	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
 	const potentialTrade = useRecoilValue(potentialTradeDetailsState);
-	const crossMarginFreeMargin = useRecoilValue(crossMarginAvailableMarginState);
-	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 
-	const totalMargin =
-		selectedAccountType === 'cross_margin'
-			? position?.remainingMargin.add(crossMarginFreeMargin) ?? zeroBN
-			: position?.remainingMargin ?? zeroBN;
-
-	const availableMargin =
-		selectedAccountType === 'cross_margin'
-			? position?.accessibleMargin.add(crossMarginFreeMargin) ?? zeroBN
-			: position?.accessibleMargin ?? zeroBN;
+	const totalMargin = position?.remainingMargin ?? zeroBN;
+	const availableMargin = position?.accessibleMargin ?? zeroBN;
 
 	const buyingPower = totalMargin.gt(zeroBN) ? totalMargin.mul(maxLeverage ?? zeroBN) : zeroBN;
 

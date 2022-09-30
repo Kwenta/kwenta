@@ -1,6 +1,6 @@
 import { wei } from '@synthetixio/wei';
 import { capitalize } from 'lodash';
-import { ChangeEvent, useMemo } from 'react';
+import { ChangeEvent, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -10,7 +10,7 @@ import InputTitle from 'components/Input/InputTitle';
 import SegmentedControl from 'components/SegmentedControl';
 import { FuturesOrderType } from 'queries/futures/types';
 import { leverageSideState, marketAssetRateState, orderFeeCapState } from 'store/futures';
-import { weiToString, zeroBN } from 'utils/formatters/number';
+import { ceilNumber, floorNumber, weiToString, zeroBN } from 'utils/formatters/number';
 import { orderPriceInvalidLabel } from 'utils/futures';
 
 type Props = {
@@ -32,6 +32,15 @@ export default function OrderPriceInput({
 	const marketAssetRate = useRecoilValue(marketAssetRateState);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const [selectedFeeCap, setSelectedFeeCap] = useRecoilState(orderFeeCapState);
+
+	useEffect(() => {
+		if (!value) {
+			const priceNum =
+				orderType === 'limit' ? floorNumber(marketAssetRate) : ceilNumber(marketAssetRate);
+			onChangeOrderPrice(String(priceNum));
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const minMaxLabelString = useMemo(
 		() => orderPriceInvalidLabel(value, leverageSide, marketAssetRate, orderType),

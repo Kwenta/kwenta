@@ -11,6 +11,7 @@ import {
 	potentialTradeDetailsState,
 	futuresAccountTypeState,
 	selectedFuturesAddressState,
+	orderTypeState,
 } from 'store/futures';
 import logError from 'utils/logError';
 
@@ -29,6 +30,7 @@ const useGetFuturesPotentialTradeDetails = () => {
 
 	const leverageSide = useRecoilValue(leverageSideState);
 	const marketAsset = useRecoilValue(currentMarketState);
+	const orderType = useRecoilValue(orderTypeState);
 
 	const getPreview = useGetCrossMarginPotentialTrade(marketAsset, selectedFuturesAddress);
 
@@ -46,6 +48,7 @@ const useGetFuturesPotentialTradeDetails = () => {
 				!marketAsset ||
 				(!nativeSizeDelta && selectedAccountType === 'isolated_margin') ||
 				(!nativeSizeDelta && (!positionMarginDelta || positionMarginDelta.eq(0))) ||
+				((orderType === 'limit' || orderType === 'stop') && orderPrice?.eq(0)) ||
 				!isL2 ||
 				!selectedFuturesAddress
 			) {
@@ -88,6 +91,7 @@ const useGetFuturesPotentialTradeDetails = () => {
 				margin: wei(margin),
 				price: wei(price),
 				size: wei(size),
+				sizeDelta: nativeSizeDelta,
 				side: leverageSide,
 				leverage: wei(leverage ? leverage : 1),
 				notionalValue: wei(size).mul(wei(price)),
@@ -106,6 +110,7 @@ const useGetFuturesPotentialTradeDetails = () => {
 			isL2,
 			leverageSide,
 			synthetixjs,
+			orderType,
 			getPreview,
 		]
 	);

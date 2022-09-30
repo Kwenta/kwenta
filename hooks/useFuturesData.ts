@@ -42,6 +42,7 @@ import {
 	potentialTradeDetailsState,
 	futuresOrderPriceState,
 	orderFeeCapState,
+	isAdvancedOrderState,
 } from 'store/futures';
 import { zeroBN, floorNumber, weiToString } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
@@ -100,8 +101,9 @@ const useFuturesData = () => {
 	const { tradeFee: crossMarginTradeFee, stopOrderFee, limitOrderFee } = useRecoilValue(
 		crossMarginSettingsState
 	);
+	const isAdvancedOrder = useRecoilValue(isAdvancedOrderState);
 	const marketAssetRate = useRecoilValue(marketAssetRateState);
-	const [orderPrice, setOrderPrice] = useRecoilState(futuresOrderPriceState);
+	const orderPrice = useRecoilValue(futuresOrderPriceState);
 	const setPotentialTradeDetails = useSetRecoilState(potentialTradeDetailsState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 	const [preferredLeverage] = usePersistedRecoilState(preferredLeverageState);
@@ -109,9 +111,10 @@ const useFuturesData = () => {
 	const [maxFee, setMaxFee] = useState(zeroBN);
 	const [error, setError] = useState<string | null>(null);
 
-	const tradePrice = useMemo(() => wei(orderPrice || marketAssetRate), [
+	const tradePrice = useMemo(() => wei(isAdvancedOrder ? orderPrice || zeroBN : marketAssetRate), [
 		orderPrice,
 		marketAssetRate,
+		isAdvancedOrder,
 	]);
 
 	const crossMarginAccount = useMemo(() => {
@@ -148,14 +151,12 @@ const useFuturesData = () => {
 		});
 		setTradeFees(ZERO_FEES);
 		setCrossMarginMarginDelta(zeroBN);
-		setOrderPrice('');
 	}, [
 		setSimulatedTrade,
 		setPotentialTradeDetails,
 		setCrossMarginMarginDelta,
 		setTradeFees,
 		setTradeInputs,
-		setOrderPrice,
 	]);
 
 	const maxUsdInputAmount = useMemo(() => {
@@ -279,7 +280,8 @@ const useFuturesData = () => {
 	const debounceFetchPreview = useCallback(
 		debounce(async (nextTrade: FuturesTradeInputs, fromLeverage = false) => {
 			setError(null);
-			if ((orderType === 'stop' || orderType === 'limit') && !orderPrice) return;
+			// if (((orderType === 'stop' || orderType === 'limit') && !orderPrice) || !nextTrade.nativeSize)
+			// 	return;
 			try {
 				const fees = await calculateFees(nextTrade.susdSizeDelta, nextTrade.nativeSizeDelta);
 				let nextMarginDelta = zeroBN;
@@ -329,7 +331,7 @@ const useFuturesData = () => {
 			currencyType: 'usd' | 'native',
 			options?: { simulateChange?: boolean; crossMarginLeverage?: Wei }
 		) => {
-			if (!value) {
+			if (!value || tradePrice.eq(0)) {
 				resetTradeState();
 				return;
 			}

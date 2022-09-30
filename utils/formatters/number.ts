@@ -220,6 +220,11 @@ export const floorNumber = (num: WeiSource, decimals?: number) => {
 	return Math.floor(Number(num) * precision) / precision;
 };
 
+export const ceilNumber = (num: WeiSource, decimals?: number) => {
+	const precision = 10 ** (decimals ?? suggestedDecimals(num));
+	return Math.ceil(Number(num) * precision) / precision;
+};
+
 // Converts to string but strips trailing zeros
 export const weiToString = (weiVal: Wei) => {
 	return String(parseFloat(weiVal.toString()));
