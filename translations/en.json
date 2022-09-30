@@ -459,6 +459,8 @@
 				"total-trades": "Total Trades"
 			},
 			"positions-tabs": {
+				"isolated-margin": "Isolated Margin",
+				"cross-margin": "Cross Margin",
 				"futures": "Futures Positions",
 				"shorts": "Shorts",
 				"spot": "Spot Balances"

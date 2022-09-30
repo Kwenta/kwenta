@@ -1,6 +1,6 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
-import React from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SetterOrUpdater, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -8,18 +8,20 @@ import styled from 'styled-components';
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
 import Connector from 'containers/Connector';
+import { FuturesAccountTypes } from 'queries/futures/types';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
-import { positionsState, ratesState } from 'store/futures';
+import { allPositionsState, ratesState } from 'store/futures';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 
 import FuturesPositionsTable from '../FuturesPositionsTable';
 import { MarketsTab } from '../Markets/Markets';
+import { PositionsTab } from '../Overview/Overview';
 import SynthBalancesTable from '../SynthBalancesTable';
 
 type OpenPositionsProps = {
-	activePositionsTab: MarketsTab;
-	setActivePositionsTab: SetterOrUpdater<MarketsTab>;
+	activePositionsTab: PositionsTab;
+	setActivePositionsTab: SetterOrUpdater<PositionsTab>;
 };
 
 const OpenPositions: React.FC<OpenPositionsProps> = ({
@@ -34,7 +36,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 	const portfolioValue = portfolioValueQuery?.data ?? null;
 
 	const exchangeRates = useRecoilValue(ratesState);
-	const futuresPositions = useRecoilValue(positionsState);
+	const allPositions = useRecoilValue(allPositionsState);
 
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const synthBalances =
@@ -46,28 +48,37 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 
 	const totalFuturesPortfolioValue = formatDollars(wei(portfolioValue ?? zeroBN));
 
-	const POSITIONS_TABS = React.useMemo(
+	const POSITIONS_TABS = useMemo(
 		() => [
 			{
-				name: MarketsTab.FUTURES,
-				label: t('dashboard.overview.positions-tabs.futures'),
-				badge: futuresPositions.length,
-				active: activePositionsTab === MarketsTab.FUTURES,
+				name: PositionsTab.CROSS_MARGIN,
+				label: t('dashboard.overview.positions-tabs.cross-margin'),
+				badge: allPositions[FuturesAccountTypes.CROSS_MARGIN].length,
+				active: activePositionsTab === PositionsTab.CROSS_MARGIN,
 				detail: totalFuturesPortfolioValue,
 				disabled: false,
-				onClick: () => setActivePositionsTab(MarketsTab.FUTURES),
+				onClick: () => setActivePositionsTab(PositionsTab.CROSS_MARGIN),
 			},
 			{
-				name: MarketsTab.SPOT,
+				name: PositionsTab.ISOLATED_MARGIN,
+				label: t('dashboard.overview.positions-tabs.isolated-margin'),
+				badge: allPositions[FuturesAccountTypes.ISOLATED_MARGIN].length,
+				active: activePositionsTab === PositionsTab.ISOLATED_MARGIN,
+				detail: totalFuturesPortfolioValue,
+				disabled: false,
+				onClick: () => setActivePositionsTab(PositionsTab.ISOLATED_MARGIN),
+			},
+			{
+				name: PositionsTab.SPOT,
 				label: t('dashboard.overview.positions-tabs.spot'),
-				active: activePositionsTab === MarketsTab.SPOT,
+				active: activePositionsTab === PositionsTab.SPOT,
 				detail: totalSpotBalancesValue,
 				disabled: false,
-				onClick: () => setActivePositionsTab(MarketsTab.SPOT),
+				onClick: () => setActivePositionsTab(PositionsTab.SPOT),
 			},
 		],
 		[
-			futuresPositions,
+			allPositions,
 			activePositionsTab,
 			setActivePositionsTab,
 			t,
@@ -90,8 +101,12 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 				</TabButtonsContainer>
 			</div>
 
-			<TabPanel name={MarketsTab.FUTURES} activeTab={activePositionsTab}>
-				<FuturesPositionsTable showCurrentMarket={true} />
+			<TabPanel name={PositionsTab.CROSS_MARGIN} activeTab={activePositionsTab}>
+				<FuturesPositionsTable accountType={FuturesAccountTypes.CROSS_MARGIN} />
+			</TabPanel>
+
+			<TabPanel name={PositionsTab.ISOLATED_MARGIN} activeTab={activePositionsTab}>
+				<FuturesPositionsTable accountType={FuturesAccountTypes.ISOLATED_MARGIN} />
 			</TabPanel>
 
 			<TabPanel name={MarketsTab.SPOT} activeTab={activePositionsTab}>

@@ -191,7 +191,7 @@ const UserInfo: React.FC = () => {
 
 			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}>
 				<PositionCard />
-				<FuturesPositionsTable showCurrentMarket={false} />
+				<FuturesPositionsTable accountType={accountType} showCurrentMarket={false} />
 			</TabPanel>
 			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}>
 				<OpenOrdersTable />

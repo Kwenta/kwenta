@@ -18,12 +18,12 @@ import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import { FuturesAccountType } from 'queries/futures/subgraph';
 import {
+	allPositionsState,
 	currentMarketState,
-	futuresAccountTypeState,
 	futuresMarketsState,
 	positionHistoryState,
-	positionsState,
 } from 'store/futures';
 import { formatNumber } from 'utils/formatters/number';
 import { getSynthDescription, isDecimalFour } from 'utils/futures';
@@ -31,10 +31,12 @@ import { getSynthDescription, isDecimalFour } from 'utils/futures';
 import MobilePositionRow from './MobilePositionRow';
 
 type FuturesPositionTableProps = {
+	accountType: FuturesAccountType;
 	showCurrentMarket?: boolean;
 };
 
 const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
+	accountType,
 	showCurrentMarket = true,
 }: FuturesPositionTableProps) => {
 	const { t } = useTranslation();
@@ -44,14 +46,13 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 	const isL2 = useIsL2();
 
-	const futuresPositions = useRecoilValue(positionsState);
+	const allPositions = useRecoilValue(allPositionsState);
 	const positionHistory = useRecoilValue(positionHistoryState);
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 	const currentMarket = useRecoilValue(currentMarketState);
-	const accountType = useRecoilValue(futuresAccountTypeState);
 
 	let data = useMemo(() => {
-		return futuresPositions
+		return allPositions[accountType]
 			.map((position) => {
 				const market = futuresMarkets.find((market) => market.asset === position.asset);
 				const description = getSynthDescription(position.asset, synthsMap, t);
@@ -71,7 +72,8 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					position.position && (position?.market?.asset !== currentMarket || showCurrentMarket)
 			);
 	}, [
-		futuresPositions,
+		allPositions,
+		accountType,
 		futuresMarkets,
 		positionHistory,
 		currentMarket,

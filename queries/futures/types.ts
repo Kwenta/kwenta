@@ -263,11 +263,17 @@ export type FuturesPotentialTradeDetailsQuery = {
 };
 
 export type FuturesAccountType = 'cross_margin' | 'isolated_margin';
+export enum FuturesAccountTypes {
+	ISOLATED_MARGIN = 'isolated_margin',
+	CROSS_MARGIN = 'cross_margin',
+}
 
 type Wallet = string;
 type CrossMarginAccount = string;
 type FactoryAddress = string;
 export type CrossMarginAccounts = Record<FactoryAddress, Record<Wallet, CrossMarginAccount>>;
+
+export type FuturesPositionsState = Record<FuturesAccountType, FuturesPosition[]>;
 
 export type FuturesAccountState = {
 	walletAddress: string | null;

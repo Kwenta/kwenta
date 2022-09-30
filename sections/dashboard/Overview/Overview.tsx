@@ -9,9 +9,10 @@ import TabButton from 'components/Button/TabButton';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { TabPanel } from 'components/Tab';
 import Connector from 'containers/Connector';
+import { FuturesAccountTypes } from 'queries/futures/types';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
-import { positionsState, ratesState } from 'store/futures';
+import { allPositionsState, ratesState } from 'store/futures';
 import { activePositionsTabState } from 'store/ui';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 
@@ -23,6 +24,12 @@ import PortfolioChart from '../PortfolioChart';
 import SpotMarketsTable from '../SpotMarketsTable';
 import SynthBalancesTable from '../SynthBalancesTable';
 
+export enum PositionsTab {
+	CROSS_MARGIN = 'cross margin',
+	ISOLATED_MARGIN = 'isolated margin',
+	SPOT = 'spot',
+}
+
 const Overview: FC = () => {
 	const { t } = useTranslation();
 
@@ -32,7 +39,7 @@ const Overview: FC = () => {
 	const portfolioValue = portfolioValueQuery?.data ?? null;
 
 	const exchangeRates = useRecoilValue(ratesState);
-	const futuresPositions = useRecoilValue(positionsState);
+	const allPositions = useRecoilValue(allPositionsState);
 
 	const { walletAddress } = Connector.useContainer();
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
@@ -41,7 +48,9 @@ const Overview: FC = () => {
 			? synthsBalancesQuery.data
 			: null;
 
-	const [activePositionsTab, setActivePositionsTab] = useRecoilState(activePositionsTabState);
+	const [activePositionsTab, setActivePositionsTab] = useRecoilState<PositionsTab>(
+		activePositionsTabState
+	);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
 	const totalSpotBalancesValue = formatDollars(wei(synthBalances?.totalUSDBalance ?? zeroBN));
@@ -51,25 +60,34 @@ const Overview: FC = () => {
 	const POSITIONS_TABS = useMemo(
 		() => [
 			{
-				name: MarketsTab.FUTURES,
-				label: t('dashboard.overview.positions-tabs.futures'),
-				badge: futuresPositions.length,
-				active: activePositionsTab === MarketsTab.FUTURES,
+				name: PositionsTab.CROSS_MARGIN,
+				label: t('dashboard.overview.positions-tabs.cross-margin'),
+				badge: allPositions[FuturesAccountTypes.CROSS_MARGIN].length,
+				active: activePositionsTab === PositionsTab.CROSS_MARGIN,
 				detail: totalFuturesPortfolioValue,
 				disabled: false,
-				onClick: () => setActivePositionsTab(MarketsTab.FUTURES),
+				onClick: () => setActivePositionsTab(PositionsTab.CROSS_MARGIN),
 			},
 			{
-				name: MarketsTab.SPOT,
+				name: PositionsTab.ISOLATED_MARGIN,
+				label: t('dashboard.overview.positions-tabs.isolated-margin'),
+				badge: allPositions[FuturesAccountTypes.ISOLATED_MARGIN].length,
+				active: activePositionsTab === PositionsTab.ISOLATED_MARGIN,
+				detail: totalFuturesPortfolioValue,
+				disabled: false,
+				onClick: () => setActivePositionsTab(PositionsTab.ISOLATED_MARGIN),
+			},
+			{
+				name: PositionsTab.SPOT,
 				label: t('dashboard.overview.positions-tabs.spot'),
-				active: activePositionsTab === MarketsTab.SPOT,
+				active: activePositionsTab === PositionsTab.SPOT,
 				detail: totalSpotBalancesValue,
 				disabled: false,
-				onClick: () => setActivePositionsTab(MarketsTab.SPOT),
+				onClick: () => setActivePositionsTab(PositionsTab.SPOT),
 			},
 		],
 		[
-			futuresPositions,
+			allPositions,
 			activePositionsTab,
 			setActivePositionsTab,
 			t,
@@ -108,11 +126,15 @@ const Overview: FC = () => {
 						<TabButton key={name} title={label} {...rest} />
 					))}
 				</TabButtonsContainer>
-				<TabPanel name={MarketsTab.FUTURES} activeTab={activePositionsTab}>
-					<FuturesPositionsTable />
+				<TabPanel name={PositionsTab.CROSS_MARGIN} activeTab={activePositionsTab}>
+					<FuturesPositionsTable accountType={FuturesAccountTypes.CROSS_MARGIN} />
 				</TabPanel>
 
-				<TabPanel name={MarketsTab.SPOT} activeTab={activePositionsTab}>
+				<TabPanel name={PositionsTab.ISOLATED_MARGIN} activeTab={activePositionsTab}>
+					<FuturesPositionsTable accountType={FuturesAccountTypes.ISOLATED_MARGIN} />
+				</TabPanel>
+
+				<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}>
 					<SynthBalancesTable
 						synthBalances={synthBalances?.balances ?? []}
 						exchangeRates={exchangeRates}

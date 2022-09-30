@@ -2,14 +2,20 @@ import { NetworkId } from '@synthetixio/contracts-interface';
 import { Provider, Contract } from 'ethcall';
 import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import FuturesMarketABI from 'lib/abis/FuturesMarket.json';
 import FuturesMarketDataABI from 'lib/abis/FuturesMarketData.json';
-import { futuresMarketsState, positionsState, selectedFuturesAddressState } from 'store/futures';
+import {
+	allPositionsState,
+	futuresAccountTypeState,
+	futuresMarketsState,
+	positionsState,
+	selectedFuturesAddressState,
+} from 'store/futures';
 import { MarketKeyByAsset } from 'utils/futures';
 
 import { FuturesMarket, FuturesPosition, PositionDetail } from './types';
@@ -30,8 +36,9 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 
 	const setFuturesPositions = useSetRecoilState(positionsState);
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	const [allPositions, setAllPositions] = useRecoilState(allPositionsState);
+	const futuresAccountType = useRecoilValue(futuresAccountTypeState);
 	const selectedFuturesAddress = useRecoilValue(selectedFuturesAddressState);
-
 	const assets = futuresMarkets.map(({ asset }) => asset);
 
 	return useQuery<FuturesPosition[] | []>(
@@ -43,6 +50,10 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 		async () => {
 			if (!assets || (!provider && !l2Provider) || !selectedFuturesAddress) {
 				setFuturesPositions([]);
+				setAllPositions({
+					...allPositions,
+					[futuresAccountType]: [],
+				});
 				return [];
 			}
 
@@ -80,6 +91,10 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 				})
 				.filter(({ remainingMargin }) => remainingMargin.gt(0));
 			setFuturesPositions(futuresPositions);
+			setAllPositions({
+				...allPositions,
+				[futuresAccountType]: futuresPositions,
+			});
 
 			return futuresPositions;
 		},
