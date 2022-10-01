@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useGetFuturesTradersStats } from 'queries/futures/useGetFuturesTradersStats';
@@ -23,7 +23,19 @@ export const Traders = () => {
 	const [isMonth, setIsMonth] = useState<boolean>(false);
 	const [isMax, setIsMax] = useState<boolean>(false);
 
-	const { data: tradersData } = useGetFuturesTradersStats();
+	const { data: rawData } = useGetFuturesTradersStats();
+
+	const tradersData = useMemo(() => {
+		if (is24H) {
+			return rawData;
+		} else if (isWeek) {
+			// TODO
+		} else if (isMonth) {
+			// TODO
+		} else if (isMax) {
+			// TODO
+		}
+	}, [is24H, isMax, isMonth, isWeek, rawData]);
 
 	useEffect(() => {
 		if (!tradersRef || !tradersRef.current || !tradersData || !tradersData.length) {

@@ -2,22 +2,10 @@ import { useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
-import AAVEIcon from 'assets/png/currencies/sAAVE.png';
-import APEIcon from 'assets/png/currencies/sAPECOIN.png';
-import AVAXIcon from 'assets/png/currencies/sAVAX.png';
-import BTCIcon from 'assets/png/currencies/sBTC.png';
-import DYDXIcon from 'assets/png/currencies/sDYDX.png';
-import ETHIcon from 'assets/png/currencies/sETH.png';
-import EURIcon from 'assets/png/currencies/sEUR.png';
-import LINKIcon from 'assets/png/currencies/sLINK.png';
-import MATICIcon from 'assets/png/currencies/sMATIC.png';
-import SOLIcon from 'assets/png/currencies/sSOL.png';
-import UNIIcon from 'assets/png/currencies/sUNI.png';
-import XAGIcon from 'assets/png/currencies/sXAG.png';
-import XAUIcon from 'assets/png/currencies/sXAU.png';
 import { futuresMarketsState } from 'store/futures';
 import colors from 'styles/theme/colors/common';
 import fonts from 'styles/theme/fonts';
+import { SYNTH_ICONS } from 'utils/icons';
 
 import { initBarChart } from './initBarChart';
 import type { EChartsOption } from './initBarChart';
@@ -30,6 +18,37 @@ export const OpenInterest = () => {
 
 	const openInterestRef = useRef<HTMLDivElement | null>(null);
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
+
+	const marketsWithIcons = useMemo(() => {
+		const temp: Record<string, { icon: any }> = {};
+		futuresMarkets.forEach(({ asset }) => {
+			temp[asset] = {
+				icon: SYNTH_ICONS[asset.startsWith('s') ? asset : `s${asset}`],
+			};
+		});
+		return temp;
+	}, [futuresMarkets]);
+
+	const richMarketsLabel = useMemo(() => {
+		const temp: Record<
+			string,
+			{
+				width: number;
+				height: number;
+				backgroundColor: { image: any };
+			}
+		> = {};
+		futuresMarkets.forEach(({ asset }) => {
+			temp[asset] = {
+				width: 40,
+				height: 40,
+				backgroundColor: {
+					image: SYNTH_ICONS[asset.startsWith('s') ? asset : `s${asset}`],
+				},
+			};
+		});
+		return temp;
+	}, [futuresMarkets]);
 
 	const openInterests = useMemo(() => {
 		return futuresMarkets.map((data) => {
@@ -59,62 +78,8 @@ export const OpenInterest = () => {
 
 		const text = t('stats.open-interest.title');
 		const subtext = '$40,461,472';
-		const ASSETS: any = {
-			ETH: {
-				underlying: 'Ether',
-				icon: ETHIcon,
-			},
-			BTC: {
-				underlying: 'Bitcoin',
-				icon: BTCIcon,
-			},
-			SOL: {
-				underlying: 'Solana',
-				icon: SOLIcon,
-			},
-			EUR: {
-				underlying: 'Euros',
-				icon: EURIcon,
-			},
-			XAG: {
-				underlying: 'Silver',
-				icon: XAGIcon,
-			},
-			MATIC: {
-				underlying: 'Matic',
-				icon: MATICIcon,
-			},
-			XAU: {
-				underlying: 'Gold',
-				icon: XAUIcon,
-			},
-			APE: {
-				underlying: 'APE',
-				icon: APEIcon,
-			},
-			LINK: {
-				underlying: 'Chainlink',
-				icon: LINKIcon,
-			},
-			DYDX: {
-				underlying: 'DYDX',
-				icon: DYDXIcon,
-			},
-			UNI: {
-				underlying: 'Uniswap',
-				icon: UNIIcon,
-			},
-			AVAX: {
-				underlying: 'Avalanche',
-				icon: AVAXIcon,
-			},
-			AAVE: {
-				underlying: 'Aave',
-				icon: AAVEIcon,
-			},
-		};
 
-		const data = Object.keys(ASSETS);
+		const data = Object.keys(marketsWithIcons);
 		const option: EChartsOption = {
 			title: {
 				text,
@@ -143,13 +108,8 @@ export const OpenInterest = () => {
 				type: 'category',
 				data,
 				axisLabel: {
-					margin: -20,
 					formatter: (sAsset: any) => {
-						return [
-							`{${sAsset}| }`,
-							`{syntheticAsset|${sAsset}}`,
-							`{underlyingAsset|${ASSETS[sAsset].underlying}}`,
-						].join('\n');
+						return [`{${sAsset}| }`, `{syntheticAsset|${sAsset}}`].join('\n');
 					},
 					rich: {
 						syntheticAsset: {
@@ -160,101 +120,7 @@ export const OpenInterest = () => {
 							height: 23,
 							padding: [9, 0, 0, 0],
 						},
-						underlyingAsset: {
-							fontFamily: fonts.regular,
-							fontSize: 12,
-						},
-						ETH: {
-							width: 40,
-							height: 40,
-							// backgroundColor: {
-							// 	image: ASSETS.ETH.icon,
-							// },
-						},
-						BTC: {
-							width: 40,
-							height: 40,
-							// backgroundColor: {
-							// 	image: ASSETS.sBTC.icon,
-							// },
-						},
-						SOL: {
-							width: 40,
-							height: 40,
-							// backgroundColor: {
-							// 	image: ASSETS.sSOL.icon,
-							// },
-						},
-						EUR: {
-							width: 40,
-							height: 40,
-							// backgroundColor: {
-							// 	image: ASSETS.sEUR.icon,
-							// },
-						},
-						XAG: {
-							width: 40,
-							height: 40,
-							// backgroundColor: {
-							// 	image: ASSETS.sXAG.icon,
-							// },
-						},
-						MATIC: {
-							width: 40,
-							height: 40,
-							// backgroundColor: {
-							// 	image: ASSETS.sMATIC.icon,
-							// },
-						},
-						XAU: {
-							width: 40,
-							height: 40,
-							// backgroundColor: {
-							// 	image: ASSETS.sXAU.icon,
-							// },
-						},
-						APE: {
-							width: 40,
-							height: 40,
-							// backgroundColor: {
-							// 	image: ASSETS.sAPE.icon,
-							// },
-						},
-						LINK: {
-							width: 40,
-							height: 40,
-							// backgroundColor: {
-							// 	image: ASSETS.sLINK.icon,
-							// },
-						},
-						DYDX: {
-							width: 40,
-							height: 40,
-							// backgroundColor: {
-							// 	image: ASSETS.sDYDX.icon,
-							// },
-						},
-						UNI: {
-							width: 40,
-							height: 40,
-							// backgroundColor: {
-							// 	image: ASSETS.sUNI.icon,
-							// },
-						},
-						AVAX: {
-							width: 40,
-							height: 40,
-							// backgroundColor: {
-							// 	image: ASSETS.sAVAX.icon,
-							// },
-						},
-						AAVE: {
-							width: 40,
-							height: 40,
-							// backgroundColor: {
-							// 	image: ASSETS.sAAVE.icon,
-							// },
-						},
+						...richMarketsLabel,
 					},
 					interval: 0,
 				},
@@ -294,7 +160,7 @@ export const OpenInterest = () => {
 		}
 		chartInstance = initBarChart(openInterestRef.current);
 		chartInstance.setOption(option);
-	}, [openInterestRef, t, openInterests]);
+	}, [openInterestRef, t, openInterests, marketsWithIcons, richMarketsLabel]);
 
 	return (
 		<OpenInterestWrapper>
