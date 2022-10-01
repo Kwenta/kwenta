@@ -20,23 +20,12 @@ function interceptStdout(text) {
 // Intercept in dev and prod
 intercept(interceptStdout);
 
-const { withPlugins, extend } = require('next-compose-plugins');
+const { withPlugins } = require('next-compose-plugins');
 const optimizedImages = require('next-optimized-images');
-const withTM = require('next-transpile-modules')(['echarts', 'zrender']);
+const transpile = require('next-transpile-modules');
+const withTM = [transpile(['echarts', 'zrender'])];
 
-const baseConfig = withPlugins([
-	[
-		optimizedImages,
-		{
-			/* config for next-optimized-images (use default) */
-			imagesFolder: 'images',
-			imagePublicPolder: '/_next/static/images',
-			imageOutputPath: '/static/images',
-		},
-	],
-]);
-
-const nextConfig = {
+const baseConfig = {
 	env: {
 		GIT_HASH_ID: gitRevision,
 	},
@@ -105,4 +94,16 @@ const nextConfig = {
 	productionBrowserSourceMaps: true,
 };
 
-module.exports = extend(baseConfig).withPlugins([withTM], nextConfig);
+module.exports = withPlugins([
+	[
+		optimizedImages,
+		{
+			/* config for next-optimized-images (use default) */
+			imagesFolder: 'images',
+			imagePublicPolder: '/_next/static/images',
+			imageOutputPath: '/static/images',
+		},
+	],
+	baseConfig,
+	...withTM,
+]);
