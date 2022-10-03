@@ -1,10 +1,10 @@
+import { wei } from '@synthetixio/wei';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
-import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
-import { futuresMarketsState } from 'store/futures';
+import { futuresMarketsState, futuresVolumesState } from 'store/futures';
 import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
@@ -14,16 +14,29 @@ const FuturesMarkets = () => {
 	const { t } = useTranslation();
 
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
-
-	const dailyTradeStats = useGetFuturesDailyTradeStats();
+	const futuresVolumes = useRecoilValue(futuresVolumesState);
 
 	const openInterest = useMemo(() => {
 		return (
-			futuresMarkets
-				.map((market) => market.marketSize.mul(market.price).toNumber())
-				.reduce((total, openInterest) => total + openInterest, 0) ?? null
+			futuresMarkets.reduce(
+				(total, { openInterest }) =>
+					total.add(openInterest?.shortUSD ?? wei(0)).add(openInterest?.longUSD ?? wei(0)),
+				wei(0)
+			) ?? null
 		);
 	}, [futuresMarkets]);
+
+	const [trades, volume] = useMemo(() => {
+		const totalTrades = Object.values(futuresVolumes).reduce(
+			(total, { trades }) => total.add(trades),
+			wei(0)
+		);
+		const totalVolume = Object.values(futuresVolumes).reduce(
+			(total, { volume }) => total.add(volume),
+			wei(0)
+		);
+		return [totalTrades, totalVolume];
+	}, [futuresVolumes]);
 
 	return (
 		<div>
@@ -37,7 +50,7 @@ const FuturesMarkets = () => {
 							{t('dashboard.overview.futures-markets-table.daily-volume')}
 						</div>
 						<div className="value">
-							{formatDollars(dailyTradeStats.data?.totalVolume ?? zeroBN, {
+							{formatDollars(volume ?? zeroBN, {
 								minDecimals: 0,
 							})}
 						</div>
@@ -56,9 +69,7 @@ const FuturesMarkets = () => {
 						<div className="title">
 							{t('dashboard.overview.futures-markets-table.daily-trades')}
 						</div>
-						<div className="value">
-							{formatNumber(dailyTradeStats.data?.totalTrades ?? 0, { minDecimals: 0 })}
-						</div>
+						<div className="value">{formatNumber(trades ?? 0, { minDecimals: 0 })}</div>
 					</MarketStat>
 				</MarketStatsContainer>
 			</HeaderContainer>
