@@ -1,4 +1,4 @@
-import { CurrencyKey, NetworkId } from '@synthetixio/contracts-interface';
+import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { SynthBalancesMap } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
@@ -7,16 +7,14 @@ import { orderBy } from 'lodash';
 import { notNill } from 'queries/synths/utils';
 import { zeroBN } from 'utils/formatters/number';
 
-import { getContractsByNetwork } from './contracts';
+import { ContractMap, getContractsByNetwork } from './contracts';
 
 type SynthBalancesTuple = [string[], ethers.BigNumber[], ethers.BigNumber[]];
 
 export default class SynthsService {
-	private networkId: NetworkId;
 	private contracts: ReturnType<typeof getContractsByNetwork>;
 
-	constructor(networkId: NetworkId, contracts: ReturnType<typeof getContractsByNetwork>) {
-		this.networkId = networkId;
+	constructor(contracts: ContractMap) {
 		this.contracts = contracts;
 	}
 

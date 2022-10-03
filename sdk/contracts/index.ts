@@ -94,7 +94,7 @@ export const contracts: AllContractsMap = {
 
 const booleanTypeGuard = <T>(x: T | null): x is T => Boolean(x);
 
-const contractsByNetwork = (id: NetworkId) =>
+const contractsByNetwork = (id: NetworkId): ContractMap =>
 	Object.fromEntries(
 		Object.entries(contracts)
 			.map(([name, config]) => {
@@ -107,12 +107,12 @@ const contractsByNetwork = (id: NetworkId) =>
 			.filter(booleanTypeGuard)
 	);
 
-const mainnetContracts: ContractMap = contractsByNetwork(1);
-const optimismContracts: ContractMap = contractsByNetwork(10);
-const kovanContracts: ContractMap = contractsByNetwork(42);
-const optimismKovanContracts: ContractMap = contractsByNetwork(69);
-const goerliContracts: ContractMap = contractsByNetwork(5);
-const optimismGoerliContracts: ContractMap = contractsByNetwork(420);
+const mainnetContracts = contractsByNetwork(1);
+const optimismContracts = contractsByNetwork(10);
+const kovanContracts = contractsByNetwork(42);
+const optimismKovanContracts = contractsByNetwork(69);
+const goerliContracts = contractsByNetwork(5);
+const optimismGoerliContracts = contractsByNetwork(420);
 
 export const getContractsByNetwork = (networkId: NetworkId) => {
 	switch (NetworkNameById[networkId]) {
