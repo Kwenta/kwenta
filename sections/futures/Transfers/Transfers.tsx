@@ -96,6 +96,7 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: 
 				)
 			}
 			showPagination
+			pageSize={5}
 		/>
 	);
 };
