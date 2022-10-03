@@ -71,6 +71,32 @@ export const balancesState = atom<SynthBalances>({
 	},
 });
 
+export const portfolioState = selector({
+	key: getFuturesKey('portfolio'),
+	get: ({ get }) => {
+		const positions = get(positionsState);
+		const { freeMargin } = get(crossMarginAccountOverviewState);
+
+		const isolatedValue =
+			positions.isolated_margin.reduce(
+				(sum, { remainingMargin }) => sum.add(remainingMargin),
+				wei(0)
+			) ?? wei(0);
+		const crossValue =
+			positions.cross_margin.reduce(
+				(sum, { remainingMargin }) => sum.add(remainingMargin),
+				wei(0)
+			) ?? wei(0);
+		const totalValue = isolatedValue.add(crossValue).add(freeMargin);
+
+		return {
+			total: totalValue,
+			crossMarginFutures: crossValue.add(freeMargin),
+			isolatedMarginFutures: isolatedValue,
+		};
+	},
+});
+
 export const activeTabState = atom<number>({
 	key: getFuturesKey('activeTab'),
 	default: 0,

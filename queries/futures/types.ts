@@ -275,6 +275,11 @@ export type CrossMarginAccounts = Record<FactoryAddress, Record<Wallet, CrossMar
 
 export type FuturesPositionsState = Record<FuturesAccountType, FuturesPosition[]>;
 export type PositionHistoryState = Record<FuturesAccountType, PositionHistory[]>;
+export type Portfolio = {
+	total: Wei;
+	crossMarginFutures: Wei;
+	isolatedMarginFutures: Wei;
+};
 
 export type FuturesAccountState = {
 	walletAddress: string | null;

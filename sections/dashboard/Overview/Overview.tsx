@@ -1,5 +1,3 @@
-import useSynthetixQueries from '@synthetixio/queries';
-import { wei } from '@synthetixio/wei';
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -8,13 +6,11 @@ import styled from 'styled-components';
 import TabButton from 'components/Button/TabButton';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { TabPanel } from 'components/Tab';
-import Connector from 'containers/Connector';
 import { FuturesAccountTypes } from 'queries/futures/types';
-import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
-import { positionsState, ratesState } from 'store/futures';
+import { balancesState, portfolioState, positionsState, ratesState } from 'store/futures';
 import { activePositionsTabState } from 'store/ui';
-import { formatDollars, zeroBN } from 'utils/formatters/number';
+import { formatDollars } from 'utils/formatters/number';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
 import FuturesPositionsTable from '../FuturesPositionsTable';
@@ -33,29 +29,15 @@ export enum PositionsTab {
 const Overview: FC = () => {
 	const { t } = useTranslation();
 
-	const { useSynthsBalancesQuery } = useSynthetixQueries();
-
-	const portfolioValueQuery = useGetCurrentPortfolioValue();
-	const portfolioValue = portfolioValueQuery?.data ?? null;
-
+	const balances = useRecoilValue(balancesState);
+	const portfolio = useRecoilValue(portfolioState);
 	const exchangeRates = useRecoilValue(ratesState);
 	const positions = useRecoilValue(positionsState);
-
-	const { walletAddress } = Connector.useContainer();
-	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
-	const synthBalances =
-		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
-			? synthsBalancesQuery.data
-			: null;
 
 	const [activePositionsTab, setActivePositionsTab] = useRecoilState<PositionsTab>(
 		activePositionsTabState
 	);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
-
-	const totalSpotBalancesValue = formatDollars(wei(synthBalances?.totalUSDBalance ?? zeroBN));
-
-	const totalFuturesPortfolioValue = formatDollars(wei(portfolioValue ?? zeroBN));
 
 	const POSITIONS_TABS = useMemo(
 		() => [
@@ -64,7 +46,7 @@ const Overview: FC = () => {
 				label: t('dashboard.overview.positions-tabs.cross-margin'),
 				badge: positions[FuturesAccountTypes.CROSS_MARGIN].length,
 				active: activePositionsTab === PositionsTab.CROSS_MARGIN,
-				detail: totalFuturesPortfolioValue,
+				detail: formatDollars(portfolio.crossMarginFutures),
 				disabled: false,
 				onClick: () => setActivePositionsTab(PositionsTab.CROSS_MARGIN),
 			},
@@ -73,7 +55,7 @@ const Overview: FC = () => {
 				label: t('dashboard.overview.positions-tabs.isolated-margin'),
 				badge: positions[FuturesAccountTypes.ISOLATED_MARGIN].length,
 				active: activePositionsTab === PositionsTab.ISOLATED_MARGIN,
-				detail: totalFuturesPortfolioValue,
+				detail: formatDollars(portfolio.isolatedMarginFutures),
 				disabled: false,
 				onClick: () => setActivePositionsTab(PositionsTab.ISOLATED_MARGIN),
 			},
@@ -81,19 +63,12 @@ const Overview: FC = () => {
 				name: PositionsTab.SPOT,
 				label: t('dashboard.overview.positions-tabs.spot'),
 				active: activePositionsTab === PositionsTab.SPOT,
-				detail: totalSpotBalancesValue,
+				detail: formatDollars(balances.totalUSDBalance),
 				disabled: false,
 				onClick: () => setActivePositionsTab(PositionsTab.SPOT),
 			},
 		],
-		[
-			positions,
-			activePositionsTab,
-			setActivePositionsTab,
-			t,
-			totalFuturesPortfolioValue,
-			totalSpotBalancesValue,
-		]
+		[positions, balances, activePositionsTab, setActivePositionsTab, t, portfolio]
 	);
 
 	const MARKETS_TABS = useMemo(
@@ -135,10 +110,7 @@ const Overview: FC = () => {
 				</TabPanel>
 
 				<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}>
-					<SynthBalancesTable
-						synthBalances={synthBalances?.balances ?? []}
-						exchangeRates={exchangeRates}
-					/>
+					<SynthBalancesTable />
 				</TabPanel>
 
 				<TabButtonsContainer>

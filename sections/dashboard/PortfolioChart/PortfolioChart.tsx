@@ -1,23 +1,19 @@
-import useSynthetixQueries from '@synthetixio/queries';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-import Connector from 'containers/Connector';
-import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
-import { zeroBN } from 'utils/formatters/number';
+import { balancesState, portfolioState } from 'store/futures';
 
 const PortfolioChart: FC = () => {
-	const portfolioValueQuery = useGetCurrentPortfolioValue();
-	const portfolioValue = portfolioValueQuery?.data ?? null;
-	const { walletAddress } = Connector.useContainer();
+	const portfolio = useRecoilValue(portfolioState);
+	const balances = useRecoilValue(balancesState);
 
-	const { useSynthsBalancesQuery } = useSynthetixQueries();
-	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
-	const synthBalances = synthsBalancesQuery.data ?? null;
-
-	const total = (portfolioValue ?? zeroBN).add(synthBalances?.totalUSDBalance ?? zeroBN);
+	const total = useMemo(() => portfolio.total.add(balances.susdWalletBalance), [
+		portfolio,
+		balances,
+	]);
 
 	return (
 		<>

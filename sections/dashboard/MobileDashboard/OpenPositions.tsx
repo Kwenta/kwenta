@@ -1,5 +1,3 @@
-import useSynthetixQueries from '@synthetixio/queries';
-import { wei } from '@synthetixio/wei';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SetterOrUpdater, useRecoilValue } from 'recoil';
@@ -7,12 +5,10 @@ import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
-import Connector from 'containers/Connector';
 import { FuturesAccountTypes } from 'queries/futures/types';
-import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
-import { positionsState, ratesState } from 'store/futures';
-import { formatDollars, zeroBN } from 'utils/formatters/number';
+import { balancesState, portfolioState, positionsState } from 'store/futures';
+import { formatDollars } from 'utils/formatters/number';
 
 import FuturesPositionsTable from '../FuturesPositionsTable';
 import { MarketsTab } from '../Markets/Markets';
@@ -29,24 +25,9 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 	setActivePositionsTab,
 }) => {
 	const { t } = useTranslation();
-	const { walletAddress } = Connector.useContainer();
-	const { useSynthsBalancesQuery } = useSynthetixQueries();
-
-	const portfolioValueQuery = useGetCurrentPortfolioValue();
-	const portfolioValue = portfolioValueQuery?.data ?? null;
-
-	const exchangeRates = useRecoilValue(ratesState);
 	const positions = useRecoilValue(positionsState);
-
-	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
-	const synthBalances =
-		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
-			? synthsBalancesQuery.data
-			: null;
-
-	const totalSpotBalancesValue = formatDollars(wei(synthBalances?.totalUSDBalance ?? zeroBN));
-
-	const totalFuturesPortfolioValue = formatDollars(wei(portfolioValue ?? zeroBN));
+	const portfolio = useRecoilValue(portfolioState);
+	const balances = useRecoilValue(balancesState);
 
 	const POSITIONS_TABS = useMemo(
 		() => [
@@ -55,7 +36,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 				label: t('dashboard.overview.positions-tabs.cross-margin'),
 				badge: positions[FuturesAccountTypes.CROSS_MARGIN].length,
 				active: activePositionsTab === PositionsTab.CROSS_MARGIN,
-				detail: totalFuturesPortfolioValue,
+				detail: formatDollars(portfolio.crossMarginFutures),
 				disabled: false,
 				onClick: () => setActivePositionsTab(PositionsTab.CROSS_MARGIN),
 			},
@@ -64,7 +45,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 				label: t('dashboard.overview.positions-tabs.isolated-margin'),
 				badge: positions[FuturesAccountTypes.ISOLATED_MARGIN].length,
 				active: activePositionsTab === PositionsTab.ISOLATED_MARGIN,
-				detail: totalFuturesPortfolioValue,
+				detail: formatDollars(portfolio.isolatedMarginFutures),
 				disabled: false,
 				onClick: () => setActivePositionsTab(PositionsTab.ISOLATED_MARGIN),
 			},
@@ -72,19 +53,12 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 				name: PositionsTab.SPOT,
 				label: t('dashboard.overview.positions-tabs.spot'),
 				active: activePositionsTab === PositionsTab.SPOT,
-				detail: totalSpotBalancesValue,
+				detail: formatDollars(balances.totalUSDBalance),
 				disabled: false,
 				onClick: () => setActivePositionsTab(PositionsTab.SPOT),
 			},
 		],
-		[
-			positions,
-			activePositionsTab,
-			setActivePositionsTab,
-			t,
-			totalFuturesPortfolioValue,
-			totalSpotBalancesValue,
-		]
+		[positions, activePositionsTab, setActivePositionsTab, t, portfolio, balances]
 	);
 
 	return (
@@ -110,10 +84,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 			</TabPanel>
 
 			<TabPanel name={MarketsTab.SPOT} activeTab={activePositionsTab}>
-				<SynthBalancesTable
-					synthBalances={synthBalances?.balances ?? []}
-					exchangeRates={exchangeRates}
-				/>
+				<SynthBalancesTable />
 			</TabPanel>
 		</div>
 	);
