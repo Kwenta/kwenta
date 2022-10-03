@@ -14,7 +14,7 @@ import {
 	crossMarginMarginDeltaState,
 	currentMarketState,
 	futuresTradeInputsState,
-	potentialTradeDetailsState,
+	isAdvancedOrderState,
 } from 'store/futures';
 import { isUserDeniedError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
@@ -29,10 +29,10 @@ export default function TradeConfirmationModalCrossMargin() {
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const { estimateEthersContractTxCost } = useEstimateGasCost();
 
-	const { data: potentialTradeDetails } = useRecoilValue(potentialTradeDetailsState);
 	const marketAsset = useRecoilValue(currentMarketState);
 	const crossMarginMarginDelta = useRecoilValue(crossMarginMarginDeltaState);
 	const tradeInputs = useRecoilValue(futuresTradeInputsState);
+	const isAdvancedOrder = useRecoilValue(isAdvancedOrderState);
 
 	const { submitCrossMarginOrder, resetTradeState, tradeFees } = useFuturesContext();
 
@@ -66,8 +66,6 @@ export default function TradeConfirmationModalCrossMargin() {
 		tradeInputs.nativeSizeDelta,
 		estimateEthersContractTxCost,
 	]);
-
-	const tradeFee = tradeFees.crossMarginFee.add(potentialTradeDetails?.fee || 0);
 
 	const onDismiss = useCallback(() => {
 		setConfirmationModalOpen(false);
@@ -112,7 +110,8 @@ export default function TradeConfirmationModalCrossMargin() {
 		<TradeConfirmationModal
 			onDismiss={onDismiss}
 			onConfirmOrder={handleConfirmOrder}
-			tradeFee={tradeFee}
+			tradeFee={tradeFees.total}
+			keeperFee={isAdvancedOrder ? tradeFees.keeperEthDeposit : null}
 			gasFee={gasFee}
 			errorMessage={error}
 		/>

@@ -5,8 +5,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import useIsL2 from 'hooks/useIsL2';
-import { marketKeyState, futuresAccountState, positionState } from 'store/futures';
+import { marketKeyState, positionState, selectedFuturesAddressState } from 'store/futures';
 import { MarketAssetByKey } from 'utils/futures';
 
 import { FuturesPosition } from './types';
@@ -14,8 +13,7 @@ import { mapFuturesPosition, getFuturesMarketContract } from './utils';
 
 const useGetFuturesPositionForMarket = (options?: UseQueryOptions<FuturesPosition | null>) => {
 	const { defaultSynthetixjs: synthetixjs, network } = Connector.useContainer();
-	const isL2 = useIsL2();
-	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
+	const selectedFuturesAddress = useRecoilValue(selectedFuturesAddressState);
 	const market = useRecoilValue(marketKeyState);
 	const setPosition = useSetRecoilState(positionState);
 
@@ -26,14 +24,13 @@ const useGetFuturesPositionForMarket = (options?: UseQueryOptions<FuturesPositio
 			selectedFuturesAddress || ''
 		),
 		async () => {
-			const {
-				contracts: { FuturesMarketData },
-			} = synthetixjs!;
-
-			if (!market || !selectedFuturesAddress) {
+			if (!market || !selectedFuturesAddress || !synthetixjs) {
 				setPosition(null);
 				return null;
 			}
+			const {
+				contracts: { FuturesMarketData },
+			} = synthetixjs;
 
 			const [futuresPosition, canLiquidatePosition] = await Promise.all([
 				FuturesMarketData.positionDetailsForMarketKey(
@@ -56,7 +53,6 @@ const useGetFuturesPositionForMarket = (options?: UseQueryOptions<FuturesPositio
 			return position;
 		},
 		{
-			enabled: isL2 && !!selectedFuturesAddress && !!market && !!synthetixjs,
 			refetchInterval: 5000,
 			...options,
 		}

@@ -7,12 +7,12 @@ export type DetailedInfo = {
 	value: string | React.ReactNode;
 	keyNode?: React.ReactNode;
 	valueNode?: React.ReactNode;
-	color?: 'green' | 'red' | 'gold';
+	color?: 'green' | 'red' | 'gold' | undefined;
 	spaceBeneath?: boolean;
 };
 
 type InfoBoxProps = {
-	details: Record<string, DetailedInfo | null>;
+	details: Record<string, DetailedInfo | null | undefined>;
 	style?: React.CSSProperties;
 	className?: string;
 	disabled?: boolean;
@@ -23,7 +23,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className, disabled, 
 	return (
 		<InfoBoxContainer style={style} className={className}>
 			{Object.entries(details).map(([key, value], index) => {
-				if (value !== null) {
+				if (value) {
 					return (
 						<React.Fragment key={key}>
 							<div>

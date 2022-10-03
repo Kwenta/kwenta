@@ -48,6 +48,7 @@ const useConnector = () => {
 	}, [l2Synthetixjs]);
 
 	return {
+		activeChain,
 		unsupportedNetwork,
 		isWalletConnected,
 		walletAddress,
