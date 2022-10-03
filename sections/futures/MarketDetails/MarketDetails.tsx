@@ -11,6 +11,7 @@ import media from 'styles/media';
 import { formatDollars, formatPercent } from 'utils/formatters/number';
 
 import useGetMarketData from './useGetMarketData';
+import { isMarketDataKey, marketDataKeyMap } from './utils';
 
 type MarketDetailsProps = {
 	mobile?: boolean;
@@ -59,16 +60,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 		);
 	}, [marketInfo]);
 
-	const contentKeyMap: Record<string, string> = {
-		'External Price': 'external-price',
-		'24H Change': '24h-change',
-		'24H Volume': '24h-vol',
-		'24H Trades': '24H Trades',
-		'Open Interest': 'Open Interest',
-		'Inst. Funding Rate': '1h-funding-rate',
-		'1H Funding Rate': '1h-funding-rate',
-	};
-
 	return (
 		<MarketDetailsContainer mobile={mobile}>
 			{Object.entries(marketData).map(([key, { value, color }]) => {
@@ -95,13 +86,13 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 					);
 				}
 
-				if (Object.keys(contentKeyMap).includes(key)) {
+				if (isMarketDataKey(key)) {
 					return (
 						<MarketDetailsTooltip
 							key={key}
 							position={'fixed'}
 							height={'auto'}
-							content={t(`exchange.market-details-card.tooltips.${contentKeyMap[key]}`)}
+							content={t(`exchange.market-details-card.tooltips.${marketDataKeyMap[key]}`)}
 						>
 							{children}
 						</MarketDetailsTooltip>
