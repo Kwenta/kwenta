@@ -29,6 +29,7 @@ export default class KwentaSDK {
 
 		this.exchange = new ExchangeService(
 			networkId,
+			this.provider,
 			this.signer,
 			this.contracts,
 			this.multicallProvider
@@ -48,6 +49,7 @@ export default class KwentaSDK {
 
 		this.exchange = new ExchangeService(
 			networkId,
+			this.provider,
 			this.signer,
 			this.contracts,
 			this.multicallProvider

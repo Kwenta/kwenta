@@ -23,14 +23,14 @@ type Token = {
 	logoURI: string;
 };
 
-type OneInchQuoteResponse = {
+export type OneInchQuoteResponse = {
 	fromToken: Token;
 	toToken: Token;
 	toTokenAmount: string;
 	fromTokenAmount: string;
 };
 
-type OneInchSwapResponse = OneInchQuoteResponse & {
+export type OneInchSwapResponse = OneInchQuoteResponse & {
 	tx: {
 		from: string;
 		to: string;
@@ -41,7 +41,7 @@ type OneInchSwapResponse = OneInchQuoteResponse & {
 	};
 };
 
-type OneInchApproveSpenderResponse = {
+export type OneInchApproveSpenderResponse = {
 	address: string;
 };
 

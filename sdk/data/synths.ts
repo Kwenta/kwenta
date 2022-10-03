@@ -2,7 +2,7 @@ import { NetworkId, NetworkNameById } from '@synthetixio/contracts-interface';
 
 import { booleanTypeGuard } from '../contracts';
 
-type SynthSymbol =
+export type SynthSymbol =
 	| 'sAAVE'
 	| 'sADA'
 	| 'sAUD'
@@ -31,7 +31,7 @@ export type SynthToken = {
 	decimals: 18;
 };
 
-export type SynthsMap = Record<SynthSymbol, SynthToken>;
+export type SynthsMap = Partial<Record<SynthSymbol, SynthToken>>;
 
 type BasicSynth = {
 	name: string;
@@ -193,7 +193,7 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 // 10 - 0x8700dAec35aF8Ff88c16BdF0418774CB3D7599B4
 // 420 - 0x2E5ED97596a8368EB9E44B1f3F25B2E813845303
 
-const synthsByNetwork = (id: NetworkId): SynthsMap =>
+const synthsByNetwork = (id: NetworkId): Partial<SynthsMap> =>
 	Object.fromEntries(
 		Object.entries(synths)
 			.map(([symbol, config]) => {
@@ -217,8 +217,6 @@ const synthsByNetwork = (id: NetworkId): SynthsMap =>
 
 const mainnetSynths = synthsByNetwork(1);
 const optimismSynths = synthsByNetwork(10);
-const kovanSynths = synthsByNetwork(42);
-const optimismKovanSynths = synthsByNetwork(69);
 const goerliSynths = synthsByNetwork(5);
 const optimismGoerliSynths = synthsByNetwork(420);
 
@@ -228,10 +226,6 @@ export const getSynthsForNetwork = (networkId: NetworkId) => {
 			return mainnetSynths;
 		case 'mainnet-ovm':
 			return optimismSynths;
-		case 'kovan':
-			return kovanSynths;
-		case 'kovan-ovm':
-			return optimismKovanSynths;
 		case 'goerli':
 			return goerliSynths;
 		case 'goerli-ovm':
