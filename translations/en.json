@@ -504,7 +504,7 @@
 					"title": "Escrow",
 					"date-time": "Date/Time",
 					"time-until-vestable": "Time Until Vestable",
-					"immediately-vestable": "immediately Vestable",
+					"immediately-vestable": "Immediately Vestable",
 					"amount": "Amount",
 					"early-vest-fee": "Early Vest Fee",
 					"status": "Status",

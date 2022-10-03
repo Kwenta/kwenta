@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
@@ -14,51 +14,71 @@ import { StakingCard } from './common';
 type EscrowRow = {
 	date: string;
 	time: string;
-	vestable: string;
-	amount: string;
-	fee: string;
-	status: string;
+	vestable: number;
+	amount: number;
+	fee: number;
+	status: 'VESTED' | 'VESTING';
+	selected: boolean;
 };
+
+const data: EscrowRow[] = [
+	{
+		date: '02/02/22',
+		time: '2D:1H:32M',
+		vestable: 0.2,
+		amount: 10,
+		fee: 0.2,
+		status: 'VESTED',
+		selected: false,
+	},
+	{
+		date: '02/02/22',
+		time: '2D:1H:32M',
+		vestable: 0.2,
+		amount: 10,
+		fee: 0.2,
+		status: 'VESTING',
+		selected: false,
+	},
+	{
+		date: '02/02/22',
+		time: '2D:1H:32M',
+		vestable: 0.2,
+		amount: 10,
+		fee: 0.2,
+		status: 'VESTING',
+		selected: false,
+	},
+	{
+		date: '02/02/22',
+		time: '2D:1H:32M',
+		vestable: 0.2,
+		amount: 10,
+		fee: 0.2,
+		status: 'VESTING',
+		selected: false,
+	},
+];
 
 const EscrowTable = () => {
 	const { t } = useTranslation();
-	const data: EscrowRow[] = useMemo(
-		() => [
-			{
-				date: '02/02/22',
-				time: '2D:1H:32M',
-				vestable: '0.2 KWENTA',
-				amount: '10 KWENTA',
-				fee: '0.2 KWENTA',
-				status: 'VESTED',
-			},
-			{
-				date: '02/02/22',
-				time: '2D:1H:32M',
-				vestable: '0.2 KWENTA',
-				amount: '10 KWENTA',
-				fee: '0.2 KWENTA',
-				status: 'VESTING',
-			},
-			{
-				date: '02/02/22',
-				time: '2D:1H:32M',
-				vestable: '0.2 KWENTA',
-				amount: '10 KWENTA',
-				fee: '0.2 KWENTA',
-				status: 'VESTING',
-			},
-			{
-				date: '02/02/22',
-				time: '2D:1H:32M',
-				vestable: '0.2 KWENTA',
-				amount: '10 KWENTA',
-				fee: '0.2 KWENTA',
-				status: 'VESTING',
-			},
-		],
-		[]
-	);
+	const [, setCheckedState] = useState(data.map((d) => d.selected));
+	const handleOnChange = (position: number) => {
+		data[position].selected = !data[position].selected;
+		setCheckedState(data.map((d) => d.selected));
+	};
+
+	const selectAll = () => {
+		data.forEach((d) => (d.selected = !d.selected));
+		setCheckedState(data.map((d) => d.selected));
+	};
+
+	const totalAmount = data
+		.filter((d) => d.selected)
+		.reduce((acc, current) => acc + current.amount, 0);
+
+	const totalFee = data.filter((d) => d.selected).reduce((acc, current) => acc + current.fee, 0);
+
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
 
@@ -69,15 +89,14 @@ const EscrowTable = () => {
 					data={data}
 					columns={[
 						{
-							Header: () => (
-								<div>
-									<input type="checkbox" />
-								</div>
-							),
-							Cell: () => (
-								<div>
-									<input type="checkbox" />
-								</div>
+							Header: () => <input type="checkbox" onChange={() => selectAll()} />,
+							Cell: (cellProps: CellProps<EscrowRow>) => (
+								<input
+									key={cellProps.row.index}
+									type="checkbox"
+									checked={data[cellProps.row.index].selected}
+									onChange={() => handleOnChange(cellProps.row.index)}
+								/>
 							),
 							accessor: 'selected',
 							width: 40,
@@ -113,7 +132,10 @@ const EscrowTable = () => {
 								</TableHeader>
 							),
 							Cell: (cellProps: CellProps<EscrowRow>) => (
-								<TableCell $darkTheme={isDarkTheme}>{cellProps.row.original.vestable}</TableCell>
+								<TableCell $darkTheme={isDarkTheme}>
+									{cellProps.row.original.vestable}{' '}
+									{t('dashboard.stake.tabs.stake-table.kwenta-token')}
+								</TableCell>
 							),
 							accessor: 'immediatelyVestable',
 							width: 80,
@@ -125,7 +147,10 @@ const EscrowTable = () => {
 								</TableHeader>
 							),
 							Cell: (cellProps: CellProps<EscrowRow>) => (
-								<TableCell $darkTheme={isDarkTheme}>{cellProps.row.original.amount}</TableCell>
+								<TableCell $darkTheme={isDarkTheme}>
+									{cellProps.row.original.amount}{' '}
+									{t('dashboard.stake.tabs.stake-table.kwenta-token')}
+								</TableCell>
 							),
 							accessor: 'amount',
 							width: 80,
@@ -137,7 +162,9 @@ const EscrowTable = () => {
 								</TableHeader>
 							),
 							Cell: (cellProps: CellProps<EscrowRow>) => (
-								<TableCell $darkTheme={isDarkTheme}>{cellProps.row.original.fee}</TableCell>
+								<TableCell $darkTheme={isDarkTheme}>
+									{cellProps.row.original.fee} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
+								</TableCell>
 							),
 							accessor: 'earlyVestFee',
 							width: 80,
@@ -152,7 +179,7 @@ const EscrowTable = () => {
 								<TableCell $darkTheme={isDarkTheme}>{cellProps.row.original.status}</TableCell>
 							),
 							accessor: 'status',
-							width: 80,
+							width: 70,
 						},
 					]}
 				/>
@@ -162,15 +189,14 @@ const EscrowTable = () => {
 					data={data}
 					columns={[
 						{
-							Header: () => (
-								<div>
-									<input type="checkbox" />
-								</div>
-							),
-							Cell: () => (
-								<div>
-									<input type="checkbox" />
-								</div>
+							Header: () => <input type="checkbox" onChange={() => selectAll()} />,
+							Cell: (cellProps: CellProps<EscrowRow>) => (
+								<input
+									key={cellProps.row.index}
+									type="checkbox"
+									checked={data[cellProps.row.index].selected}
+									onChange={() => handleOnChange(cellProps.row.index)}
+								/>
 							),
 							accessor: 'selected',
 							width: 40,
@@ -182,7 +208,10 @@ const EscrowTable = () => {
 								</TableHeader>
 							),
 							Cell: (cellProps: CellProps<EscrowRow>) => (
-								<TableCell $darkTheme={isDarkTheme}>{cellProps.row.original.amount}</TableCell>
+								<TableCell $darkTheme={isDarkTheme}>
+									{cellProps.row.original.amount}{' '}
+									{t('dashboard.stake.tabs.stake-table.kwenta-token')}
+								</TableCell>
 							),
 							accessor: 'amount',
 							width: 80,
@@ -194,7 +223,9 @@ const EscrowTable = () => {
 								</TableHeader>
 							),
 							Cell: (cellProps: CellProps<EscrowRow>) => (
-								<TableCell $darkTheme={isDarkTheme}>{cellProps.row.original.fee}</TableCell>
+								<TableCell $darkTheme={isDarkTheme}>
+									{cellProps.row.original.fee} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
+								</TableCell>
 							),
 							accessor: 'earlyVestFee',
 							width: 80,
@@ -209,7 +240,7 @@ const EscrowTable = () => {
 								<TableCell $darkTheme={isDarkTheme}>{cellProps.row.original.status}</TableCell>
 							),
 							accessor: 'status',
-							width: 80,
+							width: 70,
 						},
 					]}
 				/>
@@ -218,11 +249,15 @@ const EscrowTable = () => {
 				<div>
 					<div>
 						<div className="stat-title">{t('dashboard.stake.tabs.escrow.total')}</div>
-						<div className="stat-value">10 KWENTA</div>
+						<div className="stat-value">
+							{totalAmount.toFixed(2)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
+						</div>
 					</div>
 					<div>
 						<div className="stat-title">{t('dashboard.stake.tabs.escrow.fee')}</div>
-						<div className="stat-value">10 KWENTA</div>
+						<div className="stat-value">
+							{totalFee.toFixed(2)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
+						</div>
 					</div>
 					<VestButton $darkTheme={isDarkTheme}>{t('dashboard.stake.tabs.escrow.vest')}</VestButton>
 				</div>
