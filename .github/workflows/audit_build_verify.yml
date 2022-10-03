@@ -42,7 +42,7 @@ jobs:
         continue-on-error: true
 
       - name: Cache node modules
-        uses: actions/cache@ac8075791e805656e71b4ba23325ace9e3421120 # pin@v3
+        uses: actions/cache@56461b9eb0f8438fd15c7a9968e3c9ebb18ceff1 # pin@v3
         with:
           path: |
             .npm-cache
@@ -98,7 +98,7 @@ jobs:
         continue-on-error: true
 
       - name: Cache node modules
-        uses: actions/cache@ac8075791e805656e71b4ba23325ace9e3421120 # pin@v3
+        uses: actions/cache@56461b9eb0f8438fd15c7a9968e3c9ebb18ceff1 # pin@v3
         with:
           path: |
             .npm-cache
@@ -119,7 +119,7 @@ jobs:
           npm install --prefer-offline --no-audit --legacy-peer-deps
 
       - name: Cache next.js build cache
-        uses: actions/cache@ac8075791e805656e71b4ba23325ace9e3421120 # pin@v2
+        uses: actions/cache@56461b9eb0f8438fd15c7a9968e3c9ebb18ceff1 # pin@v2
         with:
           path: .next/cache
           key: ${{ runner.os }}-next-cache-${{ hashFiles('**/package-lock.json') }}
