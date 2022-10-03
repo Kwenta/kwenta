@@ -8,8 +8,13 @@ import { positionHistoryState } from 'store/futures';
 import logError from 'utils/logError';
 
 import { getFuturesPositions } from './subgraph';
-import { PositionHistory } from './types';
+import { FuturesAccountTypes, PositionHistory, PositionHistoryState } from './types';
 import { getFuturesEndpoint, mapFuturesPositions } from './utils';
+
+const DEFAULT_POSITION_HISTORY: PositionHistoryState = {
+	[FuturesAccountTypes.CROSS_MARGIN]: [],
+	[FuturesAccountTypes.ISOLATED_MARGIN]: [],
+};
 
 const useGetFuturesPositionForAccount = (account?: string, options?: UseQueryOptions<any>) => {
 	const { network, walletAddress } = Connector.useContainer();
@@ -17,12 +22,12 @@ const useGetFuturesPositionForAccount = (account?: string, options?: UseQueryOpt
 	const setPositionHistory = useSetRecoilState(positionHistoryState);
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
-	return useQuery<PositionHistory[]>(
+	return useQuery<PositionHistoryState>(
 		QUERY_KEYS.Futures.AccountPositions(account ?? walletAddress, network.id as NetworkId),
 		async () => {
 			if (!walletAddress) {
-				if (!account) setPositionHistory([]);
-				return [];
+				if (!account) setPositionHistory(DEFAULT_POSITION_HISTORY);
+				return DEFAULT_POSITION_HISTORY;
 			}
 
 			try {
@@ -65,12 +70,32 @@ const useGetFuturesPositionForAccount = (account?: string, options?: UseQueryOpt
 					}
 				);
 				const positionHistory = response ? mapFuturesPositions(response) : [];
-				if (!account) setPositionHistory(positionHistory);
-				return positionHistory;
+
+				const positionHistoryByType = positionHistory.reduce(
+					(acc: PositionHistoryState, position: PositionHistory) => {
+						const accountType = position.accountType;
+
+						// make sure it's not a duplicate before adding to the list
+						const existingPositionId = acc[accountType].findIndex((pos) => pos.id === position.id);
+						if (
+							existingPositionId === -1 ||
+							position.timestamp > acc[accountType][existingPositionId].timestamp
+						)
+							acc[accountType] = [
+								position,
+								...acc[accountType].filter(({ id }) => id !== existingPositionId),
+							];
+						return acc;
+					},
+					DEFAULT_POSITION_HISTORY
+				);
+
+				if (!account) setPositionHistory(positionHistoryByType);
+				return positionHistoryByType;
 			} catch (e) {
 				logError(e);
-				if (!account) setPositionHistory([]);
-				return [];
+				if (!account) setPositionHistory(DEFAULT_POSITION_HISTORY);
+				return DEFAULT_POSITION_HISTORY;
 			}
 		},
 		{

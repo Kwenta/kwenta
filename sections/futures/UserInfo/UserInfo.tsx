@@ -21,7 +21,6 @@ import {
 	currentMarketState,
 	futuresAccountTypeState,
 	openOrdersState,
-	positionHistoryState,
 	positionState,
 } from 'store/futures';
 
@@ -48,7 +47,6 @@ const UserInfo: React.FC = () => {
 	const { walletAddress } = Connector.useContainer();
 
 	const position = useRecoilValue(positionState);
-	const positionHistory = useRecoilValue(positionHistoryState);
 	const marketAsset = useRecoilValue(currentMarketState);
 	const openOrders = useRecoilValue(openOrdersState);
 	const accountType = useRecoilValue(futuresAccountTypeState);
@@ -223,7 +221,6 @@ const UserInfo: React.FC = () => {
 					position={position}
 					marketAsset={marketAsset}
 					setShowShareModal={setShowShareModal}
-					futuresPositionHistory={positionHistory}
 				/>
 			)}
 		</>

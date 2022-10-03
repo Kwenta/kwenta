@@ -14,9 +14,10 @@ import {
 	FuturesTradeInputs,
 	FuturesOrderType,
 	FuturesVolumes,
-	PositionHistory,
 	CrossMarginAccounts,
 	FuturesPositionsState,
+	PositionHistoryState,
+	FuturesAccountTypes,
 } from 'queries/futures/types';
 import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import { Price, Rates } from 'queries/rates/types';
@@ -80,9 +81,12 @@ export const positionState = atom<FuturesPosition | null>({
 	default: null,
 });
 
-export const positionHistoryState = atom<PositionHistory[]>({
+export const positionHistoryState = atom<PositionHistoryState>({
 	key: getFuturesKey('positionHistory'),
-	default: [],
+	default: {
+		[FuturesAccountTypes.CROSS_MARGIN]: [],
+		[FuturesAccountTypes.ISOLATED_MARGIN]: [],
+	},
 });
 
 export const allPositionsState = atom<FuturesPositionsState>({

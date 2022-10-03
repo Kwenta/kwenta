@@ -15,6 +15,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { PositionSide } from 'queries/futures/types';
 import {
 	currentMarketState,
+	futuresAccountTypeState,
 	marketKeyState,
 	positionHistoryState,
 	positionState,
@@ -65,6 +66,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 	const position = useRecoilValue(positionState);
 	const marketAsset = useRecoilValue(currentMarketState);
 	const marketKey = useRecoilValue(marketKeyState);
+	const futuresAccountType = useRecoilValue(futuresAccountTypeState);
 
 	const positionDetails = position?.position ?? null;
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketKey);
@@ -81,8 +83,10 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			: undefined;
 
 	const thisPositionHistory = useMemo(() => {
-		return positionHistory.find(({ asset, isOpen }) => isOpen && asset === marketAsset);
-	}, [positionHistory, marketAsset]);
+		return positionHistory[futuresAccountType].find(
+			({ asset, isOpen }) => isOpen && asset === marketAsset
+		);
+	}, [positionHistory, marketAsset, futuresAccountType]);
 
 	const { marketAssetRate } = useFuturesContext();
 

@@ -56,7 +56,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 			.map((position) => {
 				const market = futuresMarkets.find((market) => market.asset === position.asset);
 				const description = getSynthDescription(position.asset, synthsMap, t);
-				const thisPositionHistory = positionHistory.find((positionHistory) => {
+				const thisPositionHistory = positionHistory[accountType].find((positionHistory) => {
 					return positionHistory.isOpen && positionHistory.asset === position.asset;
 				});
 

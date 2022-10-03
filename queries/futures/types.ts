@@ -274,6 +274,7 @@ type FactoryAddress = string;
 export type CrossMarginAccounts = Record<FactoryAddress, Record<Wallet, CrossMarginAccount>>;
 
 export type FuturesPositionsState = Record<FuturesAccountType, FuturesPosition[]>;
+export type PositionHistoryState = Record<FuturesAccountType, PositionHistory[]>;
 
 export type FuturesAccountState = {
 	walletAddress: string | null;

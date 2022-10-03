@@ -9,6 +9,7 @@ import {
 	potentialTradeDetailsState,
 	futuresTradeInputsState,
 	positionHistoryState,
+	futuresAccountTypeState,
 } from 'store/futures';
 
 export default function PositionChart() {
@@ -16,12 +17,13 @@ export default function PositionChart() {
 	const marketAsset = useRecoilValue(currentMarketState);
 	const position = useRecoilValue(positionState);
 	const positionHistory = useRecoilValue(positionHistoryState);
+	const futuresAccountType = useRecoilValue(futuresAccountTypeState);
 
 	const { data: previewTrade } = useRecoilValue(potentialTradeDetailsState);
 
 	const subgraphPosition = useMemo(() => {
-		return positionHistory.find((p) => p.isOpen && p.asset === marketAsset);
-	}, [positionHistory, marketAsset]);
+		return positionHistory[futuresAccountType].find((p) => p.isOpen && p.asset === marketAsset);
+	}, [positionHistory, marketAsset, futuresAccountType]);
 
 	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
 
