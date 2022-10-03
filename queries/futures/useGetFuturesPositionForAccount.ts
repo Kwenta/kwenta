@@ -16,7 +16,10 @@ const DEFAULT_POSITION_HISTORY: PositionHistoryState = {
 	[FuturesAccountTypes.ISOLATED_MARGIN]: [],
 };
 
-const useGetFuturesPositionForAccount = (account?: string, options?: UseQueryOptions<any>) => {
+const useGetFuturesPositionForAccount = (
+	account?: string,
+	options?: UseQueryOptions<PositionHistoryState>
+) => {
 	const { network, walletAddress } = Connector.useContainer();
 
 	const setPositionHistory = useSetRecoilState(positionHistoryState);

@@ -8,7 +8,8 @@ import styled, { useTheme } from 'styled-components';
 import Button from 'components/Button';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Select from 'components/Select';
-import { balancesState, positionsState } from 'store/futures';
+import { FuturesAccountTypes } from 'queries/futures/types';
+import { positionsState, balancesState } from 'store/futures';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { zeroBN, formatDollars } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
@@ -26,8 +27,16 @@ const BalanceActions: FC = () => {
 	const theme = useTheme();
 	const router = useRouter();
 
-	const futuresPositions = useRecoilValue(positionsState);
+	const positions = useRecoilValue(positionsState);
 	const { susdWalletBalance } = useRecoilValue(balancesState);
+
+	const futuresPositions = useMemo(
+		() => [
+			...positions[FuturesAccountTypes.ISOLATED_MARGIN],
+			...positions[FuturesAccountTypes.CROSS_MARGIN],
+		],
+		[positions]
+	);
 
 	const accessiblePositions = useMemo(
 		() => futuresPositions?.filter((position) => position.remainingMargin.gt(zeroBN)) ?? [],

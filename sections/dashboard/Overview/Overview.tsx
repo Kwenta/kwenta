@@ -12,7 +12,7 @@ import Connector from 'containers/Connector';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
-import { allPositionsState, ratesState } from 'store/futures';
+import { positionsState, ratesState } from 'store/futures';
 import { activePositionsTabState } from 'store/ui';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 
@@ -39,7 +39,7 @@ const Overview: FC = () => {
 	const portfolioValue = portfolioValueQuery?.data ?? null;
 
 	const exchangeRates = useRecoilValue(ratesState);
-	const allPositions = useRecoilValue(allPositionsState);
+	const positions = useRecoilValue(positionsState);
 
 	const { walletAddress } = Connector.useContainer();
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
@@ -62,7 +62,7 @@ const Overview: FC = () => {
 			{
 				name: PositionsTab.CROSS_MARGIN,
 				label: t('dashboard.overview.positions-tabs.cross-margin'),
-				badge: allPositions[FuturesAccountTypes.CROSS_MARGIN].length,
+				badge: positions[FuturesAccountTypes.CROSS_MARGIN].length,
 				active: activePositionsTab === PositionsTab.CROSS_MARGIN,
 				detail: totalFuturesPortfolioValue,
 				disabled: false,
@@ -71,7 +71,7 @@ const Overview: FC = () => {
 			{
 				name: PositionsTab.ISOLATED_MARGIN,
 				label: t('dashboard.overview.positions-tabs.isolated-margin'),
-				badge: allPositions[FuturesAccountTypes.ISOLATED_MARGIN].length,
+				badge: positions[FuturesAccountTypes.ISOLATED_MARGIN].length,
 				active: activePositionsTab === PositionsTab.ISOLATED_MARGIN,
 				detail: totalFuturesPortfolioValue,
 				disabled: false,
@@ -87,7 +87,7 @@ const Overview: FC = () => {
 			},
 		],
 		[
-			allPositions,
+			positions,
 			activePositionsTab,
 			setActivePositionsTab,
 			t,

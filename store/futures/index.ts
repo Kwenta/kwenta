@@ -89,17 +89,12 @@ export const positionHistoryState = atom<PositionHistoryState>({
 	},
 });
 
-export const allPositionsState = atom<FuturesPositionsState>({
-	key: getFuturesKey('allPositions'),
+export const positionsState = atom<FuturesPositionsState>({
+	key: getFuturesKey('positions'),
 	default: {
 		cross_margin: [],
 		isolated_margin: [],
 	},
-});
-
-export const positionsState = atom<FuturesPosition[]>({
-	key: getFuturesKey('positions'),
-	default: [],
 });
 
 export const futuresMarketsState = atom<FuturesMarket[]>({

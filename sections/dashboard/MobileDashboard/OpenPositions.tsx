@@ -11,7 +11,7 @@ import Connector from 'containers/Connector';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
-import { allPositionsState, ratesState } from 'store/futures';
+import { positionsState, ratesState } from 'store/futures';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 
 import FuturesPositionsTable from '../FuturesPositionsTable';
@@ -36,7 +36,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 	const portfolioValue = portfolioValueQuery?.data ?? null;
 
 	const exchangeRates = useRecoilValue(ratesState);
-	const allPositions = useRecoilValue(allPositionsState);
+	const positions = useRecoilValue(positionsState);
 
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const synthBalances =
@@ -53,7 +53,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 			{
 				name: PositionsTab.CROSS_MARGIN,
 				label: t('dashboard.overview.positions-tabs.cross-margin'),
-				badge: allPositions[FuturesAccountTypes.CROSS_MARGIN].length,
+				badge: positions[FuturesAccountTypes.CROSS_MARGIN].length,
 				active: activePositionsTab === PositionsTab.CROSS_MARGIN,
 				detail: totalFuturesPortfolioValue,
 				disabled: false,
@@ -62,7 +62,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 			{
 				name: PositionsTab.ISOLATED_MARGIN,
 				label: t('dashboard.overview.positions-tabs.isolated-margin'),
-				badge: allPositions[FuturesAccountTypes.ISOLATED_MARGIN].length,
+				badge: positions[FuturesAccountTypes.ISOLATED_MARGIN].length,
 				active: activePositionsTab === PositionsTab.ISOLATED_MARGIN,
 				detail: totalFuturesPortfolioValue,
 				disabled: false,
@@ -78,7 +78,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 			},
 		],
 		[
-			allPositions,
+			positions,
 			activePositionsTab,
 			setActivePositionsTab,
 			t,

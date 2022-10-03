@@ -20,7 +20,7 @@ import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesAccountType } from 'queries/futures/subgraph';
 import {
-	allPositionsState,
+	positionsState,
 	currentMarketState,
 	futuresMarketsState,
 	positionHistoryState,
@@ -46,13 +46,13 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 	const isL2 = useIsL2();
 
-	const allPositions = useRecoilValue(allPositionsState);
+	const positions = useRecoilValue(positionsState);
 	const positionHistory = useRecoilValue(positionHistoryState);
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 	const currentMarket = useRecoilValue(currentMarketState);
 
 	let data = useMemo(() => {
-		return allPositions[accountType]
+		return positions[accountType]
 			.map((position) => {
 				const market = futuresMarkets.find((market) => market.asset === position.asset);
 				const description = getSynthDescription(position.asset, synthsMap, t);
@@ -72,7 +72,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					position.position && (position?.market?.asset !== currentMarket || showCurrentMarket)
 			);
 	}, [
-		allPositions,
+		positions,
 		accountType,
 		futuresMarkets,
 		positionHistory,
