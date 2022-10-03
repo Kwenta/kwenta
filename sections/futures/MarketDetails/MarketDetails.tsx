@@ -24,7 +24,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 
 	const pausedClass = marketInfo?.isSuspended ? 'paused' : '';
 
-	const data = useGetMarketData(mobile);
+	const marketData = useGetMarketData(mobile);
 
 	const lastOracleUpdateTimeQuery = useRateUpdateQuery({
 		baseCurrencyKey: marketAsset,
@@ -59,98 +59,21 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 		);
 	}, [marketInfo]);
 
-	const enableTooltip = (key: string, children: React.ReactElement) => {
-		switch (key) {
-			case 'External Price':
-				return (
-					<MarketDetailsTooltip
-						position={'fixed'}
-						key={key}
-						height={'auto'}
-						content={t('exchange.market-details-card.tooltips.external-price')}
-					>
-						{children}
-					</MarketDetailsTooltip>
-				);
-			case '24H Change':
-				return (
-					<MarketDetailsTooltip
-						key={key}
-						position={'fixed'}
-						height={'auto'}
-						content={t('exchange.market-details-card.tooltips.24h-change')}
-					>
-						{children}
-					</MarketDetailsTooltip>
-				);
-			case '24H Volume':
-				return (
-					<MarketDetailsTooltip
-						key={key}
-						position={'fixed'}
-						height={'auto'}
-						content={t('exchange.market-details-card.tooltips.24h-vol')}
-					>
-						{children}
-					</MarketDetailsTooltip>
-				);
-			case '24H Trades':
-				return (
-					<MarketDetailsTooltip
-						key={key}
-						position={'fixed'}
-						height={'auto'}
-						content={t('exchange.market-details-card.tooltips.24h-trades')}
-					>
-						{children}
-					</MarketDetailsTooltip>
-				);
-			case 'Open Interest':
-				return (
-					<MarketDetailsTooltip
-						key={key}
-						position={'fixed'}
-						height={'auto'}
-						content={t('exchange.market-details-card.tooltips.open-interest')}
-					>
-						{children}
-					</MarketDetailsTooltip>
-				);
-			case marketInfo?.marketName:
-				return (
-					<TimerTooltip
-						position={'fixed'}
-						key={key}
-						startTimeDate={lastOracleUpdateTime}
-						width={'131px'}
-					>
-						{children}
-					</TimerTooltip>
-				);
-			case 'Inst. Funding Rate':
-			case '1H Funding Rate':
-				return (
-					<MarketDetailsTooltip
-						key={key}
-						position={'fixed'}
-						height={'auto'}
-						content={t('exchange.market-details-card.tooltips.1h-funding-rate')}
-					>
-						{children}
-					</MarketDetailsTooltip>
-				);
-			default:
-				return children;
-		}
+	const contentKeyMap: Record<string, string> = {
+		'External Price': 'external-price',
+		'24H Change': '24h-change',
+		'24H Volume': '24h-vol',
+		'24H Trades': '24H Trades',
+		'Open Interest': 'Open Interest',
+		'Inst. Funding Rate': '1h-funding-rate',
+		'1H Funding Rate': '1h-funding-rate',
 	};
 
 	return (
 		<MarketDetailsContainer mobile={mobile}>
-			{Object.entries(data).map(([key, { value, color }]) => {
+			{Object.entries(marketData).map(([key, { value, color }]) => {
 				const colorClass = color || '';
-
-				return enableTooltip(
-					key,
+				const children = (
 					<WithCursor cursor="help" key={key}>
 						<div key={key}>
 							<p className="heading">{key}</p>
@@ -158,6 +81,34 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 						</div>
 					</WithCursor>
 				);
+
+				if (key === marketInfo?.marketName) {
+					return (
+						<TimerTooltip
+							position={'fixed'}
+							key={key}
+							startTimeDate={lastOracleUpdateTime}
+							width={'131px'}
+						>
+							{children}
+						</TimerTooltip>
+					);
+				}
+
+				if (Object.keys(contentKeyMap).includes(key)) {
+					return (
+						<MarketDetailsTooltip
+							key={key}
+							position={'fixed'}
+							height={'auto'}
+							content={t(`exchange.market-details-card.tooltips.${contentKeyMap[key]}`)}
+						>
+							{children}
+						</MarketDetailsTooltip>
+					);
+				}
+
+				return children;
 			})}
 
 			{mobile && (
