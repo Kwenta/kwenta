@@ -8,7 +8,7 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { TabPanel } from 'components/Tab';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
-import { balancesState, portfolioState, positionsState, ratesState } from 'store/futures';
+import { balancesState, portfolioState, positionsState } from 'store/futures';
 import { activePositionsTabState } from 'store/ui';
 import { formatDollars } from 'utils/formatters/number';
 
@@ -31,7 +31,6 @@ const Overview: FC = () => {
 
 	const balances = useRecoilValue(balancesState);
 	const portfolio = useRecoilValue(portfolioState);
-	const exchangeRates = useRecoilValue(ratesState);
 	const positions = useRecoilValue(positionsState);
 
 	const [activePositionsTab, setActivePositionsTab] = useRecoilState<PositionsTab>(
@@ -123,7 +122,7 @@ const Overview: FC = () => {
 				</TabPanel>
 
 				<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
-					<SpotMarketsTable exchangeRates={exchangeRates} />
+					<SpotMarketsTable />
 				</TabPanel>
 			</DesktopOnlyView>
 			<MobileOrTabletView>

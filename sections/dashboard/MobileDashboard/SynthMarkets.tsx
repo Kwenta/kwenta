@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 
 import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
-import { futuresMarketsState, ratesState } from 'store/futures';
+import { futuresMarketsState } from 'store/futures';
 import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 
 import SpotMarketsTable from '../SpotMarketsTable';
@@ -13,7 +13,6 @@ import { HeaderContainer, MarketStatsContainer, MarketStat } from './common';
 const SynthMarkets: React.FC = () => {
 	const { t } = useTranslation();
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
-	const exchangeRates = useRecoilValue(ratesState);
 
 	const dailyTradeStats = useGetFuturesDailyTradeStats();
 
@@ -55,7 +54,7 @@ const SynthMarkets: React.FC = () => {
 				</MarketStatsContainer>
 			</HeaderContainer>
 
-			<SpotMarketsTable exchangeRates={exchangeRates} />
+			<SpotMarketsTable />
 		</div>
 	);
 };
