@@ -32,7 +32,7 @@ const map: Record<typeof markets[number], string> = {
 	sAPE: 'apecoin',
 };
 
-enum MarketDataKey {
+export enum MarketDataKey {
 	externalPrice = 'External Price',
 	dailyChange = '24H Change',
 	dailyVolume = '24H Volume',
