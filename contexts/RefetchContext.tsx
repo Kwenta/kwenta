@@ -79,6 +79,7 @@ export const RefetchProvider: React.FC = ({ children }) => {
 					break;
 				case 'close-position':
 					positionQuery.refetch();
+					positionsQuery.refetch();
 					positionHistoryQuery.refetch();
 					openOrdersQuery.refetch();
 					break;
