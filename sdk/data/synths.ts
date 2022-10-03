@@ -1,4 +1,6 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
+import { NetworkId, NetworkNameById } from '@synthetixio/contracts-interface';
+
+import { booleanTypeGuard } from '../contracts';
 
 type SynthSymbol =
 	| 'sAAVE'
@@ -28,6 +30,8 @@ export type SynthToken = {
 	address: string;
 	decimals: 18;
 };
+
+export type SynthsMap = Record<SynthSymbol, SynthToken>;
 
 type BasicSynth = {
 	name: string;
@@ -189,4 +193,50 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 // 10 - 0x8700dAec35aF8Ff88c16BdF0418774CB3D7599B4
 // 420 - 0x2E5ED97596a8368EB9E44B1f3F25B2E813845303
 
-export const getSynthsForNetwork = (networkId: NetworkId) => {};
+const synthsByNetwork = (id: NetworkId): SynthsMap =>
+	Object.fromEntries(
+		Object.entries(synths)
+			.map(([symbol, config]) => {
+				if (config.addresses[id]) {
+					return [
+						symbol,
+						{
+							symbol,
+							asset: config.asset,
+							name: config.name,
+							address: config.addresses[id],
+							decimals: 18,
+						},
+					];
+				} else {
+					return null;
+				}
+			})
+			.filter(booleanTypeGuard)
+	);
+
+const mainnetSynths = synthsByNetwork(1);
+const optimismSynths = synthsByNetwork(10);
+const kovanSynths = synthsByNetwork(42);
+const optimismKovanSynths = synthsByNetwork(69);
+const goerliSynths = synthsByNetwork(5);
+const optimismGoerliSynths = synthsByNetwork(420);
+
+export const getSynthsForNetwork = (networkId: NetworkId) => {
+	switch (NetworkNameById[networkId]) {
+		case 'mainnet':
+			return mainnetSynths;
+		case 'mainnet-ovm':
+			return optimismSynths;
+		case 'kovan':
+			return kovanSynths;
+		case 'kovan-ovm':
+			return optimismKovanSynths;
+		case 'goerli':
+			return goerliSynths;
+		case 'goerli-ovm':
+			return optimismGoerliSynths;
+		default:
+			throw new Error('We do not support synths on the selected network.');
+	}
+};

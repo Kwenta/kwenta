@@ -3,8 +3,8 @@ import { DeprecatedSynthBalance } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import axios from 'axios';
 import { Provider as EthCallProvider, Contract as EthCallContract } from 'ethcall';
-import { ethers } from 'ethers';
-import { keyBy } from 'lodash';
+import { ethers, Signer } from 'ethers';
+import { get, keyBy } from 'lodash';
 
 import {
 	ATOMIC_EXCHANGES_L1,
@@ -12,26 +12,40 @@ import {
 	ETH_ADDRESS,
 	ETH_COINGECKO_ADDRESS,
 } from 'constants/currency';
+import erc20Abi from 'lib/abis/ERC20.json';
 import { CG_BASE_API_URL } from 'queries/coingecko/constants';
 import { PriceResponse } from 'queries/coingecko/types';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { getProxySynthSymbol } from 'queries/synths/utils';
-import { OneInchTokenListResponse } from 'queries/tokenLists/types';
+import { OneInchTokenListResponse, Token } from 'queries/tokenLists/types';
 import { newGetCoinGeckoPricesForCurrencies } from 'utils/currencies';
-import logError from 'utils/logError';
 
 import type { ContractMap } from './contracts';
 import SynthRedeemerABI from './contracts/abis/SynthRedeemer.json';
+import { getSynthsForNetwork } from './data/synths';
 
 export default class ExchangeService {
-	// private networkId: NetworkId;
+	private networkId: NetworkId;
+	private signer: Signer;
 	private contracts: ContractMap;
 	private multicallProvider: EthCallProvider;
+	private isL2: boolean;
+	private tokensMap: any = {};
+	private tokenList: Token[] = [];
+	private allTokensMap: any;
 
-	constructor(networkId: NetworkId, contracts: ContractMap, multicallProvider: EthCallProvider) {
-		// this.networkId = networkId;
+	constructor(
+		networkId: NetworkId,
+		signer: Signer,
+		contracts: ContractMap,
+		multicallProvider: EthCallProvider
+	) {
+		this.networkId = networkId;
+		this.signer = signer;
+		this.isL2 = [10, 420].includes(networkId);
 		this.contracts = contracts;
 		this.multicallProvider = multicallProvider;
+		this.getAllTokensMap();
 	}
 
 	public async getBaseFeeRate(sourceCurrencyKey: string, destinationCurrencyKey: string) {
@@ -61,23 +75,30 @@ export default class ExchangeService {
 	}
 
 	private getTokenAddress(currencyKey: string) {
-		return '';
+		if (currencyKey != null) {
+			if (this.isCurrencyETH(currencyKey)) {
+				return ETH_ADDRESS;
+			} else {
+				return get(this.allTokensMap, [currencyKey, 'address'], null);
+			}
+		} else {
+			return null;
+		}
 	}
 
 	public async getRate(
 		baseCurrencyKey: string,
 		quoteCurrencyKey: string,
 		baseRate: Wei,
-		quoteRate: Wei,
-		isL2: boolean
+		quoteRate: Wei
 	) {
 		const baseCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey);
 		const quoteCurrencyTokenAddress = this.getTokenAddress(quoteCurrencyKey);
 
-		const coinGeckoPrices = await this.getCoingeckoPrices(
-			[quoteCurrencyTokenAddress, baseCurrencyTokenAddress],
-			isL2
-		);
+		const coinGeckoPrices = await this.getCoingeckoPrices([
+			quoteCurrencyTokenAddress,
+			baseCurrencyTokenAddress,
+		]);
 
 		const base = baseRate.lte(0)
 			? newGetCoinGeckoPricesForCurrencies(coinGeckoPrices, baseCurrencyTokenAddress)
@@ -90,8 +111,8 @@ export default class ExchangeService {
 		return base.gt(0) && quote.gt(0) ? quote.div(base) : wei(0);
 	}
 
-	private async getCoingeckoPrices(tokenAddresses: string[], isL2: boolean) {
-		const platform = isL2 ? 'optimistic-ethereum' : 'ethereum';
+	private async getCoingeckoPrices(tokenAddresses: string[]) {
+		const platform = this.isL2 ? 'optimistic-ethereum' : 'ethereum';
 		const response = await axios.get<PriceResponse>(
 			`${CG_BASE_API_URL}/simple/token_price/${platform}?contract_addresses=${tokenAddresses
 				.join(',')
@@ -100,13 +121,12 @@ export default class ExchangeService {
 		return response.data;
 	}
 
-	public async getOneInchTokenList(isL2: boolean) {
-		// TODO: Create getter for oneInchApiUrl
-		const oneInchApiUrl = '';
+	public async getOneInchTokenList() {
+		const oneInchApiUrl = `https://api.1inch.io/v4.0/${this.isL2 ? 10 : 1}`;
 		const response = await axios.get<OneInchTokenListResponse>(oneInchApiUrl + 'tokens');
 
 		const tokensMap = response.data.tokens || {};
-		const chainId: NetworkId = isL2 ? 10 : 1;
+		const chainId: NetworkId = this.isL2 ? 10 : 1;
 		const tokens = Object.values(tokensMap).map((t) => ({ ...t, chainId, tags: [] }));
 
 		return {
@@ -116,35 +136,84 @@ export default class ExchangeService {
 		};
 	}
 
-	private tokensList: {} = {};
+	public async getFeeReclaimPeriod(currencyKey: string, walletAddress: string) {
+		if (!this.contracts.Exchanger) {
+			throw new Error('The Exchanger contract does not exist on the currently selected network.');
+		}
 
-	private getAllTokensList(isL2: boolean) {
-		const oneInchTokensMap = this.getOneInchTokenList(isL2);
+		const maxSecsLeftInWaitingPeriod = (await this.contracts.Exchanger.maxSecsLeftInWaitingPeriod(
+			walletAddress,
+			ethers.utils.formatBytes32String(currencyKey)
+		)) as ethers.BigNumberish;
 
-		return { ...oneInchTokensMap };
+		return Number(maxSecsLeftInWaitingPeriod);
 	}
-
-	private getFeeReclaimPeriods() {}
 
 	private getOneInchQuote() {}
 
 	private getBalance(currencyKey: string) {}
 
-	private getQuotePriceRate() {}
+	private async getQuotePriceRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
+		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
+		const isQuoteCurrencyETH = this.isCurrencyETH(quoteCurrencyKey);
+
+		const quoteCurrencyTokenAddress = this.getTokenAddress(quoteCurrencyKey).toLowerCase();
+		const baseCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey).toLowerCase();
+
+		const coinGeckoPrices = await this.getCoingeckoPrices([
+			quoteCurrencyTokenAddress,
+			baseCurrencyTokenAddress,
+		]);
+
+		if (coinGeckoPrices) {
+			const quotePrice = coinGeckoPrices[quoteCurrencyTokenAddress];
+
+			// TODO: Remove this:
+			const selectPriceCurrencyRate = wei(0);
+
+			return quotePrice ? quotePrice.usd / selectPriceCurrencyRate.toNumber() : wei(0);
+		} else {
+		}
+	}
 
 	private async getTxProvider(baseCurrencyKey: string, quoteCurrencyKey: string) {
 		const synthsMap: Record<string, any> = {};
-		const { tokensMap } = await this.getOneInchTokenList(true);
 
 		if (!baseCurrencyKey || !quoteCurrencyKey) return null;
 		if (synthsMap[baseCurrencyKey] && synthsMap[quoteCurrencyKey]) return 'synthetix';
-		if (tokensMap[baseCurrencyKey] && tokensMap[quoteCurrencyKey]) return '1inch';
+		if (this.tokensMap[baseCurrencyKey] && this.tokensMap[quoteCurrencyKey]) return '1inch';
 
 		return 'synthswap';
 	}
 
-	private checkIsAtomic(isL2: boolean, baseCurrencyKey: string, quoteCurrencyKey: string) {
-		if (isL2 || !baseCurrencyKey || !quoteCurrencyKey) {
+	private async getOneInchSlippage(baseCurrencyKey: string, quoteCurrencyKey: string) {
+		const txProvider = await this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
+
+		if (txProvider === '1inch' && (baseCurrencyKey === 'ETH' || quoteCurrencyKey === 'ETH')) {
+			return 3;
+		}
+
+		return 1;
+	}
+
+	private getSelectedTokens(baseCurrencyKey: string, quoteCurrencyKey: string) {
+		return this.tokenList.filter(
+			(t) => t.symbol === baseCurrencyKey || t.symbol === quoteCurrencyKey
+		);
+	}
+
+	private async getAllTokensMap() {
+		const synthsMap = getSynthsForNetwork(this.networkId);
+
+		const { tokensMap, tokens } = await this.getOneInchTokenList();
+
+		this.tokensMap = tokensMap;
+		this.tokenList = tokens;
+		this.allTokensMap = { ...synthsMap, tokensMap };
+	}
+
+	private checkIsAtomic(baseCurrencyKey: string, quoteCurrencyKey: string) {
+		if (this.isL2 || !baseCurrencyKey || !quoteCurrencyKey) {
 			return false;
 		}
 
@@ -165,12 +234,11 @@ export default class ExchangeService {
 		destinationCurrencyKey: string,
 		sourceAmount: Wei,
 		minAmount: Wei,
-		walletAddress: string,
-		isL2: boolean
+		walletAddress: string
 	) {
 		const sourceAmountBN = sourceAmount.toBN();
 		const minAmountBN = minAmount.toBN();
-		const isAtomic = this.checkIsAtomic(isL2, sourceCurrencyKey, destinationCurrencyKey);
+		const isAtomic = this.checkIsAtomic(sourceCurrencyKey, destinationCurrencyKey);
 
 		if (isAtomic) {
 			return [
@@ -237,9 +305,34 @@ export default class ExchangeService {
 		return { balances: cryptoBalances, totalUSDBalance };
 	}
 
-	public handleApprove(currencyKey: string) {
-		logError(currencyKey);
+	private getTokenDecimals(currencyKey: string) {
+		return get(this.allTokensMap, [currencyKey, 'decimals'], undefined);
 	}
+
+	private async getQuoteCurrencyContract(baseCurrencyKey: string, quoteCurrencyKey: string) {
+		const needsApproval = await this.checkNeedsApproval(baseCurrencyKey, quoteCurrencyKey);
+
+		if (quoteCurrencyKey && this.allTokensMap[quoteCurrencyKey] && needsApproval) {
+			const quoteTknAddress = this.allTokensMap[quoteCurrencyKey].address;
+			return createERC20Contract(quoteTknAddress, this.signer);
+		}
+		return null;
+	}
+
+	public async getNumEntries(walletAddress: string, currencyKey: string) {
+		if (!this.contracts.Exchanger) {
+			throw new Error('Something something wrong?');
+		}
+
+		const { numEntries } = await this.contracts.Exchanger.settlementOwing(
+			walletAddress,
+			ethers.utils.formatBytes32String(currencyKey)
+		);
+
+		return numEntries ?? null;
+	}
+
+	public handleApprove(currencyKey: string) {}
 
 	public handleSettle() {}
 
@@ -247,3 +340,6 @@ export default class ExchangeService {
 
 	public getSynthsBalances() {}
 }
+
+const createERC20Contract = (tokenAddress: string, signer: Signer) =>
+	new ethers.Contract(tokenAddress, erc20Abi, signer);

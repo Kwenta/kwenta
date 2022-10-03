@@ -92,14 +92,14 @@ export const contracts: AllContractsMap = {
 	},
 };
 
-const booleanTypeGuard = <T>(x: T | null): x is T => Boolean(x);
+export const booleanTypeGuard = <T>(x: T | null): x is T => Boolean(x);
 
 const contractsByNetwork = (id: NetworkId): ContractMap =>
 	Object.fromEntries(
 		Object.entries(contracts)
 			.map(([name, config]) => {
 				if (config[id]) {
-					return [name, config[id]?.contract] as [string, Contract];
+					return [name, config[id]];
 				} else {
 					return null;
 				}
