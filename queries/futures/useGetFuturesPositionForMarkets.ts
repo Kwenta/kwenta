@@ -17,7 +17,7 @@ import { mapFuturesPosition } from './utils';
 
 const ethCallProvider = new Provider();
 
-const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<any>) => {
+const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<void>) => {
 	const {
 		defaultSynthetixjs,
 		l2Synthetixjs,
@@ -35,7 +35,7 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<any>) => {
 	);
 	const assets = futuresMarkets.map(({ asset }) => asset);
 
-	return useQuery<any>(
+	return useQuery<void>(
 		QUERY_KEYS.Futures.MarketsPositions(
 			network?.id as NetworkId,
 			assets || [],
