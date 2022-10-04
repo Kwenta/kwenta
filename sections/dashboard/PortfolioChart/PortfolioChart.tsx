@@ -10,10 +10,7 @@ const PortfolioChart: FC = () => {
 	const portfolio = useRecoilValue(portfolioState);
 	const balances = useRecoilValue(balancesState);
 
-	const total = useMemo(() => portfolio.total.add(balances.susdWalletBalance), [
-		portfolio,
-		balances,
-	]);
+	const total = useMemo(() => portfolio.total.add(balances.totalUSDBalance), [portfolio, balances]);
 
 	return (
 		<>

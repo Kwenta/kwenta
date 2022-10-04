@@ -38,12 +38,14 @@ const Overview: FC = () => {
 	);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
-	const POSITIONS_TABS = useMemo(
-		() => [
+	const POSITIONS_TABS = useMemo(() => {
+		const crossPositions = positions.cross_margin.filter(({ position }) => !!position).length;
+		const isolatedPositions = positions.isolated_margin.filter(({ position }) => !!position).length;
+		return [
 			{
 				name: PositionsTab.CROSS_MARGIN,
 				label: t('dashboard.overview.positions-tabs.cross-margin'),
-				badge: positions[FuturesAccountTypes.CROSS_MARGIN].length,
+				badge: crossPositions,
 				active: activePositionsTab === PositionsTab.CROSS_MARGIN,
 				detail: formatDollars(portfolio.crossMarginFutures),
 				disabled: false,
@@ -52,7 +54,7 @@ const Overview: FC = () => {
 			{
 				name: PositionsTab.ISOLATED_MARGIN,
 				label: t('dashboard.overview.positions-tabs.isolated-margin'),
-				badge: positions[FuturesAccountTypes.ISOLATED_MARGIN].length,
+				badge: isolatedPositions,
 				active: activePositionsTab === PositionsTab.ISOLATED_MARGIN,
 				detail: formatDollars(portfolio.isolatedMarginFutures),
 				disabled: false,
@@ -66,9 +68,8 @@ const Overview: FC = () => {
 				disabled: false,
 				onClick: () => setActivePositionsTab(PositionsTab.SPOT),
 			},
-		],
-		[positions, balances, activePositionsTab, setActivePositionsTab, t, portfolio]
-	);
+		];
+	}, [positions, balances, activePositionsTab, setActivePositionsTab, t, portfolio]);
 
 	const MARKETS_TABS = useMemo(
 		() => [
