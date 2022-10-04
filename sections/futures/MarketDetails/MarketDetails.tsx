@@ -92,6 +92,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 							key={key}
 							position={'fixed'}
 							height={'auto'}
+							mobile={mobile}
 							content={t(`exchange.market-details-card.tooltips.${marketDataKeyMap[key]}`)}
 						>
 							{children}
@@ -132,9 +133,10 @@ const SkewDataContainer = styled.div`
 	grid-row: 1;
 `;
 
-const MarketDetailsTooltip = styled(StyledTooltip)`
+const MarketDetailsTooltip = styled(StyledTooltip)<{ mobile?: boolean }>`
 	z-index: 2;
 	padding: 10px;
+	right: ${(props) => props.mobile && '1px'};
 `;
 
 const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
