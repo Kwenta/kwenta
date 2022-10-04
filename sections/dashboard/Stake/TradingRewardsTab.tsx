@@ -10,14 +10,16 @@ import { KwentaLabel, StakingCard } from './common';
 
 const TradingRewardsTab: React.FC = () => {
 	const { t } = useTranslation();
-
+	const epochPeriod = 5;
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
 
 	return (
 		<TradingRewardsContainer>
 			<StakingCard $darkTheme={isDarkTheme}>
-				<div className="title">{t('dashboard.stake.tabs.trading-rewards.fees-paid')}</div>
+				<div className="title">
+					{t('dashboard.stake.tabs.trading-rewards.fees-paid', { EpochPeriod: epochPeriod })}
+				</div>
 				<div className="value">$2923.39</div>
 			</StakingCard>
 			<StakingCard $darkTheme={isDarkTheme}>

@@ -20,7 +20,7 @@ enum StakeTab {
 
 const StakingTabs: React.FC = () => {
 	const { t } = useTranslation();
-
+	const epochPeriod = 5;
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
 
@@ -51,7 +51,7 @@ const StakingTabs: React.FC = () => {
 					/>
 				</TabButtons>
 				<EpochLabel
-					title={t('dashboard.stake.tabs.trading-rewards.epoch')}
+					title={t('dashboard.stake.tabs.trading-rewards.epoch', { EpochPeriod: epochPeriod })}
 					active={activeTab === StakeTab.TradingRewards}
 					isRounded
 				/>

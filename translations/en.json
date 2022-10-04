@@ -494,11 +494,11 @@
 				},
 				"trading-rewards": {
 					"title": "Trading Rewards",
-					"fees-paid": "Fees Paid: Epoch 10",
+					"fees-paid": "Fees Paid: Epoch {{EpochPeriod}}",
 					"estimated-rewards": "Estimated Rewards",
 					"estimated-fee-share": "Estimated Fee Share",
 					"trading-activity-reset": "Trading Activity Reset",
-					"epoch": "Epoch 10"
+					"epoch": "Epoch {{EpochPeriod}}"
 				},
 				"escrow": {
 					"title": "Escrow",
