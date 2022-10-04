@@ -85,29 +85,37 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<void>) => {
 			const positionDetails = (await ethcallProvider.all(positionCalls)) as PositionDetail[];
 			const canLiquidateState = (await ethcallProvider.all(liquidationCalls)) as boolean[];
 
-			const isolatedPositions = futuresMarkets
-				.map((futuresMarket: FuturesMarket, ind: number) => {
-					const position = positionDetails[ind];
-					const canLiquidate = canLiquidateState[ind];
+			// split isolated and cross margin results
+			const positionDetailsIsolated = positionDetails.slice(0, futuresMarkets.length);
+			const positionDetailsCross = positionDetails.slice(
+				futuresMarkets.length,
+				positionDetails.length
+			);
+
+			const canLiquidateStateIsolated = canLiquidateState.slice(0, futuresMarkets.length);
+			const canLiquidateStateCross = canLiquidateState.slice(
+				futuresMarkets.length,
+				canLiquidateState.length
+			);
+
+			// map the positions using the results
+			const isolatedPositions = positionDetailsIsolated
+				.map((position, ind) => {
+					const canLiquidate = canLiquidateStateIsolated[ind];
 					const asset = assets[ind];
 					return mapFuturesPosition(position, canLiquidate, asset);
 				})
 				.filter(({ remainingMargin }) => remainingMargin.gt(0));
 
-			const crossPositions =
-				crossMarginAvailable && crossMarginAddress
-					? futuresMarkets
-							.map((futuresMarket: FuturesMarket, ind: number) => {
-								const position = positionDetails[futuresMarkets.length + ind];
-								const canLiquidate = canLiquidateState[futuresMarkets.length + ind];
-								const asset = assets[ind];
-								return mapFuturesPosition(position, canLiquidate, asset);
-							})
-							.filter(({ remainingMargin }) => remainingMargin.gt(0))
-					: [];
+			const crossPositions = positionDetailsCross
+				.map((position, ind) => {
+					const canLiquidate = canLiquidateStateCross[ind];
+					const asset = assets[ind];
+					return mapFuturesPosition(position, canLiquidate, asset);
+				})
+				.filter(({ remainingMargin }) => remainingMargin.gt(0));
 
 			setPositions({
-				...positions,
 				[FuturesAccountTypes.ISOLATED_MARGIN]: isolatedPositions,
 				[FuturesAccountTypes.CROSS_MARGIN]: crossPositions,
 			});
