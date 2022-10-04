@@ -3,18 +3,23 @@ import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'r
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
+import SwitchAssetArrows from 'assets/svg/futures/switch-arrows.svg';
 import CustomInput from 'components/Input/CustomInput';
+import InputTitle from 'components/Input/InputTitle';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import {
-	crossMarginAvailableMarginState,
-	currentMarketState,
 	futuresAccountTypeState,
 	simulatedTradeState,
 	positionState,
 	futuresTradeInputsState,
+	orderTypeState,
+	marketAssetRateState,
+	futuresOrderPriceState,
+	marketKeyState,
+	crossMarginAccountOverviewState,
 } from 'store/futures';
 import { FlexDivRow } from 'styles/common';
-import { zeroBN } from 'utils/formatters/number';
+import { floorNumber, isZero, zeroBN } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 
 type OrderSizingProps = {
@@ -22,16 +27,28 @@ type OrderSizingProps = {
 };
 
 const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
+	const { onTradeAmountChange, maxUsdInputAmount } = useFuturesContext();
+
 	const { nativeSize, susdSize } = useRecoilValue(futuresTradeInputsState);
 	const simulatedTrade = useRecoilValue(simulatedTradeState);
 
-	const marketAsset = useRecoilValue(currentMarketState);
-	const freeCrossMargin = useRecoilValue(crossMarginAvailableMarginState);
+	const { freeMargin: freeCrossMargin } = useRecoilValue(crossMarginAccountOverviewState);
 	const position = useRecoilValue(positionState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
+	const orderType = useRecoilValue(orderTypeState);
+	const assetPrice = useRecoilValue(marketAssetRateState);
+	const orderPrice = useRecoilValue(futuresOrderPriceState);
+	const marketKey = useRecoilValue(marketKeyState);
 
 	const [usdValue, setUsdValue] = useState(susdSize);
 	const [assetValue, setAssetValue] = useState(nativeSize);
+	const [assetInputType, setAssetInputType] = useState<'usd' | 'native'>('usd');
+
+	const tradePrice = useMemo(() => orderPrice || assetPrice, [orderPrice, assetPrice]);
+	const maxNativeValue = useMemo(
+		() => (!isZero(tradePrice) ? maxUsdInputAmount.div(tradePrice) : zeroBN),
+		[tradePrice, maxUsdInputAmount]
+	);
 
 	useEffect(
 		() => {
@@ -59,40 +76,33 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 		]
 	);
 
-	const { onTradeAmountChange, onTradeAmountSUSDChange, maxUsdInputAmount } = useFuturesContext();
-
 	const handleSetMax = () => {
-		onTradeAmountSUSDChange(Number(maxUsdInputAmount).toFixed(0));
+		if (assetInputType === 'usd') {
+			onTradeAmountChange(String(floorNumber(maxUsdInputAmount)), 'usd');
+		} else {
+			onTradeAmountChange(String(floorNumber(maxNativeValue)), 'native');
+		}
+	};
+
+	const handleSetPositionSize = () => {
+		onTradeAmountChange(position?.position?.size.toString() ?? '0', 'native');
 	};
 
 	// eslint-disable-next-line
-	const debounceOnChangeUsd = useCallback(
-		debounce((value) => {
-			onTradeAmountSUSDChange(value);
-		}, 500),
-		[debounce, onTradeAmountSUSDChange]
-	);
-
-	useEffect(() => {
-		return () => debounceOnChangeUsd?.cancel();
-	}, [debounceOnChangeUsd]);
-
-	// eslint-disable-next-line
-	const debounceOnChangeAssetValue = useCallback(
-		debounce((value) => {
-			onTradeAmountChange(value);
+	const debounceOnChangeValue = useCallback(
+		debounce((value, assetType) => {
+			onTradeAmountChange(value, assetType);
 		}, 500),
 		[debounce, onTradeAmountChange]
 	);
 
-	const onChangeUsdValue = (_: ChangeEvent<HTMLInputElement>, v: string) => {
-		setUsdValue(v);
-		debounceOnChangeUsd(v);
-	};
+	useEffect(() => {
+		return () => debounceOnChangeValue?.cancel();
+	}, [debounceOnChangeValue]);
 
-	const onChangeAssetValue = (_: ChangeEvent<HTMLInputElement>, v: string) => {
-		setAssetValue(v);
-		debounceOnChangeAssetValue(v);
+	const onChangeValue = (_: ChangeEvent<HTMLInputElement>, v: string) => {
+		setUsdValue(v);
+		debounceOnChangeValue(v, assetInputType);
 	};
 
 	const isDisabled = useMemo(() => {
@@ -103,40 +113,42 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 		return remaining.lte(0) || disabled;
 	}, [position?.remainingMargin, disabled, selectedAccountType, freeCrossMargin]);
 
+	const showPosSizeHelper =
+		position?.position?.size && (orderType === 'limit' || orderType === 'stop');
+
+	const invalid =
+		(assetInputType === 'usd' && usdValue !== '' && maxUsdInputAmount.lte(usdValue || 0)) ||
+		(assetInputType === 'native' && assetValue !== '' && maxNativeValue.lte(assetValue || 0));
+
 	return (
 		<OrderSizingContainer>
 			<OrderSizingRow>
-				<OrderSizingTitle>
+				<InputTitle>
 					Amount&nbsp; —<span>&nbsp; Set order size</span>
-				</OrderSizingTitle>
-				<MaxButton onClick={handleSetMax}>Max</MaxButton>
+				</InputTitle>
+				<InputHelpers>
+					<MaxButton onClick={handleSetMax}>Max</MaxButton>
+					{showPosSizeHelper && (
+						<MaxButton onClick={handleSetPositionSize}>Position Size</MaxButton>
+					)}
+				</InputHelpers>
 			</OrderSizingRow>
 
 			<CustomInput
-				disabled={isDisabled}
-				right={getDisplayAsset(marketAsset) || 'sUSD'}
-				value={assetValue}
-				placeholder="0.0"
-				onChange={onChangeAssetValue}
-				style={{
-					marginBottom: '-1px',
-					borderBottom: 'none',
-					borderBottomRightRadius: '0px',
-					borderBottomLeftRadius: '0px',
-				}}
-			/>
-
-			<CustomInput
+				invalid={invalid}
 				dataTestId="set-order-size-amount-susd"
 				disabled={isDisabled}
-				right={'sUSD'}
-				value={usdValue}
+				right={
+					<InputButton
+						onClick={() => setAssetInputType(assetInputType === 'usd' ? 'native' : 'usd')}
+					>
+						{assetInputType === 'usd' ? 'sUSD' : getDisplayAsset(marketKey)}{' '}
+						<span>{<SwitchAssetArrows />}</span>
+					</InputButton>
+				}
+				value={assetInputType === 'usd' ? usdValue : assetValue}
 				placeholder="0.0"
-				onChange={onChangeUsdValue}
-				style={{
-					borderTopRightRadius: '0px',
-					borderTopLeftRadius: '0px',
-				}}
+				onChange={onChangeValue}
 			/>
 		</OrderSizingContainer>
 	);
@@ -145,15 +157,6 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 const OrderSizingContainer = styled.div`
 	margin-top: 28px;
 	margin-bottom: 16px;
-`;
-
-const OrderSizingTitle = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	font-size: 13px;
-
-	span {
-		color: ${(props) => props.theme.colors.selectedTheme.gray};
-	}
 `;
 
 const OrderSizingRow = styled(FlexDivRow)`
@@ -170,6 +173,21 @@ const MaxButton = styled.button`
 	background-color: transparent;
 	border: none;
 	cursor: pointer;
+`;
+
+const InputButton = styled.button`
+	height: 22px;
+	padding: 4px 10px;
+	border: none;
+	background: transparent;
+	font-size: 16px;
+	line-height: 16px;
+	color: ${(props) => props.theme.colors.selectedTheme.text.label};
+	cursor: pointer;
+`;
+
+const InputHelpers = styled.div`
+	display: flex;
 `;
 
 export default OrderSizing;

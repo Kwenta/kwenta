@@ -4,6 +4,8 @@ import styled from 'styled-components';
 
 import Table, { TableNoResults } from 'components/Table';
 import BlockExplorer from 'containers/BlockExplorer';
+import useIsL2 from 'hooks/useIsL2';
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { MarginTransfer } from 'queries/futures/types';
 import { ExternalLink } from 'styles/common';
 import { timePresentation } from 'utils/formatters/date';
@@ -18,6 +20,9 @@ type TransferProps = {
 const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: TransferProps) => {
 	const { t } = useTranslation();
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
+	const { switchToL2 } = useNetworkSwitcher();
+
+	const isL2 = useIsL2();
 	const columnsDeps = useMemo(() => [marginTransfers], [marginTransfers]);
 
 	return (
@@ -79,11 +84,19 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: 
 			columnsDeps={columnsDeps}
 			isLoading={isLoading && !isLoaded}
 			noResultsMessage={
-				<TableNoResults>
-					<StyledTitle>{t('futures.market.user.transfers.table.no-results')}</StyledTitle>
-				</TableNoResults>
+				!isL2 ? (
+					<TableNoResults>
+						{t('common.l2-cta')}
+						<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+					</TableNoResults>
+				) : (
+					<TableNoResults>
+						<StyledTitle>{t('futures.market.user.transfers.table.no-results')}</StyledTitle>
+					</TableNoResults>
+				)
 			}
 			showPagination
+			pageSize={5}
 		/>
 	);
 };

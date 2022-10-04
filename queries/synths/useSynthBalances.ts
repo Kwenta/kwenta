@@ -1,5 +1,5 @@
 import { CurrencyKey, NetworkId } from '@synthetixio/contracts-interface';
-import { Balances, SynthBalancesMap } from '@synthetixio/queries';
+import { SynthBalancesMap } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
 import orderBy from 'lodash/orderBy';
@@ -8,6 +8,7 @@ import { useRecoilState } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
+import { SynthBalances } from 'queries/futures/types';
 import { balancesState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 
@@ -15,12 +16,12 @@ import { notNill } from './utils';
 
 type SynthBalancesTuple = [string[], ethers.BigNumber[], ethers.BigNumber[]];
 
-const useSynthBalances = (options?: UseQueryOptions<Balances>) => {
+const useSynthBalances = (options?: UseQueryOptions<SynthBalances>) => {
 	const { network, defaultSynthetixjs: synthetixjs, walletAddress } = Connector.useContainer();
 
 	const [, setBalances] = useRecoilState(balancesState);
 
-	return useQuery<Balances>(
+	return useQuery<SynthBalances>(
 		QUERY_KEYS.Synths.Balances(network?.id as NetworkId, walletAddress),
 		async () => {
 			if (!synthetixjs) {

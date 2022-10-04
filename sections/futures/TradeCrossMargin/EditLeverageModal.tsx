@@ -10,7 +10,9 @@ import Button from 'components/Button';
 import ErrorView from 'components/Error';
 import CustomInput from 'components/Input/CustomInput';
 import Loader from 'components/Loader';
+import Spacer from 'components/Spacer';
 import { NumberSpan } from 'components/Text/NumberLabel';
+import { DEFAULT_LEVERAGE } from 'constants/defaults';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { useRefetchContext } from 'contexts/RefetchContext';
@@ -58,7 +60,7 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 	const [submitting, setSubmitting] = useState(false);
 	const [error, setError] = useState<null | string>(null);
 
-	const maxLeverage = Number((market?.maxLeverage || wei(10)).toString(2));
+	const maxLeverage = Number((market?.maxLeverage || wei(DEFAULT_LEVERAGE)).toString(2));
 
 	const maxPositionUsd = useMemo(() => {
 		return totalMargin.mul(leverage);
@@ -85,10 +87,11 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 	);
 
 	const onConfirm = useCallback(async () => {
+		setError(null);
 		if (position?.position) {
 			try {
 				setSubmitting(true);
-				const tx = await submitCrossMarginOrder();
+				const tx = await submitCrossMarginOrder(true);
 				if (tx?.hash) {
 					monitorTransaction({
 						txHash: tx.hash,
@@ -103,6 +106,7 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 					});
 				}
 			} catch (err) {
+				setError(t('common.transaction.transaction-failed'));
 				logError(err);
 			} finally {
 				setSubmitting(false);
@@ -202,7 +206,12 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 				{submitting ? <Loader /> : t('futures.market.trade.leverage.modal.confirm')}
 			</MarginActionButton>
 
-			{error && <ErrorView message={error} formatter="revert" />}
+			{error && (
+				<>
+					<Spacer height={12} />
+					<ErrorView message={error} formatter="revert" />
+				</>
+			)}
 		</StyledBaseModal>
 	);
 }

@@ -10,6 +10,8 @@ import Table, { TableNoResults } from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { ETH_UNIT } from 'constants/network';
 import BlockExplorer from 'containers/BlockExplorer';
+import useIsL2 from 'hooks/useIsL2';
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesTrade } from 'queries/futures/types';
 import { ExternalLink, GridDivCenteredRow } from 'styles/common';
 import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
@@ -28,6 +30,9 @@ type TradesProps = {
 const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAsset }) => {
 	const { t } = useTranslation();
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
+	const { switchToL2 } = useNetworkSwitcher();
+
+	const isL2 = useIsL2();
 
 	const historyData = React.useMemo(() => {
 		return history.map((trade: FuturesTrade) => {
@@ -51,6 +56,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 	return (
 		<Card>
 			<StyledTable
+				highlightRowsOnHover
 				columns={[
 					{
 						Header: (
@@ -161,7 +167,12 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 				data={historyData}
 				isLoading={isLoading && isLoaded}
 				noResultsMessage={
-					isLoaded && historyData?.length === 0 ? (
+					!isL2 ? (
+						<TableNoResults>
+							{t('common.l2-cta')}
+							<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+						</TableNoResults>
+					) : isLoaded && historyData?.length === 0 ? (
 						<TableNoResults>{t('futures.market.user.trades.table.no-results')}</TableNoResults>
 					) : undefined
 				}
