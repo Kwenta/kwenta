@@ -122,12 +122,8 @@ export default class ExchangeService {
 		}
 	}
 
-	public async getRate(
-		baseCurrencyKey: string,
-		quoteCurrencyKey: string,
-		baseRate: Wei,
-		quoteRate: Wei
-	) {
+	public async getRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
+		const [quoteRate, baseRate] = await this.getPairRates(quoteCurrencyKey, baseCurrencyKey);
 		const baseCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey);
 		const quoteCurrencyTokenAddress = this.getTokenAddress(quoteCurrencyKey);
 
@@ -247,7 +243,7 @@ export default class ExchangeService {
 		}
 	}
 
-	private async getBalance(currencyKey: string, walletAddress: string) {
+	public async getBalance(currencyKey: string, walletAddress: string) {
 		const isETH = this.isCurrencyETH(currencyKey);
 		const synthsWalletBalance = await getSynthBalances(walletAddress, this.contracts);
 		const token = this.tokenList.find((t) => t.symbol === currencyKey);
@@ -268,8 +264,6 @@ export default class ExchangeService {
 
 		return null;
 	}
-
-	private getCurrencyRate(currencyKey: string) {}
 
 	private async getQuotePriceRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
@@ -778,13 +772,11 @@ export default class ExchangeService {
 		return wei(balance);
 	}
 
-	public handleApprove(currencyKey: string) {}
+	// public handleApprove(currencyKey: string) {}
 
-	public handleSettle() {}
+	// public handleSettle() {}
 
-	public handleExchange() {}
-
-	public getSynthsBalances() {}
+	// public handleExchange() {}
 }
 
 const FILTERED_TOKENS = ['0x4922a015c4407f87432b179bb209e125432e4a2a'];

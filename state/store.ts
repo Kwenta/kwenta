@@ -6,6 +6,7 @@ import KwentaSDK from 'sdk';
 import { wagmiClient } from 'containers/Connector/config';
 
 import balancesReducer from './balances/reducer';
+import exchangeReducer from './exchange/reducer';
 import walletReducer from './wallet/reducer';
 
 // TODO:
@@ -19,6 +20,7 @@ const store = configureStore({
 	reducer: {
 		wallet: walletReducer,
 		balances: balancesReducer,
+		exchange: exchangeReducer,
 	},
 	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware({ thunk: { extraArgument: { sdk } } }).concat(logger),

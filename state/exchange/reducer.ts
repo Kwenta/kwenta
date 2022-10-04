@@ -1,18 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { SwapRatio } from 'hooks/useExchange';
-
-type ExchangeState = {
-	baseCurrencyKey?: string;
-	quoteCurrencyKey?: string;
-	baseAmount: string;
-	quoteAmount: string;
-	ratio?: SwapRatio;
-};
+import { ExchangeState } from './types';
 
 const initialState: ExchangeState = {
 	baseCurrencyKey: undefined,
 	quoteCurrencyKey: undefined,
+	txProvider: undefined,
 	baseAmount: '',
 	quoteAmount: '',
 	ratio: undefined,
@@ -21,7 +14,17 @@ const initialState: ExchangeState = {
 const exchangeSlice = createSlice({
 	name: 'exchange',
 	initialState,
-	reducers: {},
+	reducers: {
+		setBaseAmount: (state, action) => {
+			state.baseAmount = action.payload.baseAmount;
+		},
+		setQuoteAmount: (state, action) => {
+			state.baseAmount = action.payload.baseAmount;
+		},
+		setRatio: (state, action) => {
+			state.ratio = action.payload.ratio;
+		},
+	},
 });
 
 export default exchangeSlice.reducer;
