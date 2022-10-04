@@ -2,7 +2,7 @@ import { NetworkId } from '@synthetixio/contracts-interface';
 import { Provider, Contract } from 'ethcall';
 import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
@@ -12,7 +12,7 @@ import FuturesMarketDataABI from 'lib/abis/FuturesMarketData.json';
 import { positionsState, futuresAccountState, futuresMarketsState } from 'store/futures';
 import { MarketKeyByAsset } from 'utils/futures';
 
-import { FuturesAccountTypes, FuturesMarket, PositionDetail } from './types';
+import { FuturesAccountTypes, PositionDetail } from './types';
 import { mapFuturesPosition } from './utils';
 
 const DEFAULT_POSITIONS = {
@@ -25,7 +25,7 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<void>) => {
 	const isL2 = useIsL2();
 
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
-	const [positions, setPositions] = useRecoilState(positionsState);
+	const setPositions = useSetRecoilState(positionsState);
 	const { walletAddress, crossMarginAddress, crossMarginAvailable, status } = useRecoilValue(
 		futuresAccountState
 	);
