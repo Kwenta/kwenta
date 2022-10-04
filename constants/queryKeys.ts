@@ -255,7 +255,7 @@ export const QUERY_KEYS = {
 			crossMarginAddress,
 			freeMargin,
 		],
-		AccountPositions: (walletAddress: string | null, networkId: NetworkId) => [
+		PositionHistory: (walletAddress: string | null, networkId: NetworkId) => [
 			'futures',
 			'accountPositions',
 			walletAddress,

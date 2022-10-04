@@ -7,9 +7,9 @@ import useGetAverageFundingRateForMarkets from 'queries/futures/useGetAverageFun
 import useGetCrossMarginAccountOverview from 'queries/futures/useGetCrossMarginAccountOverview';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
-import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
+import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesPositionHistory';
 import useGetFuturesVolumes from 'queries/futures/useGetFuturesVolumes';
 import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
@@ -46,7 +46,7 @@ export const RefetchProvider: React.FC = ({ children }) => {
 	const positionQuery = useGetFuturesPositionForMarket();
 	const crossMarginAccountOverview = useGetCrossMarginAccountOverview();
 	const positionsQuery = useGetFuturesPositionForMarkets();
-	const positionHistoryQuery = useGetFuturesPositionForAccount();
+	const positionHistoryQuery = useGetFuturesPositionHistory();
 	const marketsQuery = useGetFuturesMarkets();
 	const crossMarginAccountQuery = useQueryCrossMarginAccount();
 

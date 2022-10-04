@@ -1,10 +1,8 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useSetRecoilState } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import { positionHistoryState } from 'store/futures';
 import logError from 'utils/logError';
 
 import { getFuturesPositions } from './subgraph';
@@ -16,29 +14,23 @@ const DEFAULT_POSITION_HISTORY: PositionHistoryState = {
 	[FuturesAccountTypes.ISOLATED_MARGIN]: [],
 };
 
-const useGetFuturesPositionForAccount = (
-	account?: string,
+const useGetFuturesPositionHistoryForAccount = (
+	account: string | null,
 	options?: UseQueryOptions<PositionHistoryState>
 ) => {
-	const { network, walletAddress } = Connector.useContainer();
+	const { network } = Connector.useContainer();
 
-	const setPositionHistory = useSetRecoilState(positionHistoryState);
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
 	return useQuery<PositionHistoryState>(
-		QUERY_KEYS.Futures.AccountPositions(account ?? walletAddress, network.id as NetworkId),
+		QUERY_KEYS.Futures.PositionHistory(account, network.id as NetworkId),
 		async () => {
-			if (!walletAddress) {
-				if (!account) setPositionHistory(DEFAULT_POSITION_HISTORY);
-				return DEFAULT_POSITION_HISTORY;
-			}
-
 			try {
 				const response = await getFuturesPositions(
 					futuresEndpoint,
 					{
 						where: {
-							account: account ?? walletAddress,
+							account: account,
 						},
 					},
 					{
@@ -78,34 +70,24 @@ const useGetFuturesPositionForAccount = (
 					(acc: PositionHistoryState, position: PositionHistory) => {
 						const accountType = position.accountType;
 
-						// make sure it's not a duplicate before adding to the list
-						const existingPositionId = acc[accountType].findIndex((pos) => pos.id === position.id);
-						if (
-							existingPositionId === -1 ||
-							position.timestamp > acc[accountType][existingPositionId].timestamp
-						)
-							acc[accountType] = [
-								position,
-								...acc[accountType].filter(({ id }) => id !== existingPositionId),
-							];
-						return acc;
+						return {
+							...acc,
+							[accountType]: [...acc[accountType], position],
+						};
 					},
 					DEFAULT_POSITION_HISTORY
 				);
-
-				if (!account) setPositionHistory(positionHistoryByType);
 				return positionHistoryByType;
 			} catch (e) {
 				logError(e);
-				if (!account) setPositionHistory(DEFAULT_POSITION_HISTORY);
 				return DEFAULT_POSITION_HISTORY;
 			}
 		},
 		{
-			enabled: !!walletAddress,
+			enabled: !!account,
 			...options,
 		}
 	);
 };
 
-export default useGetFuturesPositionForAccount;
+export default useGetFuturesPositionHistoryForAccount;
