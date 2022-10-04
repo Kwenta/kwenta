@@ -15,18 +15,14 @@ import { MarketKeyByAsset } from 'utils/futures';
 import { FuturesAccountTypes, FuturesMarket, PositionDetail } from './types';
 import { mapFuturesPosition } from './utils';
 
-const ethCallProvider = new Provider();
+const DEFAULT_POSITIONS = {
+	[FuturesAccountTypes.ISOLATED_MARGIN]: [],
+	[FuturesAccountTypes.CROSS_MARGIN]: [],
+};
 
 const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<void>) => {
-	const {
-		defaultSynthetixjs,
-		l2Synthetixjs,
-		provider,
-		l2Provider,
-		network,
-	} = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs, provider, network } = Connector.useContainer();
 	const isL2 = useIsL2();
-	const synthetixjs = isL2 ? defaultSynthetixjs : l2Synthetixjs;
 
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 	const [positions, setPositions] = useRecoilState(positionsState);
@@ -43,7 +39,13 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<void>) => {
 			crossMarginAddress ?? ''
 		),
 		async () => {
-			await ethCallProvider.init(isL2 ? provider : l2Provider);
+			if (!isL2 || !provider || status !== 'complete') {
+				setPositions(DEFAULT_POSITIONS);
+				return;
+			}
+
+			const ethcallProvider = new Provider();
+			await ethcallProvider.init(provider);
 
 			const {
 				contracts: { FuturesMarketData },
@@ -80,8 +82,8 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<void>) => {
 				}
 			}
 
-			const positionDetails = (await ethCallProvider.all(positionCalls)) as PositionDetail[];
-			const canLiquidateState = (await ethCallProvider.all(liquidationCalls)) as boolean[];
+			const positionDetails = (await ethcallProvider.all(positionCalls)) as PositionDetail[];
+			const canLiquidateState = (await ethcallProvider.all(liquidationCalls)) as boolean[];
 
 			const isolatedPositions = futuresMarkets
 				.map((futuresMarket: FuturesMarket, ind: number) => {
@@ -111,7 +113,6 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<void>) => {
 			});
 		},
 		{
-			enabled: !!assets && !!provider && !!l2Provider && status === 'complete',
 			...options,
 		}
 	);

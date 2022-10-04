@@ -5,6 +5,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
 import { marketKeyState, positionState, selectedFuturesAddressState } from 'store/futures';
 import { MarketAssetByKey } from 'utils/futures';
 
@@ -13,6 +14,7 @@ import { mapFuturesPosition, getFuturesMarketContract } from './utils';
 
 const useGetFuturesPositionForMarket = (options?: UseQueryOptions<FuturesPosition | null>) => {
 	const { defaultSynthetixjs: synthetixjs, network } = Connector.useContainer();
+	const isL2 = useIsL2();
 	const selectedFuturesAddress = useRecoilValue(selectedFuturesAddressState);
 	const market = useRecoilValue(marketKeyState);
 	const setPosition = useSetRecoilState(positionState);
@@ -53,6 +55,7 @@ const useGetFuturesPositionForMarket = (options?: UseQueryOptions<FuturesPositio
 			return position;
 		},
 		{
+			enabled: isL2,
 			refetchInterval: 5000,
 			...options,
 		}
