@@ -27,13 +27,15 @@ const FuturesMarkets = () => {
 	}, [futuresMarkets]);
 
 	const [trades, volume] = useMemo(() => {
-		const totalTrades = Object.values(futuresVolumes).reduce(
-			(total, { trades }) => total.add(trades),
-			wei(0)
-		);
-		const totalVolume = Object.values(futuresVolumes).reduce(
-			(total, { volume }) => total.add(volume),
-			wei(0)
+		const { totalTrades, totalVolume } = Object.values(futuresVolumes).reduce(
+			({ totalTrades, totalVolume }, { trades, volume }) => ({
+				totalTrades: totalTrades.add(trades),
+				totalVolume: totalVolume.add(volume),
+			}),
+			{
+				totalTrades: wei(0),
+				totalVolume: wei(0),
+			}
 		);
 		return [totalTrades, totalVolume];
 	}, [futuresVolumes]);
