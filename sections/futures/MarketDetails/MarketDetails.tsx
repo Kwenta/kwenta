@@ -1,12 +1,10 @@
-import React, { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
+import React from 'react';
 import styled, { css } from 'styled-components';
 
-import { marketInfoState } from 'store/futures';
 import media from 'styles/media';
-import { formatDollars, formatPercent } from 'utils/formatters/number';
 
 import MarketDetail from './MarketDetail';
+import MobileMarketDetail from './MobileMarketDetail';
 import useGetMarketData from './useGetMarketData';
 
 type MarketDetailsProps = {
@@ -14,67 +12,18 @@ type MarketDetailsProps = {
 };
 
 const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
-	const marketInfo = useRecoilValue(marketInfoState);
-
-	const pausedClass = marketInfo?.isSuspended ? 'paused' : '';
-
 	const marketData = useGetMarketData(mobile);
-
-	// skew text
-	const longText = useMemo(() => {
-		return (
-			marketInfo?.openInterest &&
-			formatDollars(marketInfo.openInterest.longUSD, {
-				maxDecimals: 2,
-				...(marketInfo?.openInterest?.longUSD.gt(1e6)
-					? { truncation: { divisor: 1e6, unit: 'M' } }
-					: {}),
-			})
-		);
-	}, [marketInfo]);
-
-	const shortText = useMemo(() => {
-		return (
-			marketInfo?.openInterest &&
-			formatDollars(marketInfo.openInterest.shortUSD, {
-				maxDecimals: 2,
-				...(marketInfo?.openInterest?.shortUSD.gt(1e6)
-					? { truncation: { divisor: 1e6, unit: 'M' } }
-					: {}),
-			})
-		);
-	}, [marketInfo]);
 
 	return (
 		<MarketDetailsContainer mobile={mobile}>
-			{Object.entries(marketData).map(([key, data]) => (
-				<MarketDetail {...data} marketKey={key} mobile={Boolean(mobile)}></MarketDetail>
+			{Object.entries(marketData).map(([marketKey, data]) => (
+				<MarketDetail {...data} marketKey={marketKey} mobile={Boolean(mobile)}></MarketDetail>
 			))}
 
-			{mobile && (
-				<div key="Skew">
-					<p className="heading">Skew</p>
-					<SkewDataContainer>
-						<div className={`value green ${pausedClass}`}>
-							{marketInfo?.openInterest &&
-								formatPercent(marketInfo.openInterest.longPct ?? 0, { minDecimals: 0 })}{' '}
-							({longText})
-						</div>
-						<div className={`value red ${pausedClass}`}>
-							{marketInfo?.openInterest &&
-								formatPercent(marketInfo.openInterest.shortPct ?? 0, { minDecimals: 0 })}{' '}
-							({shortText})
-						</div>
-					</SkewDataContainer>
-				</div>
-			)}
+			{mobile && <MobileMarketDetail />}
 		</MarketDetailsContainer>
 	);
 };
-
-const SkewDataContainer = styled.div`
-	grid-row: 1;
-`;
 
 const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	width: 100%;

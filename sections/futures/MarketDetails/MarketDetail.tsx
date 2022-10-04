@@ -10,14 +10,14 @@ import { currentMarketState, marketInfoState } from 'store/futures';
 
 import { isMarketDataKey, marketDataKeyMap } from './utils';
 
-type MarketDetailProp = {
+type MarketDetailProps = {
 	mobile: boolean;
 	marketKey: string;
 	color?: string;
 	value: string | ReactElement;
 };
 
-const MarketDetail: React.FC<MarketDetailProp> = ({ mobile, marketKey, color, value }) => {
+const MarketDetail: React.FC<MarketDetailProps> = ({ mobile, marketKey, color, value }) => {
 	const { t } = useTranslation();
 	const marketInfo = useRecoilValue(marketInfoState);
 	const marketAsset = useRecoilValue(currentMarketState);
