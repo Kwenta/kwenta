@@ -21,14 +21,14 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetAllFuturesTradesForAccount from 'queries/futures/useGetAllFuturesTradesForAccount';
 import { TradeStatus } from 'sections/futures/types';
-import { futuresAccountState, futuresAccountTypeState } from 'store/futures';
+import { futuresAccountTypeState, selectedFuturesAddressState } from 'store/futures';
 import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName, isDecimalFour, MarketKeyByAsset } from 'utils/futures';
 
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
 
 const FuturesHistoryTable: FC = () => {
-	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
+	const selectedFuturesAddress = useRecoilValue(selectedFuturesAddressState);
 	const accountType = useRecoilValue(futuresAccountTypeState);
 
 	const { t } = useTranslation();

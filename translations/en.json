@@ -330,6 +330,7 @@
 			"max-fee-gwei": "Max Fee (GWEI)",
 			"fee": "Exchange fee",
 			"fee-cost": "fee cost",
+			"dynamic-fee-tooltip": "This transaction will incur an additional dynamic fee due to market volatility.",
 			"button": {
 				"approve": "approve",
 				"approving": "approving",
@@ -514,7 +515,7 @@
 		"page-title": "Trade History | Kwenta"
 	},
 	"futures": {
-		"page-title": "Futures | Kwenta",
+		"page-title": "Kwenta Futures",
 		"wallet-overview": {
 			"no-positions": "You have no open positions. Open a position now: ",
 			"title": "wallet overview",
@@ -545,18 +546,16 @@
 				"daily-volume": "24H Vol"
 			},
 			"info": {
-				"asset": "asset",
-				"size": "market size",
-				"volume": "24H volume",
-				"skew": "market skew",
-				"debt": "market debt",
-				"rate": "24H funding rate"
-			},
+				"default-market": "ETH-PERP",
+				"hourly-funding": "1H Funding Rate",
+				"instant-funding": "Inst. Funding Rate",
+				"fallback-funding": "Funding Rate"
+ 			},
 			"position-card": {
 				"position-side": "Side",
 				"position-size": "Size",
-				"r-pnl": "Realized PnL",
-				"u-pnl": "Unrealized PnL",
+				"r-pnl": "Realized P&L",
+				"u-pnl": "Unrealized P&L",
 				"leverage": "Leverage",
 				"liquidation-price": "Liq Price",
 				"net-funding": "Net Funding",
@@ -644,7 +643,10 @@
 					"modify-position": "modify",
 					"deposit-margin-minimum": "Deposit Margin",
 					"oi-caps-reached": "Open Interest Cap Reached",
-					"place-next-price-order": "Place Next-Price Order"
+					"place-next-price-order": "Place Next-Price Order",
+					"place-limit-order": "Place Limit Order",
+					"place-stop-order": "Place Stop Order",
+					"connect-wallet": "Connect Wallet"
 				},
 				"margin": {
 					"deposit-susd": "Deposit your sUSD to start trading",
@@ -702,14 +704,23 @@
 				},
 				"cross-margin": {
 					"connect-wallet": "Connect your wallet to start trading",
-					"title": "Cross-Margin",
-					"faq-title": "Cross-Margin FAQ's",
+					"title": "Cross Margin",
+					"faq-title": "Cross Margin FAQ's",
 					"create-account": "Create Account",
-					"unsupported": "Cross-margin is not supported on this network",
-					"switch-type": "Switch to isolated margin"
+					"unsupported": "Cross margin is not supported on this network",
+					"switch-type": "Switch to isolated margin",
+					"account-query-failed": "Failed to fetch account"
 				},
 				"preview": {
 					"error": "Error generating preview"
+				},
+				"orders": {
+					"manage-keeper-deposit": {
+						"title": "Manage Keeper Balance",
+						"withdraw": "Withdraw",
+						"deposit": "Deposit"
+					},
+					"fee-rejection-label": "Fee Rejection"
 				}
 			},
 			"history": {
@@ -758,12 +769,19 @@
 				"open-orders": {
 					"tab": "Open Orders",
 					"table": {
+						"market": "Market",
 						"market-type": "Market/Type",
 						"side": "Side",
+						"side-type": "Side/Type",
+						"type": "Type",
 						"size": "Size",
+						"size-price": "Size/Price",
+						"price": "Price",
+						"status": "Status",
 						"parameters": "Parameters",
 						"actions": "Actions",
-						"no-result": "You have no open orders"
+						"no-result": "You have no open orders",
+						"open-filter": "Only show open orders"
 					},
 					"actions": {
 						"cancel": "Cancel",
@@ -837,15 +855,15 @@
 				}
 			},
 			"onboard": {
-				"title": "Cross-Margin",
-				"step1-intro": "To Get started you must first create your cross-margin account",
+				"title": "Cross Margin",
+				"step1-intro": "To Get started you must first create your cross margin account",
 				"step2-intro": "Now, approve the contract to spend sUSD",
 				"step3-intro": "Lastly, deposit your sUSD into the contact",
-				"step3-complete": "Your cross-margin account has been successfully created!",
-				"faq1": "What is cross-margin?",
-				"faq2": "Is cross-margin better than isolated margin",
-				"faq3": "How will a cross-margin account affect my trading",
-				"unsupported-network": "Cross-margin is not supported on this network"
+				"step3-complete": "Your cross margin account has been successfully created!",
+				"faq1": "What is cross margin?",
+				"faq2": "Is cross margin better than isolated margin",
+				"faq3": "How will a cross margin account affect my trading",
+				"unsupported-network": "Cross margin is not supported on this network"
 			}
 		}
 	},
@@ -859,10 +877,10 @@
 				"total-trades": "Total Trades",
 				"total-volume": "Total Volume",
 				"liquidations": "Liquidations",
-				"24h-pnl": "24H PnL",
-				"pnl": "PnL",
-				"total-pnl": "PnL ($)",
-				"percent-pnl": "PnL (%)",
+				"24h-pnl": "24H P&L",
+				"pnl": "P&L",
+				"total-pnl": "P&L ($)",
+				"percent-pnl": "P&L (%)",
 				"rank-mobile": "#"
 			}
 		},
@@ -875,7 +893,7 @@
 				"liquidated": "Liquidated",
 				"total-trades": "Trades",
 				"total-volume": "Total Volume",
-				"total-pnl": "Realized PnL"
+				"total-pnl": "Realized P&L"
 			}
 		},
 		"competition": {
@@ -935,7 +953,7 @@
 			"title": "confirm transaction",
 			"confirm-with-provider": "Confirm your transaction through your wallet.",
 			"exchange-fee-hint": "The Synthetix protocol exchange fee for <0>{{currencyKey}}</0>.",
-			"price-adjustment-hint": "This transaction is subject to a price adjustment period. <0>Learn more.</0>"
+			"price-adjustment-hint": "This transaction is subject to a price adjustment period."
 		},
 		"approve-transaction": {
 			"title": "approve transaction",
@@ -1060,7 +1078,7 @@
 			"coming-soon": "Soon"
 		},
 		"wallet": {
-			"connect-wallet": "connect wallet",
+			"connect-wallet": "Connect Wallet",
 			"account-info": "Account Info",
 			"switch-accounts": "Switch Accounts",
 			"disconnect-wallet": "Disconnect Wallet",

@@ -215,12 +215,11 @@ export const QUERY_KEYS = {
 			networkId,
 			currencyKey,
 		],
-		FundingRates: (networkId: NetworkId, periodLength: number) => [
-			'futures',
-			'fundingRates',
-			networkId,
-			periodLength,
-		],
+		FundingRates: (
+			networkId: NetworkId,
+			periodLength: number,
+			marketAssets: FuturesMarketAsset[]
+		) => ['futures', 'fundingRates', networkId, periodLength, marketAssets],
 		TradingVolumeForAll: (networkId: NetworkId) => ['futures', 'tradingVolumeForAll', networkId],
 		AllPositionHistory: (networkId: NetworkId, walletAddress: string) => [
 			'futures',
@@ -308,11 +307,12 @@ export const QUERY_KEYS = {
 			wallet: string,
 			crossMarginBaseAddress: string
 		) => ['futures', 'cross-margin-account-overview', networkId, wallet, crossMarginBaseAddress],
-		CrossMarginAccount: (
-			crossMarginAddress: string,
-			wallet: string,
-			selectedAccountType: string
-		) => ['futures', 'cross-margin-account', crossMarginAddress, wallet, selectedAccountType],
+		CrossMarginAccount: (wallet: string, factoryAddress: string) => [
+			'futures',
+			'cross-margin-account',
+			wallet,
+			factoryAddress,
+		],
 		CrossMarginSettings: (networkId: NetworkId) => ['futures', 'cross-margin-settings', networkId],
 	},
 	Files: {

@@ -1,7 +1,8 @@
-import Wei, { wei } from '@synthetixio/wei';
+import { wei } from '@synthetixio/wei';
 import { atom, selector } from 'recoil';
 
 import { DEFAULT_FUTURES_MARGIN_TYPE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
+import { DEFAULT_MAX_LEVERAGE } from 'constants/futures';
 import {
 	FuturesAccountState,
 	FuturesAccountType,
@@ -11,6 +12,9 @@ import {
 	SynthBalances,
 	TradeFees,
 	FuturesTradeInputs,
+	FuturesOrderType,
+	FuturesVolumes,
+	CrossMarginAccounts,
 } from 'queries/futures/types';
 import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import { Price, Rates } from 'queries/rates/types';
@@ -20,8 +24,6 @@ import { getFuturesKey, getSynthsKey } from 'store/utils';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN } from 'utils/formatters/number';
 import { FuturesMarketAsset, MarketAssetByKey, MarketKeyByAsset } from 'utils/futures';
-
-const DEFAULT_MAX_LEVERAGE = wei(10);
 
 export const currentMarketState = atom({
 	key: getFuturesKey('currentMarket'),
@@ -56,9 +58,14 @@ export const marketAssetsState = selector({
 	},
 });
 
-export const balancesState = atom<SynthBalances | null>({
+export const balancesState = atom<SynthBalances>({
 	key: getSynthsKey('balances'),
-	default: null,
+	default: {
+		balancesMap: {},
+		balances: [],
+		totalUSDBalance: zeroBN,
+		susdWalletBalance: zeroBN,
+	},
 });
 
 export const activeTabState = atom<number>({
@@ -79,6 +86,11 @@ export const positionsState = atom<FuturesPosition[] | null>({
 export const futuresMarketsState = atom<FuturesMarket[]>({
 	key: getFuturesKey('markets'),
 	default: [],
+});
+
+export const futuresVolumesState = atom<FuturesVolumes>({
+	key: getFuturesKey('volumes'),
+	default: {},
 });
 
 export const futuresTradeInputsState = atom<FuturesTradeInputs>({
@@ -125,7 +137,15 @@ export const crossMarginSettingsState = atom({
 	default: {
 		tradeFee: zeroBN,
 		limitOrderFee: zeroBN,
-		stopLossFee: zeroBN,
+		stopOrderFee: zeroBN,
+	},
+});
+
+export const crossMarginAccountOverviewState = atom({
+	key: getFuturesKey('crossMarginAccountOverview'),
+	default: {
+		freeMargin: zeroBN,
+		keeperEthBal: zeroBN,
 	},
 });
 
@@ -161,9 +181,27 @@ export const pastRatesState = atom<Price[] | []>({
 	default: [],
 });
 
-export const orderTypeState = atom({
+export const orderTypeState = atom<FuturesOrderType>({
 	key: getFuturesKey('orderType'),
-	default: 0,
+	default: 'market',
+});
+
+export const isAdvancedOrderState = selector({
+	key: getFuturesKey('isAdvancedOrder'),
+	get: ({ get }) => {
+		const orderType = get(orderTypeState);
+		return orderType === 'limit' || orderType === 'stop';
+	},
+});
+
+export const orderFeeCapState = atom({
+	key: getFuturesKey('orderFeeCapState'),
+	default: zeroBN,
+});
+
+export const futuresOrderPriceState = atom({
+	key: getFuturesKey('futuresOrderPrice'),
+	default: '',
 });
 
 export const tradeFeesState = atom<TradeFees>({
@@ -172,6 +210,8 @@ export const tradeFeesState = atom<TradeFees>({
 		staticFee: zeroBN,
 		dynamicFeeRate: zeroBN,
 		crossMarginFee: zeroBN,
+		keeperEthDeposit: zeroBN,
+		limitStopOrderFee: zeroBN,
 		total: zeroBN,
 	},
 });
@@ -223,7 +263,9 @@ export const maxLeverageState = selector({
 		const positionSide = position?.position?.side;
 		const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
 		const adjustedMaxLeverage =
-			orderType === 1 ? marketMaxLeverage.mul(DEFAULT_NP_LEVERAGE_ADJUSTMENT) : marketMaxLeverage;
+			orderType === 'next-price'
+				? marketMaxLeverage.mul(DEFAULT_NP_LEVERAGE_ADJUSTMENT)
+				: marketMaxLeverage;
 
 		if (!positionLeverage || positionLeverage.eq(wei(0))) return adjustedMaxLeverage;
 		if (positionSide === leverageSide) {
@@ -258,10 +300,23 @@ export const futuresAccountState = atom<FuturesAccountState>({
 	default: {
 		crossMarginAddress: null,
 		walletAddress: null,
-		selectedFuturesAddress: null,
 		crossMarginAvailable: false,
-		ready: false,
+		status: 'initial-fetch',
 	},
+});
+
+export const selectedFuturesAddressState = selector<string | null>({
+	key: getFuturesKey('selectedFuturesAddress'),
+	get: ({ get }) => {
+		const futuresType = get(futuresAccountTypeState);
+		const account = get(futuresAccountState);
+		return futuresType === 'cross_margin' ? account.crossMarginAddress : account.walletAddress;
+	},
+});
+
+export const crossMarginAccountsState = atom<CrossMarginAccounts>({
+	key: getFuturesKey('crossMarginAccounts'),
+	default: {},
 });
 
 export const futuresAccountTypeState = atom<FuturesAccountType>({
@@ -269,16 +324,16 @@ export const futuresAccountTypeState = atom<FuturesAccountType>({
 	default: DEFAULT_FUTURES_MARGIN_TYPE,
 });
 
-export const crossMarginAvailableMarginState = atom<Wei>({
-	key: getFuturesKey('crossMarginAvailableMargin'),
-	default: zeroBN,
+export const showCrossMarginOnboardState = atom({
+	key: getFuturesKey('showCrossMarginOnboard'),
+	default: false,
 });
 
 export const crossMarginTotalMarginState = selector({
 	key: getFuturesKey('crossMarginTotalMargin'),
 	get: ({ get }) => {
 		const position = get(positionState);
-		const freeMargin = get(crossMarginAvailableMarginState);
+		const { freeMargin } = get(crossMarginAccountOverviewState);
 		return position?.remainingMargin.add(freeMargin) ?? zeroBN;
 	},
 });
@@ -322,7 +377,7 @@ export const placeOrderTranslationKeyState = selector({
 		const isMarketCapReached = get(isMarketCapReachedState);
 		const orderType = get(orderTypeState);
 		const selectedAccountType = get(futuresAccountTypeState);
-		const freeMargin = get(crossMarginAvailableMarginState);
+		const { freeMargin } = get(crossMarginAccountOverviewState);
 
 		let remainingMargin;
 		if (selectedAccountType === 'isolated_margin') {
@@ -332,7 +387,9 @@ export const placeOrderTranslationKeyState = selector({
 			remainingMargin = positionMargin.add(freeMargin);
 		}
 
-		if (orderType === 1) return 'futures.market.trade.button.place-next-price-order';
+		if (orderType === 'next-price') return 'futures.market.trade.button.place-next-price-order';
+		if (orderType === 'limit') return 'futures.market.trade.button.place-limit-order';
+		if (orderType === 'stop') return 'futures.market.trade.button.place-stop-order';
 		if (!!position?.position) return 'futures.market.trade.button.modify-position';
 		return remainingMargin.lt('50')
 			? 'futures.market.trade.button.deposit-margin-minimum'

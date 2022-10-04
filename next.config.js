@@ -99,5 +99,6 @@ module.exports = withPlugins([
 				},
 			];
 		},
+		productionBrowserSourceMaps: true,
 	},
 ]);

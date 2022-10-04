@@ -5,5 +5,7 @@ export { CrossMarginAccountFactory__factory } from "./CrossMarginAccountFactory_
 export { CrossMarginBase__factory } from "./CrossMarginBase__factory";
 export { CrossMarginBaseSettings__factory } from "./CrossMarginBaseSettings__factory";
 export { ERC20__factory } from "./ERC20__factory";
+export { FuturesMarket__factory } from "./FuturesMarket__factory";
+export { FuturesMarketData__factory } from "./FuturesMarketData__factory";
 export { ReverseRecords__factory } from "./ReverseRecords__factory";
 export { SynthSwap__factory } from "./SynthSwap__factory";

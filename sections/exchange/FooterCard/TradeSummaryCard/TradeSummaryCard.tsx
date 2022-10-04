@@ -1,13 +1,13 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
-import Tippy from '@tippyjs/react';
-import { FC, ReactNode, useMemo } from 'react';
+import { FC, ReactNode, useMemo, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
 import Card from 'components/Card';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { CurrencyKey } from 'constants/currency';
 import FeeCostSummaryItem from 'sections/shared/components/FeeCostSummary';
 import FeeRateSummaryItem from 'sections/shared/components/FeeRateSummary';
@@ -23,7 +23,6 @@ type TradeSummaryCardProps = {
 	feeReclaimPeriodInSeconds: number;
 	quoteCurrencyKey: CurrencyKey | null;
 	showFee?: boolean;
-	attached?: boolean;
 	className?: string;
 	totalFeeRate: Wei | null;
 	baseFeeRate?: Wei | null;
@@ -32,89 +31,90 @@ type TradeSummaryCardProps = {
 	isApproved?: boolean;
 };
 
-const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
-	submissionDisabledReason,
-	onSubmit,
-	feeReclaimPeriodInSeconds,
-	quoteCurrencyKey,
-	showFee = true,
-	attached,
-	totalFeeRate,
-	baseFeeRate,
-	transactionFee,
-	feeCost,
-	isApproved = true,
-	...rest
-}) => {
-	const { t } = useTranslation();
-	const { useEthGasPriceQuery } = useSynthetixQueries();
-
-	const isSubmissionDisabled = useMemo(() => submissionDisabledReason != null, [
+const TradeSummaryCard: FC<TradeSummaryCardProps> = memo(
+	({
 		submissionDisabledReason,
-	]);
+		onSubmit,
+		feeReclaimPeriodInSeconds,
+		quoteCurrencyKey,
+		showFee = true,
+		totalFeeRate,
+		baseFeeRate,
+		transactionFee,
+		feeCost,
+		isApproved = true,
+		...rest
+	}) => {
+		const { t } = useTranslation();
+		const { useEthGasPriceQuery } = useSynthetixQueries();
 
-	const ethGasPriceQuery = useEthGasPriceQuery();
+		const isSubmissionDisabled = useMemo(() => submissionDisabledReason != null, [
+			submissionDisabledReason,
+		]);
 
-	const gasPrices = useMemo(
-		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
-		[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data]
-	);
+		const ethGasPriceQuery = useEthGasPriceQuery();
 
-	const summaryItems = (
-		<SummaryItems attached={attached}>
-			<GasPriceSelect gasPrices={gasPrices} transactionFee={transactionFee} />
-			{showFee && (
-				<>
-					<FeeRateSummaryItem totalFeeRate={totalFeeRate} baseFeeRate={baseFeeRate} />
-					<FeeCostSummaryItem feeCost={feeCost} />
-				</>
-			)}
-		</SummaryItems>
-	);
+		const gasPrices = useMemo(() => ethGasPriceQuery?.data, [ethGasPriceQuery.data]);
 
-	return (
-		<>
-			<MobileOrTabletView>
-				<MobileCard className="trade-summary-card">
-					<Card.Body>{summaryItems}</Card.Body>
-				</MobileCard>
-			</MobileOrTabletView>
-			<MessageContainer attached={attached} className="footer-card" {...rest}>
-				<DesktopOnlyView>{summaryItems}</DesktopOnlyView>
-				<ErrorTooltip
-					visible={feeReclaimPeriodInSeconds > 0}
-					placement="top"
-					content={
-						<div>
-							{t('exchange.errors.fee-reclamation', {
-								waitingPeriod: secondsToTime(feeReclaimPeriodInSeconds),
-								currencyKey: quoteCurrencyKey,
-							})}
-						</div>
-					}
-				>
-					<span>
-						<Button
-							disabled={isSubmissionDisabled}
-							onClick={onSubmit}
-							size="lg"
-							data-testid="submit-order"
-							fullWidth
-						>
-							{isSubmissionDisabled
-								? submissionDisabledReason
-								: !isApproved
-								? t('exchange.summary-info.button.approve')
-								: t('exchange.summary-info.button.submit-order')}
-						</Button>
-					</span>
-				</ErrorTooltip>
-			</MessageContainer>
-		</>
-	);
-};
+		const summaryItems = useMemo(
+			() => (
+				<SummaryItems>
+					<GasPriceSelect gasPrices={gasPrices} transactionFee={transactionFee} />
+					{showFee && (
+						<>
+							<FeeRateSummaryItem totalFeeRate={totalFeeRate} baseFeeRate={baseFeeRate} />
+							<FeeCostSummaryItem feeCost={feeCost} />
+						</>
+					)}
+				</SummaryItems>
+			),
+			[gasPrices, transactionFee, totalFeeRate, baseFeeRate, feeCost, showFee]
+		);
 
-export const ErrorTooltip = styled(Tippy)`
+		return (
+			<>
+				<MobileOrTabletView>
+					<MobileCard className="trade-summary-card">
+						<Card.Body>{summaryItems}</Card.Body>
+					</MobileCard>
+				</MobileOrTabletView>
+				<MessageContainer className="footer-card" {...rest}>
+					<DesktopOnlyView>{summaryItems}</DesktopOnlyView>
+					<ErrorTooltip
+						visible={feeReclaimPeriodInSeconds > 0}
+						preset="top"
+						content={
+							<div>
+								{t('exchange.errors.fee-reclamation', {
+									waitingPeriod: secondsToTime(feeReclaimPeriodInSeconds),
+									currencyKey: quoteCurrencyKey,
+								})}
+							</div>
+						}
+					>
+						<span>
+							<Button
+								disabled={isSubmissionDisabled}
+								onClick={onSubmit}
+								size="lg"
+								data-testid="submit-order"
+								fullWidth
+							>
+								{isSubmissionDisabled
+									? submissionDisabledReason
+									: !isApproved
+									? t('exchange.summary-info.button.approve')
+									: t('exchange.summary-info.button.submit-order')}
+							</Button>
+						</span>
+					</ErrorTooltip>
+				</MessageContainer>
+			</>
+		);
+	}
+);
+
+export const ErrorTooltip = styled(StyledTooltip)`
 	font-size: 12px;
 	background-color: ${(props) => props.theme.colors.red};
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};

@@ -29,7 +29,7 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "_stopLossFee",
+        name: "_stopOrderFee",
         type: "uint256",
       },
     ],
@@ -94,7 +94,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "StopLossFeeChanged",
+    name: "StopOrderFeeChanged",
     type: "event",
   },
   {
@@ -177,7 +177,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "setStopLossFee",
+    name: "setStopOrderFee",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -210,7 +210,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "stopLossFee",
+    name: "stopOrderFee",
     outputs: [
       {
         internalType: "uint256",

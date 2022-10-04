@@ -1,47 +1,98 @@
-import Tippy from '@tippyjs/react';
-import { FC, ReactNode } from 'react';
+import useSynthetixQueries from '@synthetixio/queries';
+import { FC, useEffect } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
 import { MobileOrTabletView } from 'components/Media';
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { EXTERNAL_LINKS } from 'constants/links';
+import Connector from 'containers/Connector';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import { useExchangeContext } from 'contexts/ExchangeContext';
+import useIsL2 from 'hooks/useIsL2';
+import useNumEntriesQuery from 'queries/synths/useNumEntriesQuery';
+import TxSettleModal from 'sections/shared/modals/TxSettleModal';
+import { baseCurrencyKeyState, destinationCurrencyKeyState, txErrorState } from 'store/exchange';
 import { NoTextTransform, ExternalLink } from 'styles/common';
 import { secondsToTime } from 'utils/formatters/date';
+import logError from 'utils/logError';
 
 import { MessageContainer, Message, FixedMessageContainerSpacer } from '../common';
 
 type SettleTransactionsCardProps = {
-	submissionDisabledReason?: ReactNode;
-	attached?: boolean;
-	onSubmit: () => void;
-	settleCurrency: string | null;
 	numEntries: number | null;
-	settlementWaitingPeriodInSeconds: number;
 };
 
-const SettleTransactionsCard: FC<SettleTransactionsCardProps> = ({
-	attached,
-	onSubmit,
-	settleCurrency,
-	numEntries,
-}) => {
+const SettleTransactionsCard: FC<SettleTransactionsCardProps> = ({ numEntries }) => {
 	const { t } = useTranslation();
-	const { settlementWaitingPeriodInSeconds, settlementDisabledReason } = useExchangeContext();
+	const [txError, setTxError] = useRecoilState(txErrorState);
+	const { openModal, setOpenModal } = useExchangeContext();
+	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
+	const destinationCurrencyKey = useRecoilValue(destinationCurrencyKeyState);
+	const { useSynthetixTxn, useFeeReclaimPeriodQuery } = useSynthetixQueries();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const { walletAddress } = Connector.useContainer();
+	const numEntriesQuery = useNumEntriesQuery(walletAddress ?? '', baseCurrencyKey);
+	const isL2 = useIsL2();
+
+	const settlementWaitingPeriodQuery = useFeeReclaimPeriodQuery(baseCurrencyKey, walletAddress);
+
+	const settlementWaitingPeriodInSeconds = settlementWaitingPeriodQuery.data ?? 0;
+
+	const settlementDisabledReason =
+		settlementWaitingPeriodInSeconds > 0
+			? t('exchange.summary-info.button.settle-waiting-period')
+			: null;
+
+	const settleTxn = useSynthetixTxn(
+		'Exchanger',
+		'settle',
+		[walletAddress, destinationCurrencyKey],
+		undefined,
+		{ enabled: !isL2 && (numEntries ?? 0) >= 12 }
+	);
+
+	useEffect(() => {
+		if (settleTxn.hash) {
+			monitorTransaction({
+				txHash: settleTxn.hash,
+				onTxConfirmed: () => {
+					numEntriesQuery.refetch();
+				},
+			});
+		}
+
+		// eslint-disable-next-line
+	}, [settleTxn.hash]);
+
+	const handleSettle = async () => {
+		setTxError(null);
+		setOpenModal('settle');
+
+		try {
+			await settleTxn.mutateAsync();
+
+			setOpenModal(undefined);
+		} catch (e) {
+			logError(e);
+			setTxError(e.message);
+		}
+	};
 
 	return (
 		<>
 			<MobileOrTabletView>
 				<FixedMessageContainerSpacer />
 			</MobileOrTabletView>
-			<MessageContainer attached={attached} className="footer-card">
+			<MessageContainer className="footer-card">
 				<MessageItems>
 					<MessageItem>
 						<Trans
 							t={t}
 							i18nKey={'exchange.footer-card.settle.message'}
-							values={{ currencyKey: settleCurrency, numEntries: numEntries }}
+							values={{ currencyKey: baseCurrencyKey, numEntries }}
 							components={[<NoTextTransform />]}
 						/>
 					</MessageItem>
@@ -55,12 +106,12 @@ const SettleTransactionsCard: FC<SettleTransactionsCardProps> = ({
 				</MessageItems>
 				<ErrorTooltip
 					visible={settlementWaitingPeriodInSeconds > 0}
-					placement="top"
+					preset="top"
 					content={
 						<div>
 							{t('exchange.errors.settlement-waiting', {
 								waitingPeriod: secondsToTime(settlementWaitingPeriodInSeconds),
-								currencyKey: settleCurrency,
+								currencyKey: baseCurrencyKey,
 							})}
 						</div>
 					}
@@ -69,7 +120,7 @@ const SettleTransactionsCard: FC<SettleTransactionsCardProps> = ({
 						<Button
 							variant="primary"
 							disabled={!!settlementDisabledReason}
-							onClick={onSubmit}
+							onClick={handleSettle}
 							size="lg"
 							data-testid="settle"
 						>
@@ -78,6 +129,15 @@ const SettleTransactionsCard: FC<SettleTransactionsCardProps> = ({
 					</span>
 				</ErrorTooltip>
 			</MessageContainer>
+			{openModal === 'settle' && (
+				<TxSettleModal
+					onDismiss={() => setOpenModal(undefined)}
+					txError={txError}
+					attemptRetry={handleSettle}
+					currencyKey={baseCurrencyKey!}
+					currencyLabel={<NoTextTransform>{baseCurrencyKey}</NoTextTransform>}
+				/>
+			)}
 		</>
 	);
 };
@@ -96,7 +156,7 @@ export const MessageItems = styled.span`
 	display: grid;
 `;
 
-export const ErrorTooltip = styled(Tippy)`
+export const ErrorTooltip = styled(StyledTooltip)`
 	font-size: 12px;
 	background-color: ${(props) => props.theme.colors.red};
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};

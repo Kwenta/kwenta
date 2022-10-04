@@ -8,11 +8,12 @@ import { chain, useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
 const useConnector = () => {
 	const { chain: activeChain } = useNetwork();
 	const { address, isConnected: isWalletConnected } = useAccount();
+	const unsupportedNetwork = useMemo(
+		() => (isWalletConnected ? activeChain?.unsupported ?? false : false),
+		[activeChain, isWalletConnected]
+	);
 	const network = useMemo(
-		() =>
-			activeChain !== undefined && activeChain.unsupported
-				? chain.optimism
-				: activeChain ?? chain.optimism,
+		() => (activeChain?.unsupported ? chain.optimism : activeChain ?? chain.optimism),
 		[activeChain]
 	);
 
@@ -47,6 +48,8 @@ const useConnector = () => {
 	}, [l2Synthetixjs]);
 
 	return {
+		activeChain,
+		unsupportedNetwork,
 		isWalletConnected,
 		walletAddress,
 		provider,

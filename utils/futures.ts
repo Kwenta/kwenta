@@ -1,8 +1,13 @@
 import { NetworkId, NetworkNameById, Synth } from '@synthetixio/contracts-interface';
+import Wei, { wei } from '@synthetixio/wei';
 import { TFunction } from 'i18next';
 import { Dictionary } from 'lodash';
 
+import { FuturesOrderType } from 'queries/futures/types';
+import { PositionSide } from 'sections/futures/types';
 import logError from 'utils/logError';
+
+import { formatNumber } from './formatters/number';
 
 export const getMarketAsset = (marketKey: FuturesMarketKey) => {
 	return markets[marketKey].asset;
@@ -266,4 +271,25 @@ export const marketsForNetwork = (networkId: NetworkId) => {
 			logError('You cannot use futures on this network.');
 			return [];
 	}
+};
+
+export const orderPriceInvalidLabel = (
+	orderPrice: string,
+	leverageSide: PositionSide,
+	currentPrice: Wei,
+	orderType: FuturesOrderType
+): string | null => {
+	if (!orderPrice || Number(orderPrice) <= 0) return null;
+	const isLong = leverageSide === 'long';
+	if (
+		((isLong && orderType === 'limit') || (!isLong && orderType === 'stop')) &&
+		wei(orderPrice).gt(currentPrice)
+	)
+		return 'max ' + formatNumber(currentPrice);
+	if (
+		((!isLong && orderType === 'limit') || (isLong && orderType === 'stop')) &&
+		wei(orderPrice).lt(currentPrice)
+	)
+		return 'min ' + formatNumber(currentPrice);
+	return null;
 };

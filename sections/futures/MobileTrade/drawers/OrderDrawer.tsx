@@ -1,42 +1,62 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';
-import { PositionSide } from 'sections/futures/types';
+import { FuturesOrder, PositionSide } from 'queries/futures/types';
 import { getDisplayAsset } from 'utils/futures';
 
 import BaseDrawer from './BaseDrawer';
 
 type OrderDrawerProps = {
 	open: boolean;
-	order: any;
+	order: FuturesOrder | undefined;
 	closeDrawer(): void;
-	setAction(action: 'execute' | 'cancel'): void;
+	onExecute(): void;
+	onCancel(order: FuturesOrder | undefined): void;
 };
 
-const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer, setAction }) => {
+const OrderDrawer: React.FC<OrderDrawerProps> = ({
+	open,
+	order,
+	closeDrawer,
+	onCancel,
+	onExecute,
+}) => {
+	const { t } = useTranslation();
+
 	const items = React.useMemo(() => {
-		if (!order) return [];
+		if (!order || !order.side) return [];
+
+		const price = order.targetPrice
+			? [
+					{
+						label: t('futures.market.user.open-orders.table.price'),
+						value: order.targetPriceTxt,
+					},
+			  ]
+			: [];
 
 		return [
 			{
-				label: 'Market',
+				label: t('futures.market.user.open-orders.table.market'),
 				value: getDisplayAsset(order.asset),
 			},
 			{
-				label: 'Side',
+				label: t('futures.market.user.open-orders.table.side'),
 				value: <StyledPositionSide side={order.side}>{order.side}</StyledPositionSide>,
 			},
 			{
-				label: 'Size',
-				value: order.size,
+				label: t('futures.market.user.open-orders.table.size'),
+				value: order.sizeTxt,
 			},
+			...price,
 			{
-				label: 'Type',
+				label: t('futures.market.user.open-orders.table.type'),
 				value: order.orderType,
 			},
 		];
-	}, [order]);
+	}, [t, order]);
 
 	return (
 		<BaseDrawer
@@ -46,9 +66,9 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer, set
 			buttons={
 				<>
 					{order?.isExecutable && (
-						<ExecuteButton onClick={() => setAction('execute')}>Execute</ExecuteButton>
+						<ExecuteButton onClick={() => onExecute()}>Execute</ExecuteButton>
 					)}
-					<CancelOrderButton onClick={() => setAction('cancel')}>Cancel</CancelOrderButton>
+					<CancelOrderButton onClick={() => onCancel(order)}>Cancel</CancelOrderButton>
 				</>
 			}
 		/>
