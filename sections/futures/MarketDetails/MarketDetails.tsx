@@ -1,12 +1,8 @@
 import React, { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
-import StyledTooltip from 'components/Tooltip/StyledTooltip';
-import TimerTooltip from 'components/Tooltip/TimerTooltip';
-import useRateUpdateQuery from 'queries/rates/useRateUpdateQuery';
-import { currentMarketState, marketInfoState } from 'store/futures';
+import { marketInfoState } from 'store/futures';
 import media from 'styles/media';
 import { formatDollars, formatPercent } from 'utils/formatters/number';
 
