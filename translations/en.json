@@ -694,7 +694,10 @@
 					"modify-position": "modify",
 					"deposit-margin-minimum": "Deposit Margin",
 					"oi-caps-reached": "Open Interest Cap Reached",
-					"place-next-price-order": "Place Next-Price Order"
+					"place-next-price-order": "Place Next-Price Order",
+					"place-limit-order": "Place Limit Order",
+					"place-stop-order": "Place Stop Order",
+					"connect-wallet": "Connect Wallet"
 				},
 				"margin": {
 					"deposit-susd": "Deposit your sUSD to start trading",
@@ -752,14 +755,23 @@
 				},
 				"cross-margin": {
 					"connect-wallet": "Connect your wallet to start trading",
-					"title": "Cross-Margin",
-					"faq-title": "Cross-Margin FAQ's",
+					"title": "Cross Margin",
+					"faq-title": "Cross Margin FAQ's",
 					"create-account": "Create Account",
-					"unsupported": "Cross-margin is not supported on this network",
-					"switch-type": "Switch to isolated margin"
+					"unsupported": "Cross margin is not supported on this network",
+					"switch-type": "Switch to isolated margin",
+					"account-query-failed": "Failed to fetch account"
 				},
 				"preview": {
 					"error": "Error generating preview"
+				},
+				"orders": {
+					"manage-keeper-deposit": {
+						"title": "Manage Keeper Balance",
+						"withdraw": "Withdraw",
+						"deposit": "Deposit"
+					},
+					"fee-rejection-label": "Fee Rejection"
 				}
 			},
 			"history": {
@@ -894,15 +906,15 @@
 				}
 			},
 			"onboard": {
-				"title": "Cross-Margin",
-				"step1-intro": "To Get started you must first create your cross-margin account",
+				"title": "Cross Margin",
+				"step1-intro": "To Get started you must first create your cross margin account",
 				"step2-intro": "Now, approve the contract to spend sUSD",
 				"step3-intro": "Lastly, deposit your sUSD into the contact",
-				"step3-complete": "Your cross-margin account has been successfully created!",
-				"faq1": "What is cross-margin?",
-				"faq2": "Is cross-margin better than isolated margin",
-				"faq3": "How will a cross-margin account affect my trading",
-				"unsupported-network": "Cross-margin is not supported on this network"
+				"step3-complete": "Your cross margin account has been successfully created!",
+				"faq1": "What is cross margin?",
+				"faq2": "Is cross margin better than isolated margin",
+				"faq3": "How will a cross margin account affect my trading",
+				"unsupported-network": "Cross margin is not supported on this network"
 			}
 		}
 	},

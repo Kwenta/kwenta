@@ -8,7 +8,7 @@ import { resetButtonCSS } from 'styles/common';
 type DrawerItem = {
 	label: string;
 	value: React.ReactNode;
-};
+} | null;
 
 type BaseDrawerProps = {
 	items: DrawerItem[];
@@ -26,12 +26,15 @@ const BaseDrawer: React.FC<BaseDrawerProps> = ({ open, closeDrawer, items, butto
 						<CrossIcon />
 					</CloseButton>
 				</CloseButtonRow>
-				{items.map(({ label, value }) => (
-					<Row key={label}>
-						<div className="key">{label}</div>
-						<div className="value">{value}</div>
-					</Row>
-				))}
+				{items.map((row) => {
+					if (!row) return null;
+					return (
+						<Row key={row.label}>
+							<div className="key">{row.label}</div>
+							<div className="value">{row.value}</div>
+						</Row>
+					);
+				})}
 				{buttons && <ButtonsContainer>{buttons}</ButtonsContainer>}
 			</Foreground>
 		</Background>

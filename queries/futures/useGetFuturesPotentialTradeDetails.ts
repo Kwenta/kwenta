@@ -7,10 +7,11 @@ import useIsL2 from 'hooks/useIsL2';
 import { PotentialTradeStatus, POTENTIAL_TRADE_STATUS_TO_MESSAGE } from 'sections/futures/types';
 import {
 	currentMarketState,
-	futuresAccountState,
 	leverageSideState,
 	potentialTradeDetailsState,
 	futuresAccountTypeState,
+	selectedFuturesAddressState,
+	orderTypeState,
 } from 'store/futures';
 import logError from 'utils/logError';
 
@@ -23,12 +24,13 @@ const UNKNOWN = 'Unknown';
 
 const useGetFuturesPotentialTradeDetails = () => {
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
-	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
+	const selectedFuturesAddress = useRecoilValue(selectedFuturesAddressState);
 	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 	const isL2 = useIsL2();
 
 	const leverageSide = useRecoilValue(leverageSideState);
 	const marketAsset = useRecoilValue(currentMarketState);
+	const orderType = useRecoilValue(orderTypeState);
 
 	const getPreview = useGetCrossMarginPotentialTrade(marketAsset, selectedFuturesAddress);
 
@@ -38,13 +40,15 @@ const useGetFuturesPotentialTradeDetails = () => {
 		async (
 			nativeSizeDelta: Wei,
 			positionMarginDelta: Wei,
-			leverage: number
+			leverage: number,
+			orderPrice?: Wei
 		): Promise<FuturesPotentialTradeDetails | null> => {
 			if (
 				!synthetixjs ||
 				!marketAsset ||
 				(!nativeSizeDelta && selectedAccountType === 'isolated_margin') ||
 				(!nativeSizeDelta && (!positionMarginDelta || positionMarginDelta.eq(0))) ||
+				((orderType === 'limit' || orderType === 'stop') && orderPrice?.eq(0)) ||
 				!isL2 ||
 				!selectedFuturesAddress
 			) {
@@ -60,7 +64,11 @@ const useGetFuturesPotentialTradeDetails = () => {
 			const globals = await FuturesMarketData.globals();
 			const preview =
 				selectedAccountType === 'cross_margin'
-					? await getPreview(nativeSizeDelta, wei(positionMarginDelta).toBN())
+					? await getPreview(
+							nativeSizeDelta.toBN(),
+							wei(positionMarginDelta).toBN(),
+							orderPrice ? wei(orderPrice).toBN() : undefined
+					  )
 					: await FuturesMarketContract.postTradeDetails(
 							wei(nativeSizeDelta).toBN(),
 							selectedFuturesAddress
@@ -83,6 +91,7 @@ const useGetFuturesPotentialTradeDetails = () => {
 				margin: wei(margin),
 				price: wei(price),
 				size: wei(size),
+				sizeDelta: nativeSizeDelta,
 				side: leverageSide,
 				leverage: wei(leverage ? leverage : 1),
 				notionalValue: wei(size).mul(wei(price)),
@@ -101,19 +110,20 @@ const useGetFuturesPotentialTradeDetails = () => {
 			isL2,
 			leverageSide,
 			synthetixjs,
+			orderType,
 			getPreview,
 		]
 	);
 
 	const getTradeDetails = useCallback(
-		async (nativeSize: Wei, positionMarginDelta: Wei, leverage: number) => {
+		async (nativeSize: Wei, positionMarginDelta: Wei, leverage: number, orderPrice?: Wei) => {
 			try {
 				setPotentialTradeDetails({
 					data: null,
 					status: 'fetching',
 					error: null,
 				});
-				const data = await generatePreview(nativeSize, positionMarginDelta, leverage);
+				const data = await generatePreview(nativeSize, positionMarginDelta, leverage, orderPrice);
 				setPotentialTradeDetails({ data, status: 'complete', error: null });
 			} catch (err) {
 				logError(err);

@@ -266,6 +266,7 @@ export type FundingRates = {
 
 export type FuturesPotentialTradeDetails = {
 	size: Wei;
+	sizeDelta: Wei;
 	liqPrice: Wei;
 	margin: Wei;
 	price: Wei;
@@ -287,12 +288,16 @@ export type FuturesPotentialTradeDetailsQuery = {
 
 export type FuturesAccountType = 'cross_margin' | 'isolated_margin';
 
+type Wallet = string;
+type CrossMarginAccount = string;
+type FactoryAddress = string;
+export type CrossMarginAccounts = Record<FactoryAddress, Record<Wallet, CrossMarginAccount>>;
+
 export type FuturesAccountState = {
 	walletAddress: string | null;
-	selectedFuturesAddress: string | null;
 	crossMarginAddress: string | null;
 	crossMarginAvailable: boolean;
-	ready: boolean;
+	status: 'initial-fetch' | 'complete' | 'error' | 'refetching' | 'idle';
 };
 
 export type SynthBalances = Balances & {
@@ -303,6 +308,8 @@ export type TradeFees = {
 	staticFee: Wei;
 	dynamicFeeRate: Wei;
 	crossMarginFee: Wei;
+	keeperEthDeposit: Wei;
+	limitStopOrderFee: Wei;
 	total: Wei;
 };
 
@@ -312,4 +319,7 @@ export type FuturesTradeInputs = {
 	leverage: string;
 	nativeSizeDelta: Wei;
 	susdSizeDelta: Wei;
+	orderPrice?: Wei | undefined;
 };
+
+export type FuturesOrderType = 'market' | 'next-price' | 'stop' | 'limit';
