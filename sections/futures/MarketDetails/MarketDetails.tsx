@@ -10,30 +10,19 @@ import { currentMarketState, marketInfoState } from 'store/futures';
 import media from 'styles/media';
 import { formatDollars, formatPercent } from 'utils/formatters/number';
 
+import MarketDetail from './MarketDetail';
 import useGetMarketData from './useGetMarketData';
-import { isMarketDataKey, marketDataKeyMap } from './utils';
 
 type MarketDetailsProps = {
 	mobile?: boolean;
 };
 
 const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
-	const { t } = useTranslation();
-
 	const marketInfo = useRecoilValue(marketInfoState);
-	const marketAsset = useRecoilValue(currentMarketState);
 
 	const pausedClass = marketInfo?.isSuspended ? 'paused' : '';
 
 	const marketData = useGetMarketData(mobile);
-
-	const lastOracleUpdateTimeQuery = useRateUpdateQuery({
-		baseCurrencyKey: marketAsset,
-	});
-
-	const lastOracleUpdateTime: Date = useMemo(() => lastOracleUpdateTimeQuery?.data ?? new Date(), [
-		lastOracleUpdateTimeQuery,
-	]);
 
 	// skew text
 	const longText = useMemo(() => {
@@ -62,46 +51,9 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 
 	return (
 		<MarketDetailsContainer mobile={mobile}>
-			{Object.entries(marketData).map(([key, { value, color }]) => {
-				const colorClass = color || '';
-				const children = (
-					<WithCursor cursor="help" key={key}>
-						<div key={key}>
-							<p className="heading">{key}</p>
-							<span className={`value ${colorClass} ${pausedClass}`}>{value}</span>
-						</div>
-					</WithCursor>
-				);
-
-				if (key === marketInfo?.marketName) {
-					return (
-						<TimerTooltip
-							position={'fixed'}
-							key={key}
-							startTimeDate={lastOracleUpdateTime}
-							width={'131px'}
-						>
-							{children}
-						</TimerTooltip>
-					);
-				}
-
-				if (isMarketDataKey(key)) {
-					return (
-						<MarketDetailsTooltip
-							key={key}
-							position={'fixed'}
-							height={'auto'}
-							mobile={mobile}
-							content={t(`exchange.market-details-card.tooltips.${marketDataKeyMap[key]}`)}
-						>
-							{children}
-						</MarketDetailsTooltip>
-					);
-				}
-
-				return children;
-			})}
+			{Object.entries(marketData).map(([key, data]) => (
+				<MarketDetail {...data} marketKey={key} mobile={Boolean(mobile)}></MarketDetail>
+			))}
 
 			{mobile && (
 				<div key="Skew">
@@ -124,19 +76,8 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	);
 };
 
-// Extend type of cursor to accept different style of cursor. Currently accept only 'help'
-const WithCursor = styled.div<{ cursor: 'help' }>`
-	cursor: ${(props) => props.cursor};
-`;
-
 const SkewDataContainer = styled.div`
 	grid-row: 1;
-`;
-
-const MarketDetailsTooltip = styled(StyledTooltip)<{ mobile?: boolean }>`
-	z-index: 2;
-	padding: 10px;
-	right: ${(props) => props.mobile && '1px'};
 `;
 
 const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
