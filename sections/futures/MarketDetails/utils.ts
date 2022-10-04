@@ -46,8 +46,8 @@ export const marketDataKeyMap: Record<MarketDataKey, string> = {
 	[MarketDataKey.externalPrice]: 'external-price',
 	[MarketDataKey.dailyChange]: '24h-change',
 	[MarketDataKey.dailyVolume]: '24h-vol',
-	[MarketDataKey.dailyTrades]: '24H Trades',
-	[MarketDataKey.openInterest]: 'Open Interest',
+	[MarketDataKey.dailyTrades]: '24h-trades',
+	[MarketDataKey.openInterest]: 'open-interest',
 	[MarketDataKey.instFundingRate]: '1h-funding-rate',
 	[MarketDataKey.hourlyFundingRate]: '1h-funding-rate',
 };
