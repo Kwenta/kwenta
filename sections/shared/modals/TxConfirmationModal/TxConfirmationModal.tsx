@@ -302,7 +302,7 @@ const Summary = styled.div``;
 const SummaryItem = styled(FlexDivRowCentered)`
 	margin-bottom: 8px;
 	padding-bottom: 8px;
-	border-bottom: 1px solid ${(props) => props.theme.colors.navy};
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
 const SummaryItemLabel = styled.div`
