@@ -14,6 +14,7 @@ type CustomInputProps = {
 	defaultValue?: any;
 	dataTestId?: string;
 	textAlign?: string;
+	invalid?: boolean;
 };
 
 const INVALID_CHARS = ['-', '+', 'e'];
@@ -30,6 +31,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
 	id,
 	defaultValue,
 	dataTestId,
+	invalid,
 	textAlign = 'left',
 }) => {
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,7 +39,12 @@ const CustomInput: React.FC<CustomInputProps> = ({
 	};
 
 	return (
-		<CustomInputContainer style={style} className={className} textAlign={textAlign}>
+		<CustomInputContainer
+			style={style}
+			className={className}
+			textAlign={textAlign}
+			invalid={invalid}
+		>
 			{typeof left === 'string' ? <span>{left}</span> : left}
 
 			<input
@@ -60,7 +67,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
 	);
 };
 
-const CustomInputContainer = styled.div<{ textAlign: string }>`
+const CustomInputContainer = styled.div<{ textAlign: string; invalid?: boolean }>`
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -69,6 +76,9 @@ const CustomInputContainer = styled.div<{ textAlign: string }>`
 	background: ${(props) => props.theme.colors.selectedTheme.input.secondary.background};
 	box-shadow: ${(props) => props.theme.colors.selectedTheme.input.shadow};
 	border: ${(props) => props.theme.colors.selectedTheme.border};
+	border-color: ${(props) =>
+		props.invalid ? props.theme.colors.selectedTheme.red : props.theme.colors.selectedTheme.border};
+
 	border-radius: 10px;
 	padding: 0 10px;
 
@@ -82,7 +92,10 @@ const CustomInputContainer = styled.div<{ textAlign: string }>`
 		background-color: transparent;
 		border: none;
 		text-align: ${(props) => props.textAlign || 'left'};
-		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+		color: ${(props) =>
+			props.invalid
+				? props.theme.colors.selectedTheme.red
+				: props.theme.colors.selectedTheme.button.text.primary};
 		width: 100%;
 
 		&:focus {

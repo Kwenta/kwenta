@@ -1,6 +1,6 @@
 # Contributors Guide
 
-Kwenta is a dApp enabling derivates trading with infinite liquidity - powered by the Synthetix protocol. We're community driven and welcome all contribution. We aim to provide a constructive, respectful and fun environment for collaboration.
+Kwenta is a dApp enabling derivates trading with infinite liquidity - powered by the Synthetix protocol. We're community driven and welcome all contributions. We aim to provide a constructive, respectful and fun environment for collaboration.
 
 If you wish to help out, please first join the **Kwenta devDAO** on our [Discord](https://discord.gg/kwenta) `#community-dev` channel. For more information, see [devDAO](#devdao) below.
 
@@ -31,15 +31,15 @@ Be welcome to join the Kwenta devDAO on our [Discord](https://discord.gg/kwenta)
 
 This is where discussions take place, new tickets will be announced by the community PM and assigned to the respective community members and roles on a first come, first served base.
 
-There are different roles depending on the severety of a ticket. As a new community member, you should watch out for *bounty hunter* tickets are work your way up from there.
+There are different roles depending on the severity of a ticket. As a new community member, you should watch out for *bounty hunter* tickets are work your way up from there.
 
 ### General Work-Flow
 
 We recommend the following work-flow for contributors:
 
-1. **Find an open ticket** to work on in our Discord, either because it's interesting or suitable to your skill-set. Use the `#community-dev channel` to communicate your intentions and ask questions.
+1. **Find an open ticket** to work on in our Discord, either because it's interesting or suitable to your skill set. Use the `#community-dev channel` to communicate your intentions and ask questions.
 2. **Work in a feature branch** of your personal fork (github.com/YOUR_NAME/kwenta) of the main repository (github.com/kwenta/kwenta).
-3. Once you feel you have addressed the issue, **create a pull-request** to merge your changes in to the main repository. In case of any doubts, don't hesitate to contact the community PM or ask away in the channel.
+3. Once you feel you have addressed the issue, **create a pull-request** to merge your changes into the main repository. In case of any doubts, don't hesitate to contact the community PM or ask away in the channel.
 4. Wait for a CC or auditor to **review your changes** to ensure the issue is addressed satisfactorily. Optionally, mention your PR on [Discord](https://discord.gg/kwenta).
 5. If the issue is addressed the repository maintainers will **merge your pull-request** and you'll be an official contributor!
 
@@ -66,7 +66,7 @@ There's a great [guide](https://akrabat.com/the-beginners-guide-to-contributing-
 
 ### I don't think I have anything to add
 
-There's lots to be done and there's all sorts of tasks. You can do anything from correcting typos through to writing core dApp code. If you reach out, we'll include you.
+There's lots to be done and there's all sorts of tasks. You can do anything from correcting typos to writing core dApp code. If you reach out, we'll include you.
 
 ### I'm not sure my programming level is good enough
 

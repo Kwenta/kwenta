@@ -1,4 +1,5 @@
 import Wei, { wei } from '@synthetixio/wei';
+import { capitalize } from 'lodash';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -8,12 +9,16 @@ import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import ErrorView from 'components/Error';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { CurrencyKey } from 'constants/currency';
-import Connector from 'containers/Connector';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { currentMarketState, potentialTradeDetailsState } from 'store/futures';
+import {
+	currentMarketState,
+	futuresOrderPriceState,
+	orderTypeState,
+	positionState,
+	potentialTradeDetailsState,
+} from 'store/futures';
 import { FlexDivCentered } from 'styles/common';
 import { zeroBN, formatCurrency, formatDollars, formatNumber } from 'utils/formatters/number';
+import { getDisplayAsset } from 'utils/futures';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
 import { PositionSide } from '../types';
@@ -21,6 +26,7 @@ import { PositionSide } from '../types';
 type Props = {
 	gasFee: Wei;
 	tradeFee: Wei;
+	keeperFee?: Wei | null;
 	errorMessage?: string | null | undefined;
 	onConfirmOrder: () => any;
 	onDismiss: () => void;
@@ -29,23 +35,33 @@ type Props = {
 export default function TradeConfirmationModal({
 	tradeFee,
 	gasFee,
+	keeperFee,
 	errorMessage,
 	onConfirmOrder,
 	onDismiss,
 }: Props) {
 	const { t } = useTranslation();
-	const { synthsMap } = Connector.useContainer();
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const market = useRecoilValue(currentMarketState);
 	const { data: potentialTradeDetails } = useRecoilValue(potentialTradeDetailsState);
+	const orderType = useRecoilValue(orderTypeState);
+	const orderPrice = useRecoilValue(futuresOrderPriceState);
+	const position = useRecoilValue(positionState);
+
+	const positionSide = useMemo(() => {
+		if (potentialTradeDetails?.size.eq(zeroBN)) {
+			return position?.position?.side === PositionSide.LONG
+				? PositionSide.SHORT
+				: PositionSide.LONG;
+		}
+		return potentialTradeDetails?.size.gte(zeroBN) ? PositionSide.LONG : PositionSide.SHORT;
+	}, [potentialTradeDetails, position?.position?.side]);
 
 	const positionDetails = useMemo(() => {
 		return potentialTradeDetails
 			? {
 					...potentialTradeDetails,
-					size: potentialTradeDetails.size.abs(),
-					side: potentialTradeDetails.size.gte(zeroBN) ? PositionSide.LONG : PositionSide.SHORT,
+					side: positionSide,
 					leverage: potentialTradeDetails.margin.eq(zeroBN)
 						? zeroBN
 						: potentialTradeDetails.size
@@ -54,22 +70,36 @@ export default function TradeConfirmationModal({
 								.abs(),
 			  }
 			: null;
-	}, [potentialTradeDetails]);
+	}, [potentialTradeDetails, positionSide]);
 
 	const dataRows = useMemo(
 		() => [
 			{ label: 'side', value: (positionDetails?.side ?? PositionSide.LONG).toUpperCase() },
+			{ label: 'order Type', value: capitalize(orderType) },
 			{
 				label: 'size',
-				value: formatCurrency(market || '', positionDetails?.size ?? zeroBN, {
-					sign: market ? synthsMap[market]?.sign : '',
-				}),
+				value: formatCurrency(
+					getDisplayAsset(market) || '',
+					positionDetails?.sizeDelta.abs() ?? zeroBN,
+					{
+						currencyKey: getDisplayAsset(market) ?? '',
+					}
+				),
 			},
-			{ label: 'leverage', value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x` },
 			{
-				label: 'current price',
-				value: formatDollars(positionDetails?.price ?? zeroBN),
+				label: 'resulting leverage',
+				value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x`,
 			},
+
+			orderType === 'limit' || orderType === 'stop'
+				? {
+						label: orderType + ' order price',
+						value: formatDollars(orderPrice),
+				  }
+				: {
+						label: 'current price',
+						value: formatDollars(positionDetails?.price ?? zeroBN),
+				  },
 			{
 				label: 'liquidation price',
 				value: formatDollars(positionDetails?.liqPrice ?? zeroBN),
@@ -82,15 +112,18 @@ export default function TradeConfirmationModal({
 				label: 'protocol fee',
 				value: formatDollars(tradeFee),
 			},
+			keeperFee
+				? {
+						label: 'Keeper ETH deposit',
+						value: formatCurrency('ETH', keeperFee, { currencyKey: 'ETH' }),
+				  }
+				: null,
 			{
 				label: 'network gas fee',
-				value: formatCurrency(selectedPriceCurrency.name as CurrencyKey, gasFee ?? zeroBN, {
-					sign: '$',
-					minDecimals: 2,
-				}),
+				value: formatDollars(gasFee ?? zeroBN),
 			},
 		],
-		[positionDetails, market, synthsMap, gasFee, selectedPriceCurrency, tradeFee]
+		[positionDetails, market, keeperFee, gasFee, tradeFee, orderType, orderPrice]
 	);
 
 	const disabledReason = useMemo(() => {
@@ -106,12 +139,15 @@ export default function TradeConfirmationModal({
 					isOpen
 					title={t('futures.market.trade.confirmation.modal.confirm-order')}
 				>
-					{dataRows.map(({ label, value }, i) => (
-						<Row key={`datarow-${i}`}>
-							<Label>{label}</Label>
-							<Value>{value}</Value>
-						</Row>
-					))}
+					{dataRows.map((row, i) => {
+						if (!row) return null;
+						return (
+							<Row key={`datarow-${i}`}>
+								<Label>{row.label}</Label>
+								<Value>{row.value}</Value>
+							</Row>
+						);
+					})}
 					<ConfirmTradeButton
 						data-testid="trade-open-position-confirm-order-button"
 						variant="flat"
@@ -155,9 +191,6 @@ export default function TradeConfirmationModal({
 const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
 		width: 400px;
-	}
-	.card-body {
-		padding: 28px;
 	}
 `;
 
