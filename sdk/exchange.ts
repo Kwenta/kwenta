@@ -78,6 +78,380 @@ export default class ExchangeService {
 		this.getAllTokensMap();
 	}
 
+	public getTxProvider(baseCurrencyKey: string, quoteCurrencyKey: string) {
+		if (!baseCurrencyKey || !quoteCurrencyKey) return null;
+		if (
+			this.synthsMap?.[baseCurrencyKey as SynthSymbol] &&
+			this.synthsMap?.[quoteCurrencyKey as SynthSymbol]
+		)
+			return 'synthetix';
+		if (this.tokensMap[baseCurrencyKey] && this.tokensMap[quoteCurrencyKey]) return '1inch';
+
+		return 'synthswap';
+	}
+
+	public async getTotalTradePrice(
+		quoteCurrencyKey: string,
+		baseCurrencyKey: string,
+		quoteAmountWei: Wei
+	) {
+		const quotePriceRate = await this.getQuotePriceRate(baseCurrencyKey, quoteCurrencyKey);
+		const sUSDRate = await this.getSynthUsdRate(quoteCurrencyKey, baseCurrencyKey);
+		let tradePrice = quoteAmountWei.mul(quotePriceRate || 0);
+
+		if (sUSDRate) {
+			tradePrice = tradePrice.div(sUSDRate);
+		}
+
+		return tradePrice;
+	}
+
+	public async getEstimatedBaseTradePrice(
+		quoteCurrencyKey: string,
+		baseCurrencyKey: string,
+		baseAmountWei: Wei
+	) {
+		const basePriceRate = await this.getBasePriceRate(baseCurrencyKey, quoteCurrencyKey);
+		const sUSDRate = await this.getSynthUsdRate(quoteCurrencyKey, baseCurrencyKey);
+		let tradePrice = baseAmountWei.mul(basePriceRate || 0);
+
+		if (sUSDRate) {
+			tradePrice = tradePrice.div(sUSDRate);
+		}
+
+		return tradePrice;
+	}
+
+	public async getSlippagePercent(
+		quoteCurrencyKey: string,
+		baseCurrencyKey: string,
+		quoteAmountWei: Wei,
+		baseAmountWei: Wei
+	) {
+		const totalTradePrice = await this.getTotalTradePrice(
+			quoteCurrencyKey,
+			baseCurrencyKey,
+			quoteAmountWei
+		);
+
+		const estimatedBaseTradePrice = await this.getEstimatedBaseTradePrice(
+			quoteCurrencyKey,
+			baseCurrencyKey,
+			baseAmountWei
+		);
+
+		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
+
+		if (txProvider === '1inch' && totalTradePrice.gt(0) && estimatedBaseTradePrice.gt(0)) {
+			return totalTradePrice.sub(estimatedBaseTradePrice).div(totalTradePrice).neg();
+		}
+
+		return null;
+	}
+
+	public async getBaseFeeRate(sourceCurrencyKey: string, destinationCurrencyKey: string) {
+		if (!this.contracts.SystemSettings) {
+			throw new Error('SystemSettings does not exist on the currently selected network.');
+		}
+
+		const [sourceCurrencyFeeRate, destinationCurrencyFeeRate] = await Promise.all([
+			this.contracts.SystemSettings.exchangeFeeRate(
+				ethers.utils.formatBytes32String(sourceCurrencyKey)
+			),
+			this.contracts.SystemSettings.exchangeFeeRate(
+				ethers.utils.formatBytes32String(destinationCurrencyKey)
+			),
+		]);
+
+		return sourceCurrencyFeeRate && destinationCurrencyFeeRate
+			? sourceCurrencyFeeRate.add(destinationCurrencyFeeRate)
+			: null;
+	}
+
+	public async getExchangeFeeRate(sourceCurrencyKey: string, destinationCurrencyKey: string) {
+		if (!this.contracts.Exchanger) {
+			throw new Error('Exchanger does not exist on the currently selected network.');
+		}
+
+		return await this.contracts.Exchanger.feeRateForExchange(
+			ethers.utils.formatBytes32String(sourceCurrencyKey),
+			ethers.utils.formatBytes32String(destinationCurrencyKey)
+		);
+	}
+
+	public async getRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
+		const [quoteRate, baseRate] = await this.getPairRates(quoteCurrencyKey, baseCurrencyKey);
+		const baseCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey);
+		const quoteCurrencyTokenAddress = this.getTokenAddress(quoteCurrencyKey);
+
+		const coinGeckoPrices = await this.getCoingeckoPrices([
+			quoteCurrencyTokenAddress,
+			baseCurrencyTokenAddress,
+		]);
+
+		const base = baseRate.lte(0)
+			? newGetCoinGeckoPricesForCurrencies(coinGeckoPrices, baseCurrencyTokenAddress)
+			: baseRate;
+
+		const quote = quoteRate.lte(0)
+			? newGetCoinGeckoPricesForCurrencies(coinGeckoPrices, quoteCurrencyTokenAddress)
+			: quoteRate;
+
+		return base.gt(0) && quote.gt(0) ? quote.div(base) : wei(0);
+	}
+
+	public async getOneInchTokenList() {
+		const oneInchApiUrl = `https://api.1inch.io/v4.0/${this.isL2 ? 10 : 1}`;
+		const response = await axios.get<OneInchTokenListResponse>(oneInchApiUrl + 'tokens');
+
+		const tokensMap = response.data.tokens || {};
+		const chainId: NetworkId = this.isL2 ? 10 : 1;
+		const tokens = Object.values(tokensMap).map((t) => ({ ...t, chainId, tags: [] }));
+
+		return {
+			tokens,
+			tokensMap: keyBy(tokens, 'symbol'),
+			symbols: tokens.map((token) => token.symbol),
+		};
+	}
+
+	public async getFeeReclaimPeriod(currencyKey: string, walletAddress: string) {
+		if (!this.contracts.Exchanger) {
+			throw new Error('The Exchanger contract does not exist on the currently selected network.');
+		}
+
+		const maxSecsLeftInWaitingPeriod = (await this.contracts.Exchanger.maxSecsLeftInWaitingPeriod(
+			walletAddress,
+			ethers.utils.formatBytes32String(currencyKey)
+		)) as ethers.BigNumberish;
+
+		return Number(maxSecsLeftInWaitingPeriod);
+	}
+
+	public async getBalance(currencyKey: string, walletAddress: string) {
+		const isETH = this.isCurrencyETH(currencyKey);
+		const synthsWalletBalance = await getSynthBalances(walletAddress, this.contracts);
+		const token = this.tokenList.find((t) => t.symbol === currencyKey);
+		const tokenBalances = token ? await this.getTokensBalances([token], walletAddress) : undefined;
+
+		if (currencyKey != null) {
+			if (isETH) {
+				const ETHBalance = await this.getETHBalance(walletAddress);
+				return ETHBalance;
+			} else if (this.synthsMap[currencyKey as SynthSymbol]) {
+				return synthsWalletBalance != null
+					? (get(synthsWalletBalance, ['balancesMap', currencyKey, 'balance'], zeroBN) as Wei)
+					: null;
+			} else {
+				return tokenBalances?.[currencyKey]?.balance ?? zeroBN;
+			}
+		}
+
+		return null;
+	}
+
+	public async swapSynthSwap(
+		fromToken: Token,
+		toToken: Token,
+		fromAmount: string,
+		walletAddress: string,
+		metaOnly?: 'meta_tx' | 'estimate_gas'
+	) {
+		if (!this.signer) throw new Error('Wallet not connected');
+		if (this.networkId !== 10) throw new Error('Unsupported network');
+
+		const sUSD = this.tokensMap['sUSD'];
+
+		const oneInchFrom = this.tokensMap[fromToken.symbol] ? sUSD.address : fromToken.address;
+		const oneInchTo = this.tokensMap[toToken.symbol] ? sUSD.address : toToken.address;
+
+		const fromSymbolBytes = ethers.utils.formatBytes32String(fromToken.symbol);
+		const sUSDBytes = ethers.utils.formatBytes32String('sUSD');
+
+		let synthAmountEth = fromAmount;
+		if (this.tokensMap[fromToken.symbol]) {
+			const fromAmountWei = wei(fromAmount).toString(0, true);
+			const amounts = await this.contracts.Exchanger?.getAmountsForExchange(
+				fromAmountWei,
+				fromSymbolBytes,
+				sUSDBytes
+			);
+
+			const usdValue = amounts.amountReceived.sub(amounts.fee);
+			synthAmountEth = ethers.utils.formatEther(usdValue);
+		}
+
+		const params = await this.getOneInchSwapParams(
+			oneInchFrom,
+			oneInchTo,
+			synthAmountEth,
+			walletAddress
+		);
+
+		const formattedData = getFormattedSwapData(params, SYNTH_SWAP_OPTIMISM_ADDRESS);
+
+		const synthSwapContract = new ethers.Contract(
+			SYNTH_SWAP_OPTIMISM_ADDRESS,
+			synthSwapAbi,
+			this.signer
+		);
+
+		const contractFunc =
+			metaOnly === 'meta_tx'
+				? synthSwapContract.populateTransaction
+				: metaOnly === 'estimate_gas'
+				? synthSwapContract.estimateGas
+				: synthSwapContract;
+
+		if (this.tokensMap[toToken.symbol]) {
+			const symbolBytes = ethers.utils.formatBytes32String(toToken.symbol);
+			if (formattedData.functionSelector === 'swap') {
+				return contractFunc.swapInto(symbolBytes, formattedData.data);
+			} else {
+				return contractFunc.uniswapSwapInto(
+					symbolBytes,
+					fromToken.address,
+					params.fromTokenAmount,
+					formattedData.data
+				);
+			}
+		} else {
+			if (formattedData.functionSelector === 'swap') {
+				return contractFunc.swapOutOf(
+					fromSymbolBytes,
+					wei(fromAmount).toString(0, true),
+					formattedData.data
+				);
+			} else {
+				const usdValue = ethers.utils.parseEther(synthAmountEth).toString();
+				return contractFunc.uniswapSwapOutOf(
+					fromSymbolBytes,
+					toToken.address,
+					wei(fromAmount).toString(0, true),
+					usdValue,
+					formattedData.data
+				);
+			}
+		}
+	}
+
+	public async swapOneInch(
+		quoteTokenAddress: string,
+		baseTokenAddress: string,
+		amount: string,
+		walletAddress: string,
+		metaOnly = false
+	) {
+		const params = await this.getOneInchSwapParams(
+			quoteTokenAddress,
+			baseTokenAddress,
+			amount,
+			walletAddress
+		);
+
+		const { from, to, data, value } = params.tx;
+
+		const tx = metaOnly
+			? await this.signer.populateTransaction({
+					from,
+					to,
+					data,
+					value: ethers.BigNumber.from(value),
+			  })
+			: await this.signer.sendTransaction({
+					from,
+					to,
+					data,
+					value: ethers.BigNumber.from(value),
+			  });
+		return tx;
+	}
+
+	public async swapOneInchGasEstimate(
+		quoteTokenAddress: string,
+		baseTokenAddress: string,
+		amount: string,
+		walletAddress: string
+	) {
+		const params = await this.getOneInchSwapParams(
+			quoteTokenAddress,
+			baseTokenAddress,
+			amount,
+			walletAddress
+		);
+
+		return params.tx.gas;
+	}
+
+	private async getOneInchApproveAddress() {
+		const response = await axios.get<OneInchApproveSpenderResponse>(
+			this.oneInchApiUrl + 'approve/spender'
+		);
+
+		return response.data.address;
+	}
+
+	public async getNumEntries(walletAddress: string, currencyKey: string) {
+		if (!this.contracts.Exchanger) {
+			throw new Error('Something something wrong?');
+		}
+
+		const { numEntries } = await this.contracts.Exchanger.settlementOwing(
+			walletAddress,
+			ethers.utils.formatBytes32String(currencyKey)
+		);
+
+		return numEntries ?? null;
+	}
+
+	public async getExchangeRates() {
+		if (!this.contracts.SynthUtil || !this.contracts.ExchangeRates) {
+			throw new Error('Wrong network');
+		}
+
+		const exchangeRates: Rates = {};
+
+		// Additional commonly used currencies to fetch, besides the one returned by the SynthUtil.synthsRates
+		const additionalCurrencies = [
+			'SNX',
+			'XAU',
+			'XAG',
+			'DYDX',
+			'APE',
+			'BNB',
+			'DOGE',
+			'DebtRatio',
+			'XMR',
+			'OP',
+		].map(ethers.utils.formatBytes32String);
+
+		const [synthsRates, ratesForCurrencies] = (await Promise.all([
+			this.contracts.SynthUtil?.synthsRates(),
+			this.contracts.ExchangeRates?.ratesForCurrencies(additionalCurrencies),
+		])) as [SynthRatesTuple, CurrencyRate[]];
+
+		const synths = [...synthsRates[0], ...additionalCurrencies] as CurrencyKey[];
+		const rates = [...synthsRates[1], ...ratesForCurrencies] as CurrencyRate[];
+
+		synths.forEach((currencyKeyBytes32: CurrencyKey, idx: number) => {
+			const currencyKey = ethers.utils.parseBytes32String(currencyKeyBytes32) as CurrencyKey;
+			const marketAsset = MarketAssetByKey[currencyKey as FuturesMarketKey];
+
+			const rate = Number(ethers.utils.formatEther(rates[idx]));
+
+			exchangeRates[currencyKey] = wei(rate);
+			if (marketAsset) exchangeRates[marketAsset] = wei(rate);
+		});
+
+		return exchangeRates;
+	}
+
+	// public handleApprove(currencyKey: string) {}
+
+	// public handleSettle() {}
+
+	// public handleExchange() {}
+
 	private isCurrencyETH(currencyKey: string) {
 		return currencyKey === CRYPTO_CURRENCY_MAP.ETH;
 	}
@@ -496,380 +870,6 @@ export default class ExchangeService {
 		const balance = await this.provider.getBalance(walletAddress);
 		return wei(balance);
 	}
-
-	public getTxProvider(baseCurrencyKey: string, quoteCurrencyKey: string) {
-		if (!baseCurrencyKey || !quoteCurrencyKey) return null;
-		if (
-			this.synthsMap?.[baseCurrencyKey as SynthSymbol] &&
-			this.synthsMap?.[quoteCurrencyKey as SynthSymbol]
-		)
-			return 'synthetix';
-		if (this.tokensMap[baseCurrencyKey] && this.tokensMap[quoteCurrencyKey]) return '1inch';
-
-		return 'synthswap';
-	}
-
-	public async getTotalTradePrice(
-		quoteCurrencyKey: string,
-		baseCurrencyKey: string,
-		quoteAmountWei: Wei
-	) {
-		const quotePriceRate = await this.getQuotePriceRate(baseCurrencyKey, quoteCurrencyKey);
-		const sUSDRate = await this.getSynthUsdRate(quoteCurrencyKey, baseCurrencyKey);
-		let tradePrice = quoteAmountWei.mul(quotePriceRate || 0);
-
-		if (sUSDRate) {
-			tradePrice = tradePrice.div(sUSDRate);
-		}
-
-		return tradePrice;
-	}
-
-	public async getEstimatedBaseTradePrice(
-		quoteCurrencyKey: string,
-		baseCurrencyKey: string,
-		baseAmountWei: Wei
-	) {
-		const basePriceRate = await this.getBasePriceRate(baseCurrencyKey, quoteCurrencyKey);
-		const sUSDRate = await this.getSynthUsdRate(quoteCurrencyKey, baseCurrencyKey);
-		let tradePrice = baseAmountWei.mul(basePriceRate || 0);
-
-		if (sUSDRate) {
-			tradePrice = tradePrice.div(sUSDRate);
-		}
-
-		return tradePrice;
-	}
-
-	public async getSlippagePercent(
-		quoteCurrencyKey: string,
-		baseCurrencyKey: string,
-		quoteAmountWei: Wei,
-		baseAmountWei: Wei
-	) {
-		const totalTradePrice = await this.getTotalTradePrice(
-			quoteCurrencyKey,
-			baseCurrencyKey,
-			quoteAmountWei
-		);
-
-		const estimatedBaseTradePrice = await this.getEstimatedBaseTradePrice(
-			quoteCurrencyKey,
-			baseCurrencyKey,
-			baseAmountWei
-		);
-
-		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
-
-		if (txProvider === '1inch' && totalTradePrice.gt(0) && estimatedBaseTradePrice.gt(0)) {
-			return totalTradePrice.sub(estimatedBaseTradePrice).div(totalTradePrice).neg();
-		}
-
-		return null;
-	}
-
-	public async getBaseFeeRate(sourceCurrencyKey: string, destinationCurrencyKey: string) {
-		if (!this.contracts.SystemSettings) {
-			throw new Error('SystemSettings does not exist on the currently selected network.');
-		}
-
-		const [sourceCurrencyFeeRate, destinationCurrencyFeeRate] = await Promise.all([
-			this.contracts.SystemSettings.exchangeFeeRate(
-				ethers.utils.formatBytes32String(sourceCurrencyKey)
-			),
-			this.contracts.SystemSettings.exchangeFeeRate(
-				ethers.utils.formatBytes32String(destinationCurrencyKey)
-			),
-		]);
-
-		return sourceCurrencyFeeRate && destinationCurrencyFeeRate
-			? sourceCurrencyFeeRate.add(destinationCurrencyFeeRate)
-			: null;
-	}
-
-	public async getExchangeFeeRate(sourceCurrencyKey: string, destinationCurrencyKey: string) {
-		if (!this.contracts.Exchanger) {
-			throw new Error('Exchanger does not exist on the currently selected network.');
-		}
-
-		return await this.contracts.Exchanger.feeRateForExchange(
-			ethers.utils.formatBytes32String(sourceCurrencyKey),
-			ethers.utils.formatBytes32String(destinationCurrencyKey)
-		);
-	}
-
-	public async getRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
-		const [quoteRate, baseRate] = await this.getPairRates(quoteCurrencyKey, baseCurrencyKey);
-		const baseCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey);
-		const quoteCurrencyTokenAddress = this.getTokenAddress(quoteCurrencyKey);
-
-		const coinGeckoPrices = await this.getCoingeckoPrices([
-			quoteCurrencyTokenAddress,
-			baseCurrencyTokenAddress,
-		]);
-
-		const base = baseRate.lte(0)
-			? newGetCoinGeckoPricesForCurrencies(coinGeckoPrices, baseCurrencyTokenAddress)
-			: baseRate;
-
-		const quote = quoteRate.lte(0)
-			? newGetCoinGeckoPricesForCurrencies(coinGeckoPrices, quoteCurrencyTokenAddress)
-			: quoteRate;
-
-		return base.gt(0) && quote.gt(0) ? quote.div(base) : wei(0);
-	}
-
-	public async getOneInchTokenList() {
-		const oneInchApiUrl = `https://api.1inch.io/v4.0/${this.isL2 ? 10 : 1}`;
-		const response = await axios.get<OneInchTokenListResponse>(oneInchApiUrl + 'tokens');
-
-		const tokensMap = response.data.tokens || {};
-		const chainId: NetworkId = this.isL2 ? 10 : 1;
-		const tokens = Object.values(tokensMap).map((t) => ({ ...t, chainId, tags: [] }));
-
-		return {
-			tokens,
-			tokensMap: keyBy(tokens, 'symbol'),
-			symbols: tokens.map((token) => token.symbol),
-		};
-	}
-
-	public async getFeeReclaimPeriod(currencyKey: string, walletAddress: string) {
-		if (!this.contracts.Exchanger) {
-			throw new Error('The Exchanger contract does not exist on the currently selected network.');
-		}
-
-		const maxSecsLeftInWaitingPeriod = (await this.contracts.Exchanger.maxSecsLeftInWaitingPeriod(
-			walletAddress,
-			ethers.utils.formatBytes32String(currencyKey)
-		)) as ethers.BigNumberish;
-
-		return Number(maxSecsLeftInWaitingPeriod);
-	}
-
-	public async getBalance(currencyKey: string, walletAddress: string) {
-		const isETH = this.isCurrencyETH(currencyKey);
-		const synthsWalletBalance = await getSynthBalances(walletAddress, this.contracts);
-		const token = this.tokenList.find((t) => t.symbol === currencyKey);
-		const tokenBalances = token ? await this.getTokensBalances([token], walletAddress) : undefined;
-
-		if (currencyKey != null) {
-			if (isETH) {
-				const ETHBalance = await this.getETHBalance(walletAddress);
-				return ETHBalance;
-			} else if (this.synthsMap[currencyKey as SynthSymbol]) {
-				return synthsWalletBalance != null
-					? (get(synthsWalletBalance, ['balancesMap', currencyKey, 'balance'], zeroBN) as Wei)
-					: null;
-			} else {
-				return tokenBalances?.[currencyKey]?.balance ?? zeroBN;
-			}
-		}
-
-		return null;
-	}
-
-	public async swapSynthSwap(
-		fromToken: Token,
-		toToken: Token,
-		fromAmount: string,
-		walletAddress: string,
-		metaOnly?: 'meta_tx' | 'estimate_gas'
-	) {
-		if (!this.signer) throw new Error('Wallet not connected');
-		if (this.networkId !== 10) throw new Error('Unsupported network');
-
-		const sUSD = this.tokensMap['sUSD'];
-
-		const oneInchFrom = this.tokensMap[fromToken.symbol] ? sUSD.address : fromToken.address;
-		const oneInchTo = this.tokensMap[toToken.symbol] ? sUSD.address : toToken.address;
-
-		const fromSymbolBytes = ethers.utils.formatBytes32String(fromToken.symbol);
-		const sUSDBytes = ethers.utils.formatBytes32String('sUSD');
-
-		let synthAmountEth = fromAmount;
-		if (this.tokensMap[fromToken.symbol]) {
-			const fromAmountWei = wei(fromAmount).toString(0, true);
-			const amounts = await this.contracts.Exchanger?.getAmountsForExchange(
-				fromAmountWei,
-				fromSymbolBytes,
-				sUSDBytes
-			);
-
-			const usdValue = amounts.amountReceived.sub(amounts.fee);
-			synthAmountEth = ethers.utils.formatEther(usdValue);
-		}
-
-		const params = await this.getOneInchSwapParams(
-			oneInchFrom,
-			oneInchTo,
-			synthAmountEth,
-			walletAddress
-		);
-
-		const formattedData = getFormattedSwapData(params, SYNTH_SWAP_OPTIMISM_ADDRESS);
-
-		const synthSwapContract = new ethers.Contract(
-			SYNTH_SWAP_OPTIMISM_ADDRESS,
-			synthSwapAbi,
-			this.signer
-		);
-
-		const contractFunc =
-			metaOnly === 'meta_tx'
-				? synthSwapContract.populateTransaction
-				: metaOnly === 'estimate_gas'
-				? synthSwapContract.estimateGas
-				: synthSwapContract;
-
-		if (this.tokensMap[toToken.symbol]) {
-			const symbolBytes = ethers.utils.formatBytes32String(toToken.symbol);
-			if (formattedData.functionSelector === 'swap') {
-				return contractFunc.swapInto(symbolBytes, formattedData.data);
-			} else {
-				return contractFunc.uniswapSwapInto(
-					symbolBytes,
-					fromToken.address,
-					params.fromTokenAmount,
-					formattedData.data
-				);
-			}
-		} else {
-			if (formattedData.functionSelector === 'swap') {
-				return contractFunc.swapOutOf(
-					fromSymbolBytes,
-					wei(fromAmount).toString(0, true),
-					formattedData.data
-				);
-			} else {
-				const usdValue = ethers.utils.parseEther(synthAmountEth).toString();
-				return contractFunc.uniswapSwapOutOf(
-					fromSymbolBytes,
-					toToken.address,
-					wei(fromAmount).toString(0, true),
-					usdValue,
-					formattedData.data
-				);
-			}
-		}
-	}
-
-	public async swapOneInch(
-		quoteTokenAddress: string,
-		baseTokenAddress: string,
-		amount: string,
-		walletAddress: string,
-		metaOnly = false
-	) {
-		const params = await this.getOneInchSwapParams(
-			quoteTokenAddress,
-			baseTokenAddress,
-			amount,
-			walletAddress
-		);
-
-		const { from, to, data, value } = params.tx;
-
-		const tx = metaOnly
-			? await this.signer.populateTransaction({
-					from,
-					to,
-					data,
-					value: ethers.BigNumber.from(value),
-			  })
-			: await this.signer.sendTransaction({
-					from,
-					to,
-					data,
-					value: ethers.BigNumber.from(value),
-			  });
-		return tx;
-	}
-
-	public async swapOneInchGasEstimate(
-		quoteTokenAddress: string,
-		baseTokenAddress: string,
-		amount: string,
-		walletAddress: string
-	) {
-		const params = await this.getOneInchSwapParams(
-			quoteTokenAddress,
-			baseTokenAddress,
-			amount,
-			walletAddress
-		);
-
-		return params.tx.gas;
-	}
-
-	private async getOneInchApproveAddress() {
-		const response = await axios.get<OneInchApproveSpenderResponse>(
-			this.oneInchApiUrl + 'approve/spender'
-		);
-
-		return response.data.address;
-	}
-
-	public async getNumEntries(walletAddress: string, currencyKey: string) {
-		if (!this.contracts.Exchanger) {
-			throw new Error('Something something wrong?');
-		}
-
-		const { numEntries } = await this.contracts.Exchanger.settlementOwing(
-			walletAddress,
-			ethers.utils.formatBytes32String(currencyKey)
-		);
-
-		return numEntries ?? null;
-	}
-
-	public async getExchangeRates() {
-		if (!this.contracts.SynthUtil || !this.contracts.ExchangeRates) {
-			throw new Error('Wrong network');
-		}
-
-		const exchangeRates: Rates = {};
-
-		// Additional commonly used currencies to fetch, besides the one returned by the SynthUtil.synthsRates
-		const additionalCurrencies = [
-			'SNX',
-			'XAU',
-			'XAG',
-			'DYDX',
-			'APE',
-			'BNB',
-			'DOGE',
-			'DebtRatio',
-			'XMR',
-			'OP',
-		].map(ethers.utils.formatBytes32String);
-
-		const [synthsRates, ratesForCurrencies] = (await Promise.all([
-			this.contracts.SynthUtil?.synthsRates(),
-			this.contracts.ExchangeRates?.ratesForCurrencies(additionalCurrencies),
-		])) as [SynthRatesTuple, CurrencyRate[]];
-
-		const synths = [...synthsRates[0], ...additionalCurrencies] as CurrencyKey[];
-		const rates = [...synthsRates[1], ...ratesForCurrencies] as CurrencyRate[];
-
-		synths.forEach((currencyKeyBytes32: CurrencyKey, idx: number) => {
-			const currencyKey = ethers.utils.parseBytes32String(currencyKeyBytes32) as CurrencyKey;
-			const marketAsset = MarketAssetByKey[currencyKey as FuturesMarketKey];
-
-			const rate = Number(ethers.utils.formatEther(rates[idx]));
-
-			exchangeRates[currencyKey] = wei(rate);
-			if (marketAsset) exchangeRates[marketAsset] = wei(rate);
-		});
-
-		return exchangeRates;
-	}
-
-	// public handleApprove(currencyKey: string) {}
-
-	// public handleSettle() {}
-
-	// public handleExchange() {}
 }
 
 const createERC20Contract = (tokenAddress: string, signer: Signer) =>
