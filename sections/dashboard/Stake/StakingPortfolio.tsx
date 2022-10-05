@@ -1,16 +1,27 @@
+import { wei } from '@synthetixio/wei';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import { useBalance } from 'wagmi';
 
 import Text from 'components/Text';
+import Connector from 'containers/Connector';
 import { currentThemeState } from 'store/ui';
 import media from 'styles/media';
+import { zeroBN } from 'utils/formatters/number';
 
 import { SplitStakingCard } from './common';
 
 const StakingPortfolio = () => {
+	const { walletAddress } = Connector.useContainer();
 	const { t } = useTranslation();
+	const { data: ethBalance, isSuccess: ethBalanceIsSuccess } = useBalance({
+		addressOrName: walletAddress ?? undefined,
+	});
+
+	const rewardBalances = ethBalanceIsSuccess ? ethBalance?.formatted ?? zeroBN : zeroBN;
+
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
 	const DEFAULT_CARDS = [
@@ -18,7 +29,7 @@ const StakingPortfolio = () => {
 			{
 				key: 'Liquid',
 				title: t('dashboard.stake.portfolio.liquid'),
-				value: '2923.39',
+				value: Number(rewardBalances).toFixed(2),
 			},
 			{
 				key: 'Escrow',

@@ -318,6 +318,9 @@ export const QUERY_KEYS = {
 	Files: {
 		Get: (fileName: string) => ['files', 'get', fileName],
 	},
+	Staking: {
+		Rewards: (walletAddress: string | null) => ['staking', 'rewards', 'balance', walletAddress],
+	},
 };
 
 export default QUERY_KEYS;

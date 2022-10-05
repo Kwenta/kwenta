@@ -8,4 +8,6 @@ export { ERC20__factory } from "./ERC20__factory";
 export { FuturesMarket__factory } from "./FuturesMarket__factory";
 export { FuturesMarketData__factory } from "./FuturesMarketData__factory";
 export { ReverseRecords__factory } from "./ReverseRecords__factory";
+export { RewardsEscrow__factory } from "./RewardsEscrow__factory";
+export { StakingRewards__factory } from "./StakingRewards__factory";
 export { SynthSwap__factory } from "./SynthSwap__factory";
