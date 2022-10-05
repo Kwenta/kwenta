@@ -326,20 +326,10 @@ export const mapFuturesPositions = (
 			avgEntryPrice,
 			exitPrice,
 		}: FuturesPositionResult) => {
-			const entryPriceWei = weiFromWei(entryPrice).div(ETH_UNIT);
-			const exitPriceWei = weiFromWei(exitPrice || 0).div(ETH_UNIT);
-			const sizeWei = weiFromWei(size).div(ETH_UNIT);
-			const feesWei = weiFromWei(feesPaid || 0).div(ETH_UNIT);
-			const netFundingWei = weiFromWei(netFunding || 0).div(ETH_UNIT);
-			const netTransfersWei = weiFromWei(netTransfers || 0).div(ETH_UNIT);
-			const totalDepositsWei = weiFromWei(totalDeposits || 0).div(ETH_UNIT);
-			const initialMarginWei = weiFromWei(initialMargin).div(ETH_UNIT);
-			const marginWei = weiFromWei(margin).div(ETH_UNIT);
-			const pnlWei = weiFromWei(pnl).div(ETH_UNIT);
-			const pnlWithFeesPaidWei = weiFromWei(pnlWithFeesPaid).div(ETH_UNIT);
-			const totalVolumeWei = weiFromWei(totalVolume).div(ETH_UNIT);
-			const avgEntryPriceWei = weiFromWei(avgEntryPrice).div(ETH_UNIT);
-
+			const entryPriceWei = weiFromWei(entryPrice);
+			const feesWei = weiFromWei(feesPaid || 0);
+			const sizeWei = weiFromWei(size);
+			const marginWei = weiFromWei(margin);
 			return {
 				id: Number(id.split('-')[1].toString()),
 				transactionHash: lastTxHash,
@@ -355,18 +345,18 @@ export const mapFuturesPositions = (
 				isLiquidated,
 				size: sizeWei.abs(),
 				feesPaid: feesWei,
-				netFunding: netFundingWei,
-				netTransfers: netTransfersWei,
-				totalDeposits: totalDepositsWei,
-				initialMargin: initialMarginWei,
+				netFunding: weiFromWei(netFunding || 0),
+				netTransfers: weiFromWei(netTransfers || 0),
+				totalDeposits: weiFromWei(totalDeposits || 0),
+				initialMargin: weiFromWei(initialMargin),
 				margin: marginWei,
 				entryPrice: entryPriceWei,
-				exitPrice: exitPriceWei,
-				pnl: pnlWei,
-				pnlWithFeesPaid: pnlWithFeesPaidWei,
-				totalVolume: totalVolumeWei,
+				exitPrice: weiFromWei(exitPrice || 0),
+				pnl: weiFromWei(pnl),
+				pnlWithFeesPaid: weiFromWei(pnlWithFeesPaid),
+				totalVolume: weiFromWei(totalVolume),
 				trades: trades.toNumber(),
-				avgEntryPrice: avgEntryPriceWei,
+				avgEntryPrice: weiFromWei(avgEntryPrice),
 				leverage: marginWei.eq(wei(0)) ? wei(0) : sizeWei.mul(entryPriceWei).div(marginWei).abs(),
 				side: sizeWei.gte(wei(0)) ? PositionSide.LONG : PositionSide.SHORT,
 			};

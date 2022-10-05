@@ -26,7 +26,7 @@ const useGetFuturesPositionForMarket = (options?: UseQueryOptions<FuturesPositio
 			selectedFuturesAddress || ''
 		),
 		async () => {
-			if (!market || !selectedFuturesAddress || !synthetixjs) {
+			if (!isL2 || !market || !selectedFuturesAddress || !synthetixjs) {
 				setPosition(null);
 				return null;
 			}
@@ -55,7 +55,6 @@ const useGetFuturesPositionForMarket = (options?: UseQueryOptions<FuturesPositio
 			return position;
 		},
 		{
-			enabled: isL2,
 			refetchInterval: 5000,
 			...options,
 		}
