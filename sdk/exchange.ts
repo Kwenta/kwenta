@@ -166,18 +166,6 @@ export default class ExchangeService {
 		}
 	}
 
-	private getTxProvider(baseCurrencyKey: string, quoteCurrencyKey: string) {
-		if (!baseCurrencyKey || !quoteCurrencyKey) return null;
-		if (
-			this.synthsMap?.[baseCurrencyKey as SynthSymbol] &&
-			this.synthsMap?.[quoteCurrencyKey as SynthSymbol]
-		)
-			return 'synthetix';
-		if (this.tokensMap[baseCurrencyKey] && this.tokensMap[quoteCurrencyKey]) return '1inch';
-
-		return 'synthswap';
-	}
-
 	private getOneInchSlippage(baseCurrencyKey: string, quoteCurrencyKey: string) {
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
 
@@ -507,6 +495,77 @@ export default class ExchangeService {
 	private async getETHBalance(walletAddress: string) {
 		const balance = await this.provider.getBalance(walletAddress);
 		return wei(balance);
+	}
+
+	public getTxProvider(baseCurrencyKey: string, quoteCurrencyKey: string) {
+		if (!baseCurrencyKey || !quoteCurrencyKey) return null;
+		if (
+			this.synthsMap?.[baseCurrencyKey as SynthSymbol] &&
+			this.synthsMap?.[quoteCurrencyKey as SynthSymbol]
+		)
+			return 'synthetix';
+		if (this.tokensMap[baseCurrencyKey] && this.tokensMap[quoteCurrencyKey]) return '1inch';
+
+		return 'synthswap';
+	}
+
+	public async getTotalTradePrice(
+		quoteCurrencyKey: string,
+		baseCurrencyKey: string,
+		quoteAmountWei: Wei
+	) {
+		const quotePriceRate = await this.getQuotePriceRate(baseCurrencyKey, quoteCurrencyKey);
+		const sUSDRate = await this.getSynthUsdRate(quoteCurrencyKey, baseCurrencyKey);
+		let tradePrice = quoteAmountWei.mul(quotePriceRate || 0);
+
+		if (sUSDRate) {
+			tradePrice = tradePrice.div(sUSDRate);
+		}
+
+		return tradePrice;
+	}
+
+	public async getEstimatedBaseTradePrice(
+		quoteCurrencyKey: string,
+		baseCurrencyKey: string,
+		baseAmountWei: Wei
+	) {
+		const basePriceRate = await this.getBasePriceRate(baseCurrencyKey, quoteCurrencyKey);
+		const sUSDRate = await this.getSynthUsdRate(quoteCurrencyKey, baseCurrencyKey);
+		let tradePrice = baseAmountWei.mul(basePriceRate || 0);
+
+		if (sUSDRate) {
+			tradePrice = tradePrice.div(sUSDRate);
+		}
+
+		return tradePrice;
+	}
+
+	public async getSlippagePercent(
+		quoteCurrencyKey: string,
+		baseCurrencyKey: string,
+		quoteAmountWei: Wei,
+		baseAmountWei: Wei
+	) {
+		const totalTradePrice = await this.getTotalTradePrice(
+			quoteCurrencyKey,
+			baseCurrencyKey,
+			quoteAmountWei
+		);
+
+		const estimatedBaseTradePrice = await this.getEstimatedBaseTradePrice(
+			quoteCurrencyKey,
+			baseCurrencyKey,
+			baseAmountWei
+		);
+
+		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
+
+		if (txProvider === '1inch' && totalTradePrice.gt(0) && estimatedBaseTradePrice.gt(0)) {
+			return totalTradePrice.sub(estimatedBaseTradePrice).div(totalTradePrice).neg();
+		}
+
+		return null;
 	}
 
 	public async getBaseFeeRate(sourceCurrencyKey: string, destinationCurrencyKey: string) {
