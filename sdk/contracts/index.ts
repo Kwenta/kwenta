@@ -12,6 +12,7 @@ import {
 	FuturesMarketSettingsABI,
 	FuturesMarketABI,
 	SynthABI,
+	SynthetixABI,
 } from './abis/main';
 
 export type ContractName =
@@ -24,7 +25,8 @@ export type ContractName =
 	| 'FuturesMarketData'
 	| 'FuturesMarketSettings'
 	| 'FuturesMarket'
-	| 'Synth';
+	| 'Synth'
+	| 'Synthetix';
 
 export type ContractDetails = {
 	name: ContractName;
@@ -90,6 +92,12 @@ export const contracts: AllContractsMap = {
 		10: new Contract('0xDfA2d3a0d32F870D87f8A0d7AA6b9CdEB7bc5AdB', SynthABI),
 		69: new Contract('0xbdb2Bf553b5f9Ca3327809F3748b86C106719C95', SynthABI),
 	},
+	Synthetix: {
+		1: new Contract('0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F', SynthetixABI),
+		5: new Contract('0x51f44ca59b867E005e48FA573Cb8df83FC7f7597', SynthetixABI),
+		10: new Contract('0x8700dAec35aF8Ff88c16BdF0418774CB3D7599B4', SynthetixABI),
+		420: new Contract('0x2E5ED97596a8368EB9E44B1f3F25B2E813845303', SynthetixABI),
+	},
 };
 
 export const booleanTypeGuard = <T>(x: T | null): x is T => Boolean(x);
@@ -97,13 +105,7 @@ export const booleanTypeGuard = <T>(x: T | null): x is T => Boolean(x);
 const contractsByNetwork = (id: NetworkId): ContractMap =>
 	Object.fromEntries(
 		Object.entries(contracts)
-			.map(([name, config]) => {
-				if (config[id]) {
-					return [name, config[id]];
-				} else {
-					return null;
-				}
-			})
+			.map(([name, config]) => (config[id] ? [name, config[id]] : null))
 			.filter(booleanTypeGuard)
 	);
 

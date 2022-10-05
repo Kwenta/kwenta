@@ -15,6 +15,7 @@ import {
 	ETH_ADDRESS,
 	ETH_COINGECKO_ADDRESS,
 } from 'constants/currency';
+import { ATOMIC_EXCHANGE_SLIPPAGE } from 'constants/exchange';
 import {
 	OneInchApproveSpenderResponse,
 	OneInchQuoteResponse,
@@ -53,7 +54,7 @@ const FILTERED_TOKENS = ['0x4922a015c4407f87432b179bb209e125432e4a2a'];
 export default class ExchangeService {
 	private networkId: NetworkId;
 	private provider: ethers.providers.Provider;
-	private signer: Signer;
+	private signer?: Signer;
 	private contracts: ContractMap;
 	private multicallProvider: EthCallProvider;
 	private isL2: boolean;
@@ -65,9 +66,9 @@ export default class ExchangeService {
 	constructor(
 		networkId: NetworkId,
 		provider: ethers.providers.Provider,
-		signer: Signer,
 		contracts: ContractMap,
-		multicallProvider: EthCallProvider
+		multicallProvider: EthCallProvider,
+		signer?: Signer
 	) {
 		this.networkId = networkId;
 		this.signer = signer;
@@ -352,13 +353,13 @@ export default class ExchangeService {
 		const { from, to, data, value } = params.tx;
 
 		const tx = metaOnly
-			? await this.signer.populateTransaction({
+			? await this.signer?.populateTransaction({
 					from,
 					to,
 					data,
 					value: ethers.BigNumber.from(value),
 			  })
-			: await this.signer.sendTransaction({
+			: await this.signer?.sendTransaction({
 					from,
 					to,
 					data,
@@ -448,9 +449,84 @@ export default class ExchangeService {
 
 	// public handleApprove(currencyKey: string) {}
 
-	// public handleSettle() {}
+	public async handleRedeem(walletAddress: string) {
+		if (!this.signer) {
+			throw new Error('You must connect a signer to redeem synths.');
+		}
 
-	// public handleExchange() {}
+		const redeemableDeprecatedSynths = await this.getRedeemableDeprecatedSynths(walletAddress);
+
+		if (redeemableDeprecatedSynths.totalUSDBalance.gt(0)) {
+			await this.contracts.SynthRedeemer?.connect(this.signer).redeemAll(
+				redeemableDeprecatedSynths.balances.map((b) => b.proxyAddress)
+			);
+		}
+	}
+
+	public handleSettle() {}
+
+	public async handleExchange(
+		quoteCurrencyKey: string,
+		baseCurrencyKey: string,
+		quoteCurrencyAmount: string,
+		baseCurrencyAmount: string,
+		walletAddress: string,
+		isApproved: boolean
+	) {
+		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
+		const quoteCurrencyTokenAddress = this.getTokenAddress(quoteCurrencyKey);
+		const baseCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey);
+
+		let tx: ethers.ContractTransaction | null = null;
+
+		if (txProvider === '1inch' && !!this.tokensMap) {
+			// @ts-ignore is correct tx type
+
+			tx = await this.swapOneInch(
+				quoteCurrencyTokenAddress,
+				baseCurrencyTokenAddress,
+				quoteCurrencyAmount,
+				walletAddress
+			);
+		} else if (txProvider === 'synthswap') {
+			tx = await this.swapSynthSwap(
+				this.allTokensMap[quoteCurrencyKey],
+				this.allTokensMap[baseCurrencyKey],
+				quoteCurrencyAmount,
+				walletAddress
+			);
+		} else {
+			const isAtomic = this.checkIsAtomic(baseCurrencyKey, quoteCurrencyKey);
+			const needsApproval = this.checkNeedsApproval(baseCurrencyKey, quoteCurrencyKey);
+			const exchangeParams = this.getExchangeParams(
+				quoteCurrencyKey,
+				baseCurrencyKey,
+				wei(quoteCurrencyAmount),
+				wei(baseCurrencyAmount).mul(wei(1).sub(ATOMIC_EXCHANGE_SLIPPAGE)),
+				walletAddress
+			);
+
+			const shouldExchange =
+				(needsApproval ? isApproved : true) &&
+				!!exchangeParams &&
+				!!walletAddress &&
+				!!this.contracts.Synthetix;
+
+			if (shouldExchange && this.signer) {
+				if (!this.contracts.Synthetix) {
+					throw new Error('You are using this on an unsupported network');
+				}
+
+				await this.contracts.Synthetix.connect(this.signer)[
+					isAtomic ? 'exchangeAtomically' : 'exchangeWithTracking'
+				](...exchangeParams);
+			}
+		}
+
+		if (tx) {
+			return tx?.hash;
+		}
+	}
 
 	private isCurrencyETH(currencyKey: string) {
 		return currencyKey === CRYPTO_CURRENCY_MAP.ETH;
@@ -734,10 +810,11 @@ export default class ExchangeService {
 	private async getQuoteCurrencyContract(baseCurrencyKey: string, quoteCurrencyKey: string) {
 		const needsApproval = this.checkNeedsApproval(baseCurrencyKey, quoteCurrencyKey);
 
-		if (quoteCurrencyKey && this.allTokensMap[quoteCurrencyKey] && needsApproval) {
+		if (this.signer && quoteCurrencyKey && this.allTokensMap[quoteCurrencyKey] && needsApproval) {
 			const quoteTknAddress = this.allTokensMap[quoteCurrencyKey].address;
 			return createERC20Contract(quoteTknAddress, this.signer);
 		}
+
 		return null;
 	}
 
