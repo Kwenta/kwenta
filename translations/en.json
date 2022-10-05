@@ -58,8 +58,8 @@
 			"learn-more": "Learn more"
 		},
 		"hero": {
-			"title": "UNSTOPPABLE SYNTHETIC LEVERAGE",
-			"copy": "Trade commodities, forex, crypto, and more with up to <0>25x leverage</0> and <0>deep liquidity</0> without the risk of your assets being frozen."
+			"title": "TRADE SYNTHETIC PERPETUALS",
+			"copy": "Gain exposure to a variety of asset with up to <0>25x leverage</0> and <0>deep liquidity</0>."
 		},
 		"assets": {
 			"title": "UNIQUE MARKETS",
@@ -93,7 +93,7 @@
 			},
 			"stake-and-earn": {
 				"title": "stake & earn",
-				"copy": "$KWENTA stakers earn protocol fees and inflationary rewards"
+				"copy": "$KWENTA stakers earn inflationary rewards"
 			},
 			"trade-and-earn": {
 				"title": "trade & earn",
@@ -144,9 +144,9 @@
 				"title": "Unique Assets",
 				"copy": "Trade a variety of digital and traditional assets with low trading fees"
 			},
-			"permissionless": {
-				"title": "Permissionless",
-				"copy": "A full on-chain DeFi futures trading experience"
+			"open-source": {
+				"title": "Open Source",
+				"copy": " Don't trust, verify"
 			},
 			"mobile": {
 				"title": "Mobile",
