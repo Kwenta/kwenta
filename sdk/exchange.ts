@@ -45,8 +45,10 @@ import { getSynthsForNetwork, SynthsMap, SynthSymbol } from './data/synths';
 type CurrencyRate = ethers.BigNumberish;
 type SynthRatesTuple = [string[], CurrencyRate[]];
 
-const protocols =
+const PROTOCOLS =
 	'OPTIMISM_UNISWAP_V3,OPTIMISM_SYNTHETIX,OPTIMISM_SYNTHETIX_WRAPPER,OPTIMISM_ONE_INCH_LIMIT_ORDER,OPTIMISM_ONE_INCH_LIMIT_ORDER_V2,OPTIMISM_CURVE,OPTIMISM_BALANCER_V2,OPTIMISM_VELODROME,OPTIMISM_KYBERSWAP_ELASTIC';
+
+const FILTERED_TOKENS = ['0x4922a015c4407f87432b179bb209e125432e4a2a'];
 
 export default class ExchangeService {
 	private networkId: NetworkId;
@@ -76,36 +78,6 @@ export default class ExchangeService {
 		this.getAllTokensMap();
 	}
 
-	public async getBaseFeeRate(sourceCurrencyKey: string, destinationCurrencyKey: string) {
-		if (!this.contracts.SystemSettings) {
-			throw new Error('SystemSettings does not exist on the currently selected network.');
-		}
-
-		const [sourceCurrencyFeeRate, destinationCurrencyFeeRate] = await Promise.all([
-			this.contracts.SystemSettings.exchangeFeeRate(
-				ethers.utils.formatBytes32String(sourceCurrencyKey)
-			),
-			this.contracts.SystemSettings.exchangeFeeRate(
-				ethers.utils.formatBytes32String(destinationCurrencyKey)
-			),
-		]);
-
-		return sourceCurrencyFeeRate && destinationCurrencyFeeRate
-			? sourceCurrencyFeeRate.add(destinationCurrencyFeeRate)
-			: null;
-	}
-
-	public async getExchangeFeeRate(sourceCurrencyKey: string, destinationCurrencyKey: string) {
-		if (!this.contracts.Exchanger) {
-			throw new Error('Exchanger does not exist on the currently selected network.');
-		}
-
-		return await this.contracts.Exchanger.feeRateForExchange(
-			ethers.utils.formatBytes32String(sourceCurrencyKey),
-			ethers.utils.formatBytes32String(destinationCurrencyKey)
-		);
-	}
-
 	private isCurrencyETH(currencyKey: string) {
 		return currencyKey === CRYPTO_CURRENCY_MAP.ETH;
 	}
@@ -122,27 +94,6 @@ export default class ExchangeService {
 		}
 	}
 
-	public async getRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
-		const [quoteRate, baseRate] = await this.getPairRates(quoteCurrencyKey, baseCurrencyKey);
-		const baseCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey);
-		const quoteCurrencyTokenAddress = this.getTokenAddress(quoteCurrencyKey);
-
-		const coinGeckoPrices = await this.getCoingeckoPrices([
-			quoteCurrencyTokenAddress,
-			baseCurrencyTokenAddress,
-		]);
-
-		const base = baseRate.lte(0)
-			? newGetCoinGeckoPricesForCurrencies(coinGeckoPrices, baseCurrencyTokenAddress)
-			: baseRate;
-
-		const quote = quoteRate.lte(0)
-			? newGetCoinGeckoPricesForCurrencies(coinGeckoPrices, quoteCurrencyTokenAddress)
-			: quoteRate;
-
-		return base.gt(0) && quote.gt(0) ? quote.div(base) : wei(0);
-	}
-
 	private async getCoingeckoPrices(tokenAddresses: string[]) {
 		const platform = this.isL2 ? 'optimistic-ethereum' : 'ethereum';
 		const response = await axios.get<PriceResponse>(
@@ -151,34 +102,6 @@ export default class ExchangeService {
 				.replace(ETH_ADDRESS, ETH_COINGECKO_ADDRESS)}&vs_currencies=usd`
 		);
 		return response.data;
-	}
-
-	public async getOneInchTokenList() {
-		const oneInchApiUrl = `https://api.1inch.io/v4.0/${this.isL2 ? 10 : 1}`;
-		const response = await axios.get<OneInchTokenListResponse>(oneInchApiUrl + 'tokens');
-
-		const tokensMap = response.data.tokens || {};
-		const chainId: NetworkId = this.isL2 ? 10 : 1;
-		const tokens = Object.values(tokensMap).map((t) => ({ ...t, chainId, tags: [] }));
-
-		return {
-			tokens,
-			tokensMap: keyBy(tokens, 'symbol'),
-			symbols: tokens.map((token) => token.symbol),
-		};
-	}
-
-	public async getFeeReclaimPeriod(currencyKey: string, walletAddress: string) {
-		if (!this.contracts.Exchanger) {
-			throw new Error('The Exchanger contract does not exist on the currently selected network.');
-		}
-
-		const maxSecsLeftInWaitingPeriod = (await this.contracts.Exchanger.maxSecsLeftInWaitingPeriod(
-			walletAddress,
-			ethers.utils.formatBytes32String(currencyKey)
-		)) as ethers.BigNumberish;
-
-		return Number(maxSecsLeftInWaitingPeriod);
 	}
 
 	private async getSynthUsdRate(quoteCurrencyKey: string, baseCurrencyKey: string) {
@@ -243,26 +166,62 @@ export default class ExchangeService {
 		}
 	}
 
-	public async getBalance(currencyKey: string, walletAddress: string) {
-		const isETH = this.isCurrencyETH(currencyKey);
-		const synthsWalletBalance = await getSynthBalances(walletAddress, this.contracts);
-		const token = this.tokenList.find((t) => t.symbol === currencyKey);
-		const tokenBalances = token ? await this.getTokensBalances([token], walletAddress) : undefined;
+	private getTxProvider(baseCurrencyKey: string, quoteCurrencyKey: string) {
+		if (!baseCurrencyKey || !quoteCurrencyKey) return null;
+		if (
+			this.synthsMap?.[baseCurrencyKey as SynthSymbol] &&
+			this.synthsMap?.[quoteCurrencyKey as SynthSymbol]
+		)
+			return 'synthetix';
+		if (this.tokensMap[baseCurrencyKey] && this.tokensMap[quoteCurrencyKey]) return '1inch';
 
-		if (currencyKey != null) {
-			if (isETH) {
-				const ETHBalance = await this.getETHBalance(walletAddress);
-				return ETHBalance;
-			} else if (this.synthsMap[currencyKey as SynthSymbol]) {
-				return synthsWalletBalance != null
-					? (get(synthsWalletBalance, ['balancesMap', currencyKey, 'balance'], zeroBN) as Wei)
-					: null;
-			} else {
-				return tokenBalances?.[currencyKey]?.balance ?? zeroBN;
-			}
+		return 'synthswap';
+	}
+
+	private getOneInchSlippage(baseCurrencyKey: string, quoteCurrencyKey: string) {
+		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
+
+		if (txProvider === '1inch' && (baseCurrencyKey === 'ETH' || quoteCurrencyKey === 'ETH')) {
+			return 3;
 		}
 
-		return null;
+		return 1;
+	}
+
+	private getSelectedTokens(baseCurrencyKey: string, quoteCurrencyKey: string) {
+		return this.tokenList.filter(
+			(t) => t.symbol === baseCurrencyKey || t.symbol === quoteCurrencyKey
+		);
+	}
+
+	private getExchangeParams(
+		sourceCurrencyKey: string,
+		destinationCurrencyKey: string,
+		sourceAmount: Wei,
+		minAmount: Wei,
+		walletAddress: string
+	) {
+		const sourceAmountBN = sourceAmount.toBN();
+		const minAmountBN = minAmount.toBN();
+		const isAtomic = this.checkIsAtomic(sourceCurrencyKey, destinationCurrencyKey);
+
+		if (isAtomic) {
+			return [
+				sourceCurrencyKey,
+				sourceAmount,
+				destinationCurrencyKey,
+				KWENTA_TRACKING_CODE,
+				minAmountBN,
+			];
+		} else {
+			return [
+				sourceCurrencyKey,
+				sourceAmountBN,
+				destinationCurrencyKey,
+				walletAddress,
+				KWENTA_TRACKING_CODE,
+			];
+		}
 	}
 
 	private async getQuotePriceRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
@@ -302,32 +261,36 @@ export default class ExchangeService {
 		}
 	}
 
-	private getTxProvider(baseCurrencyKey: string, quoteCurrencyKey: string) {
-		if (!baseCurrencyKey || !quoteCurrencyKey) return null;
-		if (
-			this.synthsMap?.[baseCurrencyKey as SynthSymbol] &&
-			this.synthsMap?.[quoteCurrencyKey as SynthSymbol]
-		)
-			return 'synthetix';
-		if (this.tokensMap[baseCurrencyKey] && this.tokensMap[quoteCurrencyKey]) return '1inch';
-
-		return 'synthswap';
-	}
-
-	private getOneInchSlippage(baseCurrencyKey: string, quoteCurrencyKey: string) {
+	private async getBasePriceRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
+		const isBaseCurrencyETH = this.isCurrencyETH(quoteCurrencyKey);
 
-		if (txProvider === '1inch' && (baseCurrencyKey === 'ETH' || quoteCurrencyKey === 'ETH')) {
-			return 3;
+		const baseCurrencyTokenAddress = (isBaseCurrencyETH
+			? ETH_COINGECKO_ADDRESS
+			: this.getTokenAddress(baseCurrencyKey)
+		).toLowerCase();
+
+		const quoteCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey).toLowerCase();
+
+		const coinGeckoPrices = await this.getCoingeckoPrices([
+			quoteCurrencyTokenAddress,
+			baseCurrencyTokenAddress,
+		]);
+
+		const exchangeRates = await this.getExchangeRates();
+
+		if (txProvider !== 'synthetix' && !baseCurrencyKey) {
+			const selectPriceCurrencyRate = exchangeRates['sUSD'];
+
+			if (coinGeckoPrices && selectPriceCurrencyRate && coinGeckoPrices[baseCurrencyTokenAddress]) {
+				const basePrice = coinGeckoPrices[baseCurrencyTokenAddress];
+				return basePrice ? basePrice.usd / selectPriceCurrencyRate.toNumber() : wei(0);
+			} else {
+				return wei(0);
+			}
+		} else {
+			return newGetExchangeRatesForCurrencies(exchangeRates, quoteCurrencyKey, 'sUSD');
 		}
-
-		return 1;
-	}
-
-	private getSelectedTokens(baseCurrencyKey: string, quoteCurrencyKey: string) {
-		return this.tokenList.filter(
-			(t) => t.symbol === baseCurrencyKey || t.symbol === quoteCurrencyKey
-		);
 	}
 
 	private async getAllTokensMap() {
@@ -354,36 +317,6 @@ export default class ExchangeService {
 		const isQuoteCurrencyETH = this.isCurrencyETH(quoteCurrencyKey);
 
 		return (txProvider === '1inch' || txProvider === 'synthswap') && !isQuoteCurrencyETH;
-	}
-
-	private getExchangeParams(
-		sourceCurrencyKey: string,
-		destinationCurrencyKey: string,
-		sourceAmount: Wei,
-		minAmount: Wei,
-		walletAddress: string
-	) {
-		const sourceAmountBN = sourceAmount.toBN();
-		const minAmountBN = minAmount.toBN();
-		const isAtomic = this.checkIsAtomic(sourceCurrencyKey, destinationCurrencyKey);
-
-		if (isAtomic) {
-			return [
-				sourceCurrencyKey,
-				sourceAmount,
-				destinationCurrencyKey,
-				KWENTA_TRACKING_CODE,
-				minAmountBN,
-			];
-		} else {
-			return [
-				sourceCurrencyKey,
-				sourceAmountBN,
-				destinationCurrencyKey,
-				walletAddress,
-				KWENTA_TRACKING_CODE,
-			];
-		}
 	}
 
 	private async getRedeemableDeprecatedSynths(walletAddress: string) {
@@ -488,7 +421,7 @@ export default class ExchangeService {
 				amount: params.amount,
 				fromAddress: walletAddress,
 				slippage,
-				protocols,
+				PROTOCOLS,
 				referrerAddress: KWENTA_REFERRAL_ADDRESS,
 				disableEstimate: true,
 			},
@@ -516,7 +449,7 @@ export default class ExchangeService {
 				toTokenAddress: params.toTokenAddress,
 				amount: params.amount,
 				disableEstimate: true,
-				protocols,
+				PROTOCOLS,
 			},
 		});
 
@@ -527,6 +460,154 @@ export default class ExchangeService {
 
 	private async swapSynthSwapGasEstimate(fromToken: Token, toToken: Token, fromAmount: string) {
 		return this.swapSynthSwap(fromToken, toToken, fromAmount, 'estimate_gas');
+	}
+
+	private async getPairRates(quoteCurrencyKey: string, baseCurrencyKey: string) {
+		const exchangeRates = await this.getExchangeRates();
+
+		const pairRates = newGetExchangeRatesTupleForCurrencies(
+			exchangeRates,
+			quoteCurrencyKey,
+			baseCurrencyKey
+		);
+
+		return pairRates;
+	}
+
+	private async getTokensBalances(tokens: Token[], walletAddress: string) {
+		const filteredTokens = tokens.filter((t) => !FILTERED_TOKENS.includes(t.address.toLowerCase()));
+		const symbols = filteredTokens.map((token) => token.symbol);
+		const filteredTokensMap = keyBy(filteredTokens, 'symbol');
+
+		const calls = [];
+		for (const { address, symbol } of filteredTokens) {
+			if (symbol === CRYPTO_CURRENCY_MAP.ETH) {
+				calls.push(this.multicallProvider.getEthBalance(walletAddress!));
+			} else {
+				const tokenContract = new EthCallContract(address, erc20Abi);
+				calls.push(tokenContract.balanceOf(walletAddress));
+			}
+		}
+
+		const data = (await this.multicallProvider.all(calls)) as ethers.BigNumber[];
+
+		const tokenBalances: TokenBalances = {};
+		data.forEach((value, index) => {
+			if (value.lte(0)) return;
+			const token = filteredTokensMap[symbols[index]];
+
+			tokenBalances[symbols[index]] = {
+				balance: wei(value, token.decimals ?? 18),
+				token,
+			};
+		});
+		return tokenBalances;
+	}
+
+	private async getETHBalance(walletAddress: string) {
+		const balance = await this.provider.getBalance(walletAddress);
+		return wei(balance);
+	}
+
+	public async getBaseFeeRate(sourceCurrencyKey: string, destinationCurrencyKey: string) {
+		if (!this.contracts.SystemSettings) {
+			throw new Error('SystemSettings does not exist on the currently selected network.');
+		}
+
+		const [sourceCurrencyFeeRate, destinationCurrencyFeeRate] = await Promise.all([
+			this.contracts.SystemSettings.exchangeFeeRate(
+				ethers.utils.formatBytes32String(sourceCurrencyKey)
+			),
+			this.contracts.SystemSettings.exchangeFeeRate(
+				ethers.utils.formatBytes32String(destinationCurrencyKey)
+			),
+		]);
+
+		return sourceCurrencyFeeRate && destinationCurrencyFeeRate
+			? sourceCurrencyFeeRate.add(destinationCurrencyFeeRate)
+			: null;
+	}
+
+	public async getExchangeFeeRate(sourceCurrencyKey: string, destinationCurrencyKey: string) {
+		if (!this.contracts.Exchanger) {
+			throw new Error('Exchanger does not exist on the currently selected network.');
+		}
+
+		return await this.contracts.Exchanger.feeRateForExchange(
+			ethers.utils.formatBytes32String(sourceCurrencyKey),
+			ethers.utils.formatBytes32String(destinationCurrencyKey)
+		);
+	}
+
+	public async getRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
+		const [quoteRate, baseRate] = await this.getPairRates(quoteCurrencyKey, baseCurrencyKey);
+		const baseCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey);
+		const quoteCurrencyTokenAddress = this.getTokenAddress(quoteCurrencyKey);
+
+		const coinGeckoPrices = await this.getCoingeckoPrices([
+			quoteCurrencyTokenAddress,
+			baseCurrencyTokenAddress,
+		]);
+
+		const base = baseRate.lte(0)
+			? newGetCoinGeckoPricesForCurrencies(coinGeckoPrices, baseCurrencyTokenAddress)
+			: baseRate;
+
+		const quote = quoteRate.lte(0)
+			? newGetCoinGeckoPricesForCurrencies(coinGeckoPrices, quoteCurrencyTokenAddress)
+			: quoteRate;
+
+		return base.gt(0) && quote.gt(0) ? quote.div(base) : wei(0);
+	}
+
+	public async getOneInchTokenList() {
+		const oneInchApiUrl = `https://api.1inch.io/v4.0/${this.isL2 ? 10 : 1}`;
+		const response = await axios.get<OneInchTokenListResponse>(oneInchApiUrl + 'tokens');
+
+		const tokensMap = response.data.tokens || {};
+		const chainId: NetworkId = this.isL2 ? 10 : 1;
+		const tokens = Object.values(tokensMap).map((t) => ({ ...t, chainId, tags: [] }));
+
+		return {
+			tokens,
+			tokensMap: keyBy(tokens, 'symbol'),
+			symbols: tokens.map((token) => token.symbol),
+		};
+	}
+
+	public async getFeeReclaimPeriod(currencyKey: string, walletAddress: string) {
+		if (!this.contracts.Exchanger) {
+			throw new Error('The Exchanger contract does not exist on the currently selected network.');
+		}
+
+		const maxSecsLeftInWaitingPeriod = (await this.contracts.Exchanger.maxSecsLeftInWaitingPeriod(
+			walletAddress,
+			ethers.utils.formatBytes32String(currencyKey)
+		)) as ethers.BigNumberish;
+
+		return Number(maxSecsLeftInWaitingPeriod);
+	}
+
+	public async getBalance(currencyKey: string, walletAddress: string) {
+		const isETH = this.isCurrencyETH(currencyKey);
+		const synthsWalletBalance = await getSynthBalances(walletAddress, this.contracts);
+		const token = this.tokenList.find((t) => t.symbol === currencyKey);
+		const tokenBalances = token ? await this.getTokensBalances([token], walletAddress) : undefined;
+
+		if (currencyKey != null) {
+			if (isETH) {
+				const ETHBalance = await this.getETHBalance(walletAddress);
+				return ETHBalance;
+			} else if (this.synthsMap[currencyKey as SynthSymbol]) {
+				return synthsWalletBalance != null
+					? (get(synthsWalletBalance, ['balancesMap', currencyKey, 'balance'], zeroBN) as Wei)
+					: null;
+			} else {
+				return tokenBalances?.[currencyKey]?.balance ?? zeroBN;
+			}
+		}
+
+		return null;
 	}
 
 	public async swapSynthSwap(
@@ -725,61 +806,12 @@ export default class ExchangeService {
 		return exchangeRates;
 	}
 
-	private async getPairRates(quoteCurrencyKey: string, baseCurrencyKey: string) {
-		const exchangeRates = await this.getExchangeRates();
-
-		const pairRates = newGetExchangeRatesTupleForCurrencies(
-			exchangeRates,
-			quoteCurrencyKey,
-			baseCurrencyKey
-		);
-
-		return pairRates;
-	}
-
-	private async getTokensBalances(tokens: Token[], walletAddress: string) {
-		const filteredTokens = tokens.filter((t) => !FILTERED_TOKENS.includes(t.address.toLowerCase()));
-		const symbols = filteredTokens.map((token) => token.symbol);
-		const filteredTokensMap = keyBy(filteredTokens, 'symbol');
-
-		const calls = [];
-		for (const { address, symbol } of filteredTokens) {
-			if (symbol === CRYPTO_CURRENCY_MAP.ETH) {
-				calls.push(this.multicallProvider.getEthBalance(walletAddress!));
-			} else {
-				const tokenContract = new EthCallContract(address, erc20Abi);
-				calls.push(tokenContract.balanceOf(walletAddress));
-			}
-		}
-
-		const data = (await this.multicallProvider.all(calls)) as ethers.BigNumber[];
-
-		const tokenBalances: TokenBalances = {};
-		data.forEach((value, index) => {
-			if (value.lte(0)) return;
-			const token = filteredTokensMap[symbols[index]];
-
-			tokenBalances[symbols[index]] = {
-				balance: wei(value, token.decimals ?? 18),
-				token,
-			};
-		});
-		return tokenBalances;
-	}
-
-	private async getETHBalance(walletAddress: string) {
-		const balance = await this.provider.getBalance(walletAddress);
-		return wei(balance);
-	}
-
 	// public handleApprove(currencyKey: string) {}
 
 	// public handleSettle() {}
 
 	// public handleExchange() {}
 }
-
-const FILTERED_TOKENS = ['0x4922a015c4407f87432b179bb209e125432e4a2a'];
 
 const createERC20Contract = (tokenAddress: string, signer: Signer) =>
 	new ethers.Contract(tokenAddress, erc20Abi, signer);
