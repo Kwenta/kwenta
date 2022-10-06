@@ -23,7 +23,7 @@ type Props = {
 
 export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 	const { t } = useTranslation();
-	const { handleRefetch } = useRefetchContext();
+	const { handleRefetch, refetchUntilUpdate } = useRefetchContext();
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { resetTradeState } = useFuturesContext();
@@ -70,7 +70,7 @@ export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 					onDismiss();
 					resetTradeState();
 					handleRefetch('close-position');
-					handleRefetch('account-margin-change');
+					refetchUntilUpdate('account-margin-change');
 				},
 			});
 		}

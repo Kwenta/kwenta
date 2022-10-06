@@ -44,7 +44,7 @@ type DepositMarginModalProps = {
 export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps) {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { handleRefetch } = useRefetchContext();
+	const { handleRefetch, refetchUntilUpdate } = useRefetchContext();
 	const {
 		selectedLeverage,
 		onLeverageChange,
@@ -111,18 +111,19 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 						onTxFailed(failureMessage) {
 							setError(failureMessage?.failureReason || t('common.transaction.transaction-failed'));
 						},
-						onTxConfirmed: () => {
+						onTxConfirmed: async () => {
 							resetTradeState();
 							handleRefetch('modify-position');
+							await refetchUntilUpdate('account-margin-change');
+							setSubmitting(false);
 							onDismiss();
 						},
 					});
 				}
 			} catch (err) {
+				setSubmitting(false);
 				setError(t('common.transaction.transaction-failed'));
 				logError(err);
-			} finally {
-				setSubmitting(false);
 			}
 			resetTradeState();
 		} else {
@@ -146,6 +147,7 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 		onLeverageChange,
 		submitCrossMarginOrder,
 		setError,
+		refetchUntilUpdate,
 		handleRefetch,
 		onDismiss,
 	]);
