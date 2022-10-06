@@ -14,3 +14,11 @@ export const baseAmountWei = createSelector(
 	(state: ExchangeState) => state.baseAmount,
 	(baseAmount) => (baseAmount === '' ? zeroBN : wei(baseAmount))
 );
+
+export const selectedBothSides = createSelector(
+	(state: ExchangeState) => ({
+		baseCurrencyKey: state.baseCurrencyKey,
+		quoteCurrencyKey: state.quoteCurrencyKey,
+	}),
+	({ baseCurrencyKey, quoteCurrencyKey }) => !!baseCurrencyKey && !!quoteCurrencyKey
+);

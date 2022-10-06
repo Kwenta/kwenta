@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { fetchBalances } from './actions';
+import { fetchBalances, fetchTransactionFee } from './actions';
 import { ExchangeState } from './types';
 
 const initialState: ExchangeState = {
@@ -12,6 +12,10 @@ const initialState: ExchangeState = {
 	quoteBalance: undefined,
 	baseBalance: undefined,
 	ratio: undefined,
+	transactionFee: undefined,
+	slippagePercent: undefined,
+	isSubmitting: false,
+	isApproving: false,
 };
 
 const exchangeSlice = createSlice({
@@ -25,13 +29,30 @@ const exchangeSlice = createSlice({
 			state.baseAmount = action.payload.baseAmount;
 		},
 		setRatio: (state, action) => {
+			// This is not so simple,
+			// since we need to update both the baseAmount and quoteAmount
+			// here as well.
 			state.ratio = action.payload.ratio;
 		},
+		swapCurrencies: (state) => {
+			const temp = state.quoteCurrencyKey;
+
+			state.quoteCurrencyKey = state.baseCurrencyKey;
+			state.baseCurrencyKey = temp;
+
+			state.baseAmount = state.txProvider === 'synthetix' ? state.quoteAmount : '';
+			state.quoteAmount = '';
+		},
+		setMaxQuotBalance: () => {},
+		setMaxBaseBAlance: () => {},
 	},
 	extraReducers: (builder) => {
 		builder.addCase(fetchBalances.fulfilled, (state, action) => {
 			state.quoteBalance = action.payload.quoteBalance;
 			state.baseBalance = action.payload.baseBalance;
+		});
+		builder.addCase(fetchTransactionFee.fulfilled, (state, action) => {
+			state.transactionFee = action.payload.transactionFee;
 		});
 	},
 });

@@ -1,12 +1,12 @@
 //@ts-ignore TODO: remove once types are added
 import getFormattedSwapData from '@kwenta/synthswap';
-import { CurrencyKey, NetworkId } from '@synthetixio/contracts-interface';
+import { CurrencyKey, NetworkId, NetworkIdByName } from '@synthetixio/contracts-interface';
 import { DeprecatedSynthBalance, TokenBalances } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import axios from 'axios';
 import { Provider as EthCallProvider, Contract as EthCallContract } from 'ethcall';
-import { ethers, Signer } from 'ethers';
-import { get, keyBy } from 'lodash';
+import { BigNumber, ethers, Signer } from 'ethers';
+import { get, keyBy, omit } from 'lodash';
 
 import { KWENTA_REFERRAL_ADDRESS, SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
 import {
@@ -37,8 +37,10 @@ import {
 } from 'utils/currencies';
 import { zeroBN } from 'utils/formatters/number';
 import { FuturesMarketKey, MarketAssetByKey } from 'utils/futures';
+import { getTransactionPrice, normalizeGasLimit } from 'utils/network';
 
 import { getSynthBalances } from './common/balances';
+import { computeGasFee, getGasPriceFromProvider, getL1SecurityFee, MetaTx } from './common/gas';
 import type { ContractMap } from './contracts';
 import SynthRedeemerABI from './contracts/abis/SynthRedeemer.json';
 import { getSynthsForNetwork, SynthsMap, SynthSymbol } from './data/synths';
@@ -515,8 +517,8 @@ export default class ExchangeService {
 	public async handleExchange(
 		quoteCurrencyKey: string,
 		baseCurrencyKey: string,
-		quoteCurrencyAmount: string,
-		baseCurrencyAmount: string,
+		quoteAmount: string,
+		baseAmount: string,
 		walletAddress: string,
 		isApproved: boolean
 	) {
@@ -532,14 +534,14 @@ export default class ExchangeService {
 			tx = await this.swapOneInch(
 				quoteCurrencyTokenAddress,
 				baseCurrencyTokenAddress,
-				quoteCurrencyAmount,
+				quoteAmount,
 				walletAddress
 			);
 		} else if (txProvider === 'synthswap') {
 			tx = await this.swapSynthSwap(
 				this.allTokensMap[quoteCurrencyKey],
 				this.allTokensMap[baseCurrencyKey],
-				quoteCurrencyAmount,
+				quoteAmount,
 				walletAddress
 			);
 		} else {
@@ -548,8 +550,8 @@ export default class ExchangeService {
 			const exchangeParams = this.getExchangeParams(
 				quoteCurrencyKey,
 				baseCurrencyKey,
-				wei(quoteCurrencyAmount),
-				wei(baseCurrencyAmount).mul(wei(1).sub(ATOMIC_EXCHANGE_SLIPPAGE)),
+				wei(quoteAmount),
+				wei(baseAmount).mul(wei(1).sub(ATOMIC_EXCHANGE_SLIPPAGE)),
 				walletAddress
 			);
 
@@ -577,6 +579,161 @@ export default class ExchangeService {
 		if (tx) {
 			return tx?.hash;
 		}
+	}
+
+	public async getTransactionFee(
+		quoteCurrencyKey: string,
+		baseCurrencyKey: string,
+		quoteAmount: string,
+		baseAmount: string,
+		walletAddress: string
+	) {
+		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
+		const exchangeRates = await this.getExchangeRates();
+		const gasPrices = await this.getEthGasPrice();
+		const ethPriceRate = newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', 'sUSD');
+		const gasPrice = gasPrices.fast;
+
+		const gasInfo = await this.getGasEstimateForExchange(
+			quoteCurrencyKey,
+			baseCurrencyKey,
+			quoteAmount,
+			walletAddress
+		);
+
+		if (txProvider === 'synthswap' || txProvider === '1inch') {
+			return getTransactionPrice(
+				gasPrice,
+				BigNumber.from(gasInfo?.limit || 0),
+				ethPriceRate,
+				gasInfo?.l1Fee ?? zeroBN
+			);
+		} else {
+			const exchangeParams = this.getExchangeParams(
+				quoteCurrencyKey,
+				baseCurrencyKey,
+				wei(quoteAmount),
+				wei(baseAmount).mul(wei(1).sub(ATOMIC_EXCHANGE_SLIPPAGE)),
+				walletAddress
+			);
+
+			if (!this.signer) {
+				throw new Error('You must add a signer to estimate gas for this transaction.');
+			}
+
+			if (!this.contracts.Synthetix) {
+				throw new Error('Wrong network');
+			}
+
+			const isAtomic = this.checkIsAtomic(baseCurrencyKey, quoteCurrencyKey);
+			const method = isAtomic ? 'exchangeAtomically' : 'exchangeWithTracking';
+
+			const gasLimit = await this.contracts.Synthetix.connect(this.signer).estimateGas[method](
+				...exchangeParams
+			);
+
+			const txn = await this.contracts.Synthetix.populateTransaction[method](...exchangeParams);
+
+			const optimismLayerOneFee = await this.getL1SecurityFee({
+				...omit(txn, ['maxPriorityFeePerGas', 'maxFeePerGas']),
+				gasLimit: txn.gasLimit?.toNumber() ?? 0,
+				gasPrice: txn.gasPrice?.toNumber() ?? 0,
+			});
+
+			return getTransactionPrice(gasPrice, gasLimit, ethPriceRate, optimismLayerOneFee);
+		}
+	}
+
+	// This is mostly copied over from the Synthetix queries.
+	// See: https://github.com/Synthetixio/js-monorepo/blob/master/packages/queries/src/queries/network/useEthGasPriceQuery.ts
+	private async getEthGasPrice() {
+		if (!this.provider) {
+			throw new Error('Expected ctx.provider to be defined');
+		}
+
+		try {
+			// If network is Mainnet then we use EIP1559
+			if (this.networkId === NetworkIdByName.mainnet) {
+				const block = await this?.provider?.getBlock('latest');
+				if (block?.baseFeePerGas) {
+					return {
+						fastest: computeGasFee(block.baseFeePerGas, 6),
+						fast: computeGasFee(block.baseFeePerGas, 4),
+						average: computeGasFee(block.baseFeePerGas, 2),
+					};
+				} else {
+					return getGasPriceFromProvider(this.provider);
+				}
+				// If not (Testnet or Optimism network), we get the Gas Price through the provider
+			} else {
+				return getGasPriceFromProvider(this.provider);
+			}
+		} catch (e) {
+			throw new Error(`Could not fetch and compute network fee. ${e}`);
+		}
+	}
+
+	private async getGasEstimateForExchange(
+		quoteCurrencyKey: string,
+		baseCurrencyKey: string,
+		quoteAmount: string,
+		walletAddress: string
+	) {
+		if (!this.isL2) return null;
+		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
+		const quoteCurrencyTokenAddress = this.getTokenAddress(quoteCurrencyKey);
+		const baseCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey);
+
+		if (txProvider === 'synthswap') {
+			const gasEstimate = await this.swapSynthSwapGasEstimate(
+				this.allTokensMap[quoteCurrencyKey],
+				this.allTokensMap[baseCurrencyKey],
+				quoteAmount
+			);
+
+			const metaTx = await this.swapSynthSwap(
+				this.allTokensMap[quoteCurrencyKey],
+				this.allTokensMap[baseCurrencyKey],
+				quoteAmount,
+				walletAddress,
+				'meta_tx'
+			);
+
+			const l1Fee = await this.getL1SecurityFee({
+				...metaTx,
+				gasPrice: 0,
+				gasLimit: Number(gasEstimate),
+			});
+
+			return { limit: normalizeGasLimit(Number(gasEstimate)), l1Fee };
+		} else if (txProvider === '1inch') {
+			const estimate = await this.swapOneInchGasEstimate(
+				quoteCurrencyTokenAddress,
+				baseCurrencyTokenAddress,
+				quoteAmount,
+				walletAddress
+			);
+
+			const metaTx = await this.swapOneInch(
+				quoteCurrencyTokenAddress,
+				baseCurrencyTokenAddress,
+				quoteAmount,
+				walletAddress,
+				true
+			);
+
+			const l1Fee = await this.getL1SecurityFee({
+				...metaTx,
+				gasPrice: 0,
+				gasLimit: Number(estimate),
+			});
+
+			return { limit: normalizeGasLimit(Number(estimate)), l1Fee };
+		}
+	}
+
+	private getL1SecurityFee(metaTx: MetaTx) {
+		return getL1SecurityFee(this.isL2, metaTx, this.signer);
 	}
 
 	private isCurrencyETH(currencyKey: string) {
@@ -621,7 +778,6 @@ export default class ExchangeService {
 	private async getOneInchQuote(baseCurrencyKey: string, quoteCurrencyKey: string, amount: string) {
 		const sUSD = this.tokensMap['sUSD'];
 		const decimals = this.getTokenDecimals(quoteCurrencyKey);
-
 		const quoteTokenAddress = this.getTokenAddress(quoteCurrencyKey);
 		const baseTokenAddress = this.getTokenAddress(baseCurrencyKey);
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
@@ -641,6 +797,7 @@ export default class ExchangeService {
 				amount,
 				decimals
 			);
+
 			return estimatedAmount;
 		}
 

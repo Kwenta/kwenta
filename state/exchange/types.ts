@@ -11,4 +11,8 @@ export type ExchangeState = {
 	ratio?: SwapRatio;
 	quoteBalance?: Wei | null;
 	baseBalance?: Wei | null;
+	transactionFee?: Wei | null;
+	slippagePercent?: Wei | null;
+	isSubmitting: boolean;
+	isApproving: boolean;
 };

@@ -44,3 +44,26 @@ export const fetchTxProvider = createAsyncThunk<any, void, ThunkConfig>(
 		return undefined;
 	}
 );
+
+export const fetchTransactionFee = createAsyncThunk<any, void, ThunkConfig>(
+	'exchange/fetchTransactionFee',
+	async (_, { getState, extra: { sdk } }) => {
+		const {
+			exchange: { quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount },
+		} = getState();
+
+		if (baseCurrencyKey && quoteCurrencyKey) {
+			const transactionFee = await sdk.exchange.getTransactionFee(
+				quoteCurrencyKey,
+				baseCurrencyKey,
+				quoteAmount,
+				baseAmount,
+				''
+			);
+
+			return transactionFee;
+		}
+
+		return undefined;
+	}
+);
