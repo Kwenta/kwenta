@@ -447,7 +447,28 @@ export default class ExchangeService {
 		return exchangeRates;
 	}
 
-	// public handleApprove(currencyKey: string) {}
+	public async handleApprove(quoteCurrencyKey: string, baseCurrencyKey: string) {
+		if (!this.signer) {
+			throw new Error('A signer is required to approve tokens.');
+		}
+
+		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
+		const oneInchApproveAddress = await this.getOneInchApproveAddress();
+		const quoteCurrencyContract = await this.getQuoteCurrencyContract(
+			baseCurrencyKey,
+			quoteCurrencyKey
+		);
+		const needsApproval = this.checkNeedsApproval(baseCurrencyKey, quoteCurrencyKey);
+
+		const approveAddress =
+			txProvider === '1inch' ? oneInchApproveAddress : SYNTH_SWAP_OPTIMISM_ADDRESS;
+
+		if (quoteCurrencyContract && needsApproval) {
+			await quoteCurrencyContract
+				.connect(this.signer)
+				.approve(approveAddress, ethers.constants.MaxUint256);
+		}
+	}
 
 	public async handleRedeem(walletAddress: string) {
 		if (!this.signer) {
