@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'react';
+import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -14,7 +14,7 @@ type Props = {
 		onClick: (() => void) | undefined;
 		variant?: ButtonVariant;
 		i18nTitle: string;
-		Icon?: FunctionComponent<any>;
+		icon?: ReactNode;
 	}[];
 };
 
@@ -31,7 +31,7 @@ export default function TradePanelHeader({ accountType, buttons }: Props) {
 			</Title>
 			<Buttons>
 				{buttons &&
-					buttons.map(({ Icon, i18nTitle, variant, onClick }) => (
+					buttons.map(({ icon, i18nTitle, variant, onClick }) => (
 						<HeaderButton
 							key={i18nTitle}
 							variant={variant || 'flat'}
@@ -41,11 +41,7 @@ export default function TradePanelHeader({ accountType, buttons }: Props) {
 							textColor="yellow"
 						>
 							<Label>{t(i18nTitle)}</Label>
-							{Icon && (
-								<IconContainer>
-									<Icon />
-								</IconContainer>
-							)}
+							{icon && <IconContainer>{icon}</IconContainer>}
 						</HeaderButton>
 					))}
 			</Buttons>

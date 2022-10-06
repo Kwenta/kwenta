@@ -1,7 +1,7 @@
 import Wei, { wei } from '@synthetixio/wei';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import InfoBox from 'components/InfoBox';
@@ -37,6 +37,7 @@ type Props = {
 
 function MarginInfoBox({ editingLeverage }: Props) {
 	const { selectedLeverage } = useFuturesContext();
+	const { colors } = useTheme();
 
 	const position = useRecoilValue(positionState);
 	const marketInfo = useRecoilValue(marketInfoState);
@@ -187,8 +188,12 @@ function MarginInfoBox({ editingLeverage }: Props) {
 									valueNode: (
 										<>
 											{keeperEthBal.gt(0) && (
-												<ActionButton hideBorder onClick={() => setOpenModal('keeper-deposit')}>
-													<WithdrawArrow width="10px" height="10px" />
+												<ActionButton onClick={() => setOpenModal('keeper-deposit')}>
+													<WithdrawArrow
+														width="10px"
+														height="10px"
+														stroke={colors.selectedTheme.yellow}
+													/>
 												</ActionButton>
 											)}
 										</>

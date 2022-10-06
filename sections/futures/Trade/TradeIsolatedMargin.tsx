@@ -1,7 +1,7 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useMemo, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import DepositArrow from 'assets/svg/futures/deposit-arrow.svg';
 import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
@@ -36,6 +36,7 @@ type Props = {
 const TradeIsolatedMargin = ({ isMobile }: Props) => {
 	const { openConnectModal: connectWallet } = useConnectModal();
 	const { walletAddress } = Connector.useContainer();
+	const { colors } = useTheme();
 
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const position = useRecoilValue(positionState);
@@ -58,7 +59,7 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 			? [
 					{
 						i18nTitle: 'futures.market.trade.button.deposit',
-						Icon: DepositArrow,
+						icon: <DepositArrow stroke={colors.selectedTheme.yellow} />,
 						onClick: () => setOpenModal('deposit'),
 					},
 			  ]
@@ -67,12 +68,18 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 		if (position?.remainingMargin?.gt(zeroBN) && !marketInfo?.isSuspended) {
 			transferButtons.push({
 				i18nTitle: 'futures.market.trade.button.withdraw',
-				Icon: WithdrawArrow,
+				icon: <WithdrawArrow stroke={colors.selectedTheme.yellow} />,
 				onClick: () => setOpenModal('withdraw'),
 			});
 		}
 		return transferButtons;
-	}, [walletAddress, position?.remainingMargin, marketInfo?.isSuspended, connectWallet]);
+	}, [
+		walletAddress,
+		position?.remainingMargin,
+		marketInfo?.isSuspended,
+		colors.selectedTheme.yellow,
+		connectWallet,
+	]);
 
 	return (
 		<div>
