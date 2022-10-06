@@ -9,44 +9,43 @@ import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import FuturesMarketABI from 'lib/abis/FuturesMarket.json';
 import FuturesMarketDataABI from 'lib/abis/FuturesMarketData.json';
-import { futuresMarketsState, positionsState, selectedFuturesAddressState } from 'store/futures';
+import { positionsState, futuresAccountState, futuresMarketsState } from 'store/futures';
 import { MarketKeyByAsset } from 'utils/futures';
 
-import { FuturesPosition, PositionDetail } from './types';
+import { FuturesAccountTypes, PositionDetail } from './types';
 import { mapFuturesPosition } from './utils';
 
-const ethCallProvider = new Provider();
+const DEFAULT_POSITIONS = {
+	[FuturesAccountTypes.ISOLATED_MARGIN]: [],
+	[FuturesAccountTypes.CROSS_MARGIN]: [],
+};
 
-const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPosition[]>) => {
-	const {
-		defaultSynthetixjs,
-		l2Synthetixjs,
-		provider,
-		l2Provider,
-		network,
-	} = Connector.useContainer();
+const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<void>) => {
+	const { defaultSynthetixjs: synthetixjs, provider, network } = Connector.useContainer();
 	const isL2 = useIsL2();
-	const synthetixjs = isL2 ? defaultSynthetixjs : l2Synthetixjs;
 
-	const setFuturesPositions = useSetRecoilState(positionsState);
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
-	const selectedFuturesAddress = useRecoilValue(selectedFuturesAddressState);
-
+	const setPositions = useSetRecoilState(positionsState);
+	const { walletAddress, crossMarginAddress, crossMarginAvailable, status } = useRecoilValue(
+		futuresAccountState
+	);
 	const assets = futuresMarkets.map(({ asset }) => asset);
 
-	return useQuery<FuturesPosition[] | []>(
+	return useQuery<void>(
 		QUERY_KEYS.Futures.MarketsPositions(
 			network?.id as NetworkId,
 			assets || [],
-			selectedFuturesAddress ?? ''
+			walletAddress ?? '',
+			crossMarginAddress ?? ''
 		),
 		async () => {
-			if (!assets || (!provider && !l2Provider) || !selectedFuturesAddress) {
-				setFuturesPositions([]);
-				return [];
+			if (!isL2 || !provider || status !== 'complete') {
+				setPositions(DEFAULT_POSITIONS);
+				return;
 			}
 
-			await ethCallProvider.init(isL2 ? provider : l2Provider);
+			const ethcallProvider = new Provider();
+			await ethcallProvider.init(provider);
 
 			const {
 				contracts: { FuturesMarketData },
@@ -57,32 +56,69 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPositi
 			const positionCalls = [];
 			const liquidationCalls = [];
 
+			// isolated margin
 			for (const { market, asset } of futuresMarkets) {
 				positionCalls.push(
 					FMD.positionDetailsForMarketKey(
 						ethersUtils.formatBytes32String(MarketKeyByAsset[asset]),
-						selectedFuturesAddress
+						walletAddress
 					)
 				);
 				const marketContract = new Contract(market, FuturesMarketABI);
-				liquidationCalls.push(marketContract.canLiquidate(selectedFuturesAddress));
+				liquidationCalls.push(marketContract.canLiquidate(walletAddress));
 			}
 
-			const positions = (await ethCallProvider.all(positionCalls)) as PositionDetail[];
-			const canLiquidateState = (await ethCallProvider.all(liquidationCalls)) as boolean[];
-
-			const futuresPositions = [];
-
-			for (let i = 0; i < futuresMarkets.length; i++) {
-				const position = positions[i];
-				const canLiquidate = canLiquidateState[i];
-
-				futuresPositions.push(mapFuturesPosition(position, canLiquidate, assets[i]));
+			// cross margin
+			if (crossMarginAvailable && crossMarginAddress) {
+				for (const { market, asset } of futuresMarkets) {
+					positionCalls.push(
+						FMD.positionDetailsForMarketKey(
+							ethersUtils.formatBytes32String(MarketKeyByAsset[asset]),
+							crossMarginAddress
+						)
+					);
+					const marketContract = new Contract(market, FuturesMarketABI);
+					liquidationCalls.push(marketContract.canLiquidate(crossMarginAddress));
+				}
 			}
 
-			setFuturesPositions(futuresPositions);
+			const positionDetails = (await ethcallProvider.all(positionCalls)) as PositionDetail[];
+			const canLiquidateState = (await ethcallProvider.all(liquidationCalls)) as boolean[];
 
-			return futuresPositions;
+			// split isolated and cross margin results
+			const positionDetailsIsolated = positionDetails.slice(0, futuresMarkets.length);
+			const positionDetailsCross = positionDetails.slice(
+				futuresMarkets.length,
+				positionDetails.length
+			);
+
+			const canLiquidateStateIsolated = canLiquidateState.slice(0, futuresMarkets.length);
+			const canLiquidateStateCross = canLiquidateState.slice(
+				futuresMarkets.length,
+				canLiquidateState.length
+			);
+
+			// map the positions using the results
+			const isolatedPositions = positionDetailsIsolated
+				.map((position, ind) => {
+					const canLiquidate = canLiquidateStateIsolated[ind];
+					const asset = assets[ind];
+					return mapFuturesPosition(position, canLiquidate, asset);
+				})
+				.filter(({ remainingMargin }) => remainingMargin.gt(0));
+
+			const crossPositions = positionDetailsCross
+				.map((position, ind) => {
+					const canLiquidate = canLiquidateStateCross[ind];
+					const asset = assets[ind];
+					return mapFuturesPosition(position, canLiquidate, asset);
+				})
+				.filter(({ remainingMargin }) => remainingMargin.gt(0));
+
+			setPositions({
+				[FuturesAccountTypes.ISOLATED_MARGIN]: isolatedPositions,
+				[FuturesAccountTypes.CROSS_MARGIN]: crossPositions,
+			});
 		},
 		{
 			...options,
