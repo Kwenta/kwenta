@@ -1,6 +1,7 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useCallback, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { useTheme } from 'styled-components';
 
 import DepositArrow from 'assets/svg/futures/deposit-arrow.svg';
 import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
@@ -42,6 +43,7 @@ type Props = {
 
 export default function TradeCrossMargin({ isMobile }: Props) {
 	const { walletAddress } = Connector.useContainer();
+	const { colors } = useTheme();
 
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const { crossMarginAddress, crossMarginAvailable, status } = useRecoilValue(futuresAccountState);
@@ -72,12 +74,12 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 		? [
 				{
 					i18nTitle: 'futures.market.trade.button.deposit',
-					Icon: DepositArrow,
+					Icon: <DepositArrow stoke={colors.selectedTheme.yellow} />,
 					onClick: () => setOpenTransferModal('deposit'),
 				},
 				{
 					i18nTitle: 'futures.market.trade.button.withdraw',
-					Icon: WithdrawArrow,
+					Icon: <WithdrawArrow stoke={colors.selectedTheme.yellow} />,
 					onClick: () => setOpenTransferModal('withdraw'),
 				},
 		  ]
