@@ -18,7 +18,7 @@ const useConnector = () => {
 			sdk.setSigner(signer);
 
 			if (networkId) {
-				sdk.setNetworkId(networkId as any);
+				sdk.setNetworkId(networkId as NetworkId);
 			}
 
 			if (address) {
@@ -26,10 +26,12 @@ const useConnector = () => {
 			}
 		},
 	});
+
 	const unsupportedNetwork = useMemo(
 		() => (isWalletConnected ? activeChain?.unsupported ?? false : false),
 		[activeChain, isWalletConnected]
 	);
+
 	const network = useMemo(
 		() => (activeChain?.unsupported ? chain.optimism : activeChain ?? chain.optimism),
 		[activeChain]

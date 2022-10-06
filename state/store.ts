@@ -9,12 +9,7 @@ import balancesReducer from './balances/reducer';
 import exchangeReducer from './exchange/reducer';
 import walletReducer from './wallet/reducer';
 
-// TODO:
-// - Make sure that using this static value (wagmiClient.provider)
-//   is actually responsive to provider changes.
-// - Figure out how to get the signer out of wagmi
-
-export let sdk = new KwentaSDK(10, wagmiClient.provider, window.ethereum as any);
+export const sdk = new KwentaSDK(10, wagmiClient.provider, undefined);
 
 const store = configureStore({
 	reducer: {
