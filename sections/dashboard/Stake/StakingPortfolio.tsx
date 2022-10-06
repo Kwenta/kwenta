@@ -31,7 +31,7 @@ const rewardEscrowContract = {
 };
 
 const StakingPortfolio = () => {
-	const { walletAddress } = Connector.useContainer();
+	const { walletAddress, isWalletConnected } = Connector.useContainer();
 	const { t } = useTranslation();
 	const [kwentaBalance, setKwentaBalance] = useState(zeroBN);
 	const [escrowedBalance, setEscrowedBalance] = useState(zeroBN);
@@ -74,6 +74,7 @@ const StakingPortfolio = () => {
 			},
 		],
 		cacheOnBlock: true,
+		enabled: isWalletConnected,
 		onSettled(data, error) {
 			if (error) logError(error);
 			if (data) {

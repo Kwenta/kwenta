@@ -33,9 +33,7 @@ const StakingTab = () => {
 		cacheOnBlock: true,
 		onSettled(data, error) {
 			if (error) logError(error);
-			if (data) {
-				setClaimableBalance(wei(data ?? zeroBN));
-			}
+			setClaimableBalance(wei(data ?? zeroBN));
 		},
 	});
 
