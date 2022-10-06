@@ -1,9 +1,9 @@
 import { wei } from '@synthetixio/wei';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { useBalance, useContractRead } from 'wagmi';
+import { erc20ABI, useContractReads } from 'wagmi';
 
 import Text from 'components/Text';
 import Connector from 'containers/Connector';
@@ -12,95 +12,78 @@ import stakingRewardsABI from 'lib/abis/StakingRewards.json';
 import { currentThemeState } from 'store/ui';
 import media from 'styles/media';
 import { zeroBN } from 'utils/formatters/number';
+import logError from 'utils/logError';
 
 import { SplitStakingCard } from './common';
 
-const KWNETA_TOKEN = '0xDA0C33402Fc1e10d18c532F0Ed9c1A6c5C9e386C';
-const STAKING_REWARDS = '0x1653a3a3c4ccee0538685f1600a30df5e3ee830a';
-const REWARD_ESCROW = '0xaFD87d1a62260bD5714C55a1BB4057bDc8dFA413';
+const kwentaTokenContract = {
+	addressOrName: '0xDA0C33402Fc1e10d18c532F0Ed9c1A6c5C9e386C',
+	contractInterface: erc20ABI,
+};
+const stakingRewardsContract = {
+	addressOrName: '0x1653a3a3c4ccee0538685f1600a30df5e3ee830a',
+	contractInterface: stakingRewardsABI,
+};
+
+const rewardEscrowContract = {
+	addressOrName: '0xaFD87d1a62260bD5714C55a1BB4057bDc8dFA413',
+	contractInterface: rewardEscrowABI,
+};
 
 const StakingPortfolio = () => {
 	const { walletAddress } = Connector.useContainer();
 	const { t } = useTranslation();
+	const [kwentaBalance, setKwentaBalance] = useState(zeroBN);
+	const [escrowedBalance, setEscrowedBalance] = useState(zeroBN);
+	const [vestedBalance, setVestedBalance] = useState(zeroBN);
+	const [stakedNonEscrowedBalance, setStakedNonEscrowedBalance] = useState(zeroBN);
+	const [stakedEscrowedBalance, setStakedEscrowedBalance] = useState(zeroBN);
+	const [claimableBalance, setClaimableBalance] = useState(zeroBN);
 
-	const { data: kwentaBalance } = useBalance({
-		addressOrName: walletAddress ?? undefined,
-		token: KWNETA_TOKEN,
-		onSettled(data, error) {
-			// eslint-disable-next-line no-console
-			console.log('kwentaBalance Settled', { data, error });
-		},
-	});
-
-	const { data: escrowedBalance } = useContractRead({
-		addressOrName: REWARD_ESCROW,
-		contractInterface: rewardEscrowABI,
-		functionName: 'balanceOf',
-		args: [walletAddress ?? undefined],
+	useContractReads({
+		contracts: [
+			{
+				...rewardEscrowContract,
+				functionName: 'balanceOf',
+				args: [walletAddress ?? undefined],
+			},
+			{
+				...rewardEscrowContract,
+				functionName: 'totalVestedAccountBalance',
+				args: [walletAddress ?? undefined],
+			},
+			{
+				...stakingRewardsContract,
+				functionName: 'nonEscrowedBalanceOf',
+				args: [walletAddress ?? undefined],
+			},
+			{
+				...stakingRewardsContract,
+				functionName: 'escrowedBalanceOf',
+				args: [walletAddress ?? undefined],
+			},
+			{
+				...stakingRewardsContract,
+				functionName: 'earned',
+				args: [walletAddress ?? undefined],
+			},
+			{
+				...kwentaTokenContract,
+				functionName: 'balanceOf',
+				args: [walletAddress ?? undefined],
+			},
+		],
 		cacheOnBlock: true,
 		onSettled(data, error) {
-			// eslint-disable-next-line no-console
-			console.log('escrowedBalance Settled', { data, error });
-		},
-	});
-
-	const { data: vestedBalance } = useContractRead({
-		addressOrName: REWARD_ESCROW,
-		contractInterface: rewardEscrowABI,
-		functionName: 'totalVestedAccountBalance',
-		args: [walletAddress ?? undefined],
-		cacheOnBlock: true,
-		onSettled(data, error) {
-			// eslint-disable-next-line no-console
-			console.log('vestedBalance Settled', { data, error });
-		},
-	});
-
-	// const { data: stakedBalance } = useContractRead({
-	// 	addressOrName: STAKING_REWARDS,
-	// 	contractInterface: stakingRewardsABI,
-	// 	functionName: 'balanceOf',
-	// 	args: [walletAddress ?? undefined],
-	// 	cacheOnBlock: true,
-	// 	onSettled(data, error) {
-	// 		// eslint-disable-next-line no-console
-	// 		console.log('stakedBalance Settled', { data, error });
-	// 	},
-	// });
-
-	const { data: stakedNonEscrowedBalance } = useContractRead({
-		addressOrName: STAKING_REWARDS,
-		contractInterface: stakingRewardsABI,
-		functionName: 'nonEscrowedBalanceOf',
-		args: [walletAddress ?? undefined],
-		cacheOnBlock: true,
-		onSettled(data, error) {
-			// eslint-disable-next-line no-console
-			console.log('nonEscrowedBalance Settled', { data, error });
-		},
-	});
-
-	const { data: stakedEscrowedBalance } = useContractRead({
-		addressOrName: STAKING_REWARDS,
-		contractInterface: stakingRewardsABI,
-		functionName: 'escrowedBalanceOf',
-		args: [walletAddress ?? undefined],
-		cacheOnBlock: true,
-		onSettled(data, error) {
-			// eslint-disable-next-line no-console
-			console.log('stakedEscrowedBalanceOf Settled', { data, error });
-		},
-	});
-
-	const { data: claimableBalance } = useContractRead({
-		addressOrName: STAKING_REWARDS,
-		contractInterface: stakingRewardsABI,
-		functionName: 'earned',
-		args: [walletAddress ?? undefined],
-		cacheOnBlock: true,
-		onSettled(data, error) {
-			// eslint-disable-next-line no-console
-			console.log('claimableBalance Settled', { data, error });
+			if (error) logError(error);
+			if (data) {
+				setEscrowedBalance(wei(data[0] ?? zeroBN));
+				setVestedBalance(wei(data[1] ?? zeroBN));
+				setStakedNonEscrowedBalance(wei(data[2] ?? zeroBN));
+				setStakedEscrowedBalance(wei(data[3] ?? zeroBN));
+				setClaimableBalance(wei(data[4] ?? zeroBN));
+				setKwentaBalance(wei(data[5] ?? zeroBN));
+			}
 		},
 	});
 
@@ -111,36 +94,36 @@ const StakingPortfolio = () => {
 			{
 				key: 'Liquid',
 				title: t('dashboard.stake.portfolio.liquid'),
-				value: Number(kwentaBalance?.formatted).toFixed(2),
+				value: Number(kwentaBalance).toFixed(2),
 			},
 			{
 				key: 'Escrow',
 				title: t('dashboard.stake.portfolio.escrow'),
-				value: Number(wei(escrowedBalance ?? zeroBN)).toFixed(2),
+				value: Number(escrowedBalance).toFixed(2),
 			},
 		],
 		[
 			{
 				key: 'Staked',
 				title: t('dashboard.stake.portfolio.staked'),
-				value: Number(wei(stakedNonEscrowedBalance ?? zeroBN)).toFixed(2),
+				value: Number(stakedNonEscrowedBalance).toFixed(2),
 			},
 			{
 				key: 'StakedEscrow',
 				title: t('dashboard.stake.portfolio.staked-escrow'),
-				value: Number(wei(stakedEscrowedBalance ?? zeroBN)).toFixed(2),
+				value: Number(stakedEscrowedBalance).toFixed(2),
 			},
 		],
 		[
 			{
 				key: 'Claimable',
 				title: t('dashboard.stake.portfolio.claimable'),
-				value: Number(wei(claimableBalance ?? zeroBN)).toFixed(2),
+				value: Number(claimableBalance).toFixed(2),
 			},
 			{
 				key: 'Vestable',
 				title: t('dashboard.stake.portfolio.vestable'),
-				value: Number(wei(vestedBalance ?? zeroBN)).toFixed(2),
+				value: Number(vestedBalance).toFixed(2),
 			},
 		],
 	];

@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import { wei } from '@synthetixio/wei';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -9,27 +10,32 @@ import Connector from 'containers/Connector';
 import stakingRewardsABI from 'lib/abis/StakingRewards.json';
 import { currentThemeState } from 'store/ui';
 import media from 'styles/media';
+import { zeroBN } from 'utils/formatters/number';
+import logError from 'utils/logError';
 
 import { KwentaLabel, StakingCard } from './common';
 import StakingInputCard from './StakingInputCard';
-import { wei } from '@synthetixio/wei';
-import { zeroBN } from 'utils/formatters/number';
 
-const STAKING_REWARDS = '0x1653a3a3c4ccee0538685f1600a30df5e3ee830a';
+const stakingRewardsContract = {
+	addressOrName: '0x1653a3a3c4ccee0538685f1600a30df5e3ee830a',
+	contractInterface: stakingRewardsABI,
+};
 
 const StakingTab = () => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
+	const [claimableBalance, setClaimableBalance] = useState(zeroBN);
 
-	const { data: claimableBalance } = useContractRead({
-		addressOrName: STAKING_REWARDS,
-		contractInterface: stakingRewardsABI,
+	useContractRead({
+		...stakingRewardsContract,
 		functionName: 'earned',
 		args: [walletAddress ?? undefined],
 		cacheOnBlock: true,
 		onSettled(data, error) {
-			// eslint-disable-next-line no-console
-			console.log('claimableBalance Settled', { data, error });
+			if (error) logError(error);
+			if (data) {
+				setClaimableBalance(wei(data ?? zeroBN));
+			}
 		},
 	});
 
@@ -42,7 +48,7 @@ const StakingTab = () => {
 				<CardGrid>
 					<div>
 						<div className="title">{t('dashboard.stake.tabs.staking.claimable-rewards')}</div>
-						<KwentaLabel>{Number(wei(claimableBalance ?? zeroBN)).toFixed(2)}</KwentaLabel>
+						<KwentaLabel>{Number(claimableBalance).toFixed(2)}</KwentaLabel>
 					</div>
 					<div>
 						<div className="title">{t('dashboard.stake.tabs.staking.annual-percentage-yield')}</div>
