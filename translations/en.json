@@ -713,6 +713,7 @@
 					"account-query-failed": "Failed to fetch account"
 				},
 				"preview": {
+					"insufficient-margin": "Insufficient free margin",
 					"error": "Error generating preview"
 				},
 				"orders": {
@@ -722,6 +723,10 @@
 						"deposit": "Deposit"
 					},
 					"fee-rejection-label": "Fee Rejection"
+				},
+				"edit-leverage": {
+					"failed": "Transaction failed",
+					"insufficient-margin": "Leverage cannot be decreased, please deposit more margin or reduce open position sizes"
 				}
 			},
 			"history": {

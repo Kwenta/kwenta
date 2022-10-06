@@ -1,7 +1,7 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { useQuery } from 'react-query';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
@@ -19,7 +19,7 @@ const BPS_CONVERSION = 10000;
 export default function useGetCrossMarginAccountOverview() {
 	const { network, provider } = Connector.useContainer();
 	const { crossMarginAddress } = useRecoilValue(futuresAccountState);
-	const setCrossMarginSettings = useSetRecoilState(crossMarginSettingsState);
+	const [crossMarginSettings, setCrossMarginSettings] = useRecoilState(crossMarginSettingsState);
 	const setAccountOverview = useSetRecoilState(crossMarginAccountOverviewState);
 
 	const { crossMarginAccountContract, crossMarginBaseSettings } = useCrossMarginAccountContracts();
@@ -39,33 +39,38 @@ export default function useGetCrossMarginAccountOverview() {
 				return;
 			}
 
-			Promise.all([
-				crossMarginAccountContract.freeMargin(),
-				provider.getBalance(crossMarginAddress),
-			])
-				.then(([freeMargin, keeperEthBal]) => {
-					setAccountOverview({
-						freeMargin: wei(freeMargin),
-						keeperEthBal: wei(keeperEthBal),
-					});
-				})
-				.catch((err) => logError(err));
-
-			Promise.all([
-				crossMarginBaseSettings?.tradeFee(),
-				crossMarginBaseSettings?.limitOrderFee(),
-				crossMarginBaseSettings?.stopOrderFee(),
-			])
-				.then(([tradeFee, limitOrderFee, stopOrderFee]) => {
+			try {
+				if (crossMarginSettings.limitOrderFee.eq(0)) {
+					const [tradeFee, limitOrderFee, stopOrderFee] = await Promise.all([
+						crossMarginBaseSettings?.tradeFee(),
+						crossMarginBaseSettings?.limitOrderFee(),
+						crossMarginBaseSettings?.stopOrderFee(),
+					]);
 					const settings = {
 						tradeFee: tradeFee ? wei(tradeFee.toNumber() / BPS_CONVERSION) : zeroBN,
 						limitOrderFee: limitOrderFee ? wei(limitOrderFee.toNumber() / BPS_CONVERSION) : zeroBN,
 						stopOrderFee: stopOrderFee ? wei(stopOrderFee.toNumber() / BPS_CONVERSION) : zeroBN,
 					};
 					setCrossMarginSettings(settings);
-				})
-				.catch((err) => logError(err));
-			return;
+				}
+
+				const [freeMargin, keeperEthBal] = await Promise.all([
+					crossMarginAccountContract.freeMargin(),
+					provider.getBalance(crossMarginAddress),
+				]);
+
+				setAccountOverview({
+					freeMargin: wei(freeMargin),
+					keeperEthBal: wei(keeperEthBal),
+				});
+
+				return { freeMargin: wei(freeMargin), settings: crossMarginSettings, keeperEthBal };
+			} catch (err) {
+				logError(err);
+			}
+		},
+		{
+			enabled: !!crossMarginAddress,
 		}
 	);
 }
