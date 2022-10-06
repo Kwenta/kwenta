@@ -51,7 +51,7 @@ export const SplitStakingCard = styled(StakingCard)<{ $darkTheme?: boolean }>`
 
 	& > div {
 		display: flex;
-		flex: 1;
+		flex: 1 2 auto;
 		flex-direction: column;
 		padding: 30px 0;
 		padding-left: 30px;

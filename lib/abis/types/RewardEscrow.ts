@@ -41,7 +41,7 @@ export declare namespace VestingEntries {
   ] & { endTime: BigNumber; escrowAmount: BigNumber; entryID: BigNumber };
 }
 
-export interface RewardsEscrowInterface extends utils.Interface {
+export interface RewardEscrowInterface extends utils.Interface {
   functions: {
     "MAX_DURATION()": FunctionFragment;
     "acceptOwnership()": FunctionFragment;
@@ -416,12 +416,12 @@ export type VestingEntryCreatedEvent = TypedEvent<
 export type VestingEntryCreatedEventFilter =
   TypedEventFilter<VestingEntryCreatedEvent>;
 
-export interface RewardsEscrow extends BaseContract {
+export interface RewardEscrow extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: RewardsEscrowInterface;
+  interface: RewardEscrowInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

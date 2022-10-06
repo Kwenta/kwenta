@@ -4,7 +4,7 @@
 
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
-import type { RewardsEscrow, RewardsEscrowInterface } from "../RewardsEscrow";
+import type { RewardEscrow, RewardEscrowInterface } from "../RewardEscrow";
 
 const _abi = [
   {
@@ -669,15 +669,15 @@ const _abi = [
   },
 ];
 
-export class RewardsEscrow__factory {
+export class RewardEscrow__factory {
   static readonly abi = _abi;
-  static createInterface(): RewardsEscrowInterface {
-    return new utils.Interface(_abi) as RewardsEscrowInterface;
+  static createInterface(): RewardEscrowInterface {
+    return new utils.Interface(_abi) as RewardEscrowInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): RewardsEscrow {
-    return new Contract(address, _abi, signerOrProvider) as RewardsEscrow;
+  ): RewardEscrow {
+    return new Contract(address, _abi, signerOrProvider) as RewardEscrow;
   }
 }
