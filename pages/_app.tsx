@@ -9,7 +9,9 @@ import { FC, ReactElement, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import { Provider } from 'react-redux';
 import { RecoilRoot, useRecoilValue } from 'recoil';
+import store from 'state/store';
 import { ThemeProvider } from 'styled-components';
 import { chain, WagmiConfig } from 'wagmi';
 
@@ -110,15 +112,17 @@ const App: FC<AppProps> = (props) => {
 				<meta name="twitter:url" content="https://kwenta.eth.limo" />
 				<link rel="icon" href="/images/favicon.svg" />
 			</Head>
-			<RecoilRoot>
-				<QueryClientProvider client={new QueryClient()}>
-					<WagmiConfig client={wagmiClient}>
-						<WithAppContainers>
-							<InnerApp {...props} />
-						</WithAppContainers>
-					</WagmiConfig>
-				</QueryClientProvider>
-			</RecoilRoot>
+			<Provider store={store}>
+				<RecoilRoot>
+					<QueryClientProvider client={new QueryClient()}>
+						<WagmiConfig client={wagmiClient}>
+							<WithAppContainers>
+								<InnerApp {...props} />
+							</WithAppContainers>
+						</WagmiConfig>
+					</QueryClientProvider>
+				</RecoilRoot>
+			</Provider>
 		</>
 	);
 };

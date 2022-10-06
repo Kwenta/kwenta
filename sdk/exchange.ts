@@ -632,7 +632,9 @@ export default class ExchangeService {
 				...exchangeParams
 			);
 
-			const txn = await this.contracts.Synthetix.populateTransaction[method](...exchangeParams);
+			const txn = await this.contracts.Synthetix.connect(this.signer).populateTransaction[method](
+				...exchangeParams
+			);
 
 			const optimismLayerOneFee = await this.getL1SecurityFee({
 				...omit(txn, ['maxPriorityFeePerGas', 'maxFeePerGas']),

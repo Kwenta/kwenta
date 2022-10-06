@@ -24,9 +24,11 @@ const exchangeSlice = createSlice({
 	reducers: {
 		setBaseAmount: (state, action) => {
 			state.baseAmount = action.payload.baseAmount;
+			state.ratio = undefined;
 		},
 		setQuoteAmount: (state, action) => {
 			state.baseAmount = action.payload.baseAmount;
+			state.ratio = undefined;
 		},
 		setRatio: (state, action) => {
 			// This is not so simple,
@@ -43,8 +45,8 @@ const exchangeSlice = createSlice({
 			state.baseAmount = state.txProvider === 'synthetix' ? state.quoteAmount : '';
 			state.quoteAmount = '';
 		},
-		setMaxQuotBalance: () => {},
-		setMaxBaseBAlance: () => {},
+		setMaxQuoteBalance: () => {},
+		setMaxBaseBalance: () => {},
 	},
 	extraReducers: (builder) => {
 		builder.addCase(fetchBalances.fulfilled, (state, action) => {

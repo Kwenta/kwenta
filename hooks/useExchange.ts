@@ -1,7 +1,6 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { BigNumber, ethers } from 'ethers';
-import produce from 'immer';
 import get from 'lodash/get';
 import { useRouter } from 'next/router';
 import { useState, useEffect, useMemo, useCallback } from 'react';
@@ -51,8 +50,7 @@ import {
 	txErrorState,
 } from 'store/exchange';
 import { ratesState } from 'store/futures';
-import { ordersState } from 'store/orders';
-import { hasOrdersNotificationState, slippageState } from 'store/ui';
+import { slippageState } from 'store/ui';
 import { gasSpeedState } from 'store/wallet';
 import {
 	newGetCoinGeckoPricesForCurrencies,
@@ -114,8 +112,6 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 	const [ratio, setRatio] = useRecoilState(ratioState);
 
 	const setTxError = useSetRecoilState(txErrorState);
-	const setOrders = useSetRecoilState(ordersState);
-	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const quoteCurrencyAmountBN = useRecoilValue(quoteCurrencyAmountBNState);
 	const baseCurrencyAmountBN = useRecoilValue(baseCurrencyAmountBNState);
 	useExchangeRatesQuery({ refetchInterval: 15000 });
@@ -619,14 +615,6 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 				monitorTransaction({
 					txHash: hash,
 					onTxConfirmed: () => {
-						setOrders((orders) =>
-							produce(orders, (draftState) => {
-								const orderIndex = orders.findIndex((order) => order.hash === hash);
-								if (draftState[orderIndex]) {
-									draftState[orderIndex].status = 'confirmed';
-								}
-							})
-						);
 						synthsWalletBalancesQuery.refetch();
 						numEntriesQuery.refetch();
 						setQuoteCurrencyAmount('');
@@ -639,7 +627,6 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 			monitorTransaction,
 			numEntriesQuery,
 			setBaseCurrencyAmount,
-			setOrders,
 			setQuoteCurrencyAmount,
 			synthsWalletBalancesQuery,
 		]
@@ -809,25 +796,6 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 				await exchangeTxn.mutateAsync();
 			}
 
-			if (tx != null) {
-				setOrders((orders) =>
-					produce(orders, (draftState) => {
-						draftState.push({
-							timestamp: Date.now(),
-							hash: tx!.hash,
-							baseCurrencyKey: baseCurrencyKey!,
-							baseCurrencyAmount,
-							quoteCurrencyKey: quoteCurrencyKey!,
-							quoteCurrencyAmount,
-							orderType: 'market',
-							status: 'pending',
-							transaction: tx,
-						});
-					})
-				);
-				setHasOrdersNotification(true);
-			}
-
 			if (tx?.hash) monitorExchangeTxn(tx.hash);
 
 			setOpenModal(undefined);
@@ -838,7 +806,6 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 			setIsSubmitting(false);
 		}
 	}, [
-		baseCurrencyAmount,
 		baseCurrencyKey,
 		baseCurrencyTokenAddress,
 		quoteCurrencyAmount,
@@ -852,8 +819,6 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 		exchangeTxn,
 		oneInchSlippage,
 		monitorExchangeTxn,
-		setHasOrdersNotification,
-		setOrders,
 		swap1Inch,
 		swapSynthSwap,
 		setTxError,

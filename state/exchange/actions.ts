@@ -67,3 +67,32 @@ export const fetchTransactionFee = createAsyncThunk<any, void, ThunkConfig>(
 		return undefined;
 	}
 );
+
+export const submitExchange = createAsyncThunk<any, void, ThunkConfig>(
+	'exchange/submitExchange',
+	async (_, { getState, extra: { sdk } }) => {
+		const {
+			exchange: { quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount },
+		} = getState();
+
+		if (quoteCurrencyKey && baseCurrencyKey) {
+			await sdk.exchange.handleExchange(
+				quoteCurrencyKey,
+				baseCurrencyKey,
+				quoteAmount,
+				baseAmount,
+				'',
+				true
+			);
+		}
+	}
+);
+
+export const submitRedeem = createAsyncThunk<any, void, ThunkConfig>(
+	'exchange/submitRedeem',
+	async (_, { getState, extra: { sdk } }) => {
+		const {} = getState();
+
+		await sdk.exchange.handleRedeem('');
+	}
+);
