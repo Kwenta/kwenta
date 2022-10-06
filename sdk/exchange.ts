@@ -64,13 +64,15 @@ export default class ExchangeService {
 	private tokensMap: any = {};
 	private tokenList: Token[] = [];
 	private allTokensMap: any;
+	private walletAddress?: string;
 
 	constructor(
 		networkId: NetworkId,
 		provider: ethers.providers.Provider,
 		contracts: ContractMap,
 		multicallProvider: EthCallProvider,
-		signer?: Signer
+		signer?: Signer,
+		walletAddress?: string
 	) {
 		this.networkId = networkId;
 		this.signer = signer;
@@ -78,6 +80,7 @@ export default class ExchangeService {
 		this.isL2 = [10, 420].includes(networkId);
 		this.contracts = contracts;
 		this.multicallProvider = multicallProvider;
+		this.walletAddress = walletAddress;
 		this.getAllTokensMap();
 	}
 
@@ -204,8 +207,7 @@ export default class ExchangeService {
 	}
 
 	public async getOneInchTokenList() {
-		const oneInchApiUrl = `https://api.1inch.io/v4.0/${this.isL2 ? 10 : 1}`;
-		const response = await axios.get<OneInchTokenListResponse>(oneInchApiUrl + 'tokens');
+		const response = await axios.get<OneInchTokenListResponse>(this.oneInchApiUrl + 'tokens');
 
 		const tokensMap = response.data.tokens || {};
 		const chainId: NetworkId = this.isL2 ? 10 : 1;

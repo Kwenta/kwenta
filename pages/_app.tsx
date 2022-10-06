@@ -5,18 +5,20 @@ import WithAppContainers from 'containers';
 import { NextPage } from 'next';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import { FC, ReactElement, ReactNode, useMemo } from 'react';
+import { FC, ReactElement, ReactNode, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Provider } from 'react-redux';
 import { RecoilRoot, useRecoilValue } from 'recoil';
-import store from 'state/store';
+import store, { sdk } from 'state/store';
 import { ThemeProvider } from 'styled-components';
 import { chain, WagmiConfig } from 'wagmi';
 
 import Connector from 'containers/Connector';
 import { chains, wagmiClient } from 'containers/Connector/config';
+import { SDKContext, useSDKContext } from 'contexts/SDKContext';
+import useIsL1 from 'hooks/useIsL1';
 import Layout from 'sections/shared/Layout';
 import SystemStatus from 'sections/shared/SystemStatus';
 import { currentThemeState } from 'store/ui';
@@ -52,6 +54,19 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 	const isReady = useMemo(() => typeof window !== 'undefined', []);
 	const currentTheme = useRecoilValue(currentThemeState);
 	const theme = useMemo(() => themes[currentTheme], [currentTheme]);
+
+	// const { setNetworkId, setProvider } = useSDKContext();
+	// const isL1 = useIsL1();
+
+	// useEffect(() => {
+	// 	setNetworkId(network.id as any);
+
+	// 	if (isL1) {
+	// 		setProvider(provider);
+	// 	} else {
+	// 		setProvider(l2Provider);
+	// 	}
+	// }, [network, setNetworkId, setProvider, isL1, provider, l2Provider]);
 
 	return isReady ? (
 		<RainbowKitProvider
@@ -113,6 +128,9 @@ const App: FC<AppProps> = (props) => {
 				<link rel="icon" href="/images/favicon.svg" />
 			</Head>
 			<Provider store={store}>
+				{/* <SDKContext.Provider
+					value={{ setProvider: sdk.setProvider, setNetworkId: sdk.setNetworkId }}
+				> */}
 				<RecoilRoot>
 					<QueryClientProvider client={new QueryClient()}>
 						<WagmiConfig client={wagmiClient}>
@@ -122,6 +140,7 @@ const App: FC<AppProps> = (props) => {
 						</WagmiConfig>
 					</QueryClientProvider>
 				</RecoilRoot>
+				{/* </SDKContext.Provider> */}
 			</Provider>
 		</>
 	);

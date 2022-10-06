@@ -14,7 +14,7 @@ import walletReducer from './wallet/reducer';
 //   is actually responsive to provider changes.
 // - Figure out how to get the signer out of wagmi
 
-const sdk = new KwentaSDK(10, wagmiClient.provider, window.ethereum as any);
+export let sdk = new KwentaSDK(10, wagmiClient.provider, window.ethereum as any);
 
 const store = configureStore({
 	reducer: {

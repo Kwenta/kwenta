@@ -13,24 +13,32 @@ export default class KwentaSDK {
 	private provider: ethers.providers.Provider;
 	private signer?: ethers.Signer;
 	private multicallProvider = new EthCallProvider();
+	private walletAddress?: string;
 
 	private contracts: ContractMap;
 	public exchange: ExchangeService;
 	public futures: FuturesService;
 	public synths: SynthsService;
 
-	constructor(networkId: NetworkId, provider: ethers.providers.Provider, signer?: ethers.Signer) {
+	constructor(
+		networkId: NetworkId,
+		provider: ethers.providers.Provider,
+		signer?: ethers.Signer,
+		walletAddress?: string
+	) {
 		this.provider = provider;
 		this.signer = signer;
 		this.multicallProvider.init(this.provider);
 		this.contracts = getContractsByNetwork(networkId);
+		this.walletAddress = walletAddress;
 
 		this.exchange = new ExchangeService(
 			networkId,
 			this.provider,
 			this.contracts,
 			this.multicallProvider,
-			this.signer
+			this.signer,
+			this.walletAddress
 		);
 		this.futures = new FuturesService(networkId);
 		this.synths = new SynthsService(this.contracts);
@@ -53,10 +61,15 @@ export default class KwentaSDK {
 			this.provider,
 			this.contracts,
 			this.multicallProvider,
-			this.signer
+			this.signer,
+			this.walletAddress
 		);
 		this.futures = new FuturesService(networkId);
 		this.synths = new SynthsService(this.contracts);
+	}
+
+	public setWalletAddress(walletAddress: string) {
+		this.walletAddress = walletAddress;
 	}
 
 	public async getWalletTrades(walletAddress: string) {
