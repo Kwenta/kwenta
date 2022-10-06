@@ -2,11 +2,14 @@ import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import HelpIcon from 'assets/svg/app/question-mark.svg';
 import Button from 'components/Button';
 import { ButtonVariant } from 'components/Button/Button';
 import { FuturesAccountType } from 'queries/futures/subgraph';
 import { BorderedPanel } from 'styles/common';
 import media from 'styles/media';
+
+import { CROSS_MARGIN_FAQ_URL } from '../CrossMarginOnboard/CrossMarginFAQ';
 
 type Props = {
 	accountType: FuturesAccountType;
@@ -20,6 +23,7 @@ type Props = {
 
 export default function TradePanelHeader({ accountType, buttons }: Props) {
 	const { t } = useTranslation();
+
 	return (
 		<Container>
 			<Title>
@@ -27,6 +31,11 @@ export default function TradePanelHeader({ accountType, buttons }: Props) {
 					accountType === 'cross_margin'
 						? 'futures.market.trade.cross-margin.title'
 						: 'futures.market.trade.isolated-margin.title'
+				)}
+				{accountType === 'cross_margin' && (
+					<FAQLink onClick={() => window.open(CROSS_MARGIN_FAQ_URL)}>
+						<HelpIcon />
+					</FAQLink>
 				)}
 			</Title>
 			<Buttons>
@@ -59,6 +68,16 @@ const Container = styled(BorderedPanel)`
 const Title = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 16px;
+	display: flex;
+	align-items: center;
+`;
+
+const FAQLink = styled.div`
+	&:hover {
+		opacity: 0.5;
+	}
+	cursor: pointer;
+	margin-left: 5px;
 `;
 
 const Buttons = styled.div`
