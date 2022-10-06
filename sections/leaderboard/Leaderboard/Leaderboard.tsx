@@ -127,7 +127,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 			search: leaderboardData.search.map(mapEnsName),
 			all: leaderboardData.all.map(mapEnsName),
 		};
-	}, [leaderboardData, ensInfo, mapEnsName]);
+	}, [leaderboardData, mapEnsName]);
 
 	return (
 		<>
@@ -160,9 +160,9 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 							compact={compact}
 							searchTerm={searchTerm}
 						/>
-					) : searchTerm ? (
+					) : searchAddress ? (
 						<AllTime
-							stats={stats.search ?? []}
+							stats={stats.search}
 							isLoading={leaderboardQuery.isLoading}
 							compact={compact}
 							onClickTrader={onClickTrader}
@@ -170,11 +170,12 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 						/>
 					) : (
 						<AllTime
-							stats={stats[activeTab] ?? []}
+							stats={stats[activeTab]}
 							isLoading={leaderboardQuery.isLoading}
 							compact={compact}
 							onClickTrader={onClickTrader}
 							pinRow={pinRow}
+							activeTab={activeTab}
 						/>
 					)}
 				</TableContainer>

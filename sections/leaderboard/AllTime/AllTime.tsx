@@ -19,9 +19,17 @@ type AllTimeProps = {
 	pinRow: AccountStat[];
 	onClickTrader: (trader: string) => void;
 	compact?: boolean;
+	activeTab?: string;
 };
 
-const AllTime: FC<AllTimeProps> = ({ stats, isLoading, pinRow, onClickTrader, compact }) => {
+const AllTime: FC<AllTimeProps> = ({
+	stats,
+	isLoading,
+	pinRow,
+	onClickTrader,
+	compact,
+	activeTab,
+}) => {
 	const { t } = useTranslation();
 	const { staticMainnetProvider, walletAddress } = Connector.useContainer();
 
@@ -56,11 +64,14 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, pinRow, onClickTrader, co
 					hiddenColumns={
 						compact ? ['rank', 'totalTrades', 'liquidations', 'totalVolume', 'pnl'] : undefined
 					}
+					columnsDeps={[activeTab]}
 					columns={[
 						{
 							Header: (
 								<TableTitle>
-									<TitleText>{t('leaderboard.leaderboard.table.title')}</TitleText>
+									<TitleText>
+										{activeTab} {t('leaderboard.leaderboard.table.title')}
+									</TitleText>
 								</TableTitle>
 							),
 							accessor: 'title',
@@ -261,6 +272,7 @@ const TableTitle = styled.div`
 const TitleText = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
+	text-transform: capitalize;
 `;
 
 const TableHeader = styled.div`
