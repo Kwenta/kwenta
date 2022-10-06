@@ -15,7 +15,7 @@ import {
 	ETH_ADDRESS,
 	ETH_COINGECKO_ADDRESS,
 } from 'constants/currency';
-import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
+import { DEFAULT_1INCH_SLIPPAGE, DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { ATOMIC_EXCHANGE_SLIPPAGE } from 'constants/exchange';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
@@ -653,14 +653,6 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 		// eslint-disable-next-line
 	}, [exchangeTxn.hash]);
 
-	const oneInchSlippage = useMemo(() => {
-		// ETH swaps often fail with lower slippage
-		if (txProvider === '1inch' && (baseCurrencyKey === 'ETH' || quoteCurrencyKey === 'ETH')) {
-			return 3;
-		}
-		return slippage;
-	}, [txProvider, baseCurrencyKey, quoteCurrencyKey, slippage]);
-
 	const getGasEstimateForExchange = useCallback(async () => {
 		if (!isL2) return null;
 		if (txProvider === 'synthswap') {
@@ -693,7 +685,7 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 				baseCurrencyTokenAddress!,
 				quoteCurrencyAmount,
 				quoteDecimals,
-				oneInchSlippage
+				DEFAULT_1INCH_SLIPPAGE
 			);
 
 			const metaTx = await swap1Inch(
@@ -701,7 +693,7 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 				baseCurrencyTokenAddress!,
 				quoteCurrencyAmount,
 				quoteDecimals,
-				oneInchSlippage,
+				DEFAULT_1INCH_SLIPPAGE,
 				true
 			);
 			const l1Fee = await getL1SecurityFee({
@@ -723,7 +715,6 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 		slippage,
 		txProvider,
 		gasPrice?.gasPrice,
-		oneInchSlippage,
 		quoteDecimals,
 		swap1Inch,
 		swap1InchGasEstimate,
@@ -795,7 +786,7 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 					baseCurrencyTokenAddress!,
 					quoteCurrencyAmount,
 					quoteDecimals,
-					oneInchSlippage
+					DEFAULT_1INCH_SLIPPAGE
 				);
 			} else if (txProvider === 'synthswap') {
 				tx = await swapSynthSwap(
@@ -850,7 +841,6 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 		oneInchTokensMap,
 		allTokensMap,
 		exchangeTxn,
-		oneInchSlippage,
 		monitorExchangeTxn,
 		setHasOrdersNotification,
 		setOrders,
