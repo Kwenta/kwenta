@@ -181,7 +181,7 @@ function MarginInfoBox({ editingLeverage }: Props) {
 							</PreviewArrow>
 						),
 					},
-					'Keeper ETH Balance':
+					'Account ETH Balance':
 						orderType === 'limit' || orderType === 'stop'
 							? {
 									value: formatCurrency('ETH', keeperEthBal, { currencyKey: 'ETH' }),
