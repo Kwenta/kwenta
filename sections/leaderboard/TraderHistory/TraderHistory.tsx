@@ -9,8 +9,8 @@ import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
 import ROUTES from 'constants/routes';
-import { PositionHistory } from 'queries/futures/types';
-import useGetFuturesAccountPositionHistory from 'queries/futures/useGetFuturesAccountPositionHistory';
+import { FuturesAccountTypes, PositionHistory } from 'queries/futures/types';
+import useGetFuturesPositionHistoryForAccount from 'queries/futures/useGetFuturesPositionHistoryForAccount';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { FlexDiv } from 'styles/common';
 import { getMarketName } from 'utils/futures';
@@ -31,8 +31,16 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 	searchTerm,
 }: TraderHistoryProps) => {
 	const { t } = useTranslation();
-	const positionsQuery = useGetFuturesAccountPositionHistory(trader);
-	const positions = useMemo(() => positionsQuery.data ?? [], [positionsQuery]);
+	const positionsQuery = useGetFuturesPositionHistoryForAccount(trader);
+	const positions = useMemo(() => {
+		const positionData = positionsQuery.data;
+		return positionData
+			? [
+					...positionData[FuturesAccountTypes.ISOLATED_MARGIN],
+					...positionData[FuturesAccountTypes.CROSS_MARGIN],
+			  ]
+			: [];
+	}, [positionsQuery]);
 	const traderENSName = useMemo(() => ensInfo[trader] ?? null, [trader, ensInfo]);
 
 	let data = useMemo(() => {

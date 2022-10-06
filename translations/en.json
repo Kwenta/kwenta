@@ -417,7 +417,7 @@
 		"overview": {
 			"futures-positions-table": {
 				"market": "Market",
-				"position": "Side",
+				"side": "Side",
 				"avg-entry": "Avg. Entry Price",
 				"last-entry": "Last Entry Price",
 				"leverage": "Leverage",
@@ -458,6 +458,8 @@
 				"total-trades": "Total Trades"
 			},
 			"positions-tabs": {
+				"isolated-margin": "Isolated Margin",
+				"cross-margin": "Cross Margin",
 				"futures": "Futures Positions",
 				"shorts": "Shorts",
 				"spot": "Spot Balances"

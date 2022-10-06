@@ -237,20 +237,30 @@ export const QUERY_KEYS = {
 		MarketsPositions: (
 			networkId: NetworkId,
 			markets: string[] | [],
-			selectedFuturesAddress: string
-		) => ['futures', 'marketsPositions', networkId, markets, selectedFuturesAddress],
-		Positions: (networkId: NetworkId, markets: string[] | [], walletAddress: string) => [
+			walletAddress: string,
+			crossMarginAddress: string
+		) => ['futures', 'marketsPositions', networkId, markets, walletAddress, crossMarginAddress],
+		Portfolio: (
+			networkId: NetworkId,
+			markets: string[] | [],
+			walletAddress: string | null,
+			crossMarginAddress: string | null,
+			freeMargin: number
+		) => [
 			'futures',
 			'positions',
 			networkId,
 			markets,
 			walletAddress,
+			crossMarginAddress,
+			freeMargin,
 		],
-		AccountPositions: (
-			walletAddress: string | null,
-			networkId: NetworkId,
-			accountType: FuturesAccountType
-		) => ['futures', 'accountPositions', walletAddress, networkId, accountType],
+		PositionHistory: (walletAddress: string | null, networkId: NetworkId) => [
+			'futures',
+			'accountPositions',
+			walletAddress,
+			networkId,
+		],
 		Participants: () => ['futures', 'participants'],
 		Participant: (walletAddress: string) => ['futures', 'participant', walletAddress],
 		Stats: (networkId: NetworkId) => ['futures', 'stats', networkId],
