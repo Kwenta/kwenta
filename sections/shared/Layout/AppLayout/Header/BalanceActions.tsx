@@ -8,8 +8,7 @@ import styled, { useTheme } from 'styled-components';
 import Button from 'components/Button';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Select from 'components/Select';
-import useSUSDBalance from 'hooks/useSUSDBalance';
-import { positionsState } from 'store/futures';
+import { balancesState, positionsState } from 'store/futures';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { zeroBN, formatDollars } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
@@ -26,9 +25,9 @@ const BalanceActions: FC = () => {
 	const { t } = useTranslation();
 	const theme = useTheme();
 	const router = useRouter();
-	const sUSDBalance = useSUSDBalance();
 
 	const futuresPositions = useRecoilValue(positionsState);
+	const { susdWalletBalance } = useRecoilValue(balancesState);
 
 	const accessiblePositions = useMemo(
 		() => futuresPositions?.filter((position) => position.remainingMargin.gt(zeroBN)) ?? [],
@@ -116,8 +115,8 @@ const BalanceActions: FC = () => {
 	};
 
 	useEffect(() => {
-		setBalanceLabel(formatDollars(sUSDBalance, { sign: '$' }));
-	}, [balanceLabel, sUSDBalance]);
+		setBalanceLabel(formatDollars(susdWalletBalance, { sign: '$' }));
+	}, [balanceLabel, susdWalletBalance]);
 
 	if (!balanceLabel) {
 		return null;
@@ -125,7 +124,7 @@ const BalanceActions: FC = () => {
 
 	return (
 		<Container>
-			{sUSDBalance.eq(zeroBN) && futuresPositions?.length === 0 ? (
+			{susdWalletBalance.eq(zeroBN) && futuresPositions?.length === 0 ? (
 				<StyledWidgetButton
 					textTransform="none"
 					onClick={() => router.push(`/exchange/?quote=sUSD`)}

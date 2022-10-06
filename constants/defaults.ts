@@ -28,8 +28,10 @@ export const DEFAULT_FIAT_DECIMALS = 2;
 export const DEFAULT_NUMBER_DECIMALS = 2;
 export const DEFAULT_PERCENT_DECIMALS = 2;
 export const DEFAULT_TOKEN_DECIMALS = 18;
+
 // for DEX aggregators like 1inch
 export const DEFAULT_SLIPPAGE = 1;
+export const DEFAULT_1INCH_SLIPPAGE = 3;
 
 // for Trading History
 export const DEFAULT_NUMBER_OF_TRADES: number = 16;

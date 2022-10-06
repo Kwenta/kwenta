@@ -16,6 +16,7 @@ const ProgressSteps: FC<Props> = ({ step, totalSteps, complete }) => {
 					const relStep = step - 1;
 					return (
 						<Circle
+							key={i}
 							status={complete || i < relStep ? 'complete' : relStep === i ? 'current' : 'pending'}
 						/>
 					);

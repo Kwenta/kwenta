@@ -12,10 +12,17 @@ type OrderDrawerProps = {
 	open: boolean;
 	order: FuturesOrder | undefined;
 	closeDrawer(): void;
-	setAction(action: 'execute' | 'cancel'): void;
+	onExecute(): void;
+	onCancel(order: FuturesOrder | undefined): void;
 };
 
-const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer, setAction }) => {
+const OrderDrawer: React.FC<OrderDrawerProps> = ({
+	open,
+	order,
+	closeDrawer,
+	onCancel,
+	onExecute,
+}) => {
 	const { t } = useTranslation();
 
 	const items = React.useMemo(() => {
@@ -59,9 +66,9 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer, set
 			buttons={
 				<>
 					{order?.isExecutable && (
-						<ExecuteButton onClick={() => setAction('execute')}>Execute</ExecuteButton>
+						<ExecuteButton onClick={() => onExecute()}>Execute</ExecuteButton>
 					)}
-					<CancelOrderButton onClick={() => setAction('cancel')}>Cancel</CancelOrderButton>
+					<CancelOrderButton onClick={() => onCancel(order)}>Cancel</CancelOrderButton>
 				</>
 			}
 		/>

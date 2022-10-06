@@ -32,6 +32,8 @@ type Props = {
 	onClose: () => any;
 };
 
+const MAX_REFETCH_COUNT = 20;
+
 export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
@@ -41,7 +43,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 		crossMarginContractFactory,
 	} = useCrossMarginAccountContracts();
 	const susdContract = useSUSDContract();
-	const { handleRefetch } = useRefetchContext();
+	const { handleRefetch, refetchUntilUpdate } = useRefetchContext();
 
 	const futuresAccount = useRecoilValue(futuresAccountState);
 	const balances = useRecoilValue(balancesState);
@@ -56,11 +58,13 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 	const fetchAllowance = useCallback(async () => {
 		if (!crossMarginAccountContract || !susdContract || !walletAddress) return;
 		try {
-			const allowance = await susdContract.allowance(
+			const allowanceBN = await susdContract.allowance(
 				walletAddress,
 				crossMarginAccountContract.address
 			);
-			setAllowance(wei(allowance));
+			const allowanceWei = wei(allowanceBN);
+			setAllowance(allowanceWei);
+			return allowanceWei;
 		} catch (err) {
 			logError(err);
 		}
@@ -86,7 +90,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 				txHash: tx.hash,
 				onTxConfirmed: async () => {
 					try {
-						handleRefetch('cross-margin-account-change', 1000);
+						await refetchUntilUpdate('cross-margin-account-change');
 					} catch (err) {
 						logError(err);
 					} finally {
@@ -105,9 +109,9 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 		synthetixjs,
 		crossMarginContractFactory,
 		network,
-		handleRefetch,
 		setSubmitting,
 		monitorTransaction,
+		refetchUntilUpdate,
 	]);
 
 	const submitDeposit = useCallback(
@@ -132,6 +136,26 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 		[crossMarginAccountContract, monitorTransaction, handleRefetch]
 	);
 
+	const fetchUntilAllowance = useCallback(async () => {
+		let count = 0;
+		return new Promise(async (res, rej) => {
+			const refetchAllowance = async () => {
+				const fetchedAllowance = await fetchAllowance();
+				if (fetchedAllowance?.eq(0) && count < MAX_REFETCH_COUNT) {
+					setTimeout(() => {
+						count++;
+						refetchAllowance();
+					}, 1000);
+				} else if (count === MAX_REFETCH_COUNT) {
+					rej(new Error('Timeout fetching allowance'));
+				} else {
+					res(fetchedAllowance);
+				}
+			};
+			refetchAllowance();
+		});
+	}, [fetchAllowance]);
+
 	const onClickApprove = useCallback(async () => {
 		try {
 			if (!crossMarginAccountContract || !susdContract)
@@ -143,16 +167,21 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 			);
 			monitorTransaction({
 				txHash: tx.hash,
-				onTxConfirmed: () => {
-					setSubmitting(null);
-					fetchAllowance();
+				onTxConfirmed: async () => {
+					try {
+						await fetchUntilAllowance();
+						setSubmitting(null);
+					} catch (err) {
+						setSubmitting(null);
+						logError(err);
+					}
 				},
 			});
 		} catch (err) {
 			setSubmitting(null);
 			logError(err);
 		}
-	}, [crossMarginAccountContract, susdContract, monitorTransaction, fetchAllowance]);
+	}, [crossMarginAccountContract, susdContract, monitorTransaction, fetchUntilAllowance]);
 
 	const depositToAccount = useCallback(async () => {
 		try {
@@ -182,8 +211,12 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 		if (futuresAccount && !futuresAccount.crossMarginAvailable) {
 			return <ErrorView message={t('futures.modals.onboard.unsupported-network')} />;
 		}
-		if (!futuresAccount || !futuresAccount.ready) {
-			return <Loader />;
+		if (!futuresAccount || futuresAccount.status === 'initial-fetch') {
+			return (
+				<LoaderContainer>
+					<Loader />
+				</LoaderContainer>
+			);
 		}
 
 		if (depositComplete) {
@@ -299,4 +332,8 @@ export const BalanceText = styled.p`
 const Complete = styled.div`
 	padding: 40px;
 	text-align: center;
+`;
+
+const LoaderContainer = styled.div`
+	height: 120px;
 `;

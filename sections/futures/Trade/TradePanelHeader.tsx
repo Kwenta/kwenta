@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
+import { ButtonVariant } from 'components/Button/Button';
 import { FuturesAccountType } from 'queries/futures/subgraph';
 import { BorderedPanel } from 'styles/common';
 import media from 'styles/media';
@@ -10,7 +11,8 @@ import media from 'styles/media';
 type Props = {
 	accountType: FuturesAccountType;
 	buttons?: {
-		onClick: () => any;
+		onClick: (() => void) | undefined;
+		variant?: ButtonVariant;
 		i18nTitle: string;
 		Icon?: FunctionComponent<any>;
 	}[];
@@ -29,10 +31,10 @@ export default function TradePanelHeader({ accountType, buttons }: Props) {
 			</Title>
 			<Buttons>
 				{buttons &&
-					buttons.map(({ Icon, i18nTitle, onClick }) => (
+					buttons.map(({ Icon, i18nTitle, variant, onClick }) => (
 						<HeaderButton
 							key={i18nTitle}
-							variant="flat"
+							variant={variant || 'flat'}
 							size="xs"
 							onClick={onClick}
 							isRounded

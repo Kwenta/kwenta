@@ -10,7 +10,7 @@ import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { PositionSide, TradeStatus } from 'sections/futures/types';
-import { currentMarketState, futuresAccountState } from 'store/futures';
+import { currentMarketState, selectedFuturesAddressState } from 'store/futures';
 import { GridDivCenteredRow } from 'styles/common';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 
@@ -19,7 +19,7 @@ import TradeDrawer from '../drawers/TradeDrawer';
 
 const TradesTab: React.FC = () => {
 	const { t } = useTranslation();
-	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
+	const selectedFuturesAddress = useRecoilValue(selectedFuturesAddressState);
 	const marketAsset = useRecoilValue(currentMarketState);
 
 	const [selectedTrade, setSelectedTrade] = React.useState<any>();
