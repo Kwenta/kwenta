@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-import Table, { compareNumericString } from 'components/Table';
+import Table from 'components/Table';
 import { DEFAULT_LEADERBOARD_ROWS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import useENSAvatar from 'hooks/useENSAvatar';
@@ -131,8 +131,6 @@ const AllTime: FC<AllTimeProps> = ({
 									),
 									accessor: 'totalTrades',
 									width: 80,
-									sortable: true,
-									sortType: compareNumericString,
 								},
 								{
 									Header: (
@@ -140,8 +138,6 @@ const AllTime: FC<AllTimeProps> = ({
 									),
 									accessor: 'liquidations',
 									width: 80,
-									sortable: true,
-									sortType: compareNumericString,
 								},
 								{
 									Header: (
@@ -157,8 +153,6 @@ const AllTime: FC<AllTimeProps> = ({
 										/>
 									),
 									width: compact ? 'auto' : 100,
-									sortable: true,
-									sortType: compareNumericString,
 								},
 								{
 									Header: <TableHeader>{t('leaderboard.leaderboard.table.pnl')}</TableHeader>,
@@ -172,8 +166,6 @@ const AllTime: FC<AllTimeProps> = ({
 										/>
 									),
 									width: compact ? 'auto' : 100,
-									sortable: true,
-									sortType: compareNumericString,
 								},
 							],
 						},
