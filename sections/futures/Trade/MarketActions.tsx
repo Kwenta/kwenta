@@ -6,8 +6,7 @@ import styled from 'styled-components';
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
-import useSUSDBalance from 'hooks/useSUSDBalance';
-import { marketInfoState, positionState } from 'store/futures';
+import { balancesState, marketInfoState, positionState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 
 import DepositMarginModal from './DepositMarginModal';
@@ -16,7 +15,7 @@ import WithdrawMarginModal from './WithdrawMarginModal';
 const MarketActions: React.FC = () => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
-	const sUSDBalance = useSUSDBalance();
+	const { susdWalletBalance } = useRecoilValue(balancesState);
 
 	const position = useRecoilValue(positionState);
 	const marketInfo = useRecoilValue(marketInfoState);
@@ -49,7 +48,7 @@ const MarketActions: React.FC = () => {
 				</MarketActionButton>
 			</MarketActionsContainer>
 			{openModal === 'deposit' && (
-				<DepositMarginModal sUSDBalance={sUSDBalance} onDismiss={() => setOpenModal(null)} />
+				<DepositMarginModal sUSDBalance={susdWalletBalance} onDismiss={() => setOpenModal(null)} />
 			)}
 
 			{openModal === 'withdraw' && <WithdrawMarginModal onDismiss={() => setOpenModal(null)} />}

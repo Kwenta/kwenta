@@ -203,7 +203,12 @@ export const multiplyDecimal = (x: BigNumber, y: BigNumber) => {
 };
 
 export const weiFromWei = (weiAmount: WeiSource) => {
-	return wei(weiAmount, 18, true);
+	if (weiAmount instanceof Wei) {
+		const precisionDiff = 18 - weiAmount.p;
+		return wei(weiAmount.div(10 ** precisionDiff), 18, true);
+	} else {
+		return wei(weiAmount, 18, true);
+	}
 };
 
 export const suggestedDecimals = (value: WeiSource) => {
@@ -218,4 +223,18 @@ export const suggestedDecimals = (value: WeiSource) => {
 export const floorNumber = (num: WeiSource, decimals?: number) => {
 	const precision = 10 ** (decimals ?? suggestedDecimals(num));
 	return Math.floor(Number(num) * precision) / precision;
+};
+
+export const ceilNumber = (num: WeiSource, decimals?: number) => {
+	const precision = 10 ** (decimals ?? suggestedDecimals(num));
+	return Math.ceil(Number(num) * precision) / precision;
+};
+
+// Converts to string but strips trailing zeros
+export const weiToString = (weiVal: Wei) => {
+	return String(parseFloat(weiVal.toString()));
+};
+
+export const isZero = (num: WeiSource) => {
+	return wei(num || 0).eq(0);
 };

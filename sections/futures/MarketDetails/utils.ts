@@ -32,6 +32,30 @@ const map: Record<typeof markets[number], string> = {
 	sAPE: 'apecoin',
 };
 
+export enum MarketDataKey {
+	externalPrice = 'External Price',
+	dailyChange = '24H Change',
+	dailyVolume = '24H Volume',
+	dailyTrades = '24H Trades',
+	openInterest = 'Open Interest',
+	instFundingRate = 'Inst. Funding Rate',
+	hourlyFundingRate = '1H Funding Rate',
+}
+
+export const marketDataKeyMap: Record<MarketDataKey, string> = {
+	[MarketDataKey.externalPrice]: 'external-price',
+	[MarketDataKey.dailyChange]: '24h-change',
+	[MarketDataKey.dailyVolume]: '24h-vol',
+	[MarketDataKey.dailyTrades]: '24h-trades',
+	[MarketDataKey.openInterest]: 'open-interest',
+	[MarketDataKey.instFundingRate]: '1h-funding-rate',
+	[MarketDataKey.hourlyFundingRate]: '1h-funding-rate',
+};
+
+export const isMarketDataKey = (key: string): key is MarketDataKey => {
+	return Object.values<string>(MarketDataKey).includes(key);
+};
+
 export const synthToCoingeckoPriceId = (synth: any) => {
 	if (markets.includes(synth)) {
 		return map[synth as typeof markets[number]];

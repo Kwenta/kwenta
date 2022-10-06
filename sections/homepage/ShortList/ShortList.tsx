@@ -53,7 +53,6 @@ const ShortList = () => {
 	const sectionTitle = (
 		<>
 			<SectionFeatureTitle>{t('homepage.shortlist.stats.title')}</SectionFeatureTitle>
-			<SectionFeatureCopy>{t('homepage.shortlist.stats.copy')}</SectionFeatureCopy>
 		</>
 	);
 

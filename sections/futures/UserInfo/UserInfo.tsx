@@ -13,10 +13,8 @@ import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
-import { PositionHistory } from 'queries/futures/types';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
-import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
 import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
 import {
@@ -52,10 +50,6 @@ const UserInfo: React.FC = () => {
 	const marketAsset = useRecoilValue(currentMarketState);
 	const openOrders = useRecoilValue(openOrdersState);
 	const accountType = useRecoilValue(futuresAccountTypeState);
-
-	const futuresPositionQuery = useGetFuturesPositionForAccount();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const futuresPositionHistory = futuresPositionQuery?.data ?? [];
 
 	const [showShareModal, setShowShareModal] = useState(false);
 	const [hasOpenPosition, setHasOpenPosition] = useState(false);
@@ -156,16 +150,8 @@ const UserInfo: React.FC = () => {
 	);
 
 	useEffect(() => {
-		let currentPosition: PositionHistory[] = [];
-
-		if (futuresPositionHistory.length > 0) {
-			currentPosition = futuresPositionHistory.filter(
-				(obj: PositionHistory) => obj.asset === marketAsset
-			);
-
-			setHasOpenPosition(currentPosition.length === 0 ? false : true);
-		}
-	}, [futuresPositionHistory, marketAsset]);
+		setHasOpenPosition(!!position && !!position.position);
+	}, [position]);
 
 	return (
 		<>
@@ -203,10 +189,7 @@ const UserInfo: React.FC = () => {
 
 			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}>
 				<PositionCard />
-				<FuturesPositionsTable
-					futuresPositionHistory={futuresPositionHistory}
-					showCurrentMarket={false}
-				/>
+				<FuturesPositionsTable accountType={accountType} showCurrentMarket={false} />
 			</TabPanel>
 			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}>
 				<OpenOrdersTable />
@@ -238,7 +221,6 @@ const UserInfo: React.FC = () => {
 					position={position}
 					marketAsset={marketAsset}
 					setShowShareModal={setShowShareModal}
-					futuresPositionHistory={futuresPositionHistory}
 				/>
 			)}
 		</>

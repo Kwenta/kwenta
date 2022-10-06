@@ -15,27 +15,28 @@ import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { ETH_UNIT } from 'constants/network';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
+import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetAllFuturesTradesForAccount from 'queries/futures/useGetAllFuturesTradesForAccount';
 import { TradeStatus } from 'sections/futures/types';
-import { futuresAccountState, futuresAccountTypeState } from 'store/futures';
+import { futuresAccountTypeState } from 'store/futures';
 import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName, isDecimalFour, MarketKeyByAsset } from 'utils/futures';
 
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
 
 const FuturesHistoryTable: FC = () => {
-	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 	const accountType = useRecoilValue(futuresAccountTypeState);
 
+	const { walletAddress } = Connector.useContainer();
 	const { t } = useTranslation();
 	const isL2 = useIsL2();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { switchToL2 } = useNetworkSwitcher();
-	const futuresTradesQuery = useGetAllFuturesTradesForAccount(selectedFuturesAddress);
+	const futuresTradesQuery = useGetAllFuturesTradesForAccount(walletAddress);
 	const trades: FuturesTrade[] = useMemo(
 		() => (futuresTradesQuery.isSuccess ? futuresTradesQuery?.data ?? [] : []),
 		[futuresTradesQuery.isSuccess, futuresTradesQuery.data]

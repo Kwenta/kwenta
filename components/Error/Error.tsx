@@ -1,15 +1,21 @@
 import React, { FC, useMemo } from 'react';
 import styled from 'styled-components';
 
+import Button from 'components/Button';
+import Spacer from 'components/Spacer';
 import { formatRevert, isUserDeniedError } from 'utils/formatters/error';
 import { truncateString } from 'utils/formatters/string';
 
 type ErrorProps = {
 	message: string;
 	formatter?: 'revert' | undefined;
+	retryButton?: {
+		onClick: () => void;
+		label: string;
+	};
 };
 
-export const Error: FC<ErrorProps> = ({ message, formatter }) => {
+export const Error: FC<ErrorProps> = ({ message, formatter, retryButton }) => {
 	const formattedMessage = useMemo(() => {
 		switch (formatter) {
 			case 'revert':
@@ -21,7 +27,19 @@ export const Error: FC<ErrorProps> = ({ message, formatter }) => {
 
 	if (isUserDeniedError(message) || !message) return null;
 
-	return <ErrorContainer>{truncateString(formattedMessage)}</ErrorContainer>;
+	return (
+		<ErrorContainer>
+			<div>{truncateString(formattedMessage)}</div>
+			{retryButton && (
+				<>
+					<Spacer height={10} />
+					<Button variant="danger" size="xs" onClick={retryButton.onClick}>
+						{retryButton.label}
+					</Button>
+				</>
+			)}
+		</ErrorContainer>
+	);
 };
 
 const ErrorContainer = styled.div`

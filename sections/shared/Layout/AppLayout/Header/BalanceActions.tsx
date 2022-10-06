@@ -2,17 +2,22 @@ import { useRouter } from 'next/router';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { components } from 'react-select';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled, { useTheme } from 'styled-components';
 
 import Button from 'components/Button';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Select from 'components/Select';
-import useSUSDBalance from 'hooks/useSUSDBalance';
-import { positionsState } from 'store/futures';
+import { FuturesAccountTypes, FuturesPosition } from 'queries/futures/types';
+import {
+	positionsState,
+	balancesState,
+	portfolioState,
+	futuresAccountTypeState,
+} from 'store/futures';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { zeroBN, formatDollars } from 'utils/formatters/number';
-import { FuturesMarketAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
+import { getMarketName, MarketKeyByAsset } from 'utils/futures';
 
 type ReactSelectOptionProps = {
 	label: string;
@@ -26,45 +31,42 @@ const BalanceActions: FC = () => {
 	const { t } = useTranslation();
 	const theme = useTheme();
 	const router = useRouter();
-	const sUSDBalance = useSUSDBalance();
 
-	const futuresPositions = useRecoilValue(positionsState);
-
-	const accessiblePositions = useMemo(
-		() => futuresPositions?.filter((position) => position.remainingMargin.gt(zeroBN)) ?? [],
-		[futuresPositions]
-	);
-
-	const totalRemainingMargin = accessiblePositions.reduce(
-		(prev, position) => prev.add(position.remainingMargin),
-		zeroBN
-	);
+	const positions = useRecoilValue(positionsState);
+	const setFuturesAccountType = useSetRecoilState(futuresAccountTypeState);
+	const portfolio = useRecoilValue(portfolioState);
+	const { susdWalletBalance } = useRecoilValue(balancesState);
 
 	const setMarketConfig = useCallback(
-		(asset: FuturesMarketAsset): ReactSelectOptionProps => {
-			const remainingMargin =
-				accessiblePositions.find((position) => position.asset === asset)?.remainingMargin ?? zeroBN;
-
+		(position: FuturesPosition, accountType: FuturesAccountTypes): ReactSelectOptionProps => {
 			return {
-				label: getMarketName(asset),
-				synthIcon: MarketKeyByAsset[asset],
-				marketRemainingMargin: formatDollars(remainingMargin),
-				onClick: () => router.push(`/market/?asset=${asset}`),
+				label: getMarketName(position.asset),
+				synthIcon: MarketKeyByAsset[position.asset],
+				marketRemainingMargin: formatDollars(position.remainingMargin),
+				onClick: () => {
+					setFuturesAccountType(accountType);
+					return router.push(`/market/?asset=${position.asset}&account_type=${accountType}`);
+				},
 			};
 		},
-		[accessiblePositions, router]
+		[router, setFuturesAccountType]
 	);
 
-	const OPTIONS = useMemo(
-		() => [
+	const OPTIONS = useMemo(() => {
+		const isolatedPositions = positions.isolated_margin
+			.filter((position) => position.remainingMargin.gt(zeroBN))
+			.map((position) => setMarketConfig(position, FuturesAccountTypes.ISOLATED_MARGIN));
+		const crossPositions = positions.cross_margin
+			.filter((position) => position.remainingMargin.gt(zeroBN))
+			.map((position) => setMarketConfig(position, FuturesAccountTypes.CROSS_MARGIN));
+		return [
 			{
 				label: 'header.balance.total-margin-label',
-				totalAvailableMargin: formatDollars(totalRemainingMargin),
-				options: accessiblePositions.map((market) => setMarketConfig(market.asset)),
+				totalAvailableMargin: formatDollars(portfolio.total),
+				options: [...isolatedPositions, ...crossPositions],
 			},
-		],
-		[accessiblePositions, setMarketConfig, totalRemainingMargin]
-	);
+		];
+	}, [positions, setMarketConfig, portfolio]);
 
 	const OptionsGroupLabel: FC<{ label: string; totalAvailableMargin?: string }> = ({
 		label,
@@ -116,8 +118,8 @@ const BalanceActions: FC = () => {
 	};
 
 	useEffect(() => {
-		setBalanceLabel(formatDollars(sUSDBalance, { sign: '$' }));
-	}, [balanceLabel, sUSDBalance]);
+		setBalanceLabel(formatDollars(susdWalletBalance, { sign: '$' }));
+	}, [balanceLabel, susdWalletBalance]);
 
 	if (!balanceLabel) {
 		return null;
@@ -125,7 +127,7 @@ const BalanceActions: FC = () => {
 
 	return (
 		<Container>
-			{sUSDBalance.eq(zeroBN) && futuresPositions?.length === 0 ? (
+			{susdWalletBalance.eq(zeroBN) && OPTIONS.length === 0 ? (
 				<StyledWidgetButton
 					textTransform="none"
 					onClick={() => router.push(`/exchange/?quote=sUSD`)}

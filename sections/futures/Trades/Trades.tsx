@@ -56,6 +56,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 	return (
 		<Card>
 			<StyledTable
+				highlightRowsOnHover
 				columns={[
 					{
 						Header: (
