@@ -78,7 +78,7 @@ const useFuturesData = () => {
 	const crossMarginAccountOverview = useRecoilValue(crossMarginAccountOverviewState);
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { handleRefetch } = useRefetchContext();
+	const { handleRefetch, refetchUntilUpdate } = useRefetchContext();
 
 	const marketAsset = useRecoilValue(currentMarketState);
 	const [tradeInputs, setTradeInputs] = useRecoilState(futuresTradeInputsState);
@@ -493,6 +493,7 @@ const useFuturesData = () => {
 				onTxConfirmed: () => {
 					resetTradeState();
 					handleRefetch('modify-position');
+					refetchUntilUpdate('account-margin-change');
 				},
 			});
 		}

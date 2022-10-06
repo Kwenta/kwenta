@@ -722,7 +722,8 @@
 						"withdraw": "Withdraw",
 						"deposit": "Deposit"
 					},
-					"fee-rejection-label": "Fee Rejection"
+					"fee-rejection-label": "Fee Rejection",
+					"fee-rejection-tooltip": "This allows you to set a maximum fee on your order. If the dynamic fee exceeds your selected fee limit at the time of execution, the order will not execute."
 				},
 				"edit-leverage": {
 					"failed": "Transaction failed",
