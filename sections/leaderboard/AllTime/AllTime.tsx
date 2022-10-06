@@ -5,23 +5,23 @@ import styled from 'styled-components';
 
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-import Table from 'components/Table';
+import Table, { compareNumericString } from 'components/Table';
 import { DEFAULT_LEADERBOARD_ROWS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import useENSAvatar from 'hooks/useENSAvatar';
 import { AccountStat } from 'queries/futures/types';
 
-import { getMedal, PIN, StyledTrader } from '../common';
+import { getMedal, StyledTrader } from '../common';
 
 type AllTimeProps = {
 	stats: AccountStat[];
 	isLoading: boolean;
-	searchTerm: string;
+	pinRow: AccountStat[];
 	onClickTrader: (trader: string) => void;
 	compact?: boolean;
 };
 
-const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader, compact }) => {
+const AllTime: FC<AllTimeProps> = ({ stats, isLoading, pinRow, onClickTrader, compact }) => {
 	const { t } = useTranslation();
 	const { staticMainnetProvider, walletAddress } = Connector.useContainer();
 
@@ -40,22 +40,8 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 	}
 
 	const data = useMemo(() => {
-		const statsData = stats.filter((stat) =>
-			searchTerm?.length
-				? stat.account.toLowerCase().includes(searchTerm) ||
-				  stat.traderEns?.toLowerCase().includes(searchTerm)
-				: true
-		);
-
-		const pinRow = statsData
-			.filter((trader) => trader.account.toLowerCase() === walletAddress?.toLowerCase())
-			.map((trader) => ({
-				...trader,
-				rankText: `${trader.rank}${PIN}`,
-			}));
-
-		return [...pinRow, ...statsData];
-	}, [stats, searchTerm, walletAddress]);
+		return [...pinRow, ...stats];
+	}, [stats, pinRow]);
 
 	return (
 		<>
@@ -133,25 +119,24 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 										<TableHeader>{t('leaderboard.leaderboard.table.total-trades')}</TableHeader>
 									),
 									accessor: 'totalTrades',
-									sortType: 'basic',
 									width: 80,
 									sortable: true,
+									sortType: compareNumericString,
 								},
 								{
 									Header: (
 										<TableHeader>{t('leaderboard.leaderboard.table.liquidations')}</TableHeader>
 									),
 									accessor: 'liquidations',
-									sortType: 'basic',
 									width: 80,
 									sortable: true,
+									sortType: compareNumericString,
 								},
 								{
 									Header: (
 										<TableHeader>{t('leaderboard.leaderboard.table.total-volume')}</TableHeader>
 									),
 									accessor: 'totalVolume',
-									sortType: 'basic',
 									Cell: (cellProps: CellProps<any>) => (
 										<Currency.Price
 											currencyKey={'sUSD'}
@@ -162,11 +147,11 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 									),
 									width: compact ? 'auto' : 100,
 									sortable: true,
+									sortType: compareNumericString,
 								},
 								{
 									Header: <TableHeader>{t('leaderboard.leaderboard.table.pnl')}</TableHeader>,
 									accessor: 'pnl',
-									sortType: 'basic',
 									Cell: (cellProps: CellProps<any>) => (
 										<ColorCodedPrice
 											currencyKey={'sUSD'}
@@ -177,6 +162,7 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 									),
 									width: compact ? 'auto' : 100,
 									sortable: true,
+									sortType: compareNumericString,
 								},
 							],
 						},
