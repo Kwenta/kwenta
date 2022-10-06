@@ -1,5 +1,6 @@
 import { wei } from '@synthetixio/wei';
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
@@ -17,6 +18,7 @@ import {
 import { FlexDivRow } from 'styles/common';
 
 export default function OrderSizeSlider() {
+	const { t } = useTranslation();
 	const { onTradeAmountChange, maxUsdInputAmount } = useFuturesContext();
 
 	const { freeMargin: freeCrossMargin } = useRecoilValue(crossMarginAccountOverviewState);
@@ -58,9 +60,9 @@ export default function OrderSizeSlider() {
 	if (aboveMaxLeverage && position?.position?.side === leverageSide) {
 		return (
 			<ErrorView
-				message={`Your current position exceeds the max leverage of (${parseInt(
-					maxLeverage.toString()
-				)}x). You need to reduce your position or adjust leverage.`}
+				message={t('futures.market.trade.input.max-leverage-error', {
+					maxLeverage: parseInt(maxLeverage.toString()),
+				})}
 			/>
 		);
 	}

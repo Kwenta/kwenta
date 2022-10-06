@@ -620,6 +620,7 @@
 					"sell": "sell",
 					"remaining-margin": "Remaining margin",
 					"max": "max",
+					"max-leverage-error": "Your current position exceeds the max leverage of ({{maxLeverage}}x). You need to reduce your position or adjust leverage.",
 					"leverage": {
 						"title": "leverage",
 						"buy": "buy",
