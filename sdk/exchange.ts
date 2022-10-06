@@ -454,16 +454,42 @@ export default class ExchangeService {
 			throw new Error('You must connect a signer to redeem synths.');
 		}
 
+		if (!this.contracts.SynthRedeemer) {
+			throw new Error('Wrong network');
+		}
+
 		const redeemableDeprecatedSynths = await this.getRedeemableDeprecatedSynths(walletAddress);
 
 		if (redeemableDeprecatedSynths.totalUSDBalance.gt(0)) {
-			await this.contracts.SynthRedeemer?.connect(this.signer).redeemAll(
+			await this.contracts.SynthRedeemer.connect(this.signer).redeemAll(
 				redeemableDeprecatedSynths.balances.map((b) => b.proxyAddress)
 			);
 		}
 	}
 
-	public handleSettle() {}
+	public async handleSettle(walletAddress: string, baseCurrencyKey: string) {
+		if (!this.isL2) {
+			throw new Error('This function is only permitted on L2.');
+		}
+
+		if (!this.signer) {
+			throw new Error('You must connect a signer to redeem synths.');
+		}
+
+		if (!this.contracts.Exchanger) {
+			throw new Error('Wrong network.');
+		}
+
+		const numEntries = await this.getNumEntries(walletAddress, baseCurrencyKey);
+		const destinationCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey);
+
+		if (numEntries > 12) {
+			await this.contracts.Exchanger.connect(this.signer).settle(
+				walletAddress,
+				destinationCurrencyKey
+			);
+		}
+	}
 
 	public async handleExchange(
 		quoteCurrencyKey: string,
@@ -512,7 +538,11 @@ export default class ExchangeService {
 				!!walletAddress &&
 				!!this.contracts.Synthetix;
 
-			if (shouldExchange && this.signer) {
+			if (shouldExchange) {
+				if (!this.signer) {
+					throw new Error('You have to connect a signer to exchange synths.');
+				}
+
 				if (!this.contracts.Synthetix) {
 					throw new Error('You are using this on an unsupported network');
 				}
