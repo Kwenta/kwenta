@@ -313,7 +313,6 @@ export const QUERY_KEYS = {
 			wallet,
 			factoryAddress,
 		],
-		CrossMarginSettings: (networkId: NetworkId) => ['futures', 'cross-margin-settings', networkId],
 	},
 	Files: {
 		Get: (fileName: string) => ['files', 'get', fileName],

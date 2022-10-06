@@ -142,7 +142,10 @@ function MarginInfoBox({ editingLeverage }: Props) {
 					'Free Account Margin': {
 						value: formatDollars(crossMarginFreeMargin),
 						valueNode: (
-							<PreviewArrow showPreview={showPreview}>
+							<PreviewArrow
+								showPreview={showPreview}
+								color={previewTradeData.freeAccountMargin.lt(0) ? 'red' : 'yellow'}
+							>
 								{potentialTrade.status === 'fetching' ? (
 									<MiniLoader />
 								) : (

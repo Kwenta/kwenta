@@ -10,7 +10,7 @@ const lightTheme = {
 	white: '#F2F2F2',
 	gray: '#515151',
 	gray2: '#D2D2D2', // TODO: Update once added to designs
-	yellow: common.primaryYellow,
+	yellow: '#6A3300',
 	table: { fill: '#EEE', hover: '#E6E6E6' },
 	gold: '#724713',
 	badge: { background: '#A80300', text: 'white' },
