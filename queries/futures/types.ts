@@ -176,7 +176,7 @@ export type FuturesTradeWithPrice = {
 };
 
 // This type exists to rename enum types from the subgraph to display-friendly types
-type FuturesOrderTypeMapped = 'Next-Price' | 'Limit' | 'Stop-Market' | 'Market';
+type FuturesOrderTypeMapped = 'Next-Price' | 'Limit' | 'Stop-Market' | 'Market' | 'Liquidation';
 
 export type FuturesTrade = {
 	size: Wei;
