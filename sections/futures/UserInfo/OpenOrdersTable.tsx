@@ -155,7 +155,7 @@ const OpenOrdersTable: React.FC = () => {
 										<StyledText>
 											{cellProps.row.original.market}
 											{cellProps.row.original.isStale && (
-												<ExpiredBadge>
+												<ExpiredBadge color="red">
 													{t('futures.market.user.open-orders.badges.expired')}
 												</ExpiredBadge>
 											)}
