@@ -133,12 +133,12 @@ const StyledPositionSide = styled.div<{ side: PositionSide }>`
 	${(props) =>
 		props.side === PositionSide.LONG &&
 		css`
-			color: ${props.theme.colors.common.primaryGreen};
+			color: ${props.theme.colors.selectedTheme.green};
 		`}
 
 	${(props) =>
 		props.side === PositionSide.SHORT &&
 		css`
-			color: ${props.theme.colors.common.primaryRed};
+			color: ${props.theme.colors.selectedTheme.red};
 		`}
 `;
