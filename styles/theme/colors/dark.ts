@@ -6,6 +6,7 @@ const darkTheme = {
 	outlineBorder: '1px solid rgba(255, 255, 255, 0.12)',
 	red: '#EF6868',
 	green: '#7FD482',
+	orange: '#DA8332',
 	black: '#171002',
 	white: '#ECE8E3',
 	gray: '#787878',
