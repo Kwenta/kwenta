@@ -16,11 +16,11 @@ export const fetchBalances = createAsyncThunk<any, void, ThunkConfig>(
 		} = getState();
 
 		const quoteBalance = quoteCurrencyKey
-			? await sdk.exchange.getBalance(quoteCurrencyKey, '')
+			? await sdk.exchange.getBalance(quoteCurrencyKey)
 			: undefined;
 
 		const baseBalance = baseCurrencyKey
-			? await sdk.exchange.getBalance(baseCurrencyKey, '')
+			? await sdk.exchange.getBalance(baseCurrencyKey)
 			: undefined;
 
 		return { quoteBalance, baseBalance };
@@ -57,8 +57,7 @@ export const fetchTransactionFee = createAsyncThunk<any, void, ThunkConfig>(
 				quoteCurrencyKey,
 				baseCurrencyKey,
 				quoteAmount,
-				baseAmount,
-				''
+				baseAmount
 			);
 
 			return transactionFee;
@@ -81,7 +80,6 @@ export const submitExchange = createAsyncThunk<any, void, ThunkConfig>(
 				baseCurrencyKey,
 				quoteAmount,
 				baseAmount,
-				'',
 				true
 			);
 		}
@@ -90,9 +88,7 @@ export const submitExchange = createAsyncThunk<any, void, ThunkConfig>(
 
 export const submitRedeem = createAsyncThunk<any, void, ThunkConfig>(
 	'exchange/submitRedeem',
-	async (_, { getState, extra: { sdk } }) => {
-		const {} = getState();
-
-		await sdk.exchange.handleRedeem('');
+	async (_, { extra: { sdk } }) => {
+		await sdk.exchange.handleRedeem();
 	}
 );
