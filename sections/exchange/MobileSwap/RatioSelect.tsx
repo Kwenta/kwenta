@@ -53,7 +53,7 @@ const RatioButton = styled.button<{ $selected: boolean }>`
 		props.$selected &&
 		css`
 			color: ${(props) => props.theme.colors.selectedTheme.gold};
-			background: linear-gradient(180deg, #161515 0%, #1e1d1d 100%);
+			background: ${(props) => props.theme.colors.selectedTheme.cell.gradient};
 		`}
 
 	&:first-of-type {
