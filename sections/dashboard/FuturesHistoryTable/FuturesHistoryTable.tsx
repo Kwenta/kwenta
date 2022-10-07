@@ -56,7 +56,6 @@ const FuturesHistoryTable: FC = () => {
 					pnl: trade.pnl.div(ETH_UNIT),
 					feesPaid: trade.feesPaid.div(ETH_UNIT),
 					id: trade.txnHash,
-					orderType: trade.orderType === 'NextPrice' ? 'Next Price' : trade.orderType,
 					status: trade.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
 				};
 			}),

@@ -1893,8 +1893,8 @@ export type FuturesOrderFields = {
 	targetPrice: true;
 	marginDelta: true;
 	timestamp: true;
-	orderType: FuturesOrderType;
-	status: FuturesOrderStatus;
+	orderType: true;
+	status: true;
 	keeper: true;
 };
 export type FuturesOrderArgs<K extends keyof FuturesOrderResult> = {
