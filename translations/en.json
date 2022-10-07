@@ -17,7 +17,8 @@
 			"isolated-margin": "Isolated Margin",
 			"cross-margin": "Cross Margin",
 			"leaderboard": "leaderboard",
-			"earn": "earn"
+			"earn": "earn",
+			"beta-badge": "Beta"
 		},
 		"networks-switcher": {
 			"chains": "Switch Networks",
