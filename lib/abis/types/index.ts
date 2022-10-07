@@ -10,6 +10,7 @@ export type { FuturesMarketData } from "./FuturesMarketData";
 export type { ReverseRecords } from "./ReverseRecords";
 export type { RewardEscrow } from "./RewardEscrow";
 export type { StakingRewards } from "./StakingRewards";
+export type { SupplySchedule } from "./SupplySchedule";
 export type { SynthSwap } from "./SynthSwap";
 export * as factories from "./factories";
 export { CrossMarginAccountFactory__factory } from "./factories/CrossMarginAccountFactory__factory";
@@ -21,4 +22,5 @@ export { FuturesMarketData__factory } from "./factories/FuturesMarketData__facto
 export { ReverseRecords__factory } from "./factories/ReverseRecords__factory";
 export { RewardEscrow__factory } from "./factories/RewardEscrow__factory";
 export { StakingRewards__factory } from "./factories/StakingRewards__factory";
+export { SupplySchedule__factory } from "./factories/SupplySchedule__factory";
 export { SynthSwap__factory } from "./factories/SynthSwap__factory";

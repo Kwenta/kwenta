@@ -513,12 +513,18 @@
 					"fee": "Fee",
 					"vest": "VEST"
 				},
+				"redemption": {
+					"title": "Redemption"
+				},
 				"stake-table": {
 					"stake": "Stake",
 					"unstake": "Unstake",
 					"kwenta-token": "KWENTA",
 					"max": "MAX",
-					"ekwenta-token": "eKWENTA"
+					"ekwenta-token": "eKWENTA",
+					"redeem": "Redeem",
+					"vekwenta-token": "veKwenta",
+					"vkwenta-token": "vKwenta"				
 				}
 			}
 		},

@@ -5,10 +5,11 @@ import CustomNumericInput from 'components/Input/CustomNumericInput';
 
 type StakeInputProps = {
 	label: string;
+	balance: string;
 };
 
-const StakeInput: FC<StakeInputProps> = ({ label }) => {
-	const [amount, setAmount] = useState('');
+const StakeInput: FC<StakeInputProps> = ({ label, balance }) => {
+	const [amount, setAmount] = useState(balance);
 
 	return (
 		<StakeInputContainer>
@@ -18,7 +19,7 @@ const StakeInput: FC<StakeInputProps> = ({ label }) => {
 			</StakeInputHeader>
 			<StyledInput
 				value={amount}
-				suffix="($23,928.31)"
+				suffix=""
 				onChange={(_, newValue) => {
 					setAmount(newValue);
 				}}

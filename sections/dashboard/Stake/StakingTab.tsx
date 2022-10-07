@@ -3,11 +3,12 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { useContractRead } from 'wagmi';
+import { useContractRead, useContractReads } from 'wagmi';
 
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import stakingRewardsABI from 'lib/abis/StakingRewards.json';
+import supplyScheduleABI from 'lib/abis/SupplySchedule.json';
 import { currentThemeState } from 'store/ui';
 import media from 'styles/media';
 import { zeroBN } from 'utils/formatters/number';
@@ -21,10 +22,16 @@ const stakingRewardsContract = {
 	contractInterface: stakingRewardsABI,
 };
 
+const supplyScheduleContract = {
+	addressOrName: '0x671423b2e8a99882fd14bbd07e90ae8b64a0e63a',
+	contractInterface: supplyScheduleABI,
+};
+
 const StakingTab = () => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
 	const [claimableBalance, setClaimableBalance] = useState(zeroBN);
+	const [apy, setApy] = useState('0');
 
 	useContractRead({
 		...stakingRewardsContract,
@@ -37,6 +44,43 @@ const StakingTab = () => {
 		},
 	});
 
+	useContractReads({
+		contracts: [
+			{
+				...supplyScheduleContract,
+				functionName: 'DECAY_RATE',
+			},
+			{
+				...supplyScheduleContract,
+				functionName: 'INITIAL_WEEKLY_SUPPLY',
+			},
+			{
+				...supplyScheduleContract,
+				functionName: 'weekCounter',
+			},
+			{
+				...stakingRewardsContract,
+				functionName: 'totalSupply',
+			},
+		],
+		cacheOnBlock: true,
+		onSettled(data, error) {
+			if (error) logError(error);
+			if (data) {
+				const supplyRate = wei(1).sub(wei(data[0] ?? zeroBN));
+				const initialWeeklySupply = wei(data[1] ?? zeroBN);
+				const weekCounter = Number(data[2] ?? zeroBN);
+				const totalSupply = wei(data[3] ?? zeroBN);
+				const startWeeklySupply = initialWeeklySupply.mul(supplyRate.pow(weekCounter));
+				const yearlyRewards = totalSupply.gt(zeroBN)
+					? startWeeklySupply.mul(wei(1).sub(supplyRate.pow(52))).div(wei(1).sub(supplyRate))
+					: zeroBN;
+				setApy(yearlyRewards.gt(zeroBN) ? Number(yearlyRewards.div(totalSupply)).toFixed(2) : '0');
+			} else {
+				setApy('0');
+			}
+		},
+	});
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
 
@@ -50,14 +94,17 @@ const StakingTab = () => {
 					</div>
 					<div>
 						<div className="title">{t('dashboard.stake.tabs.staking.annual-percentage-yield')}</div>
-						<div className="value">68.23%</div>
+						<div className="value">{Number(apy).toFixed(2)}%</div>
 					</div>
 				</CardGrid>
 				<Button fullWidth variant="flat" size="sm">
 					{t('dashboard.stake.tabs.staking.claim')}
 				</Button>
 			</CardGridContainer>
-			<StakingInputCard inputLabel={t('dashboard.stake.tabs.stake-table.kwenta-token')} />
+			<StakingInputCard
+				inputLabel={t('dashboard.stake.tabs.stake-table.kwenta-token')}
+				tableType={'stake'}
+			/>
 		</StakingTabContainer>
 	);
 };

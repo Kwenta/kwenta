@@ -9,6 +9,7 @@ import { currentThemeState } from 'store/ui';
 import media from 'styles/media';
 
 import EscrowTab from './EscrowTab';
+import RedemptionTab from './RedemptionTab';
 import StakingTab from './StakingTab';
 import TradingRewardsTab from './TradingRewardsTab';
 
@@ -16,6 +17,7 @@ enum StakeTab {
 	Staking = 'staking',
 	TradingRewards = 'trading-rewards',
 	Escrow = 'escrow',
+	Redemption = 'redemption',
 }
 
 const StakingTabs: React.FC = () => {
@@ -49,6 +51,12 @@ const StakingTabs: React.FC = () => {
 						active={activeTab === StakeTab.Escrow}
 						lightStakePage={!isDarkTheme}
 					/>
+					<TabButton
+						title={t('dashboard.stake.tabs.redemption.title')}
+						onClick={handleTabSwitch(StakeTab.Redemption)}
+						active={activeTab === StakeTab.Redemption}
+						lightStakePage={!isDarkTheme}
+					/>
 				</TabButtons>
 				<EpochLabel
 					title={t('dashboard.stake.tabs.trading-rewards.epoch', { EpochPeriod: epochPeriod })}
@@ -66,6 +74,9 @@ const StakingTabs: React.FC = () => {
 				</TabPanel>
 				<TabPanel name={StakeTab.Escrow} activeTab={activeTab}>
 					<EscrowTab />
+				</TabPanel>
+				<TabPanel name={StakeTab.Redemption} activeTab={activeTab}>
+					<RedemptionTab />
 				</TabPanel>
 			</div>
 		</StakingTabsContainer>
