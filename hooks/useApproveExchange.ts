@@ -95,6 +95,8 @@ const useApproveExchange = () => {
 					)) as ethers.BigNumber;
 					if (wei(ethers.utils.formatEther(allowance)).gte(quoteCurrencyAmount)) {
 						setApproveStatus('approved');
+					} else {
+						setApproveStatus('none');
 					}
 				}
 			} catch (e) {
