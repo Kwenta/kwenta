@@ -1,4 +1,3 @@
-import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useCallback, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useTheme } from 'styled-components';
@@ -54,7 +53,6 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 	const [orderPrice, setOrderPrice] = useRecoilState(futuresOrderPriceState);
 
 	const { onTradeOrderPriceChange } = useFuturesContext();
-	const { openConnectModal: connectWallet } = useConnectModal();
 
 	const [showOnboard, setShowOnboard] = useRecoilState(showCrossMarginOnboardState);
 	const [openTransferModal, setOpenTransferModal] = useState<'deposit' | 'withdraw' | null>(null);
@@ -74,21 +72,16 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 		? [
 				{
 					i18nTitle: 'futures.market.trade.button.deposit',
-					Icon: <DepositArrow stoke={colors.selectedTheme.yellow} />,
+					icon: <DepositArrow stoke={colors.selectedTheme.yellow} />,
 					onClick: () => setOpenTransferModal('deposit'),
 				},
 				{
 					i18nTitle: 'futures.market.trade.button.withdraw',
-					Icon: <WithdrawArrow stoke={colors.selectedTheme.yellow} />,
+					icon: <WithdrawArrow stoke={colors.selectedTheme.yellow} />,
 					onClick: () => setOpenTransferModal('withdraw'),
 				},
 		  ]
-		: [
-				{
-					i18nTitle: 'futures.market.trade.button.connect-wallet',
-					onClick: connectWallet,
-				},
-		  ];
+		: [];
 
 	if (!showOnboard && (status === 'refetching' || status === 'initial-fetch')) return <Loader />;
 
