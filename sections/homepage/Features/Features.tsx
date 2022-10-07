@@ -3,7 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import PermissionlessIcon from 'assets/png/features/permissionless.png';
+import OpenSourceIcon from 'assets/png/features/opensource.png';
 import BlazingFastIcon from 'assets/svg/features/blazing-fast.svg';
 import EasyRampingIcon from 'assets/svg/features/easy-ramping.svg';
 import LowGasFeeIcon from 'assets/svg/features/low-gas-fee.svg';
@@ -51,10 +51,10 @@ const FEATURES = [
 		image: <UniqueAssetsIcon />,
 	},
 	{
-		key: 'permissionless',
-		title: 'homepage.features.permissionless.title',
-		copy: 'homepage.features.permissionless.copy',
-		image: <Image src={PermissionlessIcon} layout="fixed" height="64px" width="64px" />,
+		key: 'open-source',
+		title: 'homepage.features.open-source.title',
+		copy: 'homepage.features.open-source.copy',
+		image: <Image src={OpenSourceIcon} layout="fixed" height="64px" width="64px" />,
 	},
 	{
 		key: 'mobile',

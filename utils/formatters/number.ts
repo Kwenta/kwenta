@@ -203,7 +203,12 @@ export const multiplyDecimal = (x: BigNumber, y: BigNumber) => {
 };
 
 export const weiFromWei = (weiAmount: WeiSource) => {
-	return wei(weiAmount, 18, true);
+	if (weiAmount instanceof Wei) {
+		const precisionDiff = 18 - weiAmount.p;
+		return wei(weiAmount.div(10 ** precisionDiff), 18, true);
+	} else {
+		return wei(weiAmount, 18, true);
+	}
 };
 
 export const suggestedDecimals = (value: WeiSource) => {
