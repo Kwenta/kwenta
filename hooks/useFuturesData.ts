@@ -8,7 +8,11 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { DEFAULT_LEVERAGE } from 'constants/defaults';
+import {
+	CROSS_MARGIN_ENABLED,
+	DEFAULT_FUTURES_MARGIN_TYPE,
+	DEFAULT_LEVERAGE,
+} from 'constants/defaults';
 import {
 	CROSS_MARGIN_ORDER_TYPES,
 	ISOLATED_MARGIN_ORDER_TYPES,
@@ -18,7 +22,13 @@ import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import { KWENTA_TRACKING_CODE, ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
-import { PositionSide, TradeFees, FuturesTradeInputs } from 'queries/futures/types';
+import {
+	PositionSide,
+	TradeFees,
+	FuturesTradeInputs,
+	FuturesAccountType,
+} from 'queries/futures/types';
+import useGetCrossMarginAccountOverview from 'queries/futures/useGetCrossMarginAccountOverview';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import {
@@ -103,7 +113,7 @@ const useFuturesData = () => {
 	const marketAssetRate = useRecoilValue(marketAssetRateState);
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
 	const setPotentialTradeDetails = useSetRecoilState(potentialTradeDetailsState);
-	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
+	const [selectedAccountType, setSelectedAccountType] = useRecoilState(futuresAccountTypeState);
 	const [preferredLeverage] = usePersistedRecoilState(preferredLeverageState);
 
 	const [maxFee, setMaxFee] = useState(zeroBN);
@@ -563,6 +573,22 @@ const useFuturesData = () => {
 		// Clear trade state when switching address
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [crossMarginAddress]);
+
+	useEffect(() => {
+		if (!CROSS_MARGIN_ENABLED) {
+			setSelectedAccountType(DEFAULT_FUTURES_MARGIN_TYPE);
+			return;
+		}
+		const routerType =
+			typeof router.query.accountType === 'string'
+				? (router.query.accountType as FuturesAccountType)
+				: DEFAULT_FUTURES_MARGIN_TYPE;
+		const accountType = ['cross_margin', 'isolated_margin'].includes(routerType)
+			? routerType
+			: DEFAULT_FUTURES_MARGIN_TYPE;
+		setSelectedAccountType(accountType);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [router.query.accountType]);
 
 	return {
 		onLeverageChange,
