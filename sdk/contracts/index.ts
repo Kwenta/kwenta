@@ -111,8 +111,6 @@ const contractsByNetwork = (id: NetworkId): ContractMap =>
 
 const mainnetContracts = contractsByNetwork(1);
 const optimismContracts = contractsByNetwork(10);
-const kovanContracts = contractsByNetwork(42);
-const optimismKovanContracts = contractsByNetwork(69);
 const goerliContracts = contractsByNetwork(5);
 const optimismGoerliContracts = contractsByNetwork(420);
 
@@ -122,10 +120,6 @@ export const getContractsByNetwork = (networkId: NetworkId) => {
 			return mainnetContracts;
 		case 'mainnet-ovm':
 			return optimismContracts;
-		case 'kovan':
-			return kovanContracts;
-		case 'kovan-ovm':
-			return optimismKovanContracts;
 		case 'goerli':
 			return goerliContracts;
 		case 'goerli-ovm':
