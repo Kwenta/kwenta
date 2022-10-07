@@ -6,6 +6,7 @@ const lightTheme = {
 	outlineBorder: '1px solid rgba(0,0,0,0.17)',
 	red: '#A80300',
 	green: '#1D5D1F',
+	orange: '#DA8332',
 	black: '#171002',
 	white: '#F2F2F2',
 	gray: '#515151',

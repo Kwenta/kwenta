@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import Error from 'components/Error';
+import ErrorView from 'components/Error';
 import CustomInput from 'components/Input/CustomInput';
 import Loader from 'components/Loader';
 import SegmentedControl from 'components/SegmentedControl';
@@ -13,7 +13,7 @@ import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
-import { crossMarginAccountOverviewState } from 'store/futures';
+import { crossMarginAccountOverviewState, openOrdersState } from 'store/futures';
 import { isUserDeniedError } from 'utils/formatters/error';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -43,6 +43,7 @@ export default function ManageKeeperBalanceModal({ onDismiss, defaultType }: Pro
 	const { refetchUntilUpdate } = useRefetchContext();
 
 	const { keeperEthBal } = useRecoilValue(crossMarginAccountOverviewState);
+	const openOrders = useRecoilValue(openOrdersState);
 
 	const [amount, setAmount] = useState('');
 	const [isMax, setMax] = useState(false);
@@ -204,8 +205,15 @@ export default function ManageKeeperBalanceModal({ onDismiss, defaultType }: Pro
 					)
 				)}
 			</MarginActionButton>
+			{openOrders.length && transferType === 1 && (
+				<ErrorView
+					containerStyle={{ margin: '16px 0 0 0' }}
+					messageType="warn"
+					message={t('futures.market.trade.orders.manage-keeper-deposit.withdraw-warning')}
+				/>
+			)}
 
-			{error && <Error message={error} />}
+			{error && <ErrorView containerStyle={{ margin: '16px 0 0 0' }} message={error} />}
 		</StyledBaseModal>
 	);
 }
