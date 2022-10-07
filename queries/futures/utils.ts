@@ -2,18 +2,26 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { ContractsMap, NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { utils } from 'ethers';
+import { parseBytes32String } from 'ethers/lib/utils';
 import { chain } from 'wagmi';
 
 import { ETH_UNIT } from 'constants/network';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
-import { formatDollars, weiFromWei, zeroBN } from 'utils/formatters/number';
-import { FuturesMarketAsset } from 'utils/futures';
+import { formatCurrency, formatDollars, weiFromWei, zeroBN } from 'utils/formatters/number';
+import {
+	FuturesMarketAsset,
+	getDisplayAsset,
+	getMarketName,
+	MarketKeyByAsset,
+} from 'utils/futures';
 
 import { SECONDS_PER_DAY, FUTURES_ENDPOINTS } from './constants';
 import {
 	FuturesHourlyStatResult,
 	FuturesMarginTransferResult,
+	FuturesOrderResult,
+	FuturesOrderType,
 	FuturesPositionResult,
 	FuturesTradeResult,
 } from './subgraph';
@@ -28,6 +36,7 @@ import {
 	FundingRateUpdate,
 	FuturesTrade,
 	MarginTransfer,
+	FuturesMarket,
 } from './types';
 
 export const getFuturesEndpoint = (networkId: NetworkId): string => {
@@ -98,6 +107,47 @@ export const mapFuturesPosition = (
 						? zeroBN
 						: wei(notionalValue).div(wei(remainingMargin)).abs(),
 			  },
+	};
+};
+
+const mapOrderType = (orderType: Partial<FuturesOrderType>) => {
+	return orderType === 'NextPrice'
+		? 'Next-Price'
+		: orderType === 'Stop'
+		? 'Stop-Market'
+		: orderType === 'StopMarket'
+		? 'Stop-Market'
+		: orderType;
+};
+
+export const mapFuturesOrders = (o: FuturesOrderResult, marketInfo: FuturesMarket | undefined) => {
+	const asset: FuturesMarketAsset = parseBytes32String(o.asset) as FuturesMarketAsset;
+	const size = weiFromWei(o.size);
+	const targetPrice = weiFromWei(o.targetPrice ?? 0);
+	const targetRoundId = new Wei(o.targetRoundId, 0);
+	const currentRoundId = wei(marketInfo?.currentRoundId ?? 0);
+	const marginDelta = weiFromWei(o.marginDelta);
+	return {
+		...o,
+		asset,
+		targetRoundId,
+		marginDelta,
+		targetPrice: targetPrice.gt(0) ? targetPrice : null,
+		size: size,
+		market: getMarketName(asset),
+		marketKey: MarketKeyByAsset[asset],
+		orderType: mapOrderType(o.orderType),
+		sizeTxt: formatCurrency(asset, size.abs(), {
+			currencyKey: getDisplayAsset(asset) ?? '',
+			minDecimals: size.abs().lt(0.01) ? 4 : 2,
+		}),
+		targetPriceTxt: formatDollars(targetPrice),
+		side: size.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
+		isStale: o.orderType === 'NextPrice' && currentRoundId.gte(wei(o.targetRoundId).add(2)),
+		isExecutable:
+			o.orderType === 'NextPrice' && targetRoundId
+				? currentRoundId.eq(targetRoundId) || currentRoundId.eq(targetRoundId.add(1))
+				: false,
 	};
 };
 
@@ -389,7 +439,7 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 				side: size.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
 				pnl: new Wei(pnl, 18, true),
 				feesPaid: new Wei(feesPaid, 18, true),
-				orderType: orderType,
+				orderType: mapOrderType(orderType),
 			};
 		}
 	);
