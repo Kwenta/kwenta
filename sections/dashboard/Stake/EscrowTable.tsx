@@ -46,6 +46,7 @@ const EscrowTable = () => {
 			},
 		],
 		cacheOnBlock: true,
+		enabled: !!walletAddress,
 		onError(error) {
 			if (error) logError(error);
 		},
@@ -53,17 +54,18 @@ const EscrowTable = () => {
 
 	const vestingRecords = isSuccess && vestingSchedules !== undefined ? vestingSchedules[0] : [];
 
-	vestingRecords.forEach((d) => {
-		data.push({
-			date: moment(Number(d.endTime) * 1000).format('MM/DD/YY'),
-			time: moment(Number(d.endTime) * 1000).fromNow(),
-			vestable: d.endTime * 1000 > Date.now() ? 0 : Number(d.escrowAmount / 1e18),
-			amount: Number(d.escrowAmount / 1e18),
-			fee: d.endTime * 1000 > Date.now() ? Number(d.escrowAmount / 1e18) : 0,
-			status: d.endTime * 1000 > Date.now() ? 'VESTING' : 'VESTED',
-			selected: false,
+	vestingRecords.length > 0 &&
+		vestingRecords.forEach((d) => {
+			data.push({
+				date: moment(Number(d.endTime) * 1000).format('MM/DD/YY'),
+				time: moment(Number(d.endTime) * 1000).fromNow(),
+				vestable: d.endTime * 1000 > Date.now() ? 0 : Number(d.escrowAmount / 1e18),
+				amount: Number(d.escrowAmount / 1e18),
+				fee: d.endTime * 1000 > Date.now() ? Number(d.escrowAmount / 1e18) : 0,
+				status: d.endTime * 1000 > Date.now() ? 'VESTING' : 'VESTED',
+				selected: false,
+			});
 		});
-	});
 
 	const [, setCheckedState] = useState(data.map((d) => d.selected));
 	const handleOnChange = (position: number) => {
