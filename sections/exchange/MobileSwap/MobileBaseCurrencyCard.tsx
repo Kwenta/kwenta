@@ -1,6 +1,7 @@
 import { FC, memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
+import { useAppSelector } from 'state/store';
 
 import { useExchangeContext } from 'contexts/ExchangeContext';
 import { baseCurrencyKeyState, baseCurrencyAmountState } from 'store/exchange';
@@ -12,14 +13,13 @@ const MobileBaseCurrencyCard: FC = memo(() => {
 	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
 	const baseCurrencyAmount = useRecoilValue(baseCurrencyAmountState);
 
-	const {
-		txProvider,
-		baseCurrencyBalance,
-		setOpenModal,
-		basePriceRate,
-		onBaseCurrencyAmountChange,
-		onBaseBalanceClick,
-	} = useExchangeContext();
+	const { setOpenModal, onBaseCurrencyAmountChange, onBaseBalanceClick } = useExchangeContext();
+
+	const { baseBalance, basePriceRate, txProvider } = useAppSelector(({ exchange }) => ({
+		baseBalance: exchange.baseBalance,
+		basePriceRate: exchange.basePriceRate,
+		txProvider: exchange.txProvider,
+	}));
 
 	const openBaseModal = useCallback(() => setOpenModal('base-select'), [setOpenModal]);
 
@@ -29,7 +29,7 @@ const MobileBaseCurrencyCard: FC = memo(() => {
 			disabled={txProvider !== 'synthetix'}
 			amount={baseCurrencyAmount}
 			onAmountChange={onBaseCurrencyAmountChange}
-			walletBalance={baseCurrencyBalance}
+			walletBalance={baseBalance}
 			onBalanceClick={onBaseBalanceClick}
 			onCurrencySelect={openBaseModal}
 			priceRate={basePriceRate}

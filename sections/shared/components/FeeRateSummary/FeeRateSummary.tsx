@@ -1,6 +1,7 @@
-import Wei from '@synthetixio/wei';
+import { wei } from '@synthetixio/wei';
 import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAppSelector } from 'state/store';
 import styled from 'styled-components';
 
 import TimerIcon from 'assets/svg/app/timer.svg';
@@ -10,13 +11,13 @@ import { formatPercent } from 'utils/formatters/number';
 
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
 
-type FeeRateSummaryItemProps = {
-	totalFeeRate: Wei | null;
-	baseFeeRate?: Wei | null;
-};
-
-const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = memo(({ totalFeeRate, baseFeeRate }) => {
+const FeeRateSummaryItem: FC = memo(() => {
 	const { t } = useTranslation();
+
+	const { exchangeFeeRate, baseFeeRate } = useAppSelector(({ exchange }) => ({
+		exchangeFeeRate: exchange.exchangeFeeRate,
+		baseFeeRate: exchange.baseFeeRate,
+	}));
 
 	return (
 		<SummaryItem>
@@ -26,12 +27,12 @@ const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = memo(({ totalFeeRate, ba
 					<span>
 						{baseFeeRate != null
 							? formatPercent(baseFeeRate, { minDecimals: 2 })
-							: totalFeeRate != null
-							? formatPercent(totalFeeRate, { minDecimals: 2 })
+							: !!exchangeFeeRate
+							? formatPercent(wei(exchangeFeeRate), { minDecimals: 2 })
 							: NO_VALUE}
 					</span>
-					{totalFeeRate != null && baseFeeRate != null ? (
-						totalFeeRate.sub(baseFeeRate).gt(0) ? (
+					{!!exchangeFeeRate != null && baseFeeRate != null ? (
+						wei(exchangeFeeRate).sub(baseFeeRate).gt(0) ? (
 							<>
 								<DynamicFeeLabel>+</DynamicFeeLabel>
 								<CustomStyledTooltip
@@ -39,7 +40,9 @@ const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = memo(({ totalFeeRate, ba
 									content={t('exchange.summary-info.dynamic-fee-tooltip')}
 								>
 									<DynamicFeeRateItem>
-										<span>{formatPercent(totalFeeRate.sub(baseFeeRate), { minDecimals: 2 })}</span>
+										<span>
+											{formatPercent(wei(exchangeFeeRate).sub(baseFeeRate), { minDecimals: 2 })}
+										</span>
 										<TimerIcon />
 									</DynamicFeeRateItem>
 								</CustomStyledTooltip>

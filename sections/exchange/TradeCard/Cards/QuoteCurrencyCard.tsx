@@ -1,6 +1,8 @@
 import { FC, memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
+import { selectQuoteCurrencyName } from 'state/exchange/selectors';
+import { useAppSelector } from 'state/store';
 
 import { useExchangeContext } from 'contexts/ExchangeContext';
 import { quoteCurrencyKeyState, quoteCurrencyAmountState } from 'store/exchange';
@@ -12,14 +14,14 @@ const QuoteCurrencyCard: FC = memo(() => {
 	const quoteCurrencyKey = useRecoilValue(quoteCurrencyKeyState);
 	const quoteCurrencyAmount = useRecoilValue(quoteCurrencyAmountState);
 
-	const {
-		quoteCurrencyBalance,
-		setOpenModal,
-		allTokensMap,
-		quotePriceRate,
-		onQuoteCurrencyAmountChange,
-		onQuoteBalanceClick,
-	} = useExchangeContext();
+	const { setOpenModal, onQuoteCurrencyAmountChange, onQuoteBalanceClick } = useExchangeContext();
+
+	const { quoteBalance, quotePriceRate } = useAppSelector(({ exchange }) => ({
+		quoteBalance: exchange.quoteBalance,
+		quotePriceRate: exchange.quotePriceRate,
+	}));
+
+	const quoteCurrencyName = useAppSelector(selectQuoteCurrencyName);
 
 	const openQuoteModal = useCallback(() => setOpenModal('quote-select'), [setOpenModal]);
 
@@ -27,10 +29,10 @@ const QuoteCurrencyCard: FC = memo(() => {
 		<CurrencyCard
 			side="quote"
 			currencyKey={quoteCurrencyKey}
-			currencyName={quoteCurrencyKey ? allTokensMap[quoteCurrencyKey]?.name : null}
+			currencyName={quoteCurrencyName}
 			amount={quoteCurrencyAmount}
 			onAmountChange={onQuoteCurrencyAmountChange}
-			walletBalance={quoteCurrencyBalance}
+			walletBalance={quoteBalance}
 			onBalanceClick={onQuoteBalanceClick}
 			onCurrencySelect={openQuoteModal}
 			priceRate={quotePriceRate}

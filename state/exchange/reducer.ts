@@ -1,11 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+import { zeroBN } from 'utils/formatters/number';
+
 import { fetchBalances, fetchTransactionFee } from './actions';
 import { ExchangeState } from './types';
 
 const initialState: ExchangeState = {
 	baseCurrencyKey: undefined,
-	quoteCurrencyKey: undefined,
+	quoteCurrencyKey: 'sUSD',
 	txProvider: undefined,
 	baseAmount: '',
 	quoteAmount: '',
@@ -13,22 +15,48 @@ const initialState: ExchangeState = {
 	baseBalance: undefined,
 	ratio: undefined,
 	transactionFee: undefined,
+	feeCost: undefined,
 	slippagePercent: undefined,
 	isSubmitting: false,
 	isApproving: false,
+	needsApproval: false,
+	quotePriceRate: undefined,
+	basePriceRate: undefined,
+	baseFeeRate: undefined,
+	rate: undefined,
+	numEntries: 0,
+	redeemableSynthBalances: [],
+	totalRedeemableBalance: zeroBN,
+	estimatedBaseTradePrice: zeroBN,
 };
 
 const exchangeSlice = createSlice({
 	name: 'exchange',
 	initialState,
 	reducers: {
+		setCurrencyPair: (state, action) => {
+			state.baseCurrencyKey = action.payload.baseCurrencyKey;
+			state.quoteCurrencyKey = action.payload.quoteCurrencyKey;
+		},
 		setBaseAmount: (state, action) => {
-			state.baseAmount = action.payload.baseAmount;
 			state.ratio = undefined;
+
+			if (action.payload.quoteAmount === '') {
+				state.baseAmount = '';
+				state.quoteAmount = '';
+			} else {
+				state.baseAmount = action.payload.baseAmount;
+			}
 		},
 		setQuoteAmount: (state, action) => {
-			state.baseAmount = action.payload.baseAmount;
 			state.ratio = undefined;
+
+			if (action.payload.quoteAmount === '') {
+				state.quoteAmount = '';
+				state.baseAmount = '';
+			} else {
+				state.quoteAmount = action.payload.quoteAmount;
+			}
 		},
 		setRatio: (state, action) => {
 			// This is not so simple,
@@ -52,11 +80,21 @@ const exchangeSlice = createSlice({
 		builder.addCase(fetchBalances.fulfilled, (state, action) => {
 			state.quoteBalance = action.payload.quoteBalance;
 			state.baseBalance = action.payload.baseBalance;
+			state.redeemableSynthBalances = action.payload.redeemableSynthBalances;
+			state.totalRedeemableBalance = action.payload.totalRedeemableBalance;
 		});
 		builder.addCase(fetchTransactionFee.fulfilled, (state, action) => {
 			state.transactionFee = action.payload.transactionFee;
 		});
 	},
 });
+
+export const {
+	setBaseAmount,
+	setQuoteAmount,
+	setRatio,
+	swapCurrencies,
+	setCurrencyPair,
+} = exchangeSlice.actions;
 
 export default exchangeSlice.reducer;

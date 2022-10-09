@@ -6,10 +6,13 @@ import { sdk } from 'state/store';
 import { createContainer } from 'unstated-next';
 import { chain, useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
 
+import logError from 'utils/logError';
+
 const useConnector = () => {
 	const { chain: activeChain } = useNetwork();
 	const { address, isConnected: isWalletConnected } = useAccount({
 		async onConnect({ address, connector }) {
+			logError('Connected');
 			const networkId = await connector?.getChainId();
 			const signer = await connector?.getSigner();
 			const provider = await connector?.getProvider();

@@ -19,7 +19,7 @@ type CurrencyCardSelectorProps = {
 	hasWalletBalance: boolean;
 	onBalanceClick(): void;
 	insufficientBalance: boolean;
-	walletBalance: Wei | null;
+	walletBalance?: Wei | null;
 };
 
 const CurrencyCardSelector: FC<CurrencyCardSelectorProps> = memo(

@@ -1,6 +1,8 @@
 import { FC, memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
+import { selectBaseCurrencyName } from 'state/exchange/selectors';
+import { useAppSelector } from 'state/store';
 
 import { useExchangeContext } from 'contexts/ExchangeContext';
 import { baseCurrencyKeyState, baseCurrencyAmountState } from 'store/exchange';
@@ -12,17 +14,18 @@ const BaseCurrencyCard: FC = memo(() => {
 	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
 	const baseCurrencyAmount = useRecoilValue(baseCurrencyAmountState);
 
-	const {
-		txProvider,
-		baseCurrencyBalance,
-		setOpenModal,
-		slippagePercent,
-		basePriceRate,
-		allTokensMap,
-		oneInchQuoteQuery,
-		onBaseCurrencyAmountChange,
-		onBaseBalanceClick,
-	} = useExchangeContext();
+	const { setOpenModal, onBaseCurrencyAmountChange, onBaseBalanceClick } = useExchangeContext();
+
+	const { baseBalance, basePriceRate, slippagePercent, txProvider } = useAppSelector(
+		({ exchange }) => ({
+			baseBalance: exchange.baseBalance,
+			basePriceRate: exchange.basePriceRate,
+			slippagePercent: exchange.slippagePercent,
+			txProvider: exchange.txProvider,
+		})
+	);
+
+	const baseCurrencyName = useAppSelector(selectBaseCurrencyName);
 
 	const openBaseModal = useCallback(() => setOpenModal('base-select'), [setOpenModal]);
 
@@ -30,17 +33,17 @@ const BaseCurrencyCard: FC = memo(() => {
 		<CurrencyCard
 			side="base"
 			currencyKey={baseCurrencyKey}
-			currencyName={baseCurrencyKey ? allTokensMap[baseCurrencyKey]?.name : null}
+			currencyName={baseCurrencyName}
 			disabled={txProvider !== 'synthetix'}
 			amount={baseCurrencyAmount}
 			onAmountChange={onBaseCurrencyAmountChange}
-			walletBalance={baseCurrencyBalance}
+			walletBalance={baseBalance}
 			onBalanceClick={onBaseBalanceClick}
 			onCurrencySelect={openBaseModal}
 			priceRate={basePriceRate}
 			label={t('exchange.common.into')}
 			slippagePercent={slippagePercent}
-			isLoading={txProvider === '1inch' && oneInchQuoteQuery.isFetching}
+			isLoading={txProvider === '1inch'} // oneInchQuoteQuery.isFetching
 		/>
 	);
 });

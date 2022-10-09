@@ -1,14 +1,14 @@
 import useSynthetixQueries from '@synthetixio/queries';
-import Wei from '@synthetixio/wei';
 import { FC, ReactNode, useMemo, memo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { selectShowFee } from 'state/exchange/selectors';
+import { useAppSelector } from 'state/store';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
 import Card from 'components/Card';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
-import { CurrencyKey } from 'constants/currency';
 import FeeCostSummaryItem from 'sections/shared/components/FeeCostSummary';
 import FeeRateSummaryItem from 'sections/shared/components/FeeRateSummary';
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
@@ -21,13 +21,7 @@ type TradeSummaryCardProps = {
 	submissionDisabledReason: ReactNode;
 	onSubmit: () => void;
 	feeReclaimPeriodInSeconds: number;
-	quoteCurrencyKey: CurrencyKey | null;
-	showFee?: boolean;
 	className?: string;
-	totalFeeRate: Wei | null;
-	baseFeeRate?: Wei | null;
-	transactionFee?: Wei | number | null;
-	feeCost: Wei | null;
 	isApproved?: boolean;
 };
 
@@ -36,12 +30,6 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = memo(
 		submissionDisabledReason,
 		onSubmit,
 		feeReclaimPeriodInSeconds,
-		quoteCurrencyKey,
-		showFee = true,
-		totalFeeRate,
-		baseFeeRate,
-		transactionFee,
-		feeCost,
 		isApproved = true,
 		...rest
 	}) => {
@@ -56,19 +44,27 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = memo(
 
 		const gasPrices = useMemo(() => ethGasPriceQuery?.data, [ethGasPriceQuery.data]);
 
+		const { quoteCurrencyKey, transactionFee, feeCost } = useAppSelector(({ exchange }) => ({
+			quoteCurrencyKey: exchange.quoteCurrencyKey,
+			transactionFee: exchange.transactionFee,
+			feeCost: exchange.feeCost,
+		}));
+
+		const showFee = useAppSelector(selectShowFee);
+
 		const summaryItems = useMemo(
 			() => (
 				<SummaryItems>
 					<GasPriceSelect gasPrices={gasPrices} transactionFee={transactionFee} />
 					{showFee && (
 						<>
-							<FeeRateSummaryItem totalFeeRate={totalFeeRate} baseFeeRate={baseFeeRate} />
+							<FeeRateSummaryItem />
 							<FeeCostSummaryItem feeCost={feeCost} />
 						</>
 					)}
 				</SummaryItems>
 			),
-			[gasPrices, transactionFee, totalFeeRate, baseFeeRate, feeCost, showFee]
+			[gasPrices, transactionFee, feeCost, showFee]
 		);
 
 		return (

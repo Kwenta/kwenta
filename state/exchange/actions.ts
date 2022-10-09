@@ -23,7 +23,12 @@ export const fetchBalances = createAsyncThunk<any, void, ThunkConfig>(
 			? await sdk.exchange.getBalance(baseCurrencyKey)
 			: undefined;
 
-		return { quoteBalance, baseBalance };
+		const {
+			balances: redeemableBalances,
+			totalUSDBalance: totalRedeemableBalance,
+		} = await sdk.exchange.getRedeemableDeprecatedSynths();
+
+		return { quoteBalance, baseBalance, redeemableBalances, totalRedeemableBalance };
 	}
 );
 
@@ -90,5 +95,53 @@ export const submitRedeem = createAsyncThunk<any, void, ThunkConfig>(
 	'exchange/submitRedeem',
 	async (_, { extra: { sdk } }) => {
 		await sdk.exchange.handleRedeem();
+	}
+);
+
+export const submitApprove = createAsyncThunk<any, void, ThunkConfig>(
+	'exchange/submitApprove',
+	async (_, { getState, extra: { sdk } }) => {
+		const {
+			exchange: { quoteCurrencyKey, baseCurrencyKey },
+		} = getState();
+
+		if (quoteCurrencyKey && baseCurrencyKey) {
+			await sdk.exchange.handleApprove(quoteCurrencyKey, baseCurrencyKey);
+		}
+	}
+);
+
+export const checkNeedsApproval = createAsyncThunk<any, void, ThunkConfig>(
+	'exchange/checkNeedsApproval',
+	async (_, { getState, extra: { sdk } }) => {
+		const {
+			exchange: { quoteCurrencyKey, baseCurrencyKey },
+		} = getState();
+
+		if (quoteCurrencyKey && baseCurrencyKey) {
+			return sdk.exchange.checkNeedsApproval(baseCurrencyKey, quoteCurrencyKey);
+		}
+
+		return false;
+	}
+);
+
+export const fetchRates = createAsyncThunk<any, void, ThunkConfig>(
+	'exchange/fetchRates',
+	async (_, { getState, extra: { sdk } }) => {
+		const {
+			exchange: { quoteCurrencyKey, baseCurrencyKey },
+		} = getState();
+
+		if (baseCurrencyKey && quoteCurrencyKey) {
+			const baseFeeRate = await sdk.exchange.getBaseFeeRate(baseCurrencyKey, quoteCurrencyKey);
+			const rate = await sdk.exchange.getRate(baseCurrencyKey, quoteCurrencyKey);
+			const exchangeFeeRate = await sdk.exchange.getExchangeFeeRate(
+				quoteCurrencyKey,
+				baseCurrencyKey
+			);
+
+			return { baseFeeRate, rate, exchangeFeeRate };
+		}
 	}
 );

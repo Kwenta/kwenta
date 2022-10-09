@@ -1,6 +1,8 @@
 import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
+import { selectNoSynths } from 'state/exchange/selectors';
+import { useAppSelector } from 'state/store';
 
 import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 import Button from 'components/Button';
@@ -17,13 +19,7 @@ import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
 import TxApproveModal from 'sections/shared/modals/TxApproveModal';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-import {
-	baseCurrencyAmountState,
-	baseCurrencyKeyState,
-	quoteCurrencyAmountState,
-	quoteCurrencyKeyState,
-	txErrorState,
-} from 'store/exchange';
+import { baseCurrencyKeyState, quoteCurrencyKeyState, txErrorState } from 'store/exchange';
 import { NoTextTransform } from 'styles/common';
 
 import SettleTransactionsCard from '../../FooterCard/SettleTransactionsCard';
@@ -35,33 +31,36 @@ const FooterCard: FC = memo(() => {
 
 	const quoteCurrencyKey = useRecoilValue(quoteCurrencyKeyState);
 	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
-	const quoteCurrencyAmount = useRecoilValue(quoteCurrencyAmountState);
-	const baseCurrencyAmount = useRecoilValue(baseCurrencyAmountState);
 	const txError = useRecoilValue(txErrorState);
 
 	const quoteCurrencyMarketClosed = useMarketClosed(quoteCurrencyKey);
 	const baseCurrencyMarketClosed = useMarketClosed(baseCurrencyKey);
 
 	const {
-		noSynths,
-		numEntries,
 		showNoSynthsCard,
-		baseFeeRate,
-		needsApproval,
 		handleSubmit,
-		balances,
-		txProvider,
 		openModal,
-		transactionFee,
-		totalUSDBalance,
 		setOpenModal,
 		handleDismiss,
-		feeCost,
-		exchangeFeeRate,
-		estimatedBaseTradePrice,
 		submissionDisabledReason,
 		feeReclaimPeriodInSeconds,
 	} = useExchangeContext();
+
+	const {
+		needsApproval,
+		redeemableSynthBalances,
+		totalRedeemableBalance,
+		numEntries,
+		estimatedBaseTradePrice,
+	} = useAppSelector(({ exchange }) => ({
+		needsApproval: exchange.needsApproval,
+		redeemableSynthBalances: exchange.redeemableSynthBalances,
+		totalRedeemableBalance: exchange.totalRedeemableBalance,
+		numEntries: exchange.numEntries,
+		estimatedBaseTradePrice: exchange.estimatedBaseTradePrice,
+	}));
+
+	const noSynths = useAppSelector(selectNoSynths);
 
 	const { handleApprove, isApproved } = useApproveExchange();
 	const { handleRedeem } = useRedeem();
@@ -81,16 +80,10 @@ const FooterCard: FC = memo(() => {
 					submissionDisabledReason={submissionDisabledReason}
 					onSubmit={needsApproval ? (isApproved ? handleSubmit : handleApprove) : handleSubmit}
 					feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
-					quoteCurrencyKey={quoteCurrencyKey}
-					totalFeeRate={exchangeFeeRate}
-					baseFeeRate={baseFeeRate}
-					transactionFee={transactionFee}
-					feeCost={feeCost}
-					showFee={txProvider === 'synthetix'}
 					isApproved={needsApproval ? isApproved : undefined}
 				/>
 			)}
-			{balances.length !== 0 && totalUSDBalance.gt(0) && (
+			{redeemableSynthBalances.length !== 0 && totalRedeemableBalance.gt(0) && (
 				<Button
 					variant="primary"
 					disabled={false}
@@ -103,24 +96,14 @@ const FooterCard: FC = memo(() => {
 				</Button>
 			)}
 			{openModal === 'redeem' && (
-				<RedeemTxModal
-					{...{ txError, balances, totalUSDBalance }}
-					onDismiss={handleDismiss}
-					attemptRetry={handleRedeem}
-				/>
+				<RedeemTxModal {...{ txError }} onDismiss={handleDismiss} attemptRetry={handleRedeem} />
 			)}
 			{openModal === 'confirm' && (
 				<TxConfirmationModal
 					onDismiss={() => setOpenModal(undefined)}
 					txError={txError}
 					attemptRetry={handleSubmit}
-					baseCurrencyAmount={baseCurrencyAmount}
-					quoteCurrencyAmount={quoteCurrencyAmount}
-					feeCost={txProvider === 'synthetix' ? feeCost : null}
-					baseCurrencyKey={baseCurrencyKey!}
-					quoteCurrencyKey={quoteCurrencyKey!}
 					totalTradePrice={estimatedBaseTradePrice.toString()}
-					txProvider={txProvider}
 					quoteCurrencyLabel={t('exchange.common.from')}
 					baseCurrencyLabel={t('exchange.common.into')}
 					icon={<ArrowsIcon />}

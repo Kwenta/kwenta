@@ -15,10 +15,10 @@ type MobileCurrencyCardProps = {
 	currencyKey: string | null;
 	amount: string;
 	onAmountChange: (value: string) => void;
-	walletBalance: Wei | null;
+	walletBalance?: Wei | null;
 	onBalanceClick: () => void;
 	onCurrencySelect?: () => void;
-	priceRate: Wei | number | string | null;
+	priceRate?: Wei | number | string | null;
 	label: string;
 	disabled?: boolean;
 };

@@ -15,13 +15,13 @@ import CurrencyCardSelector from './CurrencyCardSelector';
 type CurrencyCardProps = {
 	side: Side;
 	currencyKey: string | null;
-	currencyName: string | null;
+	currencyName?: string;
 	amount: string;
 	onAmountChange: (value: string) => void;
-	walletBalance: Wei | null;
+	walletBalance?: Wei | null;
 	onBalanceClick: () => void;
 	onCurrencySelect?: () => void;
-	priceRate: Wei | number | null;
+	priceRate?: Wei | number | null;
 	className?: string;
 	label: string;
 	disableInput?: boolean;

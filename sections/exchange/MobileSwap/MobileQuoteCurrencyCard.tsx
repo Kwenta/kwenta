@@ -1,6 +1,7 @@
 import { FC, memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
+import { useAppSelector } from 'state/store';
 
 import { useExchangeContext } from 'contexts/ExchangeContext';
 import { quoteCurrencyKeyState, quoteCurrencyAmountState } from 'store/exchange';
@@ -12,13 +13,12 @@ const MobileQuoteCurrencyCard: FC = memo(() => {
 	const quoteCurrencyKey = useRecoilValue(quoteCurrencyKeyState);
 	const quoteCurrencyAmount = useRecoilValue(quoteCurrencyAmountState);
 
-	const {
-		setOpenModal,
-		onQuoteCurrencyAmountChange,
-		onQuoteBalanceClick,
-		quoteCurrencyBalance,
-		quotePriceRate,
-	} = useExchangeContext();
+	const { setOpenModal, onQuoteCurrencyAmountChange, onQuoteBalanceClick } = useExchangeContext();
+
+	const { quoteBalance, quotePriceRate } = useAppSelector(({ exchange }) => ({
+		quoteBalance: exchange.quoteBalance,
+		quotePriceRate: exchange.quotePriceRate,
+	}));
 
 	const openQuoteModal = useCallback(() => setOpenModal('quote-select'), [setOpenModal]);
 
@@ -27,7 +27,7 @@ const MobileQuoteCurrencyCard: FC = memo(() => {
 			currencyKey={quoteCurrencyKey}
 			amount={quoteCurrencyAmount}
 			onAmountChange={onQuoteCurrencyAmountChange}
-			walletBalance={quoteCurrencyBalance}
+			walletBalance={quoteBalance}
 			onBalanceClick={onQuoteBalanceClick}
 			onCurrencySelect={openQuoteModal}
 			priceRate={quotePriceRate}

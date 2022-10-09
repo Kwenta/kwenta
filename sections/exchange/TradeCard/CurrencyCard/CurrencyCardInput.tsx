@@ -22,7 +22,7 @@ type CurrencyCardInputProps = {
 	disableInput: boolean;
 	slippagePercent?: Wei | null;
 	currencyKeySelected: boolean;
-	priceRate: Wei | number | null;
+	priceRate?: Wei | number | null;
 };
 
 const CurrencyCardInputLabel: FC<{ label: string }> = memo(({ label }) => {

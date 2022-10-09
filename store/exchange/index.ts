@@ -55,12 +55,12 @@ export const txErrorState = atom<string | null>({
 	default: null,
 });
 
-export const baseCurrencyAmountState = atom<string>({
+export const baseCurrencyAmountState = atom({
 	key: getExchangeKey('baseCurrencyAmount'),
 	default: '',
 });
 
-export const quoteCurrencyAmountState = atom<string>({
+export const quoteCurrencyAmountState = atom({
 	key: getExchangeKey('quoteCurrencyAmount'),
 	default: '',
 });

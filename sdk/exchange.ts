@@ -53,6 +53,25 @@ const PROTOCOLS =
 
 const FILTERED_TOKENS = ['0x4922a015c4407f87432b179bb209e125432e4a2a'];
 
+// TODO:
+//  - Write a function that checks if the current (base/quote)CurrencyKey
+//    is valid. We have to dispatch an action when the networkId changes,
+//    to make sure that the current base and quote currency keys are valid
+//    for the new network. For now, we can set the currencies to the default
+//    when that happens.
+// - Make sure that all methods that depend on both the base and quote currency
+//   keys, accept the arguments in the correct order: (quote, base).
+// - Store more properties in the class instance, so we can reduce the number
+//   of async calls. For example, there are a number of functions that take
+//   more arguments than they optimally should.
+// - Write a getter method that returns the value of this.walletAddress when
+//   it is provided, and returns an error when it's undefined.
+// - Do the above for the signer as well.
+// - Experiment with creating a "generateContext" method that takes the base
+//   and quote currency keys as arguments, and returns an instance of a class
+//   that has all the ExchangeService methods that depend on those (probably
+//   overkill, but worth consideration).
+
 export default class ExchangeService {
 	private networkId: NetworkId;
 	private provider: ethers.providers.Provider;
@@ -105,9 +124,7 @@ export default class ExchangeService {
 		const sUSDRate = await this.getSynthUsdRate(quoteCurrencyKey, baseCurrencyKey);
 		let tradePrice = quoteAmountWei.mul(quotePriceRate || 0);
 
-		if (sUSDRate) {
-			tradePrice = tradePrice.div(sUSDRate);
-		}
+		if (sUSDRate) tradePrice = tradePrice.div(sUSDRate);
 
 		return tradePrice;
 	}
@@ -121,9 +138,7 @@ export default class ExchangeService {
 		const sUSDRate = await this.getSynthUsdRate(quoteCurrencyKey, baseCurrencyKey);
 		let tradePrice = baseAmountWei.mul(basePriceRate || 0);
 
-		if (sUSDRate) {
-			tradePrice = tradePrice.div(sUSDRate);
-		}
+		if (sUSDRate) tradePrice = tradePrice.div(sUSDRate);
 
 		return tradePrice;
 	}
@@ -155,17 +170,17 @@ export default class ExchangeService {
 		return null;
 	}
 
-	public async getBaseFeeRate(sourceCurrencyKey: string, destinationCurrencyKey: string) {
+	public async getBaseFeeRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
 		if (!this.contracts.SystemSettings) {
 			throw new Error('SystemSettings does not exist on the currently selected network.');
 		}
 
 		const [sourceCurrencyFeeRate, destinationCurrencyFeeRate] = await Promise.all([
 			this.contracts.SystemSettings.exchangeFeeRate(
-				ethers.utils.formatBytes32String(sourceCurrencyKey)
+				ethers.utils.formatBytes32String(baseCurrencyKey)
 			),
 			this.contracts.SystemSettings.exchangeFeeRate(
-				ethers.utils.formatBytes32String(destinationCurrencyKey)
+				ethers.utils.formatBytes32String(quoteCurrencyKey)
 			),
 		]);
 
@@ -174,14 +189,14 @@ export default class ExchangeService {
 			: null;
 	}
 
-	public async getExchangeFeeRate(sourceCurrencyKey: string, destinationCurrencyKey: string) {
+	public async getExchangeFeeRate(quoteCurrencyKey: string, baseCurrencyKey: string) {
 		if (!this.contracts.Exchanger) {
 			throw new Error('Exchanger does not exist on the currently selected network.');
 		}
 
 		return await this.contracts.Exchanger.feeRateForExchange(
-			ethers.utils.formatBytes32String(sourceCurrencyKey),
-			ethers.utils.formatBytes32String(destinationCurrencyKey)
+			ethers.utils.formatBytes32String(quoteCurrencyKey),
+			ethers.utils.formatBytes32String(baseCurrencyKey)
 		);
 	}
 
@@ -394,6 +409,7 @@ export default class ExchangeService {
 		if (!this.walletAddress) {
 			throw new Error('');
 		}
+
 		if (!this.contracts.Exchanger) {
 			throw new Error('Something something wrong?');
 		}
@@ -636,6 +652,64 @@ export default class ExchangeService {
 
 			return getTransactionPrice(gasPrice, gasLimit, ethPriceRate, optimismLayerOneFee);
 		}
+	}
+
+	public async getFeeCost(quoteCurrencyKey: string, baseCurrencyKey: string, quoteAmount: string) {
+		const sourceCurrencyKey = ethers.utils.formatBytes32String(quoteCurrencyKey);
+		const destinationCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey);
+
+		const exchangeFeeRate = await this.getExchangeFeeRate(
+			sourceCurrencyKey,
+			destinationCurrencyKey
+		);
+
+		const feeAmountInQuoteCurrency = wei(quoteAmount).mul(exchangeFeeRate);
+		const quotePriceRate = await this.getQuotePriceRate(baseCurrencyKey, quoteCurrencyKey);
+
+		return feeAmountInQuoteCurrency.mul(quotePriceRate);
+	}
+
+	public async getApproveAddress(quoteCurrencyKey: string, baseCurrencyKey: string) {
+		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
+		const oneInchApproveAddress = await this.getOneInchApproveAddress();
+		return txProvider === '1inch' ? oneInchApproveAddress : SYNTH_SWAP_OPTIMISM_ADDRESS;
+	}
+
+	public async checkAllowance(
+		quoteCurrencyKey: string,
+		baseCurrencyKey: string,
+		quoteAmount: string
+	) {
+		if (!this.walletAddress) {
+			throw new Error('');
+		}
+
+		const quoteCurrencyContract = await this.getQuoteCurrencyContract(
+			baseCurrencyKey,
+			quoteCurrencyKey
+		);
+
+		const approveAddress = await this.getApproveAddress(quoteCurrencyKey, baseCurrencyKey);
+
+		if (!!quoteCurrencyContract) {
+			const allowance = (await quoteCurrencyContract.allowance(
+				this.walletAddress,
+				approveAddress
+			)) as ethers.BigNumber;
+
+			return wei(ethers.utils.formatEther(allowance)).gte(quoteAmount);
+		}
+	}
+
+	public checkNeedsApproval(baseCurrencyKey: string, quoteCurrencyKey: string) {
+		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
+		const isQuoteCurrencyETH = this.isCurrencyETH(quoteCurrencyKey);
+
+		return (txProvider === '1inch' || txProvider === 'synthswap') && !isQuoteCurrencyETH;
+	}
+
+	public getCurrencyName(currencyKey: string): string | undefined {
+		return this.allTokensMap[currencyKey]?.name;
 	}
 
 	// This is mostly copied over from the Synthetix queries.
@@ -952,14 +1026,7 @@ export default class ExchangeService {
 		);
 	}
 
-	private checkNeedsApproval(baseCurrencyKey: string, quoteCurrencyKey: string) {
-		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
-		const isQuoteCurrencyETH = this.isCurrencyETH(quoteCurrencyKey);
-
-		return (txProvider === '1inch' || txProvider === 'synthswap') && !isQuoteCurrencyETH;
-	}
-
-	private async getRedeemableDeprecatedSynths() {
+	public async getRedeemableDeprecatedSynths() {
 		if (!this.walletAddress) {
 			throw new Error('');
 		}

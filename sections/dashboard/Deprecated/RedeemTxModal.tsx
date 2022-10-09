@@ -1,7 +1,7 @@
-import { DeprecatedSynthBalance } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAppSelector } from 'state/store';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
@@ -17,24 +17,21 @@ type RedeemTxModalProps = {
 	onDismiss: () => void;
 	txError: string | null;
 	attemptRetry: () => void;
-	balances: DeprecatedSynthBalance[];
-	totalUSDBalance: Wei | null;
 };
 
-export const RedeemTxModal: FC<RedeemTxModalProps> = ({
-	onDismiss,
-	txError,
-	attemptRetry,
-	balances,
-	totalUSDBalance,
-}) => {
+export const RedeemTxModal: FC<RedeemTxModalProps> = ({ onDismiss, txError, attemptRetry }) => {
 	const { t } = useTranslation();
+
+	const { totalRedeemableBalance, redeemableSynthBalances } = useAppSelector(({ exchange }) => ({
+		totalRedeemableBalance: exchange.totalRedeemableBalance,
+		redeemableSynthBalances: exchange.redeemableSynthBalances,
+	}));
 
 	return (
 		<StyledBaseModal onDismiss={onDismiss} isOpen title={t('modals.confirm-transaction.title')}>
 			<Title>{t('modals.deprecated-synths.from')}</Title>
 			<Balances>
-				{balances.map((balance) => (
+				{redeemableSynthBalances.map((balance) => (
 					<BalanceItem
 						key={balance.currencyKey}
 						currencyKey={balance.currencyKey}
@@ -42,7 +39,7 @@ export const RedeemTxModal: FC<RedeemTxModalProps> = ({
 					/>
 				))}
 				<Title topPad>{t('modals.deprecated-synths.to')}</Title>
-				<BalanceItem currencyKey={'sUSD'} amount={totalUSDBalance} />
+				<BalanceItem currencyKey={'sUSD'} amount={totalRedeemableBalance} />
 			</Balances>
 			<Subtitle>{t('modals.confirm-transaction.confirm-with-provider')}</Subtitle>
 			{txError != null && (
