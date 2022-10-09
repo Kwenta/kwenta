@@ -1,13 +1,18 @@
+import moment from 'moment';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import { useContractReads } from 'wagmi';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
 import { TableCellHead } from 'components/Table/Table';
+import Connector from 'containers/Connector';
+import rewardEscrowABI from 'lib/abis/RewardEscrow.json';
 import { currentThemeState } from 'store/ui';
+import logError from 'utils/logError';
 
 import { StakingCard } from './common';
 
@@ -21,47 +26,45 @@ type EscrowRow = {
 	selected: boolean;
 };
 
-const data: EscrowRow[] = [
-	{
-		date: '02/02/22',
-		time: '2D:1H:32M',
-		vestable: 0.2,
-		amount: 10,
-		fee: 0.2,
-		status: 'VESTED',
-		selected: false,
-	},
-	{
-		date: '02/02/22',
-		time: '2D:1H:32M',
-		vestable: 0.2,
-		amount: 10,
-		fee: 0.2,
-		status: 'VESTING',
-		selected: false,
-	},
-	{
-		date: '02/02/22',
-		time: '2D:1H:32M',
-		vestable: 0.2,
-		amount: 10,
-		fee: 0.2,
-		status: 'VESTING',
-		selected: false,
-	},
-	{
-		date: '02/02/22',
-		time: '2D:1H:32M',
-		vestable: 0.2,
-		amount: 10,
-		fee: 0.2,
-		status: 'VESTING',
-		selected: false,
-	},
-];
+const rewardEscrowContract = {
+	addressOrName: '0xaFD87d1a62260bD5714C55a1BB4057bDc8dFA413',
+	contractInterface: rewardEscrowABI,
+};
+
+let data: EscrowRow[] = [];
 
 const EscrowTable = () => {
 	const { t } = useTranslation();
+	const { walletAddress } = Connector.useContainer();
+	data = [];
+	const { data: vestingSchedules, isSuccess } = useContractReads({
+		contracts: [
+			{
+				...rewardEscrowContract,
+				functionName: 'getVestingSchedules',
+				args: [walletAddress ?? undefined, 0, 1000],
+			},
+		],
+		cacheOnBlock: true,
+		onError(error) {
+			if (error) logError(error);
+		},
+	});
+
+	const vestingRecords = isSuccess && vestingSchedules !== undefined ? vestingSchedules[0] : [];
+
+	vestingRecords.forEach((d) => {
+		data.push({
+			date: moment(Number(d.endTime) * 1000).format('MM/DD/YY'),
+			time: moment(Number(d.endTime) * 1000).fromNow(),
+			vestable: d.endTime * 1000 > Date.now() ? 0 : Number(d.escrowAmount / 1e18),
+			amount: Number(d.escrowAmount / 1e18),
+			fee: d.endTime * 1000 > Date.now() ? Number(d.escrowAmount / 1e18) : 0,
+			status: d.endTime * 1000 > Date.now() ? 'VESTING' : 'VESTED',
+			selected: false,
+		});
+	});
+
 	const [, setCheckedState] = useState(data.map((d) => d.selected));
 	const handleOnChange = (position: number) => {
 		data[position].selected = !data[position].selected;
@@ -73,9 +76,9 @@ const EscrowTable = () => {
 		setCheckedState(data.map((d) => d.selected));
 	};
 
-	const totalAmount = data
+	const totalVestable = data
 		.filter((d) => d.selected)
-		.reduce((acc, current) => acc + current.amount, 0);
+		.reduce((acc, current) => acc + current.vestable, 0);
 
 	const totalFee = data.filter((d) => d.selected).reduce((acc, current) => acc + current.fee, 0);
 
@@ -250,7 +253,7 @@ const EscrowTable = () => {
 					<div>
 						<div className="stat-title">{t('dashboard.stake.tabs.escrow.total')}</div>
 						<div className="stat-value">
-							{totalAmount.toFixed(2)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
+							{totalVestable.toFixed(2)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
 						</div>
 					</div>
 					<div>
