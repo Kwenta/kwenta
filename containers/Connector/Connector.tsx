@@ -1,36 +1,16 @@
 import { NetworkId, synthetix } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
 import { keyBy } from 'lodash';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { sdk } from 'state/store';
 import { createContainer } from 'unstated-next';
 import { chain, useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
 
 const useConnector = () => {
 	const { chain: activeChain } = useNetwork();
-	const { address, isConnected: isWalletConnected } = useAccount({
-		async onConnect({ address, connector }) {
-			const networkId = await connector?.getChainId();
-			const signer = await connector?.getSigner();
-			const provider = await connector?.getProvider();
+	const { address, isConnected: isWalletConnected } = useAccount();
 
-			sdk.setProvider(provider);
-			sdk.setSigner(signer);
-
-			if (networkId) {
-				sdk.setNetworkId(networkId as NetworkId);
-			}
-
-			if (address) {
-				sdk.setWalletAddress(address);
-			}
-		},
-	});
-
-	const unsupportedNetwork = useMemo(
-		() => (isWalletConnected ? activeChain?.unsupported ?? false : false),
-		[activeChain, isWalletConnected]
-	);
+	const unsupportedNetwork = useMemo(() => activeChain?.unsupported ?? false, [activeChain]);
 
 	const network = useMemo(
 		() => (activeChain?.unsupported ? chain.optimism : activeChain ?? chain.optimism),
@@ -54,6 +34,14 @@ const useConnector = () => {
 		() => synthetix({ provider: l2Provider, networkId: chain.optimism.id as NetworkId }),
 		[l2Provider]
 	);
+
+	useEffect(() => {
+		sdk.setProvider(provider);
+		sdk.setNetworkId(network.id as NetworkId);
+
+		if (signer) sdk.setSigner(signer);
+		if (address) sdk.setWalletAddress(address);
+	}, [network, signer, address, provider]);
 
 	const [synthsMap, tokensMap] = useMemo(() => {
 		if (defaultSynthetixjs == null) return [{}, {}];

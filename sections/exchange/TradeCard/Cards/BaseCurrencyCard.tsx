@@ -46,7 +46,7 @@ const BaseCurrencyCard: FC = memo(() => {
 			priceRate={basePriceRate}
 			label={t('exchange.common.into')}
 			slippagePercent={slippagePercent}
-			isLoading={txProvider === '1inch'} // oneInchQuoteQuery.isFetching
+			isLoading={txProvider === '1inch'} // && oneInchQuoteQuery.isFetching
 		/>
 	);
 });

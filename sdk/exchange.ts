@@ -7,6 +7,7 @@ import axios from 'axios';
 import { Provider as EthCallProvider, Contract as EthCallContract } from 'ethcall';
 import { BigNumber, ethers, Signer } from 'ethers';
 import { get, keyBy, omit } from 'lodash';
+import KwentaSDK from 'sdk';
 
 import { KWENTA_REFERRAL_ADDRESS, SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
 import {
@@ -39,7 +40,6 @@ import { zeroBN } from 'utils/formatters/number';
 import { FuturesMarketKey, MarketAssetByKey } from 'utils/futures';
 import { getTransactionPrice, normalizeGasLimit } from 'utils/network';
 
-import { getSynthBalances } from './common/balances';
 import { computeGasFee, getGasPriceFromProvider, getL1SecurityFee, MetaTx } from './common/gas';
 import type { ContractMap } from './contracts';
 import SynthRedeemerABI from './contracts/abis/SynthRedeemer.json';
@@ -84,8 +84,10 @@ export default class ExchangeService {
 	private tokenList: Token[] = [];
 	private allTokensMap: any;
 	private walletAddress?: string;
+	private sdk: KwentaSDK;
 
 	constructor(
+		sdk: KwentaSDK,
 		networkId: NetworkId,
 		provider: ethers.providers.Provider,
 		contracts: ContractMap,
@@ -93,6 +95,7 @@ export default class ExchangeService {
 		signer?: Signer,
 		walletAddress?: string
 	) {
+		this.sdk = sdk;
 		this.networkId = networkId;
 		this.signer = signer;
 		this.provider = provider;
@@ -258,7 +261,7 @@ export default class ExchangeService {
 		}
 
 		const isETH = this.isCurrencyETH(currencyKey);
-		const synthsWalletBalance = await getSynthBalances(this.walletAddress, this.contracts);
+		const synthsWalletBalance = await this.sdk.synths.getSynthBalances(this.walletAddress);
 		const token = this.tokenList.find((t) => t.symbol === currencyKey);
 		const tokenBalances = token ? await this.getTokensBalances([token]) : undefined;
 

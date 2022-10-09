@@ -1,7 +1,5 @@
 import { NetworkId, NetworkNameById } from '@synthetixio/contracts-interface';
 
-import { booleanTypeGuard } from '../contracts';
-
 export type SynthSymbol =
 	| 'sAAVE'
 	| 'sADA'
@@ -193,27 +191,22 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 // 10 - 0x8700dAec35aF8Ff88c16BdF0418774CB3D7599B4
 // 420 - 0x2E5ED97596a8368EB9E44B1f3F25B2E813845303
 
-const synthsByNetwork = (id: NetworkId): Partial<SynthsMap> =>
-	Object.fromEntries(
-		Object.entries(synths)
-			.map(([symbol, config]) => {
-				if (config.addresses[id]) {
-					return [
-						symbol,
-						{
-							symbol,
-							asset: config.asset,
-							name: config.name,
-							address: config.addresses[id],
-							decimals: 18,
-						},
-					];
-				} else {
-					return null;
-				}
-			})
-			.filter(booleanTypeGuard)
-	);
+const synthsByNetwork = (id: NetworkId) =>
+	Object.entries(synths).reduce((acc, [symbol, config]) => {
+		const address = config.addresses[id];
+
+		if (address) {
+			acc[symbol as SynthSymbol] = {
+				symbol: symbol as SynthSymbol,
+				asset: config.asset,
+				name: config.name,
+				address,
+				decimals: 18,
+			};
+		}
+
+		return acc;
+	}, {} as Partial<SynthsMap>);
 
 const mainnetSynths = synthsByNetwork(1);
 const optimismSynths = synthsByNetwork(10);

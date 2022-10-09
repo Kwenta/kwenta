@@ -100,14 +100,11 @@ export const contracts: AllContractsMap = {
 	},
 };
 
-export const booleanTypeGuard = <T>(x: T | null): x is T => Boolean(x);
-
-const contractsByNetwork = (id: NetworkId): ContractMap =>
-	Object.fromEntries(
-		Object.entries(contracts)
-			.map(([name, config]) => (config[id] ? [name, config[id]] : null))
-			.filter(booleanTypeGuard)
-	);
+const contractsByNetwork = (id: NetworkId) =>
+	Object.entries(contracts).reduce((acc, [name, config]) => {
+		if (config[id]) acc[name as ContractName] = config[id];
+		return acc;
+	}, {} as ContractMap);
 
 const mainnetContracts = contractsByNetwork(1);
 const optimismContracts = contractsByNetwork(10);

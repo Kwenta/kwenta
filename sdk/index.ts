@@ -33,6 +33,7 @@ export default class KwentaSDK {
 		this.walletAddress = walletAddress;
 
 		this.exchange = new ExchangeService(
+			this,
 			networkId,
 			this.provider,
 			this.contracts,
@@ -57,6 +58,7 @@ export default class KwentaSDK {
 		this.contracts = getContractsByNetwork(networkId);
 
 		this.exchange = new ExchangeService(
+			this,
 			networkId,
 			this.provider,
 			this.contracts,
