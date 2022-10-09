@@ -19,7 +19,7 @@ import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
 import TxApproveModal from 'sections/shared/modals/TxApproveModal';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-import { baseCurrencyKeyState, quoteCurrencyKeyState, txErrorState } from 'store/exchange';
+import { txErrorState } from 'store/exchange';
 import { NoTextTransform } from 'styles/common';
 
 import SettleTransactionsCard from '../../FooterCard/SettleTransactionsCard';
@@ -29,12 +29,7 @@ const FooterCard: FC = memo(() => {
 	const { isWalletConnected } = Connector.useContainer();
 	const isL2 = useIsL2();
 
-	const quoteCurrencyKey = useRecoilValue(quoteCurrencyKeyState);
-	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
 	const txError = useRecoilValue(txErrorState);
-
-	const quoteCurrencyMarketClosed = useMarketClosed(quoteCurrencyKey);
-	const baseCurrencyMarketClosed = useMarketClosed(baseCurrencyKey);
 
 	const {
 		showNoSynthsCard,
@@ -47,18 +42,25 @@ const FooterCard: FC = memo(() => {
 	} = useExchangeContext();
 
 	const {
+		quoteCurrencyKey,
+		baseCurrencyKey,
 		needsApproval,
 		redeemableSynthBalances,
 		totalRedeemableBalance,
 		numEntries,
 		estimatedBaseTradePrice,
 	} = useAppSelector(({ exchange }) => ({
+		quoteCurrencyKey: exchange.quoteCurrencyKey,
+		baseCurrencyKey: exchange.baseCurrencyKey,
 		needsApproval: exchange.needsApproval,
 		redeemableSynthBalances: exchange.redeemableSynthBalances,
 		totalRedeemableBalance: exchange.totalRedeemableBalance,
 		numEntries: exchange.numEntries,
 		estimatedBaseTradePrice: exchange.estimatedBaseTradePrice,
 	}));
+
+	const quoteCurrencyMarketClosed = useMarketClosed(quoteCurrencyKey ?? null);
+	const baseCurrencyMarketClosed = useMarketClosed(baseCurrencyKey ?? null);
 
 	const noSynths = useAppSelector(selectNoSynths);
 

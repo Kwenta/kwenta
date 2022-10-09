@@ -146,19 +146,14 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 
 	const onBaseCurrencyChange = useCallback(
 		(currencyKey: string) => {
-			// setQuoteCurrencyAmount('');
+			dispatch(setQuoteAmount({ quoteAmount: '' }));
 
 			dispatch(
 				setCurrencyPair({
 					baseCurrencyKey: currencyKey,
-					quote: quoteCurrencyKey === currencyKey ? null : quoteCurrencyKey,
+					quoteCurrencyKey: quoteCurrencyKey === currencyKey ? null : quoteCurrencyKey,
 				})
 			);
-
-			// setCurrencyPair((pair) => ({
-			// 	base: currencyKey as CurrencyKey,
-			// 	quote: pair.quote === currencyKey ? null : pair.quote,
-			// }));
 
 			if (!!quoteCurrencyKey && quoteCurrencyKey !== currencyKey) {
 				routeToMarketPair(currencyKey, quoteCurrencyKey);
@@ -179,7 +174,7 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 
 	const onQuoteCurrencyChange = useCallback(
 		(currencyKey: string) => {
-			// setBaseCurrencyAmount('');
+			dispatch(setBaseAmount({ baseAmount: '' }));
 
 			dispatch(
 				setCurrencyPair({

@@ -41,7 +41,7 @@ const exchangeSlice = createSlice({
 		setBaseAmount: (state, action) => {
 			state.ratio = undefined;
 
-			if (action.payload.quoteAmount === '') {
+			if (action.payload.baseAmount === '') {
 				state.baseAmount = '';
 				state.quoteAmount = '';
 			} else {

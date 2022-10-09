@@ -14,7 +14,7 @@ type CurrencyCardSelectorProps = {
 	tokenName: string | null;
 	hasCurrencySelectCallback: boolean;
 	onCurrencySelect?: () => void;
-	currencyKey: string | null;
+	currencyKey?: string;
 	disableInput: boolean;
 	hasWalletBalance: boolean;
 	onBalanceClick(): void;

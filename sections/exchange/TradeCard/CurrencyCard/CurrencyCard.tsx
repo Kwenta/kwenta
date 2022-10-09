@@ -14,7 +14,7 @@ import CurrencyCardSelector from './CurrencyCardSelector';
 
 type CurrencyCardProps = {
 	side: Side;
-	currencyKey: string | null;
+	currencyKey?: string;
 	currencyName?: string;
 	amount: string;
 	onAmountChange: (value: string) => void;

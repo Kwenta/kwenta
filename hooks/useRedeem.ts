@@ -1,10 +1,9 @@
-import useSynthetixQueries from '@synthetixio/queries';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSetRecoilState } from 'recoil';
+import { submitRedeem } from 'state/exchange/actions';
+import { useAppDispatch } from 'state/store';
 
-import Connector from 'containers/Connector';
-import TransactionNotifier from 'containers/TransactionNotifier';
 import { useExchangeContext } from 'contexts/ExchangeContext';
 import { txErrorState } from 'store/exchange';
 import { hexToAsciiV2 } from 'utils/formatters/string';
@@ -12,57 +11,38 @@ import logError from 'utils/logError';
 
 const useRedeem = () => {
 	const setTxError = useSetRecoilState(txErrorState);
-	const {
-		useSynthetixTxn,
-		useSynthsBalancesQuery,
-		useRedeemableDeprecatedSynthsQuery,
-	} = useSynthetixQueries();
 	const { setOpenModal } = useExchangeContext();
 	const { t } = useTranslation();
-	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { walletAddress } = Connector.useContainer();
+	const dispatch = useAppDispatch();
 
-	const redeemableDeprecatedSynthsQuery = useRedeemableDeprecatedSynthsQuery(walletAddress);
-	const redeemableDeprecatedSynths = redeemableDeprecatedSynthsQuery.data ?? null;
+	// useEffect(() => {
+	// 	if (redeemTxn.hash) {
+	// 		monitorTransaction({
+	// 			txHash: redeemTxn.hash,
+	// 			onTxConfirmed: () => {
+	// 				setOpenModal(undefined);
+	// 				redeemableDeprecatedSynthsQuery.refetch();
+	// 				synthsWalletBalancesQuery.refetch();
+	// 			},
+	// 		});
+	// 	}
 
-	const synthsWalletBalancesQuery = useSynthsBalancesQuery(walletAddress);
-
-	const redeemTxn = useSynthetixTxn(
-		'SynthRedeemer',
-		'redeemAll',
-		[redeemableDeprecatedSynths?.balances.map((b) => b.proxyAddress)],
-		undefined,
-		{ enabled: !!redeemableDeprecatedSynths?.totalUSDBalance.gt(0) }
-	);
-
-	useEffect(() => {
-		if (redeemTxn.hash) {
-			monitorTransaction({
-				txHash: redeemTxn.hash,
-				onTxConfirmed: () => {
-					setOpenModal(undefined);
-					redeemableDeprecatedSynthsQuery.refetch();
-					synthsWalletBalancesQuery.refetch();
-				},
-			});
-		}
-
-		// eslint-disable-next-line
-	}, [redeemTxn.hash]);
+	// 	// eslint-disable-next-line
+	// }, [redeemTxn.hash]);
 
 	const handleRedeem = useCallback(async () => {
 		setTxError(null);
 		setOpenModal('redeem');
 
 		try {
-			await redeemTxn.mutateAsync();
+			dispatch(submitRedeem());
 		} catch (e) {
 			logError(e);
 			setTxError(
 				e.data ? t('common.transaction.revert-reason', { reason: hexToAsciiV2(e.data) }) : e.message
 			);
 		}
-	}, [redeemTxn, setOpenModal, setTxError, t]);
+	}, [dispatch, setOpenModal, setTxError, t]);
 
 	return { handleRedeem };
 };
