@@ -37,11 +37,23 @@ const useConnector = () => {
 
 	useEffect(() => {
 		sdk.setProvider(provider);
-		sdk.setNetworkId(network.id as NetworkId);
+	}, [provider]);
 
-		if (signer) sdk.setSigner(signer);
-		if (address) sdk.setWalletAddress(address);
-	}, [network, signer, address, provider]);
+	useEffect(() => {
+		sdk.setNetworkId(network.id as NetworkId);
+	}, [network.id]);
+
+	useEffect(() => {
+		if (signer) {
+			sdk.setSigner(signer);
+		}
+	}, [signer]);
+
+	useEffect(() => {
+		if (address) {
+			sdk.setWalletAddress(address);
+		}
+	}, [address]);
 
 	const [synthsMap, tokensMap] = useMemo(() => {
 		if (defaultSynthetixjs == null) return [{}, {}];
