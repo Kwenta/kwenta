@@ -922,7 +922,7 @@ export default class ExchangeService {
 		}
 	}
 
-	private async getQuotePriceRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
+	public async getQuotePriceRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
 		const isQuoteCurrencyETH = this.isCurrencyETH(quoteCurrencyKey);
 
@@ -959,7 +959,7 @@ export default class ExchangeService {
 		}
 	}
 
-	private async getBasePriceRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
+	public async getBasePriceRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
 		const isBaseCurrencyETH = this.isCurrencyETH(quoteCurrencyKey);
 

@@ -166,17 +166,26 @@ export const fetchRates = createAsyncThunk<any, void, ThunkConfig>(
 				quoteCurrencyKey,
 				baseCurrencyKey
 			);
+			const quotePriceRate = await sdk.exchange.getQuotePriceRate(
+				baseCurrencyKey,
+				quoteCurrencyKey
+			);
+			const basePriceRate = await sdk.exchange.getBasePriceRate(baseCurrencyKey, quoteCurrencyKey);
 
 			return {
 				baseFeeRate: baseFeeRate.toString(),
 				rate: rate.toString(),
 				exchangeFeeRate: exchangeFeeRate.toString(),
+				quotePriceRate: quotePriceRate.toString(),
+				basePriceRate: basePriceRate.toString(),
 			};
 		} else {
 			return {
 				baseFeeRate: undefined,
 				rate: undefined,
 				exchangeFeeRate: undefined,
+				quotePriceRate: undefined,
+				basePriceRate: undefined,
 			};
 		}
 	}

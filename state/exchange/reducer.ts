@@ -180,6 +180,8 @@ const exchangeSlice = createSlice({
 			state.rate = action.payload.rate;
 			state.exchangeFeeRate = action.payload.exchangeFeeRate;
 			state.baseFeeRate = action.payload.baseFeeRate;
+			state.quotePriceRate = action.payload.quotePriceRate;
+			state.basePriceRate = action.payload.basePriceRate;
 		});
 		builder.addCase(fetchTxProvider.fulfilled, (state, action) => {
 			state.txProvider = action.payload;

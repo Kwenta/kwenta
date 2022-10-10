@@ -2,7 +2,7 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { useRouter } from 'next/router';
 import { useState, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { fetchRates, submitExchange } from 'state/exchange/actions';
+import { fetchRates, fetchTxProvider, submitExchange } from 'state/exchange/actions';
 import {
 	setBaseAmount,
 	setBaseCurrencyKey,
@@ -154,6 +154,7 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 			}
 
 			dispatch(fetchRates());
+			dispatch(fetchTxProvider());
 		},
 		[quoteCurrencyKey, routeToBaseCurrency, routeToMarketPair, dispatch]
 	);
@@ -167,6 +168,7 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 			}
 
 			dispatch(fetchRates());
+			dispatch(fetchTxProvider());
 		},
 		[baseCurrencyKey, routeToMarketPair, dispatch]
 	);
