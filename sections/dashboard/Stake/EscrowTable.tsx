@@ -1,5 +1,6 @@
 import moment from 'moment';
 import { useMemo, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
@@ -17,13 +18,13 @@ import logError from 'utils/logError';
 import { StakingCard } from './common';
 
 type EscrowRow = {
+	id: number;
 	date: string;
 	time: string;
 	vestable: number;
 	amount: number;
 	fee: number;
 	status: 'VESTED' | 'VESTING';
-	selected: boolean;
 };
 
 const rewardEscrowContract = {
@@ -36,8 +37,11 @@ let data: EscrowRow[] = [];
 const EscrowTable = () => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
+	const [checkedState, setCheckedState] = useState(new Array(data.length).fill(false));
+	const [checkAllState, setCheckAllState] = useState(false);
+
 	data = [];
-	const { data: vestingSchedules, isSuccess } = useContractReads({
+	const { data: vestingSchedules, isSuccess: vestingSchedulesIsSuccess } = useContractReads({
 		contracts: [
 			{
 				...rewardEscrowContract,
@@ -52,37 +56,52 @@ const EscrowTable = () => {
 		},
 	});
 
-	const vestingRecords = isSuccess && vestingSchedules !== undefined ? vestingSchedules[0] : [];
+	const vestingRecords =
+		vestingSchedulesIsSuccess && vestingSchedules !== undefined ? vestingSchedules[0] : [];
 
 	vestingRecords.length > 0 &&
 		vestingRecords.forEach((d) => {
 			data.push({
+				id: Number(d.entryID),
 				date: moment(Number(d.endTime) * 1000).format('MM/DD/YY'),
 				time: moment(Number(d.endTime) * 1000).fromNow(),
 				vestable: d.endTime * 1000 > Date.now() ? 0 : Number(d.escrowAmount / 1e18),
 				amount: Number(d.escrowAmount / 1e18),
 				fee: d.endTime * 1000 > Date.now() ? Number(d.escrowAmount / 1e18) : 0,
 				status: d.endTime * 1000 > Date.now() ? 'VESTING' : 'VESTED',
-				selected: false,
 			});
 		});
 
-	const [, setCheckedState] = useState(data.map((d) => d.selected));
 	const handleOnChange = (position: number) => {
-		data[position].selected = !data[position].selected;
-		setCheckedState(data.map((d) => d.selected));
+		checkedState[position] = !checkedState[position];
+		setCheckedState(checkedState.map((d) => d));
 	};
 
 	const selectAll = () => {
-		data.forEach((d) => (d.selected = !d.selected));
-		setCheckedState(data.map((d) => d.selected));
+		if (checkAllState) {
+			setCheckedState(new Array(data.length).fill(false));
+			setCheckAllState(false);
+		} else {
+			setCheckedState(new Array(data.length).fill(true));
+			setCheckAllState(true);
+		}
 	};
 
-	const totalVestable = data
-		.filter((d) => d.selected)
-		.reduce((acc, current) => acc + current.vestable, 0);
+	const columnsDeps = React.useMemo(() => [checkedState], [checkedState]);
 
-	const totalFee = data.filter((d) => d.selected).reduce((acc, current) => acc + current.fee, 0);
+	const totalVestable = checkedState.reduce((acc, current, index) => {
+		if (current === true) {
+			return acc + data[index]?.vestable ?? 0;
+		}
+		return acc;
+	}, 0);
+
+	const totalFee = checkedState.reduce((acc, current, index) => {
+		if (current === true) {
+			return acc + data[index]?.fee ?? 0;
+		}
+		return acc;
+	}, 0);
 
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
@@ -92,14 +111,17 @@ const EscrowTable = () => {
 			<DesktopOnlyView>
 				<StyledTable
 					data={data}
+					columnsDeps={columnsDeps}
 					columns={[
 						{
-							Header: () => <input type="checkbox" onChange={() => selectAll()} />,
+							Header: () => (
+								<input type="checkbox" checked={checkAllState} onChange={() => selectAll()} />
+							),
 							Cell: (cellProps: CellProps<EscrowRow>) => (
 								<input
 									key={cellProps.row.index}
 									type="checkbox"
-									checked={data[cellProps.row.index].selected}
+									checked={checkedState[cellProps.row.index]}
 									onChange={() => handleOnChange(cellProps.row.index)}
 								/>
 							),
@@ -192,14 +214,17 @@ const EscrowTable = () => {
 			<MobileOrTabletView>
 				<StyledTable
 					data={data}
+					columnsDeps={columnsDeps}
 					columns={[
 						{
-							Header: () => <input type="checkbox" onChange={() => selectAll()} />,
+							Header: () => (
+								<input type="checkbox" checked={checkAllState} onChange={() => selectAll()} />
+							),
 							Cell: (cellProps: CellProps<EscrowRow>) => (
 								<input
 									key={cellProps.row.index}
 									type="checkbox"
-									checked={data[cellProps.row.index].selected}
+									checked={checkedState[cellProps.row.index]}
 									onChange={() => handleOnChange(cellProps.row.index)}
 								/>
 							),

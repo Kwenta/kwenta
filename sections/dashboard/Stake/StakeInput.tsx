@@ -28,11 +28,7 @@ const StakeInput: FC<StakeInputProps> = ({ label }) => {
 		cacheOnBlock: true,
 		onSettled(data, error) {
 			if (error) logError(error);
-			if (data) {
-				setAmount(Number(wei(data ?? zeroBN)).toFixed(4));
-			} else {
-				setAmount('0');
-			}
+			setAmount(Number(wei(data ?? zeroBN)).toFixed(4));
 		},
 	});
 
