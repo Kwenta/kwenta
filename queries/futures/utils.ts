@@ -427,10 +427,12 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 			pnl,
 			feesPaid,
 			orderType,
+			accountType,
 		}: FuturesTradeResult) => {
 			return {
+				asset,
+				accountType,
 				size: new Wei(size, 18, true),
-				asset: asset,
 				price: new Wei(price, 18, true),
 				txnHash: id.split('-')[0].toString(),
 				timestamp: timestamp,

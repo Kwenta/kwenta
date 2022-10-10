@@ -191,6 +191,7 @@ export type FuturesTrade = {
 	pnl: Wei;
 	feesPaid: Wei;
 	orderType: FuturesOrderTypeMapped;
+	accountType: FuturesAccountType;
 };
 
 export type FuturesOrder = {

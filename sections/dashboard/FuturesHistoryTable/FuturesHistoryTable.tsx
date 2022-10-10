@@ -9,6 +9,7 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Currency from 'components/Currency';
+import FuturesIcon from 'components/Nav/FuturesIcon';
 import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
@@ -119,6 +120,7 @@ const FuturesHistoryTable: FC = () => {
 												/>
 											</IconContainer>
 											<StyledText>{cellProps.row.original.market}</StyledText>
+											<StyledFuturesIcon type={cellProps.row.original.accountType} />
 										</>
 									)}
 								</SynthContainer>
@@ -241,10 +243,6 @@ const StyledTable = styled(Table)`
 `;
 
 const StyledText = styled.div`
-	display: flex;
-	align-items: center;
-	grid-column: 2;
-	grid-row: 1;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 const SynthContainer = styled.div`
@@ -263,6 +261,10 @@ const PNL = styled.div<{ negative?: boolean; normal?: boolean }>`
 			: props.negative
 			? props.theme.colors.selectedTheme.red
 			: props.theme.colors.selectedTheme.green};
+`;
+
+const StyledFuturesIcon = styled(FuturesIcon)`
+	margin-left: 5px;
 `;
 
 export default FuturesHistoryTable;
