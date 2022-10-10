@@ -31,12 +31,12 @@ export default function useGetCrossMarginAccountOverview() {
 			crossMarginAccountContract?.address || ''
 		),
 		async () => {
-			if (!crossMarginAddress || !crossMarginAccountContract || !crossMarginBaseSettings) {
+			if (!crossMarginAddress || !crossMarginAccountContract) {
 				setAccountOverview({
 					freeMargin: zeroBN,
 					keeperEthBal: zeroBN,
 				});
-				return { freeMargin: zeroBN, keeperEthBal: zeroBN };
+				return;
 			}
 
 			Promise.all([
@@ -65,6 +65,7 @@ export default function useGetCrossMarginAccountOverview() {
 					setCrossMarginSettings(settings);
 				})
 				.catch((err) => logError(err));
+			return;
 		}
 	);
 }
