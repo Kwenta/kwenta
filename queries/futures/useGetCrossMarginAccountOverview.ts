@@ -36,7 +36,7 @@ export default function useGetCrossMarginAccountOverview() {
 					freeMargin: zeroBN,
 					keeperEthBal: zeroBN,
 				});
-				return { freeMargin: zeroBN, keeperEthBal: zeroBN };
+				return;
 			}
 
 			try {
@@ -64,13 +64,10 @@ export default function useGetCrossMarginAccountOverview() {
 					keeperEthBal: wei(keeperEthBal),
 				});
 
-				return { freeMargin: wei(freeMargin), settings: crossMarginSettings, keeperEthBal };
+				return;
 			} catch (err) {
 				logError(err);
 			}
-		},
-		{
-			enabled: !!crossMarginAddress,
 		}
 	);
 }

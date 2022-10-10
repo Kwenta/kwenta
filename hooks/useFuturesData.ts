@@ -28,7 +28,6 @@ import {
 	FuturesTradeInputs,
 	FuturesAccountType,
 } from 'queries/futures/types';
-import useGetCrossMarginAccountOverview from 'queries/futures/useGetCrossMarginAccountOverview';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import {
@@ -52,6 +51,7 @@ import {
 	orderFeeCapState,
 	isAdvancedOrderState,
 	aboveMaxLeverageState,
+	crossMarginAccountOverviewState,
 } from 'store/futures';
 import { zeroBN, floorNumber, weiToString } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
@@ -84,7 +84,7 @@ const useFuturesData = () => {
 	const { useSynthetixTxn } = useSynthetixQueries();
 
 	const getPotentialTrade = useGetFuturesPotentialTradeDetails();
-	const crossMarginAccountOverview = useGetCrossMarginAccountOverview();
+	const crossMarginAccountOverview = useRecoilValue(crossMarginAccountOverviewState);
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { handleRefetch, refetchUntilUpdate } = useRefetchContext();
@@ -125,10 +125,8 @@ const useFuturesData = () => {
 	]);
 
 	const crossMarginAccount = useMemo(() => {
-		return crossMarginAvailable
-			? { freeMargin: crossMarginAccountOverview.data?.freeMargin }
-			: null;
-	}, [crossMarginAccountOverview.data?.freeMargin, crossMarginAvailable]);
+		return crossMarginAvailable ? { freeMargin: crossMarginAccountOverview.freeMargin } : null;
+	}, [crossMarginAccountOverview.freeMargin, crossMarginAvailable]);
 
 	const selectedLeverage = useMemo(() => {
 		const effectiveLeverage = position?.position?.leverage.toString() || '';
