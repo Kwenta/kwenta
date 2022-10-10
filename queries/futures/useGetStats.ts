@@ -28,9 +28,6 @@ const useGetStats = (homepage?: boolean, options?: UseQueryOptions<any>) => {
 					futuresEndpoint,
 					{
 						first: 1000,
-						where: {
-							totalTrades_gte: 8,
-						},
 						orderBy: 'pnlWithFeesPaid',
 						orderDirection: 'desc',
 					},
