@@ -4,7 +4,7 @@ import {
 	selectBaseBalanceWei,
 	selectBaseCurrencyName,
 	selectBasePriceRateWei,
-	selectSlippagePercent,
+	selectSlippagePercentWei,
 } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/store';
 
@@ -27,7 +27,7 @@ const BaseCurrencyCard: FC = memo(() => {
 	const basePriceRate = useAppSelector(selectBasePriceRateWei);
 
 	const baseCurrencyName = useAppSelector(selectBaseCurrencyName);
-	const slippagePercent = useAppSelector(selectSlippagePercent);
+	const slippagePercent = useAppSelector(selectSlippagePercentWei);
 
 	const openBaseModal = useCallback(() => setOpenModal('base-select'), [setOpenModal]);
 

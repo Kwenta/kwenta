@@ -987,7 +987,7 @@ export default class ExchangeService {
 				return wei(0);
 			}
 		} else {
-			return newGetExchangeRatesForCurrencies(exchangeRates, quoteCurrencyKey, 'sUSD');
+			return newGetExchangeRatesForCurrencies(exchangeRates, baseCurrencyKey, 'sUSD');
 		}
 	}
 

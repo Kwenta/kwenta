@@ -5,8 +5,8 @@ import { RootState, sdk } from 'state/store';
 
 import { zeroBN } from 'utils/formatters/number';
 
-export const toWei = (value?: string | null) => {
-	return !!value ? wei(value) : zeroBN;
+export const toWei = (value?: string | null, p?: number) => {
+	return !!value ? wei(value, p) : zeroBN;
 };
 
 export const selectQuoteAmountWei = createSelector(
@@ -87,17 +87,17 @@ export const selectTotalRedeemableBalanceWei = createSelector(
 	(totalRedeemableBalance) => toWei(totalRedeemableBalance)
 );
 
-export const selectBaseTradePriceEstimate = createSelector(
+export const selectBaseTradePriceEstimateWei = createSelector(
 	(state: RootState) => state.exchange.estimatedBaseTradePrice,
 	(estimatedBaseTradePrice) => toWei(estimatedBaseTradePrice)
 );
 
-export const selectExchangeFeeRate = createSelector(
+export const selectExchangeFeeRateWei = createSelector(
 	(state: RootState) => state.exchange.exchangeFeeRate,
 	(exchangeFeeRate) => toWei(exchangeFeeRate)
 );
 
-export const selectSlippagePercent = createSelector(
+export const selectSlippagePercentWei = createSelector(
 	(state: RootState) => state.exchange.slippagePercent,
 	(slippagePercent) => toWei(slippagePercent)
 );
@@ -110,4 +110,9 @@ export const selectTransactionFeeWei = createSelector(
 export const selectFeeCostWei = createSelector(
 	(state: RootState) => state.exchange.feeCost,
 	(feeCost) => toWei(feeCost)
+);
+
+export const selectBaseFeeRateWei = createSelector(
+	(state: RootState) => state.exchange.baseFeeRate,
+	(baseFeeRate) => toWei(baseFeeRate)
 );

@@ -1,6 +1,6 @@
-import { wei } from '@synthetixio/wei';
 import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { selectExchangeFeeRateWei, selectBaseFeeRateWei } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/store';
 import styled from 'styled-components';
 
@@ -14,10 +14,8 @@ import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
 const FeeRateSummaryItem: FC = memo(() => {
 	const { t } = useTranslation();
 
-	const { exchangeFeeRate, baseFeeRate } = useAppSelector(({ exchange }) => ({
-		exchangeFeeRate: exchange.exchangeFeeRate,
-		baseFeeRate: exchange.baseFeeRate,
-	}));
+	const exchangeFeeRate = useAppSelector(selectExchangeFeeRateWei);
+	const baseFeeRate = useAppSelector(selectBaseFeeRateWei);
 
 	return (
 		<SummaryItem>
@@ -25,14 +23,14 @@ const FeeRateSummaryItem: FC = memo(() => {
 			<SummaryItemValue>
 				<FeeRateItem data-testid="exchange-fee-rate">
 					<span>
-						{baseFeeRate != null
+						{!!baseFeeRate
 							? formatPercent(baseFeeRate, { minDecimals: 2 })
 							: !!exchangeFeeRate
-							? formatPercent(wei(exchangeFeeRate), { minDecimals: 2 })
+							? formatPercent(exchangeFeeRate, { minDecimals: 2 })
 							: NO_VALUE}
 					</span>
-					{!!exchangeFeeRate != null && baseFeeRate != null ? (
-						wei(exchangeFeeRate).sub(baseFeeRate).gt(0) ? (
+					{!!exchangeFeeRate && !!baseFeeRate ? (
+						exchangeFeeRate.sub(baseFeeRate).gt(0) ? (
 							<>
 								<DynamicFeeLabel>+</DynamicFeeLabel>
 								<CustomStyledTooltip
@@ -41,7 +39,9 @@ const FeeRateSummaryItem: FC = memo(() => {
 								>
 									<DynamicFeeRateItem>
 										<span>
-											{formatPercent(wei(exchangeFeeRate).sub(baseFeeRate), { minDecimals: 2 })}
+											{formatPercent(exchangeFeeRate.sub(baseFeeRate), {
+												minDecimals: 2,
+											})}
 										</span>
 										<TimerIcon />
 									</DynamicFeeRateItem>

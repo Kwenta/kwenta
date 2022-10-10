@@ -1,7 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { wei } from '@synthetixio/wei';
 import KwentaSDK from 'sdk';
 import { AppDispatch, RootState } from 'state/store';
 
+import { ETH_UNIT } from 'constants/network';
 import logError from 'utils/logError';
 
 type ThunkConfig = {
@@ -173,9 +175,9 @@ export const fetchRates = createAsyncThunk<any, void, ThunkConfig>(
 			const basePriceRate = await sdk.exchange.getBasePriceRate(baseCurrencyKey, quoteCurrencyKey);
 
 			return {
-				baseFeeRate: baseFeeRate.toString(),
+				baseFeeRate: wei(baseFeeRate.toString()).div(ETH_UNIT).toString(),
 				rate: rate.toString(),
-				exchangeFeeRate: exchangeFeeRate.toString(),
+				exchangeFeeRate: wei(exchangeFeeRate.toString()).div(ETH_UNIT).toString(),
 				quotePriceRate: quotePriceRate.toString(),
 				basePriceRate: basePriceRate.toString(),
 			};

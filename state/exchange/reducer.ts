@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
 
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
+import { ETH_UNIT } from 'constants/network';
 import { truncateNumbers } from 'utils/formatters/number';
 
 import {
@@ -102,8 +103,8 @@ const exchangeSlice = createSlice({
 				state.quoteAmount = action.payload.value;
 
 				if (state.txProvider === 'synthetix' && !!state.baseCurrencyKey) {
-					const baseAmountNoFee = wei(action.payload.value).mul(state.rate ?? 0);
-					const fee = baseAmountNoFee.mul(state.exchangeFeeRate ?? 0);
+					const baseAmountNoFee = wei(action.payload.value).mul(wei(state.rate ?? 0));
+					const fee = baseAmountNoFee.mul(wei(state.exchangeFeeRate ?? 0));
 					state.baseAmount = truncateNumbers(baseAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS);
 				}
 			}
@@ -147,7 +148,7 @@ const exchangeSlice = createSlice({
 
 				if (state.txProvider === 'synthetix') {
 					const baseAmountNoFee = wei(state.quoteBalance).mul(state.rate ?? 0);
-					const fee = baseAmountNoFee.mul(state.exchangeFeeRate ?? 0);
+					const fee = baseAmountNoFee.mul(wei(state.exchangeFeeRate ?? 0));
 					state.baseAmount = truncateNumbers(baseAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS);
 				}
 			}
