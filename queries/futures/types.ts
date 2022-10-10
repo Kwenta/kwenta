@@ -196,7 +196,7 @@ export type FuturesTrade = {
 export type FuturesOrder = {
 	id: string;
 	account: string;
-	asset: string;
+	asset: FuturesMarketAsset;
 	market: string;
 	marketKey: FuturesMarketKey;
 	size: Wei;
@@ -210,6 +210,7 @@ export type FuturesOrder = {
 	side?: PositionSide;
 	isStale?: boolean;
 	isExecutable?: boolean;
+	isCancelling?: boolean;
 };
 
 export type FuturesVolumes = {

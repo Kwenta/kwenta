@@ -112,12 +112,19 @@ const OpenOrdersTable: React.FC = () => {
 	}, [cancelNextPriceOrder.hash, executeNextPriceOrder.hash]);
 
 	const rowsData = useMemo(() => {
-		if (!cancelling) return openOrders;
 		const copyOrders = [...openOrders];
+		copyOrders.sort((a, b) => {
+			return b.asset === currencyKey && a.asset !== currencyKey
+				? 1
+				: b.asset === currencyKey && a.asset === currencyKey
+				? 0
+				: -1;
+		});
+		if (!cancelling) return copyOrders;
 		const cancellingIndex = copyOrders.findIndex((o) => o.id === cancelling);
 		copyOrders[cancellingIndex] = { ...copyOrders[cancellingIndex], isCancelling: true };
 		return copyOrders;
-	}, [openOrders, cancelling]);
+	}, [openOrders, currencyKey, cancelling]);
 
 	return (
 		<>
