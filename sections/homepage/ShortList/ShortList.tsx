@@ -442,14 +442,4 @@ const SectionFeatureTitle = styled(FeatureTitle)`
 	`}
 `;
 
-const SectionFeatureCopy = styled(FeatureCopy)`
-	margin-top: 16px;
-	text-align: center;
-	width: 500px;
-	font-size: 18px;
-	${media.lessThan('sm')`
-		width: 100vw;
-	`}
-`;
-
 export default ShortList;
