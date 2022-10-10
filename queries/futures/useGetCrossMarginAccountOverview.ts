@@ -31,7 +31,7 @@ export default function useGetCrossMarginAccountOverview() {
 			crossMarginAccountContract?.address || ''
 		),
 		async () => {
-			if (!crossMarginAddress || !crossMarginAccountContract) {
+			if (!crossMarginAddress || !crossMarginAccountContract || !crossMarginBaseSettings) {
 				setAccountOverview({
 					freeMargin: zeroBN,
 					keeperEthBal: zeroBN,
@@ -64,7 +64,7 @@ export default function useGetCrossMarginAccountOverview() {
 					keeperEthBal: wei(keeperEthBal),
 				});
 
-				return { freeMargin: wei(freeMargin), settings: crossMarginSettings, keeperEthBal };
+				return;
 			} catch (err) {
 				logError(err);
 			}

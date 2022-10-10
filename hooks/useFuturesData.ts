@@ -22,13 +22,7 @@ import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import { KWENTA_TRACKING_CODE, ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
-import {
-	PositionSide,
-	TradeFees,
-	FuturesTradeInputs,
-	FuturesAccountType,
-} from 'queries/futures/types';
-import useGetCrossMarginAccountOverview from 'queries/futures/useGetCrossMarginAccountOverview';
+import { PositionSide, TradeFees, FuturesTradeInputs, FuturesAccountType } from 'queries/futures/types';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import {
@@ -53,6 +47,7 @@ import {
 	isAdvancedOrderState,
 	crossMarginAccountOverviewState,
 	aboveMaxLeverageState,
+	crossMarginAccountOverviewState,
 } from 'store/futures';
 import { zeroBN, floorNumber, weiToString } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
