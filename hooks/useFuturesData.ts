@@ -19,7 +19,6 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { PositionSide, TradeFees, FuturesTradeInputs } from 'queries/futures/types';
-import useGetCrossMarginAccountOverview from 'queries/futures/useGetCrossMarginAccountOverview';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import {
@@ -43,6 +42,7 @@ import {
 	futuresOrderPriceState,
 	orderFeeCapState,
 	isAdvancedOrderState,
+	crossMarginAccountOverviewState,
 } from 'store/futures';
 import { zeroBN, floorNumber, weiToString } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
@@ -77,7 +77,7 @@ const useFuturesData = () => {
 	const { useSynthetixTxn } = useSynthetixQueries();
 
 	const getPotentialTrade = useGetFuturesPotentialTradeDetails();
-	const crossMarginAccountOverview = useGetCrossMarginAccountOverview();
+	const crossMarginAccountOverview = useRecoilValue(crossMarginAccountOverviewState);
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { handleRefetch } = useRefetchContext();
@@ -118,10 +118,8 @@ const useFuturesData = () => {
 	]);
 
 	const crossMarginAccount = useMemo(() => {
-		return crossMarginAvailable
-			? { freeMargin: crossMarginAccountOverview.data?.freeMargin }
-			: null;
-	}, [crossMarginAccountOverview.data?.freeMargin, crossMarginAvailable]);
+		return crossMarginAvailable ? { freeMargin: crossMarginAccountOverview.freeMargin } : null;
+	}, [crossMarginAccountOverview.freeMargin, crossMarginAvailable]);
 
 	const marketMaxLeverage = useMemo(() => {
 		return market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
