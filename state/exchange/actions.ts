@@ -28,11 +28,15 @@ export const fetchBalances = createAsyncThunk<any, void, ThunkConfig>(
 			totalUSDBalance: totalRedeemableBalance,
 		} = await sdk.exchange.getRedeemableDeprecatedSynths();
 
-		return { quoteBalance, baseBalance, redeemableBalances, totalRedeemableBalance };
+		return {
+			quoteBalance: quoteBalance ? quoteBalance.toString() : undefined,
+			baseBalance: baseBalance ? baseBalance.toString() : undefined,
+			redeemableBalances,
+			totalRedeemableBalance: totalRedeemableBalance.toString(),
+		};
 	}
 );
 
-// TODO: Do this in a non-async way
 export const fetchTxProvider = createAsyncThunk<any, void, ThunkConfig>(
 	'exchange/fetchTxProvider',
 	async (_, { getState, extra: { sdk } }) => {
@@ -65,10 +69,15 @@ export const fetchTransactionFee = createAsyncThunk<any, void, ThunkConfig>(
 				baseAmount
 			);
 
-			return transactionFee;
+			const feeCost = await sdk.exchange.getFeeCost(quoteCurrencyKey, baseCurrencyKey, quoteAmount);
+
+			return {
+				transactionFee: transactionFee ? transactionFee.toString() : undefined,
+				feeCost: feeCost.toString(),
+			};
 		}
 
-		return undefined;
+		return { transactionFee: undefined, feeCost: undefined };
 	}
 );
 
@@ -141,7 +150,11 @@ export const fetchRates = createAsyncThunk<any, void, ThunkConfig>(
 				baseCurrencyKey
 			);
 
-			return { baseFeeRate, rate, exchangeFeeRate };
+			return {
+				baseFeeRate: baseFeeRate.toString(),
+				rate: rate.toString(),
+				exchangeFeeRate: exchangeFeeRate.toString(),
+			};
 		}
 	}
 );

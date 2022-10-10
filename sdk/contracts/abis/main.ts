@@ -3,6 +3,7 @@ export const ExchangerABI = [
 	'function dynamicFeeRateForExchange(bytes32 sourceCurrencyKey, bytes32 destinationCurrencyKey) external view returns (uint feeRate, bool tooVolatile)',
 	'function maxSecsLeftInWaitingPeriod(address account, bytes32 currencyKey) public view returns (uint)',
 	'function settlementOwing(address account, bytes32 currencyKey) public view returns (uint reclaimAmount, uint rebateAmount, uint numEntries)',
+	'function feeRateForExchange(bytes32 sourceCurrencyKey, bytes32 destinationCurrencyKey) external view returns (uint)',
 ];
 
 export const SystemStatusABI = [

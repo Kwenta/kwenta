@@ -1,7 +1,7 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { FC, ReactNode, useMemo, memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { selectShowFee } from 'state/exchange/selectors';
+import { selectFeeCostWei, selectShowFee, selectTransactionFeeWei } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/store';
 import styled from 'styled-components';
 
@@ -44,11 +44,9 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = memo(
 
 		const gasPrices = useMemo(() => ethGasPriceQuery?.data, [ethGasPriceQuery.data]);
 
-		const { quoteCurrencyKey, transactionFee, feeCost } = useAppSelector(({ exchange }) => ({
-			quoteCurrencyKey: exchange.quoteCurrencyKey,
-			transactionFee: exchange.transactionFee,
-			feeCost: exchange.feeCost,
-		}));
+		const quoteCurrencyKey = useAppSelector(({ exchange }) => exchange.quoteCurrencyKey);
+		const transactionFee = useAppSelector(selectTransactionFeeWei);
+		const feeCost = useAppSelector(selectFeeCostWei);
 
 		const showFee = useAppSelector(selectShowFee);
 

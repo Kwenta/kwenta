@@ -1,4 +1,5 @@
 import React from 'react';
+import { selectQuoteBalanceWei } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/store';
 import styled, { css } from 'styled-components';
 
@@ -9,10 +10,8 @@ const RATIOS: SwapRatio[] = [25, 50, 75, 100];
 
 const RatioSelect: React.FC = () => {
 	const { onRatioChange } = useExchangeContext();
-	const { ratio, quoteBalance } = useAppSelector(({ exchange }) => ({
-		ratio: exchange.ratio,
-		quoteBalance: exchange.quoteBalance,
-	}));
+	const ratio = useAppSelector(({ exchange }) => exchange.ratio);
+	const quoteBalance = useAppSelector(selectQuoteBalanceWei);
 
 	return (
 		<RatioSelectContainer>
@@ -21,7 +20,7 @@ const RatioSelect: React.FC = () => {
 					key={`ratio-${v}`}
 					$selected={ratio === v}
 					onClick={() => onRatioChange(v)}
-					disabled={quoteBalance?.eq(0) || !quoteBalance}
+					disabled={quoteBalance.eq(0)}
 				>
 					{`${v}%`}
 				</RatioButton>

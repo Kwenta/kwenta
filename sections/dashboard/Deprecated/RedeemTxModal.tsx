@@ -1,6 +1,7 @@
 import Wei, { wei } from '@synthetixio/wei';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import { selectTotalRedeemableBalanceWei } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/store';
 import styled from 'styled-components';
 
@@ -22,10 +23,11 @@ type RedeemTxModalProps = {
 export const RedeemTxModal: FC<RedeemTxModalProps> = ({ onDismiss, txError, attemptRetry }) => {
 	const { t } = useTranslation();
 
-	const { totalRedeemableBalance, redeemableSynthBalances } = useAppSelector(({ exchange }) => ({
-		totalRedeemableBalance: exchange.totalRedeemableBalance,
+	const { redeemableSynthBalances } = useAppSelector(({ exchange }) => ({
 		redeemableSynthBalances: exchange.redeemableSynthBalances,
 	}));
+
+	const totalRedeemableBalance = useAppSelector(selectTotalRedeemableBalanceWei);
 
 	return (
 		<StyledBaseModal onDismiss={onDismiss} isOpen title={t('modals.confirm-transaction.title')}>

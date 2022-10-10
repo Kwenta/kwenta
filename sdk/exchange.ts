@@ -179,10 +179,10 @@ export default class ExchangeService {
 		}
 
 		const [sourceCurrencyFeeRate, destinationCurrencyFeeRate] = await Promise.all([
-			this.contracts.SystemSettings.exchangeFeeRate(
+			this.contracts.SystemSettings.connect(this.provider).exchangeFeeRate(
 				ethers.utils.formatBytes32String(baseCurrencyKey)
 			),
-			this.contracts.SystemSettings.exchangeFeeRate(
+			this.contracts.SystemSettings.connect(this.provider).exchangeFeeRate(
 				ethers.utils.formatBytes32String(quoteCurrencyKey)
 			),
 		]);
@@ -197,7 +197,7 @@ export default class ExchangeService {
 			throw new Error('Exchanger does not exist on the currently selected network.');
 		}
 
-		return await this.contracts.Exchanger.feeRateForExchange(
+		return await this.contracts.Exchanger.connect(this.provider).feeRateForExchange(
 			ethers.utils.formatBytes32String(quoteCurrencyKey),
 			ethers.utils.formatBytes32String(baseCurrencyKey)
 		);
@@ -447,8 +447,8 @@ export default class ExchangeService {
 		].map(ethers.utils.formatBytes32String);
 
 		const [synthsRates, ratesForCurrencies] = (await Promise.all([
-			this.contracts.SynthUtil?.synthsRates(),
-			this.contracts.ExchangeRates?.ratesForCurrencies(additionalCurrencies),
+			this.contracts.SynthUtil.connect(this.provider).synthsRates(),
+			this.contracts.ExchangeRates.connect(this.provider).ratesForCurrencies(additionalCurrencies),
 		])) as [SynthRatesTuple, CurrencyRate[]];
 
 		const synths = [...synthsRates[0], ...additionalCurrencies] as CurrencyKey[];
@@ -843,7 +843,7 @@ export default class ExchangeService {
 		return null;
 	}
 
-	private async getOneInchQuote(baseCurrencyKey: string, quoteCurrencyKey: string, amount: string) {
+	public async getOneInchQuote(baseCurrencyKey: string, quoteCurrencyKey: string, amount: string) {
 		const sUSD = this.tokensMap['sUSD'];
 		const decimals = this.getTokenDecimals(quoteCurrencyKey);
 		const quoteTokenAddress = this.getTokenAddress(quoteCurrencyKey);
@@ -902,7 +902,7 @@ export default class ExchangeService {
 		return 1;
 	}
 
-	private getSelectedTokens(baseCurrencyKey: string, quoteCurrencyKey: string) {
+	public getSelectedTokens(baseCurrencyKey: string, quoteCurrencyKey: string) {
 		return this.tokenList.filter(
 			(t) => t.symbol === baseCurrencyKey || t.symbol === quoteCurrencyKey
 		);

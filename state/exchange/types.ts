@@ -1,6 +1,4 @@
 import { DeprecatedSynthBalance } from '@synthetixio/queries';
-import Wei from '@synthetixio/wei';
-import { BigNumber } from 'ethers';
 
 import { SwapRatio } from 'hooks/useExchange';
 
@@ -11,21 +9,21 @@ export type ExchangeState = {
 	baseAmount: string;
 	quoteAmount: string;
 	ratio?: SwapRatio;
-	quoteBalance?: Wei | null;
-	baseBalance?: Wei | null;
-	transactionFee?: Wei | null;
-	feeCost?: Wei;
-	slippagePercent?: Wei | null;
+	quoteBalance?: string | null;
+	baseBalance?: string | null;
+	transactionFee?: string | null;
+	feeCost?: string;
+	slippagePercent?: string | null;
 	isSubmitting: boolean;
 	isApproving: boolean;
 	needsApproval: boolean;
-	quotePriceRate?: Wei;
-	basePriceRate?: Wei;
-	baseFeeRate?: Wei;
-	exchangeFeeRate?: BigNumber;
-	rate?: Wei;
+	quotePriceRate?: string;
+	basePriceRate?: string;
+	baseFeeRate?: string;
+	exchangeFeeRate?: string;
+	rate?: string;
 	numEntries: number;
 	redeemableSynthBalances: DeprecatedSynthBalance[];
-	totalRedeemableBalance: Wei;
-	estimatedBaseTradePrice: Wei;
+	totalRedeemableBalance?: string;
+	estimatedBaseTradePrice?: string;
 };

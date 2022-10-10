@@ -3,6 +3,7 @@ import { wei } from '@synthetixio/wei';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
+import { selectTransactionFeeWei, selectFeeCostWei } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/store';
 import styled from 'styled-components';
 
@@ -29,10 +30,8 @@ const SwapInfoBox: React.FC = () => {
 
 	const { useEthGasPriceQuery } = useSynthetixQueries();
 
-	const { transactionFee, feeCost } = useAppSelector(({ exchange }) => ({
-		transactionFee: exchange.transactionFee,
-		feeCost: exchange.feeCost,
-	}));
+	const transactionFee = useAppSelector(selectTransactionFeeWei);
+	const feeCost = useAppSelector(selectFeeCostWei);
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 

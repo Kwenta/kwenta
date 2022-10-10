@@ -1,27 +1,30 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { useRouter } from 'next/router';
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
-import { submitExchange } from 'state/exchange/actions';
+import { fetchBalances, fetchRates, submitExchange } from 'state/exchange/actions';
 import {
 	setBaseAmount,
-	setCurrencyPair,
+	setBaseCurrencyKey,
+	setMaxBaseBalance,
+	setMaxQuoteBalance,
 	setQuoteAmount,
+	setQuoteCurrencyKey,
 	setRatio,
 	swapCurrencies,
 } from 'state/exchange/reducer';
-import { selectBothSidesSelected } from 'state/exchange/selectors';
+import {
+	selectBaseAmountWei,
+	selectBothSidesSelected,
+	selectQuoteAmountWei,
+} from 'state/exchange/selectors';
 import { useAppDispatch, useAppSelector } from 'state/store';
 
-import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 // import TransactionNotifier from 'containers/TransactionNotifier';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useSynthBalances from 'queries/synths/useSynthBalances';
-import { baseCurrencyAmountBNState, quoteCurrencyAmountBNState } from 'store/exchange';
-import { truncateNumbers } from 'utils/formatters/number';
 
 type ExchangeCardProps = {
 	showNoSynthsCard?: boolean;
@@ -43,23 +46,20 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 
 	const [openModal, setOpenModal] = useState<ExchangeModal>();
 
-	const quoteCurrencyAmountBN = useRecoilValue(quoteCurrencyAmountBNState);
-	const baseCurrencyAmountBN = useRecoilValue(baseCurrencyAmountBNState);
 	useExchangeRatesQuery({ refetchInterval: 15000 });
 
 	const {
 		baseCurrencyKey,
 		quoteCurrencyKey,
 		quoteBalance,
-		baseBalance,
 		txProvider,
-		baseAmount,
-		quoteAmount,
 		isApproving,
 		isSubmitting,
 	} = useAppSelector(({ exchange }) => exchange);
 
 	const selectedBothSides = useAppSelector(selectBothSidesSelected);
+	const baseAmountWei = useAppSelector(selectBaseAmountWei);
+	const quoteAmountWei = useAppSelector(selectQuoteAmountWei);
 
 	const dispatch = useAppDispatch();
 
@@ -70,8 +70,7 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 	const feeReclaimPeriodInSeconds = feeReclaimPeriodQuery.data ?? 0;
 
 	const submissionDisabledReason = useMemo(() => {
-		const insufficientBalance =
-			quoteBalance != null ? quoteCurrencyAmountBN.gt(quoteBalance) : false;
+		const insufficientBalance = quoteBalance != null ? quoteAmountWei.gt(quoteBalance) : false;
 
 		if (feeReclaimPeriodInSeconds > 0) {
 			return t('exchange.summary-info.button.fee-reclaim-period');
@@ -93,7 +92,7 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 		// if (oneInchQuoteQuery.error) {
 		// 	return t('exchange.summary-info.button.insufficient-liquidity');
 		// }
-		if (!isWalletConnected || baseCurrencyAmountBN.lte(0) || quoteCurrencyAmountBN.lte(0)) {
+		if (!isWalletConnected || baseAmountWei.lte(0) || quoteAmountWei.lte(0)) {
 			return t('exchange.summary-info.button.enter-amount');
 		}
 		return null;
@@ -102,8 +101,8 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 		selectedBothSides,
 		isSubmitting,
 		feeReclaimPeriodInSeconds,
-		baseCurrencyAmountBN,
-		quoteCurrencyAmountBN,
+		baseAmountWei,
+		quoteAmountWei,
 		isWalletConnected,
 		isApproving,
 		t,
@@ -134,6 +133,10 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 		}
 	}, [baseCurrencyKey, quoteCurrencyKey, routeToMarketPair, dispatch]);
 
+	useEffect(() => {
+		dispatch(fetchBalances());
+	}, [dispatch]);
+
 	// useEffect(() => {
 	// 	if (!synthsMap) return;
 
@@ -146,14 +149,7 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 
 	const onBaseCurrencyChange = useCallback(
 		(currencyKey: string) => {
-			dispatch(setQuoteAmount({ quoteAmount: '' }));
-
-			dispatch(
-				setCurrencyPair({
-					baseCurrencyKey: currencyKey,
-					quoteCurrencyKey: quoteCurrencyKey === currencyKey ? null : quoteCurrencyKey,
-				})
-			);
+			dispatch(setBaseCurrencyKey({ currencyKey }));
 
 			if (!!quoteCurrencyKey && quoteCurrencyKey !== currencyKey) {
 				routeToMarketPair(currencyKey, quoteCurrencyKey);
@@ -161,41 +157,22 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 				routeToBaseCurrency(currencyKey);
 			}
 
-			if (txProvider === 'synthetix' && !!baseAmount && !!quoteCurrencyKey) {
-				// const quoteCurrencyAmountNoFee = wei(baseAmount).mul(inverseRate);
-				// const fee = quoteCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
-				// setQuoteCurrencyAmount(
-				// 	truncateNumbers(quoteCurrencyAmountNoFee.add(fee), DEFAULT_CRYPTO_DECIMALS)
-				// );
-			}
+			dispatch(fetchRates());
 		},
-		[baseAmount, quoteCurrencyKey, routeToBaseCurrency, routeToMarketPair, txProvider, dispatch]
+		[quoteCurrencyKey, routeToBaseCurrency, routeToMarketPair, dispatch]
 	);
 
 	const onQuoteCurrencyChange = useCallback(
 		(currencyKey: string) => {
-			dispatch(setBaseAmount({ baseAmount: '' }));
-
-			dispatch(
-				setCurrencyPair({
-					quoteCurrencyKey: currencyKey,
-					baseCurrencyKey: baseCurrencyKey === currencyKey ? null : baseCurrencyKey,
-				})
-			);
+			dispatch(setQuoteCurrencyKey({ currencyKey }));
 
 			if (baseCurrencyKey && baseCurrencyKey !== currencyKey) {
 				routeToMarketPair(baseCurrencyKey, currencyKey);
 			}
 
-			if (txProvider === 'synthetix' && !!quoteAmount && !!baseCurrencyKey) {
-				// const baseCurrencyAmountNoFee = wei(quoteAmount).mul(rate);
-				// const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
-				// setBaseCurrencyAmount(
-				// 	truncateNumbers(baseCurrencyAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS)
-				// );
-			}
+			dispatch(fetchRates());
 		},
-		[baseCurrencyKey, routeToMarketPair, txProvider, quoteAmount, dispatch]
+		[baseCurrencyKey, routeToMarketPair, dispatch]
 	);
 
 	// const monitorExchangeTxn = useCallback(
@@ -204,7 +181,7 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 	// 			monitorTransaction({
 	// 				txHash: hash,
 	// 				onTxConfirmed: () => {
-	// 					// synthsWalletBalancesQuery.refetch();
+	// 					synthsWalletBalancesQuery.refetch();
 	// 					numEntriesQuery.refetch();
 	// 				},
 	// 			});
@@ -268,96 +245,25 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	// }, [synthsMap]);
 
-	const onBaseCurrencyAmountChange = useCallback(
-		async (value: string) => {
-			setRatio(undefined);
+	const onBaseCurrencyAmountChange = (value: string) => {
+		dispatch(setBaseAmount({ value }));
+	};
 
-			if (value === '') {
-				dispatch(setBaseAmount({ baseAmount: '' }));
-			} else {
-				dispatch(setBaseAmount({ baseAmount: value }));
+	const onBaseBalanceClick = () => {
+		dispatch(setMaxBaseBalance());
+	};
 
-				if (txProvider === 'synthetix' && baseCurrencyKey != null) {
-					// const quoteCurrencyAmountNoFee = wei(value).mul(inverseRate);
-					// const fee = quoteCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
-					// setQuoteCurrencyAmount(
-					// 	truncateNumbers(quoteCurrencyAmountNoFee.add(fee), DEFAULT_CRYPTO_DECIMALS)
-					// );
-				}
-			}
-		},
-		[baseCurrencyKey, txProvider, dispatch]
-	);
+	const onQuoteCurrencyAmountChange = (value: string) => {
+		dispatch(setQuoteAmount({ value }));
+	};
 
-	const onBaseBalanceClick = useCallback(async () => {
-		if (!!baseBalance) {
-			// setBaseCurrencyAmount(truncateNumbers(baseBalance, DEFAULT_CRYPTO_DECIMALS));
+	const onQuoteBalanceClick = () => {
+		dispatch(setMaxQuoteBalance());
+	};
 
-			if (txProvider === 'synthetix') {
-				// const baseCurrencyAmountNoFee = baseBalance.mul(inverseRate);
-				// const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
-				// setQuoteCurrencyAmount(
-				// 	truncateNumbers(baseCurrencyAmountNoFee.add(fee), DEFAULT_CRYPTO_DECIMALS)
-				// );
-			}
-		}
-	}, [baseBalance, txProvider]);
-
-	const onQuoteCurrencyAmountChange = useCallback(
-		async (value: string) => {
-			setRatio(undefined);
-
-			if (value === '') {
-				dispatch(setQuoteAmount({ quoteAmount: '' }));
-			} else {
-				dispatch(setQuoteAmount({ quoteAmount: value }));
-				if (txProvider === 'synthetix' && baseCurrencyKey != null) {
-					// const baseCurrencyAmountNoFee = wei(value).mul(rate);
-					// const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
-					// setBaseCurrencyAmount(
-					// 	truncateNumbers(baseCurrencyAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS)
-					// );
-				}
-			}
-		},
-		[txProvider, baseCurrencyKey, dispatch]
-	);
-
-	const onQuoteBalanceClick = useCallback(async () => {
-		if (!!quoteBalance) {
-			if ((quoteCurrencyKey as string) === 'ETH') {
-				// const ETH_TX_BUFFER = 0.006;
-				// const balanceWithBuffer = quoteBalance.sub(wei(ETH_TX_BUFFER));
-				// setQuoteCurrencyAmount(
-				// 	balanceWithBuffer.lt(0)
-				// 		? '0'
-				// 		: truncateNumbers(balanceWithBuffer, DEFAULT_CRYPTO_DECIMALS)
-				// );
-			} else {
-				// setQuoteCurrencyAmount(truncateNumbers(quoteBalance, DEFAULT_CRYPTO_DECIMALS));
-			}
-			if (txProvider === 'synthetix') {
-				// const baseCurrencyAmountNoFee = quoteBalance.mul(rate);
-				// const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
-				// setBaseCurrencyAmount(
-				// 	truncateNumbers(baseCurrencyAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS)
-				// );
-			}
-		}
-	}, [quoteBalance, quoteCurrencyKey, txProvider]);
-
-	const onRatioChange = useCallback(
-		(ratio: SwapRatio) => {
-			dispatch(setRatio({ ratio }));
-
-			if (!!quoteBalance) {
-				onQuoteCurrencyAmountChange(
-					truncateNumbers(quoteBalance.mul(ratio / 100) ?? 0, DEFAULT_CRYPTO_DECIMALS)
-				);
-			}
-		},
-		[quoteBalance, onQuoteCurrencyAmountChange, dispatch]
-	);
+	const onRatioChange = (ratio: SwapRatio) => {
+		dispatch(setRatio({ ratio }));
+	};
 
 	return {
 		handleCurrencySwap,

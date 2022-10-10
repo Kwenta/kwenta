@@ -1,7 +1,7 @@
 import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { selectNoSynths } from 'state/exchange/selectors';
+import { selectNoSynths, selectTotalRedeemableBalanceWei } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/store';
 
 import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
@@ -46,7 +46,6 @@ const FooterCard: FC = memo(() => {
 		baseCurrencyKey,
 		needsApproval,
 		redeemableSynthBalances,
-		totalRedeemableBalance,
 		numEntries,
 		estimatedBaseTradePrice,
 	} = useAppSelector(({ exchange }) => ({
@@ -54,10 +53,11 @@ const FooterCard: FC = memo(() => {
 		baseCurrencyKey: exchange.baseCurrencyKey,
 		needsApproval: exchange.needsApproval,
 		redeemableSynthBalances: exchange.redeemableSynthBalances,
-		totalRedeemableBalance: exchange.totalRedeemableBalance,
 		numEntries: exchange.numEntries,
 		estimatedBaseTradePrice: exchange.estimatedBaseTradePrice,
 	}));
+
+	const totalRedeemableBalance = useAppSelector(selectTotalRedeemableBalanceWei);
 
 	const quoteCurrencyMarketClosed = useMarketClosed(quoteCurrencyKey ?? null);
 	const baseCurrencyMarketClosed = useMarketClosed(baseCurrencyKey ?? null);
@@ -105,7 +105,7 @@ const FooterCard: FC = memo(() => {
 					onDismiss={() => setOpenModal(undefined)}
 					txError={txError}
 					attemptRetry={handleSubmit}
-					totalTradePrice={estimatedBaseTradePrice.toString()}
+					totalTradePrice={estimatedBaseTradePrice ?? ''}
 					quoteCurrencyLabel={t('exchange.common.from')}
 					baseCurrencyLabel={t('exchange.common.into')}
 					icon={<ArrowsIcon />}
