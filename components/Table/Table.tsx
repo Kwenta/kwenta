@@ -23,13 +23,13 @@ type ColumnWithSorting<D extends object = {}> = Column<D> & {
 };
 
 export function compareNumericString(rowA: Row<any>, rowB: Row<any>, id: string, desc: boolean) {
-	let a = Number.parseFloat(rowA.values[id]);
-	let b = Number.parseFloat(rowB.values[id]);
-	if (Number.isNaN(a)) {
+	let a = parseFloat(rowA.values[id]);
+	let b = parseFloat(rowB.values[id]);
+	if (isNaN(a)) {
 		// Blanks and non-numeric strings to bottom
 		a = desc ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
 	}
-	if (Number.isNaN(b)) {
+	if (isNaN(b)) {
 		b = desc ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
 	}
 	if (a > b) return 1;
