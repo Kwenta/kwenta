@@ -49,12 +49,6 @@ const useConnector = () => {
 		}
 	}, [signer]);
 
-	useEffect(() => {
-		if (address) {
-			sdk.setWalletAddress(address);
-		}
-	}, [address]);
-
 	const [synthsMap, tokensMap] = useMemo(() => {
 		if (defaultSynthetixjs == null) return [{}, {}];
 

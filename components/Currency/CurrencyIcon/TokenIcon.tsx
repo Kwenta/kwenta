@@ -15,26 +15,34 @@ export type TokenIconProps = {
 	url?: string;
 };
 
-const TokenIcon: FC<TokenIconProps> = ({ currencyKey, ...props }) => {
+const TokenIcon: FC<TokenIconProps> = ({ currencyKey, isDeprecated, ...props }) => {
 	const OneInchTokenListQuery = useOneInchTokenList();
 	const OneInchTokenListMap = OneInchTokenListQuery.data?.tokensMap ?? null;
 
 	if (!!OneInchTokenListMap && OneInchTokenListMap[currencyKey] != null) {
-		return <TokenImage src={OneInchTokenListMap[currencyKey].logoURI} {...props} />;
+		return (
+			<TokenImage
+				src={OneInchTokenListMap[currencyKey].logoURI}
+				$isDeprecated={isDeprecated}
+				{...props}
+			/>
+		);
 	} else {
 		return (
-			<Placeholder {...props}>{currencyKey === 'sDebtRatio' ? 'DEBT' : currencyKey}</Placeholder>
+			<Placeholder $isDeprecated={isDeprecated} {...props}>
+				{currencyKey === 'sDebtRatio' ? 'DEBT' : currencyKey}
+			</Placeholder>
 		);
 	}
 };
 
-const TokenImage = styled.img<{ isDeprecated?: boolean }>`
+const TokenImage = styled.img<{ $isDeprecated?: boolean }>`
 	border-radius: 100%;
-	border: 2px solid ${(props) => (props.isDeprecated ? props.theme.colors.red : 'transparent')};
+	border: 2px solid ${(props) => (props.$isDeprecated ? props.theme.colors.red : 'transparent')};
 `;
 
 const Placeholder = styled(FlexDivCentered)<{
-	isDeprecated?: boolean;
+	$isDeprecated?: boolean;
 	height?: string;
 	width?: string;
 }>`
@@ -42,7 +50,7 @@ const Placeholder = styled(FlexDivCentered)<{
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	border: 2px solid
 		${(props) =>
-			props.isDeprecated
+			props.$isDeprecated
 				? props.theme.colors.red
 				: props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 7px;

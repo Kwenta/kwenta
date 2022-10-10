@@ -1,10 +1,11 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
+import { selectTotalUSDBalanceWei } from 'state/balances/selectors';
 import { RootState, sdk } from 'state/store';
 
 import { zeroBN } from 'utils/formatters/number';
 
-const toWei = (value?: string | null) => {
+export const toWei = (value?: string | null) => {
 	return !!value ? wei(value) : zeroBN;
 };
 
@@ -43,9 +44,8 @@ export const selectBaseCurrencyName = createSelector(
 	(baseCurrencyKey) => (baseCurrencyKey ? sdk.exchange.getCurrencyName(baseCurrencyKey) : undefined)
 );
 
-export const selectNoSynths = createSelector(
-	(state: RootState) => state.balances.totalUSDBalance,
-	(totalUSDBalance) => totalUSDBalance.lte(zeroBN)
+export const selectNoSynths = createSelector(selectTotalUSDBalanceWei, (totalUSDBalance) =>
+	totalUSDBalance.lte(zeroBN)
 );
 
 export const selectShowFee = createSelector(

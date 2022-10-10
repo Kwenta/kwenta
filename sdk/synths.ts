@@ -3,6 +3,7 @@ import { SynthBalancesMap } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
 import { orderBy } from 'lodash';
+import KwentaSDK from 'sdk';
 
 import { notNill } from 'queries/synths/utils';
 import { zeroBN } from 'utils/formatters/number';
@@ -13,18 +14,32 @@ type SynthBalancesTuple = [string[], ethers.BigNumber[], ethers.BigNumber[]];
 
 export default class SynthsService {
 	private contracts: ReturnType<typeof getContractsByNetwork>;
+	// private walletAddress?: string;
+	private sdk: KwentaSDK;
 
-	constructor(contracts: ContractMap) {
+	constructor(sdk: KwentaSDK, contracts: ContractMap) {
 		this.contracts = contracts;
+		this.sdk = sdk;
+		// this.walletAddress = walletAddress;
 	}
 
-	public async getSynthBalances(walletAddress: string) {
+	public async getSynthBalances() {
+		if (!this.sdk.walletAddress) {
+			throw new Error('No wallet address provided');
+		}
+
+		if (!this.contracts.SynthUtil) {
+			throw new Error('Wrong network selected');
+		}
+
 		const balancesMap: SynthBalancesMap = {};
 		const [
 			currencyKeys,
 			synthsBalances,
 			synthsUSDBalances,
-		]: SynthBalancesTuple = await this.contracts.SynthUtil?.synthsBalances(walletAddress);
+		]: SynthBalancesTuple = await this.contracts.SynthUtil.connect(
+			this.sdk.provider
+		).synthsBalances(this.sdk.walletAddress);
 
 		let totalUSDBalance = wei(0);
 

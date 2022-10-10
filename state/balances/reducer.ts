@@ -1,7 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import Wei from '@synthetixio/wei';
-
-import { zeroBN } from 'utils/formatters/number';
 
 import { fetchSynthBalances } from './actions';
 
@@ -16,13 +13,13 @@ type BalancesState = {
 	status: FetchStatus;
 	error: string | undefined;
 	balances: any[];
-	totalUSDBalance: Wei;
+	totalUSDBalance?: string;
 };
 
 const initialState: BalancesState = {
 	status: FetchStatus.Idle,
 	balances: [],
-	totalUSDBalance: zeroBN,
+	totalUSDBalance: undefined,
 	error: undefined,
 };
 

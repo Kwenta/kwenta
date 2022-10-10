@@ -1,4 +1,4 @@
-//@ts-ignore TODO: remove once types are added
+// @ts-ignore TODO: remove once types are added
 import getFormattedSwapData from '@kwenta/synthswap';
 import { CurrencyKey, NetworkId, NetworkIdByName } from '@synthetixio/contracts-interface';
 import { DeprecatedSynthBalance, TokenBalances } from '@synthetixio/queries';
@@ -256,12 +256,8 @@ export default class ExchangeService {
 	}
 
 	public async getBalance(currencyKey: string) {
-		if (!this.walletAddress) {
-			throw new Error('');
-		}
-
 		const isETH = this.isCurrencyETH(currencyKey);
-		const synthsWalletBalance = await this.sdk.synths.getSynthBalances(this.walletAddress);
+		const synthsWalletBalance = await this.sdk.synths.getSynthBalances();
 		const token = this.tokenList.find((t) => t.symbol === currencyKey);
 		const tokenBalances = token ? await this.getTokensBalances([token]) : undefined;
 
@@ -1030,7 +1026,7 @@ export default class ExchangeService {
 	}
 
 	public async getRedeemableDeprecatedSynths() {
-		if (!this.walletAddress) {
+		if (!this.sdk.walletAddress) {
 			throw new Error('');
 		}
 
@@ -1038,10 +1034,10 @@ export default class ExchangeService {
 			throw new Error('The SynthRedeemer contract does not exist on this network.');
 		}
 
-		const synthDeprecatedFilter = this.contracts.SynthRedeemer.filters.SynthDeprecated();
-		const deprecatedSynthsEvents = await this.contracts.SynthRedeemer.queryFilter(
-			synthDeprecatedFilter
-		);
+		const SynthRedeemer = this.contracts.SynthRedeemer.connect(this.sdk.provider);
+
+		const synthDeprecatedFilter = SynthRedeemer.filters.SynthDeprecated();
+		const deprecatedSynthsEvents = await SynthRedeemer.queryFilter(synthDeprecatedFilter);
 		const deprecatedProxySynthsAddresses: string[] =
 			deprecatedSynthsEvents.map((e) => e.args?.synth).filter(Boolean) ?? [];
 
@@ -1052,7 +1048,7 @@ export default class ExchangeService {
 
 		for (const addr of deprecatedProxySynthsAddresses) {
 			symbolCalls.push(getProxySynthSymbol(addr));
-			balanceCalls.push(Redeemer.balanceOf(addr, this.walletAddress));
+			balanceCalls.push(Redeemer.balanceOf(addr, this.sdk.walletAddress));
 		}
 
 		const deprecatedSynths = (await this.multicallProvider.all(symbolCalls)) as CurrencyKey[];

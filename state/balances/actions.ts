@@ -3,14 +3,9 @@ import { ThunkConfig } from 'state/store';
 
 export const fetchSynthBalances = createAsyncThunk<any, void, ThunkConfig>(
 	'balances/fetchSynthBalances',
-	async (_, { getState, extra: { sdk } }) => {
-		const {
-			wallet: { walletAddress, networkId },
-		} = getState();
+	async (_, { extra: { sdk } }) => {
+		const { balances, totalUSDBalance } = await sdk.synths.getSynthBalances();
 
-		if (walletAddress) {
-			const balancesData = await sdk.synths.getSynthBalances(walletAddress);
-			return balancesData;
-		}
+		return { balances, totalUSDBalance: totalUSDBalance.toString() };
 	}
 );
