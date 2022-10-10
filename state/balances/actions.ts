@@ -6,6 +6,13 @@ export const fetchSynthBalances = createAsyncThunk<any, void, ThunkConfig>(
 	async (_, { extra: { sdk } }) => {
 		const { balances, totalUSDBalance } = await sdk.synths.getSynthBalances();
 
-		return { balances, totalUSDBalance: totalUSDBalance.toString() };
+		return {
+			balances: balances.map((b) => ({
+				...b,
+				balance: b.balance.toString(),
+				usdBalance: b.usdBalance.toString(),
+			})),
+			totalUSDBalance: totalUSDBalance.toString(),
+		};
 	}
 );

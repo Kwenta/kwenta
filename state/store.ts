@@ -5,11 +5,18 @@ import KwentaSDK from 'sdk';
 
 import { wagmiClient } from 'containers/Connector/config';
 
+import { fetchSynthBalances } from './balances/actions';
 import balancesReducer from './balances/reducer';
+import { fetchBalances } from './exchange/actions';
 import exchangeReducer from './exchange/reducer';
 import walletReducer from './wallet/reducer';
 
 export const sdk = new KwentaSDK(10, wagmiClient.provider, undefined);
+
+sdk.events.on('signer_connected', () => {
+	store.dispatch(fetchSynthBalances());
+	store.dispatch(fetchBalances());
+});
 
 const store = configureStore({
 	reducer: {

@@ -2,6 +2,8 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import KwentaSDK from 'sdk';
 import { AppDispatch, RootState } from 'state/store';
 
+import logError from 'utils/logError';
+
 type ThunkConfig = {
 	dispatch: AppDispatch;
 	state: RootState;
@@ -15,25 +17,40 @@ export const fetchBalances = createAsyncThunk<any, void, ThunkConfig>(
 			exchange: { quoteCurrencyKey, baseCurrencyKey },
 		} = getState();
 
-		const quoteBalance = quoteCurrencyKey
-			? await sdk.exchange.getBalance(quoteCurrencyKey)
-			: undefined;
+		try {
+			const quoteBalance = quoteCurrencyKey
+				? await sdk.exchange.getBalance(quoteCurrencyKey)
+				: undefined;
 
-		const baseBalance = baseCurrencyKey
-			? await sdk.exchange.getBalance(baseCurrencyKey)
-			: undefined;
+			const baseBalance = baseCurrencyKey
+				? await sdk.exchange.getBalance(baseCurrencyKey)
+				: undefined;
 
-		const {
-			balances: redeemableBalances,
-			totalUSDBalance: totalRedeemableBalance,
-		} = await sdk.exchange.getRedeemableDeprecatedSynths();
+			const {
+				balances: redeemableBalances,
+				totalUSDBalance: totalRedeemableBalance,
+			} = await sdk.exchange.getRedeemableDeprecatedSynths();
 
-		return {
-			quoteBalance: quoteBalance ? quoteBalance.toString() : undefined,
-			baseBalance: baseBalance ? baseBalance.toString() : undefined,
-			redeemableBalances,
-			totalRedeemableBalance: totalRedeemableBalance.toString(),
-		};
+			return {
+				quoteBalance: quoteBalance ? quoteBalance.toString() : undefined,
+				baseBalance: baseBalance ? baseBalance.toString() : undefined,
+				redeemableSynthBalances: redeemableBalances.map((r) => ({
+					...r,
+					balance: '0',
+					usdBalance: r.usdBalance.toString(),
+				})),
+				totalRedeemableBalance: totalRedeemableBalance.toString(),
+			};
+		} catch (error) {
+			logError(error);
+			logError(error.message);
+			return {
+				quoteBalance: undefined,
+				baseBalance: undefined,
+				redeemableSynthBalances: [],
+				totalRedeemableBalance: undefined,
+			};
+		}
 	}
 );
 
@@ -154,6 +171,12 @@ export const fetchRates = createAsyncThunk<any, void, ThunkConfig>(
 				baseFeeRate: baseFeeRate.toString(),
 				rate: rate.toString(),
 				exchangeFeeRate: exchangeFeeRate.toString(),
+			};
+		} else {
+			return {
+				baseFeeRate: undefined,
+				rate: undefined,
+				exchangeFeeRate: undefined,
 			};
 		}
 	}

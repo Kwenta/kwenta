@@ -8,19 +8,13 @@ import KwentaSDK from 'sdk';
 import { notNill } from 'queries/synths/utils';
 import { zeroBN } from 'utils/formatters/number';
 
-import { ContractMap, getContractsByNetwork } from './contracts';
-
 type SynthBalancesTuple = [string[], ethers.BigNumber[], ethers.BigNumber[]];
 
 export default class SynthsService {
-	private contracts: ReturnType<typeof getContractsByNetwork>;
-	// private walletAddress?: string;
 	private sdk: KwentaSDK;
 
-	constructor(sdk: KwentaSDK, contracts: ContractMap) {
-		this.contracts = contracts;
+	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
-		// this.walletAddress = walletAddress;
 	}
 
 	public async getSynthBalances() {
@@ -28,7 +22,7 @@ export default class SynthsService {
 			throw new Error('No wallet address provided');
 		}
 
-		if (!this.contracts.SynthUtil) {
+		if (!this.sdk.contracts.SynthUtil) {
 			throw new Error('Wrong network selected');
 		}
 
@@ -37,7 +31,7 @@ export default class SynthsService {
 			currencyKeys,
 			synthsBalances,
 			synthsUSDBalances,
-		]: SynthBalancesTuple = await this.contracts.SynthUtil.connect(
+		]: SynthBalancesTuple = await this.sdk.contracts.SynthUtil.connect(
 			this.sdk.provider
 		).synthsBalances(this.sdk.walletAddress);
 

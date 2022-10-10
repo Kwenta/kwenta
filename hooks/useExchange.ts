@@ -1,9 +1,8 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { useRouter } from 'next/router';
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { fetchSynthBalances } from 'state/balances/actions';
-import { fetchBalances, fetchRates, submitExchange } from 'state/exchange/actions';
+import { fetchRates, submitExchange } from 'state/exchange/actions';
 import {
 	setBaseAmount,
 	setBaseCurrencyKey,
@@ -19,7 +18,7 @@ import {
 	selectBothSidesSelected,
 	selectQuoteAmountWei,
 } from 'state/exchange/selectors';
-import store, { sdk, useAppDispatch, useAppSelector } from 'state/store';
+import { useAppDispatch, useAppSelector } from 'state/store';
 
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
@@ -33,11 +32,6 @@ type ExchangeCardProps = {
 
 type ExchangeModal = 'settle' | 'confirm' | 'approve' | 'redeem' | 'base-select' | 'quote-select';
 export type SwapRatio = 25 | 50 | 75 | 100;
-
-sdk.events.on('signer_connected', () => {
-	store.dispatch(fetchSynthBalances());
-	store.dispatch(fetchBalances());
-});
 
 const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 	const { t } = useTranslation();
@@ -138,14 +132,6 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 			routeToMarketPair(quoteCurrencyKey, baseCurrencyKey);
 		}
 	}, [baseCurrencyKey, quoteCurrencyKey, routeToMarketPair, dispatch]);
-
-	// useEffect(() => {
-	// 	sdk.events.on('signer_connected', () => {
-	// 		console.log('listened');
-	// 		dispatch(fetchSynthBalances());
-	// 		dispatch(fetchBalances());
-	// 	});
-	// }, [dispatch]);
 
 	// useEffect(() => {
 	// 	if (!synthsMap) return;

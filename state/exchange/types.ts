@@ -1,4 +1,4 @@
-import { DeprecatedSynthBalance } from '@synthetixio/queries';
+// import { DeprecatedSynthBalance } from '@synthetixio/queries';
 
 import { SwapRatio } from 'hooks/useExchange';
 
@@ -23,7 +23,7 @@ export type ExchangeState = {
 	exchangeFeeRate?: string;
 	rate?: string;
 	numEntries: number;
-	redeemableSynthBalances: DeprecatedSynthBalance[];
+	redeemableSynthBalances: any[];
 	totalRedeemableBalance?: string;
 	estimatedBaseTradePrice?: string;
 };

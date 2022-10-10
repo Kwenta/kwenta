@@ -4,7 +4,7 @@ import { CurrencyKey, NetworkId, NetworkIdByName } from '@synthetixio/contracts-
 import { DeprecatedSynthBalance, TokenBalances } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import axios from 'axios';
-import { Provider as EthCallProvider, Contract as EthCallContract } from 'ethcall';
+import { Contract as EthCallContract } from 'ethcall';
 import { BigNumber, ethers, Signer } from 'ethers';
 import { get, keyBy, omit } from 'lodash';
 import KwentaSDK from 'sdk';
@@ -41,7 +41,6 @@ import { FuturesMarketKey, MarketAssetByKey } from 'utils/futures';
 import { getTransactionPrice, normalizeGasLimit } from 'utils/network';
 
 import { computeGasFee, getGasPriceFromProvider, getL1SecurityFee, MetaTx } from './common/gas';
-import type { ContractMap } from './contracts';
 import SynthRedeemerABI from './contracts/abis/SynthRedeemer.json';
 import { getSynthsForNetwork, SynthsMap, SynthSymbol } from './data/synths';
 
@@ -54,7 +53,7 @@ const PROTOCOLS =
 const FILTERED_TOKENS = ['0x4922a015c4407f87432b179bb209e125432e4a2a'];
 
 // TODO:
-//  - Write a function that checks if the current (base/quote)CurrencyKey
+// - Write a function that checks if the current (base/quote)CurrencyKey
 //    is valid. We have to dispatch an action when the networkId changes,
 //    to make sure that the current base and quote currency keys are valid
 //    for the new network. For now, we can set the currencies to the default
@@ -74,35 +73,19 @@ const FILTERED_TOKENS = ['0x4922a015c4407f87432b179bb209e125432e4a2a'];
 
 export default class ExchangeService {
 	private networkId: NetworkId;
-	private provider: ethers.providers.Provider;
 	private signer?: Signer;
-	private contracts: ContractMap;
-	private multicallProvider: EthCallProvider;
 	private isL2: boolean;
 	private synthsMap: SynthsMap = {};
 	private tokensMap: any = {};
 	private tokenList: Token[] = [];
 	private allTokensMap: any;
-	private walletAddress?: string;
 	private sdk: KwentaSDK;
 
-	constructor(
-		sdk: KwentaSDK,
-		networkId: NetworkId,
-		provider: ethers.providers.Provider,
-		contracts: ContractMap,
-		multicallProvider: EthCallProvider,
-		signer?: Signer,
-		walletAddress?: string
-	) {
+	constructor(sdk: KwentaSDK, networkId: NetworkId, signer?: Signer) {
 		this.sdk = sdk;
 		this.networkId = networkId;
 		this.signer = signer;
-		this.provider = provider;
 		this.isL2 = [10, 420].includes(networkId);
-		this.contracts = contracts;
-		this.multicallProvider = multicallProvider;
-		this.walletAddress = walletAddress;
 		this.getAllTokensMap();
 	}
 
@@ -174,15 +157,15 @@ export default class ExchangeService {
 	}
 
 	public async getBaseFeeRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
-		if (!this.contracts.SystemSettings) {
+		if (!this.sdk.contracts.SystemSettings) {
 			throw new Error('SystemSettings does not exist on the currently selected network.');
 		}
 
 		const [sourceCurrencyFeeRate, destinationCurrencyFeeRate] = await Promise.all([
-			this.contracts.SystemSettings.connect(this.provider).exchangeFeeRate(
+			this.sdk.contracts.SystemSettings.connect(this.sdk.provider).exchangeFeeRate(
 				ethers.utils.formatBytes32String(baseCurrencyKey)
 			),
-			this.contracts.SystemSettings.connect(this.provider).exchangeFeeRate(
+			this.sdk.contracts.SystemSettings.connect(this.sdk.provider).exchangeFeeRate(
 				ethers.utils.formatBytes32String(quoteCurrencyKey)
 			),
 		]);
@@ -193,11 +176,11 @@ export default class ExchangeService {
 	}
 
 	public async getExchangeFeeRate(quoteCurrencyKey: string, baseCurrencyKey: string) {
-		if (!this.contracts.Exchanger) {
+		if (!this.sdk.contracts.Exchanger) {
 			throw new Error('Exchanger does not exist on the currently selected network.');
 		}
 
-		return await this.contracts.Exchanger.connect(this.provider).feeRateForExchange(
+		return await this.sdk.contracts.Exchanger.connect(this.sdk.provider).feeRateForExchange(
 			ethers.utils.formatBytes32String(quoteCurrencyKey),
 			ethers.utils.formatBytes32String(baseCurrencyKey)
 		);
@@ -239,16 +222,18 @@ export default class ExchangeService {
 	}
 
 	public async getFeeReclaimPeriod(currencyKey: string) {
-		if (!this.walletAddress) {
+		if (!this.sdk.walletAddress) {
 			throw new Error('');
 		}
 
-		if (!this.contracts.Exchanger) {
+		if (!this.sdk.contracts.Exchanger) {
 			throw new Error('The Exchanger contract does not exist on the currently selected network.');
 		}
 
-		const maxSecsLeftInWaitingPeriod = (await this.contracts.Exchanger.maxSecsLeftInWaitingPeriod(
-			this.walletAddress,
+		const maxSecsLeftInWaitingPeriod = (await this.sdk.contracts.Exchanger.connect(
+			this.sdk.provider
+		).maxSecsLeftInWaitingPeriod(
+			this.sdk.walletAddress,
 			ethers.utils.formatBytes32String(currencyKey)
 		)) as ethers.BigNumberish;
 
@@ -284,6 +269,7 @@ export default class ExchangeService {
 		metaOnly?: 'meta_tx' | 'estimate_gas'
 	) {
 		if (!this.signer) throw new Error('Wallet not connected');
+		if (!this.sdk.provider) throw new Error('');
 		if (this.networkId !== 10) throw new Error('Unsupported network');
 
 		const sUSD = this.tokensMap['sUSD'];
@@ -295,13 +281,15 @@ export default class ExchangeService {
 		const sUSDBytes = ethers.utils.formatBytes32String('sUSD');
 
 		let synthAmountEth = fromAmount;
+
 		if (this.tokensMap[fromToken.symbol]) {
+			if (!this.sdk.contracts.Exchanger) {
+				throw new Error('');
+			}
 			const fromAmountWei = wei(fromAmount).toString(0, true);
-			const amounts = await this.contracts.Exchanger?.getAmountsForExchange(
-				fromAmountWei,
-				fromSymbolBytes,
-				sUSDBytes
-			);
+			const amounts = await this.sdk.contracts.Exchanger.connect(
+				this.sdk.provider
+			).getAmountsForExchange(fromAmountWei, fromSymbolBytes, sUSDBytes);
 
 			const usdValue = amounts.amountReceived.sub(amounts.fee);
 			synthAmountEth = ethers.utils.formatEther(usdValue);
@@ -387,7 +375,7 @@ export default class ExchangeService {
 		baseTokenAddress: string,
 		amount: string
 	) {
-		if (!this.walletAddress) {
+		if (!this.sdk.walletAddress) {
 			throw new Error('');
 		}
 
@@ -405,24 +393,23 @@ export default class ExchangeService {
 	}
 
 	public async getNumEntries(currencyKey: string) {
-		if (!this.walletAddress) {
+		if (!this.sdk.walletAddress) {
 			throw new Error('');
 		}
 
-		if (!this.contracts.Exchanger) {
+		if (!this.sdk.contracts.Exchanger) {
 			throw new Error('Something something wrong?');
 		}
 
-		const { numEntries } = await this.contracts.Exchanger.settlementOwing(
-			this.walletAddress,
-			ethers.utils.formatBytes32String(currencyKey)
-		);
+		const { numEntries } = await this.sdk.contracts.Exchanger.connect(
+			this.sdk.provider
+		).settlementOwing(this.sdk.walletAddress, ethers.utils.formatBytes32String(currencyKey));
 
 		return numEntries ?? null;
 	}
 
 	public async getExchangeRates() {
-		if (!this.contracts.SynthUtil || !this.contracts.ExchangeRates) {
+		if (!this.sdk.contracts.SynthUtil || !this.sdk.contracts.ExchangeRates) {
 			throw new Error('Wrong network');
 		}
 
@@ -443,8 +430,10 @@ export default class ExchangeService {
 		].map(ethers.utils.formatBytes32String);
 
 		const [synthsRates, ratesForCurrencies] = (await Promise.all([
-			this.contracts.SynthUtil.connect(this.provider).synthsRates(),
-			this.contracts.ExchangeRates.connect(this.provider).ratesForCurrencies(additionalCurrencies),
+			this.sdk.contracts.SynthUtil.connect(this.sdk.provider).synthsRates(),
+			this.sdk.contracts.ExchangeRates.connect(this.sdk.provider).ratesForCurrencies(
+				additionalCurrencies
+			),
 		])) as [SynthRatesTuple, CurrencyRate[]];
 
 		const synths = [...synthsRates[0], ...additionalCurrencies] as CurrencyKey[];
@@ -491,14 +480,14 @@ export default class ExchangeService {
 			throw new Error('You must connect a signer to redeem synths.');
 		}
 
-		if (!this.contracts.SynthRedeemer) {
+		if (!this.sdk.contracts.SynthRedeemer) {
 			throw new Error('Wrong network');
 		}
 
 		const redeemableDeprecatedSynths = await this.getRedeemableDeprecatedSynths();
 
 		if (redeemableDeprecatedSynths.totalUSDBalance.gt(0)) {
-			await this.contracts.SynthRedeemer.connect(this.signer).redeemAll(
+			await this.sdk.contracts.SynthRedeemer.connect(this.signer).redeemAll(
 				redeemableDeprecatedSynths.balances.map((b) => b.proxyAddress)
 			);
 		}
@@ -509,7 +498,7 @@ export default class ExchangeService {
 			throw new Error('This function is only permitted on L2.');
 		}
 
-		if (!this.walletAddress) {
+		if (!this.sdk.walletAddress) {
 			throw new Error('');
 		}
 
@@ -517,7 +506,7 @@ export default class ExchangeService {
 			throw new Error('You must connect a signer to redeem synths.');
 		}
 
-		if (!this.contracts.Exchanger) {
+		if (!this.sdk.contracts.Exchanger) {
 			throw new Error('Wrong network.');
 		}
 
@@ -525,8 +514,8 @@ export default class ExchangeService {
 		const destinationCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey);
 
 		if (numEntries > 12) {
-			await this.contracts.Exchanger.connect(this.signer).settle(
-				this.walletAddress,
+			await this.sdk.contracts.Exchanger.connect(this.signer).settle(
+				this.sdk.walletAddress,
 				destinationCurrencyKey
 			);
 		}
@@ -568,19 +557,19 @@ export default class ExchangeService {
 			const shouldExchange =
 				(needsApproval ? isApproved : true) &&
 				!!exchangeParams &&
-				!!this.walletAddress &&
-				!!this.contracts.Synthetix;
+				!!this.sdk.walletAddress &&
+				!!this.sdk.contracts.Synthetix;
 
 			if (shouldExchange) {
 				if (!this.signer) {
 					throw new Error('You have to connect a signer to exchange synths.');
 				}
 
-				if (!this.contracts.Synthetix) {
+				if (!this.sdk.contracts.Synthetix) {
 					throw new Error('You are using this on an unsupported network');
 				}
 
-				await this.contracts.Synthetix.connect(this.signer)[
+				await this.sdk.contracts.Synthetix.connect(this.signer)[
 					isAtomic ? 'exchangeAtomically' : 'exchangeWithTracking'
 				](...exchangeParams);
 			}
@@ -628,20 +617,20 @@ export default class ExchangeService {
 				throw new Error('You must add a signer to estimate gas for this transaction.');
 			}
 
-			if (!this.contracts.Synthetix) {
+			if (!this.sdk.contracts.Synthetix) {
 				throw new Error('Wrong network');
 			}
 
 			const isAtomic = this.checkIsAtomic(baseCurrencyKey, quoteCurrencyKey);
 			const method = isAtomic ? 'exchangeAtomically' : 'exchangeWithTracking';
 
-			const gasLimit = await this.contracts.Synthetix.connect(this.signer).estimateGas[method](
+			const gasLimit = await this.sdk.contracts.Synthetix.connect(this.signer).estimateGas[method](
 				...exchangeParams
 			);
 
-			const txn = await this.contracts.Synthetix.connect(this.signer).populateTransaction[method](
-				...exchangeParams
-			);
+			const txn = await this.sdk.contracts.Synthetix.connect(this.signer).populateTransaction[
+				method
+			](...exchangeParams);
 
 			const optimismLayerOneFee = await this.getL1SecurityFee({
 				...omit(txn, ['maxPriorityFeePerGas', 'maxFeePerGas']),
@@ -679,7 +668,7 @@ export default class ExchangeService {
 		baseCurrencyKey: string,
 		quoteAmount: string
 	) {
-		if (!this.walletAddress) {
+		if (!this.sdk.walletAddress) {
 			throw new Error('');
 		}
 
@@ -692,7 +681,7 @@ export default class ExchangeService {
 
 		if (!!quoteCurrencyContract) {
 			const allowance = (await quoteCurrencyContract.allowance(
-				this.walletAddress,
+				this.sdk.walletAddress,
 				approveAddress
 			)) as ethers.BigNumber;
 
@@ -714,14 +703,10 @@ export default class ExchangeService {
 	// This is mostly copied over from the Synthetix queries.
 	// See: https://github.com/Synthetixio/js-monorepo/blob/master/packages/queries/src/queries/network/useEthGasPriceQuery.ts
 	private async getEthGasPrice() {
-		if (!this.provider) {
-			throw new Error('Expected ctx.provider to be defined');
-		}
-
 		try {
 			// If network is Mainnet then we use EIP1559
 			if (this.networkId === NetworkIdByName.mainnet) {
-				const block = await this?.provider?.getBlock('latest');
+				const block = await this.sdk.provider.getBlock('latest');
 				if (block?.baseFeePerGas) {
 					return {
 						fastest: computeGasFee(block.baseFeePerGas, 6),
@@ -729,11 +714,11 @@ export default class ExchangeService {
 						average: computeGasFee(block.baseFeePerGas, 2),
 					};
 				} else {
-					return getGasPriceFromProvider(this.provider);
+					return getGasPriceFromProvider(this.sdk.provider);
 				}
 				// If not (Testnet or Optimism network), we get the Gas Price through the provider
 			} else {
-				return getGasPriceFromProvider(this.provider);
+				return getGasPriceFromProvider(this.sdk.provider);
 			}
 		} catch (e) {
 			throw new Error(`Could not fetch and compute network fee. ${e}`);
@@ -910,7 +895,7 @@ export default class ExchangeService {
 		sourceAmount: Wei,
 		minAmount: Wei
 	) {
-		if (!this.walletAddress) {
+		if (!this.sdk.walletAddress) {
 			throw new Error('');
 		}
 
@@ -931,7 +916,7 @@ export default class ExchangeService {
 				sourceCurrencyKey,
 				sourceAmountBN,
 				destinationCurrencyKey,
-				this.walletAddress,
+				this.sdk.walletAddress,
 				KWENTA_TRACKING_CODE,
 			];
 		}
@@ -1030,18 +1015,18 @@ export default class ExchangeService {
 			throw new Error('');
 		}
 
-		if (!this.contracts?.SynthRedeemer) {
+		if (!this.sdk.contracts?.SynthRedeemer) {
 			throw new Error('The SynthRedeemer contract does not exist on this network.');
 		}
 
-		const SynthRedeemer = this.contracts.SynthRedeemer.connect(this.sdk.provider);
+		const SynthRedeemer = this.sdk.contracts.SynthRedeemer.connect(this.sdk.provider);
 
 		const synthDeprecatedFilter = SynthRedeemer.filters.SynthDeprecated();
 		const deprecatedSynthsEvents = await SynthRedeemer.queryFilter(synthDeprecatedFilter);
 		const deprecatedProxySynthsAddresses: string[] =
 			deprecatedSynthsEvents.map((e) => e.args?.synth).filter(Boolean) ?? [];
 
-		const Redeemer = new EthCallContract(this.contracts.SynthRedeemer.address, SynthRedeemerABI);
+		const Redeemer = new EthCallContract(SynthRedeemer.address, SynthRedeemerABI);
 
 		const symbolCalls = [];
 		const balanceCalls = [];
@@ -1051,8 +1036,8 @@ export default class ExchangeService {
 			balanceCalls.push(Redeemer.balanceOf(addr, this.sdk.walletAddress));
 		}
 
-		const deprecatedSynths = (await this.multicallProvider.all(symbolCalls)) as CurrencyKey[];
-		const balanceData = (await this.multicallProvider.all(balanceCalls)) as ethers.BigNumber[];
+		const deprecatedSynths = (await this.sdk.multicallProvider.all(symbolCalls)) as CurrencyKey[];
+		const balanceData = (await this.sdk.multicallProvider.all(balanceCalls)) as ethers.BigNumber[];
 		const balances = balanceData.map((balance) => wei(balance));
 
 		let totalUSDBalance = wei(0);
@@ -1112,7 +1097,7 @@ export default class ExchangeService {
 		baseCurrencyKey: string,
 		amount: string
 	) {
-		if (!this.walletAddress) {
+		if (!this.sdk.walletAddress) {
 			throw new Error('');
 		}
 
@@ -1133,7 +1118,7 @@ export default class ExchangeService {
 				fromTokenAddress: params.fromTokenAddress,
 				toTokenAddress: params.toTokenAddress,
 				amount: params.amount,
-				fromAddress: this.walletAddress,
+				fromAddress: this.sdk.walletAddress,
 				slippage,
 				PROTOCOLS,
 				referrerAddress: KWENTA_REFERRAL_ADDRESS,
@@ -1189,7 +1174,7 @@ export default class ExchangeService {
 	}
 
 	private async getTokensBalances(tokens: Token[]) {
-		if (!this.walletAddress) {
+		if (!this.sdk.walletAddress) {
 			throw new Error('');
 		}
 
@@ -1200,14 +1185,14 @@ export default class ExchangeService {
 		const calls = [];
 		for (const { address, symbol } of filteredTokens) {
 			if (symbol === CRYPTO_CURRENCY_MAP.ETH) {
-				calls.push(this.multicallProvider.getEthBalance(this.walletAddress));
+				calls.push(this.sdk.multicallProvider.getEthBalance(this.sdk.walletAddress));
 			} else {
 				const tokenContract = new EthCallContract(address, erc20Abi);
-				calls.push(tokenContract.balanceOf(this.walletAddress));
+				calls.push(tokenContract.balanceOf(this.sdk.walletAddress));
 			}
 		}
 
-		const data = (await this.multicallProvider.all(calls)) as ethers.BigNumber[];
+		const data = (await this.sdk.multicallProvider.all(calls)) as ethers.BigNumber[];
 
 		const tokenBalances: TokenBalances = {};
 		data.forEach((value, index) => {
@@ -1223,11 +1208,11 @@ export default class ExchangeService {
 	}
 
 	private async getETHBalance() {
-		if (!this.walletAddress) {
+		if (!this.sdk.walletAddress) {
 			throw new Error('');
 		}
 
-		const balance = await this.provider.getBalance(this.walletAddress);
+		const balance = await this.sdk.provider.getBalance(this.sdk.walletAddress);
 		return wei(balance);
 	}
 }
