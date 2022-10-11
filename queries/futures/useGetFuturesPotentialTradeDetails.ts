@@ -12,6 +12,7 @@ import {
 	futuresAccountTypeState,
 	selectedFuturesAddressState,
 	orderTypeState,
+	crossMarginAccountOverviewState,
 } from 'store/futures';
 import logError from 'utils/logError';
 
@@ -31,10 +32,10 @@ const useGetFuturesPotentialTradeDetails = () => {
 	const leverageSide = useRecoilValue(leverageSideState);
 	const marketAsset = useRecoilValue(currentMarketState);
 	const orderType = useRecoilValue(orderTypeState);
+	const { freeMargin } = useRecoilValue(crossMarginAccountOverviewState);
+	const setPotentialTradeDetails = useSetRecoilState(potentialTradeDetailsState);
 
 	const getPreview = useGetCrossMarginPotentialTrade(marketAsset, selectedFuturesAddress);
-
-	const setPotentialTradeDetails = useSetRecoilState(potentialTradeDetailsState);
 
 	const generatePreview = useCallback(
 		async (
@@ -53,6 +54,10 @@ const useGetFuturesPotentialTradeDetails = () => {
 				!selectedFuturesAddress
 			) {
 				return null;
+			}
+
+			if (positionMarginDelta.gt(freeMargin)) {
+				throw new Error('insufficient_margin');
 			}
 
 			const {
@@ -111,6 +116,7 @@ const useGetFuturesPotentialTradeDetails = () => {
 			leverageSide,
 			synthetixjs,
 			orderType,
+			freeMargin,
 			getPreview,
 		]
 	);

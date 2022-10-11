@@ -17,7 +17,7 @@ import { FlexDivColCentered, FlexDivRow, SmallGoldenHeader, WhiteHeader } from '
 import media, { Media } from 'styles/media';
 import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 
-import { Copy, StackSection, Title } from '../common';
+import { StackSection, Title } from '../common';
 
 const ShortList = () => {
 	const { t } = useTranslation();
@@ -370,14 +370,6 @@ const StyledTrader = styled.a`
 	color: ${(props) => props.theme.colors.white};
 	display: flex;
 	font-size: 15px;
-`;
-
-const FeatureCopy = styled(Copy)`
-	font-size: 15px;
-	line-height: 150%;
-	letter-spacing: -0.03em;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
-	width: 183px;
 `;
 
 const FeatureTitle = styled(Title)`

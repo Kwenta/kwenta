@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import CustomInput from 'components/Input/CustomInput';
 import InputTitle from 'components/Input/InputTitle';
 import SegmentedControl from 'components/SegmentedControl';
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { FuturesOrderType } from 'queries/futures/types';
 import { leverageSideState, marketAssetRateState, orderFeeCapState } from 'store/futures';
 import { ceilNumber, floorNumber, weiToString, zeroBN } from 'utils/formatters/number';
@@ -82,9 +83,14 @@ export default function OrderPriceInput({
 				onChange={handleOnChange}
 			/>
 			<FeeCapContainer>
-				<FeeRejectionLabel>
-					{t('futures.market.trade.orders.fee-rejection-label')}:
-				</FeeRejectionLabel>
+				<StyledTooltip
+					width={'310px'}
+					content={t('futures.market.trade.orders.fee-rejection-tooltip')}
+				>
+					<FeeRejectionLabel>
+						{t('futures.market.trade.orders.fee-rejection-label')}:
+					</FeeRejectionLabel>
+				</StyledTooltip>
 				<SegmentedControl
 					onChange={onChangeFeeCap}
 					selectedIndex={FEE_CAP_OPTIONS.indexOf(selectedFeeCapLabel)}
