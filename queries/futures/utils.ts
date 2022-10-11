@@ -37,6 +37,7 @@ import {
 	FuturesTrade,
 	MarginTransfer,
 	FuturesMarket,
+	FuturesOrder,
 } from './types';
 
 export const getFuturesEndpoint = (networkId: NetworkId): string => {
@@ -120,7 +121,10 @@ const mapOrderType = (orderType: Partial<FuturesOrderType>) => {
 		: orderType;
 };
 
-export const mapFuturesOrders = (o: FuturesOrderResult, marketInfo: FuturesMarket | undefined) => {
+export const mapFuturesOrders = (
+	o: FuturesOrderResult,
+	marketInfo: FuturesMarket | undefined
+): FuturesOrder => {
 	const asset: FuturesMarketAsset = parseBytes32String(o.asset) as FuturesMarketAsset;
 	const size = weiFromWei(o.size);
 	const targetPrice = weiFromWei(o.targetPrice ?? 0);
