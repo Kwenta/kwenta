@@ -1,42 +1,30 @@
-import { wei } from '@synthetixio/wei';
-import { FC, useState } from 'react';
+import Wei from '@synthetixio/wei';
+import { FC, useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { erc20ABI, useContractRead } from 'wagmi';
 
 import CustomNumericInput from 'components/Input/CustomNumericInput';
-import Connector from 'containers/Connector';
-import { zeroBN } from 'utils/formatters/number';
-import logError from 'utils/logError';
 
 type StakeInputProps = {
 	label: string;
+	maxBalance: Wei;
 };
 
-const kwentaTokenContract = {
-	addressOrName: '0xDA0C33402Fc1e10d18c532F0Ed9c1A6c5C9e386C',
-	contractInterface: erc20ABI,
-};
-
-const StakeInput: FC<StakeInputProps> = ({ label }) => {
-	const { walletAddress } = Connector.useContainer();
+const StakeInput: FC<StakeInputProps> = ({ label, maxBalance }) => {
+	const { t } = useTranslation();
 	const [amount, setAmount] = useState('0');
 
-	useContractRead({
-		...kwentaTokenContract,
-		functionName: 'balanceOf',
-		args: [walletAddress ?? undefined],
-		cacheOnBlock: true,
-		onSettled(data, error) {
-			if (error) logError(error);
-			setAmount(Number(wei(data ?? zeroBN)).toFixed(4));
-		},
-	});
+	const onMaxClick = useCallback(async () => {
+		setAmount(Number(maxBalance).toFixed(4));
+	}, [maxBalance]);
 
 	return (
 		<StakeInputContainer>
 			<StakeInputHeader>
 				<div>{label}</div>
-				<div className="max">Max</div>
+				<div className="max" onClick={onMaxClick}>
+					{t('dashboard.stake.tabs.stake-table.max')}
+				</div>
 			</StakeInputHeader>
 			<StyledInput
 				value={amount}
@@ -60,6 +48,7 @@ const StakeInputHeader = styled.div`
 	.max {
 		text-transform: uppercase;
 		font-family: ${(props) => props.theme.fonts.bold};
+		cursor: pointer;
 	}
 `;
 

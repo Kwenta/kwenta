@@ -81,6 +81,7 @@ const StakingTab = () => {
 			}
 		},
 	});
+
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
 

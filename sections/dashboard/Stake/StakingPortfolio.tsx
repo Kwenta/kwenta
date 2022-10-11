@@ -20,6 +20,7 @@ const kwentaTokenContract = {
 	addressOrName: '0xDA0C33402Fc1e10d18c532F0Ed9c1A6c5C9e386C',
 	contractInterface: erc20ABI,
 };
+
 const stakingRewardsContract = {
 	addressOrName: '0x1653a3a3c4ccee0538685f1600a30df5e3ee830a',
 	contractInterface: stakingRewardsABI,
