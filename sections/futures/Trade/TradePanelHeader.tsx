@@ -94,9 +94,9 @@ const HeaderButton = styled(Button)`
 `;
 
 const Label = styled.span`
-	${media.lessThan('xl')`
-        display: none;
-    `}
+	@media (max-width: 1550px) {
+		display: none;
+	}
 `;
 
 const IconContainer = styled.span`
