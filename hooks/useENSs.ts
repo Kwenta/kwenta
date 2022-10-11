@@ -6,8 +6,6 @@ import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import reverseRecordsAbi from 'lib/abis/ReverseRecords.json';
 
-import useIsL2 from './useIsL2';
-
 const ADDRESSES_PER_LOOKUP = 1500;
 
 type EnsInfo = {
@@ -15,8 +13,6 @@ type EnsInfo = {
 };
 
 const useENSs = (addresses: string[], options?: UseQueryOptions<any | null>) => {
-	const isL2 = useIsL2();
-
 	const { staticMainnetProvider } = Connector.useContainer();
 
 	return useQuery<EnsInfo>(
@@ -48,7 +44,7 @@ const useENSs = (addresses: string[], options?: UseQueryOptions<any | null>) => 
 			return ensInfo;
 		},
 		{
-			enabled: isL2 && addresses.length > 0,
+			enabled: addresses.length > 0,
 			...options,
 		}
 	);

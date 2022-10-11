@@ -9,18 +9,27 @@ import Table from 'components/Table';
 import { DEFAULT_LEADERBOARD_ROWS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import useENSAvatar from 'hooks/useENSAvatar';
+import { AccountStat } from 'queries/futures/types';
 
-import { AccountStat, getMedal, PIN, StyledTrader } from '../common';
+import { getMedal, StyledTrader } from '../common';
 
 type AllTimeProps = {
 	stats: AccountStat[];
 	isLoading: boolean;
-	searchTerm: string;
+	pinRow: AccountStat[];
 	onClickTrader: (trader: string) => void;
 	compact?: boolean;
+	activeTab?: string;
 };
 
-const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader, compact }) => {
+const AllTime: FC<AllTimeProps> = ({
+	stats,
+	isLoading,
+	pinRow,
+	onClickTrader,
+	compact,
+	activeTab,
+}) => {
 	const { t } = useTranslation();
 	const { staticMainnetProvider, walletAddress } = Connector.useContainer();
 
@@ -39,30 +48,8 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 	}
 
 	const data = useMemo(() => {
-		const statsData = stats
-			.sort((a: AccountStat, b: AccountStat) => a.rank - b.rank)
-			.map((trader: any) => {
-				return {
-					...trader,
-					rankText: trader.rank.toString(),
-				};
-			})
-			.filter((i: { account: string; traderEns: string }) =>
-				searchTerm?.length
-					? i.account.toLowerCase().includes(searchTerm) ||
-					  i.traderEns?.toLowerCase().includes(searchTerm)
-					: true
-			);
-
-		const pinRow = statsData
-			.filter((trader) => trader.account.toLowerCase() === walletAddress?.toLowerCase())
-			.map((trader) => ({
-				...trader,
-				rankText: `${trader.rank}${PIN}`,
-			}));
-
-		return [...pinRow, ...statsData];
-	}, [stats, searchTerm, walletAddress]);
+		return [...pinRow, ...stats];
+	}, [stats, pinRow]);
 
 	return (
 		<>
@@ -77,11 +64,14 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 					hiddenColumns={
 						compact ? ['rank', 'totalTrades', 'liquidations', 'totalVolume', 'pnl'] : undefined
 					}
+					columnsDeps={[activeTab]}
 					columns={[
 						{
 							Header: (
 								<TableTitle>
-									<TitleText>{t('leaderboard.leaderboard.table.title')}</TitleText>
+									<TitleText>
+										{activeTab} {t('leaderboard.leaderboard.table.title')}
+									</TitleText>
 								</TableTitle>
 							),
 							accessor: 'title',
@@ -140,25 +130,20 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 										<TableHeader>{t('leaderboard.leaderboard.table.total-trades')}</TableHeader>
 									),
 									accessor: 'totalTrades',
-									sortType: 'basic',
 									width: 80,
-									sortable: true,
 								},
 								{
 									Header: (
 										<TableHeader>{t('leaderboard.leaderboard.table.liquidations')}</TableHeader>
 									),
 									accessor: 'liquidations',
-									sortType: 'basic',
 									width: 80,
-									sortable: true,
 								},
 								{
 									Header: (
 										<TableHeader>{t('leaderboard.leaderboard.table.total-volume')}</TableHeader>
 									),
 									accessor: 'totalVolume',
-									sortType: 'basic',
 									Cell: (cellProps: CellProps<any>) => (
 										<Currency.Price
 											currencyKey={'sUSD'}
@@ -168,12 +153,10 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 										/>
 									),
 									width: compact ? 'auto' : 100,
-									sortable: true,
 								},
 								{
 									Header: <TableHeader>{t('leaderboard.leaderboard.table.pnl')}</TableHeader>,
 									accessor: 'pnl',
-									sortType: 'basic',
 									Cell: (cellProps: CellProps<any>) => (
 										<ColorCodedPrice
 											currencyKey={'sUSD'}
@@ -183,7 +166,6 @@ const AllTime: FC<AllTimeProps> = ({ stats, isLoading, searchTerm, onClickTrader
 										/>
 									),
 									width: compact ? 'auto' : 100,
-									sortable: true,
 								},
 							],
 						},
@@ -282,6 +264,7 @@ const TableTitle = styled.div`
 const TitleText = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
+	text-transform: capitalize;
 `;
 
 const TableHeader = styled.div`

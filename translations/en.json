@@ -872,7 +872,7 @@
 		"page-title": "Leaderboard | Kwenta",
 		"leaderboard": {
 			"table": {
-				"title": "All Traders",
+				"title": "{{ activeTab }} Traders",
 				"rank": "Rank",
 				"trader": "Trader",
 				"total-trades": "Total Trades",
