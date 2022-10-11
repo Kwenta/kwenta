@@ -1,13 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-export const CROSS_MARGIN_FAQ_URL = 'https://docs.kwenta.io/products/futures/cross-margin-accounts';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 export default function CrossMarginFAQ() {
 	const { t } = useTranslation();
 
 	const onClick = () => {
-		window.open(CROSS_MARGIN_FAQ_URL);
+		window.open(EXTERNAL_LINKS.Docs.CrossMarginFaq);
 	};
 
 	return (

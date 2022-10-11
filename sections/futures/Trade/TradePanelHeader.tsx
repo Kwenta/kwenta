@@ -5,11 +5,10 @@ import styled from 'styled-components';
 import HelpIcon from 'assets/svg/app/question-mark.svg';
 import Button from 'components/Button';
 import { ButtonVariant } from 'components/Button/Button';
+import { EXTERNAL_LINKS } from 'constants/links';
 import { FuturesAccountType } from 'queries/futures/subgraph';
 import { BorderedPanel } from 'styles/common';
 import media from 'styles/media';
-
-import { CROSS_MARGIN_FAQ_URL } from '../CrossMarginOnboard/CrossMarginFAQ';
 
 type Props = {
 	accountType: FuturesAccountType;
@@ -33,7 +32,7 @@ export default function TradePanelHeader({ accountType, buttons }: Props) {
 						: 'futures.market.trade.isolated-margin.title'
 				)}
 				{accountType === 'cross_margin' && (
-					<FAQLink onClick={() => window.open(CROSS_MARGIN_FAQ_URL)}>
+					<FAQLink onClick={() => window.open(EXTERNAL_LINKS.Docs.CrossMarginFaq)}>
 						<HelpIcon />
 					</FAQLink>
 				)}
