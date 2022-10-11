@@ -85,7 +85,7 @@ const OpenOrdersTable: React.FC = () => {
 		async (order: FuturesOrder | undefined) => {
 			if (!order) return;
 			setCancelling(order.id);
-			if (order.orderType === 'Limit' || order.orderType === 'Stop') {
+			if (order.orderType === 'Limit' || order.orderType === 'Stop-Market') {
 				try {
 					const id = order.id.split('-')[2];
 					const tx = await crossMarginAccountContract?.cancelOrder(id);
