@@ -22,6 +22,21 @@ type ColumnWithSorting<D extends object = {}> = Column<D> & {
 	columns?: Column[];
 };
 
+export function compareNumericString(rowA: Row<any>, rowB: Row<any>, id: string, desc: boolean) {
+	let a = parseFloat(rowA.values[id]);
+	let b = parseFloat(rowB.values[id]);
+	if (isNaN(a)) {
+		// Blanks and non-numeric strings to bottom
+		a = desc ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
+	}
+	if (isNaN(b)) {
+		b = desc ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
+	}
+	if (a > b) return 1;
+	if (a < b) return -1;
+	return 0;
+}
+
 type TableProps = {
 	palette?: TablePalette;
 	data: object[];
