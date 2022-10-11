@@ -1,24 +1,21 @@
-import { wei } from '@synthetixio/wei';
+import { getAddress, isAddress } from 'ethers/lib/utils';
 import { useRouter } from 'next/router';
-import { FC, useMemo, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
 import Search from 'components/Table/Search';
 import ROUTES from 'constants/routes';
+import useENS from 'hooks/useENS';
 import useENSs from 'hooks/useENSs';
-import { FuturesStat } from 'queries/futures/types';
-import useGetStats from 'queries/futures/useGetStats';
+import { AccountStat } from 'queries/futures/types';
+import useLeaderboard, { DEFAULT_LEADERBOARD_DATA } from 'queries/futures/useLeaderboard';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
-import { isCompetitionActive } from 'store/ui';
 import { FlexDivCol } from 'styles/common';
 import media from 'styles/media';
-import { truncateAddress } from 'utils/formatters/string';
 
 import AllTime from '../AllTime';
-import { AccountStat, COMPETITION_TIERS, Tier } from '../common';
-import Competition from '../Competition';
+import { PIN } from '../common';
 import TraderHistory from '../TraderHistory';
 
 type LeaderboardProps = {
@@ -26,104 +23,132 @@ type LeaderboardProps = {
 	mobile?: boolean;
 };
 
+enum LeaderboardTab {
+	Top = 'top',
+	Bottom = 'bottom',
+}
+
+const LEADERBOARD_TABS = [LeaderboardTab.Top, LeaderboardTab.Bottom];
+
 const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps) => {
-	const competitionActive = useRecoilValue(isCompetitionActive);
+	const [activeTab, setActiveTab] = useState<LeaderboardTab>(LeaderboardTab.Top);
+	const [searchInput, setSearchInput] = useState('');
 	const [searchTerm, setSearchTerm] = useState('');
-	const [activeTier, setActiveTier] = useState<Tier>(competitionActive ? 'bronze' : null);
+	const [searchAddress, setSearchAddress] = useState('');
 	const [selectedTrader, setSelectedTrader] = useState('');
+	const searchEns = useENS(searchTerm);
 	const router = useRouter();
 
-	const statsQuery = useGetStats();
-	const statsData = useMemo(() => statsQuery.data ?? [], [statsQuery]);
+	const leaderboardQuery = useLeaderboard(searchAddress);
+	const leaderboardData = useMemo(() => leaderboardQuery.data ?? DEFAULT_LEADERBOARD_DATA, [
+		leaderboardQuery,
+	]);
 
 	const traders = useMemo(
 		() =>
-			statsData.map((stat: FuturesStat) => {
+			leaderboardData.all?.map((stat: AccountStat) => {
 				return stat.account;
 			}) ?? [],
-		[statsData]
+		[leaderboardData]
 	);
+
 	const ensInfoQuery = useENSs(traders);
 	const ensInfo = useMemo(() => ensInfoQuery.data ?? {}, [ensInfoQuery]);
 
-	let stats: AccountStat[] = useMemo(() => {
-		return statsData
-			.map((stat: FuturesStat) => ({
-				account: stat.account,
-				trader: stat.account,
-				traderShort: truncateAddress(stat.account),
-				traderEns: ensInfo[stat.account] ?? null,
-				totalTrades: stat.totalTrades,
-				totalVolume: wei(stat.totalVolume, 18, true).toNumber(),
-				liquidations: stat.liquidations,
-				pnl: wei(stat.pnlWithFeesPaid, 18, true).toNumber(),
-			}))
-			.filter((stat: FuturesStat) => stat.totalVolume > 0)
-			.sort((a: FuturesStat, b: FuturesStat) => (b?.pnl || 0) - (a?.pnl || 0))
-			.map((stat: FuturesStat, i: number) => ({
-				rank: i + 1,
-				...stat,
-			}));
-	}, [statsData, ensInfo]);
+	const pinRow: AccountStat[] = useMemo(() => {
+		return leaderboardData.wallet
+			? leaderboardData.wallet.map((trader) => ({
+					...trader,
+					rankText: PIN,
+			  }))
+			: [];
+	}, [leaderboardData.wallet]);
 
 	useMemo(() => {
 		if (router.asPath.startsWith(ROUTES.Leaderboard.Home) && router.query.trader) {
 			const trader = router.query.trader as string;
 			setSelectedTrader(trader);
 		} else {
+			setSearchInput('');
 			setSearchTerm('');
+			setSearchAddress('');
 			setSelectedTrader('');
 		}
 		return null;
 	}, [router.query, router.asPath]);
 
-	const onChangeSearch = (text: string) => {
-		setSearchTerm(text?.toLowerCase());
+	const onChangeSearch = async (text: string) => {
+		setSearchInput(text?.toLowerCase());
+
+		if (isAddress(text)) {
+			setSearchTerm(getAddress(text));
+		} else if (text.endsWith('.eth')) {
+			setSearchTerm(text);
+		} else {
+			setSearchTerm('');
+		}
 	};
 
 	const onClickTrader = (trader: string) => {
+		setSearchInput('');
 		setSearchTerm('');
+		setSearchAddress('');
 		setSelectedTrader(trader);
 		router.push(ROUTES.Leaderboard.Trader(trader));
 	};
 
 	const resetSelection = () => {
+		setSearchInput('');
 		setSearchTerm('');
+		setSearchAddress('');
 		setSelectedTrader('');
 		router.push(ROUTES.Leaderboard.Home);
 	};
+
+	useEffect(() => {
+		setSearchAddress(
+			searchEns.ensAddress ? searchEns.ensAddress : isAddress(searchTerm) ? searchTerm : ''
+		);
+	}, [searchTerm, searchEns]);
+
+	const mapEnsName = useCallback(
+		(stat: AccountStat) => ({
+			...stat,
+			traderEns: ensInfo[stat.account] ?? null,
+		}),
+		[ensInfo]
+	);
+
+	const stats = useMemo(() => {
+		return {
+			top: leaderboardData.top.map(mapEnsName),
+			bottom: leaderboardData.bottom.map(mapEnsName),
+			wallet: leaderboardData.wallet.map(mapEnsName),
+			search: leaderboardData.search.map(mapEnsName),
+			all: leaderboardData.all.map(mapEnsName),
+		};
+	}, [leaderboardData, mapEnsName]);
 
 	return (
 		<>
 			<CompetitionBanner compact={true} hideBanner={compact} />
 			<LeaderboardContainer>
 				<SearchContainer compact={compact} mobile={mobile}>
-					{competitionActive && (
-						<TabButtonContainer mobile={mobile}>
-							{COMPETITION_TIERS.map((tier) => (
-								<StyledTabButton
-									key={tier}
-									title={tier ?? ''}
-									active={activeTier === tier}
-									onClick={() => {
-										setActiveTier(tier);
-										setSelectedTrader('');
-									}}
-								/>
-							))}
+					<TabButtonContainer mobile={mobile}>
+						{LEADERBOARD_TABS.map((tab) => (
 							<StyledTabButton
-								key={'All'}
-								title={'All'}
-								active={!activeTier}
+								key={tab}
+								title={tab ?? ''}
+								active={activeTab === tab}
 								onClick={() => {
-									setActiveTier(null);
+									setActiveTab(tab);
 									setSelectedTrader('');
 								}}
 							/>
-						</TabButtonContainer>
-					)}
+						))}
+					</TabButtonContainer>
 					<SearchBarContainer>
-						<Search value={searchTerm} onChange={onChangeSearch} disabled={false} />
+						<Search value={searchInput} onChange={onChangeSearch} disabled={false} />
 					</SearchBarContainer>
 				</SearchContainer>
 				<TableContainer compact={compact}>
@@ -135,21 +160,22 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 							compact={compact}
 							searchTerm={searchTerm}
 						/>
-					) : activeTier ? (
-						<Competition
-							activeTier={activeTier}
-							ensInfo={ensInfo}
+					) : searchAddress ? (
+						<AllTime
+							stats={stats.search}
+							isLoading={leaderboardQuery.isLoading}
 							compact={compact}
 							onClickTrader={onClickTrader}
-							searchTerm={searchTerm}
+							pinRow={pinRow}
 						/>
 					) : (
 						<AllTime
-							stats={stats}
-							isLoading={statsQuery.isLoading || ensInfoQuery.isLoading}
+							stats={stats[activeTab]}
+							isLoading={leaderboardQuery.isLoading}
 							compact={compact}
 							onClickTrader={onClickTrader}
-							searchTerm={searchTerm}
+							pinRow={pinRow}
+							activeTab={activeTab}
 						/>
 					)}
 				</TableContainer>
@@ -173,7 +199,7 @@ const StyledTabButton = styled(TabButton)`
 
 const TabButtonContainer = styled.div<{ mobile?: boolean }>`
 	display: grid;
-	grid-template-columns: repeat(4, 1fr);
+	grid-template-columns: repeat(2, 1fr);
 	margin-bottom: ${({ mobile }) => (mobile ? '16px' : '0px')};
 `;
 

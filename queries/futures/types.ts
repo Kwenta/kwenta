@@ -191,12 +191,13 @@ export type FuturesTrade = {
 	pnl: Wei;
 	feesPaid: Wei;
 	orderType: FuturesOrderTypeMapped;
+	accountType: FuturesAccountType;
 };
 
 export type FuturesOrder = {
 	id: string;
 	account: string;
-	asset: string;
+	asset: FuturesMarketAsset;
 	market: string;
 	marketKey: FuturesMarketKey;
 	size: Wei;
@@ -210,6 +211,7 @@ export type FuturesOrder = {
 	side?: PositionSide;
 	isStale?: boolean;
 	isExecutable?: boolean;
+	isCancelling?: boolean;
 };
 
 export type FuturesVolumes = {
@@ -221,11 +223,23 @@ export type FuturesVolumes = {
 
 export type FuturesStat = {
 	account: string;
-	pnlWithFeesPaid: string;
-	liquidations: number;
+	pnlWithFeesPaid: Wei;
+	liquidations: Wei;
+	totalTrades: Wei;
+	totalVolume: Wei;
+	pnl?: Wei;
+};
+
+export type AccountStat = {
+	rank: number;
+	account: string;
+	trader: string;
+	traderShort: string;
+	traderEns?: string | null;
 	totalTrades: number;
-	totalVolume: number;
-	pnl?: number;
+	totalVolume: Wei;
+	liquidations: number;
+	pnl: Wei;
 };
 
 export type FuturesCumulativeStats = {

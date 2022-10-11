@@ -18,6 +18,7 @@ import {
 	FuturesPositionsState,
 	PositionHistoryState,
 	FuturesAccountTypes,
+	FuturesOrder,
 } from 'queries/futures/types';
 import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import { Price, Rates } from 'queries/rates/types';
@@ -266,7 +267,7 @@ export const leverageValueCommittedState = atom({
 	default: true,
 });
 
-export const openOrdersState = atom<any[]>({
+export const openOrdersState = atom<FuturesOrder[]>({
 	key: getFuturesKey('openOrders'),
 	default: [],
 });
@@ -298,6 +299,7 @@ export const maxLeverageState = selector({
 		const orderType = get(orderTypeState);
 		const market = get(marketInfoState);
 		const leverageSide = get(leverageSideState);
+		const accountType = get(futuresAccountTypeState);
 
 		const positionLeverage = position?.position?.leverage ?? wei(0);
 		const positionSide = position?.position?.side;
@@ -308,6 +310,7 @@ export const maxLeverageState = selector({
 				: marketMaxLeverage;
 
 		if (!positionLeverage || positionLeverage.eq(wei(0))) return adjustedMaxLeverage;
+		if (accountType === 'cross_margin') return adjustedMaxLeverage;
 		if (positionSide === leverageSide) {
 			return adjustedMaxLeverage?.sub(positionLeverage);
 		} else {
@@ -351,6 +354,15 @@ export const selectedFuturesAddressState = selector<string | null>({
 		const futuresType = get(futuresAccountTypeState);
 		const account = get(futuresAccountState);
 		return futuresType === 'cross_margin' ? account.crossMarginAddress : account.walletAddress;
+	},
+});
+
+export const aboveMaxLeverageState = selector({
+	key: getFuturesKey('aboveMaxLeverage'),
+	get: ({ get }) => {
+		const position = get(positionState);
+		const maxLeverage = get(maxLeverageState);
+		return position?.position?.leverage && maxLeverage.lt(position.position.leverage);
 	},
 });
 

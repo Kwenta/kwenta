@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import Currency from 'components/Currency';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import FuturesIcon from 'components/Nav/FuturesIcon';
 import Table from 'components/Table';
 import ROUTES from 'constants/routes';
 import { FuturesAccountTypes, PositionHistory } from 'queries/futures/types';
@@ -48,23 +49,17 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 			.sort((a: PositionHistory, b: PositionHistory) => b.timestamp - a.timestamp)
 			.map((stat: PositionHistory, i: number) => {
 				return {
+					...stat,
 					rank: i + 1,
 					currencyIconKey: stat.asset ? (stat.asset[0] !== 's' ? 's' : '') + stat.asset : '',
 					marketShortName: getMarketName(stat.asset),
-					openTimestamp: stat.openTimestamp,
-					asset: stat.asset,
 					status: stat.isOpen ? 'Open' : stat.isLiquidated ? 'Liquidated' : 'Closed',
-					feesPaid: stat.feesPaid,
-					netFunding: stat.netFunding,
 					pnl: stat.pnlWithFeesPaid,
 					pnlPct: `(${stat.pnlWithFeesPaid
 						.div(stat.initialMargin.add(stat.totalDeposits))
 						.mul(100)
 						.toNumber()
 						.toFixed(2)}%)`,
-					totalVolume: stat.totalVolume,
-					trades: stat.trades,
-					side: stat.side,
 				};
 			})
 			.filter((i: { marketShortName: string; status: string }) =>
@@ -131,6 +126,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 										<CurrencyInfo>
 											<StyledCurrencyIcon currencyKey={cellProps.row.original.currencyIconKey} />
 											<StyledSubtitle>{cellProps.row.original.marketShortName}</StyledSubtitle>
+											<StyledFuturesIcon type={cellProps.row.original.accountType} />
 										</CurrencyInfo>
 									),
 									width: compact ? 40 : 100,
@@ -243,9 +239,10 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 										<CurrencyInfo>
 											<StyledCurrencyIcon currencyKey={cellProps.row.original.currencyIconKey} />
 											<StyledSubtitle>{cellProps.row.original.marketShortName}</StyledSubtitle>
+											<StyledFuturesIcon type={cellProps.row.original.accountType} />
 										</CurrencyInfo>
 									),
-									width: 40,
+									width: 50,
 								},
 								{
 									Header: <TableHeader>{t('leaderboard.trader-history.table.status')}</TableHeader>,
@@ -253,7 +250,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 									Cell: (cellProps: CellProps<any>) => {
 										return <StyledCell>{cellProps.row.original.status}</StyledCell>;
 									},
-									width: 40,
+									width: 30,
 								},
 								{
 									Header: (
@@ -384,6 +381,10 @@ const StyledValue = styled.div`
 			: props.theme.colors.selectedTheme.button.text.primary};
 	margin: 0;
 	text-align: end;
+`;
+
+const StyledFuturesIcon = styled(FuturesIcon)`
+	margin-left: 5px;
 `;
 
 export default TraderHistory;

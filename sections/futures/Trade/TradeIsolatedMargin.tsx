@@ -1,13 +1,11 @@
-import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useMemo, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import DepositArrow from 'assets/svg/futures/deposit-arrow.svg';
 import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import SegmentedControl from 'components/SegmentedControl';
 import { ISOLATED_MARGIN_ORDER_TYPES } from 'constants/futures';
-import Connector from 'containers/Connector';
 import {
 	balancesState,
 	leverageSideState,
@@ -34,8 +32,7 @@ type Props = {
 };
 
 const TradeIsolatedMargin = ({ isMobile }: Props) => {
-	const { openConnectModal: connectWallet } = useConnectModal();
-	const { walletAddress } = Connector.useContainer();
+	const { colors } = useTheme();
 
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const position = useRecoilValue(positionState);
@@ -46,19 +43,11 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 	const [openModal, setOpenModal] = useState<'deposit' | 'withdraw' | null>(null);
 
 	const headerButtons = useMemo(() => {
-		if (!walletAddress) {
-			return [
-				{
-					i18nTitle: 'futures.market.trade.button.connect-wallet',
-					onClick: connectWallet,
-				},
-			];
-		}
 		const transferButtons = !marketInfo?.isSuspended
 			? [
 					{
 						i18nTitle: 'futures.market.trade.button.deposit',
-						Icon: DepositArrow,
+						icon: <DepositArrow stroke={colors.selectedTheme.yellow} />,
 						onClick: () => setOpenModal('deposit'),
 					},
 			  ]
@@ -67,12 +56,12 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 		if (position?.remainingMargin?.gt(zeroBN) && !marketInfo?.isSuspended) {
 			transferButtons.push({
 				i18nTitle: 'futures.market.trade.button.withdraw',
-				Icon: WithdrawArrow,
+				icon: <WithdrawArrow stroke={colors.selectedTheme.yellow} />,
 				onClick: () => setOpenModal('withdraw'),
 			});
 		}
 		return transferButtons;
-	}, [walletAddress, position?.remainingMargin, marketInfo?.isSuspended, connectWallet]);
+	}, [position?.remainingMargin, marketInfo?.isSuspended, colors.selectedTheme.yellow]);
 
 	return (
 		<div>

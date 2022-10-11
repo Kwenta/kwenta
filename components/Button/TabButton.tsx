@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import styled, { css } from 'styled-components';
 
 import Button from './Button';
@@ -9,21 +9,23 @@ export type TabButtonProps = {
 	badge?: number;
 	icon?: any;
 	active?: boolean;
-	onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
+	titleIcon?: ReactNode;
 	disabled?: boolean;
 	noOutline?: boolean;
 	vertical?: boolean;
 	nofill?: boolean;
 	isRounded?: boolean;
 	lightStakePage?: boolean;
+	onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
 };
 
 const TabButton: React.FC<TabButtonProps> = React.memo(
-	({ title, detail, badge, active, icon, vertical, nofill, ...props }) => (
+	({ title, detail, badge, active, icon, vertical, titleIcon, nofill, ...props }) => (
 		<StyledButton {...props} {...{ active, vertical, nofill }} noOutline>
 			{!!icon && <div>{icon}</div>}
 			<div>
 				<div className="title-container">
+					{titleIcon}
 					<p className="title">{title}</p>
 					{!!badge && <div className="badge">{badge}</div>}
 				</div>
@@ -75,6 +77,7 @@ const StyledButton = styled(Button)<{
 	.title-container {
 		display: flex;
 		flex-direction: row;
+		align-items: center;
 	}
 
 	.detail {
