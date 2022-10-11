@@ -18,6 +18,7 @@ import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesOrder, PositionSide } from 'queries/futures/types';
 import { currentMarketState, openOrdersState, selectedFuturesAddressState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
+import { formatDollars } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
@@ -215,6 +216,20 @@ const OpenOrdersTable: React.FC = () => {
 										)}
 									</div>
 								);
+							},
+							sortable: true,
+							width: 50,
+						},
+						{
+							Header: (
+								<StyledTableHeader>
+									{t('futures.market.user.open-orders.table.reserved-margin')}
+								</StyledTableHeader>
+							),
+							accessor: 'marginDelta',
+							Cell: (cellProps: CellProps<any>) => {
+								const { marginDelta } = cellProps.row.original;
+								return <div>{formatDollars(marginDelta?.gt(0) ? marginDelta : '0')}</div>;
 							},
 							sortable: true,
 							width: 50,

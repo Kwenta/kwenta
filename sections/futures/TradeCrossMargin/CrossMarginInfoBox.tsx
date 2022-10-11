@@ -190,8 +190,8 @@ function MarginInfoBox({ editingLeverage }: Props) {
 											{keeperEthBal.gt(0) && (
 												<ActionButton onClick={() => setOpenModal('keeper-deposit')}>
 													<WithdrawArrow
-														width="10px"
-														height="10px"
+														width="12px"
+														height="9px"
 														stroke={colors.selectedTheme.yellow}
 													/>
 												</ActionButton>
