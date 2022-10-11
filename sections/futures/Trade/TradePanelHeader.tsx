@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import HelpIcon from 'assets/svg/app/question-mark.svg';
 import Button from 'components/Button';
 import { ButtonVariant } from 'components/Button/Button';
+import FuturesIcon from 'components/Nav/FuturesIcon';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { FuturesAccountType } from 'queries/futures/subgraph';
 import { BorderedPanel } from 'styles/common';
@@ -26,6 +27,7 @@ export default function TradePanelHeader({ accountType, buttons }: Props) {
 	return (
 		<Container>
 			<Title>
+				<StyledFuturesIcon type={accountType} />
 				{t(
 					accountType === 'cross_margin'
 						? 'futures.market.trade.cross-margin.title'
@@ -56,6 +58,10 @@ export default function TradePanelHeader({ accountType, buttons }: Props) {
 		</Container>
 	);
 }
+
+const StyledFuturesIcon = styled(FuturesIcon)`
+	margin-right: 6px;
+`;
 
 const Container = styled(BorderedPanel)`
 	display: flex;
