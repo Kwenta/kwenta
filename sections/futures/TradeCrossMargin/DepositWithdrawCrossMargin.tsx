@@ -65,15 +65,10 @@ export default function DepositWithdrawCrossMargin({
 			monitorTransaction({
 				txHash: tx.hash,
 				onTxConfirmed: async () => {
-					try {
-						await refetchUntilUpdate('account-margin-change');
-					} catch (err) {
-						logError(err);
-					} finally {
-						setTxState('complete');
-						onComplete?.();
-						onDismiss();
-					}
+					await refetchUntilUpdate('account-margin-change');
+					setTxState('complete');
+					onComplete?.();
+					onDismiss();
 				},
 			});
 		} catch (err) {
@@ -130,14 +125,10 @@ export default function DepositWithdrawCrossMargin({
 			monitorTransaction({
 				txHash: tx.hash,
 				onTxConfirmed: async () => {
-					try {
-						await refetchUntilUpdate('account-margin-change');
-						setTxState('complete');
-						onComplete?.();
-						onDismiss();
-					} catch (err) {
-						logError(err);
-					}
+					await refetchUntilUpdate('account-margin-change');
+					setTxState('complete');
+					onComplete?.();
+					onDismiss();
 				},
 			});
 		} catch (err) {

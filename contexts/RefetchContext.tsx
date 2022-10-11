@@ -17,6 +17,7 @@ import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useSynthBalances from 'queries/synths/useSynthBalances';
 import { futuresAccountTypeState, positionState } from 'store/futures';
+import logError from 'utils/logError';
 
 type RefetchType =
 	| 'modify-position'
@@ -146,14 +147,15 @@ const refetchWithComparator = async (
 ) => {
 	const prev = query?.data;
 
-	return new Promise((res, rej) => {
+	return new Promise((res) => {
 		let count = 1;
 
 		const refetch = async () => {
 			const timeout = setTimeout(async () => {
 				if (count > max) {
 					clearTimeout(timeout);
-					rej(new Error('Refetch timed out'));
+					logError('refetch timeout');
+					res({ data: null, status: 'timeout' });
 				} else {
 					const cur = query?.data || null;
 					const next = await query.refetch();
@@ -161,7 +163,7 @@ const refetchWithComparator = async (
 					count += 1;
 					if (!comparator(prev, next.data)) {
 						clearTimeout(timeout);
-						res(cur);
+						res({ data: cur, status: 'complete' });
 					} else {
 						refetch();
 					}

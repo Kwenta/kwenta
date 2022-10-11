@@ -77,13 +77,9 @@ export default function ManageKeeperBalanceModal({ onDismiss, defaultType }: Pro
 				monitorTransaction({
 					txHash: tx.hash,
 					onTxConfirmed: async () => {
-						try {
-							refetchUntilUpdate('account-margin-change');
-							setTransacting(false);
-							onDismiss();
-						} catch (err) {
-							logError(err);
-						}
+						refetchUntilUpdate('account-margin-change');
+						setTransacting(false);
+						onDismiss();
 					},
 				});
 			}
