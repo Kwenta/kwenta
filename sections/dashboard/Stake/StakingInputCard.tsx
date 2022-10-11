@@ -8,6 +8,7 @@ import { erc20ABI, useContractRead, useContractWrite, usePrepareContractWrite } 
 import Button from 'components/Button';
 import SegmentedControl from 'components/SegmentedControl';
 import Connector from 'containers/Connector';
+import rewardEscrowABI from 'lib/abis/RewardEscrow.json';
 import stakingRewardsABI from 'lib/abis/StakingRewards.json';
 import { currentThemeState } from 'store/ui';
 import { zeroBN } from 'utils/formatters/number';
@@ -18,7 +19,7 @@ import StakeInput from './StakeInput';
 
 type StakingInputCardProps = {
 	inputLabel: string;
-	tableType: 'stake' | 'redeem';
+	tableType: 'stake' | 'escrow' | 'redeem';
 };
 
 const kwentaTokenContract = {
@@ -29,6 +30,11 @@ const kwentaTokenContract = {
 const stakingRewardsContract = {
 	addressOrName: '0x1653a3a3c4ccee0538685f1600a30df5e3ee830a',
 	contractInterface: stakingRewardsABI,
+};
+
+const rewardEscrowContract = {
+	addressOrName: '0xaFD87d1a62260bD5714C55a1BB4057bDc8dFA413',
+	contractInterface: rewardEscrowABI,
 };
 
 const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel, tableType }) => {
@@ -68,21 +74,38 @@ const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel, tableType }) 
 		...stakingRewardsContract,
 		functionName: 'stake',
 		args: ['20000000000000000000'],
+		enabled: !!walletAddress,
 	});
-
-	const { write: stakingKwenta } = useContractWrite(stakedKwenta);
 
 	const { config: unstakedKwenta } = usePrepareContractWrite({
 		...stakingRewardsContract,
 		functionName: 'unstake',
 		args: ['20000000000000000000'],
+		enabled: !!walletAddress,
 	});
 
+	const { config: stakedEscrowKwenta } = usePrepareContractWrite({
+		...rewardEscrowContract,
+		functionName: 'stakeEscrow',
+		args: ['20000000000000000000'],
+		enabled: !!walletAddress,
+	});
+
+	const { config: unstakedEscrowKwenta } = usePrepareContractWrite({
+		...rewardEscrowContract,
+		functionName: 'unstakeEscrow',
+		args: ['20000000000000000000'],
+		enabled: !!walletAddress,
+	});
+
+	const { write: stakingKwenta } = useContractWrite(stakedKwenta);
 	const { write: unstakingKwenta } = useContractWrite(unstakedKwenta);
+	const { write: stakingEscrowKwenta } = useContractWrite(stakedEscrowKwenta);
+	const { write: unstakingEscrowKwenta } = useContractWrite(unstakedEscrowKwenta);
 
 	return (
 		<StakingInputCardContainer $darkTheme={isDarkTheme}>
-			{tableType === 'stake' && (
+			{(tableType === 'stake' || tableType === 'escrow') && (
 				<SegmentedControl
 					values={[
 						t('dashboard.stake.tabs.stake-table.stake'),
@@ -104,6 +127,17 @@ const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel, tableType }) 
 					variant="flat"
 					size="sm"
 					onClick={() => (activeTab === 0 ? stakingKwenta?.() : unstakingKwenta?.())}
+				>
+					{activeTab === 0
+						? t('dashboard.stake.tabs.stake-table.stake')
+						: t('dashboard.stake.tabs.stake-table.unstake')}
+				</Button>
+			) : tableType === 'escrow' ? (
+				<Button
+					fullWidth
+					variant="flat"
+					size="sm"
+					onClick={() => (activeTab === 0 ? stakingEscrowKwenta?.() : unstakingEscrowKwenta?.())}
 				>
 					{activeTab === 0
 						? t('dashboard.stake.tabs.stake-table.stake')

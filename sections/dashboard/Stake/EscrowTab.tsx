@@ -14,7 +14,7 @@ const EscrowTab = () => {
 			<EscrowTable />
 			<StakingInputCard
 				inputLabel={t('dashboard.stake.tabs.stake-table.ekwenta-token')}
-				tableType={'stake'}
+				tableType={'escrow'}
 			/>
 		</EscrowTabContainer>
 	);
