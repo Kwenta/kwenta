@@ -28,15 +28,15 @@ const AmountContainer: FC<AmountContainerProps> = ({ position }) => {
 	const positionDetails = position?.position ?? null;
 	const leverage = formatNumber(positionDetails?.leverage ?? zeroBN) + 'x';
 	const side = positionDetails?.side === 'long' ? PositionSide.LONG : PositionSide.SHORT;
-	const roiChange = positionDetails?.roiChange.mul(100);
+	const pnlPct = positionDetails?.pnlPct.mul(100);
 
 	const amount = () => {
-		if (roiChange) {
-			return roiChange.gt(0)
-				? `+${roiChange.toNumber().toFixed(2)}%`
-				: roiChange.eq(0)
+		if (pnlPct) {
+			return pnlPct.gt(0)
+				? `+${pnlPct.toNumber().toFixed(2)}%`
+				: pnlPct.eq(0)
 				? `+0.00%`
-				: `${roiChange.toNumber().toFixed(2)}%`;
+				: `${pnlPct.toNumber().toFixed(2)}%`;
 		}
 	};
 

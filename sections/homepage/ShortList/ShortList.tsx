@@ -1,4 +1,3 @@
-import Wei, { wei } from '@synthetixio/wei';
 import { useRouter } from 'next/router';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,41 +11,19 @@ import Loader from 'components/Loader';
 import Table from 'components/Table';
 import ROUTES from 'constants/routes';
 import useENS from 'hooks/useENS';
-import { FuturesStat } from 'queries/futures/types';
 import useGetFuturesCumulativeStats from 'queries/futures/useGetFuturesCumulativeStats';
 import useGetStats from 'queries/futures/useGetStats';
 import { FlexDivColCentered, FlexDivRow, SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media, { Media } from 'styles/media';
 import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
-import { truncateAddress } from 'utils/formatters/string';
 
 import { Copy, StackSection, Title } from '../common';
-
-type Stat = {
-	pnl: Wei;
-	liquidations: Wei;
-	totalTrades: Wei;
-	totalVolume: Wei;
-};
 
 const ShortList = () => {
 	const { t } = useTranslation();
 
 	const statsQuery = useGetStats(true);
 	const stats = useMemo(() => statsQuery.data ?? [], [statsQuery]);
-	const pnlMap = useMemo(
-		() =>
-			stats.reduce((acc: Record<string, Stat>, stat: FuturesStat) => {
-				acc[stat.account] = {
-					pnl: wei(stat.pnlWithFeesPaid ?? 0, 18, true),
-					liquidations: new Wei(stat.liquidations ?? 0),
-					totalTrades: new Wei(stat.totalTrades ?? 0),
-					totalVolume: wei(stat.totalVolume ?? 0, 18, true),
-				};
-				return acc;
-			}, {}),
-		[stats]
-	);
 
 	const router = useRouter();
 	const onClickTrader = (trader: string) => {
@@ -66,26 +43,6 @@ const ShortList = () => {
 		}
 	};
 
-	let data = useMemo(
-		() =>
-			stats
-				.sort(
-					(a: FuturesStat, b: FuturesStat) =>
-						(pnlMap[b.account]?.pnl || 0) - (pnlMap[a.account]?.pnl || 0)
-				)
-				.map((stat: FuturesStat, i: number) => ({
-					rank: i + 1,
-					trader: stat.account,
-					traderShort: truncateAddress(stat.account),
-					totalTrades: (pnlMap[stat.account]?.totalTrades ?? wei(0)).toNumber(),
-					totalVolume: (pnlMap[stat.account]?.totalVolume ?? wei(0)).toNumber(),
-					liquidations: (pnlMap[stat.account]?.liquidations ?? wei(0)).toNumber(),
-					'24h': 80000,
-					pnl: (pnlMap[stat.account]?.pnl ?? wei(0)).toNumber(),
-				})),
-		[stats, pnlMap]
-	);
-
 	const title = (
 		<>
 			<SmallGoldenHeader>{t('homepage.shortlist.title')}</SmallGoldenHeader>
@@ -96,7 +53,6 @@ const ShortList = () => {
 	const sectionTitle = (
 		<>
 			<SectionFeatureTitle>{t('homepage.shortlist.stats.title')}</SectionFeatureTitle>
-			<SectionFeatureCopy>{t('homepage.shortlist.stats.copy')}</SectionFeatureCopy>
 		</>
 	);
 
@@ -112,7 +68,7 @@ const ShortList = () => {
 						isLoading={statsQuery.isLoading}
 						showShortList
 						onTableRowClick={(row) => onClickTrader(row.original.trader)}
-						data={data}
+						data={stats}
 						pageSize={5}
 						hideHeaders={false}
 						columns={[
@@ -194,7 +150,7 @@ const ShortList = () => {
 						isLoading={statsQuery.isLoading}
 						showShortList
 						onTableRowClick={(row) => onClickTrader(row.original.trader)}
-						data={data}
+						data={stats}
 						pageSize={5}
 						hideHeaders={false}
 						columns={[
@@ -438,16 +394,6 @@ const SectionFeatureTitle = styled(FeatureTitle)`
 	margin-top: 80px;
 	text-align: center;
 	width: 500px;
-	${media.lessThan('sm')`
-		width: 100vw;
-	`}
-`;
-
-const SectionFeatureCopy = styled(FeatureCopy)`
-	margin-top: 16px;
-	text-align: center;
-	width: 500px;
-	font-size: 18px;
 	${media.lessThan('sm')`
 		width: 100vw;
 	`}

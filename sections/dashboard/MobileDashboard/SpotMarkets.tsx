@@ -1,17 +1,14 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
-import { ratesState } from 'store/futures';
 
 import SpotMarketsTable from '../SpotMarketsTable';
 import { HeaderContainer } from './common';
 
 const SpotMarkets: React.FC = () => {
 	const { t } = useTranslation();
-	const exchangeRates = useRecoilValue(ratesState);
 
 	return (
 		<>
@@ -21,7 +18,7 @@ const SpotMarkets: React.FC = () => {
 				</CustomSectionHeader>
 			</CustomHeaderContainer>
 
-			<SpotMarketsTable exchangeRates={exchangeRates} />
+			<SpotMarketsTable />
 		</>
 	);
 };
