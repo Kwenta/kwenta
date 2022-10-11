@@ -3,7 +3,12 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { useContractRead, useContractReads } from 'wagmi';
+import {
+	useContractRead,
+	useContractReads,
+	useContractWrite,
+	usePrepareContractWrite,
+} from 'wagmi';
 
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
@@ -82,6 +87,14 @@ const StakingTab = () => {
 		},
 	});
 
+	const { config } = usePrepareContractWrite({
+		...stakingRewardsContract,
+		functionName: 'getReward',
+		enabled: !!walletAddress,
+	});
+
+	const { write: getReward } = useContractWrite(config);
+
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
 
@@ -98,7 +111,7 @@ const StakingTab = () => {
 						<div className="value">{Number(apy).toFixed(2)}%</div>
 					</div>
 				</CardGrid>
-				<Button fullWidth variant="flat" size="sm">
+				<Button fullWidth variant="flat" size="sm" onClick={() => getReward?.()}>
 					{t('dashboard.stake.tabs.staking.claim')}
 				</Button>
 			</CardGridContainer>

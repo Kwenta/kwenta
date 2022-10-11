@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { useContractReads } from 'wagmi';
+import { useContractReads, useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
@@ -103,6 +103,14 @@ const EscrowTable = () => {
 		return acc;
 	}, 0);
 
+	const { config } = usePrepareContractWrite({
+		...rewardEscrowContract,
+		functionName: 'vest',
+		args: [[2]],
+	});
+
+	const { write: vest } = useContractWrite(config);
+
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
 
@@ -111,6 +119,7 @@ const EscrowTable = () => {
 			<DesktopOnlyView>
 				<StyledTable
 					data={data}
+					showPagination={false}
 					columnsDeps={columnsDeps}
 					columns={[
 						{
@@ -289,7 +298,9 @@ const EscrowTable = () => {
 							{totalFee.toFixed(2)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
 						</div>
 					</div>
-					<VestButton $darkTheme={isDarkTheme}>{t('dashboard.stake.tabs.escrow.vest')}</VestButton>
+					<VestButton $darkTheme={isDarkTheme} onClick={() => vest?.()}>
+						{t('dashboard.stake.tabs.escrow.vest')}
+					</VestButton>
 				</div>
 			</EscrowStats>
 		</EscrowTableContainer>
