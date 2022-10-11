@@ -23,8 +23,8 @@ import { useAppDispatch, useAppSelector } from 'state/store';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 // import TransactionNotifier from 'containers/TransactionNotifier';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import useSynthBalances from 'queries/synths/useSynthBalances';
+// import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+// import useSynthBalances from 'queries/synths/useSynthBalances';
 
 type ExchangeCardProps = {
 	showNoSynthsCard?: boolean;
@@ -39,14 +39,14 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 
 	const { useFeeReclaimPeriodQuery } = useSynthetixQueries();
 
-	useSynthBalances();
+	// useSynthBalances();
 	const { isWalletConnected, walletAddress } = Connector.useContainer();
 
 	const router = useRouter();
 
 	const [openModal, setOpenModal] = useState<ExchangeModal>();
 
-	useExchangeRatesQuery({ refetchInterval: 15000 });
+	// useExchangeRatesQuery({ refetchInterval: 15000 });
 
 	const {
 		baseCurrencyKey,

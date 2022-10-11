@@ -1,10 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { wei } from '@synthetixio/wei';
 import KwentaSDK from 'sdk';
 import { AppDispatch, RootState } from 'state/store';
-
-import { ETH_UNIT } from 'constants/network';
-import logError from 'utils/logError';
 
 type ThunkConfig = {
 	dispatch: AppDispatch;
@@ -44,8 +40,6 @@ export const fetchBalances = createAsyncThunk<any, void, ThunkConfig>(
 				totalRedeemableBalance: totalRedeemableBalance.toString(),
 			};
 		} catch (error) {
-			logError(error);
-			logError(error.message);
 			return {
 				quoteBalance: undefined,
 				baseBalance: undefined,
@@ -81,14 +75,11 @@ export const fetchTransactionFee = createAsyncThunk<any, void, ThunkConfig>(
 		} = getState();
 
 		if (baseCurrencyKey && quoteCurrencyKey) {
-			const transactionFee = await sdk.exchange.getTransactionFee(
-				quoteCurrencyKey,
-				baseCurrencyKey,
-				quoteAmount,
-				baseAmount
-			);
+			const [transactionFee, feeCost] = await Promise.all([
+				sdk.exchange.getTransactionFee(quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount),
 
-			const feeCost = await sdk.exchange.getFeeCost(quoteCurrencyKey, baseCurrencyKey, quoteAmount);
+				sdk.exchange.getFeeCost(quoteCurrencyKey, baseCurrencyKey, quoteAmount),
+			]);
 
 			return {
 				transactionFee: transactionFee ? transactionFee.toString() : undefined,
@@ -162,22 +153,24 @@ export const fetchRates = createAsyncThunk<any, void, ThunkConfig>(
 		} = getState();
 
 		if (baseCurrencyKey && quoteCurrencyKey) {
-			const baseFeeRate = await sdk.exchange.getBaseFeeRate(baseCurrencyKey, quoteCurrencyKey);
-			const rate = await sdk.exchange.getRate(baseCurrencyKey, quoteCurrencyKey);
-			const exchangeFeeRate = await sdk.exchange.getExchangeFeeRate(
-				quoteCurrencyKey,
-				baseCurrencyKey
-			);
-			const quotePriceRate = await sdk.exchange.getQuotePriceRate(
-				baseCurrencyKey,
-				quoteCurrencyKey
-			);
-			const basePriceRate = await sdk.exchange.getBasePriceRate(baseCurrencyKey, quoteCurrencyKey);
+			const [
+				baseFeeRate,
+				rate,
+				exchangeFeeRate,
+				quotePriceRate,
+				basePriceRate,
+			] = await Promise.all([
+				sdk.exchange.getBaseFeeRate(baseCurrencyKey, quoteCurrencyKey),
+				sdk.exchange.getRate(baseCurrencyKey, quoteCurrencyKey),
+				sdk.exchange.getExchangeFeeRate(quoteCurrencyKey, baseCurrencyKey),
+				sdk.exchange.getQuotePriceRate(baseCurrencyKey, quoteCurrencyKey),
+				sdk.exchange.getBasePriceRate(baseCurrencyKey, quoteCurrencyKey),
+			]);
 
 			return {
-				baseFeeRate: wei(baseFeeRate.toString()).div(ETH_UNIT).toString(),
+				baseFeeRate: baseFeeRate.toString(),
 				rate: rate.toString(),
-				exchangeFeeRate: wei(exchangeFeeRate.toString()).div(ETH_UNIT).toString(),
+				exchangeFeeRate: exchangeFeeRate.toString(),
 				quotePriceRate: quotePriceRate.toString(),
 				basePriceRate: basePriceRate.toString(),
 			};

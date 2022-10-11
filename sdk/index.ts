@@ -11,7 +11,7 @@ import SynthsService from './synths';
 
 export default class KwentaSDK {
 	public provider: ethers.providers.Provider;
-	private signer?: ethers.Signer;
+	public signer?: ethers.Signer;
 	public multicallProvider = new EthCallProvider();
 	public walletAddress?: string;
 
@@ -32,7 +32,7 @@ export default class KwentaSDK {
 			this.setSigner(signer);
 		}
 
-		this.exchange = new ExchangeService(this, networkId, this.signer);
+		this.exchange = new ExchangeService(this, networkId);
 		this.futures = new FuturesService(networkId);
 		this.synths = new SynthsService(this);
 	}
@@ -51,7 +51,7 @@ export default class KwentaSDK {
 		this.multicallProvider.init(this.provider);
 		this.contracts = getContractsByNetwork(networkId);
 
-		this.exchange = new ExchangeService(this, networkId, this.signer);
+		this.exchange = new ExchangeService(this, networkId);
 		this.futures = new FuturesService(networkId);
 		this.synths = new SynthsService(this);
 	}

@@ -17,6 +17,7 @@ import {
 	ETH_COINGECKO_ADDRESS,
 } from 'constants/currency';
 import { ATOMIC_EXCHANGE_SLIPPAGE } from 'constants/exchange';
+import { ETH_UNIT } from 'constants/network';
 import {
 	OneInchApproveSpenderResponse,
 	OneInchQuoteResponse,
@@ -73,7 +74,6 @@ const FILTERED_TOKENS = ['0x4922a015c4407f87432b179bb209e125432e4a2a'];
 
 export default class ExchangeService {
 	private networkId: NetworkId;
-	private signer?: Signer;
 	private isL2: boolean;
 	private synthsMap: SynthsMap = {};
 	private tokensMap: any = {};
@@ -81,10 +81,9 @@ export default class ExchangeService {
 	private allTokensMap: any;
 	private sdk: KwentaSDK;
 
-	constructor(sdk: KwentaSDK, networkId: NetworkId, signer?: Signer) {
+	constructor(sdk: KwentaSDK, networkId: NetworkId) {
 		this.sdk = sdk;
 		this.networkId = networkId;
-		this.signer = signer;
 		this.isL2 = [10, 420].includes(networkId);
 		this.getAllTokensMap();
 	}
@@ -171,8 +170,8 @@ export default class ExchangeService {
 		]);
 
 		return sourceCurrencyFeeRate && destinationCurrencyFeeRate
-			? sourceCurrencyFeeRate.add(destinationCurrencyFeeRate)
-			: null;
+			? wei(sourceCurrencyFeeRate.add(destinationCurrencyFeeRate)).div(ETH_UNIT)
+			: wei(0);
 	}
 
 	public async getExchangeFeeRate(quoteCurrencyKey: string, baseCurrencyKey: string) {
@@ -180,10 +179,14 @@ export default class ExchangeService {
 			throw new Error('Exchanger does not exist on the currently selected network.');
 		}
 
-		return await this.sdk.contracts.Exchanger.connect(this.sdk.provider).feeRateForExchange(
+		const exchangeFeeRate = await this.sdk.contracts.Exchanger.connect(
+			this.sdk.provider
+		).feeRateForExchange(
 			ethers.utils.formatBytes32String(quoteCurrencyKey),
 			ethers.utils.formatBytes32String(baseCurrencyKey)
 		);
+
+		return wei(exchangeFeeRate).div(ETH_UNIT);
 	}
 
 	public async getRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
@@ -268,7 +271,7 @@ export default class ExchangeService {
 		fromAmount: string,
 		metaOnly?: 'meta_tx' | 'estimate_gas'
 	) {
-		if (!this.signer) throw new Error('Wallet not connected');
+		if (!this.sdk.signer) throw new Error('Wallet not connected');
 		if (!this.sdk.provider) throw new Error('');
 		if (this.networkId !== 10) throw new Error('Unsupported network');
 
@@ -302,7 +305,7 @@ export default class ExchangeService {
 		const synthSwapContract = new ethers.Contract(
 			SYNTH_SWAP_OPTIMISM_ADDRESS,
 			synthSwapAbi,
-			this.signer
+			this.sdk.signer
 		);
 
 		const contractFunc =
@@ -350,18 +353,22 @@ export default class ExchangeService {
 		amount: string,
 		metaOnly = false
 	) {
+		if (!this.sdk.signer) {
+			throw new Error('');
+		}
+
 		const params = await this.getOneInchSwapParams(quoteTokenAddress, baseTokenAddress, amount);
 
 		const { from, to, data, value } = params.tx;
 
 		const tx = metaOnly
-			? await this.signer?.populateTransaction({
+			? await this.sdk.signer.populateTransaction({
 					from,
 					to,
 					data,
 					value: ethers.BigNumber.from(value),
 			  })
-			: await this.signer?.sendTransaction({
+			: await this.sdk.signer.sendTransaction({
 					from,
 					to,
 					data,
@@ -453,7 +460,7 @@ export default class ExchangeService {
 	}
 
 	public async handleApprove(quoteCurrencyKey: string, baseCurrencyKey: string) {
-		if (!this.signer) {
+		if (!this.sdk.signer) {
 			throw new Error('A signer is required to approve tokens.');
 		}
 
@@ -470,13 +477,13 @@ export default class ExchangeService {
 
 		if (quoteCurrencyContract && needsApproval) {
 			await quoteCurrencyContract
-				.connect(this.signer)
+				.connect(this.sdk.signer)
 				.approve(approveAddress, ethers.constants.MaxUint256);
 		}
 	}
 
 	public async handleRedeem() {
-		if (!this.signer) {
+		if (!this.sdk.signer) {
 			throw new Error('You must connect a signer to redeem synths.');
 		}
 
@@ -487,7 +494,7 @@ export default class ExchangeService {
 		const redeemableDeprecatedSynths = await this.getRedeemableDeprecatedSynths();
 
 		if (redeemableDeprecatedSynths.totalUSDBalance.gt(0)) {
-			await this.sdk.contracts.SynthRedeemer.connect(this.signer).redeemAll(
+			await this.sdk.contracts.SynthRedeemer.connect(this.sdk.signer).redeemAll(
 				redeemableDeprecatedSynths.balances.map((b) => b.proxyAddress)
 			);
 		}
@@ -502,7 +509,7 @@ export default class ExchangeService {
 			throw new Error('');
 		}
 
-		if (!this.signer) {
+		if (!this.sdk.signer) {
 			throw new Error('You must connect a signer to redeem synths.');
 		}
 
@@ -514,7 +521,7 @@ export default class ExchangeService {
 		const destinationCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey);
 
 		if (numEntries > 12) {
-			await this.sdk.contracts.Exchanger.connect(this.signer).settle(
+			await this.sdk.contracts.Exchanger.connect(this.sdk.signer).settle(
 				this.sdk.walletAddress,
 				destinationCurrencyKey
 			);
@@ -561,7 +568,7 @@ export default class ExchangeService {
 				!!this.sdk.contracts.Synthetix;
 
 			if (shouldExchange) {
-				if (!this.signer) {
+				if (!this.sdk.signer) {
 					throw new Error('You have to connect a signer to exchange synths.');
 				}
 
@@ -569,7 +576,7 @@ export default class ExchangeService {
 					throw new Error('You are using this on an unsupported network');
 				}
 
-				await this.sdk.contracts.Synthetix.connect(this.signer)[
+				await this.sdk.contracts.Synthetix.connect(this.sdk.signer)[
 					isAtomic ? 'exchangeAtomically' : 'exchangeWithTracking'
 				](...exchangeParams);
 			}
@@ -613,7 +620,7 @@ export default class ExchangeService {
 				wei(baseAmount).mul(wei(1).sub(ATOMIC_EXCHANGE_SLIPPAGE))
 			);
 
-			if (!this.signer) {
+			if (!this.sdk.signer) {
 				throw new Error('You must add a signer to estimate gas for this transaction.');
 			}
 
@@ -624,11 +631,11 @@ export default class ExchangeService {
 			const isAtomic = this.checkIsAtomic(baseCurrencyKey, quoteCurrencyKey);
 			const method = isAtomic ? 'exchangeAtomically' : 'exchangeWithTracking';
 
-			const gasLimit = await this.sdk.contracts.Synthetix.connect(this.signer).estimateGas[method](
-				...exchangeParams
-			);
+			const gasLimit = await this.sdk.contracts.Synthetix.connect(this.sdk.signer).estimateGas[
+				method
+			](...exchangeParams);
 
-			const txn = await this.sdk.contracts.Synthetix.connect(this.signer).populateTransaction[
+			const txn = await this.sdk.contracts.Synthetix.connect(this.sdk.signer).populateTransaction[
 				method
 			](...exchangeParams);
 
@@ -782,7 +789,7 @@ export default class ExchangeService {
 	}
 
 	private getL1SecurityFee(metaTx: MetaTx) {
-		return getL1SecurityFee(this.isL2, metaTx, this.signer);
+		return getL1SecurityFee(this.isL2, metaTx, this.sdk.signer);
 	}
 
 	private isCurrencyETH(currencyKey: string) {
@@ -890,14 +897,17 @@ export default class ExchangeService {
 	}
 
 	private getExchangeParams(
-		sourceCurrencyKey: string,
-		destinationCurrencyKey: string,
+		quoteCurrencyKey: string,
+		baseCurrencyKey: string,
 		sourceAmount: Wei,
 		minAmount: Wei
 	) {
 		if (!this.sdk.walletAddress) {
 			throw new Error('');
 		}
+
+		const sourceCurrencyKey = ethers.utils.formatBytes32String(quoteCurrencyKey);
+		const destinationCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey);
 
 		const sourceAmountBN = sourceAmount.toBN();
 		const minAmountBN = minAmount.toBN();
@@ -1067,9 +1077,14 @@ export default class ExchangeService {
 	private async getQuoteCurrencyContract(baseCurrencyKey: string, quoteCurrencyKey: string) {
 		const needsApproval = this.checkNeedsApproval(baseCurrencyKey, quoteCurrencyKey);
 
-		if (this.signer && quoteCurrencyKey && this.allTokensMap[quoteCurrencyKey] && needsApproval) {
+		if (
+			this.sdk.signer &&
+			quoteCurrencyKey &&
+			this.allTokensMap[quoteCurrencyKey] &&
+			needsApproval
+		) {
 			const quoteTknAddress = this.allTokensMap[quoteCurrencyKey].address;
-			return createERC20Contract(quoteTknAddress, this.signer);
+			return createERC20Contract(quoteTknAddress, this.sdk.signer);
 		}
 
 		return null;

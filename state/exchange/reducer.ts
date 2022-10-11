@@ -2,7 +2,6 @@ import { createSlice } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
 
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
-import { ETH_UNIT } from 'constants/network';
 import { truncateNumbers } from 'utils/formatters/number';
 
 import {
