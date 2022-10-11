@@ -112,12 +112,14 @@ const OpenOrdersTable: React.FC = () => {
 	}, [cancelNextPriceOrder.hash, executeNextPriceOrder.hash]);
 
 	const rowsData = useMemo(() => {
-		if (!cancelling) return openOrders;
-		const copyOrders = [...openOrders];
-		const cancellingIndex = copyOrders.findIndex((o) => o.id === cancelling);
-		copyOrders[cancellingIndex] = { ...copyOrders[cancellingIndex], isCancelling: true };
-		return copyOrders;
-	}, [openOrders, cancelling]);
+		const ordersWithCancel = openOrders.map((o) => ({ ...o, cancel: () => onCancel(o) }));
+		const cancellingIndex = ordersWithCancel.findIndex((o) => o.id === cancelling);
+		ordersWithCancel[cancellingIndex] = {
+			...ordersWithCancel[cancellingIndex],
+			isCancelling: true,
+		};
+		return ordersWithCancel;
+	}, [openOrders, cancelling, onCancel]);
 
 	return (
 		<>
@@ -220,10 +222,7 @@ const OpenOrdersTable: React.FC = () => {
 								const cancellingRow = cellProps.row.original.isCancelling;
 								return (
 									<div style={{ display: 'flex' }}>
-										<CancelButton
-											disabled={cancellingRow}
-											onClick={() => onCancel(cellProps.row.original)}
-										>
+										<CancelButton disabled={cancellingRow} onClick={cellProps.row.original.cancel}>
 											{t('futures.market.user.open-orders.actions.cancel')}
 										</CancelButton>
 										{cellProps.row.original.isExecutable && (
