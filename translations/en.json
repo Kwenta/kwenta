@@ -489,6 +489,7 @@
 				"no-trade-history-link": "Visit the Kwenta exchange to swap synths"
 			},
 			"futures-history-table": {
+				"asset": "Asset",
 				"size": "Size",
 				"pnl": "P&L",
 				"date-time": "Date/Time",
@@ -497,6 +498,8 @@
 				"side": "Side",
 				"market": "Market",
 				"order-type": "Type",
+				"side-type": "Side/Type",
+				"size-price": "Size/Price",
 				"no-result": "You have no futures trading history"
 			}
 		},

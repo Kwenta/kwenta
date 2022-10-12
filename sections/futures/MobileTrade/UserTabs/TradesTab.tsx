@@ -1,3 +1,4 @@
+import { utils as ethersUtils } from 'ethers';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
@@ -14,6 +15,7 @@ import { PositionSide, TradeStatus } from 'sections/futures/types';
 import { currentMarketState } from 'store/futures';
 import { GridDivCenteredRow } from 'styles/common';
 import { formatCryptoCurrency } from 'utils/formatters/number';
+import { FuturesMarketAsset, getMarketName } from 'utils/futures';
 
 import { SectionHeader, SectionTitle } from '../common';
 import TradeDrawer from '../drawers/TradeDrawer';
@@ -35,19 +37,22 @@ const TradesTab: React.FC = () => {
 	);
 
 	const historyData = React.useMemo(() => {
-		return history.map((trade: FuturesTrade) => ({
-			value: Number(trade?.price?.div(ETH_UNIT)),
-			amount: Number(trade?.size.div(ETH_UNIT).abs()),
-			time: Number(trade?.timestamp.mul(1000)),
-			pnl: trade?.pnl.div(ETH_UNIT),
-			feesPaid: trade?.feesPaid.div(ETH_UNIT),
-			id: trade?.txnHash,
-			asset: marketAsset,
-			type: trade?.orderType,
-			status: trade?.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
-			side: trade?.side,
-		}));
-	}, [history, marketAsset]);
+		return history.map((trade: FuturesTrade) => {
+			const parsedAsset = ethersUtils.parseBytes32String(trade.asset) as FuturesMarketAsset;
+			return {
+				...trade,
+				asset: parsedAsset,
+				market: getMarketName(parsedAsset),
+				price: Number(trade.price?.div(ETH_UNIT)),
+				size: Number(trade.size.div(ETH_UNIT).abs()),
+				timestamp: Number(trade.timestamp.mul(1000)),
+				pnl: trade.pnl.div(ETH_UNIT),
+				feesPaid: trade.feesPaid.div(ETH_UNIT),
+				id: trade.txnHash,
+				status: trade.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
+			};
+		});
+	}, [history]);
 
 	const columnsDeps = React.useMemo(() => [historyData], [historyData]);
 
@@ -65,7 +70,7 @@ const TradesTab: React.FC = () => {
 						Header: (
 							<StyledTableHeader>{t('futures.market.user.trades.table.date')}</StyledTableHeader>
 						),
-						accessor: 'time',
+						accessor: 'timestamp',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
 							<GridDivCenteredRow>
 								<TimeDisplay cellPropsValue={cellProps.value} />
@@ -97,7 +102,7 @@ const TradesTab: React.FC = () => {
 								{t('futures.market.user.trades.table.trade-size')}
 							</StyledTableHeader>
 						),
-						accessor: 'amount',
+						accessor: 'size',
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
 							<>{formatCryptoCurrency(cellProps.value)}</>
