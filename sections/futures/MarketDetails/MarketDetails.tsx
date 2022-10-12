@@ -1,15 +1,10 @@
-import React, { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
+import React from 'react';
 import styled, { css } from 'styled-components';
 
-import StyledTooltip from 'components/Tooltip/StyledTooltip';
-import TimerTooltip from 'components/Tooltip/TimerTooltip';
-import useRateUpdateQuery from 'queries/rates/useRateUpdateQuery';
-import { currentMarketState, marketInfoState } from 'store/futures';
 import media from 'styles/media';
-import { formatDollars, formatPercent } from 'utils/formatters/number';
 
+import MarketDetail from './MarketDetail';
+import MobileMarketDetail from './MobileMarketDetail';
 import useGetMarketData from './useGetMarketData';
 
 type MarketDetailsProps = {
@@ -17,183 +12,18 @@ type MarketDetailsProps = {
 };
 
 const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
-	const { t } = useTranslation();
-
-	const marketInfo = useRecoilValue(marketInfoState);
-	const marketAsset = useRecoilValue(currentMarketState);
-
-	const pausedClass = marketInfo?.isSuspended ? 'paused' : '';
-
-	const data = useGetMarketData(mobile);
-
-	const lastOracleUpdateTimeQuery = useRateUpdateQuery({
-		baseCurrencyKey: marketAsset,
-	});
-
-	const lastOracleUpdateTime: Date = useMemo(() => lastOracleUpdateTimeQuery?.data ?? new Date(), [
-		lastOracleUpdateTimeQuery,
-	]);
-
-	// skew text
-	const longText = useMemo(() => {
-		return (
-			marketInfo?.openInterest &&
-			formatDollars(marketInfo.openInterest.longUSD, {
-				maxDecimals: 2,
-				...(marketInfo?.openInterest?.longUSD.gt(1e6)
-					? { truncation: { divisor: 1e6, unit: 'M' } }
-					: {}),
-			})
-		);
-	}, [marketInfo]);
-
-	const shortText = useMemo(() => {
-		return (
-			marketInfo?.openInterest &&
-			formatDollars(marketInfo.openInterest.shortUSD, {
-				maxDecimals: 2,
-				...(marketInfo?.openInterest?.shortUSD.gt(1e6)
-					? { truncation: { divisor: 1e6, unit: 'M' } }
-					: {}),
-			})
-		);
-	}, [marketInfo]);
-
-	const enableTooltip = (key: string, children: React.ReactElement) => {
-		switch (key) {
-			case 'External Price':
-				return (
-					<MarketDetailsTooltip
-						position={'fixed'}
-						key={key}
-						height={'auto'}
-						content={t('exchange.market-details-card.tooltips.external-price')}
-					>
-						{children}
-					</MarketDetailsTooltip>
-				);
-			case '24H Change':
-				return (
-					<MarketDetailsTooltip
-						key={key}
-						position={'fixed'}
-						height={'auto'}
-						content={t('exchange.market-details-card.tooltips.24h-change')}
-					>
-						{children}
-					</MarketDetailsTooltip>
-				);
-			case '24H Volume':
-				return (
-					<MarketDetailsTooltip
-						key={key}
-						position={'fixed'}
-						height={'auto'}
-						content={t('exchange.market-details-card.tooltips.24h-vol')}
-					>
-						{children}
-					</MarketDetailsTooltip>
-				);
-			case '24H Trades':
-				return (
-					<MarketDetailsTooltip
-						key={key}
-						position={'fixed'}
-						height={'auto'}
-						content={t('exchange.market-details-card.tooltips.24h-trades')}
-					>
-						{children}
-					</MarketDetailsTooltip>
-				);
-			case 'Open Interest':
-				return (
-					<MarketDetailsTooltip
-						key={key}
-						position={'fixed'}
-						height={'auto'}
-						content={t('exchange.market-details-card.tooltips.open-interest')}
-					>
-						{children}
-					</MarketDetailsTooltip>
-				);
-			case marketInfo?.marketName:
-				return (
-					<TimerTooltip
-						position={'fixed'}
-						key={key}
-						startTimeDate={lastOracleUpdateTime}
-						width={'131px'}
-					>
-						{children}
-					</TimerTooltip>
-				);
-			case 'Inst. Funding Rate':
-			case '1H Funding Rate':
-				return (
-					<MarketDetailsTooltip
-						key={key}
-						position={'fixed'}
-						height={'auto'}
-						content={t('exchange.market-details-card.tooltips.1h-funding-rate')}
-					>
-						{children}
-					</MarketDetailsTooltip>
-				);
-			default:
-				return children;
-		}
-	};
+	const marketData = useGetMarketData(mobile);
 
 	return (
 		<MarketDetailsContainer mobile={mobile}>
-			{Object.entries(data).map(([key, { value, color }]) => {
-				const colorClass = color || '';
+			{Object.entries(marketData).map(([marketKey, data]) => (
+				<MarketDetail {...data} marketKey={marketKey} mobile={Boolean(mobile)}></MarketDetail>
+			))}
 
-				return enableTooltip(
-					key,
-					<WithCursor cursor="help" key={key}>
-						<div key={key}>
-							<p className="heading">{key}</p>
-							<span className={`value ${colorClass} ${pausedClass}`}>{value}</span>
-						</div>
-					</WithCursor>
-				);
-			})}
-
-			{mobile && (
-				<div key="Skew">
-					<p className="heading">Skew</p>
-					<SkewDataContainer>
-						<div className={`value green ${pausedClass}`}>
-							{marketInfo?.openInterest &&
-								formatPercent(marketInfo.openInterest.longPct ?? 0, { minDecimals: 0 })}{' '}
-							({longText})
-						</div>
-						<div className={`value red ${pausedClass}`}>
-							{marketInfo?.openInterest &&
-								formatPercent(marketInfo.openInterest.shortPct ?? 0, { minDecimals: 0 })}{' '}
-							({shortText})
-						</div>
-					</SkewDataContainer>
-				</div>
-			)}
+			{mobile && <MobileMarketDetail />}
 		</MarketDetailsContainer>
 	);
 };
-
-// Extend type of cursor to accept different style of cursor. Currently accept only 'help'
-const WithCursor = styled.div<{ cursor: 'help' }>`
-	cursor: ${(props) => props.cursor};
-`;
-
-const SkewDataContainer = styled.div`
-	grid-row: 1;
-`;
-
-const MarketDetailsTooltip = styled(StyledTooltip)`
-	z-index: 2;
-	padding: 10px;
-`;
 
 const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	width: 100%;

@@ -88,7 +88,7 @@ function ClosePositionModal({
 			},
 			{
 				label: t('futures.market.user.position.modal.ROI'),
-				value: formatDollars(positionDetails?.roi ?? zeroBN),
+				value: formatDollars(positionDetails?.pnl ?? zeroBN),
 			},
 			{
 				label: t('futures.market.user.position.modal.fee'),

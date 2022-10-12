@@ -2,6 +2,8 @@
 
 import { SwapRatio } from 'hooks/useExchange';
 
+type ExchangeApprovalStatus = 'needs-approval' | 'approving' | 'approved';
+
 export type ExchangeState = {
 	baseCurrencyKey?: string;
 	quoteCurrencyKey?: string;

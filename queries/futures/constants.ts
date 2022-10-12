@@ -47,3 +47,13 @@ export const FUTURES_POSITION_FRAGMENT = gql`
 	}
 `;
 export const KWENTA_TRACKING_CODE = ethersUtils.formatBytes32String('KWENTA');
+
+export const ORDER_PREVIEW_ERRORS = { insufficient_margin: 'Insufficient free margin' };
+export const ORDER_PREVIEW_ERRORS_I18N: Record<string, string> = {
+	insufficient_margin: 'futures.market.trade.preview.insufficient-margin',
+	insufficient_margin_edit_leverage: 'futures.market.trade.edit-leverage.insufficient-margin',
+};
+
+export const previewErrorI18n = (message: string) => {
+	return ORDER_PREVIEW_ERRORS_I18N[message] || 'futures.market.trade.preview.error';
+};

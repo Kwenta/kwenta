@@ -40,6 +40,7 @@ export const EXTERNAL_LINKS = {
 		DevDao: 'https://docs.kwenta.io/dao/contribute/devdao-contribute',
 		MarketingDao: 'https://docs.kwenta.io/dao/contribute/marketingDAO',
 		Faq: 'https://docs.kwenta.io/resources/faq',
+		CrossMarginFaq: 'https://docs.kwenta.io/products/futures/cross-margin-accounts',
 	},
 	Optimism: {
 		Home: 'https://optimism.io/',

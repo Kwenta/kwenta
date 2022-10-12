@@ -5,10 +5,12 @@ import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { truncateNumbers } from 'utils/formatters/number';
 
 import {
+	checkNeedsApproval,
 	fetchBalances,
 	fetchRates,
 	fetchTransactionFee,
 	fetchTxProvider,
+	submitApprove,
 	submitExchange,
 } from './actions';
 import { ExchangeState } from './types';
@@ -191,6 +193,18 @@ const exchangeSlice = createSlice({
 		});
 		builder.addCase(submitExchange.fulfilled, (state) => {
 			state.isSubmitting = false;
+		});
+		builder.addCase(submitExchange.rejected, (state) => {
+			state.isSubmitting = false;
+		});
+		builder.addCase(checkNeedsApproval.fulfilled, (state, action) => {
+			state.needsApproval = action.payload;
+		});
+		builder.addCase(submitApprove.fulfilled, (state) => {
+			state.isApproving = false;
+		});
+		builder.addCase(submitApprove.rejected, (state) => {
+			state.isApproving = false;
 		});
 	},
 });

@@ -1,11 +1,9 @@
 import { FC, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
-import { ratesState } from 'store/futures';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
 import SpotMarketsTable from '../SpotMarketsTable';
@@ -17,8 +15,6 @@ export enum MarketsTab {
 
 const Markets: FC = () => {
 	const { t } = useTranslation();
-
-	const exchangeRates = useRecoilValue(ratesState);
 
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
@@ -56,7 +52,7 @@ const Markets: FC = () => {
 			</TabPanel>
 
 			<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
-				<SpotMarketsTable exchangeRates={exchangeRates} />
+				<SpotMarketsTable />
 			</TabPanel>
 		</>
 	);

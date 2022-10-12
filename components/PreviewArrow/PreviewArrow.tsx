@@ -1,14 +1,17 @@
 import styled from 'styled-components';
 
+type TextColor = 'yellow' | 'red';
+
 type PreviewArrowProps = {
+	color?: TextColor;
 	showPreview: boolean;
 };
 
-const PreviewArrow: React.FC<PreviewArrowProps> = ({ showPreview, children }) => {
+const PreviewArrow: React.FC<PreviewArrowProps> = ({ showPreview, children, color }) => {
 	return showPreview ? (
 		<>
 			<StyledArrow />
-			<StyledPreviewGold>{children}</StyledPreviewGold>
+			<StyledPreviewGold color={color}>{children}</StyledPreviewGold>
 		</>
 	) : null;
 };
@@ -23,8 +26,8 @@ const StyledArrow = styled.span`
 	}
 `;
 
-const StyledPreviewGold = styled.span`
-	color: ${(props) => props.theme.colors.selectedTheme.yellow};
+const StyledPreviewGold = styled.span<{ color?: TextColor }>`
+	color: ${(props) => props.theme.colors.selectedTheme[props.color || 'yellow']};
 `;
 
 export default PreviewArrow;
