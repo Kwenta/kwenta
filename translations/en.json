@@ -805,7 +805,7 @@
 					}
 				},
 				"trades": {
-					"tab": "History",
+					"tab": "Trades",
 					"table": {
 						"id": "ID",
 						"trade-size": "trade size",
@@ -815,6 +815,7 @@
 						"fees": "fees",
 						"price": "price",
 						"side": "side",
+						"side-type": "Side/Type",
 						"no-results": "You have no trade history",
 						"order-type": "order type",
 						"trade-types": {

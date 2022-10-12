@@ -6,11 +6,12 @@ import styled, { css } from 'styled-components';
 
 import Table, { TableNoResults } from 'components/Table';
 import { ETH_UNIT } from 'constants/network';
+import Connector from 'containers/Connector';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { PositionSide, TradeStatus } from 'sections/futures/types';
-import { currentMarketState, selectedFuturesAddressState } from 'store/futures';
+import { currentMarketState } from 'store/futures';
 import { GridDivCenteredRow } from 'styles/common';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 
@@ -19,12 +20,12 @@ import TradeDrawer from '../drawers/TradeDrawer';
 
 const TradesTab: React.FC = () => {
 	const { t } = useTranslation();
-	const selectedFuturesAddress = useRecoilValue(selectedFuturesAddressState);
+	const { walletAddress } = Connector.useContainer();
 	const marketAsset = useRecoilValue(currentMarketState);
 
 	const [selectedTrade, setSelectedTrade] = React.useState<any>();
 
-	const futuresTradesQuery = useGetFuturesTradesForAccount(marketAsset, selectedFuturesAddress);
+	const futuresTradesQuery = useGetFuturesTradesForAccount(marketAsset, walletAddress);
 
 	const { isLoading, isFetched: isLoaded } = futuresTradesQuery;
 
@@ -53,7 +54,7 @@ const TradesTab: React.FC = () => {
 	return (
 		<div>
 			<SectionHeader>
-				<SectionTitle>Trades</SectionTitle>
+				<SectionTitle>{t('futures.market.user.trades.tab')}</SectionTitle>
 			</SectionHeader>
 			<StyledTable
 				onTableRowClick={(row) => {
@@ -74,7 +75,11 @@ const TradesTab: React.FC = () => {
 						sortable: true,
 					},
 					{
-						Header: <StyledTableHeader>Side/Type</StyledTableHeader>,
+						Header: (
+							<StyledTableHeader>
+								{t('futures.market.user.trades.table.side-type')}
+							</StyledTableHeader>
+						),
 						accessor: 'side',
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
