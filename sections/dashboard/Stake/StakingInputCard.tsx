@@ -1,11 +1,12 @@
 import { wei } from '@synthetixio/wei';
-import { FC, useMemo, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { erc20ABI, useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { erc20ABI, useContractReads, useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 import Button from 'components/Button';
+import CustomNumericInput from 'components/Input/CustomNumericInput';
 import SegmentedControl from 'components/SegmentedControl';
 import Connector from 'containers/Connector';
 import rewardEscrowABI from 'lib/abis/RewardEscrow.json';
@@ -15,7 +16,6 @@ import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
 import { StakingCard } from './common';
-import StakeInput from './StakeInput';
 
 type StakingInputCardProps = {
 	inputLabel: string;
@@ -40,24 +40,46 @@ const rewardEscrowContract = {
 const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel, tableType }) => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
+	const [kwentaBalance, setKwentaBalance] = useState(zeroBN);
+	const [stakedNonEscrowedBalance, setStakedNonEscrowedBalance] = useState(zeroBN);
+	const [escrowedBalance, setEscrowedBalance] = useState(zeroBN);
+	const [stakedEscrowedBalance, setStakedEscrowedBalance] = useState(zeroBN);
+	const [amount, setAmount] = useState('0');
+	const amountBN = Math.trunc(Number(wei(amount ?? 0).mul(1e18))).toString();
 
-	const { data: kwentaBalance } = useContractRead({
-		...kwentaTokenContract,
-		functionName: 'balanceOf',
-		args: [walletAddress ?? undefined],
+	useContractReads({
+		contracts: [
+			{
+				...kwentaTokenContract,
+				functionName: 'balanceOf',
+				args: [walletAddress ?? undefined],
+			},
+			{
+				...stakingRewardsContract,
+				functionName: 'nonEscrowedBalanceOf',
+				args: [walletAddress ?? undefined],
+			},
+			{
+				...rewardEscrowContract,
+				functionName: 'balanceOf',
+				args: [walletAddress ?? undefined],
+			},
+			{
+				...stakingRewardsContract,
+				functionName: 'escrowedBalanceOf',
+				args: [walletAddress ?? undefined],
+			},
+		],
 		cacheOnBlock: true,
-		onError(error) {
+		enabled: !!walletAddress,
+		onSettled(data, error) {
 			if (error) logError(error);
-		},
-	});
-
-	const { data: stakedNonEscrowedBalance } = useContractRead({
-		...stakingRewardsContract,
-		functionName: 'nonEscrowedBalanceOf',
-		args: [walletAddress ?? undefined],
-		cacheOnBlock: true,
-		onError(error) {
-			if (error) logError(error);
+			if (data) {
+				setKwentaBalance(wei(data[0] ?? zeroBN));
+				setStakedNonEscrowedBalance(wei(data[1] ?? zeroBN));
+				setEscrowedBalance(wei(data[2] ?? zeroBN));
+				setStakedEscrowedBalance(wei(data[3] ?? zeroBN));
+			}
 		},
 	});
 
@@ -73,35 +95,52 @@ const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel, tableType }) 
 	const { config: stakedKwenta } = usePrepareContractWrite({
 		...stakingRewardsContract,
 		functionName: 'stake',
-		args: ['20000000000000000000'],
-		enabled: !!walletAddress,
+		args: [amountBN],
+		enabled: !!walletAddress && tableType === 'stake' && wei(amount).gt(0),
+		cacheTime: 5000,
 	});
 
 	const { config: unstakedKwenta } = usePrepareContractWrite({
 		...stakingRewardsContract,
 		functionName: 'unstake',
-		args: ['20000000000000000000'],
-		enabled: !!walletAddress,
+		args: [amountBN],
+		enabled: !!walletAddress && tableType === 'stake' && wei(amount).gt(0),
+		cacheTime: 5000,
 	});
 
 	const { config: stakedEscrowKwenta } = usePrepareContractWrite({
 		...rewardEscrowContract,
 		functionName: 'stakeEscrow',
-		args: ['20000000000000000000'],
-		enabled: !!walletAddress,
+		args: [amountBN],
+		enabled: !!walletAddress && tableType === 'escrow' && wei(amount).gt(0),
+		cacheTime: 5000,
 	});
 
 	const { config: unstakedEscrowKwenta } = usePrepareContractWrite({
 		...rewardEscrowContract,
 		functionName: 'unstakeEscrow',
-		args: ['20000000000000000000'],
-		enabled: !!walletAddress,
+		args: [amountBN],
+		enabled: !!walletAddress && tableType === 'escrow' && wei(amount).gt(0),
+		cacheTime: 5000,
 	});
 
 	const { write: stakingKwenta } = useContractWrite(stakedKwenta);
 	const { write: unstakingKwenta } = useContractWrite(unstakedKwenta);
 	const { write: stakingEscrowKwenta } = useContractWrite(stakedEscrowKwenta);
 	const { write: unstakingEscrowKwenta } = useContractWrite(unstakedEscrowKwenta);
+
+	const maxBalance =
+		tableType === 'stake'
+			? activeTab === 0
+				? wei(kwentaBalance ?? zeroBN)
+				: wei(stakedNonEscrowedBalance ?? zeroBN)
+			: activeTab === 0
+			? wei(escrowedBalance ?? zeroBN)
+			: wei(stakedEscrowedBalance ?? zeroBN);
+
+	const onMaxClick = useCallback(async () => {
+		setAmount(Number(maxBalance).toFixed(4));
+	}, [maxBalance]);
 
 	return (
 		<StakingInputCardContainer $darkTheme={isDarkTheme}>
@@ -116,17 +155,27 @@ const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel, tableType }) 
 					style={{ marginBottom: '20px' }}
 				/>
 			)}
-			<StakeInput
-				label={inputLabel}
-				maxBalance={
-					activeTab === 0 ? wei(kwentaBalance ?? zeroBN) : wei(stakedNonEscrowedBalance ?? zeroBN)
-				}
-			/>
+			<StakeInputContainer>
+				<StakeInputHeader>
+					<div>{inputLabel}</div>
+					<div className="max" onClick={onMaxClick}>
+						{t('dashboard.stake.tabs.stake-table.max')}
+					</div>
+				</StakeInputHeader>
+				<StyledInput
+					value={amount}
+					suffix=""
+					onChange={(_, newValue) => {
+						setAmount(newValue);
+					}}
+				/>
+			</StakeInputContainer>
 			{tableType === 'stake' ? (
 				<Button
 					fullWidth
 					variant="flat"
 					size="sm"
+					disabled={activeTab === 0 ? !stakingKwenta : !unstakingKwenta}
 					onClick={() => (activeTab === 0 ? stakingKwenta?.() : unstakingKwenta?.())}
 					style={{ marginTop: '20px' }}
 				>
@@ -139,6 +188,7 @@ const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel, tableType }) 
 					fullWidth
 					variant="flat"
 					size="sm"
+					disabled={activeTab === 0 ? !stakingEscrowKwenta : !unstakingEscrowKwenta}
 					onClick={() => (activeTab === 0 ? stakingEscrowKwenta?.() : unstakingEscrowKwenta?.())}
 					style={{ marginTop: '20px' }}
 				>
@@ -161,6 +211,27 @@ const StakingInputCardContainer = styled(StakingCard)<{ $darkTheme: boolean }>`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
+`;
+
+const StakeInputHeader = styled.div`
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 10px;
+	color: ${(props) => props.theme.colors.selectedTheme.text.label};
+	font-size: 14px;
+
+	.max {
+		text-transform: uppercase;
+		font-family: ${(props) => props.theme.fonts.bold};
+		cursor: pointer;
+	}
+`;
+
+const StakeInputContainer = styled.div``;
+
+const StyledInput = styled(CustomNumericInput)`
+	font-family: ${(props) => props.theme.fonts.monoBold};
 `;
 
 export default StakingInputCard;
