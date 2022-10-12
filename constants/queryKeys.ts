@@ -318,18 +318,24 @@ export const QUERY_KEYS = {
 			currencyKey: string | null
 		) => ['futures', 'currentRoundId', networkId, walletAddress, currencyKey],
 		OverviewStats: (networkId: NetworkId) => ['futures', 'overview-stats', networkId],
-		CrossMarginAccountOverview: (
-			networkId: NetworkId,
-			wallet: string,
-			crossMarginBaseAddress: string
-		) => ['futures', 'cross-margin-account-overview', networkId, wallet, crossMarginBaseAddress],
+		CrossMarginAccountOverview: (networkId: NetworkId, wallet: string) => [
+			'futures',
+			'cross-margin-account-overview',
+			networkId,
+			wallet,
+		],
+		CrossMarginSettings: (networkId: NetworkId, settingsAddress: string) => [
+			'futures',
+			'cross-margin-settings',
+			networkId,
+			settingsAddress,
+		],
 		CrossMarginAccount: (wallet: string, factoryAddress: string) => [
 			'futures',
 			'cross-margin-account',
 			wallet,
 			factoryAddress,
 		],
-		CrossMarginSettings: (networkId: NetworkId) => ['futures', 'cross-margin-settings', networkId],
 	},
 	Files: {
 		Get: (fileName: string) => ['files', 'get', fileName],

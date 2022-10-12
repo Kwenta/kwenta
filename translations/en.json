@@ -17,7 +17,8 @@
 			"isolated-margin": "Isolated Margin",
 			"cross-margin": "Cross Margin",
 			"leaderboard": "leaderboard",
-			"earn": "earn"
+			"earn": "earn",
+			"beta-badge": "Beta"
 		},
 		"networks-switcher": {
 			"chains": "Switch Networks",
@@ -636,6 +637,7 @@
 					"sell": "sell",
 					"remaining-margin": "Remaining margin",
 					"max": "max",
+					"max-leverage-error": "Your current position exceeds the max leverage of ({{maxLeverage}}x). You need to reduce your position or adjust leverage.",
 					"leverage": {
 						"title": "leverage",
 						"buy": "buy",
@@ -729,15 +731,23 @@
 					"account-query-failed": "Failed to fetch account"
 				},
 				"preview": {
+					"insufficient-margin": "Insufficient free margin",
 					"error": "Error generating preview"
 				},
 				"orders": {
 					"manage-keeper-deposit": {
-						"title": "Manage Keeper Balance",
+						"title": "Manage Account ETH Balance",
 						"withdraw": "Withdraw",
-						"deposit": "Deposit"
+						"deposit": "Deposit",
+						
+						"withdraw-warning": "Withdrawing ETH while you still have open orders pending risks leaving insufficient balance for orders to execute."
 					},
-					"fee-rejection-label": "Fee Rejection"
+					"fee-rejection-label": "Fee Rejection",
+					"fee-rejection-tooltip": "This allows you to set a maximum fee on your order. If the dynamic fee exceeds your selected fee limit at the time of execution, the order will not execute."
+				},
+				"edit-leverage": {
+					"failed": "Transaction failed",
+					"insufficient-margin": "Leverage cannot be decreased, please deposit more margin or reduce open position sizes"
 				}
 			},
 			"history": {
@@ -793,6 +803,7 @@
 						"type": "Type",
 						"size": "Size",
 						"size-price": "Size/Price",
+						"reserved-margin": "Reserved margin",
 						"price": "Price",
 						"status": "Status",
 						"parameters": "Parameters",

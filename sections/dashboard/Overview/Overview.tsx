@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import FuturesIcon from 'components/Nav/FuturesIcon';
 import { TabPanel } from 'components/Tab';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
@@ -46,6 +47,7 @@ const Overview: FC = () => {
 				name: PositionsTab.CROSS_MARGIN,
 				label: t('dashboard.overview.positions-tabs.cross-margin'),
 				badge: crossPositions,
+				titleIcon: <FuturesIcon type="cross_margin" />,
 				active: activePositionsTab === PositionsTab.CROSS_MARGIN,
 				detail: formatDollars(portfolio.crossMarginFutures),
 				disabled: false,
@@ -56,6 +58,7 @@ const Overview: FC = () => {
 				label: t('dashboard.overview.positions-tabs.isolated-margin'),
 				badge: isolatedPositions,
 				active: activePositionsTab === PositionsTab.ISOLATED_MARGIN,
+				titleIcon: <FuturesIcon type="isolated_margin" />,
 				detail: formatDollars(portfolio.isolatedMarginFutures),
 				disabled: false,
 				onClick: () => setActivePositionsTab(PositionsTab.ISOLATED_MARGIN),

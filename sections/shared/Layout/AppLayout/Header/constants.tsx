@@ -5,9 +5,15 @@ import { CROSS_MARGIN_ENABLED, DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/def
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
 
+export type Badge = {
+	i18nLabel: string;
+	color: 'yellow' | 'red';
+};
+
 export type SubMenuLink = {
 	i18nLabel: string;
 	link: string;
+	badge?: Badge;
 	Icon?: FunctionComponent<any>;
 };
 
@@ -72,6 +78,10 @@ export const getMenuLinks = (isMobile: boolean): MenuLinks => [
 					{
 						link: ROUTES.Markets.Home('cross_margin'),
 						i18nLabel: 'header.nav.cross-margin',
+						badge: {
+							i18nLabel: 'header.nav.beta-badge',
+							color: 'yellow',
+						},
 						Icon: CrossMarginIcon,
 					},
 			  ]

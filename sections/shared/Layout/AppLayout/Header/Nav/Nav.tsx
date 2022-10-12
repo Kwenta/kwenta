@@ -5,21 +5,22 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
+import Badge from 'components/Badge';
 import LabelContainer from 'components/Nav/DropDownLabel';
 import Select from 'components/Select';
 import { DropdownIndicator, IndicatorSeparator } from 'components/Select/Select';
 import { currentMarketState } from 'store/futures';
 import { linkCSS } from 'styles/common';
 
-import { DESKTOP_NAV_LINKS } from '../constants';
+import { DESKTOP_NAV_LINKS, Badge as BadgeType } from '../constants';
 
 type ReactSelectOptionProps = {
-	label: string;
+	i18nLabel: string;
 	postfixIcon?: string;
 	isActive: boolean;
 	link: string;
+	badge: BadgeType;
 	Icon: FunctionComponent<any>;
-	onClick?: () => {};
 };
 
 const Nav: FC = () => {
@@ -31,17 +32,26 @@ const Nav: FC = () => {
 		return link.slice(0, 7) === '/market' ? `/market/?asset=${currentMarket}` : link;
 	}
 
-	const formatOptionLabel = ({ label, Icon, link, isActive, onClick }: ReactSelectOptionProps) => {
-		if (label === 'header.nav.markets')
+	const formatOptionLabel = ({
+		i18nLabel,
+		Icon,
+		badge,
+		link,
+		isActive,
+	}: ReactSelectOptionProps) => {
+		if (i18nLabel === 'header.nav.markets')
 			return (
-				<MenuInside isDropDown isActive={isActive} onClick={onClick}>
-					{t(label)}
+				<MenuInside isDropDown isActive={isActive}>
+					{t(i18nLabel)}
 				</MenuInside>
 			);
 		return (
-			<Link href={link} onClick={onClick}>
+			<Link href={link}>
 				<LabelContainer>
-					{label !== 'Futures' ? t(label) : <NavLabel>{t(label)}</NavLabel>}
+					<NavLabel>
+						{t(i18nLabel)}
+						{badge && <Badge color="yellow">{t(badge.i18nLabel)}</Badge>}
+					</NavLabel>
 					{Icon && <Icon />}
 				</LabelContainer>
 			</Link>
@@ -53,8 +63,9 @@ const Nav: FC = () => {
 			<MenuLinks>
 				{DESKTOP_NAV_LINKS.map(({ i18nLabel, link, links }) => {
 					const routeBase = asPath.split('/')[1];
-					const linkBase = link.split('/')[1];
+					const linkBase = link.split('/')[1]?.split('?')[0];
 					const isActive = routeBase === linkBase;
+
 					const url = getLink(link);
 					if (!links) {
 						return (
@@ -66,18 +77,14 @@ const Nav: FC = () => {
 						);
 					}
 
-					const options = links.map((l) => {
-						return { label: l.i18nLabel, Icon: l.Icon, link: l.link, onClick: () => {} };
-					});
-
 					return (
 						<DropDownSelect
 							key={url}
 							variant="transparent"
 							formatOptionLabel={formatOptionLabel}
 							controlHeight={34}
-							options={options}
-							value={{ label: i18nLabel, isActive }}
+							options={links}
+							value={{ i18nLabel, isActive }}
 							menuWidth={240}
 							components={{ IndicatorSeparator, DropdownIndicator }}
 							isSearchable={false}
@@ -96,6 +103,7 @@ const MenuLinks = styled.ul`
 const NavLabel = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 15px;
+	line-height: 15px;
 `;
 
 const MenuInside = styled.div<{ isActive: boolean; isDropDown?: boolean }>`

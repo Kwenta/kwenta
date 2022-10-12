@@ -2,7 +2,7 @@ import { wei } from '@synthetixio/wei';
 import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
@@ -17,15 +17,19 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
+import { ORDER_PREVIEW_ERRORS_I18N, previewErrorI18n } from 'queries/futures/constants';
 import {
 	crossMarginTotalMarginState,
 	currentMarketState,
 	marketInfoState,
+	orderTypeState,
 	positionState,
+	potentialTradeDetailsState,
 	preferredLeverageState,
 	tradeFeesState,
 } from 'store/futures';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
+import { isUserDeniedError } from 'utils/formatters/error';
 import { formatDollars } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
@@ -40,7 +44,7 @@ type DepositMarginModalProps = {
 export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps) {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { handleRefetch } = useRefetchContext();
+	const { handleRefetch, refetchUntilUpdate } = useRefetchContext();
 	const {
 		selectedLeverage,
 		onLeverageChange,
@@ -53,6 +57,8 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 	const marketAsset = useRecoilValue(currentMarketState);
 	const totalMargin = useRecoilValue(crossMarginTotalMarginState);
 	const tradeFees = useRecoilValue(tradeFeesState);
+	const { error: previewError, data: previewData } = useRecoilValue(potentialTradeDetailsState);
+	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 
 	const [preferredLeverage, setPreferredLeverage] = usePersistedRecoilState(preferredLeverageState);
 
@@ -61,6 +67,13 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 	const [error, setError] = useState<null | string>(null);
 
 	const maxLeverage = Number((market?.maxLeverage || wei(DEFAULT_LEVERAGE)).toString(2));
+
+	useEffect(() => {
+		if (orderType !== 'market') {
+			setOrderType('market');
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const maxPositionUsd = useMemo(() => {
 		return totalMargin.mul(leverage);
@@ -98,18 +111,19 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 						onTxFailed(failureMessage) {
 							setError(failureMessage?.failureReason || t('common.transaction.transaction-failed'));
 						},
-						onTxConfirmed: () => {
+						onTxConfirmed: async () => {
 							resetTradeState();
 							handleRefetch('modify-position');
+							await refetchUntilUpdate('account-margin-change');
+							setSubmitting(false);
 							onDismiss();
 						},
 					});
 				}
 			} catch (err) {
+				setSubmitting(false);
 				setError(t('common.transaction.transaction-failed'));
 				logError(err);
-			} finally {
-				setSubmitting(false);
 			}
 			resetTradeState();
 		} else {
@@ -133,6 +147,7 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 		onLeverageChange,
 		submitCrossMarginOrder,
 		setError,
+		refetchUntilUpdate,
 		handleRefetch,
 		onDismiss,
 	]);
@@ -151,6 +166,8 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	const errorMessage = error || previewError;
 
 	return (
 		<StyledBaseModal
@@ -199,6 +216,7 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 			)}
 
 			<MarginActionButton
+				disabled={!!previewError || (!!position?.position && !previewData)}
 				data-testid="futures-market-trade-deposit-margin-button"
 				fullWidth
 				onClick={onConfirm}
@@ -206,10 +224,19 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 				{submitting ? <Loader /> : t('futures.market.trade.leverage.modal.confirm')}
 			</MarginActionButton>
 
-			{error && (
+			{errorMessage && !isUserDeniedError(errorMessage) && (
 				<>
 					<Spacer height={12} />
-					<ErrorView message={error} formatter="revert" />
+					<ErrorView
+						message={t(
+							errorMessage === 'insufficient_margin'
+								? ORDER_PREVIEW_ERRORS_I18N.insufficient_margin_edit_leverage
+								: previewError
+								? previewErrorI18n(errorMessage)
+								: t('futures.market.trade.edit-leverage.failed')
+						)}
+						formatter="revert"
+					/>
 				</>
 			)}
 		</StyledBaseModal>

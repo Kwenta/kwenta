@@ -25,7 +25,7 @@ const ProgressSteps: FC<Props> = ({ step, totalSteps, complete }) => {
 			</Container>
 			<Labels>
 				{stepList.map((_, i) => (
-					<Label active={i === step - 1}>{`Step ${i + 1}`}</Label>
+					<Label key={i} active={i === step - 1}>{`Step ${i + 1}`}</Label>
 				))}
 			</Labels>
 		</div>
