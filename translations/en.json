@@ -516,7 +516,8 @@
 					"vest": "VEST"
 				},
 				"redemption": {
-					"title": "Redemption"
+					"title": "Redemption",
+					"current-balance": "Current Balance:"
 				},
 				"stake-table": {
 					"stake": "Stake",

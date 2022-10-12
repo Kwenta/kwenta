@@ -11,6 +11,7 @@ import SegmentedControl from 'components/SegmentedControl';
 import Connector from 'containers/Connector';
 import rewardEscrowABI from 'lib/abis/RewardEscrow.json';
 import stakingRewardsABI from 'lib/abis/StakingRewards.json';
+import vKwentaRedeemerABI from 'lib/abis/vKwentaRedeemer.json';
 import { currentThemeState } from 'store/ui';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -20,6 +21,11 @@ import { StakingCard } from './common';
 type StakingInputCardProps = {
 	inputLabel: string;
 	tableType: 'stake' | 'escrow' | 'redeem';
+};
+
+const vKwentaTokenContract = {
+	addressOrName: '0xb897D76bC9F7efB66Fb94970371ef17998c296b6',
+	contractInterface: erc20ABI,
 };
 
 const kwentaTokenContract = {
@@ -37,9 +43,15 @@ const rewardEscrowContract = {
 	contractInterface: rewardEscrowABI,
 };
 
+const vKwentaRedeemerContract = {
+	addressOrName: '0x03c3E61D624F279243e1c8b43eD0fCF6790D10E9',
+	contractInterface: vKwentaRedeemerABI,
+};
+
 const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel, tableType }) => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
+	const [vKwentaBalance, setVKwentaBalance] = useState(zeroBN);
 	const [kwentaBalance, setKwentaBalance] = useState(zeroBN);
 	const [stakedNonEscrowedBalance, setStakedNonEscrowedBalance] = useState(zeroBN);
 	const [escrowedBalance, setEscrowedBalance] = useState(zeroBN);
@@ -69,6 +81,11 @@ const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel, tableType }) 
 				functionName: 'escrowedBalanceOf',
 				args: [walletAddress ?? undefined],
 			},
+			{
+				...vKwentaTokenContract,
+				functionName: 'balanceOf',
+				args: [walletAddress ?? undefined],
+			},
 		],
 		cacheOnBlock: true,
 		enabled: !!walletAddress,
@@ -79,6 +96,7 @@ const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel, tableType }) 
 				setStakedNonEscrowedBalance(wei(data[1] ?? zeroBN));
 				setEscrowedBalance(wei(data[2] ?? zeroBN));
 				setStakedEscrowedBalance(wei(data[3] ?? zeroBN));
+				setVKwentaBalance(wei(data[4] ?? zeroBN));
 			}
 		},
 	});
@@ -124,10 +142,18 @@ const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel, tableType }) 
 		cacheTime: 5000,
 	});
 
+	const { config: redeemption } = usePrepareContractWrite({
+		...vKwentaRedeemerContract,
+		functionName: 'redeem',
+		enabled: !!walletAddress && tableType === 'redeem' && wei(vKwentaBalance).gt(0),
+		cacheTime: 5000,
+	});
+
 	const { write: stakingKwenta } = useContractWrite(stakedKwenta);
 	const { write: unstakingKwenta } = useContractWrite(unstakedKwenta);
 	const { write: stakingEscrowKwenta } = useContractWrite(stakedEscrowKwenta);
 	const { write: unstakingEscrowKwenta } = useContractWrite(unstakedEscrowKwenta);
+	const { write: redeem } = useContractWrite(redeemption);
 
 	const maxBalance =
 		tableType === 'stake'
@@ -158,17 +184,27 @@ const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel, tableType }) 
 			<StakeInputContainer>
 				<StakeInputHeader>
 					<div>{inputLabel}</div>
-					<div className="max" onClick={onMaxClick}>
-						{t('dashboard.stake.tabs.stake-table.max')}
-					</div>
+					{tableType !== 'redeem' && (
+						<div className="max" onClick={onMaxClick}>
+							{t('dashboard.stake.tabs.stake-table.max')}
+						</div>
+					)}
+					{tableType === 'redeem' && (
+						<div>
+							{t('dashboard.stake.tabs.redemption.current-balance')}{' '}
+							{Number(vKwentaBalance).toFixed(2)}
+						</div>
+					)}
 				</StakeInputHeader>
-				<StyledInput
-					value={amount}
-					suffix=""
-					onChange={(_, newValue) => {
-						setAmount(newValue);
-					}}
-				/>
+				{tableType !== 'redeem' && (
+					<StyledInput
+						value={amount}
+						suffix=""
+						onChange={(_, newValue) => {
+							setAmount(newValue);
+						}}
+					/>
+				)}
 			</StakeInputContainer>
 			{tableType === 'stake' ? (
 				<Button
@@ -197,7 +233,7 @@ const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel, tableType }) 
 						: t('dashboard.stake.tabs.stake-table.unstake')}
 				</Button>
 			) : (
-				<Button fullWidth variant="flat" size="sm">
+				<Button fullWidth variant="flat" size="sm" disabled={!redeem} onClick={() => redeem?.()}>
 					{t('dashboard.stake.tabs.stake-table.redeem')}
 				</Button>
 			)}
@@ -206,7 +242,7 @@ const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel, tableType }) 
 };
 
 const StakingInputCardContainer = styled(StakingCard)<{ $darkTheme: boolean }>`
-	min-height: 200px;
+	min-height: 125px;
 	max-height: 250px;
 	display: flex;
 	flex-direction: column;
