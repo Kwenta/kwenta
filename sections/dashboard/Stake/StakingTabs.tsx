@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
 import { currentThemeState } from 'store/ui';
+import { FlexDivRowCentered } from 'styles/common';
 import media from 'styles/media';
 
 import EscrowTab from './EscrowTab';
@@ -40,7 +41,11 @@ const StakingTabs: React.FC = () => {
 						lightStakePage={!isDarkTheme}
 					/>
 					<TabButton
-						title={t('dashboard.stake.tabs.trading-rewards.title')}
+						title={
+							window.innerWidth > 768
+								? t('dashboard.stake.tabs.trading-rewards.title')
+								: t('dashboard.stake.tabs.trading-rewards.mobile-title')
+						}
 						onClick={handleTabSwitch(StakeTab.TradingRewards)}
 						active={activeTab === StakeTab.TradingRewards}
 						lightStakePage={!isDarkTheme}
@@ -58,11 +63,19 @@ const StakingTabs: React.FC = () => {
 						lightStakePage={!isDarkTheme}
 					/>
 				</TabButtons>
-				<EpochLabel
-					title={t('dashboard.stake.tabs.trading-rewards.epoch', { EpochPeriod: epochPeriod })}
-					active={activeTab === StakeTab.TradingRewards}
-					isRounded
-				/>
+				<StyledFlexDivRowCentered active={activeTab === StakeTab.TradingRewards}>
+					{window.innerWidth < 768 && (
+						<EpochLabel
+							title={'Current Trading Period:'}
+							active={activeTab === StakeTab.TradingRewards}
+						/>
+					)}
+					<EpochLabel
+						title={t('dashboard.stake.tabs.trading-rewards.epoch', { EpochPeriod: epochPeriod })}
+						active={activeTab === StakeTab.TradingRewards}
+						isRounded
+					/>
+				</StyledFlexDivRowCentered>
 			</StakingTabsHeader>
 
 			<div>
@@ -83,6 +96,10 @@ const StakingTabs: React.FC = () => {
 	);
 };
 
+const StyledFlexDivRowCentered = styled(FlexDivRowCentered)<{ active: boolean }>`
+	display: ${(props) => (props.active ? 'flex' : 'none')};
+`;
+
 const EpochLabel = styled(TabButton)`
 	& p {
 		font-size: 10px;
@@ -100,6 +117,11 @@ const StakingTabsHeader = styled.div`
 	display: flex;
 	justify-content: space-between;
 	margin-bottom: 20px;
+
+	${media.lessThan('md')`
+		flex-direction: column;
+		row-gap: 20px;
+	`}
 `;
 
 const StakingTabsContainer = styled.div`

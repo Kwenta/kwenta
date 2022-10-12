@@ -496,6 +496,7 @@
 				},
 				"trading-rewards": {
 					"title": "Trading Rewards",
+					"mobile-title": "Rewards",
 					"fees-paid": "Fees Paid: Epoch {{EpochPeriod}}",
 					"estimated-rewards": "Estimated Rewards",
 					"estimated-fee-share": "Estimated Fee Share",

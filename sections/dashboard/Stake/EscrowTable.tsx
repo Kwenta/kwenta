@@ -60,17 +60,19 @@ const EscrowTable = () => {
 		vestingSchedulesIsSuccess && vestingSchedules !== undefined ? vestingSchedules[0] : [];
 
 	vestingRecords.length > 0 &&
-		vestingRecords.forEach((d) => {
-			data.push({
-				id: Number(d.entryID),
-				date: moment(Number(d.endTime) * 1000).format('MM/DD/YY'),
-				time: moment(Number(d.endTime) * 1000).fromNow(),
-				vestable: d.endTime * 1000 > Date.now() ? 0 : Number(d.escrowAmount / 1e18),
-				amount: Number(d.escrowAmount / 1e18),
-				fee: d.endTime * 1000 > Date.now() ? Number(d.escrowAmount / 1e18) : 0,
-				status: d.endTime * 1000 > Date.now() ? 'VESTING' : 'VESTED',
+		vestingRecords
+			.filter((d) => d.escrowAmount.gt(0))
+			.forEach((d) => {
+				data.push({
+					id: Number(d.entryID),
+					date: moment(Number(d.endTime) * 1000).format('MM/DD/YY'),
+					time: moment(Number(d.endTime) * 1000).fromNow(),
+					vestable: d.endTime * 1000 > Date.now() ? 0 : Number(d.escrowAmount / 1e18),
+					amount: Number(d.escrowAmount / 1e18),
+					fee: d.endTime * 1000 > Date.now() ? Number(d.escrowAmount / 1e18) : 0,
+					status: d.endTime * 1000 > Date.now() ? 'VESTING' : 'VESTED',
+				});
 			});
-		});
 
 	const handleOnChange = (position: number) => {
 		checkedState[position] = !checkedState[position];
@@ -106,7 +108,7 @@ const EscrowTable = () => {
 	const { config } = usePrepareContractWrite({
 		...rewardEscrowContract,
 		functionName: 'vest',
-		args: [[2]],
+		args: [[4, 5]],
 	});
 
 	const { write: vest } = useContractWrite(config);

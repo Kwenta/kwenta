@@ -113,6 +113,7 @@ const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel, tableType }) 
 					]}
 					onChange={handleTabChange}
 					selectedIndex={activeTab}
+					style={{ marginBottom: '20px' }}
 				/>
 			)}
 			<StakeInput
@@ -127,6 +128,7 @@ const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel, tableType }) 
 					variant="flat"
 					size="sm"
 					onClick={() => (activeTab === 0 ? stakingKwenta?.() : unstakingKwenta?.())}
+					style={{ marginTop: '20px' }}
 				>
 					{activeTab === 0
 						? t('dashboard.stake.tabs.stake-table.stake')
@@ -138,6 +140,7 @@ const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel, tableType }) 
 					variant="flat"
 					size="sm"
 					onClick={() => (activeTab === 0 ? stakingEscrowKwenta?.() : unstakingEscrowKwenta?.())}
+					style={{ marginTop: '20px' }}
 				>
 					{activeTab === 0
 						? t('dashboard.stake.tabs.stake-table.stake')
@@ -154,6 +157,7 @@ const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel, tableType }) 
 
 const StakingInputCardContainer = styled(StakingCard)<{ $darkTheme: boolean }>`
 	min-height: 200px;
+	max-height: 250px;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
