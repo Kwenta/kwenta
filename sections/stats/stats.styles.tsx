@@ -43,14 +43,3 @@ export const ChartWrapper = styled.div`
 		border-radius: 15px;
 	}
 `;
-
-export const TradeContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	gap: 15px;
-
-	@media only screen and (min-width: 600px) {
-		flex-direction: row;
-		gap: 20px;
-	}
-`;
