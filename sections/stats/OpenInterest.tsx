@@ -1,6 +1,7 @@
 import { useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
 import { futuresMarketsState } from 'store/futures';
 import colors from 'styles/theme/colors/common';
@@ -9,7 +10,7 @@ import { SYNTH_ICONS } from 'utils/icons';
 
 import { initBarChart } from './initBarChart';
 import type { EChartsOption } from './initBarChart';
-import { OpenInterestWrapper, ScrollableWrapper } from './stats.styles';
+import { ChartContainer, ChartWrapper } from './stats.styles';
 
 let chartInstance: any;
 
@@ -163,8 +164,12 @@ export const OpenInterest = () => {
 	}, [openInterestRef, t, openInterests, marketsWithIcons, richMarketsLabel]);
 
 	return (
-		<OpenInterestWrapper>
-			<ScrollableWrapper ref={openInterestRef} />
-		</OpenInterestWrapper>
+		<StyledChartContainer width={2}>
+			<ChartWrapper ref={openInterestRef} />
+		</StyledChartContainer>
 	);
 };
+
+const StyledChartContainer = styled(ChartContainer)`
+	overflow: scroll;
+`;

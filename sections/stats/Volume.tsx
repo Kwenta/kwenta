@@ -7,7 +7,7 @@ import fonts from 'styles/theme/fonts';
 
 import { initBarChart } from './initBarChart';
 import type { EChartsOption } from './initBarChart';
-import { VolumeWrapper, Wrapper } from './stats.styles';
+import { ChartContainer, ChartWrapper } from './stats.styles';
 import { TimeRangeSwitcher } from './TimeRangeSwitcher';
 
 let chartInstance: any;
@@ -114,7 +114,7 @@ export const Volume = () => {
 	}, [volumeRef, t, volumeData]);
 
 	return (
-		<Wrapper>
+		<ChartContainer width={2}>
 			<TimeRangeSwitcher
 				is24H={is24H}
 				isWeek={isWeek}
@@ -125,7 +125,7 @@ export const Volume = () => {
 				setIsMonth={setIsMonth}
 				setIsMax={setIsMax}
 			/>
-			<VolumeWrapper ref={volumeRef} />
-		</Wrapper>
+			<ChartWrapper ref={volumeRef} />
+		</ChartContainer>
 	);
 };

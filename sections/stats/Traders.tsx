@@ -7,7 +7,7 @@ import fonts from 'styles/theme/fonts';
 
 import { initBarChart } from './initBarChart';
 import type { EChartsOption } from './initBarChart';
-import { TradersWrapper, Wrapper } from './stats.styles';
+import { ChartContainer, ChartWrapper } from './stats.styles';
 import { TimeRangeSwitcher } from './TimeRangeSwitcher';
 
 let chartInstance: any;
@@ -149,7 +149,7 @@ export const Traders = () => {
 		chartInstance.setOption(option);
 	}, [tradersRef, t, tradersData]);
 	return (
-		<Wrapper style={{ width: '100%' }}>
+		<ChartContainer width={1}>
 			<TimeRangeSwitcher
 				is24H={is24H}
 				isWeek={isWeek}
@@ -160,7 +160,7 @@ export const Traders = () => {
 				setIsMonth={setIsMonth}
 				setIsMax={setIsMax}
 			/>
-			<TradersWrapper ref={tradersRef} />
-		</Wrapper>
+			<ChartWrapper ref={tradersRef} />
+		</ChartContainer>
 	);
 };

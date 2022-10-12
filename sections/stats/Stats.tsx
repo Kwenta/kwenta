@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { OpenInterest } from './OpenInterest';
-import { Container, StatsTitle, ChartContainer, TradeContainer } from './stats.styles';
+import { StatsTitle, StatsContainer } from './stats.styles';
 import { Traders } from './Traders';
 import { Trades } from './Trades';
 import { Volume } from './Volume';
@@ -13,16 +13,14 @@ export const Stats: FC<StatsProps> = () => {
 	const { t } = useTranslation();
 
 	return (
-		<Container>
+		<div>
 			<StatsTitle>{t('stats.title')}</StatsTitle>
-			<ChartContainer>
+			<StatsContainer>
 				<Volume />
-				<TradeContainer>
-					<Trades />
-					<Traders />
-				</TradeContainer>
+				<Trades />
+				<Traders />
 				<OpenInterest />
-			</ChartContainer>
-		</Container>
+			</StatsContainer>
+		</div>
 	);
 };
