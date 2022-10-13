@@ -5,9 +5,9 @@ import { mockProvider } from './mockEthersProvider';
 
 const DEFAULT_CONNECTOR = {
 	activeChain: {
-		id: 420,
-		name: 'goerliOptimism',
-		network: 'goerli optimism',
+		id: DEFAULT_NETWORK.id,
+		name: DEFAULT_NETWORK.name,
+		network: DEFAULT_NETWORK.name,
 		rpcUrls: {
 			infura: '',
 			default: '',

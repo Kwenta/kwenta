@@ -1,3 +1,4 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
 import WithAppContainers from 'containers';
 import mockRouter from 'next-router-mock';
@@ -12,6 +13,7 @@ import { RefetchProvider } from 'contexts/RefetchContext';
 import { themes } from 'styles/theme';
 
 import { mockProvider, MockEthProvider } from './mockEthersProvider';
+import { DEFAULT_NETWORK } from '../constants';
 
 jest.mock('@rainbow-me/rainbowkit', () => ({
 	wallet: {
@@ -62,7 +64,7 @@ const MockProviders = ({ children, ethProviderOverrides, route }: Props) => {
 				value={createQueryContext({
 					// @ts-ignore
 					provider: mockedProvider,
-					networkId: 420,
+					networkId: DEFAULT_NETWORK.id as NetworkId,
 					synthetixjs: null,
 				})}
 			>
