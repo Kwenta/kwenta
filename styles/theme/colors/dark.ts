@@ -3,14 +3,21 @@ import common from './common';
 const darkTheme = {
 	background: '#131212',
 	border: '1px solid rgba(255, 255, 255, 0.12)',
+	outlineBorder: '1px solid rgba(255, 255, 255, 0.12)',
 	red: '#EF6868',
 	green: '#7FD482',
+	orange: '#DA8332',
 	black: '#171002',
 	white: '#ECE8E3',
 	gray: '#787878',
+	gray2: '#3F3F3F',
+	yellow: common.primaryYellow,
 	table: { fill: 'rgba(255, 255, 255, 0.01)', hover: 'rgba(255, 255, 255, 0.05)' },
 	gold: '#E4B378',
-	badge: { background: '#EF6868', text: 'black' },
+	badge: {
+		red: { background: '#EF6868', text: 'black' },
+		yellow: { background: common.primaryYellow, text: 'black' },
+	},
 	tab: { background: { active: '#252525', inactive: 'transparent' } },
 	button: {
 		border: 'rgb(255 255 255 / 10%)',
@@ -20,7 +27,10 @@ const darkTheme = {
 		hover: 'linear-gradient(180deg, #383838 0%, #383838 0.01%, #1E1E1E 100%)',
 		shadow:
 			'rgb(0 0 0 / 25%) 0px 2px 2px, rgb(255 255 255 / 10%) 0px 1px 0px inset, rgb(255 255 255 / 3%) 0px 0px 20px inset',
-		text: common.primaryWhite,
+		text: {
+			primary: common.primaryWhite,
+			yellow: common.primaryYellow,
+		},
 		primary: {
 			background: 'linear-gradient(180deg, #BE9461 0%, #9C6C3C 100%)',
 			hover: 'linear-gradient(180deg, #E4B378 0%, #B98C55 100%)',
@@ -69,8 +79,17 @@ const darkTheme = {
 	},
 	slider: {
 		label: '#787878',
-		thumb: { shadow: 'inset 0px 1px 0px rgba(255, 255, 255, 0.5)' },
-		track: { shadow: 'inset 0px 0.5px 0px rgba(255, 255, 255, 0.5)' },
+		thumb: {
+			border: '3px solid rgba(43, 42, 42, 0.5)',
+			shadow: 'inset 0px 1px 0px rgba(255, 255, 255, 0.5)',
+		},
+		rail: {
+			background: 'rgba(255, 255, 255, 0.2)',
+		},
+		track: {
+			background: 'rgba(255, 255, 255, 0.2)',
+			shadow: 'inset 0px 0.5px 0px rgba(255, 255, 255, 0.5)',
+		},
 	},
 	select: {
 		control: {
@@ -87,10 +106,24 @@ const darkTheme = {
 	text: {
 		title: common.secondaryGray,
 		value: common.primaryWhite,
+		label: common.secondaryGray,
 	},
 	icon: {
 		fill: '#787878',
 		hover: '#ECE8E3',
+	},
+	openInterestBar: {
+		border: '1px solid #2b2a2a',
+	},
+	modal: {
+		background: '#252525',
+	},
+	competitionBanner: {
+		border: '1px solid #2b2a2a',
+		state: {
+			text: common.primaryWhite,
+		},
+		bg: '#fff',
 	},
 };
 

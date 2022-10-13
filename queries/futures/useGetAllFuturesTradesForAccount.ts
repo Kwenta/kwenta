@@ -1,27 +1,26 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
 
-import { appReadyState } from 'store/app';
-import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
-
-import QUERY_KEYS from 'constants/queryKeys';
-import { getFuturesEndpoint, mapTrades } from './utils';
-import { FuturesTrade } from './types';
-import { getFuturesTrades } from './subgraph';
 import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
+import QUERY_KEYS from 'constants/queryKeys';
+import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
+
+import { getFuturesTrades } from './subgraph';
+import { FuturesTrade } from './types';
+import { getFuturesEndpoint, mapTrades } from './utils';
 
 const useGetAllFuturesTradesForAccount = (
 	account?: string | null,
 	options?: UseQueryOptions<FuturesTrade[] | null> & { forceAccount: boolean }
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isL2 = useRecoilValue(isL2State);
+	const { network, isWalletConnected } = Connector.useContainer();
+	const isL2 = useIsL2();
+
+	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
 	return useQuery<FuturesTrade[] | null>(
-		QUERY_KEYS.Futures.AllTradesAccount(network.id, account || null),
+		QUERY_KEYS.Futures.AllTradesAccount(network?.id as NetworkId, account || null),
 		async () => {
 			if (!account) return null;
 
@@ -39,6 +38,9 @@ const useGetAllFuturesTradesForAccount = (
 					id: true,
 					timestamp: true,
 					account: true,
+					abstractAccount: true,
+					accountType: true,
+					margin: true,
 					size: true,
 					asset: true,
 					price: true,
@@ -52,7 +54,7 @@ const useGetAllFuturesTradesForAccount = (
 			);
 			return response ? mapTrades(response) : null;
 		},
-		{ enabled: isL2 && isAppReady && isWalletConnected && !!account, ...options }
+		{ enabled: isL2 && isWalletConnected && !!account, ...options }
 	);
 };
 

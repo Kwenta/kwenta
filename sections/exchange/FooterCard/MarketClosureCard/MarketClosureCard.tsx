@@ -1,27 +1,21 @@
 import { FC, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { MarketClosure } from 'hooks/useMarketClosed';
-import { CurrencyKey } from 'constants/currency';
+import useMarketClosed from 'hooks/useMarketClosed';
+import { baseCurrencyKeyState, quoteCurrencyKeyState } from 'store/exchange';
+
 import { MessageContainer, Message, MessageButton, FixedMessageContainerSpacer } from '../common';
 
-type MarketClosureCardProps = {
-	attached?: boolean;
-	baseCurrencyMarketClosed: MarketClosure;
-	quoteCurrencyMarketClosed: MarketClosure;
-	baseCurrencyKey: CurrencyKey | null;
-	quoteCurrencyKey: CurrencyKey | null;
-};
-
-const MarketClosureCard: FC<MarketClosureCardProps> = ({
-	attached,
-	baseCurrencyMarketClosed,
-	quoteCurrencyMarketClosed,
-	baseCurrencyKey,
-	quoteCurrencyKey,
-}) => {
+const MarketClosureCard: FC = () => {
 	const { t } = useTranslation();
+
+	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
+	const quoteCurrencyKey = useRecoilValue(quoteCurrencyKeyState);
+
+	const quoteCurrencyMarketClosed = useMarketClosed(quoteCurrencyKey);
+	const baseCurrencyMarketClosed = useMarketClosed(baseCurrencyKey);
 
 	const getSuspensionReason = useMemo(() => {
 		if (baseCurrencyMarketClosed.isMarketClosed && quoteCurrencyMarketClosed.isMarketClosed) {
@@ -37,7 +31,7 @@ const MarketClosureCard: FC<MarketClosureCardProps> = ({
 			<MobileOrTabletView>
 				<FixedMessageContainerSpacer />
 			</MobileOrTabletView>
-			<MessageContainer attached={attached} className="footer-card">
+			<MessageContainer className="footer-card">
 				<DesktopOnlyView>
 					<Message>
 						<Trans
@@ -50,7 +44,7 @@ const MarketClosureCard: FC<MarketClosureCardProps> = ({
 						/>
 					</Message>
 				</DesktopOnlyView>
-				<MessageButton disabled={true}>
+				<MessageButton disabled>
 					{t(`exchange.footer-card.market-closure.button-label`)}
 				</MessageButton>
 			</MessageContainer>

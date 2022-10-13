@@ -1,10 +1,14 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
-import QUERY_KEYS from 'constants/queryKeys';
-import { useRecoilValue } from 'recoil';
-import { isL2State, networkState } from 'store/wallet';
-import { getRatesEndpoint } from './utils';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { appReadyState } from 'store/app';
+import { chain } from 'wagmi';
+
+import QUERY_KEYS from 'constants/queryKeys';
+import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
+import logError from 'utils/logError';
+
+import { getRatesEndpoint } from './utils';
 
 interface RateUpdate {
 	baseCurrencyKey: string;
@@ -14,14 +18,12 @@ const useRateUpdateQuery = (
 	{ baseCurrencyKey }: RateUpdate,
 	options?: UseQueryOptions<any | null>
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
-
-	const network = useRecoilValue(networkState);
-	const ratesEndpoint = getRatesEndpoint(network.id);
+	const { network } = Connector.useContainer();
+	const isL2 = useIsL2();
+	const ratesEndpoint = getRatesEndpoint(network?.id as NetworkId);
 
 	return useQuery<any | null>(
-		QUERY_KEYS.Futures.LatestUpdate(network.id, baseCurrencyKey),
+		QUERY_KEYS.Futures.LatestUpdate(network?.id as NetworkId, baseCurrencyKey),
 		async () => {
 			try {
 				const response = await request(
@@ -55,11 +57,11 @@ const useRateUpdateQuery = (
 
 				return updateTime;
 			} catch (e) {
-				console.log('query ERROR', e);
+				logError(`query ERROR ${e}`);
 				return null;
 			}
 		},
-		{ enabled: isAppReady && isL2 && !!baseCurrencyKey, ...options }
+		{ enabled: isL2 && !!baseCurrencyKey && network?.id !== chain.optimismGoerli.id, ...options }
 	);
 };
 

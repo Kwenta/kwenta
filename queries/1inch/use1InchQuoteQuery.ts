@@ -1,15 +1,15 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
+import { wei } from '@synthetixio/wei';
+import { useMemo } from 'react';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import { useMemo } from 'react';
-import { wei } from '@synthetixio/wei';
-import useSynthetixQueries from '@synthetixio/queries';
-import QUERY_KEYS from 'constants/queryKeys';
 
-import Convert from 'containers/Convert';
+import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import { getExchangeRatesForCurrencies } from 'utils/currencies';
+import Convert from 'containers/Convert';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
-import { networkState } from 'store/wallet';
+import { ratesState } from 'store/futures';
+import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
 type Currency = {
 	key: string;
@@ -25,13 +25,10 @@ const use1InchQuoteQuery = (
 	options?: UseQueryOptions<string | null>
 ) => {
 	const { quote1Inch } = Convert.useContainer();
-	const network = useRecoilValue(networkState);
 
-	const { useExchangeRatesQuery } = useSynthetixQueries();
-	const exchangeRatesQuery = useExchangeRatesQuery();
-	const { tokensMap } = Connector.useContainer();
+	const { tokensMap, network } = Connector.useContainer();
 
-	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
+	const exchangeRates = useRecoilValue(ratesState);
 
 	const synthUsdRate = useMemo(() => {
 		if (!quoteCurrency || !baseCurrency) return null;
@@ -47,7 +44,8 @@ const use1InchQuoteQuery = (
 			quoteCurrency?.address,
 			baseCurrency?.address,
 			amount,
-			network?.id!
+			synthUsdRate || 0,
+			network?.id as NetworkId
 		),
 		async () => {
 			const sUsd = tokensMap['sUSD'];
@@ -75,6 +73,7 @@ const use1InchQuoteQuery = (
 					usdAmount.toString(),
 					decimals
 				);
+
 				return estimatedAmount;
 			} else {
 				const estimatedAmount = await quote1Inch(

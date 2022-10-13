@@ -1,53 +1,29 @@
+import { useRouter } from 'next/router';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRouter } from 'next/router';
-import styled from 'styled-components';
 import { CellProps } from 'react-table';
-import Wei, { wei } from '@synthetixio/wei';
-import { Synths } from '@synthetixio/contracts-interface';
+import styled from 'styled-components';
 
 import GridSvg from 'assets/svg/app/grid.svg';
-import Table from 'components/Table';
+import Button from 'components/Button';
 import Currency from 'components/Currency';
 import Loader from 'components/Loader';
+import Table from 'components/Table';
 import ROUTES from 'constants/routes';
 import useENS from 'hooks/useENS';
+import useGetFuturesCumulativeStats from 'queries/futures/useGetFuturesCumulativeStats';
 import useGetStats from 'queries/futures/useGetStats';
-import { FuturesStat } from 'queries/futures/types';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
 import { FlexDivColCentered, FlexDivRow, SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media, { Media } from 'styles/media';
-import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
-import { truncateAddress } from 'utils/formatters/string';
-import { Copy, StackSection, Title } from '../common';
-import Button from 'components/Button';
+import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 
-type Stat = {
-	pnl: Wei;
-	liquidations: Wei;
-	totalTrades: Wei;
-	totalVolume: Wei;
-};
+import { StackSection, Title } from '../common';
 
 const ShortList = () => {
 	const { t } = useTranslation();
 
 	const statsQuery = useGetStats(true);
 	const stats = useMemo(() => statsQuery.data ?? [], [statsQuery]);
-	const pnlMap = useMemo(
-		() =>
-			stats.reduce((acc: Record<string, Stat>, stat: FuturesStat) => {
-				acc[stat.account] = {
-					pnl: wei(stat.pnlWithFeesPaid ?? 0, 18, true),
-					liquidations: new Wei(stat.liquidations ?? 0),
-					totalTrades: new Wei(stat.totalTrades ?? 0),
-					totalVolume: wei(stat.totalVolume ?? 0, 18, true),
-				};
-				return acc;
-			}, {}),
-		[stats]
-	);
 
 	const router = useRouter();
 	const onClickTrader = (trader: string) => {
@@ -67,26 +43,6 @@ const ShortList = () => {
 		}
 	};
 
-	let data = useMemo(
-		() =>
-			stats
-				.sort(
-					(a: FuturesStat, b: FuturesStat) =>
-						(pnlMap[b.account]?.pnl || 0) - (pnlMap[a.account]?.pnl || 0)
-				)
-				.map((stat: FuturesStat, i: number) => ({
-					rank: i + 1,
-					trader: stat.account,
-					traderShort: truncateAddress(stat.account),
-					totalTrades: (pnlMap[stat.account]?.totalTrades ?? wei(0)).toNumber(),
-					totalVolume: (pnlMap[stat.account]?.totalVolume ?? wei(0)).toNumber(),
-					liquidations: (pnlMap[stat.account]?.liquidations ?? wei(0)).toNumber(),
-					'24h': 80000,
-					pnl: (pnlMap[stat.account]?.pnl ?? wei(0)).toNumber(),
-				})),
-		[stats, pnlMap]
-	);
-
 	const title = (
 		<>
 			<SmallGoldenHeader>{t('homepage.shortlist.title')}</SmallGoldenHeader>
@@ -97,19 +53,10 @@ const ShortList = () => {
 	const sectionTitle = (
 		<>
 			<SectionFeatureTitle>{t('homepage.shortlist.stats.title')}</SectionFeatureTitle>
-			<SectionFeatureCopy>{t('homepage.shortlist.stats.copy')}</SectionFeatureCopy>
 		</>
 	);
 
-	const dailyTradeStats = useGetFuturesDailyTradeStats();
-
-	const futuresMarketsQuery = useGetFuturesMarkets();
-	const openInterest = useMemo(() => {
-		const futuresMarkets = futuresMarketsQuery?.data ?? [];
-		return futuresMarkets
-			.map((market) => market.marketSize.mul(market.price).toNumber())
-			.reduce((total, openInterest) => total + openInterest, 0);
-	}, [futuresMarketsQuery?.data]);
+	const totalTradeStats = useGetFuturesCumulativeStats();
 
 	return (
 		<StackSection>
@@ -117,11 +64,11 @@ const ShortList = () => {
 				<FlexDivColCentered>{title}</FlexDivColCentered>
 				<Media greaterThan="sm">
 					<StyledTable
-						showPagination={true}
+						showPagination
 						isLoading={statsQuery.isLoading}
-						showShortList={true}
+						showShortList
 						onTableRowClick={(row) => onClickTrader(row.original.trader)}
-						data={data}
+						data={stats}
 						pageSize={5}
 						hideHeaders={false}
 						columns={[
@@ -186,7 +133,7 @@ const ShortList = () => {
 								accessor: 'pnl',
 								Cell: (cellProps: CellProps<any>) => (
 									<ColorCodedPrice
-										currencyKey={Synths.sUSD}
+										currencyKey={'sUSD'}
 										price={cellProps.row.original.pnl}
 										sign={'$'}
 										conversionRate={1}
@@ -199,11 +146,11 @@ const ShortList = () => {
 				</Media>
 				<Media lessThan="sm">
 					<StyledTable
-						showPagination={true}
+						showPagination
 						isLoading={statsQuery.isLoading}
-						showShortList={true}
+						showShortList
 						onTableRowClick={(row) => onClickTrader(row.original.trader)}
-						data={data}
+						data={stats}
 						pageSize={5}
 						hideHeaders={false}
 						columns={[
@@ -248,7 +195,7 @@ const ShortList = () => {
 								accessor: 'pnl',
 								Cell: (cellProps: CellProps<any>) => (
 									<ColorCodedPrice
-										currencyKey={Synths.sUSD}
+										currencyKey={'sUSD'}
 										price={cellProps.row.original.pnl}
 										sign={'$'}
 										conversionRate={1}
@@ -264,11 +211,10 @@ const ShortList = () => {
 					<StatsCard>
 						<StatsName>{t('homepage.shortlist.stats.volume')}</StatsName>
 						<StatsValue>
-							{dailyTradeStats.isLoading ? (
+							{totalTradeStats.isLoading ? (
 								<Loader />
 							) : (
-								formatCurrency(Synths.sUSD, dailyTradeStats.data?.totalVolume || zeroBN, {
-									sign: '$',
+								formatDollars(totalTradeStats.data?.totalVolume || zeroBN, {
 									minDecimals: 0,
 								})
 							)}
@@ -276,26 +222,17 @@ const ShortList = () => {
 						<GridSvg />
 					</StatsCard>
 					<StatsCard>
-						<StatsName>{t('homepage.shortlist.stats.open-interest')}</StatsName>
-						<StatsValue>
-							{futuresMarketsQuery.isLoading ? (
-								<Loader />
-							) : (
-								formatCurrency(Synths.sUSD, openInterest ?? 0, {
-									sign: '$',
-									minDecimals: 0,
-								})
-							)}
-						</StatsValue>
+						<StatsName>{t('homepage.shortlist.stats.traders')}</StatsName>
+						<StatsValue>{statsQuery.isLoading ? <Loader /> : stats.length ?? 0}</StatsValue>
 						<GridSvg />
 					</StatsCard>
 					<StatsCard>
 						<StatsName>{t('homepage.shortlist.stats.trades')}</StatsName>
 						<StatsValue>
-							{dailyTradeStats.isLoading ? (
+							{totalTradeStats.isLoading ? (
 								<Loader />
 							) : (
-								formatNumber(dailyTradeStats.data?.totalTrades ?? 0, { minDecimals: 0 })
+								formatNumber(totalTradeStats.data?.totalTrades ?? 0, { minDecimals: 0 })
 							)}
 						</StatsValue>
 						<GridSvg />
@@ -435,14 +372,6 @@ const StyledTrader = styled.a`
 	font-size: 15px;
 `;
 
-const FeatureCopy = styled(Copy)`
-	font-size: 15px;
-	line-height: 150%;
-	letter-spacing: -0.03em;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
-	width: 183px;
-`;
-
 const FeatureTitle = styled(Title)`
 	font-size: 24px;
 	line-height: 100%;
@@ -457,16 +386,6 @@ const SectionFeatureTitle = styled(FeatureTitle)`
 	margin-top: 80px;
 	text-align: center;
 	width: 500px;
-	${media.lessThan('sm')`
-		width: 100vw;
-	`}
-`;
-
-const SectionFeatureCopy = styled(FeatureCopy)`
-	margin-top: 16px;
-	text-align: center;
-	width: 500px;
-	font-size: 18px;
 	${media.lessThan('sm')`
 		width: 100vw;
 	`}

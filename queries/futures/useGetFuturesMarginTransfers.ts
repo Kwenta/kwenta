@@ -1,11 +1,14 @@
-import QUERY_KEYS from 'constants/queryKeys';
-import Connector from 'containers/Connector';
+import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import { appReadyState } from 'store/app';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
+
+import QUERY_KEYS from 'constants/queryKeys';
+import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
+import { selectedFuturesAddressState } from 'store/futures';
 import { getDisplayAsset } from 'utils/futures';
+import logError from 'utils/logError';
 
 import { MarginTransfer } from './types';
 import { getFuturesEndpoint, mapMarginTransfers } from './utils';
@@ -14,12 +17,10 @@ const useGetFuturesMarginTransfers = (
 	currencyKey: string | null,
 	options?: UseQueryOptions<MarginTransfer[]>
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
-	const walletAddress = useRecoilValue(walletAddressState);
-	const futuresEndpoint = getFuturesEndpoint(network);
-	const { synthetixjs } = Connector.useContainer();
+	const selectedFuturesAddress = useRecoilValue(selectedFuturesAddressState);
+	const { defaultSynthetixjs: synthetixjs, network, isWalletConnected } = Connector.useContainer();
+	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
+	const isL2 = useIsL2();
 
 	const gqlQuery = gql`
 		query userFuturesMarginTransfers($market: String!, $walletAddress: String!) {
@@ -41,27 +42,31 @@ const useGetFuturesMarginTransfers = (
 	`;
 
 	return useQuery<MarginTransfer[]>(
-		QUERY_KEYS.Futures.MarginTransfers(network.id, walletAddress ?? '', currencyKey || null),
+		QUERY_KEYS.Futures.MarginTransfers(
+			network?.id as NetworkId,
+			selectedFuturesAddress ?? '',
+			currencyKey || null
+		),
 		async () => {
-			if (!currencyKey || !synthetixjs) return [];
+			if (!currencyKey || !synthetixjs || !isL2 || !isWalletConnected) return [];
 			const { contracts } = synthetixjs!;
 			const marketAddress = contracts[`FuturesMarket${getDisplayAsset(currencyKey)}`].address;
-			if (!marketAddress) return [];
+			if (!marketAddress || !selectedFuturesAddress) return [];
 
 			try {
 				const response = await request(futuresEndpoint, gqlQuery, {
 					market: marketAddress,
-					walletAddress: walletAddress ?? '',
+					walletAddress: selectedFuturesAddress,
 				});
 
 				return response ? mapMarginTransfers(response.futuresMarginTransfers) : [];
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				return [];
 			}
 		},
 		{
-			enabled: isAppReady && isL2 && !!currencyKey && !!synthetixjs && !!walletAddress,
+			enabled: !!currencyKey && !!synthetixjs && !!selectedFuturesAddress,
 			...options,
 		}
 	);

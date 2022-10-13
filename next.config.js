@@ -74,24 +74,31 @@ module.exports = withPlugins([
 
 			return config;
 		},
-		trailingSlash: !!process.env.NEXT_PUBLIC_DISABLE_PRETTY_URLS,
-		exportPathMap: function (defaultPathMap) {
-			return {
-				...defaultPathMap,
-				'/': {
-					page: '/',
-				},
-				'/dashboard': {
-					page: '/dashboard/[[...tab]]',
-				},
-				'/exchange': {
-					page: '/exchange/[[...market]]',
-				},
-			};
-		},
+		trailingSlash: true,
 		compiler: {
 			// ssr and displayName are configured by default
 			styledComponents: true,
 		},
+		experimental: { images: { unoptimized: true } },
+		async redirects() {
+			return [
+				{
+					source: '/dashboard/overview',
+					destination: '/dashboard',
+					permanent: true,
+				},
+				{
+					source: '/market/:key',
+					destination: '/market/?asset=:key',
+					permanent: true,
+				},
+				{
+					source: '/exchange/:base-:quote',
+					destination: '/exchange/?quote=:quote&base=:base',
+					permanent: true,
+				},
+			];
+		},
+		productionBrowserSourceMaps: true,
 	},
 ]);

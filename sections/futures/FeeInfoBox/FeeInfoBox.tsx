@@ -1,53 +1,168 @@
-import React, { FC } from 'react';
-import styled from 'styled-components';
-import Wei, { WeiSource } from '@synthetixio/wei';
-
-import InfoBox from 'components/InfoBox';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
-import { NO_VALUE } from 'constants/placeholder';
-import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
-
+import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
 import TimerIcon from 'assets/svg/app/timer.svg';
+import InfoBox, { DetailedInfo } from 'components/InfoBox/InfoBox';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
+import { NO_VALUE } from 'constants/placeholder';
+import {
+	tradeFeesState,
+	marketInfoState,
+	orderTypeState,
+	sizeDeltaState,
+	futuresAccountTypeState,
+	crossMarginSettingsState,
+} from 'store/futures';
 import { computeNPFee, computeMarketFee } from 'utils/costCalculations';
-import { useRecoilValue } from 'recoil';
-import { feeCostState, orderTypeState, sizeDeltaState } from 'store/futures';
+import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
-type FeeInfoBoxProps = {
-	dynamicFee: Wei | WeiSource | null;
-};
-
-const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ dynamicFee }) => {
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const costDetailsQuery = useGetNextPriceDetails();
-	const costDetails = costDetailsQuery.data;
-	const { t } = useTranslation();
+const FeeInfoBox: React.FC = () => {
 	const orderType = useRecoilValue(orderTypeState);
-	const feeCost = useRecoilValue(feeCostState);
+	const fees = useRecoilValue(tradeFeesState);
 	const sizeDelta = useRecoilValue(sizeDeltaState);
-
-	const { commitDeposit, nextPriceFee } = React.useMemo(
-		() => computeNPFee(costDetails, sizeDelta),
-		[costDetails, sizeDelta]
+	const marketInfo = useRecoilValue(marketInfoState);
+	const accountType = useRecoilValue(futuresAccountTypeState);
+	const { tradeFee: crossMarginTradeFee, limitOrderFee, stopOrderFee } = useRecoilValue(
+		crossMarginSettingsState
 	);
 
-	const totalDeposit = React.useMemo(() => {
-		return (commitDeposit ?? zeroBN).add(costDetails?.keeperDeposit ?? zeroBN);
-	}, [commitDeposit, costDetails?.keeperDeposit]);
-
-	const nextPriceDiscount = React.useMemo(() => {
-		return (nextPriceFee ?? zeroBN).sub(commitDeposit ?? zeroBN);
-	}, [commitDeposit, nextPriceFee]);
-
-	const staticRate = React.useMemo(() => computeMarketFee(costDetails, sizeDelta), [
-		costDetails,
+	const { commitDeposit, nextPriceFee } = useMemo(() => computeNPFee(marketInfo, sizeDelta), [
+		marketInfo,
 		sizeDelta,
 	]);
 
-	const ToolTip: FC = (props) => (
+	const totalDeposit = useMemo(() => {
+		return (commitDeposit ?? zeroBN).add(marketInfo?.keeperDeposit ?? zeroBN);
+	}, [commitDeposit, marketInfo?.keeperDeposit]);
+
+	const nextPriceDiscount = useMemo(() => {
+		return (nextPriceFee ?? zeroBN).sub(commitDeposit ?? zeroBN);
+	}, [commitDeposit, nextPriceFee]);
+
+	const staticRate = useMemo(() => computeMarketFee(marketInfo, sizeDelta), [
+		marketInfo,
+		sizeDelta,
+	]);
+
+	const orderFeeRate = useMemo(
+		() => (orderType === 'limit' ? limitOrderFee : orderType === 'stop' ? stopOrderFee : null),
+		[orderType, stopOrderFee, limitOrderFee]
+	);
+
+	const marketCostTooltip = useMemo(
+		() => (
+			<>
+				{formatPercent(staticRate ?? zeroBN)}
+				{fees.dynamicFeeRate?.gt(0) && (
+					<>
+						{' + '}
+						<ToolTip>
+							<StyledDynamicFee>{formatPercent(fees.dynamicFeeRate)}</StyledDynamicFee>
+						</ToolTip>
+					</>
+				)}
+			</>
+		),
+		[staticRate, fees.dynamicFeeRate]
+	);
+
+	const feesInfo = useMemo<Record<string, DetailedInfo | null | undefined>>(() => {
+		const crossMarginFeeInfo = {
+			'Protocol Fee': {
+				value: formatDollars(fees.staticFee, {
+					minDecimals: fees.staticFee.lt(0.01) ? 4 : 2,
+				}),
+				keyNode: marketCostTooltip,
+			},
+			'Limit / Stop Fee':
+				fees.limitStopOrderFee.gt(0) && orderFeeRate
+					? {
+							value: formatDollars(fees.limitStopOrderFee, {
+								minDecimals: fees.limitStopOrderFee.lt(0.01) ? 4 : 2,
+							}),
+							keyNode: formatPercent(orderFeeRate),
+					  }
+					: null,
+			'Cross Margin Fee': {
+				value: formatDollars(fees.crossMarginFee, {
+					minDecimals: fees.crossMarginFee.lt(0.01) ? 4 : 2,
+				}),
+				spaceBeneath: true,
+				keyNode: formatPercent(crossMarginTradeFee),
+			},
+
+			'Total Fee': {
+				value: formatDollars(fees.total, {
+					minDecimals: fees.total.lt(0.01) ? 4 : 2,
+				}),
+			},
+		};
+		if (orderType === 'limit' || orderType === 'stop') {
+			return {
+				...crossMarginFeeInfo,
+				'Keeper Deposit': {
+					value: !!marketInfo?.keeperDeposit
+						? formatCurrency('ETH', fees.keeperEthDeposit, { currencyKey: 'ETH' })
+						: NO_VALUE,
+				},
+			};
+		}
+		if (orderType === 'next-price') {
+			return {
+				'Keeper Deposit': {
+					value: !!marketInfo?.keeperDeposit ? formatDollars(marketInfo.keeperDeposit) : NO_VALUE,
+				},
+				'Commit Deposit': {
+					value: !!commitDeposit
+						? formatDollars(commitDeposit, { minDecimals: commitDeposit.lt(0.01) ? 4 : 2 })
+						: NO_VALUE,
+				},
+				'Total Deposit': {
+					value: formatDollars(totalDeposit),
+					spaceBeneath: true,
+				},
+				'Next-Price Discount': {
+					value: !!nextPriceDiscount ? formatDollars(nextPriceDiscount) : NO_VALUE,
+					color: nextPriceDiscount.lt(0) ? 'green' : nextPriceDiscount.gt(0) ? 'red' : undefined,
+				},
+				'Estimated Fees': {
+					value: formatDollars(totalDeposit.add(nextPriceDiscount ?? zeroBN)),
+					keyNode: fees.dynamicFeeRate?.gt(0) ? <ToolTip /> : null,
+				},
+			};
+		}
+		return accountType === 'isolated_margin'
+			? {
+					Fee: {
+						value: formatDollars(fees.total, {
+							minDecimals: fees.total.lt(0.01) ? 4 : 2,
+						}),
+						keyNode: marketCostTooltip,
+					},
+			  }
+			: crossMarginFeeInfo;
+	}, [
+		orderType,
+		crossMarginTradeFee,
+		fees,
+		orderFeeRate,
+		commitDeposit,
+		accountType,
+		marketInfo?.keeperDeposit,
+		nextPriceDiscount,
+		marketCostTooltip,
+		totalDeposit,
+	]);
+
+	return <StyledInfoBox details={feesInfo} />;
+};
+
+const ToolTip: FC = (props) => {
+	const { t } = useTranslation();
+
+	return (
 		<DynamicStyledToolTip
 			height={'auto'}
 			preset="bottom"
@@ -58,88 +173,6 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ dynamicFee }) => {
 			{props.children}
 			<StyledTimerIcon />
 		</DynamicStyledToolTip>
-	);
-
-	const marketCostTooltip = (
-		<>
-			{formatPercent(staticRate ?? zeroBN)}
-			{dynamicFee?.gt(0) && (
-				<>
-					{' + '}
-					<ToolTip>
-						<StyledDynamicFee>{formatPercent(dynamicFee)}</StyledDynamicFee>
-					</ToolTip>
-				</>
-			)}
-		</>
-	);
-
-	return (
-		<StyledInfoBox
-			details={{
-				...(orderType === 1
-					? {
-							'Keeper Deposit': {
-								value: !!costDetails?.keeperDeposit
-									? formatCurrency(selectedPriceCurrency.name, costDetails.keeperDeposit, {
-											sign: selectedPriceCurrency.sign,
-											minDecimals: 2,
-									  })
-									: NO_VALUE,
-							},
-							'Commit Deposit': {
-								value: !!commitDeposit
-									? formatCurrency(selectedPriceCurrency.name, commitDeposit, {
-											sign: selectedPriceCurrency.sign,
-											minDecimals: commitDeposit.lt(0.01) ? 4 : 2,
-									  })
-									: NO_VALUE,
-							},
-							'Total Deposit': {
-								value: formatCurrency(selectedPriceCurrency.name, totalDeposit, {
-									sign: selectedPriceCurrency.sign,
-									minDecimals: 2,
-								}),
-								spaceBeneath: true,
-							},
-							'Next-Price Discount': {
-								value: !!nextPriceDiscount
-									? formatCurrency(selectedPriceCurrency.name, nextPriceDiscount, {
-											sign: selectedPriceCurrency.sign,
-											minDecimals: 2,
-									  })
-									: NO_VALUE,
-								color: nextPriceDiscount.lt(0)
-									? 'green'
-									: nextPriceDiscount.gt(0)
-									? 'red'
-									: undefined,
-							},
-							'Estimated Fees': {
-								value: formatCurrency(
-									selectedPriceCurrency.name,
-									totalDeposit.add(nextPriceDiscount ?? zeroBN),
-									{
-										minDecimals: 2,
-										sign: selectedPriceCurrency.sign,
-									}
-								),
-								keyNode: dynamicFee?.gt(0) ? <ToolTip /> : null,
-							},
-					  }
-					: {
-							Fee: {
-								value: !!feeCost
-									? formatCurrency(selectedPriceCurrency.name, feeCost, {
-											sign: selectedPriceCurrency.sign,
-											minDecimals: feeCost.lt(0.01) ? 4 : 2,
-									  })
-									: NO_VALUE,
-								keyNode: marketCostTooltip,
-							},
-					  }),
-			}}
-		/>
 	);
 };
 

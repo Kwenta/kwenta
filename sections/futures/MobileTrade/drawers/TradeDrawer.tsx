@@ -1,12 +1,13 @@
+import { wei } from '@synthetixio/wei';
 import React from 'react';
 import styled, { css } from 'styled-components';
-import BaseDrawer from './BaseDrawer';
+
 import { PositionSide } from 'queries/futures/types';
-import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
-import { getDisplayAsset } from 'utils/futures';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
-import { Synths } from 'constants/currency';
-import { wei } from '@synthetixio/wei';
+import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
+import { getDisplayAsset } from 'utils/futures';
+
+import BaseDrawer from './BaseDrawer';
 
 type TradeDrawerProps = {
 	trade?: any;
@@ -37,9 +38,7 @@ const TradeDrawer: React.FC<TradeDrawerProps> = ({ trade, closeDrawer }) => {
 			{ label: 'Size', value: formatCryptoCurrency(trade.amount) },
 			{
 				label: 'Price',
-				value: formatCurrency(Synths.sUSD, trade.value, {
-					sign: '$',
-				}),
+				value: formatDollars(trade.value),
 			},
 			{ label: 'Date/Time', value: <TimeDisplay cellPropsValue={trade.time} horizontal /> },
 			{
@@ -47,20 +46,12 @@ const TradeDrawer: React.FC<TradeDrawerProps> = ({ trade, closeDrawer }) => {
 				value: trade.pnl.eq(wei(0)) ? (
 					<PNL normal>--</PNL>
 				) : (
-					<PNL negative={trade.pnl.lt(wei(0))}>
-						{formatCurrency(Synths.sUSD, trade.pnl, {
-							sign: '$',
-						})}
-					</PNL>
+					<PNL negative={trade.pnl.lt(wei(0))}>{formatDollars(trade.pnl)}</PNL>
 				),
 			},
 			{
 				label: 'Fees',
-				value: trade.feesPaid.eq(0)
-					? '--'
-					: formatCurrency(Synths.sUSD, trade.feesPaid, {
-							sign: '$',
-					  }),
+				value: trade.feesPaid.eq(0) ? '--' : formatDollars(trade.feesPaid),
 			},
 		];
 	}, [trade]);

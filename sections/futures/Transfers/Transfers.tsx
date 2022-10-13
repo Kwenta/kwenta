@@ -1,10 +1,13 @@
-import Table from 'components/Table';
-import BlockExplorer from 'containers/BlockExplorer';
-import { MarginTransfer } from 'queries/futures/types';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { ExternalLink, GridDivCenteredRow } from 'styles/common';
+
+import Table, { TableNoResults } from 'components/Table';
+import BlockExplorer from 'containers/BlockExplorer';
+import useIsL2 from 'hooks/useIsL2';
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import { MarginTransfer } from 'queries/futures/types';
+import { ExternalLink } from 'styles/common';
 import { timePresentation } from 'utils/formatters/date';
 import { truncateAddress } from 'utils/formatters/string';
 
@@ -17,10 +20,13 @@ type TransferProps = {
 const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: TransferProps) => {
 	const { t } = useTranslation();
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
+	const { switchToL2 } = useNetworkSwitcher();
+
+	const isL2 = useIsL2();
 	const columnsDeps = useMemo(() => [marginTransfers], [marginTransfers]);
 
 	return (
-		<StyledTable
+		<Table
 			highlightRowsOnHover
 			columns={[
 				{
@@ -78,25 +84,27 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: 
 			columnsDeps={columnsDeps}
 			isLoading={isLoading && !isLoaded}
 			noResultsMessage={
-				marginTransfers?.length === 0 ? (
+				!isL2 ? (
+					<TableNoResults>
+						{t('common.l2-cta')}
+						<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+					</TableNoResults>
+				) : (
 					<TableNoResults>
 						<StyledTitle>{t('futures.market.user.transfers.table.no-results')}</StyledTitle>
 					</TableNoResults>
-				) : undefined
+				)
 			}
-			showPagination={true}
+			showPagination
+			pageSize={5}
 		/>
 	);
 };
 
 export default Transfers;
 
-const StyledTable = styled(Table)`
-	/* margin-top: 20px; */
-`;
-
 const DefaultCell = styled.p`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const StyledActionCell = styled(DefaultCell)`
@@ -104,13 +112,13 @@ const StyledActionCell = styled(DefaultCell)`
 `;
 
 const StyledTitle = styled.p`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 16px;
 	margin: 0;
 `;
 
 const StyledExternalLink = styled(ExternalLink)`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	text-decoration: underline;
 	&:hover {
 		text-decoration: underline;
@@ -127,12 +135,4 @@ const StyledAmountCell = styled(DefaultCell)<{ isPositive: boolean }>`
 const StyledTableHeader = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
 	text-transform: capitalize;
-`;
-
-const TableNoResults = styled(GridDivCenteredRow)`
-	padding: 50px 0;
-	justify-content: center;
-	background-color: transparent;
-	margin-top: -2px;
-	justify-items: center;
 `;

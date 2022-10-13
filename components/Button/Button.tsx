@@ -1,13 +1,25 @@
 import styled, { css } from 'styled-components';
 
+// TODO: Clean up these styles
+export type ButtonVariant =
+	| 'primary'
+	| 'secondary'
+	| 'flat'
+	| 'alt'
+	| 'success'
+	| 'danger'
+	| 'text'
+	| 'select';
+
 type ButtonProps = {
-	size?: 'sm' | 'md' | 'lg' | 'xl';
-	variant?: 'primary' | 'secondary' | 'outline' | 'alt' | 'success' | 'danger' | 'text' | 'select';
+	size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+	variant?: ButtonVariant;
 	isActive?: boolean;
 	isRounded?: boolean;
 	mono?: boolean;
 	fullWidth?: boolean;
 	noOutline?: boolean;
+	textColor?: 'yellow';
 	textTransform?: 'none' | 'uppercase' | 'capitalize' | 'lowercase';
 };
 
@@ -38,14 +50,16 @@ const Button = styled.button<ButtonProps>`
 	height: auto;
 	cursor: pointer;
 	position: relative;
-	border-radius: 10px;
+	border-radius: ${(props) => (props.isRounded ? '50px' : '8px')};
 	padding: 0 14px;
 	box-sizing: border-box;
 	text-transform: ${(props) => props.textTransform || 'capitalize'};
 	outline: none;
 	white-space: nowrap;
 	font-size: 17px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) =>
+		(props.textColor && props.theme.colors.selectedTheme.button.text[props.textColor]) ||
+		props.theme.colors.selectedTheme.button.text.primary};
 	transition: all 0.1s ease-in-out;
 	${border}
 	&:hover {
@@ -63,7 +77,7 @@ const Button = styled.button<ButtonProps>`
 		`};
 
 	${(props) =>
-		props.noOutline &&
+		(props.noOutline || props.variant === 'flat') &&
 		css`
 			background: ${(props) => props.theme.colors.selectedTheme.button.fill};
 			border: ${(props) => props.theme.colors.selectedTheme.border};
@@ -95,6 +109,14 @@ const Button = styled.button<ButtonProps>`
 		props.variant === 'danger' &&
 		css`
 			color: ${props.theme.colors.selectedTheme.red};
+		`};
+
+	${(props) =>
+		props.size === 'xs' &&
+		css`
+			height: 22px;
+			min-width: 50px;
+			font-size: 11px;
 		`};
 
 	${(props) =>

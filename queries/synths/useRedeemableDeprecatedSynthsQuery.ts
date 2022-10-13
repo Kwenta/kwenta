@@ -1,12 +1,13 @@
-import { ethers } from 'ethers';
-import { Provider, Contract } from 'ethcall';
-import { useQuery, UseQueryOptions } from 'react-query';
-import { CurrencyKey } from '@synthetixio/contracts-interface';
-import { wei } from '@synthetixio/wei';
-
+import { CurrencyKey, NetworkId } from '@synthetixio/contracts-interface';
 import { DeprecatedSynthBalance, DeprecatedSynthsBalances } from '@synthetixio/queries';
-import { getProxySynthSymbol } from './utils';
+import { wei } from '@synthetixio/wei';
+import { Provider, Contract } from 'ethcall';
+import { ethers } from 'ethers';
+import { useQuery, UseQueryOptions } from 'react-query';
+
 import Connector from 'containers/Connector';
+
+import { getProxySynthSymbol } from './utils';
 
 const ethCallProvider = new Provider();
 
@@ -14,11 +15,13 @@ const useRedeemableDeprecatedSynthsQuery = (
 	walletAddress: string | null,
 	options?: UseQueryOptions<DeprecatedSynthsBalances>
 ) => {
-	const { synthetixjs, network, provider } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs, provider, network } = Connector.useContainer();
+
 	return useQuery<DeprecatedSynthsBalances>(
-		['WalletBalances', 'RedeemableDeprecatedSynths', network.id, walletAddress],
+		['WalletBalances', 'RedeemableDeprecatedSynths', network?.id as NetworkId, walletAddress],
 		async () => {
 			await ethCallProvider.init(provider as any);
+
 			const {
 				contracts: { SynthRedeemer },
 				sources,
@@ -26,9 +29,9 @@ const useRedeemableDeprecatedSynthsQuery = (
 
 			const synthDeprecatedFilter = SynthRedeemer.filters.SynthDeprecated();
 			const deprecatedSynthsEvents = await SynthRedeemer.queryFilter(synthDeprecatedFilter);
-			const deprecatedProxySynthsAddresses: string[] = deprecatedSynthsEvents.map(
-				(e: any) => e.args?.synth ?? ''
-			);
+			const deprecatedProxySynthsAddresses: string[] = deprecatedSynthsEvents
+				.map((e) => e.args?.synth)
+				.filter(Boolean);
 
 			const Redeemer = new Contract(SynthRedeemer.address, sources.SynthRedeemer.abi as any);
 
@@ -40,8 +43,8 @@ const useRedeemableDeprecatedSynthsQuery = (
 				balanceCalls.push(Redeemer.balanceOf(addr, walletAddress));
 			}
 
-			const deprecatedSynths = (await ethCallProvider.all(symbolCalls, {})) as CurrencyKey[];
-			const balanceData = (await ethCallProvider.all(balanceCalls, {})) as ethers.BigNumber[];
+			const deprecatedSynths = (await ethCallProvider.all(symbolCalls)) as CurrencyKey[];
+			const balanceData = (await ethCallProvider.all(balanceCalls)) as ethers.BigNumber[];
 			const balances = balanceData.map((balance) => wei(balance));
 
 			let totalUSDBalance = wei(0);
@@ -67,7 +70,7 @@ const useRedeemableDeprecatedSynthsQuery = (
 			};
 		},
 		{
-			enabled: !!network.id && !!walletAddress,
+			enabled: !!network?.id && !!walletAddress,
 			...options,
 		}
 	);

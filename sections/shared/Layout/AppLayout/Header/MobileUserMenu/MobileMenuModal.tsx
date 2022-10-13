@@ -1,21 +1,20 @@
-import { FC, useState } from 'react';
-import { useRecoilValue } from 'recoil';
-import { useTranslation } from 'react-i18next';
-import styled, { css } from 'styled-components';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import styled, { css } from 'styled-components';
 
-import { isL2State } from 'store/wallet';
-
-import FullScreenModal from 'components/FullScreenModal';
-import Logo from 'sections/shared/Layout/Logo';
-import Links from 'sections/dashboard/Links';
-
-import MobileSubMenu from './MobileSubMenu';
-import { MenuButton, SUB_MENUS } from './common';
 import MobileMenuArrow from 'assets/svg/app/mobile-menu-arrow.svg';
-import { HOMEPAGE_MENU_LINKS, MENU_LINKS } from '../constants';
+import FullScreenModal from 'components/FullScreenModal';
 import ROUTES from 'constants/routes';
+import Links from 'sections/dashboard/Links';
+import Logo from 'sections/shared/Layout/Logo';
+import { currentThemeState } from 'store/ui';
+
+import { HOMEPAGE_MENU_LINKS, MOBILE_NAV_LINKS } from '../constants';
+import { MenuButton } from './common';
+import MobileSubMenu from './MobileSubMenu';
 
 type MobileMenuModalProps = {
 	onDismiss(): void;
@@ -24,9 +23,11 @@ type MobileMenuModalProps = {
 export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
+
 	const menuLinks =
-		window.location.pathname === ROUTES.Home.Root ? HOMEPAGE_MENU_LINKS : MENU_LINKS;
-	const isL2 = useRecoilValue(isL2State);
+		window.location.pathname === ROUTES.Home.Root ? HOMEPAGE_MENU_LINKS : MOBILE_NAV_LINKS;
+
+	const currentTheme = useRecoilValue(currentThemeState);
 
 	const [expanded, setExpanded] = useState<string | undefined>();
 
@@ -35,33 +36,39 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
 	};
 
 	return (
-		<StyledFullScreenModal isOpen={true}>
+		<StyledFullScreenModal isOpen>
 			<Container>
 				<LogoContainer>
-					<Logo isFutures isL2={isL2} />
+					<Logo />
 				</LogoContainer>
-				{menuLinks.map(({ i18nLabel, link }) => (
-					<div key={link}>
-						{SUB_MENUS[link] ? (
-							<MobileSubMenu
-								active={expanded === link}
-								i18nLabel={i18nLabel}
-								link={link}
-								defaultOpen={asPath.includes(link)}
-								onDismiss={onDismiss}
-								onToggle={handleToggle(link)}
-							/>
-						) : (
-							<Link href={link}>
-								<MenuButton isActive={asPath.includes(link)} onClick={onDismiss}>
-									{t(i18nLabel)}
-									<MobileMenuArrow />
-								</MenuButton>
-							</Link>
-						)}
-					</div>
-				))}
-				<Links isMobile />
+				<div>
+					{menuLinks.map(({ i18nLabel, link, links }) => (
+						<div key={link}>
+							{links?.length ? (
+								<MobileSubMenu
+									links={links}
+									active={expanded === link}
+									i18nLabel={i18nLabel}
+									defaultOpen={asPath.includes(link)}
+									onDismiss={onDismiss}
+									onToggle={handleToggle(link)}
+								/>
+							) : (
+								<Link href={link}>
+									<MenuButton
+										currentTheme={currentTheme}
+										isActive={asPath.includes(link)}
+										onClick={onDismiss}
+									>
+										{t(i18nLabel)}
+										<MobileMenuArrow />
+									</MenuButton>
+								</Link>
+							)}
+						</div>
+					))}
+					<Links isMobile />
+				</div>
 			</Container>
 		</StyledFullScreenModal>
 	);
@@ -73,11 +80,21 @@ const StyledFullScreenModal = styled(FullScreenModal)`
 	[data-reach-dialog-content] {
 		margin: 0;
 		width: 100%;
+		height: 100%;
+
+		& > div {
+			height: 100%;
+		}
 	}
 `;
 
 const Container = styled.div<{ hasBorder?: boolean }>`
-	padding: 24px 32px;
+	height: 100%;
+	padding: 24px 32px 100px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+
 	${(props) =>
 		props.hasBorder &&
 		css`

@@ -1,7 +1,8 @@
 import { FC } from 'react';
-import { ThemeProvider } from 'styled-components';
-import { themes } from 'styles/theme';
 import { RecoilRoot } from 'recoil';
+import { ThemeProvider } from 'styled-components';
+
+import { themes } from 'styles/theme';
 
 const ContextProvider: FC = ({ children }) => {
 	return (

@@ -1,34 +1,33 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
-import { useTranslation } from 'react-i18next';
+import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
+import { balancesState, marketInfoState, positionState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
-import { useRecoilValue } from 'recoil';
-import { marketInfoState, positionState } from 'store/futures';
+
 import DepositMarginModal from './DepositMarginModal';
 import WithdrawMarginModal from './WithdrawMarginModal';
-import useSynthetixQueries from '@synthetixio/queries';
-import { walletAddressState } from 'store/wallet';
-import { Synths } from 'constants/currency';
 
 const MarketActions: React.FC = () => {
 	const { t } = useTranslation();
+	const { walletAddress } = Connector.useContainer();
+	const { susdWalletBalance } = useRecoilValue(balancesState);
+
 	const position = useRecoilValue(positionState);
 	const marketInfo = useRecoilValue(marketInfoState);
-	const walletAddress = useRecoilValue(walletAddressState);
+	const isL2 = useIsL2();
 	const [openModal, setOpenModal] = React.useState<'deposit' | 'withdraw' | null>(null);
-
-	const { useSynthsBalancesQuery } = useSynthetixQueries();
-	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
-	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
 
 	return (
 		<>
 			<MarketActionsContainer>
 				<MarketActionButton
 					data-testid="futures-market-trade-button-deposit"
-					disabled={marketInfo?.isSuspended}
+					disabled={marketInfo?.isSuspended || !isL2 || !walletAddress}
 					onClick={() => setOpenModal('deposit')}
 					noOutline
 				>
@@ -36,7 +35,12 @@ const MarketActions: React.FC = () => {
 				</MarketActionButton>
 				<MarketActionButton
 					data-testid="futures-market-trade-button-withdraw"
-					disabled={position?.remainingMargin?.lte(zeroBN) || marketInfo?.isSuspended}
+					disabled={
+						position?.remainingMargin?.lte(zeroBN) ||
+						marketInfo?.isSuspended ||
+						!isL2 ||
+						!walletAddress
+					}
 					onClick={() => setOpenModal('withdraw')}
 					noOutline
 				>
@@ -44,12 +48,10 @@ const MarketActions: React.FC = () => {
 				</MarketActionButton>
 			</MarketActionsContainer>
 			{openModal === 'deposit' && (
-				<DepositMarginModal sUSDBalance={sUSDBalance} onDismiss={() => setOpenModal(null)} />
+				<DepositMarginModal sUSDBalance={susdWalletBalance} onDismiss={() => setOpenModal(null)} />
 			)}
 
-			{openModal === 'withdraw' && (
-				<WithdrawMarginModal sUSDBalance={sUSDBalance} onDismiss={() => setOpenModal(null)} />
-			)}
+			{openModal === 'withdraw' && <WithdrawMarginModal onDismiss={() => setOpenModal(null)} />}
 		</>
 	);
 };
@@ -70,7 +72,7 @@ const MarketActionButton = styled(Button)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 
 	&:hover:enabled {
-		color: ${(props) => props.theme.colors.selectedTheme.button.text};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 		background-color: ${(props) => props.theme.colors.selectedTheme.button.fill};
 	}
 `;

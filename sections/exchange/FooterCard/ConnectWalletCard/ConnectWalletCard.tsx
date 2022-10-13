@@ -1,27 +1,25 @@
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-
-import Connector from 'containers/Connector';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 
 import { MessageButton, MessageContainer, Message, FixedMessageContainerSpacer } from '../common';
 
 type ConnectWalletCardProps = {
-	attached?: boolean;
 	className?: string;
 };
 
-const ConnectWalletCard: FC<ConnectWalletCardProps> = ({ attached, ...rest }) => {
+const ConnectWalletCard: FC<ConnectWalletCardProps> = ({ ...rest }) => {
 	const { t } = useTranslation();
-	const { connectWallet } = Connector.useContainer();
+	const { openConnectModal: connectWallet } = useConnectModal();
 
 	return (
 		<>
 			<MobileOrTabletView>
 				<FixedMessageContainerSpacer />
 			</MobileOrTabletView>
-			<MessageContainer attached={attached} className="footer-card" {...rest}>
+			<MessageContainer className="footer-card" {...rest}>
 				<DesktopOnlyView>
 					<Message>{t('exchange.connect-wallet-card.message')}</Message>
 				</DesktopOnlyView>

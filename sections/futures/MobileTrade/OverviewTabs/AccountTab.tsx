@@ -1,17 +1,31 @@
 import React from 'react';
-import MarketActions from 'sections/futures/Trade/MarketActions';
+import { useRecoilValue } from 'recoil';
 
-import { Pane, SectionHeader } from '../common';
 import MarketInfoBox from 'sections/futures/MarketInfoBox';
+import MarketActions from 'sections/futures/Trade/MarketActions';
+import MarginInfoBox from 'sections/futures/TradeCrossMargin/CrossMarginInfoBox';
+import { futuresAccountTypeState } from 'store/futures';
 
-const AccountTab: React.FC = () => (
-	<Pane>
-		<SectionHeader>Account</SectionHeader>
+import { Pane, SectionHeader, SectionTitle } from '../common';
 
-		<MarketInfoBox />
+const AccountTab: React.FC = () => {
+	const accountType = useRecoilValue(futuresAccountTypeState);
+	return (
+		<Pane>
+			<SectionHeader>
+				<SectionTitle>Account</SectionTitle>
+			</SectionHeader>
 
-		<MarketActions />
-	</Pane>
-);
+			{accountType === 'isolated_margin' ? (
+				<>
+					<MarketInfoBox />
+					<MarketActions />
+				</>
+			) : (
+				<MarginInfoBox />
+			)}
+		</Pane>
+	);
+};
 
 export default AccountTab;

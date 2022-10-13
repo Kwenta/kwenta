@@ -1,30 +1,27 @@
-import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
-
-import { appReadyState } from 'store/app';
-import { networkState } from 'store/wallet';
+import { NetworkId } from '@synthetixio/contracts-interface';
+import request, { gql } from 'graphql-request';
+import { useQuery } from 'react-query';
+import { chain } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { calculateTradeVolumeForAllSynths } from 'queries/futures/utils';
-import { SynthsVolumes } from './type';
-import request, { gql } from 'graphql-request';
-import { getSynthsEndpoint } from './utils';
-import { SYNTHS_ENDPOINT_OPTIMISM_MAIN } from './constants';
 import ROUTES from 'constants/routes';
+import Connector from 'containers/Connector';
+import { calculateTradeVolumeForAllSynths } from 'queries/futures/utils';
+import { RATES_ENDPOINT_OP_MAINNET } from 'queries/rates/constants';
+import { getRatesEndpoint } from 'queries/rates/utils';
+import logError from 'utils/logError';
 
-const useGetSynthsTradingVolumeForAllMarkets = (
-	yesterday: number,
-	options?: UseQueryOptions<SynthsVolumes | null>
-) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const network = useRecoilValue(networkState);
+import { SynthsVolumes } from './type';
+
+const useGetSynthsTradingVolumeForAllMarkets = (yesterday: number) => {
+	const { network } = Connector.useContainer();
 	const synthsEndpoint =
-		window.location.pathname === ROUTES.Home.Root
-			? SYNTHS_ENDPOINT_OPTIMISM_MAIN
-			: getSynthsEndpoint(network);
+		window.location.pathname === ROUTES.Home.Root || network === undefined
+			? RATES_ENDPOINT_OP_MAINNET
+			: getRatesEndpoint(network?.id as NetworkId);
 
 	return useQuery<SynthsVolumes | null>(
-		QUERY_KEYS.Synths.TradingVolumeForAllSynths(network.id),
+		QUERY_KEYS.Synths.TradingVolumeForAllSynths((network?.id ?? chain.optimism.id) as NetworkId),
 		async () => {
 			try {
 				const response = await request(
@@ -50,11 +47,10 @@ const useGetSynthsTradingVolumeForAllMarkets = (
 				);
 				return response ? calculateTradeVolumeForAllSynths(response) : null;
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				return null;
 			}
-		},
-		{ enabled: isAppReady, ...options }
+		}
 	);
 };
 

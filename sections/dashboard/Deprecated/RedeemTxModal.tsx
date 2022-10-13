@@ -1,15 +1,15 @@
+import { DeprecatedSynthBalance } from '@synthetixio/queries';
+import Wei, { wei } from '@synthetixio/wei';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { DeprecatedSynthBalance } from '@synthetixio/queries';
-import Wei, { wei } from '@synthetixio/wei';
 
-import { FlexDivColCentered, numericValueCSS } from 'styles/common';
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
-import { formatCryptoCurrency } from 'utils/formatters/number';
+import { CurrencyKey } from 'constants/currency';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
-import { CurrencyKey, Synths } from 'constants/currency';
+import { FlexDivColCentered, numericValueCSS } from 'styles/common';
+import { formatCryptoCurrency } from 'utils/formatters/number';
 
 export type TxProvider = 'synthetix' | '1inch';
 
@@ -31,11 +31,7 @@ export const RedeemTxModal: FC<RedeemTxModalProps> = ({
 	const { t } = useTranslation();
 
 	return (
-		<StyledBaseModal
-			onDismiss={onDismiss}
-			isOpen={true}
-			title={t('modals.confirm-transaction.title')}
-		>
+		<StyledBaseModal onDismiss={onDismiss} isOpen title={t('modals.confirm-transaction.title')}>
 			<Title>{t('modals.deprecated-synths.from')}</Title>
 			<Balances>
 				{balances.map((balance) => (
@@ -46,7 +42,7 @@ export const RedeemTxModal: FC<RedeemTxModalProps> = ({
 					/>
 				))}
 				<Title topPad>{t('modals.deprecated-synths.to')}</Title>
-				<BalanceItem currencyKey={Synths.sUSD} amount={totalUSDBalance} />
+				<BalanceItem currencyKey={'sUSD'} amount={totalUSDBalance} />
 			</Balances>
 			<Subtitle>{t('modals.confirm-transaction.confirm-with-provider')}</Subtitle>
 			{txError != null && (
@@ -72,7 +68,7 @@ const BalanceItem: FC<{ currencyKey: CurrencyKey; amount: Wei | null }> = ({
 		</BalanceItemTitle>
 
 		<BalanceItemAmount>
-			{formatCryptoCurrency(amount ?? wei(0), { maxDecimals: 2 })} {Synths.sUSD}
+			{formatCryptoCurrency(amount ?? wei(0), { maxDecimals: 2 })} {'sUSD'}
 		</BalanceItemAmount>
 	</StyledBalanceItem>
 );
@@ -110,7 +106,7 @@ const BalanceItemTitle = styled.div`
 `;
 
 const BalanceItemAmount = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	${numericValueCSS};
 `;
 
@@ -125,7 +121,7 @@ const Actions = styled(FlexDivColCentered)`
 `;
 
 const Message = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	flex-grow: 1;
@@ -144,7 +140,7 @@ export const TooltipItem = styled.span`
 `;
 
 const Title = styled.div<{ topPad?: boolean }>`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 12px;
 	margin-bottom: 12px;
 	${(props) => (!props.topPad ? '' : 'margin-top: 24px;')}

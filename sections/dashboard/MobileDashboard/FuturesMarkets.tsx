@@ -1,59 +1,82 @@
-import React from 'react';
-import { SectionHeader } from 'sections/futures/MobileTrade/common';
+import { wei } from '@synthetixio/wei';
+import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+
+import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
+import { futuresMarketsState, futuresVolumesState } from 'store/futures';
+import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
+
 import FuturesMarketsTable from '../FuturesMarketsTable';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import { Synths } from 'constants/currency';
-import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
-import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
 import { HeaderContainer, MarketStatsContainer, MarketStat } from './common';
 
 const FuturesMarkets = () => {
-	const futuresMarketsQuery = useGetFuturesMarkets();
-	const futuresMarkets = React.useMemo(() => futuresMarketsQuery?.data ?? [], [
-		futuresMarketsQuery?.data,
-	]);
+	const { t } = useTranslation();
 
-	const dailyTradeStats = useGetFuturesDailyTradeStats();
+	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	const futuresVolumes = useRecoilValue(futuresVolumesState);
 
-	const openInterest = React.useMemo(() => {
-		return futuresMarkets
-			.map((market) => market.marketSize.mul(market.price).toNumber())
-			.reduce((total, openInterest) => total + openInterest, 0);
+	const openInterest = useMemo(() => {
+		return (
+			futuresMarkets.reduce(
+				(total, { openInterest }) =>
+					total.add(openInterest?.shortUSD ?? wei(0)).add(openInterest?.longUSD ?? wei(0)),
+				wei(0)
+			) ?? null
+		);
 	}, [futuresMarkets]);
+
+	const [trades, volume] = useMemo(() => {
+		const { totalTrades, totalVolume } = Object.values(futuresVolumes).reduce(
+			({ totalTrades, totalVolume }, { trades, volume }) => ({
+				totalTrades: totalTrades.add(trades),
+				totalVolume: totalVolume.add(volume),
+			}),
+			{
+				totalTrades: wei(0),
+				totalVolume: wei(0),
+			}
+		);
+		return [totalTrades, totalVolume];
+	}, [futuresVolumes]);
 
 	return (
 		<div>
 			<HeaderContainer>
-				<SectionHeader>Futures Markets</SectionHeader>
+				<SectionHeader>
+					<SectionTitle>{t('dashboard.overview.markets-tabs.futures')}</SectionTitle>
+				</SectionHeader>
 				<MarketStatsContainer>
 					<MarketStat>
-						<div className="title">24h Volume</div>
+						<div className="title">
+							{t('dashboard.overview.futures-markets-table.daily-volume')}
+						</div>
 						<div className="value">
-							{formatCurrency(Synths.sUSD, dailyTradeStats.data?.totalVolume || zeroBN, {
-								sign: '$',
+							{formatDollars(volume ?? zeroBN, {
 								minDecimals: 0,
 							})}
 						</div>
 					</MarketStat>
 					<MarketStat>
-						<div className="title">Open Interest</div>
+						<div className="title">
+							{t('dashboard.overview.futures-markets-table.open-interest')}
+						</div>
 						<div className="value">
-							{formatCurrency(Synths.sUSD, openInterest ?? 0, {
-								sign: '$',
+							{formatDollars(openInterest, {
 								minDecimals: 0,
 							})}
 						</div>
 					</MarketStat>
 					<MarketStat>
-						<div className="title">Total Trades</div>
-						<div className="value">
-							{formatNumber(dailyTradeStats.data?.totalTrades ?? 0, { minDecimals: 0 })}
+						<div className="title">
+							{t('dashboard.overview.futures-markets-table.daily-trades')}
 						</div>
+						<div className="value">{formatNumber(trades ?? 0, { minDecimals: 0 })}</div>
 					</MarketStat>
 				</MarketStatsContainer>
 			</HeaderContainer>
 
-			<FuturesMarketsTable futuresMarkets={futuresMarkets} />
+			<FuturesMarketsTable />
 		</div>
 	);
 };

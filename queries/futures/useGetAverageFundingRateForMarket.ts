@@ -1,37 +1,36 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
+import Wei, { wei } from '@synthetixio/wei';
+import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import request, { gql } from 'graphql-request';
+import { useNetwork } from 'wagmi';
 
-import { appReadyState } from 'store/app';
-import { isL2State, networkState } from 'store/wallet';
-
-import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
-import { getFuturesEndpoint, calculateFundingRate } from './utils';
-import Wei, { wei } from '@synthetixio/wei';
-import { getDisplayAsset } from 'utils/futures';
+import useIsL2 from 'hooks/useIsL2';
+import { marketInfoState, marketKeyState } from 'store/futures';
+import logError from 'utils/logError';
+
 import { FundingRateUpdate } from './types';
+import { getFuturesEndpoint, calculateFundingRate } from './utils';
 
 const useGetAverageFundingRateForMarket = (
-	currencyKey: string | null,
-	assetPrice: number | null,
 	periodLength: number,
-	currentFundingRate: number | undefined,
 	options?: UseQueryOptions<any | null>
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
-	const { synthetixjs } = Connector.useContainer();
-	const futuresEndpoint = getFuturesEndpoint(network);
+	const { chain: network } = useNetwork();
+	const isL2 = useIsL2();
+	const marketKey = useRecoilValue(marketKeyState);
+	const marketInfo = useRecoilValue(marketInfoState);
+	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
+
+	const price = marketInfo?.price;
+	const currentFundingRate = marketInfo?.currentFundingRate;
+	const marketAddress = marketInfo?.market;
 
 	return useQuery<Wei | null>(
-		QUERY_KEYS.Futures.FundingRate(network.id, currencyKey || '', assetPrice, currentFundingRate),
+		QUERY_KEYS.Futures.FundingRate(network?.id as NetworkId, marketKey || ''),
 		async () => {
-			if (!currencyKey || !assetPrice) return null;
-			const { contracts } = synthetixjs!;
-			const marketAddress = contracts[`FuturesMarket${getDisplayAsset(currencyKey)}`].address;
-			if (!marketAddress) return null;
+			if (!marketKey || !price || !marketInfo) return null;
 			const minTimestamp = Math.floor(Date.now() / 1000) - periodLength;
 			try {
 				const response: { string: FundingRateUpdate[] } = await request(
@@ -84,17 +83,17 @@ const useGetAverageFundingRateForMarket = (
 							minTimestamp,
 							periodLength,
 							responseFilt,
-							assetPrice,
+							price,
 							currentFundingRate
 					  )
 					: wei(0);
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				return null;
 			}
 		},
 		{
-			enabled: isAppReady && isL2 && !!synthetixjs && !!currentFundingRate,
+			enabled: isL2 && !!marketInfo && !!currentFundingRate,
 			...options,
 		}
 	);

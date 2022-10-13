@@ -18,6 +18,88 @@
 		"jsx-a11y/anchor-is-valid": "off",
 		"jsx-a11y/alt-text": "off",
 		"import/no-anonymous-default-export": "off",
-		"@next/next/no-img-element": "off"
-	}
+		"@next/next/no-img-element": "off",
+		"no-console": "error",
+		"no-unused-vars": "off",
+		"@typescript-eslint/no-unused-vars": [
+			"warn",
+			{ 
+				"argsIgnorePattern": "^_",
+				"varsIgnorePattern": "^_",
+				"caughtErrorsIgnorePattern": "^_"
+			}
+		],
+		"import/order": [
+			"warn",
+			{
+				"alphabetize": {
+					"order": "asc",
+					"caseInsensitive": true
+				},
+				"groups": [
+					"builtin", 
+					"external", 
+					"internal", 
+					["parent", "sibling"]
+				],
+				"newlines-between": "always",
+				"pathGroups": [
+					{
+						"pattern": "assets/**",
+						"group": "internal"
+					},
+					{
+						"pattern": "components/**",
+						"group": "internal"
+					},
+					{
+						"pattern": "constants/**",
+						"group": "internal"
+					},
+					{
+						"pattern": "containers/**",
+						"group": "internal"
+					},
+					{
+						"pattern": "contexts/**",
+						"group": "internal"
+					},
+					{
+						"pattern": "hooks/**",
+						"group": "internal"
+					},
+					{
+						"pattern": "pages/**",
+						"group": "internal"
+					},
+					{
+						"pattern": "queries/**",
+						"group": "internal"
+					},
+					{
+						"pattern": "sections/**",
+						"group": "internal"
+					},
+					{
+						"pattern": "store/**",
+						"group": "internal"
+					},
+					{
+						"pattern": "styles/**",
+						"group": "internal"
+					},
+					{
+						"pattern": "utils/**",
+						"group": "internal"
+					},
+					{
+						"pattern": "lib/**",
+						"group": "internal"
+					}
+				],
+				"pathGroupsExcludedImportTypes": []
+			},
+		]
+	},
+
 }

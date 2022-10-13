@@ -1,6 +1,7 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
-import Slider, { SliderProps } from 'components/Slider/Slider';
+
+import { SliderProps } from 'components/Slider/Slider';
+import StyledSlider from 'components/Slider/StyledSlider';
 
 type LeverageSliderProps = SliderProps & {
 	minValue?: number;
@@ -8,7 +9,7 @@ type LeverageSliderProps = SliderProps & {
 	value?: number;
 	defaultValue?: number;
 	disabled?: boolean;
-	onChangeCommitted: (event: React.ChangeEvent<{}>, value: number | number[]) => void;
+	onChangeCommitted?: (event: React.ChangeEvent<{}>, value: number | number[]) => void;
 };
 
 const LeverageSlider: React.FC<LeverageSliderProps> = ({
@@ -40,35 +41,5 @@ const LeverageSlider: React.FC<LeverageSliderProps> = ({
 		/>
 	);
 };
-
-const StyledSlider = styled(Slider)<{ $currentMark: number }>`
-	.MuiSlider-markLabel {
-		${(props) =>
-			props.$currentMark &&
-			props.$currentMark === props.minValue &&
-			css`
-				&:nth-child(5) {
-					color: ${(props) => props.theme.colors.selectedTheme.button.text};
-				}
-			`}
-
-		${(props) =>
-			props.$currentMark &&
-			props.$currentMark === props.maxValue &&
-			css`
-				&:nth-child(7) {
-					color: ${(props) => props.theme.colors.selectedTheme.button.text};
-				}
-			`}
-	}
-
-	.MuiSlider-valueLabel {
-		${(props) =>
-			(props.$currentMark < props.minValue + 1 || props.$currentMark > props.maxValue - 1) &&
-			css`
-				display: none;
-			`};
-	}
-`;
 
 export default LeverageSlider;

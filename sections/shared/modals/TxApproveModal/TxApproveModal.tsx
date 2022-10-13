@@ -1,14 +1,12 @@
 import { FC, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { FlexDivColCentered } from 'styles/common';
 
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
-
-import { TxProvider } from '../TxConfirmationModal/TxConfirmationModal';
-
 import { MessageButton } from 'sections/exchange/FooterCard/common';
+import { FlexDivColCentered } from 'styles/common';
+import { formatRevert } from 'utils/formatters/error';
 
 type TxApproveModalProps = {
 	onDismiss: () => void;
@@ -16,7 +14,6 @@ type TxApproveModalProps = {
 	attemptRetry: () => void;
 	currencyKey: string;
 	currencyLabel: ReactNode;
-	txProvider?: TxProvider | null;
 };
 
 export const TxApproveModal: FC<TxApproveModalProps> = ({
@@ -25,16 +22,11 @@ export const TxApproveModal: FC<TxApproveModalProps> = ({
 	attemptRetry,
 	currencyKey,
 	currencyLabel,
-	txProvider,
 }) => {
 	const { t } = useTranslation();
 
 	return (
-		<StyledBaseModal
-			onDismiss={onDismiss}
-			isOpen={true}
-			title={t('modals.approve-transaction.title')}
-		>
+		<StyledBaseModal onDismiss={onDismiss} isOpen title={t('modals.approve-transaction.title')}>
 			<Currencies>
 				<CurrencyItem>
 					<CurrencyItemTitle>{currencyLabel}</CurrencyItemTitle>
@@ -43,14 +35,13 @@ export const TxApproveModal: FC<TxApproveModalProps> = ({
 						width="40px"
 						height="40px"
 						data-testid="currency-img"
-						type={txProvider === '1inch' ? 'token' : 'synth'}
 					/>
 				</CurrencyItem>
 			</Currencies>
 			<Subtitle>{t('modals.approve-transaction.confirm-with-provider')}</Subtitle>
 			{txError != null && (
 				<Actions>
-					<Message>{txError}</Message>
+					<Message>{formatRevert(txError)}</Message>
 					<MessageButton onClick={attemptRetry} data-testid="retry-btn">
 						{t('common.transaction.reattempt')}
 					</MessageButton>
@@ -80,7 +71,7 @@ const Currencies = styled.div`
 
 const CurrencyItem = styled.div`
 	text-align: center;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const CurrencyItemTitle = styled.div`
@@ -99,7 +90,7 @@ const Actions = styled(FlexDivColCentered)`
 `;
 
 const Message = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	flex-grow: 1;

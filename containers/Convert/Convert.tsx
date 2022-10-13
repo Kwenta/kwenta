@@ -1,18 +1,16 @@
-import { createContainer } from 'unstated-next';
-import axios from 'axios';
-import { ethers } from 'ethers';
-import { useRecoilValue } from 'recoil';
-import { useCallback } from 'react';
 //@ts-ignore TODO: remove once types are added
 import getFormattedSwapData from '@kwenta/synthswap';
 import { wei } from '@synthetixio/wei';
+import axios from 'axios';
+import { ethers } from 'ethers';
 import { formatBytes32String, formatEther, parseEther } from 'ethers/lib/utils';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { createContainer } from 'unstated-next';
 
-import Connector from 'containers/Connector';
-import { CurrencyKey } from 'constants/currency';
-import { walletAddressState } from 'store/wallet';
 import { KWENTA_REFERRAL_ADDRESS, SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
+import { CurrencyKey } from 'constants/currency';
+import Connector from 'containers/Connector';
 import use1InchApiUrl from 'hooks/use1InchApiUrl';
 import erc20Abi from 'lib/abis/ERC20.json';
 import synthSwapAbi from 'lib/abis/SynthSwap.json';
@@ -47,9 +45,17 @@ type OneInchApproveSpenderResponse = {
 	address: string;
 };
 
+const protocols =
+	'OPTIMISM_UNISWAP_V3,OPTIMISM_SYNTHETIX,OPTIMISM_SYNTHETIX_WRAPPER,OPTIMISM_ONE_INCH_LIMIT_ORDER,OPTIMISM_ONE_INCH_LIMIT_ORDER_V2,OPTIMISM_CURVE,OPTIMISM_BALANCER_V2,OPTIMISM_VELODROME,OPTIMISM_KYBERSWAP_ELASTIC';
+
 const useConvert = () => {
-	const { signer, network, tokensMap, synthetixjs } = Connector.useContainer();
-	const walletAddress = useRecoilValue(walletAddressState);
+	const {
+		tokensMap,
+		defaultSynthetixjs: synthetixjs,
+		network,
+		signer,
+		walletAddress,
+	} = Connector.useContainer();
 	const oneInchApiUrl = use1InchApiUrl();
 	const { t } = useTranslation();
 
@@ -57,10 +63,10 @@ const useConvert = () => {
 		quoteTokenAddress: string,
 		baseTokenAddress: string,
 		amount: string,
+		decimals: number,
 		slippage: number
 	) => {
-		const params = get1InchQuoteSwapParams(quoteTokenAddress, baseTokenAddress, amount);
-
+		const params = get1InchQuoteSwapParams(quoteTokenAddress, baseTokenAddress, amount, decimals);
 		const res = await axios.get<OneInchSwapResponse>(oneInchApiUrl + 'swap', {
 			params: {
 				fromTokenAddress: params.fromTokenAddress,
@@ -68,6 +74,7 @@ const useConvert = () => {
 				amount: params.amount,
 				fromAddress: walletAddress,
 				slippage,
+				protocols,
 				referrerAddress: KWENTA_REFERRAL_ADDRESS,
 				disableEstimate: true,
 			},
@@ -93,16 +100,15 @@ const useConvert = () => {
 		decimals?: number
 	) => {
 		const params = get1InchQuoteSwapParams(quoteTokenAddress, baseTokenAddress, amount, decimals);
-
 		const response = await axios.get<OneInchQuoteResponse>(oneInchApiUrl + 'quote', {
 			params: {
 				fromTokenAddress: params.fromTokenAddress,
 				toTokenAddress: params.toTokenAddress,
 				amount: params.amount,
 				disableEstimate: true,
+				protocols,
 			},
 		});
-
 		return ethers.utils
 			.formatUnits(response.data.toTokenAmount, response.data.toToken.decimals)
 			.toString();
@@ -112,20 +118,22 @@ const useConvert = () => {
 		fromToken: Token,
 		toToken: Token,
 		fromAmount: string,
+		decimals: number,
 		slippage: number = 1
 	) => {
-		return swapSynthSwap(fromToken, toToken, fromAmount, slippage, 'estimate_gas');
+		return swapSynthSwap(fromToken, toToken, fromAmount, decimals, slippage, 'estimate_gas');
 	};
 
 	const swapSynthSwap = async (
 		fromToken: Token,
 		toToken: Token,
 		fromAmount: string,
+		decimals: number,
 		slippage: number = 1,
 		metaOnly?: 'meta_tx' | 'estimate_gas'
 	) => {
 		if (!signer) throw new Error(t('exchange.1inch.wallet-not-connected'));
-		if (network.id !== 10) throw new Error(t('exchange.1inch.unsupported-network'));
+		if (network?.id !== 10) throw new Error(t('exchange.1inch.unsupported-network'));
 
 		const sUsd = tokensMap['sUSD'];
 
@@ -149,7 +157,13 @@ const useConvert = () => {
 			synthAmountEth = formatEther(usdValue);
 		}
 
-		const params = await get1InchSwapParams(oneInchFrom, oneInchTo, synthAmountEth, slippage);
+		const params = await get1InchSwapParams(
+			oneInchFrom,
+			oneInchTo,
+			synthAmountEth,
+			decimals,
+			slippage
+		);
 
 		const formattedData = getFormattedSwapData(params, SYNTH_SWAP_OPTIMISM_ADDRESS);
 
@@ -202,10 +216,17 @@ const useConvert = () => {
 		quoteTokenAddress: string,
 		baseTokenAddress: string,
 		amount: string,
+		decimals: number,
 		slippage: number = 1,
 		metaOnly = false
 	) => {
-		const params = await get1InchSwapParams(quoteTokenAddress, baseTokenAddress, amount, slippage);
+		const params = await get1InchSwapParams(
+			quoteTokenAddress,
+			baseTokenAddress,
+			amount,
+			decimals,
+			slippage
+		);
 
 		const { from, to, data, value } = params.tx;
 
@@ -229,9 +250,16 @@ const useConvert = () => {
 		quoteTokenAddress: string,
 		baseTokenAddress: string,
 		amount: string,
+		decimals: number,
 		slippage: number = 1
 	) => {
-		const params = await get1InchSwapParams(quoteTokenAddress, baseTokenAddress, amount, slippage);
+		const params = await get1InchSwapParams(
+			quoteTokenAddress,
+			baseTokenAddress,
+			amount,
+			decimals,
+			slippage
+		);
 
 		const { gas } = params.tx;
 

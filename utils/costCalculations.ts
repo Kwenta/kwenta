@@ -1,34 +1,33 @@
-import Wei, { wei, WeiSource } from '@synthetixio/wei';
-import { NextPriceDetails } from 'queries/futures/useGetNextPriceDetails';
+import Wei, { wei } from '@synthetixio/wei';
+
+import { FuturesMarket } from 'queries/futures/types';
+
 import { zeroBN } from './formatters/number';
 
-export const computeNPFee = (details: NextPriceDetails | null | undefined, sizeDelta: Wei) => {
+export const computeNPFee = (market: FuturesMarket | undefined, sizeDelta: Wei) => {
 	if (
-		!details?.marketSkew ||
-		!details?.assetPrice ||
-		!details?.takerFee ||
-		!details?.makerFee ||
-		!details?.takerFeeNextPrice ||
-		!details?.makerFeeNextPrice ||
+		!market?.marketSkew ||
+		!market?.price ||
+		!market?.feeRates.takerFee ||
+		!market?.feeRates.makerFee ||
+		!market?.feeRates.takerFeeNextPrice ||
+		!market?.feeRates.makerFeeNextPrice ||
 		!sizeDelta
 	) {
-		return {
-			commitDeposit: undefined,
-			nextPriceFee: undefined,
-		};
+		return { commitDeposit: undefined, nextPriceFee: undefined };
 	}
 
-	const notionalDiff = sizeDelta.mul(details.assetPrice);
+	const notionalDiff = sizeDelta.mul(market.price);
 
 	let staticRate: Wei;
 	let staticRateNP: Wei;
 
-	if (sameSide(notionalDiff, details.marketSkew)) {
-		staticRate = details.takerFee;
-		staticRateNP = details.takerFeeNextPrice;
+	if (sameSide(notionalDiff, market.marketSkew)) {
+		staticRate = market.feeRates.takerFee;
+		staticRateNP = market.feeRates.takerFeeNextPrice;
 	} else {
-		staticRate = details.makerFee;
-		staticRateNP = details.makerFeeNextPrice;
+		staticRate = market.feeRates.makerFee;
+		staticRateNP = market.feeRates.makerFeeNextPrice;
 	}
 
 	return {
@@ -37,23 +36,23 @@ export const computeNPFee = (details: NextPriceDetails | null | undefined, sizeD
 	};
 };
 
-export const computeMarketFee = (details: NextPriceDetails | null | undefined, sizeDelta: Wei) => {
+export const computeMarketFee = (market: FuturesMarket | undefined, sizeDelta: Wei) => {
 	if (
-		!details?.marketSkew ||
-		!details?.assetPrice ||
-		!details?.takerFee ||
-		!details?.makerFee ||
+		!market?.marketSkew ||
+		!market?.price ||
+		!market?.feeRates.takerFee ||
+		!market?.feeRates.makerFee ||
 		!sizeDelta
 	) {
-		return zeroBN as WeiSource;
+		return zeroBN;
 	}
 
-	const notionalDiff = sizeDelta.mul(details.assetPrice);
+	const notionalDiff = sizeDelta.mul(market.price);
 
-	if (sameSide(notionalDiff, details.marketSkew)) {
-		return details.takerFee as WeiSource;
+	if (sameSide(notionalDiff, market.marketSkew)) {
+		return market.feeRates.takerFee;
 	} else {
-		return details.makerFee as WeiSource;
+		return market.feeRates.makerFee;
 	}
 };
 

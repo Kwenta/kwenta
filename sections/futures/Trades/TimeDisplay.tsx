@@ -1,6 +1,6 @@
+import { format } from 'date-fns';
 import { FC, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { format } from 'date-fns';
 
 import getLocale from 'utils/formatters/getLocale';
 

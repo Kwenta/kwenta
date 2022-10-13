@@ -1,22 +1,23 @@
+import Image from 'next/image';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import OpenSourceIcon from 'assets/png/features/opensource.png';
 import BlazingFastIcon from 'assets/svg/features/blazing-fast.svg';
-import LowGasFeeIcon from 'assets/svg/features/low-gas-fee.svg';
-import UniqueAssetsIcon from 'assets/svg/features/unique-assets.svg';
-import PermissionlessIcon from 'assets/png/features/permissionless.png';
-import MobileIcon from 'assets/svg/features/mobile.svg';
 import EasyRampingIcon from 'assets/svg/features/easy-ramping.svg';
+import LowGasFeeIcon from 'assets/svg/features/low-gas-fee.svg';
+import MobileIcon from 'assets/svg/features/mobile.svg';
+import UniqueAssetsIcon from 'assets/svg/features/unique-assets.svg';
 import ZeroSlippageIcon from 'assets/svg/features/zero-slippage.svg';
-import SynthetixIcon from 'assets/svg/partners/synthetix.svg';
-import LyraIcon from 'assets/svg/partners/lyra.svg';
 import AelinIcon from 'assets/svg/partners/aelin.svg';
-import ThalesIcon from 'assets/svg/partners/thales.svg';
-import OptimismIcon from 'assets/svg/partners/optimism.svg';
+import ChainLinkIcon from 'assets/svg/partners/chainlink.svg';
 import GraphIcon from 'assets/svg/partners/graph.svg';
 import HopIcon from 'assets/svg/partners/hop.svg';
-import ChainLinkIcon from 'assets/svg/partners/chainlink.svg';
+import LyraIcon from 'assets/svg/partners/lyra.svg';
+import OptimismIcon from 'assets/svg/partners/optimism.svg';
+import SynthetixIcon from 'assets/svg/partners/synthetix.svg';
+import ThalesIcon from 'assets/svg/partners/thales.svg';
 import {
 	FlexDivCentered,
 	FlexDivCol,
@@ -26,8 +27,9 @@ import {
 	SmallGoldenHeader,
 	WhiteHeader,
 } from 'styles/common';
-import { Copy, Title } from '../common';
 import media from 'styles/media';
+
+import { Copy, Title } from '../common';
 
 const FEATURES = [
 	{
@@ -49,17 +51,16 @@ const FEATURES = [
 		image: <UniqueAssetsIcon />,
 	},
 	{
-		key: 'permissionless',
-		title: 'homepage.features.permissionless.title',
-		copy: 'homepage.features.permissionless.copy',
-		image: <img src={PermissionlessIcon} />,
+		key: 'open-source',
+		title: 'homepage.features.open-source.title',
+		copy: 'homepage.features.open-source.copy',
+		image: <Image src={OpenSourceIcon} layout="fixed" height="64px" width="64px" />,
 	},
 	{
 		key: 'mobile',
 		title: 'homepage.features.mobile.title',
 		copy: 'homepage.features.mobile.copy',
 		image: <MobileIcon />,
-		comingSoon: true,
 	},
 	{
 		key: 'easy-ramping',
@@ -356,7 +357,7 @@ const FeatureContentTitle = styled(FlexDivRow)`
 const ComingSoonTag = styled(FlexDivCentered)`
 	width: 50px;
 	height: 24px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-family: ${(props) => props.theme.fonts.bold};
 	justify-content: center;
 	margin-left: 16px;

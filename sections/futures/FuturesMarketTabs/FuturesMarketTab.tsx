@@ -1,100 +1,80 @@
+import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
+import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
-import { useRouter } from 'next/router';
 
-import Table from 'components/Table';
-import { FuturesMarket } from 'queries/futures/types';
-import Currency from 'components/Currency';
-import ChangePercent from 'components/ChangePercent';
-import { Synths } from 'constants/currency';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
-import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
-import { Price } from 'queries/rates/types';
-import { FuturesVolumes } from 'queries/futures/types';
 import MarketBadge from 'components/Badge/MarketBadge';
-import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
-import { FlexDivCol } from 'styles/common';
-import { isEurForex } from 'utils/futures';
-import { NO_VALUE } from 'constants/placeholder';
+import ChangePercent from 'components/ChangePercent';
+import Currency from 'components/Currency';
+import Table from 'components/Table';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
-
-type FuturesMarketsTableProps = {
-	futuresMarkets: FuturesMarket[];
-};
+import {
+	futuresAccountTypeState,
+	futuresMarketsState,
+	futuresVolumesState,
+	pastRatesState,
+} from 'store/futures';
+import { FlexDivCol } from 'styles/common';
+import { FuturesMarketAsset, isDecimalFour, MarketKeyByAsset } from 'utils/futures';
 
 enum TableColumnAccessor {
 	Market = 'market',
 	DailyVolume = 'dailyVolume',
 }
 
-function setLastVisited(baseCurrencyPair: string): void {
-	localStorage.setItem('lastVisited', ROUTES.Markets.MarketPair(baseCurrencyPair));
-}
-
-const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
-	futuresMarkets,
-}: FuturesMarketsTableProps) => {
+const FuturesMarketsTable: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 
-	const synthList = futuresMarkets.map(({ asset }) => asset);
-	const dailyPriceChangesQuery = useLaggedDailyPrice(synthList);
-
-	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
+	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	const accountType = useRecoilValue(futuresAccountTypeState);
+	const pastRates = useRecoilValue(pastRatesState);
+	const futuresVolumes = useRecoilValue(futuresVolumesState);
 
 	let data = useMemo(() => {
-		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
-		const futuresVolume: FuturesVolumes = futuresVolumeQuery?.data ?? ({} as FuturesVolumes);
+		return (
+			futuresMarkets?.map((market) => {
+				const volume = futuresVolumes[market.assetHex]?.volume?.toNumber() ?? 0;
+				const pastPrice = pastRates.find((price) => price.synth === market.asset);
 
-		return futuresMarkets.map((market: FuturesMarket, i: number) => {
-			const volume = futuresVolume[market.assetHex];
-			const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === market.asset);
-
-			return {
-				asset: market.asset,
-				market: (market.asset[0] === 's' ? market.asset.slice(1) : market.asset) + '-PERP',
-				price: market.price.toNumber(),
-				volume: volume?.toNumber() || 0,
-				priceChange: (market.price.toNumber() - pastPrice?.price) / market.price.toNumber() || '-',
-			};
-		});
-	}, [futuresMarkets, dailyPriceChangesQuery?.data, futuresVolumeQuery?.data]);
+				return {
+					asset: market.asset,
+					market: market.marketName,
+					price: market.price,
+					volume,
+					priceChange: pastPrice?.price && market.price.sub(pastPrice?.price).div(market.price),
+				};
+			}) ?? []
+		);
+	}, [futuresMarkets, pastRates, futuresVolumes]);
 
 	return (
 		<TableContainer>
 			<StyledTable
 				data={data}
-				showPagination={true}
+				showPagination
 				onTableRowClick={(row) => {
-					router.push(ROUTES.Markets.MarketPair(row.original.asset));
-					setLastVisited(row.original.asset);
+					router.push(ROUTES.Markets.MarketPair(row.original.asset, accountType));
 				}}
 				highlightRowsOnHover
-				sortBy={[
-					{
-						id: 'dailyVolume',
-						desc: true,
-					},
-				]}
+				sortBy={[{ id: 'dailyVolume', desc: true }]}
 				columns={[
 					{
 						Header: <TableHeader>{t('futures.market.sidebar-tab.market-price')}</TableHeader>,
 						accessor: TableColumnAccessor.Market,
 						Cell: (cellProps: CellProps<any>) => {
-							const formatOptions = isEurForex(cellProps.row.original.asset)
-								? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
+							const formatOptions = isDecimalFour(cellProps.row.original.asset)
+								? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
 								: {};
-							return cellProps.row.original.market === '-' ? (
-								<DefaultCell>{NO_VALUE}</DefaultCell>
-							) : (
+							return (
 								<MarketContainer>
 									<IconContainer>
 										<StyledCurrencyIcon
 											currencyKey={
-												(cellProps.row.original.asset[0] !== 's' ? 's' : '') +
-												cellProps.row.original.asset
+												MarketKeyByAsset[cellProps.row.original.asset as FuturesMarketAsset]
 											}
 										/>
 									</IconContainer>
@@ -106,19 +86,15 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 											futuresClosureReason={cellProps.row.original.marketClosureReason}
 										/>
 									</StyledText>
-									{cellProps.row.original.price === '-' ? (
-										<DefaultCell>{NO_VALUE}</DefaultCell>
-									) : (
-										<StyledPrice isPositive={cellProps.row.original.priceChange > 0}>
-											<Currency.Price
-												currencyKey={Synths.sUSD}
-												price={cellProps.row.original.price}
-												sign={'$'}
-												conversionRate={1}
-												formatOptions={formatOptions}
-											/>
-										</StyledPrice>
-									)}
+									<StyledPrice isPositive={cellProps.row.original.priceChange > 0}>
+										<Currency.Price
+											currencyKey={'sUSD'}
+											price={cellProps.row.original.price}
+											sign={'$'}
+											conversionRate={1}
+											formatOptions={formatOptions}
+										/>
+									</StyledPrice>
 								</MarketContainer>
 							);
 						},
@@ -131,27 +107,19 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 							return (
 								<DataCol>
 									<DataRow>
-										{cellProps.row.original.volume === '-' ? (
-											<DefaultCell>{NO_VALUE}</DefaultCell>
-										) : (
-											<Currency.Price
-												currencyKey={Synths.sUSD}
-												price={cellProps.row.original.volume}
-												sign={'$'}
-												conversionRate={1}
-											/>
-										)}
+										<Currency.Price
+											currencyKey={'sUSD'}
+											price={cellProps.row.original.volume}
+											sign={'$'}
+											conversionRate={1}
+										/>
 									</DataRow>
 									<DataRow>
-										{cellProps.row.original.priceChange === '-' ? (
-											<DefaultCell>{NO_VALUE}</DefaultCell>
-										) : (
-											<ChangePercent
-												value={cellProps.row.original.priceChange}
-												decimals={2}
-												className="change-pct"
-											/>
-										)}
+										<ChangePercent
+											value={cellProps.row.original.priceChange}
+											decimals={2}
+											className="change-pct"
+										/>
 									</DataRow>
 								</DataCol>
 							);
@@ -197,8 +165,6 @@ const IconContainer = styled.div`
 	grid-row: 1 / span 2;
 `;
 
-const DefaultCell = styled.p``;
-
 const TableContainer = styled.div`
 	margin-top: 16px;
 	margin-bottom: '40px';
@@ -207,6 +173,7 @@ const TableContainer = styled.div`
 		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
 `;
+
 const TableAlignment = css`
 	justify-content: space-between;
 
@@ -241,7 +208,7 @@ const StyledText = styled.div`
 	align-items: center;
 	grid-column: 2;
 	grid-row: 1;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-family: ${(props) => props.theme.fonts.regular};
 	width: max-content;
 `;
@@ -256,6 +223,7 @@ const MarketContainer = styled.div`
 const DataCol = styled(FlexDivCol)`
 	justify-content: space-between;
 `;
+
 const DataRow = styled.div`
 	align-items: 'flex-end';
 `;

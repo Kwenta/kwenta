@@ -1,8 +1,13 @@
 import styled, { css } from 'styled-components';
-import ROUTES from 'constants/routes';
-import { EXTERNAL_LINKS } from 'constants/links';
 
-export const MenuButton = styled.div<{ isActive: boolean }>`
+import { EXTERNAL_LINKS } from 'constants/links';
+import ROUTES from 'constants/routes';
+import type { ThemeName } from 'styles/theme';
+
+export const MenuButton = styled.div<{
+	currentTheme: ThemeName;
+	isActive: boolean;
+}>`
 	outline: none;
 	width: 100%;
 	font-size: 19px;
@@ -17,9 +22,13 @@ export const MenuButton = styled.div<{ isActive: boolean }>`
 	${(props) =>
 		props.isActive &&
 		css`
-			color: ${(props) => props.theme.colors.common.primaryWhite};
+			color: ${window.location.pathname === ROUTES.Home.Root || props.currentTheme === 'dark'
+				? props.theme.colors.common.primaryWhite
+				: props.theme.colors.selectedTheme.black};
 			path {
-				fill: ${(props) => props.theme.colors.common.primaryWhite};
+				fill: ${window.location.pathname === ROUTES.Home.Root || props.currentTheme === 'dark'
+					? props.theme.colors.common.primaryWhite
+					: props.theme.colors.selectedTheme.black};
 			}
 		`}
 `;

@@ -1,9 +1,9 @@
 import styled, { css } from 'styled-components';
 
-import Button from 'components/Button';
-import Text from 'components/Text';
-import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import KwentaLogo from 'assets/svg/earn/KWENTA.svg';
+import Button from 'components/Button';
+import CurrencyIcon from 'components/Currency/CurrencyIcon';
+import Text from 'components/Text';
 
 export const KwentaText: React.FC<{ white?: boolean }> = ({ children, white }) => {
 	return (

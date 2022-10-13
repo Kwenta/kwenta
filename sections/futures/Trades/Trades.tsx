@@ -1,19 +1,24 @@
 import { wei } from '@synthetixio/wei';
-import LinkIcon from 'assets/svg/app/link-blue.svg';
-import Card from 'components/Card';
-import Table from 'components/Table';
-import TimeDisplay from './TimeDisplay';
-import { Synths } from 'constants/currency';
-import { ETH_UNIT } from 'constants/network';
-import BlockExplorer from 'containers/BlockExplorer';
-import { FuturesTrade } from 'queries/futures/types';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled, { css } from 'styled-components';
+
+import LinkIcon from 'assets/svg/app/link-blue.svg';
+import Card from 'components/Card';
+import Table, { TableNoResults } from 'components/Table';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
+import { ETH_UNIT } from 'constants/network';
+import BlockExplorer from 'containers/BlockExplorer';
+import useIsL2 from 'hooks/useIsL2';
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import { FuturesTrade } from 'queries/futures/types';
 import { ExternalLink, GridDivCenteredRow } from 'styles/common';
-import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
+import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
+import { isDecimalFour } from 'utils/futures';
+
 import { PositionSide, TradeStatus } from '../types';
+import TimeDisplay from './TimeDisplay';
 
 type TradesProps = {
 	history: FuturesTrade[] | [];
@@ -25,6 +30,9 @@ type TradesProps = {
 const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAsset }) => {
 	const { t } = useTranslation();
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
+	const { switchToL2 } = useNetworkSwitcher();
+
+	const isL2 = useIsL2();
 
 	const historyData = React.useMemo(() => {
 		return history.map((trade: FuturesTrade) => {
@@ -37,7 +45,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 				feesPaid: trade?.feesPaid.div(ETH_UNIT),
 				id: trade?.txnHash,
 				asset: marketAsset,
-				type: trade?.orderType === 'NextPrice' ? 'Next Price' : trade?.orderType,
+				type: trade?.orderType,
 				status: trade?.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
 			};
 		});
@@ -48,7 +56,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 	return (
 		<Card>
 			<StyledTable
-				palette="primary"
+				highlightRowsOnHover
 				columns={[
 					{
 						Header: (
@@ -83,13 +91,12 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						),
 						accessor: 'value',
 						sortType: 'basic',
-						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<>
-								{formatCurrency(Synths.sUSD, cellProps.value, {
-									sign: '$',
-								})}
-							</>
-						),
+						Cell: (cellProps: CellProps<FuturesTrade>) => {
+							const formatOptions = isDecimalFour(cellProps.row.original.asset)
+								? { sign: '$', minDecimals: DEFAULT_CRYPTO_DECIMALS }
+								: { sign: '$' };
+							return <>{formatDollars(cellProps.value, formatOptions)}</>;
+						},
 						width: 80,
 						sortable: true,
 					},
@@ -115,13 +122,9 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) =>
 							cellProps.row.original.pnl.eq(wei(0)) ? (
-								<PNL normal={true}>--</PNL>
+								<PNL normal>--</PNL>
 							) : (
-								<PNL negative={cellProps.value.lt(wei(0))}>
-									{formatCurrency(Synths.sUSD, cellProps.value, {
-										sign: '$',
-									})}
-								</PNL>
+								<PNL negative={cellProps.value.lt(wei(0))}>{formatDollars(cellProps.value)}</PNL>
 							),
 						width: 80,
 						sortable: true,
@@ -133,13 +136,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						sortType: 'basic',
 						accessor: 'feesPaid',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<>
-								{cellProps.value.eq(0)
-									? '--'
-									: formatCurrency(Synths.sUSD, cellProps.value, {
-											sign: '$',
-									  })}
-							</>
+							<>{cellProps.value.eq(0) ? '--' : formatDollars(cellProps.value)}</>
 						),
 						width: 80,
 						sortable: true,
@@ -152,12 +149,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						),
 						accessor: 'type',
 						sortType: 'basic',
-						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<>
-								{/* <CurrencyIcon currencyKey={cellProps.row.original.asset ?? ''} /> */}
-								{cellProps.value}
-							</>
-						),
+						Cell: (cellProps: CellProps<FuturesTrade>) => <>{cellProps.value}</>,
 						width: 100,
 					},
 					{
@@ -175,11 +167,16 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 				data={historyData}
 				isLoading={isLoading && isLoaded}
 				noResultsMessage={
-					isLoaded && historyData?.length === 0 ? (
+					!isL2 ? (
+						<TableNoResults>
+							{t('common.l2-cta')}
+							<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+						</TableNoResults>
+					) : isLoaded && historyData?.length === 0 ? (
 						<TableNoResults>{t('futures.market.user.trades.table.no-results')}</TableNoResults>
 					) : undefined
 				}
-				showPagination={true}
+				showPagination
 				pageSize={5}
 			/>
 		</Card>
@@ -212,20 +209,10 @@ const StyledPositionSide = styled.div<{ side: PositionSide }>`
 const PNL = styled.div<{ negative?: boolean; normal?: boolean }>`
 	color: ${(props) =>
 		props.normal
-			? props.theme.colors.selectedTheme.button.text
+			? props.theme.colors.selectedTheme.button.text.primary
 			: props.negative
 			? props.theme.colors.selectedTheme.red
 			: props.theme.colors.selectedTheme.green};
-`;
-
-const TableNoResults = styled(GridDivCenteredRow)`
-	padding: 50px 0;
-	justify-content: center;
-	margin-top: -2px;
-	justify-items: center;
-	grid-gap: 10px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	font-size: 16px;
 `;
 
 const StyledExternalLink = styled(ExternalLink)`
@@ -233,7 +220,7 @@ const StyledExternalLink = styled(ExternalLink)`
 	&:hover {
 		svg {
 			path {
-				fill: ${(props) => props.theme.colors.selectedTheme.button.text};
+				fill: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 			}
 		}
 	}

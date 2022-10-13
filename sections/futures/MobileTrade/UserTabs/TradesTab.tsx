@@ -1,31 +1,30 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
-import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
+import { CellProps } from 'react-table';
+import { useRecoilValue } from 'recoil';
+import styled, { css } from 'styled-components';
 
+import Table, { TableNoResults } from 'components/Table';
 import { ETH_UNIT } from 'constants/network';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
-import { currentMarketState } from 'store/futures';
-import { walletAddressState } from 'store/wallet';
-import { GridDivCenteredRow } from 'styles/common';
-import Table from 'components/Table';
-import { PositionSide, TradeStatus } from 'sections/futures/types';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
-import { CellProps } from 'react-table';
+import { PositionSide, TradeStatus } from 'sections/futures/types';
+import { currentMarketState, selectedFuturesAddressState } from 'store/futures';
+import { GridDivCenteredRow } from 'styles/common';
 import { formatCryptoCurrency } from 'utils/formatters/number';
+
+import { SectionHeader, SectionTitle } from '../common';
 import TradeDrawer from '../drawers/TradeDrawer';
-import { SectionHeader } from '../common';
 
 const TradesTab: React.FC = () => {
 	const { t } = useTranslation();
-
+	const selectedFuturesAddress = useRecoilValue(selectedFuturesAddressState);
 	const marketAsset = useRecoilValue(currentMarketState);
-	const walletAddress = useRecoilValue(walletAddressState);
 
 	const [selectedTrade, setSelectedTrade] = React.useState<any>();
 
-	const futuresTradesQuery = useGetFuturesTradesForAccount(marketAsset, walletAddress);
+	const futuresTradesQuery = useGetFuturesTradesForAccount(marketAsset, selectedFuturesAddress);
 
 	const { isLoading, isFetched: isLoaded } = futuresTradesQuery;
 
@@ -43,7 +42,7 @@ const TradesTab: React.FC = () => {
 			feesPaid: trade?.feesPaid.div(ETH_UNIT),
 			id: trade?.txnHash,
 			asset: marketAsset,
-			type: trade?.orderType === 'NextPrice' ? 'Next Price' : trade?.orderType,
+			type: trade?.orderType,
 			status: trade?.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
 			side: trade?.side,
 		}));
@@ -53,9 +52,10 @@ const TradesTab: React.FC = () => {
 
 	return (
 		<div>
-			<SectionHeader>Trades</SectionHeader>
+			<SectionHeader>
+				<SectionTitle>Trades</SectionTitle>
+			</SectionHeader>
 			<StyledTable
-				palette="primary"
 				onTableRowClick={(row) => {
 					setSelectedTrade(row.original);
 				}}
@@ -109,7 +109,7 @@ const TradesTab: React.FC = () => {
 						<TableNoResults>{t('futures.market.user.trades.table.no-results')}</TableNoResults>
 					) : undefined
 				}
-				showPagination={true}
+				showPagination
 				pageSize={5}
 			/>
 
@@ -141,14 +141,4 @@ const StyledPositionSide = styled.div<{ side: PositionSide }>`
 		css`
 			color: ${props.theme.colors.common.primaryRed};
 		`}
-`;
-
-const TableNoResults = styled(GridDivCenteredRow)`
-	padding: 50px 0;
-	justify-content: center;
-	margin-top: -2px;
-	justify-items: center;
-	grid-gap: 10px;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
-	font-size: 16px;
 `;

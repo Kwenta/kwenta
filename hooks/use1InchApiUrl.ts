@@ -1,6 +1,7 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
+import { useNetwork } from 'wagmi';
+
 import { EXTERNAL_LINKS } from 'constants/links';
-import { useRecoilValue } from 'recoil';
-import { networkState } from 'store/wallet';
 
 type SupportedNetwork = 'optimism' | 'ethereum';
 
@@ -10,8 +11,9 @@ const SUPPORTED_NETWORKS = {
 };
 
 const use1InchApiUrl = () => {
-	const network = useRecoilValue(networkState);
-	const networkName = SUPPORTED_NETWORKS[network.id as 1 | 10] || SUPPORTED_NETWORKS[10];
+	const { chain: network } = useNetwork();
+	const networkName =
+		SUPPORTED_NETWORKS[(network?.id as NetworkId) as 1 | 10] || SUPPORTED_NETWORKS[10];
 
 	return EXTERNAL_LINKS.Trading.OneInchApi[networkName as SupportedNetwork];
 };

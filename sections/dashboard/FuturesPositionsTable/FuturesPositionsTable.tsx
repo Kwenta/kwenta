@@ -1,86 +1,115 @@
-import Table from 'components/Table';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { useRouter } from 'next/router';
-import Connector from 'containers/Connector';
-import Currency from 'components/Currency';
-import PositionType from 'components/Text/PositionType';
-import ChangePercent from 'components/ChangePercent';
-import { Synths } from 'constants/currency';
-import { FuturesPosition, FuturesMarket, PositionHistory } from 'queries/futures/types';
-import { formatNumber } from 'utils/formatters/number';
-import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
-import { NO_VALUE } from 'constants/placeholder';
-import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
-import { getDisplayAsset, getMarketKey, getSynthDescription, isEurForex } from 'utils/futures';
+
 import MarketBadge from 'components/Badge/MarketBadge';
-import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import ChangePercent from 'components/ChangePercent';
+import Currency from 'components/Currency';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import Table, { TableNoResults } from 'components/Table';
+import PositionType from 'components/Text/PositionType';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
+import { NO_VALUE } from 'constants/placeholder';
+import ROUTES from 'constants/routes';
+import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import { FuturesAccountType } from 'queries/futures/subgraph';
+import {
+	positionsState,
+	currentMarketState,
+	futuresMarketsState,
+	positionHistoryState,
+} from 'store/futures';
+import { formatNumber } from 'utils/formatters/number';
+import { getSynthDescription, isDecimalFour } from 'utils/futures';
+
 import MobilePositionRow from './MobilePositionRow';
 
 type FuturesPositionTableProps = {
-	futuresMarkets: FuturesMarket[];
-	futuresPositionHistory: PositionHistory[];
+	accountType: FuturesAccountType;
+	showCurrentMarket?: boolean;
 };
 
 const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
-	futuresMarkets,
-	futuresPositionHistory,
+	accountType,
+	showCurrentMarket = true,
 }: FuturesPositionTableProps) => {
 	const { t } = useTranslation();
-	const { synthsMap, network } = Connector.useContainer();
+	const { synthsMap } = Connector.useContainer();
 	const router = useRouter();
+	const { switchToL2 } = useNetworkSwitcher();
 
-	const futuresPositionQuery = useGetFuturesPositionForMarkets(
-		futuresMarkets.map(({ asset }) => getMarketKey(asset, network.id))
-	);
+	const isL2 = useIsL2();
+
+	const positions = useRecoilValue(positionsState);
+	const positionHistory = useRecoilValue(positionHistoryState);
+	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	const currentMarket = useRecoilValue(currentMarketState);
 
 	let data = useMemo(() => {
-		const futuresPositions = futuresPositionQuery?.data ?? [];
-		const activePositions = futuresPositions.filter(
-			(position: FuturesPosition) => position?.position
-		);
+		return positions[accountType]
+			.map((position) => {
+				const market = futuresMarkets.find((market) => market.asset === position.asset);
+				const description = getSynthDescription(position.asset, synthsMap, t);
+				const thisPositionHistory = positionHistory[accountType].find((positionHistory) => {
+					return positionHistory.isOpen && positionHistory.asset === position.asset;
+				});
 
-		return activePositions.map((position: FuturesPosition) => {
-			const market = futuresMarkets.find((market) => market.asset === position.asset);
-			const description = getSynthDescription(position.asset, synthsMap, t);
-			const positionHistory = futuresPositionHistory?.find((positionHistory: PositionHistory) => {
-				return positionHistory.isOpen && positionHistory.asset === position.asset;
-			});
-
-			return {
-				asset: position.asset,
-				market: getDisplayAsset(position.asset) + '-PERP',
-				marketKey: getMarketKey(position.asset, network.id),
-				description: description,
-				price: market?.price,
-				size: position?.position?.size,
-				notionalValue: position?.position?.notionalValue.abs(),
-				position: position?.position?.side,
-				lastPrice: position?.position?.lastPrice,
-				avgEntryPrice: positionHistory?.entryPrice ?? NO_VALUE,
-				liquidationPrice: position?.position?.liquidationPrice,
-				pnl: position?.position?.profitLoss.add(position?.position?.accruedFunding),
-				pnlPct: position?.position?.profitLoss
-					.add(position?.position?.accruedFunding)
-					.div(position?.position?.initialMargin),
-				margin: position.accessibleMargin,
-				leverage: position?.position?.leverage,
-				isSuspended: market?.isSuspended,
-				marketClosureReason: market?.marketClosureReason,
-			};
-		});
-	}, [futuresPositionQuery?.data, futuresMarkets, synthsMap, t, futuresPositionHistory, network]);
+				return {
+					market,
+					position: position.position,
+					description,
+					avgEntryPrice: thisPositionHistory?.entryPrice,
+				};
+			})
+			.filter(
+				(position) =>
+					position.position && (position?.market?.asset !== currentMarket || showCurrentMarket)
+			);
+	}, [
+		positions,
+		accountType,
+		futuresMarkets,
+		positionHistory,
+		currentMarket,
+		synthsMap,
+		t,
+		showCurrentMarket,
+	]);
 
 	return (
 		<>
-			<MobileHiddenView>
+			<DesktopOnlyView>
 				<TableContainer>
-					<StyledTable
+					<Table
 						data={data}
 						showPagination
-						onTableRowClick={(row) => router.push(`/market/${row.original.asset}`)}
+						onTableRowClick={(row) =>
+							router.push(ROUTES.Markets.MarketPair(row.original.market.asset, accountType))
+						}
+						noResultsMessage={
+							!isL2 ? (
+								<TableNoResults>
+									{t('common.l2-cta')}
+									<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+								</TableNoResults>
+							) : (
+								<TableNoResults>
+									{!showCurrentMarket ? (
+										t('dashboard.overview.futures-positions-table.no-result')
+									) : (
+										<Link href={ROUTES.Markets.Home(accountType)}>
+											<div>{t('common.perp-cta')}</div>
+										</Link>
+									)}
+								</TableNoResults>
+							)
+						}
 						highlightRowsOnHover
 						columns={[
 							{
@@ -91,21 +120,17 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'market',
 								Cell: (cellProps: CellProps<any>) => {
-									return cellProps.row.original.market === NO_VALUE ? (
-										<DefaultCell>{NO_VALUE}</DefaultCell>
-									) : (
+									return (
 										<MarketContainer>
 											<IconContainer>
-												<StyledCurrencyIcon
-													currencyKey={getMarketKey(cellProps.row.original.asset, network.id)}
-												/>
+												<StyledCurrencyIcon currencyKey={cellProps.row.original.market.marketKey} />
 											</IconContainer>
 											<StyledText>
-												{cellProps.row.original.market}
+												{cellProps.row.original.market.marketName}
 												<MarketBadge
-													currencyKey={cellProps.row.original.asset}
-													isFuturesMarketClosed={cellProps.row.original.isSuspended}
-													futuresClosureReason={cellProps.row.original.marketClosureReason}
+													currencyKey={cellProps.row.original.market.marketKey}
+													isFuturesMarketClosed={cellProps.row.original.market.isSuspended}
+													futuresClosureReason={cellProps.row.original.market.marketClosureReason}
 												/>
 											</StyledText>
 											<StyledValue>{cellProps.row.original.description}</StyledValue>
@@ -116,17 +141,11 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 							},
 							{
 								Header: (
-									<TableHeader>
-										{t('dashboard.overview.futures-positions-table.position')}
-									</TableHeader>
+									<TableHeader>{t('dashboard.overview.futures-positions-table.side')}</TableHeader>
 								),
 								accessor: 'position',
 								Cell: (cellProps: CellProps<any>) => {
-									return cellProps.row.original.position === NO_VALUE ? (
-										<DefaultCell>{NO_VALUE}</DefaultCell>
-									) : (
-										<PositionType side={cellProps.row.original.position} />
-									);
+									return <PositionType side={cellProps.row.original.position.side} />;
 								},
 								width: 90,
 							},
@@ -138,14 +157,17 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'notionalValue',
 								Cell: (cellProps: CellProps<any>) => {
-									return cellProps.row.original.notionalValue === NO_VALUE ? (
-										<DefaultCell>{NO_VALUE}</DefaultCell>
-									) : (
+									const formatOptions = cellProps.row.original.position.notionalValue.gte(1e6)
+										? { truncation: { divisor: 1e6, unit: 'M' } }
+										: {};
+
+									return (
 										<Currency.Price
-											currencyKey={Synths.sUSD}
-											price={cellProps.row.original.notionalValue}
+											currencyKey={'sUSD'}
+											price={cellProps.row.original.position.notionalValue}
 											sign={'$'}
 											conversionRate={1}
+											formatOptions={formatOptions}
 										/>
 									);
 								},
@@ -159,10 +181,10 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'leverage',
 								Cell: (cellProps: CellProps<any>) => {
-									return cellProps.row.original.leverage === NO_VALUE ? (
-										<DefaultCell>{NO_VALUE}</DefaultCell>
-									) : (
-										<DefaultCell>{formatNumber(cellProps.row.original.leverage ?? 0)}x</DefaultCell>
+									return (
+										<DefaultCell>
+											{formatNumber(cellProps.row.original.position.leverage ?? 0)}x
+										</DefaultCell>
 									);
 								},
 								width: 90,
@@ -173,15 +195,13 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'pnl',
 								Cell: (cellProps: CellProps<any>) => {
-									return cellProps.row.original.pnl === undefined ? (
-										<DefaultCell>{NO_VALUE}</DefaultCell>
-									) : (
+									return (
 										<PnlContainer>
-											<ChangePercent value={cellProps.row.original.pnlPct} />
+											<ChangePercent value={cellProps.row.original.position.pnlPct} />
 											<div>
 												<Currency.Price
-													currencyKey={Synths.sUSD}
-													price={cellProps.row.original.pnl}
+													currencyKey={'sUSD'}
+													price={cellProps.row.original.position.pnl}
 													sign={'$'}
 													conversionRate={1}
 												/>
@@ -199,14 +219,14 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'avgEntryPrice',
 								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = isEurForex(cellProps.row.original.asset)
-										? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
+									const formatOptions = isDecimalFour(cellProps.row.original.market.asset)
+										? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
 										: {};
 									return cellProps.row.original.avgEntryPrice === undefined ? (
 										<DefaultCell>{NO_VALUE}</DefaultCell>
 									) : (
 										<Currency.Price
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.avgEntryPrice}
 											sign={'$'}
 											conversionRate={1}
@@ -224,15 +244,13 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'liquidationPrice',
 								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = isEurForex(cellProps.row.original.asset)
-										? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
+									const formatOptions = isDecimalFour(cellProps.row.original.market.asset)
+										? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
 										: {};
-									return cellProps.row.original.liquidationPrice === NO_VALUE ? (
-										<DefaultCell>{NO_VALUE}</DefaultCell>
-									) : (
+									return (
 										<Currency.Price
-											currencyKey={Synths.sUSD}
-											price={cellProps.row.original.liquidationPrice}
+											currencyKey={'sUSD'}
+											price={cellProps.row.original.position.liquidationPrice}
 											sign={'$'}
 											conversionRate={1}
 											formatOptions={formatOptions}
@@ -244,27 +262,33 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						]}
 					/>
 				</TableContainer>
-			</MobileHiddenView>
-			<MobileOnlyView>
+			</DesktopOnlyView>
+			<MobileOrTabletView>
 				<OpenPositionsHeader>
-					<div>Market/Side</div>
-					<div>Oracle/Entry</div>
-					<div>Unrealized P&amp;L</div>
+					<div>{t('dashboard.overview.futures-positions-table.mobile.market')}</div>
+					<OpenPositionsRightHeader>
+						<div>{t('dashboard.overview.futures-positions-table.mobile.price')}</div>
+						<div>{t('dashboard.overview.futures-positions-table.mobile.pnl')}</div>
+					</OpenPositionsRightHeader>
 				</OpenPositionsHeader>
 				<div style={{ margin: '0 15px' }}>
 					{data.length === 0 ? (
-						<NoPositionsText>There are no open positions.</NoPositionsText>
+						<NoPositionsText>
+							<Link href={ROUTES.Markets.Home(accountType)}>
+								<div>{t('common.perp-cta')}</div>
+							</Link>
+						</NoPositionsText>
 					) : (
 						data.map((row) => (
 							<MobilePositionRow
-								onClick={() => router.push(`/market/${row.asset}`)}
-								key={row.asset}
+								onClick={() => router.push(`/market/?asset=${row.market?.asset}`)}
+								key={row.market?.asset}
 								row={row}
 							/>
 						))
 					)}
 				</div>
-			</MobileOnlyView>
+			</MobileOrTabletView>
 		</>
 	);
 };
@@ -294,14 +318,10 @@ const StyledValue = styled.div`
 `;
 
 const DefaultCell = styled.p`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const TableContainer = styled.div``;
-
-const StyledTable = styled(Table)`
-	/* margin-top: 20px; */
-`;
 
 const TableHeader = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
@@ -313,7 +333,7 @@ const StyledText = styled.div`
 	grid-column: 2;
 	grid-row: 1;
 	margin-bottom: -4px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
@@ -327,7 +347,7 @@ const MarketContainer = styled.div`
 const OpenPositionsHeader = styled.div`
 	display: flex;
 	justify-content: space-between;
-	margin: 15px;
+	margin: 15px 15px 8px;
 	padding: 0 10px;
 
 	& > div {
@@ -335,8 +355,15 @@ const OpenPositionsHeader = styled.div`
 	}
 
 	& > div:first-child {
-		width: 150px;
+		width: 125px;
+		margin-right: 30px;
 	}
+`;
+
+const OpenPositionsRightHeader = styled.div`
+	display: flex;
+	flex: 1;
+	justify-content: space-between;
 `;
 
 const NoPositionsText = styled.div`
@@ -344,6 +371,7 @@ const NoPositionsText = styled.div`
 	margin: 20px 0;
 	font-size: 16px;
 	text-align: center;
+	text-decoration: underline;
 `;
 
 export default FuturesPositionsTable;

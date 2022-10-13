@@ -1,15 +1,13 @@
-import { Synths } from 'constants/currency';
-
 const markets = [
-	Synths.sETH,
-	Synths.sBTC,
-	Synths.sLINK,
-	Synths.sSOL,
-	Synths.sAVAX,
-	Synths.sMATIC,
-	Synths.sAAVE,
-	Synths.sUNI,
-	Synths.sEUR,
+	'sETH',
+	'sBTC',
+	'sLINK',
+	'sSOL',
+	'sAVAX',
+	'sMATIC',
+	'sAAVE',
+	'sUNI',
+	'sEUR',
 	'sXAU',
 	'sXAG',
 	'sWTI',
@@ -18,20 +16,44 @@ const markets = [
 ] as const;
 
 const map: Record<typeof markets[number], string> = {
-	[Synths.sETH]: 'ethereum',
-	[Synths.sBTC]: 'bitcoin',
-	[Synths.sLINK]: 'chainlink',
-	[Synths.sSOL]: 'solana',
-	[Synths.sAVAX]: 'avalanche-2',
-	[Synths.sMATIC]: 'matic-network',
-	[Synths.sAAVE]: 'aave',
-	[Synths.sUNI]: 'uniswap',
-	[Synths.sEUR]: 'euro',
+	sETH: 'ethereum',
+	sBTC: 'bitcoin',
+	sLINK: 'chainlink',
+	sSOL: 'solana',
+	sAVAX: 'avalanche-2',
+	sMATIC: 'matic-network',
+	sAAVE: 'aave',
+	sUNI: 'uniswap',
+	sEUR: 'euro',
 	sXAU: '',
 	sXAG: '',
 	sWTI: '',
 	sDYDX: 'dydx',
 	sAPE: 'apecoin',
+};
+
+export enum MarketDataKey {
+	externalPrice = 'External Price',
+	dailyChange = '24H Change',
+	dailyVolume = '24H Volume',
+	dailyTrades = '24H Trades',
+	openInterest = 'Open Interest',
+	instFundingRate = 'Inst. Funding Rate',
+	hourlyFundingRate = '1H Funding Rate',
+}
+
+export const marketDataKeyMap: Record<MarketDataKey, string> = {
+	[MarketDataKey.externalPrice]: 'external-price',
+	[MarketDataKey.dailyChange]: '24h-change',
+	[MarketDataKey.dailyVolume]: '24h-vol',
+	[MarketDataKey.dailyTrades]: '24h-trades',
+	[MarketDataKey.openInterest]: 'open-interest',
+	[MarketDataKey.instFundingRate]: '1h-funding-rate',
+	[MarketDataKey.hourlyFundingRate]: '1h-funding-rate',
+};
+
+export const isMarketDataKey = (key: string): key is MarketDataKey => {
+	return Object.values<string>(MarketDataKey).includes(key);
 };
 
 export const synthToCoingeckoPriceId = (synth: any) => {

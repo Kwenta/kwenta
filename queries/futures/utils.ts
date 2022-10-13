@@ -1,9 +1,30 @@
-import Wei, { wei } from '@synthetixio/wei';
-import { ContractsMap } from '@synthetixio/contracts-interface/build/node/src/types';
 import { BigNumber } from '@ethersproject/bignumber';
-import { utils } from '@synthetixio/contracts-interface/node_modules/ethers';
+import { ContractsMap, NetworkId } from '@synthetixio/contracts-interface';
+import Wei, { wei } from '@synthetixio/wei';
+import { utils } from 'ethers';
+import { parseBytes32String } from 'ethers/lib/utils';
+import { chain } from 'wagmi';
 
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { ETH_UNIT } from 'constants/network';
+import { MarketClosureReason } from 'hooks/useMarketClosed';
+import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
+import { formatCurrency, formatDollars, weiFromWei, zeroBN } from 'utils/formatters/number';
+import {
+	FuturesMarketAsset,
+	getDisplayAsset,
+	getMarketName,
+	MarketKeyByAsset,
+} from 'utils/futures';
+
+import { SECONDS_PER_DAY, FUTURES_ENDPOINTS } from './constants';
+import {
+	FuturesHourlyStatResult,
+	FuturesMarginTransferResult,
+	FuturesOrderResult,
+	FuturesOrderType,
+	FuturesPositionResult,
+	FuturesTradeResult,
+} from './subgraph';
 import {
 	FuturesPosition,
 	FuturesOpenInterest,
@@ -11,27 +32,16 @@ import {
 	PositionDetail,
 	PositionSide,
 	FuturesVolumes,
-	RawPosition,
 	PositionHistory,
 	FundingRateUpdate,
 	FuturesTrade,
 	MarginTransfer,
+	FuturesMarket,
+	FuturesOrder,
 } from './types';
-import { Network } from 'store/wallet';
-import { FUTURES_ENDPOINT_MAINNET, FUTURES_ENDPOINT_TESTNET, SECONDS_PER_DAY } from './constants';
 
-import { FuturesMarginTransferResult, FuturesTradeResult } from './subgraph';
-import { ETH_UNIT } from 'constants/network';
-import { MarketClosureReason } from 'hooks/useMarketClosed';
-import { Synths } from '@synthetixio/contracts-interface';
-import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
-
-export const getFuturesEndpoint = (network: Network): string => {
-	return network && network.id === 10
-		? FUTURES_ENDPOINT_MAINNET
-		: network.id === 69
-		? FUTURES_ENDPOINT_TESTNET
-		: FUTURES_ENDPOINT_MAINNET;
+export const getFuturesEndpoint = (networkId: NetworkId): string => {
+	return FUTURES_ENDPOINTS[networkId] || FUTURES_ENDPOINTS[chain.optimism.id];
 };
 
 export const getFuturesMarketContract = (asset: string | null, contracts: ContractsMap) => {
@@ -45,7 +55,7 @@ export const getFuturesMarketContract = (asset: string | null, contracts: Contra
 export const mapFuturesPosition = (
 	positionDetail: PositionDetail,
 	canLiquidatePosition: boolean,
-	asset: string
+	asset: FuturesMarketAsset
 ): FuturesPosition => {
 	const {
 		remainingMargin,
@@ -58,7 +68,9 @@ export const mapFuturesPosition = (
 		liquidationPrice,
 		profitLoss,
 	} = positionDetail;
-	const roi = wei(profitLoss).add(wei(accruedFunding));
+	const initialMargin = wei(margin);
+	const pnl = wei(profitLoss).add(wei(accruedFunding));
+	const pnlPct = initialMargin.gt(0) ? pnl.div(wei(initialMargin)) : wei(0);
 	return {
 		asset,
 		order: !!orderPending
@@ -76,17 +88,19 @@ export const mapFuturesPosition = (
 			: {
 					canLiquidatePosition: !!canLiquidatePosition,
 					side: wei(size).gt(zeroBN) ? PositionSide.LONG : PositionSide.SHORT,
-					notionalValue: wei(notionalValue),
+					notionalValue: wei(notionalValue).abs(),
 					accruedFunding: wei(accruedFunding),
-					initialMargin: wei(margin),
+					initialMargin,
 					profitLoss: wei(profitLoss),
 					fundingIndex: Number(fundingIndex),
 					lastPrice: wei(lastPrice),
 					size: wei(size).abs(),
 					liquidationPrice: wei(liquidationPrice),
-					initialLeverage: wei(size).mul(wei(lastPrice)).div(wei(margin)).abs(),
-					roi,
-					roiChange: wei(margin).eq(zeroBN) ? zeroBN : roi.div(wei(margin)),
+					initialLeverage: initialMargin.gt(0)
+						? wei(size).mul(wei(lastPrice)).div(initialMargin).abs()
+						: wei(0),
+					pnl,
+					pnlPct,
 					marginRatio: wei(notionalValue).eq(zeroBN)
 						? zeroBN
 						: wei(remainingMargin).div(wei(notionalValue).abs()),
@@ -94,6 +108,50 @@ export const mapFuturesPosition = (
 						? zeroBN
 						: wei(notionalValue).div(wei(remainingMargin)).abs(),
 			  },
+	};
+};
+
+const mapOrderType = (orderType: Partial<FuturesOrderType>) => {
+	return orderType === 'NextPrice'
+		? 'Next-Price'
+		: orderType === 'Stop'
+		? 'Stop-Market'
+		: orderType === 'StopMarket'
+		? 'Stop-Market'
+		: orderType;
+};
+
+export const mapFuturesOrders = (
+	o: FuturesOrderResult,
+	marketInfo: FuturesMarket | undefined
+): FuturesOrder => {
+	const asset: FuturesMarketAsset = parseBytes32String(o.asset) as FuturesMarketAsset;
+	const size = weiFromWei(o.size);
+	const targetPrice = weiFromWei(o.targetPrice ?? 0);
+	const targetRoundId = new Wei(o.targetRoundId, 0);
+	const currentRoundId = wei(marketInfo?.currentRoundId ?? 0);
+	const marginDelta = weiFromWei(o.marginDelta);
+	return {
+		...o,
+		asset,
+		targetRoundId,
+		marginDelta,
+		targetPrice: targetPrice.gt(0) ? targetPrice : null,
+		size: size,
+		market: getMarketName(asset),
+		marketKey: MarketKeyByAsset[asset],
+		orderType: mapOrderType(o.orderType),
+		sizeTxt: formatCurrency(asset, size.abs(), {
+			currencyKey: getDisplayAsset(asset) ?? '',
+			minDecimals: size.abs().lt(0.01) ? 4 : 2,
+		}),
+		targetPriceTxt: formatDollars(targetPrice),
+		side: size.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
+		isStale: o.orderType === 'NextPrice' && currentRoundId.gte(wei(o.targetRoundId).add(2)),
+		isExecutable:
+			o.orderType === 'NextPrice' && targetRoundId
+				? currentRoundId.eq(targetRoundId) || currentRoundId.eq(targetRoundId.add(1))
+				: false,
 	};
 };
 
@@ -146,26 +204,19 @@ export const mapOpenInterest = async (
 	return openInterest;
 };
 
-export const calculateTradeVolume = (futuresTrades: FuturesTradeResult[]): Wei => {
-	return futuresTrades.reduce((acc: Wei, { size, price }: FuturesTradeResult) => {
-		const cleanSize = new Wei(size).div(ETH_UNIT).abs();
-		const cleanPrice = new Wei(price).div(ETH_UNIT);
-		return acc.add(cleanSize.mul(cleanPrice));
-	}, wei(0));
-};
-
-export const calculateTradeVolumeForAll = (futuresTrades: FuturesTradeResult[]): FuturesVolumes => {
-	const volumes = {} as FuturesVolumes;
-
-	futuresTrades.forEach(({ asset, size, price }) => {
-		const sizeAdd = new Wei(size).div(ETH_UNIT);
-		const priceAdd = new Wei(price).div(ETH_UNIT);
-		const volumeAdd = sizeAdd.mul(priceAdd).abs();
-
-		volumes[asset]
-			? (volumes[asset] = volumes[asset].add(volumeAdd))
-			: (volumes[asset] = volumeAdd);
-	});
+export const calculateVolumes = (futuresHourlyStats: FuturesHourlyStatResult[]): FuturesVolumes => {
+	const volumes: FuturesVolumes = futuresHourlyStats.reduce(
+		(acc: FuturesVolumes, { asset, volume, trades }) => {
+			return {
+				...acc,
+				[asset]: {
+					volume: volume.div(ETH_UNIT).add(acc[asset]?.volume ?? 0),
+					trades: trades.add(acc[asset]?.trades ?? 0),
+				},
+			};
+		},
+		{}
+	);
 	return volumes;
 };
 
@@ -187,7 +238,7 @@ export const calculateDailyTradeStats = (futuresTrades: FuturesOneMinuteStat[]) 
 	return futuresTrades.reduce(
 		(acc, stat) => {
 			return {
-				totalVolume: acc.totalVolume.add(new Wei(stat.volume, 18, true).abs()),
+				totalVolume: acc.totalVolume.add(stat.volume.div(ETH_UNIT).abs()),
 				totalTrades: acc.totalTrades + Number(stat.trades),
 			};
 		},
@@ -202,8 +253,8 @@ export const calculateFundingRate = (
 	minTimestamp: number,
 	periodLength: number,
 	fundingRates: FundingRateUpdate[],
-	assetPrice: number,
-	currentFundingRate: number
+	assetPrice: Wei,
+	currentFundingRate: Wei
 ): Wei | null => {
 	const numUpdates = fundingRates.length;
 	if (numUpdates < 2) return null;
@@ -279,9 +330,7 @@ export const mapMarginTransfers = (
 			const sizeWei = new Wei(size);
 			const cleanSize = sizeWei.div(ETH_UNIT).abs();
 			const isPositive = sizeWei.gt(0);
-			const amount = `${isPositive ? '+' : '-'}${formatCurrency(Synths.sUSD, cleanSize, {
-				sign: '$',
-			})}`;
+			const amount = `${isPositive ? '+' : '-'}${formatDollars(cleanSize)}`;
 			const numTimestamp = wei(timestamp).toNumber();
 
 			return {
@@ -292,99 +341,80 @@ export const mapMarginTransfers = (
 				action: isPositive ? 'deposit' : 'withdraw',
 				amount,
 				isPositive,
-				asset: utils.parseBytes32String(asset),
+				asset: utils.parseBytes32String(asset) as FuturesMarketAsset,
 				txHash,
 			};
 		}
 	);
 };
 
-export const mapTradeHistory = (
-	futuresPositions: RawPosition[],
-	openOnly: boolean
+export const mapFuturesPositions = (
+	futuresPositions: FuturesPositionResult[]
 ): PositionHistory[] => {
-	return (
-		futuresPositions
-			?.map(
-				({
-					id,
-					lastTxHash,
-					timestamp,
-					market,
-					asset,
-					account,
-					isOpen,
-					isLiquidated,
-					size,
-					feesPaid,
-					netFunding,
-					netTransfers,
-					totalDeposits,
-					initialMargin,
-					margin,
-					entryPrice,
-					exitPrice,
-					pnl,
-					pnlWithFeesPaid,
-					openTimestamp,
-					closeTimestamp,
-					totalVolume,
-					trades,
-					avgEntryPrice,
-				}: RawPosition) => {
-					const entryPriceWei = new Wei(entryPrice, 18, true);
-					const exitPriceWei = new Wei(exitPrice || 0, 18, true);
-					const sizeWei = new Wei(size, 18, true);
-					const feesWei = new Wei(feesPaid || 0, 18, true);
-					const netFundingWei = new Wei(netFunding || 0, 18, true);
-					const netTransfersWei = new Wei(netTransfers || 0, 18, true);
-					const totalDepositsWei = new Wei(totalDeposits || 0, 18, true);
-					const initialMarginWei = new Wei(initialMargin, 18, true);
-					const marginWei = new Wei(margin, 18, true);
-					const pnlWei = new Wei(pnl, 18, true);
-					const pnlWithFeesPaidWei = new Wei(pnlWithFeesPaid, 18, true);
-					const totalVolumeWei = new Wei(totalVolume, 18, true);
-					const avgEntryPriceWei = new Wei(avgEntryPrice, 18, true);
-					return {
-						id: Number(id.split('-')[1].toString()),
-						transactionHash: lastTxHash,
-						timestamp: timestamp * 1000,
-						openTimestamp: openTimestamp * 1000,
-						closeTimestamp: closeTimestamp * 1000,
-						market: market,
-						asset: utils.parseBytes32String(asset),
-						account: account,
-						isOpen,
-						isLiquidated,
-						size: sizeWei.abs(),
-						feesPaid: feesWei,
-						netFunding: netFundingWei,
-						netTransfers: netTransfersWei,
-						totalDeposits: totalDepositsWei,
-						initialMargin: initialMarginWei,
-						margin: marginWei,
-						entryPrice: entryPriceWei,
-						exitPrice: exitPriceWei,
-						pnl: pnlWei,
-						pnlWithFeesPaid: pnlWithFeesPaidWei,
-						totalVolume: totalVolumeWei,
-						trades: trades,
-						avgEntryPrice: avgEntryPriceWei,
-						leverage: marginWei.eq(wei(0))
-							? wei(0)
-							: sizeWei.mul(entryPriceWei).div(marginWei).abs(),
-						side: sizeWei.gte(wei(0)) ? PositionSide.LONG : PositionSide.SHORT,
-					};
-				}
-			)
-			.filter(({ isOpen }: { isOpen: boolean }) => {
-				if (openOnly) {
-					return isOpen;
-				} else {
-					return true;
-				}
-			})
-			.filter(({ id }: { id: number }) => id !== 0) ?? null
+	return futuresPositions.map(
+		({
+			id,
+			lastTxHash,
+			openTimestamp,
+			closeTimestamp,
+			timestamp,
+			market,
+			asset,
+			account,
+			abstractAccount,
+			accountType,
+			isOpen,
+			isLiquidated,
+			trades,
+			totalVolume,
+			size,
+			initialMargin,
+			margin,
+			pnl,
+			feesPaid,
+			netFunding,
+			pnlWithFeesPaid,
+			netTransfers,
+			totalDeposits,
+			entryPrice,
+			avgEntryPrice,
+			exitPrice,
+		}: FuturesPositionResult) => {
+			const entryPriceWei = weiFromWei(entryPrice);
+			const feesWei = weiFromWei(feesPaid || 0);
+			const sizeWei = weiFromWei(size);
+			const marginWei = weiFromWei(margin);
+			return {
+				id: Number(id.split('-')[1].toString()),
+				transactionHash: lastTxHash,
+				timestamp: timestamp.mul(1000).toNumber(),
+				openTimestamp: openTimestamp.mul(1000).toNumber(),
+				closeTimestamp: closeTimestamp?.mul(1000).toNumber(),
+				market,
+				asset: utils.parseBytes32String(asset) as FuturesMarketAsset,
+				account,
+				abstractAccount,
+				accountType,
+				isOpen,
+				isLiquidated,
+				size: sizeWei.abs(),
+				feesPaid: feesWei,
+				netFunding: weiFromWei(netFunding || 0),
+				netTransfers: weiFromWei(netTransfers || 0),
+				totalDeposits: weiFromWei(totalDeposits || 0),
+				initialMargin: weiFromWei(initialMargin),
+				margin: marginWei,
+				entryPrice: entryPriceWei,
+				exitPrice: weiFromWei(exitPrice || 0),
+				pnl: weiFromWei(pnl),
+				pnlWithFeesPaid: weiFromWei(pnlWithFeesPaid),
+				totalVolume: weiFromWei(totalVolume),
+				trades: trades.toNumber(),
+				avgEntryPrice: weiFromWei(avgEntryPrice),
+				leverage: marginWei.eq(wei(0)) ? wei(0) : sizeWei.mul(entryPriceWei).div(marginWei).abs(),
+				side: sizeWei.gte(wei(0)) ? PositionSide.LONG : PositionSide.SHORT,
+			};
+		}
 	);
 };
 
@@ -401,10 +431,12 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 			pnl,
 			feesPaid,
 			orderType,
+			accountType,
 		}: FuturesTradeResult) => {
 			return {
+				asset,
+				accountType,
 				size: new Wei(size, 18, true),
-				asset: asset,
 				price: new Wei(price, 18, true),
 				txnHash: id.split('-')[0].toString(),
 				timestamp: timestamp,
@@ -413,7 +445,7 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 				side: size.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
 				pnl: new Wei(pnl, 18, true),
 				feesPaid: new Wei(feesPaid, 18, true),
-				orderType: orderType,
+				orderType: mapOrderType(orderType),
 			};
 		}
 	);

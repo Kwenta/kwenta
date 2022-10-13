@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
-import { FlexDivCol, FlexDivColCentered, FlexDivRow, GridDiv, Paragraph } from 'styles/common';
-
+import { FlexDivColCentered, FlexDivRow, GridDiv, Paragraph } from 'styles/common';
 import media from 'styles/media';
 
 export const SubHeader = styled(Paragraph)`
@@ -9,7 +8,7 @@ export const SubHeader = styled(Paragraph)`
 	line-height: 120%;
 	letter-spacing: 0.2px;
 	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	${media.lessThan('md')`
 		font-size: 32px;
 		text-align: center;
@@ -31,7 +30,6 @@ export const StackSection = styled(FlexDivColCentered)`
 
 export const FlexSection = styled(FlexDivRow)`
 	width: 100%;
-	/* justify-content: center; */
 	${media.lessThan('lg')`
 		align-items: center;
 		flex-direction: column;
@@ -50,13 +48,11 @@ export const GridContainer = styled(GridDiv)`
 	`}
 `;
 
-export const Col = styled(FlexDivCol)``;
-
 export const Title = styled(Paragraph)`
 	font-size: 16px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	text-align: left;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 export const Copy = styled(Paragraph)`
@@ -65,13 +61,4 @@ export const Copy = styled(Paragraph)`
 	line-height: 24px;
 	text-align: left;
 	color: ${(props) => props.theme.colors.silver};
-`;
-
-export const Subtext = styled(Paragraph)`
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 32px;
-	line-height: 120%;
-	text-align: center;
-	letter-spacing: 0.2px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;

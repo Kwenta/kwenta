@@ -1,6 +1,7 @@
-import { FC, ReactNode, SyntheticEvent } from 'react';
 import { DialogOverlay, DialogContent } from '@reach/dialog';
+import { FC, ReactNode, SyntheticEvent } from 'react';
 import styled from 'styled-components';
+
 import { HEADER_HEIGHT, zIndex } from 'constants/ui';
 
 type FullScreenModalProps = {
@@ -40,7 +41,7 @@ const StyledDialogContent = styled(DialogContent)`
 const Title = styled.div`
 	text-transform: capitalize;
 	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 24px;
 	line-height: 24px;
 	padding-bottom: 24px;

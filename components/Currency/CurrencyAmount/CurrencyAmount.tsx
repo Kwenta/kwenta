@@ -1,11 +1,11 @@
+import Wei, { wei } from '@synthetixio/wei';
+import { ethers } from 'ethers';
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
 import { formatCurrency, FormatCurrencyOptions } from 'utils/formatters/number';
 
 import { ContainerRowMixin } from '../common';
-import { ethers } from 'ethers';
-import Wei, { wei } from '@synthetixio/wei';
 
 type WeiSource = Wei | number | string | ethers.BigNumber;
 
@@ -56,7 +56,7 @@ const Container = styled.span`
 `;
 
 const Amount = styled.span`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 const TotalValue = styled.span`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};

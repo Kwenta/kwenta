@@ -1,26 +1,20 @@
 import { FC, useState, useMemo } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { TabPanel } from 'components/Tab';
+import styled from 'styled-components';
+
 import TabButton from 'components/Button/TabButton';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import { TabPanel } from 'components/Tab';
+
 import FuturesMarketsTable from '../FuturesMarketsTable';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import SpotMarketsTable from '../SpotMarketsTable';
 
-enum MarketsTab {
+export enum MarketsTab {
 	FUTURES = 'futures',
 	SPOT = 'spot',
 }
 
 const Markets: FC = () => {
 	const { t } = useTranslation();
-
-	const futuresMarketsQuery = useGetFuturesMarkets();
-	const futuresMarkets = futuresMarketsQuery?.data ?? [];
-
-	const exchangeRatesQuery = useExchangeRatesQuery();
-	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
@@ -54,11 +48,11 @@ const Markets: FC = () => {
 				))}
 			</TabButtonsContainer>
 			<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
-				<FuturesMarketsTable futuresMarkets={futuresMarkets} />
+				<FuturesMarketsTable />
 			</TabPanel>
 
 			<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
-				<SpotMarketsTable exchangeRates={exchangeRates} />
+				<SpotMarketsTable />
 			</TabPanel>
 		</>
 	);

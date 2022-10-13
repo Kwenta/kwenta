@@ -1,28 +1,29 @@
-import { FC, useMemo, ReactElement } from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
-import { Synths } from '@synthetixio/contracts-interface';
-import { CurrencyKey } from 'constants/currency';
-import Connector from 'containers/Connector';
-import values from 'lodash/values';
-import Currency from 'components/Currency';
-import { CellProps } from 'react-table';
-import Table from 'components/Table';
-import { walletAddressState } from 'store/wallet';
-import { SynthTradesExchangeResult } from '../Transactions/TradeHistory/TradeHistory';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import TimeDisplay from '../../futures/Trades/TimeDisplay';
-import { NO_VALUE } from 'constants/placeholder';
-import BlockExplorer from 'containers/BlockExplorer';
-import { ExternalLink } from 'styles/common';
-import LinkIcon from 'assets/svg/app/link.svg';
+import { SynthExchangeResult } from '@synthetixio/queries';
 import * as _ from 'lodash/fp';
-import { isFiatCurrency } from 'utils/currencies';
-import useGetWalletTrades from 'queries/synths/useGetWalletTrades';
-import { GridDivCenteredRow } from 'styles/common';
+import values from 'lodash/values';
 import Link from 'next/link';
+import { FC, useMemo, ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
+import { CellProps } from 'react-table';
+import styled from 'styled-components';
+
+import LinkIcon from 'assets/svg/app/link.svg';
+import Currency from 'components/Currency';
+import Table, { TableNoResults } from 'components/Table';
+import { CurrencyKey } from 'constants/currency';
+import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
+import BlockExplorer from 'containers/BlockExplorer';
+import Connector from 'containers/Connector';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useGetWalletTrades from 'queries/synths/useGetWalletTrades';
+import { ExternalLink } from 'styles/common';
+
+import TimeDisplay from '../../futures/Trades/TimeDisplay';
+
+interface SynthTradesExchangeResult extends SynthExchangeResult {
+	hash: string;
+}
 
 type WalletTradesExchangeResult = Omit<SynthTradesExchangeResult, 'timestamp'> & {
 	timestamp: number;
@@ -30,12 +31,10 @@ type WalletTradesExchangeResult = Omit<SynthTradesExchangeResult, 'timestamp'> &
 
 const SpotHistoryTable: FC = () => {
 	const { t } = useTranslation();
-	const walletAddress = useRecoilValue(walletAddressState);
-
+	const { network, walletAddress, synthsMap } = Connector.useContainer();
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const walletTradesQuery = useGetWalletTrades(walletAddress!);
-	const { synthsMap } = Connector.useContainer();
 
 	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
 	const trades = useMemo(() => {
@@ -57,20 +56,20 @@ const SpotHistoryTable: FC = () => {
 	);
 
 	const conditionalRender = <T,>(prop: T, children: ReactElement): ReactElement =>
-		_.isNil(prop) ? <DefaultCell>{NO_VALUE}</DefaultCell> : children;
+		_.isNil(prop) ? <p>{NO_VALUE}</p> : children;
 
 	return (
 		<TableContainer>
 			<StyledTable
 				data={filteredHistoricalTrades}
-				showPagination={true}
+				showPagination
 				isLoading={walletTradesQuery.isLoading}
 				highlightRowsOnHover
 				noResultsMessage={
 					<TableNoResults>
-						{t('dashboard.overview.spot-history-table.no-trade-history')}
+						{t('dashboard.history.spot-history-table.no-trade-history')}
 						<Link href={ROUTES.Exchange.Home}>
-							<div>{t('dashboard.overview.spot-history-table.no-trade-history-link')}</div>
+							<div>{t('dashboard.history.spot-history-table.no-trade-history-link')}</div>
 						</Link>
 					</TableNoResults>
 				}
@@ -83,7 +82,7 @@ const SpotHistoryTable: FC = () => {
 				columns={[
 					{
 						Header: (
-							<TableHeader>{t('dashboard.overview.spot-history-table.date-time')}</TableHeader>
+							<TableHeader>{t('dashboard.history.spot-history-table.date-time')}</TableHeader>
 						),
 						accessor: 'dateTime',
 						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {
@@ -97,7 +96,7 @@ const SpotHistoryTable: FC = () => {
 						width: 190,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.overview.spot-history-table.from')}</TableHeader>,
+						Header: <TableHeader>{t('dashboard.history.spot-history-table.from')}</TableHeader>,
 						accessor: 'fromAmount',
 						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {
 							return conditionalRender(
@@ -114,7 +113,7 @@ const SpotHistoryTable: FC = () => {
 
 									<StyledText>
 										<Currency.Amount
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											amount={cellProps.row.original.fromAmount}
 											totalValue={0}
 											conversionRate={selectPriceCurrencyRate}
@@ -127,7 +126,7 @@ const SpotHistoryTable: FC = () => {
 						width: 190,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.overview.spot-history-table.to')}</TableHeader>,
+						Header: <TableHeader>{t('dashboard.history.spot-history-table.to')}</TableHeader>,
 						accessor: 'toAmount',
 						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {
 							return conditionalRender(
@@ -144,7 +143,7 @@ const SpotHistoryTable: FC = () => {
 
 									<StyledText>
 										<Currency.Amount
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											amount={cellProps.row.original.toAmount}
 											totalValue={0}
 											conversionRate={selectPriceCurrencyRate}
@@ -158,7 +157,7 @@ const SpotHistoryTable: FC = () => {
 					},
 					{
 						Header: (
-							<TableHeader>{t('dashboard.overview.spot-history-table.usd-value')}</TableHeader>
+							<TableHeader>{t('dashboard.history.spot-history-table.usd-value')}</TableHeader>
 						),
 						accessor: 'amount',
 						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {
@@ -170,17 +169,10 @@ const SpotHistoryTable: FC = () => {
 									price={cellProps.row.original.toAmountInUSD}
 									sign={selectedPriceCurrency.sign}
 									conversionRate={selectPriceCurrencyRate}
-									formatOptions={
-										isFiatCurrency(currencyKey)
-											? {
-													currencyKey: undefined,
-													sign: selectedPriceCurrency.sign,
-											  }
-											: {
-													currencyKey: selectedPriceCurrency.sign,
-													sign: undefined,
-											  }
-									}
+									formatOptions={{
+										currencyKey: undefined,
+										sign: selectedPriceCurrency.sign,
+									}}
 								/>
 							);
 						},
@@ -189,9 +181,9 @@ const SpotHistoryTable: FC = () => {
 					{
 						id: 'link',
 						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) =>
-							blockExplorerInstance != null && cellProps.row.original.hash ? (
+							network != null && cellProps.row.original.hash ? (
 								<StyledExternalLink
-									href={blockExplorerInstance.txLink(cellProps.row.original.hash)}
+									href={`${blockExplorerInstance?.txLink(cellProps.row.original.hash)}`}
 								>
 									<StyledLinkIcon />
 								</StyledExternalLink>
@@ -206,8 +198,6 @@ const SpotHistoryTable: FC = () => {
 		</TableContainer>
 	);
 };
-
-const DefaultCell = styled.p``;
 
 const StyledExternalLink = styled(ExternalLink)`
 	margin-left: auto;
@@ -261,23 +251,6 @@ const StyledText = styled.div`
 	grid-column: 2;
 	grid-row: 1;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
-`;
-
-const TableNoResults = styled(GridDivCenteredRow)`
-	padding: 50px 0;
-	justify-content: center;
-	margin-top: -2px;
-	justify-items: center;
-	grid-gap: 10px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	font-size: 20px;
-	font-family: ${(props) => props.theme.fonts.bold};
-	div {
-		text-decoration: underline;
-		cursor: pointer;
-		font-size: 16px;
-		font-family: ${(props) => props.theme.fonts.regular};
-	}
 `;
 
 const SynthContainer = styled.div`

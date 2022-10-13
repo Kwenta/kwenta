@@ -1,19 +1,24 @@
-import { createContainer } from 'unstated-next';
+import {
+	TransactionStatusData,
+	TransactionNotifier as BaseTN,
+} from '@synthetixio/transaction-notifier';
+import { useMemo } from 'react';
 import { toast } from 'react-toastify';
-import { TransactionStatusData } from '@synthetixio/transaction-notifier';
-
-import Connector from 'containers/Connector';
-import BlockExplorer from 'containers/BlockExplorer';
+import { createContainer } from 'unstated-next';
 
 import {
 	NotificationSuccess,
 	NotificationPending,
 	NotificationError,
 } from 'components/TransactionNotification';
+import BlockExplorer from 'containers/BlockExplorer';
+import Connector from 'containers/Connector';
 
 const useTransactionNotifier = () => {
-	const { transactionNotifier } = Connector.useContainer();
+	const { provider } = Connector.useContainer();
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
+
+	const transactionNotifier = useMemo(() => new BaseTN(provider), [provider]);
 
 	const monitorTransaction = ({
 		txHash,

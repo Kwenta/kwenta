@@ -1,5 +1,5 @@
-import { useState, useEffect, DependencyList, useCallback } from 'react';
 import debounce from 'lodash/debounce';
+import { useState, useEffect, DependencyList, useCallback } from 'react';
 
 // source: https://github.com/SevenOutman/use-debounced-memo
 

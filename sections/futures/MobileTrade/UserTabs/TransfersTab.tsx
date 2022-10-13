@@ -1,14 +1,14 @@
 import React from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { currentMarketState } from 'store/futures';
+import styled from 'styled-components';
 
+import Table, { TableNoResults } from 'components/Table';
 import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
-import { GridDivCenteredRow } from 'styles/common';
-import Table from 'components/Table';
+import { currentMarketState } from 'store/futures';
 import { timePresentation } from 'utils/formatters/date';
-import { SectionHeader } from '../common';
+
+import { SectionHeader, SectionTitle } from '../common';
 
 const TransfersTab: React.FC = () => {
 	const marketAsset = useRecoilValue(currentMarketState);
@@ -26,9 +26,11 @@ const TransfersTab: React.FC = () => {
 
 	return (
 		<div>
-			<SectionHeader>Transfers</SectionHeader>
+			<SectionHeader>
+				<SectionTitle>Transfers</SectionTitle>
+			</SectionHeader>
 
-			<StyledTable
+			<Table
 				highlightRowsOnHover
 				columns={[
 					{
@@ -78,16 +80,12 @@ const TransfersTab: React.FC = () => {
 						</TableNoResults>
 					) : undefined
 				}
-				showPagination={true}
+				showPagination
 				pageSize={5}
 			/>
 		</div>
 	);
 };
-
-const StyledTable = styled(Table)`
-	/* margin-top: 20px; */
-`;
 
 const DefaultCell = styled.p`
 	color: ${(props) => props.theme.colors.common.primaryWhite};
@@ -113,14 +111,6 @@ const StyledAmountCell = styled(DefaultCell)<{ isPositive: boolean }>`
 const StyledTableHeader = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
 	text-transform: capitalize;
-`;
-
-const TableNoResults = styled(GridDivCenteredRow)`
-	padding: 50px 0;
-	justify-content: center;
-	background-color: transparent;
-	margin-top: -2px;
-	justify-items: center;
 `;
 
 export default TransfersTab;

@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { UseQueryOptions, useQuery } from 'react-query';
 import keyBy from 'lodash/keyBy';
+import { UseQueryOptions, useQuery } from 'react-query';
 
 import QUERY_KEYS from 'constants/queryKeys';
 

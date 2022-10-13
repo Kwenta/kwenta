@@ -1,5 +1,6 @@
 import { ChangeEvent, FC } from 'react';
 import styled from 'styled-components';
+
 import Input from './Input';
 
 type CustomNumericInputProps = {

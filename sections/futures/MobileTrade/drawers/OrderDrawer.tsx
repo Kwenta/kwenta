@@ -1,44 +1,62 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
-import { formatCurrency } from 'utils/formatters/number';
-import { getDisplayAsset } from 'utils/futures';
-import BaseDrawer from './BaseDrawer';
-import { PositionSide } from 'sections/futures/types';
 import Button from 'components/Button';
+import { FuturesOrder, PositionSide } from 'queries/futures/types';
+import { getDisplayAsset } from 'utils/futures';
+
+import BaseDrawer from './BaseDrawer';
 
 type OrderDrawerProps = {
 	open: boolean;
-	order: any;
+	order: FuturesOrder | undefined;
 	closeDrawer(): void;
-	setAction(action: 'execute' | 'cancel'): void;
+	onExecute(): void;
+	onCancel(order: FuturesOrder | undefined): void;
 };
 
-const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer, setAction }) => {
+const OrderDrawer: React.FC<OrderDrawerProps> = ({
+	open,
+	order,
+	closeDrawer,
+	onCancel,
+	onExecute,
+}) => {
+	const { t } = useTranslation();
+
 	const items = React.useMemo(() => {
-		if (!order) return [];
+		if (!order || !order.side) return [];
+
+		const price = order.targetPrice
+			? [
+					{
+						label: t('futures.market.user.open-orders.table.price'),
+						value: order.targetPriceTxt,
+					},
+			  ]
+			: [];
 
 		return [
 			{
-				label: 'Market',
+				label: t('futures.market.user.open-orders.table.market'),
 				value: getDisplayAsset(order.asset),
 			},
 			{
-				label: 'Side',
+				label: t('futures.market.user.open-orders.table.side'),
 				value: <StyledPositionSide side={order.side}>{order.side}</StyledPositionSide>,
 			},
 			{
-				label: 'Size',
-				value: formatCurrency(order.asset, order.size, {
-					sign: order.asset,
-				}),
+				label: t('futures.market.user.open-orders.table.size'),
+				value: order.sizeTxt,
 			},
+			...price,
 			{
-				label: 'Type',
+				label: t('futures.market.user.open-orders.table.type'),
 				value: order.orderType,
 			},
 		];
-	}, [order]);
+	}, [t, order]);
 
 	return (
 		<BaseDrawer
@@ -46,12 +64,12 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer, set
 			closeDrawer={closeDrawer}
 			items={items}
 			buttons={
-				<div>
+				<>
 					{order?.isExecutable && (
-						<ExecuteButton onClick={() => setAction('execute')}>Execute</ExecuteButton>
+						<ExecuteButton onClick={() => onExecute()}>Execute</ExecuteButton>
 					)}
-					<CancelOrderButton onClick={() => setAction('cancel')}>Cancel</CancelOrderButton>
-				</div>
+					<CancelOrderButton onClick={() => onCancel(order)}>Cancel</CancelOrderButton>
+				</>
 			}
 		/>
 	);
@@ -76,6 +94,7 @@ const StyledPositionSide = styled.div<{ side: PositionSide }>`
 const ExecuteButton = styled(Button)`
 	margin-right: 10px;
 	height: 41px;
+	flex: 1;
 `;
 
 const CancelOrderButton = styled(Button)`
@@ -87,6 +106,7 @@ const CancelOrderButton = styled(Button)`
 	border: 1px solid #ef6868;
 	box-shadow: none;
 	transition: all 0s ease-in-out;
+	flex: 1;
 
 	&:hover {
 		background: ${(props) => props.theme.colors.common.primaryRed};

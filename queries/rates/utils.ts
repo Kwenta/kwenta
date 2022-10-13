@@ -1,110 +1,76 @@
-import { RateUpdates, Candles, Prices } from './types';
-import Wei, { wei } from '@synthetixio/wei';
-import { RateUpdateResult } from '@synthetixio/queries/build/node/generated/exchangesSubgraphQueries';
-import { ethers } from 'ethers';
-import { Synths } from 'constants/currency';
-import { RATES_ENDPOINT_MAINNET, RATES_ENDPOINT_TESTNET } from './constants';
+import { NetworkId } from '@synthetixio/contracts-interface';
+import { wei } from '@synthetixio/wei';
+import { chain } from 'wagmi';
+
+import { DEBT_RATIO_UNIT } from 'constants/network';
 import { CandleResult } from 'queries/futures/subgraph';
-import { Candle } from './types';
-import { SYNTHS_ENDPOINT_MAIN } from 'queries/synths/constants';
+import { FuturesMarketKey } from 'utils/futures';
 
-export const getRatesEndpoint = (networkId: number): string => {
-	return networkId === 1 || networkId === 42
-		? SYNTHS_ENDPOINT_MAIN
-		: networkId === 10
-		? RATES_ENDPOINT_MAINNET
-		: networkId === 69
-		? RATES_ENDPOINT_TESTNET
-		: RATES_ENDPOINT_MAINNET;
+import { RATES_ENDPOINTS } from './constants';
+import { Candle, LatestRate } from './types';
+import { Prices } from './types';
+
+export const getRatesEndpoint = (networkId: NetworkId): string => {
+	return RATES_ENDPOINTS[networkId] || RATES_ENDPOINTS[chain.optimism.id];
 };
 
-export const getMinAndMaxRate = (rates: RateUpdateResult[]): [Wei, Wei] => {
-	if (rates.length === 0) return [wei(0), wei(0)];
-
-	return rates.reduce(
-		([minRate, maxRate], val) => {
-			const { rate } = val;
-			const newMax = rate.gt(maxRate) ? rate : maxRate;
-			const newMin = rate.lt(minRate) ? rate : minRate;
-
-			return [newMin, newMax];
-		},
-		[wei(ethers.constants.MaxUint256), wei(0)]
-	);
-};
-
-export const calculateRateChange = (rates: RateUpdateResult[]): Wei => {
-	if (rates.length < 2) return wei(0);
-
-	const newPrice = rates[0].rate;
-	const oldPrice = rates[rates.length - 1].rate;
-	const percentageChange = newPrice.sub(oldPrice).div(oldPrice);
-
-	return percentageChange;
-};
-
-export const mockHistoricalRates = (periodInHours: number, rate = 1, points = 100): RateUpdates => {
-	let now = Date.now();
-
-	const rates = [];
-
-	for (let i = 0; i < points; i++) {
-		rates.unshift({
-			timestamp: now,
-			rate,
-		});
-		now -= 1000 * 60 * periodInHours;
-	}
-
-	return rates;
-};
-
-export const mapLaggedDailyPrices = (prices: Candles): Prices => {
-	return prices.map((candle) => {
+export const mapLaggedDailyPrices = (rates: LatestRate[]): Prices => {
+	return rates.map((rate) => {
 		return {
-			synth: candle.synth,
-			price: Number(candle.average),
+			synth: rate.id,
+			price:
+				rate.id === 'DebtRatio'
+					? wei(rate.rate).div(DEBT_RATIO_UNIT).toNumber()
+					: wei(rate.rate).toNumber(),
 		};
 	});
 };
 
-const markets = [
-	Synths.sETH,
-	Synths.sBTC,
-	Synths.sLINK,
-	Synths.sSOL,
-	Synths.sAVAX,
-	Synths.sMATIC,
-	Synths.sAAVE,
-	Synths.sUNI,
-	Synths.sEUR,
-	'sXAU',
-	'sXAG',
-	'sWTI',
-	'sDYDX',
-	'sAPE',
-] as const;
+const markets = new Set<FuturesMarketKey>([
+	FuturesMarketKey.sETH,
+	FuturesMarketKey.sBTC,
+	FuturesMarketKey.sLINK,
+	FuturesMarketKey.sSOL,
+	FuturesMarketKey.sAVAX,
+	FuturesMarketKey.sMATIC,
+	FuturesMarketKey.sAAVE,
+	FuturesMarketKey.sUNI,
+	FuturesMarketKey.sEUR,
+	FuturesMarketKey.sXAU,
+	FuturesMarketKey.sXAG,
+	FuturesMarketKey.sDYDX,
+	FuturesMarketKey.sAPE,
+	FuturesMarketKey.sBNB,
+	FuturesMarketKey.sDOGE,
+	FuturesMarketKey.sDebtRatio,
+	FuturesMarketKey.sXMR,
+	FuturesMarketKey.sOP,
+]);
 
-const map: Record<typeof markets[number], string> = {
-	[Synths.sETH]: 'ethereum',
-	[Synths.sBTC]: 'bitcoin',
-	[Synths.sLINK]: 'chainlink',
-	[Synths.sSOL]: 'solana',
-	[Synths.sAVAX]: 'avalanche-2',
-	[Synths.sMATIC]: 'matic-network',
-	[Synths.sAAVE]: 'aave',
-	[Synths.sUNI]: 'uniswap',
-	[Synths.sEUR]: 'euro',
-	sXAU: '',
-	sXAG: '',
-	sWTI: '',
-	sDYDX: 'dydx',
-	sAPE: 'apecoin',
+const map: Record<FuturesMarketKey, string> = {
+	[FuturesMarketKey.sETH]: 'ethereum',
+	[FuturesMarketKey.sBTC]: 'bitcoin',
+	[FuturesMarketKey.sLINK]: 'chainlink',
+	[FuturesMarketKey.sSOL]: 'solana',
+	[FuturesMarketKey.sAVAX]: 'avalanche-2',
+	[FuturesMarketKey.sMATIC]: 'matic-network',
+	[FuturesMarketKey.sAAVE]: 'aave',
+	[FuturesMarketKey.sUNI]: 'uniswap',
+	[FuturesMarketKey.sEUR]: 'euro',
+	[FuturesMarketKey.sXAU]: '',
+	[FuturesMarketKey.sXAG]: '',
+	[FuturesMarketKey.sDYDX]: 'dydx',
+	[FuturesMarketKey.sAPE]: 'apecoin',
+	[FuturesMarketKey.sDOGE]: 'dogecoin',
+	[FuturesMarketKey.sBNB]: 'binancecoin',
+	[FuturesMarketKey.sDebtRatio]: '',
+	[FuturesMarketKey.sXMR]: 'monero',
+	[FuturesMarketKey.sOP]: 'optimism',
 };
 
-export const synthToCoingeckoPriceId = (synth: any) => {
-	if (markets.includes(synth)) {
-		return map[synth as typeof markets[number]];
+export const synthToCoingeckoPriceId = (marketKey: FuturesMarketKey) => {
+	if (markets.has(marketKey)) {
+		return map[marketKey];
 	} else {
 		return 'ethereum';
 	}
@@ -115,10 +81,10 @@ export const mapCandles = (candles: CandleResult[]): Candle[] => {
 		return {
 			id: id,
 			synth: synth,
-			open: open.toNumber(),
-			high: high.toNumber(),
-			low: low.toNumber(),
-			close: close.toNumber(),
+			open: synth === 'DebtRatio' ? open.div(DEBT_RATIO_UNIT).toNumber() : open.toNumber(),
+			high: synth === 'DebtRatio' ? high.div(DEBT_RATIO_UNIT).toNumber() : high.toNumber(),
+			low: synth === 'DebtRatio' ? low.div(DEBT_RATIO_UNIT).toNumber() : low.toNumber(),
+			close: synth === 'DebtRatio' ? close.div(DEBT_RATIO_UNIT).toNumber() : close.toNumber(),
 			timestamp: timestamp.toNumber(),
 		};
 	});
@@ -129,11 +95,11 @@ export const mapPriceChart = (candles: CandleResult[]): Candle[] => {
 		return {
 			id: id,
 			synth: synth,
-			open: open.toNumber(),
-			high: high.toNumber(),
-			low: low.toNumber(),
-			close: close.toNumber(),
-			average: average.toNumber(),
+			open: synth === 'DebtRatio' ? open.div(DEBT_RATIO_UNIT).toNumber() : open.toNumber(),
+			high: synth === 'DebtRatio' ? high.div(DEBT_RATIO_UNIT).toNumber() : high.toNumber(),
+			low: synth === 'DebtRatio' ? low.div(DEBT_RATIO_UNIT).toNumber() : low.toNumber(),
+			close: synth === 'DebtRatio' ? close.div(DEBT_RATIO_UNIT).toNumber() : close.toNumber(),
+			average: synth === 'DebtRatio' ? average.div(DEBT_RATIO_UNIT).toNumber() : average.toNumber(),
 			timestamp: timestamp.toNumber(),
 		};
 	});

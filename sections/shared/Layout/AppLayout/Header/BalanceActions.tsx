@@ -1,21 +1,23 @@
-import useSynthetixQueries from '@synthetixio/queries';
+import { useRouter } from 'next/router';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { components } from 'react-select';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import styled, { useTheme } from 'styled-components';
+
 import Button from 'components/Button';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Select from 'components/Select';
-import { Synths } from 'constants/currency';
-import Connector from 'containers/Connector';
-import { useRouter } from 'next/router';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
-import { useEffect, useState, FC } from 'react';
-import { useTranslation } from 'react-i18next';
-import { components } from 'react-select';
-import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
-import styled, { useTheme } from 'styled-components';
+import { FuturesAccountTypes, FuturesPosition } from 'queries/futures/types';
+import {
+	positionsState,
+	balancesState,
+	portfolioState,
+	futuresAccountTypeState,
+} from 'store/futures';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
-import { getDisplayAsset, getMarketKey } from 'utils/futures';
+import { zeroBN, formatDollars } from 'utils/formatters/number';
+import { getMarketName, MarketKeyByAsset } from 'utils/futures';
 
 type ReactSelectOptionProps = {
 	label: string;
@@ -29,55 +31,47 @@ const BalanceActions: FC = () => {
 	const { t } = useTranslation();
 	const theme = useTheme();
 	const router = useRouter();
-	const { network } = Connector.useContainer();
 
-	const walletAddress = useRecoilValue(walletAddressState);
-	const { useSynthsBalancesQuery } = useSynthetixQueries();
-	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
-	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
+	const positions = useRecoilValue(positionsState);
+	const setFuturesAccountType = useSetRecoilState(futuresAccountTypeState);
+	const portfolio = useRecoilValue(portfolioState);
+	const { susdWalletBalance } = useRecoilValue(balancesState);
 
-	const futuresMarketsQuery = useGetFuturesMarkets();
-	const futuresMarkets = futuresMarketsQuery?.data ?? [];
-	const futuresPositionQuery = useGetFuturesPositionForMarkets(
-		futuresMarkets.map(({ asset }) => getMarketKey(asset, network.id))
-	);
-	const futuresPositions = futuresPositionQuery?.data ?? [];
-
-	const accessiblePositions = futuresPositions.filter((position) =>
-		position.remainingMargin.gt(zeroBN)
-	);
-
-	const totalRemainingMargin = accessiblePositions.reduce(
-		(prev, position) => prev.add(position.remainingMargin),
-		zeroBN
-	);
-
-	const setMarketConfig = (asset: string): ReactSelectOptionProps => {
-		const remainingMargin =
-			accessiblePositions.find((posittion) => posittion.asset === asset)?.remainingMargin ?? zeroBN;
-
-		const marketKey = getMarketKey(asset, network.id);
-
-		return {
-			label: `${getDisplayAsset(asset)}-PERP`,
-			synthIcon: marketKey,
-			marketRemainingMargin: formatCurrency(Synths.sUSD, remainingMargin, { sign: '$' }),
-			onClick: () => router.push(`/market/${asset}`),
-		};
-	};
-
-	const OPTIONS = [
-		{
-			label: 'header.balance.total-margin-label',
-			totalAvailableMargin: formatCurrency(Synths.sUSD, totalRemainingMargin, { sign: '$' }),
-			options: accessiblePositions.map((market) => setMarketConfig(market.asset)),
+	const setMarketConfig = useCallback(
+		(position: FuturesPosition, accountType: FuturesAccountTypes): ReactSelectOptionProps => {
+			return {
+				label: getMarketName(position.asset),
+				synthIcon: MarketKeyByAsset[position.asset],
+				marketRemainingMargin: formatDollars(position.remainingMargin),
+				onClick: () => {
+					setFuturesAccountType(accountType);
+					return router.push(`/market/?asset=${position.asset}&account_type=${accountType}`);
+				},
+			};
 		},
-	];
+		[router, setFuturesAccountType]
+	);
 
-	const OptionsGroupLabel: FC<{
-		label: string;
-		totalAvailableMargin?: string;
-	}> = ({ label, totalAvailableMargin }) => {
+	const OPTIONS = useMemo(() => {
+		const isolatedPositions = positions.isolated_margin
+			.filter((position) => position.remainingMargin.gt(zeroBN))
+			.map((position) => setMarketConfig(position, FuturesAccountTypes.ISOLATED_MARGIN));
+		const crossPositions = positions.cross_margin
+			.filter((position) => position.remainingMargin.gt(zeroBN))
+			.map((position) => setMarketConfig(position, FuturesAccountTypes.CROSS_MARGIN));
+		return [
+			{
+				label: 'header.balance.total-margin-label',
+				totalAvailableMargin: formatDollars(portfolio.total),
+				options: [...isolatedPositions, ...crossPositions],
+			},
+		];
+	}, [positions, setMarketConfig, portfolio]);
+
+	const OptionsGroupLabel: FC<{ label: string; totalAvailableMargin?: string }> = ({
+		label,
+		totalAvailableMargin,
+	}) => {
 		return (
 			<FlexDivRow>
 				<Container>{t(label)}</Container>
@@ -102,7 +96,7 @@ const BalanceActions: FC = () => {
 	);
 
 	const GetUsdButton = () => (
-		<StyledButton textTransform="none" onClick={() => router.push(`/exchange/sUSD`)}>
+		<StyledButton textTransform="none" onClick={() => router.push(`/exchange/?quote=sUSD`)}>
 			{t('header.balance.get-more-susd')}
 		</StyledButton>
 	);
@@ -124,8 +118,8 @@ const BalanceActions: FC = () => {
 	};
 
 	useEffect(() => {
-		setBalanceLabel(formatCurrency(Synths.sUSD, sUSDBalance, { sign: '$' }));
-	}, [balanceLabel, sUSDBalance]);
+		setBalanceLabel(formatDollars(susdWalletBalance, { sign: '$' }));
+	}, [balanceLabel, susdWalletBalance]);
 
 	if (!balanceLabel) {
 		return null;
@@ -133,13 +127,13 @@ const BalanceActions: FC = () => {
 
 	return (
 		<Container>
-			{sUSDBalance.eq(zeroBN) && accessiblePositions.length === 0 ? (
+			{susdWalletBalance.eq(zeroBN) && OPTIONS.length === 0 ? (
 				<StyledWidgetButton
 					textTransform="none"
-					onClick={() => router.push(`/exchange/sUSD`)}
-					noOutline={true}
+					onClick={() => router.push(`/exchange/?quote=sUSD`)}
+					noOutline
 				>
-					<StyledCurrencyIcon currencyKey={Synths.sUSD} width="20px" height="20px" />
+					<StyledCurrencyIcon currencyKey={'sUSD'} width="20px" height="20px" />
 					{t('header.balance.get-susd')}
 				</StyledWidgetButton>
 			) : (
@@ -148,7 +142,7 @@ const BalanceActions: FC = () => {
 					formatGroupLabel={OptionsGroupLabel}
 					controlHeight={41}
 					options={OPTIONS}
-					value={{ label: balanceLabel, synthIcon: Synths.sUSD }}
+					value={{ label: balanceLabel, synthIcon: 'sUSD' }}
 					menuWidth={290}
 					maxMenuHeight={500}
 					optionPadding={'0px'} //override default padding to 0
@@ -156,11 +150,11 @@ const BalanceActions: FC = () => {
 					components={{
 						Group,
 						NoOptionsMessage,
-						DropdownIndicator: () => null,
-						IndicatorSeparator: () => null,
+						DropdownIndicator: undefined,
+						IndicatorSeparator: undefined,
 					}}
 					isSearchable={false}
-					noOutline={true}
+					variant="flat"
 				></BalanceSelect>
 			)}
 		</Container>
@@ -183,7 +177,7 @@ const BalanceSelect = styled(Select)<{ value: { label: string } }>`
 		padding: 20px;
 
 		.react-select__group-heading {
-			color: ${(props) => props.theme.colors.selectedTheme.button.text};
+			color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 			font-size: 12px;
 			padding: 0;
 			margin-bottom: 15px;
@@ -218,8 +212,9 @@ const StyledLabel = styled.div<{ noPadding: boolean }>`
 `;
 
 const LabelContainer = styled(FlexDivRowCentered)`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 13px;
+	line-height: 13px;
 	padding: 10px;
 	> div {
 		align-items: center;
@@ -235,6 +230,7 @@ const StyledButton = styled(Button)`
 `;
 
 const StyledWidgetButton = styled(Button)`
+	height: 41px;
 	font-size: 13px;
 	font-family: ${(props) => props.theme.fonts.mono};
 	padding: 10px;

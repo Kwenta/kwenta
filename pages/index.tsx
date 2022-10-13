@@ -1,16 +1,16 @@
-import { FC } from 'react';
-import Head from 'next/head';
 import dynamic from 'next/dynamic';
+import Head from 'next/head';
+import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import Hero from 'sections/homepage/Hero';
-import HomeLayout from 'sections/shared/Layout/HomeLayout';
-import Features from 'sections/homepage/Features';
-import ShortList from 'sections/homepage/ShortList';
 import Earning from 'sections/homepage/Earning';
-import Learn from 'sections/homepage/Learn';
+import Features from 'sections/homepage/Features';
+import Hero from 'sections/homepage/Hero';
+import ShortList from 'sections/homepage/ShortList';
 import TradeNow from 'sections/homepage/TradeNow';
+import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
+import HomeLayout from 'sections/shared/Layout/HomeLayout';
 import media from 'styles/media';
 
 type AppLayoutProps = {
@@ -37,8 +37,8 @@ const HomePage: HomePageComponent = () => {
 					<ShortList />
 					<Earning />
 					<Features />
-					<Learn />
 					<TradeNow />
+					<GitHashID />
 				</Container>
 			</HomeLayout>
 		</>

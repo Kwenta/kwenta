@@ -1,86 +1,161 @@
-import React from 'react';
+import { debounce } from 'lodash';
+import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import { Synths } from 'constants/currency';
+import SwitchAssetArrows from 'assets/svg/futures/switch-arrows.svg';
 import CustomInput from 'components/Input/CustomInput';
-import { FlexDivRow } from 'styles/common';
+import InputTitle from 'components/Input/InputTitle';
+import { useFuturesContext } from 'contexts/FuturesContext';
 import {
-	currentMarketState,
-	maxLeverageState,
+	futuresAccountTypeState,
+	simulatedTradeState,
 	positionState,
-	tradeSizeState,
-	tradeSizeSUSDState,
+	futuresTradeInputsState,
+	orderTypeState,
+	marketAssetRateState,
+	futuresOrderPriceState,
+	marketKeyState,
+	crossMarginAccountOverviewState,
 } from 'store/futures';
-import { useRecoilValue } from 'recoil';
-import { zeroBN } from 'utils/formatters/number';
+import { FlexDivRow } from 'styles/common';
+import { floorNumber, isZero, zeroBN } from 'utils/formatters/number';
+import { getDisplayAsset } from 'utils/futures';
+
+import OrderSizeSlider from './OrderSizeSlider';
 
 type OrderSizingProps = {
 	disabled?: boolean;
-	onAmountChange: (value: string) => void;
-	onAmountSUSDChange: (value: string) => void;
-	onLeverageChange: (value: string) => void;
 };
 
-const OrderSizing: React.FC<OrderSizingProps> = ({
-	disabled,
-	onAmountChange,
-	onAmountSUSDChange,
-	onLeverageChange,
-}) => {
-	const tradeSize = useRecoilValue(tradeSizeState);
-	const tradeSizeSUSD = useRecoilValue(tradeSizeSUSDState);
+const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
+	const { onTradeAmountChange, maxUsdInputAmount } = useFuturesContext();
+
+	const { nativeSize, susdSize } = useRecoilValue(futuresTradeInputsState);
+	const simulatedTrade = useRecoilValue(simulatedTradeState);
+
+	const { freeMargin: freeCrossMargin } = useRecoilValue(crossMarginAccountOverviewState);
 	const position = useRecoilValue(positionState);
-	const marketAsset = useRecoilValue(currentMarketState);
-	const maxLeverage = useRecoilValue(maxLeverageState);
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
+	const orderType = useRecoilValue(orderTypeState);
+	const assetPrice = useRecoilValue(marketAssetRateState);
+	const orderPrice = useRecoilValue(futuresOrderPriceState);
+	const marketKey = useRecoilValue(marketKeyState);
+
+	const [usdValue, setUsdValue] = useState(susdSize);
+	const [assetValue, setAssetValue] = useState(nativeSize);
+	const [assetInputType, setAssetInputType] = useState<'usd' | 'native'>('usd');
+
+	const tradePrice = useMemo(() => orderPrice || assetPrice, [orderPrice, assetPrice]);
+	const maxNativeValue = useMemo(
+		() => (!isZero(tradePrice) ? maxUsdInputAmount.div(tradePrice) : zeroBN),
+		[tradePrice, maxUsdInputAmount]
+	);
+
+	useEffect(
+		() => {
+			if (simulatedTrade && simulatedTrade.susdSize !== susdSize) {
+				setUsdValue(simulatedTrade.susdSize);
+			} else if (susdSize !== usdValue) {
+				setUsdValue(susdSize);
+			}
+
+			if (simulatedTrade && simulatedTrade.nativeSize !== nativeSize) {
+				setAssetValue(simulatedTrade.nativeSize);
+			} else if (assetValue !== nativeSize) {
+				setAssetValue(nativeSize);
+			}
+		},
+		// Don't want to react to internal value changes
+		// eslint-disable-next-line
+		[
+			susdSize,
+			nativeSize,
+			simulatedTrade?.susdSize,
+			simulatedTrade?.nativeSize,
+			setUsdValue,
+			setAssetValue,
+		]
+	);
 
 	const handleSetMax = () => {
-		const maxOrderSizeUSDValue = Number(
-			maxLeverage.mul(position?.remainingMargin ?? zeroBN)
-		).toFixed(0);
-		onAmountSUSDChange(maxOrderSizeUSDValue);
-		onLeverageChange(Number(maxLeverage).toString().substring(0, 4));
+		if (assetInputType === 'usd') {
+			onTradeAmountChange(String(floorNumber(maxUsdInputAmount)), 'usd');
+		} else {
+			onTradeAmountChange(String(floorNumber(maxNativeValue)), 'native');
+		}
 	};
 
-	const isDisabled = React.useMemo(() => {
-		return position?.remainingMargin.lte(0) || disabled;
-	}, [position, disabled]);
+	const handleSetPositionSize = () => {
+		onTradeAmountChange(position?.position?.size.toString() ?? '0', 'native');
+	};
+
+	// eslint-disable-next-line
+	const debounceOnChangeValue = useCallback(
+		debounce((value, assetType) => {
+			onTradeAmountChange(value, assetType);
+		}, 500),
+		[debounce, onTradeAmountChange]
+	);
+
+	useEffect(() => {
+		return () => debounceOnChangeValue?.cancel();
+	}, [debounceOnChangeValue]);
+
+	const onChangeValue = (_: ChangeEvent<HTMLInputElement>, v: string) => {
+		setUsdValue(v);
+		debounceOnChangeValue(v, assetInputType);
+	};
+
+	const isDisabled = useMemo(() => {
+		const remaining =
+			selectedAccountType === 'isolated_margin'
+				? position?.remainingMargin || zeroBN
+				: freeCrossMargin;
+		return remaining.lte(0) || disabled;
+	}, [position?.remainingMargin, disabled, selectedAccountType, freeCrossMargin]);
+
+	const showPosSizeHelper =
+		position?.position?.size && (orderType === 'limit' || orderType === 'stop');
+
+	const invalid =
+		(assetInputType === 'usd' && usdValue !== '' && maxUsdInputAmount.lte(usdValue || 0)) ||
+		(assetInputType === 'native' && assetValue !== '' && maxNativeValue.lte(assetValue || 0));
 
 	return (
-		<OrderSizingContainer>
-			<OrderSizingRow>
-				<OrderSizingTitle>
-					Amount&nbsp; —<span>&nbsp; Set order size</span>
-				</OrderSizingTitle>
-				<MaxButton onClick={handleSetMax}>Max</MaxButton>
-			</OrderSizingRow>
+		<>
+			<OrderSizingContainer>
+				<OrderSizingRow>
+					<InputTitle>
+						Amount&nbsp; —<span>&nbsp; Set order size</span>
+					</InputTitle>
+					<InputHelpers>
+						<MaxButton onClick={handleSetMax}>Max</MaxButton>
+						{showPosSizeHelper && (
+							<MaxButton onClick={handleSetPositionSize}>Position Size</MaxButton>
+						)}
+					</InputHelpers>
+				</OrderSizingRow>
 
-			<CustomInput
-				disabled={isDisabled}
-				right={marketAsset || Synths.sUSD}
-				value={tradeSize}
-				placeholder="0.0"
-				onChange={(_, v) => onAmountChange(v)}
-				style={{
-					marginBottom: '-1px',
-					borderBottom: 'none',
-					borderBottomRightRadius: '0px',
-					borderBottomLeftRadius: '0px',
-				}}
-			/>
-
-			<CustomInput
-				dataTestId="set-order-size-amount-susd"
-				disabled={isDisabled}
-				right={Synths.sUSD}
-				value={tradeSizeSUSD}
-				placeholder="0.0"
-				onChange={(_, v) => onAmountSUSDChange(v)}
-				style={{
-					borderTopRightRadius: '0px',
-					borderTopLeftRadius: '0px',
-				}}
-			/>
-		</OrderSizingContainer>
+				<CustomInput
+					invalid={invalid}
+					dataTestId="set-order-size-amount-susd"
+					disabled={isDisabled}
+					right={
+						<InputButton
+							onClick={() => setAssetInputType(assetInputType === 'usd' ? 'native' : 'usd')}
+						>
+							{assetInputType === 'usd' ? 'sUSD' : getDisplayAsset(marketKey)}{' '}
+							<span>{<SwitchAssetArrows />}</span>
+						</InputButton>
+					}
+					value={assetInputType === 'usd' ? usdValue : assetValue}
+					placeholder="0.0"
+					onChange={onChangeValue}
+				/>
+			</OrderSizingContainer>
+			{selectedAccountType === 'cross_margin' && <OrderSizeSlider />}
+		</>
 	);
 };
 
@@ -89,20 +164,10 @@ const OrderSizingContainer = styled.div`
 	margin-bottom: 16px;
 `;
 
-const OrderSizingTitle = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	font-size: 13px;
-
-	span {
-		color: ${(props) => props.theme.colors.selectedTheme.gray};
-	}
-`;
-
 const OrderSizingRow = styled(FlexDivRow)`
 	width: 100%;
 	align-items: center;
 	margin-bottom: 8px;
-	padding: 0 14px;
 `;
 
 const MaxButton = styled.button`
@@ -113,6 +178,21 @@ const MaxButton = styled.button`
 	background-color: transparent;
 	border: none;
 	cursor: pointer;
+`;
+
+const InputButton = styled.button`
+	height: 22px;
+	padding: 4px 10px;
+	border: none;
+	background: transparent;
+	font-size: 16px;
+	line-height: 16px;
+	color: ${(props) => props.theme.colors.selectedTheme.text.label};
+	cursor: pointer;
+`;
+
+const InputHelpers = styled.div`
+	display: flex;
 `;
 
 export default OrderSizing;

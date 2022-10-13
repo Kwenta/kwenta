@@ -1,29 +1,38 @@
 import Wei, { wei } from '@synthetixio/wei';
-import { ethers, utils } from 'ethers';
+import BN from 'bn.js';
+import { BigNumber, ethers, utils } from 'ethers';
 
+import { CurrencyKey } from 'constants/currency';
 import {
 	DEFAULT_CRYPTO_DECIMALS,
 	DEFAULT_FIAT_DECIMALS,
 	DEFAULT_NUMBER_DECIMALS,
 } from 'constants/defaults';
-import { CurrencyKey } from 'constants/currency';
 import { isFiatCurrency } from 'utils/currencies';
+import logError from 'utils/logError';
 
 type WeiSource = Wei | number | string | ethers.BigNumber;
+
+type TruncatedOptions = {
+	truncation?: {
+		unit: string;
+		divisor: number;
+	};
+};
 
 export type FormatNumberOptions = {
 	minDecimals?: number;
 	maxDecimals?: number;
 	prefix?: string;
 	suffix?: string;
-};
+} & TruncatedOptions;
 
 export type FormatCurrencyOptions = {
 	minDecimals?: number;
 	maxDecimals?: number;
 	sign?: string;
 	currencyKey?: string;
-};
+} & TruncatedOptions;
 
 const DEFAULT_CURRENCY_DECIMALS = 2;
 export const SHORT_CRYPTO_CURRENCY_DECIMALS = 4;
@@ -32,6 +41,10 @@ export const LONG_CRYPTO_CURRENCY_DECIMALS = 8;
 export const getDecimalPlaces = (value: WeiSource) => (value.toString().split('.')[1] || '').length;
 
 export const zeroBN = wei(0);
+
+export const UNIT_BN = new BN('10').pow(new BN(18));
+export const UNIT_BIG_NUM = BigNumber.from('10').pow(18);
+export const ZERO_BIG_NUM = BigNumber.from('0');
 
 export const truncateNumbers = (value: WeiSource, maxDecimalDigits: number) => {
 	if (value.toString().includes('.')) {
@@ -69,12 +82,13 @@ export const commifyAndPadDecimals = (value: string, decimals: number) => {
 export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) => {
 	const prefix = options?.prefix;
 	const suffix = options?.suffix;
+	const truncation = options?.truncation;
 
 	let weiValue = wei(0);
 	try {
 		weiValue = wei(value);
 	} catch (e) {
-		console.error('***Error in formatNumber', e);
+		logError(`***Error in formatNumber ${e}`);
 	}
 
 	const isNegative = weiValue.lt(wei(0));
@@ -86,9 +100,16 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 		formattedValue.push(prefix);
 	}
 
-	const weiAsStringWithDecimals = weiValue
-		.abs()
-		.toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS);
+	let weiAsStringWithDecimals = truncation
+		? weiValue
+				.abs()
+				.div(truncation.divisor)
+				.toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS)
+		: weiValue.abs().toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS);
+
+	if (options?.maxDecimals || options?.maxDecimals === 0) {
+		weiAsStringWithDecimals = wei(weiAsStringWithDecimals).toString(options.maxDecimals);
+	}
 
 	const withCommas = commifyAndPadDecimals(
 		weiAsStringWithDecimals,
@@ -99,6 +120,10 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 
 	if (suffix) {
 		formattedValue.push(` ${suffix}`);
+	}
+
+	if (truncation) {
+		formattedValue.push(truncation.unit);
 	}
 
 	return formattedValue.join('');
@@ -118,6 +143,7 @@ export const formatFiatCurrency = (value: WeiSource, options?: FormatCurrencyOpt
 		suffix: options?.currencyKey,
 		minDecimals: options?.minDecimals ?? DEFAULT_FIAT_DECIMALS,
 		maxDecimals: options?.maxDecimals,
+		truncation: options?.truncation,
 	});
 
 export const formatCurrency = (
@@ -128,6 +154,9 @@ export const formatCurrency = (
 	isFiatCurrency(currencyKey as CurrencyKey)
 		? formatFiatCurrency(value, options)
 		: formatCryptoCurrency(value, options);
+
+export const formatDollars = (value: WeiSource, options?: FormatCurrencyOptions) =>
+	formatCurrency('sUSD', value, { sign: '$', ...options });
 
 export const formatPercent = (value: WeiSource, options?: { minDecimals: number }) => {
 	const decimals = options?.minDecimals ?? 2;
@@ -164,3 +193,48 @@ export function scale(input: Wei, decimalPlaces: number): Wei {
 }
 
 export const formatGwei = (wei: number) => wei / 1e8 / 10;
+
+export const divideDecimal = (x: BigNumber, y: BigNumber) => {
+	return x.mul(UNIT_BIG_NUM).div(y);
+};
+
+export const multiplyDecimal = (x: BigNumber, y: BigNumber) => {
+	return x.mul(y).div(UNIT_BIG_NUM);
+};
+
+export const weiFromWei = (weiAmount: WeiSource) => {
+	if (weiAmount instanceof Wei) {
+		const precisionDiff = 18 - weiAmount.p;
+		return wei(weiAmount.div(10 ** precisionDiff), 18, true);
+	} else {
+		return wei(weiAmount, 18, true);
+	}
+};
+
+export const suggestedDecimals = (value: WeiSource) => {
+	value = wei(value).toNumber();
+	if (value >= 10000) return 0;
+	if (value >= 1) return 2;
+	if (value >= 0.01) return 3;
+	if (value >= 0.001) return 4;
+	return 5;
+};
+
+export const floorNumber = (num: WeiSource, decimals?: number) => {
+	const precision = 10 ** (decimals ?? suggestedDecimals(num));
+	return Math.floor(Number(num) * precision) / precision;
+};
+
+export const ceilNumber = (num: WeiSource, decimals?: number) => {
+	const precision = 10 ** (decimals ?? suggestedDecimals(num));
+	return Math.ceil(Number(num) * precision) / precision;
+};
+
+// Converts to string but strips trailing zeros
+export const weiToString = (weiVal: Wei) => {
+	return String(parseFloat(weiVal.toString()));
+};
+
+export const isZero = (num: WeiSource) => {
+	return wei(num || 0).eq(0);
+};

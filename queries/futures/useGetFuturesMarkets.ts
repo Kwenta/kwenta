@@ -1,39 +1,46 @@
-import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
+import { useQuery, UseQueryOptions } from 'react-query';
+import { useRecoilState } from 'recoil';
+import { chain } from 'wagmi';
 
-import { appReadyState } from 'store/app';
-import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
-
-import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
-import { FuturesMarket } from './types';
-import { getMarketKey } from 'utils/futures';
-import { getReasonFromCode } from './utils';
-import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
-import { DEFAULT_NETWORK_ID } from 'constants/defaults';
 import ROUTES from 'constants/routes';
+import Connector from 'containers/Connector';
+import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
+import useIsL2 from 'hooks/useIsL2';
+import { futuresMarketsState } from 'store/futures';
+import { zeroBN } from 'utils/formatters/number';
+import {
+	FuturesMarketAsset,
+	getMarketName,
+	MarketKeyByAsset,
+	marketsForNetwork,
+} from 'utils/futures';
+
+import { FuturesMarket } from './types';
+import { getReasonFromCode } from './utils';
 
 const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const network = useRecoilValue(networkState);
-	const { synthetixjs: snxjs, defaultSynthetixjs } = Connector.useContainer();
+	const { network: activeChain, defaultSynthetixjs, l2Synthetixjs } = Connector.useContainer();
+
 	const homepage = window.location.pathname === ROUTES.Home.Root;
-	const synthetixjs = homepage ? defaultSynthetixjs : snxjs;
-	const networkId = homepage ? DEFAULT_NETWORK_ID : network.id;
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isL2 = useRecoilValue(isL2State);
-	const isReady = isAppReady && !!synthetixjs;
+	const isL2 = useIsL2();
+	const network = homepage || !isL2 ? chain.optimism : activeChain;
+	const synthetixjs = homepage || !isL2 ? l2Synthetixjs : defaultSynthetixjs;
+	const [, setFuturesMarkets] = useRecoilState(futuresMarketsState);
 
 	return useQuery<FuturesMarket[]>(
-		QUERY_KEYS.Futures.Markets(networkId),
+		QUERY_KEYS.Futures.Markets(network?.id as NetworkId),
 		async () => {
-			if (!homepage && isWalletConnected && !isL2) {
+			if (!synthetixjs) {
+				setFuturesMarkets([]);
 				return null;
 			}
+			const enabledMarkets = marketsForNetwork(network.id as NetworkId);
 
 			const {
-				contracts: { FuturesMarketData, SystemStatus },
+				contracts: { FuturesMarketData, FuturesMarketSettings, SystemStatus, ExchangeRates },
 				utils,
 			} = synthetixjs!;
 
@@ -42,15 +49,36 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 				FuturesMarketData.globals(),
 			]);
 
-			const { suspensions, reasons } = await SystemStatus.getFuturesMarketSuspensions(
-				markets.map((m: any) => {
-					const asset = utils.parseBytes32String(m.asset);
-					const marketKey = getMarketKey(asset, networkId);
-					return utils.formatBytes32String(marketKey);
-				})
+			const filteredMarkets = markets.filter((m: any) => {
+				const asset = utils.parseBytes32String(m.asset) as FuturesMarketAsset;
+				const market = enabledMarkets.find((market) => {
+					return asset === market.asset;
+				});
+				return !!market;
+			});
+
+			const assetKeys = filteredMarkets.map((m: any) => {
+				const asset = utils.parseBytes32String(m.asset) as FuturesMarketAsset;
+				return utils.formatBytes32String(MarketKeyByAsset[asset]);
+			});
+
+			const currentRoundIdPromises = Promise.all(
+				assetKeys.map((key: string) => ExchangeRates.getCurrentRoundId(key))
 			);
 
-			return markets.map(
+			const marketLimitPromises = Promise.all(
+				assetKeys.map((key: string) => FuturesMarketSettings.maxMarketValueUSD(key))
+			);
+
+			const systemStatusPromise = await SystemStatus.getFuturesMarketSuspensions(assetKeys);
+
+			const [currentRoundIds, marketLimits, { suspensions, reasons }] = await Promise.all([
+				currentRoundIdPromises,
+				marketLimitPromises,
+				systemStatusPromise,
+			]);
+
+			const futuresMarkets = filteredMarkets.map(
 				(
 					{
 						market,
@@ -64,28 +92,51 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 						price,
 					}: FuturesMarket,
 					i: number
-				) => ({
-					market: market,
-					asset: utils.parseBytes32String(asset),
+				): FuturesMarket => ({
+					market,
+					marketKey: MarketKeyByAsset[utils.parseBytes32String(asset) as FuturesMarketAsset],
+					marketName: getMarketName(utils.parseBytes32String(asset) as FuturesMarketAsset),
+					asset: utils.parseBytes32String(asset) as FuturesMarketAsset,
 					assetHex: asset,
-					currentFundingRate: wei(currentFundingRate).mul(-1),
+					currentFundingRate: wei(currentFundingRate).neg(),
+					currentRoundId: wei(currentRoundIds[i], 0),
 					feeRates: {
 						makerFee: wei(feeRates.makerFee),
 						takerFee: wei(feeRates.takerFee),
+						makerFeeNextPrice: wei(feeRates.makerFeeNextPrice),
+						takerFeeNextPrice: wei(feeRates.takerFeeNextPrice),
+					},
+					openInterest: {
+						shortPct: wei(marketSize).eq(0)
+							? 0
+							: wei(marketSize).sub(marketSkew).div('2').div(marketSize).toNumber(),
+						longPct: wei(marketSize).eq(0)
+							? 0
+							: wei(marketSize).add(marketSkew).div('2').div(marketSize).toNumber(),
+						shortUSD: wei(marketSize).eq(0)
+							? zeroBN
+							: wei(marketSize).sub(marketSkew).div('2').mul(price),
+						longUSD: wei(marketSize).eq(0)
+							? zeroBN
+							: wei(marketSize).add(marketSkew).div('2').mul(price),
 					},
 					marketDebt: wei(marketDebt),
 					marketSkew: wei(marketSkew),
 					maxLeverage: wei(maxLeverage),
 					marketSize: wei(marketSize),
+					marketLimit: wei(marketLimits[i]),
 					price: wei(price),
 					minInitialMargin: wei(globals.minInitialMargin),
+					keeperDeposit: wei(globals.minKeeperFee),
 					isSuspended: suspensions[i],
 					marketClosureReason: getReasonFromCode(reasons[i]) as FuturesClosureReason,
 				})
 			);
+			setFuturesMarkets(futuresMarkets);
+			return futuresMarkets;
 		},
 		{
-			enabled: !homepage && isWalletConnected ? isL2 && isReady : isReady,
+			enabled: !!synthetixjs,
 			refetchInterval: 15000,
 			...options,
 		}

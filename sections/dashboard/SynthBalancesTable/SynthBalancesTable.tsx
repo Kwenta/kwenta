@@ -1,26 +1,23 @@
-import { Rates, SynthBalance } from '@synthetixio/queries';
+import { CurrencyKey } from '@synthetixio/contracts-interface';
+import { SynthBalance } from '@synthetixio/queries';
+import Wei, { wei } from '@synthetixio/wei';
+import * as _ from 'lodash/fp';
 import { FC, ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps, Row } from 'react-table';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+
+import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
+import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import Table, { TableNoResults } from 'components/Table';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
-import Table from 'components/Table';
 import { Price } from 'queries/rates/types';
-import * as _ from 'lodash/fp';
-import { CurrencyKey, Synths } from '@synthetixio/contracts-interface';
-import Wei, { wei } from '@synthetixio/wei';
+import { balancesState, pastRatesState, ratesState } from 'store/futures';
 import { formatNumber, zeroBN } from 'utils/formatters/number';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
-import ChangePercent from 'components/ChangePercent';
-import { isEurForex } from 'utils/futures';
-import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-
-type SynthBalancesTableProps = {
-	exchangeRates: Rates | null;
-	synthBalances: SynthBalance[];
-};
+import { isDecimalFour } from 'utils/futures';
 
 type Cell = {
 	synth: CurrencyKey;
@@ -44,23 +41,19 @@ const calculatePriceChange = (current: Wei | null, past: Price | undefined) => {
 const conditionalRender = <T,>(prop: T, children: ReactElement): ReactElement =>
 	_.isNil(prop) ? <DefaultCell>{NO_VALUE}</DefaultCell> : children;
 
-const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
-	exchangeRates,
-	synthBalances,
-}: SynthBalancesTableProps) => {
+const SynthBalancesTable: FC = () => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
-
-	const synthNames = synthBalances.map(({ currencyKey }) => currencyKey);
-	const dailyPriceChangesQuery = useLaggedDailyPrice(synthNames);
+	const pastRates = useRecoilValue(pastRatesState);
+	const exchangeRates = useRecoilValue(ratesState);
+	const { balances } = useRecoilValue(balancesState);
 
 	let data = useMemo(() => {
-		const dailyPriceChanges: Price[] = dailyPriceChangesQuery?.data ?? [];
-		return synthBalances.map((synthBalance: SynthBalance) => {
+		return balances.map((synthBalance: SynthBalance) => {
 			const { currencyKey, balance, usdBalance } = synthBalance;
 
 			const price = exchangeRates && exchangeRates[currencyKey];
-			const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === currencyKey);
+			const pastPrice = pastRates.find((price: Price) => price.synth === currencyKey);
 
 			const description = synthsMap != null ? synthsMap[currencyKey]?.description : '';
 			return {
@@ -72,16 +65,21 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 				priceChange: calculatePriceChange(price, pastPrice),
 			};
 		});
-	}, [dailyPriceChangesQuery?.data, exchangeRates, synthBalances, synthsMap]);
+	}, [pastRates, exchangeRates, balances, synthsMap]);
 
 	return (
 		<>
 			<MobileHiddenView>
 				<TableContainer>
-					<StyledTable
+					<Table
 						data={data}
 						showPagination
 						highlightRowsOnHover
+						noResultsMessage={
+							<TableNoResults>
+								{t('dashboard.overview.synth-balances-table.no-result')}
+							</TableNoResults>
+						}
 						columns={[
 							{
 								Header: (
@@ -141,7 +139,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 									return conditionalRender<Cell['usdBalance']>(
 										cellProps.row.original.usdBalance,
 										<Currency.Price
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.usdBalance}
 											sign={'$'}
 											conversionRate={1}
@@ -170,12 +168,12 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 									return conditionalRender<Cell['price']>(
 										cellProps.row.original.price,
 										<Currency.Price
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.price!}
 											sign={'$'}
 											conversionRate={1}
 											formatOptions={{
-												minDecimals: isEurForex(cellProps.row.original.synth) ? 4 : 2,
+												minDecimals: isDecimalFour(cellProps.row.original.synth) ? 4 : 2,
 											}}
 										/>
 									);
@@ -228,9 +226,9 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 				<StyledMobileTable
 					data={data}
 					noResultsMessage={
-						data.length === 0 ? (
-							<EmptyTableMessage>There are no synth balances.</EmptyTableMessage>
-						) : null
+						<TableNoResults>
+							{t('dashboard.overview.synth-balances-table.no-result')}
+						</TableNoResults>
 					}
 					columns={[
 						{
@@ -250,11 +248,11 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 											</IconContainer>
 											<StyledText>{cellProps.row.original.synth}</StyledText>
 											<Currency.Price
-												currencyKey={Synths.sUSD}
+												currencyKey={'sUSD'}
 												price={cellProps.row.original.price ?? 0}
 												sign="$"
 												formatOptions={{
-													minDecimals: isEurForex(cellProps.row.original.synth) ? 4 : 2,
+													minDecimals: isDecimalFour(cellProps.row.original.synth) ? 4 : 2,
 												}}
 											/>
 										</MarketContainer>
@@ -276,7 +274,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 									<div>
 										<div>{formatNumber(cellProps.row.original.balance ?? 0)}</div>
 										<Currency.Price
-											currencyKey={Synths.sUSD}
+											currencyKey={'sUSD'}
 											price={cellProps.row.original.usdBalance ?? 0}
 											sign="$"
 										/>
@@ -338,14 +336,10 @@ const StyledValue = styled.div`
 `;
 
 const DefaultCell = styled.p`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const TableContainer = styled.div``;
-
-const StyledTable = styled(Table)`
-	/* margin-top: 20px; */
-`;
 
 const TableHeader = styled.div``;
 
@@ -355,7 +349,7 @@ const StyledText = styled.div`
 	grid-column: 2;
 	grid-row: 1;
 	margin-bottom: -4px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
@@ -368,21 +362,14 @@ const MarketContainer = styled.div`
 
 const AmountCol = styled.div`
 	justify-self: flex-end;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
-const StyledMobileTable = styled(StyledTable)`
+const StyledMobileTable = styled(Table)`
 	border-radius: initial;
 	border-top: none;
 	border-right: none;
 	border-left: none;
-`;
-
-const EmptyTableMessage = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.text.value};
-	font-size: 16px;
-	text-align: center;
-	margin: 20px 0;
 `;
 
 export default SynthBalancesTable;

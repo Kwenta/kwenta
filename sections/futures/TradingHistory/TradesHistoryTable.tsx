@@ -1,23 +1,21 @@
-import Table from 'components/Table';
-import { EXTERNAL_LINKS } from 'constants/links';
-import { NO_VALUE } from 'constants/placeholder';
-import { FuturesTrade } from 'queries/futures/types';
-import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
-
-import { isL2MainnetState } from 'store/wallet';
 import styled, { css } from 'styled-components';
+
+import Table from 'components/Table';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
+import { NO_VALUE } from 'constants/placeholder';
+import BlockExplorer from 'containers/BlockExplorer';
+import { FuturesTrade } from 'queries/futures/types';
+import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
+import { currentMarketState } from 'store/futures';
 import { CapitalizedText, NumericValue } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
-import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
-import { isEurForex } from 'utils/futures';
-import { currentMarketState } from 'store/futures';
+import { isDecimalFour } from 'utils/futures';
 
 type TradesHistoryTableProps = {
-	numberOfTrades: number;
 	mobile?: boolean;
 };
 
@@ -27,27 +25,58 @@ enum TableColumnAccessor {
 	Time = 'time',
 }
 
-const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobile }) => {
+const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 	const { t } = useTranslation();
 	const currencyKey = useRecoilValue(currentMarketState);
 	const futuresTradesQuery = useGetFuturesTrades(currencyKey);
-	const isL2Mainnet = useRecoilValue(isL2MainnetState);
+	const { blockExplorerInstance } = BlockExplorer.useContainer();
 
 	let data = useMemo(() => {
-		const futuresTrades = futuresTradesQuery?.data ?? [];
-		return futuresTrades.length > 0
-			? futuresTrades.map((trade: FuturesTrade) => {
-					return {
-						value: Number(trade?.price),
-						amount: Number(trade?.size),
-						time: Number(trade?.timestamp),
-						id: trade?.txnHash,
-						currencyKey,
-						orderType: trade?.orderType,
-					};
-			  })
-			: [];
+		const futuresTradesPages = futuresTradesQuery?.data?.pages ?? [];
+		// initially the currencyKey would as null
+		// the fetch would return [null]
+		if (futuresTradesPages[0] === null) return [];
+
+		const futuresTrades =
+			futuresTradesPages.length > 0
+				? futuresTradesPages
+						.flat()
+						.filter((value) => !!value)
+						.map((trade: FuturesTrade | null) => {
+							return {
+								value: Number(trade?.price),
+								amount: Number(trade?.size),
+								time: Number(trade?.timestamp),
+								id: trade?.txnHash,
+								currencyKey,
+								orderType: trade?.orderType,
+							};
+						})
+				: [];
+		return [...new Set(futuresTrades)];
 	}, [futuresTradesQuery.data, currencyKey]);
+
+	const observer = useRef<IntersectionObserver | null>(null);
+	const lastElementRef = useCallback(
+		(node) => {
+			if (futuresTradesQuery.isLoading || data.length < 16) return;
+			if (observer) {
+				if (observer.current) {
+					observer.current.disconnect();
+				}
+
+				observer.current = new IntersectionObserver((entries) => {
+					if (entries[0].isIntersecting) {
+						futuresTradesQuery.fetchNextPage();
+					}
+				});
+			}
+			if (node) {
+				observer.current?.observe(node);
+			}
+		},
+		[futuresTradesQuery, data]
+	);
 
 	const calTimeDelta = (time: number) => {
 		const timeDelta = (Date.now() - time * 1000) / 1000;
@@ -73,17 +102,15 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 
 	return (
 		<HistoryContainer mobile={mobile}>
-			<TableContainer>
+			<div>
 				<StyledTable
 					data={data}
-					pageSize={numberOfTrades}
-					showPagination={true}
+					isLoading={futuresTradesQuery.isLoading}
+					lastRef={lastElementRef}
 					mobile={mobile}
 					onTableRowClick={(row) =>
 						row.original.id !== NO_VALUE
-							? isL2Mainnet
-								? window.open(`${EXTERNAL_LINKS.Explorer.Optimism}/${row.original.id}`)
-								: window.open(`${EXTERNAL_LINKS.Explorer.OptimismKovan}/${row.original.id}`)
+							? window.open(`${blockExplorerInstance?.txLink(row.original.id)}`)
 							: undefined
 					}
 					highlightRowsOnHover
@@ -119,8 +146,8 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 							Header: <TableHeader>{t('futures.market.history.price-label')}</TableHeader>,
 							accessor: TableColumnAccessor.Price,
 							Cell: (cellProps: CellProps<any>) => {
-								const formatOptions = isEurForex(cellProps.row.original.currencyKey)
-									? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
+								const formatOptions = isDecimalFour(cellProps.row.original.currencyKey)
+									? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
 									: {};
 
 								return (
@@ -150,7 +177,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 						},
 					]}
 				/>
-			</TableContainer>
+			</div>
 		</HistoryContainer>
 	);
 };
@@ -171,8 +198,6 @@ const HistoryContainer = styled.div<{ mobile?: boolean }>`
 			margin-bottom: 0;
 		`}
 `;
-
-const TableContainer = styled.div``;
 
 const TableAlignment = css`
 	justify-content: space-between;
@@ -225,14 +250,14 @@ const TableHeader = styled(CapitalizedText)`
 
 const PriceValue = styled(NumericValue)`
 	font-size: 13px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	padding-left: 5px;
 `;
 
 const TimeValue = styled.p`
 	font-size: 13px;
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	text-decoration: underline;
 `;
 
@@ -240,7 +265,7 @@ const DirectionalValue = styled(PriceValue)<{ negative?: boolean; normal?: boole
 	padding-left: 4px;
 	color: ${(props) =>
 		props.normal
-			? props.theme.colors.selectedTheme.button.text
+			? props.theme.colors.selectedTheme.button.text.primary
 			: props.negative
 			? props.theme.colors.selectedTheme.green
 			: props.theme.colors.selectedTheme.red};

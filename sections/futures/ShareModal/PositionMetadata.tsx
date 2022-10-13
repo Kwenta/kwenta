@@ -1,15 +1,15 @@
-import { FC, useLayoutEffect, useState } from 'react';
 import { format } from 'date-fns';
-import styled from 'styled-components';
+import { FC, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
-import { PositionHistory } from 'queries/futures/types';
+import { useFuturesContext } from 'contexts/FuturesContext';
+import { futuresAccountTypeState, positionHistoryState } from 'store/futures';
 import getLocale from 'utils/formatters/getLocale';
 
 type PositionMetadataProps = {
 	marketAsset: string;
-	marketAssetRate: number;
-	futuresPositionHistory: PositionHistory[];
 };
 
 function getColor(props: any) {
@@ -66,13 +66,13 @@ function getFontFamily(props: any) {
 	}
 }
 
-const PositionMetadata: FC<PositionMetadataProps> = ({
-	marketAsset,
-	marketAssetRate,
-	futuresPositionHistory,
-}) => {
+const PositionMetadata: FC<PositionMetadataProps> = ({ marketAsset }) => {
 	const { t } = useTranslation();
-	const [currentTimestamp, setCurrentTimestamp] = useState<number>(0);
+	const [currentTimestamp, setCurrentTimestamp] = useState(0);
+
+	const { marketAssetRate } = useFuturesContext();
+	const futuresPositionHistory = useRecoilValue(positionHistoryState);
+	const futuresAccountType = useRecoilValue(futuresAccountTypeState);
 
 	let avgEntryPrice = '',
 		openAtDate = '',
@@ -80,13 +80,12 @@ const PositionMetadata: FC<PositionMetadataProps> = ({
 		createdOnDate = '',
 		createdOnTime = '';
 
-	const currentPosition = futuresPositionHistory.filter(
-		(obj: PositionHistory) => obj.asset === marketAsset
+	const currentPosition = futuresPositionHistory[futuresAccountType].find(
+		(position) => position.isOpen && position.asset === marketAsset
 	);
 
-	avgEntryPrice = currentPosition[0].avgEntryPrice.toNumber().toFixed(2);
-
-	const openTimestamp = currentPosition[0].openTimestamp;
+	avgEntryPrice = currentPosition?.avgEntryPrice.toNumber().toFixed(2) ?? '';
+	const openTimestamp = currentPosition?.openTimestamp ?? 0;
 
 	openAtDate = format(openTimestamp, 'PP', { locale: getLocale() });
 	openAtTime = format(openTimestamp, 'HH:mm:ss', { locale: getLocale() });
@@ -124,7 +123,9 @@ const PositionMetadata: FC<PositionMetadataProps> = ({
 				<ContainerText className="header">
 					{t('futures.modals.share.position-metadata.current-price')}
 				</ContainerText>
-				<ContainerText className="date-or-price">{marketAssetRate.toFixed(2)}</ContainerText>
+				<ContainerText className="date-or-price">
+					{marketAssetRate.toNumber().toFixed(2)}
+				</ContainerText>
 			</BottomRightContainer>
 		</>
 	);

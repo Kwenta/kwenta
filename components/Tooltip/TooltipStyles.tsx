@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+
 import media from 'styles/media';
 
 // base styles for each component that make up the tooltip.
@@ -11,6 +12,7 @@ interface ToolTipStyleProps {
 	bottom?: string;
 	left?: string;
 	right?: string;
+	position?: string;
 }
 
 export const Tooltip = styled.div<ToolTipStyleProps>`
@@ -22,7 +24,7 @@ export const Tooltip = styled.div<ToolTipStyleProps>`
 	border-radius: 8px;
 	padding: 10px;
 	margin: 0;
-	position: absolute;
+	position: ${(props) => props.position || 'absolute'};
 	top: ${(props) => props.top};
 	bottom: ${(props) => props.bottom};
 	left: ${(props) => props.left};
@@ -32,7 +34,7 @@ export const Tooltip = styled.div<ToolTipStyleProps>`
 	p, span {
 		font-size: 13px;
 		font-family: ${(props) => props.theme.fonts.regular};
-		color: ${(props) => props.theme.colors.selectedTheme.button.text};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
 
 	${(props) =>

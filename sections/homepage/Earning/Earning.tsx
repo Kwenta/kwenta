@@ -2,6 +2,9 @@ import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import StakeNEarnIcon from 'assets/svg/earn/stake-n-earn.svg';
+import TradeNEarnIcon from 'assets/svg/earn/trade-n-earn.svg';
+import VoteNGovernIcon from 'assets/svg/earn/vote-n-govern.svg';
 import {
 	FlexDivCentered,
 	FlexDivCol,
@@ -11,36 +14,28 @@ import {
 	SmallGoldenHeader,
 	WhiteHeader,
 } from 'styles/common';
-import { Copy, StackSection, Title } from '../common';
-
-import StakeToEarnIcon from 'assets/svg/earn/stake-to-earn.svg';
-import TradeToEarnIcon from 'assets/svg/earn/trade-to-earn.svg';
-import VoteNGovernIcon from 'assets/svg/earn/vote-n-govern.svg';
-
-import useGetFuturesCumulativeStats from 'queries/futures/useGetFuturesCumulativeStats';
-import Loader from 'components/Loader';
-import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
-import { Synths } from 'constants/currency';
 import media, { Media } from 'styles/media';
 
+import { Copy, StackSection, Title } from '../common';
+
 const EARNINGS = [
-	{
-		id: 'stake-to-earn',
-		title: 'homepage.earning.stake-to-earn.title',
-		copy: 'homepage.earning.stake-to-earn.copy',
-		image: <StakeToEarnIcon />,
-	},
-	{
-		id: 'trade-to-earn',
-		title: 'homepage.earning.trade-to-earn.title',
-		copy: 'homepage.earning.trade-to-earn.copy',
-		image: <TradeToEarnIcon />,
-	},
 	{
 		id: 'vote-and-govern',
 		title: 'homepage.earning.vote-and-govern.title',
 		copy: 'homepage.earning.vote-and-govern.copy',
 		image: <VoteNGovernIcon />,
+	},
+	{
+		id: 'stake-to-earn',
+		title: 'homepage.earning.stake-and-earn.title',
+		copy: 'homepage.earning.stake-and-earn.copy',
+		image: <StakeNEarnIcon />,
+	},
+	{
+		id: 'trade-to-earn',
+		title: 'homepage.earning.trade-and-earn.title',
+		copy: 'homepage.earning.trade-and-earn.copy',
+		image: <TradeNEarnIcon />,
 	},
 ];
 
@@ -57,7 +52,6 @@ const Earning = () => {
 		</>
 	);
 
-	const totalTradeStats = useGetFuturesCumulativeStats();
 	return (
 		<StackSection>
 			<Container>
@@ -88,31 +82,6 @@ const Earning = () => {
 						))}
 					</StyledFlexDivColCentered>
 				</Media>
-				<StatsCardContainer>
-					<StatsCard className="first">
-						<StatsValue>
-							{totalTradeStats.isLoading ? (
-								<Loader />
-							) : (
-								formatCurrency(Synths.sUSD, totalTradeStats.data?.totalVolume || zeroBN, {
-									sign: '$',
-									minDecimals: 0,
-								})
-							)}
-						</StatsValue>
-						<StatsName>{t('homepage.earning.stats.volume')}</StatsName>
-					</StatsCard>
-					<StatsCard>
-						<StatsValue>
-							{totalTradeStats.isLoading ? (
-								<Loader />
-							) : (
-								formatNumber(totalTradeStats.data?.totalTrades ?? 0, { minDecimals: 0 })
-							)}
-						</StatsValue>
-						<StatsName>{t('homepage.earning.stats.trades')}</StatsName>
-					</StatsCard>
-				</StatsCardContainer>
 			</Container>
 		</StackSection>
 	);
@@ -142,51 +111,10 @@ const Emphasis = styled.b`
 	color: ${(props) => props.theme.colors.common.primaryGold};
 `;
 
-const StatsName = styled.div`
-	font-size: 15px;
-	letter-spacing: -0.02em;
-	text-transform: uppercase;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
-	${media.lessThan('sm')`
-		font-size: 11px;
-	`}
-`;
-
-const StatsValue = styled.div`
-	font-size: 40px;
-	line-height: 100%;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
-	margin-top: 14px;
-	margin-bottom: 10px;
-	${media.lessThan('sm')`
-		font-size: 24px;
-	`}
-`;
-
-const StatsCardContainer = styled(FlexDivRow)`
-	margin: 80px 0px;
-	justify-content: center;
-	border-top: 1px solid #3d3c3c;
-	width: 1160px;
-	${media.lessThan('sm')`
-		width: 345px;
-		margin: 60px auto;
-		padding: 0px;
-	`}
-`;
-
-const StatsCard = styled(FlexDivColCentered)`
-	width: 580px;
-	padding: 10px 45px;
-	margin-top: 40px;
-
-	&.first {
-		border-right: 1px solid #3d3c3c;
-	}
-`;
 const CenteredCopy = styled(Copy)`
 	font-size: 15px;
 	text-align: center;
+	width: 300px;
 	line-height: 150%;
 	letter-spacing: -0.03em;
 	color: ${(props) => props.theme.colors.common.secondaryGray};

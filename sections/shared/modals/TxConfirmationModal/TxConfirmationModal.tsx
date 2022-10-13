@@ -1,35 +1,31 @@
+import { CurrencyKey } from '@synthetixio/contracts-interface';
+import useSynthetixQueries from '@synthetixio/queries';
+import Wei, { wei } from '@synthetixio/wei';
 import { FC, ReactNode, useMemo } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
-import Wei, { wei } from '@synthetixio/wei';
-import { useRecoilValue } from 'recoil';
 
+import InfoIcon from 'assets/svg/app/info.svg';
+import OneInchImage from 'assets/svg/providers/1inch.svg';
+import BaseModal from 'components/BaseModal';
+import Currency from 'components/Currency';
+import Error from 'components/Error';
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
+import { ESTIMATE_VALUE } from 'constants/placeholder';
+import Connector from 'containers/Connector';
+import useCurrencyPrice from 'hooks/useCurrencyPrice';
+import useIsL2 from 'hooks/useIsL2';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { MessageButton } from 'sections/exchange/FooterCard/common';
 import {
 	FlexDivRowCentered,
 	numericValueCSS,
 	NoTextTransform,
 	FlexDivColCentered,
-	Tooltip,
-	ExternalLink,
 } from 'styles/common';
-
-import { isL2State, walletAddressState } from 'store/wallet';
-
-import BaseModal from 'components/BaseModal';
-import Currency from 'components/Currency';
-
-import OneInchImage from 'assets/svg/providers/1inch.svg';
-
 import { formatCurrency, LONG_CRYPTO_CURRENCY_DECIMALS } from 'utils/formatters/number';
-import { MessageButton } from 'sections/exchange/FooterCard/common';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useCurrencyPrice from 'hooks/useCurrencyPrice';
-import { ESTIMATE_VALUE } from 'constants/placeholder';
-import InfoIcon from 'assets/svg/app/info.svg';
-import { CurrencyKey } from '@synthetixio/contracts-interface';
-import useSynthetixQueries from '@synthetixio/queries';
 
-export type TxProvider = 'synthetix' | '1inch' | 'balancer' | 'synthswap';
+export type TxProvider = 'synthetix' | '1inch' | 'synthswap';
 
 type TxConfirmationModalProps = {
 	onDismiss: () => void;
@@ -63,9 +59,10 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 	icon,
 }) => {
 	const { t } = useTranslation();
-	const isL2 = useRecoilValue(isL2State);
+	const { walletAddress } = Connector.useContainer();
+	const isL2 = useIsL2();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const walletAddress = useRecoilValue(walletAddressState);
+
 	const { subgraph } = useSynthetixQueries();
 	const getBaseCurrencyAmount = (decimals?: number) =>
 		formatCurrency(baseCurrencyKey, baseCurrencyAmount, {
@@ -103,11 +100,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 	);
 
 	return (
-		<StyledBaseModal
-			onDismiss={onDismiss}
-			isOpen={true}
-			title={t('modals.confirm-transaction.title')}
-		>
+		<StyledBaseModal onDismiss={onDismiss} isOpen title={t('modals.confirm-transaction.title')}>
 			<Currencies>
 				{quoteCurrencyKey && (
 					<CurrencyItem>
@@ -156,15 +149,14 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 						/>
 					</SummaryItemLabel>
 					<SummaryItemValue data-testid="base-currency-value">
-						<StyledTooltip
-							placement="right"
+						<CustomStyledTooltip
+							preset="top"
 							content={<span>{getBaseCurrencyAmount(LONG_CRYPTO_CURRENCY_DECIMALS)}</span>}
-							arrow={false}
 						>
 							<span>
 								{ESTIMATE_VALUE} {getBaseCurrencyAmount()}
 							</span>
-						</StyledTooltip>
+						</CustomStyledTooltip>
 					</SummaryItemValue>
 				</SummaryItem>
 				{feeCost && (
@@ -175,25 +167,20 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 								values={{ currencyKey: baseCurrencyKey }}
 								components={[<NoTextTransform />]}
 							/>
-							<StyledTooltip
-								placement="top"
+							<ExchangeFeeHintTooltip
+								preset="top"
 								content={
 									<Trans
 										i18nKey="modals.confirm-transaction.exchange-fee-hint"
 										values={{ currencyKey: baseCurrencyKey }}
-										components={[
-											<NoTextTransform />,
-											<ExternalLink href="https://synthetix.io/synths" />,
-										]}
+										components={[<NoTextTransform />]}
 									/>
 								}
-								arrow={false}
-								interactive={true}
 							>
 								<TooltipItem>
 									<InfoIcon />
 								</TooltipItem>
-							</StyledTooltip>
+							</ExchangeFeeHintTooltip>
 						</SummaryItemLabel>
 						<SummaryItemValue data-testid="base-currency-value">
 							<span>
@@ -229,22 +216,19 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 								components={[<NoTextTransform />]}
 							/>
 							&nbsp;
-							<StyledTooltip
-								placement="top"
+							<PriceAdjustmentTooltip
+								preset="top"
 								content={
 									<Trans
 										i18nKey="modals.confirm-transaction.price-adjustment-hint"
 										values={{ currencyKey: baseCurrencyKey }}
-										components={[<ExternalLink href="https://synthetix.io/synths" />]}
 									/>
 								}
-								arrow={false}
-								interactive={true}
 							>
 								<TooltipItem>
 									<InfoIcon />
 								</TooltipItem>
-							</StyledTooltip>
+							</PriceAdjustmentTooltip>
 						</SummaryItemLabel>
 						<SummaryItemValue data-testid="price-adjustment-value">
 							<span>
@@ -258,13 +242,13 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			</Summary>
 			{txProvider === '1inch' && (
 				<TxProviderContainer>
-					<span>{t('common.powered-by')}</span>
+					<Text>{t('common.powered-by')}</Text>
 					<OneInchImage width="40" height="40" alt={t('common.dex-aggregators.1inch.title')} />
 				</TxProviderContainer>
 			)}
 			{txError != null && (
 				<Actions>
-					<Message>{txError}</Message>
+					<Error message={txError} formatter="revert"></Error>
 					<MessageButton onClick={attemptRetry} data-testid="retry-btn">
 						{t('common.transaction.reattempt')}
 					</MessageButton>
@@ -294,7 +278,7 @@ const Currencies = styled.div`
 
 const CurrencyItem = styled.div`
 	text-align: center;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const CurrencyItemTitle = styled.div`
@@ -318,7 +302,7 @@ const Summary = styled.div``;
 const SummaryItem = styled(FlexDivRowCentered)`
 	margin-bottom: 8px;
 	padding-bottom: 8px;
-	border-bottom: 1px solid ${(props) => props.theme.colors.navy};
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
 const SummaryItemLabel = styled.div`
@@ -326,7 +310,7 @@ const SummaryItemLabel = styled.div`
 `;
 
 const SummaryItemValue = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	${numericValueCSS};
 `;
 
@@ -334,30 +318,35 @@ const Actions = styled(FlexDivColCentered)`
 	margin: 8px 0px;
 `;
 
-const Message = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	font-size: 14px;
-	font-family: ${(props) => props.theme.fonts.bold};
-	flex-grow: 1;
-	text-align: center;
-	margin: 16px 0px;
+const Text = styled.span`
+	color: ${(props) => props.theme.colors.selectedTheme.text.label};
 `;
 
-const TxProviderContainer = styled.div`
+const TxProviderContainer = styled(FlexDivRowCentered)`
 	padding-top: 32px;
-	text-align: center;
 	img {
 		vertical-align: middle;
 		margin-left: 10px;
 	}
+	justify-content: center;
 `;
 
-const StyledTooltip = styled(Tooltip)`
-	.tippy-content {
-		padding: 5px;
-		font-family: ${(props) => props.theme.fonts.mono};
-		font-size: 12px;
-	}
+const CustomStyledTooltip = styled(StyledTooltip)`
+	padding: 10px;
+	width: 100%;
+	word-break: all;
+`;
+
+const ExchangeFeeHintTooltip = styled(StyledTooltip)`
+	width: 240px;
+	padding: 0px 10px;
+	margin: 0px 0px 0px 40px;
+`;
+
+const PriceAdjustmentTooltip = styled(StyledTooltip)`
+	width: 240px;
+	padding: 0px 10px;
+	margin: 0px;
 `;
 
 export const TooltipItem = styled.span`

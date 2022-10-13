@@ -1,7 +1,8 @@
 import { render } from '@testing-library/react';
-import ContextProvider from 'test-utils/ContextProvider';
-import NumericInput from './NumericInput';
 import userEvent from '@testing-library/user-event';
+import ContextProvider from 'test-utils/ContextProvider';
+
+import NumericInput from './NumericInput';
 
 describe('NumericInput', () => {
 	test('happy path', () => {

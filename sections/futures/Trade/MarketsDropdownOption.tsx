@@ -1,10 +1,12 @@
-import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import styled, { css } from 'styled-components';
-import { CurrencyLabel, SingleValueContainer } from './MarketsDropdownSingleValue';
-import { FlexDivCentered } from 'styles/common';
 import { components, OptionProps } from 'react-select';
+import styled, { css } from 'styled-components';
+
 import MarketBadge from 'components/Badge/MarketBadge';
+import CurrencyIcon from 'components/Currency/CurrencyIcon';
+import { FlexDivCentered } from 'styles/common';
+
 import { MarketsCurrencyOption } from './MarketsDropdown';
+import { CurrencyLabel, SingleValueContainer } from './MarketsDropdownSingleValue';
 
 const MarketsDropdownOption: React.FC<OptionProps<MarketsCurrencyOption>> = (props) => (
 	<components.Option {...props}>
@@ -50,7 +52,7 @@ const CurrencyMeta = styled(FlexDivCentered)<{ $isSelected: boolean }>`
 		props.$isSelected &&
 		css`
 			${StyledCurrencyLabel} {
-				color: ${(props) => props.theme.colors.selectedTheme.button.text};
+				color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 				font-family: ${(props) => props.theme.fonts.bold};
 			}
 		`}
@@ -81,12 +83,12 @@ const OptionDetailsContainer = styled(SingleValueContainer)<{ $isSelected: boole
 
 	&:hover {
 		background-color: rgba(255, 255, 255, 0.05);
-		color: ${(props) => props.theme.colors.selectedTheme.button.text};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 		${StyledCurrencyLabel} {
-			color: ${(props) => props.theme.colors.selectedTheme.button.text};
+			color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 		}
 		.name {
-			color: ${(props) => props.theme.colors.selectedTheme.button.text};
+			color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 		}
 	}
 

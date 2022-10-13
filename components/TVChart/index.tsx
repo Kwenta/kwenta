@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic';
+
 import { ChartProps } from './TVChart';
 
 // @ts-ignore

@@ -1,5 +1,4 @@
 import common from './common';
-
 import darkTheme from './dark';
 import lightTheme from './light';
 
@@ -17,24 +16,16 @@ export const themeColors = {
 
 const colors = {
 	black: '#000000',
-	vampire: '#08080F',
 	elderberry: '#10101E',
 	navy: '#1A1A2E',
-	stormcloud: '#57616B',
-	blueberry: '#9F9EC5',
-	purple: '#8168AA',
 	silver: '#8A939F',
 	white: '#FFFFFF',
 	red: '#CB366D',
-	redHover: '#FF568F',
 	green: '#66DD84',
 	yellow: '#FFDF6D',
 	goldColors,
 	gold: `linear-gradient(180deg, ${goldColors.color1} 0%, ${goldColors.color2} 100%)`,
-	goldHover: `linear-gradient(180deg, ${goldColors.color3} 0%, ${goldColors.color4} 100%)`,
 	cellGradient: `linear-gradient(180deg, #1E1D1D 0%, #161515 100%)`,
-	inputGradient: `linear-gradient(180deg, #101010 33.26%, rgba(24, 24, 24, 0.37) 100%)`,
-	inputHighlight: 'inset 0px -1px 0px rgba(255, 255, 255, 0.07)',
 	// network colors
 	mainnet: '#29B6AF',
 	ropsten: '#FF4A8D',

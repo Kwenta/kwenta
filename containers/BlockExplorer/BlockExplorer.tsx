@@ -1,12 +1,8 @@
+import { NetworkId, NetworkIdByName, NetworkNameById } from '@synthetixio/contracts-interface';
+import { OPTIMISM_NETWORKS } from '@synthetixio/optimism-networks';
 import { useEffect, useState } from 'react';
 import { createContainer } from 'unstated-next';
-import { OPTIMISM_NETWORKS, MAINNET_OPTIMISM_EXPLORER } from '@synthetixio/optimism-networks';
-import { useRecoilValue } from 'recoil';
-
-import { NetworkIdByName } from '@synthetixio/contracts-interface';
-import { Network } from 'store/wallet';
-
-import { networkState } from 'store/wallet';
+import { useNetwork } from 'wagmi';
 
 type BlockExplorerInstance = {
 	baseLink: string;
@@ -16,13 +12,16 @@ type BlockExplorerInstance = {
 	blockLink: (blockNumber: string) => string;
 };
 
-const getBaseUrl = (network: Network) => {
-	if (network.useOvm) {
-		return OPTIMISM_NETWORKS[network.id]?.blockExplorerUrls[0] ?? MAINNET_OPTIMISM_EXPLORER;
-	} else if (network.id === NetworkIdByName.mainnet) {
+const getBaseUrl = (networkId: NetworkId) => {
+	if (networkId === 10 || networkId === 420) {
+		return (
+			OPTIMISM_NETWORKS[networkId as NetworkId]?.blockExplorerUrls[0] ??
+			OPTIMISM_NETWORKS[10]?.blockExplorerUrls[0]
+		);
+	} else if ((networkId as NetworkId) === NetworkIdByName.mainnet) {
 		return 'https://etherscan.io';
 	}
-	return `https://${network.name}.etherscan.io`;
+	return `https://${NetworkNameById[networkId]}.etherscan.io`;
 };
 
 const generateExplorerFunctions = (baseUrl: string) => {
@@ -36,7 +35,7 @@ const generateExplorerFunctions = (baseUrl: string) => {
 };
 
 const useBlockExplorer = () => {
-	const network = useRecoilValue(networkState);
+	const { chain: network } = useNetwork();
 
 	const [blockExplorerInstance, setBlockExplorerInstance] = useState<BlockExplorerInstance | null>(
 		null
@@ -44,7 +43,7 @@ const useBlockExplorer = () => {
 
 	useEffect(() => {
 		if (network) {
-			const baseUrl = getBaseUrl(network);
+			const baseUrl = getBaseUrl(network?.id as NetworkId);
 			setBlockExplorerInstance(generateExplorerFunctions(baseUrl));
 		}
 	}, [network]);

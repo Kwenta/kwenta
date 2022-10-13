@@ -1,81 +1,50 @@
-import { FC, useMemo, useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
-import { useTranslation } from 'react-i18next';
-import useSynthetixQueries from '@synthetixio/queries';
-import Wei, { wei } from '@synthetixio/wei';
-
-import TransactionNotifier from 'containers/TransactionNotifier';
-import BaseModal from 'components/BaseModal';
-import { FlexDivCentered, FlexDivCol } from 'styles/common';
-import { PositionSide } from '../types';
-import { Synths } from 'constants/currency';
-import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
-import { getFuturesMarketContract } from 'queries/futures/utils';
-import Connector from 'containers/Connector';
-import Button from 'components/Button';
-import { newGetExchangeRatesForCurrencies, synthToAsset } from 'utils/currencies';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { newGetTransactionPrice } from 'utils/network';
-import { gasSpeedState } from 'store/wallet';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
-import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
-import { currentMarketState, positionState } from 'store/futures';
-import { useRefetchContext } from 'contexts/RefetchContext';
+import Wei, { wei } from '@synthetixio/wei';
+import { useMemo, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
+
+import BaseModal from 'components/BaseModal';
+import Button from 'components/Button';
+import Error from 'components/Error';
+import Connector from 'containers/Connector';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { FuturesFilledPosition } from 'queries/futures/types';
+import { getFuturesMarketContract } from 'queries/futures/utils';
+import { currentMarketState } from 'store/futures';
+import { FlexDivCentered, FlexDivCol } from 'styles/common';
+import { formatCurrency, formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
+
+import { PositionSide } from '../types';
 
 type ClosePositionModalProps = {
+	gasFee: Wei;
+	positionDetails: FuturesFilledPosition | null | undefined;
+	disabled?: boolean;
+	errorMessage?: string | null | undefined;
+	onClosePosition: () => any;
 	onDismiss: () => void;
 };
 
-const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
+function ClosePositionModal({
+	gasFee,
+	positionDetails,
+	disabled,
+	errorMessage,
+	onDismiss,
+	onClosePosition,
+}: ClosePositionModalProps) {
 	const { t } = useTranslation();
-	const { synthetixjs } = Connector.useContainer();
-	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
-	const ethGasPriceQuery = useEthGasPriceQuery();
-	const exchangeRatesQuery = useExchangeRatesQuery();
-	const gasSpeed = useRecoilValue(gasSpeedState);
+	const { defaultSynthetixjs: synthetixjs, synthsMap } = Connector.useContainer();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const [error, setError] = useState<string | null>(null);
-	const [orderFee, setOrderFee] = useState<Wei>(wei(0));
-	const { monitorTransaction } = TransactionNotifier.useContainer();
+
 	const currencyKey = useRecoilValue(currentMarketState);
-	const position = useRecoilValue(positionState);
-	const positionDetails = position?.position;
 
-	const { handleRefetch } = useRefetchContext();
+	const [orderFee, setOrderFee] = useState<Wei>(wei(0));
+	const [error, setError] = useState<null | string>(null);
 
-	const exchangeRates = useMemo(
-		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
-		[exchangeRatesQuery.isSuccess, exchangeRatesQuery.data]
-	);
-
-	const ethPriceRate = useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
-		[exchangeRates, selectedPriceCurrency.name]
-	);
-
-	const gasPrice = ethGasPriceQuery.data?.[gasSpeed] ?? null;
-
-	const closeTxn = useSynthetixTxn(
-		`FuturesMarket${currencyKey?.[0] === 's' ? currencyKey.substring(1) : currencyKey}`,
-		'closePositionWithTracking',
-		[KWENTA_TRACKING_CODE],
-		gasPrice ?? undefined,
-		{ enabled: !!currencyKey }
-	);
-
-	const transactionFee = useMemo(
-		() =>
-			newGetTransactionPrice(
-				gasPrice,
-				closeTxn.gasLimit,
-				ethPriceRate,
-				closeTxn.optimismLayerOneFee
-			),
-		[gasPrice, ethPriceRate, closeTxn.gasLimit, closeTxn.optimismLayerOneFee]
-	);
-
-	const positionSize = positionDetails?.size ?? wei(0);
+	const positionSize = useMemo(() => positionDetails?.size ?? zeroBN, [positionDetails?.size]);
 
 	useEffect(() => {
 		const getOrderFee = async () => {
@@ -88,7 +57,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 				setOrderFee(wei(orderFee.fee));
 			} catch (e) {
 				// @ts-ignore
-				console.log(e.message);
+				logError(e.message);
 				// @ts-ignore
 				setError(e?.data?.message ?? e.message);
 			}
@@ -110,7 +79,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 			{
 				label: t('futures.market.user.position.modal.size'),
 				value: formatCurrency(currencyKey || '', positionDetails?.size ?? zeroBN, {
-					sign: synthToAsset(currencyKey as CurrencyKey),
+					sign: currencyKey ? synthsMap[currencyKey]?.sign : '',
 				}),
 			},
 			{
@@ -119,39 +88,25 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 			},
 			{
 				label: t('futures.market.user.position.modal.ROI'),
-				value: formatCurrency(Synths.sUSD, positionDetails?.roi ?? zeroBN, { sign: '$' }),
+				value: formatDollars(positionDetails?.pnl ?? zeroBN),
 			},
 			{
 				label: t('futures.market.user.position.modal.fee'),
-				value: formatCurrency(Synths.sUSD, orderFee, { sign: '$' }),
+				value: formatDollars(orderFee),
 			},
 			{
 				label: t('futures.market.user.position.modal.gas-fee'),
-				value: formatCurrency(selectedPriceCurrency.name as CurrencyKey, transactionFee ?? zeroBN, {
+				value: formatCurrency(selectedPriceCurrency.name as CurrencyKey, gasFee ?? zeroBN, {
 					sign: '$',
 				}),
 			},
 		];
-	}, [positionDetails, currencyKey, t, orderFee, transactionFee, selectedPriceCurrency]);
-
-	useEffect(() => {
-		if (closeTxn.hash) {
-			monitorTransaction({
-				txHash: closeTxn.hash,
-				onTxConfirmed: () => {
-					onDismiss();
-					handleRefetch('close-position');
-				},
-			});
-		}
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [closeTxn.hash]);
+	}, [positionDetails, currencyKey, t, orderFee, gasFee, selectedPriceCurrency, synthsMap]);
 
 	return (
 		<StyledBaseModal
 			onDismiss={onDismiss}
-			isOpen={true}
+			isOpen
 			title={t('futures.market.user.position.modal.title')}
 		>
 			<>
@@ -165,18 +120,18 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 				))}
 				<StyledButton
 					data-testid="trade-close-position-confirm-order-button"
-					variant="primary"
-					isRounded
+					variant="flat"
 					size="lg"
-					onClick={() => closeTxn.mutate()}
-					disabled={!!error || !!closeTxn.errorMessage}
+					onClick={onClosePosition}
+					disabled={!!error || disabled}
 				>
-					{error || closeTxn.errorMessage || t('futures.market.user.position.modal.title')}
+					{t('futures.market.user.position.modal.title')}
 				</StyledButton>
+				{errorMessage && <Error message={errorMessage} formatter="revert" />}
 			</>
 		</StyledBaseModal>
 	);
-};
+}
 
 export default ClosePositionModal;
 
@@ -203,7 +158,7 @@ const Label = styled.div`
 
 const Value = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 12px;
 	margin-top: 6px;
 `;
@@ -214,6 +169,7 @@ const ValueColumn = styled(FlexDivCol)`
 
 const StyledButton = styled(Button)`
 	margin-top: 24px;
+	margin-bottom: 16px;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;

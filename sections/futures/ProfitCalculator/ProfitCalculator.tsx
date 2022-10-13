@@ -1,29 +1,40 @@
-import { useCallback, useEffect, useState } from 'react';
 import { wei } from '@synthetixio/wei';
+import { useCallback, useEffect, useState, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import BaseModal from 'components/BaseModal';
+import { useFuturesContext } from 'contexts/FuturesContext';
+import PositionButtons from 'sections/futures/PositionButtons';
+import { FuturesMarketAsset, getMarketName } from 'utils/futures';
+
+import { PositionSide } from '../types';
+import LabelWithInput from './LabelWithInput';
 import PnLs from './PnLs';
 import ProfitDetails from './ProfitDetails';
-import BaseModal from 'components/BaseModal';
-import LabelWithInput from './LabelWithInput';
-import PositionButtons from 'sections/futures/PositionButtons';
-import { PositionSide } from '../types';
 
-const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal }: any) => {
+type ProfitCalculatorProps = {
+	marketAsset: FuturesMarketAsset;
+	setOpenProfitCalcModal(val: boolean): void;
+};
+
+const ProfitCalculator: FC<ProfitCalculatorProps> = ({ marketAsset, setOpenProfitCalcModal }) => {
+	const marketName = getMarketName(marketAsset);
 	const marketAsset__RemovedSChar = marketAsset[0] === 's' ? marketAsset.slice(1) : marketAsset;
 	const { t } = useTranslation();
 
 	// Wei
-	const [entryPrice, setEntryPrice] = useState<string>('');
-	const [exitPrice, setExitPrice] = useState<string>('');
-	const [gainPercent, setGainPercent] = useState<string>('');
-	const [stopLoss, setStopLoss] = useState<string>('');
-	const [lossPercent, setLossPercent] = useState<string>('');
-	const [marketAssetPositionSize, setMarketAssetPositionSize] = useState<string>('');
-	const [basePositionSize, setBasePositionSize] = useState<string>('');
+	const [entryPrice, setEntryPrice] = useState('');
+	const [exitPrice, setExitPrice] = useState('');
+	const [gainPercent, setGainPercent] = useState('');
+	const [stopLoss, setStopLoss] = useState('');
+	const [lossPercent, setLossPercent] = useState('');
+	const [marketAssetPositionSize, setMarketAssetPositionSize] = useState('');
+	const [basePositionSize, setBasePositionSize] = useState('');
 	// Custom type
-	const [leverageSide, setLeverageSide] = useState<PositionSide>(PositionSide.LONG);
+	const [leverageSide, setLeverageSide] = useState(PositionSide.LONG);
+
+	const { marketAssetRate } = useFuturesContext();
 
 	const onEntryPriceAmountChange = (value: string) => {
 		setEntryPrice(value);
@@ -108,7 +119,7 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 	);
 
 	useEffect(() => {
-		setEntryPrice(marketAssetRate);
+		setEntryPrice(marketAssetRate.toNumber().toString());
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -120,10 +131,15 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 
 	return (
 		<>
-			<BaseModal
+			<StyledBaseModal
 				onDismiss={() => setOpenProfitCalcModal(false)}
-				isOpen={true}
+				isOpen
 				title={t('futures.modals.profit-calculator.title')}
+				rndProps={{
+					enableResizing: true,
+					disableDragging: false,
+					minWidth: 500,
+				}}
 			>
 				<ModalWindow>
 					<LabelWithInput
@@ -137,21 +153,21 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 							<LabelWithInput
 								id={'exit-price'}
 								labelText={'Exit Price: '}
-								placeholder={`${(marketAssetRate + marketAssetRate * 0.05).toFixed(2)}`}
+								placeholder={marketAssetRate.add(marketAssetRate.mul(0.05)).toNumber().toFixed(2)}
 								value={exitPrice}
 								onChange={(_: any, v: any) => onExitPriceAmountChange(v)}
 							/>
 							<LabelWithInput
 								id={'stop-loss'}
 								labelText={'Stop Loss: '}
-								placeholder={`${(marketAssetRate - marketAssetRate * 0.05).toFixed(2)}`}
+								placeholder={marketAssetRate.sub(marketAssetRate.mul(0.05)).toNumber().toFixed(2)}
 								value={stopLoss}
 								onChange={(_: any, v: any) => onStopLossAmountChange(v)}
 							/>
 							<LabelWithInput
 								id={'market-position-size'}
 								labelText={'Position Size: '}
-								placeholder={`10.00`}
+								placeholder="10.00"
 								right={marketAsset__RemovedSChar}
 								value={marketAssetPositionSize}
 								onChange={(_: any, v: any) => onTradeAmountChange(v)}
@@ -161,23 +177,23 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 						<RightColumn>
 							<LabelWithInput
 								id={'gain-percent'}
-								labelText={'Gain %: '}
-								placeholder={`5.00`}
+								labelText="Gain %: "
+								placeholder="5.00"
 								value={gainPercent}
 								onChange={(_: any, v: any) => onGainPercentChange(v)}
 							/>
 							<LabelWithInput
 								id={'loss-percent'}
-								labelText={'Loss %: '}
-								placeholder={`5.00`}
+								labelText="Loss %: "
+								placeholder="5.00"
 								value={lossPercent}
 								onChange={(_: any, v: any) => onLossPercentChange(v)}
 							/>
 							<LabelWithInput
 								id={'base-position-size'}
-								labelText={'Position Size: '}
-								placeholder={`${(marketAssetRate * 10).toFixed(2)}`}
-								right={'sUSD'}
+								labelText="Position Size: "
+								placeholder={marketAssetRate.mul(10).toNumber().toFixed(2)}
+								right="sUSD"
 								value={basePositionSize}
 								onChange={(_: any, v: any) => onTradeAmountSUSDChange(v)}
 							/>
@@ -200,22 +216,34 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 					<ProfitDetails
 						stopLoss={stopLoss}
 						exitPrice={exitPrice}
-						marketAsset={marketAsset__RemovedSChar}
+						marketName={marketName}
 						leverageSide={leverageSide}
 						marketAssetPositionSize={marketAssetPositionSize}
 					/>
 				</ModalWindow>
-			</BaseModal>
+			</StyledBaseModal>
 		</>
 	);
 };
+
+export const StyledBaseModal = styled(BaseModal)`
+	[data-reach-dialog-content] {
+		width: 500px;
+		.react-draggable {
+			width: 400px !important;
+		}
+	}
+	.card-body {
+		padding: 12px 28px 28px 28px;
+	}
+`;
 
 const StatsGrid = styled.div`
 	display: grid;
 	grid-gap: 1.1rem;
 	grid-template-columns: repeat(3, 1fr);
 
-	margin-top: 20px;
+	margin-top: 10px;
 `;
 
 const LeftColumn = styled.div`
@@ -238,9 +266,6 @@ const ProfitCalcGrid = styled.div`
 	grid-template-columns: repeat(2, 1fr);
 `;
 
-const ModalWindow = styled.div`
-	height: 729px;
-	padding: 0px 25px;
-`;
+const ModalWindow = styled.div``;
 
 export default ProfitCalculator;

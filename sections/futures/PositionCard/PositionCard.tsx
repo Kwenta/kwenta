@@ -1,44 +1,41 @@
+import Wei from '@synthetixio/wei';
 import React, { useMemo } from 'react';
-import styled, { css } from 'styled-components';
-import { useRecoilValue } from 'recoil';
-
-import { FlexDivCol } from 'styles/common';
 import { useTranslation } from 'react-i18next';
-import StyledTooltip from 'components/Tooltip/StyledTooltip';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
-import { isFiatCurrency } from 'utils/currencies';
-import { Synths } from 'constants/currency';
-import { PositionSide } from 'queries/futures/types';
-import { formatNumber } from 'utils/formatters/number';
-import Connector from 'containers/Connector';
-import { NO_VALUE } from 'constants/placeholder';
-import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
-import { getSynthDescription, getMarketKey, isEurForex } from 'utils/futures';
-import Wei, { wei } from '@synthetixio/wei';
-import { CurrencyKey } from 'constants/currency';
-import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
-import { Price } from 'queries/rates/types';
-import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
-import { currentMarketState, positionState, potentialTradeDetailsState } from 'store/futures';
+import { useRecoilValue } from 'recoil';
+import styled, { css } from 'styled-components';
+
 import PreviewArrow from 'components/PreviewArrow';
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
+import { NO_VALUE } from 'constants/placeholder';
+import Connector from 'containers/Connector';
+import { useFuturesContext } from 'contexts/FuturesContext';
+import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { PositionSide } from 'queries/futures/types';
+import {
+	currentMarketState,
+	futuresAccountTypeState,
+	marketKeyState,
+	positionHistoryState,
+	positionState,
+	potentialTradeDetailsState,
+} from 'store/futures';
+import { FlexDivCol } from 'styles/common';
 import media from 'styles/media';
+import { isFiatCurrency } from 'utils/currencies';
+import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatNumber } from 'utils/formatters/number';
+import { getMarketName, getSynthDescription, isDecimalFour, MarketKeyByAsset } from 'utils/futures';
 
 type PositionCardProps = {
-	currencyKeyRate: number;
-	onPositionClose?: () => void;
 	dashboard?: boolean;
-	mobile?: boolean;
 };
 
 type PositionData = {
-	currencyIconKey: string;
 	marketShortName: string;
 	marketLongName: string;
 	marketPrice: string;
-	price24h: Wei;
 	positionSide: JSX.Element;
 	positionSize: string | React.ReactNode;
 	leverage: string | React.ReactNode;
@@ -64,51 +61,49 @@ type PositionPreviewData = {
 	showStatus: boolean;
 };
 
-const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) => {
+const PositionCard: React.FC<PositionCardProps> = () => {
 	const { t } = useTranslation();
 	const position = useRecoilValue(positionState);
-	const currencyKey = useRecoilValue(currentMarketState);
+	const marketAsset = useRecoilValue(currentMarketState);
+	const marketKey = useRecoilValue(marketKeyState);
+	const futuresAccountType = useRecoilValue(futuresAccountTypeState);
 
 	const positionDetails = position?.position ?? null;
-	const futuresPositionsQuery = useGetFuturesPositionForAccount();
-	const { isFuturesMarketClosed } = useFuturesMarketClosed(currencyKey as CurrencyKey);
+	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketKey);
 
 	const potentialTrade = useRecoilValue(potentialTradeDetailsState);
+	const positionHistory = useRecoilValue(positionHistoryState);
 
-	const futuresPositions = futuresPositionsQuery?.data ?? null;
+	const { synthsMap } = Connector.useContainer();
 
-	const { synthsMap, network } = Connector.useContainer();
-
-	const marketKey = getMarketKey(currencyKey, network.id);
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const minDecimals =
-		isFiatCurrency(selectedPriceCurrency.name) && isEurForex(marketKey)
-			? DEFAULT_FIAT_EURO_DECIMALS
+		isFiatCurrency(selectedPriceCurrency.name) && isDecimalFour(marketKey)
+			? DEFAULT_CRYPTO_DECIMALS
 			: undefined;
 
-	const positionHistory = futuresPositions?.find(
-		({ asset, isOpen }) => isOpen && asset === currencyKey
-	);
+	const thisPositionHistory = useMemo(() => {
+		return positionHistory[futuresAccountType].find(
+			({ asset, isOpen }) => isOpen && asset === marketAsset
+		);
+	}, [positionHistory, marketAsset, futuresAccountType]);
 
-	const futuresMarketsQuery = useGetFuturesMarkets();
+	const { marketAssetRate } = useFuturesContext();
 
-	const dailyPriceChangesQuery = useLaggedDailyPrice(
-		futuresMarketsQuery?.data?.map(({ asset }) => asset) ?? []
-	);
-
-	const previewTradeData = useRecoilValue(potentialTradeDetailsState);
+	const { data: previewTradeData } = useRecoilValue(potentialTradeDetailsState);
 
 	const modifiedAverage = useMemo(() => {
-		if (positionHistory && previewTradeData && potentialTrade) {
-			const totalSize = positionHistory.size.add(potentialTrade.size);
+		if (thisPositionHistory && previewTradeData && potentialTrade.data) {
+			const totalSize = thisPositionHistory.size.add(potentialTrade.data.size);
 
-			const existingValue = positionHistory.avgEntryPrice.mul(positionHistory.size);
-			const newValue = previewTradeData.price.mul(potentialTrade.size);
+			const existingValue = thisPositionHistory.avgEntryPrice.mul(thisPositionHistory.size);
+			const newValue = previewTradeData.price.mul(potentialTrade.data.size);
 			const totalValue = existingValue.add(newValue);
-			return totalValue.div(totalSize);
+
+			return totalSize.gt(0) ? totalValue.div(totalSize) : null;
 		}
 		return null;
-	}, [positionHistory, previewTradeData, potentialTrade]);
+	}, [thisPositionHistory, previewTradeData, potentialTrade.data]);
 
 	const previewData: PositionPreviewData = React.useMemo(() => {
 		if (positionDetails === null || previewTradeData === null) {
@@ -123,7 +118,9 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 			positionSide: newSide,
 			positionSize: size?.abs(),
 			notionalValue: previewTradeData.notionalValue,
-			leverage: previewTradeData.notionalValue.div(previewTradeData.margin).abs(),
+			leverage: previewTradeData.margin.gt(0)
+				? previewTradeData.notionalValue.div(previewTradeData.margin).abs()
+				: zeroBN,
 			liquidationPrice: previewTradeData.liqPrice,
 			avgEntryPrice: modifiedAverage || zeroBN,
 			showStatus: previewTradeData.showStatus,
@@ -131,32 +128,25 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 	}, [positionDetails, previewTradeData, modifiedAverage]);
 
 	const data: PositionData = React.useMemo(() => {
-		const pnl = positionDetails?.profitLoss.add(positionDetails?.accruedFunding) ?? zeroBN;
-		const pnlPct = pnl.abs().gt(0) ? pnl.div(positionDetails?.initialMargin) : zeroBN;
+		const pnl = positionDetails?.pnl ?? zeroBN;
+		const pnlPct = positionDetails?.pnlPct ?? zeroBN;
 		const realizedPnl =
-			positionHistory?.pnl.add(positionHistory?.netFunding).sub(positionHistory?.feesPaid) ??
-			zeroBN;
+			thisPositionHistory?.pnl
+				.add(thisPositionHistory?.netFunding)
+				.sub(thisPositionHistory?.feesPaid) ?? zeroBN;
 		const realizedPnlPct = realizedPnl.abs().gt(0)
-			? realizedPnl.div(positionHistory?.initialMargin.add(positionHistory?.totalDeposits))
+			? realizedPnl.div(thisPositionHistory?.initialMargin.add(thisPositionHistory?.totalDeposits))
 			: zeroBN;
 		const netFunding =
-			positionDetails?.accruedFunding.add(positionHistory?.netFunding ?? zeroBN) ?? zeroBN;
-		const lastPriceWei = wei(currencyKeyRate) ?? zeroBN;
-		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
-		const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === currencyKey);
-		const pastPriceWei = pastPrice?.price ?? zeroBN;
+			positionDetails?.accruedFunding.add(thisPositionHistory?.netFunding ?? zeroBN) ?? zeroBN;
 
 		return {
-			currencyIconKey: currencyKey ? (currencyKey[0] !== 's' ? 's' : '') + currencyKey : '',
-			marketShortName: currencyKey
-				? (currencyKey[0] === 's' ? currencyKey.slice(1) : currencyKey) + '-PERP'
-				: 'Select a market',
-			marketLongName: getSynthDescription(currencyKey, synthsMap, t),
-			marketPrice: formatCurrency(Synths.sUSD, currencyKeyRate, {
-				sign: '$',
-				minDecimals: currencyKeyRate < 0.01 ? 4 : 2,
+			currencyIconKey: MarketKeyByAsset[marketAsset],
+			marketShortName: marketAsset ? getMarketName(marketAsset) : 'Select a market',
+			marketLongName: getSynthDescription(marketAsset, synthsMap, t),
+			marketPrice: formatDollars(marketAssetRate, {
+				minDecimals,
 			}),
-			price24h: lastPriceWei.sub(pastPriceWei),
 			positionSide: positionDetails ? (
 				<PositionValue
 					side={positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
@@ -183,8 +173,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 				<>
 					{`${formatNumber(positionDetails.size ?? 0, {
 						minDecimals: positionDetails.size.abs().lt(0.01) ? 4 : 2,
-					})} (${formatCurrency(Synths.sUSD, positionDetails.notionalValue?.abs() ?? zeroBN, {
-						sign: '$',
+					})} (${formatDollars(positionDetails.notionalValue?.abs() ?? zeroBN, {
 						minDecimals: positionDetails.notionalValue?.abs()?.lt(0.01) ? 4 : 2,
 					})})`}
 					<PreviewArrow
@@ -194,8 +183,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 					>
 						{`${formatNumber(previewData.positionSize ?? 0, {
 							minDecimals: 2,
-						})} (${formatCurrency(Synths.sUSD, previewData.notionalValue?.abs() ?? zeroBN, {
-							sign: '$',
+						})} (${formatDollars(previewData.notionalValue?.abs() ?? zeroBN, {
 							minDecimals: 2,
 						})})`}
 					</PreviewArrow>
@@ -217,14 +205,12 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 			),
 			liquidationPrice: positionDetails ? (
 				<>
-					{formatCurrency(Synths.sUSD, positionDetails?.liquidationPrice ?? zeroBN, {
-						sign: '$',
+					{formatDollars(positionDetails?.liquidationPrice ?? zeroBN, {
 						minDecimals,
 					})}
 					{
 						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
-							{formatCurrency(Synths.sUSD, previewData?.liquidationPrice ?? zeroBN, {
-								sign: '$',
+							{formatDollars(previewData?.liquidationPrice ?? zeroBN, {
 								minDecimals,
 							})}
 						</PreviewArrow>
@@ -237,40 +223,31 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 			realizedPnl: realizedPnl,
 			pnlText:
 				positionDetails && pnl
-					? `${formatCurrency(Synths.sUSD, pnl, {
-							sign: '$',
+					? `${formatDollars(pnl, {
 							minDecimals: pnl.abs().lt(0.01) ? 4 : 2,
 					  })} (${formatPercent(pnlPct)})`
 					: NO_VALUE,
 			realizedPnlText:
-				positionHistory && realizedPnl
-					? `${formatCurrency(Synths.sUSD, realizedPnl, {
-							sign: '$',
+				thisPositionHistory && realizedPnl
+					? `${formatDollars(realizedPnl, {
 							minDecimals: realizedPnl.abs().lt(0.01) ? 4 : 2,
 					  })} (${formatPercent(realizedPnlPct)})`
 					: NO_VALUE,
 			netFunding: netFunding,
 			netFundingText: netFunding
-				? `${formatCurrency(Synths.sUSD, netFunding, {
-						sign: '$',
+				? `${formatDollars(netFunding, {
 						minDecimals: netFunding.abs().lt(0.01) ? 4 : 2,
 				  })}`
 				: null,
-			fees: positionDetails
-				? formatCurrency(Synths.sUSD, positionHistory?.feesPaid ?? zeroBN, {
-						sign: '$',
-				  })
-				: NO_VALUE,
+			fees: positionDetails ? formatDollars(thisPositionHistory?.feesPaid ?? zeroBN) : NO_VALUE,
 			avgEntryPrice: positionDetails ? (
 				<>
-					{formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
-						sign: '$',
+					{formatDollars(thisPositionHistory?.entryPrice ?? zeroBN, {
 						minDecimals,
 					})}
 					{
 						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
-							{formatCurrency(Synths.sUSD, previewData.avgEntryPrice ?? zeroBN, {
-								sign: '$',
+							{formatDollars(previewData.avgEntryPrice ?? zeroBN, {
 								minDecimals,
 							})}
 						</PreviewArrow>
@@ -282,10 +259,9 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 		};
 	}, [
 		positionDetails,
-		positionHistory,
-		currencyKeyRate,
-		dailyPriceChangesQuery?.data,
-		currencyKey,
+		thisPositionHistory,
+		marketAssetRate,
+		marketAsset,
 		synthsMap,
 		t,
 		previewData.positionSide,
@@ -301,7 +277,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 
 	return (
 		<>
-			<Container id={isFuturesMarketClosed ? 'closed' : undefined} mobile={mobile}>
+			<Container id={isFuturesMarketClosed ? 'closed' : undefined}>
 				<DataCol>
 					<InfoRow>
 						<StyledSubtitle>{data.marketShortName}</StyledSubtitle>
@@ -309,7 +285,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 					</InfoRow>
 					<InfoRow>
 						<PositionCardTooltip
-							preset="bottom"
+							preset="fixed"
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.position-side')}
 						>
@@ -321,7 +297,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 					</InfoRow>
 					<InfoRow>
 						<PositionCardTooltip
-							preset="bottom"
+							preset="fixed"
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.position-size')}
 						>
@@ -332,11 +308,11 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 						<StyledValue>{data.positionSize}</StyledValue>
 					</InfoRow>
 				</DataCol>
-				<DataColDivider mobile={mobile} />
+				<DataColDivider />
 				<DataCol>
 					<InfoRow>
 						<PositionCardTooltip
-							preset="bottom"
+							preset="fixed"
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.net-funding')}
 						>
@@ -358,7 +334,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 					</InfoRow>
 					<InfoRow>
 						<PositionCardTooltip
-							preset="bottom"
+							preset="fixed"
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.u-pnl')}
 						>
@@ -376,7 +352,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 					</InfoRow>
 					<InfoRow>
 						<PositionCardTooltip
-							preset="bottom"
+							preset="fixed"
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.r-pnl')}
 						>
@@ -397,23 +373,23 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 						)}
 					</InfoRow>
 				</DataCol>
-				<DataColDivider mobile={mobile} />
+				<DataColDivider />
 				<DataCol>
 					<InfoRow>
-						<LeftMarginTooltip
-							preset="bottom"
+						<PositionCardTooltip
+							preset="fixed"
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.leverage')}
 						>
 							<StyledSubtitleWithCursor>
 								{t('futures.market.position-card.leverage')}
 							</StyledSubtitleWithCursor>
-						</LeftMarginTooltip>
+						</PositionCardTooltip>
 						<StyledValue data-testid="position-card-leverage-value">{data.leverage}</StyledValue>
 					</InfoRow>
 					<InfoRow>
 						<PositionCardTooltip
-							preset="bottom"
+							preset="fixed"
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.liquidation-price')}
 						>
@@ -424,15 +400,15 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 						<StyledValue>{data.liquidationPrice}</StyledValue>
 					</InfoRow>
 					<InfoRow>
-						<LeftMarginTooltip
-							preset="bottom-z-index-2-left-margin"
+						<PositionCardTooltip
+							preset="fixed"
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.avg-entry-price')}
 						>
 							<StyledSubtitleWithCursor>
 								{t('futures.market.position-card.avg-entry-price')}
 							</StyledSubtitleWithCursor>
-						</LeftMarginTooltip>
+						</PositionCardTooltip>
 						<StyledValue>{data.avgEntryPrice}</StyledValue>
 					</InfoRow>
 				</DataCol>
@@ -442,7 +418,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 };
 export default PositionCard;
 
-const Container = styled.div<{ mobile?: boolean }>`
+const Container = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 30px 1fr 30px 1fr;
 	background-color: transparent;
@@ -452,30 +428,26 @@ const Container = styled.div<{ mobile?: boolean }>`
 	border-radius: 10px;
 	margin-bottom: 15px;
 
-	${(props) =>
-		props.mobile &&
-		css`
-			display: flex;
-			flex-direction: column;
-		`}
+	${media.lessThan('md')`
+		display: flex;
+		flex-direction: column;
+	`}
 `;
 
 const DataCol = styled(FlexDivCol)`
 	justify-content: space-between;
 `;
 
-const DataColDivider = styled.div<{ mobile?: boolean }>`
+const DataColDivider = styled.div`
 	width: 1px;
 	background-color: #2b2a2a;
 	margin: 0 15px;
 
-	${(props) =>
-		props.mobile &&
-		css`
-			height: 1px;
-			width: 100%;
-			margin: 15px 0;
-		`}
+	${media.lessThan('md')`
+		height: 1px;
+		width: 100%;
+		margin: 15px 0;
+	`}
 `;
 
 const InfoRow = styled.div`
@@ -515,19 +487,13 @@ const StyledSubtitleWithCursor = styled.p`
 
 const PositionCardTooltip = styled(StyledTooltip)`
 	z-index: 2;
-`;
-
-const LeftMarginTooltip = styled(StyledTooltip)`
-	${media.greaterThan('sm')`
-		left: -60px;
-		z-index: 2;
-	`}
+	padding: 0px 10px 0px 10px;
 `;
 
 const StyledValue = styled.p`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 13px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	margin: 0;
 	text-align: end;
 	${Container}#closed & {
@@ -539,7 +505,7 @@ const PositionValue = styled.span<{ side?: PositionSide }>`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 13px;
 	text-transform: uppercase;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	margin: 0;
 	${Container}#closed & {
 		color: ${(props) => props.theme.colors.selectedTheme.gray};

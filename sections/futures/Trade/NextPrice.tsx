@@ -1,7 +1,8 @@
 import React from 'react';
-import styled from 'styled-components';
-import { EXTERNAL_LINKS } from 'constants/links';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+
+import { EXTERNAL_LINKS } from 'constants/links';
 
 const NextPrice: React.FC = () => {
 	const { t } = useTranslation();
@@ -26,7 +27,7 @@ const NextPriceContainer = styled.div`
 		margin: 0 8px;
 
 		a {
-			color: ${(props) => props.theme.colors.selectedTheme.button.text};
+			color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 		}
 	}
 `;

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import styled from 'styled-components';
 import { ToastContainer } from 'react-toastify';
+import styled from 'styled-components';
 import 'react-toastify/dist/ReactToastify.css';
 
 const NotificationContainer = () => {
@@ -29,7 +29,7 @@ const StyledToastContainer = styled(ToastContainer)`
 	.Toastify__toast {
 		border: ${(props) => props.theme.colors.selectedTheme.border};
 		background: ${(props) => props.theme.colors.selectedTheme.button.background};
-		color: ${(props) => props.theme.colors.selectedTheme.button.text};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
 	.Toastify__toast-body {
 		font-family: ${(props) => props.theme.fonts.regular};

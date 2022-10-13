@@ -1,33 +1,31 @@
-import React from 'react';
-import Wei, { wei } from '@synthetixio/wei';
-import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
-
-import TransactionNotifier from 'containers/TransactionNotifier';
+import { wei } from '@synthetixio/wei';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { gasSpeedState } from 'store/wallet';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
-import { Synths } from 'constants/currency';
-import { newGetTransactionPrice } from 'utils/network';
-import { formatCurrency } from 'utils/formatters/number';
-import { NO_VALUE } from 'constants/placeholder';
+
+import Error from 'components/Error';
 import CustomInput from 'components/Input/CustomInput';
+import Spacer from 'components/Spacer';
+import { NO_VALUE } from 'constants/placeholder';
+import TransactionNotifier from 'containers/TransactionNotifier';
+import { useRefetchContext } from 'contexts/RefetchContext';
+import useEstimateGasCost from 'hooks/useEstimateGasCost';
+import { currentMarketState, positionState } from 'store/futures';
+import { gasSpeedState } from 'store/wallet';
+import { formatDollars } from 'utils/formatters/number';
+
 import {
 	StyledBaseModal,
 	BalanceContainer,
 	BalanceText,
 	GasFeeContainer,
 	MaxButton,
-	ErrorMessage,
 	MarginActionButton,
 } from './DepositMarginModal';
-import { currentMarketState, positionState } from 'store/futures';
-import { useRefetchContext } from 'contexts/RefetchContext';
 
 type WithdrawMarginModalProps = {
 	onDismiss(): void;
-	sUSDBalance: Wei;
 };
 
 const PLACEHOLDER = '$0.00';
@@ -38,26 +36,15 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const market = useRecoilValue(currentMarketState);
-	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
-	const [amount, setAmount] = React.useState<string>('');
-	const [isDisabled, setDisabled] = React.useState<boolean>(true);
+	const { useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();
+	const [amount, setAmount] = React.useState('');
+	const [isDisabled, setDisabled] = React.useState(true);
 	const [isMax, setMax] = React.useState(false);
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
-	const exchangeRatesQuery = useExchangeRatesQuery();
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+	const { estimateSnxTxGasCost } = useEstimateGasCost();
 
 	const { handleRefetch } = useRefetchContext();
-
-	const exchangeRates = React.useMemo(
-		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
-		[exchangeRatesQuery.isSuccess, exchangeRatesQuery.data]
-	);
-
-	const ethPriceRate = React.useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
-		[exchangeRates, selectedPriceCurrency.name]
-	);
 
 	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
 
@@ -80,16 +67,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 		{ enabled: !!market && !!amount }
 	);
 
-	const transactionFee = React.useMemo(
-		() =>
-			newGetTransactionPrice(
-				gasPrice,
-				withdrawTxn.gasLimit,
-				ethPriceRate,
-				withdrawTxn.optimismLayerOneFee
-			),
-		[gasPrice, ethPriceRate, withdrawTxn.gasLimit, withdrawTxn.optimismLayerOneFee]
-	);
+	const transactionFee = estimateSnxTxGasCost(withdrawTxn);
 
 	React.useEffect(() => {
 		if (withdrawTxn.hash) {
@@ -127,13 +105,13 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 	return (
 		<StyledBaseModal
 			title={t('futures.market.trade.margin.modal.withdraw.title')}
-			isOpen={true}
+			isOpen
 			onDismiss={onDismiss}
 		>
 			<BalanceContainer>
 				<BalanceText $gold>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
 				<BalanceText>
-					<span>{formatCurrency(Synths.sUSD, accessibleMargin, { sign: '$' })}</span> sUSD
+					<span>{formatDollars(accessibleMargin)}</span> sUSD
 				</BalanceText>
 			</BalanceContainer>
 
@@ -151,6 +129,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 					</MaxButton>
 				}
 			/>
+			<Spacer height={20} />
 
 			<MarginActionButton
 				data-testid="futures-market-trade-withdraw-margin-button"
@@ -165,14 +144,14 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 				<BalanceText>{t('futures.market.trade.margin.modal.gas-fee')}:</BalanceText>
 				<BalanceText>
 					<span>
-						{transactionFee
-							? formatCurrency(Synths.sUSD, transactionFee, { sign: '$', maxDecimals: 1 })
-							: NO_VALUE}
+						{transactionFee ? formatDollars(transactionFee, { maxDecimals: 1 }) : NO_VALUE}
 					</span>
 				</BalanceText>
 			</GasFeeContainer>
 
-			{withdrawTxn.errorMessage && <ErrorMessage>{withdrawTxn.errorMessage}</ErrorMessage>}
+			{withdrawTxn.errorMessage && (
+				<Error message={withdrawTxn.errorMessage} formatter="revert"></Error>
+			)}
 		</StyledBaseModal>
 	);
 };

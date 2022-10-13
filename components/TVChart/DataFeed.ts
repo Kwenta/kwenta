@@ -1,4 +1,3 @@
-import { Synths } from 'constants/currency';
 import {
 	HistoryCallback,
 	IBasicDataFeed,
@@ -13,6 +12,8 @@ import {
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import { combineDataToPair } from 'sections/exchange/TradeCard/Charts/hooks/useCombinedCandleSticksChartData';
 import { getDisplayAsset } from 'utils/futures';
+import logError from 'utils/logError';
+
 import { resolutionToSeconds } from './utils';
 
 const supportedResolutions = [
@@ -53,8 +54,8 @@ const fetchCombinedCandles = async (
 	resolution: ResolutionString,
 	networkId: number
 ) => {
-	const baseCurrencyIsSUSD = base === Synths.sUSD;
-	const quoteCurrencyIsSUSD = quote === Synths.sUSD;
+	const baseCurrencyIsSUSD = base === 'sUSD';
+	const quoteCurrencyIsSUSD = quote === 'sUSD';
 	const baseDataPromise = requestCandlesticks(
 		base,
 		from,
@@ -81,8 +82,8 @@ const fetchLastCandle = async (
 	resolution: ResolutionString,
 	networkId: number
 ) => {
-	const baseCurrencyIsSUSD = base === Synths.sUSD;
-	const quoteCurrencyIsSUSD = quote === Synths.sUSD;
+	const baseCurrencyIsSUSD = base === 'sUSD';
+	const quoteCurrencyIsSUSD = quote === 'sUSD';
 	const to = Math.floor(Date.now() / 1000);
 	const from = 0;
 
@@ -144,7 +145,7 @@ function subscribeLastCandle(
 			}
 		});
 	} catch (err) {
-		console.log(err);
+		logError(err);
 	}
 }
 
@@ -154,7 +155,7 @@ const DataFeedFactory = (
 ): IBasicDataFeed => {
 	return {
 		onReady: (cb: OnReadyCallback) => {
-			setTimeout(() => cb(config), 0);
+			setTimeout(() => cb(config), 500);
 		},
 		resolveSymbol: (symbolName: string, onSymbolResolvedCallback: (val: any) => any) => {
 			const { base, quote } = splitBaseQuote(symbolName);
@@ -183,7 +184,7 @@ const DataFeedFactory = (
 		getBars: function (
 			symbolInfo: LibrarySymbolInfo,
 			_resolution: ResolutionString,
-			{ from, to, countBack }: PeriodParams,
+			{ from, to }: PeriodParams,
 			onHistoryCallback: HistoryCallback,
 			onErrorCallback: (error: any) => any
 		) {
@@ -253,7 +254,7 @@ const DataFeedFactory = (
 
 			onSubscribe(intervalId);
 		},
-		unsubscribeBars: (subscriberUID) => {},
+		unsubscribeBars: () => {},
 		searchSymbols: (
 			userInput: string,
 			exchange: string,

@@ -1,28 +1,27 @@
 import Link from 'next/link';
 import router from 'next/router';
 import { FC, useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right-tg.svg';
 import CaretDownGrayIcon from 'assets/svg/app/caret-down-gray-slim.svg';
+import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg';
 import DiscordLogo from 'assets/svg/social/discord.svg';
 import MirrorLogo from 'assets/svg/social/mirror.svg';
-import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg';
-import ROUTES from 'constants/routes';
-import { EXTERNAL_LINKS } from 'constants/links';
-import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Button from 'components/Button';
+import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
+import { EXTERNAL_LINKS } from 'constants/links';
+import ROUTES from 'constants/routes';
 import { FlexDivRow, FlexDivRowCentered, GridDivCenteredCol } from 'styles/common';
 import media from 'styles/media';
-import { isL2State } from 'store/wallet';
-import Logo from '../Logo';
+
 import MobileUserMenu from '../AppLayout/Header/MobileUserMenu';
+import Logo from '../Logo';
 
 const Header: FC = () => {
 	const { t } = useTranslation();
-	const isL2 = useRecoilValue(isL2State);
 
 	const LINKS = useMemo(
 		() => [
@@ -46,6 +45,12 @@ const Header: FC = () => {
 				label: t('homepage.nav.blog'),
 				icon: <ArrowUpRightIcon />,
 				onClick: () => window.open(EXTERNAL_LINKS.Social.Mirror, '_blank'),
+			},
+			{
+				id: 'learn-more',
+				label: t('homepage.nav.learn-more'),
+				icon: <ArrowUpRightIcon />,
+				onClick: () => window.open(EXTERNAL_LINKS.Docs.DocsRoot, '_blank'),
 			},
 		],
 		// eslint-disable-next-line
@@ -91,7 +96,7 @@ const Header: FC = () => {
 			<MobileHiddenView>
 				<Container>
 					<LogoContainer>
-						<Logo isL2={isL2} />
+						<Logo />
 					</LogoContainer>
 					<Links>
 						{LINKS.map(({ id, label, icon, onClick }) => (
@@ -119,7 +124,7 @@ const Header: FC = () => {
 						))}
 					</Links>
 					<MenuContainer>
-						<Link href={ROUTES.Markets.Home}>
+						<Link href={ROUTES.Markets.Home(DEFAULT_FUTURES_MARGIN_TYPE)}>
 							<Button noOutline size="sm">
 								{t('homepage.nav.start-trade')}
 							</Button>
@@ -130,7 +135,7 @@ const Header: FC = () => {
 			<MobileOnlyView>
 				<MobileContainer>
 					<LogoContainer>
-						<Logo isL2={isL2} />
+						<Logo />
 					</LogoContainer>
 					<MobileUserMenu />
 				</MobileContainer>
@@ -145,7 +150,6 @@ const MobileContainer = styled(FlexDivRow)`
 `;
 
 const LogoContainer = styled.div`
-	margin-top: -4px;
 	${media.lessThan('sm')`
 		margin-top: 4px;
 		padding-left:17px;

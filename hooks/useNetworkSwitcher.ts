@@ -1,19 +1,18 @@
+import { addOptimismNetworkToMetamask } from '@synthetixio/optimism-networks';
+import { L2_TO_L1_NETWORK_MAPPER } from '@synthetixio/optimism-networks';
+import { utils, BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
-import { isWalletConnectedState, networkState } from 'store/wallet';
+import { chain, useConnect } from 'wagmi';
+
 import Connector from 'containers/Connector';
-import { addOptimismNetworkToMetamask } from '@synthetixio/optimism-networks';
-import { utils, BigNumber } from 'ethers';
-import { L2_TO_L1_NETWORK_MAPPER } from '@synthetixio/optimism-networks';
 
 const useNetworkSwitcher = () => {
+	const { network, isWalletConnected } = Connector.useContainer();
+	const { connect: connectWallet } = useConnect();
 	const [, setNetworkError] = useState<string | null>(null);
 
 	const { t } = useTranslation();
-	const network = useRecoilValue(networkState);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const { connectWallet } = Connector.useContainer();
 
 	const switchToL1 = async () => {
 		if (!isWalletConnected) await connectWallet();
@@ -24,7 +23,7 @@ const useNetworkSwitcher = () => {
 			setNetworkError(null);
 
 			const formattedChainId = utils.hexStripZeros(
-				BigNumber.from(L2_TO_L1_NETWORK_MAPPER[network.id]).toHexString()
+				BigNumber.from(L2_TO_L1_NETWORK_MAPPER[network?.id ?? chain.optimism.id]).toHexString()
 			);
 			(window.ethereum as any).request({
 				method: 'wallet_switchEthereumChain',

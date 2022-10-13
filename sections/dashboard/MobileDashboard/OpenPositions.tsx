@@ -1,107 +1,72 @@
-import React from 'react';
-import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import useSynthetixQueries from '@synthetixio/queries';
-import { wei } from '@synthetixio/wei';
+import { SetterOrUpdater, useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
-import { SectionHeader } from 'sections/futures/MobileTrade/common';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import Connector from 'containers/Connector';
-import { getMarketKey } from 'utils/futures';
-import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
-import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
-import { walletAddressState } from 'store/wallet';
-import { Synths } from 'constants/currency';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
-import { TabPanel } from 'components/Tab';
-import SynthBalancesTable from '../SynthBalancesTable';
 import TabButton from 'components/Button/TabButton';
+import { TabPanel } from 'components/Tab';
+import { FuturesAccountTypes } from 'queries/futures/types';
+import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
+import { balancesState, portfolioState, positionsState } from 'store/futures';
+import { formatDollars } from 'utils/formatters/number';
+
 import FuturesPositionsTable from '../FuturesPositionsTable';
+import { MarketsTab } from '../Markets/Markets';
+import { PositionsTab } from '../Overview/Overview';
+import SynthBalancesTable from '../SynthBalancesTable';
 
-enum PositionsTab {
-	FUTURES = 'futures',
-	SHORTS = 'shorts',
-	SPOT = 'spot',
-}
+type OpenPositionsProps = {
+	activePositionsTab: PositionsTab;
+	setActivePositionsTab: SetterOrUpdater<PositionsTab>;
+};
 
-const OpenPositions: React.FC = () => {
+const OpenPositions: React.FC<OpenPositionsProps> = ({
+	activePositionsTab,
+	setActivePositionsTab,
+}) => {
 	const { t } = useTranslation();
+	const positions = useRecoilValue(positionsState);
+	const portfolio = useRecoilValue(portfolioState);
+	const balances = useRecoilValue(balancesState);
 
-	const { useExchangeRatesQuery, useSynthsBalancesQuery } = useSynthetixQueries();
-
-	const futuresMarketsQuery = useGetFuturesMarkets();
-	const futuresMarkets = futuresMarketsQuery?.data ?? [];
-
-	const { network } = Connector.useContainer();
-	const markets = futuresMarkets.map(({ asset }) => getMarketKey(asset, network.id));
-	const portfolioValueQuery = useGetCurrentPortfolioValue(markets);
-	const portfolioValue = portfolioValueQuery?.data ?? null;
-
-	const futuresPositionQuery = useGetFuturesPositionForAccount();
-	const futuresPositionHistory = futuresPositionQuery?.data ?? [];
-
-	const exchangeRatesQuery = useExchangeRatesQuery();
-	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
-
-	const walletAddress = useRecoilValue(walletAddressState);
-	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
-	const synthBalances =
-		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
-			? synthsBalancesQuery.data
-			: null;
-
-	const [activePositionsTab, setActivePositionsTab] = React.useState<PositionsTab>(
-		PositionsTab.FUTURES
-	);
-
-	const totalSpotBalancesValue = formatCurrency(
-		Synths.sUSD,
-		wei(synthBalances?.totalUSDBalance ?? zeroBN),
-		{ sign: '$' }
-	);
-
-	const totalFuturesPortfolioValue = formatCurrency(Synths.sUSD, wei(portfolioValue ?? zeroBN), {
-		sign: '$',
-	});
-
-	const POSITIONS_TABS = React.useMemo(
+	const POSITIONS_TABS = useMemo(
 		() => [
 			{
-				name: PositionsTab.FUTURES,
-				label: t('dashboard.overview.positions-tabs.futures'),
-				badge: futuresPositionQuery?.data?.length,
-				active: activePositionsTab === PositionsTab.FUTURES,
-				detail: totalFuturesPortfolioValue,
+				name: PositionsTab.CROSS_MARGIN,
+				label: t('dashboard.overview.positions-tabs.cross-margin'),
+				badge: positions[FuturesAccountTypes.CROSS_MARGIN].length,
+				active: activePositionsTab === PositionsTab.CROSS_MARGIN,
+				detail: formatDollars(portfolio.crossMarginFutures),
 				disabled: false,
-				onClick: () => {
-					setActivePositionsTab(PositionsTab.FUTURES);
-				},
+				onClick: () => setActivePositionsTab(PositionsTab.CROSS_MARGIN),
+			},
+			{
+				name: PositionsTab.ISOLATED_MARGIN,
+				label: t('dashboard.overview.positions-tabs.isolated-margin'),
+				badge: positions[FuturesAccountTypes.ISOLATED_MARGIN].length,
+				active: activePositionsTab === PositionsTab.ISOLATED_MARGIN,
+				detail: formatDollars(portfolio.isolatedMarginFutures),
+				disabled: false,
+				onClick: () => setActivePositionsTab(PositionsTab.ISOLATED_MARGIN),
 			},
 			{
 				name: PositionsTab.SPOT,
 				label: t('dashboard.overview.positions-tabs.spot'),
 				active: activePositionsTab === PositionsTab.SPOT,
-				detail: totalSpotBalancesValue,
+				detail: formatDollars(balances.totalUSDBalance),
 				disabled: false,
-				onClick: () => {
-					setActivePositionsTab(PositionsTab.SPOT);
-				},
+				onClick: () => setActivePositionsTab(PositionsTab.SPOT),
 			},
 		],
-		[
-			activePositionsTab,
-			futuresPositionQuery?.data?.length,
-			t,
-			totalFuturesPortfolioValue,
-			totalSpotBalancesValue,
-		]
+		[positions, activePositionsTab, setActivePositionsTab, t, portfolio, balances]
 	);
 
 	return (
 		<div>
 			<div style={{ margin: '15px 15px 30px 15px' }}>
-				<SectionHeader>Open Positions</SectionHeader>
+				<SectionHeader>
+					<SectionTitle>{t('dashboard.overview.mobile.open-positions')}</SectionTitle>
+				</SectionHeader>
 
 				<TabButtonsContainer>
 					{POSITIONS_TABS.map(({ name, label, ...rest }) => (
@@ -110,18 +75,16 @@ const OpenPositions: React.FC = () => {
 				</TabButtonsContainer>
 			</div>
 
-			<TabPanel name={PositionsTab.FUTURES} activeTab={activePositionsTab}>
-				<FuturesPositionsTable
-					futuresMarkets={futuresMarkets}
-					futuresPositionHistory={futuresPositionHistory}
-				/>
+			<TabPanel name={PositionsTab.CROSS_MARGIN} activeTab={activePositionsTab}>
+				<FuturesPositionsTable accountType={FuturesAccountTypes.CROSS_MARGIN} />
 			</TabPanel>
 
-			<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}>
-				<SynthBalancesTable
-					synthBalances={synthBalances?.balances ?? []}
-					exchangeRates={exchangeRates}
-				/>
+			<TabPanel name={PositionsTab.ISOLATED_MARGIN} activeTab={activePositionsTab}>
+				<FuturesPositionsTable accountType={FuturesAccountTypes.ISOLATED_MARGIN} />
+			</TabPanel>
+
+			<TabPanel name={MarketsTab.SPOT} activeTab={activePositionsTab}>
+				<SynthBalancesTable />
 			</TabPanel>
 		</div>
 	);

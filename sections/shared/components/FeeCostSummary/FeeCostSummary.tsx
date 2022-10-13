@@ -1,22 +1,19 @@
-import { FC } from 'react';
+import Wei from '@synthetixio/wei';
+import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import Wei from '@synthetixio/wei';
-
+import { CurrencyKey } from 'constants/currency';
+import { NO_VALUE } from 'constants/placeholder';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatCurrency } from 'utils/formatters/number';
 
-import { NO_VALUE } from 'constants/placeholder';
-
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
-import { CurrencyKey } from 'constants/currency';
 
 type FeeRateSummaryItemProps = {
 	feeCost: Wei | null;
 };
 
-const FeeCostSummary: FC<FeeRateSummaryItemProps> = ({ feeCost, ...rest }) => {
+const FeeCostSummary: FC<FeeRateSummaryItemProps> = memo(({ feeCost, ...rest }) => {
 	const { t } = useTranslation();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
@@ -33,6 +30,6 @@ const FeeCostSummary: FC<FeeRateSummaryItemProps> = ({ feeCost, ...rest }) => {
 			</SummaryItemValue>
 		</SummaryItem>
 	);
-};
+});
 
 export default FeeCostSummary;

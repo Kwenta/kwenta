@@ -1,8 +1,8 @@
-import React from 'react';
 import { wei } from '@synthetixio/wei';
+import React from 'react';
 
-import StatWithContainer from './StatWithContainer';
 import { PositionSide } from '../types';
+import StatWithContainer from './StatWithContainer';
 
 type PnLsProps = {
 	stopLoss: string;

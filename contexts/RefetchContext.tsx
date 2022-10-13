@@ -1,57 +1,177 @@
-import React from 'react';
-import { useRecoilValue } from 'recoil';
-import useSynthetixQueries from '@synthetixio/queries';
+import React, { useEffect } from 'react';
+import { UseQueryResult } from 'react-query';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { Period } from 'constants/period';
+import useGetAverageFundingRateForMarkets from 'queries/futures/useGetAverageFundingRateForMarkets';
+import useGetCrossMarginAccountOverview from 'queries/futures/useGetCrossMarginAccountOverview';
+import useGetCrossMarginSettings from 'queries/futures/useGetCrossMarginSettings';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
-import { walletAddressState } from 'store/wallet';
-import useGetFuturesMarket from 'queries/futures/useGetFuturesMarket';
-import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
+import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
+import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesPositionHistory';
+import useGetFuturesVolumes from 'queries/futures/useGetFuturesVolumes';
+import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
+import useSynthBalances from 'queries/synths/useSynthBalances';
+import { futuresAccountTypeState, positionState } from 'store/futures';
+import logError from 'utils/logError';
 
-type RefetchType = 'modify-position' | 'new-order' | 'close-position' | 'margin-change';
+type RefetchType =
+	| 'modify-position'
+	| 'new-order'
+	| 'close-position'
+	| 'margin-change'
+	| 'account-margin-change'
+	| 'cross-margin-account-change';
+
+type RefetchUntilType =
+	| 'wallet-balance-change'
+	| 'cross-margin-account-change'
+	| 'account-margin-change';
 
 type RefetchContextType = {
 	handleRefetch: (refetchType: RefetchType, timeout?: number) => void;
+	refetchUntilUpdate: (refetchType: RefetchUntilType) => Promise<any>;
 };
 
 const RefetchContext = React.createContext<RefetchContextType>({
 	handleRefetch: () => {},
+	refetchUntilUpdate: () => Promise.resolve(),
 });
 
 export const RefetchProvider: React.FC = ({ children }) => {
-	const { useSynthsBalancesQuery } = useSynthetixQueries();
-	const walletAddress = useRecoilValue(walletAddressState);
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
+	const setPosition = useSetRecoilState(positionState);
 
-	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
+	const synthsBalancesQuery = useSynthBalances();
 	const openOrdersQuery = useGetFuturesOpenOrders();
 	const positionQuery = useGetFuturesPositionForMarket();
-	const marketQuery = useGetFuturesMarket();
-	useGetFuturesPotentialTradeDetails();
+	const crossMarginAccountOverview = useGetCrossMarginAccountOverview();
+	const positionsQuery = useGetFuturesPositionForMarkets();
+	const positionHistoryQuery = useGetFuturesPositionHistory();
+	const marketsQuery = useGetFuturesMarkets();
+	const crossMarginAccountQuery = useQueryCrossMarginAccount();
+
+	useExchangeRatesQuery({ refetchInterval: 15000 });
+	useGetAverageFundingRateForMarkets(Period.ONE_HOUR);
+	useLaggedDailyPrice();
+	useGetFuturesVolumes({ refetchInterval: 60000 });
+	useGetCrossMarginSettings();
+
+	useEffect(() => {
+		if (positionQuery.error) {
+			setPosition(null);
+		}
+	}, [positionQuery.error, setPosition]);
 
 	const handleRefetch = (refetchType: RefetchType, timeout?: number) => {
 		setTimeout(() => {
 			switch (refetchType) {
 				case 'modify-position':
-					marketQuery.refetch();
+					marketsQuery.refetch();
 					openOrdersQuery.refetch();
+					positionsQuery.refetch();
+					positionHistoryQuery.refetch();
+					if (selectedAccountType === 'cross_margin') {
+						crossMarginAccountOverview.refetch();
+					}
 					break;
 				case 'new-order':
+					positionsQuery.refetch();
 					openOrdersQuery.refetch();
 					break;
 				case 'close-position':
 					positionQuery.refetch();
+					positionsQuery.refetch();
+					positionHistoryQuery.refetch();
 					openOrdersQuery.refetch();
 					break;
 				case 'margin-change':
 					positionQuery.refetch();
+					positionsQuery.refetch();
+					positionHistoryQuery.refetch();
 					openOrdersQuery.refetch();
 					synthsBalancesQuery.refetch();
+					break;
+				case 'account-margin-change':
+					crossMarginAccountOverview.refetch();
+					synthsBalancesQuery.refetch();
+					break;
+				case 'cross-margin-account-change':
+					crossMarginAccountQuery.refetch();
 					break;
 			}
 		}, timeout ?? 5000);
 	};
 
-	return <RefetchContext.Provider value={{ handleRefetch }}>{children}</RefetchContext.Provider>;
+	const refetchUntilUpdate = async (refetchType: RefetchUntilType) => {
+		switch (refetchType) {
+			case 'account-margin-change':
+				return Promise.all([
+					refetchWithComparator(crossMarginAccountOverview, (prev, next) => {
+						return !next || prev.freeMargin?.toString() === next.freeMargin?.toString();
+					}),
+					refetchWithComparator(synthsBalancesQuery, (prev, next) => {
+						return !next || prev?.susdWalletBalance === next?.susdWalletBalance;
+					}),
+				]);
+			case 'cross-margin-account-change':
+				return refetchWithComparator(crossMarginAccountQuery, (prev, next) => {
+					return !next || prev === next;
+				});
+			case 'wallet-balance-change':
+				return refetchWithComparator(synthsBalancesQuery, (prev, next) => {
+					return !next || prev?.susdWalletBalance === next?.susdWalletBalance;
+				});
+		}
+	};
+
+	return (
+		<RefetchContext.Provider value={{ handleRefetch, refetchUntilUpdate }}>
+			{children}
+		</RefetchContext.Provider>
+	);
+};
+
+// Takes a comparitor which should return a bool condition to
+// signal to continue retrying, comparing prev and new query result
+
+const refetchWithComparator = async (
+	query: UseQueryResult<any>,
+	comparator: (previous: any, current: any) => boolean,
+	interval = 1000,
+	max = 20
+) => {
+	const prev = query?.data;
+
+	return new Promise((res) => {
+		let count = 1;
+
+		const refetch = async () => {
+			const timeout = setTimeout(async () => {
+				if (count > max) {
+					clearTimeout(timeout);
+					logError('refetch timeout');
+					res({ data: null, status: 'timeout' });
+				} else {
+					const cur = query?.data || null;
+					const next = await query.refetch();
+
+					count += 1;
+					if (!comparator(prev, next.data)) {
+						clearTimeout(timeout);
+						res({ data: cur, status: 'complete' });
+					} else {
+						refetch();
+					}
+				}
+			}, interval);
+		};
+		refetch();
+	});
 };
 
 export const useRefetchContext = () => {

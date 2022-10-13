@@ -1,10 +1,13 @@
 import useSynthetixQueries, { GasPrice, GasPrices } from '@synthetixio/queries';
-import { BigNumber } from 'ethers';
-import { customGasPriceState, gasSpeedState, isMainnetState } from 'store/wallet';
-import { gasPriceInWei, normalizeGasLimit } from 'utils/network';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import { wei } from '@synthetixio/wei';
+import { BigNumber } from 'ethers';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useRecoilState } from 'recoil';
+
+import { customGasPriceState, gasSpeedState } from 'store/wallet';
+import { gasPriceInWei, normalizeGasLimit } from 'utils/network';
+
+import useIsL1 from './useIsL1';
 
 export const parseGasPriceObject = (gasPriceObject: GasPrice): number | null => {
 	const { gasPrice, maxFeePerGas } = gasPriceObject;
@@ -29,7 +32,7 @@ type GasConfigL2 = {
 type GasConfig = GasConfigL1 | GasConfigL2;
 
 const useGas = () => {
-	const isMainnet = useRecoilValue(isMainnetState);
+	const isMainnet = useIsL1();
 	const { useEthGasPriceQuery } = useSynthetixQueries();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 

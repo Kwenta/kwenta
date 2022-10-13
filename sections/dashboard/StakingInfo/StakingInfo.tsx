@@ -1,8 +1,10 @@
 import { FC } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import BigText from 'components/Text/BigText';
+import styled from 'styled-components';
+
 import Button from 'components/Button';
+import BigText from 'components/Text/BigText';
+
 import { Title } from '../common';
 
 const StakingInfo: FC = () => {
@@ -10,7 +12,7 @@ const StakingInfo: FC = () => {
 
 	return (
 		<StakingContainer>
-			<CardTitle>{t('futures-dashboard.titles.staking')}</CardTitle>
+			<CardTitle>{t('dashboard.titles.staking')}</CardTitle>
 			<StakingBody>
 				<Title>APY:</Title>
 				<BigText white>--%</BigText>

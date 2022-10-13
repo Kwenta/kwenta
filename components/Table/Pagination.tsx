@@ -1,13 +1,12 @@
 import React, { FC } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
-import { GridDivCenteredCol, resetButtonCSS } from 'styles/common';
-
-import LeftArrowIcon from 'assets/svg/app/caret-left.svg';
 import LeftEndArrowIcon from 'assets/svg/app/caret-left-end.svg';
-import RightArrowIcon from 'assets/svg/app/caret-right.svg';
+import LeftArrowIcon from 'assets/svg/app/caret-left.svg';
 import RightEndArrowIcon from 'assets/svg/app/caret-right-end.svg';
+import RightArrowIcon from 'assets/svg/app/caret-right.svg';
+import { GridDivCenteredCol, resetButtonCSS } from 'styles/common';
 
 type PaginationProps = {
 	pageIndex: number;
@@ -19,42 +18,50 @@ type PaginationProps = {
 	nextPage: () => void;
 };
 
-const Pagination: FC<PaginationProps> = ({
-	pageIndex,
-	pageCount,
-	canNextPage = true,
-	canPreviousPage = true,
-	setPage,
-	nextPage,
-	previousPage,
-}) => {
-	const { t } = useTranslation();
+const Pagination: FC<PaginationProps> = React.memo(
+	({
+		pageIndex,
+		pageCount,
+		canNextPage = true,
+		canPreviousPage = true,
+		setPage,
+		nextPage,
+		previousPage,
+	}) => {
+		const { t } = useTranslation();
 
-	return (
-		<PaginationContainer>
-			<span>
-				<ArrowButton onClick={() => setPage(0)} disabled={!canPreviousPage}>
-					<LeftEndArrowIcon />
-				</ArrowButton>
-				<ArrowButton onClick={() => previousPage()} disabled={!canPreviousPage}>
-					<LeftArrowIcon />
-				</ArrowButton>
-			</span>
-			<PageInfo>
-				{t('common.pagination.page')}{' '}
-				{t('common.pagination.page-of-total-pages', { page: pageIndex + 1, totalPages: pageCount })}
-			</PageInfo>
-			<span>
-				<ArrowButton onClick={() => nextPage()} disabled={!canNextPage}>
-					<RightArrowIcon />
-				</ArrowButton>
-				<ArrowButton onClick={() => setPage(pageCount - 1)} disabled={!canNextPage}>
-					<RightEndArrowIcon />
-				</ArrowButton>
-			</span>
-		</PaginationContainer>
-	);
-};
+		const firstPage = () => setPage(0);
+		const toLastPage = () => setPage(pageCount - 1);
+
+		return (
+			<PaginationContainer>
+				<span>
+					<ArrowButton onClick={firstPage} disabled={!canPreviousPage}>
+						<LeftEndArrowIcon />
+					</ArrowButton>
+					<ArrowButton onClick={previousPage} disabled={!canPreviousPage}>
+						<LeftArrowIcon />
+					</ArrowButton>
+				</span>
+				<PageInfo>
+					{t('common.pagination.page')}{' '}
+					{t('common.pagination.page-of-total-pages', {
+						page: pageIndex + 1,
+						totalPages: pageCount,
+					})}
+				</PageInfo>
+				<span>
+					<ArrowButton onClick={nextPage} disabled={!canNextPage}>
+						<RightArrowIcon />
+					</ArrowButton>
+					<ArrowButton onClick={toLastPage} disabled={!canNextPage}>
+						<RightEndArrowIcon />
+					</ArrowButton>
+				</span>
+			</PaginationContainer>
+		);
+	}
+);
 
 const PageInfo = styled.span`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
@@ -78,7 +85,7 @@ const ArrowButton = styled.button`
 	svg {
 		width: 14px;
 		height: 14px;
-		fill: ${(props) => props.theme.colors.selectedTheme.button.text};
+		fill: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
 `;
 

@@ -1,31 +1,38 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
+import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import { utils as ethersUtils } from 'ethers';
 
-import { appReadyState } from 'store/app';
-import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
-
-import QUERY_KEYS from 'constants/queryKeys';
-import { getFuturesEndpoint, mapTrades } from './utils';
-import { FuturesTrade } from './types';
-import { getFuturesTrades } from './subgraph';
 import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
+import QUERY_KEYS from 'constants/queryKeys';
+import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
+import { futuresAccountTypeState } from 'store/futures';
+import logError from 'utils/logError';
+
+import { FuturesAccountType, getFuturesTrades } from './subgraph';
+import { FuturesTrade } from './types';
+import { getFuturesEndpoint, mapTrades } from './utils';
 
 const useGetFuturesTradesForAccount = (
 	currencyKey: string | undefined,
 	account?: string | null,
 	options?: UseQueryOptions<FuturesTrade[] | null> & { forceAccount: boolean }
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isL2 = useRecoilValue(isL2State);
+	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
+	const { network, isWalletConnected } = Connector.useContainer();
+	const isL2 = useIsL2();
+	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
 	return useQuery<FuturesTrade[] | null>(
-		QUERY_KEYS.Futures.TradesAccount(network.id, currencyKey || null, account || null),
+		QUERY_KEYS.Futures.TradesAccount(
+			network?.id as NetworkId,
+			currencyKey || null,
+			account || null,
+			selectedAccountType
+		),
 		async () => {
-			if (!currencyKey || !account) return null;
+			if (!currencyKey || !account || !isL2) return null;
 
 			try {
 				const response = await getFuturesTrades(
@@ -35,6 +42,7 @@ const useGetFuturesTradesForAccount = (
 						where: {
 							asset: `${ethersUtils.formatBytes32String(currencyKey)}`,
 							account: account,
+							accountType: selectedAccountType as FuturesAccountType,
 						},
 						orderDirection: 'desc',
 						orderBy: 'timestamp',
@@ -43,6 +51,9 @@ const useGetFuturesTradesForAccount = (
 						id: true,
 						timestamp: true,
 						account: true,
+						abstractAccount: true,
+						accountType: true,
+						margin: true,
 						size: true,
 						asset: true,
 						price: true,
@@ -56,11 +67,11 @@ const useGetFuturesTradesForAccount = (
 				);
 				return response ? mapTrades(response) : null;
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				return null;
 			}
 		},
-		{ enabled: isWalletConnected ? isL2 && isAppReady && !!account : isAppReady, ...options }
+		{ enabled: isWalletConnected || (isL2 && !!account), ...options }
 	);
 };
 

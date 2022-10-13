@@ -1,13 +1,13 @@
-import React from 'react';
-import styled from 'styled-components';
 import { wei } from '@synthetixio/wei';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 import { PositionSide } from '../types';
 
 function textColor(props: any) {
 	if (!props.className || props.className === 'row-name')
-		return props.theme.colors.selectedTheme.button.text;
+		return props.theme.colors.selectedTheme.button.text.primary;
 	if (props.className === 'long') return props.theme.colors.selectedTheme.green;
 	if (props.className === 'short') return props.theme.colors.selectedTheme.red;
 	if (props.className === 'gray-font-color') return props.theme.colors.selectedTheme.gray;
@@ -16,7 +16,7 @@ function textColor(props: any) {
 type ProfitDetailsProps = {
 	stopLoss: string;
 	exitPrice: string;
-	marketAsset: string;
+	marketName: string;
 	leverageSide: PositionSide;
 	marketAssetPositionSize: string;
 };
@@ -24,7 +24,7 @@ type ProfitDetailsProps = {
 const ProfitDetails: React.FC<ProfitDetailsProps> = ({
 	stopLoss,
 	exitPrice,
-	marketAsset,
+	marketName,
 	leverageSide,
 	marketAssetPositionSize,
 }) => {
@@ -86,7 +86,7 @@ const ProfitDetails: React.FC<ProfitDetailsProps> = ({
 							? wei(marketAssetPositionSize).toNumber().toFixed(2)
 							: ''}
 					</RowText>
-					<RowText className="gray-font-color">{`${marketAsset}-PERP`}</RowText>
+					<RowText className="gray-font-color">{marketName}</RowText>
 				</Details>
 			</StyledProfitDetails>
 		</>
@@ -106,8 +106,8 @@ const RowText = styled.p`
 
 	color: ${(props) => textColor(props)};
 
-	font-size: 14px;
-	line-height: 17px;
+	font-size: 12px;
+	line-height: 10px;
 	text-align: ${(props) => (props.className === 'row-name' ? 'left' : 'right')};
 `;
 

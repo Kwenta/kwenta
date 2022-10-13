@@ -1,23 +1,21 @@
-import { FC } from 'react';
+import Wei from '@synthetixio/wei';
+import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import Tippy from '@tippyjs/react';
-
-import { NO_VALUE } from 'constants/placeholder';
 
 import TimerIcon from 'assets/svg/app/timer.svg';
-
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
+import { NO_VALUE } from 'constants/placeholder';
 import { formatPercent } from 'utils/formatters/number';
 
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
-import Wei from '@synthetixio/wei';
 
 type FeeRateSummaryItemProps = {
 	totalFeeRate: Wei | null;
 	baseFeeRate?: Wei | null;
 };
 
-const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = ({ totalFeeRate, baseFeeRate }) => {
+const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = memo(({ totalFeeRate, baseFeeRate }) => {
 	const { t } = useTranslation();
 
 	return (
@@ -36,17 +34,15 @@ const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = ({ totalFeeRate, baseFee
 						totalFeeRate.sub(baseFeeRate).gt(0) ? (
 							<>
 								<DynamicFeeLabel>+</DynamicFeeLabel>
-								<DynamicFeeRateTooltip
-									content="This transaction will incur an additional dynamic fee due to market volatility."
-									trigger="mouseenter focus"
-									arrow={false}
-									placement="bottom"
+								<CustomStyledTooltip
+									position="fixed"
+									content={t('exchange.summary-info.dynamic-fee-tooltip')}
 								>
 									<DynamicFeeRateItem>
 										<span>{formatPercent(totalFeeRate.sub(baseFeeRate), { minDecimals: 2 })}</span>
 										<TimerIcon />
 									</DynamicFeeRateItem>
-								</DynamicFeeRateTooltip>
+								</CustomStyledTooltip>
 							</>
 						) : null
 					) : null}
@@ -54,7 +50,7 @@ const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = ({ totalFeeRate, baseFee
 			</SummaryItemValue>
 		</SummaryItem>
 	);
-};
+});
 
 export const FeeRateItem = styled.span`
 	display: flex;
@@ -64,16 +60,6 @@ export const FeeRateItem = styled.span`
 
 export const DynamicFeeLabel = styled.span`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
-`;
-
-export const DynamicFeeRateTooltip = styled(Tippy)`
-	width: auto;
-	text-align: justify;
-	font-size: 12px;
-	.tippy-content {
-		padding: 15px;
-		font-family: ${(props) => props.theme.fonts.mono};
-	}
 `;
 
 export const DynamicFeeRateItem = styled.span`
@@ -88,6 +74,12 @@ export const DynamicFeeRateItem = styled.span`
 			fill: ${(props) => props.theme.colors.selectedTheme.gold};
 		}
 	}
+`;
+
+const CustomStyledTooltip = styled(StyledTooltip)`
+	width: 300px;
+	padding: 0px 4px;
+	text-align: center;
 `;
 
 export default FeeRateSummaryItem;

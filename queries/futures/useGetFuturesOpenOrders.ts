@@ -1,73 +1,68 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
+import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { utils as ethersUtils } from 'ethers';
-
-import { appReadyState } from 'store/app';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import request, { gql } from 'graphql-request';
-import { getFuturesEndpoint } from './utils';
-import Wei from '@synthetixio/wei';
-import { ETH_UNIT } from 'constants/network';
 import Connector from 'containers/Connector';
-import { getDisplayAsset } from 'utils/futures';
-import { currentMarketState, openOrdersState } from 'store/futures';
+import { openOrdersState, futuresMarketsState, selectedFuturesAddressState } from 'store/futures';
+import logError from 'utils/logError';
+
+import { FuturesOrder } from './types';
+import { getFuturesEndpoint, mapFuturesOrders } from './utils';
 
 const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
-	const walletAddress = useRecoilValue(walletAddressState);
-	const futuresEndpoint = getFuturesEndpoint(network);
-	const { synthetixjs } = Connector.useContainer();
-	const currencyKey = useRecoilValue(currentMarketState);
-	const [, setOpenOrders] = useRecoilState(openOrdersState);
+	const selectedFuturesAddress = useRecoilValue(selectedFuturesAddressState);
+	const { network } = Connector.useContainer();
+	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
-	return useQuery<any[]>(
-		QUERY_KEYS.Futures.OpenOrders(network.id, walletAddress),
+	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	const setOpenOrders = useSetRecoilState(openOrdersState);
+
+	return useQuery<FuturesOrder[]>(
+		QUERY_KEYS.Futures.OpenOrders(network?.id as NetworkId, selectedFuturesAddress),
 		async () => {
+			if (!selectedFuturesAddress) {
+				setOpenOrders([]);
+				return [];
+			}
 			try {
-				const { contracts } = synthetixjs!;
-				const marketAddress = contracts[`FuturesMarket${getDisplayAsset(currencyKey)}`].address;
 				const response = await request(
 					futuresEndpoint,
 					gql`
-						query OpenOrders($account: String!, $market: String!) {
-							futuresOrders(where: { account: $account, market: $market, status: Pending }) {
+						query OpenOrders($account: String!) {
+							futuresOrders(where: { abstractAccount: $account, status: Pending }) {
 								id
 								account
 								size
 								market
 								asset
 								targetRoundId
+								marginDelta
+								targetPrice
 								timestamp
 								orderType
 							}
 						}
 					`,
-					{ account: walletAddress, market: marketAddress }
+					{ account: selectedFuturesAddress }
 				);
 
-				const openOrders = response
-					? response.futuresOrders.map((o: any) => ({
-							...o,
-							asset: ethersUtils.parseBytes32String(o.asset),
-							targetRoundId: new Wei(o.targetRoundId, 0),
-							size: new Wei(o.size).div(ETH_UNIT),
-					  }))
+				const openOrders: FuturesOrder[] = response
+					? response.futuresOrders.map((o: any) => {
+							const marketInfo = futuresMarkets.find((m) => m.asset === o.asset);
+							return mapFuturesOrders(o, marketInfo);
+					  })
 					: [];
-
 				setOpenOrders(openOrders);
-
 				return openOrders;
 			} catch (e) {
-				console.log(e);
-				return null;
+				logError(e);
+				return [];
 			}
 		},
 		{
-			enabled: isAppReady && isL2 && !!currencyKey && !!walletAddress,
+			enabled: futuresMarkets.length > 0 && !!selectedFuturesAddress,
 			refetchInterval: 5000,
 			...options,
 		}

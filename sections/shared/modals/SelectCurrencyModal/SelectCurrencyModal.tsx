@@ -1,34 +1,30 @@
+import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
+import orderBy from 'lodash/orderBy';
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled, { css } from 'styled-components';
-import orderBy from 'lodash/orderBy';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import useSynthetixQueries from '@synthetixio/queries';
-import { useRecoilValue } from 'recoil';
-import { wei } from '@synthetixio/wei';
+import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';
-import Loader from 'components/Loader';
 import SearchInput from 'components/Input/SearchInput';
-import useDebouncedMemo from 'hooks/useDebouncedMemo';
-import { FlexDivCentered } from 'styles/common';
-import { CurrencyKey, CATEGORY_MAP } from 'constants/currency';
+import Loader from 'components/Loader';
+import { CurrencyKey, CATEGORY_MAP, ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'constants/currency';
 import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
-import { RowsHeader, CenteredModal } from '../common';
-import CurrencyRow from './CurrencyRow';
-import { networkState, walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
+import useDebouncedMemo from 'hooks/useDebouncedMemo';
+import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
 import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
+import { FlexDivCentered } from 'styles/common';
+import media from 'styles/media';
+
+import { RowsHeader, CenteredModal } from '../common';
+import CurrencyRow from './CurrencyRow';
 
 const PAGE_LENGTH = 50;
 
-export const CATEGORY_FILTERS = [
-	CATEGORY_MAP.crypto,
-	CATEGORY_MAP.forex,
-	CATEGORY_MAP.equities,
-	CATEGORY_MAP.commodity,
-];
+export const CATEGORY_FILTERS = [CATEGORY_MAP.crypto, CATEGORY_MAP.forex, CATEGORY_MAP.commodity];
 
 type SelectCurrencyModalProps = {
 	synthsOverride?: Array<CurrencyKey>;
@@ -42,12 +38,9 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	onSelect,
 }) => {
 	const { t } = useTranslation();
-	const network = useRecoilValue(networkState);
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { defaultSynthetixjs: synthetixjs, network, walletAddress } = Connector.useContainer();
 
-	const { synthetixjs } = Connector.useContainer();
-
-	const [assetSearch, setAssetSearch] = useState<string>('');
+	const [assetSearch, setAssetSearch] = useState('');
 	const [synthCategory, setSynthCategory] = useState<string | null>(null);
 	const [page, setPage] = useState(1);
 
@@ -56,7 +49,6 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
 
-	// eslint-disable-next-line
 	const allSynths = synthetixjs?.synths ?? [];
 	const synths =
 		synthsOverride != null
@@ -64,10 +56,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 			: allSynths;
 
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery(walletAddress);
-
-	const synthBalances = synthsWalletBalancesQuery.isSuccess
-		? synthsWalletBalancesQuery.data ?? null
-		: null;
+	const synthBalances = synthsWalletBalancesQuery.data ?? null;
 
 	const categoryFilteredSynths = useMemo(
 		() =>
@@ -123,39 +112,73 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	const searchFilteredTokens = useDebouncedMemo(
 		() =>
 			assetSearch
-				? oneInchTokenList.filter(({ name, symbol }) => {
-						const assetSearchLC = assetSearch.toLowerCase();
-						return (
-							name.toLowerCase().includes(assetSearchLC) ||
-							symbol.toLowerCase().includes(assetSearchLC)
-						);
-				  })
+				? oneInchTokenList
+						.filter(({ name, symbol }: any) => {
+							const assetSearchLC = assetSearch.toLowerCase();
+							return (
+								name.toLowerCase().includes(assetSearchLC) ||
+								symbol.toLowerCase().includes(assetSearchLC)
+							);
+						})
+						.map((t: any) => ({
+							...t,
+							isSynth: false,
+						})) || []
 				: oneInchTokenList,
 		[oneInchTokenList, assetSearch],
 		DEFAULT_SEARCH_DEBOUNCE_MS
 	);
 
+	const tokenBalancesQuery = useTokensBalancesQuery(searchFilteredTokens, walletAddress);
+	const tokenBalances = tokenBalancesQuery.data ?? null;
+
+	const coinGeckoTokenPricesQuery = useCoinGeckoTokenPricesQuery(
+		searchFilteredTokens.map((f) => f.address)
+	);
+	const coinGeckoPrices = coinGeckoTokenPricesQuery.data ?? null;
+
 	const oneInchTokensPaged = useMemo(() => {
 		if (!oneInchEnabled || (synthCategory && synthCategory !== 'crypto')) return [];
-		const items =
-			searchFilteredTokens.map((t) => ({
-				...t,
-				isSynth: false,
-			})) || [];
-		const ordered = orderBy(items, (i) => i.symbol);
+		const ordered = tokenBalancesQuery.isSuccess
+			? orderBy(
+					searchFilteredTokens.map((token) => {
+						const tokenAddress =
+							token.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : token.address;
+						if (
+							coinGeckoPrices !== null &&
+							coinGeckoPrices[tokenAddress] &&
+							tokenBalances !== null
+						) {
+							const price = wei(coinGeckoPrices[tokenAddress].usd ?? 0);
+							const balance = tokenBalances[token.symbol as CurrencyKey]?.balance ?? wei(0);
+							const usdBalance = price.mul(balance);
+
+							return {
+								...token,
+								usdBalance,
+								balance,
+							};
+						}
+						return token;
+					}),
+					({ usdBalance }) => (usdBalance ? usdBalance.toNumber() : 0),
+					'desc'
+			  )
+			: searchFilteredTokens;
 		if (ordered.length > PAGE_LENGTH) return ordered.slice(0, PAGE_LENGTH * page);
 		return ordered;
-	}, [searchFilteredTokens, page, oneInchEnabled, synthCategory]);
-
-	const tokenBalancesQuery = useTokensBalancesQuery(oneInchTokensPaged, walletAddress);
-	const tokenBalances = tokenBalancesQuery.isSuccess ? tokenBalancesQuery.data ?? {} : {};
+	}, [
+		oneInchEnabled,
+		synthCategory,
+		tokenBalancesQuery,
+		searchFilteredTokens,
+		page,
+		coinGeckoPrices,
+		tokenBalances,
+	]);
 
 	return (
-		<StyledCenteredModal
-			onDismiss={onDismiss}
-			isOpen={true}
-			title={t('modals.select-currency.title')}
-		>
+		<StyledCenteredModal onDismiss={onDismiss} isOpen title={t('modals.select-currency.title')}>
 			<Container id="scrollableDiv">
 				<SearchContainer>
 					<AssetSearchInput
@@ -165,7 +188,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 							setAssetSearch(e.target.value);
 						}}
 						value={assetSearch}
-						autoFocus={true}
+						autoFocus
 					/>
 				</SearchContainer>
 				<CategoryFilters>
@@ -226,7 +249,6 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 						// TODO: use `Synth` type from contracts-interface
 						synthsResults.map((synth) => {
 							const currencyKey = synth.name;
-
 							return (
 								<CurrencyRow
 									key={currencyKey}
@@ -258,11 +280,9 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 								</span>
 								<span>{t('modals.select-currency.header.holdings')}</span>
 							</TokensHeader>
-							{oneInchQuery.isLoading ? (
-								<Loader />
-							) : oneInchTokensPaged.length > 0 ? (
+							{oneInchTokensPaged.length > 0 ? (
 								oneInchTokensPaged.map((token) => {
-									const currencyKey = token.symbol;
+									const { symbol: currencyKey, balance, usdBalance } = token;
 									return (
 										<CurrencyRow
 											key={currencyKey}
@@ -271,14 +291,15 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 												onDismiss();
 											}}
 											balance={
-												tokenBalances[currencyKey]
+												balance && usdBalance
 													? {
-															currencyKey: currencyKey,
-															balance: tokenBalances[currencyKey]?.balance || wei(0),
+															currencyKey,
+															balance,
+															usdBalance,
 													  }
 													: undefined
 											}
-											token={token}
+											token={{ ...token, isSynth: false }}
 										/>
 									);
 								})
@@ -295,7 +316,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 
 const Container = styled.div`
 	height: 100%;
-	overflow: auto;
+	overflow-y: scroll;
 `;
 
 const StyledCenteredModal = styled(CenteredModal)`
@@ -305,7 +326,7 @@ const StyledCenteredModal = styled(CenteredModal)`
 	.card-body {
 		height: 80vh;
 		padding: 0px;
-		overflow: hidden;
+		overflow-y: scroll;
 	}
 `;
 
@@ -326,7 +347,11 @@ const AssetSearchInput = styled(SearchInput)`
 const CategoryFilters = styled.div`
 	display: grid;
 	grid-auto-flow: column;
-	justify-content: space-between;
+	${media.lessThan('sm')`
+		justify-content: space-between;
+	`}
+	justify-content: flex-start;
+	column-gap: 10px;
 	padding: 0 16px;
 	margin-bottom: 18px;
 `;
@@ -339,9 +364,8 @@ const CategoryButton = styled(Button)`
 	${(props) =>
 		props.isActive &&
 		css`
-			color: ${props.theme.colors.selectedTheme.button.text};
+			color: ${props.theme.colors.selectedTheme.button.text.primary};
 			background: ${props.theme.colors.selectedTheme.button.fill};
-			/* background: transparent */
 		`};
 	${(props) =>
 		props.disabled &&
@@ -358,7 +382,7 @@ const EmptyDisplay = styled(FlexDivCentered)`
 	text-align: center;
 	margin: 24px 0px;
 	height: 50px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const LoadingMore = styled.div`

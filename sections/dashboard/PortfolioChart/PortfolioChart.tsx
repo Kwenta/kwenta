@@ -1,44 +1,27 @@
-import { FC } from 'react';
-import styled from 'styled-components';
+import { FC, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import useSynthetixQueries from '@synthetixio/queries';
+import styled from 'styled-components';
 
-import { Synths } from 'constants/currency';
 import Currency from 'components/Currency';
-import { zeroBN } from 'utils/formatters/number';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
-import { walletAddressState } from 'store/wallet';
-import Connector from 'containers/Connector';
-import { getMarketKey } from 'utils/futures';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import { balancesState, portfolioState } from 'store/futures';
 
 const PortfolioChart: FC = () => {
-	const futuresMarketsQuery = useGetFuturesMarkets();
-	const futuresMarkets = futuresMarketsQuery?.data ?? [];
+	const portfolio = useRecoilValue(portfolioState);
+	const balances = useRecoilValue(balancesState);
 
-	const { network } = Connector.useContainer();
-	const markets = futuresMarkets.map(({ asset }) => getMarketKey(asset, network.id));
-	const portfolioValueQuery = useGetCurrentPortfolioValue(markets);
-	const portfolioValue = portfolioValueQuery?.data ?? null;
-
-	const walletAddress = useRecoilValue(walletAddressState);
-	const { useSynthsBalancesQuery } = useSynthetixQueries();
-	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
-	const synthBalances = synthsBalancesQuery.data ?? null;
-
-	const total = (portfolioValue ?? zeroBN).add(synthBalances?.totalUSDBalance ?? zeroBN);
+	const total = useMemo(() => portfolio.total.add(balances.totalUSDBalance), [portfolio, balances]);
 
 	return (
 		<>
 			<MobileHiddenView>
 				<Chart>
 					<PortfolioTitle>Portfolio Value</PortfolioTitle>
-					<PortfolioText currencyKey={Synths.sUSD} price={total} sign="$" />
+					<PortfolioText currencyKey={'sUSD'} price={total} sign="$" />
 				</Chart>
 			</MobileHiddenView>
 			<MobileOnlyView>
-				<PortfolioText currencyKey={Synths.sUSD} price={total} sign="$" />
+				<PortfolioText currencyKey={'sUSD'} price={total} sign="$" />
 				<MobileChartPlaceholder />
 			</MobileOnlyView>
 		</>
@@ -61,7 +44,7 @@ const PortfolioTitle = styled.p`
 	margin-bottom: 10px;
 `;
 const PortfolioText = styled(Currency.Price)`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-family: ${(props) => props.theme.fonts.monoBold};
 	letter-spacing: -1.2px;
 	font-size: 27px;
@@ -75,9 +58,6 @@ const PortfolioText = styled(Currency.Price)`
 `;
 
 const MobileChartPlaceholder = styled.div`
-	/* height: 273px;
-	width: 100%;
-	border-top: ${(props) => props.theme.colors.selectedTheme.border}; */
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 

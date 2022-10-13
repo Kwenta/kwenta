@@ -1,88 +1,45 @@
-import { FC, useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled, { css, useTheme } from 'styled-components';
-import { FlexDivRow } from 'styles/common';
+import { useAccountModal } from '@rainbow-me/rainbowkit';
+import { FC, useEffect, useState } from 'react';
+import styled, { css } from 'styled-components';
+import { useEnsAvatar, useEnsName } from 'wagmi';
 
+import Button from 'components/Button';
 import Connector from 'containers/Connector';
-import { truncatedWalletAddressState } from 'store/wallet';
-import { useRecoilValue } from 'recoil';
+import { truncateAddress } from 'utils/formatters/string';
 
-import CaretDownIcon from 'assets/svg/app/caret-down.svg';
-import DisconnectIcon from 'assets/svg/app/disconnect.svg';
-import SwitchWalletIcon from 'assets/svg/app/switch-wallet.svg';
-
-import { components } from 'react-select';
-import Select from 'components/Select';
-import { IndicatorSeparator } from 'components/Select/Select';
-
-import getENSName from './UserMenu/getENSName';
 import ConnectionDot from './ConnectionDot';
-import useENS from 'hooks/useENS';
-
-type ReactSelectOptionProps = {
-	label: string;
-	postfixIcon?: string;
-	isMenuLabel?: boolean;
-	onClick?: () => {};
-};
 
 type WalletActionsProps = {
 	isMobile?: boolean;
 };
 
 export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
-	const [address, setAddress] = useState('');
-	const { ensAvatar } = useENS(address);
-	const { t } = useTranslation();
-	const theme = useTheme();
-	const {
-		connectWallet,
-		disconnectWallet,
-		switchAccounts,
-		isHardwareWallet,
-		signer,
-		staticMainnetProvider,
-	} = Connector.useContainer();
-	const hardwareWallet = isHardwareWallet();
+	const { walletAddress } = Connector.useContainer();
+	const { data: ensAvatar } = useEnsAvatar({ addressOrName: walletAddress!, chainId: 1 });
+	const { data: ensName } = useEnsName({ address: walletAddress!, chainId: 1 });
 
-	const [ensName, setEns] = useState<string>('');
-	const [walletLabel, setWalletLabel] = useState<string>('');
-	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
+	const [walletLabel, setWalletLabel] = useState('');
+	const truncatedWalletAddress = truncateAddress(walletAddress! ?? '');
+	const { openAccountModal } = useAccountModal();
 
-	const WALLET_OPTIONS = useMemo(() => {
-		let options = [
-			{ label: 'common.wallet.switch-wallet', postfixIcon: 'Switch', onClick: connectWallet },
-			{
-				label: 'common.wallet.disconnect-wallet',
-				postfixIcon: 'Disconnet',
-				onClick: disconnectWallet,
-			},
-		];
+	useEffect(() => {
+		setWalletLabel(ensName || truncatedWalletAddress!);
+	}, [ensName, truncatedWalletAddress]);
 
-		if (hardwareWallet) {
-			options.push({
-				label: 'common.wallet.switch-accounts',
-				postfixIcon: 'Switch',
-				onClick: switchAccounts,
-			});
-		}
-
-		return options;
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [hardwareWallet]);
-
-	const formatOptionLabel = ({
-		label,
-		isMenuLabel,
-		postfixIcon,
-		onClick,
-	}: ReactSelectOptionProps) =>
-		isMenuLabel ? (
-			<>
+	return (
+		<Container isMobile={isMobile}>
+			<ConnectButton
+				size="sm"
+				variant="flat"
+				onClick={openAccountModal}
+				data-testid="connect-wallet"
+				mono
+				isName={!!ensName}
+			>
 				{ensAvatar ? (
 					<img
 						src={ensAvatar}
-						alt={ensName}
+						alt={ensName?.toString()}
 						width={16}
 						height={16}
 						style={{ borderRadius: '50%', marginRight: '8px' }}
@@ -90,61 +47,8 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 				) : (
 					<StyledConnectionDot />
 				)}
-				{label}
-			</>
-		) : (
-			<LabelContainer onClick={onClick}>
-				{t(label)}
-				{postfixIcon &&
-					(postfixIcon === 'Switch' ? (
-						<SwitchWalletIcon height={17} />
-					) : (
-						<DisconnectIcon height={17} />
-					))}
-			</LabelContainer>
-		);
-
-	const DropdownIndicator = (props: any) => {
-		return (
-			<components.DropdownIndicator {...props}>
-				<StyledCaretDownIcon />
-			</components.DropdownIndicator>
-		);
-	};
-
-	useEffect(() => {
-		if (signer) {
-			setWalletLabel(truncatedWalletAddress!);
-			signer.getAddress().then((account: string) => {
-				const _account = account;
-				setAddress(account);
-				getENSName(_account, staticMainnetProvider).then((_ensName: string) => {
-					setEns(_ensName);
-					setWalletLabel(_ensName || truncatedWalletAddress!);
-				});
-			});
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [signer, truncatedWalletAddress]);
-
-	return (
-		<Container isMobile={isMobile}>
-			<WalletOptionsSelect
-				formatOptionLabel={formatOptionLabel}
-				controlHeight={41}
-				options={WALLET_OPTIONS}
-				value={{ label: walletLabel, isMenuLabel: true }}
-				valueContainer={{ 'text-transform': ensName ? 'lowercase' : '' }}
-				menuWidth={240}
-				optionPadding={'0px'} //override default padding to 0
-				optionBorderBottom={`1px solid ${theme.colors.navy}`}
-				dropdownIndicatorColor={theme.colors.blueberry}
-				dropdownIndicatorColorHover={theme.colors.blueberry}
-				components={{ IndicatorSeparator, DropdownIndicator }}
-				isSearchable={false}
-				data-testid="wallet-btn"
-				noOutline
-			/>
+				{walletLabel}
+			</ConnectButton>
 		</Container>
 	);
 };
@@ -164,45 +68,15 @@ const Container = styled.div<{ isMobile?: boolean }>`
 		`};
 `;
 
-const WalletOptionsSelect = styled(Select)`
-	min-width: 155px;
-
-	.react-select__control {
-		width: 155px;
-		border-radius: 10px;
-	}
-
-	.react-select__dropdown-indicator {
-		margin-right: 5px;
-	}
-
-	.react-select__value-container {
-		padding-right: 0;
-	}
-`;
-
-const StyledCaretDownIcon = styled(CaretDownIcon)`
-	width: 11px;
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
-
-const LabelContainer = styled(FlexDivRow)`
-	padding: 16px;
+const ConnectButton = styled(Button)<{ isName?: boolean }>`
 	font-size: 13px;
-	width: 100%;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	:hover {
-		> svg {
-			path {
-				fill: ${(props) => props.theme.colors.selectedTheme.icon.hover};
-			}
-		}
-	}
-	> svg {
-		path {
-			fill: ${(props) => props.theme.colors.selectedTheme.icon.fill};
-		}
-	}
+	min-width: unset;
+	text-transform: none;
+	${(props) =>
+		props.isName &&
+		css`
+			text-transform: lowercase;
+		`};
 `;
 
 export default WalletActions;

@@ -1,0 +1,26 @@
+import Head from 'next/head';
+import { useTranslation } from 'react-i18next';
+
+import DashboardLayout from 'sections/dashboard/DashboardLayout';
+import History from 'sections/dashboard/History';
+import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
+
+type HistoryPageProps = React.FC & { getLayout: (page: HTMLElement) => JSX.Element };
+
+const HistoryPage: HistoryPageProps = () => {
+	const { t } = useTranslation();
+
+	return (
+		<>
+			<Head>
+				<title>{t('dashboard-history.page-title')}</title>
+			</Head>
+			<History />
+			<GitHashID />
+		</>
+	);
+};
+
+HistoryPage.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
+
+export default HistoryPage;

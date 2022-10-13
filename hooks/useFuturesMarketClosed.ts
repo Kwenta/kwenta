@@ -1,14 +1,15 @@
 import { SynthSuspensionReason } from '@synthetixio/queries';
-import { CurrencyKey } from 'constants/currency';
+
 import useFuturesSuspensionQuery from 'queries/futures/useFuturesSuspensionQuery';
+import { FuturesMarketKey } from 'utils/futures';
 
 export type FuturesClosureReason = SynthSuspensionReason;
 export type MarketClosure = ReturnType<typeof useFuturesMarketClosed>;
 
-const useFuturesMarketClosed = (currencyKey: CurrencyKey | null) => {
-	const futuresMarketSuspendedQuery = useFuturesSuspensionQuery(currencyKey);
+const useFuturesMarketClosed = (marketKey: FuturesMarketKey | null) => {
+	const futuresMarketSuspendedQuery = useFuturesSuspensionQuery(marketKey);
 
-	const isFutureMarketSuspended =
+	const isFuturesMarketClosed =
 		futuresMarketSuspendedQuery.isSuccess && futuresMarketSuspendedQuery.data
 			? futuresMarketSuspendedQuery.data.isFuturesMarketClosed
 			: null;
@@ -19,8 +20,7 @@ const useFuturesMarketClosed = (currencyKey: CurrencyKey | null) => {
 			: null;
 
 	return {
-		isFuturesMarketClosed: isFutureMarketSuspended,
-		isFutureMarketSuspended,
+		isFuturesMarketClosed,
 		futuresClosureReason: reason as FuturesClosureReason,
 	};
 };

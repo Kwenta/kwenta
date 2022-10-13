@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { formatPercent } from 'utils/formatters/number';
 
 type OpenInterestProps = {
@@ -25,7 +26,7 @@ const OpenInterestChart: React.FC<OpenInterestProps> = ({ skew }) => {
 export default OpenInterestChart;
 
 const OIContainer = styled.div`
-	border: 1px solid #2b2a2a;
+	border: ${(props) => props.theme.colors.selectedTheme.openInterestBar.border};
 	border-radius: 1px;
 	width: 100%;
 `;

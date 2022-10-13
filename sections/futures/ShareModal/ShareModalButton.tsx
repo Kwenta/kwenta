@@ -1,6 +1,6 @@
 import { toPng } from 'html-to-image';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 import Button from 'components/Button';
 
@@ -28,13 +28,7 @@ const ShareModalButton = () => {
 	return (
 		<>
 			<ButtonContainer>
-				<Button
-					variant="primary"
-					isRounded={true}
-					onClick={handleDownloadImage}
-					size="sm"
-					disabled={false}
-				>
+				<Button variant="primary" onClick={handleDownloadImage} size="sm" disabled={false}>
 					{t('futures.modals.share.buttons.download')}
 				</Button>
 			</ButtonContainer>

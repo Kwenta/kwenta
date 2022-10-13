@@ -1,14 +1,17 @@
-import request, { gql } from 'graphql-request';
-import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
+import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
-
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
-import { getFuturesEndpoint } from './utils';
 import EthDater from 'ethereum-block-by-date';
+import request, { gql } from 'graphql-request';
 import moment from 'moment';
-import { appReadyState } from 'store/app';
+import { useQuery, UseQueryOptions } from 'react-query';
+
 import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
+import logError from 'utils/logError';
+
+import { getFuturesEndpoint } from './utils';
+
+// @ts-ignore
 
 type PortfolioData = {
 	margin: Wei;
@@ -19,15 +22,12 @@ type PortfolioData = {
 // The chart basically plots margin against block number.
 
 const usePortfolioData = (options?: UseQueryOptions<PortfolioData | null>) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
-	const walletAddress = useRecoilValue(walletAddressState);
-	const futuresEndpoint = getFuturesEndpoint(network);
-	const { provider } = Connector.useContainer();
+	const { provider, network, walletAddress } = Connector.useContainer();
+	const isL2 = useIsL2();
+	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
 	return useQuery<PortfolioData | null>(
-		['futures', 'portfolio', network.id, walletAddress],
+		['futures', 'portfolio', network?.id as NetworkId, walletAddress],
 		async () => {
 			if (!provider || !walletAddress) return null;
 			const dater = new EthDater(provider);
@@ -46,7 +46,7 @@ const usePortfolioData = (options?: UseQueryOptions<PortfolioData | null>) => {
 				gql`
 					query marginAccounts($account: String!) {
 						${blocks.map(
-							(block) => gql`
+							(block: any) => gql`
 								${block.block}: query futuresMarginAccounts(
 									where: { account: $account },
 									block: { number: ${block.block} }
@@ -67,18 +67,11 @@ const usePortfolioData = (options?: UseQueryOptions<PortfolioData | null>) => {
 				{ account: walletAddress }
 			);
 
-			console.log(response);
+			logError(response);
 
-			// if (response?.futuresMarginAccounts) {
-			// 	const margin = response.futuresMarginAccounts.reduce((acc: Wei, next: any) => {
-			// 		return acc.add(wei(next.margin));
-			// 	}, zeroBN);
-
-			// 	res.push({ block: block.block, margin, timestamp: 0 });
-			// }
 			return [];
 		},
-		{ enabled: isAppReady && isL2, ...options }
+		{ enabled: isL2, ...options }
 	);
 };
 

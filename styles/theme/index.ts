@@ -1,12 +1,8 @@
+import animations from './animations';
 import colors, { themeColors } from './colors';
 import fonts from './fonts';
-import animations from './animations';
 
-const theme = {
-	colors,
-	fonts,
-	animations,
-};
+const theme = { colors, fonts, animations };
 
 export type ThemeName = keyof typeof themeColors;
 

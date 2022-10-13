@@ -1,29 +1,27 @@
-import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { utils as ethersUtils } from 'ethers';
+import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query';
 
-import { appReadyState } from 'store/app';
-import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
-
+import { DEFAULT_NUMBER_OF_TRADES, MAX_TIMESTAMP } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
-import { getFuturesEndpoint, mapTrades } from './utils';
-import { FuturesTrade } from './types';
+import Connector from 'containers/Connector';
+import { notNill } from 'queries/synths/utils';
+import logError from 'utils/logError';
+
 import { getFuturesTrades } from './subgraph';
-import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
+import { FuturesTrade } from './types';
+import { getFuturesEndpoint, mapTrades } from './utils';
 
 const useGetFuturesTrades = (
 	currencyKey: string | undefined,
-	options?: UseQueryOptions<FuturesTrade[] | null> & { forceAccount: boolean }
+	options?: UseInfiniteQueryOptions<FuturesTrade[] | null> & { forceAccount: boolean }
 ) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isL2 = useRecoilValue(isL2State);
+	const { network } = Connector.useContainer();
+	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
-	return useQuery<FuturesTrade[] | null>(
-		QUERY_KEYS.Futures.Trades(network.id, currencyKey || null),
-		async () => {
+	return useInfiniteQuery<FuturesTrade[] | null>(
+		QUERY_KEYS.Futures.Trades(network?.id as NetworkId, currencyKey || null),
+		async ({ pageParam = { maxTs: Math.floor(Date.now() / 1000), minTs: 0 } }) => {
 			if (!currencyKey) return null;
 
 			try {
@@ -33,6 +31,8 @@ const useGetFuturesTrades = (
 						first: DEFAULT_NUMBER_OF_TRADES,
 						where: {
 							asset: `${ethersUtils.formatBytes32String(currencyKey)}`,
+							timestamp_gt: pageParam.minTs,
+							timestamp_lt: pageParam.maxTs,
 						},
 						orderDirection: 'desc',
 						orderBy: 'timestamp',
@@ -41,6 +41,9 @@ const useGetFuturesTrades = (
 						id: true,
 						timestamp: true,
 						account: true,
+						abstractAccount: true,
+						accountType: true,
+						margin: true,
 						size: true,
 						asset: true,
 						price: true,
@@ -54,14 +57,29 @@ const useGetFuturesTrades = (
 				);
 				return response ? mapTrades(response) : null;
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				return null;
 			}
 		},
 		{
-			enabled: isWalletConnected ? isL2 && isAppReady : isAppReady,
-			refetchInterval: 15000,
 			...options,
+			refetchInterval: 15000,
+			getNextPageParam: (lastPage, _) => {
+				return notNill(lastPage) && lastPage?.length > 0
+					? {
+							minTs: 0,
+							maxTs: lastPage[lastPage.length - 1].timestamp.toNumber(),
+					  }
+					: null;
+			},
+			getPreviousPageParam: (firstPage, _) => {
+				return notNill(firstPage) && firstPage?.length > 0
+					? {
+							minTs: firstPage[0].timestamp.toNumber(),
+							maxTs: MAX_TIMESTAMP,
+					  }
+					: null;
+			},
 		}
 	);
 };

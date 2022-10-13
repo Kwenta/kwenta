@@ -1,54 +1,126 @@
-import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
+import { NetworkId } from '@synthetixio/contracts-interface';
+import { Provider, Contract } from 'ethcall';
 import { utils as ethersUtils } from 'ethers';
+import { useQuery, UseQueryOptions } from 'react-query';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { appReadyState } from 'store/app';
-import { isL2State, walletAddressState } from 'store/wallet';
-
-import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
-import { mapFuturesPosition, getFuturesMarketContract } from './utils';
-import { FuturesPosition } from './types';
-import { getMarketAssetFromKey } from 'utils/futures';
+import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
+import FuturesMarketABI from 'lib/abis/FuturesMarket.json';
+import FuturesMarketDataABI from 'lib/abis/FuturesMarketData.json';
+import { positionsState, futuresAccountState, futuresMarketsState } from 'store/futures';
+import { MarketKeyByAsset } from 'utils/futures';
 
-const useGetFuturesPositionForMarkets = (
-	markets: string[] | [],
-	options?: UseQueryOptions<FuturesPosition[] | []>
-) => {
-	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
-	const walletAddress = useRecoilValue(walletAddressState);
-	const { synthetixjs, network } = Connector.useContainer();
+import { FuturesAccountTypes, PositionDetail } from './types';
+import { mapFuturesPosition } from './utils';
 
-	return useQuery<FuturesPosition[] | []>(
-		QUERY_KEYS.Futures.MarketsPositions(markets || []),
+const DEFAULT_POSITIONS = {
+	[FuturesAccountTypes.ISOLATED_MARGIN]: [],
+	[FuturesAccountTypes.CROSS_MARGIN]: [],
+};
+
+const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<void>) => {
+	const { defaultSynthetixjs: synthetixjs, provider, network } = Connector.useContainer();
+	const isL2 = useIsL2();
+
+	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	const setPositions = useSetRecoilState(positionsState);
+	const { walletAddress, crossMarginAddress, crossMarginAvailable, status } = useRecoilValue(
+		futuresAccountState
+	);
+	const assets = futuresMarkets.map(({ asset }) => asset);
+
+	return useQuery<void>(
+		QUERY_KEYS.Futures.MarketsPositions(
+			network?.id as NetworkId,
+			assets || [],
+			walletAddress ?? '',
+			crossMarginAddress ?? ''
+		),
 		async () => {
-			if (!markets || (walletAddress && !isL2)) {
-				return [];
+			if (!isL2 || !provider || status !== 'complete') {
+				setPositions(DEFAULT_POSITIONS);
+				return;
 			}
+
+			const ethcallProvider = new Provider();
+			await ethcallProvider.init(provider);
 
 			const {
 				contracts: { FuturesMarketData },
 			} = synthetixjs!;
 
-			const positionsForMarkets = await Promise.all(
-				(markets as [string]).map((market: string) =>
-					Promise.all([
-						FuturesMarketData.positionDetailsForMarketKey(
-							ethersUtils.formatBytes32String(market),
-							walletAddress
-						),
-						getFuturesMarketContract(market, synthetixjs!.contracts).canLiquidate(walletAddress),
-					])
-				)
+			const FMD = new Contract(FuturesMarketData.address, FuturesMarketDataABI);
+
+			const positionCalls = [];
+			const liquidationCalls = [];
+
+			// isolated margin
+			for (const { market, asset } of futuresMarkets) {
+				positionCalls.push(
+					FMD.positionDetailsForMarketKey(
+						ethersUtils.formatBytes32String(MarketKeyByAsset[asset]),
+						walletAddress
+					)
+				);
+				const marketContract = new Contract(market, FuturesMarketABI);
+				liquidationCalls.push(marketContract.canLiquidate(walletAddress));
+			}
+
+			// cross margin
+			if (crossMarginAvailable && crossMarginAddress) {
+				for (const { market, asset } of futuresMarkets) {
+					positionCalls.push(
+						FMD.positionDetailsForMarketKey(
+							ethersUtils.formatBytes32String(MarketKeyByAsset[asset]),
+							crossMarginAddress
+						)
+					);
+					const marketContract = new Contract(market, FuturesMarketABI);
+					liquidationCalls.push(marketContract.canLiquidate(crossMarginAddress));
+				}
+			}
+
+			const positionDetails = (await ethcallProvider.all(positionCalls)) as PositionDetail[];
+			const canLiquidateState = (await ethcallProvider.all(liquidationCalls)) as boolean[];
+
+			// split isolated and cross margin results
+			const positionDetailsIsolated = positionDetails.slice(0, futuresMarkets.length);
+			const positionDetailsCross = positionDetails.slice(
+				futuresMarkets.length,
+				positionDetails.length
 			);
 
-			return positionsForMarkets.map(([position, canLiquidate], i) =>
-				mapFuturesPosition(position, canLiquidate, getMarketAssetFromKey(markets[i], network.id))
+			const canLiquidateStateIsolated = canLiquidateState.slice(0, futuresMarkets.length);
+			const canLiquidateStateCross = canLiquidateState.slice(
+				futuresMarkets.length,
+				canLiquidateState.length
 			);
+
+			// map the positions using the results
+			const isolatedPositions = positionDetailsIsolated
+				.map((position, ind) => {
+					const canLiquidate = canLiquidateStateIsolated[ind];
+					const asset = assets[ind];
+					return mapFuturesPosition(position, canLiquidate, asset);
+				})
+				.filter(({ remainingMargin }) => remainingMargin.gt(0));
+
+			const crossPositions = positionDetailsCross
+				.map((position, ind) => {
+					const canLiquidate = canLiquidateStateCross[ind];
+					const asset = assets[ind];
+					return mapFuturesPosition(position, canLiquidate, asset);
+				})
+				.filter(({ remainingMargin }) => remainingMargin.gt(0));
+
+			setPositions({
+				[FuturesAccountTypes.ISOLATED_MARGIN]: isolatedPositions,
+				[FuturesAccountTypes.CROSS_MARGIN]: crossPositions,
+			});
 		},
 		{
-			enabled: isAppReady && isL2 && !!walletAddress && markets.length > 0 && !!synthetixjs,
 			...options,
 		}
 	);

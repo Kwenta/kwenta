@@ -1,8 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Tooltip, ToolTipWrapper } from './TooltipStyles';
-import styled from 'styled-components';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+
 import useInterval from 'hooks/useInterval';
+
+import { Tooltip, ToolTipWrapper } from './TooltipStyles';
 
 interface ToolTipProps {
 	startTimeDate: Date | undefined;
@@ -13,6 +15,8 @@ interface ToolTipProps {
 	bottom?: string;
 	left?: string;
 	right?: string;
+	style?: React.CSSProperties;
+	position?: string;
 }
 
 const formatTimeUnit = (value: number) => {
@@ -22,9 +26,26 @@ const formatTimeUnit = (value: number) => {
 const TimerTooltip = (props: ToolTipProps) => {
 	const { t } = useTranslation();
 	const [activeMouse, setActiveMouse] = useState(false);
+	const [position, setPosition] = useState({});
+	const myRef = useRef<HTMLDivElement>(null);
+
+	const setFixedPosition = () => {
+		const isFirefox = /firefox/i.test(navigator.userAgent);
+		if (myRef.current !== null) {
+			const { left, bottom, top } = myRef.current.getBoundingClientRect();
+			if (isFirefox) {
+				setPosition({ left: `${left - 24}px`, top: `${top - 36}px` });
+			} else {
+				setPosition({ left: `${left}px`, top: `${bottom + 20}px` });
+			}
+		}
+	};
 
 	const openToolTip = () => {
 		setActiveMouse(true);
+		if (props.position === 'fixed') {
+			setFixedPosition();
+		}
 	};
 
 	const closeToolTip = () => {
@@ -41,9 +62,9 @@ const TimerTooltip = (props: ToolTipProps) => {
 		return (nowTime - startTime) / 1000;
 	}, [startTimeDate]);
 
-	const [totalSeconds, setTotalSeconds] = useState<number>(calcTime());
+	const [totalSeconds, setTotalSeconds] = useState(calcTime());
 	const [currentStartTime, setCurrentStartTime] = useState<Date | undefined>(startTimeDate);
-	const [newUpdate, setNewUpdate] = useState<Boolean>(false);
+	const [newUpdate, setNewUpdate] = useState(false);
 
 	useEffect(() => {
 		if (currentStartTime !== startTimeDate) {
@@ -72,10 +93,10 @@ const TimerTooltip = (props: ToolTipProps) => {
 	if (minutes < 1) timeUnitsFormat = `exchange.market-details-card.timer-tooltip.seconds-ago`;
 
 	return (
-		<ToolTipWrapper onMouseEnter={openToolTip} onMouseLeave={closeToolTip}>
+		<ToolTipWrapper ref={myRef} onMouseEnter={openToolTip} onMouseLeave={closeToolTip}>
 			{props.children}
 			{activeMouse && (
-				<Tooltip {...props}>
+				<Tooltip {...props} {...position}>
 					<Container>
 						<span>{t(`exchange.market-details-card.timer-tooltip.last-update`)}</span>
 						<p>
@@ -92,8 +113,6 @@ const TimerTooltip = (props: ToolTipProps) => {
 export default TimerTooltip;
 
 const Container = styled.div`
-	padding-top: 10px;
-	padding-bottom: 10px;
 	p {
 		font-family: ${(props) => props.theme.fonts.mono};
 		span {

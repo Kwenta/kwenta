@@ -1,47 +1,32 @@
 import { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useEnsAvatar, useEnsName } from 'wagmi';
 
-import Connector from 'containers/Connector';
-import { truncatedWalletAddressState } from 'store/wallet';
-import { useRecoilValue } from 'recoil';
-
-import getENSName from '../UserMenu/getENSName';
-import ConnectionDot from '../ConnectionDot';
-import useENS from 'hooks/useENS';
 import Button from 'components/Button';
+import Connector from 'containers/Connector';
+import { truncateAddress } from 'utils/formatters/string';
+
+import ConnectionDot from '../ConnectionDot';
 
 type MobileWalletButtonProps = {
 	toggleModal(): void;
 };
 
 export const MobileWalletActions: FC<MobileWalletButtonProps> = ({ toggleModal }) => {
-	const [address, setAddress] = useState('');
-	const { ensAvatar } = useENS(address);
-	const { signer, staticMainnetProvider } = Connector.useContainer();
-
-	const [ensName, setEns] = useState<string>('');
+	const { walletAddress } = Connector.useContainer();
+	const { data: ensAvatar } = useEnsAvatar({ addressOrName: walletAddress!, chainId: 1 });
+	const { data: ensName } = useEnsName({ address: walletAddress!, chainId: 1 });
 	const [walletLabel, setWalletLabel] = useState<string>('');
-	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
+	const truncatedWalletAddress = truncateAddress(walletAddress! ?? '');
 
 	useEffect(() => {
-		if (signer) {
-			setWalletLabel(truncatedWalletAddress!);
-			signer.getAddress().then((account: string) => {
-				const _account = account;
-				setAddress(account);
-				getENSName(_account, staticMainnetProvider).then((_ensName: string) => {
-					setEns(_ensName);
-					setWalletLabel(_ensName || truncatedWalletAddress!);
-				});
-			});
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [signer, truncatedWalletAddress]);
+		setWalletLabel(ensName || truncatedWalletAddress!);
+	}, [ensName, truncatedWalletAddress]);
 
 	return (
 		<StyledButton mono noOutline onClick={toggleModal}>
 			{ensAvatar ? (
-				<StyledImage src={ensAvatar} alt={ensName} width={16} height={16} />
+				<StyledImage src={ensAvatar} alt={ensName || walletAddress!} width={16} height={16} />
 			) : (
 				<StyledConnectionDot />
 			)}

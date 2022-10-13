@@ -1,27 +1,24 @@
 import { FC } from 'react';
 import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
 
 import { MobileHiddenView } from 'components/Media';
 import { zIndex } from 'constants/ui';
+import useIsL2 from 'hooks/useIsL2';
 
 import Logo from '../../Logo';
-
 import Nav from './Nav';
-import UserMenu from './UserMenu';
-import { isL2State } from 'store/wallet';
+import WalletButtons from './WalletButtons';
 
 const Header: FC = () => {
-	const isL2 = useRecoilValue(isL2State);
-
+	const isL2 = useIsL2();
 	return (
 		<Container isL2={isL2}>
 			<MobileHiddenView>
 				<LogoNav>
-					<StyledLogo isL2={isL2} isFutures={true} />
+					<Logo />
 					<Nav />
 				</LogoNav>
-				<UserMenu />
+				<WalletButtons />
 			</MobileHiddenView>
 		</Container>
 	);
@@ -44,7 +41,5 @@ const LogoNav = styled.div`
 	display: flex;
 	align-items: center;
 `;
-
-const StyledLogo = styled(Logo)``;
 
 export default Header;

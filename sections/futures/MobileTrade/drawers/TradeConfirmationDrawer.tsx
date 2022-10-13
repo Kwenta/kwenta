@@ -1,64 +1,36 @@
 import React, { useMemo } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import useSynthetixQueries from '@synthetixio/queries';
-import Wei from '@synthetixio/wei';
+import styled from 'styled-components';
 
-import Connector from 'containers/Connector';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { currentMarketState, potentialTradeDetailsState } from 'store/futures';
-import { gasSpeedState } from 'store/wallet';
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
-import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
-import { newGetTransactionPrice } from 'utils/network';
-import { PositionSide } from 'sections/futures/types';
-import { GasLimitEstimate } from 'constants/network';
-import { Synths, CurrencyKey } from 'constants/currency';
-import BaseDrawer from './BaseDrawer';
 import Button from 'components/Button';
+import { CurrencyKey } from 'constants/currency';
+import Connector from 'containers/Connector';
+import { useFuturesContext } from 'contexts/FuturesContext';
+import useEstimateGasCost from 'hooks/useEstimateGasCost';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { PositionSide } from 'sections/futures/types';
+import { currentMarketState, potentialTradeDetailsState } from 'store/futures';
+import { zeroBN, formatDollars, formatCurrency, formatNumber } from 'utils/formatters/number';
+
+import BaseDrawer from './BaseDrawer';
 
 type TradeConfirmationDrawerProps = {
 	open: boolean;
 	closeDrawer(): void;
-	gasLimit: GasLimitEstimate;
-	l1Fee: Wei | null;
-	onConfirmOrder(): void;
 };
 
-const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({
-	open,
-	closeDrawer,
-	gasLimit,
-	l1Fee,
-	onConfirmOrder,
-}) => {
+const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({ open, closeDrawer }) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
-	const gasSpeed = useRecoilValue(gasSpeedState);
 	const market = useRecoilValue(currentMarketState);
-	const { useExchangeRatesQuery, useEthGasPriceQuery } = useSynthetixQueries();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const ethGasPriceQuery = useEthGasPriceQuery();
-	const exchangeRatesQuery = useExchangeRatesQuery();
-	const potentialTradeDetails = useRecoilValue(potentialTradeDetailsState);
+	const { data: potentialTradeDetails } = useRecoilValue(potentialTradeDetailsState);
+	const { estimateSnxTxGasCost } = useEstimateGasCost();
 
-	const exchangeRates = useMemo(
-		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
-		[exchangeRatesQuery.isSuccess, exchangeRatesQuery.data]
-	);
+	const { orderTxn } = useFuturesContext();
 
-	const ethPriceRate = useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
-		[exchangeRates, selectedPriceCurrency.name]
-	);
-
-	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
-
-	const transactionFee = useMemo(
-		() => newGetTransactionPrice(gasPrice, gasLimit, ethPriceRate, l1Fee),
-		[gasPrice, gasLimit, ethPriceRate, l1Fee]
-	);
+	const transactionFee = estimateSnxTxGasCost(orderTxn);
 
 	const positionDetails = useMemo(() => {
 		return potentialTradeDetails
@@ -88,21 +60,19 @@ const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({
 			{ label: 'leverage', value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x` },
 			{
 				label: 'current price',
-				value: formatCurrency(Synths.sUSD, positionDetails?.price ?? zeroBN, { sign: '$' }),
+				value: formatDollars(positionDetails?.price ?? zeroBN),
 			},
 			{
 				label: 'liquidation price',
-				value: formatCurrency(Synths.sUSD, positionDetails?.liqPrice ?? zeroBN, {
-					sign: '$',
-				}),
+				value: formatDollars(positionDetails?.liqPrice ?? zeroBN),
 			},
 			{
 				label: 'margin',
-				value: formatCurrency(Synths.sUSD, positionDetails?.margin ?? zeroBN, { sign: '$' }),
+				value: formatDollars(positionDetails?.margin ?? zeroBN),
 			},
 			{
 				label: 'protocol fee',
-				value: formatCurrency(Synths.sUSD, positionDetails?.fee ?? zeroBN, { sign: '$' }),
+				value: formatDollars(positionDetails?.fee ?? zeroBN),
 			},
 			{
 				label: 'network gas fee',
@@ -123,9 +93,8 @@ const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({
 			buttons={
 				<ConfirmTradeButton
 					variant="primary"
-					isRounded
 					onClick={() => {
-						onConfirmOrder();
+						orderTxn.mutate();
 						closeDrawer();
 					}}
 					disabled={!positionDetails}

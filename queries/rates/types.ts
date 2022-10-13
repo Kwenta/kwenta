@@ -1,5 +1,7 @@
 import Wei from '@synthetixio/wei';
+
 import { CurrencyKey } from 'constants/currency';
+import { FuturesMarketAsset } from 'utils/futures';
 
 export type SynthExchange = {
 	block: number;
@@ -50,6 +52,13 @@ export type Candle = {
 };
 
 export type Candles = Candle[];
+
+export type LatestRate = {
+	id: string;
+	rate: Wei;
+};
+
+export type LatestRates = Partial<Record<FuturesMarketAsset, Wei>>;
 
 export type Price = {
 	synth: string;

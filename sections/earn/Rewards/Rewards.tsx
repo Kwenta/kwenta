@@ -1,8 +1,9 @@
 import styled from 'styled-components';
 
-import Text from 'components/Text';
 import Button from 'components/Button';
+import Text from 'components/Text';
 import BigText from 'components/Text/BigText';
+
 import { Title, Description } from '../common';
 
 const Rewards: React.FC = () => {

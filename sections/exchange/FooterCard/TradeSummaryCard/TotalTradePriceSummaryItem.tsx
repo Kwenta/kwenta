@@ -1,14 +1,13 @@
 import { FC } from 'react';
 import { Trans } from 'react-i18next';
 
-import { NoTextTransform } from 'styles/common';
-
+import { CurrencyKey } from 'constants/currency';
+import { NO_VALUE } from 'constants/placeholder';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { NoTextTransform } from 'styles/common';
+import { formatCurrency } from 'utils/formatters/number';
 
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
-import { formatCurrency } from 'utils/formatters/number';
-import { NO_VALUE } from 'constants/placeholder';
-import { CurrencyKey } from 'constants/currency';
 
 type TotalTradePriceSummaryItemProps = {
 	totalTradePrice: string | null;

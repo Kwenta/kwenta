@@ -1,16 +1,15 @@
-import { FC } from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
+import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
-import { NO_VALUE } from 'constants/placeholder';
 import Currency from 'components/Currency';
-import { SelectableCurrencyRow } from 'styles/common';
+import { NO_VALUE } from 'constants/placeholder';
+import Connector from 'containers/Connector';
 import useMarketClosed from 'hooks/useMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { isWalletConnectedState } from 'store/wallet';
+import { SelectableCurrencyRow } from 'styles/common';
 
 type Token = {
 	name: string;
@@ -32,8 +31,8 @@ type SynthRowProps = {
 };
 const CurrencyRow: FC<SynthRowProps> = ({ token, onClick, balance }) => {
 	const { t } = useTranslation();
+	const { isWalletConnected } = Connector.useContainer();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	const currencyKey = token.symbol;
 
@@ -42,7 +41,7 @@ const CurrencyRow: FC<SynthRowProps> = ({ token, onClick, balance }) => {
 	);
 
 	return (
-		<StyledSelectableCurrencyRow key={currencyKey} onClick={onClick} isSelectable={true}>
+		<StyledSelectableCurrencyRow key={currencyKey} onClick={onClick} isSelectable>
 			<Currency.Name
 				name={
 					token.isSynth
@@ -51,7 +50,7 @@ const CurrencyRow: FC<SynthRowProps> = ({ token, onClick, balance }) => {
 						  })
 						: token.name
 				}
-				showIcon={true}
+				showIcon
 				iconProps={
 					!token.isSynth
 						? {

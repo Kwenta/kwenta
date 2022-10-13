@@ -1,58 +1,39 @@
-import { FC, useMemo } from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
+import { Synth } from '@synthetixio/contracts-interface';
 import * as _ from 'lodash/fp';
-import { Synth, Synths } from '@synthetixio/contracts-interface';
-import { CurrencyKey } from 'constants/currency';
-import Connector from 'containers/Connector';
 import values from 'lodash/values';
-import { useQueryClient, Query } from 'react-query';
-import { networkState } from 'store/wallet';
-import { Price, Rates } from 'queries/rates/types';
-import Currency from 'components/Currency';
-import { CellProps } from 'react-table';
-import ChangePercent from 'components/ChangePercent';
-import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
-import MarketBadge from 'components/Badge/MarketBadge';
-import Table from 'components/Table';
-import { getMarketKey, isEurForex } from 'utils/futures';
 import { useRouter } from 'next/router';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
+import { FC, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { CellProps } from 'react-table';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
+
+import MarketBadge from 'components/Badge/MarketBadge';
+import ChangePercent from 'components/ChangePercent';
+import Currency from 'components/Currency';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import Table from 'components/Table';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
+import Connector from 'containers/Connector';
+import { Price } from 'queries/rates/types';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
-import { SynthsVolumes } from 'queries/synths/type';
+import { pastRatesState, ratesState } from 'store/futures';
+import { isDecimalFour, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
-type SpotMarketsTableProps = {
-	exchangeRates: Rates | null;
-};
-
-const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
+const SpotMarketsTable: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const network = useRecoilValue(networkState);
+	const pastRates = useRecoilValue(pastRatesState);
+	const exchangeRates = useRecoilValue(ratesState);
+
 	const { synthsMap } = Connector.useContainer();
-
 	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
-
-	const queryCache = useQueryClient().getQueryCache();
-	// KM-NOTE: come back and delete
-	const frozenSynthsQuery = queryCache.find(['synths', 'frozenSynths', network.id]);
-
-	const unfrozenSynths =
-		frozenSynthsQuery && (frozenSynthsQuery as Query).state.status === 'success'
-			? synths.filter(
-					(synth) => !(frozenSynthsQuery.state.data as Set<CurrencyKey>).has(synth.name)
-			  )
-			: synths;
-
-	const synthNames: string[] = synths.map((synth): string => synth.name);
-	const dailyPriceChangesQuery = useLaggedDailyPrice(synthNames);
 
 	const yesterday = Math.floor(new Date().setDate(new Date().getDate() - 1) / 1000);
 	const synthVolumesQuery = useGetSynthsTradingVolumeForAllMarkets(yesterday);
 
 	let data = useMemo(() => {
-		return unfrozenSynths.map((synth: Synth) => {
+		return synths.map((synth: Synth) => {
 			const description = synth.description
 				? t('common.currency.synthetic-currency-name', {
 						currencyName: synth.description,
@@ -60,145 +41,264 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 				: '';
 			const rate = exchangeRates && exchangeRates[synth.name];
 			const price = _.isNil(rate) ? 0 : rate.toNumber();
-			const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
-			const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === synth.name);
-			const synthVolumes: SynthsVolumes = synthVolumesQuery?.data ?? ({} as SynthsVolumes);
+			const pastPrice = pastRates.find((price: Price) => price.synth === synth.name);
+			const synthVolumes = synthVolumesQuery?.data ?? {};
 			return {
 				asset: synth.asset,
 				market: synth.name,
-				marketKey: getMarketKey(synth.asset, network.id),
+				marketKey: MarketKeyByAsset[synth.asset as FuturesMarketAsset],
 				synth: synthsMap[synth.asset],
-				description: description,
+				description,
 				price,
-				change: price !== 0 ? (price - pastPrice?.price) / price || '-' : '-',
+				change:
+					price !== 0 && pastPrice?.price
+						? (price - (pastPrice?.price ?? 0)) / price || null
+						: null,
 				volume: synthVolumes[synth.name] ?? 0,
 			};
 		});
-	}, [
-		synthsMap,
-		unfrozenSynths,
-		synthVolumesQuery,
-		dailyPriceChangesQuery,
-		exchangeRates,
-		t,
-		network.id,
-	]);
+	}, [synthsMap, synths, synthVolumesQuery, pastRates, exchangeRates, t]);
 
 	return (
-		<TableContainer>
-			<StyledTable
-				data={data}
-				showPagination={true}
-				onTableRowClick={(row) => {
-					row.original.market !== 'sUSD'
-						? router.push(`/exchange/${row.original.market}-sUSD`)
-						: router.push(`/exchange/`);
-				}}
-				highlightRowsOnHover
-				sortBy={[
-					{
-						id: 'price',
-						desc: true,
-					},
-				]}
-				columns={[
-					{
-						Header: (
-							<TableHeader>{t('dashboard.overview.futures-markets-table.market')}</TableHeader>
-						),
-						accessor: 'market',
-						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.market === '-' ? (
-								<DefaultCell>-</DefaultCell>
-							) : (
-								<MarketContainer>
-									<IconContainer>
-										<StyledCurrencyIcon
-											currencyKey={
-												(cellProps.row.original.asset[0] !== 's' ? 's' : '') +
-												cellProps.row.original.asset
-											}
-										/>
-									</IconContainer>
-									<StyledText>
-										{cellProps.row.original.market}
-										<MarketBadge
-											currencyKey={cellProps.row.original.asset}
-											isFuturesMarketClosed={cellProps.row.original.isSuspended}
-											futuresClosureReason={cellProps.row.original.marketClosureReason}
-										/>
-									</StyledText>
-									<StyledValue>{cellProps.row.original.description}</StyledValue>
-								</MarketContainer>
-							);
-						},
-						width: 190,
-					},
-					{
-						Header: <TableHeader>{t('dashboard.synth-sort.price')}</TableHeader>,
-						accessor: 'price',
-						Cell: (cellProps: CellProps<any>) => {
-							const formatOptions = isEurForex(cellProps.row.original.asset)
-								? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
-								: {};
-							return cellProps.row.original.price === '-' ? (
-								<DefaultCell>-</DefaultCell>
-							) : (
-								<Currency.Price
-									currencyKey={Synths.sUSD}
-									price={cellProps.row.original.price}
-									sign={'$'}
-									conversionRate={1}
-									formatOptions={formatOptions}
-								/>
-							);
-						},
-						width: 130,
-					},
-					{
-						Header: <TableHeader>{t('dashboard.synth-sort.24h-change')}</TableHeader>,
-						accessor: '24hChange',
-						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.change === '-' ? (
-								<DefaultCell>-</DefaultCell>
-							) : (
-								<ChangePercent
-									value={cellProps.row.original.change}
-									decimals={2}
-									className="change-pct"
-								/>
-							);
-						},
-						width: 105,
-					},
-					{
-						Header: <TableHeader>{t('dashboard.synth-sort.24h-vol')}</TableHeader>,
-						accessor: '24hVolume',
-						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.volume === '-' ? (
-								<DefaultCell>-</DefaultCell>
-							) : (
-								<Currency.Price
-									currencyKey={Synths.sUSD}
-									price={cellProps.row.original.volume}
-									sign={'$'}
-									conversionRate={1}
-								/>
-							);
-						},
-						width: 125,
-						sortType: useMemo(
-							() => (rowA: any, rowB: any) => {
-								const rowOne = rowA.original.volume;
-								const rowTwo = rowB.original.volume;
-								return rowOne > rowTwo ? 1 : -1;
+		<>
+			<DesktopOnlyView>
+				<TableContainer>
+					<StyledTable
+						data={data}
+						showPagination
+						onTableRowClick={(row) => {
+							row.original.market !== 'sUSD'
+								? router.push(`/exchange/?quote=sUSD&base=${row.original.market}`)
+								: router.push(`/exchange/`);
+						}}
+						highlightRowsOnHover
+						sortBy={[
+							{
+								id: 'price',
+								desc: true,
 							},
-							[]
-						),
-					},
-				]}
-			/>
-		</TableContainer>
+						]}
+						columns={[
+							{
+								Header: (
+									<TableHeader>{t('dashboard.overview.spot-markets-table.market')}</TableHeader>
+								),
+								accessor: 'market',
+								Cell: (cellProps: CellProps<any>) => {
+									return (
+										<MarketContainer>
+											<IconContainer>
+												<StyledCurrencyIcon
+													currencyKey={
+														(cellProps.row.original.asset[0] !== 's' ? 's' : '') +
+														cellProps.row.original.asset
+													}
+												/>
+											</IconContainer>
+											<StyledText>
+												{cellProps.row.original.market}
+												<MarketBadge
+													currencyKey={cellProps.row.original.asset}
+													isFuturesMarketClosed={cellProps.row.original.isSuspended}
+													futuresClosureReason={cellProps.row.original.marketClosureReason}
+												/>
+											</StyledText>
+											<StyledValue>{cellProps.row.original.description}</StyledValue>
+										</MarketContainer>
+									);
+								},
+								width: 190,
+							},
+							{
+								Header: (
+									<TableHeader>{t('dashboard.overview.spot-markets-table.price')}</TableHeader>
+								),
+								accessor: 'price',
+								Cell: (cellProps: CellProps<any>) => {
+									const formatOptions = isDecimalFour(cellProps.row.original.asset)
+										? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
+										: {};
+									return (
+										<Currency.Price
+											currencyKey={'sUSD'}
+											price={cellProps.row.original.price}
+											sign={'$'}
+											conversionRate={1}
+											formatOptions={formatOptions}
+										/>
+									);
+								},
+								width: 130,
+								sortable: true,
+								sortType: useMemo(
+									() => (rowA: any, rowB: any) => {
+										const rowOne = rowA.original.price ?? 0;
+										const rowTwo = rowB.original.price ?? 0;
+										return rowOne > rowTwo ? 1 : -1;
+									},
+									[]
+								),
+							},
+							{
+								Header: (
+									<TableHeader>{t('dashboard.overview.spot-markets-table.24h-change')}</TableHeader>
+								),
+								accessor: '24hChange',
+								Cell: (cellProps: CellProps<any>) => {
+									return cellProps.row.original.change === '-' ? (
+										<p>-</p>
+									) : (
+										<ChangePercent
+											value={cellProps.row.original.change}
+											decimals={2}
+											className="change-pct"
+										/>
+									);
+								},
+								width: 105,
+								sortable: true,
+								sortType: useMemo(
+									() => (rowA: any, rowB: any) => {
+										const rowOne = rowA.original.change;
+										const rowTwo = rowB.original.change;
+										return rowOne > rowTwo ? 1 : -1;
+									},
+									[]
+								),
+							},
+							{
+								Header: (
+									<TableHeader>{t('dashboard.overview.spot-markets-table.24h-vol')}</TableHeader>
+								),
+								accessor: '24hVolume',
+								Cell: (cellProps: CellProps<any>) => {
+									return (
+										<Currency.Price
+											currencyKey={'sUSD'}
+											price={cellProps.row.original.volume}
+											sign={'$'}
+											conversionRate={1}
+										/>
+									);
+								},
+								width: 125,
+								sortable: true,
+								sortType: useMemo(
+									() => (rowA: any, rowB: any) => {
+										const rowOne = rowA.original.volume;
+										const rowTwo = rowB.original.volume;
+										return rowOne > rowTwo ? 1 : -1;
+									},
+									[]
+								),
+							},
+						]}
+					/>
+				</TableContainer>
+			</DesktopOnlyView>
+			<MobileOrTabletView>
+				<StyledMobileTable
+					data={data}
+					showPagination
+					onTableRowClick={(row) => {
+						row.original.market !== 'sUSD'
+							? router.push(`/exchange/?quote=sUSD&base=${row.original.market}`)
+							: router.push(`/exchange/`);
+					}}
+					sortBy={[
+						{
+							id: 'price',
+							desc: true,
+						},
+					]}
+					columns={[
+						{
+							Header: (
+								<TableHeader>{t('dashboard.overview.spot-markets-table.market')}</TableHeader>
+							),
+							accessor: 'market',
+							Cell: (cellProps: CellProps<any>) => {
+								return (
+									<MarketContainer>
+										<IconContainer>
+											<StyledCurrencyIcon
+												currencyKey={
+													(cellProps.row.original.asset[0] !== 's' ? 's' : '') +
+													cellProps.row.original.asset
+												}
+											/>
+										</IconContainer>
+										<StyledText>
+											{cellProps.row.original.market}
+											<MarketBadge
+												currencyKey={cellProps.row.original.asset}
+												isFuturesMarketClosed={cellProps.row.original.isSuspended}
+												futuresClosureReason={cellProps.row.original.marketClosureReason}
+											/>
+										</StyledText>
+										<StyledValue>{cellProps.row.original.description}</StyledValue>
+									</MarketContainer>
+								);
+							},
+							width: 190,
+						},
+						{
+							Header: (
+								<TableHeader>{t('dashboard.overview.spot-markets-table.24h-change')}</TableHeader>
+							),
+							accessor: '24hChange',
+							Cell: (cellProps: CellProps<any>) => {
+								return cellProps.row.original.change === '-' ? (
+									<p>-</p>
+								) : (
+									<ChangePercent
+										value={cellProps.row.original.change}
+										decimals={2}
+										className="change-pct"
+									/>
+								);
+							},
+							width: 105,
+							sortable: true,
+							sortType: useMemo(
+								() => (rowA: any, rowB: any) => {
+									const rowOne = rowA.original.change;
+									const rowTwo = rowB.original.change;
+									return rowOne > rowTwo ? 1 : -1;
+								},
+								[]
+							),
+						},
+						{
+							Header: (
+								<TableHeader>{t('dashboard.overview.spot-markets-table.24h-vol')}</TableHeader>
+							),
+							accessor: '24hVolume',
+							Cell: (cellProps: CellProps<any>) => {
+								return (
+									<Currency.Price
+										currencyKey={'sUSD'}
+										price={cellProps.row.original.volume}
+										sign={'$'}
+										conversionRate={1}
+									/>
+								);
+							},
+							width: 125,
+							sortable: true,
+							sortType: useMemo(
+								() => (rowA: any, rowB: any) => {
+									const rowOne = rowA.original.volume;
+									const rowTwo = rowB.original.volume;
+									return rowOne > rowTwo ? 1 : -1;
+								},
+								[]
+							),
+						},
+					]}
+				/>
+			</MobileOrTabletView>
+		</>
 	);
 };
 
@@ -221,8 +321,6 @@ const StyledValue = styled.div`
 	grid-row: 2;
 `;
 
-const DefaultCell = styled.p``;
-
 const TableContainer = styled.div`
 	margin-top: 16px;
 	margin-bottom: '40px';
@@ -244,7 +342,7 @@ const StyledText = styled.div`
 	margin-bottom: -4px;
 	grid-column: 2;
 	grid-row: 1;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
@@ -253,6 +351,13 @@ const MarketContainer = styled.div`
 	grid-template-rows: auto auto;
 	grid-template-columns: auto auto;
 	align-items: center;
+`;
+
+const StyledMobileTable = styled(StyledTable)`
+	border-radius: initial;
+	border-top: none;
+	border-left: none;
+	border-right: none;
 `;
 
 export default SpotMarketsTable;

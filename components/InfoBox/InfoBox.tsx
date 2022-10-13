@@ -1,17 +1,18 @@
-import { NO_VALUE } from 'constants/placeholder';
 import React from 'react';
 import styled from 'styled-components';
 
-type DetailedInfo = {
-	value: string;
+import { NO_VALUE } from 'constants/placeholder';
+
+export type DetailedInfo = {
+	value: string | React.ReactNode;
 	keyNode?: React.ReactNode;
 	valueNode?: React.ReactNode;
-	color?: 'green' | 'red' | 'gold';
+	color?: 'green' | 'red' | 'gold' | undefined;
 	spaceBeneath?: boolean;
 };
 
 type InfoBoxProps = {
-	details: Record<string, DetailedInfo>;
+	details: Record<string, DetailedInfo | null | undefined>;
 	style?: React.CSSProperties;
 	className?: string;
 	disabled?: boolean;
@@ -21,25 +22,30 @@ type InfoBoxProps = {
 const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className, disabled, dataTestId }) => {
 	return (
 		<InfoBoxContainer style={style} className={className}>
-			{Object.entries(details).map(([key, value], index) => (
-				<React.Fragment key={key}>
-					<div>
-						<div className="key">
-							{key}: {value.keyNode}
-						</div>
-						<p
-							data-testid={`${dataTestId}-${index}`}
-							className={`${disabled ? 'value closed' : 'value'}${
-								value.color ? ` ${value.color}` : ''
-							}`}
-						>
-							{disabled ? NO_VALUE : value.value}
-							{value.valueNode}
-						</p>
-					</div>
-					{value?.spaceBeneath && <br />}
-				</React.Fragment>
-			))}
+			{Object.entries(details).map(([key, value], index) => {
+				if (value) {
+					return (
+						<React.Fragment key={key}>
+							<div>
+								<div className="key">
+									{key}: {value.keyNode}
+								</div>
+								<p
+									data-testid={`${dataTestId}-${index}`}
+									className={`${disabled ? 'value closed' : 'value'}${
+										value.color ? ` ${value.color}` : ''
+									}`}
+								>
+									{disabled ? NO_VALUE : value.value}
+									{value.valueNode}
+								</p>
+							</div>
+							{value?.spaceBeneath && <br />}
+						</React.Fragment>
+					);
+				}
+				return null;
+			})}
 		</InfoBoxContainer>
 	);
 };

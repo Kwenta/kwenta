@@ -1,7 +1,6 @@
 import { AtomEffect } from 'recoil';
-import { ThemeName } from 'styles/theme';
 
-export const localStorageEffect = (key: string): AtomEffect<ThemeName> => ({ setSelf, onSet }) => {
+export const localStorageEffect = <T>(key: string): AtomEffect<T> => ({ setSelf, onSet }) => {
 	if (typeof window !== 'undefined') {
 		const savedValue = localStorage.getItem(key);
 		if (savedValue != null) {

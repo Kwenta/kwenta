@@ -1,9 +1,16 @@
-import { FC } from 'react';
+import useSynthetixQueries from '@synthetixio/queries';
 import Head from 'next/head';
+import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
-import media from 'styles/media';
+import SystemDownIcon from 'assets/svg/app/system-down.svg';
+import DiscordIcon from 'assets/svg/social/discord.svg';
+import GithubIcon from 'assets/svg/social/github.svg';
+import TwitterIcon from 'assets/svg/social/twitter.svg';
+import { EXTERNAL_LINKS, PROD_HOSTNAME } from 'constants/links';
+import { HEADER_HEIGHT } from 'constants/ui';
+import Logo from 'sections/shared/Layout/Logo';
 import {
 	FlexDivColCentered,
 	PageContent,
@@ -11,18 +18,7 @@ import {
 	ExternalLink,
 	GridDivCenteredCol,
 } from 'styles/common';
-
-import Logo from 'sections/shared/Layout/Logo';
-
-import { EXTERNAL_LINKS, PROD_HOSTNAME } from 'constants/links';
-import { HEADER_HEIGHT } from 'constants/ui';
-
-import SystemDownIcon from 'assets/svg/app/system-down.svg';
-import DiscordIcon from 'assets/svg/social/discord.svg';
-import TwitterIcon from 'assets/svg/social/twitter.svg';
-import GithubIcon from 'assets/svg/social/github.svg';
-
-import useSynthetixQueries from '@synthetixio/queries';
+import media from 'styles/media';
 
 type SystemStatusProps = {
 	children: React.ReactNode;
@@ -71,7 +67,7 @@ const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 			<FullScreenContainer>
 				<StyledPageContent>
 					<Header>
-						<Logo isL2={true} />
+						<Logo />
 					</Header>
 					<Container>
 						<StyledSystemDownIcon />
@@ -132,7 +128,7 @@ const titleCSS = css`
 const Title = styled.h1`
 	${titleCSS};
 	font-size: 20px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	padding-bottom: 15px;
 	line-height: 28px;
 `;

@@ -1,14 +1,14 @@
+import Head from 'next/head';
 import React from 'react';
 import styled from 'styled-components';
-import Head from 'next/head';
 
-import { PageContent, FullHeightContainer } from 'styles/common';
-
-import Text from 'components/Text';
 import Button from 'components/Button';
-import Rewards from 'sections/earn/Rewards/Rewards';
-import StakeGrid from 'sections/earn/Grids/StakeGrid';
+import Text from 'components/Text';
 import PoolGrid from 'sections/earn/Grids/PoolGrid';
+import StakeGrid from 'sections/earn/Grids/StakeGrid';
+import Rewards from 'sections/earn/Rewards/Rewards';
+import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
+import { PageContent, FullHeightContainer } from 'styles/common';
 
 const Earn: React.FC = () => {
 	return (
@@ -29,6 +29,7 @@ const Earn: React.FC = () => {
 							<PoolGrid />
 						</GridsContainer>
 						<Rewards />
+						<GitHashID />
 					</MainContainer>
 				</FullHeightContainer>
 			</PageContent>

@@ -1,12 +1,11 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import Button from 'components/Button';
-
+import { zIndex } from 'constants/ui';
 import { FixedFooterMixin, GridDivCenteredRow, numericValueCSS } from 'styles/common';
 import media from 'styles/media';
-import { zIndex } from 'constants/ui';
 
-export const SummaryItems = styled.div<{ attached?: boolean }>`
+export const SummaryItems = styled.div`
 	display: grid;
 	grid-auto-flow: column;
 	flex-grow: 1;
@@ -18,13 +17,6 @@ export const SummaryItems = styled.div<{ attached?: boolean }>`
 		grid-template-rows: auto auto;
 		grid-gap: 20px;
 	`}
-	${(props) =>
-		props.attached &&
-		css`
-			& {
-				grid-template-rows: unset;
-			}
-		`}
 `;
 
 export const SummaryItem = styled.div`
@@ -44,7 +36,7 @@ export const SummaryItemLabel = styled.div`
 `;
 
 export const SummaryItemValue = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	${numericValueCSS};
 	max-width: 100px;
 	overflow: hidden;
@@ -53,7 +45,6 @@ export const SummaryItemValue = styled.div`
 `;
 
 export const MessageContainer = styled(GridDivCenteredRow)<{
-	attached?: boolean;
 	showProvider?: boolean;
 }>`
 	-webkit-box-align: center;
@@ -63,20 +54,6 @@ export const MessageContainer = styled(GridDivCenteredRow)<{
 	grid-template-rows: 99px 70px;
 	margin: 0 0 20px;
 
-	/*
-	width: 100%;
-	border-radius: 1000px;
-	grid-template-columns: 1fr auto;
-	padding: 16px 32px;
-	max-width: 750px;
-	margin: 0 auto;
-	*/
-
-	${(props) =>
-		props.attached &&
-		css`
-			border-radius: 4px;
-		`}
 	${media.lessThan('md')`
 		${FixedFooterMixin};
 		box-shadow: 0 -8px 8px 0 ${(props) => props.theme.colors.black};
@@ -91,7 +68,7 @@ export const FixedMessageContainerSpacer = styled.div`
 `;
 
 export const Message = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	flex-grow: 1;
@@ -99,8 +76,8 @@ export const Message = styled.div`
 `;
 
 export const MessageButton = styled(Button).attrs({
-	variant: 'primary',
 	size: 'lg',
+	noOutline: true,
 	isRounded: true,
 	fullwidth: true,
 })`

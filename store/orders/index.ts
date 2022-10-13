@@ -1,7 +1,7 @@
-import { atom, selector } from 'recoil';
-import orderBy from 'lodash/orderBy';
-import groupBy from 'lodash/groupBy';
 import { Transaction } from 'ethers';
+import groupBy from 'lodash/groupBy';
+import orderBy from 'lodash/orderBy';
+import { atom, selector } from 'recoil';
 
 import { getOrdersKey } from '../utils';
 

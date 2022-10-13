@@ -3,14 +3,21 @@ import common from './common';
 const lightTheme = {
 	background: '#F2F2F2',
 	border: '1px solid rgba(0,0,0,0.17)',
+	outlineBorder: '1px solid rgba(0,0,0,0.17)',
 	red: '#A80300',
 	green: '#1D5D1F',
+	orange: '#DA8332',
 	black: '#171002',
 	white: '#F2F2F2',
 	gray: '#515151',
+	gray2: '#D2D2D2', // TODO: Update once added to designs
+	yellow: '#6A3300',
 	table: { fill: '#EEE', hover: '#E6E6E6' },
 	gold: '#724713',
-	badge: { background: '#A80300', text: 'white' },
+	badge: {
+		red: { background: '#A80300', text: 'white' },
+		yellow: { background: '#6A3300', text: 'white' },
+	},
 	tab: { background: { active: 'transparent', inactive: '#e8e8e8' } },
 	button: {
 		border: 'rgb(0 0 0 / 10%)',
@@ -21,7 +28,10 @@ const lightTheme = {
 		hover: 'linear-gradient(180deg, rgba(231, 231, 231, 0.8) 0%, rgba(203, 203, 203, 0.8) 100%)',
 		shadow:
 			'0px 2px 2px rgb(0 0 0 / 5%), inset 0px 1px 0px rgb(255 255 255 / 8%), inset 0px 0px 20px rgb(255 255 255 / 3%)',
-		text: '#171002',
+		text: {
+			primary: '#171002',
+			yellow: '#6A3300',
+		},
 		primary: {
 			background: 'linear-gradient(180deg, #BE9461 0%, #9C6C3C 100%)',
 			hover: 'linear-gradient(180deg, #E4B378 0%, #B98C55 100%)',
@@ -70,8 +80,17 @@ const lightTheme = {
 	},
 	slider: {
 		label: '#787878',
-		thumb: { shadow: 'inset 0px 1px 0px rgba(255, 255, 255, 0.5)' },
-		track: { shadow: 'inset 0px 0.5px 0px rgba(255, 255, 255, 0.5)' },
+		thumb: {
+			border: '3px solid rgba(255, 255, 255, 0.4)',
+			shadow: 'inset 0px 1px 0px rgba(255, 255, 255, 0.5)',
+		},
+		rail: {
+			background: 'rgba(0, 0, 0, 0.2)',
+		},
+		track: {
+			background: 'rgba(0, 0, 0, 0.3)',
+			shadow: 'inset 0px 0.5px 0px rgba(255, 255, 255, 0.5)',
+		},
 	},
 	select: {
 		control: {
@@ -88,10 +107,24 @@ const lightTheme = {
 	text: {
 		title: common.secondaryGray,
 		value: '#000000',
+		label: common.secondaryGray,
 	},
 	icon: {
 		fill: '#515151',
 		hover: '#171002',
+	},
+	openInterestBar: {
+		border: '1px solid #F2F2F2',
+	},
+	modal: {
+		background: '#F2F2F2',
+	},
+	competitionBanner: {
+		border: '1px solid #C9C9C9',
+		state: {
+			text: '#171002',
+		},
+		bg: '#515151',
 	},
 };
 
