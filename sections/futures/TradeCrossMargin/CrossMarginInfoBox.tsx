@@ -1,7 +1,7 @@
 import Wei, { wei } from '@synthetixio/wei';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import InfoBox from 'components/InfoBox';
@@ -37,6 +37,7 @@ type Props = {
 
 function MarginInfoBox({ editingLeverage }: Props) {
 	const { selectedLeverage } = useFuturesContext();
+	const { colors } = useTheme();
 
 	const position = useRecoilValue(positionState);
 	const marketInfo = useRecoilValue(marketInfoState);
@@ -142,7 +143,10 @@ function MarginInfoBox({ editingLeverage }: Props) {
 					'Free Account Margin': {
 						value: formatDollars(crossMarginFreeMargin),
 						valueNode: (
-							<PreviewArrow showPreview={showPreview}>
+							<PreviewArrow
+								showPreview={showPreview}
+								color={previewTradeData.freeAccountMargin.lt(0) ? 'red' : 'yellow'}
+							>
 								{potentialTrade.status === 'fetching' ? (
 									<MiniLoader />
 								) : (
@@ -177,15 +181,19 @@ function MarginInfoBox({ editingLeverage }: Props) {
 							</PreviewArrow>
 						),
 					},
-					'Keeper ETH Balance':
+					'Account ETH Balance':
 						orderType === 'limit' || orderType === 'stop'
 							? {
 									value: formatCurrency('ETH', keeperEthBal, { currencyKey: 'ETH' }),
 									valueNode: (
 										<>
 											{keeperEthBal.gt(0) && (
-												<ActionButton hideBorder onClick={() => setOpenModal('keeper-deposit')}>
-													<WithdrawArrow width="10px" height="10px" />
+												<ActionButton onClick={() => setOpenModal('keeper-deposit')}>
+													<WithdrawArrow
+														width="12px"
+														height="9px"
+														stroke={colors.selectedTheme.yellow}
+													/>
 												</ActionButton>
 											)}
 										</>

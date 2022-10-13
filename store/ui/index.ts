@@ -1,7 +1,7 @@
 import { atom } from 'recoil';
 
 import { DEFAULT_SLIPPAGE } from 'constants/defaults';
-import { MarketsTab } from 'sections/dashboard/Markets/Markets';
+import { PositionsTab } from 'sections/dashboard/Overview/Overview';
 import { localStorageEffect } from 'store/effects';
 import { ThemeName } from 'styles/theme';
 
@@ -28,7 +28,7 @@ export const isCompetitionActive = atom<boolean>({
 	default: process.env.NEXT_PUBLIC_COMPETITION_ACTIVE === 'true',
 });
 
-export const activePositionsTabState = atom<MarketsTab>({
+export const activePositionsTabState = atom<PositionsTab>({
 	key: getUIKey('activePositionsTabState'),
-	default: MarketsTab.FUTURES,
+	default: PositionsTab.CROSS_MARGIN,
 });

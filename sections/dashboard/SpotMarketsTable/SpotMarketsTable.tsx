@@ -4,7 +4,6 @@ import values from 'lodash/values';
 import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQueryClient } from 'react-query';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -14,43 +13,27 @@ import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
-import { CurrencyKey } from 'constants/currency';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import Connector from 'containers/Connector';
-import { Price, Rates } from 'queries/rates/types';
+import { Price } from 'queries/rates/types';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
-import { pastRatesState } from 'store/futures';
+import { pastRatesState, ratesState } from 'store/futures';
 import { isDecimalFour, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
-type SpotMarketsTableProps = {
-	exchangeRates: Rates | null;
-};
-
-const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
+const SpotMarketsTable: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const pastRates = useRecoilValue(pastRatesState);
+	const exchangeRates = useRecoilValue(ratesState);
 
-	const { network, synthsMap } = Connector.useContainer();
-
+	const { synthsMap } = Connector.useContainer();
 	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
-
-	const queryCache = useQueryClient().getQueryCache();
-	// KM-NOTE: come back and delete
-	const frozenSynthsQuery = queryCache.find(['synths', 'frozenSynths', network.id]);
-
-	const unfrozenSynths =
-		frozenSynthsQuery && frozenSynthsQuery.state.status === 'success'
-			? synths.filter(
-					(synth) => !(frozenSynthsQuery.state.data as Set<CurrencyKey>).has(synth.name)
-			  )
-			: synths;
 
 	const yesterday = Math.floor(new Date().setDate(new Date().getDate() - 1) / 1000);
 	const synthVolumesQuery = useGetSynthsTradingVolumeForAllMarkets(yesterday);
 
 	let data = useMemo(() => {
-		return unfrozenSynths.map((synth: Synth) => {
+		return synths.map((synth: Synth) => {
 			const description = synth.description
 				? t('common.currency.synthetic-currency-name', {
 						currencyName: synth.description,
@@ -74,7 +57,7 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 				volume: synthVolumes[synth.name] ?? 0,
 			};
 		});
-	}, [synthsMap, unfrozenSynths, synthVolumesQuery, pastRates, exchangeRates, t]);
+	}, [synthsMap, synths, synthVolumesQuery, pastRates, exchangeRates, t]);
 
 	return (
 		<>

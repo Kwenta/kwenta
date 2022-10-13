@@ -18,6 +18,7 @@ import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesOrder, PositionSide } from 'queries/futures/types';
 import { currentMarketState, openOrdersState, selectedFuturesAddressState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
+import { formatDollars } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
@@ -85,7 +86,7 @@ const OpenOrdersTable: React.FC = () => {
 		async (order: FuturesOrder | undefined) => {
 			if (!order) return;
 			setCancelling(order.id);
-			if (order.orderType === 'Limit' || order.orderType === 'Stop') {
+			if (order.orderType === 'Limit' || order.orderType === 'Stop-Market') {
 				try {
 					const id = order.id.split('-')[2];
 					const tx = await crossMarginAccountContract?.cancelOrder(id);
@@ -112,12 +113,22 @@ const OpenOrdersTable: React.FC = () => {
 	}, [cancelNextPriceOrder.hash, executeNextPriceOrder.hash]);
 
 	const rowsData = useMemo(() => {
-		if (!cancelling) return openOrders;
-		const copyOrders = [...openOrders];
-		const cancellingIndex = copyOrders.findIndex((o) => o.id === cancelling);
-		copyOrders[cancellingIndex] = { ...copyOrders[cancellingIndex], isCancelling: true };
-		return copyOrders;
-	}, [openOrders, cancelling]);
+		const ordersWithCancel = openOrders
+			.map((o) => ({ ...o, cancel: () => onCancel(o) }))
+			.sort((a, b) => {
+				return b.asset === currencyKey && a.asset !== currencyKey
+					? 1
+					: b.asset === currencyKey && a.asset === currencyKey
+					? 0
+					: -1;
+			});
+		const cancellingIndex = ordersWithCancel.findIndex((o) => o.id === cancelling);
+		ordersWithCancel[cancellingIndex] = {
+			...ordersWithCancel[cancellingIndex],
+			isCancelling: true,
+		};
+		return ordersWithCancel;
+	}, [openOrders, cancelling, currencyKey, onCancel]);
 
 	return (
 		<>
@@ -155,7 +166,7 @@ const OpenOrdersTable: React.FC = () => {
 										<StyledText>
 											{cellProps.row.original.market}
 											{cellProps.row.original.isStale && (
-												<ExpiredBadge>
+												<ExpiredBadge color="red">
 													{t('futures.market.user.open-orders.badges.expired')}
 												</ExpiredBadge>
 											)}
@@ -212,6 +223,20 @@ const OpenOrdersTable: React.FC = () => {
 						{
 							Header: (
 								<StyledTableHeader>
+									{t('futures.market.user.open-orders.table.reserved-margin')}
+								</StyledTableHeader>
+							),
+							accessor: 'marginDelta',
+							Cell: (cellProps: CellProps<any>) => {
+								const { marginDelta } = cellProps.row.original;
+								return <div>{formatDollars(marginDelta?.gt(0) ? marginDelta : '0')}</div>;
+							},
+							sortable: true,
+							width: 50,
+						},
+						{
+							Header: (
+								<StyledTableHeader>
 									{t('futures.market.user.open-orders.table.actions')}
 								</StyledTableHeader>
 							),
@@ -220,10 +245,7 @@ const OpenOrdersTable: React.FC = () => {
 								const cancellingRow = cellProps.row.original.isCancelling;
 								return (
 									<div style={{ display: 'flex' }}>
-										<CancelButton
-											disabled={cancellingRow}
-											onClick={() => onCancel(cellProps.row.original)}
-										>
+										<CancelButton disabled={cancellingRow} onClick={cellProps.row.original.cancel}>
 											{t('futures.market.user.open-orders.actions.cancel')}
 										</CancelButton>
 										{cellProps.row.original.isExecutable && (

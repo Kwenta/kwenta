@@ -42,7 +42,7 @@ const TradesTab: React.FC = () => {
 			feesPaid: trade?.feesPaid.div(ETH_UNIT),
 			id: trade?.txnHash,
 			asset: marketAsset,
-			type: trade?.orderType === 'NextPrice' ? 'Next Price' : trade?.orderType,
+			type: trade?.orderType,
 			status: trade?.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
 			side: trade?.side,
 		}));

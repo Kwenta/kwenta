@@ -9,33 +9,35 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Currency from 'components/Currency';
+import FuturesIcon from 'components/Nav/FuturesIcon';
 import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { ETH_UNIT } from 'constants/network';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
+import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetAllFuturesTradesForAccount from 'queries/futures/useGetAllFuturesTradesForAccount';
 import { TradeStatus } from 'sections/futures/types';
-import { futuresAccountTypeState, selectedFuturesAddressState } from 'store/futures';
+import { futuresAccountTypeState } from 'store/futures';
 import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName, isDecimalFour, MarketKeyByAsset } from 'utils/futures';
 
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
 
 const FuturesHistoryTable: FC = () => {
-	const selectedFuturesAddress = useRecoilValue(selectedFuturesAddressState);
 	const accountType = useRecoilValue(futuresAccountTypeState);
 
+	const { walletAddress } = Connector.useContainer();
 	const { t } = useTranslation();
 	const isL2 = useIsL2();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { switchToL2 } = useNetworkSwitcher();
-	const futuresTradesQuery = useGetAllFuturesTradesForAccount(selectedFuturesAddress);
+	const futuresTradesQuery = useGetAllFuturesTradesForAccount(walletAddress);
 	const trades: FuturesTrade[] = useMemo(
 		() => (futuresTradesQuery.isSuccess ? futuresTradesQuery?.data ?? [] : []),
 		[futuresTradesQuery.isSuccess, futuresTradesQuery.data]
@@ -55,7 +57,6 @@ const FuturesHistoryTable: FC = () => {
 					pnl: trade.pnl.div(ETH_UNIT),
 					feesPaid: trade.feesPaid.div(ETH_UNIT),
 					id: trade.txnHash,
-					orderType: trade.orderType === 'NextPrice' ? 'Next Price' : trade.orderType,
 					status: trade.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
 				};
 			}),
@@ -119,6 +120,7 @@ const FuturesHistoryTable: FC = () => {
 												/>
 											</IconContainer>
 											<StyledText>{cellProps.row.original.market}</StyledText>
+											<StyledFuturesIcon type={cellProps.row.original.accountType} />
 										</>
 									)}
 								</SynthContainer>
@@ -241,10 +243,6 @@ const StyledTable = styled(Table)`
 `;
 
 const StyledText = styled.div`
-	display: flex;
-	align-items: center;
-	grid-column: 2;
-	grid-row: 1;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 const SynthContainer = styled.div`
@@ -263,6 +261,10 @@ const PNL = styled.div<{ negative?: boolean; normal?: boolean }>`
 			: props.negative
 			? props.theme.colors.selectedTheme.red
 			: props.theme.colors.selectedTheme.green};
+`;
+
+const StyledFuturesIcon = styled(FuturesIcon)`
+	margin-left: 5px;
 `;
 
 export default FuturesHistoryTable;

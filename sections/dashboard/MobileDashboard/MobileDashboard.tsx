@@ -1,16 +1,13 @@
-import React from 'react';
+import { FC } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
 import { activePositionsTabState } from 'store/ui';
 
-import { MarketsTab } from '../Markets/Markets';
-import FuturesMarkets from './FuturesMarkets';
 import OpenPositions from './OpenPositions';
 import Portfolio from './Portfolio';
-import SpotMarkets from './SpotMarkets';
 
-const MobileDashboard: React.FC = () => {
+const MobileDashboard: FC = () => {
 	// in the mobile dashboard, there are no differences between positions and markets tab
 	const [activePositionsTab, setActivePositionsTab] = useRecoilState(activePositionsTabState);
 
@@ -22,8 +19,6 @@ const MobileDashboard: React.FC = () => {
 				activePositionsTab={activePositionsTab}
 				setActivePositionsTab={setActivePositionsTab}
 			/>
-			{activePositionsTab === MarketsTab.FUTURES && <FuturesMarkets />}
-			{activePositionsTab === MarketsTab.SPOT && <SpotMarkets />}
 		</div>
 	);
 };

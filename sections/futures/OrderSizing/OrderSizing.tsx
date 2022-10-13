@@ -22,6 +22,8 @@ import { FlexDivRow } from 'styles/common';
 import { floorNumber, isZero, zeroBN } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 
+import OrderSizeSlider from './OrderSizeSlider';
+
 type OrderSizingProps = {
 	isMobile?: boolean;
 	disabled?: boolean;
@@ -122,36 +124,39 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 		(assetInputType === 'native' && assetValue !== '' && maxNativeValue.lte(assetValue || 0));
 
 	return (
-		<OrderSizingContainer>
-			<OrderSizingRow>
-				<InputTitle>
-					Amount&nbsp; —<span>&nbsp; Set order size</span>
-				</InputTitle>
-				<InputHelpers>
-					<MaxButton onClick={handleSetMax}>Max</MaxButton>
-					{showPosSizeHelper && (
-						<MaxButton onClick={handleSetPositionSize}>Position Size</MaxButton>
-					)}
-				</InputHelpers>
-			</OrderSizingRow>
+		<>
+			<OrderSizingContainer>
+				<OrderSizingRow>
+					<InputTitle>
+						Amount&nbsp; —<span>&nbsp; Set order size</span>
+					</InputTitle>
+					<InputHelpers>
+						<MaxButton onClick={handleSetMax}>Max</MaxButton>
+						{showPosSizeHelper && (
+							<MaxButton onClick={handleSetPositionSize}>Position Size</MaxButton>
+						)}
+					</InputHelpers>
+				</OrderSizingRow>
 
-			<CustomInput
-				invalid={invalid}
-				dataTestId={'set-order-size-amount-susd' + (isMobile ? '-mobile' : '-desktop')}
-				disabled={isDisabled}
-				right={
-					<InputButton
-						onClick={() => setAssetInputType(assetInputType === 'usd' ? 'native' : 'usd')}
-					>
-						{assetInputType === 'usd' ? 'sUSD' : getDisplayAsset(marketKey)}{' '}
-						<span>{<SwitchAssetArrows />}</span>
-					</InputButton>
-				}
-				value={assetInputType === 'usd' ? usdValue : assetValue}
-				placeholder="0.0"
-				onChange={onChangeValue}
-			/>
-		</OrderSizingContainer>
+				<CustomInput
+					invalid={invalid}
+					dataTestId={'set-order-size-amount-susd' + (isMobile ? '-mobile' : '-desktop')}
+					disabled={isDisabled}
+					right={
+						<InputButton
+							onClick={() => setAssetInputType(assetInputType === 'usd' ? 'native' : 'usd')}
+						>
+							{assetInputType === 'usd' ? 'sUSD' : getDisplayAsset(marketKey)}{' '}
+							<span>{<SwitchAssetArrows />}</span>
+						</InputButton>
+					}
+					value={assetInputType === 'usd' ? usdValue : assetValue}
+					placeholder="0.0"
+					onChange={onChangeValue}
+				/>
+			</OrderSizingContainer>
+			{selectedAccountType === 'cross_margin' && <OrderSizeSlider />}
+		</>
 	);
 };
 

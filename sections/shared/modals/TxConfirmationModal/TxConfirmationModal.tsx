@@ -242,7 +242,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			</Summary>
 			{txProvider === '1inch' && (
 				<TxProviderContainer>
-					<span>{t('common.powered-by')}</span>
+					<Text>{t('common.powered-by')}</Text>
 					<OneInchImage width="40" height="40" alt={t('common.dex-aggregators.1inch.title')} />
 				</TxProviderContainer>
 			)}
@@ -302,7 +302,7 @@ const Summary = styled.div``;
 const SummaryItem = styled(FlexDivRowCentered)`
 	margin-bottom: 8px;
 	padding-bottom: 8px;
-	border-bottom: 1px solid ${(props) => props.theme.colors.navy};
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
 const SummaryItemLabel = styled.div`
@@ -318,13 +318,17 @@ const Actions = styled(FlexDivColCentered)`
 	margin: 8px 0px;
 `;
 
-const TxProviderContainer = styled.div`
+const Text = styled.span`
+	color: ${(props) => props.theme.colors.selectedTheme.text.label};
+`;
+
+const TxProviderContainer = styled(FlexDivRowCentered)`
 	padding-top: 32px;
-	text-align: center;
 	img {
 		vertical-align: middle;
 		margin-left: 10px;
 	}
+	justify-content: center;
 `;
 
 const CustomStyledTooltip = styled(StyledTooltip)`

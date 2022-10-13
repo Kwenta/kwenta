@@ -9,10 +9,11 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import Connector from 'containers/Connector';
 import useGetFile from 'queries/files/useGetFile';
+import { AccountStat } from 'queries/futures/types';
 import { formatPercent } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';
 
-import { AccountStat, getMedal, PIN, StyledTrader, Tier } from '../common';
+import { getMedal, PIN, StyledTrader, Tier } from '../common';
 import { COMPETITION_DATA_LOCATION, MOBILE_COMPETITION_START } from './constants';
 
 type CompetitionProps = {

@@ -12,6 +12,7 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import {
 	currentMarketState,
 	futuresOrderPriceState,
+	leverageSideState,
 	orderTypeState,
 	positionState,
 	potentialTradeDetailsState,
@@ -47,6 +48,7 @@ export default function TradeConfirmationModal({
 	const orderType = useRecoilValue(orderTypeState);
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
 	const position = useRecoilValue(positionState);
+	const leverageSide = useRecoilValue(leverageSideState);
 
 	const positionSide = useMemo(() => {
 		if (potentialTradeDetails?.size.eq(zeroBN)) {
@@ -74,7 +76,7 @@ export default function TradeConfirmationModal({
 
 	const dataRows = useMemo(
 		() => [
-			{ label: 'side', value: (positionDetails?.side ?? PositionSide.LONG).toUpperCase() },
+			{ label: 'side', value: leverageSide.toUpperCase() },
 			{ label: 'order Type', value: capitalize(orderType) },
 			{
 				label: 'size',
@@ -105,7 +107,7 @@ export default function TradeConfirmationModal({
 				value: formatDollars(positionDetails?.liqPrice ?? zeroBN),
 			},
 			{
-				label: 'margin',
+				label: 'resulting margin',
 				value: formatDollars(positionDetails?.margin ?? zeroBN),
 			},
 			{
@@ -123,7 +125,7 @@ export default function TradeConfirmationModal({
 				value: formatDollars(gasFee ?? zeroBN),
 			},
 		],
-		[positionDetails, market, keeperFee, gasFee, tradeFee, orderType, orderPrice]
+		[positionDetails, market, keeperFee, gasFee, tradeFee, orderType, orderPrice, leverageSide]
 	);
 
 	const disabledReason = useMemo(() => {
