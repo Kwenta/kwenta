@@ -2,16 +2,15 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSetRecoilState } from 'recoil';
 import { submitRedeem } from 'state/exchange/actions';
+import { setOpenModal } from 'state/exchange/reducer';
 import { useAppDispatch } from 'state/store';
 
-import { useExchangeContext } from 'contexts/ExchangeContext';
 import { txErrorState } from 'store/exchange';
 import { hexToAsciiV2 } from 'utils/formatters/string';
 import logError from 'utils/logError';
 
 const useRedeem = () => {
 	const setTxError = useSetRecoilState(txErrorState);
-	const { setOpenModal } = useExchangeContext();
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
@@ -32,7 +31,7 @@ const useRedeem = () => {
 
 	const handleRedeem = useCallback(async () => {
 		setTxError(null);
-		setOpenModal('redeem');
+		dispatch(setOpenModal('redeem'));
 
 		try {
 			dispatch(submitRedeem());

@@ -1,5 +1,8 @@
 import { NetworkId, NetworkNameById } from '@synthetixio/contracts-interface';
 
+// TODO: Add synth categories, so we can swap this out for synthetixjs.synths
+// Especially in SelectCurrencyModal.
+
 export type SynthSymbol =
 	| 'sAAVE'
 	| 'sADA'
@@ -22,11 +25,12 @@ export type SynthSymbol =
 	| 'sUSD';
 
 export type SynthToken = {
-	symbol: SynthSymbol;
+	name: SynthSymbol;
+	description: string;
 	asset: string;
-	name: string;
 	address: string;
 	decimals: 18;
+	category: 'crypto' | 'forex';
 };
 
 export type SynthsMap = Partial<Record<SynthSymbol, SynthToken>>;
@@ -35,6 +39,7 @@ type BasicSynth = {
 	name: string;
 	asset: string;
 	addresses: Partial<Record<NetworkId, string>>;
+	category: 'crypto' | 'forex';
 };
 
 export const synths: Record<SynthSymbol, BasicSynth> = {
@@ -45,6 +50,7 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 			1: '0xd2dF355C19471c8bd7D8A3aa27Ff4e26A21b4076',
 			10: '0x00B8D5a5e1Ac97Cb4341c4Bc4367443c8776e8d9',
 		},
+		category: 'crypto',
 	},
 	sADA: {
 		name: 'Cardano',
@@ -52,6 +58,7 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 		addresses: {
 			1: '0xe36E2D3c7c34281FA3bC737950a68571736880A1',
 		},
+		category: 'crypto',
 	},
 	sAUD: {
 		name: 'Australian Dollars',
@@ -59,6 +66,7 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 		addresses: {
 			1: '0xF48e200EAF9906362BB1442fca31e0835773b8B4',
 		},
+		category: 'forex',
 	},
 	sAVAX: {
 		name: 'Avalanche',
@@ -66,6 +74,7 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 		addresses: {
 			10: '0xB2b42B231C68cbb0b4bF2FFEbf57782Fd97D3dA4',
 		},
+		category: 'crypto',
 	},
 	sBTC: {
 		name: 'Bitcoin',
@@ -76,6 +85,7 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 			10: '0x298B9B95708152ff6968aafd889c6586e9169f1D',
 			420: '0x23c7a77D22Fc1274eCecB703f74699500db106E6',
 		},
+		category: 'crypto',
 	},
 	sCHF: {
 		name: 'Swiss Franc',
@@ -83,6 +93,7 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 		addresses: {
 			1: '0x0F83287FF768D1c1e17a42F44d644D7F22e8ee1d',
 		},
+		category: 'forex',
 	},
 	sDOT: {
 		name: 'Polkadot',
@@ -90,6 +101,7 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 		addresses: {
 			1: '0x1715AC0743102BF5Cd58EfBB6Cf2dC2685d967b6',
 		},
+		category: 'crypto',
 	},
 	sETH: {
 		name: 'Ethereum',
@@ -100,6 +112,7 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 			10: '0xE405de8F52ba7559f9df3C368500B6E6ae6Cee49',
 			420: '0x6c3856488e664C6b0380AAEfBFD1c28cd6727eC8',
 		},
+		category: 'crypto',
 	},
 	sETHBTC: {
 		asset: 'ETHBTC',
@@ -107,6 +120,7 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 		addresses: {
 			1: '0x104eDF1da359506548BFc7c25bA1E28C16a70235',
 		},
+		category: 'crypto',
 	},
 	sEUR: {
 		name: 'Euro',
@@ -115,6 +129,7 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 			1: '0xD71eCFF9342A5Ced620049e616c5035F1dB98620',
 			10: '0xFBc4198702E81aE77c06D58f81b629BDf36f0a71',
 		},
+		category: 'forex',
 	},
 	sGBP: {
 		name: 'Pound Sterling',
@@ -122,6 +137,7 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 		addresses: {
 			1: '0x97fe22E7341a0Cd8Db6F6C021A24Dc8f4DAD855F',
 		},
+		category: 'forex',
 	},
 	sINR: {
 		name: 'Indian Rupees',
@@ -129,6 +145,7 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 		addresses: {
 			10: '0xa3A538EA5D5838dC32dde15946ccD74bDd5652fF',
 		},
+		category: 'forex',
 	},
 	sJPY: {
 		name: 'Japanese Yen',
@@ -136,6 +153,7 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 		addresses: {
 			1: '0xF6b1C627e95BFc3c1b4c9B825a032Ff0fBf3e07d',
 		},
+		category: 'forex',
 	},
 	sKRW: {
 		name: 'South Korean Won',
@@ -143,6 +161,7 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 		addresses: {
 			1: '0x269895a3dF4D73b077Fc823dD6dA1B95f72Aaf9B',
 		},
+		category: 'forex',
 	},
 	sLINK: {
 		name: 'Chainlink',
@@ -151,6 +170,7 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 			1: '0xbBC455cb4F1B9e4bFC4B73970d360c8f032EfEE6',
 			10: '0xc5Db22719A06418028A40A9B5E9A7c02959D0d08',
 		},
+		category: 'crypto',
 	},
 	sMATIC: {
 		name: 'Matic',
@@ -158,6 +178,7 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 		addresses: {
 			10: '0x81DDfAc111913d3d5218DEA999216323B7CD6356',
 		},
+		category: 'crypto',
 	},
 	sSOL: {
 		name: 'Solana',
@@ -165,6 +186,7 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 		addresses: {
 			10: '0x8b2F7Ae8cA8EE8428B6D76dE88326bB413db2766',
 		},
+		category: 'crypto',
 	},
 	sUNI: {
 		name: 'Uniswap',
@@ -172,6 +194,7 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 		addresses: {
 			10: '0xf5a6115Aa582Fd1BEEa22BC93B7dC7a785F60d03',
 		},
+		category: 'crypto',
 	},
 	sUSD: {
 		name: 'US Dollars',
@@ -182,6 +205,7 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 			10: '0x8c6f28f2F1A3C87F0f938b96d27520d9751ec8d9',
 			420: '0xeBaEAAD9236615542844adC5c149F86C36aD1136',
 		},
+		category: 'forex',
 	},
 };
 
@@ -197,11 +221,12 @@ const synthsByNetwork = (id: NetworkId) =>
 
 		if (address) {
 			acc[symbol as SynthSymbol] = {
-				symbol: symbol as SynthSymbol,
+				name: symbol as SynthSymbol,
+				description: config.name,
 				asset: config.asset,
-				name: config.name,
 				address,
 				decimals: 18,
+				category: config.category,
 			};
 		}
 
@@ -213,6 +238,11 @@ const optimismSynths = synthsByNetwork(10);
 const goerliSynths = synthsByNetwork(5);
 const optimismGoerliSynths = synthsByNetwork(420);
 
+const mainnetSynthsList = Object.values(mainnetSynths);
+const optimismSynthsList = Object.values(optimismSynths);
+const goerliSynthsList = Object.values(goerliSynths);
+const optimismGoerliSynthsList = Object.values(optimismGoerliSynths);
+
 export const getSynthsForNetwork = (networkId: NetworkId) => {
 	switch (NetworkNameById[networkId]) {
 		case 'mainnet':
@@ -223,6 +253,21 @@ export const getSynthsForNetwork = (networkId: NetworkId) => {
 			return goerliSynths;
 		case 'goerli-ovm':
 			return optimismGoerliSynths;
+		default:
+			throw new Error('We do not support synths on the selected network.');
+	}
+};
+
+export const getSynthsListForNetwork = (networkId: NetworkId) => {
+	switch (NetworkNameById[networkId]) {
+		case 'mainnet':
+			return mainnetSynthsList;
+		case 'mainnet-ovm':
+			return optimismSynthsList;
+		case 'goerli':
+			return goerliSynthsList;
+		case 'goerli-ovm':
+			return optimismGoerliSynthsList;
 		default:
 			throw new Error('We do not support synths on the selected network.');
 	}

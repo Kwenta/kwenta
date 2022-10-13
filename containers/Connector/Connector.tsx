@@ -2,7 +2,9 @@ import { NetworkId, synthetix } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
 import { keyBy } from 'lodash';
 import { useEffect, useMemo } from 'react';
-import { sdk } from 'state/store';
+import { fetchTokenList } from 'state/exchange/actions';
+import { sdk, useAppDispatch } from 'state/store';
+import { setNetwork } from 'state/wallet/reducer';
 import { createContainer } from 'unstated-next';
 import { chain, useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
 
@@ -35,13 +37,18 @@ const useConnector = () => {
 		[l2Provider]
 	);
 
+	const dispatch = useAppDispatch();
+
 	useEffect(() => {
 		sdk.setProvider(provider);
 	}, [provider]);
 
 	useEffect(() => {
-		sdk.setNetworkId(network.id as NetworkId);
-	}, [network.id]);
+		sdk.setNetworkId(network.id as NetworkId).then(async () => {
+			dispatch(setNetwork({ networkId: network.id as NetworkId }));
+			await dispatch(fetchTokenList());
+		});
+	}, [network.id, dispatch]);
 
 	useEffect(() => {
 		if (signer) {

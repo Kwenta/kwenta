@@ -1,7 +1,6 @@
 import Wei from '@synthetixio/wei';
 import { FC, useMemo, memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toWei } from 'state/exchange/selectors';
 import styled, { css } from 'styled-components';
 
 import Card from 'components/Card';
@@ -56,14 +55,7 @@ const CurrencyCard: FC<CurrencyCardProps> = memo(
 			currencyKey,
 		]);
 
-		const amountBN = useMemo(() => toWei(amount), [amount]);
-
-		const insufficientBalance = useMemo(
-			() => (!isBase && hasWalletBalance ? amountBN.gt(walletBalance!) : false),
-			[isBase, hasWalletBalance, amountBN, walletBalance]
-		);
-
-		const hasCurrencySelectCallback = onCurrencySelect != null;
+		const hasCurrencySelectCallback = !!onCurrencySelect;
 
 		const tokenName = useMemo(() => {
 			return currencyKey && currencyKey[0] === 's'
@@ -98,7 +90,6 @@ const CurrencyCard: FC<CurrencyCardProps> = memo(
 
 							<CurrencyCardSelector
 								tokenName={tokenName}
-								insufficientBalance={insufficientBalance}
 								disableInput={disableInput}
 								onBalanceClick={onBalanceClick}
 								onCurrencySelect={onCurrencySelect}
@@ -106,6 +97,7 @@ const CurrencyCard: FC<CurrencyCardProps> = memo(
 								hasWalletBalance={hasWalletBalance}
 								currencyKey={currencyKey}
 								hasCurrencySelectCallback={hasCurrencySelectCallback}
+								isBase={isBase}
 							/>
 						</CurrencyContainer>
 					</StyledCardBody>

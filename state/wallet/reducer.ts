@@ -24,6 +24,6 @@ const walletSlice = createSlice({
 	},
 });
 
-export const { setWalletAddress } = walletSlice.actions;
+export const { setWalletAddress, setNetwork } = walletSlice.actions;
 
 export default walletSlice.reducer;

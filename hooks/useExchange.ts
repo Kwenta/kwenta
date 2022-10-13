@@ -1,78 +1,48 @@
-import useSynthetixQueries from '@synthetixio/queries';
 import { useRouter } from 'next/router';
-import { useState, useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { fetchRates, fetchTxProvider, submitExchange } from 'state/exchange/actions';
-import {
-	setBaseAmount,
-	setBaseCurrencyKey,
-	setMaxBaseBalance,
-	setMaxQuoteBalance,
-	setQuoteAmount,
-	setQuoteCurrencyKey,
-	setRatio,
-	swapCurrencies,
-} from 'state/exchange/reducer';
+import { resetCurrencies, submitExchange } from 'state/exchange/actions';
+import { setOpenModal } from 'state/exchange/reducer';
 import {
 	selectBaseAmountWei,
 	selectBothSidesSelected,
+	selectInsufficientBalance,
 	selectQuoteAmountWei,
 } from 'state/exchange/selectors';
 import { useAppDispatch, useAppSelector } from 'state/store';
 
-import ROUTES from 'constants/routes';
+// import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
+import logError from 'utils/logError';
 // import TransactionNotifier from 'containers/TransactionNotifier';
-// import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-// import useSynthBalances from 'queries/synths/useSynthBalances';
 
 type ExchangeCardProps = {
 	showNoSynthsCard?: boolean;
 };
 
-type ExchangeModal = 'settle' | 'confirm' | 'approve' | 'redeem' | 'base-select' | 'quote-select';
 export type SwapRatio = 25 | 50 | 75 | 100;
 
 const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 	const { t } = useTranslation();
 	// const { monitorTransaction } = TransactionNotifier.useContainer();
 
-	const { useFeeReclaimPeriodQuery } = useSynthetixQueries();
-
-	// useSynthBalances();
-	const { isWalletConnected, walletAddress } = Connector.useContainer();
+	const { isWalletConnected, network } = Connector.useContainer();
 
 	const router = useRouter();
 
-	const [openModal, setOpenModal] = useState<ExchangeModal>();
-
-	// useExchangeRatesQuery({ refetchInterval: 15000 });
-
-	const {
-		baseCurrencyKey,
-		quoteCurrencyKey,
-		quoteBalance,
-		txProvider,
-		isApproving,
-		isSubmitting,
-	} = useAppSelector(({ exchange }) => exchange);
+	const { txProvider, isApproving, isSubmitting, feeReclaimPeriod } = useAppSelector(
+		({ exchange }) => exchange
+	);
 
 	const selectedBothSides = useAppSelector(selectBothSidesSelected);
 	const baseAmountWei = useAppSelector(selectBaseAmountWei);
 	const quoteAmountWei = useAppSelector(selectQuoteAmountWei);
+	const insufficientBalance = useAppSelector(selectInsufficientBalance);
 
 	const dispatch = useAppDispatch();
 
-	// TODO: these queries break when `txProvider` is not `synthetix` and should not be called.
-	// however, condition would break rule of hooks here
-	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(quoteCurrencyKey ?? null, walletAddress);
-
-	const feeReclaimPeriodInSeconds = feeReclaimPeriodQuery.data ?? 0;
-
 	const submissionDisabledReason = useMemo(() => {
-		const insufficientBalance = quoteBalance != null ? quoteAmountWei.gt(quoteBalance) : false;
-
-		if (feeReclaimPeriodInSeconds > 0) {
+		if (feeReclaimPeriod > 0) {
 			return t('exchange.summary-info.button.fee-reclaim-period');
 		}
 		if (!selectedBothSides) {
@@ -97,81 +67,17 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 		}
 		return null;
 	}, [
-		quoteBalance,
 		selectedBothSides,
 		isSubmitting,
-		feeReclaimPeriodInSeconds,
+		feeReclaimPeriod,
 		baseAmountWei,
 		quoteAmountWei,
 		isWalletConnected,
 		isApproving,
 		t,
 		txProvider,
+		insufficientBalance,
 	]);
-
-	const routeToMarketPair = useCallback(
-		(baseCurrencyKey: string, quoteCurrencyKey: string) =>
-			router.replace('/exchange', ROUTES.Exchange.MarketPair(baseCurrencyKey, quoteCurrencyKey), {
-				shallow: true,
-			}),
-		[router]
-	);
-
-	const routeToBaseCurrency = useCallback(
-		(baseCurrencyKey: string) =>
-			router.replace(`/exchange`, ROUTES.Exchange.Into(baseCurrencyKey), {
-				shallow: true,
-			}),
-		[router]
-	);
-
-	const handleCurrencySwap = useCallback(() => {
-		dispatch(swapCurrencies());
-
-		if (!!quoteCurrencyKey && !!baseCurrencyKey) {
-			routeToMarketPair(quoteCurrencyKey, baseCurrencyKey);
-		}
-	}, [baseCurrencyKey, quoteCurrencyKey, routeToMarketPair, dispatch]);
-
-	// useEffect(() => {
-	// 	if (!synthsMap) return;
-
-	// 	setCurrencyPair({
-	// 		base: (baseCurrencyKey && synthsMap[baseCurrencyKey]?.name) || null,
-	// 		quote: (quoteCurrencyKey && synthsMap[quoteCurrencyKey]?.name) || 'sUSD',
-	// 	});
-	// 	// eslint-disable-next-line
-	// }, [network?.id, walletAddress, setCurrencyPair, synthsMap]);
-
-	const onBaseCurrencyChange = useCallback(
-		(currencyKey: string) => {
-			dispatch(setBaseCurrencyKey({ currencyKey }));
-
-			if (!!quoteCurrencyKey && quoteCurrencyKey !== currencyKey) {
-				routeToMarketPair(currencyKey, quoteCurrencyKey);
-			} else {
-				routeToBaseCurrency(currencyKey);
-			}
-
-			dispatch(fetchRates());
-			dispatch(fetchTxProvider());
-		},
-		[quoteCurrencyKey, routeToBaseCurrency, routeToMarketPair, dispatch]
-	);
-
-	const onQuoteCurrencyChange = useCallback(
-		(currencyKey: string) => {
-			dispatch(setQuoteCurrencyKey({ currencyKey }));
-
-			if (baseCurrencyKey && baseCurrencyKey !== currencyKey) {
-				routeToMarketPair(baseCurrencyKey, currencyKey);
-			}
-
-			dispatch(fetchRates());
-			dispatch(fetchTxProvider());
-		},
-		[baseCurrencyKey, routeToMarketPair, dispatch]
-	);
 
 	// const monitorExchangeTxn = useCallback(
 	// 	(hash: string | null) => {
@@ -189,98 +95,41 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 	// );
 
 	const handleDismiss = () => {
-		setOpenModal(undefined);
+		dispatch(setOpenModal(undefined));
 	};
 
 	const handleSubmit = useCallback(() => {
-		dispatch(submitExchange());
-
-		// setTxError(null);
-		// setOpenModal('confirm');
-
-		// try {
-		// setIsSubmitting(true);
-
-		// if (tx?.hash) monitorExchangeTxn(tx.hash);
+		try {
+			dispatch(setOpenModal('confirm'));
+			dispatch(submitExchange());
+			// setTxError(null);
+			// if (tx?.hash) monitorExchangeTxn(tx.hash);
+		} catch (error) {
+			// setTxError(e.message);
+			logError(error);
+		}
 
 		// setOpenModal(undefined);
-		// } catch (e) {
-		// logError(e);
-		// setTxError(e.message);
-		// } finally {
-		// setIsSubmitting(false);
-		// }
 	}, [
 		// monitorExchangeTxn,
 		// setTxError,
 		dispatch,
 	]);
 
-	// useEffect(() => {
-	// 	const baseCurrencyFromQuery = router.query.base as CurrencyKey | null;
-	// 	const quoteCurrencyFromQuery = router.query.quote as CurrencyKey | null;
+	useEffect(() => {
+		const quoteCurrencyFromQuery = router.query.quote as string | undefined;
+		const baseCurrencyFromQuery = router.query.base as string | undefined;
 
-	// 	const tokens = oneInchTokensMap || {};
-
-	// 	const validBaseCurrency =
-	// 		baseCurrencyFromQuery != null &&
-	// 		(synthsMap[baseCurrencyFromQuery] != null || tokens[baseCurrencyFromQuery]);
-	// 	const validQuoteCurrency =
-	// 		quoteCurrencyFromQuery != null &&
-	// 		(synthsMap[quoteCurrencyFromQuery] != null || tokens[quoteCurrencyFromQuery]);
-
-	// 	if (validBaseCurrency && validQuoteCurrency) {
-	// 		setCurrencyPair({
-	// 			base: baseCurrencyFromQuery,
-	// 			quote: quoteCurrencyFromQuery,
-	// 		});
-	// 	} else if (validBaseCurrency) {
-	// 		setCurrencyPair({
-	// 			base: baseCurrencyFromQuery,
-	// 			quote: null,
-	// 		});
-	// 	}
-	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	// }, [synthsMap]);
-
-	const onBaseCurrencyAmountChange = (value: string) => {
-		dispatch(setBaseAmount({ value }));
-	};
-
-	const onBaseBalanceClick = () => {
-		dispatch(setMaxBaseBalance());
-	};
-
-	const onQuoteCurrencyAmountChange = (value: string) => {
-		dispatch(setQuoteAmount({ value }));
-	};
-
-	const onQuoteBalanceClick = () => {
-		dispatch(setMaxQuoteBalance());
-	};
-
-	const onRatioChange = (ratio: SwapRatio) => {
-		dispatch(setRatio({ ratio }));
-	};
+		if (!!quoteCurrencyFromQuery || !!baseCurrencyFromQuery) {
+			dispatch(resetCurrencies({ quoteCurrencyFromQuery, baseCurrencyFromQuery }));
+		}
+	}, [router.query.quote, router.query.base, network.id, dispatch]);
 
 	return {
-		handleCurrencySwap,
-		openModal,
-		setOpenModal,
 		handleSubmit,
-		routeToBaseCurrency,
-		routeToMarketPair,
 		handleDismiss,
 		showNoSynthsCard,
 		submissionDisabledReason,
-		feeReclaimPeriodInSeconds,
-		onBaseCurrencyAmountChange,
-		onBaseBalanceClick,
-		onQuoteCurrencyAmountChange,
-		onQuoteBalanceClick,
-		onRatioChange,
-		onBaseCurrencyChange,
-		onQuoteCurrencyChange,
 	};
 };
 

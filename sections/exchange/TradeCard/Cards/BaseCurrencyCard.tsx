@@ -1,21 +1,18 @@
 import { FC, memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { setBaseAmount, setMaxBaseBalance, setOpenModal } from 'state/exchange/reducer';
 import {
 	selectBaseBalanceWei,
 	selectBaseCurrencyName,
 	selectBasePriceRateWei,
 	selectSlippagePercentWei,
 } from 'state/exchange/selectors';
-import { useAppSelector } from 'state/store';
-
-import { useExchangeContext } from 'contexts/ExchangeContext';
+import { useAppDispatch, useAppSelector } from 'state/store';
 
 import CurrencyCard from '../CurrencyCard';
 
 const BaseCurrencyCard: FC = memo(() => {
 	const { t } = useTranslation();
-
-	const { setOpenModal, onBaseCurrencyAmountChange, onBaseBalanceClick } = useExchangeContext();
 
 	const { baseCurrencyKey, baseAmount, txProvider } = useAppSelector(({ exchange }) => ({
 		baseCurrencyKey: exchange.baseCurrencyKey,
@@ -23,13 +20,25 @@ const BaseCurrencyCard: FC = memo(() => {
 		txProvider: exchange.txProvider,
 	}));
 
+	const dispatch = useAppDispatch();
+
 	const baseBalance = useAppSelector(selectBaseBalanceWei);
 	const basePriceRate = useAppSelector(selectBasePriceRateWei);
-
 	const baseCurrencyName = useAppSelector(selectBaseCurrencyName);
 	const slippagePercent = useAppSelector(selectSlippagePercentWei);
 
-	const openBaseModal = useCallback(() => setOpenModal('base-select'), [setOpenModal]);
+	const onBaseCurrencyAmountChange = useCallback(
+		(value: string) => {
+			dispatch(setBaseAmount({ value }));
+		},
+		[dispatch]
+	);
+
+	const onBaseBalanceClick = useCallback(() => {
+		dispatch(setMaxBaseBalance());
+	}, [dispatch]);
+
+	const openBaseModal = useCallback(() => dispatch(setOpenModal('base-select')), [dispatch]);
 
 	return (
 		<CurrencyCard

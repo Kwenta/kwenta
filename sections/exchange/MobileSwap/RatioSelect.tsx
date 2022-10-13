@@ -1,17 +1,21 @@
 import React from 'react';
+import { setRatio } from 'state/exchange/reducer';
 import { selectQuoteBalanceWei } from 'state/exchange/selectors';
-import { useAppSelector } from 'state/store';
+import { useAppDispatch, useAppSelector } from 'state/store';
 import styled, { css } from 'styled-components';
 
-import { useExchangeContext } from 'contexts/ExchangeContext';
 import type { SwapRatio } from 'hooks/useExchange';
 
 const RATIOS: SwapRatio[] = [25, 50, 75, 100];
 
 const RatioSelect: React.FC = () => {
-	const { onRatioChange } = useExchangeContext();
 	const ratio = useAppSelector(({ exchange }) => exchange.ratio);
+	const dispatch = useAppDispatch();
 	const quoteBalance = useAppSelector(selectQuoteBalanceWei);
+
+	const onRatioChange = (ratio: SwapRatio) => {
+		dispatch(setRatio({ ratio }));
+	};
 
 	return (
 		<RatioSelectContainer>

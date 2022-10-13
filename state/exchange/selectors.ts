@@ -116,3 +116,13 @@ export const selectBaseFeeRateWei = createSelector(
 	(state: RootState) => state.exchange.baseFeeRate,
 	(baseFeeRate) => toWei(baseFeeRate)
 );
+
+export const validQuoteCurrency = createSelector(
+	(state: RootState) => state.exchange.quoteCurrencyKey,
+	(quoteCurrencyKey) => !!quoteCurrencyKey && sdk.exchange.validCurrencyKey(quoteCurrencyKey)
+);
+
+export const validBaseCurrency = createSelector(
+	(state: RootState) => state.exchange.baseCurrencyKey,
+	(baseCurrencyKey) => !!baseCurrencyKey && sdk.exchange.validCurrencyKey(baseCurrencyKey)
+);

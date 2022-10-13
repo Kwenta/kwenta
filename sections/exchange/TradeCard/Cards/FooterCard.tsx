@@ -1,14 +1,15 @@
 import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
+import { setOpenModal } from 'state/exchange/reducer';
 import { selectNoSynths, selectTotalRedeemableBalanceWei } from 'state/exchange/selectors';
-import { useAppSelector } from 'state/store';
+import { useAppDispatch, useAppSelector } from 'state/store';
 
-import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
-import { useExchangeContext } from 'contexts/ExchangeContext';
+// import { useExchangeContext } from 'contexts/ExchangeContext';
 import useApproveExchange from 'hooks/useApproveExchange';
+import useExchange from 'hooks/useExchange';
 import useIsL2 from 'hooks/useIsL2';
 import useMarketClosed from 'hooks/useMarketClosed';
 import useRedeem from 'hooks/useRedeem';
@@ -31,15 +32,11 @@ const FooterCard: FC = memo(() => {
 
 	const txError = useRecoilValue(txErrorState);
 
-	const {
-		showNoSynthsCard,
-		handleSubmit,
-		openModal,
-		setOpenModal,
-		handleDismiss,
-		submissionDisabledReason,
-		feeReclaimPeriodInSeconds,
-	} = useExchangeContext();
+	const { showNoSynthsCard, handleSubmit, handleDismiss, submissionDisabledReason } = useExchange({
+		showNoSynthsCard: false,
+	});
+
+	const dispatch = useAppDispatch();
 
 	const {
 		quoteCurrencyKey,
@@ -47,14 +44,16 @@ const FooterCard: FC = memo(() => {
 		needsApproval,
 		redeemableSynthBalances,
 		numEntries,
-		estimatedBaseTradePrice,
+		feeReclaimPeriod,
+		openModal,
 	} = useAppSelector(({ exchange }) => ({
 		quoteCurrencyKey: exchange.quoteCurrencyKey,
 		baseCurrencyKey: exchange.baseCurrencyKey,
 		needsApproval: exchange.needsApproval,
 		redeemableSynthBalances: exchange.redeemableSynthBalances,
 		numEntries: exchange.numEntries,
-		estimatedBaseTradePrice: exchange.estimatedBaseTradePrice,
+		feeReclaimPeriod: exchange.feeReclaimPeriod,
+		openModal: exchange.openModal,
 	}));
 
 	const totalRedeemableBalance = useAppSelector(selectTotalRedeemableBalanceWei);
@@ -76,12 +75,12 @@ const FooterCard: FC = memo(() => {
 			) : showNoSynthsCard && noSynths ? (
 				<NoSynthsCard />
 			) : !isL2 && numEntries >= 12 ? (
-				<SettleTransactionsCard numEntries={numEntries} />
+				<SettleTransactionsCard />
 			) : (
 				<TradeSummaryCard
 					submissionDisabledReason={submissionDisabledReason}
 					onSubmit={needsApproval ? (isApproved ? handleSubmit : handleApprove) : handleSubmit}
-					feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
+					feeReclaimPeriodInSeconds={feeReclaimPeriod}
 					isApproved={needsApproval ? isApproved : undefined}
 				/>
 			)}
@@ -100,20 +99,10 @@ const FooterCard: FC = memo(() => {
 			{openModal === 'redeem' && (
 				<RedeemTxModal {...{ txError }} onDismiss={handleDismiss} attemptRetry={handleRedeem} />
 			)}
-			{openModal === 'confirm' && (
-				<TxConfirmationModal
-					onDismiss={() => setOpenModal(undefined)}
-					txError={txError}
-					attemptRetry={handleSubmit}
-					totalTradePrice={estimatedBaseTradePrice ?? ''}
-					quoteCurrencyLabel={t('exchange.common.from')}
-					baseCurrencyLabel={t('exchange.common.into')}
-					icon={<ArrowsIcon />}
-				/>
-			)}
+			{openModal === 'confirm' && <TxConfirmationModal attemptRetry={handleSubmit} />}
 			{openModal === 'approve' && (
 				<TxApproveModal
-					onDismiss={() => setOpenModal(undefined)}
+					onDismiss={() => dispatch(setOpenModal(undefined))}
 					txError={txError}
 					attemptRetry={handleApprove}
 					currencyKey={quoteCurrencyKey!}

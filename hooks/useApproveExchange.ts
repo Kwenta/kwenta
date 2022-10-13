@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { submitApprove } from 'state/exchange/actions';
+import { setOpenModal } from 'state/exchange/reducer';
 import { useAppDispatch } from 'state/store';
 
 // import TransactionNotifier from 'containers/TransactionNotifier';
-import { useExchangeContext } from 'contexts/ExchangeContext';
 import { txErrorState } from 'store/exchange';
 import logError from 'utils/logError';
 
@@ -14,7 +14,6 @@ const useApproveExchange = () => {
 	const dispatch = useAppDispatch();
 
 	// const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { setOpenModal } = useExchangeContext();
 
 	// useEffect(() => {
 	// 	if (approveTxn.hash) {
@@ -31,17 +30,17 @@ const useApproveExchange = () => {
 
 	const handleApprove = useCallback(async () => {
 		setTxError(null);
-		setOpenModal('approve');
+		dispatch(setOpenModal('approve'));
 
 		try {
 			dispatch(submitApprove());
-			setOpenModal(undefined);
+			dispatch(setOpenModal(undefined));
 		} catch (e) {
 			logError(e);
 			// setApproveStatus('none');
 			setTxError(e.message);
 		}
-	}, [setTxError, setOpenModal, dispatch]);
+	}, [setTxError, dispatch]);
 
 	// if (wei(ethers.utils.formatEther(allowance)).gte(quoteCurrencyAmount)) {
 	// 	setApproveStatus('approved');

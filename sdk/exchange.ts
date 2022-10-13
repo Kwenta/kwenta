@@ -391,14 +391,6 @@ export default class ExchangeService {
 		return params.tx.gas;
 	}
 
-	private async getOneInchApproveAddress() {
-		const response = await axios.get<OneInchApproveSpenderResponse>(
-			this.oneInchApiUrl + 'approve/spender'
-		);
-
-		return response.data.address;
-	}
-
 	public async getNumEntries(currencyKey: string) {
 		if (!this.sdk.walletAddress) {
 			throw new Error('');
@@ -707,130 +699,6 @@ export default class ExchangeService {
 		return this.allTokensMap[currencyKey]?.name;
 	}
 
-	// This is mostly copied over from the Synthetix queries.
-	// See: https://github.com/Synthetixio/js-monorepo/blob/master/packages/queries/src/queries/network/useEthGasPriceQuery.ts
-	private async getEthGasPrice() {
-		try {
-			// If network is Mainnet then we use EIP1559
-			if (this.networkId === NetworkIdByName.mainnet) {
-				const block = await this.sdk.provider.getBlock('latest');
-				if (block?.baseFeePerGas) {
-					return {
-						fastest: computeGasFee(block.baseFeePerGas, 6),
-						fast: computeGasFee(block.baseFeePerGas, 4),
-						average: computeGasFee(block.baseFeePerGas, 2),
-					};
-				} else {
-					return getGasPriceFromProvider(this.sdk.provider);
-				}
-				// If not (Testnet or Optimism network), we get the Gas Price through the provider
-			} else {
-				return getGasPriceFromProvider(this.sdk.provider);
-			}
-		} catch (e) {
-			throw new Error(`Could not fetch and compute network fee. ${e}`);
-		}
-	}
-
-	private async getGasEstimateForExchange(
-		quoteCurrencyKey: string,
-		baseCurrencyKey: string,
-		quoteAmount: string
-	) {
-		if (!this.isL2) return null;
-
-		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
-		const quoteCurrencyTokenAddress = this.getTokenAddress(quoteCurrencyKey);
-		const baseCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey);
-
-		if (txProvider === 'synthswap') {
-			const gasEstimate = await this.swapSynthSwapGasEstimate(
-				this.allTokensMap[quoteCurrencyKey],
-				this.allTokensMap[baseCurrencyKey],
-				quoteAmount
-			);
-
-			const metaTx = await this.swapSynthSwap(
-				this.allTokensMap[quoteCurrencyKey],
-				this.allTokensMap[baseCurrencyKey],
-				quoteAmount,
-				'meta_tx'
-			);
-
-			const l1Fee = await this.getL1SecurityFee({
-				...metaTx,
-				gasPrice: 0,
-				gasLimit: Number(gasEstimate),
-			});
-
-			return { limit: normalizeGasLimit(Number(gasEstimate)), l1Fee };
-		} else if (txProvider === '1inch') {
-			const estimate = await this.swapOneInchGasEstimate(
-				quoteCurrencyTokenAddress,
-				baseCurrencyTokenAddress,
-				quoteAmount
-			);
-
-			const metaTx = await this.swapOneInch(
-				quoteCurrencyTokenAddress,
-				baseCurrencyTokenAddress,
-				quoteAmount,
-				true
-			);
-
-			const l1Fee = await this.getL1SecurityFee({
-				...metaTx,
-				gasPrice: 0,
-				gasLimit: Number(estimate),
-			});
-
-			return { limit: normalizeGasLimit(Number(estimate)), l1Fee };
-		}
-	}
-
-	private getL1SecurityFee(metaTx: MetaTx) {
-		return getL1SecurityFee(this.isL2, metaTx, this.sdk.signer);
-	}
-
-	private isCurrencyETH(currencyKey: string) {
-		return currencyKey === CRYPTO_CURRENCY_MAP.ETH;
-	}
-
-	private getTokenAddress(currencyKey: string) {
-		if (currencyKey != null) {
-			if (this.isCurrencyETH(currencyKey)) {
-				return ETH_ADDRESS;
-			} else {
-				return get(this.allTokensMap, [currencyKey, 'address'], null);
-			}
-		} else {
-			return null;
-		}
-	}
-
-	private async getCoingeckoPrices(tokenAddresses: string[]) {
-		const platform = this.isL2 ? 'optimistic-ethereum' : 'ethereum';
-		const response = await axios.get<PriceResponse>(
-			`${CG_BASE_API_URL}/simple/token_price/${platform}?contract_addresses=${tokenAddresses
-				.join(',')
-				.replace(ETH_ADDRESS, ETH_COINGECKO_ADDRESS)}&vs_currencies=usd`
-		);
-		return response.data;
-	}
-
-	private async getSynthUsdRate(quoteCurrencyKey: string, baseCurrencyKey: string) {
-		if (!quoteCurrencyKey || !baseCurrencyKey) return null;
-
-		const exchangeRates = await this.getExchangeRates();
-		const synth = this.tokensMap[quoteCurrencyKey] || this.tokensMap[baseCurrencyKey];
-
-		if (synth) {
-			return getExchangeRatesForCurrencies(exchangeRates, 'sUSD', synth.symbol);
-		}
-
-		return null;
-	}
-
 	public async getOneInchQuote(baseCurrencyKey: string, quoteCurrencyKey: string, amount: string) {
 		const sUSD = this.tokensMap['sUSD'];
 		const decimals = this.getTokenDecimals(quoteCurrencyKey);
@@ -880,56 +748,10 @@ export default class ExchangeService {
 		}
 	}
 
-	private getOneInchSlippage(baseCurrencyKey: string, quoteCurrencyKey: string) {
-		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
-
-		if (txProvider === '1inch' && (baseCurrencyKey === 'ETH' || quoteCurrencyKey === 'ETH')) {
-			return 3;
-		}
-
-		return 1;
-	}
-
 	public getSelectedTokens(baseCurrencyKey: string, quoteCurrencyKey: string) {
 		return this.tokenList.filter(
 			(t) => t.symbol === baseCurrencyKey || t.symbol === quoteCurrencyKey
 		);
-	}
-
-	private getExchangeParams(
-		quoteCurrencyKey: string,
-		baseCurrencyKey: string,
-		sourceAmount: Wei,
-		minAmount: Wei
-	) {
-		if (!this.sdk.walletAddress) {
-			throw new Error('');
-		}
-
-		const sourceCurrencyKey = ethers.utils.formatBytes32String(quoteCurrencyKey);
-		const destinationCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey);
-
-		const sourceAmountBN = sourceAmount.toBN();
-		const minAmountBN = minAmount.toBN();
-		const isAtomic = this.checkIsAtomic(sourceCurrencyKey, destinationCurrencyKey);
-
-		if (isAtomic) {
-			return [
-				sourceCurrencyKey,
-				sourceAmount,
-				destinationCurrencyKey,
-				KWENTA_TRACKING_CODE,
-				minAmountBN,
-			];
-		} else {
-			return [
-				sourceCurrencyKey,
-				sourceAmountBN,
-				destinationCurrencyKey,
-				this.sdk.walletAddress,
-				KWENTA_TRACKING_CODE,
-			];
-		}
 	}
 
 	public async getQuotePriceRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
@@ -1001,25 +823,6 @@ export default class ExchangeService {
 		}
 	}
 
-	private async getAllTokensMap() {
-		this.synthsMap = getSynthsForNetwork(this.networkId);
-		const { tokensMap, tokens } = await this.getOneInchTokenList();
-
-		this.tokensMap = tokensMap;
-		this.tokenList = tokens;
-		this.allTokensMap = { ...this.synthsMap, tokensMap };
-	}
-
-	private checkIsAtomic(baseCurrencyKey: string, quoteCurrencyKey: string) {
-		if (this.isL2 || !baseCurrencyKey || !quoteCurrencyKey) {
-			return false;
-		}
-
-		return [baseCurrencyKey, quoteCurrencyKey].every((currency) =>
-			ATOMIC_EXCHANGES_L1.includes(currency)
-		);
-	}
-
 	public async getRedeemableDeprecatedSynths() {
 		if (!this.sdk.walletAddress) {
 			throw new Error('');
@@ -1068,6 +871,109 @@ export default class ExchangeService {
 		}
 
 		return { balances: cryptoBalances, totalUSDBalance };
+	}
+
+	public validCurrencyKey(currencyKey: string) {
+		return !!this.synthsMap[currencyKey as SynthSymbol] || !!this.tokensMap[currencyKey];
+	}
+
+	private async getCoingeckoPrices(tokenAddresses: string[]) {
+		const platform = this.isL2 ? 'optimistic-ethereum' : 'ethereum';
+		const response = await axios.get<PriceResponse>(
+			`${CG_BASE_API_URL}/simple/token_price/${platform}?contract_addresses=${tokenAddresses
+				.join(',')
+				.replace(ETH_ADDRESS, ETH_COINGECKO_ADDRESS)}&vs_currencies=usd`
+		);
+		return response.data;
+	}
+
+	private async getSynthUsdRate(quoteCurrencyKey: string, baseCurrencyKey: string) {
+		if (!quoteCurrencyKey || !baseCurrencyKey) return null;
+
+		const exchangeRates = await this.getExchangeRates();
+		const synth = this.tokensMap[quoteCurrencyKey] || this.tokensMap[baseCurrencyKey];
+
+		if (synth) {
+			return getExchangeRatesForCurrencies(exchangeRates, 'sUSD', synth.symbol);
+		}
+
+		return null;
+	}
+
+	private getOneInchSlippage(baseCurrencyKey: string, quoteCurrencyKey: string) {
+		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
+
+		if (txProvider === '1inch' && (baseCurrencyKey === 'ETH' || quoteCurrencyKey === 'ETH')) {
+			return 3;
+		}
+
+		return 1;
+	}
+
+	private getExchangeParams(
+		quoteCurrencyKey: string,
+		baseCurrencyKey: string,
+		sourceAmount: Wei,
+		minAmount: Wei
+	) {
+		if (!this.sdk.walletAddress) {
+			throw new Error('');
+		}
+
+		const sourceCurrencyKey = ethers.utils.formatBytes32String(quoteCurrencyKey);
+		const destinationCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey);
+
+		const sourceAmountBN = sourceAmount.toBN();
+		const minAmountBN = minAmount.toBN();
+		const isAtomic = this.checkIsAtomic(sourceCurrencyKey, destinationCurrencyKey);
+
+		if (isAtomic) {
+			return [
+				sourceCurrencyKey,
+				sourceAmount,
+				destinationCurrencyKey,
+				KWENTA_TRACKING_CODE,
+				minAmountBN,
+			];
+		} else {
+			return [
+				sourceCurrencyKey,
+				sourceAmountBN,
+				destinationCurrencyKey,
+				this.sdk.walletAddress,
+				KWENTA_TRACKING_CODE,
+			];
+		}
+	}
+
+	public getSynthsMap() {
+		return this.synthsMap;
+	}
+
+	public async getOneInchTokens() {
+		const { tokensMap, tokens } = await this.getOneInchTokenList();
+
+		this.tokensMap = tokensMap;
+		this.tokenList = tokens;
+
+		return { tokensMap: this.tokensMap, tokenList: this.tokenList };
+	}
+
+	private async getAllTokensMap() {
+		this.synthsMap = getSynthsForNetwork(this.networkId);
+		await this.getOneInchTokens();
+
+		this.allTokensMap = { ...this.synthsMap, ...this.tokensMap };
+	}
+
+	private checkIsAtomic(baseCurrencyKey: string, quoteCurrencyKey: string) {
+		if (this.isL2 || !baseCurrencyKey || !quoteCurrencyKey) {
+			return false;
+		}
+
+		return [baseCurrencyKey, quoteCurrencyKey].every((currency) =>
+			ATOMIC_EXCHANGES_L1.includes(currency)
+		);
 	}
 
 	private getTokenDecimals(currencyKey: string) {
@@ -1229,6 +1135,115 @@ export default class ExchangeService {
 
 		const balance = await this.sdk.provider.getBalance(this.sdk.walletAddress);
 		return wei(balance);
+	}
+
+	private async getOneInchApproveAddress() {
+		const response = await axios.get<OneInchApproveSpenderResponse>(
+			this.oneInchApiUrl + 'approve/spender'
+		);
+
+		return response.data.address;
+	}
+
+	// This is mostly copied over from the Synthetix queries.
+	// See: https://github.com/Synthetixio/js-monorepo/blob/master/packages/queries/src/queries/network/useEthGasPriceQuery.ts
+	private async getEthGasPrice() {
+		try {
+			// If network is Mainnet then we use EIP1559
+			if (this.networkId === NetworkIdByName.mainnet) {
+				const block = await this.sdk.provider.getBlock('latest');
+				if (block?.baseFeePerGas) {
+					return {
+						fastest: computeGasFee(block.baseFeePerGas, 6),
+						fast: computeGasFee(block.baseFeePerGas, 4),
+						average: computeGasFee(block.baseFeePerGas, 2),
+					};
+				} else {
+					return getGasPriceFromProvider(this.sdk.provider);
+				}
+				// If not (Testnet or Optimism network), we get the Gas Price through the provider
+			} else {
+				return getGasPriceFromProvider(this.sdk.provider);
+			}
+		} catch (e) {
+			throw new Error(`Could not fetch and compute network fee. ${e}`);
+		}
+	}
+
+	private async getGasEstimateForExchange(
+		quoteCurrencyKey: string,
+		baseCurrencyKey: string,
+		quoteAmount: string
+	) {
+		if (!this.isL2) return null;
+
+		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
+		const quoteCurrencyTokenAddress = this.getTokenAddress(quoteCurrencyKey);
+		const baseCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey);
+
+		if (txProvider === 'synthswap') {
+			const gasEstimate = await this.swapSynthSwapGasEstimate(
+				this.allTokensMap[quoteCurrencyKey],
+				this.allTokensMap[baseCurrencyKey],
+				quoteAmount
+			);
+
+			const metaTx = await this.swapSynthSwap(
+				this.allTokensMap[quoteCurrencyKey],
+				this.allTokensMap[baseCurrencyKey],
+				quoteAmount,
+				'meta_tx'
+			);
+
+			const l1Fee = await this.getL1SecurityFee({
+				...metaTx,
+				gasPrice: 0,
+				gasLimit: Number(gasEstimate),
+			});
+
+			return { limit: normalizeGasLimit(Number(gasEstimate)), l1Fee };
+		} else if (txProvider === '1inch') {
+			const estimate = await this.swapOneInchGasEstimate(
+				quoteCurrencyTokenAddress,
+				baseCurrencyTokenAddress,
+				quoteAmount
+			);
+
+			const metaTx = await this.swapOneInch(
+				quoteCurrencyTokenAddress,
+				baseCurrencyTokenAddress,
+				quoteAmount,
+				true
+			);
+
+			const l1Fee = await this.getL1SecurityFee({
+				...metaTx,
+				gasPrice: 0,
+				gasLimit: Number(estimate),
+			});
+
+			return { limit: normalizeGasLimit(Number(estimate)), l1Fee };
+		}
+	}
+
+	private getL1SecurityFee(metaTx: MetaTx) {
+		return getL1SecurityFee(this.isL2, metaTx, this.sdk.signer);
+	}
+
+	private isCurrencyETH(currencyKey: string) {
+		return currencyKey === CRYPTO_CURRENCY_MAP.ETH;
+	}
+
+	private getTokenAddress(currencyKey: string) {
+		if (currencyKey != null) {
+			if (this.isCurrencyETH(currencyKey)) {
+				return ETH_ADDRESS;
+			} else {
+				return get(this.allTokensMap, [currencyKey, 'address'], null);
+			}
+		} else {
+			return null;
+		}
 	}
 }
 

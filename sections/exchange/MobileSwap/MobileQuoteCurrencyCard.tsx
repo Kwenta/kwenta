@@ -1,16 +1,13 @@
 import { FC, memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { setMaxQuoteBalance, setOpenModal, setQuoteAmount } from 'state/exchange/reducer';
 import { selectQuoteBalanceWei } from 'state/exchange/selectors';
-import { useAppSelector } from 'state/store';
-
-import { useExchangeContext } from 'contexts/ExchangeContext';
+import { useAppDispatch, useAppSelector } from 'state/store';
 
 import MobileCurrencyCard from '../TradeCard/CurrencyCard/MobileCurrencyCard';
 
 const MobileQuoteCurrencyCard: FC = memo(() => {
 	const { t } = useTranslation();
-
-	const { setOpenModal, onQuoteCurrencyAmountChange, onQuoteBalanceClick } = useExchangeContext();
 
 	const { quoteCurrencyKey, quoteAmount, quotePriceRate } = useAppSelector(({ exchange }) => ({
 		quoteCurrencyKey: exchange.quoteCurrencyKey,
@@ -18,9 +15,19 @@ const MobileQuoteCurrencyCard: FC = memo(() => {
 		quotePriceRate: exchange.quotePriceRate,
 	}));
 
+	const dispatch = useAppDispatch();
+
+	const onQuoteCurrencyAmountChange = (value: string) => {
+		dispatch(setQuoteAmount({ value }));
+	};
+
+	const onQuoteBalanceClick = () => {
+		dispatch(setMaxQuoteBalance());
+	};
+
 	const quoteBalance = useAppSelector(selectQuoteBalanceWei);
 
-	const openQuoteModal = useCallback(() => setOpenModal('quote-select'), [setOpenModal]);
+	const openQuoteModal = useCallback(() => dispatch(setOpenModal('quote-select')), [dispatch]);
 
 	return (
 		<MobileCurrencyCard

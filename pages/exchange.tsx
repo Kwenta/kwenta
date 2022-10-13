@@ -1,9 +1,11 @@
-import { FC } from 'react';
+import { useRouter } from 'next/router';
+import { FC, useEffect } from 'react';
+import { resetCurrencies } from 'state/exchange/actions';
+import { useAppDispatch } from 'state/store';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import NotificationContainer from 'constants/NotificationContainer';
-import { ExchangeContext } from 'contexts/ExchangeContext';
-import useExchange from 'hooks/useExchange';
+import Connector from 'containers/Connector';
 import ExchangeContent from 'sections/exchange/ExchangeContent';
 import ExchangeHead from 'sections/exchange/ExchangeHead';
 // import AppLayout from 'sections/shared/Layout/AppLayout';
@@ -13,12 +15,21 @@ import { FullScreenContainer, MobileScreenContainer } from 'styles/common';
 type ExchangeComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
 const Exchange: ExchangeComponent = () => {
-	const exchangeData = useExchange({
-		showNoSynthsCard: false,
-	});
+	const { network } = Connector.useContainer();
+	const router = useRouter();
+	const dispatch = useAppDispatch();
+
+	useEffect(() => {
+		const quoteCurrencyFromQuery = router.query.quote as string | undefined;
+		const baseCurrencyFromQuery = router.query.base as string | undefined;
+
+		if (!!quoteCurrencyFromQuery || !!baseCurrencyFromQuery) {
+			dispatch(resetCurrencies({ quoteCurrencyFromQuery, baseCurrencyFromQuery }));
+		}
+	}, [router.query.quote, router.query.base, network.id, dispatch]);
 
 	return (
-		<ExchangeContext.Provider value={exchangeData}>
+		<>
 			<ExchangeHead />
 			<DesktopOnlyView>
 				<FullScreenContainer>
@@ -32,7 +43,7 @@ const Exchange: ExchangeComponent = () => {
 					<ExchangeContent />
 				</MobileScreenContainer>
 			</MobileOrTabletView>
-		</ExchangeContext.Provider>
+		</>
 	);
 };
 

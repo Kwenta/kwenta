@@ -47,7 +47,7 @@ export default class KwentaSDK {
 		this.events.emit('signer_connected');
 	}
 
-	public setNetworkId(networkId: NetworkId) {
+	public async setNetworkId(networkId: NetworkId) {
 		this.multicallProvider.init(this.provider);
 		this.contracts = getContractsByNetwork(networkId);
 

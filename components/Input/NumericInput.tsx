@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, memo } from 'react';
+import { ChangeEvent, FC, memo, useCallback } from 'react';
 import styled from 'styled-components';
 
 import Input from './Input';
@@ -17,11 +17,14 @@ const INVALID_CHARS = ['-', '+', 'e'];
 
 const NumericInput: FC<NumericInputProps> = memo(
 	({ value, onChange, placeholder, className, defaultValue, disabled, id, ...rest }) => {
-		const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
-			const { value } = e.target;
+		const handleOnChange = useCallback(
+			(e: ChangeEvent<HTMLInputElement>) => {
+				const { value } = e.target;
 
-			onChange(e, value.replace(/,/g, '.').replace(/[e+-]/gi, ''));
-		};
+				onChange(e, value.replace(/,/g, '.').replace(/[e+-]/gi, ''));
+			},
+			[onChange]
+		);
 
 		return (
 			<StyledInput

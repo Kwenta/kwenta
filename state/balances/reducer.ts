@@ -13,12 +13,14 @@ type BalancesState = {
 	status: FetchStatus;
 	error: string | undefined;
 	balances: any[];
+	balancesMap: any;
 	totalUSDBalance?: string;
 };
 
 const initialState: BalancesState = {
 	status: FetchStatus.Idle,
 	balances: [],
+	balancesMap: {},
 	totalUSDBalance: undefined,
 	error: undefined,
 };
@@ -36,6 +38,7 @@ const balancesSlice = createSlice({
 		builder.addCase(fetchSynthBalances.fulfilled, (state, action) => {
 			state.balances = action.payload.balances;
 			state.totalUSDBalance = action.payload.totalUSDBalance;
+			state.balancesMap = action.payload.balancesMap;
 		});
 	},
 });

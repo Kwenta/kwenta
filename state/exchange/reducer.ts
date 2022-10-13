@@ -8,8 +8,10 @@ import {
 	checkNeedsApproval,
 	fetchBalances,
 	fetchRates,
+	fetchTokenList,
 	fetchTransactionFee,
 	fetchTxProvider,
+	resetCurrencies,
 	submitApprove,
 	submitExchange,
 } from './actions';
@@ -38,6 +40,15 @@ const initialState: ExchangeState = {
 	redeemableSynthBalances: [],
 	totalRedeemableBalance: undefined,
 	estimatedBaseTradePrice: undefined,
+	approvalStatus: undefined,
+	tokenListLoading: false,
+	synthsMap: {},
+	tokensMap: {},
+	tokenList: [],
+	txHash: undefined,
+	feeReclaimPeriod: 0,
+	settlementWaitingPeriod: 0,
+	openModal: undefined,
 };
 
 const exchangeSlice = createSlice({
@@ -166,6 +177,12 @@ const exchangeSlice = createSlice({
 				}
 			}
 		},
+		setOpenModal: (state, action) => {
+			state.openModal = action.payload;
+		},
+		closeModal: (state) => {
+			state.openModal = undefined;
+		},
 	},
 	extraReducers: (builder) => {
 		builder.addCase(fetchBalances.fulfilled, (state, action) => {
@@ -206,6 +223,22 @@ const exchangeSlice = createSlice({
 		builder.addCase(submitApprove.rejected, (state) => {
 			state.isApproving = false;
 		});
+		builder.addCase(fetchTokenList.pending, (state) => {
+			state.tokenListLoading = true;
+		});
+		builder.addCase(fetchTokenList.fulfilled, (state, action) => {
+			state.tokenListLoading = false;
+			state.synthsMap = action.payload.synthsMap;
+			state.tokensMap = action.payload.tokensMap;
+			state.tokenList = action.payload.tokenList;
+		});
+		builder.addCase(fetchTokenList.rejected, (state) => {
+			state.tokenListLoading = false;
+		});
+		builder.addCase(resetCurrencies.fulfilled, (state, action) => {
+			state.quoteCurrencyKey = action.payload.quoteCurrencyKey;
+			state.baseCurrencyKey = action.payload.baseCurrencyKey;
+		});
 	},
 });
 
@@ -219,6 +252,8 @@ export const {
 	setBaseCurrencyKey,
 	setMaxQuoteBalance,
 	setMaxBaseBalance,
+	setOpenModal,
+	closeModal,
 } = exchangeSlice.actions;
 
 export default exchangeSlice.reducer;

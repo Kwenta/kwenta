@@ -1,78 +1,61 @@
-import useSynthetixQueries from '@synthetixio/queries';
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
+import { submitSettle } from 'state/exchange/actions';
+import { setOpenModal } from 'state/exchange/reducer';
+import { useAppDispatch, useAppSelector } from 'state/store';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
 import { MobileOrTabletView } from 'components/Media';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { EXTERNAL_LINKS } from 'constants/links';
-import Connector from 'containers/Connector';
-import TransactionNotifier from 'containers/TransactionNotifier';
-import { useExchangeContext } from 'contexts/ExchangeContext';
-import useIsL2 from 'hooks/useIsL2';
-import useNumEntriesQuery from 'queries/synths/useNumEntriesQuery';
 import TxSettleModal from 'sections/shared/modals/TxSettleModal';
-import { baseCurrencyKeyState, destinationCurrencyKeyState, txErrorState } from 'store/exchange';
+import { txErrorState } from 'store/exchange';
 import { NoTextTransform, ExternalLink } from 'styles/common';
 import { secondsToTime } from 'utils/formatters/date';
 import logError from 'utils/logError';
 
 import { MessageContainer, Message, FixedMessageContainerSpacer } from '../common';
 
-type SettleTransactionsCardProps = {
-	numEntries: number | null;
-};
-
-const SettleTransactionsCard: FC<SettleTransactionsCardProps> = ({ numEntries }) => {
+const SettleTransactionsCard: FC = () => {
 	const { t } = useTranslation();
 	const [txError, setTxError] = useRecoilState(txErrorState);
-	const { openModal, setOpenModal } = useExchangeContext();
-	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
-	const destinationCurrencyKey = useRecoilValue(destinationCurrencyKeyState);
-	const { useSynthetixTxn, useFeeReclaimPeriodQuery } = useSynthetixQueries();
-	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { walletAddress } = Connector.useContainer();
-	const numEntriesQuery = useNumEntriesQuery(walletAddress ?? '', baseCurrencyKey);
-	const isL2 = useIsL2();
 
-	const settlementWaitingPeriodQuery = useFeeReclaimPeriodQuery(baseCurrencyKey, walletAddress);
+	const { baseCurrencyKey, openModal, numEntries, settlementWaitingPeriod } = useAppSelector(
+		({ exchange }) => ({
+			baseCurrencyKey: exchange.baseCurrencyKey,
+			openModal: exchange.openModal,
+			numEntries: exchange.numEntries,
+			settlementWaitingPeriod: exchange.settlementWaitingPeriod,
+		})
+	);
+	const dispatch = useAppDispatch();
 
-	const settlementWaitingPeriodInSeconds = settlementWaitingPeriodQuery.data ?? 0;
+	// const { monitorTransaction } = TransactionNotifier.useContainer();
 
 	const settlementDisabledReason =
-		settlementWaitingPeriodInSeconds > 0
-			? t('exchange.summary-info.button.settle-waiting-period')
-			: null;
+		settlementWaitingPeriod > 0 ? t('exchange.summary-info.button.settle-waiting-period') : null;
 
-	const settleTxn = useSynthetixTxn(
-		'Exchanger',
-		'settle',
-		[walletAddress, destinationCurrencyKey],
-		undefined,
-		{ enabled: !isL2 && (numEntries ?? 0) >= 12 }
-	);
+	// useEffect(() => {
+	// 	if (settleTxn.hash) {
+	// 		monitorTransaction({
+	// 			txHash: settleTxn.hash,
+	// 			onTxConfirmed: () => {
+	// 				numEntriesQuery.refetch();
+	// 			},
+	// 		});
+	// 	}
 
-	useEffect(() => {
-		if (settleTxn.hash) {
-			monitorTransaction({
-				txHash: settleTxn.hash,
-				onTxConfirmed: () => {
-					numEntriesQuery.refetch();
-				},
-			});
-		}
-
-		// eslint-disable-next-line
-	}, [settleTxn.hash]);
+	// 	// eslint-disable-next-line
+	// }, [settleTxn.hash]);
 
 	const handleSettle = async () => {
 		setTxError(null);
-		setOpenModal('settle');
+		dispatch(setOpenModal('settle'));
 
 		try {
-			await settleTxn.mutateAsync();
+			dispatch(submitSettle());
 
 			setOpenModal(undefined);
 		} catch (e) {
@@ -105,12 +88,12 @@ const SettleTransactionsCard: FC<SettleTransactionsCardProps> = ({ numEntries })
 					</UnderlineExternalLink>
 				</MessageItems>
 				<ErrorTooltip
-					visible={settlementWaitingPeriodInSeconds > 0}
+					visible={settlementWaitingPeriod > 0}
 					preset="top"
 					content={
 						<div>
 							{t('exchange.errors.settlement-waiting', {
-								waitingPeriod: secondsToTime(settlementWaitingPeriodInSeconds),
+								waitingPeriod: secondsToTime(settlementWaitingPeriod),
 								currencyKey: baseCurrencyKey,
 							})}
 						</div>

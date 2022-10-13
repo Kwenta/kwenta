@@ -5,14 +5,16 @@ import { useAppSelector } from 'state/store';
 
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
-import { useExchangeContext } from 'contexts/ExchangeContext';
 import useApproveExchange from 'hooks/useApproveExchange';
+import useExchange from 'hooks/useExchange';
 
 const SwapButton: FC = () => {
 	const { isWalletConnected } = Connector.useContainer();
 	const { t } = useTranslation();
 	const { openConnectModal: connectWallet } = useConnectModal();
-	const { handleSubmit, submissionDisabledReason } = useExchangeContext();
+	const { handleSubmit, submissionDisabledReason } = useExchange({
+		showNoSynthsCard: false,
+	});
 	const { isApproved, handleApprove } = useApproveExchange();
 	const needsApproval = useAppSelector(({ exchange }) => exchange.needsApproval);
 

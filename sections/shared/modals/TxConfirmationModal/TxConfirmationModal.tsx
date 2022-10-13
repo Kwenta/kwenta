@@ -1,11 +1,14 @@
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
-import { FC, ReactNode, useMemo } from 'react';
+import { FC, useMemo } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { useAppSelector } from 'state/store';
+import { useRecoilValue } from 'recoil';
+import { closeModal } from 'state/exchange/reducer';
+import { useAppDispatch, useAppSelector } from 'state/store';
 import styled from 'styled-components';
 
+import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 import InfoIcon from 'assets/svg/app/info.svg';
 import OneInchImage from 'assets/svg/providers/1inch.svg';
 import BaseModal from 'components/BaseModal';
@@ -17,6 +20,7 @@ import Connector from 'containers/Connector';
 import useCurrencyPrice from 'hooks/useCurrencyPrice';
 import useIsL2 from 'hooks/useIsL2';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
+import { txErrorState } from 'store/exchange';
 import {
 	FlexDivRowCentered,
 	numericValueCSS,
@@ -28,27 +32,15 @@ import { formatCurrency, LONG_CRYPTO_CURRENCY_DECIMALS } from 'utils/formatters/
 export type TxProvider = 'synthetix' | '1inch' | 'synthswap';
 
 type TxConfirmationModalProps = {
-	onDismiss: () => void;
-	txError: string | null;
 	attemptRetry: () => void;
-	totalTradePrice: string;
-	quoteCurrencyLabel?: ReactNode;
-	baseCurrencyLabel: ReactNode;
-	icon?: ReactNode;
 };
 
-export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
-	onDismiss,
-	txError,
-	attemptRetry,
-	totalTradePrice,
-	quoteCurrencyLabel,
-	baseCurrencyLabel,
-	icon,
-}) => {
+export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry }) => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
 	const isL2 = useIsL2();
+	const txError = useRecoilValue(txErrorState);
+	const dispatch = useAppDispatch();
 
 	const { subgraph } = useSynthetixQueries();
 
@@ -59,6 +51,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 		feeCost,
 		baseAmount,
 		quoteAmount,
+		totalTradePrice,
 	} = useAppSelector(({ exchange }) => ({
 		baseCurrencyKey: exchange.baseCurrencyKey,
 		quoteCurrencyKey: exchange.quoteCurrencyKey,
@@ -66,6 +59,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 		feeCost: exchange.feeCost,
 		baseAmount: exchange.baseAmount,
 		quoteAmount: exchange.quoteAmount,
+		totalTradePrice: exchange.estimatedBaseTradePrice,
 	}));
 
 	const getBaseCurrencyAmount = (decimals?: number) =>
@@ -73,6 +67,10 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			minDecimals: decimals,
 		});
 	const priceUSD = useCurrencyPrice((quoteCurrencyKey ?? '') as CurrencyKey);
+
+	const onDismiss = () => {
+		dispatch(closeModal());
+	};
 
 	const priceAdjustmentQuery = subgraph.useGetExchangeEntrySettleds(
 		{ where: { from: walletAddress } },
@@ -100,7 +98,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			<Currencies>
 				{quoteCurrencyKey && (
 					<CurrencyItem>
-						<CurrencyItemTitle>{quoteCurrencyLabel}</CurrencyItemTitle>
+						<CurrencyItemTitle>{t('exchange.common.from')}</CurrencyItemTitle>
 						<Currency.Icon
 							currencyKey={quoteCurrencyKey}
 							width="40px"
@@ -109,9 +107,11 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 						/>
 					</CurrencyItem>
 				)}
-				{icon && <ArrowsIconContainer>{icon}</ArrowsIconContainer>}
+				<ArrowsIconContainer>
+					<ArrowsIcon />
+				</ArrowsIconContainer>
 				<CurrencyItem>
-					<CurrencyItemTitle>{baseCurrencyLabel}</CurrencyItemTitle>
+					<CurrencyItemTitle>{t('exchange.common.into')}</CurrencyItemTitle>
 					<Currency.Icon
 						currencyKey={baseCurrencyKey!}
 						width="40px"
@@ -193,7 +193,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 					</SummaryItemLabel>
 					<SummaryItemValue data-testid="total-trade-price-value">
 						<span>
-							{ESTIMATE_VALUE} {formatCurrency('sUSD', totalTradePrice, { sign: '$' })}
+							{ESTIMATE_VALUE} {formatCurrency('sUSD', totalTradePrice ?? '', { sign: '$' })}
 						</span>
 					</SummaryItemValue>
 				</SummaryItem>

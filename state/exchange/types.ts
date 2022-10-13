@@ -1,8 +1,9 @@
 // import { DeprecatedSynthBalance } from '@synthetixio/queries';
 
-import { SwapRatio } from 'hooks/useExchange';
-
 type ExchangeApprovalStatus = 'needs-approval' | 'approving' | 'approved';
+type ExchangeModal = 'settle' | 'confirm' | 'approve' | 'redeem' | 'base-select' | 'quote-select';
+
+export type SwapRatio = 25 | 50 | 75 | 100;
 
 export type ExchangeState = {
 	baseCurrencyKey?: string;
@@ -28,4 +29,13 @@ export type ExchangeState = {
 	redeemableSynthBalances: any[];
 	totalRedeemableBalance?: string;
 	estimatedBaseTradePrice?: string;
+	approvalStatus?: ExchangeApprovalStatus;
+	tokenListLoading: boolean;
+	synthsMap: any;
+	tokensMap: any;
+	tokenList: any[];
+	txHash?: string;
+	feeReclaimPeriod: number;
+	settlementWaitingPeriod: number;
+	openModal?: ExchangeModal;
 };
