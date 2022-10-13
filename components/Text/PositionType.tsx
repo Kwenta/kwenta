@@ -45,16 +45,13 @@ const MobileStyledText = styled.p<{ side: PositionSide }>`
 	font-family: ${(props) => props.theme.fonts.bold};
 
 	${(props) =>
-		props.side === PositionSide.LONG &&
-		css`
-			color: ${props.theme.colors.common.primaryGreen};
-		`}
-
-	${(props) =>
-		props.side === PositionSide.SHORT &&
-		css`
-			color: ${props.theme.colors.common.primaryRed};
-		`}
+		props.side === PositionSide.LONG
+			? css`
+					color: ${props.theme.colors.common.primaryGreen};
+			  `
+			: css`
+					color: ${props.theme.colors.common.primaryRed};
+			  `}
 `;
 
 export default PositionType;
