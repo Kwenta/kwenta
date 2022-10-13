@@ -136,7 +136,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 					{!isMobile && <MarketsDropdown />}
 
 					<TradePanelHeader accountType={selectedAccountType} buttons={headerButtons} />
-					{}
+
 					<MarginInfoBox />
 					<SegmentedControl
 						styleType="check"
@@ -154,7 +154,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 							onChangeOrderPrice(String(price));
 						}}
 					/>
-					<OrderSizing />
+					<OrderSizing isMobile={isMobile} />
 					<SliderRow>
 						<StyledSlider
 							minValue={0}

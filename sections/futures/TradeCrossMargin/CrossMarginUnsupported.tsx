@@ -10,7 +10,9 @@ export default function CrossMarginUnsupported() {
 
 	return (
 		<MessageContainer>
-			<Title>{t('futures.market.trade.cross-margin.title')}</Title>
+			<Title data-testid="cross-margin-unsupported-network">
+				{t('futures.market.trade.cross-margin.title')}
+			</Title>
 			<UnsupportedMessage>{t('futures.market.trade.cross-margin.unsupported')} </UnsupportedMessage>
 			<IsolatedLink>
 				<Link href={ROUTES.Markets.Home('isolated_margin')}>

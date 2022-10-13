@@ -23,10 +23,11 @@ import { floorNumber, isZero, zeroBN } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 
 type OrderSizingProps = {
+	isMobile?: boolean;
 	disabled?: boolean;
 };
 
-const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
+const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	const { onTradeAmountChange, maxUsdInputAmount } = useFuturesContext();
 
 	const { nativeSize, susdSize } = useRecoilValue(futuresTradeInputsState);
@@ -136,7 +137,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 
 			<CustomInput
 				invalid={invalid}
-				dataTestId="set-order-size-amount-susd"
+				dataTestId={'set-order-size-amount-susd' + (isMobile ? '-mobile' : '-desktop')}
 				disabled={isDisabled}
 				right={
 					<InputButton
