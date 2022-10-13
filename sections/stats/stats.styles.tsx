@@ -23,8 +23,14 @@ export const StatsContainer = styled.div`
 `;
 
 export const ChartContainer = styled.div<{ width: number }>`
-	grid-column: span 1;
+	background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
 
+	/* Highlight-Glow */
+	box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.08),
+		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
+	border-radius: 15px;
+
+	grid-column: span 1;
 	@media only screen and (min-width: 600px) {
 		grid-column: span ${(props) => props.width};
 	}
@@ -33,13 +39,4 @@ export const ChartContainer = styled.div<{ width: number }>`
 export const ChartWrapper = styled.div`
 	width: 100%;
 	height: 380px;
-
-	canvas {
-		background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
-		/* Highlight-Glow */
-
-		box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.08),
-			inset 0px 0px 20px rgba(255, 255, 255, 0.03);
-		border-radius: 15px;
-	}
 `;

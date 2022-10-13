@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from 'styled-components';
 
 import { useGetFuturesVolumesStats } from 'queries/futures/useGetFuturesVolumesStats';
-import colors from 'styles/theme/colors/common';
 import fonts from 'styles/theme/fonts';
 
 import { initBarChart } from './initBarChart';
@@ -14,6 +14,7 @@ let chartInstance: any;
 
 export const Volume = () => {
 	const { t } = useTranslation();
+	const { colors } = useTheme();
 
 	const volumeRef = useRef<HTMLDivElement | null>(null);
 
@@ -43,12 +44,12 @@ export const Volume = () => {
 				top: 40,
 				itemGap: 10,
 				textStyle: {
-					color: colors.primaryWhite,
+					color: colors.selectedTheme.white,
 					fontFamily: fonts.regular,
 					fontSize: 18,
 				},
 				subtextStyle: {
-					color: colors.primaryWhite,
+					color: colors.selectedTheme.white,
 					fontFamily: fonts.monoBold,
 					fontSize: 28,
 				},
@@ -63,7 +64,7 @@ export const Volume = () => {
 				type: 'category',
 				data,
 				axisLabel: {
-					color: '#ECE8E3',
+					color: colors.common.primaryWhite,
 				},
 				axisTick: {
 					show: false,
@@ -73,11 +74,12 @@ export const Volume = () => {
 				type: 'value',
 				splitLine: {
 					lineStyle: {
-						color: '#C9975B',
+						color: '#39332D',
 					},
 				},
 				position: 'right',
 				axisLabel: {
+					color: colors.common.primaryWhite,
 					formatter: (value: any) => {
 						return (value === 0 ? '' : '$') + value.toLocaleString();
 					},
@@ -99,7 +101,7 @@ export const Volume = () => {
 					type: 'bar',
 					name: 'Total Trades',
 					itemStyle: {
-						color: '#C9975B',
+						color: colors.common.primaryGold,
 					},
 					tooltip: {},
 				},
@@ -111,7 +113,7 @@ export const Volume = () => {
 		}
 		chartInstance = initBarChart(volumeRef.current);
 		chartInstance.setOption(option);
-	}, [volumeRef, t, volumeData]);
+	}, [volumeRef, t, volumeData, colors]);
 
 	return (
 		<ChartContainer width={2}>
