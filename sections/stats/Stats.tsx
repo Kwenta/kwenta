@@ -13,14 +13,11 @@ export const Stats: FC<StatsProps> = () => {
 	const { t } = useTranslation();
 
 	return (
-		<div>
-			<StatsTitle>{t('stats.title')}</StatsTitle>
-			<StatsContainer>
-				<Volume />
-				<Trades />
-				<Traders />
-				<OpenInterest />
-			</StatsContainer>
-		</div>
+		<StatsContainer>
+			<Volume />
+			<Trades />
+			<Traders />
+			<OpenInterest />
+		</StatsContainer>
 	);
 };

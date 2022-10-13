@@ -12,6 +12,7 @@ export const StatsTitle = styled.h3`
 `;
 
 export const StatsContainer = styled.div`
+	margin: 40px 0 40px 0;
 	width: 100%;
 	display: grid;
 	grid-template-columns: 1 100%;
