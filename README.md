@@ -78,6 +78,10 @@ npm start
 npm run test:unit
 ```
 
+For unit tests we use a combination of Jest and [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
+
+Page tests should be added to the \_\_tests\_\_ folder at the root as it is not possible co-locate tests and pages in nextjs. Other tests should be co-located in a \_\_tests\_\_ folder next to their related file.
+
 ### End-2-End testing
 
 In order to run fully automated end-2-end (e2e) tests Kwenta uses [Synpress](https://github.com/Synthetixio/synpress) (a wrapper around [Cynpress](https://www.cypress.io/)).

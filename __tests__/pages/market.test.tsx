@@ -5,7 +5,7 @@ import MockProviders from 'testing/unit/__mocks__/MockProviders';
 import { mockGrapqhlRequest, mockReactQuery } from 'testing/unit/__mocks__/mockQueries';
 import { TEST_ADDR } from 'testing/unit/constants';
 
-import Market from '../market';
+import Market from '../../pages/market';
 
 describe('Futures market page - cross margin', () => {
 	beforeAll(() => {
