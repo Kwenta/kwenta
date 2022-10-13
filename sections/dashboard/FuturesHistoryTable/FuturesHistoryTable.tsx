@@ -2,7 +2,7 @@ import { wei } from '@synthetixio/wei';
 import { utils as ethersUtils } from 'ethers';
 import * as _ from 'lodash/fp';
 import Link from 'next/link';
-import React, { FC, useMemo, ReactElement } from 'react';
+import { FC, useMemo, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
@@ -39,7 +39,7 @@ import {
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
 
 const FuturesHistoryTable: FC = () => {
-	const [selectedTrade, setSelectedTrade] = React.useState<FuturesTrade>();
+	const [selectedTrade, setSelectedTrade] = useState<FuturesTrade>();
 	const accountType = useRecoilValue(futuresAccountTypeState);
 
 	const { walletAddress } = Connector.useContainer();

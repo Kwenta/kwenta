@@ -21,24 +21,22 @@ const StyledText = styled.p<{ side: PositionSide }>`
 	border-radius: 6px;
 
 	${(props) =>
-		props.side === 'long' &&
-		css`
-			color: ${(props) => props.theme.colors.selectedTheme.green};
-			background: rgba(127, 212, 130, 0.1);
-			font-family: ${(props) => props.theme.fonts.monoBold};
-			font-variant: all-small-caps;
-			letter-spacing: 1.4px;
-		`};
-
-	${(props) =>
-		props.side === 'short' &&
-		css`
-			color: ${(props) => props.theme.colors.selectedTheme.red};
-			background: rgba(239, 104, 104, 0.1);
-			font-family: ${(props) => props.theme.fonts.monoBold};
-			font-variant: all-small-caps;
-			letter-spacing: -0.2px;
-		`};
+		props.side === PositionSide.LONG
+			? css`
+					color: ${(props) => props.theme.colors.selectedTheme.green};
+					background: rgba(127, 212, 130, 0.1);
+					font-family: ${(props) => props.theme.fonts.monoBold};
+					font-variant: all-small-caps;
+					letter-spacing: 1.4px;
+			  `
+			: css`
+					color: ${(props) => props.theme.colors.selectedTheme.red};
+					background: rgba(239, 104, 104, 0.1);
+					font-family: ${(props) => props.theme.fonts.monoBold};
+					font-variant: all-small-caps;
+					letter-spacing: -0.2px;
+			  `};
+	};
 `;
 
 const MobileStyledText = styled.p<{ side: PositionSide }>`
