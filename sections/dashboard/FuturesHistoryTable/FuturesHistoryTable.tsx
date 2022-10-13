@@ -26,6 +26,7 @@ import useGetAllFuturesTradesForAccount from 'queries/futures/useGetAllFuturesTr
 import TradeDrawer from 'sections/futures/MobileTrade/drawers/TradeDrawer';
 import { TradeStatus } from 'sections/futures/types';
 import { futuresAccountTypeState } from 'store/futures';
+import { formatShortDateWithoutYear } from 'utils/formatters/date';
 import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
 import {
 	FuturesMarketAsset,
@@ -64,6 +65,7 @@ const FuturesHistoryTable: FC = () => {
 					price: Number(trade.price?.div(ETH_UNIT)),
 					size: Number(trade.size.div(ETH_UNIT).abs()),
 					timestamp: Number(trade.timestamp.mul(1000)),
+					date: formatShortDateWithoutYear(new Date(trade.timestamp.mul(1000).toNumber())),
 					pnl: trade.pnl.div(ETH_UNIT),
 					feesPaid: trade.feesPaid.div(ETH_UNIT),
 					id: trade.txnHash,
@@ -121,21 +123,19 @@ const FuturesHistoryTable: FC = () => {
 								Cell: (cellProps: CellProps<typeof mappedHistoricalTrades[number]>) => {
 									return conditionalRender(
 										cellProps.row.original.asset,
-										<SynthContainer>
+										<>
 											{cellProps.row.original.asset && (
-												<>
-													<IconContainer>
-														<StyledCurrencyIcon
-															currencyKey={
-																MarketKeyByAsset[cellProps.row.original.asset as FuturesMarketAsset]
-															}
-														/>
-													</IconContainer>
-													<StyledText>{cellProps.row.original.market}</StyledText>
+												<SynthContainer>
+													<StyledCurrencyIcon
+														currencyKey={
+															MarketKeyByAsset[cellProps.row.original.asset as FuturesMarketAsset]
+														}
+													/>
+													<StyledText>{cellProps.value}</StyledText>
 													<FuturesIcon type={cellProps.row.original.accountType} />
-												</>
+												</SynthContainer>
 											)}
-										</SynthContainer>
+										</>
 									);
 								},
 								width: 120,
@@ -255,21 +255,22 @@ const FuturesHistoryTable: FC = () => {
 								Cell: (cellProps: CellProps<typeof mappedHistoricalTrades[number]>) => {
 									return conditionalRender(
 										cellProps.row.original.asset,
-										<SynthContainer>
+										<>
 											{cellProps.row.original.asset && (
-												<>
-													<IconContainer>
-														<StyledCurrencyIcon
-															currencyKey={
-																MarketKeyByAsset[cellProps.row.original.asset as FuturesMarketAsset]
-															}
-														/>
-													</IconContainer>
-													<StyledText>{cellProps.value}</StyledText>
-													<FuturesIcon type={cellProps.row.original.accountType} />
-												</>
+												<MobileSynthContainer>
+													<MobileStyledCurrencyIcon
+														currencyKey={
+															MarketKeyByAsset[cellProps.row.original.asset as FuturesMarketAsset]
+														}
+													/>
+													<MobileMarketContainer>
+														<StyledText>{cellProps.value}</StyledText>
+														<FuturesIcon type={cellProps.row.original.accountType} />
+													</MobileMarketContainer>
+													<StyledText>{cellProps.row.original.date}</StyledText>
+												</MobileSynthContainer>
 											)}
-										</SynthContainer>
+										</>
 									);
 								},
 								width: 60,
@@ -335,13 +336,14 @@ const StyledTimeDisplay = styled.div`
 `;
 
 const StyledCurrencyIcon = styled(Currency.Icon)`
-	width: 20px;
-	height: 20px;
+	width: 30px;
+	height: 30px;
 `;
 
-const IconContainer = styled.div`
-	grid-column: 1;
+const MobileStyledCurrencyIcon = styled(Currency.Icon)`
 	grid-row: 1 / span 2;
+	width: 20px;
+	height: 20px;
 `;
 
 const TableContainer = styled.div`
@@ -360,13 +362,28 @@ const StyledTable = styled(Table)`
 const StyledText = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
+
 const SynthContainer = styled.div`
 	display: flex;
 	align-items: center;
-	grid-column: 3;
-	grid-row: 1;
 	column-gap: 5px;
 	margin-left: -4px;
+`;
+
+const MobileSynthContainer = styled.div`
+	display: grid;
+	align-items: center;
+	grid-template-columns: repeat(2, auto);
+	grid-template-rows: repeat(2, auto);
+	column-gap: 5px;
+	margin-left: -4px;
+`;
+
+const MobileMarketContainer = styled.div`
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 5px;
 `;
 
 const PNL = styled.div<{ negative?: boolean; normal?: boolean }>`
