@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { OpenInterest } from './OpenInterest';
-import { StatsTitle, StatsContainer } from './stats.styles';
+import { StatsContainer } from './stats.styles';
 import { Traders } from './Traders';
 import { Trades } from './Trades';
 import { Volume } from './Volume';

@@ -1,16 +1,5 @@
 import styled from 'styled-components';
 
-export const StatsTitle = styled.h3`
-	font-family: ${(props) => props.theme.fonts.compressedBlack};
-	font-size: 24px;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
-	text-transform: uppercase;
-
-	@media only screen and (min-width: 600px) {
-		text-align: center;
-	}
-`;
-
 export const StatsContainer = styled.div`
 	margin: 40px 0 40px 0;
 	width: 100%;
