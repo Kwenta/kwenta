@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import styled, { useTheme } from 'styled-components';
 
 import useStatsData from 'hooks/useStatsData';
-import fonts from 'styles/theme/fonts';
 import { SYNTH_ICONS } from 'utils/icons';
 
 import { ChartContainer, ChartWrapper } from './stats.styles';
@@ -12,7 +11,7 @@ import type { EChartsOption } from './useChart';
 
 export const OpenInterest = () => {
 	const { t } = useTranslation();
-	const { colors } = useTheme();
+	const { colors, fonts } = useTheme();
 
 	const { futuresMarkets, openInterestData } = useStatsData();
 
