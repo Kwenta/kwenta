@@ -143,7 +143,7 @@ jobs:
   e2e:
     needs: build
     # run only on main/dev branch
-    # if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
+    if: always() && (needs.lint.result == 'success' || needs.lint.result == 'skipped')
     runs-on: ubuntu-latest
 
     container:
