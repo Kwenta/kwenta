@@ -3,7 +3,7 @@ name: Kwenta CI
 on:
   push:
   pull_request:
-    branches: [master, dev]
+    branches: [main, dev]
 
 jobs:
   audit:
@@ -213,11 +213,11 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cache/Cypress
-          RPC_URL: https://kovan.optimism.io
-          NETWORK_NAME: OptimisticKovan
-          BLOCK_EXPLORER: https://kovan-optimistic.etherscan.io
+          RPC_URL: https://goerli.optimism.io
+          NETWORK_NAME: OptimisticGoerli
+          BLOCK_EXPLORER: https://blockscout.com/optimism/goerli
           IS_TESTNET: true
-          CHAIN_ID: 69
+          CHAIN_ID: 420
 
       - name: Archive e2e artifacts
         uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # pin@v2

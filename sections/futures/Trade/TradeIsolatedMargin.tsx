@@ -48,6 +48,7 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 					{
 						i18nTitle: 'futures.market.trade.button.deposit',
 						icon: <DepositArrow stroke={colors.selectedTheme.yellow} />,
+						testId: 'futures-trade-header-deposit-isolated',
 						onClick: () => setOpenModal('deposit'),
 					},
 			  ]
@@ -57,6 +58,7 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 			transferButtons.push({
 				i18nTitle: 'futures.market.trade.button.withdraw',
 				icon: <WithdrawArrow stroke={colors.selectedTheme.yellow} />,
+				testId: 'futures-trade-header-withdraw-isolated',
 				onClick: () => setOpenModal('withdraw'),
 			});
 		}

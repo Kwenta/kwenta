@@ -73,11 +73,13 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 				{
 					i18nTitle: 'futures.market.trade.button.deposit',
 					icon: <DepositArrow stoke={colors.selectedTheme.yellow} />,
+					testId: 'futures-trade-header-deposit-cross',
 					onClick: () => setOpenTransferModal('deposit'),
 				},
 				{
 					i18nTitle: 'futures.market.trade.button.withdraw',
 					icon: <WithdrawArrow stoke={colors.selectedTheme.yellow} />,
+					testId: 'futures-trade-header-withdraw-cross',
 					onClick: () => setOpenTransferModal('withdraw'),
 				},
 		  ]

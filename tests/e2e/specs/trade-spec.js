@@ -14,8 +14,8 @@ describe('Trade 1 sUSD for sETH on Optimism', () => {
 		before(() => {
 			// this line is necessary to make sure we have a clean slate and empty a cached connection by a previous test spec
 			exchange.disconnectMetamaskWalletFromAllDapps();
-
 			exchange.visit(`${testedAsset}-sUSD`);
+			exchange.switchToGoerliOptimism();
 			exchange.connectBrowserWallet();
 			exchange.acceptMetamaskAccessRequest();
 		});

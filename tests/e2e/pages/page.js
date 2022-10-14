@@ -14,6 +14,29 @@ export default class Page {
 		cy.acceptMetamaskAccess();
 	}
 
+	allowMetamaskToAddNetwork() {
+		cy.allowMetamaskToAddNetwork();
+	}
+
+	allowMetamaskToSwitchNetwork() {
+		cy.allowMetamaskToSwitchNetwork();
+	}
+
+	switchToGoerliOptimism() {
+		cy.getNetwork().then((network) => {
+			if (network.networkName !== 'goerli optimism') {
+				cy.addMetamaskNetwork({
+					networkName: 'Goerli Optimism',
+					rpcUrl: 'https://goerli.optimism.io',
+					chainId: '420',
+					symbol: 'ETH',
+					blockExplorer: 'https://blockscout.com/optimism/goerli',
+					isTestnet: true,
+				});
+			}
+		});
+	}
+
 	confirmMetamaskTransaction() {
 		// Currently without supplying a gas configuration results in failing transactions
 		// Possibly caused by wrong default behaviour within Synpress

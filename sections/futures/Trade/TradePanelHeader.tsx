@@ -17,6 +17,7 @@ type Props = {
 		onClick: (() => void) | undefined;
 		variant?: ButtonVariant;
 		i18nTitle: string;
+		testId: string;
 		icon?: ReactNode;
 	}[];
 };
@@ -41,8 +42,9 @@ export default function TradePanelHeader({ accountType, buttons }: Props) {
 			</Title>
 			<Buttons>
 				{buttons &&
-					buttons.map(({ icon, i18nTitle, variant, onClick }) => (
+					buttons.map(({ icon, i18nTitle, variant, testId, onClick }) => (
 						<HeaderButton
+							data-testid={testId}
 							key={i18nTitle}
 							variant={variant || 'flat'}
 							size="xs"

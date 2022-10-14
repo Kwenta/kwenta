@@ -13,8 +13,8 @@ export default class FuturesPage extends Page {
 		this.notifications = new Notifications();
 	}
 
-	visit(marketKey = 'sETH') {
-		cy.visit(`/market/?asset=${marketKey}`);
+	visit(marketKey = 'sETH', type = 'isolated_margin') {
+		cy.visit(`/market/?asset=${marketKey}&accountType=${type}`);
 	}
 
 	connectBrowserWallet() {
@@ -37,12 +37,12 @@ export default class FuturesPage extends Page {
 		const walletButton = this.header.getWalletButton();
 		return walletButton.invoke('text');
 	}
-	getDepositBtn() {
-		return cy.findByTestId('futures-market-trade-button-deposit');
+	getDepositBtn(marginType = 'isolated') {
+		return cy.findByTestId('futures-trade-header-deposit-' + marginType);
 	}
 
-	getWithdrawBtn() {
-		return cy.findByTestId('futures-market-trade-button-withdraw');
+	getWithdrawBtn(marginType = 'isolated') {
+		return cy.findByTestId('futures-trade-header-withdraw-' + marginType);
 	}
 
 	enterDepositMarginInsUSD(margin) {

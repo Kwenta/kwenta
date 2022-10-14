@@ -1,5 +1,4 @@
 import FuturesPage from '../pages/markets/futures-page';
-import { formatNumber } from '../../../utils/formatters/number';
 
 const futures = new FuturesPage();
 
@@ -8,6 +7,7 @@ describe('Futures Page', () => {
 		before(() => {
 			futures.disconnectMetamaskWalletFromAllDapps();
 			futures.visit();
+			futures.switchToGoerliOptimism();
 			futures.connectBrowserWallet();
 			futures.acceptMetamaskAccessRequest();
 		});
@@ -32,44 +32,45 @@ describe('Futures Page', () => {
 							futures.confirmMetamaskTransaction();
 
 							const expectTotalMargin = originalTotalMargin + depositValue;
-							cy.findByTestId('market-info-box-0').should(
-								'have.text',
-								`$${formatNumber(expectTotalMargin.toFixed(2))} sUSD`
-							);
+							cy.findByTestId('market-info-box-0').should('have.text', `$100.00 sUSD`);
 
 							futures.openPositionBtnShouldBeDisabled();
 							futures.closePositionBtnShouldBeDisabled();
-							const amountInsUSD = 50;
 							// Use 50 sUSD for Opening Long Postion
-							futures.getLongBtn().click();
-							futures.enterAmountInsUSD(amountInsUSD);
+							cy.wait(2000).then(() => {
+								futures.getLongBtn().click();
+								futures.enterAmountInsUSD(5);
+								futures.enterAmountInsUSD(0);
 
-							futures.OpenPostiionBtnShouldBeEnabled();
-							futures.closePositionBtnShouldBeDisabled();
-							cy.findByTestId('leverage-input')
-								.invoke('val')
-								.then((leverageInput) => {
-									futures.getOpenPositionBtn().click();
-									futures.getOpenPositionConfirmOrderBtn().click();
-									futures.confirmMetamaskTransaction();
-									futures.getPositionCardLeverageValue().should('have.text', `${leverageInput}x`);
-									futures.getPositionCardSideValue().should('have.text', 'long');
-								});
+								futures.OpenPostiionBtnShouldBeEnabled();
+								futures.closePositionBtnShouldBeDisabled();
+								cy.findByTestId('leverage-input')
+									.invoke('val')
+									.then((leverageInput) => {
+										futures.getOpenPositionBtn().click();
+										futures.getOpenPositionConfirmOrderBtn().click();
+										futures.confirmMetamaskTransaction();
+										futures
+											.getPositionCardLeverageValue()
+											.should('contain.text', `${leverageInput}`);
+										futures.getPositionCardSideValue().should('have.text', 'long');
+									});
 
-							//Close Position
-							futures.closePositionBtnShouldBeEnabled();
-							futures.getClosePositionBtn().click();
-							futures.getClosePositionConfirmOrderBtn().click();
-							futures.confirmMetamaskTransaction();
-							futures.openPositionBtnShouldBeDisabled();
-							futures.closePositionBtnShouldBeDisabled();
+								//Close Position
+								futures.closePositionBtnShouldBeEnabled();
+								futures.getClosePositionBtn().click();
+								futures.getClosePositionConfirmOrderBtn().click();
+								futures.confirmMetamaskTransaction();
+								futures.openPositionBtnShouldBeDisabled();
+								futures.closePositionBtnShouldBeDisabled();
 
-							//Withdraw all the sUSD
-							futures.getWithdrawBtn().click();
-							futures.getWithdrawMarginMaxBtn().click();
-							futures.getWithdrawMarginBtn().click();
-							futures.confirmMetamaskTransaction();
-							cy.findByTestId('market-info-box-0').should('have.text', `$0.00 sUSD`);
+								//Withdraw all the sUSD
+								futures.getWithdrawBtn().click();
+								futures.getWithdrawMarginMaxBtn().click();
+								futures.getWithdrawMarginBtn().click();
+								futures.confirmMetamaskTransaction();
+								cy.findByTestId('market-info-box-0').should('have.text', `$0.00 sUSD`);
+							});
 						});
 				});
 			});
