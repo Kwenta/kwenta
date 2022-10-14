@@ -1,21 +1,20 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from 'styled-components';
 
 import { useGetFuturesTradersStats } from 'queries/futures/useGetFuturesTradersStats';
-import colors from 'styles/theme/colors/common';
-import fonts from 'styles/theme/fonts';
 
-import { initBarChart } from './initBarChart';
-import type { EChartsOption } from './initBarChart';
 import { ChartContainer, ChartWrapper } from './stats.styles';
 import { TimeRangeSwitcher } from './TimeRangeSwitcher';
-
-let chartInstance: any;
+import { useChart } from './useChart';
+import type { EChartsOption } from './useChart';
 
 export const Traders = () => {
 	const { t } = useTranslation();
+	const { colors, fonts } = useTheme();
 
-	const tradersRef = useRef<HTMLDivElement | null>(null);
+	const ref = useRef<HTMLDivElement | null>(null);
+	const chart = useChart(ref?.current);
 
 	// show 24h data by default
 	const [is24H, setIs24H] = useState<boolean>(true);
@@ -38,7 +37,7 @@ export const Traders = () => {
 	}, [is24H, isMax, isMonth, isWeek, rawData]);
 
 	useEffect(() => {
-		if (!tradersRef || !tradersRef.current || !tradersData || !tradersData.length) {
+		if (!ref || !chart || !ref.current || !tradersData || !tradersData.length) {
 			return;
 		}
 
@@ -53,7 +52,7 @@ export const Traders = () => {
 				top: 40,
 				itemGap: 10,
 				textStyle: {
-					color: colors.primaryWhite,
+					color: colors.common.primaryWhite,
 					fontFamily: fonts.regular,
 					fontSize: 18,
 				},
@@ -135,19 +134,15 @@ export const Traders = () => {
 				top: 71,
 				left: 20,
 				textStyle: {
-					color: colors.primaryWhite,
+					color: colors.common.primaryWhite,
 					fontFamily: fonts.regular,
 					fontSize: 15,
 				},
 			},
 		};
 
-		if (chartInstance) {
-			chartInstance.dispose();
-		}
-		chartInstance = initBarChart(tradersRef.current);
-		chartInstance.setOption(option);
-	}, [tradersRef, t, tradersData]);
+		chart.setOption(option);
+	}, [ref, chart, t, tradersData, colors, fonts]);
 	return (
 		<ChartContainer width={1}>
 			<TimeRangeSwitcher
@@ -160,7 +155,7 @@ export const Traders = () => {
 				setIsMonth={setIsMonth}
 				setIsMax={setIsMax}
 			/>
-			<ChartWrapper ref={tradersRef} />
+			<ChartWrapper ref={ref} />
 		</ChartContainer>
 	);
 };

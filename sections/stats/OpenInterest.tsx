@@ -1,23 +1,23 @@
 import { useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import useStatsData from 'hooks/useStatsData';
-import colors from 'styles/theme/colors/common';
 import fonts from 'styles/theme/fonts';
 import { SYNTH_ICONS } from 'utils/icons';
 
-import { initBarChart } from './initBarChart';
-import type { EChartsOption } from './initBarChart';
 import { ChartContainer, ChartWrapper } from './stats.styles';
-
-let chartInstance: any;
+import { useChart } from './useChart';
+import type { EChartsOption } from './useChart';
 
 export const OpenInterest = () => {
 	const { t } = useTranslation();
+	const { colors } = useTheme();
 
-	const openInterestRef = useRef<HTMLDivElement | null>(null);
 	const { futuresMarkets, openInterestData } = useStatsData();
+
+	const ref = useRef<HTMLDivElement | null>(null);
+	const chart = useChart(ref?.current);
 
 	const marketsWithIcons = useMemo(() => {
 		const temp: Record<string, { icon: any }> = {};
@@ -51,12 +51,7 @@ export const OpenInterest = () => {
 	}, [futuresMarkets]);
 
 	useEffect(() => {
-		if (
-			!openInterestRef ||
-			!openInterestRef.current ||
-			!openInterestData ||
-			!openInterestData.length
-		) {
+		if (!ref || !chart || !ref.current || !openInterestData || !openInterestData.length) {
 			return;
 		}
 
@@ -72,12 +67,12 @@ export const OpenInterest = () => {
 				top: 40,
 				itemGap: 10,
 				textStyle: {
-					color: colors.primaryWhite,
+					color: colors.common.primaryWhite,
 					fontFamily: fonts.regular,
 					fontSize: 18,
 				},
 				subtextStyle: {
-					color: colors.primaryWhite,
+					color: colors.common.primaryWhite,
 					fontFamily: fonts.monoBold,
 					fontSize: 28,
 				},
@@ -99,7 +94,7 @@ export const OpenInterest = () => {
 						syntheticAsset: {
 							fontFamily: fonts.regular,
 							fontSize: 15,
-							color: colors.primaryWhite,
+							color: colors.common.primaryWhite,
 							width: 35,
 							height: 23,
 							padding: [9, 0, 0, 0],
@@ -139,16 +134,12 @@ export const OpenInterest = () => {
 			],
 		};
 
-		if (chartInstance) {
-			chartInstance.dispose();
-		}
-		chartInstance = initBarChart(openInterestRef.current);
-		chartInstance.setOption(option);
-	}, [openInterestRef, t, openInterestData, marketsWithIcons, richMarketsLabel]);
+		chart.setOption(option);
+	}, [ref, chart, t, openInterestData, marketsWithIcons, richMarketsLabel, colors, fonts]);
 
 	return (
 		<StyledChartContainer width={2}>
-			<ChartWrapper ref={openInterestRef} />
+			<ChartWrapper ref={ref} />
 		</StyledChartContainer>
 	);
 };

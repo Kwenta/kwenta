@@ -3,21 +3,19 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from 'styled-components';
 
 import useStatsData from 'hooks/useStatsData';
-import fonts from 'styles/theme/fonts';
 
-import { initBarChart } from './initBarChart';
-import type { EChartsOption } from './initBarChart';
 import { ChartContainer, ChartWrapper } from './stats.styles';
 import { TimeRangeSwitcher } from './TimeRangeSwitcher';
-
-let chartInstance: any;
+import { useChart } from './useChart';
+import type { EChartsOption } from './useChart';
 
 export const Volume = () => {
 	const { t } = useTranslation();
-	const { colors } = useTheme();
+	const { colors, fonts } = useTheme();
 	const { volumeData } = useStatsData();
 
-	const volumeRef = useRef<HTMLDivElement | null>(null);
+	const ref = useRef<HTMLDivElement | null>(null);
+	const chart = useChart(ref?.current);
 
 	// show 24h data by default
 	const [is24H, setIs24H] = useState<boolean>(true);
@@ -26,7 +24,7 @@ export const Volume = () => {
 	const [isMax, setIsMax] = useState<boolean>(false);
 
 	useEffect(() => {
-		if (!volumeRef || !volumeRef.current || !volumeData || !volumeData.length) {
+		if (!chart || !ref || !ref.current || !volumeData || !volumeData.length) {
 			return;
 		}
 
@@ -107,12 +105,8 @@ export const Volume = () => {
 			],
 		};
 
-		if (chartInstance) {
-			chartInstance.dispose();
-		}
-		chartInstance = initBarChart(volumeRef.current);
-		chartInstance.setOption(option);
-	}, [volumeRef, t, volumeData, colors]);
+		chart.setOption(option);
+	}, [chart, ref, t, volumeData, colors, fonts]);
 
 	return (
 		<ChartContainer width={2}>
@@ -126,7 +120,7 @@ export const Volume = () => {
 				setIsMonth={setIsMonth}
 				setIsMax={setIsMax}
 			/>
-			<ChartWrapper ref={volumeRef} />
+			<ChartWrapper ref={ref} />
 		</ChartContainer>
 	);
 };
