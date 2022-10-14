@@ -4,17 +4,16 @@ import { useTheme } from 'styled-components';
 
 import { useGetFuturesTradesStats } from 'queries/futures/useGetFuturesTradesStats';
 
+import { initChart } from './initChart';
+import type { EChartsOption } from './initChart';
 import { ChartContainer, ChartWrapper } from './stats.styles';
 import { TimeRangeSwitcher } from './TimeRangeSwitcher';
-import { useChart } from './useChart';
-import type { EChartsOption } from './useChart';
 
 export const Trades = () => {
 	const { t } = useTranslation();
-	const { colors, fonts } = useTheme();
+	const theme = useTheme();
 
 	const ref = useRef<HTMLDivElement | null>(null);
-	const chart = useChart(ref?.current);
 
 	// show 24h data by default
 	const [is24H, setIs24H] = useState<boolean>(true);
@@ -23,6 +22,12 @@ export const Trades = () => {
 	const [isMax, setIsMax] = useState<boolean>(false);
 
 	const { data: rawData } = useGetFuturesTradesStats();
+
+	const { chart, defaultOptions } = useMemo(() => {
+		if (chart) chart.dispose();
+		return initChart(ref?.current, theme);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ref?.current, theme]);
 
 	const tradesData = useMemo(() => {
 		if (is24H) {
@@ -46,37 +51,32 @@ export const Trades = () => {
 		const data: any = [];
 		tradesData?.forEach(({ date }) => data.push(date));
 		const option: EChartsOption = {
+			...defaultOptions,
 			title: {
+				...defaultOptions.title,
 				text,
-				left: 20,
-				top: 40,
-				itemGap: 10,
-				textStyle: {
-					color: colors.common.primaryWhite,
-					fontFamily: fonts.regular,
-					fontSize: 18,
-				},
-			},
-			grid: {
-				top: 137,
-				bottom: 40,
+				subtext: '',
 			},
 			xAxis: {
+				...defaultOptions.xAxis,
 				type: 'category',
 				data,
-				axisLabel: {
-					color: '#ECE8E3',
-				},
-				axisTick: {
-					show: false,
-				},
 			},
 			yAxis: [
 				{
 					type: 'value',
 					splitLine: {
 						lineStyle: {
-							color: '#C9975B',
+							color: '#39332D',
+						},
+					},
+					position: 'left',
+				},
+				{
+					type: 'value',
+					splitLine: {
+						lineStyle: {
+							color: '#39332D',
 						},
 					},
 					axisLabel: {
@@ -87,48 +87,26 @@ export const Trades = () => {
 					},
 					position: 'right',
 				},
-				{
-					type: 'value',
-					splitLine: {
-						lineStyle: {
-							color: '#C9975B',
-						},
-					},
-					max: 2000,
-					show: false,
-				},
 			],
-			tooltip: {
-				show: true,
-				backgroundColor: '#0C0C0C',
-				extraCssText:
-					'box-shadow: 0px 24px 40px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.08), inset 0px 0px 20px rgba(255, 255, 255, 0.03);backdrop-filter: blur(60px);/* Note: backdrop-filter has minimal browser support */border-radius: 15px;',
-				trigger: 'axis',
-				axisPointer: {
-					type: 'cross',
-				},
-			},
 			series: [
 				{
-					data: tradesData?.map((data) => data.totalTrades),
+					data: tradesData?.map((data) => data.tradesByPeriod),
 					type: 'bar',
-					name: 'Total Trades',
+					name: 'Trades by Period',
 					itemStyle: {
 						color: '#C9975B',
 					},
-					tooltip: {},
 				},
 				{
-					name: 'Trades by Period',
+					name: 'Total Trades',
 					type: 'line',
-					data: tradesData?.map((data) => data.tradesByPeriod),
+					data: tradesData?.map((data) => data.totalTrades),
 					lineStyle: {
 						color: '#02E1FF',
 						cap: 'square',
 					},
 					symbol: 'none',
 					yAxisIndex: 1,
-					tooltip: {},
 				},
 			],
 			legend: {
@@ -136,15 +114,15 @@ export const Trades = () => {
 				top: 71,
 				left: 20,
 				textStyle: {
-					color: colors.common.primaryWhite,
-					fontFamily: fonts.regular,
+					color: theme.colors.common.primaryWhite,
+					fontFamily: theme.fonts.regular,
 					fontSize: 15,
 				},
 			},
 		};
 
 		chart.setOption(option);
-	}, [ref, chart, t, tradesData, colors, fonts]);
+	}, [ref, chart, t, tradesData, theme, defaultOptions]);
 
 	return (
 		<ChartContainer width={1}>

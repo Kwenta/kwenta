@@ -4,23 +4,28 @@ import { useTheme } from 'styled-components';
 
 import { useGetFuturesTradersStats } from 'queries/futures/useGetFuturesTradersStats';
 
+import { initChart } from './initChart';
+import type { EChartsOption } from './initChart';
 import { ChartContainer, ChartWrapper } from './stats.styles';
 import { TimeRangeSwitcher } from './TimeRangeSwitcher';
-import { useChart } from './useChart';
-import type { EChartsOption } from './useChart';
 
 export const Traders = () => {
 	const { t } = useTranslation();
-	const { colors, fonts } = useTheme();
+	const theme = useTheme();
 
 	const ref = useRef<HTMLDivElement | null>(null);
-	const chart = useChart(ref?.current);
 
 	// show 24h data by default
 	const [is24H, setIs24H] = useState<boolean>(true);
 	const [isWeek, setIsWeek] = useState<boolean>(false);
 	const [isMonth, setIsMonth] = useState<boolean>(false);
 	const [isMax, setIsMax] = useState<boolean>(false);
+
+	const { chart, defaultOptions } = useMemo(() => {
+		if (chart) chart.dispose();
+		return initChart(ref?.current, theme);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ref?.current, theme]);
 
 	const { data: rawData } = useGetFuturesTradersStats();
 
@@ -52,8 +57,8 @@ export const Traders = () => {
 				top: 40,
 				itemGap: 10,
 				textStyle: {
-					color: colors.common.primaryWhite,
-					fontFamily: fonts.regular,
+					color: theme.colors.common.primaryWhite,
+					fontFamily: theme.fonts.regular,
 					fontSize: 18,
 				},
 			},
@@ -134,15 +139,15 @@ export const Traders = () => {
 				top: 71,
 				left: 20,
 				textStyle: {
-					color: colors.common.primaryWhite,
-					fontFamily: fonts.regular,
+					color: theme.colors.common.primaryWhite,
+					fontFamily: theme.fonts.regular,
 					fontSize: 15,
 				},
 			},
 		};
 
 		chart.setOption(option);
-	}, [ref, chart, t, tradersData, colors, fonts]);
+	}, [ref, chart, t, tradersData, theme]);
 	return (
 		<ChartContainer width={1}>
 			<TimeRangeSwitcher

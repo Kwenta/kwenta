@@ -1,21 +1,20 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'styled-components';
 
 import useStatsData from 'hooks/useStatsData';
 
+import { initChart } from './initChart';
+import type { EChartsOption } from './initChart';
 import { ChartContainer, ChartWrapper } from './stats.styles';
 import { TimeRangeSwitcher } from './TimeRangeSwitcher';
-import { useChart } from './useChart';
-import type { EChartsOption } from './useChart';
 
 export const Volume = () => {
 	const { t } = useTranslation();
-	const { colors, fonts } = useTheme();
+	const theme = useTheme();
 	const { volumeData } = useStatsData();
 
 	const ref = useRef<HTMLDivElement | null>(null);
-	const chart = useChart(ref?.current);
 
 	// show 24h data by default
 	const [is24H, setIs24H] = useState<boolean>(true);
@@ -23,8 +22,14 @@ export const Volume = () => {
 	const [isMonth, setIsMonth] = useState<boolean>(false);
 	const [isMax, setIsMax] = useState<boolean>(false);
 
+	const { chart, defaultOptions } = useMemo(() => {
+		if (chart) chart.dispose();
+		return initChart(ref?.current, theme);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ref?.current, theme]);
+
 	useEffect(() => {
-		if (!chart || !ref || !ref.current || !volumeData || !volumeData.length) {
+		if (!chart || !volumeData || !volumeData.length) {
 			return;
 		}
 
@@ -34,62 +39,30 @@ export const Volume = () => {
 		const data: any = [];
 		volumeData?.forEach(({ date }) => data.push(date));
 		const option: EChartsOption = {
+			...defaultOptions,
 			title: {
+				...defaultOptions.title,
 				text,
 				subtext,
-				left: 20,
-				top: 40,
-				itemGap: 10,
-				textStyle: {
-					color: colors.selectedTheme.white,
-					fontFamily: fonts.regular,
-					fontSize: 18,
-				},
-				subtextStyle: {
-					color: colors.selectedTheme.white,
-					fontFamily: fonts.monoBold,
-					fontSize: 28,
-				},
 			},
 			grid: {
-				top: 137,
+				...defaultOptions.grid,
 				right: 100,
-				bottom: 60,
 				left: 40,
 			},
 			xAxis: {
+				...defaultOptions.xAxis,
 				type: 'category',
 				data,
-				axisLabel: {
-					color: colors.common.primaryWhite,
-				},
-				axisTick: {
-					show: false,
-				},
 			},
 			yAxis: {
+				...defaultOptions.yAxis,
 				type: 'value',
-				splitLine: {
-					lineStyle: {
-						color: '#39332D',
-					},
-				},
-				position: 'right',
 				axisLabel: {
-					color: colors.common.primaryWhite,
+					color: theme.colors.common.primaryWhite,
 					formatter: (value: any) => {
 						return (value === 0 ? '' : '$') + value.toLocaleString();
 					},
-				},
-			},
-			tooltip: {
-				show: true,
-				backgroundColor: '#0C0C0C',
-				extraCssText:
-					'box-shadow: 0px 24px 40px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.08), inset 0px 0px 20px rgba(255, 255, 255, 0.03);backdrop-filter: blur(60px);/* Note: backdrop-filter has minimal browser support */border-radius: 15px;',
-				trigger: 'axis',
-				axisPointer: {
-					type: 'cross',
 				},
 			},
 			series: [
@@ -98,15 +71,14 @@ export const Volume = () => {
 					type: 'bar',
 					name: 'Total Trades',
 					itemStyle: {
-						color: colors.common.primaryGold,
+						color: theme.colors.common.primaryGold,
 					},
 					tooltip: {},
 				},
 			],
 		};
-
 		chart.setOption(option);
-	}, [chart, ref, t, volumeData, colors, fonts]);
+	}, [chart, t, volumeData, theme, defaultOptions]);
 
 	return (
 		<ChartContainer width={2}>

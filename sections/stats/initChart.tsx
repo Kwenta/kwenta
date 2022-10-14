@@ -15,7 +15,8 @@ import type {
 import * as echarts from 'echarts/core';
 import { ECharts } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
-import { useTheme } from 'styled-components';
+
+import { ThemeInterface } from 'styles/theme';
 
 echarts.use([
 	GridComponent,
@@ -36,26 +37,40 @@ export type EChartsOption = echarts.ComposeOption<
 	| LineSeriesOption
 >;
 
+type ChartSpec = { chart: ECharts | null; defaultOptions: EChartsOption };
+
 /**
  * initialize a bar chart.
  *
  * @param dom mount point of the chart.
  * @param option options of the chart.
  */
-export const useChart = (dom: HTMLElement | null): ECharts | null => {
-	const { colors } = useTheme();
-	if (!dom) return null;
+export const initChart = (dom: HTMLElement | null, theme: ThemeInterface): ChartSpec => {
+	if (!dom) return { chart: null, defaultOptions: {} };
 
 	const defaultOptions: EChartsOption = {
+		title: {
+			left: 20,
+			top: 40,
+			itemGap: 10,
+			textStyle: {
+				color: theme.colors.selectedTheme.white,
+				fontFamily: theme.fonts.regular,
+				fontSize: 18,
+			},
+			subtextStyle: {
+				color: theme.colors.selectedTheme.white,
+				fontFamily: theme.fonts.monoBold,
+				fontSize: 28,
+			},
+		},
 		grid: {
 			top: 137,
-			right: 100,
 			bottom: 60,
-			left: 40,
 		},
 		xAxis: {
 			axisLabel: {
-				color: colors.common.primaryWhite,
+				color: theme.colors.common.primaryWhite,
 			},
 			axisTick: {
 				show: false,
@@ -67,10 +82,10 @@ export const useChart = (dom: HTMLElement | null): ECharts | null => {
 					color: '#39332D',
 				},
 			},
-			position: 'right',
 			axisLabel: {
-				color: colors.common.primaryWhite,
+				color: theme.colors.common.primaryWhite,
 			},
+			position: 'right',
 		},
 		tooltip: {
 			show: true,
@@ -83,6 +98,6 @@ export const useChart = (dom: HTMLElement | null): ECharts | null => {
 			},
 		},
 	};
-	const chart = echarts.init(dom, { ...defaultOptions });
-	return chart;
+	const chart = echarts.init(dom);
+	return { chart, defaultOptions };
 };

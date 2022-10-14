@@ -5,18 +5,23 @@ import styled, { useTheme } from 'styled-components';
 import useStatsData from 'hooks/useStatsData';
 import { SYNTH_ICONS } from 'utils/icons';
 
+import { initChart } from './initChart';
+import type { EChartsOption } from './initChart';
 import { ChartContainer, ChartWrapper } from './stats.styles';
-import { useChart } from './useChart';
-import type { EChartsOption } from './useChart';
 
 export const OpenInterest = () => {
 	const { t } = useTranslation();
-	const { colors, fonts } = useTheme();
+	const theme = useTheme();
 
 	const { futuresMarkets, openInterestData } = useStatsData();
 
 	const ref = useRef<HTMLDivElement | null>(null);
-	const chart = useChart(ref?.current);
+
+	const { chart, defaultOptions } = useMemo(() => {
+		if (chart) chart.dispose();
+		return initChart(ref?.current, theme);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ref?.current, theme]);
 
 	const marketsWithIcons = useMemo(() => {
 		const temp: Record<string, { icon: any }> = {};
@@ -66,13 +71,13 @@ export const OpenInterest = () => {
 				top: 40,
 				itemGap: 10,
 				textStyle: {
-					color: colors.common.primaryWhite,
-					fontFamily: fonts.regular,
+					color: theme.colors.common.primaryWhite,
+					fontFamily: theme.fonts.regular,
 					fontSize: 18,
 				},
 				subtextStyle: {
-					color: colors.common.primaryWhite,
-					fontFamily: fonts.monoBold,
+					color: theme.colors.common.primaryWhite,
+					fontFamily: theme.fonts.monoBold,
 					fontSize: 28,
 				},
 			},
@@ -91,9 +96,9 @@ export const OpenInterest = () => {
 					},
 					rich: {
 						syntheticAsset: {
-							fontFamily: fonts.regular,
+							fontFamily: theme.fonts.regular,
 							fontSize: 15,
-							color: colors.common.primaryWhite,
+							color: theme.colors.common.primaryWhite,
 							width: 35,
 							height: 23,
 							padding: [9, 0, 0, 0],
@@ -134,7 +139,7 @@ export const OpenInterest = () => {
 		};
 
 		chart.setOption(option);
-	}, [ref, chart, t, openInterestData, marketsWithIcons, richMarketsLabel, colors, fonts]);
+	}, [ref, chart, t, openInterestData, marketsWithIcons, richMarketsLabel, theme]);
 
 	return (
 		<StyledChartContainer width={2}>
