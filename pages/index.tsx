@@ -12,13 +12,8 @@ import TradeNow from 'sections/homepage/TradeNow';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import HomeLayout from 'sections/shared/Layout/HomeLayout';
 import type { TPages } from 'sections/shared/Layout/HomeLayout/Header';
-import type { StatsProps } from 'sections/stats';
+import { Stats } from 'sections/stats';
 import media from 'styles/media';
-
-const Stats = dynamic<StatsProps>(
-	() => import('sections/stats').then((module) => module.Stats),
-	{}
-);
 
 type AppLayoutProps = {
 	children: React.ReactNode;

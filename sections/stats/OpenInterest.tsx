@@ -1,9 +1,8 @@
 import { useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import { futuresMarketsState } from 'store/futures';
+import useStatsData from 'hooks/useStatsData';
 import colors from 'styles/theme/colors/common';
 import fonts from 'styles/theme/fonts';
 import { SYNTH_ICONS } from 'utils/icons';
@@ -18,7 +17,7 @@ export const OpenInterest = () => {
 	const { t } = useTranslation();
 
 	const openInterestRef = useRef<HTMLDivElement | null>(null);
-	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	const { futuresMarkets, openInterestData } = useStatsData();
 
 	const marketsWithIcons = useMemo(() => {
 		const temp: Record<string, { icon: any }> = {};
@@ -51,29 +50,13 @@ export const OpenInterest = () => {
 		return temp;
 	}, [futuresMarkets]);
 
-	const openInterests = useMemo(() => {
-		return futuresMarkets.map((data) => {
-			if (data.openInterest?.longUSD === undefined) {
-				if (data.openInterest?.shortUSD === undefined) {
-					return 0;
-				} else {
-					// @ts-ignore
-					return data.openInterest.longUSD.toNumber();
-				}
-			} else if (data.openInterest.shortUSD === undefined) {
-				if (data.openInterest.longUSD === undefined) {
-					return 0;
-				} else {
-					// @ts-ignore
-					return data.openInterest.shortUSD.toNumber();
-				}
-			}
-			return data.openInterest?.longUSD.add(data.openInterest?.shortUSD).toNumber();
-		});
-	}, [futuresMarkets]);
-
 	useEffect(() => {
-		if (!openInterestRef || !openInterestRef.current || !openInterests || !openInterests.length) {
+		if (
+			!openInterestRef ||
+			!openInterestRef.current ||
+			!openInterestData ||
+			!openInterestData.length
+		) {
 			return;
 		}
 
@@ -146,7 +129,7 @@ export const OpenInterest = () => {
 			},
 			series: [
 				{
-					data: openInterests.filter((e) => e !== undefined).sort((a, b) => b - a),
+					data: openInterestData.filter((e) => e !== undefined).sort((a, b) => b - a),
 					type: 'bar',
 					name: 'Total Trades',
 					itemStyle: {
@@ -161,7 +144,7 @@ export const OpenInterest = () => {
 		}
 		chartInstance = initBarChart(openInterestRef.current);
 		chartInstance.setOption(option);
-	}, [openInterestRef, t, openInterests, marketsWithIcons, richMarketsLabel]);
+	}, [openInterestRef, t, openInterestData, marketsWithIcons, richMarketsLabel]);
 
 	return (
 		<StyledChartContainer width={2}>

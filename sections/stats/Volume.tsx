@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'styled-components';
 
-import { useGetFuturesVolumesStats } from 'queries/futures/useGetFuturesVolumesStats';
+import useStatsData from 'hooks/useStatsData';
 import fonts from 'styles/theme/fonts';
 
 import { initBarChart } from './initBarChart';
@@ -15,6 +15,7 @@ let chartInstance: any;
 export const Volume = () => {
 	const { t } = useTranslation();
 	const { colors } = useTheme();
+	const { volumeData } = useStatsData();
 
 	const volumeRef = useRef<HTMLDivElement | null>(null);
 
@@ -23,8 +24,6 @@ export const Volume = () => {
 	const [isWeek, setIsWeek] = useState<boolean>(false);
 	const [isMonth, setIsMonth] = useState<boolean>(false);
 	const [isMax, setIsMax] = useState<boolean>(false);
-
-	const { data: volumeData } = useGetFuturesVolumesStats();
 
 	useEffect(() => {
 		if (!volumeRef || !volumeRef.current || !volumeData || !volumeData.length) {
