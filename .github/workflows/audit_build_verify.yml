@@ -134,8 +134,7 @@ jobs:
         run: tar -zcvf build.tar.gz .next
 
       - name: Archive build
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
-        uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # pin@v3
+        uses: actions/upload-artifact@v3 # pin@v3
         with:
           name: build
           path: build.tar.gz
@@ -143,7 +142,7 @@ jobs:
   e2e:
     needs: build
     # run only on main/dev branch
-    if: always() && (needs.build.result == 'success' || needs.build.result == 'skipped')
+    if: always() && (needs.build.result == 'success')
     runs-on: ubuntu-latest
 
     container:
@@ -196,7 +195,7 @@ jobs:
           VERCEL_DOMAIN: ${{ secrets.VERCEL_DOMAIN }}
 
       - name: Download build
-        uses: actions/download-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # pin@v2
+        uses: actions/download-artifact@v3 # pin@v2
         with:
           name: build
 
@@ -220,7 +219,7 @@ jobs:
           CHAIN_ID: 420
 
       - name: Archive e2e artifacts
-        uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # pin@v2
+        uses: actions/upload-artifact@v3 # pin@v2
         if: always()
         with:
           name: e2e-artifacts
