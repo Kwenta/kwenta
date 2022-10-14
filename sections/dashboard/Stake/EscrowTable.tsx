@@ -41,6 +41,7 @@ const EscrowTable = () => {
 	const [checkAllState, setCheckAllState] = useState(false);
 
 	data = [];
+
 	const { data: vestingSchedules, isSuccess: vestingSchedulesIsSuccess } = useContractReads({
 		contracts: [
 			{
@@ -73,6 +74,30 @@ const EscrowTable = () => {
 					status: d.endTime * 1000 > Date.now() ? 'VESTING' : 'VESTED',
 				});
 			});
+
+	const contracts = data.map((d) => {
+		return {
+			...rewardEscrowContract,
+			functionName: 'getVestingEntryClaimable',
+			args: [walletAddress ?? undefined, d.id],
+		};
+	});
+
+	const {
+		data: vestingEntryClaimable,
+		isSuccess: vestingEntryClaimableIsSuccess,
+	} = useContractReads({
+		contracts,
+		cacheOnBlock: true,
+		enabled: !!walletAddress && contracts.length > 0,
+	});
+
+	vestingEntryClaimableIsSuccess &&
+		vestingEntryClaimable !== undefined &&
+		vestingEntryClaimable.forEach((d, index) => {
+			data[index].vestable = Number(d.quantity / 1e18);
+			data[index].fee = Number(d.fee / 1e18);
+		});
 
 	const handleOnChange = (position: number) => {
 		checkedState[position] = !checkedState[position];
@@ -108,7 +133,8 @@ const EscrowTable = () => {
 	const { config } = usePrepareContractWrite({
 		...rewardEscrowContract,
 		functionName: 'vest',
-		args: [[4, 5]],
+		args: [data.filter((d, index) => !!checkedState[index]).map((d) => d.id)],
+		enabled: data.filter((d, index) => !!checkedState[index]).map((d) => d.id).length > 0,
 	});
 
 	const { write: vest } = useContractWrite(config);
@@ -171,7 +197,7 @@ const EscrowTable = () => {
 							),
 							Cell: (cellProps: CellProps<EscrowRow>) => (
 								<TableCell $darkTheme={isDarkTheme}>
-									{cellProps.row.original.vestable}{' '}
+									{Math.trunc(cellProps.row.original.vestable)}{' '}
 									{t('dashboard.stake.tabs.stake-table.kwenta-token')}
 								</TableCell>
 							),
@@ -186,7 +212,7 @@ const EscrowTable = () => {
 							),
 							Cell: (cellProps: CellProps<EscrowRow>) => (
 								<TableCell $darkTheme={isDarkTheme}>
-									{cellProps.row.original.amount}{' '}
+									{Math.trunc(cellProps.row.original.amount)}{' '}
 									{t('dashboard.stake.tabs.stake-table.kwenta-token')}
 								</TableCell>
 							),
@@ -201,7 +227,8 @@ const EscrowTable = () => {
 							),
 							Cell: (cellProps: CellProps<EscrowRow>) => (
 								<TableCell $darkTheme={isDarkTheme}>
-									{cellProps.row.original.fee} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
+									{Math.trunc(cellProps.row.original.fee)}{' '}
+									{t('dashboard.stake.tabs.stake-table.kwenta-token')}
 								</TableCell>
 							),
 							accessor: 'earlyVestFee',
@@ -250,7 +277,7 @@ const EscrowTable = () => {
 							),
 							Cell: (cellProps: CellProps<EscrowRow>) => (
 								<TableCell $darkTheme={isDarkTheme}>
-									{cellProps.row.original.amount}{' '}
+									{Math.trunc(cellProps.row.original.amount)}{' '}
 									{t('dashboard.stake.tabs.stake-table.kwenta-token')}
 								</TableCell>
 							),
@@ -265,7 +292,8 @@ const EscrowTable = () => {
 							),
 							Cell: (cellProps: CellProps<EscrowRow>) => (
 								<TableCell $darkTheme={isDarkTheme}>
-									{cellProps.row.original.fee} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
+									{Math.trunc(cellProps.row.original.fee)}{' '}
+									{t('dashboard.stake.tabs.stake-table.kwenta-token')}
 								</TableCell>
 							),
 							accessor: 'earlyVestFee',
@@ -300,7 +328,7 @@ const EscrowTable = () => {
 							{totalFee.toFixed(2)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
 						</div>
 					</div>
-					<VestButton $darkTheme={isDarkTheme} onClick={() => vest?.()}>
+					<VestButton $darkTheme={isDarkTheme} disabled={!vest} onClick={() => vest?.()}>
 						{t('dashboard.stake.tabs.escrow.vest')}
 					</VestButton>
 				</div>
