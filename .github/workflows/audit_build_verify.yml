@@ -7,8 +7,8 @@ on:
 
 jobs:
   audit:
-    # run only on master/dev branch and pull requests
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
+    # run only on main/dev branch and pull requests
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
 
     container:
@@ -63,8 +63,8 @@ jobs:
           npm install --prefer-offline --no-audit --legacy-peer-deps
 
       - name: Lint
-        # run only on master/dev branch and pull requests
-        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
+        # run only on main/dev branch and pull requests
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
         run: npm run lint:sarif
 
       - name: Upload lint results
@@ -76,8 +76,8 @@ jobs:
         continue-on-error: true
 
       - name: Unit tests
-        # run only on master/dev branch and pull requests
-        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
+        # run only on main/dev branch and pull requests
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
         run: npm run test:unit
 
   build:
@@ -134,7 +134,7 @@ jobs:
         run: tar -zcvf build.tar.gz .next
 
       - name: Archive build
-        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
         uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # pin@v3
         with:
           name: build
@@ -142,8 +142,8 @@ jobs:
 
   e2e:
     needs: build
-    # run only on master/dev branch
-    # if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev'
+    # run only on main/dev branch
+    # if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
 
     container:
