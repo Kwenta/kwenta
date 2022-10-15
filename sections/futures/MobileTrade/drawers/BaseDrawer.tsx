@@ -102,7 +102,7 @@ const Row = styled.div`
 	}
 
 	&:not(:last-of-type) {
-		border-bottom: 1px solid #2b2a2a;
+		border-bottom: 1px solid #a7a7a7;
 	}
 `;
 
