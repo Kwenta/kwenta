@@ -52,8 +52,8 @@ const RatioButton = styled.button<{ $selected: boolean }>`
 	${(props) =>
 		props.$selected &&
 		css`
-			color: ${(props) => props.theme.colors.selectedTheme.gold};
-			background: ${(props) => props.theme.colors.selectedTheme.cell.gradient};
+			color: ${(props) => props.theme.colors.selectedTheme.white};
+			background: ${(props) => props.theme.colors.selectedTheme.button.hover};
 		`}
 
 	&:first-of-type {
