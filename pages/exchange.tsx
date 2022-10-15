@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { FC, useEffect } from 'react';
-import { resetCurrencies } from 'state/exchange/actions';
+import { fetchRates, fetchTxProvider, resetCurrencies } from 'state/exchange/actions';
 import { useAppDispatch } from 'state/store';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
@@ -24,10 +24,14 @@ const Exchange: ExchangeComponent = () => {
 		const baseCurrencyFromQuery = router.query.base as string | undefined;
 
 		if (!!quoteCurrencyFromQuery || !!baseCurrencyFromQuery) {
-			dispatch(resetCurrencies({ quoteCurrencyFromQuery, baseCurrencyFromQuery }));
+			dispatch(resetCurrencies({ quoteCurrencyFromQuery, baseCurrencyFromQuery })).then(() => {
+				dispatch(fetchTxProvider());
+				dispatch(fetchRates());
+			});
 		}
 	}, [router.query.quote, router.query.base, network.id, dispatch]);
 
+	//<RelayerProvider>
 	return (
 		<>
 			<ExchangeHead />
@@ -45,6 +49,7 @@ const Exchange: ExchangeComponent = () => {
 			</MobileOrTabletView>
 		</>
 	);
+	/*</RelayerProvider> */
 };
 
 Exchange.getLayout = (page) => <>{page}</>;

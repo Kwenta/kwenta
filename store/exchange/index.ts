@@ -1,9 +1,9 @@
 import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
 import { atom, selector } from 'recoil';
+import type { SwapRatio } from 'state/exchange/types';
 
 import { CurrencyKey, CRYPTO_CURRENCY_MAP } from 'constants/currency';
-import { SwapRatio } from 'hooks/useExchange';
 import { localStorageEffect } from 'store/effects';
 import { getExchangeKey } from 'store/utils';
 import { zeroBN } from 'utils/formatters/number';

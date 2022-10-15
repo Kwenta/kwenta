@@ -17,21 +17,15 @@ const SwapCurrencies = memo(() => {
 		baseCurrencyKey: exchange.baseCurrencyKey,
 	}));
 
-	const routeToMarketPair = useCallback(
-		(baseCurrencyKey: string, quoteCurrencyKey: string) =>
-			router.replace('/exchange', ROUTES.Exchange.MarketPair(baseCurrencyKey, quoteCurrencyKey), {
-				shallow: true,
-			}),
-		[router]
-	);
-
 	const handleCurrencySwap = useCallback(() => {
 		dispatch(swapCurrencies());
 
 		if (!!quoteCurrencyKey && !!baseCurrencyKey) {
-			routeToMarketPair(quoteCurrencyKey, baseCurrencyKey);
+			router.replace('/exchange', ROUTES.Exchange.MarketPair(baseCurrencyKey, quoteCurrencyKey), {
+				shallow: true,
+			});
 		}
-	}, [baseCurrencyKey, quoteCurrencyKey, routeToMarketPair, dispatch]);
+	}, [quoteCurrencyKey, baseCurrencyKey, router, dispatch]);
 
 	return (
 		<SwapCurrenciesButtonContainer>

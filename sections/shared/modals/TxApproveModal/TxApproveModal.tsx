@@ -1,37 +1,44 @@
-import { FC, ReactNode } from 'react';
+import { FC, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import { setOpenModal } from 'state/exchange/reducer';
+import { useAppDispatch, useAppSelector } from 'state/store';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
-import { FlexDivColCentered } from 'styles/common';
+import { txErrorState } from 'store/exchange';
+import { FlexDivColCentered, NoTextTransform } from 'styles/common';
 import { formatRevert } from 'utils/formatters/error';
 
 type TxApproveModalProps = {
-	onDismiss: () => void;
-	txError: string | null;
 	attemptRetry: () => void;
-	currencyKey: string;
-	currencyLabel: ReactNode;
 };
 
-export const TxApproveModal: FC<TxApproveModalProps> = ({
-	onDismiss,
-	txError,
-	attemptRetry,
-	currencyKey,
-	currencyLabel,
-}) => {
+export const TxApproveModal: FC<TxApproveModalProps> = ({ attemptRetry }) => {
 	const { t } = useTranslation();
+	const dispatch = useAppDispatch();
+	const txError = useRecoilValue(txErrorState);
+	const quoteCurrencyKey = useAppSelector(({ exchange }) => exchange.quoteCurrencyKey);
+
+	const onDismiss = useCallback(() => {
+		dispatch(setOpenModal(undefined));
+	}, [dispatch]);
+
+	if (!quoteCurrencyKey) {
+		return null;
+	}
 
 	return (
 		<StyledBaseModal onDismiss={onDismiss} isOpen title={t('modals.approve-transaction.title')}>
 			<Currencies>
 				<CurrencyItem>
-					<CurrencyItemTitle>{currencyLabel}</CurrencyItemTitle>
+					<CurrencyItemTitle>
+						<NoTextTransform>{quoteCurrencyKey}</NoTextTransform>
+					</CurrencyItemTitle>
 					<Currency.Icon
-						currencyKey={currencyKey}
+						currencyKey={quoteCurrencyKey}
 						width="40px"
 						height="40px"
 						data-testid="currency-img"

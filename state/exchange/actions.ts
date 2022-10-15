@@ -2,6 +2,8 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import KwentaSDK from 'sdk';
 import { AppDispatch, RootState } from 'state/store';
 
+import { monitorTransaction } from 'contexts/RelayerContext';
+
 type ThunkConfig = {
 	dispatch: AppDispatch;
 	state: RootState;
@@ -15,38 +17,29 @@ export const fetchBalances = createAsyncThunk<any, void, ThunkConfig>(
 			exchange: { quoteCurrencyKey, baseCurrencyKey },
 		} = getState();
 
-		try {
-			const quoteBalance = quoteCurrencyKey
-				? await sdk.exchange.getBalance(quoteCurrencyKey)
-				: undefined;
+		const quoteBalance = quoteCurrencyKey
+			? await sdk.exchange.getBalance(quoteCurrencyKey)
+			: undefined;
 
-			const baseBalance = baseCurrencyKey
-				? await sdk.exchange.getBalance(baseCurrencyKey)
-				: undefined;
+		const baseBalance = baseCurrencyKey
+			? await sdk.exchange.getBalance(baseCurrencyKey)
+			: undefined;
 
-			const {
-				balances: redeemableBalances,
-				totalUSDBalance: totalRedeemableBalance,
-			} = await sdk.exchange.getRedeemableDeprecatedSynths();
+		const {
+			balances: redeemableBalances,
+			totalUSDBalance: totalRedeemableBalance,
+		} = await sdk.exchange.getRedeemableDeprecatedSynths();
 
-			return {
-				quoteBalance: quoteBalance ? quoteBalance.toString() : undefined,
-				baseBalance: baseBalance ? baseBalance.toString() : undefined,
-				redeemableSynthBalances: redeemableBalances.map((r) => ({
-					...r,
-					balance: '0',
-					usdBalance: r.usdBalance.toString(),
-				})),
-				totalRedeemableBalance: totalRedeemableBalance.toString(),
-			};
-		} catch (error) {
-			return {
-				quoteBalance: undefined,
-				baseBalance: undefined,
-				redeemableSynthBalances: [],
-				totalRedeemableBalance: undefined,
-			};
-		}
+		return {
+			quoteBalance: quoteBalance ? quoteBalance.toString() : undefined,
+			baseBalance: baseBalance ? baseBalance.toString() : undefined,
+			redeemableSynthBalances: redeemableBalances.map((r) => ({
+				...r,
+				balance: '0',
+				usdBalance: r.usdBalance.toString(),
+			})),
+			totalRedeemableBalance: totalRedeemableBalance.toString(),
+		};
 	}
 );
 
@@ -99,13 +92,22 @@ export const submitExchange = createAsyncThunk<any, void, ThunkConfig>(
 		} = getState();
 
 		if (quoteCurrencyKey && baseCurrencyKey) {
-			await sdk.exchange.handleExchange(
+			const hash = await sdk.exchange.handleExchange(
 				quoteCurrencyKey,
 				baseCurrencyKey,
 				quoteAmount,
 				baseAmount,
 				true
 			);
+
+			if (hash) {
+				monitorTransaction({
+					txHash: hash,
+					onTxConfirmed: () => {
+						// Do something
+					},
+				});
+			}
 		}
 	}
 );
@@ -125,7 +127,14 @@ export const submitApprove = createAsyncThunk<any, void, ThunkConfig>(
 		} = getState();
 
 		if (quoteCurrencyKey && baseCurrencyKey) {
-			await sdk.exchange.handleApprove(quoteCurrencyKey, baseCurrencyKey);
+			const hash = await sdk.exchange.handleApprove(quoteCurrencyKey, baseCurrencyKey);
+
+			if (hash) {
+				monitorTransaction({
+					txHash: hash,
+				});
+				// do something
+			}
 		}
 	}
 );
@@ -230,13 +239,14 @@ export const fetchFeeReclaimPeriod = createAsyncThunk<any, void, ThunkConfig>(
 			exchange: { quoteCurrencyKey, baseCurrencyKey },
 		} = getState();
 
-		if (quoteCurrencyKey && baseCurrencyKey) {
-			const feeReclaimPeriod = await sdk.exchange.getFeeReclaimPeriod(quoteCurrencyKey);
-			const settlementWaitingPeriod = await sdk.exchange.getFeeReclaimPeriod(baseCurrencyKey);
-			return { feeReclaimPeriod, settlementWaitingPeriod };
-		}
+		const feeReclaimPeriod = quoteCurrencyKey
+			? await sdk.exchange.getFeeReclaimPeriod(quoteCurrencyKey)
+			: 0;
+		const settlementWaitingPeriod = baseCurrencyKey
+			? await sdk.exchange.getFeeReclaimPeriod(baseCurrencyKey)
+			: 0;
 
-		return { feeReclaimPeriod: 0, settlementWaitingPeriod: 0 };
+		return { feeReclaimPeriod, settlementWaitingPeriod };
 	}
 );
 

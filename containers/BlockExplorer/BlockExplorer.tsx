@@ -12,7 +12,7 @@ type BlockExplorerInstance = {
 	blockLink: (blockNumber: string) => string;
 };
 
-const getBaseUrl = (networkId: NetworkId) => {
+export const getBaseUrl = (networkId: NetworkId) => {
 	if (networkId === 10 || networkId === 420) {
 		return (
 			OPTIMISM_NETWORKS[networkId as NetworkId]?.blockExplorerUrls[0] ??
@@ -24,7 +24,7 @@ const getBaseUrl = (networkId: NetworkId) => {
 	return `https://${NetworkNameById[networkId]}.etherscan.io`;
 };
 
-const generateExplorerFunctions = (baseUrl: string) => {
+export const generateExplorerFunctions = (baseUrl: string) => {
 	return {
 		baseLink: baseUrl,
 		txLink: (txId: string) => `${baseUrl}/tx/${txId}`,

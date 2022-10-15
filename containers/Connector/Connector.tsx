@@ -1,12 +1,21 @@
 import { NetworkId, synthetix } from '@synthetixio/contracts-interface';
+import { TransactionNotifier as BaseTN } from '@synthetixio/transaction-notifier';
 import { ethers } from 'ethers';
 import { keyBy } from 'lodash';
 import { useEffect, useMemo } from 'react';
-import { fetchTokenList } from 'state/exchange/actions';
+import { fetchSynthBalances } from 'state/balances/actions';
+import { fetchBalances, fetchRates, fetchTokenList } from 'state/exchange/actions';
 import { sdk, useAppDispatch } from 'state/store';
-import { setNetwork } from 'state/wallet/reducer';
+import { setNetwork, setWalletAddress } from 'state/wallet/reducer';
 import { createContainer } from 'unstated-next';
 import { chain, useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
+
+import { generateExplorerFunctions, getBaseUrl } from 'containers/BlockExplorer/BlockExplorer';
+
+import { wagmiClient } from './config';
+
+export let TransactionNotifier = new BaseTN(wagmiClient.provider);
+export let BlockExplorer = generateExplorerFunctions(getBaseUrl(10));
 
 const useConnector = () => {
 	const { chain: activeChain } = useNetwork();
@@ -41,20 +50,30 @@ const useConnector = () => {
 
 	useEffect(() => {
 		sdk.setProvider(provider);
+		TransactionNotifier = new BaseTN(provider);
 	}, [provider]);
 
 	useEffect(() => {
 		sdk.setNetworkId(network.id as NetworkId).then(async () => {
 			dispatch(setNetwork({ networkId: network.id as NetworkId }));
+			BlockExplorer = generateExplorerFunctions(getBaseUrl(network.id as NetworkId));
 			await dispatch(fetchTokenList());
+			dispatch(fetchSynthBalances());
+			dispatch(fetchBalances());
+			dispatch(fetchRates());
 		});
 	}, [network.id, dispatch]);
 
 	useEffect(() => {
 		if (signer) {
-			sdk.setSigner(signer);
+			sdk.setSigner(signer).then(async () => {
+				const address = await signer.getAddress();
+				dispatch(setWalletAddress({ walletAddress: address }));
+				await dispatch(fetchSynthBalances());
+				dispatch(fetchBalances());
+			});
 		}
-	}, [signer]);
+	}, [signer, dispatch]);
 
 	const [synthsMap, tokensMap] = useMemo(() => {
 		if (defaultSynthetixjs == null) return [{}, {}];

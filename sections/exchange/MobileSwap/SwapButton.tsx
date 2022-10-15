@@ -1,27 +1,34 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit';
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAppSelector } from 'state/store';
+import { submitApprove, submitExchange } from 'state/exchange/actions';
+import { selectIsApproved, selectSubmissionDisabledReason } from 'state/exchange/selectors';
+import { useAppDispatch, useAppSelector } from 'state/store';
 
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
-import useApproveExchange from 'hooks/useApproveExchange';
-import useExchange from 'hooks/useExchange';
 
 const SwapButton: FC = () => {
 	const { isWalletConnected } = Connector.useContainer();
 	const { t } = useTranslation();
 	const { openConnectModal: connectWallet } = useConnectModal();
-	const { handleSubmit, submissionDisabledReason } = useExchange({
-		showNoSynthsCard: false,
-	});
-	const { isApproved, handleApprove } = useApproveExchange();
+	const submissionDisabledReason = useAppSelector(selectSubmissionDisabledReason);
+	const isApproved = useAppSelector(selectIsApproved);
 	const needsApproval = useAppSelector(({ exchange }) => exchange.needsApproval);
+	const dispatch = useAppDispatch();
+
+	const handleSubmit = useCallback(() => {
+		if (needsApproval && !isApproved) {
+			dispatch(submitApprove());
+		} else {
+			dispatch(submitExchange());
+		}
+	}, [dispatch, isApproved, needsApproval]);
 
 	return isWalletConnected ? (
 		<Button
 			disabled={!!submissionDisabledReason}
-			onClick={needsApproval && !isApproved ? handleApprove : handleSubmit}
+			onClick={handleSubmit}
 			size="md"
 			data-testid="submit-order"
 			fullWidth

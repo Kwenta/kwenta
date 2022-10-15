@@ -73,19 +73,19 @@ const FILTERED_TOKENS = ['0x4922a015c4407f87432b179bb209e125432e4a2a'];
 //   overkill, but worth consideration).
 
 export default class ExchangeService {
-	private networkId: NetworkId;
-	private isL2: boolean;
 	private synthsMap: SynthsMap = {};
 	private tokensMap: any = {};
 	private tokenList: Token[] = [];
 	private allTokensMap: any;
 	private sdk: KwentaSDK;
 
-	constructor(sdk: KwentaSDK, networkId: NetworkId) {
+	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
-		this.networkId = networkId;
-		this.isL2 = [10, 420].includes(networkId);
 		this.getAllTokensMap();
+	}
+
+	private get isL2() {
+		return [10, 420].includes(this.sdk.networkId);
 	}
 
 	public getTxProvider(baseCurrencyKey: string, quoteCurrencyKey: string) {
@@ -245,24 +245,22 @@ export default class ExchangeService {
 
 	public async getBalance(currencyKey: string) {
 		const isETH = this.isCurrencyETH(currencyKey);
-		const synthsWalletBalance = await this.sdk.synths.getSynthBalances();
-		const token = this.tokenList.find((t) => t.symbol === currencyKey);
-		const tokenBalances = token ? await this.getTokensBalances([token]) : undefined;
 
-		if (currencyKey != null) {
-			if (isETH) {
-				const ETHBalance = await this.getETHBalance();
-				return ETHBalance;
-			} else if (this.synthsMap[currencyKey as SynthSymbol]) {
-				return synthsWalletBalance != null
-					? (get(synthsWalletBalance, ['balancesMap', currencyKey, 'balance'], zeroBN) as Wei)
-					: null;
-			} else {
+		if (isETH) {
+			const ETHBalance = await this.getETHBalance();
+			return ETHBalance;
+		} else if (this.synthsMap[currencyKey as SynthSymbol]) {
+			const synthsWalletBalance = await this.sdk.synths.getSynthBalances();
+			return synthsWalletBalance.balancesMap[currencyKey]?.balance ?? zeroBN;
+		} else {
+			const token = this.tokenList.find((t) => t.symbol === currencyKey);
+			if (token) {
+				const tokenBalances = token ? await this.getTokensBalances([token]) : undefined;
 				return tokenBalances?.[currencyKey]?.balance ?? zeroBN;
 			}
 		}
 
-		return null;
+		return zeroBN;
 	}
 
 	public async swapSynthSwap(
@@ -273,7 +271,7 @@ export default class ExchangeService {
 	) {
 		if (!this.sdk.signer) throw new Error('Wallet not connected');
 		if (!this.sdk.provider) throw new Error('');
-		if (this.networkId !== 10) throw new Error('Unsupported network');
+		if (this.sdk.networkId !== 10) throw new Error('Unsupported network');
 
 		const sUSD = this.tokensMap['sUSD'];
 
@@ -452,10 +450,6 @@ export default class ExchangeService {
 	}
 
 	public async handleApprove(quoteCurrencyKey: string, baseCurrencyKey: string) {
-		if (!this.sdk.signer) {
-			throw new Error('A signer is required to approve tokens.');
-		}
-
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
 		const oneInchApproveAddress = await this.getOneInchApproveAddress();
 		const quoteCurrencyContract = await this.getQuoteCurrencyContract(
@@ -468,27 +462,29 @@ export default class ExchangeService {
 			txProvider === '1inch' ? oneInchApproveAddress : SYNTH_SWAP_OPTIMISM_ADDRESS;
 
 		if (quoteCurrencyContract && needsApproval) {
-			await quoteCurrencyContract
-				.connect(this.sdk.signer)
-				.approve(approveAddress, ethers.constants.MaxUint256);
+			const { hash } = await this.sdk.transactions.createContractTxn(
+				quoteCurrencyContract,
+				'approve',
+				[approveAddress, ethers.constants.MaxUint256]
+			);
+
+			return hash;
 		}
+
+		return undefined;
 	}
 
 	public async handleRedeem() {
-		if (!this.sdk.signer) {
-			throw new Error('You must connect a signer to redeem synths.');
-		}
-
-		if (!this.sdk.contracts.SynthRedeemer) {
-			throw new Error('Wrong network');
-		}
-
 		const redeemableDeprecatedSynths = await this.getRedeemableDeprecatedSynths();
 
 		if (redeemableDeprecatedSynths.totalUSDBalance.gt(0)) {
-			await this.sdk.contracts.SynthRedeemer.connect(this.sdk.signer).redeemAll(
-				redeemableDeprecatedSynths.balances.map((b) => b.proxyAddress)
+			const { hash } = await this.sdk.transactions.createSynthetixTxn(
+				'SynthRedeemer',
+				'redeemAll',
+				[redeemableDeprecatedSynths.balances.map((b) => b.proxyAddress)]
 			);
+
+			return hash;
 		}
 	}
 
@@ -498,26 +494,22 @@ export default class ExchangeService {
 		}
 
 		if (!this.sdk.walletAddress) {
-			throw new Error('');
-		}
-
-		if (!this.sdk.signer) {
-			throw new Error('You must connect a signer to redeem synths.');
-		}
-
-		if (!this.sdk.contracts.Exchanger) {
-			throw new Error('Wrong network.');
+			throw new Error('You need a signer to execute this transaction.');
 		}
 
 		const numEntries = await this.getNumEntries(baseCurrencyKey);
 		const destinationCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey);
 
 		if (numEntries > 12) {
-			await this.sdk.contracts.Exchanger.connect(this.sdk.signer).settle(
+			const { hash } = await this.sdk.transactions.createSynthetixTxn('Exchanger', 'settle', [
 				this.sdk.walletAddress,
-				destinationCurrencyKey
-			);
+				destinationCurrencyKey,
+			]);
+
+			return hash;
 		}
+
+		return undefined;
 	}
 
 	public async handleExchange(
@@ -560,23 +552,17 @@ export default class ExchangeService {
 				!!this.sdk.contracts.Synthetix;
 
 			if (shouldExchange) {
-				if (!this.sdk.signer) {
-					throw new Error('You have to connect a signer to exchange synths.');
-				}
+				const { hash } = await this.sdk.transactions.createSynthetixTxn(
+					'Synthetix',
+					isAtomic ? 'exchangeAtomically' : 'exchangeWithTracking',
+					exchangeParams
+				);
 
-				if (!this.sdk.contracts.Synthetix) {
-					throw new Error('You are using this on an unsupported network');
-				}
-
-				await this.sdk.contracts.Synthetix.connect(this.sdk.signer)[
-					isAtomic ? 'exchangeAtomically' : 'exchangeWithTracking'
-				](...exchangeParams);
+				return hash;
 			}
 		}
 
-		if (tx) {
-			return tx?.hash;
-		}
+		return tx?.hash;
 	}
 
 	public async getTransactionFee(
@@ -960,7 +946,7 @@ export default class ExchangeService {
 	}
 
 	private async getAllTokensMap() {
-		this.synthsMap = getSynthsForNetwork(this.networkId);
+		this.synthsMap = getSynthsForNetwork(this.sdk.networkId);
 		await this.getOneInchTokens();
 
 		this.allTokensMap = { ...this.synthsMap, ...this.tokensMap };
@@ -1150,7 +1136,7 @@ export default class ExchangeService {
 	private async getEthGasPrice() {
 		try {
 			// If network is Mainnet then we use EIP1559
-			if (this.networkId === NetworkIdByName.mainnet) {
+			if (this.sdk.networkId === NetworkIdByName.mainnet) {
 				const block = await this.sdk.provider.getBlock('latest');
 				if (block?.baseFeePerGas) {
 					return {

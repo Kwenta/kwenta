@@ -7,6 +7,7 @@ import { truncateNumbers } from 'utils/formatters/number';
 import {
 	checkNeedsApproval,
 	fetchBalances,
+	fetchFeeReclaimPeriod,
 	fetchRates,
 	fetchTokenList,
 	fetchTransactionFee,
@@ -183,6 +184,9 @@ const exchangeSlice = createSlice({
 		closeModal: (state) => {
 			state.openModal = undefined;
 		},
+		setApprovalStatus: (state, action) => {
+			state.approvalStatus = action.payload;
+		},
 	},
 	extraReducers: (builder) => {
 		builder.addCase(fetchBalances.fulfilled, (state, action) => {
@@ -239,6 +243,10 @@ const exchangeSlice = createSlice({
 			state.quoteCurrencyKey = action.payload.quoteCurrencyKey;
 			state.baseCurrencyKey = action.payload.baseCurrencyKey;
 		});
+		builder.addCase(fetchFeeReclaimPeriod.fulfilled, (state, action) => {
+			state.feeReclaimPeriod = action.payload.feeReclaimPeriod;
+			state.settlementWaitingPeriod = action.payload.settlementWaitingPeriod;
+		});
 	},
 });
 
@@ -254,6 +262,7 @@ export const {
 	setMaxBaseBalance,
 	setOpenModal,
 	closeModal,
+	setApprovalStatus,
 } = exchangeSlice.actions;
 
 export default exchangeSlice.reducer;

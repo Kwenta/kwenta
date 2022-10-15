@@ -1,33 +1,40 @@
 import Wei, { wei } from '@synthetixio/wei';
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import { closeModal } from 'state/exchange/reducer';
 import { selectTotalRedeemableBalanceWei } from 'state/exchange/selectors';
-import { useAppSelector } from 'state/store';
+import { useAppDispatch, useAppSelector } from 'state/store';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
 import { CurrencyKey } from 'constants/currency';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
+import { txErrorState } from 'store/exchange';
 import { FlexDivColCentered, numericValueCSS } from 'styles/common';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 
 export type TxProvider = 'synthetix' | '1inch';
 
 type RedeemTxModalProps = {
-	onDismiss: () => void;
-	txError: string | null;
 	attemptRetry: () => void;
 };
 
-export const RedeemTxModal: FC<RedeemTxModalProps> = ({ onDismiss, txError, attemptRetry }) => {
+export const RedeemTxModal: FC<RedeemTxModalProps> = ({ attemptRetry }) => {
 	const { t } = useTranslation();
+	const txError = useRecoilValue(txErrorState);
 
-	const { redeemableSynthBalances } = useAppSelector(({ exchange }) => ({
-		redeemableSynthBalances: exchange.redeemableSynthBalances,
-	}));
+	const redeemableSynthBalances = useAppSelector(
+		({ exchange }) => exchange.redeemableSynthBalances
+	);
 
 	const totalRedeemableBalance = useAppSelector(selectTotalRedeemableBalanceWei);
+	const dispatch = useAppDispatch();
+
+	const onDismiss = useCallback(() => {
+		dispatch(closeModal());
+	}, [dispatch]);
 
 	return (
 		<StyledBaseModal onDismiss={onDismiss} isOpen title={t('modals.confirm-transaction.title')}>

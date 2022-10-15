@@ -1,43 +1,42 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { NetworkIdByName, NetworkNameById } from '@synthetixio/contracts-interface';
 import { OPTIMISM_NETWORKS } from '@synthetixio/optimism-networks';
-
-import { WalletState } from './types';
+import { RootState } from 'state/store';
 
 const SUPPORTED_NETWORKS = [1, 10, 5, 420];
 
-export const isUnsupportedNetwork = createSelector(
-	(state: WalletState) => state.networkId,
+export const selectIsUnsupportedNetwork = createSelector(
+	(state: RootState) => state.wallet.networkId,
 	(networkId) => networkId && !SUPPORTED_NETWORKS.includes(networkId)
 );
 
-export const isWalletConnected = createSelector(
-	(state: WalletState) => state.walletAddress,
+export const selectIsWalletConnected = createSelector(
+	(state: RootState) => state.wallet.walletAddress,
 	(walletAddress) => !!walletAddress
 );
 
-export const isL2 = createSelector(
-	(state: WalletState) => state.networkId,
+export const selectIsL2 = createSelector(
+	(state: RootState) => state.wallet.networkId,
 	(networkId) => networkId && (networkId === 10 || networkId === 420)
 );
 
-export const isL1 = createSelector(
-	(state: WalletState) => state.networkId,
+export const selectIsL1 = createSelector(
+	(state: RootState) => state.wallet.networkId,
 	(networkId) => networkId && (networkId === 1 || networkId === 5)
 );
 
-export const isTestnet = createSelector(
-	(state: WalletState) => state.networkId,
+export const selectIsTestnet = createSelector(
+	(state: RootState) => state.wallet.networkId,
 	(networkId) => networkId && (networkId === 5 || networkId === 420)
 );
 
-export const isMainnet = createSelector(
-	(state: WalletState) => state.networkId,
+export const selectIsMainnet = createSelector(
+	(state: RootState) => state.wallet.networkId,
 	(networkId) => networkId && (networkId === 5 || networkId === 420)
 );
 
 export const selectBaseUrl = createSelector(
-	(state: WalletState) => state.networkId,
+	(state: RootState) => state.wallet.networkId,
 	(networkId) => {
 		if (networkId === 10 || networkId === 420) {
 			return (

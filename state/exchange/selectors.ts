@@ -2,6 +2,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
 import { selectTotalUSDBalanceWei } from 'state/balances/selectors';
 import { RootState, sdk } from 'state/store';
+import { selectIsWalletConnected } from 'state/wallet/selectors';
 
 import { zeroBN } from 'utils/formatters/number';
 
@@ -125,4 +126,64 @@ export const validQuoteCurrency = createSelector(
 export const validBaseCurrency = createSelector(
 	(state: RootState) => state.exchange.baseCurrencyKey,
 	(baseCurrencyKey) => !!baseCurrencyKey && sdk.exchange.validCurrencyKey(baseCurrencyKey)
+);
+
+export const selectCanRedeem = createSelector(
+	selectTotalRedeemableBalanceWei,
+	(state: RootState) => state.exchange.redeemableSynthBalances,
+	(totalRedeemableBalance, redeemableSynthBalances) =>
+		totalRedeemableBalance.gt(0) && redeemableSynthBalances.length > 0
+);
+
+export const selectSubmissionDisabledReason = createSelector(
+	(state: RootState) => state.exchange.txProvider,
+	(state: RootState) => state.exchange.feeReclaimPeriod,
+	selectBothSidesSelected,
+	selectInsufficientBalance,
+	(state: RootState) => state.exchange.isSubmitting,
+	(state: RootState) => state.exchange.isApproving,
+	selectIsWalletConnected,
+	selectBaseAmountWei,
+	selectQuoteAmountWei,
+	(
+		txProvider,
+		feeReclaimPeriod,
+		bothSidesSelected,
+		insufficientBalance,
+		isSubmitting,
+		isApproving,
+		isWalletConnected,
+		baseAmountWei,
+		quoteAmountWei
+	) => {
+		if (feeReclaimPeriod > 0) {
+			return 'exchange.summary-info.button.fee-reclaim-period';
+		}
+		if (!bothSidesSelected) {
+			return txProvider === '1inch'
+				? 'exchange.summary-info.button.select-token'
+				: 'exchange.summary-info.button.select-synth';
+		}
+		if (insufficientBalance) {
+			return 'exchange.summary-info.button.insufficient-balance';
+		}
+		if (isSubmitting) {
+			return 'exchange.summary-info.button.submitting-order';
+		}
+		if (isApproving) {
+			return 'exchange.summary-info.button.approving';
+		}
+		// if (oneInchQuoteQuery.error) {
+		// 	return t('exchange.summary-info.button.insufficient-liquidity');
+		// }
+		if (!isWalletConnected || baseAmountWei.lte(0) || quoteAmountWei.lte(0)) {
+			return 'exchange.summary-info.button.enter-amount';
+		}
+		return null;
+	}
+);
+
+export const selectIsApproved = createSelector(
+	(state: RootState) => state.exchange.approvalStatus,
+	(approveStatus) => approveStatus === 'approved'
 );
