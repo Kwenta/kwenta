@@ -66,7 +66,7 @@ const StyledFuturesIcon = styled(FuturesIcon)`
 const Container = styled(BorderedPanel)`
 	display: flex;
 	justify-content: space-between;
-	padding: 10px 14px;
+	padding: 10px 10px;
 	margin-bottom: 16px;
 `;
 
@@ -75,6 +75,7 @@ const Title = styled.div`
 	font-size: 16px;
 	display: flex;
 	align-items: center;
+	cursor: default;
 `;
 
 const FAQLink = styled.div`
@@ -101,7 +102,8 @@ const Label = styled.span`
 
 const IconContainer = styled.span`
 	margin-left: 5px;
-	${media.lessThan('xl')`
-        margin-left: 0;
-    `}
+
+	@media (max-width: 1550px) {
+		margin-left: 0;
+	}
 `;
