@@ -37,12 +37,9 @@ const SettleTransactionsCard: FC = () => {
 
 	const handleSettle = async () => {
 		setTxError(null);
-		dispatch(setOpenModal('settle'));
 
 		try {
 			dispatch(submitSettle());
-
-			setOpenModal(undefined);
 		} catch (e) {
 			logError(e);
 			setTxError(e.message);
@@ -102,8 +99,6 @@ const SettleTransactionsCard: FC = () => {
 					onDismiss={() => setOpenModal(undefined)}
 					txError={txError}
 					attemptRetry={handleSettle}
-					currencyKey={baseCurrencyKey!}
-					currencyLabel={<NoTextTransform>{baseCurrencyKey}</NoTextTransform>}
 				/>
 			)}
 		</>

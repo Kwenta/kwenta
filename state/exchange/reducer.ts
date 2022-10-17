@@ -17,6 +17,8 @@ import {
 	resetCurrencies,
 	submitApprove,
 	submitExchange,
+	submitRedeem,
+	submitSettle,
 } from './actions';
 import { ExchangeState } from './types';
 
@@ -214,18 +216,46 @@ const exchangeSlice = createSlice({
 		});
 		builder.addCase(submitExchange.pending, (state) => {
 			state.isSubmitting = true;
+			state.openModal = 'confirm';
 		});
 		builder.addCase(submitExchange.fulfilled, (state) => {
 			state.isSubmitting = false;
+			state.openModal = undefined;
 		});
 		builder.addCase(submitExchange.rejected, (state) => {
 			state.isSubmitting = false;
+			state.openModal = undefined;
 		});
 		builder.addCase(checkNeedsApproval.fulfilled, (state, action) => {
 			state.approvalStatus = action.payload;
 		});
 		builder.addCase(submitApprove.pending, (state) => {
 			state.approvalStatus = 'approving';
+			state.openModal = 'approve';
+		});
+		builder.addCase(submitApprove.fulfilled, (state) => {
+			state.openModal = undefined;
+		});
+		builder.addCase(submitApprove.rejected, (state) => {
+			state.openModal = undefined;
+		});
+		builder.addCase(submitRedeem.pending, (state) => {
+			state.openModal = 'redeem';
+		});
+		builder.addCase(submitRedeem.fulfilled, (state) => {
+			state.openModal = undefined;
+		});
+		builder.addCase(submitRedeem.rejected, (state) => {
+			state.openModal = undefined;
+		});
+		builder.addCase(submitSettle.pending, (state) => {
+			state.openModal = 'settle';
+		});
+		builder.addCase(submitSettle.fulfilled, (state) => {
+			state.openModal = undefined;
+		});
+		builder.addCase(submitSettle.rejected, (state) => {
+			state.openModal = undefined;
 		});
 		builder.addCase(fetchTokenList.pending, (state) => {
 			state.tokenListLoading = true;

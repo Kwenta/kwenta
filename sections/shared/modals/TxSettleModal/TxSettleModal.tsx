@@ -1,37 +1,33 @@
-import { FC, ReactNode } from 'react';
+import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAppSelector } from 'state/store';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
-import { FlexDivColCentered } from 'styles/common';
+import { FlexDivColCentered, NoTextTransform } from 'styles/common';
 import { formatRevert } from 'utils/formatters/error';
 
 type TxSettleModalProps = {
 	onDismiss: () => void;
 	txError: string | null;
 	attemptRetry: () => void;
-	currencyKey: string;
-	currencyLabel: ReactNode;
 };
 
-export const TxSettleModal: FC<TxSettleModalProps> = ({
-	onDismiss,
-	txError,
-	attemptRetry,
-	currencyKey,
-	currencyLabel,
-}) => {
+export const TxSettleModal: FC<TxSettleModalProps> = ({ onDismiss, txError, attemptRetry }) => {
+	const baseCurrencyKey = useAppSelector(({ exchange }) => exchange.baseCurrencyKey);
 	const { t } = useTranslation();
 
 	return (
 		<StyledBaseModal onDismiss={onDismiss} isOpen title={t('modals.settle-transaction.title')}>
 			<Currencies>
 				<CurrencyItem>
-					<CurrencyItemTitle>{currencyLabel}</CurrencyItemTitle>
+					<CurrencyItemTitle>
+						<NoTextTransform>{baseCurrencyKey}</NoTextTransform>
+					</CurrencyItemTitle>
 					<Currency.Icon
-						currencyKey={currencyKey}
+						currencyKey={baseCurrencyKey!}
 						width="40px"
 						height="40px"
 						data-testid="currency-img"
