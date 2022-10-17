@@ -3,8 +3,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import { useGetFuturesTradersStats } from 'queries/futures/useGetFuturesTradersStats';
-import { useGetFuturesTradesStats } from 'queries/futures/useGetFuturesTradesStats';
-import { useGetFuturesVolumesStats } from 'queries/futures/useGetFuturesVolumesStats';
+import { useGetStatsVolumes } from 'queries/futures/useGetStatsVolumes';
 import { futuresMarketsState } from 'store/futures';
 import { selectedTimeframeState } from 'store/stats';
 
@@ -16,8 +15,7 @@ const useStatsData = () => {
 
 	// run queries
 	useGetFuturesMarkets();
-	const { data: rawVolumeData } = useGetFuturesVolumesStats();
-	const { data: rawTradesData } = useGetFuturesTradesStats();
+	const { data: rawVolumeData } = useGetStatsVolumes();
 	const { data: rawTradersData } = useGetFuturesTradersStats();
 
 	const openInterestData = useMemo(() => {
@@ -34,17 +32,12 @@ const useStatsData = () => {
 		return rawVolumeData;
 	}, [rawVolumeData, selectedTimeframe]);
 
-	const tradesData = useMemo(() => {
-		return rawTradesData;
-	}, [rawTradesData, selectedTimeframe]);
-
 	const tradersData = useMemo(() => {
 		return rawTradersData;
 	}, [rawTradersData, selectedTimeframe]);
 
 	return {
 		volumeData,
-		tradesData,
 		tradersData,
 		openInterestData,
 		selectedTimeframe,

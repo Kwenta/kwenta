@@ -43,6 +43,7 @@ export const TimeframeSwitcher: FC = () => {
 		<Container>
 			{TIMEFRAMES.map((timeframe) => (
 				<StyledBtn
+					key={timeframe}
 					onClick={() => {
 						setSelectedTimeframe(timeframe);
 					}}

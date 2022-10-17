@@ -12,7 +12,7 @@ import { TimeframeSwitcher } from './TimeframeSwitcher';
 export const Trades = () => {
 	const { t } = useTranslation();
 	const theme = useTheme();
-	const { tradesData } = useStatsData();
+	const { volumeData } = useStatsData();
 
 	const ref = useRef<HTMLDivElement | null>(null);
 
@@ -23,14 +23,14 @@ export const Trades = () => {
 	}, [ref?.current, theme]);
 
 	useEffect(() => {
-		if (!ref || !chart || !ref.current || !tradesData || !tradesData.length) {
+		if (!ref || !chart || !ref.current || !volumeData || !volumeData.length) {
 			return;
 		}
 
 		const text = t('stats.trades.title');
 
 		const data: any = [];
-		tradesData?.forEach(({ date }) => data.push(date));
+		volumeData?.forEach(({ date }) => data.push(date));
 		const option: EChartsOption = {
 			...defaultOptions,
 			title: {
@@ -72,17 +72,17 @@ export const Trades = () => {
 			],
 			series: [
 				{
-					data: tradesData?.map((data) => data.tradesByPeriod),
+					data: volumeData?.map((data) => data.trades),
 					type: 'bar',
-					name: 'Trades by Period',
+					name: 'Trades',
 					itemStyle: {
 						color: '#C9975B',
 					},
 				},
 				{
-					data: tradesData?.map((data) => data.totalTrades),
+					data: volumeData?.map((data) => data.cumulativeTrades || 0),
 					type: 'line',
-					name: 'Total Trades',
+					name: 'Cumulative Trades',
 					lineStyle: {
 						color: '#02E1FF',
 						cap: 'square',
@@ -94,7 +94,7 @@ export const Trades = () => {
 		};
 
 		chart.setOption(option);
-	}, [ref, chart, t, tradesData, theme, defaultOptions]);
+	}, [ref, chart, t, volumeData, theme, defaultOptions]);
 
 	return (
 		<ChartContainer width={1}>

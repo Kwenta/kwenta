@@ -29,7 +29,7 @@ export const Volume = () => {
 			return;
 		}
 
-		const totalVolume = volumeData.reduce((acc, curr) => acc + curr.volumes, 0);
+		const totalVolume = volumeData.reduce((acc, curr) => acc + curr.volume, 0);
 
 		const text = t('stats.volume.title');
 		const subtext = formatDollars(totalVolume, { maxDecimals: 0 });
@@ -70,7 +70,7 @@ export const Volume = () => {
 			],
 			series: [
 				{
-					data: volumeData?.map((data) => data.volumes),
+					data: volumeData?.map((data) => data.volume),
 					type: 'bar',
 					name: 'Total Volume',
 					itemStyle: {
