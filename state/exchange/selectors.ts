@@ -167,6 +167,7 @@ export const selectSubmissionDisabledReason = createSelector(
 	selectInsufficientBalance,
 	(state: RootState) => state.exchange.isSubmitting,
 	selectIsApproving,
+	(state: RootState) => state.exchange.oneInchQuoteError,
 	selectIsWalletConnected,
 	selectBaseAmountWei,
 	selectQuoteAmountWei,
@@ -177,6 +178,7 @@ export const selectSubmissionDisabledReason = createSelector(
 		insufficientBalance,
 		isSubmitting,
 		isApproving,
+		oneInchQuoteError,
 		isWalletConnected,
 		baseAmountWei,
 		quoteAmountWei
@@ -198,9 +200,9 @@ export const selectSubmissionDisabledReason = createSelector(
 		if (isApproving) {
 			return 'exchange.summary-info.button.approving';
 		}
-		// if (oneInchQuoteQuery.error) {
-		// 	return t('exchange.summary-info.button.insufficient-liquidity');
-		// }
+		if (oneInchQuoteError) {
+			return 'exchange.summary-info.button.insufficient-liquidity';
+		}
 		if (!isWalletConnected || baseAmountWei.lte(0) || quoteAmountWei.lte(0)) {
 			return 'exchange.summary-info.button.enter-amount';
 		}

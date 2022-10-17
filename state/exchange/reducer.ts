@@ -9,6 +9,7 @@ import {
 	fetchBalances,
 	fetchFeeReclaimPeriod,
 	fetchNumEntries,
+	fetchOneInchQuote,
 	fetchRates,
 	fetchTokenList,
 	fetchTransactionFee,
@@ -49,6 +50,9 @@ const initialState: ExchangeState = {
 	feeReclaimPeriod: 0,
 	settlementWaitingPeriod: 0,
 	openModal: undefined,
+	oneInchQuote: '',
+	oneInchQuoteLoading: false,
+	oneInchQuoteError: false,
 };
 
 const exchangeSlice = createSlice({
@@ -245,6 +249,19 @@ const exchangeSlice = createSlice({
 		});
 		builder.addCase(fetchNumEntries.fulfilled, (state, action) => {
 			state.numEntries = action.payload;
+		});
+		builder.addCase(fetchOneInchQuote.pending, (state) => {
+			state.oneInchQuoteLoading = true;
+		});
+		builder.addCase(fetchOneInchQuote.fulfilled, (state, action) => {
+			state.oneInchQuoteLoading = false;
+			if (!!action.payload) {
+				state.baseAmount = action.payload;
+			}
+		});
+		builder.addCase(fetchOneInchQuote.rejected, (state) => {
+			state.oneInchQuoteLoading = false;
+			state.oneInchQuoteError = true;
 		});
 	},
 });

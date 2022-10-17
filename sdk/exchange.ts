@@ -245,8 +245,7 @@ export default class ExchangeService {
 			const ETHBalance = await this.getETHBalance();
 			return ETHBalance;
 		} else if (this.synthsMap[currencyKey as SynthSymbol]) {
-			const synthsWalletBalance = await this.sdk.synths.getSynthBalances();
-			return synthsWalletBalance.balancesMap[currencyKey]?.balance ?? zeroBN;
+			return this.sdk.synths.getSynthBalance(currencyKey);
 		} else {
 			const token = this.tokenList.find((t) => t.symbol === currencyKey);
 			if (token) {

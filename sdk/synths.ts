@@ -12,6 +12,7 @@ type SynthBalancesTuple = [string[], ethers.BigNumber[], ethers.BigNumber[]];
 
 export default class SynthsService {
 	private sdk: KwentaSDK;
+	private balances: any;
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
@@ -61,6 +62,13 @@ export default class SynthsService {
 			susdWalletBalance: balancesMap?.['sUSD']?.balance ?? zeroBN,
 		};
 
+		this.balances = balances;
+
 		return balances;
+	}
+
+	public getSynthBalance(currencyKey: string) {
+		// TODO: If this.balances is empty, populate it first.
+		return this.balances?.balancesMap[currencyKey]?.balance ?? zeroBN;
 	}
 }

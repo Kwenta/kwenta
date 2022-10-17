@@ -18,18 +18,15 @@ export const fetchBalances = createAsyncThunk<any, void, ThunkConfig>(
 			exchange: { quoteCurrencyKey, baseCurrencyKey },
 		} = getState();
 
-		const quoteBalance = quoteCurrencyKey
-			? await sdk.exchange.getBalance(quoteCurrencyKey)
-			: undefined;
-
-		const baseBalance = baseCurrencyKey
-			? await sdk.exchange.getBalance(baseCurrencyKey)
-			: undefined;
-
-		const {
-			balances: redeemableBalances,
-			totalUSDBalance: totalRedeemableBalance,
-		} = await sdk.exchange.getRedeemableDeprecatedSynths();
+		const [
+			quoteBalance,
+			baseBalance,
+			{ balances: redeemableBalances, totalUSDBalance: totalRedeemableBalance },
+		] = await Promise.all([
+			quoteCurrencyKey ? sdk.exchange.getBalance(quoteCurrencyKey) : undefined,
+			baseCurrencyKey ? sdk.exchange.getBalance(baseCurrencyKey) : undefined,
+			sdk.exchange.getRedeemableDeprecatedSynths(),
+		]);
 
 		return {
 			quoteBalance: quoteBalance ? quoteBalance.toString() : undefined,
@@ -71,7 +68,6 @@ export const fetchTransactionFee = createAsyncThunk<any, void, ThunkConfig>(
 		if (baseCurrencyKey && quoteCurrencyKey) {
 			const [transactionFee, feeCost] = await Promise.all([
 				sdk.exchange.getTransactionFee(quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount),
-
 				sdk.exchange.getFeeCost(quoteCurrencyKey, baseCurrencyKey, quoteAmount),
 			]);
 
@@ -177,7 +173,7 @@ export const checkNeedsApproval = createAsyncThunk<any, void, ThunkConfig>(
 			if (needsApproval) {
 				// TODO: Handle case where allowance is not MaxUint256.
 				// Simplest way to do this is to return the allowance from
-				// checkAllowance and store it in state to do the comparison there.
+				// checkAllowance, store it in state to do the comparison there.
 				const isApproved = await sdk.exchange.checkAllowance(
 					quoteCurrencyKey,
 					baseCurrencyKey,
@@ -279,12 +275,10 @@ export const fetchFeeReclaimPeriod = createAsyncThunk<any, void, ThunkConfig>(
 			exchange: { quoteCurrencyKey, baseCurrencyKey },
 		} = getState();
 
-		const feeReclaimPeriod = quoteCurrencyKey
-			? await sdk.exchange.getFeeReclaimPeriod(quoteCurrencyKey)
-			: 0;
-		const settlementWaitingPeriod = baseCurrencyKey
-			? await sdk.exchange.getFeeReclaimPeriod(baseCurrencyKey)
-			: 0;
+		const [feeReclaimPeriod, settlementWaitingPeriod] = await Promise.all([
+			quoteCurrencyKey ? sdk.exchange.getFeeReclaimPeriod(quoteCurrencyKey) : 0,
+			baseCurrencyKey ? sdk.exchange.getFeeReclaimPeriod(baseCurrencyKey) : 0,
+		]);
 
 		return { feeReclaimPeriod, settlementWaitingPeriod };
 	}
@@ -325,5 +319,32 @@ export const fetchNumEntries = createAsyncThunk<any, void, ThunkConfig>(
 		}
 
 		return 0;
+	}
+);
+
+export const fetchOneInchQuote = createAsyncThunk<any, void, ThunkConfig>(
+	'exchange/fetchOneInchQuote',
+	async (_, { getState, extra: { sdk } }) => {
+		const {
+			exchange: { quoteCurrencyKey, baseCurrencyKey, quoteAmount, txProvider },
+		} = getState();
+
+		if (
+			!!quoteCurrencyKey &&
+			!!baseCurrencyKey &&
+			!!quoteAmount &&
+			!!txProvider &&
+			txProvider !== 'synthetix'
+		) {
+			const oneInchQuote = await sdk.exchange.getOneInchQuote(
+				baseCurrencyKey,
+				quoteCurrencyKey,
+				quoteAmount
+			);
+
+			return oneInchQuote;
+		}
+
+		return undefined;
 	}
 );

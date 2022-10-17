@@ -14,11 +14,14 @@ import CurrencyCard from '../CurrencyCard';
 const BaseCurrencyCard: FC = memo(() => {
 	const { t } = useTranslation();
 
-	const { baseCurrencyKey, baseAmount, txProvider } = useAppSelector(({ exchange }) => ({
-		baseCurrencyKey: exchange.baseCurrencyKey,
-		baseAmount: exchange.baseAmount,
-		txProvider: exchange.txProvider,
-	}));
+	const { baseCurrencyKey, baseAmount, txProvider, oneInchQuoteLoading } = useAppSelector(
+		({ exchange }) => ({
+			baseCurrencyKey: exchange.baseCurrencyKey,
+			baseAmount: exchange.baseAmount,
+			txProvider: exchange.txProvider,
+			oneInchQuoteLoading: exchange.oneInchQuoteLoading,
+		})
+	);
 
 	const dispatch = useAppDispatch();
 
@@ -54,7 +57,7 @@ const BaseCurrencyCard: FC = memo(() => {
 			priceRate={basePriceRate}
 			label={t('exchange.common.into')}
 			slippagePercent={slippagePercent}
-			isLoading={txProvider === '1inch'} // && oneInchQuoteQuery.isFetching
+			isLoading={txProvider === '1inch' && oneInchQuoteLoading}
 		/>
 	);
 });
