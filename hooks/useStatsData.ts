@@ -16,8 +16,11 @@ const useStatsData = () => {
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 
 	const openInterestData = useMemo(() => {
-		return futuresMarkets.map(({ marketSize, price }) => {
-			return marketSize.mul(price).toNumber();
+		return futuresMarkets.map(({ asset, marketSize, price }) => {
+			return {
+				asset,
+				openInterest: marketSize.mul(price).toNumber(),
+			};
 		});
 	}, [futuresMarkets]);
 

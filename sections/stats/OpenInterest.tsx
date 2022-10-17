@@ -5,17 +5,28 @@ import styled, { useTheme } from 'styled-components';
 
 import useStatsData from 'hooks/useStatsData';
 import { formatDollars } from 'utils/formatters/number';
+import { getDisplayAsset, MarketKeyByAsset } from 'utils/futures';
 import { SYNTH_ICONS } from 'utils/icons';
 
 import { initChart } from './initChart';
 import type { EChartsOption } from './initChart';
 import { ChartContainer, ChartWrapper } from './stats.styles';
 
+type RichLabel = {
+	width: number;
+	height: number;
+	backgroundColor: {
+		image: any;
+	};
+};
+
+type RichLabelMap = Record<string, RichLabel>;
+
 export const OpenInterest = () => {
 	const { t } = useTranslation();
 	const theme = useTheme();
 
-	const { futuresMarkets, openInterestData } = useStatsData();
+	const { openInterestData } = useStatsData();
 
 	const ref = useRef<HTMLDivElement | null>(null);
 
@@ -25,48 +36,38 @@ export const OpenInterest = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ref?.current, theme]);
 
-	const marketsWithIcons = useMemo(() => {
-		const temp: Record<string, { icon: any }> = {};
-		futuresMarkets.forEach(({ asset }) => {
-			temp[asset] = {
-				icon: SYNTH_ICONS[asset.startsWith('s') ? asset : `s${asset}`],
-			};
-		});
-		return temp;
-	}, [futuresMarkets]);
-
-	const richMarketsLabel = useMemo(() => {
-		const temp: Record<
-			string,
-			{
-				width: number;
-				height: number;
-				backgroundColor: { image: any };
-			}
-		> = {};
-		futuresMarkets.forEach(({ asset }) => {
-			temp[asset] = {
-				width: 40,
-				height: 40,
-				backgroundColor: {
-					image: SYNTH_ICONS[asset.startsWith('s') ? asset : `s${asset}`],
-				},
-			};
-		});
-		return temp;
-	}, [futuresMarkets]);
+	const openInterestStats = useMemo(() => {
+		return openInterestData
+			.map(({ asset, openInterest }) => ({
+				asset: getDisplayAsset(asset) ?? asset,
+				openInterest,
+				icon: SYNTH_ICONS[MarketKeyByAsset[asset]],
+				richLabel: {
+					width: 40,
+					height: 40,
+					backgroundColor: {
+						image: SYNTH_ICONS[MarketKeyByAsset[asset]],
+					},
+				} as RichLabel,
+			}))
+			.sort((a, b) => b.openInterest - a.openInterest);
+	}, [openInterestData]);
 
 	useEffect(() => {
 		if (!ref || !chart || !ref.current || !openInterestData || !openInterestData.length) {
 			return;
 		}
 
-		const totalOI = openInterestData.reduce((acc, curr) => acc + curr, 0);
+		const totalOI = openInterestData.reduce((acc, curr) => acc + curr.openInterest, 0);
 
 		const text = t('stats.open-interest.title');
 		const subtext = formatDollars(totalOI, { maxDecimals: 0 });
 
-		const data = Object.keys(marketsWithIcons);
+		const richLabels = openInterestStats.reduce((acc, openInterestStat) => {
+			acc[openInterestStat.asset] = openInterestStat.richLabel;
+			return acc;
+		}, {} as RichLabelMap);
+
 		const option: EChartsOption = {
 			...defaultOptions,
 			title: {
@@ -81,10 +82,10 @@ export const OpenInterest = () => {
 			},
 			xAxis: {
 				type: 'category',
-				data,
+				data: openInterestStats.map(({ asset }) => asset),
 				axisLabel: {
-					formatter: (sAsset: any) => {
-						return [`{${sAsset}| }`, `{syntheticAsset|${sAsset}}`].join('\n');
+					formatter: (market: any) => {
+						return [`{${market}| }`, `{syntheticAsset|${market}}`].join('\n');
 					},
 					rich: {
 						syntheticAsset: {
@@ -95,7 +96,7 @@ export const OpenInterest = () => {
 							height: 23,
 							padding: [9, 0, 0, 0],
 						},
-						...richMarketsLabel,
+						...richLabels,
 					},
 					interval: 0,
 				},
@@ -118,7 +119,7 @@ export const OpenInterest = () => {
 			},
 			series: [
 				{
-					data: openInterestData.sort((a, b) => b - a),
+					data: openInterestStats.map(({ openInterest }) => openInterest),
 					type: 'bar',
 					name: 'Open Interest',
 					itemStyle: {
@@ -137,7 +138,7 @@ export const OpenInterest = () => {
 		};
 
 		chart.setOption(option);
-	}, [ref, chart, t, openInterestData, marketsWithIcons, richMarketsLabel, theme, defaultOptions]);
+	}, [ref, chart, t, openInterestData, openInterestStats, theme, defaultOptions]);
 
 	return (
 		<StyledChartContainer width={2}>
