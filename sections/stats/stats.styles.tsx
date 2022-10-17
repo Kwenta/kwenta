@@ -14,6 +14,7 @@ export const StatsContainer = styled.div`
 
 export const ChartContainer = styled.div<{ width: number }>`
 	background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
+	padding: 12px;
 
 	/* Highlight-Glow */
 	box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.08),

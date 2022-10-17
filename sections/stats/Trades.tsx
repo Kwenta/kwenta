@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'styled-components';
 
@@ -7,7 +7,7 @@ import useStatsData from 'hooks/useStatsData';
 import { initChart } from './initChart';
 import type { EChartsOption } from './initChart';
 import { ChartContainer, ChartWrapper } from './stats.styles';
-import { TimeRangeSwitcher } from './TimeRangeSwitcher';
+import { TimeframeSwitcher } from './TimeframeSwitcher';
 
 export const Trades = () => {
 	const { t } = useTranslation();
@@ -15,12 +15,6 @@ export const Trades = () => {
 	const { tradesData } = useStatsData();
 
 	const ref = useRef<HTMLDivElement | null>(null);
-
-	// show 24h data by default
-	const [is24H, setIs24H] = useState<boolean>(true);
-	const [isWeek, setIsWeek] = useState<boolean>(false);
-	const [isMonth, setIsMonth] = useState<boolean>(false);
-	const [isMax, setIsMax] = useState<boolean>(false);
 
 	const { chart, defaultOptions } = useMemo(() => {
 		if (chart) chart.dispose();
@@ -104,6 +98,7 @@ export const Trades = () => {
 
 	return (
 		<ChartContainer width={1}>
+			<TimeframeSwitcher />
 			<ChartWrapper ref={ref} />
 		</ChartContainer>
 	);

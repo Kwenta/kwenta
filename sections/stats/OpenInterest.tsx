@@ -79,6 +79,7 @@ export const OpenInterest = () => {
 				...defaultOptions.grid,
 				right: 100,
 				left: 40,
+				bottom: 60,
 			},
 			xAxis: {
 				type: 'category',

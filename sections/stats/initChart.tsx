@@ -51,7 +51,6 @@ export const initChart = (dom: HTMLElement | null, theme: ThemeInterface): Chart
 	const defaultOptions: EChartsOption = {
 		title: {
 			left: 20,
-			top: 20,
 			itemGap: 10,
 			textStyle: {
 				color: theme.colors.selectedTheme.white,
@@ -65,8 +64,8 @@ export const initChart = (dom: HTMLElement | null, theme: ThemeInterface): Chart
 			},
 		},
 		grid: {
-			top: 100,
-			bottom: 60,
+			top: 70,
+			bottom: 30,
 		},
 		xAxis: {
 			axisLabel: {
@@ -88,7 +87,7 @@ export const initChart = (dom: HTMLElement | null, theme: ThemeInterface): Chart
 		},
 		legend: {
 			icon: 'circle',
-			top: 50,
+			top: 30,
 			left: 20,
 			textStyle: {
 				color: theme.colors.common.primaryWhite,
