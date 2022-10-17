@@ -1,8 +1,10 @@
+import { WeiSource } from '@synthetixio/wei';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'styled-components';
 
 import useStatsData from 'hooks/useStatsData';
+import { formatDollars } from 'utils/formatters/number';
 
 import { initChart } from './initChart';
 import type { EChartsOption } from './initChart';
@@ -33,8 +35,10 @@ export const Volume = () => {
 			return;
 		}
 
+		const totalVolume = volumeData.reduce((acc, curr) => acc + curr.volumes, 0);
+
 		const text = t('stats.volume.title');
-		const subtext = '$40,461,472';
+		const subtext = formatDollars(totalVolume, { maxDecimals: 0 });
 
 		const data: any = [];
 		volumeData?.forEach(({ date }) => data.push(date));
@@ -55,43 +59,42 @@ export const Volume = () => {
 				type: 'category',
 				data,
 			},
-			yAxis: {
-				...defaultOptions.yAxis,
-				type: 'value',
-				axisLabel: {
-					color: theme.colors.common.primaryWhite,
-					formatter: (value: any) => {
-						return (value === 0 ? '' : '$') + value.toLocaleString();
+			yAxis: [
+				{
+					type: 'value',
+					splitLine: {
+						lineStyle: {
+							color: '#39332D',
+						},
+					},
+					position: 'right',
+					axisLabel: {
+						formatter: (value: WeiSource) =>
+							formatDollars(value, { truncation: { divisor: 1e6, unit: 'M' }, maxDecimals: 0 }),
 					},
 				},
-			},
+			],
 			series: [
 				{
 					data: volumeData?.map((data) => data.volumes),
 					type: 'bar',
-					name: 'Total Trades',
+					name: 'Total Volume',
 					itemStyle: {
 						color: theme.colors.common.primaryGold,
 					},
-					tooltip: {},
 				},
 			],
+			tooltip: {
+				...defaultOptions.tooltip,
+				valueFormatter: (value: WeiSource) => formatDollars(value, { maxDecimals: 0 }),
+			},
+			legend: undefined,
 		};
 		chart.setOption(option);
 	}, [chart, t, volumeData, theme, defaultOptions]);
 
 	return (
 		<ChartContainer width={2}>
-			<TimeRangeSwitcher
-				is24H={is24H}
-				isWeek={isWeek}
-				isMonth={isMonth}
-				isMax={isMax}
-				setIs24H={setIs24H}
-				setIsWeek={setIsWeek}
-				setIsMonth={setIsMonth}
-				setIsMax={setIsMax}
-			/>
 			<ChartWrapper ref={ref} />
 		</ChartContainer>
 	);

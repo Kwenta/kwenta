@@ -1,8 +1,10 @@
+import { WeiSource } from '@synthetixio/wei';
 import { useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { useTheme } from 'styled-components';
 
 import useStatsData from 'hooks/useStatsData';
+import { formatDollars } from 'utils/formatters/number';
 import { SYNTH_ICONS } from 'utils/icons';
 
 import { initChart } from './initChart';
@@ -59,32 +61,22 @@ export const OpenInterest = () => {
 			return;
 		}
 
+		const totalOI = openInterestData.reduce((acc, curr) => acc + curr, 0);
+
 		const text = t('stats.open-interest.title');
-		const subtext = '$40,461,472';
+		const subtext = formatDollars(totalOI, { maxDecimals: 0 });
 
 		const data = Object.keys(marketsWithIcons);
 		const option: EChartsOption = {
+			...defaultOptions,
 			title: {
+				...defaultOptions.title,
 				text,
 				subtext,
-				left: 20,
-				top: 40,
-				itemGap: 10,
-				textStyle: {
-					color: theme.colors.common.primaryWhite,
-					fontFamily: theme.fonts.regular,
-					fontSize: 18,
-				},
-				subtextStyle: {
-					color: theme.colors.common.primaryWhite,
-					fontFamily: theme.fonts.monoBold,
-					fontSize: 28,
-				},
 			},
 			grid: {
-				top: 137,
-				// right: 40,
-				bottom: 100,
+				...defaultOptions.grid,
+				right: 100,
 				left: 40,
 			},
 			xAxis: {
@@ -115,31 +107,37 @@ export const OpenInterest = () => {
 				type: 'value',
 				splitLine: {
 					lineStyle: {
-						color: '#C9975B',
+						color: '#39332D',
 					},
+				},
+				axisLabel: {
+					formatter: (value: WeiSource) =>
+						formatDollars(value, { truncation: { divisor: 1e6, unit: 'M' }, maxDecimals: 1 }),
 				},
 				position: 'right',
 			},
-			tooltip: {
-				show: true,
-				backgroundColor: '#0C0C0C',
-				extraCssText:
-					'box-shadow: 0px 24px 40px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.08), inset 0px 0px 20px rgba(255, 255, 255, 0.03);backdrop-filter: blur(60px);/* Note: backdrop-filter has minimal browser support */border-radius: 15px;',
-			},
 			series: [
 				{
-					data: openInterestData.filter((e) => e !== undefined).sort((a, b) => b - a),
+					data: openInterestData.sort((a, b) => b - a),
 					type: 'bar',
-					name: 'Total Trades',
+					name: 'Open Interest',
 					itemStyle: {
 						color: '#C9975B',
 					},
+					label: {
+						formatter: (value: WeiSource) => formatDollars(value, { maxDecimals: 0 }),
+					},
 				},
 			],
+			tooltip: {
+				...defaultOptions.tooltip,
+				valueFormatter: (value: WeiSource) => formatDollars(value, { maxDecimals: 0 }),
+			},
+			legend: undefined,
 		};
 
 		chart.setOption(option);
-	}, [ref, chart, t, openInterestData, marketsWithIcons, richMarketsLabel, theme]);
+	}, [ref, chart, t, openInterestData, marketsWithIcons, richMarketsLabel, theme, defaultOptions]);
 
 	return (
 		<StyledChartContainer width={2}>

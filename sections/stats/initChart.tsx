@@ -51,7 +51,7 @@ export const initChart = (dom: HTMLElement | null, theme: ThemeInterface): Chart
 	const defaultOptions: EChartsOption = {
 		title: {
 			left: 20,
-			top: 40,
+			top: 20,
 			itemGap: 10,
 			textStyle: {
 				color: theme.colors.selectedTheme.white,
@@ -65,7 +65,7 @@ export const initChart = (dom: HTMLElement | null, theme: ThemeInterface): Chart
 			},
 		},
 		grid: {
-			top: 137,
+			top: 100,
 			bottom: 60,
 		},
 		xAxis: {
@@ -76,17 +76,6 @@ export const initChart = (dom: HTMLElement | null, theme: ThemeInterface): Chart
 				show: false,
 			},
 		},
-		yAxis: {
-			splitLine: {
-				lineStyle: {
-					color: '#39332D',
-				},
-			},
-			axisLabel: {
-				color: theme.colors.common.primaryWhite,
-			},
-			position: 'right',
-		},
 		tooltip: {
 			show: true,
 			backgroundColor: '#0C0C0C',
@@ -95,6 +84,16 @@ export const initChart = (dom: HTMLElement | null, theme: ThemeInterface): Chart
 			trigger: 'axis',
 			axisPointer: {
 				type: 'cross',
+			},
+		},
+		legend: {
+			icon: 'circle',
+			top: 50,
+			left: 20,
+			textStyle: {
+				color: theme.colors.common.primaryWhite,
+				fontFamily: theme.fonts.regular,
+				fontSize: 15,
 			},
 		},
 	};

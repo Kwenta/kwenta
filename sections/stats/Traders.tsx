@@ -38,37 +38,33 @@ export const Traders = () => {
 		const data: any = [];
 		tradersData?.forEach(({ date }) => data.push(date));
 		const option: EChartsOption = {
+			...defaultOptions,
 			title: {
+				...defaultOptions.title,
 				text,
-				left: 20,
-				top: 40,
-				itemGap: 10,
-				textStyle: {
-					color: theme.colors.common.primaryWhite,
-					fontFamily: theme.fonts.regular,
-					fontSize: 18,
-				},
-			},
-			grid: {
-				top: 137,
-				bottom: 40,
 			},
 			xAxis: {
+				...defaultOptions.xAxis,
 				type: 'category',
 				data,
-				axisLabel: {
-					color: '#ECE8E3',
-				},
-				axisTick: {
-					show: false,
-				},
 			},
 			yAxis: [
 				{
 					type: 'value',
+					alignTicks: true,
 					splitLine: {
 						lineStyle: {
-							color: '#C9975B',
+							color: '#39332D',
+						},
+					},
+					position: 'left',
+				},
+				{
+					type: 'value',
+					alignTicks: true,
+					splitLine: {
+						lineStyle: {
+							color: '#39332D',
 						},
 					},
 					axisLabel: {
@@ -79,74 +75,35 @@ export const Traders = () => {
 					},
 					position: 'right',
 				},
-				{
-					type: 'value',
-					splitLine: {
-						lineStyle: {
-							color: '#C9975B',
-						},
-					},
-					max: 1000,
-					show: false,
-				},
 			],
-			tooltip: {
-				show: true,
-				backgroundColor: '#0C0C0C',
-				extraCssText:
-					'box-shadow: 0px 24px 40px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.08), inset 0px 0px 20px rgba(255, 255, 255, 0.03);backdrop-filter: blur(60px);/* Note: backdrop-filter has minimal browser support */border-radius: 15px;',
-				trigger: 'axis',
-				axisPointer: {
-					type: 'cross',
-				},
-			},
 			series: [
 				{
-					data: tradersData?.map((data) => data.totalUniqueTraders),
+					data: tradersData?.map((data) => data.uniqueTradersByPeriod),
 					type: 'bar',
-					name: 'Unique Traders',
+					name: 'Traders by Period',
 					itemStyle: {
 						color: '#C9975B',
 					},
 				},
 				{
-					name: 'Traders by Period',
+					data: tradersData?.map((data) => data.totalUniqueTraders),
 					type: 'line',
-					data: tradersData?.map((data) => data.uniqueTradersByPeriod),
+					name: 'Total Traders',
 					lineStyle: {
 						color: '#02E1FF',
 						cap: 'square',
 					},
-					yAxisIndex: 1,
 					symbol: 'none',
+					yAxisIndex: 1,
 				},
 			],
-			legend: {
-				icon: 'circle',
-				top: 71,
-				left: 20,
-				textStyle: {
-					color: theme.colors.common.primaryWhite,
-					fontFamily: theme.fonts.regular,
-					fontSize: 15,
-				},
-			},
 		};
 
 		chart.setOption(option);
-	}, [ref, chart, t, tradersData, theme]);
+	}, [ref, chart, t, tradersData, theme, defaultOptions]);
+
 	return (
 		<ChartContainer width={1}>
-			<TimeRangeSwitcher
-				is24H={is24H}
-				isWeek={isWeek}
-				isMonth={isMonth}
-				isMax={isMax}
-				setIs24H={setIs24H}
-				setIsWeek={setIsWeek}
-				setIsMonth={setIsMonth}
-				setIsMax={setIsMax}
-			/>
 			<ChartWrapper ref={ref} />
 		</ChartContainer>
 	);

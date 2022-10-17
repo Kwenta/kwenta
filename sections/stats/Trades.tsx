@@ -42,7 +42,6 @@ export const Trades = () => {
 			title: {
 				...defaultOptions.title,
 				text,
-				subtext: '',
 			},
 			xAxis: {
 				...defaultOptions.xAxis,
@@ -52,6 +51,7 @@ export const Trades = () => {
 			yAxis: [
 				{
 					type: 'value',
+					alignTicks: true,
 					splitLine: {
 						lineStyle: {
 							color: '#39332D',
@@ -61,6 +61,7 @@ export const Trades = () => {
 				},
 				{
 					type: 'value',
+					alignTicks: true,
 					splitLine: {
 						lineStyle: {
 							color: '#39332D',
@@ -85,9 +86,9 @@ export const Trades = () => {
 					},
 				},
 				{
-					name: 'Total Trades',
-					type: 'line',
 					data: tradesData?.map((data) => data.totalTrades),
+					type: 'line',
+					name: 'Total Trades',
 					lineStyle: {
 						color: '#02E1FF',
 						cap: 'square',
@@ -96,16 +97,6 @@ export const Trades = () => {
 					yAxisIndex: 1,
 				},
 			],
-			legend: {
-				icon: 'circle',
-				top: 71,
-				left: 20,
-				textStyle: {
-					color: theme.colors.common.primaryWhite,
-					fontFamily: theme.fonts.regular,
-					fontSize: 15,
-				},
-			},
 		};
 
 		chart.setOption(option);
@@ -113,16 +104,6 @@ export const Trades = () => {
 
 	return (
 		<ChartContainer width={1}>
-			<TimeRangeSwitcher
-				is24H={is24H}
-				isWeek={isWeek}
-				isMonth={isMonth}
-				isMax={isMax}
-				setIs24H={setIs24H}
-				setIsWeek={setIsWeek}
-				setIsMonth={setIsMonth}
-				setIsMax={setIsMax}
-			/>
 			<ChartWrapper ref={ref} />
 		</ChartContainer>
 	);
