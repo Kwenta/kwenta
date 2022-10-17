@@ -65,7 +65,7 @@ export const timePresentation = (timestamp: string, t: TFunction) => {
 
 export const formatDateWithoutYear = (date: Date) => formatDate(date, 'MMMM dd');
 
-export const formatShortDateWithoutYear = (date: Date) => formatDate(date, 'MM/dd');
+export const formatShortDateWithoutYear = (date: Date) => formatDate(date, 'M/dd');
 
 export const calculatedTimeDifference = (dateLeft: Date, dateRight: Date) =>
 	differenceInSeconds(dateLeft, dateRight);
