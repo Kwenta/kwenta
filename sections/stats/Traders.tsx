@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'styled-components';
 
-import { useGetFuturesTradersStats } from 'queries/futures/useGetFuturesTradersStats';
+import useStatsData from 'hooks/useStatsData';
 
 import { initChart } from './initChart';
 import type { EChartsOption } from './initChart';
@@ -12,6 +12,7 @@ import { TimeRangeSwitcher } from './TimeRangeSwitcher';
 export const Traders = () => {
 	const { t } = useTranslation();
 	const theme = useTheme();
+	const { tradersData } = useStatsData();
 
 	const ref = useRef<HTMLDivElement | null>(null);
 
@@ -26,20 +27,6 @@ export const Traders = () => {
 		return initChart(ref?.current, theme);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ref?.current, theme]);
-
-	const { data: rawData } = useGetFuturesTradersStats();
-
-	const tradersData = useMemo(() => {
-		if (is24H) {
-			return rawData;
-		} else if (isWeek) {
-			// TODO
-		} else if (isMonth) {
-			// TODO
-		} else if (isMax) {
-			// TODO
-		}
-	}, [is24H, isMax, isMonth, isWeek, rawData]);
 
 	useEffect(() => {
 		if (!ref || !chart || !ref.current || !tradersData || !tradersData.length) {
