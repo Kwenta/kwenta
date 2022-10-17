@@ -1,4 +1,5 @@
 import { wei } from '@synthetixio/wei';
+import { ethers } from 'ethers';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -57,6 +58,8 @@ const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel, tableType }) 
 	const [escrowedBalance, setEscrowedBalance] = useState(zeroBN);
 	const [stakedEscrowedBalance, setStakedEscrowedBalance] = useState(zeroBN);
 	const [amount, setAmount] = useState('0');
+	const [vKwentaAllowance, setVKwentaAllowance] = useState(zeroBN);
+	const [kwentaAllowance, setKwentaAllowance] = useState(zeroBN);
 	const amountBN = Math.trunc(Number(wei(amount ?? 0).mul(1e18))).toString();
 
 	useContractReads({
@@ -86,6 +89,16 @@ const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel, tableType }) 
 				functionName: 'balanceOf',
 				args: [walletAddress ?? undefined],
 			},
+			{
+				...vKwentaTokenContract,
+				functionName: 'allowance',
+				args: [walletAddress ?? undefined, vKwentaRedeemerContract.addressOrName],
+			},
+			{
+				...kwentaTokenContract,
+				functionName: 'allowance',
+				args: [walletAddress ?? undefined, stakingRewardsContract.addressOrName],
+			},
 		],
 		cacheOnBlock: true,
 		enabled: !!walletAddress,
@@ -97,10 +110,19 @@ const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel, tableType }) 
 				setEscrowedBalance(wei(data[2] ?? zeroBN));
 				setStakedEscrowedBalance(wei(data[3] ?? zeroBN));
 				setVKwentaBalance(wei(data[4] ?? zeroBN));
+				setVKwentaAllowance(wei(data[5] ?? zeroBN));
+				setKwentaAllowance(wei(data[6] ?? zeroBN));
 			}
 		},
 	});
 
+	const needApproval = useMemo(
+		() =>
+			tableType === 'redeem'
+				? vKwentaBalance.gt(vKwentaAllowance)
+				: kwentaBalance.gt(kwentaAllowance),
+		[tableType, vKwentaBalance, vKwentaAllowance, kwentaBalance, kwentaAllowance]
+	);
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
 
@@ -109,6 +131,22 @@ const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel, tableType }) 
 	const handleTabChange = (tabIndex: number) => {
 		setActiveTab(tabIndex);
 	};
+
+	const { config: vKwentaApproving } = usePrepareContractWrite({
+		...vKwentaTokenContract,
+		functionName: 'approve',
+		args: [vKwentaRedeemerContract.addressOrName, ethers.constants.MaxUint256],
+		enabled: !!walletAddress && tableType === 'redeem' && needApproval,
+		cacheTime: 5000,
+	});
+
+	const { config: kwentaApproving } = usePrepareContractWrite({
+		...kwentaTokenContract,
+		functionName: 'approve',
+		args: [stakingRewardsContract.addressOrName, ethers.constants.MaxUint256],
+		enabled: !!walletAddress && tableType !== 'redeem' && needApproval,
+		cacheTime: 5000,
+	});
 
 	const { config: stakedKwenta } = usePrepareContractWrite({
 		...stakingRewardsContract,
@@ -149,6 +187,8 @@ const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel, tableType }) 
 		cacheTime: 5000,
 	});
 
+	const { write: vKwentaApprove } = useContractWrite(vKwentaApproving);
+	const { write: kwentaApprove } = useContractWrite(kwentaApproving);
 	const { write: stakingKwenta } = useContractWrite(stakedKwenta);
 	const { write: unstakingKwenta } = useContractWrite(unstakedKwenta);
 	const { write: stakingEscrowKwenta } = useContractWrite(stakedEscrowKwenta);
@@ -211,8 +251,13 @@ const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel, tableType }) 
 					fullWidth
 					variant="flat"
 					size="sm"
-					disabled={activeTab === 0 ? !stakingKwenta : !unstakingKwenta}
-					onClick={() => (activeTab === 0 ? stakingKwenta?.() : unstakingKwenta?.())}
+					onClick={() =>
+						needApproval
+							? kwentaApprove?.()
+							: activeTab === 0
+							? stakingKwenta?.()
+							: unstakingKwenta?.()
+					}
 					style={{ marginTop: '20px' }}
 				>
 					{activeTab === 0
@@ -233,8 +278,15 @@ const StakingInputCard: FC<StakingInputCardProps> = ({ inputLabel, tableType }) 
 						: t('dashboard.stake.tabs.stake-table.unstake')}
 				</Button>
 			) : (
-				<Button fullWidth variant="flat" size="sm" disabled={!redeem} onClick={() => redeem?.()}>
-					{t('dashboard.stake.tabs.stake-table.redeem')}
+				<Button
+					fullWidth
+					variant="flat"
+					size="sm"
+					onClick={() => (needApproval ? vKwentaApprove?.() : redeem?.())}
+				>
+					{needApproval
+						? t('dashboard.stake.tabs.stake-table.approve')
+						: t('dashboard.stake.tabs.stake-table.redeem')}
 				</Button>
 			)}
 		</StakingInputCardContainer>

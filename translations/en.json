@@ -527,7 +527,8 @@
 					"ekwenta-token": "eKWENTA",
 					"redeem": "Redeem",
 					"vekwenta-token": "veKwenta",
-					"vkwenta-token": "vKwenta"				
+					"vkwenta-token": "vKwenta",
+					"approve": "Approve"			
 				}
 			}
 		},
