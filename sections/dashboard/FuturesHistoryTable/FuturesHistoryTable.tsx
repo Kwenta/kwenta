@@ -210,7 +210,7 @@ const FuturesHistoryTable: FC = () => {
 								width: 120,
 							},
 							{
-								Header: <div>{t('dashboard.history.futures-history-table.order-type')}</div>,
+								Header: <div>{t('dashboard.history.futures-history-table.type')}</div>,
 								accessor: 'orderType',
 								Cell: (cellProps: CellProps<FuturesTrade>) => {
 									return conditionalRender(
@@ -226,7 +226,7 @@ const FuturesHistoryTable: FC = () => {
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<TableContainer>
-					<StyledTable
+					<MobileStyledTable
 						data={isL2 ? mappedHistoricalTrades : []}
 						onTableRowClick={(row) => {
 							setSelectedTrade(row.original);
@@ -276,7 +276,12 @@ const FuturesHistoryTable: FC = () => {
 								width: 60,
 							},
 							{
-								Header: <div>{t('dashboard.history.futures-history-table.side-type')}</div>,
+								Header: () => (
+									<div>
+										<div>{t('dashboard.history.futures-history-table.side')}</div>
+										<div>{t('dashboard.history.futures-history-table.type')}</div>
+									</div>
+								),
 								accessor: 'side',
 								Cell: (cellProps: CellProps<FuturesTrade>) => {
 									return conditionalRender(
@@ -290,7 +295,12 @@ const FuturesHistoryTable: FC = () => {
 								width: 60,
 							},
 							{
-								Header: <div>{t('dashboard.history.futures-history-table.size-price')}</div>,
+								Header: () => (
+									<div>
+										<div>{t('dashboard.history.futures-history-table.size')}</div>
+										<div>{t('dashboard.history.futures-history-table.price')}</div>
+									</div>
+								),
 								accessor: 'size',
 								Cell: (cellProps: CellProps<FuturesTrade>) => {
 									return conditionalRender(
@@ -357,6 +367,14 @@ const TableContainer = styled.div`
 
 const StyledTable = styled(Table)`
 	margin-bottom: 20px;
+`;
+
+const MobileStyledTable = styled(Table)`
+	margin-bottom: 20px;
+	border-radius: initial;
+	border-top: none;
+	border-left: none;
+	border-right: none;
 `;
 
 const StyledText = styled.div`

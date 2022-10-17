@@ -497,9 +497,7 @@
 				"price": "Price",
 				"side": "Side",
 				"market": "Market",
-				"order-type": "Type",
-				"side-type": "Side/Type",
-				"size-price": "Size/Price",
+				"type": "Type",
 				"no-result": "You have no futures trading history"
 			}
 		},
