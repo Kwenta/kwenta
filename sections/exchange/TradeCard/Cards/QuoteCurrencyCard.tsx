@@ -1,6 +1,6 @@
 import { FC, memo, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { fetchOneInchQuote } from 'state/exchange/actions';
+import { fetchOneInchQuote, fetchSlippagePercent } from 'state/exchange/actions';
 import { setMaxQuoteBalance, setOpenModal, setQuoteAmount } from 'state/exchange/reducer';
 import {
 	selectQuoteBalanceWei,
@@ -29,13 +29,9 @@ const QuoteCurrencyCard: FC = memo(() => {
 
 	const quoteAmountDebounced = useDebouncedMemo(() => quoteAmount, [quoteAmount], 300);
 
-	// FIXME: This works as intended, but we should fix it.
-	// We can get the 1inch quote when the currency is changed,
-	// and store it in state, instead of debouncing and fetching
-	// on (almost) every keystroke.
-
 	useEffect(() => {
 		dispatch(fetchOneInchQuote());
+		dispatch(fetchSlippagePercent());
 	}, [dispatch, quoteAmountDebounced]);
 
 	const onQuoteAmountChange = useCallback(

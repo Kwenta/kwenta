@@ -5,6 +5,8 @@ import { AppDispatch, RootState } from 'state/store';
 
 import { monitorTransaction } from 'contexts/RelayerContext';
 
+import { toWei } from './selectors';
+
 type ThunkConfig = {
 	dispatch: AppDispatch;
 	state: RootState;
@@ -343,6 +345,37 @@ export const fetchOneInchQuote = createAsyncThunk<any, void, ThunkConfig>(
 			);
 
 			return oneInchQuote;
+		}
+
+		return undefined;
+	}
+);
+
+export const fetchSlippagePercent = createAsyncThunk<any, void, ThunkConfig>(
+	'exchange/fetchSlippagePercent',
+	async (_, { getState, extra: { sdk } }) => {
+		const {
+			exchange: { quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount, txProvider },
+		} = getState();
+
+		if (
+			!!quoteCurrencyKey &&
+			!!baseCurrencyKey &&
+			txProvider === '1inch' &&
+			!!quoteAmount &&
+			!!baseAmount
+		) {
+			const quoteAmountWei = toWei(quoteAmount);
+			const baseAmountWei = toWei(baseAmount);
+
+			const slippagePercent = await sdk.exchange.getSlippagePercent(
+				quoteCurrencyKey,
+				baseCurrencyKey,
+				quoteAmountWei,
+				baseAmountWei
+			);
+
+			return slippagePercent;
 		}
 
 		return undefined;

@@ -11,6 +11,7 @@ import {
 	fetchNumEntries,
 	fetchOneInchQuote,
 	fetchRates,
+	fetchSlippagePercent,
 	fetchTokenList,
 	fetchTransactionFee,
 	fetchTxProvider,
@@ -292,6 +293,9 @@ const exchangeSlice = createSlice({
 		builder.addCase(fetchOneInchQuote.rejected, (state) => {
 			state.oneInchQuoteLoading = false;
 			state.oneInchQuoteError = true;
+		});
+		builder.addCase(fetchSlippagePercent.fulfilled, (state, action) => {
+			state.slippagePercent = action.payload;
 		});
 	},
 });
