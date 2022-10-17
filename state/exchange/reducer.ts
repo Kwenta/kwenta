@@ -8,6 +8,7 @@ import {
 	checkNeedsApproval,
 	fetchBalances,
 	fetchFeeReclaimPeriod,
+	fetchNumEntries,
 	fetchRates,
 	fetchTokenList,
 	fetchTransactionFee,
@@ -31,8 +32,6 @@ const initialState: ExchangeState = {
 	feeCost: undefined,
 	slippagePercent: undefined,
 	isSubmitting: false,
-	isApproving: false,
-	needsApproval: false,
 	quotePriceRate: undefined,
 	basePriceRate: undefined,
 	baseFeeRate: undefined,
@@ -219,13 +218,10 @@ const exchangeSlice = createSlice({
 			state.isSubmitting = false;
 		});
 		builder.addCase(checkNeedsApproval.fulfilled, (state, action) => {
-			state.needsApproval = action.payload;
+			state.approvalStatus = action.payload;
 		});
-		builder.addCase(submitApprove.fulfilled, (state) => {
-			state.isApproving = false;
-		});
-		builder.addCase(submitApprove.rejected, (state) => {
-			state.isApproving = false;
+		builder.addCase(submitApprove.pending, (state) => {
+			state.approvalStatus = 'approving';
 		});
 		builder.addCase(fetchTokenList.pending, (state) => {
 			state.tokenListLoading = true;
@@ -246,6 +242,9 @@ const exchangeSlice = createSlice({
 		builder.addCase(fetchFeeReclaimPeriod.fulfilled, (state, action) => {
 			state.feeReclaimPeriod = action.payload.feeReclaimPeriod;
 			state.settlementWaitingPeriod = action.payload.settlementWaitingPeriod;
+		});
+		builder.addCase(fetchNumEntries.fulfilled, (state, action) => {
+			state.numEntries = action.payload;
 		});
 	},
 });

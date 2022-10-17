@@ -5,6 +5,7 @@ import { submitApprove, submitExchange } from 'state/exchange/actions';
 import {
 	selectFeeCostWei,
 	selectIsApproved,
+	selectNeedsApproval,
 	selectShowFee,
 	selectSubmissionDisabledReason,
 	selectTransactionFeeWei,
@@ -34,9 +35,8 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = memo(({ ...rest }) => {
 	const { t } = useTranslation();
 	const { useEthGasPriceQuery } = useSynthetixQueries();
 
-	const { feeReclaimPeriod, needsApproval, openModal } = useAppSelector(({ exchange }) => ({
+	const { feeReclaimPeriod, openModal } = useAppSelector(({ exchange }) => ({
 		feeReclaimPeriod: exchange.feeReclaimPeriod,
-		needsApproval: exchange.needsApproval,
 		openModal: exchange.openModal,
 	}));
 
@@ -50,15 +50,12 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = memo(({ ...rest }) => {
 	const dispatch = useAppDispatch();
 
 	const isApproved = useAppSelector(selectIsApproved);
+	const needsApproval = useAppSelector(selectNeedsApproval);
 
 	const onSubmit = useCallback(() => {
 		if (needsApproval) {
-			if (isApproved) {
-				dispatch(submitExchange());
-			} else {
-				dispatch(submitApprove());
-			}
-		} else {
+			dispatch(submitApprove());
+		} else if (isApproved) {
 			dispatch(submitExchange());
 		}
 	}, [needsApproval, dispatch, isApproved]);

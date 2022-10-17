@@ -5,7 +5,7 @@ import { DeprecatedSynthBalance, TokenBalances } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import axios from 'axios';
 import { Contract as EthCallContract } from 'ethcall';
-import { BigNumber, ethers, Signer } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { get, keyBy, omit } from 'lodash';
 import KwentaSDK from 'sdk';
 
@@ -54,11 +54,6 @@ const PROTOCOLS =
 const FILTERED_TOKENS = ['0x4922a015c4407f87432b179bb209e125432e4a2a'];
 
 // TODO:
-// - Write a function that checks if the current (base/quote)CurrencyKey
-//    is valid. We have to dispatch an action when the networkId changes,
-//    to make sure that the current base and quote currency keys are valid
-//    for the new network. For now, we can set the currencies to the default
-//    when that happens.
 // - Make sure that all methods that depend on both the base and quote currency
 //   keys, accept the arguments in the correct order: (quote, base).
 // - Store more properties in the class instance, so we can reduce the number
@@ -402,7 +397,7 @@ export default class ExchangeService {
 			this.sdk.provider
 		).settlementOwing(this.sdk.walletAddress, ethers.utils.formatBytes32String(currencyKey));
 
-		return numEntries ?? null;
+		return numEntries ?? 0;
 	}
 
 	public async getExchangeRates() {
@@ -969,14 +964,9 @@ export default class ExchangeService {
 	private async getQuoteCurrencyContract(baseCurrencyKey: string, quoteCurrencyKey: string) {
 		const needsApproval = this.checkNeedsApproval(baseCurrencyKey, quoteCurrencyKey);
 
-		if (
-			this.sdk.signer &&
-			quoteCurrencyKey &&
-			this.allTokensMap[quoteCurrencyKey] &&
-			needsApproval
-		) {
+		if (quoteCurrencyKey && this.allTokensMap[quoteCurrencyKey] && needsApproval) {
 			const quoteTknAddress = this.allTokensMap[quoteCurrencyKey].address;
-			return createERC20Contract(quoteTknAddress, this.sdk.signer);
+			return this.createERC20Contract(quoteTknAddress);
 		}
 
 		return null;
@@ -1231,7 +1221,8 @@ export default class ExchangeService {
 			return null;
 		}
 	}
-}
 
-const createERC20Contract = (tokenAddress: string, signer: Signer) =>
-	new ethers.Contract(tokenAddress, erc20Abi, signer);
+	private createERC20Contract(tokenAddress: string) {
+		return new ethers.Contract(tokenAddress, erc20Abi, this.sdk.provider);
+	}
+}

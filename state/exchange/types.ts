@@ -1,6 +1,6 @@
 // import { DeprecatedSynthBalance } from '@synthetixio/queries';
 
-type ExchangeApprovalStatus = 'needs-approval' | 'approving' | 'approved';
+type ExchangeApprovalStatus = 'needs-approval' | 'approving' | 'approved' | 'failed';
 type ExchangeModal = 'settle' | 'confirm' | 'approve' | 'redeem' | 'base-select' | 'quote-select';
 
 export type SwapRatio = 25 | 50 | 75 | 100;
@@ -18,8 +18,8 @@ export type ExchangeState = {
 	feeCost?: string;
 	slippagePercent?: string | null;
 	isSubmitting: boolean;
-	isApproving: boolean;
-	needsApproval: boolean;
+	// isApproving: boolean;
+	// needsApproval: boolean;
 	quotePriceRate?: string;
 	basePriceRate?: string;
 	baseFeeRate?: string;

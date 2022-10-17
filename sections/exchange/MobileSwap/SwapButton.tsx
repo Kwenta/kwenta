@@ -2,7 +2,11 @@ import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { FC, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { submitApprove, submitExchange } from 'state/exchange/actions';
-import { selectIsApproved, selectSubmissionDisabledReason } from 'state/exchange/selectors';
+import {
+	selectIsApproved,
+	selectNeedsApproval,
+	selectSubmissionDisabledReason,
+} from 'state/exchange/selectors';
 import { useAppDispatch, useAppSelector } from 'state/store';
 
 import Button from 'components/Button';
@@ -14,7 +18,7 @@ const SwapButton: FC = () => {
 	const { openConnectModal: connectWallet } = useConnectModal();
 	const submissionDisabledReason = useAppSelector(selectSubmissionDisabledReason);
 	const isApproved = useAppSelector(selectIsApproved);
-	const needsApproval = useAppSelector(({ exchange }) => exchange.needsApproval);
+	const needsApproval = useAppSelector(selectNeedsApproval);
 	const dispatch = useAppDispatch();
 
 	const handleSubmit = useCallback(() => {

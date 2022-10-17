@@ -1,5 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import KwentaSDK from 'sdk';
+import { fetchSynthBalances } from 'state/balances/actions';
 import { AppDispatch, RootState } from 'state/store';
 
 import { monitorTransaction } from 'contexts/RelayerContext';
@@ -86,7 +87,7 @@ export const fetchTransactionFee = createAsyncThunk<any, void, ThunkConfig>(
 
 export const submitExchange = createAsyncThunk<any, void, ThunkConfig>(
 	'exchange/submitExchange',
-	async (_, { getState, extra: { sdk } }) => {
+	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const {
 			exchange: { quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount },
 		} = getState();
@@ -104,7 +105,16 @@ export const submitExchange = createAsyncThunk<any, void, ThunkConfig>(
 				monitorTransaction({
 					txHash: hash,
 					onTxConfirmed: () => {
-						// Do something
+						dispatch(fetchSynthBalances());
+						dispatch(fetchNumEntries());
+						dispatch({
+							type: 'exchange/setQuoteAmount',
+							payload: { value: '' },
+						});
+						dispatch({
+							type: 'exchange/setBaseAmount',
+							payload: { value: '' },
+						});
 					},
 				});
 			}
@@ -114,14 +124,24 @@ export const submitExchange = createAsyncThunk<any, void, ThunkConfig>(
 
 export const submitRedeem = createAsyncThunk<any, void, ThunkConfig>(
 	'exchange/submitRedeem',
-	async (_, { extra: { sdk } }) => {
-		await sdk.exchange.handleRedeem();
+	async (_, { dispatch, extra: { sdk } }) => {
+		const hash = await sdk.exchange.handleRedeem();
+
+		if (hash) {
+			monitorTransaction({
+				txHash: hash,
+				onTxConfirmed: () => {
+					dispatch(fetchSynthBalances());
+					dispatch(fetchBalances);
+				},
+			});
+		}
 	}
 );
 
 export const submitApprove = createAsyncThunk<any, void, ThunkConfig>(
 	'exchange/submitApprove',
-	async (_, { getState, extra: { sdk } }) => {
+	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const {
 			exchange: { quoteCurrencyKey, baseCurrencyKey },
 		} = getState();
@@ -132,8 +152,13 @@ export const submitApprove = createAsyncThunk<any, void, ThunkConfig>(
 			if (hash) {
 				monitorTransaction({
 					txHash: hash,
+					onTxConfirmed: () => {
+						dispatch({ type: 'exchange/setApprovalStatus', payload: 'approved' });
+					},
+					onTxFailed: () => {
+						dispatch({ type: 'exchange/setApprovalStatus', payload: 'needs-approval' });
+					},
 				});
-				// do something
 			}
 		}
 	}
@@ -147,10 +172,25 @@ export const checkNeedsApproval = createAsyncThunk<any, void, ThunkConfig>(
 		} = getState();
 
 		if (quoteCurrencyKey && baseCurrencyKey) {
-			return sdk.exchange.checkNeedsApproval(baseCurrencyKey, quoteCurrencyKey);
+			const needsApproval = sdk.exchange.checkNeedsApproval(baseCurrencyKey, quoteCurrencyKey);
+
+			if (needsApproval) {
+				// TODO: Handle case where allowance is not MaxUint256.
+				// Simplest way to do this is to return the allowance from
+				// checkAllowance and store it in state to do the comparison there.
+				const isApproved = await sdk.exchange.checkAllowance(
+					quoteCurrencyKey,
+					baseCurrencyKey,
+					'0'
+				);
+
+				return isApproved ? 'approved' : 'needs-approval';
+			} else {
+				return 'approved';
+			}
 		}
 
-		return false;
+		return undefined;
 	}
 );
 
@@ -252,13 +292,38 @@ export const fetchFeeReclaimPeriod = createAsyncThunk<any, void, ThunkConfig>(
 
 export const submitSettle = createAsyncThunk<any, void, ThunkConfig>(
 	'exchange/submitSettle',
+	async (_, { getState, dispatch, extra: { sdk } }) => {
+		const {
+			exchange: { baseCurrencyKey },
+		} = getState();
+
+		if (baseCurrencyKey) {
+			const hash = await sdk.exchange.handleSettle(baseCurrencyKey);
+
+			if (hash) {
+				monitorTransaction({
+					txHash: hash,
+					onTxConfirmed: () => {
+						dispatch(fetchNumEntries());
+					},
+				});
+			}
+		}
+	}
+);
+
+export const fetchNumEntries = createAsyncThunk<any, void, ThunkConfig>(
+	'exchange/fetchNumEntries',
 	async (_, { getState, extra: { sdk } }) => {
 		const {
 			exchange: { baseCurrencyKey },
 		} = getState();
 
 		if (baseCurrencyKey) {
-			await sdk.exchange.handleSettle(baseCurrencyKey);
+			const numEntries = await sdk.exchange.getNumEntries(baseCurrencyKey);
+			return numEntries;
 		}
+
+		return 0;
 	}
 );

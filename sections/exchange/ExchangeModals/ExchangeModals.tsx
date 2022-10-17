@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { memo, useCallback } from 'react';
-import { fetchRates, fetchTxProvider } from 'state/exchange/actions';
+import { checkNeedsApproval, fetchRates, fetchTxProvider } from 'state/exchange/actions';
 import { setBaseCurrencyKey, setOpenModal, setQuoteCurrencyKey } from 'state/exchange/reducer';
 import { useAppDispatch, useAppSelector } from 'state/store';
 
@@ -50,6 +50,7 @@ const ExchangeModals = memo(() => {
 
 			dispatch(fetchRates());
 			dispatch(fetchTxProvider());
+			dispatch(checkNeedsApproval());
 		},
 		[quoteCurrencyKey, routeToBaseCurrency, routeToMarketPair, dispatch]
 	);
@@ -64,6 +65,7 @@ const ExchangeModals = memo(() => {
 
 			dispatch(fetchRates());
 			dispatch(fetchTxProvider());
+			dispatch(checkNeedsApproval());
 		},
 		[baseCurrencyKey, routeToMarketPair, dispatch]
 	);

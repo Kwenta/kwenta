@@ -1,6 +1,11 @@
 import { useRouter } from 'next/router';
 import { FC, useEffect } from 'react';
-import { fetchRates, fetchTxProvider, resetCurrencies } from 'state/exchange/actions';
+import {
+	checkNeedsApproval,
+	fetchRates,
+	fetchTxProvider,
+	resetCurrencies,
+} from 'state/exchange/actions';
 import { useAppDispatch } from 'state/store';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
@@ -25,6 +30,7 @@ const Exchange: ExchangeComponent = () => {
 
 		if (!!quoteCurrencyFromQuery || !!baseCurrencyFromQuery) {
 			dispatch(resetCurrencies({ quoteCurrencyFromQuery, baseCurrencyFromQuery })).then(() => {
+				dispatch(checkNeedsApproval());
 				dispatch(fetchTxProvider());
 				dispatch(fetchRates());
 			});

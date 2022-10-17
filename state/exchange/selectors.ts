@@ -10,6 +10,16 @@ export const toWei = (value?: string | null, p?: number) => {
 	return !!value ? wei(value, p) : zeroBN;
 };
 
+export const selectQuoteBalance = createSelector(
+	(state: RootState) => state.exchange.quoteCurrencyKey,
+	(state: RootState) => state.balances.balancesMap,
+	(quoteCurrencyKey, balancesMap) => {
+		if (!!quoteCurrencyKey) {
+			return balancesMap[quoteCurrencyKey];
+		}
+	}
+);
+
 export const selectQuoteAmountWei = createSelector(
 	(state: RootState) => state.exchange.quoteAmount,
 	(quoteAmount) => toWei(quoteAmount)
@@ -135,13 +145,28 @@ export const selectCanRedeem = createSelector(
 		totalRedeemableBalance.gt(0) && redeemableSynthBalances.length > 0
 );
 
+export const selectIsApproved = createSelector(
+	(state: RootState) => state.exchange.approvalStatus,
+	(approvalStatus) => approvalStatus === 'approved'
+);
+
+export const selectNeedsApproval = createSelector(
+	(state: RootState) => state.exchange.approvalStatus,
+	(approvalStatus) => approvalStatus === 'needs-approval'
+);
+
+export const selectIsApproving = createSelector(
+	(state: RootState) => state.exchange.approvalStatus,
+	(approvalStatus) => approvalStatus === 'approving'
+);
+
 export const selectSubmissionDisabledReason = createSelector(
 	(state: RootState) => state.exchange.txProvider,
 	(state: RootState) => state.exchange.feeReclaimPeriod,
 	selectBothSidesSelected,
 	selectInsufficientBalance,
 	(state: RootState) => state.exchange.isSubmitting,
-	(state: RootState) => state.exchange.isApproving,
+	selectIsApproving,
 	selectIsWalletConnected,
 	selectBaseAmountWei,
 	selectQuoteAmountWei,
@@ -181,9 +206,4 @@ export const selectSubmissionDisabledReason = createSelector(
 		}
 		return null;
 	}
-);
-
-export const selectIsApproved = createSelector(
-	(state: RootState) => state.exchange.approvalStatus,
-	(approveStatus) => approveStatus === 'approved'
 );

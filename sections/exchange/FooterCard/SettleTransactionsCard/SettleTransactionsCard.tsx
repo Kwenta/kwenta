@@ -32,23 +32,8 @@ const SettleTransactionsCard: FC = () => {
 	);
 	const dispatch = useAppDispatch();
 
-	// const { monitorTransaction } = TransactionNotifier.useContainer();
-
 	const settlementDisabledReason =
 		settlementWaitingPeriod > 0 ? t('exchange.summary-info.button.settle-waiting-period') : null;
-
-	// useEffect(() => {
-	// 	if (settleTxn.hash) {
-	// 		monitorTransaction({
-	// 			txHash: settleTxn.hash,
-	// 			onTxConfirmed: () => {
-	// 				numEntriesQuery.refetch();
-	// 			},
-	// 		});
-	// 	}
-
-	// 	// eslint-disable-next-line
-	// }, [settleTxn.hash]);
 
 	const handleSettle = async () => {
 		setTxError(null);
