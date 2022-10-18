@@ -47,11 +47,13 @@ cp .env.local.example .env.local
 Then, open `.env.local` and add the missing environment variables:
 
 Required:
+
 - `NEXT_PUBLIC_PORTIS_APP_ID` - Portis app id (get it from [portis.io](https://www.portis.io/))
 - `NEXT_PUBLIC_BN_ONBOARD_API_KEY` - Blocknative Onboard API key (get it from [blocknative.com](https://blocknative.com/))
 - `NEXT_PUBLIC_PROVIDER_ID` - Specifies the default provider, options are `INFURA` or `BLAST_API`
 
 Optional:
+
 - `NEXT_PUBLIC_INFURA_PROJECT_ID` - Infura project id (get it from [infura.io](https://infura.io/))
 - `NEXT_PUBLIC_BLASTAPI_PROJECT_ID` - Blast API project id (get it from [blastapi.io](https://blastapi.io/))
 
@@ -70,16 +72,29 @@ npm run build
 npm start
 ```
 
-### End-2-End testing
-In order to run fully automated end-2-end (e2e) tests Kwenta uses [Synpress](https://github.com/Synthetixio/synpress) (a wrapper around [Cynpress](https://www.cypress.io/)).  
+### Unit Testing
 
-#### Constraints 
+```bash
+npm run test:unit
+```
+
+For unit tests we use a combination of Jest and [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
+
+Page tests should be added to the \_\_tests\_\_ folder at the root as it is not possible co-locate tests and pages in nextjs. Other tests should be co-located in a \_\_tests\_\_ folder next to their related file.
+
+### End-2-End testing
+
+In order to run fully automated end-2-end (e2e) tests Kwenta uses [Synpress](https://github.com/Synthetixio/synpress) (a wrapper around [Cynpress](https://www.cypress.io/)).
+
+#### Constraints
+
 The current e2e tests are written to be run on Optimistic Kovan using Chrome as the browser.
 
 #### Setup
-- Download and install Google Chrome 
+
+- Download and install Google Chrome
 - Setup a test wallet on Optimistic Kovan and fund it with plenty of ETH (to pay for gas) and sUSD
-- Prior to running the tests you must set the environment variables below in the shell from which npm is started. Unfortunately, at this time other methods to set said environment variables (eg. through `.env.local`) don't work in conjunction with Synpress. 
+- Prior to running the tests you must set the environment variables below in the shell from which npm is started. Unfortunately, at this time other methods to set said environment variables (eg. through `.env.local`) don't work in conjunction with Synpress.
 
 ```bash
 PRIVATE_KEY=<INSERTPRIVATEKEY>
@@ -91,9 +106,11 @@ IS_TESTNET=true
 ```
 
 ##### Bash convenience script for setting up the environment
-A Bash convenience script [has been made available here](https://gist.github.com/raffiegang/b24a6b97bcd054645abf59be852bc88d). 
-- Open bash 
-- Copy the private key of the test wallet into the file `SYNPRESS_PRIVATEKEY` into the same folder location as the script. While using this method, please don't forget to update your .gitignore file to prevent your private key to be leaked.   
+
+A Bash convenience script [has been made available here](https://gist.github.com/raffiegang/b24a6b97bcd054645abf59be852bc88d).
+
+- Open bash
+- Copy the private key of the test wallet into the file `SYNPRESS_PRIVATEKEY` into the same folder location as the script. While using this method, please don't forget to update your .gitignore file to prevent your private key to be leaked.
 - Run the following command `source ./synpress-envsetter.sh`
 
 #### Run the tests
