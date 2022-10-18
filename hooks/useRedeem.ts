@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSetRecoilState } from 'recoil';
 import { submitRedeem } from 'state/exchange/actions';
-import { useAppDispatch } from 'state/store';
+import { useAppDispatch } from 'state/hooks';
 
 import { txErrorState } from 'store/exchange';
 import { hexToAsciiV2 } from 'utils/formatters/string';

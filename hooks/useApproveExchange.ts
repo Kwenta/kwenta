@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { submitApprove } from 'state/exchange/actions';
-import { useAppDispatch } from 'state/store';
+import { useAppDispatch } from 'state/hooks';
 
 import { txErrorState } from 'store/exchange';
 import logError from 'utils/logError';

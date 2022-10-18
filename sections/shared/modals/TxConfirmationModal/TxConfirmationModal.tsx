@@ -5,7 +5,7 @@ import { FC, useMemo } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { closeModal } from 'state/exchange/reducer';
-import { useAppDispatch, useAppSelector } from 'state/store';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';

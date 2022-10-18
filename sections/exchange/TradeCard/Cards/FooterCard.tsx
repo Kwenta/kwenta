@@ -1,6 +1,6 @@
 import { FC, memo } from 'react';
 import { selectCanRedeem } from 'state/exchange/selectors';
-import { useAppSelector } from 'state/store';
+import { useAppSelector } from 'state/hooks';
 
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';

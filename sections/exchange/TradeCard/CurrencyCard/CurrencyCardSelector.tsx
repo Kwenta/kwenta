@@ -2,7 +2,7 @@ import Wei from '@synthetixio/wei';
 import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { selectInsufficientBalance } from 'state/exchange/selectors';
-import { useAppSelector } from 'state/store';
+import { useAppSelector } from 'state/hooks';
 import styled, { css } from 'styled-components';
 
 import CaretDownIcon from 'assets/svg/app/caret-down-gray.svg';

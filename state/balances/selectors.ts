@@ -1,6 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { toWei } from 'state/exchange/selectors';
 import type { RootState } from 'state/store';
+
+import { toWei } from 'utils/formatters/number';
 
 export const selectTotalUSDBalanceWei = createSelector(
 	(state: RootState) => state.balances.totalUSDBalance,

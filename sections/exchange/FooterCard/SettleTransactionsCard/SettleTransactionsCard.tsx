@@ -3,7 +3,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import { useRecoilState } from 'recoil';
 import { submitSettle } from 'state/exchange/actions';
 import { setOpenModal } from 'state/exchange/reducer';
-import { useAppDispatch, useAppSelector } from 'state/store';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import Button from 'components/Button';

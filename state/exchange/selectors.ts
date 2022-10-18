@@ -1,24 +1,11 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
 import { selectTotalUSDBalanceWei } from 'state/balances/selectors';
-import { RootState, sdk } from 'state/store';
+import { sdk } from 'state/config';
+import type { RootState } from 'state/store';
 import { selectIsWalletConnected } from 'state/wallet/selectors';
 
-import { zeroBN } from 'utils/formatters/number';
-
-export const toWei = (value?: string | null, p?: number) => {
-	return !!value ? wei(value, p) : zeroBN;
-};
-
-export const selectQuoteBalance = createSelector(
-	(state: RootState) => state.exchange.quoteCurrencyKey,
-	(state: RootState) => state.balances.balancesMap,
-	(quoteCurrencyKey, balancesMap) => {
-		if (!!quoteCurrencyKey) {
-			return balancesMap[quoteCurrencyKey];
-		}
-	}
-);
+import { toWei, zeroBN } from 'utils/formatters/number';
 
 export const selectQuoteAmountWei = createSelector(
 	(state: RootState) => state.exchange.quoteAmount,

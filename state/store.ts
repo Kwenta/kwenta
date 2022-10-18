@@ -1,15 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import logger from 'redux-logger';
 import KwentaSDK from 'sdk';
 
-import { wagmiClient } from 'containers/Connector/config';
-
 import balancesReducer from './balances/reducer';
+import { sdk } from './config';
 import exchangeReducer from './exchange/reducer';
 import walletReducer from './wallet/reducer';
-
-export const sdk = new KwentaSDK(10, wagmiClient.provider, undefined);
 
 const store = configureStore({
 	reducer: {
@@ -28,8 +24,5 @@ export type ThunkConfig = {
 	state: RootState;
 	extra: { sdk: KwentaSDK };
 };
-
-export const useAppDispatch: () => AppDispatch = useDispatch;
-export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 export default store;

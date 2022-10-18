@@ -1,11 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import KwentaSDK from 'sdk';
 import { fetchSynthBalances } from 'state/balances/actions';
-import { AppDispatch, RootState } from 'state/store';
+import type { AppDispatch, RootState } from 'state/store';
 
 import { monitorTransaction } from 'contexts/RelayerContext';
-
-import { toWei } from './selectors';
+import { toWei } from 'utils/formatters/number';
 
 type ThunkConfig = {
 	dispatch: AppDispatch;
@@ -130,7 +129,7 @@ export const submitRedeem = createAsyncThunk<any, void, ThunkConfig>(
 				txHash: hash,
 				onTxConfirmed: () => {
 					dispatch(fetchSynthBalances());
-					dispatch(fetchBalances);
+					dispatch(fetchBalances());
 				},
 			});
 		}

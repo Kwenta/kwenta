@@ -2,7 +2,7 @@ import { FC, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { setOpenModal } from 'state/exchange/reducer';
-import { useAppDispatch, useAppSelector } from 'state/store';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';

@@ -5,7 +5,7 @@ import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { getSynthsListForNetwork } from 'sdk/data/synths';
-import { useAppSelector } from 'state/store';
+import { useAppSelector } from 'state/hooks';
 import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';

@@ -3,10 +3,9 @@ import { NetworkIdByName } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
 import { omit, clone } from 'lodash';
+import KwentaSDK from 'sdk';
 
 import { ContractName } from './contracts';
-
-import KwentaSDK from './index';
 
 const OVMGasPriceOracle = getContractFactory('OVM_GasPriceOracle').attach(
 	predeploys.OVM_GasPriceOracle

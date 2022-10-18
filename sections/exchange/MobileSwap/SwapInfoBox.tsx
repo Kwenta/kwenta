@@ -4,7 +4,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { selectTransactionFeeWei, selectFeeCostWei } from 'state/exchange/selectors';
-import { useAppSelector } from 'state/store';
+import { useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import TimerIcon from 'assets/svg/app/timer.svg';

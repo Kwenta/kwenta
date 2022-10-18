@@ -7,7 +7,7 @@ import {
 	selectNeedsApproval,
 	selectSubmissionDisabledReason,
 } from 'state/exchange/selectors';
-import { useAppDispatch, useAppSelector } from 'state/store';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import Button from 'components/Button';
 import Connector from 'containers/Connector';

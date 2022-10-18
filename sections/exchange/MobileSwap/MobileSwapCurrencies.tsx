@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { memo, useCallback } from 'react';
 import { swapCurrencies } from 'state/exchange/reducer';
-import { useAppDispatch, useAppSelector } from 'state/store';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import ArrowIcon from 'assets/svg/app/arrow-down.svg';

@@ -6,7 +6,7 @@ import {
 	fetchTxProvider,
 	resetCurrencies,
 } from 'state/exchange/actions';
-import { useAppDispatch } from 'state/store';
+import { useAppDispatch } from 'state/hooks';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import NotificationContainer from 'constants/NotificationContainer';
@@ -37,7 +37,6 @@ const Exchange: ExchangeComponent = () => {
 		}
 	}, [router.query.quote, router.query.base, network.id, dispatch]);
 
-	//<RelayerProvider>
 	return (
 		<>
 			<ExchangeHead />
@@ -55,7 +54,6 @@ const Exchange: ExchangeComponent = () => {
 			</MobileOrTabletView>
 		</>
 	);
-	/*</RelayerProvider> */
 };
 
 Exchange.getLayout = (page) => <>{page}</>;

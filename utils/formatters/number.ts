@@ -238,3 +238,7 @@ export const weiToString = (weiVal: Wei) => {
 export const isZero = (num: WeiSource) => {
 	return wei(num || 0).eq(0);
 };
+
+export const toWei = (value?: string | null, p?: number) => {
+	return !!value ? wei(value, p) : zeroBN;
+};

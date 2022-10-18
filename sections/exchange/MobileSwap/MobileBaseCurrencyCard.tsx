@@ -2,7 +2,7 @@ import { FC, memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { setBaseAmount, setMaxBaseBalance, setOpenModal } from 'state/exchange/reducer';
 import { selectBaseBalanceWei } from 'state/exchange/selectors';
-import { useAppDispatch, useAppSelector } from 'state/store';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import MobileCurrencyCard from '../TradeCard/CurrencyCard/MobileCurrencyCard';
 

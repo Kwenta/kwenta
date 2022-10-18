@@ -10,7 +10,7 @@ import {
 	selectSubmissionDisabledReason,
 	selectTransactionFeeWei,
 } from 'state/exchange/selectors';
-import { useAppDispatch, useAppSelector } from 'state/store';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import Button from 'components/Button';

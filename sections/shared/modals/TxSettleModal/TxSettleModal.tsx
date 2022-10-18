@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAppSelector } from 'state/store';
+import { useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';

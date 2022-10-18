@@ -1,6 +1,6 @@
 import { FC, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useAppSelector } from 'state/store';
+import { useAppSelector } from 'state/hooks';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import useMarketClosed from 'hooks/useMarketClosed';

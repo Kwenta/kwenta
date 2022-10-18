@@ -7,7 +7,7 @@ import {
 	selectQuoteCurrencyName,
 	selectQuotePriceRateWei,
 } from 'state/exchange/selectors';
-import { useAppDispatch, useAppSelector } from 'state/store';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
 

@@ -1,6 +1,6 @@
 import { memo, FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAppSelector } from 'state/store';
+import { useAppSelector } from 'state/hooks';
 
 import Button from 'components/Button';
 import useRedeem from 'hooks/useRedeem';

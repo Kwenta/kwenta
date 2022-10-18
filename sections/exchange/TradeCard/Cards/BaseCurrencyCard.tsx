@@ -7,7 +7,7 @@ import {
 	selectBasePriceRateWei,
 	selectSlippagePercentWei,
 } from 'state/exchange/selectors';
-import { useAppDispatch, useAppSelector } from 'state/store';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import CurrencyCard from '../CurrencyCard';
 

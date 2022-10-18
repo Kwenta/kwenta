@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import { memo, useCallback } from 'react';
 import { checkNeedsApproval, fetchRates, fetchTxProvider } from 'state/exchange/actions';
 import { setBaseCurrencyKey, setOpenModal, setQuoteCurrencyKey } from 'state/exchange/reducer';
-import { useAppDispatch, useAppSelector } from 'state/store';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import ROUTES from 'constants/routes';
 import SelectCurrencyModal from 'sections/shared/modals/SelectCurrencyModal';
