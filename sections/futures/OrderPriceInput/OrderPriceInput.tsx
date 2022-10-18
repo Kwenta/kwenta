@@ -75,7 +75,7 @@ export default function OrderPriceInput({
 			</StyledInputTitle>
 			<CustomInput
 				invalid={!!minMaxLabelString}
-				dataTestId="set-order-size-amount-susd"
+				dataTestId="order-price-input"
 				disabled={isDisabled}
 				right={'sUSD'}
 				value={value}
