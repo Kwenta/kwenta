@@ -12,8 +12,8 @@ import { initRainbowkit } from 'containers/Connector/config';
 import { RefetchProvider } from 'contexts/RefetchContext';
 import { themes } from 'styles/theme';
 
-import { mockProvider, MockEthProvider } from './mockEthersProvider';
 import { DEFAULT_NETWORK } from '../constants';
+import { mockProvider, MockEthProvider } from './mockEthersProvider';
 
 jest.mock('@rainbow-me/rainbowkit', () => ({
 	wallet: {
