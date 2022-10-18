@@ -15,8 +15,8 @@ const useStatsData = () => {
 
 	// run queries
 	useGetFuturesMarkets();
-	const { data: rawVolumeData } = useGetStatsVolumes();
-	const { data: rawTradersData } = useGetFuturesTradersStats();
+	const { data: volumeData, isLoading: volumeIsLoading } = useGetStatsVolumes();
+	const { data: tradersData, isLoading: tradersIsLoading } = useGetFuturesTradersStats();
 
 	const openInterestData = useMemo(() => {
 		return futuresMarkets.map(({ asset, marketSize, price }) => {
@@ -27,18 +27,11 @@ const useStatsData = () => {
 		});
 	}, [futuresMarkets]);
 
-	// filter data
-	const volumeData = useMemo(() => {
-		return rawVolumeData;
-	}, [rawVolumeData, selectedTimeframe]);
-
-	const tradersData = useMemo(() => {
-		return rawTradersData;
-	}, [rawTradersData, selectedTimeframe]);
-
 	return {
 		volumeData,
+		volumeIsLoading,
 		tradersData,
+		tradersIsLoading,
 		openInterestData,
 		selectedTimeframe,
 		setSelectedTimeframe,

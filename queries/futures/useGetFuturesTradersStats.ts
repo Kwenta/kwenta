@@ -1,63 +1,73 @@
 import { useQuery } from 'react-query';
+import { useRecoilValue } from 'recoil';
 import { chainId } from 'wagmi';
 
+import { minTimestampState } from 'store/stats';
 import logError from 'utils/logError';
 
-import { getFuturesTrades } from './subgraph';
+import { getFuturesPositions } from './subgraph';
 import { getFuturesEndpoint } from './utils';
 
-interface T {
+type TradersStatMap = Record<
+	string,
+	{
+		[account: string]: number;
+	}
+>;
+
+type TradersStat = {
 	date: string;
 	uniqueTradersByPeriod: number;
 	totalUniqueTraders: number;
-}
+};
 
 export const useGetFuturesTradersStats = () => {
+	const minTimestamp = useRecoilValue(minTimestampState);
+
 	const query = async () => {
 		try {
 			const futuresEndpoint = getFuturesEndpoint(chainId.optimism);
-			const response = await getFuturesTrades(
+			const response = await getFuturesPositions(
 				futuresEndpoint,
 				{
 					first: 99999,
 					orderDirection: 'asc',
-					orderBy: 'timestamp',
+					orderBy: 'openTimestamp',
+					where: {
+						openTimestamp_gt: minTimestamp,
+					},
 				},
 				{
-					timestamp: true,
+					openTimestamp: true,
 					account: true,
 				}
 			);
 
-			const result: T[] = [];
+			const summary = response.reduce((acc: TradersStatMap, res) => {
+				const date = new Date(Number(res.openTimestamp) * 1000).toISOString().split('T')[0];
 
-			const map = new Map();
+				if (!acc[date]) acc[date] = {};
+				if (!acc[date][res.account]) acc[date][res.account] = 0;
+				acc[date][res.account] += 1;
+				return acc;
+			}, {});
 
-			response.forEach((res) => {
-				const date = new Date(Number(res.timestamp) * 1000).toISOString().split('T')[0];
+			let cumulativeAccounts = new Set();
+			const result: TradersStat[] = Object.entries(summary)
+				.sort((a, b) => (new Date(a[0]) > new Date(b[0]) ? 1 : -1))
+				.map(([date, accounts]) => {
+					const uniqueAccounts = Object.keys(accounts);
 
-				if (!map.has(date)) {
-					map.set(date, [res.account]);
-				} else {
-					const temp = map.get(date);
-					temp.push(res.account);
-					map.set(date, temp);
-				}
-			});
+					// set cumulative account set
+					cumulativeAccounts = new Set([...cumulativeAccounts, ...uniqueAccounts]);
 
-			let sum = 0;
-
-			map.forEach((accounts, date) => {
-				const uniqueTradersByPeriod = [...new Set(accounts)].length;
-
-				sum += result.length > 0 ? result[result.length - 1].uniqueTradersByPeriod : 0;
-
-				result.push({
-					date,
-					uniqueTradersByPeriod,
-					totalUniqueTraders: uniqueTradersByPeriod + sum,
+					// set values
+					return {
+						date,
+						uniqueTradersByPeriod: uniqueAccounts.length,
+						totalUniqueTraders: cumulativeAccounts.size,
+					};
 				});
-			});
 
 			return result;
 		} catch (e) {
@@ -66,8 +76,8 @@ export const useGetFuturesTradersStats = () => {
 		}
 	};
 
-	return useQuery<T[]>({
-		queryKey: 'get-futures-traders-stats',
+	return useQuery<TradersStat[]>({
+		queryKey: ['Stats', 'Traders', minTimestamp],
 		queryFn: query,
 	});
 };

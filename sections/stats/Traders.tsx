@@ -74,7 +74,7 @@ export const Traders = () => {
 				{
 					data: tradersData?.map((data) => data.uniqueTradersByPeriod),
 					type: 'bar',
-					name: 'Traders by Period',
+					name: 'Traders',
 					itemStyle: {
 						color: '#C9975B',
 					},
@@ -82,7 +82,7 @@ export const Traders = () => {
 				{
 					data: tradersData?.map((data) => data.totalUniqueTraders),
 					type: 'line',
-					name: 'Total Traders',
+					name: 'Cumulative Traders',
 					lineStyle: {
 						color: '#02E1FF',
 						cap: 'square',
