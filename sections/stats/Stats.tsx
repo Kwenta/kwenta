@@ -1,5 +1,6 @@
 import { FC } from 'react';
 
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { StatsContext } from 'contexts/StatsContext';
 import useStatsData from 'hooks/useStatsData';
 
@@ -14,12 +15,22 @@ export const Stats: FC = () => {
 
 	return (
 		<StatsContext.Provider value={statsData}>
-			<StatsContainer>
-				<Volume />
-				<Trades />
-				<Traders />
-				<OpenInterest />
-			</StatsContainer>
+			<DesktopOnlyView>
+				<StatsContainer>
+					<Volume />
+					<Trades />
+					<Traders />
+					<OpenInterest mobile={false} />
+				</StatsContainer>
+			</DesktopOnlyView>
+			<MobileOrTabletView>
+				<StatsContainer>
+					<Volume />
+					<Trades />
+					<Traders />
+					<OpenInterest mobile />
+				</StatsContainer>
+			</MobileOrTabletView>
 		</StatsContext.Provider>
 	);
 };

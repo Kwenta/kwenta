@@ -1,5 +1,5 @@
 import { WeiSource } from '@synthetixio/wei';
-import { useEffect, useRef, useMemo } from 'react';
+import { useEffect, useRef, useMemo, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { useTheme } from 'styled-components';
 
@@ -21,8 +21,9 @@ type RichLabel = {
 };
 
 type RichLabelMap = Record<string, RichLabel>;
+type OpenInterestProps = { mobile: boolean };
 
-export const OpenInterest = () => {
+export const OpenInterest: FC<OpenInterestProps> = ({ mobile }) => {
 	const { t } = useTranslation();
 	const theme = useTheme();
 
@@ -37,7 +38,7 @@ export const OpenInterest = () => {
 	}, [ref?.current, theme]);
 
 	const openInterestStats = useMemo(() => {
-		return openInterestData
+		const sortedData = openInterestData
 			.map(({ asset, openInterest }) => ({
 				asset: getDisplayAsset(asset) ?? asset,
 				openInterest,
@@ -51,7 +52,9 @@ export const OpenInterest = () => {
 				} as RichLabel,
 			}))
 			.sort((a, b) => b.openInterest - a.openInterest);
-	}, [openInterestData]);
+
+		return mobile ? sortedData.slice(0, 5) : sortedData;
+	}, [mobile, openInterestData]);
 
 	useEffect(() => {
 		if (!ref || !chart || !ref.current || !openInterestData || !openInterestData.length) {

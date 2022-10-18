@@ -15,13 +15,14 @@ export const ChartHeader = styled.div`
 
 export const StatsContainer = styled.div`
 	margin: 40px 0 40px 0;
-	padding: 0 10% 0 10%;
+	padding: 0;
 	display: grid;
 	grid-template-columns: 1 100%;
 	gap: 15px;
 
 	@media only screen and (min-width: 600px) {
 		grid-template-columns: repeat(2, 50%);
+		padding: 0 10% 0 10%;
 	}
 `;
 
