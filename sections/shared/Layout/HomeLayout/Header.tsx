@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import router from 'next/router';
-import { Dispatch, FC, SetStateAction, useMemo } from 'react';
+import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -22,11 +22,7 @@ import Logo from '../Logo';
 
 export type TPages = 'landing-page' | 'stats-page';
 
-export type HeaderProps = {
-	setCurrentPage: Dispatch<SetStateAction<TPages>>;
-};
-
-const Header: FC<HeaderProps> = ({ setCurrentPage }) => {
+const Header: FC = () => {
 	const { t } = useTranslation();
 
 	const LINKS = useMemo(
@@ -39,7 +35,7 @@ const Header: FC<HeaderProps> = ({ setCurrentPage }) => {
 			{
 				id: 'stats',
 				label: t('homepage.nav.stats'),
-				onClick: () => setCurrentPage('stats-page'),
+				onClick: () => router.push(ROUTES.Home.Stats),
 			},
 			{
 				id: 'governance',
@@ -106,7 +102,7 @@ const Header: FC<HeaderProps> = ({ setCurrentPage }) => {
 		<>
 			<MobileHiddenView>
 				<Container>
-					<LogoContainer onClick={() => setCurrentPage('landing-page')}>
+					<LogoContainer onClick={() => router.push(ROUTES.Home.Root)}>
 						<Logo />
 					</LogoContainer>
 					<Links>
@@ -145,10 +141,10 @@ const Header: FC<HeaderProps> = ({ setCurrentPage }) => {
 			</MobileHiddenView>
 			<MobileOnlyView>
 				<MobileContainer>
-					<LogoContainer onClick={() => setCurrentPage('landing-page')}>
+					<LogoContainer onClick={() => router.push(ROUTES.Home.Markets)}>
 						<Logo />
 					</LogoContainer>
-					<MobileUserMenu setCurrentPage={setCurrentPage} />
+					<MobileUserMenu />
 				</MobileContainer>
 			</MobileOnlyView>
 		</>

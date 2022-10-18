@@ -9,7 +9,6 @@ import MenuIcon from 'assets/svg/app/menu.svg';
 import Button from 'components/Button';
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import ROUTES from 'constants/routes';
-import type { HeaderProps } from 'sections/shared/Layout/HomeLayout/Header';
 import { currentThemeState } from 'store/ui';
 import { FixedFooterMixin } from 'styles/common';
 
@@ -17,9 +16,7 @@ import MobileMenuModal from './MobileMenuModal';
 import MobileSettingsModal from './MobileSettingsModal';
 import MobileWalletButton from './MobileWalletButton';
 
-type MobileUserMenuProps = Partial<HeaderProps>;
-
-const MobileUserMenu: FC<MobileUserMenuProps> = ({ setCurrentPage = () => {} }) => {
+const MobileUserMenu: FC = () => {
 	const [isOpen, setIsOpen] = useState<'menu' | 'settings' | undefined>();
 	const { t } = useTranslation();
 
@@ -67,9 +64,7 @@ const MobileUserMenu: FC<MobileUserMenuProps> = ({ setCurrentPage = () => {} }) 
 					)}
 				</MobileFooterRight>
 			</MobileFooterContainer>
-			{isOpen === 'menu' && (
-				<MobileMenuModal setCurrentPage={setCurrentPage} onDismiss={closeModal} />
-			)}
+			{isOpen === 'menu' && <MobileMenuModal onDismiss={closeModal} />}
 			{isOpen === 'settings' && <MobileSettingsModal onDismiss={closeModal} />}
 		</>
 	);

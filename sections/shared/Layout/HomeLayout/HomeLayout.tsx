@@ -8,17 +8,16 @@ import darkTheme from 'styles/theme/colors/dark';
 
 import Footer from './Footer';
 import Header from './Header';
-import type { HeaderProps } from './Header';
 
-type HomeLayoutProps = HeaderProps & {
+type HomeLayoutProps = {
 	children: React.ReactNode;
 };
 
-const HomeLayout: FC<HomeLayoutProps> = ({ setCurrentPage, children }) => (
+const HomeLayout: FC<HomeLayoutProps> = ({ children }) => (
 	<ThemeProvider theme={themes['dark']}>
 		<FullScreenContainer>
 			<GlobalStyle />
-			<Header setCurrentPage={setCurrentPage} />
+			<Header />
 			<RefetchProvider>{children}</RefetchProvider>
 			<Footer />
 		</FullScreenContainer>

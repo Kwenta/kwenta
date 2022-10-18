@@ -13,6 +13,7 @@ export const formatUrl = (route: string, params: Record<string, string>) => {
 export const ROUTES = {
 	Home: {
 		Root: '/',
+		Stats: formatUrl('/', { page: 'stats' }),
 		Overview: normalizeRoute('/dashboard', 'overview', 'tab'),
 		History: normalizeRoute('/dashboard', 'history', 'tab'),
 		Markets: normalizeRoute('/dashboard', 'markets', 'tab'),

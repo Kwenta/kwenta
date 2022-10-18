@@ -9,7 +9,6 @@ import MobileMenuArrow from 'assets/svg/app/mobile-menu-arrow.svg';
 import FullScreenModal from 'components/FullScreenModal';
 import ROUTES from 'constants/routes';
 import Links from 'sections/dashboard/Links';
-import type { HeaderProps } from 'sections/shared/Layout/HomeLayout/Header';
 import Logo from 'sections/shared/Layout/Logo';
 import { currentThemeState } from 'store/ui';
 
@@ -17,13 +16,13 @@ import { HOMEPAGE_MENU_LINKS, MOBILE_NAV_LINKS } from '../constants';
 import { MenuButton } from './common';
 import MobileSubMenu from './MobileSubMenu';
 
-type MobileMenuModalProps = HeaderProps & {
+type MobileMenuModalProps = {
 	onDismiss(): void;
 };
 
-export const MobileMenuModal: FC<MobileMenuModalProps> = ({ setCurrentPage, onDismiss }) => {
+export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
-	const { asPath } = useRouter();
+	const router = useRouter();
 
 	const menuLinks =
 		window.location.pathname === ROUTES.Home.Root ? HOMEPAGE_MENU_LINKS : MOBILE_NAV_LINKS;
@@ -37,7 +36,7 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ setCurrentPage, onDi
 	};
 
 	const showStatsPage = () => {
-		setCurrentPage('stats-page');
+		router.push(ROUTES.Home.Markets);
 		onDismiss();
 	};
 
@@ -55,14 +54,14 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ setCurrentPage, onDi
 									links={links}
 									active={expanded === link}
 									i18nLabel={i18nLabel}
-									defaultOpen={asPath.includes(link)}
+									defaultOpen={router.asPath.includes(link)}
 									onDismiss={onDismiss}
 									onToggle={handleToggle(link)}
 								/>
 							) : link === ROUTES.Stats.Home ? (
 								<MenuButton
 									currentTheme={currentTheme}
-									isActive={asPath.includes(link)}
+									isActive={router.asPath.includes(link)}
 									onClick={showStatsPage}
 								>
 									{t(i18nLabel)}
@@ -72,7 +71,7 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ setCurrentPage, onDi
 								<Link href={link}>
 									<MenuButton
 										currentTheme={currentTheme}
-										isActive={asPath.includes(link)}
+										isActive={router.asPath.includes(link)}
 										onClick={onDismiss}
 									>
 										{t(i18nLabel)}

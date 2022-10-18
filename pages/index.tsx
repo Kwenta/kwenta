@@ -1,6 +1,7 @@
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
-import { FC, useState } from 'react';
+import { useRouter } from 'next/router';
+import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -23,8 +24,18 @@ type HomePageComponent = FC & { layout?: FC<AppLayoutProps> };
 
 const HomePage: HomePageComponent = () => {
 	const { t } = useTranslation();
+	const router = useRouter();
 
+	const queryPage = router.query.page;
 	const [currentPage, setCurrentPage] = useState<TPages>('landing-page');
+
+	useEffect(() => {
+		if (queryPage === 'stats') {
+			setCurrentPage('stats-page');
+		} else {
+			setCurrentPage('landing-page');
+		}
+	}, [router, queryPage]);
 
 	const Assets = dynamic(() => import('../sections/homepage/Assets'), {
 		ssr: false,
@@ -35,7 +46,7 @@ const HomePage: HomePageComponent = () => {
 			<Head>
 				<title>{t('homepage.page-title')}</title>
 			</Head>
-			<HomeLayout setCurrentPage={setCurrentPage}>
+			<HomeLayout>
 				{currentPage === 'landing-page' ? (
 					<Container>
 						<Hero />
