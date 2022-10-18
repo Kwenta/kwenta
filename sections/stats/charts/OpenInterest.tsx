@@ -8,9 +8,9 @@ import { formatDollars } from 'utils/formatters/number';
 import { getDisplayAsset, MarketKeyByAsset } from 'utils/futures';
 import { SYNTH_ICONS } from 'utils/icons';
 
-import { initChart } from './initChart';
-import type { EChartsOption } from './initChart';
-import { ChartContainer, ChartWrapper } from './stats.styles';
+import { initChart } from '../initChart';
+import type { EChartsOption } from '../initChart';
+import { ChartContainer, ChartHeader, ChartTitle, ChartWrapper } from '../stats.styles';
 
 type RichLabel = {
 	width: number;
@@ -59,8 +59,6 @@ export const OpenInterest = () => {
 		}
 
 		const totalOI = openInterestData.reduce((acc, curr) => acc + curr.openInterest, 0);
-
-		const text = t('stats.open-interest.title');
 		const subtext = formatDollars(totalOI, { maxDecimals: 0 });
 
 		const richLabels = openInterestStats.reduce((acc, openInterestStat) => {
@@ -72,14 +70,7 @@ export const OpenInterest = () => {
 			...defaultOptions,
 			title: {
 				...defaultOptions.title,
-				text,
 				subtext,
-			},
-			grid: {
-				...defaultOptions.grid,
-				right: 100,
-				left: 40,
-				bottom: 60,
 			},
 			xAxis: {
 				type: 'category',
@@ -143,6 +134,9 @@ export const OpenInterest = () => {
 
 	return (
 		<StyledChartContainer width={2}>
+			<ChartHeader>
+				<ChartTitle>{t('stats.open-interest.title')}</ChartTitle>
+			</ChartHeader>
 			<ChartWrapper ref={ref} />
 		</StyledChartContainer>
 	);

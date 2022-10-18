@@ -50,8 +50,6 @@ export const initChart = (dom: HTMLElement | null, theme: ThemeInterface): Chart
 
 	const defaultOptions: EChartsOption = {
 		title: {
-			left: 20,
-			itemGap: 10,
 			textStyle: {
 				color: theme.colors.selectedTheme.white,
 				fontFamily: theme.fonts.regular,
@@ -62,10 +60,14 @@ export const initChart = (dom: HTMLElement | null, theme: ThemeInterface): Chart
 				fontFamily: theme.fonts.monoBold,
 				fontSize: 28,
 			},
+			padding: 0,
 		},
 		grid: {
 			top: 70,
-			bottom: 30,
+			bottom: 0,
+			left: 0,
+			right: 0,
+			containLabel: true,
 		},
 		xAxis: {
 			axisLabel: {
@@ -87,8 +89,9 @@ export const initChart = (dom: HTMLElement | null, theme: ThemeInterface): Chart
 		},
 		legend: {
 			icon: 'circle',
-			top: 30,
-			left: 20,
+			padding: 0,
+			left: 0,
+			top: 10,
 			textStyle: {
 				color: theme.colors.common.primaryWhite,
 				fontFamily: theme.fonts.regular,

@@ -2,17 +2,18 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'styled-components';
 
+import { MiniLoader } from 'components/Loader';
 import useStatsData from 'hooks/useStatsData';
 
-import { initChart } from './initChart';
-import type { EChartsOption } from './initChart';
-import { ChartContainer, ChartWrapper } from './stats.styles';
-import { TimeframeSwitcher } from './TimeframeSwitcher';
+import { initChart } from '../initChart';
+import type { EChartsOption } from '../initChart';
+import { ChartContainer, ChartHeader, ChartTitle, ChartWrapper } from '../stats.styles';
+import { TimeframeSwitcher } from '../TimeframeSwitcher';
 
 export const Traders = () => {
 	const { t } = useTranslation();
 	const theme = useTheme();
-	const { tradersData } = useStatsData();
+	const { tradersData, tradersIsLoading } = useStatsData();
 
 	const ref = useRef<HTMLDivElement | null>(null);
 
@@ -27,20 +28,15 @@ export const Traders = () => {
 			return;
 		}
 
-		const text = t('stats.traders.title');
-
-		const data: any = [];
-		tradersData?.forEach(({ date }) => data.push(date));
 		const option: EChartsOption = {
 			...defaultOptions,
 			title: {
 				...defaultOptions.title,
-				text,
 			},
 			xAxis: {
 				...defaultOptions.xAxis,
 				type: 'category',
-				data,
+				data: tradersData?.map((data) => data.date),
 			},
 			yAxis: [
 				{
@@ -98,7 +94,12 @@ export const Traders = () => {
 
 	return (
 		<ChartContainer width={1}>
-			<TimeframeSwitcher />
+			<ChartHeader>
+				<ChartTitle>
+					{t('stats.traders.title')} {tradersIsLoading && <MiniLoader />}
+				</ChartTitle>
+				<TimeframeSwitcher />
+			</ChartHeader>
 			<ChartWrapper ref={ref} />
 		</ChartContainer>
 	);

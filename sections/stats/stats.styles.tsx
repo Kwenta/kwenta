@@ -1,5 +1,18 @@
 import styled from 'styled-components';
 
+export const ChartTitle = styled.div`
+	color: ${(props) => props.theme.colors.selectedTheme.white};
+	font-family: ${(props) => props.theme.fonts.regular};
+	font-size: 18px;
+	font-weight: bold;
+`;
+
+export const ChartHeader = styled.div`
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+`;
+
 export const StatsContainer = styled.div`
 	margin: 40px 0 40px 0;
 	width: 100%;
@@ -14,7 +27,7 @@ export const StatsContainer = styled.div`
 
 export const ChartContainer = styled.div<{ width: number }>`
 	background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
-	padding: 12px;
+	padding: 40px;
 
 	/* Highlight-Glow */
 	box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.08),

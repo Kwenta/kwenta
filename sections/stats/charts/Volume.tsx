@@ -3,18 +3,19 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'styled-components';
 
+import { MiniLoader } from 'components/Loader';
 import useStatsData from 'hooks/useStatsData';
 import { formatDollars } from 'utils/formatters/number';
 
-import { initChart } from './initChart';
-import type { EChartsOption } from './initChart';
-import { ChartContainer, ChartWrapper } from './stats.styles';
-import { TimeframeSwitcher } from './TimeframeSwitcher';
+import { initChart } from '../initChart';
+import type { EChartsOption } from '../initChart';
+import { ChartContainer, ChartHeader, ChartTitle, ChartWrapper } from '../stats.styles';
+import { TimeframeSwitcher } from '../TimeframeSwitcher';
 
 export const Volume = () => {
 	const { t } = useTranslation();
 	const theme = useTheme();
-	const { volumeData } = useStatsData();
+	const { volumeData, volumeIsLoading } = useStatsData();
 
 	const ref = useRef<HTMLDivElement | null>(null);
 
@@ -31,7 +32,6 @@ export const Volume = () => {
 
 		const totalVolume = volumeData.reduce((acc, curr) => acc + curr.volume, 0);
 
-		const text = t('stats.volume.title');
 		const subtext = formatDollars(totalVolume, { maxDecimals: 0 });
 
 		const data: any = [];
@@ -40,13 +40,7 @@ export const Volume = () => {
 			...defaultOptions,
 			title: {
 				...defaultOptions.title,
-				text,
 				subtext,
-			},
-			grid: {
-				...defaultOptions.grid,
-				right: 100,
-				left: 40,
 			},
 			xAxis: {
 				...defaultOptions.xAxis,
@@ -89,7 +83,12 @@ export const Volume = () => {
 
 	return (
 		<ChartContainer width={2}>
-			<TimeframeSwitcher />
+			<ChartHeader>
+				<ChartTitle>
+					{t('stats.volume.title')} {volumeIsLoading && <MiniLoader />}
+				</ChartTitle>
+				<TimeframeSwitcher />
+			</ChartHeader>
 			<ChartWrapper ref={ref} />
 		</ChartContainer>
 	);

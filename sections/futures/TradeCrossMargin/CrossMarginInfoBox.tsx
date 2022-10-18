@@ -5,7 +5,7 @@ import styled, { useTheme } from 'styled-components';
 
 import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import InfoBox from 'components/InfoBox';
-import Loader from 'components/Loader';
+import { MiniLoader } from 'components/Loader';
 import PreviewArrow from 'components/PreviewArrow';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { FuturesPotentialTradeDetails } from 'queries/futures/types';
@@ -244,10 +244,6 @@ function MarginInfoBox({ editingLeverage }: Props) {
 		</>
 	);
 }
-
-const MiniLoader = () => {
-	return <Loader inline height="11px" width="11px" style={{ marginLeft: '10px' }} />;
-};
 
 const StyledInfoBox = styled(InfoBox)`
 	margin-bottom: 16px;

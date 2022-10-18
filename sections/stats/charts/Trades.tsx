@@ -2,17 +2,18 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'styled-components';
 
+import { MiniLoader } from 'components/Loader';
 import useStatsData from 'hooks/useStatsData';
 
-import { initChart } from './initChart';
-import type { EChartsOption } from './initChart';
-import { ChartContainer, ChartWrapper } from './stats.styles';
-import { TimeframeSwitcher } from './TimeframeSwitcher';
+import { initChart } from '../initChart';
+import type { EChartsOption } from '../initChart';
+import { ChartContainer, ChartHeader, ChartTitle, ChartWrapper } from '../stats.styles';
+import { TimeframeSwitcher } from '../TimeframeSwitcher';
 
 export const Trades = () => {
 	const { t } = useTranslation();
 	const theme = useTheme();
-	const { volumeData } = useStatsData();
+	const { volumeData, volumeIsLoading } = useStatsData();
 
 	const ref = useRef<HTMLDivElement | null>(null);
 
@@ -27,20 +28,15 @@ export const Trades = () => {
 			return;
 		}
 
-		const text = t('stats.trades.title');
-
-		const data: any = [];
-		volumeData?.forEach(({ date }) => data.push(date));
 		const option: EChartsOption = {
 			...defaultOptions,
 			title: {
 				...defaultOptions.title,
-				text,
 			},
 			xAxis: {
 				...defaultOptions.xAxis,
 				type: 'category',
-				data,
+				data: volumeData?.map((data) => data.date),
 			},
 			yAxis: [
 				{
@@ -85,7 +81,6 @@ export const Trades = () => {
 					name: 'Cumulative Trades',
 					lineStyle: {
 						color: '#02E1FF',
-						cap: 'square',
 					},
 					symbol: 'none',
 					yAxisIndex: 1,
@@ -98,7 +93,12 @@ export const Trades = () => {
 
 	return (
 		<ChartContainer width={1}>
-			<TimeframeSwitcher />
+			<ChartHeader>
+				<ChartTitle>
+					{t('stats.trades.title')} {volumeIsLoading && <MiniLoader />}
+				</ChartTitle>
+				<TimeframeSwitcher />
+			</ChartHeader>
 			<ChartWrapper ref={ref} />
 		</ChartContainer>
 	);
