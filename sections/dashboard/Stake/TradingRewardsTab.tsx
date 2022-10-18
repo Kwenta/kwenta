@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 import { currentThemeState } from 'store/ui';
 import media from 'styles/media';
+import { formatTruncatedDuration } from 'utils/formatters/date';
 
 import { KwentaLabel, StakingCard } from './common';
 
@@ -13,6 +14,12 @@ const TradingRewardsTab: React.FC = () => {
 	const epochPeriod = 5;
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
+	const getNextSunday = (date: Date) => {
+		const nextSunday = new Date();
+		nextSunday.setDate(date.getDate() + (7 - date.getDay()));
+		nextSunday.setHours(0, 0, 0, 0);
+		return nextSunday;
+	};
 
 	return (
 		<TradingRewardsContainer>
@@ -34,7 +41,11 @@ const TradingRewardsTab: React.FC = () => {
 				<div className="title">
 					{t('dashboard.stake.tabs.trading-rewards.trading-activity-reset')}
 				</div>
-				<div className="value">4D:2H:11M</div>
+				<div className="value">
+					{formatTruncatedDuration(
+						getNextSunday(new Date()).getTime() / 1000 - new Date().getTime() / 1000
+					)}
+				</div>
 			</StakingCard>
 		</TradingRewardsContainer>
 	);

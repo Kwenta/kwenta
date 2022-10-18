@@ -69,3 +69,16 @@ export const calculatedTimeDifference = (dateLeft: Date, dateRight: Date) =>
 	differenceInSeconds(dateLeft, dateRight);
 
 export const keepDoublePlaceholder = (num: number) => (num < 9 ? `0${num}` : num);
+
+export const formatTruncatedDuration = (delta: number): string => {
+	const days = Math.floor(delta / 86400);
+	delta -= days * 86400;
+	const hours = Math.floor(delta / 3600) % 24;
+	delta -= hours * 3600;
+	const minutes = Math.floor(delta / 60) % 60;
+	delta -= minutes * 60;
+	const daysStr = days > 0 ? days + 'd:' : '';
+	const hoursStr = hours > 0 ? hours + 'h:' : '0h:';
+	const minsStr = minutes > 0 ? minutes + 'm' : '0m';
+	return `${daysStr}${hoursStr}${minsStr}`.trim();
+};

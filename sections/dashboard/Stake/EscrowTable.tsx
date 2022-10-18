@@ -13,6 +13,7 @@ import { TableCellHead } from 'components/Table/Table';
 import Connector from 'containers/Connector';
 import rewardEscrowABI from 'lib/abis/RewardEscrow.json';
 import { currentThemeState } from 'store/ui';
+import { formatTruncatedDuration } from 'utils/formatters/date';
 import logError from 'utils/logError';
 
 import { StakingCard } from './common';
@@ -67,7 +68,7 @@ const EscrowTable = () => {
 				data.push({
 					id: Number(d.entryID),
 					date: moment(Number(d.endTime) * 1000).format('MM/DD/YY'),
-					time: moment(Number(d.endTime) * 1000).fromNow(),
+					time: formatTruncatedDuration(d.endTime - new Date().getTime() / 1000),
 					vestable: d.endTime * 1000 > Date.now() ? 0 : Number(d.escrowAmount / 1e18),
 					amount: Number(d.escrowAmount / 1e18),
 					fee: d.endTime * 1000 > Date.now() ? Number(d.escrowAmount / 1e18) : 0,
