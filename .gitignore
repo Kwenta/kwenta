@@ -43,6 +43,7 @@ lighthouse-mobile-report
 #e2e-tests
 tests/e2e/videos
 tests/e2e/screenshots
+docker/
 
 # Vscode
 .vscode

@@ -145,85 +145,49 @@ jobs:
     if: always() && (needs.build.result == 'success')
     runs-on: ubuntu-latest
 
-    container:
-      image: synthetixio/docker-e2e:16.14-ubuntu
+    strategy:
+      matrix:
+        resolution: ['high']
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
-
-      - name: Set npm cache directory
-        run: npm config set cache .npm-cache --global
-        continue-on-error: true
-
-      - name: Cache node modules
-        uses: actions/cache@136d96b4aee02b1f0de3ba493b1d47135042d9c0 # pin@v3
-        with:
-          path: |
-            .npm-cache
-            node_modules
-          key: ${{ runner.os }}-e2e-cache-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-e2e-cache-
-        continue-on-error: true
-
-      # fixes permission issues on gh actions + docker + npm@8
       - name: Chown workspace
         run: chown -R $(whoami) .
 
-      # mkdir -p node_modules fixes https://github.com/npm/cli/issues/3208 starting from npm@7
-      - name: Install dependencies
-        run: |
-          mkdir -p node_modules
-          npm install --prefer-offline --no-audit --legacy-peer-deps
-        env:
-          CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cache/Cypress
+      - name: Checkout
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
 
-      - name: Set deployment url
-        shell: bash
-        run: |
-          if [ ${{ github.event_name }} == pull_request ]
-          then
-            export BRANCH_NAME=$(echo ${GITHUB_HEAD_REF#refs/heads/} | sed -e 's/\//-/g')
-            echo "BASE_URL=https://${{ secrets.VERCEL_PREFIX }}-$BRANCH_NAME-${{ secrets.VERCEL_DOMAIN }}" >> $GITHUB_ENV
-          else
-            export BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | sed -e 's/\//-/g')
-            echo "BASE_URL=https://${{ secrets.VERCEL_PREFIX }}-$BRANCH_NAME-${{ secrets.VERCEL_DOMAIN }}" >> $GITHUB_ENV
-          fi
-        env:
-          VERCEL_PREFIX: ${{ secrets.VERCEL_PREFIX }}
-          VERCEL_DOMAIN: ${{ secrets.VERCEL_DOMAIN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@8b122486cedac8393e77aa9734c3528886e4a1a8 # pin@v1
 
-      - name: Download build
-        uses: actions/download-artifact@v3 # pin@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@dc7b9719a96d48369863986a06765841d7ea23f6 # pin@v1
+
+      - name: Cache Docker \layers
+        uses: actions/cache@56461b9eb0f8438fd15c7a9968e3c9ebb18ceff1 # pin@v2
         with:
-          name: build
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
 
-      - name: Extract build
-        run: tar -xf build.tar.gz
-
-      - name: Run e2e tests
-        run: npm run test:e2e:ci
+      - name: Run e2e tests (${{ matrix.resolution }} resolution)
+        run: |
+          docker-compose --env-file ./${{ matrix.resolution }}-res.env up --build --exit-code-from synpress
         env:
-          SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-          ETHERSCAN_KEY: ${{ secrets.ETHERSCAN_KEY }}
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          COMPOSE_DOCKER_CLI_BUILD: 1
+          DOCKER_BUILDKIT: 1
+          DOCKER_DEFAULT_PLATFORM: linux/amd64
+          PRIVATE_KEY: ${{ env.PRIVATE_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cache/Cypress
-          RPC_URL: https://goerli.optimism.io
-          NETWORK_NAME: OptimisticGoerli
-          BLOCK_EXPLORER: https://blockscout.com/optimism/goerli
-          IS_TESTNET: true
-          CHAIN_ID: 420
+          NGROK_AUTH: ${{ secrets.NGROK_AUTH }}
 
-      - name: Archive e2e artifacts
-        uses: actions/upload-artifact@v3 # pin@v2
+      - name: Archive e2e artifacts (${{ matrix.resolution }} resolution)
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # pin@v2
         if: always()
         with:
-          name: e2e-artifacts
+          name: e2e-artifacts-${{ matrix.resolution }}-resolution
           path: |
-            tests/e2e/videos
-            tests/e2e/screenshots
+            docker/videos
+            docker/videos-ci
+            docker/screenshots
         continue-on-error: true
