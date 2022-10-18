@@ -95,6 +95,10 @@
 					{
 						"pattern": "lib/**",
 						"group": "internal"
+					},
+					{
+						"pattern": "testing/**",
+						"group": "internal"
 					}
 				],
 				"pathGroupsExcludedImportTypes": []
