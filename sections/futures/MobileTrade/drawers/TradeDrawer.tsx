@@ -5,7 +5,6 @@ import styled, { css } from 'styled-components';
 import { PositionSide } from 'queries/futures/types';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
-import { getDisplayAsset } from 'utils/futures';
 
 import BaseDrawer from './BaseDrawer';
 
@@ -21,7 +20,7 @@ const TradeDrawer: React.FC<TradeDrawerProps> = ({ trade, closeDrawer }) => {
 		return [
 			{
 				label: 'Market',
-				value: getDisplayAsset(trade.asset),
+				value: trade.market,
 			},
 			{
 				label: 'Side',
@@ -29,18 +28,18 @@ const TradeDrawer: React.FC<TradeDrawerProps> = ({ trade, closeDrawer }) => {
 			},
 			{
 				label: 'Type',
-				value: trade.type,
+				value: trade.orderType,
 			},
 			{
 				label: 'Status',
 				value: trade.status,
 			},
-			{ label: 'Size', value: formatCryptoCurrency(trade.amount) },
+			{ label: 'Size', value: formatCryptoCurrency(trade.size) },
 			{
 				label: 'Price',
-				value: formatDollars(trade.value),
+				value: formatDollars(trade.price),
 			},
-			{ label: 'Date/Time', value: <TimeDisplay cellPropsValue={trade.time} horizontal /> },
+			{ label: 'Date/Time', value: <TimeDisplay cellPropsValue={trade.timestamp} horizontal /> },
 			{
 				label: 'PnL',
 				value: trade.pnl.eq(wei(0)) ? (

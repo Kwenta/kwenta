@@ -2,13 +2,14 @@ import { wei } from '@synthetixio/wei';
 import { utils as ethersUtils } from 'ethers';
 import * as _ from 'lodash/fp';
 import Link from 'next/link';
-import React, { FC, useMemo, ReactElement } from 'react';
+import { FC, useMemo, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Currency from 'components/Currency';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import FuturesIcon from 'components/Nav/FuturesIcon';
 import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
@@ -22,14 +23,23 @@ import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetAllFuturesTradesForAccount from 'queries/futures/useGetAllFuturesTradesForAccount';
+import TradeDrawer from 'sections/futures/MobileTrade/drawers/TradeDrawer';
 import { TradeStatus } from 'sections/futures/types';
 import { futuresAccountTypeState } from 'store/futures';
+import { formatShortDateWithoutYear } from 'utils/formatters/date';
 import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
-import { FuturesMarketAsset, getMarketName, isDecimalFour, MarketKeyByAsset } from 'utils/futures';
+import {
+	FuturesMarketAsset,
+	getDisplayAsset,
+	getMarketName,
+	isDecimalFour,
+	MarketKeyByAsset,
+} from 'utils/futures';
 
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
 
 const FuturesHistoryTable: FC = () => {
+	const [selectedTrade, setSelectedTrade] = useState<FuturesTrade>();
 	const accountType = useRecoilValue(futuresAccountTypeState);
 
 	const { walletAddress } = Connector.useContainer();
@@ -50,10 +60,12 @@ const FuturesHistoryTable: FC = () => {
 				return {
 					...trade,
 					asset: parsedAsset,
+					displayAsset: getDisplayAsset(parsedAsset),
 					market: getMarketName(parsedAsset),
 					price: Number(trade.price?.div(ETH_UNIT)),
 					size: Number(trade.size.div(ETH_UNIT).abs()),
 					timestamp: Number(trade.timestamp.mul(1000)),
+					date: formatShortDateWithoutYear(new Date(trade.timestamp.mul(1000).toNumber())),
 					pnl: trade.pnl.div(ETH_UNIT),
 					feesPaid: trade.feesPaid.div(ETH_UNIT),
 					id: trade.txnHash,
@@ -67,148 +79,263 @@ const FuturesHistoryTable: FC = () => {
 		_.isNil(prop) ? <p>{NO_VALUE}</p> : children;
 
 	return (
-		<TableContainer>
-			<StyledTable
-				data={isL2 ? mappedHistoricalTrades : []}
-				showPagination
-				isLoading={futuresTradesQuery.isLoading}
-				noResultsMessage={
-					!isL2 ? (
-						<TableNoResults>
-							{t('common.l2-cta')}
-							<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
-						</TableNoResults>
-					) : (
-						<TableNoResults>
-							{t('dashboard.history.futures-history-table.no-result')}
-							<Link href={ROUTES.Markets.Home(accountType)}>
-								<div>{t('common.perp-cta')}</div>
-							</Link>
-						</TableNoResults>
-					)
-				}
-				highlightRowsOnHover
-				sortBy={[{ id: 'dateTime', asec: true }]}
-				columns={[
-					{
-						Header: <div>{t('dashboard.history.futures-history-table.date-time')}</div>,
-						accessor: 'dateTime',
-						Cell: (cellProps: CellProps<FuturesTrade>) => {
-							return conditionalRender(
-								cellProps.row.original.timestamp,
-								<StyledTimeDisplay>
-									<TimeDisplay cellPropsValue={cellProps.row.original.timestamp} />
-								</StyledTimeDisplay>
-							);
-						},
-						width: 100,
-					},
-					{
-						Header: <div>{t('dashboard.history.futures-history-table.market')}</div>,
-						accessor: 'market',
-						Cell: (cellProps: CellProps<typeof mappedHistoricalTrades[number]>) => {
-							return conditionalRender(
-								cellProps.row.original.asset,
-								<SynthContainer>
-									{cellProps.row.original.asset && (
+		<>
+			<DesktopOnlyView>
+				<TableContainer>
+					<StyledTable
+						data={isL2 ? mappedHistoricalTrades : []}
+						showPagination
+						isLoading={futuresTradesQuery.isLoading}
+						noResultsMessage={
+							!isL2 ? (
+								<TableNoResults>
+									{t('common.l2-cta')}
+									<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+								</TableNoResults>
+							) : (
+								<TableNoResults>
+									{t('dashboard.history.futures-history-table.no-result')}
+									<Link href={ROUTES.Markets.Home(accountType)}>
+										<div>{t('common.perp-cta')}</div>
+									</Link>
+								</TableNoResults>
+							)
+						}
+						highlightRowsOnHover
+						sortBy={[{ id: 'dateTime', asec: true }]}
+						columns={[
+							{
+								Header: <div>{t('dashboard.history.futures-history-table.date-time')}</div>,
+								accessor: 'dateTime',
+								Cell: (cellProps: CellProps<FuturesTrade>) => {
+									return conditionalRender(
+										cellProps.row.original.timestamp,
+										<StyledTimeDisplay>
+											<TimeDisplay cellPropsValue={cellProps.row.original.timestamp} />
+										</StyledTimeDisplay>
+									);
+								},
+								width: 100,
+							},
+							{
+								Header: <div>{t('dashboard.history.futures-history-table.market')}</div>,
+								accessor: 'market',
+								Cell: (cellProps: CellProps<typeof mappedHistoricalTrades[number]>) => {
+									return conditionalRender(
+										cellProps.row.original.asset,
 										<>
-											<IconContainer>
-												<StyledCurrencyIcon
-													currencyKey={
-														MarketKeyByAsset[cellProps.row.original.asset as FuturesMarketAsset]
-													}
-												/>
-											</IconContainer>
-											<StyledText>{cellProps.row.original.market}</StyledText>
-											<StyledFuturesIcon type={cellProps.row.original.accountType} />
+											{cellProps.row.original.asset && (
+												<SynthContainer>
+													<StyledCurrencyIcon
+														currencyKey={
+															MarketKeyByAsset[cellProps.row.original.asset as FuturesMarketAsset]
+														}
+													/>
+													<StyledText>{cellProps.value}</StyledText>
+													<FuturesIcon type={cellProps.row.original.accountType} />
+												</SynthContainer>
+											)}
 										</>
-									)}
-								</SynthContainer>
-							);
-						},
-						width: 120,
-					},
-					{
-						Header: <div>{t('dashboard.history.futures-history-table.side')}</div>,
-						accessor: 'side',
-						Cell: (cellProps: CellProps<FuturesTrade>) => {
-							return conditionalRender(
-								cellProps.row.original.side,
-								<PositionType side={cellProps.value} />
-							);
-						},
-						width: 70,
-					},
-					{
-						Header: <div>{t('dashboard.history.futures-history-table.size')}</div>,
-						accessor: 'size',
-						Cell: (cellProps: CellProps<FuturesTrade>) => {
-							return conditionalRender(
-								cellProps.row.original.size,
-								<>{formatCryptoCurrency(cellProps.value)}</>
-							);
-						},
-						width: 100,
-					},
-					{
-						Header: <div>{t('dashboard.history.futures-history-table.price')}</div>,
-						accessor: 'price',
-						Cell: (cellProps: CellProps<FuturesTrade>) => {
-							const formatOptions = isDecimalFour(cellProps.row.original.asset)
-								? { sign: '$', minDecimals: DEFAULT_CRYPTO_DECIMALS }
-								: { sign: '$' };
-							return conditionalRender(
-								cellProps.row.original.price,
-								<>{formatDollars(cellProps.value, formatOptions)}</>
-							);
-						},
-						width: 120,
-					},
-					{
-						Header: <div>{t('dashboard.history.futures-history-table.pnl')}</div>,
-						accessor: 'pnl',
-						Cell: (cellProps: CellProps<FuturesTrade>) => {
-							return conditionalRender(
-								cellProps.row.original.pnl,
-								cellProps.row.original.pnl.eq(wei(0)) ? (
-									<PNL normal>--</PNL>
-								) : (
-									<PNL negative={cellProps.value.lt(wei(0))}>{formatDollars(cellProps.value)}</PNL>
-								)
-							);
-						},
-						width: 120,
-					},
-					{
-						Header: <div>{t('dashboard.history.futures-history-table.fees')}</div>,
-						accessor: 'fees',
-						Cell: (cellProps: CellProps<FuturesTrade>) => {
-							return conditionalRender(
-								cellProps.row.original.feesPaid,
-								<Currency.Price
-									currencyKey={'sUSD'}
-									price={cellProps.row.original.feesPaid}
-									sign={selectedPriceCurrency.sign}
-									conversionRate={selectPriceCurrencyRate}
-								/>
-							);
-						},
-						width: 120,
-					},
-					{
-						Header: <div>{t('dashboard.history.futures-history-table.order-type')}</div>,
-						accessor: 'orderType',
-						Cell: (cellProps: CellProps<FuturesTrade>) => {
-							return conditionalRender(
-								cellProps.row.original.orderType,
-								<StyledText>{cellProps.row.original.orderType}</StyledText>
-							);
-						},
-						width: 80,
-					},
-				]}
-			/>
-		</TableContainer>
+									);
+								},
+								width: 120,
+							},
+							{
+								Header: <div>{t('dashboard.history.futures-history-table.side')}</div>,
+								accessor: 'side',
+								Cell: (cellProps: CellProps<FuturesTrade>) => {
+									return conditionalRender(
+										cellProps.row.original.side,
+										<PositionType side={cellProps.value} />
+									);
+								},
+								width: 70,
+							},
+							{
+								Header: <div>{t('dashboard.history.futures-history-table.size')}</div>,
+								accessor: 'size',
+								Cell: (cellProps: CellProps<FuturesTrade>) => {
+									return conditionalRender(
+										cellProps.row.original.size,
+										<>{formatCryptoCurrency(cellProps.value)}</>
+									);
+								},
+								width: 100,
+							},
+							{
+								Header: <div>{t('dashboard.history.futures-history-table.price')}</div>,
+								accessor: 'price',
+								Cell: (cellProps: CellProps<FuturesTrade>) => {
+									const formatOptions = isDecimalFour(cellProps.row.original.asset)
+										? { sign: '$', minDecimals: DEFAULT_CRYPTO_DECIMALS }
+										: { sign: '$' };
+									return conditionalRender(
+										cellProps.row.original.price,
+										<>{formatDollars(cellProps.value, formatOptions)}</>
+									);
+								},
+								width: 120,
+							},
+							{
+								Header: <div>{t('dashboard.history.futures-history-table.pnl')}</div>,
+								accessor: 'pnl',
+								Cell: (cellProps: CellProps<FuturesTrade>) => {
+									return conditionalRender(
+										cellProps.row.original.pnl,
+										cellProps.row.original.pnl.eq(wei(0)) ? (
+											<PNL normal>--</PNL>
+										) : (
+											<PNL negative={cellProps.value.lt(wei(0))}>
+												{formatDollars(cellProps.value)}
+											</PNL>
+										)
+									);
+								},
+								width: 120,
+							},
+							{
+								Header: <div>{t('dashboard.history.futures-history-table.fees')}</div>,
+								accessor: 'fees',
+								Cell: (cellProps: CellProps<FuturesTrade>) => {
+									return conditionalRender(
+										cellProps.row.original.feesPaid,
+										<Currency.Price
+											currencyKey={'sUSD'}
+											price={cellProps.row.original.feesPaid}
+											sign={selectedPriceCurrency.sign}
+											conversionRate={selectPriceCurrencyRate}
+										/>
+									);
+								},
+								width: 120,
+							},
+							{
+								Header: <div>{t('dashboard.history.futures-history-table.type')}</div>,
+								accessor: 'orderType',
+								Cell: (cellProps: CellProps<FuturesTrade>) => {
+									return conditionalRender(
+										cellProps.row.original.orderType,
+										<StyledText>{cellProps.row.original.orderType}</StyledText>
+									);
+								},
+								width: 80,
+							},
+						]}
+					/>
+				</TableContainer>
+			</DesktopOnlyView>
+			<MobileOrTabletView>
+				<TableContainer>
+					<MobileStyledTable
+						data={isL2 ? mappedHistoricalTrades : []}
+						onTableRowClick={(row) => {
+							setSelectedTrade(row.original);
+						}}
+						isLoading={futuresTradesQuery.isLoading}
+						noResultsMessage={
+							!isL2 ? (
+								<TableNoResults>
+									{t('common.l2-cta')}
+									<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+								</TableNoResults>
+							) : (
+								<TableNoResults>
+									{t('dashboard.history.futures-history-table.no-result')}
+									<Link href={ROUTES.Markets.Home(accountType)}>
+										<div>{t('common.perp-cta')}</div>
+									</Link>
+								</TableNoResults>
+							)
+						}
+						sortBy={[{ id: 'dateTime', asc: false }]}
+						columns={[
+							{
+								Header: <div>{t('dashboard.history.futures-history-table.asset')}</div>,
+								accessor: 'displayAsset',
+								Cell: (cellProps: CellProps<typeof mappedHistoricalTrades[number]>) => {
+									return conditionalRender(
+										cellProps.row.original.asset,
+										<>
+											{cellProps.row.original.asset && (
+												<MobileSynthContainer>
+													<MobileStyledCurrencyIcon
+														currencyKey={
+															MarketKeyByAsset[cellProps.row.original.asset as FuturesMarketAsset]
+														}
+													/>
+													<MobileMarketContainer>
+														<StyledText>{cellProps.value}</StyledText>
+														<FuturesIcon type={cellProps.row.original.accountType} />
+													</MobileMarketContainer>
+													<StyledText>{cellProps.row.original.date}</StyledText>
+												</MobileSynthContainer>
+											)}
+										</>
+									);
+								},
+								width: 60,
+							},
+							{
+								Header: () => (
+									<div>
+										<div>{t('dashboard.history.futures-history-table.side')}</div>
+										<div>{t('dashboard.history.futures-history-table.type')}</div>
+									</div>
+								),
+								accessor: 'side',
+								Cell: (cellProps: CellProps<FuturesTrade>) => {
+									return conditionalRender(
+										cellProps.row.original.side,
+										<div>
+											<PositionType side={cellProps.value} mobile />
+											<div>{cellProps.row.original.orderType}</div>
+										</div>
+									);
+								},
+								width: 60,
+							},
+							{
+								Header: () => (
+									<div>
+										<div>{t('dashboard.history.futures-history-table.size')}</div>
+										<div>{t('dashboard.history.futures-history-table.price')}</div>
+									</div>
+								),
+								accessor: 'size',
+								Cell: (cellProps: CellProps<FuturesTrade>) => {
+									return conditionalRender(
+										cellProps.row.original.price,
+										<div>
+											<div>{formatCryptoCurrency(cellProps.value)}</div>
+											<div>{formatDollars(cellProps.row.original.price ?? 0)}</div>
+										</div>
+									);
+								},
+								width: 60,
+							},
+							{
+								Header: <div>{t('dashboard.history.futures-history-table.pnl')}</div>,
+								accessor: 'pnl',
+								Cell: (cellProps: CellProps<FuturesTrade>) => {
+									return conditionalRender(
+										cellProps.row.original.pnl,
+										cellProps.row.original.pnl.eq(wei(0)) ? (
+											<PNL normal>--</PNL>
+										) : (
+											<PNL negative={cellProps.value.lt(wei(0))}>
+												{formatDollars(cellProps.value)}
+											</PNL>
+										)
+									);
+								},
+								width: 60,
+							},
+						]}
+					/>
+				</TableContainer>
+				<TradeDrawer trade={selectedTrade} closeDrawer={() => setSelectedTrade(undefined)} />
+			</MobileOrTabletView>
+		</>
 	);
 };
 
@@ -221,12 +348,12 @@ const StyledTimeDisplay = styled.div`
 const StyledCurrencyIcon = styled(Currency.Icon)`
 	width: 30px;
 	height: 30px;
-	margin-right: 5px;
 `;
 
-const IconContainer = styled.div`
-	grid-column: 1;
+const MobileStyledCurrencyIcon = styled(Currency.Icon)`
 	grid-row: 1 / span 2;
+	width: 20px;
+	height: 20px;
 `;
 
 const TableContainer = styled.div`
@@ -242,16 +369,39 @@ const StyledTable = styled(Table)`
 	margin-bottom: 20px;
 `;
 
+const MobileStyledTable = styled(Table)`
+	margin-bottom: 20px;
+	border-radius: initial;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+`;
+
 const StyledText = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
+
 const SynthContainer = styled.div`
 	display: flex;
 	align-items: center;
-	grid-column: 3;
-	grid-row: 1;
 	column-gap: 5px;
 	margin-left: -4px;
+`;
+
+const MobileSynthContainer = styled.div`
+	display: grid;
+	align-items: center;
+	grid-template-columns: repeat(2, auto);
+	grid-template-rows: repeat(2, auto);
+	column-gap: 5px;
+	margin-left: -4px;
+`;
+
+const MobileMarketContainer = styled.div`
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 5px;
 `;
 
 const PNL = styled.div<{ negative?: boolean; normal?: boolean }>`
@@ -261,10 +411,6 @@ const PNL = styled.div<{ negative?: boolean; normal?: boolean }>`
 			: props.negative
 			? props.theme.colors.selectedTheme.red
 			: props.theme.colors.selectedTheme.green};
-`;
-
-const StyledFuturesIcon = styled(FuturesIcon)`
-	margin-left: 5px;
 `;
 
 export default FuturesHistoryTable;
