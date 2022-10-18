@@ -15,7 +15,7 @@ export const ChartHeader = styled.div`
 
 export const StatsContainer = styled.div`
 	margin: 40px 0 40px 0;
-	width: 100%;
+	padding: 0 10% 0 10%;
 	display: grid;
 	grid-template-columns: 1 100%;
 	gap: 15px;
