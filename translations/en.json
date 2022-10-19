@@ -546,6 +546,7 @@
 				"no-trade-history-link": "Visit the Kwenta exchange to swap synths"
 			},
 			"futures-history-table": {
+				"asset": "Asset",
 				"size": "Size",
 				"pnl": "P&L",
 				"date-time": "Date/Time",
@@ -553,7 +554,7 @@
 				"price": "Price",
 				"side": "Side",
 				"market": "Market",
-				"order-type": "Type",
+				"type": "Type",
 				"no-result": "You have no futures trading history"
 			}
 		},
@@ -865,7 +866,7 @@
 					}
 				},
 				"trades": {
-					"tab": "History",
+					"tab": "Trades",
 					"table": {
 						"id": "ID",
 						"trade-size": "trade size",
@@ -875,6 +876,7 @@
 						"fees": "fees",
 						"price": "price",
 						"side": "side",
+						"side-type": "Side/Type",
 						"no-results": "You have no trade history",
 						"order-type": "order type",
 						"trade-types": {
@@ -1030,6 +1032,9 @@
 		"approve-transaction": {
 			"title": "approve transaction",
 			"confirm-with-provider": "Confirm your transaction through your wallet."
+		},
+		"menu": {
+			"title": "menu"
 		},
 		"settings": {
 			"title": "settings",

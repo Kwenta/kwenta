@@ -22,7 +22,7 @@ export default function CreateAccount({ onShowOnboard }: Props) {
 
 	return (
 		<>
-			<CreateAccountContainer>
+			<CreateAccountContainer data-testid="cross-margin-create-account">
 				<Title>{t('futures.market.trade.cross-margin.title')}</Title>
 				<CreateAccountButton variant="flat" onClick={onShowOnboard}>
 					{t('futures.market.trade.cross-margin.create-account')}

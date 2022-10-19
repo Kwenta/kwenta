@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { TabPanel } from 'components/Tab';
 
 import FuturesHistoryTable from '../FuturesHistoryTable';
@@ -42,13 +43,23 @@ const History: FC = () => {
 
 	return (
 		<>
-			<TabButtonsContainer>
-				{HISTORY_TABS.map(({ name, label, active, onClick }) => (
-					<TabButton key={name} title={label} active={active} onClick={onClick} />
-				))}
-			</TabButtonsContainer>
+			<DesktopOnlyView>
+				<TabButtonsContainer>
+					{HISTORY_TABS.map(({ name, label, active, onClick }) => (
+						<TabButton key={name} title={label} active={active} onClick={onClick} />
+					))}
+				</TabButtonsContainer>
+			</DesktopOnlyView>
+			<MobileOrTabletView>
+				<TabButtonsContainer mobile>
+					{HISTORY_TABS.map(({ name, label, active, onClick }) => (
+						<TabButton key={name} title={label} active={active} onClick={onClick} />
+					))}
+				</TabButtonsContainer>
+			</MobileOrTabletView>
+
 			<TabPanel name={HistoryTab.FUTURES} activeTab={activeMarketsTab}>
-				<FuturesHistoryTable></FuturesHistoryTable>
+				<FuturesHistoryTable />
 			</TabPanel>
 
 			<TabPanel name={HistoryTab.SPOT} activeTab={activeMarketsTab}>
@@ -58,10 +69,12 @@ const History: FC = () => {
 	);
 };
 
-const TabButtonsContainer = styled.div`
+const TabButtonsContainer = styled.div<{ mobile?: boolean }>`
 	display: flex;
 	margin-top: 16px;
 	margin-bottom: 16px;
+
+	margin-left: ${(props) => (props.mobile ? '16px' : '0')};
 
 	& > button {
 		height: 38px;
