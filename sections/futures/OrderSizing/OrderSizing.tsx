@@ -194,7 +194,7 @@ const InputButton = styled.button`
 	cursor: pointer;
 	&:hover {
 		svg > path {
-			fill: ${(props) => props.theme.colors.selectedTheme.white};
+			fill: ${(props) => props.theme.colors.selectedTheme.input.hover};
 		}
 	}
 `;
