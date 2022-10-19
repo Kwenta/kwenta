@@ -25,12 +25,13 @@ const lightTheme = {
 		fillHover: '#f0f0f0',
 		background:
 			'linear-gradient(180deg, rgba(231, 231, 231, 0.6) 0%, rgba(203, 203, 203, 0.6) 100%)',
-		hover: 'linear-gradient(180deg, rgba(231, 231, 231, 0.8) 0%, rgba(203, 203, 203, 0.8) 100%)',
+		hover: '#393939',
 		shadow:
 			'0px 2px 2px rgb(0 0 0 / 5%), inset 0px 1px 0px rgb(255 255 255 / 8%), inset 0px 0px 20px rgb(255 255 255 / 3%)',
 		text: {
 			primary: '#171002',
 			yellow: '#6A3300',
+			white: '#FFFFFF',
 		},
 		primary: {
 			background: 'linear-gradient(180deg, #BE9461 0%, #9C6C3C 100%)',
