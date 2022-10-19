@@ -60,6 +60,7 @@ const lightTheme = {
 			},
 			disabled: { border: '1px solid #353333', text: '#B3B3B3' },
 		},
+		pill: { background: common.light.yellow, text: common.light.yellow, hover: common.light.white },
 	},
 	input: {
 		background: '#dbdbdb',
@@ -68,6 +69,7 @@ const lightTheme = {
 		},
 		placeholder: '#686868',
 		shadow: '0px 0.5px 0px rgba(255, 255, 255, 0.08)',
+		hover: common.black,
 	},
 	segmented: {
 		background: '#eaeaea',
