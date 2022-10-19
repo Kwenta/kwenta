@@ -1,6 +1,7 @@
 import Wei, { wei } from '@synthetixio/wei';
 import BN from 'bn.js';
 import { BigNumber, ethers, utils } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils';
 
 import { CurrencyKey } from 'constants/currency';
 import {
@@ -237,6 +238,12 @@ export const weiToString = (weiVal: Wei) => {
 
 export const isZero = (num: WeiSource) => {
 	return wei(num || 0).eq(0);
+};
+
+export const weiFromEth = (num: WeiSource) => wei(num).toBN().toString();
+
+export const gweiToWei = (val: WeiSource) => {
+	return parseUnits(wei(val).toString(), 9).toString();
 };
 
 export const toWei = (value?: string | null, p?: number) => {

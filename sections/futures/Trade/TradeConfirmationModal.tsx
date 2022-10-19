@@ -172,7 +172,7 @@ export default function TradeConfirmationModal({
 					items={dataRows}
 					buttons={
 						<MobileConfirmTradeButton
-							variant="primary"
+							variant="flat"
 							onClick={onConfirmOrder}
 							disabled={!positionDetails || !!disabledReason}
 						>

@@ -65,7 +65,7 @@ export const SingleValueContainer = styled(FlexDivCentered)`
 
 	.price {
 		font-family: ${(props) => props.theme.fonts.mono};
-		color: ${(props) => props.theme.colors.common.primaryWhite};
+		color: ${(props) => props.theme.colors.selectedTheme.gray};
 		font-size: 15px;
 	}
 
@@ -80,11 +80,11 @@ export const SingleValueContainer = styled(FlexDivCentered)`
 	}
 
 	.green {
-		color: ${(props) => props.theme.colors.common.primaryGreen};
+		color: ${(props) => props.theme.colors.selectedTheme.green};
 	}
 
 	.red {
-		color: ${(props) => props.theme.colors.common.primaryRed};
+		color: ${(props) => props.theme.colors.selectedTheme.red};
 	}
 `;
 

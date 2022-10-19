@@ -137,13 +137,13 @@ const SubMenuItem = styled.div<{ currentTheme: ThemeName; active?: boolean; sele
 	${(props) =>
 		props.active &&
 		css`
-			color: ${(props) => props.theme.colors.common.primaryWhite};
+			color: ${(props) => props.theme.colors.selectedTheme.button.active};
 		`}
 
 	${(props) =>
 		props.selected &&
 		css`
-			color: ${(props) => props.theme.colors.common.secondaryGold};
+			color: ${(props) => props.theme.colors.selectedTheme.gold};
 		`}
 `;
 

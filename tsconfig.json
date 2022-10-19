@@ -23,7 +23,7 @@
   },
   "exclude": [
     "node_modules",
-    "tests/e2e/helper/*.ts"
+    "testing/e2e/helper/*.ts"
   ],
   "include": [
     "next-env.d.ts",
