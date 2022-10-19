@@ -21,7 +21,7 @@ import { languageState } from 'store/app';
 import { currentThemeState } from 'store/ui';
 import colors from 'styles/theme/colors';
 
-import { lanugageIcons } from './common';
+import { languageIcon } from './common';
 import MobileSubMenu from './MobileSubMenu';
 
 type MobileSettingsModalProps = {
@@ -126,7 +126,7 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 							onToggle={handleToggle('language')}
 							options={languageOptions.map((option) => ({
 								label: option.label,
-								icon: <div>{lanugageIcons[option.value as Language]}</div>,
+								icon: <div>{languageIcon[option.value as Language]}</div>,
 								selected: languages[language] === option.value,
 								onClick: () => setLanguage(option.value as Language),
 							}))}

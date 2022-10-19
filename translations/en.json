@@ -973,6 +973,9 @@
 			"title": "approve transaction",
 			"confirm-with-provider": "Confirm your transaction through your wallet."
 		},
+		"menu": {
+			"title": "menu"
+		},
 		"settings": {
 			"title": "settings",
 			"options": {
