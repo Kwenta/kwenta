@@ -42,10 +42,9 @@ function SegmentedControl({
 const SegmentedControlContainer = styled.div<{ $length: number; styleType: StyleType }>`
 	display: ${(props) => (props.styleType === 'check' ? 'flex' : 'grid')};
 	grid-template-columns: repeat(${(props) => props.$length}, 1fr);
-	box-sizing: border-box;
-	grid-gap: 14px;
 	${(props) => props.styleType === 'check' && 'justify-content: space-between;'}
-
+	grid-gap: 14px;
+	box-sizing: border-box;
 	width: 100%;
 	height: ${(props) => (props.styleType === 'tab' ? '38px' : '24px')};
 	padding: ${(props) => (props.styleType === 'tab' ? '4px' : '0')};
