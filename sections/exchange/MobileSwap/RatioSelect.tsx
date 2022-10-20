@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC, useCallback } from 'react';
 import { setRatio } from 'state/exchange/reducer';
 import { selectQuoteBalanceWei } from 'state/exchange/selectors';
 import type { SwapRatio } from 'state/exchange/types';
@@ -7,14 +7,17 @@ import styled, { css } from 'styled-components';
 
 const RATIOS: SwapRatio[] = [25, 50, 75, 100];
 
-const RatioSelect: React.FC = () => {
+const RatioSelect: FC = () => {
 	const ratio = useAppSelector(({ exchange }) => exchange.ratio);
 	const dispatch = useAppDispatch();
 	const quoteBalance = useAppSelector(selectQuoteBalanceWei);
 
-	const onRatioChange = (ratio: SwapRatio) => {
-		dispatch(setRatio({ ratio }));
-	};
+	const onRatioChange = useCallback(
+		(ratio: SwapRatio) => {
+			dispatch(setRatio({ ratio }));
+		},
+		[dispatch]
+	);
 
 	return (
 		<RatioSelectContainer>
