@@ -8,5 +8,5 @@ COPY package.json ./
 COPY package-lock.json ./
 
 FROM base as test
-RUN npm install --frozen-lockfile --prefer-offline --no-audit --legacy-peer-deps
+RUN npm ci --prefer-offline --no-audit --legacy-peer-deps
 COPY . .
