@@ -1,4 +1,4 @@
-import { NetworkId, NetworkNameById } from '@synthetixio/contracts-interface';
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { Contract } from 'ethers';
 
 import {
@@ -106,22 +106,13 @@ const contractsByNetwork = (id: NetworkId) =>
 		return acc;
 	}, {} as ContractMap);
 
-const mainnetContracts = contractsByNetwork(1);
-const optimismContracts = contractsByNetwork(10);
-const goerliContracts = contractsByNetwork(5);
-const optimismGoerliContracts = contractsByNetwork(420);
+const CONTRACTS_BY_NETWORK: Partial<Record<NetworkId, ContractMap>> = {
+	1: contractsByNetwork(1),
+	10: contractsByNetwork(10),
+	5: contractsByNetwork(5),
+	420: contractsByNetwork(420),
+};
 
 export const getContractsByNetwork = (networkId: NetworkId) => {
-	switch (NetworkNameById[networkId]) {
-		case 'mainnet':
-			return mainnetContracts;
-		case 'mainnet-ovm':
-			return optimismContracts;
-		case 'goerli':
-			return goerliContracts;
-		case 'goerli-ovm':
-			return optimismGoerliContracts;
-		default:
-			throw new Error('We do not support contracts on the selected network.');
-	}
+	return CONTRACTS_BY_NETWORK[networkId] ?? {};
 };

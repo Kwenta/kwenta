@@ -1,4 +1,4 @@
-import { NetworkId, NetworkNameById } from '@synthetixio/contracts-interface';
+import { NetworkId } from '@synthetixio/contracts-interface';
 
 // TODO: Add synth categories, so we can swap this out for synthetixjs.synths
 // Especially in SelectCurrencyModal.
@@ -233,42 +233,29 @@ const synthsByNetwork = (id: NetworkId) =>
 		return acc;
 	}, {} as Partial<SynthsMap>);
 
-const mainnetSynths = synthsByNetwork(1);
-const optimismSynths = synthsByNetwork(10);
-const goerliSynths = synthsByNetwork(5);
-const optimismGoerliSynths = synthsByNetwork(420);
-
-const mainnetSynthsList = Object.values(mainnetSynths);
-const optimismSynthsList = Object.values(optimismSynths);
-const goerliSynthsList = Object.values(goerliSynths);
-const optimismGoerliSynthsList = Object.values(optimismGoerliSynths);
+const SYNTHS_BY_NETWORK: Partial<Record<NetworkId, { map: SynthsMap; list: SynthToken[] }>> = {
+	1: {
+		map: synthsByNetwork(1),
+		list: Object.values(synthsByNetwork),
+	},
+	10: {
+		map: synthsByNetwork(10),
+		list: Object.values(synthsByNetwork(10)),
+	},
+	5: {
+		map: synthsByNetwork(5),
+		list: Object.values(synthsByNetwork(5)),
+	},
+	420: {
+		map: synthsByNetwork(420),
+		list: Object.values(synthsByNetwork(420)),
+	},
+};
 
 export const getSynthsForNetwork = (networkId: NetworkId) => {
-	switch (NetworkNameById[networkId]) {
-		case 'mainnet':
-			return mainnetSynths;
-		case 'mainnet-ovm':
-			return optimismSynths;
-		case 'goerli':
-			return goerliSynths;
-		case 'goerli-ovm':
-			return optimismGoerliSynths;
-		default:
-			throw new Error('We do not support synths on the selected network.');
-	}
+	return SYNTHS_BY_NETWORK[networkId]?.map ?? {};
 };
 
 export const getSynthsListForNetwork = (networkId: NetworkId) => {
-	switch (NetworkNameById[networkId]) {
-		case 'mainnet':
-			return mainnetSynthsList;
-		case 'mainnet-ovm':
-			return optimismSynthsList;
-		case 'goerli':
-			return goerliSynthsList;
-		case 'goerli-ovm':
-			return optimismGoerliSynthsList;
-		default:
-			throw new Error('We do not support synths on the selected network.');
-	}
+	return SYNTHS_BY_NETWORK[networkId]?.list ?? [];
 };
