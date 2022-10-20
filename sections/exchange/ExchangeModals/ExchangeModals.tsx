@@ -34,9 +34,9 @@ const ExchangeModals = memo(() => {
 		openModal: exchange.openModal,
 	}));
 
-	const closeModal = () => {
+	const closeModal = useCallback(() => {
 		dispatch(setOpenModal(undefined));
-	};
+	}, [dispatch]);
 
 	const onBaseCurrencyChange = useCallback(
 		(currencyKey: string) => {
