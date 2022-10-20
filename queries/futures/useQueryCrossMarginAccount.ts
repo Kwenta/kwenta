@@ -1,5 +1,4 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
-import request, { gql } from 'graphql-request';
+import { useCallback } from 'react';
 import { useQuery } from 'react-query';
 import { useRecoilState } from 'recoil';
 
@@ -12,18 +11,31 @@ import logError from 'utils/logError';
 
 import useCrossMarginAccountContracts from '../../hooks/useCrossMarginContracts';
 import { FuturesAccountState } from './types';
-import { getFuturesEndpoint } from './utils';
 
 const SUPPORTED_NETWORKS = Object.keys(CROSS_MARGIN_ACCOUNT_FACTORY);
 
 export default function useQueryCrossMarginAccount() {
 	const { crossMarginContractFactory } = useCrossMarginAccountContracts();
 	const { network, walletAddress } = Connector.useContainer();
-	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
 	const [futuresAccount, setFuturesAccount] = useRecoilState(futuresAccountState);
 	const [storedCrossMarginAccounts, setStoredCrossMarginAccount] = usePersistedRecoilState(
 		crossMarginAccountsState
+	);
+
+	const queryAccountFromLogs = useCallback(
+		async (address: string): Promise<string | null> => {
+			if (!crossMarginContractFactory) return null;
+			const accountFilter = crossMarginContractFactory.filters.NewAccount(address);
+			if (accountFilter) {
+				const logs = await crossMarginContractFactory.queryFilter(accountFilter);
+				if (logs.length) {
+					return logs[0].args?.[1] || null;
+				}
+			}
+			return null;
+		},
+		[crossMarginContractFactory]
 	);
 
 	return useQuery<string | null>(
@@ -80,32 +92,21 @@ export default function useQueryCrossMarginAccount() {
 			});
 
 			try {
-				const response = await request(
-					futuresEndpoint,
-					gql`
-						query crossMarginAccounts($owner: String!) {
-							crossMarginAccounts(where: { owner: $owner }) {
-								id
-								owner
-							}
-						}
-					`,
-					{ owner: walletAddress }
-				);
-
-				const crossMarginAccount = response?.crossMarginAccounts[0]?.id || null;
+				const crossMarginAccount = await queryAccountFromLogs(walletAddress);
 
 				const existingAccounts = crossMarginContractFactory
 					? storedCrossMarginAccounts[crossMarginContractFactory.address]
 					: {};
 
-				setStoredCrossMarginAccount({
-					...storedCrossMarginAccounts,
-					[crossMarginContractFactory!.address]: {
-						...existingAccounts,
-						[walletAddress]: crossMarginAccount,
-					},
-				});
+				if (crossMarginAccount) {
+					setStoredCrossMarginAccount({
+						...storedCrossMarginAccounts,
+						[crossMarginContractFactory!.address]: {
+							...existingAccounts,
+							[walletAddress]: crossMarginAccount,
+						},
+					});
+				}
 
 				const accountState: FuturesAccountState = {
 					status: 'complete',
@@ -121,6 +122,7 @@ export default function useQueryCrossMarginAccount() {
 					...futuresAccount,
 					status: 'error',
 				});
+				return null;
 			}
 		}
 	);
