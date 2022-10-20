@@ -871,7 +871,7 @@
 			},
 			"onboard": {
 				"title": "Cross Margin",
-				"step1-intro": "To get started you must first create your cross margin account",
+				"step1-intro": "Start by creating your cross margin account",
 				"step2-intro": "Now, approve the contract to spend sUSD",
 				"step3-intro": "Lastly, deposit sUSD to begin trading",
 				"step3-complete": "Your cross margin account has been successfully created!",
