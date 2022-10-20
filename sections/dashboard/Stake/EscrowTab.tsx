@@ -1,21 +1,15 @@
-import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import media from 'styles/media';
 
 import EscrowTable from './EscrowTable';
-import StakingInputCard from './StakingInputCard';
+import EscrowInputCard from './InputCards/EscrowInputCard';
 
 const EscrowTab = () => {
-	const { t } = useTranslation();
-
 	return (
 		<EscrowTabContainer>
 			<EscrowTable />
-			<StakingInputCard
-				inputLabel={t('dashboard.stake.tabs.stake-table.ekwenta-token')}
-				tableType={'escrow'}
-			/>
+			<EscrowInputCard />
 		</EscrowTabContainer>
 	);
 };

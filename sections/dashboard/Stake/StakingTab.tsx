@@ -1,99 +1,22 @@
-import { wei } from '@synthetixio/wei';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import {
-	useContractRead,
-	useContractReads,
-	useContractWrite,
-	usePrepareContractWrite,
-} from 'wagmi';
+import { useContractWrite } from 'wagmi';
 
 import Button from 'components/Button';
-import Connector from 'containers/Connector';
-import stakingRewardsABI from 'lib/abis/StakingRewards.json';
-import supplyScheduleABI from 'lib/abis/SupplySchedule.json';
+import { useStakingContext } from 'contexts/StakingContext';
 import { currentThemeState } from 'store/ui';
 import media from 'styles/media';
-import { zeroBN } from 'utils/formatters/number';
-import logError from 'utils/logError';
 
 import { KwentaLabel, StakingCard } from './common';
-import StakingInputCard from './StakingInputCard';
-
-const stakingRewardsContract = {
-	addressOrName: '0x1653a3a3c4ccee0538685f1600a30df5e3ee830a',
-	contractInterface: stakingRewardsABI,
-};
-
-const supplyScheduleContract = {
-	addressOrName: '0x671423b2e8a99882fd14bbd07e90ae8b64a0e63a',
-	contractInterface: supplyScheduleABI,
-};
+import StakeInputCard from './InputCards/StakeInputCard';
 
 const StakingTab = () => {
 	const { t } = useTranslation();
-	const { walletAddress } = Connector.useContainer();
-	const [claimableBalance, setClaimableBalance] = useState(zeroBN);
-	const [apy, setApy] = useState('0');
+	const { claimableBalance, apy, getRewardConfig } = useStakingContext();
 
-	useContractRead({
-		...stakingRewardsContract,
-		functionName: 'earned',
-		args: [walletAddress ?? undefined],
-		cacheOnBlock: true,
-		onSettled(data, error) {
-			if (error) logError(error);
-			setClaimableBalance(wei(data ?? zeroBN));
-		},
-	});
-
-	useContractReads({
-		contracts: [
-			{
-				...supplyScheduleContract,
-				functionName: 'DECAY_RATE',
-			},
-			{
-				...supplyScheduleContract,
-				functionName: 'INITIAL_WEEKLY_SUPPLY',
-			},
-			{
-				...supplyScheduleContract,
-				functionName: 'weekCounter',
-			},
-			{
-				...stakingRewardsContract,
-				functionName: 'totalSupply',
-			},
-		],
-		cacheOnBlock: true,
-		onSettled(data, error) {
-			if (error) logError(error);
-			if (data) {
-				const supplyRate = wei(1).sub(wei(data[0] ?? zeroBN));
-				const initialWeeklySupply = wei(data[1] ?? zeroBN);
-				const weekCounter = Number(data[2] ?? zeroBN);
-				const totalSupply = wei(data[3] ?? zeroBN);
-				const startWeeklySupply = initialWeeklySupply.mul(supplyRate.pow(weekCounter));
-				const yearlyRewards = totalSupply.gt(zeroBN)
-					? startWeeklySupply.mul(wei(1).sub(supplyRate.pow(52))).div(wei(1).sub(supplyRate))
-					: zeroBN;
-				setApy(yearlyRewards.gt(zeroBN) ? Number(yearlyRewards.div(totalSupply)).toFixed(2) : '0');
-			} else {
-				setApy('0');
-			}
-		},
-	});
-
-	const { config } = usePrepareContractWrite({
-		...stakingRewardsContract,
-		functionName: 'getReward',
-		enabled: !!walletAddress,
-	});
-
-	const { write: getReward } = useContractWrite(config);
+	const { write: getReward } = useContractWrite(getRewardConfig);
 
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
@@ -115,10 +38,7 @@ const StakingTab = () => {
 					{t('dashboard.stake.tabs.staking.claim')}
 				</Button>
 			</CardGridContainer>
-			<StakingInputCard
-				inputLabel={t('dashboard.stake.tabs.stake-table.kwenta-token')}
-				tableType={'stake'}
-			/>
+			<StakeInputCard />
 		</StakingTabContainer>
 	);
 };

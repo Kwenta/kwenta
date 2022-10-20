@@ -3,21 +3,15 @@ import styled from 'styled-components';
 
 import media from 'styles/media';
 
-import StakingInputCard from './StakingInputCard';
+import RedeemInputCard from './InputCards/RedeemInputCard';
 
 const RedemptionTab = () => {
 	const { t } = useTranslation();
 
 	return (
 		<StakingTabContainer>
-			<StakingInputCard
-				inputLabel={t('dashboard.stake.tabs.stake-table.vkwenta-token')}
-				tableType={'redeem'}
-			/>
-			<StakingInputCard
-				inputLabel={t('dashboard.stake.tabs.stake-table.vekwenta-token')}
-				tableType={'redeem'}
-			/>
+			<RedeemInputCard inputLabel={t('dashboard.stake.tabs.stake-table.vkwenta-token')} />
+			<RedeemInputCard inputLabel={t('dashboard.stake.tabs.stake-table.vekwenta-token')} />
 		</StakingTabContainer>
 	);
 };
