@@ -43,7 +43,7 @@ export default function DepositWithdrawCrossMargin({
 	const susdContract = useSUSDContract();
 
 	const balances = useRecoilValue(balancesState);
-	const { freeMargin } = useRecoilValue(crossMarginAccountOverviewState);
+	const { freeMargin, allowance } = useRecoilValue(crossMarginAccountOverviewState);
 
 	const [amount, setAmount] = useState<string>('');
 	const [transferType, setTransferType] = useState(0);
@@ -91,7 +91,6 @@ export default function DepositWithdrawCrossMargin({
 
 			if (!crossMarginAccountContract || !wallet) throw new Error('No cross margin account');
 			const weiAmount = wei(amount ?? 0, 18);
-			const allowance = await susdContract?.allowance(wallet, crossMarginAccountContract.address);
 
 			if (wei(allowance).lt(weiAmount)) {
 				setTxState('approving');
@@ -115,7 +114,15 @@ export default function DepositWithdrawCrossMargin({
 			setTxState('none');
 			logError(err);
 		}
-	}, [crossMarginAccountContract, amount, signer, susdContract, monitorTransaction, submitDeposit]);
+	}, [
+		crossMarginAccountContract,
+		amount,
+		signer,
+		susdContract,
+		allowance,
+		monitorTransaction,
+		submitDeposit,
+	]);
 
 	const withdrawMargin = useCallback(async () => {
 		try {
@@ -157,6 +164,10 @@ export default function DepositWithdrawCrossMargin({
 				return t('futures.market.trade.margin.modal.deposit.exceeds-balance');
 		}
 	}, [amount, freeMargin, transferType, susdBal, t]);
+
+	const isApproved = useMemo(() => {
+		return allowance.gt(wei(amount || 0));
+	}, [allowance, amount]);
 
 	const handleSetMax = React.useCallback(() => {
 		setAmount(susdBal.toString());
@@ -208,11 +219,13 @@ export default function DepositWithdrawCrossMargin({
 					<Loader />
 				) : (
 					disabledReason ||
-					t(
-						`futures.market.trade.margin.modal.${
-							transferType === 0 ? 'deposit' : 'withdraw'
-						}.button`
-					)
+					(transferType === 0
+						? t(
+								`futures.market.trade.margin.modal.deposit.${
+									isApproved ? 'button' : 'approve-button'
+								}`
+						  )
+						: t(`futures.market.trade.margin.modal.withdraw.button`))
 				)}
 			</MarginActionButton>
 
@@ -246,6 +259,7 @@ export const MarginActionButton = styled(Button)`
 	margin-top: 16px;
 	height: 55px;
 	font-size: 15px;
+	text-transform: initial;
 `;
 
 export const MaxButton = styled.button`

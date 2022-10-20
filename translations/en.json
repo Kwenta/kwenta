@@ -666,6 +666,7 @@
 						"deposit": {
 							"title": "Deposit Margin",
 							"button": "Deposit Margin",
+							"approve-button": "Approve sUSD",
 							"disclaimer": "A $50 margin minimum is required to open a position.",
 							"min-deposit": "$50 minimum margin to open a position",
 							"exceeds-balance": "Amount exceeds balance"
