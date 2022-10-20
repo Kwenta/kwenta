@@ -17,13 +17,16 @@ const MobileQuoteCurrencyCard: FC = memo(() => {
 
 	const dispatch = useAppDispatch();
 
-	const onQuoteCurrencyAmountChange = (value: string) => {
-		dispatch(setQuoteAmount({ value }));
-	};
+	const onQuoteCurrencyAmountChange = useCallback(
+		(value: string) => {
+			dispatch(setQuoteAmount({ value }));
+		},
+		[dispatch]
+	);
 
-	const onQuoteBalanceClick = () => {
+	const onQuoteBalanceClick = useCallback(() => {
 		dispatch(setMaxQuoteBalance());
-	};
+	}, [dispatch]);
 
 	const quoteBalance = useAppSelector(selectQuoteBalanceWei);
 

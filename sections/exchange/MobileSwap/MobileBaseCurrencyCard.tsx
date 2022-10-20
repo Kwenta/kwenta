@@ -11,13 +11,16 @@ const MobileBaseCurrencyCard: FC = memo(() => {
 
 	const dispatch = useAppDispatch();
 
-	const onBaseCurrencyAmountChange = (value: string) => {
-		dispatch(setBaseAmount({ value }));
-	};
+	const onBaseCurrencyAmountChange = useCallback(
+		(value: string) => {
+			dispatch(setBaseAmount({ value }));
+		},
+		[dispatch]
+	);
 
-	const onBaseBalanceClick = () => {
+	const onBaseBalanceClick = useCallback(() => {
 		dispatch(setMaxBaseBalance());
-	};
+	}, [dispatch]);
 
 	const { baseCurrencyKey, baseAmount, basePriceRate, txProvider } = useAppSelector(
 		({ exchange }) => ({
