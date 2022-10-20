@@ -666,6 +666,7 @@
 						"deposit": {
 							"title": "Deposit Margin",
 							"button": "Deposit Margin",
+							"approve-button": "Approve sUSD",
 							"disclaimer": "A $50 margin minimum is required to open a position.",
 							"min-deposit": "$50 minimum margin to open a position",
 							"exceeds-balance": "Amount exceeds balance"
@@ -709,7 +710,7 @@
 				"cross-margin": {
 					"connect-wallet": "Connect your wallet to start trading",
 					"title": "Cross Margin",
-					"faq-title": "Cross Margin FAQ's",
+					"faq-title": " Cross Margin FAQ",
 					"create-account": "Create Account",
 					"unsupported": "Cross margin is not supported on this network",
 					"switch-type": "Switch to isolated margin",
@@ -870,13 +871,13 @@
 			},
 			"onboard": {
 				"title": "Cross Margin",
-				"step1-intro": "To Get started you must first create your cross margin account",
+				"step1-intro": "Start by creating your cross margin account",
 				"step2-intro": "Now, approve the contract to spend sUSD",
-				"step3-intro": "Lastly, deposit your sUSD into the contact",
+				"step3-intro": "Lastly, deposit sUSD to begin trading",
 				"step3-complete": "Your cross margin account has been successfully created!",
 				"faq1": "What is cross margin?",
-				"faq2": "Is cross margin better than isolated margin",
-				"faq3": "How will a cross margin account affect my trading",
+				"faq2": "Is cross margin better than isolated margin?",
+				"faq3": "How will a cross margin account affect my trading?",
 				"unsupported-network": "Cross margin is not supported on this network"
 			}
 		}
