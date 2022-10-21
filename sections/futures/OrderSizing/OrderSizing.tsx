@@ -169,10 +169,13 @@ const OrderSizingRow = styled(FlexDivRow)`
 	width: 100%;
 	align-items: center;
 	margin-bottom: 8px;
+	cursor: default;
 `;
 
 const MaxButton = styled.button`
 	text-decoration: underline;
+	font-variant: small-caps;
+	text-transform: lowercase;
 	font-size: 13px;
 	line-height: 11px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
@@ -183,13 +186,18 @@ const MaxButton = styled.button`
 
 const InputButton = styled.button`
 	height: 22px;
-	padding: 4px 10px;
+	padding: 3px 2px 4px 10px;
 	border: none;
 	background: transparent;
 	font-size: 16px;
 	line-height: 16px;
 	color: ${(props) => props.theme.colors.selectedTheme.text.label};
 	cursor: pointer;
+	&:hover {
+		svg > path {
+			fill: ${(props) => props.theme.colors.selectedTheme.input.hover};
+		}
+	}
 `;
 
 const InputHelpers = styled.div`

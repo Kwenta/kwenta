@@ -109,6 +109,7 @@ const StyledInputTitle = styled(InputTitle)`
 	span {
 		color: ${(props) => props.theme.colors.selectedTheme.red};
 	}
+	cursor: default;
 `;
 
 const FeeCapContainer = styled.div`
@@ -122,4 +123,5 @@ const FeeRejectionLabel = styled.div`
 	min-width: 100px;
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.selectedTheme.text.label};
+	cursor: default;
 `;

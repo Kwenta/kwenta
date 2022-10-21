@@ -187,7 +187,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				})}
 				options={options}
 				isSearchable={false}
-				variant="gradient"
+				variant="flat"
 				components={{
 					SingleValue: MarketsDropdownSingleValue,
 					Option: MarketsDropdownOption,
