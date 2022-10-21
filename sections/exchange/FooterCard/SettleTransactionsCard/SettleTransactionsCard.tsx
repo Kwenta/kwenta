@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { useRecoilState } from 'recoil';
 import { submitSettle } from 'state/exchange/actions';
 import { setOpenModal } from 'state/exchange/reducer';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -11,7 +10,6 @@ import { MobileOrTabletView } from 'components/Media';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { EXTERNAL_LINKS } from 'constants/links';
 import TxSettleModal from 'sections/shared/modals/TxSettleModal';
-import { txErrorState } from 'store/exchange';
 import { NoTextTransform, ExternalLink } from 'styles/common';
 import { secondsToTime } from 'utils/formatters/date';
 import logError from 'utils/logError';
@@ -20,29 +18,30 @@ import { MessageContainer, Message, FixedMessageContainerSpacer } from '../commo
 
 const SettleTransactionsCard: FC = () => {
 	const { t } = useTranslation();
-	const [txError, setTxError] = useRecoilState(txErrorState);
 
-	const { baseCurrencyKey, openModal, numEntries, settlementWaitingPeriod } = useAppSelector(
-		({ exchange }) => ({
-			baseCurrencyKey: exchange.baseCurrencyKey,
-			openModal: exchange.openModal,
-			numEntries: exchange.numEntries,
-			settlementWaitingPeriod: exchange.settlementWaitingPeriod,
-		})
-	);
+	const {
+		baseCurrencyKey,
+		openModal,
+		numEntries,
+		settlementWaitingPeriod,
+		txError,
+	} = useAppSelector(({ exchange }) => ({
+		baseCurrencyKey: exchange.baseCurrencyKey,
+		openModal: exchange.openModal,
+		numEntries: exchange.numEntries,
+		settlementWaitingPeriod: exchange.settlementWaitingPeriod,
+		txError: exchange.txError,
+	}));
 	const dispatch = useAppDispatch();
 
 	const settlementDisabledReason =
 		settlementWaitingPeriod > 0 ? t('exchange.summary-info.button.settle-waiting-period') : null;
 
 	const handleSettle = async () => {
-		setTxError(null);
-
 		try {
 			dispatch(submitSettle());
 		} catch (e) {
 			logError(e);
-			setTxError(e.message);
 		}
 	};
 

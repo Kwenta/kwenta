@@ -1,7 +1,6 @@
 import Wei, { wei } from '@synthetixio/wei';
 import { FC, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import { closeModal } from 'state/exchange/reducer';
 import { selectTotalRedeemableBalanceWei } from 'state/exchange/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -11,7 +10,6 @@ import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
 import { CurrencyKey } from 'constants/currency';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
-import { txErrorState } from 'store/exchange';
 import { FlexDivColCentered, numericValueCSS } from 'styles/common';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 
@@ -23,11 +21,11 @@ type RedeemTxModalProps = {
 
 export const RedeemTxModal: FC<RedeemTxModalProps> = ({ attemptRetry }) => {
 	const { t } = useTranslation();
-	const txError = useRecoilValue(txErrorState);
 
-	const redeemableSynthBalances = useAppSelector(
-		({ exchange }) => exchange.redeemableSynthBalances
-	);
+	const { redeemableSynthBalances, txError } = useAppSelector(({ exchange }) => ({
+		redeemableSynthBalances: exchange.redeemableSynthBalances,
+		txError: exchange.txError,
+	}));
 
 	const totalRedeemableBalance = useAppSelector(selectTotalRedeemableBalanceWei);
 	const dispatch = useAppDispatch();
@@ -51,7 +49,7 @@ export const RedeemTxModal: FC<RedeemTxModalProps> = ({ attemptRetry }) => {
 				<BalanceItem currencyKey={'sUSD'} amount={totalRedeemableBalance} />
 			</Balances>
 			<Subtitle>{t('modals.confirm-transaction.confirm-with-provider')}</Subtitle>
-			{txError != null && (
+			{!!txError && (
 				<Actions>
 					<Message>{txError}</Message>
 					<MessageButton onClick={attemptRetry} data-testid="retry-btn">

@@ -3,7 +3,6 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { FC, useMemo } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import { closeModal } from 'state/exchange/reducer';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
@@ -20,7 +19,6 @@ import Connector from 'containers/Connector';
 import useCurrencyPrice from 'hooks/useCurrencyPrice';
 import useIsL2 from 'hooks/useIsL2';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
-import { txErrorState } from 'store/exchange';
 import {
 	FlexDivRowCentered,
 	numericValueCSS,
@@ -43,7 +41,6 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
 	const isL2 = useIsL2();
-	const txError = useRecoilValue(txErrorState);
 	const dispatch = useAppDispatch();
 
 	const { subgraph } = useSynthetixQueries();
@@ -56,6 +53,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry
 		baseAmount,
 		quoteAmount,
 		totalTradePrice,
+		txError,
 	} = useAppSelector(({ exchange }) => ({
 		baseCurrencyKey: exchange.baseCurrencyKey,
 		quoteCurrencyKey: exchange.quoteCurrencyKey,
@@ -64,6 +62,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry
 		baseAmount: exchange.baseAmount,
 		quoteAmount: exchange.quoteAmount,
 		totalTradePrice: exchange.estimatedBaseTradePrice,
+		txError: exchange.txError,
 	}));
 
 	const getBaseCurrencyAmount = (decimals?: number) =>
@@ -235,7 +234,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry
 					<OneInchImage width="40" height="40" alt={t('common.dex-aggregators.1inch.title')} />
 				</TxProviderContainer>
 			)}
-			{txError != null && (
+			{!!txError && (
 				<Actions>
 					<Error message={txError} formatter="revert"></Error>
 					<MessageButton onClick={attemptRetry} data-testid="retry-btn">

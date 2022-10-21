@@ -37,4 +37,5 @@ export type ExchangeState = {
 	oneInchQuote: string;
 	oneInchQuoteLoading: boolean;
 	oneInchQuoteError: boolean;
+	txError?: string;
 };

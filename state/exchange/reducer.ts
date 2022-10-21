@@ -56,6 +56,7 @@ const initialState: ExchangeState = {
 	oneInchQuote: '',
 	oneInchQuoteLoading: false,
 	oneInchQuoteError: false,
+	txError: undefined,
 };
 
 const exchangeSlice = createSlice({

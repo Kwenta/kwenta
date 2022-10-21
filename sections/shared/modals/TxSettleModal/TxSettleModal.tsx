@@ -11,7 +11,7 @@ import { formatRevert } from 'utils/formatters/error';
 
 type TxSettleModalProps = {
 	onDismiss: () => void;
-	txError: string | null;
+	txError?: string;
 	attemptRetry: () => void;
 };
 
@@ -35,7 +35,7 @@ export const TxSettleModal: FC<TxSettleModalProps> = ({ onDismiss, txError, atte
 				</CurrencyItem>
 			</Currencies>
 			<Subtitle>{t('modals.settle-transaction.confirm-with-provider')}</Subtitle>
-			{txError != null && (
+			{!!txError && (
 				<Actions>
 					<Message>{formatRevert(txError)}</Message>
 					<MessageButton onClick={attemptRetry} data-testid="retry-btn">

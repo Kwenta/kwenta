@@ -1,6 +1,5 @@
 import { FC, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import { setOpenModal } from 'state/exchange/reducer';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
@@ -8,7 +7,6 @@ import styled from 'styled-components';
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
-import { txErrorState } from 'store/exchange';
 import { FlexDivColCentered, NoTextTransform } from 'styles/common';
 import { formatRevert } from 'utils/formatters/error';
 
@@ -19,8 +17,10 @@ type TxApproveModalProps = {
 export const TxApproveModal: FC<TxApproveModalProps> = ({ attemptRetry }) => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
-	const txError = useRecoilValue(txErrorState);
-	const quoteCurrencyKey = useAppSelector(({ exchange }) => exchange.quoteCurrencyKey);
+	const { quoteCurrencyKey, txError } = useAppSelector(({ exchange }) => ({
+		quoteCurrencyKey: exchange.quoteCurrencyKey,
+		txError: exchange.txError,
+	}));
 
 	const onDismiss = useCallback(() => {
 		dispatch(setOpenModal(undefined));
@@ -46,7 +46,7 @@ export const TxApproveModal: FC<TxApproveModalProps> = ({ attemptRetry }) => {
 				</CurrencyItem>
 			</Currencies>
 			<Subtitle>{t('modals.approve-transaction.confirm-with-provider')}</Subtitle>
-			{txError != null && (
+			{!!txError && (
 				<Actions>
 					<Message>{formatRevert(txError)}</Message>
 					<MessageButton onClick={attemptRetry} data-testid="retry-btn">
