@@ -4,7 +4,7 @@ import { NetworkId } from '@synthetixio/contracts-interface';
 import { Provider as EthCallProvider } from 'ethcall';
 import { ethers } from 'ethers';
 
-import { ContractMap, getContractsByNetwork } from './contracts';
+import { ContractMap, ContractName, getContractsByNetwork } from './contracts';
 import ExchangeService from './exchange';
 import FuturesService from './futures';
 import SynthsService from './synths';
@@ -30,7 +30,7 @@ export default class KwentaSDK {
 		this.provider = provider;
 		this.signer = signer;
 		this.multicallProvider.init(this.provider);
-		this.contracts = getContractsByNetwork(networkId);
+		this.contracts = this.getContracts();
 		this.events = new EventEmitter().setMaxListeners(100);
 
 		if (signer) {
@@ -46,6 +46,7 @@ export default class KwentaSDK {
 	public setProvider(provider: ethers.providers.Provider) {
 		this.provider = provider;
 		this.multicallProvider.init(provider);
+		this.contracts = this.getContracts();
 	}
 
 	public async setSigner(signer: ethers.Signer) {
@@ -57,5 +58,15 @@ export default class KwentaSDK {
 		this.networkId = networkId;
 		await this.exchange.getOneInchTokens();
 		this.contracts = getContractsByNetwork(networkId);
+	}
+
+	private getContracts() {
+		const contracts = getContractsByNetwork(this.networkId);
+
+		return Object.entries(contracts).reduce((acc, [contractName, contract]) => {
+			acc[contractName as ContractName] = contract.connect(this.provider);
+
+			return acc;
+		}, {} as ContractMap);
 	}
 }

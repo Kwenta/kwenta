@@ -156,10 +156,10 @@ export default class ExchangeService {
 		}
 
 		const [sourceCurrencyFeeRate, destinationCurrencyFeeRate] = await Promise.all([
-			this.sdk.contracts.SystemSettings.connect(this.sdk.provider).exchangeFeeRate(
+			this.sdk.contracts.SystemSettings.exchangeFeeRate(
 				ethers.utils.formatBytes32String(baseCurrencyKey)
 			),
-			this.sdk.contracts.SystemSettings.connect(this.sdk.provider).exchangeFeeRate(
+			this.sdk.contracts.SystemSettings.exchangeFeeRate(
 				ethers.utils.formatBytes32String(quoteCurrencyKey)
 			),
 		]);
@@ -174,9 +174,7 @@ export default class ExchangeService {
 			throw new Error('Exchanger does not exist on the currently selected network.');
 		}
 
-		const exchangeFeeRate = await this.sdk.contracts.Exchanger.connect(
-			this.sdk.provider
-		).feeRateForExchange(
+		const exchangeFeeRate = await this.sdk.contracts.Exchanger.feeRateForExchange(
 			ethers.utils.formatBytes32String(quoteCurrencyKey),
 			ethers.utils.formatBytes32String(baseCurrencyKey)
 		);
@@ -228,9 +226,7 @@ export default class ExchangeService {
 			throw new Error('The Exchanger contract does not exist on the currently selected network.');
 		}
 
-		const maxSecsLeftInWaitingPeriod = (await this.sdk.contracts.Exchanger.connect(
-			this.sdk.provider
-		).maxSecsLeftInWaitingPeriod(
+		const maxSecsLeftInWaitingPeriod = (await this.sdk.contracts.Exchanger.maxSecsLeftInWaitingPeriod(
 			this.sdk.walletAddress,
 			ethers.utils.formatBytes32String(currencyKey)
 		)) as ethers.BigNumberish;
@@ -282,9 +278,11 @@ export default class ExchangeService {
 				throw new Error('');
 			}
 			const fromAmountWei = wei(fromAmount).toString(0, true);
-			const amounts = await this.sdk.contracts.Exchanger.connect(
-				this.sdk.provider
-			).getAmountsForExchange(fromAmountWei, fromSymbolBytes, sUSDBytes);
+			const amounts = await this.sdk.contracts.Exchanger.getAmountsForExchange(
+				fromAmountWei,
+				fromSymbolBytes,
+				sUSDBytes
+			);
 
 			const usdValue = amounts.amountReceived.sub(amounts.fee);
 			synthAmountEth = ethers.utils.formatEther(usdValue);
@@ -392,9 +390,10 @@ export default class ExchangeService {
 			throw new Error('Something something wrong?');
 		}
 
-		const { numEntries } = await this.sdk.contracts.Exchanger.connect(
-			this.sdk.provider
-		).settlementOwing(this.sdk.walletAddress, ethers.utils.formatBytes32String(currencyKey));
+		const { numEntries } = await this.sdk.contracts.Exchanger.settlementOwing(
+			this.sdk.walletAddress,
+			ethers.utils.formatBytes32String(currencyKey)
+		);
 
 		return numEntries ?? 0;
 	}
@@ -421,10 +420,8 @@ export default class ExchangeService {
 		].map(ethers.utils.formatBytes32String);
 
 		const [synthsRates, ratesForCurrencies] = (await Promise.all([
-			this.sdk.contracts.SynthUtil.connect(this.sdk.provider).synthsRates(),
-			this.sdk.contracts.ExchangeRates.connect(this.sdk.provider).ratesForCurrencies(
-				additionalCurrencies
-			),
+			this.sdk.contracts.SynthUtil.synthsRates(),
+			this.sdk.contracts.ExchangeRates.ratesForCurrencies(additionalCurrencies),
 		])) as [SynthRatesTuple, CurrencyRate[]];
 
 		const synths = [...synthsRates[0], ...additionalCurrencies] as CurrencyKey[];
@@ -812,7 +809,7 @@ export default class ExchangeService {
 			throw new Error('The SynthRedeemer contract does not exist on this network.');
 		}
 
-		const SynthRedeemer = this.sdk.contracts.SynthRedeemer.connect(this.sdk.provider);
+		const SynthRedeemer = this.sdk.contracts.SynthRedeemer;
 
 		const synthDeprecatedFilter = SynthRedeemer.filters.SynthDeprecated();
 		const deprecatedSynthsEvents = await SynthRedeemer.queryFilter(synthDeprecatedFilter);
