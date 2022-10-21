@@ -6,7 +6,7 @@ import {
 	NotificationPending,
 	NotificationError,
 } from 'components/TransactionNotification';
-import { BlockExplorer, TransactionNotifier } from 'containers/Connector/Connector';
+import { blockExplorer, transactionNotifier } from 'containers/Connector/Connector';
 
 export const monitorTransaction = ({
 	txHash,
@@ -18,12 +18,12 @@ export const monitorTransaction = ({
 	onTxConfirmed?: () => void;
 	onTxFailed?: (failureMessage: TransactionStatusData) => void;
 }) => {
-	const link = BlockExplorer.txLink(txHash);
+	const link = blockExplorer.txLink(txHash);
 
 	const toastProps = {
 		onClick: () => window.open(link, '_blank'),
 	};
-	const emitter = TransactionNotifier.hash(txHash);
+	const emitter = transactionNotifier.hash(txHash);
 	emitter.on('txSent', () => {
 		toast(NotificationPending, { ...toastProps, toastId: txHash });
 	});

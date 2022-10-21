@@ -15,8 +15,8 @@ import { generateExplorerFunctions, getBaseUrl } from 'containers/BlockExplorer/
 
 import { wagmiClient } from './config';
 
-export let TransactionNotifier = new BaseTN(wagmiClient.provider);
-export let BlockExplorer = generateExplorerFunctions(getBaseUrl(10));
+export let transactionNotifier = new BaseTN(wagmiClient.provider);
+export let blockExplorer = generateExplorerFunctions(getBaseUrl(10));
 
 const useConnector = () => {
 	const { chain: activeChain } = useNetwork();
@@ -51,13 +51,13 @@ const useConnector = () => {
 
 	useEffect(() => {
 		sdk.setProvider(provider);
-		TransactionNotifier = new BaseTN(provider);
+		transactionNotifier = new BaseTN(provider);
 	}, [provider]);
 
 	useEffect(() => {
 		sdk.setNetworkId(network.id as NetworkId).then(async () => {
 			dispatch(setNetwork({ networkId: network.id as NetworkId }));
-			BlockExplorer = generateExplorerFunctions(getBaseUrl(network.id as NetworkId));
+			blockExplorer = generateExplorerFunctions(getBaseUrl(network.id as NetworkId));
 			await dispatch(fetchTokenList());
 			dispatch(fetchSynthBalances());
 			dispatch(fetchBalances());
