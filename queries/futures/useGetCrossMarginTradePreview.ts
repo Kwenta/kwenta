@@ -8,6 +8,7 @@ import { useCallback, useMemo } from 'react';
 
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
+import FuturesMarket from 'lib/abis/FuturesMarket.json';
 import { PotentialTradeStatus } from 'sections/futures/types';
 import {
 	zeroBN,
@@ -19,7 +20,6 @@ import {
 } from 'utils/formatters/number';
 import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
 import logError from 'utils/logError';
-import FuturesMarket from 'lib/abis/FuturesMarket.json';
 
 import { KWENTA_TRACKING_CODE } from './constants';
 import { getFuturesMarketContract } from './utils';
