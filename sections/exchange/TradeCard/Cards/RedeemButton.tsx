@@ -1,15 +1,19 @@
-import { memo, FC } from 'react';
+import { memo, FC, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAppSelector } from 'state/hooks';
+import { submitRedeem } from 'state/exchange/actions';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import Button from 'components/Button';
-import useRedeem from 'hooks/useRedeem';
 import RedeemTxModal from 'sections/dashboard/Deprecated/RedeemTxModal';
 
 const RedeemButton: FC = memo(() => {
 	const { t } = useTranslation();
 	const openModal = useAppSelector(({ exchange }) => exchange.openModal);
-	const { handleRedeem } = useRedeem();
+	const dispatch = useAppDispatch();
+
+	const handleRedeem = useCallback(() => {
+		dispatch(submitRedeem());
+	}, [dispatch]);
 
 	return (
 		<>
