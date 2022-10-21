@@ -55,6 +55,7 @@ const useStakingData = () => {
 	const [vKwentaAllowance, setVKwentaAllowance] = useState(zeroBN);
 	const [kwentaAllowance, setKwentaAllowance] = useState(zeroBN);
 	const [currentWeeklyReward, setCurrentWeeklyReward] = useState(zeroBN);
+	const [totalFeePaid, setTotalFeePaid] = useState(10);
 
 	useContractReads({
 		contracts: [
@@ -187,8 +188,14 @@ const useStakingData = () => {
 		staleTime: Infinity,
 	});
 
+	const tradingRewardsScore =
+		Math.pow(totalFeePaid, 0.7) *
+		Math.pow(Number(stakedNonEscrowedBalance.add(stakedEscrowedBalance)), 0.3);
+
 	return {
 		epochPeriod,
+		totalFeePaid,
+		tradingRewardsScore,
 		escrowedBalance,
 		vestedBalance,
 		stakedNonEscrowedBalance,

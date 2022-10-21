@@ -12,7 +12,12 @@ import { KwentaLabel, StakingCard } from './common';
 
 const TradingRewardsTab: React.FC = () => {
 	const { t } = useTranslation();
-	const { epochPeriod, currentWeeklyReward } = useStakingContext();
+	const {
+		epochPeriod,
+		currentWeeklyReward,
+		tradingRewardsScore,
+		totalFeePaid,
+	} = useStakingContext();
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
 	const getNextSunday = (date: Date) => {
@@ -28,7 +33,7 @@ const TradingRewardsTab: React.FC = () => {
 				<div className="title">
 					{t('dashboard.stake.tabs.trading-rewards.fees-paid', { EpochPeriod: epochPeriod })}
 				</div>
-				<div className="value">$2923.39</div>
+				<div className="value">${totalFeePaid.toFixed(2)}</div>
 			</StakingCard>
 			<StakingCard $darkTheme={isDarkTheme}>
 				<div className="title">{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}</div>
@@ -36,7 +41,7 @@ const TradingRewardsTab: React.FC = () => {
 			</StakingCard>
 			<StakingCard $darkTheme={isDarkTheme}>
 				<div className="title">{t('dashboard.stake.tabs.trading-rewards.estimated-fee-share')}</div>
-				<div className="value">0.0002%</div>
+				<div className="value">{tradingRewardsScore.toFixed(2)}%</div>
 			</StakingCard>
 			<StakingCard $darkTheme={isDarkTheme}>
 				<div className="title">
