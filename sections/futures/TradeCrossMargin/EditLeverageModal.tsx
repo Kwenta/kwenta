@@ -115,12 +115,16 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 						onTxFailed(failureMessage) {
 							setError(failureMessage?.failureReason || t('common.transaction.transaction-failed'));
 						},
-						onTxConfirmed: async () => {
-							resetTradeState();
-							handleRefetch('modify-position');
-							await refetchUntilUpdate('account-margin-change');
-							setSubmitting(false);
-							onDismiss();
+						onTxConfirmed: () => {
+							try {
+								resetTradeState();
+								handleRefetch('modify-position');
+								refetchUntilUpdate('account-margin-change');
+								setSubmitting(false);
+								onDismiss();
+							} catch (err) {
+								logError(err);
+							}
 						},
 					});
 				}
@@ -214,6 +218,7 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 
 			{position?.position && (
 				<>
+					<Spacer height={15} />
 					<MarginInfoBox editingLeverage />
 					{tradeFees.total.gt(0) && <FeeInfoBox />}
 				</>
