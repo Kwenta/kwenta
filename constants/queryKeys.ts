@@ -331,12 +331,6 @@ export const QUERY_KEYS = {
 			networkId,
 			settingsAddress,
 		],
-		CrossMarginAccount: (wallet: string, factoryAddress: string) => [
-			'futures',
-			'cross-margin-account',
-			wallet,
-			factoryAddress,
-		],
 	},
 	Files: {
 		Get: (fileName: string) => ['files', 'get', fileName],

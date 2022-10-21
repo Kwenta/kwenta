@@ -187,6 +187,7 @@ export const crossMarginAccountOverviewState = atom({
 	default: {
 		freeMargin: zeroBN,
 		keeperEthBal: zeroBN,
+		allowance: zeroBN,
 	},
 });
 
