@@ -66,7 +66,7 @@ export default function OrderPriceInput({
 	return (
 		<>
 			<StyledInputTitle margin="10px 0">
-				{capitalize(orderType)} Price{' '}
+				{orderType} Price{' '}
 				{minMaxLabelString && (
 					<>
 						&nbsp; —<span>&nbsp; {minMaxLabelString}</span>
@@ -105,6 +105,7 @@ export default function OrderPriceInput({
 }
 
 const StyledInputTitle = styled(InputTitle)`
+	text-transform: capitalize;
 	span {
 		color: ${(props) => props.theme.colors.selectedTheme.red};
 	}

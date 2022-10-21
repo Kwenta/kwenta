@@ -124,7 +124,7 @@ const FeeInfoBox: React.FC = () => {
 					value: formatDollars(totalDeposit),
 					spaceBeneath: true,
 				},
-				'Next-Price Discount': {
+				'Next Price Discount': {
 					value: !!nextPriceDiscount ? formatDollars(nextPriceDiscount) : NO_VALUE,
 					color: nextPriceDiscount.lt(0) ? 'green' : nextPriceDiscount.gt(0) ? 'red' : undefined,
 				},
