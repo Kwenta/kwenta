@@ -37,7 +37,9 @@ const TradingRewardsTab: React.FC = () => {
 			</StakingCard>
 			<StakingCard $darkTheme={isDarkTheme}>
 				<div className="title">{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}</div>
-				<KwentaLabel>{Number(currentWeeklyReward).toFixed(2)}</KwentaLabel>
+				<KwentaLabel>
+					{((Number(currentWeeklyReward) * tradingRewardsScore) / 100).toFixed(2)}
+				</KwentaLabel>
 			</StakingCard>
 			<StakingCard $darkTheme={isDarkTheme}>
 				<div className="title">{t('dashboard.stake.tabs.trading-rewards.estimated-fee-share')}</div>
