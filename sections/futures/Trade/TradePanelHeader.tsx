@@ -9,7 +9,6 @@ import FuturesIcon from 'components/Nav/FuturesIcon';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { FuturesAccountType } from 'queries/futures/subgraph';
 import { BorderedPanel } from 'styles/common';
-import media from 'styles/media';
 
 type Props = {
 	accountType: FuturesAccountType;
