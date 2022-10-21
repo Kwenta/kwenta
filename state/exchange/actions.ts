@@ -144,7 +144,7 @@ export const submitApprove = createAsyncThunk<any, void, ThunkConfig>(
 		} = getState();
 
 		if (quoteCurrencyKey && baseCurrencyKey) {
-			const hash = await sdk.exchange.handleApprove(quoteCurrencyKey, baseCurrencyKey);
+			const hash = await sdk.exchange.approveSwap(quoteCurrencyKey, baseCurrencyKey);
 
 			if (hash) {
 				monitorTransaction({

@@ -41,6 +41,7 @@ import { zeroBN } from 'utils/formatters/number';
 import { FuturesMarketKey, MarketAssetByKey } from 'utils/futures';
 import { getTransactionPrice, normalizeGasLimit } from 'utils/network';
 
+import * as sdkErrors from './common/errors';
 import { computeGasFee, getGasPriceFromProvider, getL1SecurityFee, MetaTx } from './common/gas';
 import SynthRedeemerABI from './contracts/abis/SynthRedeemer.json';
 import { getSynthsForNetwork, SynthsMap, SynthSymbol } from './data/synths';
@@ -56,6 +57,7 @@ const FILTERED_TOKENS = ['0x4922a015c4407f87432b179bb209e125432e4a2a'];
 // TODO:
 // - Make sure that all methods that depend on both the base and quote currency
 //   keys, accept the arguments in the correct order: (quote, base).
+// - Rename `quote` and `base` to `from` and `to`, to reduce confusion.
 // - Store more properties in the class instance, so we can reduce the number
 //   of async calls. For example, there are a number of functions that take
 //   more arguments than they optimally should.
@@ -152,7 +154,7 @@ export default class ExchangeService {
 
 	public async getBaseFeeRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
 		if (!this.sdk.contracts.SystemSettings) {
-			throw new Error('SystemSettings does not exist on the currently selected network.');
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
 		const [sourceCurrencyFeeRate, destinationCurrencyFeeRate] = await Promise.all([
@@ -171,7 +173,7 @@ export default class ExchangeService {
 
 	public async getExchangeFeeRate(quoteCurrencyKey: string, baseCurrencyKey: string) {
 		if (!this.sdk.contracts.Exchanger) {
-			throw new Error('Exchanger does not exist on the currently selected network.');
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
 		const exchangeFeeRate = await this.sdk.contracts.Exchanger.feeRateForExchange(
@@ -219,11 +221,11 @@ export default class ExchangeService {
 
 	public async getFeeReclaimPeriod(currencyKey: string) {
 		if (!this.sdk.walletAddress) {
-			throw new Error('');
+			throw new Error(sdkErrors.NO_SIGNER);
 		}
 
 		if (!this.sdk.contracts.Exchanger) {
-			throw new Error('The Exchanger contract does not exist on the currently selected network.');
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
 		const maxSecsLeftInWaitingPeriod = (await this.sdk.contracts.Exchanger.maxSecsLeftInWaitingPeriod(
@@ -238,8 +240,7 @@ export default class ExchangeService {
 		const isETH = this.isCurrencyETH(currencyKey);
 
 		if (isETH) {
-			const ETHBalance = await this.getETHBalance();
-			return ETHBalance;
+			return this.getETHBalance();
 		} else if (this.synthsMap[currencyKey as SynthSymbol]) {
 			return this.sdk.synths.getSynthBalance(currencyKey);
 		} else {
@@ -259,9 +260,9 @@ export default class ExchangeService {
 		fromAmount: string,
 		metaOnly?: 'meta_tx' | 'estimate_gas'
 	) {
-		if (!this.sdk.signer) throw new Error('Wallet not connected');
-		if (!this.sdk.provider) throw new Error('');
-		if (this.sdk.networkId !== 10) throw new Error('Unsupported network');
+		if (!this.sdk.signer) throw new Error(sdkErrors.NO_SIGNER);
+		if (!this.sdk.provider) throw new Error(sdkErrors.NO_PROVIDER);
+		if (this.sdk.networkId !== 10) throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 
 		const sUSD = this.tokensMap['sUSD'];
 
@@ -275,7 +276,7 @@ export default class ExchangeService {
 
 		if (this.tokensMap[fromToken.symbol]) {
 			if (!this.sdk.contracts.Exchanger) {
-				throw new Error('');
+				throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 			}
 			const fromAmountWei = wei(fromAmount).toString(0, true);
 			const amounts = await this.sdk.contracts.Exchanger.getAmountsForExchange(
@@ -344,7 +345,7 @@ export default class ExchangeService {
 		metaOnly = false
 	) {
 		if (!this.sdk.signer) {
-			throw new Error('');
+			throw new Error(sdkErrors.NO_SIGNER);
 		}
 
 		const params = await this.getOneInchSwapParams(quoteTokenAddress, baseTokenAddress, amount);
@@ -373,7 +374,7 @@ export default class ExchangeService {
 		amount: string
 	) {
 		if (!this.sdk.walletAddress) {
-			throw new Error('');
+			throw new Error(sdkErrors.NO_SIGNER);
 		}
 
 		const params = await this.getOneInchSwapParams(quoteTokenAddress, baseTokenAddress, amount);
@@ -383,11 +384,11 @@ export default class ExchangeService {
 
 	public async getNumEntries(currencyKey: string) {
 		if (!this.sdk.walletAddress) {
-			throw new Error('');
+			throw new Error(sdkErrors.NO_SIGNER);
 		}
 
 		if (!this.sdk.contracts.Exchanger) {
-			throw new Error('Something something wrong?');
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
 		const { numEntries } = await this.sdk.contracts.Exchanger.settlementOwing(
@@ -400,7 +401,7 @@ export default class ExchangeService {
 
 	public async getExchangeRates() {
 		if (!this.sdk.contracts.SynthUtil || !this.sdk.contracts.ExchangeRates) {
-			throw new Error('Wrong network');
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
 		const exchangeRates: Rates = {};
@@ -440,19 +441,15 @@ export default class ExchangeService {
 		return exchangeRates;
 	}
 
-	public async handleApprove(quoteCurrencyKey: string, baseCurrencyKey: string) {
+	public async approveSwap(quoteCurrencyKey: string, baseCurrencyKey: string) {
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
 		const oneInchApproveAddress = await this.getOneInchApproveAddress();
-		const quoteCurrencyContract = await this.getQuoteCurrencyContract(
-			baseCurrencyKey,
-			quoteCurrencyKey
-		);
-		const needsApproval = this.checkNeedsApproval(baseCurrencyKey, quoteCurrencyKey);
+		const quoteCurrencyContract = await this.getQuoteCurrencyContract(quoteCurrencyKey);
 
 		const approveAddress =
 			txProvider === '1inch' ? oneInchApproveAddress : SYNTH_SWAP_OPTIMISM_ADDRESS;
 
-		if (quoteCurrencyContract && needsApproval) {
+		if (quoteCurrencyContract) {
 			const { hash } = await this.sdk.transactions.createContractTxn(
 				quoteCurrencyContract,
 				'approve',
@@ -481,11 +478,11 @@ export default class ExchangeService {
 
 	public async handleSettle(baseCurrencyKey: string) {
 		if (!this.isL2) {
-			throw new Error('This function is only permitted on L2.');
+			throw new Error(sdkErrors.REQUIRES_L2);
 		}
 
 		if (!this.sdk.walletAddress) {
-			throw new Error('You need a signer to execute this transaction.');
+			throw new Error(sdkErrors.NO_SIGNER);
 		}
 
 		const numEntries = await this.getNumEntries(baseCurrencyKey);
@@ -502,6 +499,8 @@ export default class ExchangeService {
 
 		return undefined;
 	}
+
+	// TODO: Refactor handleExchange
 
 	public async handleExchange(
 		quoteCurrencyKey: string,
@@ -590,11 +589,11 @@ export default class ExchangeService {
 			);
 
 			if (!this.sdk.signer) {
-				throw new Error('You must add a signer to estimate gas for this transaction.');
+				throw new Error(sdkErrors.NO_SIGNER);
 			}
 
 			if (!this.sdk.contracts.Synthetix) {
-				throw new Error('Wrong network');
+				throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 			}
 
 			const isAtomic = this.checkIsAtomic(baseCurrencyKey, quoteCurrencyKey);
@@ -645,13 +644,10 @@ export default class ExchangeService {
 		quoteAmount: string
 	) {
 		if (!this.sdk.walletAddress) {
-			throw new Error('');
+			throw new Error(sdkErrors.NO_SIGNER);
 		}
 
-		const quoteCurrencyContract = await this.getQuoteCurrencyContract(
-			baseCurrencyKey,
-			quoteCurrencyKey
-		);
+		const quoteCurrencyContract = await this.getQuoteCurrencyContract(quoteCurrencyKey);
 
 		const approveAddress = await this.getApproveAddress(quoteCurrencyKey, baseCurrencyKey);
 
@@ -725,12 +721,6 @@ export default class ExchangeService {
 		}
 	}
 
-	public getSelectedTokens(baseCurrencyKey: string, quoteCurrencyKey: string) {
-		return this.tokenList.filter(
-			(t) => t.symbol === baseCurrencyKey || t.symbol === quoteCurrencyKey
-		);
-	}
-
 	public async getQuotePriceRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
 		const isQuoteCurrencyETH = this.isCurrencyETH(quoteCurrencyKey);
@@ -802,11 +792,11 @@ export default class ExchangeService {
 
 	public async getRedeemableDeprecatedSynths() {
 		if (!this.sdk.walletAddress) {
-			throw new Error('');
+			throw new Error(sdkErrors.NO_SIGNER);
 		}
 
 		if (!this.sdk.contracts?.SynthRedeemer) {
-			throw new Error('The SynthRedeemer contract does not exist on this network.');
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
 		const SynthRedeemer = this.sdk.contracts.SynthRedeemer;
@@ -894,7 +884,7 @@ export default class ExchangeService {
 		minAmount: Wei
 	) {
 		if (!this.sdk.walletAddress) {
-			throw new Error('');
+			throw new Error(sdkErrors.NO_SIGNER);
 		}
 
 		const sourceCurrencyKey = ethers.utils.formatBytes32String(quoteCurrencyKey);
@@ -957,10 +947,8 @@ export default class ExchangeService {
 		return get(this.allTokensMap, [currencyKey, 'decimals'], undefined);
 	}
 
-	private async getQuoteCurrencyContract(baseCurrencyKey: string, quoteCurrencyKey: string) {
-		const needsApproval = this.checkNeedsApproval(baseCurrencyKey, quoteCurrencyKey);
-
-		if (quoteCurrencyKey && this.allTokensMap[quoteCurrencyKey] && needsApproval) {
+	private async getQuoteCurrencyContract(quoteCurrencyKey: string) {
+		if (quoteCurrencyKey && this.allTokensMap[quoteCurrencyKey]) {
 			const quoteTknAddress = this.allTokensMap[quoteCurrencyKey].address;
 			return this.createERC20Contract(quoteTknAddress);
 		}
@@ -991,7 +979,7 @@ export default class ExchangeService {
 		amount: string
 	) {
 		if (!this.sdk.walletAddress) {
-			throw new Error('');
+			throw new Error(sdkErrors.NO_SIGNER);
 		}
 
 		const quoteTokenAddress = this.getTokenAddress(quoteCurrencyKey);
@@ -1068,7 +1056,7 @@ export default class ExchangeService {
 
 	private async getTokensBalances(tokens: Token[]) {
 		if (!this.sdk.walletAddress) {
-			throw new Error('');
+			throw new Error(sdkErrors.NO_SIGNER);
 		}
 
 		const filteredTokens = tokens.filter((t) => !FILTERED_TOKENS.includes(t.address.toLowerCase()));
@@ -1102,7 +1090,7 @@ export default class ExchangeService {
 
 	private async getETHBalance() {
 		if (!this.sdk.walletAddress) {
-			throw new Error('');
+			throw new Error(sdkErrors.NO_SIGNER);
 		}
 
 		const balance = await this.sdk.provider.getBalance(this.sdk.walletAddress);

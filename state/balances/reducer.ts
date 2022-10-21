@@ -1,13 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { FetchStatus } from 'state/types';
 
 import { fetchSynthBalances } from './actions';
-
-enum FetchStatus {
-	Idle,
-	Loading,
-	Success,
-	Error,
-}
 
 type BalancesState = {
 	status: FetchStatus;
@@ -35,10 +29,17 @@ const balancesSlice = createSlice({
 		},
 	},
 	extraReducers: (builder) => {
+		builder.addCase(fetchSynthBalances.pending, (state) => {
+			state.status = FetchStatus.Loading;
+		});
 		builder.addCase(fetchSynthBalances.fulfilled, (state, action) => {
+			state.status = FetchStatus.Success;
 			state.balances = action.payload.balances;
 			state.totalUSDBalance = action.payload.totalUSDBalance;
 			state.balancesMap = action.payload.balancesMap;
+		});
+		builder.addCase(fetchSynthBalances.rejected, (state) => {
+			state.status = FetchStatus.Error;
 		});
 	},
 });

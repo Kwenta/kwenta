@@ -5,6 +5,7 @@ import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { getSynthsListForNetwork } from 'sdk/data/synths';
+import { selectSynthBalancesLoading } from 'state/balances/selectors';
 import { useAppSelector } from 'state/hooks';
 import styled, { css } from 'styled-components';
 
@@ -59,6 +60,8 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 		tokenList: exchange.tokenList,
 		tokenListLoading: exchange.tokenListLoading,
 	}));
+
+	const synthBalancesLoading = useAppSelector(selectSynthBalancesLoading);
 
 	const categoryFilteredSynths = useMemo(
 		() => (!!synthCategory ? synths.filter((synth) => synth.category === synthCategory) : synths),
@@ -222,7 +225,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 						</span>
 						<span>{t('modals.select-currency.header.holdings')}</span>
 					</RowsHeader>
-					{false ? (
+					{synthBalancesLoading ? (
 						<Loader />
 					) : synthsResults.length > 0 ? (
 						// TODO: use `Synth` type from contracts-interface

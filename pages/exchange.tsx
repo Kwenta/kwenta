@@ -13,7 +13,6 @@ import NotificationContainer from 'constants/NotificationContainer';
 import Connector from 'containers/Connector';
 import ExchangeContent from 'sections/exchange/ExchangeContent';
 import ExchangeHead from 'sections/exchange/ExchangeHead';
-// import AppLayout from 'sections/shared/Layout/AppLayout';
 import Header from 'sections/shared/Layout/AppLayout/Header';
 import { FullScreenContainer, MobileScreenContainer } from 'styles/common';
 

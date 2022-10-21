@@ -27,7 +27,11 @@ import {
 	NoTextTransform,
 	FlexDivColCentered,
 } from 'styles/common';
-import { formatCurrency, LONG_CRYPTO_CURRENCY_DECIMALS } from 'utils/formatters/number';
+import {
+	formatCurrency,
+	formatDollars,
+	LONG_CRYPTO_CURRENCY_DECIMALS,
+} from 'utils/formatters/number';
 
 export type TxProvider = 'synthetix' | '1inch' | 'synthswap';
 
@@ -220,7 +224,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry
 							</PriceAdjustmentTooltip>
 						</SummaryItemLabel>
 						<SummaryItemValue data-testid="price-adjustment-value">
-							<span>{formatCurrency('sUSD', priceAdjustmentFeeUSD.toString(), { sign: '$' })}</span>
+							<span>{formatDollars(priceAdjustmentFeeUSD)}</span>
 						</SummaryItemValue>
 					</SummaryItem>
 				) : null}
