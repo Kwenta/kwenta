@@ -3,10 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
+import CaretDownGrayIcon from 'assets/svg/app/caret-down-gray-slim.svg';
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
+import { useStakingContext } from 'contexts/StakingContext';
 import { currentThemeState } from 'store/ui';
-import { FlexDivRowCentered } from 'styles/common';
+import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import media from 'styles/media';
 
 import EscrowTab from './EscrowTab';
@@ -23,7 +25,7 @@ enum StakeTab {
 
 const StakingTabs: React.FC = () => {
 	const { t } = useTranslation();
-	const epochPeriod = 5;
+	const { epochPeriod } = useStakingContext();
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
 
@@ -64,17 +66,15 @@ const StakingTabs: React.FC = () => {
 					/>
 				</TabButtons>
 				<StyledFlexDivRowCentered active={activeTab === StakeTab.TradingRewards}>
-					{window.innerWidth < 768 && (
+					{window.innerWidth < 768 && <PeriodLabel>{'Current Trading Period:'}</PeriodLabel>}
+					<StyledFlexDivRow>
 						<EpochLabel
-							title={'Current Trading Period:'}
+							title={t('dashboard.stake.tabs.trading-rewards.epoch', { EpochPeriod: epochPeriod })}
 							active={activeTab === StakeTab.TradingRewards}
+							isRounded
 						/>
-					)}
-					<EpochLabel
-						title={t('dashboard.stake.tabs.trading-rewards.epoch', { EpochPeriod: epochPeriod })}
-						active={activeTab === StakeTab.TradingRewards}
-						isRounded
-					/>
+						{window.innerWidth < 768 && <CaretDownGrayIcon />}
+					</StyledFlexDivRow>
 				</StyledFlexDivRowCentered>
 			</StakingTabsHeader>
 
@@ -96,8 +96,22 @@ const StakingTabs: React.FC = () => {
 	);
 };
 
+const StyledFlexDivRow = styled(FlexDivRow)`
+	align-items: center;
+	margin-right: 4px;
+`;
+
 const StyledFlexDivRowCentered = styled(FlexDivRowCentered)<{ active: boolean }>`
 	display: ${(props) => (props.active ? 'flex' : 'none')};
+`;
+
+const PeriodLabel = styled.div`
+	font-size: 11px;
+	line-height: 11px;
+	display: flex;
+	align-items: center;
+	color: #b1b1b1;
+	margin-left: 4px;
 `;
 
 const EpochLabel = styled(TabButton)`
@@ -111,6 +125,18 @@ const EpochLabel = styled(TabButton)`
 	visibility: ${(props) => (props.active ? 'visible' : 'hidden')};
 	border-radius: ${(props) => (props.isRounded ? '50px' : '8px')};
 	transition-duration: 0s;
+
+	${media.lessThan('md')`
+		background: none;
+		flex-direction: column;
+		color: #b1b1b1;
+		font-weight: 700px;
+		border-width: 0px;
+		text-transform: uppercase;
+		font-size: 14px;
+		line-height: 14px;
+		margin-left: 0px;
+	`}
 `;
 
 const StakingTabsHeader = styled.div`
@@ -120,7 +146,8 @@ const StakingTabsHeader = styled.div`
 
 	${media.lessThan('md')`
 		flex-direction: column;
-		row-gap: 20px;
+		row-gap: 10px;
+		margin-bottom: 10px;
 	`}
 `;
 
@@ -132,10 +159,13 @@ const StakingTabsContainer = styled.div`
 
 const TabButtons = styled.div`
 	display: flex;
-
 	& > button:not(:last-of-type) {
 		margin-right: 8px;
 	}
+
+	${media.lessThan('md')`
+		justify-content: space-around;
+	`}
 `;
 
 export default StakingTabs;

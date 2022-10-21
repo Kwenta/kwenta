@@ -42,6 +42,7 @@ const useStakingData = () => {
 		contractInterface: vKwentaRedeemerABI,
 	};
 
+	const epochPeriod = 1;
 	const { walletAddress } = Connector.useContainer();
 	const [kwentaBalance, setKwentaBalance] = useState(zeroBN);
 	const [escrowedBalance, setEscrowedBalance] = useState(zeroBN);
@@ -53,6 +54,7 @@ const useStakingData = () => {
 	const [vKwentaBalance, setVKwentaBalance] = useState(zeroBN);
 	const [vKwentaAllowance, setVKwentaAllowance] = useState(zeroBN);
 	const [kwentaAllowance, setKwentaAllowance] = useState(zeroBN);
+	const [currentWeeklyReward, setCurrentWeeklyReward] = useState(zeroBN);
 
 	useContractReads({
 		contracts: [
@@ -118,7 +120,8 @@ const useStakingData = () => {
 				args: [walletAddress ?? undefined, stakingRewardsContract.addressOrName],
 			},
 		],
-		cacheOnBlock: true,
+		watch: true,
+		allowFailure: true,
 		onSettled(data, error) {
 			if (error) logError(error);
 			if (data) {
@@ -136,6 +139,7 @@ const useStakingData = () => {
 				const yearlyRewards = totalSupply.gt(zeroBN)
 					? startWeeklySupply.mul(wei(1).sub(supplyRate.pow(52))).div(wei(1).sub(supplyRate))
 					: zeroBN;
+				setCurrentWeeklyReward(startWeeklySupply.mul(0.2));
 				setApy(yearlyRewards.gt(zeroBN) ? Number(yearlyRewards.div(totalSupply)).toFixed(2) : '0');
 				setVKwentaBalance(wei(data[10] ?? zeroBN));
 				setVKwentaAllowance(wei(data[11] ?? zeroBN));
@@ -157,33 +161,34 @@ const useStakingData = () => {
 	const { config: getRewardConfig } = usePrepareContractWrite({
 		...stakingRewardsContract,
 		functionName: 'getReward',
-		enabled: !!walletAddress,
+		enabled: claimableBalance.gt(0),
 	});
 
 	const { config: kwentaApproveConfig } = usePrepareContractWrite({
 		...kwentaTokenContract,
 		functionName: 'approve',
 		args: [stakingRewardsContract.addressOrName, ethers.constants.MaxUint256],
-		enabled: !!walletAddress && kwentaTokenApproval,
-		cacheTime: 5000,
+		enabled: kwentaTokenApproval,
+		staleTime: Infinity,
 	});
 
 	const { config: vKwentaApproveConfig } = usePrepareContractWrite({
 		...vKwentaTokenContract,
 		functionName: 'approve',
 		args: [vKwentaRedeemerContract.addressOrName, ethers.constants.MaxUint256],
-		enabled: !!walletAddress && vkwentaTokenApproval,
-		cacheTime: 5000,
+		enabled: vkwentaTokenApproval,
+		staleTime: Infinity,
 	});
 
 	const { config: redeemConfig } = usePrepareContractWrite({
 		...vKwentaRedeemerContract,
 		functionName: 'redeem',
-		enabled: !!walletAddress && wei(vKwentaBalance).gt(0),
-		cacheTime: 5000,
+		enabled: wei(vKwentaBalance).gt(0),
+		staleTime: Infinity,
 	});
 
 	return {
+		epochPeriod,
 		escrowedBalance,
 		vestedBalance,
 		stakedNonEscrowedBalance,
@@ -191,6 +196,7 @@ const useStakingData = () => {
 		claimableBalance,
 		kwentaBalance,
 		apy,
+		currentWeeklyReward,
 		vKwentaBalance,
 		vKwentaAllowance,
 		kwentaAllowance,

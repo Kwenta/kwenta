@@ -51,7 +51,7 @@ const EscrowTable = () => {
 				args: [walletAddress ?? undefined, 0, 1000],
 			},
 		],
-		cacheOnBlock: true,
+		watch: true,
 		enabled: !!walletAddress,
 		onError(error) {
 			if (error) logError(error);
@@ -89,7 +89,7 @@ const EscrowTable = () => {
 		isSuccess: vestingEntryClaimableIsSuccess,
 	} = useContractReads({
 		contracts,
-		cacheOnBlock: true,
+		watch: true,
 		enabled: !!walletAddress && contracts.length > 0,
 	});
 

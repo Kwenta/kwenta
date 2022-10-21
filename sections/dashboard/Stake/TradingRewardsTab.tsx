@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
+import { useStakingContext } from 'contexts/StakingContext';
 import { currentThemeState } from 'store/ui';
 import media from 'styles/media';
 import { formatTruncatedDuration } from 'utils/formatters/date';
@@ -11,7 +12,7 @@ import { KwentaLabel, StakingCard } from './common';
 
 const TradingRewardsTab: React.FC = () => {
 	const { t } = useTranslation();
-	const epochPeriod = 5;
+	const { epochPeriod, currentWeeklyReward } = useStakingContext();
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
 	const getNextSunday = (date: Date) => {
@@ -31,7 +32,7 @@ const TradingRewardsTab: React.FC = () => {
 			</StakingCard>
 			<StakingCard $darkTheme={isDarkTheme}>
 				<div className="title">{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}</div>
-				<KwentaLabel>2923.39</KwentaLabel>
+				<KwentaLabel>{Number(currentWeeklyReward).toFixed(2)}</KwentaLabel>
 			</StakingCard>
 			<StakingCard $darkTheme={isDarkTheme}>
 				<div className="title">{t('dashboard.stake.tabs.trading-rewards.estimated-fee-share')}</div>

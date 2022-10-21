@@ -34,7 +34,13 @@ const StakingTab = () => {
 						<div className="value">{Number(apy).toFixed(2)}%</div>
 					</div>
 				</CardGrid>
-				<Button fullWidth variant="flat" size="sm" onClick={() => getReward?.()}>
+				<Button
+					fullWidth
+					variant="flat"
+					size="sm"
+					disabled={claimableBalance.eq(0)}
+					onClick={() => getReward?.()}
+				>
 					{t('dashboard.stake.tabs.staking.claim')}
 				</Button>
 			</CardGridContainer>
