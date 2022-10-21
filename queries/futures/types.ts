@@ -176,7 +176,7 @@ export type FuturesTradeWithPrice = {
 };
 
 // This type exists to rename enum types from the subgraph to display-friendly types
-type FuturesOrderTypeMapped = 'Next-Price' | 'Limit' | 'Stop-Market' | 'Market' | 'Liquidation';
+type FuturesOrderTypeDisplay = 'Next-Price' | 'Limit' | 'Stop-Market' | 'Market' | 'Liquidation';
 
 export type FuturesTrade = {
 	size: Wei;
@@ -190,7 +190,7 @@ export type FuturesTrade = {
 	side?: PositionSide | null;
 	pnl: Wei;
 	feesPaid: Wei;
-	orderType: FuturesOrderTypeMapped;
+	orderType: FuturesOrderTypeDisplay;
 	accountType: FuturesAccountType;
 };
 
@@ -205,7 +205,7 @@ export type FuturesOrder = {
 	marginDelta: Wei;
 	targetRoundId: Wei | null;
 	timestamp: Wei;
-	orderType: FuturesOrderTypeMapped;
+	orderType: FuturesOrderTypeDisplay;
 	sizeTxt?: string;
 	targetPriceTxt?: string;
 	side?: PositionSide;
@@ -328,4 +328,4 @@ export type FuturesTradeInputs = {
 	orderPrice?: Wei | undefined;
 };
 
-export type FuturesOrderType = 'market' | 'next-price' | 'stop' | 'limit';
+export type FuturesOrderType = 'market' | 'next-price' | 'stop-market' | 'limit';

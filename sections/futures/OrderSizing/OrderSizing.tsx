@@ -117,7 +117,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	}, [position?.remainingMargin, disabled, selectedAccountType, freeCrossMargin]);
 
 	const showPosSizeHelper =
-		position?.position?.size && (orderType === 'limit' || orderType === 'stop');
+		position?.position?.size && (orderType === 'limit' || orderType === 'stop-market');
 
 	const invalid =
 		(assetInputType === 'usd' && usdValue !== '' && maxUsdInputAmount.lte(usdValue || 0)) ||

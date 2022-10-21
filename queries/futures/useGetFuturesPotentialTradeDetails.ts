@@ -49,7 +49,7 @@ const useGetFuturesPotentialTradeDetails = () => {
 				!marketAsset ||
 				(!nativeSizeDelta && selectedAccountType === 'isolated_margin') ||
 				(!nativeSizeDelta && (!positionMarginDelta || positionMarginDelta.eq(0))) ||
-				((orderType === 'limit' || orderType === 'stop') && orderPrice?.eq(0)) ||
+				((orderType === 'limit' || orderType === 'stop-market') && orderPrice?.eq(0)) ||
 				!isL2 ||
 				!selectedFuturesAddress
 			) {

@@ -101,7 +101,7 @@ const ManagePosition: React.FC = () => {
 		);
 
 		if (!leverageValid || !!error || marketInfo?.isSuspended || isMarketCapReached) return true;
-		if ((orderType === 'limit' || orderType === 'stop') && !!invalidReason) return true;
+		if ((orderType === 'limit' || orderType === 'stop-market') && !!invalidReason) return true;
 		if (tradeInputs.susdSizeDelta.abs().gt(maxUsdInputAmount)) return true;
 		if (placeOrderTranslationKey === 'futures.market.trade.button.deposit-margin-minimum')
 			return true;

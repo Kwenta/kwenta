@@ -114,8 +114,6 @@ export const mapFuturesPosition = (
 const mapOrderType = (orderType: Partial<FuturesOrderType>) => {
 	return orderType === 'NextPrice'
 		? 'Next-Price'
-		: orderType === 'Stop'
-		? 'Stop-Market'
 		: orderType === 'StopMarket'
 		? 'Stop-Market'
 		: orderType;
