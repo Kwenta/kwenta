@@ -139,9 +139,6 @@ const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
 		max-width: 400px;
 	}
-	.card-body {
-		padding: 28px;
-	}
 `;
 
 const Row = styled(FlexDivCentered)`

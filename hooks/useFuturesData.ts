@@ -54,7 +54,7 @@ import {
 	crossMarginAccountOverviewState,
 } from 'store/futures';
 import { zeroBN, floorNumber, weiToString } from 'utils/formatters/number';
-import { getDisplayAsset } from 'utils/futures';
+import { getDisplayAsset, MarketKeyByAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
 import useCrossMarginAccountContracts from './useCrossMarginContracts';
@@ -204,7 +204,7 @@ const useFuturesData = () => {
 
 	const calculateCrossMarginFee = useCallback(
 		(susdSizeDelta: Wei) => {
-			if (orderType !== 'limit' && orderType !== 'stop') return zeroBN;
+			if (orderType !== 'limit' && orderType !== 'stop market') return zeroBN;
 			const advancedOrderFeeRate = orderType === 'limit' ? limitOrderFee : stopOrderFee;
 			return susdSizeDelta.abs().mul(advancedOrderFeeRate);
 		},
@@ -224,7 +224,9 @@ const useFuturesData = () => {
 			]);
 
 			const currentDeposit =
-				orderType === 'limit' || orderType === 'market' ? await getCrossMarginEthBal() : zeroBN;
+				orderType === 'limit' || orderType === 'stop market'
+					? await getCrossMarginEthBal()
+					: zeroBN;
 			const requiredDeposit = currentDeposit.lt(ORDER_KEEPER_ETH_DEPOSIT)
 				? ORDER_KEEPER_ETH_DEPOSIT.sub(currentDeposit)
 				: zeroBN;
@@ -440,7 +442,7 @@ const useFuturesData = () => {
 
 	const orderTxn = useSynthetixTxn(
 		`FuturesMarket${getDisplayAsset(marketAsset)}`,
-		orderType === 'next-price' ? 'submitNextPriceOrderWithTracking' : 'modifyPositionWithTracking',
+		orderType === 'next price' ? 'submitNextPriceOrderWithTracking' : 'modifyPositionWithTracking',
 		[tradeInputs.nativeSizeDelta.toBN(), KWENTA_TRACKING_CODE],
 		{},
 		{
@@ -460,7 +462,7 @@ const useFuturesData = () => {
 			if (orderType === 'market' || fromEditLeverage) {
 				const newPosition = [
 					{
-						marketKey: formatBytes32String(marketAsset),
+						marketKey: formatBytes32String(MarketKeyByAsset[marketAsset]),
 						marginDelta: crossMarginMarginDelta.toBN(),
 						sizeDelta: tradeInputs.nativeSizeDelta.toBN(),
 					},
@@ -470,7 +472,7 @@ const useFuturesData = () => {
 			const enumType = orderType === 'limit' ? 0 : 1;
 
 			return await crossMarginAccountContract.placeOrderWithFeeCap(
-				formatBytes32String(marketAsset),
+				formatBytes32String(MarketKeyByAsset[marketAsset]),
 				crossMarginMarginDelta.toBN(),
 				tradeInputs.nativeSizeDelta.toBN(),
 				wei(orderPrice).toBN(),

@@ -12,6 +12,7 @@ import useEstimateGasCost from 'hooks/useEstimateGasCost';
 import { currentMarketState, positionState } from 'store/futures';
 import { isUserDeniedError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
+import { MarketKeyByAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
 import { PositionSide } from '../types';
@@ -40,7 +41,7 @@ export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 
 	const crossMarginCloseParams = useMemo(() => {
 		return {
-			marketKey: formatBytes32String(currencyKey),
+			marketKey: formatBytes32String(MarketKeyByAsset[currencyKey]),
 			marginDelta: zeroBN.toBN(),
 			sizeDelta:
 				position?.position?.side === PositionSide.LONG

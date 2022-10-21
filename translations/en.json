@@ -489,6 +489,7 @@
 				"no-trade-history-link": "Visit the Kwenta exchange to swap synths"
 			},
 			"futures-history-table": {
+				"asset": "Asset",
 				"size": "Size",
 				"pnl": "P&L",
 				"date-time": "Date/Time",
@@ -496,7 +497,7 @@
 				"price": "Price",
 				"side": "Side",
 				"market": "Market",
-				"order-type": "Type",
+				"type": "Type",
 				"no-result": "You have no futures trading history"
 			}
 		},
@@ -646,9 +647,9 @@
 					"modify-position": "modify",
 					"deposit-margin-minimum": "Deposit Margin",
 					"oi-caps-reached": "Open Interest Cap Reached",
-					"place-next-price-order": "Place Next-Price Order",
+					"place-next-price-order": "Place Next Price Order",
 					"place-limit-order": "Place Limit Order",
-					"place-stop-order": "Place Stop Order",
+					"place-stop-order": "Place Stop Market Order",
 					"connect-wallet": "Connect Wallet"
 				},
 				"margin": {
@@ -665,8 +666,10 @@
 						"deposit": {
 							"title": "Deposit Margin",
 							"button": "Deposit Margin",
+							"approve-button": "Approve sUSD",
 							"disclaimer": "A $50 margin minimum is required to open a position.",
 							"min-deposit": "$50 minimum margin to open a position",
+							"min-margin-error": "Position size too small, minimum market margin of $50 required",
 							"exceeds-balance": "Amount exceeds balance"
 						},
 						"withdraw": {
@@ -681,7 +684,7 @@
 					}
 				},
 				"next-price": {
-					"description": "Next-Price orders are subject to volatility and execute at the very next on-chain price.",
+					"description": "Next Price orders are subject to volatility and execute at the very next on-chain price.",
 					"learn-more": "Learn more"
 				},
 				"cost-basis": {
@@ -691,12 +694,12 @@
 					"modal": {
 						"confirm-order": "Confirm order",
 						"max-leverage-disclaimer": "Note: A next price update could cause your order to exceed maximum leverage resulting in the order being dropped by the keeper.",
-						"disabled-min-margin": "Minimum $50 margin required" 
+						"disabled-min-margin": "Minimum market margin of $50 required" 
 					}
 				},
 				"leverage": {
 					"modal": {
-						"max-pos": "Maximum position at current leverage:",
+						"max-pos": "Max position at current leverage:",
 						"title": "Adjust Leverage",
 						"input-label": "Leverage",
 						"confirm": "Confirm"
@@ -708,7 +711,7 @@
 				"cross-margin": {
 					"connect-wallet": "Connect your wallet to start trading",
 					"title": "Cross Margin",
-					"faq-title": "Cross Margin FAQ's",
+					"faq-title": " Cross Margin FAQ",
 					"create-account": "Create Account",
 					"unsupported": "Cross margin is not supported on this network",
 					"switch-type": "Switch to isolated margin",
@@ -772,9 +775,9 @@
 						"gas-fee": "Network Gas Fee",
 						"order-type": "Order Type",
 						"market-order": "Market",
-						"next-price-order": "Next-Price",
+						"next-price-order": "Next Price",
 						"deposit": "Total Deposit",
-						"np-discount": "Next-Price Discount"
+						"np-discount": "Next Price Discount"
 					}
 				},
 				"open-orders": {
@@ -805,7 +808,7 @@
 					}
 				},
 				"trades": {
-					"tab": "History",
+					"tab": "Trades",
 					"table": {
 						"id": "ID",
 						"trade-size": "trade size",
@@ -815,6 +818,7 @@
 						"fees": "fees",
 						"price": "price",
 						"side": "side",
+						"side-type": "Side/Type",
 						"no-results": "You have no trade history",
 						"order-type": "order type",
 						"trade-types": {
@@ -868,13 +872,13 @@
 			},
 			"onboard": {
 				"title": "Cross Margin",
-				"step1-intro": "To Get started you must first create your cross margin account",
+				"step1-intro": "Start by creating your cross margin account",
 				"step2-intro": "Now, approve the contract to spend sUSD",
-				"step3-intro": "Lastly, deposit your sUSD into the contact",
+				"step3-intro": "Lastly, deposit sUSD to begin trading",
 				"step3-complete": "Your cross margin account has been successfully created!",
 				"faq1": "What is cross margin?",
-				"faq2": "Is cross margin better than isolated margin",
-				"faq3": "How will a cross margin account affect my trading",
+				"faq2": "Is cross margin better than isolated margin?",
+				"faq3": "How will a cross margin account affect my trading?",
 				"unsupported-network": "Cross margin is not supported on this network"
 			}
 		}
@@ -970,6 +974,9 @@
 		"approve-transaction": {
 			"title": "approve transaction",
 			"confirm-with-provider": "Confirm your transaction through your wallet."
+		},
+		"menu": {
+			"title": "menu"
 		},
 		"settings": {
 			"title": "settings",

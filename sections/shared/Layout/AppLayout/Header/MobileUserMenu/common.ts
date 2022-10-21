@@ -47,6 +47,6 @@ export const SUB_MENUS = {
 	],
 };
 
-export const lanugageIcons = {
+export const languageIcon = {
 	en: '🌐',
 };

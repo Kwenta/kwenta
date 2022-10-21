@@ -1,12 +1,14 @@
 import { SynthetixJS } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import BN from 'bn.js';
-import { BigNumber, Contract, ethers } from 'ethers';
+import { Provider, Contract as MultiCallContract } from 'ethcall';
+import { BigNumber, ethers, Contract } from 'ethers';
 import { formatBytes32String } from 'ethers/lib/utils';
 import { useCallback, useMemo } from 'react';
 
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
+import FuturesMarket from 'lib/abis/FuturesMarket.json';
 import { PotentialTradeStatus } from 'sections/futures/types';
 import {
 	zeroBN,
@@ -46,6 +48,8 @@ type Position = {
 	margin: BigNumber;
 	lastFundingIndex: BigNumber;
 };
+
+const ethcallProvider = new Provider();
 
 export default function useGetCrossMarginTradePreview(
 	marketAsset: FuturesMarketAsset,
@@ -87,6 +91,15 @@ class FuturesMarketInternal {
 	_marketKeyBytes: string;
 	_account: string;
 
+	_onChainData: {
+		assetPrice: BigNumber;
+		marketSkew: BigNumber;
+		marketSize: BigNumber;
+		fundingSequenceLength: BigNumber;
+		fundingLastRecomputed: number;
+		accruedFunding: BigNumber;
+	};
+
 	_cache: Record<string, BigNumber>;
 
 	constructor(
@@ -103,6 +116,14 @@ class FuturesMarketInternal {
 		this._marketKeyBytes = formatBytes32String(MarketKeyByAsset[marketAsset]);
 		this._account = account;
 		this._cache = {};
+		this._onChainData = {
+			assetPrice: BigNumber.from(0),
+			marketSkew: BigNumber.from(0),
+			marketSize: BigNumber.from(0),
+			fundingSequenceLength: BigNumber.from(0),
+			fundingLastRecomputed: 0,
+			accruedFunding: BigNumber.from(0),
+		};
 	}
 
 	getTradePreview = async (
@@ -110,8 +131,34 @@ class FuturesMarketInternal {
 		marginDelta: BigNumber,
 		limitStopPrice?: BigNumber
 	) => {
-		const position = await this._futuresMarketContract.positions(this._account);
-		const price = limitStopPrice || (await this._futuresMarketContract.assetPrice()).price;
+		const multiCallContract = new MultiCallContract(
+			this._futuresMarketContract.address,
+			FuturesMarket
+		);
+		await ethcallProvider.init(this._provider as any);
+		const preFetchedData = await ethcallProvider.all([
+			multiCallContract.assetPrice(),
+			multiCallContract.marketSkew(),
+			multiCallContract.marketSize(),
+			multiCallContract.accruedFunding(this._account),
+			multiCallContract.fundingSequenceLength(),
+			multiCallContract.fundingLastRecomputed(),
+			multiCallContract.positions(this._account),
+		]);
+
+		this._onChainData = {
+			//@ts-ignore
+			assetPrice: preFetchedData[0].price as BigNumber,
+			marketSkew: preFetchedData[1] as BigNumber,
+			marketSize: preFetchedData[2] as BigNumber,
+			//@ts-ignore
+			accruedFunding: preFetchedData[3].funding as BigNumber,
+			fundingSequenceLength: preFetchedData[4] as BigNumber,
+			fundingLastRecomputed: preFetchedData[5] as number,
+		};
+
+		const position = preFetchedData[6] as Position;
+		const price = limitStopPrice || this._onChainData.assetPrice;
 
 		const takerFee = await this._getSetting('takerFee', [this._marketKeyBytes]);
 		const makerFee = await this._getSetting('makerFee', [this._marketKeyBytes]);
@@ -220,7 +267,7 @@ class FuturesMarketInternal {
 
 	_orderFee = async (tradeParams: TradeParams, dynamicFeeRate: BigNumber) => {
 		const notionalDiff = multiplyDecimal(tradeParams.sizeDelta, tradeParams.price);
-		const marketSkew = await this._futuresMarketContract.marketSkew();
+		const marketSkew = await this._onChainData.marketSkew;
 		const sameSide = notionalDiff.gte(0) === marketSkew.gte(0);
 		const staticRate = sameSide ? tradeParams.takerFee : tradeParams.makerFee;
 		const feeRate = staticRate.add(dynamicFeeRate);
@@ -248,7 +295,7 @@ class FuturesMarketInternal {
 	};
 
 	_marginPlusProfitFunding = async (position: Position, price: BigNumber) => {
-		const { funding } = await this._futuresMarketContract.accruedFunding(this._account);
+		const funding = this._onChainData.accruedFunding;
 		return position.margin.add(this._profitLoss(position, price)).add(funding);
 	};
 
@@ -267,7 +314,7 @@ class FuturesMarketInternal {
 	};
 
 	_latestFundingIndex = async () => {
-		const fundingSequenceLength = await this._futuresMarketContract.fundingSequenceLength();
+		const fundingSequenceLength = this._onChainData.fundingSequenceLength;
 		return fundingSequenceLength.sub(1); // at least one element is pushed in constructor
 	};
 
@@ -292,7 +339,7 @@ class FuturesMarketInternal {
 	_unrecordedFunding = async (price: BigNumber) => {
 		const blockNum = await this._provider?.getBlockNumber();
 		const block = await this._provider?.getBlock(blockNum);
-		const fundingLastRecomputed = await this._futuresMarketContract.fundingLastRecomputed();
+		const fundingLastRecomputed = this._onChainData.fundingLastRecomputed;
 		const elapsed = BigNumber.from(block.timestamp).sub(fundingLastRecomputed);
 		const currentFundingRatePerSecond = (await this._currentFundingRate(price)).div(
 			BigNumber.from(86400)
@@ -305,7 +352,7 @@ class FuturesMarketInternal {
 		const skewScaleUSD = await this._getSetting('skewScaleUSD', [this._marketKeyBytes]);
 		const skewScaleBaseAsset = divideDecimal(skewScaleUSD, price);
 		if (skewScaleBaseAsset.isZero()) throw new Error('skewScale is zero');
-		const marketSkew = await this._futuresMarketContract.marketSkew();
+		const marketSkew = this._onChainData.marketSkew;
 		return divideDecimal(marketSkew, skewScaleBaseAsset);
 	};
 
@@ -349,8 +396,8 @@ class FuturesMarketInternal {
 			return false;
 		}
 
-		const marketSkew = await this._futuresMarketContract.marketSkew();
-		const marketSize = await this._futuresMarketContract.marketSize();
+		const marketSkew = this._onChainData.marketSkew;
+		const marketSize = this._onChainData.marketSize;
 
 		const newSkew = marketSkew.sub(oldSize).add(newSize);
 		const newMarketSize = marketSize.sub(oldSize.abs()).add(newSize);
