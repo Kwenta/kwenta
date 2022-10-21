@@ -204,7 +204,7 @@ const useFuturesData = () => {
 
 	const calculateCrossMarginFee = useCallback(
 		(susdSizeDelta: Wei) => {
-			if (orderType !== 'limit' && orderType !== 'stop') return zeroBN;
+			if (orderType !== 'limit' && orderType !== 'stop market') return zeroBN;
 			const advancedOrderFeeRate = orderType === 'limit' ? limitOrderFee : stopOrderFee;
 			return susdSizeDelta.abs().mul(advancedOrderFeeRate);
 		},
@@ -224,7 +224,9 @@ const useFuturesData = () => {
 			]);
 
 			const currentDeposit =
-				orderType === 'limit' || orderType === 'stop' ? await getCrossMarginEthBal() : zeroBN;
+				orderType === 'limit' || orderType === 'stop market'
+					? await getCrossMarginEthBal()
+					: zeroBN;
 			const requiredDeposit = currentDeposit.lt(ORDER_KEEPER_ETH_DEPOSIT)
 				? ORDER_KEEPER_ETH_DEPOSIT.sub(currentDeposit)
 				: zeroBN;
@@ -440,7 +442,7 @@ const useFuturesData = () => {
 
 	const orderTxn = useSynthetixTxn(
 		`FuturesMarket${getDisplayAsset(marketAsset)}`,
-		orderType === 'next-price' ? 'submitNextPriceOrderWithTracking' : 'modifyPositionWithTracking',
+		orderType === 'next price' ? 'submitNextPriceOrderWithTracking' : 'modifyPositionWithTracking',
 		[tradeInputs.nativeSizeDelta.toBN(), KWENTA_TRACKING_CODE],
 		{},
 		{

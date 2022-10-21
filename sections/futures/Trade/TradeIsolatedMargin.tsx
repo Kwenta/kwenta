@@ -76,11 +76,11 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 				values={ISOLATED_MARGIN_ORDER_TYPES}
 				selectedIndex={ISOLATED_MARGIN_ORDER_TYPES.indexOf(orderType)}
 				onChange={(oType: number) => {
-					setOrderType(oType === 0 ? 'market' : 'next-price');
+					setOrderType(oType === 0 ? 'market' : 'next price');
 				}}
 			/>
 
-			{orderType === 'next-price' && <NextPrice />}
+			{orderType === 'next price' && <NextPrice />}
 
 			<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
 

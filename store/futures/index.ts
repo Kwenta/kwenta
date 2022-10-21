@@ -232,7 +232,7 @@ export const isAdvancedOrderState = selector({
 	key: getFuturesKey('isAdvancedOrder'),
 	get: ({ get }) => {
 		const orderType = get(orderTypeState);
-		return orderType === 'limit' || orderType === 'stop';
+		return orderType === 'limit' || orderType === 'stop market';
 	},
 });
 
@@ -306,7 +306,7 @@ export const maxLeverageState = selector({
 		const positionSide = position?.position?.side;
 		const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
 		const adjustedMaxLeverage =
-			orderType === 'next-price'
+			orderType === 'next price'
 				? marketMaxLeverage.mul(DEFAULT_NP_LEVERAGE_ADJUSTMENT)
 				: marketMaxLeverage;
 
@@ -440,9 +440,9 @@ export const placeOrderTranslationKeyState = selector({
 			remainingMargin = positionMargin.add(freeMargin);
 		}
 
-		if (orderType === 'next-price') return 'futures.market.trade.button.place-next-price-order';
+		if (orderType === 'next price') return 'futures.market.trade.button.place-next-price-order';
 		if (orderType === 'limit') return 'futures.market.trade.button.place-limit-order';
-		if (orderType === 'stop') return 'futures.market.trade.button.place-stop-order';
+		if (orderType === 'stop market') return 'futures.market.trade.button.place-stop-order';
 		if (!!position?.position) return 'futures.market.trade.button.modify-position';
 		return remainingMargin.lt('50')
 			? 'futures.market.trade.button.deposit-margin-minimum'
