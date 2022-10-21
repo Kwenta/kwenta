@@ -181,25 +181,24 @@ function MarginInfoBox({ editingLeverage }: Props) {
 							</PreviewArrow>
 						),
 					},
-					'Account ETH Balance':
-						orderType === 'limit' || orderType === 'stop'
-							? {
-									value: formatCurrency('ETH', keeperEthBal, { currencyKey: 'ETH' }),
-									valueNode: (
-										<>
-											{keeperEthBal.gt(0) && (
-												<ActionButton onClick={() => setOpenModal('keeper-deposit')}>
-													<WithdrawArrow
-														width="12px"
-														height="9px"
-														stroke={colors.selectedTheme.yellow}
-													/>
-												</ActionButton>
-											)}
-										</>
-									),
-							  }
-							: null,
+					'Account ETH Balance': !editingLeverage
+						? {
+								value: formatCurrency('ETH', keeperEthBal, { currencyKey: 'ETH' }),
+								valueNode: (
+									<>
+										{keeperEthBal.gt(0) && (
+											<ActionButton onClick={() => setOpenModal('keeper-deposit')}>
+												<WithdrawArrow
+													width="12px"
+													height="9px"
+													stroke={colors.selectedTheme.yellow}
+												/>
+											</ActionButton>
+										)}
+									</>
+								),
+						  }
+						: null,
 					Leverage: {
 						value: (
 							<>

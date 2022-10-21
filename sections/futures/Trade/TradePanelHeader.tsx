@@ -92,6 +92,7 @@ const Buttons = styled.div`
 
 const HeaderButton = styled(Button)`
 	margin-left: 10px;
+	font-size: 11px;
 `;
 
 const Label = styled.span`
