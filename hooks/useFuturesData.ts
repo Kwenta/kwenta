@@ -224,7 +224,9 @@ const useFuturesData = () => {
 			]);
 
 			const currentDeposit =
-				orderType === 'limit' || orderType === 'stop' ? await getCrossMarginEthBal() : zeroBN;
+				orderType === 'limit' || orderType === 'stop market'
+					? await getCrossMarginEthBal()
+					: zeroBN;
 			const requiredDeposit = currentDeposit.lt(ORDER_KEEPER_ETH_DEPOSIT)
 				? ORDER_KEEPER_ETH_DEPOSIT.sub(currentDeposit)
 				: zeroBN;

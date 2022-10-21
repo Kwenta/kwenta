@@ -1,5 +1,4 @@
 import { wei } from '@synthetixio/wei';
-import { capitalize } from 'lodash';
 import { ChangeEvent, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
