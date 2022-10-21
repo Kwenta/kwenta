@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import Error from 'components/Error';
+import Loader from 'components/Loader';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { previewErrorI18n } from 'queries/futures/constants';
 import { PositionSide } from 'queries/futures/types';
@@ -144,7 +145,7 @@ const ManagePosition: React.FC = () => {
 						disabled={placeOrderDisabled}
 						onClick={() => setConfirmationModalOpen(true)}
 					>
-						{t(placeOrderTranslationKey)}
+						{status === 'fetching' ? <Loader /> : t(placeOrderTranslationKey)}
 					</PlaceOrderButton>
 
 					<CloseOrderButton

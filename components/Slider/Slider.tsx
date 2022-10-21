@@ -46,7 +46,7 @@ export default SliderComponent;
 
 const styledMarkLabel = css`
 	font-family: ${(props) => props.theme.fonts.mono};
-	font-size: 11px;
+	font-size: 13px;
 	color: ${(props) => props.theme.colors.selectedTheme.slider.label};
 	${media.lessThan('sm')`
 		top: -5px;
@@ -124,7 +124,7 @@ const StyledSlider = styled(Slider)`
 			color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 		}
 		font-family: ${(props) => props.theme.fonts.mono};
-		font-size: 11px;
+		font-size: 13px;
 		top: initial;
 		bottom: -41.5px;
 		${media.lessThan('sm')`

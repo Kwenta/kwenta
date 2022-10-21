@@ -8,9 +8,8 @@ import LogoNoTextSVG from 'assets/svg/brand/logo-no-text.svg';
 import Button from 'components/Button';
 import PoweredBySynthetix from 'components/PoweredBySynthetix';
 import Webp from 'components/Webp';
+import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import ROUTES from 'constants/routes';
-import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
-import { futuresAccountTypeState } from 'store/futures';
 import { FlexDivColCentered, GridDiv, Paragraph } from 'styles/common';
 import media from 'styles/media';
 
@@ -18,7 +17,6 @@ import { StackSection } from '../common';
 
 const Hero = () => {
 	const { t } = useTranslation();
-	const [accountType] = usePersistedRecoilState(futuresAccountTypeState);
 
 	return (
 		<StackSection>
@@ -34,7 +32,7 @@ const Hero = () => {
 					<PoweredBySynthetix />
 				</SynthetixContainer>
 				<CTAContainer>
-					<Link href={ROUTES.Markets.Home(accountType)}>
+					<Link href={ROUTES.Markets.Home(DEFAULT_FUTURES_MARGIN_TYPE)}>
 						<Button variant="primary" size="md">
 							{t('homepage.nav.trade-now')}
 						</Button>
