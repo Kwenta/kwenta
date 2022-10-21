@@ -38,6 +38,7 @@ import {
 	MarginTransfer,
 	FuturesMarket,
 	FuturesOrder,
+	FuturesOrderTypeDisplay,
 } from './types';
 
 export const getFuturesEndpoint = (networkId: NetworkId): string => {
@@ -111,11 +112,11 @@ export const mapFuturesPosition = (
 	};
 };
 
-const mapOrderType = (orderType: Partial<FuturesOrderType>) => {
+const mapOrderType = (orderType: Partial<FuturesOrderType>): FuturesOrderTypeDisplay => {
 	return orderType === 'NextPrice'
-		? 'Next-Price'
+		? 'Next Price'
 		: orderType === 'StopMarket'
-		? 'Stop-Market'
+		? 'Stop Market'
 		: orderType;
 };
 

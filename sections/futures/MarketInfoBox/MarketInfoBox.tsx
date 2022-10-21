@@ -38,7 +38,7 @@ const MarketInfoBox: React.FC = () => {
 		? totalMargin.sub(availableMargin).div(totalMargin)
 		: zeroBN;
 
-	const isNextPriceOrder = orderType === 'next-price';
+	const isNextPriceOrder = orderType === 'next price';
 
 	const positionSize = position?.position?.size ? wei(position?.position?.size) : zeroBN;
 	const orderDetails = useMemo(() => {

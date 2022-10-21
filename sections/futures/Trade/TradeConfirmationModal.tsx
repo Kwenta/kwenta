@@ -93,7 +93,7 @@ export default function TradeConfirmationModal({
 				value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x`,
 			},
 
-			orderType === 'limit' || orderType === 'stop-market'
+			orderType === 'limit' || orderType === 'stop market'
 				? {
 						label: orderType + ' order price',
 						value: formatDollars(orderPrice),

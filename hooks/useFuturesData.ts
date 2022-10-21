@@ -204,7 +204,7 @@ const useFuturesData = () => {
 
 	const calculateCrossMarginFee = useCallback(
 		(susdSizeDelta: Wei) => {
-			if (orderType !== 'limit' && orderType !== 'stop-market') return zeroBN;
+			if (orderType !== 'limit' && orderType !== 'stop market') return zeroBN;
 			const advancedOrderFeeRate = orderType === 'limit' ? limitOrderFee : stopOrderFee;
 			return susdSizeDelta.abs().mul(advancedOrderFeeRate);
 		},
@@ -440,7 +440,7 @@ const useFuturesData = () => {
 
 	const orderTxn = useSynthetixTxn(
 		`FuturesMarket${getDisplayAsset(marketAsset)}`,
-		orderType === 'next-price' ? 'submitNextPriceOrderWithTracking' : 'modifyPositionWithTracking',
+		orderType === 'next price' ? 'submitNextPriceOrderWithTracking' : 'modifyPositionWithTracking',
 		[tradeInputs.nativeSizeDelta.toBN(), KWENTA_TRACKING_CODE],
 		{},
 		{

@@ -48,7 +48,7 @@ const FeeInfoBox: React.FC = () => {
 
 	const orderFeeRate = useMemo(
 		() =>
-			orderType === 'limit' ? limitOrderFee : orderType === 'stop-market' ? stopOrderFee : null,
+			orderType === 'limit' ? limitOrderFee : orderType === 'stop market' ? stopOrderFee : null,
 		[orderType, stopOrderFee, limitOrderFee]
 	);
 
@@ -100,7 +100,7 @@ const FeeInfoBox: React.FC = () => {
 				}),
 			},
 		};
-		if (orderType === 'limit' || orderType === 'stop-market') {
+		if (orderType === 'limit' || orderType === 'stop market') {
 			return {
 				...crossMarginFeeInfo,
 				'Keeper Deposit': {
@@ -110,7 +110,7 @@ const FeeInfoBox: React.FC = () => {
 				},
 			};
 		}
-		if (orderType === 'next-price') {
+		if (orderType === 'next price') {
 			return {
 				'Keeper Deposit': {
 					value: !!marketInfo?.keeperDeposit ? formatDollars(marketInfo.keeperDeposit) : NO_VALUE,

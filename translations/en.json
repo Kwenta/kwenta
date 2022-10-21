@@ -647,9 +647,9 @@
 					"modify-position": "modify",
 					"deposit-margin-minimum": "Deposit Margin",
 					"oi-caps-reached": "Open Interest Cap Reached",
-					"place-next-price-order": "Place Next-Price Order",
+					"place-next-price-order": "Place Next Price Order",
 					"place-limit-order": "Place Limit Order",
-					"place-stop-order": "Place Stop Order",
+					"place-stop-order": "Place Stop Market Order",
 					"connect-wallet": "Connect Wallet"
 				},
 				"margin": {
@@ -684,7 +684,7 @@
 					}
 				},
 				"next-price": {
-					"description": "Next-Price orders are subject to volatility and execute at the very next on-chain price.",
+					"description": "Next Price orders are subject to volatility and execute at the very next on-chain price.",
 					"learn-more": "Learn more"
 				},
 				"cost-basis": {
@@ -775,9 +775,9 @@
 						"gas-fee": "Network Gas Fee",
 						"order-type": "Order Type",
 						"market-order": "Market",
-						"next-price-order": "Next-Price",
+						"next-price-order": "Next Price",
 						"deposit": "Total Deposit",
-						"np-discount": "Next-Price Discount"
+						"np-discount": "Next Price Discount"
 					}
 				},
 				"open-orders": {

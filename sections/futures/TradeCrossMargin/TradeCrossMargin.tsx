@@ -107,9 +107,9 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 							setOrderType(type as FuturesOrderType);
 							const price =
 								(type === 'limit' && leverageSide === 'long') ||
-								(type === 'stop' && leverageSide === 'short')
+								(type === 'stop market' && leverageSide === 'short')
 									? floorNumber(marketAssetRate, 0)
-									: (type === 'stop' && leverageSide === 'long') ||
+									: (type === 'stop market' && leverageSide === 'long') ||
 									  (type === 'limit' && leverageSide === 'short')
 									? ceilNumber(marketAssetRate, 0)
 									: '';
