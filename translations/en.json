@@ -698,7 +698,7 @@
 				},
 				"leverage": {
 					"modal": {
-						"max-pos": "Maximum position at current leverage:",
+						"max-pos": "Max position at current leverage:",
 						"title": "Adjust Leverage",
 						"input-label": "Leverage",
 						"confirm": "Confirm"

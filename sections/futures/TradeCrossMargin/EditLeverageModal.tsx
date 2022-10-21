@@ -80,13 +80,15 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 	}, [totalMargin, leverage]);
 
 	const handleIncrease = () => {
-		const newLeverage = Math.max(leverage + 1, 1);
+		let newLeverage = wei(leverage).add(1).toNumber();
+		newLeverage = Math.max(newLeverage, 1);
 		setLeverage(Math.min(newLeverage, maxLeverage));
 		previewPositionChange(newLeverage);
 	};
 
 	const handleDecrease = () => {
-		const newLeverage = Math.max(leverage - 1, 1);
+		let newLeverage = wei(leverage).sub(1).toNumber();
+		newLeverage = Math.max(newLeverage, 1);
 		setLeverage(newLeverage);
 		previewPositionChange(newLeverage);
 	};
@@ -94,7 +96,9 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const previewPositionChange = useCallback(
 		debounce((leverage: number) => {
-			onLeverageChange(leverage);
+			if (leverage >= 1) {
+				onLeverageChange(leverage);
+			}
 		}, 200),
 		[onLeverageChange]
 	);
@@ -178,7 +182,7 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 			<Label>{t('futures.market.trade.leverage.modal.input-label')}:</Label>
 			<InputContainer
 				dataTestId="futures-market-trade-leverage-modal-input"
-				value={leverage}
+				value={String(leverage)}
 				onChange={(_, v) => {
 					setLeverage(Number(v));
 					previewPositionChange(Number(v));
@@ -216,7 +220,7 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 			)}
 
 			<MarginActionButton
-				disabled={!!previewError || (!!position?.position && !previewData)}
+				disabled={!!previewError || (!!position?.position && !previewData) || leverage < 1}
 				data-testid="futures-market-trade-deposit-margin-button"
 				fullWidth
 				onClick={onConfirm}
@@ -258,6 +262,7 @@ const MaxPosContainer = styled(FlexDivRowCentered)`
 `;
 
 const Label = styled.p`
+	font-size: 13px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
