@@ -1,5 +1,6 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
+import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
@@ -17,21 +18,24 @@ export default function useGetCrossMarginAccountOverview() {
 	const setAccountOverview = useSetRecoilState(crossMarginAccountOverviewState);
 
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
+	const [retryCount, setRetryCount] = useState(0);
 	const susdContract = useSUSDContract();
 
 	return useQuery(
 		QUERY_KEYS.Futures.CrossMarginAccountOverview(
 			network.id as NetworkId,
-			crossMarginAddress || ''
+			crossMarginAddress || '',
+			retryCount
 		),
 		async () => {
 			if (!crossMarginAddress || !crossMarginAccountContract || !susdContract || !walletAddress) {
-				setAccountOverview({
+				const overview = {
 					freeMargin: zeroBN,
 					keeperEthBal: zeroBN,
 					allowance: zeroBN,
-				});
-				return;
+				};
+				setAccountOverview(overview);
+				return overview;
 			}
 
 			try {
@@ -41,14 +45,22 @@ export default function useGetCrossMarginAccountOverview() {
 					susdContract.allowance(walletAddress, crossMarginAccountContract.address),
 				]);
 
-				setAccountOverview({
+				const overview = {
 					freeMargin: wei(freeMargin),
 					keeperEthBal: wei(keeperEthBal),
 					allowance: wei(allowance),
-				});
+				};
+				setRetryCount(0);
+				setAccountOverview(overview);
 
-				return;
+				return overview;
 			} catch (err) {
+				// This a hacky workaround to deal with the delayed Metamask error
+				// which causes the logs query to fail on network switching
+				// https://github.com/MetaMask/metamask-extension/issues/13375#issuecomment-1046125113
+				if (retryCount < 2) {
+					setRetryCount(retryCount + 1);
+				}
 				logError(err);
 			}
 		}
