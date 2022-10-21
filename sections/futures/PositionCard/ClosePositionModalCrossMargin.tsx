@@ -16,6 +16,7 @@ import logError from 'utils/logError';
 
 import { PositionSide } from '../types';
 import ClosePositionModal from './ClosePositionModal';
+import { MarketKeyByAsset } from 'utils/futures';
 
 type Props = {
 	onDismiss: () => void;
@@ -40,7 +41,7 @@ export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 
 	const crossMarginCloseParams = useMemo(() => {
 		return {
-			marketKey: formatBytes32String(currencyKey),
+			marketKey: formatBytes32String(MarketKeyByAsset[currencyKey]),
 			marginDelta: zeroBN.toBN(),
 			sizeDelta:
 				position?.position?.side === PositionSide.LONG
