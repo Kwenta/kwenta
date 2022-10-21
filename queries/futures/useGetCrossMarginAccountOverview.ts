@@ -24,11 +24,12 @@ export default function useGetCrossMarginAccountOverview() {
 		),
 		async () => {
 			if (!crossMarginAddress || !crossMarginAccountContract) {
-				setAccountOverview({
+				const overview = {
 					freeMargin: zeroBN,
 					keeperEthBal: zeroBN,
-				});
-				return;
+				};
+				setAccountOverview(overview);
+				return overview;
 			}
 
 			try {
@@ -36,13 +37,14 @@ export default function useGetCrossMarginAccountOverview() {
 					crossMarginAccountContract.freeMargin(),
 					provider.getBalance(crossMarginAddress),
 				]);
-
-				setAccountOverview({
+				const overview = {
 					freeMargin: wei(freeMargin),
 					keeperEthBal: wei(keeperEthBal),
-				});
+				};
 
-				return;
+				setAccountOverview(overview);
+
+				return overview;
 			} catch (err) {
 				logError(err);
 			}
