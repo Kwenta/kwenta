@@ -267,12 +267,18 @@ const ActionButton = styled(Button)<{ hideBorder?: boolean }>`
 	margin-left: 8px;
 	cursor: pointer;
 	font-size: 10px;
-	font-family: ${(props) => props.theme.fonts.bold};
+	font-family: ${(props) => props.theme.fonts.black};
+	font-variant: all-small-caps;
 	border: 1px solid
 		${(props) => (!props.hideBorder ? props.theme.colors.selectedTheme.yellow : 'none')};
-	color: ${(props) => props.theme.colors.selectedTheme.yellow};
+	color: ${(props) => props.theme.colors.selectedTheme.button.pill.background};
 	border-radius: 10px;
 	padding: ${(props) => (props.hideBorder ? '3px 2px 3px 0px' : '3px 5px')};
+	&:hover {
+		background-color: ${(props) => props.theme.colors.selectedTheme.button.pill.background};
+		color: ${(props) => props.theme.colors.selectedTheme.button.pill.hover};
+		opacity: unset;
+	}
 `;
 
 export default React.memo(MarginInfoBox);

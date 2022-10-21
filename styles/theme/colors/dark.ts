@@ -59,6 +59,7 @@ const darkTheme = {
 			},
 			disabled: { border: '1px solid #353333', text: '#353333' },
 		},
+		pill: { background: common.dark.yellow, text: common.dark.yellow, hover: common.black },
 	},
 	input: {
 		background: '#151515',
@@ -67,6 +68,7 @@ const darkTheme = {
 		},
 		placeholder: '#787878',
 		shadow: '0px 0.5px 0px rgba(255, 255, 255, 0.08)',
+		hover: common.dark.white,
 	},
 	segmented: {
 		background: '#0b0b0b',

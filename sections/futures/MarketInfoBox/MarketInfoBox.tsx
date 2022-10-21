@@ -115,7 +115,7 @@ const MarketInfoBox: React.FC = () => {
 			details={{
 				'Total Margin': {
 					value: `${formatDollars(totalMargin, {
-						currencyKey: 'sUSD',
+						currencyKey: undefined,
 					})}`,
 				},
 				'Available Margin': {
