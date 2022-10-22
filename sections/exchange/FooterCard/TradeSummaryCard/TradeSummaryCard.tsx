@@ -33,20 +33,13 @@ type TradeSummaryCardProps = {
 
 const TradeSummaryCard: FC<TradeSummaryCardProps> = memo(({ ...rest }) => {
 	const { t } = useTranslation();
-	const { useEthGasPriceQuery } = useSynthetixQueries();
 
 	const { feeReclaimPeriod, openModal } = useAppSelector(({ exchange }) => ({
 		feeReclaimPeriod: exchange.feeReclaimPeriod,
 		openModal: exchange.openModal,
 	}));
 
-	const ethGasPriceQuery = useEthGasPriceQuery();
-	const gasPrices = useMemo(() => ethGasPriceQuery?.data, [ethGasPriceQuery.data]);
-
 	const quoteCurrencyKey = useAppSelector(({ exchange }) => exchange.quoteCurrencyKey);
-	const transactionFee = useAppSelector(selectTransactionFeeWei);
-	const feeCost = useAppSelector(selectFeeCostWei);
-	const showFee = useAppSelector(selectShowFee);
 	const dispatch = useAppDispatch();
 
 	const isApproved = useAppSelector(selectIsApproved);
@@ -64,30 +57,19 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = memo(({ ...rest }) => {
 		dispatch(submitApprove());
 	}, [dispatch]);
 
-	const summaryItems = useMemo(
-		() => (
-			<SummaryItems>
-				<GasPriceSelect gasPrices={gasPrices} transactionFee={transactionFee} />
-				{showFee && (
-					<>
-						<FeeRateSummaryItem />
-						<FeeCostSummaryItem feeCost={feeCost} />
-					</>
-				)}
-			</SummaryItems>
-		),
-		[gasPrices, transactionFee, feeCost, showFee]
-	);
-
 	return (
 		<>
 			<MobileOrTabletView>
 				<MobileCard className="trade-summary-card">
-					<Card.Body>{summaryItems}</Card.Body>
+					<Card.Body>
+						<SummaryItemsWrapper />
+					</Card.Body>
 				</MobileCard>
 			</MobileOrTabletView>
 			<MessageContainer className="footer-card" {...rest}>
-				<DesktopOnlyView>{summaryItems}</DesktopOnlyView>
+				<DesktopOnlyView>
+					<SummaryItemsWrapper />
+				</DesktopOnlyView>
 				<ErrorTooltip
 					visible={feeReclaimPeriod > 0}
 					preset="top"
@@ -110,6 +92,27 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = memo(({ ...rest }) => {
 		</>
 	);
 });
+
+const SummaryItemsWrapper = () => {
+	const { useEthGasPriceQuery } = useSynthetixQueries();
+	const ethGasPriceQuery = useEthGasPriceQuery();
+	const gasPrices = useMemo(() => ethGasPriceQuery?.data, [ethGasPriceQuery.data]);
+	const transactionFee = useAppSelector(selectTransactionFeeWei);
+	const feeCost = useAppSelector(selectFeeCostWei);
+	const showFee = useAppSelector(selectShowFee);
+
+	return (
+		<SummaryItems>
+			<GasPriceSelect gasPrices={gasPrices} transactionFee={transactionFee} />
+			{showFee && (
+				<>
+					<FeeRateSummaryItem />
+					<FeeCostSummaryItem feeCost={feeCost} />
+				</>
+			)}
+		</SummaryItems>
+	);
+};
 
 const SubmissionButton = ({ onSubmit, isApproved }: any) => {
 	const { t } = useTranslation();
