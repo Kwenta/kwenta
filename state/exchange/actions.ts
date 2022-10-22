@@ -254,13 +254,20 @@ export const resetCurrencies = createAsyncThunk<
 	ThunkConfig
 >(
 	'exchange/resetCurrencies',
-	async ({ quoteCurrencyFromQuery, baseCurrencyFromQuery }, { extra: { sdk } }) => {
+	async ({ quoteCurrencyFromQuery, baseCurrencyFromQuery }, { dispatch, extra: { sdk } }) => {
 		await sdk.exchange.getOneInchTokens();
 
 		const validQuoteCurrency =
 			!!quoteCurrencyFromQuery && sdk.exchange.validCurrencyKey(quoteCurrencyFromQuery);
 		const validBaseCurrency =
 			!!baseCurrencyFromQuery && sdk.exchange.validCurrencyKey(baseCurrencyFromQuery);
+
+		// Make sure the quote/base are set first!
+		await Promise.all([
+			dispatch(checkNeedsApproval()),
+			dispatch(fetchTxProvider()),
+			dispatch(fetchRates()),
+		]);
 
 		return {
 			quoteCurrencyKey: validQuoteCurrency ? quoteCurrencyFromQuery : 'sUSD',

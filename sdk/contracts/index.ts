@@ -26,7 +26,10 @@ export type ContractName =
 	| 'FuturesMarketSettings'
 	| 'FuturesMarket'
 	| 'Synth'
-	| 'Synthetix';
+	| 'Synthetix'
+	| 'SynthSwap'
+	| 'MarginAccountFactory'
+	| 'MarginBaseSettings';
 
 export type ContractDetails = {
 	name: ContractName;
@@ -97,6 +100,17 @@ export const contracts: AllContractsMap = {
 		5: new Contract('0x51f44ca59b867E005e48FA573Cb8df83FC7f7597', SynthetixABI),
 		10: new Contract('0x8700dAec35aF8Ff88c16BdF0418774CB3D7599B4', SynthetixABI),
 		420: new Contract('0x2E5ED97596a8368EB9E44B1f3F25B2E813845303', SynthetixABI),
+	},
+	SynthSwap: {
+		10: new Contract('0x6d6273f52b0C8eaB388141393c1e8cfDB3311De6', []),
+	},
+	MarginAccountFactory: {
+		10: new Contract('0x1fcFf1c7911dc209bdFc1648E5cDdB320f08AC08', []),
+		420: new Contract('0x73a70947fe787A4167a27f8bd876349b7206ee77', []),
+	},
+	MarginBaseSettings: {
+		10: new Contract('0x8954C7b1417E3De398c7F33520EbAe142929Ba2A', []),
+		420: new Contract('0x8d1CB3f153D4646b64A447809e1Ce7714d41C6B4', []),
 	},
 };
 

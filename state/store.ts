@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
+import type { AnyAction, ThunkAction } from '@reduxjs/toolkit';
 import logger from 'redux-logger';
 import KwentaSDK from 'sdk';
 
@@ -24,5 +25,11 @@ export type ThunkConfig = {
 	state: RootState;
 	extra: { sdk: KwentaSDK };
 };
+export type AppThunk<ReturnType = void> = ThunkAction<
+	ReturnType,
+	RootState,
+	{ sdk: KwentaSDK },
+	AnyAction
+>;
 
 export default store;

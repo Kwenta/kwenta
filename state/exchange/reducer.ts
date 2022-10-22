@@ -219,14 +219,16 @@ const exchangeSlice = createSlice({
 		builder.addCase(submitExchange.pending, (state) => {
 			state.isSubmitting = true;
 			state.openModal = 'confirm';
+			state.txError = undefined;
 		});
 		builder.addCase(submitExchange.fulfilled, (state) => {
 			state.isSubmitting = false;
 			state.openModal = undefined;
 		});
-		builder.addCase(submitExchange.rejected, (state) => {
+		builder.addCase(submitExchange.rejected, (state, action) => {
 			state.isSubmitting = false;
 			state.openModal = undefined;
+			state.txError = action.error.message;
 		});
 		builder.addCase(checkNeedsApproval.fulfilled, (state, action) => {
 			state.approvalStatus = action.payload;
@@ -234,30 +236,36 @@ const exchangeSlice = createSlice({
 		builder.addCase(submitApprove.pending, (state) => {
 			state.approvalStatus = 'approving';
 			state.openModal = 'approve';
+			state.txError = undefined;
 		});
 		builder.addCase(submitApprove.fulfilled, (state) => {
 			state.openModal = undefined;
 		});
-		builder.addCase(submitApprove.rejected, (state) => {
+		builder.addCase(submitApprove.rejected, (state, action) => {
 			state.openModal = undefined;
+			state.txError = action.error.message;
 		});
 		builder.addCase(submitRedeem.pending, (state) => {
 			state.openModal = 'redeem';
+			state.txError = undefined;
 		});
 		builder.addCase(submitRedeem.fulfilled, (state) => {
 			state.openModal = undefined;
 		});
-		builder.addCase(submitRedeem.rejected, (state) => {
+		builder.addCase(submitRedeem.rejected, (state, action) => {
 			state.openModal = undefined;
+			state.txError = action.error.message;
 		});
 		builder.addCase(submitSettle.pending, (state) => {
 			state.openModal = 'settle';
+			state.txError = undefined;
 		});
 		builder.addCase(submitSettle.fulfilled, (state) => {
 			state.openModal = undefined;
 		});
-		builder.addCase(submitSettle.rejected, (state) => {
+		builder.addCase(submitSettle.rejected, (state, action) => {
 			state.openModal = undefined;
+			state.txError = action.error.message;
 		});
 		builder.addCase(fetchTokenList.pending, (state) => {
 			state.tokenListLoading = true;

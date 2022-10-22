@@ -1,8 +1,5 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 
-// TODO: Add synth categories, so we can swap this out for synthetixjs.synths
-// Especially in SelectCurrencyModal.
-
 export type SynthSymbol =
 	| 'sAAVE'
 	| 'sADA'
@@ -208,12 +205,6 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 		category: 'forex',
 	},
 };
-
-// SNX
-// 1 - 0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F
-// 5 - 0x51f44ca59b867E005e48FA573Cb8df83FC7f7597
-// 10 - 0x8700dAec35aF8Ff88c16BdF0418774CB3D7599B4
-// 420 - 0x2E5ED97596a8368EB9E44B1f3F25B2E813845303
 
 const synthsByNetwork = (id: NetworkId) =>
 	Object.entries(synths).reduce((acc, [symbol, config]) => {
