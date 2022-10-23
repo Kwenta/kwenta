@@ -49,13 +49,15 @@ const useStakingData = () => {
 	const [vestedBalance, setVestedBalance] = useState(zeroBN);
 	const [stakedNonEscrowedBalance, setStakedNonEscrowedBalance] = useState(zeroBN);
 	const [stakedEscrowedBalance, setStakedEscrowedBalance] = useState(zeroBN);
+	const [totalStakedBalance, setTotalStakedBalance] = useState(zeroBN);
 	const [claimableBalance, setClaimableBalance] = useState(zeroBN);
 	const [apy, setApy] = useState('0');
 	const [vKwentaBalance, setVKwentaBalance] = useState(zeroBN);
 	const [vKwentaAllowance, setVKwentaAllowance] = useState(zeroBN);
 	const [kwentaAllowance, setKwentaAllowance] = useState(zeroBN);
 	const [currentWeeklyReward, setCurrentWeeklyReward] = useState(zeroBN);
-	const [totalFeePaid, setTotalFeePaid] = useState(10);
+	const [feePaid] = useState(10);
+	const [totalFeePaid] = useState(20);
 
 	useContractReads({
 		contracts: [
@@ -132,16 +134,18 @@ const useStakingData = () => {
 				setStakedEscrowedBalance(wei(data[3] ?? zeroBN));
 				setClaimableBalance(wei(data[4] ?? zeroBN));
 				setKwentaBalance(wei(data[5] ?? zeroBN));
+				setTotalStakedBalance(wei(data[9] ?? zeroBN));
 				const supplyRate = wei(1).sub(wei(data[6] ?? zeroBN));
 				const initialWeeklySupply = wei(data[7] ?? zeroBN);
 				const weekCounter = Number(data[8] ?? zeroBN);
-				const totalSupply = wei(data[9] ?? zeroBN);
 				const startWeeklySupply = initialWeeklySupply.mul(supplyRate.pow(weekCounter));
-				const yearlyRewards = totalSupply.gt(zeroBN)
+				const yearlyRewards = totalStakedBalance.gt(zeroBN)
 					? startWeeklySupply.mul(wei(1).sub(supplyRate.pow(52))).div(wei(1).sub(supplyRate))
 					: zeroBN;
 				setCurrentWeeklyReward(startWeeklySupply.mul(0.2));
-				setApy(yearlyRewards.gt(zeroBN) ? Number(yearlyRewards.div(totalSupply)).toFixed(2) : '0');
+				setApy(
+					yearlyRewards.gt(zeroBN) ? Number(yearlyRewards.div(totalStakedBalance)).toFixed(2) : '0'
+				);
 				setVKwentaBalance(wei(data[10] ?? zeroBN));
 				setVKwentaAllowance(wei(data[11] ?? zeroBN));
 				setKwentaAllowance(wei(data[12] ?? zeroBN));
@@ -189,13 +193,20 @@ const useStakingData = () => {
 	});
 
 	const tradingRewardsScore =
-		Math.pow(totalFeePaid, 0.7) *
+		Math.pow(feePaid, 0.7) *
 		Math.pow(Number(stakedNonEscrowedBalance.add(stakedEscrowedBalance)), 0.3);
+
+	const totalTradingRewardsScore =
+		Math.pow(totalFeePaid, 0.7) * Math.pow(Number(totalStakedBalance), 0.3);
+
+	const tradingRewardsRatio = totalTradingRewardsScore
+		? tradingRewardsScore / totalTradingRewardsScore
+		: 0;
 
 	return {
 		epochPeriod,
-		totalFeePaid,
-		tradingRewardsScore,
+		feePaid,
+		tradingRewardsRatio,
 		escrowedBalance,
 		vestedBalance,
 		stakedNonEscrowedBalance,

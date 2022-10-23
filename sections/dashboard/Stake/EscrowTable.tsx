@@ -61,7 +61,8 @@ const EscrowTable = () => {
 	const vestingRecords =
 		vestingSchedulesIsSuccess && vestingSchedules !== undefined ? vestingSchedules[0] : [];
 
-	vestingRecords.length > 0 &&
+	vestingRecords &&
+		vestingRecords.length > 0 &&
 		vestingRecords
 			.filter((d) => d.escrowAmount.gt(0))
 			.forEach((d) => {
