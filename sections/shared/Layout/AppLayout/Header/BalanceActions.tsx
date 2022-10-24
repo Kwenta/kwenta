@@ -45,7 +45,7 @@ const BalanceActions: FC = () => {
 				marketRemainingMargin: formatDollars(position.remainingMargin),
 				onClick: () => {
 					setFuturesAccountType(accountType);
-					return router.push(`/market/?asset=${position.asset}&account_type=${accountType}`);
+					return router.push(`/market/?asset=${position.asset}&accountType=${accountType}`);
 				},
 			};
 		},
