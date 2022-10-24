@@ -19,8 +19,8 @@ import {
 	ORDER_KEEPER_ETH_DEPOSIT,
 } from 'constants/futures';
 import Connector from 'containers/Connector';
-import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
+import { monitorTransaction } from 'contexts/RelayerContext';
 import { KWENTA_TRACKING_CODE, ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
 import {
 	PositionSide,
@@ -86,7 +86,6 @@ const useFuturesData = () => {
 	const getPotentialTrade = useGetFuturesPotentialTradeDetails();
 	const crossMarginAccountOverview = useRecoilValue(crossMarginAccountOverviewState);
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
-	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { handleRefetch, refetchUntilUpdate } = useRefetchContext();
 
 	const marketAsset = useRecoilValue(currentMarketState);

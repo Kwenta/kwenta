@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Table, { TableNoResults } from 'components/Table';
-import BlockExplorer from 'containers/BlockExplorer';
+import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { MarginTransfer } from 'queries/futures/types';
@@ -19,7 +19,6 @@ type TransferProps = {
 
 const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: TransferProps) => {
 	const { t } = useTranslation();
-	const { blockExplorerInstance } = BlockExplorer.useContainer();
 	const { switchToL2 } = useNetworkSwitcher();
 
 	const isL2 = useIsL2();
@@ -71,7 +70,7 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: 
 					Cell: (cellProps: any) => {
 						return (
 							<DefaultCell>
-								<StyledExternalLink href={blockExplorerInstance?.txLink(cellProps.value)}>
+								<StyledExternalLink href={blockExplorer.txLink(cellProps.value)}>
 									{truncateAddress(cellProps.value)}
 								</StyledExternalLink>
 							</DefaultCell>

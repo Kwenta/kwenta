@@ -11,8 +11,7 @@ import { setNetwork, setWalletAddress } from 'state/wallet/reducer';
 import { createContainer } from 'unstated-next';
 import { chain, useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
 
-import { generateExplorerFunctions, getBaseUrl } from 'containers/BlockExplorer/BlockExplorer';
-
+import { generateExplorerFunctions, getBaseUrl } from './blockExplorer';
 import { wagmiClient } from './config';
 
 export let transactionNotifier = new BaseTN(wagmiClient.provider);

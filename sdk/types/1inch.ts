@@ -1,0 +1,31 @@
+import { CurrencyKey } from '@synthetixio/contracts-interface';
+
+type Token = {
+	symbol: CurrencyKey;
+	name: string;
+	address: string;
+	decimals: string;
+	logoURI: string;
+};
+
+export type OneInchQuoteResponse = {
+	fromToken: Token;
+	toToken: Token;
+	toTokenAmount: string;
+	fromTokenAmount: string;
+};
+
+export type OneInchSwapResponse = OneInchQuoteResponse & {
+	tx: {
+		from: string;
+		to: string;
+		data: string;
+		value: string;
+		gasPrice: string;
+		gas: number;
+	};
+};
+
+export type OneInchApproveSpenderResponse = {
+	address: string;
+};

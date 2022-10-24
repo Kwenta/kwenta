@@ -10,8 +10,8 @@ import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
-import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
+import { monitorTransaction } from 'contexts/RelayerContext';
 import useCrossMarginContracts from 'hooks/useCrossMarginContracts';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
@@ -26,7 +26,6 @@ import OrderDrawer from '../MobileTrade/drawers/OrderDrawer';
 
 const OpenOrdersTable: React.FC = () => {
 	const { t } = useTranslation();
-	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
 	const { crossMarginAccountContract } = useCrossMarginContracts();
 	const { handleRefetch } = useRefetchContext();
@@ -79,7 +78,7 @@ const OpenOrdersTable: React.FC = () => {
 				},
 			});
 		},
-		[monitorTransaction, handleRefetch]
+		[handleRefetch]
 	);
 
 	const onCancel = useCallback(

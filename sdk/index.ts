@@ -5,10 +5,10 @@ import { Provider as EthCallProvider } from 'ethcall';
 import { ethers } from 'ethers';
 
 import { ContractMap, ContractName, getContractsByNetwork } from './contracts';
-import ExchangeService from './exchange';
-import FuturesService from './futures';
-import SynthsService from './synths';
-import TransactionsService from './transactions';
+import ExchangeService from './services/exchange';
+import FuturesService from './services/futures';
+import SynthsService from './services/synths';
+import TransactionsService from './services/transactions';
 
 export default class KwentaSDK {
 	public provider: ethers.providers.Provider;

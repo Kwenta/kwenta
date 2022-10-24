@@ -8,8 +8,8 @@ import Error from 'components/Error';
 import CustomInput from 'components/Input/CustomInput';
 import Spacer from 'components/Spacer';
 import { NO_VALUE } from 'constants/placeholder';
-import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
+import { monitorTransaction } from 'contexts/RelayerContext';
 import useEstimateGasCost from 'hooks/useEstimateGasCost';
 import { currentMarketState, positionState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
@@ -33,7 +33,6 @@ const ZERO_WEI = wei(0);
 
 const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
-	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const market = useRecoilValue(currentMarketState);
 	const { useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();

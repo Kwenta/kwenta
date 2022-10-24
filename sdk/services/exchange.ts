@@ -18,13 +18,7 @@ import {
 } from 'constants/currency';
 import { ATOMIC_EXCHANGE_SLIPPAGE } from 'constants/exchange';
 import { ETH_UNIT } from 'constants/network';
-import {
-	OneInchApproveSpenderResponse,
-	OneInchQuoteResponse,
-	OneInchSwapResponse,
-} from 'containers/Convert/Convert';
 import erc20Abi from 'lib/abis/ERC20.json';
-import synthSwapAbi from 'lib/abis/SynthSwap.json';
 import { CG_BASE_API_URL } from 'queries/coingecko/constants';
 import { PriceResponse } from 'queries/coingecko/types';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
@@ -41,10 +35,15 @@ import { zeroBN } from 'utils/formatters/number';
 import { FuturesMarketKey, MarketAssetByKey } from 'utils/futures';
 import { getTransactionPrice, normalizeGasLimit } from 'utils/network';
 
-import * as sdkErrors from './common/errors';
-import { computeGasFee, getGasPriceFromProvider, getL1SecurityFee, MetaTx } from './common/gas';
-import SynthRedeemerABI from './contracts/abis/SynthRedeemer.json';
-import { getSynthsForNetwork, SynthsMap, SynthSymbol } from './data/synths';
+import * as sdkErrors from '../common/errors';
+import { computeGasFee, getGasPriceFromProvider, getL1SecurityFee, MetaTx } from '../common/gas';
+import SynthRedeemerABI from '../contracts/abis/SynthRedeemer.json';
+import { getSynthsForNetwork, SynthsMap, SynthSymbol } from '../data/synths';
+import {
+	OneInchApproveSpenderResponse,
+	OneInchQuoteResponse,
+	OneInchSwapResponse,
+} from '../types/1inch';
 
 type CurrencyRate = ethers.BigNumberish;
 type SynthRatesTuple = [string[], CurrencyRate[]];
@@ -293,18 +292,18 @@ export default class ExchangeService {
 
 		const formattedData = getFormattedSwapData(params, SYNTH_SWAP_OPTIMISM_ADDRESS);
 
-		const synthSwapContract = new ethers.Contract(
-			SYNTH_SWAP_OPTIMISM_ADDRESS,
-			synthSwapAbi,
-			this.sdk.signer
-		);
+		const SynthSwap = this.sdk.contracts.SynthSwap;
+
+		if (!SynthSwap) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
+		}
 
 		const contractFunc =
 			metaOnly === 'meta_tx'
-				? synthSwapContract.populateTransaction
+				? SynthSwap.populateTransaction
 				: metaOnly === 'estimate_gas'
-				? synthSwapContract.estimateGas
-				: synthSwapContract;
+				? SynthSwap.estimateGas
+				: SynthSwap;
 
 		if (this.tokensMap[toToken.symbol]) {
 			const symbolBytes = ethers.utils.formatBytes32String(toToken.symbol);

@@ -4,9 +4,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import TransactionNotifier from 'containers/TransactionNotifier';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { useRefetchContext } from 'contexts/RefetchContext';
+import { monitorTransaction } from 'contexts/RelayerContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useEstimateGasCost from 'hooks/useEstimateGasCost';
 import {
@@ -24,7 +24,6 @@ import TradeConfirmationModal from './TradeConfirmationModal';
 
 export default function TradeConfirmationModalCrossMargin() {
 	const { t } = useTranslation();
-	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { handleRefetch, refetchUntilUpdate } = useRefetchContext();
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const { estimateEthersContractTxCost } = useEstimateGasCost();
@@ -102,7 +101,6 @@ export default function TradeConfirmationModalCrossMargin() {
 		handleRefetch,
 		refetchUntilUpdate,
 		resetTradeState,
-		monitorTransaction,
 		onDismiss,
 		submitCrossMarginOrder,
 		t,

@@ -50,3 +50,10 @@ export const SynthetixABI = [
 	'function exchangeAtomically(bytes32 sourceCurrencyKey, uint sourceAmount, bytes32 destinationCurrencyKey, bytes32 trackingCode, uint minAmount) external returns (uint amountReceived)',
 	'function exchangeWithTracking(bytes32 sourceCurrencyKey, uint sourceAmount, bytes32 destinationCurrencyKey, address rewardAddress, bytes32 trackingCode) external returns (uint amountReceived)',
 ];
+
+export const SynthSwapABI = [
+	'function swapInto(bytes32 _destSynthCurrencyKey, bytes calldata _data) external payable returns (uint)',
+	'function swapOutOf(bytes32 _sourceSynthCurrencyKey, uint _sourceAmount, bytes calldata _data) external returns (uint);',
+	'function uniswapSwapInto(bytes32 _destSynthCurrencyKey, address _sourceTokenAddress, uint _amount, bytes calldata _data) external payable returns (uint)',
+	'function uniswapSwapOutOf(bytes32 _sourceSynthCurrencyKey, address _destTokenAddress, uint _amountOfSynth, uint _expectedAmountOfSUSDFromSwap, bytes calldata _data) external returns (uint)',
+];

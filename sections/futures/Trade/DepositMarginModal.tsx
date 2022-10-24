@@ -10,8 +10,8 @@ import Button from 'components/Button';
 import Error from 'components/Error';
 import CustomInput from 'components/Input/CustomInput';
 import { NO_VALUE } from 'constants/placeholder';
-import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
+import { monitorTransaction } from 'contexts/RelayerContext';
 import useEstimateGasCost from 'hooks/useEstimateGasCost';
 import { currentMarketState, positionState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
@@ -29,7 +29,6 @@ const MIN_MARGIN_AMOUNT = wei('50');
 
 const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSDBalance }) => {
 	const { t } = useTranslation();
-	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();
 	const { estimateSnxTxGasCost } = useEstimateGasCost();
 

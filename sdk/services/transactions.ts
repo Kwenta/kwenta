@@ -5,7 +5,7 @@ import { ethers } from 'ethers';
 import { omit, clone } from 'lodash';
 import KwentaSDK from 'sdk';
 
-import { ContractName } from './contracts';
+import { ContractName } from '../contracts';
 
 const OVMGasPriceOracle = getContractFactory('OVM_GasPriceOracle').attach(
 	predeploys.OVM_GasPriceOracle
