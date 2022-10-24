@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import Error from 'components/Error';
+import Loader from 'components/Loader';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { previewErrorI18n } from 'queries/futures/constants';
 import { PositionSide } from 'queries/futures/types';
@@ -100,7 +101,7 @@ const ManagePosition: React.FC = () => {
 		);
 
 		if (!leverageValid || !!error || marketInfo?.isSuspended || isMarketCapReached) return true;
-		if ((orderType === 'limit' || orderType === 'stop') && !!invalidReason) return true;
+		if ((orderType === 'limit' || orderType === 'stop market') && !!invalidReason) return true;
 		if (tradeInputs.susdSizeDelta.abs().gt(maxUsdInputAmount)) return true;
 		if (placeOrderTranslationKey === 'futures.market.trade.button.deposit-margin-minimum')
 			return true;
@@ -144,7 +145,7 @@ const ManagePosition: React.FC = () => {
 						disabled={placeOrderDisabled}
 						onClick={() => setConfirmationModalOpen(true)}
 					>
-						{t(placeOrderTranslationKey)}
+						{status === 'fetching' ? <Loader /> : t(placeOrderTranslationKey)}
 					</PlaceOrderButton>
 
 					<CloseOrderButton
@@ -153,7 +154,7 @@ const ManagePosition: React.FC = () => {
 						noOutline
 						variant="danger"
 						onClick={() => {
-							if (orderType === 'next-price' && position?.position?.size) {
+							if (orderType === 'next price' && position?.position?.size) {
 								const newTradeSize = position.position.size;
 								const newLeverageSide =
 									position.position.side === PositionSide.LONG
@@ -191,7 +192,7 @@ const ManagePosition: React.FC = () => {
 					<TradeConfirmationModalIsolatedMargin />
 				))}
 
-			{isConfirmationModalOpen && orderType === 'next-price' && <NextPriceConfirmationModal />}
+			{isConfirmationModalOpen && orderType === 'next price' && <NextPriceConfirmationModal />}
 		</>
 	);
 };
