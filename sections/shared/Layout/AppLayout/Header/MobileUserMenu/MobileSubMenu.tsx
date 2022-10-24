@@ -13,6 +13,7 @@ import { ThemeName } from 'styles/theme';
 import { SubMenuLink } from '../constants';
 import { MenuButton } from './common';
 import Badge from 'components/Badge';
+import { FlexDivRow } from 'styles/common';
 
 type MobileSubMenuOption = {
 	label: string;
@@ -59,7 +60,10 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 									<SubMenuIcon>·</SubMenuIcon>
 									<StyledLink href={subLink}>
 										<SubMenuItem currentTheme={currentTheme} active={asPath.includes(subLink)}>
-											{t(i18nLabel)} {badge && <Badge color="yellow">{t(badge.i18nLabel)}</Badge>}
+											<SubMenuRow>
+												{t(i18nLabel)}{' '}
+												{badge && <StyledBadge color="yellow">{t(badge.i18nLabel)}</StyledBadge>}
+											</SubMenuRow>
 										</SubMenuItem>
 									</StyledLink>
 								</SubMenuItemContainer>
@@ -98,6 +102,17 @@ const SubMenuButton = styled(MenuButton)`
 		css`
 			margin-bottom: 20px;
 		`}
+`;
+
+const SubMenuRow = styled(FlexDivRow)`
+	justify-content: flex-start;
+	align-items: center;
+`;
+
+const StyledBadge = styled(Badge)`
+	font-size: 12px;
+	padding: 2.5px 5px 2px 5px;
+	margin-left: 8px;
 `;
 
 const SubMenuContainer = styled.div`
