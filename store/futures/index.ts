@@ -15,6 +15,10 @@ import {
 	FuturesOrderType,
 	FuturesVolumes,
 	CrossMarginAccounts,
+	FuturesPositionsState,
+	PositionHistoryState,
+	FuturesAccountTypes,
+	FuturesOrder,
 } from 'queries/futures/types';
 import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import { Price, Rates } from 'queries/rates/types';
@@ -68,6 +72,32 @@ export const balancesState = atom<SynthBalances>({
 	},
 });
 
+export const portfolioState = selector({
+	key: getFuturesKey('portfolio'),
+	get: ({ get }) => {
+		const positions = get(positionsState);
+		const { freeMargin } = get(crossMarginAccountOverviewState);
+
+		const isolatedValue =
+			positions.isolated_margin.reduce(
+				(sum, { remainingMargin }) => sum.add(remainingMargin),
+				wei(0)
+			) ?? wei(0);
+		const crossValue =
+			positions.cross_margin.reduce(
+				(sum, { remainingMargin }) => sum.add(remainingMargin),
+				wei(0)
+			) ?? wei(0);
+		const totalValue = isolatedValue.add(crossValue).add(freeMargin);
+
+		return {
+			total: totalValue,
+			crossMarginFutures: crossValue.add(freeMargin),
+			isolatedMarginFutures: isolatedValue,
+		};
+	},
+});
+
 export const activeTabState = atom<number>({
 	key: getFuturesKey('activeTab'),
 	default: 0,
@@ -78,9 +108,20 @@ export const positionState = atom<FuturesPosition | null>({
 	default: null,
 });
 
-export const positionsState = atom<FuturesPosition[] | null>({
+export const positionHistoryState = atom<PositionHistoryState>({
+	key: getFuturesKey('positionHistory'),
+	default: {
+		[FuturesAccountTypes.CROSS_MARGIN]: [],
+		[FuturesAccountTypes.ISOLATED_MARGIN]: [],
+	},
+});
+
+export const positionsState = atom<FuturesPositionsState>({
 	key: getFuturesKey('positions'),
-	default: null,
+	default: {
+		cross_margin: [],
+		isolated_margin: [],
+	},
 });
 
 export const futuresMarketsState = atom<FuturesMarket[]>({
@@ -146,6 +187,7 @@ export const crossMarginAccountOverviewState = atom({
 	default: {
 		freeMargin: zeroBN,
 		keeperEthBal: zeroBN,
+		allowance: zeroBN,
 	},
 });
 
@@ -190,7 +232,7 @@ export const isAdvancedOrderState = selector({
 	key: getFuturesKey('isAdvancedOrder'),
 	get: ({ get }) => {
 		const orderType = get(orderTypeState);
-		return orderType === 'limit' || orderType === 'stop';
+		return orderType === 'limit' || orderType === 'stop market';
 	},
 });
 
@@ -226,7 +268,7 @@ export const leverageValueCommittedState = atom({
 	default: true,
 });
 
-export const openOrdersState = atom<any[]>({
+export const openOrdersState = atom<FuturesOrder[]>({
 	key: getFuturesKey('openOrders'),
 	default: [],
 });
@@ -258,16 +300,18 @@ export const maxLeverageState = selector({
 		const orderType = get(orderTypeState);
 		const market = get(marketInfoState);
 		const leverageSide = get(leverageSideState);
+		const accountType = get(futuresAccountTypeState);
 
 		const positionLeverage = position?.position?.leverage ?? wei(0);
 		const positionSide = position?.position?.side;
 		const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
 		const adjustedMaxLeverage =
-			orderType === 'next-price'
+			orderType === 'next price'
 				? marketMaxLeverage.mul(DEFAULT_NP_LEVERAGE_ADJUSTMENT)
 				: marketMaxLeverage;
 
 		if (!positionLeverage || positionLeverage.eq(wei(0))) return adjustedMaxLeverage;
+		if (accountType === 'cross_margin') return adjustedMaxLeverage;
 		if (positionSide === leverageSide) {
 			return adjustedMaxLeverage?.sub(positionLeverage);
 		} else {
@@ -311,6 +355,15 @@ export const selectedFuturesAddressState = selector<string | null>({
 		const futuresType = get(futuresAccountTypeState);
 		const account = get(futuresAccountState);
 		return futuresType === 'cross_margin' ? account.crossMarginAddress : account.walletAddress;
+	},
+});
+
+export const aboveMaxLeverageState = selector({
+	key: getFuturesKey('aboveMaxLeverage'),
+	get: ({ get }) => {
+		const position = get(positionState);
+		const maxLeverage = get(maxLeverageState);
+		return position?.position?.leverage && maxLeverage.lt(position.position.leverage);
 	},
 });
 
@@ -387,9 +440,9 @@ export const placeOrderTranslationKeyState = selector({
 			remainingMargin = positionMargin.add(freeMargin);
 		}
 
-		if (orderType === 'next-price') return 'futures.market.trade.button.place-next-price-order';
+		if (orderType === 'next price') return 'futures.market.trade.button.place-next-price-order';
 		if (orderType === 'limit') return 'futures.market.trade.button.place-limit-order';
-		if (orderType === 'stop') return 'futures.market.trade.button.place-stop-order';
+		if (orderType === 'stop market') return 'futures.market.trade.button.place-stop-order';
 		if (!!position?.position) return 'futures.market.trade.button.modify-position';
 		return remainingMargin.lt('50')
 			? 'futures.market.trade.button.deposit-margin-minimum'

@@ -6,6 +6,7 @@ const darkTheme = {
 	outlineBorder: '1px solid rgba(255, 255, 255, 0.12)',
 	red: '#EF6868',
 	green: '#7FD482',
+	orange: '#DA8332',
 	black: '#171002',
 	white: '#ECE8E3',
 	gray: '#787878',
@@ -13,7 +14,10 @@ const darkTheme = {
 	yellow: common.primaryYellow,
 	table: { fill: 'rgba(255, 255, 255, 0.01)', hover: 'rgba(255, 255, 255, 0.05)' },
 	gold: '#E4B378',
-	badge: { background: '#EF6868', text: 'black' },
+	badge: {
+		red: { background: '#EF6868', text: 'black' },
+		yellow: { background: common.primaryYellow, text: 'black' },
+	},
 	tab: { background: { active: '#252525', inactive: 'transparent' } },
 	button: {
 		border: 'rgb(255 255 255 / 10%)',
@@ -55,6 +59,7 @@ const darkTheme = {
 			},
 			disabled: { border: '1px solid #353333', text: '#353333' },
 		},
+		pill: { background: common.dark.yellow, text: common.dark.yellow, hover: common.black },
 	},
 	input: {
 		background: '#151515',
@@ -63,6 +68,7 @@ const darkTheme = {
 		},
 		placeholder: '#787878',
 		shadow: '0px 0.5px 0px rgba(255, 255, 255, 0.08)',
+		hover: common.dark.white,
 	},
 	segmented: {
 		background: '#0b0b0b',

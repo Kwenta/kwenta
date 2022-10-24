@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import PNLGraphicPNG from 'assets/png/pnl-graphic.png';
 import BaseModal from 'components/BaseModal';
-import { FuturesPosition, PositionHistory } from 'queries/futures/types';
+import { FuturesPosition } from 'queries/futures/types';
 import { FuturesMarketAsset } from 'utils/futures';
 
 import AmountContainer from './AmountContainer';
@@ -15,15 +15,9 @@ export type ShareModalProps = {
 	position: FuturesPosition | null;
 	marketAsset: FuturesMarketAsset;
 	setShowShareModal: React.Dispatch<React.SetStateAction<boolean>>;
-	futuresPositionHistory: PositionHistory[];
 };
 
-const ShareModal: FC<ShareModalProps> = ({
-	position,
-	marketAsset,
-	setShowShareModal,
-	futuresPositionHistory,
-}) => {
+const ShareModal: FC<ShareModalProps> = ({ position, marketAsset, setShowShareModal }) => {
 	const { t } = useTranslation();
 
 	return (
@@ -39,10 +33,7 @@ const ShareModal: FC<ShareModalProps> = ({
 							<PNLImage src={PNLGraphicPNG} aria-label="pnl-graphic" />
 						</PNLImageFrame>
 						<AmountContainer position={position} />
-						<PositionMetadata
-							marketAsset={marketAsset}
-							futuresPositionHistory={futuresPositionHistory}
-						/>
+						<PositionMetadata marketAsset={marketAsset} />
 					</PNLGraphic>
 					<ShareModalButton />
 				</ModalWindow>

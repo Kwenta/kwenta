@@ -1,26 +1,23 @@
-import useSynthetixQueries from '@synthetixio/queries';
-import { wei } from '@synthetixio/wei';
-import React from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SetterOrUpdater, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
-import Connector from 'containers/Connector';
-import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
-import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
+import { FuturesAccountTypes } from 'queries/futures/types';
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
-import { ratesState } from 'store/futures';
-import { formatDollars, zeroBN } from 'utils/formatters/number';
+import { balancesState, portfolioState, positionsState } from 'store/futures';
+import { formatDollars } from 'utils/formatters/number';
 
 import FuturesPositionsTable from '../FuturesPositionsTable';
 import { MarketsTab } from '../Markets/Markets';
+import { PositionsTab } from '../Overview/Overview';
 import SynthBalancesTable from '../SynthBalancesTable';
 
 type OpenPositionsProps = {
-	activePositionsTab: MarketsTab;
-	setActivePositionsTab: SetterOrUpdater<MarketsTab>;
+	activePositionsTab: PositionsTab;
+	setActivePositionsTab: SetterOrUpdater<PositionsTab>;
 };
 
 const OpenPositions: React.FC<OpenPositionsProps> = ({
@@ -28,55 +25,40 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 	setActivePositionsTab,
 }) => {
 	const { t } = useTranslation();
-	const { walletAddress } = Connector.useContainer();
-	const { useSynthsBalancesQuery } = useSynthetixQueries();
+	const positions = useRecoilValue(positionsState);
+	const portfolio = useRecoilValue(portfolioState);
+	const balances = useRecoilValue(balancesState);
 
-	const portfolioValueQuery = useGetCurrentPortfolioValue();
-	const portfolioValue = portfolioValueQuery?.data ?? null;
-
-	const futuresPositionQuery = useGetFuturesPositionForAccount();
-	const futuresPositionHistory = futuresPositionQuery?.data ?? [];
-
-	const exchangeRates = useRecoilValue(ratesState);
-
-	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
-	const synthBalances =
-		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
-			? synthsBalancesQuery.data
-			: null;
-
-	const totalSpotBalancesValue = formatDollars(wei(synthBalances?.totalUSDBalance ?? zeroBN));
-
-	const totalFuturesPortfolioValue = formatDollars(wei(portfolioValue ?? zeroBN));
-
-	const POSITIONS_TABS = React.useMemo(
+	const POSITIONS_TABS = useMemo(
 		() => [
 			{
-				name: MarketsTab.FUTURES,
-				label: t('dashboard.overview.positions-tabs.futures'),
-				badge: futuresPositionQuery?.data?.length,
-				active: activePositionsTab === MarketsTab.FUTURES,
-				detail: totalFuturesPortfolioValue,
+				name: PositionsTab.CROSS_MARGIN,
+				label: t('dashboard.overview.positions-tabs.cross-margin'),
+				badge: positions[FuturesAccountTypes.CROSS_MARGIN].length,
+				active: activePositionsTab === PositionsTab.CROSS_MARGIN,
+				detail: formatDollars(portfolio.crossMarginFutures),
 				disabled: false,
-				onClick: () => setActivePositionsTab(MarketsTab.FUTURES),
+				onClick: () => setActivePositionsTab(PositionsTab.CROSS_MARGIN),
 			},
 			{
-				name: MarketsTab.SPOT,
-				label: t('dashboard.overview.positions-tabs.spot'),
-				active: activePositionsTab === MarketsTab.SPOT,
-				detail: totalSpotBalancesValue,
+				name: PositionsTab.ISOLATED_MARGIN,
+				label: t('dashboard.overview.positions-tabs.isolated-margin'),
+				badge: positions[FuturesAccountTypes.ISOLATED_MARGIN].length,
+				active: activePositionsTab === PositionsTab.ISOLATED_MARGIN,
+				detail: formatDollars(portfolio.isolatedMarginFutures),
 				disabled: false,
-				onClick: () => setActivePositionsTab(MarketsTab.SPOT),
+				onClick: () => setActivePositionsTab(PositionsTab.ISOLATED_MARGIN),
+			},
+			{
+				name: PositionsTab.SPOT,
+				label: t('dashboard.overview.positions-tabs.spot'),
+				active: activePositionsTab === PositionsTab.SPOT,
+				detail: formatDollars(balances.totalUSDBalance),
+				disabled: false,
+				onClick: () => setActivePositionsTab(PositionsTab.SPOT),
 			},
 		],
-		[
-			futuresPositionQuery?.data?.length,
-			activePositionsTab,
-			setActivePositionsTab,
-			t,
-			totalFuturesPortfolioValue,
-			totalSpotBalancesValue,
-		]
+		[positions, activePositionsTab, setActivePositionsTab, t, portfolio, balances]
 	);
 
 	return (
@@ -93,18 +75,16 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 				</TabButtonsContainer>
 			</div>
 
-			<TabPanel name={MarketsTab.FUTURES} activeTab={activePositionsTab}>
-				<FuturesPositionsTable
-					futuresPositionHistory={futuresPositionHistory}
-					showCurrentMarket={true}
-				/>
+			<TabPanel name={PositionsTab.CROSS_MARGIN} activeTab={activePositionsTab}>
+				<FuturesPositionsTable accountType={FuturesAccountTypes.CROSS_MARGIN} />
+			</TabPanel>
+
+			<TabPanel name={PositionsTab.ISOLATED_MARGIN} activeTab={activePositionsTab}>
+				<FuturesPositionsTable accountType={FuturesAccountTypes.ISOLATED_MARGIN} />
 			</TabPanel>
 
 			<TabPanel name={MarketsTab.SPOT} activeTab={activePositionsTab}>
-				<SynthBalancesTable
-					synthBalances={synthBalances?.balances ?? []}
-					exchangeRates={exchangeRates}
-				/>
+				<SynthBalancesTable />
 			</TabPanel>
 		</div>
 	);

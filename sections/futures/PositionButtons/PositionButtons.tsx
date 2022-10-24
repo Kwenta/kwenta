@@ -74,7 +74,7 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 			${props.$isActive &&
 			css`
 				border: 1px solid ${(props) => props.theme.colors.selectedTheme.green};
-				border-radius: 11px;
+				border-radius: 8px;
 				background: linear-gradient(
 					180deg,
 					rgba(127, 212, 130, 0.15) 0%,
@@ -102,7 +102,7 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 			${props.$isActive &&
 			css`
 				border: 1px solid rgba(239, 104, 104, 0.7);
-				border-radius: 11px;
+				border-radius: 8px;
 				background: linear-gradient(
 					180deg,
 					rgba(239, 104, 104, 0.15) 0%,

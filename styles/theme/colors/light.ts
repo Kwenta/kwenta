@@ -6,14 +6,18 @@ const lightTheme = {
 	outlineBorder: '1px solid rgba(0,0,0,0.17)',
 	red: '#A80300',
 	green: '#1D5D1F',
+	orange: '#DA8332',
 	black: '#171002',
 	white: '#F2F2F2',
 	gray: '#515151',
 	gray2: '#D2D2D2', // TODO: Update once added to designs
-	yellow: common.primaryYellow,
+	yellow: '#6A3300',
 	table: { fill: '#EEE', hover: '#E6E6E6' },
 	gold: '#724713',
-	badge: { background: '#A80300', text: 'white' },
+	badge: {
+		red: { background: '#A80300', text: 'white' },
+		yellow: { background: '#6A3300', text: 'white' },
+	},
 	tab: { background: { active: 'transparent', inactive: '#e8e8e8' } },
 	button: {
 		border: 'rgb(0 0 0 / 10%)',
@@ -26,7 +30,8 @@ const lightTheme = {
 			'0px 2px 2px rgb(0 0 0 / 5%), inset 0px 1px 0px rgb(255 255 255 / 8%), inset 0px 0px 20px rgb(255 255 255 / 3%)',
 		text: {
 			primary: '#171002',
-			yellow: common.primaryYellow,
+			yellow: '#6A3300',
+			white: '#FFFFFF',
 		},
 		primary: {
 			background: 'linear-gradient(180deg, #BE9461 0%, #9C6C3C 100%)',
@@ -56,6 +61,7 @@ const lightTheme = {
 			},
 			disabled: { border: '1px solid #353333', text: '#B3B3B3' },
 		},
+		pill: { background: common.light.yellow, text: common.light.yellow, hover: common.light.white },
 	},
 	input: {
 		background: '#dbdbdb',
@@ -64,6 +70,7 @@ const lightTheme = {
 		},
 		placeholder: '#686868',
 		shadow: '0px 0.5px 0px rgba(255, 255, 255, 0.08)',
+		hover: common.black,
 	},
 	segmented: {
 		background: '#eaeaea',

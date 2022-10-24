@@ -1834,6 +1834,14 @@ export type FuturesOrderFilter = {
 	targetPrice_lte?: WeiSource | null;
 	targetPrice_in?: WeiSource[];
 	targetPrice_not_in?: WeiSource[];
+	marginDelta?: WeiSource | null;
+	marginDelta_not?: WeiSource | null;
+	marginDelta_gt?: WeiSource | null;
+	marginDelta_lt?: WeiSource | null;
+	marginDelta_gte?: WeiSource | null;
+	marginDelta_lte?: WeiSource | null;
+	marginDelta_in?: WeiSource[];
+	marginDelta_not_in?: WeiSource[];
 	timestamp?: WeiSource | null;
 	timestamp_not?: WeiSource | null;
 	timestamp_gt?: WeiSource | null;
@@ -1856,7 +1864,6 @@ export type FuturesOrderFilter = {
 	keeper_not_in?: string[];
 	keeper_contains?: string | null;
 	keeper_not_contains?: string | null;
-	_change_block?: any | null;
 };
 export type FuturesOrderResult = {
 	id: string;
@@ -1868,6 +1875,7 @@ export type FuturesOrderResult = {
 	orderId: Wei;
 	targetRoundId: Wei;
 	targetPrice: Wei;
+	marginDelta: Wei;
 	timestamp: Wei;
 	orderType: Partial<FuturesOrderType>;
 	status: Partial<FuturesOrderStatus>;
@@ -1883,6 +1891,7 @@ export type FuturesOrderFields = {
 	orderId: true;
 	targetRoundId: true;
 	targetPrice: true;
+	marginDelta: true;
 	timestamp: true;
 	orderType: true;
 	status: true;
@@ -1914,6 +1923,7 @@ export const getFuturesOrderById = async function <K extends keyof FuturesOrderR
 	if (obj['orderId']) formattedObj['orderId'] = wei(obj['orderId'], 0);
 	if (obj['targetRoundId']) formattedObj['targetRoundId'] = wei(obj['targetRoundId'], 0);
 	if (obj['targetPrice']) formattedObj['targetPrice'] = wei(obj['targetPrice'], 0);
+	if (obj['marginDelta']) formattedObj['marginDelta'] = wei(obj['marginDelta'], 0);
 	if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
 	if (obj['orderType']) formattedObj['orderType'] = obj['orderType'];
 	if (obj['status']) formattedObj['status'] = obj['status'];
@@ -1961,6 +1971,7 @@ export const getFuturesOrders = async function <K extends keyof FuturesOrderResu
 			if (obj['orderId']) formattedObj['orderId'] = wei(obj['orderId'], 0);
 			if (obj['targetRoundId']) formattedObj['targetRoundId'] = wei(obj['targetRoundId'], 0);
 			if (obj['targetPrice']) formattedObj['targetPrice'] = wei(obj['targetPrice'], 0);
+			if (obj['marginDelta']) formattedObj['marginDelta'] = wei(obj['marginDelta'], 0);
 			if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
 			if (obj['orderType']) formattedObj['orderType'] = obj['orderType'];
 			if (obj['status']) formattedObj['status'] = obj['status'];
@@ -4045,5 +4056,5 @@ export const getTotals = async function <K extends keyof TotalResult>(
 
 // additional types
 export type FuturesAccountType = 'isolated_margin' | 'cross_margin';
-export type FuturesOrderType = 'NextPrice' | 'Limit' | 'Market' | 'Liquidation';
-export type FuturesOrderStatus = 'Pending' | 'Filled' | 'Cancelled';
+export type FuturesOrderType = 'NextPrice' | 'Limit' | 'Market' | 'StopMarket';
+export type FuturesOrderStatus = 'Pending' | 'Filled' | 'Cancelled' | 'Open';

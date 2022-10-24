@@ -88,7 +88,7 @@ const TransfersTab: React.FC = () => {
 };
 
 const DefaultCell = styled.p`
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const StyledActionCell = styled(DefaultCell)`
@@ -96,7 +96,7 @@ const StyledActionCell = styled(DefaultCell)`
 `;
 
 const StyledTitle = styled.p`
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 16px;
 	margin: 0;
 `;
@@ -104,8 +104,8 @@ const StyledTitle = styled.p`
 const StyledAmountCell = styled(DefaultCell)<{ isPositive: boolean }>`
 	color: ${(props: any) =>
 		props.isPositive
-			? props.theme.colors.common.primaryGreen
-			: props.theme.colors.common.primaryRed};
+			? props.theme.colors.selectedTheme.green
+			: props.theme.colors.selectedTheme.red};
 `;
 
 const StyledTableHeader = styled.div`

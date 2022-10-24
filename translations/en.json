@@ -17,7 +17,8 @@
 			"isolated-margin": "Isolated Margin",
 			"cross-margin": "Cross Margin",
 			"leaderboard": "leaderboard",
-			"earn": "earn"
+			"earn": "earn",
+			"beta-badge": "Beta"
 		},
 		"networks-switcher": {
 			"chains": "Switch Networks",
@@ -58,8 +59,8 @@
 			"learn-more": "Learn more"
 		},
 		"hero": {
-			"title": "UNSTOPPABLE SYNTHETIC LEVERAGE",
-			"copy": "Trade commodities, forex, crypto, and more with up to <0>25x leverage</0> and <0>deep liquidity</0> without the risk of your assets being frozen."
+			"title": "TRADE SYNTHETIC PERPETUALS",
+			"copy": "Gain exposure to a variety of asset with up to <0>25x leverage</0> and <0>deep liquidity</0>."
 		},
 		"assets": {
 			"title": "UNIQUE MARKETS",
@@ -76,7 +77,6 @@
 			"description": "Follow Top Traders",
 			"stats": {
 				"title": "Fostering a growing community of traders",
-				"copy": "Zero withdrawals frozen",
 				"volume": "Total Volume",
 				"traders": "Total Traders",
 				"trades": "Total Trades",
@@ -93,7 +93,7 @@
 			},
 			"stake-and-earn": {
 				"title": "stake & earn",
-				"copy": "$KWENTA stakers earn protocol fees and inflationary rewards"
+				"copy": "$KWENTA stakers earn inflationary rewards"
 			},
 			"trade-and-earn": {
 				"title": "trade & earn",
@@ -144,9 +144,9 @@
 				"title": "Unique Assets",
 				"copy": "Trade a variety of digital and traditional assets with low trading fees"
 			},
-			"permissionless": {
-				"title": "Permissionless",
-				"copy": "A full on-chain DeFi futures trading experience"
+			"open-source": {
+				"title": "Open Source",
+				"copy": " Don't trust, verify"
 			},
 			"mobile": {
 				"title": "Mobile",
@@ -418,7 +418,7 @@
 		"overview": {
 			"futures-positions-table": {
 				"market": "Market",
-				"position": "Side",
+				"side": "Side",
 				"avg-entry": "Avg. Entry Price",
 				"last-entry": "Last Entry Price",
 				"leverage": "Leverage",
@@ -459,6 +459,8 @@
 				"total-trades": "Total Trades"
 			},
 			"positions-tabs": {
+				"isolated-margin": "Isolated Margin",
+				"cross-margin": "Cross Margin",
 				"futures": "Futures Positions",
 				"shorts": "Shorts",
 				"spot": "Spot Balances"
@@ -487,6 +489,7 @@
 				"no-trade-history-link": "Visit the Kwenta exchange to swap synths"
 			},
 			"futures-history-table": {
+				"asset": "Asset",
 				"size": "Size",
 				"pnl": "P&L",
 				"date-time": "Date/Time",
@@ -494,7 +497,7 @@
 				"price": "Price",
 				"side": "Side",
 				"market": "Market",
-				"order-type": "Type",
+				"type": "Type",
 				"no-result": "You have no futures trading history"
 			}
 		},
@@ -619,6 +622,7 @@
 					"sell": "sell",
 					"remaining-margin": "Remaining margin",
 					"max": "max",
+					"max-leverage-error": "Your current position exceeds the max leverage of ({{maxLeverage}}x). You need to reduce your position or adjust leverage.",
 					"leverage": {
 						"title": "leverage",
 						"buy": "buy",
@@ -643,9 +647,9 @@
 					"modify-position": "modify",
 					"deposit-margin-minimum": "Deposit Margin",
 					"oi-caps-reached": "Open Interest Cap Reached",
-					"place-next-price-order": "Place Next-Price Order",
+					"place-next-price-order": "Place Next Price Order",
 					"place-limit-order": "Place Limit Order",
-					"place-stop-order": "Place Stop Order",
+					"place-stop-order": "Place Stop Market Order",
 					"connect-wallet": "Connect Wallet"
 				},
 				"margin": {
@@ -662,8 +666,10 @@
 						"deposit": {
 							"title": "Deposit Margin",
 							"button": "Deposit Margin",
+							"approve-button": "Approve sUSD",
 							"disclaimer": "A $50 margin minimum is required to open a position.",
 							"min-deposit": "$50 minimum margin to open a position",
+							"min-margin-error": "Position size too small, minimum market margin of $50 required",
 							"exceeds-balance": "Amount exceeds balance"
 						},
 						"withdraw": {
@@ -678,7 +684,7 @@
 					}
 				},
 				"next-price": {
-					"description": "Next-Price orders are subject to volatility and execute at the very next on-chain price.",
+					"description": "Next Price orders are subject to volatility and execute at the very next on-chain price.",
 					"learn-more": "Learn more"
 				},
 				"cost-basis": {
@@ -688,12 +694,12 @@
 					"modal": {
 						"confirm-order": "Confirm order",
 						"max-leverage-disclaimer": "Note: A next price update could cause your order to exceed maximum leverage resulting in the order being dropped by the keeper.",
-						"disabled-min-margin": "Minimum $50 margin required" 
+						"disabled-min-margin": "Minimum market margin of $50 required" 
 					}
 				},
 				"leverage": {
 					"modal": {
-						"max-pos": "Maximum position at current leverage:",
+						"max-pos": "Max position at current leverage:",
 						"title": "Adjust Leverage",
 						"input-label": "Leverage",
 						"confirm": "Confirm"
@@ -705,22 +711,30 @@
 				"cross-margin": {
 					"connect-wallet": "Connect your wallet to start trading",
 					"title": "Cross Margin",
-					"faq-title": "Cross Margin FAQ's",
+					"faq-title": " Cross Margin FAQ",
 					"create-account": "Create Account",
 					"unsupported": "Cross margin is not supported on this network",
 					"switch-type": "Switch to isolated margin",
 					"account-query-failed": "Failed to fetch account"
 				},
 				"preview": {
+					"insufficient-margin": "Insufficient free margin",
 					"error": "Error generating preview"
 				},
 				"orders": {
 					"manage-keeper-deposit": {
-						"title": "Manage Keeper Balance",
+						"title": "Manage Account ETH Balance",
 						"withdraw": "Withdraw",
-						"deposit": "Deposit"
+						"deposit": "Deposit",
+						
+						"withdraw-warning": "Withdrawing ETH while you still have open orders pending risks leaving insufficient balance for orders to execute."
 					},
-					"fee-rejection-label": "Fee Rejection"
+					"fee-rejection-label": "Fee Rejection",
+					"fee-rejection-tooltip": "This allows you to set a maximum fee on your order. If the dynamic fee exceeds your selected fee limit at the time of execution, the order will not execute."
+				},
+				"edit-leverage": {
+					"failed": "Transaction failed",
+					"insufficient-margin": "Leverage cannot be decreased, please deposit more margin or reduce open position sizes"
 				}
 			},
 			"history": {
@@ -761,9 +775,9 @@
 						"gas-fee": "Network Gas Fee",
 						"order-type": "Order Type",
 						"market-order": "Market",
-						"next-price-order": "Next-Price",
+						"next-price-order": "Next Price",
 						"deposit": "Total Deposit",
-						"np-discount": "Next-Price Discount"
+						"np-discount": "Next Price Discount"
 					}
 				},
 				"open-orders": {
@@ -776,6 +790,7 @@
 						"type": "Type",
 						"size": "Size",
 						"size-price": "Size/Price",
+						"reserved-margin": "Reserved margin",
 						"price": "Price",
 						"status": "Status",
 						"parameters": "Parameters",
@@ -793,7 +808,7 @@
 					}
 				},
 				"trades": {
-					"tab": "History",
+					"tab": "Trades",
 					"table": {
 						"id": "ID",
 						"trade-size": "trade size",
@@ -803,6 +818,7 @@
 						"fees": "fees",
 						"price": "price",
 						"side": "side",
+						"side-type": "Side/Type",
 						"no-results": "You have no trade history",
 						"order-type": "order type",
 						"trade-types": {
@@ -856,13 +872,13 @@
 			},
 			"onboard": {
 				"title": "Cross Margin",
-				"step1-intro": "To Get started you must first create your cross margin account",
+				"step1-intro": "Start by creating your cross margin account",
 				"step2-intro": "Now, approve the contract to spend sUSD",
-				"step3-intro": "Lastly, deposit your sUSD into the contact",
+				"step3-intro": "Lastly, deposit sUSD to begin trading",
 				"step3-complete": "Your cross margin account has been successfully created!",
 				"faq1": "What is cross margin?",
-				"faq2": "Is cross margin better than isolated margin",
-				"faq3": "How will a cross margin account affect my trading",
+				"faq2": "Is cross margin better than isolated margin?",
+				"faq3": "How will a cross margin account affect my trading?",
 				"unsupported-network": "Cross margin is not supported on this network"
 			}
 		}
@@ -871,7 +887,7 @@
 		"page-title": "Leaderboard | Kwenta",
 		"leaderboard": {
 			"table": {
-				"title": "All Traders",
+				"title": "{{ activeTab }} Traders",
 				"rank": "Rank",
 				"trader": "Trader",
 				"total-trades": "Total Trades",
@@ -958,6 +974,9 @@
 		"approve-transaction": {
 			"title": "approve transaction",
 			"confirm-with-provider": "Confirm your transaction through your wallet."
+		},
+		"menu": {
+			"title": "menu"
 		},
 		"settings": {
 			"title": "settings",

@@ -1,5 +1,4 @@
 import { wei } from '@synthetixio/wei';
-import { capitalize } from 'lodash';
 import { ChangeEvent, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -8,6 +7,7 @@ import styled from 'styled-components';
 import CustomInput from 'components/Input/CustomInput';
 import InputTitle from 'components/Input/InputTitle';
 import SegmentedControl from 'components/SegmentedControl';
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { FuturesOrderType } from 'queries/futures/types';
 import { leverageSideState, marketAssetRateState, orderFeeCapState } from 'store/futures';
 import { ceilNumber, floorNumber, weiToString, zeroBN } from 'utils/formatters/number';
@@ -65,7 +65,7 @@ export default function OrderPriceInput({
 	return (
 		<>
 			<StyledInputTitle margin="10px 0">
-				{capitalize(orderType)} Price{' '}
+				{orderType} Price{' '}
 				{minMaxLabelString && (
 					<>
 						&nbsp; —<span>&nbsp; {minMaxLabelString}</span>
@@ -74,7 +74,7 @@ export default function OrderPriceInput({
 			</StyledInputTitle>
 			<CustomInput
 				invalid={!!minMaxLabelString}
-				dataTestId="set-order-size-amount-susd"
+				dataTestId="order-price-input"
 				disabled={isDisabled}
 				right={'sUSD'}
 				value={value}
@@ -82,9 +82,16 @@ export default function OrderPriceInput({
 				onChange={handleOnChange}
 			/>
 			<FeeCapContainer>
-				<FeeRejectionLabel>
-					{t('futures.market.trade.orders.fee-rejection-label')}:
-				</FeeRejectionLabel>
+				<StyledTooltip
+					width={'310px'}
+					height="auto"
+					style={{ padding: '0 15px', textTransform: 'none' }}
+					content={t('futures.market.trade.orders.fee-rejection-tooltip')}
+				>
+					<FeeRejectionLabel>
+						{t('futures.market.trade.orders.fee-rejection-label')}:
+					</FeeRejectionLabel>
+				</StyledTooltip>
 				<SegmentedControl
 					onChange={onChangeFeeCap}
 					selectedIndex={FEE_CAP_OPTIONS.indexOf(selectedFeeCapLabel)}
@@ -97,9 +104,11 @@ export default function OrderPriceInput({
 }
 
 const StyledInputTitle = styled(InputTitle)`
+	text-transform: capitalize;
 	span {
 		color: ${(props) => props.theme.colors.selectedTheme.red};
 	}
+	cursor: default;
 `;
 
 const FeeCapContainer = styled.div`
@@ -113,4 +122,5 @@ const FeeRejectionLabel = styled.div`
 	min-width: 100px;
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.selectedTheme.text.label};
+	cursor: default;
 `;

@@ -4,15 +4,13 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
+import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import ROUTES from 'constants/routes';
-import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
-import { futuresAccountTypeState } from 'store/futures';
 import { FlexDivColCentered, Paragraph, SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media from 'styles/media';
 
 const TradeNow = () => {
 	const { t } = useTranslation();
-	const [accountType] = usePersistedRecoilState(futuresAccountTypeState);
 
 	const title = (
 		<TransparentCard>
@@ -20,7 +18,7 @@ const TradeNow = () => {
 			<BigWhiteHeader>{t('homepage.tradenow.description')}</BigWhiteHeader>
 			<GrayDescription>{t('homepage.tradenow.categories')}</GrayDescription>
 			<CTAContainer>
-				<Link href={ROUTES.Markets.Home(accountType)}>
+				<Link href={ROUTES.Markets.Home(DEFAULT_FUTURES_MARGIN_TYPE)}>
 					<Button variant="primary" size="md">
 						{t('homepage.nav.trade-now')}
 					</Button>

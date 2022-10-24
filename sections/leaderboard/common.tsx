@@ -1,4 +1,3 @@
-import Wei from '@synthetixio/wei';
 import styled from 'styled-components';
 
 export type Tier = 'gold' | 'silver' | 'bronze' | null;
@@ -15,18 +14,6 @@ export const getMedal = (position: number) => {
 };
 
 export const COMPETITION_TIERS: Tier[] = ['bronze', 'silver', 'gold'];
-
-export type AccountStat = {
-	rank: number;
-	account: string;
-	trader: string;
-	traderShort: string;
-	traderEns: string | null;
-	totalTrades: Wei;
-	totalVolume: Wei;
-	liquidation: Wei;
-	pnl: Wei;
-};
 
 export const PIN = ' 📌';
 

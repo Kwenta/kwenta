@@ -1,65 +1,68 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
+import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
-import {
-	crossMarginAccountOverviewState,
-	crossMarginSettingsState,
-	futuresAccountState,
-} from 'store/futures';
+import useSUSDContract from 'hooks/useSUSDContract';
+import { crossMarginAccountOverviewState, futuresAccountState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
-
-const BPS_CONVERSION = 10000;
+import logError from 'utils/logError';
 
 export default function useGetCrossMarginAccountOverview() {
-	const { network, provider } = Connector.useContainer();
+	const { walletAddress, network, provider } = Connector.useContainer();
 	const { crossMarginAddress } = useRecoilValue(futuresAccountState);
-	const setCrossMarginSettings = useSetRecoilState(crossMarginSettingsState);
 	const setAccountOverview = useSetRecoilState(crossMarginAccountOverviewState);
 
-	const { crossMarginAccountContract, crossMarginBaseSettings } = useCrossMarginAccountContracts();
+	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
+	const [retryCount, setRetryCount] = useState(0);
+	const susdContract = useSUSDContract();
 
 	return useQuery(
 		QUERY_KEYS.Futures.CrossMarginAccountOverview(
 			network.id as NetworkId,
 			crossMarginAddress || '',
-			crossMarginAccountContract?.address || ''
+			retryCount
 		),
 		async () => {
-			if (!crossMarginAddress || !crossMarginAccountContract) {
-				setAccountOverview({
+			if (!crossMarginAddress || !crossMarginAccountContract || !susdContract || !walletAddress) {
+				const overview = {
 					freeMargin: zeroBN,
 					keeperEthBal: zeroBN,
-				});
-				return { freeMargin: zeroBN, keeperEthBal: zeroBN };
+					allowance: zeroBN,
+				};
+				setAccountOverview(overview);
+				return overview;
 			}
 
-			const freeMargin = await crossMarginAccountContract.freeMargin();
-			const tradeFee = await crossMarginBaseSettings?.tradeFee();
-			const limitOrderFee = await crossMarginBaseSettings?.limitOrderFee();
-			const stopOrderFee = await crossMarginBaseSettings?.stopOrderFee();
-			const keeperEthBal = await provider.getBalance(crossMarginAddress);
+			try {
+				const [freeMargin, keeperEthBal, allowance] = await Promise.all([
+					crossMarginAccountContract.freeMargin(),
+					provider.getBalance(crossMarginAddress),
+					susdContract.allowance(walletAddress, crossMarginAccountContract.address),
+				]);
 
-			const settings = {
-				tradeFee: tradeFee ? wei(tradeFee.toNumber() / BPS_CONVERSION) : zeroBN,
-				limitOrderFee: limitOrderFee ? wei(limitOrderFee.toNumber() / BPS_CONVERSION) : zeroBN,
-				stopOrderFee: stopOrderFee ? wei(stopOrderFee.toNumber() / BPS_CONVERSION) : zeroBN,
-			};
+				const overview = {
+					freeMargin: wei(freeMargin),
+					keeperEthBal: wei(keeperEthBal),
+					allowance: wei(allowance),
+				};
+				setRetryCount(0);
+				setAccountOverview(overview);
 
-			setAccountOverview({
-				freeMargin: wei(freeMargin),
-				keeperEthBal: wei(keeperEthBal),
-			});
-			setCrossMarginSettings(settings);
-
-			return { freeMargin: wei(freeMargin), settings: settings, keeperEthBal };
-		},
-		{
-			enabled: !!crossMarginAddress,
+				return overview;
+			} catch (err) {
+				// This a hacky workaround to deal with the delayed Metamask error
+				// which causes the logs query to fail on network switching
+				// https://github.com/MetaMask/metamask-extension/issues/13375#issuecomment-1046125113
+				if (retryCount < 2) {
+					setRetryCount(retryCount + 1);
+				}
+				logError(err);
+			}
 		}
 	);
 }

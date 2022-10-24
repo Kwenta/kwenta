@@ -152,7 +152,7 @@ export const BalanceContainer = styled(FlexDivRowCentered)`
 
 export const BalanceText = styled.p<{ $gold?: boolean }>`
 	color: ${(props) =>
-		props.$gold ? props.theme.colors.common.primaryGold : props.theme.colors.selectedTheme.gray};
+		props.$gold ? props.theme.colors.selectedTheme.yellow : props.theme.colors.selectedTheme.gray};
 	span {
 		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}

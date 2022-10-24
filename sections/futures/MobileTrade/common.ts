@@ -9,13 +9,13 @@ export const SectionHeader = styled.div`
 
 export const SectionTitle = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.common.primaryGold};
+	color: ${(props) => props.theme.colors.selectedTheme.yellow};
 	text-transform: uppercase;
 	font-size: 13px;
-	text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4);
 	display: flex;
 	justify-content: space-between;
 	width: 100%;
+	text-shadow: 0px 1px 3px rgb(242, 242, 242);
 `;
 
 export const SectionSubTitle = styled.div`

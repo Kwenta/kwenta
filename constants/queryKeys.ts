@@ -237,23 +237,39 @@ export const QUERY_KEYS = {
 		MarketsPositions: (
 			networkId: NetworkId,
 			markets: string[] | [],
-			selectedFuturesAddress: string
-		) => ['futures', 'marketsPositions', networkId, markets, selectedFuturesAddress],
-		Positions: (networkId: NetworkId, markets: string[] | [], walletAddress: string) => [
+			walletAddress: string,
+			crossMarginAddress: string
+		) => ['futures', 'marketsPositions', networkId, markets, walletAddress, crossMarginAddress],
+		Portfolio: (
+			networkId: NetworkId,
+			markets: string[] | [],
+			walletAddress: string | null,
+			crossMarginAddress: string | null,
+			freeMargin: number
+		) => [
 			'futures',
 			'positions',
 			networkId,
 			markets,
 			walletAddress,
+			crossMarginAddress,
+			freeMargin,
 		],
-		AccountPositions: (
-			walletAddress: string | null,
-			networkId: NetworkId,
-			accountType: FuturesAccountType
-		) => ['futures', 'accountPositions', walletAddress, networkId, accountType],
+		PositionHistory: (walletAddress: string | null, networkId: NetworkId) => [
+			'futures',
+			'accountPositions',
+			walletAddress,
+			networkId,
+		],
 		Participants: () => ['futures', 'participants'],
 		Participant: (walletAddress: string) => ['futures', 'participant', walletAddress],
 		Stats: (networkId: NetworkId) => ['futures', 'stats', networkId],
+		Leaderboard: (networkId: NetworkId, searchTerm: string) => [
+			'futures',
+			'leaderboard',
+			networkId,
+			searchTerm,
+		],
 		AverageLeverage: ['futures', 'averageLeverage'],
 		CumulativeVolume: ['futures', 'cumulativeVolume'],
 		TotalLiquidations: ['futures', 'totalLiquidations'],
@@ -302,18 +318,19 @@ export const QUERY_KEYS = {
 			currencyKey: string | null
 		) => ['futures', 'currentRoundId', networkId, walletAddress, currencyKey],
 		OverviewStats: (networkId: NetworkId) => ['futures', 'overview-stats', networkId],
-		CrossMarginAccountOverview: (
-			networkId: NetworkId,
-			wallet: string,
-			crossMarginBaseAddress: string
-		) => ['futures', 'cross-margin-account-overview', networkId, wallet, crossMarginBaseAddress],
-		CrossMarginAccount: (wallet: string, factoryAddress: string) => [
+		CrossMarginAccountOverview: (networkId: NetworkId, wallet: string, retryCount: number) => [
 			'futures',
-			'cross-margin-account',
+			'cross-margin-account-overview',
+			networkId,
 			wallet,
-			factoryAddress,
+			retryCount,
 		],
-		CrossMarginSettings: (networkId: NetworkId) => ['futures', 'cross-margin-settings', networkId],
+		CrossMarginSettings: (networkId: NetworkId, settingsAddress: string) => [
+			'futures',
+			'cross-margin-settings',
+			networkId,
+			settingsAddress,
+		],
 	},
 	Files: {
 		Get: (fileName: string) => ['files', 'get', fileName],

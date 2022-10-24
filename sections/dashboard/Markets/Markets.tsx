@@ -1,11 +1,10 @@
 import { FC, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { TabPanel } from 'components/Tab';
-import { ratesState } from 'store/futures';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
 import SpotMarketsTable from '../SpotMarketsTable';
@@ -17,8 +16,6 @@ export enum MarketsTab {
 
 const Markets: FC = () => {
 	const { t } = useTranslation();
-
-	const exchangeRates = useRecoilValue(ratesState);
 
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
@@ -46,26 +43,38 @@ const Markets: FC = () => {
 
 	return (
 		<>
-			<TabButtonsContainer>
-				{MARKETS_TABS.map(({ name, label, active, onClick }) => (
-					<TabButton key={name} title={label} active={active} onClick={onClick} />
-				))}
-			</TabButtonsContainer>
+			<DesktopOnlyView>
+				<TabButtonsContainer>
+					{MARKETS_TABS.map(({ name, label, active, onClick }) => (
+						<TabButton key={name} title={label} active={active} onClick={onClick} />
+					))}
+				</TabButtonsContainer>
+			</DesktopOnlyView>
+			<MobileOrTabletView>
+				<TabButtonsContainer mobile>
+					{MARKETS_TABS.map(({ name, label, active, onClick }) => (
+						<TabButton key={name} title={label} active={active} onClick={onClick} />
+					))}
+				</TabButtonsContainer>
+			</MobileOrTabletView>
+
 			<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
 				<FuturesMarketsTable />
 			</TabPanel>
 
 			<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
-				<SpotMarketsTable exchangeRates={exchangeRates} />
+				<SpotMarketsTable />
 			</TabPanel>
 		</>
 	);
 };
 
-const TabButtonsContainer = styled.div`
+const TabButtonsContainer = styled.div<{ mobile?: boolean }>`
 	display: flex;
 	margin-top: 16px;
 	margin-bottom: 16px;
+
+	margin-left: ${(props) => (props.mobile ? '16px' : '0')};
 
 	& > button {
 		height: 38px;

@@ -16,18 +16,20 @@ type MobilePositionRowProps = {
 
 const MobilePositionRow: React.FC<MobilePositionRowProps> = ({ row, onClick }) => {
 	return (
-		<OpenPositionContainer side={row.position} key={row.asset} onClick={onClick}>
+		<OpenPositionContainer side={row.position.position} key={row.market.asset} onClick={onClick}>
 			<CurrencyDetailsContainer>
-				<StyledCurrencyIcon currencyKey={row.marketKey} />
+				<StyledCurrencyIcon currencyKey={row.market.marketKey} />
 				<div>
 					<OpenPositionSize>
-						{formatNumber(row.size ?? 0)}
-						<OpenPositionMarketName>{getDisplayAsset(row.asset)}</OpenPositionMarketName>
+						{formatNumber(row.position.size ?? 0)}
+						<OpenPositionMarketName>{getDisplayAsset(row.market.asset)}</OpenPositionMarketName>
 					</OpenPositionSize>
-					<OpenPositionSide side={row.position ?? PositionSide.LONG}>
-						<span className="side">{row.position ?? PositionSide.LONG}</span>{' '}
+					<OpenPositionSide side={row.position.side ?? PositionSide.LONG}>
+						<span className="side">{row.position.side ?? PositionSide.LONG}</span>{' '}
 						<span className="at">@</span>{' '}
-						<span className="leverage">{formatNumber(row.leverage ?? 0, { maxDecimals: 1 })}x</span>
+						<span className="leverage">
+							{formatNumber(row.position.leverage ?? 0, { maxDecimals: 1 })}x
+						</span>
 					</OpenPositionSide>
 				</div>
 			</CurrencyDetailsContainer>
@@ -36,7 +38,7 @@ const MobilePositionRow: React.FC<MobilePositionRowProps> = ({ row, onClick }) =
 					<div>
 						<Currency.Price
 							currencyKey={'sUSD'}
-							price={row.price ?? 0}
+							price={row.market.price ?? 0}
 							sign="$"
 							formatOptions={
 								isDecimalFour(row.asset) ? { minDecimals: DEFAULT_CRYPTO_DECIMALS } : {}
@@ -49,15 +51,15 @@ const MobilePositionRow: React.FC<MobilePositionRowProps> = ({ row, onClick }) =
 							price={row.avgEntryPrice ?? 0}
 							sign="$"
 							formatOptions={
-								isDecimalFour(row.asset) ? { minDecimals: DEFAULT_CRYPTO_DECIMALS } : {}
+								isDecimalFour(row.market.asset) ? { minDecimals: DEFAULT_CRYPTO_DECIMALS } : {}
 							}
 						/>
 					</EntryPrice>
 				</div>
 				<div>
-					<ChangePercent value={row.pnlPct ?? 0} />
+					<ChangePercent value={row.position.pnlPct ?? 0} />
 					<div>
-						<Currency.Price currencyKey={'sUSD'} price={row.pnl ?? 0} sign="$" />
+						<Currency.Price currencyKey={'sUSD'} price={row.position.pnl ?? 0} sign="$" />
 					</div>
 				</div>
 			</RightColumnsContainer>

@@ -1,5 +1,5 @@
 import { CurrencyKey } from '@synthetixio/contracts-interface';
-import { Rates, SynthBalance } from '@synthetixio/queries';
+import { SynthBalance } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import * as _ from 'lodash/fp';
 import { FC, ReactElement, useMemo } from 'react';
@@ -15,14 +15,9 @@ import Table, { TableNoResults } from 'components/Table';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import { Price } from 'queries/rates/types';
-import { pastRatesState } from 'store/futures';
+import { balancesState, pastRatesState, ratesState } from 'store/futures';
 import { formatNumber, zeroBN } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
-
-type SynthBalancesTableProps = {
-	exchangeRates: Rates | null;
-	synthBalances: SynthBalance[];
-};
 
 type Cell = {
 	synth: CurrencyKey;
@@ -46,16 +41,15 @@ const calculatePriceChange = (current: Wei | null, past: Price | undefined) => {
 const conditionalRender = <T,>(prop: T, children: ReactElement): ReactElement =>
 	_.isNil(prop) ? <DefaultCell>{NO_VALUE}</DefaultCell> : children;
 
-const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
-	exchangeRates,
-	synthBalances,
-}: SynthBalancesTableProps) => {
+const SynthBalancesTable: FC = () => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
 	const pastRates = useRecoilValue(pastRatesState);
+	const exchangeRates = useRecoilValue(ratesState);
+	const { balances } = useRecoilValue(balancesState);
 
 	let data = useMemo(() => {
-		return synthBalances.map((synthBalance: SynthBalance) => {
+		return balances.map((synthBalance: SynthBalance) => {
 			const { currencyKey, balance, usdBalance } = synthBalance;
 
 			const price = exchangeRates && exchangeRates[currencyKey];
@@ -71,7 +65,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 				priceChange: calculatePriceChange(price, pastPrice),
 			};
 		});
-	}, [pastRates, exchangeRates, synthBalances, synthsMap]);
+	}, [pastRates, exchangeRates, balances, synthsMap]);
 
 	return (
 		<>

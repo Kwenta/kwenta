@@ -13,10 +13,11 @@ import { useFuturesContext } from 'contexts/FuturesContext';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { PositionSide } from 'queries/futures/types';
-import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import {
 	currentMarketState,
+	futuresAccountTypeState,
 	marketKeyState,
+	positionHistoryState,
 	positionState,
 	potentialTradeDetailsState,
 } from 'store/futures';
@@ -65,14 +66,13 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 	const position = useRecoilValue(positionState);
 	const marketAsset = useRecoilValue(currentMarketState);
 	const marketKey = useRecoilValue(marketKeyState);
+	const futuresAccountType = useRecoilValue(futuresAccountTypeState);
 
 	const positionDetails = position?.position ?? null;
-	const futuresPositionsQuery = useGetFuturesPositionForAccount();
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketKey);
 
 	const potentialTrade = useRecoilValue(potentialTradeDetailsState);
-
-	const futuresPositions = futuresPositionsQuery?.data ?? null;
+	const positionHistory = useRecoilValue(positionHistoryState);
 
 	const { synthsMap } = Connector.useContainer();
 
@@ -82,26 +82,28 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			? DEFAULT_CRYPTO_DECIMALS
 			: undefined;
 
-	const positionHistory = futuresPositions?.find(
-		({ asset, isOpen }) => isOpen && asset === marketAsset
-	);
+	const thisPositionHistory = useMemo(() => {
+		return positionHistory[futuresAccountType].find(
+			({ asset, isOpen }) => isOpen && asset === marketAsset
+		);
+	}, [positionHistory, marketAsset, futuresAccountType]);
 
 	const { marketAssetRate } = useFuturesContext();
 
 	const { data: previewTradeData } = useRecoilValue(potentialTradeDetailsState);
 
 	const modifiedAverage = useMemo(() => {
-		if (positionHistory && previewTradeData && potentialTrade.data) {
-			const totalSize = positionHistory.size.add(potentialTrade.data.size);
+		if (thisPositionHistory && previewTradeData && potentialTrade.data) {
+			const totalSize = thisPositionHistory.size.add(potentialTrade.data.size);
 
-			const existingValue = positionHistory.avgEntryPrice.mul(positionHistory.size);
+			const existingValue = thisPositionHistory.avgEntryPrice.mul(thisPositionHistory.size);
 			const newValue = previewTradeData.price.mul(potentialTrade.data.size);
 			const totalValue = existingValue.add(newValue);
 
 			return totalSize.gt(0) ? totalValue.div(totalSize) : null;
 		}
 		return null;
-	}, [positionHistory, previewTradeData, potentialTrade.data]);
+	}, [thisPositionHistory, previewTradeData, potentialTrade.data]);
 
 	const previewData: PositionPreviewData = React.useMemo(() => {
 		if (positionDetails === null || previewTradeData === null) {
@@ -126,16 +128,17 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 	}, [positionDetails, previewTradeData, modifiedAverage]);
 
 	const data: PositionData = React.useMemo(() => {
-		const pnl = positionDetails?.profitLoss.add(positionDetails?.accruedFunding) ?? zeroBN;
-		const pnlPct = pnl.abs().gt(0) ? pnl.div(positionDetails?.initialMargin) : zeroBN;
+		const pnl = positionDetails?.pnl ?? zeroBN;
+		const pnlPct = positionDetails?.pnlPct ?? zeroBN;
 		const realizedPnl =
-			positionHistory?.pnl.add(positionHistory?.netFunding).sub(positionHistory?.feesPaid) ??
-			zeroBN;
+			thisPositionHistory?.pnl
+				.add(thisPositionHistory?.netFunding)
+				.sub(thisPositionHistory?.feesPaid) ?? zeroBN;
 		const realizedPnlPct = realizedPnl.abs().gt(0)
-			? realizedPnl.div(positionHistory?.initialMargin.add(positionHistory?.totalDeposits))
+			? realizedPnl.div(thisPositionHistory?.initialMargin.add(thisPositionHistory?.totalDeposits))
 			: zeroBN;
 		const netFunding =
-			positionDetails?.accruedFunding.add(positionHistory?.netFunding ?? zeroBN) ?? zeroBN;
+			positionDetails?.accruedFunding.add(thisPositionHistory?.netFunding ?? zeroBN) ?? zeroBN;
 
 		return {
 			currencyIconKey: MarketKeyByAsset[marketAsset],
@@ -225,7 +228,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 					  })} (${formatPercent(pnlPct)})`
 					: NO_VALUE,
 			realizedPnlText:
-				positionHistory && realizedPnl
+				thisPositionHistory && realizedPnl
 					? `${formatDollars(realizedPnl, {
 							minDecimals: realizedPnl.abs().lt(0.01) ? 4 : 2,
 					  })} (${formatPercent(realizedPnlPct)})`
@@ -236,10 +239,10 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 						minDecimals: netFunding.abs().lt(0.01) ? 4 : 2,
 				  })}`
 				: null,
-			fees: positionDetails ? formatDollars(positionHistory?.feesPaid ?? zeroBN) : NO_VALUE,
+			fees: positionDetails ? formatDollars(thisPositionHistory?.feesPaid ?? zeroBN) : NO_VALUE,
 			avgEntryPrice: positionDetails ? (
 				<>
-					{formatDollars(positionHistory?.entryPrice ?? zeroBN, {
+					{formatDollars(thisPositionHistory?.entryPrice ?? zeroBN, {
 						minDecimals,
 					})}
 					{
@@ -256,7 +259,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 		};
 	}, [
 		positionDetails,
-		positionHistory,
+		thisPositionHistory,
 		marketAssetRate,
 		marketAsset,
 		synthsMap,
@@ -282,7 +285,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 					</InfoRow>
 					<InfoRow>
 						<PositionCardTooltip
-							preset="bottom"
+							preset="fixed"
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.position-side')}
 						>
@@ -294,7 +297,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 					</InfoRow>
 					<InfoRow>
 						<PositionCardTooltip
-							preset="bottom"
+							preset="fixed"
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.position-size')}
 						>
@@ -309,7 +312,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 				<DataCol>
 					<InfoRow>
 						<PositionCardTooltip
-							preset="bottom"
+							preset="fixed"
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.net-funding')}
 						>
@@ -331,7 +334,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 					</InfoRow>
 					<InfoRow>
 						<PositionCardTooltip
-							preset="bottom"
+							preset="fixed"
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.u-pnl')}
 						>
@@ -349,7 +352,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 					</InfoRow>
 					<InfoRow>
 						<PositionCardTooltip
-							preset="bottom"
+							preset="fixed"
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.r-pnl')}
 						>
@@ -373,20 +376,20 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 				<DataColDivider />
 				<DataCol>
 					<InfoRow>
-						<LeftMarginTooltip
-							preset="bottom"
+						<PositionCardTooltip
+							preset="fixed"
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.leverage')}
 						>
 							<StyledSubtitleWithCursor>
 								{t('futures.market.position-card.leverage')}
 							</StyledSubtitleWithCursor>
-						</LeftMarginTooltip>
+						</PositionCardTooltip>
 						<StyledValue data-testid="position-card-leverage-value">{data.leverage}</StyledValue>
 					</InfoRow>
 					<InfoRow>
 						<PositionCardTooltip
-							preset="bottom"
+							preset="fixed"
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.liquidation-price')}
 						>
@@ -397,15 +400,15 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 						<StyledValue>{data.liquidationPrice}</StyledValue>
 					</InfoRow>
 					<InfoRow>
-						<LeftMarginTooltip
-							preset="bottom-z-index-2-left-margin"
+						<PositionCardTooltip
+							preset="fixed"
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.avg-entry-price')}
 						>
 							<StyledSubtitleWithCursor>
 								{t('futures.market.position-card.avg-entry-price')}
 							</StyledSubtitleWithCursor>
-						</LeftMarginTooltip>
+						</PositionCardTooltip>
 						<StyledValue>{data.avgEntryPrice}</StyledValue>
 					</InfoRow>
 				</DataCol>
@@ -484,13 +487,7 @@ const StyledSubtitleWithCursor = styled.p`
 
 const PositionCardTooltip = styled(StyledTooltip)`
 	z-index: 2;
-`;
-
-const LeftMarginTooltip = styled(StyledTooltip)`
-	${media.greaterThan('sm')`
-		left: -60px;
-		z-index: 2;
-	`}
+	padding: 0px 10px 0px 10px;
 `;
 
 const StyledValue = styled.p`

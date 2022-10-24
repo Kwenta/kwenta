@@ -19,6 +19,8 @@ import { isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
 
+import { MarketDataKey } from './utils';
+
 type MarketData = Record<string, { value: string | JSX.Element; color?: string }>;
 
 const useGetMarketData = (mobile?: boolean) => {
@@ -74,10 +76,10 @@ const useGetMarketData = (mobile?: boolean) => {
 									minDecimals,
 							  }),
 				},
-				'24H Trades': {
+				[MarketDataKey.dailyTrades]: {
 					value: `${futuresTradeCount}`,
 				},
-				'Open Interest': {
+				[MarketDataKey.openInterest]: {
 					value: marketInfo?.marketSize?.mul(marketPrice)
 						? formatCurrency(
 								selectedPriceCurrency.name,
@@ -86,7 +88,7 @@ const useGetMarketData = (mobile?: boolean) => {
 						  )
 						: NO_VALUE,
 				},
-				'24H Volume': {
+				[MarketDataKey.dailyVolume]: {
 					value: formatCurrency(selectedPriceCurrency.name, futuresTradingVolume ?? zeroBN, {
 						sign: '$',
 					}),
@@ -97,7 +99,7 @@ const useGetMarketData = (mobile?: boolean) => {
 						: NO_VALUE,
 					color: fundingValue?.gt(zeroBN) ? 'green' : fundingValue?.lt(zeroBN) ? 'red' : undefined,
 				},
-				'24H Change': {
+				[MarketDataKey.dailyChange]: {
 					value:
 						marketPrice && marketPrice.gt(0) && pastPrice?.price
 							? `${formatCurrency(
@@ -124,7 +126,7 @@ const useGetMarketData = (mobile?: boolean) => {
 						minDecimals,
 					}),
 				},
-				'External Price': {
+				[MarketDataKey.externalPrice]: {
 					value:
 						externalPrice === 0
 							? NO_VALUE
@@ -133,7 +135,7 @@ const useGetMarketData = (mobile?: boolean) => {
 									minDecimals,
 							  }),
 				},
-				'24H Change': {
+				[MarketDataKey.dailyChange]: {
 					value:
 						marketPrice && marketPrice.gt(0) && pastPrice?.price
 							? `${formatCurrency(
@@ -151,15 +153,15 @@ const useGetMarketData = (mobile?: boolean) => {
 								: ''
 							: undefined,
 				},
-				'24H Volume': {
+				[MarketDataKey.dailyVolume]: {
 					value: formatCurrency(selectedPriceCurrency.name, futuresTradingVolume ?? zeroBN, {
 						sign: '$',
 					}),
 				},
-				'24H Trades': {
+				[MarketDataKey.dailyTrades]: {
 					value: `${futuresTradeCount}`,
 				},
-				'Open Interest': {
+				[MarketDataKey.openInterest]: {
 					value: marketInfo?.marketSize?.mul(marketPrice)
 						? formatCurrency(selectedPriceCurrency.name, marketInfo?.marketSize?.mul(marketPrice), {
 								sign: '$',
