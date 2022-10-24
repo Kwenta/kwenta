@@ -82,7 +82,7 @@ export default function OrderSizeSlider() {
 					{ value: 0, label: `0%` },
 					{ value: 100, label: `100%` },
 				]}
-				valueLabelDisplay="on"
+				valueLabelDisplay="auto"
 				valueLabelFormat={(v) => `${v}%`}
 				$currentMark={percent}
 			/>
