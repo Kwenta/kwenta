@@ -1,16 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import KwentaSDK from 'sdk';
+import Wei from '@synthetixio/wei';
 import { fetchSynthBalances } from 'state/balances/actions';
-import type { AppDispatch, RootState } from 'state/store';
+import type { ThunkConfig } from 'state/types';
 
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { toWei } from 'utils/formatters/number';
-
-type ThunkConfig = {
-	dispatch: AppDispatch;
-	state: RootState;
-	extra: { sdk: KwentaSDK };
-};
 
 export const fetchBalances = createAsyncThunk<any, void, ThunkConfig>(
 	'exchange/fetchBalances',
@@ -59,30 +53,34 @@ export const fetchTxProvider = createAsyncThunk<any, void, ThunkConfig>(
 	}
 );
 
-export const fetchTransactionFee = createAsyncThunk<any, void, ThunkConfig>(
-	'exchange/fetchTransactionFee',
-	async (_, { getState, extra: { sdk } }) => {
-		const {
-			exchange: { quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount },
-		} = getState();
+export const fetchTransactionFee = createAsyncThunk<
+	{
+		transactionFee?: string;
+		feeCost?: string;
+	},
+	void,
+	ThunkConfig
+>('exchange/fetchTransactionFee', async (_, { getState, extra: { sdk } }) => {
+	const {
+		exchange: { quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount },
+	} = getState();
 
-		if (baseCurrencyKey && quoteCurrencyKey) {
-			const [transactionFee, feeCost] = await Promise.all([
-				sdk.exchange.getTransactionFee(quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount),
-				sdk.exchange.getFeeCost(quoteCurrencyKey, baseCurrencyKey, quoteAmount),
-			]);
+	if (baseCurrencyKey && quoteCurrencyKey) {
+		const [transactionFee, feeCost] = await Promise.all([
+			sdk.exchange.getTransactionFee(quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount),
+			sdk.exchange.getFeeCost(quoteCurrencyKey, baseCurrencyKey, quoteAmount),
+		]);
 
-			return {
-				transactionFee: transactionFee ? transactionFee.toString() : undefined,
-				feeCost: feeCost.toString(),
-			};
-		}
-
-		return { transactionFee: undefined, feeCost: undefined };
+		return {
+			transactionFee: transactionFee ? transactionFee.toString() : undefined,
+			feeCost: feeCost.toString(),
+		};
 	}
-);
 
-export const submitExchange = createAsyncThunk<any, void, ThunkConfig>(
+	return { transactionFee: undefined, feeCost: undefined };
+});
+
+export const submitExchange = createAsyncThunk<void, void, ThunkConfig>(
 	'exchange/submitExchange',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const {
@@ -119,7 +117,7 @@ export const submitExchange = createAsyncThunk<any, void, ThunkConfig>(
 	}
 );
 
-export const submitRedeem = createAsyncThunk<any, void, ThunkConfig>(
+export const submitRedeem = createAsyncThunk<void, void, ThunkConfig>(
 	'exchange/submitRedeem',
 	async (_, { dispatch, extra: { sdk } }) => {
 		const hash = await sdk.exchange.handleRedeem();
@@ -136,7 +134,7 @@ export const submitRedeem = createAsyncThunk<any, void, ThunkConfig>(
 	}
 );
 
-export const submitApprove = createAsyncThunk<any, void, ThunkConfig>(
+export const submitApprove = createAsyncThunk<void, void, ThunkConfig>(
 	'exchange/submitApprove',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const {
@@ -161,76 +159,74 @@ export const submitApprove = createAsyncThunk<any, void, ThunkConfig>(
 	}
 );
 
-export const checkNeedsApproval = createAsyncThunk<any, void, ThunkConfig>(
-	'exchange/checkNeedsApproval',
-	async (_, { getState, extra: { sdk } }) => {
-		const {
-			exchange: { quoteCurrencyKey, baseCurrencyKey },
-		} = getState();
+export const checkNeedsApproval = createAsyncThunk<
+	'approved' | 'needs-approval' | undefined,
+	void,
+	ThunkConfig
+>('exchange/checkNeedsApproval', async (_, { getState, extra: { sdk } }) => {
+	const {
+		exchange: { quoteCurrencyKey, baseCurrencyKey },
+	} = getState();
 
-		if (quoteCurrencyKey && baseCurrencyKey) {
-			const needsApproval = sdk.exchange.checkNeedsApproval(baseCurrencyKey, quoteCurrencyKey);
+	if (quoteCurrencyKey && baseCurrencyKey) {
+		const needsApproval = sdk.exchange.checkNeedsApproval(baseCurrencyKey, quoteCurrencyKey);
 
-			if (needsApproval) {
-				// TODO: Handle case where allowance is not MaxUint256.
-				// Simplest way to do this is to return the allowance from
-				// checkAllowance, store it in state to do the comparison there.
-				const isApproved = await sdk.exchange.checkAllowance(
-					quoteCurrencyKey,
-					baseCurrencyKey,
-					'0'
-				);
+		if (needsApproval) {
+			// TODO: Handle case where allowance is not MaxUint256.
+			// Simplest way to do this is to return the allowance from
+			// checkAllowance, store it in state to do the comparison there.
+			const isApproved = await sdk.exchange.checkAllowance(quoteCurrencyKey, baseCurrencyKey, '0');
 
-				return isApproved ? 'approved' : 'needs-approval';
-			} else {
-				return 'approved';
-			}
-		}
-
-		return undefined;
-	}
-);
-
-export const fetchRates = createAsyncThunk<any, void, ThunkConfig>(
-	'exchange/fetchRates',
-	async (_, { getState, extra: { sdk } }) => {
-		const {
-			exchange: { quoteCurrencyKey, baseCurrencyKey },
-		} = getState();
-
-		if (baseCurrencyKey && quoteCurrencyKey) {
-			const [
-				baseFeeRate,
-				rate,
-				exchangeFeeRate,
-				quotePriceRate,
-				basePriceRate,
-			] = await Promise.all([
-				sdk.exchange.getBaseFeeRate(baseCurrencyKey, quoteCurrencyKey),
-				sdk.exchange.getRate(baseCurrencyKey, quoteCurrencyKey),
-				sdk.exchange.getExchangeFeeRate(quoteCurrencyKey, baseCurrencyKey),
-				sdk.exchange.getQuotePriceRate(baseCurrencyKey, quoteCurrencyKey),
-				sdk.exchange.getBasePriceRate(baseCurrencyKey, quoteCurrencyKey),
-			]);
-
-			return {
-				baseFeeRate: baseFeeRate.toString(),
-				rate: rate.toString(),
-				exchangeFeeRate: exchangeFeeRate.toString(),
-				quotePriceRate: quotePriceRate.toString(),
-				basePriceRate: basePriceRate.toString(),
-			};
+			return isApproved ? 'approved' : 'needs-approval';
 		} else {
-			return {
-				baseFeeRate: undefined,
-				rate: undefined,
-				exchangeFeeRate: undefined,
-				quotePriceRate: undefined,
-				basePriceRate: undefined,
-			};
+			return 'approved';
 		}
 	}
-);
+
+	return undefined;
+});
+
+export const fetchRates = createAsyncThunk<
+	{
+		baseFeeRate?: string;
+		rate?: string;
+		exchangeFeeRate?: string;
+		quotePriceRate?: string;
+		basePriceRate?: string;
+	},
+	void,
+	ThunkConfig
+>('exchange/fetchRates', async (_, { getState, extra: { sdk } }) => {
+	const {
+		exchange: { quoteCurrencyKey, baseCurrencyKey },
+	} = getState();
+
+	if (baseCurrencyKey && quoteCurrencyKey) {
+		const [baseFeeRate, rate, exchangeFeeRate, quotePriceRate, basePriceRate] = await Promise.all([
+			sdk.exchange.getBaseFeeRate(baseCurrencyKey, quoteCurrencyKey),
+			sdk.exchange.getRate(baseCurrencyKey, quoteCurrencyKey),
+			sdk.exchange.getExchangeFeeRate(quoteCurrencyKey, baseCurrencyKey),
+			sdk.exchange.getQuotePriceRate(baseCurrencyKey, quoteCurrencyKey),
+			sdk.exchange.getBasePriceRate(baseCurrencyKey, quoteCurrencyKey),
+		]);
+
+		return {
+			baseFeeRate: baseFeeRate.toString(),
+			rate: rate.toString(),
+			exchangeFeeRate: exchangeFeeRate.toString(),
+			quotePriceRate: quotePriceRate.toString(),
+			basePriceRate: basePriceRate.toString(),
+		};
+	} else {
+		return {
+			baseFeeRate: undefined,
+			rate: undefined,
+			exchangeFeeRate: undefined,
+			quotePriceRate: undefined,
+			basePriceRate: undefined,
+		};
+	}
+});
 
 export const fetchTokenList = createAsyncThunk<any, void, ThunkConfig>(
 	'exchange/fetchTokenList',
@@ -276,23 +272,27 @@ export const resetCurrencies = createAsyncThunk<
 	}
 );
 
-export const fetchFeeReclaimPeriod = createAsyncThunk<any, void, ThunkConfig>(
-	'exchange/fetchFeeReclaimPeriod',
-	async (_, { getState, extra: { sdk } }) => {
-		const {
-			exchange: { quoteCurrencyKey, baseCurrencyKey },
-		} = getState();
+export const fetchFeeReclaimPeriod = createAsyncThunk<
+	{
+		feeReclaimPeriod: number;
+		settlementWaitingPeriod: number;
+	},
+	void,
+	ThunkConfig
+>('exchange/fetchFeeReclaimPeriod', async (_, { getState, extra: { sdk } }) => {
+	const {
+		exchange: { quoteCurrencyKey, baseCurrencyKey },
+	} = getState();
 
-		const [feeReclaimPeriod, settlementWaitingPeriod] = await Promise.all([
-			quoteCurrencyKey ? sdk.exchange.getFeeReclaimPeriod(quoteCurrencyKey) : 0,
-			baseCurrencyKey ? sdk.exchange.getFeeReclaimPeriod(baseCurrencyKey) : 0,
-		]);
+	const [feeReclaimPeriod, settlementWaitingPeriod] = await Promise.all([
+		quoteCurrencyKey ? sdk.exchange.getFeeReclaimPeriod(quoteCurrencyKey) : 0,
+		baseCurrencyKey ? sdk.exchange.getFeeReclaimPeriod(baseCurrencyKey) : 0,
+	]);
 
-		return { feeReclaimPeriod, settlementWaitingPeriod };
-	}
-);
+	return { feeReclaimPeriod, settlementWaitingPeriod };
+});
 
-export const submitSettle = createAsyncThunk<any, void, ThunkConfig>(
+export const submitSettle = createAsyncThunk<void, void, ThunkConfig>(
 	'exchange/submitSettle',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const {
@@ -314,7 +314,7 @@ export const submitSettle = createAsyncThunk<any, void, ThunkConfig>(
 	}
 );
 
-export const fetchNumEntries = createAsyncThunk<any, void, ThunkConfig>(
+export const fetchNumEntries = createAsyncThunk<number, void, ThunkConfig>(
 	'exchange/fetchNumEntries',
 	async (_, { getState, extra: { sdk } }) => {
 		const {
@@ -330,7 +330,7 @@ export const fetchNumEntries = createAsyncThunk<any, void, ThunkConfig>(
 	}
 );
 
-export const fetchOneInchQuote = createAsyncThunk<any, void, ThunkConfig>(
+export const fetchOneInchQuote = createAsyncThunk<string | undefined, void, ThunkConfig>(
 	'exchange/fetchOneInchQuote',
 	async (_, { getState, extra: { sdk } }) => {
 		const {
@@ -357,7 +357,7 @@ export const fetchOneInchQuote = createAsyncThunk<any, void, ThunkConfig>(
 	}
 );
 
-export const fetchSlippagePercent = createAsyncThunk<any, void, ThunkConfig>(
+export const fetchSlippagePercent = createAsyncThunk<string | undefined, void, ThunkConfig>(
 	'exchange/fetchSlippagePercent',
 	async (_, { getState, extra: { sdk } }) => {
 		const {
@@ -381,7 +381,7 @@ export const fetchSlippagePercent = createAsyncThunk<any, void, ThunkConfig>(
 				baseAmountWei
 			);
 
-			return slippagePercent;
+			return slippagePercent?.toString();
 		}
 
 		return undefined;

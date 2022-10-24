@@ -3,11 +3,9 @@ import { TransactionNotifier as BaseTN } from '@synthetixio/transaction-notifier
 import { ethers } from 'ethers';
 import { keyBy } from 'lodash';
 import { useEffect, useMemo } from 'react';
-import { fetchSynthBalances } from 'state/balances/actions';
 import { sdk } from 'state/config';
-import { fetchBalances, fetchRates, fetchTokenList } from 'state/exchange/actions';
 import { useAppDispatch } from 'state/hooks';
-import { setNetwork, setWalletAddress } from 'state/wallet/reducer';
+import { resetNetwork, resetWalletAddress } from 'state/wallet/actions';
 import { createContainer } from 'unstated-next';
 import { chain, useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
 
@@ -32,7 +30,16 @@ const useConnector = () => {
 
 	const provider = useProvider({ chainId: network.id });
 	const l2Provider = useProvider({ chainId: chain.optimism.id });
-	const { data: signer } = useSigner();
+
+	const { data: signer } = useSigner({
+		onSuccess: async (signer) => {
+			if (signer) {
+				const [address] = await Promise.all([signer.getAddress(), sdk.setSigner(signer)]);
+				dispatch(resetWalletAddress(address));
+			}
+		},
+	});
+
 	// Provides a default mainnet provider, irrespective of the current network
 	const staticMainnetProvider = new ethers.providers.InfuraProvider();
 
@@ -54,26 +61,11 @@ const useConnector = () => {
 	}, [provider]);
 
 	useEffect(() => {
-		sdk.setNetworkId(network.id as NetworkId).then(async () => {
-			dispatch(setNetwork({ networkId: network.id as NetworkId }));
+		sdk.setNetworkId(network.id as NetworkId).then(() => {
+			dispatch(resetNetwork(network.id as NetworkId));
 			blockExplorer = generateExplorerFunctions(getBaseUrl(network.id as NetworkId));
-			await dispatch(fetchTokenList());
-			dispatch(fetchSynthBalances());
-			dispatch(fetchBalances());
-			dispatch(fetchRates());
 		});
 	}, [network.id, dispatch]);
-
-	useEffect(() => {
-		if (signer) {
-			sdk.setSigner(signer).then(async () => {
-				const address = await signer.getAddress();
-				dispatch(setWalletAddress({ walletAddress: address }));
-				await dispatch(fetchSynthBalances());
-				dispatch(fetchBalances());
-			});
-		}
-	}, [signer, dispatch]);
 
 	const [synthsMap, tokensMap] = useMemo(() => {
 		if (defaultSynthetixjs == null) return [{}, {}];

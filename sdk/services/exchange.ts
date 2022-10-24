@@ -135,7 +135,7 @@ export default class ExchangeService {
 			return totalTradePrice.sub(estimatedBaseTradePrice).div(totalTradePrice).neg();
 		}
 
-		return null;
+		return undefined;
 	}
 
 	public async getBaseFeeRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
@@ -368,7 +368,7 @@ export default class ExchangeService {
 		return params.tx.gas;
 	}
 
-	public async getNumEntries(currencyKey: string) {
+	public async getNumEntries(currencyKey: string): Promise<number> {
 		if (!this.sdk.walletAddress) {
 			throw new Error(sdkErrors.NO_SIGNER);
 		}
