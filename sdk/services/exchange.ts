@@ -16,6 +16,7 @@ import {
 	ETH_ADDRESS,
 	ETH_COINGECKO_ADDRESS,
 } from 'constants/currency';
+import { DEFAULT_1INCH_SLIPPAGE } from 'constants/defaults';
 import { ATOMIC_EXCHANGE_SLIPPAGE } from 'constants/exchange';
 import { ETH_UNIT } from 'constants/network';
 import erc20Abi from 'lib/abis/ERC20.json';
@@ -866,16 +867,6 @@ export default class ExchangeService {
 		return null;
 	}
 
-	private getOneInchSlippage(baseCurrencyKey: string, quoteCurrencyKey: string) {
-		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
-
-		if (txProvider === '1inch' && (baseCurrencyKey === 'ETH' || quoteCurrencyKey === 'ETH')) {
-			return 3;
-		}
-
-		return 1;
-	}
-
 	private getExchangeParams(
 		quoteCurrencyKey: string,
 		baseCurrencyKey: string,
@@ -983,7 +974,6 @@ export default class ExchangeService {
 
 		const quoteTokenAddress = this.getTokenAddress(quoteCurrencyKey);
 		const baseTokenAddress = this.getTokenAddress(baseCurrencyKey);
-		const slippage = this.getOneInchSlippage(baseCurrencyKey, quoteCurrencyKey);
 		const decimals = this.getTokenDecimals(quoteCurrencyKey);
 
 		const params = this.getOneInchQuoteSwapParams(
@@ -999,7 +989,7 @@ export default class ExchangeService {
 				toTokenAddress: params.toTokenAddress,
 				amount: params.amount,
 				fromAddress: this.sdk.walletAddress,
-				slippage,
+				DEFAULT_1INCH_SLIPPAGE,
 				PROTOCOLS,
 				referrerAddress: KWENTA_REFERRAL_ADDRESS,
 				disableEstimate: true,
