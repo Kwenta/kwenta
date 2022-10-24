@@ -18,6 +18,7 @@ import {
 } from 'store/futures';
 import { isUserDeniedError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
+import { MarketKeyByAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
 import TradeConfirmationModal from './TradeConfirmationModal';
@@ -45,7 +46,7 @@ export default function TradeConfirmationModalCrossMargin() {
 		const estimateGas = async () => {
 			const newPosition = [
 				{
-					marketKey: formatBytes32String(marketAsset),
+					marketKey: formatBytes32String(MarketKeyByAsset[marketAsset]),
 					marginDelta: crossMarginMarginDelta.toBN(),
 					sizeDelta: tradeInputs.nativeSizeDelta.toBN(),
 				},

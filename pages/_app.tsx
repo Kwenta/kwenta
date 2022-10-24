@@ -1,3 +1,4 @@
+import { createTheme, MuiThemeProvider } from '@material-ui/core';
 import { darkTheme, lightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
@@ -52,6 +53,8 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 	const isReady = useMemo(() => typeof window !== 'undefined', []);
 	const currentTheme = useRecoilValue(currentThemeState);
 	const theme = useMemo(() => themes[currentTheme], [currentTheme]);
+	// @ts-ignore palette options
+	const muiTheme = useMemo(() => createTheme(getDesignTokens(currentTheme)), [currentTheme]);
 
 	return isReady ? (
 		<RainbowKitProvider
@@ -59,33 +62,42 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 			theme={currentTheme === 'dark' ? darkTheme() : lightTheme()}
 		>
 			<ThemeProvider theme={theme}>
-				<MediaContextProvider>
-					<SynthetixQueryContextProvider
-						value={
-							provider && network && synthetixjs
-								? createQueryContext({
-										provider,
-										signer: signer || undefined,
-										networkId: network.id as NetworkId,
-										synthetixjs,
-								  })
-								: createQueryContext({
-										provider: l2Provider,
-										networkId: chain.optimism.id as NetworkId,
-										synthetixjs,
-								  })
-						}
-					>
-						<Layout>
-							<SystemStatus>{getLayout(<Component {...pageProps} />)}</SystemStatus>
-						</Layout>
-						<ReactQueryDevtools position="top-left" />
-					</SynthetixQueryContextProvider>
-				</MediaContextProvider>
+				<MuiThemeProvider theme={muiTheme}>
+					<MediaContextProvider>
+						<SynthetixQueryContextProvider
+							value={
+								provider && network && synthetixjs
+									? createQueryContext({
+											provider,
+											signer: signer || undefined,
+											networkId: network.id as NetworkId,
+											synthetixjs,
+									  })
+									: createQueryContext({
+											provider: l2Provider,
+											networkId: chain.optimism.id as NetworkId,
+											synthetixjs,
+									  })
+							}
+						>
+							<Layout>
+								<SystemStatus>{getLayout(<Component {...pageProps} />)}</SystemStatus>
+							</Layout>
+							<ReactQueryDevtools position="top-left" />
+						</SynthetixQueryContextProvider>
+					</MediaContextProvider>
+				</MuiThemeProvider>
 			</ThemeProvider>
 		</RainbowKitProvider>
 	) : null;
 };
+
+const getDesignTokens = (mode: 'dark' | 'light') => ({
+	palette: {
+		mode,
+		colors: themes[mode].colors,
+	},
+});
 
 const App: FC<AppProps> = (props) => {
 	const { t } = useTranslation();

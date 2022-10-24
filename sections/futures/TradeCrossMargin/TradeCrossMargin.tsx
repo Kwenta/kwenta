@@ -72,12 +72,12 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 		? [
 				{
 					i18nTitle: 'futures.market.trade.button.deposit',
-					icon: <DepositArrow stoke={colors.selectedTheme.yellow} />,
+					icon: <DepositArrow stroke={colors.selectedTheme.yellow} />,
 					onClick: () => setOpenTransferModal('deposit'),
 				},
 				{
 					i18nTitle: 'futures.market.trade.button.withdraw',
-					icon: <WithdrawArrow stoke={colors.selectedTheme.yellow} />,
+					icon: <WithdrawArrow stroke={colors.selectedTheme.yellow} />,
 					onClick: () => setOpenTransferModal('withdraw'),
 				},
 		  ]
@@ -107,9 +107,9 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 							setOrderType(type as FuturesOrderType);
 							const price =
 								(type === 'limit' && leverageSide === 'long') ||
-								(type === 'stop' && leverageSide === 'short')
+								(type === 'stop market' && leverageSide === 'short')
 									? floorNumber(marketAssetRate, 0)
-									: (type === 'stop' && leverageSide === 'long') ||
+									: (type === 'stop market' && leverageSide === 'long') ||
 									  (type === 'limit' && leverageSide === 'short')
 									? ceilNumber(marketAssetRate, 0)
 									: '';

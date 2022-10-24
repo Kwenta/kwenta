@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { UseQueryResult } from 'react-query';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { Period } from 'constants/period';
@@ -16,7 +15,7 @@ import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccou
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useSynthBalances from 'queries/synths/useSynthBalances';
-import { futuresAccountTypeState, positionState } from 'store/futures';
+import { futuresAccountState, futuresAccountTypeState, positionState } from 'store/futures';
 import logError from 'utils/logError';
 
 type RefetchType =
@@ -44,6 +43,7 @@ const RefetchContext = React.createContext<RefetchContextType>({
 
 export const RefetchProvider: React.FC = ({ children }) => {
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
+	const { crossMarginAddress } = useRecoilValue(futuresAccountState);
 	const setPosition = useSetRecoilState(positionState);
 
 	const synthsBalancesQuery = useSynthBalances();
@@ -53,7 +53,7 @@ export const RefetchProvider: React.FC = ({ children }) => {
 	const positionsQuery = useGetFuturesPositionForMarkets();
 	const positionHistoryQuery = useGetFuturesPositionHistory();
 	const marketsQuery = useGetFuturesMarkets();
-	const crossMarginAccountQuery = useQueryCrossMarginAccount();
+	const queryCrossMarginAccount = useQueryCrossMarginAccount();
 
 	useExchangeRatesQuery({ refetchInterval: 15000 });
 	useGetAverageFundingRateForMarkets(Period.ONE_HOUR);
@@ -101,7 +101,7 @@ export const RefetchProvider: React.FC = ({ children }) => {
 					synthsBalancesQuery.refetch();
 					break;
 				case 'cross-margin-account-change':
-					crossMarginAccountQuery.refetch();
+					queryCrossMarginAccount();
 					break;
 			}
 		}, timeout ?? 5000);
@@ -111,21 +111,27 @@ export const RefetchProvider: React.FC = ({ children }) => {
 		switch (refetchType) {
 			case 'account-margin-change':
 				return Promise.all([
-					refetchWithComparator(crossMarginAccountOverview, (prev, next) => {
-						return !next || prev.freeMargin?.toString() === next.freeMargin?.toString();
-					}),
-					refetchWithComparator(synthsBalancesQuery, (prev, next) => {
-						return !next || prev?.susdWalletBalance === next?.susdWalletBalance;
-					}),
+					refetchWithComparator(
+						crossMarginAccountOverview.refetch,
+						crossMarginAccountOverview,
+						(prev, next) =>
+							!next.data ||
+							prev?.data?.freeMargin?.toString() === next?.data?.freeMargin?.toString()
+					),
+					refetchWithComparator(
+						synthsBalancesQuery.refetch,
+						synthsBalancesQuery,
+						(prev, next) =>
+							!next.data ||
+							prev?.data.susdWalletBalance?.toString() === next?.data.susdWalletBalance?.toString()
+					),
 				]);
 			case 'cross-margin-account-change':
-				return refetchWithComparator(crossMarginAccountQuery, (prev, next) => {
-					return !next || prev === next;
-				});
-			case 'wallet-balance-change':
-				return refetchWithComparator(synthsBalancesQuery, (prev, next) => {
-					return !next || prev?.susdWalletBalance === next?.susdWalletBalance;
-				});
+				return refetchWithComparator(
+					queryCrossMarginAccount,
+					crossMarginAddress,
+					(prev, next) => !next || prev === next
+				);
 		}
 	};
 
@@ -140,37 +146,34 @@ export const RefetchProvider: React.FC = ({ children }) => {
 // signal to continue retrying, comparing prev and new query result
 
 const refetchWithComparator = async (
-	query: UseQueryResult<any>,
+	query: () => Promise<any>,
+	existingResult: any,
 	comparator: (previous: any, current: any) => boolean,
 	interval = 1000,
-	max = 20
+	max = 25
 ) => {
-	const prev = query?.data;
-
 	return new Promise((res) => {
 		let count = 1;
 
-		const refetch = async () => {
+		const refetch = async (existingResult: any) => {
 			const timeout = setTimeout(async () => {
 				if (count > max) {
 					clearTimeout(timeout);
 					logError('refetch timeout');
 					res({ data: null, status: 'timeout' });
 				} else {
-					const cur = query?.data || null;
-					const next = await query.refetch();
-
+					const next = await query();
 					count += 1;
-					if (!comparator(prev, next.data)) {
+					if (!comparator(existingResult, next)) {
 						clearTimeout(timeout);
-						res({ data: cur, status: 'complete' });
+						res({ data: next, status: 'complete' });
 					} else {
-						refetch();
+						refetch(next);
 					}
 				}
 			}, interval);
 		};
-		refetch();
+		refetch(existingResult);
 	});
 };
 

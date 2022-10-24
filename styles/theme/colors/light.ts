@@ -25,7 +25,7 @@ const lightTheme = {
 		fillHover: '#f0f0f0',
 		background:
 			'linear-gradient(180deg, rgba(231, 231, 231, 0.6) 0%, rgba(203, 203, 203, 0.6) 100%)',
-		hover: '#393939',
+		hover: 'linear-gradient(180deg, rgba(231, 231, 231, 0.8) 0%, rgba(203, 203, 203, 0.8) 100%)',
 		shadow:
 			'0px 2px 2px rgb(0 0 0 / 5%), inset 0px 1px 0px rgb(255 255 255 / 8%), inset 0px 0px 20px rgb(255 255 255 / 3%)',
 		text: {
@@ -61,6 +61,7 @@ const lightTheme = {
 			},
 			disabled: { border: '1px solid #353333', text: '#B3B3B3' },
 		},
+		pill: { background: common.light.yellow, text: common.light.yellow, hover: common.light.white },
 	},
 	input: {
 		background: '#dbdbdb',
@@ -69,6 +70,7 @@ const lightTheme = {
 		},
 		placeholder: '#686868',
 		shadow: '0px 0.5px 0px rgba(255, 255, 255, 0.08)',
+		hover: common.black,
 	},
 	segmented: {
 		background: '#eaeaea',
