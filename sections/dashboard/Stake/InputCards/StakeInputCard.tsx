@@ -78,7 +78,10 @@ const StakeInputCard: FC = () => {
 				<StakeInputHeader>
 					<div>{t('dashboard.stake.tabs.stake-table.kwenta-token')}</div>
 					<div className="max" onClick={onMaxClick}>
-						{t('dashboard.stake.tabs.stake-table.max')}
+						{t('dashboard.stake.tabs.stake-table.current-balance')}{' '}
+						{activeTab === 0
+							? Number(kwentaBalance).toFixed(2)
+							: Number(stakedNonEscrowedBalance).toFixed(2)}
 					</div>
 				</StakeInputHeader>
 				<StyledInput
@@ -129,8 +132,6 @@ const StakeInputHeader = styled.div`
 	font-size: 14px;
 
 	.max {
-		text-transform: uppercase;
-		font-family: ${(props) => props.theme.fonts.bold};
 		cursor: pointer;
 	}
 `;

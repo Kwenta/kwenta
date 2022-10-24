@@ -501,7 +501,11 @@
 					"estimated-rewards": "Estimated Rewards",
 					"estimated-fee-share": "Estimated Fee Share",
 					"trading-activity-reset": "Trading Activity Reset",
-					"epoch": "Epoch {{EpochPeriod}}"
+					"epoch": "Epoch {{EpochPeriod}}",
+					"claimable-rewards-epoch": "Claimable Trading Rewards: Epoch {{EpochPeriod}}",
+					"claimable-rewards-all": "Claimable All Trading Rewards",
+					"claim-epoch": "Claim: Epoch {{EpochPeriod}}",
+					"claim-all": "Claim All"
 				},
 				"escrow": {
 					"title": "Escrow",
@@ -516,8 +520,7 @@
 					"vest": "VEST"
 				},
 				"redemption": {
-					"title": "Redemption",
-					"current-balance": "Current Balance:"
+					"title": "Redemption"
 				},
 				"stake-table": {
 					"stake": "Stake",
@@ -528,7 +531,8 @@
 					"redeem": "Redeem",
 					"vekwenta-token": "veKwenta",
 					"vkwenta-token": "vKwenta",
-					"approve": "Approve"			
+					"approve": "Approve",		
+					"current-balance": "Current Balance:"
 				}
 			}
 		},

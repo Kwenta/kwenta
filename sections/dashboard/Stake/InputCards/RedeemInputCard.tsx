@@ -35,7 +35,7 @@ const RedeemInputCard: FC<RedeemInputCardProps> = ({ inputLabel }) => {
 				<StakeInputHeader>
 					<div>{inputLabel}</div>
 					<div>
-						{t('dashboard.stake.tabs.redemption.current-balance')}{' '}
+						{t('dashboard.stake.tabs.stake-table.current-balance')}{' '}
 						{Number(vKwentaBalance).toFixed(2)}
 					</div>
 				</StakeInputHeader>
