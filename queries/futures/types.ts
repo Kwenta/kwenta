@@ -46,8 +46,8 @@ export type FuturesFilledPosition = {
 	liquidationPrice: Wei;
 	initialLeverage: Wei;
 	leverage: Wei;
-	roi: Wei;
-	roiChange: Wei;
+	pnl: Wei;
+	pnlPct: Wei;
 	marginRatio: Wei;
 };
 
@@ -61,6 +61,7 @@ export type FuturesPosition = {
 
 export type FuturesMarket = {
 	market: string;
+	marketKey?: FuturesMarketKey;
 	marketName: string;
 	asset: FuturesMarketAsset;
 	assetHex: string;
@@ -98,33 +99,6 @@ export type FuturesOpenInterest = {
 	};
 };
 
-export type RawPosition = {
-	id: string;
-	lastTxHash: string;
-	timestamp: number;
-	openTimestamp: number;
-	closeTimestamp: number;
-	market: string;
-	asset: string;
-	account: string;
-	isOpen: boolean;
-	isLiquidated: boolean;
-	size: Wei;
-	feesPaid: Wei;
-	netFunding: Wei;
-	netTransfers: Wei;
-	totalDeposits: Wei;
-	initialMargin: Wei;
-	margin: Wei;
-	entryPrice: Wei;
-	avgEntryPrice: Wei;
-	exitPrice: Wei;
-	pnl: Wei;
-	pnlWithFeesPaid: Wei;
-	totalVolume: Wei;
-	trades: number;
-};
-
 export type MarginTransfer = {
 	timestamp: number;
 	market: string;
@@ -142,10 +116,12 @@ export type PositionHistory = {
 	transactionHash: string;
 	timestamp: number;
 	openTimestamp: number;
-	closeTimestamp: number;
+	closeTimestamp: number | undefined;
 	market: string;
 	asset: FuturesMarketAsset;
 	account: string;
+	abstractAccount: string;
+	accountType: FuturesAccountType;
 	isOpen: boolean;
 	isLiquidated: boolean;
 	size: Wei;
@@ -199,6 +175,14 @@ export type FuturesTradeWithPrice = {
 	price: string;
 };
 
+// This type exists to rename enum types from the subgraph to display-friendly types
+export type FuturesOrderTypeDisplay =
+	| 'Next Price'
+	| 'Limit'
+	| 'Stop Market'
+	| 'Market'
+	| 'Liquidation';
+
 export type FuturesTrade = {
 	size: Wei;
 	asset: string;
@@ -211,25 +195,28 @@ export type FuturesTrade = {
 	side?: PositionSide | null;
 	pnl: Wei;
 	feesPaid: Wei;
-	orderType: 'NextPrice' | 'Limit' | 'Market' | 'Liquidation';
+	orderType: FuturesOrderTypeDisplay;
+	accountType: FuturesAccountType;
 };
 
 export type FuturesOrder = {
 	id: string;
 	account: string;
-	asset: string;
+	asset: FuturesMarketAsset;
 	market: string;
 	marketKey: FuturesMarketKey;
 	size: Wei;
 	targetPrice: Wei | null;
+	marginDelta: Wei;
 	targetRoundId: Wei | null;
 	timestamp: Wei;
-	orderType: 'NextPrice' | 'Next-Price' | 'Limit' | 'Stop';
+	orderType: FuturesOrderTypeDisplay;
 	sizeTxt?: string;
 	targetPriceTxt?: string;
 	side?: PositionSide;
 	isStale?: boolean;
 	isExecutable?: boolean;
+	isCancelling?: boolean;
 };
 
 export type FuturesVolumes = {
@@ -241,11 +228,23 @@ export type FuturesVolumes = {
 
 export type FuturesStat = {
 	account: string;
-	pnlWithFeesPaid: string;
-	liquidations: number;
+	pnlWithFeesPaid: Wei;
+	liquidations: Wei;
+	totalTrades: Wei;
+	totalVolume: Wei;
+	pnl?: Wei;
+};
+
+export type AccountStat = {
+	rank: number;
+	account: string;
+	trader: string;
+	traderShort: string;
+	traderEns?: string | null;
 	totalTrades: number;
-	totalVolume: number;
-	pnl?: number;
+	totalVolume: Wei;
+	liquidations: number;
+	pnl: Wei;
 };
 
 export type FuturesCumulativeStats = {
@@ -287,11 +286,23 @@ export type FuturesPotentialTradeDetailsQuery = {
 };
 
 export type FuturesAccountType = 'cross_margin' | 'isolated_margin';
+export enum FuturesAccountTypes {
+	ISOLATED_MARGIN = 'isolated_margin',
+	CROSS_MARGIN = 'cross_margin',
+}
 
 type Wallet = string;
 type CrossMarginAccount = string;
 type FactoryAddress = string;
 export type CrossMarginAccounts = Record<FactoryAddress, Record<Wallet, CrossMarginAccount>>;
+
+export type FuturesPositionsState = Record<FuturesAccountType, FuturesPosition[]>;
+export type PositionHistoryState = Record<FuturesAccountType, PositionHistory[]>;
+export type Portfolio = {
+	total: Wei;
+	crossMarginFutures: Wei;
+	isolatedMarginFutures: Wei;
+};
 
 export type FuturesAccountState = {
 	walletAddress: string | null;
@@ -322,4 +333,4 @@ export type FuturesTradeInputs = {
 	orderPrice?: Wei | undefined;
 };
 
-export type FuturesOrderType = 'market' | 'next-price' | 'stop' | 'limit';
+export type FuturesOrderType = 'market' | 'next price' | 'stop market' | 'limit';

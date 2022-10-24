@@ -92,8 +92,9 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 						price,
 					}: FuturesMarket,
 					i: number
-				) => ({
+				): FuturesMarket => ({
 					market,
+					marketKey: MarketKeyByAsset[utils.parseBytes32String(asset) as FuturesMarketAsset],
 					marketName: getMarketName(utils.parseBytes32String(asset) as FuturesMarketAsset),
 					asset: utils.parseBytes32String(asset) as FuturesMarketAsset,
 					assetHex: asset,
@@ -131,9 +132,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 					marketClosureReason: getReasonFromCode(reasons[i]) as FuturesClosureReason,
 				})
 			);
-
 			setFuturesMarkets(futuresMarkets);
-
 			return futuresMarkets;
 		},
 		{

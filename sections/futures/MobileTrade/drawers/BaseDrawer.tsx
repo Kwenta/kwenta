@@ -76,7 +76,7 @@ const Background = styled.div`
 `;
 
 const Foreground = styled.div`
-	background: linear-gradient(180deg, #1e1d1d 0%, #161515 100%);
+	background: ${(props) => props.theme.colors.selectedTheme.background};
 	padding: 15px;
 	border-radius: 8px 8px 0 0;
 `;
@@ -89,11 +89,11 @@ const Row = styled.div`
 
 	.key {
 		text-transform: capitalize;
-		color: ${(props) => props.theme.colors.common.secondaryGray};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
 
 	.value {
-		color: ${(props) => props.theme.colors.common.primaryWhite};
+		color: ${(props) => props.theme.colors.selectedTheme.gray};
 		max-width: 60%;
 	}
 
@@ -102,7 +102,7 @@ const Row = styled.div`
 	}
 
 	&:not(:last-of-type) {
-		border-bottom: 1px solid #2b2a2a;
+		border-bottom: 1px solid #a7a7a7;
 	}
 `;
 
@@ -120,7 +120,7 @@ const CloseButtonRow = styled.div`
 
 const CloseButton = styled.button`
 	${resetButtonCSS};
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray2};
 `;
 
 export default BaseDrawer;

@@ -89,13 +89,8 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 			monitorTransaction({
 				txHash: tx.hash,
 				onTxConfirmed: async () => {
-					try {
-						await refetchUntilUpdate('cross-margin-account-change');
-					} catch (err) {
-						logError(err);
-					} finally {
-						setSubmitting(null);
-					}
+					await refetchUntilUpdate('cross-margin-account-change');
+					setSubmitting(null);
 				},
 				onTxFailed: () => {
 					setSubmitting(null);

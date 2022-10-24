@@ -22,11 +22,14 @@ import { FlexDivRow } from 'styles/common';
 import { floorNumber, isZero, zeroBN } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 
+import OrderSizeSlider from './OrderSizeSlider';
+
 type OrderSizingProps = {
+	isMobile?: boolean;
 	disabled?: boolean;
 };
 
-const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
+const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	const { onTradeAmountChange, maxUsdInputAmount } = useFuturesContext();
 
 	const { nativeSize, susdSize } = useRecoilValue(futuresTradeInputsState);
@@ -101,7 +104,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 	}, [debounceOnChangeValue]);
 
 	const onChangeValue = (_: ChangeEvent<HTMLInputElement>, v: string) => {
-		setUsdValue(v);
+		assetInputType === 'usd' ? setUsdValue(v) : setAssetValue(v);
 		debounceOnChangeValue(v, assetInputType);
 	};
 
@@ -114,43 +117,46 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 	}, [position?.remainingMargin, disabled, selectedAccountType, freeCrossMargin]);
 
 	const showPosSizeHelper =
-		position?.position?.size && (orderType === 'limit' || orderType === 'stop');
+		position?.position?.size && (orderType === 'limit' || orderType === 'stop market');
 
 	const invalid =
 		(assetInputType === 'usd' && usdValue !== '' && maxUsdInputAmount.lte(usdValue || 0)) ||
 		(assetInputType === 'native' && assetValue !== '' && maxNativeValue.lte(assetValue || 0));
 
 	return (
-		<OrderSizingContainer>
-			<OrderSizingRow>
-				<InputTitle>
-					Amount&nbsp; —<span>&nbsp; Set order size</span>
-				</InputTitle>
-				<InputHelpers>
-					<MaxButton onClick={handleSetMax}>Max</MaxButton>
-					{showPosSizeHelper && (
-						<MaxButton onClick={handleSetPositionSize}>Position Size</MaxButton>
-					)}
-				</InputHelpers>
-			</OrderSizingRow>
+		<>
+			<OrderSizingContainer>
+				<OrderSizingRow>
+					<InputTitle>
+						Amount&nbsp; —<span>&nbsp; Set order size</span>
+					</InputTitle>
+					<InputHelpers>
+						<MaxButton onClick={handleSetMax}>Max</MaxButton>
+						{showPosSizeHelper && (
+							<MaxButton onClick={handleSetPositionSize}>Position Size</MaxButton>
+						)}
+					</InputHelpers>
+				</OrderSizingRow>
 
-			<CustomInput
-				invalid={invalid}
-				dataTestId="set-order-size-amount-susd"
-				disabled={isDisabled}
-				right={
-					<InputButton
-						onClick={() => setAssetInputType(assetInputType === 'usd' ? 'native' : 'usd')}
-					>
-						{assetInputType === 'usd' ? 'sUSD' : getDisplayAsset(marketKey)}{' '}
-						<span>{<SwitchAssetArrows />}</span>
-					</InputButton>
-				}
-				value={assetInputType === 'usd' ? usdValue : assetValue}
-				placeholder="0.0"
-				onChange={onChangeValue}
-			/>
-		</OrderSizingContainer>
+				<CustomInput
+					invalid={invalid}
+					dataTestId={'set-order-size-amount-susd' + (isMobile ? '-mobile' : '-desktop')}
+					disabled={isDisabled}
+					right={
+						<InputButton
+							onClick={() => setAssetInputType(assetInputType === 'usd' ? 'native' : 'usd')}
+						>
+							{assetInputType === 'usd' ? 'sUSD' : getDisplayAsset(marketKey)}{' '}
+							<span>{<SwitchAssetArrows />}</span>
+						</InputButton>
+					}
+					value={assetInputType === 'usd' ? usdValue : assetValue}
+					placeholder="0.0"
+					onChange={onChangeValue}
+				/>
+			</OrderSizingContainer>
+			{selectedAccountType === 'cross_margin' && <OrderSizeSlider />}
+		</>
 	);
 };
 
@@ -163,10 +169,13 @@ const OrderSizingRow = styled(FlexDivRow)`
 	width: 100%;
 	align-items: center;
 	margin-bottom: 8px;
+	cursor: default;
 `;
 
 const MaxButton = styled.button`
 	text-decoration: underline;
+	font-variant: small-caps;
+	text-transform: lowercase;
 	font-size: 13px;
 	line-height: 11px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
@@ -177,13 +186,18 @@ const MaxButton = styled.button`
 
 const InputButton = styled.button`
 	height: 22px;
-	padding: 4px 10px;
+	padding: 3px 2px 4px 10px;
 	border: none;
 	background: transparent;
 	font-size: 16px;
 	line-height: 16px;
 	color: ${(props) => props.theme.colors.selectedTheme.text.label};
 	cursor: pointer;
+	&:hover {
+		svg > path {
+			fill: ${(props) => props.theme.colors.selectedTheme.input.hover};
+		}
+	}
 `;
 
 const InputHelpers = styled.div`

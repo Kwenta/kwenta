@@ -1,14 +1,11 @@
-import { useConnectModal } from '@rainbow-me/rainbowkit';
-import { wei } from '@synthetixio/wei';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import styled from 'styled-components';
+import { useTheme } from 'styled-components';
 
 import DepositArrow from 'assets/svg/futures/deposit-arrow.svg';
 import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import Loader from 'components/Loader';
 import SegmentedControl from 'components/SegmentedControl';
-import StyledSlider from 'components/Slider/StyledSlider';
 import Spacer from 'components/Spacer';
 import { CROSS_MARGIN_ORDER_TYPES } from 'constants/futures';
 import Connector from 'containers/Connector';
@@ -18,14 +15,12 @@ import {
 	futuresAccountState,
 	futuresAccountTypeState,
 	leverageSideState,
-	futuresTradeInputsState,
 	orderTypeState,
 	futuresOrderPriceState,
 	marketAssetRateState,
 	showCrossMarginOnboardState,
 	crossMarginAccountOverviewState,
 } from 'store/futures';
-import { FlexDivRow } from 'styles/common';
 import { ceilNumber, floorNumber } from 'utils/formatters/number';
 import { orderPriceInvalidLabel } from 'utils/futures';
 
@@ -47,37 +42,20 @@ type Props = {
 
 export default function TradeCrossMargin({ isMobile }: Props) {
 	const { walletAddress } = Connector.useContainer();
+	const { colors } = useTheme();
 
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const { crossMarginAddress, crossMarginAvailable, status } = useRecoilValue(futuresAccountState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 	const { freeMargin } = useRecoilValue(crossMarginAccountOverviewState);
-
-	const { susdSize } = useRecoilValue(futuresTradeInputsState);
 	const marketAssetRate = useRecoilValue(marketAssetRateState);
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const [orderPrice, setOrderPrice] = useRecoilState(futuresOrderPriceState);
 
-	const { onTradeAmountChange, maxUsdInputAmount, onTradeOrderPriceChange } = useFuturesContext();
-	const { openConnectModal: connectWallet } = useConnectModal();
+	const { onTradeOrderPriceChange } = useFuturesContext();
 
-	const [percent, setPercent] = useState(0);
-	const [usdAmount, setUsdAmount] = useState(susdSize);
 	const [showOnboard, setShowOnboard] = useRecoilState(showCrossMarginOnboardState);
 	const [openTransferModal, setOpenTransferModal] = useState<'deposit' | 'withdraw' | null>(null);
-
-	// eslint-disable-next-line
-	const onChangeMarginPercent = useCallback(
-		(value, commit = false) => {
-			setPercent(value);
-			const fraction = value / 100;
-			const usdAmount = maxUsdInputAmount.mul(fraction).toString();
-			const usdValue = Number(usdAmount).toFixed(0);
-			setUsdAmount(usdValue);
-			onTradeAmountChange(usdValue, 'usd', { simulateChange: !commit });
-		},
-		[onTradeAmountChange, maxUsdInputAmount]
-	);
 
 	const onChangeOrderPrice = useCallback(
 		(price: string) => {
@@ -90,38 +68,20 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 		[onTradeOrderPriceChange, setOrderPrice, leverageSide, marketAssetRate, orderType]
 	);
 
-	useEffect(() => {
-		if (susdSize !== usdAmount) {
-			if (!susdSize || maxUsdInputAmount.eq(0)) {
-				setPercent(0);
-				return;
-			}
-
-			const percent = wei(susdSize).div(maxUsdInputAmount).mul(100).toNumber();
-			setPercent(Number(percent.toFixed(2)));
-		}
-		// eslint-disable-next-line
-	}, [susdSize]);
-
 	const headerButtons = walletAddress
 		? [
 				{
 					i18nTitle: 'futures.market.trade.button.deposit',
-					Icon: DepositArrow,
+					icon: <DepositArrow stroke={colors.selectedTheme.yellow} />,
 					onClick: () => setOpenTransferModal('deposit'),
 				},
 				{
 					i18nTitle: 'futures.market.trade.button.withdraw',
-					Icon: WithdrawArrow,
+					icon: <WithdrawArrow stroke={colors.selectedTheme.yellow} />,
 					onClick: () => setOpenTransferModal('withdraw'),
 				},
 		  ]
-		: [
-				{
-					i18nTitle: 'futures.market.trade.button.connect-wallet',
-					onClick: connectWallet,
-				},
-		  ];
+		: [];
 
 	if (!showOnboard && (status === 'refetching' || status === 'initial-fetch')) return <Loader />;
 
@@ -136,7 +96,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 					{!isMobile && <MarketsDropdown />}
 
 					<TradePanelHeader accountType={selectedAccountType} buttons={headerButtons} />
-					{}
+
 					<MarginInfoBox />
 					<SegmentedControl
 						styleType="check"
@@ -146,34 +106,17 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 							const type = CROSS_MARGIN_ORDER_TYPES[index];
 							setOrderType(type as FuturesOrderType);
 							const price =
-								type === 'limit'
-									? floorNumber(marketAssetRate)
-									: type === 'stop'
-									? ceilNumber(marketAssetRate)
+								(type === 'limit' && leverageSide === 'long') ||
+								(type === 'stop market' && leverageSide === 'short')
+									? floorNumber(marketAssetRate, 0)
+									: (type === 'stop market' && leverageSide === 'long') ||
+									  (type === 'limit' && leverageSide === 'short')
+									? ceilNumber(marketAssetRate, 0)
 									: '';
 							onChangeOrderPrice(String(price));
 						}}
 					/>
-					<OrderSizing />
-					<SliderRow>
-						<StyledSlider
-							minValue={0}
-							maxValue={100}
-							step={1}
-							disabled={freeMargin.eq(0)}
-							defaultValue={percent}
-							value={percent}
-							onChange={(_, value) => onChangeMarginPercent(value, false)}
-							onChangeCommitted={(_, value) => onChangeMarginPercent(value, true)}
-							marks={[
-								{ value: 0, label: `0%` },
-								{ value: 100, label: `100%` },
-							]}
-							valueLabelDisplay="on"
-							valueLabelFormat={(v) => `${v}%`}
-							$currentMark={percent}
-						/>
-					</SliderRow>
+					<OrderSizing isMobile={isMobile} />
 					{orderType !== 'market' && (
 						<>
 							<OrderPriceInput
@@ -199,9 +142,3 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 		</>
 	);
 }
-
-const SliderRow = styled(FlexDivRow)`
-	margin-top: 8px;
-	margin-bottom: 32px;
-	position: relative;
-`;

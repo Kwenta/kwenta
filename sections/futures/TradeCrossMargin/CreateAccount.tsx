@@ -22,7 +22,7 @@ export default function CreateAccount({ onShowOnboard }: Props) {
 
 	return (
 		<>
-			<CreateAccountContainer>
+			<CreateAccountContainer data-testid="cross-margin-create-account">
 				<Title>{t('futures.market.trade.cross-margin.title')}</Title>
 				<CreateAccountButton variant="flat" onClick={onShowOnboard}>
 					{t('futures.market.trade.cross-margin.create-account')}
@@ -30,7 +30,7 @@ export default function CreateAccount({ onShowOnboard }: Props) {
 			</CreateAccountContainer>
 			<FAQContainer>
 				<Icon height="21px" width="30px" />
-				<Title yellow>{t('futures.market.trade.cross-margin.faq-title')}</Title>
+				<FaqTitle yellow>{t('futures.market.trade.cross-margin.faq-title')}</FaqTitle>
 				<Questions>
 					<CrossMarginFAQ />
 				</Questions>
@@ -51,7 +51,13 @@ const FAQContainer = styled(BorderedPanel)`
 	margin-top: 20px;
 `;
 
-const Title = styled.div<{ yellow?: boolean }>`
+const Title = styled.div`
+	font-family: ${(props) => props.theme.fonts.monoBold};
+	font-size: 23px;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+`;
+
+const FaqTitle = styled.span<{ yellow?: boolean }>`
 	font-family: ${(props) => props.theme.fonts.monoBold};
 	font-size: 23px;
 	color: ${(props) =>

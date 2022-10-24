@@ -88,7 +88,7 @@ function ClosePositionModal({
 			},
 			{
 				label: t('futures.market.user.position.modal.ROI'),
-				value: formatDollars(positionDetails?.roi ?? zeroBN),
+				value: formatDollars(positionDetails?.pnl ?? zeroBN),
 			},
 			{
 				label: t('futures.market.user.position.modal.fee'),
@@ -138,9 +138,6 @@ export default ClosePositionModal;
 const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
 		max-width: 400px;
-	}
-	.card-body {
-		padding: 28px;
 	}
 `;
 

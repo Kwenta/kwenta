@@ -1,6 +1,7 @@
 import Wei, { wei } from '@synthetixio/wei';
 import BN from 'bn.js';
 import { BigNumber, ethers, utils } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils';
 
 import { CurrencyKey } from 'constants/currency';
 import {
@@ -203,7 +204,12 @@ export const multiplyDecimal = (x: BigNumber, y: BigNumber) => {
 };
 
 export const weiFromWei = (weiAmount: WeiSource) => {
-	return wei(weiAmount, 18, true);
+	if (weiAmount instanceof Wei) {
+		const precisionDiff = 18 - weiAmount.p;
+		return wei(weiAmount, 18, true).div(10 ** precisionDiff);
+	} else {
+		return wei(weiAmount, 18, true);
+	}
 };
 
 export const suggestedDecimals = (value: WeiSource) => {
@@ -232,4 +238,10 @@ export const weiToString = (weiVal: Wei) => {
 
 export const isZero = (num: WeiSource) => {
 	return wei(num || 0).eq(0);
+};
+
+export const weiFromEth = (num: WeiSource) => wei(num).toBN().toString();
+
+export const gweiToWei = (val: WeiSource) => {
+	return parseUnits(wei(val).toString(), 9).toString();
 };
