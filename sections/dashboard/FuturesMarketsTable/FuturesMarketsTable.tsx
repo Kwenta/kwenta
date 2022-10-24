@@ -12,6 +12,7 @@ import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
+import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import {
@@ -19,6 +20,7 @@ import {
 	pastRatesState,
 	fundingRatesState,
 	futuresVolumesState,
+	futuresAccountTypeState,
 } from 'store/futures';
 import {
 	getSynthDescription,
@@ -36,6 +38,7 @@ const FuturesMarketsTable: FC = () => {
 	const fundingRates = useRecoilValue(fundingRatesState);
 	const pastRates = useRecoilValue(pastRatesState);
 	const futuresVolumes = useRecoilValue(futuresVolumesState);
+	const accountType = useRecoilValue(futuresAccountTypeState);
 
 	let data = useMemo(() => {
 		return futuresMarkets.map((market) => {
@@ -75,7 +78,7 @@ const FuturesMarketsTable: FC = () => {
 						data={data}
 						showPagination
 						onTableRowClick={(row) => {
-							router.push(`/market/?asset=${row.original.asset}`);
+							router.push(ROUTES.Markets.MarketPair(row.original.asset, accountType));
 						}}
 						highlightRowsOnHover
 						sortBy={[{ id: 'dailyVolume', desc: true }]}
@@ -269,7 +272,7 @@ const FuturesMarketsTable: FC = () => {
 					data={data}
 					showPagination
 					onTableRowClick={(row) => {
-						router.push(`/market/?asset=${row.original.asset}`);
+						router.push(ROUTES.Markets.MarketPair(row.original.asset, accountType));
 					}}
 					columns={[
 						{
