@@ -337,6 +337,13 @@ export const QUERY_KEYS = {
 	},
 	Staking: {
 		Rewards: (walletAddress: string | null) => ['staking', 'rewards', 'balance', walletAddress],
+		SpotsFee: (walletAddress: string | null) => ['staking', 'rewards', 'spots-fee', walletAddress],
+		FuturesFee: (walletAddress: string | null) => [
+			'staking',
+			'rewards',
+			'futures-fee',
+			walletAddress,
+		],
 	},
 };
 
