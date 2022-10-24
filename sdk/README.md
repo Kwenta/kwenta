@@ -38,3 +38,4 @@ The following tasks are expected to be completed before the SDK can be considere
 - [ ] Ensure all methods use from/to in correct order.
 - [ ] Experiment with exchange contexts (store an instance of from/to pairings, so that the client doesn't have to pass it every time).
 - [ ] Reduce number of queries, by storing more data in class instance.
+- [ ] Write tests for simple functions.

@@ -4,7 +4,7 @@ type Token = {
 	symbol: CurrencyKey;
 	name: string;
 	address: string;
-	decimals: string;
+	decimals: number;
 	logoURI: string;
 };
 
@@ -28,4 +28,8 @@ export type OneInchSwapResponse = OneInchQuoteResponse & {
 
 export type OneInchApproveSpenderResponse = {
 	address: string;
+};
+
+export type OneInchTokenListResponse = {
+	tokens: Record<string, Token>;
 };

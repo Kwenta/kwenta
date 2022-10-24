@@ -1,7 +1,7 @@
 import { FC } from 'react';
+import { useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
-import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 import { FlexDivCentered } from 'styles/common';
 
 export type TokenIconProps = {
@@ -16,16 +16,11 @@ export type TokenIconProps = {
 };
 
 const TokenIcon: FC<TokenIconProps> = ({ currencyKey, isDeprecated, ...props }) => {
-	const OneInchTokenListQuery = useOneInchTokenList();
-	const OneInchTokenListMap = OneInchTokenListQuery.data?.tokensMap ?? null;
+	const tokensMap = useAppSelector(({ exchange }) => exchange.tokensMap);
 
-	if (!!OneInchTokenListMap && OneInchTokenListMap[currencyKey] != null) {
+	if (!!tokensMap[currencyKey]) {
 		return (
-			<TokenImage
-				src={OneInchTokenListMap[currencyKey].logoURI}
-				$isDeprecated={isDeprecated}
-				{...props}
-			/>
+			<TokenImage src={tokensMap[currencyKey].logoURI} $isDeprecated={isDeprecated} {...props} />
 		);
 	} else {
 		return (

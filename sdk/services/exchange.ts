@@ -25,7 +25,7 @@ import { PriceResponse } from 'queries/coingecko/types';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { Rates } from 'queries/rates/types';
 import { getProxySynthSymbol } from 'queries/synths/utils';
-import { OneInchTokenListResponse, Token } from 'queries/tokenLists/types';
+import { Token } from 'queries/walletBalances/types';
 import {
 	getExchangeRatesForCurrencies,
 	newGetCoinGeckoPricesForCurrencies,
@@ -44,6 +44,7 @@ import {
 	OneInchApproveSpenderResponse,
 	OneInchQuoteResponse,
 	OneInchSwapResponse,
+	OneInchTokenListResponse,
 } from '../types/1inch';
 
 type CurrencyRate = ethers.BigNumberish;
@@ -53,21 +54,6 @@ const PROTOCOLS =
 	'OPTIMISM_UNISWAP_V3,OPTIMISM_SYNTHETIX,OPTIMISM_SYNTHETIX_WRAPPER,OPTIMISM_ONE_INCH_LIMIT_ORDER,OPTIMISM_ONE_INCH_LIMIT_ORDER_V2,OPTIMISM_CURVE,OPTIMISM_BALANCER_V2,OPTIMISM_VELODROME,OPTIMISM_KYBERSWAP_ELASTIC';
 
 const FILTERED_TOKENS = ['0x4922a015c4407f87432b179bb209e125432e4a2a'];
-
-// TODO:
-// - Make sure that all methods that depend on both the base and quote currency
-//   keys, accept the arguments in the correct order: (quote, base).
-// - Rename `quote` and `base` to `from` and `to`, to reduce confusion.
-// - Store more properties in the class instance, so we can reduce the number
-//   of async calls. For example, there are a number of functions that take
-//   more arguments than they optimally should.
-// - Write a getter method that returns the value of this.walletAddress when
-//   it is provided, and returns an error when it's undefined.
-// - Do the above for the signer as well.
-// - Experiment with creating a "generateContext" method that takes the base
-//   and quote currency keys as arguments, and returns an instance of a class
-//   that has all the ExchangeService methods that depend on those (probably
-//   overkill, but worth consideration).
 
 export default class ExchangeService {
 	private synthsMap: SynthsMap = {};

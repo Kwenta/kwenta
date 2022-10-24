@@ -11,7 +11,8 @@ import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import erc20Abi from 'lib/abis/ERC20.json';
-import { Token } from 'queries/tokenLists/types';
+
+import { Token } from './types';
 
 const FILTERED_TOKENS = ['0x4922a015c4407f87432b179bb209e125432e4a2a'];
 

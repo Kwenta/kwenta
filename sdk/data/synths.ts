@@ -227,7 +227,7 @@ const synthsByNetwork = (id: NetworkId) =>
 const SYNTHS_BY_NETWORK: Partial<Record<NetworkId, { map: SynthsMap; list: SynthToken[] }>> = {
 	1: {
 		map: synthsByNetwork(1),
-		list: Object.values(synthsByNetwork),
+		list: Object.values(synthsByNetwork(1)),
 	},
 	10: {
 		map: synthsByNetwork(10),
