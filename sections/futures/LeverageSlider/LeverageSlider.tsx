@@ -35,7 +35,7 @@ const LeverageSlider: React.FC<LeverageSliderProps> = ({
 				{ value: minValue ?? 0, label: `${minValue}x` },
 				{ value: maxValue ?? 10, label: `${maxValue}x` },
 			]}
-			valueLabelDisplay="on"
+			valueLabelDisplay="auto"
 			valueLabelFormat={(v) => `${v}x`}
 			$currentMark={value ?? defaultValue ?? 0}
 		/>
