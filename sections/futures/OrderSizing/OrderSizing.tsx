@@ -104,7 +104,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	}, [debounceOnChangeValue]);
 
 	const onChangeValue = (_: ChangeEvent<HTMLInputElement>, v: string) => {
-		setUsdValue(v);
+		assetInputType === 'usd' ? setUsdValue(v) : setAssetValue(v);
 		debounceOnChangeValue(v, assetInputType);
 	};
 
