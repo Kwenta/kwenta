@@ -12,6 +12,7 @@ import { ThemeName } from 'styles/theme';
 
 import { SubMenuLink } from '../constants';
 import { MenuButton } from './common';
+import Badge from 'components/Badge';
 
 type MobileSubMenuOption = {
 	label: string;
@@ -53,12 +54,12 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 			{active && (
 				<SubMenuContainer onClick={onDismiss}>
 					{links
-						? links.map(({ i18nLabel, link: subLink }) => (
+						? links.map(({ i18nLabel, link: subLink, badge }) => (
 								<SubMenuItemContainer key={i18nLabel}>
 									<SubMenuIcon>·</SubMenuIcon>
 									<StyledLink href={subLink}>
 										<SubMenuItem currentTheme={currentTheme} active={asPath.includes(subLink)}>
-											{t(i18nLabel)}
+											{t(i18nLabel)} {badge && <Badge color="yellow">{t(badge.i18nLabel)}</Badge>}
 										</SubMenuItem>
 									</StyledLink>
 								</SubMenuItemContainer>
