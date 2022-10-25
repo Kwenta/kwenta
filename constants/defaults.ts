@@ -49,4 +49,4 @@ export const DEFAULT_FUTURES_MARGIN_TYPE = CROSS_MARGIN_ENABLED
 	? 'cross_margin'
 	: 'isolated_margin';
 
-export const DEFAULT_LEVERAGE = '10';
+export const DEFAULT_LEVERAGE = '1';

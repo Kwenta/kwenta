@@ -1,4 +1,5 @@
 import React, { FC, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
@@ -19,6 +20,10 @@ type ErrorProps = {
 	};
 };
 
+export const FRIENDLY_I18N_MESSAGES: Record<string, string> = {
+	'Insufficient margin': 'futures.market.trade.margin.modal.deposit.min-margin-error',
+};
+
 export const Error: FC<ErrorProps> = ({
 	message,
 	formatter,
@@ -26,14 +31,16 @@ export const Error: FC<ErrorProps> = ({
 	containerStyle,
 	messageType = 'error',
 }) => {
+	const { t } = useTranslation();
 	const formattedMessage = useMemo(() => {
+		if (FRIENDLY_I18N_MESSAGES[message]) return t(FRIENDLY_I18N_MESSAGES[message]);
 		switch (formatter) {
 			case 'revert':
 				return formatRevert(message);
 			default:
 				return message;
 		}
-	}, [message, formatter]);
+	}, [message, formatter, t]);
 
 	if (isUserDeniedError(message) || !message) return null;
 
