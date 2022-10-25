@@ -110,7 +110,7 @@ export default function useQueryCrossMarginAccount() {
 		try {
 			return await handleAccountQuery();
 		} catch (err) {
-			// This a hacky workaround to deal with the delayed Metamask error
+			// This is a hacky workaround to deal with the delayed Metamask error
 			// which causes the logs query to fail on network switching
 			// https://github.com/MetaMask/metamask-extension/issues/13375#issuecomment-1046125113
 			if (err.message.includes('underlying network changed') && retryCount < 5) {
