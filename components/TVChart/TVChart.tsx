@@ -1,6 +1,6 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { useRouter } from 'next/router';
-import { useRef, useContext, useEffect, useCallback, useState, useMemo } from 'react';
+import { useRef, useContext, useEffect, useCallback, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ThemeContext } from 'styled-components';
 import { chain } from 'wagmi';
@@ -48,12 +48,12 @@ export function TVChart({
 		return;
 	},
 }: Props) {
-	const [lastSubscription, setLastSubscription] = useState(0);
-	const [intervalId, setIntervalId] = useState(0);
 	const currentTheme = useRecoilValue(currentThemeState);
 	const _widget = useRef<IChartingLibraryWidget | null>(null);
 	const _entryLine = useRef<IPositionLineAdapter | null | undefined>(null);
 	const _liquidationLine = useRef<IPositionLineAdapter | null | undefined>(null);
+	const _intervalId = useRef<number | null>(null);
+
 	const router = useRouter();
 
 	const { colors } = useContext(ThemeContext);
@@ -109,6 +109,9 @@ export function TVChart({
 			if (_widget.current !== null) {
 				_widget.current.remove();
 				_widget.current = null;
+			}
+			if (_intervalId.current) {
+				clearInterval(_intervalId.current);
 			}
 		};
 
@@ -188,21 +191,9 @@ export function TVChart({
 		});
 	}, [marketAsset]);
 
-	const onSubscribe = useCallback(
-		(newIntervalId: number) => {
-			setLastSubscription(newIntervalId);
-		},
-		[setLastSubscription]
-	);
-
-	useEffect(() => {
-		clearInterval(intervalId);
-		setIntervalId(lastSubscription);
-		_widget.current?.onChartReady(() => {
-			_widget.current?.chart()?.resetData();
-		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [lastSubscription, onSubscribe, network?.id as NetworkId]);
+	const onSubscribe = useCallback((newIntervalId: number) => {
+		_intervalId.current = newIntervalId;
+	}, []);
 
 	return <ChartBody id={containerId} />;
 }
