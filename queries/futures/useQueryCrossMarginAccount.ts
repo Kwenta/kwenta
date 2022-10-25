@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+import { NetworkId } from '@synthetixio/contracts-interface';
+import request, { gql } from 'graphql-request';
+import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { CROSS_MARGIN_ACCOUNT_FACTORY } from 'constants/address';
@@ -9,32 +11,21 @@ import logError from 'utils/logError';
 
 import useCrossMarginAccountContracts from '../../hooks/useCrossMarginContracts';
 import { FuturesAccountState } from './types';
+import { getFuturesEndpoint } from './utils';
 
 const SUPPORTED_NETWORKS = Object.keys(CROSS_MARGIN_ACCOUNT_FACTORY);
 
 export default function useQueryCrossMarginAccount() {
 	const { crossMarginContractFactory } = useCrossMarginAccountContracts();
-	const { network, walletAddress, signer } = Connector.useContainer();
+	const { network, walletAddress } = Connector.useContainer();
 
 	const [futuresAccount, setFuturesAccount] = useRecoilState(futuresAccountState);
 	const [storedCrossMarginAccounts, setStoredCrossMarginAccount] = usePersistedRecoilState(
 		crossMarginAccountsState
 	);
-	const [retryCount, setRetryCount] = useState(0);
+	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
 	const handleAccountQuery = async () => {
-		const queryAccountFromLogs = async (address: string): Promise<string | null> => {
-			if (!signer || !crossMarginContractFactory) return null;
-			const accountFilter = crossMarginContractFactory.filters.NewAccount(address);
-			if (accountFilter) {
-				const logs = await crossMarginContractFactory.queryFilter(accountFilter);
-				if (logs.length) {
-					return logs[0].args?.[1] || null;
-				}
-			}
-			return null;
-		};
-
 		if (!SUPPORTED_NETWORKS.includes(String(network.id))) {
 			const accountState: FuturesAccountState = {
 				crossMarginAvailable: false,
@@ -80,7 +71,20 @@ export default function useQueryCrossMarginAccount() {
 			walletAddress,
 		});
 
-		const crossMarginAccount = await queryAccountFromLogs(walletAddress);
+		const response = await request(
+			futuresEndpoint,
+			gql`
+				query crossMarginAccounts($owner: String!) {
+					crossMarginAccounts(where: { owner: $owner }) {
+						id
+						owner
+					}
+				}
+			`,
+			{ owner: walletAddress }
+		);
+
+		const crossMarginAccount = response?.crossMarginAccounts[0]?.id || null;
 
 		const existingAccounts = crossMarginContractFactory
 			? storedCrossMarginAccounts[crossMarginContractFactory.address]
@@ -110,22 +114,12 @@ export default function useQueryCrossMarginAccount() {
 		try {
 			return await handleAccountQuery();
 		} catch (err) {
-			// This is a hacky workaround to deal with the delayed Metamask error
-			// which causes the logs query to fail on network switching
-			// https://github.com/MetaMask/metamask-extension/issues/13375#issuecomment-1046125113
-			if (err.message.includes('underlying network changed') && retryCount < 5) {
-				setTimeout(() => {
-					setRetryCount(retryCount + 1);
-				}, 500);
-			} else {
-				setRetryCount(0);
-				logError(err);
-				setFuturesAccount({
-					...futuresAccount,
-					status: 'error',
-				});
-				return null;
-			}
+			logError(err);
+			setFuturesAccount({
+				...futuresAccount,
+				status: 'error',
+			});
+			return null;
 		}
 	};
 
@@ -133,13 +127,6 @@ export default function useQueryCrossMarginAccount() {
 		queryAccount();
 		// eslint-disable-next-line
 	}, [walletAddress, crossMarginContractFactory?.address]);
-
-	useEffect(() => {
-		if (retryCount) {
-			queryAccount();
-		}
-		// eslint-disable-next-line
-	}, [retryCount]);
 
 	return queryAccount;
 }
