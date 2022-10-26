@@ -1,6 +1,7 @@
 import { FC, memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { setBaseAmount, setMaxBaseBalance, setOpenModal } from 'state/exchange/reducer';
+import { setBaseAmount } from 'state/exchange/actions';
+import { setMaxBaseBalance, setOpenModal } from 'state/exchange/reducer';
 import {
 	selectBaseBalanceWei,
 	selectBaseCurrencyName,
@@ -32,7 +33,7 @@ const BaseCurrencyCard: FC = memo(() => {
 
 	const onBaseCurrencyAmountChange = useCallback(
 		(value: string) => {
-			dispatch(setBaseAmount({ value }));
+			dispatch(setBaseAmount(value));
 		},
 		[dispatch]
 	);

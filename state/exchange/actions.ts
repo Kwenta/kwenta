@@ -1,9 +1,11 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { wei } from '@synthetixio/wei';
 import { fetchSynthBalances } from 'state/balances/actions';
 import type { ThunkConfig } from 'state/types';
 
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { monitorTransaction } from 'contexts/RelayerContext';
-import { toWei } from 'utils/formatters/number';
+import { toWei, truncateNumbers } from 'utils/formatters/number';
 
 export const fetchBalances = createAsyncThunk<any, void, ThunkConfig>(
 	'exchange/fetchBalances',
@@ -154,32 +156,6 @@ export const submitApprove = createAsyncThunk<void, void, ThunkConfig>(
 		}
 	}
 );
-
-export const checkNeedsApproval = createAsyncThunk<
-	'approved' | 'needs-approval' | undefined,
-	void,
-	ThunkConfig
->('exchange/checkNeedsApproval', async (_, { getState, extra: { sdk } }) => {
-	const {
-		exchange: { quoteCurrencyKey, baseCurrencyKey },
-	} = getState();
-
-	if (quoteCurrencyKey && baseCurrencyKey) {
-		const needsApproval = sdk.exchange.checkNeedsApproval(baseCurrencyKey, quoteCurrencyKey);
-
-		if (needsApproval) {
-			// TODO: Handle case where allowance is not MaxUint256.
-			// Simplest way to do this is to return the allowance from
-			// checkAllowance, store it in state to do the comparison there.
-			const isApproved = await sdk.exchange.checkAllowance(quoteCurrencyKey, baseCurrencyKey, '0');
-			return isApproved ? 'approved' : 'needs-approval';
-		} else {
-			return 'approved';
-		}
-	}
-
-	return undefined;
-});
 
 export const fetchTokenList = createAsyncThunk<any, void, ThunkConfig>(
 	'exchange/fetchTokenList',
@@ -356,46 +332,75 @@ export const fetchNumEntries = createAsyncThunk<number, void, ThunkConfig>(
 	}
 );
 
-export const fetchOneInchQuote = createAsyncThunk<
-	{
-		oneInchQuote?: string;
-		slippagePercent?: string;
-	},
-	void,
-	ThunkConfig
->('exchange/fetchOneInchQuote', async (_, { getState, extra: { sdk } }) => {
-	const {
-		exchange: { quoteCurrencyKey, baseCurrencyKey, quoteAmount, txProvider },
-	} = getState();
+export const setBaseAmount = createAsyncThunk<any, string, ThunkConfig>(
+	'exchange/setBaseAmount',
+	async (value, { getState }) => {
+		const {
+			exchange: { txProvider, quoteCurrencyKey, rate, exchangeFeeRate },
+		} = getState();
 
-	let oneInchQuote = undefined;
-	let slippagePercent = undefined;
+		let baseAmount = '';
+		let quoteAmount = '';
 
-	if (
-		!!quoteCurrencyKey &&
-		!!baseCurrencyKey &&
-		!!quoteAmount &&
-		!!txProvider &&
-		txProvider !== 'synthetix'
-	) {
-		oneInchQuote = await sdk.exchange.getOneInchQuote(
-			baseCurrencyKey,
-			quoteCurrencyKey,
-			quoteAmount
-		);
-
-		if (txProvider === '1inch') {
-			const quoteAmountWei = toWei(quoteAmount);
-			const baseAmountWei = toWei(oneInchQuote);
-
-			slippagePercent = await sdk.exchange.getSlippagePercent(
-				quoteCurrencyKey,
-				baseCurrencyKey,
-				quoteAmountWei,
-				baseAmountWei
-			);
+		if (value === '') {
+			baseAmount = '';
+			quoteAmount = '';
+		} else {
+			baseAmount = value;
+			if (txProvider === 'synthetix' && !!quoteCurrencyKey) {
+				const inverseRate = wei(rate || 0).gt(0) ? wei(1).div(rate) : wei(0);
+				const quoteAmountNoFee = wei(value).mul(inverseRate);
+				const fee = quoteAmountNoFee.mul(exchangeFeeRate ?? 0);
+				quoteAmount = truncateNumbers(quoteAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS);
+			}
 		}
-	}
 
-	return { oneInchQuote, slippagePercent: slippagePercent?.toString() };
-});
+		return { baseAmount, quoteAmount };
+	}
+);
+
+export const setQuoteAmount = createAsyncThunk<any, string, ThunkConfig>(
+	'exchange/setQuoteAmount',
+	async (value, { getState, extra: { sdk } }) => {
+		const {
+			exchange: { txProvider, quoteCurrencyKey, baseCurrencyKey, rate, exchangeFeeRate },
+		} = getState();
+
+		let quoteAmount = '';
+		let baseAmount = '';
+		let slippagePercent = undefined;
+
+		if (value === '') {
+			quoteAmount = '';
+			baseAmount = '';
+		} else {
+			quoteAmount = value;
+
+			if (txProvider === 'synthetix' && baseCurrencyKey) {
+				const baseAmountNoFee = wei(value).mul(wei(rate ?? 0));
+				const fee = baseAmountNoFee.mul(wei(exchangeFeeRate ?? 0));
+				baseAmount = truncateNumbers(baseAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS);
+			} else if (!!quoteCurrencyKey && !!baseCurrencyKey && !!value && !!txProvider) {
+				baseAmount = await sdk.exchange.getOneInchQuote(baseCurrencyKey, quoteCurrencyKey, value);
+
+				if (txProvider === '1inch') {
+					const quoteAmountWei = toWei(value);
+					const baseAmountWei = toWei(baseAmount);
+
+					slippagePercent = await sdk.exchange.getSlippagePercent(
+						quoteCurrencyKey,
+						baseCurrencyKey,
+						quoteAmountWei,
+						baseAmountWei
+					);
+				}
+			}
+		}
+
+		return {
+			quoteAmount,
+			baseAmount,
+			slippagePercent: slippagePercent?.toString(),
+		};
+	}
+);

@@ -5,15 +5,15 @@ import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { truncateNumbers } from 'utils/formatters/number';
 
 import {
-	checkNeedsApproval,
 	fetchBalances,
 	fetchFeeReclaimPeriod,
 	fetchNumEntries,
-	fetchOneInchQuote,
 	fetchTokenList,
 	fetchTransactionFee,
 	fetchTxProvider,
 	resetCurrencyKeys,
+	setBaseAmount,
+	setQuoteAmount,
 	submitApprove,
 	submitExchange,
 	submitRedeem,
@@ -88,39 +88,6 @@ const exchangeSlice = createSlice({
 				const fee = quoteAmountNoFee.mul(state.exchangeFeeRate ?? 0);
 
 				state.quoteAmount = truncateNumbers(quoteAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS);
-			}
-		},
-		setBaseAmount: (state, action) => {
-			state.ratio = undefined;
-
-			if (action.payload.value === '') {
-				state.baseAmount = '';
-				state.quoteAmount = '';
-			} else {
-				state.baseAmount = action.payload.value;
-
-				if (state.txProvider === 'synthetix' && !!state.quoteCurrencyKey) {
-					const inverseRate = wei(state.rate || 0).gt(0) ? wei(1).div(state.rate) : wei(0);
-					const quoteAmountNoFee = wei(action.payload.value).mul(inverseRate);
-					const fee = quoteAmountNoFee.mul(state.exchangeFeeRate ?? 0);
-					state.quoteAmount = truncateNumbers(quoteAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS);
-				}
-			}
-		},
-		setQuoteAmount: (state, action) => {
-			state.ratio = undefined;
-
-			if (action.payload.value === '') {
-				state.quoteAmount = '';
-				state.baseAmount = '';
-			} else {
-				state.quoteAmount = action.payload.value;
-
-				if (state.txProvider === 'synthetix' && !!state.baseCurrencyKey) {
-					const baseAmountNoFee = wei(action.payload.value).mul(wei(state.rate ?? 0));
-					const fee = baseAmountNoFee.mul(wei(state.exchangeFeeRate ?? 0));
-					state.baseAmount = truncateNumbers(baseAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS);
-				}
 			}
 		},
 		setRatio: (state, action) => {
@@ -220,9 +187,6 @@ const exchangeSlice = createSlice({
 			state.openModal = undefined;
 			state.txError = action.error.message;
 		});
-		builder.addCase(checkNeedsApproval.fulfilled, (state, action) => {
-			state.approvalStatus = action.payload;
-		});
 		builder.addCase(submitApprove.pending, (state) => {
 			state.approvalStatus = 'approving';
 			state.openModal = 'approve';
@@ -276,23 +240,26 @@ const exchangeSlice = createSlice({
 		builder.addCase(fetchNumEntries.fulfilled, (state, action) => {
 			state.numEntries = action.payload;
 		});
-		builder.addCase(fetchOneInchQuote.pending, (state) => {
-			state.oneInchQuoteLoading = true;
+		builder.addCase(setQuoteAmount.pending, (state) => {
+			if (!!state.txProvider && state.txProvider !== 'synthetix') {
+				state.oneInchQuoteLoading = true;
+			}
 		});
-		builder.addCase(fetchOneInchQuote.fulfilled, (state, action) => {
+		builder.addCase(setQuoteAmount.fulfilled, (state, action) => {
+			state.ratio = undefined;
 			state.oneInchQuoteLoading = false;
-
-			if (!!action.payload.oneInchQuote) {
-				state.baseAmount = action.payload.oneInchQuote;
-			}
-
-			if (!!action.payload.slippagePercent) {
-				state.slippagePercent = action.payload.slippagePercent;
-			}
+			state.quoteAmount = action.payload.quoteAmount;
+			state.baseAmount = action.payload.baseAmount;
+			state.slippagePercent = action.payload.slippagePercent;
 		});
-		builder.addCase(fetchOneInchQuote.rejected, (state) => {
+		builder.addCase(setQuoteAmount.rejected, (state) => {
 			state.oneInchQuoteLoading = false;
 			state.oneInchQuoteError = true;
+		});
+		builder.addCase(setBaseAmount.fulfilled, (state, action) => {
+			state.ratio = undefined;
+			state.baseAmount = action.payload.baseAmount;
+			state.quoteAmount = action.payload.quoteAmount;
 		});
 		builder.addCase(resetCurrencyKeys.fulfilled, (state, action) => {
 			state.baseFeeRate = action.payload.baseFeeRate;
@@ -307,8 +274,6 @@ const exchangeSlice = createSlice({
 });
 
 export const {
-	setBaseAmount,
-	setQuoteAmount,
 	setRatio,
 	swapCurrencies,
 	setQuoteCurrencyKey,

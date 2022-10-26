@@ -1,6 +1,7 @@
 import { FC, memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { setMaxQuoteBalance, setOpenModal, setQuoteAmount } from 'state/exchange/reducer';
+import { setQuoteAmount } from 'state/exchange/actions';
+import { setMaxQuoteBalance, setOpenModal } from 'state/exchange/reducer';
 import { selectQuoteBalanceWei } from 'state/exchange/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 
@@ -19,7 +20,7 @@ const MobileQuoteCurrencyCard: FC = memo(() => {
 
 	const onQuoteCurrencyAmountChange = useCallback(
 		(value: string) => {
-			dispatch(setQuoteAmount({ value }));
+			dispatch(setQuoteAmount(value));
 		},
 		[dispatch]
 	);
