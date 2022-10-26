@@ -63,7 +63,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 			if (!invalidLabel || !price) {
 				onTradeOrderPriceChange(price);
 			}
-			setOrderPrice(price);
+			setOrderPrice(marketAssetRate.toString(2));
 		},
 		[onTradeOrderPriceChange, setOrderPrice, leverageSide, marketAssetRate, orderType]
 	);
