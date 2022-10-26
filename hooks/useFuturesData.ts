@@ -267,7 +267,7 @@ const useFuturesData = () => {
 		async (nextTrade: FuturesTradeInputs, fees: TradeFees) => {
 			if (nextTrade.nativeSizeDelta.add(position?.position?.size || 0).eq(zeroBN)) return zeroBN;
 			const currentSize = position?.position?.notionalValue || zeroBN;
-			const newNotionalValue = currentSize.add(nextTrade.susdSizeDelta);
+			const newNotionalValue = currentSize.add(nextTrade.susdSizeDelta.abs());
 			const fullMargin = newNotionalValue.abs().div(nextTrade.leverage);
 
 			let marginDelta = fullMargin.sub(position?.remainingMargin || '0').add(fees.total);
