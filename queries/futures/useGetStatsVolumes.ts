@@ -63,23 +63,19 @@ export const useGetStatsVolumes = () => {
 			}, {});
 
 			// convert the object into an array and sort it
-			const result: VolumeStat[] = Object.entries(summary)
-				.map(([date, { trades, volume }]) => ({
-					date,
-					trades,
-					volume,
-				}))
-				.sort((a, b) => (new Date(a.date) > new Date(b.date) ? 1 : -1));
-
-			// add cumulative trades and return
 			let cumulativeTrades = 0;
-			return result.map((res) => {
-				cumulativeTrades += res.trades;
-				return {
-					...res,
-					cumulativeTrades: cumulativeTrades,
-				};
-			});
+			const result: VolumeStat[] = Object.entries(summary)
+				.sort((a, b) => (new Date(a[0]) > new Date(b[0]) ? 1 : -1))
+				.map(([date, { trades, volume }]) => {
+					cumulativeTrades += trades;
+					return {
+						date,
+						trades,
+						volume,
+						cumulativeTrades,
+					};
+				});
+			return result;
 		} catch (e) {
 			logError(e);
 			return [];
