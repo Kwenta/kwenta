@@ -39,12 +39,6 @@ export type EChartsOption = echarts.ComposeOption<
 
 type ChartSpec = { chart: ECharts | null; defaultOptions: EChartsOption };
 
-/**
- * initialize a bar chart.
- *
- * @param dom mount point of the chart.
- * @param option options of the chart.
- */
 export const initChart = (dom: HTMLElement | null, theme: ThemeInterface): ChartSpec => {
 	if (!dom) return { chart: null, defaultOptions: {} };
 

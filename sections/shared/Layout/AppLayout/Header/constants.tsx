@@ -50,11 +50,11 @@ const DASHBOARD_LINKS = [
 		i18nLabel: 'dashboard.tabs.overview',
 	},
 	{
-		link: ROUTES.Home.History,
+		link: ROUTES.Dashboard.History,
 		i18nLabel: 'dashboard.tabs.history',
 	},
 	{
-		link: ROUTES.Home.Markets,
+		link: ROUTES.Dashboard.Markets,
 		i18nLabel: 'dashboard.tabs.markets',
 	},
 ];

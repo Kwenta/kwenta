@@ -36,7 +36,7 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
 	};
 
 	const showStatsPage = () => {
-		router.push(ROUTES.Home.Markets);
+		router.push(ROUTES.Stats.Home);
 		onDismiss();
 	};
 

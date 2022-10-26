@@ -30,12 +30,12 @@ const Header: FC = () => {
 			{
 				id: 'market',
 				label: t('homepage.nav.markets'),
-				onClick: () => router.push(ROUTES.Home.Markets),
+				onClick: () => router.push(ROUTES.Dashboard.Markets),
 			},
 			{
 				id: 'stats',
 				label: t('homepage.nav.stats'),
-				onClick: () => router.push(ROUTES.Home.Stats),
+				onClick: () => router.push(ROUTES.Stats.Home),
 			},
 			{
 				id: 'governance',
@@ -141,7 +141,7 @@ const Header: FC = () => {
 			</MobileHiddenView>
 			<MobileOnlyView>
 				<MobileContainer>
-					<LogoContainer onClick={() => router.push(ROUTES.Home.Markets)}>
+					<LogoContainer onClick={() => router.push(ROUTES.Dashboard.Markets)}>
 						<Logo />
 					</LogoContainer>
 					<MobileUserMenu />
