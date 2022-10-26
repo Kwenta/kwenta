@@ -63,7 +63,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 			if (!invalidLabel || !price) {
 				onTradeOrderPriceChange(price);
 			}
-			setOrderPrice(marketAssetRate.toString(2));
+			setOrderPrice(price);
 		},
 		[onTradeOrderPriceChange, setOrderPrice, leverageSide, marketAssetRate, orderType]
 	);
@@ -108,10 +108,10 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 							const price =
 								(type === 'limit' && leverageSide === 'long') ||
 								(type === 'stop market' && leverageSide === 'short')
-									? floorNumber(marketAssetRate, 0)
+									? floorNumber(marketAssetRate, 2)
 									: (type === 'stop market' && leverageSide === 'long') ||
 									  (type === 'limit' && leverageSide === 'short')
-									? ceilNumber(marketAssetRate, 0)
+									? ceilNumber(marketAssetRate, 2)
 									: '';
 							onChangeOrderPrice(String(price));
 						}}
