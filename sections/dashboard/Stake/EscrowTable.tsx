@@ -14,6 +14,7 @@ import Connector from 'containers/Connector';
 import rewardEscrowABI from 'lib/abis/RewardEscrow.json';
 import { currentThemeState } from 'store/ui';
 import { formatTruncatedDuration } from 'utils/formatters/date';
+import { truncateNumbers } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
 import { StakingCard } from './common';
@@ -321,13 +322,15 @@ const EscrowTable = () => {
 					<div>
 						<div className="stat-title">{t('dashboard.stake.tabs.escrow.total')}</div>
 						<div className="stat-value">
-							{totalVestable.toFixed(2)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
+							{truncateNumbers(totalVestable ?? 0, 2)}{' '}
+							{t('dashboard.stake.tabs.stake-table.kwenta-token')}
 						</div>
 					</div>
 					<div>
 						<div className="stat-title">{t('dashboard.stake.tabs.escrow.fee')}</div>
 						<div className="stat-value">
-							{totalFee.toFixed(2)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
+							{truncateNumbers(totalFee ?? 0, 2)}{' '}
+							{t('dashboard.stake.tabs.stake-table.kwenta-token')}
 						</div>
 					</div>
 					<VestButton $darkTheme={isDarkTheme} disabled={!vest} onClick={() => vest?.()}>

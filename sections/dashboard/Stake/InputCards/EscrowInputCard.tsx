@@ -1,4 +1,5 @@
 import { wei } from '@synthetixio/wei';
+import _ from 'lodash';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -10,7 +11,7 @@ import CustomNumericInput from 'components/Input/CustomNumericInput';
 import SegmentedControl from 'components/SegmentedControl';
 import { useStakingContext } from 'contexts/StakingContext';
 import { currentThemeState } from 'store/ui';
-import { zeroBN } from 'utils/formatters/number';
+import { truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import { StakingCard } from '../common';
 
@@ -25,7 +26,7 @@ const EscrowInputCard: FC = () => {
 	} = useStakingContext();
 
 	const [amount, setAmount] = useState('0');
-	const amountBN = Math.trunc(Number(wei(amount ?? 0).mul(1e18))).toString();
+	const amountBN = _.isNil(amount) ? '0' : Number(wei(amount ?? 0).mul(1e18)).toString();
 
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
@@ -41,7 +42,7 @@ const EscrowInputCard: FC = () => {
 		functionName: 'stakeEscrow',
 		args: [amountBN],
 		enabled: escrowedBalance.gt(0) && wei(amount).gt(0),
-		cacheTime: 5000,
+		staleTime: Infinity,
 	});
 
 	const { config: unstakedEscrowKwenta } = usePrepareContractWrite({
@@ -49,7 +50,7 @@ const EscrowInputCard: FC = () => {
 		functionName: 'unstakeEscrow',
 		args: [amountBN],
 		enabled: stakedEscrowedBalance.gt(0) && wei(amount).gt(0),
-		cacheTime: 5000,
+		staleTime: Infinity,
 	});
 
 	const { write: kwentaApprove } = useContractWrite(kwentaApproveConfig);
@@ -60,7 +61,7 @@ const EscrowInputCard: FC = () => {
 		activeTab === 0 ? wei(escrowedBalance ?? zeroBN) : wei(stakedEscrowedBalance ?? zeroBN);
 
 	const onMaxClick = useCallback(async () => {
-		setAmount(Number(maxBalance).toFixed(4));
+		setAmount(truncateNumbers(maxBalance, 2));
 	}, [maxBalance]);
 
 	return (
@@ -80,8 +81,8 @@ const EscrowInputCard: FC = () => {
 					<div className="max" onClick={onMaxClick}>
 						{t('dashboard.stake.tabs.stake-table.current-balance')}{' '}
 						{activeTab === 0
-							? Number(escrowedBalance).toFixed(2)
-							: Number(stakedEscrowedBalance).toFixed(2)}
+							? truncateNumbers(escrowedBalance, 2)
+							: truncateNumbers(stakedEscrowedBalance, 2)}
 					</div>
 				</StakeInputHeader>
 				<StyledInput
@@ -96,6 +97,7 @@ const EscrowInputCard: FC = () => {
 				fullWidth
 				variant="flat"
 				size="sm"
+				disabled={wei(amount).eq(0)}
 				onClick={() =>
 					kwentaTokenApproval
 						? kwentaApprove?.()

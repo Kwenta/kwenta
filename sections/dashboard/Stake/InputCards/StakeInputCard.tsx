@@ -1,4 +1,5 @@
 import { wei } from '@synthetixio/wei';
+import _ from 'lodash';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -10,7 +11,7 @@ import CustomNumericInput from 'components/Input/CustomNumericInput';
 import SegmentedControl from 'components/SegmentedControl';
 import { useStakingContext } from 'contexts/StakingContext';
 import { currentThemeState } from 'store/ui';
-import { zeroBN } from 'utils/formatters/number';
+import { truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import { StakingCard } from '../common';
 
@@ -25,14 +26,14 @@ const StakeInputCard: FC = () => {
 	} = useStakingContext();
 
 	const [amount, setAmount] = useState('0');
-	const amountBN = Math.trunc(Number(wei(amount ?? 0).mul(1e18))).toString();
+	const amountBN = _.isNil(amount) ? '0' : Number(wei(amount ?? 0).mul(1e18)).toString();
 
 	const { config: stakeKwentaConfig } = usePrepareContractWrite({
 		...stakingRewardsContract,
 		functionName: 'stake',
 		args: [amountBN],
 		enabled: kwentaBalance.gt(0) && wei(amount).gt(0),
-		cacheTime: 5000,
+		staleTime: Infinity,
 	});
 
 	const { config: unstakeKwentaConfig } = usePrepareContractWrite({
@@ -40,7 +41,7 @@ const StakeInputCard: FC = () => {
 		functionName: 'unstake',
 		args: [amountBN],
 		enabled: stakedNonEscrowedBalance.gt(0) && wei(amount).gt(0),
-		cacheTime: 5000,
+		staleTime: Infinity,
 	});
 
 	const currentTheme = useRecoilValue(currentThemeState);
@@ -60,7 +61,7 @@ const StakeInputCard: FC = () => {
 		activeTab === 0 ? wei(kwentaBalance ?? zeroBN) : wei(stakedNonEscrowedBalance ?? zeroBN);
 
 	const onMaxClick = useCallback(async () => {
-		setAmount(Number(maxBalance).toFixed(4));
+		setAmount(truncateNumbers(maxBalance, 4));
 	}, [maxBalance]);
 
 	return (
@@ -80,8 +81,8 @@ const StakeInputCard: FC = () => {
 					<div className="max" onClick={onMaxClick}>
 						{t('dashboard.stake.tabs.stake-table.current-balance')}{' '}
 						{activeTab === 0
-							? Number(kwentaBalance).toFixed(2)
-							: Number(stakedNonEscrowedBalance).toFixed(2)}
+							? truncateNumbers(kwentaBalance, 2)
+							: truncateNumbers(stakedNonEscrowedBalance, 2)}
 					</div>
 				</StakeInputHeader>
 				<StyledInput

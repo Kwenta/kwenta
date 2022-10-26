@@ -502,8 +502,8 @@
 					"estimated-fee-share": "Estimated Fee Share",
 					"trading-activity-reset": "Trading Activity Reset",
 					"epoch": "Epoch {{EpochPeriod}}",
-					"claimable-rewards-epoch": "Claimable Trading Rewards: Epoch {{EpochPeriod}}",
-					"claimable-rewards-all": "Claimable All Trading Rewards",
+					"claimable-rewards-epoch": "Claimable Rewards: Epoch {{EpochPeriod}}",
+					"claimable-rewards-all": "Total Claimable Trading Rewards",
 					"claim-epoch": "Claim: Epoch {{EpochPeriod}}",
 					"claim-all": "Claim All"
 				},
