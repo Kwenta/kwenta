@@ -10,12 +10,10 @@ import {
 	fetchFeeReclaimPeriod,
 	fetchNumEntries,
 	fetchOneInchQuote,
-	fetchRates,
-	fetchSlippagePercent,
 	fetchTokenList,
 	fetchTransactionFee,
 	fetchTxProvider,
-	resetCurrencies,
+	resetCurrencyKeys,
 	submitApprove,
 	submitExchange,
 	submitRedeem,
@@ -66,9 +64,9 @@ const exchangeSlice = createSlice({
 		setQuoteCurrencyKey: (state, action) => {
 			state.baseAmount = '';
 
-			state.quoteCurrencyKey = action.payload.currencyKey;
+			state.quoteCurrencyKey = action.payload;
 			state.baseCurrencyKey =
-				state.baseCurrencyKey === action.payload.currencyKey ? undefined : state.baseCurrencyKey;
+				state.baseCurrencyKey === action.payload ? undefined : state.baseCurrencyKey;
 
 			if (state.txProvider === 'synthetix' && !!state.quoteAmount && !!state.baseCurrencyKey) {
 				const baseAmountNoFee = wei(state.quoteAmount).mul(state.rate ?? 0);
@@ -80,9 +78,9 @@ const exchangeSlice = createSlice({
 		setBaseCurrencyKey: (state, action) => {
 			state.quoteAmount = '';
 
-			state.baseCurrencyKey = action.payload.currencyKey;
+			state.baseCurrencyKey = action.payload;
 			state.quoteCurrencyKey =
-				state.quoteCurrencyKey === action.payload.currencyKey ? undefined : state.quoteCurrencyKey;
+				state.quoteCurrencyKey === action.payload ? undefined : state.quoteCurrencyKey;
 
 			if (state.txProvider === 'synthetix' && !!state.baseAmount && !!state.quoteCurrencyKey) {
 				const inverseRate = wei(state.rate ?? 0).gt(0) ? wei(1).div(state.rate) : wei(0);
@@ -91,10 +89,6 @@ const exchangeSlice = createSlice({
 
 				state.quoteAmount = truncateNumbers(quoteAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS);
 			}
-		},
-		setCurrencyPair: (state, action) => {
-			state.baseCurrencyKey = action.payload.baseCurrencyKey;
-			state.quoteCurrencyKey = action.payload.quoteCurrencyKey;
 		},
 		setBaseAmount: (state, action) => {
 			state.ratio = undefined;
@@ -130,10 +124,10 @@ const exchangeSlice = createSlice({
 			}
 		},
 		setRatio: (state, action) => {
-			state.ratio = action.payload.ratio;
+			state.ratio = action.payload;
 
 			const newQuote = truncateNumbers(
-				wei(state.quoteBalance || 0).mul(action.payload.ratio / 100),
+				wei(state.quoteBalance || 0).mul(action.payload / 100),
 				DEFAULT_CRYPTO_DECIMALS
 			);
 
@@ -147,12 +141,15 @@ const exchangeSlice = createSlice({
 		},
 		swapCurrencies: (state) => {
 			const temp = state.quoteCurrencyKey;
-
 			state.quoteCurrencyKey = state.baseCurrencyKey;
 			state.baseCurrencyKey = temp;
 
 			state.baseAmount = state.txProvider === 'synthetix' ? state.quoteAmount : '';
 			state.quoteAmount = '';
+
+			const tempBalance = state.quoteBalance;
+			state.quoteBalance = state.baseBalance;
+			state.baseBalance = tempBalance;
 		},
 		setMaxQuoteBalance: (state) => {
 			if (!!state.quoteBalance) {
@@ -205,13 +202,6 @@ const exchangeSlice = createSlice({
 		builder.addCase(fetchTransactionFee.fulfilled, (state, action) => {
 			state.transactionFee = action.payload.transactionFee;
 			state.feeCost = action.payload.feeCost;
-		});
-		builder.addCase(fetchRates.fulfilled, (state, action) => {
-			state.rate = action.payload.rate;
-			state.exchangeFeeRate = action.payload.exchangeFeeRate;
-			state.baseFeeRate = action.payload.baseFeeRate;
-			state.quotePriceRate = action.payload.quotePriceRate;
-			state.basePriceRate = action.payload.basePriceRate;
 		});
 		builder.addCase(fetchTxProvider.fulfilled, (state, action) => {
 			state.txProvider = action.payload;
@@ -279,10 +269,6 @@ const exchangeSlice = createSlice({
 		builder.addCase(fetchTokenList.rejected, (state) => {
 			state.tokenListLoading = false;
 		});
-		builder.addCase(resetCurrencies.fulfilled, (state, action) => {
-			state.quoteCurrencyKey = action.payload.quoteCurrencyKey;
-			state.baseCurrencyKey = action.payload.baseCurrencyKey;
-		});
 		builder.addCase(fetchFeeReclaimPeriod.fulfilled, (state, action) => {
 			state.feeReclaimPeriod = action.payload.feeReclaimPeriod;
 			state.settlementWaitingPeriod = action.payload.settlementWaitingPeriod;
@@ -295,16 +281,27 @@ const exchangeSlice = createSlice({
 		});
 		builder.addCase(fetchOneInchQuote.fulfilled, (state, action) => {
 			state.oneInchQuoteLoading = false;
-			if (!!action.payload) {
-				state.baseAmount = action.payload;
+
+			if (!!action.payload.oneInchQuote) {
+				state.baseAmount = action.payload.oneInchQuote;
+			}
+
+			if (!!action.payload.slippagePercent) {
+				state.slippagePercent = action.payload.slippagePercent;
 			}
 		});
 		builder.addCase(fetchOneInchQuote.rejected, (state) => {
 			state.oneInchQuoteLoading = false;
 			state.oneInchQuoteError = true;
 		});
-		builder.addCase(fetchSlippagePercent.fulfilled, (state, action) => {
-			state.slippagePercent = action.payload;
+		builder.addCase(resetCurrencyKeys.fulfilled, (state, action) => {
+			state.baseFeeRate = action.payload.baseFeeRate;
+			state.rate = action.payload.rate;
+			state.exchangeFeeRate = action.payload.exchangeFeeRate;
+			state.quotePriceRate = action.payload.quotePriceRate;
+			state.basePriceRate = action.payload.basePriceRate;
+			state.txProvider = action.payload.txProvider;
+			state.approvalStatus = action.payload.approvalStatus;
 		});
 	},
 });
@@ -314,7 +311,6 @@ export const {
 	setQuoteAmount,
 	setRatio,
 	swapCurrencies,
-	setCurrencyPair,
 	setQuoteCurrencyKey,
 	setBaseCurrencyKey,
 	setMaxQuoteBalance,

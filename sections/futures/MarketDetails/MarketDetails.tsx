@@ -17,7 +17,12 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	return (
 		<MarketDetailsContainer mobile={mobile}>
 			{Object.entries(marketData).map(([marketKey, data]) => (
-				<MarketDetail {...data} marketKey={marketKey} mobile={Boolean(mobile)}></MarketDetail>
+				<MarketDetail
+					key={marketKey}
+					{...data}
+					marketKey={marketKey}
+					mobile={Boolean(mobile)}
+				></MarketDetail>
 			))}
 
 			{mobile && <MobileMarketDetail />}

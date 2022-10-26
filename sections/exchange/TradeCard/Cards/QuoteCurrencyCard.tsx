@@ -1,6 +1,6 @@
 import { FC, memo, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { fetchOneInchQuote, fetchSlippagePercent } from 'state/exchange/actions';
+import { fetchOneInchQuote } from 'state/exchange/actions';
 import { setMaxQuoteBalance, setOpenModal, setQuoteAmount } from 'state/exchange/reducer';
 import {
 	selectQuoteBalanceWei,
@@ -31,7 +31,6 @@ const QuoteCurrencyCard: FC = memo(() => {
 
 	useEffect(() => {
 		dispatch(fetchOneInchQuote());
-		dispatch(fetchSlippagePercent());
 	}, [dispatch, quoteAmountDebounced]);
 
 	const onQuoteAmountChange = useCallback(

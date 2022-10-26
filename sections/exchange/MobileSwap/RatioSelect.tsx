@@ -14,7 +14,7 @@ const RatioSelect: FC = () => {
 
 	const onRatioChange = useCallback(
 		(ratio: SwapRatio) => {
-			dispatch(setRatio({ ratio }));
+			dispatch(setRatio(ratio));
 		},
 		[dispatch]
 	);

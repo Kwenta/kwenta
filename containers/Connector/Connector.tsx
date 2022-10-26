@@ -30,15 +30,7 @@ const useConnector = () => {
 
 	const provider = useProvider({ chainId: network.id });
 	const l2Provider = useProvider({ chainId: chain.optimism.id });
-
-	const { data: signer } = useSigner({
-		onSuccess: async (signer) => {
-			if (signer) {
-				const [address] = await Promise.all([signer.getAddress(), sdk.setSigner(signer)]);
-				dispatch(resetWalletAddress(address));
-			}
-		},
-	});
+	const { data: signer } = useSigner();
 
 	// Provides a default mainnet provider, irrespective of the current network
 	const staticMainnetProvider = new ethers.providers.InfuraProvider();
@@ -56,16 +48,20 @@ const useConnector = () => {
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
-		sdk.setProvider(provider);
-		transactionNotifier = new BaseTN(provider);
-	}, [provider]);
+		sdk.setProvider(provider).then((networkId) => {
+			dispatch(resetNetwork(networkId));
+			blockExplorer = generateExplorerFunctions(getBaseUrl(networkId));
+			transactionNotifier = new BaseTN(provider);
+		});
+	}, [provider, dispatch]);
 
 	useEffect(() => {
-		sdk.setNetworkId(network.id as NetworkId).then(() => {
-			dispatch(resetNetwork(network.id as NetworkId));
-			blockExplorer = generateExplorerFunctions(getBaseUrl(network.id as NetworkId));
-		});
-	}, [network.id, dispatch]);
+		if (signer) {
+			Promise.all([signer.getAddress(), sdk.setSigner(signer)]).then(([address]) => {
+				dispatch(resetWalletAddress(address));
+			});
+		}
+	}, [signer, dispatch]);
 
 	const [synthsMap, tokensMap] = useMemo(() => {
 		if (defaultSynthetixjs == null) return [{}, {}];

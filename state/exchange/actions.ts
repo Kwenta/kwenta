@@ -1,5 +1,4 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import Wei from '@synthetixio/wei';
 import { fetchSynthBalances } from 'state/balances/actions';
 import type { ThunkConfig } from 'state/types';
 
@@ -44,9 +43,7 @@ export const fetchTxProvider = createAsyncThunk<any, void, ThunkConfig>(
 		} = getState();
 
 		if (baseCurrencyKey && quoteCurrencyKey) {
-			const txProvider = sdk.exchange.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
-
-			return txProvider;
+			return sdk.exchange.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
 		}
 
 		return undefined;
@@ -92,8 +89,7 @@ export const submitExchange = createAsyncThunk<void, void, ThunkConfig>(
 				quoteCurrencyKey,
 				baseCurrencyKey,
 				quoteAmount,
-				baseAmount,
-				true
+				baseAmount
 			);
 
 			if (hash) {
@@ -176,7 +172,6 @@ export const checkNeedsApproval = createAsyncThunk<
 			// Simplest way to do this is to return the allowance from
 			// checkAllowance, store it in state to do the comparison there.
 			const isApproved = await sdk.exchange.checkAllowance(quoteCurrencyKey, baseCurrencyKey, '0');
-
 			return isApproved ? 'approved' : 'needs-approval';
 		} else {
 			return 'approved';
@@ -184,48 +179,6 @@ export const checkNeedsApproval = createAsyncThunk<
 	}
 
 	return undefined;
-});
-
-export const fetchRates = createAsyncThunk<
-	{
-		baseFeeRate?: string;
-		rate?: string;
-		exchangeFeeRate?: string;
-		quotePriceRate?: string;
-		basePriceRate?: string;
-	},
-	void,
-	ThunkConfig
->('exchange/fetchRates', async (_, { getState, extra: { sdk } }) => {
-	const {
-		exchange: { quoteCurrencyKey, baseCurrencyKey },
-	} = getState();
-
-	if (baseCurrencyKey && quoteCurrencyKey) {
-		const [baseFeeRate, rate, exchangeFeeRate, quotePriceRate, basePriceRate] = await Promise.all([
-			sdk.exchange.getBaseFeeRate(baseCurrencyKey, quoteCurrencyKey),
-			sdk.exchange.getRate(baseCurrencyKey, quoteCurrencyKey),
-			sdk.exchange.getExchangeFeeRate(quoteCurrencyKey, baseCurrencyKey),
-			sdk.exchange.getQuotePriceRate(baseCurrencyKey, quoteCurrencyKey),
-			sdk.exchange.getBasePriceRate(baseCurrencyKey, quoteCurrencyKey),
-		]);
-
-		return {
-			baseFeeRate: baseFeeRate.toString(),
-			rate: rate.toString(),
-			exchangeFeeRate: exchangeFeeRate.toString(),
-			quotePriceRate: quotePriceRate.toString(),
-			basePriceRate: basePriceRate.toString(),
-		};
-	} else {
-		return {
-			baseFeeRate: undefined,
-			rate: undefined,
-			exchangeFeeRate: undefined,
-			quotePriceRate: undefined,
-			basePriceRate: undefined,
-		};
-	}
 });
 
 export const fetchTokenList = createAsyncThunk<any, void, ThunkConfig>(
@@ -238,11 +191,84 @@ export const fetchTokenList = createAsyncThunk<any, void, ThunkConfig>(
 	}
 );
 
+export const resetCurrencyKeys = createAsyncThunk<any, void, ThunkConfig>(
+	'exchange/resetCurrencyKeys',
+	async (_, { getState, extra: { sdk } }) => {
+		const {
+			exchange: { quoteCurrencyKey, baseCurrencyKey },
+		} = getState();
+
+		let baseFeeRate = undefined;
+		let rate = undefined;
+		let exchangeFeeRate = undefined;
+		let quotePriceRate = undefined;
+		let basePriceRate = undefined;
+		let txProvider = undefined;
+		let approvalStatus = undefined;
+
+		if (quoteCurrencyKey && baseCurrencyKey) {
+			[baseFeeRate, rate, exchangeFeeRate, quotePriceRate, basePriceRate] = await Promise.all([
+				sdk.exchange.getBaseFeeRate(baseCurrencyKey, quoteCurrencyKey),
+				sdk.exchange.getRate(baseCurrencyKey, quoteCurrencyKey),
+				sdk.exchange.getExchangeFeeRate(quoteCurrencyKey, baseCurrencyKey),
+				sdk.exchange.getQuotePriceRate(baseCurrencyKey, quoteCurrencyKey),
+				sdk.exchange.getBasePriceRate(baseCurrencyKey, quoteCurrencyKey),
+			]);
+
+			txProvider = sdk.exchange.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
+
+			const needsApproval = sdk.exchange.checkNeedsApproval(baseCurrencyKey, quoteCurrencyKey);
+
+			if (needsApproval) {
+				// TODO: Handle case where allowance is not MaxUint256.
+				// Simplest way to do this is to return the allowance from
+				// checkAllowance, store it in state to do the comparison there.
+				const isApproved = await sdk.exchange.checkAllowance(
+					quoteCurrencyKey,
+					baseCurrencyKey,
+					'0'
+				);
+
+				approvalStatus = isApproved ? 'approved' : 'needs-approval';
+			} else {
+				approvalStatus = 'approved';
+			}
+		}
+
+		return {
+			baseFeeRate: baseFeeRate?.toString(),
+			rate: rate?.toString(),
+			exchangeFeeRate: exchangeFeeRate?.toString(),
+			quotePriceRate: quotePriceRate?.toString(),
+			basePriceRate: basePriceRate?.toString(),
+			txProvider,
+			approvalStatus,
+		};
+	}
+);
+
+export const changeQuoteCurrencyKey = createAsyncThunk<any, string, ThunkConfig>(
+	'exchange/changeQuoteCurrencyKey',
+	async (currencyKey, { dispatch }) => {
+		dispatch({ type: 'exchange/setQuoteCurrencyKey', payload: currencyKey });
+		await dispatch(resetCurrencyKeys());
+		// TODO: Handle other things that depend on "txProvider" here.
+		// - feeReclaimPeriod
+	}
+);
+
+export const changeBaseCurrencyKey = createAsyncThunk<any, string, ThunkConfig>(
+	'exchange/changeBaseCurrencyKey',
+	async (currencyKey, { dispatch }) => {
+		dispatch({ type: 'exchange/setBaseCurrencyKey', payload: currencyKey });
+		await dispatch(resetCurrencyKeys());
+		// TODO: Handle other things that depend on "txProvider" here.
+		// - settlementReclaimPeriod
+	}
+);
+
 export const resetCurrencies = createAsyncThunk<
-	{
-		quoteCurrencyKey: string | undefined;
-		baseCurrencyKey: string | undefined;
-	},
+	void,
 	{
 		quoteCurrencyFromQuery: string | undefined;
 		baseCurrencyFromQuery: string | undefined;
@@ -258,17 +284,17 @@ export const resetCurrencies = createAsyncThunk<
 		const validBaseCurrency =
 			!!baseCurrencyFromQuery && sdk.exchange.validCurrencyKey(baseCurrencyFromQuery);
 
-		// Make sure the quote/base are set first!
-		await Promise.all([
-			dispatch(checkNeedsApproval()),
-			dispatch(fetchTxProvider()),
-			dispatch(fetchRates()),
-		]);
+		dispatch({
+			type: 'exchange/setQuoteCurrencyKey',
+			payload: validQuoteCurrency ? quoteCurrencyFromQuery : 'sUSD',
+		});
 
-		return {
-			quoteCurrencyKey: validQuoteCurrency ? quoteCurrencyFromQuery : 'sUSD',
-			baseCurrencyKey: validBaseCurrency ? baseCurrencyFromQuery : undefined,
-		};
+		dispatch({
+			type: 'exchange/setBaseCurrencyKey',
+			payload: validBaseCurrency ? baseCurrencyFromQuery : undefined,
+		});
+
+		dispatch(resetCurrencyKeys());
 	}
 );
 
@@ -330,60 +356,46 @@ export const fetchNumEntries = createAsyncThunk<number, void, ThunkConfig>(
 	}
 );
 
-export const fetchOneInchQuote = createAsyncThunk<string | undefined, void, ThunkConfig>(
-	'exchange/fetchOneInchQuote',
-	async (_, { getState, extra: { sdk } }) => {
-		const {
-			exchange: { quoteCurrencyKey, baseCurrencyKey, quoteAmount, txProvider },
-		} = getState();
+export const fetchOneInchQuote = createAsyncThunk<
+	{
+		oneInchQuote?: string;
+		slippagePercent?: string;
+	},
+	void,
+	ThunkConfig
+>('exchange/fetchOneInchQuote', async (_, { getState, extra: { sdk } }) => {
+	const {
+		exchange: { quoteCurrencyKey, baseCurrencyKey, quoteAmount, txProvider },
+	} = getState();
 
-		if (
-			!!quoteCurrencyKey &&
-			!!baseCurrencyKey &&
-			!!quoteAmount &&
-			!!txProvider &&
-			txProvider !== 'synthetix'
-		) {
-			const oneInchQuote = await sdk.exchange.getOneInchQuote(
-				baseCurrencyKey,
-				quoteCurrencyKey,
-				quoteAmount
-			);
+	let oneInchQuote = undefined;
+	let slippagePercent = undefined;
 
-			return oneInchQuote;
-		}
+	if (
+		!!quoteCurrencyKey &&
+		!!baseCurrencyKey &&
+		!!quoteAmount &&
+		!!txProvider &&
+		txProvider !== 'synthetix'
+	) {
+		oneInchQuote = await sdk.exchange.getOneInchQuote(
+			baseCurrencyKey,
+			quoteCurrencyKey,
+			quoteAmount
+		);
 
-		return undefined;
-	}
-);
-
-export const fetchSlippagePercent = createAsyncThunk<string | undefined, void, ThunkConfig>(
-	'exchange/fetchSlippagePercent',
-	async (_, { getState, extra: { sdk } }) => {
-		const {
-			exchange: { quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount, txProvider },
-		} = getState();
-
-		if (
-			!!quoteCurrencyKey &&
-			!!baseCurrencyKey &&
-			txProvider === '1inch' &&
-			!!quoteAmount &&
-			!!baseAmount
-		) {
+		if (txProvider === '1inch') {
 			const quoteAmountWei = toWei(quoteAmount);
-			const baseAmountWei = toWei(baseAmount);
+			const baseAmountWei = toWei(oneInchQuote);
 
-			const slippagePercent = await sdk.exchange.getSlippagePercent(
+			slippagePercent = await sdk.exchange.getSlippagePercent(
 				quoteCurrencyKey,
 				baseCurrencyKey,
 				quoteAmountWei,
 				baseAmountWei
 			);
-
-			return slippagePercent?.toString();
 		}
-
-		return undefined;
 	}
-);
+
+	return { oneInchQuote, slippagePercent: slippagePercent?.toString() };
+});

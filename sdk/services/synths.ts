@@ -12,7 +12,7 @@ type SynthBalancesTuple = [string[], ethers.BigNumber[], ethers.BigNumber[]];
 
 export default class SynthsService {
 	private sdk: KwentaSDK;
-	private balances: any;
+	private balances?: any;
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;

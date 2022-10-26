@@ -72,7 +72,7 @@ export default class ExchangeService {
 	}
 
 	public getTxProvider(baseCurrencyKey: string, quoteCurrencyKey: string) {
-		if (!baseCurrencyKey || !quoteCurrencyKey) return null;
+		if (!baseCurrencyKey || !quoteCurrencyKey) return undefined;
 		if (
 			this.synthsMap?.[baseCurrencyKey as SynthSymbol] &&
 			this.synthsMap?.[quoteCurrencyKey as SynthSymbol]
@@ -429,8 +429,10 @@ export default class ExchangeService {
 
 	public async approveSwap(quoteCurrencyKey: string, baseCurrencyKey: string) {
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
-		const oneInchApproveAddress = await this.getOneInchApproveAddress();
-		const quoteCurrencyContract = await this.getQuoteCurrencyContract(quoteCurrencyKey);
+		const [oneInchApproveAddress, quoteCurrencyContract] = await Promise.all([
+			this.getOneInchApproveAddress(),
+			this.getQuoteCurrencyContract(quoteCurrencyKey),
+		]);
 
 		const approveAddress =
 			txProvider === '1inch' ? oneInchApproveAddress : SYNTH_SWAP_OPTIMISM_ADDRESS;
@@ -492,8 +494,7 @@ export default class ExchangeService {
 		quoteCurrencyKey: string,
 		baseCurrencyKey: string,
 		quoteAmount: string,
-		baseAmount: string,
-		isApproved: boolean
+		baseAmount: string
 	) {
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
 		const quoteCurrencyTokenAddress = this.getTokenAddress(quoteCurrencyKey);
@@ -513,7 +514,6 @@ export default class ExchangeService {
 			);
 		} else {
 			const isAtomic = this.checkIsAtomic(baseCurrencyKey, quoteCurrencyKey);
-			const needsApproval = this.checkNeedsApproval(baseCurrencyKey, quoteCurrencyKey);
 			const exchangeParams = this.getExchangeParams(
 				quoteCurrencyKey,
 				baseCurrencyKey,
@@ -522,10 +522,7 @@ export default class ExchangeService {
 			);
 
 			const shouldExchange =
-				(needsApproval ? isApproved : true) &&
-				!!exchangeParams &&
-				!!this.sdk.walletAddress &&
-				!!this.sdk.contracts.Synthetix;
+				!!exchangeParams && !!this.sdk.walletAddress && !!this.sdk.contracts.Synthetix;
 
 			if (shouldExchange) {
 				const { hash } = await this.sdk.transactions.createSynthetixTxn(
@@ -785,7 +782,7 @@ export default class ExchangeService {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
-		const SynthRedeemer = this.sdk.contracts.SynthRedeemer;
+		const SynthRedeemer = this.sdk.contracts.SynthRedeemer.connect(this.sdk.provider);
 
 		const synthDeprecatedFilter = SynthRedeemer.filters.SynthDeprecated();
 		const deprecatedSynthsEvents = await SynthRedeemer.queryFilter(synthDeprecatedFilter);

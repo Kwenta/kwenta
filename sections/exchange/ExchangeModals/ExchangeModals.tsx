@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { memo, useCallback } from 'react';
-import { checkNeedsApproval, fetchRates, fetchTxProvider } from 'state/exchange/actions';
-import { setBaseCurrencyKey, setOpenModal, setQuoteCurrencyKey } from 'state/exchange/reducer';
+import { changeBaseCurrencyKey, changeQuoteCurrencyKey } from 'state/exchange/actions';
+import { setOpenModal } from 'state/exchange/reducer';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import ROUTES from 'constants/routes';
@@ -39,33 +39,25 @@ const ExchangeModals = memo(() => {
 	}, [dispatch]);
 
 	const onBaseCurrencyChange = useCallback(
-		(currencyKey: string) => {
-			dispatch(setBaseCurrencyKey({ currencyKey }));
+		async (currencyKey: string) => {
+			await dispatch(changeBaseCurrencyKey(currencyKey));
 
 			if (!!quoteCurrencyKey && quoteCurrencyKey !== currencyKey) {
 				routeToMarketPair(currencyKey, quoteCurrencyKey);
 			} else {
 				routeToBaseCurrency(currencyKey);
 			}
-
-			dispatch(fetchRates());
-			dispatch(fetchTxProvider());
-			dispatch(checkNeedsApproval());
 		},
 		[quoteCurrencyKey, routeToBaseCurrency, routeToMarketPair, dispatch]
 	);
 
 	const onQuoteCurrencyChange = useCallback(
-		(currencyKey: string) => {
-			dispatch(setQuoteCurrencyKey({ currencyKey }));
+		async (currencyKey: string) => {
+			await dispatch(changeQuoteCurrencyKey(currencyKey));
 
 			if (baseCurrencyKey && baseCurrencyKey !== currencyKey) {
 				routeToMarketPair(baseCurrencyKey, currencyKey);
 			}
-
-			dispatch(fetchRates());
-			dispatch(fetchTxProvider());
-			dispatch(checkNeedsApproval());
 		},
 		[baseCurrencyKey, routeToMarketPair, dispatch]
 	);
