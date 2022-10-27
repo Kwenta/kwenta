@@ -20,8 +20,10 @@ import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useSUSDContract from 'hooks/useSUSDContract';
+import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
 import { balancesState, futuresAccountState } from 'store/futures';
 import { FlexDivRowCentered } from 'styles/common';
+import { isUserDeniedError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
@@ -43,6 +45,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 	} = useCrossMarginAccountContracts();
 	const susdContract = useSUSDContract();
 	const { handleRefetch, refetchUntilUpdate } = useRefetchContext();
+	const queryCrossMarginAccount = useQueryCrossMarginAccount();
 
 	const futuresAccount = useRecoilValue(futuresAccountState);
 	const balances = useRecoilValue(balancesState);
@@ -51,6 +54,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 	const [depositComplete, setDepositComplete] = useState(false);
 	const [submitting, setSubmitting] = useState<null | 'approve' | 'create' | 'deposit'>(null);
 	const [allowance, setAllowance] = useState(zeroBN);
+	const [error, setError] = useState<string | null>(null);
 
 	const susdBal = balances?.susdWalletBalance;
 
@@ -75,6 +79,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 	}, [crossMarginAccountContract?.address, walletAddress]);
 
 	const createAccount = useCallback(async () => {
+		setError(null);
 		try {
 			if (!synthetixjs || !crossMarginContractFactory) throw new Error('Signer or snx lib missing');
 
@@ -82,6 +87,13 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 				CROSS_MARGIN_BASE_SETTINGS[String(network?.id as NetworkId)];
 
 			if (!crossMarginSettingsAddress) throw new Error('Unsupported network');
+			const existing = await queryCrossMarginAccount();
+			if (existing) {
+				// This is a safety measure in the case a user gets
+				// into this flow when they already have an account
+				setSubmitting(null);
+				return;
+			}
 
 			setSubmitting('create');
 			const tx = await crossMarginContractFactory.newAccount();
@@ -96,10 +108,20 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 				},
 			});
 		} catch (err) {
+			if (!isUserDeniedError(err.message)) {
+				setError('Failed to create account');
+				logError(err);
+			}
 			setSubmitting(null);
-			logError(err);
 		}
-	}, [synthetixjs, crossMarginContractFactory, network, setSubmitting, refetchUntilUpdate]);
+	}, [
+		synthetixjs,
+		crossMarginContractFactory,
+		network,
+		setSubmitting,
+		refetchUntilUpdate,
+		queryCrossMarginAccount,
+	]);
 
 	const submitDeposit = useCallback(
 		async (weiAmount: string) => {
@@ -269,6 +291,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 	return (
 		<StyledBaseModal onDismiss={onClose} isOpen={isOpen} title={t('futures.modals.onboard.title')}>
 			{renderContent()}
+			{error && <ErrorView message={error} containerStyle={{ marginTop: '20px' }} />}
 		</StyledBaseModal>
 	);
 }

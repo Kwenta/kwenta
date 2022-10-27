@@ -6,14 +6,14 @@ import styled, { css } from 'styled-components';
 
 import ChevronDown from 'assets/svg/app/chevron-down.svg';
 import ChevronUp from 'assets/svg/app/chevron-up.svg';
+import Badge from 'components/Badge';
 import ROUTES from 'constants/routes';
 import { currentThemeState } from 'store/ui';
+import { FlexDivRow } from 'styles/common';
 import { ThemeName } from 'styles/theme';
 
 import { SubMenuLink } from '../constants';
 import { MenuButton } from './common';
-import Badge from 'components/Badge';
-import { FlexDivRow } from 'styles/common';
 
 type MobileSubMenuOption = {
 	label: string;

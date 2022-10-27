@@ -76,7 +76,7 @@ const styledMarkLabel = css`
 	font-size: 13px;
 	color: ${(props) => props.theme.colors.selectedTheme.slider.label};
 	${media.lessThan('sm')`
-		top: -5px;
+		top: 30px;
 	`}
 `;
 const SliderContainer = styled.div`
