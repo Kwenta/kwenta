@@ -20,6 +20,8 @@ import media from 'styles/media';
 import MobileUserMenu from '../AppLayout/Header/MobileUserMenu';
 import Logo from '../Logo';
 
+export type TPages = 'landing-page' | 'stats-page';
+
 const Header: FC = () => {
 	const { t } = useTranslation();
 
@@ -28,7 +30,12 @@ const Header: FC = () => {
 			{
 				id: 'market',
 				label: t('homepage.nav.markets'),
-				onClick: () => router.push(ROUTES.Home.Markets),
+				onClick: () => router.push(ROUTES.Dashboard.Markets),
+			},
+			{
+				id: 'stats',
+				label: t('homepage.nav.stats'),
+				onClick: () => router.push(ROUTES.Stats.Home),
 			},
 			{
 				id: 'governance',
@@ -95,7 +102,7 @@ const Header: FC = () => {
 		<>
 			<MobileHiddenView>
 				<Container>
-					<LogoContainer>
+					<LogoContainer onClick={() => router.push(ROUTES.Home.Root)}>
 						<Logo />
 					</LogoContainer>
 					<Links>
@@ -134,7 +141,7 @@ const Header: FC = () => {
 			</MobileHiddenView>
 			<MobileOnlyView>
 				<MobileContainer>
-					<LogoContainer>
+					<LogoContainer onClick={() => router.push(ROUTES.Dashboard.Markets)}>
 						<Logo />
 					</LogoContainer>
 					<MobileUserMenu />
