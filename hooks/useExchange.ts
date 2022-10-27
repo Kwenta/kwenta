@@ -65,14 +65,10 @@ import { normalizeGasLimit, getTransactionPrice } from 'utils/network';
 
 import useIsL2 from './useIsL2';
 
-type ExchangeCardProps = {
-	showNoSynthsCard?: boolean;
-};
-
 type ExchangeModal = 'settle' | 'confirm' | 'approve' | 'redeem' | 'base-select' | 'quote-select';
 export type SwapRatio = 25 | 50 | 75 | 100;
 
-const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
+const useExchange = () => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
@@ -415,7 +411,7 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 		oneInchQuoteQuery,
 	]);
 
-	const noSynths = synthsWalletBalancesQuery.data?.balances.length === 0;
+	const noSynths = true;
 
 	const routeToMarketPair = useCallback(
 		(baseCurrencyKey: string, quoteCurrencyKey: string) =>
@@ -1029,7 +1025,6 @@ const useExchange = ({ showNoSynthsCard = false }: ExchangeCardProps) => {
 		exchangeFeeRate,
 		oneInchQuoteQuery,
 		numEntries,
-		showNoSynthsCard,
 		quoteCurrencyBalance,
 		quotePriceRate,
 		baseFeeRate,

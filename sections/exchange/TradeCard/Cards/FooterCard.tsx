@@ -13,7 +13,6 @@ import useRedeem from 'hooks/useRedeem';
 import RedeemTxModal from 'sections/dashboard/Deprecated/RedeemTxModal';
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
 import MarketClosureCard from 'sections/exchange/FooterCard/MarketClosureCard';
-import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
 import TxApproveModal from 'sections/shared/modals/TxApproveModal';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
@@ -43,9 +42,7 @@ const FooterCard: FC = memo(() => {
 	const baseCurrencyMarketClosed = useMarketClosed(baseCurrencyKey);
 
 	const {
-		noSynths,
 		numEntries,
-		showNoSynthsCard,
 		baseFeeRate,
 		needsApproval,
 		handleSubmit,
@@ -72,8 +69,6 @@ const FooterCard: FC = memo(() => {
 				<ConnectWalletCard />
 			) : baseCurrencyMarketClosed.isMarketClosed || quoteCurrencyMarketClosed.isMarketClosed ? (
 				<MarketClosureCard />
-			) : showNoSynthsCard && noSynths ? (
-				<NoSynthsCard />
 			) : !isL2 && numEntries >= 12 ? (
 				<SettleTransactionsCard numEntries={numEntries} />
 			) : (

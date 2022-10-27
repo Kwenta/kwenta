@@ -21,6 +21,7 @@ type HomePageComponent = FC & { layout?: FC<AppLayoutProps> };
 
 const HomePage: HomePageComponent = () => {
 	const { t } = useTranslation();
+
 	const Assets = dynamic(() => import('../sections/homepage/Assets'), {
 		ssr: false,
 	});
