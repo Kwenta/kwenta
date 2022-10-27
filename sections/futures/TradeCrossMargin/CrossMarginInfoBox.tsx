@@ -5,7 +5,7 @@ import styled, { useTheme } from 'styled-components';
 
 import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import InfoBox from 'components/InfoBox';
-import Loader from 'components/Loader';
+import { MiniLoader } from 'components/Loader';
 import PreviewArrow from 'components/PreviewArrow';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { FuturesPotentialTradeDetails } from 'queries/futures/types';
@@ -187,7 +187,10 @@ function MarginInfoBox({ editingLeverage }: Props) {
 								valueNode: (
 									<>
 										{keeperEthBal.gt(0) && (
-											<ActionButton onClick={() => setOpenModal('keeper-deposit')}>
+											<ActionButton
+												padding={'4px 3px 1px 3px'}
+												onClick={() => setOpenModal('keeper-deposit')}
+											>
 												<WithdrawArrow
 													width="12px"
 													height="9px"
@@ -244,10 +247,6 @@ function MarginInfoBox({ editingLeverage }: Props) {
 	);
 }
 
-const MiniLoader = () => {
-	return <Loader inline height="11px" width="11px" style={{ marginLeft: '10px' }} />;
-};
-
 const StyledInfoBox = styled(InfoBox)`
 	margin-bottom: 16px;
 
@@ -263,17 +262,16 @@ const Button = styled.span`
 	}
 `;
 
-const ActionButton = styled(Button)<{ hideBorder?: boolean }>`
+const ActionButton = styled(Button)<{ padding?: string }>`
 	margin-left: 8px;
 	cursor: pointer;
 	font-size: 10px;
 	font-family: ${(props) => props.theme.fonts.black};
 	font-variant: all-small-caps;
-	border: 1px solid
-		${(props) => (!props.hideBorder ? props.theme.colors.selectedTheme.yellow : 'none')};
+	border: 1px solid ${(props) => props.theme.colors.selectedTheme.yellow};
 	color: ${(props) => props.theme.colors.selectedTheme.button.pill.background};
 	border-radius: 10px;
-	padding: ${(props) => (props.hideBorder ? '3px 2px 3px 0px' : '3px 5px')};
+	padding: ${(props) => props.padding ?? '3px 5px'};
 	&:hover {
 		background-color: ${(props) => props.theme.colors.selectedTheme.button.pill.background};
 		color: ${(props) => props.theme.colors.selectedTheme.button.pill.hover};

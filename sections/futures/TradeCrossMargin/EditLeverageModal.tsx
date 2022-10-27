@@ -195,19 +195,24 @@ export default function EditLeverageModal({ onDismiss }: DepositMarginModalProps
 				left={<MaxButton onClick={handleDecrease}>-</MaxButton>}
 				textAlign="center"
 			/>
+			<SliderOuter>
+				<Spacer height={55} />
 
-			<SliderRow>
-				<LeverageSlider
-					minValue={1}
-					maxValue={maxLeverage}
-					value={leverage}
-					onChange={(_, newValue) => {
-						setLeverage(newValue as number);
-						previewPositionChange(newValue as number);
-					}}
-					onChangeCommitted={() => {}}
-				/>
-			</SliderRow>
+				<SliderInner>
+					<FlexDivRow>
+						<LeverageSlider
+							minValue={1}
+							maxValue={maxLeverage}
+							value={leverage}
+							onChange={(_, newValue) => {
+								setLeverage(newValue as number);
+								previewPositionChange(newValue as number);
+							}}
+							onChangeCommitted={() => {}}
+						/>
+					</FlexDivRow>
+				</SliderInner>
+			</SliderOuter>
 
 			<MaxPosContainer>
 				<Label>{t('futures.market.trade.leverage.modal.max-pos')}</Label>
@@ -259,8 +264,7 @@ const StyledBaseModal = styled(BaseModal)`
 `;
 
 const MaxPosContainer = styled(FlexDivRowCentered)`
-	margin-top: 24px;
-	margin-bottom: 8px;
+	margin-top: 15px;
 	p {
 		margin: 0;
 	}
@@ -287,10 +291,16 @@ const MaxButton = styled.div`
 `;
 
 const InputContainer = styled(CustomInput)`
-	margin-bottom: 30px;
+	margin-bottom: 15px;
 `;
 
-const SliderRow = styled(FlexDivRow)`
-	margin-bottom: 14px;
+const SliderOuter = styled.div`
 	position: relative;
+`;
+
+const SliderInner = styled.div`
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
 `;
