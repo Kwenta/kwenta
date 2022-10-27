@@ -1,4 +1,4 @@
-import Wei, { wei } from '@synthetixio/wei';
+import Wei from '@synthetixio/wei';
 import { capitalize } from 'lodash';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +9,7 @@ import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import ErrorView from 'components/Error';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import {
 	currentMarketState,
 	futuresOrderPriceState,
@@ -129,7 +130,7 @@ export default function TradeConfirmationModal({
 	);
 
 	const disabledReason = useMemo(() => {
-		if (positionDetails?.margin.lt(wei(50)))
+		if (positionDetails?.margin.lt(MIN_MARGIN_AMOUNT))
 			return t('futures.market.trade.confirmation.modal.disabled-min-margin');
 	}, [positionDetails?.margin, t]);
 

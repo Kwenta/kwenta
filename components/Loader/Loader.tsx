@@ -26,4 +26,8 @@ Loader.defaultProps = {
 	inline: false,
 };
 
+export const MiniLoader = () => {
+	return <Loader inline height="11px" width="11px" style={{ marginLeft: '10px' }} />;
+};
+
 export default Loader;
