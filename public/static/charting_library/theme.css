@@ -21,6 +21,7 @@
     --tv-color-toolbar-button-background-hover: #3A3A3A;
     --tv-color-toolbar-button-background-secondary-hover: #3A3A3A;
     --tv-color-toolbar-button-background-expanded: #787878;
+    --tv-color-toolbar-tooltip-text: #787878;
     --tv-color-toolbar-button-text: #787878;
     --tv-color-toolbar-button-text-hover: #787878;
     --tv-color-toolbar-button-text-active: #787878;
@@ -29,3 +30,17 @@
     --tv-color-toolbar-toggle-button-background-active: #2F2F48;
     --tv-color-toolbar-toggle-button-background-active-hover: #787878;
 }
+
+.custom-button {
+    height: 34px;
+    line-height: 34px;
+    border-radius: 2px;
+    color: #787878 !important;
+}
+.custom-button:hover {
+    background: #3A3A3A;
+}
+
+
+
+

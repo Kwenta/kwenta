@@ -1,17 +1,7 @@
 import common from './common';
 
 const lightTheme = {
-	background: '#F2F2F2',
-	border: '1px solid rgba(0,0,0,0.17)',
-	outlineBorder: '1px solid rgba(0,0,0,0.17)',
-	red: '#A80300',
-	green: '#1D5D1F',
-	orange: '#DA8332',
-	black: '#171002',
-	white: '#F2F2F2',
-	gray: '#515151',
-	gray2: '#D2D2D2', // TODO: Update once added to designs
-	yellow: '#6A3300',
+	...common.light,
 	table: { fill: '#EEE', hover: '#E6E6E6' },
 	gold: '#724713',
 	badge: {
@@ -128,6 +118,9 @@ const lightTheme = {
 			text: '#171002',
 		},
 		bg: '#515151',
+	},
+	chartLine: {
+		long: common.light.green,
 	},
 };
 

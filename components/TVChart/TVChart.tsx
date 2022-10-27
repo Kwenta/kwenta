@@ -6,8 +6,10 @@ import { ThemeContext } from 'styled-components';
 import { chain } from 'wagmi';
 
 import Connector from 'containers/Connector';
+import { FuturesOrder } from 'queries/futures/types';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
 import { currentThemeState } from 'store/ui';
+import darkTheme from 'styles/theme/colors/dark';
 import { formatNumber } from 'utils/formatters/number';
 
 import {
@@ -22,7 +24,10 @@ import { ChartPosition } from './types';
 export type ChartProps = {
 	activePosition?: ChartPosition | null;
 	potentialTrade?: ChartPosition | null;
+	openOrders: FuturesOrder[];
+	showOrderLines: boolean;
 	onChartReady?: () => void;
+	onToggleShowOrderLines?: () => void;
 };
 
 export type Props = ChartProps & {
@@ -44,6 +49,9 @@ export function TVChart({
 	studiesOverrides = {},
 	activePosition,
 	potentialTrade,
+	openOrders,
+	showOrderLines,
+	onToggleShowOrderLines,
 	onChartReady = () => {
 		return;
 	},
@@ -52,7 +60,10 @@ export function TVChart({
 	const _widget = useRef<IChartingLibraryWidget | null>(null);
 	const _entryLine = useRef<IPositionLineAdapter | null | undefined>(null);
 	const _liquidationLine = useRef<IPositionLineAdapter | null | undefined>(null);
+	const _oderLineRefs = useRef<IPositionLineAdapter[]>([]);
+	const _toggleLinesButton = useRef<HTMLElement | null>(null);
 	const _intervalId = useRef<number | null>(null);
+	const _toggleListener = useRef<(() => void) | null>(null);
 
 	const router = useRouter();
 
@@ -68,6 +79,69 @@ export function TVChart({
 	const [marketAsset, marketAssetLoaded] = useMemo(() => {
 		return router.query.asset ? [router.query.asset, true] : [null, false];
 	}, [router.query.asset]);
+
+	const clearOrderLines = () => {
+		_oderLineRefs.current?.forEach((ref) => {
+			ref?.remove();
+		});
+		_oderLineRefs.current = [];
+	};
+
+	const renderOrderLines = () => {
+		clearOrderLines();
+		_oderLineRefs.current = openOrders.reduce<IPositionLineAdapter[]>((acc, order) => {
+			if (order.targetPrice) {
+				const color =
+					order.side === 'long' ? colors.selectedTheme.chartLine.long : colors.selectedTheme.red;
+
+				const orderLine = _widget.current
+					?.chart()
+					.createPositionLine()
+					.setText(order.orderType)
+					.setTooltip('Average entry price')
+					.setQuantity(formatNumber(order.size.abs()))
+					.setPrice(order.targetPrice?.toNumber() ?? 0)
+					.setExtendLeft(false)
+					.setQuantityTextColor(colors.white)
+					.setBodyTextColor(darkTheme.black)
+					.setLineStyle(2)
+					.setLineColor(color)
+					.setBodyBorderColor(color)
+					.setQuantityBackgroundColor(color)
+					.setQuantityBorderColor(color)
+					.setLineLength(25);
+				if (orderLine) {
+					acc.push(orderLine);
+				}
+			}
+			return acc;
+		}, []);
+	};
+
+	const onToggleOrderLines = () => {
+		if (_oderLineRefs.current.length) {
+			clearOrderLines();
+		} else {
+			renderOrderLines();
+		}
+	};
+
+	useEffect(() => {
+		if (showOrderLines) {
+			renderOrderLines();
+		}
+		// eslint-disable-next-line
+	}, [openOrders]);
+
+	useEffect(() => {
+		if (_toggleLinesButton.current) {
+			_toggleLinesButton.current.textContent = showOrderLines ? 'Hide Orders' : 'Show Orders';
+		}
+		if (_widget.current) {
+			onToggleOrderLines();
+		}
+		// eslint-disable-next-line
+	}, [showOrderLines]);
 
 	useEffect(() => {
 		const widgetOptions = {
@@ -107,6 +181,7 @@ export function TVChart({
 
 		const clearExistingWidget = () => {
 			if (_widget.current !== null) {
+				clearOrderLines();
 				_widget.current.remove();
 				_widget.current = null;
 			}
@@ -126,11 +201,30 @@ export function TVChart({
 			onChartReady();
 		});
 
+		_widget.current?.headerReady().then(() => {
+			if (!_widget.current || !onToggleShowOrderLines) return;
+			_toggleLinesButton.current = _widget.current.createButton();
+			_toggleLinesButton.current.classList.add('custom-button');
+			_toggleLinesButton.current.setAttribute('title', 'Hide / Show Orders');
+			_toggleLinesButton.current.textContent = 'Show Orders';
+			_toggleLinesButton.current.addEventListener('click', onToggleShowOrderLines);
+			_toggleListener.current = onToggleShowOrderLines;
+		});
+
 		return () => {
 			clearExistingWidget();
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network?.id as NetworkId, currentTheme, marketAssetLoaded]);
+
+	useEffect(() => {
+		if (onToggleShowOrderLines) {
+			_toggleListener.current &&
+				_toggleLinesButton.current?.removeEventListener('click', _toggleListener.current);
+			_toggleLinesButton.current?.addEventListener('click', onToggleShowOrderLines);
+			_toggleListener.current = onToggleShowOrderLines;
+		}
+	}, [onToggleShowOrderLines]);
 
 	useEffect(() => {
 		_widget.current?.onChartReady(() => {
@@ -139,37 +233,36 @@ export function TVChart({
 				_liquidationLine.current?.remove?.();
 				_entryLine.current = null;
 				_liquidationLine.current = null;
-
 				const setPositionLines = (position: ChartPosition, active: boolean) => {
 					_entryLine.current = _widget.current
 						?.chart()
 						.createPositionLine()
-						.setText('ENTRY: ' + formatNumber(position.price))
+						.setText('Entry')
 						.setTooltip('Average entry price')
 						.setQuantity(formatNumber(position.size.abs()))
 						.setPrice(position.price.toNumber())
 						.setExtendLeft(false)
+						.setBodyTextColor(darkTheme.black)
 						.setLineStyle(active ? 0 : 2)
 						.setLineLength(25);
-
 					if (position.liqPrice) {
 						_liquidationLine.current = _widget.current
 							?.chart()
 							.createPositionLine()
-							.setText('LIQUIDATION: ' + formatNumber(position.liqPrice))
+							.setText('Liquidation')
 							.setTooltip('Liquidation price')
 							.setQuantity(formatNumber(position.size.abs()))
 							.setPrice(position.liqPrice.toNumber())
 							.setExtendLeft(false)
+							.setBodyTextColor(darkTheme.black)
 							.setLineStyle(active ? 0 : 2)
-							.setLineColor(colors.common.primaryRed)
-							.setBodyBorderColor(colors.common.primaryRed)
-							.setQuantityBackgroundColor(colors.common.primaryRed)
-							.setQuantityBorderColor(colors.common.primaryRed)
+							.setLineColor(colors.selectedTheme.orange)
+							.setBodyBorderColor(colors.selectedTheme.orange)
+							.setQuantityBackgroundColor(colors.selectedTheme.orange)
+							.setQuantityBorderColor(colors.selectedTheme.orange)
 							.setLineLength(25);
 					}
 				};
-
 				// Always show potential over existing
 				if (potentialTrade) {
 					setPositionLines(potentialTrade, false);
@@ -178,7 +271,8 @@ export function TVChart({
 				}
 			});
 		});
-	}, [activePosition, potentialTrade, colors.common.primaryRed]);
+		// eslint-disable-next-line
+	}, [activePosition, potentialTrade]);
 
 	useEffect(() => {
 		_widget.current?.onChartReady(() => {

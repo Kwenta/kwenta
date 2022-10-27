@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
@@ -10,6 +10,7 @@ import {
 	futuresTradeInputsState,
 	positionHistoryState,
 	futuresAccountTypeState,
+	openOrdersState,
 } from 'store/futures';
 
 export default function PositionChart() {
@@ -18,8 +19,10 @@ export default function PositionChart() {
 	const position = useRecoilValue(positionState);
 	const positionHistory = useRecoilValue(positionHistoryState);
 	const futuresAccountType = useRecoilValue(futuresAccountTypeState);
-
+	const openOrders = useRecoilValue(openOrdersState);
 	const { data: previewTrade } = useRecoilValue(potentialTradeDetailsState);
+
+	const [showOrderLines, setShowOrderLines] = useState(false);
 
 	const subgraphPosition = useMemo(() => {
 		return positionHistory[futuresAccountType].find((p) => p.isOpen && p.asset === marketAsset);
@@ -53,9 +56,15 @@ export default function PositionChart() {
 		};
 	}, [subgraphPosition, position]);
 
+	const onToggleLines = useCallback(() => {
+		setShowOrderLines(!showOrderLines);
+	}, [setShowOrderLines, showOrderLines]);
+
 	return (
 		<Container visible={isChartReady}>
+			<div onClick={onToggleLines}>Toggle</div>
 			<TVChart
+				openOrders={openOrders}
 				activePosition={activePosition}
 				potentialTrade={
 					previewTrade
@@ -69,6 +78,8 @@ export default function PositionChart() {
 				onChartReady={() => {
 					setIsChartReady(true);
 				}}
+				showOrderLines={showOrderLines}
+				onToggleShowOrderLines={onToggleLines}
 			/>
 		</Container>
 	);
