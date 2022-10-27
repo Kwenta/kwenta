@@ -110,10 +110,10 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 							const price =
 								(type === 'limit' && leverageSide === 'long') ||
 								(type === 'stop market' && leverageSide === 'short')
-									? floorNumber(marketAssetRate, 2) - offset
+									? floorNumber(marketAssetRate, decimals) - offset
 									: (type === 'stop market' && leverageSide === 'long') ||
 									  (type === 'limit' && leverageSide === 'short')
-									? ceilNumber(marketAssetRate, 2) - offset
+									? ceilNumber(marketAssetRate, decimals) + offset
 									: '';
 							onChangeOrderPrice(String(price));
 						}}
