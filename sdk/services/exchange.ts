@@ -6,7 +6,7 @@ import Wei, { wei } from '@synthetixio/wei';
 import axios from 'axios';
 import { Contract as EthCallContract } from 'ethcall';
 import { BigNumber, ethers } from 'ethers';
-import { get, keyBy, omit } from 'lodash';
+import { get, keyBy } from 'lodash';
 import KwentaSDK from 'sdk';
 
 import { KWENTA_REFERRAL_ADDRESS, SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
@@ -16,7 +16,7 @@ import {
 	ETH_ADDRESS,
 	ETH_COINGECKO_ADDRESS,
 } from 'constants/currency';
-import { DEFAULT_1INCH_SLIPPAGE } from 'constants/defaults';
+import { DEFAULT_1INCH_SLIPPAGE, DEFAULT_GAS_BUFFER } from 'constants/defaults';
 import { ATOMIC_EXCHANGE_SLIPPAGE } from 'constants/exchange';
 import { ETH_UNIT } from 'constants/network';
 import erc20Abi from 'lib/abis/ERC20.json';
@@ -88,8 +88,11 @@ export default class ExchangeService {
 		baseCurrencyKey: string,
 		quoteAmountWei: Wei
 	) {
-		const quotePriceRate = await this.getQuotePriceRate(baseCurrencyKey, quoteCurrencyKey);
-		const sUSDRate = await this.getSynthUsdRate(quoteCurrencyKey, baseCurrencyKey);
+		const [quotePriceRate, sUSDRate] = await Promise.all([
+			this.getQuotePriceRate(baseCurrencyKey, quoteCurrencyKey),
+			this.getSynthUsdRate(quoteCurrencyKey, baseCurrencyKey),
+		]);
+
 		let tradePrice = quoteAmountWei.mul(quotePriceRate || 0);
 
 		if (sUSDRate) tradePrice = tradePrice.div(sUSDRate);
@@ -102,8 +105,11 @@ export default class ExchangeService {
 		baseCurrencyKey: string,
 		baseAmountWei: Wei
 	) {
-		const basePriceRate = await this.getBasePriceRate(baseCurrencyKey, quoteCurrencyKey);
-		const sUSDRate = await this.getSynthUsdRate(quoteCurrencyKey, baseCurrencyKey);
+		const [basePriceRate, sUSDRate] = await Promise.all([
+			this.getBasePriceRate(baseCurrencyKey, quoteCurrencyKey),
+			this.getSynthUsdRate(quoteCurrencyKey, baseCurrencyKey),
+		]);
+
 		let tradePrice = baseAmountWei.mul(basePriceRate || 0);
 
 		if (sUSDRate) tradePrice = tradePrice.div(sUSDRate);
@@ -111,28 +117,31 @@ export default class ExchangeService {
 		return tradePrice;
 	}
 
+	// TODO:
+	// - The `getTotalTradePrice` and `getEstimatedBaseTradePrice` functions
+	//   should be consolidated.
+	// - In the same vein, the `get(Quote/Base)PriceRate` functions should
+	//   be merged as well.
+	// - Consider making it the client's reponsibility to ensure that the
+	//   `txProvider` is correct.
+
 	public async getSlippagePercent(
 		quoteCurrencyKey: string,
 		baseCurrencyKey: string,
 		quoteAmountWei: Wei,
 		baseAmountWei: Wei
 	) {
-		const totalTradePrice = await this.getTotalTradePrice(
-			quoteCurrencyKey,
-			baseCurrencyKey,
-			quoteAmountWei
-		);
-
-		const estimatedBaseTradePrice = await this.getEstimatedBaseTradePrice(
-			quoteCurrencyKey,
-			baseCurrencyKey,
-			baseAmountWei
-		);
-
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
 
-		if (txProvider === '1inch' && totalTradePrice.gt(0) && estimatedBaseTradePrice.gt(0)) {
-			return totalTradePrice.sub(estimatedBaseTradePrice).div(totalTradePrice).neg();
+		if (txProvider === '1inch') {
+			const [totalTradePrice, estimatedBaseTradePrice] = await Promise.all([
+				this.getTotalTradePrice(quoteCurrencyKey, baseCurrencyKey, quoteAmountWei),
+				this.getEstimatedBaseTradePrice(quoteCurrencyKey, baseCurrencyKey, baseAmountWei),
+			]);
+
+			if (txProvider === '1inch' && totalTradePrice.gt(0) && estimatedBaseTradePrice.gt(0)) {
+				return totalTradePrice.sub(estimatedBaseTradePrice).div(totalTradePrice).neg();
+			}
 		}
 
 		return undefined;
@@ -167,7 +176,7 @@ export default class ExchangeService {
 			ethers.utils.formatBytes32String(baseCurrencyKey)
 		);
 
-		return wei(exchangeFeeRate).div(ETH_UNIT);
+		return wei(exchangeFeeRate);
 	}
 
 	public async getRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
@@ -544,19 +553,21 @@ export default class ExchangeService {
 		quoteAmount: string,
 		baseAmount: string
 	) {
+		const [exchangeRates, gasPrices] = await Promise.all([
+			this.getExchangeRates(),
+			this.getEthGasPrice(),
+		]);
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
-		const exchangeRates = await this.getExchangeRates();
-		const gasPrices = await this.getEthGasPrice();
 		const ethPriceRate = newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', 'sUSD');
 		const gasPrice = gasPrices.fast;
 
-		const gasInfo = await this.getGasEstimateForExchange(
-			quoteCurrencyKey,
-			baseCurrencyKey,
-			quoteAmount
-		);
-
 		if (txProvider === 'synthswap' || txProvider === '1inch') {
+			const gasInfo = await this.getGasEstimateForExchange(
+				quoteCurrencyKey,
+				baseCurrencyKey,
+				quoteAmount
+			);
+
 			return getTransactionPrice(
 				gasPrice,
 				BigNumber.from(gasInfo?.limit || 0),
@@ -567,8 +578,8 @@ export default class ExchangeService {
 			const exchangeParams = this.getExchangeParams(
 				quoteCurrencyKey,
 				baseCurrencyKey,
-				wei(quoteAmount),
-				wei(baseAmount).mul(wei(1).sub(ATOMIC_EXCHANGE_SLIPPAGE))
+				wei(quoteAmount || 0),
+				wei(baseAmount || 0).mul(wei(1).sub(ATOMIC_EXCHANGE_SLIPPAGE))
 			);
 
 			if (!this.sdk.signer) {
@@ -582,35 +593,32 @@ export default class ExchangeService {
 			const isAtomic = this.checkIsAtomic(baseCurrencyKey, quoteCurrencyKey);
 			const method = isAtomic ? 'exchangeAtomically' : 'exchangeWithTracking';
 
-			const gasLimit = await this.sdk.contracts.Synthetix.connect(this.sdk.signer).estimateGas[
-				method
-			](...exchangeParams);
+			const txn = {
+				to: this.sdk.contracts.Synthetix.address,
+				data: this.sdk.contracts.Synthetix.interface.encodeFunctionData(method, exchangeParams),
+				value: ethers.BigNumber.from(0),
+			};
 
-			const txn = await this.sdk.contracts.Synthetix.connect(this.sdk.signer).populateTransaction[
-				method
-			](...exchangeParams);
+			const [baseGasLimit, optimismLayerOneFee] = await Promise.all([
+				this.sdk.transactions.estimateGas(txn),
+				this.sdk.transactions.getOptimismLayerOneFees(txn),
+			]);
 
-			const optimismLayerOneFee = await this.getL1SecurityFee({
-				...omit(txn, ['maxPriorityFeePerGas', 'maxFeePerGas']),
-				gasLimit: txn.gasLimit?.toNumber() ?? 0,
-				gasPrice: txn.gasPrice?.toNumber() ?? 0,
-			});
+			const gasLimit = wei(baseGasLimit ?? 0, 9)
+				.mul(1 + DEFAULT_GAS_BUFFER)
+				.toBN();
 
 			return getTransactionPrice(gasPrice, gasLimit, ethPriceRate, optimismLayerOneFee);
 		}
 	}
 
 	public async getFeeCost(quoteCurrencyKey: string, baseCurrencyKey: string, quoteAmount: string) {
-		const sourceCurrencyKey = ethers.utils.formatBytes32String(quoteCurrencyKey);
-		const destinationCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey);
-
-		const exchangeFeeRate = await this.getExchangeFeeRate(
-			sourceCurrencyKey,
-			destinationCurrencyKey
-		);
+		const [exchangeFeeRate, quotePriceRate] = await Promise.all([
+			this.getExchangeFeeRate(quoteCurrencyKey, baseCurrencyKey),
+			this.getQuotePriceRate(baseCurrencyKey, quoteCurrencyKey),
+		]);
 
 		const feeAmountInQuoteCurrency = wei(quoteAmount).mul(exchangeFeeRate);
-		const quotePriceRate = await this.getQuotePriceRate(baseCurrencyKey, quoteCurrencyKey);
 
 		return feeAmountInQuoteCurrency.mul(quotePriceRate);
 	}
@@ -722,7 +730,7 @@ export default class ExchangeService {
 
 		const exchangeRates = await this.getExchangeRates();
 
-		if (txProvider !== 'synthetix' && !quoteCurrencyKey) {
+		if (txProvider !== 'synthetix') {
 			const selectPriceCurrencyRate = exchangeRates['sUSD'];
 
 			if (
@@ -750,7 +758,7 @@ export default class ExchangeService {
 			: this.getTokenAddress(baseCurrencyKey)
 		).toLowerCase();
 
-		const quoteCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey).toLowerCase();
+		const quoteCurrencyTokenAddress = this.getTokenAddress(quoteCurrencyKey).toLowerCase();
 
 		const coinGeckoPrices = await this.getCoingeckoPrices([
 			quoteCurrencyTokenAddress,
@@ -759,7 +767,7 @@ export default class ExchangeService {
 
 		const exchangeRates = await this.getExchangeRates();
 
-		if (txProvider !== 'synthetix' && !baseCurrencyKey) {
+		if (txProvider !== 'synthetix') {
 			const selectPriceCurrencyRate = exchangeRates['sUSD'];
 
 			if (coinGeckoPrices && selectPriceCurrencyRate && coinGeckoPrices[baseCurrencyTokenAddress]) {

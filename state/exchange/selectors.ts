@@ -102,7 +102,7 @@ export const selectSlippagePercentWei = createSelector(
 
 export const selectTransactionFeeWei = createSelector(
 	(state: RootState) => state.exchange.transactionFee,
-	(transactionFee) => toWei(transactionFee)
+	(transactionFee) => (transactionFee ? toWei(transactionFee) : undefined)
 );
 
 export const selectFeeCostWei = createSelector(
@@ -195,4 +195,9 @@ export const selectSubmissionDisabledReason = createSelector(
 		}
 		return null;
 	}
+);
+
+export const selectIsSubmissionDisabled = createSelector(
+	selectSubmissionDisabledReason,
+	(submissionDisabledReason) => !!submissionDisabledReason
 );

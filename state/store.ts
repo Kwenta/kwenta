@@ -14,8 +14,7 @@ const store = configureStore({
 		balances: balancesReducer,
 		exchange: exchangeReducer,
 	},
-	middleware: (getDefaultMiddleware) =>
-		getDefaultMiddleware({ thunk: { extraArgument: { sdk } } }).concat(logger),
+	middleware: (getDefaultMiddleware) => getDefaultMiddleware({ thunk: { extraArgument: { sdk } } }), //.concat(logger),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

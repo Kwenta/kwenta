@@ -39,3 +39,8 @@ The following tasks are expected to be completed before the SDK can be considere
 - [ ] Experiment with exchange contexts (store an instance of from/to pairings, so that the client doesn't have to pass it every time).
 - [ ] Reduce number of queries, by storing more data in class instance.
 - [ ] Write tests for simple functions.
+- [ ] Remove duplicate calls in `getSlippagePercent`
+
+# Notes
+
+- The `ExchangeService` class is still structured very similarly to the `useExchange` hook. It is important to change this, as they are two different paradigms. Without doing this, it is impossible to be efficient with requests and eliminating the overdependence of certain methods on others.

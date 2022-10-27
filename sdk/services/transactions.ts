@@ -77,7 +77,7 @@ export default class TransactionsService {
 		return this.createContractTxn(contract, method, args, txnOptions, options);
 	}
 
-	private async estimateGas(txn: ethers.providers.TransactionRequest) {
+	public async estimateGas(txn: ethers.providers.TransactionRequest) {
 		if (!this.sdk.signer) {
 			throw new Error('A signer is required to estimate gas.');
 		}

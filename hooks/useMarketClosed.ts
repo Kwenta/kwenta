@@ -1,5 +1,6 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { SynthSuspensionReason } from '@synthetixio/queries';
+import { useMemo } from 'react';
 
 import { CurrencyKey } from 'constants/currency';
 
@@ -8,18 +9,17 @@ export type MarketClosure = ReturnType<typeof useMarketClosed>;
 
 const useMarketClosed = (currencyKey: CurrencyKey | null) => {
 	const { useSynthSuspensionQuery } = useSynthetixQueries();
-
 	const currencySuspendedQuery = useSynthSuspensionQuery(currencyKey);
 
-	const isMarketClosed =
-		currencySuspendedQuery.isSuccess && currencySuspendedQuery.data
-			? currencySuspendedQuery.data.isSuspended
-			: false;
+	const { isMarketClosed, marketClosureReason } = useMemo(
+		() => ({
+			isMarketClosed: currencySuspendedQuery.data?.isSuspended ?? false,
+			marketClosureReason: currencySuspendedQuery.data?.reason as MarketClosureReason,
+		}),
+		[currencySuspendedQuery?.data]
+	);
 
-	return {
-		isMarketClosed,
-		marketClosureReason: currencySuspendedQuery.data?.reason as MarketClosureReason,
-	};
+	return { isMarketClosed, marketClosureReason };
 };
 
 export default useMarketClosed;

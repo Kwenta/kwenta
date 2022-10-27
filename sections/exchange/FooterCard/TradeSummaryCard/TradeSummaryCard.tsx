@@ -27,11 +27,7 @@ import { secondsToTime } from 'utils/formatters/date';
 import { MessageContainer } from '../common';
 import { SummaryItems } from '../common';
 
-type TradeSummaryCardProps = {
-	className?: string;
-};
-
-const TradeSummaryCard: FC<TradeSummaryCardProps> = memo(({ ...rest }) => {
+const TradeSummaryCard: FC = memo(() => {
 	const { t } = useTranslation();
 
 	const { feeReclaimPeriod, openModal } = useAppSelector(({ exchange }) => ({
@@ -66,7 +62,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = memo(({ ...rest }) => {
 					</Card.Body>
 				</MobileCard>
 			</MobileOrTabletView>
-			<MessageContainer className="footer-card" {...rest}>
+			<MessageContainer className="footer-card">
 				<DesktopOnlyView>
 					<SummaryItemsWrapper />
 				</DesktopOnlyView>

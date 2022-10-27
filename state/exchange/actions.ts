@@ -7,6 +7,8 @@ import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { toWei, truncateNumbers } from 'utils/formatters/number';
 
+import { selectIsSubmissionDisabled } from './selectors';
+
 export const fetchBalances = createAsyncThunk<any, void, ThunkConfig>(
 	'exchange/fetchBalances',
 	async (_, { getState, extra: { sdk } }) => {
@@ -64,14 +66,18 @@ export const fetchTransactionFee = createAsyncThunk<
 		exchange: { quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount },
 	} = getState();
 
+	const isSubmissionDisabled = selectIsSubmissionDisabled(getState());
+
 	if (baseCurrencyKey && quoteCurrencyKey) {
 		const [transactionFee, feeCost] = await Promise.all([
-			sdk.exchange.getTransactionFee(quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount),
+			!isSubmissionDisabled
+				? sdk.exchange.getTransactionFee(quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount)
+				: undefined,
 			sdk.exchange.getFeeCost(quoteCurrencyKey, baseCurrencyKey, quoteAmount),
 		]);
 
 		return {
-			transactionFee: transactionFee ? transactionFee.toString() : undefined,
+			transactionFee: transactionFee?.toString(),
 			feeCost: feeCost.toString(),
 		};
 	}
@@ -239,6 +245,7 @@ export const changeBaseCurrencyKey = createAsyncThunk<any, string, ThunkConfig>(
 		dispatch({ type: 'exchange/setBaseCurrencyKey', payload: currencyKey });
 		await dispatch(resetCurrencyKeys());
 		// TODO: Handle other things that depend on "txProvider" here.
+		// - txProvider
 		// - settlementReclaimPeriod
 	}
 );
@@ -334,7 +341,7 @@ export const fetchNumEntries = createAsyncThunk<number, void, ThunkConfig>(
 
 export const setBaseAmount = createAsyncThunk<any, string, ThunkConfig>(
 	'exchange/setBaseAmount',
-	async (value, { getState }) => {
+	async (value, { getState, dispatch }) => {
 		const {
 			exchange: { txProvider, quoteCurrencyKey, rate, exchangeFeeRate },
 		} = getState();
@@ -353,6 +360,7 @@ export const setBaseAmount = createAsyncThunk<any, string, ThunkConfig>(
 				const fee = quoteAmountNoFee.mul(exchangeFeeRate ?? 0);
 				quoteAmount = truncateNumbers(quoteAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS);
 			}
+			await dispatch(fetchTransactionFee());
 		}
 
 		return { baseAmount, quoteAmount };
@@ -361,7 +369,7 @@ export const setBaseAmount = createAsyncThunk<any, string, ThunkConfig>(
 
 export const updateBaseAmount = createAsyncThunk<any, void, ThunkConfig>(
 	'exchange/updateBaseAmount',
-	async (_, { getState, extra: { sdk } }) => {
+	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const {
 			exchange: {
 				txProvider,
@@ -403,6 +411,8 @@ export const updateBaseAmount = createAsyncThunk<any, void, ThunkConfig>(
 				}
 			}
 		}
+
+		await dispatch(fetchTransactionFee());
 
 		return {
 			baseAmount,
