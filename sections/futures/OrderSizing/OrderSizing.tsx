@@ -151,7 +151,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 						</InputButton>
 					}
 					value={assetInputType === 'usd' ? usdValue : assetValue}
-					placeholder="0.0"
+					placeholder="0.00"
 					onChange={onChangeValue}
 				/>
 			</OrderSizingContainer>
