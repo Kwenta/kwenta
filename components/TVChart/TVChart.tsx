@@ -89,33 +89,39 @@ export function TVChart({
 
 	const renderOrderLines = () => {
 		clearOrderLines();
-		_oderLineRefs.current = openOrders.reduce<IPositionLineAdapter[]>((acc, order) => {
-			if (order.targetPrice) {
-				const color =
-					order.side === 'long' ? colors.selectedTheme.chartLine.long : colors.selectedTheme.red;
+		_widget.current?.onChartReady(() => {
+			_widget.current?.chart().dataReady(() => {
+				_oderLineRefs.current = openOrders.reduce<IPositionLineAdapter[]>((acc, order) => {
+					if (order.targetPrice) {
+						const color =
+							order.side === 'long'
+								? colors.selectedTheme.chartLine.long
+								: colors.selectedTheme.red;
 
-				const orderLine = _widget.current
-					?.chart()
-					.createPositionLine()
-					.setText(order.orderType)
-					.setTooltip('Average entry price')
-					.setQuantity(formatNumber(order.size.abs()))
-					.setPrice(order.targetPrice?.toNumber() ?? 0)
-					.setExtendLeft(false)
-					.setQuantityTextColor(colors.white)
-					.setBodyTextColor(darkTheme.black)
-					.setLineStyle(2)
-					.setLineColor(color)
-					.setBodyBorderColor(color)
-					.setQuantityBackgroundColor(color)
-					.setQuantityBorderColor(color)
-					.setLineLength(25);
-				if (orderLine) {
-					acc.push(orderLine);
-				}
-			}
-			return acc;
-		}, []);
+						const orderLine = _widget.current
+							?.chart()
+							.createPositionLine()
+							.setText(order.orderType)
+							.setTooltip('Average entry price')
+							.setQuantity(formatNumber(order.size.abs()))
+							.setPrice(order.targetPrice?.toNumber() ?? 0)
+							.setExtendLeft(false)
+							.setQuantityTextColor(colors.white)
+							.setBodyTextColor(darkTheme.black)
+							.setLineStyle(2)
+							.setLineColor(color)
+							.setBodyBorderColor(color)
+							.setQuantityBackgroundColor(color)
+							.setQuantityBorderColor(color)
+							.setLineLength(25);
+						if (orderLine) {
+							acc.push(orderLine);
+						}
+					}
+					return acc;
+				}, []);
+			});
+		});
 	};
 
 	const onToggleOrderLines = () => {
