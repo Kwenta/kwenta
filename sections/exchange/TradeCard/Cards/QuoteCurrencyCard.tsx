@@ -1,6 +1,7 @@
-import { FC, memo, useCallback } from 'react';
+import { FC, memo, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { setQuoteAmount } from 'state/exchange/actions';
+import { updateBaseAmount } from 'state/exchange/actions';
+import { setQuoteAmount } from 'state/exchange/reducer';
 import { setMaxQuoteBalance, setOpenModal } from 'state/exchange/reducer';
 import {
 	selectQuoteBalanceWei,
@@ -8,6 +9,8 @@ import {
 	selectQuotePriceRateWei,
 } from 'state/exchange/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
+
+import useDebouncedMemo from 'hooks/useDebouncedMemo';
 
 import CurrencyCard from '../CurrencyCard';
 
@@ -25,13 +28,18 @@ const QuoteCurrencyCard: FC = memo(() => {
 
 	const dispatch = useAppDispatch();
 
-	// TODO: Debounce this
+	const quoteAmountDebounced = useDebouncedMemo(() => quoteAmount, [quoteAmount], 300);
+
 	const onQuoteAmountChange = useCallback(
 		(value: string) => {
 			dispatch(setQuoteAmount(value));
 		},
 		[dispatch]
 	);
+
+	useEffect(() => {
+		dispatch(updateBaseAmount());
+	}, [dispatch, quoteAmountDebounced]);
 
 	const onQuoteBalanceClick = useCallback(() => {
 		dispatch(setMaxQuoteBalance());

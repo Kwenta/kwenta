@@ -25,8 +25,8 @@ export const fetchBalances = createAsyncThunk<any, void, ThunkConfig>(
 		]);
 
 		return {
-			quoteBalance: quoteBalance ? quoteBalance.toString() : undefined,
-			baseBalance: baseBalance ? baseBalance.toString() : undefined,
+			quoteBalance: quoteBalance?.toString(),
+			baseBalance: baseBalance?.toString(),
 			redeemableSynthBalances: redeemableBalances.map((r) => ({
 				...r,
 				balance: '0',
@@ -359,32 +359,39 @@ export const setBaseAmount = createAsyncThunk<any, string, ThunkConfig>(
 	}
 );
 
-export const setQuoteAmount = createAsyncThunk<any, string, ThunkConfig>(
-	'exchange/setQuoteAmount',
-	async (value, { getState, extra: { sdk } }) => {
+export const updateBaseAmount = createAsyncThunk<any, void, ThunkConfig>(
+	'exchange/updateBaseAmount',
+	async (_, { getState, extra: { sdk } }) => {
 		const {
-			exchange: { txProvider, quoteCurrencyKey, baseCurrencyKey, rate, exchangeFeeRate },
+			exchange: {
+				txProvider,
+				quoteCurrencyKey,
+				baseCurrencyKey,
+				rate,
+				exchangeFeeRate,
+				quoteAmount,
+			},
 		} = getState();
 
-		let quoteAmount = '';
 		let baseAmount = '';
 		let slippagePercent = undefined;
 
-		if (value === '') {
-			quoteAmount = '';
+		if (quoteAmount === '') {
 			baseAmount = '';
 		} else {
-			quoteAmount = value;
-
 			if (txProvider === 'synthetix' && baseCurrencyKey) {
-				const baseAmountNoFee = wei(value).mul(wei(rate ?? 0));
+				const baseAmountNoFee = wei(quoteAmount).mul(wei(rate ?? 0));
 				const fee = baseAmountNoFee.mul(wei(exchangeFeeRate ?? 0));
 				baseAmount = truncateNumbers(baseAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS);
-			} else if (!!quoteCurrencyKey && !!baseCurrencyKey && !!value && !!txProvider) {
-				baseAmount = await sdk.exchange.getOneInchQuote(baseCurrencyKey, quoteCurrencyKey, value);
+			} else if (!!quoteCurrencyKey && !!baseCurrencyKey && !!quoteAmount && !!txProvider) {
+				baseAmount = await sdk.exchange.getOneInchQuote(
+					baseCurrencyKey,
+					quoteCurrencyKey,
+					quoteAmount
+				);
 
 				if (txProvider === '1inch') {
-					const quoteAmountWei = toWei(value);
+					const quoteAmountWei = toWei(quoteAmount);
 					const baseAmountWei = toWei(baseAmount);
 
 					slippagePercent = await sdk.exchange.getSlippagePercent(
@@ -398,7 +405,6 @@ export const setQuoteAmount = createAsyncThunk<any, string, ThunkConfig>(
 		}
 
 		return {
-			quoteAmount,
 			baseAmount,
 			slippagePercent: slippagePercent?.toString(),
 		};

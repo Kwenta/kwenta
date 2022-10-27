@@ -12,12 +12,11 @@ import {
 	fetchTransactionFee,
 	fetchTxProvider,
 	resetCurrencyKeys,
-	setBaseAmount,
-	setQuoteAmount,
 	submitApprove,
 	submitExchange,
 	submitRedeem,
 	submitSettle,
+	updateBaseAmount,
 } from './actions';
 import { ExchangeState } from './types';
 
@@ -61,6 +60,26 @@ const exchangeSlice = createSlice({
 	name: 'exchange',
 	initialState,
 	reducers: {
+		setQuoteAmount: (state, action) => {
+			state.ratio = undefined;
+			state.quoteAmount = action.payload;
+		},
+		setBaseAmount: (state, action) => {
+			state.ratio = undefined;
+
+			if (action.payload === '') {
+				state.baseAmount = '';
+				state.quoteAmount = '';
+			} else {
+				state.baseAmount = action.payload;
+				if (state.txProvider === 'synthetix' && !!state.quoteCurrencyKey) {
+					const inverseRate = wei(state.rate || 0).gt(0) ? wei(1).div(state.rate) : wei(0);
+					const quoteAmountNoFee = wei(action.payload).mul(inverseRate);
+					const fee = quoteAmountNoFee.mul(state.exchangeFeeRate ?? 0);
+					state.quoteAmount = truncateNumbers(quoteAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS);
+				}
+			}
+		},
 		setQuoteCurrencyKey: (state, action) => {
 			state.baseAmount = '';
 
@@ -240,26 +259,19 @@ const exchangeSlice = createSlice({
 		builder.addCase(fetchNumEntries.fulfilled, (state, action) => {
 			state.numEntries = action.payload;
 		});
-		builder.addCase(setQuoteAmount.pending, (state) => {
+		builder.addCase(updateBaseAmount.pending, (state) => {
 			if (!!state.txProvider && state.txProvider !== 'synthetix') {
 				state.oneInchQuoteLoading = true;
 			}
 		});
-		builder.addCase(setQuoteAmount.fulfilled, (state, action) => {
-			state.ratio = undefined;
+		builder.addCase(updateBaseAmount.fulfilled, (state, action) => {
 			state.oneInchQuoteLoading = false;
-			state.quoteAmount = action.payload.quoteAmount;
 			state.baseAmount = action.payload.baseAmount;
 			state.slippagePercent = action.payload.slippagePercent;
 		});
-		builder.addCase(setQuoteAmount.rejected, (state) => {
+		builder.addCase(updateBaseAmount.rejected, (state) => {
 			state.oneInchQuoteLoading = false;
 			state.oneInchQuoteError = true;
-		});
-		builder.addCase(setBaseAmount.fulfilled, (state, action) => {
-			state.ratio = undefined;
-			state.baseAmount = action.payload.baseAmount;
-			state.quoteAmount = action.payload.quoteAmount;
 		});
 		builder.addCase(resetCurrencyKeys.fulfilled, (state, action) => {
 			state.baseFeeRate = action.payload.baseFeeRate;
@@ -274,6 +286,8 @@ const exchangeSlice = createSlice({
 });
 
 export const {
+	setQuoteAmount,
+	setBaseAmount,
 	setRatio,
 	swapCurrencies,
 	setQuoteCurrencyKey,
