@@ -300,6 +300,9 @@ export const SwapCurrenciesButton = styled.button`
 		transform: rotate(180deg);
 		transition-duration: 0.12s;
 		transition-timing-function: ease-in-out;
+		path {
+			fill: ${(props) => props.theme.colors.selectedTheme.white};
+		}
 	}
 
 	.arrow {

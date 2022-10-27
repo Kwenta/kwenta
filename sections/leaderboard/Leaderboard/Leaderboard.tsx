@@ -59,6 +59,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 		return leaderboardData.wallet
 			? leaderboardData.wallet.map((trader) => ({
 					...trader,
+					rank: 0,
 					rankText: PIN,
 			  }))
 			: [];

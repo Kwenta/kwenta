@@ -93,7 +93,7 @@ export default function TradeConfirmationModal({
 				value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x`,
 			},
 
-			orderType === 'limit' || orderType === 'stop'
+			orderType === 'limit' || orderType === 'stop market'
 				? {
 						label: orderType + ' order price',
 						value: formatDollars(orderPrice),
@@ -172,7 +172,7 @@ export default function TradeConfirmationModal({
 					items={dataRows}
 					buttons={
 						<MobileConfirmTradeButton
-							variant="primary"
+							variant="flat"
 							onClick={onConfirmOrder}
 							disabled={!positionDetails || !!disabledReason}
 						>

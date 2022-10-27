@@ -32,6 +32,9 @@ const useGetFuturesPositionHistoryForAccount = (
 						where: {
 							account: account,
 						},
+						first: 99999,
+						orderBy: 'openTimestamp',
+						orderDirection: 'desc',
 					},
 					{
 						id: true,

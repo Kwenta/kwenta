@@ -1,4 +1,9 @@
-import Slider, { SliderProps as DefaultSliderProps } from '@material-ui/core/Slider';
+import Slider, {
+	SliderProps as DefaultSliderProps,
+	ValueLabelProps,
+} from '@material-ui/core/Slider';
+import Tooltip from '@material-ui/core/Tooltip';
+import { withStyles } from '@material-ui/styles';
 import React from 'react';
 import styled, { css } from 'styled-components';
 
@@ -31,10 +36,12 @@ const SliderComponent: React.FC<SliderProps> = ({
 				max={maxValue}
 				step={steps}
 				marks
+				valueLabelDisplay="auto"
 				defaultValue={defaultValue ?? minValue}
 				value={value}
 				onChange={onChange}
 				onChangeCommitted={onChangeCommitted}
+				ValueLabelComponent={ValueLabelComponent}
 				disabled={disabled}
 				{...props}
 				className={className}
@@ -42,14 +49,34 @@ const SliderComponent: React.FC<SliderProps> = ({
 		</SliderContainer>
 	);
 };
+
+const TextOnlyTooltip = withStyles((theme) => ({
+	tooltip: {
+		color: theme.palette.colors.selectedTheme.text.value,
+		marginTop: '1px',
+		fontSize: '13px',
+		backgroundColor: 'transparent',
+	},
+}))(Tooltip);
+
 export default SliderComponent;
+
+function ValueLabelComponent(props: ValueLabelProps) {
+	const { children, open, value } = props;
+
+	return (
+		<TextOnlyTooltip open={open} enterTouchDelay={0} placement="bottom" title={value}>
+			{children}
+		</TextOnlyTooltip>
+	);
+}
 
 const styledMarkLabel = css`
 	font-family: ${(props) => props.theme.fonts.mono};
-	font-size: 11px;
+	font-size: 13px;
 	color: ${(props) => props.theme.colors.selectedTheme.slider.label};
 	${media.lessThan('sm')`
-		top: -5px;
+		top: 30px;
 	`}
 `;
 const SliderContainer = styled.div`
@@ -117,18 +144,5 @@ const StyledSlider = styled(Slider)`
 
 	.MuiSlider-markLabel:nth-child(7) {
 		color: #787878 !important;
-	}
-
-	.MuiSlider-valueLabel {
-		span[class^='PrivateValueLabel-label'] {
-			color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-		}
-		font-family: ${(props) => props.theme.fonts.mono};
-		font-size: 11px;
-		top: initial;
-		bottom: -41.5px;
-		${media.lessThan('sm')`
-			top: -15px;
-		`}
 	}
 `;

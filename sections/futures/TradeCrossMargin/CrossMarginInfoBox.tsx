@@ -107,9 +107,9 @@ function MarginInfoBox({ editingLeverage }: Props) {
 
 		return {
 			showPreview:
-				((orderType === 'market' || orderType === 'next-price') &&
+				((orderType === 'market' || orderType === 'next price') &&
 					(!size.eq(0) || !marginDelta.eq(0))) ||
-				((orderType === 'limit' || orderType === 'stop') && !!orderPrice && !size.eq(0)),
+				((orderType === 'limit' || orderType === 'stop market') && !!orderPrice && !size.eq(0)),
 			totalMargin: potentialTrade.data?.margin.sub(crossMarginFee) || zeroBN,
 			freeAccountMargin: crossMarginFreeMargin.sub(marginDelta),
 			availableMargin: previewAvailableMargin.gt(0) ? previewAvailableMargin : zeroBN,
@@ -181,25 +181,24 @@ function MarginInfoBox({ editingLeverage }: Props) {
 							</PreviewArrow>
 						),
 					},
-					'Account ETH Balance':
-						orderType === 'limit' || orderType === 'stop'
-							? {
-									value: formatCurrency('ETH', keeperEthBal, { currencyKey: 'ETH' }),
-									valueNode: (
-										<>
-											{keeperEthBal.gt(0) && (
-												<ActionButton onClick={() => setOpenModal('keeper-deposit')}>
-													<WithdrawArrow
-														width="12px"
-														height="9px"
-														stroke={colors.selectedTheme.yellow}
-													/>
-												</ActionButton>
-											)}
-										</>
-									),
-							  }
-							: null,
+					'Account ETH Balance': !editingLeverage
+						? {
+								value: formatCurrency('ETH', keeperEthBal, { currencyKey: 'ETH' }),
+								valueNode: (
+									<>
+										{keeperEthBal.gt(0) && (
+											<ActionButton onClick={() => setOpenModal('keeper-deposit')}>
+												<WithdrawArrow
+													width="12px"
+													height="9px"
+													stroke={colors.selectedTheme.yellow}
+												/>
+											</ActionButton>
+										)}
+									</>
+								),
+						  }
+						: null,
 					Leverage: {
 						value: (
 							<>
@@ -264,12 +263,18 @@ const ActionButton = styled(Button)<{ hideBorder?: boolean }>`
 	margin-left: 8px;
 	cursor: pointer;
 	font-size: 10px;
-	font-family: ${(props) => props.theme.fonts.bold};
+	font-family: ${(props) => props.theme.fonts.black};
+	font-variant: all-small-caps;
 	border: 1px solid
 		${(props) => (!props.hideBorder ? props.theme.colors.selectedTheme.yellow : 'none')};
-	color: ${(props) => props.theme.colors.selectedTheme.yellow};
+	color: ${(props) => props.theme.colors.selectedTheme.button.pill.background};
 	border-radius: 10px;
 	padding: ${(props) => (props.hideBorder ? '3px 2px 3px 0px' : '3px 5px')};
+	&:hover {
+		background-color: ${(props) => props.theme.colors.selectedTheme.button.pill.background};
+		color: ${(props) => props.theme.colors.selectedTheme.button.pill.hover};
+		opacity: unset;
+	}
 `;
 
 export default React.memo(MarginInfoBox);

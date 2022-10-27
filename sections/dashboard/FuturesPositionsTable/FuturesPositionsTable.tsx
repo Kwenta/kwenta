@@ -281,7 +281,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					) : (
 						data.map((row) => (
 							<MobilePositionRow
-								onClick={() => router.push(`/market/?asset=${row.market?.asset}`)}
+								onClick={() =>
+									router.push(ROUTES.Markets.MarketPair(row.market?.asset ?? 'sETH', accountType))
+								}
 								key={row.market?.asset}
 								row={row}
 							/>

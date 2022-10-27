@@ -49,6 +49,9 @@ const MobileUserMenu: FC = () => {
 					{!!isOpen ? <CloseIcon /> : <MenuIcon />}
 				</MobileFooterIconContainer>
 				<MobileFooterSeparator />
+				{!(window.location.pathname === ROUTES.Home.Root) && isOpen === 'menu' && (
+					<SettingsWrapper currentTheme={currentTheme}>{t('modals.menu.title')}</SettingsWrapper>
+				)}
 				{!(window.location.pathname === ROUTES.Home.Root) && isOpen === 'settings' && (
 					<SettingsWrapper currentTheme={currentTheme}>
 						{t('modals.settings.title')}
