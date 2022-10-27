@@ -22,12 +22,7 @@ import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import { KWENTA_TRACKING_CODE, ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
-import {
-	PositionSide,
-	TradeFees,
-	FuturesTradeInputs,
-	FuturesAccountType,
-} from 'queries/futures/types';
+import { PositionSide, FuturesTradeInputs, FuturesAccountType } from 'queries/futures/types';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import {
@@ -54,7 +49,7 @@ import {
 	crossMarginAccountOverviewState,
 } from 'store/futures';
 import { zeroBN, floorNumber, weiToString } from 'utils/formatters/number';
-import { getDisplayAsset, MarketKeyByAsset } from 'utils/futures';
+import { calculateMarginDelta, getDisplayAsset, MarketKeyByAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
 import useCrossMarginAccountContracts from './useCrossMarginContracts';
@@ -263,19 +258,6 @@ const useFuturesData = () => {
 		]
 	);
 
-	const calculateMarginDelta = useCallback(
-		async (nextTrade: FuturesTradeInputs, fees: TradeFees) => {
-			if (nextTrade.nativeSizeDelta.add(position?.position?.size || 0).eq(zeroBN)) return zeroBN;
-			const currentSize = position?.position?.notionalValue || zeroBN;
-			const newNotionalValue = currentSize.add(nextTrade.susdSizeDelta);
-			const fullMargin = newNotionalValue.abs().div(nextTrade.leverage);
-
-			let marginDelta = fullMargin.sub(position?.remainingMargin || '0').add(fees.total);
-			return marginDelta;
-		},
-		[position?.position?.notionalValue, position?.position?.size, position?.remainingMargin]
-	);
-
 	// eslint-disable-next-line
 	const debounceFetchPreview = useCallback(
 		debounce(async (nextTrade: FuturesTradeInputs, fromLeverage = false) => {
@@ -286,7 +268,7 @@ const useFuturesData = () => {
 				if (selectedAccountType === 'cross_margin') {
 					nextMarginDelta =
 						nextTrade.nativeSizeDelta.abs().gt(0) || fromLeverage
-							? await calculateMarginDelta(nextTrade, fees)
+							? await calculateMarginDelta(nextTrade, fees, position)
 							: zeroBN;
 					setCrossMarginMarginDelta(nextMarginDelta);
 				}
@@ -311,6 +293,7 @@ const useFuturesData = () => {
 			calculateFees,
 			getPotentialTrade,
 			calculateMarginDelta,
+			position,
 			orderPrice,
 			orderType,
 			selectedAccountType,

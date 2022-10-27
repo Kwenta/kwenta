@@ -54,7 +54,7 @@ const DashboardLayout: FC = ({ children }) => {
 				name: Tab.History,
 				label: t('dashboard.tabs.history'),
 				active: activeTab === Tab.History,
-				onClick: () => router.push(ROUTES.Home.History),
+				onClick: () => router.push(ROUTES.Dashboard.History),
 			},
 			{
 				name: Tab.Rewards,
@@ -67,7 +67,8 @@ const DashboardLayout: FC = ({ children }) => {
 				name: Tab.Markets,
 				label: t('dashboard.tabs.markets'),
 				active: activeTab === Tab.Markets,
-				onClick: () => router.push(ROUTES.Home.Markets),
+				disabled: false,
+				onClick: () => router.push(ROUTES.Dashboard.Markets),
 			},
 			{
 				name: Tab.Governance,

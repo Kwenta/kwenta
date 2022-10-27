@@ -44,6 +44,7 @@
 			"trade-now": "Trade now",
 			"wallet": "Connect Wallet",
 			"markets": "Markets",
+			"stats": "Stats",
 			"governance": {
 				"title": "Governance",
 				"overview": "Overview",
@@ -281,6 +282,21 @@
 				"marketing-dao": "Marketing DAO",
 				"kips": "KIPs"
 			}
+		}
+	},
+	"stats": {
+		"title": "kwenta stats",
+		"volume": {
+			"title": "Volume"
+		},
+		"trades": {
+			"title": "Trades"
+		},
+		"traders": {
+			"title": "Traders"
+		},
+		"open-interest": {
+			"title": "Open Interest"
 		}
 	},
 	"exchange": {

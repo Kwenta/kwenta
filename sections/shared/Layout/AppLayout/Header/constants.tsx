@@ -31,6 +31,10 @@ export const HOMEPAGE_MENU_LINKS: MenuLinks = [
 		link: ROUTES.Markets.Home('cross_margin'),
 	},
 	{
+		i18nLabel: 'homepage.nav.stats',
+		link: ROUTES.Stats.Home,
+	},
+	{
 		i18nLabel: 'homepage.nav.governance.title',
 		link: ROUTES.Home.Root,
 	},
@@ -46,11 +50,11 @@ const DASHBOARD_LINKS = [
 		i18nLabel: 'dashboard.tabs.overview',
 	},
 	{
-		link: ROUTES.Home.History,
+		link: ROUTES.Dashboard.History,
 		i18nLabel: 'dashboard.tabs.history',
 	},
 	{
-		link: ROUTES.Home.Markets,
+		link: ROUTES.Dashboard.Markets,
 		i18nLabel: 'dashboard.tabs.markets',
 	},
 ];

@@ -3,11 +3,16 @@ import Wei, { wei } from '@synthetixio/wei';
 import { TFunction } from 'i18next';
 import { Dictionary } from 'lodash';
 
-import { FuturesOrderType } from 'queries/futures/types';
+import {
+	FuturesOrderType,
+	FuturesPosition,
+	FuturesTradeInputs,
+	TradeFees,
+} from 'queries/futures/types';
 import { PositionSide } from 'sections/futures/types';
 import logError from 'utils/logError';
 
-import { formatNumber } from './formatters/number';
+import { formatNumber, zeroBN } from './formatters/number';
 
 export const getMarketAsset = (marketKey: FuturesMarketKey) => {
 	return markets[marketKey].asset;
@@ -292,4 +297,17 @@ export const orderPriceInvalidLabel = (
 	)
 		return 'min ' + formatNumber(currentPrice);
 	return null;
+};
+
+export const calculateMarginDelta = (
+	nextTrade: FuturesTradeInputs,
+	fees: TradeFees,
+	position: FuturesPosition | null
+) => {
+	if (nextTrade.nativeSizeDelta.add(position?.position?.size || 0).eq(zeroBN)) return zeroBN;
+	let currentSize = position?.position?.notionalValue || zeroBN;
+	currentSize = position?.position?.side === 'long' ? currentSize : currentSize.neg();
+	const newNotionalValue = currentSize.add(nextTrade.susdSizeDelta).abs();
+	const fullMargin = newNotionalValue.abs().div(nextTrade.leverage);
+	return fullMargin.sub(position?.remainingMargin || '0').add(fees.total);
 };

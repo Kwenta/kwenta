@@ -9,9 +9,7 @@ import AppLayout from 'sections/shared/Layout/AppLayout';
 type ExchangeComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
 const Exchange: ExchangeComponent = () => {
-	const exchangeData = useExchange({
-		showNoSynthsCard: false,
-	});
+	const exchangeData = useExchange();
 
 	return (
 		<ExchangeContext.Provider value={exchangeData}>

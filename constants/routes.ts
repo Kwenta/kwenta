@@ -13,17 +13,12 @@ export const formatUrl = (route: string, params: Record<string, string>) => {
 export const ROUTES = {
 	Home: {
 		Root: '/',
-		Overview: normalizeRoute('/dashboard', 'overview', 'tab'),
-		History: normalizeRoute('/dashboard', 'history', 'tab'),
-		Markets: normalizeRoute('/dashboard', 'markets', 'tab'),
-		Stake: normalizeRoute('/dashboard', 'stake', 'tab'),
 	},
 	Dashboard: {
 		Home: '/dashboard',
-		Convert: normalizeRoute('/dashboard', 'convert', 'tab'),
-		SynthBalances: normalizeRoute('/dashboard', 'synth-balances', 'tab'),
-		Transactions: normalizeRoute('/dashboard', 'transactions', 'tab'),
-		Deprecated: normalizeRoute('/dashboard', 'deprecated', 'tab'),
+		Overview: normalizeRoute('/dashboard', 'overview', 'tab'),
+		History: normalizeRoute('/dashboard', 'history', 'tab'),
+		Markets: normalizeRoute('/dashboard', 'markets', 'tab'),
 	},
 	Exchange: {
 		Home: '/exchange',
@@ -47,6 +42,9 @@ export const ROUTES = {
 			formatUrl('/market', { asset, accountType, tab: 'trades' }),
 		Transfers: (asset: FuturesMarketAsset, accountType: FuturesAccountType) =>
 			formatUrl('/market', { asset, accountType, tab: 'transfers' }),
+	},
+	Stats: {
+		Home: '/stats',
 	},
 	Leaderboard: {
 		Home: '/leaderboard',

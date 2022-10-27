@@ -22,7 +22,7 @@ type MobileMenuModalProps = {
 
 export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
-	const { asPath } = useRouter();
+	const router = useRouter();
 
 	const menuLinks =
 		window.location.pathname === ROUTES.Home.Root ? HOMEPAGE_MENU_LINKS : MOBILE_NAV_LINKS;
@@ -33,6 +33,11 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
 
 	const handleToggle = (link: string) => () => {
 		setExpanded((l) => (l === link ? undefined : link));
+	};
+
+	const showStatsPage = () => {
+		router.push(ROUTES.Stats.Home);
+		onDismiss();
 	};
 
 	return (
@@ -49,15 +54,24 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
 									links={links}
 									active={expanded === link}
 									i18nLabel={i18nLabel}
-									defaultOpen={asPath.includes(link)}
+									defaultOpen={router.asPath.includes(link)}
 									onDismiss={onDismiss}
 									onToggle={handleToggle(link)}
 								/>
+							) : link === ROUTES.Stats.Home ? (
+								<MenuButton
+									currentTheme={currentTheme}
+									isActive={router.asPath.includes(link)}
+									onClick={showStatsPage}
+								>
+									{t(i18nLabel)}
+									<MobileMenuArrow />
+								</MenuButton>
 							) : (
 								<Link href={link}>
 									<MenuButton
 										currentTheme={currentTheme}
-										isActive={asPath.includes(link)}
+										isActive={router.asPath.includes(link)}
 										onClick={onDismiss}
 									>
 										{t(i18nLabel)}
