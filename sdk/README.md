@@ -40,6 +40,8 @@ The following tasks are expected to be completed before the SDK can be considere
 - [ ] Reduce number of queries, by storing more data in class instance.
 - [ ] Write tests for simple functions.
 - [ ] Remove duplicate calls in `getSlippagePercent`
+- [ ] Consider making the provision of the `txProvider` the client's responsibility. It is a little cumbersome to have to call `this.getTxProvider` in nearly every method.
+- [ ] Consider ditching currency keys for simple token addresses. The client can choose to load a token list for UI purposes, but the SDK should not be concerned with such details. For balances, we can fetch them as needed.
 
 # Notes
 
