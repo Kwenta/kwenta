@@ -212,7 +212,7 @@ export function TVChart({
 			_toggleLinesButton.current = _widget.current.createButton();
 			_toggleLinesButton.current.classList.add('custom-button');
 			_toggleLinesButton.current.setAttribute('title', 'Hide / Show Orders');
-			_toggleLinesButton.current.textContent = 'Show Orders';
+			_toggleLinesButton.current.textContent = showOrderLines ? 'Hide Orders' : 'Show Orders';
 			_toggleLinesButton.current.addEventListener('click', onToggleShowOrderLines);
 			_toggleListener.current = onToggleShowOrderLines;
 		});

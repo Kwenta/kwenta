@@ -22,7 +22,7 @@ export default function PositionChart() {
 	const openOrders = useRecoilValue(openOrdersState);
 	const { data: previewTrade } = useRecoilValue(potentialTradeDetailsState);
 
-	const [showOrderLines, setShowOrderLines] = useState(false);
+	const [showOrderLines, setShowOrderLines] = useState(true);
 
 	const subgraphPosition = useMemo(() => {
 		return positionHistory[futuresAccountType].find((p) => p.isOpen && p.asset === marketAsset);
@@ -62,7 +62,6 @@ export default function PositionChart() {
 
 	return (
 		<Container visible={isChartReady}>
-			<div onClick={onToggleLines}>Toggle</div>
 			<TVChart
 				openOrders={openOrders}
 				activePosition={activePosition}
