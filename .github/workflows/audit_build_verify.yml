@@ -22,7 +22,6 @@ jobs:
         run: lockfile-lint -p package-lock.json --type npm --allowed-hosts npm github.com --allowed-schemes "https:" "git+ssh:" "npm:"
 
   lint:
-    needs: audit
     runs-on: ubuntu-latest
 
     container:
