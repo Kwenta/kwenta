@@ -1,7 +1,6 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { renderHook } from '@testing-library/react-hooks';
-import { wait } from '@testing-library/user-event/dist/utils';
 
 import { SynthetixProvider } from 'testing/unit/mocks/MockProviders';
 
