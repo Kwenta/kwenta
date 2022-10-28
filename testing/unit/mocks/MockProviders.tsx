@@ -67,31 +67,37 @@ type Props = {
 
 process.env.GIT_HASH_ID = '12345';
 
-const MockProviders = ({ children, ethProviderOverrides, route }: Props) => {
+export const SynthetixProvider = ({ children, ethProviderOverrides }: Props) => {
 	const mockedProvider = mockProvider(ethProviderOverrides);
 
+	return (
+		<SynthetixQueryContextProvider
+			value={createQueryContext({
+				// @ts-ignore
+				provider: mockedProvider,
+				networkId: DEFAULT_NETWORK.id as NetworkId,
+				synthetixjs: null,
+			})}
+		>
+			<RecoilRoot>{children}</RecoilRoot>
+		</SynthetixQueryContextProvider>
+	);
+};
+
+const MockProviders = ({ children, ethProviderOverrides, route }: Props) => {
 	mockRouter.setCurrentUrl(route || '/');
 
 	return (
 		<QueryClientProvider client={queryClient}>
-			<SynthetixQueryContextProvider
-				value={createQueryContext({
-					// @ts-ignore
-					provider: mockedProvider,
-					networkId: DEFAULT_NETWORK.id as NetworkId,
-					synthetixjs: null,
-				})}
-			>
-				<RecoilRoot>
-					<WagmiConfig client={wagmiClient}>
-						<WithAppContainers>
-							<RefetchProvider>
-								<ThemeProvider theme={themes.dark}>{children}</ThemeProvider>
-							</RefetchProvider>
-						</WithAppContainers>
-					</WagmiConfig>
-				</RecoilRoot>
-			</SynthetixQueryContextProvider>
+			<SynthetixProvider ethProviderOverrides={ethProviderOverrides}>
+				<WagmiConfig client={wagmiClient}>
+					<WithAppContainers>
+						<RefetchProvider>
+							<ThemeProvider theme={themes.dark}>{children}</ThemeProvider>
+						</RefetchProvider>
+					</WithAppContainers>
+				</WagmiConfig>
+			</SynthetixProvider>
 		</QueryClientProvider>
 	);
 };
