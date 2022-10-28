@@ -1,4 +1,4 @@
-import { render, waitFor } from '@testing-library/react';
+import { render } from '@testing-library/react';
 
 import mockConnector from 'testing/unit/__mocks__/mockConnector';
 import MockProviders from 'testing/unit/__mocks__/MockProviders';
@@ -51,9 +51,7 @@ describe('Futures market page - cross margin', () => {
 			</MockProviders>
 		);
 
-		await waitFor(async () => {
-			const component = await findByTestId('set-order-size-amount-susd-desktop');
-			expect(component.hasAttribute('disabled'));
-		});
+		const component = await findByTestId('set-order-size-amount-susd-desktop');
+		expect(component.hasAttribute('disabled'));
 	});
 });
