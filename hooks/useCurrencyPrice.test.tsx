@@ -2,7 +2,7 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { renderHook } from '@testing-library/react-hooks';
 
-import ContextProvider from 'testing/unit/__mocks__/MockProviders';
+import ContextProvider from 'testing/unit/mocks/MockProviders';
 
 import useCurrencyPrice from './useCurrencyPrice';
 

@@ -12,7 +12,7 @@
 		"lint": "eslint . --ext ts,.tsx && tsc",
 		"lint:sarif": "node testing/lint.js . --ext ts,.tsx && tsc",
 		"lint:fix": "eslint . --ext ts,.tsx --fix",
-		"test:unit": "jest --coverage",
+		"test:unit": "jest --coverage --detectOpenHandles",
 		"test:e2e": "start-server-and-test 'npm run build && npm run start' http-get://localhost:3000 'synpress run'",
 		"test:e2e:only:tests": "synpress run",
 		"test:e2e:open:testrunner": "synpress open",
