@@ -10,7 +10,8 @@ import rewardEscrowABI from 'lib/abis/RewardEscrow.json';
 import stakingRewardsABI from 'lib/abis/StakingRewards.json';
 import supplyScheduleABI from 'lib/abis/SupplySchedule.json';
 import vKwentaRedeemerABI from 'lib/abis/vKwentaRedeemer.json';
-import { formatTruncatedDuration } from 'utils/formatters/date';
+import { getEpochDetails } from 'queries/staking/utils';
+import { formatShortDate, formatTruncatedDuration, toJSTimestamp } from 'utils/formatters/date';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
@@ -63,8 +64,9 @@ const useStakingData = () => {
 		contractInterface: vKwentaRedeemerABI,
 	};
 
+	const { provider } = Connector.useContainer();
 	const epochPeriod = 1;
-	const epochDate = 'Oct 24 - Oct 30';
+	const [epochDate, setEpochDates] = useState(`23 Oct, 2022 - 30 Oct, 2022`);
 	const { walletAddress } = Connector.useContainer();
 	const [kwentaBalance, setKwentaBalance] = useState(zeroBN);
 	const [escrowedBalance, setEscrowedBalance] = useState(zeroBN);
@@ -79,6 +81,14 @@ const useStakingData = () => {
 	const [currentWeeklyReward, setCurrentWeeklyReward] = useState(zeroBN);
 	const [feePaid] = useState(10);
 	const [totalFeePaid] = useState(20);
+
+	getEpochDetails(provider, 1).then((e) =>
+		setEpochDates(
+			`${formatShortDate(new Date(toJSTimestamp(e.epochStart)))} - ${formatShortDate(
+				new Date(toJSTimestamp(e.epochEnd))
+			)}`
+		)
+	);
 
 	useContractReads({
 		contracts: [
