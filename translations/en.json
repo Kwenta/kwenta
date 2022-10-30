@@ -493,7 +493,7 @@
 		},
 		"stake": {
 			"portfolio": {
-				"title": "Portfolio",
+				"title": "Staking Dashboard",
 				"liquid": "Liquid",
 				"escrow": "Escrow",
 				"staked": "Staked",
