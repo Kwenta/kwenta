@@ -1,106 +1,26 @@
-import moment from 'moment';
 import { useMemo, useState } from 'react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { useContractReads, useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
 import { TableCellHead } from 'components/Table/Table';
-import Connector from 'containers/Connector';
-import rewardEscrowABI from 'lib/abis/RewardEscrow.json';
+import { useStakingContext } from 'contexts/StakingContext';
+import { EscrowRow } from 'hooks/useStakingData';
 import { currentThemeState } from 'store/ui';
-import { formatTruncatedDuration } from 'utils/formatters/date';
 import { truncateNumbers } from 'utils/formatters/number';
-import logError from 'utils/logError';
 
 import { StakingCard } from './common';
 
-type EscrowRow = {
-	id: number;
-	date: string;
-	time: string;
-	vestable: number;
-	amount: number;
-	fee: number;
-	status: 'VESTED' | 'VESTING';
-};
-
-const rewardEscrowContract = {
-	addressOrName: '0xaFD87d1a62260bD5714C55a1BB4057bDc8dFA413',
-	contractInterface: rewardEscrowABI,
-};
-
-let data: EscrowRow[] = [];
-
 const EscrowTable = () => {
 	const { t } = useTranslation();
-	const { walletAddress } = Connector.useContainer();
+	const { data, rewardEscrowContract } = useStakingContext();
 	const [checkedState, setCheckedState] = useState(new Array(data.length).fill(false));
 	const [checkAllState, setCheckAllState] = useState(false);
-
-	data = [];
-
-	const { data: vestingSchedules, isSuccess: vestingSchedulesIsSuccess } = useContractReads({
-		contracts: [
-			{
-				...rewardEscrowContract,
-				functionName: 'getVestingSchedules',
-				args: [walletAddress ?? undefined, 0, 1000],
-			},
-		],
-		watch: true,
-		enabled: !!walletAddress,
-		onError(error) {
-			if (error) logError(error);
-		},
-	});
-
-	const vestingRecords =
-		vestingSchedulesIsSuccess && vestingSchedules !== undefined ? vestingSchedules[0] : [];
-
-	vestingRecords &&
-		vestingRecords.length > 0 &&
-		vestingRecords
-			.filter((d) => d.escrowAmount.gt(0))
-			.forEach((d) => {
-				data.push({
-					id: Number(d.entryID),
-					date: moment(Number(d.endTime) * 1000).format('MM/DD/YY'),
-					time: formatTruncatedDuration(d.endTime - new Date().getTime() / 1000),
-					vestable: d.endTime * 1000 > Date.now() ? 0 : Number(d.escrowAmount / 1e18),
-					amount: Number(d.escrowAmount / 1e18),
-					fee: d.endTime * 1000 > Date.now() ? Number(d.escrowAmount / 1e18) : 0,
-					status: d.endTime * 1000 > Date.now() ? 'VESTING' : 'VESTED',
-				});
-			});
-
-	const contracts = data.map((d) => {
-		return {
-			...rewardEscrowContract,
-			functionName: 'getVestingEntryClaimable',
-			args: [walletAddress ?? undefined, d.id],
-		};
-	});
-
-	const {
-		data: vestingEntryClaimable,
-		isSuccess: vestingEntryClaimableIsSuccess,
-	} = useContractReads({
-		contracts,
-		watch: true,
-		enabled: !!walletAddress && contracts.length > 0,
-	});
-
-	vestingEntryClaimableIsSuccess &&
-		vestingEntryClaimable !== undefined &&
-		vestingEntryClaimable.forEach((d, index) => {
-			data[index].vestable = Number(d.quantity / 1e18);
-			data[index].fee = Number(d.fee / 1e18);
-		});
 
 	const handleOnChange = (position: number) => {
 		checkedState[position] = !checkedState[position];

@@ -14,7 +14,7 @@ const StakingPortfolio = () => {
 	const { t } = useTranslation();
 	const {
 		escrowedBalance,
-		vestedBalance,
+		totalVestable,
 		stakedNonEscrowedBalance,
 		stakedEscrowedBalance,
 		claimableBalance,
@@ -57,7 +57,7 @@ const StakingPortfolio = () => {
 			{
 				key: 'Vestable',
 				title: t('dashboard.stake.portfolio.vestable'),
-				value: Number(vestedBalance).toFixed(2),
+				value: totalVestable.toFixed(2),
 			},
 		],
 	];

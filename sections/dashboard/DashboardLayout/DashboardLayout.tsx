@@ -21,7 +21,7 @@ enum Tab {
 	Rewards = 'rewards',
 	Markets = 'markets',
 	Governance = 'governance',
-	Stake = 'stake',
+	Stake = 'staking',
 }
 
 const Tabs = Object.values(Tab);
@@ -79,7 +79,7 @@ const DashboardLayout: FC = ({ children }) => {
 			},
 			{
 				name: Tab.Stake,
-				label: t('dashboard.tabs.stake'),
+				label: t('dashboard.tabs.staking'),
 				active: activeTab === Tab.Stake,
 				onClick: () => router.push(ROUTES.Dashboard.Stake),
 			},

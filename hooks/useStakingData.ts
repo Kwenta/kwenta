@@ -1,15 +1,36 @@
 import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
+import _ from 'lodash';
+import moment from 'moment';
 import { useMemo, useState } from 'react';
-import { erc20ABI, useContractReads, usePrepareContractWrite } from 'wagmi';
+import { erc20ABI, useContractRead, useContractReads, usePrepareContractWrite } from 'wagmi';
 
 import Connector from 'containers/Connector';
 import rewardEscrowABI from 'lib/abis/RewardEscrow.json';
 import stakingRewardsABI from 'lib/abis/StakingRewards.json';
 import supplyScheduleABI from 'lib/abis/SupplySchedule.json';
 import vKwentaRedeemerABI from 'lib/abis/vKwentaRedeemer.json';
+import { formatTruncatedDuration } from 'utils/formatters/date';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
+
+export type EscrowRow = {
+	id: number;
+	date: string;
+	time: string;
+	vestable: number;
+	amount: number;
+	fee: number;
+	status: 'VESTED' | 'VESTING';
+};
+
+type VestingEntry = {
+	endTime: number;
+	escrowAmount: number;
+	entryID: number;
+};
+
+let data: EscrowRow[] = [];
 
 const useStakingData = () => {
 	const kwentaTokenContract = {
@@ -43,10 +64,10 @@ const useStakingData = () => {
 	};
 
 	const epochPeriod = 1;
+	const epochDate = 'Oct 24 - Oct 30';
 	const { walletAddress } = Connector.useContainer();
 	const [kwentaBalance, setKwentaBalance] = useState(zeroBN);
 	const [escrowedBalance, setEscrowedBalance] = useState(zeroBN);
-	const [vestedBalance, setVestedBalance] = useState(zeroBN);
 	const [stakedNonEscrowedBalance, setStakedNonEscrowedBalance] = useState(zeroBN);
 	const [stakedEscrowedBalance, setStakedEscrowedBalance] = useState(zeroBN);
 	const [totalStakedBalance, setTotalStakedBalance] = useState(zeroBN);
@@ -64,11 +85,6 @@ const useStakingData = () => {
 			{
 				...rewardEscrowContract,
 				functionName: 'balanceOf',
-				args: [walletAddress ?? undefined],
-			},
-			{
-				...rewardEscrowContract,
-				functionName: 'totalVestedAccountBalance',
 				args: [walletAddress ?? undefined],
 			},
 			{
@@ -129,15 +145,14 @@ const useStakingData = () => {
 			if (error) logError(error);
 			if (data) {
 				setEscrowedBalance(wei(data[0] ?? zeroBN));
-				setVestedBalance(wei(data[1] ?? zeroBN));
-				setStakedNonEscrowedBalance(wei(data[2] ?? zeroBN));
-				setStakedEscrowedBalance(wei(data[3] ?? zeroBN));
-				setClaimableBalance(wei(data[4] ?? zeroBN));
-				setKwentaBalance(wei(data[5] ?? zeroBN));
-				setTotalStakedBalance(wei(data[9] ?? zeroBN));
-				const supplyRate = wei(1).sub(wei(data[6] ?? zeroBN));
-				const initialWeeklySupply = wei(data[7] ?? zeroBN);
-				const weekCounter = Number(data[8] ?? zeroBN);
+				setStakedNonEscrowedBalance(wei(data[1] ?? zeroBN));
+				setStakedEscrowedBalance(wei(data[2] ?? zeroBN));
+				setClaimableBalance(wei(data[3] ?? zeroBN));
+				setKwentaBalance(wei(data[4] ?? zeroBN));
+				setTotalStakedBalance(wei(data[8] ?? zeroBN));
+				const supplyRate = wei(1).sub(wei(data[5] ?? zeroBN));
+				const initialWeeklySupply = wei(data[6] ?? zeroBN);
+				const weekCounter = Number(data[7] ?? zeroBN);
 				const startWeeklySupply = initialWeeklySupply.mul(supplyRate.pow(weekCounter));
 				const yearlyRewards = totalStakedBalance.gt(zeroBN)
 					? startWeeklySupply.mul(wei(1).sub(supplyRate.pow(52))).div(wei(1).sub(supplyRate))
@@ -146,12 +161,66 @@ const useStakingData = () => {
 				setApy(
 					yearlyRewards.gt(zeroBN) ? Number(yearlyRewards.div(totalStakedBalance)).toFixed(2) : '0'
 				);
-				setVKwentaBalance(wei(data[10] ?? zeroBN));
-				setVKwentaAllowance(wei(data[11] ?? zeroBN));
-				setKwentaAllowance(wei(data[12] ?? zeroBN));
+				setVKwentaBalance(wei(data[9] ?? zeroBN));
+				setVKwentaAllowance(wei(data[10] ?? zeroBN));
+				setKwentaAllowance(wei(data[11] ?? zeroBN));
 			}
 		},
 	});
+
+	data = [];
+
+	const { data: vestingSchedules } = useContractRead({
+		...rewardEscrowContract,
+		functionName: 'getVestingSchedules',
+		args: [walletAddress ?? undefined, 0, 1000],
+		watch: true,
+		enabled: !!walletAddress,
+		select: (data) => data.filter((d) => d.escrowAmount.gt(0)),
+		onError(error) {
+			if (error) logError(error);
+		},
+	});
+
+	vestingSchedules &&
+		vestingSchedules.length > 0 &&
+		vestingSchedules.forEach((d: VestingEntry) => {
+			data.push({
+				id: Number(d.entryID),
+				date: moment(Number(d.endTime) * 1000).format('MM/DD/YY'),
+				time: formatTruncatedDuration(d.endTime - new Date().getTime() / 1000),
+				vestable: d.endTime * 1000 > Date.now() ? 0 : Number(d.escrowAmount / 1e18),
+				amount: Number(d.escrowAmount / 1e18),
+				fee: d.endTime * 1000 > Date.now() ? Number(d.escrowAmount / 1e18) : 0,
+				status: d.endTime * 1000 > Date.now() ? 'VESTING' : 'VESTED',
+			});
+		});
+
+	const contracts = data.map((d) => {
+		return {
+			...rewardEscrowContract,
+			functionName: 'getVestingEntryClaimable',
+			args: [walletAddress ?? undefined, d.id],
+		};
+	});
+
+	const {
+		data: vestingEntryClaimable,
+		isSuccess: vestingEntryClaimableIsSuccess,
+	} = useContractReads({
+		contracts,
+		watch: true,
+		enabled: !!walletAddress && contracts.length > 0,
+	});
+
+	vestingEntryClaimableIsSuccess &&
+		vestingEntryClaimable !== undefined &&
+		vestingEntryClaimable.forEach((d, index) => {
+			data[index].vestable = Number(d.quantity / 1e18);
+			data[index].fee = Number(d.fee / 1e18);
+		});
+
+	const totalVestable = data.reduce((acc, current, index) => acc + data[index]?.vestable ?? 0, 0);
 
 	const kwentaTokenApproval = useMemo(() => kwentaBalance.gt(kwentaAllowance), [
 		kwentaBalance,
@@ -205,10 +274,12 @@ const useStakingData = () => {
 
 	return {
 		epochPeriod,
+		epochDate,
+		data,
 		feePaid,
 		tradingRewardsRatio,
 		escrowedBalance,
-		vestedBalance,
+		totalVestable,
 		stakedNonEscrowedBalance,
 		stakedEscrowedBalance,
 		claimableBalance,

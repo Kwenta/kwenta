@@ -429,7 +429,7 @@
 			"rewards": "Rewards",
 			"markets": "Markets",
 			"governance": "Governance",
-			"stake": "Stake"
+			"staking": "Staking"
 		},
 		"overview": {
 			"futures-positions-table": {
@@ -517,7 +517,7 @@
 					"estimated-rewards": "Estimated Rewards",
 					"estimated-fee-share": "Estimated Fee Share",
 					"trading-activity-reset": "Trading Activity Reset",
-					"epoch": "Epoch {{EpochPeriod}}",
+					"epoch": "Epoch {{EpochPeriod}}: {{EpochDate}}",
 					"claimable-rewards-epoch": "Claimable Rewards: Epoch {{EpochPeriod}}",
 					"claimable-rewards-all": "Total Claimable Trading Rewards",
 					"claim-epoch": "Claim: Epoch {{EpochPeriod}}",
@@ -595,7 +595,7 @@
 		"page-title": "Trade History | Kwenta"
 	},
 	"dashboard-stake": {
-		"page-title": "Stake | Kwenta"
+		"page-title": "Staking | Kwenta"
 	},
 	"futures": {
 		"page-title": "Kwenta Futures",
