@@ -39,21 +39,6 @@ export const fetchBalances = createAsyncThunk<any, void, ThunkConfig>(
 	}
 );
 
-export const fetchTxProvider = createAsyncThunk<any, void, ThunkConfig>(
-	'exchange/fetchTxProvider',
-	async (_, { getState, extra: { sdk } }) => {
-		const {
-			exchange: { quoteCurrencyKey, baseCurrencyKey },
-		} = getState();
-
-		if (baseCurrencyKey && quoteCurrencyKey) {
-			return sdk.exchange.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
-		}
-
-		return undefined;
-	}
-);
-
 export const fetchTransactionFee = createAsyncThunk<
 	{
 		transactionFee?: string;
@@ -173,13 +158,16 @@ export const fetchTokenList = createAsyncThunk<any, void, ThunkConfig>(
 	}
 );
 
-export const resetCurrencyKeys = createAsyncThunk<any, void, ThunkConfig>(
+export const resetCurrencyKeys = createAsyncThunk<
+	any,
+	{
+		quoteCurrencyKey: string | undefined;
+		baseCurrencyKey: string | undefined;
+	},
+	ThunkConfig
+>(
 	'exchange/resetCurrencyKeys',
-	async (_, { getState, extra: { sdk } }) => {
-		const {
-			exchange: { quoteCurrencyKey, baseCurrencyKey },
-		} = getState();
-
+	async ({ quoteCurrencyKey, baseCurrencyKey }, { extra: { sdk } }) => {
 		let baseFeeRate = undefined;
 		let rate = undefined;
 		let exchangeFeeRate = undefined;
@@ -231,9 +219,13 @@ export const resetCurrencyKeys = createAsyncThunk<any, void, ThunkConfig>(
 
 export const changeQuoteCurrencyKey = createAsyncThunk<any, string, ThunkConfig>(
 	'exchange/changeQuoteCurrencyKey',
-	async (currencyKey, { dispatch }) => {
+	async (currencyKey, { dispatch, getState }) => {
+		const {
+			exchange: { baseCurrencyKey },
+		} = getState();
+
 		dispatch({ type: 'exchange/setQuoteCurrencyKey', payload: currencyKey });
-		await dispatch(resetCurrencyKeys());
+		await dispatch(resetCurrencyKeys({ quoteCurrencyKey: currencyKey, baseCurrencyKey }));
 		// TODO: Handle other things that depend on "txProvider" here.
 		// - feeReclaimPeriod
 	}
@@ -241,11 +233,14 @@ export const changeQuoteCurrencyKey = createAsyncThunk<any, string, ThunkConfig>
 
 export const changeBaseCurrencyKey = createAsyncThunk<any, string, ThunkConfig>(
 	'exchange/changeBaseCurrencyKey',
-	async (currencyKey, { dispatch }) => {
+	async (currencyKey, { dispatch, getState }) => {
+		const {
+			exchange: { quoteCurrencyKey },
+		} = getState();
+
 		dispatch({ type: 'exchange/setBaseCurrencyKey', payload: currencyKey });
-		await dispatch(resetCurrencyKeys());
+		await dispatch(resetCurrencyKeys({ baseCurrencyKey: currencyKey, quoteCurrencyKey }));
 		// TODO: Handle other things that depend on "txProvider" here.
-		// - txProvider
 		// - settlementReclaimPeriod
 	}
 );
@@ -267,17 +262,12 @@ export const resetCurrencies = createAsyncThunk<
 		const validBaseCurrency =
 			!!baseCurrencyFromQuery && sdk.exchange.validCurrencyKey(baseCurrencyFromQuery);
 
-		dispatch({
-			type: 'exchange/setQuoteCurrencyKey',
-			payload: validQuoteCurrency ? quoteCurrencyFromQuery : 'sUSD',
-		});
+		const quoteCurrencyKey = validQuoteCurrency ? quoteCurrencyFromQuery : 'sUSD';
+		const baseCurrencyKey = validBaseCurrency ? baseCurrencyFromQuery : undefined;
 
-		dispatch({
-			type: 'exchange/setBaseCurrencyKey',
-			payload: validBaseCurrency ? baseCurrencyFromQuery : undefined,
-		});
-
-		dispatch(resetCurrencyKeys());
+		dispatch({ type: 'exchange/setQuoteCurrencyKey', payload: quoteCurrencyKey });
+		dispatch({ type: 'exchange/setBaseCurrencyKey', payload: baseCurrencyKey });
+		dispatch(resetCurrencyKeys({ quoteCurrencyKey, baseCurrencyKey }));
 	}
 );
 

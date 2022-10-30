@@ -10,7 +10,6 @@ import {
 	fetchNumEntries,
 	fetchTokenList,
 	fetchTransactionFee,
-	fetchTxProvider,
 	resetCurrencyKeys,
 	submitApprove,
 	submitExchange,
@@ -188,9 +187,6 @@ const exchangeSlice = createSlice({
 		builder.addCase(fetchTransactionFee.fulfilled, (state, action) => {
 			state.transactionFee = action.payload.transactionFee;
 			state.feeCost = action.payload.feeCost;
-		});
-		builder.addCase(fetchTxProvider.fulfilled, (state, action) => {
-			state.txProvider = action.payload;
 		});
 		builder.addCase(submitExchange.pending, (state) => {
 			state.isSubmitting = true;
