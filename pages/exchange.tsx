@@ -20,13 +20,15 @@ const Exchange: ExchangeComponent = () => {
 	const walletAddress = useAppSelector(({ wallet }) => wallet.walletAddress);
 
 	useEffect(() => {
-		const quoteCurrencyFromQuery = (router.query.quote as string | undefined) ?? 'sUSD';
-		const baseCurrencyFromQuery = router.query.base as string | undefined;
+		if (Object.keys(router.query).length !== 0) {
+			const quoteCurrencyFromQuery = (router.query.quote as string | undefined) ?? 'sUSD';
+			const baseCurrencyFromQuery = router.query.base as string | undefined;
 
-		if (!!walletAddress && (!!quoteCurrencyFromQuery || !!baseCurrencyFromQuery)) {
-			dispatch(resetCurrencies({ quoteCurrencyFromQuery, baseCurrencyFromQuery }));
+			if (!!walletAddress && (!!quoteCurrencyFromQuery || !!baseCurrencyFromQuery)) {
+				dispatch(resetCurrencies({ quoteCurrencyFromQuery, baseCurrencyFromQuery }));
+			}
 		}
-	}, [router.query.quote, router.query.base, network.id, dispatch, walletAddress]);
+	}, [router.query, network.id, dispatch, walletAddress]);
 
 	return (
 		<>
