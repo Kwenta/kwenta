@@ -27,7 +27,6 @@ import { Rates } from 'queries/rates/types';
 import { getProxySynthSymbol } from 'queries/synths/utils';
 import { Token } from 'queries/walletBalances/types';
 import {
-	getExchangeRatesForCurrencies,
 	newGetCoinGeckoPricesForCurrencies,
 	newGetExchangeRatesForCurrencies,
 	newGetExchangeRatesTupleForCurrencies,
@@ -86,7 +85,7 @@ export default class ExchangeService {
 	public async getTotalTradePrice(
 		quoteCurrencyKey: string,
 		baseCurrencyKey: string,
-		sUSDRate: number | null,
+		sUSDRate: Wei,
 		quoteAmountWei: Wei
 	) {
 		const quotePriceRate = await this.getQuotePriceRate(baseCurrencyKey, quoteCurrencyKey);
@@ -101,7 +100,7 @@ export default class ExchangeService {
 	public async getEstimatedBaseTradePrice(
 		quoteCurrencyKey: string,
 		baseCurrencyKey: string,
-		sUSDRate: number | null,
+		sUSDRate: Wei,
 		baseAmountWei: Wei
 	) {
 		const basePriceRate = await this.getBasePriceRate(baseCurrencyKey, quoteCurrencyKey);
@@ -130,7 +129,7 @@ export default class ExchangeService {
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
 
 		if (txProvider === '1inch') {
-			const sUSDRate = await this.getSynthUsdRate(quoteCurrencyKey, baseCurrencyKey);
+			const sUSDRate = await this.getSynthUsdRate();
 			const [totalTradePrice, estimatedBaseTradePrice] = await Promise.all([
 				this.getTotalTradePrice(quoteCurrencyKey, baseCurrencyKey, sUSDRate, quoteAmountWei),
 				this.getEstimatedBaseTradePrice(quoteCurrencyKey, baseCurrencyKey, sUSDRate, baseAmountWei),
@@ -329,14 +328,10 @@ export default class ExchangeService {
 		}
 	}
 
-	// TODO: Split this function into two separate ones,
-	// so we can have a deterministic function signature.
-
-	public async swapOneInch(
+	public async swapOneInchMeta(
 		quoteTokenAddress: string,
 		baseTokenAddress: string,
-		amount: string,
-		metaOnly = false
+		amount: string
 	) {
 		if (!this.sdk.signer) {
 			throw new Error(sdkErrors.NO_SIGNER);
@@ -346,20 +341,29 @@ export default class ExchangeService {
 
 		const { from, to, data, value } = params.tx;
 
-		const tx = metaOnly
-			? await this.sdk.signer.populateTransaction({
-					from,
-					to,
-					data,
-					value: ethers.BigNumber.from(value),
-			  })
-			: await this.sdk.signer.sendTransaction({
-					from,
-					to,
-					data,
-					value: ethers.BigNumber.from(value),
-			  });
-		return tx;
+		return this.sdk.signer.populateTransaction({
+			from,
+			to,
+			data,
+			value: ethers.BigNumber.from(value),
+		});
+	}
+
+	public async swapOneInch(quoteTokenAddress: string, baseTokenAddress: string, amount: string) {
+		if (!this.sdk.signer) {
+			throw new Error(sdkErrors.NO_SIGNER);
+		}
+
+		const params = await this.getOneInchSwapParams(quoteTokenAddress, baseTokenAddress, amount);
+
+		const { from, to, data, value } = params.tx;
+
+		return this.sdk.signer.sendTransaction({
+			from,
+			to,
+			data,
+			value: ethers.BigNumber.from(value),
+		});
 	}
 
 	public async swapOneInchGasEstimate(
@@ -511,8 +515,6 @@ export default class ExchangeService {
 		let tx: ethers.ContractTransaction | null = null;
 
 		if (txProvider === '1inch' && !!this.tokensMap) {
-			// @ts-ignore is correct tx type
-
 			tx = await this.swapOneInch(quoteCurrencyTokenAddress, baseCurrencyTokenAddress, quoteAmount);
 		} else if (txProvider === 'synthswap') {
 			tx = await this.swapSynthSwap(
@@ -820,8 +822,13 @@ export default class ExchangeService {
 		return { balances: cryptoBalances, totalUSDBalance };
 	}
 
-	public validCurrencyKey(currencyKey: string) {
-		return !!this.synthsMap[currencyKey as SynthSymbol] || !!this.tokensMap[currencyKey];
+	public validCurrencyKeys(quoteCurrencyKey?: string, baseCurrencyKey?: string) {
+		return [quoteCurrencyKey, baseCurrencyKey].map((currencyKey) => {
+			return (
+				!!currencyKey &&
+				(!!this.synthsMap[currencyKey as SynthSymbol] || !!this.tokensMap[currencyKey])
+			);
+		});
 	}
 
 	private async getCoingeckoPrices(tokenAddresses: string[]) {
@@ -834,17 +841,10 @@ export default class ExchangeService {
 		return response.data;
 	}
 
-	private async getSynthUsdRate(quoteCurrencyKey: string, baseCurrencyKey: string) {
-		if (!quoteCurrencyKey || !baseCurrencyKey) return null;
-
+	private async getSynthUsdRate() {
 		const exchangeRates = await this.getExchangeRates();
-		const synth = this.tokensMap[quoteCurrencyKey] || this.tokensMap[baseCurrencyKey];
 
-		if (synth) {
-			return getExchangeRatesForCurrencies(exchangeRates, 'sUSD', synth.symbol);
-		}
-
-		return null;
+		return exchangeRates['sUSD'];
 	}
 
 	private getExchangeParams(
@@ -1139,7 +1139,7 @@ export default class ExchangeService {
 					baseCurrencyTokenAddress,
 					quoteAmount
 				),
-				this.swapOneInch(quoteCurrencyTokenAddress, baseCurrencyTokenAddress, quoteAmount, true),
+				this.swapOneInchMeta(quoteCurrencyTokenAddress, baseCurrencyTokenAddress, quoteAmount),
 			]);
 
 			const l1Fee = await this.getL1SecurityFee({

@@ -79,19 +79,22 @@ const exchangeSlice = createSlice({
 				}
 			}
 		},
+		setQuoteAmountRaw: (state, action) => {
+			state.quoteAmount = action.payload;
+		},
+		setBaseAmountRaw: (state, action) => {
+			state.baseAmount = action.payload;
+		},
+		setBalances: (state, action) => {
+			state.quoteBalance = action.payload.quoteBalance;
+			state.baseBalance = action.payload.baseBalance;
+		},
 		setQuoteCurrencyKey: (state, action) => {
 			state.baseAmount = '';
 
 			state.quoteCurrencyKey = action.payload;
 			state.baseCurrencyKey =
 				state.baseCurrencyKey === action.payload ? undefined : state.baseCurrencyKey;
-
-			if (state.txProvider === 'synthetix' && !!state.quoteAmount && !!state.baseCurrencyKey) {
-				const baseAmountNoFee = wei(state.quoteAmount).mul(state.rate ?? 0);
-				const fee = baseAmountNoFee.mul(state.exchangeFeeRate ?? 0);
-
-				state.baseAmount = truncateNumbers(baseAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS);
-			}
 		},
 		setBaseCurrencyKey: (state, action) => {
 			state.quoteAmount = '';
@@ -99,14 +102,6 @@ const exchangeSlice = createSlice({
 			state.baseCurrencyKey = action.payload;
 			state.quoteCurrencyKey =
 				state.quoteCurrencyKey === action.payload ? undefined : state.quoteCurrencyKey;
-
-			if (state.txProvider === 'synthetix' && !!state.baseAmount && !!state.quoteCurrencyKey) {
-				const inverseRate = wei(state.rate ?? 0).gt(0) ? wei(1).div(state.rate) : wei(0);
-				const quoteAmountNoFee = wei(state.baseAmount).mul(inverseRate);
-				const fee = quoteAmountNoFee.mul(state.exchangeFeeRate ?? 0);
-
-				state.quoteAmount = truncateNumbers(quoteAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS);
-			}
 		},
 		setRatio: (state, action) => {
 			state.ratio = action.payload;
@@ -179,8 +174,6 @@ const exchangeSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder.addCase(fetchBalances.fulfilled, (state, action) => {
-			state.quoteBalance = action.payload.quoteBalance;
-			state.baseBalance = action.payload.baseBalance;
 			state.redeemableSynthBalances = action.payload.redeemableSynthBalances;
 			state.totalRedeemableBalance = action.payload.totalRedeemableBalance;
 		});

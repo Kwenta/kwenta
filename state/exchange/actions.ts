@@ -9,26 +9,19 @@ import { toWei, truncateNumbers } from 'utils/formatters/number';
 
 import { selectIsSubmissionDisabled } from './selectors';
 
+// Final exchange checklist:
+// - Handle approval clause for transactionFee fetch.
+// - Test `fetchTransactionFee` for txProvider === '1inch' | 'synthswap'
+
 export const fetchBalances = createAsyncThunk<any, void, ThunkConfig>(
 	'exchange/fetchBalances',
-	async (_, { getState, extra: { sdk } }) => {
+	async (_, { extra: { sdk } }) => {
 		const {
-			exchange: { quoteCurrencyKey, baseCurrencyKey },
-		} = getState();
-
-		const [
-			quoteBalance,
-			baseBalance,
-			{ balances: redeemableBalances, totalUSDBalance: totalRedeemableBalance },
-		] = await Promise.all([
-			quoteCurrencyKey ? sdk.exchange.getBalance(quoteCurrencyKey) : undefined,
-			baseCurrencyKey ? sdk.exchange.getBalance(baseCurrencyKey) : undefined,
-			sdk.exchange.getRedeemableDeprecatedSynths(),
-		]);
+			balances: redeemableBalances,
+			totalUSDBalance: totalRedeemableBalance,
+		} = await sdk.exchange.getRedeemableDeprecatedSynths();
 
 		return {
-			quoteBalance: quoteBalance?.toString(),
-			baseBalance: baseBalance?.toString(),
 			redeemableSynthBalances: redeemableBalances.map((r) => ({
 				...r,
 				balance: '0',
@@ -158,16 +151,14 @@ export const fetchTokenList = createAsyncThunk<any, void, ThunkConfig>(
 	}
 );
 
-export const resetCurrencyKeys = createAsyncThunk<
-	any,
-	{
-		quoteCurrencyKey: string | undefined;
-		baseCurrencyKey: string | undefined;
-	},
-	ThunkConfig
->(
+export const resetCurrencyKeys = createAsyncThunk<any, void, ThunkConfig>(
 	'exchange/resetCurrencyKeys',
-	async ({ quoteCurrencyKey, baseCurrencyKey }, { extra: { sdk } }) => {
+	async (_, { getState, dispatch, extra: { sdk } }) => {
+		const {
+			exchange: { quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount },
+			wallet: { walletAddress },
+		} = getState();
+
 		let baseFeeRate = undefined;
 		let rate = undefined;
 		let exchangeFeeRate = undefined;
@@ -176,32 +167,70 @@ export const resetCurrencyKeys = createAsyncThunk<
 		let txProvider = undefined;
 		let approvalStatus = undefined;
 
-		if (quoteCurrencyKey && baseCurrencyKey) {
-			[baseFeeRate, rate, exchangeFeeRate, quotePriceRate, basePriceRate] = await Promise.all([
-				sdk.exchange.getBaseFeeRate(baseCurrencyKey, quoteCurrencyKey),
-				sdk.exchange.getRate(baseCurrencyKey, quoteCurrencyKey),
-				sdk.exchange.getExchangeFeeRate(quoteCurrencyKey, baseCurrencyKey),
-				sdk.exchange.getQuotePriceRate(baseCurrencyKey, quoteCurrencyKey),
-				sdk.exchange.getBasePriceRate(baseCurrencyKey, quoteCurrencyKey),
-			]);
+		if (walletAddress) {
+			const quoteBalance = !!quoteCurrencyKey
+				? await sdk.exchange.getBalance(quoteCurrencyKey)
+				: undefined;
 
-			txProvider = sdk.exchange.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
+			const baseBalance = !!baseCurrencyKey
+				? await sdk.exchange.getBalance(baseCurrencyKey)
+				: undefined;
 
-			const needsApproval = sdk.exchange.checkNeedsApproval(baseCurrencyKey, quoteCurrencyKey);
+			dispatch({
+				type: 'exchange/setBalances',
+				payload: { quoteBalance: quoteBalance?.toString(), baseBalance: baseBalance?.toString() },
+			});
 
-			if (needsApproval) {
-				// TODO: Handle case where allowance is not MaxUint256.
-				// Simplest way to do this is to return the allowance from
-				// checkAllowance, store it in state to do the comparison there.
-				const isApproved = await sdk.exchange.checkAllowance(
-					quoteCurrencyKey,
-					baseCurrencyKey,
-					'0'
-				);
+			if (quoteCurrencyKey && baseCurrencyKey) {
+				[baseFeeRate, rate, exchangeFeeRate, quotePriceRate, basePriceRate] = await Promise.all([
+					sdk.exchange.getBaseFeeRate(baseCurrencyKey, quoteCurrencyKey),
+					sdk.exchange.getRate(baseCurrencyKey, quoteCurrencyKey),
+					sdk.exchange.getExchangeFeeRate(quoteCurrencyKey, baseCurrencyKey),
+					sdk.exchange.getQuotePriceRate(baseCurrencyKey, quoteCurrencyKey),
+					sdk.exchange.getBasePriceRate(baseCurrencyKey, quoteCurrencyKey),
+				]);
 
-				approvalStatus = isApproved ? 'approved' : 'needs-approval';
-			} else {
-				approvalStatus = 'approved';
+				txProvider = sdk.exchange.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
+
+				if (txProvider === 'synthetix') {
+					if (!!quoteCurrencyKey && !!quoteAmount && !!baseCurrencyKey) {
+						const baseAmountNoFee = wei(quoteAmount).mul(rate ?? 0);
+						const fee = baseAmountNoFee.mul(exchangeFeeRate ?? 0);
+
+						dispatch({
+							type: 'exchange/setBaseAmountRaw',
+							payload: truncateNumbers(baseAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS),
+						});
+					}
+
+					if (!!baseCurrencyKey && !!baseAmount && !!quoteCurrencyKey) {
+						const inverseRate = wei(rate ?? 0).gt(0) ? wei(1).div(rate) : wei(0);
+						const quoteAmountNoFee = wei(baseAmount).mul(inverseRate);
+						const fee = quoteAmountNoFee.mul(exchangeFeeRate ?? 0);
+
+						dispatch({
+							type: 'exchange/setQuoteAmountRaw',
+							payload: truncateNumbers(quoteAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS),
+						});
+					}
+				}
+
+				const needsApproval = sdk.exchange.checkNeedsApproval(baseCurrencyKey, quoteCurrencyKey);
+
+				if (needsApproval) {
+					// TODO: Handle case where allowance is not MaxUint256.
+					// Simplest way to do this is to return the allowance from
+					// checkAllowance, store it in state to do the comparison there.
+					const isApproved = await sdk.exchange.checkAllowance(
+						quoteCurrencyKey,
+						baseCurrencyKey,
+						'0'
+					);
+
+					approvalStatus = isApproved ? 'approved' : 'needs-approval';
+				} else {
+					approvalStatus = 'approved';
+				}
 			}
 		}
 
@@ -219,29 +248,19 @@ export const resetCurrencyKeys = createAsyncThunk<
 
 export const changeQuoteCurrencyKey = createAsyncThunk<any, string, ThunkConfig>(
 	'exchange/changeQuoteCurrencyKey',
-	async (currencyKey, { dispatch, getState }) => {
-		const {
-			exchange: { baseCurrencyKey },
-		} = getState();
-
+	async (currencyKey, { dispatch }) => {
 		dispatch({ type: 'exchange/setQuoteCurrencyKey', payload: currencyKey });
-		await dispatch(resetCurrencyKeys({ quoteCurrencyKey: currencyKey, baseCurrencyKey }));
-		// TODO: Handle other things that depend on "txProvider" here.
-		// - feeReclaimPeriod
+		dispatch(resetCurrencyKeys());
+		dispatch(fetchFeeReclaimPeriod());
 	}
 );
 
 export const changeBaseCurrencyKey = createAsyncThunk<any, string, ThunkConfig>(
 	'exchange/changeBaseCurrencyKey',
-	async (currencyKey, { dispatch, getState }) => {
-		const {
-			exchange: { quoteCurrencyKey },
-		} = getState();
-
+	async (currencyKey, { dispatch }) => {
 		dispatch({ type: 'exchange/setBaseCurrencyKey', payload: currencyKey });
-		await dispatch(resetCurrencyKeys({ baseCurrencyKey: currencyKey, quoteCurrencyKey }));
-		// TODO: Handle other things that depend on "txProvider" here.
-		// - settlementReclaimPeriod
+		dispatch(resetCurrencyKeys());
+		dispatch(fetchFeeReclaimPeriod());
 	}
 );
 
@@ -255,19 +274,20 @@ export const resetCurrencies = createAsyncThunk<
 >(
 	'exchange/resetCurrencies',
 	async ({ quoteCurrencyFromQuery, baseCurrencyFromQuery }, { dispatch, extra: { sdk } }) => {
-		await sdk.exchange.getOneInchTokens();
+		await dispatch(fetchTokenList());
 
-		const validQuoteCurrency =
-			!!quoteCurrencyFromQuery && sdk.exchange.validCurrencyKey(quoteCurrencyFromQuery);
-		const validBaseCurrency =
-			!!baseCurrencyFromQuery && sdk.exchange.validCurrencyKey(baseCurrencyFromQuery);
+		const [validQuoteCurrency, validBaseCurrency] = sdk.exchange.validCurrencyKeys(
+			quoteCurrencyFromQuery,
+			baseCurrencyFromQuery
+		);
 
 		const quoteCurrencyKey = validQuoteCurrency ? quoteCurrencyFromQuery : 'sUSD';
 		const baseCurrencyKey = validBaseCurrency ? baseCurrencyFromQuery : undefined;
 
 		dispatch({ type: 'exchange/setQuoteCurrencyKey', payload: quoteCurrencyKey });
 		dispatch({ type: 'exchange/setBaseCurrencyKey', payload: baseCurrencyKey });
-		dispatch(resetCurrencyKeys({ quoteCurrencyKey, baseCurrencyKey }));
+		dispatch(resetCurrencyKeys());
+		dispatch(fetchFeeReclaimPeriod());
 	}
 );
 
@@ -282,7 +302,6 @@ export const fetchFeeReclaimPeriod = createAsyncThunk<
 	const {
 		exchange: { quoteCurrencyKey, baseCurrencyKey },
 	} = getState();
-
 	const [feeReclaimPeriod, settlementWaitingPeriod] = await Promise.all([
 		quoteCurrencyKey ? sdk.exchange.getFeeReclaimPeriod(quoteCurrencyKey) : 0,
 		baseCurrencyKey ? sdk.exchange.getFeeReclaimPeriod(baseCurrencyKey) : 0,
@@ -321,8 +340,7 @@ export const fetchNumEntries = createAsyncThunk<number, void, ThunkConfig>(
 		} = getState();
 
 		if (baseCurrencyKey) {
-			const numEntries = await sdk.exchange.getNumEntries(baseCurrencyKey);
-			return numEntries;
+			return sdk.exchange.getNumEntries(baseCurrencyKey);
 		}
 
 		return 0;
@@ -339,17 +357,16 @@ export const setBaseAmount = createAsyncThunk<any, string, ThunkConfig>(
 		let baseAmount = '';
 		let quoteAmount = '';
 
-		if (value === '') {
-			baseAmount = '';
-			quoteAmount = '';
-		} else {
+		if (value !== '') {
 			baseAmount = value;
+
 			if (txProvider === 'synthetix' && !!quoteCurrencyKey) {
 				const inverseRate = wei(rate || 0).gt(0) ? wei(1).div(rate) : wei(0);
 				const quoteAmountNoFee = wei(value).mul(inverseRate);
 				const fee = quoteAmountNoFee.mul(exchangeFeeRate ?? 0);
 				quoteAmount = truncateNumbers(quoteAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS);
 			}
+
 			await dispatch(fetchTransactionFee());
 		}
 
@@ -374,9 +391,7 @@ export const updateBaseAmount = createAsyncThunk<any, void, ThunkConfig>(
 		let baseAmount = '';
 		let slippagePercent = undefined;
 
-		if (quoteAmount === '') {
-			baseAmount = '';
-		} else {
+		if (quoteAmount !== '') {
 			if (txProvider === 'synthetix' && baseCurrencyKey) {
 				const baseAmountNoFee = wei(quoteAmount).mul(wei(rate ?? 0));
 				const fee = baseAmountNoFee.mul(wei(exchangeFeeRate ?? 0));

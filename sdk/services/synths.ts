@@ -67,8 +67,11 @@ export default class SynthsService {
 		return balances;
 	}
 
-	public getSynthBalance(currencyKey: string) {
-		// TODO: If this.balances is empty, populate it first.
+	public async getSynthBalance(currencyKey: string) {
+		if (!this.balances) {
+			await this.getSynthBalances();
+		}
+
 		return this.balances?.balancesMap[currencyKey]?.balance ?? zeroBN;
 	}
 }

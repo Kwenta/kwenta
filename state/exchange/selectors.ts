@@ -115,16 +115,6 @@ export const selectBaseFeeRateWei = createSelector(
 	(baseFeeRate) => toWei(baseFeeRate)
 );
 
-export const validQuoteCurrency = createSelector(
-	(state: RootState) => state.exchange.quoteCurrencyKey,
-	(quoteCurrencyKey) => !!quoteCurrencyKey && sdk.exchange.validCurrencyKey(quoteCurrencyKey)
-);
-
-export const validBaseCurrency = createSelector(
-	(state: RootState) => state.exchange.baseCurrencyKey,
-	(baseCurrencyKey) => !!baseCurrencyKey && sdk.exchange.validCurrencyKey(baseCurrencyKey)
-);
-
 export const selectCanRedeem = createSelector(
 	selectTotalRedeemableBalanceWei,
 	(state: RootState) => state.exchange.redeemableSynthBalances,

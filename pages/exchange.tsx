@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { FC, useEffect } from 'react';
 import { resetCurrencies } from 'state/exchange/actions';
-import { useAppDispatch } from 'state/hooks';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import NotificationContainer from 'constants/NotificationContainer';
@@ -17,15 +17,16 @@ const Exchange: ExchangeComponent = () => {
 	const { network } = Connector.useContainer();
 	const router = useRouter();
 	const dispatch = useAppDispatch();
+	const walletAddress = useAppSelector(({ wallet }) => wallet.walletAddress);
 
 	useEffect(() => {
-		const quoteCurrencyFromQuery = router.query.quote as string | undefined;
+		const quoteCurrencyFromQuery = (router.query.quote as string | undefined) ?? 'sUSD';
 		const baseCurrencyFromQuery = router.query.base as string | undefined;
 
-		if (!!quoteCurrencyFromQuery || !!baseCurrencyFromQuery) {
+		if (!!walletAddress && (!!quoteCurrencyFromQuery || !!baseCurrencyFromQuery)) {
 			dispatch(resetCurrencies({ quoteCurrencyFromQuery, baseCurrencyFromQuery }));
 		}
-	}, [router.query.quote, router.query.base, network.id, dispatch]);
+	}, [router.query.quote, router.query.base, network.id, dispatch, walletAddress]);
 
 	return (
 		<>
