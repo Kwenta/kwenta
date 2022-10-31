@@ -17,6 +17,7 @@ import {
 	futuresOrderPriceState,
 	marketKeyState,
 	crossMarginAccountOverviewState,
+	leverageSideState,
 } from 'store/futures';
 import { FlexDivRow } from 'styles/common';
 import { floorNumber, isZero, zeroBN } from 'utils/formatters/number';
@@ -42,6 +43,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	const assetPrice = useRecoilValue(marketAssetRateState);
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
 	const marketKey = useRecoilValue(marketKeyState);
+	const selectedLeverageSide = useRecoilValue(leverageSideState);
 
 	const [usdValue, setUsdValue] = useState(susdSize);
 	const [assetValue, setAssetValue] = useState(nativeSize);
@@ -117,7 +119,9 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	}, [position?.remainingMargin, disabled, selectedAccountType, freeCrossMargin]);
 
 	const showPosSizeHelper =
-		position?.position?.size && (orderType === 'limit' || orderType === 'stop market');
+		position?.position?.size &&
+		(orderType === 'limit' || orderType === 'stop market') &&
+		position?.position.side !== selectedLeverageSide;
 
 	const invalid =
 		(assetInputType === 'usd' && usdValue !== '' && maxUsdInputAmount.lte(usdValue || 0)) ||
