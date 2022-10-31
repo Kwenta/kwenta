@@ -525,7 +525,7 @@
 				},
 				"escrow": {
 					"title": "Escrow",
-					"date-time": "Date/Time",
+					"date": "Date",
 					"time-until-vestable": "Time Until Vestable",
 					"immediately-vestable": "Immediately Vestable",
 					"amount": "Amount",

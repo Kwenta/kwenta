@@ -91,7 +91,7 @@ const EscrowTable = () => {
 						{
 							Header: () => (
 								<TableHeader $darkTheme={isDarkTheme}>
-									{t('dashboard.stake.tabs.escrow.date-time')}
+									{t('dashboard.stake.tabs.escrow.date')}
 								</TableHeader>
 							),
 							Cell: (cellProps: CellProps<EscrowRow>) => (
@@ -120,8 +120,7 @@ const EscrowTable = () => {
 							),
 							Cell: (cellProps: CellProps<EscrowRow>) => (
 								<TableCell $darkTheme={isDarkTheme}>
-									{Math.trunc(cellProps.row.original.vestable)}{' '}
-									{t('dashboard.stake.tabs.stake-table.kwenta-token')}
+									{truncateNumbers(cellProps.row.original.vestable, 4)}
 								</TableCell>
 							),
 							accessor: 'immediatelyVestable',
@@ -135,8 +134,7 @@ const EscrowTable = () => {
 							),
 							Cell: (cellProps: CellProps<EscrowRow>) => (
 								<TableCell $darkTheme={isDarkTheme}>
-									{Math.trunc(cellProps.row.original.amount)}{' '}
-									{t('dashboard.stake.tabs.stake-table.kwenta-token')}
+									{truncateNumbers(cellProps.row.original.amount, 4)}
 								</TableCell>
 							),
 							accessor: 'amount',
@@ -150,8 +148,7 @@ const EscrowTable = () => {
 							),
 							Cell: (cellProps: CellProps<EscrowRow>) => (
 								<TableCell $darkTheme={isDarkTheme}>
-									{Math.trunc(cellProps.row.original.fee)}{' '}
-									{t('dashboard.stake.tabs.stake-table.kwenta-token')}
+									{truncateNumbers(cellProps.row.original.fee, 4)}
 								</TableCell>
 							),
 							accessor: 'earlyVestFee',
@@ -200,8 +197,7 @@ const EscrowTable = () => {
 							),
 							Cell: (cellProps: CellProps<EscrowRow>) => (
 								<TableCell $darkTheme={isDarkTheme}>
-									{Math.trunc(cellProps.row.original.amount)}{' '}
-									{t('dashboard.stake.tabs.stake-table.kwenta-token')}
+									{truncateNumbers(cellProps.row.original.amount, 4)}
 								</TableCell>
 							),
 							accessor: 'amount',
@@ -215,8 +211,7 @@ const EscrowTable = () => {
 							),
 							Cell: (cellProps: CellProps<EscrowRow>) => (
 								<TableCell $darkTheme={isDarkTheme}>
-									{Math.trunc(cellProps.row.original.fee)}{' '}
-									{t('dashboard.stake.tabs.stake-table.kwenta-token')}
+									{truncateNumbers(cellProps.row.original.fee, 4)}
 								</TableCell>
 							),
 							accessor: 'earlyVestFee',
@@ -242,14 +237,14 @@ const EscrowTable = () => {
 					<div>
 						<div className="stat-title">{t('dashboard.stake.tabs.escrow.total')}</div>
 						<div className="stat-value">
-							{truncateNumbers(totalVestable ?? 0, 2)}{' '}
+							{truncateNumbers(totalVestable ?? 0, 4)}{' '}
 							{t('dashboard.stake.tabs.stake-table.kwenta-token')}
 						</div>
 					</div>
 					<div>
 						<div className="stat-title">{t('dashboard.stake.tabs.escrow.fee')}</div>
 						<div className="stat-value">
-							{truncateNumbers(totalFee ?? 0, 2)}{' '}
+							{truncateNumbers(totalFee ?? 0, 4)}{' '}
 							{t('dashboard.stake.tabs.stake-table.kwenta-token')}
 						</div>
 					</div>

@@ -46,13 +46,17 @@ const TradingRewardsTab: React.FC = () => {
 								EpochPeriod: epochPeriod,
 							})}
 						</div>
-						<KwentaLabel>{Number(claimableBalance).toFixed(2)}</KwentaLabel>
+						<KwentaLabel>
+							{truncateNumbers(Number(currentWeeklyReward) * tradingRewardsRatio, 4)}
+						</KwentaLabel>
 					</div>
 					<div>
 						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.claimable-rewards-all')}
 						</div>
-						<KwentaLabel>{Number(claimableBalance).toFixed(2)}</KwentaLabel>
+						<KwentaLabel>
+							{truncateNumbers(Number(currentWeeklyReward) * tradingRewardsRatio, 4)}
+						</KwentaLabel>
 					</div>
 				</CardGrid>
 				<StyledFlexDivRow>
@@ -82,21 +86,21 @@ const TradingRewardsTab: React.FC = () => {
 						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.fees-paid', { EpochPeriod: epochPeriod })}
 						</div>
-						<div className="value">${truncateNumbers(feePaid, 2)}</div>
+						<div className="value">{truncateNumbers(feePaid ?? 0, 4)}</div>
 					</div>
 					<div>
 						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}
 						</div>
 						<KwentaLabel>
-							{truncateNumbers(Number(currentWeeklyReward) * tradingRewardsRatio, 2)}
+							{truncateNumbers(Number(currentWeeklyReward) * tradingRewardsRatio, 4)}
 						</KwentaLabel>
 					</div>
 					<div>
 						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.estimated-fee-share')}
 						</div>
-						<div className="value">{truncateNumbers(tradingRewardsRatio * 100, 2)}%</div>
+						<div className="value">{truncateNumbers(tradingRewardsRatio * 100, 4)}%</div>
 					</div>
 					<div>
 						<div className="title">

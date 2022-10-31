@@ -1,8 +1,13 @@
+import {
+	getFuturesTradesBetweenPeriod,
+	getSynthExchangesBetweenPeriod,
+	mergeDatasets,
+} from '@kwenta/trading-incentives';
 import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
 import _ from 'lodash';
 import moment from 'moment';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { erc20ABI, useContractRead, useContractReads, usePrepareContractWrite } from 'wagmi';
 
 import Connector from 'containers/Connector';
@@ -10,7 +15,8 @@ import rewardEscrowABI from 'lib/abis/RewardEscrow.json';
 import stakingRewardsABI from 'lib/abis/StakingRewards.json';
 import supplyScheduleABI from 'lib/abis/SupplySchedule.json';
 import vKwentaRedeemerABI from 'lib/abis/vKwentaRedeemer.json';
-import { getEpochDetails } from 'queries/staking/utils';
+import useGetSpotFeeForAccount from 'queries/staking/useGetSpotFeeForAccount';
+import { EPOCH_START, getEpochDetails, WEEK } from 'queries/staking/utils';
 import { formatShortDate, formatTruncatedDuration, toJSTimestamp } from 'utils/formatters/date';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -64,10 +70,9 @@ const useStakingData = () => {
 		contractInterface: vKwentaRedeemerABI,
 	};
 
-	const { provider } = Connector.useContainer();
 	const epochPeriod = 1;
-	const [epochDate, setEpochDates] = useState(`23 Oct, 2022 - 30 Oct, 2022`);
-	const { walletAddress } = Connector.useContainer();
+	const [epochDate, setEpochDate] = useState(`16 Oct, 2022 - 23 Oct, 2022`);
+	const { walletAddress, provider } = Connector.useContainer();
 	const [kwentaBalance, setKwentaBalance] = useState(zeroBN);
 	const [escrowedBalance, setEscrowedBalance] = useState(zeroBN);
 	const [stakedNonEscrowedBalance, setStakedNonEscrowedBalance] = useState(zeroBN);
@@ -79,16 +84,11 @@ const useStakingData = () => {
 	const [vKwentaAllowance, setVKwentaAllowance] = useState(zeroBN);
 	const [kwentaAllowance, setKwentaAllowance] = useState(zeroBN);
 	const [currentWeeklyReward, setCurrentWeeklyReward] = useState(zeroBN);
-	const [feePaid] = useState(10);
-	const [totalFeePaid] = useState(20);
-
-	getEpochDetails(provider, 1).then((e) =>
-		setEpochDates(
-			`${formatShortDate(new Date(toJSTimestamp(e.epochStart)))} - ${formatShortDate(
-				new Date(toJSTimestamp(e.epochEnd))
-			)}`
-		)
-	);
+	const [feePaid, setFeesPaid] = useState(0);
+	const [totalFeePaid, setTotalFeePaid] = useState(0);
+	const [epochStart, setEpochStart] = useState(EPOCH_START);
+	const [epochEnd, setEpochEnd] = useState(EPOCH_START + WEEK);
+	const [tradingRewardsRatio, setTradingRewardsRatio] = useState(0);
 
 	useContractReads({
 		contracts: [
@@ -271,22 +271,67 @@ const useStakingData = () => {
 		staleTime: Infinity,
 	});
 
-	const tradingRewardsScore =
-		Math.pow(feePaid, 0.7) *
-		Math.pow(Number(stakedNonEscrowedBalance.add(stakedEscrowedBalance)), 0.3);
+	useEffect(() => {
+		const snapshot = async () => {
+			const { epochStart, epochEnd } = await getEpochDetails(provider, 1);
+			setEpochStart(epochStart);
+			setEpochEnd(epochEnd);
+			const startDate = formatShortDate(new Date(toJSTimestamp(epochStart)));
+			const endDate = formatShortDate(new Date(toJSTimestamp(epochEnd)));
+			setEpochDate(`${startDate} - ${endDate}`);
+		};
+		snapshot();
+	}, [provider]);
 
-	const totalTradingRewardsScore =
-		Math.pow(totalFeePaid, 0.7) * Math.pow(Number(totalStakedBalance), 0.3);
+	const SpotFeeQuery = useGetSpotFeeForAccount(walletAddress!);
+	const spotFeePaid = useMemo(() => {
+		const t = SpotFeeQuery.data?.synthExchanges ?? [];
 
-	const tradingRewardsRatio = totalTradingRewardsScore
-		? tradingRewardsScore / totalTradingRewardsScore
-		: 0;
+		return t
+			.map((trade: any) => Number(trade.feesInUSD))
+			.reduce((acc: number, curr: number) => acc + curr, 0);
+	}, [SpotFeeQuery.data]);
+
+	useEffect(() => {
+		const snapshot = async () => {
+			setFeesPaid(spotFeePaid ?? 0);
+			const synthExchanges = await getSynthExchangesBetweenPeriod(epochStart, epochEnd);
+			const futuresTrades = await getFuturesTradesBetweenPeriod(epochStart, epochEnd);
+			const feePaidByTrader = await mergeDatasets(synthExchanges, futuresTrades);
+			setTotalFeePaid(
+				Object.values(feePaidByTrader).reduce((acc, current) => acc + Number(current), 0) ?? 0
+			);
+			const tradingRewardsScore =
+				Math.pow(feePaid, 0.7) *
+				Math.pow(Number(stakedNonEscrowedBalance) + Number(stakedEscrowedBalance), 0.3);
+			const totalTradingRewardsScore =
+				Math.pow(totalFeePaid / 1e18, 0.7) * Math.pow(Number(totalStakedBalance), 0.3);
+			setTradingRewardsRatio(
+				!_.isNil(totalTradingRewardsScore) ? tradingRewardsScore / totalTradingRewardsScore : 0
+			);
+		};
+		snapshot();
+	}, [
+		currentWeeklyReward,
+		epochEnd,
+		epochStart,
+		feePaid,
+		provider,
+		spotFeePaid,
+		stakedEscrowedBalance,
+		stakedNonEscrowedBalance,
+		totalFeePaid,
+		totalStakedBalance,
+	]);
 
 	return {
 		epochPeriod,
 		epochDate,
+		epochStart,
+		epochEnd,
 		data,
 		feePaid,
+		totalFeePaid,
 		tradingRewardsRatio,
 		escrowedBalance,
 		totalVestable,
