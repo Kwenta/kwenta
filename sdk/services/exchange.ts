@@ -36,9 +36,9 @@ import { FuturesMarketKey, MarketAssetByKey } from 'utils/futures';
 import { getTransactionPrice, normalizeGasLimit } from 'utils/network';
 
 import * as sdkErrors from '../common/errors';
-import { computeGasFee, getGasPriceFromProvider, getL1SecurityFee, MetaTx } from '../common/gas';
+import { computeGasFee, getGasPriceFromProvider } from '../common/gas';
 import SynthRedeemerABI from '../contracts/abis/SynthRedeemer.json';
-import { getSynthsForNetwork, SynthsMap, SynthSymbol } from '../data/synths';
+import { getSynthsForNetwork, SynthSymbol } from '../data/synths';
 import {
 	OneInchApproveSpenderResponse,
 	OneInchQuoteResponse,
@@ -55,7 +55,6 @@ const PROTOCOLS =
 const FILTERED_TOKENS = ['0x4922a015c4407f87432b179bb209e125432e4a2a'];
 
 export default class ExchangeService {
-	private synthsMap: SynthsMap = {};
 	private tokensMap: any = {};
 	private tokenList: Token[] = [];
 	private allTokensMap: any;
@@ -63,7 +62,7 @@ export default class ExchangeService {
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
-		this.getAllTokensMap();
+		this.getOneInchTokens();
 	}
 
 	private get isL2() {
@@ -279,7 +278,12 @@ export default class ExchangeService {
 			synthAmountEth = ethers.utils.formatEther(usdValue);
 		}
 
-		const params = await this.getOneInchSwapParams(oneInchFrom, oneInchTo, synthAmountEth);
+		const params = await this.getOneInchSwapParams(
+			oneInchFrom,
+			oneInchTo,
+			synthAmountEth,
+			fromToken.decimals
+		);
 
 		const formattedData = getFormattedSwapData(params, SYNTH_SWAP_OPTIMISM_ADDRESS);
 
@@ -331,13 +335,19 @@ export default class ExchangeService {
 	public async swapOneInchMeta(
 		quoteTokenAddress: string,
 		baseTokenAddress: string,
-		amount: string
+		amount: string,
+		quoteDecimals: number
 	) {
 		if (!this.sdk.signer) {
 			throw new Error(sdkErrors.NO_SIGNER);
 		}
 
-		const params = await this.getOneInchSwapParams(quoteTokenAddress, baseTokenAddress, amount);
+		const params = await this.getOneInchSwapParams(
+			quoteTokenAddress,
+			baseTokenAddress,
+			amount,
+			quoteDecimals
+		);
 
 		const { from, to, data, value } = params.tx;
 
@@ -349,12 +359,22 @@ export default class ExchangeService {
 		});
 	}
 
-	public async swapOneInch(quoteTokenAddress: string, baseTokenAddress: string, amount: string) {
+	public async swapOneInch(
+		quoteTokenAddress: string,
+		baseTokenAddress: string,
+		amount: string,
+		quoteDecimals: number
+	) {
 		if (!this.sdk.signer) {
 			throw new Error(sdkErrors.NO_SIGNER);
 		}
 
-		const params = await this.getOneInchSwapParams(quoteTokenAddress, baseTokenAddress, amount);
+		const params = await this.getOneInchSwapParams(
+			quoteTokenAddress,
+			baseTokenAddress,
+			amount,
+			quoteDecimals
+		);
 
 		const { from, to, data, value } = params.tx;
 
@@ -369,13 +389,19 @@ export default class ExchangeService {
 	public async swapOneInchGasEstimate(
 		quoteTokenAddress: string,
 		baseTokenAddress: string,
-		amount: string
+		amount: string,
+		quoteDecimals: number
 	) {
 		if (!this.sdk.walletAddress) {
 			throw new Error(sdkErrors.NO_SIGNER);
 		}
 
-		const params = await this.getOneInchSwapParams(quoteTokenAddress, baseTokenAddress, amount);
+		const params = await this.getOneInchSwapParams(
+			quoteTokenAddress,
+			baseTokenAddress,
+			amount,
+			quoteDecimals
+		);
 
 		return params.tx.gas;
 	}
@@ -511,11 +537,17 @@ export default class ExchangeService {
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
 		const quoteCurrencyTokenAddress = this.getTokenAddress(quoteCurrencyKey);
 		const baseCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey);
+		const quoteDecimals = this.getTokenDecimals(quoteCurrencyKey);
 
 		let tx: ethers.ContractTransaction | null = null;
 
 		if (txProvider === '1inch' && !!this.tokensMap) {
-			tx = await this.swapOneInch(quoteCurrencyTokenAddress, baseCurrencyTokenAddress, quoteAmount);
+			tx = await this.swapOneInch(
+				quoteCurrencyTokenAddress,
+				baseCurrencyTokenAddress,
+				quoteAmount,
+				quoteDecimals
+			);
 		} else if (txProvider === 'synthswap') {
 			tx = await this.swapSynthSwap(
 				this.allTokensMap[quoteCurrencyKey],
@@ -887,20 +919,18 @@ export default class ExchangeService {
 		return this.synthsMap;
 	}
 
+	public get synthsMap() {
+		return getSynthsForNetwork(this.sdk.networkId);
+	}
+
 	public async getOneInchTokens() {
 		const { tokensMap, tokens } = await this.getOneInchTokenList();
 
 		this.tokensMap = tokensMap;
 		this.tokenList = tokens;
+		this.allTokensMap = { ...this.synthsMap, ...tokensMap };
 
 		return { tokensMap: this.tokensMap, tokenList: this.tokenList };
-	}
-
-	private async getAllTokensMap() {
-		this.synthsMap = getSynthsForNetwork(this.sdk.networkId);
-		await this.getOneInchTokens();
-
-		this.allTokensMap = { ...this.synthsMap, ...this.tokensMap };
 	}
 
 	private checkIsAtomic(baseCurrencyKey: string, quoteCurrencyKey: string) {
@@ -944,23 +974,20 @@ export default class ExchangeService {
 	}
 
 	private async getOneInchSwapParams(
-		quoteCurrencyKey: string,
-		baseCurrencyKey: string,
-		amount: string
+		quoteTokenAddress: string,
+		baseTokenAddress: string,
+		amount: string,
+		quoteDecimals: number
 	) {
 		if (!this.sdk.walletAddress) {
 			throw new Error(sdkErrors.NO_SIGNER);
 		}
 
-		const quoteTokenAddress = this.getTokenAddress(quoteCurrencyKey);
-		const baseTokenAddress = this.getTokenAddress(baseCurrencyKey);
-		const decimals = this.getTokenDecimals(quoteCurrencyKey);
-
 		const params = this.getOneInchQuoteSwapParams(
 			quoteTokenAddress,
 			baseTokenAddress,
 			amount,
-			decimals
+			quoteDecimals
 		);
 
 		const res = await axios.get<OneInchSwapResponse>(this.oneInchApiUrl + 'swap', {
@@ -969,7 +996,7 @@ export default class ExchangeService {
 				toTokenAddress: params.toTokenAddress,
 				amount: params.amount,
 				fromAddress: this.sdk.walletAddress,
-				DEFAULT_1INCH_SLIPPAGE,
+				slippage: DEFAULT_1INCH_SLIPPAGE,
 				PROTOCOLS,
 				referrerAddress: KWENTA_REFERRAL_ADDRESS,
 				disableEstimate: true,
@@ -1109,6 +1136,7 @@ export default class ExchangeService {
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
 		const quoteCurrencyTokenAddress = this.getTokenAddress(quoteCurrencyKey);
 		const baseCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey);
+		const quoteDecimals = this.getTokenDecimals(quoteCurrencyKey);
 
 		if (txProvider === 'synthswap') {
 			const [gasEstimate, metaTx] = await Promise.all([
@@ -1125,7 +1153,7 @@ export default class ExchangeService {
 				),
 			]);
 
-			const l1Fee = await this.getL1SecurityFee({
+			const l1Fee = await this.sdk.transactions.getOptimismLayerOneFees({
 				...metaTx,
 				gasPrice: 0,
 				gasLimit: Number(gasEstimate),
@@ -1137,12 +1165,18 @@ export default class ExchangeService {
 				this.swapOneInchGasEstimate(
 					quoteCurrencyTokenAddress,
 					baseCurrencyTokenAddress,
-					quoteAmount
+					quoteAmount,
+					quoteDecimals
 				),
-				this.swapOneInchMeta(quoteCurrencyTokenAddress, baseCurrencyTokenAddress, quoteAmount),
+				this.swapOneInchMeta(
+					quoteCurrencyTokenAddress,
+					baseCurrencyTokenAddress,
+					quoteAmount,
+					quoteDecimals
+				),
 			]);
 
-			const l1Fee = await this.getL1SecurityFee({
+			const l1Fee = await this.sdk.transactions.getOptimismLayerOneFees({
 				...metaTx,
 				gasPrice: 0,
 				gasLimit: Number(estimate),
@@ -1150,10 +1184,6 @@ export default class ExchangeService {
 
 			return { limit: normalizeGasLimit(Number(estimate)), l1Fee };
 		}
-	}
-
-	private getL1SecurityFee(metaTx: MetaTx) {
-		return getL1SecurityFee(this.isL2, metaTx, this.sdk.signer);
 	}
 
 	private isCurrencyETH(currencyKey: string) {

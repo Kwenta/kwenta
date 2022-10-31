@@ -88,7 +88,7 @@ export default class TransactionsService {
 	}
 
 	public async getOptimismLayerOneFees(txn?: ethers.providers.TransactionRequest) {
-		if (!txn || !this.sdk.provider) return null;
+		if (!txn || !this.sdk.signer) return null;
 
 		const isNotOvm =
 			this.sdk.networkId !== NetworkIdByName['mainnet-ovm'] &&
@@ -102,10 +102,10 @@ export default class TransactionsService {
 		const OptimismGasPriceOracleContract = new ethers.Contract(
 			OVMGasPriceOracle.address,
 			contractAbi,
-			this.sdk.provider
+			this.sdk.signer
 		);
 
-		const cleanedTxn = omit(txn, ['maxPriorityFeePerGas', 'maxFeePerGas']);
+		const cleanedTxn = omit(txn, ['from', 'maxPriorityFeePerGas', 'maxFeePerGas']);
 		const serializedTxn = ethers.utils.serializeTransaction(
 			cleanedTxn as ethers.UnsignedTransaction
 		);

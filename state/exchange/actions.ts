@@ -7,12 +7,6 @@ import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { toWei, truncateNumbers } from 'utils/formatters/number';
 
-import { selectIsSubmissionDisabled } from './selectors';
-
-// Final exchange checklist:
-// - Handle approval clause for transactionFee fetch.
-// - Test `fetchTransactionFee` for txProvider === '1inch' | 'synthswap'
-
 export const fetchBalances = createAsyncThunk<any, void, ThunkConfig>(
 	'exchange/fetchBalances',
 	async (_, { extra: { sdk } }) => {
@@ -44,13 +38,9 @@ export const fetchTransactionFee = createAsyncThunk<
 		exchange: { quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount },
 	} = getState();
 
-	const isSubmissionDisabled = selectIsSubmissionDisabled(getState());
-
 	if (baseCurrencyKey && quoteCurrencyKey) {
 		const [transactionFee, feeCost] = await Promise.all([
-			!isSubmissionDisabled
-				? sdk.exchange.getTransactionFee(quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount)
-				: undefined,
+			sdk.exchange.getTransactionFee(quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount),
 			sdk.exchange.getFeeCost(quoteCurrencyKey, baseCurrencyKey, quoteAmount),
 		]);
 
