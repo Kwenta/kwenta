@@ -35,13 +35,19 @@ const EligibilityBox = () => {
 			</EligibilityContainer>
 			{isEligible !== undefined && !isLonoEligible && (
 				<EligibilityStatus $isEligible={isEligible}>
-					{`Address is ${!isEligible ? 'not' : ''} eligible for `}
-					<StyledLink
-						style={{ marginLeft: '5px' }}
-						onClick={() => window.open(EXTERNAL_LINKS.Aelin.Blog)}
-					>
-						{` the Aelin pool (Nov 1 - Nov 14).`}
-					</StyledLink>
+					{isEligible ? (
+						<span>
+							Address is eligible for
+							<StyledLink
+								style={{ marginLeft: '5px' }}
+								onClick={() => window.open(EXTERNAL_LINKS.Aelin.Pool)}
+							>
+								the Aelin pool (Nov 1 - Nov 14).
+							</StyledLink>
+						</span>
+					) : (
+						<span>Address is not eligible.</span>
+					)}
 				</EligibilityStatus>
 			)}
 			{isLonoEligible && (
