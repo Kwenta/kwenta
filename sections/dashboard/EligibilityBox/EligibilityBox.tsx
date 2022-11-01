@@ -5,7 +5,7 @@ import Button from 'components/Button';
 import Input from 'components/Input/Input';
 import Text from 'components/Text';
 
-import EligibilityMap from './EligibilityMap';
+import ELIGIBILITY_MAP from './EligibilityMap';
 
 const EligibilityBox = () => {
 	const [address, setAddress] = useState('');
@@ -16,7 +16,7 @@ const EligibilityBox = () => {
 	}, []);
 
 	const handleCheck = useCallback(() => {
-		setIsEligible(!!(!!address && EligibilityMap[address]));
+		setIsEligible(!!(address && ELIGIBILITY_MAP[address]));
 	}, [address]);
 
 	return (
