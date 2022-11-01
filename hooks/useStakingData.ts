@@ -15,6 +15,7 @@ import rewardEscrowABI from 'lib/abis/RewardEscrow.json';
 import stakingRewardsABI from 'lib/abis/StakingRewards.json';
 import supplyScheduleABI from 'lib/abis/SupplySchedule.json';
 import vKwentaRedeemerABI from 'lib/abis/vKwentaRedeemer.json';
+import useGetFuturesFeeForAccount from 'queries/staking/useGetFuturesFeeForAccount';
 import useGetSpotFeeForAccount from 'queries/staking/useGetSpotFeeForAccount';
 import { EPOCH_START, getEpochDetails, WEEK } from 'queries/staking/utils';
 import { formatShortDate, formatTruncatedDuration, toJSTimestamp } from 'utils/formatters/date';
@@ -292,9 +293,18 @@ const useStakingData = () => {
 			.reduce((acc: number, curr: number) => acc + curr, 0);
 	}, [SpotFeeQuery.data]);
 
+	const FuturesFeeQuery = useGetFuturesFeeForAccount(walletAddress!);
+	const futuresFeePaid = useMemo(() => {
+		const t = FuturesFeeQuery.data ?? [];
+
+		return t
+			.map((trade: any) => Number(trade.feesPaid) / 1e18)
+			.reduce((acc: number, curr: number) => acc + curr, 0);
+	}, [FuturesFeeQuery.data]);
+
 	useEffect(() => {
 		const snapshot = async () => {
-			setFeesPaid(spotFeePaid ?? 0);
+			setFeesPaid(spotFeePaid + futuresFeePaid ?? 0);
 			const synthExchanges = await getSynthExchangesBetweenPeriod(epochStart, epochEnd);
 			const futuresTrades = await getFuturesTradesBetweenPeriod(epochStart, epochEnd);
 			const feePaidByTrader = await mergeDatasets(synthExchanges, futuresTrades);
@@ -316,6 +326,7 @@ const useStakingData = () => {
 		epochEnd,
 		epochStart,
 		feePaid,
+		futuresFeePaid,
 		provider,
 		spotFeePaid,
 		stakedEscrowedBalance,

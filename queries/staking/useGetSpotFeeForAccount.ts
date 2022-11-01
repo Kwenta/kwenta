@@ -31,8 +31,7 @@ const useGetSpotFeeForAccount = (
 					`,
 					{ walletAddress: walletAddress.toLowerCase() }
 				);
-				// eslint-disable-next-line no-console
-				console.log(`spot`, response);
+
 				return response;
 			} catch (e) {
 				logError(e);
