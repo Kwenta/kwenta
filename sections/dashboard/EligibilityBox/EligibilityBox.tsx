@@ -4,12 +4,16 @@ import styled from 'styled-components';
 import Button from 'components/Button';
 import Input from 'components/Input/Input';
 import Text from 'components/Text';
+import Connector from 'containers/Connector';
 
 import ELIGIBILITY_SET from './EligibilitySet';
+import LONOCLAUSE_SET from './LonoClause';
 
 const EligibilityBox = () => {
-	const [address, setAddress] = useState('');
+	const { walletAddress } = Connector.useContainer();
+	const [address, setAddress] = useState(walletAddress || '');
 	const [isEligible, setIsEligible] = useState<boolean>();
+	const [isLonoEligible, setIsLonoEligible] = useState<boolean>();
 
 	const handleChangeAddress = useCallback((e) => {
 		setAddress(e.target.value);
@@ -17,11 +21,12 @@ const EligibilityBox = () => {
 
 	const handleCheck = useCallback(() => {
 		setIsEligible(!!(address && ELIGIBILITY_SET.has(address)));
+		setIsLonoEligible(!!(address && LONOCLAUSE_SET.has(address)));
 	}, [address]);
 
 	return (
 		<div>
-			<EligibilitySectionTitle>SNX Staker Distribution</EligibilitySectionTitle>
+			<EligibilitySectionTitle>SNX Staker & Synth Trader Distribution</EligibilitySectionTitle>
 			<EligibilityContainer>
 				<EligibilityText>Enter your wallet address to check eligibility</EligibilityText>
 				<EligibilityInput placeholder="0x..." value={address} onChange={handleChangeAddress} />{' '}
@@ -29,9 +34,14 @@ const EligibilityBox = () => {
 					Check
 				</Button>
 			</EligibilityContainer>
-			{isEligible !== undefined && (
+			{isEligible !== undefined && !isLonoEligible && (
 				<EligibilityStatus $isEligible={isEligible}>
 					{`Address is ${!isEligible ? 'not' : ''} eligible`}
+				</EligibilityStatus>
+			)}
+			{isLonoEligible && (
+				<EligibilityStatus $isEligible={true}>
+					{`You'll get your allocation distributed directly as escrowed KWENTA at the launch of the token. No further action is needed.`}
 				</EligibilityStatus>
 			)}
 		</div>
@@ -64,7 +74,7 @@ const EligibilityStatus = styled.div<{ $isEligible: boolean }>`
 	justify-content: center;
 	align-items: center;
 
-	padding: 10px 0;
+	padding: 10px 10px;
 	margin-top: 8px;
 
 	border: 1px solid

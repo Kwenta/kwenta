@@ -4,7 +4,7 @@ import { useRecoilState } from 'recoil';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
 import { activePositionsTabState } from 'store/ui';
 
-import EligibilityBox from '../EligibilityBox';
+import MobileEligibilityBox from './MobileEligibilityBox';
 import OpenPositions from './OpenPositions';
 import Portfolio from './Portfolio';
 
@@ -20,7 +20,7 @@ const MobileDashboard: FC = () => {
 				activePositionsTab={activePositionsTab}
 				setActivePositionsTab={setActivePositionsTab}
 			/>
-			<EligibilityBox />
+			<MobileEligibilityBox />
 		</div>
 	);
 };
