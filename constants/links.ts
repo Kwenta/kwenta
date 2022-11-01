@@ -55,6 +55,6 @@ export const EXTERNAL_LINKS = {
 		LearnMore: 'https://mirror.xyz/kwenta.eth/WghvQFjEslsC0kwnGVP0QZnY1F7ZU3w5hpWxDPLbBsE',
 	},
 	Aelin: {
-		Pool: 'https://mirror.xyz/kwenta.eth/bM-hUzw9fzxTom3k8Is_HbkVJ4My3XzamHthA0Lp7KI',
+		Pool: 'https://app.aelin.xyz/pool/mainnet/0x21f4F88a95f656ef4ee1ea107569b3b38cf8daef',
 	},
 };
