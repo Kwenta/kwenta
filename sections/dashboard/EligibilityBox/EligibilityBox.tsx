@@ -4,14 +4,12 @@ import styled from 'styled-components';
 import Button from 'components/Button';
 import Input from 'components/Input/Input';
 import Text from 'components/Text';
-import Connector from 'containers/Connector';
 
 import ELIGIBILITY_SET from './EligibilitySet';
 import LONOCLAUSE_SET from './LonoClause';
 
 const EligibilityBox = () => {
-	const { walletAddress } = Connector.useContainer();
-	const [address, setAddress] = useState(walletAddress || '');
+	const [address, setAddress] = useState('');
 	const [isEligible, setIsEligible] = useState<boolean>();
 	const [isLonoEligible, setIsLonoEligible] = useState<boolean>();
 
@@ -25,18 +23,18 @@ const EligibilityBox = () => {
 	}, [address]);
 
 	return (
-		<div>
+		<div style={{ maxWidth: '445px' }}>
 			<EligibilitySectionTitle>SNX Staker & Synth Trader Distribution</EligibilitySectionTitle>
 			<EligibilityContainer>
 				<EligibilityText>Enter your wallet address to check eligibility</EligibilityText>
-				<EligibilityInput placeholder="0x..." value={address} onChange={handleChangeAddress} />{' '}
+				<EligibilityInput placeholder="0x..." value={address} onChange={handleChangeAddress} />
 				<Button fullWidth size="sm" onClick={handleCheck}>
 					Check
 				</Button>
 			</EligibilityContainer>
 			{isEligible !== undefined && !isLonoEligible && (
 				<EligibilityStatus $isEligible={isEligible}>
-					{`Address is ${!isEligible ? 'not' : ''} eligible`}
+					{`Address is ${!isEligible ? 'not' : ''} eligible for the Aelin pool (Nov 1 - Nov 14)`}
 				</EligibilityStatus>
 			)}
 			{isLonoEligible && (
