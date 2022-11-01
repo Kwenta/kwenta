@@ -1,9 +1,9 @@
 import { render } from '@testing-library/react';
 
+import { TEST_ADDR } from 'testing/unit/constants';
 import mockConnector from 'testing/unit/mocks/mockConnector';
 import MockProviders from 'testing/unit/mocks/MockProviders';
 import { mockGrapqhlRequest, mockReactQuery } from 'testing/unit/mocks/mockQueries';
-import { TEST_ADDR } from 'testing/unit/constants';
 
 import Market from '../../pages/market';
 
