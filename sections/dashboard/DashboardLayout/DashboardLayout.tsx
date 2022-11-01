@@ -13,6 +13,7 @@ import AppLayout from 'sections/shared/Layout/AppLayout';
 import { isCompetitionActive } from 'store/ui';
 import { MainContent, LeftSideContent, FullHeightContainer, PageContent } from 'styles/common';
 
+import EligibilityBox from '../EligibilityBox';
 import Links from '../Links';
 
 enum Tab {
@@ -131,6 +132,7 @@ const DashboardLayout: FC = ({ children }) => {
 							</TabPanel>
 						</MainContent>
 						{competitionActive && <Leaderboard compact />}
+						<EligibilityBox />
 					</StyledFullHeightContainer>
 				</PageContent>
 			</DesktopOnlyView>
