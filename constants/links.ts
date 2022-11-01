@@ -54,4 +54,7 @@ export const EXTERNAL_LINKS = {
 	Competition: {
 		LearnMore: 'https://mirror.xyz/kwenta.eth/WghvQFjEslsC0kwnGVP0QZnY1F7ZU3w5hpWxDPLbBsE',
 	},
+	Aelin: {
+		Blog: 'https://mirror.xyz/kwenta.eth/bM-hUzw9fzxTom3k8Is_HbkVJ4My3XzamHthA0Lp7KI',
+	},
 };

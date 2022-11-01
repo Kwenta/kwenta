@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import Button from 'components/Button';
 import Input from 'components/Input/Input';
 import Text from 'components/Text';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 import ELIGIBILITY_SET from './EligibilitySet';
 import LONOCLAUSE_SET from './LonoClause';
@@ -34,7 +35,13 @@ const EligibilityBox = () => {
 			</EligibilityContainer>
 			{isEligible !== undefined && !isLonoEligible && (
 				<EligibilityStatus $isEligible={isEligible}>
-					{`Address is ${!isEligible ? 'not' : ''} eligible for the Aelin pool (Nov 1 - Nov 14)`}
+					{`Address is ${!isEligible ? 'not' : ''} eligible for `}
+					<StyledLink
+						style={{ marginLeft: '5px' }}
+						onClick={() => window.open(EXTERNAL_LINKS.Aelin.Blog)}
+					>
+						{` the Aelin pool (Nov 1 - Nov 14).`}
+					</StyledLink>
 				</EligibilityStatus>
 			)}
 			{isLonoEligible && (
@@ -46,6 +53,10 @@ const EligibilityBox = () => {
 	);
 };
 
+const StyledLink = styled.span`
+	cursor: pointer;
+	font-weight: 700;
+`;
 const EligibilitySectionTitle = styled.div`
 	text-transform: uppercase;
 	color: ${(props) => props.theme.colors.selectedTheme.gold};
