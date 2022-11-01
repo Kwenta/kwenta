@@ -7,8 +7,10 @@ export { CrossMarginBaseSettings__factory } from "./CrossMarginBaseSettings__fac
 export { ERC20__factory } from "./ERC20__factory";
 export { FuturesMarket__factory } from "./FuturesMarket__factory";
 export { FuturesMarketData__factory } from "./FuturesMarketData__factory";
+export { MultipleMerkleDistributor__factory } from "./MultipleMerkleDistributor__factory";
 export { ReverseRecords__factory } from "./ReverseRecords__factory";
 export { RewardEscrow__factory } from "./RewardEscrow__factory";
 export { StakingRewards__factory } from "./StakingRewards__factory";
 export { SupplySchedule__factory } from "./SupplySchedule__factory";
 export { SynthSwap__factory } from "./SynthSwap__factory";
+export { VKwentaRedeemer__factory } from "./VKwentaRedeemer__factory";
