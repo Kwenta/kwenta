@@ -1,14 +1,11 @@
 name: Kwenta CI
 
 on:
-  push:
   pull_request:
     branches: [main, dev]
 
 jobs:
   audit:
-    # run only on main/dev branch and pull requests
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
 
     container:
@@ -25,9 +22,6 @@ jobs:
         run: lockfile-lint -p package-lock.json --type npm --allowed-hosts npm github.com --allowed-schemes "https:" "git+ssh:" "npm:"
 
   lint:
-    needs: audit
-    # run only on audit success or audit skipped
-    if: always() && (needs.audit.result == 'success' || needs.audit.result == 'skipped')
     runs-on: ubuntu-latest
 
     container:
@@ -63,21 +57,15 @@ jobs:
           npm install --prefer-offline --no-audit --legacy-peer-deps
 
       - name: Lint
-        # run only on main/dev branch and pull requests
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
         run: npm run lint:sarif
 
       - name: Upload lint results
-        # run if lint failed and only on main/dev branch and pull requests
-        if: always() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request')
         uses: github/codeql-action/upload-sarif@ec3cf9c605b848da5f1e41e8452719eb1ccfb9a6 # pin@codeql-bundle-20220322
         with:
           sarif_file: lint-results.sarif
         continue-on-error: true
 
       - name: Unit tests
-        # run only on main/dev branch and pull requests
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
         run: npm run test:unit
 
   build:
@@ -134,7 +122,6 @@ jobs:
         run: tar -zcvf build.tar.gz .next
 
       - name: Archive build
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
         uses: actions/upload-artifact@83fd05a356d7e2593de66fc9913b3002723633cb # pin@v3
         with:
           name: build
