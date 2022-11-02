@@ -1,5 +1,6 @@
 import { wei } from '@synthetixio/wei';
-import { ChangeEvent, useEffect, useMemo } from 'react';
+import { debounce } from 'lodash';
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -33,6 +34,8 @@ export default function OrderPriceInput({
 	const leverageSide = useRecoilValue(leverageSideState);
 	const [selectedFeeCap, setSelectedFeeCap] = useRecoilState(orderFeeCapState);
 
+	const [localValue, setLocalValue] = useState(value);
+
 	useEffect(() => {
 		if (!value) {
 			const priceNum =
@@ -47,9 +50,21 @@ export default function OrderPriceInput({
 		[value, orderType, leverageSide, marketAssetRate]
 	);
 
-	const handleOnChange = (_: ChangeEvent<HTMLInputElement>, v: string) => {
-		onChangeOrderPrice(v);
-	};
+	// eslint-disable-next-line
+	const debounceUpdate = useCallback(
+		debounce((v: string) => {
+			onChangeOrderPrice(v);
+		}, 500),
+		[onChangeOrderPrice, debounce]
+	);
+
+	const handleOnChange = useCallback(
+		(_: ChangeEvent<HTMLInputElement>, v: string) => {
+			setLocalValue(v);
+			debounceUpdate(v);
+		},
+		[debounceUpdate, setLocalValue]
+	);
 
 	const onChangeFeeCap = (index: number) => {
 		const val = FEE_CAP_OPTIONS[index];
@@ -77,7 +92,7 @@ export default function OrderPriceInput({
 				dataTestId="order-price-input"
 				disabled={isDisabled}
 				right={'sUSD'}
-				value={value}
+				value={localValue}
 				placeholder="0.0"
 				onChange={handleOnChange}
 			/>
