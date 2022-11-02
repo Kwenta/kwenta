@@ -300,14 +300,16 @@ export const orderPriceInvalidLabel = (
 };
 
 const getPositionChangeState = (existingSize: Wei, newSize: Wei) => {
-	if (existingSize.eq(0)) return 'increase';
-	if ((existingSize.gt(0) && newSize.lt(0)) || (existingSize.lt(0) && newSize.gt(0))) return 'flip';
+	if (existingSize.eq(newSize)) return 'edit_leverage';
+	if (existingSize.eq(0)) return 'increase_size';
+	if ((existingSize.gt(0) && newSize.lt(0)) || (existingSize.lt(0) && newSize.gt(0)))
+		return 'flip_side';
 	if (
 		(existingSize.gt(0) && newSize.gt(existingSize)) ||
 		(existingSize.lt(0) && newSize.lt(existingSize))
 	)
-		return 'increase';
-	return 'reduce';
+		return 'increase_size';
+	return 'reduce_size';
 };
 
 export const calculateMarginDelta = (
@@ -328,16 +330,20 @@ export const calculateMarginDelta = (
 	const posChangeState = getPositionChangeState(existingSize, newSize);
 
 	switch (posChangeState) {
-		case 'reduce':
+		case 'edit_leverage':
+			const nextMargin = position?.position?.notionalValue.div(nextTrade.leverage) ?? zeroBN;
+			const delta = nextMargin.sub(position?.remainingMargin);
+			return delta.add(fees.total);
+		case 'reduce_size':
 			// When a position is reducing we keep the leverage the same as the existing position
 			let marginDiff = nextTrade.susdSizeDelta.div(position?.position?.leverage ?? zeroBN);
 			return nextTrade.susdSizeDelta.gt(0)
 				? marginDiff.neg().add(fees.total)
 				: marginDiff.add(fees.total);
-		case 'increase':
+		case 'increase_size':
 			// When a position is increasing we calculate margin for selected leverage
 			return nextTrade.susdSizeDelta.abs().div(nextTrade.leverage).add(fees.total);
-		case 'flip':
+		case 'flip_side':
 			// When flipping sides we calculate the margin required for selected leverage
 			const newNotionalSize = newSizeAbs.mul(nextTrade.orderPrice);
 			const newMargin = newNotionalSize.div(nextTrade.leverage);

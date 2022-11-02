@@ -355,3 +355,30 @@ export const BorderedPanel = styled.div`
 	border-radius: 10px;
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
 `;
+
+const PillButtonCss = css<{ padding?: string }>`
+	transition: all 0.1s ease-in-out;
+	margin-left: 8px;
+	cursor: pointer;
+	font-size: 10px;
+	line-height: 12px;
+	font-family: ${(props) => props.theme.fonts.black};
+	font-variant: all-small-caps;
+	border: 1px solid ${(props) => props.theme.colors.selectedTheme.yellow};
+	color: ${(props) => props.theme.colors.selectedTheme.button.pill.background};
+	border-radius: 10px;
+	padding: ${(props) => props.padding ?? '3px 5px'};
+	&:hover {
+		background-color: ${(props) => props.theme.colors.selectedTheme.button.pill.background};
+		color: ${(props) => props.theme.colors.selectedTheme.button.pill.hover};
+		opacity: 0.7;
+	}
+`;
+
+export const PillButtonSpan = styled.span<{ padding?: string }>`
+	${PillButtonCss}
+`;
+
+export const PillButtonDiv = styled.div<{ padding?: string }>`
+	${PillButtonCss}
+`;

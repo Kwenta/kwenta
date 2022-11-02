@@ -51,6 +51,7 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 		onLeverageChange,
 		resetTradeState,
 		submitCrossMarginOrder,
+		onChangeOpenPosLeverage,
 	} = useFuturesContext();
 
 	const market = useRecoilValue(marketInfoState);
@@ -98,7 +99,9 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 	const previewPositionChange = useCallback(
 		debounce((leverage: number) => {
 			if (leverage >= 1) {
-				onLeverageChange(leverage);
+				editMode === 'existing_position'
+					? onChangeOpenPosLeverage(leverage)
+					: onLeverageChange(leverage);
 			}
 		}, 200),
 		[onLeverageChange]

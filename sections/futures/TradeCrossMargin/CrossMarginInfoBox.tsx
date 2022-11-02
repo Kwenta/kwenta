@@ -20,6 +20,7 @@ import {
 	futuresOrderPriceState,
 	crossMarginAccountOverviewState,
 } from 'store/futures';
+import { PillButtonSpan } from 'styles/common';
 import {
 	formatCurrency,
 	formatDollars,
@@ -172,7 +173,7 @@ function MarginInfoBox({ editingLeverage }: Props) {
 								valueNode: (
 									<>
 										{keeperEthBal.gt(0) && (
-											<ActionButton
+											<PillButtonSpan
 												padding={'4px 3px 1px 3px'}
 												onClick={() => setOpenModal('keeper-deposit')}
 											>
@@ -181,7 +182,7 @@ function MarginInfoBox({ editingLeverage }: Props) {
 													height="9px"
 													stroke={colors.selectedTheme.yellow}
 												/>
-											</ActionButton>
+											</PillButtonSpan>
 										)}
 									</>
 								),
@@ -192,7 +193,7 @@ function MarginInfoBox({ editingLeverage }: Props) {
 							<>
 								{formatNumber(selectedLeverage, { maxDecimals: 2 })}x
 								{!editingLeverage && (
-									<ActionButton onClick={() => setOpenModal('leverage')}>Edit</ActionButton>
+									<PillButtonSpan onClick={() => setOpenModal('leverage')}>Edit</PillButtonSpan>
 								)}
 							</>
 						),
@@ -239,30 +240,6 @@ const StyledInfoBox = styled(InfoBox)`
 
 	.value {
 		font-family: ${(props) => props.theme.fonts.regular};
-	}
-`;
-
-const Button = styled.span`
-	transition: all 0.1s ease-in-out;
-	&:hover {
-		opacity: 0.7;
-	}
-`;
-
-const ActionButton = styled(Button)<{ padding?: string }>`
-	margin-left: 8px;
-	cursor: pointer;
-	font-size: 10px;
-	font-family: ${(props) => props.theme.fonts.black};
-	font-variant: all-small-caps;
-	border: 1px solid ${(props) => props.theme.colors.selectedTheme.yellow};
-	color: ${(props) => props.theme.colors.selectedTheme.button.pill.background};
-	border-radius: 10px;
-	padding: ${(props) => props.padding ?? '3px 5px'};
-	&:hover {
-		background-color: ${(props) => props.theme.colors.selectedTheme.button.pill.background};
-		color: ${(props) => props.theme.colors.selectedTheme.button.pill.hover};
-		opacity: unset;
 	}
 `;
 
