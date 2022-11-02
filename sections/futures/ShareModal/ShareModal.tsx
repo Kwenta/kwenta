@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import PNLGraphicPNG from 'assets/png/pnl-graphic.png';
+import PNLGraphicPNG from 'assets/png/new-pnl-graphic.png';
 import BaseModal from 'components/BaseModal';
 import { FuturesPosition } from 'queries/futures/types';
 import { FuturesMarketAsset } from 'utils/futures';
