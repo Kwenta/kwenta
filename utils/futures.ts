@@ -338,7 +338,7 @@ export const calculateMarginDelta = (
 			// When a position is increasing we calculate margin for selected leverage
 			return nextTrade.susdSizeDelta.abs().div(nextTrade.leverage).add(fees.total);
 		case 'flip':
-			// When flipping sides we caculate the margin required for selected leverage
+			// When flipping sides we calculate the margin required for selected leverage
 			const newNotionalSize = newSizeAbs.mul(nextTrade.orderPrice);
 			const newMargin = newNotionalSize.div(nextTrade.leverage);
 			const remainingMargin =

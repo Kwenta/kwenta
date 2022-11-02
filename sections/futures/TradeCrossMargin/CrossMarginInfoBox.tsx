@@ -140,21 +140,6 @@ function MarginInfoBox({ editingLeverage }: Props) {
 			<StyledInfoBox
 				dataTestId="market-info-box"
 				details={{
-					'Free Account Margin': {
-						value: formatDollars(crossMarginFreeMargin),
-						valueNode: (
-							<PreviewArrow
-								showPreview={showPreview}
-								color={previewTradeData.freeAccountMargin.lt(0) ? 'red' : 'yellow'}
-							>
-								{potentialTrade.status === 'fetching' ? (
-									<MiniLoader />
-								) : (
-									formatDollars(previewTradeData.freeAccountMargin)
-								)}
-							</PreviewArrow>
-						),
-					},
 					'Market Margin': !editingLeverage
 						? {
 								value: formatDollars(position?.remainingMargin || 0),
