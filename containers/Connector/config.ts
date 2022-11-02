@@ -15,7 +15,7 @@ export const initRainbowkit = () => {
 			infuraProvider({
 				apiKey: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
 				stallTimeout: 5000,
-				priority: 0,
+				priority: process.env.NEXT_PUBLIC_PROVIDER_ID === 'INFURA' ? 0 : 2,
 			}),
 			jsonRpcProvider({
 				rpc: (networkChain) => {
