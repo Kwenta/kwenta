@@ -1,9 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { useTheme } from 'styled-components';
 
-import DepositArrow from 'assets/svg/futures/deposit-arrow.svg';
-import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import Loader from 'components/Loader';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
@@ -29,7 +26,6 @@ import OrderPriceInput from '../OrderPriceInput/OrderPriceInput';
 import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
 import ManagePosition from '../Trade/ManagePosition';
-import MarketsDropdown from '../Trade/MarketsDropdown';
 import TradePanelHeader from '../Trade/TradePanelHeader';
 import CreateAccount from './CreateAccount';
 import MarginInfoBox from './CrossMarginInfoBox';
@@ -42,7 +38,6 @@ type Props = {
 
 export default function TradeCrossMargin({ isMobile }: Props) {
 	const { walletAddress } = Connector.useContainer();
-	const { colors } = useTheme();
 
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const { crossMarginAddress, crossMarginAvailable, status } = useRecoilValue(futuresAccountState);
@@ -68,21 +63,6 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 		[onTradeOrderPriceChange, setOrderPrice, leverageSide, marketAssetRate, orderType]
 	);
 
-	const headerButtons = walletAddress
-		? [
-				{
-					i18nTitle: 'futures.market.trade.button.deposit',
-					icon: <DepositArrow stroke={colors.selectedTheme.yellow} />,
-					onClick: () => setOpenTransferModal('deposit'),
-				},
-				{
-					i18nTitle: 'futures.market.trade.button.withdraw',
-					icon: <WithdrawArrow stroke={colors.selectedTheme.yellow} />,
-					onClick: () => setOpenTransferModal('withdraw'),
-				},
-		  ]
-		: [];
-
 	if (!showOnboard && (status === 'refetching' || status === 'initial-fetch')) return <Loader />;
 
 	return (
@@ -93,9 +73,11 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 				<CreateAccount onShowOnboard={() => setShowOnboard(true)} />
 			) : (
 				<>
-					{!isMobile && <MarketsDropdown />}
-
-					<TradePanelHeader accountType={selectedAccountType} buttons={headerButtons} />
+					<TradePanelHeader
+						balance={freeMargin}
+						accountType={selectedAccountType}
+						onManageBalance={() => setOpenTransferModal('deposit')}
+					/>
 
 					<MarginInfoBox />
 					<SegmentedControl

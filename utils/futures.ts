@@ -299,15 +299,52 @@ export const orderPriceInvalidLabel = (
 	return null;
 };
 
+const getPositionChangeState = (existingSize: Wei, newSize: Wei) => {
+	if (existingSize.eq(0)) return 'increase';
+	if ((existingSize.gt(0) && newSize.lt(0)) || (existingSize.lt(0) && newSize.gt(0))) return 'flip';
+	if (
+		(existingSize.gt(0) && newSize.gt(existingSize)) ||
+		(existingSize.lt(0) && newSize.lt(existingSize))
+	)
+		return 'increase';
+	return 'reduce';
+};
+
 export const calculateMarginDelta = (
 	nextTrade: FuturesTradeInputs,
 	fees: TradeFees,
 	position: FuturesPosition | null
 ) => {
 	if (nextTrade.nativeSizeDelta.add(position?.position?.size || 0).eq(zeroBN)) return zeroBN;
-	let currentSize = position?.position?.notionalValue || zeroBN;
-	currentSize = position?.position?.side === 'long' ? currentSize : currentSize.neg();
-	const newNotionalValue = currentSize.add(nextTrade.susdSizeDelta).abs();
-	const fullMargin = newNotionalValue.abs().div(nextTrade.leverage);
-	return fullMargin.sub(position?.remainingMargin || '0').add(fees.total);
+
+	const existingSize = position?.position
+		? position?.position?.side === 'long'
+			? position?.position?.size
+			: position?.position?.size.neg()
+		: zeroBN;
+
+	const newSize = existingSize.add(nextTrade.nativeSizeDelta);
+	const newSizeAbs = newSize.abs();
+	const posChangeState = getPositionChangeState(existingSize, newSize);
+
+	switch (posChangeState) {
+		case 'reduce':
+			// When a position is reducing we keep the leverage the same as the existing position
+			let marginDiff = nextTrade.susdSizeDelta.div(position?.position?.leverage ?? zeroBN);
+			return nextTrade.susdSizeDelta.gt(0)
+				? marginDiff.neg().add(fees.total)
+				: marginDiff.add(fees.total);
+		case 'increase':
+			// When a position is increasing we calculate margin for selected leverage
+			return nextTrade.susdSizeDelta.abs().div(nextTrade.leverage).add(fees.total);
+		case 'flip':
+			// When flipping sides we caculate the margin required for selected leverage
+			const newNotionalSize = newSizeAbs.mul(nextTrade.orderPrice);
+			const newMargin = newNotionalSize.div(nextTrade.leverage);
+			const remainingMargin =
+				position?.position?.size.mul(nextTrade.orderPrice).div(position?.position?.leverage) ??
+				zeroBN;
+			const marginDelta = newMargin.sub(remainingMargin ?? zeroBN);
+			return marginDelta.add(fees.total);
+	}
 };
