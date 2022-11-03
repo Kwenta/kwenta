@@ -10,8 +10,13 @@ import InputTitle from 'components/Input/InputTitle';
 import SegmentedControl from 'components/SegmentedControl';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { FuturesOrderType } from 'queries/futures/types';
-import { leverageSideState, marketAssetRateState, orderFeeCapState } from 'store/futures';
-import { ceilNumber, floorNumber, weiToString, zeroBN } from 'utils/formatters/number';
+import {
+	leverageSideState,
+	marketAssetRateState,
+	marketInfoState,
+	orderFeeCapState,
+} from 'store/futures';
+import { weiToString, zeroBN } from 'utils/formatters/number';
 import { orderPriceInvalidLabel } from 'utils/futures';
 
 type Props = {
@@ -33,17 +38,20 @@ export default function OrderPriceInput({
 	const marketAssetRate = useRecoilValue(marketAssetRateState);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const [selectedFeeCap, setSelectedFeeCap] = useRecoilState(orderFeeCapState);
+	const marketInfo = useRecoilValue(marketInfoState);
 
 	const [localValue, setLocalValue] = useState(value);
 
 	useEffect(() => {
-		if (!value) {
-			const priceNum =
-				orderType === 'limit' ? floorNumber(marketAssetRate) : ceilNumber(marketAssetRate);
-			onChangeOrderPrice(String(priceNum));
-		}
+		if (!value) setLocalValue(value);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [value]);
+
+	useEffect(() => {
+		// Reset input when the selected market changes
+		setLocalValue('');
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [marketInfo?.asset]);
 
 	const minMaxLabelString = useMemo(
 		() => orderPriceInvalidLabel(value, leverageSide, marketAssetRate, orderType),

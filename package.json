@@ -1,6 +1,6 @@
 {
 	"name": "kwenta",
-	"version": "4.1.2",
+	"version": "4.1.3",
 	"scripts": {
 		"dev": "next",
 		"build": "next build",
@@ -51,7 +51,7 @@
 		"echarts": "5.3.3",
 		"ethcall": "4.7.2",
 		"ethereum-block-by-date": "^1.4.5",
-		"ethers": "5.7.0",
+		"ethers": "5.7.2",
 		"graphql-request": "3.4.0",
 		"i18next": "19.7.0",
 		"imagemin-mozjpeg": "^10.0.0",

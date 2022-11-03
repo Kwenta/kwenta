@@ -1,7 +1,7 @@
 import Wei, { wei } from '@synthetixio/wei';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
 
 import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import InfoBox from 'components/InfoBox';
@@ -20,6 +20,7 @@ import {
 	futuresOrderPriceState,
 	crossMarginAccountOverviewState,
 } from 'store/futures';
+import { PillButtonSpan } from 'styles/common';
 import {
 	formatCurrency,
 	formatDollars,
@@ -37,7 +38,6 @@ type Props = {
 
 function MarginInfoBox({ editingLeverage }: Props) {
 	const { selectedLeverage } = useFuturesContext();
-	const { colors } = useTheme();
 
 	const position = useRecoilValue(positionState);
 	const marketInfo = useRecoilValue(marketInfoState);
@@ -54,12 +54,9 @@ function MarginInfoBox({ editingLeverage }: Props) {
 	const [openModal, setOpenModal] = useState<'leverage' | 'keeper-deposit' | null>(null);
 
 	const totalMargin = position?.remainingMargin.add(crossMarginFreeMargin) ?? zeroBN;
-	const availableMargin = position?.accessibleMargin.add(crossMarginFreeMargin) ?? zeroBN;
-	const currentSize = position?.position?.size ?? zeroBN;
+	const remainingMargin = position?.remainingMargin ?? zeroBN;
 
-	const marginUsage = availableMargin.gt(zeroBN)
-		? totalMargin.sub(availableMargin).div(totalMargin)
-		: zeroBN;
+	const marginUsage = totalMargin.gt(zeroBN) ? remainingMargin.div(totalMargin) : zeroBN;
 
 	const previewTotalMargin = useMemo(() => {
 		const remainingMargin = crossMarginFreeMargin.sub(marginDelta);
@@ -69,6 +66,8 @@ function MarginInfoBox({ editingLeverage }: Props) {
 	const getPotentialAvailableMargin = useCallback(
 		(previewTrade: FuturesPotentialTradeDetails | null, marketMaxLeverage: Wei | undefined) => {
 			let inaccessible;
+
+			if (!marketMaxLeverage) return zeroBN;
 
 			inaccessible = previewTrade?.notionalValue.div(marketMaxLeverage).abs() ?? zeroBN;
 
@@ -140,35 +139,35 @@ function MarginInfoBox({ editingLeverage }: Props) {
 			<StyledInfoBox
 				dataTestId="market-info-box"
 				details={{
-					'Free Account Margin': {
-						value: formatDollars(crossMarginFreeMargin),
-						valueNode: (
-							<PreviewArrow
-								showPreview={showPreview}
-								color={previewTradeData.freeAccountMargin.lt(0) ? 'red' : 'yellow'}
-							>
-								{potentialTrade.status === 'fetching' ? (
-									<MiniLoader />
-								) : (
-									formatDollars(previewTradeData.freeAccountMargin)
-								)}
-							</PreviewArrow>
-						),
-					},
-					'Market Margin': !editingLeverage
+					'Free Account Margin': editingLeverage
 						? {
-								value: formatDollars(position?.remainingMargin || 0),
+								value: formatDollars(crossMarginFreeMargin),
 								valueNode: (
-									<PreviewArrow showPreview={showPreview}>
+									<PreviewArrow
+										showPreview={showPreview}
+										color={previewTradeData.freeAccountMargin.lt(0) ? 'red' : 'yellow'}
+									>
 										{potentialTrade.status === 'fetching' ? (
 											<MiniLoader />
 										) : (
-											formatDollars(previewTradeData.totalMargin)
+											formatDollars(previewTradeData.freeAccountMargin)
 										)}
 									</PreviewArrow>
 								),
 						  }
 						: null,
+					'Market Margin': {
+						value: formatDollars(position?.remainingMargin || 0),
+						valueNode: (
+							<PreviewArrow showPreview={showPreview}>
+								{potentialTrade.status === 'fetching' ? (
+									<MiniLoader />
+								) : (
+									formatDollars(previewTradeData.totalMargin)
+								)}
+							</PreviewArrow>
+						),
+					},
 					'Margin Usage': {
 						value: formatPercent(marginUsage),
 						valueNode: (
@@ -187,16 +186,12 @@ function MarginInfoBox({ editingLeverage }: Props) {
 								valueNode: (
 									<>
 										{keeperEthBal.gt(0) && (
-											<ActionButton
+											<PillButtonSpan
 												padding={'4px 3px 1px 3px'}
 												onClick={() => setOpenModal('keeper-deposit')}
 											>
-												<WithdrawArrow
-													width="12px"
-													height="9px"
-													stroke={colors.selectedTheme.yellow}
-												/>
-											</ActionButton>
+												<WithdrawArrow width="12px" height="9px" />
+											</PillButtonSpan>
 										)}
 									</>
 								),
@@ -205,9 +200,17 @@ function MarginInfoBox({ editingLeverage }: Props) {
 					Leverage: {
 						value: (
 							<>
-								{formatNumber(selectedLeverage, { maxDecimals: 2 })}x
+								{formatNumber(
+									editingLeverage
+										? position?.position?.leverage ?? selectedLeverage
+										: selectedLeverage,
+									{
+										maxDecimals: 2,
+									}
+								)}
+								x
 								{!editingLeverage && (
-									<ActionButton onClick={() => setOpenModal('leverage')}>Edit</ActionButton>
+									<PillButtonSpan onClick={() => setOpenModal('leverage')}>Edit</PillButtonSpan>
 								)}
 							</>
 						),
@@ -221,25 +224,13 @@ function MarginInfoBox({ editingLeverage }: Props) {
 							</PreviewArrow>
 						),
 					},
-					'Position Size': editingLeverage
-						? {
-								value: formatCurrency(marketInfo?.asset || '', currentSize),
-								valueNode: (
-									<PreviewArrow showPreview={showPreview}>
-										{potentialTrade.status === 'fetching' ? (
-											<MiniLoader />
-										) : (
-											formatCurrency(marketInfo?.asset || '', previewTradeData.size)
-										)}
-									</PreviewArrow>
-								),
-						  }
-						: null,
 				}}
 				disabled={marketInfo?.isSuspended}
 			/>
 
-			{openModal === 'leverage' && <EditLeverageModal onDismiss={() => setOpenModal(null)} />}
+			{openModal === 'leverage' && (
+				<EditLeverageModal editMode="next_trade" onDismiss={() => setOpenModal(null)} />
+			)}
 			{openModal === 'keeper-deposit' && (
 				<ManageKeeperBalanceModal defaultType="withdraw" onDismiss={() => setOpenModal(null)} />
 			)}
@@ -252,30 +243,6 @@ const StyledInfoBox = styled(InfoBox)`
 
 	.value {
 		font-family: ${(props) => props.theme.fonts.regular};
-	}
-`;
-
-const Button = styled.span`
-	transition: all 0.1s ease-in-out;
-	&:hover {
-		opacity: 0.7;
-	}
-`;
-
-const ActionButton = styled(Button)<{ padding?: string }>`
-	margin-left: 8px;
-	cursor: pointer;
-	font-size: 10px;
-	font-family: ${(props) => props.theme.fonts.black};
-	font-variant: all-small-caps;
-	border: 1px solid ${(props) => props.theme.colors.selectedTheme.yellow};
-	color: ${(props) => props.theme.colors.selectedTheme.button.pill.background};
-	border-radius: 10px;
-	padding: ${(props) => props.padding ?? '3px 5px'};
-	&:hover {
-		background-color: ${(props) => props.theme.colors.selectedTheme.button.pill.background};
-		color: ${(props) => props.theme.colors.selectedTheme.button.pill.hover};
-		opacity: unset;
 	}
 `;
 

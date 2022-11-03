@@ -105,6 +105,7 @@ const lightTheme = {
 	icon: {
 		fill: '#515151',
 		hover: '#171002',
+		hoverReverse: common.dark.white,
 	},
 	openInterestBar: {
 		border: '1px solid #F2F2F2',
