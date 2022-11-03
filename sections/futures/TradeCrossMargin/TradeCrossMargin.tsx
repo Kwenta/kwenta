@@ -1,9 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { useTheme } from 'styled-components';
 
-import DepositArrow from 'assets/svg/futures/deposit-arrow.svg';
-import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import Loader from 'components/Loader';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
@@ -21,7 +18,6 @@ import {
 	showCrossMarginOnboardState,
 	crossMarginAccountOverviewState,
 } from 'store/futures';
-import { ceilNumber, floorNumber, suggestedDecimals } from 'utils/formatters/number';
 import { orderPriceInvalidLabel } from 'utils/futures';
 
 import FeeInfoBox from '../FeeInfoBox';
@@ -29,7 +25,6 @@ import OrderPriceInput from '../OrderPriceInput/OrderPriceInput';
 import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
 import ManagePosition from '../Trade/ManagePosition';
-import MarketsDropdown from '../Trade/MarketsDropdown';
 import TradePanelHeader from '../Trade/TradePanelHeader';
 import CreateAccount from './CreateAccount';
 import MarginInfoBox from './CrossMarginInfoBox';
@@ -42,7 +37,6 @@ type Props = {
 
 export default function TradeCrossMargin({ isMobile }: Props) {
 	const { walletAddress } = Connector.useContainer();
-	const { colors } = useTheme();
 
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const { crossMarginAddress, crossMarginAvailable, status } = useRecoilValue(futuresAccountState);
@@ -60,28 +54,13 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 	const onChangeOrderPrice = useCallback(
 		(price: string) => {
 			const invalidLabel = orderPriceInvalidLabel(price, leverageSide, marketAssetRate, orderType);
+			setOrderPrice(price);
 			if (!invalidLabel || !price) {
 				onTradeOrderPriceChange(price);
 			}
-			setOrderPrice(price);
 		},
 		[onTradeOrderPriceChange, setOrderPrice, leverageSide, marketAssetRate, orderType]
 	);
-
-	const headerButtons = walletAddress
-		? [
-				{
-					i18nTitle: 'futures.market.trade.button.deposit',
-					icon: <DepositArrow stroke={colors.selectedTheme.yellow} />,
-					onClick: () => setOpenTransferModal('deposit'),
-				},
-				{
-					i18nTitle: 'futures.market.trade.button.withdraw',
-					icon: <WithdrawArrow stroke={colors.selectedTheme.yellow} />,
-					onClick: () => setOpenTransferModal('withdraw'),
-				},
-		  ]
-		: [];
 
 	if (!showOnboard && (status === 'refetching' || status === 'initial-fetch')) return <Loader />;
 
@@ -93,9 +72,11 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 				<CreateAccount onShowOnboard={() => setShowOnboard(true)} />
 			) : (
 				<>
-					{!isMobile && <MarketsDropdown />}
-
-					<TradePanelHeader accountType={selectedAccountType} buttons={headerButtons} />
+					<TradePanelHeader
+						balance={freeMargin}
+						accountType={selectedAccountType}
+						onManageBalance={() => setOpenTransferModal('deposit')}
+					/>
 
 					<MarginInfoBox />
 					<SegmentedControl
@@ -105,17 +86,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 						onChange={(index: number) => {
 							const type = CROSS_MARGIN_ORDER_TYPES[index];
 							setOrderType(type as FuturesOrderType);
-							const decimals = suggestedDecimals(marketAssetRate);
-							const offset = 1 / 10 ** (decimals ?? 1);
-							const price =
-								(type === 'limit' && leverageSide === 'long') ||
-								(type === 'stop market' && leverageSide === 'short')
-									? floorNumber(marketAssetRate, decimals) - offset
-									: (type === 'stop market' && leverageSide === 'long') ||
-									  (type === 'limit' && leverageSide === 'short')
-									? ceilNumber(marketAssetRate, decimals) + offset
-									: '';
-							onChangeOrderPrice(String(price));
+							setOrderPrice('');
 						}}
 					/>
 					<OrderSizing isMobile={isMobile} />
