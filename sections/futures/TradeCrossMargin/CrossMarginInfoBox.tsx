@@ -54,9 +54,9 @@ function MarginInfoBox({ editingLeverage }: Props) {
 	const [openModal, setOpenModal] = useState<'leverage' | 'keeper-deposit' | null>(null);
 
 	const totalMargin = position?.remainingMargin.add(crossMarginFreeMargin) ?? zeroBN;
-	const availableMargin = position?.accessibleMargin.add(crossMarginFreeMargin) ?? zeroBN;
+	const remainingMargin = position?.remainingMargin ?? zeroBN;
 
-	const marginUsage = availableMargin.gt(zeroBN) ? availableMargin.div(totalMargin) : zeroBN;
+	const marginUsage = totalMargin.gt(zeroBN) ? remainingMargin.div(totalMargin) : zeroBN;
 
 	const previewTotalMargin = useMemo(() => {
 		const remainingMargin = crossMarginFreeMargin.sub(marginDelta);
