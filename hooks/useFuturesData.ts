@@ -353,17 +353,17 @@ const useFuturesData = () => {
 	const onTradeAmountChange = useCallback(
 		(
 			value: string,
+			usdPrice: Wei,
 			currencyType: 'usd' | 'native',
 			options?: { simulateChange?: boolean; crossMarginLeverage?: Wei }
 		) => {
-			if (!value || tradePrice.eq(0)) {
+			if (!value || usdPrice.eq(0)) {
 				resetTradeState();
 				return;
 			}
-
 			const positiveTrade = leverageSide === PositionSide.LONG;
-			const nativeSize = currencyType === 'native' ? wei(value) : wei(value).div(tradePrice);
-			const usdSize = currencyType === 'native' ? tradePrice.mul(value) : wei(value);
+			const nativeSize = currencyType === 'native' ? wei(value) : wei(value).div(usdPrice);
+			const usdSize = currencyType === 'native' ? usdPrice.mul(value) : wei(value);
 			const changeEnabled = remainingMargin.gt(0) && value !== '';
 			const isolatedMarginLeverage = changeEnabled ? usdSize.div(remainingMargin) : zeroBN;
 
@@ -379,7 +379,7 @@ const useFuturesData = () => {
 				susdSize: changeEnabled ? weiToString(usdSize) : '',
 				nativeSizeDelta: positiveTrade ? nativeSize : nativeSize.neg(),
 				susdSizeDelta: positiveTrade ? usdSize : usdSize.neg(),
-				orderPrice: tradePrice,
+				orderPrice: usdPrice,
 				leverage: String(floorNumber(leverage)),
 			};
 
@@ -391,7 +391,6 @@ const useFuturesData = () => {
 			}
 		},
 		[
-			tradePrice,
 			remainingMargin,
 			maxLeverage,
 			selectedLeverage,
@@ -422,7 +421,7 @@ const useFuturesData = () => {
 	const onLeverageChange = useCallback(
 		(leverage: number) => {
 			if (selectedAccountType === 'cross_margin') {
-				onTradeAmountChange('', 'usd', {
+				onTradeAmountChange('', tradePrice, 'usd', {
 					crossMarginLeverage: wei(leverage),
 				});
 			} else {
@@ -433,18 +432,25 @@ const useFuturesData = () => {
 						marketAssetRate.eq(0) || remainingMargin.eq(0)
 							? ''
 							: wei(leverage).mul(remainingMargin).div(marketAssetRate).toString();
-					onTradeAmountChange(newTradeSize, 'native');
+					onTradeAmountChange(newTradeSize, tradePrice, 'native');
 				}
 			}
 		},
-		[remainingMargin, marketAssetRate, selectedAccountType, resetTradeState, onTradeAmountChange]
+		[
+			remainingMargin,
+			marketAssetRate,
+			selectedAccountType,
+			tradePrice,
+			resetTradeState,
+			onTradeAmountChange,
+		]
 	);
 
 	const onTradeOrderPriceChange = useCallback(
 		(price: string) => {
 			if (price && tradeInputs.susdSize) {
 				// Recalc the trade
-				onTradeAmountChange(tradeInputs.susdSize, 'usd');
+				onTradeAmountChange(tradeInputs.susdSize, wei(price), 'usd');
 			}
 		},
 		[tradeInputs, onTradeAmountChange]
@@ -566,7 +572,7 @@ const useFuturesData = () => {
 		) {
 			setOrderType('market');
 		}
-		onTradeAmountChange(tradeInputs.susdSize, 'usd');
+		onTradeAmountChange(tradeInputs.susdSize, tradePrice, 'usd');
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedAccountType, orderType, network.id]);
@@ -583,7 +589,7 @@ const useFuturesData = () => {
 
 	useEffect(() => {
 		if (tradeInputs.susdSizeDelta.eq(0)) return;
-		onTradeAmountChange(tradeInputs.susdSize, 'usd');
+		onTradeAmountChange(tradeInputs.susdSize, tradePrice, 'usd');
 		// Only want to react to leverage side change
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [leverageSide]);
@@ -628,6 +634,7 @@ const useFuturesData = () => {
 		selectedLeverage,
 		error,
 		debounceFetchPreview,
+		tradePrice,
 	};
 };
 

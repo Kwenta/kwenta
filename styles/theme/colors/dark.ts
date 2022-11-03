@@ -1,21 +1,16 @@
 import common from './common';
 
 const darkTheme = {
-	background: '#131212',
-	border: '1px solid rgba(255, 255, 255, 0.12)',
-	outlineBorder: '1px solid rgba(255, 255, 255, 0.12)',
-	red: '#EF6868',
-	green: '#7FD482',
-	orange: '#DA8332',
-	black: '#171002',
-	white: '#ECE8E3',
-	gray: '#787878',
-	gray2: '#3F3F3F',
+	...common.dark,
+	red: common.dark.red,
+	green: common.dark.green,
+	black: common.dark.black,
+	white: common.dark.white,
 	yellow: common.primaryYellow,
 	table: { fill: 'rgba(255, 255, 255, 0.01)', hover: 'rgba(255, 255, 255, 0.05)' },
 	gold: '#E4B378',
 	badge: {
-		red: { background: '#EF6868', text: 'black' },
+		red: { background: common.dark.red, text: 'black' },
 		yellow: { background: common.primaryYellow, text: 'black' },
 	},
 	tab: { background: { active: '#252525', inactive: 'transparent' } },
@@ -37,7 +32,7 @@ const darkTheme = {
 			textShadow: '0px 1px 2px rgba(0, 0, 0, 0.5)',
 		},
 		secondary: { text: '#E4B378' },
-		danger: { text: '#EF6868' },
+		danger: { text: common.dark.red },
 		active: {
 			shadow: 'inset 0px 0px 20px rgba(255, 255, 255, 0.03)',
 			textShadow: '0px 1px 2px rgba(0, 0, 0, 0.4)',
@@ -126,6 +121,9 @@ const darkTheme = {
 			text: common.primaryWhite,
 		},
 		bg: '#fff',
+	},
+	chartLine: {
+		long: '#37A141',
 	},
 };
 
