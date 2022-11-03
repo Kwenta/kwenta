@@ -18,7 +18,6 @@ import {
 	showCrossMarginOnboardState,
 	crossMarginAccountOverviewState,
 } from 'store/futures';
-import { ceilNumber, floorNumber, suggestedDecimals } from 'utils/formatters/number';
 import { orderPriceInvalidLabel } from 'utils/futures';
 
 import FeeInfoBox from '../FeeInfoBox';
@@ -55,10 +54,10 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 	const onChangeOrderPrice = useCallback(
 		(price: string) => {
 			const invalidLabel = orderPriceInvalidLabel(price, leverageSide, marketAssetRate, orderType);
+			setOrderPrice(price);
 			if (!invalidLabel || !price) {
 				onTradeOrderPriceChange(price);
 			}
-			setOrderPrice(price);
 		},
 		[onTradeOrderPriceChange, setOrderPrice, leverageSide, marketAssetRate, orderType]
 	);
@@ -87,17 +86,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 						onChange={(index: number) => {
 							const type = CROSS_MARGIN_ORDER_TYPES[index];
 							setOrderType(type as FuturesOrderType);
-							const decimals = suggestedDecimals(marketAssetRate);
-							const offset = 1 / 10 ** (decimals ?? 1);
-							const price =
-								(type === 'limit' && leverageSide === 'long') ||
-								(type === 'stop market' && leverageSide === 'short')
-									? floorNumber(marketAssetRate, decimals) - offset
-									: (type === 'stop market' && leverageSide === 'long') ||
-									  (type === 'limit' && leverageSide === 'short')
-									? ceilNumber(marketAssetRate, decimals) + offset
-									: '';
-							onChangeOrderPrice(String(price));
+							setOrderPrice('');
 						}}
 					/>
 					<OrderSizing isMobile={isMobile} />

@@ -42,7 +42,13 @@ type OrderTxnError = {
 
 const ManagePosition: React.FC = () => {
 	const { t } = useTranslation();
-	const { error, orderTxn, onTradeAmountChange, maxUsdInputAmount } = useFuturesContext();
+	const {
+		error,
+		orderTxn,
+		onTradeAmountChange,
+		maxUsdInputAmount,
+		tradePrice,
+	} = useFuturesContext();
 
 	const sizeDelta = useRecoilValue(sizeDeltaState);
 	const marginDelta = useRecoilValue(crossMarginMarginDeltaState);
@@ -168,7 +174,7 @@ const ManagePosition: React.FC = () => {
 										? PositionSide.SHORT
 										: PositionSide.LONG;
 								setLeverageSide(newLeverageSide);
-								onTradeAmountChange(newTradeSize.toString(), 'native');
+								onTradeAmountChange(newTradeSize.toString(), tradePrice, 'native');
 								setConfirmationModalOpen(true);
 							} else {
 								setCancelModalOpen(true);
