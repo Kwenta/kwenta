@@ -11,6 +11,7 @@ import ErrorView from 'components/Error';
 import CustomInput from 'components/Input/CustomInput';
 import Loader from 'components/Loader';
 import SegmentedControl from 'components/SegmentedControl';
+import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import Connector from 'containers/Connector';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
@@ -28,7 +29,6 @@ type DepositMarginModalProps = {
 };
 
 const PLACEHOLDER = '$0.00';
-const MIN_DEPOSIT_AMOUNT = wei('50');
 
 export default function DepositWithdrawCrossMargin({
 	defaultTab = 'deposit',
@@ -148,7 +148,7 @@ export default function DepositWithdrawCrossMargin({
 		const amtWei = wei(amount || 0);
 		if (transferType === 0) {
 			const total = wei(freeMargin).add(amtWei);
-			if (total.lt(MIN_DEPOSIT_AMOUNT))
+			if (total.lt(MIN_MARGIN_AMOUNT))
 				return t('futures.market.trade.margin.modal.deposit.min-deposit');
 			if (amtWei.gt(susdBal)) return t('futures.market.trade.margin.modal.deposit.exceeds-balance');
 		} else {

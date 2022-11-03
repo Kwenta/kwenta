@@ -1,7 +1,7 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { constants } from 'ethers';
-import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -15,6 +15,7 @@ import NumericInput from 'components/Input/NumericInput';
 import Loader from 'components/Loader';
 import ProgressSteps from 'components/ProgressSteps';
 import { CROSS_MARGIN_BASE_SETTINGS } from 'constants/address';
+import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import Connector from 'containers/Connector';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
@@ -57,6 +58,12 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 	const [error, setError] = useState<string | null>(null);
 
 	const susdBal = balances?.susdWalletBalance;
+
+	const isDepositDisabled = useMemo(() => {
+		if (!depositAmount) return true;
+
+		return wei(depositAmount).lt(MIN_MARGIN_AMOUNT);
+	}, [depositAmount]);
 
 	const fetchAllowance = useCallback(async () => {
 		if (!crossMarginAccountContract || !susdContract || !walletAddress) return;
@@ -263,10 +270,24 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 			return (
 				<>
 					<Intro>{t('futures.modals.onboard.step3-intro')}</Intro>
-					<InputBalanceLabel balance={susdBal || zeroBN} currencyKey="sUSD" />
+					<InputBalanceLabel
+						balance={susdBal || zeroBN}
+						currencyKey="sUSD"
+						onSetAmount={setDepositAmount}
+					/>
 					<NumericInput placeholder="0.00" value={depositAmount} onChange={onEditAmount} />
 					{renderProgress(3)}
-					<StyledButton variant="flat" onClick={depositToAccount}>
+					{isDepositDisabled && (
+						<MinimumAmountDisclaimer>
+							{t('futures.market.trade.margin.modal.deposit.disclaimer')}
+						</MinimumAmountDisclaimer>
+					)}
+					<StyledButton
+						disabled={isDepositDisabled}
+						variant="flat"
+						textTransform="none"
+						onClick={depositToAccount}
+					>
 						{submitting === 'deposit' ? <Loader /> : 'Deposit sUSD'}
 					</StyledButton>
 				</>
@@ -346,4 +367,11 @@ const Complete = styled.div`
 
 const LoaderContainer = styled.div`
 	height: 120px;
+`;
+
+const MinimumAmountDisclaimer = styled.div`
+	font-size: 12px;
+	margin: 20px 0 0;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+	text-align: center;
 `;

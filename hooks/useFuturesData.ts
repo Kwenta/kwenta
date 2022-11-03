@@ -48,6 +48,7 @@ import {
 	aboveMaxLeverageState,
 	crossMarginAccountOverviewState,
 } from 'store/futures';
+import { computeMarketFee } from 'utils/costCalculations';
 import { zeroBN, floorNumber, weiToString } from 'utils/formatters/number';
 import { calculateMarginDelta, getDisplayAsset, MarketKeyByAsset } from 'utils/futures';
 import logError from 'utils/logError';
@@ -160,12 +161,13 @@ const useFuturesData = () => {
 		if (aboveMaxLeverage && position?.position?.side === leverageSide) {
 			return zeroBN;
 		}
-		const currentValue = position?.position?.notionalValue || zeroBN;
+		const currentValue = position?.position?.notionalValue ?? zeroBN;
 		let maxUsd = remainingMargin.mul(selectedLeverage);
-		maxUsd = leverageSide === 'long' ? maxUsd.sub(currentValue) : maxUsd.add(currentValue);
-		const maxCrossMarginFee = maxUsd.mul(crossMarginTradeFee);
-		const fees = maxFee.add(maxCrossMarginFee) || zeroBN;
-		maxUsd = maxUsd.sub(fees.mul(selectedLeverage));
+		maxUsd =
+			position?.position?.side === leverageSide
+				? maxUsd.sub(currentValue)
+				: maxUsd.add(currentValue);
+		maxUsd = maxUsd.sub(maxFee);
 		const buffer = maxUsd.mul(0.01);
 		return maxUsd.abs().sub(buffer);
 	}, [
@@ -176,10 +178,20 @@ const useFuturesData = () => {
 		remainingMargin,
 		leverageSide,
 		selectedAccountType,
-		crossMarginTradeFee,
 		position?.position?.notionalValue,
 		position?.position?.side,
 	]);
+
+	const advancedOrderFeeRate = useMemo(() => {
+		switch (orderType) {
+			case 'limit':
+				return limitOrderFee;
+			case 'stop market':
+				return stopOrderFee;
+			default:
+				return zeroBN;
+		}
+	}, [orderType, limitOrderFee, stopOrderFee]);
 
 	const getTradeFee = useCallback(
 		(size: Wei) => {
@@ -203,6 +215,30 @@ const useFuturesData = () => {
 			return susdSizeDelta.abs().mul(advancedOrderFeeRate);
 		},
 		[orderType, stopOrderFee, limitOrderFee]
+	);
+
+	const totalFeeRate = useCallback(
+		async (sizeDelta: Wei) => {
+			const [dynamicFeeRate] = await Promise.all([
+				synthetixjs.contracts.Exchanger.dynamicFeeRateForExchange(
+					ethers.utils.formatBytes32String('sUSD'),
+					ethers.utils.formatBytes32String(marketAsset)
+				),
+			]);
+			const staticRate = computeMarketFee(market, sizeDelta);
+			const total = crossMarginTradeFee
+				.add(dynamicFeeRate.feeRate)
+				.add(staticRate)
+				.add(advancedOrderFeeRate);
+			return total;
+		},
+		[
+			market,
+			marketAsset,
+			crossMarginTradeFee,
+			advancedOrderFeeRate,
+			synthetixjs.contracts.Exchanger,
+		]
 	);
 
 	const calculateFees = useCallback(
@@ -501,10 +537,13 @@ const useFuturesData = () => {
 			try {
 				const currentValue = position?.position?.notionalValue || zeroBN;
 				let maxUsd = remainingMargin.mul(selectedLeverage);
-				maxUsd = leverageSide === 'long' ? maxUsd.sub(currentValue) : maxUsd.add(currentValue);
-				const maxSize = maxUsd.gt(0) ? maxUsd.div(tradePrice) : zeroBN;
-				const maxOrderFee = await getTradeFee(maxSize);
-				setMaxFee(wei(maxOrderFee.fee));
+				maxUsd =
+					position?.position?.side === leverageSide
+						? maxUsd.sub(currentValue)
+						: maxUsd.add(currentValue);
+				const totalRate = await totalFeeRate(maxUsd);
+				const totalMaxFee = maxUsd.mul(totalRate);
+				setMaxFee(totalMaxFee.mul(selectedLeverage));
 			} catch (e) {
 				logError(e);
 			}
@@ -513,8 +552,11 @@ const useFuturesData = () => {
 	}, [
 		setMaxFee,
 		getTradeFee,
+		totalFeeRate,
+		crossMarginTradeFee,
 		leverageSide,
 		position?.position?.notionalValue,
+		position?.position?.side,
 		remainingMargin,
 		tradePrice,
 		selectedLeverage,

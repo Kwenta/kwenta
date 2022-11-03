@@ -9,6 +9,7 @@ import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import Error from 'components/Error';
 import CustomInput from 'components/Input/CustomInput';
+import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import { NO_VALUE } from 'constants/placeholder';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
@@ -25,7 +26,6 @@ type DepositMarginModalProps = {
 };
 
 const PLACEHOLDER = '$0.00';
-const MIN_MARGIN_AMOUNT = wei('50');
 
 const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSDBalance }) => {
 	const { t } = useTranslation();
