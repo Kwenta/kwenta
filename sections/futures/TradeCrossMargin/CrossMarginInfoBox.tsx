@@ -56,9 +56,7 @@ function MarginInfoBox({ editingLeverage }: Props) {
 	const totalMargin = position?.remainingMargin.add(crossMarginFreeMargin) ?? zeroBN;
 	const availableMargin = position?.accessibleMargin.add(crossMarginFreeMargin) ?? zeroBN;
 
-	const marginUsage = availableMargin.gt(zeroBN)
-		? totalMargin.sub(availableMargin).div(totalMargin)
-		: zeroBN;
+	const marginUsage = availableMargin.gt(zeroBN) ? availableMargin.div(totalMargin) : zeroBN;
 
 	const previewTotalMargin = useMemo(() => {
 		const remainingMargin = crossMarginFreeMargin.sub(marginDelta);
