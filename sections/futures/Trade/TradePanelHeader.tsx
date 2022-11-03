@@ -8,7 +8,7 @@ import FuturesIcon from 'components/Nav/FuturesIcon';
 import { NumberDiv } from 'components/Text/NumberLabel';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { FuturesAccountType } from 'queries/futures/subgraph';
-import { BorderedPanel, TextButton, YellowIconButton } from 'styles/common';
+import { BorderedPanel, YellowIconButton } from 'styles/common';
 import { formatDollars } from 'utils/formatters/number';
 
 type Props = {
