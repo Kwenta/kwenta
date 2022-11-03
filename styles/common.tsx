@@ -368,10 +368,26 @@ const PillButtonCss = css<{ padding?: string }>`
 	color: ${(props) => props.theme.colors.selectedTheme.button.pill.background};
 	border-radius: 10px;
 	padding: ${(props) => props.padding ?? '3px 5px'};
+	svg {
+		path {
+			${(props) =>
+				css`
+					fill: ${props.theme.colors.selectedTheme.yellow};
+				`}
+		}
+	}
 	&:hover {
 		background-color: ${(props) => props.theme.colors.selectedTheme.button.pill.background};
 		color: ${(props) => props.theme.colors.selectedTheme.button.pill.hover};
 		opacity: 0.7;
+		svg {
+			path {
+				${(props) =>
+					css`
+						fill: ${props.theme.colors.selectedTheme.button.pill.hover};
+					`}
+			}
+		}
 	}
 `;
 
@@ -381,4 +397,21 @@ export const PillButtonSpan = styled.span<{ padding?: string }>`
 
 export const PillButtonDiv = styled.div<{ padding?: string }>`
 	${PillButtonCss}
+`;
+
+export const YellowIconButton = styled.div`
+	transition: all 0.1s ease-in-out;
+	cursor: pointer;
+	color: ${(props) => props.theme.colors.selectedTheme.yellow};
+	svg {
+		path {
+			${(props) =>
+				css`
+					fill: ${props.theme.colors.selectedTheme.yellow};
+				`}
+		}
+	}
+	&:hover {
+		opacity: 0.7;
+	}
 `;

@@ -8,7 +8,7 @@ import FuturesIcon from 'components/Nav/FuturesIcon';
 import { NumberDiv } from 'components/Text/NumberLabel';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { FuturesAccountType } from 'queries/futures/subgraph';
-import { BorderedPanel, TextButton } from 'styles/common';
+import { BorderedPanel, TextButton, YellowIconButton } from 'styles/common';
 import { formatDollars } from 'utils/formatters/number';
 
 type Props = {
@@ -35,10 +35,12 @@ export default function TradePanelHeader({ accountType, onManageBalance, balance
 					</FAQLink>
 				)}
 			</Title>
-			<BalanceButton onClick={onManageBalance}>
+			<BalanceRow onClick={onManageBalance}>
 				<NumberDiv contrast="strong">{formatDollars(balance)}</NumberDiv>
-				<SwitchAssetArrows />
-			</BalanceButton>
+				<BalanceButton>
+					<SwitchAssetArrows />
+				</BalanceButton>
+			</BalanceRow>
 		</Container>
 	);
 }
@@ -63,10 +65,19 @@ const StyledFuturesIcon = styled(FuturesIcon)`
 	margin-right: 6px;
 `;
 
-const BalanceButton = styled(TextButton)`
+const BalanceRow = styled.div`
 	display: flex;
 	gap: 8px;
 	align-items: center;
+`;
+
+const BalanceButton = styled(YellowIconButton)`
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	&:hover {
+		opacity: 0.7;
+	}
 `;
 
 const FAQLink = styled.div`

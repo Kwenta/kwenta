@@ -108,6 +108,7 @@ const darkTheme = {
 	icon: {
 		fill: '#787878',
 		hover: '#ECE8E3',
+		hoverReverse: common.dark.black,
 	},
 	openInterestBar: {
 		border: '1px solid #2b2a2a',
