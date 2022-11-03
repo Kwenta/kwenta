@@ -132,7 +132,7 @@ const StyledFullHeightContainer = styled(FullHeightContainer)`
 	width: calc(100% - 30px);
 	@media (min-width: 1725px) {
 		display: grid;
-		grid-template-columns: 400px 1fr 400px;
+		grid-template-columns: 370px 1fr 370px;
 		column-gap: 15px;
 		width: 100%;
 	}

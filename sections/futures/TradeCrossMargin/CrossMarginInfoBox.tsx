@@ -56,7 +56,6 @@ function MarginInfoBox({ editingLeverage }: Props) {
 
 	const totalMargin = position?.remainingMargin.add(crossMarginFreeMargin) ?? zeroBN;
 	const availableMargin = position?.accessibleMargin.add(crossMarginFreeMargin) ?? zeroBN;
-	const currentSize = position?.position?.size ?? zeroBN;
 
 	const marginUsage = availableMargin.gt(zeroBN)
 		? totalMargin.sub(availableMargin).div(totalMargin)
@@ -70,6 +69,8 @@ function MarginInfoBox({ editingLeverage }: Props) {
 	const getPotentialAvailableMargin = useCallback(
 		(previewTrade: FuturesPotentialTradeDetails | null, marketMaxLeverage: Wei | undefined) => {
 			let inaccessible;
+
+			if (!marketMaxLeverage) return zeroBN;
 
 			inaccessible = previewTrade?.notionalValue.div(marketMaxLeverage).abs() ?? zeroBN;
 
@@ -141,20 +142,35 @@ function MarginInfoBox({ editingLeverage }: Props) {
 			<StyledInfoBox
 				dataTestId="market-info-box"
 				details={{
-					'Market Margin': !editingLeverage
+					'Free Account Margin': editingLeverage
 						? {
-								value: formatDollars(position?.remainingMargin || 0),
+								value: formatDollars(crossMarginFreeMargin),
 								valueNode: (
-									<PreviewArrow showPreview={showPreview}>
+									<PreviewArrow
+										showPreview={showPreview}
+										color={previewTradeData.freeAccountMargin.lt(0) ? 'red' : 'yellow'}
+									>
 										{potentialTrade.status === 'fetching' ? (
 											<MiniLoader />
 										) : (
-											formatDollars(previewTradeData.totalMargin)
+											formatDollars(previewTradeData.freeAccountMargin)
 										)}
 									</PreviewArrow>
 								),
 						  }
 						: null,
+					'Market Margin': {
+						value: formatDollars(position?.remainingMargin || 0),
+						valueNode: (
+							<PreviewArrow showPreview={showPreview}>
+								{potentialTrade.status === 'fetching' ? (
+									<MiniLoader />
+								) : (
+									formatDollars(previewTradeData.totalMargin)
+								)}
+							</PreviewArrow>
+						),
+					},
 					'Margin Usage': {
 						value: formatPercent(marginUsage),
 						valueNode: (
@@ -191,7 +207,15 @@ function MarginInfoBox({ editingLeverage }: Props) {
 					Leverage: {
 						value: (
 							<>
-								{formatNumber(selectedLeverage, { maxDecimals: 2 })}x
+								{formatNumber(
+									editingLeverage
+										? position?.position?.leverage ?? selectedLeverage
+										: selectedLeverage,
+									{
+										maxDecimals: 2,
+									}
+								)}
+								x
 								{!editingLeverage && (
 									<PillButtonSpan onClick={() => setOpenModal('leverage')}>Edit</PillButtonSpan>
 								)}
@@ -207,20 +231,6 @@ function MarginInfoBox({ editingLeverage }: Props) {
 							</PreviewArrow>
 						),
 					},
-					'Position Size': editingLeverage
-						? {
-								value: formatCurrency(marketInfo?.asset || '', currentSize),
-								valueNode: (
-									<PreviewArrow showPreview={showPreview}>
-										{potentialTrade.status === 'fetching' ? (
-											<MiniLoader />
-										) : (
-											formatCurrency(marketInfo?.asset || '', previewTradeData.size)
-										)}
-									</PreviewArrow>
-								),
-						  }
-						: null,
 				}}
 				disabled={marketInfo?.isSuspended}
 			/>

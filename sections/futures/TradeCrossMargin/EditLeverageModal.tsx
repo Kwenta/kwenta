@@ -64,7 +64,11 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 
 	const [preferredLeverage, setPreferredLeverage] = usePersistedRecoilState(preferredLeverageState);
 
-	const [leverage, setLeverage] = useState<number>(Number(Number(selectedLeverage).toFixed(2)));
+	const [leverage, setLeverage] = useState<number>(
+		editMode === 'existing_position' && position?.position
+			? Number(position.position.leverage.toNumber().toFixed(2))
+			: Number(Number(selectedLeverage).toFixed(2))
+	);
 	const [submitting, setSubmitting] = useState(false);
 	const [error, setError] = useState<null | string>(null);
 
@@ -180,7 +184,10 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const errorMessage = error || previewError;
+	const errorMessage = useMemo(
+		() => error || previewError || (previewData?.showStatus && previewData?.statusMessage),
+		[error, previewError, previewData?.showStatus, previewData?.statusMessage]
+	);
 
 	return (
 		<StyledBaseModal
@@ -219,12 +226,14 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 				</SliderInner>
 			</SliderOuter>
 
-			<MaxPosContainer>
-				<Label>{t('futures.market.trade.leverage.modal.max-pos')}</Label>
-				<Label>
-					<NumberSpan fontWeight="bold">{formatDollars(maxPositionUsd)}</NumberSpan> sUSD
-				</Label>
-			</MaxPosContainer>
+			{editMode === 'next_trade' && (
+				<MaxPosContainer>
+					<Label>{t('futures.market.trade.leverage.modal.max-pos')}</Label>
+					<Label>
+						<NumberSpan fontWeight="bold">{formatDollars(maxPositionUsd)}</NumberSpan> sUSD
+					</Label>
+				</MaxPosContainer>
+			)}
 
 			{position?.position && editMode === 'existing_position' && (
 				<>
@@ -236,7 +245,9 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 
 			<MarginActionButton
 				disabled={
-					!!previewError || (editMode === 'existing_position' && !previewData) || leverage < 1
+					!!previewError ||
+					(editMode === 'existing_position' && (!previewData || !!errorMessage)) ||
+					leverage < 1
 				}
 				data-testid="futures-market-trade-deposit-margin-button"
 				fullWidth
@@ -250,7 +261,7 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 					<Spacer height={12} />
 					<ErrorView
 						message={t(
-							errorMessage === 'insufficient_margin'
+							errorMessage === 'insufficient_margin' || errorMessage === 'Insufficient margin'
 								? ORDER_PREVIEW_ERRORS_I18N.insufficient_margin_edit_leverage
 								: previewError
 								? previewErrorI18n(errorMessage)

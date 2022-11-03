@@ -398,7 +398,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 						</PositionCardTooltip>
 						<FlexDivCentered>
 							<StyledValue data-testid="position-card-leverage-value">{data.leverage}</StyledValue>
-							{position?.position && (
+							{position?.position && futuresAccountType === 'cross_margin' && (
 								<PillButtonDiv onClick={() => setShowEditLeverage(true)}>Edit</PillButtonDiv>
 							)}
 						</FlexDivCentered>
