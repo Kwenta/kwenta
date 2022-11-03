@@ -32,7 +32,7 @@ const EligibilityBox = () => {
 			<EligibilityContainer>
 				<EligibilityText>Enter your wallet address to check eligibility</EligibilityText>
 				<EligibilityInput placeholder="0x..." value={address} onChange={handleChangeAddress} />
-				<Button fullWidth size="sm" onClick={handleCheck}>
+				<Button fullWidth size="sm" disabled={!address} onClick={handleCheck}>
 					Check
 				</Button>
 			</EligibilityContainer>
