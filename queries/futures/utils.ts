@@ -18,6 +18,7 @@ import {
 
 import { SECONDS_PER_DAY, FUTURES_ENDPOINTS } from './constants';
 import {
+	CrossMarginAccountTransferResult,
 	FuturesHourlyStatResult,
 	FuturesMarginTransferResult,
 	FuturesOrderResult,
@@ -341,6 +342,30 @@ export const mapMarginTransfers = (
 				amount,
 				isPositive,
 				asset: utils.parseBytes32String(asset) as FuturesMarketAsset,
+				txHash,
+			};
+		}
+	);
+};
+
+export const mapCrossMarginTransfers = (
+	marginTransfers: CrossMarginAccountTransferResult[]
+): MarginTransfer[] => {
+	return marginTransfers?.map(
+		({ timestamp, account, size, txHash }: CrossMarginAccountTransferResult): MarginTransfer => {
+			const sizeWei = new Wei(size);
+			const cleanSize = sizeWei.div(ETH_UNIT).abs();
+			const isPositive = sizeWei.gt(0);
+			const amount = `${isPositive ? '+' : '-'}${formatDollars(cleanSize)}`;
+			const numTimestamp = wei(timestamp).toNumber();
+
+			return {
+				timestamp: numTimestamp,
+				account,
+				size,
+				action: isPositive ? 'deposit' : 'withdraw',
+				amount,
+				isPositive,
 				txHash,
 			};
 		}
