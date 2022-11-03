@@ -19,8 +19,11 @@ const EligibilityBox = () => {
 	}, []);
 
 	const handleCheck = useCallback(() => {
-		setIsEligible(!!(address && ELIGIBILITY_SET.has(address)));
-		setIsLonoEligible(!!(address && LONOCLAUSE_SET.has(address)));
+		if (!!address) {
+			const lowerAddress = address.toLowerCase();
+			setIsEligible(ELIGIBILITY_SET.has(lowerAddress));
+			setIsLonoEligible(LONOCLAUSE_SET.has(lowerAddress));
+		}
 	}, [address]);
 
 	return (
