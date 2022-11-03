@@ -3,17 +3,19 @@ import styled from 'styled-components';
 
 import { LeftSideContent } from 'styles/common';
 
-import FuturesMarketTabs from '../FuturesMarketTabs';
+import MarketsDropdown from '../Trade/MarketsDropdown';
 import SkewInfo from '../TradingHistory/SkewInfo';
+import TradesHistoryTable from '../TradingHistory/TradesHistoryTable';
 
-const TradingHistory: React.FC = React.memo(() => (
+const FuturesLeftSideBar: React.FC = React.memo(() => (
 	<StyledLeftSideContent>
+		<MarketsDropdown />
 		<SkewInfo />
-		<FuturesMarketTabs />
+		<TradesHistoryTable />
 	</StyledLeftSideContent>
 ));
 
-export default TradingHistory;
+export default FuturesLeftSideBar;
 
 const StyledLeftSideContent = styled(LeftSideContent)`
 	width: 100%;

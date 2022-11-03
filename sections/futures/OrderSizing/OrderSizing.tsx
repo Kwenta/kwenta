@@ -1,3 +1,4 @@
+import { wei } from '@synthetixio/wei';
 import { debounce } from 'lodash';
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -49,7 +50,10 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	const [assetValue, setAssetValue] = useState(nativeSize);
 	const [assetInputType, setAssetInputType] = useState<'usd' | 'native'>('usd');
 
-	const tradePrice = useMemo(() => orderPrice || assetPrice, [orderPrice, assetPrice]);
+	const tradePrice = useMemo(() => (orderPrice ? wei(orderPrice) : assetPrice), [
+		orderPrice,
+		assetPrice,
+	]);
 	const maxNativeValue = useMemo(
 		() => (!isZero(tradePrice) ? maxUsdInputAmount.div(tradePrice) : zeroBN),
 		[tradePrice, maxUsdInputAmount]
@@ -83,20 +87,20 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 
 	const handleSetMax = () => {
 		if (assetInputType === 'usd') {
-			onTradeAmountChange(String(floorNumber(maxUsdInputAmount)), 'usd');
+			onTradeAmountChange(String(floorNumber(maxUsdInputAmount)), tradePrice, 'usd');
 		} else {
-			onTradeAmountChange(String(floorNumber(maxNativeValue)), 'native');
+			onTradeAmountChange(String(floorNumber(maxNativeValue)), tradePrice, 'native');
 		}
 	};
 
 	const handleSetPositionSize = () => {
-		onTradeAmountChange(position?.position?.size.toString() ?? '0', 'native');
+		onTradeAmountChange(position?.position?.size.toString() ?? '0', tradePrice, 'native');
 	};
 
 	// eslint-disable-next-line
 	const debounceOnChangeValue = useCallback(
 		debounce((value, assetType) => {
-			onTradeAmountChange(value, assetType);
+			onTradeAmountChange(value, tradePrice, assetType);
 		}, 500),
 		[debounce, onTradeAmountChange]
 	);

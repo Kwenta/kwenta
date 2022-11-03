@@ -1,5 +1,5 @@
 import Wei from '@synthetixio/wei';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
@@ -21,12 +21,14 @@ import {
 	positionState,
 	potentialTradeDetailsState,
 } from 'store/futures';
-import { FlexDivCol } from 'styles/common';
+import { FlexDivCentered, FlexDivCol, PillButtonDiv } from 'styles/common';
 import media from 'styles/media';
 import { isFiatCurrency } from 'utils/currencies';
 import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 import { formatNumber } from 'utils/formatters/number';
 import { getMarketName, getSynthDescription, isDecimalFour, MarketKeyByAsset } from 'utils/futures';
+
+import EditLeverageModal from '../TradeCrossMargin/EditLeverageModal';
 
 type PositionCardProps = {
 	dashboard?: boolean;
@@ -73,6 +75,8 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 
 	const potentialTrade = useRecoilValue(potentialTradeDetailsState);
 	const positionHistory = useRecoilValue(positionHistoryState);
+
+	const [showEditLeverage, setShowEditLeverage] = useState(false);
 
 	const { synthsMap } = Connector.useContainer();
 
@@ -277,6 +281,13 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 
 	return (
 		<>
+			{showEditLeverage && (
+				<EditLeverageModal
+					editMode="existing_position"
+					onDismiss={() => setShowEditLeverage(false)}
+				/>
+			)}
+
 			<Container id={isFuturesMarketClosed ? 'closed' : undefined}>
 				<DataCol>
 					<InfoRow>
@@ -385,7 +396,12 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 								{t('futures.market.position-card.leverage')}
 							</StyledSubtitleWithCursor>
 						</PositionCardTooltip>
-						<StyledValue data-testid="position-card-leverage-value">{data.leverage}</StyledValue>
+						<FlexDivCentered>
+							<StyledValue data-testid="position-card-leverage-value">{data.leverage}</StyledValue>
+							{position?.position && futuresAccountType === 'cross_margin' && (
+								<PillButtonDiv onClick={() => setShowEditLeverage(true)}>Edit</PillButtonDiv>
+							)}
+						</FlexDivCentered>
 					</InfoRow>
 					<InfoRow>
 						<PositionCardTooltip
