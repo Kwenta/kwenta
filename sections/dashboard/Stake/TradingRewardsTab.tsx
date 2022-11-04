@@ -21,11 +21,11 @@ const TradingRewardsTab: React.FC = () => {
 		currentWeeklyReward,
 		tradingRewardsRatio,
 		feePaid,
-		claimableBalance,
-		getRewardConfig,
+		claimEpochConfig,
+		claimError,
 	} = useStakingContext();
 
-	const { write: getReward } = useContractWrite(getRewardConfig);
+	const { write: claim } = useContractWrite(claimEpochConfig);
 
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
@@ -64,8 +64,8 @@ const TradingRewardsTab: React.FC = () => {
 						fullWidth
 						variant="flat"
 						size="sm"
-						disabled={claimableBalance.eq(0)}
-						onClick={() => getReward?.()}
+						disabled={tradingRewardsRatio === 0 || claimError}
+						onClick={() => claim?.()}
 					>
 						{t('dashboard.stake.tabs.trading-rewards.claim-epoch', { EpochPeriod: epochPeriod })}
 					</Button>
@@ -73,8 +73,8 @@ const TradingRewardsTab: React.FC = () => {
 						fullWidth
 						variant="flat"
 						size="sm"
-						disabled={claimableBalance.eq(0)}
-						onClick={() => getReward?.()}
+						disabled={tradingRewardsRatio === 0 || claimError}
+						onClick={() => claim?.()}
 					>
 						{t('dashboard.stake.tabs.trading-rewards.claim-all')}
 					</Button>

@@ -1,11 +1,3 @@
-import {
-	createMerkleInfo,
-	createTradingRewardsScores,
-	getFuturesTradesBetweenPeriod,
-	getRewardAmountForTradingRewardsEpoch,
-	getSynthExchangesBetweenPeriod,
-	mergeDatasets,
-} from '@kwenta/trading-incentives';
 import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
 import _ from 'lodash';
@@ -19,9 +11,10 @@ import rewardEscrowABI from 'lib/abis/RewardEscrow.json';
 import stakingRewardsABI from 'lib/abis/StakingRewards.json';
 import supplyScheduleABI from 'lib/abis/SupplySchedule.json';
 import vKwentaRedeemerABI from 'lib/abis/vKwentaRedeemer.json';
+import useGetFile from 'queries/files/useGetFile';
 import useGetFuturesFeeForAccount from 'queries/staking/useGetFuturesFeeForAccount';
 import useGetSpotFeeForAccount from 'queries/staking/useGetSpotFeeForAccount';
-import { EPOCH_START, getEpochDetails, getStakedBalances, WEEK } from 'queries/staking/utils';
+import { EPOCH_START, getEpochDetails, WEEK } from 'queries/staking/utils';
 import { formatShortDate, formatTruncatedDuration, toJSTimestamp } from 'utils/formatters/date';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -81,7 +74,6 @@ const useStakingData = () => {
 	};
 
 	const [epochPeriod, setEpochPeriod] = useState(0);
-	const [epochEndBlock, setEpochEndBlock] = useState(0);
 	const [epochDate, setEpochDate] = useState(`16 Oct, 2022 - 23 Oct, 2022`);
 	const { walletAddress, provider } = Connector.useContainer();
 	const [kwentaBalance, setKwentaBalance] = useState(zeroBN);
@@ -94,12 +86,9 @@ const useStakingData = () => {
 	const [vKwentaBalance, setVKwentaBalance] = useState(zeroBN);
 	const [vKwentaAllowance, setVKwentaAllowance] = useState(zeroBN);
 	const [kwentaAllowance, setKwentaAllowance] = useState(zeroBN);
-	const [currentWeeklyReward, setCurrentWeeklyReward] = useState(zeroBN);
-	const [feePaid, setFeesPaid] = useState(0);
-	const [totalFeePaid, setTotalFeePaid] = useState(0);
 	const [epochStart, setEpochStart] = useState(EPOCH_START);
 	const [epochEnd, setEpochEnd] = useState(EPOCH_START + WEEK);
-	const [tradingRewardsRatio, setTradingRewardsRatio] = useState(0);
+	const [claimError, setClaimError] = useState(false);
 
 	useContractReads({
 		contracts: [
@@ -182,7 +171,6 @@ const useStakingData = () => {
 				const yearlyRewards = totalStakedBalance.gt(zeroBN)
 					? startWeeklySupply.mul(wei(1).sub(supplyRate.pow(52))).div(wei(1).sub(supplyRate))
 					: zeroBN;
-				setCurrentWeeklyReward(startWeeklySupply.mul(0.2));
 				setApy(
 					yearlyRewards.gt(zeroBN) ? Number(yearlyRewards.div(totalStakedBalance)).toFixed(2) : '0'
 				);
@@ -289,16 +277,47 @@ const useStakingData = () => {
 
 	useEffect(() => {
 		const snapshot = async () => {
-			const { epochStart, epochEnd, epochEndBlock } = await getEpochDetails(provider, 1);
+			const { epochStart, epochEnd } = await getEpochDetails(provider, 1);
 			setEpochStart(epochStart);
 			setEpochEnd(epochEnd);
-			setEpochEndBlock(epochEndBlock);
 			const startDate = formatShortDate(new Date(toJSTimestamp(epochStart)));
 			const endDate = formatShortDate(new Date(toJSTimestamp(epochEnd)));
 			setEpochDate(`${startDate} - ${endDate}`);
 		};
 		snapshot();
 	}, [provider]);
+
+	const epochQuery = useGetFile('trading-rewards-snapshots/epoch-0.json');
+	const epochData = epochQuery.isSuccess ? epochQuery.data : null;
+
+	const walletReward = useMemo(
+		() => (epochData != null && walletAddress != null ? epochData.claims[walletAddress] : null),
+		[epochData, walletAddress]
+	);
+
+	const currentWeeklyReward = useMemo(() => (epochData != null ? epochData.tokenTotal : 0), [
+		epochData,
+	]);
+
+	const tradingRewardsRatio = useMemo(
+		() =>
+			walletReward != null && currentWeeklyReward != null && currentWeeklyReward !== 0
+				? walletReward.amount / currentWeeklyReward
+				: 0,
+		[currentWeeklyReward, walletReward]
+	);
+
+	const { config: claimEpochConfig } = usePrepareContractWrite({
+		...multipleMerkleDistributorContract,
+		functionName: 'claim',
+		args: [walletReward?.index, walletAddress, walletReward?.amount, walletReward?.proof, 0],
+		enabled: walletReward != null,
+		onError(error) {
+			logError(error);
+			setClaimError(true);
+		},
+		staleTime: Infinity,
+	});
 
 	const SpotFeeQuery = useGetSpotFeeForAccount(walletAddress!);
 	const spotFeePaid = useMemo(() => {
@@ -318,57 +337,7 @@ const useStakingData = () => {
 			.reduce((acc: number, curr: number) => acc + curr, 0);
 	}, [FuturesFeeQuery.data]);
 
-	useEffect(() => {
-		const snapshot = async () => {
-			setFeesPaid(spotFeePaid + futuresFeePaid ?? 0);
-			const synthExchanges = await getSynthExchangesBetweenPeriod(epochStart, epochEnd);
-			const futuresTrades = await getFuturesTradesBetweenPeriod(epochStart, epochEnd);
-			const feePaidByTrader = await mergeDatasets(synthExchanges, futuresTrades);
-			setTotalFeePaid(
-				Object.values(feePaidByTrader).reduce((acc, current) => acc + Number(current), 0) ?? 0
-			);
-			// const stakedBalances = await getStakedBalances(
-			// 	provider,
-			// 	Object.keys(feePaidByTrader),
-			// 	epochEndBlock
-			// );
-
-			// const rewardAmount = await getRewardAmountForTradingRewardsEpoch(0);
-			// const totalTradingRewardsScores = createTradingRewardsScores(feePaidByTrader, stakedBalances);
-			const tradingRewardsScore =
-				Math.pow(feePaid, 0.7) *
-				Math.pow(Number(stakedNonEscrowedBalance) + Number(stakedEscrowedBalance), 0.3);
-			const totalTradingRewardsScore =
-				Math.pow(totalFeePaid / 1e18, 0.7) * Math.pow(Number(totalStakedBalance), 0.3);
-			// eslint-disable-next-line no-console
-			// console.log(`score`, totalTradingRewardsScores);
-			// eslint-disable-next-line no-console
-			// console.log(`reward`, rewardAmount);
-			// const merkleRoot = createMerkleInfo(totalTradingRewardsScores, rewardAmount);
-
-			// const totalTradingRewardsScore = totalTradingRewardsScores
-			// 	.map((t) => t.tradingRewardsScore)
-			// 	.reduce((acc, curr) => acc + curr, 0);
-
-			setTradingRewardsRatio(
-				!_.isNil(totalTradingRewardsScore) ? tradingRewardsScore / totalTradingRewardsScore : 0
-			);
-		};
-		snapshot();
-	}, [
-		currentWeeklyReward,
-		epochEnd,
-		epochEndBlock,
-		epochStart,
-		feePaid,
-		futuresFeePaid,
-		provider,
-		spotFeePaid,
-		stakedEscrowedBalance,
-		stakedNonEscrowedBalance,
-		totalFeePaid,
-		totalStakedBalance,
-	]);
+	const feePaid = useMemo(() => spotFeePaid + futuresFeePaid, [futuresFeePaid, spotFeePaid]);
 
 	return {
 		epochPeriod,
@@ -377,7 +346,6 @@ const useStakingData = () => {
 		epochEnd,
 		data,
 		feePaid,
-		totalFeePaid,
 		tradingRewardsRatio,
 		escrowedBalance,
 		totalVestable,
@@ -386,7 +354,8 @@ const useStakingData = () => {
 		claimableBalance,
 		kwentaBalance,
 		apy,
-		currentWeeklyReward,
+		currentWeeklyReward: Number(currentWeeklyReward) / 1e18,
+		claimError,
 		vKwentaBalance,
 		vKwentaAllowance,
 		kwentaAllowance,
@@ -394,11 +363,13 @@ const useStakingData = () => {
 		kwentaApproveConfig,
 		vKwentaApproveConfig,
 		redeemConfig,
+		claimEpochConfig,
 		kwentaTokenApproval,
 		vkwentaTokenApproval,
 		stakingRewardsContract,
 		rewardEscrowContract,
 		vKwentaRedeemerContract,
+		multipleMerkleDistributorContract,
 	};
 };
 
