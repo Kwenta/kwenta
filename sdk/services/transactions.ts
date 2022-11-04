@@ -5,6 +5,7 @@ import { ethers } from 'ethers';
 import { omit, clone } from 'lodash';
 import KwentaSDK from 'sdk';
 
+import * as sdkErrors from '../common/errors';
 import { ContractName } from '../contracts';
 
 const OVMGasPriceOracle = getContractFactory('OVM_GasPriceOracle').attach(
@@ -44,7 +45,7 @@ export default class TransactionsService {
 
 	public async createEVMTxn(txn: ethers.providers.TransactionRequest, options?: any) {
 		if (!this.sdk.signer) {
-			throw new Error('A signer is required to execute a transaction.');
+			throw new Error(sdkErrors.NO_SIGNER);
 		}
 
 		const execTxn = clone(txn);
@@ -71,7 +72,7 @@ export default class TransactionsService {
 		const contract = this.sdk.contracts[contractName];
 
 		if (!contract) {
-			throw new Error('The selected contract does not exist on this network.');
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
 		return this.createContractTxn(contract, method, args, txnOptions, options);
@@ -79,7 +80,7 @@ export default class TransactionsService {
 
 	public async estimateGas(txn: ethers.providers.TransactionRequest) {
 		if (!this.sdk.signer) {
-			throw new Error('A signer is required to estimate gas.');
+			throw new Error(sdkErrors.NO_SIGNER);
 		}
 
 		return this.sdk.signer.estimateGas(
