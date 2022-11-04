@@ -13,3 +13,8 @@ export const selectSynthBalancesLoading = createSelector(
 	(state: RootState) => state.balances.status,
 	(status) => status === FetchStatus.Loading
 );
+
+export const selectSusdBalanceWei = createSelector(
+	(state: RootState) => state.balances.susdWalletBalance,
+	(susdWalletBalance) => toWei(susdWalletBalance)
+);

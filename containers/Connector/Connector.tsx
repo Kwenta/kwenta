@@ -57,7 +57,7 @@ const useConnector = () => {
 
 	useEffect(() => {
 		if (signer) {
-			Promise.all([signer.getAddress(), sdk.setSigner(signer)]).then(([address]) => {
+			Promise.all([signer?.getAddress(), sdk.setSigner(signer)]).then(([address]) => {
 				dispatch(resetWalletAddress(address));
 			});
 		}

@@ -32,7 +32,6 @@ type WalletTradesExchangeResult = Omit<SynthTradesExchangeResult, 'timestamp'> &
 const SpotHistoryTable: FC = () => {
 	const { t } = useTranslation();
 	const { network, walletAddress, synthsMap } = Connector.useContainer();
-	// const { blockExplorerInstance } = BlockExplorer.useContainer();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const walletTradesQuery = useGetWalletTrades(walletAddress!);
 

@@ -24,6 +24,7 @@ export const fetchSynthBalances = createAsyncThunk<any, void, ThunkConfig>(
 				return acc;
 			}, {} as any),
 			totalUSDBalance: totalUSDBalance.toString(),
+			susdWalletBalance: balancesMap?.['sUSD']?.balance.toString() ?? '0',
 		};
 	}
 );

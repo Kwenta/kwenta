@@ -8,7 +8,7 @@ import NumericInput from 'components/Input/NumericInput';
 import Loader from 'components/Loader';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { CapitalizedText, FlexDivCol, FlexDivRowCentered, numericValueCSS } from 'styles/common';
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 type CurrencyCardInputProps = {
 	label: string;
@@ -109,9 +109,7 @@ const CurrencyCardInputAmountValue = memo(({ currencyKeySelected, amount, priceR
 
 	return (
 		<CurrencyAmountValue data-testid="amount-value">
-			{currencyKeySelected && tradeAmount != null
-				? formatCurrency('sUSD', tradeAmount, { sign: '$' })
-				: null}
+			{currencyKeySelected && !!tradeAmount ? formatDollars(tradeAmount, { sign: '$' }) : null}
 		</CurrencyAmountValue>
 	);
 });
