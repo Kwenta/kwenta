@@ -5,7 +5,7 @@ import { keyBy } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { sdk } from 'state/config';
 import { useAppDispatch } from 'state/hooks';
-import { resetNetwork, resetWalletAddress } from 'state/wallet/actions';
+import { resetNetwork, setSigner } from 'state/wallet/actions';
 import { createContainer } from 'unstated-next';
 import { chain, useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
 
@@ -56,11 +56,7 @@ const useConnector = () => {
 	}, [provider, dispatch]);
 
 	useEffect(() => {
-		if (signer) {
-			Promise.all([signer?.getAddress(), sdk.setSigner(signer)]).then(([address]) => {
-				dispatch(resetWalletAddress(address));
-			});
-		}
+		dispatch(setSigner(signer));
 	}, [signer, dispatch]);
 
 	const [synthsMap, tokensMap] = useMemo(() => {

@@ -5,7 +5,7 @@ import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { truncateNumbers } from 'utils/formatters/number';
 
 import {
-	fetchBalances,
+	fetchRedeemableBalances,
 	fetchFeeReclaimPeriod,
 	fetchNumEntries,
 	fetchTokenList,
@@ -173,7 +173,7 @@ const exchangeSlice = createSlice({
 		},
 	},
 	extraReducers: (builder) => {
-		builder.addCase(fetchBalances.fulfilled, (state, action) => {
+		builder.addCase(fetchRedeemableBalances.fulfilled, (state, action) => {
 			state.redeemableSynthBalances = action.payload.redeemableSynthBalances;
 			state.totalRedeemableBalance = action.payload.totalRedeemableBalance;
 		});

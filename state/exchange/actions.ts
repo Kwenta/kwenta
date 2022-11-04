@@ -7,8 +7,8 @@ import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { toWei, truncateNumbers } from 'utils/formatters/number';
 
-export const fetchBalances = createAsyncThunk<any, void, ThunkConfig>(
-	'exchange/fetchBalances',
+export const fetchRedeemableBalances = createAsyncThunk<any, void, ThunkConfig>(
+	'exchange/fetchRedeemableBalances',
 	async (_, { extra: { sdk } }) => {
 		const {
 			balances: redeemableBalances,
@@ -99,7 +99,7 @@ export const submitRedeem = createAsyncThunk<void, void, ThunkConfig>(
 				txHash: hash,
 				onTxConfirmed: () => {
 					dispatch(fetchSynthBalances());
-					dispatch(fetchBalances());
+					dispatch(fetchRedeemableBalances());
 				},
 			});
 		}

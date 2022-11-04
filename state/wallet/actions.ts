@@ -1,7 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { NetworkId } from '@synthetixio/contracts-interface';
+import { ethers } from 'ethers';
 import { fetchSynthBalances } from 'state/balances/actions';
-import { fetchBalances, fetchTokenList } from 'state/exchange/actions';
+import { fetchRedeemableBalances, fetchTokenList } from 'state/exchange/actions';
 import type { ThunkConfig } from 'state/types';
 
 export const resetNetwork = createAsyncThunk<any, NetworkId, ThunkConfig>(
@@ -12,7 +13,7 @@ export const resetNetwork = createAsyncThunk<any, NetworkId, ThunkConfig>(
 		} = getState();
 
 		if (!!walletAddress) {
-			await Promise.all([dispatch(fetchSynthBalances()), dispatch(fetchBalances())]);
+			await Promise.all([dispatch(fetchSynthBalances()), dispatch(fetchRedeemableBalances())]);
 		}
 
 		await dispatch(fetchTokenList());
@@ -31,9 +32,19 @@ export const resetWalletAddress = createAsyncThunk<any, string, ThunkConfig>(
 		await dispatch(fetchSynthBalances());
 
 		if (!!networkId) {
-			dispatch(fetchBalances());
+			dispatch(fetchRedeemableBalances());
 		}
 
 		return walletAddress;
+	}
+);
+
+export const setSigner = createAsyncThunk<void, ethers.Signer | null | undefined, ThunkConfig>(
+	'wallet/setSigner',
+	async (signer, { dispatch, extra: { sdk } }) => {
+		if (!!signer) {
+			const [address] = await Promise.all([signer?.getAddress(), sdk.setSigner(signer)]);
+			dispatch(resetWalletAddress(address));
+		}
 	}
 );

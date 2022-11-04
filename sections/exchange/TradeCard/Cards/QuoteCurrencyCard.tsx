@@ -14,6 +14,10 @@ import useDebouncedMemo from 'hooks/useDebouncedMemo';
 
 import CurrencyCard from '../CurrencyCard';
 
+// TODO: Reconsider consolidating the mobile and desktop currency cards.
+// A number of performance considerations have changed, given the move
+// away from Recoil to Redux.
+
 const QuoteCurrencyCard: FC = memo(() => {
 	const { t } = useTranslation();
 
