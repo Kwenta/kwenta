@@ -15,7 +15,7 @@ import { FlexDivCol } from 'styles/common';
 import media from 'styles/media';
 
 import AllTime from '../AllTime';
-import { PIN } from '../common';
+import { CompetitionRound, PIN } from '../common';
 import TraderHistory from '../TraderHistory';
 
 type LeaderboardProps = {
@@ -32,6 +32,7 @@ const LEADERBOARD_TABS = [LeaderboardTab.Top, LeaderboardTab.Bottom];
 
 const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps) => {
 	const [activeTab, setActiveTab] = useState<LeaderboardTab>(LeaderboardTab.Top);
+	const [competitionRound, setCompetitionRound] = useState<CompetitionRound>();
 	const [searchInput, setSearchInput] = useState('');
 	const [searchTerm, setSearchTerm] = useState('');
 	const [searchAddress, setSearchAddress] = useState('');
@@ -69,11 +70,15 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 		if (router.asPath.startsWith(ROUTES.Leaderboard.Home) && router.query.trader) {
 			const trader = router.query.trader as string;
 			setSelectedTrader(trader);
+		} else if (router.asPath.startsWith(ROUTES.Leaderboard.Home) && router.query.competitionRound) {
+			const round = router.query.competitionRound as CompetitionRound;
+			setCompetitionRound(round);
 		} else {
 			setSearchInput('');
 			setSearchTerm('');
 			setSearchAddress('');
 			setSelectedTrader('');
+			setCompetitionRound(null);
 		}
 		return null;
 	}, [router.query, router.asPath]);
@@ -136,24 +141,27 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 			<LeaderboardContainer>
 				<SearchContainer compact={compact} mobile={mobile}>
 					<TabButtonContainer mobile={mobile}>
-						{LEADERBOARD_TABS.map((tab) => (
-							<StyledTabButton
-								key={tab}
-								title={tab ?? ''}
-								active={activeTab === tab}
-								onClick={() => {
-									setActiveTab(tab);
-									setSelectedTrader('');
-								}}
-							/>
-						))}
+						{!competitionRound &&
+							LEADERBOARD_TABS.map((tab) => (
+								<StyledTabButton
+									key={tab}
+									title={tab ?? ''}
+									active={activeTab === tab}
+									onClick={() => {
+										setActiveTab(tab);
+										setSelectedTrader('');
+									}}
+								/>
+							))}
 					</TabButtonContainer>
 					<SearchBarContainer>
 						<Search value={searchInput} onChange={onChangeSearch} disabled={false} />
 					</SearchBarContainer>
 				</SearchContainer>
 				<TableContainer compact={compact}>
-					{!compact && selectedTrader !== '' ? (
+					{competitionRound ? (
+						<></>
+					) : !compact && selectedTrader !== '' ? (
 						<TraderHistory
 							trader={selectedTrader}
 							ensInfo={ensInfo}

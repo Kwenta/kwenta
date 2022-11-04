@@ -39,7 +39,7 @@ const Nav: FC = () => {
 		link,
 		isActive,
 	}: ReactSelectOptionProps) => {
-		if (i18nLabel === 'header.nav.markets')
+		if (i18nLabel === 'header.nav.markets' || i18nLabel === 'header.nav.leaderboard')
 			return (
 				<MenuInside isDropDown isActive={isActive}>
 					{t(i18nLabel)}
