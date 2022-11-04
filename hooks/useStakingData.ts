@@ -177,7 +177,7 @@ const useStakingData = () => {
 				setVKwentaBalance(wei(data[9] ?? zeroBN));
 				setVKwentaAllowance(wei(data[10] ?? zeroBN));
 				setKwentaAllowance(wei(data[11] ?? zeroBN));
-				setEpochPeriod(Number(data[12] ?? 0));
+				setEpochPeriod(Number(data[12] ?? 0) - 1 ?? 0);
 			}
 		},
 	});
@@ -277,7 +277,7 @@ const useStakingData = () => {
 
 	useEffect(() => {
 		const snapshot = async () => {
-			const { epochStart, epochEnd } = await getEpochDetails(provider, 1);
+			const { epochStart, epochEnd } = await getEpochDetails(provider, epochPeriod);
 			setEpochStart(epochStart);
 			setEpochEnd(epochEnd);
 			const startDate = formatShortDate(new Date(toJSTimestamp(epochStart)));
@@ -285,9 +285,9 @@ const useStakingData = () => {
 			setEpochDate(`${startDate} - ${endDate}`);
 		};
 		snapshot();
-	}, [provider]);
+	}, [epochPeriod, provider]);
 
-	const epochQuery = useGetFile('trading-rewards-snapshots/epoch-0.json');
+	const epochQuery = useGetFile('trading-rewards-snapshots/epoch-1.json');
 	const epochData = epochQuery.isSuccess ? epochQuery.data : null;
 
 	const walletReward = useMemo(
@@ -310,7 +310,13 @@ const useStakingData = () => {
 	const { config: claimEpochConfig } = usePrepareContractWrite({
 		...multipleMerkleDistributorContract,
 		functionName: 'claim',
-		args: [walletReward?.index, walletAddress, walletReward?.amount, walletReward?.proof, 0],
+		args: [
+			walletReward?.index,
+			walletAddress,
+			walletReward?.amount,
+			walletReward?.proof,
+			epochPeriod,
+		],
 		enabled: walletReward != null,
 		onError(error) {
 			logError(error);
