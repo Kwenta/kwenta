@@ -1,7 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
+import { ethers } from 'ethers';
 import { fetchSynthBalances } from 'state/balances/actions';
-import type { ThunkConfig } from 'state/types';
+import { FetchStatus, ThunkConfig } from 'state/types';
 
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { monitorTransaction } from 'contexts/RelayerContext';
@@ -124,10 +125,14 @@ export const submitApprove = createAsyncThunk<void, void, ThunkConfig>(
 				monitorTransaction({
 					txHash: hash,
 					onTxConfirmed: () => {
-						dispatch({ type: 'exchange/setApprovalStatus', payload: 'approved' });
+						dispatch({ type: 'exchange/setApprovalStatus', payload: FetchStatus.Success });
+						dispatch({
+							type: 'exchange/setAllowance',
+							payload: wei(ethers.utils.formatEther(ethers.constants.MaxUint256)).toString(),
+						});
 					},
 					onTxFailed: () => {
-						dispatch({ type: 'exchange/setApprovalStatus', payload: 'needs-approval' });
+						dispatch({ type: 'exchange/setApprovalStatus', payload: FetchStatus.Error });
 					},
 				});
 			}
@@ -159,7 +164,7 @@ export const resetCurrencyKeys = createAsyncThunk<any, void, ThunkConfig>(
 		let quotePriceRate = undefined;
 		let basePriceRate = undefined;
 		let txProvider = undefined;
-		let approvalStatus = undefined;
+		let allowance = undefined;
 
 		if (walletAddress) {
 			const quoteBalance = !!quoteCurrencyKey
@@ -209,22 +214,7 @@ export const resetCurrencyKeys = createAsyncThunk<any, void, ThunkConfig>(
 					}
 				}
 
-				const needsApproval = sdk.exchange.checkNeedsApproval(baseCurrencyKey, quoteCurrencyKey);
-
-				if (needsApproval) {
-					// TODO: Handle case where allowance is not MaxUint256.
-					// Simplest way to do this is to return the allowance from
-					// checkAllowance, store it in state to do the comparison there.
-					const isApproved = await sdk.exchange.checkAllowance(
-						quoteCurrencyKey,
-						baseCurrencyKey,
-						'0'
-					);
-
-					approvalStatus = isApproved ? 'approved' : 'needs-approval';
-				} else {
-					approvalStatus = 'approved';
-				}
+				allowance = await sdk.exchange.checkAllowance(quoteCurrencyKey, baseCurrencyKey);
 			}
 		}
 
@@ -235,7 +225,7 @@ export const resetCurrencyKeys = createAsyncThunk<any, void, ThunkConfig>(
 			quotePriceRate: quotePriceRate?.toString(),
 			basePriceRate: basePriceRate?.toString(),
 			txProvider,
-			approvalStatus,
+			allowance: allowance?.toString(),
 		};
 	}
 );

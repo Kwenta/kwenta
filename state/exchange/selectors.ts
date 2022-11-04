@@ -3,8 +3,10 @@ import { wei } from '@synthetixio/wei';
 import { selectTotalUSDBalanceWei } from 'state/balances/selectors';
 import { sdk } from 'state/config';
 import type { RootState } from 'state/store';
+import { FetchStatus } from 'state/types';
 import { selectIsWalletConnected } from 'state/wallet/selectors';
 
+import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
 import { toWei, zeroBN } from 'utils/formatters/number';
 
 export const selectQuoteAmountWei = createSelector(
@@ -122,19 +124,27 @@ export const selectCanRedeem = createSelector(
 		totalRedeemableBalance.gt(0) && redeemableSynthBalances.length > 0
 );
 
-export const selectIsApproved = createSelector(
-	(state: RootState) => state.exchange.approvalStatus,
-	(approvalStatus) => approvalStatus === 'approved'
+export const selectNeedsApproval = createSelector(
+	(state: RootState) => state.exchange.txProvider,
+	(state: RootState) => state.exchange.quoteCurrencyKey,
+	(txProvider, quoteCurrencyKey) => {
+		const isQuoteCurrencyETH = quoteCurrencyKey === CRYPTO_CURRENCY_MAP.ETH;
+		return (txProvider === '1inch' || txProvider === 'synthswap') && !isQuoteCurrencyETH;
+	}
 );
 
-export const selectNeedsApproval = createSelector(
-	(state: RootState) => state.exchange.approvalStatus,
-	(approvalStatus) => approvalStatus === 'needs-approval'
+export const selectIsApproved = createSelector(
+	selectNeedsApproval,
+	(state: RootState) => state.exchange.allowance,
+	(state: RootState) => state.exchange.quoteAmount,
+	(needsApproval, allowance, quoteAmount) => {
+		return needsApproval ? toWei(allowance).gte(quoteAmount) : true;
+	}
 );
 
 export const selectIsApproving = createSelector(
 	(state: RootState) => state.exchange.approvalStatus,
-	(approvalStatus) => approvalStatus === 'approving'
+	(approvalStatus) => approvalStatus === FetchStatus.Loading
 );
 
 export const selectSubmissionDisabledReason = createSelector(

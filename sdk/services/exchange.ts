@@ -664,11 +664,7 @@ export default class ExchangeService {
 		return txProvider === '1inch' ? oneInchApproveAddress : SYNTH_SWAP_OPTIMISM_ADDRESS;
 	}
 
-	public async checkAllowance(
-		quoteCurrencyKey: string,
-		baseCurrencyKey: string,
-		quoteAmount: string
-	) {
+	public async checkAllowance(quoteCurrencyKey: string, baseCurrencyKey: string) {
 		if (!this.sdk.walletAddress) {
 			throw new Error(sdkErrors.NO_SIGNER);
 		}
@@ -684,7 +680,7 @@ export default class ExchangeService {
 				approveAddress
 			)) as ethers.BigNumber;
 
-			return wei(ethers.utils.formatEther(allowance)).gte(quoteAmount);
+			return wei(ethers.utils.formatEther(allowance));
 		}
 	}
 

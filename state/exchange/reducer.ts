@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
+import { FetchStatus } from 'state/types';
 
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { truncateNumbers } from 'utils/formatters/number';
@@ -40,7 +41,7 @@ const initialState: ExchangeState = {
 	redeemableSynthBalances: [],
 	totalRedeemableBalance: undefined,
 	estimatedBaseTradePrice: undefined,
-	approvalStatus: undefined,
+	approvalStatus: FetchStatus.Idle,
 	tokenListLoading: false,
 	synthsMap: {},
 	tokensMap: {},
@@ -53,6 +54,8 @@ const initialState: ExchangeState = {
 	oneInchQuoteLoading: false,
 	oneInchQuoteError: false,
 	txError: undefined,
+	isApproved: undefined,
+	allowance: undefined,
 };
 
 const exchangeSlice = createSlice({
@@ -171,6 +174,9 @@ const exchangeSlice = createSlice({
 		setApprovalStatus: (state, action) => {
 			state.approvalStatus = action.payload;
 		},
+		setAllowance: (state, action) => {
+			state.allowance = action.payload;
+		},
 	},
 	extraReducers: (builder) => {
 		builder.addCase(fetchRedeemableBalances.fulfilled, (state, action) => {
@@ -196,7 +202,7 @@ const exchangeSlice = createSlice({
 			state.txError = action.error.message;
 		});
 		builder.addCase(submitApprove.pending, (state) => {
-			state.approvalStatus = 'approving';
+			state.approvalStatus = FetchStatus.Loading;
 			state.openModal = 'approve';
 			state.txError = undefined;
 		});
@@ -269,7 +275,7 @@ const exchangeSlice = createSlice({
 			state.quotePriceRate = action.payload.quotePriceRate;
 			state.basePriceRate = action.payload.basePriceRate;
 			state.txProvider = action.payload.txProvider;
-			state.approvalStatus = action.payload.approvalStatus;
+			state.allowance = action.payload.allowance;
 		});
 	},
 });

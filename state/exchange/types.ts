@@ -1,4 +1,5 @@
-type ExchangeApprovalStatus = 'needs-approval' | 'approving' | 'approved' | 'failed';
+import { FetchStatus } from 'state/types';
+
 type ExchangeModal = 'settle' | 'confirm' | 'approve' | 'redeem' | 'base-select' | 'quote-select';
 
 export type SwapRatio = 25 | 50 | 75 | 100;
@@ -25,7 +26,7 @@ export type ExchangeState = {
 	redeemableSynthBalances: any[];
 	totalRedeemableBalance?: string;
 	estimatedBaseTradePrice?: string;
-	approvalStatus?: ExchangeApprovalStatus;
+	approvalStatus: FetchStatus;
 	tokenListLoading: boolean;
 	synthsMap: any;
 	tokensMap: any;
@@ -38,4 +39,6 @@ export type ExchangeState = {
 	oneInchQuoteLoading: boolean;
 	oneInchQuoteError: boolean;
 	txError?: string;
+	isApproved?: boolean;
+	allowance?: string;
 };
