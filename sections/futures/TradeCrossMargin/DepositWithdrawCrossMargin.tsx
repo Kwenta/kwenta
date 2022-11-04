@@ -106,15 +106,7 @@ export default function DepositWithdrawCrossMargin({
 			setTxState('none');
 			logError(err);
 		}
-	}, [
-		crossMarginAccountContract,
-		amount,
-		signer,
-		susdContract,
-		allowance,
-		monitorTransaction,
-		submitDeposit,
-	]);
+	}, [crossMarginAccountContract, amount, signer, susdContract, allowance, submitDeposit]);
 
 	const withdrawMargin = useCallback(async () => {
 		try {
@@ -135,14 +127,7 @@ export default function DepositWithdrawCrossMargin({
 			setTxState('none');
 			logError(err);
 		}
-	}, [
-		crossMarginAccountContract,
-		amount,
-		monitorTransaction,
-		refetchUntilUpdate,
-		onComplete,
-		onDismiss,
-	]);
+	}, [crossMarginAccountContract, amount, refetchUntilUpdate, onComplete, onDismiss]);
 
 	const disabledReason = useMemo(() => {
 		const amtWei = wei(amount || 0);
