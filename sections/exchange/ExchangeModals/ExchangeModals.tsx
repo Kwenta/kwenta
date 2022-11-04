@@ -14,7 +14,7 @@ const ExchangeModals = memo(() => {
 
 	const routeToMarketPair = useCallback(
 		(baseCurrencyKey: string, quoteCurrencyKey: string) =>
-			router.replace('/exchange', ROUTES.Exchange.MarketPair(baseCurrencyKey, quoteCurrencyKey), {
+			router.replace(ROUTES.Exchange.MarketPair(baseCurrencyKey, quoteCurrencyKey), undefined, {
 				shallow: true,
 			}),
 		[router]
@@ -22,7 +22,7 @@ const ExchangeModals = memo(() => {
 
 	const routeToBaseCurrency = useCallback(
 		(baseCurrencyKey: string) =>
-			router.replace(`/exchange`, ROUTES.Exchange.Into(baseCurrencyKey), {
+			router.replace(ROUTES.Exchange.Into(baseCurrencyKey), undefined, {
 				shallow: true,
 			}),
 		[router]

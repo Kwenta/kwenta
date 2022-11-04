@@ -1,10 +1,12 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import type { ThunkConfig } from 'state/store';
 
-export const fetchSynthBalances = createAsyncThunk<any, void, ThunkConfig>(
+export const fetchSynthBalances = createAsyncThunk<any, string, ThunkConfig>(
 	'balances/fetchSynthBalances',
-	async (_, { extra: { sdk } }) => {
-		const { balances, balancesMap, totalUSDBalance } = await sdk.synths.getSynthBalances();
+	async (walletAddress, { extra: { sdk } }) => {
+		const { balances, balancesMap, totalUSDBalance } = await sdk.synths.getSynthBalances(
+			walletAddress
+		);
 
 		return {
 			balances: balances.map((b) => ({

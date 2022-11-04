@@ -13,7 +13,10 @@ export const resetNetwork = createAsyncThunk<any, NetworkId, ThunkConfig>(
 		} = getState();
 
 		if (!!walletAddress) {
-			await Promise.all([dispatch(fetchSynthBalances()), dispatch(fetchRedeemableBalances())]);
+			await Promise.all([
+				dispatch(fetchSynthBalances(walletAddress)),
+				dispatch(fetchRedeemableBalances()),
+			]);
 		}
 
 		await dispatch(fetchTokenList());
@@ -29,7 +32,7 @@ export const resetWalletAddress = createAsyncThunk<any, string, ThunkConfig>(
 			wallet: { networkId },
 		} = getState();
 
-		await dispatch(fetchSynthBalances());
+		await dispatch(fetchSynthBalances(walletAddress));
 
 		if (!!networkId) {
 			dispatch(fetchRedeemableBalances());

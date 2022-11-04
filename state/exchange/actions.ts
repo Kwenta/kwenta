@@ -58,6 +58,7 @@ export const submitExchange = createAsyncThunk<void, void, ThunkConfig>(
 	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const {
 			exchange: { quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount },
+			wallet: { walletAddress },
 		} = getState();
 
 		if (quoteCurrencyKey && baseCurrencyKey) {
@@ -72,7 +73,7 @@ export const submitExchange = createAsyncThunk<void, void, ThunkConfig>(
 				monitorTransaction({
 					txHash: hash,
 					onTxConfirmed: () => {
-						dispatch(fetchSynthBalances());
+						if (walletAddress) dispatch(fetchSynthBalances(walletAddress));
 						dispatch(fetchNumEntries());
 						dispatch({
 							type: 'exchange/setQuoteAmount',
@@ -91,14 +92,17 @@ export const submitExchange = createAsyncThunk<void, void, ThunkConfig>(
 
 export const submitRedeem = createAsyncThunk<void, void, ThunkConfig>(
 	'exchange/submitRedeem',
-	async (_, { dispatch, extra: { sdk } }) => {
+	async (_, { getState, dispatch, extra: { sdk } }) => {
+		const {
+			wallet: { walletAddress },
+		} = getState();
 		const hash = await sdk.exchange.handleRedeem();
 
 		if (hash) {
 			monitorTransaction({
 				txHash: hash,
 				onTxConfirmed: () => {
-					dispatch(fetchSynthBalances());
+					if (walletAddress) dispatch(fetchSynthBalances(walletAddress));
 					dispatch(fetchRedeemableBalances());
 				},
 			});

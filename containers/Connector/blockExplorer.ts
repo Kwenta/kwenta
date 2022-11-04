@@ -3,10 +3,7 @@ import { OPTIMISM_NETWORKS } from '@synthetixio/optimism-networks';
 
 export const getBaseUrl = (networkId: NetworkId) => {
 	if (networkId === 10 || networkId === 420) {
-		return (
-			OPTIMISM_NETWORKS[networkId as NetworkId]?.blockExplorerUrls[0] ??
-			OPTIMISM_NETWORKS[10]?.blockExplorerUrls[0]
-		);
+		return OPTIMISM_NETWORKS[networkId as NetworkId]?.blockExplorerUrls[0];
 	} else if ((networkId as NetworkId) === NetworkIdByName.mainnet) {
 		return 'https://etherscan.io';
 	}

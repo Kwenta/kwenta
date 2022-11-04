@@ -8,6 +8,8 @@ import KwentaSDK from 'sdk';
 import { notNill } from 'queries/synths/utils';
 import { zeroBN } from 'utils/formatters/number';
 
+import * as sdkErrors from '../common/errors';
+
 type SynthBalancesTuple = [string[], ethers.BigNumber[], ethers.BigNumber[]];
 
 export default class SynthsService {
@@ -18,13 +20,9 @@ export default class SynthsService {
 		this.sdk = sdk;
 	}
 
-	public async getSynthBalances() {
-		if (!this.sdk.walletAddress) {
-			throw new Error('No wallet address provided');
-		}
-
+	public async getSynthBalances(walletAddress: string) {
 		if (!this.sdk.contracts.SynthUtil) {
-			throw new Error('Wrong network selected');
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
 		const balancesMap: SynthBalancesMap = {};
@@ -34,7 +32,7 @@ export default class SynthsService {
 			synthsUSDBalances,
 		]: SynthBalancesTuple = await this.sdk.contracts.SynthUtil.connect(
 			this.sdk.provider
-		).synthsBalances(this.sdk.walletAddress);
+		).synthsBalances(walletAddress);
 
 		let totalUSDBalance = wei(0);
 
@@ -67,9 +65,9 @@ export default class SynthsService {
 		return balances;
 	}
 
-	public async getSynthBalance(currencyKey: string) {
+	public async getSynthBalance(walletAddress: string, currencyKey: string) {
 		if (!this.balances) {
-			await this.getSynthBalances();
+			await this.getSynthBalances(walletAddress);
 		}
 
 		return this.balances?.balancesMap[currencyKey]?.balance ?? zeroBN;

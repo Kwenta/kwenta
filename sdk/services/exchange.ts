@@ -1,6 +1,6 @@
 // @ts-ignore TODO: remove once types are added
 import getFormattedSwapData from '@kwenta/synthswap';
-import { CurrencyKey, NetworkId, NetworkIdByName } from '@synthetixio/contracts-interface';
+import { CurrencyKey, NetworkId } from '@synthetixio/contracts-interface';
 import { DeprecatedSynthBalance, TokenBalances } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import axios from 'axios';
@@ -8,6 +8,7 @@ import { Contract as EthCallContract } from 'ethcall';
 import { BigNumber, ethers } from 'ethers';
 import { get, keyBy } from 'lodash';
 import KwentaSDK from 'sdk';
+import { getEthGasPrice } from 'sdk/common/gas';
 
 import { KWENTA_REFERRAL_ADDRESS, SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
 import {
@@ -36,7 +37,6 @@ import { FuturesMarketKey, MarketAssetByKey } from 'utils/futures';
 import { getTransactionPrice, normalizeGasLimit } from 'utils/network';
 
 import * as sdkErrors from '../common/errors';
-import { computeGasFee, getGasPriceFromProvider } from '../common/gas';
 import SynthRedeemerABI from '../contracts/abis/SynthRedeemer.json';
 import { getSynthsForNetwork, SynthSymbol } from '../data/synths';
 import {
@@ -228,15 +228,17 @@ export default class ExchangeService {
 	public async getBalance(currencyKey: string) {
 		const isETH = this.isCurrencyETH(currencyKey);
 
-		if (isETH) {
-			return this.getETHBalance();
-		} else if (this.synthsMap[currencyKey as SynthSymbol]) {
-			return this.sdk.synths.getSynthBalance(currencyKey);
-		} else {
-			const token = this.tokenList.find((t) => t.symbol === currencyKey);
-			if (token) {
-				const tokenBalances = token ? await this.getTokensBalances([token]) : undefined;
-				return tokenBalances?.[currencyKey]?.balance ?? zeroBN;
+		if (this.sdk.walletAddress) {
+			if (isETH) {
+				return this.getETHBalance();
+			} else if (this.synthsMap[currencyKey as SynthSymbol]) {
+				return this.sdk.synths.getSynthBalance(this.sdk.walletAddress, currencyKey);
+			} else {
+				const token = this.tokenList.find((t) => t.symbol === currencyKey);
+				if (token) {
+					const tokenBalances = token ? await this.getTokensBalances([token]) : undefined;
+					return tokenBalances?.[currencyKey]?.balance ?? zeroBN;
+				}
 			}
 		}
 
@@ -588,7 +590,7 @@ export default class ExchangeService {
 	) {
 		const [exchangeRates, gasPrices] = await Promise.all([
 			this.getExchangeRates(),
-			this.getEthGasPrice(),
+			getEthGasPrice(this.sdk.networkId, this.sdk.provider),
 		]);
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
 		const ethPriceRate = newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', 'sUSD');
@@ -1099,31 +1101,6 @@ export default class ExchangeService {
 		);
 
 		return response.data.address;
-	}
-
-	// This is mostly copied over from the Synthetix queries.
-	// See: https://github.com/Synthetixio/js-monorepo/blob/master/packages/queries/src/queries/network/useEthGasPriceQuery.ts
-	private async getEthGasPrice() {
-		try {
-			// If network is Mainnet then we use EIP1559
-			if (this.sdk.networkId === NetworkIdByName.mainnet) {
-				const block = await this.sdk.provider.getBlock('latest');
-				if (block?.baseFeePerGas) {
-					return {
-						fastest: computeGasFee(block.baseFeePerGas, 6),
-						fast: computeGasFee(block.baseFeePerGas, 4),
-						average: computeGasFee(block.baseFeePerGas, 2),
-					};
-				} else {
-					return getGasPriceFromProvider(this.sdk.provider);
-				}
-				// If not (Testnet or Optimism network), we get the Gas Price through the provider
-			} else {
-				return getGasPriceFromProvider(this.sdk.provider);
-			}
-		} catch (e) {
-			throw new Error(`Could not fetch and compute network fee. ${e}`);
-		}
 	}
 
 	private async getGasEstimateForExchange(
