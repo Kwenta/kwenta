@@ -27,7 +27,7 @@ export type ExchangeState = {
 	totalRedeemableBalance?: string;
 	estimatedBaseTradePrice?: string;
 	approvalStatus: FetchStatus;
-	tokenListLoading: boolean;
+	tokenListStatus: FetchStatus;
 	synthsMap: any;
 	tokensMap: any;
 	tokenList: any[];

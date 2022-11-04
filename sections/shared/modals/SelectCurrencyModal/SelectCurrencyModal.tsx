@@ -58,7 +58,6 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	const { balancesMap, tokenList } = useAppSelector(({ balances, exchange }) => ({
 		balancesMap: balances.balancesMap,
 		tokenList: exchange.tokenList,
-		tokenListLoading: exchange.tokenListLoading,
 	}));
 
 	const synthBalancesLoading = useAppSelector(selectSynthBalancesLoading);

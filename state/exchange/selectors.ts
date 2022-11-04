@@ -136,7 +136,7 @@ export const selectNeedsApproval = createSelector(
 export const selectIsApproved = createSelector(
 	selectNeedsApproval,
 	(state: RootState) => state.exchange.allowance,
-	(state: RootState) => state.exchange.quoteAmount,
+	selectQuoteAmountWei,
 	(needsApproval, allowance, quoteAmount) => {
 		return needsApproval ? toWei(allowance).gte(quoteAmount) : true;
 	}

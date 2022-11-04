@@ -42,7 +42,7 @@ const initialState: ExchangeState = {
 	totalRedeemableBalance: undefined,
 	estimatedBaseTradePrice: undefined,
 	approvalStatus: FetchStatus.Idle,
-	tokenListLoading: false,
+	tokenListStatus: FetchStatus.Idle,
 	synthsMap: {},
 	tokensMap: {},
 	tokenList: [],
@@ -236,16 +236,16 @@ const exchangeSlice = createSlice({
 			state.txError = action.error.message;
 		});
 		builder.addCase(fetchTokenList.pending, (state) => {
-			state.tokenListLoading = true;
+			state.tokenListStatus = FetchStatus.Loading;
 		});
 		builder.addCase(fetchTokenList.fulfilled, (state, action) => {
-			state.tokenListLoading = false;
+			state.tokenListStatus = FetchStatus.Success;
 			state.synthsMap = action.payload.synthsMap;
 			state.tokensMap = action.payload.tokensMap;
 			state.tokenList = action.payload.tokenList;
 		});
 		builder.addCase(fetchTokenList.rejected, (state) => {
-			state.tokenListLoading = false;
+			state.tokenListStatus = FetchStatus.Error;
 		});
 		builder.addCase(fetchFeeReclaimPeriod.fulfilled, (state, action) => {
 			state.feeReclaimPeriod = action.payload.feeReclaimPeriod;
