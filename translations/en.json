@@ -935,8 +935,7 @@
 			"title": "Competition",
 			"table": {
 				"table-updates": "Table data updates daily",
-				"starting-soon": "Competition starting soon",
-				"started": "Competition started, leaderboard updates every 3 hours"
+				"starting-soon": "No competition standings available"
 			}
 		}
 	},
