@@ -9,6 +9,8 @@ import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import Error from 'components/Error';
 import CustomInput from 'components/Input/CustomInput';
+import SegmentedControl from 'components/SegmentedControl';
+import Spacer from 'components/Spacer';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import { NO_VALUE } from 'constants/placeholder';
 import { useRefetchContext } from 'contexts/RefetchContext';
@@ -20,14 +22,15 @@ import { FlexDivRowCentered } from 'styles/common';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 
-type DepositMarginModalProps = {
+type Props = {
 	onDismiss(): void;
+	defaultTab: 'deposit' | 'withdraw';
 	sUSDBalance: Wei;
 };
 
 const PLACEHOLDER = '$0.00';
 
-const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSDBalance }) => {
+const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, sUSDBalance, defaultTab }) => {
 	const { t } = useTranslation();
 	const { useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();
 	const { estimateSnxTxGasCost } = useEstimateGasCost();
@@ -43,21 +46,35 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 	}, [position?.accessibleMargin]);
 
 	const [amount, setAmount] = useState('');
+	const [transferType, setTransferType] = useState(defaultTab === 'deposit' ? 0 : 1);
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const { handleRefetch } = useRefetchContext();
 	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
+
+	const susdBal = transferType === 0 ? sUSDBalance : position?.accessibleMargin || zeroBN;
+	const accessibleMargin = useMemo(() => position?.accessibleMargin ?? zeroBN, [
+		position?.accessibleMargin,
+	]);
 
 	const isDisabled = useMemo(() => {
 		if (!amount) {
 			return true;
 		}
 		const amtWei = wei(amount);
-		if (amtWei.eq(0) || amtWei.gt(sUSDBalance) || amtWei.lt(minDeposit)) {
+		if (amtWei.eq(0) || amtWei.gt(susdBal) || (transferType === 0 && amtWei.lt(minDeposit))) {
 			return true;
 		}
 		return false;
-	}, [amount, sUSDBalance, minDeposit]);
+	}, [amount, susdBal, minDeposit, transferType]);
+
+	const computedWithdrawAmount = useMemo(
+		() =>
+			accessibleMargin.eq(wei(amount || 0))
+				? accessibleMargin.mul(wei(-1)).toBN()
+				: wei(-amount).toBN(),
+		[amount, accessibleMargin]
+	);
 
 	const depositTxn = useSynthetixTxn(
 		`FuturesMarket${getDisplayAsset(market)}`,
@@ -67,12 +84,21 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 		{ enabled: !!market && !!amount && !isDisabled }
 	);
 
-	const transactionFee = estimateSnxTxGasCost(depositTxn);
+	const withdrawTxn = useSynthetixTxn(
+		`FuturesMarket${market?.[0] === 's' ? market?.substring(1) : market}`,
+		'transferMargin',
+		[computedWithdrawAmount],
+		gasPrice || undefined,
+		{ enabled: !!market && !!amount }
+	);
+
+	const transactionFee = estimateSnxTxGasCost(transferType === 0 ? depositTxn : withdrawTxn);
 
 	useEffect(() => {
-		if (depositTxn.hash) {
+		const hash = depositTxn.hash ?? withdrawTxn.hash;
+		if (hash) {
 			monitorTransaction({
-				txHash: depositTxn.hash,
+				txHash: hash,
 				onTxConfirmed: () => {
 					handleRefetch('margin-change');
 					onDismiss();
@@ -81,11 +107,20 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [depositTxn.hash]);
+	}, [depositTxn.hash, withdrawTxn.hash]);
 
 	const handleSetMax = useCallback(() => {
-		setAmount(sUSDBalance.toString());
-	}, [sUSDBalance]);
+		if (transferType === 0) {
+			setAmount(susdBal.toString());
+		} else {
+			setAmount(accessibleMargin.toString());
+		}
+	}, [susdBal, accessibleMargin, transferType]);
+
+	const onChangeTab = (selection: number) => {
+		setTransferType(selection);
+		setAmount('');
+	};
 
 	return (
 		<StyledBaseModal
@@ -93,10 +128,15 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 			isOpen
 			onDismiss={onDismiss}
 		>
+			<StyledSegmentedControl
+				values={['Deposit', 'Withdraw']}
+				selectedIndex={transferType}
+				onChange={onChangeTab}
+			/>
 			<BalanceContainer>
 				<BalanceText $gold>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
 				<BalanceText>
-					<span>{formatDollars(sUSDBalance)}</span> sUSD
+					<span>{formatDollars(susdBal)}</span> sUSD
 				</BalanceText>
 			</BalanceContainer>
 			<CustomInput
@@ -108,18 +148,23 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 					<MaxButton onClick={handleSetMax}>{t('futures.market.trade.margin.modal.max')}</MaxButton>
 				}
 			/>
-
-			<MinimumAmountDisclaimer>
-				{t('futures.market.trade.margin.modal.deposit.disclaimer')}
-			</MinimumAmountDisclaimer>
+			{transferType === 0 ? (
+				<MinimumAmountDisclaimer>
+					{t('futures.market.trade.margin.modal.deposit.disclaimer')}
+				</MinimumAmountDisclaimer>
+			) : (
+				<Spacer height={20} />
+			)}
 
 			<MarginActionButton
 				data-testid="futures-market-trade-deposit-margin-button"
 				disabled={isDisabled}
 				fullWidth
-				onClick={() => depositTxn.mutate()}
+				onClick={transferType === 0 ? () => depositTxn.mutate() : () => withdrawTxn.mutate()}
 			>
-				{t('futures.market.trade.margin.modal.deposit.button')}
+				{transferType === 0
+					? t('futures.market.trade.margin.modal.deposit.button')
+					: t('futures.market.trade.margin.modal.withdraw.button')}
 			</MarginActionButton>
 
 			<GasFeeContainer>
@@ -189,4 +234,8 @@ export const GasFeeContainer = styled(FlexDivRowCentered)`
 	}
 `;
 
-export default DepositMarginModal;
+const StyledSegmentedControl = styled(SegmentedControl)`
+	margin-bottom: 16px;
+`;
+
+export default TransferIsolatedMarginModal;
