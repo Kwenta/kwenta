@@ -192,7 +192,7 @@ export const resetCurrencyKeys = createAsyncThunk<any, void, ThunkConfig>(
 				txProvider = sdk.exchange.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
 
 				if (txProvider === 'synthetix') {
-					if (!!quoteCurrencyKey && !!quoteAmount && !!baseCurrencyKey) {
+					if (!!quoteAmount) {
 						const baseAmountNoFee = wei(quoteAmount).mul(rate ?? 0);
 						const fee = baseAmountNoFee.mul(exchangeFeeRate ?? 0);
 
@@ -202,7 +202,7 @@ export const resetCurrencyKeys = createAsyncThunk<any, void, ThunkConfig>(
 						});
 					}
 
-					if (!!baseCurrencyKey && !!baseAmount && !!quoteCurrencyKey) {
+					if (!!baseAmount) {
 						const inverseRate = wei(rate ?? 0).gt(0) ? wei(1).div(rate) : wei(0);
 						const quoteAmountNoFee = wei(baseAmount).mul(inverseRate);
 						const fee = quoteAmountNoFee.mul(exchangeFeeRate ?? 0);
