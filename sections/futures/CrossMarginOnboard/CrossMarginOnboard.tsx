@@ -95,6 +95,8 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 
 	const createAccount = useCallback(async () => {
 		setError(null);
+		if (submitting) return;
+		setSubmitting('create');
 		try {
 			if (!synthetixjs || !crossMarginContractFactory) throw new Error('Signer or snx lib missing');
 
@@ -110,7 +112,6 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 				return;
 			}
 
-			setSubmitting('create');
 			const tx = await crossMarginContractFactory.newAccount();
 			monitorTransaction({
 				txHash: tx.hash,
@@ -132,6 +133,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 		synthetixjs,
 		crossMarginContractFactory,
 		network,
+		submitting,
 		setSubmitting,
 		monitorTransaction,
 		refetchUntilUpdate,
