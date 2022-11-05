@@ -86,6 +86,13 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [crossMarginAccountContract?.address, walletAddress]);
 
+	useEffect(() => {
+		if (futuresAccount?.crossMarginAddress) {
+			// Only re-enable the button when account has been created
+			setSubmitting(null);
+		}
+	}, [futuresAccount?.crossMarginAddress]);
+
 	const createAccount = useCallback(async () => {
 		setError(null);
 		try {
@@ -109,7 +116,6 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 				txHash: tx.hash,
 				onTxConfirmed: async () => {
 					await refetchUntilUpdate('cross-margin-account-change');
-					setSubmitting(null);
 				},
 				onTxFailed: () => {
 					setSubmitting(null);
@@ -261,7 +267,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 						<CrossMarginFAQ />
 					</FAQs>
 					{renderProgress(2)}
-					<StyledButton variant="flat" onClick={onClickApprove}>
+					<StyledButton variant="flat" onClick={onClickApprove} disabled={!!submitting}>
 						{submitting === 'approve' ? <Loader /> : 'Approve'}
 					</StyledButton>
 				</>
@@ -285,7 +291,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 						</MinimumAmountDisclaimer>
 					)}
 					<StyledButton
-						disabled={isDepositDisabled}
+						disabled={isDepositDisabled || !!submitting}
 						variant="flat"
 						textTransform="none"
 						onClick={depositToAccount}
@@ -304,7 +310,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 					<CrossMarginFAQ />
 				</FAQs>
 				{renderProgress(1)}
-				<StyledButton noOutline onClick={createAccount}>
+				<StyledButton noOutline onClick={createAccount} disabled={!!submitting}>
 					{submitting === 'create' ? <Loader /> : 'Create Account'}
 				</StyledButton>
 			</>
