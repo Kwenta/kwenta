@@ -145,7 +145,7 @@ const TradingRewardsContainer = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	${media.lessThan('md')`
-		grid-template-columns: repeat(2, 1fr);
+		grid-template-columns: repeat(1, 1fr);
 	`}
 	grid-gap: 15px;
 `;

@@ -3,12 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import CaretDownGrayIcon from 'assets/svg/app/caret-down-gray-slim.svg';
 import TabButton from 'components/Button/TabButton';
+import LabelContainer from 'components/Nav/DropDownLabel';
+import Select from 'components/Select';
+import { DropdownIndicator, IndicatorSeparator } from 'components/Select/Select';
 import { TabPanel } from 'components/Tab';
 import { useStakingContext } from 'contexts/StakingContext';
 import { currentThemeState } from 'store/ui';
-import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
+import { FlexDivRowCentered } from 'styles/common';
 import media from 'styles/media';
 
 import EscrowTab from './EscrowTab';
@@ -16,12 +18,26 @@ import RedemptionTab from './RedemptionTab';
 import StakingTab from './StakingTab';
 import TradingRewardsTab from './TradingRewardsTab';
 
+type ReactSelectOptionProps = {
+	label: string;
+	onClick?: () => {};
+};
+
 enum StakeTab {
 	Staking = 'staking',
 	TradingRewards = 'trading-rewards',
 	Escrow = 'escrow',
 	Redemption = 'redemption',
 }
+
+const epochData = [
+	{
+		label: `1: 23 Oct, 2022 - 30 Oct, 2022`,
+	},
+	{
+		label: `2: 30 Oct, 2022 - 6 Nov, 2022`,
+	},
+];
 
 const StakingTabs: React.FC = () => {
 	const { t } = useTranslation();
@@ -31,6 +47,12 @@ const StakingTabs: React.FC = () => {
 
 	const [activeTab, setActiveTab] = useState(StakeTab.Staking);
 	const handleTabSwitch = useCallback((tab: StakeTab) => () => setActiveTab(tab), []);
+
+	const formatOptionLabel = ({ label }: ReactSelectOptionProps) => (
+		<div onClick={() => {}}>
+			<LabelContainer>{label}</LabelContainer>
+		</div>
+	);
 
 	return (
 		<StakingTabsContainer>
@@ -67,17 +89,20 @@ const StakingTabs: React.FC = () => {
 				</TabButtons>
 				<StyledFlexDivRowCentered active={activeTab === StakeTab.TradingRewards}>
 					{window.innerWidth < 768 && <PeriodLabel>{'Current Trading Period:'}</PeriodLabel>}
-					<StyledFlexDivRow>
-						<EpochLabel
-							title={t('dashboard.stake.tabs.trading-rewards.epoch', {
-								EpochPeriod: epochPeriod,
-								EpochDate: epochDate,
-							})}
-							active={activeTab === StakeTab.TradingRewards}
-							isRounded
-						/>
-						{window.innerWidth < 768 && <CaretDownGrayIcon />}
-					</StyledFlexDivRow>
+
+					<StakingSelect
+						formatOptionLabel={formatOptionLabel}
+						controlHeight={41}
+						options={epochData}
+						optionPadding={'0px'}
+						value={{
+							label: `Epoch ${epochData[0].label}`,
+						}}
+						menuWidth={240}
+						components={{ IndicatorSeparator, DropdownIndicator }}
+						isSearchable={false}
+						variant="flat"
+					></StakingSelect>
 				</StyledFlexDivRowCentered>
 			</StakingTabsHeader>
 
@@ -99,13 +124,22 @@ const StakingTabs: React.FC = () => {
 	);
 };
 
-const StyledFlexDivRow = styled(FlexDivRow)`
-	align-items: center;
-	margin-right: 4px;
+const StakingSelect = styled(Select)`
+	width: 100%;
+	.react-select__value-container {
+		padding: 0;
+	}
+	.react-select__single-value > div > div {
+		font-size: 12px;
+	}
 `;
 
 const StyledFlexDivRowCentered = styled(FlexDivRowCentered)<{ active: boolean }>`
 	display: ${(props) => (props.active ? 'flex' : 'none')};
+	width: 30%;
+	${media.lessThan('md')`
+		width: unset;
+	`}
 `;
 
 const PeriodLabel = styled.div`
@@ -115,6 +149,7 @@ const PeriodLabel = styled.div`
 	align-items: center;
 	color: #b1b1b1;
 	margin-left: 4px;
+	width: 50%;
 `;
 
 const EpochLabel = styled(TabButton)`
