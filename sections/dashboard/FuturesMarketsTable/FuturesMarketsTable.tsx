@@ -375,6 +375,7 @@ const FuturesMarketsTable: FC = () => {
 												currencyKey={'sUSD'}
 												price={cellProps.row.original.volume ?? 0}
 												sign="$"
+												truncate
 											/>
 										</div>
 									</div>
