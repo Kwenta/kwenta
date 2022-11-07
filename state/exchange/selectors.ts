@@ -63,13 +63,19 @@ export const selectInverseRate = createSelector(selectRateWei, (rate) =>
 );
 
 export const selectQuoteBalanceWei = createSelector(
-	(state: RootState) => state.exchange.quoteBalance,
-	(quoteBalance) => toWei(quoteBalance)
+	(state: RootState) => state.balances.balancesMap,
+	(state: RootState) => state.exchange.quoteCurrencyKey,
+	(balancesMap, quoteCurrencyKey) => {
+		return quoteCurrencyKey ? toWei(balancesMap[quoteCurrencyKey]?.balance) : zeroBN;
+	}
 );
 
 export const selectBaseBalanceWei = createSelector(
-	(state: RootState) => state.exchange.baseBalance,
-	(baseBalance) => toWei(baseBalance)
+	(state: RootState) => state.balances.balancesMap,
+	(state: RootState) => state.exchange.baseCurrencyKey,
+	(balancesMap, baseCurrencyKey) => {
+		return baseCurrencyKey ? toWei(balancesMap[baseCurrencyKey]?.balance) : zeroBN;
+	}
 );
 
 export const selectQuotePriceRateWei = createSelector(

@@ -88,10 +88,6 @@ const exchangeSlice = createSlice({
 		setBaseAmountRaw: (state, action) => {
 			state.baseAmount = action.payload;
 		},
-		setBalances: (state, action) => {
-			state.quoteBalance = action.payload.quoteBalance;
-			state.baseBalance = action.payload.baseBalance;
-		},
 		setQuoteCurrencyKey: (state, action) => {
 			state.baseAmount = '';
 

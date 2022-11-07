@@ -167,19 +167,6 @@ export const resetCurrencyKeys = createAsyncThunk<any, void, ThunkConfig>(
 		let allowance = undefined;
 
 		if (walletAddress) {
-			const quoteBalance = !!quoteCurrencyKey
-				? await sdk.exchange.getBalance(quoteCurrencyKey)
-				: undefined;
-
-			const baseBalance = !!baseCurrencyKey
-				? await sdk.exchange.getBalance(baseCurrencyKey)
-				: undefined;
-
-			dispatch({
-				type: 'exchange/setBalances',
-				payload: { quoteBalance: quoteBalance?.toString(), baseBalance: baseBalance?.toString() },
-			});
-
 			if (quoteCurrencyKey && baseCurrencyKey) {
 				[baseFeeRate, rate, exchangeFeeRate, quotePriceRate, basePriceRate] = await Promise.all([
 					sdk.exchange.getBaseFeeRate(baseCurrencyKey, quoteCurrencyKey),
