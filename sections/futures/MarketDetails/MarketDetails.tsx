@@ -18,9 +18,12 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 
 	return (
 		<FlexDivCentered>
-			<MarketDropDownContainer>
-				<MarketsDropdown />
-			</MarketDropDownContainer>
+			{!mobile && (
+				<MarketDropDownContainer>
+					<MarketsDropdown />
+				</MarketDropDownContainer>
+			)}
+
 			<MarketDetailsContainer mobile={mobile}>
 				{Object.entries(marketData).map(([marketKey, data]) => (
 					<MarketDetail {...data} marketKey={marketKey} mobile={Boolean(mobile)}></MarketDetail>
