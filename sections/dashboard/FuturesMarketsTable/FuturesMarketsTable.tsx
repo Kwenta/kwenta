@@ -207,17 +207,13 @@ const FuturesMarketsTable: FC = () => {
 								),
 								accessor: 'openInterest',
 								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions =
-										cellProps.row.original.longInterest && cellProps.row.original.longInterest > 1e6
-											? { truncation: { divisor: 1e6, unit: 'M' } }
-											: {};
 									return (
 										<OpenInterestContainer>
 											<StyledLongPrice
 												currencyKey={'sUSD'}
 												price={cellProps.row.original.longInterest}
 												sign={'$'}
-												formatOptions={formatOptions}
+												truncate={cellProps?.row?.original?.longInterest > 1e6}
 											/>
 											<StyledShortPrice
 												currencyKey={'sUSD'}
@@ -248,17 +244,13 @@ const FuturesMarketsTable: FC = () => {
 								),
 								accessor: 'dailyVolume',
 								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions =
-										cellProps.row.original.volume && cellProps.row.original.volume > 1e6
-											? { truncation: { divisor: 1e6, unit: 'M' } }
-											: {};
 									return (
 										<Currency.Price
 											currencyKey={'sUSD'}
 											price={cellProps.row.original.volume}
 											sign={'$'}
 											conversionRate={1}
-											formatOptions={formatOptions}
+											truncate={cellProps?.row?.original?.volume > 1e6}
 										/>
 									);
 								},
@@ -334,17 +326,13 @@ const FuturesMarketsTable: FC = () => {
 							),
 							accessor: 'openInterest',
 							Cell: (cellProps: CellProps<any>) => {
-								const formatOptions =
-									cellProps.row.original.openInterest && cellProps.row.original.openInterest > 1e6
-										? { truncation: { divisor: 1e6, unit: 'M' } }
-										: {};
 								return (
 									<div>
 										<Currency.Price
 											currencyKey={'sUSD'}
 											price={cellProps.row.original.openInterest}
 											sign="$"
-											formatOptions={formatOptions}
+											truncate={cellProps?.row?.original?.openInterest > 1e6}
 										/>
 										<div>
 											<ChangePercent
