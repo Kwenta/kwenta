@@ -277,6 +277,7 @@ const exchangeSlice = createSlice({
 			state.basePriceRate = action.payload.basePriceRate;
 			state.txProvider = action.payload.txProvider;
 			state.allowance = action.payload.allowance;
+			state.oneInchQuoteError = false;
 		});
 	},
 });
