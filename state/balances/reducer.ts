@@ -10,6 +10,7 @@ type BalancesState = {
 	balancesMap: any;
 	totalUSDBalance?: string;
 	susdWalletBalance?: string;
+	tokenBalances: any;
 };
 
 const initialState: BalancesState = {
@@ -19,16 +20,13 @@ const initialState: BalancesState = {
 	totalUSDBalance: undefined,
 	susdWalletBalance: undefined,
 	error: undefined,
+	tokenBalances: {},
 };
 
 const balancesSlice = createSlice({
 	name: 'balances',
 	initialState,
 	reducers: {
-		setBalances: (state, action) => {
-			state.balances = action.payload.balances;
-			state.totalUSDBalance = action.payload.totalUSDBalance;
-		},
 		clearBalances: (state) => {
 			state.balances = [];
 			state.balancesMap = {};
@@ -47,13 +45,12 @@ const balancesSlice = createSlice({
 			state.totalUSDBalance = action.payload.totalUSDBalance;
 			state.balancesMap = action.payload.balancesMap;
 			state.susdWalletBalance = action.payload.susdWalletBalance;
+			state.tokenBalances = action.payload.tokenBalances;
 		});
 		builder.addCase(fetchSynthBalances.rejected, (state) => {
 			state.status = FetchStatus.Error;
 		});
 	},
 });
-
-export const { setBalances } = balancesSlice.actions;
 
 export default balancesSlice.reducer;

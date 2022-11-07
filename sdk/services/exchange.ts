@@ -1175,6 +1175,46 @@ export default class ExchangeService {
 		}
 	}
 
+	// TODO: This is temporary.
+	// We should consider either having another service for this
+	// It does not quite fit into the synths service.
+	// One idea is to create a "tokens" service that handles everything
+	// related to 1inch tokens.
+
+	public async getTokenBalances(walletAddress: string) {
+		const filteredTokens = this.tokenList.filter(
+			(t) => !FILTERED_TOKENS.includes(t.address.toLowerCase())
+		);
+		const symbols = filteredTokens.map((token) => token.symbol);
+		const tokensMap = keyBy(filteredTokens, 'symbol');
+		const calls = [];
+
+		for (const { address, symbol } of filteredTokens) {
+			if (symbol === CRYPTO_CURRENCY_MAP.ETH) {
+				calls.push(this.sdk.multicallProvider.getEthBalance(walletAddress));
+			} else {
+				const tokenContract = new EthCallContract(address, erc20Abi);
+				calls.push(tokenContract.balanceOf(walletAddress));
+			}
+		}
+
+		const data = (await this.sdk.multicallProvider.all(calls)) as BigNumber[];
+
+		const tokenBalances: TokenBalances = {};
+
+		data.forEach((value, index) => {
+			if (value.lte(0)) return;
+			const token = tokensMap[symbols[index]];
+
+			tokenBalances[symbols[index]] = {
+				balance: wei(value, token.decimals ?? 18),
+				token,
+			};
+		});
+
+		return tokenBalances;
+	}
+
 	private createERC20Contract(tokenAddress: string) {
 		return new ethers.Contract(tokenAddress, erc20Abi, this.sdk.provider);
 	}

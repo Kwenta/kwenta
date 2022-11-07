@@ -7,6 +7,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { getSynthsListForNetwork } from 'sdk/data/synths';
 import { selectSynthBalancesLoading } from 'state/balances/selectors';
 import { useAppSelector } from 'state/hooks';
+import { FetchStatus } from 'state/types';
 import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';
@@ -17,9 +18,9 @@ import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
 import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
-import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
 import { FlexDivCentered } from 'styles/common';
 import media from 'styles/media';
+import { toWei } from 'utils/formatters/number';
 
 import { RowsHeader, CenteredModal } from '../common';
 import CurrencyRow from './CurrencyRow';
@@ -40,7 +41,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	onSelect,
 }) => {
 	const { t } = useTranslation();
-	const { network, walletAddress } = Connector.useContainer();
+	const { network } = Connector.useContainer();
 
 	const [assetSearch, setAssetSearch] = useState('');
 	const [synthCategory, setSynthCategory] = useState<string | null>(null);
@@ -55,10 +56,14 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 		? allSynths.filter((synth) => synthsOverride.includes(synth.name))
 		: allSynths;
 
-	const { balancesMap, tokenList } = useAppSelector(({ balances, exchange }) => ({
-		balancesMap: balances.balancesMap,
-		tokenList: exchange.tokenList,
-	}));
+	const { balancesMap, tokenList, tokenBalances, balancesStatus } = useAppSelector(
+		({ balances, exchange }) => ({
+			balancesMap: balances.balancesMap,
+			tokenList: exchange.tokenList,
+			tokenBalances: balances.tokenBalances,
+			balancesStatus: balances.status,
+		})
+	);
 
 	const synthBalancesLoading = useAppSelector(selectSynthBalancesLoading);
 
@@ -118,9 +123,6 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 		DEFAULT_SEARCH_DEBOUNCE_MS
 	);
 
-	const tokenBalancesQuery = useTokensBalancesQuery(searchFilteredTokens, walletAddress);
-	const tokenBalances = tokenBalancesQuery.data ?? null;
-
 	const coinGeckoTokenPricesQuery = useCoinGeckoTokenPricesQuery(
 		searchFilteredTokens.map((f) => f.address)
 	);
@@ -128,34 +130,35 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 
 	const oneInchTokensPaged = useMemo(() => {
 		if (!oneInchEnabled || (synthCategory && synthCategory !== 'crypto')) return [];
-		const ordered = tokenBalancesQuery.isSuccess
-			? orderBy(
-					searchFilteredTokens.map((token) => {
-						const tokenAddress =
-							token.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : token.address;
-						if (coinGeckoPrices?.[tokenAddress] && tokenBalances !== null) {
-							const price = wei(coinGeckoPrices[tokenAddress].usd ?? 0);
-							const balance = tokenBalances[token.symbol]?.balance ?? wei(0);
-							const usdBalance = price.mul(balance);
+		const ordered =
+			balancesStatus === FetchStatus.Success
+				? orderBy(
+						searchFilteredTokens.map((token) => {
+							const tokenAddress =
+								token.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : token.address;
+							if (coinGeckoPrices?.[tokenAddress] && tokenBalances !== null) {
+								const price = wei(coinGeckoPrices[tokenAddress].usd ?? 0);
+								const balance = toWei(tokenBalances[token.symbol]?.balance);
+								const usdBalance = price.mul(balance);
 
-							return { ...token, usdBalance, balance };
-						}
-						return token;
-					}),
-					({ usdBalance }) => (usdBalance ? usdBalance.toNumber() : 0),
-					'desc'
-			  )
-			: searchFilteredTokens;
+								return { ...token, usdBalance, balance };
+							}
+							return token;
+						}),
+						({ usdBalance }) => (usdBalance ? usdBalance.toNumber() : 0),
+						'desc'
+				  )
+				: searchFilteredTokens;
 		if (ordered.length > PAGE_LENGTH) return ordered.slice(0, PAGE_LENGTH * page);
 		return ordered;
 	}, [
 		oneInchEnabled,
 		synthCategory,
-		tokenBalancesQuery,
 		searchFilteredTokens,
 		page,
 		coinGeckoPrices,
 		tokenBalances,
+		balancesStatus,
 	]);
 
 	return (
