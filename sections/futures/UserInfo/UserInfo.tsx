@@ -4,10 +4,10 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import CalculatorIcon from 'assets/svg/futures/calculator-icon.svg';
+import TransfersIcon from 'assets/svg/futures/deposit-withdraw-arrows.svg';
 import OpenPositionsIcon from 'assets/svg/futures/icon-open-positions.svg';
 import OrderHistoryIcon from 'assets/svg/futures/icon-order-history.svg';
 import PositionIcon from 'assets/svg/futures/icon-position.svg';
-import TransfersIcon from 'assets/svg/futures/icon-transfers.svg';
 import UploadIcon from 'assets/svg/futures/upload-icon.svg';
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
@@ -139,7 +139,7 @@ const UserInfo: React.FC = () => {
 				badge: undefined,
 				disabled: false, // leave this until we determine a disbaled state
 				active: activeTab === FuturesTab.TRANSFERS,
-				icon: <TransfersIcon />,
+				icon: <TransfersIcon width={11} height={11} />,
 				onClick: () =>
 					router.push(ROUTES.Markets.Transfers(marketAsset, accountType), undefined, {
 						scroll: false,

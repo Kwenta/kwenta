@@ -19,7 +19,7 @@ import { FlexDivRow } from 'styles/common';
 
 export default function OrderSizeSlider() {
 	const { t } = useTranslation();
-	const { onTradeAmountChange, maxUsdInputAmount } = useFuturesContext();
+	const { onTradeAmountChange, maxUsdInputAmount, tradePrice } = useFuturesContext();
 
 	const { freeMargin: freeCrossMargin } = useRecoilValue(crossMarginAccountOverviewState);
 	const { susdSize } = useRecoilValue(futuresTradeInputsState);
@@ -39,9 +39,9 @@ export default function OrderSizeSlider() {
 			const usdAmount = maxUsdInputAmount.mul(fraction).toString();
 			const usdValue = Number(usdAmount).toFixed(0);
 			setUsdValue(usdValue);
-			onTradeAmountChange(usdValue, 'usd', { simulateChange: !commit });
+			onTradeAmountChange(usdValue, tradePrice, 'usd', { simulateChange: !commit });
 		},
-		[onTradeAmountChange, maxUsdInputAmount]
+		[onTradeAmountChange, maxUsdInputAmount, tradePrice]
 	);
 
 	useEffect(() => {

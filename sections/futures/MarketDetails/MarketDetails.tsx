@@ -1,8 +1,10 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 
+import { FlexDivCentered } from 'styles/common';
 import media from 'styles/media';
 
+import MarketsDropdown from '../Trade/MarketsDropdown';
 import MarketDetail from './MarketDetail';
 import MobileMarketDetail from './MobileMarketDetail';
 import useGetMarketData from './useGetMarketData';
@@ -15,18 +17,26 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	const marketData = useGetMarketData(mobile);
 
 	return (
-		<MarketDetailsContainer mobile={mobile}>
-			{Object.entries(marketData).map(([marketKey, data]) => (
-				<MarketDetail {...data} marketKey={marketKey} mobile={Boolean(mobile)}></MarketDetail>
-			))}
+		<FlexDivCentered>
+			{!mobile && (
+				<MarketDropDownContainer>
+					<MarketsDropdown />
+				</MarketDropDownContainer>
+			)}
 
-			{mobile && <MobileMarketDetail />}
-		</MarketDetailsContainer>
+			<MarketDetailsContainer mobile={mobile}>
+				{Object.entries(marketData).map(([marketKey, data]) => (
+					<MarketDetail {...data} marketKey={marketKey} mobile={Boolean(mobile)}></MarketDetail>
+				))}
+
+				{mobile && <MobileMarketDetail />}
+			</MarketDetailsContainer>
+		</FlexDivCentered>
 	);
 };
 
 const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
-	width: 100%;
+	flex: 1;
 	height: 55px;
 	padding: 10px 45px 10px 15px;
 	margin-bottom: 16px;
@@ -95,6 +105,14 @@ const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 				margin-bottom: 2px;
 			}
 		`}
+`;
+
+const MarketDropDownContainer = styled.div`
+	width: 280px;
+	margin-right: 15px;
+	@media (min-width: 1200px) {
+		display: none;
+	}
 `;
 
 export default MarketDetails;
