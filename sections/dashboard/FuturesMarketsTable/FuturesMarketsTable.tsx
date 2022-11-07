@@ -341,7 +341,6 @@ const FuturesMarketsTable: FC = () => {
 												value={cellProps.row.original.fundingRate}
 												decimals={6}
 												className="change-pct"
-												truncate
 											/>
 										</div>
 									</div>
