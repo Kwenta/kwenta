@@ -17,7 +17,7 @@ import {
 	ETH_ADDRESS,
 	ETH_COINGECKO_ADDRESS,
 } from 'constants/currency';
-import { DEFAULT_1INCH_SLIPPAGE, DEFAULT_GAS_BUFFER } from 'constants/defaults';
+import { DEFAULT_1INCH_SLIPPAGE } from 'constants/defaults';
 import { ATOMIC_EXCHANGE_SLIPPAGE } from 'constants/exchange';
 import { ETH_UNIT } from 'constants/network';
 import erc20Abi from 'lib/abis/ERC20.json';
@@ -53,6 +53,7 @@ const PROTOCOLS =
 	'OPTIMISM_UNISWAP_V3,OPTIMISM_SYNTHETIX,OPTIMISM_SYNTHETIX_WRAPPER,OPTIMISM_ONE_INCH_LIMIT_ORDER,OPTIMISM_ONE_INCH_LIMIT_ORDER_V2,OPTIMISM_CURVE,OPTIMISM_BALANCER_V2,OPTIMISM_VELODROME,OPTIMISM_KYBERSWAP_ELASTIC';
 
 const FILTERED_TOKENS = ['0x4922a015c4407f87432b179bb209e125432e4a2a'];
+const DEFAULT_BUFFER = 0.2;
 
 export default class ExchangeService {
 	private tokensMap: any = {};
@@ -640,7 +641,7 @@ export default class ExchangeService {
 			]);
 
 			const gasLimit = wei(baseGasLimit ?? 0, 9)
-				.mul(1 + DEFAULT_GAS_BUFFER)
+				.mul(1 + DEFAULT_BUFFER)
 				.toBN();
 
 			return getTransactionPrice(gasPrice, gasLimit, ethPriceRate, optimismLayerOneFee);
