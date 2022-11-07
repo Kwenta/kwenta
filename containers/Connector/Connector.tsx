@@ -2,7 +2,7 @@ import { NetworkId, synthetix } from '@synthetixio/contracts-interface';
 import { TransactionNotifier as BaseTN } from '@synthetixio/transaction-notifier';
 import { ethers } from 'ethers';
 import { keyBy } from 'lodash';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { sdk } from 'state/config';
 import { useAppDispatch } from 'state/hooks';
 import { resetNetwork, setSigner } from 'state/wallet/actions';
@@ -47,13 +47,22 @@ const useConnector = () => {
 
 	const dispatch = useAppDispatch();
 
-	useEffect(() => {
-		sdk.setProvider(provider).then((networkId) => {
+	const handleNetworkChange = useCallback(
+		(networkId: NetworkId) => {
 			dispatch(resetNetwork(networkId));
 			blockExplorer = generateExplorerFunctions(getBaseUrl(networkId));
-			transactionNotifier = new BaseTN(provider);
-		});
-	}, [provider, dispatch]);
+		},
+		[dispatch]
+	);
+
+	useEffect(() => {
+		sdk.setProvider(provider).then(handleNetworkChange);
+		transactionNotifier = new BaseTN(provider);
+	}, [provider, dispatch, handleNetworkChange]);
+
+	useEffect(() => {
+		handleNetworkChange(network.id as NetworkId);
+	}, [network.id, handleNetworkChange]);
 
 	useEffect(() => {
 		dispatch(setSigner(signer));
