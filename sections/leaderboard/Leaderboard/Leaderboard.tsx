@@ -189,7 +189,6 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 						<Competition
 							round={competitionRound}
 							activeTier={activeTier}
-							ensInfo={ensInfo}
 							compact={compact}
 							onClickTrader={onClickTrader}
 							searchTerm={searchTerm !== '' ? searchTerm : searchInput}

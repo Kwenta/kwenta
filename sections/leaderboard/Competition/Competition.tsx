@@ -8,6 +8,7 @@ import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import Connector from 'containers/Connector';
+import useENSs from 'hooks/useENSs';
 import useGetFile from 'queries/files/useGetFile';
 import { AccountStat } from 'queries/futures/types';
 import { formatPercent } from 'utils/formatters/number';
@@ -19,7 +20,6 @@ import { getCompetitionDataLocation } from './constants';
 type CompetitionProps = {
 	round: CompetitionRound;
 	activeTier: Tier;
-	ensInfo: Record<string, string>;
 	compact?: boolean;
 	onClickTrader: (trader: string) => void;
 	searchTerm?: string | undefined;
@@ -28,7 +28,6 @@ type CompetitionProps = {
 const Competition: FC<CompetitionProps> = ({
 	round,
 	activeTier,
-	ensInfo,
 	compact,
 	onClickTrader,
 	searchTerm,
@@ -44,6 +43,17 @@ const Competition: FC<CompetitionProps> = ({
 		);
 		return walletStat ? walletStat.tier : null;
 	}, [walletAddress, competitionQuery]);
+
+	const traders = useMemo(
+		() =>
+			competitionQuery?.data?.map((stat: AccountStat) => {
+				return stat.account;
+			}) ?? [],
+		[competitionQuery?.data]
+	);
+
+	const ensInfoQuery = useENSs(traders);
+	const ensInfo = useMemo(() => ensInfoQuery.data ?? {}, [ensInfoQuery]);
 
 	let data = useMemo(() => {
 		const competitionData = competitionQuery?.data ?? [];
