@@ -8,7 +8,6 @@ import LabelContainer from 'components/Nav/DropDownLabel';
 import Select from 'components/Select';
 import { DropdownIndicator, IndicatorSeparator } from 'components/Select/Select';
 import { TabPanel } from 'components/Tab';
-import { useStakingContext } from 'contexts/StakingContext';
 import { currentThemeState } from 'store/ui';
 import { FlexDivRowCentered } from 'styles/common';
 import media from 'styles/media';
@@ -41,7 +40,6 @@ const epochData = [
 
 const StakingTabs: React.FC = () => {
 	const { t } = useTranslation();
-	const { epochPeriod, epochDate } = useStakingContext();
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
 
@@ -150,31 +148,6 @@ const PeriodLabel = styled.div`
 	color: #b1b1b1;
 	margin-left: 4px;
 	width: 50%;
-`;
-
-const EpochLabel = styled(TabButton)`
-	& p {
-		font-size: 10px;
-		line-height: 100%;
-	}
-	margin-top: 4px;
-	margin-bottom: 4px;
-	align-items: center;
-	visibility: ${(props) => (props.active ? 'visible' : 'hidden')};
-	border-radius: ${(props) => (props.isRounded ? '50px' : '8px')};
-	transition-duration: 0s;
-
-	${media.lessThan('md')`
-		background: none;
-		flex-direction: column;
-		color: #b1b1b1;
-		font-weight: 700px;
-		border-width: 0px;
-		text-transform: uppercase;
-		font-size: 14px;
-		line-height: 14px;
-		margin-left: 0px;
-	`}
 `;
 
 const StakingTabsHeader = styled.div`
