@@ -563,7 +563,8 @@ export default class ExchangeService {
 				quoteCurrencyKey,
 				baseCurrencyKey,
 				wei(quoteAmount),
-				wei(baseAmount).mul(wei(1).sub(ATOMIC_EXCHANGE_SLIPPAGE))
+				wei(baseAmount).mul(wei(1).sub(ATOMIC_EXCHANGE_SLIPPAGE)),
+				isAtomic
 			);
 
 			const shouldExchange =
@@ -611,13 +612,6 @@ export default class ExchangeService {
 				gasInfo?.l1Fee ?? zeroBN
 			);
 		} else {
-			const exchangeParams = this.getExchangeParams(
-				quoteCurrencyKey,
-				baseCurrencyKey,
-				wei(quoteAmount || 0),
-				wei(baseAmount || 0).mul(wei(1).sub(ATOMIC_EXCHANGE_SLIPPAGE))
-			);
-
 			if (!this.sdk.signer) {
 				throw new Error(sdkErrors.NO_SIGNER);
 			}
@@ -627,6 +621,15 @@ export default class ExchangeService {
 			}
 
 			const isAtomic = this.checkIsAtomic(baseCurrencyKey, quoteCurrencyKey);
+
+			const exchangeParams = this.getExchangeParams(
+				quoteCurrencyKey,
+				baseCurrencyKey,
+				wei(quoteAmount || 0),
+				wei(baseAmount || 0).mul(wei(1).sub(ATOMIC_EXCHANGE_SLIPPAGE)),
+				isAtomic
+			);
+
 			const method = isAtomic ? 'exchangeAtomically' : 'exchangeWithTracking';
 
 			const txn = {
@@ -882,7 +885,8 @@ export default class ExchangeService {
 		quoteCurrencyKey: string,
 		baseCurrencyKey: string,
 		sourceAmount: Wei,
-		minAmount: Wei
+		minAmount: Wei,
+		isAtomic: boolean
 	) {
 		if (!this.sdk.walletAddress) {
 			throw new Error(sdkErrors.NO_SIGNER);
@@ -893,12 +897,11 @@ export default class ExchangeService {
 
 		const sourceAmountBN = sourceAmount.toBN();
 		const minAmountBN = minAmount.toBN();
-		const isAtomic = this.checkIsAtomic(sourceCurrencyKey, destinationCurrencyKey);
 
 		if (isAtomic) {
 			return [
 				sourceCurrencyKey,
-				sourceAmount,
+				sourceAmountBN,
 				destinationCurrencyKey,
 				KWENTA_TRACKING_CODE,
 				minAmountBN,

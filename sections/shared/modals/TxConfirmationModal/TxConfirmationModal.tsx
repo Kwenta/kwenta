@@ -4,6 +4,7 @@ import { wei } from '@synthetixio/wei';
 import { FC, useMemo } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { closeModal } from 'state/exchange/reducer';
+import { selectEstimatedBaseTradePrice } from 'state/exchange/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
@@ -52,7 +53,6 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry
 		feeCost,
 		baseAmount,
 		quoteAmount,
-		totalTradePrice,
 		txError,
 	} = useAppSelector(({ exchange }) => ({
 		baseCurrencyKey: exchange.baseCurrencyKey,
@@ -61,9 +61,10 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry
 		feeCost: exchange.feeCost,
 		baseAmount: exchange.baseAmount,
 		quoteAmount: exchange.quoteAmount,
-		totalTradePrice: exchange.estimatedBaseTradePrice,
 		txError: exchange.txError,
 	}));
+
+	const totalTradePrice = useAppSelector(selectEstimatedBaseTradePrice);
 
 	const getBaseCurrencyAmount = (decimals?: number) =>
 		formatCurrency(baseCurrencyKey!, baseAmount, {
@@ -196,7 +197,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry
 					</SummaryItemLabel>
 					<SummaryItemValue data-testid="total-trade-price-value">
 						<span>
-							{ESTIMATE_VALUE} {formatCurrency('sUSD', totalTradePrice ?? '', { sign: '$' })}
+							{ESTIMATE_VALUE} {formatCurrency('sUSD', totalTradePrice, { sign: '$' })}
 						</span>
 					</SummaryItemValue>
 				</SummaryItem>

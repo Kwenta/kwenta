@@ -1,5 +1,7 @@
 import { FetchStatus } from 'state/types';
 
+import { Rates } from 'queries/rates/types';
+
 type ExchangeModal = 'settle' | 'confirm' | 'approve' | 'redeem' | 'base-select' | 'quote-select';
 
 export type SwapRatio = 25 | 50 | 75 | 100;
@@ -39,4 +41,5 @@ export type ExchangeState = {
 	txError?: string;
 	isApproved?: boolean;
 	allowance?: string;
+	exchangeRates: Rates;
 };

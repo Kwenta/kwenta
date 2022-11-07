@@ -17,6 +17,7 @@ import {
 	submitRedeem,
 	submitSettle,
 	updateBaseAmount,
+	setExchangeRates,
 } from './actions';
 import { ExchangeState } from './types';
 
@@ -54,6 +55,7 @@ const initialState: ExchangeState = {
 	txError: undefined,
 	isApproved: undefined,
 	allowance: undefined,
+	exchangeRates: {},
 };
 
 const exchangeSlice = createSlice({
@@ -221,6 +223,9 @@ const exchangeSlice = createSlice({
 			state.txProvider = action.payload.txProvider;
 			state.allowance = action.payload.allowance;
 			state.oneInchQuoteError = false;
+		});
+		builder.addCase(setExchangeRates.fulfilled, (state, action) => {
+			state.exchangeRates = action.payload;
 		});
 	},
 });

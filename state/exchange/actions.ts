@@ -7,6 +7,7 @@ import { FetchStatus, ThunkConfig } from 'state/types';
 
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { monitorTransaction } from 'contexts/RelayerContext';
+import { Rates } from 'queries/rates/types';
 import { toWei, truncateNumbers } from 'utils/formatters/number';
 
 import { selectBaseBalanceWei, selectQuoteBalanceWei } from './selectors';
@@ -485,3 +486,11 @@ export const setRatio = (value: SwapRatio): AppThunk => (dispatch, getState) => 
 		});
 	}
 };
+
+export const setExchangeRates = createAsyncThunk<Rates, void, ThunkConfig>(
+	'exchange/setExchangeRates',
+	async (_, { extra: { sdk } }) => {
+		const exchangeRates = await sdk.exchange.getExchangeRates();
+		return exchangeRates;
+	}
+);

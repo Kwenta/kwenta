@@ -213,3 +213,34 @@ export const selectIsSubmissionDisabled = createSelector(
 	selectSubmissionDisabledReason,
 	(submissionDisabledReason) => !!submissionDisabledReason
 );
+
+export const selectUsdRateWei = createSelector(
+	(state: RootState) => state.exchange.exchangeRates['sUSD'],
+	(sUSDRate) => sUSDRate
+);
+
+export const selectTotalTradePrice = createSelector(
+	selectQuoteAmountWei,
+	selectQuotePriceRateWei,
+	selectUsdRateWei,
+	(quoteAmount, quotePriceRate, sUSDRate) => {
+		let tradePrice = quoteAmount.mul(quotePriceRate || 0);
+		if (sUSDRate) {
+			tradePrice = tradePrice.div(sUSDRate);
+		}
+		return tradePrice;
+	}
+);
+
+export const selectEstimatedBaseTradePrice = createSelector(
+	selectBaseAmountWei,
+	selectBasePriceRateWei,
+	selectUsdRateWei,
+	(baseAmount, basePriceRate, sUSDRate) => {
+		let tradePrice = baseAmount.mul(basePriceRate || 0);
+		if (sUSDRate) {
+			tradePrice = tradePrice.div(sUSDRate);
+		}
+		return tradePrice;
+	}
+);
