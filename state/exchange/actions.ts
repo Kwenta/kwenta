@@ -1,7 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
-import App from 'next/app';
 import { fetchSynthBalances } from 'state/balances/actions';
 import { AppThunk } from 'state/store';
 import { FetchStatus, ThunkConfig } from 'state/types';
