@@ -29,6 +29,13 @@ const balancesSlice = createSlice({
 			state.balances = action.payload.balances;
 			state.totalUSDBalance = action.payload.totalUSDBalance;
 		},
+		clearBalances: (state) => {
+			state.balances = [];
+			state.balancesMap = {};
+			state.totalUSDBalance = undefined;
+			state.susdWalletBalance = undefined;
+			state.error = undefined;
+		},
 	},
 	extraReducers: (builder) => {
 		builder.addCase(fetchSynthBalances.pending, (state) => {

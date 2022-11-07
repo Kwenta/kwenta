@@ -48,6 +48,8 @@ export const setSigner = createAsyncThunk<void, ethers.Signer | null | undefined
 		if (!!signer) {
 			const [address] = await Promise.all([signer?.getAddress(), sdk.setSigner(signer)]);
 			dispatch(resetWalletAddress(address));
+		} else {
+			dispatch({ type: 'balances/clearBalances' });
 		}
 	}
 );
