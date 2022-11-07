@@ -49,8 +49,8 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 		}
 	}, [conversionRate]);
 
-	if (truncate) {
-		formatOptions = { truncation: { divisor: 1e6, unit: 'M' } };
+	if (truncate && price > 1e6) {
+		formatOptions = { ...formatOptions, truncation: { divisor: 1e6, unit: 'M' } };
 	}
 	return (
 		<Container {...rest}>

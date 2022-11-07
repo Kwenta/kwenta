@@ -213,12 +213,13 @@ const FuturesMarketsTable: FC = () => {
 												currencyKey={'sUSD'}
 												price={cellProps.row.original.longInterest}
 												sign={'$'}
-												truncate={cellProps?.row?.original?.longInterest > 1e6}
+												truncate
 											/>
 											<StyledShortPrice
 												currencyKey={'sUSD'}
 												price={cellProps.row.original.shortInterest}
 												sign={'$'}
+												truncate
 											/>
 										</OpenInterestContainer>
 									);
@@ -250,7 +251,7 @@ const FuturesMarketsTable: FC = () => {
 											price={cellProps.row.original.volume}
 											sign={'$'}
 											conversionRate={1}
-											truncate={cellProps?.row?.original?.volume > 1e6}
+											truncate
 										/>
 									);
 								},
@@ -332,7 +333,7 @@ const FuturesMarketsTable: FC = () => {
 											currencyKey={'sUSD'}
 											price={cellProps.row.original.openInterest}
 											sign="$"
-											truncate={cellProps?.row?.original?.openInterest > 1e6}
+											truncate
 										/>
 										<div>
 											<ChangePercent
@@ -340,6 +341,7 @@ const FuturesMarketsTable: FC = () => {
 												value={cellProps.row.original.fundingRate}
 												decimals={6}
 												className="change-pct"
+												truncate
 											/>
 										</div>
 									</div>
