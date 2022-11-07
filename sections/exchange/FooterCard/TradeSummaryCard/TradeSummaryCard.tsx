@@ -5,7 +5,6 @@ import { submitApprove, submitExchange } from 'state/exchange/actions';
 import {
 	selectFeeCostWei,
 	selectIsApproved,
-	selectNeedsApproval,
 	selectShowFee,
 	selectSubmissionDisabledReason,
 	selectTransactionFeeWei,
@@ -39,15 +38,14 @@ const TradeSummaryCard: FC = memo(() => {
 	const dispatch = useAppDispatch();
 
 	const isApproved = useAppSelector(selectIsApproved);
-	const needsApproval = useAppSelector(selectNeedsApproval);
 
 	const onSubmit = useCallback(() => {
-		if (needsApproval) {
+		if (!isApproved) {
 			dispatch(submitApprove());
-		} else if (isApproved) {
+		} else {
 			dispatch(submitExchange());
 		}
-	}, [needsApproval, dispatch, isApproved]);
+	}, [dispatch, isApproved]);
 
 	const handleApprove = useCallback(() => {
 		dispatch(submitApprove());

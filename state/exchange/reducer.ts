@@ -211,6 +211,7 @@ const exchangeSlice = createSlice({
 		});
 		builder.addCase(submitApprove.rejected, (state, action) => {
 			state.openModal = undefined;
+			state.approvalStatus = FetchStatus.Error;
 			state.txError = action.error.message;
 		});
 		builder.addCase(submitRedeem.pending, (state) => {
