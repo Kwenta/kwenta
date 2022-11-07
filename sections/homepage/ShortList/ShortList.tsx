@@ -223,7 +223,9 @@ const ShortList = () => {
 					</StatsCard>
 					<StatsCard>
 						<StatsName>{t('homepage.shortlist.stats.traders')}</StatsName>
-						<StatsValue>{statsQuery.isLoading ? <Loader /> : stats.length ?? 0}</StatsValue>
+						<StatsValue>
+							{totalTradeStats.isLoading ? <Loader /> : totalTradeStats.data?.totalTraders ?? 0}
+						</StatsValue>
 						<GridSvg />
 					</StatsCard>
 					<StatsCard>

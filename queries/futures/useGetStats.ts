@@ -27,7 +27,7 @@ const useGetStats = (homepage?: boolean, options?: UseQueryOptions<any>) => {
 				const response = await getFuturesStats(
 					futuresEndpoint,
 					{
-						first: 1000,
+						first: 10,
 						orderBy: 'pnlWithFeesPaid',
 						orderDirection: 'desc',
 					},
