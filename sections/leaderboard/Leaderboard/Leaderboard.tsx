@@ -183,7 +183,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 							ensInfo={ensInfo}
 							resetSelection={resetSelection}
 							compact={compact}
-							searchTerm={searchTerm}
+							searchTerm={searchInput}
 						/>
 					) : competitionRound ? (
 						<Competition
@@ -192,7 +192,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 							ensInfo={ensInfo}
 							compact={compact}
 							onClickTrader={onClickTrader}
-							searchTerm={searchTerm}
+							searchTerm={searchTerm !== '' ? searchTerm : searchInput}
 						/>
 					) : searchAddress ? (
 						<AllTime

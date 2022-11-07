@@ -935,7 +935,7 @@
 			"title": "Competition",
 			"table": {
 				"table-updates": "Table data updates daily",
-				"starting-soon": "No competition standings available"
+				"no-results": "No competition standings available"
 			}
 		}
 	},
