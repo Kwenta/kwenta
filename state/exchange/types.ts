@@ -11,8 +11,6 @@ export type ExchangeState = {
 	baseAmount: string;
 	quoteAmount: string;
 	ratio?: SwapRatio;
-	quoteBalance?: string | null;
-	baseBalance?: string | null;
 	transactionFee?: string | null;
 	feeCost?: string;
 	slippagePercent?: string | null;

@@ -1,5 +1,5 @@
 import { FC, useCallback } from 'react';
-import { setRatio } from 'state/exchange/reducer';
+import { setRatio } from 'state/exchange/actions';
 import { selectQuoteBalanceWei } from 'state/exchange/selectors';
 import type { SwapRatio } from 'state/exchange/types';
 import { useAppDispatch, useAppSelector } from 'state/hooks';

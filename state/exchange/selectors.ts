@@ -27,12 +27,6 @@ export const selectBothSidesSelected = createSelector(
 	({ baseCurrencyKey, quoteCurrencyKey }) => !!baseCurrencyKey && !!quoteCurrencyKey
 );
 
-export const selectInsufficientBalance = createSelector(
-	selectQuoteAmountWei,
-	(state: RootState) => wei(state.exchange.quoteBalance ?? 0),
-	(quoteAmountWei, quoteBalance) => quoteAmountWei.gt(quoteBalance)
-);
-
 export const selectQuoteCurrencyName = createSelector(
 	(state: RootState) => state.exchange.quoteCurrencyKey,
 	(quoteCurrencyKey) =>
@@ -68,6 +62,12 @@ export const selectQuoteBalanceWei = createSelector(
 	(balancesMap, quoteCurrencyKey) => {
 		return quoteCurrencyKey ? toWei(balancesMap[quoteCurrencyKey]?.balance) : zeroBN;
 	}
+);
+
+export const selectInsufficientBalance = createSelector(
+	selectQuoteAmountWei,
+	selectQuoteBalanceWei,
+	(quoteAmountWei, quoteBalance) => quoteAmountWei.gt(quoteBalance)
 );
 
 export const selectBaseBalanceWei = createSelector(

@@ -1,7 +1,7 @@
 import { FC, memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { setBaseAmount } from 'state/exchange/reducer';
-import { setMaxBaseBalance, setOpenModal } from 'state/exchange/reducer';
+import { setMaxBaseBalance } from 'state/exchange/actions';
+import { setBaseAmount, setOpenModal } from 'state/exchange/reducer';
 import { selectBaseBalanceWei } from 'state/exchange/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 

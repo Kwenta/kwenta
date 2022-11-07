@@ -1,12 +1,17 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
+import App from 'next/app';
 import { fetchSynthBalances } from 'state/balances/actions';
+import { AppThunk } from 'state/store';
 import { FetchStatus, ThunkConfig } from 'state/types';
 
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { toWei, truncateNumbers } from 'utils/formatters/number';
+
+import { selectBaseBalanceWei, selectQuoteBalanceWei } from './selectors';
+import { SwapRatio } from './types';
 
 export const fetchRedeemableBalances = createAsyncThunk<any, void, ThunkConfig>(
 	'exchange/fetchRedeemableBalances',
@@ -396,3 +401,88 @@ export const updateBaseAmount = createAsyncThunk<any, void, ThunkConfig>(
 		};
 	}
 );
+
+export const setMaxQuoteBalance = (): AppThunk => (dispatch, getState) => {
+	const state = getState();
+	const quoteBalance = selectQuoteBalanceWei(state);
+
+	const {
+		exchange: { quoteCurrencyKey, txProvider, rate, exchangeFeeRate },
+	} = state;
+
+	if (quoteBalance.gte(0)) {
+		if (quoteCurrencyKey === 'ETH') {
+			const ETH_TX_BUFFER = 0.006;
+			const balanceWithBuffer = quoteBalance.sub(wei(ETH_TX_BUFFER));
+			dispatch({
+				type: 'exchange/setQuoteAmountRaw',
+				payload: balanceWithBuffer.lt(0)
+					? '0'
+					: truncateNumbers(balanceWithBuffer, DEFAULT_CRYPTO_DECIMALS),
+			});
+		} else {
+			dispatch({
+				type: 'exchange/setQuoteAmountRaw',
+				payload: truncateNumbers(quoteBalance, DEFAULT_CRYPTO_DECIMALS),
+			});
+		}
+
+		if (txProvider === 'synthetix') {
+			const baseAmountNoFee = quoteBalance.mul(rate ?? 0);
+			const fee = baseAmountNoFee.mul(wei(exchangeFeeRate ?? 0));
+			dispatch({
+				type: 'exchange/setBaseAmountRaw',
+				payload: truncateNumbers(baseAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS),
+			});
+		}
+	}
+};
+
+export const setMaxBaseBalance = (): AppThunk => (dispatch, getState) => {
+	const state = getState();
+	const baseBalance = selectBaseBalanceWei(state);
+
+	const {
+		exchange: { txProvider, rate, exchangeFeeRate },
+	} = state;
+
+	if (baseBalance.gte(0)) {
+		dispatch({
+			type: 'exchange/setBaseAmountRaw',
+			payload: truncateNumbers(baseBalance, DEFAULT_CRYPTO_DECIMALS),
+		});
+
+		if (!!txProvider) {
+			const inverseRate = wei(rate || 0).gt(0) ? wei(1).div(rate) : wei(0);
+			const baseAmountNoFee = wei(baseBalance).mul(inverseRate);
+			const fee = baseAmountNoFee.mul(exchangeFeeRate ?? 0);
+
+			dispatch({
+				type: 'exchange/setQuoteAmountRaw',
+				payload: truncateNumbers(baseAmountNoFee.add(fee), DEFAULT_CRYPTO_DECIMALS),
+			});
+		}
+	}
+};
+
+export const setRatio = (value: SwapRatio): AppThunk => (dispatch, getState) => {
+	const state = getState();
+	const quoteBalance = selectQuoteBalanceWei(state);
+
+	const {
+		exchange: { baseCurrencyKey, txProvider, rate, exchangeFeeRate },
+	} = state;
+
+	const newQuote = truncateNumbers(quoteBalance.mul(value / 100), DEFAULT_CRYPTO_DECIMALS);
+
+	dispatch({ type: 'exchange/setQuoteAmountRaw', payload: newQuote });
+
+	if (txProvider === 'synthetix' && !!baseCurrencyKey) {
+		const baseAmountNoFee = wei(newQuote).mul(rate ?? 0);
+		const fee = baseAmountNoFee.mul(exchangeFeeRate ?? 0);
+		dispatch({
+			type: 'exchange/setBaseAmountRaw',
+			payload: truncateNumbers(baseAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS),
+		});
+	}
+};

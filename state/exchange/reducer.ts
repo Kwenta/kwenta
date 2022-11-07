@@ -26,8 +26,6 @@ const initialState: ExchangeState = {
 	txProvider: undefined,
 	baseAmount: '',
 	quoteAmount: '',
-	quoteBalance: undefined,
-	baseBalance: undefined,
 	ratio: undefined,
 	transactionFee: undefined,
 	feeCost: undefined,
@@ -102,22 +100,6 @@ const exchangeSlice = createSlice({
 			state.quoteCurrencyKey =
 				state.quoteCurrencyKey === action.payload ? undefined : state.quoteCurrencyKey;
 		},
-		setRatio: (state, action) => {
-			state.ratio = action.payload;
-
-			const newQuote = truncateNumbers(
-				wei(state.quoteBalance || 0).mul(action.payload / 100),
-				DEFAULT_CRYPTO_DECIMALS
-			);
-
-			state.quoteAmount = newQuote;
-
-			if (state.txProvider === 'synthetix' && !!state.baseCurrencyKey) {
-				const baseAmountNoFee = wei(newQuote).mul(state.rate ?? 0);
-				const fee = baseAmountNoFee.mul(state.exchangeFeeRate ?? 0);
-				state.baseAmount = truncateNumbers(baseAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS);
-			}
-		},
 		swapCurrencies: (state) => {
 			const temp = state.quoteCurrencyKey;
 			state.quoteCurrencyKey = state.baseCurrencyKey;
@@ -125,41 +107,6 @@ const exchangeSlice = createSlice({
 
 			state.baseAmount = state.txProvider === 'synthetix' ? state.quoteAmount : '';
 			state.quoteAmount = '';
-
-			const tempBalance = state.quoteBalance;
-			state.quoteBalance = state.baseBalance;
-			state.baseBalance = tempBalance;
-		},
-		setMaxQuoteBalance: (state) => {
-			if (!!state.quoteBalance) {
-				if (state.quoteCurrencyKey === 'ETH') {
-					const ETH_TX_BUFFER = 0.006;
-					const balanceWithBuffer = wei(state.quoteBalance).sub(wei(ETH_TX_BUFFER));
-					state.quoteAmount = balanceWithBuffer.lt(0)
-						? '0'
-						: truncateNumbers(balanceWithBuffer, DEFAULT_CRYPTO_DECIMALS);
-				} else {
-					state.quoteAmount = truncateNumbers(state.quoteBalance, DEFAULT_CRYPTO_DECIMALS);
-				}
-
-				if (state.txProvider === 'synthetix') {
-					const baseAmountNoFee = wei(state.quoteBalance).mul(state.rate ?? 0);
-					const fee = baseAmountNoFee.mul(wei(state.exchangeFeeRate ?? 0));
-					state.baseAmount = truncateNumbers(baseAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS);
-				}
-			}
-		},
-		setMaxBaseBalance: (state) => {
-			if (!!state.baseBalance) {
-				state.baseAmount = truncateNumbers(state.baseBalance, DEFAULT_CRYPTO_DECIMALS);
-
-				if (state.txProvider) {
-					const inverseRate = wei(state.rate || 0).gt(0) ? wei(1).div(state.rate) : wei(0);
-					const baseAmountNoFee = wei(state.baseBalance).mul(inverseRate);
-					const fee = baseAmountNoFee.mul(state.exchangeFeeRate ?? 0);
-					state.quoteAmount = truncateNumbers(baseAmountNoFee.add(fee), DEFAULT_CRYPTO_DECIMALS);
-				}
-			}
 		},
 		setOpenModal: (state, action) => {
 			state.openModal = action.payload;
@@ -281,12 +228,9 @@ const exchangeSlice = createSlice({
 export const {
 	setQuoteAmount,
 	setBaseAmount,
-	setRatio,
 	swapCurrencies,
 	setQuoteCurrencyKey,
 	setBaseCurrencyKey,
-	setMaxQuoteBalance,
-	setMaxBaseBalance,
 	setOpenModal,
 	closeModal,
 	setApprovalStatus,

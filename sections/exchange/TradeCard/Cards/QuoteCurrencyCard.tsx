@@ -1,8 +1,8 @@
 import { FC, memo, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { updateBaseAmount } from 'state/exchange/actions';
+import { updateBaseAmount, setMaxQuoteBalance } from 'state/exchange/actions';
 import { setQuoteAmount } from 'state/exchange/reducer';
-import { setMaxQuoteBalance, setOpenModal } from 'state/exchange/reducer';
+import { setOpenModal } from 'state/exchange/reducer';
 import {
 	selectQuoteBalanceWei,
 	selectQuoteCurrencyName,

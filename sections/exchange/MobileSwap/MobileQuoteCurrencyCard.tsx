@@ -1,7 +1,7 @@
 import { FC, memo, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { updateBaseAmount } from 'state/exchange/actions';
-import { setQuoteAmount, setMaxQuoteBalance, setOpenModal } from 'state/exchange/reducer';
+import { updateBaseAmount, setMaxQuoteBalance } from 'state/exchange/actions';
+import { setQuoteAmount, setOpenModal } from 'state/exchange/reducer';
 import { selectQuoteBalanceWei } from 'state/exchange/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 
