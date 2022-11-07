@@ -113,9 +113,11 @@ const MenuInside = styled.div<{ isActive: boolean; isDropDown?: boolean }>`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 15px;
 	text-transform: capitalize;
+	text-align: center;
 	border-radius: 100px;
 	background: transparent;
 	cursor: pointer;
+	width: 100%;
 	color: ${(props) =>
 		props.isActive
 			? props.theme.colors.selectedTheme.button.text.primary
@@ -129,7 +131,6 @@ const MenuInside = styled.div<{ isActive: boolean; isDropDown?: boolean }>`
 const DropDownSelect = styled(Select)`
 	.react-select__control {
 		padding: 0 6px;
-		width: 98px;
 	}
 
 	.react-select__group {
@@ -152,8 +153,21 @@ const DropDownSelect = styled(Select)`
 
 	.react-select__value-container {
 		padding: 0px;
+		width: ${(props) => {
+			//@ts-ignore
+			return props.value?.i18nLabel === 'header.nav.markets'
+				? '75px'
+				: //@ts-ignore
+				props.value?.i18nLabel === 'header.nav.leaderboard'
+				? '110px'
+				: '100%';
+		}};
+	}
+
+	.react-select__single-value {
 		display: flex;
-		justify-content: center;
+		align-items: center;
+		width: 100%;
 	}
 
 	.react-select__menu-notice--no-options {
