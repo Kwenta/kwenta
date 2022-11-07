@@ -250,6 +250,7 @@ export type AccountStat = {
 
 export type FuturesCumulativeStats = {
 	totalTrades: string;
+	totalTraders: string;
 	totalVolume: string;
 	totalLiquidations: string;
 	averageTradeSize: string;
