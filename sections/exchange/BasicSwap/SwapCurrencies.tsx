@@ -21,7 +21,7 @@ const SwapCurrencies = memo(() => {
 		dispatch(swapCurrencies());
 
 		if (!!quoteCurrencyKey && !!baseCurrencyKey) {
-			router.replace('/exchange', ROUTES.Exchange.MarketPair(baseCurrencyKey, quoteCurrencyKey), {
+			router.replace(ROUTES.Exchange.MarketPair(quoteCurrencyKey, baseCurrencyKey), undefined, {
 				shallow: true,
 			});
 		}
