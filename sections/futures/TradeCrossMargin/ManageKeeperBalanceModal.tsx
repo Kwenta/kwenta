@@ -24,7 +24,7 @@ import {
 	BalanceText,
 	MaxButton,
 	MarginActionButton,
-} from '../Trade/DepositMarginModal';
+} from '../Trade/TransferIsolatedMarginModal';
 
 type TransferType = 'deposit' | 'withdraw';
 

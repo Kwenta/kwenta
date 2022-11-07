@@ -9,8 +9,7 @@ import useIsL2 from 'hooks/useIsL2';
 import { balancesState, marketInfoState, positionState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 
-import DepositMarginModal from './DepositMarginModal';
-import WithdrawMarginModal from './WithdrawMarginModal';
+import TransferIsolatedMarginModal from './TransferIsolatedMarginModal';
 
 const MarketActions: React.FC = () => {
 	const { t } = useTranslation();
@@ -48,10 +47,20 @@ const MarketActions: React.FC = () => {
 				</MarketActionButton>
 			</MarketActionsContainer>
 			{openModal === 'deposit' && (
-				<DepositMarginModal sUSDBalance={susdWalletBalance} onDismiss={() => setOpenModal(null)} />
+				<TransferIsolatedMarginModal
+					defaultTab="deposit"
+					sUSDBalance={susdWalletBalance}
+					onDismiss={() => setOpenModal(null)}
+				/>
 			)}
 
-			{openModal === 'withdraw' && <WithdrawMarginModal onDismiss={() => setOpenModal(null)} />}
+			{openModal === 'withdraw' && (
+				<TransferIsolatedMarginModal
+					sUSDBalance={susdWalletBalance}
+					defaultTab="withdraw"
+					onDismiss={() => setOpenModal(null)}
+				/>
+			)}
 		</>
 	);
 };
