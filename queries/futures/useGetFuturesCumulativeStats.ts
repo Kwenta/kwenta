@@ -31,6 +31,7 @@ const useGetFuturesCumulativeStats = (options?: UseQueryOptions<FuturesCumulativ
 						query FuturesCumulativeStats {
 							futuresCumulativeStat(id: "0") {
 								totalTrades
+								totalTraders
 								totalVolume
 								totalLiquidations
 								averageTradeSize
@@ -47,6 +48,7 @@ const useGetFuturesCumulativeStats = (options?: UseQueryOptions<FuturesCumulativ
 								18,
 								true
 							).toString(),
+							totalTraders: response.futuresCumulativeStat.totalTraders,
 							totalTrades: response.futuresCumulativeStat.totalTrades,
 							totalLiquidations: response.futuresCumulativeStat.totalLiquidations,
 					  }
