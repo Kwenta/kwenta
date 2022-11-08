@@ -9,6 +9,7 @@ import { BigNumber, ethers } from 'ethers';
 import { get, keyBy } from 'lodash';
 import KwentaSDK from 'sdk';
 import { getEthGasPrice } from 'sdk/common/gas';
+import { startInterval } from 'sdk/utils/interval';
 
 import { KWENTA_REFERRAL_ADDRESS, SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
 import {
@@ -60,10 +61,16 @@ export default class ExchangeService {
 	private tokenList: Token[] = [];
 	private allTokensMap: any;
 	private sdk: KwentaSDK;
+	private exchangeRates: Rates = {};
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
 		this.getOneInchTokens();
+
+		startInterval(async () => {
+			this.exchangeRates = await this.getExchangeRates();
+			this.sdk.events.emit('exchangeRates_updated', this.exchangeRates);
+		}, 15000);
 	}
 
 	private get isL2() {
@@ -86,14 +93,9 @@ export default class ExchangeService {
 		quoteCurrencyKey: string,
 		baseCurrencyKey: string,
 		sUSDRate: Wei,
-		quoteAmountWei: Wei,
-		exchangeRates: Rates
+		quoteAmountWei: Wei
 	) {
-		const quotePriceRate = await this.getQuotePriceRate(
-			baseCurrencyKey,
-			quoteCurrencyKey,
-			exchangeRates
-		);
+		const quotePriceRate = await this.getQuotePriceRate(baseCurrencyKey, quoteCurrencyKey);
 
 		let tradePrice = quoteAmountWei.mul(quotePriceRate || 0);
 
@@ -106,14 +108,9 @@ export default class ExchangeService {
 		quoteCurrencyKey: string,
 		baseCurrencyKey: string,
 		sUSDRate: Wei,
-		baseAmountWei: Wei,
-		exchangeRates: Rates
+		baseAmountWei: Wei
 	) {
-		const basePriceRate = await this.getBasePriceRate(
-			baseCurrencyKey,
-			quoteCurrencyKey,
-			exchangeRates
-		);
+		const basePriceRate = await this.getBasePriceRate(baseCurrencyKey, quoteCurrencyKey);
 
 		let tradePrice = baseAmountWei.mul(basePriceRate || 0);
 
@@ -134,28 +131,15 @@ export default class ExchangeService {
 		quoteCurrencyKey: string,
 		baseCurrencyKey: string,
 		quoteAmountWei: Wei,
-		baseAmountWei: Wei,
-		exchangeRates: Rates
+		baseAmountWei: Wei
 	) {
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
 
 		if (txProvider === '1inch') {
-			const sUSDRate = this.getSynthUsdRate(exchangeRates);
+			const sUSDRate = this.getSynthUsdRate;
 			const [totalTradePrice, estimatedBaseTradePrice] = await Promise.all([
-				this.getTotalTradePrice(
-					quoteCurrencyKey,
-					baseCurrencyKey,
-					sUSDRate,
-					quoteAmountWei,
-					exchangeRates
-				),
-				this.getEstimatedBaseTradePrice(
-					quoteCurrencyKey,
-					baseCurrencyKey,
-					sUSDRate,
-					baseAmountWei,
-					exchangeRates
-				),
+				this.getTotalTradePrice(quoteCurrencyKey, baseCurrencyKey, sUSDRate, quoteAmountWei),
+				this.getEstimatedBaseTradePrice(quoteCurrencyKey, baseCurrencyKey, sUSDRate, baseAmountWei),
 			]);
 
 			if (totalTradePrice.gt(0) && estimatedBaseTradePrice.gt(0)) {
@@ -198,12 +182,12 @@ export default class ExchangeService {
 		return wei(exchangeFeeRate);
 	}
 
-	public async getRate(baseCurrencyKey: string, quoteCurrencyKey: string, exchangeRates: Rates) {
+	public async getRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
 		const baseCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey);
 		const quoteCurrencyTokenAddress = this.getTokenAddress(quoteCurrencyKey);
 
 		const [[quoteRate, baseRate], coinGeckoPrices] = await Promise.all([
-			this.getPairRates(quoteCurrencyKey, baseCurrencyKey, exchangeRates),
+			this.getPairRates(quoteCurrencyKey, baseCurrencyKey),
 			this.getCoingeckoPrices([quoteCurrencyTokenAddress, baseCurrencyTokenAddress]),
 		]);
 
@@ -611,12 +595,11 @@ export default class ExchangeService {
 		quoteCurrencyKey: string,
 		baseCurrencyKey: string,
 		quoteAmount: string,
-		baseAmount: string,
-		exchangeRates: Rates
+		baseAmount: string
 	) {
 		const gasPrices = await getEthGasPrice(this.sdk.networkId, this.sdk.provider);
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
-		const ethPriceRate = newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', 'sUSD');
+		const ethPriceRate = newGetExchangeRatesForCurrencies(this.exchangeRates, 'sETH', 'sUSD');
 		const gasPrice = gasPrices.fast;
 
 		if (txProvider === 'synthswap' || txProvider === '1inch') {
@@ -672,15 +655,10 @@ export default class ExchangeService {
 		}
 	}
 
-	public async getFeeCost(
-		quoteCurrencyKey: string,
-		baseCurrencyKey: string,
-		quoteAmount: string,
-		exchangeRates: Rates
-	) {
+	public async getFeeCost(quoteCurrencyKey: string, baseCurrencyKey: string, quoteAmount: string) {
 		const [exchangeFeeRate, quotePriceRate] = await Promise.all([
 			this.getExchangeFeeRate(quoteCurrencyKey, baseCurrencyKey),
-			this.getQuotePriceRate(baseCurrencyKey, quoteCurrencyKey, exchangeRates),
+			this.getQuotePriceRate(baseCurrencyKey, quoteCurrencyKey),
 		]);
 
 		const feeAmountInQuoteCurrency = wei(quoteAmount).mul(exchangeFeeRate);
@@ -725,12 +703,7 @@ export default class ExchangeService {
 		return this.allTokensMap?.[currencyKey]?.name;
 	}
 
-	public async getOneInchQuote(
-		baseCurrencyKey: string,
-		quoteCurrencyKey: string,
-		amount: string,
-		exchangeRates: Rates
-	) {
+	public async getOneInchQuote(baseCurrencyKey: string, quoteCurrencyKey: string, amount: string) {
 		const sUSD = this.tokensMap['sUSD'];
 		const decimals = this.getTokenDecimals(quoteCurrencyKey);
 		const quoteTokenAddress = this.getTokenAddress(quoteCurrencyKey);
@@ -739,7 +712,7 @@ export default class ExchangeService {
 
 		const synth = this.tokensMap[quoteCurrencyKey] || this.tokensMap[baseCurrencyKey];
 
-		const synthUsdRate = synth ? await this.getPairRates(synth, 'sUSD', exchangeRates) : null;
+		const synthUsdRate = synth ? await this.getPairRates(synth, 'sUSD') : null;
 
 		if (!quoteCurrencyKey || !baseCurrencyKey || !sUSD || !amount.length || wei(amount).eq(0)) {
 			return '';
@@ -779,11 +752,7 @@ export default class ExchangeService {
 		}
 	}
 
-	public async getQuotePriceRate(
-		baseCurrencyKey: string,
-		quoteCurrencyKey: string,
-		exchangeRates: Rates
-	) {
+	public async getQuotePriceRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
 
 		const quoteCurrencyTokenAddress = this.getTokenAddress(quoteCurrencyKey, true).toLowerCase();
@@ -795,7 +764,7 @@ export default class ExchangeService {
 		]);
 
 		if (txProvider !== 'synthetix') {
-			const selectPriceCurrencyRate = exchangeRates['sUSD'];
+			const selectPriceCurrencyRate = this.exchangeRates['sUSD'];
 
 			if (
 				coinGeckoPrices &&
@@ -809,15 +778,11 @@ export default class ExchangeService {
 				return wei(0);
 			}
 		} else {
-			return newGetExchangeRatesForCurrencies(exchangeRates, quoteCurrencyKey, 'sUSD');
+			return newGetExchangeRatesForCurrencies(this.exchangeRates, quoteCurrencyKey, 'sUSD');
 		}
 	}
 
-	public async getBasePriceRate(
-		baseCurrencyKey: string,
-		quoteCurrencyKey: string,
-		exchangeRates: Rates
-	) {
+	public async getBasePriceRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
 
 		const baseCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey, true).toLowerCase();
@@ -829,7 +794,7 @@ export default class ExchangeService {
 		]);
 
 		if (txProvider !== 'synthetix') {
-			const selectPriceCurrencyRate = exchangeRates['sUSD'];
+			const selectPriceCurrencyRate = this.exchangeRates['sUSD'];
 
 			if (coinGeckoPrices && selectPriceCurrencyRate && coinGeckoPrices[baseCurrencyTokenAddress]) {
 				const basePrice = coinGeckoPrices[baseCurrencyTokenAddress];
@@ -838,7 +803,7 @@ export default class ExchangeService {
 				return wei(0);
 			}
 		} else {
-			return newGetExchangeRatesForCurrencies(exchangeRates, baseCurrencyKey, 'sUSD');
+			return newGetExchangeRatesForCurrencies(this.exchangeRates, baseCurrencyKey, 'sUSD');
 		}
 	}
 
@@ -914,8 +879,8 @@ export default class ExchangeService {
 		return response.data;
 	}
 
-	private getSynthUsdRate(exchangeRates: Rates) {
-		return exchangeRates['sUSD'];
+	private get getSynthUsdRate() {
+		return this.exchangeRates['sUSD'];
 	}
 
 	private getExchangeParams(
@@ -1077,13 +1042,9 @@ export default class ExchangeService {
 		return this.swapSynthSwap(fromToken, toToken, fromAmount, 'estimate_gas');
 	}
 
-	private async getPairRates(
-		quoteCurrencyKey: string,
-		baseCurrencyKey: string,
-		exchangeRates: Rates
-	) {
+	private async getPairRates(quoteCurrencyKey: string, baseCurrencyKey: string) {
 		const pairRates = newGetExchangeRatesTupleForCurrencies(
-			exchangeRates,
+			this.exchangeRates,
 			quoteCurrencyKey,
 			baseCurrencyKey
 		);

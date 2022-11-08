@@ -7,9 +7,10 @@ import { FetchStatus, ThunkConfig } from 'state/types';
 
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { monitorTransaction } from 'contexts/RelayerContext';
+import { Rates } from 'queries/rates/types';
 import { toWei, truncateNumbers } from 'utils/formatters/number';
 
-import { selectBaseBalanceWei, selectExchangeRatesWei, selectQuoteBalanceWei } from './selectors';
+import { selectBaseBalanceWei, selectQuoteBalanceWei } from './selectors';
 import { SwapRatio } from './types';
 
 export const fetchRedeemableBalances = createAsyncThunk<any, void, ThunkConfig>(
@@ -39,23 +40,14 @@ export const fetchTransactionFee = createAsyncThunk<
 	void,
 	ThunkConfig
 >('exchange/fetchTransactionFee', async (_, { getState, extra: { sdk } }) => {
-	const state = getState();
 	const {
 		exchange: { quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount },
-	} = state;
-
-	const exchangeRates = selectExchangeRatesWei(state);
+	} = getState();
 
 	if (baseCurrencyKey && quoteCurrencyKey) {
 		const [transactionFee, feeCost] = await Promise.all([
-			sdk.exchange.getTransactionFee(
-				quoteCurrencyKey,
-				baseCurrencyKey,
-				quoteAmount,
-				baseAmount,
-				exchangeRates
-			),
-			sdk.exchange.getFeeCost(quoteCurrencyKey, baseCurrencyKey, quoteAmount, exchangeRates),
+			sdk.exchange.getTransactionFee(quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount),
+			sdk.exchange.getFeeCost(quoteCurrencyKey, baseCurrencyKey, quoteAmount),
 		]);
 
 		return {
@@ -166,13 +158,10 @@ export const fetchTokenList = createAsyncThunk<any, void, ThunkConfig>(
 export const resetCurrencyKeys = createAsyncThunk<any, void, ThunkConfig>(
 	'exchange/resetCurrencyKeys',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
-		const state = getState();
 		const {
 			exchange: { quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount },
 			wallet: { walletAddress },
-		} = state;
-
-		const exchangeRates = selectExchangeRatesWei(state);
+		} = getState();
 
 		let baseFeeRate = undefined;
 		let rate = undefined;
@@ -186,10 +175,10 @@ export const resetCurrencyKeys = createAsyncThunk<any, void, ThunkConfig>(
 			if (quoteCurrencyKey && baseCurrencyKey) {
 				[baseFeeRate, rate, exchangeFeeRate, quotePriceRate, basePriceRate] = await Promise.all([
 					sdk.exchange.getBaseFeeRate(baseCurrencyKey, quoteCurrencyKey),
-					sdk.exchange.getRate(baseCurrencyKey, quoteCurrencyKey, exchangeRates),
+					sdk.exchange.getRate(baseCurrencyKey, quoteCurrencyKey),
 					sdk.exchange.getExchangeFeeRate(quoteCurrencyKey, baseCurrencyKey),
-					sdk.exchange.getQuotePriceRate(baseCurrencyKey, quoteCurrencyKey, exchangeRates),
-					sdk.exchange.getBasePriceRate(baseCurrencyKey, quoteCurrencyKey, exchangeRates),
+					sdk.exchange.getQuotePriceRate(baseCurrencyKey, quoteCurrencyKey),
+					sdk.exchange.getBasePriceRate(baseCurrencyKey, quoteCurrencyKey),
 				]);
 
 				txProvider = sdk.exchange.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
@@ -364,8 +353,6 @@ export const setBaseAmount = createAsyncThunk<any, string, ThunkConfig>(
 export const updateBaseAmount = createAsyncThunk<any, void, ThunkConfig>(
 	'exchange/updateBaseAmount',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
-		const state = getState();
-
 		const {
 			exchange: {
 				txProvider,
@@ -375,9 +362,7 @@ export const updateBaseAmount = createAsyncThunk<any, void, ThunkConfig>(
 				exchangeFeeRate,
 				quoteAmount,
 			},
-		} = state;
-
-		const exchangeRates = selectExchangeRatesWei(state);
+		} = getState();
 
 		let baseAmount = '';
 		let slippagePercent = undefined;
@@ -391,8 +376,7 @@ export const updateBaseAmount = createAsyncThunk<any, void, ThunkConfig>(
 				baseAmount = await sdk.exchange.getOneInchQuote(
 					baseCurrencyKey,
 					quoteCurrencyKey,
-					quoteAmount,
-					exchangeRates
+					quoteAmount
 				);
 
 				if (txProvider === '1inch') {
@@ -403,8 +387,7 @@ export const updateBaseAmount = createAsyncThunk<any, void, ThunkConfig>(
 						quoteCurrencyKey,
 						baseCurrencyKey,
 						quoteAmountWei,
-						baseAmountWei,
-						exchangeRates
+						baseAmountWei
 					);
 				}
 			}
@@ -504,14 +487,12 @@ export const setRatio = (value: SwapRatio): AppThunk => (dispatch, getState) => 
 	}
 };
 
-export const setExchangeRates = createAsyncThunk<Record<string, string>, void, ThunkConfig>(
-	'exchange/setExchangeRates',
-	async (_, { extra: { sdk } }) => {
-		const exchangeRates = await sdk.exchange.getExchangeRates();
-
-		return Object.entries(exchangeRates).reduce((acc, [key, value]) => {
+export const setExchangeRates = (exchangeRates: Rates): AppThunk => (dispatch) => {
+	dispatch({
+		type: 'exchange/setExchangeRates',
+		payload: Object.entries(exchangeRates).reduce((acc, [key, value]) => {
 			acc[key] = value.toString();
 			return acc;
-		}, {} as Record<string, string>);
-	}
-);
+		}, {} as Record<string, string>),
+	});
+};

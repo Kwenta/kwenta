@@ -10,6 +10,8 @@ import { resetNetwork, setSigner } from 'state/wallet/actions';
 import { createContainer } from 'unstated-next';
 import { chain, useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
 
+import { Rates } from 'queries/rates/types';
+
 import { generateExplorerFunctions, getBaseUrl } from './blockExplorer';
 import { wagmiClient } from './config';
 
@@ -70,12 +72,14 @@ const useConnector = () => {
 	}, [signer, dispatch]);
 
 	useEffect(() => {
-		const rateInterval = setInterval(() => {
-			dispatch(setExchangeRates());
-		}, 15000);
+		const ratesListener = (exchangeRates: Rates) => {
+			dispatch(setExchangeRates(exchangeRates));
+		};
+
+		sdk.events.on('exchangeRates_updated', ratesListener);
 
 		return () => {
-			clearInterval(rateInterval);
+			sdk.events.removeListener('exchangeRates_updated', ratesListener);
 		};
 	}, [dispatch]);
 

@@ -1,3 +1,5 @@
+import { EventEmitter } from 'events';
+
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { Provider as EthCallProvider } from 'ethcall';
 import { ethers } from 'ethers';
@@ -15,6 +17,7 @@ export default class KwentaSDK {
 	public walletAddress?: string;
 	public networkId: NetworkId;
 	public contracts: ContractMap;
+	public events = new EventEmitter().setMaxListeners(100);
 
 	public exchange: ExchangeService;
 	public futures: FuturesService;
