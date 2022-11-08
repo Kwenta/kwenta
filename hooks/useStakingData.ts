@@ -11,8 +11,6 @@ import rewardEscrowABI from 'lib/abis/RewardEscrow.json';
 import stakingRewardsABI from 'lib/abis/StakingRewards.json';
 import supplyScheduleABI from 'lib/abis/SupplySchedule.json';
 import vKwentaRedeemerABI from 'lib/abis/vKwentaRedeemer.json';
-import useGetFuturesFeeForAccount from 'queries/staking/useGetFuturesFeeForAccount';
-import useGetSpotFeeForAccount from 'queries/staking/useGetSpotFeeForAccount';
 import { formatTruncatedDuration } from 'utils/formatters/date';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -271,30 +269,29 @@ const useStakingData = () => {
 		staleTime: Infinity,
 	});
 
-	const SpotFeeQuery = useGetSpotFeeForAccount(walletAddress!);
-	const spotFeePaid = useMemo(() => {
-		const t = SpotFeeQuery.data?.synthExchanges ?? [];
+	// const SpotFeeQuery = useGetSpotFeeForAccount(walletAddress!);
+	// const spotFeePaid = useMemo(() => {
+	// 	const t = SpotFeeQuery.data?.synthExchanges ?? [];
 
-		return t
-			.map((trade: any) => Number(trade.feesInUSD))
-			.reduce((acc: number, curr: number) => acc + curr, 0);
-	}, [SpotFeeQuery.data]);
+	// 	return t
+	// 		.map((trade: any) => Number(trade.feesInUSD))
+	// 		.reduce((acc: number, curr: number) => acc + curr, 0);
+	// }, [SpotFeeQuery.data]);
 
-	const FuturesFeeQuery = useGetFuturesFeeForAccount(walletAddress!);
-	const futuresFeePaid = useMemo(() => {
-		const t = FuturesFeeQuery.data ?? [];
+	// const FuturesFeeQuery = useGetFuturesFeeForAccount(walletAddress!);
+	// const futuresFeePaid = useMemo(() => {
+	// 	const t = FuturesFeeQuery.data ?? [];
 
-		return t
-			.map((trade: any) => Number(trade.feesPaid) / 1e18)
-			.reduce((acc: number, curr: number) => acc + curr, 0);
-	}, [FuturesFeeQuery.data]);
+	// 	return t
+	// 		.map((trade: any) => Number(trade.feesPaid) / 1e18)
+	// 		.reduce((acc: number, curr: number) => acc + curr, 0);
+	// }, [FuturesFeeQuery.data]);
 
-	const feePaid = useMemo(() => spotFeePaid + futuresFeePaid, [futuresFeePaid, spotFeePaid]);
+	// const feePaid = useMemo(() => spotFeePaid + futuresFeePaid, [futuresFeePaid, spotFeePaid]);
 
 	return {
 		epochPeriod,
 		data,
-		feePaid,
 		escrowedBalance,
 		totalVestable,
 		stakedNonEscrowedBalance,

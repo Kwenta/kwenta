@@ -1,8 +1,8 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
@@ -27,6 +27,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({ period = 1 }: Trading
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
 	const { multipleMerkleDistributorContract } = useStakingContext();
+	const [isClaimed, setIsClaimed] = useState(true);
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
 
@@ -77,11 +78,24 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({ period = 1 }: Trading
 
 	const feePaid = useMemo(() => spotFeePaid + futuresFeePaid, [futuresFeePaid, spotFeePaid]);
 
+	useContractRead({
+		...multipleMerkleDistributorContract,
+		functionName: 'isClaimed',
+		args: [walletReward?.index, period],
+		enabled: walletReward != null,
+		watch: true,
+		onSettled(data, error) {
+			if (error) logError(error);
+			if (data) {
+				setIsClaimed(!!data);
+			}
+		},
+	});
 	const { config: claimEpochConfig } = usePrepareContractWrite({
 		...multipleMerkleDistributorContract,
 		functionName: 'claim',
 		args: [walletReward?.index, walletAddress, walletReward?.amount, walletReward?.proof, period],
-		enabled: walletReward != null && false,
+		enabled: walletReward != null && !isClaimed,
 		onError(error) {
 			logError(error);
 		},
@@ -118,7 +132,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({ period = 1 }: Trading
 						fullWidth
 						variant="flat"
 						size="sm"
-						disabled={tradingRewardsRatio === 0}
+						disabled={tradingRewardsRatio === 0 || isClaimed}
 						onClick={() => claim?.()}
 					>
 						{t('dashboard.stake.tabs.trading-rewards.claim-epoch', { EpochPeriod: period })}
@@ -127,7 +141,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({ period = 1 }: Trading
 						fullWidth
 						variant="flat"
 						size="sm"
-						disabled={tradingRewardsRatio === 0}
+						disabled={tradingRewardsRatio === 0 || isClaimed}
 						onClick={() => claim?.()}
 					>
 						{t('dashboard.stake.tabs.trading-rewards.claim-all')}

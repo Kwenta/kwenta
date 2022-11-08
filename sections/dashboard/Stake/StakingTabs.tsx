@@ -46,7 +46,7 @@ const StakingTabs: React.FC = () => {
 	const { provider } = Connector.useContainer();
 	const { epochPeriod } = useStakingContext();
 	const [epochCurrentLabel, setEpochCurrentLabel] = useState(
-		`Epoch 0: Oct 16, 2022 - Oct 23, 2022`
+		`Epoch 1: Oct 23, 2022 - Oct 30, 2022`
 	);
 
 	const currentTheme = useRecoilValue(currentThemeState);
@@ -77,7 +77,8 @@ const StakingTabs: React.FC = () => {
 			});
 		});
 		return epochList;
-	}, [epochPeriod, provider]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const formatOptionLabel = ({ label, onClick }: ReactSelectOptionProps) => {
 		return (
