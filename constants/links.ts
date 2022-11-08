@@ -52,7 +52,7 @@ export const EXTERNAL_LINKS = {
 		Home: 'https://kips.kwenta.io/all-kip/',
 	},
 	Competition: {
-		LearnMore: 'https://mirror.xyz/kwenta.eth/WghvQFjEslsC0kwnGVP0QZnY1F7ZU3w5hpWxDPLbBsE',
+		LearnMore: 'https://mirror.xyz/kwenta.eth/s_PO64SxvuwDHz9fdHebsYeQAOOc73D3bL2q4nC6LvU',
 	},
 	Aelin: {
 		Pool: 'https://app.aelin.xyz/pool/mainnet/0x21f4F88a95f656ef4ee1ea107569b3b38cf8daef',

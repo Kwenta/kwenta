@@ -1,3 +1,5 @@
-export const COMPETITION_DATA_LOCATION = 'competition/leaderboard_latest.json';
+import { CompetitionRound } from '../common';
 
-export const MOBILE_COMPETITION_START = new Date('2022-08-16');
+export const getCompetitionDataLocation = (round: CompetitionRound) => {
+	return `crossmargin_competition_${round}/leaderboard_latest.json`;
+};
