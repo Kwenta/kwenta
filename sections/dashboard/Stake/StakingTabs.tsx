@@ -77,8 +77,7 @@ const StakingTabs: React.FC = () => {
 			});
 		});
 		return epochList;
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [epochPeriod, provider]);
 
 	const formatOptionLabel = ({ label, onClick }: ReactSelectOptionProps) => {
 		return (
