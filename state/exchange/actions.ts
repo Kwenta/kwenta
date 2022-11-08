@@ -81,14 +81,8 @@ export const submitExchange = createAsyncThunk<void, void, ThunkConfig>(
 					onTxConfirmed: () => {
 						if (walletAddress) dispatch(fetchSynthBalances(walletAddress));
 						dispatch(fetchNumEntries());
-						dispatch({
-							type: 'exchange/setQuoteAmount',
-							payload: { value: '' },
-						});
-						dispatch({
-							type: 'exchange/setBaseAmount',
-							payload: { value: '' },
-						});
+						dispatch({ type: 'exchange/setQuoteAmount', payload: '' });
+						dispatch({ type: 'exchange/setBaseAmount', payload: '' });
 					},
 				});
 			}

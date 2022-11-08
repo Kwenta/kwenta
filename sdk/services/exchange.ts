@@ -430,7 +430,7 @@ export default class ExchangeService {
 			ethers.utils.formatBytes32String(currencyKey)
 		);
 
-		return numEntries ?? 0;
+		return Number(numEntries.toString()) ?? 0;
 	}
 
 	public async getExchangeRates() {
