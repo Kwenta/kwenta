@@ -39,7 +39,6 @@ const initialState: ExchangeState = {
 	numEntries: 0,
 	redeemableSynthBalances: [],
 	totalRedeemableBalance: undefined,
-	estimatedBaseTradePrice: undefined,
 	approvalStatus: FetchStatus.Idle,
 	tokenListStatus: FetchStatus.Idle,
 	synthsMap: {},

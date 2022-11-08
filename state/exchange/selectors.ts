@@ -99,11 +99,6 @@ export const selectTotalRedeemableBalanceWei = createSelector(
 	(totalRedeemableBalance) => toWei(totalRedeemableBalance)
 );
 
-export const selectBaseTradePriceEstimateWei = createSelector(
-	(state: RootState) => state.exchange.estimatedBaseTradePrice,
-	(estimatedBaseTradePrice) => toWei(estimatedBaseTradePrice)
-);
-
 export const selectExchangeFeeRateWei = createSelector(
 	(state: RootState) => state.exchange.exchangeFeeRate,
 	(exchangeFeeRate) => toWei(exchangeFeeRate)
