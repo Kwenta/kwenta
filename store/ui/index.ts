@@ -23,11 +23,6 @@ export const currentThemeState = atom<ThemeName>({
 	effects: [localStorageEffect('currentTheme')],
 });
 
-export const isCompetitionActive = atom<boolean>({
-	key: getUIKey('isCompetitionActive'),
-	default: process.env.NEXT_PUBLIC_COMPETITION_ACTIVE === 'true',
-});
-
 export const activePositionsTabState = atom<PositionsTab>({
 	key: getUIKey('activePositionsTabState'),
 	default: PositionsTab.CROSS_MARGIN,

@@ -54,6 +54,7 @@ export type AtomicSynthExchangeFilter = {
 	account_ends_with_nocase?: string | null;
 	account_not_ends_with?: string | null;
 	account_not_ends_with_nocase?: string | null;
+	account_?: ExchangerFilter | null;
 	fromSynth?: string | null;
 	fromSynth_not?: string | null;
 	fromSynth_gt?: string | null;
@@ -74,6 +75,7 @@ export type AtomicSynthExchangeFilter = {
 	fromSynth_ends_with_nocase?: string | null;
 	fromSynth_not_ends_with?: string | null;
 	fromSynth_not_ends_with_nocase?: string | null;
+	fromSynth_?: SynthFilter | null;
 	toSynth?: string | null;
 	toSynth_not?: string | null;
 	toSynth_gt?: string | null;
@@ -94,6 +96,7 @@ export type AtomicSynthExchangeFilter = {
 	toSynth_ends_with_nocase?: string | null;
 	toSynth_not_ends_with?: string | null;
 	toSynth_not_ends_with_nocase?: string | null;
+	toSynth_?: SynthFilter | null;
 	fromAmount?: WeiSource | null;
 	fromAmount_not?: WeiSource | null;
 	fromAmount_gt?: WeiSource | null;
@@ -574,6 +577,166 @@ export const getCrossMarginAccounts = async function <K extends keyof CrossMargi
 	} while (paginationKey && options.first && results.length < options.first);
 	return options.first ? results.slice(0, options.first) : results;
 };
+export type CrossMarginAccountTransferFilter = {
+	id?: string | null;
+	id_not?: string | null;
+	id_gt?: string | null;
+	id_lt?: string | null;
+	id_gte?: string | null;
+	id_lte?: string | null;
+	id_in?: string[];
+	id_not_in?: string[];
+	account?: string | null;
+	account_not?: string | null;
+	account_in?: string[];
+	account_not_in?: string[];
+	account_contains?: string | null;
+	account_not_contains?: string | null;
+	abstractAccount?: string | null;
+	abstractAccount_not?: string | null;
+	abstractAccount_in?: string[];
+	abstractAccount_not_in?: string[];
+	abstractAccount_contains?: string | null;
+	abstractAccount_not_contains?: string | null;
+	timestamp?: WeiSource | null;
+	timestamp_not?: WeiSource | null;
+	timestamp_gt?: WeiSource | null;
+	timestamp_lt?: WeiSource | null;
+	timestamp_gte?: WeiSource | null;
+	timestamp_lte?: WeiSource | null;
+	timestamp_in?: WeiSource[];
+	timestamp_not_in?: WeiSource[];
+	size?: WeiSource | null;
+	size_not?: WeiSource | null;
+	size_gt?: WeiSource | null;
+	size_lt?: WeiSource | null;
+	size_gte?: WeiSource | null;
+	size_lte?: WeiSource | null;
+	size_in?: WeiSource[];
+	size_not_in?: WeiSource[];
+	txHash?: string | null;
+	txHash_not?: string | null;
+	txHash_gt?: string | null;
+	txHash_lt?: string | null;
+	txHash_gte?: string | null;
+	txHash_lte?: string | null;
+	txHash_in?: string[];
+	txHash_not_in?: string[];
+	txHash_contains?: string | null;
+	txHash_contains_nocase?: string | null;
+	txHash_not_contains?: string | null;
+	txHash_not_contains_nocase?: string | null;
+	txHash_starts_with?: string | null;
+	txHash_starts_with_nocase?: string | null;
+	txHash_not_starts_with?: string | null;
+	txHash_not_starts_with_nocase?: string | null;
+	txHash_ends_with?: string | null;
+	txHash_ends_with_nocase?: string | null;
+	txHash_not_ends_with?: string | null;
+	txHash_not_ends_with_nocase?: string | null;
+	_change_block?: any | null;
+};
+export type CrossMarginAccountTransferResult = {
+	id: string;
+	account: string;
+	abstractAccount: string;
+	timestamp: Wei;
+	size: Wei;
+	txHash: string;
+};
+export type CrossMarginAccountTransferFields = {
+	id: true;
+	account: true;
+	abstractAccount: true;
+	timestamp: true;
+	size: true;
+	txHash: true;
+};
+export type CrossMarginAccountTransferArgs<K extends keyof CrossMarginAccountTransferResult> = {
+	[Property in keyof Pick<
+		CrossMarginAccountTransferFields,
+		K
+	>]: CrossMarginAccountTransferFields[Property];
+};
+export const getCrossMarginAccountTransferById = async function <
+	K extends keyof CrossMarginAccountTransferResult
+>(
+	url: string,
+	options: SingleQueryOptions,
+	args: CrossMarginAccountTransferArgs<K>
+): Promise<Pick<CrossMarginAccountTransferResult, K>> {
+	const res = await axios.post(url, {
+		query: generateGql('crossMarginAccountTransfer', options, args),
+	});
+	const r = res.data as any;
+	if (r.errors && r.errors.length) {
+		throw new Error(r.errors[0].message);
+	}
+	const obj = r.data[Object.keys(r.data)[0]] as any;
+	const formattedObj: any = {};
+	if (obj['id']) formattedObj['id'] = obj['id'];
+	if (obj['account']) formattedObj['account'] = obj['account'];
+	if (obj['abstractAccount']) formattedObj['abstractAccount'] = obj['abstractAccount'];
+	if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
+	if (obj['size']) formattedObj['size'] = wei(obj['size'], 0);
+	if (obj['txHash']) formattedObj['txHash'] = obj['txHash'];
+	return formattedObj as Pick<CrossMarginAccountTransferResult, K>;
+};
+export const getCrossMarginAccountTransfers = async function <
+	K extends keyof CrossMarginAccountTransferResult
+>(
+	url: string,
+	options: MultiQueryOptions<CrossMarginAccountTransferFilter, CrossMarginAccountTransferResult>,
+	args: CrossMarginAccountTransferArgs<K>
+): Promise<Pick<CrossMarginAccountTransferResult, K>[]> {
+	const paginatedOptions: Partial<MultiQueryOptions<
+		CrossMarginAccountTransferFilter,
+		CrossMarginAccountTransferResult
+	>> = { ...options };
+	let paginationKey: keyof CrossMarginAccountTransferFilter | null = null;
+	let paginationValue = '';
+	if (options.first && options.first > MAX_PAGE) {
+		paginatedOptions.first = MAX_PAGE;
+		paginatedOptions.orderBy = options.orderBy || 'id';
+		paginatedOptions.orderDirection = options.orderDirection || 'asc';
+		paginationKey = (paginatedOptions.orderBy +
+			(paginatedOptions.orderDirection === 'asc'
+				? '_gt'
+				: '_lt')) as keyof CrossMarginAccountTransferFilter;
+		paginatedOptions.where = { ...options.where };
+	}
+	let results: Pick<CrossMarginAccountTransferResult, K>[] = [];
+	do {
+		if (paginationKey && paginationValue)
+			paginatedOptions.where![paginationKey] = paginationValue as any;
+		const res = await axios.post(url, {
+			query: generateGql('crossMarginAccountTransfers', paginatedOptions, args),
+		});
+		const r = res.data as any;
+		if (r.errors && r.errors.length) {
+			throw new Error(r.errors[0].message);
+		}
+		const rawResults = r.data[Object.keys(r.data)[0]] as any[];
+		const newResults = rawResults.map((obj) => {
+			const formattedObj: any = {};
+			if (obj['id']) formattedObj['id'] = obj['id'];
+			if (obj['account']) formattedObj['account'] = obj['account'];
+			if (obj['abstractAccount']) formattedObj['abstractAccount'] = obj['abstractAccount'];
+			if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
+			if (obj['size']) formattedObj['size'] = wei(obj['size'], 0);
+			if (obj['txHash']) formattedObj['txHash'] = obj['txHash'];
+			return formattedObj as Pick<CrossMarginAccountTransferResult, K>;
+		});
+		results = results.concat(newResults);
+		if (newResults.length < 1000) {
+			break;
+		}
+		if (paginationKey) {
+			paginationValue = rawResults[rawResults.length - 1][paginatedOptions.orderBy!];
+		}
+	} while (paginationKey && options.first && results.length < options.first);
+	return options.first ? results.slice(0, options.first) : results;
+};
 export type ExchangerFilter = {
 	id?: string | null;
 	id_not?: string | null;
@@ -627,6 +790,7 @@ export type ExchangerFilter = {
 	synth_ends_with_nocase?: string | null;
 	synth_not_ends_with?: string | null;
 	synth_not_ends_with_nocase?: string | null;
+	synth_?: SynthFilter | null;
 	firstSeen?: WeiSource | null;
 	firstSeen_not?: WeiSource | null;
 	firstSeen_gt?: WeiSource | null;
@@ -673,6 +837,8 @@ export type ExchangerFilter = {
 	balances_contains_nocase?: string[];
 	balances_not_contains?: string[];
 	balances_not_contains_nocase?: string[];
+	balances_?: LatestSynthBalanceFilter | null;
+	exchanges_?: SynthExchangeFilter | null;
 	_change_block?: any | null;
 };
 export type ExchangerResult = {
@@ -1569,6 +1735,7 @@ export type FuturesMarketFilter = {
 	marketStats_ends_with_nocase?: string | null;
 	marketStats_not_ends_with?: string | null;
 	marketStats_not_ends_with_nocase?: string | null;
+	marketStats_?: FuturesCumulativeStatFilter | null;
 	_change_block?: any | null;
 };
 export type FuturesMarketResult = {
@@ -1864,6 +2031,7 @@ export type FuturesOrderFilter = {
 	keeper_not_in?: string[];
 	keeper_contains?: string | null;
 	keeper_not_contains?: string | null;
+	_change_block?: any | null;
 };
 export type FuturesOrderResult = {
 	id: string;
@@ -2436,6 +2604,14 @@ export type FuturesStatFilter = {
 	totalVolume_lte?: WeiSource | null;
 	totalVolume_in?: WeiSource[];
 	totalVolume_not_in?: WeiSource[];
+	crossMarginVolume?: WeiSource | null;
+	crossMarginVolume_not?: WeiSource | null;
+	crossMarginVolume_gt?: WeiSource | null;
+	crossMarginVolume_lt?: WeiSource | null;
+	crossMarginVolume_gte?: WeiSource | null;
+	crossMarginVolume_lte?: WeiSource | null;
+	crossMarginVolume_in?: WeiSource[];
+	crossMarginVolume_not_in?: WeiSource[];
 	_change_block?: any | null;
 };
 export type FuturesStatResult = {
@@ -2447,6 +2623,7 @@ export type FuturesStatResult = {
 	liquidations: Wei;
 	totalTrades: Wei;
 	totalVolume: Wei;
+	crossMarginVolume: Wei;
 };
 export type FuturesStatFields = {
 	id: true;
@@ -2457,6 +2634,7 @@ export type FuturesStatFields = {
 	liquidations: true;
 	totalTrades: true;
 	totalVolume: true;
+	crossMarginVolume: true;
 };
 export type FuturesStatArgs<K extends keyof FuturesStatResult> = {
 	[Property in keyof Pick<FuturesStatFields, K>]: FuturesStatFields[Property];
@@ -2483,6 +2661,8 @@ export const getFuturesStatById = async function <K extends keyof FuturesStatRes
 	if (obj['liquidations']) formattedObj['liquidations'] = wei(obj['liquidations'], 0);
 	if (obj['totalTrades']) formattedObj['totalTrades'] = wei(obj['totalTrades'], 0);
 	if (obj['totalVolume']) formattedObj['totalVolume'] = wei(obj['totalVolume'], 0);
+	if (obj['crossMarginVolume'])
+		formattedObj['crossMarginVolume'] = wei(obj['crossMarginVolume'], 0);
 	return formattedObj as Pick<FuturesStatResult, K>;
 };
 export const getFuturesStats = async function <K extends keyof FuturesStatResult>(
@@ -2525,6 +2705,8 @@ export const getFuturesStats = async function <K extends keyof FuturesStatResult
 			if (obj['liquidations']) formattedObj['liquidations'] = wei(obj['liquidations'], 0);
 			if (obj['totalTrades']) formattedObj['totalTrades'] = wei(obj['totalTrades'], 0);
 			if (obj['totalVolume']) formattedObj['totalVolume'] = wei(obj['totalVolume'], 0);
+			if (obj['crossMarginVolume'])
+				formattedObj['crossMarginVolume'] = wei(obj['crossMarginVolume'], 0);
 			return formattedObj as Pick<FuturesStatResult, K>;
 		});
 		results = results.concat(newResults);
@@ -2956,6 +3138,7 @@ export type LatestSynthBalanceFilter = {
 	synth_ends_with_nocase?: string | null;
 	synth_not_ends_with?: string | null;
 	synth_not_ends_with_nocase?: string | null;
+	synth_?: SynthFilter | null;
 	_change_block?: any | null;
 };
 export type LatestSynthBalanceResult = {
@@ -3415,6 +3598,7 @@ export type SynthBalanceFilter = {
 	synth_ends_with_nocase?: string | null;
 	synth_not_ends_with?: string | null;
 	synth_not_ends_with_nocase?: string | null;
+	synth_?: SynthFilter | null;
 	_change_block?: any | null;
 };
 export type SynthBalanceResult = {
@@ -3632,6 +3816,7 @@ export type SynthExchangeFilter = {
 	account_ends_with_nocase?: string | null;
 	account_not_ends_with?: string | null;
 	account_not_ends_with_nocase?: string | null;
+	account_?: ExchangerFilter | null;
 	fromSynth?: string | null;
 	fromSynth_not?: string | null;
 	fromSynth_gt?: string | null;
@@ -3652,6 +3837,7 @@ export type SynthExchangeFilter = {
 	fromSynth_ends_with_nocase?: string | null;
 	fromSynth_not_ends_with?: string | null;
 	fromSynth_not_ends_with_nocase?: string | null;
+	fromSynth_?: SynthFilter | null;
 	toSynth?: string | null;
 	toSynth_not?: string | null;
 	toSynth_gt?: string | null;
@@ -3672,6 +3858,7 @@ export type SynthExchangeFilter = {
 	toSynth_ends_with_nocase?: string | null;
 	toSynth_not_ends_with?: string | null;
 	toSynth_not_ends_with_nocase?: string | null;
+	toSynth_?: SynthFilter | null;
 	fromAmount?: WeiSource | null;
 	fromAmount_not?: WeiSource | null;
 	fromAmount_gt?: WeiSource | null;
@@ -3752,9 +3939,9 @@ export type SynthExchangeResult = {
 };
 export type SynthExchangeFields = {
 	id: true;
-	account: ExchangerFields;
-	fromSynth: SynthFields;
-	toSynth: SynthFields;
+	account: true;
+	fromSynth: true;
+	toSynth: true;
 	fromAmount: true;
 	fromAmountInUSD: true;
 	toAmount: true;
@@ -3904,6 +4091,7 @@ export type TotalFilter = {
 	synth_ends_with_nocase?: string | null;
 	synth_not_ends_with?: string | null;
 	synth_not_ends_with_nocase?: string | null;
+	synth_?: SynthFilter | null;
 	trades?: WeiSource | null;
 	trades_not?: WeiSource | null;
 	trades_gt?: WeiSource | null;
@@ -3963,7 +4151,7 @@ export type TotalFields = {
 	timestamp: true;
 	period: true;
 	bucketMagnitude: true;
-	synth: SynthFields;
+	synth: true;
 	trades: true;
 	newExchangers: true;
 	exchangers: true;

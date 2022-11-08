@@ -25,7 +25,6 @@ const HomePage: HomePageComponent = () => {
 	const Assets = dynamic(() => import('../sections/homepage/Assets'), {
 		ssr: false,
 	});
-
 	return (
 		<>
 			<Head>

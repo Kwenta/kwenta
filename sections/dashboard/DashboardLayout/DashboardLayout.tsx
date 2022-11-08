@@ -1,16 +1,13 @@
 import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import NavButton from 'components/Button/NavButton';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { TabList, TabPanel } from 'components/Tab';
 import ROUTES from 'constants/routes';
-import Leaderboard from 'sections/leaderboard/Leaderboard';
 import AppLayout from 'sections/shared/Layout/AppLayout';
-import { isCompetitionActive } from 'store/ui';
 import { MainContent, LeftSideContent, FullHeightContainer, PageContent } from 'styles/common';
 
 import EligibilityBox from '../EligibilityBox';
@@ -28,7 +25,6 @@ enum Tab {
 const Tabs = Object.values(Tab);
 
 const DashboardLayout: FC = ({ children }) => {
-	const competitionActive = useRecoilValue(isCompetitionActive);
 	const { t } = useTranslation();
 	const router = useRouter();
 
@@ -131,7 +127,6 @@ const DashboardLayout: FC = ({ children }) => {
 								{children}
 							</TabPanel>
 						</MainContent>
-						{competitionActive && <Leaderboard compact />}
 						<EligibilityBox />
 					</StyledFullHeightContainer>
 				</PageContent>
