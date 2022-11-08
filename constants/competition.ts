@@ -4,8 +4,8 @@
  */
 export const COMPETITION_DATES = {
 	// note: month starts at 0, not 1.
-	START_DATE: new Date(Date.UTC(2022, 10, 10)),
-	END_DATE: new Date(Date.UTC(2022, 10, 24)),
+	START_DATE: new Date(Date.UTC(2022, 10, 11)),
+	END_DATE: new Date(Date.UTC(2022, 10, 25)),
 };
 
 export const COMPETITION_ENABLED = true;
