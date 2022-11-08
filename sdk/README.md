@@ -42,6 +42,7 @@ The following tasks are expected to be completed before the SDK can be considere
 - [ ] Remove duplicate calls in `getSlippagePercent`
 - [ ] Consider making the provision of the `txProvider` the client's responsibility. It is a little cumbersome to have to call `this.getTxProvider` in nearly every method.
 - [ ] Consider ditching currency keys for simple token addresses. The client can choose to load a token list for UI purposes, but the SDK should not be concerned with such details. For balances, we can fetch them as needed.
+- [ ] Handle calling `getExchangeRates` every 15 seconds within the SDK.
 
 # Notes
 

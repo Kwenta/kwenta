@@ -4,6 +4,7 @@ import { ethers } from 'ethers';
 import { keyBy } from 'lodash';
 import { useCallback, useEffect, useMemo } from 'react';
 import { sdk } from 'state/config';
+import { setExchangeRates } from 'state/exchange/actions';
 import { useAppDispatch } from 'state/hooks';
 import { resetNetwork, setSigner } from 'state/wallet/actions';
 import { createContainer } from 'unstated-next';
@@ -67,6 +68,16 @@ const useConnector = () => {
 	useEffect(() => {
 		dispatch(setSigner(signer));
 	}, [signer, dispatch]);
+
+	useEffect(() => {
+		const rateInterval = setInterval(() => {
+			dispatch(setExchangeRates());
+		}, 15000);
+
+		return () => {
+			clearInterval(rateInterval);
+		};
+	}, [dispatch]);
 
 	const [synthsMap, tokensMap] = useMemo(() => {
 		if (defaultSynthetixjs == null) return [{}, {}];

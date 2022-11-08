@@ -40,5 +40,5 @@ export type ExchangeState = {
 	txError?: string;
 	isApproved?: boolean;
 	allowance?: string;
-	exchangeRates: Rates;
+	exchangeRates: Record<string, string>;
 };
