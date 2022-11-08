@@ -11,7 +11,6 @@ const RedemptionTab = () => {
 	return (
 		<StakingTabContainer>
 			<RedeemInputCard inputLabel={t('dashboard.stake.tabs.stake-table.vkwenta-token')} />
-			<RedeemInputCard inputLabel={t('dashboard.stake.tabs.stake-table.vekwenta-token')} />
 		</StakingTabContainer>
 	);
 };

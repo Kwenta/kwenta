@@ -79,7 +79,7 @@ const StakeInputCard: FC = () => {
 				<StakeInputHeader>
 					<div>{t('dashboard.stake.tabs.stake-table.kwenta-token')}</div>
 					<div className="max" onClick={onMaxClick}>
-						{t('dashboard.stake.tabs.stake-table.current-balance')}{' '}
+						{t('dashboard.stake.tabs.stake-table.balance')}{' '}
 						{activeTab === 0
 							? truncateNumbers(kwentaBalance, 2)
 							: truncateNumbers(stakedNonEscrowedBalance, 2)}

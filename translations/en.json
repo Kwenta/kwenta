@@ -543,12 +543,12 @@
 					"unstake": "Unstake",
 					"kwenta-token": "KWENTA",
 					"max": "MAX",
-					"ekwenta-token": "eKWENTA",
+					"ekwenta-token": "Escrowed KWENTA",
 					"redeem": "Redeem",
 					"vekwenta-token": "veKwenta",
 					"vkwenta-token": "vKwenta",
 					"approve": "Approve",		
-					"current-balance": "Current Balance:"
+					"balance": "Balance:"
 				}
 			}
 		},

@@ -8,9 +8,13 @@ import LabelContainer from 'components/Nav/DropDownLabel';
 import Select from 'components/Select';
 import { DropdownIndicator, IndicatorSeparator } from 'components/Select/Select';
 import { TabPanel } from 'components/Tab';
+import Connector from 'containers/Connector';
+import { useStakingContext } from 'contexts/StakingContext';
+import { getEpochDetails } from 'queries/staking/utils';
 import { currentThemeState } from 'store/ui';
 import { FlexDivRowCentered } from 'styles/common';
 import media from 'styles/media';
+import { formatShortDate, toJSTimestamp } from 'utils/formatters/date';
 
 import EscrowTab from './EscrowTab';
 import RedemptionTab from './RedemptionTab';
@@ -19,7 +23,15 @@ import TradingRewardsTab from './TradingRewardsTab';
 
 type ReactSelectOptionProps = {
 	label: string;
-	onClick?: () => {};
+	onClick?: () => void;
+};
+
+type EpochLabel = {
+	period: number;
+	start: number;
+	end: number;
+	label: string;
+	onClick?: () => void;
 };
 
 enum StakeTab {
@@ -29,28 +41,46 @@ enum StakeTab {
 	Redemption = 'redemption',
 }
 
-const epochData = [
-	{
-		label: `1: 23 Oct, 2022 - 30 Oct, 2022`,
-	},
-	{
-		label: `2: 30 Oct, 2022 - 6 Nov, 2022`,
-	},
-];
-
 const StakingTabs: React.FC = () => {
 	const { t } = useTranslation();
+	const { provider } = Connector.useContainer();
+	const [epochCurrentLabel, setEpochCurrentLabel] = useState(
+		`Epoch 0: Oct 16, 2022 - Oct 23, 2022`
+	);
+
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
-
+	const [period, setPeriod] = useState(1);
 	const [activeTab, setActiveTab] = useState(StakeTab.Staking);
 	const handleTabSwitch = useCallback((tab: StakeTab) => () => setActiveTab(tab), []);
 
-	const formatOptionLabel = ({ label }: ReactSelectOptionProps) => (
-		<div onClick={() => {}}>
-			<LabelContainer>{label}</LabelContainer>
-		</div>
-	);
+	const epochData = useMemo(() => {
+		let epochList: EpochLabel[] = [];
+		[1, 2].forEach(async (i) => {
+			const { epochStart, epochEnd } = await getEpochDetails(provider, i);
+			const startDate = formatShortDate(new Date(toJSTimestamp(epochStart)));
+			const endDate = formatShortDate(new Date(toJSTimestamp(epochEnd)));
+			epochList.push({
+				period: i,
+				start: epochStart,
+				end: epochEnd,
+				label: `${i}: ${startDate} - ${endDate}`,
+				onClick: () => {
+					setPeriod(i);
+					setEpochCurrentLabel(`Epoch ${i}: ${startDate} - ${endDate}`);
+				},
+			});
+		});
+		return epochList;
+	}, [provider]);
+
+	const formatOptionLabel = ({ label, onClick }: ReactSelectOptionProps) => {
+		return (
+			<div onClick={onClick}>
+				<LabelContainer>{label}</LabelContainer>
+			</div>
+		);
+	};
 
 	return (
 		<StakingTabsContainer>
@@ -94,7 +124,7 @@ const StakingTabs: React.FC = () => {
 						options={epochData}
 						optionPadding={'0px'}
 						value={{
-							label: `Epoch ${epochData[0].label}`,
+							label: epochCurrentLabel,
 						}}
 						menuWidth={240}
 						components={{ IndicatorSeparator, DropdownIndicator }}
@@ -109,7 +139,7 @@ const StakingTabs: React.FC = () => {
 					<StakingTab />
 				</TabPanel>
 				<TabPanel name={StakeTab.TradingRewards} activeTab={activeTab}>
-					<TradingRewardsTab />
+					<TradingRewardsTab period={period} />
 				</TabPanel>
 				<TabPanel name={StakeTab.Escrow} activeTab={activeTab}>
 					<EscrowTab />
