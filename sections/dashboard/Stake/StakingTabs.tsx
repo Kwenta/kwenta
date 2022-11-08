@@ -44,6 +44,7 @@ enum StakeTab {
 const StakingTabs: React.FC = () => {
 	const { t } = useTranslation();
 	const { provider } = Connector.useContainer();
+	const { epochPeriod } = useStakingContext();
 	const [epochCurrentLabel, setEpochCurrentLabel] = useState(
 		`Epoch 0: Oct 16, 2022 - Oct 23, 2022`
 	);
@@ -55,8 +56,12 @@ const StakingTabs: React.FC = () => {
 	const handleTabSwitch = useCallback((tab: StakeTab) => () => setActiveTab(tab), []);
 
 	const epochData = useMemo(() => {
+		let periods = [];
+		for (let i = 1; i <= epochPeriod + 1; i++) {
+			periods.push(i);
+		}
 		let epochList: EpochLabel[] = [];
-		[1, 2].forEach(async (i) => {
+		periods.forEach(async (i) => {
 			const { epochStart, epochEnd } = await getEpochDetails(provider, i);
 			const startDate = formatShortDate(new Date(toJSTimestamp(epochStart)));
 			const endDate = formatShortDate(new Date(toJSTimestamp(epochEnd)));
@@ -72,7 +77,7 @@ const StakingTabs: React.FC = () => {
 			});
 		});
 		return epochList;
-	}, [provider]);
+	}, [epochPeriod, provider]);
 
 	const formatOptionLabel = ({ label, onClick }: ReactSelectOptionProps) => {
 		return (

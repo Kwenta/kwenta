@@ -81,7 +81,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({ period = 1 }: Trading
 		...multipleMerkleDistributorContract,
 		functionName: 'claim',
 		args: [walletReward?.index, walletAddress, walletReward?.amount, walletReward?.proof, period],
-		enabled: walletReward != null,
+		enabled: walletReward != null && false,
 		onError(error) {
 			logError(error);
 		},
