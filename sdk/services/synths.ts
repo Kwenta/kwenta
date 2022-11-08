@@ -12,8 +12,6 @@ import * as sdkErrors from '../common/errors';
 
 type SynthBalancesTuple = [string[], ethers.BigNumber[], ethers.BigNumber[]];
 
-const FILTERED_TOKENS = ['0x4922a015c4407f87432b179bb209e125432e4a2a'];
-
 export default class SynthsService {
 	private sdk: KwentaSDK;
 	private balances?: any;
