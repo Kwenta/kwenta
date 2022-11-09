@@ -262,7 +262,6 @@ const Assets = () => {
 	var settings = {
 		className: 'center',
 		centerMode: true,
-		dots: true,
 		infinite: true,
 		centerPadding: (window.innerWidth - 380) / 2 + 40 + 'px',
 		speed: 0,
