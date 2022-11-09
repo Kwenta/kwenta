@@ -17,8 +17,8 @@ import ProgressSteps from 'components/ProgressSteps';
 import { CROSS_MARGIN_BASE_SETTINGS } from 'constants/address';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import Connector from 'containers/Connector';
-import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
+import { monitorTransaction } from 'contexts/RelayerContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useSUSDContract from 'hooks/useSUSDContract';
 import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
@@ -39,7 +39,6 @@ const MAX_REFETCH_COUNT = 20;
 
 export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 	const { t } = useTranslation();
-	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { defaultSynthetixjs: synthetixjs, network, walletAddress } = Connector.useContainer();
 	const {
 		crossMarginAccountContract,
@@ -135,7 +134,6 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 		network,
 		submitting,
 		setSubmitting,
-		monitorTransaction,
 		refetchUntilUpdate,
 		queryCrossMarginAccount,
 	]);
@@ -159,7 +157,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 				logError(err);
 			}
 		},
-		[crossMarginAccountContract, monitorTransaction, handleRefetch]
+		[crossMarginAccountContract, handleRefetch]
 	);
 
 	const fetchUntilAllowance = useCallback(async () => {
@@ -207,7 +205,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 			setSubmitting(null);
 			logError(err);
 		}
-	}, [crossMarginAccountContract, susdContract, monitorTransaction, fetchUntilAllowance]);
+	}, [crossMarginAccountContract, susdContract, fetchUntilAllowance]);
 
 	const depositToAccount = useCallback(async () => {
 		try {

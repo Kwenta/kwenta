@@ -16,6 +16,9 @@
 			"markets": "futures",
 			"isolated-margin": "Isolated Margin",
 			"cross-margin": "Cross Margin",
+			"leaderboard-alltime": "All Time",
+			"competition-round-1": "Round 1",
+			"competition-round-2": "Round 2",
 			"leaderboard": "leaderboard",
 			"earn": "earn",
 			"beta-badge": "Beta"
@@ -996,8 +999,7 @@
 			"title": "Competition",
 			"table": {
 				"table-updates": "Table data updates daily",
-				"starting-soon": "Competition starting soon",
-				"started": "Competition started, leaderboard updates every 3 hours"
+				"no-results": "No competition standings available"
 			}
 		}
 	},

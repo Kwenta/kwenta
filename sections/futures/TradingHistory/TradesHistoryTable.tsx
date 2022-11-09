@@ -7,7 +7,7 @@ import styled, { css } from 'styled-components';
 import Table from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
-import BlockExplorer from 'containers/BlockExplorer';
+import { blockExplorer } from 'containers/Connector/Connector';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
 import { currentMarketState } from 'store/futures';
@@ -29,7 +29,6 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 	const { t } = useTranslation();
 	const currencyKey = useRecoilValue(currentMarketState);
 	const futuresTradesQuery = useGetFuturesTrades(currencyKey);
-	const { blockExplorerInstance } = BlockExplorer.useContainer();
 
 	let data = useMemo(() => {
 		const futuresTradesPages = futuresTradesQuery?.data?.pages ?? [];
@@ -110,7 +109,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 					mobile={mobile}
 					onTableRowClick={(row) =>
 						row.original.id !== NO_VALUE
-							? window.open(`${blockExplorerInstance?.txLink(row.original.id)}`)
+							? window.open(`${blockExplorer.txLink(row.original.id)}`)
 							: undefined
 					}
 					highlightRowsOnHover

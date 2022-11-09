@@ -1,6 +1,8 @@
 import Wei from '@synthetixio/wei';
 import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { selectInsufficientBalance } from 'state/exchange/selectors';
+import { useAppSelector } from 'state/hooks';
 import styled, { css } from 'styled-components';
 
 import CaretDownIcon from 'assets/svg/app/caret-down-gray.svg';
@@ -14,12 +16,12 @@ type CurrencyCardSelectorProps = {
 	tokenName: string | null;
 	hasCurrencySelectCallback: boolean;
 	onCurrencySelect?: () => void;
-	currencyKey: string | null;
+	currencyKey?: string;
 	disableInput: boolean;
 	hasWalletBalance: boolean;
 	onBalanceClick(): void;
-	insufficientBalance: boolean;
-	walletBalance: Wei | null;
+	isBase: boolean;
+	walletBalance?: Wei | null;
 };
 
 const CurrencyCardSelector: FC<CurrencyCardSelectorProps> = memo(
@@ -31,10 +33,11 @@ const CurrencyCardSelector: FC<CurrencyCardSelectorProps> = memo(
 		disableInput,
 		hasWalletBalance,
 		onBalanceClick,
-		insufficientBalance,
 		walletBalance,
+		isBase,
 	}) => {
 		const { t } = useTranslation();
+
 		return (
 			<SelectorContainer>
 				<CurrencyNameLabel data-testid="currency-name">{tokenName}</CurrencyNameLabel>
@@ -56,15 +59,31 @@ const CurrencyCardSelector: FC<CurrencyCardSelectorProps> = memo(
 				</CurrencySelector>
 				<WalletBalanceContainer disableInput={disableInput}>
 					<WalletBalanceLabel>{t('exchange.currency-card.wallet-balance')}</WalletBalanceLabel>
-					<WalletBalance
-						onClick={hasWalletBalance ? onBalanceClick : undefined}
-						insufficientBalance={insufficientBalance}
-						data-testid="wallet-balance"
-					>
-						{hasWalletBalance ? formatCurrency(currencyKey!, walletBalance!) : NO_VALUE}
-					</WalletBalance>
+					<CurrencyCardSelectorWalletBalance
+						hasWalletBalance={hasWalletBalance}
+						onBalanceClick={onBalanceClick}
+						isBase={isBase}
+						currencyKey={currencyKey}
+						walletBalance={walletBalance}
+					/>
 				</WalletBalanceContainer>
 			</SelectorContainer>
+		);
+	}
+);
+
+const CurrencyCardSelectorWalletBalance = memo(
+	({ hasWalletBalance, onBalanceClick, isBase, currencyKey, walletBalance }: any) => {
+		const insufficientBalance = useAppSelector(selectInsufficientBalance);
+
+		return (
+			<WalletBalance
+				onClick={hasWalletBalance ? onBalanceClick : undefined}
+				insufficientBalance={isBase ? false : insufficientBalance}
+				data-testid="wallet-balance"
+			>
+				{hasWalletBalance ? formatCurrency(currencyKey!, walletBalance!) : NO_VALUE}
+			</WalletBalance>
 		);
 	}
 );

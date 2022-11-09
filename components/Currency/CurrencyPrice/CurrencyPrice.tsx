@@ -19,6 +19,7 @@ type CurrencyPriceProps = {
 	change?: number;
 	conversionRate?: WeiSource | null;
 	formatOptions?: FormatCurrencyOptions;
+	truncate?: boolean;
 };
 
 export const CurrencyPrice: FC<CurrencyPriceProps> = ({
@@ -29,6 +30,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 	conversionRate,
 	showCurrencyKey,
 	formatOptions,
+	truncate = false,
 	...rest
 }) => {
 	const cleanPrice = useMemo(() => {
@@ -47,6 +49,9 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 		}
 	}, [conversionRate]);
 
+	if (truncate && price > 1e6) {
+		formatOptions = { ...formatOptions, truncation: { divisor: 1e6, unit: 'M' } };
+	}
 	return (
 		<Container {...rest}>
 			<Price className="price">

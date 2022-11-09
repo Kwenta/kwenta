@@ -102,14 +102,14 @@ export type FuturesOpenInterest = {
 
 export type MarginTransfer = {
 	timestamp: number;
-	market: string;
 	account: string;
 	size: Wei;
 	txHash: string;
 	action: string;
 	amount: string;
 	isPositive: boolean;
-	asset: FuturesMarketAsset;
+	market?: string;
+	asset?: FuturesMarketAsset;
 };
 
 export type PositionHistory = {

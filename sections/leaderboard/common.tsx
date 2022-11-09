@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 export type Tier = 'gold' | 'silver' | 'bronze' | null;
+export type CompetitionRound = '1' | '2' | null;
 
 export const getMedal = (position: number) => {
 	switch (position) {

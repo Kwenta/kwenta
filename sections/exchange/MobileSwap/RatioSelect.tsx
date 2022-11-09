@@ -1,13 +1,23 @@
-import React from 'react';
+import { FC, useCallback } from 'react';
+import { setRatio } from 'state/exchange/actions';
+import { selectQuoteBalanceWei } from 'state/exchange/selectors';
+import type { SwapRatio } from 'state/exchange/types';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import styled, { css } from 'styled-components';
-
-import { useExchangeContext } from 'contexts/ExchangeContext';
-import type { SwapRatio } from 'hooks/useExchange';
 
 const RATIOS: SwapRatio[] = [25, 50, 75, 100];
 
-const RatioSelect: React.FC = () => {
-	const { quoteCurrencyBalance, ratio, onRatioChange } = useExchangeContext();
+const RatioSelect: FC = () => {
+	const ratio = useAppSelector(({ exchange }) => exchange.ratio);
+	const dispatch = useAppDispatch();
+	const quoteBalance = useAppSelector(selectQuoteBalanceWei);
+
+	const onRatioChange = useCallback(
+		(ratio: SwapRatio) => {
+			dispatch(setRatio(ratio));
+		},
+		[dispatch]
+	);
 
 	return (
 		<RatioSelectContainer>
@@ -16,7 +26,7 @@ const RatioSelect: React.FC = () => {
 					key={`ratio-${v}`}
 					$selected={ratio === v}
 					onClick={() => onRatioChange(v)}
-					disabled={quoteCurrencyBalance?.eq(0) || !quoteCurrencyBalance}
+					disabled={quoteBalance.eq(0)}
 				>
 					{`${v}%`}
 				</RatioButton>
