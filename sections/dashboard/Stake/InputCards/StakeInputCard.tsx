@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 import Button from 'components/Button';
-import CustomNumericInput from 'components/Input/CustomNumericInput';
+import NumericInput from 'components/Input/NumericInput';
 import SegmentedControl from 'components/SegmentedControl';
 import { useStakingContext } from 'contexts/StakingContext';
 import { currentThemeState } from 'store/ui';
@@ -26,14 +26,13 @@ const StakeInputCard: FC = () => {
 	} = useStakingContext();
 
 	const [amount, setAmount] = useState('0');
-	const amountBN = _.isNil(amount) ? '0' : Number(wei(amount ?? 0).mul(1e18)).toString();
+	const amountBN = _.isNil(amount) ? '0' : wei(amount ?? '0').toString(0, true);
 
 	const { config: stakeKwentaConfig } = usePrepareContractWrite({
 		...stakingRewardsContract,
 		functionName: 'stake',
 		args: [amountBN],
 		enabled: kwentaBalance.gt(0) && wei(amount).gt(0),
-		staleTime: Infinity,
 	});
 
 	const { config: unstakeKwentaConfig } = usePrepareContractWrite({
@@ -41,7 +40,6 @@ const StakeInputCard: FC = () => {
 		functionName: 'unstake',
 		args: [amountBN],
 		enabled: stakedNonEscrowedBalance.gt(0) && wei(amount).gt(0),
-		staleTime: Infinity,
 	});
 
 	const currentTheme = useRecoilValue(currentThemeState);
@@ -87,7 +85,6 @@ const StakeInputCard: FC = () => {
 				</StakeInputHeader>
 				<StyledInput
 					value={amount}
-					suffix=""
 					onChange={(_, newValue) => {
 						setAmount(newValue);
 					}}
@@ -139,7 +136,7 @@ const StakeInputHeader = styled.div`
 
 const StakeInputContainer = styled.div``;
 
-const StyledInput = styled(CustomNumericInput)`
+const StyledInput = styled(NumericInput)`
 	font-family: ${(props) => props.theme.fonts.monoBold};
 `;
 
