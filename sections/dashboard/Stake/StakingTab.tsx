@@ -11,6 +11,7 @@ import media from 'styles/media';
 
 import { KwentaLabel, StakingCard } from './common';
 import StakeInputCard from './InputCards/StakeInputCard';
+import { truncateNumbers } from 'utils/formatters/number';
 
 const StakingTab = () => {
 	const { t } = useTranslation();
@@ -27,11 +28,11 @@ const StakingTab = () => {
 				<CardGrid>
 					<div>
 						<div className="title">{t('dashboard.stake.tabs.staking.claimable-rewards')}</div>
-						<KwentaLabel>{Number(claimableBalance).toFixed(2)}</KwentaLabel>
+						<KwentaLabel>{truncateNumbers(claimableBalance, 2)}</KwentaLabel>
 					</div>
 					<div>
 						<div className="title">{t('dashboard.stake.tabs.staking.annual-percentage-yield')}</div>
-						<div className="value">{Number(apy).toFixed(2)}%</div>
+						<div className="value">{truncateNumbers(apy, 2)}%</div>
 					</div>
 				</CardGrid>
 				<Button

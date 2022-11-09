@@ -269,26 +269,6 @@ const useStakingData = () => {
 		staleTime: Infinity,
 	});
 
-	// const SpotFeeQuery = useGetSpotFeeForAccount(walletAddress!);
-	// const spotFeePaid = useMemo(() => {
-	// 	const t = SpotFeeQuery.data?.synthExchanges ?? [];
-
-	// 	return t
-	// 		.map((trade: any) => Number(trade.feesInUSD))
-	// 		.reduce((acc: number, curr: number) => acc + curr, 0);
-	// }, [SpotFeeQuery.data]);
-
-	// const FuturesFeeQuery = useGetFuturesFeeForAccount(walletAddress!);
-	// const futuresFeePaid = useMemo(() => {
-	// 	const t = FuturesFeeQuery.data ?? [];
-
-	// 	return t
-	// 		.map((trade: any) => Number(trade.feesPaid) / 1e18)
-	// 		.reduce((acc: number, curr: number) => acc + curr, 0);
-	// }, [FuturesFeeQuery.data]);
-
-	// const feePaid = useMemo(() => spotFeePaid + futuresFeePaid, [futuresFeePaid, spotFeePaid]);
-
 	return {
 		epochPeriod,
 		data,
