@@ -4,13 +4,10 @@ import { ethers } from 'ethers';
 import { keyBy } from 'lodash';
 import { useCallback, useEffect, useMemo } from 'react';
 import { sdk } from 'state/config';
-import { setExchangeRates } from 'state/exchange/actions';
 import { useAppDispatch } from 'state/hooks';
 import { resetNetwork, setSigner } from 'state/wallet/actions';
 import { createContainer } from 'unstated-next';
 import { chain, useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
-
-import { Rates } from 'queries/rates/types';
 
 import { generateExplorerFunctions, getBaseUrl } from './blockExplorer';
 import { wagmiClient } from './config';
@@ -70,18 +67,6 @@ const useConnector = () => {
 	useEffect(() => {
 		dispatch(setSigner(signer));
 	}, [signer, dispatch]);
-
-	useEffect(() => {
-		const ratesListener = (exchangeRates: Rates) => {
-			dispatch(setExchangeRates(exchangeRates));
-		};
-
-		sdk.events.on('exchangeRates_updated', ratesListener);
-
-		return () => {
-			sdk.events.removeListener('exchangeRates_updated', ratesListener);
-		};
-	}, [dispatch]);
 
 	const [synthsMap, tokensMap] = useMemo(() => {
 		if (defaultSynthetixjs == null) return [{}, {}];

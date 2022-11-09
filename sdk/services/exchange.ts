@@ -73,6 +73,14 @@ export default class ExchangeService {
 		}, 15000);
 	}
 
+	public onRatesUpdated(listener: (exchangeRates: Rates) => void) {
+		return this.sdk.events.on('exchangeRates_updated', listener);
+	}
+
+	public removeRatesListeners() {
+		this.sdk.events.removeAllListeners('exchangeRates_updated');
+	}
+
 	private get isL2() {
 		return [10, 420].includes(this.sdk.networkId);
 	}
@@ -430,7 +438,7 @@ export default class ExchangeService {
 			ethers.utils.formatBytes32String(currencyKey)
 		);
 
-		return Number(numEntries.toString()) ?? 0;
+		return numEntries ? Number(numEntries.toString()) : 0;
 	}
 
 	public async getExchangeRates() {

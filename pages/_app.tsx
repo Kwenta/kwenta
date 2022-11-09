@@ -18,6 +18,7 @@ import { chain, WagmiConfig } from 'wagmi';
 
 import Connector from 'containers/Connector';
 import { chains, wagmiClient } from 'containers/Connector/config';
+import AppData from 'sections/shared/components/AppData';
 import Layout from 'sections/shared/Layout';
 import SystemStatus from 'sections/shared/SystemStatus';
 import { currentThemeState } from 'store/ui';
@@ -129,7 +130,9 @@ const App: FC<AppProps> = (props) => {
 					<QueryClientProvider client={new QueryClient()}>
 						<WagmiConfig client={wagmiClient}>
 							<WithAppContainers>
-								<InnerApp {...props} />
+								<AppData>
+									<InnerApp {...props} />
+								</AppData>
 							</WithAppContainers>
 						</WagmiConfig>
 					</QueryClientProvider>
