@@ -1,12 +1,10 @@
-import Wei, { wei } from '@synthetixio/wei';
+import Wei from '@synthetixio/wei';
 import { FC, useMemo, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
 import Card from 'components/Card';
-import Connector from 'containers/Connector';
 import { FlexDivRowCentered } from 'styles/common';
-import { zeroBN } from 'utils/formatters/number';
 
 import { Side } from '../types';
 import CurrencyCardInput from './CurrencyCardInput';
@@ -14,14 +12,14 @@ import CurrencyCardSelector from './CurrencyCardSelector';
 
 type CurrencyCardProps = {
 	side: Side;
-	currencyKey: string | null;
-	currencyName: string | null;
+	currencyKey?: string;
+	currencyName?: string;
 	amount: string;
 	onAmountChange: (value: string) => void;
-	walletBalance: Wei | null;
+	walletBalance?: Wei | null;
 	onBalanceClick: () => void;
 	onCurrencySelect?: () => void;
-	priceRate: Wei | number | null;
+	priceRate?: Wei | number | null;
 	className?: string;
 	label: string;
 	disableInput?: boolean;
@@ -49,7 +47,6 @@ const CurrencyCard: FC<CurrencyCardProps> = memo(
 		...rest
 	}) => {
 		const { t } = useTranslation();
-		const { synthsMap } = Connector.useContainer();
 
 		const isBase = useMemo(() => side === 'base', [side]);
 
@@ -58,22 +55,13 @@ const CurrencyCard: FC<CurrencyCardProps> = memo(
 			currencyKey,
 		]);
 
-		const amountBN = useMemo(() => (amount === '' ? zeroBN : wei(amount)), [amount]);
-
-		const insufficientBalance = useMemo(
-			() => (!isBase && hasWalletBalance ? amountBN.gt(walletBalance!) : false),
-			[isBase, hasWalletBalance, amountBN, walletBalance]
-		);
-
-		const hasCurrencySelectCallback = onCurrencySelect != null;
+		const hasCurrencySelectCallback = !!onCurrencySelect;
 
 		const tokenName = useMemo(() => {
-			return currencyKey && synthsMap[currencyKey]
-				? t('common.currency.synthetic-currency-name', {
-						currencyName,
-				  })
+			return currencyKey && currencyKey[0] === 's'
+				? t('common.currency.synthetic-currency-name', { currencyName })
 				: currencyName || t('exchange.currency-card.synth-name');
-		}, [currencyKey, currencyName, t, synthsMap]);
+		}, [currencyKey, currencyName, t]);
 
 		return (
 			<CardContainer>
@@ -102,7 +90,6 @@ const CurrencyCard: FC<CurrencyCardProps> = memo(
 
 							<CurrencyCardSelector
 								tokenName={tokenName}
-								insufficientBalance={insufficientBalance}
 								disableInput={disableInput}
 								onBalanceClick={onBalanceClick}
 								onCurrencySelect={onCurrencySelect}
@@ -110,6 +97,7 @@ const CurrencyCard: FC<CurrencyCardProps> = memo(
 								hasWalletBalance={hasWalletBalance}
 								currencyKey={currencyKey}
 								hasCurrencySelectCallback={hasCurrencySelectCallback}
+								isBase={isBase}
 							/>
 						</CurrencyContainer>
 					</StyledCardBody>

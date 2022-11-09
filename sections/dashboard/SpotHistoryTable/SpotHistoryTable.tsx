@@ -13,8 +13,8 @@ import Table, { TableNoResults } from 'components/Table';
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
-import BlockExplorer from 'containers/BlockExplorer';
 import Connector from 'containers/Connector';
+import { blockExplorer } from 'containers/Connector/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetWalletTrades from 'queries/synths/useGetWalletTrades';
 import { ExternalLink } from 'styles/common';
@@ -32,7 +32,6 @@ type WalletTradesExchangeResult = Omit<SynthTradesExchangeResult, 'timestamp'> &
 const SpotHistoryTable: FC = () => {
 	const { t } = useTranslation();
 	const { network, walletAddress, synthsMap } = Connector.useContainer();
-	const { blockExplorerInstance } = BlockExplorer.useContainer();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const walletTradesQuery = useGetWalletTrades(walletAddress!);
 
@@ -182,9 +181,7 @@ const SpotHistoryTable: FC = () => {
 						id: 'link',
 						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) =>
 							network != null && cellProps.row.original.hash ? (
-								<StyledExternalLink
-									href={`${blockExplorerInstance?.txLink(cellProps.row.original.hash)}`}
-								>
+								<StyledExternalLink href={`${blockExplorer.txLink(cellProps.row.original.hash)}`}>
 									<StyledLinkIcon />
 								</StyledExternalLink>
 							) : (

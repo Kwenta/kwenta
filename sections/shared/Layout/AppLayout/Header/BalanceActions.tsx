@@ -3,18 +3,15 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { components } from 'react-select';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { selectSusdBalanceWei } from 'state/balances/selectors';
+import { useAppSelector } from 'state/hooks';
 import styled, { useTheme } from 'styled-components';
 
 import Button from 'components/Button';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Select from 'components/Select';
 import { FuturesAccountTypes, FuturesPosition } from 'queries/futures/types';
-import {
-	positionsState,
-	balancesState,
-	portfolioState,
-	futuresAccountTypeState,
-} from 'store/futures';
+import { positionsState, portfolioState, futuresAccountTypeState } from 'store/futures';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { zeroBN, formatDollars } from 'utils/formatters/number';
 import { getMarketName, MarketKeyByAsset } from 'utils/futures';
@@ -35,7 +32,7 @@ const BalanceActions: FC = () => {
 	const positions = useRecoilValue(positionsState);
 	const setFuturesAccountType = useSetRecoilState(futuresAccountTypeState);
 	const portfolio = useRecoilValue(portfolioState);
-	const { susdWalletBalance } = useRecoilValue(balancesState);
+	const susdWalletBalance = useAppSelector(selectSusdBalanceWei);
 
 	const setMarketConfig = useCallback(
 		(position: FuturesPosition, accountType: FuturesAccountTypes): ReactSelectOptionProps => {

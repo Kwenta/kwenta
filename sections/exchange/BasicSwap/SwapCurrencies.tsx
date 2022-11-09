@@ -1,13 +1,31 @@
-import { memo } from 'react';
+import { useRouter } from 'next/router';
+import { memo, useCallback } from 'react';
+import { swapCurrencies } from 'state/exchange/reducer';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import ArrowIcon from 'assets/svg/app/arrow-down.svg';
+import ROUTES from 'constants/routes';
 import { zIndex } from 'constants/ui';
-import { useExchangeContext } from 'contexts/ExchangeContext';
 import { SwapCurrenciesButton } from 'styles/common';
 
 const SwapCurrencies = memo(() => {
-	const { handleCurrencySwap } = useExchangeContext();
+	const dispatch = useAppDispatch();
+	const router = useRouter();
+	const { quoteCurrencyKey, baseCurrencyKey } = useAppSelector(({ exchange }) => ({
+		quoteCurrencyKey: exchange.quoteCurrencyKey,
+		baseCurrencyKey: exchange.baseCurrencyKey,
+	}));
+
+	const handleCurrencySwap = useCallback(() => {
+		dispatch(swapCurrencies());
+
+		if (!!quoteCurrencyKey && !!baseCurrencyKey) {
+			router.replace(ROUTES.Exchange.MarketPair(quoteCurrencyKey, baseCurrencyKey), undefined, {
+				shallow: true,
+			});
+		}
+	}, [quoteCurrencyKey, baseCurrencyKey, router, dispatch]);
 
 	return (
 		<SwapCurrenciesButtonContainer>

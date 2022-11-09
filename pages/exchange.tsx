@@ -1,24 +1,52 @@
-import { FC } from 'react';
+import { useRouter } from 'next/router';
+import { FC, useEffect } from 'react';
+import { resetCurrencies } from 'state/exchange/actions';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 
-import { ExchangeContext } from 'contexts/ExchangeContext';
-import useExchange from 'hooks/useExchange';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import NotificationContainer from 'constants/NotificationContainer';
+import Connector from 'containers/Connector';
 import ExchangeContent from 'sections/exchange/ExchangeContent';
 import ExchangeHead from 'sections/exchange/ExchangeHead';
-import AppLayout from 'sections/shared/Layout/AppLayout';
+import Header from 'sections/shared/Layout/AppLayout/Header';
+import { FullScreenContainer, MobileScreenContainer } from 'styles/common';
 
 type ExchangeComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
 const Exchange: ExchangeComponent = () => {
-	const exchangeData = useExchange();
+	const { network } = Connector.useContainer();
+	const router = useRouter();
+	const dispatch = useAppDispatch();
+	const walletAddress = useAppSelector(({ wallet }) => wallet.walletAddress);
+
+	useEffect(() => {
+		const quoteCurrencyFromQuery = (router.query.quote as string | undefined) ?? 'sUSD';
+		const baseCurrencyFromQuery = router.query.base as string | undefined;
+
+		if (!!walletAddress && (!!quoteCurrencyFromQuery || !!baseCurrencyFromQuery)) {
+			dispatch(resetCurrencies({ quoteCurrencyFromQuery, baseCurrencyFromQuery }));
+		}
+	}, [router.query, network.id, dispatch, walletAddress]);
 
 	return (
-		<ExchangeContext.Provider value={exchangeData}>
+		<>
 			<ExchangeHead />
-			<ExchangeContent />
-		</ExchangeContext.Provider>
+			<DesktopOnlyView>
+				<FullScreenContainer>
+					<Header />
+					<ExchangeContent />
+					<NotificationContainer />
+				</FullScreenContainer>
+			</DesktopOnlyView>
+			<MobileOrTabletView>
+				<MobileScreenContainer>
+					<ExchangeContent />
+				</MobileScreenContainer>
+			</MobileOrTabletView>
+		</>
 	);
 };
 
-Exchange.getLayout = (page) => <AppLayout>{page}</AppLayout>;
+Exchange.getLayout = (page) => <>{page}</>;
 
 export default Exchange;

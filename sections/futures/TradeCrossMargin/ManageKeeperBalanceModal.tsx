@@ -10,8 +10,8 @@ import Loader from 'components/Loader';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
 import Connector from 'containers/Connector';
-import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
+import { monitorTransaction } from 'contexts/RelayerContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import { crossMarginAccountOverviewState, openOrdersState } from 'store/futures';
 import { isUserDeniedError } from 'utils/formatters/error';
@@ -38,7 +38,6 @@ const DEPOSIT_ENABLED = false;
 export default function ManageKeeperBalanceModal({ onDismiss, defaultType }: Props) {
 	const { t } = useTranslation();
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
-	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { provider, walletAddress } = Connector.useContainer();
 	const { refetchUntilUpdate } = useRefetchContext();
 
@@ -90,15 +89,7 @@ export default function ManageKeeperBalanceModal({ onDismiss, defaultType }: Pro
 			}
 			logError(err);
 		}
-	}, [
-		keeperEthBal,
-		crossMarginAccountContract,
-		amount,
-		t,
-		refetchUntilUpdate,
-		onDismiss,
-		monitorTransaction,
-	]);
+	}, [keeperEthBal, crossMarginAccountContract, amount, t, refetchUntilUpdate, onDismiss]);
 
 	const onDepositKeeperDeposit = useCallback(async () => {
 		// if (!crossMarginAccountContract || !signer) return;
