@@ -1,46 +1,64 @@
 import { FC, memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
-
-import { useExchangeContext } from 'contexts/ExchangeContext';
-import { baseCurrencyKeyState, baseCurrencyAmountState } from 'store/exchange';
+import { setMaxBaseBalance } from 'state/exchange/actions';
+import { setBaseAmount, setOpenModal } from 'state/exchange/reducer';
+import {
+	selectBaseBalanceWei,
+	selectBaseCurrencyName,
+	selectBasePriceRateWei,
+	selectSlippagePercentWei,
+} from 'state/exchange/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import CurrencyCard from '../CurrencyCard';
 
 const BaseCurrencyCard: FC = memo(() => {
 	const { t } = useTranslation();
-	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
-	const baseCurrencyAmount = useRecoilValue(baseCurrencyAmountState);
 
-	const {
-		txProvider,
-		baseCurrencyBalance,
-		setOpenModal,
-		slippagePercent,
-		basePriceRate,
-		allTokensMap,
-		oneInchQuoteQuery,
-		onBaseCurrencyAmountChange,
-		onBaseBalanceClick,
-	} = useExchangeContext();
+	const { baseCurrencyKey, baseAmount, txProvider, oneInchQuoteLoading } = useAppSelector(
+		({ exchange }) => ({
+			baseCurrencyKey: exchange.baseCurrencyKey,
+			baseAmount: exchange.baseAmount,
+			txProvider: exchange.txProvider,
+			oneInchQuoteLoading: exchange.oneInchQuoteLoading,
+		})
+	);
 
-	const openBaseModal = useCallback(() => setOpenModal('base-select'), [setOpenModal]);
+	const dispatch = useAppDispatch();
+
+	const baseBalance = useAppSelector(selectBaseBalanceWei);
+	const basePriceRate = useAppSelector(selectBasePriceRateWei);
+	const baseCurrencyName = useAppSelector(selectBaseCurrencyName);
+	const slippagePercent = useAppSelector(selectSlippagePercentWei);
+
+	const onBaseCurrencyAmountChange = useCallback(
+		(value: string) => {
+			dispatch(setBaseAmount(value));
+		},
+		[dispatch]
+	);
+
+	const onBaseBalanceClick = useCallback(() => {
+		dispatch(setMaxBaseBalance());
+	}, [dispatch]);
+
+	const openBaseModal = useCallback(() => dispatch(setOpenModal('base-select')), [dispatch]);
 
 	return (
 		<CurrencyCard
 			side="base"
 			currencyKey={baseCurrencyKey}
-			currencyName={baseCurrencyKey ? allTokensMap[baseCurrencyKey]?.name : null}
+			currencyName={baseCurrencyName}
 			disabled={txProvider !== 'synthetix'}
-			amount={baseCurrencyAmount}
+			amount={baseAmount}
 			onAmountChange={onBaseCurrencyAmountChange}
-			walletBalance={baseCurrencyBalance}
+			walletBalance={baseBalance}
 			onBalanceClick={onBaseBalanceClick}
 			onCurrencySelect={openBaseModal}
 			priceRate={basePriceRate}
 			label={t('exchange.common.into')}
 			slippagePercent={slippagePercent}
-			isLoading={txProvider === '1inch' && oneInchQuoteQuery.isFetching}
+			isLoading={txProvider === '1inch' && oneInchQuoteLoading}
 		/>
 	);
 });

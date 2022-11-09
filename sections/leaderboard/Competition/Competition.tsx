@@ -8,32 +8,33 @@ import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import Connector from 'containers/Connector';
+import useENSs from 'hooks/useENSs';
 import useGetFile from 'queries/files/useGetFile';
 import { AccountStat } from 'queries/futures/types';
 import { formatPercent } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';
 
-import { getMedal, PIN, StyledTrader, Tier } from '../common';
-import { COMPETITION_DATA_LOCATION, MOBILE_COMPETITION_START } from './constants';
+import { CompetitionRound, getMedal, PIN, StyledTrader, Tier } from '../common';
+import { getCompetitionDataLocation } from './constants';
 
 type CompetitionProps = {
+	round: CompetitionRound;
 	activeTier: Tier;
-	ensInfo: Record<string, string>;
 	compact?: boolean;
 	onClickTrader: (trader: string) => void;
 	searchTerm?: string | undefined;
 };
 
 const Competition: FC<CompetitionProps> = ({
+	round,
 	activeTier,
-	ensInfo,
 	compact,
 	onClickTrader,
 	searchTerm,
 }: CompetitionProps) => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
-	const competitionQuery = useGetFile(COMPETITION_DATA_LOCATION);
+	const competitionQuery = useGetFile(getCompetitionDataLocation(round));
 
 	const walletTier = useMemo(() => {
 		const competitionData = competitionQuery?.data ?? [];
@@ -42,6 +43,17 @@ const Competition: FC<CompetitionProps> = ({
 		);
 		return walletStat ? walletStat.tier : null;
 	}, [walletAddress, competitionQuery]);
+
+	const traders = useMemo(
+		() =>
+			competitionQuery?.data?.map((stat: AccountStat) => {
+				return stat.account;
+			}) ?? [],
+		[competitionQuery?.data]
+	);
+
+	const ensInfoQuery = useENSs(traders);
+	const ensInfo = useMemo(() => ensInfoQuery.data ?? {}, [ensInfoQuery]);
 
 	let data = useMemo(() => {
 		const competitionData = competitionQuery?.data ?? [];
@@ -56,6 +68,7 @@ const Competition: FC<CompetitionProps> = ({
 					rankText: trader.rank.toString(),
 					traderShort: truncateAddress(trader.account),
 					pnl: wei(trader.pnl),
+					pnlNumber: wei(trader.pnl).toNumber(),
 					pnlPct: `(${formatPercent(trader?.pnl_pct)})`,
 					totalVolume: trader.volume,
 					totalTrades: trader.trades,
@@ -81,11 +94,6 @@ const Competition: FC<CompetitionProps> = ({
 		return [...pinRow, ...cleanCompetitionData];
 	}, [competitionQuery, ensInfo, searchTerm, activeTier, walletAddress, walletTier, compact]);
 
-	const noResultsMessage =
-		Date.now() > MOBILE_COMPETITION_START.getTime()
-			? t('leaderboard.competition.table.started')
-			: t('leaderboard.competition.table.starting-soon');
-
 	return (
 		<>
 			<DesktopOnlyView>
@@ -97,7 +105,9 @@ const Competition: FC<CompetitionProps> = ({
 					isLoading={competitionQuery.isLoading}
 					data={data}
 					hiddenColumns={!compact ? undefined : ['totalTrades', 'liquidations', 'totalVolume']}
-					noResultsMessage={<TableNoResults>{noResultsMessage}</TableNoResults>}
+					noResultsMessage={
+						<TableNoResults>{t('leaderboard.competition.table.no-results')}</TableNoResults>
+					}
 					columns={[
 						{
 							Header: (
@@ -170,7 +180,7 @@ const Competition: FC<CompetitionProps> = ({
 								},
 								{
 									Header: <TableHeader>{t('leaderboard.leaderboard.table.pnl')}</TableHeader>,
-									accessor: 'pnl',
+									accessor: 'pnlNumber',
 									sortType: 'basic',
 									Cell: (cellProps: CellProps<any>) => (
 										<PnlContainer direction={'column'}>

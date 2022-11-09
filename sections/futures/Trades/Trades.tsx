@@ -9,7 +9,7 @@ import Card from 'components/Card';
 import Table, { TableNoResults } from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { ETH_UNIT } from 'constants/network';
-import BlockExplorer from 'containers/BlockExplorer';
+import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesTrade } from 'queries/futures/types';
@@ -29,7 +29,6 @@ type TradesProps = {
 
 const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAsset }) => {
 	const { t } = useTranslation();
-	const { blockExplorerInstance } = BlockExplorer.useContainer();
 	const { switchToL2 } = useNetworkSwitcher();
 
 	const isL2 = useIsL2();
@@ -155,7 +154,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 					{
 						accessor: 'txnHash',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<StyledExternalLink href={blockExplorerInstance?.txLink(cellProps.value)}>
+							<StyledExternalLink href={blockExplorer.txLink(cellProps.value)}>
 								<StyledLinkIcon />
 							</StyledExternalLink>
 						),

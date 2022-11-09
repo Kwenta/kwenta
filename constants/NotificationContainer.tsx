@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { createPortal } from 'react-dom';
 import { ToastContainer } from 'react-toastify';
 import styled from 'styled-components';
 import 'react-toastify/dist/ReactToastify.css';
 
-const NotificationContainer = () => {
+const NotificationContainer = memo(() => {
 	const [mounted, setMounted] = useState(false);
 
 	useEffect(() => {
@@ -18,7 +18,7 @@ const NotificationContainer = () => {
 				document.body
 		  )
 		: null;
-};
+});
 
 const StyledToastContainer = styled(ToastContainer)`
 	.Toastify__toast-container {
