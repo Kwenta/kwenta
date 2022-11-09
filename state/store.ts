@@ -8,14 +8,19 @@ import { sdk } from './config';
 import exchangeReducer from './exchange/reducer';
 import walletReducer from './wallet/reducer';
 
+// TODO: Consider creating an env var for this.
+const LOG_REDUX = true;
+
 const store = configureStore({
 	reducer: {
 		wallet: walletReducer,
 		balances: balancesReducer,
 		exchange: exchangeReducer,
 	},
-	middleware: (getDefaultMiddleware) =>
-		getDefaultMiddleware({ thunk: { extraArgument: { sdk } } }).concat(logger),
+	middleware: (getDefaultMiddleware) => {
+		const baseMiddleware = getDefaultMiddleware({ thunk: { extraArgument: { sdk } } });
+		return LOG_REDUX ? baseMiddleware.concat(logger) : baseMiddleware;
+	},
 });
 
 export type RootState = ReturnType<typeof store.getState>;
