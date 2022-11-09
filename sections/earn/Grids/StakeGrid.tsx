@@ -11,7 +11,6 @@ import {
 	StyledButton,
 	DollarValue,
 	ColumnInner,
-	GridHeading,
 	InfoGridContainer,
 	Column,
 	SplitColumn,
@@ -25,7 +24,6 @@ const StakeGrid = () => {
 
 	return (
 		<>
-			<GridHeading variant="h4">OVM SNX Stakers</GridHeading>
 			<StyledGridContainer>
 				<Column>
 					<ColumnInner>
@@ -39,7 +37,9 @@ const StakeGrid = () => {
 							<Description>Stake SNX on Optimism to earn $KWENTA.</Description>
 						</div>
 						<div>
-							<StyledButton size="sm">Add Liquidity ↗</StyledButton>
+							<StyledButton size="sm" variant="flat">
+								Add Liquidity
+							</StyledButton>
 						</div>
 					</ColumnInner>
 				</Column>

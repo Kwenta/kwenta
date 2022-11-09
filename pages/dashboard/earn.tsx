@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import Button from 'components/Button';
 import Text from 'components/Text';
 import DashboardLayout from 'sections/dashboard/DashboardLayout';
-import PoolGrid from 'sections/earn/Grids/PoolGrid';
 import StakeGrid from 'sections/earn/Grids/StakeGrid';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { PageContent, FullHeightContainer } from 'styles/common';
@@ -28,7 +27,6 @@ const EarnPage: EarnPageProps = () => {
 								Earn KWENTA by staking SNX or adding liquidity to the sUSD Curve pool on Optimism.
 							</StyledBody>
 							<StakeGrid />
-							<PoolGrid />
 						</GridsContainer>
 						<GitHashID />
 					</MainContainer>
@@ -41,8 +39,11 @@ const EarnPage: EarnPageProps = () => {
 EarnPage.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
 const PageHeading = styled(Text.Heading).attrs({ variant: 'h4' })`
+	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 21px;
 	margin-bottom: 2px;
+	text-transform: uppercase;
+	font-variant: all-small-caps;
 `;
 
 const StyledBody = styled(Text.Body).attrs({ size: 'large' })`
@@ -62,7 +63,6 @@ const MainContainer = styled.div`
 	justify-content: space-between;
 	width: 100%;
 	max-width: 1440px;
-	margin: 120px auto 0;
 `;
 
 const GridsContainer = styled.div`
