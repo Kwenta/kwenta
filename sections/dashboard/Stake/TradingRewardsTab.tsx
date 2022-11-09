@@ -110,16 +110,6 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({ period = 1 }: Trading
 				<CardGrid>
 					<div>
 						<div className="title">
-							{t('dashboard.stake.tabs.trading-rewards.claimable-rewards-epoch', {
-								EpochPeriod: period,
-							})}
-						</div>
-						<KwentaLabel>
-							{truncateNumbers(Number(currentWeeklyReward / 1e18) * tradingRewardsRatio, 4)}
-						</KwentaLabel>
-					</div>
-					<div>
-						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.claimable-rewards-all')}
 						</div>
 						<KwentaLabel>
@@ -128,15 +118,6 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({ period = 1 }: Trading
 					</div>
 				</CardGrid>
 				<StyledFlexDivRow>
-					<Button
-						fullWidth
-						variant="flat"
-						size="sm"
-						disabled={tradingRewardsRatio === 0 || isClaimed}
-						onClick={() => claim?.()}
-					>
-						{t('dashboard.stake.tabs.trading-rewards.claim-epoch', { EpochPeriod: period })}
-					</Button>
 					<Button
 						fullWidth
 						variant="flat"
@@ -155,20 +136,6 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({ period = 1 }: Trading
 							{t('dashboard.stake.tabs.trading-rewards.fees-paid', { EpochPeriod: period })}
 						</div>
 						<div className="value">{truncateNumbers(feePaid ?? 0, 4)}</div>
-					</div>
-					<div>
-						<div className="title">
-							{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}
-						</div>
-						<KwentaLabel>
-							{truncateNumbers(Number(currentWeeklyReward / 1e18) * tradingRewardsRatio, 4)}
-						</KwentaLabel>
-					</div>
-					<div>
-						<div className="title">
-							{t('dashboard.stake.tabs.trading-rewards.estimated-fee-share')}
-						</div>
-						<div className="value">{truncateNumbers(tradingRewardsRatio * 100, 4)}%</div>
 					</div>
 					<div>
 						<div className="title">
