@@ -80,6 +80,7 @@ const NavSpan = styled.span`
 	${media.lessThan('md')`
 		margin-left: 5px;
 		color: ${(props) => props.theme.colors.common.primaryWhite};
+		text-shadow: 0px 1px 2px ${(props) => props.theme.colors.transparentBlack};
 	`}
 `;
 
@@ -116,6 +117,7 @@ const FuturesBannerContainer = styled.div`
 		padding: 22px 10px;
 		border-radius: 0px;
 		gap: 5px;
+		text-shadow: 0px 1px 2px ${(props) => props.theme.colors.transparentBlack};
 	`}
 `;
 
