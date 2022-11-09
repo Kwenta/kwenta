@@ -1,16 +1,18 @@
 import Head from 'next/head';
-import React from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
 import Text from 'components/Text';
+import DashboardLayout from 'sections/dashboard/DashboardLayout';
 import PoolGrid from 'sections/earn/Grids/PoolGrid';
 import StakeGrid from 'sections/earn/Grids/StakeGrid';
-import Rewards from 'sections/earn/Rewards/Rewards';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { PageContent, FullHeightContainer } from 'styles/common';
 
-const Earn: React.FC = () => {
+type EarnPageProps = FC & { getLayout: (page: HTMLElement) => JSX.Element };
+
+const EarnPage: EarnPageProps = () => {
 	return (
 		<>
 			<Head>
@@ -21,14 +23,13 @@ const Earn: React.FC = () => {
 					<MainContainer>
 						<EmptyColumn />
 						<GridsContainer>
-							<PageHeading variant="h4">Liquidity Mining Program</PageHeading>
-							<StyledBody size="large">
+							<PageHeading>Liquidity Mining Program</PageHeading>
+							<StyledBody>
 								Earn KWENTA by staking SNX or adding liquidity to the sUSD Curve pool on Optimism.
 							</StyledBody>
 							<StakeGrid />
 							<PoolGrid />
 						</GridsContainer>
-						<Rewards />
 						<GitHashID />
 					</MainContainer>
 				</FullHeightContainer>
@@ -37,12 +38,14 @@ const Earn: React.FC = () => {
 	);
 };
 
-const PageHeading = styled(Text.Heading)`
+EarnPage.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
+
+const PageHeading = styled(Text.Heading).attrs({ variant: 'h4' })`
 	font-size: 21px;
 	margin-bottom: 2px;
 `;
 
-const StyledBody = styled(Text.Body)`
+const StyledBody = styled(Text.Body).attrs({ size: 'large' })`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	margin-bottom: 40px;
 `;
@@ -70,4 +73,4 @@ const EmptyColumn = styled.div`
 	width: 174px;
 `;
 
-export default Earn;
+export default EarnPage;
