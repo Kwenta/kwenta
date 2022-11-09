@@ -8,7 +8,7 @@ import NumericInput from 'components/Input/NumericInput';
 import Loader from 'components/Loader';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { CapitalizedText, FlexDivCol, FlexDivRowCentered, numericValueCSS } from 'styles/common';
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 type CurrencyCardInputProps = {
 	label: string;
@@ -22,7 +22,7 @@ type CurrencyCardInputProps = {
 	disableInput: boolean;
 	slippagePercent?: Wei | null;
 	currencyKeySelected: boolean;
-	priceRate: Wei | number | null;
+	priceRate?: Wei | number | null;
 };
 
 const CurrencyCardInputLabel: FC<{ label: string }> = memo(({ label }) => {
@@ -55,18 +55,6 @@ const CurrencyCardInput: FC<CurrencyCardInputProps> = memo(
 		priceRate,
 	}) => {
 		const { t } = useTranslation();
-		const { selectPriceCurrencyRate, getPriceAtCurrentRate } = useSelectedPriceCurrency();
-
-		const tradeAmount = useMemo(() => {
-			const amountBN = amount === '' ? zeroBN : wei(amount);
-			let current = priceRate ? amountBN.mul(priceRate) : null;
-
-			if (!!selectPriceCurrencyRate && !!current) {
-				current = getPriceAtCurrentRate(current);
-			}
-
-			return current;
-		}, [priceRate, selectPriceCurrencyRate, getPriceAtCurrentRate, amount]);
 
 		return (
 			<InputContainer>
@@ -87,11 +75,11 @@ const CurrencyCardInput: FC<CurrencyCardInputProps> = memo(
 						)}
 					</FlexDivRowCentered>
 					<FlexDivRowCentered>
-						<CurrencyAmountValue data-testid="amount-value">
-							{currencyKeySelected && tradeAmount != null
-								? formatCurrency('sUSD', tradeAmount, { sign: '$' })
-								: null}
-						</CurrencyAmountValue>
+						<CurrencyCardInputAmountValue
+							amount={amount}
+							currencyKeySelected={currencyKeySelected}
+							priceRate={priceRate}
+						/>
 						<Slippage>
 							{!isLoading &&
 								slippagePercent?.lt(0) &&
@@ -104,6 +92,27 @@ const CurrencyCardInput: FC<CurrencyCardInputProps> = memo(
 		);
 	}
 );
+
+const CurrencyCardInputAmountValue = memo(({ currencyKeySelected, amount, priceRate }: any) => {
+	const { selectPriceCurrencyRate, getPriceAtCurrentRate } = useSelectedPriceCurrency();
+
+	const tradeAmount = useMemo(() => {
+		const amountBN = amount === '' ? zeroBN : wei(amount);
+		let current = priceRate ? amountBN.mul(priceRate) : null;
+
+		if (!!selectPriceCurrencyRate && !!current) {
+			current = getPriceAtCurrentRate(current);
+		}
+
+		return current;
+	}, [priceRate, selectPriceCurrencyRate, getPriceAtCurrentRate, amount]);
+
+	return (
+		<CurrencyAmountValue data-testid="amount-value">
+			{currencyKeySelected && !!tradeAmount ? formatDollars(tradeAmount, { sign: '$' }) : null}
+		</CurrencyAmountValue>
+	);
+});
 
 const InputContainer = styled(FlexDivCol)`
 	row-gap: 21px;

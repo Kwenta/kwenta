@@ -13,9 +13,9 @@ import Loader from 'components/Loader';
 import Spacer from 'components/Spacer';
 import { NumberSpan } from 'components/Text/NumberLabel';
 import { DEFAULT_LEVERAGE } from 'constants/defaults';
-import TransactionNotifier from 'containers/TransactionNotifier';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { useRefetchContext } from 'contexts/RefetchContext';
+import { monitorTransaction } from 'contexts/RelayerContext';
 import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 import { ORDER_PREVIEW_ERRORS_I18N, previewErrorI18n } from 'queries/futures/constants';
 import {
@@ -44,7 +44,6 @@ type DepositMarginModalProps = {
 
 export default function EditLeverageModal({ onDismiss, editMode }: DepositMarginModalProps) {
 	const { t } = useTranslation();
-	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { handleRefetch, refetchUntilUpdate } = useRefetchContext();
 	const {
 		selectedLeverage,
@@ -159,7 +158,6 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 		setSubmitting,
 		resetTradeState,
 		t,
-		monitorTransaction,
 		setPreferredLeverage,
 		onLeverageChange,
 		submitCrossMarginOrder,

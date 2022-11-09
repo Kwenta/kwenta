@@ -1,9 +1,13 @@
-import useSynthetixQueries from '@synthetixio/queries';
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import orderBy from 'lodash/orderBy';
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { getSynthsListForNetwork } from 'sdk/data/synths';
+import { selectSynthBalancesLoading } from 'state/balances/selectors';
+import { useAppSelector } from 'state/hooks';
+import { FetchStatus } from 'state/types';
 import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';
@@ -14,10 +18,9 @@ import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
 import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
-import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
-import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
 import { FlexDivCentered } from 'styles/common';
 import media from 'styles/media';
+import { toWei } from 'utils/formatters/number';
 
 import { RowsHeader, CenteredModal } from '../common';
 import CurrencyRow from './CurrencyRow';
@@ -38,7 +41,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	onSelect,
 }) => {
 	const { t } = useTranslation();
-	const { defaultSynthetixjs: synthetixjs, network, walletAddress } = Connector.useContainer();
+	const { network } = Connector.useContainer();
 
 	const [assetSearch, setAssetSearch] = useState('');
 	const [synthCategory, setSynthCategory] = useState<string | null>(null);
@@ -47,20 +50,25 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	// Only available on Optimism mainnet
 	const oneInchEnabled = network.id === 10;
 
-	const { useSynthsBalancesQuery } = useSynthetixQueries();
+	const allSynths = useMemo(() => getSynthsListForNetwork(network.id as NetworkId), [network.id]);
 
-	const allSynths = synthetixjs?.synths ?? [];
-	const synths =
-		synthsOverride != null
-			? allSynths.filter((synth) => synthsOverride.includes(synth.name as CurrencyKey))
-			: allSynths;
+	const synths = !!synthsOverride
+		? allSynths.filter((synth) => synthsOverride.includes(synth.name))
+		: allSynths;
 
-	const synthsWalletBalancesQuery = useSynthsBalancesQuery(walletAddress);
-	const synthBalances = synthsWalletBalancesQuery.data ?? null;
+	const { balancesMap, tokenList, tokenBalances, balancesStatus } = useAppSelector(
+		({ balances, exchange }) => ({
+			balancesMap: balances.balancesMap,
+			tokenList: exchange.tokenList,
+			tokenBalances: balances.tokenBalances,
+			balancesStatus: balances.status,
+		})
+	);
+
+	const synthBalancesLoading = useAppSelector(selectSynthBalancesLoading);
 
 	const categoryFilteredSynths = useMemo(
-		() =>
-			synthCategory != null ? synths.filter((synth) => synth.category === synthCategory) : synths,
+		() => (!!synthCategory ? synths.filter((synth) => synth.category === synthCategory) : synths),
 		[synths, synthCategory]
 	);
 
@@ -82,32 +90,21 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 
 	const synthsResults = useMemo(() => {
 		const synthsList = assetSearch ? searchFilteredSynths : categoryFilteredSynths;
-		if (synthsWalletBalancesQuery.isSuccess) {
-			return orderBy(
-				synthsList,
-				(synth) => {
-					const synthBalance = synthBalances?.balancesMap[synth.name as CurrencyKey];
-					return synthBalance != null ? synthBalance.usdBalance.toNumber() : 0;
-				},
-				'desc'
-			);
-		}
-		return synthsList;
-	}, [
-		assetSearch,
-		searchFilteredSynths,
-		categoryFilteredSynths,
-		synthsWalletBalancesQuery.isSuccess,
-		synthBalances,
-	]);
+		return orderBy(
+			synthsList,
+			(synth) => {
+				const synthBalance = balancesMap[synth.name as CurrencyKey];
+				return !!synthBalance ? Number(synthBalance.usdBalance) : 0;
+			},
+			'desc'
+		);
+	}, [assetSearch, searchFilteredSynths, categoryFilteredSynths, balancesMap]);
 
 	const synthKeys = useMemo(() => synthsResults.map((s) => s.name), [synthsResults]);
 
-	const oneInchQuery = useOneInchTokenList({ enabled: oneInchEnabled });
 	const oneInchTokenList = useMemo(() => {
-		if (!oneInchQuery.isSuccess || !oneInchQuery.data) return [];
-		return oneInchQuery.data.tokens.filter((i) => !synthKeys.includes(i.symbol as CurrencyKey));
-	}, [oneInchQuery.isSuccess, oneInchQuery.data, synthKeys]);
+		return tokenList.filter((i) => !synthKeys.includes(i.symbol));
+	}, [synthKeys, tokenList]);
 
 	const searchFilteredTokens = useDebouncedMemo(
 		() =>
@@ -120,17 +117,11 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 								symbol.toLowerCase().includes(assetSearchLC)
 							);
 						})
-						.map((t: any) => ({
-							...t,
-							isSynth: false,
-						})) || []
+						.map((t: any) => ({ ...t, isSynth: false }))
 				: oneInchTokenList,
 		[oneInchTokenList, assetSearch],
 		DEFAULT_SEARCH_DEBOUNCE_MS
 	);
-
-	const tokenBalancesQuery = useTokensBalancesQuery(searchFilteredTokens, walletAddress);
-	const tokenBalances = tokenBalancesQuery.data ?? null;
 
 	const coinGeckoTokenPricesQuery = useCoinGeckoTokenPricesQuery(
 		searchFilteredTokens.map((f) => f.address)
@@ -139,42 +130,35 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 
 	const oneInchTokensPaged = useMemo(() => {
 		if (!oneInchEnabled || (synthCategory && synthCategory !== 'crypto')) return [];
-		const ordered = tokenBalancesQuery.isSuccess
-			? orderBy(
-					searchFilteredTokens.map((token) => {
-						const tokenAddress =
-							token.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : token.address;
-						if (
-							coinGeckoPrices !== null &&
-							coinGeckoPrices[tokenAddress] &&
-							tokenBalances !== null
-						) {
-							const price = wei(coinGeckoPrices[tokenAddress].usd ?? 0);
-							const balance = tokenBalances[token.symbol as CurrencyKey]?.balance ?? wei(0);
-							const usdBalance = price.mul(balance);
+		const ordered =
+			balancesStatus === FetchStatus.Success
+				? orderBy(
+						searchFilteredTokens.map((token) => {
+							const tokenAddress =
+								token.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : token.address;
+							if (coinGeckoPrices?.[tokenAddress] && tokenBalances !== null) {
+								const price = wei(coinGeckoPrices[tokenAddress].usd ?? 0);
+								const balance = toWei(tokenBalances[token.symbol]?.balance);
+								const usdBalance = price.mul(balance);
 
-							return {
-								...token,
-								usdBalance,
-								balance,
-							};
-						}
-						return token;
-					}),
-					({ usdBalance }) => (usdBalance ? usdBalance.toNumber() : 0),
-					'desc'
-			  )
-			: searchFilteredTokens;
+								return { ...token, usdBalance, balance };
+							}
+							return token;
+						}),
+						({ usdBalance }) => (usdBalance ? usdBalance.toNumber() : 0),
+						'desc'
+				  )
+				: searchFilteredTokens;
 		if (ordered.length > PAGE_LENGTH) return ordered.slice(0, PAGE_LENGTH * page);
 		return ordered;
 	}, [
 		oneInchEnabled,
 		synthCategory,
-		tokenBalancesQuery,
 		searchFilteredTokens,
 		page,
 		coinGeckoPrices,
 		tokenBalances,
+		balancesStatus,
 	]);
 
 	return (
@@ -243,7 +227,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 						</span>
 						<span>{t('modals.select-currency.header.holdings')}</span>
 					</RowsHeader>
-					{synthsWalletBalancesQuery.isLoading ? (
+					{synthBalancesLoading ? (
 						<Loader />
 					) : synthsResults.length > 0 ? (
 						// TODO: use `Synth` type from contracts-interface
@@ -256,7 +240,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 										onSelect(currencyKey, false);
 										onDismiss();
 									}}
-									balance={synthBalances?.balancesMap[currencyKey as CurrencyKey]}
+									balance={balancesMap[currencyKey as CurrencyKey]}
 									token={{
 										name: synth.description,
 										symbol: synth.name,

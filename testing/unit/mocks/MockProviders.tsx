@@ -8,7 +8,7 @@ import { RecoilRoot } from 'recoil';
 import { ThemeProvider } from 'styled-components';
 import { WagmiConfig } from 'wagmi';
 
-import { initRainbowkit } from 'containers/Connector/config';
+import { wagmiClient } from 'containers/Connector/config';
 import { RefetchProvider } from 'contexts/RefetchContext';
 import { themes } from 'styles/theme';
 
@@ -48,8 +48,6 @@ jest.mock('queries/futures/subgraph', () => ({
 	getFuturesHourlyStats: () => Promise.resolve([]),
 	getFuturesPositions: () => Promise.resolve([]),
 }));
-
-const { wagmiClient } = initRainbowkit();
 
 const queryClient = new QueryClient({
 	defaultOptions: {

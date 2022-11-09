@@ -13,8 +13,8 @@ import Loader from 'components/Loader';
 import SegmentedControl from 'components/SegmentedControl';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import Connector from 'containers/Connector';
-import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
+import { monitorTransaction } from 'contexts/RelayerContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useSUSDContract from 'hooks/useSUSDContract';
 import { balancesState, crossMarginAccountOverviewState } from 'store/futures';
@@ -37,7 +37,6 @@ export default function DepositWithdrawCrossMargin({
 }: DepositMarginModalProps) {
 	const { t } = useTranslation();
 	const { signer } = Connector.useContainer();
-	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const { refetchUntilUpdate } = useRefetchContext();
 	const susdContract = useSUSDContract();
@@ -76,14 +75,7 @@ export default function DepositWithdrawCrossMargin({
 			setTxState('none');
 			logError(err);
 		}
-	}, [
-		crossMarginAccountContract,
-		amount,
-		refetchUntilUpdate,
-		monitorTransaction,
-		onComplete,
-		onDismiss,
-	]);
+	}, [crossMarginAccountContract, amount, refetchUntilUpdate, onComplete, onDismiss]);
 
 	const depositMargin = useCallback(async () => {
 		try {
@@ -114,15 +106,7 @@ export default function DepositWithdrawCrossMargin({
 			setTxState('none');
 			logError(err);
 		}
-	}, [
-		crossMarginAccountContract,
-		amount,
-		signer,
-		susdContract,
-		allowance,
-		monitorTransaction,
-		submitDeposit,
-	]);
+	}, [crossMarginAccountContract, amount, signer, susdContract, allowance, submitDeposit]);
 
 	const withdrawMargin = useCallback(async () => {
 		try {
@@ -143,14 +127,7 @@ export default function DepositWithdrawCrossMargin({
 			setTxState('none');
 			logError(err);
 		}
-	}, [
-		crossMarginAccountContract,
-		amount,
-		monitorTransaction,
-		refetchUntilUpdate,
-		onComplete,
-		onDismiss,
-	]);
+	}, [crossMarginAccountContract, amount, refetchUntilUpdate, onComplete, onDismiss]);
 
 	const disabledReason = useMemo(() => {
 		const amtWei = wei(amount || 0);

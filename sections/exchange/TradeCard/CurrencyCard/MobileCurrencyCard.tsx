@@ -12,13 +12,13 @@ import { SectionHeader, SectionSubTitle, SectionTitle } from 'sections/futures/M
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 
 type MobileCurrencyCardProps = {
-	currencyKey: string | null;
+	currencyKey?: string;
 	amount: string;
 	onAmountChange: (value: string) => void;
-	walletBalance: Wei | null;
+	walletBalance?: Wei | null;
 	onBalanceClick: () => void;
 	onCurrencySelect?: () => void;
-	priceRate: Wei | number | string | null;
+	priceRate?: Wei | number | string | null;
 	label: string;
 	disabled?: boolean;
 };
