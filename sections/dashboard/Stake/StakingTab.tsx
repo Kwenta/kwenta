@@ -8,10 +8,10 @@ import Button from 'components/Button';
 import { useStakingContext } from 'contexts/StakingContext';
 import { currentThemeState } from 'store/ui';
 import media from 'styles/media';
+import { truncateNumbers } from 'utils/formatters/number';
 
 import { KwentaLabel, StakingCard } from './common';
 import StakeInputCard from './InputCards/StakeInputCard';
-import { truncateNumbers } from 'utils/formatters/number';
 
 const StakingTab = () => {
 	const { t } = useTranslation();
