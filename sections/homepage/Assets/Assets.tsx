@@ -570,7 +570,7 @@ const StyledSlider = styled(Slider)`
 		display: flex !important;
 		position: relative;
 		bottom: -10px;
-		width: 240px;
+		width: 320px;
 		margin: auto;
 		padding: 0px;
 	}
