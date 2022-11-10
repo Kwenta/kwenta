@@ -81,10 +81,6 @@ export default class ExchangeService {
 		this.sdk.events.removeAllListeners('exchangeRates_updated');
 	}
 
-	private get isL2() {
-		return [10, 420].includes(this.sdk.networkId);
-	}
-
 	public getTxProvider(baseCurrencyKey: string, quoteCurrencyKey: string) {
 		if (!baseCurrencyKey || !quoteCurrencyKey) return undefined;
 		if (
@@ -159,15 +155,15 @@ export default class ExchangeService {
 	}
 
 	public async getBaseFeeRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
-		if (!this.sdk.contracts.SystemSettings) {
+		if (!this.sdk.context.contracts.SystemSettings) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
 		const [sourceCurrencyFeeRate, destinationCurrencyFeeRate] = await Promise.all([
-			this.sdk.contracts.SystemSettings.exchangeFeeRate(
+			this.sdk.context.contracts.SystemSettings.exchangeFeeRate(
 				ethers.utils.formatBytes32String(baseCurrencyKey)
 			),
-			this.sdk.contracts.SystemSettings.exchangeFeeRate(
+			this.sdk.context.contracts.SystemSettings.exchangeFeeRate(
 				ethers.utils.formatBytes32String(quoteCurrencyKey)
 			),
 		]);
@@ -178,11 +174,11 @@ export default class ExchangeService {
 	}
 
 	public async getExchangeFeeRate(quoteCurrencyKey: string, baseCurrencyKey: string) {
-		if (!this.sdk.contracts.Exchanger) {
+		if (!this.sdk.context.contracts.Exchanger) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
-		const exchangeFeeRate = await this.sdk.contracts.Exchanger.feeRateForExchange(
+		const exchangeFeeRate = await this.sdk.context.contracts.Exchanger.feeRateForExchange(
 			ethers.utils.formatBytes32String(quoteCurrencyKey),
 			ethers.utils.formatBytes32String(baseCurrencyKey)
 		);
@@ -214,7 +210,7 @@ export default class ExchangeService {
 		const response = await axios.get<OneInchTokenListResponse>(this.oneInchApiUrl + 'tokens');
 
 		const tokensMap = response.data.tokens || {};
-		const chainId: NetworkId = this.isL2 ? 10 : 1;
+		const chainId: NetworkId = this.sdk.context.isL2 ? 10 : 1;
 		const tokens = Object.values(tokensMap).map((t) => ({ ...t, chainId, tags: [] }));
 
 		return {
@@ -225,16 +221,16 @@ export default class ExchangeService {
 	}
 
 	public async getFeeReclaimPeriod(currencyKey: string) {
-		if (!this.sdk.walletAddress) {
+		if (!this.sdk.context.walletAddress) {
 			throw new Error(sdkErrors.NO_SIGNER);
 		}
 
-		if (!this.sdk.contracts.Exchanger) {
+		if (!this.sdk.context.contracts.Exchanger) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
-		const maxSecsLeftInWaitingPeriod = (await this.sdk.contracts.Exchanger.maxSecsLeftInWaitingPeriod(
-			this.sdk.walletAddress,
+		const maxSecsLeftInWaitingPeriod = (await this.sdk.context.contracts.Exchanger.maxSecsLeftInWaitingPeriod(
+			this.sdk.context.walletAddress,
 			ethers.utils.formatBytes32String(currencyKey)
 		)) as ethers.BigNumberish;
 
@@ -244,11 +240,11 @@ export default class ExchangeService {
 	public async getBalance(currencyKey: string) {
 		const isETH = this.isCurrencyETH(currencyKey);
 
-		if (this.sdk.walletAddress) {
+		if (this.sdk.context.walletAddress) {
 			if (isETH) {
 				return this.getETHBalance();
 			} else if (this.synthsMap[currencyKey as SynthSymbol]) {
-				return this.sdk.synths.getSynthBalance(this.sdk.walletAddress, currencyKey);
+				return this.sdk.synths.getSynthBalance(this.sdk.context.walletAddress, currencyKey);
 			} else {
 				const token = this.tokenList.find((t) => t.symbol === currencyKey);
 				if (token) {
@@ -267,9 +263,7 @@ export default class ExchangeService {
 		fromAmount: string,
 		metaOnly?: 'meta_tx' | 'estimate_gas'
 	) {
-		if (!this.sdk.signer) throw new Error(sdkErrors.NO_SIGNER);
-		if (!this.sdk.provider) throw new Error(sdkErrors.NO_PROVIDER);
-		if (this.sdk.networkId !== 10) throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
+		if (this.sdk.context.networkId !== 10) throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 
 		const sUSD = this.tokensMap['sUSD'];
 
@@ -282,11 +276,11 @@ export default class ExchangeService {
 		let synthAmountEth = fromAmount;
 
 		if (this.tokensMap[fromToken.symbol]) {
-			if (!this.sdk.contracts.Exchanger) {
+			if (!this.sdk.context.contracts.Exchanger) {
 				throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 			}
 			const fromAmountWei = wei(fromAmount).toString(0, true);
-			const amounts = await this.sdk.contracts.Exchanger.getAmountsForExchange(
+			const amounts = await this.sdk.context.contracts.Exchanger.getAmountsForExchange(
 				fromAmountWei,
 				fromSymbolBytes,
 				sUSDBytes
@@ -305,7 +299,7 @@ export default class ExchangeService {
 
 		const formattedData = getFormattedSwapData(params, SYNTH_SWAP_OPTIMISM_ADDRESS);
 
-		const SynthSwap = this.sdk.contracts.SynthSwap;
+		const SynthSwap = this.sdk.context.contracts.SynthSwap;
 
 		if (!SynthSwap) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
@@ -356,10 +350,6 @@ export default class ExchangeService {
 		amount: string,
 		quoteDecimals: number
 	) {
-		if (!this.sdk.signer) {
-			throw new Error(sdkErrors.NO_SIGNER);
-		}
-
 		const params = await this.getOneInchSwapParams(
 			quoteTokenAddress,
 			baseTokenAddress,
@@ -369,7 +359,7 @@ export default class ExchangeService {
 
 		const { from, to, data, value } = params.tx;
 
-		return this.sdk.signer.populateTransaction({
+		return this.sdk.context.signer.populateTransaction({
 			from,
 			to,
 			data,
@@ -383,10 +373,6 @@ export default class ExchangeService {
 		amount: string,
 		quoteDecimals: number
 	) {
-		if (!this.sdk.signer) {
-			throw new Error(sdkErrors.NO_SIGNER);
-		}
-
 		const params = await this.getOneInchSwapParams(
 			quoteTokenAddress,
 			baseTokenAddress,
@@ -396,7 +382,7 @@ export default class ExchangeService {
 
 		const { from, to, data, value } = params.tx;
 
-		return this.sdk.signer.sendTransaction({
+		return this.sdk.context.signer.sendTransaction({
 			from,
 			to,
 			data,
@@ -410,10 +396,6 @@ export default class ExchangeService {
 		amount: string,
 		quoteDecimals: number
 	) {
-		if (!this.sdk.walletAddress) {
-			throw new Error(sdkErrors.NO_SIGNER);
-		}
-
 		const params = await this.getOneInchSwapParams(
 			quoteTokenAddress,
 			baseTokenAddress,
@@ -425,16 +407,12 @@ export default class ExchangeService {
 	}
 
 	public async getNumEntries(currencyKey: string): Promise<number> {
-		if (!this.sdk.walletAddress) {
-			throw new Error(sdkErrors.NO_SIGNER);
-		}
-
-		if (!this.sdk.contracts.Exchanger) {
+		if (!this.sdk.context.contracts.Exchanger) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
-		const { numEntries } = await this.sdk.contracts.Exchanger.settlementOwing(
-			this.sdk.walletAddress,
+		const { numEntries } = await this.sdk.context.contracts.Exchanger.settlementOwing(
+			this.sdk.context.walletAddress,
 			ethers.utils.formatBytes32String(currencyKey)
 		);
 
@@ -442,7 +420,7 @@ export default class ExchangeService {
 	}
 
 	public async getExchangeRates() {
-		if (!this.sdk.contracts.SynthUtil || !this.sdk.contracts.ExchangeRates) {
+		if (!this.sdk.context.contracts.SynthUtil || !this.sdk.context.contracts.ExchangeRates) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
@@ -463,8 +441,8 @@ export default class ExchangeService {
 		].map(ethers.utils.formatBytes32String);
 
 		const [synthsRates, ratesForCurrencies] = (await Promise.all([
-			this.sdk.contracts.SynthUtil.synthsRates(),
-			this.sdk.contracts.ExchangeRates.ratesForCurrencies(additionalCurrencies),
+			this.sdk.context.contracts.SynthUtil.synthsRates(),
+			this.sdk.context.contracts.ExchangeRates.ratesForCurrencies(additionalCurrencies),
 		])) as [SynthRatesTuple, CurrencyRate[]];
 
 		const synths = [...synthsRates[0], ...additionalCurrencies] as CurrencyKey[];
@@ -521,12 +499,8 @@ export default class ExchangeService {
 	}
 
 	public async handleSettle(baseCurrencyKey: string) {
-		if (!this.isL2) {
+		if (!this.sdk.context.isL2) {
 			throw new Error(sdkErrors.REQUIRES_L2);
-		}
-
-		if (!this.sdk.walletAddress) {
-			throw new Error(sdkErrors.NO_SIGNER);
 		}
 
 		const numEntries = await this.getNumEntries(baseCurrencyKey);
@@ -534,7 +508,7 @@ export default class ExchangeService {
 
 		if (numEntries > 12) {
 			const { hash } = await this.sdk.transactions.createSynthetixTxn('Exchanger', 'settle', [
-				this.sdk.walletAddress,
+				this.sdk.context.walletAddress,
 				destinationCurrencyKey,
 			]);
 
@@ -583,7 +557,9 @@ export default class ExchangeService {
 			);
 
 			const shouldExchange =
-				!!exchangeParams && !!this.sdk.walletAddress && !!this.sdk.contracts.Synthetix;
+				!!exchangeParams &&
+				!!this.sdk.context.walletAddress &&
+				!!this.sdk.context.contracts.Synthetix;
 
 			if (shouldExchange) {
 				const { hash } = await this.sdk.transactions.createSynthetixTxn(
@@ -605,7 +581,7 @@ export default class ExchangeService {
 		quoteAmount: string,
 		baseAmount: string
 	) {
-		const gasPrices = await getEthGasPrice(this.sdk.networkId, this.sdk.provider);
+		const gasPrices = await getEthGasPrice(this.sdk.context.networkId, this.sdk.context.provider);
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
 		const ethPriceRate = newGetExchangeRatesForCurrencies(this.exchangeRates, 'sETH', 'sUSD');
 		const gasPrice = gasPrices.fast;
@@ -624,11 +600,7 @@ export default class ExchangeService {
 				gasInfo?.l1Fee ?? zeroBN
 			);
 		} else {
-			if (!this.sdk.signer) {
-				throw new Error(sdkErrors.NO_SIGNER);
-			}
-
-			if (!this.sdk.contracts.Synthetix) {
+			if (!this.sdk.context.contracts.Synthetix) {
 				throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 			}
 
@@ -645,8 +617,11 @@ export default class ExchangeService {
 			const method = isAtomic ? 'exchangeAtomically' : 'exchangeWithTracking';
 
 			const txn = {
-				to: this.sdk.contracts.Synthetix.address,
-				data: this.sdk.contracts.Synthetix.interface.encodeFunctionData(method, exchangeParams),
+				to: this.sdk.context.contracts.Synthetix.address,
+				data: this.sdk.context.contracts.Synthetix.interface.encodeFunctionData(
+					method,
+					exchangeParams
+				),
 				value: ethers.BigNumber.from(0),
 			};
 
@@ -681,10 +656,6 @@ export default class ExchangeService {
 	}
 
 	public async checkAllowance(quoteCurrencyKey: string, baseCurrencyKey: string) {
-		if (!this.sdk.walletAddress) {
-			throw new Error(sdkErrors.NO_SIGNER);
-		}
-
 		const [quoteCurrencyContract, approveAddress] = await Promise.all([
 			this.getQuoteCurrencyContract(quoteCurrencyKey),
 			this.getApproveAddress(quoteCurrencyKey, baseCurrencyKey),
@@ -692,7 +663,7 @@ export default class ExchangeService {
 
 		if (!!quoteCurrencyContract) {
 			const allowance = (await quoteCurrencyContract.allowance(
-				this.sdk.walletAddress,
+				this.sdk.context.walletAddress,
 				approveAddress
 			)) as ethers.BigNumber;
 
@@ -816,15 +787,13 @@ export default class ExchangeService {
 	}
 
 	public async getRedeemableDeprecatedSynths() {
-		if (!this.sdk.walletAddress) {
-			throw new Error(sdkErrors.NO_SIGNER);
-		}
-
-		if (!this.sdk.contracts?.SynthRedeemer) {
+		if (!this.sdk.context.contracts?.SynthRedeemer) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
-		const SynthRedeemer = this.sdk.contracts.SynthRedeemer.connect(this.sdk.provider);
+		const SynthRedeemer = this.sdk.context.contracts.SynthRedeemer.connect(
+			this.sdk.context.provider
+		);
 
 		const synthDeprecatedFilter = SynthRedeemer.filters.SynthDeprecated();
 		const deprecatedSynthsEvents = await SynthRedeemer.queryFilter(synthDeprecatedFilter);
@@ -838,12 +807,12 @@ export default class ExchangeService {
 
 		for (const addr of deprecatedProxySynthsAddresses) {
 			symbolCalls.push(getProxySynthSymbol(addr));
-			balanceCalls.push(Redeemer.balanceOf(addr, this.sdk.walletAddress));
+			balanceCalls.push(Redeemer.balanceOf(addr, this.sdk.context.walletAddress));
 		}
 
 		const [deprecatedSynths, balanceData] = (await Promise.all([
-			this.sdk.multicallProvider.all(symbolCalls),
-			this.sdk.multicallProvider.all(balanceCalls),
+			this.sdk.context.multicallProvider.all(symbolCalls),
+			this.sdk.context.multicallProvider.all(balanceCalls),
 		])) as [CurrencyKey[], ethers.BigNumber[]];
 
 		const balances = balanceData.map((balance) => wei(balance));
@@ -878,7 +847,7 @@ export default class ExchangeService {
 	}
 
 	private async getCoingeckoPrices(tokenAddresses: string[]) {
-		const platform = this.isL2 ? 'optimistic-ethereum' : 'ethereum';
+		const platform = this.sdk.context.isL2 ? 'optimistic-ethereum' : 'ethereum';
 		const response = await axios.get<PriceResponse>(
 			`${CG_BASE_API_URL}/simple/token_price/${platform}?contract_addresses=${tokenAddresses
 				.join(',')
@@ -898,10 +867,6 @@ export default class ExchangeService {
 		minAmount: Wei,
 		isAtomic: boolean
 	) {
-		if (!this.sdk.walletAddress) {
-			throw new Error(sdkErrors.NO_SIGNER);
-		}
-
 		const sourceCurrencyKey = ethers.utils.formatBytes32String(quoteCurrencyKey);
 		const destinationCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey);
 
@@ -921,7 +886,7 @@ export default class ExchangeService {
 				sourceCurrencyKey,
 				sourceAmountBN,
 				destinationCurrencyKey,
-				this.sdk.walletAddress,
+				this.sdk.context.walletAddress,
 				KWENTA_TRACKING_CODE,
 			];
 		}
@@ -932,7 +897,7 @@ export default class ExchangeService {
 	}
 
 	public get synthsMap() {
-		return getSynthsForNetwork(this.sdk.networkId);
+		return getSynthsForNetwork(this.sdk.context.networkId);
 	}
 
 	public async getOneInchTokens() {
@@ -946,7 +911,7 @@ export default class ExchangeService {
 	}
 
 	private checkIsAtomic(baseCurrencyKey: string, quoteCurrencyKey: string) {
-		if (this.isL2 || !baseCurrencyKey || !quoteCurrencyKey) {
+		if (this.sdk.context.isL2 || !baseCurrencyKey || !quoteCurrencyKey) {
 			return false;
 		}
 
@@ -969,7 +934,7 @@ export default class ExchangeService {
 	}
 
 	private get oneInchApiUrl() {
-		return `https://api.1inch.io/v4.0/${this.isL2 ? 10 : 1}/`;
+		return `https://api.1inch.io/v4.0/${this.sdk.context.isL2 ? 10 : 1}/`;
 	}
 
 	private getOneInchQuoteSwapParams(
@@ -991,10 +956,6 @@ export default class ExchangeService {
 		amount: string,
 		quoteDecimals: number
 	) {
-		if (!this.sdk.walletAddress) {
-			throw new Error(sdkErrors.NO_SIGNER);
-		}
-
 		const params = this.getOneInchQuoteSwapParams(
 			quoteTokenAddress,
 			baseTokenAddress,
@@ -1007,7 +968,7 @@ export default class ExchangeService {
 				fromTokenAddress: params.fromTokenAddress,
 				toTokenAddress: params.toTokenAddress,
 				amount: params.amount,
-				fromAddress: this.sdk.walletAddress,
+				fromAddress: this.sdk.context.walletAddress,
 				slippage: DEFAULT_1INCH_SLIPPAGE,
 				PROTOCOLS,
 				referrerAddress: KWENTA_REFERRAL_ADDRESS,
@@ -1061,10 +1022,6 @@ export default class ExchangeService {
 	}
 
 	private async getTokensBalances(tokens: Token[]) {
-		if (!this.sdk.walletAddress) {
-			throw new Error(sdkErrors.NO_SIGNER);
-		}
-
 		const filteredTokens = tokens.filter((t) => !FILTERED_TOKENS.includes(t.address.toLowerCase()));
 		const symbols = filteredTokens.map((token) => token.symbol);
 		const filteredTokensMap = keyBy(filteredTokens, 'symbol');
@@ -1072,14 +1029,16 @@ export default class ExchangeService {
 		const calls = [];
 		for (const { address, symbol } of filteredTokens) {
 			if (symbol === CRYPTO_CURRENCY_MAP.ETH) {
-				calls.push(this.sdk.multicallProvider.getEthBalance(this.sdk.walletAddress));
+				calls.push(
+					this.sdk.context.multicallProvider.getEthBalance(this.sdk.context.walletAddress)
+				);
 			} else {
 				const tokenContract = new EthCallContract(address, erc20Abi);
-				calls.push(tokenContract.balanceOf(this.sdk.walletAddress));
+				calls.push(tokenContract.balanceOf(this.sdk.context.walletAddress));
 			}
 		}
 
-		const data = (await this.sdk.multicallProvider.all(calls)) as ethers.BigNumber[];
+		const data = (await this.sdk.context.multicallProvider.all(calls)) as ethers.BigNumber[];
 
 		const tokenBalances: TokenBalances = {};
 		data.forEach((value, index) => {
@@ -1095,11 +1054,7 @@ export default class ExchangeService {
 	}
 
 	private async getETHBalance() {
-		if (!this.sdk.walletAddress) {
-			throw new Error(sdkErrors.NO_SIGNER);
-		}
-
-		const balance = await this.sdk.provider.getBalance(this.sdk.walletAddress);
+		const balance = await this.sdk.context.provider.getBalance(this.sdk.context.walletAddress);
 		return wei(balance);
 	}
 
@@ -1116,7 +1071,7 @@ export default class ExchangeService {
 		baseCurrencyKey: string,
 		quoteAmount: string
 	) {
-		if (!this.isL2) return null;
+		if (!this.sdk.context.isL2) return null;
 
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
 		const quoteCurrencyTokenAddress = this.getTokenAddress(quoteCurrencyKey);
@@ -1203,14 +1158,14 @@ export default class ExchangeService {
 
 		for (const { address, symbol } of filteredTokens) {
 			if (symbol === CRYPTO_CURRENCY_MAP.ETH) {
-				calls.push(this.sdk.multicallProvider.getEthBalance(walletAddress));
+				calls.push(this.sdk.context.multicallProvider.getEthBalance(walletAddress));
 			} else {
 				const tokenContract = new EthCallContract(address, erc20Abi);
 				calls.push(tokenContract.balanceOf(walletAddress));
 			}
 		}
 
-		const data = (await this.sdk.multicallProvider.all(calls)) as BigNumber[];
+		const data = (await this.sdk.context.multicallProvider.all(calls)) as BigNumber[];
 
 		const tokenBalances: TokenBalances = {};
 
@@ -1228,6 +1183,6 @@ export default class ExchangeService {
 	}
 
 	private createERC20Contract(tokenAddress: string) {
-		return new ethers.Contract(tokenAddress, erc20Abi, this.sdk.provider);
+		return new ethers.Contract(tokenAddress, erc20Abi, this.sdk.context.provider);
 	}
 }

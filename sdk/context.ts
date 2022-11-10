@@ -23,6 +23,15 @@ export default class Context implements IContext {
 
 	constructor(context: IContext) {
 		this.context = { ...DEFAULT_CONTEXT, ...context };
+
+		if (context.provider) {
+			this.multicallProvider.init(context.provider);
+		}
+
+		if (context.signer) {
+			this.setSigner(context.signer);
+		}
+
 		this.contracts = this.getContracts();
 	}
 
@@ -56,6 +65,15 @@ export default class Context implements IContext {
 
 	get isL2() {
 		return [10, 420].includes(this.networkId);
+	}
+
+	public async setProvider(provider: ethers.providers.Provider) {
+		this.context.provider = provider;
+		this.multicallProvider.init(provider);
+		const networkId = (await provider.getNetwork()).chainId as NetworkId;
+		await this.setNetworkId(networkId);
+
+		return networkId;
 	}
 
 	public async setNetworkId(networkId: NetworkId) {
