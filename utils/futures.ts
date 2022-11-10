@@ -300,6 +300,7 @@ export const orderPriceInvalidLabel = (
 };
 
 const getPositionChangeState = (existingSize: Wei, newSize: Wei) => {
+	if (newSize.eq(0)) return 'closing';
 	if (existingSize.eq(newSize)) return 'edit_leverage';
 	if (existingSize.eq(0)) return 'increase_size';
 	if ((existingSize.gt(0) && newSize.lt(0)) || (existingSize.lt(0) && newSize.gt(0)))
@@ -317,8 +318,6 @@ export const calculateMarginDelta = (
 	fees: TradeFees,
 	position: FuturesPosition | null
 ) => {
-	if (nextTrade.nativeSizeDelta.add(position?.position?.size || 0).eq(zeroBN)) return zeroBN;
-
 	const existingSize = position?.position
 		? position?.position?.side === 'long'
 			? position?.position?.size
@@ -330,6 +329,8 @@ export const calculateMarginDelta = (
 	const posChangeState = getPositionChangeState(existingSize, newSize);
 
 	switch (posChangeState) {
+		case 'closing':
+			return zeroBN;
 		case 'edit_leverage':
 			const nextMargin = position?.position?.notionalValue.div(nextTrade.leverage) ?? zeroBN;
 			const delta = nextMargin.sub(position?.remainingMargin);
