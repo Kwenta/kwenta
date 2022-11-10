@@ -39,14 +39,29 @@ export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 	const positionSize = useMemo(() => positionDetails?.size ?? zeroBN, [positionDetails?.size]);
 
 	const crossMarginCloseParams = useMemo(() => {
-		return {
-			marketKey: formatBytes32String(MarketKeyByAsset[currencyKey]),
-			marginDelta: zeroBN.toBN(),
-			sizeDelta:
-				position?.position?.side === PositionSide.LONG
-					? positionSize.neg().toBN()
-					: positionSize.toBN(),
-		};
+		return currencyKey === 'SOL' && position?.position?.side === PositionSide.SHORT
+			? [
+					{
+						marketKey: formatBytes32String(MarketKeyByAsset[currencyKey]),
+						marginDelta: zeroBN.toBN(),
+						sizeDelta: positionSize.add(wei(1, 18, true)).toBN(),
+					},
+					{
+						marketKey: formatBytes32String(MarketKeyByAsset[currencyKey]),
+						marginDelta: zeroBN.toBN(),
+						sizeDelta: wei(1, 18, true).neg().toBN(),
+					},
+			  ]
+			: [
+					{
+						marketKey: formatBytes32String(MarketKeyByAsset[currencyKey]),
+						marginDelta: zeroBN.toBN(),
+						sizeDelta:
+							position?.position?.side === PositionSide.LONG
+								? positionSize.neg().toBN()
+								: positionSize.toBN(),
+					},
+			  ];
 	}, [currencyKey, position?.position?.side, positionSize]);
 
 	useEffect(() => {
@@ -55,7 +70,7 @@ export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 			const fee = await estimateEthersContractTxCost(
 				crossMarginAccountContract,
 				'distributeMargin',
-				[[crossMarginCloseParams]]
+				[crossMarginCloseParams]
 			);
 			setCrossMarginGasFee(fee);
 		};
@@ -79,7 +94,8 @@ export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 	const closePosition = async () => {
 		if (!crossMarginAccountContract) return;
 		try {
-			const tx = await crossMarginAccountContract.distributeMargin([crossMarginCloseParams]);
+			const tx = await crossMarginAccountContract.distributeMargin(crossMarginCloseParams);
+
 			monitorTx(tx.hash);
 		} catch (err) {
 			if (!isUserDeniedError(err.message)) {
