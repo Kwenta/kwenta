@@ -36,7 +36,7 @@ export default class KwentaSDK {
 		}
 
 		this.exchange = new ExchangeService(this);
-		this.futures = new FuturesService(networkId);
+		this.futures = new FuturesService(this);
 		this.synths = new SynthsService(this);
 		this.transactions = new TransactionsService(this);
 	}

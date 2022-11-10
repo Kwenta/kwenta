@@ -46,6 +46,18 @@ export default class Context implements IContext {
 		return this.context.signer;
 	}
 
+	get walletAddress() {
+		if (!this.context.walletAddress) {
+			throw new Error(sdkErrors.NO_SIGNER);
+		}
+
+		return this.context.walletAddress;
+	}
+
+	get isL2() {
+		return [10, 420].includes(this.networkId);
+	}
+
 	public async setNetworkId(networkId: NetworkId) {
 		this.context.networkId = networkId;
 		this.contracts = this.getContracts();
