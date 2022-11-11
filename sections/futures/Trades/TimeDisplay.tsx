@@ -16,9 +16,10 @@ const TimeDisplay: FC<TimeDisplayProps> = ({ cellPropsValue, horizontal }) => {
 		setShow12h(!show12hr);
 	};
 
-	const date = format(new Date(cellPropsValue), 'MM/dd/yy', {
-		locale: getLocale(),
-	});
+	const date = format(
+		new Date(cellPropsValue),
+		getLocale().formatLong?.date({ width: 'short' }) ?? 'MM/dd/yy'
+	);
 	const time12hr = new Date(cellPropsValue).toLocaleTimeString(getLocale().code);
 	const time24hr = format(new Date(cellPropsValue), 'HH:mm:ss', {
 		locale: getLocale(),
