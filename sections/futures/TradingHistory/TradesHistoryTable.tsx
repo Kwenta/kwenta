@@ -202,9 +202,9 @@ const HistoryContainer = styled.div<{ mobile?: boolean }>`
 
 const TableMainHeader = styled.div`
 	font-size: 13px;
-	color: #ece8e3;
+	color: ${(props) => props.theme.colors.selectedTheme.text.value};
 	padding: 20px 15px;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
 const TableAlignment = css`
