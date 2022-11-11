@@ -21,7 +21,7 @@ import stakingRewardsABI from 'lib/abis/StakingRewards.json';
 import supplyScheduleABI from 'lib/abis/SupplySchedule.json';
 import vKwentaRedeemerABI from 'lib/abis/vKwentaRedeemer.json';
 import { formatTruncatedDuration } from 'utils/formatters/date';
-import { zeroBN } from 'utils/formatters/number';
+import { truncateNumbers, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
 export type EscrowRow = {
@@ -176,7 +176,7 @@ const useStakingData = () => {
 						? startWeeklySupply.mul(wei(1).sub(supplyRate.pow(52))).div(wei(1).sub(supplyRate))
 						: zeroBN;
 				setApy(
-					yearlyRewards.gt(zeroBN) ? Number(yearlyRewards.div(totalStakedBalance)).toFixed(2) : '0'
+					yearlyRewards.gt(zeroBN) ? truncateNumbers(yearlyRewards.div(totalStakedBalance), 2) : '0'
 				);
 				setVKwentaBalance(wei(data[9] ?? zeroBN));
 				setVKwentaAllowance(wei(data[10] ?? zeroBN));
