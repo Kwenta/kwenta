@@ -8,8 +8,7 @@ import { sdk } from './config';
 import exchangeReducer from './exchange/reducer';
 import walletReducer from './wallet/reducer';
 
-// TODO: Consider creating an env var for this.
-const LOG_REDUX = true;
+const LOG_REDUX = process.env.NODE_ENV !== 'production';
 
 const store = configureStore({
 	reducer: {
