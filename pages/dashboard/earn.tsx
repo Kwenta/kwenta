@@ -41,12 +41,13 @@ EarnPage.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 const PageHeading = styled(Text.Heading).attrs({ variant: 'h4' })`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 21px;
-	margin-bottom: 2px;
+	margin-bottom: 4px;
 	text-transform: uppercase;
 	font-variant: all-small-caps;
 `;
 
 const StyledBody = styled(Text.Body).attrs({ size: 'large' })`
+	font-size: 15px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	margin-bottom: 40px;
 `;

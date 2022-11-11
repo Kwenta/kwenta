@@ -2,20 +2,9 @@ import styled from 'styled-components';
 
 import useRewardsTimer from 'hooks/useRewardsTimer';
 
-import {
-	BigText,
-	KwentaText,
-	Title,
-	Description,
-	StyledSNXIcon,
-	StyledButton,
-	DollarValue,
-	ColumnInner,
-	InfoGridContainer,
-	Column,
-	SplitColumn,
-	LiquidityAmount,
-} from '../common';
+import { InfoGridContainer, Column, SplitColumn } from '../common';
+import GridData from './GridData';
+import LiquidityCard from './LiquidityCard';
 
 const DEADLINE = new Date('2022-03-20T23:59:59Z');
 
@@ -23,48 +12,19 @@ const StakeGrid = () => {
 	const timeTillDeadline = useRewardsTimer(DEADLINE);
 
 	return (
-		<>
-			<StyledGridContainer>
-				<Column>
-					<ColumnInner>
-						<div>
-							<Title>Your Liquidity</Title>
-							<LiquidityAmount>
-								<BigText>2923.39</BigText>
-								<StyledSNXIcon currencyKey="SNX" width="23px" height="23px" />
-								<DollarValue>$32,284.31</DollarValue>
-							</LiquidityAmount>
-							<Description>Stake SNX on Optimism to earn $KWENTA.</Description>
-						</div>
-						<div>
-							<StyledButton size="sm" variant="flat">
-								Add Liquidity
-							</StyledButton>
-						</div>
-					</ColumnInner>
-				</Column>
-				<SplitColumn>
-					<div>
-						<Title>Yield / $1K / Day</Title>
-						<KwentaText>28.12</KwentaText>
-					</div>
-					<div>
-						<Title>Your Rewards</Title>
-						<KwentaText>734.72</KwentaText>
-					</div>
-				</SplitColumn>
-				<SplitColumn>
-					<div>
-						<Title>Time Remaining</Title>
-						<BigText>{timeTillDeadline}</BigText>
-					</div>
-					<div>
-						<Title>Last Snapshot</Title>
-						<BigText>2H Ago</BigText>
-					</div>
-				</SplitColumn>
-			</StyledGridContainer>
-		</>
+		<StyledGridContainer>
+			<Column>
+				<LiquidityCard />
+			</Column>
+			<SplitColumn>
+				<GridData title="Yield / $1K / Day" value="28.12" hasKwentaLogo />
+				<GridData title="Your Rewards" value="734.72" hasKwentaLogo />
+			</SplitColumn>
+			<SplitColumn>
+				<GridData title="Time Remaining" value={timeTillDeadline} />
+				<GridData title="Last Snapshot" value="2H Ago" />
+			</SplitColumn>
+		</StyledGridContainer>
 	);
 };
 

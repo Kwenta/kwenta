@@ -5,24 +5,22 @@ import Button from 'components/Button';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Text from 'components/Text';
 
-export const KwentaText: React.FC<{ white?: boolean }> = ({ children, white }) => {
-	return (
-		<div style={{ display: 'flex', alignItems: 'center' }}>
-			<BigText $gold={!white}>{children}</BigText>
-			<StyledKwentaLogo />
-		</div>
-	);
-};
+export const BigText: React.FC<{ hasKwentaLogo?: boolean }> = ({
+	children,
+	hasKwentaLogo,
+	...rest
+}) => (
+	<div style={{ display: 'flex', alignItems: 'center' }}>
+		<BigTextRaw {...rest}>{children}</BigTextRaw>
+		{hasKwentaLogo && <StyledKwentaLogo />}
+	</div>
+);
 
-export const BigText = styled(Text.Heading)<{ $gold?: boolean }>`
+export const BigTextRaw = styled(Text.Heading)<{ $yellow?: boolean }>`
 	font-size: 25px;
 	font-family: AkkuratMonoLLWeb-Regular;
 	letter-spacing: -0.7px;
-	${(props) =>
-		props.$gold &&
-		css`
-			color: ${(props) => props.theme.colors.common.primaryGold};
-		`}
+	color: ${(props) => props.theme.colors.selectedTheme.yellow};
 `;
 
 export const Title = styled(Text.Body)`
@@ -32,7 +30,7 @@ export const Title = styled(Text.Body)`
 `;
 
 export const Description = styled(Text.Body)`
-	font-size: 13px;
+	font-size: 15px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
