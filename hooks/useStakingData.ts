@@ -5,6 +5,15 @@ import moment from 'moment';
 import { useMemo, useState } from 'react';
 import { erc20ABI, useContractRead, useContractReads, usePrepareContractWrite } from 'wagmi';
 
+import {
+	KWENTA_TOKEN_ADDRESS,
+	REWARD_ESCROW,
+	STAKING_REWARDS,
+	SUPPLY_SCHEDULE,
+	TRADING_REWARDS,
+	VKWENTA_REDEEMER,
+	VKWENTA_TOKEN_ADDRESS,
+} from 'constants/address';
 import Connector from 'containers/Connector';
 import multipleMerkleDistributorABI from 'lib/abis/MultipleMerkleDistributor.json';
 import rewardEscrowABI from 'lib/abis/RewardEscrow.json';
@@ -34,38 +43,39 @@ type VestingEntry = {
 let data: EscrowRow[] = [];
 
 const useStakingData = () => {
+	const { network } = Connector.useContainer();
 	const kwentaTokenContract = {
-		addressOrName: '0xDA0C33402Fc1e10d18c532F0Ed9c1A6c5C9e386C',
+		addressOrName: KWENTA_TOKEN_ADDRESS[network?.id],
 		contractInterface: erc20ABI,
 	};
 
 	const stakingRewardsContract = {
-		addressOrName: '0x1653a3a3c4ccee0538685f1600a30df5e3ee830a',
+		addressOrName: STAKING_REWARDS[network?.id],
 		contractInterface: stakingRewardsABI,
 	};
 
 	const rewardEscrowContract = {
-		addressOrName: '0xaFD87d1a62260bD5714C55a1BB4057bDc8dFA413',
+		addressOrName: REWARD_ESCROW[network?.id],
 		contractInterface: rewardEscrowABI,
 	};
 
 	const supplyScheduleContract = {
-		addressOrName: '0x671423b2e8a99882fd14bbd07e90ae8b64a0e63a',
+		addressOrName: SUPPLY_SCHEDULE[network?.id],
 		contractInterface: supplyScheduleABI,
 	};
 
 	const vKwentaTokenContract = {
-		addressOrName: '0xb897D76bC9F7efB66Fb94970371ef17998c296b6',
+		addressOrName: VKWENTA_TOKEN_ADDRESS[network?.id],
 		contractInterface: erc20ABI,
 	};
 
 	const vKwentaRedeemerContract = {
-		addressOrName: '0x03c3E61D624F279243e1c8b43eD0fCF6790D10E9',
+		addressOrName: VKWENTA_REDEEMER[network?.id],
 		contractInterface: vKwentaRedeemerABI,
 	};
 
 	const multipleMerkleDistributorContract = {
-		addressOrName: '0x74c0A3bD10634759DC8B4CA7078C8Bf85bFE1271',
+		addressOrName: TRADING_REWARDS[network?.id],
 		contractInterface: multipleMerkleDistributorABI,
 	};
 
