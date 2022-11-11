@@ -26,39 +26,51 @@ const EscrowInputCard: FC = () => {
 	} = useStakingContext();
 
 	const [amount, setAmount] = useState('0');
-	const amountBN = _.isNil(amount) ? '0' : Number(wei(amount ?? 0).mul(1e18)).toString();
-
-	const currentTheme = useRecoilValue(currentThemeState);
-	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
-
 	const [activeTab, setActiveTab] = useState(0);
+	const currentTheme = useRecoilValue(currentThemeState);
+
+	const amountBN = useMemo(() => (_.isNil(amount) ? '0' : wei(amount ?? '0').toString(0, true)), [
+		amount,
+	]);
+
+	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
+	const unstakedEscrowedKwentaBalance = useMemo(
+		() =>
+			!_.isNil(escrowedBalance) && escrowedBalance.gt(0)
+				? escrowedBalance.sub(stakedEscrowedBalance ?? zeroBN) ?? zeroBN
+				: zeroBN,
+		[escrowedBalance, stakedEscrowedBalance]
+	);
 
 	const handleTabChange = (tabIndex: number) => {
 		setActiveTab(tabIndex);
 	};
 
-	const { config: stakedEscrowKwenta } = usePrepareContractWrite({
+	const { config: stakedEscrowKwentaConfig } = usePrepareContractWrite({
 		...rewardEscrowContract,
 		functionName: 'stakeEscrow',
 		args: [amountBN],
-		enabled: escrowedBalance.gt(0) && wei(amount).gt(0),
-		staleTime: Infinity,
+		enabled: unstakedEscrowedKwentaBalance.gt(0) && wei(amount).gt(0),
 	});
 
-	const { config: unstakedEscrowKwenta } = usePrepareContractWrite({
+	const { config: unstakedEscrowKwentaConfig } = usePrepareContractWrite({
 		...rewardEscrowContract,
 		functionName: 'unstakeEscrow',
 		args: [amountBN],
 		enabled: stakedEscrowedBalance.gt(0) && wei(amount).gt(0),
-		staleTime: Infinity,
 	});
 
 	const { write: kwentaApprove } = useContractWrite(kwentaApproveConfig);
-	const { write: stakeEscrowKwenta } = useContractWrite(stakedEscrowKwenta);
-	const { write: unstakeEscrowKwenta } = useContractWrite(unstakedEscrowKwenta);
+	const { write: stakeEscrowKwenta } = useContractWrite(stakedEscrowKwentaConfig);
+	const { write: unstakeEscrowKwenta } = useContractWrite(unstakedEscrowKwentaConfig);
 
-	const maxBalance =
-		activeTab === 0 ? wei(escrowedBalance ?? zeroBN) : wei(stakedEscrowedBalance ?? zeroBN);
+	const maxBalance = useMemo(
+		() =>
+			activeTab === 0
+				? wei(unstakedEscrowedKwentaBalance ?? zeroBN)
+				: wei(stakedEscrowedBalance ?? zeroBN),
+		[activeTab, stakedEscrowedBalance, unstakedEscrowedKwentaBalance]
+	);
 
 	const onMaxClick = useCallback(async () => {
 		setAmount(truncateNumbers(maxBalance, 2));
@@ -81,7 +93,7 @@ const EscrowInputCard: FC = () => {
 					<div className="max" onClick={onMaxClick}>
 						{t('dashboard.stake.tabs.stake-table.balance')}{' '}
 						{activeTab === 0
-							? truncateNumbers(escrowedBalance, 2)
+							? truncateNumbers(unstakedEscrowedKwentaBalance, 2)
 							: truncateNumbers(stakedEscrowedBalance, 2)}
 					</div>
 				</StakeInputHeader>

@@ -13,7 +13,7 @@ import useGetSpotFeeForAccount from 'queries/staking/useGetSpotFeeForAccount';
 import { currentThemeState } from 'store/ui';
 import { FlexDivRow } from 'styles/common';
 import media from 'styles/media';
-import { formatTruncatedDuration } from 'utils/formatters/date';
+import { formatTruncatedDuration, getNextSunday } from 'utils/formatters/date';
 import { truncateNumbers } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
@@ -30,13 +30,6 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({ period = 1 }: Trading
 	const [isClaimed, setIsClaimed] = useState(true);
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
-
-	const getNextSunday = (date: Date) => {
-		const nextSunday = new Date();
-		nextSunday.setDate(date.getDate() + (7 - date.getDay()));
-		nextSunday.setHours(0, 0, 0, 0);
-		return nextSunday;
-	};
 
 	const epochQuery = useGetFile(`trading-rewards-snapshots/epoch-${period - 1}.json`);
 	const epochData = epochQuery.isSuccess ? epochQuery.data : null;

@@ -84,3 +84,10 @@ export const formatTruncatedDuration = (delta: number): string => {
 	const minsStr = minutes > 0 ? minutes + 'm' : '0m';
 	return days > 10 ? `${daysStr}:${hoursStr}`.trim() : `${daysStr}:${hoursStr}:${minsStr}`.trim();
 };
+
+export const getNextSunday = (date: Date) => {
+	const nextSunday = new Date();
+	nextSunday.setDate(date.getDate() + (7 - date.getDay()));
+	nextSunday.setHours(0, 0, 0, 0);
+	return nextSunday;
+};
