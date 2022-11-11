@@ -30,9 +30,9 @@ export default class SynthsService {
 			currencyKeys,
 			synthsBalances,
 			synthsUSDBalances,
-		]: SynthBalancesTuple = await this.sdk.context.contracts.SynthUtil.connect(
-			this.sdk.context.provider
-		).synthsBalances(walletAddress);
+		]: SynthBalancesTuple = await this.sdk.context.contracts.SynthUtil.synthsBalances(
+			walletAddress
+		);
 
 		let totalUSDBalance = wei(0);
 

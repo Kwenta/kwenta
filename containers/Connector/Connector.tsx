@@ -56,7 +56,7 @@ const useConnector = () => {
 	);
 
 	useEffect(() => {
-		sdk.context.setProvider(provider).then(handleNetworkChange);
+		sdk.setProvider(provider).then(handleNetworkChange);
 		transactionNotifier = new BaseTN(provider);
 	}, [provider, dispatch, handleNetworkChange]);
 

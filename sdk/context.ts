@@ -6,13 +6,13 @@ import * as sdkErrors from './common/errors';
 import { ContractName, getContractsByNetwork, ContractMap } from './contracts';
 
 export interface IContext {
-	provider?: ethers.providers.Provider;
+	provider: ethers.providers.Provider;
+	networkId: NetworkId;
 	signer?: ethers.Signer;
-	networkId?: NetworkId;
 	walletAddress?: string;
 }
 
-const DEFAULT_CONTEXT: IContext = {
+const DEFAULT_CONTEXT: Partial<IContext> = {
 	networkId: 10,
 };
 
@@ -40,10 +40,6 @@ export default class Context implements IContext {
 	}
 
 	get provider() {
-		if (!this.context.provider) {
-			throw new Error(sdkErrors.NO_PROVIDER);
-		}
-
 		return this.context.provider;
 	}
 
