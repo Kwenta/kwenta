@@ -61,6 +61,16 @@ The following tasks are expected to be completed before the SDK can be considere
 - [ ] Implement methods for fetching orders, past trades and transfers from the subgraph.
 - [ ] Consider experimenting with WebSockets for realtime data (again).
 
+# Design Considerations
+
+## General
+
+- It is important to understand that checking if certain context properties are initialized cannot be done directly by checking if the property is undefined. This is because the getter throws an error on attempting to access these values when they are undefined.
+
+## Exchange
+
+## Futures
+
 # Notes
 
 - The `ExchangeService` class is still structured very similarly to the `useExchange` hook. It is important to change this, as they are two different paradigms. Without doing this, it is impossible to be efficient with requests and eliminate the overdependence of certain methods on others.
