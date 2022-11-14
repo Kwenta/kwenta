@@ -34,7 +34,7 @@ const StakingPortfolio = () => {
 			{
 				key: 'Escrow',
 				title: t('dashboard.stake.portfolio.escrow'),
-				value: truncateNumbers(escrowedBalance, 2),
+				value: truncateNumbers(escrowedBalance.sub(stakedEscrowedBalance), 2),
 			},
 		],
 		[

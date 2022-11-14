@@ -44,6 +44,11 @@ export const VKWENTA_REDEEMER: Record<string, string> = {
 	10: '0x8132EE584bCD6f8Eb1bea141DB7a7AC1E72917b9',
 };
 
+export const VEKWENTA_REDEEMER: Record<string, string> = {
+	420: '',
+	10: '0xc7088AC8F287539567e458C7D08C2a1470Fd25B7',
+};
+
 export const TRADING_REWARDS: Record<string, string> = {
 	420: '0x74c0A3bD10634759DC8B4CA7078C8Bf85bFE1271',
 	10: '0xf486A72E8c8143ACd9F65A104A16990fDb38be14',
