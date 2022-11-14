@@ -81,8 +81,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 		});
 
 	let checkIsClaimed: any[] = [];
-	rewards &&
-		rewards.length > 0 &&
+	rewards.length > 0 &&
 		rewards.forEach((walletReward) =>
 			checkIsClaimed.push({
 				...multipleMerkleDistributorContract,
@@ -93,7 +92,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 
 	const { data: isClaimable } = useContractReads({
 		contracts: checkIsClaimed,
-		enabled: checkIsClaimed && checkIsClaimed.length > 0,
+		enabled: checkIsClaimed.length > 0,
 		watch: true,
 	});
 
