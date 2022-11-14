@@ -7,6 +7,7 @@ import Text from 'components/Text';
 import { useStakingContext } from 'contexts/StakingContext';
 import { currentThemeState } from 'store/ui';
 import media from 'styles/media';
+import { truncateNumbers } from 'utils/formatters/number';
 
 import { SplitStakingCard } from './common';
 
@@ -28,36 +29,36 @@ const StakingPortfolio = () => {
 			{
 				key: 'Liquid',
 				title: t('dashboard.stake.portfolio.liquid'),
-				value: Number(kwentaBalance).toFixed(2),
+				value: truncateNumbers(kwentaBalance, 2),
 			},
 			{
 				key: 'Escrow',
 				title: t('dashboard.stake.portfolio.escrow'),
-				value: Number(escrowedBalance).toFixed(2),
+				value: truncateNumbers(escrowedBalance, 2),
 			},
 		],
 		[
 			{
 				key: 'Staked',
 				title: t('dashboard.stake.portfolio.staked'),
-				value: Number(stakedNonEscrowedBalance).toFixed(2),
+				value: truncateNumbers(stakedNonEscrowedBalance, 2),
 			},
 			{
 				key: 'StakedEscrow',
 				title: t('dashboard.stake.portfolio.staked-escrow'),
-				value: Number(stakedEscrowedBalance).toFixed(2),
+				value: truncateNumbers(stakedEscrowedBalance, 2),
 			},
 		],
 		[
 			{
 				key: 'Claimable',
 				title: t('dashboard.stake.portfolio.claimable'),
-				value: Number(claimableBalance).toFixed(2),
+				value: truncateNumbers(claimableBalance, 2),
 			},
 			{
 				key: 'Vestable',
 				title: t('dashboard.stake.portfolio.vestable'),
-				value: totalVestable.toFixed(2),
+				value: truncateNumbers(totalVestable, 2),
 			},
 		],
 	];
@@ -72,10 +73,8 @@ const StakingPortfolio = () => {
 					<SplitStakingCard $darkTheme={isDarkTheme}>
 						{card.map(({ key, title, value }) => (
 							<div key={key}>
-								<div>
-									<div className="title">{title}</div>
-									<div className="value">{value}</div>
-								</div>
+								<div className="title">{title}</div>
+								<div className="value">{value}</div>
 							</div>
 						))}
 					</SplitStakingCard>

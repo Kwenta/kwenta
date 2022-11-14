@@ -20,13 +20,6 @@ import RedemptionTab from './RedemptionTab';
 import StakingTab from './StakingTab';
 import TradingRewardsTab from './TradingRewardsTab';
 
-type ReactSelectOptionProps = {
-	label: string;
-	startDate: string;
-	endDate: string;
-	period: number;
-};
-
 type EpochLabel = {
 	period: number;
 	start: number;
@@ -80,11 +73,13 @@ const StakingTabs: React.FC = () => {
 		return epochData;
 	}, [periods]);
 
-	const formatOptionLabel = ({ label, startDate, endDate, period }: ReactSelectOptionProps) => {
+	const formatOptionLabel = ({ label, start, end, startDate, endDate, period }: EpochLabel) => {
 		return (
 			<div
 				onClick={() => {
 					setPeriod(period);
+					setStart(start ?? 0);
+					setEnd(end ?? 0);
 					setCurrentEpochLabel(`Epoch ${period ?? ''}: ${startDate ?? ''} - ${endDate ?? ''}`);
 				}}
 			>
