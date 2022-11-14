@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
@@ -8,6 +8,7 @@ import LabelContainer from 'components/Nav/DropDownLabel';
 import Select from 'components/Select';
 import { DropdownIndicator, IndicatorSeparator } from 'components/Select/Select';
 import { TabPanel } from 'components/Tab';
+import { EXTERNAL_LINKS } from 'constants/links';
 import { useStakingContext } from 'contexts/StakingContext';
 import { getEpochDetails } from 'queries/staking/utils';
 import { currentThemeState } from 'store/ui';
@@ -154,9 +155,26 @@ const StakingTabs: React.FC = () => {
 					<RedemptionTab />
 				</TabPanel>
 			</div>
+
+			<StyledLabelContainer>
+				<a href={EXTERNAL_LINKS.Docs.Staking} target="_blank" rel="noreferrer">
+					<Trans i18nKey={'dashboard.stake.tabs.staking.more-info'} components={[<Emphasis />]} />
+				</a>
+			</StyledLabelContainer>
 		</StakingTabsContainer>
 	);
 };
+
+const Emphasis = styled.b`
+	color: ${(props) => props.theme.colors.common.primaryWhite};
+`;
+
+const StyledLabelContainer = styled(LabelContainer)`
+	font-size: 14px;
+	padding-left: 4px;
+	margin-top: 40px;
+	text-decoration: underline;
+`;
 
 const StakingSelect = styled(Select)`
 	width: 100%;
