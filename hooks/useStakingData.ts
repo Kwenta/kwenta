@@ -87,7 +87,7 @@ const useStakingData = () => {
 	const [stakedEscrowedBalance, setStakedEscrowedBalance] = useState(zeroBN);
 	const [totalStakedBalance, setTotalStakedBalance] = useState(zeroBN);
 	const [claimableBalance, setClaimableBalance] = useState(zeroBN);
-	const [apy, setApy] = useState('0');
+	const [apy, setApy] = useState(zeroBN);
 	const [vKwentaBalance, setVKwentaBalance] = useState(zeroBN);
 	const [vKwentaAllowance, setVKwentaAllowance] = useState(zeroBN);
 	const [kwentaAllowance, setKwentaAllowance] = useState(zeroBN);
@@ -175,7 +175,7 @@ const useStakingData = () => {
 						? startWeeklySupply.mul(wei(1).sub(supplyRate.pow(52))).div(wei(1).sub(supplyRate))
 						: zeroBN;
 				setApy(
-					yearlyRewards.gt(zeroBN) ? truncateNumbers(yearlyRewards.div(totalStakedBalance), 2) : '0'
+					totalStakedBalance.gt(zeroBN) ? yearlyRewards.div(totalStakedBalance).div(100) : zeroBN
 				);
 				setVKwentaBalance(wei(data[9] ?? zeroBN));
 				setVKwentaAllowance(wei(data[10] ?? zeroBN));
@@ -245,7 +245,10 @@ const useStakingData = () => {
 			data[index].fee = Number(d.fee / 1e18);
 		});
 
-	const totalVestable = data.reduce((acc, current, index) => acc + data[index]?.vestable ?? 0, 0);
+	const totalVestable = data.reduce(
+		(acc, current, index) => wei(acc).add(wei(data[index]?.vestable)) ?? zeroBN,
+		zeroBN
+	);
 
 	const kwentaTokenApproval = useMemo(() => kwentaBalance.gt(kwentaAllowance), [
 		kwentaBalance,

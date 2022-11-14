@@ -8,7 +8,7 @@ import Button from 'components/Button';
 import { useStakingContext } from 'contexts/StakingContext';
 import { currentThemeState } from 'store/ui';
 import media from 'styles/media';
-import { truncateNumbers } from 'utils/formatters/number';
+import { formatPercent, truncateNumbers } from 'utils/formatters/number';
 
 import { KwentaLabel, StakingCard } from './common';
 import StakeInputCard from './InputCards/StakeInputCard';
@@ -32,7 +32,7 @@ const StakingTab = () => {
 					</div>
 					<div>
 						<div className="title">{t('dashboard.stake.tabs.staking.annual-percentage-yield')}</div>
-						<div className="value">{truncateNumbers(apy, 2)}%</div>
+						<div className="value">{formatPercent(apy, { minDecimals: 2 })}</div>
 					</div>
 				</CardGrid>
 				<Button

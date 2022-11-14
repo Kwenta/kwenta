@@ -1,3 +1,4 @@
+import { wei } from '@synthetixio/wei';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -14,7 +15,7 @@ import { currentThemeState } from 'store/ui';
 import { FlexDivRow } from 'styles/common';
 import media from 'styles/media';
 import { formatTruncatedDuration, getNextSunday } from 'utils/formatters/date';
-import { truncateNumbers } from 'utils/formatters/number';
+import { formatDollars, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import { KwentaLabel, StakingCard } from './common';
 
@@ -128,8 +129,6 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 
 	const feePaid = useMemo(() => spotFeePaid + futuresFeePaid, [futuresFeePaid, spotFeePaid]);
 
-	// eslint-disable-next-line no-console
-	console.log(`args`, claimableRewards);
 	const { config: claimEpochConfig } = usePrepareContractWrite({
 		...multipleMerkleDistributorContract,
 		functionName: 'claimMultiple',
@@ -147,7 +146,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.claimable-rewards-all')}
 						</div>
-						<KwentaLabel>{truncateNumbers(totalRewards ?? 0, 4)}</KwentaLabel>
+						<KwentaLabel>{truncateNumbers(wei(totalRewards) ?? zeroBN, 2)}</KwentaLabel>
 					</div>
 				</CardGrid>
 				<StyledFlexDivRow>
@@ -168,7 +167,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.fees-paid', { EpochPeriod: period })}
 						</div>
-						<div className="value">{truncateNumbers(feePaid ?? 0, 4)}</div>
+						<div className="value">{formatDollars(feePaid)}</div>
 					</div>
 					<div>
 						<div className="title">
