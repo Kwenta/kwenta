@@ -4,6 +4,7 @@ import getISOWeeksInYear from 'date-fns/getISOWeeksInYear';
 import subHours from 'date-fns/subHours';
 import { TFunction } from 'i18next';
 
+import getLocale from './getLocale';
 import { strPadLeft } from './string';
 
 export const formatTxTimestamp = (timestamp: number | Date) =>
@@ -59,8 +60,7 @@ export const timePresentation = (timestamp: string, t: TFunction) => {
 			timeDelta: Math.floor(seconds / 604800),
 		});
 	}
-
-	return format(actionTime, 'MM/dd/yyyy');
+	return format(actionTime, getLocale().formatLong?.date({ width: 'short' }) ?? 'MM/dd/yyyy');
 };
 
 export const formatDateWithoutYear = (date: Date) => formatDate(date, 'MMMM dd');
