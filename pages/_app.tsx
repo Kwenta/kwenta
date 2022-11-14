@@ -18,6 +18,7 @@ import { chain, WagmiConfig } from 'wagmi';
 
 import Connector from 'containers/Connector';
 import { chains, wagmiClient } from 'containers/Connector/config';
+import AcknowledgementModal from 'sections/app/AcknowledgementModal';
 import AppData from 'sections/shared/components/AppData';
 import Layout from 'sections/shared/Layout';
 import SystemStatus from 'sections/shared/SystemStatus';
@@ -82,6 +83,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 							}
 						>
 							<Layout>
+								<AcknowledgementModal />
 								<SystemStatus>{getLayout(<Component {...pageProps} />)}</SystemStatus>
 							</Layout>
 							<ReactQueryDevtools position="top-left" />

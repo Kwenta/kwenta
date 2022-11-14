@@ -104,6 +104,7 @@ const darkTheme = {
 		title: common.secondaryGray,
 		value: common.primaryWhite,
 		label: common.secondaryGray,
+		body: common.dark.gray,
 	},
 	icon: {
 		fill: '#787878',
