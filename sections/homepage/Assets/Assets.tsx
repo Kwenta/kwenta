@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
 import Slider from 'react-slick';
 import { useRecoilValue } from 'recoil';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import GridSvg from 'assets/svg/app/grid.svg';
 import Button from 'components/Button';

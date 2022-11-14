@@ -34,10 +34,6 @@ const HomeLayout: FC<HomeLayoutProps> = ({ children }) => (
 						</NavSpan>
 					</>
 				</FuturesBannerLinkWrapper>
-
-				{/* <DivBorder />
-				<FuturesBordersSvg />
-				<DivBorder /> */}
 			</FuturesBannerContainer>
 		</DesktopOnlyView>
 		<MobileOrTabletView>
