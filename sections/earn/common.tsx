@@ -2,7 +2,6 @@ import styled from 'styled-components';
 
 import KwentaLogo from 'assets/svg/earn/KWENTA.svg';
 import Button from 'components/Button';
-import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Text from 'components/Text';
 import media from 'styles/media';
 
@@ -52,10 +51,7 @@ export const StyledButton = styled(Button)`
 
 export const DollarValue = styled(BigText)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
-
-export const StyledSNXIcon = styled(CurrencyIcon)`
-	margin: 0 9px;
+	margin-left: 8px;
 `;
 
 export const SplitColumn = styled.div`

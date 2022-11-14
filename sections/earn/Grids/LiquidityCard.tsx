@@ -2,15 +2,7 @@ import styled from 'styled-components';
 
 import media from 'styles/media';
 
-import {
-	BigText,
-	Description,
-	DollarValue,
-	LiquidityAmount,
-	StyledButton,
-	StyledSNXIcon,
-	Title,
-} from '../common';
+import { BigText, Description, DollarValue, LiquidityAmount, StyledButton, Title } from '../common';
 
 const LiquidityCard = () => {
 	return (
@@ -18,17 +10,14 @@ const LiquidityCard = () => {
 			<div>
 				<Title>Your Liquidity</Title>
 				<LiquidityAmount>
-					<BigText>2923.39</BigText>
-					<StyledSNXIcon currencyKey="SNX" width="23px" height="23px" />
+					<BigText hasKwentaLogo>2923.39</BigText>
 					<DollarValue>$32,284.31</DollarValue>
 				</LiquidityAmount>
 				<Description>Stake SNX on Optimism to earn $KWENTA.</Description>
 			</div>
-			<div>
-				<StyledButton size="sm" variant="flat" fullWidth>
-					Add Liquidity
-				</StyledButton>
-			</div>
+			<StyledButton size="sm" variant="flat" fullWidth>
+				Add Liquidity
+			</StyledButton>
 		</LiquidityCardContainer>
 	);
 };
