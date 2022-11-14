@@ -1,9 +1,9 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
+import KwentaSDK from 'sdk';
 
 export default class FuturesService {
-	private networkId: NetworkId;
+	private sdk: KwentaSDK;
 
-	constructor(networkId: NetworkId) {
-		this.networkId = networkId;
+	constructor(sdk: KwentaSDK) {
+		this.sdk = sdk;
 	}
 }
