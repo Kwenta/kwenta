@@ -19,9 +19,12 @@ const GridData: FC<GridDataProps> = memo(({ title, value, hasKwentaLogo }) => (
 ));
 
 const GridDataContainer = styled.div`
+	background-color: #181818;
 	${media.lessThan('mdUp')`
+		padding: 20px;
     margin-top: 15px;
     border-radius: 15px;
+	border: ${(props) => props.theme.colors.selectedTheme.border};
   `}
 `;
 

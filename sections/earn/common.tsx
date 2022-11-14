@@ -1,9 +1,10 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import KwentaLogo from 'assets/svg/earn/KWENTA.svg';
 import Button from 'components/Button';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Text from 'components/Text';
+import media from 'styles/media';
 
 export const BigText: React.FC<{ hasKwentaLogo?: boolean }> = ({
 	children,
@@ -32,26 +33,11 @@ export const Title = styled(Text.Body)`
 export const Description = styled(Text.Body)`
 	font-size: 15px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
+	margin: 8px 0;
 `;
 
 const StyledKwentaLogo = styled(KwentaLogo)`
 	margin-left: 8px;
-`;
-
-export const OverlappingIcons = styled.div`
-	display: flex;
-	position: relative;
-
-	& > div:last-child {
-		position: absolute;
-		z-index: 5;
-		left: 12px;
-	}
-`;
-
-export const GridHeading = styled(Text.Heading)`
-	font-size: 21px;
-	margin-bottom: 8px;
 `;
 
 export const StyledBody = styled(Text.Body)`
@@ -68,64 +54,53 @@ export const DollarValue = styled(BigText)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
-export const ColumnInner = styled.div`
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	height: 100%;
-`;
-
 export const StyledSNXIcon = styled(CurrencyIcon)`
 	margin: 0 9px;
 `;
 
-export const Column = styled.div`
-	padding: 20px 24px 18px 24px;
-	outline: 1px solid #353333;
-`;
+export const SplitColumn = styled.div`
+	${media.greaterThan('mdUp')`
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		width: 100%;
 
-export const SplitColumn = styled.div<{ $isLast?: boolean }>`
-	display: flex;
-	flex-direction: column;
-	height: 100%;
-	width: 100%;
-
-	${(props) => !props.$isLast && css``}
-
-	& > div {
-		padding: 20px 24px 18px 24px;
-		height: 50%;
-		min-height: 95px;
-	}
-
-	& > div:last-child {
-		border-top: 1px solid #353333;
-	}
-`;
-
-export const InfoGridContainer = styled.div`
-	display: grid;
-	grid-template-columns: repeat(3, minmax(auto, 1fr));
-	border-radius: 15px;
-	border: 1px solid #353333;
-	max-width: 915px;
-	overflow: hidden;
-	box-sizing: border-box;
-
-	div {
-		box-sizing: border-box;
-	}
-
-	& > div {
-		border-left: 1px solid #353333;
-		border-right: 1px solid #353333;
-
-		&:first-child,
-		&:last-child {
-			border-left: none;
-			border-right: none;
+		& > div {
+			padding: 20px 24px 18px 24px;
+			height: 50%;
+			min-height: 95px;
 		}
-	}
+
+		& > div:last-child {
+			border-top: 1px solid #353333;
+		}
+	`}
+`;
+
+export const GridContainer = styled.div`
+	display: flex;
+
+	${media.lessThan('mdUp')`
+		flex-direction: column;
+	`}
+
+	${media.greaterThan('mdUp')`
+		border-radius: 15px;
+		border: 1px solid #353333;
+		overflow: hidden;
+
+		& > div {
+			box-sizing: border-box;
+			border-left: 1px solid #353333;
+			border-right: 1px solid #353333;
+
+			&:first-child,
+			&:last-child {
+				border-left: none;
+				border-right: none;
+			}
+		}
+	`}
 `;
 
 export const LiquidityAmount = styled.div`
