@@ -152,16 +152,11 @@ const Header: FC = () => {
 };
 
 const MobileContainer = styled(FlexDivRow)`
-	justify-content: space-between;
+	justify-content: center;
 	align-items: center;
 `;
 
-const LogoContainer = styled.div`
-	${media.lessThan('sm')`
-		margin-top: 4px;
-		padding-left:17px;
-	`}
-`;
+const LogoContainer = styled.div``;
 
 const StyledMenu = styled.div`
 	position: absolute;

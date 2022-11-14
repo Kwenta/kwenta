@@ -21,9 +21,9 @@ const Hero = () => {
 	return (
 		<StackSection>
 			<Container>
-				<LogoContainer>
+				{/* <LogoContainer>
 					<LogoNoTextSVG />
-				</LogoContainer>
+				</LogoContainer> */}
 				<Header>{t('homepage.hero.title')}</Header>
 				<ProductDescription>
 					<Trans i18nKey={'homepage.hero.copy'} components={[<Emphasis />]} />
@@ -33,7 +33,7 @@ const Hero = () => {
 				</SynthetixContainer>
 				<CTAContainer>
 					<Link href={ROUTES.Markets.Home(DEFAULT_FUTURES_MARGIN_TYPE)}>
-						<Button variant="primary" size="md">
+						<Button variant="flat" textColor="yellow" size="md">
 							{t('homepage.nav.trade-now')}
 						</Button>
 					</Link>
@@ -48,24 +48,27 @@ const Hero = () => {
 
 const Container = styled(FlexDivColCentered)`
 	width: 100vw;
-	${media.greaterThan('sm')`
+	overflow: hidden;
+	justify-content: center;
+	padding: 20px 0px;
+
+	/* ${media.greaterThan('sm')`
 		background: radial-gradient(white, rgba(2, 225, 255, 0.15) 0px, transparent 220px),
 			radial-gradient(white, rgba(201, 151, 90, 0.25) 0px, transparent 500px);
 		background-size: 100% 150%, 100% 150%;
 		background-position: -600px -250px, -200px -250px;
 		background-repeat: no-repeat, no-repeat;
-	`}
-	overflow: hidden;
-	justify-content: center;
-	padding: 110px 0px;
-	${media.lessThan('sm')`
+	`} */
+
+
+	/* ${media.lessThan('sm')`
 		padding-top: 100px;
 		background: radial-gradient(white, rgba(2, 225, 255, 0.08) 0px, transparent 120px),
 		radial-gradient(white, rgba(201, 151, 90, 0.15) 0px, transparent 180px);
 		background-size: 100% 100%, 100% 100%;
 		background-position: -100px 120px, 50px 0px;
 		background-repeat: no-repeat, no-repeat;
-	`}
+	`} */
 `;
 
 const LogoContainer = styled.div`
@@ -81,15 +84,15 @@ const Emphasis = styled.b`
 `;
 
 const Header = styled(Paragraph)`
-	font-family: ${(props) => props.theme.fonts.compressedBlack};
+	font-family: ${(props) => props.theme.fonts.monoBold};
 	max-width: 636px;
 	font-size: 80px;
 	line-height: 85%;
 	text-align: center;
 	text-transform: uppercase;
-	color: ${(props) => props.theme.colors.common.primaryGold};
-	text-shadow: 0px 0px 60px rgba(208, 168, 117, 0.35), 0px -0.8px 0px rgba(255, 255, 255);
-	padding-top: 40px;
+	color: ${(props) => props.theme.colors.common.primaryYellow};
+	/* text-shadow: 0px 0px 60px rgba(208, 168, 117, 0.35), 0px -0.8px 0px rgba(255, 255, 255); */
+	/* padding-top: 40px; */
 	${media.lessThan('sm')`
 		font-size: 40px;
 		width: 346px;
@@ -117,7 +120,7 @@ const HeroImageContainer = styled(GridDiv)`
 	display: grid;
 	justify-content: center;
 	margin-top: 97px;
-	margin-bottom: 201px;
+	margin-bottom: 150px;
 	${media.lessThan('sm')`
 		margin-bottom: 101px;
 	`}

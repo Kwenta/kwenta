@@ -63,10 +63,6 @@ const CurrencyChange = styled.span<{ isValid: boolean; isPositive: boolean }>`
 					: props.theme.colors.selectedTheme.red};
 		}
 	}
-
-	${media.lessThan('md')`
-		margin-right: 5px;
-	`}
 `;
 
 export default ChangePercent;

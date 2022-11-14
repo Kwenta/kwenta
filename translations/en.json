@@ -80,7 +80,7 @@
 			"title": "Leaderboard",
 			"description": "Follow Top Traders",
 			"stats": {
-				"title": "Fostering a growing community of traders",
+				"title": "A growing community",
 				"volume": "Total Volume",
 				"traders": "Total Traders",
 				"trades": "Total Trades",
@@ -135,7 +135,7 @@
 		},
 		"features": {
 			"title": "ADVANTAGES",
-			"description": "Trade without the limits of a centralized exchange",
+			"description": "Experience a true DEX",
 			"blazing-fast": {
 				"title": "Blazing Fast",
 				"copy": "Near-instant trade confirmations using Optimism's Layer 2 scalability"
@@ -157,7 +157,7 @@
 				"copy": "Manage your trades at home or on the go"
 			},
 			"easy-ramping": {
-				"title": "Easy On/Off Ramping",
+				"title": "Easy Ramping",
 				"copy": "Deposit or withdraw assets freely"
 			},
 			"zero-slippage": {
