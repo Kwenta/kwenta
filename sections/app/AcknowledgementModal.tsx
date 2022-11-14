@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
@@ -7,12 +8,11 @@ import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import localStore from 'utils/localStore';
 import logError from 'utils/logError';
-import { useRouter } from 'next/router';
 
 export default function AcknowledgementModal() {
 	const { walletAddress, signer } = Connector.useContainer();
 	const router = useRouter();
-	const [signedMessage, setSignedMessage] = useState<string | null>(null);
+	const [acks, setAcks] = useState<Record<string, string>>({});
 
 	const acknowledgedAddresses = (localStore.get('acknowledgedAddresses') || {}) as Record<
 		string,
@@ -26,8 +26,8 @@ export default function AcknowledgementModal() {
 
 	if (
 		!protectedRoute ||
-		signedMessage ||
 		!walletAddress ||
+		acks[walletAddress.toLowerCase()] ||
 		acknowledgedAddresses[walletAddress.toLowerCase()]
 	) {
 		return null;
@@ -39,7 +39,7 @@ export default function AcknowledgementModal() {
 			if (signed) {
 				acknowledgedAddresses[walletAddress.toLowerCase()] = signed;
 				localStore.set('acknowledgedAddresses', acknowledgedAddresses);
-				setSignedMessage(signed);
+				setAcks({ ...acks, [walletAddress.toLowerCase()]: signed });
 			}
 		} catch (err) {
 			logError(err);
