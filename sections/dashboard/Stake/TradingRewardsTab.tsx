@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { useContractReads, useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
@@ -45,13 +45,12 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
 	const { multipleMerkleDistributorContract, periods } = useStakingContext();
-	const isClaimed = true;
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
 
 	const fileNames = useMemo(() => {
 		let fileNames: string[] = [];
-		periods.slice(0, -1).forEach((i) => {
+		periods.forEach((i) => {
 			fileNames.push(`trading-rewards-snapshots/epoch-${i - 1}.json`);
 		});
 		return fileNames;
@@ -60,13 +59,13 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 	const allEpochQuery = useGetFiles(fileNames);
 	const allEpochData = useMemo(() => allEpochQuery?.data ?? [], [allEpochQuery?.data]);
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	let rewards: [any, any, any, any, any][] = [];
+
 	allEpochData &&
 		allEpochData.length > 0 &&
 		allEpochData.forEach((d: EpochDataProps, period) => {
 			const index = Object.keys(d.claims).findIndex((key) => key === walletAddress);
-			// eslint-disable-next-line no-console
-			console.log(`processing`, index);
 			if (index !== -1) {
 				const walletReward = Object.values(d.claims)[index];
 				if (!!walletReward && walletAddress != null) {
@@ -81,8 +80,35 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 			}
 		});
 
+	let checkIsClaimed: any[] = [];
+	rewards &&
+		rewards.length > 0 &&
+		rewards.forEach((walletReward) =>
+			checkIsClaimed.push({
+				...multipleMerkleDistributorContract,
+				functionName: 'isClaimed',
+				args: [walletReward[0], walletReward[4]],
+			})
+		);
+
+	const { data: isClaimable } = useContractReads({
+		contracts: checkIsClaimed,
+		enabled: checkIsClaimed && checkIsClaimed.length > 0,
+		watch: true,
+	});
+
+	const claimableRewards = useMemo(
+		() =>
+			isClaimable && isClaimable.length > 0
+				? rewards.filter((_, index) => !isClaimable[index])
+				: [],
+		[isClaimable, rewards]
+	);
+
 	const totalRewards =
-		rewards.length > 0 ? rewards.reduce((acc, curr) => (acc = acc + Number(curr[2] / 1e18)), 0) : 0;
+		claimableRewards.length > 0
+			? claimableRewards.reduce((acc, curr) => acc + Number(curr[2] / 1e18), 0)
+			: 0;
 
 	const SpotFeeQuery = useGetSpotFeeForAccount(walletAddress!, start, end);
 	const spotFeePaid = useMemo(() => {
@@ -107,8 +133,8 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 	const { config: claimEpochConfig } = usePrepareContractWrite({
 		...multipleMerkleDistributorContract,
 		functionName: 'claimMultiple',
-		args: rewards,
-		enabled: rewards.length > 0 && !isClaimed,
+		args: claimableRewards,
+		enabled: claimableRewards && claimableRewards.length > 0,
 		onError(error) {
 			logError(error);
 		},
@@ -128,7 +154,13 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 					</div>
 				</CardGrid>
 				<StyledFlexDivRow>
-					<Button fullWidth variant="flat" size="sm" disabled={isClaimed} onClick={() => claim?.()}>
+					<Button
+						fullWidth
+						variant="flat"
+						size="sm"
+						disabled={!claimableRewards || claimableRewards.length === 0}
+						onClick={() => claim?.()}
+					>
 						{t('dashboard.stake.tabs.trading-rewards.claim-all')}
 					</Button>
 				</StyledFlexDivRow>
