@@ -15,7 +15,6 @@ import { FlexDivRow } from 'styles/common';
 import media from 'styles/media';
 import { formatTruncatedDuration, getNextSunday } from 'utils/formatters/date';
 import { truncateNumbers } from 'utils/formatters/number';
-import logError from 'utils/logError';
 
 import { KwentaLabel, StakingCard } from './common';
 
@@ -129,14 +128,13 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 
 	const feePaid = useMemo(() => spotFeePaid + futuresFeePaid, [futuresFeePaid, spotFeePaid]);
 
+	// eslint-disable-next-line no-console
+	console.log(`args`, claimableRewards);
 	const { config: claimEpochConfig } = usePrepareContractWrite({
 		...multipleMerkleDistributorContract,
 		functionName: 'claimMultiple',
-		args: claimableRewards,
+		args: [claimableRewards],
 		enabled: claimableRewards && claimableRewards.length > 0,
-		onError(error) {
-			logError(error);
-		},
 	});
 
 	const { write: claim } = useContractWrite(claimEpochConfig);
