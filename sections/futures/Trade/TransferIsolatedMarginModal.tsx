@@ -81,7 +81,7 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, sUSDBalance, 
 		'transferMargin',
 		[wei(amount || 0).toBN()],
 		gasPrice || undefined,
-		{ enabled: !!market && !!amount && !isDisabled }
+		{ enabled: !!market && !!amount && !isDisabled && transferType === 0 }
 	);
 
 	const withdrawTxn = useSynthetixTxn(
@@ -89,7 +89,7 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, sUSDBalance, 
 		'transferMargin',
 		[computedWithdrawAmount],
 		gasPrice || undefined,
-		{ enabled: !!market && !!amount }
+		{ enabled: !!market && !!amount && transferType === 1 }
 	);
 
 	const transactionFee = estimateSnxTxGasCost(transferType === 0 ? depositTxn : withdrawTxn);

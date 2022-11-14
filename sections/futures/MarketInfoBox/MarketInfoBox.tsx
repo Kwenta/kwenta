@@ -113,11 +113,6 @@ const MarketInfoBox: React.FC = () => {
 		<StyledInfoBox
 			dataTestId="market-info-box"
 			details={{
-				'Total Margin': {
-					value: `${formatDollars(totalMargin, {
-						currencyKey: undefined,
-					})}`,
-				},
 				'Available Margin': {
 					value: `${formatDollars(availableMargin, {
 						currencyKey: undefined,
