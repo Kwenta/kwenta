@@ -256,26 +256,6 @@ export default class ExchangeService {
 		return Number(maxSecsLeftInWaitingPeriod);
 	}
 
-	public async getBalance(currencyKey: string) {
-		const isETH = this.isCurrencyETH(currencyKey);
-
-		if (this.sdk.context.hasWalletAddress) {
-			if (isETH) {
-				return this.getETHBalance();
-			} else if (this.synthsMap[currencyKey as SynthSymbol]) {
-				return this.sdk.synths.getSynthBalance(this.sdk.context.walletAddress, currencyKey);
-			} else {
-				const token = this.tokenList.find((t) => t.symbol === currencyKey);
-				if (token) {
-					const tokenBalances = token ? await this.getTokensBalances([token]) : undefined;
-					return tokenBalances?.[currencyKey]?.balance ?? zeroBN;
-				}
-			}
-		}
-
-		return zeroBN;
-	}
-
 	public async swapSynthSwap(
 		fromToken: Token,
 		toToken: Token,
@@ -1040,43 +1020,6 @@ export default class ExchangeService {
 		);
 
 		return pairRates;
-	}
-
-	private async getTokensBalances(tokens: Token[]) {
-		const filteredTokens = tokens.filter((t) => !FILTERED_TOKENS.includes(t.address.toLowerCase()));
-		const symbols = filteredTokens.map((token) => token.symbol);
-		const filteredTokensMap = keyBy(filteredTokens, 'symbol');
-
-		const calls = [];
-		for (const { address, symbol } of filteredTokens) {
-			if (symbol === CRYPTO_CURRENCY_MAP.ETH) {
-				calls.push(
-					this.sdk.context.multicallProvider.getEthBalance(this.sdk.context.walletAddress)
-				);
-			} else {
-				const tokenContract = new EthCallContract(address, erc20Abi);
-				calls.push(tokenContract.balanceOf(this.sdk.context.walletAddress));
-			}
-		}
-
-		const data = (await this.sdk.context.multicallProvider.all(calls)) as ethers.BigNumber[];
-
-		const tokenBalances: TokenBalances = {};
-		data.forEach((value, index) => {
-			if (value.lte(0)) return;
-			const token = filteredTokensMap[symbols[index]];
-
-			tokenBalances[symbols[index]] = {
-				balance: wei(value, token.decimals ?? 18),
-				token,
-			};
-		});
-		return tokenBalances;
-	}
-
-	private async getETHBalance() {
-		const balance = await this.sdk.context.provider.getBalance(this.sdk.context.walletAddress);
-		return wei(balance);
 	}
 
 	private async getOneInchApproveAddress() {
