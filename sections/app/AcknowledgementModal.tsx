@@ -3,12 +3,15 @@ import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
+import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import localStore from 'utils/localStore';
 import logError from 'utils/logError';
+import { useRouter } from 'next/router';
 
 export default function AcknowledgementModal() {
 	const { walletAddress, signer } = Connector.useContainer();
+	const router = useRouter();
 	const [signedMessage, setSignedMessage] = useState<string | null>(null);
 
 	const acknowledgedAddresses = (localStore.get('acknowledgedAddresses') || {}) as Record<
@@ -16,7 +19,17 @@ export default function AcknowledgementModal() {
 		string
 	>;
 
-	if (signedMessage || !walletAddress || acknowledgedAddresses[walletAddress.toLowerCase()]) {
+	const protectedRoute =
+		router.asPath.startsWith(ROUTES.Earn.Home) ||
+		router.asPath.startsWith(ROUTES.Exchange.Home) ||
+		router.asPath.includes('/market');
+
+	if (
+		!protectedRoute ||
+		signedMessage ||
+		!walletAddress ||
+		acknowledgedAddresses[walletAddress.toLowerCase()]
+	) {
 		return null;
 	}
 

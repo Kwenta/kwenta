@@ -32,6 +32,7 @@ import '@reach/dialog/styles.css';
 import '@rainbow-me/rainbowkit/styles.css';
 
 import '../i18n';
+import { useRouter } from 'next/router';
 
 type NextPageWithLayout = NextPage & {
 	getLayout?: (page: ReactElement) => ReactNode;
