@@ -4,11 +4,11 @@ import React from 'react';
 const secondsToDDHHMM = (seconds: number) => {
 	return (
 		Math.floor(seconds / (3600 * 24)) +
-		'D:' +
+		'd:' +
 		('0' + Math.floor(seconds / 3600)).slice(-2) +
-		'H:' +
+		'h:' +
 		('0' + (Math.floor(seconds / 60) % 60)).slice(-2) +
-		'M'
+		'm'
 	);
 };
 
@@ -23,7 +23,7 @@ const useRewardsTimer = (deadline: Date | null) => {
 		};
 	}, []);
 
-	if (deadline == null) return secondsToDDHHMM(0);
+	if (!deadline || deadline < new Date()) return secondsToDDHHMM(0);
 	return secondsToDDHHMM(differenceInSeconds(deadline, now));
 };
 
