@@ -259,7 +259,7 @@ export default class ExchangeService {
 	public async getBalance(currencyKey: string) {
 		const isETH = this.isCurrencyETH(currencyKey);
 
-		if (this.sdk.context.walletAddress) {
+		if (this.sdk.context.hasWalletAddress) {
 			if (isETH) {
 				return this.getETHBalance();
 			} else if (this.synthsMap[currencyKey as SynthSymbol]) {

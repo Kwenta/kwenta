@@ -63,6 +63,10 @@ export default class Context implements IContext {
 		return [10, 420].includes(this.networkId);
 	}
 
+	get hasWalletAddress() {
+		return !!this.walletAddress;
+	}
+
 	public async setProvider(provider: ethers.providers.Provider) {
 		this.context.provider = provider;
 		this.multicallProvider.init(provider);
