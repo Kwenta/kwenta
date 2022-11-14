@@ -1,13 +1,13 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import { useStakingContext } from 'contexts/StakingContext';
-import useGetFile from 'queries/files/useGetFile';
+import useGetFiles from 'queries/files/useGetFiles';
 import useGetFuturesFeeForAccount from 'queries/staking/useGetFuturesFeeForAccount';
 import useGetSpotFeeForAccount from 'queries/staking/useGetSpotFeeForAccount';
 import { currentThemeState } from 'store/ui';
@@ -20,38 +20,71 @@ import logError from 'utils/logError';
 import { KwentaLabel, StakingCard } from './common';
 
 type TradingRewardProps = {
-	period: number;
+	period: number | string;
+	start?: number;
+	end?: number;
 };
 
-const TradingRewardsTab: React.FC<TradingRewardProps> = ({ period = 1 }: TradingRewardProps) => {
+type EpochDataProps = {
+	merkleRoot: string;
+	tokenTotal: string;
+	claims: {
+		[address: string]: {
+			index: number;
+			amount: string;
+			proof: string[];
+		};
+	}[];
+};
+
+const TradingRewardsTab: React.FC<TradingRewardProps> = ({
+	period = 'ALL',
+	start = 0,
+	end = Math.floor(Date.now() / 1000),
+}: TradingRewardProps) => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
-	const { multipleMerkleDistributorContract } = useStakingContext();
-	const [isClaimed, setIsClaimed] = useState(true);
+	const { multipleMerkleDistributorContract, periods } = useStakingContext();
+	const isClaimed = true;
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
 
-	const epochQuery = useGetFile(`trading-rewards-snapshots/epoch-${period - 1}.json`);
-	const epochData = epochQuery.isSuccess ? epochQuery.data : null;
+	const fileNames = useMemo(() => {
+		let fileNames: string[] = [];
+		periods.slice(0, -1).forEach((i) => {
+			fileNames.push(`trading-rewards-snapshots/epoch-${i - 1}.json`);
+		});
+		return fileNames;
+	}, [periods]);
 
-	const walletReward = useMemo(
-		() => (epochData != null && walletAddress != null ? epochData.claims[walletAddress] : null),
-		[epochData, walletAddress]
-	);
+	const allEpochQuery = useGetFiles(fileNames);
+	const allEpochData = useMemo(() => allEpochQuery?.data ?? [], [allEpochQuery?.data]);
 
-	const currentWeeklyReward = useMemo(() => (epochData != null ? epochData.tokenTotal : 0), [
-		epochData,
-	]);
+	let rewards: [any, any, any, any, any][] = [];
+	allEpochData &&
+		allEpochData.length > 0 &&
+		allEpochData.forEach((d: EpochDataProps, period) => {
+			const index = Object.keys(d.claims).findIndex((key) => key === walletAddress);
+			// eslint-disable-next-line no-console
+			console.log(`processing`, index);
+			if (index !== -1) {
+				const walletReward = Object.values(d.claims)[index];
+				if (!!walletReward && walletAddress != null) {
+					rewards.push([
+						walletReward?.index,
+						walletAddress,
+						walletReward?.amount,
+						walletReward?.proof,
+						period,
+					]);
+				}
+			}
+		});
 
-	const tradingRewardsRatio = useMemo(
-		() =>
-			walletReward != null && currentWeeklyReward != null && currentWeeklyReward !== 0
-				? walletReward.amount / currentWeeklyReward
-				: 0,
-		[currentWeeklyReward, walletReward]
-	);
+	const totalRewards =
+		rewards.length > 0 ? rewards.reduce((acc, curr) => (acc = acc + Number(curr[2] / 1e18)), 0) : 0;
 
-	const SpotFeeQuery = useGetSpotFeeForAccount(walletAddress!);
+	const SpotFeeQuery = useGetSpotFeeForAccount(walletAddress!, start, end);
 	const spotFeePaid = useMemo(() => {
 		const t = SpotFeeQuery.data?.synthExchanges ?? [];
 
@@ -60,7 +93,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({ period = 1 }: Trading
 			.reduce((acc: number, curr: number) => acc + curr, 0);
 	}, [SpotFeeQuery.data]);
 
-	const FuturesFeeQuery = useGetFuturesFeeForAccount(walletAddress!);
+	const FuturesFeeQuery = useGetFuturesFeeForAccount(walletAddress!, start, end);
 	const futuresFeePaid = useMemo(() => {
 		const t = FuturesFeeQuery.data ?? [];
 
@@ -71,28 +104,14 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({ period = 1 }: Trading
 
 	const feePaid = useMemo(() => spotFeePaid + futuresFeePaid, [futuresFeePaid, spotFeePaid]);
 
-	useContractRead({
-		...multipleMerkleDistributorContract,
-		functionName: 'isClaimed',
-		args: [walletReward?.index, period],
-		enabled: walletReward != null,
-		watch: true,
-		onSettled(data, error) {
-			if (error) logError(error);
-			if (data) {
-				setIsClaimed(!!data);
-			}
-		},
-	});
 	const { config: claimEpochConfig } = usePrepareContractWrite({
 		...multipleMerkleDistributorContract,
-		functionName: 'claim',
-		args: [walletReward?.index, walletAddress, walletReward?.amount, walletReward?.proof, period],
-		enabled: walletReward != null && !isClaimed,
+		functionName: 'claimMultiple',
+		args: rewards,
+		enabled: rewards.length > 0 && !isClaimed,
 		onError(error) {
 			logError(error);
 		},
-		staleTime: Infinity,
 	});
 
 	const { write: claim } = useContractWrite(claimEpochConfig);
@@ -105,19 +124,11 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({ period = 1 }: Trading
 						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.claimable-rewards-all')}
 						</div>
-						<KwentaLabel>
-							{truncateNumbers(Number(currentWeeklyReward / 1e18) * tradingRewardsRatio, 4)}
-						</KwentaLabel>
+						<KwentaLabel>{truncateNumbers(totalRewards ?? 0, 4)}</KwentaLabel>
 					</div>
 				</CardGrid>
 				<StyledFlexDivRow>
-					<Button
-						fullWidth
-						variant="flat"
-						size="sm"
-						disabled={tradingRewardsRatio === 0 || isClaimed}
-						onClick={() => claim?.()}
-					>
+					<Button fullWidth variant="flat" size="sm" disabled={isClaimed} onClick={() => claim?.()}>
 						{t('dashboard.stake.tabs.trading-rewards.claim-all')}
 					</Button>
 				</StyledFlexDivRow>

@@ -8,7 +8,6 @@ import LabelContainer from 'components/Nav/DropDownLabel';
 import Select from 'components/Select';
 import { DropdownIndicator, IndicatorSeparator } from 'components/Select/Select';
 import { TabPanel } from 'components/Tab';
-import Connector from 'containers/Connector';
 import { useStakingContext } from 'contexts/StakingContext';
 import { getEpochDetails } from 'queries/staking/utils';
 import { currentThemeState } from 'store/ui';
@@ -23,15 +22,18 @@ import TradingRewardsTab from './TradingRewardsTab';
 
 type ReactSelectOptionProps = {
 	label: string;
-	onClick?: () => void;
+	startDate: string;
+	endDate: string;
+	period: number;
 };
 
 type EpochLabel = {
 	period: number;
 	start: number;
 	end: number;
+	startDate: string;
+	endDate: string;
 	label: string;
-	onClick?: () => void;
 };
 
 enum StakeTab {
@@ -43,45 +45,49 @@ enum StakeTab {
 
 const StakingTabs: React.FC = () => {
 	const { t } = useTranslation();
-	const { provider } = Connector.useContainer();
-	const { epochPeriod } = useStakingContext();
-	const [epochCurrentLabel, setEpochCurrentLabel] = useState(
-		`Epoch 1: Oct 23, 2022 - Oct 30, 2022`
-	);
+	const { epochPeriod, periods } = useStakingContext();
 
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
-	const [period, setPeriod] = useState(1);
+	const [period, setPeriod] = useState(epochPeriod + 1);
+	const [start, setStart] = useState(0);
+	const [end, setEnd] = useState(0);
+	const [currentEpochLabel, setCurrentEpochLabel] = useState(
+		`Epoch 1: Oct 23, 2022 - Oct 30, 2022`
+	);
 	const [activeTab, setActiveTab] = useState(StakeTab.Staking);
 	const handleTabSwitch = useCallback((tab: StakeTab) => () => setActiveTab(tab), []);
 
 	const epochData = useMemo(() => {
-		let periods = [];
-		for (let i = 1; i <= epochPeriod + 1; i++) {
-			periods.push(i);
-		}
-		let epochList: EpochLabel[] = [];
-		periods.forEach(async (i) => {
-			const { epochStart, epochEnd } = await getEpochDetails(provider, i);
+		let epochData: EpochLabel[] = [];
+		periods.forEach((i) => {
+			const { epochStart, epochEnd } = getEpochDetails(i);
 			const startDate = formatShortDate(new Date(toJSTimestamp(epochStart)));
 			const endDate = formatShortDate(new Date(toJSTimestamp(epochEnd)));
-			epochList.push({
+			epochData.push({
 				period: i,
 				start: epochStart,
 				end: epochEnd,
+				startDate,
+				endDate,
 				label: `${i}: ${startDate} - ${endDate}`,
-				onClick: () => {
-					setPeriod(i);
-					setEpochCurrentLabel(`Epoch ${i}: ${startDate} - ${endDate}`);
-				},
 			});
+			setPeriod(i);
+			setStart(epochStart ?? 0);
+			setEnd(epochEnd ?? 0);
+			setCurrentEpochLabel(`Epoch ${i}: ${startDate} - ${endDate}`);
 		});
-		return epochList;
-	}, [epochPeriod, provider]);
+		return epochData;
+	}, [periods]);
 
-	const formatOptionLabel = ({ label, onClick }: ReactSelectOptionProps) => {
+	const formatOptionLabel = ({ label, startDate, endDate, period }: ReactSelectOptionProps) => {
 		return (
-			<div onClick={onClick}>
+			<div
+				onClick={() => {
+					setPeriod(period);
+					setCurrentEpochLabel(`Epoch ${period ?? ''}: ${startDate ?? ''} - ${endDate ?? ''}`);
+				}}
+			>
 				<LabelContainer>{label}</LabelContainer>
 			</div>
 		);
@@ -126,10 +132,10 @@ const StakingTabs: React.FC = () => {
 					<StakingSelect
 						formatOptionLabel={formatOptionLabel}
 						controlHeight={41}
-						options={epochData}
+						options={epochData.sort((a, b) => a.period - b.period)}
 						optionPadding={'0px'}
 						value={{
-							label: epochCurrentLabel,
+							label: currentEpochLabel,
 						}}
 						menuWidth={240}
 						components={{ IndicatorSeparator, DropdownIndicator }}
@@ -144,7 +150,7 @@ const StakingTabs: React.FC = () => {
 					<StakingTab />
 				</TabPanel>
 				<TabPanel name={StakeTab.TradingRewards} activeTab={activeTab}>
-					<TradingRewardsTab period={period} />
+					<TradingRewardsTab period={period} start={start} end={end} />
 				</TabPanel>
 				<TabPanel name={StakeTab.Escrow} activeTab={activeTab}>
 					<EscrowTab />

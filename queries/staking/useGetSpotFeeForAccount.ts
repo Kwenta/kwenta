@@ -7,18 +7,28 @@ import logError from 'utils/logError';
 
 const useGetSpotFeeForAccount = (
 	walletAddress: string,
+	start: number,
+	end: number,
 	options?: UseQueryOptions<Number | null>
 ) => {
 	return useQuery<any>(
-		QUERY_KEYS.Staking.SpotsFee(walletAddress),
+		QUERY_KEYS.Staking.SpotsFee(walletAddress, start, end),
 		async () => {
 			try {
 				const response = await request(
 					RATES_ENDPOINT_OP_MAINNET,
 					gql`
-						query WalletTrades($walletAddress: String!) {
+						query WalletTrades(
+							$walletAddress: String!
+							$minTimestamp: BigInt!
+							$maxTimestamp: BigInt!
+						) {
 							synthExchanges(
-								where: { toAddress: $walletAddress }
+								where: {
+									timestamp_gt: $minTimestamp
+									timestamp_lte: $maxTimestamp
+									toAddress: $walletAddress
+								}
 								first: 1000
 								orderBy: "timestamp"
 								orderDirection: "desc"
@@ -29,7 +39,11 @@ const useGetSpotFeeForAccount = (
 							}
 						}
 					`,
-					{ walletAddress: walletAddress.toLowerCase() }
+					{
+						walletAddress: walletAddress.toLowerCase(),
+						minTimestamp: start,
+						maxTimestamp: end,
+					}
 				);
 
 				return response;

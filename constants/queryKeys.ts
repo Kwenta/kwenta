@@ -334,15 +334,25 @@ export const QUERY_KEYS = {
 	},
 	Files: {
 		Get: (fileName: string) => ['files', 'get', fileName],
+		GetMultiple: (fileNames: string[]) => ['files', 'getMultiple', fileNames],
 	},
 	Staking: {
 		Rewards: (walletAddress: string | null) => ['staking', 'rewards', 'balance', walletAddress],
-		SpotsFee: (walletAddress: string | null) => ['staking', 'rewards', 'spots-fee', walletAddress],
-		FuturesFee: (walletAddress: string | null) => [
+		SpotsFee: (walletAddress: string | null, start: number, end: number) => [
+			'staking',
+			'rewards',
+			'spots-fee',
+			walletAddress,
+			start,
+			end,
+		],
+		FuturesFee: (walletAddress: string | null, start: number, end: number) => [
 			'staking',
 			'rewards',
 			'futures-fee',
 			walletAddress,
+			start,
+			end,
 		],
 	},
 };

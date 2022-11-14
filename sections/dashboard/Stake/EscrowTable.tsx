@@ -39,19 +39,27 @@ const EscrowTable = () => {
 
 	const columnsDeps = React.useMemo(() => [checkedState], [checkedState]);
 
-	const totalVestable = checkedState.reduce((acc, current, index) => {
-		if (current === true) {
-			return acc + data[index]?.vestable ?? 0;
-		}
-		return acc;
-	}, 0);
+	const totalVestable = useMemo(
+		() =>
+			checkedState.reduce((acc, current, index) => {
+				if (current === true) {
+					return acc + data[index]?.vestable ?? 0;
+				}
+				return acc;
+			}, 0),
+		[checkedState, data]
+	);
 
-	const totalFee = checkedState.reduce((acc, current, index) => {
-		if (current === true) {
-			return acc + data[index]?.fee ?? 0;
-		}
-		return acc;
-	}, 0);
+	const totalFee = useMemo(
+		() =>
+			checkedState.reduce((acc, current, index) => {
+				if (current === true) {
+					return acc + data[index]?.fee ?? 0;
+				}
+				return acc;
+			}, 0),
+		[checkedState, data]
+	);
 
 	const { config } = usePrepareContractWrite({
 		...rewardEscrowContract,

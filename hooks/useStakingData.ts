@@ -80,7 +80,6 @@ const useStakingData = () => {
 	};
 
 	const [epochPeriod, setEpochPeriod] = useState(0);
-
 	const { walletAddress } = Connector.useContainer();
 	const [kwentaBalance, setKwentaBalance] = useState(zeroBN);
 	const [escrowedBalance, setEscrowedBalance] = useState(zeroBN);
@@ -181,10 +180,18 @@ const useStakingData = () => {
 				setVKwentaBalance(wei(data[9] ?? zeroBN));
 				setVKwentaAllowance(wei(data[10] ?? zeroBN));
 				setKwentaAllowance(wei(data[11] ?? zeroBN));
-				setEpochPeriod(Number(data[12] ?? 0) - 1 ?? 0);
+				setEpochPeriod(Number(data[12] ?? 0) ?? 0);
 			}
 		},
 	});
+
+	const periods = useMemo(() => {
+		let periods: number[] = [];
+		for (let i = 1; i <= epochPeriod + 1; i++) {
+			periods.push(i);
+		}
+		return periods;
+	}, [epochPeriod]);
 
 	data = [];
 
@@ -280,6 +287,7 @@ const useStakingData = () => {
 	});
 
 	return {
+		periods,
 		epochPeriod,
 		data,
 		escrowedBalance,

@@ -6,11 +6,13 @@ import { FUTURES_ENDPOINT_OP_MAINNET } from 'queries/futures/constants';
 import { getFuturesTrades } from 'queries/futures/subgraph';
 
 const useGetFuturesFeeForAccount = (
-	account?: string | null,
+	account: string,
+	start: number,
+	end: number,
 	options?: UseQueryOptions<Number | null> & { forceAccount: boolean }
 ) => {
 	return useQuery<any>(
-		QUERY_KEYS.Staking.FuturesFee(account || null),
+		QUERY_KEYS.Staking.FuturesFee(account || null, start, end),
 		async () => {
 			if (!account) return null;
 
@@ -20,6 +22,8 @@ const useGetFuturesFeeForAccount = (
 					first: DEFAULT_NUMBER_OF_TRADES,
 					where: {
 						account: account,
+						timestamp_gt: start,
+						timestamp_lt: end,
 					},
 					orderDirection: 'desc',
 					orderBy: 'timestamp',
