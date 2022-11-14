@@ -683,7 +683,7 @@
 						"gas-fee": "Gas Fee",
 						"max": "Max",
 						"deposit": {
-							"title": "Deposit Margin",
+							"title": "Transfer Margin",
 							"button": "Deposit Margin",
 							"approve-button": "Approve sUSD",
 							"disclaimer": "A $50 margin minimum is required to open a position.",
