@@ -2,8 +2,6 @@ import router from 'next/router';
 import { FC } from 'react';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 
-import FuturesBordersSvg from 'assets/svg/app/futures-borders.svg';
-import LinkWhiteIcon from 'assets/svg/app/link-white.svg';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import ROUTES from 'constants/routes';
 import { RefetchProvider } from 'contexts/RefetchContext';
@@ -86,12 +84,6 @@ const NavSpan = styled.span`
 		color: ${(props) => props.theme.colors.common.primaryWhite};
 		text-shadow: 0px 1px 2px ${(props) => props.theme.colors.transparentBlack};
 	`}
-`;
-
-const DivBorder = styled.div`
-	height: 2px;
-	background: ${(props) => props.theme.colors.goldColors.color1};
-	flex-grow: 1;
 `;
 
 const FuturesLink = styled.a`

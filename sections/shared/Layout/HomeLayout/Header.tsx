@@ -15,7 +15,6 @@ import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
 import { FlexDivRow, FlexDivRowCentered, GridDivCenteredCol } from 'styles/common';
-import media from 'styles/media';
 
 import MobileUserMenu from '../AppLayout/Header/MobileUserMenu';
 import Logo from '../Logo';

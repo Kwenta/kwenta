@@ -536,14 +536,6 @@ const Assets = () => {
 	);
 };
 
-const border = css`
-	padding: 1px;
-	width: 277px !important;
-	height: 152px !important;
-	margin: auto 10px;
-	border-radius: 15px;
-`;
-
 const SliderContainer = styled.div`
 	margin: auto;
 `;

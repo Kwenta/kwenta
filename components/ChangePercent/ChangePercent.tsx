@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import ChangeNegativeIcon from 'assets/svg/app/change-negative.svg';
 import ChangePositiveIcon from 'assets/svg/app/change-positive.svg';
 import { NO_VALUE } from 'constants/placeholder';
-import media from 'styles/media';
 import { formatPercent } from 'utils/formatters/number';
 
 type ChangePercentProps = {
