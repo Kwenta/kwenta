@@ -142,7 +142,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.claimable-rewards-all')}
 						</div>
-						<KwentaLabel>{truncateNumbers(wei(totalRewards) ?? zeroBN, 2)}</KwentaLabel>
+						<KwentaLabel>{truncateNumbers(wei(totalRewards) ?? zeroBN, 4)}</KwentaLabel>
 					</div>
 				</CardGrid>
 				<StyledFlexDivRow>
