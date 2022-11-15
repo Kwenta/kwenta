@@ -3,13 +3,13 @@ import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
 import Text from 'components/Text';
+import { EXTERNAL_LINKS } from 'constants/links';
 import { useStakingContext } from 'contexts/StakingContext';
 import { FlexDivRowCentered } from 'styles/common';
 import media from 'styles/media';
 import { truncateNumbers } from 'utils/formatters/number';
 
 import { SplitStakingCard } from './common';
-import { EXTERNAL_LINKS } from 'constants/links';
 
 const StakingPortfolio = () => {
 	const { t } = useTranslation();
