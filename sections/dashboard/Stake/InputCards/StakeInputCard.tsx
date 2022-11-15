@@ -2,7 +2,6 @@ import { wei } from '@synthetixio/wei';
 import _ from 'lodash';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
@@ -11,7 +10,6 @@ import NumericInput from 'components/Input/NumericInput';
 import SegmentedControl from 'components/SegmentedControl';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { useStakingContext } from 'contexts/StakingContext';
-import { currentThemeState } from 'store/ui';
 import { truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import { StakingCard } from '../common';
@@ -34,9 +32,6 @@ const StakeInputCard: FC = () => {
 				: wei(amount).toString(0, true),
 		[amount]
 	);
-
-	const currentTheme = useRecoilValue(currentThemeState);
-	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
 
 	const [activeTab, setActiveTab] = useState(0);
 
@@ -70,7 +65,7 @@ const StakeInputCard: FC = () => {
 	const { write: unstakeKwenta } = useContractWrite(unstakeKwentaConfig);
 
 	return (
-		<StakingInputCardContainer $darkTheme={isDarkTheme}>
+		<StakingInputCardContainer>
 			<SegmentedControl
 				values={[
 					t('dashboard.stake.tabs.stake-table.stake'),
@@ -128,7 +123,7 @@ const StakeInputCard: FC = () => {
 	);
 };
 
-const StakingInputCardContainer = styled(StakingCard)<{ $darkTheme: boolean }>`
+const StakingInputCardContainer = styled(StakingCard)`
 	min-height: 125px;
 	max-height: 250px;
 	display: flex;
