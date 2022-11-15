@@ -257,7 +257,7 @@ const StyledTable = styled(Table)`
 
 const TableHeader = styled.div`
 	font-size: 10px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.yellow};
+	color: ${(props) => props.theme.colors.selectedTheme.text.header};
 `;
 
 const TableCell = styled.div`
