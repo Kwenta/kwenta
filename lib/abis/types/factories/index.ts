@@ -14,3 +14,4 @@ export { StakingRewards__factory } from "./StakingRewards__factory";
 export { SupplySchedule__factory } from "./SupplySchedule__factory";
 export { SynthSwap__factory } from "./SynthSwap__factory";
 export { VKwentaRedeemer__factory } from "./VKwentaRedeemer__factory";
+export { VeKwentaRedeemer__factory } from "./VeKwentaRedeemer__factory";
