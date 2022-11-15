@@ -50,7 +50,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 
 	const fileNames = useMemo(() => {
 		let fileNames: string[] = [];
-		periods.forEach((i) => {
+		periods.slice(0, -1).forEach((i) => {
 			fileNames.push(`trading-rewards-snapshots/epoch-${i - 1}.json`);
 		});
 		return fileNames;
@@ -129,14 +129,14 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 
 	const feePaid = useMemo(() => spotFeePaid + futuresFeePaid, [futuresFeePaid, spotFeePaid]);
 
-	const { config: claimEpochConfig } = usePrepareContractWrite({
+	const { config } = usePrepareContractWrite({
 		...multipleMerkleDistributorContract,
 		functionName: 'claimMultiple',
 		args: [claimableRewards],
 		enabled: claimableRewards && claimableRewards.length > 0,
 	});
 
-	const { write: claim } = useContractWrite(claimEpochConfig);
+	const { write: claim } = useContractWrite(config);
 
 	return (
 		<TradingRewardsContainer>

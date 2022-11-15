@@ -74,14 +74,14 @@ const StakingTabs: React.FC = () => {
 		return epochData;
 	}, [periods]);
 
-	const formatOptionLabel = ({ label, start, end, startDate, endDate, period }: EpochLabel) => {
+	const formatOptionLabel = ({ label, start, end, period }: EpochLabel) => {
 		return (
 			<div
 				onClick={() => {
 					setPeriod(period);
 					setStart(start ?? 0);
 					setEnd(end ?? 0);
-					setCurrentEpochLabel(`Epoch ${period ?? ''}: ${startDate ?? ''} - ${endDate ?? ''}`);
+					setCurrentEpochLabel(`Epoch ${label}`);
 				}}
 			>
 				<LabelContainer>{label}</LabelContainer>
@@ -123,7 +123,9 @@ const StakingTabs: React.FC = () => {
 					/>
 				</TabButtons>
 				<StyledFlexDivRowCentered active={activeTab === StakeTab.TradingRewards}>
-					{window.innerWidth < 768 && <PeriodLabel>{'Current Trading Period:'}</PeriodLabel>}
+					{window.innerWidth < 768 && (
+						<PeriodLabel>{t('dashboard.stake.tabs.staking.current-trading-period')}</PeriodLabel>
+					)}
 
 					<StakingSelect
 						formatOptionLabel={formatOptionLabel}
@@ -188,7 +190,7 @@ const StakingSelect = styled(Select)`
 
 const StyledFlexDivRowCentered = styled(FlexDivRowCentered)<{ active: boolean }>`
 	display: ${(props) => (props.active ? 'flex' : 'none')};
-	width: 30%;
+	width: 24%;
 	${media.lessThan('md')`
 		width: unset;
 	`}

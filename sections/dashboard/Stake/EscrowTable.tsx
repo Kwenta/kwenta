@@ -13,9 +13,9 @@ import { useStakingContext } from 'contexts/StakingContext';
 import { EscrowRow } from 'hooks/useStakingData';
 import { currentThemeState } from 'store/ui';
 import { truncateNumbers } from 'utils/formatters/number';
+import logError from 'utils/logError';
 
 import { StakingCard } from './common';
-import logError from 'utils/logError';
 
 const EscrowTable = () => {
 	const { t } = useTranslation();
