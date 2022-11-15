@@ -19,7 +19,7 @@ const TradeNow = () => {
 			<GrayDescription>{t('homepage.tradenow.categories')}</GrayDescription>
 			<CTAContainer>
 				<Link href={ROUTES.Markets.Home(DEFAULT_FUTURES_MARGIN_TYPE)}>
-					<Button variant="primary" size="md">
+					<Button variant="flat" textColor="yellow" size="md">
 						{t('homepage.nav.trade-now')}
 					</Button>
 				</Link>

@@ -71,6 +71,7 @@ const ShortList = () => {
 						data={stats}
 						pageSize={5}
 						hideHeaders={false}
+						highlightRowsOnHover={true}
 						columns={[
 							{
 								Header: <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
@@ -153,6 +154,7 @@ const ShortList = () => {
 						data={stats}
 						pageSize={5}
 						hideHeaders={false}
+						highlightRowsOnHover={true}
 						columns={[
 							{
 								Header: <TableHeader>{t('leaderboard.leaderboard.table.rank-mobile')}</TableHeader>,
@@ -253,7 +255,6 @@ const StatsName = styled.div`
 const StatsValue = styled.div`
 	font-size: 32px;
 	color: ${(props) => props.theme.colors.selectedTheme.white};
-	margin-top: 14px;
 `;
 
 const StatsCardContainer = styled(FlexDivRow)`
@@ -271,26 +272,27 @@ const StatsCardContainer = styled(FlexDivRow)`
 `;
 
 const StatsCard = styled(Button)`
-	disply: flex;
+	display: flex;
 	flex-direction: column;
 	align-items: center;
 	width: 291px;
 	height: 191px;
 	font-family: ${(props) => props.theme.fonts.regular};
 	border-radius: 15px;
+	justify-content: center;
 	&::before {
 		border-radius: 15px;
 	}
 	cursor: default;
+	transition: all 1s ease-in-out;
+
 	&:hover {
 		background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
 	}
+
 	background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
 	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1),
 		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
-	padding: 45px;
-	padding-bottom: 60px;
-	justify-content: flex-end;
 	svg {
 		width: 291px;
 		height: 75px;
@@ -375,19 +377,24 @@ const StyledTrader = styled.a`
 `;
 
 const FeatureTitle = styled(Title)`
-	font-size: 24px;
-	line-height: 100%;
-	font-family: ${(props) => props.theme.fonts.compressedBlack};
+	font-family: ${(props) => props.theme.fonts.regular};
+	font-size: 22px;
+	font-variant: all-small-caps;
 	text-transform: uppercase;
-	color: ${(props) => props.theme.colors.white};
-	text-shadow: 0px 0px 12.83px rgba(255, 255, 255, 0.2);
+	color: ${(props) => props.theme.colors.common.primaryWhite};
 	width: 150px;
+	letter-spacing: 2px;
 `;
 
 const SectionFeatureTitle = styled(FeatureTitle)`
-	margin-top: 80px;
+	font-size: 20px;
+	line-height: 100%;
+	font-family: ${(props) => props.theme.fonts.black};
+	font-variant: all-small-caps;
+	letter-spacing: 0px;
+	margin-top: 100px;
 	text-align: center;
-	width: 500px;
+	width: auto;
 	${media.lessThan('sm')`
 		width: 100vw;
 	`}

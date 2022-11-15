@@ -47,8 +47,8 @@ const CreateAccountContainer = styled(BorderedPanel)`
 
 const FAQContainer = styled(BorderedPanel)`
 	color: white;
-	padding: 30px;
-	margin-top: 20px;
+	padding: 15px;
+	margin-top: 15px;
 `;
 
 const Title = styled.div`
