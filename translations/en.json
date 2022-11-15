@@ -512,7 +512,8 @@
 					"liquid-rewards": "Liquid Rewards",
 					"annual-percentage-yield": "Annual Percentage Yield",
 					"claim": "Claim",
-					"more-info": "More information about how to stake Kwenta can be found in our <0>staking docs</0>."
+					"more-info": "More information about how to stake Kwenta can be found in our <0>staking docs</0>.",
+					"current-trading-period": "Current Trading Period:"
 				},
 				"trading-rewards": {
 					"title": "Trading Rewards",
