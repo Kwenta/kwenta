@@ -7,8 +7,9 @@ import styled from 'styled-components';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 import Button from 'components/Button';
-import CustomNumericInput from 'components/Input/CustomNumericInput';
+import NumericInput from 'components/Input/NumericInput';
 import SegmentedControl from 'components/SegmentedControl';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { useStakingContext } from 'contexts/StakingContext';
 import { currentThemeState } from 'store/ui';
 import { truncateNumbers, zeroBN } from 'utils/formatters/number';
@@ -29,9 +30,13 @@ const EscrowInputCard: FC = () => {
 	const [activeTab, setActiveTab] = useState(0);
 	const currentTheme = useRecoilValue(currentThemeState);
 
-	const amountBN = useMemo(() => {
-		return amount === '' ? zeroBN : wei(amount).toString(0, true);
-	}, [amount]);
+	const amountBN = useMemo(
+		() =>
+			!parseFloat(amount) || amount === ''
+				? zeroBN.toString(0, true)
+				: wei(amount).toString(0, true),
+		[amount]
+	);
 
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
 	const unstakedEscrowedKwentaBalance = useMemo(
@@ -46,24 +51,6 @@ const EscrowInputCard: FC = () => {
 		setActiveTab(tabIndex);
 	};
 
-	const { config: stakedEscrowKwentaConfig } = usePrepareContractWrite({
-		...rewardEscrowContract,
-		functionName: 'stakeEscrow',
-		args: [amountBN],
-		enabled: unstakedEscrowedKwentaBalance.gt(0) && wei(amount === '' ? zeroBN : amount).gt(0),
-	});
-
-	const { config: unstakedEscrowKwentaConfig } = usePrepareContractWrite({
-		...rewardEscrowContract,
-		functionName: 'unstakeEscrow',
-		args: [amountBN],
-		enabled: stakedEscrowedBalance.gt(0) && wei(amount === '' ? zeroBN : amount).gt(0),
-	});
-
-	const { write: kwentaApprove } = useContractWrite(kwentaApproveConfig);
-	const { write: stakeEscrowKwenta } = useContractWrite(stakedEscrowKwentaConfig);
-	const { write: unstakeEscrowKwenta } = useContractWrite(unstakedEscrowKwentaConfig);
-
 	const maxBalance = useMemo(
 		() =>
 			activeTab === 0
@@ -73,8 +60,26 @@ const EscrowInputCard: FC = () => {
 	);
 
 	const onMaxClick = useCallback(async () => {
-		setAmount(truncateNumbers(maxBalance, 2));
+		setAmount(truncateNumbers(maxBalance, DEFAULT_CRYPTO_DECIMALS));
 	}, [maxBalance]);
+
+	const { config: stakedEscrowKwentaConfig } = usePrepareContractWrite({
+		...rewardEscrowContract,
+		functionName: 'stakeEscrow',
+		args: [amountBN],
+		enabled: activeTab === 0 && unstakedEscrowedKwentaBalance.gt(0) && !!amountBN,
+	});
+
+	const { config: unstakedEscrowKwentaConfig } = usePrepareContractWrite({
+		...rewardEscrowContract,
+		functionName: 'unstakeEscrow',
+		args: [amountBN],
+		enabled: activeTab === 1 && stakedEscrowedBalance.gt(0) && !!amountBN,
+	});
+
+	const { write: kwentaApprove } = useContractWrite(kwentaApproveConfig);
+	const { write: stakeEscrowKwenta } = useContractWrite(stakedEscrowKwentaConfig);
+	const { write: unstakeEscrowKwenta } = useContractWrite(unstakedEscrowKwentaConfig);
 
 	return (
 		<StakingInputCardContainer $darkTheme={isDarkTheme}>
@@ -93,15 +98,18 @@ const EscrowInputCard: FC = () => {
 					<div className="max" onClick={onMaxClick}>
 						{t('dashboard.stake.tabs.stake-table.balance')}{' '}
 						{activeTab === 0
-							? truncateNumbers(unstakedEscrowedKwentaBalance, 2)
-							: truncateNumbers(stakedEscrowedBalance, 2)}
+							? truncateNumbers(unstakedEscrowedKwentaBalance, DEFAULT_CRYPTO_DECIMALS)
+							: truncateNumbers(stakedEscrowedBalance, DEFAULT_CRYPTO_DECIMALS)}
 					</div>
 				</StakeInputHeader>
 				<StyledInput
 					value={amount}
-					suffix=""
 					onChange={(_, newValue) => {
-						setAmount(newValue);
+						setAmount(
+							!parseFloat(newValue)
+								? ''
+								: truncateNumbers(parseFloat(newValue), DEFAULT_CRYPTO_DECIMALS)
+						);
 					}}
 				/>
 			</StakeInputContainer>
@@ -110,10 +118,8 @@ const EscrowInputCard: FC = () => {
 				variant="flat"
 				size="sm"
 				disabled={
-					unstakedEscrowedKwentaBalance.eq(0) ||
-					amount === '' ||
-					wei(amount).eq(0) ||
-					wei(amount).gt(unstakedEscrowedKwentaBalance)
+					!parseFloat(amount) ||
+					(activeTab === 0 ? unstakedEscrowedKwentaBalance.eq(0) : stakedEscrowedBalance.eq(0))
 				}
 				onClick={() =>
 					kwentaTokenApproval
@@ -157,7 +163,7 @@ const StakeInputHeader = styled.div`
 
 const StakeInputContainer = styled.div``;
 
-const StyledInput = styled(CustomNumericInput)`
+const StyledInput = styled(NumericInput)`
 	font-family: ${(props) => props.theme.fonts.monoBold};
 `;
 

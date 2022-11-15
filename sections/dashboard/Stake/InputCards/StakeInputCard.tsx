@@ -9,6 +9,7 @@ import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 import Button from 'components/Button';
 import NumericInput from 'components/Input/NumericInput';
 import SegmentedControl from 'components/SegmentedControl';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { useStakingContext } from 'contexts/StakingContext';
 import { currentThemeState } from 'store/ui';
 import { truncateNumbers, zeroBN } from 'utils/formatters/number';
@@ -26,23 +27,13 @@ const StakeInputCard: FC = () => {
 	} = useStakingContext();
 
 	const [amount, setAmount] = useState('');
-	const amountBN = useMemo(() => {
-		return amount === '' ? zeroBN : wei(amount).toString(0, true);
-	}, [amount]);
-
-	const { config: stakeKwentaConfig } = usePrepareContractWrite({
-		...stakingRewardsContract,
-		functionName: 'stake',
-		args: [amountBN],
-		enabled: kwentaBalance.gt(0) && wei(amount === '' ? zeroBN : amount).gt(0),
-	});
-
-	const { config: unstakeKwentaConfig } = usePrepareContractWrite({
-		...stakingRewardsContract,
-		functionName: 'unstake',
-		args: [amountBN],
-		enabled: stakedNonEscrowedBalance.gt(0) && wei(amount === '' ? zeroBN : amount).gt(0),
-	});
+	const amountBN = useMemo(
+		() =>
+			!parseFloat(amount) || amount === ''
+				? zeroBN.toString(0, true)
+				: wei(amount).toString(0, true),
+		[amount]
+	);
 
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
@@ -53,16 +44,30 @@ const StakeInputCard: FC = () => {
 		setActiveTab(tabIndex);
 	};
 
-	const { write: kwentaApprove } = useContractWrite(kwentaApproveConfig);
-	const { write: stakeKwenta } = useContractWrite(stakeKwentaConfig);
-	const { write: unstakeKwenta } = useContractWrite(unstakeKwentaConfig);
-
 	const maxBalance =
 		activeTab === 0 ? wei(kwentaBalance ?? zeroBN) : wei(stakedNonEscrowedBalance ?? zeroBN);
 
 	const onMaxClick = useCallback(async () => {
-		setAmount(truncateNumbers(maxBalance, 4));
+		setAmount(truncateNumbers(maxBalance, DEFAULT_CRYPTO_DECIMALS));
 	}, [maxBalance]);
+
+	const { config: stakeKwentaConfig } = usePrepareContractWrite({
+		...stakingRewardsContract,
+		functionName: 'stake',
+		args: [amountBN],
+		enabled: activeTab === 0 && kwentaBalance.gt(0) && !!amountBN,
+	});
+
+	const { config: unstakeKwentaConfig } = usePrepareContractWrite({
+		...stakingRewardsContract,
+		functionName: 'unstake',
+		args: [amountBN],
+		enabled: activeTab === 1 && stakedNonEscrowedBalance.gt(0) && !!amountBN,
+	});
+
+	const { write: kwentaApprove } = useContractWrite(kwentaApproveConfig);
+	const { write: stakeKwenta } = useContractWrite(stakeKwentaConfig);
+	const { write: unstakeKwenta } = useContractWrite(unstakeKwentaConfig);
 
 	return (
 		<StakingInputCardContainer $darkTheme={isDarkTheme}>
@@ -81,14 +86,18 @@ const StakeInputCard: FC = () => {
 					<div className="max" onClick={onMaxClick}>
 						{t('dashboard.stake.tabs.stake-table.balance')}{' '}
 						{activeTab === 0
-							? truncateNumbers(kwentaBalance, 2)
-							: truncateNumbers(stakedNonEscrowedBalance, 2)}
+							? truncateNumbers(kwentaBalance, DEFAULT_CRYPTO_DECIMALS)
+							: truncateNumbers(stakedNonEscrowedBalance, DEFAULT_CRYPTO_DECIMALS)}
 					</div>
 				</StakeInputHeader>
 				<StyledInput
 					value={amount}
 					onChange={(_, newValue) => {
-						setAmount(newValue);
+						setAmount(
+							!parseFloat(newValue)
+								? ''
+								: truncateNumbers(parseFloat(newValue), DEFAULT_CRYPTO_DECIMALS)
+						);
 					}}
 				/>
 			</StakeInputContainer>
@@ -97,7 +106,8 @@ const StakeInputCard: FC = () => {
 				variant="flat"
 				size="sm"
 				disabled={
-					kwentaBalance.eq(0) || amount === '' || wei(amount).eq(0) || wei(amount).gt(kwentaBalance)
+					!parseFloat(amount) ||
+					(activeTab === 0 ? kwentaBalance.eq(0) : stakedNonEscrowedBalance.eq(0))
 				}
 				onClick={() =>
 					kwentaTokenApproval

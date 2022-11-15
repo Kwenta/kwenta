@@ -181,6 +181,7 @@ const useStakingData = () => {
 			},
 		],
 		watch: true,
+		enabled: !!walletAddress,
 		allowFailure: true,
 		onSettled(data, error) {
 			if (error) logError(error);
@@ -253,6 +254,7 @@ const useStakingData = () => {
 			...rewardEscrowContract,
 			functionName: 'getVestingEntryClaimable',
 			args: [walletAddress ?? undefined, d.id],
+			enabled: !!walletAddress,
 		};
 	});
 
@@ -302,34 +304,34 @@ const useStakingData = () => {
 		...kwentaTokenContract,
 		functionName: 'approve',
 		args: [stakingRewardsContract.addressOrName, ethers.constants.MaxUint256],
-		enabled: kwentaTokenApproval,
+		enabled: !!walletAddress && kwentaTokenApproval,
 	});
 
 	const { config: vKwentaApproveConfig } = usePrepareContractWrite({
 		...vKwentaTokenContract,
 		functionName: 'approve',
 		args: [vKwentaRedeemerContract.addressOrName, ethers.constants.MaxUint256],
-		enabled: vKwentaTokenApproval,
+		enabled: !!walletAddress && vKwentaTokenApproval,
 	});
 
 	const { config: veKwentaApproveConfig } = usePrepareContractWrite({
 		...veKwentaTokenContract,
 		functionName: 'approve',
 		args: [veKwentaRedeemerContract.addressOrName, ethers.constants.MaxUint256],
-		enabled: veKwentaTokenApproval,
+		enabled: !!walletAddress && veKwentaTokenApproval,
 	});
 
 	const { config: vKwentaRedeemConfig } = usePrepareContractWrite({
 		...vKwentaRedeemerContract,
 		functionName: 'redeem',
-		enabled: wei(vKwentaBalance).gt(0),
+		enabled: !!walletAddress && wei(vKwentaBalance).gt(0),
 	});
 
 	const { config: veKwentaRedeemConfig } = usePrepareContractWrite({
 		...veKwentaRedeemerContract,
 		functionName: 'redeem',
 		args: [walletAddress],
-		enabled: wei(veKwentaBalance).gt(0),
+		enabled: !!walletAddress && wei(veKwentaBalance).gt(0),
 	});
 
 	return {
