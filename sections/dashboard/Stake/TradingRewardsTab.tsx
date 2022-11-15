@@ -144,6 +144,16 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 						</div>
 						<KwentaLabel>{truncateNumbers(wei(totalRewards) ?? zeroBN, 4)}</KwentaLabel>
 					</div>
+					<div>
+						<div className="title">
+							{t('dashboard.stake.tabs.trading-rewards.trading-activity-reset')}
+						</div>
+						<div className="value">
+							{formatTruncatedDuration(
+								getNextSunday(new Date()).getTime() / 1000 - new Date().getTime() / 1000
+							)}
+						</div>
+					</div>
 				</CardGrid>
 				<StyledFlexDivRow>
 					<Button
@@ -165,16 +175,6 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 						</div>
 						<div className="value">{formatDollars(feePaid)}</div>
 					</div>
-					<div>
-						<div className="title">
-							{t('dashboard.stake.tabs.trading-rewards.trading-activity-reset')}
-						</div>
-						<div className="value">
-							{formatTruncatedDuration(
-								getNextSunday(new Date()).getTime() / 1000 - new Date().getTime() / 1000
-							)}
-						</div>
-					</div>
 				</CardGrid>
 			</CardGridContainer>
 		</TradingRewardsContainer>
@@ -193,6 +193,7 @@ const CardGridContainer = styled(StakingCard)`
 
 const CardGrid = styled.div`
 	display: grid;
+	grid-auto-flow: column;
 	grid-template-rows: 1fr 1fr;
 	grid-template-columns: 1fr 1fr;
 	& > div {

@@ -520,7 +520,7 @@
 					"fees-paid": "Fees Paid: Epoch {{EpochPeriod}}",
 					"estimated-rewards": "Estimated Rewards",
 					"estimated-fee-share": "Estimated Fee Share",
-					"trading-activity-reset": "Trading Activity Reset",
+					"trading-activity-reset": "Time until next epoch",
 					"epoch": "Epoch {{EpochPeriod}}: {{EpochDate}}",
 					"claimable-rewards-epoch": "Claimable Rewards: Epoch {{EpochPeriod}}",
 					"claimable-rewards-all": "Claimable Trading Rewards",
