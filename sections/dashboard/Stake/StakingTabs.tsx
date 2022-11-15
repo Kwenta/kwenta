@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
@@ -7,7 +7,6 @@ import LabelContainer from 'components/Nav/DropDownLabel';
 import Select from 'components/Select';
 import { DropdownIndicator, IndicatorSeparator } from 'components/Select/Select';
 import { TabPanel } from 'components/Tab';
-import { EXTERNAL_LINKS } from 'constants/links';
 import { useStakingContext } from 'contexts/StakingContext';
 import { getEpochDetails } from 'queries/staking/utils';
 import { FlexDivRowCentered } from 'styles/common';
@@ -150,29 +149,12 @@ const StakingTabs: React.FC = () => {
 					<RedemptionTab />
 				</TabPanel>
 			</div>
-
-			<StyledLabelContainer>
-				<a href={EXTERNAL_LINKS.Docs.Staking} target="_blank" rel="noreferrer">
-					<Trans i18nKey={'dashboard.stake.tabs.staking.more-info'} components={[<Emphasis />]} />
-				</a>
-			</StyledLabelContainer>
 		</StakingTabsContainer>
 	);
 };
 
-const Emphasis = styled.b`
-	color: ${(props) => props.theme.colors.selectedTheme.yellow};
-`;
-
 const SelectLabelContainer = styled(LabelContainer)`
 	font-size: 12px;
-`;
-
-const StyledLabelContainer = styled(LabelContainer)`
-	font-size: 14px;
-	padding-left: 4px;
-	margin-top: 40px;
-	text-decoration: underline;
 `;
 
 const StakingSelect = styled(Select)`

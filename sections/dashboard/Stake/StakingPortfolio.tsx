@@ -1,12 +1,15 @@
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import TabButton from 'components/Button/TabButton';
 import Text from 'components/Text';
 import { useStakingContext } from 'contexts/StakingContext';
+import { FlexDivRowCentered } from 'styles/common';
 import media from 'styles/media';
 import { truncateNumbers } from 'utils/formatters/number';
 
 import { SplitStakingCard } from './common';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 const StakingPortfolio = () => {
 	const { t } = useTranslation();
@@ -60,7 +63,15 @@ const StakingPortfolio = () => {
 
 	return (
 		<StakingPortfolioContainer>
-			<Header variant="h4">{t('dashboard.stake.portfolio.title')}</Header>
+			<FlexDivRowCentered>
+				<Header variant="h4">{t('dashboard.stake.portfolio.title')}</Header>
+				<StyledTabButton
+					isRounded
+					title={'Staking Docs'}
+					active={true}
+					onClick={() => window.open(EXTERNAL_LINKS.Docs.Staking, '_blank')}
+				/>
+			</FlexDivRowCentered>
 			<CardsContainer>
 				{DEFAULT_CARDS.map((card) => (
 					<SplitStakingCard>
@@ -77,6 +88,12 @@ const StakingPortfolio = () => {
 	);
 };
 
+const StyledTabButton = styled(TabButton)`
+	p {
+		font-size: 12px;
+	}
+	margin-bottom: 9px;
+`;
 const StakingPortfolioContainer = styled.div`
 	${media.lessThan('mdUp')`
 		padding: 15px;
