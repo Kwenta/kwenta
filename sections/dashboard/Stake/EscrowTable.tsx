@@ -15,6 +15,7 @@ import { currentThemeState } from 'store/ui';
 import { truncateNumbers } from 'utils/formatters/number';
 
 import { StakingCard } from './common';
+import logError from 'utils/logError';
 
 const EscrowTable = () => {
 	const { t } = useTranslation();
@@ -68,7 +69,14 @@ const EscrowTable = () => {
 		enabled: data.filter((d, index) => !!checkedState[index]).map((d) => d.id).length > 0,
 	});
 
-	const { write: vest } = useContractWrite(config);
+	const { write: vest } = useContractWrite({
+		...config,
+		onSettled(_, error) {
+			if (error) logError(error);
+			setCheckedState(new Array(data.length).fill(false));
+			setCheckAllState(false);
+		},
+	});
 
 	const currentTheme = useRecoilValue(currentThemeState);
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
