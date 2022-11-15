@@ -225,11 +225,6 @@ const exchangeSlice = createSlice({
 			state.allowance = action.payload.allowance;
 			state.oneInchQuoteError = false;
 		});
-		builder.addCase(resetCurrencyKeys.rejected, (state, action) => {
-			// handle any errors here.
-			// eslint-disable-next-line no-console
-			console.error(action.error.message);
-		});
 	},
 });
 

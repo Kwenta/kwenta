@@ -663,17 +663,12 @@ export default class ExchangeService {
 		]);
 
 		if (!!quoteCurrencyContract) {
-			try {
-				const allowance = (await quoteCurrencyContract.allowance(
-					this.sdk.context.walletAddress,
-					approveAddress
-				)) as ethers.BigNumber;
+			const allowance = (await quoteCurrencyContract.allowance(
+				this.sdk.context.walletAddress,
+				approveAddress
+			)) as ethers.BigNumber;
 
-				return wei(ethers.utils.formatEther(allowance));
-			} catch (e) {
-				// eslint-disable-next-line no-console
-				console.error('checkAllowance: ', e);
-			}
+			return wei(ethers.utils.formatEther(allowance));
 		}
 	}
 
