@@ -16,9 +16,19 @@ Services are collection of methods that function together to enable. We have ser
 
 ## Events
 
+In certain situations where the SDK needs to inform a client about data changes (for example, exchange rate updates), we emit events that clients can listen to.
+
 ## Contracts
 
+Closely related to the context (see section above), when the network changes, we update a list of available contracts on said network internally, to be used on subsequent contract calls.
+
 ## Synths
+
+Similarly to contracts, we maintain a list of synths on the current network, which is used for fetching balances, synth names etc.
+
+# Testing
+
+One of the main benefits of extracting Kwenta's logic into an SDK is the ability to test business logic independently of the UI. The `tests` folder will contain a number of unit and integration tests that will help us remain confident in the functionality of the SDK, as well as our ability to output sensible errors when one or more of our dependencies do not behave as expected. These tests will also be updated frequently as new features are added and bugs are fixed.
 
 # Checklist
 
@@ -30,6 +40,8 @@ The following tasks are expected to be completed before the SDK can be considere
 - [ ] Add contract typings for human-readable ABIs.
 - [ ] Implement `Context` class.
 - [ ] Ensure type correctness of all SDK methods.
+- [ ] Set up foundation for retries on select methods.
+- [ ] Set up service for interacting with our subgraphs.
 
 ## Exchange
 
@@ -43,6 +55,22 @@ The following tasks are expected to be completed before the SDK can be considere
 - [ ] Consider making the provision of the `txProvider` the client's responsibility. It is a little cumbersome to have to call `this.getTxProvider` in nearly every method.
 - [ ] Consider ditching currency keys for simple token addresses. The client can choose to load a token list for UI purposes, but the SDK should not be concerned with such details. For balances, we can fetch them as needed.
 
+## Futures
+
+- [ ] Separate methods for isolated and cross-margin accounts.
+- [ ] Implement methods for fetching orders, past trades and transfers from the subgraph.
+- [ ] Consider experimenting with WebSockets for realtime data (again).
+
+# Design Considerations
+
+## General
+
+- It is important to understand that checking if certain context properties are initialized cannot be done directly by checking if the property is undefined. This is because the getter throws an error on attempting to access these values when they are undefined.
+
+## Exchange
+
+## Futures
+
 # Notes
 
-- The `ExchangeService` class is still structured very similarly to the `useExchange` hook. It is important to change this, as they are two different paradigms. Without doing this, it is impossible to be efficient with requests and eliminating the overdependence of certain methods on others.
+- The `ExchangeService` class is still structured very similarly to the `useExchange` hook. It is important to change this, as they are two different paradigms. Without doing this, it is impossible to be efficient with requests and eliminate the overdependence of certain methods on others.
