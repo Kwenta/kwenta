@@ -18,7 +18,7 @@ const StakeGrid = () => {
 			</SplitColumn>
 			<SplitColumn>
 				<GridData title="Time Remaining" value={timeTillDeadline} />
-				<GridData title="Last Snapshot" value="2H Ago" />
+				<GridData title="Last Snapshot" value="2h Ago" />
 			</SplitColumn>
 		</GridContainer>
 	);

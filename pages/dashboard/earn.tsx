@@ -21,9 +21,10 @@ const EarnPage: EarnPageProps = () => {
 			<PageContent>
 				<FullHeightContainer>
 					<EarnContent>
-						<PageHeading>Liquidity Mining Program</PageHeading>
+						<PageHeading>Kwenta Liquidity Mining</PageHeading>
 						<StyledBody>
-							Earn KWENTA by staking SNX or adding liquidity to the sUSD Curve pool on Optimism.
+							The ETH/KWENTA program rewards liquidity providers on the Uniswap v3 pool via Arrakis
+							Finance. Liquidity providers can stake their pool tokens to earn KWENTA.
 						</StyledBody>
 						<StakeGrid />
 						<GitHashID />

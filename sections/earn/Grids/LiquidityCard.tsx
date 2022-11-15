@@ -13,7 +13,7 @@ const LiquidityCard = () => {
 					<BigText hasKwentaLogo>2923.39</BigText>
 					<DollarValue>$32,284.31</DollarValue>
 				</LiquidityAmount>
-				<Description>Stake SNX on Optimism to earn $KWENTA.</Description>
+				<Description>Stake LP Pool tokens on Optimism to earn $KWENTA.</Description>
 			</div>
 			<StyledButton size="sm" variant="flat" fullWidth>
 				Add Liquidity
