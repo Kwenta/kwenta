@@ -60,14 +60,14 @@ const EscrowInputCard: FC = () => {
 		...rewardEscrowContract,
 		functionName: 'stakeEscrow',
 		args: [amountBN],
-		enabled: activeTab === 0 && unstakedEscrowedKwentaBalance.gt(0) && !!amountBN,
+		enabled: activeTab === 0 && unstakedEscrowedKwentaBalance.gt(0) && !!parseFloat(amount),
 	});
 
 	const { config: unstakedEscrowKwentaConfig } = usePrepareContractWrite({
 		...rewardEscrowContract,
 		functionName: 'unstakeEscrow',
 		args: [amountBN],
-		enabled: activeTab === 1 && stakedEscrowedBalance.gt(0) && !!amountBN,
+		enabled: activeTab === 1 && stakedEscrowedBalance.gt(0) && !!parseFloat(amount),
 	});
 
 	const { write: kwentaApprove } = useContractWrite(kwentaApproveConfig);

@@ -47,14 +47,14 @@ const StakeInputCard: FC = () => {
 		...stakingRewardsContract,
 		functionName: 'stake',
 		args: [amountBN],
-		enabled: activeTab === 0 && kwentaBalance.gt(0) && !!amountBN,
+		enabled: activeTab === 0 && kwentaBalance.gt(0) && !!parseFloat(amount),
 	});
 
 	const { config: unstakeKwentaConfig } = usePrepareContractWrite({
 		...stakingRewardsContract,
 		functionName: 'unstake',
 		args: [amountBN],
-		enabled: activeTab === 1 && stakedNonEscrowedBalance.gt(0) && !!amountBN,
+		enabled: activeTab === 1 && stakedNonEscrowedBalance.gt(0) && !!parseFloat(amount),
 	});
 
 	const { write: kwentaApprove } = useContractWrite(kwentaApproveConfig);
