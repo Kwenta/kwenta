@@ -257,12 +257,12 @@ const StyledTable = styled(Table)`
 
 const TableHeader = styled.div`
 	font-size: 10px;
-	color: ${(props) => props.theme.colors.selectedTheme.text.title};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.yellow};
 `;
 
 const TableCell = styled.div`
 	font-size: 11px;
-	color: ${(props) => props.theme.colors.selectedTheme.text.label};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const EscrowStats = styled.div`
