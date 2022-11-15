@@ -71,8 +71,6 @@ const StakingTabs: React.FC = () => {
 		return epochData;
 	}, [periods]);
 
-	// eslint-disable-next-line no-console
-	console.log(currentEpochLabel);
 	const formatOptionLabel = ({ label, start, end, period }: EpochLabel) => {
 		return (
 			<div
@@ -206,7 +204,7 @@ const PeriodLabel = styled.div`
 	line-height: 11px;
 	display: flex;
 	align-items: center;
-	color: #b1b1b1;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	margin-left: 4px;
 	width: 50%;
 `;
