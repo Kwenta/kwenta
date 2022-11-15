@@ -1,11 +1,12 @@
 import { wei } from '@synthetixio/wei';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useContractReads, useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
+import { monitorTransaction } from 'contexts/RelayerContext';
 import { useStakingContext } from 'contexts/StakingContext';
 import useGetFiles from 'queries/files/useGetFiles';
 import useGetFuturesFeeForAccount from 'queries/staking/useGetFuturesFeeForAccount';
@@ -132,7 +133,16 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 		enabled: claimableRewards && claimableRewards.length > 0,
 	});
 
-	const { write: claim } = useContractWrite(config);
+	const { data, write: claim } = useContractWrite(config);
+
+	useEffect(() => {
+		if (data?.hash) {
+			monitorTransaction({
+				txHash: data?.hash,
+			});
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [data?.hash]);
 
 	return (
 		<TradingRewardsContainer>
@@ -156,13 +166,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 					</div>
 				</CardGrid>
 				<StyledFlexDivRow>
-					<Button
-						fullWidth
-						variant="flat"
-						size="sm"
-						disabled={!claimableRewards || claimableRewards.length === 0}
-						onClick={() => claim?.()}
-					>
+					<Button fullWidth variant="flat" size="sm" disabled={!claim} onClick={() => claim?.()}>
 						{t('dashboard.stake.tabs.trading-rewards.claim-all')}
 					</Button>
 				</StyledFlexDivRow>
@@ -173,7 +177,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.fees-paid', { EpochPeriod: period })}
 						</div>
-						<div className="value">{formatDollars(feePaid)}</div>
+						<div className="value">{formatDollars(feePaid, { minDecimals: 4 })}</div>
 					</div>
 				</CardGrid>
 			</CardGridContainer>

@@ -1,8 +1,10 @@
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useContractWrite } from 'wagmi';
 
 import Button from 'components/Button';
+import { monitorTransaction } from 'contexts/RelayerContext';
 import { useStakingContext } from 'contexts/StakingContext';
 import media from 'styles/media';
 import { formatPercent, truncateNumbers } from 'utils/formatters/number';
@@ -14,7 +16,16 @@ const StakingTab = () => {
 	const { t } = useTranslation();
 	const { claimableBalance, apy, getRewardConfig } = useStakingContext();
 
-	const { write: getReward } = useContractWrite(getRewardConfig);
+	const { data, write: getReward } = useContractWrite(getRewardConfig);
+
+	useEffect(() => {
+		if (data?.hash) {
+			monitorTransaction({
+				txHash: data?.hash,
+			});
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [data?.hash]);
 
 	return (
 		<StakingTabContainer>
@@ -33,7 +44,7 @@ const StakingTab = () => {
 					fullWidth
 					variant="flat"
 					size="sm"
-					disabled={claimableBalance.eq(0)}
+					disabled={!getReward || claimableBalance.eq(0)}
 					onClick={() => getReward?.()}
 				>
 					{t('dashboard.stake.tabs.staking.claim')}

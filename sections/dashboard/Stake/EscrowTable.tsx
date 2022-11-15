@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
@@ -8,10 +8,10 @@ import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
 import { TableCellHead } from 'components/Table/Table';
+import { monitorTransaction } from 'contexts/RelayerContext';
 import { useStakingContext } from 'contexts/StakingContext';
 import { EscrowRow } from 'hooks/useStakingData';
 import { truncateNumbers } from 'utils/formatters/number';
-import logError from 'utils/logError';
 
 import { StakingCard } from './common';
 
@@ -67,14 +67,20 @@ const EscrowTable = () => {
 		enabled: data.filter((d, index) => !!checkedState[index]).map((d) => d.id).length > 0,
 	});
 
-	const { write: vest } = useContractWrite({
-		...config,
-		onSettled(_, error) {
-			if (error) logError(error);
-			setCheckedState(new Array(data.length).fill(false));
-			setCheckAllState(false);
-		},
-	});
+	const { data: vestTxn, write: vest } = useContractWrite(config);
+
+	useEffect(() => {
+		if (vestTxn?.hash) {
+			monitorTransaction({
+				txHash: vestTxn?.hash,
+				onTxConfirmed: () => {
+					setCheckedState(new Array(data.length).fill(false));
+					setCheckAllState(false);
+				},
+			});
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [vestTxn?.hash]);
 
 	return (
 		<EscrowTableContainer $noPadding>

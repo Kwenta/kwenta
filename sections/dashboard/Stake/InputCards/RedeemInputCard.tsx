@@ -1,9 +1,10 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useContractWrite } from 'wagmi';
 
 import Button from 'components/Button';
+import { monitorTransaction } from 'contexts/RelayerContext';
 import { useStakingContext } from 'contexts/StakingContext';
 import { truncateNumbers } from 'utils/formatters/number';
 
@@ -27,10 +28,46 @@ const RedeemInputCard: FC<RedeemInputCardProps> = ({ inputLabel, isVKwenta }) =>
 		veKwentaRedeemConfig,
 	} = useStakingContext();
 
-	const { write: vKwentaApprove } = useContractWrite(vKwentaApproveConfig);
-	const { write: vKwentaRedeem } = useContractWrite(vKwentaRedeemConfig);
-	const { write: veKwentaApprove } = useContractWrite(veKwentaApproveConfig);
-	const { write: veKwentaRedeem } = useContractWrite(veKwentaRedeemConfig);
+	const { data: vApproveTxn, write: vKwentaApprove } = useContractWrite(vKwentaApproveConfig);
+	const { data: vRedeemTxn, write: vKwentaRedeem } = useContractWrite(vKwentaRedeemConfig);
+	const { data: veApproveTxn, write: veKwentaApprove } = useContractWrite(veKwentaApproveConfig);
+	const { data: veRedeemTxn, write: veKwentaRedeem } = useContractWrite(veKwentaRedeemConfig);
+
+	useEffect(() => {
+		if (vApproveTxn?.hash) {
+			monitorTransaction({
+				txHash: vApproveTxn?.hash,
+			});
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [vApproveTxn?.hash]);
+
+	useEffect(() => {
+		if (vRedeemTxn?.hash) {
+			monitorTransaction({
+				txHash: vRedeemTxn?.hash,
+			});
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [vRedeemTxn?.hash]);
+
+	useEffect(() => {
+		if (veApproveTxn?.hash) {
+			monitorTransaction({
+				txHash: veApproveTxn?.hash,
+			});
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [veApproveTxn?.hash]);
+
+	useEffect(() => {
+		if (veRedeemTxn?.hash) {
+			monitorTransaction({
+				txHash: veRedeemTxn?.hash,
+			});
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [veRedeemTxn?.hash]);
 
 	return (
 		<StakingInputCardContainer>

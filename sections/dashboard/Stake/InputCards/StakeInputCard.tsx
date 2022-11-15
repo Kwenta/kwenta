@@ -1,6 +1,6 @@
 import { wei } from '@synthetixio/wei';
 import _ from 'lodash';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
@@ -9,6 +9,7 @@ import Button from 'components/Button';
 import NumericInput from 'components/Input/NumericInput';
 import SegmentedControl from 'components/SegmentedControl';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
+import { monitorTransaction } from 'contexts/RelayerContext';
 import { useStakingContext } from 'contexts/StakingContext';
 import { truncateNumbers, zeroBN } from 'utils/formatters/number';
 
@@ -33,6 +34,7 @@ const StakeInputCard: FC = () => {
 	const [activeTab, setActiveTab] = useState(0);
 
 	const handleTabChange = (tabIndex: number) => {
+		setAmount('');
 		setActiveTab(tabIndex);
 	};
 
@@ -57,9 +59,42 @@ const StakeInputCard: FC = () => {
 		enabled: activeTab === 1 && stakedNonEscrowedBalance.gt(0) && !!parseFloat(amount),
 	});
 
-	const { write: kwentaApprove } = useContractWrite(kwentaApproveConfig);
-	const { write: stakeKwenta } = useContractWrite(stakeKwentaConfig);
-	const { write: unstakeKwenta } = useContractWrite(unstakeKwentaConfig);
+	const { data: approveTxn, write: kwentaApprove } = useContractWrite(kwentaApproveConfig);
+	const { data: stakeTxn, write: stakeKwenta } = useContractWrite(stakeKwentaConfig);
+	const { data: unstakeTxn, write: unstakeKwenta } = useContractWrite(unstakeKwentaConfig);
+
+	useEffect(() => {
+		if (approveTxn?.hash) {
+			monitorTransaction({
+				txHash: approveTxn?.hash,
+			});
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [approveTxn?.hash]);
+
+	useEffect(() => {
+		if (stakeTxn?.hash) {
+			monitorTransaction({
+				txHash: stakeTxn?.hash,
+				onTxConfirmed: () => {
+					setAmount('');
+				},
+			});
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [stakeTxn?.hash]);
+
+	useEffect(() => {
+		if (unstakeTxn?.hash) {
+			monitorTransaction({
+				txHash: unstakeTxn?.hash,
+				onTxConfirmed: () => {
+					setAmount('');
+				},
+			});
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [unstakeTxn?.hash]);
 
 	return (
 		<StakingInputCardContainer>
@@ -96,8 +131,7 @@ const StakeInputCard: FC = () => {
 				variant="flat"
 				size="sm"
 				disabled={
-					!parseFloat(amount) ||
-					(activeTab === 0 ? kwentaBalance.eq(0) : stakedNonEscrowedBalance.eq(0))
+					kwentaTokenApproval ? !kwentaApprove : activeTab === 0 ? !stakeKwenta : !unstakeKwenta
 				}
 				onClick={() =>
 					kwentaTokenApproval
