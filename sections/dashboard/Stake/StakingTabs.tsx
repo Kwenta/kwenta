@@ -1,6 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
@@ -11,7 +10,6 @@ import { TabPanel } from 'components/Tab';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { useStakingContext } from 'contexts/StakingContext';
 import { getEpochDetails } from 'queries/staking/utils';
-import { currentThemeState } from 'store/ui';
 import { FlexDivRowCentered } from 'styles/common';
 import media from 'styles/media';
 import { formatShortDate, toJSTimestamp } from 'utils/formatters/date';
@@ -41,8 +39,6 @@ const StakingTabs: React.FC = () => {
 	const { t } = useTranslation();
 	const { epochPeriod, periods } = useStakingContext();
 
-	const currentTheme = useRecoilValue(currentThemeState);
-	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
 	const [period, setPeriod] = useState(epochPeriod + 1);
 	const [start, setStart] = useState(0);
 	const [end, setEnd] = useState(0);
@@ -58,22 +54,25 @@ const StakingTabs: React.FC = () => {
 			const { epochStart, epochEnd } = getEpochDetails(i);
 			const startDate = formatShortDate(new Date(toJSTimestamp(epochStart)));
 			const endDate = formatShortDate(new Date(toJSTimestamp(epochEnd)));
+			const label = `Epoch ${i}: ${startDate} - ${endDate}`;
 			epochData.push({
 				period: i,
 				start: epochStart,
 				end: epochEnd,
 				startDate,
 				endDate,
-				label: `${i}: ${startDate} - ${endDate}`,
+				label,
 			});
 			setPeriod(i);
 			setStart(epochStart ?? 0);
 			setEnd(epochEnd ?? 0);
-			setCurrentEpochLabel(`Epoch ${i}: ${startDate} - ${endDate}`);
+			setCurrentEpochLabel(label);
 		});
 		return epochData;
 	}, [periods]);
 
+	// eslint-disable-next-line no-console
+	console.log(currentEpochLabel);
 	const formatOptionLabel = ({ label, start, end, period }: EpochLabel) => {
 		return (
 			<div
@@ -81,10 +80,10 @@ const StakingTabs: React.FC = () => {
 					setPeriod(period);
 					setStart(start ?? 0);
 					setEnd(end ?? 0);
-					setCurrentEpochLabel(`Epoch ${label}`);
+					setCurrentEpochLabel(label);
 				}}
 			>
-				<LabelContainer>{label}</LabelContainer>
+				<SelectLabelContainer>{label}</SelectLabelContainer>
 			</div>
 		);
 	};
@@ -97,7 +96,6 @@ const StakingTabs: React.FC = () => {
 						title={t('dashboard.stake.tabs.staking.title')}
 						onClick={handleTabSwitch(StakeTab.Staking)}
 						active={activeTab === StakeTab.Staking}
-						lightStakePage={!isDarkTheme}
 					/>
 					<TabButton
 						title={
@@ -107,19 +105,16 @@ const StakingTabs: React.FC = () => {
 						}
 						onClick={handleTabSwitch(StakeTab.TradingRewards)}
 						active={activeTab === StakeTab.TradingRewards}
-						lightStakePage={!isDarkTheme}
 					/>
 					<TabButton
 						title={t('dashboard.stake.tabs.escrow.title')}
 						onClick={handleTabSwitch(StakeTab.Escrow)}
 						active={activeTab === StakeTab.Escrow}
-						lightStakePage={!isDarkTheme}
 					/>
 					<TabButton
 						title={t('dashboard.stake.tabs.redemption.title')}
 						onClick={handleTabSwitch(StakeTab.Redemption)}
 						active={activeTab === StakeTab.Redemption}
-						lightStakePage={!isDarkTheme}
 					/>
 				</TabButtons>
 				<StyledFlexDivRowCentered active={activeTab === StakeTab.TradingRewards}>
@@ -168,7 +163,11 @@ const StakingTabs: React.FC = () => {
 };
 
 const Emphasis = styled.b`
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.yellow};
+`;
+
+const SelectLabelContainer = styled(LabelContainer)`
+	font-size: 12px;
 `;
 
 const StyledLabelContainer = styled(LabelContainer)`
@@ -179,7 +178,13 @@ const StyledLabelContainer = styled(LabelContainer)`
 `;
 
 const StakingSelect = styled(Select)`
+	height: 38px;
 	width: 100%;
+	.react-select__control,
+	.react-select__menu,
+	.react-select__menu-list {
+		border-radius: 20px;
+	}
 	.react-select__value-container {
 		padding: 0;
 	}

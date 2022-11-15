@@ -1,7 +1,6 @@
 import { wei } from '@synthetixio/wei';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { useContractReads, useContractWrite, usePrepareContractWrite } from 'wagmi';
 
@@ -11,7 +10,6 @@ import { useStakingContext } from 'contexts/StakingContext';
 import useGetFiles from 'queries/files/useGetFiles';
 import useGetFuturesFeeForAccount from 'queries/staking/useGetFuturesFeeForAccount';
 import useGetSpotFeeForAccount from 'queries/staking/useGetSpotFeeForAccount';
-import { currentThemeState } from 'store/ui';
 import { FlexDivRow } from 'styles/common';
 import media from 'styles/media';
 import { formatTruncatedDuration, getNextSunday } from 'utils/formatters/date';
@@ -45,8 +43,6 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
 	const { multipleMerkleDistributorContract, periods } = useStakingContext();
-	const currentTheme = useRecoilValue(currentThemeState);
-	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
 
 	const fileNames = useMemo(() => {
 		let fileNames: string[] = [];
@@ -140,7 +136,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 
 	return (
 		<TradingRewardsContainer>
-			<CardGridContainer $darkTheme={isDarkTheme}>
+			<CardGridContainer>
 				<CardGrid>
 					<div>
 						<div className="title">
@@ -161,7 +157,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 					</Button>
 				</StyledFlexDivRow>
 			</CardGridContainer>
-			<CardGridContainer $darkTheme={isDarkTheme}>
+			<CardGridContainer>
 				<CardGrid>
 					<div>
 						<div className="title">
@@ -189,7 +185,7 @@ const StyledFlexDivRow = styled(FlexDivRow)`
 	column-gap: 15px;
 `;
 
-const CardGridContainer = styled(StakingCard)<{ $darkTheme: boolean }>`
+const CardGridContainer = styled(StakingCard)`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;

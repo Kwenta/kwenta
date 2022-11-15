@@ -12,7 +12,7 @@ export const formatTxTimestamp = (timestamp: number | Date) =>
 
 export const toJSTimestamp = (timestamp: number) => timestamp * 1000;
 
-export const formatShortDate = (date: Date | number) => formatDate(date, 'MMM d, yyyy');
+export const formatShortDate = (date: Date | number) => formatDate(date, 'MM/dd/yyyy');
 
 export const formatShortDateWithTime = (date: Date | number) =>
 	formatDate(date, 'MMM d, yyyy H:mma');

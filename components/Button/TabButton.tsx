@@ -15,7 +15,6 @@ export type TabButtonProps = {
 	vertical?: boolean;
 	nofill?: boolean;
 	isRounded?: boolean;
-	lightStakePage?: boolean;
 	onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
 };
 
@@ -40,7 +39,6 @@ const StyledButton = styled(Button)<{
 	active?: boolean;
 	vertical?: boolean;
 	nofill?: boolean;
-	lightStakePage?: boolean;
 }>`
 	height: initial;
 	display: flex;
@@ -49,26 +47,10 @@ const StyledButton = styled(Button)<{
 	padding-top: 10px;
 	padding-bottom: 10px;
 	justify-content: center;
-	${(props) =>
-		!props.lightStakePage
-			? css`
-					background-color: ${props.active
-						? props.theme.colors.selectedTheme.tab.background.active
-						: props.theme.colors.selectedTheme.tab.background.inactive};
-					.title {
-						text-align: center;
-						color: ${props.active
-							? props.theme.colors.selectedTheme.button.text.primary
-							: props.theme.colors.selectedTheme.gray};
-					}
-			  `
-			: css`
-					background-color: ${props.active ? '#393939' : '#F2F2F2'};
-					.title {
-						text-align: center;
-						color: ${props.active ? '#F2F2F2' : '#3F3F3F'};
-					}
-			  `}
+	background-color: ${(props) =>
+		props.active
+			? props.theme.colors.selectedTheme.tab.background.active
+			: props.theme.colors.selectedTheme.tab.background.inactive};
 	p {
 		margin: 0;
 		font-size: 13px;
@@ -78,6 +60,13 @@ const StyledButton = styled(Button)<{
 		display: flex;
 		flex-direction: row;
 		align-items: center;
+	}
+	.title {
+		text-align: center;
+		color: ${(props) =>
+			props.active
+				? props.theme.colors.selectedTheme.button.text.primary
+				: props.theme.colors.selectedTheme.gray};
 	}
 
 	.detail {

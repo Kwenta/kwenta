@@ -1,12 +1,9 @@
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { useContractWrite } from 'wagmi';
 
 import Button from 'components/Button';
 import { useStakingContext } from 'contexts/StakingContext';
-import { currentThemeState } from 'store/ui';
 import media from 'styles/media';
 import { formatPercent, truncateNumbers } from 'utils/formatters/number';
 
@@ -19,16 +16,13 @@ const StakingTab = () => {
 
 	const { write: getReward } = useContractWrite(getRewardConfig);
 
-	const currentTheme = useRecoilValue(currentThemeState);
-	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
-
 	return (
 		<StakingTabContainer>
-			<CardGridContainer $darkTheme={isDarkTheme}>
+			<CardGridContainer>
 				<CardGrid>
 					<div>
 						<div className="title">{t('dashboard.stake.tabs.staking.claimable-rewards')}</div>
-						<KwentaLabel>{truncateNumbers(claimableBalance, 2)}</KwentaLabel>
+						<KwentaLabel>{truncateNumbers(claimableBalance, 4)}</KwentaLabel>
 					</div>
 					<div>
 						<div className="title">{t('dashboard.stake.tabs.staking.annual-percentage-yield')}</div>
@@ -70,7 +64,7 @@ const StakingTabContainer = styled.div`
 	`}
 `;
 
-const CardGridContainer = styled(StakingCard)<{ $darkTheme: boolean }>`
+const CardGridContainer = styled(StakingCard)`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;

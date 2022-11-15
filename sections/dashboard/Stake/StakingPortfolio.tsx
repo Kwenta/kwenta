@@ -1,11 +1,8 @@
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Text from 'components/Text';
 import { useStakingContext } from 'contexts/StakingContext';
-import { currentThemeState } from 'store/ui';
 import media from 'styles/media';
 import { truncateNumbers } from 'utils/formatters/number';
 
@@ -22,8 +19,6 @@ const StakingPortfolio = () => {
 		kwentaBalance,
 	} = useStakingContext();
 
-	const currentTheme = useRecoilValue(currentThemeState);
-	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
 	const DEFAULT_CARDS = [
 		[
 			{
@@ -65,12 +60,10 @@ const StakingPortfolio = () => {
 
 	return (
 		<StakingPortfolioContainer>
-			<Header $darkTheme={isDarkTheme} variant="h4">
-				{t('dashboard.stake.portfolio.title')}
-			</Header>
+			<Header variant="h4">{t('dashboard.stake.portfolio.title')}</Header>
 			<CardsContainer>
 				{DEFAULT_CARDS.map((card) => (
-					<SplitStakingCard $darkTheme={isDarkTheme}>
+					<SplitStakingCard>
 						{card.map(({ key, title, value }) => (
 							<div key={key}>
 								<div className="title">{title}</div>
@@ -94,8 +87,8 @@ const StakingPortfolioContainer = styled.div`
 	`}
 `;
 
-const Header = styled(Text.Heading)<{ $darkTheme: boolean }>`
-	color: ${(props) => (props.$darkTheme ? props.theme.colors.selectedTheme.text.value : '#6A3300')};
+const Header = styled(Text.Heading)`
+	color: ${(props) => props.theme.colors.selectedTheme.text.value};
 	margin-bottom: 15px;
 	font-variant: all-small-caps;
 `;

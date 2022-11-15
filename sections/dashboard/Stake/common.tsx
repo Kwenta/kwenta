@@ -45,7 +45,7 @@ export const StakingCard = styled.div<{ $darkTheme?: boolean; $noPadding?: boole
 		`}
 `;
 
-export const SplitStakingCard = styled(StakingCard)<{ $darkTheme?: boolean }>`
+export const SplitStakingCard = styled(StakingCard)`
 	display: flex;
 	padding: 0;
 
