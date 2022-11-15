@@ -44,10 +44,6 @@ export default class TransactionsService {
 	}
 
 	public async createEVMTxn(txn: ethers.providers.TransactionRequest, options?: any) {
-		if (!this.sdk.signer) {
-			throw new Error(sdkErrors.NO_SIGNER);
-		}
-
 		const execTxn = clone(txn);
 
 		if (!execTxn.gasLimit) {
@@ -57,7 +53,7 @@ export default class TransactionsService {
 				.toBN();
 		}
 
-		const txnData = await this.sdk.signer.sendTransaction(execTxn);
+		const txnData = await this.sdk.context.signer.sendTransaction(execTxn);
 
 		return txnData;
 	}
@@ -69,7 +65,7 @@ export default class TransactionsService {
 		txnOptions: Partial<ethers.providers.TransactionRequest> = {},
 		options?: any
 	) {
-		const contract = this.sdk.contracts[contractName];
+		const contract = this.sdk.context.contracts[contractName];
 
 		if (!contract) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
@@ -79,22 +75,18 @@ export default class TransactionsService {
 	}
 
 	public async estimateGas(txn: ethers.providers.TransactionRequest) {
-		if (!this.sdk.signer) {
-			throw new Error(sdkErrors.NO_SIGNER);
-		}
-
-		return this.sdk.signer.estimateGas(
+		return this.sdk.context.signer.estimateGas(
 			omit(txn, ['gasPrice', 'maxPriorityFeePerGas', 'maxFeePerGas'])
 		);
 	}
 
 	public async getOptimismLayerOneFees(txn?: ethers.providers.TransactionRequest) {
-		if (!txn || !this.sdk.signer) return null;
+		if (!txn || !this.sdk.context.signer) return null;
 
 		const isNotOvm =
-			this.sdk.networkId !== NetworkIdByName['mainnet-ovm'] &&
-			this.sdk.networkId !== NetworkIdByName['kovan-ovm'] &&
-			this.sdk.networkId !== NetworkIdByName['goerli-ovm'];
+			this.sdk.context.networkId !== NetworkIdByName['mainnet-ovm'] &&
+			this.sdk.context.networkId !== NetworkIdByName['kovan-ovm'] &&
+			this.sdk.context.networkId !== NetworkIdByName['goerli-ovm'];
 
 		if (isNotOvm) {
 			return null;
@@ -103,7 +95,7 @@ export default class TransactionsService {
 		const OptimismGasPriceOracleContract = new ethers.Contract(
 			OVMGasPriceOracle.address,
 			contractAbi,
-			this.sdk.signer
+			this.sdk.context.signer
 		);
 
 		const cleanedTxn = omit(txn, ['from', 'maxPriorityFeePerGas', 'maxFeePerGas']);

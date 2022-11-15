@@ -21,7 +21,7 @@ export default class SynthsService {
 	}
 
 	public async getSynthBalances(walletAddress: string) {
-		if (!this.sdk.contracts.SynthUtil) {
+		if (!this.sdk.context.contracts.SynthUtil) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
@@ -30,9 +30,9 @@ export default class SynthsService {
 			currencyKeys,
 			synthsBalances,
 			synthsUSDBalances,
-		]: SynthBalancesTuple = await this.sdk.contracts.SynthUtil.connect(
-			this.sdk.provider
-		).synthsBalances(walletAddress);
+		]: SynthBalancesTuple = await this.sdk.context.contracts.SynthUtil.synthsBalances(
+			walletAddress
+		);
 
 		let totalUSDBalance = wei(0);
 
