@@ -927,7 +927,7 @@ export default class ExchangeService {
 
 	private async getQuoteCurrencyContract(quoteCurrencyKey: string) {
 		if (quoteCurrencyKey && this.allTokensMap[quoteCurrencyKey]) {
-			const quoteTknAddress = this.allTokensMap[quoteCurrencyKey].address;
+			const quoteTknAddress = this.getTokenAddress(quoteCurrencyKey, true);
 			return this.createERC20Contract(quoteTknAddress);
 		}
 
