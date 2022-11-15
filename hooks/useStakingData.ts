@@ -317,20 +317,12 @@ const useStakingData = () => {
 		functionName: 'approve',
 		args: [veKwentaRedeemerContract.addressOrName, ethers.constants.MaxUint256],
 		enabled: veKwentaTokenApproval,
-		onError(error) {
-			// eslint-disable-next-line no-console
-			console.log(`vKwentaApprove`, error);
-		},
 	});
 
 	const { config: vKwentaRedeemConfig } = usePrepareContractWrite({
 		...vKwentaRedeemerContract,
 		functionName: 'redeem',
 		enabled: wei(vKwentaBalance).gt(0),
-		onError(error) {
-			// eslint-disable-next-line no-console
-			console.log(`vKwentaRedeem`, error);
-		},
 	});
 
 	const { config: veKwentaRedeemConfig } = usePrepareContractWrite({
@@ -338,10 +330,6 @@ const useStakingData = () => {
 		functionName: 'redeem',
 		args: [walletAddress],
 		enabled: wei(veKwentaBalance).gt(0),
-		onError(error) {
-			// eslint-disable-next-line no-console
-			console.log(`veKwentaRedeem`, error);
-		},
 	});
 
 	return {
