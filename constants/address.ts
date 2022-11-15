@@ -50,7 +50,7 @@ export const VKWENTA_REDEEMER: Record<string, string> = {
 };
 
 export const VEKWENTA_REDEEMER: Record<string, string> = {
-	420: '0xb3E58002aAf9d21a39a19DB784f10c30c9e5bE76',
+	420: '0x86ca3CEbEA60101292EEFCd5802fD6e55D647c87',
 	10: '0xc7088AC8F287539567e458C7D08C2a1470Fd25B7',
 };
 
