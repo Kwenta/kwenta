@@ -103,7 +103,7 @@ const HeroImage = styled.img`
 	${media.lessThan('sm')`
 		width: 345px;
 	`}
-	background: linear-gradient(180deg, #C9975A 0%, #94F2FF 100%);
+	background: linear-gradient(180deg,#FFB800 0%,#F7FF00 100%);
 	padding: 1px;
 	border-radius: 8px;
 `;

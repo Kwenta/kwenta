@@ -10,6 +10,7 @@ import media from 'styles/media';
 import { themes } from 'styles/theme';
 import darkTheme from 'styles/theme/colors/dark';
 
+import Background from './Background';
 import Footer from './Footer';
 import Header from './Header';
 
@@ -19,6 +20,7 @@ type HomeLayoutProps = {
 
 const HomeLayout: FC<HomeLayoutProps> = ({ children }) => (
 	<ThemeProvider theme={themes['dark']}>
+		<Background />
 		<DesktopOnlyView>
 			<FuturesBannerContainer>
 				<FuturesBannerLinkWrapper>
@@ -68,7 +70,6 @@ const GlobalStyle = createGlobalStyle`
 		color: ${darkTheme.text.value};
 	}
 `;
-
 const NavSpan = styled.span`
 	cursor: help;
 	background: #313131;
