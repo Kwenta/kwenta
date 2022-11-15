@@ -2,8 +2,6 @@ import router from 'next/router';
 import { FC } from 'react';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 
-import FuturesBordersSvg from 'assets/svg/app/futures-borders.svg';
-import LinkWhiteIcon from 'assets/svg/app/link-white.svg';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import ROUTES from 'constants/routes';
 import { RefetchProvider } from 'contexts/RefetchContext';
@@ -29,17 +27,13 @@ const HomeLayout: FC<HomeLayoutProps> = ({ children }) => (
 							href="https://app.aelin.xyz/pool/mainnet/0x21f4f88a95f656ef4ee1ea107569b3b38cf8daef"
 							target="_blank"
 						>
-							SNX Staker & Early Synth Trader $KWENTA distribution live on Aelin until 14 November!
-							Check your eligibility
+							SNX Staker & Early Synth Trader $KWENTA distribution live on Aelin until November 14th
 						</FuturesLink>
-						<NavSpan onClick={() => router.push(ROUTES.Dashboard.Home)}>here</NavSpan>.
-						<LinkWhiteIcon />
+						<NavSpan onClick={() => router.push(ROUTES.Dashboard.Home)}>
+							Check your eligibility
+						</NavSpan>
 					</>
 				</FuturesBannerLinkWrapper>
-
-				<DivBorder />
-				<FuturesBordersSvg />
-				<DivBorder />
 			</FuturesBannerContainer>
 		</DesktopOnlyView>
 		<MobileOrTabletView>
@@ -77,6 +71,10 @@ const GlobalStyle = createGlobalStyle`
 
 const NavSpan = styled.span`
 	cursor: help;
+	background: #313131;
+	padding: 4px 9px;
+	border-radius: 20px;
+
 	${media.lessThan('md')`
 		margin-left: 5px;
 		color: ${(props) => props.theme.colors.common.primaryWhite};
@@ -84,26 +82,20 @@ const NavSpan = styled.span`
 	`}
 `;
 
-const DivBorder = styled.div`
-	height: 2px;
-	background: ${(props) => props.theme.colors.goldColors.color1};
-	flex-grow: 1;
-`;
-
 const FuturesLink = styled.a`
 	margin-right: 5px;
+	background: #313131;
+	padding: 4px 9px;
+	border-radius: 20px;
 `;
 
 const FuturesBannerContainer = styled.div`
-	height: 65px;
+	height: 70px;
 	width: 100%;
 	display: flex;
 	align-items: center;
-	background: linear-gradient(
-		180deg,
-		${(props) => props.theme.colors.goldColors.color1} 0%,
-		${(props) => props.theme.colors.goldColors.color2} 100%
-	);
+	margin-bottom: -35px;
+
 	${media.lessThan('md')`
 		position: relative;
 		width: 100%;
@@ -117,7 +109,6 @@ const FuturesBannerContainer = styled.div`
 		padding: 22px 10px;
 		border-radius: 0px;
 		gap: 5px;
-		text-shadow: 0px 1px 2px ${(props) => props.theme.colors.transparentBlack};
 	`}
 `;
 
@@ -125,7 +116,7 @@ const FuturesBannerLinkWrapper = styled.div`
 	width: 100%;
 	text-align: center;
 	position: absolute;
-	text-shadow: 0px 1px 2px ${(props) => props.theme.colors.transparentBlack};
+
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 16px;
