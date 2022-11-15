@@ -28,10 +28,7 @@ const EscrowInputCard: FC = () => {
 	const [activeTab, setActiveTab] = useState(0);
 
 	const amountBN = useMemo(
-		() =>
-			!parseFloat(amount) || amount === ''
-				? zeroBN.toString(0, true)
-				: wei(amount).toString(0, true),
+		() => (amount === '' ? zeroBN.toString(0, true) : wei(amount).toString(0, true)),
 		[amount]
 	);
 
@@ -101,11 +98,9 @@ const EscrowInputCard: FC = () => {
 				<StyledInput
 					value={amount}
 					onChange={(_, newValue) => {
-						setAmount(
-							!parseFloat(newValue)
-								? ''
-								: truncateNumbers(parseFloat(newValue), DEFAULT_CRYPTO_DECIMALS)
-						);
+						newValue !== '' && newValue.indexOf('.') === -1
+							? setAmount(parseFloat(newValue).toString())
+							: setAmount(newValue);
 					}}
 				/>
 			</StakeInputContainer>
