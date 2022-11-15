@@ -160,8 +160,8 @@ const Features = () => {
 
 const FeatureCopy = styled(Copy)`
 	font-size: 15px;
-	line-height: 150%;
-	letter-spacing: -0.04em;
+	line-height: 100%;
+	letter-spacing: -0.2px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	width: 250px;
 	${media.lessThan('sm')`
@@ -170,21 +170,19 @@ const FeatureCopy = styled(Copy)`
 `;
 
 const FeatureTitle = styled(Title)`
-	font-size: 24px;
+	font-size: 20px;
 	line-height: 100%;
-	font-family: ${(props) => props.theme.fonts.compressedBlack};
+	font-family: ${(props) => props.theme.fonts.black};
+	font-variant: all-small-caps;
 	text-transform: uppercase;
 	color: ${(props) => props.theme.colors.white};
-	text-shadow: 0px 0px 12.83px rgba(255, 255, 255, 0.2);
-	width: 150px;
 	${media.lessThan('sm')`
 		font-size: 20px;
 	`}
 `;
 
 const StyledFlexDivRow = styled(FlexDivRow)`
-	margin: auto;
-	margin-top: 60px;
+	margin: 35px auto 0 auto;
 	gap: 20px 20px;
 	width: 826px;
 	flex-wrap: wrap;
@@ -211,7 +209,7 @@ const FeatureCard = styled(FlexDivRow)`
 		width: 305px;
 		height: auto;
 		align-items: center; 
-		padding: 20px 40px 20px 20px;
+		padding: 20px;
 	`}
 `;
 
@@ -343,7 +341,10 @@ const FeatureIconContainer = styled.div`
 
 const FeatureContentContainer = styled(FlexDivCol)`
 	margin-left: 20px;
+	justify-content: center;
+
 	${media.lessThan('sm')`
+		margin-left: 10px;
 		width: 305px;
 		height: auto;
 		padding-top: 0px;
@@ -352,29 +353,34 @@ const FeatureContentContainer = styled(FlexDivCol)`
 
 const FeatureContentTitle = styled(FlexDivRow)`
 	padding-bottom: 5px;
+	justify-content: flex-start;
+	align-items: center;
+
+	${media.lessThan('sm')`
+		justify-content: space-between;
+	`}
 `;
 
 const ComingSoonTag = styled(FlexDivCentered)`
-	width: 50px;
-	height: 24px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+	padding: 2px 5px;
+	color: ${(props) => props.theme.colors.common.primaryYellow};
 	font-family: ${(props) => props.theme.fonts.bold};
 	justify-content: center;
 	margin-left: 16px;
-	background: linear-gradient(180deg, #39332d 0%, #2d2a28 100%);
-	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1),
-		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
-	border-radius: 8px;
-	border: 1px solid #9c6c3c;
+	background: #202020;
+	border-radius: 6px;
+	border: ${(props) => ` 1px solid ${props.theme.colors.common.primaryYellow}`};
 	cursor: default;
+	font-variant: all-small-caps;
 
 	${media.lessThan('sm')`
-		margin-left: -16px;
+		margin-left: 0px;
+		padding: 2px 5px;
 	`}
 `;
 
 const SectionFeatureTitle = styled(FeatureTitle)`
-	margin-top: 80px;
+	margin-top: 100px;
 	text-align: center;
 	width: 500px;
 	${media.lessThan('sm')`
