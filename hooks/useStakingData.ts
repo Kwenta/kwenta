@@ -13,15 +13,18 @@ import {
 	TRADING_REWARDS,
 	VKWENTA_REDEEMER,
 	VKWENTA_TOKEN_ADDRESS,
+	VEKWENTA_REDEEMER,
+	VEKWENTA_TOKEN_ADDRESS,
 } from 'constants/address';
 import Connector from 'containers/Connector';
 import multipleMerkleDistributorABI from 'lib/abis/MultipleMerkleDistributor.json';
 import rewardEscrowABI from 'lib/abis/RewardEscrow.json';
 import stakingRewardsABI from 'lib/abis/StakingRewards.json';
 import supplyScheduleABI from 'lib/abis/SupplySchedule.json';
+import veKwentaRedeemerABI from 'lib/abis/veKwentaRedeemer.json';
 import vKwentaRedeemerABI from 'lib/abis/vKwentaRedeemer.json';
 import { formatTruncatedDuration } from 'utils/formatters/date';
-import { truncateNumbers, zeroBN } from 'utils/formatters/number';
+import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
 export type EscrowRow = {
@@ -74,6 +77,16 @@ const useStakingData = () => {
 		contractInterface: vKwentaRedeemerABI,
 	};
 
+	const veKwentaTokenContract = {
+		addressOrName: VEKWENTA_TOKEN_ADDRESS[network?.id],
+		contractInterface: erc20ABI,
+	};
+
+	const veKwentaRedeemerContract = {
+		addressOrName: VEKWENTA_REDEEMER[network?.id],
+		contractInterface: veKwentaRedeemerABI,
+	};
+
 	const multipleMerkleDistributorContract = {
 		addressOrName: TRADING_REWARDS[network?.id],
 		contractInterface: multipleMerkleDistributorABI,
@@ -91,6 +104,8 @@ const useStakingData = () => {
 	const [vKwentaBalance, setVKwentaBalance] = useState(zeroBN);
 	const [vKwentaAllowance, setVKwentaAllowance] = useState(zeroBN);
 	const [kwentaAllowance, setKwentaAllowance] = useState(zeroBN);
+	const [veKwentaBalance, setVEKwentaBalance] = useState(zeroBN);
+	const [veKwentaAllowance, setVEKwentaAllowance] = useState(zeroBN);
 
 	useContractReads({
 		contracts: [
@@ -154,6 +169,16 @@ const useStakingData = () => {
 				...multipleMerkleDistributorContract,
 				functionName: 'distributionEpoch',
 			},
+			{
+				...veKwentaTokenContract,
+				functionName: 'balanceOf',
+				args: [walletAddress ?? undefined],
+			},
+			{
+				...veKwentaTokenContract,
+				functionName: 'allowance',
+				args: [walletAddress ?? undefined, veKwentaRedeemerContract.addressOrName],
+			},
 		],
 		watch: true,
 		allowFailure: true,
@@ -181,6 +206,8 @@ const useStakingData = () => {
 				setVKwentaAllowance(wei(data[10] ?? zeroBN));
 				setKwentaAllowance(wei(data[11] ?? zeroBN));
 				setEpochPeriod(Number(data[12] ?? 0) ?? 0);
+				setVEKwentaBalance(wei(data[13] ?? zeroBN));
+				setVEKwentaAllowance(wei(data[14] ?? zeroBN));
 			}
 		},
 	});
@@ -255,9 +282,14 @@ const useStakingData = () => {
 		kwentaAllowance,
 	]);
 
-	const vkwentaTokenApproval = useMemo(() => vKwentaBalance.gt(vKwentaAllowance), [
+	const vKwentaTokenApproval = useMemo(() => vKwentaBalance.gt(vKwentaAllowance), [
 		vKwentaBalance,
 		vKwentaAllowance,
+	]);
+
+	const veKwentaTokenApproval = useMemo(() => veKwentaBalance.gt(veKwentaAllowance), [
+		veKwentaBalance,
+		veKwentaAllowance,
 	]);
 
 	const { config: getRewardConfig } = usePrepareContractWrite({
@@ -271,22 +303,32 @@ const useStakingData = () => {
 		functionName: 'approve',
 		args: [stakingRewardsContract.addressOrName, ethers.constants.MaxUint256],
 		enabled: kwentaTokenApproval,
-		staleTime: Infinity,
 	});
 
 	const { config: vKwentaApproveConfig } = usePrepareContractWrite({
 		...vKwentaTokenContract,
 		functionName: 'approve',
 		args: [vKwentaRedeemerContract.addressOrName, ethers.constants.MaxUint256],
-		enabled: vkwentaTokenApproval,
-		staleTime: Infinity,
+		enabled: vKwentaTokenApproval,
 	});
 
-	const { config: redeemConfig } = usePrepareContractWrite({
+	const { config: veKwentaApproveConfig } = usePrepareContractWrite({
+		...veKwentaTokenContract,
+		functionName: 'approve',
+		args: [veKwentaRedeemerContract.addressOrName, ethers.constants.MaxUint256],
+		enabled: veKwentaTokenApproval,
+	});
+
+	const { config: vKwentaRedeemConfig } = usePrepareContractWrite({
 		...vKwentaRedeemerContract,
 		functionName: 'redeem',
 		enabled: wei(vKwentaBalance).gt(0),
-		staleTime: Infinity,
+	});
+
+	const { config: veKwentaRedeemConfig } = usePrepareContractWrite({
+		...veKwentaRedeemerContract,
+		functionName: 'redeem',
+		enabled: wei(veKwentaBalance).gt(0),
 	});
 
 	return {
@@ -301,17 +343,23 @@ const useStakingData = () => {
 		kwentaBalance,
 		apy,
 		vKwentaBalance,
+		veKwentaBalance,
 		vKwentaAllowance,
+		veKwentaAllowance,
 		kwentaAllowance,
 		getRewardConfig,
 		kwentaApproveConfig,
 		vKwentaApproveConfig,
-		redeemConfig,
+		veKwentaApproveConfig,
+		vKwentaRedeemConfig,
+		veKwentaRedeemConfig,
 		kwentaTokenApproval,
-		vkwentaTokenApproval,
+		vKwentaTokenApproval,
+		veKwentaTokenApproval,
 		stakingRewardsContract,
 		rewardEscrowContract,
 		vKwentaRedeemerContract,
+		veKwentaRedeemerContract,
 		multipleMerkleDistributorContract,
 	};
 };

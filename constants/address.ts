@@ -39,13 +39,18 @@ export const VKWENTA_TOKEN_ADDRESS: Record<string, string> = {
 	10: '0x6789D8a7a7871923Fc6430432A602879eCB6520a',
 };
 
+export const VEKWENTA_TOKEN_ADDRESS: Record<string, string> = {
+	420: '0x3e52b5f840eafd79394c6359e93bf3ffdae89ee4',
+	10: '0x678d8f4ba8dfe6bad51796351824dcceceaeff2b',
+};
+
 export const VKWENTA_REDEEMER: Record<string, string> = {
 	420: '0x03c3E61D624F279243e1c8b43eD0fCF6790D10E9',
 	10: '0x8132EE584bCD6f8Eb1bea141DB7a7AC1E72917b9',
 };
 
 export const VEKWENTA_REDEEMER: Record<string, string> = {
-	420: '',
+	420: '0xb3E58002aAf9d21a39a19DB784f10c30c9e5bE76',
 	10: '0xc7088AC8F287539567e458C7D08C2a1470Fd25B7',
 };
 
