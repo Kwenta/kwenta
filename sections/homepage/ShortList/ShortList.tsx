@@ -310,12 +310,13 @@ const StyledTable = styled(Table)`
 	margin-top: 60px;
 	font-size: 15px;
 	width: 1160px;
+	background: #131212;
 	${media.lessThan('sm')`
 		width: 345px;
 		& > .table-body >.table-body-row >.table-body-cell {
 			padding-left: 0px;
 		}
-	`}
+	`};
 `;
 
 const Medal = styled.span`
@@ -340,22 +341,6 @@ const ColorCodedPrice = styled(Currency.Price)`
 const Container = styled(FlexDivColCentered)`
 	padding-bottom: 140px;
 	justify-content: center;
-	${media.greaterThan('sm')`
-		background: radial-gradient(white, rgba(2, 225, 255, 0.15) 0px, transparent 280px),
-			radial-gradient(white, rgba(201, 151, 90, 0.25) 0px, transparent 330px);
-		background-size: 100% 200%, 100% 100%;
-		background-position: -300px 0px, 250px 500px;
-		background-repeat: no-repeat, no-repeat;
-	`}
-	${media.lessThan('sm')`
-		padding-bottom: 100px;
-		background: radial-gradient(white, rgba(2, 225, 255, 0.15) 0px, transparent 120px),
-		radial-gradient(white, rgba(201, 151, 90, 0.2) 0px, transparent 180px);
-		background-size: 100% 60%, 100% 60%;
-		background-position: -120px 1000px, 80px 1000px;
-		background-repeat: no-repeat, no-repeat;
-		z-index: 20;
-	`}
 `;
 
 const TableHeader = styled.div`
