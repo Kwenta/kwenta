@@ -95,15 +95,14 @@ const HeroImageContainer = styled(GridDiv)`
 `;
 
 const HeroImage = styled.img`
-	width: 960px;
-	aspect-ratio: 1.72;
+	width: 1060px;
 	${media.lessThan('md')`
 		width: 785px;
 	`}
 	${media.lessThan('sm')`
 		width: 345px;
 	`}
-	background: linear-gradient(180deg,#FFB800 0%,#F7FF00 100%);
+	background: linear-gradient(180deg,#71623f 0%,#4D4F21 100%);
 	padding: 1px;
 	border-radius: 8px;
 `;
