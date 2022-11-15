@@ -25,13 +25,13 @@ const EscrowInputCard: FC = () => {
 		rewardEscrowContract,
 	} = useStakingContext();
 
-	const [amount, setAmount] = useState('0');
+	const [amount, setAmount] = useState('');
 	const [activeTab, setActiveTab] = useState(0);
 	const currentTheme = useRecoilValue(currentThemeState);
 
-	const amountBN = useMemo(() => (_.isNil(amount) ? '0' : wei(amount ?? '0').toString(0, true)), [
-		amount,
-	]);
+	const amountBN = useMemo(() => {
+		return amount === '' ? zeroBN : wei(amount).toString(0, true);
+	}, [amount]);
 
 	const isDarkTheme = useMemo(() => currentTheme === 'dark', [currentTheme]);
 	const unstakedEscrowedKwentaBalance = useMemo(
@@ -50,14 +50,14 @@ const EscrowInputCard: FC = () => {
 		...rewardEscrowContract,
 		functionName: 'stakeEscrow',
 		args: [amountBN],
-		enabled: unstakedEscrowedKwentaBalance.gt(0) && wei(amount).gt(0),
+		enabled: unstakedEscrowedKwentaBalance.gt(0) && wei(amount === '' ? zeroBN : amount).gt(0),
 	});
 
 	const { config: unstakedEscrowKwentaConfig } = usePrepareContractWrite({
 		...rewardEscrowContract,
 		functionName: 'unstakeEscrow',
 		args: [amountBN],
-		enabled: stakedEscrowedBalance.gt(0) && wei(amount).gt(0),
+		enabled: stakedEscrowedBalance.gt(0) && wei(amount === '' ? zeroBN : amount).gt(0),
 	});
 
 	const { write: kwentaApprove } = useContractWrite(kwentaApproveConfig);
@@ -109,7 +109,12 @@ const EscrowInputCard: FC = () => {
 				fullWidth
 				variant="flat"
 				size="sm"
-				disabled={wei(amount).eq(0)}
+				disabled={
+					unstakedEscrowedKwentaBalance.eq(0) ||
+					amount === '' ||
+					wei(amount).eq(0) ||
+					wei(amount).gt(unstakedEscrowedKwentaBalance)
+				}
 				onClick={() =>
 					kwentaTokenApproval
 						? kwentaApprove?.()

@@ -25,21 +25,23 @@ const StakeInputCard: FC = () => {
 		stakingRewardsContract,
 	} = useStakingContext();
 
-	const [amount, setAmount] = useState('0');
-	const amountBN = _.isNil(amount) ? '0' : wei(amount ?? '0').toString(0, true);
+	const [amount, setAmount] = useState('');
+	const amountBN = useMemo(() => {
+		return amount === '' ? zeroBN : wei(amount).toString(0, true);
+	}, [amount]);
 
 	const { config: stakeKwentaConfig } = usePrepareContractWrite({
 		...stakingRewardsContract,
 		functionName: 'stake',
 		args: [amountBN],
-		enabled: kwentaBalance.gt(0) && wei(amount).gt(0),
+		enabled: kwentaBalance.gt(0) && wei(amount === '' ? zeroBN : amount).gt(0),
 	});
 
 	const { config: unstakeKwentaConfig } = usePrepareContractWrite({
 		...stakingRewardsContract,
 		functionName: 'unstake',
 		args: [amountBN],
-		enabled: stakedNonEscrowedBalance.gt(0) && wei(amount).gt(0),
+		enabled: stakedNonEscrowedBalance.gt(0) && wei(amount === '' ? zeroBN : amount).gt(0),
 	});
 
 	const currentTheme = useRecoilValue(currentThemeState);
@@ -94,6 +96,9 @@ const StakeInputCard: FC = () => {
 				fullWidth
 				variant="flat"
 				size="sm"
+				disabled={
+					kwentaBalance.eq(0) || amount === '' || wei(amount).eq(0) || wei(amount).gt(kwentaBalance)
+				}
 				onClick={() =>
 					kwentaTokenApproval
 						? kwentaApprove?.()
