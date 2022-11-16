@@ -1,9 +1,7 @@
-import router from 'next/router';
 import { FC } from 'react';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import ROUTES from 'constants/routes';
 import { RefetchProvider } from 'contexts/RefetchContext';
 import { FullScreenContainer } from 'styles/common';
 import media from 'styles/media';
@@ -26,14 +24,12 @@ const HomeLayout: FC<HomeLayoutProps> = ({ children }) => (
 				<FuturesBannerLinkWrapper>
 					<>
 						<FuturesLink
-							href="https://app.aelin.xyz/pool/mainnet/0x21f4f88a95f656ef4ee1ea107569b3b38cf8daef"
+							href="https://mirror.xyz/kwenta.eth/ueasaL_H0IdPe5-U1Z6jqGfa_B2HW3xf0_CSIR34ueE"
 							target="_blank"
 						>
-							SNX Staker & Early Synth Trader $KWENTA distribution live on Aelin until November 14th
+							Council nominations are live in the Kwenta Discord until Nov 22nd. Click to learn
+							more.
 						</FuturesLink>
-						<NavSpan onClick={() => router.push(ROUTES.Dashboard.Home)}>
-							Check your eligibility
-						</NavSpan>
 					</>
 				</FuturesBannerLinkWrapper>
 			</FuturesBannerContainer>
@@ -42,14 +38,11 @@ const HomeLayout: FC<HomeLayoutProps> = ({ children }) => (
 			<FuturesBannerContainer>
 				<>
 					<FuturesLink
-						href="https://app.aelin.xyz/pool/mainnet/0x21f4f88a95f656ef4ee1ea107569b3b38cf8daef"
+						href="https://mirror.xyz/kwenta.eth/ueasaL_H0IdPe5-U1Z6jqGfa_B2HW3xf0_CSIR34ueE"
 						target="_blank"
 					>
-						SNX Staker & Early Synth Trader $KWENTA distribution live on Aelin until 14 November!
+						Council nominations are live in the Kwenta Discord until Nov 22nd. Click to learn more.
 					</FuturesLink>
-					<NavSpan onClick={() => router.push(ROUTES.Dashboard.Home)}>
-						Check your eligibility here.
-					</NavSpan>
 				</>
 			</FuturesBannerContainer>
 		</MobileOrTabletView>
@@ -69,18 +62,6 @@ const GlobalStyle = createGlobalStyle`
 		background-color: ${darkTheme.background};
 		color: ${darkTheme.text.value};
 	}
-`;
-const NavSpan = styled.span`
-	cursor: help;
-	background: #313131;
-	padding: 4px 9px;
-	border-radius: 20px;
-
-	${media.lessThan('md')`
-		margin-left: 5px;
-		color: ${(props) => props.theme.colors.common.primaryWhite};
-		text-shadow: 0px 1px 2px ${(props) => props.theme.colors.transparentBlack};
-	`}
 `;
 
 const FuturesLink = styled.a`
