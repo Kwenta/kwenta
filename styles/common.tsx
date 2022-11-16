@@ -144,6 +144,7 @@ export const FixedFooterMixin = `
 
 export const Paragraph = styled.p`
 	margin: 0;
+	cursor: default;
 `;
 
 export const BoldText = styled.span`
@@ -254,7 +255,7 @@ export const MainContent = styled(FlexDiv)`
 	flex-grow: 1;
 	flex-direction: column;
 	margin: 0 auto;
-	max-width: 915px;
+	max-width: 1032px;
 `;
 
 export const RightSideContent = styled.div`
@@ -322,11 +323,12 @@ export const SmallGoldenHeader = styled(Paragraph)`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 14px;
 	line-height: 100%;
-	color: ${(props) => props.theme.colors.common.primaryGold};
+	color: ${(props) => props.theme.colors.common.primaryYellow};
 	text-transform: uppercase;
 	text-align: center;
 	letter-spacing: 0.65em;
-	margin-bottom: 20px;
+	margin-bottom: 10px;
+	cursor: default;
 	${media.lessThan('sm')`
 		font-size: 12px;
 		margin-bottom: 12px;
@@ -334,15 +336,16 @@ export const SmallGoldenHeader = styled(Paragraph)`
 `;
 
 export const WhiteHeader = styled.div`
-	font-family: ${(props) => props.theme.fonts.compressedBlack};
+	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 42px;
 	line-height: 100%;
 	color: ${(props) => props.theme.colors.common.primaryWhite};
+	font-variant: all-small-caps;
 	text-transform: uppercase;
 	text-align: center;
-	text-shadow: 0px 0px 12.83px rgba(255, 255, 255, 0.2);
-	letter-spacing: 0.05em;
-	width: 550px;
+	letter-spacing: 6px;
+	cursor: default;
+	/* width: 550px; */
 	${media.lessThan('sm')`
 		font-size: 32px;
 		width: 306px;

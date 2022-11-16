@@ -1,17 +1,14 @@
-import router from 'next/router';
 import { FC } from 'react';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 
-import FuturesBordersSvg from 'assets/svg/app/futures-borders.svg';
-import LinkWhiteIcon from 'assets/svg/app/link-white.svg';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import ROUTES from 'constants/routes';
 import { RefetchProvider } from 'contexts/RefetchContext';
 import { FullScreenContainer } from 'styles/common';
 import media from 'styles/media';
 import { themes } from 'styles/theme';
 import darkTheme from 'styles/theme/colors/dark';
 
+import Background from './Background';
 import Footer from './Footer';
 import Header from './Header';
 
@@ -21,39 +18,31 @@ type HomeLayoutProps = {
 
 const HomeLayout: FC<HomeLayoutProps> = ({ children }) => (
 	<ThemeProvider theme={themes['dark']}>
+		<Background />
 		<DesktopOnlyView>
 			<FuturesBannerContainer>
 				<FuturesBannerLinkWrapper>
 					<>
 						<FuturesLink
-							href="https://app.aelin.xyz/pool/mainnet/0x21f4f88a95f656ef4ee1ea107569b3b38cf8daef"
+							href="https://mirror.xyz/kwenta.eth/ueasaL_H0IdPe5-U1Z6jqGfa_B2HW3xf0_CSIR34ueE"
 							target="_blank"
 						>
-							SNX Staker & Early Synth Trader $KWENTA distribution live on Aelin until 14 November!
-							Check your eligibility
+							Council nominations are live in the Kwenta Discord until Nov 22nd. Click to learn
+							more.
 						</FuturesLink>
-						<NavSpan onClick={() => router.push(ROUTES.Dashboard.Home)}>here</NavSpan>.
-						<LinkWhiteIcon />
 					</>
 				</FuturesBannerLinkWrapper>
-
-				<DivBorder />
-				<FuturesBordersSvg />
-				<DivBorder />
 			</FuturesBannerContainer>
 		</DesktopOnlyView>
 		<MobileOrTabletView>
 			<FuturesBannerContainer>
 				<>
 					<FuturesLink
-						href="https://app.aelin.xyz/pool/mainnet/0x21f4f88a95f656ef4ee1ea107569b3b38cf8daef"
+						href="https://mirror.xyz/kwenta.eth/ueasaL_H0IdPe5-U1Z6jqGfa_B2HW3xf0_CSIR34ueE"
 						target="_blank"
 					>
-						SNX Staker & Early Synth Trader $KWENTA distribution live on Aelin until 14 November!
+						Council nominations are live in the Kwenta Discord until Nov 22nd. Click to learn more.
 					</FuturesLink>
-					<NavSpan onClick={() => router.push(ROUTES.Dashboard.Home)}>
-						Check your eligibility here.
-					</NavSpan>
 				</>
 			</FuturesBannerContainer>
 		</MobileOrTabletView>
@@ -75,35 +64,20 @@ const GlobalStyle = createGlobalStyle`
 	}
 `;
 
-const NavSpan = styled.span`
-	cursor: help;
-	${media.lessThan('md')`
-		margin-left: 5px;
-		color: ${(props) => props.theme.colors.common.primaryWhite};
-		text-shadow: 0px 1px 2px ${(props) => props.theme.colors.transparentBlack};
-	`}
-`;
-
-const DivBorder = styled.div`
-	height: 2px;
-	background: ${(props) => props.theme.colors.goldColors.color1};
-	flex-grow: 1;
-`;
-
 const FuturesLink = styled.a`
 	margin-right: 5px;
+	background: #313131;
+	padding: 4px 9px;
+	border-radius: 20px;
 `;
 
 const FuturesBannerContainer = styled.div`
-	height: 65px;
+	height: 70px;
 	width: 100%;
 	display: flex;
 	align-items: center;
-	background: linear-gradient(
-		180deg,
-		${(props) => props.theme.colors.goldColors.color1} 0%,
-		${(props) => props.theme.colors.goldColors.color2} 100%
-	);
+	margin-bottom: -35px;
+
 	${media.lessThan('md')`
 		position: relative;
 		width: 100%;
@@ -117,7 +91,6 @@ const FuturesBannerContainer = styled.div`
 		padding: 22px 10px;
 		border-radius: 0px;
 		gap: 5px;
-		text-shadow: 0px 1px 2px ${(props) => props.theme.colors.transparentBlack};
 	`}
 `;
 
@@ -125,7 +98,7 @@ const FuturesBannerLinkWrapper = styled.div`
 	width: 100%;
 	text-align: center;
 	position: absolute;
-	text-shadow: 0px 1px 2px ${(props) => props.theme.colors.transparentBlack};
+
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 16px;

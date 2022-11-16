@@ -1,5 +1,6 @@
 import { Balances } from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
+import { BigNumber } from 'ethers';
 
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import { PotentialTradeStatus } from 'sections/futures/types';
@@ -335,3 +336,22 @@ export type FuturesTradeInputs = {
 };
 
 export type FuturesOrderType = 'market' | 'next price' | 'stop market' | 'limit';
+
+export type SpotsFee = {
+	timestamp: string;
+	toAddress: string;
+	feesInUSD: string;
+};
+
+export type FuturesFee = {
+	timestamp: string;
+	account: string;
+	feesPaid: string;
+};
+
+export type TradingRewardScore = {
+	address: string;
+	totalFeesPaid: BigNumber;
+	stakedBalance: BigNumber;
+	tradingRewardsScore: number;
+};
