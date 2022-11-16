@@ -91,6 +91,10 @@ const StyledFlexDivColCentered = styled(FlexDivColCentered)`
 	width: 405px;
 	margin: auto;
 	padding: 0px;
+
+	${media.lessThan('sm')`
+		gap: 20px;
+	`}
 `;
 
 const GrayCopy = styled(Copy)`
@@ -108,63 +112,48 @@ const GrayCopy = styled(Copy)`
 `;
 
 const Emphasis = styled.b`
-	color: ${(props) => props.theme.colors.common.primaryGold};
+	color: ${(props) => props.theme.colors.common.primaryYellow};
 `;
 
 const CenteredCopy = styled(Copy)`
 	font-size: 15px;
 	text-align: center;
 	width: 300px;
-	line-height: 150%;
+	line-height: 100%;
 	letter-spacing: -0.03em;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
 const CenteredTitle = styled(Title)`
-	font-family: ${(props) => props.theme.fonts.compressedBlack};
+	font-family: ${(props) => props.theme.fonts.black};
+	font-variant: all-small-caps;
 	text-transform: uppercase;
 	font-size: 24px;
 `;
 
 const Container = styled(GridDiv)`
 	width: 100vw;
-	${media.greaterThan('sm')`
-		background: radial-gradient(white, rgba(2, 225, 255, 0.2) 0px, transparent 180px),
-		radial-gradient(white, rgba(201, 151, 90, 0.25) 0px, transparent 280px),
-		linear-gradient(180deg, #0f0f0f 0%, #1e1e1e 100%);
-		background-size: 100% 200%, 100% 200%, 100% 100%;
-		background-position: -650px -300px, -600px -450px, 0px 0px;
-		background-repeat: no-repeat, no-repeat, repeat;
-	`}
 	overflow: hidden;
 	justify-content: center;
 	padding: 110px 0px;
-	${media.lessThan('sm')`
-		padding-top: 100px;
-		background: radial-gradient(white, rgba(2, 225, 255, 0.12) 0px, transparent 100px),
-		radial-gradient(white, rgba(201, 151, 90, 0.25) 0px, transparent 140px),
-		linear-gradient(180deg, #0f0f0f 0%, #1e1e1e 100%);
-		background-size: 100% 50%, 100% 50%, 100% 100%;
-		background-position: -120px 250px, -100px 40px, 0px 0px;
-		background-repeat: no-repeat, no-repeat, repeat;
-	`}
 `;
 
 const StyledFlexContainer = styled(FlexDivRow)`
 	width: 1160px;
 	justify-content: center;
+	gap: 20px;
+	margin-top: 40px;
 `;
 
 const FeatureCard = styled(FlexDivCol)`
-	margin-top: 90px;
-	padding: 0px 40px;
-	${media.lessThan('sm')`
-		margin-top: 40px;
-	`}
+	padding: 25px;
+	background-color: #1a1a1a;
+	border-radius: 10px;
+	border: 1px solid rgba(255, 255, 255, 0.05);
 `;
 
 const FeatureIconContainer = styled.div`
-	padding-bottom: 25px;
+	padding-bottom: 15px;
 	svg {
 		width: 64px;
 		height: 64px;
@@ -174,7 +163,7 @@ const FeatureIconContainer = styled.div`
 `;
 
 const FeatureContentTitle = styled(FlexDivCentered)`
-	padding-bottom: 20px;
+	padding-bottom: 5px;
 	justify-content: center;
 `;
 
