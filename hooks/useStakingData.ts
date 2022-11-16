@@ -111,7 +111,7 @@ const useStakingData = () => {
 	const [veKwentaBalance, setVEKwentaBalance] = useState(zeroBN);
 	const [veKwentaAllowance, setVEKwentaAllowance] = useState(zeroBN);
 
-	useContractReads({
+	const { refetch: resetStakingState } = useContractReads({
 		contracts: [
 			{
 				...rewardEscrowContract,
@@ -184,7 +184,7 @@ const useStakingData = () => {
 				args: [walletAddress ?? undefined, veKwentaRedeemerContract.addressOrName],
 			},
 		],
-		watch: true,
+		watch: false,
 		enabled: !!walletAddress && isL2,
 		allowFailure: true,
 		onSettled(data, error) {
@@ -227,11 +227,11 @@ const useStakingData = () => {
 
 	data = [];
 
-	const { data: vestingSchedules } = useContractRead({
+	const { refetch: resetVesting, data: vestingSchedules } = useContractRead({
 		...rewardEscrowContract,
 		functionName: 'getVestingSchedules',
 		args: [walletAddress ?? undefined, 0, 1000],
-		watch: true,
+		watch: false,
 		enabled: !!walletAddress,
 		select: (data) => data.filter((d) => d.escrowAmount.gt(0)),
 		onError(error) {
@@ -263,11 +263,12 @@ const useStakingData = () => {
 	});
 
 	const {
+		refetch: resetVestingClaimable,
 		data: vestingEntryClaimable,
 		isSuccess: vestingEntryClaimableIsSuccess,
 	} = useContractReads({
 		contracts,
-		watch: true,
+		watch: false,
 		enabled: !!walletAddress && contracts.length > 0,
 	});
 
@@ -344,6 +345,9 @@ const useStakingData = () => {
 	});
 
 	return {
+		resetStakingState,
+		resetVesting,
+		resetVestingClaimable,
 		periods,
 		resetTime,
 		epochPeriod,

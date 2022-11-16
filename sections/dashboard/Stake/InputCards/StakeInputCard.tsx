@@ -23,6 +23,7 @@ const StakeInputCard: FC = () => {
 		kwentaApproveConfig,
 		kwentaTokenApproval,
 		stakingRewardsContract,
+		resetStakingState,
 	} = useStakingContext();
 
 	const [amount, setAmount] = useState('');
@@ -70,6 +71,9 @@ const StakeInputCard: FC = () => {
 			const approveTxn = await kwentaApprove?.();
 			monitorTransaction({
 				txHash: approveTxn?.hash ?? '',
+				onTxConfirmed: () => {
+					resetStakingState();
+				},
 			});
 		} else if (activeTab === 0) {
 			const stakeTxn = await stakeKwenta?.();
@@ -77,6 +81,7 @@ const StakeInputCard: FC = () => {
 				txHash: stakeTxn?.hash ?? '',
 				onTxConfirmed: () => {
 					setAmount('');
+					resetStakingState();
 				},
 			});
 		} else {
@@ -85,10 +90,18 @@ const StakeInputCard: FC = () => {
 				txHash: unstakeTxn?.hash ?? '',
 				onTxConfirmed: () => {
 					setAmount('');
+					resetStakingState();
 				},
 			});
 		}
-	}, [activeTab, kwentaApprove, kwentaTokenApproval, stakeKwenta, unstakeKwenta]);
+	}, [
+		activeTab,
+		kwentaApprove,
+		kwentaTokenApproval,
+		resetStakingState,
+		stakeKwenta,
+		unstakeKwenta,
+	]);
 
 	return (
 		<StakingInputCardContainer>
