@@ -12,10 +12,10 @@ const useGetFiles = (fileNames: string[]) => {
 	});
 	return useQuery(QUERY_KEYS.Files.GetMultiple(fileNames), async () => {
 		let responses: any[] = [];
-		fileNames.forEach(async (fileName) => {
+		for (const fileName of fileNames) {
 			const response = await client.get(fileName);
 			responses.push(response.data ?? null);
-		});
+		}
 		return responses;
 	});
 };

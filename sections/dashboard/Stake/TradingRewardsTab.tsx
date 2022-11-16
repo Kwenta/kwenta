@@ -33,8 +33,10 @@ type EpochDataProps = {
 			amount: string;
 			proof: string[];
 		};
-	}[];
+	};
 };
+
+type ClaimParams = [number, string, string, string[], number];
 
 const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 	period = 'ALL',
@@ -57,7 +59,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 	const allEpochData = useMemo(() => allEpochQuery?.data ?? [], [allEpochQuery?.data]);
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	let rewards: [any, any, any, any, any][] = [];
+	let rewards: ClaimParams[] = [];
 
 	allEpochData &&
 		allEpochData.length > 0 &&
@@ -77,19 +79,19 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 			}
 		});
 
-	let checkIsClaimed: any[] = [];
-	rewards.length > 0 &&
-		rewards.forEach((walletReward) =>
-			checkIsClaimed.push({
+	const checkIsClaimed = useMemo(() => {
+		return rewards.map((reward: ClaimParams) => {
+			return {
 				...multipleMerkleDistributorContract,
 				functionName: 'isClaimed',
-				args: [walletReward[0], walletReward[4]],
-			})
-		);
+				args: [reward[0], reward[4]],
+			};
+		});
+	}, [multipleMerkleDistributorContract, rewards]);
 
 	const { data: isClaimable } = useContractReads({
 		contracts: checkIsClaimed,
-		enabled: checkIsClaimed.length > 0,
+		enabled: checkIsClaimed && checkIsClaimed.length > 0,
 		watch: true,
 	});
 
@@ -103,7 +105,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 
 	const totalRewards =
 		claimableRewards.length > 0
-			? claimableRewards.reduce((acc, curr) => acc + Number(curr[2] / 1e18), 0)
+			? claimableRewards.reduce((acc, curr) => acc + Number(curr[2]) / 1e18, 0)
 			: 0;
 
 	const SpotFeeQuery = useGetSpotFeeForAccount(walletAddress!, start, end);
