@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
+import Loader from 'components/Loader';
 import Select from 'components/Select';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
@@ -14,11 +15,13 @@ import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMa
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { Price, Rates } from 'queries/rates/types';
 import {
-	currentMarketState,
-	futuresAccountTypeState,
-	futuresMarketsState,
-	pastRatesState,
-} from 'store/futures';
+	selectMarketAsset,
+	selectMarkets,
+	selectMarketsQueryStatus,
+} from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { FetchStatus } from 'state/types';
+import { futuresAccountTypeState, pastRatesState } from 'store/futures';
 import { assetToSynth, iStandardSynth } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import {
@@ -65,13 +68,14 @@ type MarketsDropdownProps = {
 };
 
 const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
-	const futuresMarkets = useRecoilValue(futuresMarketsState);
 	const pastRates = useRecoilValue(pastRatesState);
 	const accountType = useRecoilValue(futuresAccountTypeState);
-	const asset = useRecoilValue(currentMarketState);
+	const marketAsset = useAppSelector(selectMarketAsset);
+	const futuresMarkets = useAppSelector(selectMarkets);
+	const marketsQueryStatus = useAppSelector(selectMarketsQueryStatus);
 
 	const { isFuturesMarketClosed, futuresClosureReason } = useFuturesMarketClosed(
-		MarketKeyByAsset[asset]
+		MarketKeyByAsset[marketAsset]
 	);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
@@ -104,8 +108,8 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 		[pastRates]
 	);
 
-	const selectedBasePriceRate = getBasePriceRate(asset);
-	const selectedPastPrice = getPastPrice(asset);
+	const selectedBasePriceRate = getBasePriceRate(marketAsset);
+	const selectedPastPrice = getPastPrice(marketAsset);
 
 	const getMinDecimals = React.useCallback(
 		(asset: string) => (isDecimalFour(asset) ? DEFAULT_CRYPTO_DECIMALS : undefined),
@@ -149,54 +153,65 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 
 	return (
 		<SelectContainer mobile={mobile}>
-			<Select
-				instanceId={`markets-dropdown-${asset}`}
-				controlHeight={55}
-				menuWidth={'100%'}
-				onChange={(x) => {
-					// Types are not perfect from react-select, this should always be true (just helping typescript)
-					if (x && 'value' in x) {
-						router.push(ROUTES.Markets.MarketPair(x.value, accountType));
-					}
-				}}
-				value={assetToCurrencyOption({
-					asset,
-					description: getSynthDescription(asset, synthsMap, t),
-					price: mobile
-						? formatCurrency(selectedPriceCurrency.name, selectedBasePriceRate, {
-								sign: '$',
-								minDecimals: getMinDecimals(asset),
-						  })
-						: undefined,
-					change: mobile
-						? formatPercent(
-								selectedBasePriceRate && selectedPastPrice?.price
-									? wei(selectedBasePriceRate)
-											.sub(selectedPastPrice?.price)
-											.div(selectedBasePriceRate)
-									: zeroBN
-						  )
-						: undefined,
-					negativeChange: mobile
-						? selectedBasePriceRate && selectedPastPrice?.price
-							? wei(selectedBasePriceRate).lt(selectedPastPrice?.price)
-							: false
-						: false,
-					isMarketClosed: isFuturesMarketClosed,
-					closureReason: futuresClosureReason,
-				})}
-				options={options}
-				isSearchable={false}
-				variant="flat"
-				components={{
-					SingleValue: MarketsDropdownSingleValue,
-					Option: MarketsDropdownOption,
-					DropdownIndicator: !mobile ? MarketsDropdownIndicator : undefined,
-				}}
-			/>
+			{!futuresMarkets.length && marketsQueryStatus === FetchStatus.Loading ? (
+				<LoaderContainer>
+					<Loader inline />
+				</LoaderContainer>
+			) : (
+				<Select
+					instanceId={`markets-dropdown-${marketAsset}`}
+					controlHeight={55}
+					menuWidth={'100%'}
+					onChange={(x) => {
+						// Types are not perfect from react-select, this should always be true (just helping typescript)
+						if (x && 'value' in x) {
+							router.push(ROUTES.Markets.MarketPair(x.value, accountType));
+						}
+					}}
+					value={assetToCurrencyOption({
+						asset: marketAsset,
+						description: getSynthDescription(marketAsset, synthsMap, t),
+						price: mobile
+							? formatCurrency(selectedPriceCurrency.name, selectedBasePriceRate, {
+									sign: '$',
+									minDecimals: getMinDecimals(marketAsset),
+							  })
+							: undefined,
+						change: mobile
+							? formatPercent(
+									selectedBasePriceRate && selectedPastPrice?.price
+										? wei(selectedBasePriceRate)
+												.sub(selectedPastPrice?.price)
+												.div(selectedBasePriceRate)
+										: zeroBN
+							  )
+							: undefined,
+						negativeChange: mobile
+							? selectedBasePriceRate && selectedPastPrice?.price
+								? wei(selectedBasePriceRate).lt(selectedPastPrice?.price)
+								: false
+							: false,
+						isMarketClosed: isFuturesMarketClosed,
+						closureReason: futuresClosureReason,
+					})}
+					options={options}
+					isSearchable={false}
+					variant="flat"
+					components={{
+						SingleValue: MarketsDropdownSingleValue,
+						Option: MarketsDropdownOption,
+						DropdownIndicator: !mobile ? MarketsDropdownIndicator : undefined,
+					}}
+				/>
+			)}
 		</SelectContainer>
 	);
 };
+
+const LoaderContainer = styled.div`
+	display: flex;
+	justify-content: center;
+`;
 
 const SelectContainer = styled.div<{ mobile?: boolean }>`
 	margin-bottom: 16px;

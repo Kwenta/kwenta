@@ -24,9 +24,10 @@ import { monitorTransaction } from 'contexts/RelayerContext';
 import { KWENTA_TRACKING_CODE, ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
 import { PositionSide, FuturesTradeInputs, FuturesAccountType } from 'queries/futures/types';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
+import { selectMarketAsset } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import {
 	crossMarginMarginDeltaState,
-	currentMarketState,
 	tradeFeesState,
 	futuresAccountState,
 	leverageSideState,
@@ -83,7 +84,7 @@ const useFuturesData = () => {
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const { handleRefetch, refetchUntilUpdate } = useRefetchContext();
 
-	const marketAsset = useRecoilValue(currentMarketState);
+	const marketAsset = useAppSelector(selectMarketAsset);
 	const [tradeInputs, setTradeInputs] = useRecoilState(futuresTradeInputsState);
 	const setSimulatedTrade = useSetRecoilState(simulatedTradeState);
 
@@ -625,7 +626,6 @@ const useFuturesData = () => {
 		onChangeOpenPosLeverage,
 		marketAssetRate,
 		position,
-		marketAsset,
 		market,
 		orderTxn,
 		maxUsdInputAmount,

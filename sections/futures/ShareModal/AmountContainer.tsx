@@ -1,10 +1,10 @@
 import { FC } from 'react';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { FuturesPosition } from 'queries/futures/types';
-import { currentMarketState } from 'store/futures';
+import { selectMarketAsset } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import { formatNumber, zeroBN } from 'utils/formatters/number';
 import { getMarketName, MarketKeyByAsset } from 'utils/futures';
 
@@ -21,7 +21,8 @@ const currencyIconStyle = {
 };
 
 const AmountContainer: FC<AmountContainerProps> = ({ position }) => {
-	const marketAsset = useRecoilValue(currentMarketState);
+	const marketAsset = useAppSelector(selectMarketAsset);
+
 	// TODO: Probably store the market key separately in Recoil
 	// using a selector to handle these scenarios.
 	const marketName = getMarketName(marketAsset);

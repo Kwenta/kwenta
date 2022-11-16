@@ -10,8 +10,9 @@ import Button from 'components/Button';
 import ErrorView from 'components/Error';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
+import { selectMarketAsset } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import {
-	currentMarketState,
 	futuresOrderPriceState,
 	leverageSideState,
 	orderTypeState,
@@ -44,7 +45,7 @@ export default function TradeConfirmationModal({
 }: Props) {
 	const { t } = useTranslation();
 
-	const market = useRecoilValue(currentMarketState);
+	const marketAsset = useAppSelector(selectMarketAsset);
 	const { data: potentialTradeDetails } = useRecoilValue(potentialTradeDetailsState);
 	const orderType = useRecoilValue(orderTypeState);
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
@@ -82,10 +83,10 @@ export default function TradeConfirmationModal({
 			{
 				label: 'size',
 				value: formatCurrency(
-					getDisplayAsset(market) || '',
+					getDisplayAsset(marketAsset) || '',
 					positionDetails?.sizeDelta.abs() ?? zeroBN,
 					{
-						currencyKey: getDisplayAsset(market) ?? '',
+						currencyKey: getDisplayAsset(marketAsset) ?? '',
 					}
 				),
 			},
@@ -126,7 +127,7 @@ export default function TradeConfirmationModal({
 				value: formatDollars(gasFee ?? zeroBN),
 			},
 		],
-		[positionDetails, market, keeperFee, gasFee, tradeFee, orderType, orderPrice, leverageSide]
+		[positionDetails, marketAsset, keeperFee, gasFee, tradeFee, orderType, orderPrice, leverageSide]
 	);
 
 	const disabledReason = useMemo(() => {

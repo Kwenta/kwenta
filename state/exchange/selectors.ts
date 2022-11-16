@@ -1,13 +1,13 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
+
+import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
+import { Rates } from 'queries/rates/types';
 import { selectTotalUSDBalanceWei } from 'state/balances/selectors';
 import { sdk } from 'state/config';
 import type { RootState } from 'state/store';
 import { FetchStatus } from 'state/types';
 import { selectIsWalletConnected } from 'state/wallet/selectors';
-
-import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
-import { Rates } from 'queries/rates/types';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { toWei, zeroBN } from 'utils/formatters/number';
 

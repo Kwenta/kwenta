@@ -1,8 +1,5 @@
 import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { submitSettle } from 'state/exchange/actions';
-import { setOpenModal } from 'state/exchange/reducer';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
@@ -10,6 +7,9 @@ import { MobileOrTabletView } from 'components/Media';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { EXTERNAL_LINKS } from 'constants/links';
 import TxSettleModal from 'sections/shared/modals/TxSettleModal';
+import { submitSettle } from 'state/exchange/actions';
+import { setOpenModal } from 'state/exchange/reducer';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { NoTextTransform, ExternalLink } from 'styles/common';
 import { secondsToTime } from 'utils/formatters/date';
 import logError from 'utils/logError';

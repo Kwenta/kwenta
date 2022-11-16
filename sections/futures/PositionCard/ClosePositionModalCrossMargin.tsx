@@ -9,10 +9,11 @@ import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useEstimateGasCost from 'hooks/useEstimateGasCost';
-import { currentMarketState, positionState } from 'store/futures';
+import { selectMarketAsset, selectMarketKey } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { positionState } from 'store/futures';
 import { isUserDeniedError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
-import { MarketKeyByAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
 import { PositionSide } from '../types';
@@ -32,29 +33,31 @@ export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 	const [crossMarginGasFee, setCrossMarginGasFee] = useState(wei(0));
 	const [error, setError] = useState<null | string>(null);
 
-	const currencyKey = useRecoilValue(currentMarketState);
+	const marketAsset = useAppSelector(selectMarketAsset);
+	const marketAssetKey = useAppSelector(selectMarketKey);
+
 	const position = useRecoilValue(positionState);
 	const positionDetails = position?.position;
 
 	const positionSize = useMemo(() => positionDetails?.size ?? zeroBN, [positionDetails?.size]);
 
 	const crossMarginCloseParams = useMemo(() => {
-		return currencyKey === 'SOL' && position?.position?.side === PositionSide.SHORT
+		return marketAsset === 'SOL' && position?.position?.side === PositionSide.SHORT
 			? [
 					{
-						marketKey: formatBytes32String(MarketKeyByAsset[currencyKey]),
+						marketKey: formatBytes32String(marketAssetKey),
 						marginDelta: zeroBN.toBN(),
 						sizeDelta: positionSize.add(wei(1, 18, true)).toBN(),
 					},
 					{
-						marketKey: formatBytes32String(MarketKeyByAsset[currencyKey]),
+						marketKey: formatBytes32String(marketAssetKey),
 						marginDelta: zeroBN.toBN(),
 						sizeDelta: wei(1, 18, true).neg().toBN(),
 					},
 			  ]
 			: [
 					{
-						marketKey: formatBytes32String(MarketKeyByAsset[currencyKey]),
+						marketKey: formatBytes32String(marketAssetKey),
 						marginDelta: zeroBN.toBN(),
 						sizeDelta:
 							position?.position?.side === PositionSide.LONG
@@ -62,7 +65,7 @@ export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 								: positionSize.toBN(),
 					},
 			  ];
-	}, [currencyKey, position?.position?.side, positionSize]);
+	}, [marketAssetKey, marketAsset, position?.position?.side, positionSize]);
 
 	useEffect(() => {
 		if (!crossMarginAccountContract) return;

@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { useEffect } from 'react';
+
 import { sdk } from 'state/config';
 import { setExchangeRates } from 'state/exchange/actions';
 import { useAppDispatch } from 'state/hooks';

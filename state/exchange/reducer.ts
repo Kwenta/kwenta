@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
-import { FetchStatus } from 'state/types';
 
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
+import { FetchStatus } from 'state/types';
 import { truncateNumbers } from 'utils/formatters/number';
 
 import {

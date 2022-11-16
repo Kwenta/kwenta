@@ -1,10 +1,10 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 
 import { FuturesAccountType } from 'queries/futures/types';
+import { Period } from 'sdk/constants/period';
 import { FuturesMarketAsset } from 'utils/futures';
 
 import { CurrencyKey } from './currency';
-import { Period } from './period';
 
 export const QUERY_KEYS = {
 	Rates: {

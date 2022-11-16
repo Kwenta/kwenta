@@ -7,7 +7,9 @@ import { useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import useIsL2 from 'hooks/useIsL2';
-import { marketInfoState, marketKeyState } from 'store/futures';
+import { selectMarketKey } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { marketInfoState } from 'store/futures';
 import logError from 'utils/logError';
 
 import { FundingRateUpdate } from './types';
@@ -19,7 +21,7 @@ const useGetAverageFundingRateForMarket = (
 ) => {
 	const { chain: network } = useNetwork();
 	const isL2 = useIsL2();
-	const marketKey = useRecoilValue(marketKeyState);
+	const marketKey = useAppSelector(selectMarketKey);
 	const marketInfo = useRecoilValue(marketInfoState);
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 

@@ -3,11 +3,12 @@ import { TransactionNotifier as BaseTN } from '@synthetixio/transaction-notifier
 import { ethers } from 'ethers';
 import { keyBy } from 'lodash';
 import { useCallback, useEffect, useMemo } from 'react';
+import { createContainer } from 'unstated-next';
+import { chain, useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
+
 import { sdk } from 'state/config';
 import { useAppDispatch } from 'state/hooks';
 import { resetNetwork, setSigner } from 'state/wallet/actions';
-import { createContainer } from 'unstated-next';
-import { chain, useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
 
 import { generateExplorerFunctions, getBaseUrl } from './blockExplorer';
 import { wagmiClient } from './config';

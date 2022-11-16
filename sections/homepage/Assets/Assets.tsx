@@ -19,12 +19,9 @@ import Connector from 'containers/Connector';
 import { Price } from 'queries/rates/types';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
-import {
-	futuresMarketsState,
-	futuresVolumesState,
-	ratesState,
-	pastRatesState,
-} from 'store/futures';
+import { selectMarkets } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { futuresVolumesState, ratesState, pastRatesState } from 'store/futures';
 import {
 	FlexDiv,
 	FlexDivColCentered,
@@ -150,7 +147,7 @@ const Assets = () => {
 	const { l2SynthsMap } = Connector.useContainer();
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
-	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	const futuresMarkets = useAppSelector(selectMarkets);
 	const pastRates = useRecoilValue(pastRatesState);
 	const futuresVolumes = useRecoilValue(futuresVolumesState);
 

@@ -23,6 +23,9 @@ import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
 import TradeCrossMargin from 'sections/futures/TradeCrossMargin';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
+import { setMarketAsset } from 'state/futures/actions';
+import { usePollMarkets } from 'state/futures/hooks';
+import { useAppDispatch } from 'state/hooks';
 import {
 	currentMarketState,
 	futuresAccountState,
@@ -30,7 +33,7 @@ import {
 	showCrossMarginOnboardState,
 } from 'store/futures';
 import { PageContent, FullHeightContainer, RightSideContent } from 'styles/common';
-import { FuturesMarketAsset } from 'utils/futures';
+import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
 
 type MarketComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
@@ -39,16 +42,21 @@ const Market: MarketComponent = () => {
 	const router = useRouter();
 	const { walletAddress } = Connector.useContainer();
 	const futuresData = useFuturesData();
+	const dispatch = useAppDispatch();
+	usePollMarkets();
 
-	const marketAsset = router.query.asset as FuturesMarketAsset;
+	const routerMarketAsset = router.query.asset as FuturesMarketAsset;
 
 	const setCurrentMarket = useSetRecoilState(currentMarketState);
 	const account = useRecoilValue(futuresAccountState);
 	const [showOnboard, setShowOnboard] = useRecoilState(showCrossMarginOnboardState);
 
 	useEffect(() => {
-		if (marketAsset) setCurrentMarket(marketAsset);
-	}, [router, setCurrentMarket, marketAsset]);
+		if (routerMarketAsset && MarketKeyByAsset[routerMarketAsset]) {
+			setCurrentMarket(routerMarketAsset);
+			dispatch(setMarketAsset(routerMarketAsset));
+		}
+	}, [router, setCurrentMarket, dispatch, routerMarketAsset]);
 
 	return (
 		<FuturesContext.Provider value={futuresData}>

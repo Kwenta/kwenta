@@ -8,8 +8,6 @@ import { Contract as EthCallContract } from 'ethcall';
 import { BigNumber, ethers } from 'ethers';
 import { get, keyBy } from 'lodash';
 import KwentaSDK from 'sdk';
-import { getEthGasPrice } from 'sdk/common/gas';
-import { startInterval } from 'sdk/utils/interval';
 
 import { KWENTA_REFERRAL_ADDRESS, SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
 import {
@@ -21,13 +19,15 @@ import {
 import { DEFAULT_1INCH_SLIPPAGE } from 'constants/defaults';
 import { ATOMIC_EXCHANGE_SLIPPAGE } from 'constants/exchange';
 import { ETH_UNIT } from 'constants/network';
-import erc20Abi from 'lib/abis/ERC20.json';
 import { CG_BASE_API_URL } from 'queries/coingecko/constants';
 import { PriceResponse } from 'queries/coingecko/types';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { Rates } from 'queries/rates/types';
 import { getProxySynthSymbol } from 'queries/synths/utils';
 import { Token } from 'queries/walletBalances/types';
+import { getEthGasPrice } from 'sdk/common/gas';
+import erc20Abi from 'sdk/contracts/abis/ERC20.json';
+import { startInterval } from 'sdk/utils/interval';
 import {
 	newGetCoinGeckoPricesForCurrencies,
 	newGetExchangeRatesForCurrencies,
@@ -540,6 +540,7 @@ export default class ExchangeService {
 				quoteDecimals
 			);
 		} else if (txProvider === 'synthswap') {
+			// @ts-ignore TODO: Fix varibale types
 			tx = await this.swapSynthSwap(
 				this.allTokensMap[quoteCurrencyKey],
 				this.allTokensMap[baseCurrencyKey],
@@ -618,6 +619,7 @@ export default class ExchangeService {
 			const txn = {
 				to: this.sdk.context.contracts.Synthetix.address,
 				data: this.sdk.context.contracts.Synthetix.interface.encodeFunctionData(
+					// @ts-ignore TODO: Fix types
 					method,
 					exchangeParams
 				),
@@ -1057,6 +1059,7 @@ export default class ExchangeService {
 				),
 			]);
 
+			// @ts-ignore TODO: Fix types from metaTx
 			const l1Fee = await this.sdk.transactions.getOptimismLayerOneFees({
 				...metaTx,
 				gasPrice: 0,

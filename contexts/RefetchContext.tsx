@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { Period } from 'constants/period';
 import useGetAverageFundingRateForMarkets from 'queries/futures/useGetAverageFundingRateForMarkets';
 import useGetCrossMarginAccountOverview from 'queries/futures/useGetCrossMarginAccountOverview';
 import useGetCrossMarginSettings from 'queries/futures/useGetCrossMarginSettings';
@@ -15,6 +14,7 @@ import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccou
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useSynthBalances from 'queries/synths/useSynthBalances';
+import { Period } from 'sdk/constants/period';
 import { futuresAccountState, futuresAccountTypeState, positionState } from 'store/futures';
 import logError from 'utils/logError';
 

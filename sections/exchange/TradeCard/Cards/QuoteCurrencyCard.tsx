@@ -1,5 +1,7 @@
 import { FC, memo, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import useDebouncedMemo from 'hooks/useDebouncedMemo';
 import { updateBaseAmount, setMaxQuoteBalance } from 'state/exchange/actions';
 import { setQuoteAmount } from 'state/exchange/reducer';
 import { setOpenModal } from 'state/exchange/reducer';
@@ -9,8 +11,6 @@ import {
 	selectQuotePriceRateWei,
 } from 'state/exchange/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-
-import useDebouncedMemo from 'hooks/useDebouncedMemo';
 
 import CurrencyCard from '../CurrencyCard';
 

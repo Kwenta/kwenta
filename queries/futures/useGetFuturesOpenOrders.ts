@@ -5,7 +5,9 @@ import { useSetRecoilState, useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import { openOrdersState, futuresMarketsState, selectedFuturesAddressState } from 'store/futures';
+import { selectMarkets } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { openOrdersState, selectedFuturesAddressState } from 'store/futures';
 import logError from 'utils/logError';
 
 import { FuturesOrder } from './types';
@@ -16,7 +18,7 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 	const { network } = Connector.useContainer();
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
-	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	const futuresMarkets = useAppSelector(selectMarkets);
 	const setOpenOrders = useSetRecoilState(openOrdersState);
 
 	return useQuery<FuturesOrder[]>(
