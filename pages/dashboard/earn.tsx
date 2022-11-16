@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import Button from 'components/Button';
 import Text from 'components/Text';
 import DashboardLayout from 'sections/dashboard/DashboardLayout';
-import { BigText } from 'sections/earn/common';
+import StakeGrid from 'sections/earn/Grids/StakeGrid';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { PageContent, FullHeightContainer, MainContent } from 'styles/common';
 import media from 'styles/media';
@@ -26,7 +26,7 @@ const EarnPage: EarnPageProps = () => {
 							The ETH/KWENTA program rewards liquidity providers on the Uniswap v3 pool via Arrakis
 							Finance. Liquidity providers can stake their pool tokens to earn KWENTA.
 						</StyledBody>
-						<BigText>Coming Soon</BigText>
+						<StakeGrid />
 						<GitHashID />
 					</EarnContent>
 				</FullHeightContainer>
