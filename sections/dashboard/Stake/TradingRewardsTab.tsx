@@ -45,7 +45,12 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 }: TradingRewardProps) => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
-	const { multipleMerkleDistributorContract, periods, resetTime } = useStakingContext();
+	const {
+		multipleMerkleDistributorContract,
+		periods,
+		resetTime,
+		resetStakingState,
+	} = useStakingContext();
 
 	const fileNames = useMemo(() => {
 		let fileNames: string[] = [];
@@ -89,7 +94,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 		});
 	}, [multipleMerkleDistributorContract, rewards]);
 
-	const { data: isClaimable } = useContractReads({
+	const { refetch: resetClaimable, data: isClaimable } = useContractReads({
 		contracts: checkIsClaimed,
 		enabled: checkIsClaimed && checkIsClaimed.length > 0,
 		watch: false,
@@ -166,6 +171,10 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 							const tx = await claim?.();
 							monitorTransaction({
 								txHash: tx?.hash ?? '',
+								onTxConfirmed: () => {
+									resetStakingState();
+									resetClaimable();
+								},
 							});
 						}}
 					>

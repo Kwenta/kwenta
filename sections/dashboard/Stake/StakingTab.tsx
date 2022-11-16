@@ -13,7 +13,7 @@ import StakeInputCard from './InputCards/StakeInputCard';
 
 const StakingTab = () => {
 	const { t } = useTranslation();
-	const { claimableBalance, apy, getRewardConfig } = useStakingContext();
+	const { claimableBalance, apy, getRewardConfig, resetStakingState } = useStakingContext();
 
 	const { writeAsync: getReward } = useContractWrite(getRewardConfig);
 
@@ -39,6 +39,9 @@ const StakingTab = () => {
 						const tx = await getReward?.();
 						monitorTransaction({
 							txHash: tx?.hash ?? '',
+							onTxConfirmed: () => {
+								resetStakingState();
+							},
 						});
 					}}
 				>
