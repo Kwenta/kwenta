@@ -12,7 +12,7 @@ export const formatTxTimestamp = (timestamp: number | Date) =>
 
 export const toJSTimestamp = (timestamp: number) => timestamp * 1000;
 
-export const formatShortDate = (date: Date | number) => formatDate(date, 'MMM d, yyyy');
+export const formatShortDate = (date: Date | number) => formatDate(date, 'MM/dd/yyyy');
 
 export const formatShortDateWithTime = (date: Date | number) =>
 	formatDate(date, 'MMM d, yyyy H:mma');
@@ -71,3 +71,23 @@ export const calculatedTimeDifference = (dateLeft: Date, dateRight: Date) =>
 	differenceInSeconds(dateLeft, dateRight);
 
 export const keepDoublePlaceholder = (num: number) => (num < 9 ? `0${num}` : num);
+
+export const formatTruncatedDuration = (delta: number): string => {
+	const days = Math.floor(delta / 86400);
+	delta -= days * 86400;
+	const hours = Math.floor(delta / 3600) % 24;
+	delta -= hours * 3600;
+	const minutes = Math.floor(delta / 60) % 60;
+	delta -= minutes * 60;
+	const daysStr = days > 0 ? days + 'd' : '0d';
+	const hoursStr = hours > 0 ? hours + 'h' : '0h';
+	const minsStr = minutes > 0 ? minutes + 'm' : '0m';
+	return days > 10 ? `${daysStr}:${hoursStr}`.trim() : `${daysStr}:${hoursStr}:${minsStr}`.trim();
+};
+
+export const getNextSunday = (date: Date) => {
+	const nextSunday = new Date();
+	nextSunday.setDate(date.getDate() + (7 - date.getDay()));
+	nextSunday.setHours(0, 0, 0, 0);
+	return nextSunday;
+};

@@ -494,6 +494,68 @@
 				"open-positions": "Open Positions"
 			}
 		},
+		"stake": {
+			"portfolio": {
+				"title": "Staking Dashboard",
+				"liquid": "Liquid",
+				"escrow": "Escrow",
+				"staked": "Staked",
+				"staked-escrow": "Staked Escrow",
+				"claimable": "Claimable",
+				"vestable": "Vestable"
+			},
+			"tabs": {
+				"staking": {
+					"title": "Staking",
+					"claimable-rewards": "Claimable Rewards",
+					"escrowed-rewards": "Escrowed Rewards",
+					"liquid-rewards": "Liquid Rewards",
+					"annual-percentage-yield": "Annual Percentage Yield",
+					"claim": "Claim",
+					"current-trading-period": "Current Trading Period:"
+				},
+				"trading-rewards": {
+					"title": "Trading Rewards",
+					"mobile-title": "Rewards",
+					"fees-paid": "Fees Paid: Epoch {{EpochPeriod}}",
+					"estimated-rewards": "Estimated Rewards",
+					"estimated-fee-share": "Estimated Fee Share",
+					"trading-activity-reset": "Time until next epoch",
+					"epoch": "Epoch {{EpochPeriod}}: {{EpochDate}}",
+					"claimable-rewards-epoch": "Claimable Rewards: Epoch {{EpochPeriod}}",
+					"claimable-rewards-all": "Claimable Trading Rewards",
+					"claim-epoch": "Claim: Epoch {{EpochPeriod}}",
+					"claim-all": "Claim All"
+				},
+				"escrow": {
+					"title": "Escrow",
+					"date": "Date",
+					"time-until-vestable": "Time Until Vestable",
+					"immediately-vestable": "Immediately Vestable",
+					"amount": "Amount",
+					"early-vest-fee": "Early Vest Fee",
+					"status": "Status",
+					"total": "Total",
+					"fee": "Fee",
+					"vest": "VEST"
+				},
+				"redemption": {
+					"title": "Redemption"
+				},
+				"stake-table": {
+					"stake": "Stake",
+					"unstake": "Unstake",
+					"kwenta-token": "KWENTA",
+					"max": "MAX",
+					"ekwenta-token": "Escrowed KWENTA",
+					"redeem": "Redeem",
+					"vekwenta-token": "veKwenta",
+					"vkwenta-token": "vKwenta",
+					"approve": "Approve",		
+					"balance": "Balance:"
+				}
+			}
+		},
 		"history": {
 			"tabs": {
 				"futures": "Futures History",
@@ -535,6 +597,9 @@
 	},
 	"dashboard-history": {
 		"page-title": "Trade History | Kwenta"
+	},
+	"dashboard-stake": {
+		"page-title": "Staking | Kwenta"
 	},
 	"futures": {
 		"page-title": "Kwenta Futures",
