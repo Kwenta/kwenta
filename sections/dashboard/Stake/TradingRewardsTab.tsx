@@ -92,7 +92,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 	const { data: isClaimable } = useContractReads({
 		contracts: checkIsClaimed,
 		enabled: checkIsClaimed && checkIsClaimed.length > 0,
-		watch: true,
+		watch: false,
 	});
 
 	const claimableRewards = useMemo(
@@ -175,6 +175,18 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 			</CardGridContainer>
 			<CardGridContainer>
 				<CardGrid>
+					<div>
+						<div className="title">
+							{t('dashboard.stake.tabs.trading-rewards.spot-fee-paid', { EpochPeriod: period })}
+						</div>
+						<div className="value">{formatDollars(spotFeePaid, { minDecimals: 4 })}</div>
+					</div>
+					<div>
+						<div className="title">
+							{t('dashboard.stake.tabs.trading-rewards.future-fee-paid', { EpochPeriod: period })}
+						</div>
+						<div className="value">{formatDollars(feePaid, { minDecimals: 4 })}</div>
+					</div>
 					<div>
 						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.fees-paid', { EpochPeriod: period })}
