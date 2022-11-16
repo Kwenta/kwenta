@@ -17,7 +17,7 @@ import { StakingCard } from './common';
 
 const EscrowTable = () => {
 	const { t } = useTranslation();
-	const { data, rewardEscrowContract } = useStakingContext();
+	const { data, rewardEscrowContract, resetVesting, resetVestingClaimable } = useStakingContext();
 	const [checkedState, setCheckedState] = useState(new Array(data.length).fill(false));
 	const [checkAllState, setCheckAllState] = useState(false);
 
@@ -230,6 +230,8 @@ const EscrowTable = () => {
 								onTxConfirmed: () => {
 									setCheckedState(new Array(data.length).fill(false));
 									setCheckAllState(false);
+									resetVesting();
+									resetVestingClaimable();
 								},
 							});
 						}}
