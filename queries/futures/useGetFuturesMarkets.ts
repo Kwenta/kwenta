@@ -2,6 +2,8 @@ import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilState } from 'recoil';
+import { setFuturesMarkets as setReduxFuturesMarkets } from 'state/futures/reducer';
+import { serializeWeiObject } from 'state/helpers';
 import { chain } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
@@ -133,6 +135,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 				})
 			);
 			setFuturesMarkets(futuresMarkets);
+			setReduxFuturesMarkets(futuresMarkets.map(serializeWeiObject));
 			return futuresMarkets;
 		},
 		{

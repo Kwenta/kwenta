@@ -7,6 +7,8 @@ import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
 import Slider from 'react-slick';
 import { useRecoilValue } from 'recoil';
+import { selectExchangeRatesWei } from 'state/exchange/selectors';
+import { useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import GridSvg from 'assets/svg/app/grid.svg';
@@ -19,12 +21,7 @@ import Connector from 'containers/Connector';
 import { Price } from 'queries/rates/types';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
-import {
-	futuresMarketsState,
-	futuresVolumesState,
-	ratesState,
-	pastRatesState,
-} from 'store/futures';
+import { futuresMarketsState, futuresVolumesState, pastRatesState } from 'store/futures';
 import {
 	FlexDiv,
 	FlexDivColCentered,
@@ -178,7 +175,7 @@ const Assets = () => {
 		[activeMarketsTab, t]
 	);
 
-	const exchangeRates = useRecoilValue(ratesState);
+	const exchangeRates = useAppSelector(selectExchangeRatesWei);
 
 	const synths = useMemo(() => values(l2SynthsMap) || [], [l2SynthsMap]);
 	const queryCache = useQueryClient().getQueryCache();

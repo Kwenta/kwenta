@@ -1,6 +1,13 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue, useRecoilState } from 'recoil';
+import { setLeverageSide as setReduxLeverageSide } from 'state/futures/reducer';
+import {
+	selectIsMarketCapReached,
+	selectMarketAssetRate,
+	selectPlaceOrderTranslationKey,
+} from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
@@ -11,12 +18,10 @@ import { previewErrorI18n } from 'queries/futures/constants';
 import { PositionSide } from 'queries/futures/types';
 import {
 	confirmationModalOpenState,
-	isMarketCapReachedState,
 	leverageSideState,
 	marketInfoState,
 	maxLeverageState,
 	orderTypeState,
-	placeOrderTranslationKeyState,
 	positionState,
 	potentialTradeDetailsState,
 	sizeDeltaState,
@@ -24,7 +29,6 @@ import {
 	futuresAccountTypeState,
 	crossMarginMarginDeltaState,
 	futuresOrderPriceState,
-	marketAssetRateState,
 	isAdvancedOrderState,
 } from 'store/futures';
 import { isZero } from 'utils/formatters/number';
@@ -65,10 +69,10 @@ const ManagePosition: React.FC = () => {
 	const [isConfirmationModalOpen, setConfirmationModalOpen] = useRecoilState(
 		confirmationModalOpenState
 	);
-	const isMarketCapReached = useRecoilValue(isMarketCapReachedState);
-	const placeOrderTranslationKey = useRecoilValue(placeOrderTranslationKeyState);
+	const isMarketCapReached = useAppSelector(selectIsMarketCapReached);
+	const placeOrderTranslationKey = useAppSelector(selectPlaceOrderTranslationKey);
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
-	const marketAssetRate = useRecoilValue(marketAssetRateState);
+	const marketAssetRate = useAppSelector(selectMarketAssetRate);
 	const tradeInputs = useRecoilValue(futuresTradeInputsState);
 	const isAdvancedOrder = useRecoilValue(isAdvancedOrderState);
 
@@ -174,6 +178,7 @@ const ManagePosition: React.FC = () => {
 										? PositionSide.SHORT
 										: PositionSide.LONG;
 								setLeverageSide(newLeverageSide);
+								setReduxLeverageSide(newLeverageSide);
 								onTradeAmountChange(newTradeSize.toString(), tradePrice, 'native');
 								setConfirmationModalOpen(true);
 							} else {

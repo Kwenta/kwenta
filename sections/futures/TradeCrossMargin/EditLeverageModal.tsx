@@ -3,6 +3,7 @@ import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { setOrderType as setReduxOrderType } from 'state/futures/reducer';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
@@ -76,6 +77,7 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 	useEffect(() => {
 		if (editMode === 'existing_position' && orderType !== 'market') {
 			setOrderType('market');
+			setReduxOrderType('market');
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);

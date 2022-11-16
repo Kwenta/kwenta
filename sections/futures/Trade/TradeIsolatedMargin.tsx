@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { setLeverageSide as setReduxLeverageSide } from 'state/futures/reducer';
+import { setOrderType as setReduxOrderType } from 'state/futures/reducer';
 import styled from 'styled-components';
 
 import SegmentedControl from 'components/SegmentedControl';
@@ -46,12 +48,19 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 				selectedIndex={ISOLATED_MARGIN_ORDER_TYPES.indexOf(orderType)}
 				onChange={(oType: number) => {
 					setOrderType(oType === 0 ? 'market' : 'next price');
+					setReduxOrderType(oType === 0 ? 'market' : 'next price');
 				}}
 			/>
 
 			{orderType === 'next price' && <NextPrice />}
 
-			<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
+			<PositionButtons
+				selected={leverageSide}
+				onSelect={(side) => {
+					setLeverageSide(side);
+					setReduxLeverageSide(side);
+				}}
+			/>
 
 			<OrderSizing />
 

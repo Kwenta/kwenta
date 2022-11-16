@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useEffect, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { setMarketAsset } from 'state/futures/reducer';
 import styled from 'styled-components';
 
 import Error from 'components/Error';
@@ -47,7 +48,10 @@ const Market: MarketComponent = () => {
 	const [showOnboard, setShowOnboard] = useRecoilState(showCrossMarginOnboardState);
 
 	useEffect(() => {
-		if (marketAsset) setCurrentMarket(marketAsset);
+		if (marketAsset) {
+			setCurrentMarket(marketAsset);
+			setMarketAsset(marketAsset);
+		}
 	}, [router, setCurrentMarket, marketAsset]);
 
 	return (

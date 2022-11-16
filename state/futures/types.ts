@@ -1,6 +1,13 @@
-import { FuturesAccountType, FuturesOrderType } from 'queries/futures/types';
+import {
+	FuturesAccountType,
+	FuturesMarket,
+	FuturesOrderType,
+	FuturesPosition,
+} from 'queries/futures/types';
 import { PositionSide } from 'sections/futures/types';
 import { FuturesMarketAsset } from 'utils/futures';
+
+export type SerializableFuturesPosition = {};
 
 export type FuturesState = {
 	marketAsset: FuturesMarketAsset;
@@ -9,4 +16,12 @@ export type FuturesState = {
 	futuresAccountType: FuturesAccountType;
 	showCrossMarginOnboard: boolean;
 	confirmationModalOpen: boolean;
+	position?: FuturesPosition<string>;
+	marketInfo?: FuturesMarket<string>;
+	crossMarginAccountOverview: {
+		freeMargin: string;
+		keeperEthBal: string;
+		allowance: string;
+	};
+	futuresMarkets: FuturesMarket<string>[];
 };
