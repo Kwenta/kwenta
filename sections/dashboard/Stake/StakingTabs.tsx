@@ -42,7 +42,7 @@ const StakingTabs: React.FC = () => {
 	const isL2 = useIsL2();
 	const { epochPeriod, periods } = useStakingContext();
 
-	const [period, setPeriod] = useState(epochPeriod + 1);
+	const [period, setPeriod] = useState(epochPeriod);
 	const [start, setStart] = useState(0);
 	const [end, setEnd] = useState(0);
 	const [currentEpochLabel, setCurrentEpochLabel] = useState(
