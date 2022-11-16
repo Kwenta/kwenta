@@ -13,7 +13,7 @@ import useGetFuturesFeeForAccount from 'queries/staking/useGetFuturesFeeForAccou
 import useGetSpotFeeForAccount from 'queries/staking/useGetSpotFeeForAccount';
 import { FlexDivRow } from 'styles/common';
 import media from 'styles/media';
-import { formatTruncatedDuration, getNextSunday } from 'utils/formatters/date';
+import { formatTruncatedDuration } from 'utils/formatters/date';
 import { formatDollars, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import { KwentaLabel, StakingCard } from './common';
@@ -45,12 +45,12 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 }: TradingRewardProps) => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
-	const { multipleMerkleDistributorContract, periods } = useStakingContext();
+	const { multipleMerkleDistributorContract, periods, resetTime } = useStakingContext();
 
 	const fileNames = useMemo(() => {
 		let fileNames: string[] = [];
 		periods.slice(0, -1).forEach((i) => {
-			fileNames.push(`trading-rewards-snapshots/epoch-${i - 1}.json`);
+			fileNames.push(`trading-rewards-snapshots/epoch-${i}.json`);
 		});
 		return fileNames;
 	}, [periods]);
@@ -152,9 +152,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 							{t('dashboard.stake.tabs.trading-rewards.trading-activity-reset')}
 						</div>
 						<div className="value">
-							{formatTruncatedDuration(
-								getNextSunday(new Date()).getTime() / 1000 - new Date().getTime() / 1000
-							)}
+							{formatTruncatedDuration(resetTime - new Date().getTime() / 1000)}
 						</div>
 					</div>
 				</CardGrid>

@@ -23,6 +23,7 @@ import stakingRewardsABI from 'lib/abis/StakingRewards.json';
 import supplyScheduleABI from 'lib/abis/SupplySchedule.json';
 import veKwentaRedeemerABI from 'lib/abis/veKwentaRedeemer.json';
 import vKwentaRedeemerABI from 'lib/abis/vKwentaRedeemer.json';
+import { getEpochDetails } from 'queries/staking/utils';
 import { formatTruncatedDuration } from 'utils/formatters/date';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -218,7 +219,7 @@ const useStakingData = () => {
 
 	const periods = useMemo(() => {
 		let periods: number[] = [];
-		for (let i = 1; i <= epochPeriod + 1; i++) {
+		for (let i = 0; i <= epochPeriod; i++) {
 			periods.push(i);
 		}
 		return periods;
@@ -276,6 +277,11 @@ const useStakingData = () => {
 			data[index].vestable = Number(d.quantity / 1e18);
 			data[index].fee = Number(d.fee / 1e18);
 		});
+
+	const resetTime = useMemo(() => {
+		const { epochEnd } = getEpochDetails(network?.id, epochPeriod);
+		return epochEnd;
+	}, [epochPeriod, network?.id]);
 
 	const totalVestable = data.reduce(
 		(acc, current, index) => wei(acc).add(wei(data[index]?.vestable)) ?? zeroBN,
@@ -339,6 +345,7 @@ const useStakingData = () => {
 
 	return {
 		periods,
+		resetTime,
 		epochPeriod,
 		data,
 		escrowedBalance,
