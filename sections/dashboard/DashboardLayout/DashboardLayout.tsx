@@ -10,7 +10,6 @@ import ROUTES from 'constants/routes';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import { MainContent, LeftSideContent, FullHeightContainer, PageContent } from 'styles/common';
 
-import EligibilityBox from '../EligibilityBox';
 import Links from '../Links';
 
 enum Tab {
@@ -127,7 +126,6 @@ const DashboardLayout: FC = ({ children }) => {
 								{children}
 							</TabPanel>
 						</MainContent>
-						<EligibilityBox />
 					</StyledFullHeightContainer>
 				</PageContent>
 			</DesktopOnlyView>
