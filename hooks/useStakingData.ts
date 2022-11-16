@@ -27,6 +27,8 @@ import { formatTruncatedDuration } from 'utils/formatters/date';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
+import useIsL2 from './useIsL2';
+
 export type EscrowRow = {
 	id: number;
 	date: string;
@@ -47,6 +49,7 @@ let data: EscrowRow[] = [];
 
 const useStakingData = () => {
 	const { network } = Connector.useContainer();
+	const isL2 = useIsL2();
 	const kwentaTokenContract = {
 		addressOrName: KWENTA_TOKEN_ADDRESS[network?.id],
 		contractInterface: erc20ABI,
@@ -181,7 +184,7 @@ const useStakingData = () => {
 			},
 		],
 		watch: true,
-		enabled: !!walletAddress,
+		enabled: !!walletAddress && isL2,
 		allowFailure: true,
 		onSettled(data, error) {
 			if (error) logError(error);

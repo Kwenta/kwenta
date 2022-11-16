@@ -1,6 +1,6 @@
 import { wei } from '@synthetixio/wei';
 import _ from 'lodash';
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
@@ -26,22 +26,24 @@ const StakeInputCard: FC = () => {
 	} = useStakingContext();
 
 	const [amount, setAmount] = useState('');
+	const [activeTab, setActiveTab] = useState(0);
 	const amountBN = useMemo(
 		() => (amount === '' ? zeroBN.toString(0, true) : wei(amount).toString(0, true)),
 		[amount]
 	);
-
-	const [activeTab, setActiveTab] = useState(0);
 
 	const handleTabChange = (tabIndex: number) => {
 		setAmount('');
 		setActiveTab(tabIndex);
 	};
 
-	const maxBalance =
-		activeTab === 0 ? wei(kwentaBalance ?? zeroBN) : wei(stakedNonEscrowedBalance ?? zeroBN);
+	const maxBalance = useMemo(
+		() =>
+			activeTab === 0 ? wei(kwentaBalance ?? zeroBN) : wei(stakedNonEscrowedBalance ?? zeroBN),
+		[activeTab, kwentaBalance, stakedNonEscrowedBalance]
+	);
 
-	const onMaxClick = useCallback(async () => {
+	const onMaxClick = useCallback(() => {
 		setAmount(truncateNumbers(maxBalance, DEFAULT_CRYPTO_DECIMALS));
 	}, [maxBalance]);
 
@@ -59,42 +61,34 @@ const StakeInputCard: FC = () => {
 		enabled: activeTab === 1 && stakedNonEscrowedBalance.gt(0) && !!parseFloat(amount),
 	});
 
-	const { data: approveTxn, write: kwentaApprove } = useContractWrite(kwentaApproveConfig);
-	const { data: stakeTxn, write: stakeKwenta } = useContractWrite(stakeKwentaConfig);
-	const { data: unstakeTxn, write: unstakeKwenta } = useContractWrite(unstakeKwentaConfig);
+	const { writeAsync: kwentaApprove } = useContractWrite(kwentaApproveConfig);
+	const { writeAsync: stakeKwenta } = useContractWrite(stakeKwentaConfig);
+	const { writeAsync: unstakeKwenta } = useContractWrite(unstakeKwentaConfig);
 
-	useEffect(() => {
-		if (approveTxn?.hash) {
+	const submitStake = useCallback(async () => {
+		if (kwentaTokenApproval) {
+			const approveTxn = await kwentaApprove?.();
 			monitorTransaction({
-				txHash: approveTxn?.hash,
+				txHash: approveTxn?.hash ?? '',
 			});
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [approveTxn?.hash]);
-
-	useEffect(() => {
-		if (stakeTxn?.hash) {
+		} else if (activeTab === 0) {
+			const stakeTxn = await stakeKwenta?.();
 			monitorTransaction({
-				txHash: stakeTxn?.hash,
+				txHash: stakeTxn?.hash ?? '',
+				onTxConfirmed: () => {
+					setAmount('');
+				},
+			});
+		} else {
+			const unstakeTxn = await unstakeKwenta?.();
+			monitorTransaction({
+				txHash: unstakeTxn?.hash ?? '',
 				onTxConfirmed: () => {
 					setAmount('');
 				},
 			});
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [stakeTxn?.hash]);
-
-	useEffect(() => {
-		if (unstakeTxn?.hash) {
-			monitorTransaction({
-				txHash: unstakeTxn?.hash,
-				onTxConfirmed: () => {
-					setAmount('');
-				},
-			});
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [unstakeTxn?.hash]);
+	}, [activeTab, kwentaApprove, kwentaTokenApproval, stakeKwenta, unstakeKwenta]);
 
 	return (
 		<StakingInputCardContainer>
@@ -133,13 +127,7 @@ const StakeInputCard: FC = () => {
 				disabled={
 					kwentaTokenApproval ? !kwentaApprove : activeTab === 0 ? !stakeKwenta : !unstakeKwenta
 				}
-				onClick={() =>
-					kwentaTokenApproval
-						? kwentaApprove?.()
-						: activeTab === 0
-						? stakeKwenta?.()
-						: unstakeKwenta?.()
-				}
+				onClick={submitStake}
 				style={{ marginTop: '20px' }}
 			>
 				{kwentaTokenApproval

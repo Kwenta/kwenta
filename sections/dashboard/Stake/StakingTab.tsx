@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useContractWrite } from 'wagmi';
@@ -16,16 +15,7 @@ const StakingTab = () => {
 	const { t } = useTranslation();
 	const { claimableBalance, apy, getRewardConfig } = useStakingContext();
 
-	const { data, write: getReward } = useContractWrite(getRewardConfig);
-
-	useEffect(() => {
-		if (data?.hash) {
-			monitorTransaction({
-				txHash: data?.hash,
-			});
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [data?.hash]);
+	const { writeAsync: getReward } = useContractWrite(getRewardConfig);
 
 	return (
 		<StakingTabContainer>
@@ -45,7 +35,12 @@ const StakingTab = () => {
 					variant="flat"
 					size="sm"
 					disabled={!getReward || claimableBalance.eq(0)}
-					onClick={() => getReward?.()}
+					onClick={async () => {
+						const tx = await getReward?.();
+						monitorTransaction({
+							txHash: tx?.hash ?? '',
+						});
+					}}
 				>
 					{t('dashboard.stake.tabs.staking.claim')}
 				</Button>

@@ -7,7 +7,9 @@ import LabelContainer from 'components/Nav/DropDownLabel';
 import Select from 'components/Select';
 import { DropdownIndicator, IndicatorSeparator } from 'components/Select/Select';
 import { TabPanel } from 'components/Tab';
+import Connector from 'containers/Connector';
 import { useStakingContext } from 'contexts/StakingContext';
+import useIsL2 from 'hooks/useIsL2';
 import { getEpochDetails } from 'queries/staking/utils';
 import { FlexDivRowCentered } from 'styles/common';
 import media from 'styles/media';
@@ -36,6 +38,8 @@ enum StakeTab {
 
 const StakingTabs: React.FC = () => {
 	const { t } = useTranslation();
+	const { network } = Connector.useContainer();
+	const isL2 = useIsL2();
 	const { epochPeriod, periods } = useStakingContext();
 
 	const [period, setPeriod] = useState(epochPeriod + 1);
@@ -48,27 +52,28 @@ const StakingTabs: React.FC = () => {
 	const handleTabSwitch = useCallback((tab: StakeTab) => () => setActiveTab(tab), []);
 
 	const epochData = useMemo(() => {
-		let epochData: EpochLabel[] = [];
-		periods.forEach((i) => {
-			const { epochStart, epochEnd } = getEpochDetails(i);
+		const epochData = periods.map((i) => {
+			const { epochStart, epochEnd } = getEpochDetails(network?.id, i);
 			const startDate = formatShortDate(new Date(toJSTimestamp(epochStart)));
 			const endDate = formatShortDate(new Date(toJSTimestamp(epochEnd)));
 			const label = `Epoch ${i}: ${startDate} - ${endDate}`;
-			epochData.push({
+
+			setPeriod(i);
+			setStart(epochStart ?? 0);
+			setEnd(epochEnd ?? 0);
+			setCurrentEpochLabel(label);
+
+			return {
 				period: i,
 				start: epochStart,
 				end: epochEnd,
 				startDate,
 				endDate,
 				label,
-			});
-			setPeriod(i);
-			setStart(epochStart ?? 0);
-			setEnd(epochEnd ?? 0);
-			setCurrentEpochLabel(label);
+			};
 		});
-		return epochData;
-	}, [periods]);
+		return epochData ?? [];
+	}, [network?.id, periods]);
 
 	const formatOptionLabel = ({ label, start, end, period }: EpochLabel) => {
 		return (
@@ -122,7 +127,7 @@ const StakingTabs: React.FC = () => {
 					<StakingSelect
 						formatOptionLabel={formatOptionLabel}
 						controlHeight={41}
-						options={epochData.sort((a, b) => a.period - b.period)}
+						options={epochData.sort((a, b) => b.period - a.period)}
 						optionPadding={'0px'}
 						value={{
 							label: currentEpochLabel,
@@ -131,6 +136,7 @@ const StakingTabs: React.FC = () => {
 						components={{ IndicatorSeparator, DropdownIndicator }}
 						isSearchable={false}
 						variant="flat"
+						isDisabled={!isL2}
 					></StakingSelect>
 				</StyledFlexDivRowCentered>
 			</StakingTabsHeader>

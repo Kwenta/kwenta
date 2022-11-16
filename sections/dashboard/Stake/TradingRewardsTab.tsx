@@ -1,5 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useContractReads, useContractWrite, usePrepareContractWrite } from 'wagmi';
@@ -133,16 +133,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 		enabled: claimableRewards && claimableRewards.length > 0,
 	});
 
-	const { data, write: claim } = useContractWrite(config);
-
-	useEffect(() => {
-		if (data?.hash) {
-			monitorTransaction({
-				txHash: data?.hash,
-			});
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [data?.hash]);
+	const { writeAsync: claim } = useContractWrite(config);
 
 	return (
 		<TradingRewardsContainer>
@@ -166,7 +157,18 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 					</div>
 				</CardGrid>
 				<StyledFlexDivRow>
-					<Button fullWidth variant="flat" size="sm" disabled={!claim} onClick={() => claim?.()}>
+					<Button
+						fullWidth
+						variant="flat"
+						size="sm"
+						disabled={!claim}
+						onClick={async () => {
+							const tx = await claim?.();
+							monitorTransaction({
+								txHash: tx?.hash ?? '',
+							});
+						}}
+					>
 						{t('dashboard.stake.tabs.trading-rewards.claim-all')}
 					</Button>
 				</StyledFlexDivRow>

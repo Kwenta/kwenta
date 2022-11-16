@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
@@ -26,7 +26,7 @@ const EscrowTable = () => {
 		setCheckedState(checkedState.map((d) => d));
 	};
 
-	const selectAll = () => {
+	const selectAll = useCallback(() => {
 		if (checkAllState) {
 			setCheckedState(new Array(data.length).fill(false));
 			setCheckAllState(false);
@@ -34,7 +34,7 @@ const EscrowTable = () => {
 			setCheckedState(new Array(data.length).fill(true));
 			setCheckAllState(true);
 		}
-	};
+	}, [checkAllState, data.length]);
 
 	const columnsDeps = React.useMemo(() => [checkedState], [checkedState]);
 
@@ -67,20 +67,7 @@ const EscrowTable = () => {
 		enabled: data.filter((d, index) => !!checkedState[index]).map((d) => d.id).length > 0,
 	});
 
-	const { data: vestTxn, write: vest } = useContractWrite(config);
-
-	useEffect(() => {
-		if (vestTxn?.hash) {
-			monitorTransaction({
-				txHash: vestTxn?.hash,
-				onTxConfirmed: () => {
-					setCheckedState(new Array(data.length).fill(false));
-					setCheckAllState(false);
-				},
-			});
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [vestTxn?.hash]);
+	const { writeAsync: vest } = useContractWrite(config);
 
 	return (
 		<EscrowTableContainer $noPadding>
@@ -233,7 +220,20 @@ const EscrowTable = () => {
 							{t('dashboard.stake.tabs.stake-table.kwenta-token')}
 						</div>
 					</div>
-					<VestButton disabled={!vest} onClick={() => vest?.()}>
+					<VestButton
+						disabled={!vest}
+						onClick={async () => {
+							const tx = await vest?.();
+							const receipt = await tx?.wait();
+							monitorTransaction({
+								txHash: receipt?.transactionHash ?? '',
+								onTxConfirmed: () => {
+									setCheckedState(new Array(data.length).fill(false));
+									setCheckAllState(false);
+								},
+							});
+						}}
+					>
 						{t('dashboard.stake.tabs.escrow.vest')}
 					</VestButton>
 				</div>

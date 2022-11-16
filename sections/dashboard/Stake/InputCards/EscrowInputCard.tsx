@@ -1,6 +1,6 @@
 import { wei } from '@synthetixio/wei';
 import _ from 'lodash';
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
@@ -41,10 +41,10 @@ const EscrowInputCard: FC = () => {
 		[escrowedBalance, stakedEscrowedBalance]
 	);
 
-	const handleTabChange = (tabIndex: number) => {
+	const handleTabChange = useCallback((tabIndex: number) => {
 		setAmount('');
 		setActiveTab(tabIndex);
-	};
+	}, []);
 
 	const maxBalance = useMemo(
 		() =>
@@ -72,44 +72,34 @@ const EscrowInputCard: FC = () => {
 		enabled: activeTab === 1 && stakedEscrowedBalance.gt(0) && !!parseFloat(amount),
 	});
 
-	const { data: approveTxn, write: kwentaApprove } = useContractWrite(kwentaApproveConfig);
-	const { data: stakeTxn, write: stakeEscrowKwenta } = useContractWrite(stakedEscrowKwentaConfig);
-	const { data: unstakeTxn, write: unstakeEscrowKwenta } = useContractWrite(
-		unstakedEscrowKwentaConfig
-	);
+	const { writeAsync: kwentaApprove } = useContractWrite(kwentaApproveConfig);
+	const { writeAsync: stakeEscrowKwenta } = useContractWrite(stakedEscrowKwentaConfig);
+	const { writeAsync: unstakeEscrowKwenta } = useContractWrite(unstakedEscrowKwentaConfig);
 
-	useEffect(() => {
-		if (approveTxn?.hash) {
+	const submitEscrow = useCallback(async () => {
+		if (kwentaTokenApproval) {
+			const approveTxn = await kwentaApprove?.();
 			monitorTransaction({
-				txHash: approveTxn?.hash,
+				txHash: approveTxn?.hash ?? '',
 			});
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [approveTxn?.hash]);
-
-	useEffect(() => {
-		if (stakeTxn?.hash) {
+		} else if (activeTab === 0) {
+			const stakeTxn = await stakeEscrowKwenta?.();
 			monitorTransaction({
-				txHash: stakeTxn?.hash,
+				txHash: stakeTxn?.hash ?? '',
+				onTxConfirmed: () => {
+					setAmount('');
+				},
+			});
+		} else {
+			const unstakeTxn = await unstakeEscrowKwenta?.();
+			monitorTransaction({
+				txHash: unstakeTxn?.hash ?? '',
 				onTxConfirmed: () => {
 					setAmount('');
 				},
 			});
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [stakeTxn?.hash]);
-
-	useEffect(() => {
-		if (unstakeTxn?.hash) {
-			monitorTransaction({
-				txHash: unstakeTxn?.hash,
-				onTxConfirmed: () => {
-					setAmount('');
-				},
-			});
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [unstakeTxn?.hash]);
+	}, [activeTab, kwentaApprove, kwentaTokenApproval, stakeEscrowKwenta, unstakeEscrowKwenta]);
 
 	return (
 		<StakingInputCardContainer>
@@ -152,13 +142,7 @@ const EscrowInputCard: FC = () => {
 						? !stakeEscrowKwenta
 						: !unstakeEscrowKwenta
 				}
-				onClick={() =>
-					kwentaTokenApproval
-						? kwentaApprove?.()
-						: activeTab === 0
-						? stakeEscrowKwenta?.()
-						: unstakeEscrowKwenta?.()
-				}
+				onClick={submitEscrow}
 				style={{ marginTop: '20px' }}
 			>
 				{kwentaTokenApproval

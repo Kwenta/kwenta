@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useContractWrite } from 'wagmi';
@@ -28,46 +28,46 @@ const RedeemInputCard: FC<RedeemInputCardProps> = ({ inputLabel, isVKwenta }) =>
 		veKwentaRedeemConfig,
 	} = useStakingContext();
 
-	const { data: vApproveTxn, write: vKwentaApprove } = useContractWrite(vKwentaApproveConfig);
-	const { data: vRedeemTxn, write: vKwentaRedeem } = useContractWrite(vKwentaRedeemConfig);
-	const { data: veApproveTxn, write: veKwentaApprove } = useContractWrite(veKwentaApproveConfig);
-	const { data: veRedeemTxn, write: veKwentaRedeem } = useContractWrite(veKwentaRedeemConfig);
+	const { writeAsync: vKwentaApprove } = useContractWrite(vKwentaApproveConfig);
+	const { writeAsync: vKwentaRedeem } = useContractWrite(vKwentaRedeemConfig);
+	const { writeAsync: veKwentaApprove } = useContractWrite(veKwentaApproveConfig);
+	const { writeAsync: veKwentaRedeem } = useContractWrite(veKwentaRedeemConfig);
 
-	useEffect(() => {
-		if (vApproveTxn?.hash) {
-			monitorTransaction({
-				txHash: vApproveTxn?.hash,
-			});
+	const submitRedeem = useCallback(async () => {
+		if (isVKwenta) {
+			if (vKwentaTokenApproval) {
+				const vApproveTxn = await vKwentaApprove?.();
+				monitorTransaction({
+					txHash: vApproveTxn?.hash ?? '',
+				});
+			} else {
+				const vRedeemTxn = await vKwentaRedeem?.();
+				monitorTransaction({
+					txHash: vRedeemTxn?.hash ?? '',
+				});
+			}
+		} else {
+			if (veKwentaTokenApproval) {
+				const veApproveTxn = await veKwentaApprove?.();
+				monitorTransaction({
+					txHash: veApproveTxn?.hash ?? '',
+				});
+			} else {
+				const veRedeemTxn = await veKwentaRedeem?.();
+				monitorTransaction({
+					txHash: veRedeemTxn?.hash ?? '',
+				});
+			}
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [vApproveTxn?.hash]);
-
-	useEffect(() => {
-		if (vRedeemTxn?.hash) {
-			monitorTransaction({
-				txHash: vRedeemTxn?.hash,
-			});
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [vRedeemTxn?.hash]);
-
-	useEffect(() => {
-		if (veApproveTxn?.hash) {
-			monitorTransaction({
-				txHash: veApproveTxn?.hash,
-			});
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [veApproveTxn?.hash]);
-
-	useEffect(() => {
-		if (veRedeemTxn?.hash) {
-			monitorTransaction({
-				txHash: veRedeemTxn?.hash,
-			});
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [veRedeemTxn?.hash]);
+	}, [
+		isVKwenta,
+		vKwentaApprove,
+		vKwentaRedeem,
+		vKwentaTokenApproval,
+		veKwentaApprove,
+		veKwentaRedeem,
+		veKwentaTokenApproval,
+	]);
 
 	return (
 		<StakingInputCardContainer>
@@ -85,15 +85,7 @@ const RedeemInputCard: FC<RedeemInputCardProps> = ({ inputLabel, isVKwenta }) =>
 				variant="flat"
 				size="sm"
 				disabled={isVKwenta ? vKwentaBalance.eq(0) : veKwentaBalance.eq(0)}
-				onClick={() =>
-					isVKwenta
-						? vKwentaTokenApproval
-							? vKwentaApprove?.()
-							: vKwentaRedeem?.()
-						: veKwentaTokenApproval
-						? veKwentaApprove?.()
-						: veKwentaRedeem?.()
-				}
+				onClick={submitRedeem}
 			>
 				{isVKwenta
 					? vKwentaTokenApproval
