@@ -8,7 +8,7 @@ import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 import Button from 'components/Button';
 import NumericInput from 'components/Input/NumericInput';
 import SegmentedControl from 'components/SegmentedControl';
-import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
+import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { useStakingContext } from 'contexts/StakingContext';
 import { truncateNumbers, zeroBN } from 'utils/formatters/number';
@@ -44,7 +44,7 @@ const StakeInputCard: FC = () => {
 	);
 
 	const onMaxClick = useCallback(() => {
-		setAmount(truncateNumbers(maxBalance, DEFAULT_CRYPTO_DECIMALS));
+		setAmount(truncateNumbers(maxBalance, DEFAULT_TOKEN_DECIMALS));
 	}, [maxBalance]);
 
 	const { config: stakeKwentaConfig } = usePrepareContractWrite({
