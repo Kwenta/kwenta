@@ -28,7 +28,7 @@ export default function TradeConfirmationModalCrossMargin() {
 	const { t } = useTranslation();
 	const { handleRefetch, refetchUntilUpdate } = useRefetchContext();
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
-	const { estimateEthersContractTxCost, estimateEthersContractGasLimit } = useEstimateGasCost();
+	const { estimateEthersContractTxCost } = useEstimateGasCost();
 
 	const marketAsset = useRecoilValue(currentMarketState);
 	const crossMarginMarginDelta = useRecoilValue(crossMarginMarginDeltaState);
@@ -53,15 +53,15 @@ export default function TradeConfirmationModalCrossMargin() {
 					sizeDelta: tradeInputs.nativeSizeDelta.toBN(),
 				},
 			];
-			const [estimatedFee, estimatedGasLimit] = await Promise.all([
-				estimateEthersContractTxCost(crossMarginAccountContract, 'distributeMargin', [newPosition]),
-				estimateEthersContractGasLimit(crossMarginAccountContract, 'distributeMargin', [
-					newPosition,
-				]),
-			]);
+			const [estimatedFee, estimatedGasLimit] = await estimateEthersContractTxCost(
+				crossMarginAccountContract,
+				'distributeMargin',
+				[newPosition],
+				DEFAULT_CROSSMARGIN_GAS_BUFFER
+			);
 
 			setGasFee(estimatedFee);
-			setGasLimit(estimatedGasLimit?.add(DEFAULT_CROSSMARGIN_GAS_BUFFER));
+			setGasLimit(estimatedGasLimit);
 		};
 		estimateGas();
 	}, [
@@ -70,7 +70,6 @@ export default function TradeConfirmationModalCrossMargin() {
 		crossMarginMarginDelta,
 		tradeInputs.nativeSizeDelta,
 		estimateEthersContractTxCost,
-		estimateEthersContractGasLimit,
 	]);
 
 	const onDismiss = useCallback(() => {
