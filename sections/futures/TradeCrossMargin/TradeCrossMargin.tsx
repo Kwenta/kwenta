@@ -1,9 +1,11 @@
 import { useCallback, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { setLeverageSide as setReduxLeverageSide } from 'state/futures/reducer';
-import { setOrderType as setReduxOrderType } from 'state/futures/reducer';
+import {
+	setLeverageSide as setReduxLeverageSide,
+	setOrderType as setReduxOrderType,
+} from 'state/futures/reducer';
 import { selectMarketAssetRate } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import Loader from 'components/Loader';
 import SegmentedControl from 'components/SegmentedControl';
@@ -48,6 +50,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 	const marketAssetRate = useAppSelector(selectMarketAssetRate);
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const [orderPrice, setOrderPrice] = useRecoilState(futuresOrderPriceState);
+	const dispatch = useAppDispatch();
 
 	const { onTradeOrderPriceChange } = useFuturesContext();
 
@@ -89,7 +92,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 						onChange={(index: number) => {
 							const type = CROSS_MARGIN_ORDER_TYPES[index];
 							setOrderType(type as FuturesOrderType);
-							setReduxOrderType(type);
+							dispatch(setReduxOrderType(type));
 							setOrderPrice('');
 						}}
 					/>
@@ -109,7 +112,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 						selected={leverageSide}
 						onSelect={(side) => {
 							setLeverageSide(side);
-							setReduxLeverageSide(side);
+							dispatch(setReduxLeverageSide(side));
 						}}
 					/>
 					<ManagePosition />

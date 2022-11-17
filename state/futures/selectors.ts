@@ -1,10 +1,10 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
 import { selectExchangeRatesWei } from 'state/exchange/selectors';
-import { hydrateWeiObject } from 'state/helpers';
+import { deserializeWeiObject } from 'state/helpers';
 import { RootState } from 'state/store';
 
-import { FuturesMarket } from 'queries/futures/types';
+import { FuturesMarket, FuturesPosition } from 'queries/futures/types';
 import { PositionSide } from 'sections/futures/types';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN } from 'utils/formatters/number';
@@ -69,7 +69,9 @@ export const selectMarketInfo = createSelector(
 			(market: FuturesMarket<string>) => market.asset === marketAsset
 		);
 
-		return marketInfo ? hydrateWeiObject(marketInfo, marketInfoKeys) : undefined;
+		return marketInfo
+			? (deserializeWeiObject(marketInfo, marketInfoKeys) as FuturesMarket)
+			: undefined;
 	}
 );
 
@@ -91,7 +93,7 @@ export const selectIsMarketCapReached = createSelector(
 export const selectPositionWei = createSelector(
 	(state: RootState) => state.futures.position,
 	(position) => {
-		return position ? hydrateWeiObject(position, positionKeys) : undefined;
+		return position ? (deserializeWeiObject(position, positionKeys) as FuturesPosition) : undefined;
 	}
 );
 

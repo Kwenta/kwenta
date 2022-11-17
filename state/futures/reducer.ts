@@ -50,6 +50,7 @@ const futuresSlice = createSlice({
 });
 
 export default futuresSlice.reducer;
+
 export const {
 	setMarketAsset,
 	setOrderType,

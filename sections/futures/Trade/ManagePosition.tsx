@@ -7,7 +7,7 @@ import {
 	selectMarketAssetRate,
 	selectPlaceOrderTranslationKey,
 } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
@@ -71,6 +71,7 @@ const ManagePosition: React.FC = () => {
 	);
 	const isMarketCapReached = useAppSelector(selectIsMarketCapReached);
 	const placeOrderTranslationKey = useAppSelector(selectPlaceOrderTranslationKey);
+	const dispatch = useAppDispatch();
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
 	const marketAssetRate = useAppSelector(selectMarketAssetRate);
 	const tradeInputs = useRecoilValue(futuresTradeInputsState);
@@ -178,7 +179,7 @@ const ManagePosition: React.FC = () => {
 										? PositionSide.SHORT
 										: PositionSide.LONG;
 								setLeverageSide(newLeverageSide);
-								setReduxLeverageSide(newLeverageSide);
+								dispatch(setReduxLeverageSide(newLeverageSide));
 								onTradeAmountChange(newTradeSize.toString(), tradePrice, 'native');
 								setConfirmationModalOpen(true);
 							} else {

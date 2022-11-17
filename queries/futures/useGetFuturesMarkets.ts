@@ -4,6 +4,7 @@ import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilState } from 'recoil';
 import { setFuturesMarkets as setReduxFuturesMarkets } from 'state/futures/reducer';
 import { serializeWeiObject } from 'state/helpers';
+import { useAppDispatch } from 'state/hooks';
 import { chain } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
@@ -31,6 +32,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 	const network = homepage || !isL2 ? chain.optimism : activeChain;
 	const synthetixjs = homepage || !isL2 ? l2Synthetixjs : defaultSynthetixjs;
 	const [, setFuturesMarkets] = useRecoilState(futuresMarketsState);
+	const dispatch = useAppDispatch();
 
 	return useQuery<FuturesMarket[]>(
 		QUERY_KEYS.Futures.Markets(network?.id as NetworkId),
@@ -135,7 +137,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 				})
 			);
 			setFuturesMarkets(futuresMarkets);
-			setReduxFuturesMarkets(futuresMarkets.map(serializeWeiObject));
+			dispatch(setReduxFuturesMarkets(futuresMarkets.map(serializeWeiObject)));
 			return futuresMarkets;
 		},
 		{

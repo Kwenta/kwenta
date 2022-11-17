@@ -4,6 +4,7 @@ import { useEffect, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { setMarketAsset } from 'state/futures/reducer';
+import { useAppDispatch } from 'state/hooks';
 import styled from 'styled-components';
 
 import Error from 'components/Error';
@@ -40,6 +41,7 @@ const Market: MarketComponent = () => {
 	const router = useRouter();
 	const { walletAddress } = Connector.useContainer();
 	const futuresData = useFuturesData();
+	const dispatch = useAppDispatch();
 
 	const marketAsset = router.query.asset as FuturesMarketAsset;
 
@@ -50,9 +52,9 @@ const Market: MarketComponent = () => {
 	useEffect(() => {
 		if (marketAsset) {
 			setCurrentMarket(marketAsset);
-			setMarketAsset(marketAsset);
+			dispatch(setMarketAsset(marketAsset));
 		}
-	}, [router, setCurrentMarket, marketAsset]);
+	}, [dispatch, router, setCurrentMarket, marketAsset]);
 
 	return (
 		<FuturesContext.Provider value={futuresData}>
