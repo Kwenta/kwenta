@@ -97,6 +97,7 @@ const useStakingData = () => {
 	};
 
 	const [epochPeriod, setEpochPeriod] = useState(0);
+	const [weekCounter, setWeekCounter] = useState(1);
 	const { walletAddress } = Connector.useContainer();
 	const [kwentaBalance, setKwentaBalance] = useState(zeroBN);
 	const [escrowedBalance, setEscrowedBalance] = useState(zeroBN);
@@ -104,7 +105,6 @@ const useStakingData = () => {
 	const [stakedEscrowedBalance, setStakedEscrowedBalance] = useState(zeroBN);
 	const [totalStakedBalance, setTotalStakedBalance] = useState(zeroBN);
 	const [claimableBalance, setClaimableBalance] = useState(zeroBN);
-	const [apy, setApy] = useState(zeroBN);
 	const [vKwentaBalance, setVKwentaBalance] = useState(zeroBN);
 	const [vKwentaAllowance, setVKwentaAllowance] = useState(zeroBN);
 	const [kwentaAllowance, setKwentaAllowance] = useState(zeroBN);
@@ -137,14 +137,6 @@ const useStakingData = () => {
 				...kwentaTokenContract,
 				functionName: 'balanceOf',
 				args: [walletAddress ?? undefined],
-			},
-			{
-				...supplyScheduleContract,
-				functionName: 'DECAY_RATE',
-			},
-			{
-				...supplyScheduleContract,
-				functionName: 'INITIAL_WEEKLY_SUPPLY',
 			},
 			{
 				...supplyScheduleContract,
@@ -195,24 +187,14 @@ const useStakingData = () => {
 				setStakedEscrowedBalance(wei(data[2] ?? zeroBN));
 				setClaimableBalance(wei(data[3] ?? zeroBN));
 				setKwentaBalance(wei(data[4] ?? zeroBN));
-				setTotalStakedBalance(wei(data[8] ?? zeroBN));
-				const supplyRate = wei(1).sub(wei(data[5] ?? zeroBN));
-				const initialWeeklySupply = wei(data[6] ?? zeroBN);
-				const weekCounter = Number(data[7] ?? zeroBN);
-				const startWeeklySupply = initialWeeklySupply.mul(supplyRate.pow(weekCounter));
-				const yearlyRewards =
-					totalStakedBalance.gt(zeroBN) && supplyRate.gt(zeroBN)
-						? startWeeklySupply.mul(wei(1).sub(supplyRate.pow(52))).div(wei(1).sub(supplyRate))
-						: zeroBN;
-				setApy(
-					totalStakedBalance.gt(zeroBN) ? yearlyRewards.div(totalStakedBalance).div(100) : zeroBN
-				);
-				setVKwentaBalance(wei(data[9] ?? zeroBN));
-				setVKwentaAllowance(wei(data[10] ?? zeroBN));
-				setKwentaAllowance(wei(data[11] ?? zeroBN));
-				setEpochPeriod(Number(data[12] ?? 0) ?? 0);
-				setVEKwentaBalance(wei(data[13] ?? zeroBN));
-				setVEKwentaAllowance(wei(data[14] ?? zeroBN));
+				setWeekCounter(Number(data[5] ?? 1) ?? 1);
+				setTotalStakedBalance(wei(data[6] ?? zeroBN));
+				setVKwentaBalance(wei(data[7] ?? zeroBN));
+				setVKwentaAllowance(wei(data[8] ?? zeroBN));
+				setKwentaAllowance(wei(data[9] ?? zeroBN));
+				setEpochPeriod(Number(data[10] ?? 0) ?? 0);
+				setVEKwentaBalance(wei(data[11] ?? zeroBN));
+				setVEKwentaAllowance(wei(data[12] ?? zeroBN));
 			}
 		},
 	});
@@ -348,6 +330,8 @@ const useStakingData = () => {
 		resetStakingState,
 		resetVesting,
 		resetVestingClaimable,
+		weekCounter,
+		totalStakedBalance: Number(totalStakedBalance),
 		periods,
 		resetTime,
 		epochPeriod,
@@ -358,7 +342,6 @@ const useStakingData = () => {
 		stakedEscrowedBalance,
 		claimableBalance,
 		kwentaBalance,
-		apy,
 		vKwentaBalance,
 		veKwentaBalance,
 		vKwentaAllowance,
