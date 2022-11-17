@@ -73,6 +73,13 @@ export default class ExchangeService {
 		}, 15000);
 	}
 
+	public startRateUpdates() {
+		startInterval(async () => {
+			this.exchangeRates = await this.getExchangeRates();
+			this.sdk.events.emit('exchangeRates_updated', this.exchangeRates);
+		}, 15000);
+	}
+
 	public onRatesUpdated(listener: (exchangeRates: Rates) => void) {
 		return this.sdk.events.on('exchangeRates_updated', listener);
 	}

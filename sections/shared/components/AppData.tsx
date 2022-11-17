@@ -8,6 +8,10 @@ const AppData: FC = ({ children }) => {
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
+		sdk.exchange.startRateUpdates();
+	}, []);
+
+	useEffect(() => {
 		sdk.exchange.onRatesUpdated((exchangeRates) => {
 			dispatch(setExchangeRates(exchangeRates));
 		});
