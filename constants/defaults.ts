@@ -18,6 +18,7 @@ export const DEFAULT_PRICE_CURRENCY: Synth = localStore.get(priceCurrencyStateKe
 export const DEFAULT_NETWORK_ID = NetworkIdByName['mainnet-ovm'];
 
 export const DEFAULT_GAS_BUFFER = 5000;
+export const DEFAULT_CROSSMARGIN_GAS_BUFFER = 50000;
 export const DEFAULT_GAS_LIMIT = 500000;
 
 // ui defaults
