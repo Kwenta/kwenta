@@ -10,7 +10,6 @@ import ROUTES from 'constants/routes';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import { MainContent, LeftSideContent, FullHeightContainer, PageContent } from 'styles/common';
 
-import EligibilityBox from '../EligibilityBox';
 import Links from '../Links';
 
 enum Tab {
@@ -19,7 +18,7 @@ enum Tab {
 	Rewards = 'rewards',
 	Markets = 'markets',
 	Governance = 'governance',
-	Staking = 'staking',
+	Stake = 'staking',
 }
 
 const Tabs = Object.values(Tab);
@@ -75,11 +74,10 @@ const DashboardLayout: FC = ({ children }) => {
 				onClick: () => {},
 			},
 			{
-				name: Tab.Staking,
+				name: Tab.Stake,
 				label: t('dashboard.tabs.staking'),
-				active: activeTab === Tab.Staking,
-				disabled: true,
-				onClick: () => {},
+				active: activeTab === Tab.Stake,
+				onClick: () => router.push(ROUTES.Dashboard.Stake),
 			},
 		],
 		[t, activeTab, router]
@@ -127,7 +125,6 @@ const DashboardLayout: FC = ({ children }) => {
 								{children}
 							</TabPanel>
 						</MainContent>
-						<EligibilityBox />
 					</StyledFullHeightContainer>
 				</PageContent>
 			</DesktopOnlyView>

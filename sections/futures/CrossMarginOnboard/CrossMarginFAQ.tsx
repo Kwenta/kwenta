@@ -29,12 +29,18 @@ export default function CrossMarginFAQ() {
 }
 
 const FAQListItem = styled.ul`
-	margin: 6px 0;
+	margin-bottom: 6px;
 	cursor: pointer;
 	display: flex;
 	justify-content: space-between;
 	color: ${(props) => props.theme.colors.selectedTheme.text.label};
 	&:hover {
 		color: ${(props) => props.theme.colors.selectedTheme.text.value};
+	}
+	&:last-child {
+		margin-bottom: 0;
+	}
+	&:first-child {
+		margin-top: 6px;
 	}
 `;

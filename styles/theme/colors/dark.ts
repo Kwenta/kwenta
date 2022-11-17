@@ -101,6 +101,7 @@ const darkTheme = {
 		outline: '#2B2A2A',
 	},
 	text: {
+		header: '#B1B1B1',
 		title: common.secondaryGray,
 		value: common.primaryWhite,
 		label: common.secondaryGray,

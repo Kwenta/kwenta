@@ -4,7 +4,8 @@ import styled from 'styled-components';
 
 import SegmentedControl from 'components/SegmentedControl';
 import { ISOLATED_MARGIN_ORDER_TYPES } from 'constants/futures';
-import { balancesState, leverageSideState, orderTypeState } from 'store/futures';
+import { balancesState, leverageSideState, orderTypeState, positionState } from 'store/futures';
+import { zeroBN } from 'utils/formatters/number';
 
 import FeeInfoBox from '../FeeInfoBox';
 import LeverageInput from '../LeverageInput';
@@ -23,15 +24,17 @@ type Props = {
 const TradeIsolatedMargin = ({ isMobile }: Props) => {
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const { susdWalletBalance } = useRecoilValue(balancesState);
+	const position = useRecoilValue(positionState);
 
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const [openTransferModal, setOpenTransferModal] = useState<boolean>(false);
+	const totalMargin = position?.remainingMargin ?? zeroBN;
 
 	return (
 		<div>
 			<TradePanelHeader
 				onManageBalance={() => setOpenTransferModal(true)}
-				balance={susdWalletBalance}
+				balance={totalMargin}
 				accountType={'isolated_margin'}
 			/>
 

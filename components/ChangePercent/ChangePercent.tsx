@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import ChangeNegativeIcon from 'assets/svg/app/change-negative.svg';
 import ChangePositiveIcon from 'assets/svg/app/change-positive.svg';
 import { NO_VALUE } from 'constants/placeholder';
-import media from 'styles/media';
 import { formatPercent } from 'utils/formatters/number';
 
 type ChangePercentProps = {
@@ -63,10 +62,6 @@ const CurrencyChange = styled.span<{ isValid: boolean; isPositive: boolean }>`
 					: props.theme.colors.selectedTheme.red};
 		}
 	}
-
-	${media.lessThan('md')`
-		margin-right: 5px;
-	`}
 `;
 
 export default ChangePercent;
