@@ -10,13 +10,13 @@ import localStore from 'utils/localStore';
 import logError from 'utils/logError';
 
 export default function AcknowledgementModal() {
-	const { walletAddress, signer } = Connector.useContainer();
+	const { walletAddress } = Connector.useContainer();
 	const router = useRouter();
-	const [acks, setAcks] = useState<Record<string, string>>({});
+	const [acks, setAcks] = useState<Record<string, boolean>>({});
 
 	const acknowledgedAddresses = (localStore.get('acknowledgedAddresses') || {}) as Record<
 		string,
-		string
+		boolean
 	>;
 
 	const protectedRoute =
@@ -35,12 +35,9 @@ export default function AcknowledgementModal() {
 
 	const onAccept = async () => {
 		try {
-			const signed = await signer?.signMessage('I acknowledge and accept Kwenta terms of service');
-			if (signed) {
-				acknowledgedAddresses[walletAddress.toLowerCase()] = signed;
-				localStore.set('acknowledgedAddresses', acknowledgedAddresses);
-				setAcks({ ...acks, [walletAddress.toLowerCase()]: signed });
-			}
+			acknowledgedAddresses[walletAddress.toLowerCase()] = true;
+			localStore.set('acknowledgedAddresses', acknowledgedAddresses);
+			setAcks({ ...acks, [walletAddress.toLowerCase()]: true });
 		} catch (err) {
 			logError(err);
 		}
@@ -56,16 +53,15 @@ export default function AcknowledgementModal() {
 				consulted with a legal representative in your jurisdiction if necessary.
 				<br />
 				<br />
-				Please acknowledge that you have read our terms and conditions agreement (once available) as
-				well as understood your local regulations well enough to determine whether you are operating
-				within your rights when using Kwenta as Kwenta does not block anyone from accessing the
-				protocol due its reliance on smart contracts and blockchain systems. All users assume
-				responsibility for their own actions.
+				Please acknowledge that you understood your local regulations well enough to determine
+				whether you are operating within your rights when using Kwenta as Kwenta does not block
+				anyone from accessing the protocol due its reliance on smart contracts and blockchain
+				systems. All users assume responsibility for their own actions.
 				<br />
 				<br />
 			</BodyText>
 			<Button variant="flat" size="md" onClick={onAccept}>
-				Accept & Sign
+				Accept & Continue
 			</Button>
 		</StyledBaseModal>
 	);
