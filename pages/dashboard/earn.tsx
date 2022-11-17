@@ -6,7 +6,6 @@ import Button from 'components/Button';
 import Text from 'components/Text';
 import DashboardLayout from 'sections/dashboard/DashboardLayout';
 import { Heading } from 'sections/earn/common';
-import StakeGrid from 'sections/earn/Grids/StakeGrid';
 import StepOne from 'sections/earn/StepOne';
 import StepTwo from 'sections/earn/StepTwo';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
@@ -31,7 +30,6 @@ const EarnPage: EarnPageProps = () => {
 						</StyledBody>
 						<StepOne />
 						<StepTwo />
-						<StakeGrid />
 						<GitHashID />
 					</EarnContent>
 				</FullHeightContainer>

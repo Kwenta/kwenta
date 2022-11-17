@@ -3,18 +3,28 @@ import styled from 'styled-components';
 import media from 'styles/media';
 
 import { Heading, Description } from './common';
+import StakeGrid from './Grids/StakeGrid';
 
 const StepTwo = () => {
 	return (
-		<div>
+		<StepTwoContainer>
 			<Heading>Step 2: Stake the pool tokens</Heading>
 			<Description>Stake your pool tokens</Description>
-			<SplitContainer></SplitContainer>
-		</div>
+			<SplitContainer>
+				<div />
+				<StakeGrid />
+			</SplitContainer>
+		</StepTwoContainer>
 	);
 };
 
+const StepTwoContainer = styled.div`
+	margin-bottom: 50px;
+`;
+
 const SplitContainer = styled.div`
+	margin-top: 10px;
+
 	${media.greaterThan('mdUp')`
 		display: grid;
 		grid-template-columns: 1fr 1fr;
