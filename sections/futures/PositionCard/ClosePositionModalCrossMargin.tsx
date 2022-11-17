@@ -4,6 +4,7 @@ import { useMemo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
+import { DEFAULT_CROSSMARGIN_GAS_BUFFER } from 'constants/defaults';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
@@ -17,7 +18,6 @@ import logError from 'utils/logError';
 
 import { PositionSide } from '../types';
 import ClosePositionModal from './ClosePositionModal';
-import { DEFAULT_CROSSMARGIN_GAS_BUFFER } from 'constants/defaults';
 
 type Props = {
 	onDismiss: () => void;
