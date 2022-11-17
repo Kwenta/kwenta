@@ -234,14 +234,12 @@ const useStakingData = () => {
 	}, [vestingSchedules]);
 
 	const vestingEntries = useMemo(() => {
-		return escrowRows.map((d) => {
-			return {
-				...rewardEscrowContract,
-				functionName: 'getVestingEntryClaimable',
-				args: [walletAddress ?? undefined, d?.id],
-				enabled: !!walletAddress,
-			};
-		});
+		return escrowRows.map((d) => ({
+			...rewardEscrowContract,
+			functionName: 'getVestingEntryClaimable',
+			args: [walletAddress ?? undefined, d?.id],
+			enabled: !!walletAddress,
+		}));
 	}, [escrowRows, rewardEscrowContract, walletAddress]);
 
 	const { refetch: resetVestingClaimable } = useContractReads({
@@ -257,10 +255,7 @@ const useStakingData = () => {
 	});
 
 	const totalVestable = useMemo(() => {
-		return escrowRows.reduce(
-			(acc, _current, index) => wei(acc).add(wei(escrowRows[index]?.vestable ?? 0)) ?? zeroBN,
-			zeroBN
-		);
+		return escrowRows.reduce((acc, row) => wei(acc).add(wei(row.vestable ?? 0)) ?? zeroBN, zeroBN);
 	}, [escrowRows]);
 
 	const resetTime = useMemo(() => {
