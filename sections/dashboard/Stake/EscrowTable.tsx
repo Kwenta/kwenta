@@ -14,6 +14,7 @@ import { EscrowRow } from 'hooks/useStakingData';
 import { truncateNumbers } from 'utils/formatters/number';
 
 import { StakingCard } from './common';
+import VestConfirmationModal from './VestConfirmationModal';
 
 const EscrowTable = () => {
 	const { t } = useTranslation();
@@ -25,6 +26,7 @@ const EscrowTable = () => {
 	} = useStakingContext();
 	const [checkedState, setCheckedState] = useState(new Array(escrowRows.length).fill(false));
 	const [checkAllState, setCheckAllState] = useState(false);
+	const [openConfirmModal, setOpenConfirmModal] = useState(false);
 
 	const handleOnChange = useCallback(
 		(position: number) => {
@@ -76,6 +78,20 @@ const EscrowTable = () => {
 	});
 
 	const { writeAsync: vest } = useContractWrite(config);
+
+	const handleVest = useCallback(async () => {
+		const tx = await vest?.();
+		setOpenConfirmModal(false);
+		monitorTransaction({
+			txHash: tx?.hash ?? '',
+			onTxConfirmed: () => {
+				setCheckedState(new Array(escrowRows.length).fill(false));
+				setCheckAllState(false);
+				resetVesting();
+				resetVestingClaimable();
+			},
+		});
+	}, [escrowRows.length, resetVesting, resetVestingClaimable, vest]);
 
 	return (
 		<EscrowTableContainer $noPadding>
@@ -228,26 +244,18 @@ const EscrowTable = () => {
 							{t('dashboard.stake.tabs.stake-table.kwenta-token')}
 						</div>
 					</div>
-					<VestButton
-						disabled={!vest}
-						onClick={async () => {
-							const tx = await vest?.();
-							const receipt = await tx?.wait();
-							monitorTransaction({
-								txHash: receipt?.transactionHash ?? '',
-								onTxConfirmed: () => {
-									setCheckedState(new Array(escrowRows.length).fill(false));
-									setCheckAllState(false);
-									resetVesting();
-									resetVestingClaimable();
-								},
-							});
-						}}
-					>
+					<VestButton disabled={!vest} onClick={() => setOpenConfirmModal(true)}>
 						{t('dashboard.stake.tabs.escrow.vest')}
 					</VestButton>
 				</div>
 			</EscrowStats>
+			{openConfirmModal && (
+				<VestConfirmationModal
+					totalFee={totalFee}
+					onDismiss={() => setOpenConfirmModal(false)}
+					handleVest={handleVest}
+				/>
+			)}
 		</EscrowTableContainer>
 	);
 };
@@ -309,16 +317,22 @@ const EscrowStats = styled.div`
 	}
 `;
 
-const VestButton = styled.button`
+const VestButton = styled.button<{ disabled: boolean }>`
 	border-width: 1px;
 	border-style: solid;
-	border-color: ${(props) => props.theme.colors.selectedTheme.yellow};
+	border-color: ${(props) =>
+		props.disabled
+			? props.theme.colors.selectedTheme.gray
+			: props.theme.colors.selectedTheme.yellow};
 	height: 24px;
 	box-sizing: border-box;
 	border-radius: 14px;
-	cursor: pointer;
+	cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
 	background-color: transparent;
-	color: ${(props) => props.theme.colors.selectedTheme.yellow};
+	color: ${(props) =>
+		props.disabled
+			? props.theme.colors.selectedTheme.gray
+			: props.theme.colors.selectedTheme.yellow};
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 12px;
 	padding-left: 12px;
