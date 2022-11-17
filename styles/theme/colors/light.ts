@@ -102,6 +102,7 @@ const lightTheme = {
 		title: common.secondaryGray,
 		value: '#000000',
 		label: common.secondaryGray,
+		body: common.light.gray,
 	},
 	icon: {
 		fill: '#515151',
