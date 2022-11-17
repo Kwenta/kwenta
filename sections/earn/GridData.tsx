@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import media from 'styles/media';
 
-import { BigText, Title } from '../common';
+import { BigText, Title } from './common';
 
 type GridDataProps = {
 	title: string;

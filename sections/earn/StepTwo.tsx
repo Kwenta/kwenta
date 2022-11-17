@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import media from 'styles/media';
 
 import { Heading, Description } from './common';
-import StakeGrid from './Grids/StakeGrid';
+import EarnStakeCard from './EarnStakeCard';
+import StakeGrid from './StakeGrid';
 
 const StepTwo = () => {
 	return (
@@ -11,7 +12,7 @@ const StepTwo = () => {
 			<Heading>Step 2: Stake the pool tokens</Heading>
 			<Description>Stake your pool tokens</Description>
 			<SplitContainer>
-				<div />
+				<EarnStakeCard />
 				<StakeGrid />
 			</SplitContainer>
 		</StepTwoContainer>

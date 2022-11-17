@@ -1,5 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import _ from 'lodash';
+import isNil from 'lodash/isNil';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -36,7 +36,7 @@ const EscrowInputCard: FC = () => {
 
 	const unstakedEscrowedKwentaBalance = useMemo(
 		() =>
-			!_.isNil(escrowedBalance) && escrowedBalance.gt(0)
+			!isNil(escrowedBalance) && escrowedBalance.gt(0)
 				? escrowedBalance.sub(stakedEscrowedBalance ?? zeroBN) ?? zeroBN
 				: zeroBN,
 		[escrowedBalance, stakedEscrowedBalance]

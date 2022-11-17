@@ -1,6 +1,6 @@
 import useRewardsTimer from 'hooks/useRewardsTimer';
 
-import { GridContainer, SplitColumn } from '../common';
+import { GridContainer, SplitColumn } from './common';
 import GridData from './GridData';
 
 const DEADLINE = new Date('2022-12-18T23:59:59Z');
