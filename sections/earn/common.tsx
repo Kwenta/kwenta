@@ -61,12 +61,6 @@ export const SplitColumn = styled.div`
 		height: 100%;
 		width: 100%;
 
-		& > div {
-			padding: 20px 24px 18px 24px;
-			height: 50%;
-			min-height: 95px;
-		}
-
 		& > div:last-child {
 			border-top: 1px solid #353333;
 		}
@@ -76,19 +70,18 @@ export const SplitColumn = styled.div`
 export const GridContainer = styled.div`
 	display: flex;
 
-	${media.lessThan('mdUp')`
-		flex-direction: column;
-	`}
-
 	${media.greaterThan('mdUp')`
+		flex-wrap: wrap;
 		border-radius: 15px;
 		border: 1px solid #353333;
 		overflow: hidden;
+	background-color: #181818;
 
 		& > div {
 			box-sizing: border-box;
 			border-left: 1px solid #353333;
 			border-right: 1px solid #353333;
+			min-width: 50%;
 
 			&:first-child,
 			&:last-child {
@@ -96,6 +89,10 @@ export const GridContainer = styled.div`
 				border-right: none;
 			}
 		}
+	`}
+
+	${media.lessThan('mdUp')`
+		flex-direction: column;
 	`}
 `;
 
