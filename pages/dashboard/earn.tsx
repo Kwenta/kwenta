@@ -5,7 +5,10 @@ import styled from 'styled-components';
 import Button from 'components/Button';
 import Text from 'components/Text';
 import DashboardLayout from 'sections/dashboard/DashboardLayout';
+import { Heading } from 'sections/earn/common';
 import StakeGrid from 'sections/earn/Grids/StakeGrid';
+import StepOne from 'sections/earn/StepOne';
+import StepTwo from 'sections/earn/StepTwo';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { PageContent, FullHeightContainer, MainContent } from 'styles/common';
 import media from 'styles/media';
@@ -21,11 +24,13 @@ const EarnPage: EarnPageProps = () => {
 			<PageContent>
 				<FullHeightContainer>
 					<EarnContent>
-						<PageHeading>Kwenta Liquidity Mining</PageHeading>
+						<Heading>Kwenta Liquidity Mining</Heading>
 						<StyledBody>
 							The ETH/KWENTA program rewards liquidity providers on the Uniswap v3 pool via Arrakis
 							Finance. Liquidity providers can stake their pool tokens to earn KWENTA.
 						</StyledBody>
+						<StepOne />
+						<StepTwo />
 						<StakeGrid />
 						<GitHashID />
 					</EarnContent>
@@ -43,18 +48,9 @@ const EarnContent = styled(MainContent)`
 	`}
 `;
 
-const PageHeading = styled(Text.Heading).attrs({ variant: 'h4' })`
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 21px;
-	margin-bottom: 4px;
-	text-transform: uppercase;
-	font-variant: all-small-caps;
-`;
-
 const StyledBody = styled(Text.Body).attrs({ size: 'large' })`
 	font-size: 15px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	margin-bottom: 40px;
 `;
 
 export const StyledButton = styled(Button)`

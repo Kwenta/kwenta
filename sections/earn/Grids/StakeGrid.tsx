@@ -4,7 +4,7 @@ import { GridContainer, SplitColumn } from '../common';
 import GridData from './GridData';
 import LiquidityCard from './LiquidityCard';
 
-const DEADLINE = new Date('2022-03-20T23:59:59Z');
+const DEADLINE = new Date('2022-12-18T23:59:59Z');
 
 const StakeGrid = () => {
 	const timeTillDeadline = useRewardsTimer(DEADLINE);
