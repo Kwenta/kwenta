@@ -4,17 +4,12 @@ import { sdk } from 'state/config';
 import { setExchangeRates } from 'state/exchange/actions';
 import { useAppDispatch } from 'state/hooks';
 
-import Connector from 'containers/Connector';
-
 const AppData: FC = ({ children }) => {
 	const dispatch = useAppDispatch();
-	const { provider } = Connector.useContainer();
 
 	useEffect(() => {
-		if (provider) {
-			sdk.exchange.startRateUpdates();
-		}
-	}, [provider]);
+		sdk.exchange.startRateUpdates();
+	}, []);
 
 	useEffect(() => {
 		sdk.exchange.onRatesUpdated((exchangeRates) => {
