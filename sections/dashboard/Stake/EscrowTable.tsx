@@ -17,54 +17,62 @@ import { StakingCard } from './common';
 
 const EscrowTable = () => {
 	const { t } = useTranslation();
-	const { data, rewardEscrowContract, resetVesting, resetVestingClaimable } = useStakingContext();
-	const [checkedState, setCheckedState] = useState(new Array(data.length).fill(false));
+	const {
+		escrowRows,
+		rewardEscrowContract,
+		resetVesting,
+		resetVestingClaimable,
+	} = useStakingContext();
+	const [checkedState, setCheckedState] = useState(new Array(escrowRows.length).fill(false));
 	const [checkAllState, setCheckAllState] = useState(false);
 
-	const handleOnChange = (position: number) => {
-		checkedState[position] = !checkedState[position];
-		setCheckedState(checkedState.map((d) => d));
-	};
+	const handleOnChange = useCallback(
+		(position: number) => {
+			checkedState[position] = !checkedState[position];
+			setCheckedState(checkedState.map((d) => d));
+		},
+		[checkedState]
+	);
 
 	const selectAll = useCallback(() => {
 		if (checkAllState) {
-			setCheckedState(new Array(data.length).fill(false));
+			setCheckedState(new Array(escrowRows.length).fill(false));
 			setCheckAllState(false);
 		} else {
-			setCheckedState(new Array(data.length).fill(true));
+			setCheckedState(new Array(escrowRows.length).fill(true));
 			setCheckAllState(true);
 		}
-	}, [checkAllState, data.length]);
+	}, [checkAllState, escrowRows.length]);
 
-	const columnsDeps = React.useMemo(() => [checkedState], [checkedState]);
+	const columnsDeps = useMemo(() => [checkedState], [checkedState]);
 
 	const totalVestable = useMemo(
 		() =>
 			checkedState.reduce((acc, current, index) => {
 				if (current === true) {
-					return acc + data[index]?.vestable ?? 0;
+					return acc + escrowRows[index]?.vestable ?? 0;
 				}
 				return acc;
 			}, 0),
-		[checkedState, data]
+		[checkedState, escrowRows]
 	);
 
 	const totalFee = useMemo(
 		() =>
 			checkedState.reduce((acc, current, index) => {
 				if (current === true) {
-					return acc + data[index]?.fee ?? 0;
+					return acc + escrowRows[index]?.fee ?? 0;
 				}
 				return acc;
 			}, 0),
-		[checkedState, data]
+		[checkedState, escrowRows]
 	);
 
 	const { config } = usePrepareContractWrite({
 		...rewardEscrowContract,
 		functionName: 'vest',
-		args: [data.filter((d, index) => !!checkedState[index]).map((d) => d.id)],
-		enabled: data.filter((d, index) => !!checkedState[index]).map((d) => d.id).length > 0,
+		args: [escrowRows.filter((d, index) => !!checkedState[index]).map((d) => d.id)],
+		enabled: escrowRows.filter((d, index) => !!checkedState[index]).map((d) => d.id).length > 0,
 	});
 
 	const { writeAsync: vest } = useContractWrite(config);
@@ -73,7 +81,7 @@ const EscrowTable = () => {
 		<EscrowTableContainer $noPadding>
 			<DesktopOnlyView>
 				<StyledTable
-					data={data}
+					data={escrowRows}
 					showPagination={false}
 					columnsDeps={columnsDeps}
 					columns={[
@@ -157,7 +165,7 @@ const EscrowTable = () => {
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<StyledTable
-					data={data}
+					data={escrowRows}
 					columnsDeps={columnsDeps}
 					columns={[
 						{
@@ -228,7 +236,7 @@ const EscrowTable = () => {
 							monitorTransaction({
 								txHash: receipt?.transactionHash ?? '',
 								onTxConfirmed: () => {
-									setCheckedState(new Array(data.length).fill(false));
+									setCheckedState(new Array(escrowRows.length).fill(false));
 									setCheckAllState(false);
 									resetVesting();
 									resetVestingClaimable();
