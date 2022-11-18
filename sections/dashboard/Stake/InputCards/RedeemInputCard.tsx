@@ -27,6 +27,8 @@ const RedeemInputCard: FC<RedeemInputCardProps> = ({ inputLabel, isVKwenta }) =>
 		veKwentaApproveConfig,
 		veKwentaRedeemConfig,
 		resetStakingState,
+		resetVesting,
+		resetVestingClaimable,
 	} = useStakingContext();
 
 	const { writeAsync: vKwentaApprove } = useContractWrite(vKwentaApproveConfig);
@@ -68,6 +70,8 @@ const RedeemInputCard: FC<RedeemInputCardProps> = ({ inputLabel, isVKwenta }) =>
 					txHash: veRedeemTxn?.hash ?? '',
 					onTxConfirmed: () => {
 						resetStakingState();
+						resetVesting();
+						resetVestingClaimable();
 					},
 				});
 			}
