@@ -57,3 +57,20 @@ export const SynthSwapABI = [
 	'function uniswapSwapInto(bytes32 _destSynthCurrencyKey, address _sourceTokenAddress, uint _amount, bytes calldata _data) external payable returns (uint)',
 	'function uniswapSwapOutOf(bytes32 _sourceSynthCurrencyKey, address _destTokenAddress, uint _amountOfSynth, uint _expectedAmountOfSUSDFromSwap, bytes calldata _data) external returns (uint)',
 ];
+
+export const StakingRewardsABI = [
+	'function periodFinish() public view returns (uint256)',
+	'function stake(uint256 amount) external',
+	'function withdraw(uint256 amount) public',
+	'function balanceOf(address account) external view returns (uint256)',
+	'function earned(address account) external view returns (uint256)',
+	'function rewardRate() public view returns (uint256)',
+	'function totalSupply() public view returns (uint256)',
+	'function getReward() public',
+];
+
+export const KwentaArrakisVaultABI = [
+	'function approve(address spender, uint256 amount) external returns (bool)',
+	'function balanceOf(address account) external view returns (uint256)',
+	'function allowance(address owner, address spender) external view returns (uint256)',
+];

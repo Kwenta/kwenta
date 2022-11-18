@@ -432,7 +432,8 @@
 			"rewards": "Rewards",
 			"markets": "Markets",
 			"governance": "Governance",
-			"staking": "Staking"
+			"staking": "Staking",
+			"earn": "Earn"
 		},
 		"overview": {
 			"futures-positions-table": {

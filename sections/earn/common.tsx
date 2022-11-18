@@ -1,28 +1,26 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import KwentaLogo from 'assets/svg/earn/KWENTA.svg';
 import Button from 'components/Button';
-import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Text from 'components/Text';
+import media from 'styles/media';
 
-export const KwentaText: React.FC<{ white?: boolean }> = ({ children, white }) => {
-	return (
-		<div style={{ display: 'flex', alignItems: 'center' }}>
-			<BigText $gold={!white}>{children}</BigText>
-			<StyledKwentaLogo />
-		</div>
-	);
-};
+export const BigText: React.FC<{ hasKwentaLogo?: boolean }> = ({
+	children,
+	hasKwentaLogo,
+	...rest
+}) => (
+	<div style={{ display: 'flex', alignItems: 'center' }}>
+		<BigTextRaw {...rest}>{children}</BigTextRaw>
+		{hasKwentaLogo && <StyledKwentaLogo />}
+	</div>
+);
 
-export const BigText = styled(Text.Heading)<{ $gold?: boolean }>`
+export const BigTextRaw = styled(Text.Heading)<{ $yellow?: boolean }>`
 	font-size: 25px;
 	font-family: AkkuratMonoLLWeb-Regular;
 	letter-spacing: -0.7px;
-	${(props) =>
-		props.$gold &&
-		css`
-			color: ${(props) => props.theme.colors.common.primaryGold};
-		`}
+	color: ${(props) => props.theme.colors.selectedTheme.yellow};
 `;
 
 export const Title = styled(Text.Body)`
@@ -32,28 +30,13 @@ export const Title = styled(Text.Body)`
 `;
 
 export const Description = styled(Text.Body)`
-	font-size: 13px;
+	font-size: 15px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
+	margin: 8px 0;
 `;
 
 const StyledKwentaLogo = styled(KwentaLogo)`
 	margin-left: 8px;
-`;
-
-export const OverlappingIcons = styled.div`
-	display: flex;
-	position: relative;
-
-	& > div:last-child {
-		position: absolute;
-		z-index: 5;
-		left: 12px;
-	}
-`;
-
-export const GridHeading = styled(Text.Heading)`
-	font-size: 21px;
-	margin-bottom: 8px;
 `;
 
 export const StyledBody = styled(Text.Body)`
@@ -68,70 +51,57 @@ export const StyledButton = styled(Button)`
 
 export const DollarValue = styled(BigText)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
+	margin-left: 8px;
 `;
 
-export const ColumnInner = styled.div`
+export const GridContainer = styled.div`
 	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	height: 100%;
-`;
 
-export const StyledSNXIcon = styled(CurrencyIcon)`
-	margin: 0 9px;
-`;
+	${media.greaterThan('mdUp')`
+		flex-wrap: wrap;
+		border-radius: 15px;
+		border: ${(props) => props.theme.colors.selectedTheme.border};
+		overflow: hidden;
+		background-color: ${(props) => props.theme.colors.selectedTheme.segmented.button.background};
 
-export const Column = styled.div`
-	padding: 20px 24px 18px 24px;
-	outline: 1px solid #353333;
-`;
+		& > div {
+			box-sizing: border-box;
+			border-left: ${(props) => props.theme.colors.selectedTheme.border};
+			border-right: ${(props) => props.theme.colors.selectedTheme.border};
+			min-width: 50%;
 
-export const SplitColumn = styled.div<{ $isLast?: boolean }>`
-	display: flex;
-	flex-direction: column;
-	height: 100%;
-	width: 100%;
+			&:nth-child(2n), &:nth-child(2n+2) {
+				border-right: none;
+			}
 
-	${(props) => !props.$isLast && css``}
+			&:nth-child(3) {
+				border-bottom: none;
+			}
 
-	& > div {
-		padding: 20px 24px 18px 24px;
-		height: 50%;
-		min-height: 95px;
-	}
-
-	& > div:last-child {
-		border-top: 1px solid #353333;
-	}
-`;
-
-export const InfoGridContainer = styled.div`
-	display: grid;
-	grid-template-columns: repeat(3, minmax(auto, 1fr));
-	border-radius: 15px;
-	border: 1px solid #353333;
-	max-width: 915px;
-	overflow: hidden;
-	box-sizing: border-box;
-
-	div {
-		box-sizing: border-box;
-	}
-
-	& > div {
-		border-left: 1px solid #353333;
-		border-right: 1px solid #353333;
-
-		&:first-child,
-		&:last-child {
-			border-left: none;
-			border-right: none;
+			&:first-child,
+			&:last-child {
+				border-left: none;
+				border-right: none;
+			}
 		}
-	}
+	`}
+
+	${media.lessThan('mdUp')`
+		flex-direction: column;
+	`}
 `;
 
 export const LiquidityAmount = styled.div`
 	display: flex;
 	align-items: center;
 	margin-bottom: 3px;
+`;
+
+export const Heading = styled(Text.Heading).attrs({ variant: 'h4' })`
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 21px;
+	margin-bottom: 4px;
+	text-transform: uppercase;
+	font-variant: all-small-caps;
+	color: ${(props) => props.theme.colors.selectedTheme.yellow};
 `;

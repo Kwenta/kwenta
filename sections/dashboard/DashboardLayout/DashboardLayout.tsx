@@ -15,10 +15,10 @@ import Links from '../Links';
 enum Tab {
 	Overview = 'overview',
 	History = 'history',
-	Rewards = 'rewards',
 	Markets = 'markets',
 	Governance = 'governance',
 	Stake = 'staking',
+	Earn = 'earn',
 }
 
 const Tabs = Object.values(Tab);
@@ -53,13 +53,6 @@ const DashboardLayout: FC = ({ children }) => {
 				onClick: () => router.push(ROUTES.Dashboard.History),
 			},
 			{
-				name: Tab.Rewards,
-				label: t('dashboard.tabs.rewards'),
-				active: activeTab === Tab.Rewards,
-				disabled: true,
-				onClick: () => {},
-			},
-			{
 				name: Tab.Markets,
 				label: t('dashboard.tabs.markets'),
 				active: activeTab === Tab.Markets,
@@ -78,6 +71,12 @@ const DashboardLayout: FC = ({ children }) => {
 				label: t('dashboard.tabs.staking'),
 				active: activeTab === Tab.Stake,
 				onClick: () => router.push(ROUTES.Dashboard.Stake),
+			},
+			{
+				name: Tab.Earn,
+				label: t('dashboard.tabs.earn'),
+				active: activeTab === Tab.Earn,
+				onClick: () => router.push(ROUTES.Dashboard.Earn),
 			},
 		],
 		[t, activeTab, router]
