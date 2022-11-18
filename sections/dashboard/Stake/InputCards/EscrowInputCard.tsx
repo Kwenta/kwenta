@@ -11,6 +11,7 @@ import SegmentedControl from 'components/SegmentedControl';
 import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { useStakingContext } from 'contexts/StakingContext';
+import { STAKING_LOW_GAS_LIMIT } from 'queries/staking/utils';
 import { truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import { StakingCard } from '../common';
@@ -63,6 +64,9 @@ const EscrowInputCard: FC = () => {
 		...rewardEscrowContract,
 		functionName: 'stakeEscrow',
 		args: [amountBN],
+		overrides: {
+			gasLimit: STAKING_LOW_GAS_LIMIT,
+		},
 		enabled: activeTab === 0 && unstakedEscrowedKwentaBalance.gt(0) && !!parseFloat(amount),
 	});
 
@@ -70,6 +74,9 @@ const EscrowInputCard: FC = () => {
 		...rewardEscrowContract,
 		functionName: 'unstakeEscrow',
 		args: [amountBN],
+		overrides: {
+			gasLimit: STAKING_LOW_GAS_LIMIT,
+		},
 		enabled: activeTab === 1 && stakedEscrowedBalance.gt(0) && !!parseFloat(amount),
 	});
 

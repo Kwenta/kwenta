@@ -6,6 +6,8 @@ import { FC, ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps, Row } from 'react-table';
 import { useRecoilValue } from 'recoil';
+import { selectExchangeRatesWei } from 'state/exchange/selectors';
+import { useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import ChangePercent from 'components/ChangePercent';
@@ -15,7 +17,7 @@ import Table, { TableNoResults } from 'components/Table';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import { Price } from 'queries/rates/types';
-import { balancesState, pastRatesState, ratesState } from 'store/futures';
+import { balancesState, pastRatesState } from 'store/futures';
 import { formatNumber, zeroBN } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
 
@@ -45,7 +47,7 @@ const SynthBalancesTable: FC = () => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
 	const pastRates = useRecoilValue(pastRatesState);
-	const exchangeRates = useRecoilValue(ratesState);
+	const exchangeRates = useAppSelector(selectExchangeRatesWei);
 	const { balances } = useRecoilValue(balancesState);
 
 	let data = useMemo(() => {

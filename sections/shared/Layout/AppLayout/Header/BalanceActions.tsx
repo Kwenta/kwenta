@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { components } from 'react-select';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { selectSusdBalanceWei } from 'state/balances/selectors';
-import { useAppSelector } from 'state/hooks';
+import { setFuturesAccountType as setReduxFuturesAccountType } from 'state/futures/reducer';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import styled, { useTheme } from 'styled-components';
 
 import Button from 'components/Button';
@@ -33,6 +34,7 @@ const BalanceActions: FC = () => {
 	const setFuturesAccountType = useSetRecoilState(futuresAccountTypeState);
 	const portfolio = useRecoilValue(portfolioState);
 	const susdWalletBalance = useAppSelector(selectSusdBalanceWei);
+	const dispatch = useAppDispatch();
 
 	const setMarketConfig = useCallback(
 		(position: FuturesPosition, accountType: FuturesAccountTypes): ReactSelectOptionProps => {
@@ -42,11 +44,12 @@ const BalanceActions: FC = () => {
 				marketRemainingMargin: formatDollars(position.remainingMargin),
 				onClick: () => {
 					setFuturesAccountType(accountType);
+					dispatch(setReduxFuturesAccountType(accountType));
 					return router.push(`/market/?asset=${position.asset}&accountType=${accountType}`);
 				},
 			};
 		},
-		[router, setFuturesAccountType]
+		[dispatch, router, setFuturesAccountType]
 	);
 
 	const OPTIONS = useMemo(() => {

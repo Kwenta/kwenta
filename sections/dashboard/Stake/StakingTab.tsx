@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useContractWrite } from 'wagmi';
@@ -5,6 +6,7 @@ import { useContractWrite } from 'wagmi';
 import Button from 'components/Button';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { useStakingContext } from 'contexts/StakingContext';
+import { getStakingApy } from 'queries/staking/utils';
 import media from 'styles/media';
 import { formatPercent, truncateNumbers } from 'utils/formatters/number';
 
@@ -13,7 +15,20 @@ import StakeInputCard from './InputCards/StakeInputCard';
 
 const StakingTab = () => {
 	const { t } = useTranslation();
-	const { claimableBalance, apy, getRewardConfig, resetStakingState } = useStakingContext();
+	const {
+		claimableBalance,
+		totalStakedBalance,
+		weekCounter,
+		getRewardConfig,
+		resetStakingState,
+		resetVesting,
+		resetVestingClaimable,
+	} = useStakingContext();
+
+	const apy = useMemo(() => getStakingApy(totalStakedBalance, weekCounter), [
+		totalStakedBalance,
+		weekCounter,
+	]);
 
 	const { writeAsync: getReward } = useContractWrite(getRewardConfig);
 
@@ -41,6 +56,8 @@ const StakingTab = () => {
 							txHash: tx?.hash ?? '',
 							onTxConfirmed: () => {
 								resetStakingState();
+								resetVesting();
+								resetVestingClaimable();
 							},
 						});
 					}}

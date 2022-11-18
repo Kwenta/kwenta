@@ -11,69 +11,99 @@ import { TableCellHead } from 'components/Table/Table';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { useStakingContext } from 'contexts/StakingContext';
 import { EscrowRow } from 'hooks/useStakingData';
+import { STAKING_LOW_GAS_LIMIT } from 'queries/staking/utils';
 import { truncateNumbers } from 'utils/formatters/number';
 
 import { StakingCard } from './common';
+import VestConfirmationModal from './VestConfirmationModal';
 
 const EscrowTable = () => {
 	const { t } = useTranslation();
-	const { data, rewardEscrowContract, resetVesting, resetVestingClaimable } = useStakingContext();
-	const [checkedState, setCheckedState] = useState(new Array(data.length).fill(false));
+	const {
+		escrowRows,
+		rewardEscrowContract,
+		resetStakingState,
+		resetVesting,
+		resetVestingClaimable,
+	} = useStakingContext();
+	const [checkedState, setCheckedState] = useState(escrowRows.map((_) => false));
 	const [checkAllState, setCheckAllState] = useState(false);
+	const [openConfirmModal, setOpenConfirmModal] = useState(false);
 
-	const handleOnChange = (position: number) => {
-		checkedState[position] = !checkedState[position];
-		setCheckedState(checkedState.map((d) => d));
-	};
+	const handleOnChange = useCallback(
+		(position: number) => {
+			checkedState[position] = !checkedState[position];
+			setCheckedState([...checkedState]);
+		},
+		[checkedState]
+	);
 
 	const selectAll = useCallback(() => {
 		if (checkAllState) {
-			setCheckedState(new Array(data.length).fill(false));
+			setCheckedState(escrowRows.map((_) => false));
 			setCheckAllState(false);
 		} else {
-			setCheckedState(new Array(data.length).fill(true));
+			setCheckedState(escrowRows.map((_) => true));
 			setCheckAllState(true);
 		}
-	}, [checkAllState, data.length]);
+	}, [checkAllState, escrowRows]);
 
-	const columnsDeps = React.useMemo(() => [checkedState], [checkedState]);
+	const columnsDeps = useMemo(() => [checkedState], [checkedState]);
 
 	const totalVestable = useMemo(
 		() =>
 			checkedState.reduce((acc, current, index) => {
 				if (current === true) {
-					return acc + data[index]?.vestable ?? 0;
+					return acc + escrowRows[index]?.vestable ?? 0;
 				}
 				return acc;
 			}, 0),
-		[checkedState, data]
+		[checkedState, escrowRows]
 	);
 
 	const totalFee = useMemo(
 		() =>
 			checkedState.reduce((acc, current, index) => {
 				if (current === true) {
-					return acc + data[index]?.fee ?? 0;
+					return acc + escrowRows[index]?.fee ?? 0;
 				}
 				return acc;
 			}, 0),
-		[checkedState, data]
+		[checkedState, escrowRows]
 	);
 
 	const { config } = usePrepareContractWrite({
 		...rewardEscrowContract,
 		functionName: 'vest',
-		args: [data.filter((d, index) => !!checkedState[index]).map((d) => d.id)],
-		enabled: data.filter((d, index) => !!checkedState[index]).map((d) => d.id).length > 0,
+		overrides: {
+			gasLimit: STAKING_LOW_GAS_LIMIT,
+		},
+		args: [escrowRows.filter((d, index) => !!checkedState[index]).map((d) => d.id)],
+		enabled: escrowRows.filter((d, index) => !!checkedState[index]).map((d) => d.id).length > 0,
 	});
 
 	const { writeAsync: vest } = useContractWrite(config);
+
+	const handleVest = useCallback(async () => {
+		const tx = await vest?.();
+		setOpenConfirmModal(false);
+		monitorTransaction({
+			txHash: tx?.hash ?? '',
+			onTxConfirmed: () => {
+				setCheckedState(escrowRows.map((_) => false));
+				setCheckAllState(false);
+				resetStakingState();
+				resetVesting();
+				resetVestingClaimable();
+			},
+		});
+	}, [escrowRows, resetStakingState, resetVesting, resetVestingClaimable, vest]);
 
 	return (
 		<EscrowTableContainer $noPadding>
 			<DesktopOnlyView>
 				<StyledTable
-					data={data}
+					data={escrowRows}
 					showPagination={false}
 					columnsDeps={columnsDeps}
 					columns={[
@@ -157,7 +187,7 @@ const EscrowTable = () => {
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<StyledTable
-					data={data}
+					data={escrowRows}
 					columnsDeps={columnsDeps}
 					columns={[
 						{
@@ -220,26 +250,18 @@ const EscrowTable = () => {
 							{t('dashboard.stake.tabs.stake-table.kwenta-token')}
 						</div>
 					</div>
-					<VestButton
-						disabled={!vest}
-						onClick={async () => {
-							const tx = await vest?.();
-							const receipt = await tx?.wait();
-							monitorTransaction({
-								txHash: receipt?.transactionHash ?? '',
-								onTxConfirmed: () => {
-									setCheckedState(new Array(data.length).fill(false));
-									setCheckAllState(false);
-									resetVesting();
-									resetVestingClaimable();
-								},
-							});
-						}}
-					>
+					<VestButton disabled={!vest} onClick={() => setOpenConfirmModal(true)}>
 						{t('dashboard.stake.tabs.escrow.vest')}
 					</VestButton>
 				</div>
 			</EscrowStats>
+			{openConfirmModal && (
+				<VestConfirmationModal
+					totalFee={totalFee}
+					onDismiss={() => setOpenConfirmModal(false)}
+					handleVest={handleVest}
+				/>
+			)}
 		</EscrowTableContainer>
 	);
 };
@@ -301,16 +323,22 @@ const EscrowStats = styled.div`
 	}
 `;
 
-const VestButton = styled.button`
+const VestButton = styled.button<{ disabled: boolean }>`
 	border-width: 1px;
 	border-style: solid;
-	border-color: ${(props) => props.theme.colors.selectedTheme.yellow};
+	border-color: ${(props) =>
+		props.disabled
+			? props.theme.colors.selectedTheme.gray
+			: props.theme.colors.selectedTheme.yellow};
 	height: 24px;
 	box-sizing: border-box;
 	border-radius: 14px;
-	cursor: pointer;
+	cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
 	background-color: transparent;
-	color: ${(props) => props.theme.colors.selectedTheme.yellow};
+	color: ${(props) =>
+		props.disabled
+			? props.theme.colors.selectedTheme.gray
+			: props.theme.colors.selectedTheme.yellow};
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 12px;
 	padding-left: 12px;
