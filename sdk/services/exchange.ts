@@ -62,15 +62,21 @@ export default class ExchangeService {
 	private allTokensMap: any;
 	private sdk: KwentaSDK;
 	private exchangeRates: Rates = {};
+	private ratesInterval: number | undefined;
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
+	}
+
+	public startRateUpdates(ratesInterval: number) {
 		this.getOneInchTokens();
 
-		startInterval(async () => {
-			this.exchangeRates = await this.getExchangeRates();
-			this.sdk.events.emit('exchangeRates_updated', this.exchangeRates);
-		}, 15000);
+		if (!this.ratesInterval) {
+			this.ratesInterval = startInterval(async () => {
+				this.exchangeRates = await this.getExchangeRates();
+				this.sdk.events.emit('exchangeRates_updated', this.exchangeRates);
+			}, ratesInterval);
+		}
 	}
 
 	public onRatesUpdated(listener: (exchangeRates: Rates) => void) {
@@ -93,53 +99,31 @@ export default class ExchangeService {
 		return 'synthswap';
 	}
 
-	public async getTotalTradePrice(
+	public async getTradePrices(
+		txProvider: ReturnType<ExchangeService['getTxProvider']>,
 		quoteCurrencyKey: string,
 		baseCurrencyKey: string,
-		sUSDRate: Wei,
 		quoteAmountWei: Wei,
-		coinGeckoPrices: PriceResponse
+		baseAmountWei: Wei
 	) {
-		const quotePriceRate = await this.getQuotePriceRate(
-			baseCurrencyKey,
-			quoteCurrencyKey,
-			coinGeckoPrices
+		const coinGeckoPrices = await this.getCoingeckoPrices(quoteCurrencyKey, baseCurrencyKey);
+
+		const [quotePriceRate, basePriceRate] = await Promise.all(
+			[quoteCurrencyKey, baseCurrencyKey].map((currencyKey) =>
+				this.getPriceRate(currencyKey, txProvider, coinGeckoPrices)
+			)
 		);
 
-		let tradePrice = quoteAmountWei.mul(quotePriceRate || 0);
+		let quoteTradePrice = quoteAmountWei.mul(quotePriceRate || 0);
+		let baseTradePrice = baseAmountWei.mul(basePriceRate || 0);
 
-		if (sUSDRate) tradePrice = tradePrice.div(sUSDRate);
+		if (this.sUSDRate) {
+			quoteTradePrice = quoteTradePrice.div(this.sUSDRate);
+			baseTradePrice = baseTradePrice.div(this.sUSDRate);
+		}
 
-		return tradePrice;
+		return { quoteTradePrice, baseTradePrice };
 	}
-
-	public async getEstimatedBaseTradePrice(
-		quoteCurrencyKey: string,
-		baseCurrencyKey: string,
-		sUSDRate: Wei,
-		baseAmountWei: Wei,
-		coinGeckoPrices: PriceResponse
-	) {
-		const basePriceRate = await this.getBasePriceRate(
-			baseCurrencyKey,
-			quoteCurrencyKey,
-			coinGeckoPrices
-		);
-
-		let tradePrice = baseAmountWei.mul(basePriceRate || 0);
-
-		if (sUSDRate) tradePrice = tradePrice.div(sUSDRate);
-
-		return tradePrice;
-	}
-
-	// TODO:
-	// - The `getTotalTradePrice` and `getEstimatedBaseTradePrice` functions
-	//   should be consolidated.
-	// - In the same vein, the `get(Quote/Base)PriceRate` functions should
-	//   be merged as well.
-	// - Consider making it the client's reponsibility to ensure that the
-	//   `txProvider` is correct.
 
 	public async getSlippagePercent(
 		quoteCurrencyKey: string,
@@ -148,26 +132,18 @@ export default class ExchangeService {
 		baseAmountWei: Wei
 	) {
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
-		const coinGeckoPrices = await this.getCoingeckoPrices(quoteCurrencyKey, baseCurrencyKey);
 
 		if (txProvider === '1inch') {
-			const sUSDRate = this.getSynthUsdRate;
-			const [totalTradePrice, estimatedBaseTradePrice] = await Promise.all([
-				this.getTotalTradePrice(
-					quoteCurrencyKey,
-					baseCurrencyKey,
-					sUSDRate,
-					quoteAmountWei,
-					coinGeckoPrices
-				),
-				this.getEstimatedBaseTradePrice(
-					quoteCurrencyKey,
-					baseCurrencyKey,
-					sUSDRate,
-					baseAmountWei,
-					coinGeckoPrices
-				),
-			]);
+			const {
+				quoteTradePrice: totalTradePrice,
+				baseTradePrice: estimatedBaseTradePrice,
+			} = await this.getTradePrices(
+				txProvider,
+				quoteCurrencyKey,
+				baseCurrencyKey,
+				quoteAmountWei,
+				baseAmountWei
+			);
 
 			if (totalTradePrice.gt(0) && estimatedBaseTradePrice.gt(0)) {
 				return totalTradePrice.sub(estimatedBaseTradePrice).div(totalTradePrice).neg();
@@ -638,11 +614,13 @@ export default class ExchangeService {
 	}
 
 	public async getFeeCost(quoteCurrencyKey: string, baseCurrencyKey: string, quoteAmount: string) {
+		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
+
 		const coinGeckoPrices = await this.getCoingeckoPrices(quoteCurrencyKey, baseCurrencyKey);
 
 		const [exchangeFeeRate, quotePriceRate] = await Promise.all([
 			this.getExchangeFeeRate(quoteCurrencyKey, baseCurrencyKey),
-			this.getQuotePriceRate(baseCurrencyKey, quoteCurrencyKey, coinGeckoPrices),
+			this.getPriceRate(quoteCurrencyKey, txProvider, coinGeckoPrices),
 		]);
 
 		const feeAmountInQuoteCurrency = wei(quoteAmount).mul(exchangeFeeRate);
@@ -732,54 +710,24 @@ export default class ExchangeService {
 		}
 	}
 
-	public async getQuotePriceRate(
-		baseCurrencyKey: string,
-		quoteCurrencyKey: string,
-		coinGeckoPrices?: PriceResponse
+	public async getPriceRate(
+		currencyKey: string,
+		txProvider: ReturnType<ExchangeService['getTxProvider']>,
+		coinGeckoPrices: PriceResponse
 	) {
-		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
-		const quoteCurrencyTokenAddress = this.getTokenAddress(quoteCurrencyKey, true).toLowerCase();
-
-		const prices =
-			coinGeckoPrices ?? (await this.getCoingeckoPrices(quoteCurrencyKey, baseCurrencyKey));
+		const tokenAddress = this.getTokenAddress(currencyKey, true).toLowerCase();
 
 		if (txProvider !== 'synthetix') {
 			const selectPriceCurrencyRate = this.exchangeRates['sUSD'];
 
-			if (prices && selectPriceCurrencyRate && prices[quoteCurrencyTokenAddress]) {
-				const quotePrice = prices[quoteCurrencyTokenAddress];
-
+			if (coinGeckoPrices && selectPriceCurrencyRate && coinGeckoPrices[tokenAddress]) {
+				const quotePrice = coinGeckoPrices[tokenAddress];
 				return quotePrice ? quotePrice.usd / selectPriceCurrencyRate.toNumber() : wei(0);
 			} else {
 				return wei(0);
 			}
 		} else {
-			return newGetExchangeRatesForCurrencies(this.exchangeRates, quoteCurrencyKey, 'sUSD');
-		}
-	}
-
-	public async getBasePriceRate(
-		baseCurrencyKey: string,
-		quoteCurrencyKey: string,
-		coinGeckoPrices?: PriceResponse
-	) {
-		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
-		const baseCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey, true).toLowerCase();
-
-		const prices =
-			coinGeckoPrices ?? (await this.getCoingeckoPrices(quoteCurrencyKey, baseCurrencyKey));
-
-		if (txProvider !== 'synthetix') {
-			const selectPriceCurrencyRate = this.exchangeRates['sUSD'];
-
-			if (prices && selectPriceCurrencyRate && prices[baseCurrencyTokenAddress]) {
-				const basePrice = prices[baseCurrencyTokenAddress];
-				return basePrice ? basePrice.usd / selectPriceCurrencyRate.toNumber() : wei(0);
-			} else {
-				return wei(0);
-			}
-		} else {
-			return newGetExchangeRatesForCurrencies(this.exchangeRates, baseCurrencyKey, 'sUSD');
+			return newGetExchangeRatesForCurrencies(this.exchangeRates, currencyKey, 'sUSD');
 		}
 	}
 
@@ -843,7 +791,7 @@ export default class ExchangeService {
 		});
 	}
 
-	private async getCoingeckoPrices(quoteCurrencyKey: string, baseCurrencyKey: string) {
+	public async getCoingeckoPrices(quoteCurrencyKey: string, baseCurrencyKey: string) {
 		const quoteCurrencyTokenAddress = this.getTokenAddress(quoteCurrencyKey, true).toLowerCase();
 		const baseCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey).toLowerCase();
 		const tokenAddresses = [quoteCurrencyTokenAddress, baseCurrencyTokenAddress];
@@ -857,7 +805,7 @@ export default class ExchangeService {
 		return response.data;
 	}
 
-	private get getSynthUsdRate() {
+	private get sUSDRate() {
 		return this.exchangeRates['sUSD'];
 	}
 

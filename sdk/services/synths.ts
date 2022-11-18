@@ -14,7 +14,6 @@ type SynthBalancesTuple = [string[], ethers.BigNumber[], ethers.BigNumber[]];
 
 export default class SynthsService {
 	private sdk: KwentaSDK;
-	private balances?: any;
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
@@ -60,16 +59,6 @@ export default class SynthsService {
 			susdWalletBalance: balancesMap?.['sUSD']?.balance ?? zeroBN,
 		};
 
-		this.balances = balances;
-
 		return balances;
-	}
-
-	public async getSynthBalance(walletAddress: string, currencyKey: string) {
-		if (!this.balances) {
-			await this.getSynthBalances(walletAddress);
-		}
-
-		return this.balances?.balancesMap[currencyKey]?.balance ?? zeroBN;
 	}
 }

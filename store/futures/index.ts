@@ -21,11 +21,10 @@ import {
 	FuturesOrder,
 } from 'queries/futures/types';
 import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
-import { Price, Rates } from 'queries/rates/types';
+import { Price } from 'queries/rates/types';
 import { PositionSide } from 'sections/futures/types';
 import { localStorageEffect } from 'store/effects';
 import { getFuturesKey, getSynthsKey } from 'store/utils';
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN } from 'utils/formatters/number';
 import { FuturesMarketAsset, MarketAssetByKey, MarketKeyByAsset } from 'utils/futures';
 
@@ -194,11 +193,6 @@ export const crossMarginAccountOverviewState = atom({
 export const leverageSideState = atom<PositionSide>({
 	key: getFuturesKey('leverageSide'),
 	default: PositionSide.LONG,
-});
-
-export const ratesState = atom<Rates>({
-	key: getFuturesKey('rates'),
-	default: {},
 });
 
 export const fundingRateState = selector({
@@ -394,60 +388,4 @@ export const crossMarginTotalMarginState = selector({
 export const confirmationModalOpenState = atom({
 	key: getFuturesKey('confirmationModalOpen'),
 	default: false,
-});
-
-export const marketAssetRateState = selector({
-	key: getFuturesKey('marketAssetRate'),
-	get: ({ get }) => {
-		const exchangeRates = get(ratesState);
-		const marketAsset = get(currentMarketState);
-
-		return newGetExchangeRatesForCurrencies(exchangeRates, marketAsset, 'sUSD');
-	},
-});
-
-export const isMarketCapReachedState = selector({
-	key: getFuturesKey('isMarketCapReached'),
-	get: ({ get }) => {
-		const leverageSide = get(leverageSideState);
-		const market = get(marketInfoState);
-		const marketAssetRate = get(marketAssetRateState);
-
-		const maxMarketValueUSD = market?.marketLimit ?? wei(0);
-		const marketSize = market?.marketSize ?? wei(0);
-		const marketSkew = market?.marketSkew ?? wei(0);
-
-		return leverageSide === PositionSide.LONG
-			? marketSize.add(marketSkew).div('2').abs().mul(marketAssetRate).gte(maxMarketValueUSD)
-			: marketSize.sub(marketSkew).div('2').abs().mul(marketAssetRate).gte(maxMarketValueUSD);
-	},
-});
-
-export const placeOrderTranslationKeyState = selector({
-	key: getFuturesKey('placeOrderTranslationKey'),
-	get: ({ get }) => {
-		const position = get(positionState);
-		const isMarketCapReached = get(isMarketCapReachedState);
-		const orderType = get(orderTypeState);
-		const selectedAccountType = get(futuresAccountTypeState);
-		const { freeMargin } = get(crossMarginAccountOverviewState);
-
-		let remainingMargin;
-		if (selectedAccountType === 'isolated_margin') {
-			remainingMargin = position?.remainingMargin || zeroBN;
-		} else {
-			const positionMargin = position?.remainingMargin || zeroBN;
-			remainingMargin = positionMargin.add(freeMargin);
-		}
-
-		if (orderType === 'next price') return 'futures.market.trade.button.place-next-price-order';
-		if (orderType === 'limit') return 'futures.market.trade.button.place-limit-order';
-		if (orderType === 'stop market') return 'futures.market.trade.button.place-stop-order';
-		if (!!position?.position) return 'futures.market.trade.button.modify-position';
-		return remainingMargin.lt('50')
-			? 'futures.market.trade.button.deposit-margin-minimum'
-			: isMarketCapReached
-			? 'futures.market.trade.button.oi-caps-reached'
-			: 'futures.market.trade.button.open-position';
-	},
 });
