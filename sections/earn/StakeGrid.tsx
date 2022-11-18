@@ -21,7 +21,7 @@ const StakeGrid = () => {
 			totalSupply: earn.totalSupply,
 		})
 	);
-	const timeTillDeadline = useRewardsTimer(new Date(endDate));
+	const timeTillDeadline = useRewardsTimer(new Date(endDate * 1000));
 
 	const yieldPerDay = useMemo(() => {
 		const balanceWei = toWei(balance);
