@@ -8,7 +8,6 @@ import { sdk } from 'state/config';
 import { gasSpeedState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN } from 'utils/formatters/number';
-import logError from 'utils/logError';
 import { getTransactionPrice } from 'utils/network';
 
 export default function useEstimateGasCost() {
@@ -52,7 +51,7 @@ export default function useEstimateGasCost() {
 			const metaTx = await contract?.populateTransaction[method](...params);
 			if (!metaTx || !gasLimit || !gasPrice?.gasPrice) return { gasPrice: null, gasLimit: null };
 			const gasBuffer = gasLimit.mul(buffer).div(100);
-			const gasLimitWithBuffer = buffer ? gasLimit.add(gasBuffer) : gasLimit;
+			const gasLimitWithBuffer = gasLimit.add(gasBuffer);
 			const l1Fee = await sdk.transactions.getOptimismLayerOneFees({
 				...metaTx,
 				gasPrice: gasPrice?.gasPrice?.toNumber(),
