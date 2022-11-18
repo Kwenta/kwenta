@@ -20,8 +20,9 @@ import { Price } from 'queries/rates/types';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
 import { selectExchangeRates } from 'state/exchange/selectors';
-import { selectMarkets } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { fetchOptimismMarkets } from 'state/home/actions';
+import { selectOptimismMarkets } from 'state/home/selector';
+import { useAppSelector, usePollAction } from 'state/hooks';
 import { futuresVolumesState, pastRatesState } from 'store/futures';
 import {
 	FlexDiv,
@@ -145,14 +146,15 @@ export const PriceChart = ({ asset }: PriceChartProps) => {
 
 const Assets = () => {
 	const { t } = useTranslation();
-	const { l2SynthsMap } = Connector.useContainer();
+	const { l2SynthsMap, l2Provider } = Connector.useContainer();
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
 	const exchangeRates = useAppSelector(selectExchangeRates);
-	const futuresMarkets = useAppSelector(selectMarkets);
+	const futuresMarkets = useAppSelector(selectOptimismMarkets);
 
 	const pastRates = useRecoilValue(pastRatesState);
 	const futuresVolumes = useRecoilValue(futuresVolumesState);
+	usePollAction(() => fetchOptimismMarkets(l2Provider));
 
 	const MARKETS_TABS = useMemo(
 		() => [

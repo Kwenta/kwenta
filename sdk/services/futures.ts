@@ -5,6 +5,8 @@ import KwentaSDK from 'sdk';
 
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
 import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';
+import { getContractsByNetwork } from 'sdk/contracts';
+import { NetworkOverrideOptions } from 'sdk/types/common';
 import {
 	FundingRateInput,
 	FundingRateResponse,
@@ -54,15 +56,17 @@ export default class FuturesService {
 	// 	}, 15000);
 	// }
 
-	public async getMarkets() {
-		const enabledMarkets = marketsForNetwork(this.sdk.context.networkId);
+	public async getMarkets(networkOverride?: NetworkOverrideOptions) {
+		const enabledMarkets = marketsForNetwork(
+			networkOverride?.networkId || this.sdk.context.networkId
+		);
 
-		const {
-			FuturesMarketSettings,
-			SystemStatus,
-			ExchangeRates,
-			FuturesMarketData,
-		} = this.sdk.context.contracts;
+		const contracts =
+			networkOverride && networkOverride?.networkId !== this.sdk.context.networkId
+				? getContractsByNetwork(networkOverride.networkId, networkOverride.provider)
+				: this.sdk.context.contracts;
+
+		const { FuturesMarketSettings, SystemStatus, ExchangeRates, FuturesMarketData } = contracts;
 
 		if (!FuturesMarketData || !FuturesMarketSettings || !SystemStatus || !ExchangeRates) {
 			throw new Error(UNSUPPORTED_NETWORK);

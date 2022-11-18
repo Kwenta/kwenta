@@ -4,7 +4,6 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import useGetAverageFundingRateForMarkets from 'queries/futures/useGetAverageFundingRateForMarkets';
 import useGetCrossMarginAccountOverview from 'queries/futures/useGetCrossMarginAccountOverview';
 import useGetCrossMarginSettings from 'queries/futures/useGetCrossMarginSettings';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
@@ -51,7 +50,6 @@ export const RefetchProvider: React.FC = ({ children }) => {
 	const crossMarginAccountOverview = useGetCrossMarginAccountOverview();
 	const positionsQuery = useGetFuturesPositionForMarkets();
 	const positionHistoryQuery = useGetFuturesPositionHistory();
-	const marketsQuery = useGetFuturesMarkets();
 	const queryCrossMarginAccount = useQueryCrossMarginAccount();
 
 	useGetAverageFundingRateForMarkets(Period.ONE_HOUR);
@@ -69,7 +67,6 @@ export const RefetchProvider: React.FC = ({ children }) => {
 		setTimeout(() => {
 			switch (refetchType) {
 				case 'modify-position':
-					marketsQuery.refetch();
 					openOrdersQuery.refetch();
 					positionsQuery.refetch();
 					positionHistoryQuery.refetch();

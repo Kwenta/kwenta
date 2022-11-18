@@ -23,10 +23,10 @@ import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
 import TradeCrossMargin from 'sections/futures/TradeCrossMargin';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
-import { usePollMarkets } from 'state/futures/hooks';
+import { fetchMarkets } from 'state/futures/actions';
 import { setMarketAsset } from 'state/futures/reducer';
 import { selectMarketAsset } from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks';
 import {
 	futuresAccountState,
 	futuresAccountTypeState,
@@ -43,7 +43,7 @@ const Market: MarketComponent = () => {
 	const { walletAddress } = Connector.useContainer();
 	const futuresData = useFuturesData();
 	const dispatch = useAppDispatch();
-	usePollMarkets();
+	usePollAction(fetchMarkets);
 
 	const routerMarketAsset = router.query.asset as FuturesMarketAsset;
 

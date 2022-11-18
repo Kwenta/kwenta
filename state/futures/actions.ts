@@ -33,6 +33,6 @@ export const fetchMarkets = createAsyncThunk<
 // TODO: Finish
 export const resetFuturesState = (): AppThunk => (dispatch) => {
 	dispatch({
-		type: 'futures/setMarketAsset',
+		type: 'futures/resetFuturesState',
 	});
 };
