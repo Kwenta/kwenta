@@ -79,6 +79,8 @@ const RedeemInputCard: FC<RedeemInputCardProps> = ({ inputLabel, isVKwenta }) =>
 	}, [
 		isVKwenta,
 		resetStakingState,
+		resetVesting,
+		resetVestingClaimable,
 		vKwentaApprove,
 		vKwentaRedeem,
 		vKwentaTokenApproval,

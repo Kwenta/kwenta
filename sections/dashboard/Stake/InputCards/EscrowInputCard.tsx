@@ -63,6 +63,9 @@ const EscrowInputCard: FC = () => {
 		...rewardEscrowContract,
 		functionName: 'stakeEscrow',
 		args: [amountBN],
+		overrides: {
+			gasLimit: 200000,
+		},
 		enabled: activeTab === 0 && unstakedEscrowedKwentaBalance.gt(0) && !!parseFloat(amount),
 	});
 
