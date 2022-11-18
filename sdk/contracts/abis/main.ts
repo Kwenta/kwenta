@@ -66,6 +66,7 @@ export const StakingRewardsABI = [
 	'function earned(address account) external view returns (uint256)',
 	'function rewardRate() public view returns (uint256)',
 	'function totalSupply() public view returns (uint256)',
+	'function getReward() public',
 ];
 
 export const KwentaArrakisVaultABI = [

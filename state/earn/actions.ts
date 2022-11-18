@@ -21,7 +21,7 @@ export const approveLPToken = createAsyncThunk<any, void, ThunkConfig>(
 
 export const stakeTokens = createAsyncThunk<any, void, ThunkConfig>(
 	'earn/stakeTokens',
-	async (_, { getState, extra: { sdk } }) => {
+	async (_, { dispatch, getState, extra: { sdk } }) => {
 		const {
 			earn: { amount },
 		} = getState();
@@ -31,6 +31,9 @@ export const stakeTokens = createAsyncThunk<any, void, ThunkConfig>(
 		if (hash) {
 			monitorTransaction({
 				txHash: hash,
+				onTxConfirmed: () => {
+					dispatch(getEarnDetails());
+				},
 			});
 		}
 	}
@@ -44,6 +47,22 @@ export const unstakeTokens = createAsyncThunk<any, void, ThunkConfig>(
 		} = getState();
 
 		const hash = await sdk.token.changePoolTokens(amount, 'withdraw');
+
+		if (hash) {
+			monitorTransaction({
+				txHash: hash,
+				onTxConfirmed: () => {
+					dispatch(getEarnDetails());
+				},
+			});
+		}
+	}
+);
+
+export const claimRewards = createAsyncThunk<any, void, ThunkConfig>(
+	'earn/claimRewards',
+	async (_, { dispatch, extra: { sdk } }) => {
+		const hash = await sdk.token.claimRewards();
 
 		if (hash) {
 			monitorTransaction({

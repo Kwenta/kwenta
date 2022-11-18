@@ -1,6 +1,7 @@
 import { wei } from '@synthetixio/wei';
-import { useMemo } from 'react';
-import { useAppSelector } from 'state/hooks';
+import { useCallback, useMemo } from 'react';
+import { claimRewards } from 'state/earn/actions';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import Button from 'components/Button';
 import useRewardsTimer from 'hooks/useRewardsTimer';
@@ -10,6 +11,7 @@ import { GridContainer } from './common';
 import GridData from './GridData';
 
 const StakeGrid = () => {
+	const dispatch = useAppDispatch();
 	const { balance, earnedRewards, endDate, rewardRate, totalSupply } = useAppSelector(
 		({ earn }) => ({
 			balance: earn.balance,
@@ -33,11 +35,15 @@ const StakeGrid = () => {
 		return truncateNumbers(rawYield.toString(), 4);
 	}, [balance, rewardRate, totalSupply]);
 
+	const handleClaim = useCallback(() => {
+		dispatch(claimRewards());
+	}, [dispatch]);
+
 	return (
 		<GridContainer>
 			<GridData title="Your Yield / Day" value={yieldPerDay} hasKwentaLogo />
 			<GridData title="Your Rewards" value={truncateNumbers(earnedRewards, 4)} hasKwentaLogo>
-				<Button fullWidth variant="flat" size="sm" style={{ marginTop: 10 }}>
+				<Button fullWidth variant="flat" size="sm" style={{ marginTop: 10 }} onClick={handleClaim}>
 					Claim Rewards
 				</Button>
 			</GridData>

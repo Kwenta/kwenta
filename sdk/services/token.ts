@@ -77,4 +77,16 @@ export default class TokenService {
 			allowance: wei(allowance),
 		};
 	}
+
+	public async claimRewards() {
+		const StakingRewards = this.sdk.context.contracts.StakingRewards;
+
+		if (!StakingRewards) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
+		}
+
+		const { hash } = await this.sdk.transactions.createContractTxn(StakingRewards, 'getReward', []);
+
+		return hash;
+	}
 }
