@@ -75,13 +75,21 @@ export const GridContainer = styled.div`
 		border-radius: 15px;
 		border: 1px solid #353333;
 		overflow: hidden;
-	background-color: #181818;
+		background-color: #181818;
 
 		& > div {
 			box-sizing: border-box;
 			border-left: 1px solid #353333;
 			border-right: 1px solid #353333;
 			min-width: 50%;
+
+			&:nth-child(2n), &:nth-child(2n+2) {
+				border-right: none;
+			}
+
+			&:nth-child(3) {
+				border-bottom: none;
+			}
 
 			&:first-child,
 			&:last-child {

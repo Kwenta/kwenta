@@ -10,7 +10,8 @@ import exchangeReducer from './exchange/reducer';
 import futuresReducer from './futures/reducer';
 import walletReducer from './wallet/reducer';
 
-const LOG_REDUX = process.env.NODE_ENV !== 'production';
+// const LOG_REDUX = process.env.NODE_ENV !== 'production';
+const LOG_REDUX = false;
 
 const store = configureStore({
 	reducer: {
