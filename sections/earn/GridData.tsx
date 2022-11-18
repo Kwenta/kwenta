@@ -19,7 +19,7 @@ const GridData: FC<GridDataProps> = memo(({ title, value, hasKwentaLogo }) => (
 ));
 
 const GridDataContainer = styled.div`
-	background-color: #181818;
+	background-color: ${(props) => props.theme.colors.selectedTheme.segmented.button.background};
 	padding: 20px 24px 18px 24px;
 	height: 50%;
 	min-height: 95px;

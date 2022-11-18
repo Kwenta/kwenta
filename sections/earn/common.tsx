@@ -54,33 +54,20 @@ export const DollarValue = styled(BigText)`
 	margin-left: 8px;
 `;
 
-export const SplitColumn = styled.div`
-	${media.greaterThan('mdUp')`
-		display: flex;
-		flex-direction: column;
-		height: 100%;
-		width: 100%;
-
-		& > div:last-child {
-			border-top: 1px solid #353333;
-		}
-	`}
-`;
-
 export const GridContainer = styled.div`
 	display: flex;
 
 	${media.greaterThan('mdUp')`
 		flex-wrap: wrap;
 		border-radius: 15px;
-		border: 1px solid #353333;
+		border: ${(props) => props.theme.colors.selectedTheme.border};
 		overflow: hidden;
-		background-color: #181818;
+		background-color: ${(props) => props.theme.colors.selectedTheme.segmented.button.background};
 
 		& > div {
 			box-sizing: border-box;
-			border-left: 1px solid #353333;
-			border-right: 1px solid #353333;
+			border-left: ${(props) => props.theme.colors.selectedTheme.border};
+			border-right: ${(props) => props.theme.colors.selectedTheme.border};
 			min-width: 50%;
 
 			&:nth-child(2n), &:nth-child(2n+2) {
