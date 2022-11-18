@@ -19,7 +19,7 @@ import { formatCurrency, formatDollars, formatNumber, zeroBN } from 'utils/forma
 import { PositionSide } from '../types';
 
 type ClosePositionModalProps = {
-	gasFee: Wei;
+	gasFee: Wei | null;
 	positionDetails: FuturesFilledPosition | null | undefined;
 	disabled?: boolean;
 	errorMessage?: string | null | undefined;
@@ -123,7 +123,7 @@ function ClosePositionModal({
 					variant="flat"
 					size="lg"
 					onClick={onClosePosition}
-					disabled={!!error || disabled}
+					disabled={!!error || disabled || gasFee?.eq(0)}
 				>
 					{t('futures.market.user.position.modal.title')}
 				</StyledButton>

@@ -1,9 +1,10 @@
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import { formatBytes32String } from 'ethers/lib/utils';
 import { useMemo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
+import { DEFAULT_CROSSMARGIN_GAS_BUFFER_PCT } from 'constants/defaults';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
@@ -29,7 +30,8 @@ export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 	const { resetTradeState } = useFuturesContext();
 	const { estimateEthersContractTxCost } = useEstimateGasCost();
 
-	const [crossMarginGasFee, setCrossMarginGasFee] = useState(wei(0));
+	const [crossMarginGasFee, setCrossMarginGasFee] = useState<Wei | null>(null);
+	const [crossMarginGasLimit, setCrossMarginGasLimit] = useState<Wei | null>(null);
 	const [error, setError] = useState<null | string>(null);
 
 	const currencyKey = useRecoilValue(currentMarketState);
@@ -67,12 +69,14 @@ export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 	useEffect(() => {
 		if (!crossMarginAccountContract) return;
 		const estimateGas = async () => {
-			const fee = await estimateEthersContractTxCost(
+			const { gasPrice, gasLimit } = await estimateEthersContractTxCost(
 				crossMarginAccountContract,
 				'distributeMargin',
-				[crossMarginCloseParams]
+				[crossMarginCloseParams],
+				DEFAULT_CROSSMARGIN_GAS_BUFFER_PCT
 			);
-			setCrossMarginGasFee(fee);
+			setCrossMarginGasFee(gasPrice);
+			setCrossMarginGasLimit(gasLimit);
 		};
 		estimateGas();
 	}, [crossMarginAccountContract, crossMarginCloseParams, estimateEthersContractTxCost]);
@@ -94,7 +98,9 @@ export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 	const closePosition = async () => {
 		if (!crossMarginAccountContract) return;
 		try {
-			const tx = await crossMarginAccountContract.distributeMargin(crossMarginCloseParams);
+			const tx = await crossMarginAccountContract.distributeMargin(crossMarginCloseParams, {
+				gasLimit: crossMarginGasLimit?.toBN(),
+			});
 
 			monitorTx(tx.hash);
 		} catch (err) {

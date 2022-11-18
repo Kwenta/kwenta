@@ -10,6 +10,8 @@ import { toWei, truncateNumbers } from 'utils/formatters/number';
 import { GridContainer } from './common';
 import GridData from './GridData';
 
+const SECONDS_PER_DAY = 86400;
+
 const StakeGrid = () => {
 	const dispatch = useAppDispatch();
 	const { balance, earnedRewards, endDate, rewardRate, totalSupply } = useAppSelector(
@@ -29,7 +31,7 @@ const StakeGrid = () => {
 		const totalSupplyWei = wei(totalSupply);
 
 		const rawYield = totalSupplyWei.gt(0)
-			? balanceWei.div(totalSupplyWei).mul(rewardRateWei)
+			? balanceWei.mul(rewardRateWei).div(totalSupplyWei).mul(SECONDS_PER_DAY)
 			: wei(0);
 
 		return truncateNumbers(rawYield.toString(), 4);

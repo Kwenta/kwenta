@@ -475,7 +475,7 @@ const useFuturesData = () => {
 	);
 
 	const submitCrossMarginOrder = useCallback(
-		async (fromEditLeverage?: boolean) => {
+		async (fromEditLeverage?: boolean, gasLimit?: Wei | null) => {
 			if (!crossMarginAccountContract) return;
 			if (orderType === 'market' || fromEditLeverage) {
 				const newPosition = [
@@ -485,7 +485,9 @@ const useFuturesData = () => {
 						sizeDelta: tradeInputs.nativeSizeDelta.toBN(),
 					},
 				];
-				return await crossMarginAccountContract.distributeMargin(newPosition);
+				return await crossMarginAccountContract.distributeMargin(newPosition, {
+					gasLimit: gasLimit?.toBN(),
+				});
 			}
 			const enumType = orderType === 'limit' ? 0 : 1;
 
