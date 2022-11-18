@@ -27,34 +27,11 @@ import { MarketKeyByAsset } from 'utils/futures';
 export default class FuturesService {
 	private sdk: KwentaSDK;
 	private futuresGqlEndpoint: string;
-	private marketsPollingInterval: number | undefined;
-	private marketsListeners: Set<(markets: FuturesMarket[]) => void> = new Set();
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
 		this.futuresGqlEndpoint = getFuturesEndpoint(sdk.context.networkId);
 	}
-
-	// public async onMarketsUpdated(listener: (markets: FuturesMarket[]) => void) {
-	// 	this.startMarketsPolling();
-	// 	this.sdk.events.on('futuresMarkets_updated', listener);
-	// 	this.marketsListeners.add(listener);
-	// }
-
-	// public async removeMarketsListener(listener: (markets: FuturesMarket[]) => void) {
-	// 	if (this.marketsListeners.has(listener)) {
-	// 		this.sdk.events.off('futuresMarkets_updated', listener);
-	// 		this.marketsListeners.delete(listener);
-	// 	}
-	// }
-
-	// private async startMarketsPolling() {
-	// 	if (this.marketsPollingInterval) return;
-	// 	this.marketsPollingInterval = startInterval(async () => {
-	// 		const markets = await this.getMarkets();
-	// 		this.sdk.events.emit('futuresMarkets_updated', markets);
-	// 	}, 15000);
-	// }
 
 	public async getMarkets(networkOverride?: NetworkOverrideOptions) {
 		const enabledMarkets = marketsForNetwork(
