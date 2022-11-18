@@ -11,17 +11,17 @@ type GridDataProps = {
 	hasKwentaLogo?: boolean;
 };
 
-const GridData: FC<GridDataProps> = memo(({ title, value, hasKwentaLogo }) => (
+const GridData: FC<GridDataProps> = memo(({ title, value, hasKwentaLogo, children }) => (
 	<GridDataContainer>
 		<Title>{title}</Title>
 		<BigText hasKwentaLogo={hasKwentaLogo}>{value}</BigText>
+		{children}
 	</GridDataContainer>
 ));
 
 const GridDataContainer = styled.div`
 	background-color: ${(props) => props.theme.colors.selectedTheme.segmented.button.background};
 	padding: 20px 24px 18px 24px;
-	height: 50%;
 	min-height: 95px;
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 

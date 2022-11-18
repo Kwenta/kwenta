@@ -2,6 +2,7 @@ import { wei } from '@synthetixio/wei';
 import { useMemo } from 'react';
 import { useAppSelector } from 'state/hooks';
 
+import Button from 'components/Button';
 import useRewardsTimer from 'hooks/useRewardsTimer';
 import { toWei, truncateNumbers } from 'utils/formatters/number';
 
@@ -35,7 +36,11 @@ const StakeGrid = () => {
 	return (
 		<GridContainer>
 			<GridData title="Your Yield / Day" value={yieldPerDay} hasKwentaLogo />
-			<GridData title="Your Rewards" value={truncateNumbers(earnedRewards, 4)} hasKwentaLogo />
+			<GridData title="Your Rewards" value={truncateNumbers(earnedRewards, 4)} hasKwentaLogo>
+				<Button fullWidth variant="flat" size="sm" style={{ marginTop: 10 }}>
+					Claim Rewards
+				</Button>
+			</GridData>
 			<GridData title="Time Remaining" value={timeTillDeadline} />
 		</GridContainer>
 	);
