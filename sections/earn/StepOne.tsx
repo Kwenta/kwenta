@@ -7,11 +7,14 @@ const StepOne = () => {
 		<StepOneContainer>
 			<Heading>Step 1: Deposit Liquidity</Heading>
 			<Description>
-				Follow the link to Arrakis and deposit your liquidity to the ETH/KWENTA pair.
+				Follow the link to Arrakis and deposit your liquidity to the WETH/KWENTA vault.
 			</Description>
-
-			<ButtonLink href="" target="_blank" rel="noreferrer">
-				<BigButton>Arrakkis ETH/KWENTA Pool ↗</BigButton>
+			<ButtonLink
+				href="https://beta.arrakis.finance/vaults/10/0x56dEa47c40877c2aaC2a689aC56aa56cAE4938d2"
+				target="_blank"
+				rel="noreferrer"
+			>
+				<BigButton>Arrakis WETH/KWENTA Pool ↗</BigButton>
 			</ButtonLink>
 		</StepOneContainer>
 	);
