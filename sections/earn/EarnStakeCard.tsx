@@ -1,4 +1,5 @@
-import { FC, useCallback, useState } from 'react';
+import { wei } from '@synthetixio/wei';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { stakeTokens, unstakeTokens } from 'state/earn/actions';
 import { setAmount } from 'state/earn/reducer';
@@ -9,6 +10,7 @@ import Button from 'components/Button';
 import NumericInput from 'components/Input/NumericInput';
 import SegmentedControl from 'components/SegmentedControl';
 import { StakingCard } from 'sections/dashboard/Stake/common';
+import { toWei, truncateNumbers } from 'utils/formatters/number';
 
 const EarnStakeCard: FC = () => {
 	const { t } = useTranslation();
@@ -16,6 +18,14 @@ const EarnStakeCard: FC = () => {
 	const amount = useAppSelector(({ earn }) => earn.amount);
 	const [activeTab, setActiveTab] = useState(0);
 	const dispatch = useAppDispatch();
+	const { balance } = useAppSelector(({ wallet, earn }) => ({
+		walletAddress: wallet.walletAddress,
+		balance: earn.balance,
+	}));
+
+	const setMaxBalance = useCallback(() => {
+		dispatch(setAmount(balance));
+	}, [dispatch, balance]);
 
 	const handleTabChange = useCallback(
 		(tabIndex: number) => {
@@ -27,9 +37,7 @@ const EarnStakeCard: FC = () => {
 
 	const handleAmountChange = useCallback(
 		(_: any, newAmount: string) => {
-			dispatch(
-				setAmount(newAmount.indexOf('.') === -1 ? parseFloat(newAmount).toString() : newAmount)
-			);
+			dispatch(setAmount(newAmount));
 		},
 		[dispatch]
 	);
@@ -41,6 +49,12 @@ const EarnStakeCard: FC = () => {
 			dispatch(unstakeTokens());
 		}
 	}, [dispatch, activeTab]);
+
+	const balanceValue = useMemo(() => (balance ? truncateNumbers(balance, 4) : '-'), [balance]);
+
+	const disabled = useMemo(() => {
+		return !amount || toWei(amount).lte(0) || wei(balance).lte(0);
+	}, [amount, balance]);
 
 	return (
 		<StakingInputCardContainer>
@@ -56,8 +70,8 @@ const EarnStakeCard: FC = () => {
 			<div>
 				<StakeInputHeader>
 					<div>WETH/KWENTA</div>
-					<div className="max" onClick={() => {}}>
-						Max
+					<div className="max" onClick={setMaxBalance}>
+						Balance: {balanceValue}
 					</div>
 				</StakeInputHeader>
 				<StyledInput value={amount} onChange={handleAmountChange} />
@@ -66,7 +80,7 @@ const EarnStakeCard: FC = () => {
 				fullWidth
 				variant="flat"
 				size="sm"
-				disabled={!amount}
+				disabled={disabled}
 				onClick={handleSubmit}
 				style={{ marginTop: '20px' }}
 			>
@@ -95,7 +109,6 @@ const StakeInputHeader = styled.div`
 	font-size: 14px;
 
 	.max {
-		text-transform: uppercase;
 		cursor: pointer;
 	}
 `;

@@ -24,4 +24,20 @@ export default class TokenService {
 
 		return hash;
 	}
+
+	public async getEarnDetails() {
+		const StakingRewards = this.sdk.context.contracts.StakingRewards;
+
+		if (!StakingRewards) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
+		}
+
+		const [balance, earned, periodFinish] = await Promise.all([
+			StakingRewards.balanceOf(this.sdk.context.walletAddress),
+			StakingRewards.earned(this.sdk.context.walletAddress),
+			StakingRewards.periodFinish(),
+		]);
+
+		return { balance: wei(balance), earned: wei(earned), endDate: periodFinish.toNumber() };
+	}
 }

@@ -1,5 +1,7 @@
 import Head from 'next/head';
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
+import { getEarnDetails } from 'state/earn/actions';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
@@ -15,6 +17,13 @@ import media from 'styles/media';
 type EarnPageProps = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
 const EarnPage: EarnPageProps = () => {
+	const dispatch = useAppDispatch();
+	const walletAddress = useAppSelector(({ wallet }) => wallet.walletAddress);
+
+	useEffect(() => {
+		dispatch(getEarnDetails(walletAddress));
+	}, [dispatch, walletAddress]);
+
 	return (
 		<>
 			<Head>
