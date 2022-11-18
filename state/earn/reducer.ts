@@ -4,8 +4,6 @@ import { FetchStatus } from 'state/types';
 import { stakeTokens, unstakeTokens } from './actions';
 import { EarnState } from './types';
 
-export const DEADLINE = new Date('2022-12-18T23:59:59Z');
-
 const initialState: EarnState = {
 	amount: '',
 	balance: undefined,
@@ -13,7 +11,7 @@ const initialState: EarnState = {
 	error: undefined,
 	stakeStatus: FetchStatus.Idle,
 	unstakeStatus: FetchStatus.Idle,
-	endDate: DEADLINE.getTime(),
+	endDate: 0,
 };
 
 const earnSlice = createSlice({
