@@ -18,8 +18,9 @@ import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 import { ORDER_PREVIEW_ERRORS_I18N, previewErrorI18n } from 'queries/futures/constants';
+import { setOrderType as setReduxOrderType } from 'state/futures/reducer';
 import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { useAppSelector, useAppDispatch } from 'state/hooks';
 import {
 	crossMarginTotalMarginState,
 	orderTypeState,
@@ -70,12 +71,14 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 	);
 	const [submitting, setSubmitting] = useState(false);
 	const [error, setError] = useState<null | string>(null);
+	const dispatch = useAppDispatch();
 
 	const maxLeverage = Number((market?.maxLeverage || wei(DEFAULT_LEVERAGE)).toString(2));
 
 	useEffect(() => {
 		if (editMode === 'existing_position' && orderType !== 'market') {
 			setOrderType('market');
+			dispatch(setReduxOrderType('market'));
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);

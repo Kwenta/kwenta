@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 import { DEFAULT_FUTURES_MARGIN_TYPE, DEFAULT_LEVERAGE } from 'constants/defaults';
-import { FuturesAccountType } from 'queries/futures/types';
 import { PositionSide } from 'sections/futures/types';
+import { accountType } from 'state/helpers';
 import { FetchStatus } from 'state/types';
 import { FuturesMarketAsset } from 'utils/futures';
 
@@ -33,7 +33,7 @@ const ZERO_STATE_CM_TRADE_INPUTS = {
 };
 
 const initialState: FuturesState = {
-	futuresAccountType: DEFAULT_FUTURES_MARGIN_TYPE,
+	selectedType: DEFAULT_FUTURES_MARGIN_TYPE,
 	confirmationModalOpen: false,
 	fundingRates: [],
 	markets: [],
@@ -45,6 +45,12 @@ const initialState: FuturesState = {
 		selectedLeverage: DEFAULT_LEVERAGE,
 		showCrossMarginOnboard: false,
 		tradeInputs: ZERO_STATE_CM_TRADE_INPUTS,
+		position: undefined,
+		accountOverview: {
+			freeMargin: '0',
+			keeperEthBal: '0',
+			allowance: '0',
+		},
 	},
 	isolatedMargin: {
 		marketAsset: FuturesMarketAsset.sETH,
@@ -52,25 +58,41 @@ const initialState: FuturesState = {
 		orderType: 'market',
 		selectedLeverage: DEFAULT_LEVERAGE,
 		tradeInputs: ZERO_STATE_TRADE_INPUTS,
+		position: undefined,
 	},
 };
-
-const accountType = (type: FuturesAccountType) =>
-	type === 'cross_margin' ? 'crossMargin' : 'isolatedMargin';
 
 const futuresSlice = createSlice({
 	name: 'futures',
 	initialState,
 	reducers: {
 		setMarketAsset: (state, action) => {
-			state[accountType(state.futuresAccountType)].marketAsset = action.payload;
-			if (state.futuresAccountType === 'cross_margin') {
+			state[accountType(state.selectedType)].marketAsset = action.payload;
+			if (state.selectedType === 'cross_margin') {
 				state.crossMargin.marketAsset = action.payload;
 				state.crossMargin.tradeInputs = ZERO_STATE_CM_TRADE_INPUTS;
 			} else {
 				state.isolatedMargin.marketAsset = action.payload;
 				state.isolatedMargin.tradeInputs = ZERO_STATE_TRADE_INPUTS;
 			}
+		},
+		setOrderType: (state, action) => {
+			state[accountType(state.selectedType)].orderType = action.payload;
+		},
+		setLeverageSide: (state, action) => {
+			state[accountType(state.selectedType)].leverageSide = action.payload;
+		},
+		setFuturesAccountType: (state, action) => {
+			state.selectedType = action.payload;
+		},
+		setCrossMarginAccountOverview: (state, action) => {
+			state.crossMargin.accountOverview = action.payload;
+		},
+		setPosition: (state, action) => {
+			state[accountType(state.selectedType)].position = action.payload;
+		},
+		setFuturesMarkets: (state, action) => {
+			state.markets = action.payload;
 		},
 		setFundingRates: (state, action) => {
 			state.fundingRates = action.payload;
@@ -92,3 +114,13 @@ const futuresSlice = createSlice({
 });
 
 export default futuresSlice.reducer;
+
+export const {
+	setMarketAsset,
+	setOrderType,
+	setLeverageSide,
+	setFuturesAccountType,
+	setCrossMarginAccountOverview,
+	setPosition,
+	setFuturesMarkets,
+} = futuresSlice.actions;

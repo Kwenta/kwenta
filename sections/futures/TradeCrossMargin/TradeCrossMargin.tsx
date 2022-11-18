@@ -9,12 +9,17 @@ import Connector from 'containers/Connector';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { FuturesOrderType } from 'queries/futures/types';
 import {
+	setLeverageSide as setReduxLeverageSide,
+	setOrderType as setReduxOrderType,
+} from 'state/futures/reducer';
+import { selectMarketAssetRate } from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import {
 	futuresAccountState,
 	futuresAccountTypeState,
 	leverageSideState,
 	orderTypeState,
 	futuresOrderPriceState,
-	marketAssetRateState,
 	showCrossMarginOnboardState,
 	crossMarginAccountOverviewState,
 } from 'store/futures';
@@ -42,9 +47,10 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 	const { crossMarginAddress, crossMarginAvailable, status } = useRecoilValue(futuresAccountState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 	const { freeMargin } = useRecoilValue(crossMarginAccountOverviewState);
-	const marketAssetRate = useRecoilValue(marketAssetRateState);
+	const marketAssetRate = useAppSelector(selectMarketAssetRate);
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const [orderPrice, setOrderPrice] = useRecoilState(futuresOrderPriceState);
+	const dispatch = useAppDispatch();
 
 	const { onTradeOrderPriceChange } = useFuturesContext();
 
@@ -86,6 +92,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 						onChange={(index: number) => {
 							const type = CROSS_MARGIN_ORDER_TYPES[index];
 							setOrderType(type as FuturesOrderType);
+							dispatch(setReduxOrderType(type));
 							setOrderPrice('');
 						}}
 					/>
@@ -101,7 +108,13 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 							<Spacer height={16} />
 						</>
 					)}
-					<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
+					<PositionButtons
+						selected={leverageSide}
+						onSelect={(side) => {
+							setLeverageSide(side);
+							dispatch(setReduxLeverageSide(side));
+						}}
+					/>
 					<ManagePosition />
 					<FeeInfoBox />
 					{openTransferModal && (

@@ -23,8 +23,8 @@ import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
 import TradeCrossMargin from 'sections/futures/TradeCrossMargin';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
-import { setMarketAsset } from 'state/futures/actions';
 import { usePollMarkets } from 'state/futures/hooks';
+import { setMarketAsset } from 'state/futures/reducer';
 import { selectMarketAsset } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import {

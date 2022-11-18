@@ -62,8 +62,6 @@ export const mapFuturesPosition = (
 	const {
 		remainingMargin,
 		accessibleMargin,
-		orderPending,
-		order,
 		position: { fundingIndex, lastPrice, size, margin },
 		accruedFunding,
 		notionalValue,
@@ -75,14 +73,6 @@ export const mapFuturesPosition = (
 	const pnlPct = initialMargin.gt(0) ? pnl.div(wei(initialMargin)) : wei(0);
 	return {
 		asset,
-		order: !!orderPending
-			? {
-					pending: !!orderPending,
-					fee: wei(order.fee),
-					leverage: wei(order.leverage),
-					side: wei(order.leverage).gte(zeroBN) ? PositionSide.LONG : PositionSide.SHORT,
-			  }
-			: null,
 		remainingMargin: wei(remainingMargin),
 		accessibleMargin: wei(accessibleMargin),
 		position: wei(size).eq(zeroBN)

@@ -34,7 +34,11 @@ const baseConfig = {
 	},
 	webpack: (config, options) => {
 		config.resolve.mainFields = ['module', 'browser', 'main'];
-
+		if (!options.isServer) {
+			config.resolve.fallback = {
+				fs: false,
+			};
+		}
 		config.module.rules.push(
 			{
 				test: /\.svg$/,

@@ -13,12 +13,11 @@ import { useFuturesContext } from 'contexts/FuturesContext';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { PositionSide } from 'queries/futures/types';
-import { selectMarketAsset, selectMarketKey } from 'state/futures/selectors';
+import { selectMarketAsset, selectMarketKey, selectPosition } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {
 	futuresAccountTypeState,
 	positionHistoryState,
-	positionState,
 	potentialTradeDetailsState,
 } from 'store/futures';
 import { FlexDivCentered, FlexDivCol, PillButtonDiv } from 'styles/common';
@@ -65,9 +64,9 @@ type PositionPreviewData = {
 
 const PositionCard: React.FC<PositionCardProps> = () => {
 	const { t } = useTranslation();
-	const position = useRecoilValue(positionState);
 	const futuresAccountType = useRecoilValue(futuresAccountTypeState);
 
+	const position = useAppSelector(selectPosition);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const marketKey = useAppSelector(selectMarketKey);
 

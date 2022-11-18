@@ -4,6 +4,11 @@ import styled from 'styled-components';
 
 import SegmentedControl from 'components/SegmentedControl';
 import { ISOLATED_MARGIN_ORDER_TYPES } from 'constants/futures';
+import {
+	setLeverageSide as setReduxLeverageSide,
+	setOrderType as setReduxOrderType,
+} from 'state/futures/reducer';
+import { useAppDispatch } from 'state/hooks';
 import { balancesState, leverageSideState, orderTypeState, positionState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 
@@ -29,6 +34,7 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const [openTransferModal, setOpenTransferModal] = useState<boolean>(false);
 	const totalMargin = position?.remainingMargin ?? zeroBN;
+	const dispatch = useAppDispatch();
 
 	return (
 		<div>
@@ -46,12 +52,19 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 				selectedIndex={ISOLATED_MARGIN_ORDER_TYPES.indexOf(orderType)}
 				onChange={(oType: number) => {
 					setOrderType(oType === 0 ? 'market' : 'next price');
+					dispatch(setReduxOrderType(oType === 0 ? 'market' : 'next price'));
 				}}
 			/>
 
 			{orderType === 'next price' && <NextPrice />}
 
-			<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
+			<PositionButtons
+				selected={leverageSide}
+				onSelect={(side) => {
+					setLeverageSide(side);
+					dispatch(setReduxLeverageSide(side));
+				}}
+			/>
 
 			<OrderSizing />
 

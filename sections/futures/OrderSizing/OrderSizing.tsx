@@ -8,7 +8,7 @@ import SwitchAssetArrows from 'assets/svg/futures/switch-arrows.svg';
 import CustomInput from 'components/Input/CustomInput';
 import InputTitle from 'components/Input/InputTitle';
 import { useFuturesContext } from 'contexts/FuturesContext';
-import { selectMarketKey } from 'state/futures/selectors';
+import { selectMarketKey, selectMarketAssetRate } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {
 	futuresAccountTypeState,
@@ -16,7 +16,6 @@ import {
 	positionState,
 	futuresTradeInputsState,
 	orderTypeState,
-	marketAssetRateState,
 	futuresOrderPriceState,
 	crossMarginAccountOverviewState,
 	leverageSideState,
@@ -42,7 +41,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	const position = useRecoilValue(positionState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 	const orderType = useRecoilValue(orderTypeState);
-	const assetPrice = useRecoilValue(marketAssetRateState);
+	const marketAssetRate = useAppSelector(selectMarketAssetRate);
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
 	const selectedLeverageSide = useRecoilValue(leverageSideState);
 
@@ -52,9 +51,9 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	const [assetValue, setAssetValue] = useState(nativeSize);
 	const [assetInputType, setAssetInputType] = useState<'usd' | 'native'>('usd');
 
-	const tradePrice = useMemo(() => (orderPrice ? wei(orderPrice) : assetPrice), [
+	const tradePrice = useMemo(() => (orderPrice ? wei(orderPrice) : marketAssetRate), [
 		orderPrice,
-		assetPrice,
+		marketAssetRate,
 	]);
 	const maxNativeValue = useMemo(
 		() => (!isZero(tradePrice) ? maxUsdInputAmount.div(tradePrice) : zeroBN),

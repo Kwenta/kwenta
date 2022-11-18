@@ -17,9 +17,9 @@ import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
 import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
 import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
-import { selectMarketAsset } from 'state/futures/selectors';
+import { selectMarketAsset, selectPosition } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { futuresAccountTypeState, openOrdersState, positionState } from 'store/futures';
+import { futuresAccountTypeState, openOrdersState } from 'store/futures';
 
 import PositionCard from '../PositionCard';
 import ProfitCalculator from '../ProfitCalculator';
@@ -44,8 +44,8 @@ const UserInfo: React.FC = () => {
 	const { walletAddress } = Connector.useContainer();
 
 	const marketAsset = useAppSelector(selectMarketAsset);
+	const position = useAppSelector(selectPosition);
 
-	const position = useRecoilValue(positionState);
 	const openOrders = useRecoilValue(openOrdersState);
 	const accountType = useRecoilValue(futuresAccountTypeState);
 

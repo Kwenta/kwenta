@@ -211,7 +211,7 @@ export const selectIsSubmissionDisabled = createSelector(
 	(submissionDisabledReason) => !!submissionDisabledReason
 );
 
-export const selectExchangeRatesWei = createSelector(
+export const selectExchangeRates = createSelector(
 	(state: RootState) => state.exchange.exchangeRates,
 	(exchangeRates) =>
 		Object.entries(exchangeRates).reduce((acc, [key, value]) => {
@@ -221,11 +221,11 @@ export const selectExchangeRatesWei = createSelector(
 );
 
 export const selectUsdRateWei = createSelector(
-	selectExchangeRatesWei,
+	selectExchangeRates,
 	(exchangeRates) => exchangeRates['sUSD']
 );
 
-export const selectEthRate = createSelector(selectExchangeRatesWei, (exchangeRates) =>
+export const selectEthRate = createSelector(selectExchangeRates, (exchangeRates) =>
 	newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', 'sUSD')
 );
 

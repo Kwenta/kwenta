@@ -10,7 +10,8 @@ import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Select from 'components/Select';
 import { FuturesAccountTypes, FuturesPosition } from 'queries/futures/types';
 import { selectSusdBalanceWei } from 'state/balances/selectors';
-import { useAppSelector } from 'state/hooks';
+import { setFuturesAccountType as setReduxFuturesAccountType } from 'state/futures/reducer';
+import { useAppSelector, useAppDispatch } from 'state/hooks';
 import { positionsState, portfolioState, futuresAccountTypeState } from 'store/futures';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { zeroBN, formatDollars } from 'utils/formatters/number';
@@ -33,6 +34,7 @@ const BalanceActions: FC = () => {
 	const setFuturesAccountType = useSetRecoilState(futuresAccountTypeState);
 	const portfolio = useRecoilValue(portfolioState);
 	const susdWalletBalance = useAppSelector(selectSusdBalanceWei);
+	const dispatch = useAppDispatch();
 
 	const setMarketConfig = useCallback(
 		(position: FuturesPosition, accountType: FuturesAccountTypes): ReactSelectOptionProps => {
@@ -42,11 +44,12 @@ const BalanceActions: FC = () => {
 				marketRemainingMargin: formatDollars(position.remainingMargin),
 				onClick: () => {
 					setFuturesAccountType(accountType);
+					dispatch(setReduxFuturesAccountType(accountType));
 					return router.push(`/market/?asset=${position.asset}&accountType=${accountType}`);
 				},
 			};
 		},
-		[router, setFuturesAccountType]
+		[dispatch, router, setFuturesAccountType]
 	);
 
 	const OPTIONS = useMemo(() => {

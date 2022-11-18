@@ -162,20 +162,27 @@ export const resetCurrencyKeys = createAsyncThunk<any, void, ThunkConfig>(
 		let exchangeFeeRate = undefined;
 		let quotePriceRate = undefined;
 		let basePriceRate = undefined;
-		let txProvider = undefined;
+		let txProvider: ReturnType<typeof sdk.exchange.getTxProvider> = undefined;
 		let allowance = undefined;
 
 		if (walletAddress) {
 			if (quoteCurrencyKey && baseCurrencyKey) {
+				txProvider = sdk.exchange.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
+
+				// TODO: We should not have to do this.
+				// But we need the coingecko prices to generate the rates.
+				const coinGeckoPrices = await sdk.exchange.getCoingeckoPrices(
+					quoteCurrencyKey,
+					baseCurrencyKey
+				);
+
 				[baseFeeRate, rate, exchangeFeeRate, quotePriceRate, basePriceRate] = await Promise.all([
 					sdk.exchange.getBaseFeeRate(baseCurrencyKey, quoteCurrencyKey),
 					sdk.exchange.getRate(baseCurrencyKey, quoteCurrencyKey),
 					sdk.exchange.getExchangeFeeRate(quoteCurrencyKey, baseCurrencyKey),
-					sdk.exchange.getQuotePriceRate(baseCurrencyKey, quoteCurrencyKey),
-					sdk.exchange.getBasePriceRate(baseCurrencyKey, quoteCurrencyKey),
+					sdk.exchange.getPriceRate(quoteCurrencyKey, txProvider, coinGeckoPrices),
+					sdk.exchange.getPriceRate(baseCurrencyKey, txProvider, coinGeckoPrices),
 				]);
-
-				txProvider = sdk.exchange.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
 
 				if (txProvider === 'synthetix') {
 					if (!!quoteAmount) {

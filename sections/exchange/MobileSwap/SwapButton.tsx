@@ -38,7 +38,7 @@ const SwapButton: FC = () => {
 			fullWidth
 		>
 			{!!submissionDisabledReason
-				? submissionDisabledReason
+				? t(submissionDisabledReason)
 				: needsApproval && !isApproved
 				? t('exchange.summary-info.button.approve')
 				: t('exchange.summary-info.button.submit-order')}
