@@ -9,13 +9,13 @@ const StepOne = () => {
 			<Description>
 				Follow the link to Arrakis and deposit your liquidity to the WETH/KWENTA vault.
 			</Description>
-			<ButtonLink
+			<a
 				href="https://beta.arrakis.finance/vaults/10/0x56dEa47c40877c2aaC2a689aC56aa56cAE4938d2"
 				target="_blank"
 				rel="noreferrer"
 			>
 				<BigButton>Arrakis WETH/KWENTA Pool ↗</BigButton>
-			</ButtonLink>
+			</a>
 		</StepOneContainer>
 	);
 };
@@ -23,8 +23,6 @@ const StepOne = () => {
 const StepOneContainer = styled.div`
 	margin: 50px 0;
 `;
-
-const ButtonLink = styled.a``;
 
 const BigButton = styled.div`
 	width: 100%;
@@ -38,6 +36,7 @@ const BigButton = styled.div`
 	align-items: center;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 15px;
+	background-color: #181818;
 `;
 
 export default StepOne;

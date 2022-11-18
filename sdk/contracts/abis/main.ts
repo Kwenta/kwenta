@@ -57,3 +57,9 @@ export const SynthSwapABI = [
 	'function uniswapSwapInto(bytes32 _destSynthCurrencyKey, address _sourceTokenAddress, uint _amount, bytes calldata _data) external payable returns (uint)',
 	'function uniswapSwapOutOf(bytes32 _sourceSynthCurrencyKey, address _destTokenAddress, uint _amountOfSynth, uint _expectedAmountOfSUSDFromSwap, bytes calldata _data) external returns (uint)',
 ];
+
+export const StakingRewardsABI = [
+	'function periodFinish() public view returns (uint256)',
+	'function stake(uint256 amount) external',
+	'function withdraw(uint256 amount) public',
+];

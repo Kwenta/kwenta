@@ -1,5 +1,8 @@
 import { FC, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { stakeTokens, unstakeTokens } from 'state/earn/actions';
+import { setAmount } from 'state/earn/reducer';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
@@ -10,13 +13,34 @@ import { StakingCard } from 'sections/dashboard/Stake/common';
 const EarnStakeCard: FC = () => {
 	const { t } = useTranslation();
 
-	const [amount, setAmount] = useState('');
+	const amount = useAppSelector(({ earn }) => earn.amount);
 	const [activeTab, setActiveTab] = useState(0);
+	const dispatch = useAppDispatch();
 
-	const handleTabChange = useCallback((tabIndex: number) => {
-		setAmount('');
-		setActiveTab(tabIndex);
-	}, []);
+	const handleTabChange = useCallback(
+		(tabIndex: number) => {
+			dispatch(setAmount(''));
+			setActiveTab(tabIndex);
+		},
+		[dispatch]
+	);
+
+	const handleAmountChange = useCallback(
+		(_: any, newAmount: string) => {
+			dispatch(
+				setAmount(newAmount.indexOf('.') === -1 ? parseFloat(newAmount).toString() : newAmount)
+			);
+		},
+		[dispatch]
+	);
+
+	const handleSubmit = useCallback(() => {
+		if (activeTab === 0) {
+			dispatch(stakeTokens());
+		} else {
+			dispatch(unstakeTokens());
+		}
+	}, [dispatch, activeTab]);
 
 	return (
 		<StakingInputCardContainer>
@@ -29,28 +53,21 @@ const EarnStakeCard: FC = () => {
 				selectedIndex={activeTab}
 				style={{ marginBottom: '20px' }}
 			/>
-			<StakeInputContainer>
+			<div>
 				<StakeInputHeader>
-					<div>KWENTA/WETH</div>
+					<div>WETH/KWENTA</div>
 					<div className="max" onClick={() => {}}>
 						Max
 					</div>
 				</StakeInputHeader>
-				<StyledInput
-					value={amount}
-					onChange={(_, newValue) => {
-						newValue !== '' && newValue.indexOf('.') === -1
-							? setAmount(parseFloat(newValue).toString())
-							: setAmount(newValue);
-					}}
-				/>
-			</StakeInputContainer>
+				<StyledInput value={amount} onChange={handleAmountChange} />
+			</div>
 			<Button
 				fullWidth
 				variant="flat"
 				size="sm"
-				disabled={false}
-				onClick={() => {}}
+				disabled={!amount}
+				onClick={handleSubmit}
 				style={{ marginTop: '20px' }}
 			>
 				{activeTab === 0
@@ -78,11 +95,10 @@ const StakeInputHeader = styled.div`
 	font-size: 14px;
 
 	.max {
+		text-transform: uppercase;
 		cursor: pointer;
 	}
 `;
-
-const StakeInputContainer = styled.div``;
 
 const StyledInput = styled(NumericInput)`
 	font-family: ${(props) => props.theme.fonts.monoBold};

@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { FetchStatus } from 'state/types';
 
-import { stakeTokens } from './actions';
+import { stakeTokens, unstakeTokens } from './actions';
 import { EarnState } from './types';
 
 const initialState: EarnState = {
@@ -20,7 +20,12 @@ const earnSlice = createSlice({
 		},
 	},
 	extraReducers: (builder) => {
-		builder.addCase(stakeTokens.fulfilled, (state, action) => {});
+		builder.addCase(stakeTokens.pending, (state) => {
+			state.stakeStatus = FetchStatus.Loading;
+		});
+		builder.addCase(unstakeTokens.pending, (state) => {
+			state.unstakeStatus = FetchStatus.Loading;
+		});
 	},
 });
 
