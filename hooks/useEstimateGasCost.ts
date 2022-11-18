@@ -45,27 +45,23 @@ export default function useEstimateGasCost() {
 			contract: Contract,
 			method: string,
 			params: any[],
-			buffer?: number
-		): Promise<[Wei, Wei | undefined]> => {
-			try {
-				if (!contract?.estimateGas[method]) throw new Error('Invalid contract method');
-				const gasLimit = await contract?.estimateGas[method](...params);
-				const metaTx = await contract?.populateTransaction[method](...params);
-				if (!metaTx || !gasLimit || !gasPrice?.gasPrice) return [zeroBN, undefined];
-				const gasLimitWithBuffer = buffer ? gasLimit.add(buffer) : gasLimit;
-				const l1Fee = await sdk.transactions.getOptimismLayerOneFees({
-					...metaTx,
-					gasPrice: gasPrice?.gasPrice?.toNumber(),
-					gasLimit: Number(gasLimitWithBuffer),
-				});
-				return [
-					getTransactionPrice(gasPrice, gasLimit, ethPriceRate, l1Fee) || zeroBN,
-					wei(gasLimitWithBuffer, 0, true),
-				];
-			} catch (err) {
-				logError(err);
-				return [zeroBN, undefined];
-			}
+			buffer: number = 0
+		): Promise<{ gasPrice: Wei | null; gasLimit: Wei | null }> => {
+			if (!contract?.estimateGas[method]) throw new Error('Invalid contract method');
+			const gasLimit = await contract?.estimateGas[method](...params);
+			const metaTx = await contract?.populateTransaction[method](...params);
+			if (!metaTx || !gasLimit || !gasPrice?.gasPrice) return { gasPrice: null, gasLimit: null };
+			const gasBuffer = gasLimit.mul(buffer).div(100);
+			const gasLimitWithBuffer = buffer ? gasLimit.add(gasBuffer) : gasLimit;
+			const l1Fee = await sdk.transactions.getOptimismLayerOneFees({
+				...metaTx,
+				gasPrice: gasPrice?.gasPrice?.toNumber(),
+				gasLimit: Number(gasLimitWithBuffer),
+			});
+			return {
+				gasPrice: getTransactionPrice(gasPrice, gasLimit, ethPriceRate, l1Fee) || zeroBN,
+				gasLimit: wei(gasLimitWithBuffer, 0, true),
+			};
 		},
 		[gasPrice, ethPriceRate]
 	);

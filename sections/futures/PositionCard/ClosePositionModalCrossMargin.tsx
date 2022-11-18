@@ -4,7 +4,7 @@ import { useMemo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
-import { DEFAULT_CROSSMARGIN_GAS_BUFFER } from 'constants/defaults';
+import { DEFAULT_CROSSMARGIN_GAS_BUFFER_PCT } from 'constants/defaults';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
@@ -30,8 +30,8 @@ export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 	const { resetTradeState } = useFuturesContext();
 	const { estimateEthersContractTxCost } = useEstimateGasCost();
 
-	const [crossMarginGasFee, setCrossMarginGasFee] = useState<Wei>(zeroBN);
-	const [crossMarginGasLimit, setCrossMarginGasLimit] = useState<Wei | undefined>();
+	const [crossMarginGasFee, setCrossMarginGasFee] = useState<Wei | null>(null);
+	const [crossMarginGasLimit, setCrossMarginGasLimit] = useState<Wei | null>(null);
 	const [error, setError] = useState<null | string>(null);
 
 	const currencyKey = useRecoilValue(currentMarketState);
@@ -69,13 +69,13 @@ export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 	useEffect(() => {
 		if (!crossMarginAccountContract) return;
 		const estimateGas = async () => {
-			const [fee, gasLimit] = await estimateEthersContractTxCost(
+			const { gasPrice, gasLimit } = await estimateEthersContractTxCost(
 				crossMarginAccountContract,
 				'distributeMargin',
 				[crossMarginCloseParams],
-				DEFAULT_CROSSMARGIN_GAS_BUFFER
+				DEFAULT_CROSSMARGIN_GAS_BUFFER_PCT
 			);
-			setCrossMarginGasFee(fee);
+			setCrossMarginGasFee(gasPrice);
 			setCrossMarginGasLimit(gasLimit);
 		};
 		estimateGas();

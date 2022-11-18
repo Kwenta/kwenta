@@ -472,7 +472,7 @@ const useFuturesData = () => {
 	);
 
 	const submitCrossMarginOrder = useCallback(
-		async (fromEditLeverage?: boolean, gasLimit?: Wei) => {
+		async (fromEditLeverage?: boolean, gasLimit?: Wei | null) => {
 			if (!crossMarginAccountContract) return;
 			if (orderType === 'market' || fromEditLeverage) {
 				const newPosition = [

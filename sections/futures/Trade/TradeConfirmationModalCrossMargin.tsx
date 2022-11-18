@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { DEFAULT_CROSSMARGIN_GAS_BUFFER } from 'constants/defaults';
+import { DEFAULT_CROSSMARGIN_GAS_BUFFER_PCT } from 'constants/defaults';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
@@ -40,8 +40,8 @@ export default function TradeConfirmationModalCrossMargin() {
 	const setConfirmationModalOpen = useSetRecoilState(confirmationModalOpenState);
 
 	const [error, setError] = useState<null | string>(null);
-	const [gasFee, setGasFee] = useState<Wei>(zeroBN);
-	const [gasLimit, setGasLimit] = useState<Wei | undefined>();
+	const [gasFee, setGasFee] = useState<Wei | null>(null);
+	const [gasLimit, setGasLimit] = useState<Wei | null>(null);
 
 	useEffect(() => {
 		if (!crossMarginAccountContract) return;
@@ -53,15 +53,15 @@ export default function TradeConfirmationModalCrossMargin() {
 					sizeDelta: tradeInputs.nativeSizeDelta.toBN(),
 				},
 			];
-			const [estimatedFee, estimatedGasLimit] = await estimateEthersContractTxCost(
+			const { gasPrice, gasLimit } = await estimateEthersContractTxCost(
 				crossMarginAccountContract,
 				'distributeMargin',
 				[newPosition],
-				DEFAULT_CROSSMARGIN_GAS_BUFFER
+				DEFAULT_CROSSMARGIN_GAS_BUFFER_PCT
 			);
 
-			setGasFee(estimatedFee);
-			setGasLimit(estimatedGasLimit);
+			setGasFee(gasPrice);
+			setGasLimit(gasLimit);
 		};
 		estimateGas();
 	}, [
@@ -119,7 +119,7 @@ export default function TradeConfirmationModalCrossMargin() {
 			onConfirmOrder={handleConfirmOrder}
 			tradeFee={tradeFees.total}
 			keeperFee={isAdvancedOrder ? tradeFees.keeperEthDeposit : null}
-			gasFee={gasFee}
+			gasFee={gasFee ?? zeroBN}
 			errorMessage={error}
 		/>
 	);

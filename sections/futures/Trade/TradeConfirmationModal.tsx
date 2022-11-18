@@ -26,7 +26,7 @@ import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
 import { PositionSide } from '../types';
 
 type Props = {
-	gasFee: Wei;
+	gasFee: Wei | null;
 	tradeFee: Wei;
 	keeperFee?: Wei | null;
 	errorMessage?: string | null | undefined;
@@ -155,7 +155,7 @@ export default function TradeConfirmationModal({
 						data-testid="trade-open-position-confirm-order-button"
 						variant="flat"
 						onClick={onConfirmOrder}
-						disabled={!positionDetails || !!disabledReason || gasFee.eq(0)}
+						disabled={!positionDetails || !!disabledReason || !!gasFee}
 					>
 						{disabledReason || t('futures.market.trade.confirmation.modal.confirm-order')}
 					</ConfirmTradeButton>
