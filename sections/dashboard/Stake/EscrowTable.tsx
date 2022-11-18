@@ -24,27 +24,27 @@ const EscrowTable = () => {
 		resetVesting,
 		resetVestingClaimable,
 	} = useStakingContext();
-	const [checkedState, setCheckedState] = useState(new Array(escrowRows.length).fill(false));
+	const [checkedState, setCheckedState] = useState(escrowRows.map((_) => false));
 	const [checkAllState, setCheckAllState] = useState(false);
 	const [openConfirmModal, setOpenConfirmModal] = useState(false);
 
 	const handleOnChange = useCallback(
 		(position: number) => {
 			checkedState[position] = !checkedState[position];
-			setCheckedState(checkedState.map((d) => d));
+			setCheckedState([...checkedState]);
 		},
 		[checkedState]
 	);
 
 	const selectAll = useCallback(() => {
 		if (checkAllState) {
-			setCheckedState(new Array(escrowRows.length).fill(false));
+			setCheckedState(escrowRows.map((_) => false));
 			setCheckAllState(false);
 		} else {
-			setCheckedState(new Array(escrowRows.length).fill(true));
+			setCheckedState(escrowRows.map((_) => true));
 			setCheckAllState(true);
 		}
-	}, [checkAllState, escrowRows.length]);
+	}, [checkAllState, escrowRows]);
 
 	const columnsDeps = useMemo(() => [checkedState], [checkedState]);
 
@@ -85,13 +85,13 @@ const EscrowTable = () => {
 		monitorTransaction({
 			txHash: tx?.hash ?? '',
 			onTxConfirmed: () => {
-				setCheckedState(new Array(escrowRows.length).fill(false));
+				setCheckedState(escrowRows.map((_) => false));
 				setCheckAllState(false);
 				resetVesting();
 				resetVestingClaimable();
 			},
 		});
-	}, [escrowRows.length, resetVesting, resetVestingClaimable, vest]);
+	}, [escrowRows, resetVesting, resetVestingClaimable, vest]);
 
 	return (
 		<EscrowTableContainer $noPadding>
