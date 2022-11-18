@@ -1,4 +1,5 @@
 import { wei } from '@synthetixio/wei';
+import { ethers } from 'ethers';
 import KwentaSDK from 'sdk';
 
 import * as sdkErrors from '../common/errors';
@@ -10,8 +11,7 @@ export default class TokenService {
 		this.sdk = sdk;
 	}
 
-	// TODO: Figure out better name.
-	public async changePoolTokens(amount: string, action: 'stake' | 'unstake') {
+	public async changePoolTokens(amount: string, action: 'stake' | 'withdraw') {
 		if (!this.sdk.context.contracts.StakingRewards) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
@@ -25,19 +25,56 @@ export default class TokenService {
 		return hash;
 	}
 
-	public async getEarnDetails() {
+	public async approveLPToken() {
 		const StakingRewards = this.sdk.context.contracts.StakingRewards;
+		const KwentaArrakisVault = this.sdk.context.contracts.KwentaArrakisVault;
 
-		if (!StakingRewards) {
+		if (!StakingRewards || !KwentaArrakisVault) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
-		const [balance, earned, periodFinish] = await Promise.all([
+		const { hash } = await this.sdk.transactions.createContractTxn(KwentaArrakisVault, 'approve', [
+			StakingRewards.address,
+			ethers.constants.MaxUint256,
+		]);
+
+		return hash;
+	}
+
+	public async getEarnDetails() {
+		const StakingRewards = this.sdk.context.contracts.StakingRewards;
+		const KwentaArrakisVault = this.sdk.context.contracts.KwentaArrakisVault;
+
+		if (!StakingRewards || !KwentaArrakisVault) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
+		}
+
+		const [
+			balance,
+			earned,
+			periodFinish,
+			rewardRate,
+			totalSupply,
+			lpTokenBalance,
+			allowance,
+		] = await Promise.all([
 			StakingRewards.balanceOf(this.sdk.context.walletAddress),
 			StakingRewards.earned(this.sdk.context.walletAddress),
 			StakingRewards.periodFinish(),
+			StakingRewards.rewardRate(),
+			StakingRewards.totalSupply(),
+			KwentaArrakisVault.balanceOf(this.sdk.context.walletAddress),
+			KwentaArrakisVault.allowance(this.sdk.context.walletAddress, StakingRewards.address),
 		]);
 
-		return { balance: wei(balance), earned: wei(earned), endDate: periodFinish.toNumber() };
+		return {
+			balance: wei(balance),
+			earned: wei(earned),
+			endDate: periodFinish.toNumber(),
+			rewardRate: wei(rewardRate),
+			totalSupply: wei(totalSupply),
+			lpTokenBalance: wei(lpTokenBalance),
+			allowance: wei(allowance),
+		};
 	}
 }

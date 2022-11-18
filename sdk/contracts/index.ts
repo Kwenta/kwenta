@@ -14,6 +14,7 @@ import {
 	SynthABI,
 	SynthetixABI,
 	StakingRewardsABI,
+	KwentaArrakisVaultABI,
 } from './abis/main';
 
 export type ContractName =
@@ -31,7 +32,8 @@ export type ContractName =
 	| 'SynthSwap'
 	| 'MarginAccountFactory'
 	| 'MarginBaseSettings'
-	| 'StakingRewards';
+	| 'StakingRewards'
+	| 'KwentaArrakisVault';
 
 export type AllContractsMap = Record<
 	ContractName,
@@ -157,6 +159,12 @@ export const contracts: AllContractsMap = {
 			10: '0x6077987e8e06c062094c33177Eb12c4A65f90B65',
 		},
 		abi: StakingRewardsABI,
+	},
+	KwentaArrakisVault: {
+		addresses: {
+			10: '0x56dEa47c40877c2aaC2a689aC56aa56cAE4938d2',
+		},
+		abi: KwentaArrakisVaultABI,
 	},
 };
 

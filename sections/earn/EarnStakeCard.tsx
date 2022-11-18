@@ -1,8 +1,9 @@
 import { wei } from '@synthetixio/wei';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { stakeTokens, unstakeTokens } from 'state/earn/actions';
+import { approveLPToken, stakeTokens, unstakeTokens } from 'state/earn/actions';
 import { setAmount } from 'state/earn/reducer';
+import { selectIsApproved } from 'state/earn/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
@@ -18,14 +19,16 @@ const EarnStakeCard: FC = () => {
 	const amount = useAppSelector(({ earn }) => earn.amount);
 	const [activeTab, setActiveTab] = useState(0);
 	const dispatch = useAppDispatch();
-	const { balance } = useAppSelector(({ wallet, earn }) => ({
+	const { lpTokenBalance, balance } = useAppSelector(({ wallet, earn }) => ({
 		walletAddress: wallet.walletAddress,
+		lpTokenBalance: earn.lpTokenBalance,
 		balance: earn.balance,
 	}));
+	const isApproved = useAppSelector(selectIsApproved);
 
 	const setMaxBalance = useCallback(() => {
-		dispatch(setAmount(balance));
-	}, [dispatch, balance]);
+		dispatch(setAmount(activeTab === 0 ? lpTokenBalance : balance));
+	}, [dispatch, activeTab, lpTokenBalance, balance]);
 
 	const handleTabChange = useCallback(
 		(tabIndex: number) => {
@@ -43,18 +46,25 @@ const EarnStakeCard: FC = () => {
 	);
 
 	const handleSubmit = useCallback(() => {
-		if (activeTab === 0) {
+		if (!isApproved) {
+			dispatch(approveLPToken());
+		} else if (activeTab === 0) {
 			dispatch(stakeTokens());
 		} else {
 			dispatch(unstakeTokens());
 		}
-	}, [dispatch, activeTab]);
+	}, [dispatch, activeTab, isApproved]);
 
-	const balanceValue = useMemo(() => (balance ? truncateNumbers(balance, 4) : '-'), [balance]);
+	const balanceValue = useMemo(() => {
+		const returnedBalance = activeTab === 0 ? lpTokenBalance : balance;
+		return returnedBalance ? truncateNumbers(returnedBalance, 4) : '-';
+	}, [activeTab, lpTokenBalance, balance]);
 
 	const disabled = useMemo(() => {
-		return !amount || toWei(amount).lte(0) || wei(balance).lte(0);
-	}, [amount, balance]);
+		return (
+			!amount || toWei(amount).lte(0) || wei(activeTab === 0 ? lpTokenBalance : balance).lte(0)
+		);
+	}, [amount, lpTokenBalance, balance, activeTab]);
 
 	return (
 		<StakingInputCardContainer>
@@ -84,7 +94,9 @@ const EarnStakeCard: FC = () => {
 				onClick={handleSubmit}
 				style={{ marginTop: '20px' }}
 			>
-				{activeTab === 0
+				{!isApproved
+					? 'Approve'
+					: activeTab === 0
 					? t('dashboard.stake.tabs.stake-table.stake')
 					: t('dashboard.stake.tabs.stake-table.unstake')}
 			</Button>

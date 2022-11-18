@@ -64,4 +64,12 @@ export const StakingRewardsABI = [
 	'function withdraw(uint256 amount) public',
 	'function balanceOf(address account) external view returns (uint256)',
 	'function earned(address account) external view returns (uint256)',
+	'function rewardRate() public view returns (uint256)',
+	'function totalSupply() public view returns (uint256)',
+];
+
+export const KwentaArrakisVaultABI = [
+	'function approve(address spender, uint256 amount) external returns (bool)',
+	'function balanceOf(address account) external view returns (uint256)',
+	'function allowance(address owner, address spender) external view returns (uint256)',
 ];

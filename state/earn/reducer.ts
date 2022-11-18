@@ -8,6 +8,10 @@ const initialState: EarnState = {
 	amount: '',
 	balance: undefined,
 	earnedRewards: '0',
+	rewardRate: '0',
+	totalSupply: '0',
+	lpTokenBalance: '0',
+	allowance: '0',
 	error: undefined,
 	stakeStatus: FetchStatus.Idle,
 	unstakeStatus: FetchStatus.Idle,
@@ -25,6 +29,10 @@ const earnSlice = createSlice({
 			state.balance = action.payload.balance;
 			state.earnedRewards = action.payload.earnedRewards;
 			state.endDate = action.payload.endDate;
+			state.rewardRate = action.payload.rewardRate;
+			state.totalSupply = action.payload.totalSupply;
+			state.lpTokenBalance = action.payload.lpTokenBalance;
+			state.allowance = action.payload.allowance;
 		},
 	},
 	extraReducers: (builder) => {
