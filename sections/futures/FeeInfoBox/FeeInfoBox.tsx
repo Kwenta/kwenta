@@ -7,9 +7,10 @@ import TimerIcon from 'assets/svg/app/timer.svg';
 import InfoBox, { DetailedInfo } from 'components/InfoBox/InfoBox';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { NO_VALUE } from 'constants/placeholder';
+import { selectMarketInfo } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import {
 	tradeFeesState,
-	marketInfoState,
 	orderTypeState,
 	sizeDeltaState,
 	futuresAccountTypeState,
@@ -22,11 +23,11 @@ const FeeInfoBox: React.FC = () => {
 	const orderType = useRecoilValue(orderTypeState);
 	const fees = useRecoilValue(tradeFeesState);
 	const sizeDelta = useRecoilValue(sizeDeltaState);
-	const marketInfo = useRecoilValue(marketInfoState);
 	const accountType = useRecoilValue(futuresAccountTypeState);
 	const { tradeFee: crossMarginTradeFee, limitOrderFee, stopOrderFee } = useRecoilValue(
 		crossMarginSettingsState
 	);
+	const marketInfo = useAppSelector(selectMarketInfo);
 
 	const { commitDeposit, nextPriceFee } = useMemo(() => computeNPFee(marketInfo, sizeDelta), [
 		marketInfo,

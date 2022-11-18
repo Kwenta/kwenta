@@ -31,6 +31,14 @@ export const selectMarkets = (state: RootState) => unserializeMarkets(state.futu
 
 export const selectMarketsQueryStatus = (state: RootState) => state.futures.marketsQueryStatus;
 
+export const selectMarketKeys = (state: RootState) =>
+	state.futures.markets.map(({ asset }) => {
+		return MarketKeyByAsset[asset];
+	});
+
+export const selectMarketAssets = (state: RootState) =>
+	state.futures.markets.map(({ asset }) => asset);
+
 export const selectAverageFundingRates = (state: RootState) =>
 	unserializeFundingRates(state.futures.fundingRates);
 

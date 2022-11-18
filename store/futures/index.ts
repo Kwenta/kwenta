@@ -27,34 +27,12 @@ import { localStorageEffect } from 'store/effects';
 import { getFuturesKey, getSynthsKey } from 'store/utils';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN } from 'utils/formatters/number';
-import { FuturesMarketAsset, MarketAssetByKey, MarketKeyByAsset } from 'utils/futures';
+import { FuturesMarketAsset } from 'utils/futures';
 
 export const currentMarketState = atom({
 	key: getFuturesKey('currentMarket'),
 	default: FuturesMarketAsset.sETH,
 	effects: [localStorageEffect('currentMarketAsset')],
-});
-
-export const marketKeysState = selector({
-	key: getFuturesKey('marketKeys'),
-	get: ({ get }) => {
-		const futuresMarkets = get(futuresMarketsState);
-		return futuresMarkets.map(({ asset }) => {
-			return MarketKeyByAsset[asset];
-		});
-	},
-});
-
-export const marketAssetsState = selector({
-	key: getFuturesKey('marketAssets'),
-	get: ({ get }) => {
-		const marketKeys = get(marketKeysState);
-		return marketKeys.map(
-			(key): FuturesMarketAsset => {
-				return MarketAssetByKey[key];
-			}
-		);
-	},
 });
 
 export const balancesState = atom<SynthBalances>({

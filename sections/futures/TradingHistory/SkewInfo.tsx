@@ -2,13 +2,11 @@
 import React from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
-import { selectMarketAsset } from 'state/futures/selectors';
+import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { marketInfoState } from 'store/futures';
 import { CapitalizedText, NumericValue } from 'styles/common';
 import { formatCurrency, formatPercent } from 'utils/formatters/number';
 
@@ -26,7 +24,7 @@ const DEFAULT_DATA = {
 const SkewInfo: React.FC = () => {
 	const { t } = useTranslation();
 
-	const marketInfo = useRecoilValue(marketInfoState);
+	const marketInfo = useAppSelector(selectMarketInfo);
 	const marketAsset = useAppSelector(selectMarketAsset);
 
 	const data = useMemo(() => {

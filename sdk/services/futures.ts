@@ -2,6 +2,7 @@ import { wei } from '@synthetixio/wei';
 import { formatBytes32String, parseBytes32String } from 'ethers/lib/utils';
 import request, { gql } from 'graphql-request';
 import KwentaSDK from 'sdk';
+
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
 import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import {

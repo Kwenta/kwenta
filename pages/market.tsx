@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Error from 'components/Error';
@@ -25,9 +25,9 @@ import AppLayout from 'sections/shared/Layout/AppLayout';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { setMarketAsset } from 'state/futures/actions';
 import { usePollMarkets } from 'state/futures/hooks';
-import { useAppDispatch } from 'state/hooks';
+import { selectMarketAsset } from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import {
-	currentMarketState,
 	futuresAccountState,
 	futuresAccountTypeState,
 	showCrossMarginOnboardState,
@@ -47,13 +47,12 @@ const Market: MarketComponent = () => {
 
 	const routerMarketAsset = router.query.asset as FuturesMarketAsset;
 
-	const setCurrentMarket = useSetRecoilState(currentMarketState);
+	const setCurrentMarket = useAppSelector(selectMarketAsset);
 	const account = useRecoilValue(futuresAccountState);
 	const [showOnboard, setShowOnboard] = useRecoilState(showCrossMarginOnboardState);
 
 	useEffect(() => {
 		if (routerMarketAsset && MarketKeyByAsset[routerMarketAsset]) {
-			setCurrentMarket(routerMarketAsset);
 			dispatch(setMarketAsset(routerMarketAsset));
 		}
 	}, [router, setCurrentMarket, dispatch, routerMarketAsset]);

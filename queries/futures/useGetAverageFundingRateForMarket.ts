@@ -2,14 +2,12 @@ import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
 import { useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import useIsL2 from 'hooks/useIsL2';
-import { selectMarketKey } from 'state/futures/selectors';
+import { selectMarketInfo, selectMarketKey } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { marketInfoState } from 'store/futures';
 import logError from 'utils/logError';
 
 import { FundingRateUpdate } from './types';
@@ -22,7 +20,7 @@ const useGetAverageFundingRateForMarket = (
 	const { chain: network } = useNetwork();
 	const isL2 = useIsL2();
 	const marketKey = useAppSelector(selectMarketKey);
-	const marketInfo = useRecoilValue(marketInfoState);
+	const marketInfo = useAppSelector(selectMarketInfo);
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 
 	const price = marketInfo?.price;

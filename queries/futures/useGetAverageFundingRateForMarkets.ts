@@ -3,14 +3,14 @@ import Wei from '@synthetixio/wei';
 import request, { gql } from 'graphql-request';
 import { useTranslation } from 'react-i18next';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';
-import { selectMarkets } from 'state/futures/selectors';
+import { selectMarketAssets, selectMarkets } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { fundingRatesState, marketAssetsState } from 'store/futures';
+import { fundingRatesState } from 'store/futures';
 import { FuturesMarketKey, MarketKeyByAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
@@ -38,7 +38,7 @@ const useGetAverageFundingRateForMarkets = (
 	const { network } = Connector.useContainer();
 
 	const futuresMarkets = useAppSelector(selectMarkets);
-	const marketAssets = useRecoilValue(marketAssetsState);
+	const marketAssets = useAppSelector(selectMarketAssets);
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 	const setFundingRates = useSetRecoilState(fundingRatesState);
 

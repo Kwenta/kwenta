@@ -29,3 +29,10 @@ export const fetchMarkets = createAsyncThunk<
 	}));
 	return { markets: serializedMarkets, fundingRates: seriailizedRates };
 });
+
+// TODO: Finish
+export const resetFuturesState = (): AppThunk => (dispatch) => {
+	dispatch({
+		type: 'futures/setMarketAsset',
+	});
+};

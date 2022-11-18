@@ -10,12 +10,9 @@ import InputTitle from 'components/Input/InputTitle';
 import SegmentedControl from 'components/SegmentedControl';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { FuturesOrderType } from 'queries/futures/types';
-import {
-	leverageSideState,
-	marketAssetRateState,
-	marketInfoState,
-	orderFeeCapState,
-} from 'store/futures';
+import { selectMarketInfo } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { leverageSideState, marketAssetRateState, orderFeeCapState } from 'store/futures';
 import { weiToString, zeroBN } from 'utils/formatters/number';
 import { orderPriceInvalidLabel } from 'utils/futures';
 
@@ -38,7 +35,7 @@ export default function OrderPriceInput({
 	const marketAssetRate = useRecoilValue(marketAssetRateState);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const [selectedFeeCap, setSelectedFeeCap] = useRecoilState(orderFeeCapState);
-	const marketInfo = useRecoilValue(marketInfoState);
+	const marketInfo = useAppSelector(selectMarketInfo);
 
 	const [localValue, setLocalValue] = useState(value);
 

@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
-import Loader from 'components/Loader';
 import Select from 'components/Select';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
@@ -32,7 +31,7 @@ import {
 	MarketKeyByAsset,
 } from 'utils/futures';
 
-import MarketsDropdownIndicator from './MarketsDropdownIndicator';
+import MarketsDropdownIndicator, { DropdownLoadingIndicator } from './MarketsDropdownIndicator';
 import MarketsDropdownOption from './MarketsDropdownOption';
 import MarketsDropdownSingleValue from './MarketsDropdownSingleValue';
 
@@ -151,67 +150,62 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 		getMinDecimals,
 	]);
 
+	const isFetching = !futuresMarkets.length && marketsQueryStatus === FetchStatus.Loading;
+
 	return (
 		<SelectContainer mobile={mobile}>
-			{!futuresMarkets.length && marketsQueryStatus === FetchStatus.Loading ? (
-				<LoaderContainer>
-					<Loader inline />
-				</LoaderContainer>
-			) : (
-				<Select
-					instanceId={`markets-dropdown-${marketAsset}`}
-					controlHeight={55}
-					menuWidth={'100%'}
-					onChange={(x) => {
-						// Types are not perfect from react-select, this should always be true (just helping typescript)
-						if (x && 'value' in x) {
-							router.push(ROUTES.Markets.MarketPair(x.value, accountType));
-						}
-					}}
-					value={assetToCurrencyOption({
-						asset: marketAsset,
-						description: getSynthDescription(marketAsset, synthsMap, t),
-						price: mobile
-							? formatCurrency(selectedPriceCurrency.name, selectedBasePriceRate, {
-									sign: '$',
-									minDecimals: getMinDecimals(marketAsset),
-							  })
-							: undefined,
-						change: mobile
-							? formatPercent(
-									selectedBasePriceRate && selectedPastPrice?.price
-										? wei(selectedBasePriceRate)
-												.sub(selectedPastPrice?.price)
-												.div(selectedBasePriceRate)
-										: zeroBN
-							  )
-							: undefined,
-						negativeChange: mobile
-							? selectedBasePriceRate && selectedPastPrice?.price
-								? wei(selectedBasePriceRate).lt(selectedPastPrice?.price)
-								: false
-							: false,
-						isMarketClosed: isFuturesMarketClosed,
-						closureReason: futuresClosureReason,
-					})}
-					options={options}
-					isSearchable={false}
-					variant="flat"
-					components={{
-						SingleValue: MarketsDropdownSingleValue,
-						Option: MarketsDropdownOption,
-						DropdownIndicator: !mobile ? MarketsDropdownIndicator : undefined,
-					}}
-				/>
-			)}
+			<Select
+				instanceId={`markets-dropdown-${marketAsset}`}
+				controlHeight={55}
+				menuWidth={'100%'}
+				onChange={(x) => {
+					// Types are not perfect from react-select, this should always be true (just helping typescript)
+					if (x && 'value' in x) {
+						router.push(ROUTES.Markets.MarketPair(x.value, accountType));
+					}
+				}}
+				value={assetToCurrencyOption({
+					asset: marketAsset,
+					description: getSynthDescription(marketAsset, synthsMap, t),
+					price: mobile
+						? formatCurrency(selectedPriceCurrency.name, selectedBasePriceRate, {
+								sign: '$',
+								minDecimals: getMinDecimals(marketAsset),
+						  })
+						: undefined,
+					change: mobile
+						? formatPercent(
+								selectedBasePriceRate && selectedPastPrice?.price
+									? wei(selectedBasePriceRate)
+											.sub(selectedPastPrice?.price)
+											.div(selectedBasePriceRate)
+									: zeroBN
+						  )
+						: undefined,
+					negativeChange: mobile
+						? selectedBasePriceRate && selectedPastPrice?.price
+							? wei(selectedBasePriceRate).lt(selectedPastPrice?.price)
+							: false
+						: false,
+					isMarketClosed: isFuturesMarketClosed,
+					closureReason: futuresClosureReason,
+				})}
+				options={options}
+				isSearchable={false}
+				variant="flat"
+				components={{
+					SingleValue: MarketsDropdownSingleValue,
+					Option: MarketsDropdownOption,
+					DropdownIndicator: !mobile
+						? isFetching
+							? DropdownLoadingIndicator
+							: MarketsDropdownIndicator
+						: undefined,
+				}}
+			/>
 		</SelectContainer>
 	);
 };
-
-const LoaderContainer = styled.div`
-	display: flex;
-	justify-content: center;
-`;
 
 const SelectContainer = styled.div<{ mobile?: boolean }>`
 	margin-bottom: 16px;

@@ -1,14 +1,12 @@
 import { ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import TimerTooltip from 'components/Tooltip/TimerTooltip';
 import useRateUpdateQuery from 'queries/rates/useRateUpdateQuery';
-import { selectMarketAsset } from 'state/futures/selectors';
+import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { marketInfoState } from 'store/futures';
 
 import { isMarketDataKey, marketDataKeyMap } from './utils';
 
@@ -21,8 +19,8 @@ type MarketDetailProps = {
 
 const MarketDetail: React.FC<MarketDetailProps> = ({ mobile, marketKey, color, value }) => {
 	const { t } = useTranslation();
-	const marketInfo = useRecoilValue(marketInfoState);
 	const marketAsset = useAppSelector(selectMarketAsset);
+	const marketInfo = useAppSelector(selectMarketInfo);
 
 	const pausedClass = marketInfo?.isSuspended ? 'paused' : '';
 	const lastOracleUpdateTimeQuery = useRateUpdateQuery({

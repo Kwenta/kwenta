@@ -9,11 +9,12 @@ import Loader from 'components/Loader';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { previewErrorI18n } from 'queries/futures/constants';
 import { PositionSide } from 'queries/futures/types';
+import { selectMarketInfo } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import {
 	confirmationModalOpenState,
 	isMarketCapReachedState,
 	leverageSideState,
-	marketInfoState,
 	maxLeverageState,
 	orderTypeState,
 	placeOrderTranslationKeyState,
@@ -54,7 +55,6 @@ const ManagePosition: React.FC = () => {
 	const marginDelta = useRecoilValue(crossMarginMarginDeltaState);
 	const position = useRecoilValue(positionState);
 	const maxLeverageValue = useRecoilValue(maxLeverageState);
-	const marketInfo = useRecoilValue(marketInfoState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 	const { data: previewTrade, error: previewError, status } = useRecoilValue(
 		potentialTradeDetailsState
@@ -71,6 +71,8 @@ const ManagePosition: React.FC = () => {
 	const marketAssetRate = useRecoilValue(marketAssetRateState);
 	const tradeInputs = useRecoilValue(futuresTradeInputsState);
 	const isAdvancedOrder = useRecoilValue(isAdvancedOrderState);
+
+	const marketInfo = useAppSelector(selectMarketInfo);
 
 	const [isCancelModalOpen, setCancelModalOpen] = React.useState(false);
 
