@@ -8,6 +8,7 @@ import { sdk } from 'state/config';
 import { gasSpeedState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN } from 'utils/formatters/number';
+import logError from 'utils/logError';
 import { getTransactionPrice } from 'utils/network';
 
 export default function useEstimateGasCost() {
@@ -47,20 +48,25 @@ export default function useEstimateGasCost() {
 			buffer: number = 0
 		): Promise<{ gasPrice: Wei | null; gasLimit: Wei | null }> => {
 			if (!contract?.estimateGas[method]) throw new Error('Invalid contract method');
-			const gasLimit = await contract?.estimateGas[method](...params);
-			const metaTx = await contract?.populateTransaction[method](...params);
-			if (!metaTx || !gasLimit || !gasPrice?.gasPrice) return { gasPrice: null, gasLimit: null };
-			const gasBuffer = gasLimit.mul(buffer).div(100);
-			const gasLimitWithBuffer = gasLimit.add(gasBuffer);
-			const l1Fee = await sdk.transactions.getOptimismLayerOneFees({
-				...metaTx,
-				gasPrice: gasPrice?.gasPrice?.toNumber(),
-				gasLimit: Number(gasLimitWithBuffer),
-			});
-			return {
-				gasPrice: getTransactionPrice(gasPrice, gasLimit, ethPriceRate, l1Fee) || zeroBN,
-				gasLimit: wei(gasLimitWithBuffer, 0, true),
-			};
+			try {
+				const gasLimit = await contract?.estimateGas[method](...params);
+				const metaTx = await contract?.populateTransaction[method](...params);
+				if (!metaTx || !gasLimit || !gasPrice?.gasPrice) return { gasPrice: null, gasLimit: null };
+				const gasBuffer = gasLimit.mul(buffer).div(100);
+				const gasLimitWithBuffer = gasLimit.add(gasBuffer);
+				const l1Fee = await sdk.transactions.getOptimismLayerOneFees({
+					...metaTx,
+					gasPrice: gasPrice?.gasPrice?.toNumber(),
+					gasLimit: Number(gasLimitWithBuffer),
+				});
+				return {
+					gasPrice: getTransactionPrice(gasPrice, gasLimit, ethPriceRate, l1Fee) || zeroBN,
+					gasLimit: wei(gasLimitWithBuffer, 0, true),
+				};
+			} catch (err) {
+				logError(err);
+				return { gasPrice: null, gasLimit: null };
+			}
 		},
 		[gasPrice, ethPriceRate]
 	);
