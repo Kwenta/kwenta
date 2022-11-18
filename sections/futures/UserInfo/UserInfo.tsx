@@ -215,7 +215,7 @@ const UserInfo: React.FC = () => {
 			)}
 			{showShareModal && (
 				<ShareModal
-					position={position as any}
+					position={position}
 					marketAsset={marketAsset}
 					setShowShareModal={setShowShareModal}
 				/>

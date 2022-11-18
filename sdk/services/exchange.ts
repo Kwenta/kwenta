@@ -68,14 +68,14 @@ export default class ExchangeService {
 		this.sdk = sdk;
 	}
 
-	public startRateUpdates() {
+	public startRateUpdates(ratesInterval: number) {
 		this.getOneInchTokens();
 
 		if (!this.ratesInterval) {
 			this.ratesInterval = startInterval(async () => {
 				this.exchangeRates = await this.getExchangeRates();
 				this.sdk.events.emit('exchangeRates_updated', this.exchangeRates);
-			}, 15000);
+			}, ratesInterval);
 		}
 	}
 

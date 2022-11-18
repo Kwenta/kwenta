@@ -12,7 +12,7 @@ import PositionMetadata from './PositionMetadata';
 import ShareModalButton from './ShareModalButton';
 
 type ShareModalProps = {
-	position: FuturesPosition | null;
+	position: FuturesPosition | null | undefined;
 	marketAsset: FuturesMarketAsset;
 	setShowShareModal: React.Dispatch<React.SetStateAction<boolean>>;
 };

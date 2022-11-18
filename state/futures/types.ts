@@ -7,8 +7,6 @@ import {
 import { PositionSide } from 'sections/futures/types';
 import { FuturesMarketAsset } from 'utils/futures';
 
-export type SerializableFuturesPosition = {};
-
 export type FuturesState = {
 	marketAsset: FuturesMarketAsset;
 	leverageSide: PositionSide;

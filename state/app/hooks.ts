@@ -8,7 +8,7 @@ export function useAppData(ready: boolean) {
 
 	useEffect(() => {
 		if (ready) {
-			sdk.exchange.startRateUpdates();
+			sdk.exchange.startRateUpdates(15000);
 		}
 	}, [ready]);
 
