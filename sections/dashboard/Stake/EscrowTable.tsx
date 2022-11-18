@@ -21,6 +21,7 @@ const EscrowTable = () => {
 	const {
 		escrowRows,
 		rewardEscrowContract,
+		resetStakingState,
 		resetVesting,
 		resetVestingClaimable,
 	} = useStakingContext();
@@ -87,11 +88,12 @@ const EscrowTable = () => {
 			onTxConfirmed: () => {
 				setCheckedState(escrowRows.map((_) => false));
 				setCheckAllState(false);
+				resetStakingState();
 				resetVesting();
 				resetVestingClaimable();
 			},
 		});
-	}, [escrowRows, resetVesting, resetVestingClaimable, vest]);
+	}, [escrowRows, resetStakingState, resetVesting, resetVestingClaimable, vest]);
 
 	return (
 		<EscrowTableContainer $noPadding>
