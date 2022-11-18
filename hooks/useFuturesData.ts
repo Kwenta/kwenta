@@ -7,6 +7,9 @@ import { useRouter } from 'next/router';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { setFuturesAccountType, setOrderType as setReduxOrderType } from 'state/futures/reducer';
+import { selectMarketAssetRate } from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import {
 	CROSS_MARGIN_ENABLED,
@@ -30,7 +33,6 @@ import {
 	tradeFeesState,
 	futuresAccountState,
 	leverageSideState,
-	marketAssetRateState,
 	marketInfoState,
 	maxLeverageState,
 	orderTypeState,
@@ -103,11 +105,12 @@ const useFuturesData = () => {
 		crossMarginSettingsState
 	);
 	const isAdvancedOrder = useRecoilValue(isAdvancedOrderState);
-	const marketAssetRate = useRecoilValue(marketAssetRateState);
+	const marketAssetRate = useAppSelector(selectMarketAssetRate);
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
 	const setPotentialTradeDetails = useSetRecoilState(potentialTradeDetailsState);
 	const [selectedAccountType, setSelectedAccountType] = useRecoilState(futuresAccountTypeState);
 	const [preferredLeverage] = usePersistedRecoilState(preferredLeverageState);
+	const dispatch = useAppDispatch();
 
 	const [maxFee, setMaxFee] = useState(zeroBN);
 	const [error, setError] = useState<string | null>(null);
@@ -565,16 +568,18 @@ const useFuturesData = () => {
 	useEffect(() => {
 		if (selectedAccountType === 'cross_margin' && !CROSS_MARGIN_ORDER_TYPES.includes(orderType)) {
 			setOrderType('market');
+			dispatch(setReduxOrderType('market'));
 		} else if (
 			selectedAccountType === 'isolated_margin' &&
 			!ISOLATED_MARGIN_ORDER_TYPES.includes(orderType)
 		) {
 			setOrderType('market');
+			dispatch(setReduxOrderType('market'));
 		}
 		onTradeAmountChange(tradeInputs.susdSize, tradePrice, 'usd');
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedAccountType, orderType, network.id]);
+	}, [dispatch, selectedAccountType, orderType, network.id]);
 
 	useEffect(() => {
 		const handleRouteChange = () => {
@@ -602,6 +607,7 @@ const useFuturesData = () => {
 	useEffect(() => {
 		if (!CROSS_MARGIN_ENABLED) {
 			setSelectedAccountType(DEFAULT_FUTURES_MARGIN_TYPE);
+			dispatch(setFuturesAccountType(DEFAULT_FUTURES_MARGIN_TYPE));
 			return;
 		}
 		const routerType =
@@ -612,8 +618,9 @@ const useFuturesData = () => {
 			? routerType
 			: DEFAULT_FUTURES_MARGIN_TYPE;
 		setSelectedAccountType(accountType);
+		dispatch(setFuturesAccountType(accountType));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [router.query.accountType]);
+	}, [dispatch, router.query.accountType]);
 
 	return {
 		onLeverageChange,

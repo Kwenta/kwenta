@@ -67,12 +67,12 @@ export default class Context implements IContext {
 		this.context.provider = provider;
 		this.multicallProvider.init(provider);
 		const networkId = (await provider.getNetwork()).chainId as NetworkId;
-		await this.setNetworkId(networkId);
+		this.setNetworkId(networkId);
 
 		return networkId;
 	}
 
-	public async setNetworkId(networkId: NetworkId) {
+	public setNetworkId(networkId: NetworkId) {
 		this.context.networkId = networkId;
 		this.contracts = this.getContracts();
 	}

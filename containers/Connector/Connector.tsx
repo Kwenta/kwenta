@@ -2,7 +2,7 @@ import { NetworkId, synthetix } from '@synthetixio/contracts-interface';
 import { TransactionNotifier as BaseTN } from '@synthetixio/transaction-notifier';
 import { ethers } from 'ethers';
 import { keyBy } from 'lodash';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { sdk } from 'state/config';
 import { useAppDispatch } from 'state/hooks';
 import { resetNetwork, setSigner } from 'state/wallet/actions';
@@ -18,6 +18,7 @@ export let blockExplorer = generateExplorerFunctions(getBaseUrl(10));
 const useConnector = () => {
 	const { chain: activeChain } = useNetwork();
 	const { address, isConnected: isWalletConnected } = useAccount();
+	const [providerReady, setProviderReady] = useState(false);
 
 	const unsupportedNetwork = useMemo(() => activeChain?.unsupported ?? false, [activeChain]);
 
@@ -56,7 +57,10 @@ const useConnector = () => {
 	);
 
 	useEffect(() => {
-		sdk.setProvider(provider).then(handleNetworkChange);
+		sdk.setProvider(provider).then((networkId) => {
+			handleNetworkChange(networkId);
+			setProviderReady(true);
+		});
 		transactionNotifier = new BaseTN(provider);
 	}, [provider, dispatch, handleNetworkChange]);
 
@@ -95,6 +99,7 @@ const useConnector = () => {
 		defaultSynthetixjs,
 		l2Synthetixjs,
 		l2SynthsMap,
+		providerReady,
 	};
 };
 
