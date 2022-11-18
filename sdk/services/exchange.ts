@@ -62,22 +62,21 @@ export default class ExchangeService {
 	private allTokensMap: any;
 	private sdk: KwentaSDK;
 	private exchangeRates: Rates = {};
+	private ratesInterval: number | undefined;
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
-		this.getOneInchTokens();
-
-		startInterval(async () => {
-			this.exchangeRates = await this.getExchangeRates();
-			this.sdk.events.emit('exchangeRates_updated', this.exchangeRates);
-		}, 15000);
 	}
 
 	public startRateUpdates() {
-		startInterval(async () => {
-			this.exchangeRates = await this.getExchangeRates();
-			this.sdk.events.emit('exchangeRates_updated', this.exchangeRates);
-		}, 15000);
+		this.getOneInchTokens();
+
+		if (!this.ratesInterval) {
+			this.ratesInterval = startInterval(async () => {
+				this.exchangeRates = await this.getExchangeRates();
+				this.sdk.events.emit('exchangeRates_updated', this.exchangeRates);
+			}, 15000);
+		}
 	}
 
 	public onRatesUpdated(listener: (exchangeRates: Rates) => void) {
