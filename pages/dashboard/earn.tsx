@@ -24,6 +24,18 @@ const EarnPage: EarnPageProps = () => {
 		dispatch(getEarnDetails(walletAddress));
 	}, [dispatch, walletAddress]);
 
+	useEffect(() => {
+		const refetchEarnDetails = () => {
+			dispatch(getEarnDetails(walletAddress));
+		};
+
+		window.addEventListener('focus', refetchEarnDetails);
+
+		return () => {
+			window.removeEventListener('focus', refetchEarnDetails);
+		};
+	}, [dispatch, walletAddress]);
+
 	return (
 		<>
 			<Head>
