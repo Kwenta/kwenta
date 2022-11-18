@@ -2,6 +2,9 @@ import { NetworkId } from '@synthetixio/contracts-interface';
 import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { setPosition as setReduxPosition } from 'state/futures/reducer';
+import { serializeWeiObject } from 'state/helpers';
+import { useAppDispatch } from 'state/hooks';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
@@ -18,6 +21,7 @@ const useGetFuturesPositionForMarket = (options?: UseQueryOptions<FuturesPositio
 	const selectedFuturesAddress = useRecoilValue(selectedFuturesAddressState);
 	const market = useRecoilValue(marketKeyState);
 	const setPosition = useSetRecoilState(positionState);
+	const dispatch = useAppDispatch();
 
 	return useQuery<FuturesPosition | null>(
 		QUERY_KEYS.Futures.Position(
@@ -51,6 +55,7 @@ const useGetFuturesPositionForMarket = (options?: UseQueryOptions<FuturesPositio
 			);
 
 			setPosition(position);
+			dispatch(setReduxPosition(serializeWeiObject(position)));
 
 			return position;
 		},

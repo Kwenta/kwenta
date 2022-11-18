@@ -23,7 +23,11 @@ import stakingRewardsABI from 'lib/abis/StakingRewards.json';
 import supplyScheduleABI from 'lib/abis/SupplySchedule.json';
 import veKwentaRedeemerABI from 'lib/abis/veKwentaRedeemer.json';
 import vKwentaRedeemerABI from 'lib/abis/vKwentaRedeemer.json';
-import { getEpochDetails } from 'queries/staking/utils';
+import {
+	getEpochDetails,
+	STAKING_HIGH_GAS_LIMIT,
+	STAKING_LOW_GAS_LIMIT,
+} from 'queries/staking/utils';
 import { formatTruncatedDuration } from 'utils/formatters/date';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -46,8 +50,6 @@ type VestingEntry = {
 	entryID: number;
 };
 
-let data: EscrowRow[] = [];
-
 const useStakingData = () => {
 	const { network } = Connector.useContainer();
 	const isL2 = useIsL2();
@@ -61,10 +63,12 @@ const useStakingData = () => {
 		contractInterface: stakingRewardsABI,
 	};
 
-	const rewardEscrowContract = {
-		addressOrName: REWARD_ESCROW[network?.id],
-		contractInterface: rewardEscrowABI,
-	};
+	const rewardEscrowContract = useMemo(() => {
+		return {
+			addressOrName: REWARD_ESCROW[network?.id],
+			contractInterface: rewardEscrowABI,
+		};
+	}, [network?.id]);
 
 	const supplyScheduleContract = {
 		addressOrName: SUPPLY_SCHEDULE[network?.id],
@@ -207,8 +211,6 @@ const useStakingData = () => {
 		return periods;
 	}, [epochPeriod]);
 
-	data = [];
-
 	const { refetch: resetVesting, data: vestingSchedules } = useContractRead({
 		...rewardEscrowContract,
 		functionName: 'getVestingSchedules',
@@ -216,60 +218,54 @@ const useStakingData = () => {
 		watch: false,
 		enabled: !!walletAddress,
 		select: (data) => data.filter((d) => d.escrowAmount.gt(0)),
-		onError(error) {
-			if (error) logError(error);
+	});
+
+	const escrowRows: EscrowRow[] = useMemo(() => {
+		if (vestingSchedules && vestingSchedules.length > 0) {
+			return vestingSchedules.map((d: VestingEntry) => {
+				return {
+					id: Number(d.entryID),
+					date: moment(Number(d.endTime) * 1000).format('MM/DD/YY'),
+					time: formatTruncatedDuration(d.endTime - new Date().getTime() / 1000),
+					vestable: d.endTime * 1000 > Date.now() ? 0 : Number(d.escrowAmount / 1e18),
+					amount: Number(d.escrowAmount / 1e18),
+					fee: d.endTime * 1000 > Date.now() ? Number(d.escrowAmount / 1e18) : 0,
+					status: d.endTime * 1000 > Date.now() ? 'VESTING' : 'VESTED',
+				};
+			});
+		}
+		return [];
+	}, [vestingSchedules]);
+
+	const vestingEntries = useMemo(() => {
+		return escrowRows.map((d) => ({
+			...rewardEscrowContract,
+			functionName: 'getVestingEntryClaimable',
+			args: [walletAddress ?? undefined, d?.id],
+			enabled: !!walletAddress,
+		}));
+	}, [escrowRows, rewardEscrowContract, walletAddress]);
+
+	const { refetch: resetVestingClaimable } = useContractReads({
+		contracts: vestingEntries,
+		watch: false,
+		enabled: !!walletAddress && vestingEntries.length > 0,
+		onSuccess(data) {
+			data.forEach((d, index) => {
+				escrowRows[index].vestable = Number(d?.quantity / 1e18) ?? 0;
+				escrowRows[index].fee = Number(d?.fee / 1e18) ?? 0;
+			});
 		},
 	});
 
-	vestingSchedules &&
-		vestingSchedules.length > 0 &&
-		vestingSchedules.forEach((d: VestingEntry) => {
-			data.push({
-				id: Number(d.entryID),
-				date: moment(Number(d.endTime) * 1000).format('MM/DD/YY'),
-				time: formatTruncatedDuration(d.endTime - new Date().getTime() / 1000),
-				vestable: d.endTime * 1000 > Date.now() ? 0 : Number(d.escrowAmount / 1e18),
-				amount: Number(d.escrowAmount / 1e18),
-				fee: d.endTime * 1000 > Date.now() ? Number(d.escrowAmount / 1e18) : 0,
-				status: d.endTime * 1000 > Date.now() ? 'VESTING' : 'VESTED',
-			});
-		});
-
-	const contracts = data.map((d) => {
-		return {
-			...rewardEscrowContract,
-			functionName: 'getVestingEntryClaimable',
-			args: [walletAddress ?? undefined, d.id],
-			enabled: !!walletAddress,
-		};
-	});
-
-	const {
-		refetch: resetVestingClaimable,
-		data: vestingEntryClaimable,
-		isSuccess: vestingEntryClaimableIsSuccess,
-	} = useContractReads({
-		contracts,
-		watch: false,
-		enabled: !!walletAddress && contracts.length > 0,
-	});
-
-	vestingEntryClaimableIsSuccess &&
-		vestingEntryClaimable !== undefined &&
-		vestingEntryClaimable.forEach((d, index) => {
-			data[index].vestable = Number(d.quantity / 1e18);
-			data[index].fee = Number(d.fee / 1e18);
-		});
+	const totalVestable = useMemo(() => {
+		return escrowRows.reduce((acc, row) => wei(acc).add(wei(row.vestable ?? 0)) ?? zeroBN, zeroBN);
+	}, [escrowRows]);
 
 	const resetTime = useMemo(() => {
 		const { epochEnd } = getEpochDetails(network?.id, epochPeriod);
 		return epochEnd;
 	}, [epochPeriod, network?.id]);
-
-	const totalVestable = data.reduce(
-		(acc, current, index) => wei(acc).add(wei(data[index]?.vestable)) ?? zeroBN,
-		zeroBN
-	);
 
 	const kwentaTokenApproval = useMemo(() => kwentaBalance.gt(kwentaAllowance), [
 		kwentaBalance,
@@ -289,6 +285,9 @@ const useStakingData = () => {
 	const { config: getRewardConfig } = usePrepareContractWrite({
 		...stakingRewardsContract,
 		functionName: 'getReward',
+		overrides: {
+			gasLimit: STAKING_HIGH_GAS_LIMIT,
+		},
 		enabled: claimableBalance.gt(0),
 	});
 
@@ -316,6 +315,9 @@ const useStakingData = () => {
 	const { config: vKwentaRedeemConfig } = usePrepareContractWrite({
 		...vKwentaRedeemerContract,
 		functionName: 'redeem',
+		overrides: {
+			gasLimit: STAKING_LOW_GAS_LIMIT,
+		},
 		enabled: !!walletAddress && wei(vKwentaBalance).gt(0),
 	});
 
@@ -323,6 +325,9 @@ const useStakingData = () => {
 		...veKwentaRedeemerContract,
 		functionName: 'redeem',
 		args: [walletAddress],
+		overrides: {
+			gasLimit: STAKING_HIGH_GAS_LIMIT,
+		},
 		enabled: !!walletAddress && wei(veKwentaBalance).gt(0),
 	});
 
@@ -335,7 +340,7 @@ const useStakingData = () => {
 		periods,
 		resetTime,
 		epochPeriod,
-		data,
+		escrowRows,
 		escrowedBalance,
 		totalVestable,
 		stakedNonEscrowedBalance,

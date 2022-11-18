@@ -1,11 +1,16 @@
-import { FC } from 'react';
 import { useEffect } from 'react';
 import { sdk } from 'state/config';
 import { setExchangeRates } from 'state/exchange/actions';
 import { useAppDispatch } from 'state/hooks';
 
-const AppData: FC = ({ children }) => {
+export function useAppData(ready: boolean) {
 	const dispatch = useAppDispatch();
+
+	useEffect(() => {
+		if (ready) {
+			sdk.exchange.startRateUpdates(15000);
+		}
+	}, [ready]);
 
 	useEffect(() => {
 		sdk.exchange.onRatesUpdated((exchangeRates) => {
@@ -16,8 +21,4 @@ const AppData: FC = ({ children }) => {
 			sdk.exchange.removeRatesListeners();
 		};
 	}, [dispatch]);
-
-	return <>{children}</>;
-};
-
-export default AppData;
+}

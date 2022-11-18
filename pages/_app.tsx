@@ -12,13 +12,14 @@ import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Provider } from 'react-redux';
 import { RecoilRoot, useRecoilValue } from 'recoil';
+import { useAppData } from 'state/app/hooks';
 import store from 'state/store';
 import { ThemeProvider } from 'styled-components';
 import { chain, WagmiConfig } from 'wagmi';
 
 import Connector from 'containers/Connector';
 import { chains, wagmiClient } from 'containers/Connector/config';
-import AppData from 'sections/shared/components/AppData';
+import AcknowledgementModal from 'sections/app/AcknowledgementModal';
 import Layout from 'sections/shared/Layout';
 import SystemStatus from 'sections/shared/SystemStatus';
 import { currentThemeState } from 'store/ui';
@@ -46,8 +47,11 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 		provider,
 		l2Provider,
 		network,
+		providerReady,
 		defaultSynthetixjs: synthetixjs,
 	} = Connector.useContainer();
+
+	useAppData(providerReady);
 
 	const getLayout = Component.getLayout || ((page) => page);
 
@@ -82,6 +86,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 							}
 						>
 							<Layout>
+								<AcknowledgementModal />
 								<SystemStatus>{getLayout(<Component {...pageProps} />)}</SystemStatus>
 							</Layout>
 							<ReactQueryDevtools position="top-left" />
@@ -130,9 +135,7 @@ const App: FC<AppProps> = (props) => {
 					<QueryClientProvider client={new QueryClient()}>
 						<WagmiConfig client={wagmiClient}>
 							<WithAppContainers>
-								<AppData>
-									<InnerApp {...props} />
-								</AppData>
+								<InnerApp {...props} />
 							</WithAppContainers>
 						</WagmiConfig>
 					</QueryClientProvider>

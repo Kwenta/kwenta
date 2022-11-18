@@ -2,6 +2,8 @@ import { wei } from '@synthetixio/wei';
 import { debounce } from 'lodash';
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { selectMarketAssetRate } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import SwitchAssetArrows from 'assets/svg/futures/switch-arrows.svg';
@@ -14,7 +16,6 @@ import {
 	positionState,
 	futuresTradeInputsState,
 	orderTypeState,
-	marketAssetRateState,
 	futuresOrderPriceState,
 	marketKeyState,
 	crossMarginAccountOverviewState,
@@ -41,7 +42,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	const position = useRecoilValue(positionState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 	const orderType = useRecoilValue(orderTypeState);
-	const assetPrice = useRecoilValue(marketAssetRateState);
+	const marketAssetRate = useAppSelector(selectMarketAssetRate);
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
 	const marketKey = useRecoilValue(marketKeyState);
 	const selectedLeverageSide = useRecoilValue(leverageSideState);
@@ -50,9 +51,9 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	const [assetValue, setAssetValue] = useState(nativeSize);
 	const [assetInputType, setAssetInputType] = useState<'usd' | 'native'>('usd');
 
-	const tradePrice = useMemo(() => (orderPrice ? wei(orderPrice) : assetPrice), [
+	const tradePrice = useMemo(() => (orderPrice ? wei(orderPrice) : marketAssetRate), [
 		orderPrice,
-		assetPrice,
+		marketAssetRate,
 	]);
 	const maxNativeValue = useMemo(
 		() => (!isZero(tradePrice) ? maxUsdInputAmount.div(tradePrice) : zeroBN),

@@ -50,6 +50,8 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 		periods,
 		resetTime,
 		resetStakingState,
+		resetVesting,
+		resetVestingClaimable,
 	} = useStakingContext();
 
 	const fileNames = useMemo(() => {
@@ -174,6 +176,8 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 								onTxConfirmed: () => {
 									resetStakingState();
 									resetClaimable();
+									resetVesting();
+									resetVestingClaimable();
 								},
 							});
 						}}

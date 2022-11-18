@@ -2,6 +2,8 @@ import Wei from '@synthetixio/wei';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
+import { selectPositionWei } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import styled, { css } from 'styled-components';
 
 import PreviewArrow from 'components/PreviewArrow';
@@ -18,7 +20,6 @@ import {
 	futuresAccountTypeState,
 	marketKeyState,
 	positionHistoryState,
-	positionState,
 	potentialTradeDetailsState,
 } from 'store/futures';
 import { FlexDivCentered, FlexDivCol, PillButtonDiv } from 'styles/common';
@@ -65,7 +66,7 @@ type PositionPreviewData = {
 
 const PositionCard: React.FC<PositionCardProps> = () => {
 	const { t } = useTranslation();
-	const position = useRecoilValue(positionState);
+	const position = useAppSelector(selectPositionWei);
 	const marketAsset = useRecoilValue(currentMarketState);
 	const marketKey = useRecoilValue(marketKeyState);
 	const futuresAccountType = useRecoilValue(futuresAccountTypeState);

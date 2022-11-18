@@ -11,7 +11,7 @@ import { getMarketName, MarketKeyByAsset } from 'utils/futures';
 import { PositionSide } from '../types';
 
 type AmountContainerProps = {
-	position: FuturesPosition | null;
+	position: FuturesPosition | null | undefined;
 };
 
 const currencyIconStyle = {
