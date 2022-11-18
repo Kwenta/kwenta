@@ -11,6 +11,7 @@ import { TableCellHead } from 'components/Table/Table';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { useStakingContext } from 'contexts/StakingContext';
 import { EscrowRow } from 'hooks/useStakingData';
+import { STAKING_LOW_GAS_LIMIT } from 'queries/staking/utils';
 import { truncateNumbers } from 'utils/formatters/number';
 
 import { StakingCard } from './common';
@@ -74,6 +75,9 @@ const EscrowTable = () => {
 	const { config } = usePrepareContractWrite({
 		...rewardEscrowContract,
 		functionName: 'vest',
+		overrides: {
+			gasLimit: STAKING_LOW_GAS_LIMIT,
+		},
 		args: [escrowRows.filter((d, index) => !!checkedState[index]).map((d) => d.id)],
 		enabled: escrowRows.filter((d, index) => !!checkedState[index]).map((d) => d.id).length > 0,
 	});
