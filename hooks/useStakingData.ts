@@ -23,7 +23,11 @@ import stakingRewardsABI from 'lib/abis/StakingRewards.json';
 import supplyScheduleABI from 'lib/abis/SupplySchedule.json';
 import veKwentaRedeemerABI from 'lib/abis/veKwentaRedeemer.json';
 import vKwentaRedeemerABI from 'lib/abis/vKwentaRedeemer.json';
-import { getEpochDetails } from 'queries/staking/utils';
+import {
+	getEpochDetails,
+	STAKING_HIGH_GAS_LIMIT,
+	STAKING_LOW_GAS_LIMIT,
+} from 'queries/staking/utils';
 import { formatTruncatedDuration } from 'utils/formatters/date';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -281,6 +285,9 @@ const useStakingData = () => {
 	const { config: getRewardConfig } = usePrepareContractWrite({
 		...stakingRewardsContract,
 		functionName: 'getReward',
+		overrides: {
+			gasLimit: STAKING_HIGH_GAS_LIMIT,
+		},
 		enabled: claimableBalance.gt(0),
 	});
 
@@ -308,6 +315,9 @@ const useStakingData = () => {
 	const { config: vKwentaRedeemConfig } = usePrepareContractWrite({
 		...vKwentaRedeemerContract,
 		functionName: 'redeem',
+		overrides: {
+			gasLimit: STAKING_LOW_GAS_LIMIT,
+		},
 		enabled: !!walletAddress && wei(vKwentaBalance).gt(0),
 	});
 
@@ -315,6 +325,9 @@ const useStakingData = () => {
 		...veKwentaRedeemerContract,
 		functionName: 'redeem',
 		args: [walletAddress],
+		overrides: {
+			gasLimit: STAKING_HIGH_GAS_LIMIT,
+		},
 		enabled: !!walletAddress && wei(veKwentaBalance).gt(0),
 	});
 
