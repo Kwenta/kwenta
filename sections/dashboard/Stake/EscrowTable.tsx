@@ -75,9 +75,6 @@ const EscrowTable = () => {
 	const { config } = usePrepareContractWrite({
 		...rewardEscrowContract,
 		functionName: 'vest',
-		overrides: {
-			gasLimit: STAKING_LOW_GAS_LIMIT,
-		},
 		args: [escrowRows.filter((d, index) => !!checkedState[index]).map((d) => d.id)],
 		enabled: escrowRows.filter((d, index) => !!checkedState[index]).map((d) => d.id).length > 0,
 	});
