@@ -528,7 +528,7 @@
 					"claimable-rewards-epoch": "Claimable Rewards: Epoch {{EpochPeriod}}",
 					"claimable-rewards-all": "Claimable Trading Rewards",
 					"claim-epoch": "Claim: Epoch {{EpochPeriod}}",
-					"claim-all": "Claim All"
+					"claim": "Claim"
 				},
 				"escrow": {
 					"title": "Escrow",

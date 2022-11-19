@@ -182,7 +182,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 							});
 						}}
 					>
-						{t('dashboard.stake.tabs.trading-rewards.claim-all')}
+						{t('dashboard.stake.tabs.trading-rewards.claim')}
 					</Button>
 				</StyledFlexDivRow>
 			</CardGridContainer>
