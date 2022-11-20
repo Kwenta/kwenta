@@ -260,6 +260,7 @@ const useStakingData = () => {
 				Object.values(escrowRows)
 					.map((d) => d.vestable)
 					.reduce((acc, curr) => acc + curr, 0)
+			);
 		},
 	});
 
