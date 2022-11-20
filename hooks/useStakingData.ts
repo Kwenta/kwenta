@@ -119,6 +119,7 @@ const useStakingData = () => {
 	const [kwentaAllowance, setKwentaAllowance] = useState(zeroBN);
 	const [veKwentaBalance, setVEKwentaBalance] = useState(zeroBN);
 	const [veKwentaAllowance, setVEKwentaAllowance] = useState(zeroBN);
+	const [totalVestable, setTotalVestable] = useState(0);
 
 	useContractReads({
 		scopeKey: 'staking',
@@ -261,12 +262,13 @@ const useStakingData = () => {
 				escrowRows[index].vestable = d.quantity / 1e18 ?? 0;
 				escrowRows[index].fee = d.fee / 1e18 ?? 0;
 			});
+			setTotalVestable(
+				Object.values(escrowRows)
+					.map((d) => d.vestable)
+					.reduce((acc, curr) => acc + curr, 0)
+			);
 		},
 	});
-
-	const totalVestable = useMemo(() => {
-		return escrowRows.reduce((acc, row) => wei(acc).add(wei(row.vestable ?? 0)) ?? zeroBN, zeroBN);
-	}, [escrowRows]);
 
 	const resetTime = useMemo(() => {
 		const { epochEnd } = getEpochDetails(network?.id, epochPeriod);
