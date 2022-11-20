@@ -11,7 +11,6 @@ import { TableCellHead } from 'components/Table/Table';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { useStakingContext } from 'contexts/StakingContext';
 import { EscrowRow } from 'hooks/useStakingData';
-import { STAKING_LOW_GAS_LIMIT } from 'queries/staking/utils';
 import { truncateNumbers } from 'utils/formatters/number';
 
 import { StakingCard } from './common';
