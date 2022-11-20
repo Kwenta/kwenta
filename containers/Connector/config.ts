@@ -4,7 +4,6 @@ import { infuraProvider } from 'wagmi/providers/infura';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { publicProvider } from 'wagmi/providers/public';
 
-import Safe from 'components/Rainbowkit/Gnosis';
 import Tally from 'components/Rainbowkit/Tally';
 import { BLAST_NETWORK_LOOKUP } from 'constants/network';
 
@@ -12,7 +11,7 @@ const { chains, provider } = configureChains(
 	[chain.optimism, chain.mainnet, chain.optimismGoerli, chain.goerli],
 	[
 		infuraProvider({
-			apiKey: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+			apiKey: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID!,
 			stallTimeout: 5000,
 			priority: process.env.NEXT_PUBLIC_PROVIDER_ID === 'INFURA' ? 0 : 2,
 		}),
@@ -37,7 +36,6 @@ const connectors = connectorsForWallets([
 	{
 		groupName: 'Popular',
 		wallets: [
-			Safe({ chains }),
 			wallet.metaMask({ chains }),
 			wallet.rainbow({ chains }),
 			wallet.coinbase({ appName: 'Kwenta', chains }),

@@ -24,7 +24,6 @@ const EscrowInputCard: FC = () => {
 		kwentaApproveConfig,
 		kwentaTokenApproval,
 		rewardEscrowContract,
-		resetStakingState,
 	} = useStakingContext();
 
 	const [amount, setAmount] = useState('');
@@ -89,9 +88,6 @@ const EscrowInputCard: FC = () => {
 			const approveTxn = await kwentaApprove?.();
 			monitorTransaction({
 				txHash: approveTxn?.hash ?? '',
-				onTxConfirmed: () => {
-					resetStakingState();
-				},
 			});
 		} else if (activeTab === 0) {
 			const stakeTxn = await stakeEscrowKwenta?.();
@@ -99,7 +95,6 @@ const EscrowInputCard: FC = () => {
 				txHash: stakeTxn?.hash ?? '',
 				onTxConfirmed: () => {
 					setAmount('');
-					resetStakingState();
 				},
 			});
 		} else {
@@ -108,18 +103,10 @@ const EscrowInputCard: FC = () => {
 				txHash: unstakeTxn?.hash ?? '',
 				onTxConfirmed: () => {
 					setAmount('');
-					resetStakingState();
 				},
 			});
 		}
-	}, [
-		activeTab,
-		kwentaApprove,
-		kwentaTokenApproval,
-		resetStakingState,
-		stakeEscrowKwenta,
-		unstakeEscrowKwenta,
-	]);
+	}, [activeTab, kwentaApprove, kwentaTokenApproval, stakeEscrowKwenta, unstakeEscrowKwenta]);
 
 	return (
 		<StakingInputCardContainer>
