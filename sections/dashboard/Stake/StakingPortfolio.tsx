@@ -10,6 +10,7 @@ import media from 'styles/media';
 import { truncateNumbers } from 'utils/formatters/number';
 
 import { SplitStakingCard } from './common';
+import { wei } from '@synthetixio/wei';
 
 const StakingPortfolio = () => {
 	const { t } = useTranslation();
@@ -56,7 +57,7 @@ const StakingPortfolio = () => {
 			{
 				key: 'Vestable',
 				title: t('dashboard.stake.portfolio.vestable'),
-				value: truncateNumbers(totalVestable, 2),
+				value: truncateNumbers(wei(totalVestable), 2),
 			},
 		],
 	];
