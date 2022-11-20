@@ -54,15 +54,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 		resetVestingClaimable,
 	} = useStakingContext();
 
-	const fileNames = useMemo(() => {
-		let fileNames: string[] = [];
-		periods.slice(0, -1).forEach((i) => {
-			fileNames.push(`trading-rewards-snapshots/epoch-${i}.json`);
-		});
-		return fileNames;
-	}, [periods]);
-
-	const allEpochQuery = useGetFiles(fileNames);
+	const allEpochQuery = useGetFiles(periods);
 	const allEpochData = useMemo(() => allEpochQuery?.data ?? [], [allEpochQuery?.data]);
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps

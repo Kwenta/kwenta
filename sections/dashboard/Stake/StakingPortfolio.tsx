@@ -1,3 +1,4 @@
+import { wei } from '@synthetixio/wei';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -10,7 +11,6 @@ import media from 'styles/media';
 import { truncateNumbers } from 'utils/formatters/number';
 
 import { SplitStakingCard } from './common';
-import { wei } from '@synthetixio/wei';
 
 const StakingPortfolio = () => {
 	const { t } = useTranslation();
