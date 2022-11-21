@@ -456,7 +456,7 @@
 				"market": "Market",
 				"amount": "Amount",
 				"value-in-usd": "Value in USD",
-				"oracle-price": "Oracle Price",
+				"oracle-price": "Price",
 				"daily-change": "24H Change",
 				"no-result": "You have no synths"
 			},
