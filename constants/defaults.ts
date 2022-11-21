@@ -33,6 +33,9 @@ export const DEFAULT_TOKEN_DECIMALS = 18;
 // for DEX aggregators like 1inch
 export const DEFAULT_SLIPPAGE = 1;
 export const DEFAULT_1INCH_SLIPPAGE = 3;
+export const COMPLEXITY_LEVEL = 0;
+export const MAIN_ROUTE_PARTS = 1;
+export const SPLIT_PARTS = 1;
 
 // for Trading History
 export const DEFAULT_NUMBER_OF_TRADES: number = 16;

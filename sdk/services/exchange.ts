@@ -18,7 +18,7 @@ import {
 	ETH_ADDRESS,
 	ETH_COINGECKO_ADDRESS,
 } from 'constants/currency';
-import { DEFAULT_1INCH_SLIPPAGE } from 'constants/defaults';
+import { COMPLEXITY_LEVEL, DEFAULT_1INCH_SLIPPAGE, MAIN_ROUTE_PARTS, SPLIT_PARTS } from 'constants/defaults';
 import { ATOMIC_EXCHANGE_SLIPPAGE } from 'constants/exchange';
 import { ETH_UNIT } from 'constants/network';
 import erc20Abi from 'lib/abis/ERC20.json';
@@ -46,6 +46,7 @@ import {
 	OneInchSwapResponse,
 	OneInchTokenListResponse,
 } from '../types/1inch';
+import { MainContent } from 'styles/common';
 
 type CurrencyRate = ethers.BigNumberish;
 type SynthRatesTuple = [string[], CurrencyRate[]];
@@ -922,6 +923,9 @@ export default class ExchangeService {
 				PROTOCOLS,
 				referrerAddress: KWENTA_REFERRAL_ADDRESS,
 				disableEstimate: true,
+				complexityLevel: COMPLEXITY_LEVEL,
+				mainRouteParts: MAIN_ROUTE_PARTS,
+				parts: SPLIT_PARTS,
 			},
 		});
 
@@ -948,6 +952,9 @@ export default class ExchangeService {
 				amount: params.amount,
 				disableEstimate: true,
 				PROTOCOLS,
+				complexityLevel: COMPLEXITY_LEVEL,
+				mainRouteParts: MAIN_ROUTE_PARTS,
+				parts: SPLIT_PARTS,
 			},
 		});
 
