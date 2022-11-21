@@ -4,6 +4,7 @@ import { infuraProvider } from 'wagmi/providers/infura';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { publicProvider } from 'wagmi/providers/public';
 
+import Safe from 'components/Rainbowkit/Gnosis';
 import Tally from 'components/Rainbowkit/Tally';
 import { BLAST_NETWORK_LOOKUP } from 'constants/network';
 
@@ -36,6 +37,7 @@ const connectors = connectorsForWallets([
 	{
 		groupName: 'Popular',
 		wallets: [
+			Safe({ chains }),
 			wallet.metaMask({ chains }),
 			wallet.rainbow({ chains }),
 			wallet.coinbase({ appName: 'Kwenta', chains }),
