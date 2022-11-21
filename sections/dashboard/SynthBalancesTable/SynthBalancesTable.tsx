@@ -2,26 +2,30 @@ import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { SynthBalance } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import * as _ from 'lodash/fp';
-import { FC, ReactElement, useMemo } from 'react';
+import { FC, ReactElement, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps, Row } from 'react-table';
 import { useRecoilValue } from 'recoil';
 import { selectExchangeRatesWei } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
+import { erc20ABI, useContractRead } from 'wagmi';
 
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
+import { KWENTA_TOKEN_ADDRESS } from 'constants/address';
 import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
 import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
 import { Price } from 'queries/rates/types';
 import { balancesState, pastRatesState } from 'store/futures';
-import { formatNumber, zeroBN } from 'utils/formatters/number';
+import { formatNumber, truncateNumbers, zeroBN } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
+import logError from 'utils/logError';
 
 type Cell = {
 	synth: CurrencyKey;
@@ -47,31 +51,71 @@ const conditionalRender = <T,>(prop: T, children: ReactElement): ReactElement =>
 
 const SynthBalancesTable: FC = () => {
 	const { t } = useTranslation();
-	const { synthsMap, network } = Connector.useContainer();
+	const { synthsMap, network, walletAddress } = Connector.useContainer();
 	const pastRates = useRecoilValue(pastRatesState);
 	const exchangeRates = useAppSelector(selectExchangeRatesWei);
 
-	const { balancesMap, tokenList, tokenBalances, balancesStatus } = useAppSelector(
-		({ balances, exchange }) => ({
-			balancesMap: balances.balancesMap,
-			tokenList: exchange.tokenList,
-			tokenBalances: balances.tokenBalances,
-			balancesStatus: balances.status,
-		})
-	);
+	const { tokenBalances } = useAppSelector(({ balances, exchange }) => ({
+		balancesMap: balances.balancesMap,
+		tokenList: exchange.tokenList,
+		tokenBalances: balances.tokenBalances,
+		balancesStatus: balances.status,
+	}));
 	// Only available on Optimism mainnet
 	const oneInchEnabled = network.id === 10;
 
+	const isL2 = useIsL2();
+
 	const { balances } = useRecoilValue(balancesState);
+	const [kwentaBalance, setKwentaBalance] = useState(zeroBN);
+
+	useContractRead({
+		addressOrName: KWENTA_TOKEN_ADDRESS['10'],
+		contractInterface: erc20ABI,
+		functionName: 'balanceOf',
+		args: [walletAddress ?? undefined],
+		watch: false,
+		enabled: !!walletAddress && isL2,
+		onSettled(data, error) {
+			if (error) logError(error);
+			if (data) {
+				setKwentaBalance(data[0] ?? zeroBN);
+			}
+		},
+	});
+
+	const noKwentaFound = !Object.values(tokenBalances).find(
+		(token: any) => token.token.address.toLowerCase() === KWENTA_TOKEN_ADDRESS['10'].toLowerCase()
+	);
 
 	const coinGeckoTokenPricesQuery = useCoinGeckoTokenPricesQuery(
-		Object.values(tokenBalances).map((value: any) => value.token.address.toLowerCase())
+		oneInchEnabled
+			? [
+					...Object.values(tokenBalances).map((value: any) => value.token.address.toLowerCase()),
+					noKwentaFound ? [KWENTA_TOKEN_ADDRESS['10'].toLowerCase()] : [],
+			  ]
+			: []
 	);
 	const coinGeckoPrices = coinGeckoTokenPricesQuery.data ?? null;
 
 	const data1 = useMemo(() => {
+		const kwentaTokenObj = {
+			Kwenta: {
+				balance: truncateNumbers(kwentaBalance, 2),
+				token: {
+					address: KWENTA_TOKEN_ADDRESS['10'].toLowerCase(),
+					symbol: 'Kwenta',
+				},
+			},
+		};
+
+		const allTokens =
+			oneInchEnabled && noKwentaFound && kwentaBalance.gt(0)
+				? { ...kwentaTokenObj, ...tokenBalances }
+				: tokenBalances;
+
 		const exchangeBalances: any[] = oneInchEnabled
-			? Object.values(tokenBalances).map((value: any) => {
+			? Object.values(allTokens).map((value: any) => {
 					return {
 						currencyKey: value.token.symbol,
 						balance: value.balance,
@@ -99,7 +143,7 @@ const SynthBalancesTable: FC = () => {
 				priceChange,
 			};
 		});
-	}, [coinGeckoPrices, oneInchEnabled, synthsMap, tokenBalances]);
+	}, [coinGeckoPrices, noKwentaFound, kwentaBalance, oneInchEnabled, synthsMap, tokenBalances]);
 
 	const data2 = useMemo(() => {
 		return balances.map((synthBalance: SynthBalance) => {
