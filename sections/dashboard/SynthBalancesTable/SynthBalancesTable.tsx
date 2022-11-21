@@ -14,8 +14,10 @@ import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
+import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
+import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
 import { Price } from 'queries/rates/types';
 import { balancesState, pastRatesState } from 'store/futures';
 import { formatNumber, zeroBN } from 'utils/formatters/number';
@@ -45,12 +47,61 @@ const conditionalRender = <T,>(prop: T, children: ReactElement): ReactElement =>
 
 const SynthBalancesTable: FC = () => {
 	const { t } = useTranslation();
-	const { synthsMap } = Connector.useContainer();
+	const { synthsMap, network } = Connector.useContainer();
 	const pastRates = useRecoilValue(pastRatesState);
 	const exchangeRates = useAppSelector(selectExchangeRatesWei);
+
+	const { balancesMap, tokenList, tokenBalances, balancesStatus } = useAppSelector(
+		({ balances, exchange }) => ({
+			balancesMap: balances.balancesMap,
+			tokenList: exchange.tokenList,
+			tokenBalances: balances.tokenBalances,
+			balancesStatus: balances.status,
+		})
+	);
+	// Only available on Optimism mainnet
+	const oneInchEnabled = network.id === 10;
+
 	const { balances } = useRecoilValue(balancesState);
 
-	let data = useMemo(() => {
+	const coinGeckoTokenPricesQuery = useCoinGeckoTokenPricesQuery(
+		Object.values(tokenBalances).map((value: any) => value.token.address.toLowerCase())
+	);
+	const coinGeckoPrices = coinGeckoTokenPricesQuery.data ?? null;
+
+	const data1 = useMemo(() => {
+		const exchangeBalances: any[] = oneInchEnabled
+			? Object.values(tokenBalances).map((value: any) => {
+					return {
+						currencyKey: value.token.symbol,
+						balance: value.balance,
+						address:
+							value.token.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : value.token.address,
+					};
+			  })
+			: [];
+
+		return exchangeBalances.map((synthBalance: any) => {
+			const { currencyKey, balance, address } = synthBalance;
+
+			const price = coinGeckoPrices ? coinGeckoPrices[address]?.usd : 0;
+			const priceChange = coinGeckoPrices ? coinGeckoPrices[address]?.usd_24h_change / 100 : 0;
+
+			const usdBalance = Number(balance) * price;
+
+			const description = synthsMap != null ? synthsMap[currencyKey]?.description : '';
+			return {
+				synth: currencyKey,
+				description,
+				balance,
+				usdBalance,
+				price,
+				priceChange,
+			};
+		});
+	}, [coinGeckoPrices, oneInchEnabled, synthsMap, tokenBalances]);
+
+	const data2 = useMemo(() => {
 		return balances.map((synthBalance: SynthBalance) => {
 			const { currencyKey, balance, usdBalance } = synthBalance;
 
@@ -68,6 +119,8 @@ const SynthBalancesTable: FC = () => {
 			};
 		});
 	}, [pastRates, exchangeRates, balances, synthsMap]);
+
+	const data = [...data1, ...data2];
 
 	return (
 		<>
