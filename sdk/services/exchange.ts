@@ -18,7 +18,12 @@ import {
 	ETH_ADDRESS,
 	ETH_COINGECKO_ADDRESS,
 } from 'constants/currency';
-import { COMPLEXITY_LEVEL, DEFAULT_1INCH_SLIPPAGE, MAIN_ROUTE_PARTS, SPLIT_PARTS } from 'constants/defaults';
+import {
+	COMPLEXITY_LEVEL,
+	DEFAULT_1INCH_SLIPPAGE,
+	MAIN_ROUTE_PARTS,
+	SPLIT_PARTS,
+} from 'constants/defaults';
 import { ATOMIC_EXCHANGE_SLIPPAGE } from 'constants/exchange';
 import { ETH_UNIT } from 'constants/network';
 import erc20Abi from 'lib/abis/ERC20.json';
@@ -46,7 +51,6 @@ import {
 	OneInchSwapResponse,
 	OneInchTokenListResponse,
 } from '../types/1inch';
-import { MainContent } from 'styles/common';
 
 type CurrencyRate = ethers.BigNumberish;
 type SynthRatesTuple = [string[], CurrencyRate[]];
