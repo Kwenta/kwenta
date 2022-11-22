@@ -20,6 +20,7 @@ const queryAccountsFromSubgraph = async (
 	walletAddress: string | null
 ): Promise<string[]> => {
 	if (!walletAddress) return [];
+
 	const futuresEndpoint = getFuturesEndpoint(networkId);
 	const response = await request(
 		futuresEndpoint,
@@ -141,7 +142,7 @@ export default function useQueryCrossMarginAccount() {
 		return crossMarginAccount;
 	};
 
-	const queryAccount = async () => {
+	const queryAccount = async (throwOnError?: boolean) => {
 		try {
 			return await handleAccountQuery();
 		} catch (err) {
@@ -159,6 +160,7 @@ export default function useQueryCrossMarginAccount() {
 					...futuresAccount,
 					status: 'error',
 				});
+				if (throwOnError) throw err;
 				return null;
 			}
 		}

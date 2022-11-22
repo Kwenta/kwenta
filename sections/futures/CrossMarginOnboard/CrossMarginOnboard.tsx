@@ -103,7 +103,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 				CROSS_MARGIN_BASE_SETTINGS[String(network?.id as NetworkId)];
 
 			if (!crossMarginSettingsAddress) throw new Error('Unsupported network');
-			const existing = await queryCrossMarginAccount();
+			const existing = await queryCrossMarginAccount(true);
 			if (existing) {
 				// This is a safety measure in the case a user gets
 				// into this flow when they already have an account
