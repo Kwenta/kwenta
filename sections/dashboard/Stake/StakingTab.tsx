@@ -20,9 +20,6 @@ const StakingTab = () => {
 		totalStakedBalance,
 		weekCounter,
 		getRewardConfig,
-		resetStakingState,
-		resetVesting,
-		resetVestingClaimable,
 	} = useStakingContext();
 
 	const apy = useMemo(() => getStakingApy(totalStakedBalance, weekCounter), [
@@ -54,11 +51,6 @@ const StakingTab = () => {
 						const tx = await getReward?.();
 						monitorTransaction({
 							txHash: tx?.hash ?? '',
-							onTxConfirmed: () => {
-								resetStakingState();
-								resetVesting();
-								resetVestingClaimable();
-							},
 						});
 					}}
 				>
