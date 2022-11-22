@@ -50,6 +50,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 	const marketAssetRate = useAppSelector(selectMarketAssetRate);
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const [orderPrice, setOrderPrice] = useRecoilState(futuresOrderPriceState);
+
 	const dispatch = useAppDispatch();
 
 	const { onTradeOrderPriceChange } = useFuturesContext();
