@@ -1,3 +1,4 @@
+import KWENTAIcon from 'assets/png/currencies/KWENTA.png';
 import AAVEIcon from 'assets/png/currencies/sAAVE.png';
 import ADAIcon from 'assets/png/currencies/sADA.png';
 import APEIcon from 'assets/png/currencies/sAPECOIN.png';
@@ -63,5 +64,6 @@ export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = 
 	sDebtRatio: DEBTIcon,
 	sXMR: XMRIcon,
 	sOP: OPIcon,
+	KWENTA: KWENTAIcon,
 	[CRYPTO_CURRENCY_MAP.SNX]: SNXIcon,
 };

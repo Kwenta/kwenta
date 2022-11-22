@@ -99,7 +99,8 @@ const Overview: FC = () => {
 				balance: kwentaBalance,
 				token: {
 					address: KWENTA_TOKEN_ADDRESS['10'].toLowerCase(),
-					symbol: 'Kwenta',
+					symbol: 'KWENTA',
+					name: 'Kwenta',
 				},
 			},
 		};
