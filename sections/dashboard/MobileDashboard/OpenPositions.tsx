@@ -9,7 +9,7 @@ import { TabPanel } from 'components/Tab';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
 import { balancesState, portfolioState, positionsState } from 'store/futures';
-import { formatDollars, toWei } from 'utils/formatters/number';
+import { formatDollars } from 'utils/formatters/number';
 
 import FuturesPositionsTable from '../FuturesPositionsTable';
 import { MarketsTab } from '../Markets/Markets';
@@ -33,8 +33,8 @@ export type OpenPositionsProps = {
 const OpenPositions: React.FC<OpenPositionsProps> = ({
 	activePositionsTab,
 	setActivePositionsTab,
-	exchangeTokens = [],
-	exchangeTokenBalances = 0,
+	exchangeTokens,
+	exchangeTokenBalances,
 }) => {
 	const { t } = useTranslation();
 	const positions = useRecoilValue(positionsState);
@@ -65,9 +65,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 				name: PositionsTab.SPOT,
 				label: t('dashboard.overview.positions-tabs.spot'),
 				active: activePositionsTab === PositionsTab.SPOT,
-				detail: formatDollars(
-					balances.totalUSDBalance.add(toWei(exchangeTokenBalances.toString()))
-				),
+				detail: formatDollars(balances.totalUSDBalance.add(exchangeTokenBalances)),
 				disabled: false,
 				onClick: () => setActivePositionsTab(PositionsTab.SPOT),
 			},

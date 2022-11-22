@@ -133,7 +133,7 @@ const Overview: FC = () => {
 
 			const price = coinGeckoPrices ? toWei(coinGeckoPrices[address]?.usd.toString()) : zeroBN;
 			const priceChange = coinGeckoPrices
-				? toWei((coinGeckoPrices[address]?.usd_24h_change / 100).toString())
+				? toWei(coinGeckoPrices[address]?.usd_24h_change.toString()).div(100)
 				: zeroBN;
 
 			const usdBalance = balance.mul(price);
