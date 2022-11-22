@@ -8,6 +8,7 @@ import { minTimestampState } from 'store/stats';
 import { weiFromWei } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
+import { AGGREGATE_ASSET_KEY } from './constants';
 import { getFuturesAggregateStats } from './subgraph';
 import { getFuturesEndpoint } from './utils';
 
@@ -33,7 +34,7 @@ export const useGetStatsVolumes = () => {
 					where: {
 						period: `${PERIOD_IN_SECONDS.ONE_DAY}`,
 						timestamp_gt: minTimestamp,
-						asset: '0x',
+						asset: AGGREGATE_ASSET_KEY,
 					},
 				},
 				{
