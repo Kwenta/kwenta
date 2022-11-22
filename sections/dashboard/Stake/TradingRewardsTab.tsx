@@ -47,15 +47,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 	const { walletAddress } = Connector.useContainer();
 	const { multipleMerkleDistributorContract, periods, resetTime } = useStakingContext();
 
-	const fileNames = useMemo(() => {
-		let fileNames: string[] = [];
-		periods.slice(0, -1).forEach((i) => {
-			fileNames.push(`trading-rewards-snapshots/epoch-${i}.json`);
-		});
-		return fileNames;
-	}, [periods]);
-
-	const allEpochQuery = useGetFiles(fileNames);
+	const allEpochQuery = useGetFiles(periods);
 	const allEpochData = useMemo(() => allEpochQuery?.data ?? [], [allEpochQuery?.data]);
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -186,7 +178,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.future-fee-paid', { EpochPeriod: period })}
 						</div>
-						<div className="value">{formatDollars(feePaid, { minDecimals: 4 })}</div>
+						<div className="value">{formatDollars(futuresFeePaid, { minDecimals: 4 })}</div>
 					</div>
 					<div>
 						<div className="title">
