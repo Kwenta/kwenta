@@ -19,7 +19,7 @@ import {
 import { SECONDS_PER_DAY, FUTURES_ENDPOINTS } from './constants';
 import {
 	CrossMarginAccountTransferResult,
-	FuturesHourlyStatResult,
+	FuturesAggregateStatResult,
 	FuturesMarginTransferResult,
 	FuturesOrderResult,
 	FuturesOrderType,
@@ -194,7 +194,9 @@ export const mapOpenInterest = async (
 	return openInterest;
 };
 
-export const calculateVolumes = (futuresHourlyStats: FuturesHourlyStatResult[]): FuturesVolumes => {
+export const calculateVolumes = (
+	futuresHourlyStats: FuturesAggregateStatResult[]
+): FuturesVolumes => {
 	const volumes: FuturesVolumes = futuresHourlyStats.reduce(
 		(acc: FuturesVolumes, { asset, volume, trades }) => {
 			return {
