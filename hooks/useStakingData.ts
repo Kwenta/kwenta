@@ -1,5 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import _ from 'lodash';
 import moment from 'moment';
 import { useMemo, useState } from 'react';
@@ -46,13 +46,13 @@ export type EscrowRow = {
 
 type VestingEntry = {
 	endTime: number;
-	escrowAmount: number;
+	escrowAmount: BigNumber;
 	entryID: number;
 };
 
 type VestingClaimable = {
-	quantity: number;
-	fee: number;
+	quantity: BigNumber;
+	fee: BigNumber;
 };
 
 const useStakingData = () => {
@@ -225,7 +225,7 @@ const useStakingData = () => {
 		scopeKey: 'staking',
 		watch: true,
 		enabled: !!walletAddress,
-		select: (data) => (data as VestingEntry[]).filter((d) => d.escrowAmount > 0),
+		select: (data) => (data as VestingEntry[]).filter((d) => d.escrowAmount.gt(0)),
 	});
 
 	const escrowRows: EscrowRow[] = useMemo(() => {
@@ -234,9 +234,10 @@ const useStakingData = () => {
 				id: Number(d.entryID),
 				date: moment(Number(d.endTime) * 1000).format('MM/DD/YY'),
 				time: formatTruncatedDuration(d.endTime - new Date().getTime() / 1000),
-				vestable: d.endTime * 1000 > Date.now() ? 0 : Number(d.escrowAmount / 1e18),
-				amount: Number(d.escrowAmount / 1e18),
-				fee: d.endTime * 1000 > Date.now() ? Number(d.escrowAmount / 1e18) : 0,
+				vestable:
+					d.endTime * 1000 > Date.now() ? 0 : Number(ethers.utils.formatEther(d.escrowAmount)),
+				amount: Number(ethers.utils.formatEther(d.escrowAmount)),
+				fee: d.endTime * 1000 > Date.now() ? Number(ethers.utils.formatEther(d.escrowAmount)) : 0,
 				status: d.endTime * 1000 > Date.now() ? 'VESTING' : 'VESTED',
 			}));
 		}
@@ -259,8 +260,8 @@ const useStakingData = () => {
 		enabled: !!walletAddress && vestingEntries.length > 0,
 		onSuccess(data) {
 			(data as VestingClaimable[]).forEach((d, index) => {
-				escrowRows[index].vestable = d.quantity / 1e18 ?? 0;
-				escrowRows[index].fee = d.fee / 1e18 ?? 0;
+				escrowRows[index].vestable = Number(ethers.utils.formatEther(d.quantity)) ?? 0;
+				escrowRows[index].fee = Number(ethers.utils.formatEther(d.fee)) ?? 0;
 			});
 			setTotalVestable(
 				Object.values(escrowRows)
