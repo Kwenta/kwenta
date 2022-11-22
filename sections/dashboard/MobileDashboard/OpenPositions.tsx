@@ -8,7 +8,7 @@ import { TabPanel } from 'components/Tab';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
 import { balancesState, portfolioState, positionsState } from 'store/futures';
-import { formatDollars } from 'utils/formatters/number';
+import { formatDollars, toWei } from 'utils/formatters/number';
 
 import FuturesPositionsTable from '../FuturesPositionsTable';
 import { MarketsTab } from '../Markets/Markets';
@@ -18,11 +18,15 @@ import SynthBalancesTable from '../SynthBalancesTable';
 type OpenPositionsProps = {
 	activePositionsTab: PositionsTab;
 	setActivePositionsTab: SetterOrUpdater<PositionsTab>;
+	exchangeTokens?: any;
+	exchangeTokenBalances?: number;
 };
 
 const OpenPositions: React.FC<OpenPositionsProps> = ({
 	activePositionsTab,
 	setActivePositionsTab,
+	exchangeTokens = [],
+	exchangeTokenBalances = 0,
 }) => {
 	const { t } = useTranslation();
 	const positions = useRecoilValue(positionsState);
@@ -53,12 +57,23 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 				name: PositionsTab.SPOT,
 				label: t('dashboard.overview.positions-tabs.spot'),
 				active: activePositionsTab === PositionsTab.SPOT,
-				detail: formatDollars(balances.totalUSDBalance),
+				detail: formatDollars(
+					balances.totalUSDBalance.add(toWei(exchangeTokenBalances.toString()))
+				),
 				disabled: false,
 				onClick: () => setActivePositionsTab(PositionsTab.SPOT),
 			},
 		],
-		[positions, activePositionsTab, setActivePositionsTab, t, portfolio, balances]
+		[
+			t,
+			positions,
+			activePositionsTab,
+			portfolio.crossMarginFutures,
+			portfolio.isolatedMarginFutures,
+			balances.totalUSDBalance,
+			exchangeTokenBalances,
+			setActivePositionsTab,
+		]
 	);
 
 	return (
@@ -84,7 +99,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 			</TabPanel>
 
 			<TabPanel name={MarketsTab.SPOT} activeTab={activePositionsTab}>
-				<SynthBalancesTable />
+				<SynthBalancesTable exchangeTokens={exchangeTokens} />
 			</TabPanel>
 		</div>
 	);

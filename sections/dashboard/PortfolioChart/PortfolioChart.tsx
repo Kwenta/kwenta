@@ -5,12 +5,21 @@ import styled from 'styled-components';
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import { balancesState, portfolioState } from 'store/futures';
+import { toWei } from 'utils/formatters/number';
 
-const PortfolioChart: FC = () => {
+type PortfolioChartProps = {
+	exchangeTokenBalances?: number;
+};
+
+const PortfolioChart: FC<PortfolioChartProps> = ({ exchangeTokenBalances = 0 }) => {
 	const portfolio = useRecoilValue(portfolioState);
 	const balances = useRecoilValue(balancesState);
 
-	const total = useMemo(() => portfolio.total.add(balances.totalUSDBalance), [portfolio, balances]);
+	const total = useMemo(
+		() =>
+			portfolio.total.add(balances.totalUSDBalance).add(toWei(exchangeTokenBalances.toString())),
+		[portfolio.total, balances.totalUSDBalance, exchangeTokenBalances]
+	);
 
 	return (
 		<>

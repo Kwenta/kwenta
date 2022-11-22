@@ -5,7 +5,11 @@ import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common
 
 import PortfolioChart from '../PortfolioChart';
 
-const Portfolio: React.FC = () => {
+type PortfolioProps = {
+	exchangeTokenBalances?: number;
+};
+
+const Portfolio: React.FC<PortfolioProps> = ({ exchangeTokenBalances = 0 }) => {
 	const { t } = useTranslation();
 
 	return (
@@ -15,7 +19,7 @@ const Portfolio: React.FC = () => {
 					<SectionTitle>{t('dashboard.overview.mobile.portfolio')}</SectionTitle>
 				</SectionHeader>
 			</div>
-			<PortfolioChart />
+			<PortfolioChart exchangeTokenBalances={exchangeTokenBalances} />
 		</div>
 	);
 };

@@ -146,9 +146,9 @@ const Overview: FC = () => {
 	const POSITIONS_TABS = useMemo(() => {
 		const crossPositions = positions.cross_margin.filter(({ position }) => !!position).length;
 		const isolatedPositions = positions.isolated_margin.filter(({ position }) => !!position).length;
-		let exchangeTokenBalances = 0;
-		exchangeTokens.forEach(
-			(exchangeToken: any) => (exchangeTokenBalances += exchangeToken.usdBalance)
+		const exchangeTokenBalances = exchangeTokens.reduce(
+			(initial: number, { usdBalance }: { usdBalance: number }) => initial + usdBalance,
+			0
 		);
 		const spotBalances = formatDollars(
 			balances.totalUSDBalance.add(toWei(exchangeTokenBalances.toString()))
@@ -218,7 +218,12 @@ const Overview: FC = () => {
 			<DesktopOnlyView>
 				<CompetitionBanner />
 
-				<PortfolioChart />
+				<PortfolioChart
+					exchangeTokenBalances={exchangeTokens.reduce(
+						(initial: number, { usdBalance }: { usdBalance: number }) => initial + usdBalance,
+						0
+					)}
+				/>
 
 				<TabButtonsContainer>
 					{POSITIONS_TABS.map(({ name, label, ...rest }) => (
@@ -251,7 +256,7 @@ const Overview: FC = () => {
 				</TabPanel>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
-				<MobileDashboard />
+				<MobileDashboard exchangeTokens={exchangeTokens} />
 			</MobileOrTabletView>
 		</>
 	);
