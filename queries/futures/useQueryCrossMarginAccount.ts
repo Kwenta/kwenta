@@ -37,6 +37,8 @@ const queryAccountsFromSubgraph = async (
 	return response?.crossMarginAccounts.map((cm: { id: string }) => cm.id) || [];
 };
 
+// TODO: Clean up this state logic during redux refactor
+
 export default function useQueryCrossMarginAccount() {
 	const { crossMarginContractFactory } = useCrossMarginAccountContracts();
 	const { network, walletAddress, signer } = Connector.useContainer();
@@ -180,3 +182,34 @@ export default function useQueryCrossMarginAccount() {
 
 	return queryAccount;
 }
+
+export const useStoredCrossMarginAccounts = () => {
+	const { crossMarginContractFactory } = useCrossMarginAccountContracts();
+	const { walletAddress } = Connector.useContainer();
+
+	const [storedCrossMarginAccounts, setStoredCrossMarginAccount] = usePersistedRecoilState(
+		crossMarginAccountsState
+	);
+
+	const existingAccounts = crossMarginContractFactory
+		? storedCrossMarginAccounts[crossMarginContractFactory.address]
+		: {};
+
+	const storeCrossMarginAccount = (account: string) => {
+		if (!walletAddress) return;
+		setStoredCrossMarginAccount({
+			...storedCrossMarginAccounts,
+			[crossMarginContractFactory!.address]: {
+				...existingAccounts,
+				[walletAddress]: account,
+			},
+		});
+	};
+
+	const storedAccount =
+		walletAddress && crossMarginContractFactory?.address
+			? storedCrossMarginAccounts[crossMarginContractFactory?.address]?.[walletAddress]
+			: null;
+
+	return { storeCrossMarginAccount, storedAccount };
+};

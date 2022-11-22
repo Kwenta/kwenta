@@ -1,9 +1,10 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { constants } from 'ethers';
+import { hexStripZeros } from 'ethers/lib/utils';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import CompleteCheck from 'assets/svg/futures/onboard-complete-check.svg';
@@ -21,7 +22,10 @@ import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useSUSDContract from 'hooks/useSUSDContract';
-import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
+import { FuturesAccountState } from 'queries/futures/types';
+import useQueryCrossMarginAccount, {
+	useStoredCrossMarginAccounts,
+} from 'queries/futures/useQueryCrossMarginAccount';
 import { balancesState, futuresAccountState } from 'store/futures';
 import { FlexDivRowCentered } from 'styles/common';
 import { isUserDeniedError } from 'utils/formatters/error';
@@ -39,7 +43,12 @@ const MAX_REFETCH_COUNT = 20;
 
 export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 	const { t } = useTranslation();
-	const { defaultSynthetixjs: synthetixjs, network, walletAddress } = Connector.useContainer();
+	const {
+		defaultSynthetixjs: synthetixjs,
+		network,
+		walletAddress,
+		provider,
+	} = Connector.useContainer();
 	const {
 		crossMarginAccountContract,
 		crossMarginContractFactory,
@@ -47,8 +56,8 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 	const susdContract = useSUSDContract();
 	const { handleRefetch, refetchUntilUpdate } = useRefetchContext();
 	const queryCrossMarginAccount = useQueryCrossMarginAccount();
-
-	const futuresAccount = useRecoilValue(futuresAccountState);
+	const { storeCrossMarginAccount } = useStoredCrossMarginAccounts();
+	const [futuresAccount, setFuturesAccount] = useRecoilState(futuresAccountState);
 	const balances = useRecoilValue(balancesState);
 
 	const [depositAmount, setDepositAmount] = useState('');
@@ -112,10 +121,34 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 			}
 
 			const tx = await crossMarginContractFactory.newAccount();
+
 			monitorTransaction({
 				txHash: tx.hash,
 				onTxConfirmed: async () => {
-					await refetchUntilUpdate('cross-margin-account-change');
+					try {
+						const receipt = await provider.getTransactionReceipt(tx.hash);
+						const log = receipt?.logs.find((l) => l.address === crossMarginContractFactory.address);
+						if (log?.data) {
+							const account = hexStripZeros(log.data);
+							storeCrossMarginAccount(account);
+							const accountState: FuturesAccountState = {
+								status: 'complete',
+								crossMarginAvailable: true,
+								crossMarginAddress: account,
+								walletAddress,
+							};
+							setFuturesAccount(accountState);
+						}
+					} catch (err) {
+						logError(err);
+						// Fallback to querying logs and subgraph if tx not available
+						try {
+							await refetchUntilUpdate('cross-margin-account-change');
+						} catch (err) {
+							logError(err);
+							setSubmitting(null);
+						}
+					}
 				},
 				onTxFailed: () => {
 					setSubmitting(null);
