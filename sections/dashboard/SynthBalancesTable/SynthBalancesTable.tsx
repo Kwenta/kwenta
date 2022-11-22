@@ -44,10 +44,17 @@ const conditionalRender = <T,>(prop: T, children: ReactElement): ReactElement =>
 	_.isNil(prop) ? <DefaultCell>{NO_VALUE}</DefaultCell> : children;
 
 type SynthBalancesTableProps = {
-	exchangeTokens?: [];
+	exchangeTokens: {
+		synth: string;
+		description: string;
+		balance: Wei;
+		usdBalance: Wei;
+		price: Wei;
+		priceChange: Wei;
+	}[];
 };
 
-const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens = [] }) => {
+const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
 	const pastRates = useRecoilValue(pastRatesState);

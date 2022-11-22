@@ -1,23 +1,23 @@
+import Wei from '@synthetixio/wei';
 import { FC } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
 import { activePositionsTabState } from 'store/ui';
+import { zeroBN } from 'utils/formatters/number';
 
-import OpenPositions from './OpenPositions';
+import OpenPositions, { OpenPositionsProps } from './OpenPositions';
 import Portfolio from './Portfolio';
 
-type MobileDashboardProps = {
-	exchangeTokens?: any;
-};
+type MobileDashboardProps = Pick<OpenPositionsProps, 'exchangeTokens'>;
 
-const MobileDashboard: FC<MobileDashboardProps> = ({ exchangeTokens = [] }) => {
+const MobileDashboard: FC<MobileDashboardProps> = ({ exchangeTokens }) => {
 	// in the mobile dashboard, there are no differences between positions and markets tab
 	const [activePositionsTab, setActivePositionsTab] = useRecoilState(activePositionsTabState);
 
 	const exchangeTokenBalances = exchangeTokens.reduce(
-		(initial: number, { usdBalance }: { usdBalance: number }) => initial + usdBalance,
-		0
+		(initial: Wei, { usdBalance }: { usdBalance: Wei }) => initial.add(usdBalance),
+		zeroBN
 	);
 
 	return (

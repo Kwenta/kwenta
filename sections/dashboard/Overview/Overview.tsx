@@ -1,3 +1,4 @@
+import Wei from '@synthetixio/wei';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -18,7 +19,7 @@ import { FuturesAccountTypes } from 'queries/futures/types';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
 import { balancesState, portfolioState, positionsState } from 'store/futures';
 import { activePositionsTabState } from 'store/ui';
-import { formatDollars, toWei, truncateNumbers, zeroBN } from 'utils/formatters/number';
+import { formatDollars, toWei, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
@@ -95,7 +96,7 @@ const Overview: FC = () => {
 	useEffect(() => {
 		const kwentaTokenObj = {
 			Kwenta: {
-				balance: truncateNumbers(kwentaBalance, 2),
+				balance: kwentaBalance,
 				token: {
 					address: KWENTA_TOKEN_ADDRESS['10'].toLowerCase(),
 					symbol: 'Kwenta',
@@ -108,27 +109,34 @@ const Overview: FC = () => {
 				? { ...kwentaTokenObj, ...tokenBalances }
 				: tokenBalances;
 
-		const exchangeBalances: any[] = oneInchEnabled
+		const exchangeBalances: {
+			name: string;
+			currencyKey: string;
+			balance: Wei;
+			address: string;
+		}[] = oneInchEnabled
 			? Object.values(allTokens)
 					.filter((token: any) => !synthsMap[token.token.symbol])
 					.map((value: any) => {
 						return {
 							name: value.token.name,
 							currencyKey: value.token.symbol,
-							balance: value.balance,
+							balance: toWei(value.balance),
 							address:
 								value.token.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : value.token.address,
 						};
 					})
 			: [];
 
-		const _exchangeTokens = exchangeBalances.map((exchangeToken: any) => {
+		const _exchangeTokens = exchangeBalances.map((exchangeToken) => {
 			const { name, currencyKey, balance, address } = exchangeToken;
 
-			const price = coinGeckoPrices ? coinGeckoPrices[address]?.usd : 0;
-			const priceChange = coinGeckoPrices ? coinGeckoPrices[address]?.usd_24h_change / 100 : 0;
+			const price = coinGeckoPrices ? toWei(coinGeckoPrices[address]?.usd.toString()) : zeroBN;
+			const priceChange = coinGeckoPrices
+				? toWei((coinGeckoPrices[address]?.usd_24h_change / 100).toString())
+				: zeroBN;
 
-			const usdBalance = Number(balance) * price;
+			const usdBalance = balance.mul(price);
 
 			return {
 				synth: currencyKey,
@@ -147,11 +155,8 @@ const Overview: FC = () => {
 		const crossPositions = positions.cross_margin.filter(({ position }) => !!position).length;
 		const isolatedPositions = positions.isolated_margin.filter(({ position }) => !!position).length;
 		const exchangeTokenBalances = exchangeTokens.reduce(
-			(initial: number, { usdBalance }: { usdBalance: number }) => initial + usdBalance,
-			0
-		);
-		const spotBalances = formatDollars(
-			balances.totalUSDBalance.add(toWei(exchangeTokenBalances.toString()))
+			(initial: Wei, { usdBalance }: { usdBalance: Wei }) => initial.add(usdBalance),
+			zeroBN
 		);
 		return [
 			{
@@ -178,7 +183,7 @@ const Overview: FC = () => {
 				name: PositionsTab.SPOT,
 				label: t('dashboard.overview.positions-tabs.spot'),
 				active: activePositionsTab === PositionsTab.SPOT,
-				detail: spotBalances,
+				detail: formatDollars(balances.totalUSDBalance.add(exchangeTokenBalances)),
 				disabled: false,
 				onClick: () => setActivePositionsTab(PositionsTab.SPOT),
 			},
@@ -220,8 +225,8 @@ const Overview: FC = () => {
 
 				<PortfolioChart
 					exchangeTokenBalances={exchangeTokens.reduce(
-						(initial: number, { usdBalance }: { usdBalance: number }) => initial + usdBalance,
-						0
+						(initial: Wei, { usdBalance }: { usdBalance: Wei }) => initial.add(usdBalance),
+						zeroBN
 					)}
 				/>
 

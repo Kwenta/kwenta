@@ -1,3 +1,4 @@
+import Wei from '@synthetixio/wei';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SetterOrUpdater, useRecoilValue } from 'recoil';
@@ -15,11 +16,18 @@ import { MarketsTab } from '../Markets/Markets';
 import { PositionsTab } from '../Overview/Overview';
 import SynthBalancesTable from '../SynthBalancesTable';
 
-type OpenPositionsProps = {
+export type OpenPositionsProps = {
 	activePositionsTab: PositionsTab;
 	setActivePositionsTab: SetterOrUpdater<PositionsTab>;
-	exchangeTokens?: any;
-	exchangeTokenBalances?: number;
+	exchangeTokens: {
+		synth: string;
+		description: string;
+		balance: Wei;
+		usdBalance: Wei;
+		price: Wei;
+		priceChange: Wei;
+	}[];
+	exchangeTokenBalances: Wei;
 };
 
 const OpenPositions: React.FC<OpenPositionsProps> = ({
