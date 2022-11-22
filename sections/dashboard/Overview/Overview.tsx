@@ -1,17 +1,25 @@
-import { FC, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
+import { erc20ABI, useContractRead } from 'wagmi';
 
 import TabButton from 'components/Button/TabButton';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import FuturesIcon from 'components/Nav/FuturesIcon';
 import { TabPanel } from 'components/Tab';
+import { KWENTA_TOKEN_ADDRESS } from 'constants/address';
+import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'constants/currency';
+import Connector from 'containers/Connector';
+import useIsL2 from 'hooks/useIsL2';
+import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
 import { balancesState, portfolioState, positionsState } from 'store/futures';
 import { activePositionsTabState } from 'store/ui';
-import { formatDollars } from 'utils/formatters/number';
+import { formatDollars, toWei, truncateNumbers, zeroBN } from 'utils/formatters/number';
+import logError from 'utils/logError';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
 import FuturesPositionsTable from '../FuturesPositionsTable';
@@ -39,9 +47,112 @@ const Overview: FC = () => {
 	);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
+	const { network, walletAddress, synthsMap } = Connector.useContainer();
+
+	const { tokenBalances } = useAppSelector(({ balances, exchange }) => ({
+		balancesMap: balances.balancesMap,
+		tokenList: exchange.tokenList,
+		tokenBalances: balances.tokenBalances,
+		balancesStatus: balances.status,
+	}));
+	// Only available on Optimism mainnet
+	const oneInchEnabled = network.id === 10;
+
+	const isL2 = useIsL2();
+
+	const [exchangeTokens, setExchangeTokens] = useState<any>([]);
+	const [kwentaBalance, setKwentaBalance] = useState(zeroBN);
+
+	useContractRead({
+		addressOrName: KWENTA_TOKEN_ADDRESS['10'],
+		contractInterface: erc20ABI,
+		functionName: 'balanceOf',
+		args: [walletAddress ?? undefined],
+		watch: false,
+		enabled: !!walletAddress && isL2,
+		onSettled(data, error) {
+			if (error) logError(error);
+			if (data) {
+				setKwentaBalance(data[0] ?? zeroBN);
+			}
+		},
+	});
+
+	const noKwentaFound = !Object.values(tokenBalances).find(
+		(token: any) => token.token.address.toLowerCase() === KWENTA_TOKEN_ADDRESS['10'].toLowerCase()
+	);
+
+	const coinGeckoTokenPricesQuery = useCoinGeckoTokenPricesQuery(
+		oneInchEnabled
+			? [
+					...Object.values(tokenBalances).map((value: any) => value.token.address.toLowerCase()),
+					noKwentaFound ? [KWENTA_TOKEN_ADDRESS['10'].toLowerCase()] : [],
+			  ]
+			: []
+	);
+	const coinGeckoPrices = coinGeckoTokenPricesQuery.data ?? null;
+
+	useEffect(() => {
+		const kwentaTokenObj = {
+			Kwenta: {
+				balance: truncateNumbers(kwentaBalance, 2),
+				token: {
+					address: KWENTA_TOKEN_ADDRESS['10'].toLowerCase(),
+					symbol: 'Kwenta',
+				},
+			},
+		};
+
+		const allTokens =
+			oneInchEnabled && noKwentaFound && kwentaBalance.gt(0)
+				? { ...kwentaTokenObj, ...tokenBalances }
+				: tokenBalances;
+
+		const exchangeBalances: any[] = oneInchEnabled
+			? Object.values(allTokens)
+					.filter((token: any) => !synthsMap[token.token.symbol])
+					.map((value: any) => {
+						return {
+							name: value.token.name,
+							currencyKey: value.token.symbol,
+							balance: value.balance,
+							address:
+								value.token.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : value.token.address,
+						};
+					})
+			: [];
+
+		const _exchangeTokens = exchangeBalances.map((exchangeToken: any) => {
+			const { name, currencyKey, balance, address } = exchangeToken;
+
+			const price = coinGeckoPrices ? coinGeckoPrices[address]?.usd : 0;
+			const priceChange = coinGeckoPrices ? coinGeckoPrices[address]?.usd_24h_change / 100 : 0;
+
+			const usdBalance = Number(balance) * price;
+
+			return {
+				synth: currencyKey,
+				description: name,
+				balance,
+				usdBalance,
+				price,
+				priceChange,
+			};
+		});
+
+		setExchangeTokens(_exchangeTokens);
+	}, [coinGeckoPrices, kwentaBalance, noKwentaFound, oneInchEnabled, synthsMap, tokenBalances]);
+
 	const POSITIONS_TABS = useMemo(() => {
 		const crossPositions = positions.cross_margin.filter(({ position }) => !!position).length;
 		const isolatedPositions = positions.isolated_margin.filter(({ position }) => !!position).length;
+		let exchangeTokenBalances = 0;
+		exchangeTokens.forEach(
+			(exchangeToken: any) => (exchangeTokenBalances += exchangeToken.usdBalance)
+		);
+		const spotBalances = formatDollars(
+			balances.totalUSDBalance.add(toWei(exchangeTokenBalances.toString()))
+		);
 		return [
 			{
 				name: PositionsTab.CROSS_MARGIN,
@@ -67,12 +178,22 @@ const Overview: FC = () => {
 				name: PositionsTab.SPOT,
 				label: t('dashboard.overview.positions-tabs.spot'),
 				active: activePositionsTab === PositionsTab.SPOT,
-				detail: formatDollars(balances.totalUSDBalance),
+				detail: spotBalances,
 				disabled: false,
 				onClick: () => setActivePositionsTab(PositionsTab.SPOT),
 			},
 		];
-	}, [positions, balances, activePositionsTab, setActivePositionsTab, t, portfolio]);
+	}, [
+		positions.cross_margin,
+		positions.isolated_margin,
+		exchangeTokens,
+		balances.totalUSDBalance,
+		t,
+		activePositionsTab,
+		portfolio.crossMarginFutures,
+		portfolio.isolatedMarginFutures,
+		setActivePositionsTab,
+	]);
 
 	const MARKETS_TABS = useMemo(
 		() => [
@@ -113,7 +234,7 @@ const Overview: FC = () => {
 				</TabPanel>
 
 				<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}>
-					<SynthBalancesTable />
+					<SynthBalancesTable exchangeTokens={exchangeTokens} />
 				</TabPanel>
 
 				<TabButtonsContainer>
