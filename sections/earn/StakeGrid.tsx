@@ -1,10 +1,10 @@
 import { wei } from '@synthetixio/wei';
 import { useCallback, useMemo } from 'react';
-import { claimRewards } from 'state/earn/actions';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import Button from 'components/Button';
 import useRewardsTimer from 'hooks/useRewardsTimer';
+import { claimRewards } from 'state/earn/actions';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { toWei, truncateNumbers } from 'utils/formatters/number';
 
 import { GridContainer } from './common';
@@ -45,7 +45,14 @@ const StakeGrid = () => {
 		<GridContainer>
 			<GridData title="Your Yield / Day" value={yieldPerDay} hasKwentaLogo />
 			<GridData title="Your Rewards" value={truncateNumbers(earnedRewards, 4)} hasKwentaLogo>
-				<Button fullWidth variant="flat" size="sm" style={{ marginTop: 10 }} onClick={handleClaim}>
+				<Button
+					fullWidth
+					variant="flat"
+					size="sm"
+					style={{ marginTop: 10 }}
+					disabled={!toWei(earnedRewards).gt(0)}
+					onClick={handleClaim}
+				>
 					Claim Rewards
 				</Button>
 			</GridData>

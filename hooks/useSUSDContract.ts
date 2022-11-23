@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 
 import Connector from 'containers/Connector';
-import { ERC20, ERC20__factory } from 'lib/abis/types';
+import { ERC20 } from 'sdk/contracts/types/ERC20';
+import { ERC20__factory } from 'sdk/contracts/types/factories/ERC20__factory';
 
 export default function useSUSDContract(): ERC20 | null {
 	const { tokensMap: synthTokensMap, signer } = Connector.useContainer();

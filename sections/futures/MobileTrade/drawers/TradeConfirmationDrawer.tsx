@@ -10,7 +10,9 @@ import { useFuturesContext } from 'contexts/FuturesContext';
 import useEstimateGasCost from 'hooks/useEstimateGasCost';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { PositionSide } from 'sections/futures/types';
-import { currentMarketState, potentialTradeDetailsState } from 'store/futures';
+import { selectMarketAsset } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { potentialTradeDetailsState } from 'store/futures';
 import { zeroBN, formatDollars, formatCurrency, formatNumber } from 'utils/formatters/number';
 
 import BaseDrawer from './BaseDrawer';
@@ -23,7 +25,7 @@ type TradeConfirmationDrawerProps = {
 const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({ open, closeDrawer }) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
-	const market = useRecoilValue(currentMarketState);
+	const marketAsset = useAppSelector(selectMarketAsset);
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { data: potentialTradeDetails } = useRecoilValue(potentialTradeDetailsState);
 	const { estimateSnxTxGasCost } = useEstimateGasCost();
@@ -53,8 +55,8 @@ const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({ open,
 			{ label: 'side', value: (positionDetails?.side ?? PositionSide.LONG).toUpperCase() },
 			{
 				label: 'size',
-				value: formatCurrency(market || '', positionDetails?.size ?? zeroBN, {
-					sign: market ? synthsMap[market]?.sign : '',
+				value: formatCurrency(marketAsset || '', positionDetails?.size ?? zeroBN, {
+					sign: marketAsset ? synthsMap[marketAsset]?.sign : '',
 				}),
 			},
 			{ label: 'leverage', value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x` },
@@ -82,7 +84,7 @@ const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({ open,
 				}),
 			},
 		],
-		[positionDetails, market, synthsMap, transactionFee, selectedPriceCurrency]
+		[positionDetails, marketAsset, synthsMap, transactionFee, selectedPriceCurrency]
 	);
 
 	return (

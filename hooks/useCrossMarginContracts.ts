@@ -4,14 +4,12 @@ import { useRecoilValue } from 'recoil';
 
 import { CROSS_MARGIN_ACCOUNT_FACTORY, CROSS_MARGIN_BASE_SETTINGS } from 'constants/address';
 import Connector from 'containers/Connector';
-import {
-	CrossMarginBaseSettings__factory,
-	CrossMarginAccountFactory__factory,
-	CrossMarginBase__factory,
-	CrossMarginAccountFactory,
-	CrossMarginBase,
-	CrossMarginBaseSettings,
-} from 'lib/abis/types';
+import { CrossMarginAccountFactory } from 'sdk/contracts/types/CrossMarginAccountFactory';
+import { CrossMarginBase } from 'sdk/contracts/types/CrossMarginBase';
+import { CrossMarginBaseSettings } from 'sdk/contracts/types/CrossMarginBaseSettings';
+import { CrossMarginAccountFactory__factory } from 'sdk/contracts/types/factories/CrossMarginAccountFactory__factory';
+import { CrossMarginBase__factory } from 'sdk/contracts/types/factories/CrossMarginBase__factory';
+import { CrossMarginBaseSettings__factory } from 'sdk/contracts/types/factories/CrossMarginBaseSettings__factory';
 import { futuresAccountState } from 'store/futures';
 
 export default function useCrossMarginContracts(): {

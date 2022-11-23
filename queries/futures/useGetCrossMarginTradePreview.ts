@@ -8,7 +8,7 @@ import { useCallback, useMemo } from 'react';
 
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
-import FuturesMarket from 'lib/abis/FuturesMarket.json';
+import FuturesMarket from 'sdk/contracts/abis/FuturesMarket.json';
 import { PotentialTradeStatus } from 'sections/futures/types';
 import {
 	zeroBN,

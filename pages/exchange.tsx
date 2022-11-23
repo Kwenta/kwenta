@@ -1,7 +1,5 @@
 import { useRouter } from 'next/router';
 import { FC, useEffect } from 'react';
-import { resetCurrencies } from 'state/exchange/actions';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import NotificationContainer from 'constants/NotificationContainer';
@@ -9,6 +7,8 @@ import Connector from 'containers/Connector';
 import ExchangeContent from 'sections/exchange/ExchangeContent';
 import ExchangeHead from 'sections/exchange/ExchangeHead';
 import Header from 'sections/shared/Layout/AppLayout/Header';
+import { resetCurrencies } from 'state/exchange/actions';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FullScreenContainer, MobileScreenContainer } from 'styles/common';
 
 type ExchangeComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };

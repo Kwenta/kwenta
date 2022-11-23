@@ -1,9 +1,10 @@
 import { FC, useCallback } from 'react';
+import styled, { css } from 'styled-components';
+
 import { setRatio } from 'state/exchange/actions';
 import { selectQuoteBalanceWei } from 'state/exchange/selectors';
 import type { SwapRatio } from 'state/exchange/types';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import styled, { css } from 'styled-components';
 
 const RATIOS: SwapRatio[] = [25, 50, 75, 100];
 

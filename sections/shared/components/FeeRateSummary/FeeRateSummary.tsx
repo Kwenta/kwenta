@@ -1,12 +1,12 @@
 import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { selectExchangeFeeRateWei, selectBaseFeeRateWei } from 'state/exchange/selectors';
-import { useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import TimerIcon from 'assets/svg/app/timer.svg';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { NO_VALUE } from 'constants/placeholder';
+import { selectExchangeFeeRateWei, selectBaseFeeRateWei } from 'state/exchange/selectors';
+import { useAppSelector } from 'state/hooks';
 import { formatPercent } from 'utils/formatters/number';
 
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';

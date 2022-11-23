@@ -7,9 +7,10 @@ import Button from 'components/Button';
 import CustomNumericInput from 'components/Input/CustomNumericInput';
 import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import { useFuturesContext } from 'contexts/FuturesContext';
+import { selectMarketInfo } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import {
 	leverageValueCommittedState,
-	marketInfoState,
 	maxLeverageState,
 	nextPriceDisclaimerState,
 	orderTypeState,
@@ -29,8 +30,9 @@ const LeverageInput: FC = () => {
 	const orderType = useRecoilValue(orderTypeState);
 	const isDisclaimerDisplayed = useRecoilValue(nextPriceDisclaimerState);
 	const setIsLeverageValueCommitted = useSetRecoilState(leverageValueCommittedState);
-	const marketInfo = useRecoilValue(marketInfoState);
 	const position = useRecoilValue(positionState);
+
+	const marketInfo = useAppSelector(selectMarketInfo);
 
 	const { onLeverageChange } = useFuturesContext();
 

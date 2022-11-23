@@ -16,7 +16,9 @@ import { NO_VALUE } from 'constants/placeholder';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import useEstimateGasCost from 'hooks/useEstimateGasCost';
-import { currentMarketState, positionState } from 'store/futures';
+import { selectMarketAsset } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { positionState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { FlexDivRowCentered } from 'styles/common';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
@@ -37,7 +39,7 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, sUSDBalance, 
 
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const position = useRecoilValue(positionState);
-	const market = useRecoilValue(currentMarketState);
+	const marketAsset = useAppSelector(selectMarketAsset);
 
 	const minDeposit = useMemo(() => {
 		const accessibleMargin = position?.accessibleMargin ?? zeroBN;
@@ -77,19 +79,19 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, sUSDBalance, 
 	);
 
 	const depositTxn = useSynthetixTxn(
-		`FuturesMarket${getDisplayAsset(market)}`,
+		`FuturesMarket${getDisplayAsset(marketAsset)}`,
 		'transferMargin',
 		[wei(amount || 0).toBN()],
 		gasPrice || undefined,
-		{ enabled: !!market && !!amount && !isDisabled && transferType === 0 }
+		{ enabled: !!marketAsset && !!amount && !isDisabled && transferType === 0 }
 	);
 
 	const withdrawTxn = useSynthetixTxn(
-		`FuturesMarket${market?.[0] === 's' ? market?.substring(1) : market}`,
+		`FuturesMarket${getDisplayAsset(marketAsset)}`,
 		'transferMargin',
 		[computedWithdrawAmount],
 		gasPrice || undefined,
-		{ enabled: !!market && !!amount && transferType === 1 }
+		{ enabled: !!marketAsset && !!amount && transferType === 1 }
 	);
 
 	const transactionFee = estimateSnxTxGasCost(transferType === 0 ? depositTxn : withdrawTxn);

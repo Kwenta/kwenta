@@ -2,8 +2,6 @@ import Wei from '@synthetixio/wei';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { selectPositionWei } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
 import styled, { css } from 'styled-components';
 
 import PreviewArrow from 'components/PreviewArrow';
@@ -15,10 +13,10 @@ import { useFuturesContext } from 'contexts/FuturesContext';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { PositionSide } from 'queries/futures/types';
+import { selectMarketAsset, selectMarketKey, selectPosition } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import {
-	currentMarketState,
 	futuresAccountTypeState,
-	marketKeyState,
 	positionHistoryState,
 	potentialTradeDetailsState,
 } from 'store/futures';
@@ -66,10 +64,11 @@ type PositionPreviewData = {
 
 const PositionCard: React.FC<PositionCardProps> = () => {
 	const { t } = useTranslation();
-	const position = useAppSelector(selectPositionWei);
-	const marketAsset = useRecoilValue(currentMarketState);
-	const marketKey = useRecoilValue(marketKeyState);
 	const futuresAccountType = useRecoilValue(futuresAccountTypeState);
+
+	const position = useAppSelector(selectPosition);
+	const marketAsset = useAppSelector(selectMarketAsset);
+	const marketKey = useAppSelector(selectMarketKey);
 
 	const positionDetails = position?.position ?? null;
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketKey);

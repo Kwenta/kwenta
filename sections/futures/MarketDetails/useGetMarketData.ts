@@ -8,13 +8,13 @@ import { NO_VALUE } from 'constants/placeholder';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useExternalPriceQuery from 'queries/rates/useExternalPriceQuery';
 import {
-	currentMarketState,
-	fundingRateState,
-	futuresVolumesState,
-	marketInfoState,
-	marketKeyState,
-	pastRatesState,
-} from 'store/futures';
+	selectFundingRate,
+	selectMarketAsset,
+	selectMarketInfo,
+	selectMarketKey,
+} from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { futuresVolumesState, pastRatesState } from 'store/futures';
 import { isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
@@ -26,11 +26,12 @@ type MarketData = Record<string, { value: string | JSX.Element; color?: string }
 const useGetMarketData = (mobile?: boolean) => {
 	const { t } = useTranslation();
 
-	const marketAsset = useRecoilValue(currentMarketState);
-	const marketKey = useRecoilValue(marketKeyState);
-	const marketInfo = useRecoilValue(marketInfoState);
+	const marketAsset = useAppSelector(selectMarketAsset);
+	const marketKey = useAppSelector(selectMarketKey);
+	const fundingRate = useAppSelector(selectFundingRate);
+	const marketInfo = useAppSelector(selectMarketInfo);
+
 	const pastRates = useRecoilValue(pastRatesState);
-	const fundingRate = useRecoilValue(fundingRateState);
 	const futuresVolumes = useRecoilValue(futuresVolumesState);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();

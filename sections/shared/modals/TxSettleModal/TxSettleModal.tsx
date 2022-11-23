@@ -1,11 +1,11 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
+import { useAppSelector } from 'state/hooks';
 import { FlexDivColCentered, NoTextTransform } from 'styles/common';
 import { formatRevert } from 'utils/formatters/error';
 
