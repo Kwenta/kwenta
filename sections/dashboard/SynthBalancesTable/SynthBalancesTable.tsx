@@ -63,7 +63,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 
 	const { balances } = useRecoilValue(balancesState);
 
-	const data2 = useMemo(() => {
+	const synthTokens = useMemo(() => {
 		return balances.map((synthBalance: SynthBalance) => {
 			const { currencyKey, balance, usdBalance } = synthBalance;
 
@@ -82,7 +82,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 		});
 	}, [pastRates, exchangeRates, balances, synthsMap]);
 
-	const data = [...exchangeTokens, ...data2].sort((a, b) =>
+	const data = [...exchangeTokens, ...synthTokens].sort((a, b) =>
 		sortWei(a.usdBalance, b.usdBalance, 'descending')
 	);
 
