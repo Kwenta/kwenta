@@ -1,6 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-import { Period } from 'sdk/constants/period';
 import { FuturesMarketSerialized } from 'sdk/types/futures';
 import { AppThunk } from 'state/store';
 import { ThunkConfig } from 'state/types';
@@ -22,12 +21,13 @@ export const fetchMarkets = createAsyncThunk<
 >('futures/fetchMarkets', async (_, { extra: { sdk } }) => {
 	const markets = await sdk.futures.getMarkets();
 	const serializedMarkets = serializeMarkets(markets);
-	// const averageFundingRates = await sdk.futures.getAverageFundingRates(markets, Period.ONE_HOUR);
-	// const serializedRates = averageFundingRates.map((r) => ({
-	// 	...r,
-	// 	fundingRate: r.fundingRate ? r.fundingRate.toString() : null,
-	// }));
-	return { markets: serializedMarkets, fundingRates: [] };
+
+	const averageFundingRates = await sdk.futures.getAverageFundingRates(markets);
+	const serializedRates = averageFundingRates.map((r) => ({
+		...r,
+		fundingRate: r.fundingRate ? r.fundingRate.toString() : null,
+	}));
+	return { markets: serializedMarkets, fundingRates: serializedRates };
 });
 
 // TODO: Finish
