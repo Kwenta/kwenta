@@ -131,6 +131,9 @@ const StakingTabs: React.FC = () => {
 						optionPadding={'0px'}
 						value={{
 							label: currentEpochLabel,
+							period,
+							start,
+							end,
 						}}
 						menuWidth={240}
 						components={{ IndicatorSeparator, DropdownIndicator }}

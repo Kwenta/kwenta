@@ -1,21 +1,16 @@
+import { wei } from '@synthetixio/wei';
 import { useQuery } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import { chainId } from 'wagmi';
 
+import { PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { minTimestampState } from 'store/stats';
 import { weiFromWei } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
-import { getFuturesHourlyStats } from './subgraph';
+import { AGGREGATE_ASSET_KEY } from './constants';
+import { getFuturesAggregateStats } from './subgraph';
 import { getFuturesEndpoint } from './utils';
-
-type VolumeStatMap = Record<
-	string,
-	{
-		trades: number;
-		volume: number;
-	}
->;
 
 type VolumeStat = {
 	date: string;
@@ -30,14 +25,16 @@ export const useGetStatsVolumes = () => {
 
 	const query = async () => {
 		try {
-			const response = await getFuturesHourlyStats(
+			const response = await getFuturesAggregateStats(
 				futuresEndpoint,
 				{
 					first: 999999,
 					orderBy: 'timestamp',
 					orderDirection: 'asc',
 					where: {
+						period: `${PERIOD_IN_SECONDS.ONE_DAY}`,
 						timestamp_gt: minTimestamp,
+						asset: AGGREGATE_ASSET_KEY,
 					},
 				},
 				{
@@ -48,33 +45,18 @@ export const useGetStatsVolumes = () => {
 				}
 			);
 
-			// aggregate markets into a single object
-			const summary = response.reduce((acc: VolumeStatMap, res) => {
-				const timestamp = res.timestamp.mul(1000).toNumber();
-				const date = new Date(timestamp).toISOString().split('T')[0];
-				const volume = weiFromWei(res.volume ?? 0).toNumber();
-				const trades = res.trades.toNumber();
-
-				acc[date] = {
-					volume: acc[date]?.volume ? acc[date].volume + volume : volume,
-					trades: acc[date]?.trades ? acc[date].trades + trades : trades,
+			let cumulativeTrades = wei(0);
+			const result: VolumeStat[] = response.map(({ timestamp, trades, volume }) => {
+				cumulativeTrades = cumulativeTrades.add(trades);
+				const thisTimestamp = timestamp.mul(1000).toNumber();
+				const date = new Date(thisTimestamp).toISOString().split('T')[0];
+				return {
+					date,
+					trades: trades.toNumber(),
+					volume: weiFromWei(volume ?? 0).toNumber(),
+					cumulativeTrades: cumulativeTrades.toNumber(),
 				};
-				return acc;
-			}, {});
-
-			// convert the object into an array and sort it
-			let cumulativeTrades = 0;
-			const result: VolumeStat[] = Object.entries(summary)
-				.sort((a, b) => (new Date(a[0]) > new Date(b[0]) ? 1 : -1))
-				.map(([date, { trades, volume }]) => {
-					cumulativeTrades += trades;
-					return {
-						date,
-						trades,
-						volume,
-						cumulativeTrades,
-					};
-				});
+			});
 			return result;
 		} catch (e) {
 			logError(e);

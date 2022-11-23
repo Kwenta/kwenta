@@ -21,7 +21,7 @@ import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
 import { selectExchangeRates } from 'state/exchange/selectors';
 import { fetchOptimismMarkets } from 'state/home/actions';
-import { selectOptimismMarkets } from 'state/home/selector';
+import { selectOptimismMarkets } from 'state/home/selectors';
 import { useAppSelector, usePollAction } from 'state/hooks';
 import { futuresVolumesState, pastRatesState } from 'store/futures';
 import {

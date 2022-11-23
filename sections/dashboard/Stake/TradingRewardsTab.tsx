@@ -45,22 +45,9 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 }: TradingRewardProps) => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
-	const {
-		multipleMerkleDistributorContract,
-		periods,
-		resetTime,
-		resetStakingState,
-	} = useStakingContext();
+	const { multipleMerkleDistributorContract, periods, resetTime } = useStakingContext();
 
-	const fileNames = useMemo(() => {
-		let fileNames: string[] = [];
-		periods.slice(0, -1).forEach((i) => {
-			fileNames.push(`trading-rewards-snapshots/epoch-${i}.json`);
-		});
-		return fileNames;
-	}, [periods]);
-
-	const allEpochQuery = useGetFiles(fileNames);
+	const allEpochQuery = useGetFiles(periods);
 	const allEpochData = useMemo(() => allEpochQuery?.data ?? [], [allEpochQuery?.data]);
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -94,10 +81,11 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 		});
 	}, [multipleMerkleDistributorContract, rewards]);
 
-	const { refetch: resetClaimable, data: isClaimable } = useContractReads({
+	const { data: isClaimable } = useContractReads({
 		contracts: checkIsClaimed,
 		enabled: checkIsClaimed && checkIsClaimed.length > 0,
-		watch: false,
+		watch: true,
+		scopeKey: 'staking',
 	});
 
 	const claimableRewards = useMemo(
@@ -171,14 +159,10 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 							const tx = await claim?.();
 							monitorTransaction({
 								txHash: tx?.hash ?? '',
-								onTxConfirmed: () => {
-									resetStakingState();
-									resetClaimable();
-								},
 							});
 						}}
 					>
-						{t('dashboard.stake.tabs.trading-rewards.claim-all')}
+						{t('dashboard.stake.tabs.trading-rewards.claim')}
 					</Button>
 				</StyledFlexDivRow>
 			</CardGridContainer>
@@ -194,7 +178,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.future-fee-paid', { EpochPeriod: period })}
 						</div>
-						<div className="value">{formatDollars(feePaid, { minDecimals: 4 })}</div>
+						<div className="value">{formatDollars(futuresFeePaid, { minDecimals: 4 })}</div>
 					</div>
 					<div>
 						<div className="title">

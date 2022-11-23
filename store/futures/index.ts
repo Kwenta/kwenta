@@ -6,7 +6,6 @@ import { DEFAULT_MAX_LEVERAGE } from 'constants/futures';
 import {
 	FuturesAccountState,
 	FuturesAccountType,
-	FuturesMarket,
 	FuturesPosition,
 	FuturesPotentialTradeDetailsQuery,
 	SynthBalances,
@@ -22,6 +21,7 @@ import {
 } from 'queries/futures/types';
 import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import { Price } from 'queries/rates/types';
+import { FuturesMarket } from 'sdk/types/futures';
 import { PositionSide } from 'sections/futures/types';
 import { localStorageEffect } from 'store/effects';
 import { getFuturesKey, getSynthsKey } from 'store/utils';

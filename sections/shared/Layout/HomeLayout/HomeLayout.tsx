@@ -24,11 +24,11 @@ const HomeLayout: FC<HomeLayoutProps> = ({ children }) => (
 				<FuturesBannerLinkWrapper>
 					<>
 						<FuturesLink
-							href="https://mirror.xyz/kwenta.eth/ueasaL_H0IdPe5-U1Z6jqGfa_B2HW3xf0_CSIR34ueE"
+							href="https://snapshot.org/#/kwenta.eth/proposal/0x4a2dbd3839de2b6407ebbdc47e7d51a5d69f3363a803a93ffd8cf4e5d08011ff"
 							target="_blank"
 						>
-							Council nominations are live in the Kwenta Discord until Nov 22nd. Click to learn
-							more.
+							Council elections are live on Snapshot until Nov 29th. $KWENTA stakers go cast your
+							vote!
 						</FuturesLink>
 					</>
 				</FuturesBannerLinkWrapper>
@@ -38,10 +38,11 @@ const HomeLayout: FC<HomeLayoutProps> = ({ children }) => (
 			<FuturesBannerContainer>
 				<>
 					<FuturesLink
-						href="https://mirror.xyz/kwenta.eth/ueasaL_H0IdPe5-U1Z6jqGfa_B2HW3xf0_CSIR34ueE"
+						href="https://snapshot.org/#/kwenta.eth/proposal/0x4a2dbd3839de2b6407ebbdc47e7d51a5d69f3363a803a93ffd8cf4e5d08011ff"
 						target="_blank"
 					>
-						Council nominations are live in the Kwenta Discord until Nov 22nd. Click to learn more.
+						Council elections are live on Snapshot until Nov 29th. $KWENTA stakers go cast your
+						vote!
 					</FuturesLink>
 				</>
 			</FuturesBannerContainer>

@@ -1,6 +1,7 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { Contract, ethers } from 'ethers';
 
+import { KwentaArrakisVaultABI, StakingRewardsABI } from './abis/main';
 import { ADDRESSES } from './constants';
 import {
 	AddressResolver__factory,
@@ -80,6 +81,13 @@ export const getContractsByNetwork = (
 					ADDRESSES.CrossMarginBaseSettings[networkId],
 					provider
 			  )
+			: undefined,
+		// TODO: Replace these when we move away from wagmi hooks
+		KwentaArrakisVault: ADDRESSES.KwentaArrakisVault[networkId]
+			? new Contract(ADDRESSES.KwentaArrakisVault[networkId], KwentaArrakisVaultABI, provider)
+			: undefined,
+		StakingRewards: ADDRESSES.StakingRewards[networkId]
+			? new Contract(ADDRESSES.StakingRewards[networkId], StakingRewardsABI, provider)
 			: undefined,
 	};
 };

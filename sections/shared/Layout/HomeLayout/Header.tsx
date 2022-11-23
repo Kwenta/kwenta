@@ -72,7 +72,7 @@ const Header: FC = () => {
 		{
 			id: 'kips',
 			label: t('homepage.nav.governance.kips'),
-			onClick: () => window.open(EXTERNAL_LINKS.Kips.Home, '_blank'),
+			onClick: () => window.open(EXTERNAL_LINKS.Governance.Kips, '_blank'),
 		},
 	];
 

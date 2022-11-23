@@ -14,7 +14,7 @@ type MobileWalletButtonProps = {
 
 export const MobileWalletActions: FC<MobileWalletButtonProps> = ({ toggleModal }) => {
 	const { walletAddress } = Connector.useContainer();
-	const { data: ensAvatar } = useEnsAvatar({ addressOrName: walletAddress!, chainId: 1 });
+	const { data: ensAvatar } = useEnsAvatar({ address: walletAddress!, chainId: 1 });
 	const { data: ensName } = useEnsName({ address: walletAddress!, chainId: 1 });
 	const [walletLabel, setWalletLabel] = useState<string>('');
 	const truncatedWalletAddress = truncateAddress(walletAddress! ?? '');

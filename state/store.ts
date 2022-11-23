@@ -5,6 +5,7 @@ import KwentaSDK from 'sdk';
 
 import balancesReducer from './balances/reducer';
 import { sdk } from './config';
+import earnReducer from './earn/reducer';
 import exchangeReducer from './exchange/reducer';
 import futuresReducer from './futures/reducer';
 import homeReducer from './home/reducer';
@@ -19,6 +20,7 @@ const store = configureStore({
 		exchange: exchangeReducer,
 		futures: futuresReducer,
 		home: homeReducer,
+		earn: earnReducer,
 	},
 	middleware: (getDefaultMiddleware) => {
 		const baseMiddleware = getDefaultMiddleware({ thunk: { extraArgument: { sdk } } });

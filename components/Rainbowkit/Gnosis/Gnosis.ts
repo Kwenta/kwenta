@@ -1,7 +1,8 @@
-import { SafeConnector } from '@gnosis.pm/safe-apps-wagmi';
 import { Chain, Wallet } from '@rainbow-me/rainbowkit';
 
 import GnosisIcon from 'assets/png/rainbowkit/gnosis.png';
+
+import { SafeConnector } from './SafeConnector';
 
 type SafeOptions = {
 	chains: Chain[];

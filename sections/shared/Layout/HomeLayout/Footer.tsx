@@ -91,7 +91,7 @@ const Footer: React.FC = () => {
 				{
 					key: 'kips',
 					title: t('homepage.footer.community.kips'),
-					link: EXTERNAL_LINKS.Kips.Home,
+					link: EXTERNAL_LINKS.Governance.Kips,
 				},
 			],
 		},

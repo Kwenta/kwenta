@@ -1,5 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import _ from 'lodash';
 import moment from 'moment';
 import { useMemo, useState } from 'react';
@@ -17,7 +17,11 @@ import {
 	VEKWENTA_TOKEN_ADDRESS,
 } from 'constants/address';
 import Connector from 'containers/Connector';
-import { getEpochDetails } from 'queries/staking/utils';
+import {
+	getEpochDetails,
+	STAKING_HIGH_GAS_LIMIT,
+	STAKING_LOW_GAS_LIMIT,
+} from 'queries/staking/utils';
 import multipleMerkleDistributorABI from 'sdk/contracts/abis/MultipleMerkleDistributor.json';
 import rewardEscrowABI from 'sdk/contracts/abis/RewardEscrow.json';
 import stakingRewardsABI from 'sdk/contracts/abis/StakingRewards.json';
@@ -42,58 +46,63 @@ export type EscrowRow = {
 
 type VestingEntry = {
 	endTime: number;
-	escrowAmount: number;
+	escrowAmount: BigNumber;
 	entryID: number;
 };
 
-let data: EscrowRow[] = [];
+type VestingClaimable = {
+	quantity: BigNumber;
+	fee: BigNumber;
+};
 
 const useStakingData = () => {
 	const { network } = Connector.useContainer();
 	const isL2 = useIsL2();
 	const kwentaTokenContract = {
-		addressOrName: KWENTA_TOKEN_ADDRESS[network?.id],
-		contractInterface: erc20ABI,
+		address: KWENTA_TOKEN_ADDRESS[network?.id],
+		abi: erc20ABI,
 	};
 
 	const stakingRewardsContract = {
-		addressOrName: STAKING_REWARDS[network?.id],
-		contractInterface: stakingRewardsABI,
+		address: STAKING_REWARDS[network?.id],
+		abi: stakingRewardsABI,
 	};
 
-	const rewardEscrowContract = {
-		addressOrName: REWARD_ESCROW[network?.id],
-		contractInterface: rewardEscrowABI,
-	};
+	const rewardEscrowContract = useMemo(() => {
+		return {
+			address: REWARD_ESCROW[network?.id],
+			abi: rewardEscrowABI,
+		};
+	}, [network?.id]);
 
 	const supplyScheduleContract = {
-		addressOrName: SUPPLY_SCHEDULE[network?.id],
-		contractInterface: supplyScheduleABI,
+		address: SUPPLY_SCHEDULE[network?.id],
+		abi: supplyScheduleABI,
 	};
 
 	const vKwentaTokenContract = {
-		addressOrName: VKWENTA_TOKEN_ADDRESS[network?.id],
-		contractInterface: erc20ABI,
+		address: VKWENTA_TOKEN_ADDRESS[network?.id],
+		abi: erc20ABI,
 	};
 
 	const vKwentaRedeemerContract = {
-		addressOrName: VKWENTA_REDEEMER[network?.id],
-		contractInterface: vKwentaRedeemerABI,
+		address: VKWENTA_REDEEMER[network?.id],
+		abi: vKwentaRedeemerABI,
 	};
 
 	const veKwentaTokenContract = {
-		addressOrName: VEKWENTA_TOKEN_ADDRESS[network?.id],
-		contractInterface: erc20ABI,
+		address: VEKWENTA_TOKEN_ADDRESS[network?.id],
+		abi: erc20ABI,
 	};
 
 	const veKwentaRedeemerContract = {
-		addressOrName: VEKWENTA_REDEEMER[network?.id],
-		contractInterface: veKwentaRedeemerABI,
+		address: VEKWENTA_REDEEMER[network?.id],
+		abi: veKwentaRedeemerABI,
 	};
 
 	const multipleMerkleDistributorContract = {
-		addressOrName: TRADING_REWARDS[network?.id],
-		contractInterface: multipleMerkleDistributorABI,
+		address: TRADING_REWARDS[network?.id],
+		abi: multipleMerkleDistributorABI,
 	};
 
 	const [epochPeriod, setEpochPeriod] = useState(0);
@@ -110,8 +119,10 @@ const useStakingData = () => {
 	const [kwentaAllowance, setKwentaAllowance] = useState(zeroBN);
 	const [veKwentaBalance, setVEKwentaBalance] = useState(zeroBN);
 	const [veKwentaAllowance, setVEKwentaAllowance] = useState(zeroBN);
+	const [totalVestable, setTotalVestable] = useState(0);
 
-	const { refetch: resetStakingState } = useContractReads({
+	useContractReads({
+		scopeKey: 'staking',
 		contracts: [
 			{
 				...rewardEscrowContract,
@@ -136,7 +147,7 @@ const useStakingData = () => {
 			{
 				...kwentaTokenContract,
 				functionName: 'balanceOf',
-				args: [walletAddress ?? undefined],
+				args: [walletAddress!],
 			},
 			{
 				...supplyScheduleContract,
@@ -149,17 +160,17 @@ const useStakingData = () => {
 			{
 				...vKwentaTokenContract,
 				functionName: 'balanceOf',
-				args: [walletAddress ?? undefined],
+				args: [walletAddress!],
 			},
 			{
 				...vKwentaTokenContract,
 				functionName: 'allowance',
-				args: [walletAddress ?? undefined, vKwentaRedeemerContract.addressOrName],
+				args: [walletAddress!, vKwentaRedeemerContract.address],
 			},
 			{
 				...kwentaTokenContract,
 				functionName: 'allowance',
-				args: [walletAddress ?? undefined, stakingRewardsContract.addressOrName],
+				args: [walletAddress!, stakingRewardsContract.address],
 			},
 			{
 				...multipleMerkleDistributorContract,
@@ -168,15 +179,15 @@ const useStakingData = () => {
 			{
 				...veKwentaTokenContract,
 				functionName: 'balanceOf',
-				args: [walletAddress ?? undefined],
+				args: [walletAddress!],
 			},
 			{
 				...veKwentaTokenContract,
 				functionName: 'allowance',
-				args: [walletAddress ?? undefined, veKwentaRedeemerContract.addressOrName],
+				args: [walletAddress!, veKwentaRedeemerContract.address],
 			},
 		],
-		watch: false,
+		watch: true,
 		enabled: !!walletAddress && isL2,
 		allowFailure: true,
 		onSettled(data, error) {
@@ -207,69 +218,63 @@ const useStakingData = () => {
 		return periods;
 	}, [epochPeriod]);
 
-	data = [];
-
-	const { refetch: resetVesting, data: vestingSchedules } = useContractRead({
+	const { data: vestingSchedules } = useContractRead({
 		...rewardEscrowContract,
 		functionName: 'getVestingSchedules',
 		args: [walletAddress ?? undefined, 0, 1000],
-		watch: false,
+		scopeKey: 'staking',
+		watch: true,
 		enabled: !!walletAddress,
-		select: (data) => data.filter((d) => d.escrowAmount.gt(0)),
-		onError(error) {
-			if (error) logError(error);
-		},
+		select: (data) => (data as VestingEntry[]).filter((d) => d.escrowAmount.gt(0)),
 	});
 
-	vestingSchedules &&
-		vestingSchedules.length > 0 &&
-		vestingSchedules.forEach((d: VestingEntry) => {
-			data.push({
+	const escrowRows: EscrowRow[] = useMemo(() => {
+		if (vestingSchedules && (vestingSchedules as VestingEntry[]).length > 0) {
+			return (vestingSchedules as VestingEntry[]).map((d: VestingEntry) => ({
 				id: Number(d.entryID),
 				date: moment(Number(d.endTime) * 1000).format('MM/DD/YY'),
 				time: formatTruncatedDuration(d.endTime - new Date().getTime() / 1000),
-				vestable: d.endTime * 1000 > Date.now() ? 0 : Number(d.escrowAmount / 1e18),
-				amount: Number(d.escrowAmount / 1e18),
-				fee: d.endTime * 1000 > Date.now() ? Number(d.escrowAmount / 1e18) : 0,
+				vestable:
+					d.endTime * 1000 > Date.now() ? 0 : Number(ethers.utils.formatEther(d.escrowAmount)),
+				amount: Number(ethers.utils.formatEther(d.escrowAmount)),
+				fee: d.endTime * 1000 > Date.now() ? Number(ethers.utils.formatEther(d.escrowAmount)) : 0,
 				status: d.endTime * 1000 > Date.now() ? 'VESTING' : 'VESTED',
-			});
-		});
+			}));
+		}
+		return [];
+	}, [vestingSchedules]);
 
-	const contracts = data.map((d) => {
-		return {
+	const vestingEntries = useMemo(() => {
+		return escrowRows.map((d) => ({
 			...rewardEscrowContract,
 			functionName: 'getVestingEntryClaimable',
-			args: [walletAddress ?? undefined, d.id],
+			args: [walletAddress ?? undefined, d?.id],
 			enabled: !!walletAddress,
-		};
-	});
+		}));
+	}, [escrowRows, rewardEscrowContract, walletAddress]);
 
-	const {
-		refetch: resetVestingClaimable,
-		data: vestingEntryClaimable,
-		isSuccess: vestingEntryClaimableIsSuccess,
-	} = useContractReads({
-		contracts,
-		watch: false,
-		enabled: !!walletAddress && contracts.length > 0,
+	useContractReads({
+		contracts: vestingEntries,
+		scopeKey: 'staking',
+		watch: true,
+		enabled: !!walletAddress && vestingEntries.length > 0,
+		onSuccess(data) {
+			(data as VestingClaimable[]).forEach((d, index) => {
+				escrowRows[index].vestable = Number(ethers.utils.formatEther(d.quantity)) ?? 0;
+				escrowRows[index].fee = Number(ethers.utils.formatEther(d.fee)) ?? 0;
+			});
+			setTotalVestable(
+				Object.values(escrowRows)
+					.map((d) => d.vestable)
+					.reduce((acc, curr) => acc + curr, 0)
+			);
+		},
 	});
-
-	vestingEntryClaimableIsSuccess &&
-		vestingEntryClaimable !== undefined &&
-		vestingEntryClaimable.forEach((d, index) => {
-			data[index].vestable = Number(d.quantity / 1e18);
-			data[index].fee = Number(d.fee / 1e18);
-		});
 
 	const resetTime = useMemo(() => {
 		const { epochEnd } = getEpochDetails(network?.id, epochPeriod);
 		return epochEnd;
 	}, [epochPeriod, network?.id]);
-
-	const totalVestable = data.reduce(
-		(acc, current, index) => wei(acc).add(wei(data[index]?.vestable)) ?? zeroBN,
-		zeroBN
-	);
 
 	const kwentaTokenApproval = useMemo(() => kwentaBalance.gt(kwentaAllowance), [
 		kwentaBalance,
@@ -289,33 +294,39 @@ const useStakingData = () => {
 	const { config: getRewardConfig } = usePrepareContractWrite({
 		...stakingRewardsContract,
 		functionName: 'getReward',
+		overrides: {
+			gasLimit: STAKING_HIGH_GAS_LIMIT,
+		},
 		enabled: claimableBalance.gt(0),
 	});
 
 	const { config: kwentaApproveConfig } = usePrepareContractWrite({
 		...kwentaTokenContract,
 		functionName: 'approve',
-		args: [stakingRewardsContract.addressOrName, ethers.constants.MaxUint256],
+		args: [stakingRewardsContract.address, ethers.constants.MaxUint256],
 		enabled: !!walletAddress && kwentaTokenApproval,
 	});
 
 	const { config: vKwentaApproveConfig } = usePrepareContractWrite({
 		...vKwentaTokenContract,
 		functionName: 'approve',
-		args: [vKwentaRedeemerContract.addressOrName, ethers.constants.MaxUint256],
+		args: [vKwentaRedeemerContract.address, ethers.constants.MaxUint256],
 		enabled: !!walletAddress && vKwentaTokenApproval,
 	});
 
 	const { config: veKwentaApproveConfig } = usePrepareContractWrite({
 		...veKwentaTokenContract,
 		functionName: 'approve',
-		args: [veKwentaRedeemerContract.addressOrName, ethers.constants.MaxUint256],
+		args: [veKwentaRedeemerContract.address, ethers.constants.MaxUint256],
 		enabled: !!walletAddress && veKwentaTokenApproval,
 	});
 
 	const { config: vKwentaRedeemConfig } = usePrepareContractWrite({
 		...vKwentaRedeemerContract,
 		functionName: 'redeem',
+		overrides: {
+			gasLimit: STAKING_LOW_GAS_LIMIT,
+		},
 		enabled: !!walletAddress && wei(vKwentaBalance).gt(0),
 	});
 
@@ -323,19 +334,19 @@ const useStakingData = () => {
 		...veKwentaRedeemerContract,
 		functionName: 'redeem',
 		args: [walletAddress],
+		overrides: {
+			gasLimit: STAKING_HIGH_GAS_LIMIT,
+		},
 		enabled: !!walletAddress && wei(veKwentaBalance).gt(0),
 	});
 
 	return {
-		resetStakingState,
-		resetVesting,
-		resetVestingClaimable,
 		weekCounter,
 		totalStakedBalance: Number(totalStakedBalance),
 		periods,
 		resetTime,
 		epochPeriod,
-		data,
+		escrowRows,
 		escrowedBalance,
 		totalVestable,
 		stakedNonEscrowedBalance,

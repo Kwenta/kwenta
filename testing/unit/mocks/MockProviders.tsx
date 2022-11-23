@@ -45,7 +45,7 @@ jest.mock('axios', () => ({
 jest.mock('queries/futures/subgraph', () => ({
 	__esModule: true,
 	getFuturesTrades: () => Promise.resolve([]),
-	getFuturesHourlyStats: () => Promise.resolve([]),
+	getFuturesAggregateStats: () => Promise.resolve([]),
 	getFuturesPositions: () => Promise.resolve([]),
 }));
 
