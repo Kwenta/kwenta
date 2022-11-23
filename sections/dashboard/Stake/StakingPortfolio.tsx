@@ -1,3 +1,4 @@
+import { wei } from '@synthetixio/wei';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -56,7 +57,7 @@ const StakingPortfolio = () => {
 			{
 				key: 'Vestable',
 				title: t('dashboard.stake.portfolio.vestable'),
-				value: truncateNumbers(totalVestable, 2),
+				value: truncateNumbers(wei(totalVestable), 2),
 			},
 		],
 	];

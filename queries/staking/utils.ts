@@ -1,3 +1,5 @@
+import { BigNumber } from 'ethers';
+
 export const EPOCH_START: Record<number, number> = {
 	420: 1665878400,
 	10: 1668556800,
@@ -7,6 +9,8 @@ export const WEEK = 604800;
 export const DECAY_RATE = 0.0205;
 export const INITIAL_WEEKLY_SUPPLY = 14463.36923076923076923;
 export const STAKING_REWARDS_RATIO = 0.6;
+export const STAKING_HIGH_GAS_LIMIT = BigNumber.from('400000');
+export const STAKING_LOW_GAS_LIMIT = BigNumber.from('200000');
 
 export function getEpochDetails(networkId: number, epoch: number) {
 	const currentEpochTime = EPOCH_START[networkId]

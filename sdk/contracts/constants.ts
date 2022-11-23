@@ -60,4 +60,10 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 		10: '0x8954C7b1417E3De398c7F33520EbAe142929Ba2A',
 		420: '0x8d1CB3f153D4646b64A447809e1Ce7714d41C6B4',
 	},
+	KwentaArrakisVault: {
+		10: '0x56dEa47c40877c2aaC2a689aC56aa56cAE4938d2',
+	},
+	StakingRewards: {
+		10: '0x6077987e8e06c062094c33177Eb12c4A65f90B65',
+	},
 };

@@ -6,12 +6,13 @@ import { chain, useNetwork } from 'wagmi';
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
+import { PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { futuresVolumesState } from 'store/futures';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import logError from 'utils/logError';
 
 import { DAY_PERIOD, FUTURES_ENDPOINT_OP_MAINNET } from './constants';
-import { getFuturesHourlyStats } from './subgraph';
+import { getFuturesAggregateStats } from './subgraph';
 import { FuturesVolumes } from './types';
 import { calculateVolumes, getFuturesEndpoint } from './utils';
 
@@ -30,11 +31,12 @@ const useGetFuturesVolumes = (options?: UseQueryOptions<FuturesVolumes | null>) 
 		async () => {
 			try {
 				const minTimestamp = Math.floor(calculateTimestampForPeriod(DAY_PERIOD) / 1000);
-				const response = await getFuturesHourlyStats(
+				const response = await getFuturesAggregateStats(
 					futuresEndpoint,
 					{
 						first: 999999,
 						where: {
+							period: `${PERIOD_IN_SECONDS.ONE_HOUR}`,
 							timestamp_gte: `${minTimestamp}`,
 						},
 					},
@@ -44,6 +46,9 @@ const useGetFuturesVolumes = (options?: UseQueryOptions<FuturesVolumes | null>) 
 						volume: true,
 						trades: true,
 						timestamp: true,
+						period: true,
+						feesKwenta: true,
+						feesSynthetix: true,
 					}
 				);
 				const futuresVolumes = response ? calculateVolumes(response) : {};

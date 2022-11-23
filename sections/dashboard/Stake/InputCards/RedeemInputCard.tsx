@@ -26,7 +26,6 @@ const RedeemInputCard: FC<RedeemInputCardProps> = ({ inputLabel, isVKwenta }) =>
 		veKwentaBalance,
 		veKwentaApproveConfig,
 		veKwentaRedeemConfig,
-		resetStakingState,
 	} = useStakingContext();
 
 	const { writeAsync: vKwentaApprove } = useContractWrite(vKwentaApproveConfig);
@@ -40,17 +39,11 @@ const RedeemInputCard: FC<RedeemInputCardProps> = ({ inputLabel, isVKwenta }) =>
 				const vApproveTxn = await vKwentaApprove?.();
 				monitorTransaction({
 					txHash: vApproveTxn?.hash ?? '',
-					onTxConfirmed: () => {
-						resetStakingState();
-					},
 				});
 			} else {
 				const vRedeemTxn = await vKwentaRedeem?.();
 				monitorTransaction({
 					txHash: vRedeemTxn?.hash ?? '',
-					onTxConfirmed: () => {
-						resetStakingState();
-					},
 				});
 			}
 		} else {
@@ -58,23 +51,16 @@ const RedeemInputCard: FC<RedeemInputCardProps> = ({ inputLabel, isVKwenta }) =>
 				const veApproveTxn = await veKwentaApprove?.();
 				monitorTransaction({
 					txHash: veApproveTxn?.hash ?? '',
-					onTxConfirmed: () => {
-						resetStakingState();
-					},
 				});
 			} else {
 				const veRedeemTxn = await veKwentaRedeem?.();
 				monitorTransaction({
 					txHash: veRedeemTxn?.hash ?? '',
-					onTxConfirmed: () => {
-						resetStakingState();
-					},
 				});
 			}
 		}
 	}, [
 		isVKwenta,
-		resetStakingState,
 		vKwentaApprove,
 		vKwentaRedeem,
 		vKwentaTokenApproval,

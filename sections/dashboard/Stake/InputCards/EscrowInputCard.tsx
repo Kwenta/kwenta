@@ -1,5 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import _ from 'lodash';
+import isNil from 'lodash/isNil';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -11,6 +11,7 @@ import SegmentedControl from 'components/SegmentedControl';
 import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { useStakingContext } from 'contexts/StakingContext';
+import { STAKING_LOW_GAS_LIMIT } from 'queries/staking/utils';
 import { truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import { StakingCard } from '../common';
@@ -23,7 +24,6 @@ const EscrowInputCard: FC = () => {
 		kwentaApproveConfig,
 		kwentaTokenApproval,
 		rewardEscrowContract,
-		resetStakingState,
 	} = useStakingContext();
 
 	const [amount, setAmount] = useState('');
@@ -36,7 +36,7 @@ const EscrowInputCard: FC = () => {
 
 	const unstakedEscrowedKwentaBalance = useMemo(
 		() =>
-			!_.isNil(escrowedBalance) && escrowedBalance.gt(0)
+			!isNil(escrowedBalance) && escrowedBalance.gt(0)
 				? escrowedBalance.sub(stakedEscrowedBalance ?? zeroBN) ?? zeroBN
 				: zeroBN,
 		[escrowedBalance, stakedEscrowedBalance]
@@ -63,6 +63,9 @@ const EscrowInputCard: FC = () => {
 		...rewardEscrowContract,
 		functionName: 'stakeEscrow',
 		args: [amountBN],
+		overrides: {
+			gasLimit: STAKING_LOW_GAS_LIMIT,
+		},
 		enabled: activeTab === 0 && unstakedEscrowedKwentaBalance.gt(0) && !!parseFloat(amount),
 	});
 
@@ -70,6 +73,9 @@ const EscrowInputCard: FC = () => {
 		...rewardEscrowContract,
 		functionName: 'unstakeEscrow',
 		args: [amountBN],
+		overrides: {
+			gasLimit: STAKING_LOW_GAS_LIMIT,
+		},
 		enabled: activeTab === 1 && stakedEscrowedBalance.gt(0) && !!parseFloat(amount),
 	});
 
@@ -82,9 +88,6 @@ const EscrowInputCard: FC = () => {
 			const approveTxn = await kwentaApprove?.();
 			monitorTransaction({
 				txHash: approveTxn?.hash ?? '',
-				onTxConfirmed: () => {
-					resetStakingState();
-				},
 			});
 		} else if (activeTab === 0) {
 			const stakeTxn = await stakeEscrowKwenta?.();
@@ -92,7 +95,6 @@ const EscrowInputCard: FC = () => {
 				txHash: stakeTxn?.hash ?? '',
 				onTxConfirmed: () => {
 					setAmount('');
-					resetStakingState();
 				},
 			});
 		} else {
@@ -101,18 +103,10 @@ const EscrowInputCard: FC = () => {
 				txHash: unstakeTxn?.hash ?? '',
 				onTxConfirmed: () => {
 					setAmount('');
-					resetStakingState();
 				},
 			});
 		}
-	}, [
-		activeTab,
-		kwentaApprove,
-		kwentaTokenApproval,
-		resetStakingState,
-		stakeEscrowKwenta,
-		unstakeEscrowKwenta,
-	]);
+	}, [activeTab, kwentaApprove, kwentaTokenApproval, stakeEscrowKwenta, unstakeEscrowKwenta]);
 
 	return (
 		<StakingInputCardContainer>

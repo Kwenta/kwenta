@@ -11,7 +11,7 @@ export const mockReactQuery = (returnValue?: any) => {
 };
 
 export const mockSubgraphQueries = () => {
-	jest.spyOn(subgraph, 'getFuturesHourlyStats').mockReturnValue(Promise.resolve([]));
+	jest.spyOn(subgraph, 'getFuturesAggregateStats').mockReturnValue(Promise.resolve([]));
 	jest.spyOn(subgraph, 'getFuturesTrades').mockReturnValue(Promise.resolve([]));
 	jest.spyOn(subgraph, 'getFuturesPositions').mockReturnValue(Promise.resolve([]));
 };
