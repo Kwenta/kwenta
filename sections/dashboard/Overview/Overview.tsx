@@ -2,8 +2,6 @@ import Wei from '@synthetixio/wei';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { sdk } from 'state/config';
-import { useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 import { erc20ABI, useContractRead } from 'wagmi';
 
@@ -17,6 +15,8 @@ import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
+import { sdk } from 'state/config';
+import { useAppSelector } from 'state/hooks';
 import { balancesState, portfolioState, positionsState } from 'store/futures';
 import { activePositionsTabState } from 'store/ui';
 import { formatDollars, toWei, weiFromWei, zeroBN } from 'utils/formatters/number';
