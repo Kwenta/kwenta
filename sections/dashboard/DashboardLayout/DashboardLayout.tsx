@@ -6,12 +6,12 @@ import styled from 'styled-components';
 import NavButton from 'components/Button/NavButton';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { TabList, TabPanel } from 'components/Tab';
+import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import { MainContent, LeftSideContent, FullHeightContainer, PageContent } from 'styles/common';
 
 import Links from '../Links';
-import { EXTERNAL_LINKS } from 'constants/links';
 
 enum Tab {
 	Overview = 'overview',
