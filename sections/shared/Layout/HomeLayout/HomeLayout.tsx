@@ -27,7 +27,7 @@ const HomeLayout: FC<HomeLayoutProps> = ({ children }) => (
 							href="https://snapshot.org/#/kwenta.eth/proposal/0x4a2dbd3839de2b6407ebbdc47e7d51a5d69f3363a803a93ffd8cf4e5d08011ff"
 							target="_blank"
 						>
-							Council elections are live on Snapshot until Nov 29th. $KWENTA staker go cast your
+							Council elections are live on Snapshot until Nov 29th. $KWENTA stakers go cast your
 							vote!
 						</FuturesLink>
 					</>
@@ -41,7 +41,8 @@ const HomeLayout: FC<HomeLayoutProps> = ({ children }) => (
 						href="https://snapshot.org/#/kwenta.eth/proposal/0x4a2dbd3839de2b6407ebbdc47e7d51a5d69f3363a803a93ffd8cf4e5d08011ff"
 						target="_blank"
 					>
-						Council elections are live on Snapshot until Nov 29th. $KWENTA staker go cast your vote!
+						Council elections are live on Snapshot until Nov 29th. $KWENTA stakers go cast your
+						vote!
 					</FuturesLink>
 				</>
 			</FuturesBannerContainer>
