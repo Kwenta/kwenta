@@ -18,7 +18,9 @@ const { chains, provider } = configureChains(
 		}),
 		jsonRpcProvider({
 			rpc: (networkChain) => {
-				return !BLAST_NETWORK_LOOKUP[networkChain.id]
+				return networkChain.id === 10
+					? { http: 'https://rpc.tenderly.co/fork/a98fa0f6-6e2e-4313-8818-4a30ffe32ec2' } // TODO: Remove hardcoded tenderly fork RPC
+					: !BLAST_NETWORK_LOOKUP[networkChain.id]
 					? { http: networkChain.rpcUrls.default }
 					: {
 							http: `https://${BLAST_NETWORK_LOOKUP[networkChain.id]}.blastapi.io/${

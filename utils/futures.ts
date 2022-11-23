@@ -73,6 +73,11 @@ export const isDecimalFour = (marketKeyOrAsset: string | undefined): boolean =>
 	marketKeyOrAsset === 'DebtRatio';
 
 export enum FuturesMarketKey {
+	// perps v2
+	pBTC = 'pBTC',
+	pETH = 'pETH',
+
+	// perps v1
 	sBTC = 'sBTC',
 	sETH = 'sETH',
 	sLINK = 'sLINK',
@@ -115,6 +120,11 @@ export enum FuturesMarketAsset {
 }
 
 export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
+	// perps v2
+	[FuturesMarketKey.pBTC]: FuturesMarketAsset.sBTC,
+	[FuturesMarketKey.pETH]: FuturesMarketAsset.sETH,
+
+	// perps v1
 	[FuturesMarketKey.sBTC]: FuturesMarketAsset.sBTC,
 	[FuturesMarketKey.sETH]: FuturesMarketAsset.sETH,
 	[FuturesMarketKey.sLINK]: FuturesMarketAsset.sLINK,
@@ -136,8 +146,11 @@ export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
 } as const;
 
 export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
-	[FuturesMarketAsset.sBTC]: FuturesMarketKey.sBTC,
-	[FuturesMarketAsset.sETH]: FuturesMarketKey.sETH,
+	// perps v2
+	[FuturesMarketAsset.sBTC]: FuturesMarketKey.pBTC,
+	[FuturesMarketAsset.sETH]: FuturesMarketKey.pETH,
+
+	// perps v1
 	[FuturesMarketAsset.sLINK]: FuturesMarketKey.sLINK,
 	[FuturesMarketAsset.SOL]: FuturesMarketKey.sSOL,
 	[FuturesMarketAsset.AVAX]: FuturesMarketKey.sAVAX,
@@ -159,100 +172,113 @@ export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 export interface FuturesMarketConfig {
 	key: FuturesMarketKey;
 	asset: FuturesMarketAsset;
-	supports: 'mainnet' | 'testnet' | 'both';
+	supports: 'mainnet' | 'testnet' | 'both' | 'none';
 	disabled?: boolean;
 }
 
 export const markets: Record<FuturesMarketKey, FuturesMarketConfig> = {
+	// perps v2
+	[FuturesMarketKey.pBTC]: {
+		key: FuturesMarketKey.pBTC,
+		asset: FuturesMarketAsset.sBTC,
+		supports: 'mainnet',
+	},
+	[FuturesMarketKey.pETH]: {
+		key: FuturesMarketKey.pETH,
+		asset: FuturesMarketAsset.sETH,
+		supports: 'mainnet',
+	},
+
+	// perps v1
 	[FuturesMarketKey.sBTC]: {
 		key: FuturesMarketKey.sBTC,
 		asset: FuturesMarketAsset.sBTC,
-		supports: 'both',
+		supports: 'none',
 	},
 	[FuturesMarketKey.sETH]: {
 		key: FuturesMarketKey.sETH,
 		asset: FuturesMarketAsset.sETH,
-		supports: 'both',
+		supports: 'none',
 	},
 	[FuturesMarketKey.sLINK]: {
 		key: FuturesMarketKey.sLINK,
 		asset: FuturesMarketAsset.sLINK,
-		supports: 'mainnet',
+		supports: 'none',
 	},
 	[FuturesMarketKey.sSOL]: {
 		key: FuturesMarketKey.sSOL,
 		asset: FuturesMarketAsset.SOL,
-		supports: 'mainnet',
+		supports: 'none',
 	},
 	[FuturesMarketKey.sAVAX]: {
 		key: FuturesMarketKey.sAVAX,
 		asset: FuturesMarketAsset.AVAX,
-		supports: 'mainnet',
+		supports: 'none',
 	},
 	[FuturesMarketKey.sAAVE]: {
 		key: FuturesMarketKey.sAAVE,
 		asset: FuturesMarketAsset.AAVE,
-		supports: 'mainnet',
+		supports: 'none',
 	},
 	[FuturesMarketKey.sUNI]: {
 		key: FuturesMarketKey.sUNI,
 		asset: FuturesMarketAsset.UNI,
-		supports: 'mainnet',
+		supports: 'none',
 	},
 	[FuturesMarketKey.sMATIC]: {
 		key: FuturesMarketKey.sMATIC,
 		asset: FuturesMarketAsset.MATIC,
-		supports: 'mainnet',
+		supports: 'none',
 	},
 	[FuturesMarketKey.sXAU]: {
 		key: FuturesMarketKey.sXAU,
 		asset: FuturesMarketAsset.XAU,
-		supports: 'mainnet',
+		supports: 'none',
 	},
 	[FuturesMarketKey.sXAG]: {
 		key: FuturesMarketKey.sXAG,
 		asset: FuturesMarketAsset.XAG,
-		supports: 'mainnet',
+		supports: 'none',
 	},
 	[FuturesMarketKey.sEUR]: {
 		key: FuturesMarketKey.sEUR,
 		asset: FuturesMarketAsset.EUR,
-		supports: 'mainnet',
+		supports: 'none',
 	},
 	[FuturesMarketKey.sAPE]: {
 		key: FuturesMarketKey.sAPE,
 		asset: FuturesMarketAsset.APE,
-		supports: 'mainnet',
+		supports: 'none',
 	},
 	[FuturesMarketKey.sDYDX]: {
 		key: FuturesMarketKey.sDYDX,
 		asset: FuturesMarketAsset.DYDX,
-		supports: 'mainnet',
+		supports: 'none',
 	},
 	[FuturesMarketKey.sBNB]: {
 		key: FuturesMarketKey.sBNB,
 		asset: FuturesMarketAsset.BNB,
-		supports: 'mainnet',
+		supports: 'none',
 	},
 	[FuturesMarketKey.sDOGE]: {
 		key: FuturesMarketKey.sDOGE,
 		asset: FuturesMarketAsset.DOGE,
-		supports: 'mainnet',
+		supports: 'none',
 	},
 	[FuturesMarketKey.sDebtRatio]: {
 		key: FuturesMarketKey.sDebtRatio,
 		asset: FuturesMarketAsset.DebtRatio,
-		supports: 'mainnet',
+		supports: 'none',
 	},
 	[FuturesMarketKey.sXMR]: {
 		key: FuturesMarketKey.sXMR,
 		asset: FuturesMarketAsset.XMR,
-		supports: 'mainnet',
+		supports: 'none',
 	},
 	[FuturesMarketKey.sOP]: {
 		key: FuturesMarketKey.sOP,
 		asset: FuturesMarketAsset.OP,
-		supports: 'mainnet',
+		supports: 'none',
 	},
 };
 
@@ -367,8 +393,10 @@ export const serializeMarkets = (markets: FuturesMarket[]): FuturesMarketSeriali
 			feeRates: {
 				makerFee: m.feeRates.makerFee.toString(),
 				takerFee: m.feeRates.takerFee.toString(),
-				makerFeeNextPrice: m.feeRates.makerFeeNextPrice.toString(),
-				takerFeeNextPrice: m.feeRates.takerFeeNextPrice.toString(),
+				makerFeeDelayedOrder: m.feeRates.makerFeeDelayedOrder.toString(),
+				takerFeeDelayedOrder: m.feeRates.takerFeeDelayedOrder.toString(),
+				makerFeeOffchainDelayedOrder: m.feeRates.makerFeeOffchainDelayedOrder.toString(),
+				takerFeeOffchainDelayedOrder: m.feeRates.takerFeeOffchainDelayedOrder.toString(),
 			},
 			openInterest: m.openInterest
 				? {
@@ -397,8 +425,10 @@ export const unserializeMarkets = (markets: FuturesMarketSerialized[]): FuturesM
 		feeRates: {
 			makerFee: wei(m.feeRates.makerFee),
 			takerFee: wei(m.feeRates.takerFee),
-			makerFeeNextPrice: wei(m.feeRates.makerFeeNextPrice),
-			takerFeeNextPrice: wei(m.feeRates.takerFeeNextPrice),
+			makerFeeDelayedOrder: wei(m.feeRates.makerFeeDelayedOrder),
+			takerFeeDelayedOrder: wei(m.feeRates.takerFeeDelayedOrder),
+			makerFeeOffchainDelayedOrder: wei(m.feeRates.makerFeeOffchainDelayedOrder),
+			takerFeeOffchainDelayedOrder: wei(m.feeRates.takerFeeOffchainDelayedOrder),
 		},
 		openInterest: m.openInterest
 			? {

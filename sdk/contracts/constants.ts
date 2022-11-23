@@ -1,4 +1,7 @@
 export const ADDRESSES: Record<string, Record<number, string>> = {
+	AddressResolver: {
+		10: '0x95A6a3f44a70172E7d50a9e28c85Dfd712756B8C',
+	},
 	Exchanger: {
 		1: '0xD64D83829D92B5bdA881f6f61A4e4E27Fc185387',
 		5: '0x889d8a97f43809Ef3FBb002B4b7a6A65319B61eD',
@@ -46,6 +49,9 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 	FuturesMarket: {
 		10: '0xf86048DFf23cF130107dfB4e6386f574231a5C65',
 		420: '0x0D10c032ad006C98C33A95e59ab3BA2b0849bD59',
+	},
+	PerpsV2MarketData: {
+		10: '0x912D07eb8c32853C82ef418D34630b07B15DCf4F',
 	},
 	Synth: {
 		1: '0x10A5F7D9D65bCc2734763444D4940a31b109275f',

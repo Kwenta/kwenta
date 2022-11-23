@@ -22,7 +22,7 @@ import {
 	getReasonFromCode,
 	marketsForNetwork,
 } from 'sdk/utils/futures';
-import { MarketKeyByAsset } from 'utils/futures';
+import { FuturesMarketKey, MarketKeyByAsset } from 'utils/futures';
 
 export default class FuturesService {
 	private sdk: KwentaSDK;
@@ -43,21 +43,33 @@ export default class FuturesService {
 				? getContractsByNetwork(networkOverride.networkId, networkOverride.provider)
 				: this.sdk.context.contracts;
 
-		const { FuturesMarketSettings, SystemStatus, ExchangeRates, FuturesMarketData } = contracts;
+		const {
+			FuturesMarketSettings,
+			SystemStatus,
+			ExchangeRates,
+			PerpsV2MarketData,
+			AddressResolver,
+		} = contracts;
 
-		if (!FuturesMarketData || !FuturesMarketSettings || !SystemStatus || !ExchangeRates) {
+		if (
+			!PerpsV2MarketData ||
+			!FuturesMarketSettings ||
+			!SystemStatus ||
+			!ExchangeRates ||
+			!AddressResolver
+		) {
 			throw new Error(UNSUPPORTED_NETWORK);
 		}
 
 		const [markets, globals] = await Promise.all([
-			FuturesMarketData.allMarketSummaries(),
-			FuturesMarketData.globals(),
+			PerpsV2MarketData.allMarketSummaries(),
+			PerpsV2MarketData.globals(),
 		]);
 
 		const filteredMarkets = markets.filter((m: any) => {
-			const asset = parseBytes32String(m.asset) as FuturesMarketAsset;
+			const marketKey = parseBytes32String(m.key) as FuturesMarketKey;
 			const market = enabledMarkets.find((market) => {
-				return asset === market.asset;
+				return marketKey === market.key;
 			});
 			return !!market;
 		});
@@ -108,8 +120,10 @@ export default class FuturesService {
 				feeRates: {
 					makerFee: wei(feeRates.makerFee),
 					takerFee: wei(feeRates.takerFee),
-					makerFeeNextPrice: wei(feeRates.makerFeeNextPrice),
-					takerFeeNextPrice: wei(feeRates.takerFeeNextPrice),
+					makerFeeDelayedOrder: wei(feeRates.makerFeeDelayedOrder),
+					takerFeeDelayedOrder: wei(feeRates.takerFeeDelayedOrder),
+					makerFeeOffchainDelayedOrder: wei(feeRates.makerFeeOffchainDelayedOrder),
+					takerFeeOffchainDelayedOrder: wei(feeRates.takerFeeOffchainDelayedOrder),
 				},
 				openInterest: {
 					shortPct: wei(marketSize).eq(0)

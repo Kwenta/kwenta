@@ -22,12 +22,12 @@ export const fetchMarkets = createAsyncThunk<
 >('futures/fetchMarkets', async (_, { extra: { sdk } }) => {
 	const markets = await sdk.futures.getMarkets();
 	const serializedMarkets = serializeMarkets(markets);
-	const averageFundingRates = await sdk.futures.getAverageFundingRates(markets, Period.ONE_HOUR);
-	const seriailizedRates = averageFundingRates.map((r) => ({
-		...r,
-		fundingRate: r.fundingRate ? r.fundingRate.toString() : null,
-	}));
-	return { markets: serializedMarkets, fundingRates: seriailizedRates };
+	// const averageFundingRates = await sdk.futures.getAverageFundingRates(markets, Period.ONE_HOUR);
+	// const serializedRates = averageFundingRates.map((r) => ({
+	// 	...r,
+	// 	fundingRate: r.fundingRate ? r.fundingRate.toString() : null,
+	// }));
+	return { markets: serializedMarkets, fundingRates: [] };
 });
 
 // TODO: Finish

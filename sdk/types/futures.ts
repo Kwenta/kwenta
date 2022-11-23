@@ -26,8 +26,10 @@ export type FuturesMarket = {
 	feeRates: {
 		makerFee: Wei;
 		takerFee: Wei;
-		makerFeeNextPrice: Wei;
-		takerFeeNextPrice: Wei;
+		makerFeeDelayedOrder: Wei;
+		takerFeeDelayedOrder: Wei;
+		makerFeeOffchainDelayedOrder: Wei;
+		takerFeeOffchainDelayedOrder: Wei;
 	};
 	openInterest?: {
 		shortPct: number;
@@ -58,8 +60,10 @@ export type FuturesMarketSerialized = {
 	feeRates: {
 		makerFee: string;
 		takerFee: string;
-		makerFeeNextPrice: string;
-		takerFeeNextPrice: string;
+		makerFeeDelayedOrder: string;
+		takerFeeDelayedOrder: string;
+		makerFeeOffchainDelayedOrder: string;
+		takerFeeOffchainDelayedOrder: string;
 	};
 	openInterest?: {
 		shortPct: number;
@@ -91,6 +95,11 @@ export type FundingRateResponse = {
 };
 
 export enum FuturesMarketKey {
+	// perps v2
+	pBTC = 'pBTC',
+	pETH = 'pETH',
+
+	// perps v1
 	sBTC = 'sBTC',
 	sETH = 'sETH',
 	sLINK = 'sLINK',
@@ -135,6 +144,6 @@ export enum FuturesMarketAsset {
 export interface FuturesMarketConfig {
 	key: FuturesMarketKey;
 	asset: FuturesMarketAsset;
-	supports: 'mainnet' | 'testnet' | 'both';
+	supports: 'mainnet' | 'testnet' | 'both' | 'none';
 	disabled?: boolean;
 }

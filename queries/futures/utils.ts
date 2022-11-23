@@ -8,6 +8,7 @@ import { chain } from 'wagmi';
 import { ETH_UNIT } from 'constants/network';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
+import { FuturesMarket } from 'sdk/types/futures';
 import { formatCurrency, formatDollars, weiFromWei, zeroBN } from 'utils/formatters/number';
 import {
 	FuturesMarketAsset,
@@ -37,7 +38,6 @@ import {
 	FundingRateUpdate,
 	FuturesTrade,
 	MarginTransfer,
-	FuturesMarket,
 	FuturesOrder,
 	FuturesOrderTypeDisplay,
 } from './types';
@@ -48,7 +48,9 @@ export const getFuturesEndpoint = (networkId: NetworkId): string => {
 
 export const getFuturesMarketContract = (asset: string | null, contracts: ContractsMap) => {
 	if (!asset) throw new Error(`Asset needs to be specified`);
-	const contractName = `FuturesMarket${asset[0] === 's' ? asset.substring(1) : asset}`;
+	const contractName = `FuturesMarket${
+		asset[0] === 's' || asset[0] === 'p' ? asset.substring(1) : asset
+	}`;
 	const contract = contracts[contractName];
 	if (!contract) throw new Error(`${contractName} for ${asset} does not exist`);
 	return contract;

@@ -1,12 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { FuturesMarket } from 'queries/futures/types';
+import { FuturesMarketSerialized } from 'sdk/types/futures';
 import { FetchStatus } from 'state/types';
 
 import { fetchOptimismMarkets } from './actions';
 
 type HomeState = {
-	optimismMarkets: FuturesMarket<string>[];
+	optimismMarkets: FuturesMarketSerialized[];
 	marketsQueryStatus: FetchStatus;
 };
 

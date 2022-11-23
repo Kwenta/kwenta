@@ -27,6 +27,8 @@ export const mapLaggedDailyPrices = (rates: LatestRate[]): Prices => {
 };
 
 const markets = new Set<FuturesMarketKey>([
+	FuturesMarketKey.pETH,
+	FuturesMarketKey.pBTC,
 	FuturesMarketKey.sETH,
 	FuturesMarketKey.sBTC,
 	FuturesMarketKey.sLINK,
@@ -48,6 +50,9 @@ const markets = new Set<FuturesMarketKey>([
 ]);
 
 const map: Record<FuturesMarketKey, string> = {
+	[FuturesMarketKey.pETH]: 'ethereum',
+	[FuturesMarketKey.pBTC]: 'bitcoin',
+
 	[FuturesMarketKey.sETH]: 'ethereum',
 	[FuturesMarketKey.sBTC]: 'bitcoin',
 	[FuturesMarketKey.sLINK]: 'chainlink',

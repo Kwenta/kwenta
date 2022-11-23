@@ -3,12 +3,14 @@ import { Contract, ethers } from 'ethers';
 
 import { ADDRESSES } from './constants';
 import {
+	AddressResolver__factory,
 	CrossMarginAccountFactory__factory,
 	CrossMarginBaseSettings__factory,
 	ExchangeRates__factory,
 	Exchanger__factory,
 	FuturesMarketData__factory,
 	FuturesMarketSettings__factory,
+	PerpsV2MarketData__factory,
 	Synthetix__factory,
 	SynthRedeemer__factory,
 	SynthSwap__factory,
@@ -31,6 +33,9 @@ export const getContractsByNetwork = (
 	provider: ethers.providers.Provider
 ) => {
 	return {
+		AddressResolver: ADDRESSES.AddressResolver[networkId]
+			? AddressResolver__factory.connect(ADDRESSES.AddressResolver[networkId], provider)
+			: undefined,
 		Exchanger: ADDRESSES.Exchanger[networkId]
 			? Exchanger__factory.connect(ADDRESSES.Exchanger[networkId], provider)
 			: undefined,
@@ -51,6 +56,9 @@ export const getContractsByNetwork = (
 			: undefined,
 		FuturesMarketData: ADDRESSES.FuturesMarketData[networkId]
 			? FuturesMarketData__factory.connect(ADDRESSES.FuturesMarketData[networkId], provider)
+			: undefined,
+		PerpsV2MarketData: ADDRESSES.PerpsV2MarketData[networkId]
+			? PerpsV2MarketData__factory.connect(ADDRESSES.PerpsV2MarketData[networkId], provider)
 			: undefined,
 		FuturesMarketSettings: ADDRESSES.FuturesMarketSettings[networkId]
 			? FuturesMarketSettings__factory.connect(ADDRESSES.FuturesMarketSettings[networkId], provider)
