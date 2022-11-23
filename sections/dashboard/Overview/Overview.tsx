@@ -19,7 +19,7 @@ import { FuturesAccountTypes } from 'queries/futures/types';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
 import { balancesState, portfolioState, positionsState } from 'store/futures';
 import { activePositionsTabState } from 'store/ui';
-import { formatDollars, toWei, zeroBN } from 'utils/formatters/number';
+import { formatDollars, toWei, weiFromWei, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
@@ -65,16 +65,16 @@ const Overview: FC = () => {
 	const [kwentaBalance, setKwentaBalance] = useState(zeroBN);
 
 	useContractRead({
-		addressOrName: KWENTA_TOKEN_ADDRESS['10'],
-		contractInterface: erc20ABI,
+		address: KWENTA_TOKEN_ADDRESS['10'],
+		abi: erc20ABI,
 		functionName: 'balanceOf',
-		args: [walletAddress ?? undefined],
+		args: [walletAddress!],
 		watch: false,
 		enabled: !!walletAddress && isL2,
 		onSettled(data, error) {
 			if (error) logError(error);
 			if (data) {
-				setKwentaBalance(data[0] ?? zeroBN);
+				setKwentaBalance(weiFromWei(data));
 			}
 		},
 	});
