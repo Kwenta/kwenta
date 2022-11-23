@@ -1,7 +1,7 @@
 import Wei from '@synthetixio/wei';
 
 import { FuturesAccountType, FuturesPosition } from 'queries/futures/types';
-import { FuturesMarket, FuturesMarketSerialized } from 'sdk/types/futures';
+import { FuturesMarketSerialized } from 'sdk/types/futures';
 import { PositionSide } from 'sections/futures/types';
 import { FetchStatus } from 'state/types';
 import { FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
@@ -60,6 +60,7 @@ export type CrossMarginState = {
 };
 
 export type IsolatedMarginState = {
+	transferAmount: string;
 	tradeInputs: IsolatedMarginTradeInputs;
 	orderType: IsolatedMarginOrderType;
 	selectedLeverage: string;

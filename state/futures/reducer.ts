@@ -53,6 +53,7 @@ const initialState: FuturesState = {
 		},
 	},
 	isolatedMargin: {
+		transferAmount: '',
 		marketAsset: FuturesMarketAsset.sETH,
 		leverageSide: PositionSide.LONG,
 		orderType: 'market',
@@ -75,6 +76,9 @@ const futuresSlice = createSlice({
 				state.isolatedMargin.marketAsset = action.payload;
 				state.isolatedMargin.tradeInputs = ZERO_STATE_TRADE_INPUTS;
 			}
+		},
+		setIsolatedTransferAmount: (state, action) => {
+			state.isolatedMargin.transferAmount = action.payload;
 		},
 		setOrderType: (state, action) => {
 			state[accountType(state.selectedType)].orderType = action.payload;
@@ -123,4 +127,5 @@ export const {
 	setCrossMarginAccountOverview,
 	setPosition,
 	setFuturesMarkets,
+	setIsolatedTransferAmount,
 } = futuresSlice.actions;

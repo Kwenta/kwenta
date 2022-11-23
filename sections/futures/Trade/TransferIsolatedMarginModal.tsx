@@ -16,14 +16,15 @@ import { NO_VALUE } from 'constants/placeholder';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import useEstimateGasCost from 'hooks/useEstimateGasCost';
+import { transferIsolatedMargin } from 'state/futures/actions';
+import { setIsolatedTransferAmount } from 'state/futures/reducer';
 import { selectMarketAsset } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { positionState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { FlexDivRowCentered } from 'styles/common';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
-
 type Props = {
 	onDismiss(): void;
 	defaultTab: 'deposit' | 'withdraw';
@@ -35,6 +36,9 @@ const PLACEHOLDER = '$0.00';
 const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, sUSDBalance, defaultTab }) => {
 	const { t } = useTranslation();
 	const { useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();
+
+	const dispatch = useAppDispatch();
+
 	const { estimateSnxTxGasCost } = useEstimateGasCost();
 
 	const gasSpeed = useRecoilValue(gasSpeedState);
@@ -114,15 +118,22 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, sUSDBalance, 
 	const handleSetMax = useCallback(() => {
 		if (transferType === 0) {
 			setAmount(susdBal.toString());
+			dispatch(setIsolatedTransferAmount(susdBal.toString()));
 		} else {
 			setAmount(accessibleMargin.toString());
+			dispatch(setIsolatedTransferAmount(accessibleMargin.toString()));
 		}
-	}, [susdBal, accessibleMargin, transferType]);
+	}, [dispatch, susdBal, accessibleMargin, transferType]);
 
 	const onChangeTab = (selection: number) => {
 		setTransferType(selection);
 		setAmount('');
+		dispatch(setIsolatedTransferAmount(''));
 	};
+
+	const handleSubmit = useCallback(() => {
+		dispatch(transferIsolatedMargin());
+	}, [dispatch]);
 
 	return (
 		<StyledBaseModal
@@ -145,7 +156,10 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, sUSDBalance, 
 				dataTestId="futures-market-trade-deposit-margin-input"
 				placeholder={PLACEHOLDER}
 				value={amount}
-				onChange={(_, v) => setAmount(v)}
+				onChange={(_, v) => {
+					setAmount(v);
+					dispatch(setIsolatedTransferAmount(v));
+				}}
 				right={
 					<MaxButton onClick={handleSetMax}>{t('futures.market.trade.margin.modal.max')}</MaxButton>
 				}
@@ -162,7 +176,7 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, sUSDBalance, 
 				data-testid="futures-market-trade-deposit-margin-button"
 				disabled={isDisabled}
 				fullWidth
-				onClick={transferType === 0 ? () => depositTxn.mutate() : () => withdrawTxn.mutate()}
+				onClick={handleSubmit}
 			>
 				{transferType === 0
 					? t('futures.market.trade.margin.modal.deposit.button')

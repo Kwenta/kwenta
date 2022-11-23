@@ -1,5 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
+import { monitorTransaction } from 'contexts/RelayerContext';
 import { FuturesMarketSerialized } from 'sdk/types/futures';
 import { AppThunk } from 'state/store';
 import { ThunkConfig } from 'state/types';
@@ -29,6 +30,29 @@ export const fetchMarkets = createAsyncThunk<
 	}));
 	return { markets: serializedMarkets, fundingRates: serializedRates };
 });
+
+export const transferIsolatedMargin = createAsyncThunk<any, void, ThunkConfig>(
+	'futures/transferIsolatedMargin',
+	async (_, { dispatch, getState, extra: { sdk } }) => {
+		const { futures } = getState();
+
+		const marketAddress =
+			futures.markets.find(({ asset }) => (asset = futures.isolatedMargin.marketAsset))?.market ??
+			'';
+		const transferAmount = futures.isolatedMargin.transferAmount;
+
+		const hash = await sdk.futures.transferIsolatedMargin(marketAddress, transferAmount);
+
+		if (hash) {
+			monitorTransaction({
+				txHash: hash,
+				onTxConfirmed: () => {
+					// dispatch(getEarnDetails());
+				},
+			});
+		}
+	}
+);
 
 // TODO: Finish
 export const resetFuturesState = (): AppThunk => (dispatch) => {

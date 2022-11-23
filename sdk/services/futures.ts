@@ -4,6 +4,7 @@ import KwentaSDK from 'sdk';
 
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
 import { getContractsByNetwork } from 'sdk/contracts';
+import { FuturesMarket__factory } from 'sdk/contracts/types';
 import { NetworkOverrideOptions } from 'sdk/types/common';
 import {
 	FundingRateInput,
@@ -19,6 +20,8 @@ import {
 	marketsForNetwork,
 } from 'sdk/utils/futures';
 import { FuturesMarketKey, MarketKeyByAsset } from 'utils/futures';
+
+import * as sdkErrors from '../common/errors';
 
 export default class FuturesService {
 	private sdk: KwentaSDK;
@@ -175,5 +178,20 @@ export default class FuturesService {
 		);
 
 		return fundingRateResponses.filter((funding): funding is FundingRateResponse => !!funding);
+	}
+
+	public async transferIsolatedMargin(address: string, amount: string) {
+		const futuresMarketContract = FuturesMarket__factory.connect(address, this.sdk.context.signer);
+		if (!futuresMarketContract) {
+			throw new Error(sdkErrors.NO_MARKET);
+		}
+
+		const { hash } = await this.sdk.transactions.createContractTxn(
+			futuresMarketContract,
+			'transferMargin',
+			[wei(amount).toBN()]
+		);
+
+		return hash;
 	}
 }

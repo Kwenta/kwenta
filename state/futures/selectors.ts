@@ -68,6 +68,7 @@ export const selectMarketInfo = createSelector(
 		return markets.find((market) => market.asset === selectedMarket);
 	}
 );
+
 export const selectMarketAssetRate = createSelector(
 	(state: RootState) => state.futures[accountType(state.futures.selectedType)].marketAsset,
 	selectExchangeRates,
