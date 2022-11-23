@@ -31,7 +31,10 @@ export const selectMarketRate = createSelector(
 	(marketKey, exchangeRates) => newGetExchangeRatesForCurrencies(exchangeRates, marketKey, 'sUSD')
 );
 
-export const selectMarkets = (state: RootState) => unserializeMarkets(state.futures.markets);
+export const selectMarkets = createSelector(
+	(state: RootState) => state.futures.markets,
+	(markets) => unserializeMarkets(markets)
+);
 
 export const selectMarketsQueryStatus = (state: RootState) => state.futures.marketsQueryStatus;
 
@@ -45,8 +48,10 @@ export const selectMarketAssets = createSelector(
 	(markets) => markets.map(({ asset }) => asset)
 );
 
-export const selectAverageFundingRates = (state: RootState) =>
-	unserializeFundingRates(state.futures.fundingRates);
+export const selectAverageFundingRates = createSelector(
+	(state: RootState) => state.futures.fundingRates,
+	(fundingRates) => unserializeFundingRates(fundingRates)
+);
 
 export const selectFundingRate = createSelector(
 	selectMarketKey,
