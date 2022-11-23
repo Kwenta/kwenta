@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { FuturesMarket } from 'queries/futures/types';
+import { FuturesMarket } from 'sdk/types/futures';
 import { FetchStatus } from 'state/types';
 
 import { fetchOptimismMarkets } from './actions';

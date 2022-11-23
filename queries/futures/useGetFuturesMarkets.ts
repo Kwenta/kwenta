@@ -9,6 +9,7 @@ import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import useIsL2 from 'hooks/useIsL2';
+import { FuturesMarket } from 'sdk/types/futures';
 import { setFuturesMarkets as setReduxFuturesMarkets } from 'state/futures/reducer';
 import { serializeWeiObject } from 'state/helpers';
 import { useAppDispatch } from 'state/hooks';
@@ -21,7 +22,6 @@ import {
 	marketsForNetwork,
 } from 'utils/futures';
 
-import { FuturesMarket } from './types';
 import { getReasonFromCode } from './utils';
 
 const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {

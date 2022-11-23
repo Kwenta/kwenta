@@ -1,12 +1,12 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { providers } from 'ethers';
 
-import { FuturesMarketSerialized } from 'sdk/types/futures';
+import { FuturesMarket } from 'sdk/types/futures';
 import { ThunkConfig } from 'state/types';
 import { serializeMarkets } from 'utils/futures';
 
 export const fetchOptimismMarkets = createAsyncThunk<
-	{ markets: FuturesMarketSerialized[] },
+	{ markets: FuturesMarket<string>[] },
 	providers.Provider,
 	ThunkConfig
 >('home/fetchOptimismMarkets', async (mainnetL2Provider, { extra: { sdk } }) => {

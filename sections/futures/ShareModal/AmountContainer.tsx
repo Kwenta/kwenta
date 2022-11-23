@@ -23,8 +23,6 @@ const currencyIconStyle = {
 const AmountContainer: FC<AmountContainerProps> = ({ position }) => {
 	const marketAsset = useAppSelector(selectMarketAsset);
 
-	// TODO: Probably store the market key separately in Recoil
-	// using a selector to handle these scenarios.
 	const marketName = getMarketName(marketAsset);
 	const positionDetails = position?.position ?? null;
 	const leverage = formatNumber(positionDetails?.leverage ?? zeroBN) + 'x';

@@ -2,7 +2,7 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 	Exchanger: {
 		1: '0xD64D83829D92B5bdA881f6f61A4e4E27Fc185387',
 		5: '0x889d8a97f43809Ef3FBb002B4b7a6A65319B61eD',
-		10: '0xcC02F000b0aA8a0eFC2B55C9cf2305Fb3531cca1',
+		10: '0xC37c47C55d894443493c1e2E615f4F9f4b8fDEa4',
 		420: '0x601A1Cf1a34d9cF0020dCCD361c155Fe54CE24fB',
 	},
 	SystemStatus: {
@@ -14,7 +14,7 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 	ExchangeRates: {
 		1: '0xb4dc5ced63C2918c89E491D19BF1C0e92845de7C',
 		5: '0xea765947303051507033202CAB7D3f5d4961CF5d',
-		10: '0x22602469d704BfFb0936c7A7cfcD18f7aA269375',
+		10: '0x0cA3985f973f044978d2381AFEd9c4D85a762d11',
 		420: '0x280E5dFaA78CE685a846830bAe5F2FD21d6A3D89',
 	},
 	SynthUtil: {
@@ -42,14 +42,6 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 	FuturesMarketSettings: {
 		10: '0xaE55F163337A2A46733AA66dA9F35299f9A46e9e',
 		420: '0x0dde87714C3bdACB93bB1d38605aFff209a85998',
-	},
-	FuturesMarket: {
-		10: '0xf86048DFf23cF130107dfB4e6386f574231a5C65',
-		420: '0x0D10c032ad006C98C33A95e59ab3BA2b0849bD59',
-	},
-	Synth: {
-		1: '0x10A5F7D9D65bCc2734763444D4940a31b109275f',
-		10: '0xDfA2d3a0d32F870D87f8A0d7AA6b9CdEB7bc5AdB',
 	},
 	Synthetix: {
 		1: '0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F',

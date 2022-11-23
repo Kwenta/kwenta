@@ -17,11 +17,13 @@ export const selectMarketKey = createSelector(
 	(marketAsset) => MarketKeyByAsset[marketAsset]
 );
 
-export const selectMarketAsset = (state: RootState) => {
-	return state.futures.selectedType === 'cross_margin'
-		? state.futures.crossMargin.marketAsset
-		: state.futures.isolatedMargin.marketAsset;
-};
+export const selectFuturesType = (state: RootState) => state.futures.selectedType;
+
+export const selectMarketAsset = createSelector(
+	(state: RootState) => state.futures,
+	selectFuturesType,
+	(futures, marginType) => futures[accountType(marginType)].marketAsset
+);
 
 export const selectMarketRate = createSelector(
 	selectMarketKey,
@@ -33,13 +35,15 @@ export const selectMarkets = (state: RootState) => unserializeMarkets(state.futu
 
 export const selectMarketsQueryStatus = (state: RootState) => state.futures.marketsQueryStatus;
 
-export const selectMarketKeys = (state: RootState) =>
-	state.futures.markets.map(({ asset }) => {
-		return MarketKeyByAsset[asset];
-	});
+export const selectMarketKeys = createSelector(
+	(state: RootState) => state.futures.markets,
+	(markets) => markets.map(({ asset }) => MarketKeyByAsset[asset])
+);
 
-export const selectMarketAssets = (state: RootState) =>
-	state.futures.markets.map(({ asset }) => asset);
+export const selectMarketAssets = createSelector(
+	(state: RootState) => state.futures.markets,
+	(markets) => markets.map(({ asset }) => asset)
+);
 
 export const selectAverageFundingRates = (state: RootState) =>
 	unserializeFundingRates(state.futures.fundingRates);

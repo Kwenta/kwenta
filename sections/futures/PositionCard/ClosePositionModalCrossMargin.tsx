@@ -34,7 +34,7 @@ export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 	const [error, setError] = useState<null | string>(null);
 
 	const marketAsset = useAppSelector(selectMarketAsset);
-	const marketAssetKey = useAppSelector(selectMarketKey);
+	const marketKey = useAppSelector(selectMarketKey);
 
 	const position = useRecoilValue(positionState);
 	const positionDetails = position?.position;
@@ -45,19 +45,19 @@ export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 		return marketAsset === 'SOL' && position?.position?.side === PositionSide.SHORT
 			? [
 					{
-						marketKey: formatBytes32String(marketAssetKey),
+						marketKey: formatBytes32String(marketKey),
 						marginDelta: zeroBN.toBN(),
 						sizeDelta: positionSize.add(wei(1, 18, true)).toBN(),
 					},
 					{
-						marketKey: formatBytes32String(marketAssetKey),
+						marketKey: formatBytes32String(marketKey),
 						marginDelta: zeroBN.toBN(),
 						sizeDelta: wei(1, 18, true).neg().toBN(),
 					},
 			  ]
 			: [
 					{
-						marketKey: formatBytes32String(marketAssetKey),
+						marketKey: formatBytes32String(marketKey),
 						marginDelta: zeroBN.toBN(),
 						sizeDelta:
 							position?.position?.side === PositionSide.LONG
@@ -65,7 +65,7 @@ export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 								: positionSize.toBN(),
 					},
 			  ];
-	}, [marketAssetKey, marketAsset, position?.position?.side, positionSize]);
+	}, [marketKey, marketAsset, position?.position?.side, positionSize]);
 
 	useEffect(() => {
 		if (!crossMarginAccountContract) return;

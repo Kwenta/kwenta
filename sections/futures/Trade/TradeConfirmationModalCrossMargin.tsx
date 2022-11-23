@@ -29,7 +29,7 @@ export default function TradeConfirmationModalCrossMargin() {
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const { estimateEthersContractTxCost } = useEstimateGasCost();
 
-	const marketAssetKey = useAppSelector(selectMarketKey);
+	const marketKey = useAppSelector(selectMarketKey);
 	const crossMarginMarginDelta = useRecoilValue(crossMarginMarginDeltaState);
 	const tradeInputs = useRecoilValue(futuresTradeInputsState);
 	const isAdvancedOrder = useRecoilValue(isAdvancedOrderState);
@@ -46,7 +46,7 @@ export default function TradeConfirmationModalCrossMargin() {
 		const estimateGas = async () => {
 			const newPosition = [
 				{
-					marketKey: formatBytes32String(marketAssetKey),
+					marketKey: formatBytes32String(marketKey),
 					marginDelta: crossMarginMarginDelta.toBN(),
 					sizeDelta: tradeInputs.nativeSizeDelta.toBN(),
 				},
@@ -61,7 +61,7 @@ export default function TradeConfirmationModalCrossMargin() {
 		estimateGas();
 	}, [
 		crossMarginAccountContract,
-		marketAssetKey,
+		marketKey,
 		crossMarginMarginDelta,
 		tradeInputs.nativeSizeDelta,
 		estimateEthersContractTxCost,

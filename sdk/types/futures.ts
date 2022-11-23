@@ -15,68 +15,36 @@ export type SynthSuspensionReason =
 
 export type MarketClosureReason = SynthSuspensionReason;
 
-export type FuturesMarket = {
+export type FuturesMarket<T = Wei> = {
 	market: string;
 	marketKey?: FuturesMarketKey;
 	marketName: string;
 	asset: FuturesMarketAsset;
 	assetHex: string;
-	currentFundingRate: Wei;
-	currentRoundId: Wei;
+	currentFundingRate: T;
+	currentRoundId: T;
 	feeRates: {
-		makerFee: Wei;
-		takerFee: Wei;
-		makerFeeNextPrice: Wei;
-		takerFeeNextPrice: Wei;
+		makerFee: T;
+		takerFee: T;
+		makerFeeNextPrice: T;
+		takerFeeNextPrice: T;
 	};
 	openInterest?: {
 		shortPct: number;
 		longPct: number;
-		shortUSD: Wei;
-		longUSD: Wei;
+		shortUSD: T;
+		longUSD: T;
 	};
-	marketDebt: Wei;
-	marketSkew: Wei;
-	marketSize: Wei;
-	maxLeverage: Wei;
-	price: Wei;
-	minInitialMargin: Wei;
-	keeperDeposit: Wei;
+	marketDebt: T;
+	marketSkew: T;
+	marketSize: T;
+	maxLeverage: T;
+	price: T;
+	minInitialMargin: T;
+	keeperDeposit: T;
 	isSuspended: boolean;
 	marketClosureReason: SynthSuspensionReason;
-	marketLimit: Wei;
-};
-
-export type FuturesMarketSerialized = {
-	market: string;
-	marketKey?: FuturesMarketKey;
-	marketName: string;
-	asset: FuturesMarketAsset;
-	assetHex: string;
-	currentFundingRate: string;
-	currentRoundId: string;
-	feeRates: {
-		makerFee: string;
-		takerFee: string;
-		makerFeeNextPrice: string;
-		takerFeeNextPrice: string;
-	};
-	openInterest?: {
-		shortPct: number;
-		longPct: number;
-		shortUSD: string;
-		longUSD: string;
-	};
-	marketDebt: string;
-	marketSkew: string;
-	marketSize: string;
-	maxLeverage: string;
-	price: string;
-	minInitialMargin: string;
-	keeperDeposit: string;
-	isSuspended: boolean;
-	marketClosureReason: SynthSuspensionReason;
-	marketLimit: string;
+	marketLimit: T;
 };
 
 export type FundingRateUpdate = {

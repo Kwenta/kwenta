@@ -1,7 +1,7 @@
 import Wei from '@synthetixio/wei';
 
-import { FuturesAccountType, FuturesPosition, FuturesMarket } from 'queries/futures/types';
-import { FuturesMarketSerialized } from 'sdk/types/futures';
+import { FuturesAccountType, FuturesPosition } from 'queries/futures/types';
+import { FuturesMarket } from 'sdk/types/futures';
 import { PositionSide } from 'sections/futures/types';
 import { FetchStatus } from 'state/types';
 import { FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
@@ -39,7 +39,7 @@ export type FuturesState = {
 	isolatedMargin: IsolatedMarginState;
 	crossMargin: CrossMarginState;
 	marketsQueryStatus: FetchStatus;
-	markets: FuturesMarketSerialized[];
+	markets: FuturesMarket<string>[];
 	fundingRates: FundingRateSerialized[];
 	marketInfo?: FuturesMarket<string>;
 };

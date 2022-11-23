@@ -9,7 +9,7 @@ import {
 	FuturesTradeInputs,
 	TradeFees,
 } from 'queries/futures/types';
-import { FuturesMarket, FuturesMarketSerialized } from 'sdk/types/futures';
+import { FuturesMarket } from 'sdk/types/futures';
 import { PositionSide } from 'sections/futures/types';
 import { FundingRate, FundingRateSerialized } from 'state/futures/types';
 import logError from 'utils/logError';
@@ -358,7 +358,7 @@ export const calculateMarginDelta = (
 	}
 };
 
-export const serializeMarkets = (markets: FuturesMarket[]): FuturesMarketSerialized[] => {
+export const serializeMarkets = (markets: FuturesMarket[]): FuturesMarket<string>[] => {
 	return markets.map((m) => {
 		return {
 			...m,
@@ -389,7 +389,7 @@ export const serializeMarkets = (markets: FuturesMarket[]): FuturesMarketSeriali
 	});
 };
 
-export const unserializeMarkets = (markets: FuturesMarketSerialized[]): FuturesMarket[] => {
+export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMarket[] => {
 	return markets.map((m) => ({
 		...m,
 		currentFundingRate: wei(m.currentFundingRate),
