@@ -7,9 +7,6 @@ import { useRouter } from 'next/router';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { setFuturesAccountType, setOrderType as setReduxOrderType } from 'state/futures/reducer';
-import { selectMarketAssetRate } from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import {
 	CROSS_MARGIN_ENABLED,
@@ -27,13 +24,15 @@ import { monitorTransaction } from 'contexts/RelayerContext';
 import { KWENTA_TRACKING_CODE, ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
 import { PositionSide, FuturesTradeInputs, FuturesAccountType } from 'queries/futures/types';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
+import { setFuturesAccountType, setOrderType as setReduxOrderType } from 'state/futures/reducer';
+import { selectMarketAssetRate } from 'state/futures/selectors';
+import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
+import { useAppSelector, useAppDispatch } from 'state/hooks';
 import {
 	crossMarginMarginDeltaState,
-	currentMarketState,
 	tradeFeesState,
 	futuresAccountState,
 	leverageSideState,
-	marketInfoState,
 	maxLeverageState,
 	orderTypeState,
 	positionState,
@@ -85,7 +84,7 @@ const useFuturesData = () => {
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const { handleRefetch, refetchUntilUpdate } = useRefetchContext();
 
-	const marketAsset = useRecoilValue(currentMarketState);
+	const marketAsset = useAppSelector(selectMarketAsset);
 	const [tradeInputs, setTradeInputs] = useRecoilState(futuresTradeInputsState);
 	const setSimulatedTrade = useSetRecoilState(simulatedTradeState);
 
@@ -97,7 +96,6 @@ const useFuturesData = () => {
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const feeCap = useRecoilValue(orderFeeCapState);
 	const position = useRecoilValue(positionState);
-	const market = useRecoilValue(marketInfoState);
 	const aboveMaxLeverage = useRecoilValue(aboveMaxLeverageState);
 	const maxLeverage = useRecoilValue(maxLeverageState);
 	const { crossMarginAvailable, crossMarginAddress } = useRecoilValue(futuresAccountState);
@@ -111,6 +109,8 @@ const useFuturesData = () => {
 	const [selectedAccountType, setSelectedAccountType] = useRecoilState(futuresAccountTypeState);
 	const [preferredLeverage] = usePersistedRecoilState(preferredLeverageState);
 	const dispatch = useAppDispatch();
+
+	const market = useAppSelector(selectMarketInfo);
 
 	const [maxFee, setMaxFee] = useState(zeroBN);
 	const [error, setError] = useState<string | null>(null);
@@ -634,7 +634,6 @@ const useFuturesData = () => {
 		onChangeOpenPosLeverage,
 		marketAssetRate,
 		position,
-		marketAsset,
 		market,
 		orderTxn,
 		maxUsdInputAmount,

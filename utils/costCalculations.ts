@@ -1,6 +1,6 @@
 import Wei, { wei } from '@synthetixio/wei';
 
-import { FuturesMarket } from 'queries/futures/types';
+import { FuturesMarket } from 'sdk/types/futures';
 
 import { zeroBN } from './formatters/number';
 

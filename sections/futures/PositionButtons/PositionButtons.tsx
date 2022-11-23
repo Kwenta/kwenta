@@ -1,9 +1,9 @@
 import React from 'react';
-import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';
-import { marketInfoState } from 'store/futures';
+import { selectMarketInfo } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 
 import { PositionSide } from '../types';
 
@@ -14,7 +14,8 @@ interface PositionButtonsProps {
 }
 
 const PositionButtons: React.FC<PositionButtonsProps> = ({ selected, onSelect }) => {
-	const marketInfo = useRecoilValue(marketInfoState);
+	const marketInfo = useAppSelector(selectMarketInfo);
+
 	return (
 		<PositionButtonsContainer>
 			<StyledPositionButton

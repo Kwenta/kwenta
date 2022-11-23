@@ -1,13 +1,6 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue, useRecoilState } from 'recoil';
-import { setLeverageSide as setReduxLeverageSide } from 'state/futures/reducer';
-import {
-	selectIsMarketCapReached,
-	selectMarketAssetRate,
-	selectPlaceOrderTranslationKey,
-} from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
@@ -16,10 +9,17 @@ import Loader from 'components/Loader';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { previewErrorI18n } from 'queries/futures/constants';
 import { PositionSide } from 'queries/futures/types';
+import { setLeverageSide as setReduxLeverageSide } from 'state/futures/reducer';
+import {
+	selectMarketInfo,
+	selectIsMarketCapReached,
+	selectMarketAssetRate,
+	selectPlaceOrderTranslationKey,
+} from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import {
 	confirmationModalOpenState,
 	leverageSideState,
-	marketInfoState,
 	maxLeverageState,
 	orderTypeState,
 	positionState,
@@ -58,7 +58,6 @@ const ManagePosition: React.FC = () => {
 	const marginDelta = useRecoilValue(crossMarginMarginDeltaState);
 	const position = useRecoilValue(positionState);
 	const maxLeverageValue = useRecoilValue(maxLeverageState);
-	const marketInfo = useRecoilValue(marketInfoState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 	const { data: previewTrade, error: previewError, status } = useRecoilValue(
 		potentialTradeDetailsState
@@ -76,6 +75,8 @@ const ManagePosition: React.FC = () => {
 	const marketAssetRate = useAppSelector(selectMarketAssetRate);
 	const tradeInputs = useRecoilValue(futuresTradeInputsState);
 	const isAdvancedOrder = useRecoilValue(isAdvancedOrderState);
+
+	const marketInfo = useAppSelector(selectMarketInfo);
 
 	const [isCancelModalOpen, setCancelModalOpen] = React.useState(false);
 

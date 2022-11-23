@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
-import { futuresMarketsState, futuresVolumesState } from 'store/futures';
+import { selectMarkets } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { futuresVolumesState } from 'store/futures';
 import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
@@ -13,7 +15,7 @@ import { HeaderContainer, MarketStatsContainer, MarketStat } from './common';
 const FuturesMarkets = () => {
 	const { t } = useTranslation();
 
-	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	const futuresMarkets = useAppSelector(selectMarkets);
 	const futuresVolumes = useRecoilValue(futuresVolumesState);
 
 	const openInterest = useMemo(() => {

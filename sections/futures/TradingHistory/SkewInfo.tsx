@@ -2,11 +2,11 @@
 import React from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
-import { currentMarketState, marketInfoState } from 'store/futures';
+import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import { CapitalizedText, NumericValue } from 'styles/common';
 import { formatCurrency, formatPercent } from 'utils/formatters/number';
 
@@ -24,8 +24,8 @@ const DEFAULT_DATA = {
 const SkewInfo: React.FC = () => {
 	const { t } = useTranslation();
 
-	const marketInfo = useRecoilValue(marketInfoState);
-	const currentMarket = useRecoilValue(currentMarketState);
+	const marketInfo = useAppSelector(selectMarketInfo);
+	const marketAsset = useAppSelector(selectMarketAsset);
 
 	const data = useMemo(() => {
 		return marketInfo?.openInterest
@@ -34,17 +34,17 @@ const SkewInfo: React.FC = () => {
 					long: marketInfo?.openInterest?.longPct,
 					shortValue: marketInfo?.openInterest?.shortUSD,
 					longValue: marketInfo?.openInterest?.longUSD,
-					shortText: formatCurrency(currentMarket, marketInfo?.openInterest?.shortUSD, {
+					shortText: formatCurrency(marketAsset, marketInfo?.openInterest?.shortUSD, {
 						sign: '$',
 						minDecimals: 0,
 					}),
-					longText: formatCurrency(currentMarket, marketInfo?.openInterest?.longUSD, {
+					longText: formatCurrency(marketAsset, marketInfo?.openInterest?.longUSD, {
 						sign: '$',
 						minDecimals: 0,
 					}),
 			  }
 			: DEFAULT_DATA;
-	}, [marketInfo, currentMarket]);
+	}, [marketInfo, marketAsset]);
 
 	return (
 		<SkewContainer>

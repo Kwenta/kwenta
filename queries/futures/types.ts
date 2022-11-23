@@ -2,7 +2,6 @@ import { Balances } from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 
-import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import { PotentialTradeStatus } from 'sections/futures/types';
 import { FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
 
@@ -50,38 +49,6 @@ export type FuturesPosition<T = Wei> = {
 	remainingMargin: T;
 	accessibleMargin: T;
 	position: FuturesFilledPosition<T> | null;
-};
-
-export type FuturesMarket<T = Wei> = {
-	market: string;
-	marketKey?: FuturesMarketKey;
-	marketName: string;
-	asset: FuturesMarketAsset;
-	assetHex: string;
-	currentFundingRate: T;
-	currentRoundId: T;
-	feeRates: {
-		makerFee: T;
-		takerFee: T;
-		makerFeeNextPrice: T;
-		takerFeeNextPrice: T;
-	};
-	openInterest?: {
-		shortPct: number;
-		longPct: number;
-		shortUSD: T;
-		longUSD: T;
-	};
-	marketDebt: T;
-	marketSkew: T;
-	marketSize: T;
-	maxLeverage: T;
-	price: T;
-	minInitialMargin: T;
-	keeperDeposit: T;
-	isSuspended: boolean;
-	marketClosureReason: FuturesClosureReason;
-	marketLimit: T;
 };
 
 export type FuturesOpenInterest = {

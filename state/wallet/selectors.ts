@@ -1,4 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
+
 import type { RootState } from 'state/store';
 
 const SUPPORTED_NETWORKS = [1, 10, 5, 420];

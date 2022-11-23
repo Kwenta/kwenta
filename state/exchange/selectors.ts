@@ -1,13 +1,13 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
+
+import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
+import { Rates } from 'queries/rates/types';
 import { selectTotalUSDBalanceWei } from 'state/balances/selectors';
 import { sdk } from 'state/config';
 import type { RootState } from 'state/store';
 import { FetchStatus } from 'state/types';
 import { selectIsWalletConnected } from 'state/wallet/selectors';
-
-import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
-import { Rates } from 'queries/rates/types';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { toWei, zeroBN } from 'utils/formatters/number';
 
@@ -211,7 +211,7 @@ export const selectIsSubmissionDisabled = createSelector(
 	(submissionDisabledReason) => !!submissionDisabledReason
 );
 
-export const selectExchangeRatesWei = createSelector(
+export const selectExchangeRates = createSelector(
 	(state: RootState) => state.exchange.exchangeRates,
 	(exchangeRates) =>
 		Object.entries(exchangeRates).reduce((acc, [key, value]) => {
@@ -221,11 +221,11 @@ export const selectExchangeRatesWei = createSelector(
 );
 
 export const selectUsdRateWei = createSelector(
-	selectExchangeRatesWei,
+	selectExchangeRates,
 	(exchangeRates) => exchangeRates['sUSD']
 );
 
-export const selectEthRate = createSelector(selectExchangeRatesWei, (exchangeRates) =>
+export const selectEthRate = createSelector(selectExchangeRates, (exchangeRates) =>
 	newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', 'sUSD')
 );
 

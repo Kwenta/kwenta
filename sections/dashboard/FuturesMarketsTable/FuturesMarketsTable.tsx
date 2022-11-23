@@ -15,8 +15,9 @@ import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
+import { selectMarkets } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import {
-	futuresMarketsState,
 	pastRatesState,
 	fundingRatesState,
 	futuresVolumesState,
@@ -34,7 +35,7 @@ const FuturesMarketsTable: FC = () => {
 	const router = useRouter();
 	const { synthsMap } = Connector.useContainer();
 
-	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	const futuresMarkets = useAppSelector(selectMarkets);
 	const fundingRates = useRecoilValue(fundingRatesState);
 	const pastRates = useRecoilValue(pastRatesState);
 	const futuresVolumes = useRecoilValue(futuresVolumesState);

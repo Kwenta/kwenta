@@ -2,14 +2,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FC, FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Badge from 'components/Badge';
 import LabelContainer from 'components/Nav/DropDownLabel';
 import Select from 'components/Select';
 import { DropdownIndicator, IndicatorSeparator } from 'components/Select/Select';
-import { currentMarketState } from 'store/futures';
+import { selectMarketAsset } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import { linkCSS } from 'styles/common';
 
 import { DESKTOP_NAV_LINKS, Badge as BadgeType } from '../constants';
@@ -26,10 +26,10 @@ type ReactSelectOptionProps = {
 const Nav: FC = () => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
-	const currentMarket = useRecoilValue(currentMarketState);
+	const marketAsset = useAppSelector(selectMarketAsset);
 
 	function getLink(link: string) {
-		return link.slice(0, 7) === '/market' ? `/market/?asset=${currentMarket}` : link;
+		return link.slice(0, 7) === '/market' ? `/market/?asset=${marketAsset}` : link;
 	}
 
 	const formatOptionLabel = ({

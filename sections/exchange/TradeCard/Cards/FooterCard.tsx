@@ -1,6 +1,4 @@
 import { FC, memo } from 'react';
-import { selectCanRedeem } from 'state/exchange/selectors';
-import { useAppSelector } from 'state/hooks';
 
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
@@ -8,6 +6,8 @@ import useMarketClosed from 'hooks/useMarketClosed';
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
 import MarketClosureCard from 'sections/exchange/FooterCard/MarketClosureCard';
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
+import { selectCanRedeem } from 'state/exchange/selectors';
+import { useAppSelector } from 'state/hooks';
 
 import SettleTransactionsCard from '../../FooterCard/SettleTransactionsCard';
 import RedeemButton from './RedeemButton';

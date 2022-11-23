@@ -1,11 +1,5 @@
 import { useCallback, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import {
-	setLeverageSide as setReduxLeverageSide,
-	setOrderType as setReduxOrderType,
-} from 'state/futures/reducer';
-import { selectMarketAssetRate } from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import Loader from 'components/Loader';
 import SegmentedControl from 'components/SegmentedControl';
@@ -14,6 +8,12 @@ import { CROSS_MARGIN_ORDER_TYPES } from 'constants/futures';
 import Connector from 'containers/Connector';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { FuturesOrderType } from 'queries/futures/types';
+import {
+	setLeverageSide as setReduxLeverageSide,
+	setOrderType as setReduxOrderType,
+} from 'state/futures/reducer';
+import { selectMarketAssetRate } from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import {
 	futuresAccountState,
 	futuresAccountTypeState,
