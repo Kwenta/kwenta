@@ -2,6 +2,7 @@ import Wei from '@synthetixio/wei';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { sdk } from 'state/config';
 import { useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 import { erc20ABI, useContractRead } from 'wagmi';
@@ -14,7 +15,6 @@ import { KWENTA_TOKEN_ADDRESS } from 'constants/address';
 import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'constants/currency';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
-import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
 import { balancesState, portfolioState, positionsState } from 'store/futures';
@@ -78,74 +78,78 @@ const Overview: FC = () => {
 		(token: any) => token.token.address.toLowerCase() === KWENTA_TOKEN_ADDRESS['10'].toLowerCase()
 	);
 
-	const coinGeckoTokenPricesQuery = useCoinGeckoTokenPricesQuery(
-		oneInchEnabled
-			? [
-					...Object.values(tokenBalances).map((value: any) => value.token.address.toLowerCase()),
-					noKwentaFound ? [KWENTA_TOKEN_ADDRESS['10'].toLowerCase()] : [],
-			  ]
-			: []
-	);
-	const coinGeckoPrices = coinGeckoTokenPricesQuery.data ?? null;
-
 	useEffect(() => {
-		const kwentaTokenObj = {
-			Kwenta: {
-				balance: kwentaBalance,
-				token: {
-					address: KWENTA_TOKEN_ADDRESS['10'].toLowerCase(),
-					symbol: 'KWENTA',
-					name: 'Kwenta',
+		(async () => {
+			const kwentaTokenObj = {
+				Kwenta: {
+					balance: kwentaBalance,
+					token: {
+						address: KWENTA_TOKEN_ADDRESS['10'].toLowerCase(),
+						symbol: 'KWENTA',
+						name: 'Kwenta',
+					},
 				},
-			},
-		};
-
-		const allTokens =
-			oneInchEnabled && noKwentaFound && kwentaBalance.gt(0)
-				? { ...kwentaTokenObj, ...tokenBalances }
-				: tokenBalances;
-
-		const exchangeBalances: {
-			name: string;
-			currencyKey: string;
-			balance: Wei;
-			address: string;
-		}[] = oneInchEnabled
-			? Object.values(allTokens)
-					.filter((token: any) => !synthsMap[token.token.symbol])
-					.map((value: any) => {
-						return {
-							name: value.token.name,
-							currencyKey: value.token.symbol,
-							balance: toWei(value.balance),
-							address:
-								value.token.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : value.token.address,
-						};
-					})
-			: [];
-
-		const _exchangeTokens = exchangeBalances.map((exchangeToken) => {
-			const { name, currencyKey, balance, address } = exchangeToken;
-
-			const price = coinGeckoPrices ? toWei(coinGeckoPrices[address]?.usd.toString()) : zeroBN;
-			const priceChange = coinGeckoPrices
-				? toWei(coinGeckoPrices[address]?.usd_24h_change.toString()).div(100)
-				: zeroBN;
-
-			const usdBalance = balance.mul(price);
-
-			return {
-				synth: currencyKey,
-				description: name,
-				balance,
-				usdBalance,
-				price,
-				priceChange,
 			};
-		});
 
-		setExchangeTokens(_exchangeTokens);
-	}, [coinGeckoPrices, kwentaBalance, noKwentaFound, oneInchEnabled, synthsMap, tokenBalances]);
+			const allTokens =
+				oneInchEnabled && noKwentaFound && kwentaBalance.gt(0)
+					? { ...kwentaTokenObj, ...tokenBalances }
+					: tokenBalances;
+
+			const exchangeBalances: {
+				name: string;
+				currencyKey: string;
+				balance: Wei;
+				address: string;
+			}[] = oneInchEnabled
+				? Object.values(allTokens)
+						.filter((token: any) => !synthsMap[token.token.symbol])
+						.map((value: any) => {
+							return {
+								name: value.token.name,
+								currencyKey: value.token.symbol,
+								balance: toWei(value.balance),
+								address:
+									value.token.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : value.token.address,
+							};
+						})
+				: [];
+
+			const coinGeckoPrices = await sdk.exchange.batchGetCoingeckoPrices(
+				oneInchEnabled
+					? [
+							...Object.values(tokenBalances).map((value: any) =>
+								value.token.address.toLowerCase()
+							),
+							noKwentaFound ? [KWENTA_TOKEN_ADDRESS['10'].toLowerCase()] : [],
+					  ]
+					: [],
+				true
+			);
+
+			const _exchangeTokens = exchangeBalances.map((exchangeToken) => {
+				const { name, currencyKey, balance, address } = exchangeToken;
+
+				const price = coinGeckoPrices ? toWei(coinGeckoPrices[address]?.usd?.toString()) : zeroBN;
+				const priceChange = coinGeckoPrices
+					? toWei(coinGeckoPrices[address]?.usd_24h_change?.toString()).div(100)
+					: zeroBN;
+
+				const usdBalance = balance.mul(price);
+
+				return {
+					synth: currencyKey,
+					description: name,
+					balance,
+					usdBalance,
+					price,
+					priceChange,
+				};
+			});
+
+			setExchangeTokens(_exchangeTokens);
+		})();
+	}, [kwentaBalance, noKwentaFound, oneInchEnabled, synthsMap, tokenBalances]);
 
 	const POSITIONS_TABS = useMemo(() => {
 		const crossPositions = positions.cross_margin.filter(({ position }) => !!position).length;
