@@ -11,6 +11,7 @@ import AppLayout from 'sections/shared/Layout/AppLayout';
 import { MainContent, LeftSideContent, FullHeightContainer, PageContent } from 'styles/common';
 
 import Links from '../Links';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 enum Tab {
 	Overview = 'overview',
@@ -75,8 +76,7 @@ const DashboardLayout: FC = ({ children }) => {
 				name: Tab.Governance,
 				label: t('dashboard.tabs.governance'),
 				active: activeTab === Tab.Governance,
-				disabled: true,
-				onClick: () => {},
+				onClick: () => window.open(EXTERNAL_LINKS.Governance.Vote, '_blank'),
 			},
 		],
 		[t, activeTab, router]
