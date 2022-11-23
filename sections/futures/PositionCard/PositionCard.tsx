@@ -99,13 +99,14 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 
 	const modifiedAverage = useMemo(() => {
 		if (thisPositionHistory && previewTradeData && potentialTrade.data) {
-			const totalSize = thisPositionHistory.size.add(potentialTrade.data.size);
+			const newSize = potentialTrade.data.sizeDelta.abs();
+			const totalSize = thisPositionHistory.size.add(newSize);
 
 			const existingValue = thisPositionHistory.avgEntryPrice.mul(thisPositionHistory.size);
-			const newValue = previewTradeData.price.mul(potentialTrade.data.size);
+			const newValue = previewTradeData.price.mul(newSize);
 			const totalValue = existingValue.add(newValue);
 
-			return totalSize.gt(0) ? totalValue.div(totalSize) : null;
+			return totalValue.div(totalSize);
 		}
 		return null;
 	}, [thisPositionHistory, previewTradeData, potentialTrade.data]);
