@@ -18,13 +18,7 @@ import VestConfirmationModal from './VestConfirmationModal';
 
 const EscrowTable = () => {
 	const { t } = useTranslation();
-	const {
-		escrowRows,
-		rewardEscrowContract,
-		resetStakingState,
-		resetVesting,
-		resetVestingClaimable,
-	} = useStakingContext();
+	const { escrowRows, rewardEscrowContract } = useStakingContext();
 	const [checkedState, setCheckedState] = useState(escrowRows.map((_) => false));
 	const [checkAllState, setCheckAllState] = useState(false);
 	const [openConfirmModal, setOpenConfirmModal] = useState(false);
@@ -88,12 +82,9 @@ const EscrowTable = () => {
 			onTxConfirmed: () => {
 				setCheckedState(escrowRows.map((_) => false));
 				setCheckAllState(false);
-				resetStakingState();
-				resetVesting();
-				resetVestingClaimable();
 			},
 		});
-	}, [escrowRows, resetStakingState, resetVesting, resetVestingClaimable, vest]);
+	}, [escrowRows, vest]);
 
 	return (
 		<EscrowTableContainer $noPadding>

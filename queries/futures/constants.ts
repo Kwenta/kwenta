@@ -48,6 +48,8 @@ export const FUTURES_POSITION_FRAGMENT = gql`
 `;
 export const KWENTA_TRACKING_CODE = ethersUtils.formatBytes32String('KWENTA');
 
+export const AGGREGATE_ASSET_KEY = '0x';
+
 export const ORDER_PREVIEW_ERRORS = { insufficient_margin: 'Insufficient free margin' };
 export const ORDER_PREVIEW_ERRORS_I18N: Record<string, string> = {
 	insufficient_margin: 'futures.market.trade.preview.insufficient-margin',

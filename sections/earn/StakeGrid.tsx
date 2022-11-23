@@ -45,7 +45,14 @@ const StakeGrid = () => {
 		<GridContainer>
 			<GridData title="Your Yield / Day" value={yieldPerDay} hasKwentaLogo />
 			<GridData title="Your Rewards" value={truncateNumbers(earnedRewards, 4)} hasKwentaLogo>
-				<Button fullWidth variant="flat" size="sm" style={{ marginTop: 10 }} onClick={handleClaim}>
+				<Button
+					fullWidth
+					variant="flat"
+					size="sm"
+					style={{ marginTop: 10 }}
+					disabled={!toWei(earnedRewards).gt(0)}
+					onClick={handleClaim}
+				>
 					Claim Rewards
 				</Button>
 			</GridData>

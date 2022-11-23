@@ -15,7 +15,7 @@ type WalletActionsProps = {
 
 export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 	const { walletAddress } = Connector.useContainer();
-	const { data: ensAvatar } = useEnsAvatar({ addressOrName: walletAddress!, chainId: 1 });
+	const { data: ensAvatar } = useEnsAvatar({ address: walletAddress!, chainId: 1 });
 	const { data: ensName } = useEnsName({ address: walletAddress!, chainId: 1 });
 
 	const [walletLabel, setWalletLabel] = useState('');

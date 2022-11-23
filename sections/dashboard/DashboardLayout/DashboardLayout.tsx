@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import NavButton from 'components/Button/NavButton';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { TabList, TabPanel } from 'components/Tab';
+import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import { MainContent, LeftSideContent, FullHeightContainer, PageContent } from 'styles/common';
@@ -60,13 +61,6 @@ const DashboardLayout: FC = ({ children }) => {
 				onClick: () => router.push(ROUTES.Dashboard.Markets),
 			},
 			{
-				name: Tab.Governance,
-				label: t('dashboard.tabs.governance'),
-				active: activeTab === Tab.Governance,
-				disabled: true,
-				onClick: () => {},
-			},
-			{
 				name: Tab.Stake,
 				label: t('dashboard.tabs.staking'),
 				active: activeTab === Tab.Stake,
@@ -77,6 +71,12 @@ const DashboardLayout: FC = ({ children }) => {
 				label: t('dashboard.tabs.earn'),
 				active: activeTab === Tab.Earn,
 				onClick: () => router.push(ROUTES.Dashboard.Earn),
+			},
+			{
+				name: Tab.Governance,
+				label: t('dashboard.tabs.governance'),
+				active: activeTab === Tab.Governance,
+				onClick: () => window.open(EXTERNAL_LINKS.Governance.Vote, '_blank'),
 			},
 		],
 		[t, activeTab, router]
@@ -90,7 +90,7 @@ const DashboardLayout: FC = ({ children }) => {
 						<LeftSideContent>
 							<StyledTabList>
 								<TabGroupTitle>{t('dashboard.titles.trading')}</TabGroupTitle>
-								{TABS.slice(0, 4).map(({ name, label, active, disabled, onClick }) => (
+								{TABS.slice(0, 3).map(({ name, label, active, disabled, onClick }) => (
 									<NavButton
 										key={name}
 										title={name}
@@ -104,7 +104,7 @@ const DashboardLayout: FC = ({ children }) => {
 								))}
 
 								<TabGroupTitle>{t('dashboard.titles.community')}</TabGroupTitle>
-								{TABS.slice(4).map(({ name, label, active, disabled, onClick }) => (
+								{TABS.slice(3).map(({ name, label, active, disabled, onClick }) => (
 									<NavButton
 										key={name}
 										title={name}
