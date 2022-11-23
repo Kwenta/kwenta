@@ -40,6 +40,7 @@ type Props = {
 };
 
 const MAX_REFETCH_COUNT = 20;
+export const CREATE_ACCOUNT_GAS_LIMIT = 230000;
 
 export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 	const { t } = useTranslation();
@@ -120,7 +121,9 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 				return;
 			}
 
-			const tx = await crossMarginContractFactory.newAccount();
+			const tx = await crossMarginContractFactory.newAccount({
+				gasLimit: CREATE_ACCOUNT_GAS_LIMIT,
+			});
 
 			monitorTransaction({
 				txHash: tx.hash,
