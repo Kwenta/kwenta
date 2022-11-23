@@ -21,7 +21,7 @@ const useCoinGeckoTokenPricesQuery = (
 			const response = await axios.get<PriceResponse>(
 				`${CG_BASE_API_URL}/simple/token_price/${platform}?contract_addresses=${tokenAddresses
 					.join(',')
-					.replace(ETH_ADDRESS, ETH_COINGECKO_ADDRESS)}&vs_currencies=usd&include_24hr_change=true`
+					.replace(ETH_ADDRESS, ETH_COINGECKO_ADDRESS)}&vs_currencies=usd`
 			);
 			return response.data;
 		},
