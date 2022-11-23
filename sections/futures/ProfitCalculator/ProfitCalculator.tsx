@@ -136,6 +136,7 @@ const ProfitCalculator: FC<ProfitCalculatorProps> = ({ marketAsset, setOpenProfi
 				isOpen
 				title={t('futures.modals.profit-calculator.title')}
 				rndProps={{
+					cancel: 'input',
 					enableResizing: true,
 					disableDragging: false,
 					minWidth: 500,

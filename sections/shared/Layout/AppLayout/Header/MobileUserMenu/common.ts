@@ -43,7 +43,7 @@ export const SUB_MENUS = {
 	],
 	[ROUTES.Home.Root]: [
 		{ label: 'Overview', link: EXTERNAL_LINKS.Docs.Governance },
-		{ label: 'KIPs', link: EXTERNAL_LINKS.Kips.Home },
+		{ label: 'KIPs', link: EXTERNAL_LINKS.Governance.Kips },
 	],
 };
 

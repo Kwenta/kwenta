@@ -12,7 +12,7 @@ const { chains, provider } = configureChains(
 	[chain.optimism, chain.mainnet, chain.optimismGoerli, chain.goerli],
 	[
 		infuraProvider({
-			apiKey: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+			apiKey: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID!,
 			stallTimeout: 5000,
 			priority: process.env.NEXT_PUBLIC_PROVIDER_ID === 'INFURA' ? 0 : 2,
 		}),

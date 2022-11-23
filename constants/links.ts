@@ -49,8 +49,9 @@ export const EXTERNAL_LINKS = {
 	Trade: {
 		NextPriceBlogPost: 'https://docs.kwenta.io/products/futures/next-price',
 	},
-	Kips: {
-		Home: 'https://kips.kwenta.io/all-kip/',
+	Governance: {
+		Kips: 'https://kips.kwenta.io/all-kip/',
+		Vote: 'https://snapshot.org/#/kwenta.eth',
 	},
 	Competition: {
 		LearnMore: 'https://mirror.xyz/kwenta.eth/s_PO64SxvuwDHz9fdHebsYeQAOOc73D3bL2q4nC6LvU',
