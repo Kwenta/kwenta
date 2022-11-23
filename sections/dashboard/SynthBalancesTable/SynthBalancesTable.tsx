@@ -18,6 +18,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import { Price } from 'queries/rates/types';
 import { balancesState, pastRatesState } from 'store/futures';
+import { sortWei } from 'utils/balances';
 import { formatNumber, zeroBN } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
 
@@ -81,7 +82,9 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 		});
 	}, [pastRates, exchangeRates, balances, synthsMap]);
 
-	const data = [...exchangeTokens, ...data2];
+	const data = [...exchangeTokens, ...data2].sort((a, b) =>
+		sortWei(a.usdBalance, b.usdBalance, 'descending')
+	);
 
 	return (
 		<>
