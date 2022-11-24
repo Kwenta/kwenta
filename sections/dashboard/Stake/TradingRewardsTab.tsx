@@ -11,7 +11,12 @@ import { useStakingContext } from 'contexts/StakingContext';
 import useGetFiles from 'queries/files/useGetFiles';
 import useGetFuturesFee from 'queries/staking/useGetFuturesFee';
 import useGetFuturesFeeForAccount from 'queries/staking/useGetFuturesFeeForAccount';
-import { cobbDouglas, getTradingRewards } from 'queries/staking/utils';
+import {
+	cobbDouglas,
+	getApy,
+	getTradingRewards,
+	TRADING_REWARDS_RATIO,
+} from 'queries/staking/utils';
 import { FlexDivRow } from 'styles/common';
 import media from 'styles/media';
 import { formatTruncatedDuration } from 'utils/formatters/date';
@@ -189,13 +194,13 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.future-fee-paid', { EpochPeriod: period })}
 						</div>
-						<div className="value">{formatDollars(futuresFeePaid, { minDecimals: 4 })}</div>
+						<div className="value">{formatDollars(futuresFeePaid, { minDecimals: 2 })}</div>
 					</div>
 					<div>
 						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.fees-paid', { EpochPeriod: period })}
 						</div>
-						<div className="value">{formatDollars(totalFuturesFeePaid, { minDecimals: 4 })}</div>
+						<div className="value">{formatDollars(totalFuturesFeePaid, { minDecimals: 2 })}</div>
 					</div>
 					{weekCounter <= period ? (
 						<>
@@ -213,7 +218,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 										EpochPeriod: period,
 									})}
 								</div>
-								<KwentaLabel>{formatPercent(ratio, { minDecimals: 2 })}</KwentaLabel>
+								<div className="value">{formatPercent(ratio, { minDecimals: 2 })}</div>
 							</div>
 						</>
 					) : null}

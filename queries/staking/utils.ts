@@ -24,12 +24,16 @@ export function getEpochDetails(networkId: number, epoch: number) {
 	};
 }
 
-export function getStakingApy(totalStakedBalance: number, weekCounter: number) {
+export function getApy(
+	totalStakedBalance: number,
+	weekCounter: number,
+	ratio: number = STAKING_REWARDS_RATIO
+) {
 	const supplyRate = 1 - DECAY_RATE;
 	const initialWeeklySupply = INITIAL_WEEKLY_SUPPLY;
 	const startWeeklySupply = initialWeeklySupply * supplyRate ** weekCounter;
 	const yearlyRewards = (startWeeklySupply * (1 - supplyRate ** 52)) / (1 - supplyRate);
-	return totalStakedBalance > 0 ? (yearlyRewards * STAKING_REWARDS_RATIO) / totalStakedBalance : 0;
+	return totalStakedBalance > 0 ? (yearlyRewards * ratio) / totalStakedBalance : 0;
 }
 
 export function cobbDouglas(feesPaid: number, stakedBalance: number) {
