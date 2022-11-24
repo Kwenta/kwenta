@@ -31,8 +31,8 @@ type EpochLabel = {
 
 enum StakeTab {
 	Staking = 'staking',
-	TradingRewards = 'trading-rewards',
 	Escrow = 'escrow',
+	TradingRewards = 'trading-rewards',
 	Redemption = 'redemption',
 }
 
