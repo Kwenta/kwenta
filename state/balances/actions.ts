@@ -1,4 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+
 import type { ThunkConfig } from 'state/store';
 
 export const fetchSynthBalances = createAsyncThunk<any, string, ThunkConfig>(

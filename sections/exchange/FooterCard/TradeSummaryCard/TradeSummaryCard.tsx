@@ -1,15 +1,6 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { FC, useMemo, memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { submitApprove, submitExchange } from 'state/exchange/actions';
-import {
-	selectFeeCostWei,
-	selectIsApproved,
-	selectShowFee,
-	selectSubmissionDisabledReason,
-	selectTransactionFeeWei,
-} from 'state/exchange/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
@@ -21,6 +12,15 @@ import FeeRateSummaryItem from 'sections/shared/components/FeeRateSummary';
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import TxApproveModal from 'sections/shared/modals/TxApproveModal';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
+import { submitApprove, submitExchange } from 'state/exchange/actions';
+import {
+	selectFeeCostWei,
+	selectIsApproved,
+	selectShowFee,
+	selectSubmissionDisabledReason,
+	selectTransactionFeeWei,
+} from 'state/exchange/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { secondsToTime } from 'utils/formatters/date';
 
 import { MessageContainer } from '../common';

@@ -3,13 +3,13 @@ import { wei } from '@synthetixio/wei';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { setCrossMarginAccountOverview } from 'state/futures/reducer';
-import { useAppDispatch } from 'state/hooks';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useSUSDContract from 'hooks/useSUSDContract';
+import { setCrossMarginAccountOverview } from 'state/futures/reducer';
+import { useAppDispatch } from 'state/hooks';
 import { crossMarginAccountOverviewState, futuresAccountState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';

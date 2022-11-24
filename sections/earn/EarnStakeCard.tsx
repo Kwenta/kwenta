@@ -1,16 +1,16 @@
 import { wei } from '@synthetixio/wei';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { approveLPToken, stakeTokens, unstakeTokens } from 'state/earn/actions';
-import { setAmount } from 'state/earn/reducer';
-import { selectIsApproved } from 'state/earn/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
 import NumericInput from 'components/Input/NumericInput';
 import SegmentedControl from 'components/SegmentedControl';
 import { StakingCard } from 'sections/dashboard/Stake/common';
+import { approveLPToken, stakeTokens, unstakeTokens } from 'state/earn/actions';
+import { setAmount } from 'state/earn/reducer';
+import { selectIsApproved } from 'state/earn/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { toWei, truncateNumbers } from 'utils/formatters/number';
 
 const EarnStakeCard: FC = () => {

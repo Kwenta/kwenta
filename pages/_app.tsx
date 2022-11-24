@@ -12,8 +12,6 @@ import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Provider } from 'react-redux';
 import { RecoilRoot, useRecoilValue } from 'recoil';
-import { useAppData } from 'state/app/hooks';
-import store from 'state/store';
 import { ThemeProvider } from 'styled-components';
 import { chain, WagmiConfig } from 'wagmi';
 
@@ -22,6 +20,8 @@ import { chains, wagmiClient } from 'containers/Connector/config';
 import AcknowledgementModal from 'sections/app/AcknowledgementModal';
 import Layout from 'sections/shared/Layout';
 import SystemStatus from 'sections/shared/SystemStatus';
+import { useAppData } from 'state/app/hooks';
+import store from 'state/store';
 import { currentThemeState } from 'store/ui';
 import { MediaContextProvider } from 'styles/media';
 import { themes } from 'styles/theme';

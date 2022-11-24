@@ -1,7 +1,7 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { constants } from 'ethers';
-import { hexStripZeros } from 'ethers/lib/utils';
+import { defaultAbiCoder } from 'ethers/lib/utils';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -132,7 +132,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 						const receipt = await provider.getTransactionReceipt(tx.hash);
 						const log = receipt?.logs.find((l) => l.address === crossMarginContractFactory.address);
 						if (log?.data) {
-							const account = hexStripZeros(log.data);
+							const account = defaultAbiCoder.decode(['address'], log.data)[0];
 							storeCrossMarginAccount(account);
 							const accountState: FuturesAccountState = {
 								status: 'complete',

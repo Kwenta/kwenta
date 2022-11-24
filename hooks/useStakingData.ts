@@ -17,17 +17,17 @@ import {
 	VEKWENTA_TOKEN_ADDRESS,
 } from 'constants/address';
 import Connector from 'containers/Connector';
-import multipleMerkleDistributorABI from 'lib/abis/MultipleMerkleDistributor.json';
-import rewardEscrowABI from 'lib/abis/RewardEscrow.json';
-import stakingRewardsABI from 'lib/abis/StakingRewards.json';
-import supplyScheduleABI from 'lib/abis/SupplySchedule.json';
-import veKwentaRedeemerABI from 'lib/abis/veKwentaRedeemer.json';
-import vKwentaRedeemerABI from 'lib/abis/vKwentaRedeemer.json';
 import {
 	getEpochDetails,
 	STAKING_HIGH_GAS_LIMIT,
 	STAKING_LOW_GAS_LIMIT,
 } from 'queries/staking/utils';
+import multipleMerkleDistributorABI from 'sdk/contracts/abis/MultipleMerkleDistributor.json';
+import rewardEscrowABI from 'sdk/contracts/abis/RewardEscrow.json';
+import stakingRewardsABI from 'sdk/contracts/abis/StakingRewards.json';
+import supplyScheduleABI from 'sdk/contracts/abis/SupplySchedule.json';
+import veKwentaRedeemerABI from 'sdk/contracts/abis/veKwentaRedeemer.json';
+import vKwentaRedeemerABI from 'sdk/contracts/abis/vKwentaRedeemer.json';
 import { formatTruncatedDuration } from 'utils/formatters/date';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';

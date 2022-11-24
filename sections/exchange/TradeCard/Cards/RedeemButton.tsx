@@ -1,10 +1,10 @@
 import { memo, FC, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { submitRedeem } from 'state/exchange/actions';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import Button from 'components/Button';
 import RedeemTxModal from 'sections/dashboard/Deprecated/RedeemTxModal';
+import { submitRedeem } from 'state/exchange/actions';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 const RedeemButton: FC = memo(() => {
 	const { t } = useTranslation();

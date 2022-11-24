@@ -6,8 +6,6 @@ import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
-import { selectExchangeRatesWei } from 'state/exchange/selectors';
-import { useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import MarketBadge from 'components/Badge/MarketBadge';
@@ -19,6 +17,8 @@ import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import { Price } from 'queries/rates/types';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
+import { selectExchangeRates } from 'state/exchange/selectors';
+import { useAppSelector } from 'state/hooks';
 import { pastRatesState } from 'store/futures';
 import { isDecimalFour, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
@@ -26,7 +26,7 @@ const SpotMarketsTable: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const pastRates = useRecoilValue(pastRatesState);
-	const exchangeRates = useAppSelector(selectExchangeRatesWei);
+	const exchangeRates = useAppSelector(selectExchangeRates);
 
 	const { synthsMap } = Connector.useContainer();
 	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);

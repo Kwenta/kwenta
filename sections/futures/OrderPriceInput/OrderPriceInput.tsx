@@ -3,8 +3,6 @@ import { debounce } from 'lodash';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { selectMarketAssetRate } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import CustomInput from 'components/Input/CustomInput';
@@ -12,7 +10,9 @@ import InputTitle from 'components/Input/InputTitle';
 import SegmentedControl from 'components/SegmentedControl';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { FuturesOrderType } from 'queries/futures/types';
-import { leverageSideState, marketInfoState, orderFeeCapState } from 'store/futures';
+import { selectMarketAssetRate, selectMarketInfo } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { leverageSideState, orderFeeCapState } from 'store/futures';
 import { weiToString, zeroBN } from 'utils/formatters/number';
 import { orderPriceInvalidLabel } from 'utils/futures';
 
@@ -35,7 +35,7 @@ export default function OrderPriceInput({
 	const marketAssetRate = useAppSelector(selectMarketAssetRate);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const [selectedFeeCap, setSelectedFeeCap] = useRecoilState(orderFeeCapState);
-	const marketInfo = useRecoilValue(marketInfoState);
+	const marketInfo = useAppSelector(selectMarketInfo);
 
 	const [localValue, setLocalValue] = useState(value);
 

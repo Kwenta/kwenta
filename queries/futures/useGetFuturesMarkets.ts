@@ -2,9 +2,6 @@ import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilState } from 'recoil';
-import { setFuturesMarkets as setReduxFuturesMarkets } from 'state/futures/reducer';
-import { serializeWeiObject } from 'state/helpers';
-import { useAppDispatch } from 'state/hooks';
 import { chain } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
@@ -12,6 +9,10 @@ import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import useIsL2 from 'hooks/useIsL2';
+import { FuturesMarket } from 'sdk/types/futures';
+import { setFuturesMarkets as setReduxFuturesMarkets } from 'state/futures/reducer';
+import { serializeWeiObject } from 'state/helpers';
+import { useAppDispatch } from 'state/hooks';
 import { futuresMarketsState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 import {
@@ -21,7 +22,6 @@ import {
 	marketsForNetwork,
 } from 'utils/futures';
 
-import { FuturesMarket } from './types';
 import { getReasonFromCode } from './utils';
 
 const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
