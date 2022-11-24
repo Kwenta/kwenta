@@ -50,12 +50,7 @@ const Overview: FC = () => {
 
 	const { network, walletAddress, synthsMap } = Connector.useContainer();
 
-	const { tokenBalances } = useAppSelector(({ balances, exchange }) => ({
-		balancesMap: balances.balancesMap,
-		tokenList: exchange.tokenList,
-		tokenBalances: balances.tokenBalances,
-		balancesStatus: balances.status,
-	}));
+	const { tokenBalances } = useAppSelector(({ balances }) => balances);
 	// Only available on Optimism mainnet
 	const oneInchEnabled = network.id === 10;
 
