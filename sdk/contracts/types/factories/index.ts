@@ -10,6 +10,7 @@ export { Exchanger__factory } from "./Exchanger__factory";
 export { FuturesMarket__factory } from "./FuturesMarket__factory";
 export { FuturesMarketData__factory } from "./FuturesMarketData__factory";
 export { FuturesMarketSettings__factory } from "./FuturesMarketSettings__factory";
+export { KwentaArrakisVault__factory } from "./KwentaArrakisVault__factory";
 export { MultipleMerkleDistributor__factory } from "./MultipleMerkleDistributor__factory";
 export { ReverseRecords__factory } from "./ReverseRecords__factory";
 export { RewardEscrow__factory } from "./RewardEscrow__factory";

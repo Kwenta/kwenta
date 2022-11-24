@@ -62,6 +62,10 @@ The following tasks are expected to be completed before the SDK can be considere
 - [ ] Implement methods for fetching orders, past trades and transfers from the subgraph.
 - [ ] Consider experimenting with WebSockets for realtime data (again).
 
+## Kwenta Token
+
+- [ ] Consider breaking up `getEarnDetails` and `getStakingData` functions.
+
 # Design Considerations
 
 ## General
