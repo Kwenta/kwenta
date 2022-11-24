@@ -340,8 +340,14 @@ const useStakingData = () => {
 		enabled: !!walletAddress && wei(veKwentaBalance).gt(0),
 	});
 
+	const userStakedBalance = useMemo(() => stakedEscrowedBalance.add(stakedNonEscrowedBalance), [
+		stakedEscrowedBalance,
+		stakedNonEscrowedBalance,
+	]);
+
 	return {
 		weekCounter,
+		userStakedBalance: Number(userStakedBalance),
 		totalStakedBalance: Number(totalStakedBalance),
 		periods,
 		resetTime,

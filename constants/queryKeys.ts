@@ -337,12 +337,10 @@ export const QUERY_KEYS = {
 		GetMultiple: (fileNames: string[]) => ['files', 'getMultiple', fileNames],
 	},
 	Staking: {
-		Rewards: (walletAddress: string | null) => ['staking', 'rewards', 'balance', walletAddress],
-		SpotsFee: (walletAddress: string | null, start: number, end: number) => [
+		TotalFuturesFee: (start: number, end: number) => [
 			'staking',
 			'rewards',
-			'spots-fee',
-			walletAddress,
+			'total-futures-fee',
 			start,
 			end,
 		],

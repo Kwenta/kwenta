@@ -9,12 +9,13 @@ import Connector from 'containers/Connector';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { useStakingContext } from 'contexts/StakingContext';
 import useGetFiles from 'queries/files/useGetFiles';
+import useGetFuturesFee from 'queries/staking/useGetFuturesFee';
 import useGetFuturesFeeForAccount from 'queries/staking/useGetFuturesFeeForAccount';
-import useGetSpotFeeForAccount from 'queries/staking/useGetSpotFeeForAccount';
+import { cobbDouglas, getTradingRewards } from 'queries/staking/utils';
 import { FlexDivRow } from 'styles/common';
 import media from 'styles/media';
 import { formatTruncatedDuration } from 'utils/formatters/date';
-import { formatDollars, truncateNumbers, zeroBN } from 'utils/formatters/number';
+import { formatDollars, formatPercent, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import { KwentaLabel, StakingCard } from './common';
 
@@ -45,7 +46,14 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 }: TradingRewardProps) => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
-	const { multipleMerkleDistributorContract, periods, resetTime } = useStakingContext();
+	const {
+		multipleMerkleDistributorContract,
+		periods,
+		weekCounter,
+		resetTime,
+		userStakedBalance,
+		totalStakedBalance,
+	} = useStakingContext();
 
 	const allEpochQuery = useGetFiles(periods);
 	const allEpochData = useMemo(() => allEpochQuery?.data ?? [], [allEpochQuery?.data]);
@@ -101,25 +109,23 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 			? claimableRewards.reduce((acc, curr) => acc + Number(curr[2]) / 1e18, 0)
 			: 0;
 
-	const SpotFeeQuery = useGetSpotFeeForAccount(walletAddress!, start, end);
-	const spotFeePaid = useMemo(() => {
-		const t = SpotFeeQuery.data?.synthExchanges ?? [];
-
-		return t
-			.map((trade: any) => Number(trade.feesInUSD))
-			.reduce((acc: number, curr: number) => acc + curr, 0);
-	}, [SpotFeeQuery.data]);
-
-	const FuturesFeeQuery = useGetFuturesFeeForAccount(walletAddress!, start, end);
+	const futuresFeeQuery = useGetFuturesFeeForAccount(walletAddress!, start, end);
 	const futuresFeePaid = useMemo(() => {
-		const t = FuturesFeeQuery.data ?? [];
+		const t = futuresFeeQuery.data ?? [];
 
 		return t
 			.map((trade: any) => Number(trade.feesPaid) / 1e18)
 			.reduce((acc: number, curr: number) => acc + curr, 0);
-	}, [FuturesFeeQuery.data]);
+	}, [futuresFeeQuery.data]);
 
-	const feePaid = useMemo(() => spotFeePaid + futuresFeePaid, [futuresFeePaid, spotFeePaid]);
+	const totalFuturesFeeQuery = useGetFuturesFee(start, end);
+	const totalFuturesFeePaid = useMemo(() => {
+		const t = totalFuturesFeeQuery.data ?? [];
+
+		return t
+			.map((trade: any) => Number(trade.feesKwenta) / 1e18)
+			.reduce((acc: number, curr: number) => acc + curr, 0);
+	}, [totalFuturesFeeQuery.data]);
 
 	const { config } = usePrepareContractWrite({
 		...multipleMerkleDistributorContract,
@@ -129,6 +135,17 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 	});
 
 	const { writeAsync: claim } = useContractWrite(config);
+
+	const { ratio, score: estimatedReward } = useMemo(() => {
+		const weeklyReward = getTradingRewards(weekCounter);
+		const userScore = cobbDouglas(futuresFeePaid, userStakedBalance);
+		const totalScore = cobbDouglas(totalFuturesFeePaid, totalStakedBalance);
+		const ratio = totalScore > 0 ? userScore / totalScore : 0;
+		return {
+			ratio,
+			score: ratio * weeklyReward,
+		};
+	}, [futuresFeePaid, totalFuturesFeePaid, totalStakedBalance, userStakedBalance, weekCounter]);
 
 	return (
 		<TradingRewardsContainer>
@@ -170,12 +187,6 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 				<CardGrid>
 					<div>
 						<div className="title">
-							{t('dashboard.stake.tabs.trading-rewards.spot-fee-paid', { EpochPeriod: period })}
-						</div>
-						<div className="value">{formatDollars(spotFeePaid, { minDecimals: 4 })}</div>
-					</div>
-					<div>
-						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.future-fee-paid', { EpochPeriod: period })}
 						</div>
 						<div className="value">{formatDollars(futuresFeePaid, { minDecimals: 4 })}</div>
@@ -184,8 +195,28 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.fees-paid', { EpochPeriod: period })}
 						</div>
-						<div className="value">{formatDollars(feePaid, { minDecimals: 4 })}</div>
+						<div className="value">{formatDollars(totalFuturesFeePaid, { minDecimals: 4 })}</div>
 					</div>
+					{weekCounter <= period ? (
+						<>
+							<div>
+								<div className="title">
+									{t('dashboard.stake.tabs.trading-rewards.estimated-rewards', {
+										EpochPeriod: period,
+									})}
+								</div>
+								<KwentaLabel>{truncateNumbers(wei(estimatedReward), 4)}</KwentaLabel>
+							</div>
+							<div>
+								<div className="title">
+									{t('dashboard.stake.tabs.trading-rewards.estimated-fee-share', {
+										EpochPeriod: period,
+									})}
+								</div>
+								<KwentaLabel>{formatPercent(ratio, { minDecimals: 2 })}</KwentaLabel>
+							</div>
+						</>
+					) : null}
 				</CardGrid>
 			</CardGridContainer>
 		</TradingRewardsContainer>
