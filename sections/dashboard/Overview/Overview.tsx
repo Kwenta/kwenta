@@ -30,6 +30,8 @@ import PortfolioChart from '../PortfolioChart';
 import SpotMarketsTable from '../SpotMarketsTable';
 import SynthBalancesTable from '../SynthBalancesTable';
 
+const kwentaAddress = KWENTA_TOKEN_ADDRESS['10'].toLowerCase();
+
 export enum PositionsTab {
 	CROSS_MARGIN = 'cross margin',
 	ISOLATED_MARGIN = 'isolated margin',
@@ -75,79 +77,88 @@ const Overview: FC = () => {
 	});
 
 	const noKwentaFound = !Object.values(tokenBalances).find(
-		(token: any) => token.token.address.toLowerCase() === KWENTA_TOKEN_ADDRESS['10'].toLowerCase()
+		(token: any) => token.token.address.toLowerCase() === kwentaAddress
 	);
 
 	useEffect(() => {
-		(async () => {
-			const kwentaTokenObj = {
-				Kwenta: {
-					balance: kwentaBalance,
-					token: {
-						address: KWENTA_TOKEN_ADDRESS['10'].toLowerCase(),
-						symbol: 'KWENTA',
-						name: 'Kwenta',
+		const initExchangeTokens = async () => {
+			try {
+				const kwentaTokenObj = {
+					Kwenta: {
+						balance: kwentaBalance,
+						token: {
+							address: kwentaAddress,
+							symbol: 'KWENTA',
+							name: 'Kwenta',
+						},
 					},
-				},
-			};
+				};
 
-			const allTokens =
-				oneInchEnabled && noKwentaFound && kwentaBalance.gt(0)
-					? { ...kwentaTokenObj, ...tokenBalances }
-					: tokenBalances;
+				const allTokens =
+					oneInchEnabled && noKwentaFound && kwentaBalance.gt(0)
+						? { ...kwentaTokenObj, ...tokenBalances }
+						: tokenBalances;
 
-			const exchangeBalances: {
-				name: string;
-				currencyKey: string;
-				balance: Wei;
-				address: string;
-			}[] = oneInchEnabled
-				? Object.values(allTokens)
-						.filter((token: any) => !synthsMap[token.token.symbol])
-						.map((value: any) => {
-							return {
-								name: value.token.name,
-								currencyKey: value.token.symbol,
-								balance: toWei(value.balance),
-								address:
-									value.token.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : value.token.address,
-							};
-						})
-				: [];
+				const exchangeBalances: {
+					name: string;
+					currencyKey: string;
+					balance: Wei;
+					address: string;
+				}[] = oneInchEnabled
+					? Object.values(allTokens)
+							.filter((token: any) => !synthsMap[token.token.symbol])
+							.map((value: any) => {
+								return {
+									name: value.token.name,
+									currencyKey: value.token.symbol,
+									balance: toWei(value.balance),
+									address:
+										value.token.address === ETH_ADDRESS
+											? ETH_COINGECKO_ADDRESS
+											: value.token.address,
+								};
+							})
+					: [];
 
-			const coinGeckoPrices = await sdk.exchange.batchGetCoingeckoPrices(
-				oneInchEnabled
+				const tokenAddresses = oneInchEnabled
 					? [
 							...Object.values(tokenBalances).map((value: any) =>
 								value.token.address.toLowerCase()
 							),
-							noKwentaFound ? [KWENTA_TOKEN_ADDRESS['10'].toLowerCase()] : [],
+							noKwentaFound ? [kwentaAddress] : [],
 					  ]
-					: [],
-				true
-			);
+					: [];
 
-			const _exchangeTokens = exchangeBalances.map((exchangeToken) => {
-				const { name, currencyKey, balance, address } = exchangeToken;
+				const coinGeckoPrices = await sdk.exchange.batchGetCoingeckoPrices(tokenAddresses, true);
 
-				const price = coinGeckoPrices ? toWei(coinGeckoPrices[address]?.usd?.toString()) : zeroBN;
-				const priceChange = coinGeckoPrices
-					? toWei(coinGeckoPrices[address]?.usd_24h_change?.toString()).div(100)
-					: zeroBN;
+				const _exchangeTokens = exchangeBalances.map((exchangeToken) => {
+					const { name, currencyKey, balance, address } = exchangeToken;
 
-				const usdBalance = balance.mul(price);
+					const price = coinGeckoPrices ? toWei(coinGeckoPrices[address]?.usd?.toString()) : zeroBN;
+					const priceChange = coinGeckoPrices
+						? toWei(coinGeckoPrices[address]?.usd_24h_change?.toString()).div(100)
+						: zeroBN;
 
-				return {
-					synth: currencyKey,
-					description: name,
-					balance,
-					usdBalance,
-					price,
-					priceChange,
-				};
-			});
+					const usdBalance = balance.mul(price);
 
-			setExchangeTokens(_exchangeTokens);
+					return {
+						synth: currencyKey,
+						description: name,
+						balance,
+						usdBalance,
+						price,
+						priceChange,
+					};
+				});
+
+				setExchangeTokens(_exchangeTokens);
+			} catch (e) {
+				logError(e);
+			}
+		};
+
+		(async () => {
+			await initExchangeTokens();
 		})();
 	}, [kwentaBalance, noKwentaFound, oneInchEnabled, synthsMap, tokenBalances]);
 
