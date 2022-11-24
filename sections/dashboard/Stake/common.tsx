@@ -44,6 +44,7 @@ export const StakingCard = styled.div<{ $noPadding?: boolean }>`
 export const SplitStakingCard = styled(StakingCard)`
 	display: flex;
 	padding: 0;
+	cursor: pointer;
 
 	& > div {
 		display: flex;

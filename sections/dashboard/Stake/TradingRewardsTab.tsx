@@ -11,12 +11,7 @@ import { useStakingContext } from 'contexts/StakingContext';
 import useGetFiles from 'queries/files/useGetFiles';
 import useGetFuturesFee from 'queries/staking/useGetFuturesFee';
 import useGetFuturesFeeForAccount from 'queries/staking/useGetFuturesFeeForAccount';
-import {
-	cobbDouglas,
-	getApy,
-	getTradingRewards,
-	TRADING_REWARDS_RATIO,
-} from 'queries/staking/utils';
+import { cobbDouglas, getTradingRewards } from 'queries/staking/utils';
 import { FlexDivRow } from 'styles/common';
 import media from 'styles/media';
 import { formatTruncatedDuration } from 'utils/formatters/date';
