@@ -38,6 +38,9 @@ export const DEFAULT_1INCH_SLIPPAGE = 3;
 export const DEFAULT_NUMBER_OF_TRADES: number = 16;
 export const MAX_TIMESTAMP: number = 8640000000000000;
 
+// for Fee History
+export const DEFAULT_NUMBER_OF_FUTURES_FEE: number = 5000;
+
 // leverage adjustment
 export const DEFAULT_NP_LEVERAGE_ADJUSTMENT: number = 0.9975;
 
