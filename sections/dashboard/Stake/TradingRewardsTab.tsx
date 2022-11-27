@@ -40,7 +40,7 @@ type EpochDataProps = {
 type ClaimParams = [number, string, string, string[], number];
 
 const TradingRewardsTab: React.FC<TradingRewardProps> = ({
-	period = 'ALL',
+	period = 0,
 	start = 0,
 	end = Math.floor(Date.now() / 1000),
 }: TradingRewardProps) => {

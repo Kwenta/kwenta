@@ -16,6 +16,7 @@ import {
 	VEKWENTA_REDEEMER,
 	VEKWENTA_TOKEN_ADDRESS,
 } from 'constants/address';
+import { DEFAULT_NUMBER_OF_FUTURES_FEE } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import {
 	getEpochDetails,
@@ -221,7 +222,7 @@ const useStakingData = () => {
 	const { data: vestingSchedules } = useContractRead({
 		...rewardEscrowContract,
 		functionName: 'getVestingSchedules',
-		args: [walletAddress ?? undefined, 0, 1000],
+		args: [walletAddress ?? undefined, 0, DEFAULT_NUMBER_OF_FUTURES_FEE],
 		scopeKey: 'staking',
 		watch: true,
 		enabled: !!walletAddress,
