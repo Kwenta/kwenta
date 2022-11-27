@@ -50,6 +50,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 		multipleMerkleDistributorContract,
 		periods,
 		weekCounter,
+		epochPeriod,
 		resetTime,
 		userStakedBalance,
 		totalStakedBalance,
@@ -197,7 +198,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 						</div>
 						<div className="value">{formatDollars(totalFuturesFeePaid, { minDecimals: 2 })}</div>
 					</div>
-					{weekCounter <= period ? (
+					{epochPeriod === period ? (
 						<>
 							<div>
 								<div className="title">
