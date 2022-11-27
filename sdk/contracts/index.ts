@@ -99,14 +99,11 @@ export const getContractsByNetwork = (
 		vKwentaToken: ADDRESSES.vKwentaToken[networkId]
 			? ERC20__factory.connect(ADDRESSES.vKwentaToken[networkId], provider)
 			: undefined,
-		MultipleMerkleDistributor: ADDRESSES.MultipleMerkleDistributor[networkId]
-			? MultipleMerkleDistributor__factory.connect(
-					ADDRESSES.MultipleMerkleDistributor[networkId],
-					provider
-			  )
+		MultipleMerkleDistributor: ADDRESSES.TradingRewards[networkId]
+			? MultipleMerkleDistributor__factory.connect(ADDRESSES.TradingRewards[networkId], provider)
 			: undefined,
 		veKwentaToken: ADDRESSES.veKwentaToken[networkId]
-			? ERC20__factory.connect(ADDRESSES.veKwenta[networkId], provider)
+			? ERC20__factory.connect(ADDRESSES.veKwentaToken[networkId], provider)
 			: undefined,
 		KwentaStakingRewards: ADDRESSES.KwentaStakingRewards[networkId]
 			? StakingRewards__factory.connect(ADDRESSES.KwentaStakingRewards[networkId], provider)

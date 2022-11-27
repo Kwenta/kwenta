@@ -134,6 +134,8 @@ export default class KwentaTokenService {
 			MultipleMerkleDistributor,
 			veKwentaToken,
 			KwentaStakingRewards,
+			vKwentaRedeemer,
+			veKwentaRedeemer,
 		} = this.sdk.context.contracts;
 
 		if (
@@ -143,7 +145,9 @@ export default class KwentaTokenService {
 			!SupplySchedule ||
 			!vKwentaToken ||
 			!MultipleMerkleDistributor ||
-			!veKwentaToken
+			!veKwentaToken ||
+			!vKwentaRedeemer ||
+			!veKwentaRedeemer
 		) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
@@ -178,18 +182,18 @@ export default class KwentaTokenService {
 			veKwentaAllowance,
 		]: ethers.BigNumber[] = await this.sdk.context.multicallProvider.all([
 			RewardEscrowContract.balanceOf(this.sdk.context.walletAddress),
-			KwentaStakingRewardsContract.nonEscrowedBalanceOf(),
-			KwentaStakingRewardsContract.escrowedBalanceOf(),
-			KwentaStakingRewardsContract.earned(),
-			KwentaTokenContract.balanceOf(),
+			KwentaStakingRewardsContract.nonEscrowedBalanceOf(this.sdk.context.walletAddress),
+			KwentaStakingRewardsContract.escrowedBalanceOf(this.sdk.context.walletAddress),
+			KwentaStakingRewardsContract.earned(this.sdk.context.walletAddress),
+			KwentaTokenContract.balanceOf(this.sdk.context.walletAddress),
 			SupplyScheduleContract.weekCounter(),
 			KwentaStakingRewardsContract.totalSupply(),
-			vKwentaTokenContract.balanceOf(),
-			vKwentaTokenContract.allowance(),
-			KwentaTokenContract.allowance(),
+			vKwentaTokenContract.balanceOf(this.sdk.context.walletAddress),
+			vKwentaTokenContract.allowance(this.sdk.context.walletAddress, vKwentaRedeemer.address),
+			KwentaTokenContract.allowance(this.sdk.context.walletAddress, KwentaStakingRewards.address),
 			MultipleMerkleDistributorContract.distributionEpoch(),
-			veKwentaTokenContract.balanceOf(),
-			veKwentaTokenContract.allowance(),
+			veKwentaTokenContract.balanceOf(this.sdk.context.walletAddress),
+			veKwentaTokenContract.allowance(this.sdk.context.walletAddress, veKwentaRedeemer.address),
 		]);
 
 		return {

@@ -79,8 +79,8 @@ const StakingPortfolio = () => {
 				/>
 			</FlexDivRowCentered>
 			<CardsContainer>
-				{DEFAULT_CARDS.map((card) => (
-					<SplitStakingCard>
+				{DEFAULT_CARDS.map((card, i) => (
+					<SplitStakingCard key={i}>
 						{card.map(({ key, title, value }) => (
 							<div key={key}>
 								<div className="title">{title}</div>
