@@ -8,9 +8,10 @@ import Select from 'components/Select';
 import { DropdownIndicator, IndicatorSeparator } from 'components/Select/Select';
 import { TabPanel } from 'components/Tab';
 import Connector from 'containers/Connector';
-import { useStakingContext } from 'contexts/StakingContext';
 import useIsL2 from 'hooks/useIsL2';
 import { getEpochDetails } from 'queries/staking/utils';
+import { useAppSelector } from 'state/hooks';
+import { selectPeriods } from 'state/staking/selectors';
 import { FlexDivRowCentered } from 'styles/common';
 import media from 'styles/media';
 import { formatShortDate, toJSTimestamp } from 'utils/formatters/date';
@@ -40,7 +41,9 @@ const StakingTabs: React.FC = () => {
 	const { t } = useTranslation();
 	const { network } = Connector.useContainer();
 	const isL2 = useIsL2();
-	const { epochPeriod, periods } = useStakingContext();
+
+	const epochPeriod = useAppSelector(({ staking }) => staking.epochPeriod);
+	const periods = useAppSelector(selectPeriods);
 
 	const [period, setPeriod] = useState(epochPeriod);
 	const [start, setStart] = useState(0);

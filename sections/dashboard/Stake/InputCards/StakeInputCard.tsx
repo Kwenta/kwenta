@@ -3,99 +3,103 @@ import _ from 'lodash';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 import Button from 'components/Button';
 import NumericInput from 'components/Input/NumericInput';
 import SegmentedControl from 'components/SegmentedControl';
 import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
-import { monitorTransaction } from 'contexts/RelayerContext';
-import { useStakingContext } from 'contexts/StakingContext';
-import { STAKING_LOW_GAS_LIMIT } from 'queries/staking/utils';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { approveKwentaToken } from 'state/staking/actions';
+import { stakeKwenta, unstakeKwenta } from 'state/staking/actions';
+import {
+	selectIsKwentaTokenApproved,
+	selectKwentaBalance,
+	selectStakedKwentaBalance,
+} from 'state/staking/selectors';
 import { truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import { StakingCard } from '../common';
 
 const StakeInputCard: FC = () => {
 	const { t } = useTranslation();
-	const {
-		kwentaBalance,
-		stakedNonEscrowedBalance,
-		kwentaApproveConfig,
-		kwentaTokenApproval,
-		stakingRewardsContract,
-	} = useStakingContext();
+	const dispatch = useAppDispatch();
+
+	const kwentaBalance = useAppSelector(selectKwentaBalance);
+	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance);
 
 	const [amount, setAmount] = useState('');
 	const [activeTab, setActiveTab] = useState(0);
-	const amountBN = useMemo(
-		() => (amount === '' ? zeroBN.toString(0, true) : wei(amount).toString(0, true)),
-		[amount]
-	);
+	const amountBN = useMemo(() => (!!amount ? zeroBN : wei(amount)).toString(0, true), [amount]);
 
-	const handleTabChange = (tabIndex: number) => {
+	const handleTabChange = useCallback((tabIndex: number) => {
 		setAmount('');
 		setActiveTab(tabIndex);
-	};
+	}, []);
 
-	const maxBalance = useMemo(
-		() =>
-			activeTab === 0 ? wei(kwentaBalance ?? zeroBN) : wei(stakedNonEscrowedBalance ?? zeroBN),
-		[activeTab, kwentaBalance, stakedNonEscrowedBalance]
-	);
+	const maxBalance = useMemo(() => (activeTab === 0 ? kwentaBalance : stakedKwentaBalance), [
+		activeTab,
+		kwentaBalance,
+		stakedKwentaBalance,
+	]);
 
 	const onMaxClick = useCallback(() => {
 		setAmount(truncateNumbers(maxBalance, DEFAULT_TOKEN_DECIMALS));
 	}, [maxBalance]);
 
-	const { config: stakeKwentaConfig } = usePrepareContractWrite({
-		...stakingRewardsContract,
-		functionName: 'stake',
-		args: [amountBN],
-		overrides: {
-			gasLimit: STAKING_LOW_GAS_LIMIT,
-		},
-		enabled: activeTab === 0 && kwentaBalance.gt(0) && !!parseFloat(amount),
-	});
+	const isKwentaTokenApproved = useAppSelector(selectIsKwentaTokenApproved);
 
-	const { config: unstakeKwentaConfig } = usePrepareContractWrite({
-		...stakingRewardsContract,
-		functionName: 'unstake',
-		args: [amountBN],
-		overrides: {
-			gasLimit: STAKING_LOW_GAS_LIMIT,
-		},
-		enabled: activeTab === 1 && stakedNonEscrowedBalance.gt(0) && !!parseFloat(amount),
-	});
+	const handleApprove = useCallback(() => {
+		dispatch(approveKwentaToken('kwenta'));
+	}, [dispatch]);
 
-	const { writeAsync: kwentaApprove } = useContractWrite(kwentaApproveConfig);
-	const { writeAsync: stakeKwenta } = useContractWrite(stakeKwentaConfig);
-	const { writeAsync: unstakeKwenta } = useContractWrite(unstakeKwentaConfig);
+	const handleStakeKwenta = useCallback(() => {
+		dispatch(stakeKwenta(amountBN));
+	}, [dispatch, amountBN]);
+
+	const handleUnstakeKwenta = useCallback(() => {
+		dispatch(unstakeKwenta(amountBN));
+	}, [dispatch, amountBN]);
+
+	const stakeEnabled = useMemo(() => {
+		return activeTab === 0 && kwentaBalance.gt(0) && !!parseFloat(amount);
+	}, [activeTab, kwentaBalance, amount]);
+
+	const unstakeEnabled = useMemo(() => {
+		return activeTab === 1 && stakedKwentaBalance.gt(0) && !!parseFloat(amount);
+	}, [activeTab, stakedKwentaBalance, amount]);
+
+	const isDisabled = useMemo(() => {
+		if (!isKwentaTokenApproved) {
+			return false;
+		} else if (activeTab === 0) {
+			return !stakeEnabled;
+		} else {
+			return !unstakeEnabled;
+		}
+	}, [isKwentaTokenApproved, activeTab, stakeEnabled, unstakeEnabled]);
 
 	const submitStake = useCallback(async () => {
-		if (kwentaTokenApproval) {
-			const approveTxn = await kwentaApprove?.();
-			monitorTransaction({
-				txHash: approveTxn?.hash ?? '',
-			});
+		if (!isKwentaTokenApproved) {
+			handleApprove();
 		} else if (activeTab === 0) {
-			const stakeTxn = await stakeKwenta?.();
-			monitorTransaction({
-				txHash: stakeTxn?.hash ?? '',
-				onTxConfirmed: () => {
-					setAmount('');
-				},
-			});
+			handleStakeKwenta();
 		} else {
-			const unstakeTxn = await unstakeKwenta?.();
-			monitorTransaction({
-				txHash: unstakeTxn?.hash ?? '',
-				onTxConfirmed: () => {
-					setAmount('');
-				},
-			});
+			handleUnstakeKwenta();
 		}
-	}, [activeTab, kwentaApprove, kwentaTokenApproval, stakeKwenta, unstakeKwenta]);
+	}, [activeTab, handleApprove, isKwentaTokenApproved, handleStakeKwenta, handleUnstakeKwenta]);
+
+	const handleChange = useCallback((_: any, value: string) => {
+		if (value !== '' && value.indexOf('.') === -1) {
+			setAmount(parseFloat(value).toString());
+		} else {
+			setAmount(value);
+		}
+	}, []);
+
+	const balance = useMemo(() => {
+		const b = activeTab === 0 ? kwentaBalance : stakedKwentaBalance;
+		return truncateNumbers(b, DEFAULT_CRYPTO_DECIMALS);
+	}, [activeTab, kwentaBalance, stakedKwentaBalance]);
 
 	return (
 		<StakingInputCardContainer>
@@ -112,32 +116,13 @@ const StakeInputCard: FC = () => {
 				<StakeInputHeader>
 					<div>{t('dashboard.stake.tabs.stake-table.kwenta-token')}</div>
 					<div className="max" onClick={onMaxClick}>
-						{t('dashboard.stake.tabs.stake-table.balance')}{' '}
-						{activeTab === 0
-							? truncateNumbers(kwentaBalance, DEFAULT_CRYPTO_DECIMALS)
-							: truncateNumbers(stakedNonEscrowedBalance, DEFAULT_CRYPTO_DECIMALS)}
+						{t('dashboard.stake.tabs.stake-table.balance')} {balance}
 					</div>
 				</StakeInputHeader>
-				<StyledInput
-					value={amount}
-					onChange={(_, newValue) => {
-						newValue !== '' && newValue.indexOf('.') === -1
-							? setAmount(parseFloat(newValue).toString())
-							: setAmount(newValue);
-					}}
-				/>
+				<StyledInput value={amount} onChange={handleChange} />
 			</StakeInputContainer>
-			<Button
-				fullWidth
-				variant="flat"
-				size="sm"
-				disabled={
-					kwentaTokenApproval ? !kwentaApprove : activeTab === 0 ? !stakeKwenta : !unstakeKwenta
-				}
-				onClick={submitStake}
-				style={{ marginTop: '20px' }}
-			>
-				{kwentaTokenApproval
+			<Button fullWidth variant="flat" size="sm" disabled={isDisabled} onClick={submitStake}>
+				{!isKwentaTokenApproved
 					? t('dashboard.stake.tabs.stake-table.approve')
 					: activeTab === 0
 					? t('dashboard.stake.tabs.stake-table.stake')
@@ -168,7 +153,9 @@ const StakeInputHeader = styled.div`
 	}
 `;
 
-const StakeInputContainer = styled.div``;
+const StakeInputContainer = styled.div`
+	margin-bottom: 20px;
+`;
 
 const StyledInput = styled(NumericInput)`
 	font-family: ${(props) => props.theme.fonts.monoBold};

@@ -71,8 +71,8 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 		420: '0xDA0C33402Fc1e10d18c532F0Ed9c1A6c5C9e386C',
 	},
 	KwentaStakingRewards: {
-		420: '0x1653a3a3c4ccee0538685f1600a30df5e3ee830a',
 		10: '0x6e56A5D49F775BA08041e28030bc7826b13489e0',
+		420: '0x1653a3a3c4ccee0538685f1600a30df5e3ee830a',
 	},
 	RewardEscrow: {
 		10: '0x1066A8eB3d90Af0Ad3F89839b974658577e75BE2',

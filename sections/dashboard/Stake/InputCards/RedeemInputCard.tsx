@@ -1,11 +1,16 @@
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useContractWrite } from 'wagmi';
 
 import Button from 'components/Button';
-import { monitorTransaction } from 'contexts/RelayerContext';
-import { useStakingContext } from 'contexts/StakingContext';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { approveKwentaToken, redeemToken } from 'state/staking/actions';
+import {
+	selectIsVeKwentaTokenApproved,
+	selectIsVKwentaTokenApproved,
+	selectVeKwentaBalance,
+	selectVKwentaBalance,
+} from 'state/staking/selectors';
 import { truncateNumbers } from 'utils/formatters/number';
 
 import { StakingCard } from '../common';
@@ -17,57 +22,40 @@ type RedeemInputCardProps = {
 
 const RedeemInputCard: FC<RedeemInputCardProps> = ({ inputLabel, isVKwenta }) => {
 	const { t } = useTranslation();
-	const {
-		vKwentaTokenApproval,
-		vKwentaBalance,
-		vKwentaApproveConfig,
-		vKwentaRedeemConfig,
-		veKwentaTokenApproval,
-		veKwentaBalance,
-		veKwentaApproveConfig,
-		veKwentaRedeemConfig,
-	} = useStakingContext();
+	const dispatch = useAppDispatch();
 
-	const { writeAsync: vKwentaApprove } = useContractWrite(vKwentaApproveConfig);
-	const { writeAsync: vKwentaRedeem } = useContractWrite(vKwentaRedeemConfig);
-	const { writeAsync: veKwentaApprove } = useContractWrite(veKwentaApproveConfig);
-	const { writeAsync: veKwentaRedeem } = useContractWrite(veKwentaRedeemConfig);
+	const vKwentaBalance = useAppSelector(selectVKwentaBalance);
+	const veKwentaBalance = useAppSelector(selectVeKwentaBalance);
+	const isVKwentaApproved = useAppSelector(selectIsVKwentaTokenApproved);
+	const isVeKwentaApproved = useAppSelector(selectIsVeKwentaTokenApproved);
+
+	const isApproved = useMemo(() => (isVKwenta ? isVKwentaApproved : isVeKwentaApproved), [
+		isVKwenta,
+		isVKwentaApproved,
+		isVeKwentaApproved,
+	]);
+
+	const balance = useMemo(() => (isVKwenta ? vKwentaBalance : veKwentaBalance), [
+		isVKwenta,
+		vKwentaBalance,
+		veKwentaBalance,
+	]);
+
+	const buttonTranslationKey = useMemo(() => {
+		return isApproved
+			? 'dashboard.stake.tabs.stake-table.redeem'
+			: 'dashboard.stake.tabs.stake-table.approve';
+	}, [isApproved]);
 
 	const submitRedeem = useCallback(async () => {
-		if (isVKwenta) {
-			if (vKwentaTokenApproval) {
-				const vApproveTxn = await vKwentaApprove?.();
-				monitorTransaction({
-					txHash: vApproveTxn?.hash ?? '',
-				});
-			} else {
-				const vRedeemTxn = await vKwentaRedeem?.();
-				monitorTransaction({
-					txHash: vRedeemTxn?.hash ?? '',
-				});
-			}
+		const token = isVKwenta ? 'vKwenta' : 'veKwenta';
+
+		if (!isApproved) {
+			dispatch(approveKwentaToken(token));
 		} else {
-			if (veKwentaTokenApproval) {
-				const veApproveTxn = await veKwentaApprove?.();
-				monitorTransaction({
-					txHash: veApproveTxn?.hash ?? '',
-				});
-			} else {
-				const veRedeemTxn = await veKwentaRedeem?.();
-				monitorTransaction({
-					txHash: veRedeemTxn?.hash ?? '',
-				});
-			}
+			dispatch(redeemToken(token));
 		}
-	}, [
-		isVKwenta,
-		vKwentaApprove,
-		vKwentaRedeem,
-		vKwentaTokenApproval,
-		veKwentaApprove,
-		veKwentaRedeem,
-		veKwentaTokenApproval,
-	]);
+	}, [dispatch, isApproved, isVKwenta]);
 
 	return (
 		<StakingInputCardContainer>
@@ -75,25 +63,12 @@ const RedeemInputCard: FC<RedeemInputCardProps> = ({ inputLabel, isVKwenta }) =>
 				<StakeInputHeader>
 					<div>{inputLabel}</div>
 					<div>
-						{t('dashboard.stake.tabs.stake-table.balance')}{' '}
-						{isVKwenta ? truncateNumbers(vKwentaBalance, 4) : truncateNumbers(veKwentaBalance, 4)}
+						{t('dashboard.stake.tabs.stake-table.balance')} {truncateNumbers(balance, 4)}
 					</div>
 				</StakeInputHeader>
 			</StakeInputContainer>
-			<Button
-				fullWidth
-				variant="flat"
-				size="sm"
-				disabled={isVKwenta ? vKwentaBalance.eq(0) : veKwentaBalance.eq(0)}
-				onClick={submitRedeem}
-			>
-				{isVKwenta
-					? vKwentaTokenApproval
-						? t('dashboard.stake.tabs.stake-table.approve')
-						: t('dashboard.stake.tabs.stake-table.redeem')
-					: veKwentaTokenApproval
-					? t('dashboard.stake.tabs.stake-table.approve')
-					: t('dashboard.stake.tabs.stake-table.redeem')}
+			<Button fullWidth variant="flat" size="sm" disabled={balance.eq(0)} onClick={submitRedeem}>
+				{t(buttonTranslationKey)}
 			</Button>
 		</StakingInputCardContainer>
 	);

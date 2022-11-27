@@ -7,14 +7,15 @@ import useIsL2 from 'hooks/useIsL2';
 
 import { FLEEK_BASE_URL, FLEEK_STORAGE_BUCKET } from './constants';
 
+const client = axios.create({
+	baseURL: `${FLEEK_BASE_URL}/${FLEEK_STORAGE_BUCKET}/data/`,
+	timeout: 5000,
+});
+
 const useGetFiles = (periods: number[]) => {
-	const client = axios.create({
-		baseURL: `${FLEEK_BASE_URL}/${FLEEK_STORAGE_BUCKET}/data/`,
-		timeout: 5000,
-	});
 	const { network } = Connector.useContainer();
 	const isL2 = useIsL2();
-	const fileNames: string[] = periods
+	const fileNames = periods
 		.slice(0, -1)
 		.map((i) => `trading-rewards-snapshots/${network.id === 420 ? `goerli-` : ''}epoch-${i}.json`);
 

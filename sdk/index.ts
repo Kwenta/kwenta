@@ -17,7 +17,7 @@ export default class KwentaSDK {
 	public futures: FuturesService;
 	public synths: SynthsService;
 	public transactions: TransactionsService;
-	public token: KwentaTokenService;
+	public kwentaToken: KwentaTokenService;
 
 	constructor(context: IContext) {
 		this.context = new Context(context);
@@ -25,7 +25,7 @@ export default class KwentaSDK {
 		this.futures = new FuturesService(this);
 		this.synths = new SynthsService(this);
 		this.transactions = new TransactionsService(this);
-		this.token = new KwentaTokenService(this);
+		this.kwentaToken = new KwentaTokenService(this);
 	}
 
 	public setProvider(provider: ethers.providers.Provider) {

@@ -1,16 +1,15 @@
 import { wei } from '@synthetixio/wei';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useContractReads, useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
-import { monitorTransaction } from 'contexts/RelayerContext';
-import { useStakingContext } from 'contexts/StakingContext';
-import useGetFiles from 'queries/files/useGetFiles';
 import useGetFuturesFeeForAccount from 'queries/staking/useGetFuturesFeeForAccount';
 import useGetSpotFeeForAccount from 'queries/staking/useGetSpotFeeForAccount';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { claimMultipleRewards, fetchClaimableRewards } from 'state/staking/actions';
+import { selectResetTime } from 'state/staking/selectors';
 import { FlexDivRow } from 'styles/common';
 import media from 'styles/media';
 import { formatTruncatedDuration } from 'utils/formatters/date';
@@ -24,20 +23,6 @@ type TradingRewardProps = {
 	end?: number;
 };
 
-type EpochDataProps = {
-	merkleRoot: string;
-	tokenTotal: string;
-	claims: {
-		[address: string]: {
-			index: number;
-			amount: string;
-			proof: string[];
-		};
-	};
-};
-
-type ClaimParams = [number, string, string, string[], number];
-
 const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 	period = 'ALL',
 	start = 0,
@@ -45,61 +30,10 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 }: TradingRewardProps) => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
-	const { multipleMerkleDistributorContract, periods, resetTime } = useStakingContext();
+	const dispatch = useAppDispatch();
 
-	const allEpochQuery = useGetFiles(periods);
-	const allEpochData = useMemo(() => allEpochQuery?.data ?? [], [allEpochQuery?.data]);
-
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	let rewards: ClaimParams[] = [];
-
-	allEpochData &&
-		allEpochData.length > 0 &&
-		allEpochData.forEach((d: EpochDataProps, period) => {
-			const index = Object.keys(d.claims).findIndex((key) => key === walletAddress);
-			if (index !== -1) {
-				const walletReward = Object.values(d.claims)[index];
-				if (!!walletReward && walletAddress != null) {
-					rewards.push([
-						walletReward?.index,
-						walletAddress,
-						walletReward?.amount,
-						walletReward?.proof,
-						period,
-					]);
-				}
-			}
-		});
-
-	const checkIsClaimed = useMemo(() => {
-		return rewards.map((reward: ClaimParams) => {
-			return {
-				...multipleMerkleDistributorContract,
-				functionName: 'isClaimed',
-				args: [reward[0], reward[4]],
-			};
-		});
-	}, [multipleMerkleDistributorContract, rewards]);
-
-	const { data: isClaimable } = useContractReads({
-		contracts: checkIsClaimed,
-		enabled: checkIsClaimed && checkIsClaimed.length > 0,
-		watch: true,
-		scopeKey: 'staking',
-	});
-
-	const claimableRewards = useMemo(
-		() =>
-			isClaimable && isClaimable.length > 0
-				? rewards.filter((_, index) => !isClaimable[index])
-				: [],
-		[isClaimable, rewards]
-	);
-
-	const totalRewards =
-		claimableRewards.length > 0
-			? claimableRewards.reduce((acc, curr) => acc + Number(curr[2]) / 1e18, 0)
-			: 0;
+	const resetTime = useAppSelector(selectResetTime);
+	const totalRewards = useAppSelector(({ staking }) => staking.totalRewards);
 
 	const SpotFeeQuery = useGetSpotFeeForAccount(walletAddress!, start, end);
 	const spotFeePaid = useMemo(() => {
@@ -121,14 +55,13 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 
 	const feePaid = useMemo(() => spotFeePaid + futuresFeePaid, [futuresFeePaid, spotFeePaid]);
 
-	const { config } = usePrepareContractWrite({
-		...multipleMerkleDistributorContract,
-		functionName: 'claimMultiple',
-		args: [claimableRewards],
-		enabled: claimableRewards && claimableRewards.length > 0,
-	});
+	useEffect(() => {
+		dispatch(fetchClaimableRewards());
+	}, [dispatch]);
 
-	const { writeAsync: claim } = useContractWrite(config);
+	const handleClaim = useCallback(() => {
+		dispatch(claimMultipleRewards());
+	}, [dispatch]);
 
 	return (
 		<TradingRewardsContainer>
@@ -150,18 +83,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 					</div>
 				</CardGrid>
 				<StyledFlexDivRow>
-					<Button
-						fullWidth
-						variant="flat"
-						size="sm"
-						disabled={!claim}
-						onClick={async () => {
-							const tx = await claim?.();
-							monitorTransaction({
-								txHash: tx?.hash ?? '',
-							});
-						}}
-					>
+					<Button fullWidth variant="flat" size="sm" onClick={handleClaim}>
 						{t('dashboard.stake.tabs.trading-rewards.claim')}
 					</Button>
 				</StyledFlexDivRow>

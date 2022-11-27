@@ -5,7 +5,14 @@ import styled from 'styled-components';
 import TabButton from 'components/Button/TabButton';
 import Text from 'components/Text';
 import { EXTERNAL_LINKS } from 'constants/links';
-import { useStakingContext } from 'contexts/StakingContext';
+import { useAppSelector } from 'state/hooks';
+import {
+	selectClaimableBalance,
+	selectEscrowedKwentaBalance,
+	selectKwentaBalance,
+	selectStakedEscrowedKwentaBalance,
+	selectStakedKwentaBalance,
+} from 'state/staking/selectors';
 import { FlexDivRowCentered } from 'styles/common';
 import media from 'styles/media';
 import { truncateNumbers } from 'utils/formatters/number';
@@ -14,14 +21,12 @@ import { SplitStakingCard } from './common';
 
 const StakingPortfolio = () => {
 	const { t } = useTranslation();
-	const {
-		escrowedBalance,
-		totalVestable,
-		stakedNonEscrowedBalance,
-		stakedEscrowedBalance,
-		claimableBalance,
-		kwentaBalance,
-	} = useStakingContext();
+	const kwentaBalance = useAppSelector(selectKwentaBalance);
+	const escrowedKwentaBalance = useAppSelector(selectEscrowedKwentaBalance);
+	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance);
+	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance);
+	const claimableBalance = useAppSelector(selectClaimableBalance);
+	const totalVestable = useAppSelector(({ staking }) => staking.totalVestable);
 
 	const DEFAULT_CARDS = [
 		[
@@ -33,19 +38,19 @@ const StakingPortfolio = () => {
 			{
 				key: 'Escrow',
 				title: t('dashboard.stake.portfolio.escrow'),
-				value: truncateNumbers(escrowedBalance.sub(stakedEscrowedBalance), 2),
+				value: truncateNumbers(escrowedKwentaBalance.sub(stakedEscrowedKwentaBalance), 2),
 			},
 		],
 		[
 			{
 				key: 'Staked',
 				title: t('dashboard.stake.portfolio.staked'),
-				value: truncateNumbers(stakedNonEscrowedBalance, 2),
+				value: truncateNumbers(stakedKwentaBalance, 2),
 			},
 			{
 				key: 'StakedEscrow',
 				title: t('dashboard.stake.portfolio.staked-escrow'),
-				value: truncateNumbers(stakedEscrowedBalance, 2),
+				value: truncateNumbers(stakedEscrowedKwentaBalance, 2),
 			},
 		],
 		[

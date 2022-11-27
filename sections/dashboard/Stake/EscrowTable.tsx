@@ -3,25 +3,27 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
-import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
 import { TableCellHead } from 'components/Table/Table';
-import { monitorTransaction } from 'contexts/RelayerContext';
-import { useStakingContext } from 'contexts/StakingContext';
-import { EscrowRow } from 'hooks/useStakingData';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { vestEscrowedRewards } from 'state/staking/actions';
+import { EscrowData } from 'state/staking/types';
 import { truncateNumbers } from 'utils/formatters/number';
 
 import { StakingCard } from './common';
 import VestConfirmationModal from './VestConfirmationModal';
 
+type EscrowRow = EscrowData[number];
+
 const EscrowTable = () => {
 	const { t } = useTranslation();
-	const { escrowRows, rewardEscrowContract } = useStakingContext();
-	const [checkedState, setCheckedState] = useState(escrowRows.map((_) => false));
+	const dispatch = useAppDispatch();
+	const escrowData = useAppSelector(({ staking }) => staking.escrowData);
+	const [checkedState, setCheckedState] = useState(escrowData.map((_) => false));
 	const [checkAllState, setCheckAllState] = useState(false);
-	const [openConfirmModal, setOpenConfirmModal] = useState(false);
+	const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
 
 	const handleOnChange = useCallback(
 		(position: number) => {
@@ -33,64 +35,52 @@ const EscrowTable = () => {
 
 	const selectAll = useCallback(() => {
 		if (checkAllState) {
-			setCheckedState(escrowRows.map((_) => false));
+			setCheckedState(escrowData.map((_) => false));
 			setCheckAllState(false);
 		} else {
-			setCheckedState(escrowRows.map((_) => true));
+			setCheckedState(escrowData.map((_) => true));
 			setCheckAllState(true);
 		}
-	}, [checkAllState, escrowRows]);
+	}, [checkAllState, escrowData]);
 
 	const columnsDeps = useMemo(() => [checkedState], [checkedState]);
 
-	const totalVestable = useMemo(
+	const { totalVestable, totalFee } = useMemo(
 		() =>
-			checkedState.reduce((acc, current, index) => {
-				if (current === true) {
-					return acc + escrowRows[index]?.vestable ?? 0;
-				}
-				return acc;
-			}, 0),
-		[checkedState, escrowRows]
+			checkedState.reduce(
+				(acc, current, index) => {
+					if (current) {
+						acc.totalVestable += escrowData[index].vestable;
+						acc.totalFee += escrowData[index].fee;
+					}
+
+					return acc;
+				},
+				{ totalVestable: 0, totalFee: 0 }
+			),
+		[checkedState, escrowData]
 	);
-
-	const totalFee = useMemo(
-		() =>
-			checkedState.reduce((acc, current, index) => {
-				if (current === true) {
-					return acc + escrowRows[index]?.fee ?? 0;
-				}
-				return acc;
-			}, 0),
-		[checkedState, escrowRows]
-	);
-
-	const { config } = usePrepareContractWrite({
-		...rewardEscrowContract,
-		functionName: 'vest',
-		args: [escrowRows.filter((d, index) => !!checkedState[index]).map((d) => d.id)],
-		enabled: escrowRows.filter((d, index) => !!checkedState[index]).map((d) => d.id).length > 0,
-	});
-
-	const { writeAsync: vest } = useContractWrite(config);
 
 	const handleVest = useCallback(async () => {
-		const tx = await vest?.();
-		setOpenConfirmModal(false);
-		monitorTransaction({
-			txHash: tx?.hash ?? '',
-			onTxConfirmed: () => {
-				setCheckedState(escrowRows.map((_) => false));
-				setCheckAllState(false);
-			},
-		});
-	}, [escrowRows, vest]);
+		const ids = escrowData.filter((_, i) => !!checkedState[i]).map((d) => d.id);
+
+		if (ids.length > 0) {
+			await dispatch(vestEscrowedRewards(ids));
+			setCheckedState(escrowData.map((_) => false));
+			setCheckAllState(false);
+		}
+
+		setConfirmModalOpen(false);
+	}, [dispatch, escrowData, checkedState]);
+
+	const openConfirmModal = useCallback(() => setConfirmModalOpen(true), []);
+	const closeConfirmModal = useCallback(() => setConfirmModalOpen(false), []);
 
 	return (
 		<EscrowTableContainer $noPadding>
 			<DesktopOnlyView>
 				<StyledTable
-					data={escrowRows}
+					data={escrowData}
 					showPagination={false}
 					columnsDeps={columnsDeps}
 					columns={[
@@ -174,7 +164,7 @@ const EscrowTable = () => {
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<StyledTable
-					data={escrowRows}
+					data={escrowData}
 					columnsDeps={columnsDeps}
 					columns={[
 						{
@@ -237,15 +227,15 @@ const EscrowTable = () => {
 							{t('dashboard.stake.tabs.stake-table.kwenta-token')}
 						</div>
 					</div>
-					<VestButton disabled={!vest} onClick={() => setOpenConfirmModal(true)}>
+					<VestButton disabled={false} onClick={openConfirmModal}>
 						{t('dashboard.stake.tabs.escrow.vest')}
 					</VestButton>
 				</div>
 			</EscrowStats>
-			{openConfirmModal && (
+			{isConfirmModalOpen && (
 				<VestConfirmationModal
 					totalFee={totalFee}
-					onDismiss={() => setOpenConfirmModal(false)}
+					onDismiss={closeConfirmModal}
 					handleVest={handleVest}
 				/>
 			)}
@@ -310,7 +300,7 @@ const EscrowStats = styled.div`
 	}
 `;
 
-const VestButton = styled.button<{ disabled: boolean }>`
+const VestButton = styled.button`
 	border-width: 1px;
 	border-style: solid;
 	border-color: ${(props) =>
