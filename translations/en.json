@@ -518,9 +518,11 @@
 				"trading-rewards": {
 					"title": "Trading Rewards",
 					"mobile-title": "Rewards",
+					"pending-for-rewards": "Pending...",
+					"trading-rewards-tooltip": "Only trades made using a Kwenta Cross Margin account are eligible for trading rewards.",
 					"spot-fee-paid": "Spot Fee Paid: Epoch {{EpochPeriod}}",
 					"future-fee-paid": "Future Fee Paid: Ep. {{EpochPeriod}}",					
-					"fees-paid": "Total Fees Paid: Ep. {{EpochPeriod}}",
+					"fees-paid": "Total Fees in Pool: Ep. {{EpochPeriod}}",
 					"estimated-rewards": "Estimated Rewards",
 					"estimated-fee-share": "Estimated Fee Share",
 					"trading-activity-reset": "Time until next epoch",

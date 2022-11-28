@@ -1,43 +1,33 @@
 import { wei } from '@synthetixio/wei';
+import { formatEther } from 'ethers/lib/utils.js';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useContractReads, useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 import Button from 'components/Button';
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import Connector from 'containers/Connector';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { useStakingContext } from 'contexts/StakingContext';
 import useGetFiles from 'queries/files/useGetFiles';
 import useGetFuturesFee from 'queries/staking/useGetFuturesFee';
 import useGetFuturesFeeForAccount from 'queries/staking/useGetFuturesFeeForAccount';
-import { cobbDouglas, getTradingRewards } from 'queries/staking/utils';
+import {
+	ClaimParams,
+	cobbDouglas,
+	EpochDataProps,
+	FuturesFeeForAccountProps,
+	FuturesFeeProps,
+	getTradingRewards,
+	TradingRewardProps,
+} from 'queries/staking/utils';
 import { FlexDivRow } from 'styles/common';
 import media from 'styles/media';
 import { formatTruncatedDuration } from 'utils/formatters/date';
 import { formatDollars, formatPercent, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import { KwentaLabel, StakingCard } from './common';
-
-type TradingRewardProps = {
-	period: number | string;
-	start?: number;
-	end?: number;
-};
-
-type EpochDataProps = {
-	merkleRoot: string;
-	tokenTotal: string;
-	claims: {
-		[address: string]: {
-			index: number;
-			amount: string;
-			proof: string[];
-		};
-	};
-};
-
-type ClaimParams = [number, string, string, string[], number];
 
 const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 	period = 0,
@@ -107,7 +97,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 
 	const totalRewards =
 		claimableRewards.length > 0
-			? claimableRewards.reduce((acc, curr) => acc + Number(curr[2]) / 1e18, 0)
+			? claimableRewards.reduce((acc, curr) => wei(acc).add(formatEther(curr[2])), zeroBN)
 			: 0;
 
 	const futuresFeeQuery = useGetFuturesFeeForAccount(walletAddress!, start, end);
@@ -115,8 +105,8 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 		const t = futuresFeeQuery.data ?? [];
 
 		return t
-			.map((trade: any) => Number(trade.feesPaid) / 1e18)
-			.reduce((acc: number, curr: number) => acc + curr, 0);
+			.map((trade: FuturesFeeForAccountProps) => formatEther(trade.feesPaid.toString()))
+			.reduce((acc: number, curr: number) => wei(acc).add(wei(curr)), zeroBN);
 	}, [futuresFeeQuery.data]);
 
 	const totalFuturesFeeQuery = useGetFuturesFee(start, end);
@@ -124,8 +114,8 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 		const t = totalFuturesFeeQuery.data ?? [];
 
 		return t
-			.map((trade: any) => Number(trade.feesCrossMarginAccounts) / 1e18)
-			.reduce((acc: number, curr: number) => acc + curr, 0);
+			.map((trade: FuturesFeeProps) => formatEther(trade.feesCrossMarginAccounts.toString()))
+			.reduce((acc: number, curr: number) => wei(acc).add(wei(curr)), zeroBN);
 	}, [totalFuturesFeeQuery.data]);
 
 	const { config } = usePrepareContractWrite({
@@ -141,10 +131,10 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 		const weeklyReward = getTradingRewards(weekCounter);
 		const userScore = cobbDouglas(futuresFeePaid, userStakedBalance);
 		const totalScore = cobbDouglas(totalFuturesFeePaid, totalStakedBalance);
-		const ratio = totalScore > 0 ? userScore / totalScore : 0;
+		const ratio = wei(totalScore).gt(0) ? wei(userScore).div(wei(totalScore)) : zeroBN;
 		return {
 			ratio,
-			score: ratio * weeklyReward,
+			score: wei(ratio).mul(weeklyReward),
 		};
 	}, [futuresFeePaid, totalFuturesFeePaid, totalStakedBalance, userStakedBalance, weekCounter]);
 
@@ -163,7 +153,9 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 							{t('dashboard.stake.tabs.trading-rewards.trading-activity-reset')}
 						</div>
 						<div className="value">
-							{formatTruncatedDuration(resetTime - new Date().getTime() / 1000)}
+							{resetTime > new Date().getTime() / 1000
+								? formatTruncatedDuration(resetTime - new Date().getTime() / 1000)
+								: t('dashboard.stake.tabs.trading-rewards.pending-for-rewards')}
 						</div>
 					</div>
 				</CardGrid>
@@ -200,14 +192,23 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 					</div>
 					{epochPeriod === period ? (
 						<>
-							<div>
-								<div className="title">
-									{t('dashboard.stake.tabs.trading-rewards.estimated-rewards', {
-										EpochPeriod: period,
-									})}
+							<CustomStyledTooltip
+								preset="bottom"
+								width={'280px'}
+								height={'auto'}
+								content={t('dashboard.stake.tabs.trading-rewards.trading-rewards-tooltip')}
+							>
+								<div>
+									<WithCursor cursor="help">
+										<div className="title">
+											{t('dashboard.stake.tabs.trading-rewards.estimated-rewards', {
+												EpochPeriod: period,
+											})}
+										</div>
+										<KwentaLabel>{truncateNumbers(wei(estimatedReward), 4)}</KwentaLabel>
+									</WithCursor>
 								</div>
-								<KwentaLabel>{truncateNumbers(wei(estimatedReward), 4)}</KwentaLabel>
-							</div>
+							</CustomStyledTooltip>
 							<div>
 								<div className="title">
 									{t('dashboard.stake.tabs.trading-rewards.estimated-fee-share', {
@@ -223,6 +224,17 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 		</TradingRewardsContainer>
 	);
 };
+
+const CustomStyledTooltip = styled(StyledTooltip)`
+	${media.lessThan('md')`
+		width: 280px;
+		right: -30px;
+	`}
+`;
+
+const WithCursor = styled.div<{ cursor: 'help' }>`
+	cursor: ${(props) => props.cursor};
+`;
 
 const StyledFlexDivRow = styled(FlexDivRow)`
 	column-gap: 15px;

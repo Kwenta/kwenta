@@ -1,4 +1,40 @@
+import { wei } from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
+
+import { zeroBN } from 'utils/formatters/number';
+
+export type TradingRewardProps = {
+	period: number | string;
+	start?: number;
+	end?: number;
+};
+
+export type EpochDataProps = {
+	merkleRoot: string;
+	tokenTotal: string;
+	claims: {
+		[address: string]: {
+			index: number;
+			amount: string;
+			proof: string[];
+		};
+	};
+};
+
+export type FuturesFeeForAccountProps = {
+	timestamp: number;
+	account: string;
+	abstractAccount: string;
+	accountType: string;
+	feesPaid: BigNumber;
+};
+
+export type FuturesFeeProps = {
+	timestamp: string;
+	feesCrossMarginAccounts: BigNumber;
+};
+
+export type ClaimParams = [number, string, string, string[], number];
 
 export const EPOCH_START: Record<number, number> = {
 	420: 1665878400,
@@ -7,11 +43,13 @@ export const EPOCH_START: Record<number, number> = {
 
 export const WEEK = 604800;
 export const DECAY_RATE = 0.0205;
-export const INITIAL_WEEKLY_SUPPLY = 14463.36923076923076923;
+export const INITIAL_WEEKLY_SUPPLY = BigNumber.from('14463369230769230769230');
 export const STAKING_REWARDS_RATIO = 0.6;
 export const TRADING_REWARDS_RATIO = 0.05;
 export const STAKING_HIGH_GAS_LIMIT = BigNumber.from('400000');
 export const STAKING_LOW_GAS_LIMIT = BigNumber.from('200000');
+
+const SUPPLY_RATE = wei(1).sub(wei(DECAY_RATE));
 
 export function getEpochDetails(networkId: number, epoch: number) {
 	const currentEpochTime = EPOCH_START[networkId]
@@ -24,24 +62,19 @@ export function getEpochDetails(networkId: number, epoch: number) {
 	};
 }
 
-export function getApy(
-	totalStakedBalance: number,
-	weekCounter: number,
-	ratio: number = STAKING_REWARDS_RATIO
-) {
-	const supplyRate = 1 - DECAY_RATE;
-	const initialWeeklySupply = INITIAL_WEEKLY_SUPPLY;
-	const startWeeklySupply = initialWeeklySupply * supplyRate ** weekCounter;
-	const yearlyRewards = (startWeeklySupply * (1 - supplyRate ** 52)) / (1 - supplyRate);
-	return totalStakedBalance > 0 ? (yearlyRewards * ratio) / totalStakedBalance : 0;
+export function getApy(totalStakedBalance: number, weekCounter: number) {
+	const startWeeklySupply = wei(INITIAL_WEEKLY_SUPPLY).mul(SUPPLY_RATE.pow(weekCounter));
+	const yearlyRewards = startWeeklySupply.mul(wei(1).sub(SUPPLY_RATE.pow(52))).div(wei(DECAY_RATE));
+	return wei(totalStakedBalance).gt(0)
+		? yearlyRewards.mul(wei(STAKING_REWARDS_RATIO)).div(wei(totalStakedBalance))
+		: zeroBN;
 }
 
 export function cobbDouglas(feesPaid: number, stakedBalance: number) {
+	// pow(n), n must be a integer
 	return feesPaid ** 0.7 * stakedBalance ** 0.3;
 }
 
 export function getTradingRewards(weekCounter: number) {
-	const supplyRate = 1 - DECAY_RATE;
-	const initialWeeklySupply = INITIAL_WEEKLY_SUPPLY;
-	return initialWeeklySupply * supplyRate ** weekCounter * TRADING_REWARDS_RATIO;
+	return wei(INITIAL_WEEKLY_SUPPLY).mul(SUPPLY_RATE.pow(weekCounter)).mul(TRADING_REWARDS_RATIO);
 }
