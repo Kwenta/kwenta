@@ -448,7 +448,7 @@ export default class KwentaTokenService {
 			}
 		}
 
-		return { rewards, claimableRewards, totalRewards };
+		return { claimableRewards, totalRewards };
 	}
 
 	public async claimMultipleRewards(claimableRewards: ClaimParams[]) {
