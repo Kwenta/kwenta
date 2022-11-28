@@ -3,10 +3,9 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import TVChart from 'components/TVChart';
-import { selectMarketAsset } from 'state/futures/selectors';
+import { selectMarketAsset, selectPosition } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {
-	positionState,
 	potentialTradeDetailsState,
 	futuresTradeInputsState,
 	positionHistoryState,
@@ -17,8 +16,8 @@ import {
 export default function PositionChart() {
 	const [isChartReady, setIsChartReady] = useState(false);
 	const marketAsset = useAppSelector(selectMarketAsset);
+	const position = useAppSelector(selectPosition);
 
-	const position = useRecoilValue(positionState);
 	const positionHistory = useRecoilValue(positionHistoryState);
 	const futuresAccountType = useRecoilValue(futuresAccountTypeState);
 	const openOrders = useRecoilValue(openOrdersState);

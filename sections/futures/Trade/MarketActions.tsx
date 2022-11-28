@@ -6,9 +6,9 @@ import styled from 'styled-components';
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
-import { selectMarketInfo } from 'state/futures/selectors';
+import { selectMarketInfo, selectPosition } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { balancesState, positionState } from 'store/futures';
+import { balancesState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 
 import TransferIsolatedMarginModal from './TransferIsolatedMarginModal';
@@ -18,7 +18,7 @@ const MarketActions: React.FC = () => {
 	const { walletAddress } = Connector.useContainer();
 	const { susdWalletBalance } = useRecoilValue(balancesState);
 
-	const position = useRecoilValue(positionState);
+	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const isL2 = useIsL2();
 	const [openModal, setOpenModal] = React.useState<'deposit' | 'withdraw' | null>(null);

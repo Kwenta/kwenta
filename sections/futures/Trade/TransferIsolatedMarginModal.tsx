@@ -1,7 +1,6 @@
 import Wei, { wei } from '@synthetixio/wei';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
@@ -15,7 +14,6 @@ import { transferIsolatedMargin } from 'state/futures/actions';
 import { setIsolatedTransferAmount } from 'state/futures/reducer';
 import { selectIsolatedTransferAmount, selectPosition } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { positionState } from 'store/futures';
 import { FlexDivRowCentered } from 'styles/common';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 type Props = {

@@ -8,12 +8,11 @@ import SwitchAssetArrows from 'assets/svg/futures/switch-arrows.svg';
 import CustomInput from 'components/Input/CustomInput';
 import InputTitle from 'components/Input/InputTitle';
 import { useFuturesContext } from 'contexts/FuturesContext';
-import { selectMarketKey, selectMarketAssetRate } from 'state/futures/selectors';
+import { selectMarketKey, selectMarketAssetRate, selectPosition } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {
 	futuresAccountTypeState,
 	simulatedTradeState,
-	positionState,
 	futuresTradeInputsState,
 	orderTypeState,
 	futuresOrderPriceState,
@@ -38,7 +37,6 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	const simulatedTrade = useRecoilValue(simulatedTradeState);
 
 	const { freeMargin: freeCrossMargin } = useRecoilValue(crossMarginAccountOverviewState);
-	const position = useRecoilValue(positionState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 	const orderType = useRecoilValue(orderTypeState);
 	const marketAssetRate = useAppSelector(selectMarketAssetRate);
@@ -46,6 +44,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	const selectedLeverageSide = useRecoilValue(leverageSideState);
 
 	const marketKey = useAppSelector(selectMarketKey);
+	const position = useAppSelector(selectPosition);
 
 	const [usdValue, setUsdValue] = useState(susdSize);
 	const [assetValue, setAssetValue] = useState(nativeSize);

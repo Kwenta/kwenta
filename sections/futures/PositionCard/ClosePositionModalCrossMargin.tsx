@@ -2,7 +2,6 @@ import Wei, { wei } from '@synthetixio/wei';
 import { formatBytes32String } from 'ethers/lib/utils';
 import { useMemo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 
 import { DEFAULT_CROSSMARGIN_GAS_BUFFER_PCT } from 'constants/defaults';
 import { useFuturesContext } from 'contexts/FuturesContext';
@@ -10,9 +9,8 @@ import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useEstimateGasCost from 'hooks/useEstimateGasCost';
-import { selectMarketAsset, selectMarketKey } from 'state/futures/selectors';
+import { selectMarketAsset, selectMarketKey, selectPosition } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { positionState } from 'store/futures';
 import { isUserDeniedError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -37,8 +35,8 @@ export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const marketKey = useAppSelector(selectMarketKey);
+	const position = useAppSelector(selectPosition);
 
-	const position = useRecoilValue(positionState);
 	const positionDetails = position?.position;
 
 	const positionSize = useMemo(() => positionDetails?.size ?? zeroBN, [positionDetails?.size]);

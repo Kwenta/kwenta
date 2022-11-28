@@ -15,6 +15,7 @@ import {
 	selectIsMarketCapReached,
 	selectMarketAssetRate,
 	selectPlaceOrderTranslationKey,
+	selectPosition,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import {
@@ -22,7 +23,6 @@ import {
 	leverageSideState,
 	maxLeverageState,
 	orderTypeState,
-	positionState,
 	potentialTradeDetailsState,
 	sizeDeltaState,
 	futuresTradeInputsState,
@@ -56,7 +56,6 @@ const ManagePosition: React.FC = () => {
 
 	const sizeDelta = useRecoilValue(sizeDeltaState);
 	const marginDelta = useRecoilValue(crossMarginMarginDeltaState);
-	const position = useRecoilValue(positionState);
 	const maxLeverageValue = useRecoilValue(maxLeverageState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 	const { data: previewTrade, error: previewError, status } = useRecoilValue(
@@ -73,6 +72,7 @@ const ManagePosition: React.FC = () => {
 	const dispatch = useAppDispatch();
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
 	const marketAssetRate = useAppSelector(selectMarketAssetRate);
+	const position = useAppSelector(selectPosition);
 	const tradeInputs = useRecoilValue(futuresTradeInputsState);
 	const isAdvancedOrder = useRecoilValue(isAdvancedOrderState);
 

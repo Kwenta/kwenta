@@ -14,13 +14,12 @@ import { useFuturesContext } from 'contexts/FuturesContext';
 import useEstimateGasCost from 'hooks/useEstimateGasCost';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
-import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
+import { selectMarketAsset, selectMarketInfo, selectPosition } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {
 	confirmationModalOpenState,
 	leverageSideState,
 	nextPriceDisclaimerState,
-	positionState,
 	futuresTradeInputsState,
 } from 'store/futures';
 import { FlexDivCol, FlexDivCentered } from 'styles/common';
@@ -42,9 +41,10 @@ const NextPriceConfirmationModal: FC = () => {
 
 	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
 	const leverageSide = useRecoilValue(leverageSideState);
-	const position = useRecoilValue(positionState);
+
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const marketAsset = useAppSelector(selectMarketAsset);
+	const position = useAppSelector(selectPosition);
 
 	const setConfirmationModalOpen = useSetRecoilState(confirmationModalOpenState);
 

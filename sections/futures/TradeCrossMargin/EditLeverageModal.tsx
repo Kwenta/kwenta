@@ -19,12 +19,11 @@ import { monitorTransaction } from 'contexts/RelayerContext';
 import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 import { ORDER_PREVIEW_ERRORS_I18N, previewErrorI18n } from 'queries/futures/constants';
 import { setOrderType as setReduxOrderType } from 'state/futures/reducer';
-import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
+import { selectMarketAsset, selectMarketInfo, selectPosition } from 'state/futures/selectors';
 import { useAppSelector, useAppDispatch } from 'state/hooks';
 import {
 	crossMarginTotalMarginState,
 	orderTypeState,
-	positionState,
 	potentialTradeDetailsState,
 	preferredLeverageState,
 	tradeFeesState,
@@ -55,8 +54,9 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 	} = useFuturesContext();
 
 	const marketAsset = useAppSelector(selectMarketAsset);
+	const position = useAppSelector(selectPosition);
+
 	const market = useAppSelector(selectMarketInfo);
-	const position = useRecoilValue(positionState);
 	const totalMargin = useRecoilValue(crossMarginTotalMarginState);
 	const tradeFees = useRecoilValue(tradeFeesState);
 	const { error: previewError, data: previewData } = useRecoilValue(potentialTradeDetailsState);
