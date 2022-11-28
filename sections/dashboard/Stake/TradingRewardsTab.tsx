@@ -124,7 +124,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 		const t = totalFuturesFeeQuery.data ?? [];
 
 		return t
-			.map((trade: any) => Number(trade.feesKwenta) / 1e18)
+			.map((trade: any) => Number(trade.feesCrossMarginAccounts) / 1e18)
 			.reduce((acc: number, curr: number) => acc + curr, 0);
 	}, [totalFuturesFeeQuery.data]);
 
@@ -246,6 +246,9 @@ const CardGrid = styled.div`
 	.value {
 		margin-top: 5px;
 	}
+	${media.lessThan('md')`
+		column-gap: 10px;
+	`}
 `;
 
 const TradingRewardsContainer = styled.div`

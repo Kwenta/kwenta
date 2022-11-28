@@ -1,6 +1,6 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 
-import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
+import { DEFAULT_NUMBER_OF_FUTURES_FEE } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
 import useIsL2 from 'hooks/useIsL2';
 import { FUTURES_ENDPOINT_OP_MAINNET } from 'queries/futures/constants';
@@ -19,7 +19,7 @@ const useGetFuturesFee = (
 			const response = await getFuturesAggregateStats(
 				FUTURES_ENDPOINT_OP_MAINNET,
 				{
-					first: DEFAULT_NUMBER_OF_TRADES,
+					first: DEFAULT_NUMBER_OF_FUTURES_FEE,
 					where: {
 						timestamp_gt: start,
 						timestamp_lt: end,
@@ -29,7 +29,7 @@ const useGetFuturesFee = (
 				},
 				{
 					timestamp: true,
-					feesKwenta: true,
+					feesCrossMarginAccounts: true,
 				}
 			);
 			return response;
