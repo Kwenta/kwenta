@@ -9,14 +9,19 @@ import Loader from 'components/Loader';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { previewErrorI18n } from 'queries/futures/constants';
 import { PositionSide } from 'queries/futures/types';
+import { setLeverageSide as setReduxLeverageSide } from 'state/futures/reducer';
+import {
+	selectMarketInfo,
+	selectIsMarketCapReached,
+	selectMarketAssetRate,
+	selectPlaceOrderTranslationKey,
+} from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import {
 	confirmationModalOpenState,
-	isMarketCapReachedState,
 	leverageSideState,
-	marketInfoState,
 	maxLeverageState,
 	orderTypeState,
-	placeOrderTranslationKeyState,
 	positionState,
 	potentialTradeDetailsState,
 	sizeDeltaState,
@@ -24,7 +29,6 @@ import {
 	futuresAccountTypeState,
 	crossMarginMarginDeltaState,
 	futuresOrderPriceState,
-	marketAssetRateState,
 	isAdvancedOrderState,
 } from 'store/futures';
 import { isZero } from 'utils/formatters/number';
@@ -42,13 +46,18 @@ type OrderTxnError = {
 
 const ManagePosition: React.FC = () => {
 	const { t } = useTranslation();
-	const { error, orderTxn, onTradeAmountChange, maxUsdInputAmount } = useFuturesContext();
+	const {
+		error,
+		orderTxn,
+		onTradeAmountChange,
+		maxUsdInputAmount,
+		tradePrice,
+	} = useFuturesContext();
 
 	const sizeDelta = useRecoilValue(sizeDeltaState);
 	const marginDelta = useRecoilValue(crossMarginMarginDeltaState);
 	const position = useRecoilValue(positionState);
 	const maxLeverageValue = useRecoilValue(maxLeverageState);
-	const marketInfo = useRecoilValue(marketInfoState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 	const { data: previewTrade, error: previewError, status } = useRecoilValue(
 		potentialTradeDetailsState
@@ -59,12 +68,15 @@ const ManagePosition: React.FC = () => {
 	const [isConfirmationModalOpen, setConfirmationModalOpen] = useRecoilState(
 		confirmationModalOpenState
 	);
-	const isMarketCapReached = useRecoilValue(isMarketCapReachedState);
-	const placeOrderTranslationKey = useRecoilValue(placeOrderTranslationKeyState);
+	const isMarketCapReached = useAppSelector(selectIsMarketCapReached);
+	const placeOrderTranslationKey = useAppSelector(selectPlaceOrderTranslationKey);
+	const dispatch = useAppDispatch();
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
-	const marketAssetRate = useRecoilValue(marketAssetRateState);
+	const marketAssetRate = useAppSelector(selectMarketAssetRate);
 	const tradeInputs = useRecoilValue(futuresTradeInputsState);
 	const isAdvancedOrder = useRecoilValue(isAdvancedOrderState);
+
+	const marketInfo = useAppSelector(selectMarketInfo);
 
 	const [isCancelModalOpen, setCancelModalOpen] = React.useState(false);
 
@@ -92,26 +104,31 @@ const ManagePosition: React.FC = () => {
 		return leverageNum > 0 && leverageNum < maxLeverageValue.toNumber();
 	}, [leverage, selectedAccountType, maxLeverageValue]);
 
-	const placeOrderDisabled = useMemo(() => {
+	const placeOrderDisabledReason = useMemo(() => {
 		const invalidReason = orderPriceInvalidLabel(
 			orderPrice,
 			leverageSide,
 			marketAssetRate,
 			orderType
 		);
-
-		if (!leverageValid || !!error || marketInfo?.isSuspended || isMarketCapReached) return true;
-		if ((orderType === 'limit' || orderType === 'stop market') && !!invalidReason) return true;
-		if (tradeInputs.susdSizeDelta.abs().gt(maxUsdInputAmount)) return true;
+		if (!leverageValid) return 'invalid_leverage';
+		if (!!error) return error;
+		if (marketInfo?.isSuspended) return 'market_suspended';
+		if (isMarketCapReached) return 'market_cap_reached';
+		if ((orderType === 'limit' || orderType === 'stop market') && !!invalidReason)
+			return invalidReason;
+		if (tradeInputs.susdSizeDelta.abs().gt(maxUsdInputAmount)) return 'max_size_exceeded';
 		if (placeOrderTranslationKey === 'futures.market.trade.button.deposit-margin-minimum')
-			return true;
+			return 'min_margin_required';
 		if (selectedAccountType === 'cross_margin') {
-			if ((isZero(marginDelta) && isZero(sizeDelta)) || status !== 'complete') return true;
-			if (orderType !== 'market' && isZero(orderPrice)) return true;
+			if ((isZero(marginDelta) && isZero(sizeDelta)) || status !== 'complete')
+				return 'awaiting_preview';
+			if (orderType !== 'market' && isZero(orderPrice)) return 'price_required';
 		} else if (isZero(sizeDelta)) {
-			return true;
+			return 'size_required';
 		}
-		return false;
+
+		return null;
 	}, [
 		leverageValid,
 		error,
@@ -130,6 +147,8 @@ const ManagePosition: React.FC = () => {
 		status,
 	]);
 
+	// TODO: Better user feedback for disabled reasons
+
 	return (
 		<>
 			<div>
@@ -142,7 +161,7 @@ const ManagePosition: React.FC = () => {
 						data-testid="trade-open-position-button"
 						noOutline
 						fullWidth
-						disabled={placeOrderDisabled}
+						disabled={!!placeOrderDisabledReason}
 						onClick={() => setConfirmationModalOpen(true)}
 					>
 						{status === 'fetching' ? <Loader /> : t(placeOrderTranslationKey)}
@@ -161,7 +180,8 @@ const ManagePosition: React.FC = () => {
 										? PositionSide.SHORT
 										: PositionSide.LONG;
 								setLeverageSide(newLeverageSide);
-								onTradeAmountChange(newTradeSize.toString(), 'native');
+								dispatch(setReduxLeverageSide(newLeverageSide));
+								onTradeAmountChange(newTradeSize.toString(), tradePrice, 'native');
 								setConfirmationModalOpen(true);
 							} else {
 								setCancelModalOpen(true);

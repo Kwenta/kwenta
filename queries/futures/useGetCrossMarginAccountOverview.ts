@@ -8,6 +8,8 @@ import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useSUSDContract from 'hooks/useSUSDContract';
+import { setCrossMarginAccountOverview } from 'state/futures/reducer';
+import { useAppDispatch } from 'state/hooks';
 import { crossMarginAccountOverviewState, futuresAccountState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -20,6 +22,7 @@ export default function useGetCrossMarginAccountOverview() {
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const [retryCount, setRetryCount] = useState(0);
 	const susdContract = useSUSDContract();
+	const dispatch = useAppDispatch();
 
 	return useQuery(
 		QUERY_KEYS.Futures.CrossMarginAccountOverview(
@@ -35,6 +38,9 @@ export default function useGetCrossMarginAccountOverview() {
 					allowance: zeroBN,
 				};
 				setAccountOverview(overview);
+				dispatch(
+					setCrossMarginAccountOverview({ freeMargin: '0', keeperEthBal: '0', allowance: '0' })
+				);
 				return overview;
 			}
 
@@ -52,6 +58,13 @@ export default function useGetCrossMarginAccountOverview() {
 				};
 				setRetryCount(0);
 				setAccountOverview(overview);
+				dispatch(
+					setCrossMarginAccountOverview({
+						freeMargin: overview.freeMargin.toString(),
+						keeperEthBal: overview.keeperEthBal.toString(),
+						allowance: overview.allowance.toString(),
+					})
+				);
 
 				return overview;
 			} catch (err) {

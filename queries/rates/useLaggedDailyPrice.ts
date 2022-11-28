@@ -3,12 +3,14 @@ import EthDater from 'ethereum-block-by-date';
 import request, { gql } from 'graphql-request';
 import { values } from 'lodash';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
-import { marketAssetsState, pastRatesState } from 'store/futures';
+import { selectMarketAssets } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { pastRatesState } from 'store/futures';
 import logError from 'utils/logError';
 
 import { RATES_ENDPOINT_OP_MAINNET } from './constants';
@@ -17,7 +19,7 @@ import { getRatesEndpoint, mapLaggedDailyPrices } from './utils';
 
 const useLaggedDailyPrice = (options?: UseQueryOptions<Price[] | null>) => {
 	const { provider, network, synthsMap } = Connector.useContainer();
-	const marketAssets = useRecoilValue(marketAssetsState);
+	const marketAssets = useAppSelector(selectMarketAssets);
 	const setPastRates = useSetRecoilState(pastRatesState);
 
 	const minTimestamp = Math.floor(Date.now()) - 60 * 60 * 24 * 1000;

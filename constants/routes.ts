@@ -13,16 +13,14 @@ export const formatUrl = (route: string, params: Record<string, string>) => {
 export const ROUTES = {
 	Home: {
 		Root: '/',
-		Overview: normalizeRoute('/dashboard', 'overview', 'tab'),
-		History: normalizeRoute('/dashboard', 'history', 'tab'),
-		Markets: normalizeRoute('/dashboard', 'markets', 'tab'),
 	},
 	Dashboard: {
 		Home: '/dashboard',
-		Convert: normalizeRoute('/dashboard', 'convert', 'tab'),
-		SynthBalances: normalizeRoute('/dashboard', 'synth-balances', 'tab'),
-		Transactions: normalizeRoute('/dashboard', 'transactions', 'tab'),
-		Deprecated: normalizeRoute('/dashboard', 'deprecated', 'tab'),
+		Overview: normalizeRoute('/dashboard', 'overview', 'tab'),
+		History: normalizeRoute('/dashboard', 'history', 'tab'),
+		Markets: normalizeRoute('/dashboard', 'markets', 'tab'),
+		Earn: normalizeRoute('/dashboard', 'earn', 'tab'),
+		Stake: normalizeRoute('/dashboard', 'staking', 'tab'),
 	},
 	Exchange: {
 		Home: '/exchange',
@@ -47,9 +45,13 @@ export const ROUTES = {
 		Transfers: (asset: FuturesMarketAsset, accountType: FuturesAccountType) =>
 			formatUrl('/market', { asset, accountType, tab: 'transfers' }),
 	},
+	Stats: {
+		Home: '/stats',
+	},
 	Leaderboard: {
 		Home: '/leaderboard',
 		Trader: (trader: string) => `/leaderboard/?trader=${trader}`,
+		Competition: (round: string) => `/leaderboard/?competitionRound=${round}`,
 	},
 	Earn: {
 		Home: '/earn',

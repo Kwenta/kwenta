@@ -8,9 +8,10 @@ import { formatCurrency } from 'utils/formatters/number';
 type Props = {
 	balance: Wei;
 	currencyKey: string;
+	onSetAmount: (amount: string) => void;
 };
 
-export default function InputBalanceLabel({ balance, currencyKey }: Props) {
+export default function InputBalanceLabel({ balance, currencyKey, onSetAmount }: Props) {
 	const { t } = useTranslation();
 
 	const key = currencyKey.toLowerCase();
@@ -18,7 +19,7 @@ export default function InputBalanceLabel({ balance, currencyKey }: Props) {
 	return (
 		<BalanceContainer>
 			<BalanceText>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
-			<BalanceText>
+			<BalanceButton as="button" onClick={() => onSetAmount(balance.toString())}>
 				<span>
 					{formatCurrency(currencyKey, balance, {
 						sign: isUsd ? '$' : '',
@@ -26,7 +27,7 @@ export default function InputBalanceLabel({ balance, currencyKey }: Props) {
 					})}
 				</span>{' '}
 				{currencyKey}
-			</BalanceText>
+			</BalanceButton>
 		</BalanceContainer>
 	);
 }
@@ -42,5 +43,17 @@ export const BalanceText = styled.p`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	span {
 		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+	}
+`;
+
+export const BalanceButton = styled(BalanceText)`
+	padding: 0;
+	font-size: 12px;
+	line-height: 11px;
+	background-color: transparent;
+	border: none;
+	cursor: pointer;
+	&:hover {
+		text-decoration: underline;
 	}
 `;

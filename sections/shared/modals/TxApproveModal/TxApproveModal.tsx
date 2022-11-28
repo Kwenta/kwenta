@@ -1,37 +1,44 @@
-import { FC, ReactNode } from 'react';
+import { FC, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
-import { FlexDivColCentered } from 'styles/common';
+import { setOpenModal } from 'state/exchange/reducer';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { FlexDivColCentered, NoTextTransform } from 'styles/common';
 import { formatRevert } from 'utils/formatters/error';
 
 type TxApproveModalProps = {
-	onDismiss: () => void;
-	txError: string | null;
 	attemptRetry: () => void;
-	currencyKey: string;
-	currencyLabel: ReactNode;
 };
 
-export const TxApproveModal: FC<TxApproveModalProps> = ({
-	onDismiss,
-	txError,
-	attemptRetry,
-	currencyKey,
-	currencyLabel,
-}) => {
+export const TxApproveModal: FC<TxApproveModalProps> = ({ attemptRetry }) => {
 	const { t } = useTranslation();
+	const dispatch = useAppDispatch();
+	const { quoteCurrencyKey, txError } = useAppSelector(({ exchange }) => ({
+		quoteCurrencyKey: exchange.quoteCurrencyKey,
+		txError: exchange.txError,
+	}));
+
+	const onDismiss = useCallback(() => {
+		dispatch(setOpenModal(undefined));
+	}, [dispatch]);
+
+	if (!quoteCurrencyKey) {
+		return null;
+	}
 
 	return (
 		<StyledBaseModal onDismiss={onDismiss} isOpen title={t('modals.approve-transaction.title')}>
 			<Currencies>
 				<CurrencyItem>
-					<CurrencyItemTitle>{currencyLabel}</CurrencyItemTitle>
+					<CurrencyItemTitle>
+						<NoTextTransform>{quoteCurrencyKey}</NoTextTransform>
+					</CurrencyItemTitle>
 					<Currency.Icon
-						currencyKey={currencyKey}
+						currencyKey={quoteCurrencyKey}
 						width="40px"
 						height="40px"
 						data-testid="currency-img"
@@ -39,7 +46,7 @@ export const TxApproveModal: FC<TxApproveModalProps> = ({
 				</CurrencyItem>
 			</Currencies>
 			<Subtitle>{t('modals.approve-transaction.confirm-with-provider')}</Subtitle>
-			{txError != null && (
+			{!!txError && (
 				<Actions>
 					<Message>{formatRevert(txError)}</Message>
 					<MessageButton onClick={attemptRetry} data-testid="retry-btn">

@@ -10,14 +10,18 @@ import { FC, ReactElement, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import { Provider } from 'react-redux';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 import { ThemeProvider } from 'styled-components';
 import { chain, WagmiConfig } from 'wagmi';
 
 import Connector from 'containers/Connector';
-import { initRainbowkit } from 'containers/Connector/config';
+import { chains, wagmiClient } from 'containers/Connector/config';
+import AcknowledgementModal from 'sections/app/AcknowledgementModal';
 import Layout from 'sections/shared/Layout';
 import SystemStatus from 'sections/shared/SystemStatus';
+import { useAppData } from 'state/app/hooks';
+import store from 'state/store';
 import { currentThemeState } from 'store/ui';
 import { MediaContextProvider } from 'styles/media';
 import { themes } from 'styles/theme';
@@ -37,16 +41,17 @@ type AppPropsWithLayout = AppProps & {
 	Component: NextPageWithLayout;
 };
 
-const { chains, wagmiClient } = initRainbowkit();
-
 const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {
 	const {
 		signer,
 		provider,
 		l2Provider,
 		network,
+		providerReady,
 		defaultSynthetixjs: synthetixjs,
 	} = Connector.useContainer();
+
+	useAppData(providerReady);
 
 	const getLayout = Component.getLayout || ((page) => page);
 
@@ -81,6 +86,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 							}
 						>
 							<Layout>
+								<AcknowledgementModal />
 								<SystemStatus>{getLayout(<Component {...pageProps} />)}</SystemStatus>
 							</Layout>
 							<ReactQueryDevtools position="top-left" />
@@ -124,15 +130,17 @@ const App: FC<AppProps> = (props) => {
 				<meta name="twitter:url" content="https://kwenta.eth.limo" />
 				<link rel="icon" href="/images/favicon.svg" />
 			</Head>
-			<RecoilRoot>
-				<QueryClientProvider client={new QueryClient()}>
-					<WagmiConfig client={wagmiClient}>
-						<WithAppContainers>
-							<InnerApp {...props} />
-						</WithAppContainers>
-					</WagmiConfig>
-				</QueryClientProvider>
-			</RecoilRoot>
+			<Provider store={store}>
+				<RecoilRoot>
+					<QueryClientProvider client={new QueryClient()}>
+						<WagmiConfig client={wagmiClient}>
+							<WithAppContainers>
+								<InnerApp {...props} />
+							</WithAppContainers>
+						</WagmiConfig>
+					</QueryClientProvider>
+				</RecoilRoot>
+			</Provider>
 		</>
 	);
 };

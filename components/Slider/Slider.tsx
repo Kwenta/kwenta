@@ -1,13 +1,10 @@
-import Slider, {
-	SliderProps as DefaultSliderProps,
-	ValueLabelProps,
-} from '@material-ui/core/Slider';
-import Tooltip from '@material-ui/core/Tooltip';
-import { withStyles } from '@material-ui/styles';
+import Slider, { SliderProps as DefaultSliderProps } from '@material-ui/core/Slider';
 import React from 'react';
 import styled, { css } from 'styled-components';
 
 import media from 'styles/media';
+
+import ValueLabel from './ValueLabel';
 
 export type SliderProps = Omit<DefaultSliderProps, 'onChange'> & {
 	minValue: number;
@@ -41,7 +38,7 @@ const SliderComponent: React.FC<SliderProps> = ({
 				value={value}
 				onChange={onChange}
 				onChangeCommitted={onChangeCommitted}
-				ValueLabelComponent={ValueLabelComponent}
+				ValueLabelComponent={ValueLabel}
 				disabled={disabled}
 				{...props}
 				className={className}
@@ -50,33 +47,14 @@ const SliderComponent: React.FC<SliderProps> = ({
 	);
 };
 
-const TextOnlyTooltip = withStyles((theme) => ({
-	tooltip: {
-		color: theme.palette.colors.selectedTheme.text.value,
-		marginTop: '1px',
-		fontSize: '13px',
-		backgroundColor: 'transparent',
-	},
-}))(Tooltip);
-
 export default SliderComponent;
-
-function ValueLabelComponent(props: ValueLabelProps) {
-	const { children, open, value } = props;
-
-	return (
-		<TextOnlyTooltip open={open} enterTouchDelay={0} placement="bottom" title={value}>
-			{children}
-		</TextOnlyTooltip>
-	);
-}
 
 const styledMarkLabel = css`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 13px;
 	color: ${(props) => props.theme.colors.selectedTheme.slider.label};
 	${media.lessThan('sm')`
-		top: -5px;
+		top: 30px;
 	`}
 `;
 const SliderContainer = styled.div`

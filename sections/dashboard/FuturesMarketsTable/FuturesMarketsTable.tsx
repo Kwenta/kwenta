@@ -12,13 +12,16 @@ import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
+import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
+import { selectMarkets } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import {
-	futuresMarketsState,
 	pastRatesState,
 	fundingRatesState,
 	futuresVolumesState,
+	futuresAccountTypeState,
 } from 'store/futures';
 import {
 	getSynthDescription,
@@ -32,10 +35,11 @@ const FuturesMarketsTable: FC = () => {
 	const router = useRouter();
 	const { synthsMap } = Connector.useContainer();
 
-	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	const futuresMarkets = useAppSelector(selectMarkets);
 	const fundingRates = useRecoilValue(fundingRatesState);
 	const pastRates = useRecoilValue(pastRatesState);
 	const futuresVolumes = useRecoilValue(futuresVolumesState);
+	const accountType = useRecoilValue(futuresAccountTypeState);
 
 	let data = useMemo(() => {
 		return futuresMarkets.map((market) => {
@@ -75,7 +79,7 @@ const FuturesMarketsTable: FC = () => {
 						data={data}
 						showPagination
 						onTableRowClick={(row) => {
-							router.push(`/market/?asset=${row.original.asset}`);
+							router.push(ROUTES.Markets.MarketPair(row.original.asset, accountType));
 						}}
 						highlightRowsOnHover
 						sortBy={[{ id: 'dailyVolume', desc: true }]}
@@ -210,11 +214,13 @@ const FuturesMarketsTable: FC = () => {
 												currencyKey={'sUSD'}
 												price={cellProps.row.original.longInterest}
 												sign={'$'}
+												truncate
 											/>
 											<StyledShortPrice
 												currencyKey={'sUSD'}
 												price={cellProps.row.original.shortInterest}
 												sign={'$'}
+												truncate
 											/>
 										</OpenInterestContainer>
 									);
@@ -246,6 +252,7 @@ const FuturesMarketsTable: FC = () => {
 											price={cellProps.row.original.volume}
 											sign={'$'}
 											conversionRate={1}
+											truncate
 										/>
 									);
 								},
@@ -269,7 +276,7 @@ const FuturesMarketsTable: FC = () => {
 					data={data}
 					showPagination
 					onTableRowClick={(row) => {
-						router.push(`/market/?asset=${row.original.asset}`);
+						router.push(ROUTES.Markets.MarketPair(row.original.asset, accountType));
 					}}
 					columns={[
 						{
@@ -327,6 +334,7 @@ const FuturesMarketsTable: FC = () => {
 											currencyKey={'sUSD'}
 											price={cellProps.row.original.openInterest}
 											sign="$"
+											truncate
 										/>
 										<div>
 											<ChangePercent
@@ -368,6 +376,7 @@ const FuturesMarketsTable: FC = () => {
 												currencyKey={'sUSD'}
 												price={cellProps.row.original.volume ?? 0}
 												sign="$"
+												truncate
 											/>
 										</div>
 									</div>

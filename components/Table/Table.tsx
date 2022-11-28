@@ -1,5 +1,6 @@
 import React, { FC, useMemo, DependencyList, useEffect, useRef } from 'react';
 import { useTable, useFlexLayout, useSortBy, Column, Row, usePagination } from 'react-table';
+import type { TableInstance, UsePaginationInstanceProps, UsePaginationState } from 'react-table';
 import styled, { css } from 'styled-components';
 
 import SortDownIcon from 'assets/svg/app/caret-down.svg';
@@ -21,6 +22,16 @@ type ColumnWithSorting<D extends object = {}> = Column<D> & {
 	sortable?: boolean;
 	columns?: Column[];
 };
+
+/**
+ * This type adds typing for the fields returned by the usePagination hook when used in
+ * conjunction with useTable, to compensate for deficiencies of @types/react-table.
+ * This should be fixed in react-table v8-- see: https://github.com/TanStack/table/issues/3064
+ */
+type TableWithPagination<T extends object> = TableInstance<T> &
+	UsePaginationInstanceProps<T> & {
+		state: UsePaginationState<T>;
+	};
 
 export function compareNumericString(rowA: Row<any>, rowB: Row<any>, id: string, desc: boolean) {
 	let a = parseFloat(rowA.values[id]);
@@ -82,27 +93,18 @@ export const Table: FC<TableProps> = ({
 		columnsDeps
 	);
 
-	// TODO: How do I tell Typescript about the usePagination props?
 	const {
 		getTableProps,
 		getTableBodyProps,
 		headerGroups,
-		// @ts-ignore
 		page,
 		prepareRow,
-		// @ts-ignore
 		canPreviousPage,
-		// @ts-ignore
 		canNextPage,
-		// @ts-ignore
 		pageCount,
-		// @ts-ignore
 		gotoPage,
-		// @ts-ignore
 		nextPage,
-		// @ts-ignore
 		previousPage,
-		// @ts-ignore
 		state: { pageIndex },
 		setHiddenColumns,
 	} = useTable(
@@ -127,7 +129,7 @@ export const Table: FC<TableProps> = ({
 		useSortBy,
 		usePagination,
 		useFlexLayout
-	);
+	) as TableWithPagination<object>;
 
 	useEffect(() => {
 		setHiddenColumns(hiddenColumns);
@@ -205,7 +207,7 @@ export const Table: FC<TableProps> = ({
 					{!!noResultsMessage && !isLoading && data.length === 0 && noResultsMessage}
 				</ReactTable>
 			</TableContainer>
-			{!showShortList && data.length > (pageSize ?? MAX_PAGE_ROWS) ? (
+			{showPagination && !showShortList && data.length > (pageSize ?? MAX_PAGE_ROWS) ? (
 				<Pagination
 					pageIndex={pageIndex}
 					pageCount={pageCount}
@@ -236,7 +238,7 @@ const TableBody = styled.div`
 	overflow-x: hidden;
 `;
 
-const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
+export const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
 	user-select: none;
 	&:first-child {
 		padding-left: 18px;

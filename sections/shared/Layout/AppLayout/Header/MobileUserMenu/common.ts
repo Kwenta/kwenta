@@ -34,7 +34,7 @@ export const MenuButton = styled.div<{
 `;
 
 export const SUB_MENUS = {
-	[ROUTES.Home.Overview]: [
+	[ROUTES.Dashboard.Overview]: [
 		{ label: 'Overview', link: '/dashboard/overview' },
 		// { label: 'Positions', link: '/positions' },
 		// { label: 'Rewards', link: '/rewards' },
@@ -43,7 +43,7 @@ export const SUB_MENUS = {
 	],
 	[ROUTES.Home.Root]: [
 		{ label: 'Overview', link: EXTERNAL_LINKS.Docs.Governance },
-		{ label: 'KIPs', link: EXTERNAL_LINKS.Kips.Home },
+		{ label: 'KIPs', link: EXTERNAL_LINKS.Governance.Kips },
 	],
 };
 

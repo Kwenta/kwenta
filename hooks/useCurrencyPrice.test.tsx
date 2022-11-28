@@ -2,7 +2,7 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { renderHook } from '@testing-library/react-hooks';
 
-import ContextProvider from 'testing/unit/__mocks__/MockProviders';
+import { SynthetixProvider } from 'testing/unit/mocks/MockProviders';
 
 import useCurrencyPrice from './useCurrencyPrice';
 
@@ -12,7 +12,7 @@ const useSynthetixQueriesMock = useSynthetixQueries as jest.MockedFunction<
 >;
 
 describe('useCurrencyPrice', () => {
-	test('happy path', () => {
+	test('happy path', async () => {
 		useSynthetixQueriesMock.mockReturnValue({
 			useExchangeRatesQuery: jest.fn().mockReturnValue({
 				isSuccess: true,
@@ -24,7 +24,7 @@ describe('useCurrencyPrice', () => {
 		} as any);
 		expect(1).toBe(1);
 
-		const { result } = renderHook(() => useCurrencyPrice('sBTC'), { wrapper: ContextProvider });
+		const { result } = renderHook(() => useCurrencyPrice('sBTC'), { wrapper: SynthetixProvider });
 		expect(result.current.toString(0)).toBe('60000');
 	});
 });

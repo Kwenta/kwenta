@@ -17,7 +17,7 @@ import MobileSettingsModal from './MobileSettingsModal';
 import MobileWalletButton from './MobileWalletButton';
 
 const MobileUserMenu: FC = () => {
-	const [isOpen, setIsOpen] = useState<'menu' | 'settings'>();
+	const [isOpen, setIsOpen] = useState<'menu' | 'settings' | undefined>();
 	const { t } = useTranslation();
 
 	const currentTheme = useRecoilValue(currentThemeState);

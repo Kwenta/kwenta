@@ -6,7 +6,11 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
-import { marketKeyState, positionState, selectedFuturesAddressState } from 'store/futures';
+import { setPosition as setReduxPosition } from 'state/futures/reducer';
+import { selectMarketKey } from 'state/futures/selectors';
+import { serializeWeiObject } from 'state/helpers';
+import { useAppSelector, useAppDispatch } from 'state/hooks';
+import { positionState, selectedFuturesAddressState } from 'store/futures';
 import { MarketAssetByKey } from 'utils/futures';
 
 import { FuturesPosition } from './types';
@@ -16,8 +20,9 @@ const useGetFuturesPositionForMarket = (options?: UseQueryOptions<FuturesPositio
 	const { defaultSynthetixjs: synthetixjs, network } = Connector.useContainer();
 	const isL2 = useIsL2();
 	const selectedFuturesAddress = useRecoilValue(selectedFuturesAddressState);
-	const market = useRecoilValue(marketKeyState);
+	const market = useAppSelector(selectMarketKey);
 	const setPosition = useSetRecoilState(positionState);
+	const dispatch = useAppDispatch();
 
 	return useQuery<FuturesPosition | null>(
 		QUERY_KEYS.Futures.Position(
@@ -51,6 +56,7 @@ const useGetFuturesPositionForMarket = (options?: UseQueryOptions<FuturesPositio
 			);
 
 			setPosition(position);
+			dispatch(setReduxPosition(serializeWeiObject(position)));
 
 			return position;
 		},

@@ -2,14 +2,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FC, FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Badge from 'components/Badge';
 import LabelContainer from 'components/Nav/DropDownLabel';
 import Select from 'components/Select';
 import { DropdownIndicator, IndicatorSeparator } from 'components/Select/Select';
-import { currentMarketState } from 'store/futures';
+import { selectMarketAsset } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import { linkCSS } from 'styles/common';
 
 import { DESKTOP_NAV_LINKS, Badge as BadgeType } from '../constants';
@@ -26,10 +26,10 @@ type ReactSelectOptionProps = {
 const Nav: FC = () => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
-	const currentMarket = useRecoilValue(currentMarketState);
+	const marketAsset = useAppSelector(selectMarketAsset);
 
 	function getLink(link: string) {
-		return link.slice(0, 7) === '/market' ? `/market/?asset=${currentMarket}` : link;
+		return link.slice(0, 7) === '/market' ? `/market/?asset=${marketAsset}` : link;
 	}
 
 	const formatOptionLabel = ({
@@ -39,7 +39,7 @@ const Nav: FC = () => {
 		link,
 		isActive,
 	}: ReactSelectOptionProps) => {
-		if (i18nLabel === 'header.nav.markets')
+		if (i18nLabel === 'header.nav.markets' || i18nLabel === 'header.nav.leaderboard')
 			return (
 				<MenuInside isDropDown isActive={isActive}>
 					{t(i18nLabel)}
@@ -113,9 +113,11 @@ const MenuInside = styled.div<{ isActive: boolean; isDropDown?: boolean }>`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 15px;
 	text-transform: capitalize;
+	text-align: center;
 	border-radius: 100px;
 	background: transparent;
 	cursor: pointer;
+	width: 100%;
 	color: ${(props) =>
 		props.isActive
 			? props.theme.colors.selectedTheme.button.text.primary
@@ -129,7 +131,6 @@ const MenuInside = styled.div<{ isActive: boolean; isDropDown?: boolean }>`
 const DropDownSelect = styled(Select)`
 	.react-select__control {
 		padding: 0 6px;
-		width: 98px;
 	}
 
 	.react-select__group {
@@ -152,8 +153,21 @@ const DropDownSelect = styled(Select)`
 
 	.react-select__value-container {
 		padding: 0px;
+		width: ${(props) => {
+			//@ts-ignore
+			return props.value?.i18nLabel === 'header.nav.markets'
+				? '75px'
+				: //@ts-ignore
+				props.value?.i18nLabel === 'header.nav.leaderboard'
+				? '110px'
+				: '100%';
+		}};
+	}
+
+	.react-select__single-value {
 		display: flex;
-		justify-content: center;
+		align-items: center;
+		width: 100%;
 	}
 
 	.react-select__menu-notice--no-options {

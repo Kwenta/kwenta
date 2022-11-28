@@ -10,13 +10,15 @@ import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
-import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
+import { monitorTransaction } from 'contexts/RelayerContext';
 import useCrossMarginContracts from 'hooks/useCrossMarginContracts';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesOrder, PositionSide } from 'queries/futures/types';
-import { currentMarketState, openOrdersState, selectedFuturesAddressState } from 'store/futures';
+import { selectMarketAsset } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { openOrdersState, selectedFuturesAddressState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { formatDollars } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
@@ -26,16 +28,16 @@ import OrderDrawer from '../MobileTrade/drawers/OrderDrawer';
 
 const OpenOrdersTable: React.FC = () => {
 	const { t } = useTranslation();
-	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
 	const { crossMarginAccountContract } = useCrossMarginContracts();
 	const { handleRefetch } = useRefetchContext();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const { switchToL2 } = useNetworkSwitcher();
 
+	const marketAsset = useAppSelector(selectMarketAsset);
+
 	const isL2 = useIsL2();
 	const gasSpeed = useRecoilValue(gasSpeedState);
-	const currencyKey = useRecoilValue(currentMarketState);
 	const openOrders = useRecoilValue(openOrdersState);
 	const selectedFuturesAddress = useRecoilValue(selectedFuturesAddressState);
 
@@ -55,7 +57,7 @@ const OpenOrdersTable: React.FC = () => {
 	};
 
 	const cancelNextPriceOrder = useSynthetixTxn(
-		`FuturesMarket${getDisplayAsset(currencyKey)}`,
+		`FuturesMarket${getDisplayAsset(marketAsset)}`,
 		`cancelNextPriceOrder`,
 		[selectedFuturesAddress],
 		gasPrice,
@@ -63,7 +65,7 @@ const OpenOrdersTable: React.FC = () => {
 	);
 
 	const executeNextPriceOrder = useSynthetixTxn(
-		`FuturesMarket${getDisplayAsset(currencyKey)}`,
+		`FuturesMarket${getDisplayAsset(marketAsset)}`,
 		`executeNextPriceOrder`,
 		[selectedFuturesAddress],
 		gasPrice,
@@ -79,7 +81,7 @@ const OpenOrdersTable: React.FC = () => {
 				},
 			});
 		},
-		[monitorTransaction, handleRefetch]
+		[handleRefetch]
 	);
 
 	const onCancel = useCallback(
@@ -116,9 +118,9 @@ const OpenOrdersTable: React.FC = () => {
 		const ordersWithCancel = openOrders
 			.map((o) => ({ ...o, cancel: () => onCancel(o) }))
 			.sort((a, b) => {
-				return b.asset === currencyKey && a.asset !== currencyKey
+				return b.asset === marketAsset && a.asset !== marketAsset
 					? 1
-					: b.asset === currencyKey && a.asset === currencyKey
+					: b.asset === marketAsset && a.asset === marketAsset
 					? 0
 					: -1;
 			});
@@ -128,7 +130,7 @@ const OpenOrdersTable: React.FC = () => {
 			isCancelling: true,
 		};
 		return ordersWithCancel;
-	}, [openOrders, cancelling, currencyKey, onCancel]);
+	}, [openOrders, cancelling, marketAsset, onCancel]);
 
 	return (
 		<>

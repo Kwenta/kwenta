@@ -19,25 +19,20 @@ import {
 	ORDER_KEEPER_ETH_DEPOSIT,
 } from 'constants/futures';
 import Connector from 'containers/Connector';
-import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
+import { monitorTransaction } from 'contexts/RelayerContext';
 import { KWENTA_TRACKING_CODE, ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
-import {
-	PositionSide,
-	TradeFees,
-	FuturesTradeInputs,
-	FuturesAccountType,
-} from 'queries/futures/types';
+import { PositionSide, FuturesTradeInputs, FuturesAccountType } from 'queries/futures/types';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
-import { getFuturesMarketContract } from 'queries/futures/utils';
+import { setFuturesAccountType, setOrderType as setReduxOrderType } from 'state/futures/reducer';
+import { selectMarketAssetRate } from 'state/futures/selectors';
+import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
+import { useAppSelector, useAppDispatch } from 'state/hooks';
 import {
 	crossMarginMarginDeltaState,
-	currentMarketState,
 	tradeFeesState,
 	futuresAccountState,
 	leverageSideState,
-	marketAssetRateState,
-	marketInfoState,
 	maxLeverageState,
 	orderTypeState,
 	positionState,
@@ -53,8 +48,9 @@ import {
 	aboveMaxLeverageState,
 	crossMarginAccountOverviewState,
 } from 'store/futures';
+import { computeMarketFee } from 'utils/costCalculations';
 import { zeroBN, floorNumber, weiToString } from 'utils/formatters/number';
-import { getDisplayAsset, MarketKeyByAsset } from 'utils/futures';
+import { calculateMarginDelta, getDisplayAsset, MarketKeyByAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
 import useCrossMarginAccountContracts from './useCrossMarginContracts';
@@ -86,10 +82,9 @@ const useFuturesData = () => {
 	const getPotentialTrade = useGetFuturesPotentialTradeDetails();
 	const crossMarginAccountOverview = useRecoilValue(crossMarginAccountOverviewState);
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
-	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { handleRefetch, refetchUntilUpdate } = useRefetchContext();
 
-	const marketAsset = useRecoilValue(currentMarketState);
+	const marketAsset = useAppSelector(selectMarketAsset);
 	const [tradeInputs, setTradeInputs] = useRecoilState(futuresTradeInputsState);
 	const setSimulatedTrade = useSetRecoilState(simulatedTradeState);
 
@@ -101,7 +96,6 @@ const useFuturesData = () => {
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const feeCap = useRecoilValue(orderFeeCapState);
 	const position = useRecoilValue(positionState);
-	const market = useRecoilValue(marketInfoState);
 	const aboveMaxLeverage = useRecoilValue(aboveMaxLeverageState);
 	const maxLeverage = useRecoilValue(maxLeverageState);
 	const { crossMarginAvailable, crossMarginAddress } = useRecoilValue(futuresAccountState);
@@ -109,11 +103,14 @@ const useFuturesData = () => {
 		crossMarginSettingsState
 	);
 	const isAdvancedOrder = useRecoilValue(isAdvancedOrderState);
-	const marketAssetRate = useRecoilValue(marketAssetRateState);
+	const marketAssetRate = useAppSelector(selectMarketAssetRate);
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
 	const setPotentialTradeDetails = useSetRecoilState(potentialTradeDetailsState);
 	const [selectedAccountType, setSelectedAccountType] = useRecoilState(futuresAccountTypeState);
 	const [preferredLeverage] = usePersistedRecoilState(preferredLeverageState);
+	const dispatch = useAppDispatch();
+
+	const market = useAppSelector(selectMarketInfo);
 
 	const [maxFee, setMaxFee] = useState(zeroBN);
 	const [error, setError] = useState<string | null>(null);
@@ -128,11 +125,14 @@ const useFuturesData = () => {
 		return crossMarginAvailable ? { freeMargin: crossMarginAccountOverview.freeMargin } : null;
 	}, [crossMarginAccountOverview.freeMargin, crossMarginAvailable]);
 
+	const freeMargin = useMemo(() => crossMarginAccount?.freeMargin ?? zeroBN, [
+		crossMarginAccount?.freeMargin,
+	]);
+
 	const selectedLeverage = useMemo(() => {
-		const effectiveLeverage = position?.position?.leverage.toString() || '';
-		const leverage = effectiveLeverage || preferredLeverage[marketAsset] || DEFAULT_LEVERAGE;
+		const leverage = preferredLeverage[marketAsset] || DEFAULT_LEVERAGE;
 		return String(Math.min(maxLeverage.toNumber(), Number(leverage)));
-	}, [position?.position?.leverage, preferredLeverage, marketAsset, maxLeverage]);
+	}, [preferredLeverage, marketAsset, maxLeverage]);
 
 	const remainingMargin: Wei = useMemo(() => {
 		if (selectedAccountType === 'isolated_margin') {
@@ -166,35 +166,47 @@ const useFuturesData = () => {
 		if (aboveMaxLeverage && position?.position?.side === leverageSide) {
 			return zeroBN;
 		}
-		const currentValue = position?.position?.notionalValue || zeroBN;
-		let maxUsd = remainingMargin.mul(selectedLeverage);
-		maxUsd = leverageSide === 'long' ? maxUsd.sub(currentValue) : maxUsd.add(currentValue);
-		const maxCrossMarginFee = maxUsd.mul(crossMarginTradeFee);
-		const fees = maxFee.add(maxCrossMarginFee) || zeroBN;
-		maxUsd = maxUsd.sub(fees.mul(selectedLeverage));
-		const buffer = maxUsd.mul(0.01);
+
+		const totalMargin =
+			position?.position?.side === leverageSide
+				? freeMargin
+				: freeMargin.add(position?.remainingMargin ?? zeroBN);
+
+		let maxUsd = totalMargin.mul(selectedLeverage);
+		if (position?.position?.side !== leverageSide) {
+			const notionalValue = position?.position?.size.mul(tradePrice);
+			maxUsd = maxUsd.add(notionalValue ?? zeroBN);
+		}
+
+		maxUsd = maxUsd.sub(maxFee.mul(selectedLeverage));
+		let buffer = maxUsd.mul(0.01);
+
 		return maxUsd.abs().sub(buffer);
 	}, [
 		selectedLeverage,
 		maxLeverage,
 		maxFee,
 		aboveMaxLeverage,
+		freeMargin,
 		remainingMargin,
 		leverageSide,
+		tradePrice,
 		selectedAccountType,
-		crossMarginTradeFee,
-		position?.position?.notionalValue,
+		position?.position?.size,
+		position?.remainingMargin,
 		position?.position?.side,
 	]);
 
-	const getTradeFee = useCallback(
-		(size: Wei) => {
-			if (!synthetixjs) return ZERO_FEES;
-			const FuturesMarketContract = getFuturesMarketContract(marketAsset, synthetixjs.contracts);
-			return FuturesMarketContract.orderFee(size.toBN());
-		},
-		[synthetixjs, marketAsset]
-	);
+	const advancedOrderFeeRate = useMemo(() => {
+		switch (orderType) {
+			case 'limit':
+				return limitOrderFee;
+			case 'stop market':
+				return stopOrderFee;
+			default:
+				return zeroBN;
+		}
+	}, [orderType, limitOrderFee, stopOrderFee]);
 
 	const getCrossMarginEthBal = useCallback(async () => {
 		if (!crossMarginAddress) return zeroBN;
@@ -211,17 +223,44 @@ const useFuturesData = () => {
 		[orderType, stopOrderFee, limitOrderFee]
 	);
 
-	const calculateFees = useCallback(
-		async (susdSizeDelta: Wei, nativeSizeDelta: Wei) => {
-			if (!synthetixjs) return ZERO_FEES;
-
-			const [volatilityFee, orderFee] = await Promise.all([
+	const totalFeeRate = useCallback(
+		async (sizeDelta: Wei) => {
+			const [dynamicFeeRate] = await Promise.all([
 				synthetixjs.contracts.Exchanger.dynamicFeeRateForExchange(
 					ethers.utils.formatBytes32String('sUSD'),
 					ethers.utils.formatBytes32String(marketAsset)
 				),
-				getTradeFee(nativeSizeDelta),
 			]);
+			const staticRate = computeMarketFee(market, sizeDelta);
+
+			let total = crossMarginTradeFee
+				.add(dynamicFeeRate.feeRate)
+				.add(staticRate)
+				.add(advancedOrderFeeRate);
+
+			return total;
+		},
+		[
+			market,
+			marketAsset,
+			crossMarginTradeFee,
+			advancedOrderFeeRate,
+			synthetixjs.contracts.Exchanger,
+		]
+	);
+
+	const calculateFees = useCallback(
+		async (susdSizeDelta: Wei, nativeSizeDelta: Wei) => {
+			if (!synthetixjs) return ZERO_FEES;
+
+			const volatilityFeeRate = await synthetixjs.contracts.Exchanger.dynamicFeeRateForExchange(
+				ethers.utils.formatBytes32String('sUSD'),
+				ethers.utils.formatBytes32String(marketAsset)
+			);
+			const volatilityFeeWei = wei(volatilityFeeRate.feeRate);
+			const susdSize = susdSizeDelta.abs();
+			const staticRate = computeMarketFee(market, nativeSizeDelta);
+			const tradeFee = susdSize.mul(staticRate).add(susdSize.mul(volatilityFeeWei));
 
 			const currentDeposit =
 				orderType === 'limit' || orderType === 'stop market'
@@ -232,20 +271,17 @@ const useFuturesData = () => {
 				: zeroBN;
 
 			const crossMarginFee =
-				selectedAccountType === 'cross_margin'
-					? susdSizeDelta.abs().mul(crossMarginTradeFee)
-					: zeroBN;
+				selectedAccountType === 'cross_margin' ? susdSize.mul(crossMarginTradeFee) : zeroBN;
 			const limitStopOrderFee = calculateCrossMarginFee(susdSizeDelta);
-			const orderFeeWei = wei(orderFee.fee);
-			const volatilityFeeWei = wei(volatilityFee.feeRate);
+			const tradeFeeWei = wei(tradeFee);
 
 			const fees = {
-				staticFee: orderFeeWei,
+				staticFee: tradeFeeWei,
 				crossMarginFee: crossMarginFee,
 				dynamicFeeRate: volatilityFeeWei,
 				keeperEthDeposit: requiredDeposit,
 				limitStopOrderFee: limitStopOrderFee,
-				total: orderFeeWei.add(crossMarginFee).add(limitStopOrderFee),
+				total: tradeFeeWei.add(crossMarginFee).add(limitStopOrderFee),
 			};
 			setTradeFees(fees);
 			return fees;
@@ -256,24 +292,11 @@ const useFuturesData = () => {
 			marketAsset,
 			synthetixjs,
 			orderType,
+			market,
 			calculateCrossMarginFee,
 			setTradeFees,
-			getTradeFee,
 			getCrossMarginEthBal,
 		]
-	);
-
-	const calculateMarginDelta = useCallback(
-		async (nextTrade: FuturesTradeInputs, fees: TradeFees) => {
-			if (nextTrade.nativeSizeDelta.add(position?.position?.size || 0).eq(zeroBN)) return zeroBN;
-			const currentSize = position?.position?.notionalValue || zeroBN;
-			const newNotionalValue = currentSize.add(nextTrade.susdSizeDelta);
-			const fullMargin = newNotionalValue.abs().div(nextTrade.leverage);
-
-			let marginDelta = fullMargin.sub(position?.remainingMargin || '0').add(fees.total);
-			return marginDelta;
-		},
-		[position?.position?.notionalValue, position?.position?.size, position?.remainingMargin]
 	);
 
 	// eslint-disable-next-line
@@ -286,7 +309,7 @@ const useFuturesData = () => {
 				if (selectedAccountType === 'cross_margin') {
 					nextMarginDelta =
 						nextTrade.nativeSizeDelta.abs().gt(0) || fromLeverage
-							? await calculateMarginDelta(nextTrade, fees)
+							? await calculateMarginDelta(nextTrade, fees, position)
 							: zeroBN;
 					setCrossMarginMarginDelta(nextMarginDelta);
 				}
@@ -311,6 +334,7 @@ const useFuturesData = () => {
 			calculateFees,
 			getPotentialTrade,
 			calculateMarginDelta,
+			position,
 			orderPrice,
 			orderType,
 			selectedAccountType,
@@ -331,17 +355,17 @@ const useFuturesData = () => {
 	const onTradeAmountChange = useCallback(
 		(
 			value: string,
+			usdPrice: Wei,
 			currencyType: 'usd' | 'native',
 			options?: { simulateChange?: boolean; crossMarginLeverage?: Wei }
 		) => {
-			if (!value || tradePrice.eq(0)) {
+			if (!value || usdPrice.eq(0)) {
 				resetTradeState();
 				return;
 			}
-
 			const positiveTrade = leverageSide === PositionSide.LONG;
-			const nativeSize = currencyType === 'native' ? wei(value) : wei(value).div(tradePrice);
-			const usdSize = currencyType === 'native' ? tradePrice.mul(value) : wei(value);
+			const nativeSize = currencyType === 'native' ? wei(value) : wei(value).div(usdPrice);
+			const usdSize = currencyType === 'native' ? usdPrice.mul(value) : wei(value);
 			const changeEnabled = remainingMargin.gt(0) && value !== '';
 			const isolatedMarginLeverage = changeEnabled ? usdSize.div(remainingMargin) : zeroBN;
 
@@ -357,7 +381,7 @@ const useFuturesData = () => {
 				susdSize: changeEnabled ? weiToString(usdSize) : '',
 				nativeSizeDelta: positiveTrade ? nativeSize : nativeSize.neg(),
 				susdSizeDelta: positiveTrade ? usdSize : usdSize.neg(),
-				orderPrice: tradePrice,
+				orderPrice: usdPrice,
 				leverage: String(floorNumber(leverage)),
 			};
 
@@ -369,7 +393,6 @@ const useFuturesData = () => {
 			}
 		},
 		[
-			tradePrice,
 			remainingMargin,
 			maxLeverage,
 			selectedLeverage,
@@ -400,13 +423,9 @@ const useFuturesData = () => {
 	const onLeverageChange = useCallback(
 		(leverage: number) => {
 			if (selectedAccountType === 'cross_margin') {
-				if (position?.position) {
-					onChangeOpenPosLeverage(leverage);
-				} else {
-					onTradeAmountChange('', 'usd', {
-						crossMarginLeverage: wei(leverage),
-					});
-				}
+				onTradeAmountChange('', tradePrice, 'usd', {
+					crossMarginLeverage: wei(leverage),
+				});
 			} else {
 				if (leverage <= 0) {
 					resetTradeState();
@@ -415,7 +434,7 @@ const useFuturesData = () => {
 						marketAssetRate.eq(0) || remainingMargin.eq(0)
 							? ''
 							: wei(leverage).mul(remainingMargin).div(marketAssetRate).toString();
-					onTradeAmountChange(newTradeSize, 'native');
+					onTradeAmountChange(newTradeSize, tradePrice, 'native');
 				}
 			}
 		},
@@ -423,10 +442,9 @@ const useFuturesData = () => {
 			remainingMargin,
 			marketAssetRate,
 			selectedAccountType,
-			position?.position,
+			tradePrice,
 			resetTradeState,
 			onTradeAmountChange,
-			onChangeOpenPosLeverage,
 		]
 	);
 
@@ -434,7 +452,7 @@ const useFuturesData = () => {
 		(price: string) => {
 			if (price && tradeInputs.susdSize) {
 				// Recalc the trade
-				onTradeAmountChange(tradeInputs.susdSize, 'usd');
+				onTradeAmountChange(tradeInputs.susdSize, wei(price), 'usd');
 			}
 		},
 		[tradeInputs, onTradeAmountChange]
@@ -457,7 +475,7 @@ const useFuturesData = () => {
 	);
 
 	const submitCrossMarginOrder = useCallback(
-		async (fromEditLeverage?: boolean) => {
+		async (fromEditLeverage?: boolean, gasLimit?: Wei | null) => {
 			if (!crossMarginAccountContract) return;
 			if (orderType === 'market' || fromEditLeverage) {
 				const newPosition = [
@@ -467,7 +485,9 @@ const useFuturesData = () => {
 						sizeDelta: tradeInputs.nativeSizeDelta.toBN(),
 					},
 				];
-				return await crossMarginAccountContract.distributeMargin(newPosition);
+				return await crossMarginAccountContract.distributeMargin(newPosition, {
+					gasLimit: gasLimit?.toBN(),
+				});
 			}
 			const enumType = orderType === 'limit' ? 0 : 1;
 
@@ -517,12 +537,18 @@ const useFuturesData = () => {
 				return;
 			}
 			try {
-				const currentValue = position?.position?.notionalValue || zeroBN;
-				let maxUsd = remainingMargin.mul(selectedLeverage);
-				maxUsd = leverageSide === 'long' ? maxUsd.sub(currentValue) : maxUsd.add(currentValue);
-				const maxSize = maxUsd.gt(0) ? maxUsd.div(tradePrice) : zeroBN;
-				const maxOrderFee = await getTradeFee(maxSize);
-				setMaxFee(wei(maxOrderFee.fee));
+				const totalMargin =
+					position?.position?.side === leverageSide
+						? freeMargin
+						: freeMargin.add(position?.remainingMargin ?? zeroBN);
+
+				let maxUsd = totalMargin.mul(selectedLeverage);
+				if (position?.position?.side !== leverageSide) {
+					maxUsd = maxUsd.add(position?.position?.notionalValue ?? zeroBN);
+				}
+				const totalRate = await totalFeeRate(maxUsd);
+				const totalMaxFee = maxUsd.mul(totalRate);
+				setMaxFee(totalMaxFee);
 			} catch (e) {
 				logError(e);
 			}
@@ -530,10 +556,13 @@ const useFuturesData = () => {
 		getMaxFee();
 	}, [
 		setMaxFee,
-		getTradeFee,
+		totalFeeRate,
 		leverageSide,
+		position?.remainingMargin,
 		position?.position?.notionalValue,
+		position?.position?.side,
 		remainingMargin,
+		freeMargin,
 		tradePrice,
 		selectedLeverage,
 	]);
@@ -541,16 +570,18 @@ const useFuturesData = () => {
 	useEffect(() => {
 		if (selectedAccountType === 'cross_margin' && !CROSS_MARGIN_ORDER_TYPES.includes(orderType)) {
 			setOrderType('market');
+			dispatch(setReduxOrderType('market'));
 		} else if (
 			selectedAccountType === 'isolated_margin' &&
 			!ISOLATED_MARGIN_ORDER_TYPES.includes(orderType)
 		) {
 			setOrderType('market');
+			dispatch(setReduxOrderType('market'));
 		}
-		onTradeAmountChange(tradeInputs.susdSize, 'usd');
+		onTradeAmountChange(tradeInputs.susdSize, tradePrice, 'usd');
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedAccountType, orderType, network.id]);
+	}, [dispatch, selectedAccountType, orderType, network.id]);
 
 	useEffect(() => {
 		const handleRouteChange = () => {
@@ -564,7 +595,7 @@ const useFuturesData = () => {
 
 	useEffect(() => {
 		if (tradeInputs.susdSizeDelta.eq(0)) return;
-		onTradeAmountChange(tradeInputs.susdSize, 'usd');
+		onTradeAmountChange(tradeInputs.susdSize, tradePrice, 'usd');
 		// Only want to react to leverage side change
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [leverageSide]);
@@ -578,6 +609,7 @@ const useFuturesData = () => {
 	useEffect(() => {
 		if (!CROSS_MARGIN_ENABLED) {
 			setSelectedAccountType(DEFAULT_FUTURES_MARGIN_TYPE);
+			dispatch(setFuturesAccountType(DEFAULT_FUTURES_MARGIN_TYPE));
 			return;
 		}
 		const routerType =
@@ -588,8 +620,9 @@ const useFuturesData = () => {
 			? routerType
 			: DEFAULT_FUTURES_MARGIN_TYPE;
 		setSelectedAccountType(accountType);
+		dispatch(setFuturesAccountType(accountType));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [router.query.accountType]);
+	}, [dispatch, router.query.accountType]);
 
 	return {
 		onLeverageChange,
@@ -598,9 +631,9 @@ const useFuturesData = () => {
 		submitCrossMarginOrder,
 		resetTradeState,
 		onTradeOrderPriceChange,
+		onChangeOpenPosLeverage,
 		marketAssetRate,
 		position,
-		marketAsset,
 		market,
 		orderTxn,
 		maxUsdInputAmount,
@@ -608,6 +641,7 @@ const useFuturesData = () => {
 		selectedLeverage,
 		error,
 		debounceFetchPreview,
+		tradePrice,
 	};
 };
 

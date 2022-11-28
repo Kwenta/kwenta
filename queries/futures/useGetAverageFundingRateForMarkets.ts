@@ -3,12 +3,14 @@ import Wei from '@synthetixio/wei';
 import request, { gql } from 'graphql-request';
 import { useTranslation } from 'react-i18next';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
-import { Period, PERIOD_IN_SECONDS } from 'constants/period';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import { fundingRatesState, futuresMarketsState, marketAssetsState } from 'store/futures';
+import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';
+import { selectMarketAssets, selectMarkets } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { fundingRatesState } from 'store/futures';
 import { FuturesMarketKey, MarketKeyByAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
@@ -35,8 +37,8 @@ const useGetAverageFundingRateForMarkets = (
 	const { t } = useTranslation();
 	const { network } = Connector.useContainer();
 
-	const futuresMarkets = useRecoilValue(futuresMarketsState);
-	const marketAssets = useRecoilValue(marketAssetsState);
+	const futuresMarkets = useAppSelector(selectMarkets);
+	const marketAssets = useAppSelector(selectMarketAssets);
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
 	const setFundingRates = useSetRecoilState(fundingRatesState);
 
@@ -63,92 +65,104 @@ const useGetAverageFundingRateForMarkets = (
 		async () => {
 			const minTimestamp = Math.floor(Date.now() / 1000) - periodLength;
 
-			const fundingRatePromises = fundingRateInputs.map(
-				({ marketAddress, marketKey, price, currentFundingRate }) => {
-					try {
-						const response = request(
-							futuresEndpoint,
-							gql`
-								query fundingRateUpdates($market: String!, $minTimestamp: BigInt!) {
-									# last before timestamp
-									first: fundingRateUpdates(
-										first: 1
-										where: { market: $market, timestamp_lt: $minTimestamp }
-										orderBy: sequenceLength
-										orderDirection: desc
-									) {
-										timestamp
-										funding
-									}
+			const fundingRateQueries = fundingRateInputs.map(({ marketAddress, marketKey }) => {
+				return gql`
+						# last before timestamp
+						${marketKey}_first: fundingRateUpdates(
+							first: 1
+							where: { market: "${marketAddress}", timestamp_lt: $minTimestamp }
+							orderBy: sequenceLength
+							orderDirection: desc
+						) {
+							timestamp
+							funding
+						}
 
-									# first after timestamp
-									next: fundingRateUpdates(
-										first: 1
-										where: { market: $market, timestamp_gt: $minTimestamp }
-										orderBy: sequenceLength
-										orderDirection: asc
-									) {
-										timestamp
-										funding
-									}
+						# first after timestamp
+						${marketKey}_next: fundingRateUpdates(
+							first: 1
+							where: { market: "${marketAddress}", timestamp_gt: $minTimestamp }
+							orderBy: sequenceLength
+							orderDirection: asc
+						) {
+							timestamp
+							funding
+						}
 
-									# latest update
-									latest: fundingRateUpdates(
-										first: 1
-										where: { market: $market }
-										orderBy: sequenceLength
-										orderDirection: desc
-									) {
-										timestamp
-										funding
-									}
-								}
-							`,
-							{ market: marketAddress, minTimestamp: minTimestamp }
-						).then((response: { string: FundingRateUpdate[] }): FundingRateResponse | null => {
-							if (!price) return null;
-							const responseFilt = Object.values(response)
-								.filter((value: FundingRateUpdate[]) => value.length > 0)
-								.map((entry: FundingRateUpdate[]): FundingRateUpdate => entry[0])
-								.sort((a: FundingRateUpdate, b: FundingRateUpdate) => a.timestamp - b.timestamp);
+						# latest update
+						${marketKey}_latest: fundingRateUpdates(
+							first: 1
+							where: { market: "${marketAddress}" }
+							orderBy: sequenceLength
+							orderDirection: desc
+						) {
+							timestamp
+							funding
+						}
+					`;
+			});
 
-							const fundingRate =
-								responseFilt && !!currentFundingRate
-									? calculateFundingRate(
-											minTimestamp,
-											periodLength,
-											responseFilt,
-											price,
-											currentFundingRate
-									  )
-									: currentFundingRate ?? null;
-
-							const fundingPeriod =
-								responseFilt && !!currentFundingRate
-									? periodTitle
-									: t('futures.markets.info.instant-funding');
-
-							const fundingRateResponse: FundingRateResponse = {
-								asset: marketKey,
-								fundingTitle: fundingPeriod,
-								fundingRate: fundingRate,
-							};
-							return fundingRateResponse;
-						});
-						return response;
-					} catch (e) {
-						logError(e);
-						return null;
+			try {
+				const marketFundingResponses: Record<string, FundingRateUpdate[]> = await request(
+					futuresEndpoint,
+					gql`
+					query fundingRateUpdates($minTimestamp: BigInt!) {
+						${fundingRateQueries.reduce((acc: string, curr: string) => {
+							return acc + curr;
+						})}
 					}
-				}
-			);
+				`,
+					{ minTimestamp: minTimestamp }
+				);
 
-			const fundingRateResponses = await Promise.all(fundingRatePromises);
-			const fundingRates: FundingRateResponse[] = fundingRateResponses.filter(
-				(funding): funding is FundingRateResponse => !!funding
-			);
+				const fundingRateResponses = fundingRateInputs.map(
+					({ marketKey, currentFundingRate, price }) => {
+						if (!price) return null;
+						const marketResponses = [
+							marketFundingResponses[`${marketKey}_first`],
+							marketFundingResponses[`${marketKey}_next`],
+							marketFundingResponses[`${marketKey}_latest`],
+						];
 
-			setFundingRates(fundingRates);
+						const responseFilt = marketResponses
+							.filter((value: FundingRateUpdate[]) => value.length > 0)
+							.map((entry: FundingRateUpdate[]): FundingRateUpdate => entry[0])
+							.sort((a: FundingRateUpdate, b: FundingRateUpdate) => a.timestamp - b.timestamp);
+
+						const fundingRate =
+							responseFilt && !!currentFundingRate
+								? calculateFundingRate(
+										minTimestamp,
+										periodLength,
+										responseFilt,
+										price,
+										currentFundingRate
+								  )
+								: currentFundingRate ?? null;
+
+						const fundingPeriod =
+							responseFilt && !!currentFundingRate
+								? periodTitle
+								: t('futures.markets.info.instant-funding');
+
+						const fundingRateResponse: FundingRateResponse = {
+							asset: marketKey,
+							fundingTitle: fundingPeriod,
+							fundingRate: fundingRate,
+						};
+						return fundingRateResponse;
+					}
+				);
+
+				const fundingRates: FundingRateResponse[] = fundingRateResponses.filter(
+					(funding): funding is FundingRateResponse => !!funding
+				);
+
+				setFundingRates(fundingRates);
+			} catch (e) {
+				logError(e);
+				return null;
+			}
 		},
 		{
 			enabled: futuresMarkets.length > 0 && futuresMarkets.length === marketAssets.length,

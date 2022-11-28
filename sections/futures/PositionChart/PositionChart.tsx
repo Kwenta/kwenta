@@ -1,25 +1,30 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import TVChart from 'components/TVChart';
+import { selectMarketAsset } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import {
-	currentMarketState,
 	positionState,
 	potentialTradeDetailsState,
 	futuresTradeInputsState,
 	positionHistoryState,
 	futuresAccountTypeState,
+	openOrdersState,
 } from 'store/futures';
 
 export default function PositionChart() {
 	const [isChartReady, setIsChartReady] = useState(false);
-	const marketAsset = useRecoilValue(currentMarketState);
+	const marketAsset = useAppSelector(selectMarketAsset);
+
 	const position = useRecoilValue(positionState);
 	const positionHistory = useRecoilValue(positionHistoryState);
 	const futuresAccountType = useRecoilValue(futuresAccountTypeState);
-
+	const openOrders = useRecoilValue(openOrdersState);
 	const { data: previewTrade } = useRecoilValue(potentialTradeDetailsState);
+
+	const [showOrderLines, setShowOrderLines] = useState(true);
 
 	const subgraphPosition = useMemo(() => {
 		return positionHistory[futuresAccountType].find((p) => p.isOpen && p.asset === marketAsset);
@@ -53,9 +58,14 @@ export default function PositionChart() {
 		};
 	}, [subgraphPosition, position]);
 
+	const onToggleLines = useCallback(() => {
+		setShowOrderLines(!showOrderLines);
+	}, [setShowOrderLines, showOrderLines]);
+
 	return (
 		<Container visible={isChartReady}>
 			<TVChart
+				openOrders={openOrders}
 				activePosition={activePosition}
 				potentialTrade={
 					previewTrade
@@ -69,12 +79,17 @@ export default function PositionChart() {
 				onChartReady={() => {
 					setIsChartReady(true);
 				}}
+				showOrderLines={showOrderLines}
+				onToggleShowOrderLines={onToggleLines}
 			/>
 		</Container>
 	);
 }
 
 const Container = styled.div<{ visible: boolean }>`
+	border: ${(props) => props.theme.colors.selectedTheme.border};
+	border-radius: 10px;
+	padding: 3px;
 	min-height: 450px;
 	background: ${(props) => props.theme.colors.selectedTheme.background};
 	visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};

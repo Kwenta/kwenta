@@ -8,6 +8,7 @@ import { chain } from 'wagmi';
 import { ETH_UNIT } from 'constants/network';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
+import { FuturesMarket } from 'sdk/types/futures';
 import { formatCurrency, formatDollars, weiFromWei, zeroBN } from 'utils/formatters/number';
 import {
 	FuturesMarketAsset,
@@ -18,7 +19,8 @@ import {
 
 import { SECONDS_PER_DAY, FUTURES_ENDPOINTS } from './constants';
 import {
-	FuturesHourlyStatResult,
+	CrossMarginAccountTransferResult,
+	FuturesAggregateStatResult,
 	FuturesMarginTransferResult,
 	FuturesOrderResult,
 	FuturesOrderType,
@@ -36,7 +38,6 @@ import {
 	FundingRateUpdate,
 	FuturesTrade,
 	MarginTransfer,
-	FuturesMarket,
 	FuturesOrder,
 	FuturesOrderTypeDisplay,
 } from './types';
@@ -61,8 +62,6 @@ export const mapFuturesPosition = (
 	const {
 		remainingMargin,
 		accessibleMargin,
-		orderPending,
-		order,
 		position: { fundingIndex, lastPrice, size, margin },
 		accruedFunding,
 		notionalValue,
@@ -74,14 +73,6 @@ export const mapFuturesPosition = (
 	const pnlPct = initialMargin.gt(0) ? pnl.div(wei(initialMargin)) : wei(0);
 	return {
 		asset,
-		order: !!orderPending
-			? {
-					pending: !!orderPending,
-					fee: wei(order.fee),
-					leverage: wei(order.leverage),
-					side: wei(order.leverage).gte(zeroBN) ? PositionSide.LONG : PositionSide.SHORT,
-			  }
-			: null,
 		remainingMargin: wei(remainingMargin),
 		accessibleMargin: wei(accessibleMargin),
 		position: wei(size).eq(zeroBN)
@@ -203,7 +194,9 @@ export const mapOpenInterest = async (
 	return openInterest;
 };
 
-export const calculateVolumes = (futuresHourlyStats: FuturesHourlyStatResult[]): FuturesVolumes => {
+export const calculateVolumes = (
+	futuresHourlyStats: FuturesAggregateStatResult[]
+): FuturesVolumes => {
 	const volumes: FuturesVolumes = futuresHourlyStats.reduce(
 		(acc: FuturesVolumes, { asset, volume, trades }) => {
 			return {
@@ -341,6 +334,30 @@ export const mapMarginTransfers = (
 				amount,
 				isPositive,
 				asset: utils.parseBytes32String(asset) as FuturesMarketAsset,
+				txHash,
+			};
+		}
+	);
+};
+
+export const mapCrossMarginTransfers = (
+	marginTransfers: CrossMarginAccountTransferResult[]
+): MarginTransfer[] => {
+	return marginTransfers?.map(
+		({ timestamp, account, size, txHash }: CrossMarginAccountTransferResult): MarginTransfer => {
+			const sizeWei = new Wei(size);
+			const cleanSize = sizeWei.div(ETH_UNIT).abs();
+			const isPositive = sizeWei.gt(0);
+			const amount = `${isPositive ? '+' : '-'}${formatDollars(cleanSize)}`;
+			const numTimestamp = wei(timestamp).toNumber();
+
+			return {
+				timestamp: numTimestamp,
+				account,
+				size,
+				action: isPositive ? 'deposit' : 'withdraw',
+				amount,
+				isPositive,
 				txHash,
 			};
 		}

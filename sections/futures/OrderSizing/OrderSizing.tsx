@@ -1,3 +1,4 @@
+import { wei } from '@synthetixio/wei';
 import { debounce } from 'lodash';
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -7,16 +8,17 @@ import SwitchAssetArrows from 'assets/svg/futures/switch-arrows.svg';
 import CustomInput from 'components/Input/CustomInput';
 import InputTitle from 'components/Input/InputTitle';
 import { useFuturesContext } from 'contexts/FuturesContext';
+import { selectMarketKey, selectMarketAssetRate } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import {
 	futuresAccountTypeState,
 	simulatedTradeState,
 	positionState,
 	futuresTradeInputsState,
 	orderTypeState,
-	marketAssetRateState,
 	futuresOrderPriceState,
-	marketKeyState,
 	crossMarginAccountOverviewState,
+	leverageSideState,
 } from 'store/futures';
 import { FlexDivRow } from 'styles/common';
 import { floorNumber, isZero, zeroBN } from 'utils/formatters/number';
@@ -39,15 +41,20 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	const position = useRecoilValue(positionState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 	const orderType = useRecoilValue(orderTypeState);
-	const assetPrice = useRecoilValue(marketAssetRateState);
+	const marketAssetRate = useAppSelector(selectMarketAssetRate);
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
-	const marketKey = useRecoilValue(marketKeyState);
+	const selectedLeverageSide = useRecoilValue(leverageSideState);
+
+	const marketKey = useAppSelector(selectMarketKey);
 
 	const [usdValue, setUsdValue] = useState(susdSize);
 	const [assetValue, setAssetValue] = useState(nativeSize);
 	const [assetInputType, setAssetInputType] = useState<'usd' | 'native'>('usd');
 
-	const tradePrice = useMemo(() => orderPrice || assetPrice, [orderPrice, assetPrice]);
+	const tradePrice = useMemo(() => (orderPrice ? wei(orderPrice) : marketAssetRate), [
+		orderPrice,
+		marketAssetRate,
+	]);
 	const maxNativeValue = useMemo(
 		() => (!isZero(tradePrice) ? maxUsdInputAmount.div(tradePrice) : zeroBN),
 		[tradePrice, maxUsdInputAmount]
@@ -81,20 +88,20 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 
 	const handleSetMax = () => {
 		if (assetInputType === 'usd') {
-			onTradeAmountChange(String(floorNumber(maxUsdInputAmount)), 'usd');
+			onTradeAmountChange(String(floorNumber(maxUsdInputAmount)), tradePrice, 'usd');
 		} else {
-			onTradeAmountChange(String(floorNumber(maxNativeValue)), 'native');
+			onTradeAmountChange(String(floorNumber(maxNativeValue)), tradePrice, 'native');
 		}
 	};
 
 	const handleSetPositionSize = () => {
-		onTradeAmountChange(position?.position?.size.toString() ?? '0', 'native');
+		onTradeAmountChange(position?.position?.size.toString() ?? '0', tradePrice, 'native');
 	};
 
 	// eslint-disable-next-line
 	const debounceOnChangeValue = useCallback(
 		debounce((value, assetType) => {
-			onTradeAmountChange(value, assetType);
+			onTradeAmountChange(value, tradePrice, assetType);
 		}, 500),
 		[debounce, onTradeAmountChange]
 	);
@@ -117,7 +124,9 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	}, [position?.remainingMargin, disabled, selectedAccountType, freeCrossMargin]);
 
 	const showPosSizeHelper =
-		position?.position?.size && (orderType === 'limit' || orderType === 'stop market');
+		position?.position?.size &&
+		(orderType === 'limit' || orderType === 'stop market') &&
+		position?.position.side !== selectedLeverageSide;
 
 	const invalid =
 		(assetInputType === 'usd' && usdValue !== '' && maxUsdInputAmount.lte(usdValue || 0)) ||
@@ -151,7 +160,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 						</InputButton>
 					}
 					value={assetInputType === 'usd' ? usdValue : assetValue}
-					placeholder="0.0"
+					placeholder="0.00"
 					onChange={onChangeValue}
 				/>
 			</OrderSizingContainer>

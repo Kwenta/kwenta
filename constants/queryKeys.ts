@@ -1,10 +1,10 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 
 import { FuturesAccountType } from 'queries/futures/types';
+import { Period } from 'sdk/constants/period';
 import { FuturesMarketAsset } from 'utils/futures';
 
 import { CurrencyKey } from './currency';
-import { Period } from './period';
 
 export const QUERY_KEYS = {
 	Rates: {
@@ -334,6 +334,26 @@ export const QUERY_KEYS = {
 	},
 	Files: {
 		Get: (fileName: string) => ['files', 'get', fileName],
+		GetMultiple: (fileNames: string[]) => ['files', 'getMultiple', fileNames],
+	},
+	Staking: {
+		Rewards: (walletAddress: string | null) => ['staking', 'rewards', 'balance', walletAddress],
+		SpotsFee: (walletAddress: string | null, start: number, end: number) => [
+			'staking',
+			'rewards',
+			'spots-fee',
+			walletAddress,
+			start,
+			end,
+		],
+		FuturesFee: (walletAddress: string | null, start: number, end: number) => [
+			'staking',
+			'rewards',
+			'futures-fee',
+			walletAddress,
+			start,
+			end,
+		],
 	},
 };
 

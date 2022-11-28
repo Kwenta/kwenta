@@ -1,6 +1,6 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import Head from 'next/head';
-import { FC } from 'react';
+import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
@@ -44,7 +44,7 @@ const SOCIAL_LINKS = [
 
 export const REFRESH_INTERVAL = 2 * 60 * 1000; // 2 min
 
-const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
+const SystemStatus: FC<SystemStatusProps> = memo(({ children }) => {
 	const { t } = useTranslation();
 
 	const { useIsSystemOnMaintenance } = useSynthetixQueries();
@@ -87,7 +87,7 @@ const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 	) : (
 		<>{children}</>
 	);
-};
+});
 
 const Header = styled.header`
 	height: ${HEADER_HEIGHT};

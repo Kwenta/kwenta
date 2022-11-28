@@ -15,10 +15,11 @@ import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
 import { FlexDivRow, FlexDivRowCentered, GridDivCenteredCol } from 'styles/common';
-import media from 'styles/media';
 
 import MobileUserMenu from '../AppLayout/Header/MobileUserMenu';
 import Logo from '../Logo';
+
+export type TPages = 'landing-page' | 'stats-page';
 
 const Header: FC = () => {
 	const { t } = useTranslation();
@@ -28,7 +29,12 @@ const Header: FC = () => {
 			{
 				id: 'market',
 				label: t('homepage.nav.markets'),
-				onClick: () => router.push(ROUTES.Home.Markets),
+				onClick: () => router.push(ROUTES.Dashboard.Markets),
+			},
+			{
+				id: 'stats',
+				label: t('homepage.nav.stats'),
+				onClick: () => router.push(ROUTES.Stats.Home),
 			},
 			{
 				id: 'governance',
@@ -66,7 +72,7 @@ const Header: FC = () => {
 		{
 			id: 'kips',
 			label: t('homepage.nav.governance.kips'),
-			onClick: () => window.open(EXTERNAL_LINKS.Kips.Home, '_blank'),
+			onClick: () => window.open(EXTERNAL_LINKS.Governance.Kips, '_blank'),
 		},
 	];
 
@@ -95,7 +101,7 @@ const Header: FC = () => {
 		<>
 			<MobileHiddenView>
 				<Container>
-					<LogoContainer>
+					<LogoContainer onClick={() => router.push(ROUTES.Home.Root)}>
 						<Logo />
 					</LogoContainer>
 					<Links>
@@ -134,7 +140,7 @@ const Header: FC = () => {
 			</MobileHiddenView>
 			<MobileOnlyView>
 				<MobileContainer>
-					<LogoContainer>
+					<LogoContainer onClick={() => router.push(ROUTES.Dashboard.Markets)}>
 						<Logo />
 					</LogoContainer>
 					<MobileUserMenu />
@@ -145,16 +151,11 @@ const Header: FC = () => {
 };
 
 const MobileContainer = styled(FlexDivRow)`
-	justify-content: space-between;
+	justify-content: center;
 	align-items: center;
 `;
 
-const LogoContainer = styled.div`
-	${media.lessThan('sm')`
-		margin-top: 4px;
-		padding-left:17px;
-	`}
-`;
+const LogoContainer = styled.div``;
 
 const StyledMenu = styled.div`
 	position: absolute;

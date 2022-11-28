@@ -1,4 +1,5 @@
 import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -8,10 +9,11 @@ import TimerIcon from 'assets/svg/app/timer.svg';
 import InfoBox from 'components/InfoBox';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { NO_VALUE } from 'constants/placeholder';
-import { useExchangeContext } from 'contexts/ExchangeContext';
 import { parseGasPriceObject } from 'hooks/useGas';
 import useIsL1 from 'hooks/useIsL1';
 import useIsL2 from 'hooks/useIsL2';
+import { selectTransactionFeeWei, selectFeeCostWei } from 'state/exchange/selectors';
+import { useAppSelector } from 'state/hooks';
 import { customGasPriceState, gasSpeedState } from 'store/wallet';
 import { formatDollars, formatNumber, formatPercent, zeroBN } from 'utils/formatters/number';
 
@@ -21,15 +23,21 @@ const SwapInfoBox: React.FC = () => {
 	const customGasPrice = useRecoilValue(customGasPriceState);
 	const isL2 = useIsL2();
 	const isMainnet = useIsL1();
-	const { transactionFee, feeCost, exchangeFeeRate, baseFeeRate } = useExchangeContext();
+	const { exchangeFeeRate, baseFeeRate } = useAppSelector(({ exchange }) => ({
+		exchangeFeeRate: exchange.exchangeFeeRate,
+		baseFeeRate: exchange.baseFeeRate,
+	}));
+
 	const { useEthGasPriceQuery } = useSynthetixQueries();
+
+	const transactionFee = useAppSelector(selectTransactionFeeWei);
+	const feeCost = useAppSelector(selectFeeCostWei);
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
-	const gasPrices = React.useMemo(
-		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
-		[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data]
-	);
+	const gasPrices = React.useMemo(() => ethGasPriceQuery?.data ?? undefined, [
+		ethGasPriceQuery.data,
+	]);
 
 	const hasCustomGasPrice = customGasPrice !== '';
 	const gasPrice = gasPrices ? parseGasPriceObject(gasPrices[gasSpeed]) : null;
@@ -58,7 +66,9 @@ const SwapInfoBox: React.FC = () => {
 						<div style={{ display: 'flex' }}>
 							{formatPercent(baseFeeRate ?? zeroBN)}
 							{exchangeFeeRate != null && baseFeeRate != null ? (
-								exchangeFeeRate.sub(baseFeeRate).gt(0) ? (
+								wei(exchangeFeeRate)
+									.sub(baseFeeRate ?? 0)
+									.gt(0) ? (
 									<>
 										{' + '}
 										<StyledTooltip
@@ -69,7 +79,7 @@ const SwapInfoBox: React.FC = () => {
 											style={{ padding: 10, textTransform: 'none' }}
 										>
 											<StyledDynamicFee>
-												{formatPercent(exchangeFeeRate.sub(baseFeeRate), { minDecimals: 2 })}
+												{formatPercent(wei(exchangeFeeRate).sub(baseFeeRate), { minDecimals: 2 })}
 											</StyledDynamicFee>
 											<StyledTimerIcon />
 										</StyledTooltip>

@@ -2,12 +2,14 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import TransactionNotifier from 'containers/TransactionNotifier';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { useRefetchContext } from 'contexts/RefetchContext';
+import { monitorTransaction } from 'contexts/RelayerContext';
 import useEstimateGasCost from 'hooks/useEstimateGasCost';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
-import { currentMarketState, futuresAccountTypeState, positionState } from 'store/futures';
+import { selectMarketAsset } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { futuresAccountTypeState, positionState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { getDisplayAsset } from 'utils/futures';
 
@@ -22,11 +24,11 @@ export default function ClosePositionModalIsolatedMargin({ onDismiss }: Props) {
 	const { useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const gasSpeed = useRecoilValue(gasSpeedState);
-	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { resetTradeState } = useFuturesContext();
 	const { estimateSnxTxGasCost } = useEstimateGasCost();
 
-	const currencyKey = useRecoilValue(currentMarketState);
+	const marketAsset = useAppSelector(selectMarketAsset);
+
 	const position = useRecoilValue(positionState);
 	const positionDetails = position?.position;
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
@@ -34,11 +36,11 @@ export default function ClosePositionModalIsolatedMargin({ onDismiss }: Props) {
 	const gasPrice = ethGasPriceQuery.data?.[gasSpeed] ?? null;
 
 	const closeTxn = useSynthetixTxn(
-		`FuturesMarket${getDisplayAsset(currencyKey)}`,
+		`FuturesMarket${getDisplayAsset(marketAsset)}`,
 		'closePositionWithTracking',
 		[KWENTA_TRACKING_CODE],
 		gasPrice ?? undefined,
-		{ enabled: !!currencyKey && selectedAccountType === 'isolated_margin' }
+		{ enabled: !!marketAsset && selectedAccountType === 'isolated_margin' }
 	);
 
 	const transactionFee = estimateSnxTxGasCost(closeTxn);

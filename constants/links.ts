@@ -41,6 +41,7 @@ export const EXTERNAL_LINKS = {
 		MarketingDao: 'https://docs.kwenta.io/dao/contribute/marketingDAO',
 		Faq: 'https://docs.kwenta.io/resources/faq',
 		CrossMarginFaq: 'https://docs.kwenta.io/products/futures/cross-margin-accounts',
+		Staking: 'https://docs.kwenta.io/using-kwenta/staking-kwenta',
 	},
 	Optimism: {
 		Home: 'https://optimism.io/',
@@ -48,10 +49,14 @@ export const EXTERNAL_LINKS = {
 	Trade: {
 		NextPriceBlogPost: 'https://docs.kwenta.io/products/futures/next-price',
 	},
-	Kips: {
-		Home: 'https://kips.kwenta.io/all-kip/',
+	Governance: {
+		Kips: 'https://kips.kwenta.io/all-kip/',
+		Vote: 'https://snapshot.org/#/kwenta.eth',
 	},
 	Competition: {
-		LearnMore: 'https://mirror.xyz/kwenta.eth/WghvQFjEslsC0kwnGVP0QZnY1F7ZU3w5hpWxDPLbBsE',
+		LearnMore: 'https://mirror.xyz/kwenta.eth/s_PO64SxvuwDHz9fdHebsYeQAOOc73D3bL2q4nC6LvU',
+	},
+	Aelin: {
+		Pool: 'https://app.aelin.xyz/pool/mainnet/0x21f4F88a95f656ef4ee1ea107569b3b38cf8daef',
 	},
 };

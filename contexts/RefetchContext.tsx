@@ -1,20 +1,18 @@
 import React, { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { Period } from 'constants/period';
 import useGetAverageFundingRateForMarkets from 'queries/futures/useGetAverageFundingRateForMarkets';
 import useGetCrossMarginAccountOverview from 'queries/futures/useGetCrossMarginAccountOverview';
 import useGetCrossMarginSettings from 'queries/futures/useGetCrossMarginSettings';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesPositionHistory';
 import useGetFuturesVolumes from 'queries/futures/useGetFuturesVolumes';
 import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useSynthBalances from 'queries/synths/useSynthBalances';
+import { Period } from 'sdk/constants/period';
 import { futuresAccountState, futuresAccountTypeState, positionState } from 'store/futures';
 import logError from 'utils/logError';
 
@@ -52,10 +50,8 @@ export const RefetchProvider: React.FC = ({ children }) => {
 	const crossMarginAccountOverview = useGetCrossMarginAccountOverview();
 	const positionsQuery = useGetFuturesPositionForMarkets();
 	const positionHistoryQuery = useGetFuturesPositionHistory();
-	const marketsQuery = useGetFuturesMarkets();
 	const queryCrossMarginAccount = useQueryCrossMarginAccount();
 
-	useExchangeRatesQuery({ refetchInterval: 15000 });
 	useGetAverageFundingRateForMarkets(Period.ONE_HOUR);
 	useLaggedDailyPrice();
 	useGetFuturesVolumes({ refetchInterval: 60000 });
@@ -71,7 +67,6 @@ export const RefetchProvider: React.FC = ({ children }) => {
 		setTimeout(() => {
 			switch (refetchType) {
 				case 'modify-position':
-					marketsQuery.refetch();
 					openOrdersQuery.refetch();
 					positionsQuery.refetch();
 					positionHistoryQuery.refetch();

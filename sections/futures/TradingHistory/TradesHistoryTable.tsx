@@ -1,16 +1,16 @@
 import { FC, useMemo, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import Table from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
-import BlockExplorer from 'containers/BlockExplorer';
+import { blockExplorer } from 'containers/Connector/Connector';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
-import { currentMarketState } from 'store/futures';
+import { selectMarketAsset } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import { CapitalizedText, NumericValue } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
@@ -27,9 +27,8 @@ enum TableColumnAccessor {
 
 const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 	const { t } = useTranslation();
-	const currencyKey = useRecoilValue(currentMarketState);
-	const futuresTradesQuery = useGetFuturesTrades(currencyKey);
-	const { blockExplorerInstance } = BlockExplorer.useContainer();
+	const marketAsset = useAppSelector(selectMarketAsset);
+	const futuresTradesQuery = useGetFuturesTrades(marketAsset);
 
 	let data = useMemo(() => {
 		const futuresTradesPages = futuresTradesQuery?.data?.pages ?? [];
@@ -48,13 +47,13 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 								amount: Number(trade?.size),
 								time: Number(trade?.timestamp),
 								id: trade?.txnHash,
-								currencyKey,
+								marketAsset,
 								orderType: trade?.orderType,
 							};
 						})
 				: [];
 		return [...new Set(futuresTrades)];
-	}, [futuresTradesQuery.data, currencyKey]);
+	}, [futuresTradesQuery.data, marketAsset]);
 
 	const observer = useRef<IntersectionObserver | null>(null);
 	const lastElementRef = useCallback(
@@ -103,6 +102,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 	return (
 		<HistoryContainer mobile={mobile}>
 			<div>
+				<TableMainHeader>Trade History</TableMainHeader>
 				<StyledTable
 					data={data}
 					isLoading={futuresTradesQuery.isLoading}
@@ -110,7 +110,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 					mobile={mobile}
 					onTableRowClick={(row) =>
 						row.original.id !== NO_VALUE
-							? window.open(`${blockExplorerInstance?.txLink(row.original.id)}`)
+							? window.open(`${blockExplorer.txLink(row.original.id)}`)
 							: undefined
 					}
 					highlightRowsOnHover
@@ -197,6 +197,13 @@ const HistoryContainer = styled.div<{ mobile?: boolean }>`
 		css`
 			margin-bottom: 0;
 		`}
+`;
+
+const TableMainHeader = styled.div`
+	font-size: 13px;
+	color: ${(props) => props.theme.colors.selectedTheme.text.value};
+	padding: 20px 15px;
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
 const TableAlignment = css`

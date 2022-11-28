@@ -1,16 +1,14 @@
 import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import NavButton from 'components/Button/NavButton';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { TabList, TabPanel } from 'components/Tab';
+import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
-import Leaderboard from 'sections/leaderboard/Leaderboard';
 import AppLayout from 'sections/shared/Layout/AppLayout';
-import { isCompetitionActive } from 'store/ui';
 import { MainContent, LeftSideContent, FullHeightContainer, PageContent } from 'styles/common';
 
 import Links from '../Links';
@@ -18,16 +16,15 @@ import Links from '../Links';
 enum Tab {
 	Overview = 'overview',
 	History = 'history',
-	Rewards = 'rewards',
 	Markets = 'markets',
 	Governance = 'governance',
-	Staking = 'staking',
+	Stake = 'staking',
+	Earn = 'earn',
 }
 
 const Tabs = Object.values(Tab);
 
 const DashboardLayout: FC = ({ children }) => {
-	const competitionActive = useRecoilValue(isCompetitionActive);
 	const { t } = useTranslation();
 	const router = useRouter();
 
@@ -54,35 +51,32 @@ const DashboardLayout: FC = ({ children }) => {
 				name: Tab.History,
 				label: t('dashboard.tabs.history'),
 				active: activeTab === Tab.History,
-				onClick: () => router.push(ROUTES.Home.History),
-			},
-			{
-				name: Tab.Rewards,
-				label: t('dashboard.tabs.rewards'),
-				active: activeTab === Tab.Rewards,
-				disabled: true,
-				onClick: () => {},
+				onClick: () => router.push(ROUTES.Dashboard.History),
 			},
 			{
 				name: Tab.Markets,
 				label: t('dashboard.tabs.markets'),
 				active: activeTab === Tab.Markets,
 				disabled: false,
-				onClick: () => router.push(ROUTES.Home.Markets),
+				onClick: () => router.push(ROUTES.Dashboard.Markets),
+			},
+			{
+				name: Tab.Stake,
+				label: t('dashboard.tabs.staking'),
+				active: activeTab === Tab.Stake,
+				onClick: () => router.push(ROUTES.Dashboard.Stake),
+			},
+			{
+				name: Tab.Earn,
+				label: t('dashboard.tabs.earn'),
+				active: activeTab === Tab.Earn,
+				onClick: () => router.push(ROUTES.Dashboard.Earn),
 			},
 			{
 				name: Tab.Governance,
 				label: t('dashboard.tabs.governance'),
 				active: activeTab === Tab.Governance,
-				disabled: true,
-				onClick: () => {},
-			},
-			{
-				name: Tab.Staking,
-				label: t('dashboard.tabs.staking'),
-				active: activeTab === Tab.Staking,
-				disabled: true,
-				onClick: () => {},
+				onClick: () => window.open(EXTERNAL_LINKS.Governance.Vote, '_blank'),
 			},
 		],
 		[t, activeTab, router]
@@ -96,7 +90,7 @@ const DashboardLayout: FC = ({ children }) => {
 						<LeftSideContent>
 							<StyledTabList>
 								<TabGroupTitle>{t('dashboard.titles.trading')}</TabGroupTitle>
-								{TABS.slice(0, 4).map(({ name, label, active, disabled, onClick }) => (
+								{TABS.slice(0, 3).map(({ name, label, active, disabled, onClick }) => (
 									<NavButton
 										key={name}
 										title={name}
@@ -110,7 +104,7 @@ const DashboardLayout: FC = ({ children }) => {
 								))}
 
 								<TabGroupTitle>{t('dashboard.titles.community')}</TabGroupTitle>
-								{TABS.slice(4).map(({ name, label, active, disabled, onClick }) => (
+								{TABS.slice(3).map(({ name, label, active, disabled, onClick }) => (
 									<NavButton
 										key={name}
 										title={name}
@@ -130,7 +124,6 @@ const DashboardLayout: FC = ({ children }) => {
 								{children}
 							</TabPanel>
 						</MainContent>
-						{competitionActive && <Leaderboard compact />}
 					</StyledFullHeightContainer>
 				</PageContent>
 			</DesktopOnlyView>

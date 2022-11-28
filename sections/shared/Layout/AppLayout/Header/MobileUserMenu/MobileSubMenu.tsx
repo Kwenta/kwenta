@@ -6,8 +6,10 @@ import styled, { css } from 'styled-components';
 
 import ChevronDown from 'assets/svg/app/chevron-down.svg';
 import ChevronUp from 'assets/svg/app/chevron-up.svg';
+import Badge from 'components/Badge';
 import ROUTES from 'constants/routes';
 import { currentThemeState } from 'store/ui';
+import { FlexDivRow } from 'styles/common';
 import { ThemeName } from 'styles/theme';
 
 import { SubMenuLink } from '../constants';
@@ -53,12 +55,15 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 			{active && (
 				<SubMenuContainer onClick={onDismiss}>
 					{links
-						? links.map(({ i18nLabel, link: subLink }) => (
+						? links.map(({ i18nLabel, link: subLink, badge }) => (
 								<SubMenuItemContainer key={i18nLabel}>
 									<SubMenuIcon>·</SubMenuIcon>
 									<StyledLink href={subLink}>
 										<SubMenuItem currentTheme={currentTheme} active={asPath.includes(subLink)}>
-											{t(i18nLabel)}
+											<SubMenuRow>
+												{t(i18nLabel)}{' '}
+												{badge && <StyledBadge color="yellow">{t(badge.i18nLabel)}</StyledBadge>}
+											</SubMenuRow>
 										</SubMenuItem>
 									</StyledLink>
 								</SubMenuItemContainer>
@@ -97,6 +102,17 @@ const SubMenuButton = styled(MenuButton)`
 		css`
 			margin-bottom: 20px;
 		`}
+`;
+
+const SubMenuRow = styled(FlexDivRow)`
+	justify-content: flex-start;
+	align-items: center;
+`;
+
+const StyledBadge = styled(Badge)`
+	font-size: 12px;
+	padding: 2.5px 5px 2px 5px;
+	margin-left: 8px;
 `;
 
 const SubMenuContainer = styled.div`

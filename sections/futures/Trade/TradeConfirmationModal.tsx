@@ -1,4 +1,4 @@
-import Wei, { wei } from '@synthetixio/wei';
+import Wei from '@synthetixio/wei';
 import { capitalize } from 'lodash';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,8 +9,10 @@ import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import ErrorView from 'components/Error';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import { MIN_MARGIN_AMOUNT } from 'constants/futures';
+import { selectMarketAsset } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import {
-	currentMarketState,
 	futuresOrderPriceState,
 	leverageSideState,
 	orderTypeState,
@@ -25,7 +27,7 @@ import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
 import { PositionSide } from '../types';
 
 type Props = {
-	gasFee: Wei;
+	gasFee: Wei | null;
 	tradeFee: Wei;
 	keeperFee?: Wei | null;
 	errorMessage?: string | null | undefined;
@@ -43,7 +45,7 @@ export default function TradeConfirmationModal({
 }: Props) {
 	const { t } = useTranslation();
 
-	const market = useRecoilValue(currentMarketState);
+	const marketAsset = useAppSelector(selectMarketAsset);
 	const { data: potentialTradeDetails } = useRecoilValue(potentialTradeDetailsState);
 	const orderType = useRecoilValue(orderTypeState);
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
@@ -81,10 +83,10 @@ export default function TradeConfirmationModal({
 			{
 				label: 'size',
 				value: formatCurrency(
-					getDisplayAsset(market) || '',
+					getDisplayAsset(marketAsset) || '',
 					positionDetails?.sizeDelta.abs() ?? zeroBN,
 					{
-						currencyKey: getDisplayAsset(market) ?? '',
+						currencyKey: getDisplayAsset(marketAsset) ?? '',
 					}
 				),
 			},
@@ -125,11 +127,11 @@ export default function TradeConfirmationModal({
 				value: formatDollars(gasFee ?? zeroBN),
 			},
 		],
-		[positionDetails, market, keeperFee, gasFee, tradeFee, orderType, orderPrice, leverageSide]
+		[positionDetails, marketAsset, keeperFee, gasFee, tradeFee, orderType, orderPrice, leverageSide]
 	);
 
 	const disabledReason = useMemo(() => {
-		if (positionDetails?.margin.lt(wei(50)))
+		if (positionDetails?.margin.lt(MIN_MARGIN_AMOUNT))
 			return t('futures.market.trade.confirmation.modal.disabled-min-margin');
 	}, [positionDetails?.margin, t]);
 
@@ -154,7 +156,7 @@ export default function TradeConfirmationModal({
 						data-testid="trade-open-position-confirm-order-button"
 						variant="flat"
 						onClick={onConfirmOrder}
-						disabled={!positionDetails || !!disabledReason}
+						disabled={!positionDetails || !!disabledReason || gasFee?.eq(0)}
 					>
 						{disabledReason || t('futures.market.trade.confirmation.modal.confirm-order')}
 					</ConfirmTradeButton>

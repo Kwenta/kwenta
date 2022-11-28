@@ -1,6 +1,7 @@
 import { FunctionComponent } from 'react';
 
 import { CrossMarginIcon, IsolatedMarginIcon } from 'components/Nav/FuturesIcon';
+import { COMPETITION_ENABLED } from 'constants/competition';
 import { CROSS_MARGIN_ENABLED, DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
@@ -31,6 +32,10 @@ export const HOMEPAGE_MENU_LINKS: MenuLinks = [
 		link: ROUTES.Markets.Home('cross_margin'),
 	},
 	{
+		i18nLabel: 'homepage.nav.stats',
+		link: ROUTES.Stats.Home,
+	},
+	{
 		i18nLabel: 'homepage.nav.governance.title',
 		link: ROUTES.Home.Root,
 	},
@@ -46,12 +51,20 @@ const DASHBOARD_LINKS = [
 		i18nLabel: 'dashboard.tabs.overview',
 	},
 	{
-		link: ROUTES.Home.History,
+		link: ROUTES.Dashboard.History,
 		i18nLabel: 'dashboard.tabs.history',
 	},
 	{
-		link: ROUTES.Home.Markets,
+		link: ROUTES.Dashboard.Markets,
 		i18nLabel: 'dashboard.tabs.markets',
+	},
+	{
+		link: ROUTES.Dashboard.Stake,
+		i18nLabel: 'dashboard.tabs.staking',
+	},
+	{
+		link: ROUTES.Dashboard.Earn,
+		i18nLabel: 'dashboard.tabs.earn',
 	},
 ];
 
@@ -90,6 +103,22 @@ export const getMenuLinks = (isMobile: boolean): MenuLinks => [
 	{
 		i18nLabel: 'header.nav.leaderboard',
 		link: ROUTES.Leaderboard.Home,
+		links: COMPETITION_ENABLED
+			? [
+					{
+						link: ROUTES.Leaderboard.Home,
+						i18nLabel: 'header.nav.leaderboard-alltime',
+					},
+					{
+						link: ROUTES.Leaderboard.Competition('1'),
+						i18nLabel: 'header.nav.competition-round-1',
+					},
+					{
+						link: ROUTES.Leaderboard.Competition('2'),
+						i18nLabel: 'header.nav.competition-round-2',
+					},
+			  ]
+			: null,
 	},
 ];
 

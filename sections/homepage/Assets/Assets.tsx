@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
 import Slider from 'react-slick';
 import { useRecoilValue } from 'recoil';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import GridSvg from 'assets/svg/app/grid.svg';
 import Button from 'components/Button';
@@ -19,12 +19,11 @@ import Connector from 'containers/Connector';
 import { Price } from 'queries/rates/types';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
-import {
-	futuresMarketsState,
-	futuresVolumesState,
-	ratesState,
-	pastRatesState,
-} from 'store/futures';
+import { selectExchangeRates } from 'state/exchange/selectors';
+import { fetchOptimismMarkets } from 'state/home/actions';
+import { selectOptimismMarkets } from 'state/home/selectors';
+import { useAppSelector, usePollAction } from 'state/hooks';
+import { futuresVolumesState, pastRatesState } from 'store/futures';
 import {
 	FlexDiv,
 	FlexDivColCentered,
@@ -147,12 +146,15 @@ export const PriceChart = ({ asset }: PriceChartProps) => {
 
 const Assets = () => {
 	const { t } = useTranslation();
-	const { l2SynthsMap } = Connector.useContainer();
+	const { l2SynthsMap, l2Provider } = Connector.useContainer();
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
-	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	const exchangeRates = useAppSelector(selectExchangeRates);
+	const futuresMarkets = useAppSelector(selectOptimismMarkets);
+
 	const pastRates = useRecoilValue(pastRatesState);
 	const futuresVolumes = useRecoilValue(futuresVolumesState);
+	usePollAction(() => fetchOptimismMarkets(l2Provider));
 
 	const MARKETS_TABS = useMemo(
 		() => [
@@ -177,8 +179,6 @@ const Assets = () => {
 		],
 		[activeMarketsTab, t]
 	);
-
-	const exchangeRates = useRecoilValue(ratesState);
 
 	const synths = useMemo(() => values(l2SynthsMap) || [], [l2SynthsMap]);
 	const queryCache = useQueryClient().getQueryCache();
@@ -262,7 +262,6 @@ const Assets = () => {
 	var settings = {
 		className: 'center',
 		centerMode: true,
-		dots: true,
 		infinite: true,
 		centerPadding: (window.innerWidth - 380) / 2 + 40 + 'px',
 		speed: 0,
@@ -537,14 +536,6 @@ const Assets = () => {
 	);
 };
 
-const border = css`
-	padding: 1px;
-	width: 277px !important;
-	height: 152px !important;
-	margin: auto 10px;
-	border-radius: 15px;
-`;
-
 const SliderContainer = styled.div`
 	margin: auto;
 `;
@@ -553,8 +544,13 @@ const StatsCardContainer = styled.div`
 	display: flex !important;
 	justify-content: center !important;
 	align-items: center !important;
-	border-radius: 15px;
-	background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
+	border-radius: 10px;
+	overflow: hidden;
+	transition: all 0.2s ease-in-out;
+
+	&:hover {
+		transform: translateY(-5px);
+	}
 
 	${media.lessThan('sm')`
 		width: 275px !important;
@@ -570,7 +566,7 @@ const StyledSlider = styled(Slider)`
 		display: flex !important;
 		position: relative;
 		bottom: -10px;
-		width: 240px;
+		width: 320px;
 		margin: auto;
 		padding: 0px;
 	}
@@ -604,71 +600,6 @@ const StyledSlider = styled(Slider)`
 		border: 1px solid rgba(255, 255, 255, 0.1);
 		box-shadow: 0px 0px 8px rgba(255, 255, 255, 0.25), 0px 0px 15px rgba(255, 255, 255, 0.7);
 	}
-
-	& .slick-active .sBTC, .slick-active .BTC {
-		${border}
-		background: linear-gradient(180deg, #EF9931 0%, #C97714 100%);
-	}
-
-	& .slick-active .sETH, .slick-active .ETH {
-		${border}
-		background: linear-gradient(180deg, #8297EA 0%, #627CE5 100%);
-	}
-
-	& .slick-active .sLINK, .slick-active .LINK {
-		${border}
-		background: linear-gradient(180deg, #2958D5 0%, #0036C5 100%);
-	}
-
-	& .slick-active .SOL {
-		${border}
-		background: linear-gradient(180deg, #90F5AA 0%, #874DF1 100%);
-	}
-
-	& .slick-active .AVAX {
-		${border}
-		background: linear-gradient(180deg, #DC5044 0%, #C92416 100%);
-	}
-
-	& .slick-active .AAVE {
-		${border}
-		background: linear-gradient(180deg, #A65A9D 0%, #51B2C3 100%);
-	}
-
-	& .slick-active .UNI {
-		${border}
-		background: linear-gradient(180deg, #F13578 0%, #D81F61 100%);
-	}
-
-	& .slick-active .MATIC {
-		${border}
-		background: linear-gradient(180deg, #6742D3 0%, #471DC0 100%);
-	}
-
-	& .slick-active .XAG {
-		${border}
-		background: linear-gradient(180deg, #CFCFCF 0%, #B1B1B1 100%);
-	}
-
-	& .slick-active .XAU {
-		${border}
-		background: linear-gradient(180deg, #EBD986 0%, #CFAC6D 100%);
-	}
-
-	& .slick-active .APE {
-		${border}
-		background: linear-gradient(180deg, #024DE2 0%, #0C3EA9 100%);
-	}
-
-	& .slick-active .DYDX {
-		${border}
-		background: linear-gradient(180deg, #6264F9 0%, #25348C 100%);
-	}
-
-	& .slick-active .EUR, .slick-active .INR, .slick-active .USD {
-		${border}
-		background: ${(props) => props.theme.colors.selectedTheme.button.border};
-	}
 `;
 
 const StatsIconContainer = styled(FlexDiv)`
@@ -683,21 +614,17 @@ const StatsIconContainer = styled(FlexDiv)`
 `;
 
 const ChartContainer = styled.div`
-	margin-left: -52.5px;
+	margin-left: -36.5px;
 	margin-top: -20px;
 	overflow: hidden;
-	${media.lessThan('sm')`
-		margin-left: -60px;
-	`};
 `;
 
 const StatsValueContainer = styled.div`
 	display: flex;
 	flex-direction: column;
-	width: 110px;
 	font-size: 13px;
 	align-self: flex-end;
-	text-align: left;
+	text-align: right;
 	padding-left: 7.5px;
 
 	${media.lessThan('sm')`
@@ -708,10 +635,8 @@ const StatsValueContainer = styled.div`
 
 const StatsNameContainer = styled.div`
 	font-size: 18px;
-	align-self: center;
 	margin-left: -5px;
-	text-transform: none;
-	text-align: left;
+	margin-top: 3px;
 `;
 
 const AssetName = styled.div`
@@ -764,73 +689,25 @@ const StatsCard = styled(Button)`
 	grid-template-columns: repeat(2, auto);
 	font-family: ${(props) => props.theme.fonts.regular};
 	padding: 16px 16px;
-	border-radius: 15px;
+	border-radius: 10px;
+	border: 1px solid rgb(57, 57, 57);
+	box-shadow: none;
 
 	&::before {
-		border-radius: 15px;
+		display: none;
 	}
+	transition: all 0.2s ease-in-out;
 
-	&.BTC:hover::before {
-		background: linear-gradient(180deg, #ef9931 0%, #c97714 100%);
-	}
-	&.sBTC:hover::before {
-		background: linear-gradient(180deg, #ef9931 0%, #c97714 100%);
-	}
+	background: #1a1a1a;
 
-	&.sETH:hover::before {
-		background: linear-gradient(180deg, #8297ea 0%, #627ce5 100%);
-	}
-
-	&.ETH:hover::before {
-		background: linear-gradient(180deg, #8297ea 0%, #627ce5 100%);
-	}
-
-	&.sLINK:hover::before {
-		border-radius: 15px;
-		background: linear-gradient(180deg, #2958d5 0%, #0036c5 100%);
-	}
-
-	&.SOL:hover::before {
-		background: linear-gradient(180deg, #90f5aa 0%, #874df1 100%);
-	}
-
-	&.AVAX:hover::before {
-		background: linear-gradient(180deg, #dc5044 0%, #c92416 100%);
-	}
-
-	&.AAVE:hover::before {
-		background: linear-gradient(180deg, #a65a9d 0%, #51b2c3 100%);
-	}
-
-	&.UNI:hover::before {
-		background: linear-gradient(180deg, #f13578 0%, #d81f61 100%);
-	}
-
-	&.MATIC:hover::before {
-		background: linear-gradient(180deg, #6742d3 0%, #471dc0 100%);
-	}
-
-	&.XAG:hover::before {
-		background: linear-gradient(180deg, #cfcfcf 0%, #b1b1b1 100%);
-	}
-
-	&.XAU:hover::before {
-		background: linear-gradient(180deg, #ebd986 0%, #cfac6d 100%);
-	}
-
-	&.APE:hover::before {
-		background: linear-gradient(180deg, #024de2 0%, #0c3ea9 100%);
-	}
-
-	&.DYDX:hover::before {
-		background: linear-gradient(180deg, #6264f9 0%, #25348c 100%);
+	&:hover {
+		background: #202020;
 	}
 
 	svg.bg {
-		position: absolute;
 		z-index: 10;
-		margin-top: 32px;
-		width: 275px;
+		margin-top: 33px;
+		width: 273px;
 		height: 140px;
 		position: absolute;
 		right: 0;
@@ -838,7 +715,6 @@ const StatsCard = styled(Button)`
 	}
 
 	${media.lessThan('sm')`
-		grid-template-columns: repeat(2, 135px);
 		height: 150px;
 		svg.bg {
 			position: absolute;
@@ -852,7 +728,7 @@ const StatsCard = styled(Button)`
 `;
 
 const Container = styled.div`
-	margin-bottom: 140px;
+	margin-bottom: 200px;
 	${media.lessThan('sm')`
 		margin-left: -30px;
 		margin-right: -30px;
@@ -860,8 +736,8 @@ const Container = styled.div`
 `;
 
 const StyledCurrencyIcon = styled(Currency.Icon).attrs({ width: '45px', height: '45px' })`
-	width: 45px;
-	height: 45px;
+	width: 40px;
+	height: 40px;
 	margin-right: 15px;
 `;
 
@@ -874,9 +750,6 @@ const TabButtonsContainer = styled.div`
 	justify-content: center;
 	align-items: center;
 	border-radius: 134px;
-	background: #1d1d1d;
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	box-shadow: inset 0px 9.43478px 10.7826px rgba(0, 0, 0, 0.25);
 
 	${media.lessThan('sm')`
 		margin: auto;
@@ -898,11 +771,10 @@ const MarketSwitcher = styled(FlexDiv)<{ isActive: boolean }>`
 		props.isActive
 			? props.theme.colors.selectedTheme.white
 			: props.theme.colors.common.secondaryGray};
-	background: ${(props) =>
-		props.isActive ? 'linear-gradient(180deg, #BE9562 0%, #A07141 100%)' : null};
-	text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
+	border: ${(props) =>
+		props.isActive ? `1px solid  ${props.theme.colors.common.primaryYellow}` : null};
 	font-family: ${(props) => props.theme.fonts.bold};
-	padding: 12px 16px;
+	padding: 12px 15px;
 	box-shadow: ${(props) =>
 		props.isActive
 			? '0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1), inset 0px 0px 20px rgba(255, 255, 255, 0.03)'

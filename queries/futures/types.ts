@@ -1,7 +1,7 @@
 import { Balances } from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
+import { BigNumber } from 'ethers';
 
-import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import { PotentialTradeStatus } from 'sections/futures/types';
 import { FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
 
@@ -26,69 +26,29 @@ export type PositionDetail = {
 	profitLoss: Wei;
 };
 
-type FuturesPositionOrder = {
-	pending: boolean;
-	fee: Wei;
-	leverage: Wei;
-	side: PositionSide;
-};
-
-export type FuturesFilledPosition = {
+export type FuturesFilledPosition<T = Wei> = {
 	canLiquidatePosition: boolean;
 	side: PositionSide;
-	notionalValue: Wei;
-	accruedFunding: Wei;
-	initialMargin: Wei;
-	profitLoss: Wei;
+	notionalValue: T;
+	accruedFunding: T;
+	initialMargin: T;
+	profitLoss: T;
 	fundingIndex: number;
-	lastPrice: Wei;
-	size: Wei;
-	liquidationPrice: Wei;
-	initialLeverage: Wei;
-	leverage: Wei;
-	pnl: Wei;
-	pnlPct: Wei;
-	marginRatio: Wei;
+	lastPrice: T;
+	size: T;
+	liquidationPrice: T;
+	initialLeverage: T;
+	leverage: T;
+	pnl: T;
+	pnlPct: T;
+	marginRatio: T;
 };
 
-export type FuturesPosition = {
+export type FuturesPosition<T = Wei> = {
 	asset: FuturesMarketAsset;
-	order: FuturesPositionOrder | null;
-	remainingMargin: Wei;
-	accessibleMargin: Wei;
-	position: FuturesFilledPosition | null;
-};
-
-export type FuturesMarket = {
-	market: string;
-	marketKey?: FuturesMarketKey;
-	marketName: string;
-	asset: FuturesMarketAsset;
-	assetHex: string;
-	currentFundingRate: Wei;
-	currentRoundId: Wei;
-	feeRates: {
-		makerFee: Wei;
-		takerFee: Wei;
-		makerFeeNextPrice: Wei;
-		takerFeeNextPrice: Wei;
-	};
-	openInterest?: {
-		shortPct: number;
-		longPct: number;
-		shortUSD: Wei;
-		longUSD: Wei;
-	};
-	marketDebt: Wei;
-	marketSkew: Wei;
-	marketSize: Wei;
-	maxLeverage: Wei;
-	price: Wei;
-	minInitialMargin: Wei;
-	keeperDeposit: Wei;
-	isSuspended: boolean;
-	marketClosureReason: FuturesClosureReason;
-	marketLimit: Wei;
+	remainingMargin: T;
+	accessibleMargin: T;
+	position: FuturesFilledPosition<T> | null;
 };
 
 export type FuturesOpenInterest = {
@@ -101,14 +61,14 @@ export type FuturesOpenInterest = {
 
 export type MarginTransfer = {
 	timestamp: number;
-	market: string;
 	account: string;
 	size: Wei;
 	txHash: string;
 	action: string;
 	amount: string;
 	isPositive: boolean;
-	asset: FuturesMarketAsset;
+	market?: string;
+	asset?: FuturesMarketAsset;
 };
 
 export type PositionHistory = {
@@ -249,6 +209,7 @@ export type AccountStat = {
 
 export type FuturesCumulativeStats = {
 	totalTrades: string;
+	totalTraders: string;
 	totalVolume: string;
 	totalLiquidations: string;
 	averageTradeSize: string;
@@ -334,3 +295,22 @@ export type FuturesTradeInputs = {
 };
 
 export type FuturesOrderType = 'market' | 'next price' | 'stop market' | 'limit';
+
+export type SpotsFee = {
+	timestamp: string;
+	toAddress: string;
+	feesInUSD: string;
+};
+
+export type FuturesFee = {
+	timestamp: string;
+	account: string;
+	feesPaid: string;
+};
+
+export type TradingRewardScore = {
+	address: string;
+	totalFeesPaid: BigNumber;
+	stakedBalance: BigNumber;
+	tradingRewardsScore: number;
+};

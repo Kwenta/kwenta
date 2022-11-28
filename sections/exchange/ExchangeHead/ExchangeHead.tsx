@@ -1,17 +1,18 @@
 import Head from 'next/head';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 
-import { useExchangeContext } from 'contexts/ExchangeContext';
-import { baseCurrencyKeyState, quoteCurrencyKeyState } from 'store/exchange';
+import { selectInverseRate } from 'state/exchange/selectors';
+import { useAppSelector } from 'state/hooks';
 import { formatCurrency } from 'utils/formatters/number';
 
 const ExchangeHead = memo(() => {
 	const { t } = useTranslation();
-	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
-	const quoteCurrencyKey = useRecoilValue(quoteCurrencyKeyState);
-	const { inverseRate } = useExchangeContext();
+	const { quoteCurrencyKey, baseCurrencyKey } = useAppSelector(({ exchange }) => ({
+		quoteCurrencyKey: exchange.quoteCurrencyKey,
+		baseCurrencyKey: exchange.baseCurrencyKey,
+	}));
+	const inverseRate = useAppSelector(selectInverseRate);
 
 	return (
 		<Head>

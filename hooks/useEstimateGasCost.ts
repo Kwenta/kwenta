@@ -1,16 +1,15 @@
 import useSynthetixQueries from '@synthetixio/queries';
-import Wei from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import { Contract } from 'ethers';
 import { useMemo, useCallback } from 'react';
 import { useRecoilValue } from 'recoil';
 
+import { sdk } from 'state/config';
 import { gasSpeedState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 import { getTransactionPrice } from 'utils/network';
-
-import { useGetL1SecurityFee } from './useGetL1SecurityGasFee';
 
 export default function useEstimateGasCost() {
 	const gasSpeed = useRecoilValue(gasSpeedState);
@@ -18,9 +17,8 @@ export default function useEstimateGasCost() {
 	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const getL1Fee = useGetL1SecurityFee();
 
-	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
+	const gasPrice = ethGasPriceQuery.data?.[gasSpeed] ?? null;
 
 	const exchangeRates = useMemo(() => exchangeRatesQuery.data ?? null, [exchangeRatesQuery.data]);
 
@@ -43,24 +41,34 @@ export default function useEstimateGasCost() {
 	);
 
 	const estimateEthersContractTxCost = useCallback(
-		async (contract: Contract, method: string, params: any[]): Promise<Wei> => {
+		async (
+			contract: Contract,
+			method: string,
+			params: any[],
+			buffer: number = 0
+		): Promise<{ gasPrice: Wei | null; gasLimit: Wei | null }> => {
+			if (!contract?.estimateGas[method]) throw new Error('Invalid contract method');
 			try {
-				if (!contract?.estimateGas[method]) throw new Error('Invalid contract method');
 				const gasLimit = await contract?.estimateGas[method](...params);
 				const metaTx = await contract?.populateTransaction[method](...params);
-				if (!metaTx || !gasLimit || !gasPrice?.gasPrice) return zeroBN;
-				const l1Fee = await getL1Fee({
+				if (!metaTx || !gasLimit || !gasPrice?.gasPrice) return { gasPrice: null, gasLimit: null };
+				const gasBuffer = gasLimit.mul(buffer).div(100);
+				const gasLimitWithBuffer = gasLimit.add(gasBuffer);
+				const l1Fee = await sdk.transactions.getOptimismLayerOneFees({
 					...metaTx,
 					gasPrice: gasPrice?.gasPrice?.toNumber(),
-					gasLimit: Number(gasLimit),
+					gasLimit: Number(gasLimitWithBuffer),
 				});
-				return getTransactionPrice(gasPrice, gasLimit, ethPriceRate, l1Fee) || zeroBN;
+				return {
+					gasPrice: getTransactionPrice(gasPrice, gasLimit, ethPriceRate, l1Fee) || zeroBN,
+					gasLimit: wei(gasLimitWithBuffer, 0, true),
+				};
 			} catch (err) {
 				logError(err);
-				return zeroBN;
+				return { gasPrice: null, gasLimit: null };
 			}
 		},
-		[gasPrice, ethPriceRate, getL1Fee]
+		[gasPrice, ethPriceRate]
 	);
 
 	return { estimateSnxTxGasCost, estimateEthersContractTxCost };

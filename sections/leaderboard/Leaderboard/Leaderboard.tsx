@@ -15,7 +15,8 @@ import { FlexDivCol } from 'styles/common';
 import media from 'styles/media';
 
 import AllTime from '../AllTime';
-import { PIN } from '../common';
+import { CompetitionRound, COMPETITION_TIERS, PIN, Tier } from '../common';
+import Competition from '../Competition';
 import TraderHistory from '../TraderHistory';
 
 type LeaderboardProps = {
@@ -32,6 +33,8 @@ const LEADERBOARD_TABS = [LeaderboardTab.Top, LeaderboardTab.Bottom];
 
 const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps) => {
 	const [activeTab, setActiveTab] = useState<LeaderboardTab>(LeaderboardTab.Top);
+	const [activeTier, setActiveTier] = useState<Tier>('bronze');
+	const [competitionRound, setCompetitionRound] = useState<CompetitionRound>();
 	const [searchInput, setSearchInput] = useState('');
 	const [searchTerm, setSearchTerm] = useState('');
 	const [searchAddress, setSearchAddress] = useState('');
@@ -59,6 +62,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 		return leaderboardData.wallet
 			? leaderboardData.wallet.map((trader) => ({
 					...trader,
+					rank: 0,
 					rankText: PIN,
 			  }))
 			: [];
@@ -68,11 +72,15 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 		if (router.asPath.startsWith(ROUTES.Leaderboard.Home) && router.query.trader) {
 			const trader = router.query.trader as string;
 			setSelectedTrader(trader);
+		} else if (router.asPath.startsWith(ROUTES.Leaderboard.Home) && router.query.competitionRound) {
+			const round = router.query.competitionRound as CompetitionRound;
+			setCompetitionRound(round);
 		} else {
 			setSearchInput('');
 			setSearchTerm('');
 			setSearchAddress('');
 			setSelectedTrader('');
+			setCompetitionRound(null);
 		}
 		return null;
 	}, [router.query, router.asPath]);
@@ -102,7 +110,12 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 		setSearchTerm('');
 		setSearchAddress('');
 		setSelectedTrader('');
-		router.push(ROUTES.Leaderboard.Home);
+
+		if (competitionRound) {
+			router.push(ROUTES.Leaderboard.Competition(competitionRound));
+		} else {
+			router.push(ROUTES.Leaderboard.Home);
+		}
 	};
 
 	useEffect(() => {
@@ -134,18 +147,30 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 			<CompetitionBanner compact={true} hideBanner={compact} />
 			<LeaderboardContainer>
 				<SearchContainer compact={compact} mobile={mobile}>
-					<TabButtonContainer mobile={mobile}>
-						{LEADERBOARD_TABS.map((tab) => (
-							<StyledTabButton
-								key={tab}
-								title={tab ?? ''}
-								active={activeTab === tab}
-								onClick={() => {
-									setActiveTab(tab);
-									setSelectedTrader('');
-								}}
-							/>
-						))}
+					<TabButtonContainer numItems={competitionRound ? 3 : 2} mobile={mobile}>
+						{competitionRound
+							? COMPETITION_TIERS.map((tier) => (
+									<StyledTabButton
+										key={tier}
+										title={tier ?? ''}
+										active={activeTier === tier}
+										onClick={() => {
+											setActiveTier(tier);
+											setSelectedTrader('');
+										}}
+									/>
+							  ))
+							: LEADERBOARD_TABS.map((tab) => (
+									<StyledTabButton
+										key={tab}
+										title={tab ?? ''}
+										active={activeTab === tab}
+										onClick={() => {
+											setActiveTab(tab);
+											setSelectedTrader('');
+										}}
+									/>
+							  ))}
 					</TabButtonContainer>
 					<SearchBarContainer>
 						<Search value={searchInput} onChange={onChangeSearch} disabled={false} />
@@ -158,7 +183,15 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 							ensInfo={ensInfo}
 							resetSelection={resetSelection}
 							compact={compact}
-							searchTerm={searchTerm}
+							searchTerm={searchInput}
+						/>
+					) : competitionRound ? (
+						<Competition
+							round={competitionRound}
+							activeTier={activeTier}
+							compact={compact}
+							onClickTrader={onClickTrader}
+							searchTerm={searchTerm !== '' ? searchTerm : searchInput}
 						/>
 					) : searchAddress ? (
 						<AllTime
@@ -197,9 +230,9 @@ const StyledTabButton = styled(TabButton)`
 	margin-right: 5px;
 `;
 
-const TabButtonContainer = styled.div<{ mobile?: boolean }>`
+const TabButtonContainer = styled.div<{ numItems: number; mobile?: boolean }>`
 	display: grid;
-	grid-template-columns: repeat(2, 1fr);
+	grid-template-columns: ${({ numItems }) => `repeat(${numItems}, 1fr)`};
 	margin-bottom: ${({ mobile }) => (mobile ? '16px' : '0px')};
 `;
 

@@ -4,33 +4,33 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import TransactionNotifier from 'containers/TransactionNotifier';
+import { DEFAULT_CROSSMARGIN_GAS_BUFFER_PCT } from 'constants/defaults';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { useRefetchContext } from 'contexts/RefetchContext';
+import { monitorTransaction } from 'contexts/RelayerContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useEstimateGasCost from 'hooks/useEstimateGasCost';
+import { selectMarketKey } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import {
 	confirmationModalOpenState,
 	crossMarginMarginDeltaState,
-	currentMarketState,
 	futuresTradeInputsState,
 	isAdvancedOrderState,
 } from 'store/futures';
 import { isUserDeniedError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
-import { MarketKeyByAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
 import TradeConfirmationModal from './TradeConfirmationModal';
 
 export default function TradeConfirmationModalCrossMargin() {
 	const { t } = useTranslation();
-	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { handleRefetch, refetchUntilUpdate } = useRefetchContext();
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const { estimateEthersContractTxCost } = useEstimateGasCost();
 
-	const marketAsset = useRecoilValue(currentMarketState);
+	const marketKey = useAppSelector(selectMarketKey);
 	const crossMarginMarginDelta = useRecoilValue(crossMarginMarginDeltaState);
 	const tradeInputs = useRecoilValue(futuresTradeInputsState);
 	const isAdvancedOrder = useRecoilValue(isAdvancedOrderState);
@@ -40,29 +40,33 @@ export default function TradeConfirmationModalCrossMargin() {
 	const setConfirmationModalOpen = useSetRecoilState(confirmationModalOpenState);
 
 	const [error, setError] = useState<null | string>(null);
-	const [gasFee, setGasFee] = useState<Wei>(zeroBN);
+	const [gasFee, setGasFee] = useState<Wei | null>(null);
+	const [gasLimit, setGasLimit] = useState<Wei | null>(null);
 
 	useEffect(() => {
 		if (!crossMarginAccountContract) return;
 		const estimateGas = async () => {
 			const newPosition = [
 				{
-					marketKey: formatBytes32String(MarketKeyByAsset[marketAsset]),
+					marketKey: formatBytes32String(marketKey),
 					marginDelta: crossMarginMarginDelta.toBN(),
 					sizeDelta: tradeInputs.nativeSizeDelta.toBN(),
 				},
 			];
-			const fee = await estimateEthersContractTxCost(
+			const { gasPrice, gasLimit } = await estimateEthersContractTxCost(
 				crossMarginAccountContract,
 				'distributeMargin',
-				[newPosition]
+				[newPosition],
+				DEFAULT_CROSSMARGIN_GAS_BUFFER_PCT
 			);
-			setGasFee(fee);
+
+			setGasFee(gasPrice);
+			setGasLimit(gasLimit);
 		};
 		estimateGas();
 	}, [
 		crossMarginAccountContract,
-		marketAsset,
+		marketKey,
 		crossMarginMarginDelta,
 		tradeInputs.nativeSizeDelta,
 		estimateEthersContractTxCost,
@@ -75,7 +79,7 @@ export default function TradeConfirmationModalCrossMargin() {
 	const handleConfirmOrder = useCallback(async () => {
 		setError(null);
 		try {
-			const tx = await submitCrossMarginOrder();
+			const tx = await submitCrossMarginOrder(false, gasLimit);
 			if (tx?.hash) {
 				monitorTransaction({
 					txHash: tx.hash,
@@ -99,11 +103,11 @@ export default function TradeConfirmationModalCrossMargin() {
 			}
 		}
 	}, [
+		gasLimit,
 		setError,
 		handleRefetch,
 		refetchUntilUpdate,
 		resetTradeState,
-		monitorTransaction,
 		onDismiss,
 		submitCrossMarginOrder,
 		t,
@@ -115,7 +119,7 @@ export default function TradeConfirmationModalCrossMargin() {
 			onConfirmOrder={handleConfirmOrder}
 			tradeFee={tradeFees.total}
 			keeperFee={isAdvancedOrder ? tradeFees.keeperEthDeposit : null}
-			gasFee={gasFee}
+			gasFee={gasFee ?? zeroBN}
 			errorMessage={error}
 		/>
 	);

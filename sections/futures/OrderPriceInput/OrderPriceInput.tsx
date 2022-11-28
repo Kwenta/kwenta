@@ -1,5 +1,6 @@
 import { wei } from '@synthetixio/wei';
-import { ChangeEvent, useEffect, useMemo } from 'react';
+import { debounce } from 'lodash';
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -9,8 +10,10 @@ import InputTitle from 'components/Input/InputTitle';
 import SegmentedControl from 'components/SegmentedControl';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { FuturesOrderType } from 'queries/futures/types';
-import { leverageSideState, marketAssetRateState, orderFeeCapState } from 'store/futures';
-import { ceilNumber, floorNumber, weiToString, zeroBN } from 'utils/formatters/number';
+import { selectMarketAssetRate, selectMarketInfo } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { leverageSideState, orderFeeCapState } from 'store/futures';
+import { weiToString, zeroBN } from 'utils/formatters/number';
 import { orderPriceInvalidLabel } from 'utils/futures';
 
 type Props = {
@@ -29,27 +32,44 @@ export default function OrderPriceInput({
 	onChangeOrderPrice,
 }: Props) {
 	const { t } = useTranslation();
-	const marketAssetRate = useRecoilValue(marketAssetRateState);
+	const marketAssetRate = useAppSelector(selectMarketAssetRate);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const [selectedFeeCap, setSelectedFeeCap] = useRecoilState(orderFeeCapState);
+	const marketInfo = useAppSelector(selectMarketInfo);
+
+	const [localValue, setLocalValue] = useState(value);
 
 	useEffect(() => {
-		if (!value) {
-			const priceNum =
-				orderType === 'limit' ? floorNumber(marketAssetRate) : ceilNumber(marketAssetRate);
-			onChangeOrderPrice(String(priceNum));
-		}
+		if (!value) setLocalValue(value);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [value]);
+
+	useEffect(() => {
+		// Reset input when the selected market changes
+		setLocalValue('');
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [marketInfo?.asset]);
 
 	const minMaxLabelString = useMemo(
 		() => orderPriceInvalidLabel(value, leverageSide, marketAssetRate, orderType),
 		[value, orderType, leverageSide, marketAssetRate]
 	);
 
-	const handleOnChange = (_: ChangeEvent<HTMLInputElement>, v: string) => {
-		onChangeOrderPrice(v);
-	};
+	// eslint-disable-next-line
+	const debounceUpdate = useCallback(
+		debounce((v: string) => {
+			onChangeOrderPrice(v);
+		}, 500),
+		[onChangeOrderPrice, debounce]
+	);
+
+	const handleOnChange = useCallback(
+		(_: ChangeEvent<HTMLInputElement>, v: string) => {
+			setLocalValue(v);
+			debounceUpdate(v);
+		},
+		[debounceUpdate, setLocalValue]
+	);
 
 	const onChangeFeeCap = (index: number) => {
 		const val = FEE_CAP_OPTIONS[index];
@@ -77,7 +97,7 @@ export default function OrderPriceInput({
 				dataTestId="order-price-input"
 				disabled={isDisabled}
 				right={'sUSD'}
-				value={value}
+				value={localValue}
 				placeholder="0.0"
 				onChange={handleOnChange}
 			/>

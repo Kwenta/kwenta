@@ -11,9 +11,10 @@ import ErrorView from 'components/Error';
 import CustomInput from 'components/Input/CustomInput';
 import Loader from 'components/Loader';
 import SegmentedControl from 'components/SegmentedControl';
+import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import Connector from 'containers/Connector';
-import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRefetchContext } from 'contexts/RefetchContext';
+import { monitorTransaction } from 'contexts/RelayerContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useSUSDContract from 'hooks/useSUSDContract';
 import { balancesState, crossMarginAccountOverviewState } from 'store/futures';
@@ -28,7 +29,6 @@ type DepositMarginModalProps = {
 };
 
 const PLACEHOLDER = '$0.00';
-const MIN_DEPOSIT_AMOUNT = wei('50');
 
 export default function DepositWithdrawCrossMargin({
 	defaultTab = 'deposit',
@@ -37,7 +37,6 @@ export default function DepositWithdrawCrossMargin({
 }: DepositMarginModalProps) {
 	const { t } = useTranslation();
 	const { signer } = Connector.useContainer();
-	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const { refetchUntilUpdate } = useRefetchContext();
 	const susdContract = useSUSDContract();
@@ -76,14 +75,7 @@ export default function DepositWithdrawCrossMargin({
 			setTxState('none');
 			logError(err);
 		}
-	}, [
-		crossMarginAccountContract,
-		amount,
-		refetchUntilUpdate,
-		monitorTransaction,
-		onComplete,
-		onDismiss,
-	]);
+	}, [crossMarginAccountContract, amount, refetchUntilUpdate, onComplete, onDismiss]);
 
 	const depositMargin = useCallback(async () => {
 		try {
@@ -114,15 +106,7 @@ export default function DepositWithdrawCrossMargin({
 			setTxState('none');
 			logError(err);
 		}
-	}, [
-		crossMarginAccountContract,
-		amount,
-		signer,
-		susdContract,
-		allowance,
-		monitorTransaction,
-		submitDeposit,
-	]);
+	}, [crossMarginAccountContract, amount, signer, susdContract, allowance, submitDeposit]);
 
 	const withdrawMargin = useCallback(async () => {
 		try {
@@ -143,20 +127,13 @@ export default function DepositWithdrawCrossMargin({
 			setTxState('none');
 			logError(err);
 		}
-	}, [
-		crossMarginAccountContract,
-		amount,
-		monitorTransaction,
-		refetchUntilUpdate,
-		onComplete,
-		onDismiss,
-	]);
+	}, [crossMarginAccountContract, amount, refetchUntilUpdate, onComplete, onDismiss]);
 
 	const disabledReason = useMemo(() => {
 		const amtWei = wei(amount || 0);
 		if (transferType === 0) {
 			const total = wei(freeMargin).add(amtWei);
-			if (total.lt(MIN_DEPOSIT_AMOUNT))
+			if (total.lt(MIN_MARGIN_AMOUNT))
 				return t('futures.market.trade.margin.modal.deposit.min-deposit');
 			if (amtWei.gt(susdBal)) return t('futures.market.trade.margin.modal.deposit.exceeds-balance');
 		} else {

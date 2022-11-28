@@ -1,10 +1,11 @@
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
-import Wei, { wei } from '@synthetixio/wei';
-import { FC, ReactNode, useMemo } from 'react';
+import { wei } from '@synthetixio/wei';
+import { FC, useMemo } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
 
+import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 import InfoIcon from 'assets/svg/app/info.svg';
 import OneInchImage from 'assets/svg/providers/1inch.svg';
 import BaseModal from 'components/BaseModal';
@@ -15,69 +16,69 @@ import { ESTIMATE_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import useCurrencyPrice from 'hooks/useCurrencyPrice';
 import useIsL2 from 'hooks/useIsL2';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
+import { closeModal } from 'state/exchange/reducer';
+import { selectEstimatedBaseTradePrice } from 'state/exchange/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import {
 	FlexDivRowCentered,
 	numericValueCSS,
 	NoTextTransform,
 	FlexDivColCentered,
 } from 'styles/common';
-import { formatCurrency, LONG_CRYPTO_CURRENCY_DECIMALS } from 'utils/formatters/number';
+import {
+	formatCurrency,
+	formatDollars,
+	LONG_CRYPTO_CURRENCY_DECIMALS,
+} from 'utils/formatters/number';
 
 export type TxProvider = 'synthetix' | '1inch' | 'synthswap';
 
 type TxConfirmationModalProps = {
-	onDismiss: () => void;
-	txError: string | null;
 	attemptRetry: () => void;
-	baseCurrencyKey: string;
-	baseCurrencyAmount: string;
-	quoteCurrencyKey?: string;
-	quoteCurrencyAmount?: string;
-	totalTradePrice: string;
-	feeCost: Wei | null;
-	txProvider: TxProvider | null;
-	quoteCurrencyLabel?: ReactNode;
-	baseCurrencyLabel: ReactNode;
-	icon?: ReactNode;
 };
 
-export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
-	onDismiss,
-	txError,
-	attemptRetry,
-	baseCurrencyKey,
-	quoteCurrencyKey,
-	baseCurrencyAmount,
-	quoteCurrencyAmount,
-	totalTradePrice,
-	feeCost,
-	txProvider,
-	quoteCurrencyLabel,
-	baseCurrencyLabel,
-	icon,
-}) => {
+export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry }) => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
 	const isL2 = useIsL2();
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+	const dispatch = useAppDispatch();
 
 	const { subgraph } = useSynthetixQueries();
+
+	const {
+		baseCurrencyKey,
+		quoteCurrencyKey,
+		txProvider,
+		feeCost,
+		baseAmount,
+		quoteAmount,
+		txError,
+	} = useAppSelector(({ exchange }) => ({
+		baseCurrencyKey: exchange.baseCurrencyKey,
+		quoteCurrencyKey: exchange.quoteCurrencyKey,
+		txProvider: exchange.txProvider,
+		feeCost: exchange.feeCost,
+		baseAmount: exchange.baseAmount,
+		quoteAmount: exchange.quoteAmount,
+		txError: exchange.txError,
+	}));
+
+	const totalTradePrice = useAppSelector(selectEstimatedBaseTradePrice);
+
 	const getBaseCurrencyAmount = (decimals?: number) =>
-		formatCurrency(baseCurrencyKey, baseCurrencyAmount, {
+		formatCurrency(baseCurrencyKey!, baseAmount, {
 			minDecimals: decimals,
 		});
 	const priceUSD = useCurrencyPrice((quoteCurrencyKey ?? '') as CurrencyKey);
 
+	const onDismiss = () => {
+		dispatch(closeModal());
+	};
+
 	const priceAdjustmentQuery = subgraph.useGetExchangeEntrySettleds(
-		{
-			where: { from: walletAddress },
-		},
-		{
-			reclaim: true,
-			rebate: true,
-		}
+		{ where: { from: walletAddress } },
+		{ reclaim: true, rebate: true }
 	);
 
 	const priceAdjustment = useMemo(
@@ -87,10 +88,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 						rebate: priceAdjustmentQuery.data[0].rebate,
 						reclaim: priceAdjustmentQuery.data[0].reclaim,
 				  }
-				: {
-						rebate: wei(0),
-						reclaim: wei(0),
-				  },
+				: { rebate: wei(0), reclaim: wei(0) },
 		[priceAdjustmentQuery.data]
 	);
 
@@ -104,7 +102,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			<Currencies>
 				{quoteCurrencyKey && (
 					<CurrencyItem>
-						<CurrencyItemTitle>{quoteCurrencyLabel}</CurrencyItemTitle>
+						<CurrencyItemTitle>{t('exchange.common.from')}</CurrencyItemTitle>
 						<Currency.Icon
 							currencyKey={quoteCurrencyKey}
 							width="40px"
@@ -113,11 +111,13 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 						/>
 					</CurrencyItem>
 				)}
-				{icon && <ArrowsIconContainer>{icon}</ArrowsIconContainer>}
+				<ArrowsIconContainer>
+					<ArrowsIcon />
+				</ArrowsIconContainer>
 				<CurrencyItem>
-					<CurrencyItemTitle>{baseCurrencyLabel}</CurrencyItemTitle>
+					<CurrencyItemTitle>{t('exchange.common.into')}</CurrencyItemTitle>
 					<Currency.Icon
-						currencyKey={baseCurrencyKey}
+						currencyKey={baseCurrencyKey!}
 						width="40px"
 						height="40px"
 						data-testid="base-currency-img"
@@ -126,7 +126,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			</Currencies>
 			<Subtitle>{t('modals.confirm-transaction.confirm-with-provider')}</Subtitle>
 			<Summary>
-				{quoteCurrencyKey != null && quoteCurrencyAmount != null && (
+				{quoteCurrencyKey != null && quoteAmount != null && (
 					<SummaryItem>
 						<SummaryItemLabel data-testid="quote-currency-label">
 							<Trans
@@ -136,7 +136,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 							/>
 						</SummaryItemLabel>
 						<SummaryItemValue data-testid="quote-currency-value">
-							{formatCurrency(quoteCurrencyKey, quoteCurrencyAmount)}
+							{formatCurrency(quoteCurrencyKey, quoteAmount)}
 						</SummaryItemValue>
 					</SummaryItem>
 				)}
@@ -159,7 +159,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 						</CustomStyledTooltip>
 					</SummaryItemValue>
 				</SummaryItem>
-				{feeCost && (
+				{txProvider === 'synthetix' && feeCost && (
 					<SummaryItem>
 						<SummaryItemLabel data-testid="base-currency-label">
 							<Trans
@@ -183,11 +183,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 							</ExchangeFeeHintTooltip>
 						</SummaryItemLabel>
 						<SummaryItemValue data-testid="base-currency-value">
-							<span>
-								{formatCurrency(selectedPriceCurrency.name, feeCost, {
-									sign: selectedPriceCurrency.sign,
-								})}
-							</span>
+							<span>{formatCurrency('sUSD', feeCost, { sign: '$' })}</span>
 						</SummaryItemValue>
 					</SummaryItem>
 				)}
@@ -195,16 +191,13 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 					<SummaryItemLabel data-testid="total-trade-price-label">
 						<Trans
 							i18nKey="common.currency.estimated-currency-value"
-							values={{ currencyKey: selectedPriceCurrency.asset }}
+							values={{ currencyKey: 'sUSD' }}
 							components={[<NoTextTransform />]}
 						/>
 					</SummaryItemLabel>
 					<SummaryItemValue data-testid="total-trade-price-value">
 						<span>
-							{ESTIMATE_VALUE}{' '}
-							{formatCurrency(selectedPriceCurrency.name, totalTradePrice, {
-								sign: selectedPriceCurrency.sign,
-							})}
+							{ESTIMATE_VALUE} {formatCurrency('sUSD', totalTradePrice, { sign: '$' })}
 						</span>
 					</SummaryItemValue>
 				</SummaryItem>
@@ -231,11 +224,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 							</PriceAdjustmentTooltip>
 						</SummaryItemLabel>
 						<SummaryItemValue data-testid="price-adjustment-value">
-							<span>
-								{formatCurrency(selectedPriceCurrency.name, priceAdjustmentFeeUSD.toString(), {
-									sign: selectedPriceCurrency.sign,
-								})}
-							</span>
+							<span>{formatDollars(priceAdjustmentFeeUSD)}</span>
 						</SummaryItemValue>
 					</SummaryItem>
 				) : null}
@@ -246,7 +235,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 					<OneInchImage width="40" height="40" alt={t('common.dex-aggregators.1inch.title')} />
 				</TxProviderContainer>
 			)}
-			{txError != null && (
+			{!!txError && (
 				<Actions>
 					<Error message={txError} formatter="revert"></Error>
 					<MessageButton onClick={attemptRetry} data-testid="retry-btn">

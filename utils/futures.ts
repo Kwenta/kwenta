@@ -3,11 +3,18 @@ import Wei, { wei } from '@synthetixio/wei';
 import { TFunction } from 'i18next';
 import { Dictionary } from 'lodash';
 
-import { FuturesOrderType } from 'queries/futures/types';
+import {
+	FuturesOrderType,
+	FuturesPosition,
+	FuturesTradeInputs,
+	TradeFees,
+} from 'queries/futures/types';
+import { FuturesMarket } from 'sdk/types/futures';
 import { PositionSide } from 'sections/futures/types';
+import { FundingRate, FundingRateSerialized } from 'state/futures/types';
 import logError from 'utils/logError';
 
-import { formatNumber } from './formatters/number';
+import { formatNumber, zeroBN } from './formatters/number';
 
 export const getMarketAsset = (marketKey: FuturesMarketKey) => {
 	return markets[marketKey].asset;
@@ -292,4 +299,125 @@ export const orderPriceInvalidLabel = (
 	)
 		return 'min ' + formatNumber(currentPrice);
 	return null;
+};
+
+const getPositionChangeState = (existingSize: Wei, newSize: Wei) => {
+	if (newSize.eq(0)) return 'closing';
+	if (existingSize.eq(newSize)) return 'edit_leverage';
+	if (existingSize.eq(0)) return 'increase_size';
+	if ((existingSize.gt(0) && newSize.lt(0)) || (existingSize.lt(0) && newSize.gt(0)))
+		return 'flip_side';
+	if (
+		(existingSize.gt(0) && newSize.gt(existingSize)) ||
+		(existingSize.lt(0) && newSize.lt(existingSize))
+	)
+		return 'increase_size';
+	return 'reduce_size';
+};
+
+export const calculateMarginDelta = (
+	nextTrade: FuturesTradeInputs,
+	fees: TradeFees,
+	position: FuturesPosition | null
+) => {
+	const existingSize = position?.position
+		? position?.position?.side === 'long'
+			? position?.position?.size
+			: position?.position?.size.neg()
+		: zeroBN;
+
+	const newSize = existingSize.add(nextTrade.nativeSizeDelta);
+	const newSizeAbs = newSize.abs();
+	const posChangeState = getPositionChangeState(existingSize, newSize);
+
+	switch (posChangeState) {
+		case 'closing':
+			return zeroBN;
+		case 'edit_leverage':
+			const nextMargin = position?.position?.notionalValue.div(nextTrade.leverage) ?? zeroBN;
+			const delta = nextMargin.sub(position?.remainingMargin);
+			return delta.add(fees.total);
+		case 'reduce_size':
+			// When a position is reducing we keep the leverage the same as the existing position
+			let marginDiff = nextTrade.susdSizeDelta.div(position?.position?.leverage ?? zeroBN);
+			return nextTrade.susdSizeDelta.gt(0)
+				? marginDiff.neg().add(fees.total)
+				: marginDiff.add(fees.total);
+		case 'increase_size':
+			// When a position is increasing we calculate margin for selected leverage
+			return nextTrade.susdSizeDelta.abs().div(nextTrade.leverage).add(fees.total);
+		case 'flip_side':
+			// When flipping sides we calculate the margin required for selected leverage
+			const newNotionalSize = newSizeAbs.mul(nextTrade.orderPrice);
+			const newMargin = newNotionalSize.div(nextTrade.leverage);
+			const remainingMargin =
+				position?.position?.size.mul(nextTrade.orderPrice).div(position?.position?.leverage) ??
+				zeroBN;
+			const marginDelta = newMargin.sub(remainingMargin ?? zeroBN);
+			return marginDelta.add(fees.total);
+	}
+};
+
+export const serializeMarkets = (markets: FuturesMarket[]): FuturesMarket<string>[] => {
+	return markets.map((m) => {
+		return {
+			...m,
+			currentFundingRate: m.currentFundingRate.toString(),
+			currentRoundId: m.currentRoundId.toString(),
+			feeRates: {
+				makerFee: m.feeRates.makerFee.toString(),
+				takerFee: m.feeRates.takerFee.toString(),
+				makerFeeNextPrice: m.feeRates.makerFeeNextPrice.toString(),
+				takerFeeNextPrice: m.feeRates.takerFeeNextPrice.toString(),
+			},
+			openInterest: m.openInterest
+				? {
+						...m.openInterest,
+						shortUSD: m.openInterest.shortUSD.toString(),
+						longUSD: m.openInterest.longUSD.toString(),
+				  }
+				: undefined,
+			marketDebt: m.marketDebt.toString(),
+			marketSkew: m.marketSkew.toString(),
+			marketSize: m.marketSize.toString(),
+			maxLeverage: m.maxLeverage.toString(),
+			price: m.price.toString(),
+			minInitialMargin: m.minInitialMargin.toString(),
+			keeperDeposit: m.keeperDeposit.toString(),
+			marketLimit: m.marketLimit.toString(),
+		};
+	});
+};
+
+export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMarket[] => {
+	return markets.map((m) => ({
+		...m,
+		currentFundingRate: wei(m.currentFundingRate),
+		currentRoundId: wei(m.currentRoundId),
+		feeRates: {
+			makerFee: wei(m.feeRates.makerFee),
+			takerFee: wei(m.feeRates.takerFee),
+			makerFeeNextPrice: wei(m.feeRates.makerFeeNextPrice),
+			takerFeeNextPrice: wei(m.feeRates.takerFeeNextPrice),
+		},
+		openInterest: m.openInterest
+			? {
+					...m.openInterest,
+					shortUSD: wei(m.openInterest.shortUSD),
+					longUSD: wei(m.openInterest.longUSD),
+			  }
+			: undefined,
+		marketDebt: wei(m.marketDebt),
+		marketSkew: wei(m.marketSkew),
+		marketSize: wei(m.marketSize),
+		maxLeverage: wei(m.maxLeverage),
+		price: wei(m.price),
+		minInitialMargin: wei(m.minInitialMargin),
+		keeperDeposit: wei(m.keeperDeposit),
+		marketLimit: wei(m.marketLimit),
+	}));
+};
+
+export const unserializeFundingRates = (rates: FundingRateSerialized[]): FundingRate[] => {
+	return rates.map((r) => ({ ...r, fundingRate: r.fundingRate ? wei(r.fundingRate) : null }));
 };

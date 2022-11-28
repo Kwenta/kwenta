@@ -1,30 +1,75 @@
-import { memo } from 'react';
+import { useRouter } from 'next/router';
+import { memo, useCallback } from 'react';
 
-import { useExchangeContext } from 'contexts/ExchangeContext';
+import ROUTES from 'constants/routes';
 import SelectCurrencyModal from 'sections/shared/modals/SelectCurrencyModal';
+import { changeBaseCurrencyKey, changeQuoteCurrencyKey } from 'state/exchange/actions';
+import { setOpenModal } from 'state/exchange/reducer';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 const ExchangeModals = memo(() => {
-	const {
-		openModal,
-		setOpenModal,
-		onQuoteCurrencyChange,
-		onBaseCurrencyChange,
-	} = useExchangeContext();
+	const dispatch = useAppDispatch();
+
+	const router = useRouter();
+
+	const routeToMarketPair = useCallback(
+		(baseCurrencyKey: string, quoteCurrencyKey: string) =>
+			router.replace(ROUTES.Exchange.MarketPair(baseCurrencyKey, quoteCurrencyKey), undefined, {
+				shallow: true,
+			}),
+		[router]
+	);
+
+	const routeToBaseCurrency = useCallback(
+		(baseCurrencyKey: string) =>
+			router.replace(ROUTES.Exchange.Into(baseCurrencyKey), undefined, {
+				shallow: true,
+			}),
+		[router]
+	);
+
+	const { openModal, quoteCurrencyKey, baseCurrencyKey } = useAppSelector(({ exchange }) => ({
+		quoteCurrencyKey: exchange.quoteCurrencyKey,
+		baseCurrencyKey: exchange.baseCurrencyKey,
+		openModal: exchange.openModal,
+	}));
+
+	const closeModal = useCallback(() => {
+		dispatch(setOpenModal(undefined));
+	}, [dispatch]);
+
+	const onBaseCurrencyChange = useCallback(
+		async (currencyKey: string) => {
+			await dispatch(changeBaseCurrencyKey(currencyKey));
+
+			if (!!quoteCurrencyKey && quoteCurrencyKey !== currencyKey) {
+				routeToMarketPair(currencyKey, quoteCurrencyKey);
+			} else {
+				routeToBaseCurrency(currencyKey);
+			}
+		},
+		[quoteCurrencyKey, routeToBaseCurrency, routeToMarketPair, dispatch]
+	);
+
+	const onQuoteCurrencyChange = useCallback(
+		async (currencyKey: string) => {
+			await dispatch(changeQuoteCurrencyKey(currencyKey));
+
+			if (baseCurrencyKey && baseCurrencyKey !== currencyKey) {
+				routeToMarketPair(baseCurrencyKey, currencyKey);
+			}
+		},
+		[baseCurrencyKey, routeToMarketPair, dispatch]
+	);
 
 	return (
 		<>
 			{openModal === 'quote-select' && (
-				<SelectCurrencyModal
-					onDismiss={() => setOpenModal(undefined)}
-					onSelect={onQuoteCurrencyChange}
-				/>
+				<SelectCurrencyModal onDismiss={closeModal} onSelect={onQuoteCurrencyChange} />
 			)}
 
 			{openModal === 'base-select' && (
-				<SelectCurrencyModal
-					onDismiss={() => setOpenModal(undefined)}
-					onSelect={onBaseCurrencyChange}
-				/>
+				<SelectCurrencyModal onDismiss={closeModal} onSelect={onBaseCurrencyChange} />
 			)}
 		</>
 	);

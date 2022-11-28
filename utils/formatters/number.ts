@@ -245,3 +245,7 @@ export const weiFromEth = (num: WeiSource) => wei(num).toBN().toString();
 export const gweiToWei = (val: WeiSource) => {
 	return parseUnits(wei(val).toString(), 9).toString();
 };
+
+export const toWei = (value?: string | null, p?: number) => {
+	return !!value ? wei(value, p) : zeroBN;
+};
