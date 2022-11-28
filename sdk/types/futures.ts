@@ -17,7 +17,7 @@ export type MarketClosureReason = SynthSuspensionReason;
 
 export type FuturesMarket = {
 	market: string;
-	marketKey?: FuturesMarketKey;
+	marketKey: FuturesMarketKey;
 	marketName: string;
 	asset: FuturesMarketAsset;
 	assetHex: string;
@@ -51,7 +51,7 @@ export type FuturesMarket = {
 
 export type FuturesMarketSerialized = {
 	market: string;
-	marketKey?: FuturesMarketKey;
+	marketKey: FuturesMarketKey;
 	marketName: string;
 	asset: FuturesMarketAsset;
 	assetHex: string;
@@ -147,3 +147,75 @@ export interface FuturesMarketConfig {
 	supports: 'mainnet' | 'testnet' | 'both' | 'none';
 	disabled?: boolean;
 }
+
+export enum PositionSide {
+	LONG = 'long',
+	SHORT = 'short',
+}
+
+export type PositionDetail = {
+	remainingMargin: Wei;
+	accessibleMargin: Wei;
+	orderPending: boolean;
+	order: {
+		pending: boolean;
+		fee: Wei;
+		leverage: Wei;
+	};
+	position: {
+		fundingIndex: Wei;
+		lastPrice: Wei;
+		size: Wei;
+		margin: Wei;
+	};
+	accruedFunding: Wei;
+	notionalValue: Wei;
+	liquidationPrice: Wei;
+	profitLoss: Wei;
+};
+
+export type FuturesPosition<T = Wei> = {
+	asset: FuturesMarketAsset;
+	remainingMargin: T;
+	accessibleMargin: T;
+	position: {
+		canLiquidatePosition: boolean;
+		side: PositionSide;
+		notionalValue: T;
+		accruedFunding: T;
+		initialMargin: T;
+		profitLoss: T;
+		fundingIndex: number;
+		lastPrice: T;
+		size: T;
+		liquidationPrice: T;
+		initialLeverage: T;
+		leverage: T;
+		pnl: T;
+		pnlPct: T;
+		marginRatio: T;
+	} | null;
+};
+
+export type FuturesPositionSerialized = {
+	asset: FuturesMarketAsset;
+	remainingMargin: string;
+	accessibleMargin: string;
+	position: {
+		canLiquidatePosition: boolean;
+		side: PositionSide;
+		notionalValue: string;
+		accruedFunding: string;
+		initialMargin: string;
+		profitLoss: string;
+		fundingIndex: number;
+		lastPrice: string;
+		size: string;
+		liquidationPrice: string;
+		initialLeverage: string;
+		leverage: string;
+		pnl: string;
+		pnlPct: string;
+		marginRatio: string;
+	} | null;
+};

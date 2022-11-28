@@ -4,9 +4,9 @@ import { DEFAULT_FUTURES_MARGIN_TYPE, DEFAULT_LEVERAGE } from 'constants/default
 import { PositionSide } from 'sections/futures/types';
 import { accountType } from 'state/helpers';
 import { FetchStatus } from 'state/types';
-import { FuturesMarketAsset } from 'utils/futures';
+import { FuturesMarketAsset, FuturesMarketKey, MarketKeyByAsset } from 'utils/futures';
 
-import { fetchMarkets } from './actions';
+import { fetchMarkets, fetchPosition } from './actions';
 import { FuturesState } from './types';
 
 export type CrossMarginTradeInputs = {
@@ -39,6 +39,7 @@ const initialState: FuturesState = {
 	markets: [],
 	marketsQueryStatus: FetchStatus.Idle,
 	crossMargin: {
+		marketKey: FuturesMarketKey.pETH,
 		marketAsset: FuturesMarketAsset.sETH,
 		leverageSide: PositionSide.LONG,
 		orderType: 'market',
@@ -54,6 +55,7 @@ const initialState: FuturesState = {
 	},
 	isolatedMargin: {
 		transferAmount: '',
+		marketKey: FuturesMarketKey.pETH,
 		marketAsset: FuturesMarketAsset.sETH,
 		leverageSide: PositionSide.LONG,
 		orderType: 'market',
@@ -71,9 +73,11 @@ const futuresSlice = createSlice({
 			state[accountType(state.selectedType)].marketAsset = action.payload;
 			if (state.selectedType === 'cross_margin') {
 				state.crossMargin.marketAsset = action.payload;
+				state.crossMargin.marketKey = MarketKeyByAsset[action.payload as FuturesMarketAsset];
 				state.crossMargin.tradeInputs = ZERO_STATE_CM_TRADE_INPUTS;
 			} else {
 				state.isolatedMargin.marketAsset = action.payload;
+				state.isolatedMargin.marketKey = MarketKeyByAsset[action.payload as FuturesMarketAsset];
 				state.isolatedMargin.tradeInputs = ZERO_STATE_TRADE_INPUTS;
 			}
 		},
@@ -113,6 +117,12 @@ const futuresSlice = createSlice({
 		});
 		builder.addCase(fetchMarkets.rejected, (futuresState) => {
 			futuresState.marketsQueryStatus = FetchStatus.Error;
+		});
+		builder.addCase(fetchPosition.pending, (futuresState) => {
+			futuresState[accountType(futuresState.selectedType)].position = undefined;
+		});
+		builder.addCase(fetchPosition.fulfilled, (futuresState, action) => {
+			futuresState[accountType(futuresState.selectedType)].position = action.payload;
 		});
 	},
 });

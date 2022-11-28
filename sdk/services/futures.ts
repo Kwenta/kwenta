@@ -1,8 +1,10 @@
 import { wei } from '@synthetixio/wei';
+import { ethers } from 'ethers';
 import { formatBytes32String, parseBytes32String } from 'ethers/lib/utils';
 import KwentaSDK from 'sdk';
 
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
+import { MarketAssetByKey, MarketKeyByAsset } from 'sdk/constants/futures';
 import { getContractsByNetwork } from 'sdk/contracts';
 import { FuturesMarket__factory } from 'sdk/contracts/types';
 import { NetworkOverrideOptions } from 'sdk/types/common';
@@ -11,15 +13,16 @@ import {
 	FundingRateResponse,
 	FuturesMarket,
 	FuturesMarketAsset,
+	FuturesMarketKey,
 	MarketClosureReason,
 } from 'sdk/types/futures';
 import {
 	getFuturesEndpoint,
 	getMarketName,
 	getReasonFromCode,
+	mapFuturesPosition,
 	marketsForNetwork,
 } from 'sdk/utils/futures';
-import { FuturesMarketKey, MarketKeyByAsset } from 'utils/futures';
 
 import * as sdkErrors from '../common/errors';
 
@@ -178,6 +181,29 @@ export default class FuturesService {
 		);
 
 		return fundingRateResponses.filter((funding): funding is FundingRateResponse => !!funding);
+	}
+
+	public async getPosition(market: FuturesMarket) {
+		const { PerpsV2MarketData } = this.sdk.context.contracts;
+		if (!PerpsV2MarketData) {
+			throw new Error(UNSUPPORTED_NETWORK);
+		}
+
+		const [futuresPosition, canLiquidatePosition] = await Promise.all([
+			PerpsV2MarketData.positionDetailsForMarketKey(
+				ethers.utils.formatBytes32String(market.marketKey),
+				market.market
+			),
+			// perpsV2Market.canLiquidate(selectedFuturesAddress), TODO: Add market contract ABI and create contract from factory
+			false,
+		]);
+
+		const position = mapFuturesPosition(
+			futuresPosition,
+			canLiquidatePosition,
+			MarketAssetByKey[market.marketKey]
+		);
+		return position;
 	}
 
 	public async transferIsolatedMargin(address: string, amount: string) {

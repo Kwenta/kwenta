@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import SegmentedControl from 'components/SegmentedControl';
 import { ISOLATED_MARGIN_ORDER_TYPES } from 'constants/futures';
 import {
+	setIsolatedTransferAmount,
 	setLeverageSide as setReduxLeverageSide,
 	setOrderType as setReduxOrderType,
 } from 'state/futures/reducer';
@@ -77,7 +78,10 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 				<TransferIsolatedMarginModal
 					defaultTab="deposit"
 					sUSDBalance={susdWalletBalance}
-					onDismiss={() => setOpenTransferModal(false)}
+					onDismiss={() => {
+						setOpenTransferModal(false);
+						dispatch(setIsolatedTransferAmount(''));
+					}}
 				/>
 			)}
 		</div>

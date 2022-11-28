@@ -9,7 +9,11 @@ import {
 	FuturesTradeInputs,
 	TradeFees,
 } from 'queries/futures/types';
-import { FuturesMarket, FuturesMarketSerialized } from 'sdk/types/futures';
+import {
+	FuturesMarket,
+	FuturesMarketSerialized,
+	FuturesPositionSerialized,
+} from 'sdk/types/futures';
 import { PositionSide } from 'sections/futures/types';
 import { FundingRate, FundingRateSerialized } from 'state/futures/types';
 import logError from 'utils/logError';
@@ -384,40 +388,100 @@ export const calculateMarginDelta = (
 	}
 };
 
+export const serializeMarket = (m: FuturesMarket) => {
+	return {
+		...m,
+		currentFundingRate: m.currentFundingRate.toString(),
+		currentRoundId: m.currentRoundId.toString(),
+		feeRates: {
+			makerFee: m.feeRates.makerFee.toString(),
+			takerFee: m.feeRates.takerFee.toString(),
+			makerFeeDelayedOrder: m.feeRates.makerFeeDelayedOrder.toString(),
+			takerFeeDelayedOrder: m.feeRates.takerFeeDelayedOrder.toString(),
+			makerFeeOffchainDelayedOrder: m.feeRates.makerFeeOffchainDelayedOrder.toString(),
+			takerFeeOffchainDelayedOrder: m.feeRates.takerFeeOffchainDelayedOrder.toString(),
+		},
+		openInterest: m.openInterest
+			? {
+					...m.openInterest,
+					shortUSD: m.openInterest.shortUSD.toString(),
+					longUSD: m.openInterest.longUSD.toString(),
+			  }
+			: undefined,
+		marketDebt: m.marketDebt.toString(),
+		marketSkew: m.marketSkew.toString(),
+		marketSize: m.marketSize.toString(),
+		maxLeverage: m.maxLeverage.toString(),
+		price: m.price.toString(),
+		minInitialMargin: m.minInitialMargin.toString(),
+		keeperDeposit: m.keeperDeposit.toString(),
+		marketLimit: m.marketLimit.toString(),
+	};
+};
+
+export const unserializeMarket = (m: FuturesMarketSerialized) => ({
+	...m,
+	currentFundingRate: wei(m.currentFundingRate),
+	currentRoundId: wei(m.currentRoundId),
+	feeRates: {
+		makerFee: wei(m.feeRates.makerFee),
+		takerFee: wei(m.feeRates.takerFee),
+		makerFeeDelayedOrder: wei(m.feeRates.makerFeeDelayedOrder),
+		takerFeeDelayedOrder: wei(m.feeRates.takerFeeDelayedOrder),
+		makerFeeOffchainDelayedOrder: wei(m.feeRates.makerFeeOffchainDelayedOrder),
+		takerFeeOffchainDelayedOrder: wei(m.feeRates.takerFeeOffchainDelayedOrder),
+	},
+	openInterest: m.openInterest
+		? {
+				...m.openInterest,
+				shortUSD: wei(m.openInterest.shortUSD),
+				longUSD: wei(m.openInterest.longUSD),
+		  }
+		: undefined,
+	marketDebt: wei(m.marketDebt),
+	marketSkew: wei(m.marketSkew),
+	marketSize: wei(m.marketSize),
+	maxLeverage: wei(m.maxLeverage),
+	price: wei(m.price),
+	minInitialMargin: wei(m.minInitialMargin),
+	keeperDeposit: wei(m.keeperDeposit),
+	marketLimit: wei(m.marketLimit),
+});
+
 export const serializeMarkets = (markets: FuturesMarket[]): FuturesMarketSerialized[] => {
-	return markets.map((m) => {
-		return {
-			...m,
-			currentFundingRate: m.currentFundingRate.toString(),
-			currentRoundId: m.currentRoundId.toString(),
-			feeRates: {
-				makerFee: m.feeRates.makerFee.toString(),
-				takerFee: m.feeRates.takerFee.toString(),
-				makerFeeDelayedOrder: m.feeRates.makerFeeDelayedOrder.toString(),
-				takerFeeDelayedOrder: m.feeRates.takerFeeDelayedOrder.toString(),
-				makerFeeOffchainDelayedOrder: m.feeRates.makerFeeOffchainDelayedOrder.toString(),
-				takerFeeOffchainDelayedOrder: m.feeRates.takerFeeOffchainDelayedOrder.toString(),
-			},
-			openInterest: m.openInterest
-				? {
-						...m.openInterest,
-						shortUSD: m.openInterest.shortUSD.toString(),
-						longUSD: m.openInterest.longUSD.toString(),
-				  }
-				: undefined,
-			marketDebt: m.marketDebt.toString(),
-			marketSkew: m.marketSkew.toString(),
-			marketSize: m.marketSize.toString(),
-			maxLeverage: m.maxLeverage.toString(),
-			price: m.price.toString(),
-			minInitialMargin: m.minInitialMargin.toString(),
-			keeperDeposit: m.keeperDeposit.toString(),
-			marketLimit: m.marketLimit.toString(),
-		};
-	});
+	return markets.map(serializeMarket);
 };
 
 export const unserializeMarkets = (markets: FuturesMarketSerialized[]): FuturesMarket[] => {
+	return markets.map(unserializeMarket);
+};
+
+export const serializePosition = (position: FuturesPosition): FuturesPositionSerialized => {
+	return {
+		...position,
+		remainingMargin: position.remainingMargin.toString(),
+		accessibleMargin: position.accessibleMargin.toString(),
+		position: position.position
+			? {
+					...position.position,
+					notionalValue: position.position.notionalValue.toString(),
+					accruedFunding: position.position.toString(),
+					initialMargin: position.position.toString(),
+					profitLoss: position.position.toString(),
+					lastPrice: position.position.toString(),
+					size: position.position.toString(),
+					liquidationPrice: position.position.toString(),
+					initialLeverage: position.position.toString(),
+					leverage: position.position.toString(),
+					pnl: position.position.toString(),
+					pnlPct: position.position.toString(),
+					marginRatio: position.position.toString(),
+			  }
+			: null,
+	};
+};
+
+export const unserializePosition = (markets: FuturesMarketSerialized[]): FuturesMarket[] => {
 	return markets.map((m) => ({
 		...m,
 		currentFundingRate: wei(m.currentFundingRate),

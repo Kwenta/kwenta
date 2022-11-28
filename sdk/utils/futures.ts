@@ -3,7 +3,14 @@ import { BigNumber } from 'ethers';
 
 import { FUTURES_ENDPOINTS, MAINNET_MARKETS, TESTNET_MARKETS } from 'sdk/constants/futures';
 import { SECONDS_PER_DAY } from 'sdk/constants/period';
-import { FundingRateUpdate, FuturesMarketAsset, MarketClosureReason } from 'sdk/types/futures';
+import {
+	FundingRateUpdate,
+	FuturesMarketAsset,
+	FuturesPosition,
+	MarketClosureReason,
+	PositionDetail,
+	PositionSide,
+} from 'sdk/types/futures';
 import logError from 'utils/logError';
 
 export const getFuturesEndpoint = (networkId: number): string => {
@@ -54,6 +61,55 @@ export const calculateFundingRate = (
 
 	const fundingRate = fundingPaid.div(assetPrice);
 	return fundingRate;
+};
+
+export const mapFuturesPosition = (
+	positionDetail: any, // TODO: Fix type with contract output
+	canLiquidatePosition: boolean,
+	asset: FuturesMarketAsset
+): FuturesPosition => {
+	const {
+		remainingMargin,
+		accessibleMargin,
+		position: { fundingIndex, lastPrice, size, margin },
+		accruedFunding,
+		notionalValue,
+		liquidationPrice,
+		profitLoss,
+	} = positionDetail;
+	const initialMargin = wei(margin);
+	const pnl = wei(profitLoss).add(wei(accruedFunding));
+	const pnlPct = initialMargin.gt(0) ? pnl.div(wei(initialMargin)) : wei(0);
+	return {
+		asset,
+		remainingMargin: wei(remainingMargin),
+		accessibleMargin: wei(accessibleMargin),
+		position: wei(size).eq(wei(0))
+			? null
+			: {
+					canLiquidatePosition: !!canLiquidatePosition,
+					side: wei(size).gt(wei(0)) ? PositionSide.LONG : PositionSide.SHORT,
+					notionalValue: wei(notionalValue).abs(),
+					accruedFunding: wei(accruedFunding),
+					initialMargin,
+					profitLoss: wei(profitLoss),
+					fundingIndex: Number(fundingIndex),
+					lastPrice: wei(lastPrice),
+					size: wei(size).abs(),
+					liquidationPrice: wei(liquidationPrice),
+					initialLeverage: initialMargin.gt(0)
+						? wei(size).mul(wei(lastPrice)).div(initialMargin).abs()
+						: wei(0),
+					pnl,
+					pnlPct,
+					marginRatio: wei(notionalValue).eq(wei(0))
+						? wei(0)
+						: wei(remainingMargin).div(wei(notionalValue).abs()),
+					leverage: wei(remainingMargin).eq(wei(0))
+						? wei(0)
+						: wei(notionalValue).div(wei(remainingMargin)).abs(),
+			  },
+	};
 };
 
 export const marketsForNetwork = (networkId: number) => {

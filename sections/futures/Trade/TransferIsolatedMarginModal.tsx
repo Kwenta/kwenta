@@ -1,6 +1,5 @@
-import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -12,19 +11,13 @@ import CustomInput from 'components/Input/CustomInput';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
-import { NO_VALUE } from 'constants/placeholder';
-import { useRefetchContext } from 'contexts/RefetchContext';
-import { monitorTransaction } from 'contexts/RelayerContext';
-import useEstimateGasCost from 'hooks/useEstimateGasCost';
 import { transferIsolatedMargin } from 'state/futures/actions';
 import { setIsolatedTransferAmount } from 'state/futures/reducer';
-import { selectMarketAsset } from 'state/futures/selectors';
+import { selectIsolatedTransferAmount, selectPosition } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { positionState } from 'store/futures';
-import { gasSpeedState } from 'store/wallet';
 import { FlexDivRowCentered } from 'styles/common';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
-import { getDisplayAsset } from 'utils/futures';
 type Props = {
 	onDismiss(): void;
 	defaultTab: 'deposit' | 'withdraw';
@@ -35,15 +28,11 @@ const PLACEHOLDER = '$0.00';
 
 const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, sUSDBalance, defaultTab }) => {
 	const { t } = useTranslation();
-	const { useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();
 
 	const dispatch = useAppDispatch();
 
-	const { estimateSnxTxGasCost } = useEstimateGasCost();
-
-	const gasSpeed = useRecoilValue(gasSpeedState);
-	const position = useRecoilValue(positionState);
-	const marketAsset = useAppSelector(selectMarketAsset);
+	const position = useAppSelector(selectPosition);
+	const transferAmount = useAppSelector(selectIsolatedTransferAmount);
 
 	const minDeposit = useMemo(() => {
 		const accessibleMargin = position?.accessibleMargin ?? zeroBN;
@@ -51,12 +40,7 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, sUSDBalance, 
 		return min.lt(zeroBN) ? zeroBN : min;
 	}, [position?.accessibleMargin]);
 
-	const [amount, setAmount] = useState('');
 	const [transferType, setTransferType] = useState(defaultTab === 'deposit' ? 0 : 1);
-
-	const ethGasPriceQuery = useEthGasPriceQuery();
-	const { handleRefetch } = useRefetchContext();
-	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
 
 	const susdBal = transferType === 0 ? sUSDBalance : position?.accessibleMargin || zeroBN;
 	const accessibleMargin = useMemo(() => position?.accessibleMargin ?? zeroBN, [
@@ -64,70 +48,26 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, sUSDBalance, 
 	]);
 
 	const isDisabled = useMemo(() => {
-		if (!amount) {
+		if (!transferAmount) {
 			return true;
 		}
-		const amtWei = wei(amount);
+		const amtWei = wei(transferAmount);
 		if (amtWei.eq(0) || amtWei.gt(susdBal) || (transferType === 0 && amtWei.lt(minDeposit))) {
 			return true;
 		}
 		return false;
-	}, [amount, susdBal, minDeposit, transferType]);
-
-	const computedWithdrawAmount = useMemo(
-		() =>
-			accessibleMargin.eq(wei(amount || 0))
-				? accessibleMargin.mul(wei(-1)).toBN()
-				: wei(-amount).toBN(),
-		[amount, accessibleMargin]
-	);
-
-	const depositTxn = useSynthetixTxn(
-		`FuturesMarket${getDisplayAsset(marketAsset)}`,
-		'transferMargin',
-		[wei(amount || 0).toBN()],
-		gasPrice || undefined,
-		{ enabled: !!marketAsset && !!amount && !isDisabled && transferType === 0 }
-	);
-
-	const withdrawTxn = useSynthetixTxn(
-		`FuturesMarket${getDisplayAsset(marketAsset)}`,
-		'transferMargin',
-		[computedWithdrawAmount],
-		gasPrice || undefined,
-		{ enabled: !!marketAsset && !!amount && transferType === 1 }
-	);
-
-	const transactionFee = estimateSnxTxGasCost(transferType === 0 ? depositTxn : withdrawTxn);
-
-	useEffect(() => {
-		const hash = depositTxn.hash ?? withdrawTxn.hash;
-		if (hash) {
-			monitorTransaction({
-				txHash: hash,
-				onTxConfirmed: () => {
-					handleRefetch('margin-change');
-					onDismiss();
-				},
-			});
-		}
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [depositTxn.hash, withdrawTxn.hash]);
+	}, [transferAmount, susdBal, minDeposit, transferType]);
 
 	const handleSetMax = useCallback(() => {
 		if (transferType === 0) {
-			setAmount(susdBal.toString());
 			dispatch(setIsolatedTransferAmount(susdBal.toString()));
 		} else {
-			setAmount(accessibleMargin.toString());
-			dispatch(setIsolatedTransferAmount(accessibleMargin.toString()));
+			dispatch(setIsolatedTransferAmount(accessibleMargin.mul(wei(-1)).toString()));
 		}
 	}, [dispatch, susdBal, accessibleMargin, transferType]);
 
 	const onChangeTab = (selection: number) => {
 		setTransferType(selection);
-		setAmount('');
 		dispatch(setIsolatedTransferAmount(''));
 	};
 
@@ -155,10 +95,9 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, sUSDBalance, 
 			<CustomInput
 				dataTestId="futures-market-trade-deposit-margin-input"
 				placeholder={PLACEHOLDER}
-				value={amount}
+				value={transferAmount}
 				onChange={(_, v) => {
-					setAmount(v);
-					dispatch(setIsolatedTransferAmount(v));
+					dispatch(setIsolatedTransferAmount(transferType === 0 ? v : -v));
 				}}
 				right={
 					<MaxButton onClick={handleSetMax}>{t('futures.market.trade.margin.modal.max')}</MaxButton>
@@ -183,16 +122,16 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, sUSDBalance, 
 					: t('futures.market.trade.margin.modal.withdraw.button')}
 			</MarginActionButton>
 
-			<GasFeeContainer>
+			{/* <GasFeeContainer>
 				<BalanceText>{t('futures.market.trade.margin.modal.gas-fee')}:</BalanceText>
 				<BalanceText>
 					<span>
 						{transactionFee ? formatDollars(transactionFee, { maxDecimals: 1 }) : NO_VALUE}
 					</span>
 				</BalanceText>
-			</GasFeeContainer>
+			</GasFeeContainer> */}
 
-			{depositTxn.errorMessage && <Error message={depositTxn.errorMessage} formatter="revert" />}
+			{/* {depositTxn.errorMessage && <Error message={depositTxn.errorMessage} formatter="revert" />} */}
 		</StyledBaseModal>
 	);
 };

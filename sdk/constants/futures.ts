@@ -114,6 +114,56 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	},
 };
 
+export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
+	// perps v2
+	[FuturesMarketAsset.sBTC]: FuturesMarketKey.pBTC,
+	[FuturesMarketAsset.sETH]: FuturesMarketKey.pETH,
+
+	// perps v1
+	[FuturesMarketAsset.sLINK]: FuturesMarketKey.sLINK,
+	[FuturesMarketAsset.SOL]: FuturesMarketKey.sSOL,
+	[FuturesMarketAsset.AVAX]: FuturesMarketKey.sAVAX,
+	[FuturesMarketAsset.AAVE]: FuturesMarketKey.sAAVE,
+	[FuturesMarketAsset.UNI]: FuturesMarketKey.sUNI,
+	[FuturesMarketAsset.MATIC]: FuturesMarketKey.sMATIC,
+	[FuturesMarketAsset.XAU]: FuturesMarketKey.sXAU,
+	[FuturesMarketAsset.XAG]: FuturesMarketKey.sXAG,
+	[FuturesMarketAsset.EUR]: FuturesMarketKey.sEUR,
+	[FuturesMarketAsset.APE]: FuturesMarketKey.sAPE,
+	[FuturesMarketAsset.DYDX]: FuturesMarketKey.sDYDX,
+	[FuturesMarketAsset.BNB]: FuturesMarketKey.sBNB,
+	[FuturesMarketAsset.DOGE]: FuturesMarketKey.sDOGE,
+	[FuturesMarketAsset.DebtRatio]: FuturesMarketKey.sDebtRatio,
+	[FuturesMarketAsset.XMR]: FuturesMarketKey.sXMR,
+	[FuturesMarketAsset.OP]: FuturesMarketKey.sOP,
+} as const;
+
+export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
+	// perps v2
+	[FuturesMarketKey.pBTC]: FuturesMarketAsset.sBTC,
+	[FuturesMarketKey.pETH]: FuturesMarketAsset.sETH,
+
+	// perps v1
+	[FuturesMarketKey.sBTC]: FuturesMarketAsset.sBTC,
+	[FuturesMarketKey.sETH]: FuturesMarketAsset.sETH,
+	[FuturesMarketKey.sLINK]: FuturesMarketAsset.sLINK,
+	[FuturesMarketKey.sSOL]: FuturesMarketAsset.SOL,
+	[FuturesMarketKey.sAVAX]: FuturesMarketAsset.AVAX,
+	[FuturesMarketKey.sAAVE]: FuturesMarketAsset.AAVE,
+	[FuturesMarketKey.sUNI]: FuturesMarketAsset.UNI,
+	[FuturesMarketKey.sMATIC]: FuturesMarketAsset.MATIC,
+	[FuturesMarketKey.sXAU]: FuturesMarketAsset.XAU,
+	[FuturesMarketKey.sXAG]: FuturesMarketAsset.XAG,
+	[FuturesMarketKey.sEUR]: FuturesMarketAsset.EUR,
+	[FuturesMarketKey.sAPE]: FuturesMarketAsset.APE,
+	[FuturesMarketKey.sDYDX]: FuturesMarketAsset.DYDX,
+	[FuturesMarketKey.sBNB]: FuturesMarketAsset.BNB,
+	[FuturesMarketKey.sDOGE]: FuturesMarketAsset.DOGE,
+	[FuturesMarketKey.sDebtRatio]: FuturesMarketAsset.DebtRatio,
+	[FuturesMarketKey.sXMR]: FuturesMarketAsset.XMR,
+	[FuturesMarketKey.sOP]: FuturesMarketAsset.OP,
+} as const;
+
 export const MARKETS_LIST = Object.values(MARKETS).filter((m) => !m.disabled);
 
 export const MAINNET_MARKETS = MARKETS_LIST.filter(

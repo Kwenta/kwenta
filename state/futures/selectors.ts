@@ -25,6 +25,13 @@ export const selectMarketAsset = createSelector(
 	(futures, marginType) => futures[accountType(marginType)].marketAsset
 );
 
+export const selectMarketAddress = createSelector(
+	(state: RootState) => state.futures,
+	selectMarketKey,
+	(futures, selectedMarketKey) =>
+		futures.markets.find(({ marketKey }) => marketKey === selectedMarketKey)?.market
+);
+
 export const selectMarketRate = createSelector(
 	selectMarketKey,
 	selectExchangeRates,
@@ -143,4 +150,9 @@ export const selectPlaceOrderTranslationKey = createSelector(
 			? 'futures.market.trade.button.oi-caps-reached'
 			: 'futures.market.trade.button.open-position';
 	}
+);
+
+export const selectIsolatedTransferAmount = createSelector(
+	(state: RootState) => state.futures.isolatedMargin.transferAmount,
+	(transferAmount) => transferAmount
 );
