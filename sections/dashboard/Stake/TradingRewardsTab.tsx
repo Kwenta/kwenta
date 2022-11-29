@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useContractReads, useContractWrite, usePrepareContractWrite } from 'wagmi';
-
+import HelpIcon from 'assets/svg/app/question-mark.svg';
 import Button from 'components/Button';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import Connector from 'containers/Connector';
@@ -192,7 +192,10 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 										EpochPeriod: period,
 									})}
 								</div>
-								<div className="value">{formatDollars(futuresFeePaid, { minDecimals: 2 })}</div>
+								<div className="value">
+									{formatDollars(futuresFeePaid, { minDecimals: 2 })}
+									<HelpIcon />
+								</div>
 							</WithCursor>
 						</div>
 					</CustomStyledTooltip>
@@ -260,6 +263,10 @@ const CardGrid = styled.div`
 
 	.value {
 		margin-top: 5px;
+	}
+
+	svg {
+		margin-left: 5px;
 	}
 
 	.title {
