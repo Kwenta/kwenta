@@ -29,7 +29,7 @@ const common = {
 		white: '#F2F2F2',
 		yellow: '#6A3300',
 		background: '#F2F2F2',
-		surfaceFill: '#CFCFCF',
+		surfaceFill: '#F2F2F2', // TODO: Update the light theme
 		title: '#171002',
 		border: '1px solid rgba(0,0,0,0.17)',
 		outlineBorder: '1px solid rgba(0,0,0,0.17)',
