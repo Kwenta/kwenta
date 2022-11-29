@@ -33,6 +33,11 @@ import { CRYPTO_CURRENCY_MAP, SynthsName } from 'constants/currency';
 import { FuturesMarketKey } from './futures';
 
 export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = {
+	// perps v2
+	pBTC: BTCIcon,
+	pETH: ETHIcon,
+
+	// perps v1
 	sBTC: BTCIcon,
 	sETH: ETHIcon,
 	sLINK: LINKIcon,
