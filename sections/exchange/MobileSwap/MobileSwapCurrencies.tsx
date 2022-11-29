@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router';
 import { memo, useCallback } from 'react';
-import { swapCurrencies } from 'state/exchange/reducer';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import ArrowIcon from 'assets/svg/app/arrow-down.svg';
 import ROUTES from 'constants/routes';
+import { swapCurrencies } from 'state/exchange/reducer';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { SwapCurrenciesButton } from 'styles/common';
 
 const MobileSwapCurrencies = memo(() => {

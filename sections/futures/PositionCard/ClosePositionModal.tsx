@@ -2,7 +2,6 @@ import { CurrencyKey } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { useMemo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
@@ -12,7 +11,8 @@ import Connector from 'containers/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { FuturesFilledPosition } from 'queries/futures/types';
 import { getFuturesMarketContract } from 'queries/futures/utils';
-import { currentMarketState } from 'store/futures';
+import { selectMarketAsset } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import { FlexDivCentered, FlexDivCol } from 'styles/common';
 import { formatCurrency, formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 
@@ -39,7 +39,7 @@ function ClosePositionModal({
 	const { defaultSynthetixjs: synthetixjs, synthsMap } = Connector.useContainer();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
-	const currencyKey = useRecoilValue(currentMarketState);
+	const marketAsset = useAppSelector(selectMarketAsset);
 
 	const [orderFee, setOrderFee] = useState<Wei>(wei(0));
 	const [error, setError] = useState<null | string>(null);
@@ -49,9 +49,9 @@ function ClosePositionModal({
 	useEffect(() => {
 		const getOrderFee = async () => {
 			try {
-				if (!synthetixjs || !currencyKey || !positionSize) return;
+				if (!synthetixjs || !marketAsset || !positionSize) return;
 				setError(null);
-				const FuturesMarketContract = getFuturesMarketContract(currencyKey, synthetixjs!.contracts);
+				const FuturesMarketContract = getFuturesMarketContract(marketAsset, synthetixjs!.contracts);
 				const size = positionSize.neg();
 				const orderFee = await FuturesMarketContract.orderFee(size.toBN());
 				setOrderFee(wei(orderFee.fee));
@@ -63,10 +63,10 @@ function ClosePositionModal({
 			}
 		};
 		getOrderFee();
-	}, [synthetixjs, currencyKey, positionSize]);
+	}, [synthetixjs, marketAsset, positionSize]);
 
 	const dataRows = useMemo(() => {
-		if (!positionDetails || !currencyKey) return [];
+		if (!positionDetails || !marketAsset) return [];
 		return [
 			{
 				label: t('futures.market.user.position.modal.order-type'),
@@ -78,8 +78,8 @@ function ClosePositionModal({
 			},
 			{
 				label: t('futures.market.user.position.modal.size'),
-				value: formatCurrency(currencyKey || '', positionDetails?.size ?? zeroBN, {
-					sign: currencyKey ? synthsMap[currencyKey]?.sign : '',
+				value: formatCurrency(marketAsset || '', positionDetails?.size ?? zeroBN, {
+					sign: marketAsset ? synthsMap[marketAsset]?.sign : '',
 				}),
 			},
 			{
@@ -101,7 +101,7 @@ function ClosePositionModal({
 				}),
 			},
 		];
-	}, [positionDetails, currencyKey, t, orderFee, gasFee, selectedPriceCurrency, synthsMap]);
+	}, [positionDetails, marketAsset, t, orderFee, gasFee, selectedPriceCurrency, synthsMap]);
 
 	return (
 		<StyledBaseModal

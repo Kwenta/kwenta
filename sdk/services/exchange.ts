@@ -8,8 +8,6 @@ import { Contract as EthCallContract } from 'ethcall';
 import { BigNumber, ethers } from 'ethers';
 import { get, keyBy } from 'lodash';
 import KwentaSDK from 'sdk';
-import { getEthGasPrice } from 'sdk/common/gas';
-import { startInterval } from 'sdk/utils/interval';
 
 import { KWENTA_REFERRAL_ADDRESS, SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
 import {
@@ -21,13 +19,15 @@ import {
 import { DEFAULT_1INCH_SLIPPAGE } from 'constants/defaults';
 import { ATOMIC_EXCHANGE_SLIPPAGE } from 'constants/exchange';
 import { ETH_UNIT } from 'constants/network';
-import erc20Abi from 'lib/abis/ERC20.json';
 import { CG_BASE_API_URL } from 'queries/coingecko/constants';
 import { PriceResponse } from 'queries/coingecko/types';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { Rates } from 'queries/rates/types';
 import { getProxySynthSymbol } from 'queries/synths/utils';
 import { Token } from 'queries/walletBalances/types';
+import { getEthGasPrice } from 'sdk/common/gas';
+import erc20Abi from 'sdk/contracts/abis/ERC20.json';
+import { startInterval } from 'sdk/utils/interval';
 import {
 	newGetCoinGeckoPricesForCurrencies,
 	newGetExchangeRatesForCurrencies,
@@ -516,6 +516,7 @@ export default class ExchangeService {
 				quoteDecimals
 			);
 		} else if (txProvider === 'synthswap') {
+			// @ts-ignore TODO: Fix varibale types
 			tx = await this.swapSynthSwap(
 				this.allTokensMap[quoteCurrencyKey],
 				this.allTokensMap[baseCurrencyKey],
@@ -594,6 +595,7 @@ export default class ExchangeService {
 			const txn = {
 				to: this.sdk.context.contracts.Synthetix.address,
 				data: this.sdk.context.contracts.Synthetix.interface.encodeFunctionData(
+					// @ts-ignore TODO: Fix types
 					method,
 					exchangeParams
 				),
@@ -796,11 +798,17 @@ export default class ExchangeService {
 		const baseCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey).toLowerCase();
 		const tokenAddresses = [quoteCurrencyTokenAddress, baseCurrencyTokenAddress];
 
+		return this.batchGetCoingeckoPrices(tokenAddresses);
+	}
+
+	public async batchGetCoingeckoPrices(tokenAddresses: string[], include24hrChange = false) {
 		const platform = this.sdk.context.isL2 ? 'optimistic-ethereum' : 'ethereum';
 		const response = await axios.get<PriceResponse>(
 			`${CG_BASE_API_URL}/simple/token_price/${platform}?contract_addresses=${tokenAddresses
 				.join(',')
-				.replace(ETH_ADDRESS, ETH_COINGECKO_ADDRESS)}&vs_currencies=usd`
+				.replace(ETH_ADDRESS, ETH_COINGECKO_ADDRESS)}&vs_currencies=usd${
+				include24hrChange ? '&include_24hr_change=true' : ''
+			}`
 		);
 		return response.data;
 	}
@@ -1005,6 +1013,7 @@ export default class ExchangeService {
 				),
 			]);
 
+			// @ts-ignore TODO: Fix types from metaTx
 			const l1Fee = await this.sdk.transactions.getOptimismLayerOneFees({
 				...metaTx,
 				gasPrice: 0,

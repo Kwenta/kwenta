@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import { marketInfoState } from 'store/futures';
+import { selectMarketInfo } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import { formatDollars, formatPercent } from 'utils/formatters/number';
 
 const MobileMarketDetail: React.FC = () => {
-	const marketInfo = useRecoilValue(marketInfoState);
+	const marketInfo = useAppSelector(selectMarketInfo);
+
 	const pausedClass = marketInfo?.isSuspended ? 'paused' : '';
 
 	const longSkewText = useMemo(() => {

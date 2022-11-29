@@ -1,3 +1,4 @@
+import Wei from '@synthetixio/wei';
 import { ethers } from 'ethers';
 import get from 'lodash/get';
 
@@ -44,3 +45,15 @@ export const getCurrencyKeyUSDBalanceBN = (
 	isSynth(currencyKey)
 		? get(balances, getSynthBalancePath(currencyKey, 'balanceBN'))
 		: get(balances, getCryptoCurrencyBalancePath(currencyKey, 'balanceBN'));
+
+export const sortWei = (a: Wei, b: Wei, order: 'descending' | 'ascending'): number => {
+	const diff = order === 'ascending' ? a.sub(b) : b.sub(a);
+
+	if (diff.gt(0)) {
+		return 1;
+	} else if (diff.lt(0)) {
+		return -1;
+	} else {
+		return 0;
+	}
+};

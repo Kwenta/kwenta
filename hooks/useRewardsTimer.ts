@@ -5,7 +5,7 @@ const secondsToDDHHMM = (seconds: number) => {
 	return (
 		Math.floor(seconds / (3600 * 24)) +
 		'd:' +
-		('0' + Math.floor(seconds / 3600)).slice(-2) +
+		('0' + (Math.floor(seconds / 3600) % 24)).slice(-2) +
 		'h:' +
 		('0' + (Math.floor(seconds / 60) % 60)).slice(-2) +
 		'm'

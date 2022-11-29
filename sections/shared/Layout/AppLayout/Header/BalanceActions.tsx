@@ -3,15 +3,15 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { components } from 'react-select';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { selectSusdBalanceWei } from 'state/balances/selectors';
-import { setFuturesAccountType as setReduxFuturesAccountType } from 'state/futures/reducer';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
 import styled, { useTheme } from 'styled-components';
 
 import Button from 'components/Button';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Select from 'components/Select';
 import { FuturesAccountTypes, FuturesPosition } from 'queries/futures/types';
+import { selectSusdBalanceWei } from 'state/balances/selectors';
+import { setFuturesAccountType as setReduxFuturesAccountType } from 'state/futures/reducer';
+import { useAppSelector, useAppDispatch } from 'state/hooks';
 import { positionsState, portfolioState, futuresAccountTypeState } from 'store/futures';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { zeroBN, formatDollars } from 'utils/formatters/number';

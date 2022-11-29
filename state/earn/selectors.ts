@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { RootState } from 'state/store';
 
+import { RootState } from 'state/store';
 import { toWei } from 'utils/formatters/number';
 
 export const selectIsApproved = createSelector(

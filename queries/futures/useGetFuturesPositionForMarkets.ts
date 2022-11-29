@@ -7,9 +7,11 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
-import FuturesMarketABI from 'lib/abis/FuturesMarket.json';
-import FuturesMarketDataABI from 'lib/abis/FuturesMarketData.json';
-import { positionsState, futuresAccountState, futuresMarketsState } from 'store/futures';
+import FuturesMarketABI from 'sdk/contracts/abis/FuturesMarket.json';
+import FuturesMarketDataABI from 'sdk/contracts/abis/FuturesMarketData.json';
+import { selectMarkets } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { positionsState, futuresAccountState } from 'store/futures';
 import { MarketKeyByAsset } from 'utils/futures';
 
 import { FuturesAccountTypes, PositionDetail } from './types';
@@ -24,7 +26,7 @@ const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<void>) => {
 	const { defaultSynthetixjs: synthetixjs, provider, network } = Connector.useContainer();
 	const isL2 = useIsL2();
 
-	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	const futuresMarkets = useAppSelector(selectMarkets);
 	const setPositions = useSetRecoilState(positionsState);
 	const { walletAddress, crossMarginAddress, crossMarginAvailable, status } = useRecoilValue(
 		futuresAccountState

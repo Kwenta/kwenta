@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router';
 import { memo, useCallback } from 'react';
-import { changeBaseCurrencyKey, changeQuoteCurrencyKey } from 'state/exchange/actions';
-import { setOpenModal } from 'state/exchange/reducer';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import ROUTES from 'constants/routes';
 import SelectCurrencyModal from 'sections/shared/modals/SelectCurrencyModal';
+import { changeBaseCurrencyKey, changeQuoteCurrencyKey } from 'state/exchange/actions';
+import { setOpenModal } from 'state/exchange/reducer';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 const ExchangeModals = memo(() => {
 	const dispatch = useAppDispatch();

@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+
 import { FetchStatus } from 'state/types';
 
 import { fetchSynthBalances } from './actions';

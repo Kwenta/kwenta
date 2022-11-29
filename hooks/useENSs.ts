@@ -4,7 +4,7 @@ import { useQuery, UseQueryOptions } from 'react-query';
 import { ENS_REVERSE_LOOKUP } from 'constants/address';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import reverseRecordsAbi from 'lib/abis/ReverseRecords.json';
+import reverseRecordsAbi from 'sdk/contracts/abis/ReverseRecords.json';
 
 const ADDRESSES_PER_LOOKUP = 1500;
 

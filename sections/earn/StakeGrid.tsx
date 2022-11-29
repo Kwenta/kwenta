@@ -1,10 +1,10 @@
 import { wei } from '@synthetixio/wei';
 import { useCallback, useMemo } from 'react';
-import { claimRewards } from 'state/earn/actions';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import Button from 'components/Button';
 import useRewardsTimer from 'hooks/useRewardsTimer';
+import { claimRewards } from 'state/earn/actions';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { toWei, truncateNumbers } from 'utils/formatters/number';
 
 import { GridContainer } from './common';

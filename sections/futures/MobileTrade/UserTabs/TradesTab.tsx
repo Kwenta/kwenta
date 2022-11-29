@@ -2,7 +2,6 @@ import { utils as ethersUtils } from 'ethers';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import Table, { TableNoResults } from 'components/Table';
@@ -12,7 +11,8 @@ import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { PositionSide, TradeStatus } from 'sections/futures/types';
-import { currentMarketState } from 'store/futures';
+import { selectMarketAsset } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import { GridDivCenteredRow } from 'styles/common';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName } from 'utils/futures';
@@ -23,7 +23,7 @@ import TradeDrawer from '../drawers/TradeDrawer';
 const TradesTab: React.FC = () => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
-	const marketAsset = useRecoilValue(currentMarketState);
+	const marketAsset = useAppSelector(selectMarketAsset);
 
 	const [selectedTrade, setSelectedTrade] = React.useState<any>();
 

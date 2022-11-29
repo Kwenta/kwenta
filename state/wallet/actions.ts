@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
+
 import { fetchSynthBalances } from 'state/balances/actions';
 import { fetchRedeemableBalances, fetchTokenList } from 'state/exchange/actions';
 import type { ThunkConfig } from 'state/types';

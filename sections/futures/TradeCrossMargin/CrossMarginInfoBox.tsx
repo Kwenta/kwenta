@@ -9,9 +9,10 @@ import { MiniLoader } from 'components/Loader';
 import PreviewArrow from 'components/PreviewArrow';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { FuturesPotentialTradeDetails } from 'queries/futures/types';
+import { selectMarketInfo } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import {
 	crossMarginMarginDeltaState,
-	marketInfoState,
 	positionState,
 	potentialTradeDetailsState,
 	tradeFeesState,
@@ -40,7 +41,7 @@ function MarginInfoBox({ editingLeverage }: Props) {
 	const { selectedLeverage } = useFuturesContext();
 
 	const position = useRecoilValue(positionState);
-	const marketInfo = useRecoilValue(marketInfoState);
+	const marketInfo = useAppSelector(selectMarketInfo);
 	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
 	const potentialTrade = useRecoilValue(potentialTradeDetailsState);
 	const marginDelta = useRecoilValue(crossMarginMarginDeltaState);

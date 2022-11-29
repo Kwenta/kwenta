@@ -1,13 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
-import { fetchSynthBalances } from 'state/balances/actions';
-import { AppThunk } from 'state/store';
-import { FetchStatus, ThunkConfig } from 'state/types';
 
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { Rates } from 'queries/rates/types';
+import { fetchSynthBalances } from 'state/balances/actions';
+import { AppThunk } from 'state/store';
+import { FetchStatus, ThunkConfig } from 'state/types';
 import { toWei, truncateNumbers } from 'utils/formatters/number';
 
 import { selectBaseBalanceWei, selectQuoteBalanceWei } from './selectors';

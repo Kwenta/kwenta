@@ -3,9 +3,6 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { FC, useMemo } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { closeModal } from 'state/exchange/reducer';
-import { selectEstimatedBaseTradePrice } from 'state/exchange/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
@@ -20,6 +17,9 @@ import Connector from 'containers/Connector';
 import useCurrencyPrice from 'hooks/useCurrencyPrice';
 import useIsL2 from 'hooks/useIsL2';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
+import { closeModal } from 'state/exchange/reducer';
+import { selectEstimatedBaseTradePrice } from 'state/exchange/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import {
 	FlexDivRowCentered,
 	numericValueCSS,

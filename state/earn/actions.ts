@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { ThunkConfig } from 'state/types';
 
 import { monitorTransaction } from 'contexts/RelayerContext';
+import { ThunkConfig } from 'state/types';
 
 export const approveLPToken = createAsyncThunk<any, void, ThunkConfig>(
 	'earn/approveLPToken',

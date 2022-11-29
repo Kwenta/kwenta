@@ -2,9 +2,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { setMarketAsset } from 'state/futures/reducer';
-import { useAppDispatch } from 'state/hooks';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Error from 'components/Error';
@@ -25,14 +23,17 @@ import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
 import TradeCrossMargin from 'sections/futures/TradeCrossMargin';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
+import { fetchMarkets } from 'state/futures/actions';
+import { setMarketAsset } from 'state/futures/reducer';
+import { selectMarketAsset } from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks';
 import {
-	currentMarketState,
 	futuresAccountState,
 	futuresAccountTypeState,
 	showCrossMarginOnboardState,
 } from 'store/futures';
 import { PageContent, FullHeightContainer, RightSideContent } from 'styles/common';
-import { FuturesMarketAsset } from 'utils/futures';
+import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
 
 type MarketComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
@@ -42,19 +43,19 @@ const Market: MarketComponent = () => {
 	const { walletAddress } = Connector.useContainer();
 	const futuresData = useFuturesData();
 	const dispatch = useAppDispatch();
+	usePollAction(fetchMarkets);
 
-	const marketAsset = router.query.asset as FuturesMarketAsset;
+	const routerMarketAsset = router.query.asset as FuturesMarketAsset;
 
-	const setCurrentMarket = useSetRecoilState(currentMarketState);
+	const setCurrentMarket = useAppSelector(selectMarketAsset);
 	const account = useRecoilValue(futuresAccountState);
 	const [showOnboard, setShowOnboard] = useRecoilState(showCrossMarginOnboardState);
 
 	useEffect(() => {
-		if (marketAsset) {
-			setCurrentMarket(marketAsset);
-			dispatch(setMarketAsset(marketAsset));
+		if (routerMarketAsset && MarketKeyByAsset[routerMarketAsset]) {
+			dispatch(setMarketAsset(routerMarketAsset));
 		}
-	}, [dispatch, router, setCurrentMarket, marketAsset]);
+	}, [router, setCurrentMarket, dispatch, routerMarketAsset]);
 
 	return (
 		<FuturesContext.Provider value={futuresData}>

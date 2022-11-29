@@ -3,10 +3,10 @@ import { useQuery, UseQueryOptions } from 'react-query';
 import { useSetRecoilState } from 'recoil';
 import { chain, useNetwork } from 'wagmi';
 
-import { PERIOD_IN_SECONDS } from 'constants/period';
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
+import { PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { futuresVolumesState } from 'store/futures';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import logError from 'utils/logError';

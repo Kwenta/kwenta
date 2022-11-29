@@ -4,8 +4,9 @@ import styled from 'styled-components';
 
 import TVChart from 'components/TVChart';
 import useAverageEntryPrice from 'hooks/useAverageEntryPrice';
+import { selectMarketAsset } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import {
-	currentMarketState,
 	positionState,
 	potentialTradeDetailsState,
 	positionHistoryState,
@@ -15,7 +16,8 @@ import {
 
 export default function PositionChart() {
 	const [isChartReady, setIsChartReady] = useState(false);
-	const marketAsset = useRecoilValue(currentMarketState);
+	const marketAsset = useAppSelector(selectMarketAsset);
+
 	const position = useRecoilValue(positionState);
 	const positionHistory = useRecoilValue(positionHistoryState);
 	const futuresAccountType = useRecoilValue(futuresAccountTypeState);

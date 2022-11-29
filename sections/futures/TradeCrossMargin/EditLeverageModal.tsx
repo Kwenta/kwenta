@@ -3,8 +3,6 @@ import { debounce } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { setOrderType as setReduxOrderType } from 'state/futures/reducer';
-import { useAppDispatch } from 'state/hooks';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
@@ -20,10 +18,11 @@ import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 import { ORDER_PREVIEW_ERRORS_I18N, previewErrorI18n } from 'queries/futures/constants';
+import { setOrderType as setReduxOrderType } from 'state/futures/reducer';
+import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
+import { useAppSelector, useAppDispatch } from 'state/hooks';
 import {
 	crossMarginTotalMarginState,
-	currentMarketState,
-	marketInfoState,
 	orderTypeState,
 	positionState,
 	potentialTradeDetailsState,
@@ -55,9 +54,9 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 		onChangeOpenPosLeverage,
 	} = useFuturesContext();
 
-	const market = useRecoilValue(marketInfoState);
+	const marketAsset = useAppSelector(selectMarketAsset);
+	const market = useAppSelector(selectMarketInfo);
 	const position = useRecoilValue(positionState);
-	const marketAsset = useRecoilValue(currentMarketState);
 	const totalMargin = useRecoilValue(crossMarginTotalMarginState);
 	const tradeFees = useRecoilValue(tradeFeesState);
 	const { error: previewError, data: previewData } = useRecoilValue(potentialTradeDetailsState);

@@ -1,5 +1,7 @@
 import Wei, { wei } from '@synthetixio/wei';
 
+import { FuturesAccountType } from 'queries/futures/types';
+
 // Redux recommends that values stored in state are serializable
 // (Generally for diffing, performance and persistence reasons).
 //
@@ -46,3 +48,6 @@ export const deserializeWeiObject = (object: object, keys: Set<string>, prefix?:
 		return acc;
 	}, {} as any);
 };
+
+export const accountType = (type: FuturesAccountType) =>
+	type === 'cross_margin' ? 'crossMargin' : 'isolatedMargin';

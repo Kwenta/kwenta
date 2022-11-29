@@ -1,3 +1,4 @@
+import Wei from '@synthetixio/wei';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SetterOrUpdater, useRecoilValue } from 'recoil';
@@ -15,14 +16,25 @@ import { MarketsTab } from '../Markets/Markets';
 import { PositionsTab } from '../Overview/Overview';
 import SynthBalancesTable from '../SynthBalancesTable';
 
-type OpenPositionsProps = {
+export type OpenPositionsProps = {
 	activePositionsTab: PositionsTab;
 	setActivePositionsTab: SetterOrUpdater<PositionsTab>;
+	exchangeTokens: {
+		synth: string;
+		description: string;
+		balance: Wei;
+		usdBalance: Wei;
+		price: Wei;
+		priceChange: Wei;
+	}[];
+	exchangeTokenBalances: Wei;
 };
 
 const OpenPositions: React.FC<OpenPositionsProps> = ({
 	activePositionsTab,
 	setActivePositionsTab,
+	exchangeTokens,
+	exchangeTokenBalances,
 }) => {
 	const { t } = useTranslation();
 	const positions = useRecoilValue(positionsState);
@@ -53,12 +65,21 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 				name: PositionsTab.SPOT,
 				label: t('dashboard.overview.positions-tabs.spot'),
 				active: activePositionsTab === PositionsTab.SPOT,
-				detail: formatDollars(balances.totalUSDBalance),
+				detail: formatDollars(balances.totalUSDBalance.add(exchangeTokenBalances)),
 				disabled: false,
 				onClick: () => setActivePositionsTab(PositionsTab.SPOT),
 			},
 		],
-		[positions, activePositionsTab, setActivePositionsTab, t, portfolio, balances]
+		[
+			t,
+			positions,
+			activePositionsTab,
+			portfolio.crossMarginFutures,
+			portfolio.isolatedMarginFutures,
+			balances.totalUSDBalance,
+			exchangeTokenBalances,
+			setActivePositionsTab,
+		]
 	);
 
 	return (
@@ -84,7 +105,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 			</TabPanel>
 
 			<TabPanel name={MarketsTab.SPOT} activeTab={activePositionsTab}>
-				<SynthBalancesTable />
+				<SynthBalancesTable exchangeTokens={exchangeTokens} />
 			</TabPanel>
 		</div>
 	);
