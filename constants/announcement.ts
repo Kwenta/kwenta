@@ -1,5 +1,5 @@
 // Shows or hides the home page banner entirely when set to true/false
-export const BANNER_ENABLED = true;
+export const BANNER_ENABLED = false;
 // Sets the link destination for the banner component, or renders the banner as
 // plain, un-clickable text if set to a falsey value (`false`, `null`, '', etc...)
 export const BANNER_LINK_URL =
