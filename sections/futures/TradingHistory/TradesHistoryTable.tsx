@@ -52,7 +52,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 						})
 				: [];
 		return [...new Set(futuresTrades)];
-	}, [futuresTradesQuery.data, marketKey]);
+	}, [futuresTradesQuery.data]);
 
 	const observer = useRef<IntersectionObserver | null>(null);
 	const lastElementRef = useCallback(
