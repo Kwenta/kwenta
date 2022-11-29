@@ -97,18 +97,19 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 		formattedValue.push(prefix);
 	}
 
-	let weiBeforeAsString = truncation ? weiValue.abs().div(truncation.divisor) : weiValue.abs();
+	const weiBeforeAsString = truncation ? weiValue.abs().div(truncation.divisor) : weiValue.abs();
 
-	let weiAsStringWithDecimals = weiBeforeAsString.toString(suggestedDecimals(weiBeforeAsString));
+	const dp = suggestedDecimals(weiBeforeAsString);
+
+	let weiAsStringWithDecimals = weiBeforeAsString.toString(dp);
 
 	if (options?.maxDecimals || options?.maxDecimals === 0) {
 		weiAsStringWithDecimals = wei(weiAsStringWithDecimals).toString(options.maxDecimals);
 	}
 
-	const withCommas = commifyAndPadDecimals(
-		weiAsStringWithDecimals,
-		suggestedDecimals(weiAsStringWithDecimals)
-	);
+	const decimals = suggestedDecimals(weiAsStringWithDecimals);
+
+	const withCommas = commifyAndPadDecimals(weiAsStringWithDecimals, decimals);
 
 	formattedValue.push(withCommas);
 
