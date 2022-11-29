@@ -6,6 +6,7 @@ import { DEFAULT_NUMBER_OF_TRADES, MAX_TIMESTAMP } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { notNill } from 'queries/synths/utils';
+import { FuturesMarketKey } from 'sdk/types/futures';
 import logError from 'utils/logError';
 
 import { getFuturesTrades } from './subgraph';
@@ -13,7 +14,7 @@ import { FuturesTrade } from './types';
 import { getFuturesEndpoint, mapTrades } from './utils';
 
 const useGetFuturesTrades = (
-	currencyKey: string | undefined,
+	currencyKey: FuturesMarketKey | undefined,
 	options?: UseInfiniteQueryOptions<FuturesTrade[] | null> & { forceAccount: boolean }
 ) => {
 	const { network } = Connector.useContainer();
