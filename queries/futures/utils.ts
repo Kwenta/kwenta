@@ -12,7 +12,6 @@ import { FuturesMarket } from 'sdk/types/futures';
 import { formatCurrency, formatDollars, weiFromWei, zeroBN } from 'utils/formatters/number';
 import {
 	FuturesMarketAsset,
-	FuturesMarketKey,
 	getDisplayAsset,
 	getMarketName,
 	MarketKeyByAsset,
