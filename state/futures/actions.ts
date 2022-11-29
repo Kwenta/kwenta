@@ -29,6 +29,8 @@ export const fetchMarkets = createAsyncThunk<
 	const markets = await sdk.futures.getMarkets();
 	const serializedMarkets = serializeMarkets(markets);
 
+	// TODO: Check if average funding rates are correct
+	// If so, remove
 	const averageFundingRates = await sdk.futures.getAverageFundingRates(markets);
 	const serializedRates = averageFundingRates.map((r) => ({
 		...r,

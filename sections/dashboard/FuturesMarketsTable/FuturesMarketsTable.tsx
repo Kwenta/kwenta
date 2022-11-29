@@ -42,22 +42,13 @@ const FuturesMarketsTable: FC = () => {
 			const pastPrice = pastRates.find((price) => price.synth === market.asset);
 
 			return {
-				asset: market.asset,
-				market: market.marketName,
+				...market,
+				marketSize: market.marketSize.mul(market.price),
 				synth: synthsMap[market.asset],
 				description,
-				price: market.price,
 				volume: volume?.toNumber() ?? 0,
 				pastPrice: pastPrice?.price,
 				priceChange: pastPrice?.price && market.price.sub(pastPrice?.price).div(market.price),
-				fundingRate: market.currentFundingRate.div(24),
-				openInterest: market.marketSize.mul(market.price),
-				openInterestNative: market.marketSize,
-				longInterest: market.marketSize.add(market.marketSkew).div('2').abs().mul(market.price),
-				shortInterest: market.marketSize.sub(market.marketSkew).div('2').abs().mul(market.price),
-				marketSkew: market.marketSkew,
-				isSuspended: market.isSuspended,
-				marketClosureReason: market.marketClosureReason,
 			};
 		});
 	}, [synthsMap, futuresMarkets, pastRates, futuresVolumes, t]);
@@ -91,7 +82,7 @@ const FuturesMarketsTable: FC = () => {
 												/>
 											</IconContainer>
 											<StyledText>
-												{cellProps.row.original.market}
+												{cellProps.row.original.marketName}
 												<MarketBadge
 													currencyKey={cellProps.row.original.asset}
 													isFuturesMarketClosed={cellProps.row.original.isSuspended}
@@ -173,7 +164,7 @@ const FuturesMarketsTable: FC = () => {
 								Cell: (cellProps: CellProps<any>) => {
 									return (
 										<ChangePercent
-											value={cellProps.row.original.fundingRate}
+											value={cellProps.row.original.currentFundingRate}
 											decimals={6}
 											showArrow={false}
 											className="change-pct"
@@ -184,8 +175,8 @@ const FuturesMarketsTable: FC = () => {
 								width: 125,
 								sortType: useMemo(
 									() => (rowA: any, rowB: any) => {
-										const rowOne = rowA.original.fundingRate ?? wei(0);
-										const rowTwo = rowB.original.fundingRate ?? wei(0);
+										const rowOne = rowA.original.currentFundingRate ?? wei(0);
+										const rowTwo = rowB.original.currentFundingRate ?? wei(0);
 										return rowOne.toNumber() > rowTwo.toNumber() ? -1 : 1;
 									},
 									[]
@@ -203,13 +194,13 @@ const FuturesMarketsTable: FC = () => {
 										<OpenInterestContainer>
 											<StyledLongPrice
 												currencyKey={'sUSD'}
-												price={cellProps.row.original.longInterest}
+												price={cellProps.row.original.openInterest.longUSD}
 												sign={'$'}
 												truncate
 											/>
 											<StyledShortPrice
 												currencyKey={'sUSD'}
-												price={cellProps.row.original.shortInterest}
+												price={cellProps.row.original.openInterest.shortUSD}
 												sign={'$'}
 												truncate
 											/>
@@ -220,10 +211,8 @@ const FuturesMarketsTable: FC = () => {
 								sortable: true,
 								sortType: useMemo(
 									() => (rowA: any, rowB: any) => {
-										const rowOne =
-											rowA.original.longInterest.add(rowA.original.shortInterest) ?? wei(0);
-										const rowTwo =
-											rowB.original.longInterest.add(rowB.original.shortInterest) ?? wei(0);
+										const rowOne = rowA.original.marketSize ?? wei(0);
+										const rowTwo = rowB.original.marketSize ?? wei(0);
 										return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1;
 									},
 									[]
@@ -323,7 +312,7 @@ const FuturesMarketsTable: FC = () => {
 									<div>
 										<Currency.Price
 											currencyKey={'sUSD'}
-											price={cellProps.row.original.openInterest}
+											price={cellProps.row.original.marketSize}
 											sign="$"
 											truncate
 										/>

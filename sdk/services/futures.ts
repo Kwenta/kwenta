@@ -117,7 +117,7 @@ export default class FuturesService {
 				marketName: getMarketName(parseBytes32String(asset) as FuturesMarketAsset),
 				asset: parseBytes32String(asset) as FuturesMarketAsset,
 				assetHex: asset,
-				currentFundingRate: wei(currentFundingRate).neg(),
+				currentFundingRate: wei(currentFundingRate).div(24),
 				currentRoundId: wei(currentRoundIds[i], 0),
 				feeRates: {
 					makerFee: wei(feeRates.makerFee),
