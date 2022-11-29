@@ -178,12 +178,24 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 			</CardGridContainer>
 			<CardGridContainer>
 				<CardGrid>
-					<div>
-						<div className="title">
-							{t('dashboard.stake.tabs.trading-rewards.future-fee-paid', { EpochPeriod: period })}
+					<CustomStyledTooltip
+						preset="bottom"
+						width={'280px'}
+						height={'auto'}
+						style={{ padding: '5px 10px 5px 15px' }}
+						content={t('dashboard.stake.tabs.trading-rewards.trading-rewards-tooltip')}
+					>
+						<div>
+							<WithCursor cursor="help">
+								<div className="title">
+									{t('dashboard.stake.tabs.trading-rewards.future-fee-paid', {
+										EpochPeriod: period,
+									})}
+								</div>
+								<div className="value">{formatDollars(futuresFeePaid, { minDecimals: 2 })}</div>
+							</WithCursor>
 						</div>
-						<div className="value">{formatDollars(futuresFeePaid, { minDecimals: 2 })}</div>
-					</div>
+					</CustomStyledTooltip>
 					<div>
 						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.fees-paid', { EpochPeriod: period })}
@@ -192,23 +204,14 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 					</div>
 					{epochPeriod === period ? (
 						<>
-							<CustomStyledTooltip
-								preset="bottom"
-								width={'280px'}
-								height={'auto'}
-								content={t('dashboard.stake.tabs.trading-rewards.trading-rewards-tooltip')}
-							>
-								<div>
-									<WithCursor cursor="help">
-										<div className="title">
-											{t('dashboard.stake.tabs.trading-rewards.estimated-rewards', {
-												EpochPeriod: period,
-											})}
-										</div>
-										<KwentaLabel>{truncateNumbers(wei(estimatedReward), 4)}</KwentaLabel>
-									</WithCursor>
+							<div>
+								<div className="title">
+									{t('dashboard.stake.tabs.trading-rewards.estimated-rewards', {
+										EpochPeriod: period,
+									})}
 								</div>
-							</CustomStyledTooltip>
+								<KwentaLabel>{truncateNumbers(wei(estimatedReward), 4)}</KwentaLabel>
+							</div>
 							<div>
 								<div className="title">
 									{t('dashboard.stake.tabs.trading-rewards.estimated-fee-share', {
@@ -228,7 +231,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 const CustomStyledTooltip = styled(StyledTooltip)`
 	${media.lessThan('md')`
 		width: 280px;
-		right: -30px;
+		left: -5px;
 	`}
 `;
 
