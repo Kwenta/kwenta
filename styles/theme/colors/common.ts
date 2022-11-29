@@ -28,7 +28,7 @@ const common = {
 	light: {
 		white: '#F2F2F2',
 		yellow: '#6A3300',
-		background: '#BFBFBF',
+		background: '#F2F2F2',
 		surfaceFill: '#CFCFCF',
 		title: '#171002',
 		border: '1px solid rgba(0,0,0,0.17)',
