@@ -176,6 +176,7 @@ const StakingSelect = styled(Select)`
 	.react-select__menu,
 	.react-select__menu-list {
 		border-radius: 20px;
+		background: ${(props) => props.theme.colors.selectedTheme.surfaceFill};
 	}
 	.react-select__value-container {
 		padding: 0;
