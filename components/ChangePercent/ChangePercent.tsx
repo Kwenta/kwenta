@@ -25,7 +25,7 @@ export const ChangePercent: FC<ChangePercentProps> = ({
 	const isPositive = value && wei(value).gt(0);
 
 	return (
-		<CurrencyChange isValid={isValid} isPositive={isPositive} {...rest}>
+		<CurrencyChange isValid={isValid} isPositive={isPositive} isZero={isZero} {...rest}>
 			{!isValid ? (
 				<>{NO_VALUE}</>
 			) : !showArrow ? (
@@ -40,11 +40,11 @@ export const ChangePercent: FC<ChangePercentProps> = ({
 	);
 };
 
-const CurrencyChange = styled.span<{ isValid: boolean; isPositive: boolean }>`
+const CurrencyChange = styled.span<{ isValid: boolean; isPositive: boolean; isZero: boolean }>`
 	display: inline-flex;
 	align-items: center;
 	color: ${(props) =>
-		!props.isValid
+		!props.isValid || props.isZero
 			? props.theme.colors.selectedTheme.white
 			: props.isPositive
 			? props.theme.colors.selectedTheme.green
@@ -57,7 +57,9 @@ const CurrencyChange = styled.span<{ isValid: boolean; isPositive: boolean }>`
 		height: 10px;
 		path {
 			fill: ${(props) =>
-				props.isPositive
+				props.isZero
+					? props.theme.colors.selectedTheme.white
+					: props.isPositive
 					? props.theme.colors.selectedTheme.green
 					: props.theme.colors.selectedTheme.red};
 		}
