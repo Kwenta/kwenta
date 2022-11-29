@@ -4,11 +4,7 @@ import { BigNumber, ethers, utils } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 
 import { CurrencyKey } from 'constants/currency';
-import {
-	DEFAULT_CRYPTO_DECIMALS,
-	DEFAULT_FIAT_DECIMALS,
-	DEFAULT_NUMBER_DECIMALS,
-} from 'constants/defaults';
+import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import { isFiatCurrency } from 'utils/currencies';
 import logError from 'utils/logError';
 
@@ -57,7 +53,7 @@ export const truncateNumbers = (value: WeiSource, maxDecimalDigits: number) => {
 
 /**
  * ethers utils.commify method will reduce the decimals of a number to one digit if those decimals are zero.
- * This helper is used to reverse this behavior in order to display the specified decmials in the output.
+ * This helper is used to reverse this behavior in order to display the specified decimals in the output.
  *
  * ex: utils.commify('10000', 2) => '10,000.0'
  * ex: commifyAndPadDecimals('10000', 2)) => '10,000.00'
@@ -101,12 +97,9 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 		formattedValue.push(prefix);
 	}
 
-	let weiAsStringWithDecimals = truncation
-		? weiValue
-				.abs()
-				.div(truncation.divisor)
-				.toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS)
-		: weiValue.abs().toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS);
+	let weiBeforeAsString = truncation ? weiValue.abs().div(truncation.divisor) : weiValue.abs();
+
+	let weiAsStringWithDecimals = weiBeforeAsString.toString(suggestedDecimals(weiBeforeAsString));
 
 	if (options?.maxDecimals || options?.maxDecimals === 0) {
 		weiAsStringWithDecimals = wei(weiAsStringWithDecimals).toString(options.maxDecimals);
@@ -114,7 +107,7 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 
 	const withCommas = commifyAndPadDecimals(
 		weiAsStringWithDecimals,
-		options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS
+		suggestedDecimals(weiAsStringWithDecimals)
 	);
 
 	formattedValue.push(withCommas);
