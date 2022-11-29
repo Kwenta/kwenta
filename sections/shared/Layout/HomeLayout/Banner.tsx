@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { BANNER_LINK_URL, BANNER_TEXT } from 'constants/announcement';
+import { BANNER_ENABLED, BANNER_LINK_URL, BANNER_TEXT } from 'constants/announcement';
 import media from 'styles/media';
 
 const Banner = () => {
-	if (!BANNER_TEXT) return null;
+	if (!BANNER_ENABLED) return null;
 
 	const linkProps = BANNER_LINK_URL
 		? { href: BANNER_LINK_URL, target: '_blank' }
