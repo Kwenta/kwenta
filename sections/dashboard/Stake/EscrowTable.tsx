@@ -61,19 +61,22 @@ const EscrowTable = () => {
 		[checkedState, escrowData]
 	);
 
-	const ids = useMemo(() => {
-		return escrowData.filter((_, i) => !!checkedState[i]).map((d) => d.id);
+	const { ids, vestEnabled } = useMemo(() => {
+		const ids = escrowData.filter((_, i) => !!checkedState[i]).map((d) => d.id);
+		const vestEnabled = ids.length > 0;
+
+		return { ids, vestEnabled };
 	}, [escrowData, checkedState]);
 
 	const handleVest = useCallback(async () => {
-		if (ids.length > 0) {
+		if (vestEnabled) {
 			await dispatch(vestEscrowedRewards(ids));
 			setCheckedState(escrowData.map((_) => false));
 			setCheckAllState(false);
 		}
 
 		setConfirmModalOpen(false);
-	}, [dispatch, escrowData, ids]);
+	}, [dispatch, escrowData, ids, vestEnabled]);
 
 	const openConfirmModal = useCallback(() => setConfirmModalOpen(true), []);
 	const closeConfirmModal = useCallback(() => setConfirmModalOpen(false), []);
@@ -218,18 +221,17 @@ const EscrowTable = () => {
 					<div>
 						<div className="stat-title">{t('dashboard.stake.tabs.escrow.total')}</div>
 						<div className="stat-value">
-							{truncateNumbers(totalVestable ?? 0, 4)}{' '}
+							{truncateNumbers(totalVestable, 4)}{' '}
 							{t('dashboard.stake.tabs.stake-table.kwenta-token')}
 						</div>
 					</div>
 					<div>
 						<div className="stat-title">{t('dashboard.stake.tabs.escrow.fee')}</div>
 						<div className="stat-value">
-							{truncateNumbers(totalFee ?? 0, 4)}{' '}
-							{t('dashboard.stake.tabs.stake-table.kwenta-token')}
+							{truncateNumbers(totalFee, 4)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
 						</div>
 					</div>
-					<VestButton disabled={false} onClick={openConfirmModal}>
+					<VestButton disabled={!vestEnabled} onClick={openConfirmModal}>
 						{t('dashboard.stake.tabs.escrow.vest')}
 					</VestButton>
 				</div>
