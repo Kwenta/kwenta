@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useContractReads, useContractWrite, usePrepareContractWrite } from 'wagmi';
+
 import HelpIcon from 'assets/svg/app/question-mark.svg';
 import Button from 'components/Button';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
@@ -19,7 +20,6 @@ import {
 	EpochDataProps,
 	FuturesFeeForAccountProps,
 	FuturesFeeProps,
-	getTradingRewards,
 	TradingRewardProps,
 } from 'queries/staking/utils';
 import { FlexDivRow } from 'styles/common';
@@ -39,8 +39,6 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 	const {
 		multipleMerkleDistributorContract,
 		periods,
-		weekCounter,
-		epochPeriod,
 		resetTime,
 		userStakedBalance,
 		totalStakedBalance,
@@ -127,16 +125,14 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 
 	const { writeAsync: claim } = useContractWrite(config);
 
-	const { ratio, score: estimatedReward } = useMemo(() => {
-		const weeklyReward = getTradingRewards(weekCounter);
+	const { ratio } = useMemo(() => {
 		const userScore = cobbDouglas(futuresFeePaid, userStakedBalance);
 		const totalScore = cobbDouglas(totalFuturesFeePaid, totalStakedBalance);
 		const ratio = wei(totalScore).gt(0) ? wei(userScore).div(wei(totalScore)) : zeroBN;
 		return {
 			ratio,
-			score: wei(ratio).mul(weeklyReward),
 		};
-	}, [futuresFeePaid, totalFuturesFeePaid, totalStakedBalance, userStakedBalance, weekCounter]);
+	}, [futuresFeePaid, totalFuturesFeePaid, totalStakedBalance, userStakedBalance]);
 
 	return (
 		<TradingRewardsContainer>
@@ -205,26 +201,14 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 						</div>
 						<div className="value">{formatDollars(totalFuturesFeePaid, { minDecimals: 2 })}</div>
 					</div>
-					{epochPeriod === period ? (
-						<>
-							<div>
-								<div className="title">
-									{t('dashboard.stake.tabs.trading-rewards.estimated-rewards', {
-										EpochPeriod: period,
-									})}
-								</div>
-								<KwentaLabel>{truncateNumbers(wei(estimatedReward), 4)}</KwentaLabel>
-							</div>
-							<div>
-								<div className="title">
-									{t('dashboard.stake.tabs.trading-rewards.estimated-fee-share', {
-										EpochPeriod: period,
-									})}
-								</div>
-								<div className="value">{formatPercent(ratio, { minDecimals: 2 })}</div>
-							</div>
-						</>
-					) : null}
+					<div>
+						<div className="title">
+							{t('dashboard.stake.tabs.trading-rewards.estimated-fee-share', {
+								EpochPeriod: period,
+							})}
+						</div>
+						<div className="value">{formatPercent(ratio, { minDecimals: 2 })}</div>
+					</div>
 				</CardGrid>
 			</CardGridContainer>
 		</TradingRewardsContainer>
