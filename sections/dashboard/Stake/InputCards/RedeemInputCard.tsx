@@ -119,7 +119,7 @@ const StakeInputHeader = styled.div`
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 10px;
-	color: ${(props) => props.theme.colors.selectedTheme.text.label};
+	color: ${(props) => props.theme.colors.selectedTheme.title};
 	font-size: 14px;
 
 	.max {

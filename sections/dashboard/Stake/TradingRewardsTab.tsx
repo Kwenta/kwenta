@@ -258,6 +258,11 @@ const CardGrid = styled.div`
 	.value {
 		margin-top: 5px;
 	}
+
+	.title {
+		color: ${(props) => props.theme.colors.selectedTheme.title};
+	}
+
 	${media.lessThan('md')`
 		column-gap: 10px;
 	`}

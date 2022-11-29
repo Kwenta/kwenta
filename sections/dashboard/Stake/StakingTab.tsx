@@ -99,6 +99,10 @@ const CardGrid = styled.div`
 	.value {
 		margin-top: 5px;
 	}
+
+	.title {
+		color: ${(props) => props.theme.colors.selectedTheme.title};
+	}
 `;
 
 export default StakingTab;

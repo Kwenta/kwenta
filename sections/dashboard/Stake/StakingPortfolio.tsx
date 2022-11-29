@@ -126,7 +126,7 @@ const StakingPortfolioContainer = styled.div`
 `;
 
 const Header = styled(Text.Heading)`
-	color: ${(props) => props.theme.colors.selectedTheme.text.value};
+	color: ${(props) => props.theme.colors.selectedTheme.yellow};
 	margin-bottom: 15px;
 	font-variant: all-small-caps;
 `;
