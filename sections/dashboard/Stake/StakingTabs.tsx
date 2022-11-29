@@ -103,6 +103,11 @@ const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab }) => {
 						active={activeTab === StakeTab.Staking}
 					/>
 					<TabButton
+						title={t('dashboard.stake.tabs.escrow.title')}
+						onClick={handleTabSwitch(StakeTab.Escrow)}
+						active={activeTab === StakeTab.Escrow}
+					/>
+					<TabButton
 						title={
 							window.innerWidth > 768
 								? t('dashboard.stake.tabs.trading-rewards.title')
@@ -110,11 +115,6 @@ const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab }) => {
 						}
 						onClick={handleTabSwitch(StakeTab.TradingRewards)}
 						active={activeTab === StakeTab.TradingRewards}
-					/>
-					<TabButton
-						title={t('dashboard.stake.tabs.escrow.title')}
-						onClick={handleTabSwitch(StakeTab.Escrow)}
-						active={activeTab === StakeTab.Escrow}
 					/>
 					<TabButton
 						title={t('dashboard.stake.tabs.redemption.title')}
