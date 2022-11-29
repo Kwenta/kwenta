@@ -42,6 +42,7 @@ const useGetAllFuturesTradesForAccount = (
 					accountType: true,
 					margin: true,
 					size: true,
+					marketKey: true,
 					asset: true,
 					price: true,
 					positionId: true,

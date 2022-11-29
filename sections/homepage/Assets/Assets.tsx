@@ -199,7 +199,8 @@ const Assets = () => {
 		return (
 			futuresMarkets?.map((market) => {
 				const description = getSynthDescription(market.asset, l2SynthsMap, t);
-				const volume = futuresVolumes[market.assetHex]?.volume?.toNumber() ?? 0;
+
+				const volume = futuresVolumes[market?.marketKey ?? '']?.volume?.toNumber() ?? 0;
 				const pastPrice = pastRates.find(
 					(price: Price) => price.synth === market.asset || price.synth === market.asset.slice(1)
 				);
