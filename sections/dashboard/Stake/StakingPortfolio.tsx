@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
-import Text from 'components/Text';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { useStakingContext } from 'contexts/StakingContext';
+import { Heading } from 'sections/earn/common';
 import { FlexDivRowCentered } from 'styles/common';
 import media from 'styles/media';
 import { truncateNumbers } from 'utils/formatters/number';
@@ -83,7 +83,7 @@ const StakingPortfolio = () => {
 		<>
 			<StakingPortfolioContainer>
 				<FlexDivRowCentered>
-					<Header variant="h4">{t('dashboard.stake.portfolio.title')}</Header>
+					<Heading>{t('dashboard.stake.portfolio.title')}</Heading>
 					<StyledTabButton
 						isRounded
 						title={'Staking Docs'}
@@ -123,12 +123,6 @@ const StakingPortfolioContainer = styled.div`
 	${media.greaterThan('mdUp')`
 		margin-bottom: 100px;
 	`}
-`;
-
-const Header = styled(Text.Heading)`
-	color: ${(props) => props.theme.colors.selectedTheme.yellow};
-	margin-bottom: 15px;
-	font-variant: all-small-caps;
 `;
 
 const CardsContainer = styled.div`
