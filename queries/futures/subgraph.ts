@@ -1632,6 +1632,12 @@ export type FuturesMarginTransferFilter = {
 	asset_not_in?: string[];
 	asset_contains?: string | null;
 	asset_not_contains?: string | null;
+	marketKey?: string | null;
+	marketKey_not?: string | null;
+	marketKey_in?: string[];
+	marketKey_not_in?: string[];
+	marketKey_contains?: string | null;
+	marketKey_not_contains?: string | null;
 	size?: WeiSource | null;
 	size_not?: WeiSource | null;
 	size_gt?: WeiSource | null;
@@ -1668,6 +1674,7 @@ export type FuturesMarginTransferResult = {
 	account: string;
 	market: string;
 	asset: string;
+	marketKey: string;
 	size: Wei;
 	txHash: string;
 };
@@ -1677,6 +1684,7 @@ export type FuturesMarginTransferFields = {
 	account: true;
 	market: true;
 	asset: true;
+	marketKey: true;
 	size: true;
 	txHash: true;
 };
@@ -1704,6 +1712,7 @@ export const getFuturesMarginTransferById = async function <
 	if (obj['account']) formattedObj['account'] = obj['account'];
 	if (obj['market']) formattedObj['market'] = obj['market'];
 	if (obj['asset']) formattedObj['asset'] = obj['asset'];
+	if (obj['marketKey']) formattedObj['marketKey'] = obj['marketKey'];
 	if (obj['size']) formattedObj['size'] = wei(obj['size'], 0);
 	if (obj['txHash']) formattedObj['txHash'] = obj['txHash'];
 	return formattedObj as Pick<FuturesMarginTransferResult, K>;
@@ -1750,6 +1759,7 @@ export const getFuturesMarginTransfers = async function <
 			if (obj['account']) formattedObj['account'] = obj['account'];
 			if (obj['market']) formattedObj['market'] = obj['market'];
 			if (obj['asset']) formattedObj['asset'] = obj['asset'];
+			if (obj['marketKey']) formattedObj['marketKey'] = obj['marketKey'];
 			if (obj['size']) formattedObj['size'] = wei(obj['size'], 0);
 			if (obj['txHash']) formattedObj['txHash'] = obj['txHash'];
 			return formattedObj as Pick<FuturesMarginTransferResult, K>;
@@ -1914,6 +1924,12 @@ export type FuturesOrderFilter = {
 	asset_not_in?: string[];
 	asset_contains?: string | null;
 	asset_not_contains?: string | null;
+	marketKey?: string | null;
+	marketKey_not?: string | null;
+	marketKey_in?: string[];
+	marketKey_not_in?: string[];
+	marketKey_contains?: string | null;
+	marketKey_not_contains?: string | null;
 	market?: string | null;
 	market_not?: string | null;
 	market_in?: string[];
@@ -1992,6 +2008,7 @@ export type FuturesOrderResult = {
 	id: string;
 	size: Wei;
 	asset: string;
+	marketKey: string;
 	market: string;
 	account: string;
 	abstractAccount: string;
@@ -2008,6 +2025,7 @@ export type FuturesOrderFields = {
 	id: true;
 	size: true;
 	asset: true;
+	marketKey: true;
 	market: true;
 	account: true;
 	abstractAccount: true;
@@ -2040,6 +2058,7 @@ export const getFuturesOrderById = async function <K extends keyof FuturesOrderR
 	if (obj['id']) formattedObj['id'] = obj['id'];
 	if (obj['size']) formattedObj['size'] = wei(obj['size'], 0);
 	if (obj['asset']) formattedObj['asset'] = obj['asset'];
+	if (obj['marketKey']) formattedObj['marketKey'] = obj['marketKey'];
 	if (obj['market']) formattedObj['market'] = obj['market'];
 	if (obj['account']) formattedObj['account'] = obj['account'];
 	if (obj['abstractAccount']) formattedObj['abstractAccount'] = obj['abstractAccount'];
@@ -2088,6 +2107,7 @@ export const getFuturesOrders = async function <K extends keyof FuturesOrderResu
 			if (obj['id']) formattedObj['id'] = obj['id'];
 			if (obj['size']) formattedObj['size'] = wei(obj['size'], 0);
 			if (obj['asset']) formattedObj['asset'] = obj['asset'];
+			if (obj['marketKey']) formattedObj['marketKey'] = obj['marketKey'];
 			if (obj['market']) formattedObj['market'] = obj['market'];
 			if (obj['account']) formattedObj['account'] = obj['account'];
 			if (obj['abstractAccount']) formattedObj['abstractAccount'] = obj['abstractAccount'];

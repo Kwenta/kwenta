@@ -17,7 +17,7 @@ import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
 import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
 import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
-import { selectMarketAsset, selectPosition } from 'state/futures/selectors';
+import { selectMarketAsset, selectMarketKey, selectPosition } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { futuresAccountTypeState, openOrdersState } from 'store/futures';
 
@@ -43,6 +43,7 @@ const UserInfo: React.FC = () => {
 	const router = useRouter();
 	const { walletAddress } = Connector.useContainer();
 
+	const marketKey = useAppSelector(selectMarketKey);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const position = useAppSelector(selectPosition);
 
@@ -53,13 +54,13 @@ const UserInfo: React.FC = () => {
 	const [hasOpenPosition, setHasOpenPosition] = useState(false);
 	const [openProfitCalcModal, setOpenProfitCalcModal] = useState(false);
 
-	const marginTransfersQuery = useGetFuturesMarginTransfers(marketAsset);
+	const marginTransfersQuery = useGetFuturesMarginTransfers(marketKey);
 	const marginTransfers = useMemo(
 		() => (marginTransfersQuery.isSuccess ? marginTransfersQuery?.data ?? [] : []),
 		[marginTransfersQuery.isSuccess, marginTransfersQuery.data]
 	);
 
-	const futuresTradesQuery = useGetFuturesTradesForAccount(marketAsset, walletAddress);
+	const futuresTradesQuery = useGetFuturesTradesForAccount(marketKey, walletAddress);
 
 	const history: FuturesTrade[] = useMemo(
 		() => (futuresTradesQuery.isSuccess ? futuresTradesQuery?.data ?? [] : []),
