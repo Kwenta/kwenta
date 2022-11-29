@@ -208,8 +208,7 @@ export const weiFromWei = (weiAmount: WeiSource) => {
 export const suggestedDecimals = (value: WeiSource) => {
 	value = wei(value).toNumber();
 	if (value >= 10000) return 0;
-	if (value >= 1) return 2;
-	if (value >= 0.01) return 3;
+	if (value >= 10 || value === 0) return 2;
 	if (value >= 0.001) return 4;
 	return 5;
 };
