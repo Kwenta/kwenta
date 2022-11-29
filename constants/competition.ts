@@ -8,4 +8,4 @@ export const COMPETITION_DATES = {
 	END_DATE: new Date(Date.UTC(2022, 10, 23)),
 };
 
-export const COMPETITION_ENABLED = true;
+export const COMPETITION_ENABLED = false;
