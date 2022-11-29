@@ -26,7 +26,11 @@ const initialState: StakingState = {
 const stakingSlice = createSlice({
 	name: 'staking',
 	initialState,
-	reducers: {},
+	reducers: {
+		setSelectedEpoch: (state, action) => {
+			state.selectedEpoch = action.payload;
+		},
+	},
 	extraReducers: (builder) => {
 		builder.addCase(fetchStakingData.fulfilled, (state, action) => {
 			state.escrowedKwentaBalance = action.payload.rewardEscrowBalance;
@@ -55,3 +59,4 @@ const stakingSlice = createSlice({
 });
 
 export default stakingSlice.reducer;
+export const { setSelectedEpoch } = stakingSlice.actions;

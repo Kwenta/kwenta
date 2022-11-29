@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 
-import { getEpochDetails } from 'queries/staking/utils';
+import { getEpochDetails, parseEpochData } from 'queries/staking/utils';
 import { RootState } from 'state/store';
 import { toWei } from 'utils/formatters/number';
 
@@ -69,4 +69,17 @@ export const selectResetTime = createSelector(
 		const { epochEnd } = getEpochDetails(networkId ?? 10, epochPeriod);
 		return epochEnd;
 	}
+);
+
+export const selectEpochData = createSelector(
+	selectPeriods,
+	(state: RootState) => state.wallet.networkId,
+	(periods, networkId) => periods.map((i) => parseEpochData(i, networkId))
+);
+
+export const selectSelectedEpoch = createSelector(
+	(state: RootState) => state.staking.selectedEpoch,
+	(state: RootState) => state.staking.epochPeriod,
+	(state: RootState) => state.wallet.networkId,
+	(selectedEpoch, epochPeriod, networkId) => parseEpochData(selectedEpoch ?? epochPeriod, networkId)
 );

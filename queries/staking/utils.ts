@@ -1,4 +1,7 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { BigNumber } from 'ethers';
+
+import { formatShortDate, toJSTimestamp } from 'utils/formatters/date';
 
 export const EPOCH_START: Record<number, number> = {
 	420: 1665878400,
@@ -17,10 +20,7 @@ export function getEpochDetails(networkId: number, epoch: number) {
 		? EPOCH_START[networkId] + WEEK * epoch
 		: EPOCH_START[10];
 	const epochEndTime = currentEpochTime + WEEK;
-	return {
-		epochStart: currentEpochTime,
-		epochEnd: epochEndTime,
-	};
+	return { epochStart: currentEpochTime, epochEnd: epochEndTime };
 }
 
 export function getStakingApy(totalStakedBalance: number, weekCounter: number) {
@@ -30,3 +30,11 @@ export function getStakingApy(totalStakedBalance: number, weekCounter: number) {
 	const yearlyRewards = (startWeeklySupply * (1 - supplyRate ** 52)) / (1 - supplyRate);
 	return totalStakedBalance > 0 ? (yearlyRewards * STAKING_REWARDS_RATIO) / totalStakedBalance : 0;
 }
+
+export const parseEpochData = (index: number, networkId?: NetworkId) => {
+	const { epochStart, epochEnd } = getEpochDetails(networkId ?? 10, index);
+	const startDate = formatShortDate(new Date(toJSTimestamp(epochStart)));
+	const endDate = formatShortDate(new Date(toJSTimestamp(epochEnd)));
+	const label = `Epoch ${index}: ${startDate} - ${endDate}`;
+	return { period: index, start: epochStart, end: epochEnd, label };
+};

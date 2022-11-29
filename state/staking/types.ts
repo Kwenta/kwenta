@@ -24,4 +24,5 @@ export type StakingState = {
 	escrowData: EscrowData;
 	totalRewards: number;
 	claimableRewards: ClaimParams[];
+	selectedEpoch?: number;
 };

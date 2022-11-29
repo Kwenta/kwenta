@@ -14,7 +14,7 @@ import {
 	selectIsKwentaTokenApproved,
 	selectStakedEscrowedKwentaBalance,
 } from 'state/staking/selectors';
-import { truncateNumbers, zeroBN } from 'utils/formatters/number';
+import { toWei, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import { StakingCard } from '../common';
 
@@ -29,9 +29,7 @@ const EscrowInputCard: FC = () => {
 	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance);
 	const isKwentaTokenApproved = useAppSelector(selectIsKwentaTokenApproved);
 
-	const amountBN = useMemo(() => (amount === '' ? zeroBN : wei(amount)).toString(0, true), [
-		amount,
-	]);
+	const amountBN = useMemo(() => toWei(amount).toString(0, true), [amount]);
 
 	const unstakedEscrowedKwentaBalance = useMemo(
 		() =>
@@ -122,7 +120,6 @@ const EscrowInputCard: FC = () => {
 				]}
 				onChange={handleTabChange}
 				selectedIndex={activeTab}
-				style={{ marginBottom: '20px' }}
 			/>
 			<StakeInputContainer>
 				<StakeInputHeader>
@@ -166,7 +163,7 @@ const StakeInputHeader = styled.div`
 `;
 
 const StakeInputContainer = styled.div`
-	margin-bottom: 20px;
+	margin: 20px 0;
 `;
 
 const StyledInput = styled(NumericInput)`

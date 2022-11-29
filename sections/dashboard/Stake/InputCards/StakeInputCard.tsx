@@ -16,7 +16,7 @@ import {
 	selectKwentaBalance,
 	selectStakedKwentaBalance,
 } from 'state/staking/selectors';
-import { truncateNumbers, zeroBN } from 'utils/formatters/number';
+import { toWei, truncateNumbers } from 'utils/formatters/number';
 
 import { StakingCard } from '../common';
 
@@ -29,9 +29,7 @@ const StakeInputCard: FC = () => {
 
 	const [amount, setAmount] = useState('');
 	const [activeTab, setActiveTab] = useState(0);
-	const amountBN = useMemo(() => (amount === '' ? zeroBN : wei(amount)).toString(0, true), [
-		amount,
-	]);
+	const amountBN = useMemo(() => toWei(amount).toString(0, true), [amount]);
 
 	const handleTabChange = useCallback((tabIndex: number) => {
 		setAmount('');

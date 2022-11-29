@@ -46,23 +46,27 @@ export const approveKwentaToken = createAsyncThunk<
 	void,
 	'kwenta' | 'vKwenta' | 'veKwenta',
 	ThunkConfig
->('staking/approveKwentaToken', async (token, { extra: { sdk } }) => {
+>('staking/approveKwentaToken', async (token, { dispatch, extra: { sdk } }) => {
 	const hash = await sdk.kwentaToken.approveKwentaToken(token);
 
 	monitorTransaction({
 		txHash: hash,
-		onTxConfirmed: () => {},
+		onTxConfirmed: () => {
+			dispatch(fetchStakingData());
+		},
 	});
 });
 
 export const redeemToken = createAsyncThunk<void, 'vKwenta' | 'veKwenta', ThunkConfig>(
 	'staking/redeemToken',
-	async (token, { extra: { sdk } }) => {
+	async (token, { dispatch, extra: { sdk } }) => {
 		const hash = await sdk.kwentaToken.redeemToken(token);
 
 		monitorTransaction({
 			txHash: hash,
-			onTxConfirmed: () => {},
+			onTxConfirmed: () => {
+				dispatch(fetchStakingData());
+			},
 		});
 	}
 );
@@ -78,13 +82,15 @@ export const fetchEscrowData = createAsyncThunk<any, void, ThunkConfig>(
 
 export const vestEscrowedRewards = createAsyncThunk<any, number[], ThunkConfig>(
 	'staking/vestEscrowedRewards',
-	async (ids, { extra: { sdk } }) => {
+	async (ids, { dispatch, extra: { sdk } }) => {
 		if (ids.length > 0) {
 			const hash = await sdk.kwentaToken.vestToken(ids);
 
 			monitorTransaction({
 				txHash: hash,
-				onTxConfirmed: () => {},
+				onTxConfirmed: () => {
+					dispatch(fetchStakingData());
+				},
 			});
 		}
 	}
@@ -92,12 +98,14 @@ export const vestEscrowedRewards = createAsyncThunk<any, number[], ThunkConfig>(
 
 export const getReward = createAsyncThunk<any, void, ThunkConfig>(
 	'staking/getReward',
-	async (_, { extra: { sdk } }) => {
+	async (_, { dispatch, extra: { sdk } }) => {
 		const hash = await sdk.kwentaToken.getReward();
 
 		monitorTransaction({
 			txHash: hash,
-			onTxConfirmed: () => {},
+			onTxConfirmed: () => {
+				dispatch(fetchStakingData());
+			},
 		});
 	}
 );
@@ -115,37 +123,46 @@ export const fetchClaimableRewards = createAsyncThunk<any, void, ThunkConfig>(
 
 export const claimMultipleRewards = createAsyncThunk<any, void, ThunkConfig>(
 	'staking/claimMultipleRewards',
-	async (_, { getState, extra: { sdk } }) => {
+	async (_, { dispatch, getState, extra: { sdk } }) => {
 		const {
 			staking: { claimableRewards },
 		} = getState();
 
 		const hash = await sdk.kwentaToken.claimMultipleRewards(claimableRewards);
 
-		monitorTransaction({ txHash: hash, onTxConfirmed: () => {} });
+		monitorTransaction({
+			txHash: hash,
+			onTxConfirmed: () => {
+				dispatch(fetchStakingData());
+			},
+		});
 	}
 );
 
 export const stakeEscrow = createAsyncThunk<void, string, ThunkConfig>(
 	'staking/stakeEscrow',
-	async (amount, { extra: { sdk } }) => {
+	async (amount, { dispatch, extra: { sdk } }) => {
 		const hash = await sdk.kwentaToken.performStakeAction('stake', amount);
 
 		monitorTransaction({
 			txHash: hash,
-			onTxConfirmed: () => {},
+			onTxConfirmed: () => {
+				dispatch(fetchStakingData());
+			},
 		});
 	}
 );
 
 export const unstakeEscrow = createAsyncThunk<void, string, ThunkConfig>(
 	'staking/unstakeEscrow',
-	async (amount, { extra: { sdk } }) => {
+	async (amount, { dispatch, extra: { sdk } }) => {
 		const hash = await sdk.kwentaToken.performStakeAction('unstake', amount);
 
 		monitorTransaction({
 			txHash: hash,
-			onTxConfirmed: () => {},
+			onTxConfirmed: () => {
+				dispatch(fetchStakingData());
+			},
 		});
 	}
 );
@@ -154,24 +171,28 @@ export const unstakeEscrow = createAsyncThunk<void, string, ThunkConfig>(
 
 export const stakeKwenta = createAsyncThunk<void, string, ThunkConfig>(
 	'staking/stakeKwenta',
-	async (amount, { extra: { sdk } }) => {
+	async (amount, { dispatch, extra: { sdk } }) => {
 		const hash = await sdk.kwentaToken.performStakeAction('stake', amount, { escrow: false });
 
 		monitorTransaction({
 			txHash: hash,
-			onTxConfirmed: () => {},
+			onTxConfirmed: () => {
+				dispatch(fetchStakingData());
+			},
 		});
 	}
 );
 
 export const unstakeKwenta = createAsyncThunk<void, string, ThunkConfig>(
 	'staking/unstakeKwenta',
-	async (amount, { extra: { sdk } }) => {
+	async (amount, { dispatch, extra: { sdk } }) => {
 		const hash = await sdk.kwentaToken.performStakeAction('unstake', amount, { escrow: false });
 
 		monitorTransaction({
 			txHash: hash,
-			onTxConfirmed: () => {},
+			onTxConfirmed: () => {
+				dispatch(fetchStakingData());
+			},
 		});
 	}
 );
