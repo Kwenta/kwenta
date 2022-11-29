@@ -15,7 +15,7 @@ export const selectVKwentaBalance = createSelector(
 );
 
 export const selectVeKwentaBalance = createSelector(
-	(state: RootState) => state.staking.vKwentaBalance,
+	(state: RootState) => state.staking.veKwentaBalance,
 	toWei
 );
 

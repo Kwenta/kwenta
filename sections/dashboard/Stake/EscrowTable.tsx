@@ -61,9 +61,11 @@ const EscrowTable = () => {
 		[checkedState, escrowData]
 	);
 
-	const handleVest = useCallback(async () => {
-		const ids = escrowData.filter((_, i) => !!checkedState[i]).map((d) => d.id);
+	const ids = useMemo(() => {
+		return escrowData.filter((_, i) => !!checkedState[i]).map((d) => d.id);
+	}, [escrowData, checkedState]);
 
+	const handleVest = useCallback(async () => {
 		if (ids.length > 0) {
 			await dispatch(vestEscrowedRewards(ids));
 			setCheckedState(escrowData.map((_) => false));
@@ -71,7 +73,7 @@ const EscrowTable = () => {
 		}
 
 		setConfirmModalOpen(false);
-	}, [dispatch, escrowData, checkedState]);
+	}, [dispatch, escrowData, ids]);
 
 	const openConfirmModal = useCallback(() => setConfirmModalOpen(true), []);
 	const closeConfirmModal = useCallback(() => setConfirmModalOpen(false), []);
