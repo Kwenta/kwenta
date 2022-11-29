@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber';
 import { ContractsMap, NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
-import { utils } from 'ethers';
+import { ethers, utils } from 'ethers';
 import { parseBytes32String } from 'ethers/lib/utils';
 import { chain } from 'wagmi';
 
@@ -12,12 +12,13 @@ import { FuturesMarket } from 'sdk/types/futures';
 import { formatCurrency, formatDollars, weiFromWei, zeroBN } from 'utils/formatters/number';
 import {
 	FuturesMarketAsset,
+	FuturesMarketKey,
 	getDisplayAsset,
 	getMarketName,
 	MarketKeyByAsset,
 } from 'utils/futures';
 
-import { SECONDS_PER_DAY, FUTURES_ENDPOINTS } from './constants';
+import { SECONDS_PER_DAY, FUTURES_ENDPOINTS, AGGREGATE_ASSET_KEY } from './constants';
 import {
 	CrossMarginAccountTransferResult,
 	FuturesAggregateStatResult,
@@ -200,12 +201,14 @@ export const calculateVolumes = (
 	futuresHourlyStats: FuturesAggregateStatResult[]
 ): FuturesVolumes => {
 	const volumes: FuturesVolumes = futuresHourlyStats.reduce(
-		(acc: FuturesVolumes, { asset, volume, trades }) => {
+		(acc: FuturesVolumes, { marketKey, volume, trades }) => {
+			const cleanMarketKey =
+				marketKey !== AGGREGATE_ASSET_KEY ? ethers.utils.parseBytes32String(marketKey) : marketKey;
 			return {
 				...acc,
-				[asset]: {
-					volume: volume.div(ETH_UNIT).add(acc[asset]?.volume ?? 0),
-					trades: trades.add(acc[asset]?.trades ?? 0),
+				[cleanMarketKey]: {
+					volume: volume.div(ETH_UNIT).add(acc[cleanMarketKey]?.volume ?? 0),
+					trades: trades.add(acc[cleanMarketKey]?.trades ?? 0),
 				},
 			};
 		},

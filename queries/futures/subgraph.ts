@@ -1112,6 +1112,12 @@ export type FuturesAggregateStatFilter = {
 	timestamp_lte?: WeiSource | null;
 	timestamp_in?: WeiSource[];
 	timestamp_not_in?: WeiSource[];
+	marketKey?: string | null;
+	marketKey_not?: string | null;
+	marketKey_in?: string[];
+	marketKey_not_in?: string[];
+	marketKey_contains?: string | null;
+	marketKey_not_contains?: string | null;
 	asset?: string | null;
 	asset_not?: string | null;
 	asset_in?: string[];
@@ -1150,27 +1156,39 @@ export type FuturesAggregateStatFilter = {
 	feesSynthetix_lte?: WeiSource | null;
 	feesSynthetix_in?: WeiSource[];
 	feesSynthetix_not_in?: WeiSource[];
+	feesCrossMarginAccounts?: WeiSource | null;
+	feesCrossMarginAccounts_not?: WeiSource | null;
+	feesCrossMarginAccounts_gt?: WeiSource | null;
+	feesCrossMarginAccounts_lt?: WeiSource | null;
+	feesCrossMarginAccounts_gte?: WeiSource | null;
+	feesCrossMarginAccounts_lte?: WeiSource | null;
+	feesCrossMarginAccounts_in?: WeiSource[];
+	feesCrossMarginAccounts_not_in?: WeiSource[];
 	_change_block?: any | null;
 };
 export type FuturesAggregateStatResult = {
 	id: string;
 	period: Wei;
 	timestamp: Wei;
+	marketKey: string;
 	asset: string;
 	trades: Wei;
 	volume: Wei;
 	feesKwenta: Wei;
 	feesSynthetix: Wei;
+	feesCrossMarginAccounts: Wei;
 };
 export type FuturesAggregateStatFields = {
 	id: true;
 	period: true;
 	timestamp: true;
+	marketKey: true;
 	asset: true;
 	trades: true;
 	volume: true;
 	feesKwenta: true;
 	feesSynthetix: true;
+	feesCrossMarginAccounts: true;
 };
 export type FuturesAggregateStatArgs<K extends keyof FuturesAggregateStatResult> = {
 	[Property in keyof Pick<FuturesAggregateStatFields, K>]: FuturesAggregateStatFields[Property];
@@ -1194,11 +1212,14 @@ export const getFuturesAggregateStatById = async function <
 	if (obj['id']) formattedObj['id'] = obj['id'];
 	if (obj['period']) formattedObj['period'] = wei(obj['period'], 0);
 	if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
+	if (obj['marketKey']) formattedObj['marketKey'] = obj['marketKey'];
 	if (obj['asset']) formattedObj['asset'] = obj['asset'];
 	if (obj['trades']) formattedObj['trades'] = wei(obj['trades'], 0);
 	if (obj['volume']) formattedObj['volume'] = wei(obj['volume'], 0);
 	if (obj['feesKwenta']) formattedObj['feesKwenta'] = wei(obj['feesKwenta'], 0);
 	if (obj['feesSynthetix']) formattedObj['feesSynthetix'] = wei(obj['feesSynthetix'], 0);
+	if (obj['feesCrossMarginAccounts'])
+		formattedObj['feesCrossMarginAccounts'] = wei(obj['feesCrossMarginAccounts'], 0);
 	return formattedObj as Pick<FuturesAggregateStatResult, K>;
 };
 export const getFuturesAggregateStats = async function <K extends keyof FuturesAggregateStatResult>(
@@ -1239,11 +1260,14 @@ export const getFuturesAggregateStats = async function <K extends keyof FuturesA
 			if (obj['id']) formattedObj['id'] = obj['id'];
 			if (obj['period']) formattedObj['period'] = wei(obj['period'], 0);
 			if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
+			if (obj['marketKey']) formattedObj['marketKey'] = obj['marketKey'];
 			if (obj['asset']) formattedObj['asset'] = obj['asset'];
 			if (obj['trades']) formattedObj['trades'] = wei(obj['trades'], 0);
 			if (obj['volume']) formattedObj['volume'] = wei(obj['volume'], 0);
 			if (obj['feesKwenta']) formattedObj['feesKwenta'] = wei(obj['feesKwenta'], 0);
 			if (obj['feesSynthetix']) formattedObj['feesSynthetix'] = wei(obj['feesSynthetix'], 0);
+			if (obj['feesCrossMarginAccounts'])
+				formattedObj['feesCrossMarginAccounts'] = wei(obj['feesCrossMarginAccounts'], 0);
 			return formattedObj as Pick<FuturesAggregateStatResult, K>;
 		});
 		results = results.concat(newResults);
@@ -1397,135 +1421,6 @@ export const getFuturesCumulativeStats = async function <
 			if (obj['averageTradeSize'])
 				formattedObj['averageTradeSize'] = wei(obj['averageTradeSize'], 0);
 			return formattedObj as Pick<FuturesCumulativeStatResult, K>;
-		});
-		results = results.concat(newResults);
-		if (newResults.length < 1000) {
-			break;
-		}
-		if (paginationKey) {
-			paginationValue = rawResults[rawResults.length - 1][paginatedOptions.orderBy!];
-		}
-	} while (paginationKey && options.first && results.length < options.first);
-	return options.first ? results.slice(0, options.first) : results;
-};
-export type FuturesHourlyStatFilter = {
-	id?: string | null;
-	id_not?: string | null;
-	id_gt?: string | null;
-	id_lt?: string | null;
-	id_gte?: string | null;
-	id_lte?: string | null;
-	id_in?: string[];
-	id_not_in?: string[];
-	asset?: string | null;
-	asset_not?: string | null;
-	asset_in?: string[];
-	asset_not_in?: string[];
-	asset_contains?: string | null;
-	asset_not_contains?: string | null;
-	trades?: WeiSource | null;
-	trades_not?: WeiSource | null;
-	trades_gt?: WeiSource | null;
-	trades_lt?: WeiSource | null;
-	trades_gte?: WeiSource | null;
-	trades_lte?: WeiSource | null;
-	trades_in?: WeiSource[];
-	trades_not_in?: WeiSource[];
-	volume?: WeiSource | null;
-	volume_not?: WeiSource | null;
-	volume_gt?: WeiSource | null;
-	volume_lt?: WeiSource | null;
-	volume_gte?: WeiSource | null;
-	volume_lte?: WeiSource | null;
-	volume_in?: WeiSource[];
-	volume_not_in?: WeiSource[];
-	timestamp?: WeiSource | null;
-	timestamp_not?: WeiSource | null;
-	timestamp_gt?: WeiSource | null;
-	timestamp_lt?: WeiSource | null;
-	timestamp_gte?: WeiSource | null;
-	timestamp_lte?: WeiSource | null;
-	timestamp_in?: WeiSource[];
-	timestamp_not_in?: WeiSource[];
-	_change_block?: any | null;
-};
-export type FuturesHourlyStatResult = {
-	id: string;
-	asset: string;
-	trades: Wei;
-	volume: Wei;
-	timestamp: Wei;
-};
-export type FuturesHourlyStatFields = {
-	id: true;
-	asset: true;
-	trades: true;
-	volume: true;
-	timestamp: true;
-};
-export type FuturesHourlyStatArgs<K extends keyof FuturesHourlyStatResult> = {
-	[Property in keyof Pick<FuturesHourlyStatFields, K>]: FuturesHourlyStatFields[Property];
-};
-export const getFuturesHourlyStatById = async function <K extends keyof FuturesHourlyStatResult>(
-	url: string,
-	options: SingleQueryOptions,
-	args: FuturesHourlyStatArgs<K>
-): Promise<Pick<FuturesHourlyStatResult, K>> {
-	const res = await axios.post(url, {
-		query: generateGql('futuresHourlyStat', options, args),
-	});
-	const r = res.data as any;
-	if (r.errors && r.errors.length) {
-		throw new Error(r.errors[0].message);
-	}
-	const obj = r.data[Object.keys(r.data)[0]] as any;
-	const formattedObj: any = {};
-	if (obj['id']) formattedObj['id'] = obj['id'];
-	if (obj['asset']) formattedObj['asset'] = obj['asset'];
-	if (obj['trades']) formattedObj['trades'] = wei(obj['trades'], 0);
-	if (obj['volume']) formattedObj['volume'] = wei(obj['volume'], 0);
-	if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
-	return formattedObj as Pick<FuturesHourlyStatResult, K>;
-};
-export const getFuturesHourlyStats = async function <K extends keyof FuturesHourlyStatResult>(
-	url: string,
-	options: MultiQueryOptions<FuturesHourlyStatFilter, FuturesHourlyStatResult>,
-	args: FuturesHourlyStatArgs<K>
-): Promise<Pick<FuturesHourlyStatResult, K>[]> {
-	const paginatedOptions: Partial<MultiQueryOptions<
-		FuturesHourlyStatFilter,
-		FuturesHourlyStatResult
-	>> = { ...options };
-	let paginationKey: keyof FuturesHourlyStatFilter | null = null;
-	let paginationValue = '';
-	if (options.first && options.first > MAX_PAGE) {
-		paginatedOptions.first = MAX_PAGE;
-		paginatedOptions.orderBy = options.orderBy || 'id';
-		paginatedOptions.orderDirection = options.orderDirection || 'asc';
-		paginationKey = (paginatedOptions.orderBy +
-			(paginatedOptions.orderDirection === 'asc' ? '_gt' : '_lt')) as keyof FuturesHourlyStatFilter;
-		paginatedOptions.where = { ...options.where };
-	}
-	let results: Pick<FuturesHourlyStatResult, K>[] = [];
-	do {
-		if (paginationKey && paginationValue)
-			paginatedOptions.where![paginationKey] = paginationValue as any;
-		const res = await axios.post(url, {
-			query: generateGql('futuresHourlyStats', paginatedOptions, args),
-		});
-		const r = res.data as any;
-		if (r.errors && r.errors.length) {
-			throw new Error(r.errors[0].message);
-		}
-		const rawResults = r.data[Object.keys(r.data)[0]] as any[];
-		const newResults = rawResults.map((obj) => {
-			const formattedObj: any = {};
-			if (obj['id']) formattedObj['id'] = obj['id'];
-			if (obj['asset']) formattedObj['asset'] = obj['asset'];
-			if (obj['trades']) formattedObj['trades'] = wei(obj['trades'], 0);
-			if (obj['volume']) formattedObj['volume'] = wei(obj['volume'], 0);
-			if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
-			return formattedObj as Pick<FuturesHourlyStatResult, K>;
 		});
 		results = results.concat(newResults);
 		if (newResults.length < 1000) {
@@ -1884,6 +1779,12 @@ export type FuturesMarketFilter = {
 	asset_not_in?: string[];
 	asset_contains?: string | null;
 	asset_not_contains?: string | null;
+	marketKey?: string | null;
+	marketKey_not?: string | null;
+	marketKey_in?: string[];
+	marketKey_not_in?: string[];
+	marketKey_contains?: string | null;
+	marketKey_not_contains?: string | null;
 	marketStats?: string | null;
 	marketStats_not?: string | null;
 	marketStats_gt?: string | null;
@@ -1910,11 +1811,13 @@ export type FuturesMarketFilter = {
 export type FuturesMarketResult = {
 	id: string;
 	asset: string;
+	marketKey: string;
 	marketStats: Partial<FuturesCumulativeStatResult>;
 };
 export type FuturesMarketFields = {
 	id: true;
 	asset: true;
+	marketKey: true;
 	marketStats: FuturesCumulativeStatFields;
 };
 export type FuturesMarketArgs<K extends keyof FuturesMarketResult> = {
@@ -1936,6 +1839,7 @@ export const getFuturesMarketById = async function <K extends keyof FuturesMarke
 	const formattedObj: any = {};
 	if (obj['id']) formattedObj['id'] = obj['id'];
 	if (obj['asset']) formattedObj['asset'] = obj['asset'];
+	if (obj['marketKey']) formattedObj['marketKey'] = obj['marketKey'];
 	if (obj['marketStats']) formattedObj['marketStats'] = obj['marketStats'];
 	return formattedObj as Pick<FuturesMarketResult, K>;
 };
@@ -1973,6 +1877,7 @@ export const getFuturesMarkets = async function <K extends keyof FuturesMarketRe
 			const formattedObj: any = {};
 			if (obj['id']) formattedObj['id'] = obj['id'];
 			if (obj['asset']) formattedObj['asset'] = obj['asset'];
+			if (obj['marketKey']) formattedObj['marketKey'] = obj['marketKey'];
 			if (obj['marketStats']) formattedObj['marketStats'] = obj['marketStats'];
 			return formattedObj as Pick<FuturesMarketResult, K>;
 		});
@@ -2257,6 +2162,12 @@ export type FuturesPositionFilter = {
 	asset_not_in?: string[];
 	asset_contains?: string | null;
 	asset_not_contains?: string | null;
+	marketKey?: string | null;
+	marketKey_not?: string | null;
+	marketKey_in?: string[];
+	marketKey_not_in?: string[];
+	marketKey_contains?: string | null;
+	marketKey_not_contains?: string | null;
 	account?: string | null;
 	account_not?: string | null;
 	account_in?: string[];
@@ -2419,6 +2330,7 @@ export type FuturesPositionResult = {
 	timestamp: Wei;
 	market: string;
 	asset: string;
+	marketKey: string;
 	account: string;
 	abstractAccount: string;
 	accountType: Partial<FuturesAccountType>;
@@ -2449,6 +2361,7 @@ export type FuturesPositionFields = {
 	timestamp: true;
 	market: true;
 	asset: true;
+	marketKey: true;
 	account: true;
 	abstractAccount: true;
 	accountType: true;
@@ -2495,6 +2408,7 @@ export const getFuturesPositionById = async function <K extends keyof FuturesPos
 	if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
 	if (obj['market']) formattedObj['market'] = obj['market'];
 	if (obj['asset']) formattedObj['asset'] = obj['asset'];
+	if (obj['marketKey']) formattedObj['marketKey'] = obj['marketKey'];
 	if (obj['account']) formattedObj['account'] = obj['account'];
 	if (obj['abstractAccount']) formattedObj['abstractAccount'] = obj['abstractAccount'];
 	if (obj['accountType']) formattedObj['accountType'] = obj['accountType'];
@@ -2558,6 +2472,7 @@ export const getFuturesPositions = async function <K extends keyof FuturesPositi
 			if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
 			if (obj['market']) formattedObj['market'] = obj['market'];
 			if (obj['asset']) formattedObj['asset'] = obj['asset'];
+			if (obj['marketKey']) formattedObj['marketKey'] = obj['marketKey'];
 			if (obj['account']) formattedObj['account'] = obj['account'];
 			if (obj['abstractAccount']) formattedObj['abstractAccount'] = obj['abstractAccount'];
 			if (obj['accountType']) formattedObj['accountType'] = obj['accountType'];
@@ -2824,6 +2739,12 @@ export type FuturesTradeFilter = {
 	asset_not_in?: string[];
 	asset_contains?: string | null;
 	asset_not_contains?: string | null;
+	marketKey?: string | null;
+	marketKey_not?: string | null;
+	marketKey_in?: string[];
+	marketKey_not_in?: string[];
+	marketKey_contains?: string | null;
+	marketKey_not_contains?: string | null;
 	price?: WeiSource | null;
 	price_not?: WeiSource | null;
 	price_gt?: WeiSource | null;
@@ -2883,6 +2804,7 @@ export type FuturesTradeResult = {
 	margin: Wei;
 	size: Wei;
 	asset: string;
+	marketKey: string;
 	price: Wei;
 	positionId: string;
 	positionSize: Wei;
@@ -2900,6 +2822,7 @@ export type FuturesTradeFields = {
 	margin: true;
 	size: true;
 	asset: true;
+	marketKey: true;
 	price: true;
 	positionId: true;
 	positionSize: true;
@@ -2933,6 +2856,7 @@ export const getFuturesTradeById = async function <K extends keyof FuturesTradeR
 	if (obj['margin']) formattedObj['margin'] = wei(obj['margin'], 0);
 	if (obj['size']) formattedObj['size'] = wei(obj['size'], 0);
 	if (obj['asset']) formattedObj['asset'] = obj['asset'];
+	if (obj['marketKey']) formattedObj['marketKey'] = obj['marketKey'];
 	if (obj['price']) formattedObj['price'] = wei(obj['price'], 0);
 	if (obj['positionId']) formattedObj['positionId'] = obj['positionId'];
 	if (obj['positionSize']) formattedObj['positionSize'] = wei(obj['positionSize'], 0);
@@ -2982,6 +2906,7 @@ export const getFuturesTrades = async function <K extends keyof FuturesTradeResu
 			if (obj['margin']) formattedObj['margin'] = wei(obj['margin'], 0);
 			if (obj['size']) formattedObj['size'] = wei(obj['size'], 0);
 			if (obj['asset']) formattedObj['asset'] = obj['asset'];
+			if (obj['marketKey']) formattedObj['marketKey'] = obj['marketKey'];
 			if (obj['price']) formattedObj['price'] = wei(obj['price'], 0);
 			if (obj['positionId']) formattedObj['positionId'] = obj['positionId'];
 			if (obj['positionSize']) formattedObj['positionSize'] = wei(obj['positionSize'], 0);

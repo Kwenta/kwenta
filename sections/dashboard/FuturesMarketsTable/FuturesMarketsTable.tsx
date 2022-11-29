@@ -44,7 +44,8 @@ const FuturesMarketsTable: FC = () => {
 	let data = useMemo(() => {
 		return futuresMarkets.map((market) => {
 			const description = getSynthDescription(market.asset, synthsMap, t);
-			const volume = futuresVolumes[market.assetHex]?.volume;
+
+			const volume = futuresVolumes[market?.marketKey ?? '']?.volume;
 			const pastPrice = pastRates.find((price) => price.synth === market.asset);
 			const fundingRate = fundingRates.find(
 				(funding) => (funding as FundingRateResponse)?.asset === MarketKeyByAsset[market.asset]
