@@ -69,12 +69,3 @@ export function getApy(totalStakedBalance: number, weekCounter: number) {
 		? yearlyRewards.mul(wei(STAKING_REWARDS_RATIO)).div(wei(totalStakedBalance))
 		: zeroBN;
 }
-
-export function cobbDouglas(feesPaid: number, stakedBalance: number) {
-	// pow(n), n must be a integer
-	return feesPaid ** 0.7 * stakedBalance ** 0.3;
-}
-
-export function getTradingRewards(weekCounter: number) {
-	return wei(INITIAL_WEEKLY_SUPPLY).mul(SUPPLY_RATE.pow(weekCounter)).mul(TRADING_REWARDS_RATIO);
-}

@@ -16,7 +16,6 @@ import useGetFuturesFee from 'queries/staking/useGetFuturesFee';
 import useGetFuturesFeeForAccount from 'queries/staking/useGetFuturesFeeForAccount';
 import {
 	ClaimParams,
-	cobbDouglas,
 	EpochDataProps,
 	FuturesFeeForAccountProps,
 	FuturesFeeProps,
@@ -36,13 +35,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 }: TradingRewardProps) => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
-	const {
-		multipleMerkleDistributorContract,
-		periods,
-		resetTime,
-		userStakedBalance,
-		totalStakedBalance,
-	} = useStakingContext();
+	const { multipleMerkleDistributorContract, periods, resetTime } = useStakingContext();
 
 	const allEpochQuery = useGetFiles(periods);
 	const allEpochData = useMemo(() => allEpochQuery?.data ?? [], [allEpochQuery?.data]);
@@ -125,14 +118,11 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 
 	const { writeAsync: claim } = useContractWrite(config);
 
-	const { ratio } = useMemo(() => {
-		const userScore = cobbDouglas(futuresFeePaid, userStakedBalance);
-		const totalScore = cobbDouglas(totalFuturesFeePaid, totalStakedBalance);
-		const ratio = wei(totalScore).gt(0) ? wei(userScore).div(wei(totalScore)) : zeroBN;
-		return {
-			ratio,
-		};
-	}, [futuresFeePaid, totalFuturesFeePaid, totalStakedBalance, userStakedBalance]);
+	const ratio = useMemo(
+		() =>
+			wei(totalFuturesFeePaid).gt(0) ? wei(futuresFeePaid).div(wei(totalFuturesFeePaid)) : zeroBN,
+		[futuresFeePaid, totalFuturesFeePaid]
+	);
 
 	return (
 		<TradingRewardsContainer>
