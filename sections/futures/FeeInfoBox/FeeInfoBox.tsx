@@ -7,6 +7,7 @@ import TimerIcon from 'assets/svg/app/timer.svg';
 import InfoBox, { DetailedInfo } from 'components/InfoBox/InfoBox';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { NO_VALUE } from 'constants/placeholder';
+import { useFuturesContext } from 'contexts/FuturesContext';
 import { selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {
@@ -27,6 +28,7 @@ const FeeInfoBox: React.FC = () => {
 	const { tradeFee: crossMarginTradeFee, limitOrderFee, stopOrderFee } = useRecoilValue(
 		crossMarginSettingsState
 	);
+	const { dynamicFeeRate } = useFuturesContext();
 	const marketInfo = useAppSelector(selectMarketInfo);
 
 	const { commitDeposit, nextPriceFee } = useMemo(() => computeNPFee(marketInfo, sizeDelta), [
@@ -57,17 +59,17 @@ const FeeInfoBox: React.FC = () => {
 		() => (
 			<>
 				{formatPercent(staticRate ?? zeroBN)}
-				{fees.dynamicFeeRate?.gt(0) && (
+				{dynamicFeeRate?.gt(0) && (
 					<>
 						{' + '}
 						<ToolTip>
-							<StyledDynamicFee>{formatPercent(fees.dynamicFeeRate)}</StyledDynamicFee>
+							<StyledDynamicFee>{formatPercent(dynamicFeeRate)}</StyledDynamicFee>
 						</ToolTip>
 					</>
 				)}
 			</>
 		),
-		[staticRate, fees.dynamicFeeRate]
+		[staticRate, dynamicFeeRate]
 	);
 
 	const feesInfo = useMemo<Record<string, DetailedInfo | null | undefined>>(() => {

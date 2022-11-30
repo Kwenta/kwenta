@@ -113,6 +113,7 @@ const useFuturesData = () => {
 	const market = useAppSelector(selectMarketInfo);
 
 	const [maxFee, setMaxFee] = useState(zeroBN);
+	const [dynamicFeeRate, setDynamicFeeRate] = useState(zeroBN);
 	const [error, setError] = useState<string | null>(null);
 
 	const tradePrice = useMemo(() => wei(isAdvancedOrder ? orderPrice || zeroBN : marketAssetRate), [
@@ -225,42 +226,22 @@ const useFuturesData = () => {
 
 	const totalFeeRate = useCallback(
 		async (sizeDelta: Wei) => {
-			const [dynamicFeeRate] = await Promise.all([
-				synthetixjs.contracts.Exchanger.dynamicFeeRateForExchange(
-					ethers.utils.formatBytes32String('sUSD'),
-					ethers.utils.formatBytes32String(marketAsset)
-				),
-			]);
 			const staticRate = computeMarketFee(market, sizeDelta);
 
-			let total = crossMarginTradeFee
-				.add(dynamicFeeRate.feeRate)
-				.add(staticRate)
-				.add(advancedOrderFeeRate);
+			let total = crossMarginTradeFee.add(dynamicFeeRate).add(staticRate).add(advancedOrderFeeRate);
 
 			return total;
 		},
-		[
-			market,
-			marketAsset,
-			crossMarginTradeFee,
-			advancedOrderFeeRate,
-			synthetixjs.contracts.Exchanger,
-		]
+		[market, crossMarginTradeFee, dynamicFeeRate, advancedOrderFeeRate]
 	);
 
 	const calculateFees = useCallback(
 		async (susdSizeDelta: Wei, nativeSizeDelta: Wei) => {
 			if (!synthetixjs) return ZERO_FEES;
 
-			const volatilityFeeRate = await synthetixjs.contracts.Exchanger.dynamicFeeRateForExchange(
-				ethers.utils.formatBytes32String('sUSD'),
-				ethers.utils.formatBytes32String(marketAsset)
-			);
-			const volatilityFeeWei = wei(volatilityFeeRate.feeRate);
 			const susdSize = susdSizeDelta.abs();
 			const staticRate = computeMarketFee(market, nativeSizeDelta);
-			const tradeFee = susdSize.mul(staticRate).add(susdSize.mul(volatilityFeeWei));
+			const tradeFee = susdSize.mul(staticRate).add(susdSize.mul(dynamicFeeRate));
 
 			const currentDeposit =
 				orderType === 'limit' || orderType === 'stop market'
@@ -278,7 +259,7 @@ const useFuturesData = () => {
 			const fees = {
 				staticFee: tradeFeeWei,
 				crossMarginFee: crossMarginFee,
-				dynamicFeeRate: volatilityFeeWei,
+				dynamicFeeRate,
 				keeperEthDeposit: requiredDeposit,
 				limitStopOrderFee: limitStopOrderFee,
 				total: tradeFeeWei.add(crossMarginFee).add(limitStopOrderFee),
@@ -287,15 +268,15 @@ const useFuturesData = () => {
 			return fees;
 		},
 		[
-			crossMarginTradeFee,
-			selectedAccountType,
-			marketAsset,
 			synthetixjs,
-			orderType,
 			market,
+			dynamicFeeRate,
+			orderType,
+			getCrossMarginEthBal,
+			selectedAccountType,
+			crossMarginTradeFee,
 			calculateCrossMarginFee,
 			setTradeFees,
-			getCrossMarginEthBal,
 		]
 	);
 
@@ -624,6 +605,20 @@ const useFuturesData = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dispatch, router.query.accountType]);
 
+	useEffect(() => {
+		const getDynamicFee = async () => {
+			if (!synthetixjs) return zeroBN;
+			const [dynamicFeeRate] = await Promise.all([
+				synthetixjs.contracts.Exchanger.dynamicFeeRateForExchange(
+					ethers.utils.formatBytes32String('sUSD'),
+					ethers.utils.formatBytes32String(marketAsset)
+				),
+			]);
+			setDynamicFeeRate(wei(dynamicFeeRate.feeRate));
+		};
+		getDynamicFee();
+	}, [marketAsset, synthetixjs]);
+
 	return {
 		onLeverageChange,
 		onTradeAmountChange,
@@ -632,6 +627,7 @@ const useFuturesData = () => {
 		resetTradeState,
 		onTradeOrderPriceChange,
 		onChangeOpenPosLeverage,
+		dynamicFeeRate,
 		marketAssetRate,
 		position,
 		market,
