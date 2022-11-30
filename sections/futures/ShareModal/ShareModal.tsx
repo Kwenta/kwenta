@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import PNLGraphicPNG from 'assets/png/pnl-graphic.png';
 import BaseModal from 'components/BaseModal';
-import { FuturesPosition } from 'queries/futures/types';
+import { FuturesPosition } from 'sdk/types/futures';
 import { FuturesMarketAsset } from 'utils/futures';
 
 import AmountContainer from './AmountContainer';

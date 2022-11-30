@@ -1,20 +1,16 @@
-import React, { useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import React from 'react';
+import { useRecoilValue } from 'recoil';
 
-import useGetAverageFundingRateForMarkets from 'queries/futures/useGetAverageFundingRateForMarkets';
-import useGetCrossMarginAccountOverview from 'queries/futures/useGetCrossMarginAccountOverview';
 import useGetCrossMarginSettings from 'queries/futures/useGetCrossMarginSettings';
 import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
-import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
-import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesPositionHistory';
-import useGetFuturesVolumes from 'queries/futures/useGetFuturesVolumes';
 import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useSynthBalances from 'queries/synths/useSynthBalances';
-import { Period } from 'sdk/constants/period';
-import { futuresAccountState, futuresAccountTypeState, positionState } from 'store/futures';
-import logError from 'utils/logError';
+import { fetchCrossMarginBalanceInfo, fetchFuturesPositionsForType } from 'state/futures/actions';
+import { useAppDispatch } from 'state/hooks';
+import { futuresAccountState, futuresAccountTypeState } from 'store/futures';
+import { refetchWithComparator } from 'utils/queries';
 
 type RefetchType =
 	| 'modify-position'
@@ -42,57 +38,43 @@ const RefetchContext = React.createContext<RefetchContextType>({
 export const RefetchProvider: React.FC = ({ children }) => {
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 	const { crossMarginAddress } = useRecoilValue(futuresAccountState);
-	const setPosition = useSetRecoilState(positionState);
+	const dispatch = useAppDispatch();
 
 	const synthsBalancesQuery = useSynthBalances();
 	const openOrdersQuery = useGetFuturesOpenOrders();
-	const positionQuery = useGetFuturesPositionForMarket();
-	const crossMarginAccountOverview = useGetCrossMarginAccountOverview();
-	const positionsQuery = useGetFuturesPositionForMarkets();
 	const positionHistoryQuery = useGetFuturesPositionHistory();
 	const queryCrossMarginAccount = useQueryCrossMarginAccount();
 
-	useGetAverageFundingRateForMarkets(Period.ONE_HOUR);
 	useLaggedDailyPrice();
-	useGetFuturesVolumes({ refetchInterval: 60000 });
 	useGetCrossMarginSettings();
-
-	useEffect(() => {
-		if (positionQuery.error) {
-			setPosition(null);
-		}
-	}, [positionQuery.error, setPosition]);
 
 	const handleRefetch = (refetchType: RefetchType, timeout?: number) => {
 		setTimeout(() => {
 			switch (refetchType) {
 				case 'modify-position':
 					openOrdersQuery.refetch();
-					positionsQuery.refetch();
 					positionHistoryQuery.refetch();
+					dispatch(fetchFuturesPositionsForType());
 					if (selectedAccountType === 'cross_margin') {
-						crossMarginAccountOverview.refetch();
+						dispatch(fetchCrossMarginBalanceInfo());
 					}
 					break;
 				case 'new-order':
-					positionsQuery.refetch();
+					dispatch(fetchFuturesPositionsForType());
 					openOrdersQuery.refetch();
 					break;
 				case 'close-position':
-					positionQuery.refetch();
-					positionsQuery.refetch();
+					dispatch(fetchFuturesPositionsForType());
 					positionHistoryQuery.refetch();
 					openOrdersQuery.refetch();
 					break;
 				case 'margin-change':
-					positionQuery.refetch();
-					positionsQuery.refetch();
+					dispatch(fetchFuturesPositionsForType());
 					positionHistoryQuery.refetch();
 					openOrdersQuery.refetch();
 					synthsBalancesQuery.refetch();
 					break;
 				case 'account-margin-change':
-					crossMarginAccountOverview.refetch();
 					synthsBalancesQuery.refetch();
 					break;
 				case 'cross-margin-account-change':
@@ -106,13 +88,6 @@ export const RefetchProvider: React.FC = ({ children }) => {
 		switch (refetchType) {
 			case 'account-margin-change':
 				return Promise.all([
-					refetchWithComparator(
-						crossMarginAccountOverview.refetch,
-						crossMarginAccountOverview,
-						(prev, next) =>
-							!next.data ||
-							prev?.data?.freeMargin?.toString() === next?.data?.freeMargin?.toString()
-					),
 					refetchWithComparator(
 						synthsBalancesQuery.refetch,
 						synthsBalancesQuery,
@@ -135,41 +110,6 @@ export const RefetchProvider: React.FC = ({ children }) => {
 			{children}
 		</RefetchContext.Provider>
 	);
-};
-
-// Takes a comparitor which should return a bool condition to
-// signal to continue retrying, comparing prev and new query result
-
-const refetchWithComparator = async (
-	query: () => Promise<any>,
-	existingResult: any,
-	comparator: (previous: any, current: any) => boolean,
-	interval = 1000,
-	max = 25
-) => {
-	return new Promise((res) => {
-		let count = 1;
-
-		const refetch = async (existingResult: any) => {
-			const timeout = setTimeout(async () => {
-				if (count > max) {
-					clearTimeout(timeout);
-					logError('refetch timeout');
-					res({ data: null, status: 'timeout' });
-				} else {
-					const next = await query();
-					count += 1;
-					if (!comparator(existingResult, next)) {
-						clearTimeout(timeout);
-						res({ data: next, status: 'complete' });
-					} else {
-						refetch(next);
-					}
-				}
-			}, interval);
-		};
-		refetch(existingResult);
-	});
 };
 
 export const useRefetchContext = () => {

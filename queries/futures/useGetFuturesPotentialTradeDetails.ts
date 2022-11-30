@@ -5,7 +5,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import { PotentialTradeStatus, POTENTIAL_TRADE_STATUS_TO_MESSAGE } from 'sections/futures/types';
-import { selectMarketAsset } from 'state/futures/selectors';
+import { selectCrossMarginBalanceInfo, selectMarketAsset } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {
 	leverageSideState,
@@ -13,7 +13,6 @@ import {
 	futuresAccountTypeState,
 	selectedFuturesAddressState,
 	orderTypeState,
-	crossMarginAccountOverviewState,
 } from 'store/futures';
 import logError from 'utils/logError';
 
@@ -34,7 +33,7 @@ const useGetFuturesPotentialTradeDetails = () => {
 	const marketAsset = useAppSelector(selectMarketAsset);
 
 	const orderType = useRecoilValue(orderTypeState);
-	const { freeMargin } = useRecoilValue(crossMarginAccountOverviewState);
+	const { freeMargin } = useAppSelector(selectCrossMarginBalanceInfo);
 	const setPotentialTradeDetails = useSetRecoilState(potentialTradeDetailsState);
 
 	const getPreview = useGetCrossMarginPotentialTrade(marketAsset, selectedFuturesAddress);

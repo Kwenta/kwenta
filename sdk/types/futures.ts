@@ -106,3 +106,61 @@ export interface FuturesMarketConfig {
 	supports: 'mainnet' | 'testnet' | 'both';
 	disabled?: boolean;
 }
+
+export type FuturesVolumes<T = Wei> = {
+	[asset: string]: {
+		volume: T;
+		trades: T;
+	};
+};
+
+export type PositionDetail = {
+	remainingMargin: Wei;
+	accessibleMargin: Wei;
+	orderPending: boolean;
+	order: {
+		pending: boolean;
+		fee: Wei;
+		leverage: Wei;
+	};
+	position: {
+		fundingIndex: Wei;
+		lastPrice: Wei;
+		size: Wei;
+		margin: Wei;
+	};
+	accruedFunding: Wei;
+	notionalValue: Wei;
+	liquidationPrice: Wei;
+	profitLoss: Wei;
+};
+
+export enum PositionSide {
+	LONG = 'long',
+	SHORT = 'short',
+}
+
+export type FuturesFilledPosition<T = Wei> = {
+	canLiquidatePosition: boolean;
+	side: PositionSide;
+	notionalValue: T;
+	accruedFunding: T;
+	initialMargin: T;
+	profitLoss: T;
+	fundingIndex: number;
+	lastPrice: T;
+	size: T;
+	liquidationPrice: T;
+	initialLeverage: T;
+	leverage: T;
+	pnl: T;
+	pnlPct: T;
+	marginRatio: T;
+};
+
+export type FuturesPosition<T = Wei> = {
+	asset: FuturesMarketAsset;
+	remainingMargin: T;
+	accessibleMargin: T;
+	position: FuturesFilledPosition<T> | null;
+};

@@ -16,9 +16,8 @@ import { NO_VALUE } from 'constants/placeholder';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import useEstimateGasCost from 'hooks/useEstimateGasCost';
-import { selectMarketAsset } from 'state/futures/selectors';
+import { selectMarketAsset, selectPosition } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { positionState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { FlexDivRowCentered } from 'styles/common';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
@@ -38,7 +37,7 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, sUSDBalance, 
 	const { estimateSnxTxGasCost } = useEstimateGasCost();
 
 	const gasSpeed = useRecoilValue(gasSpeedState);
-	const position = useRecoilValue(positionState);
+	const position = useAppSelector(selectPosition);
 	const marketAsset = useAppSelector(selectMarketAsset);
 
 	const minDeposit = useMemo(() => {

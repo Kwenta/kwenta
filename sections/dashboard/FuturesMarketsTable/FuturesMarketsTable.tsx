@@ -14,15 +14,14 @@ import Table from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
-import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
-import { selectMarkets } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { FundingRateResponse } from 'sdk/types/futures';
 import {
-	pastRatesState,
-	fundingRatesState,
-	futuresVolumesState,
-	futuresAccountTypeState,
-} from 'store/futures';
+	selectAverageFundingRates,
+	selectMarkets,
+	selectMarketVolumes,
+} from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { pastRatesState, futuresAccountTypeState } from 'store/futures';
 import {
 	getSynthDescription,
 	isDecimalFour,
@@ -36,9 +35,9 @@ const FuturesMarketsTable: FC = () => {
 	const { synthsMap } = Connector.useContainer();
 
 	const futuresMarkets = useAppSelector(selectMarkets);
-	const fundingRates = useRecoilValue(fundingRatesState);
+	const fundingRates = useAppSelector(selectAverageFundingRates);
 	const pastRates = useRecoilValue(pastRatesState);
-	const futuresVolumes = useRecoilValue(futuresVolumesState);
+	const futuresVolumes = useAppSelector(selectMarketVolumes);
 	const accountType = useRecoilValue(futuresAccountTypeState);
 
 	let data = useMemo(() => {

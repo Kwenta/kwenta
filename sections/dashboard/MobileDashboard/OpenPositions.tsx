@@ -8,7 +8,13 @@ import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
-import { balancesState, portfolioState, positionsState } from 'store/futures';
+import {
+	selectCrossMarginPositions,
+	selectFuturesPortfolio,
+	selectIsolatedMarginPositions,
+} from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { balancesState } from 'store/futures';
 import { formatDollars } from 'utils/formatters/number';
 
 import FuturesPositionsTable from '../FuturesPositionsTable';
@@ -37,8 +43,9 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 	exchangeTokenBalances,
 }) => {
 	const { t } = useTranslation();
-	const positions = useRecoilValue(positionsState);
-	const portfolio = useRecoilValue(portfolioState);
+	const crossPositions = useAppSelector(selectCrossMarginPositions);
+	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
+	const portfolio = useAppSelector(selectFuturesPortfolio);
 	const balances = useRecoilValue(balancesState);
 
 	const POSITIONS_TABS = useMemo(
@@ -46,7 +53,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 			{
 				name: PositionsTab.CROSS_MARGIN,
 				label: t('dashboard.overview.positions-tabs.cross-margin'),
-				badge: positions[FuturesAccountTypes.CROSS_MARGIN].length,
+				badge: crossPositions.length,
 				active: activePositionsTab === PositionsTab.CROSS_MARGIN,
 				detail: formatDollars(portfolio.crossMarginFutures),
 				disabled: false,
@@ -55,7 +62,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 			{
 				name: PositionsTab.ISOLATED_MARGIN,
 				label: t('dashboard.overview.positions-tabs.isolated-margin'),
-				badge: positions[FuturesAccountTypes.ISOLATED_MARGIN].length,
+				badge: isolatedPositions.length,
 				active: activePositionsTab === PositionsTab.ISOLATED_MARGIN,
 				detail: formatDollars(portfolio.isolatedMarginFutures),
 				disabled: false,
@@ -72,7 +79,8 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 		],
 		[
 			t,
-			positions,
+			isolatedPositions,
+			crossPositions,
 			activePositionsTab,
 			portfolio.crossMarginFutures,
 			portfolio.isolatedMarginFutures,

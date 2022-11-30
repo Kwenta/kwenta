@@ -167,7 +167,6 @@ export const QUERY_KEYS = {
 			networkId,
 			currencyKey,
 		],
-		Markets: (networkId: NetworkId) => ['futures', 'marketsSummaries', networkId],
 		Market: (networkId: NetworkId, currencyKey: string | null) => [
 			'futures',
 			currencyKey,
@@ -215,45 +214,13 @@ export const QUERY_KEYS = {
 			networkId,
 			currencyKey,
 		],
-		FundingRates: (
-			networkId: NetworkId,
-			periodLength: number,
-			marketAssets: FuturesMarketAsset[]
-		) => ['futures', 'fundingRates', networkId, periodLength, marketAssets],
 		TradingVolumeForAll: (networkId: NetworkId) => ['futures', 'tradingVolumeForAll', networkId],
-		AllPositionHistory: (networkId: NetworkId, walletAddress: string) => [
-			'futures',
-			'allPositionHistory',
-			networkId,
-			walletAddress,
-		],
 		Position: (networkId: NetworkId, market: string | null, walletAddress: string) => [
 			'futures',
 			'position',
 			networkId,
 			market,
 			walletAddress,
-		],
-		MarketsPositions: (
-			networkId: NetworkId,
-			markets: string[] | [],
-			walletAddress: string,
-			crossMarginAddress: string
-		) => ['futures', 'marketsPositions', networkId, markets, walletAddress, crossMarginAddress],
-		Portfolio: (
-			networkId: NetworkId,
-			markets: string[] | [],
-			walletAddress: string | null,
-			crossMarginAddress: string | null,
-			freeMargin: number
-		) => [
-			'futures',
-			'positions',
-			networkId,
-			markets,
-			walletAddress,
-			crossMarginAddress,
-			freeMargin,
 		],
 		PositionHistory: (walletAddress: string | null, networkId: NetworkId) => [
 			'futures',
@@ -318,13 +285,6 @@ export const QUERY_KEYS = {
 			currencyKey: string | null
 		) => ['futures', 'currentRoundId', networkId, walletAddress, currencyKey],
 		OverviewStats: (networkId: NetworkId) => ['futures', 'overview-stats', networkId],
-		CrossMarginAccountOverview: (networkId: NetworkId, wallet: string, retryCount: number) => [
-			'futures',
-			'cross-margin-account-overview',
-			networkId,
-			wallet,
-			retryCount,
-		],
 		CrossMarginSettings: (networkId: NetworkId, settingsAddress: string) => [
 			'futures',
 			'cross-margin-settings',

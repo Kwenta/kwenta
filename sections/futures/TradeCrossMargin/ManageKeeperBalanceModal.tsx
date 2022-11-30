@@ -13,7 +13,9 @@ import Connector from 'containers/Connector';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
-import { crossMarginAccountOverviewState, openOrdersState } from 'store/futures';
+import { selectCrossMarginBalanceInfo } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { openOrdersState } from 'store/futures';
 import { isUserDeniedError } from 'utils/formatters/error';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -41,7 +43,7 @@ export default function ManageKeeperBalanceModal({ onDismiss, defaultType }: Pro
 	const { provider, walletAddress } = Connector.useContainer();
 	const { refetchUntilUpdate } = useRefetchContext();
 
-	const { keeperEthBal } = useRecoilValue(crossMarginAccountOverviewState);
+	const { keeperEthBal } = useAppSelector(selectCrossMarginBalanceInfo);
 	const openOrders = useRecoilValue(openOrdersState);
 
 	const [amount, setAmount] = useState('');

@@ -7,14 +7,16 @@ import Button from 'components/Button';
 import CustomNumericInput from 'components/Input/CustomNumericInput';
 import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import { useFuturesContext } from 'contexts/FuturesContext';
-import { selectMarketInfo } from 'state/futures/selectors';
+import {
+	selectMarketInfo,
+	selectMaxLeverage,
+	selectNextPriceDisclaimer,
+	selectPosition,
+} from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {
 	leverageValueCommittedState,
-	maxLeverageState,
-	nextPriceDisclaimerState,
 	orderTypeState,
-	positionState,
 	futuresTradeInputsState,
 } from 'store/futures';
 import { FlexDivCol, FlexDivRow } from 'styles/common';
@@ -26,12 +28,11 @@ const LeverageInput: FC = () => {
 	const { t } = useTranslation();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
 	const { leverage } = useRecoilValue(futuresTradeInputsState);
-	const maxLeverage = useRecoilValue(maxLeverageState);
+	const maxLeverage = useAppSelector(selectMaxLeverage);
 	const orderType = useRecoilValue(orderTypeState);
-	const isDisclaimerDisplayed = useRecoilValue(nextPriceDisclaimerState);
+	const isDisclaimerDisplayed = useAppSelector(selectNextPriceDisclaimer);
 	const setIsLeverageValueCommitted = useSetRecoilState(leverageValueCommittedState);
-	const position = useRecoilValue(positionState);
-
+	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
 
 	const { onLeverageChange } = useFuturesContext();

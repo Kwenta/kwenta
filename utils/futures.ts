@@ -3,15 +3,15 @@ import Wei, { wei } from '@synthetixio/wei';
 import { TFunction } from 'i18next';
 import { Dictionary } from 'lodash';
 
-import {
-	FuturesOrderType,
-	FuturesPosition,
-	FuturesTradeInputs,
-	TradeFees,
-} from 'queries/futures/types';
-import { FuturesMarket } from 'sdk/types/futures';
+import { FuturesOrderType, FuturesTradeInputs, TradeFees } from 'queries/futures/types';
+import { FuturesMarket, FuturesPosition, FuturesVolumes } from 'sdk/types/futures';
 import { PositionSide } from 'sections/futures/types';
-import { FundingRate, FundingRateSerialized } from 'state/futures/types';
+import {
+	CrossMarginBalanceInfo,
+	CrossMarginTradeInputs,
+	FundingRate,
+	FundingRateSerialized,
+} from 'state/futures/types';
 import logError from 'utils/logError';
 
 import { formatNumber, zeroBN } from './formatters/number';
@@ -318,7 +318,7 @@ const getPositionChangeState = (existingSize: Wei, newSize: Wei) => {
 export const calculateMarginDelta = (
 	nextTrade: FuturesTradeInputs,
 	fees: TradeFees,
-	position: FuturesPosition | null
+	position: FuturesPosition | null | undefined
 ) => {
 	const existingSize = position?.position
 		? position?.position?.side === 'long'
@@ -420,4 +420,64 @@ export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMar
 
 export const unserializeFundingRates = (rates: FundingRateSerialized[]): FundingRate[] => {
 	return rates.map((r) => ({ ...r, fundingRate: r.fundingRate ? wei(r.fundingRate) : null }));
+};
+
+export const serializeCmBalanceInfo = (
+	overview: CrossMarginBalanceInfo
+): CrossMarginBalanceInfo<string> => {
+	return {
+		freeMargin: overview.freeMargin.toString(),
+		keeperEthBal: overview.keeperEthBal.toString(),
+		allowance: overview.allowance.toString(),
+	};
+};
+
+export const unserializeCmBalanceInfo = (
+	overview: CrossMarginBalanceInfo<string>
+): CrossMarginBalanceInfo<Wei> => {
+	return {
+		freeMargin: wei(overview.freeMargin),
+		keeperEthBal: wei(overview.keeperEthBal),
+		allowance: wei(overview.allowance),
+	};
+};
+
+export const serializeFuturesVolumes = (volumes: FuturesVolumes) => {
+	return Object.keys(volumes).reduce<FuturesVolumes<string>>((acc, k) => {
+		acc[k] = {
+			trades: volumes[k].trades.toString(),
+			volume: volumes[k].volume.toString(),
+		};
+		return acc;
+	}, {});
+};
+
+export const unserializeFuturesVolumes = (volumes: FuturesVolumes<string>) => {
+	return Object.keys(volumes).reduce<FuturesVolumes>((acc, k) => {
+		acc[k] = {
+			trades: wei(volumes[k].trades),
+			volume: wei(volumes[k].volume),
+		};
+		return acc;
+	}, {});
+};
+
+export const serializeCrossMarginTradeInputs = (
+	tradeInputs: CrossMarginTradeInputs
+): CrossMarginTradeInputs<string> => {
+	return {
+		...tradeInputs,
+		nativeSizeDelta: tradeInputs.nativeSizeDelta.toString(),
+		susdSizeDelta: tradeInputs.susdSizeDelta.toString(),
+	};
+};
+
+export const unserializeCrossMarginTradeInputs = (
+	tradeInputs: CrossMarginTradeInputs<string>
+): CrossMarginTradeInputs => {
+	return {
+		...tradeInputs,
+		nativeSizeDelta: wei(tradeInputs.nativeSizeDelta || 0),
+		susdSizeDelta: wei(tradeInputs.susdSizeDelta || 0),
+	};
 };

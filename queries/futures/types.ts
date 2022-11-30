@@ -5,52 +5,6 @@ import { BigNumber } from 'ethers';
 import { PotentialTradeStatus } from 'sections/futures/types';
 import { FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
 
-export type PositionDetail = {
-	remainingMargin: Wei;
-	accessibleMargin: Wei;
-	orderPending: boolean;
-	order: {
-		pending: boolean;
-		fee: Wei;
-		leverage: Wei;
-	};
-	position: {
-		fundingIndex: Wei;
-		lastPrice: Wei;
-		size: Wei;
-		margin: Wei;
-	};
-	accruedFunding: Wei;
-	notionalValue: Wei;
-	liquidationPrice: Wei;
-	profitLoss: Wei;
-};
-
-export type FuturesFilledPosition<T = Wei> = {
-	canLiquidatePosition: boolean;
-	side: PositionSide;
-	notionalValue: T;
-	accruedFunding: T;
-	initialMargin: T;
-	profitLoss: T;
-	fundingIndex: number;
-	lastPrice: T;
-	size: T;
-	liquidationPrice: T;
-	initialLeverage: T;
-	leverage: T;
-	pnl: T;
-	pnlPct: T;
-	marginRatio: T;
-};
-
-export type FuturesPosition<T = Wei> = {
-	asset: FuturesMarketAsset;
-	remainingMargin: T;
-	accessibleMargin: T;
-	position: FuturesFilledPosition<T> | null;
-};
-
 export type FuturesOpenInterest = {
 	asset: string;
 	ratio: {
@@ -179,13 +133,6 @@ export type FuturesOrder = {
 	isCancelling?: boolean;
 };
 
-export type FuturesVolumes = {
-	[asset: string]: {
-		volume: Wei;
-		trades: Wei;
-	};
-};
-
 export type FuturesStat = {
 	account: string;
 	pnlWithFeesPaid: Wei;
@@ -257,7 +204,6 @@ type CrossMarginAccount = string;
 type FactoryAddress = string;
 export type CrossMarginAccounts = Record<FactoryAddress, Record<Wallet, CrossMarginAccount>>;
 
-export type FuturesPositionsState = Record<FuturesAccountType, FuturesPosition[]>;
 export type PositionHistoryState = Record<FuturesAccountType, PositionHistory[]>;
 export type Portfolio = {
 	total: Wei;

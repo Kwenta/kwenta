@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import Loader from 'components/Loader';
@@ -8,11 +8,13 @@ import { CROSS_MARGIN_ORDER_TYPES } from 'constants/futures';
 import Connector from 'containers/Connector';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { FuturesOrderType } from 'queries/futures/types';
+import { setOpenModal } from 'state/app/reducer';
+import { selectOpenModal } from 'state/app/selectors';
 import {
 	setLeverageSide as setReduxLeverageSide,
 	setOrderType as setReduxOrderType,
 } from 'state/futures/reducer';
-import { selectMarketAssetRate } from 'state/futures/selectors';
+import { selectCrossMarginBalanceInfo, selectMarketAssetRate } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import {
 	futuresAccountState,
@@ -21,7 +23,6 @@ import {
 	orderTypeState,
 	futuresOrderPriceState,
 	showCrossMarginOnboardState,
-	crossMarginAccountOverviewState,
 } from 'store/futures';
 import { orderPriceInvalidLabel } from 'utils/futures';
 
@@ -46,17 +47,17 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const { crossMarginAddress, crossMarginAvailable, status } = useRecoilValue(futuresAccountState);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
-	const { freeMargin } = useRecoilValue(crossMarginAccountOverviewState);
+	const { freeMargin } = useAppSelector(selectCrossMarginBalanceInfo);
 	const marketAssetRate = useAppSelector(selectMarketAssetRate);
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const [orderPrice, setOrderPrice] = useRecoilState(futuresOrderPriceState);
+	const openTransferModal = useAppSelector(selectOpenModal);
 
 	const dispatch = useAppDispatch();
 
 	const { onTradeOrderPriceChange } = useFuturesContext();
 
 	const [showOnboard, setShowOnboard] = useRecoilState(showCrossMarginOnboardState);
-	const [openTransferModal, setOpenTransferModal] = useState<'deposit' | 'withdraw' | null>(null);
 
 	const onChangeOrderPrice = useCallback(
 		(price: string) => {
@@ -82,7 +83,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 					<TradePanelHeader
 						balance={freeMargin}
 						accountType={selectedAccountType}
-						onManageBalance={() => setOpenTransferModal('deposit')}
+						onManageBalance={() => dispatch(setOpenModal('cm_deposit_margin'))}
 					/>
 
 					<MarginInfoBox />
@@ -120,8 +121,8 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 					<FeeInfoBox />
 					{openTransferModal && (
 						<DepositWithdrawCrossMargin
-							defaultTab={openTransferModal}
-							onDismiss={() => setOpenTransferModal(null)}
+							defaultTab={openTransferModal === 'cm_deposit_margin' ? 'deposit' : 'withdraw'}
+							onDismiss={() => dispatch(setOpenModal(null))}
 						/>
 					)}
 				</>

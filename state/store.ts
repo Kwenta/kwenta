@@ -3,6 +3,7 @@ import type { AnyAction, ThunkAction } from '@reduxjs/toolkit';
 import logger from 'redux-logger';
 import KwentaSDK from 'sdk';
 
+import appReducer from './app/reducer';
 import balancesReducer from './balances/reducer';
 import { sdk } from './config';
 import earnReducer from './earn/reducer';
@@ -15,6 +16,7 @@ const LOG_REDUX = process.env.NODE_ENV !== 'production';
 
 const store = configureStore({
 	reducer: {
+		app: appReducer,
 		wallet: walletReducer,
 		balances: balancesReducer,
 		exchange: exchangeReducer,

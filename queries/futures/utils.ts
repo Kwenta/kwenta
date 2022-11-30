@@ -9,7 +9,7 @@ import { ETH_UNIT } from 'constants/network';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
 import { FuturesMarket } from 'sdk/types/futures';
-import { formatCurrency, formatDollars, weiFromWei, zeroBN } from 'utils/formatters/number';
+import { formatCurrency, formatDollars, weiFromWei } from 'utils/formatters/number';
 import {
 	FuturesMarketAsset,
 	getDisplayAsset,
@@ -20,7 +20,6 @@ import {
 import { SECONDS_PER_DAY, FUTURES_ENDPOINTS } from './constants';
 import {
 	CrossMarginAccountTransferResult,
-	FuturesAggregateStatResult,
 	FuturesMarginTransferResult,
 	FuturesOrderResult,
 	FuturesOrderType,
@@ -28,12 +27,9 @@ import {
 	FuturesTradeResult,
 } from './subgraph';
 import {
-	FuturesPosition,
 	FuturesOpenInterest,
 	FuturesOneMinuteStat,
-	PositionDetail,
 	PositionSide,
-	FuturesVolumes,
 	PositionHistory,
 	FundingRateUpdate,
 	FuturesTrade,
@@ -52,55 +48,6 @@ export const getFuturesMarketContract = (asset: string | null, contracts: Contra
 	const contract = contracts[contractName];
 	if (!contract) throw new Error(`${contractName} for ${asset} does not exist`);
 	return contract;
-};
-
-export const mapFuturesPosition = (
-	positionDetail: PositionDetail,
-	canLiquidatePosition: boolean,
-	asset: FuturesMarketAsset
-): FuturesPosition => {
-	const {
-		remainingMargin,
-		accessibleMargin,
-		position: { fundingIndex, lastPrice, size, margin },
-		accruedFunding,
-		notionalValue,
-		liquidationPrice,
-		profitLoss,
-	} = positionDetail;
-	const initialMargin = wei(margin);
-	const pnl = wei(profitLoss).add(wei(accruedFunding));
-	const pnlPct = initialMargin.gt(0) ? pnl.div(wei(initialMargin)) : wei(0);
-	return {
-		asset,
-		remainingMargin: wei(remainingMargin),
-		accessibleMargin: wei(accessibleMargin),
-		position: wei(size).eq(zeroBN)
-			? null
-			: {
-					canLiquidatePosition: !!canLiquidatePosition,
-					side: wei(size).gt(zeroBN) ? PositionSide.LONG : PositionSide.SHORT,
-					notionalValue: wei(notionalValue).abs(),
-					accruedFunding: wei(accruedFunding),
-					initialMargin,
-					profitLoss: wei(profitLoss),
-					fundingIndex: Number(fundingIndex),
-					lastPrice: wei(lastPrice),
-					size: wei(size).abs(),
-					liquidationPrice: wei(liquidationPrice),
-					initialLeverage: initialMargin.gt(0)
-						? wei(size).mul(wei(lastPrice)).div(initialMargin).abs()
-						: wei(0),
-					pnl,
-					pnlPct,
-					marginRatio: wei(notionalValue).eq(zeroBN)
-						? zeroBN
-						: wei(remainingMargin).div(wei(notionalValue).abs()),
-					leverage: wei(remainingMargin).eq(zeroBN)
-						? zeroBN
-						: wei(notionalValue).div(wei(remainingMargin)).abs(),
-			  },
-	};
 };
 
 const mapOrderType = (orderType: Partial<FuturesOrderType>): FuturesOrderTypeDisplay => {
@@ -192,24 +139,6 @@ export const mapOpenInterest = async (
 		}
 	}
 	return openInterest;
-};
-
-export const calculateVolumes = (
-	futuresHourlyStats: FuturesAggregateStatResult[]
-): FuturesVolumes => {
-	const volumes: FuturesVolumes = futuresHourlyStats.reduce(
-		(acc: FuturesVolumes, { asset, volume, trades }) => {
-			return {
-				...acc,
-				[asset]: {
-					volume: volume.div(ETH_UNIT).add(acc[asset]?.volume ?? 0),
-					trades: trades.add(acc[asset]?.trades ?? 0),
-				},
-			};
-		},
-		{}
-	);
-	return volumes;
 };
 
 export const calculateTradeVolumeForAllSynths = (SynthTrades: SynthsTrades): SynthsVolumes => {

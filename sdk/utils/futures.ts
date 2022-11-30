@@ -1,9 +1,20 @@
 import Wei, { wei } from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 
+import { ETH_UNIT } from 'constants/network';
+import { FuturesAggregateStatResult } from 'queries/futures/subgraph';
 import { FUTURES_ENDPOINTS, MAINNET_MARKETS, TESTNET_MARKETS } from 'sdk/constants/futures';
 import { SECONDS_PER_DAY } from 'sdk/constants/period';
-import { FundingRateUpdate, FuturesMarketAsset, MarketClosureReason } from 'sdk/types/futures';
+import {
+	FundingRateUpdate,
+	FuturesMarketAsset,
+	FuturesPosition,
+	FuturesVolumes,
+	MarketClosureReason,
+	PositionDetail,
+	PositionSide,
+} from 'sdk/types/futures';
+import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
 export const getFuturesEndpoint = (networkId: number): string => {
@@ -99,4 +110,71 @@ export const getReasonFromCode = (
 		default:
 			return 'unknown';
 	}
+};
+
+export const calculateVolumes = (
+	futuresHourlyStats: FuturesAggregateStatResult[]
+): FuturesVolumes => {
+	const volumes: FuturesVolumes = futuresHourlyStats.reduce(
+		(acc: FuturesVolumes, { asset, volume, trades }) => {
+			return {
+				...acc,
+				[asset]: {
+					volume: volume.div(ETH_UNIT).add(acc[asset]?.volume ?? 0),
+					trades: trades.add(acc[asset]?.trades ?? 0),
+				},
+			};
+		},
+		{}
+	);
+	return volumes;
+};
+
+export const mapFuturesPosition = (
+	positionDetail: PositionDetail,
+	canLiquidatePosition: boolean,
+	asset: FuturesMarketAsset
+): FuturesPosition => {
+	const {
+		remainingMargin,
+		accessibleMargin,
+		position: { fundingIndex, lastPrice, size, margin },
+		accruedFunding,
+		notionalValue,
+		liquidationPrice,
+		profitLoss,
+	} = positionDetail;
+	const initialMargin = wei(margin);
+	const pnl = wei(profitLoss).add(wei(accruedFunding));
+	const pnlPct = initialMargin.gt(0) ? pnl.div(wei(initialMargin)) : wei(0);
+	return {
+		asset,
+		remainingMargin: wei(remainingMargin),
+		accessibleMargin: wei(accessibleMargin),
+		position: wei(size).eq(zeroBN)
+			? null
+			: {
+					canLiquidatePosition: !!canLiquidatePosition,
+					side: wei(size).gt(zeroBN) ? PositionSide.LONG : PositionSide.SHORT,
+					notionalValue: wei(notionalValue).abs(),
+					accruedFunding: wei(accruedFunding),
+					initialMargin,
+					profitLoss: wei(profitLoss),
+					fundingIndex: Number(fundingIndex),
+					lastPrice: wei(lastPrice),
+					size: wei(size).abs(),
+					liquidationPrice: wei(liquidationPrice),
+					initialLeverage: initialMargin.gt(0)
+						? wei(size).mul(wei(lastPrice)).div(initialMargin).abs()
+						: wei(0),
+					pnl,
+					pnlPct,
+					marginRatio: wei(notionalValue).eq(zeroBN)
+						? zeroBN
+						: wei(remainingMargin).div(wei(notionalValue).abs()),
+					leverage: wei(remainingMargin).eq(zeroBN)
+						? zeroBN
+						: wei(notionalValue).div(wei(remainingMargin)).abs(),
+			  },
+	};
 };

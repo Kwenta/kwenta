@@ -1,14 +1,14 @@
 import React from 'react';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import { positionState } from 'store/futures';
+import { selectPosition } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 
 import PositionCard from '../PositionCard';
 import { SectionHeader, SectionSeparator, SectionTitle } from './common';
 
 const PositionDetails = () => {
-	const position = useRecoilValue(positionState);
+	const position = useAppSelector(selectPosition);
 
 	return position?.position ? (
 		<PositionDetailsContainer>

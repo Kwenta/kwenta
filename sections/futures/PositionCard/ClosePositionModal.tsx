@@ -9,8 +9,8 @@ import Button from 'components/Button';
 import Error from 'components/Error';
 import Connector from 'containers/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { FuturesFilledPosition } from 'queries/futures/types';
 import { getFuturesMarketContract } from 'queries/futures/utils';
+import { FuturesFilledPosition } from 'sdk/types/futures';
 import { selectMarketAsset } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FlexDivCentered, FlexDivCol } from 'styles/common';
@@ -123,7 +123,7 @@ function ClosePositionModal({
 					variant="flat"
 					size="lg"
 					onClick={onClosePosition}
-					disabled={!!error || disabled || gasFee?.eq(0)}
+					disabled={!!error || disabled}
 				>
 					{t('futures.market.user.position.modal.title')}
 				</StyledButton>

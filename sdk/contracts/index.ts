@@ -6,6 +6,7 @@ import { ADDRESSES } from './constants';
 import {
 	CrossMarginAccountFactory__factory,
 	CrossMarginBaseSettings__factory,
+	ERC20__factory,
 	ExchangeRates__factory,
 	Exchanger__factory,
 	FuturesMarketData__factory,
@@ -29,7 +30,7 @@ export type AllContractsMap = Record<
 
 export const getContractsByNetwork = (
 	networkId: NetworkId,
-	provider: ethers.providers.Provider
+	provider: ethers.providers.Provider | ethers.Signer
 ) => {
 	return {
 		Exchanger: ADDRESSES.Exchanger[networkId]
@@ -61,6 +62,9 @@ export const getContractsByNetwork = (
 			: undefined,
 		SynthSwap: ADDRESSES.SynthSwap[networkId]
 			? SynthSwap__factory.connect(ADDRESSES.SynthSwap[networkId], provider)
+			: undefined,
+		SUSD: ADDRESSES.SUSD[networkId]
+			? ERC20__factory.connect(ADDRESSES.SUSD[networkId], provider)
 			: undefined,
 		CrossMarginAccountFactory: ADDRESSES.CrossMarginAccountFactory[networkId]
 			? CrossMarginAccountFactory__factory.connect(

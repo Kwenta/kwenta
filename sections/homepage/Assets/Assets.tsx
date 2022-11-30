@@ -20,10 +20,11 @@ import { Price } from 'queries/rates/types';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
 import { selectExchangeRates } from 'state/exchange/selectors';
+import { selectMarketVolumes } from 'state/futures/selectors';
 import { fetchOptimismMarkets } from 'state/home/actions';
 import { selectOptimismMarkets } from 'state/home/selectors';
-import { useAppSelector, usePollAction } from 'state/hooks';
-import { futuresVolumesState, pastRatesState } from 'store/futures';
+import { useAppSelector, usePollWhenReady } from 'state/hooks';
+import { pastRatesState } from 'store/futures';
 import {
 	FlexDiv,
 	FlexDivColCentered,
@@ -153,8 +154,8 @@ const Assets = () => {
 	const futuresMarkets = useAppSelector(selectOptimismMarkets);
 
 	const pastRates = useRecoilValue(pastRatesState);
-	const futuresVolumes = useRecoilValue(futuresVolumesState);
-	usePollAction(() => fetchOptimismMarkets(l2Provider));
+	const futuresVolumes = useAppSelector(selectMarketVolumes);
+	usePollWhenReady('fetchOptimismMarkets', () => fetchOptimismMarkets(l2Provider));
 
 	const MARKETS_TABS = useMemo(
 		() => [

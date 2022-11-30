@@ -1,11 +1,20 @@
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
+import { Contract as EthCallContract } from 'ethcall';
+import { BigNumber, ethers, utils as ethersUtils } from 'ethers';
 import { formatBytes32String, parseBytes32String } from 'ethers/lib/utils';
 import request, { gql } from 'graphql-request';
 import KwentaSDK from 'sdk';
 
+import { DAY_PERIOD } from 'queries/futures/constants';
+import { getFuturesAggregateStats } from 'queries/futures/subgraph';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
 import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { getContractsByNetwork } from 'sdk/contracts';
+import ExchangeRatesABI from 'sdk/contracts/abis/ExchangeRates.json';
+import FuturesMarketABI from 'sdk/contracts/abis/FuturesMarket.json';
+import FuturesMarketDataABI from 'sdk/contracts/abis/FuturesMarketData.json';
+import FuturesMarketSettingsABI from 'sdk/contracts/abis/FuturesMarketSettings.json';
+import { CrossMarginBase__factory, FuturesMarketData } from 'sdk/contracts/types';
 import { NetworkOverrideOptions } from 'sdk/types/common';
 import {
 	FundingRateInput,
@@ -13,31 +22,38 @@ import {
 	FundingRateUpdate,
 	FuturesMarket,
 	FuturesMarketAsset,
+	FuturesVolumes,
 	MarketClosureReason,
+	PositionDetail,
 } from 'sdk/types/futures';
 import {
 	calculateFundingRate,
+	calculateVolumes,
 	getFuturesEndpoint,
 	getMarketName,
 	getReasonFromCode,
+	mapFuturesPosition,
 	marketsForNetwork,
 } from 'sdk/utils/futures';
+import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import { MarketKeyByAsset } from 'utils/futures';
 
 export default class FuturesService {
 	private sdk: KwentaSDK;
-	private futuresGqlEndpoint: string;
+	public markets: FuturesMarket[] | undefined;
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
-		this.futuresGqlEndpoint = getFuturesEndpoint(sdk.context.networkId);
+	}
+
+	get futuresGqlEndpoint() {
+		return getFuturesEndpoint(this.sdk.context.networkId);
 	}
 
 	public async getMarkets(networkOverride?: NetworkOverrideOptions) {
 		const enabledMarkets = marketsForNetwork(
 			networkOverride?.networkId || this.sdk.context.networkId
 		);
-
 		const contracts =
 			networkOverride && networkOverride?.networkId !== this.sdk.context.networkId
 				? getContractsByNetwork(networkOverride.networkId, networkOverride.provider)
@@ -49,9 +65,19 @@ export default class FuturesService {
 			throw new Error(UNSUPPORTED_NETWORK);
 		}
 
-		const [markets, globals] = await Promise.all([
-			FuturesMarketData.allMarketSummaries(),
-			FuturesMarketData.globals(),
+		const FuturesMarketDataEthCall = new EthCallContract(
+			FuturesMarketData.address,
+			FuturesMarketDataABI
+		);
+		const ExchangeRatesEthCall = new EthCallContract(ExchangeRates.address, ExchangeRatesABI);
+		const FuturesMarketSettingsEthCall = new EthCallContract(
+			FuturesMarketSettings.address,
+			FuturesMarketSettingsABI
+		);
+
+		const [markets, globals] = await this.sdk.context.multicallProvider.all([
+			FuturesMarketDataEthCall.allMarketSummaries(),
+			FuturesMarketDataEthCall.globals(),
 		]);
 
 		const filteredMarkets = markets.filter((m: any) => {
@@ -60,28 +86,30 @@ export default class FuturesService {
 				return asset === market.asset;
 			});
 			return !!market;
-		});
+		}) as FuturesMarketData.MarketSummaryStructOutput[];
 
 		const assetKeys = filteredMarkets.map((m: any) => {
 			const asset = parseBytes32String(m.asset) as FuturesMarketAsset;
 			return formatBytes32String(MarketKeyByAsset[asset]);
 		});
 
-		const currentRoundIdPromises = Promise.all(
-			assetKeys.map((key: string) => ExchangeRates.getCurrentRoundId(key))
+		const currentRoundIdCalls = assetKeys.map((key: string) =>
+			ExchangeRatesEthCall.getCurrentRoundId(key)
 		);
 
-		const marketLimitPromises = Promise.all(
-			assetKeys.map((key: string) => FuturesMarketSettings.maxMarketValueUSD(key))
+		const marketLimitCalls = assetKeys.map((key: string) =>
+			FuturesMarketSettingsEthCall.maxMarketValueUSD(key)
 		);
 
-		const systemStatusPromise = await SystemStatus.getFuturesMarketSuspensions(assetKeys);
-
-		const [currentRoundIds, marketLimits, { suspensions, reasons }] = await Promise.all([
-			currentRoundIdPromises,
-			marketLimitPromises,
-			systemStatusPromise,
+		const responses = await this.sdk.context.multicallProvider.all([
+			...currentRoundIdCalls,
+			...marketLimitCalls,
 		]);
+
+		const currentRoundIds = responses.slice(0, currentRoundIdCalls.length);
+		const marketLimits = responses.slice(currentRoundIdCalls.length);
+
+		const { suspensions, reasons } = await SystemStatus.getFuturesMarketSuspensions(assetKeys);
 
 		const futuresMarkets = filteredMarkets.map(
 			(
@@ -243,5 +271,123 @@ export default class FuturesService {
 		);
 
 		return fundingRateResponses.filter((funding): funding is FundingRateResponse => !!funding);
+	}
+
+	public async getDailyVolumes(): Promise<FuturesVolumes> {
+		const minTimestamp = Math.floor(calculateTimestampForPeriod(DAY_PERIOD) / 1000);
+		const response = await getFuturesAggregateStats(
+			this.futuresGqlEndpoint,
+			{
+				first: 999999,
+				where: {
+					period: `${PERIOD_IN_SECONDS.ONE_HOUR}`,
+					timestamp_gte: `${minTimestamp}`,
+				},
+			},
+			{
+				id: true,
+				asset: true,
+				volume: true,
+				trades: true,
+				timestamp: true,
+				period: true,
+				feesKwenta: true,
+				feesSynthetix: true,
+			}
+		);
+		return response ? calculateVolumes(response) : {};
+	}
+
+	public async getCrossMarginBalanceInfo(crossMarginAddress: string) {
+		const crossMarginAccountContract = CrossMarginBase__factory.connect(
+			crossMarginAddress,
+			this.sdk.context.provider
+		);
+		const { SUSD } = this.sdk.context.contracts;
+		if (!SUSD) throw new Error(UNSUPPORTED_NETWORK);
+
+		const [freeMargin, keeperEthBal, allowance] = await Promise.all([
+			crossMarginAccountContract.freeMargin(),
+			this.sdk.context.provider.getBalance(crossMarginAddress),
+			SUSD.allowance(this.sdk.context.walletAddress, crossMarginAccountContract.address),
+		]);
+
+		return {
+			freeMargin: wei(freeMargin),
+			keeperEthBal: wei(keeperEthBal),
+			allowance: wei(allowance),
+		};
+	}
+
+	public async approveCrossMarginDeposit(
+		crossMarginAddress: string,
+		amount: BigNumber = ethers.constants.MaxUint256
+	) {
+		if (!this.sdk.context.contracts.SUSD) throw new Error(UNSUPPORTED_NETWORK);
+		return this.sdk.context.contracts.SUSD.approve(crossMarginAddress, amount);
+	}
+
+	public async depositCrossMargin(crossMarginAddress: string, amount: Wei) {
+		// TODO: Store on instance
+		const crossMarginAccountContract = CrossMarginBase__factory.connect(
+			crossMarginAddress,
+			this.sdk.context.signer
+		);
+		return crossMarginAccountContract.deposit(amount.toBN());
+	}
+
+	public async withdrawCrossMargin(crossMarginAddress: string, amount: Wei) {
+		// TODO: Store on instance
+		const crossMarginAccountContract = CrossMarginBase__factory.connect(
+			crossMarginAddress,
+			this.sdk.context.signer
+		);
+		return crossMarginAccountContract.withdraw(amount.toBN());
+	}
+
+	// TODO: types
+	public async getFuturesPositions(
+		address: string, // Cross margin or EOA address
+		futuresMarkets: { asset: FuturesMarketAsset; address: string }[]
+	) {
+		const futuresDataAddress = this.sdk.context.contracts.FuturesMarketData?.address;
+		if (!this.sdk.context.isL2 || !futuresDataAddress) {
+			throw new Error(UNSUPPORTED_NETWORK);
+		}
+
+		const FMD = new EthCallContract(futuresDataAddress, FuturesMarketDataABI);
+
+		const positionCalls = [];
+		const liquidationCalls = [];
+
+		for (const { address: marketAddress, asset } of futuresMarkets) {
+			positionCalls.push(
+				FMD.positionDetailsForMarketKey(
+					ethersUtils.formatBytes32String(MarketKeyByAsset[asset]),
+					address
+				)
+			);
+			const marketContract = new EthCallContract(marketAddress, FuturesMarketABI);
+			liquidationCalls.push(marketContract.canLiquidate(address));
+		}
+
+		// TODO: Combine these two?
+		const positionDetails = (await this.sdk.context.multicallProvider.all(
+			positionCalls
+		)) as PositionDetail[];
+		const canLiquidateState = (await this.sdk.context.multicallProvider.all(
+			liquidationCalls
+		)) as boolean[];
+
+		// map the positions using the results
+		const positions = positionDetails
+			.map((position, ind) => {
+				const canLiquidate = canLiquidateState[ind];
+				const asset = futuresMarkets[ind].asset;
+				return mapFuturesPosition(position, canLiquidate, asset);
+			})
+			.filter(({ remainingMargin }) => remainingMargin.gt(0));
+
+		return positions;
 	}
 }

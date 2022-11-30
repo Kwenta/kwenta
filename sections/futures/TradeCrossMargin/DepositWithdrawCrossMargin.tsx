@@ -1,5 +1,4 @@
 import { wei } from '@synthetixio/wei';
-import { constants } from 'ethers';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -12,12 +11,15 @@ import CustomInput from 'components/Input/CustomInput';
 import Loader from 'components/Loader';
 import SegmentedControl from 'components/SegmentedControl';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
-import Connector from 'containers/Connector';
-import { useRefetchContext } from 'contexts/RefetchContext';
-import { monitorTransaction } from 'contexts/RelayerContext';
-import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
-import useSUSDContract from 'hooks/useSUSDContract';
-import { balancesState, crossMarginAccountOverviewState } from 'store/futures';
+import { approveCrossMargin, depositCrossMargin, withdrawCrossMargin } from 'state/futures/actions';
+import {
+	selectCrossMarginBalanceInfo,
+	selectFuturesTransaction,
+	selectIsApprovingDeposit,
+	selectIsSubmittingTransfer,
+} from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { balancesState } from 'store/futures';
 import { FlexDivRowCentered } from 'styles/common';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -25,7 +27,6 @@ import logError from 'utils/logError';
 type DepositMarginModalProps = {
 	defaultTab: 'deposit' | 'withdraw';
 	onDismiss(): void;
-	onComplete?(): void;
 };
 
 const PLACEHOLDER = '$0.00';
@@ -33,118 +34,64 @@ const PLACEHOLDER = '$0.00';
 export default function DepositWithdrawCrossMargin({
 	defaultTab = 'deposit',
 	onDismiss,
-	onComplete,
 }: DepositMarginModalProps) {
 	const { t } = useTranslation();
-	const { signer } = Connector.useContainer();
-	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
-	const { refetchUntilUpdate } = useRefetchContext();
-	const susdContract = useSUSDContract();
+	const dispatch = useAppDispatch();
 
 	const balances = useRecoilValue(balancesState);
-	const { freeMargin, allowance } = useRecoilValue(crossMarginAccountOverviewState);
+	const crossMarginBalanceInfo = useAppSelector(selectCrossMarginBalanceInfo);
+	const transactionState = useAppSelector(selectFuturesTransaction);
+	const isSubmitting = useAppSelector(selectIsSubmittingTransfer);
+	const isApproving = useAppSelector(selectIsApprovingDeposit);
 
 	const [amount, setAmount] = useState<string>('');
 	const [transferType, setTransferType] = useState(0);
-	const [txState, setTxState] = useState<'none' | 'approving' | 'submitting' | 'complete'>('none');
-	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
 		setTransferType(defaultTab === 'deposit' ? 0 : 1);
 	}, [defaultTab]);
 
-	const susdBal = transferType === 0 ? balances?.susdWalletBalance || zeroBN : freeMargin;
+	const susdBal =
+		transferType === 0 ? balances?.susdWalletBalance || zeroBN : crossMarginBalanceInfo.freeMargin;
 
 	const submitDeposit = useCallback(async () => {
-		try {
-			if (!crossMarginAccountContract) throw new Error('No cross-margin account');
-
-			setTxState('submitting');
-			const tx = await crossMarginAccountContract.deposit(wei(amount || 0).toBN());
-			monitorTransaction({
-				txHash: tx.hash,
-				onTxConfirmed: async () => {
-					await refetchUntilUpdate('account-margin-change');
-					setTxState('complete');
-					onComplete?.();
-					onDismiss();
-				},
-			});
-		} catch (err) {
-			setError(err.message);
-			setTxState('none');
-			logError(err);
-		}
-	}, [crossMarginAccountContract, amount, refetchUntilUpdate, onComplete, onDismiss]);
+		dispatch(depositCrossMargin(wei(amount)));
+	}, [amount, dispatch]);
 
 	const depositMargin = useCallback(async () => {
 		try {
-			const wallet = await signer?.getAddress();
-
-			if (!crossMarginAccountContract || !wallet) throw new Error('No cross margin account');
 			const weiAmount = wei(amount ?? 0, 18);
 
-			if (wei(allowance).lt(weiAmount)) {
-				setTxState('approving');
-				const tx = await susdContract?.approve(
-					crossMarginAccountContract.address,
-					constants.MaxUint256
-				);
-				if (tx?.hash) {
-					monitorTransaction({
-						txHash: tx.hash,
-						onTxConfirmed: () => {
-							submitDeposit();
-						},
-					});
-				}
+			if (wei(crossMarginBalanceInfo.allowance).lt(weiAmount)) {
+				dispatch(approveCrossMargin());
 			} else {
 				submitDeposit();
 			}
 		} catch (err) {
-			setError(err.message);
-			setTxState('none');
 			logError(err);
 		}
-	}, [crossMarginAccountContract, amount, signer, susdContract, allowance, submitDeposit]);
+	}, [amount, crossMarginBalanceInfo.allowance, dispatch, submitDeposit]);
 
 	const withdrawMargin = useCallback(async () => {
-		try {
-			if (!crossMarginAccountContract) throw new Error('No cross-margin account');
-			setTxState('submitting');
-			const tx = await crossMarginAccountContract.withdraw(wei(amount).toBN());
-			monitorTransaction({
-				txHash: tx.hash,
-				onTxConfirmed: async () => {
-					await refetchUntilUpdate('account-margin-change');
-					setTxState('complete');
-					onComplete?.();
-					onDismiss();
-				},
-			});
-		} catch (err) {
-			setError(err.message);
-			setTxState('none');
-			logError(err);
-		}
-	}, [crossMarginAccountContract, amount, refetchUntilUpdate, onComplete, onDismiss]);
+		dispatch(withdrawCrossMargin(wei(amount)));
+	}, [amount, dispatch]);
 
 	const disabledReason = useMemo(() => {
 		const amtWei = wei(amount || 0);
 		if (transferType === 0) {
-			const total = wei(freeMargin).add(amtWei);
+			const total = wei(crossMarginBalanceInfo.freeMargin).add(amtWei);
 			if (total.lt(MIN_MARGIN_AMOUNT))
 				return t('futures.market.trade.margin.modal.deposit.min-deposit');
 			if (amtWei.gt(susdBal)) return t('futures.market.trade.margin.modal.deposit.exceeds-balance');
 		} else {
-			if (amtWei.gt(freeMargin))
+			if (amtWei.gt(crossMarginBalanceInfo.freeMargin))
 				return t('futures.market.trade.margin.modal.deposit.exceeds-balance');
 		}
-	}, [amount, freeMargin, transferType, susdBal, t]);
+	}, [amount, crossMarginBalanceInfo.freeMargin, transferType, susdBal, t]);
 
 	const isApproved = useMemo(() => {
-		return allowance.gt(wei(amount || 0));
-	}, [allowance, amount]);
+		return crossMarginBalanceInfo.allowance.gt(wei(amount || 0));
+	}, [crossMarginBalanceInfo.allowance, amount]);
 
 	const handleSetMax = React.useCallback(() => {
 		setAmount(susdBal.toString());
@@ -154,6 +101,8 @@ export default function DepositWithdrawCrossMargin({
 		setTransferType(selection);
 		setAmount('');
 	};
+
+	const isLoading = isSubmitting || isApproving;
 
 	return (
 		<StyledBaseModal
@@ -188,11 +137,11 @@ export default function DepositWithdrawCrossMargin({
 			<MarginActionButton
 				variant="flat"
 				data-testid="futures-market-trade-deposit-margin-button"
-				disabled={!!disabledReason || !amount || txState !== 'none'}
+				disabled={!!disabledReason || !amount || isLoading}
 				fullWidth
 				onClick={transferType === 0 ? depositMargin : withdrawMargin}
 			>
-				{txState === 'approving' || txState === 'submitting' ? (
+				{isLoading ? (
 					<Loader />
 				) : (
 					disabledReason ||
@@ -206,7 +155,7 @@ export default function DepositWithdrawCrossMargin({
 				)}
 			</MarginActionButton>
 
-			{error && <ErrorView message={error} formatter="revert" />}
+			{transactionState?.error && <ErrorView message={transactionState.error} formatter="revert" />}
 		</StyledBaseModal>
 	);
 }

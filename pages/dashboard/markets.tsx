@@ -5,13 +5,13 @@ import DashboardLayout from 'sections/dashboard/DashboardLayout';
 import Markets from 'sections/dashboard/Markets';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { fetchMarkets } from 'state/futures/actions';
-import { usePollAction } from 'state/hooks';
+import { usePollWhenReady } from 'state/hooks';
 
 type MarketsProps = React.FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
 const MarketsPage: MarketsProps = () => {
 	const { t } = useTranslation();
-	usePollAction(fetchMarkets);
+	usePollWhenReady('fetchMarkets', fetchMarkets);
 
 	return (
 		<>

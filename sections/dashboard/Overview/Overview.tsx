@@ -16,8 +16,13 @@ import useIsL2 from 'hooks/useIsL2';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
 import { sdk } from 'state/config';
+import {
+	selectCrossMarginPositions,
+	selectFuturesPortfolio,
+	selectIsolatedMarginPositions,
+} from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { balancesState, portfolioState, positionsState } from 'store/futures';
+import { balancesState } from 'store/futures';
 import { activePositionsTabState } from 'store/ui';
 import { formatDollars, toWei, weiFromWei, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -42,8 +47,9 @@ const Overview: FC = () => {
 	const { t } = useTranslation();
 
 	const balances = useRecoilValue(balancesState);
-	const portfolio = useRecoilValue(portfolioState);
-	const positions = useRecoilValue(positionsState);
+	const portfolio = useAppSelector(selectFuturesPortfolio);
+	const crossPositions = useAppSelector(selectCrossMarginPositions);
+	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
 
 	const [activePositionsTab, setActivePositionsTab] = useRecoilState<PositionsTab>(
 		activePositionsTabState
@@ -163,8 +169,6 @@ const Overview: FC = () => {
 	}, [kwentaBalance, noKwentaFound, oneInchEnabled, synthsMap, tokenBalances]);
 
 	const POSITIONS_TABS = useMemo(() => {
-		const crossPositions = positions.cross_margin.filter(({ position }) => !!position).length;
-		const isolatedPositions = positions.isolated_margin.filter(({ position }) => !!position).length;
 		const exchangeTokenBalances = exchangeTokens.reduce(
 			(initial: Wei, { usdBalance }: { usdBalance: Wei }) => initial.add(usdBalance),
 			zeroBN
@@ -173,7 +177,7 @@ const Overview: FC = () => {
 			{
 				name: PositionsTab.CROSS_MARGIN,
 				label: t('dashboard.overview.positions-tabs.cross-margin'),
-				badge: crossPositions,
+				badge: crossPositions.length,
 				titleIcon: <FuturesIcon type="cross_margin" />,
 				active: activePositionsTab === PositionsTab.CROSS_MARGIN,
 				detail: formatDollars(portfolio.crossMarginFutures),
@@ -183,7 +187,7 @@ const Overview: FC = () => {
 			{
 				name: PositionsTab.ISOLATED_MARGIN,
 				label: t('dashboard.overview.positions-tabs.isolated-margin'),
-				badge: isolatedPositions,
+				badge: isolatedPositions.length,
 				active: activePositionsTab === PositionsTab.ISOLATED_MARGIN,
 				titleIcon: <FuturesIcon type="isolated_margin" />,
 				detail: formatDollars(portfolio.isolatedMarginFutures),
@@ -200,8 +204,8 @@ const Overview: FC = () => {
 			},
 		];
 	}, [
-		positions.cross_margin,
-		positions.isolated_margin,
+		crossPositions,
+		isolatedPositions,
 		exchangeTokens,
 		balances.totalUSDBalance,
 		t,

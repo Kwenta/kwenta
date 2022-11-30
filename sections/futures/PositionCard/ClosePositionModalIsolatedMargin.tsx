@@ -7,9 +7,9 @@ import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import useEstimateGasCost from 'hooks/useEstimateGasCost';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
-import { selectMarketAsset } from 'state/futures/selectors';
+import { selectMarketAsset, selectPosition } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { futuresAccountTypeState, positionState } from 'store/futures';
+import { futuresAccountTypeState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { getDisplayAsset } from 'utils/futures';
 
@@ -29,7 +29,7 @@ export default function ClosePositionModalIsolatedMargin({ onDismiss }: Props) {
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 
-	const position = useRecoilValue(positionState);
+	const position = useAppSelector(selectPosition);
 	const positionDetails = position?.position;
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 

@@ -8,16 +8,19 @@ import SwitchAssetArrows from 'assets/svg/futures/switch-arrows.svg';
 import CustomInput from 'components/Input/CustomInput';
 import InputTitle from 'components/Input/InputTitle';
 import { useFuturesContext } from 'contexts/FuturesContext';
-import { selectMarketKey, selectMarketAssetRate } from 'state/futures/selectors';
+import {
+	selectMarketKey,
+	selectMarketAssetRate,
+	selectCrossMarginBalanceInfo,
+	selectPosition,
+} from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {
 	futuresAccountTypeState,
 	simulatedTradeState,
-	positionState,
 	futuresTradeInputsState,
 	orderTypeState,
 	futuresOrderPriceState,
-	crossMarginAccountOverviewState,
 	leverageSideState,
 } from 'store/futures';
 import { FlexDivRow } from 'styles/common';
@@ -37,8 +40,8 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	const { nativeSize, susdSize } = useRecoilValue(futuresTradeInputsState);
 	const simulatedTrade = useRecoilValue(simulatedTradeState);
 
-	const { freeMargin: freeCrossMargin } = useRecoilValue(crossMarginAccountOverviewState);
-	const position = useRecoilValue(positionState);
+	const { freeMargin: freeCrossMargin } = useAppSelector(selectCrossMarginBalanceInfo);
+	const position = useAppSelector(selectPosition);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 	const orderType = useRecoilValue(orderTypeState);
 	const marketAssetRate = useAppSelector(selectMarketAssetRate);

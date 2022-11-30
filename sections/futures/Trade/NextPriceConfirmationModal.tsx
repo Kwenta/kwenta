@@ -14,13 +14,16 @@ import { useFuturesContext } from 'contexts/FuturesContext';
 import useEstimateGasCost from 'hooks/useEstimateGasCost';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
-import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
+import {
+	selectMarketAsset,
+	selectMarketInfo,
+	selectNextPriceDisclaimer,
+	selectPosition,
+} from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {
 	confirmationModalOpenState,
 	leverageSideState,
-	nextPriceDisclaimerState,
-	positionState,
 	futuresTradeInputsState,
 } from 'store/futures';
 import { FlexDivCol, FlexDivCentered } from 'styles/common';
@@ -34,7 +37,7 @@ import { MobileConfirmTradeButton } from './TradeConfirmationModal';
 const NextPriceConfirmationModal: FC = () => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
-	const isDisclaimerDisplayed = useRecoilValue(nextPriceDisclaimerState);
+	const isDisclaimerDisplayed = useAppSelector(selectNextPriceDisclaimer);
 	const { useEthGasPriceQuery } = useSynthetixQueries();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const ethGasPriceQuery = useEthGasPriceQuery();
@@ -42,7 +45,7 @@ const NextPriceConfirmationModal: FC = () => {
 
 	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
 	const leverageSide = useRecoilValue(leverageSideState);
-	const position = useRecoilValue(positionState);
+	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const marketAsset = useAppSelector(selectMarketAsset);
 

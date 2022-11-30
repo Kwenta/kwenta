@@ -19,19 +19,22 @@ import { monitorTransaction } from 'contexts/RelayerContext';
 import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 import { ORDER_PREVIEW_ERRORS_I18N, previewErrorI18n } from 'queries/futures/constants';
 import { setOrderType as setReduxOrderType } from 'state/futures/reducer';
-import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
+import {
+	selectCrossMarginBalanceInfo,
+	selectMarketAsset,
+	selectMarketInfo,
+	selectPosition,
+} from 'state/futures/selectors';
 import { useAppSelector, useAppDispatch } from 'state/hooks';
 import {
-	crossMarginTotalMarginState,
 	orderTypeState,
-	positionState,
 	potentialTradeDetailsState,
 	preferredLeverageState,
 	tradeFeesState,
 } from 'store/futures';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { isUserDeniedError } from 'utils/formatters/error';
-import { formatDollars } from 'utils/formatters/number';
+import { formatDollars, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
 import FeeInfoBox from '../FeeInfoBox';
@@ -54,10 +57,10 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 		onChangeOpenPosLeverage,
 	} = useFuturesContext();
 
+	const balanceInfo = useAppSelector(selectCrossMarginBalanceInfo);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const market = useAppSelector(selectMarketInfo);
-	const position = useRecoilValue(positionState);
-	const totalMargin = useRecoilValue(crossMarginTotalMarginState);
+	const position = useAppSelector(selectPosition);
 	const tradeFees = useRecoilValue(tradeFeesState);
 	const { error: previewError, data: previewData } = useRecoilValue(potentialTradeDetailsState);
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
@@ -72,6 +75,10 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 	const [submitting, setSubmitting] = useState(false);
 	const [error, setError] = useState<null | string>(null);
 	const dispatch = useAppDispatch();
+
+	const totalMargin = useMemo(() => {
+		return position?.remainingMargin.add(balanceInfo.freeMargin) ?? zeroBN;
+	}, [position?.remainingMargin, balanceInfo.freeMargin]);
 
 	const maxLeverage = Number((market?.maxLeverage || wei(DEFAULT_LEVERAGE)).toString(2));
 

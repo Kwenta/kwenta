@@ -39,15 +39,26 @@ The following tasks are expected to be completed before the SDK can be considere
 - [ ] Remove code that refers to `@synthetixio/*` packages.
 - [x] Add contract typings.
 - [x] Implement `Context` class.
+- [ ] Cache redux state and hydrate on load
 - [ ] Ensure type correctness of all SDK methods.
 - [ ] Set up foundation for retries on select methods.
 - [ ] Set up service for interacting with our subgraphs.
-- [ ] Remove Duplicated types.
+- [ ] Remove Duplicated types and move most data types to sdk.
+- [ ] Cache contract data where possible, especially settings, config etc which doesn't change very often
+- [ ] Create a contracts class in sdk context where we can cache more dynamic contracts such as markets
+- [ ] Ensure types are added to all redux actions and reducers
+- [ ] Remove old unused code
+- [ ] Ensure consistent logic patterns across various pages, sdk states and services
+- [ ] Ensure all data is correctly refetched after some mutation e.g. polling for contract and subgraph changes after a transaction
+- [ ] Consider experimenting with WebSockets for realtime data (again).
+- [ ] Remove walletAddress from connector and change references to the redux state wallet, this means we're always taking the sdk as source of truth for the wallet and avoids race conditions where queries are attempted before the signer is set.
+- [ ] Add query statuses for all key queries and create derived query statuses for components which rely on completion of multiple queries
 
 ## Exchange
 
 - [ ] Refactor `handleExchange` method.
 - [ ] Rename quote/base to from/to.
+- [ ] Update the write transactions to use the typed calls
 - [ ] Ensure all methods use from/to in correct order.
 - [ ] Experiment with exchange contexts (store an instance of from/to pairings, so that the client doesn't have to pass it every time).
 - [ ] Reduce number of queries, by storing more data in class instance.
@@ -60,7 +71,7 @@ The following tasks are expected to be completed before the SDK can be considere
 
 - [ ] Separate methods for isolated and cross-margin accounts.
 - [ ] Implement methods for fetching orders, past trades and transfers from the subgraph.
-- [ ] Consider experimenting with WebSockets for realtime data (again).
+- [ ] Query cross margin accounts from sdk and cache them there.
 
 # Design Considerations
 

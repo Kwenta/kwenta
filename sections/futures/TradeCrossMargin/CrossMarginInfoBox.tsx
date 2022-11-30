@@ -9,17 +9,19 @@ import { MiniLoader } from 'components/Loader';
 import PreviewArrow from 'components/PreviewArrow';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { FuturesPotentialTradeDetails } from 'queries/futures/types';
-import { selectMarketInfo } from 'state/futures/selectors';
+import {
+	selectCrossMarginBalanceInfo,
+	selectMarketInfo,
+	selectPosition,
+} from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {
 	crossMarginMarginDeltaState,
-	positionState,
 	potentialTradeDetailsState,
 	tradeFeesState,
 	futuresTradeInputsState,
 	orderTypeState,
 	futuresOrderPriceState,
-	crossMarginAccountOverviewState,
 } from 'store/futures';
 import { PillButtonSpan } from 'styles/common';
 import {
@@ -40,13 +42,13 @@ type Props = {
 function MarginInfoBox({ editingLeverage }: Props) {
 	const { selectedLeverage } = useFuturesContext();
 
-	const position = useRecoilValue(positionState);
+	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
 	const potentialTrade = useRecoilValue(potentialTradeDetailsState);
 	const marginDelta = useRecoilValue(crossMarginMarginDeltaState);
-	const { freeMargin: crossMarginFreeMargin, keeperEthBal } = useRecoilValue(
-		crossMarginAccountOverviewState
+	const { freeMargin: crossMarginFreeMargin, keeperEthBal } = useAppSelector(
+		selectCrossMarginBalanceInfo
 	);
 	const orderType = useRecoilValue(orderTypeState);
 	const orderPrice = useRecoilValue(futuresOrderPriceState);

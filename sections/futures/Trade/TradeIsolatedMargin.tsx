@@ -8,8 +8,9 @@ import {
 	setLeverageSide as setReduxLeverageSide,
 	setOrderType as setReduxOrderType,
 } from 'state/futures/reducer';
-import { useAppDispatch } from 'state/hooks';
-import { balancesState, leverageSideState, orderTypeState, positionState } from 'store/futures';
+import { selectPosition } from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { balancesState, leverageSideState, orderTypeState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 
 import FeeInfoBox from '../FeeInfoBox';
@@ -29,7 +30,7 @@ type Props = {
 const TradeIsolatedMargin = ({ isMobile }: Props) => {
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const { susdWalletBalance } = useRecoilValue(balancesState);
-	const position = useRecoilValue(positionState);
+	const position = useAppSelector(selectPosition);
 
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const [openTransferModal, setOpenTransferModal] = useState<boolean>(false);

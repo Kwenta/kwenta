@@ -10,13 +10,12 @@ import Button from 'components/Button';
 import ErrorView from 'components/Error';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
-import { selectMarketAsset } from 'state/futures/selectors';
+import { selectMarketAsset, selectPosition } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {
 	futuresOrderPriceState,
 	leverageSideState,
 	orderTypeState,
-	positionState,
 	potentialTradeDetailsState,
 } from 'store/futures';
 import { FlexDivCentered } from 'styles/common';
@@ -49,7 +48,7 @@ export default function TradeConfirmationModal({
 	const { data: potentialTradeDetails } = useRecoilValue(potentialTradeDetailsState);
 	const orderType = useRecoilValue(orderTypeState);
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
-	const position = useRecoilValue(positionState);
+	const position = useAppSelector(selectPosition);
 	const leverageSide = useRecoilValue(leverageSideState);
 
 	const positionSide = useMemo(() => {
@@ -156,7 +155,7 @@ export default function TradeConfirmationModal({
 						data-testid="trade-open-position-confirm-order-button"
 						variant="flat"
 						onClick={onConfirmOrder}
-						disabled={!positionDetails || !!disabledReason || gasFee?.eq(0)}
+						disabled={!positionDetails || !!disabledReason}
 					>
 						{disabledReason || t('futures.market.trade.confirmation.modal.confirm-order')}
 					</ConfirmTradeButton>

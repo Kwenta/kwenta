@@ -8,25 +8,25 @@ import ErrorView from 'components/Error';
 import StyledSlider from 'components/Slider/StyledSlider';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import {
-	aboveMaxLeverageState,
-	crossMarginAccountOverviewState,
-	futuresTradeInputsState,
-	leverageSideState,
-	maxLeverageState,
-	positionState,
-} from 'store/futures';
+	selectAboveMaxLeverage,
+	selectCrossMarginBalanceInfo,
+	selectMaxLeverage,
+	selectPosition,
+} from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { futuresTradeInputsState, leverageSideState } from 'store/futures';
 import { FlexDivRow } from 'styles/common';
 
 export default function OrderSizeSlider() {
 	const { t } = useTranslation();
 	const { onTradeAmountChange, maxUsdInputAmount, tradePrice } = useFuturesContext();
 
-	const { freeMargin: freeCrossMargin } = useRecoilValue(crossMarginAccountOverviewState);
+	const { freeMargin: freeCrossMargin } = useAppSelector(selectCrossMarginBalanceInfo);
 	const { susdSize } = useRecoilValue(futuresTradeInputsState);
-	const aboveMaxLeverage = useRecoilValue(aboveMaxLeverageState);
-	const maxLeverage = useRecoilValue(maxLeverageState);
-	const position = useRecoilValue(positionState);
+	const aboveMaxLeverage = useAppSelector(selectAboveMaxLeverage);
+	const maxLeverage = useAppSelector(selectMaxLeverage);
 	const leverageSide = useRecoilValue(leverageSideState);
+	const position = useAppSelector(selectPosition);
 
 	const [percent, setPercent] = useState(0);
 	const [usdValue, setUsdValue] = useState(susdSize);
