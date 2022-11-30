@@ -1,6 +1,9 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
+import { selectMarketAsset } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import { FlexDivCentered } from 'styles/common';
 import media from 'styles/media';
 
@@ -14,7 +17,9 @@ type MarketDetailsProps = {
 };
 
 const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
+	const { t } = useTranslation();
 	const marketData = useGetMarketData(mobile);
+	const marketAsset = useAppSelector(selectMarketAsset);
 
 	return (
 		<FlexDivCentered>
@@ -25,15 +30,40 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 			)}
 
 			<MarketDetailsContainer mobile={mobile}>
-				{Object.entries(marketData).map(([marketKey, data]) => (
-					<MarketDetail {...data} key={marketKey} marketKey={marketKey} mobile={Boolean(mobile)} />
-				))}
-
+				{marketAsset !== 'DebtRatio' ? (
+					Object.entries(marketData).map(([marketKey, data]) => (
+						<MarketDetail
+							{...data}
+							key={marketKey}
+							marketKey={marketKey}
+							mobile={Boolean(mobile)}
+						/>
+					))
+				) : (
+					<DeprecatedBannerContainer>
+						{t('exchange.market-details-card.deprecated-info')}
+					</DeprecatedBannerContainer>
+				)}
 				{mobile && <MobileMarketDetail />}
 			</MarketDetailsContainer>
 		</FlexDivCentered>
 	);
 };
+
+const DeprecatedBannerContainer = styled.div`
+	height: 40px;
+	width: 100%;
+	padding: 22px 5px;
+	border-radius: 8px;
+	margin-top: -5px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: ${(props) => props.theme.colors.white};
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 16px;
+	background-color: ${(props) => props.theme.colors.red};
+`;
 
 const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	flex: 1;
