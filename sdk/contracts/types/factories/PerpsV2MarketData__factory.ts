@@ -162,7 +162,7 @@ const _abi = [
     constant: true,
     inputs: [
       {
-        internalType: "contract IFuturesMarket",
+        internalType: "contract IPerpsV2MarketViews",
         name: "market",
         type: "address",
       },
@@ -232,7 +232,7 @@ const _abi = [
               },
               {
                 internalType: "uint256",
-                name: "maxMarketValueUSD",
+                name: "maxMarketValue",
                 type: "uint256",
               },
             ],
@@ -244,12 +244,12 @@ const _abi = [
             components: [
               {
                 internalType: "uint256",
-                name: "maxFundingRate",
+                name: "maxFundingVelocity",
                 type: "uint256",
               },
               {
                 internalType: "uint256",
-                name: "skewScaleUSD",
+                name: "skewScale",
                 type: "uint256",
               },
             ],
@@ -397,7 +397,7 @@ const _abi = [
               },
               {
                 internalType: "uint256",
-                name: "maxMarketValueUSD",
+                name: "maxMarketValue",
                 type: "uint256",
               },
             ],
@@ -409,12 +409,12 @@ const _abi = [
             components: [
               {
                 internalType: "uint256",
-                name: "maxFundingRate",
+                name: "maxFundingVelocity",
                 type: "uint256",
               },
               {
                 internalType: "uint256",
-                name: "skewScaleUSD",
+                name: "skewScale",
                 type: "uint256",
               },
             ],
@@ -723,17 +723,22 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "takerFeeNextPrice",
+            name: "takerFeeDelayedOrder",
             type: "uint256",
           },
           {
             internalType: "uint256",
-            name: "makerFeeNextPrice",
+            name: "makerFeeDelayedOrder",
             type: "uint256",
           },
           {
             internalType: "uint256",
-            name: "nextPriceConfirmWindow",
+            name: "takerFeeOffchainDelayedOrder",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "makerFeeOffchainDelayedOrder",
             type: "uint256",
           },
           {
@@ -743,21 +748,61 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "maxMarketValueUSD",
+            name: "maxMarketValue",
             type: "uint256",
           },
           {
             internalType: "uint256",
-            name: "maxFundingRate",
+            name: "maxFundingVelocity",
             type: "uint256",
           },
           {
             internalType: "uint256",
-            name: "skewScaleUSD",
+            name: "skewScale",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "nextPriceConfirmWindow",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "delayedOrderConfirmWindow",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "minDelayTimeDelta",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "maxDelayTimeDelta",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "offchainDelayedOrderMinAge",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "offchainDelayedOrderMaxAge",
+            type: "uint256",
+          },
+          {
+            internalType: "bytes32",
+            name: "offchainMarketKey",
+            type: "bytes32",
+          },
+          {
+            internalType: "uint256",
+            name: "offchainPriceDivergence",
             type: "uint256",
           },
         ],
-        internalType: "struct IFuturesMarketSettings.Parameters",
+        internalType: "struct IPerpsV2MarketSettings.Parameters",
         name: "",
         type: "tuple",
       },
@@ -770,7 +815,7 @@ const _abi = [
     constant: true,
     inputs: [
       {
-        internalType: "contract IFuturesMarket",
+        internalType: "contract IPerpsV2MarketViews",
         name: "market",
         type: "address",
       },
@@ -812,7 +857,7 @@ const _abi = [
                 type: "int128",
               },
             ],
-            internalType: "struct IFuturesMarketBaseTypes.Position",
+            internalType: "struct IPerpsV2MarketBaseTypes.Position",
             name: "position",
             type: "tuple",
           },
@@ -907,7 +952,7 @@ const _abi = [
                 type: "int128",
               },
             ],
-            internalType: "struct IFuturesMarketBaseTypes.Position",
+            internalType: "struct IPerpsV2MarketBaseTypes.Position",
             name: "position",
             type: "tuple",
           },

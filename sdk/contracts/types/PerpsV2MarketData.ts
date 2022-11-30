@@ -105,22 +105,22 @@ export declare namespace PerpsV2MarketData {
 
   export type MarketLimitsStruct = {
     maxLeverage: PromiseOrValue<BigNumberish>;
-    maxMarketValueUSD: PromiseOrValue<BigNumberish>;
+    maxMarketValue: PromiseOrValue<BigNumberish>;
   };
 
   export type MarketLimitsStructOutput = [BigNumber, BigNumber] & {
     maxLeverage: BigNumber;
-    maxMarketValueUSD: BigNumber;
+    maxMarketValue: BigNumber;
   };
 
   export type FundingParametersStruct = {
-    maxFundingRate: PromiseOrValue<BigNumberish>;
-    skewScaleUSD: PromiseOrValue<BigNumberish>;
+    maxFundingVelocity: PromiseOrValue<BigNumberish>;
+    skewScale: PromiseOrValue<BigNumberish>;
   };
 
   export type FundingParametersStructOutput = [BigNumber, BigNumber] & {
-    maxFundingRate: BigNumber;
-    skewScaleUSD: BigNumber;
+    maxFundingVelocity: BigNumber;
+    skewScale: BigNumber;
   };
 
   export type SidesStruct = {
@@ -194,7 +194,7 @@ export declare namespace PerpsV2MarketData {
   };
 
   export type PositionDataStruct = {
-    position: IFuturesMarketBaseTypes.PositionStruct;
+    position: IPerpsV2MarketBaseTypes.PositionStruct;
     notionalValue: PromiseOrValue<BigNumberish>;
     profitLoss: PromiseOrValue<BigNumberish>;
     accruedFunding: PromiseOrValue<BigNumberish>;
@@ -205,7 +205,7 @@ export declare namespace PerpsV2MarketData {
   };
 
   export type PositionDataStructOutput = [
-    IFuturesMarketBaseTypes.PositionStructOutput,
+    IPerpsV2MarketBaseTypes.PositionStructOutput,
     BigNumber,
     BigNumber,
     BigNumber,
@@ -214,7 +214,7 @@ export declare namespace PerpsV2MarketData {
     BigNumber,
     boolean
   ] & {
-    position: IFuturesMarketBaseTypes.PositionStructOutput;
+    position: IPerpsV2MarketBaseTypes.PositionStructOutput;
     notionalValue: BigNumber;
     profitLoss: BigNumber;
     accruedFunding: BigNumber;
@@ -225,17 +225,26 @@ export declare namespace PerpsV2MarketData {
   };
 }
 
-export declare namespace IFuturesMarketSettings {
+export declare namespace IPerpsV2MarketSettings {
   export type ParametersStruct = {
     takerFee: PromiseOrValue<BigNumberish>;
     makerFee: PromiseOrValue<BigNumberish>;
-    takerFeeNextPrice: PromiseOrValue<BigNumberish>;
-    makerFeeNextPrice: PromiseOrValue<BigNumberish>;
-    nextPriceConfirmWindow: PromiseOrValue<BigNumberish>;
+    takerFeeDelayedOrder: PromiseOrValue<BigNumberish>;
+    makerFeeDelayedOrder: PromiseOrValue<BigNumberish>;
+    takerFeeOffchainDelayedOrder: PromiseOrValue<BigNumberish>;
+    makerFeeOffchainDelayedOrder: PromiseOrValue<BigNumberish>;
     maxLeverage: PromiseOrValue<BigNumberish>;
-    maxMarketValueUSD: PromiseOrValue<BigNumberish>;
-    maxFundingRate: PromiseOrValue<BigNumberish>;
-    skewScaleUSD: PromiseOrValue<BigNumberish>;
+    maxMarketValue: PromiseOrValue<BigNumberish>;
+    maxFundingVelocity: PromiseOrValue<BigNumberish>;
+    skewScale: PromiseOrValue<BigNumberish>;
+    nextPriceConfirmWindow: PromiseOrValue<BigNumberish>;
+    delayedOrderConfirmWindow: PromiseOrValue<BigNumberish>;
+    minDelayTimeDelta: PromiseOrValue<BigNumberish>;
+    maxDelayTimeDelta: PromiseOrValue<BigNumberish>;
+    offchainDelayedOrderMinAge: PromiseOrValue<BigNumberish>;
+    offchainDelayedOrderMaxAge: PromiseOrValue<BigNumberish>;
+    offchainMarketKey: PromiseOrValue<BytesLike>;
+    offchainPriceDivergence: PromiseOrValue<BigNumberish>;
   };
 
   export type ParametersStructOutput = [
@@ -247,21 +256,39 @@ export declare namespace IFuturesMarketSettings {
     BigNumber,
     BigNumber,
     BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    string,
     BigNumber
   ] & {
     takerFee: BigNumber;
     makerFee: BigNumber;
-    takerFeeNextPrice: BigNumber;
-    makerFeeNextPrice: BigNumber;
-    nextPriceConfirmWindow: BigNumber;
+    takerFeeDelayedOrder: BigNumber;
+    makerFeeDelayedOrder: BigNumber;
+    takerFeeOffchainDelayedOrder: BigNumber;
+    makerFeeOffchainDelayedOrder: BigNumber;
     maxLeverage: BigNumber;
-    maxMarketValueUSD: BigNumber;
-    maxFundingRate: BigNumber;
-    skewScaleUSD: BigNumber;
+    maxMarketValue: BigNumber;
+    maxFundingVelocity: BigNumber;
+    skewScale: BigNumber;
+    nextPriceConfirmWindow: BigNumber;
+    delayedOrderConfirmWindow: BigNumber;
+    minDelayTimeDelta: BigNumber;
+    maxDelayTimeDelta: BigNumber;
+    offchainDelayedOrderMinAge: BigNumber;
+    offchainDelayedOrderMaxAge: BigNumber;
+    offchainMarketKey: string;
+    offchainPriceDivergence: BigNumber;
   };
 }
 
-export declare namespace IFuturesMarketBaseTypes {
+export declare namespace IPerpsV2MarketBaseTypes {
   export type PositionStruct = {
     id: PromiseOrValue<BigNumberish>;
     lastFundingIndex: PromiseOrValue<BigNumberish>;
@@ -447,7 +474,7 @@ export interface PerpsV2MarketData extends BaseContract {
     parameters(
       marketKey: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<[IFuturesMarketSettings.ParametersStructOutput]>;
+    ): Promise<[IPerpsV2MarketSettings.ParametersStructOutput]>;
 
     positionDetails(
       market: PromiseOrValue<string>,
@@ -495,7 +522,7 @@ export interface PerpsV2MarketData extends BaseContract {
   parameters(
     marketKey: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
-  ): Promise<IFuturesMarketSettings.ParametersStructOutput>;
+  ): Promise<IPerpsV2MarketSettings.ParametersStructOutput>;
 
   positionDetails(
     market: PromiseOrValue<string>,
@@ -543,7 +570,7 @@ export interface PerpsV2MarketData extends BaseContract {
     parameters(
       marketKey: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<IFuturesMarketSettings.ParametersStructOutput>;
+    ): Promise<IPerpsV2MarketSettings.ParametersStructOutput>;
 
     positionDetails(
       market: PromiseOrValue<string>,
