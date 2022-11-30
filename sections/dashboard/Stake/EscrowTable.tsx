@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useState } from 'react';
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
@@ -26,7 +25,7 @@ const EscrowTable = () => {
 	const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
 
 	const handleOnChange = useCallback(
-		(position: number) => {
+		(position: number) => () => {
 			checkedState[position] = !checkedState[position];
 			setCheckedState([...checkedState]);
 		},
@@ -90,15 +89,13 @@ const EscrowTable = () => {
 					columnsDeps={columnsDeps}
 					columns={[
 						{
-							Header: () => (
-								<input type="checkbox" checked={checkAllState} onChange={() => selectAll()} />
-							),
+							Header: () => <input type="checkbox" checked={checkAllState} onChange={selectAll} />,
 							Cell: (cellProps: CellProps<EscrowRow>) => (
 								<input
 									key={cellProps.row.index}
 									type="checkbox"
 									checked={checkedState[cellProps.row.index]}
-									onChange={() => handleOnChange(cellProps.row.index)}
+									onChange={handleOnChange(cellProps.row.index)}
 								/>
 							),
 							accessor: 'selected',
@@ -173,15 +170,13 @@ const EscrowTable = () => {
 					columnsDeps={columnsDeps}
 					columns={[
 						{
-							Header: () => (
-								<input type="checkbox" checked={checkAllState} onChange={() => selectAll()} />
-							),
+							Header: () => <input type="checkbox" checked={checkAllState} onChange={selectAll} />,
 							Cell: (cellProps: CellProps<EscrowRow>) => (
 								<input
 									key={cellProps.row.index}
 									type="checkbox"
 									checked={checkedState[cellProps.row.index]}
-									onChange={() => handleOnChange(cellProps.row.index)}
+									onChange={handleOnChange(cellProps.row.index)}
 								/>
 							),
 							accessor: 'selected',
