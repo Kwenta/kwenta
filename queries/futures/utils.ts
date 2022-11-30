@@ -138,10 +138,10 @@ export const mapFuturesOrders = (
 		targetPriceTxt: formatDollars(targetPrice),
 		side: size.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
 		isStale: o.orderType === 'NextPrice' && currentRoundId.gte(wei(o.targetRoundId).add(2)),
-		isExecutable:
-			o.orderType === 'NextPrice' && targetRoundId
-				? currentRoundId.eq(targetRoundId) || currentRoundId.eq(targetRoundId.add(1))
-				: false,
+		isExecutable: true,
+		// o.orderType === 'NextPrice' && targetRoundId
+		// 	? currentRoundId.eq(targetRoundId) || currentRoundId.eq(targetRoundId.add(1))
+		// 	: false,
 	};
 };
 

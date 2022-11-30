@@ -80,7 +80,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sBNB]: {
 		key: FuturesMarketKey.sBNB,
 		asset: FuturesMarketAsset.BNB,
-		supports: 'mainnet',
+		supports: 'both',
 	},
 	[FuturesMarketKey.sDOGE]: {
 		key: FuturesMarketKey.sDOGE,
