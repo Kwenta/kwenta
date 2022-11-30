@@ -607,7 +607,7 @@ const useFuturesData = () => {
 
 	useEffect(() => {
 		const getDynamicFee = async () => {
-			if (!synthetixjs) return zeroBN;
+			if (!synthetixjs) return;
 			const [dynamicFeeRate] = await Promise.all([
 				synthetixjs.contracts.Exchanger.dynamicFeeRateForExchange(
 					ethers.utils.formatBytes32String('sUSD'),
