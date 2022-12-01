@@ -6,15 +6,13 @@ import styled from 'styled-components';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
 import { TableCellHead } from 'components/Table/Table';
+import type { EscrowData } from 'sdk/services/kwentaToken';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { vestEscrowedRewards } from 'state/staking/actions';
-import { EscrowData } from 'state/staking/types';
 import { truncateNumbers } from 'utils/formatters/number';
 
 import { StakingCard } from './common';
 import VestConfirmationModal from './VestConfirmationModal';
-
-type EscrowRow = EscrowData[number];
 
 const EscrowTable = () => {
 	const { t } = useTranslation();
@@ -90,7 +88,7 @@ const EscrowTable = () => {
 					columns={[
 						{
 							Header: () => <input type="checkbox" checked={checkAllState} onChange={selectAll} />,
-							Cell: (cellProps: CellProps<EscrowRow>) => (
+							Cell: (cellProps: CellProps<EscrowData>) => (
 								<input
 									key={cellProps.row.index}
 									type="checkbox"
@@ -103,7 +101,7 @@ const EscrowTable = () => {
 						},
 						{
 							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.date')}</TableHeader>,
-							Cell: (cellProps: CellProps<EscrowRow>) => (
+							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{cellProps.row.original.date}</TableCell>
 							),
 							accessor: 'date',
@@ -115,7 +113,7 @@ const EscrowTable = () => {
 									<div>{t('dashboard.stake.tabs.escrow.time-until-vestable')}</div>
 								</TableHeader>
 							),
-							Cell: (cellProps: CellProps<EscrowRow>) => (
+							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{cellProps.row.original.time}</TableCell>
 							),
 							accessor: 'timeUntilVestable',
@@ -127,7 +125,7 @@ const EscrowTable = () => {
 									<div>{t('dashboard.stake.tabs.escrow.immediately-vestable')}</div>
 								</TableHeader>
 							),
-							Cell: (cellProps: CellProps<EscrowRow>) => (
+							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{truncateNumbers(cellProps.row.original.vestable, 4)}</TableCell>
 							),
 							accessor: 'immediatelyVestable',
@@ -135,7 +133,7 @@ const EscrowTable = () => {
 						},
 						{
 							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.amount')}</TableHeader>,
-							Cell: (cellProps: CellProps<EscrowRow>) => (
+							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{truncateNumbers(cellProps.row.original.amount, 4)}</TableCell>
 							),
 							accessor: 'amount',
@@ -147,7 +145,7 @@ const EscrowTable = () => {
 									<div>{t('dashboard.stake.tabs.escrow.early-vest-fee')}</div>
 								</TableHeader>
 							),
-							Cell: (cellProps: CellProps<EscrowRow>) => (
+							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{truncateNumbers(cellProps.row.original.fee, 4)}</TableCell>
 							),
 							accessor: 'earlyVestFee',
@@ -155,7 +153,7 @@ const EscrowTable = () => {
 						},
 						{
 							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.status')}</TableHeader>,
-							Cell: (cellProps: CellProps<EscrowRow>) => (
+							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{cellProps.row.original.status}</TableCell>
 							),
 							accessor: 'status',
@@ -171,7 +169,7 @@ const EscrowTable = () => {
 					columns={[
 						{
 							Header: () => <input type="checkbox" checked={checkAllState} onChange={selectAll} />,
-							Cell: (cellProps: CellProps<EscrowRow>) => (
+							Cell: (cellProps: CellProps<EscrowData>) => (
 								<input
 									key={cellProps.row.index}
 									type="checkbox"
@@ -184,7 +182,7 @@ const EscrowTable = () => {
 						},
 						{
 							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.amount')}</TableHeader>,
-							Cell: (cellProps: CellProps<EscrowRow>) => (
+							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{truncateNumbers(cellProps.row.original.amount, 4)}</TableCell>
 							),
 							accessor: 'amount',
@@ -194,7 +192,7 @@ const EscrowTable = () => {
 							Header: () => (
 								<TableHeader>{t('dashboard.stake.tabs.escrow.early-vest-fee')}</TableHeader>
 							),
-							Cell: (cellProps: CellProps<EscrowRow>) => (
+							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{truncateNumbers(cellProps.row.original.fee, 4)}</TableCell>
 							),
 							accessor: 'earlyVestFee',
@@ -202,7 +200,7 @@ const EscrowTable = () => {
 						},
 						{
 							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.status')}</TableHeader>,
-							Cell: (cellProps: CellProps<EscrowRow>) => (
+							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{cellProps.row.original.status}</TableCell>
 							),
 							accessor: 'status',

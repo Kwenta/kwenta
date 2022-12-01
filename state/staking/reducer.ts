@@ -1,6 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { fetchClaimableRewards, fetchEscrowData, fetchStakingData } from './actions';
+import { FetchStatus } from 'state/types';
+
+import {
+	claimMultipleRewards,
+	fetchClaimableRewards,
+	fetchEscrowData,
+	fetchStakingData,
+	getReward,
+	stakeEscrow,
+	stakeKwenta,
+	unstakeEscrow,
+	unstakeKwenta,
+	vestEscrowedRewards,
+} from './actions';
 import { StakingState } from './types';
 
 const initialState: StakingState = {
@@ -21,12 +34,40 @@ const initialState: StakingState = {
 	escrowData: [],
 	totalRewards: 0,
 	claimableRewards: [],
+	stakeStatus: FetchStatus.Idle,
+	unstakeStatus: FetchStatus.Idle,
+	stakeEscrowedStatus: FetchStatus.Idle,
+	unstakeEscrowedStatus: FetchStatus.Idle,
+	getRewardStatus: FetchStatus.Idle,
+	claimRewardsStatus: FetchStatus.Idle,
+	vestEscrowedRewardsStatus: FetchStatus.Idle,
 };
 
 const stakingSlice = createSlice({
 	name: 'staking',
 	initialState,
 	reducers: {
+		setStakeStatus: (state, action) => {
+			state.stakeStatus = action.payload;
+		},
+		setUnstakeStatus: (state, action) => {
+			state.unstakeStatus = action.payload;
+		},
+		setStakeEscrowedStatus: (state, action) => {
+			state.stakeEscrowedStatus = action.payload;
+		},
+		setUnstakeEscrowedStatus: (state, action) => {
+			state.unstakeEscrowedStatus = action.payload;
+		},
+		setGetRewardStatus: (state, action) => {
+			state.getRewardStatus = action.payload;
+		},
+		setClaimRewardsStatus: (state, action) => {
+			state.claimRewardsStatus = action.payload;
+		},
+		setVestEscrowedRewardsStatus: (state, action) => {
+			state.vestEscrowedRewardsStatus = action.payload;
+		},
 		setSelectedEpoch: (state, action) => {
 			state.selectedEpoch = action.payload;
 		},
@@ -54,6 +95,27 @@ const stakingSlice = createSlice({
 		builder.addCase(fetchClaimableRewards.fulfilled, (state, action) => {
 			state.claimableRewards = action.payload.claimableRewards;
 			state.totalRewards = action.payload.totalRewards;
+		});
+		builder.addCase(stakeKwenta.pending, (state) => {
+			state.stakeStatus = FetchStatus.Loading;
+		});
+		builder.addCase(unstakeKwenta.pending, (state) => {
+			state.unstakeStatus = FetchStatus.Loading;
+		});
+		builder.addCase(stakeEscrow.pending, (state) => {
+			state.stakeEscrowedStatus = FetchStatus.Loading;
+		});
+		builder.addCase(unstakeEscrow.pending, (state) => {
+			state.unstakeEscrowedStatus = FetchStatus.Loading;
+		});
+		builder.addCase(getReward.pending, (state) => {
+			state.getRewardStatus = FetchStatus.Loading;
+		});
+		builder.addCase(claimMultipleRewards.pending, (state) => {
+			state.claimRewardsStatus = FetchStatus.Loading;
+		});
+		builder.addCase(vestEscrowedRewards.pending, (state) => {
+			state.vestEscrowedRewardsStatus = FetchStatus.Loading;
 		});
 	},
 });

@@ -1,10 +1,6 @@
-import KwentaSDK from 'sdk';
-
+import type { EscrowData } from 'sdk/services/kwentaToken';
 import { ClaimParams } from 'sdk/services/kwentaToken';
-
-export type EscrowData = Awaited<
-	ReturnType<KwentaSDK['kwentaToken']['getEscrowData']>
->['escrowData'];
+import { FetchStatus } from 'state/types';
 
 export type StakingState = {
 	kwentaBalance: string;
@@ -21,8 +17,15 @@ export type StakingState = {
 	vKwentaAllowance: string;
 	veKwentaAllowance: string;
 	totalVestable: number;
-	escrowData: EscrowData;
+	escrowData: EscrowData[];
 	totalRewards: number;
 	claimableRewards: ClaimParams[];
 	selectedEpoch?: number;
+	stakeStatus: FetchStatus;
+	unstakeStatus: FetchStatus;
+	stakeEscrowedStatus: FetchStatus;
+	unstakeEscrowedStatus: FetchStatus;
+	getRewardStatus: FetchStatus;
+	claimRewardsStatus: FetchStatus;
+	vestEscrowedRewardsStatus: FetchStatus;
 };

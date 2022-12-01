@@ -12,6 +12,8 @@ import { approveKwentaToken, stakeEscrow, unstakeEscrow } from 'state/staking/ac
 import {
 	selectEscrowedKwentaBalance,
 	selectIsKwentaTokenApproved,
+	selectIsStakingEscrowedKwenta,
+	selectIsUnstakingEscrowedKwenta,
 	selectStakedEscrowedKwentaBalance,
 } from 'state/staking/selectors';
 import { toWei, truncateNumbers, zeroBN } from 'utils/formatters/number';
@@ -29,6 +31,9 @@ const EscrowInputCard: FC = () => {
 	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance);
 	const isKwentaTokenApproved = useAppSelector(selectIsKwentaTokenApproved);
 
+	const isStakingEscrowedKwenta = useAppSelector(selectIsStakingEscrowedKwenta);
+	const isUnstakingEscrowedKwenta = useAppSelector(selectIsUnstakingEscrowedKwenta);
+
 	const amountBN = useMemo(() => toWei(amount).toBN(), [amount]);
 
 	const unstakedEscrowedKwentaBalance = useMemo(
@@ -43,12 +48,22 @@ const EscrowInputCard: FC = () => {
 	);
 
 	const stakeEnabled = useMemo(() => {
-		return activeTab === 0 && unstakedEscrowedKwentaBalance.gt(0) && !!parseFloat(amount);
-	}, [activeTab, unstakedEscrowedKwentaBalance, amount]);
+		return (
+			activeTab === 0 &&
+			unstakedEscrowedKwentaBalance.gt(0) &&
+			!!parseFloat(amount) &&
+			!isStakingEscrowedKwenta
+		);
+	}, [activeTab, unstakedEscrowedKwentaBalance, amount, isStakingEscrowedKwenta]);
 
 	const unstakeEnabled = useMemo(() => {
-		return activeTab === 1 && stakedEscrowedKwentaBalance.gt(0) && !!parseFloat(amount);
-	}, [activeTab, stakedEscrowedKwentaBalance, amount]);
+		return (
+			activeTab === 1 &&
+			stakedEscrowedKwentaBalance.gt(0) &&
+			!!parseFloat(amount) &&
+			!isUnstakingEscrowedKwenta
+		);
+	}, [activeTab, stakedEscrowedKwentaBalance, amount, isUnstakingEscrowedKwenta]);
 
 	const handleApprove = useCallback(() => {
 		dispatch(approveKwentaToken('kwenta'));

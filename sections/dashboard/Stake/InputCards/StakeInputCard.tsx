@@ -12,6 +12,8 @@ import { approveKwentaToken } from 'state/staking/actions';
 import { stakeKwenta, unstakeKwenta } from 'state/staking/actions';
 import {
 	selectIsKwentaTokenApproved,
+	selectIsStakingKwenta,
+	selectIsUnstakingKwenta,
 	selectKwentaBalance,
 	selectStakedKwentaBalance,
 } from 'state/staking/selectors';
@@ -46,6 +48,8 @@ const StakeInputCard: FC = () => {
 	}, [maxBalance]);
 
 	const isKwentaTokenApproved = useAppSelector(selectIsKwentaTokenApproved);
+	const isStakingKwenta = useAppSelector(selectIsStakingKwenta);
+	const isUnstakingKwenta = useAppSelector(selectIsUnstakingKwenta);
 
 	const handleApprove = useCallback(() => {
 		dispatch(approveKwentaToken('kwenta'));
@@ -60,12 +64,14 @@ const StakeInputCard: FC = () => {
 	}, [dispatch, amountBN]);
 
 	const stakeEnabled = useMemo(() => {
-		return activeTab === 0 && kwentaBalance.gt(0) && !!parseFloat(amount);
-	}, [activeTab, kwentaBalance, amount]);
+		return activeTab === 0 && kwentaBalance.gt(0) && !!parseFloat(amount) && !isStakingKwenta;
+	}, [activeTab, kwentaBalance, amount, isStakingKwenta]);
 
 	const unstakeEnabled = useMemo(() => {
-		return activeTab === 1 && stakedKwentaBalance.gt(0) && !!parseFloat(amount);
-	}, [activeTab, stakedKwentaBalance, amount]);
+		return (
+			activeTab === 1 && stakedKwentaBalance.gt(0) && !!parseFloat(amount) && !isUnstakingKwenta
+		);
+	}, [activeTab, stakedKwentaBalance, amount, isUnstakingKwenta]);
 
 	const isDisabled = useMemo(() => {
 		if (!isKwentaTokenApproved) {

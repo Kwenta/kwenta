@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import KwentaSDK from 'sdk';
 
 import { monitorTransaction } from 'contexts/RelayerContext';
-import { ThunkConfig } from 'state/types';
+import { FetchStatus, ThunkConfig } from 'state/types';
 
 import { selectPeriods } from './selectors';
 
@@ -94,10 +94,8 @@ export const fetchEscrowData = createAsyncThunk<
 	Awaited<ReturnType<KwentaSDK['kwentaToken']['getEscrowData']>>,
 	void,
 	ThunkConfig
->('staking/fetchEscrowData', async (_, { extra: { sdk } }) => {
-	const { totalVestable, escrowData } = await sdk.kwentaToken.getEscrowData();
-
-	return { totalVestable, escrowData };
+>('staking/fetchEscrowData', (_, { extra: { sdk } }) => {
+	return sdk.kwentaToken.getEscrowData();
 });
 
 export const vestEscrowedRewards = createAsyncThunk<void, number[], ThunkConfig>(
@@ -109,7 +107,11 @@ export const vestEscrowedRewards = createAsyncThunk<void, number[], ThunkConfig>
 			monitorTransaction({
 				txHash: hash,
 				onTxConfirmed: () => {
+					dispatch({ type: 'staking/setVestEscrowedRewardsStatus', payload: FetchStatus.Success });
 					dispatch(fetchStakingData());
+				},
+				onTxFailed: () => {
+					dispatch({ type: 'staking/setVestEscrowedRewardsStatus', payload: FetchStatus.Error });
 				},
 			});
 		}
@@ -124,7 +126,11 @@ export const getReward = createAsyncThunk<void, void, ThunkConfig>(
 		monitorTransaction({
 			txHash: hash,
 			onTxConfirmed: () => {
+				dispatch({ type: 'staking/setGetRewardStatus', payload: FetchStatus.Success });
 				dispatch(fetchStakingData());
+			},
+			onTxFailed: () => {
+				dispatch({ type: 'staking/setGetRewardStatus', payload: FetchStatus.Error });
 			},
 		});
 	}
@@ -134,12 +140,9 @@ export const fetchClaimableRewards = createAsyncThunk<
 	Awaited<ReturnType<KwentaSDK['kwentaToken']['getClaimableRewards']>>,
 	void,
 	ThunkConfig
->('staking/fetchClaimableRewards', async (_, { getState, extra: { sdk } }) => {
+>('staking/fetchClaimableRewards', (_, { getState, extra: { sdk } }) => {
 	const periods = selectPeriods(getState());
-
-	const { claimableRewards, totalRewards } = await sdk.kwentaToken.getClaimableRewards(periods);
-
-	return { claimableRewards, totalRewards };
+	return sdk.kwentaToken.getClaimableRewards(periods);
 });
 
 export const claimMultipleRewards = createAsyncThunk<void, void, ThunkConfig>(
@@ -154,7 +157,11 @@ export const claimMultipleRewards = createAsyncThunk<void, void, ThunkConfig>(
 		monitorTransaction({
 			txHash: hash,
 			onTxConfirmed: () => {
+				dispatch({ type: 'staking/setClaimRewardsStatus', payload: FetchStatus.Success });
 				dispatch(fetchStakingData());
+			},
+			onTxFailed: () => {
+				dispatch({ type: 'staking/setClaimRewardsStatus', payload: FetchStatus.Error });
 			},
 		});
 	}
@@ -168,7 +175,11 @@ export const stakeEscrow = createAsyncThunk<void, ethers.BigNumber, ThunkConfig>
 		monitorTransaction({
 			txHash: hash,
 			onTxConfirmed: () => {
+				dispatch({ type: 'staking/setStakeEscrowedStatus', payload: FetchStatus.Success });
 				dispatch(fetchStakingData());
+			},
+			onTxFailed: () => {
+				dispatch({ type: 'staking/setStakeEscrowedStatus', payload: FetchStatus.Error });
 			},
 		});
 	}
@@ -182,7 +193,11 @@ export const unstakeEscrow = createAsyncThunk<void, ethers.BigNumber, ThunkConfi
 		monitorTransaction({
 			txHash: hash,
 			onTxConfirmed: () => {
+				dispatch({ type: 'staking/setUnstakeEscrowedStatus', payload: FetchStatus.Success });
 				dispatch(fetchStakingData());
+			},
+			onTxFailed: () => {
+				dispatch({ type: 'staking/setUnstakeEscrowedStatus', payload: FetchStatus.Error });
 			},
 		});
 	}
@@ -198,7 +213,11 @@ export const stakeKwenta = createAsyncThunk<void, ethers.BigNumber, ThunkConfig>
 		monitorTransaction({
 			txHash: hash,
 			onTxConfirmed: () => {
+				dispatch({ type: 'staking/setStakeStatus', payload: FetchStatus.Success });
 				dispatch(fetchStakingData());
+			},
+			onTxFailed: () => {
+				dispatch({ type: 'staking/setStakeStatus', payload: FetchStatus.Error });
 			},
 		});
 	}
@@ -212,7 +231,11 @@ export const unstakeKwenta = createAsyncThunk<void, ethers.BigNumber, ThunkConfi
 		monitorTransaction({
 			txHash: hash,
 			onTxConfirmed: () => {
+				dispatch({ type: 'staking/setUnstakeStatus', payload: FetchStatus.Success });
 				dispatch(fetchStakingData());
+			},
+			onTxFailed: () => {
+				dispatch({ type: 'staking/setUnstakeStatus', payload: FetchStatus.Error });
 			},
 		});
 	}
