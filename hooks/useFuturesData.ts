@@ -25,7 +25,7 @@ import { KWENTA_TRACKING_CODE, ORDER_PREVIEW_ERRORS } from 'queries/futures/cons
 import { PositionSide, FuturesTradeInputs, FuturesAccountType } from 'queries/futures/types';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 import { setFuturesAccountType, setOrderType as setReduxOrderType } from 'state/futures/reducer';
-import { selectMarketAssetRate } from 'state/futures/selectors';
+import { selectMarketAssetRate, selectMaxLeverage } from 'state/futures/selectors';
 import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector, useAppDispatch } from 'state/hooks';
 import {
@@ -33,7 +33,6 @@ import {
 	tradeFeesState,
 	futuresAccountState,
 	leverageSideState,
-	maxLeverageState,
 	orderTypeState,
 	positionState,
 	futuresTradeInputsState,
@@ -99,7 +98,7 @@ const useFuturesData = () => {
 	const feeCap = useRecoilValue(orderFeeCapState);
 	const position = useRecoilValue(positionState);
 	const aboveMaxLeverage = useRecoilValue(aboveMaxLeverageState);
-	const maxLeverage = useRecoilValue(maxLeverageState);
+	const maxLeverage = useAppSelector(selectMaxLeverage);
 	const { crossMarginAvailable, crossMarginAddress } = useRecoilValue(futuresAccountState);
 	const { tradeFee: crossMarginTradeFee, stopOrderFee, limitOrderFee } = useRecoilValue(
 		crossMarginSettingsState
