@@ -8,15 +8,13 @@ import Error from 'components/Error';
 import Loader from 'components/Loader';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { previewErrorI18n } from 'queries/futures/constants';
-import { PositionSide } from 'queries/futures/types';
-import { setLeverageSide as setReduxLeverageSide } from 'state/futures/reducer';
 import {
 	selectMarketInfo,
 	selectIsMarketCapReached,
 	selectMarketAssetRate,
 	selectPlaceOrderTranslationKey,
 } from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { useAppSelector } from 'state/hooks';
 import {
 	confirmationModalOpenState,
 	leverageSideState,
@@ -46,13 +44,7 @@ type OrderTxnError = {
 
 const ManagePosition: React.FC = () => {
 	const { t } = useTranslation();
-	const {
-		error,
-		orderTxn,
-		onTradeAmountChange,
-		maxUsdInputAmount,
-		tradePrice,
-	} = useFuturesContext();
+	const { error, orderTxn, maxUsdInputAmount } = useFuturesContext();
 
 	const sizeDelta = useRecoilValue(sizeDeltaState);
 	const marginDelta = useRecoilValue(crossMarginMarginDeltaState);
@@ -63,14 +55,13 @@ const ManagePosition: React.FC = () => {
 		potentialTradeDetailsState
 	);
 	const orderType = useRecoilValue(orderTypeState);
-	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
+	const leverageSide = useRecoilState(leverageSideState);
 	const { leverage } = useRecoilValue(futuresTradeInputsState);
 	const [isConfirmationModalOpen, setConfirmationModalOpen] = useRecoilState(
 		confirmationModalOpenState
 	);
 	const isMarketCapReached = useAppSelector(selectIsMarketCapReached);
 	const placeOrderTranslationKey = useAppSelector(selectPlaceOrderTranslationKey);
-	const dispatch = useAppDispatch();
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
 	const marketAssetRate = useAppSelector(selectMarketAssetRate);
 	const tradeInputs = useRecoilValue(futuresTradeInputsState);

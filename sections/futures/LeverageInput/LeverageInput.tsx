@@ -27,8 +27,6 @@ const LeverageInput: FC = () => {
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
 	const { leverage } = useRecoilValue(futuresTradeInputsState);
 	const maxLeverage = useRecoilValue(maxLeverageState);
-	const orderType = useRecoilValue(orderTypeState);
-	const isDisclaimerDisplayed = useRecoilValue(nextPriceDisclaimerState);
 	const setIsLeverageValueCommitted = useSetRecoilState(leverageValueCommittedState);
 	const position = useRecoilValue(positionState);
 
@@ -162,12 +160,6 @@ const TextButton = styled.button`
 	background-color: transparent;
 	border: none;
 	cursor: pointer;
-`;
-
-const LeverageDisclaimer = styled.div`
-	font-size: 13px;
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	margin: 0 8px 12px;
 `;
 
 export const StyledInput = styled(CustomNumericInput)`

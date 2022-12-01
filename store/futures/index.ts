@@ -1,7 +1,7 @@
 import { wei } from '@synthetixio/wei';
 import { atom, selector } from 'recoil';
 
-import { DEFAULT_FUTURES_MARGIN_TYPE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
+import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import { DEFAULT_MAX_LEVERAGE } from 'constants/futures';
 import {
 	FuturesAccountState,
@@ -252,7 +252,6 @@ export const maxLeverageState = selector({
 	key: getFuturesKey('maxLeverage'),
 	get: ({ get }) => {
 		const position = get(positionState);
-		const orderType = get(orderTypeState);
 		const market = get(marketInfoState);
 		const leverageSide = get(leverageSideState);
 		const accountType = get(futuresAccountTypeState);

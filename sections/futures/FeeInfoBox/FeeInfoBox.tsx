@@ -126,12 +126,9 @@ const FeeInfoBox: React.FC = () => {
 		crossMarginTradeFee,
 		fees,
 		orderFeeRate,
-		commitDeposit,
 		accountType,
 		marketInfo?.keeperDeposit,
-		nextPriceDiscount,
 		marketCostTooltip,
-		totalDeposit,
 	]);
 
 	return <StyledInfoBox details={feesInfo} />;

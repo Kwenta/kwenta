@@ -115,7 +115,6 @@ export const mapFuturesOrders = (
 	const size = weiFromWei(o.size);
 	const targetPrice = weiFromWei(o.targetPrice ?? 0);
 	const targetRoundId = new Wei(o.targetRoundId, 0);
-	const currentRoundId = wei(marketInfo?.currentRoundId ?? 0);
 	const marginDelta = weiFromWei(o.marginDelta);
 	return {
 		...o,

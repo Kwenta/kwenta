@@ -24,7 +24,6 @@ import { PositionSide } from '../types';
 const MarketInfoBox: React.FC = () => {
 	const maxLeverage = useRecoilValue(maxLeverageState);
 	const position = useRecoilValue(positionState);
-	const orderType = useRecoilValue(orderTypeState);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
 	const potentialTrade = useRecoilValue(potentialTradeDetailsState);
@@ -53,10 +52,6 @@ const MarketInfoBox: React.FC = () => {
 		orderDetails,
 	]);
 
-	const totalDeposit = useMemo(() => {
-		return (commitDeposit ?? zeroBN).add(marketInfo?.keeperDeposit ?? zeroBN);
-	}, [commitDeposit, marketInfo?.keeperDeposit]);
-
 	const getPotentialAvailableMargin = (
 		trade: FuturesPotentialTradeDetails | null,
 		marketMaxLeverage: Wei | undefined
@@ -83,7 +78,7 @@ const MarketInfoBox: React.FC = () => {
 			marketInfo?.maxLeverage
 		);
 		return potentialAvailableMargin;
-	}, [potentialTrade.data, marketInfo?.maxLeverage, totalDeposit]);
+	}, [potentialTrade.data, marketInfo?.maxLeverage]);
 
 	const previewTradeData = React.useMemo(() => {
 		const size = wei(nativeSize || zeroBN);
