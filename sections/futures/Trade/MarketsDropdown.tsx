@@ -177,6 +177,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 							formatCurrency(selectedPriceCurrency.name, selectedBasePriceRate, {
 								sign: '$',
 								minDecimals: getMinDecimals(marketAsset),
+								isAssetPrice: true,
 							})
 						)
 					) : undefined,
