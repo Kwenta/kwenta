@@ -29,7 +29,7 @@ const StakeInputCard: FC = () => {
 
 	const [amount, setAmount] = useState('');
 	const [activeTab, setActiveTab] = useState(0);
-	const amountBN = useMemo(() => toWei(amount).toString(0, true), [amount]);
+	const amountBN = useMemo(() => toWei(amount).toBN(), [amount]);
 
 	const handleTabChange = useCallback((tabIndex: number) => {
 		setAmount('');

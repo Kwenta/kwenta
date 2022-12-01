@@ -29,7 +29,7 @@ const EscrowInputCard: FC = () => {
 	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance);
 	const isKwentaTokenApproved = useAppSelector(selectIsKwentaTokenApproved);
 
-	const amountBN = useMemo(() => toWei(amount).toString(0, true), [amount]);
+	const amountBN = useMemo(() => toWei(amount).toBN(), [amount]);
 
 	const unstakedEscrowedKwentaBalance = useMemo(
 		() =>

@@ -358,19 +358,19 @@ export default class KwentaTokenService {
 		return this.sdk.transactions.createContractTxn(RewardEscrow, 'vest', [ids]);
 	}
 
-	public stakeKwenta(amount: string) {
+	public stakeKwenta(amount: string | ethers.BigNumber) {
 		return this.performStakeAction('stake', amount);
 	}
 
-	public async unstakeKwenta(amount: string) {
+	public async unstakeKwenta(amount: string | ethers.BigNumber) {
 		return this.performStakeAction('unstake', amount);
 	}
 
-	public async stakeEscrowedKwenta(amount: string) {
+	public async stakeEscrowedKwenta(amount: string | ethers.BigNumber) {
 		return this.performStakeAction('stake', amount, { escrow: true });
 	}
 
-	public async unstakeEscrowedKwenta(amount: string) {
+	public async unstakeEscrowedKwenta(amount: string | ethers.BigNumber) {
 		return this.performStakeAction('unstake', amount, { escrow: true });
 	}
 
@@ -443,7 +443,7 @@ export default class KwentaTokenService {
 
 	private performStakeAction(
 		action: 'stake' | 'unstake',
-		amount: string,
+		amount: string | ethers.BigNumber,
 		options: { escrow: boolean } = { escrow: false }
 	) {
 		const { RewardEscrow, KwentaStakingRewards } = this.sdk.context.contracts;
