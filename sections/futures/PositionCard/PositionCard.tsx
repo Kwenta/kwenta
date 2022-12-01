@@ -150,6 +150,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			marketLongName: getSynthDescription(marketAsset, synthsMap, t),
 			marketPrice: formatDollars(marketAssetRate, {
 				minDecimals,
+				isAssetPrice: true,
 			}),
 			positionSide: positionDetails ? (
 				<PositionValue
@@ -211,11 +212,13 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 				<>
 					{formatDollars(positionDetails?.liquidationPrice ?? zeroBN, {
 						minDecimals,
+						isAssetPrice: true,
 					})}
 					{
 						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
 							{formatDollars(previewData?.liquidationPrice ?? zeroBN, {
 								minDecimals,
+								isAssetPrice: true,
 							})}
 						</PreviewArrow>
 					}
@@ -248,11 +251,13 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 				<>
 					{formatDollars(thisPositionHistory?.entryPrice ?? zeroBN, {
 						minDecimals,
+						isAssetPrice: true,
 					})}
 					{
 						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
 							{formatDollars(previewData.avgEntryPrice ?? zeroBN, {
 								minDecimals,
+								isAssetPrice: true,
 							})}
 						</PreviewArrow>
 					}
