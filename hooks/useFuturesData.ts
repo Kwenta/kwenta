@@ -47,6 +47,7 @@ import {
 	isAdvancedOrderState,
 	aboveMaxLeverageState,
 	crossMarginAccountOverviewState,
+	dynamicFeeRateState,
 } from 'store/futures';
 import { computeMarketFee } from 'utils/costCalculations';
 import { zeroBN, floorNumber, weiToString } from 'utils/formatters/number';
@@ -92,6 +93,7 @@ const useFuturesData = () => {
 		crossMarginMarginDeltaState
 	);
 	const [tradeFees, setTradeFees] = useRecoilState(tradeFeesState);
+	const [dynamicFeeRate, setDynamicFeeRate] = useRecoilState(dynamicFeeRateState);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const feeCap = useRecoilValue(orderFeeCapState);
@@ -113,7 +115,6 @@ const useFuturesData = () => {
 	const market = useAppSelector(selectMarketInfo);
 
 	const [maxFee, setMaxFee] = useState(zeroBN);
-	const [dynamicFeeRate, setDynamicFeeRate] = useState(zeroBN);
 	const [error, setError] = useState<string | null>(null);
 
 	const tradePrice = useMemo(() => wei(isAdvancedOrder ? orderPrice || zeroBN : marketAssetRate), [
@@ -617,7 +618,7 @@ const useFuturesData = () => {
 			setDynamicFeeRate(wei(dynamicFeeRate.feeRate));
 		};
 		getDynamicFee();
-	}, [marketAsset, synthetixjs]);
+	}, [marketAsset, setDynamicFeeRate, synthetixjs]);
 
 	return {
 		onLeverageChange,
