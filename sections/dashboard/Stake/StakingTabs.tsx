@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -17,6 +17,7 @@ import { formatShortDate, toJSTimestamp } from 'utils/formatters/date';
 
 import EscrowTab from './EscrowTab';
 import RedemptionTab from './RedemptionTab';
+import { StakeTab } from './StakingPortfolio';
 import StakingTab from './StakingTab';
 import TradingRewardsTab from './TradingRewardsTab';
 
@@ -29,14 +30,11 @@ type EpochLabel = {
 	label: string;
 };
 
-enum StakeTab {
-	Staking = 'staking',
-	TradingRewards = 'trading-rewards',
-	Escrow = 'escrow',
-	Redemption = 'redemption',
-}
+type StakingTabsProp = {
+	currentTab?: StakeTab;
+};
 
-const StakingTabs: React.FC = () => {
+const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab }) => {
 	const { t } = useTranslation();
 	const { network } = Connector.useContainer();
 	const isL2 = useIsL2();
@@ -49,6 +47,11 @@ const StakingTabs: React.FC = () => {
 		`Epoch 1: Oct 23, 2022 - Oct 30, 2022`
 	);
 	const [activeTab, setActiveTab] = useState(StakeTab.Staking);
+
+	useEffect(() => {
+		setActiveTab(currentTab !== undefined ? currentTab : StakeTab.Staking);
+	}, [currentTab]);
+
 	const handleTabSwitch = useCallback((tab: StakeTab) => () => setActiveTab(tab), []);
 
 	const epochData = useMemo(() => {
@@ -100,6 +103,11 @@ const StakingTabs: React.FC = () => {
 						active={activeTab === StakeTab.Staking}
 					/>
 					<TabButton
+						title={t('dashboard.stake.tabs.escrow.title')}
+						onClick={handleTabSwitch(StakeTab.Escrow)}
+						active={activeTab === StakeTab.Escrow}
+					/>
+					<TabButton
 						title={
 							window.innerWidth > 768
 								? t('dashboard.stake.tabs.trading-rewards.title')
@@ -107,11 +115,6 @@ const StakingTabs: React.FC = () => {
 						}
 						onClick={handleTabSwitch(StakeTab.TradingRewards)}
 						active={activeTab === StakeTab.TradingRewards}
-					/>
-					<TabButton
-						title={t('dashboard.stake.tabs.escrow.title')}
-						onClick={handleTabSwitch(StakeTab.Escrow)}
-						active={activeTab === StakeTab.Escrow}
 					/>
 					<TabButton
 						title={t('dashboard.stake.tabs.redemption.title')}
@@ -173,6 +176,7 @@ const StakingSelect = styled(Select)`
 	.react-select__menu,
 	.react-select__menu-list {
 		border-radius: 20px;
+		background: ${(props) => props.theme.colors.selectedTheme.surfaceFill};
 	}
 	.react-select__value-container {
 		padding: 0;

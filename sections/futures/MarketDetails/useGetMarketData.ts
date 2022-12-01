@@ -107,7 +107,7 @@ const useGetMarketData = (mobile?: boolean) => {
 							? `${formatCurrency(
 									selectedPriceCurrency.name,
 									marketPrice.sub(pastPrice.price) ?? zeroBN,
-									{ sign: '$', minDecimals }
+									{ sign: '$', minDecimals, isAssetPrice: true }
 							  )} (${formatPercent(marketPrice.sub(pastPrice.price).div(marketPrice) ?? zeroBN)})`
 							: NO_VALUE,
 					color:
@@ -126,6 +126,7 @@ const useGetMarketData = (mobile?: boolean) => {
 					value: formatCurrency(selectedPriceCurrency.name, marketPrice, {
 						sign: '$',
 						minDecimals,
+						isAssetPrice: true,
 					}),
 				},
 				[MarketDataKey.externalPrice]: {
@@ -135,6 +136,7 @@ const useGetMarketData = (mobile?: boolean) => {
 							: formatCurrency(selectedPriceCurrency.name, externalPrice, {
 									sign: '$',
 									minDecimals,
+									isAssetPrice: true,
 							  }),
 				},
 				[MarketDataKey.dailyChange]: {
@@ -143,7 +145,7 @@ const useGetMarketData = (mobile?: boolean) => {
 							? `${formatCurrency(
 									selectedPriceCurrency.name,
 									marketPrice.sub(pastPrice.price) ?? zeroBN,
-									{ sign: '$', minDecimals }
+									{ sign: '$', minDecimals, isAssetPrice: true }
 							  )} (${formatPercent(marketPrice.sub(pastPrice.price).div(marketPrice) ?? zeroBN)})`
 							: NO_VALUE,
 					color:

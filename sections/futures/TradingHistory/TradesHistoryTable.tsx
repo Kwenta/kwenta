@@ -13,7 +13,6 @@ import { selectMarketAsset } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { CapitalizedText, NumericValue } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
-import { isDecimalFour } from 'utils/futures';
 
 type TradesHistoryTableProps = {
 	mobile?: boolean;
@@ -146,9 +145,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 							Header: <TableHeader>{t('futures.market.history.price-label')}</TableHeader>,
 							accessor: TableColumnAccessor.Price,
 							Cell: (cellProps: CellProps<any>) => {
-								const formatOptions = isDecimalFour(cellProps.row.original.currencyKey)
-									? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
-									: {};
+								const formatOptions = { minDecimals: DEFAULT_CRYPTO_DECIMALS, isAssetPrice: true };
 
 								return (
 									<PriceValue>

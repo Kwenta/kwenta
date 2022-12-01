@@ -341,6 +341,7 @@ export default class FuturesService {
 				trades: true,
 				timestamp: true,
 				period: true,
+				feesCrossMarginAccounts: true,
 				feesKwenta: true,
 				feesSynthetix: true,
 			}

@@ -97,15 +97,15 @@ export default function TradeConfirmationModal({
 			orderType === 'limit' || orderType === 'stop market'
 				? {
 						label: orderType + ' order price',
-						value: formatDollars(orderPrice),
+						value: formatDollars(orderPrice, { isAssetPrice: true }),
 				  }
 				: {
 						label: 'current price',
-						value: formatDollars(positionDetails?.price ?? zeroBN),
+						value: formatDollars(positionDetails?.price ?? zeroBN, { isAssetPrice: true }),
 				  },
 			{
 				label: 'liquidation price',
-				value: formatDollars(positionDetails?.liqPrice ?? zeroBN),
+				value: formatDollars(positionDetails?.liqPrice ?? zeroBN, { isAssetPrice: true }),
 			},
 			{
 				label: 'resulting margin',

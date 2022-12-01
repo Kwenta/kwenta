@@ -28,12 +28,12 @@ const LeverageInput: FC = () => {
 	const { t } = useTranslation();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
 	const { leverage } = useRecoilValue(futuresTradeInputsState);
-	const maxLeverage = useAppSelector(selectMaxLeverage);
 	const orderType = useRecoilValue(orderTypeState);
 	const isDisclaimerDisplayed = useAppSelector(selectNextPriceDisclaimer);
 	const setIsLeverageValueCommitted = useSetRecoilState(leverageValueCommittedState);
 	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
+	const maxLeverage = useAppSelector(selectMaxLeverage);
 
 	const { onLeverageChange } = useFuturesContext();
 

@@ -20,7 +20,6 @@ import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 import { PositionSide } from '../types';
 
 const MarketInfoBox: React.FC = () => {
-	const maxLeverage = useAppSelector(selectMaxLeverage);
 	const orderType = useRecoilValue(orderTypeState);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
@@ -28,6 +27,7 @@ const MarketInfoBox: React.FC = () => {
 
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const position = useAppSelector(selectPosition);
+	const maxLeverage = useAppSelector(selectMaxLeverage);
 
 	const totalMargin = position?.remainingMargin ?? zeroBN;
 	const availableMargin = position?.accessibleMargin ?? zeroBN;

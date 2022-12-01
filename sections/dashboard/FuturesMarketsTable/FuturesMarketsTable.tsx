@@ -22,12 +22,7 @@ import {
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { pastRatesState, futuresAccountTypeState } from 'store/futures';
-import {
-	getSynthDescription,
-	isDecimalFour,
-	MarketKeyByAsset,
-	FuturesMarketAsset,
-} from 'utils/futures';
+import { getSynthDescription, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
 const FuturesMarketsTable: FC = () => {
 	const { t } = useTranslation();
@@ -120,9 +115,10 @@ const FuturesMarketsTable: FC = () => {
 								),
 								accessor: 'oraclePrice',
 								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = isDecimalFour(cellProps.row.original.asset)
-										? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
-										: {};
+									const formatOptions = {
+										minDecimals: DEFAULT_CRYPTO_DECIMALS,
+										isAssetPrice: true,
+									};
 									return (
 										<Currency.Price
 											currencyKey={'sUSD'}
@@ -302,11 +298,7 @@ const FuturesMarketsTable: FC = () => {
 												currencyKey={'sUSD'}
 												price={cellProps.row.original.price}
 												sign="$"
-												formatOptions={
-													isDecimalFour(cellProps.row.original.asset)
-														? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
-														: {}
-												}
+												formatOptions={{ minDecimals: DEFAULT_CRYPTO_DECIMALS, isAssetPrice: true }}
 											/>
 										</MarketContainer>
 									</div>

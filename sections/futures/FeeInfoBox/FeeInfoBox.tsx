@@ -15,6 +15,7 @@ import {
 	sizeDeltaState,
 	futuresAccountTypeState,
 	crossMarginSettingsState,
+	dynamicFeeRateState,
 } from 'store/futures';
 import { computeNPFee, computeMarketFee } from 'utils/costCalculations';
 import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
@@ -22,6 +23,7 @@ import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/form
 const FeeInfoBox: React.FC = () => {
 	const orderType = useRecoilValue(orderTypeState);
 	const fees = useRecoilValue(tradeFeesState);
+	const dynamicFeeRate = useRecoilValue(dynamicFeeRateState);
 	const sizeDelta = useRecoilValue(sizeDeltaState);
 	const accountType = useRecoilValue(futuresAccountTypeState);
 	const { tradeFee: crossMarginTradeFee, limitOrderFee, stopOrderFee } = useRecoilValue(
@@ -57,17 +59,17 @@ const FeeInfoBox: React.FC = () => {
 		() => (
 			<>
 				{formatPercent(staticRate ?? zeroBN)}
-				{fees.dynamicFeeRate?.gt(0) && (
+				{dynamicFeeRate?.gt(0) && (
 					<>
 						{' + '}
 						<ToolTip>
-							<StyledDynamicFee>{formatPercent(fees.dynamicFeeRate)}</StyledDynamicFee>
+							<StyledDynamicFee>{formatPercent(dynamicFeeRate)}</StyledDynamicFee>
 						</ToolTip>
 					</>
 				)}
 			</>
 		),
-		[staticRate, fees.dynamicFeeRate]
+		[staticRate, dynamicFeeRate]
 	);
 
 	const feesInfo = useMemo<Record<string, DetailedInfo | null | undefined>>(() => {
