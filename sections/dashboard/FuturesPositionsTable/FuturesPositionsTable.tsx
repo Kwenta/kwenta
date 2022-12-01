@@ -23,7 +23,7 @@ import { selectMarketAsset, selectMarkets } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { positionsState, positionHistoryState } from 'store/futures';
 import { formatNumber } from 'utils/formatters/number';
-import { getSynthDescription, isDecimalFour } from 'utils/futures';
+import { getSynthDescription } from 'utils/futures';
 
 import MobilePositionRow from './MobilePositionRow';
 
@@ -216,9 +216,10 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'avgEntryPrice',
 								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = isDecimalFour(cellProps.row.original.market.asset)
-										? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
-										: {};
+									const formatOptions = {
+										minDecimals: DEFAULT_CRYPTO_DECIMALS,
+										isAssetPrice: true,
+									};
 									return cellProps.row.original.avgEntryPrice === undefined ? (
 										<DefaultCell>{NO_VALUE}</DefaultCell>
 									) : (
@@ -241,9 +242,10 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'liquidationPrice',
 								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = isDecimalFour(cellProps.row.original.market.asset)
-										? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
-										: {};
+									const formatOptions = {
+										minDecimals: DEFAULT_CRYPTO_DECIMALS,
+										isAssetPrice: true,
+									};
 									return (
 										<Currency.Price
 											currencyKey={'sUSD'}

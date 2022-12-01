@@ -4,7 +4,11 @@ import { BigNumber, ethers, utils } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 
 import { CurrencyKey } from 'constants/currency';
-import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
+import {
+	DEFAULT_CRYPTO_DECIMALS,
+	DEFAULT_FIAT_DECIMALS,
+	DEFAULT_NUMBER_DECIMALS,
+} from 'constants/defaults';
 import { isFiatCurrency } from 'utils/currencies';
 import logError from 'utils/logError';
 
@@ -22,6 +26,7 @@ export type FormatNumberOptions = {
 	maxDecimals?: number;
 	prefix?: string;
 	suffix?: string;
+	isAssetPrice?: boolean;
 } & TruncatedOptions;
 
 export type FormatCurrencyOptions = {
@@ -29,6 +34,7 @@ export type FormatCurrencyOptions = {
 	maxDecimals?: number;
 	sign?: string;
 	currencyKey?: string;
+	isAssetPrice?: boolean;
 } & TruncatedOptions;
 
 const DEFAULT_CURRENCY_DECIMALS = 2;
@@ -80,6 +86,7 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	const prefix = options?.prefix;
 	const suffix = options?.suffix;
 	const truncation = options?.truncation;
+	const isAssetPrice = options?.isAssetPrice;
 
 	let weiValue = wei(0);
 	try {
@@ -99,7 +106,9 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 
 	const weiBeforeAsString = truncation ? weiValue.abs().div(truncation.divisor) : weiValue.abs();
 
-	const dp = suggestedDecimals(weiBeforeAsString);
+	const dp = isAssetPrice
+		? suggestedDecimals(weiBeforeAsString)
+		: options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS;
 
 	let weiAsStringWithDecimals = weiBeforeAsString.toString(dp);
 
@@ -107,7 +116,9 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 		weiAsStringWithDecimals = wei(weiAsStringWithDecimals).toString(options.maxDecimals);
 	}
 
-	const decimals = suggestedDecimals(weiAsStringWithDecimals);
+	const decimals = isAssetPrice
+		? suggestedDecimals(weiAsStringWithDecimals)
+		: options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS;
 
 	const withCommas = commifyAndPadDecimals(weiAsStringWithDecimals, decimals);
 
@@ -130,6 +141,7 @@ export const formatCryptoCurrency = (value: WeiSource, options?: FormatCurrencyO
 		suffix: options?.currencyKey,
 		minDecimals: options?.minDecimals ?? DEFAULT_CRYPTO_DECIMALS,
 		maxDecimals: options?.maxDecimals,
+		isAssetPrice: options?.isAssetPrice,
 	});
 
 export const formatFiatCurrency = (value: WeiSource, options?: FormatCurrencyOptions) =>
@@ -139,6 +151,7 @@ export const formatFiatCurrency = (value: WeiSource, options?: FormatCurrencyOpt
 		minDecimals: options?.minDecimals ?? DEFAULT_FIAT_DECIMALS,
 		maxDecimals: options?.maxDecimals,
 		truncation: options?.truncation,
+		isAssetPrice: options?.isAssetPrice,
 	});
 
 export const formatCurrency = (
