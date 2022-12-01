@@ -10,6 +10,7 @@ import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import { useFuturesContext } from 'contexts/FuturesContext';
+import useAverageEntryPrice from 'hooks/useAverageEntryPrice';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { PositionSide } from 'queries/futures/types';
@@ -73,7 +74,6 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 	const positionDetails = position?.position ?? null;
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketKey);
 
-	const potentialTrade = useRecoilValue(potentialTradeDetailsState);
 	const positionHistory = useRecoilValue(positionHistoryState);
 
 	const [showEditLeverage, setShowEditLeverage] = useState(false);
@@ -96,18 +96,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 
 	const { data: previewTradeData } = useRecoilValue(potentialTradeDetailsState);
 
-	const modifiedAverage = useMemo(() => {
-		if (thisPositionHistory && previewTradeData && potentialTrade.data) {
-			const totalSize = thisPositionHistory.size.add(potentialTrade.data.size);
-
-			const existingValue = thisPositionHistory.avgEntryPrice.mul(thisPositionHistory.size);
-			const newValue = previewTradeData.price.mul(potentialTrade.data.size);
-			const totalValue = existingValue.add(newValue);
-
-			return totalSize.gt(0) ? totalValue.div(totalSize) : null;
-		}
-		return null;
-	}, [thisPositionHistory, previewTradeData, potentialTrade.data]);
+	const modifiedAverage = useAverageEntryPrice(thisPositionHistory);
 
 	const previewData: PositionPreviewData = React.useMemo(() => {
 		if (positionDetails === null || previewTradeData === null) {
