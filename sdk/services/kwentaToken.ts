@@ -276,7 +276,10 @@ export default class KwentaTokenService {
 	// TODO: Delete `approveLPToken` method.
 	// In that case, we can safely remove the map object from this method.
 
-	public approveKwentaToken(token: 'kwenta' | 'vKwenta' | 'veKwenta') {
+	public approveKwentaToken(
+		token: 'kwenta' | 'vKwenta' | 'veKwenta',
+		amount = ethers.constants.MaxUint256
+	) {
 		const {
 			KwentaToken,
 			KwentaStakingRewards,
@@ -298,13 +301,14 @@ export default class KwentaTokenService {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
-		return this.sdk.transactions.createContractTxn(contract, 'approve', [
-			spender.address,
-			ethers.constants.MaxUint256,
-		]);
+		return this.sdk.transactions.createContractTxn(contract, 'approve', [spender.address, amount]);
 	}
 
-	public approveToken(token: ContractName, spender?: ContractName) {
+	public approveToken(
+		token: ContractName,
+		spender?: ContractName,
+		amount = ethers.constants.MaxUint256
+	) {
 		const tokenContract = this.sdk.context.contracts[token];
 
 		if (!tokenContract) {
@@ -320,7 +324,7 @@ export default class KwentaTokenService {
 
 		return this.sdk.transactions.createContractTxn(tokenContract, 'approve', [
 			spenderAddress,
-			ethers.constants.MaxUint256,
+			amount,
 		]);
 	}
 
@@ -437,7 +441,7 @@ export default class KwentaTokenService {
 		]);
 	}
 
-	private async performStakeAction(
+	private performStakeAction(
 		action: 'stake' | 'unstake',
 		amount: string,
 		options: { escrow: boolean } = { escrow: false }
