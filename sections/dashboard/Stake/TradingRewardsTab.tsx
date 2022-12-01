@@ -166,9 +166,8 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 				<CardGrid>
 					<CustomStyledTooltip
 						preset="bottom"
-						width={'280px'}
+						width={'260px'}
 						height={'auto'}
-						style={{ padding: '5px 10px 5px 15px' }}
 						content={t('dashboard.stake.tabs.trading-rewards.trading-rewards-tooltip')}
 					>
 						<div>
@@ -206,8 +205,9 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 };
 
 const CustomStyledTooltip = styled(StyledTooltip)`
+	padding: 0px 10px 0px;
 	${media.lessThan('md')`
-		width: 280px;
+		width: 310px;
 		left: -5px;
 	`}
 `;
