@@ -1,8 +1,8 @@
 export type ModalType =
-	| 'cm_deposit_margin'
-	| 'cm_withdraw_margin'
-	| 'cm_confirm_order'
-	| 'cm_edit_leverage'
+	| 'futures_cross_deposit'
+	| 'futures_cross_withdraw'
+	| 'futures_cross_leverage'
+	| 'futures_isolated_transfer'
 	| null;
 
 export type AppState = {

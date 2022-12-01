@@ -83,7 +83,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 					<TradePanelHeader
 						balance={freeMargin}
 						accountType={selectedAccountType}
-						onManageBalance={() => dispatch(setOpenModal('cm_deposit_margin'))}
+						onManageBalance={() => dispatch(setOpenModal('futures_cross_deposit'))}
 					/>
 
 					<MarginInfoBox />
@@ -121,7 +121,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 					<FeeInfoBox />
 					{openTransferModal && (
 						<DepositWithdrawCrossMargin
-							defaultTab={openTransferModal === 'cm_deposit_margin' ? 'deposit' : 'withdraw'}
+							defaultTab={openTransferModal === 'futures_cross_deposit' ? 'deposit' : 'withdraw'}
 							onDismiss={() => dispatch(setOpenModal(null))}
 						/>
 					)}

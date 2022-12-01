@@ -56,7 +56,7 @@ const initialState: FuturesState = {
 	transaction: undefined,
 	crossMargin: {
 		account: undefined,
-		marketAsset: FuturesMarketAsset.sETH,
+		selectedMarketAsset: FuturesMarketAsset.sETH,
 		leverageSide: PositionSide.LONG,
 		orderType: 'market',
 		selectedLeverage: DEFAULT_LEVERAGE,
@@ -71,7 +71,7 @@ const initialState: FuturesState = {
 		},
 	},
 	isolatedMargin: {
-		marketAsset: FuturesMarketAsset.sETH,
+		selectedMarketAsset: FuturesMarketAsset.sETH,
 		leverageSide: PositionSide.LONG,
 		orderType: 'market',
 		selectedLeverage: DEFAULT_LEVERAGE,
@@ -86,12 +86,12 @@ const futuresSlice = createSlice({
 	initialState,
 	reducers: {
 		setMarketAsset: (state, action) => {
-			state[accountType(state.selectedType)].marketAsset = action.payload;
+			state[accountType(state.selectedType)].selectedMarketAsset = action.payload;
 			if (state.selectedType === 'cross_margin') {
-				state.crossMargin.marketAsset = action.payload;
+				state.crossMargin.selectedMarketAsset = action.payload;
 				state.crossMargin.tradeInputs = ZERO_STATE_CM_TRADE_INPUTS;
 			} else {
-				state.isolatedMargin.marketAsset = action.payload;
+				state.isolatedMargin.selectedMarketAsset = action.payload;
 				state.isolatedMargin.tradeInputs = ZERO_STATE_TRADE_INPUTS;
 			}
 		},

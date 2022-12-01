@@ -148,7 +148,7 @@ const useFuturesData = () => {
 	useEffect(() => {
 		// Poll shared futures data
 		if (providerReady) {
-			startPolling('fetchSharedFuturesData', fetchSharedFuturesData, 6000);
+			startPolling('fetchSharedFuturesData', fetchSharedFuturesData, 60000);
 		}
 		// eslint-disable-next-line
 	}, [providerReady, networkId]);

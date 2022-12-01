@@ -53,6 +53,7 @@ The following tasks are expected to be completed before the SDK can be considere
 - [ ] Consider experimenting with WebSockets for realtime data (again).
 - [ ] Remove walletAddress from connector and change references to the redux state wallet, this means we're always taking the sdk as source of truth for the wallet and avoids race conditions where queries are attempted before the signer is set.
 - [ ] Add query statuses for all key queries and create derived query statuses for components which rely on completion of multiple queries
+- [ ] Make all sdk number params consistent, e.g. use Wei everywhere insreads of BigNumber or string
 
 ## Exchange
 

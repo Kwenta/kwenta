@@ -42,7 +42,12 @@ export type FuturesQueryStatuses = {
 };
 
 export type FuturesTransaction = {
-	type: 'deposit' | 'withdraw' | 'approve';
+	type:
+		| 'deposit_cross_margin'
+		| 'withdraw_cross_margin'
+		| 'approve_cross_margin'
+		| 'deposit_isolated'
+		| 'withdraw_isolated';
 	status: TransactionStatus;
 	error?: string;
 	hash: string | null;
@@ -58,7 +63,6 @@ export type FuturesState = {
 	crossMargin: CrossMarginState;
 	markets: FuturesMarket<string>[];
 	fundingRates: FundingRateSerialized[];
-	marketInfo?: FuturesMarket<string>;
 	queryStatuses: FuturesQueryStatuses;
 	dailyMarketVolumes: FuturesVolumes<string>;
 	transaction?: FuturesTransaction | undefined;
@@ -75,7 +79,7 @@ export type CrossMarginState = {
 	orderType: CrossMarginOrderType;
 	selectedLeverage: string;
 	leverageSide: PositionSide;
-	marketAsset: FuturesMarketAsset;
+	selectedMarketAsset: FuturesMarketAsset;
 	showCrossMarginOnboard: boolean;
 	position?: FuturesPosition<string>;
 	balanceInfo: CrossMarginBalanceInfo<string>;
@@ -90,7 +94,7 @@ export type IsolatedMarginState = {
 	orderType: IsolatedMarginOrderType;
 	selectedLeverage: string;
 	leverageSide: PositionSide;
-	marketAsset: FuturesMarketAsset;
+	selectedMarketAsset: FuturesMarketAsset;
 	position?: FuturesPosition<string>;
 	positions: {
 		[account: string]: FuturesPosition<string>[];

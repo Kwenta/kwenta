@@ -15,8 +15,8 @@ import { approveCrossMargin, depositCrossMargin, withdrawCrossMargin } from 'sta
 import {
 	selectCrossMarginBalanceInfo,
 	selectFuturesTransaction,
-	selectIsApprovingDeposit,
-	selectIsSubmittingTransfer,
+	selectIsApprovingCrossDeposit,
+	selectIsSubmittingCrossTransfer,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { balancesState } from 'store/futures';
@@ -41,8 +41,8 @@ export default function DepositWithdrawCrossMargin({
 	const balances = useRecoilValue(balancesState);
 	const crossMarginBalanceInfo = useAppSelector(selectCrossMarginBalanceInfo);
 	const transactionState = useAppSelector(selectFuturesTransaction);
-	const isSubmitting = useAppSelector(selectIsSubmittingTransfer);
-	const isApproving = useAppSelector(selectIsApprovingDeposit);
+	const isSubmitting = useAppSelector(selectIsSubmittingCrossTransfer);
+	const isApproving = useAppSelector(selectIsApprovingCrossDeposit);
 
 	const [amount, setAmount] = useState<string>('');
 	const [transferType, setTransferType] = useState(0);

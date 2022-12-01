@@ -23,11 +23,6 @@ import {
 
 import { FundingRate, futuresPositionKeys } from './types';
 
-export const selectMarketKey = createSelector(
-	(state: RootState) => state.futures[accountType(state.futures.selectedType)].marketAsset,
-	(marketAsset) => MarketKeyByAsset[marketAsset]
-);
-
 export const selectFuturesType = (state: RootState) => state.futures.selectedType;
 
 export const selectFuturesTransaction = (state: RootState) => state.futures.transaction;
@@ -36,10 +31,15 @@ export const selectCrossMarginAccount = (state: RootState) => state.futures.cros
 
 export const selectMarketsQueryStatus = (state: RootState) => state.futures.queryStatuses.markets;
 
+export const selectMarketKey = createSelector(
+	(state: RootState) => state.futures[accountType(state.futures.selectedType)].selectedMarketAsset,
+	(marketAsset) => MarketKeyByAsset[marketAsset]
+);
+
 export const selectMarketAsset = createSelector(
 	(state: RootState) => state.futures,
 	selectFuturesType,
-	(futures, marginType) => futures[accountType(marginType)].marketAsset
+	(futures, marginType) => futures[accountType(marginType)].selectedMarketAsset
 );
 
 export const selectMarketRate = createSelector(
@@ -89,7 +89,7 @@ export const selectMarketInfo = createSelector(
 	}
 );
 export const selectMarketAssetRate = createSelector(
-	(state: RootState) => state.futures[accountType(state.futures.selectedType)].marketAsset,
+	(state: RootState) => state.futures[accountType(state.futures.selectedType)].selectedMarketAsset,
 	selectExchangeRates,
 	(marketAsset, exchangeRates) => {
 		return newGetExchangeRatesForCurrencies(exchangeRates, marketAsset, 'sUSD');
@@ -131,25 +131,49 @@ export const selectFuturesPositions = createSelector(
 	}
 );
 
-export const selectIsSubmittingTransfer = createSelector(
+export const selectIsSubmittingCrossTransfer = createSelector(
 	(state: RootState) => state.futures,
 	(futures) => {
 		return (
-			(futures.transaction?.type === 'deposit' || futures.transaction?.type === 'withdraw') &&
+			(futures.transaction?.type === 'deposit_cross_margin' ||
+				futures.transaction?.type === 'withdraw_cross_margin') &&
 			(futures.transaction?.status === TransactionStatus.AwaitingExecution ||
 				futures.transaction?.status === TransactionStatus.Executed)
 		);
 	}
 );
 
-export const selectIsApprovingDeposit = createSelector(
+export const selectIsApprovingCrossDeposit = createSelector(
 	(state: RootState) => state.futures,
 	(futures) => {
 		return (
-			futures.transaction?.type === 'approve' &&
+			futures.transaction?.type === 'approve_cross_margin' &&
 			(futures.transaction?.status === TransactionStatus.AwaitingExecution ||
 				futures.transaction?.status === TransactionStatus.Executed)
 		);
+	}
+);
+
+export const selectIsSubmittingIsolatedTransfer = createSelector(
+	(state: RootState) => state.futures,
+	(futures) => {
+		return (
+			(futures.transaction?.type === 'deposit_isolated' ||
+				futures.transaction?.type === 'withdraw_isolated') &&
+			(futures.transaction?.status === TransactionStatus.AwaitingExecution ||
+				futures.transaction?.status === TransactionStatus.Executed)
+		);
+	}
+);
+
+export const selectIsolatedTransferError = createSelector(
+	(state: RootState) => state.futures,
+	(futures) => {
+		return (futures.transaction?.type === 'deposit_isolated' ||
+			futures.transaction?.type === 'withdraw_isolated') &&
+			futures.transaction?.status === TransactionStatus.Failed
+			? futures.transaction?.error ?? 'Transaction failed'
+			: null;
 	}
 );
 

@@ -48,51 +48,6 @@ export const fetchCrossMarginBalanceInfo = createAsyncThunk<
 	return serializeCmBalanceInfo(overview);
 });
 
-export const depositCrossMargin = createAsyncThunk<void, Wei, ThunkConfig>(
-	'futures/depositCrossMargin',
-	async (amount, { getState, dispatch, extra: { sdk } }) => {
-		const { futures } = getState();
-		const account = futures.crossMargin.account;
-		if (!account) throw new Error('No cross margin account');
-		await submitCMTransferTransaction(dispatch, sdk, 'deposit', account, amount);
-	}
-);
-
-export const withdrawCrossMargin = createAsyncThunk<void, Wei, ThunkConfig>(
-	'futures/withdrawCrossMargin',
-	async (amount, { getState, dispatch, extra: { sdk } }) => {
-		const { futures } = getState();
-		const account = futures.crossMargin.account;
-		if (!account) throw new Error('No cross margin account');
-		await submitCMTransferTransaction(dispatch, sdk, 'withdraw', account, amount);
-	}
-);
-
-export const approveCrossMargin = createAsyncThunk<void, void, ThunkConfig>(
-	'futures/approveCrossMargin',
-	async (_, { getState, dispatch, extra: { sdk } }) => {
-		const { futures } = getState();
-		const account = futures.crossMargin.account;
-		if (!account) throw new Error('No cross margin account');
-		try {
-			dispatch(
-				setTransaction({
-					status: TransactionStatus.AwaitingExecution,
-					type: 'approve',
-					hash: null,
-				})
-			);
-			const tx = await sdk.futures.approveCrossMarginDeposit(account);
-			dispatch(updateTransactionHash(tx.hash));
-			await tx.wait();
-			dispatch(fetchCrossMarginBalanceInfo());
-		} catch (err) {
-			dispatch(handleTransactionError(err.message));
-			throw err;
-		}
-	}
-);
-
 export const fetchFuturesPositionsForType = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/fetchFuturesPositionsForType',
 	async (_, { dispatch, getState }) => {
@@ -168,6 +123,109 @@ export const fetchSharedFuturesData = createAsyncThunk<void, void, ThunkConfig>(
 	}
 );
 
+// Contract Mutations
+
+export const depositCrossMargin = createAsyncThunk<void, Wei, ThunkConfig>(
+	'futures/depositCrossMargin',
+	async (amount, { getState, dispatch, extra: { sdk } }) => {
+		const { futures } = getState();
+		const account = futures.crossMargin.account;
+		if (!account) throw new Error('No cross margin account');
+		await submitCMTransferTransaction(dispatch, sdk, 'deposit_cross_margin', account, amount);
+	}
+);
+
+export const withdrawCrossMargin = createAsyncThunk<void, Wei, ThunkConfig>(
+	'futures/withdrawCrossMargin',
+	async (amount, { getState, dispatch, extra: { sdk } }) => {
+		const { futures } = getState();
+		const account = futures.crossMargin.account;
+		if (!account) throw new Error('No cross margin account');
+		await submitCMTransferTransaction(dispatch, sdk, 'withdraw_cross_margin', account, amount);
+	}
+);
+
+export const approveCrossMargin = createAsyncThunk<void, void, ThunkConfig>(
+	'futures/approveCrossMargin',
+	async (_, { getState, dispatch, extra: { sdk } }) => {
+		const { futures } = getState();
+		const account = futures.crossMargin.account;
+		if (!account) throw new Error('No cross margin account');
+		try {
+			dispatch(
+				setTransaction({
+					status: TransactionStatus.AwaitingExecution,
+					type: 'approve_cross_margin',
+					hash: null,
+				})
+			);
+			const tx = await sdk.futures.approveCrossMarginDeposit(account);
+			dispatch(updateTransactionHash(tx.hash));
+			await tx.wait();
+			dispatch(fetchCrossMarginBalanceInfo());
+		} catch (err) {
+			dispatch(handleTransactionError(err.message));
+			throw err;
+		}
+	}
+);
+
+export const depositIsolatedMargin = createAsyncThunk<void, Wei, ThunkConfig>(
+	'futures/depositIsolatedMargin',
+	async (amount, { getState, dispatch, extra: { sdk } }) => {
+		const { futures } = getState();
+		const marketInfo = futures.markets.find(
+			(m) => m.asset === futures.isolatedMargin.selectedMarketAsset
+		);
+		if (!marketInfo) throw new Error('Market info not found');
+		try {
+			dispatch(
+				setTransaction({
+					status: TransactionStatus.AwaitingExecution,
+					type: 'deposit_isolated',
+					hash: null,
+				})
+			);
+			const tx = await sdk.futures.depositIsolatedMargin(marketInfo.market, amount);
+			dispatch(updateTransactionHash(tx.hash));
+			await tx.wait();
+			dispatch(fetchIsolatedMarginPositions());
+			dispatch(setOpenModal(null));
+		} catch (err) {
+			dispatch(handleTransactionError(err.message));
+			throw err;
+		}
+	}
+);
+
+export const withdrawIsolatedMargin = createAsyncThunk<void, Wei, ThunkConfig>(
+	'futures/withdrawIsolatedMargin',
+	async (amount, { getState, dispatch, extra: { sdk } }) => {
+		const { futures } = getState();
+		const marketInfo = futures.markets.find(
+			(m) => m.asset === futures.isolatedMargin.selectedMarketAsset
+		);
+		if (!marketInfo) throw new Error('Market info not found');
+		try {
+			dispatch(
+				setTransaction({
+					status: TransactionStatus.AwaitingExecution,
+					type: 'withdraw_isolated',
+					hash: null,
+				})
+			);
+			const tx = await sdk.futures.withdrawIsolatedMargin(marketInfo.market, amount);
+			dispatch(updateTransactionHash(tx.hash));
+			await tx.wait();
+			dispatch(fetchIsolatedMarginPositions());
+			dispatch(setOpenModal(null));
+		} catch (err) {
+			dispatch(handleTransactionError(err.message));
+			throw err;
+		}
+	}
+);
+
 // TODO: Finish
 export const resetFuturesState = (): AppThunk => (dispatch) => {
 	dispatch({
@@ -178,7 +236,7 @@ export const resetFuturesState = (): AppThunk => (dispatch) => {
 const submitCMTransferTransaction = async (
 	dispatch: AppDispatch,
 	sdk: KwentaSDK,
-	type: 'deposit' | 'withdraw',
+	type: 'withdraw_cross_margin' | 'deposit_cross_margin',
 	account: string,
 	amount: Wei
 ) => {
@@ -192,7 +250,7 @@ const submitCMTransferTransaction = async (
 
 	try {
 		const tx =
-			type === 'deposit'
+			type === 'deposit_cross_margin'
 				? await sdk.futures.depositCrossMargin(account, amount)
 				: await sdk.futures.withdrawCrossMargin(account, amount);
 		dispatch(updateTransactionHash(tx.hash));

@@ -1,9 +1,10 @@
-import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import SegmentedControl from 'components/SegmentedControl';
 import { ISOLATED_MARGIN_ORDER_TYPES } from 'constants/futures';
+import { setOpenModal } from 'state/app/reducer';
+import { selectOpenModal } from 'state/app/selectors';
 import {
 	setLeverageSide as setReduxLeverageSide,
 	setOrderType as setReduxOrderType,
@@ -28,19 +29,20 @@ type Props = {
 };
 
 const TradeIsolatedMargin = ({ isMobile }: Props) => {
+	const dispatch = useAppDispatch();
+
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const { susdWalletBalance } = useRecoilValue(balancesState);
 	const position = useAppSelector(selectPosition);
+	const openModal = useAppSelector(selectOpenModal);
 
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
-	const [openTransferModal, setOpenTransferModal] = useState<boolean>(false);
 	const totalMargin = position?.remainingMargin ?? zeroBN;
-	const dispatch = useAppDispatch();
 
 	return (
 		<div>
 			<TradePanelHeader
-				onManageBalance={() => setOpenTransferModal(true)}
+				onManageBalance={() => dispatch(setOpenModal('futures_isolated_transfer'))}
 				balance={totalMargin}
 				accountType={'isolated_margin'}
 			/>
@@ -74,11 +76,11 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 			<ManagePosition />
 
 			<FeeInfoBox />
-			{openTransferModal && (
+			{openModal === 'futures_isolated_transfer' && (
 				<TransferIsolatedMarginModal
 					defaultTab="deposit"
 					sUSDBalance={susdWalletBalance}
-					onDismiss={() => setOpenTransferModal(false)}
+					onDismiss={() => dispatch(setOpenModal(null))}
 				/>
 			)}
 		</div>

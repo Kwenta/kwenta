@@ -14,7 +14,11 @@ import ExchangeRatesABI from 'sdk/contracts/abis/ExchangeRates.json';
 import FuturesMarketABI from 'sdk/contracts/abis/FuturesMarket.json';
 import FuturesMarketDataABI from 'sdk/contracts/abis/FuturesMarketData.json';
 import FuturesMarketSettingsABI from 'sdk/contracts/abis/FuturesMarketSettings.json';
-import { CrossMarginBase__factory, FuturesMarketData } from 'sdk/contracts/types';
+import {
+	CrossMarginBase__factory,
+	FuturesMarketData,
+	FuturesMarket__factory,
+} from 'sdk/contracts/types';
 import { NetworkOverrideOptions } from 'sdk/types/common';
 import {
 	FundingRateInput,
@@ -168,6 +172,52 @@ export default class FuturesService {
 		return futuresMarkets;
 	}
 
+	// TODO: types
+	public async getFuturesPositions(
+		address: string, // Cross margin or EOA address
+		futuresMarkets: { asset: FuturesMarketAsset; address: string }[]
+	) {
+		const futuresDataAddress = this.sdk.context.contracts.FuturesMarketData?.address;
+		if (!this.sdk.context.isL2 || !futuresDataAddress) {
+			throw new Error(UNSUPPORTED_NETWORK);
+		}
+
+		const FMD = new EthCallContract(futuresDataAddress, FuturesMarketDataABI);
+
+		const positionCalls = [];
+		const liquidationCalls = [];
+
+		for (const { address: marketAddress, asset } of futuresMarkets) {
+			positionCalls.push(
+				FMD.positionDetailsForMarketKey(
+					ethersUtils.formatBytes32String(MarketKeyByAsset[asset]),
+					address
+				)
+			);
+			const marketContract = new EthCallContract(marketAddress, FuturesMarketABI);
+			liquidationCalls.push(marketContract.canLiquidate(address));
+		}
+
+		// TODO: Combine these two?
+		const positionDetails = (await this.sdk.context.multicallProvider.all(
+			positionCalls
+		)) as PositionDetail[];
+		const canLiquidateState = (await this.sdk.context.multicallProvider.all(
+			liquidationCalls
+		)) as boolean[];
+
+		// map the positions using the results
+		const positions = positionDetails
+			.map((position, ind) => {
+				const canLiquidate = canLiquidateState[ind];
+				const asset = futuresMarkets[ind].asset;
+				return mapFuturesPosition(position, canLiquidate, asset);
+			})
+			.filter(({ remainingMargin }) => remainingMargin.gt(0));
+
+		return positions;
+	}
+
 	public async getAverageFundingRates(markets: FuturesMarket[], period: Period) {
 		const fundingRateInputs: FundingRateInput[] = markets.map(
 			({ asset, market, price, currentFundingRate }) => {
@@ -319,6 +369,8 @@ export default class FuturesService {
 		};
 	}
 
+	// Contract mutations
+
 	public async approveCrossMarginDeposit(
 		crossMarginAddress: string,
 		amount: BigNumber = ethers.constants.MaxUint256
@@ -345,49 +397,13 @@ export default class FuturesService {
 		return crossMarginAccountContract.withdraw(amount.toBN());
 	}
 
-	// TODO: types
-	public async getFuturesPositions(
-		address: string, // Cross margin or EOA address
-		futuresMarkets: { asset: FuturesMarketAsset; address: string }[]
-	) {
-		const futuresDataAddress = this.sdk.context.contracts.FuturesMarketData?.address;
-		if (!this.sdk.context.isL2 || !futuresDataAddress) {
-			throw new Error(UNSUPPORTED_NETWORK);
-		}
+	public async depositIsolatedMargin(marketAddress: string, amount: Wei) {
+		const market = FuturesMarket__factory.connect(marketAddress, this.sdk.context.signer);
+		return market.transferMargin(amount.toBN());
+	}
 
-		const FMD = new EthCallContract(futuresDataAddress, FuturesMarketDataABI);
-
-		const positionCalls = [];
-		const liquidationCalls = [];
-
-		for (const { address: marketAddress, asset } of futuresMarkets) {
-			positionCalls.push(
-				FMD.positionDetailsForMarketKey(
-					ethersUtils.formatBytes32String(MarketKeyByAsset[asset]),
-					address
-				)
-			);
-			const marketContract = new EthCallContract(marketAddress, FuturesMarketABI);
-			liquidationCalls.push(marketContract.canLiquidate(address));
-		}
-
-		// TODO: Combine these two?
-		const positionDetails = (await this.sdk.context.multicallProvider.all(
-			positionCalls
-		)) as PositionDetail[];
-		const canLiquidateState = (await this.sdk.context.multicallProvider.all(
-			liquidationCalls
-		)) as boolean[];
-
-		// map the positions using the results
-		const positions = positionDetails
-			.map((position, ind) => {
-				const canLiquidate = canLiquidateState[ind];
-				const asset = futuresMarkets[ind].asset;
-				return mapFuturesPosition(position, canLiquidate, asset);
-			})
-			.filter(({ remainingMargin }) => remainingMargin.gt(0));
-
-		return positions;
+	public async withdrawIsolatedMargin(marketAddress: string, amount: Wei) {
+		const market = FuturesMarket__factory.connect(marketAddress, this.sdk.context.signer);
+		return market.transferMargin(amount.neg().toBN());
 	}
 }
