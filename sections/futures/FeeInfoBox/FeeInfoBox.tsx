@@ -111,30 +111,6 @@ const FeeInfoBox: React.FC = () => {
 				},
 			};
 		}
-		if (orderType === 'next price') {
-			return {
-				'Keeper Deposit': {
-					value: !!marketInfo?.keeperDeposit ? formatDollars(marketInfo.keeperDeposit) : NO_VALUE,
-				},
-				'Commit Deposit': {
-					value: !!commitDeposit
-						? formatDollars(commitDeposit, { minDecimals: commitDeposit.lt(0.01) ? 4 : 2 })
-						: NO_VALUE,
-				},
-				'Total Deposit': {
-					value: formatDollars(totalDeposit),
-					spaceBeneath: true,
-				},
-				'Next Price Discount': {
-					value: !!nextPriceDiscount ? formatDollars(nextPriceDiscount) : NO_VALUE,
-					color: nextPriceDiscount.lt(0) ? 'green' : nextPriceDiscount.gt(0) ? 'red' : undefined,
-				},
-				'Estimated Fees': {
-					value: formatDollars(totalDeposit.add(nextPriceDiscount ?? zeroBN)),
-					keyNode: fees.dynamicFeeRate?.gt(0) ? <ToolTip /> : null,
-				},
-			};
-		}
 		return accountType === 'isolated_margin'
 			? {
 					Fee: {

@@ -40,8 +40,6 @@ const MarketInfoBox: React.FC = () => {
 		? totalMargin.sub(availableMargin).div(totalMargin)
 		: zeroBN;
 
-	const isNextPriceOrder = orderType === 'next price';
-
 	const positionSize = position?.position?.size ? wei(position?.position?.size) : zeroBN;
 	const orderDetails = useMemo(() => {
 		const newSize =
@@ -84,10 +82,8 @@ const MarketInfoBox: React.FC = () => {
 			potentialTrade.data,
 			marketInfo?.maxLeverage
 		);
-		return isNextPriceOrder
-			? potentialAvailableMargin?.sub(totalDeposit) ?? zeroBN
-			: potentialAvailableMargin;
-	}, [potentialTrade.data, marketInfo?.maxLeverage, isNextPriceOrder, totalDeposit]);
+		return potentialAvailableMargin;
+	}, [potentialTrade.data, marketInfo?.maxLeverage, totalDeposit]);
 
 	const previewTradeData = React.useMemo(() => {
 		const size = wei(nativeSize || zeroBN);

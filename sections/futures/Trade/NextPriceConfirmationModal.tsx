@@ -81,10 +81,6 @@ const NextPriceConfirmationModal: FC = () => {
 	const dataRows = useMemo(
 		() => [
 			{
-				label: t('futures.market.user.position.modal.order-type'),
-				value: t('futures.market.user.position.modal.next-price-order'),
-			},
-			{
 				label: t('futures.market.user.position.modal.side'),
 				value: (leverageSide ?? PositionSide.LONG).toUpperCase(),
 			},

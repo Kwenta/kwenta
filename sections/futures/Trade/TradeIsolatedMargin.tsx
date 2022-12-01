@@ -18,7 +18,6 @@ import MarketInfoBox from '../MarketInfoBox';
 import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
 import ManagePosition from './ManagePosition';
-import NextPrice from './NextPrice';
 import TradePanelHeader from './TradePanelHeader';
 import TransferIsolatedMarginModal from './TransferIsolatedMarginModal';
 
@@ -50,13 +49,11 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 				styleType="check"
 				values={ISOLATED_MARGIN_ORDER_TYPES}
 				selectedIndex={ISOLATED_MARGIN_ORDER_TYPES.indexOf(orderType)}
-				onChange={(oType: number) => {
-					setOrderType(oType === 0 ? 'market' : 'next price');
-					dispatch(setReduxOrderType(oType === 0 ? 'market' : 'next price'));
+				onChange={() => {
+					setOrderType('market');
+					dispatch(setReduxOrderType('market'));
 				}}
 			/>
-
-			{orderType === 'next price' && <NextPrice />}
 
 			<PositionButtons
 				selected={leverageSide}

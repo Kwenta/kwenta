@@ -173,19 +173,7 @@ const ManagePosition: React.FC = () => {
 						noOutline
 						variant="danger"
 						onClick={() => {
-							if (orderType === 'next price' && position?.position?.size) {
-								const newTradeSize = position.position.size;
-								const newLeverageSide =
-									position.position.side === PositionSide.LONG
-										? PositionSide.SHORT
-										: PositionSide.LONG;
-								setLeverageSide(newLeverageSide);
-								dispatch(setReduxLeverageSide(newLeverageSide));
-								onTradeAmountChange(newTradeSize.toString(), tradePrice, 'native');
-								setConfirmationModalOpen(true);
-							} else {
-								setCancelModalOpen(true);
-							}
+							setCancelModalOpen(true);
 						}}
 						disabled={!positionDetails || marketInfo?.isSuspended || isAdvancedOrder}
 					>

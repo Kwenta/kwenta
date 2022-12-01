@@ -107,8 +107,7 @@ function MarginInfoBox({ editingLeverage }: Props) {
 
 		return {
 			showPreview:
-				((orderType === 'market' || orderType === 'next price') &&
-					(!size.eq(0) || !marginDelta.eq(0))) ||
+				(orderType === 'market' && (!size.eq(0) || !marginDelta.eq(0))) ||
 				((orderType === 'limit' || orderType === 'stop market') && !!orderPrice && !size.eq(0)),
 			totalMargin: potentialTrade.data?.margin.sub(crossMarginFee) || zeroBN,
 			freeAccountMargin: crossMarginFreeMargin.sub(marginDelta),

@@ -260,10 +260,7 @@ export const maxLeverageState = selector({
 		const positionLeverage = position?.position?.leverage ?? wei(0);
 		const positionSide = position?.position?.side;
 		const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
-		const adjustedMaxLeverage =
-			orderType === 'next price'
-				? marketMaxLeverage.mul(DEFAULT_NP_LEVERAGE_ADJUSTMENT)
-				: marketMaxLeverage;
+		const adjustedMaxLeverage = marketMaxLeverage;
 
 		if (!positionLeverage || positionLeverage.eq(wei(0))) return adjustedMaxLeverage;
 		if (accountType === 'cross_margin') return adjustedMaxLeverage;

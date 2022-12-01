@@ -67,11 +67,6 @@ const LeverageInput: FC = () => {
 				</LeverageTitle>
 				{modeButton}
 			</LeverageRow>
-			{orderType === 'next price' && isDisclaimerDisplayed && (
-				<LeverageDisclaimer>
-					{t('futures.market.trade.input.leverage.disclaimer')}
-				</LeverageDisclaimer>
-			)}
 			{mode === 'slider' ? (
 				<SliderRow>
 					<LeverageSlider
