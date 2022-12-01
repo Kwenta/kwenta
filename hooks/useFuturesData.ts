@@ -628,7 +628,6 @@ const useFuturesData = () => {
 		resetTradeState,
 		onTradeOrderPriceChange,
 		onChangeOpenPosLeverage,
-		dynamicFeeRate,
 		marketAssetRate,
 		position,
 		market,
