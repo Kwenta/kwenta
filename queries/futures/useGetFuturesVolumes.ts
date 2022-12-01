@@ -49,6 +49,7 @@ const useGetFuturesVolumes = (options?: UseQueryOptions<FuturesVolumes | null>) 
 						period: true,
 						feesKwenta: true,
 						feesSynthetix: true,
+						feesCrossMarginAccounts: true,
 					}
 				);
 				const futuresVolumes = response ? calculateVolumes(response) : {};

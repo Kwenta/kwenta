@@ -16,14 +16,14 @@ const StyledKwentaLogo = styled(KwentaLogo)`
 `;
 
 export const StakingCard = styled.div<{ $noPadding?: boolean }>`
-	background: ${(props) => props.theme.colors.selectedTheme.segmented.button.background};
+	background: ${(props) => props.theme.colors.selectedTheme.surfaceFill};
 	padding: 20px;
 	border-radius: 15px;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 
 	.title {
 		font-size: 15px;
-		color: ${(props) => props.theme.colors.selectedTheme.text.title};
+		color: ${(props) => props.theme.colors.selectedTheme.title};
 	}
 
 	.value {
@@ -44,6 +44,7 @@ export const StakingCard = styled.div<{ $noPadding?: boolean }>`
 export const SplitStakingCard = styled(StakingCard)`
 	display: flex;
 	padding: 0;
+	cursor: pointer;
 
 	& > div {
 		display: flex;
