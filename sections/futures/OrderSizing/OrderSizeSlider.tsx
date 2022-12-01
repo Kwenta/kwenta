@@ -7,12 +7,13 @@ import styled from 'styled-components';
 import ErrorView from 'components/Error';
 import StyledSlider from 'components/Slider/StyledSlider';
 import { useFuturesContext } from 'contexts/FuturesContext';
+import { selectMaxLeverage } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import {
 	aboveMaxLeverageState,
 	crossMarginAccountOverviewState,
 	futuresTradeInputsState,
 	leverageSideState,
-	maxLeverageState,
 	positionState,
 } from 'store/futures';
 import { FlexDivRow } from 'styles/common';
@@ -24,12 +25,14 @@ export default function OrderSizeSlider() {
 	const { freeMargin: freeCrossMargin } = useRecoilValue(crossMarginAccountOverviewState);
 	const { susdSize } = useRecoilValue(futuresTradeInputsState);
 	const aboveMaxLeverage = useRecoilValue(aboveMaxLeverageState);
-	const maxLeverage = useRecoilValue(maxLeverageState);
+
 	const position = useRecoilValue(positionState);
 	const leverageSide = useRecoilValue(leverageSideState);
 
 	const [percent, setPercent] = useState(0);
 	const [usdValue, setUsdValue] = useState(susdSize);
+
+	const maxLeverage = useAppSelector(selectMaxLeverage);
 
 	// eslint-disable-next-line
 	const onChangeMarginPercent = useCallback(
