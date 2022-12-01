@@ -3,7 +3,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { ThunkConfig } from 'state/types';
 
-export const approveLPToken = createAsyncThunk<any, void, ThunkConfig>(
+export const approveLPToken = createAsyncThunk<void, void, ThunkConfig>(
 	'earn/approveLPToken',
 	async (_, { dispatch, extra: { sdk } }) => {
 		const { hash } = await sdk.kwentaToken.approveLPToken();
@@ -19,7 +19,7 @@ export const approveLPToken = createAsyncThunk<any, void, ThunkConfig>(
 	}
 );
 
-export const stakeTokens = createAsyncThunk<any, void, ThunkConfig>(
+export const stakeTokens = createAsyncThunk<void, void, ThunkConfig>(
 	'earn/stakeTokens',
 	async (_, { dispatch, getState, extra: { sdk } }) => {
 		const {
@@ -39,7 +39,7 @@ export const stakeTokens = createAsyncThunk<any, void, ThunkConfig>(
 	}
 );
 
-export const unstakeTokens = createAsyncThunk<any, void, ThunkConfig>(
+export const unstakeTokens = createAsyncThunk<void, void, ThunkConfig>(
 	'earn/unstakeTokens',
 	async (_, { dispatch, getState, extra: { sdk } }) => {
 		const {
@@ -59,7 +59,7 @@ export const unstakeTokens = createAsyncThunk<any, void, ThunkConfig>(
 	}
 );
 
-export const claimRewards = createAsyncThunk<any, void, ThunkConfig>(
+export const claimRewards = createAsyncThunk<void, void, ThunkConfig>(
 	'earn/claimRewards',
 	async (_, { dispatch, extra: { sdk } }) => {
 		const { hash } = await sdk.kwentaToken.claimRewards();
