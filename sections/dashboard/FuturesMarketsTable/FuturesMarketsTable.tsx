@@ -121,9 +121,10 @@ const FuturesMarketsTable: FC = () => {
 								),
 								accessor: 'oraclePrice',
 								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = isDecimalFour(cellProps.row.original.asset)
-										? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
-										: {};
+									const formatOptions = {
+										minDecimals: DEFAULT_CRYPTO_DECIMALS,
+										isAssetPrice: true,
+									};
 									return (
 										<Currency.Price
 											currencyKey={'sUSD'}
