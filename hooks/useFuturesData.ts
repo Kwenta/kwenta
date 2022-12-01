@@ -609,12 +609,10 @@ const useFuturesData = () => {
 	useEffect(() => {
 		const getDynamicFee = async () => {
 			if (!synthetixjs) return;
-			const [dynamicFeeRate] = await Promise.all([
-				synthetixjs.contracts.Exchanger.dynamicFeeRateForExchange(
-					ethers.utils.formatBytes32String('sUSD'),
-					ethers.utils.formatBytes32String(marketAsset)
-				),
-			]);
+			const dynamicFeeRate = await synthetixjs.contracts.Exchanger.dynamicFeeRateForExchange(
+				ethers.utils.formatBytes32String('sUSD'),
+				ethers.utils.formatBytes32String(marketAsset)
+			);
 			setDynamicFeeRate(wei(dynamicFeeRate.feeRate));
 		};
 		getDynamicFee();
