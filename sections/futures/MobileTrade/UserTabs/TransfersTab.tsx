@@ -1,17 +1,17 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Table, { TableNoResults } from 'components/Table';
 import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
-import { currentMarketState } from 'store/futures';
+import { selectMarketAsset } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import { timePresentation } from 'utils/formatters/date';
 
 import { SectionHeader, SectionTitle } from '../common';
 
 const TransfersTab: React.FC = () => {
-	const marketAsset = useRecoilValue(currentMarketState);
+	const marketAsset = useAppSelector(selectMarketAsset);
 
 	const marginTransfersQuery = useGetFuturesMarginTransfers(marketAsset);
 	const marginTransfers = React.useMemo(

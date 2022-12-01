@@ -6,7 +6,6 @@ import { StakingContext } from 'contexts/StakingContext';
 import useStakingData from 'hooks/useStakingData';
 import DashboardLayout from 'sections/dashboard/DashboardLayout';
 import StakingPortfolio from 'sections/dashboard/Stake/StakingPortfolio';
-import StakingTabs from 'sections/dashboard/Stake/StakingTabs';
 
 type StakingComponent = React.FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
@@ -20,7 +19,6 @@ const StakingPage: StakingComponent = () => {
 				<title>{t('dashboard-stake.page-title')}</title>
 			</Head>
 			<StakingPortfolio />
-			<StakingTabs />
 		</StakingContext.Provider>
 	);
 };

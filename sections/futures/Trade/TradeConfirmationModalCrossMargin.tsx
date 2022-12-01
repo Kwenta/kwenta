@@ -10,16 +10,16 @@ import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useEstimateGasCost from 'hooks/useEstimateGasCost';
+import { selectMarketKey } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import {
 	confirmationModalOpenState,
 	crossMarginMarginDeltaState,
-	currentMarketState,
 	futuresTradeInputsState,
 	isAdvancedOrderState,
 } from 'store/futures';
 import { isUserDeniedError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
-import { MarketKeyByAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
 import TradeConfirmationModal from './TradeConfirmationModal';
@@ -30,7 +30,7 @@ export default function TradeConfirmationModalCrossMargin() {
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const { estimateEthersContractTxCost } = useEstimateGasCost();
 
-	const marketAsset = useRecoilValue(currentMarketState);
+	const marketKey = useAppSelector(selectMarketKey);
 	const crossMarginMarginDelta = useRecoilValue(crossMarginMarginDeltaState);
 	const tradeInputs = useRecoilValue(futuresTradeInputsState);
 	const isAdvancedOrder = useRecoilValue(isAdvancedOrderState);
@@ -48,7 +48,7 @@ export default function TradeConfirmationModalCrossMargin() {
 		const estimateGas = async () => {
 			const newPosition = [
 				{
-					marketKey: formatBytes32String(MarketKeyByAsset[marketAsset]),
+					marketKey: formatBytes32String(marketKey),
 					marginDelta: crossMarginMarginDelta.toBN(),
 					sizeDelta: tradeInputs.nativeSizeDelta.toBN(),
 				},
@@ -66,7 +66,7 @@ export default function TradeConfirmationModalCrossMargin() {
 		estimateGas();
 	}, [
 		crossMarginAccountContract,
-		marketAsset,
+		marketKey,
 		crossMarginMarginDelta,
 		tradeInputs.nativeSizeDelta,
 		estimateEthersContractTxCost,

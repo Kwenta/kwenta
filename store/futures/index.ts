@@ -6,7 +6,6 @@ import { DEFAULT_MAX_LEVERAGE } from 'constants/futures';
 import {
 	FuturesAccountState,
 	FuturesAccountType,
-	FuturesMarket,
 	FuturesPosition,
 	FuturesPotentialTradeDetailsQuery,
 	SynthBalances,
@@ -22,43 +21,17 @@ import {
 } from 'queries/futures/types';
 import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import { Price } from 'queries/rates/types';
+import { FuturesMarket } from 'sdk/types/futures';
 import { PositionSide } from 'sections/futures/types';
 import { localStorageEffect } from 'store/effects';
 import { getFuturesKey, getSynthsKey } from 'store/utils';
 import { zeroBN } from 'utils/formatters/number';
-import { FuturesMarketAsset, MarketAssetByKey, MarketKeyByAsset } from 'utils/futures';
+import { FuturesMarketAsset } from 'utils/futures';
 
 export const currentMarketState = atom({
 	key: getFuturesKey('currentMarket'),
 	default: FuturesMarketAsset.sETH,
 	effects: [localStorageEffect('currentMarketAsset')],
-});
-
-export const marketKeyState = selector({
-	key: getFuturesKey('marketKey'),
-	get: ({ get }) => MarketKeyByAsset[get(currentMarketState)],
-});
-
-export const marketKeysState = selector({
-	key: getFuturesKey('marketKeys'),
-	get: ({ get }) => {
-		const futuresMarkets = get(futuresMarketsState);
-		return futuresMarkets.map(({ asset }) => {
-			return MarketKeyByAsset[asset];
-		});
-	},
-});
-
-export const marketAssetsState = selector({
-	key: getFuturesKey('marketAssets'),
-	get: ({ get }) => {
-		const marketKeys = get(marketKeysState);
-		return marketKeys.map(
-			(key): FuturesMarketAsset => {
-				return MarketAssetByKey[key];
-			}
-		);
-	},
 });
 
 export const balancesState = atom<SynthBalances>({
@@ -195,18 +168,6 @@ export const leverageSideState = atom<PositionSide>({
 	default: PositionSide.LONG,
 });
 
-export const fundingRateState = selector({
-	key: getFuturesKey('fundingRate'),
-	get: ({ get }) => {
-		const currentMarket = get(currentMarketState);
-		const fundingRates = get(fundingRatesState);
-
-		return fundingRates.find(
-			(fundingRate: FundingRateResponse) => fundingRate.asset === MarketKeyByAsset[currentMarket]
-		);
-	},
-});
-
 export const fundingRatesState = atom<FundingRateResponse[]>({
 	key: getFuturesKey('fundingRates'),
 	default: [],
@@ -254,7 +215,7 @@ export const tradeFeesState = atom<TradeFees>({
 
 export const dynamicFeeRateState = atom({
 	key: getFuturesKey('dynamicFeeRate'),
-	default: null,
+	default: zeroBN,
 });
 
 export const leverageValueCommittedState = atom({

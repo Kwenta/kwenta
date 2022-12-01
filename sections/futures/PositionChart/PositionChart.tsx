@@ -3,11 +3,12 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import TVChart from 'components/TVChart';
+import useAverageEntryPrice from 'hooks/useAverageEntryPrice';
+import { selectMarketAsset } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import {
-	currentMarketState,
 	positionState,
 	potentialTradeDetailsState,
-	futuresTradeInputsState,
 	positionHistoryState,
 	futuresAccountTypeState,
 	openOrdersState,
@@ -15,7 +16,8 @@ import {
 
 export default function PositionChart() {
 	const [isChartReady, setIsChartReady] = useState(false);
-	const marketAsset = useRecoilValue(currentMarketState);
+	const marketAsset = useAppSelector(selectMarketAsset);
+
 	const position = useRecoilValue(positionState);
 	const positionHistory = useRecoilValue(positionHistoryState);
 	const futuresAccountType = useRecoilValue(futuresAccountTypeState);
@@ -28,19 +30,7 @@ export default function PositionChart() {
 		return positionHistory[futuresAccountType].find((p) => p.isOpen && p.asset === marketAsset);
 	}, [positionHistory, marketAsset, futuresAccountType]);
 
-	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
-
-	const modifiedAverage = useMemo(() => {
-		if (subgraphPosition && previewTrade && !!nativeSize) {
-			const totalSize = subgraphPosition.size.add(nativeSize);
-
-			const existingValue = subgraphPosition.avgEntryPrice.mul(subgraphPosition.size);
-			const newValue = previewTrade.price.mul(nativeSize);
-			const totalValue = existingValue.add(newValue);
-			return totalValue.div(totalSize);
-		}
-		return null;
-	}, [subgraphPosition, previewTrade, nativeSize]);
+	const modifiedAverage = useAverageEntryPrice(subgraphPosition);
 
 	const activePosition = useMemo(() => {
 		if (!position?.position) {

@@ -19,14 +19,11 @@ import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesAccountType } from 'queries/futures/subgraph';
-import {
-	positionsState,
-	currentMarketState,
-	futuresMarketsState,
-	positionHistoryState,
-} from 'store/futures';
+import { selectMarketAsset, selectMarkets } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { positionsState, positionHistoryState } from 'store/futures';
 import { formatNumber } from 'utils/formatters/number';
-import { getSynthDescription, isDecimalFour } from 'utils/futures';
+import { getSynthDescription } from 'utils/futures';
 
 import MobilePositionRow from './MobilePositionRow';
 
@@ -48,8 +45,8 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 	const positions = useRecoilValue(positionsState);
 	const positionHistory = useRecoilValue(positionHistoryState);
-	const futuresMarkets = useRecoilValue(futuresMarketsState);
-	const currentMarket = useRecoilValue(currentMarketState);
+	const currentMarket = useAppSelector(selectMarketAsset);
+	const futuresMarkets = useAppSelector(selectMarkets);
 
 	let data = useMemo(() => {
 		return positions[accountType]
@@ -219,9 +216,10 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'avgEntryPrice',
 								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = isDecimalFour(cellProps.row.original.market.asset)
-										? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
-										: {};
+									const formatOptions = {
+										minDecimals: DEFAULT_CRYPTO_DECIMALS,
+										isAssetPrice: true,
+									};
 									return cellProps.row.original.avgEntryPrice === undefined ? (
 										<DefaultCell>{NO_VALUE}</DefaultCell>
 									) : (
@@ -244,9 +242,10 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'liquidationPrice',
 								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = isDecimalFour(cellProps.row.original.market.asset)
-										? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
-										: {};
+									const formatOptions = {
+										minDecimals: DEFAULT_CRYPTO_DECIMALS,
+										isAssetPrice: true,
+									};
 									return (
 										<Currency.Price
 											currencyKey={'sUSD'}

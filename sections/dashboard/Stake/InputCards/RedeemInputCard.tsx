@@ -6,6 +6,7 @@ import { useContractWrite } from 'wagmi';
 import Button from 'components/Button';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { useStakingContext } from 'contexts/StakingContext';
+import { FlexDivRowCentered, numericValueCSS } from 'styles/common';
 import { truncateNumbers } from 'utils/formatters/number';
 
 import { StakingCard } from '../common';
@@ -74,10 +75,12 @@ const RedeemInputCard: FC<RedeemInputCardProps> = ({ inputLabel, isVKwenta }) =>
 			<StakeInputContainer>
 				<StakeInputHeader>
 					<div>{inputLabel}</div>
-					<div>
-						{t('dashboard.stake.tabs.stake-table.balance')}{' '}
-						{isVKwenta ? truncateNumbers(vKwentaBalance, 4) : truncateNumbers(veKwentaBalance, 4)}
-					</div>
+					<StyledFlexDivRowCentered>
+						<div>{t('dashboard.stake.tabs.stake-table.balance')}</div>
+						<div className="max">
+							{isVKwenta ? truncateNumbers(vKwentaBalance, 4) : truncateNumbers(veKwentaBalance, 4)}
+						</div>
+					</StyledFlexDivRowCentered>
 				</StakeInputHeader>
 			</StakeInputContainer>
 			<Button
@@ -99,6 +102,10 @@ const RedeemInputCard: FC<RedeemInputCardProps> = ({ inputLabel, isVKwenta }) =>
 	);
 };
 
+const StyledFlexDivRowCentered = styled(FlexDivRowCentered)`
+	column-gap: 5px;
+`;
+
 const StakingInputCardContainer = styled(StakingCard)`
 	min-height: 125px;
 	max-height: 250px;
@@ -112,13 +119,12 @@ const StakeInputHeader = styled.div`
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 10px;
-	color: ${(props) => props.theme.colors.selectedTheme.text.label};
+	color: ${(props) => props.theme.colors.selectedTheme.title};
 	font-size: 14px;
 
 	.max {
-		text-transform: uppercase;
-		font-family: ${(props) => props.theme.fonts.bold};
-		cursor: pointer;
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+		${numericValueCSS};
 	}
 `;
 

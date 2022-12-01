@@ -3,8 +3,8 @@ import Wei, { wei } from '@synthetixio/wei';
 import { Contract } from 'ethers';
 import { useMemo, useCallback } from 'react';
 import { useRecoilValue } from 'recoil';
-import { sdk } from 'state/config';
 
+import { sdk } from 'state/config';
 import { gasSpeedState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN } from 'utils/formatters/number';

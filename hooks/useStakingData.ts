@@ -16,18 +16,19 @@ import {
 	VEKWENTA_REDEEMER,
 	VEKWENTA_TOKEN_ADDRESS,
 } from 'constants/address';
+import { DEFAULT_NUMBER_OF_FUTURES_FEE } from 'constants/defaults';
 import Connector from 'containers/Connector';
-import multipleMerkleDistributorABI from 'lib/abis/MultipleMerkleDistributor.json';
-import rewardEscrowABI from 'lib/abis/RewardEscrow.json';
-import stakingRewardsABI from 'lib/abis/StakingRewards.json';
-import supplyScheduleABI from 'lib/abis/SupplySchedule.json';
-import veKwentaRedeemerABI from 'lib/abis/veKwentaRedeemer.json';
-import vKwentaRedeemerABI from 'lib/abis/vKwentaRedeemer.json';
 import {
 	getEpochDetails,
 	STAKING_HIGH_GAS_LIMIT,
 	STAKING_LOW_GAS_LIMIT,
 } from 'queries/staking/utils';
+import multipleMerkleDistributorABI from 'sdk/contracts/abis/MultipleMerkleDistributor.json';
+import rewardEscrowABI from 'sdk/contracts/abis/RewardEscrow.json';
+import stakingRewardsABI from 'sdk/contracts/abis/StakingRewards.json';
+import supplyScheduleABI from 'sdk/contracts/abis/SupplySchedule.json';
+import veKwentaRedeemerABI from 'sdk/contracts/abis/veKwentaRedeemer.json';
+import vKwentaRedeemerABI from 'sdk/contracts/abis/vKwentaRedeemer.json';
 import { formatTruncatedDuration } from 'utils/formatters/date';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -221,7 +222,7 @@ const useStakingData = () => {
 	const { data: vestingSchedules } = useContractRead({
 		...rewardEscrowContract,
 		functionName: 'getVestingSchedules',
-		args: [walletAddress ?? undefined, 0, 1000],
+		args: [walletAddress ?? undefined, 0, DEFAULT_NUMBER_OF_FUTURES_FEE],
 		scopeKey: 'staking',
 		watch: true,
 		enabled: !!walletAddress,
@@ -340,8 +341,14 @@ const useStakingData = () => {
 		enabled: !!walletAddress && wei(veKwentaBalance).gt(0),
 	});
 
+	const userStakedBalance = useMemo(() => stakedEscrowedBalance.add(stakedNonEscrowedBalance), [
+		stakedEscrowedBalance,
+		stakedNonEscrowedBalance,
+	]);
+
 	return {
 		weekCounter,
+		userStakedBalance: Number(userStakedBalance),
 		totalStakedBalance: Number(totalStakedBalance),
 		periods,
 		resetTime,

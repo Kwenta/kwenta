@@ -1,7 +1,6 @@
 import { FC, useMemo, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import Table from 'components/Table';
@@ -10,10 +9,10 @@ import { NO_VALUE } from 'constants/placeholder';
 import { blockExplorer } from 'containers/Connector/Connector';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
-import { currentMarketState } from 'store/futures';
+import { selectMarketAsset } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import { CapitalizedText, NumericValue } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
-import { isDecimalFour } from 'utils/futures';
 
 type TradesHistoryTableProps = {
 	mobile?: boolean;
@@ -27,8 +26,8 @@ enum TableColumnAccessor {
 
 const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 	const { t } = useTranslation();
-	const currencyKey = useRecoilValue(currentMarketState);
-	const futuresTradesQuery = useGetFuturesTrades(currencyKey);
+	const marketAsset = useAppSelector(selectMarketAsset);
+	const futuresTradesQuery = useGetFuturesTrades(marketAsset);
 
 	let data = useMemo(() => {
 		const futuresTradesPages = futuresTradesQuery?.data?.pages ?? [];
@@ -47,13 +46,13 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 								amount: Number(trade?.size),
 								time: Number(trade?.timestamp),
 								id: trade?.txnHash,
-								currencyKey,
+								marketAsset,
 								orderType: trade?.orderType,
 							};
 						})
 				: [];
 		return [...new Set(futuresTrades)];
-	}, [futuresTradesQuery.data, currencyKey]);
+	}, [futuresTradesQuery.data, marketAsset]);
 
 	const observer = useRef<IntersectionObserver | null>(null);
 	const lastElementRef = useCallback(
@@ -146,9 +145,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 							Header: <TableHeader>{t('futures.market.history.price-label')}</TableHeader>,
 							accessor: TableColumnAccessor.Price,
 							Cell: (cellProps: CellProps<any>) => {
-								const formatOptions = isDecimalFour(cellProps.row.original.currencyKey)
-									? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
-									: {};
+								const formatOptions = { minDecimals: DEFAULT_CRYPTO_DECIMALS, isAssetPrice: true };
 
 								return (
 									<PriceValue>

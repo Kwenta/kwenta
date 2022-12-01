@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import styled from 'styled-components';
+
+import SegmentedControl from 'components/SegmentedControl';
+import { ISOLATED_MARGIN_ORDER_TYPES } from 'constants/futures';
 import {
 	setLeverageSide as setReduxLeverageSide,
 	setOrderType as setReduxOrderType,
 } from 'state/futures/reducer';
 import { useAppDispatch } from 'state/hooks';
-import styled from 'styled-components';
-
-import SegmentedControl from 'components/SegmentedControl';
-import { ISOLATED_MARGIN_ORDER_TYPES } from 'constants/futures';
 import { balancesState, leverageSideState, orderTypeState, positionState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 

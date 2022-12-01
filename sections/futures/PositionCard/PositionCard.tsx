@@ -2,8 +2,6 @@ import Wei from '@synthetixio/wei';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { selectPositionWei } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
 import styled, { css } from 'styled-components';
 
 import PreviewArrow from 'components/PreviewArrow';
@@ -12,13 +10,14 @@ import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import { useFuturesContext } from 'contexts/FuturesContext';
+import useAverageEntryPrice from 'hooks/useAverageEntryPrice';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { PositionSide } from 'queries/futures/types';
+import { selectMarketAsset, selectMarketKey, selectPosition } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import {
-	currentMarketState,
 	futuresAccountTypeState,
-	marketKeyState,
 	positionHistoryState,
 	potentialTradeDetailsState,
 } from 'store/futures';
@@ -66,15 +65,15 @@ type PositionPreviewData = {
 
 const PositionCard: React.FC<PositionCardProps> = () => {
 	const { t } = useTranslation();
-	const position = useAppSelector(selectPositionWei);
-	const marketAsset = useRecoilValue(currentMarketState);
-	const marketKey = useRecoilValue(marketKeyState);
 	const futuresAccountType = useRecoilValue(futuresAccountTypeState);
+
+	const position = useAppSelector(selectPosition);
+	const marketAsset = useAppSelector(selectMarketAsset);
+	const marketKey = useAppSelector(selectMarketKey);
 
 	const positionDetails = position?.position ?? null;
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketKey);
 
-	const potentialTrade = useRecoilValue(potentialTradeDetailsState);
 	const positionHistory = useRecoilValue(positionHistoryState);
 
 	const [showEditLeverage, setShowEditLeverage] = useState(false);
@@ -97,18 +96,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 
 	const { data: previewTradeData } = useRecoilValue(potentialTradeDetailsState);
 
-	const modifiedAverage = useMemo(() => {
-		if (thisPositionHistory && previewTradeData && potentialTrade.data) {
-			const totalSize = thisPositionHistory.size.add(potentialTrade.data.size);
-
-			const existingValue = thisPositionHistory.avgEntryPrice.mul(thisPositionHistory.size);
-			const newValue = previewTradeData.price.mul(potentialTrade.data.size);
-			const totalValue = existingValue.add(newValue);
-
-			return totalSize.gt(0) ? totalValue.div(totalSize) : null;
-		}
-		return null;
-	}, [thisPositionHistory, previewTradeData, potentialTrade.data]);
+	const modifiedAverage = useAverageEntryPrice(thisPositionHistory);
 
 	const previewData: PositionPreviewData = React.useMemo(() => {
 		if (positionDetails === null || previewTradeData === null) {
@@ -151,6 +139,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			marketLongName: getSynthDescription(marketAsset, synthsMap, t),
 			marketPrice: formatDollars(marketAssetRate, {
 				minDecimals,
+				isAssetPrice: true,
 			}),
 			positionSide: positionDetails ? (
 				<PositionValue
@@ -212,11 +201,13 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 				<>
 					{formatDollars(positionDetails?.liquidationPrice ?? zeroBN, {
 						minDecimals,
+						isAssetPrice: true,
 					})}
 					{
 						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
 							{formatDollars(previewData?.liquidationPrice ?? zeroBN, {
 								minDecimals,
+								isAssetPrice: true,
 							})}
 						</PreviewArrow>
 					}
@@ -249,11 +240,13 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 				<>
 					{formatDollars(thisPositionHistory?.entryPrice ?? zeroBN, {
 						minDecimals,
+						isAssetPrice: true,
 					})}
 					{
 						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
 							{formatDollars(previewData.avgEntryPrice ?? zeroBN, {
 								minDecimals,
+								isAssetPrice: true,
 							})}
 						</PreviewArrow>
 					}

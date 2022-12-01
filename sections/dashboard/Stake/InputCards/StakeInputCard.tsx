@@ -12,6 +12,7 @@ import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_TOKEN_DECIMALS } from 'constants/defau
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { useStakingContext } from 'contexts/StakingContext';
 import { STAKING_LOW_GAS_LIMIT } from 'queries/staking/utils';
+import { FlexDivRowCentered, numericValueCSS } from 'styles/common';
 import { truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import { StakingCard } from '../common';
@@ -111,12 +112,14 @@ const StakeInputCard: FC = () => {
 			<StakeInputContainer>
 				<StakeInputHeader>
 					<div>{t('dashboard.stake.tabs.stake-table.kwenta-token')}</div>
-					<div className="max" onClick={onMaxClick}>
-						{t('dashboard.stake.tabs.stake-table.balance')}{' '}
-						{activeTab === 0
-							? truncateNumbers(kwentaBalance, DEFAULT_CRYPTO_DECIMALS)
-							: truncateNumbers(stakedNonEscrowedBalance, DEFAULT_CRYPTO_DECIMALS)}
-					</div>
+					<StyledFlexDivRowCentered>
+						<div>{t('dashboard.stake.tabs.stake-table.balance')}</div>
+						<div className="max" onClick={onMaxClick}>
+							{activeTab === 0
+								? truncateNumbers(kwentaBalance, DEFAULT_CRYPTO_DECIMALS)
+								: truncateNumbers(stakedNonEscrowedBalance, DEFAULT_CRYPTO_DECIMALS)}
+						</div>
+					</StyledFlexDivRowCentered>
 				</StakeInputHeader>
 				<StyledInput
 					value={amount}
@@ -147,6 +150,10 @@ const StakeInputCard: FC = () => {
 	);
 };
 
+const StyledFlexDivRowCentered = styled(FlexDivRowCentered)`
+	column-gap: 5px;
+`;
+
 const StakingInputCardContainer = styled(StakingCard)`
 	min-height: 125px;
 	max-height: 250px;
@@ -160,11 +167,13 @@ const StakeInputHeader = styled.div`
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 10px;
-	color: ${(props) => props.theme.colors.selectedTheme.text.label};
+	color: ${(props) => props.theme.colors.selectedTheme.title};
 	font-size: 14px;
 
 	.max {
 		cursor: pointer;
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+		${numericValueCSS};
 	}
 `;
 

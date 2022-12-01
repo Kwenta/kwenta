@@ -1,7 +1,5 @@
 import Head from 'next/head';
 import { FC, useEffect } from 'react';
-import { getEarnDetails } from 'state/earn/actions';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
@@ -11,6 +9,8 @@ import { Heading } from 'sections/earn/common';
 import StepOne from 'sections/earn/StepOne';
 import StepTwo from 'sections/earn/StepTwo';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
+import { getEarnDetails } from 'state/earn/actions';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { PageContent, FullHeightContainer, MainContent } from 'styles/common';
 import media from 'styles/media';
 

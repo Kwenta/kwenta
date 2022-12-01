@@ -37,11 +37,12 @@ The following tasks are expected to be completed before the SDK can be considere
 ## General
 
 - [ ] Remove code that refers to `@synthetixio/*` packages.
-- [ ] Add contract typings for human-readable ABIs.
-- [ ] Implement `Context` class.
+- [x] Add contract typings.
+- [x] Implement `Context` class.
 - [ ] Ensure type correctness of all SDK methods.
 - [ ] Set up foundation for retries on select methods.
 - [ ] Set up service for interacting with our subgraphs.
+- [ ] Remove Duplicated types.
 
 ## Exchange
 

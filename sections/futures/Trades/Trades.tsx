@@ -15,7 +15,6 @@ import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesTrade } from 'queries/futures/types';
 import { ExternalLink, GridDivCenteredRow } from 'styles/common';
 import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
-import { isDecimalFour } from 'utils/futures';
 
 import { PositionSide, TradeStatus } from '../types';
 import TimeDisplay from './TimeDisplay';
@@ -91,9 +90,11 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						accessor: 'value',
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
-							const formatOptions = isDecimalFour(cellProps.row.original.asset)
-								? { sign: '$', minDecimals: DEFAULT_CRYPTO_DECIMALS }
-								: { sign: '$' };
+							const formatOptions = {
+								sign: '$',
+								minDecimals: DEFAULT_CRYPTO_DECIMALS,
+								isAssetPrice: true,
+							};
 							return <>{formatDollars(cellProps.value, formatOptions)}</>;
 						},
 						width: 80,

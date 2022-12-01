@@ -342,7 +342,8 @@
 				"24h-trades": "Total amount of trades on selected pair within the past 24h",
 				"open-interest": "Total notional value on all outstanding positions of the selected market",
 				"1h-funding-rate": "Funding applies to all open positions. A positive rate means longs pay shorts, a negative rate means shorts pay longs. The rate is calculated as the average funding paid by open positions for the last hour. Funding accrues on a position every time it is opened, modified, or closed. Funding accrues on open positions."
-			}
+			},
+			"deprecated-info": "DEBT-PERP is being deprecated soon. Please close your positions at your earliest convenience."
 		},
 		"summary-info": {
 			"gas-price-gwei": "gas price (GWEI)",
@@ -456,7 +457,7 @@
 				"market": "Market",
 				"amount": "Amount",
 				"value-in-usd": "Value in USD",
-				"oracle-price": "Oracle Price",
+				"oracle-price": "Price",
 				"daily-change": "24H Change",
 				"no-result": "You have no synths"
 			},
@@ -518,9 +519,11 @@
 				"trading-rewards": {
 					"title": "Trading Rewards",
 					"mobile-title": "Rewards",
+					"pending-for-rewards": "Pending...",
+					"trading-rewards-tooltip": "Only trades made using a Kwenta Cross Margin account are eligible for trading rewards.",
 					"spot-fee-paid": "Spot Fee Paid: Epoch {{EpochPeriod}}",
-					"future-fee-paid": "Future Fee Paid: Epoch {{EpochPeriod}}",					
-					"fees-paid": "Total Fees Paid: Epoch {{EpochPeriod}}",
+					"future-fee-paid": "Futures Fees Paid: Ep. {{EpochPeriod}}",					
+					"fees-paid": "Total Fees in Pool: Ep. {{EpochPeriod}}",
 					"estimated-rewards": "Estimated Rewards",
 					"estimated-fee-share": "Estimated Fee Share",
 					"trading-activity-reset": "Time until next epoch",

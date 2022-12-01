@@ -6,7 +6,7 @@ import { useContractWrite } from 'wagmi';
 import Button from 'components/Button';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { useStakingContext } from 'contexts/StakingContext';
-import { getStakingApy } from 'queries/staking/utils';
+import { getApy } from 'queries/staking/utils';
 import media from 'styles/media';
 import { formatPercent, truncateNumbers } from 'utils/formatters/number';
 
@@ -22,7 +22,7 @@ const StakingTab = () => {
 		getRewardConfig,
 	} = useStakingContext();
 
-	const apy = useMemo(() => getStakingApy(totalStakedBalance, weekCounter), [
+	const apy = useMemo(() => getApy(totalStakedBalance, weekCounter), [
 		totalStakedBalance,
 		weekCounter,
 	]);
@@ -98,6 +98,10 @@ const CardGrid = styled.div`
 
 	.value {
 		margin-top: 5px;
+	}
+
+	.title {
+		color: ${(props) => props.theme.colors.selectedTheme.title};
 	}
 `;
 

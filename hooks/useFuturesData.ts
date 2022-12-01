@@ -7,9 +7,6 @@ import { useRouter } from 'next/router';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { setFuturesAccountType, setOrderType as setReduxOrderType } from 'state/futures/reducer';
-import { selectMarketAssetRate } from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import {
 	CROSS_MARGIN_ENABLED,
@@ -27,13 +24,15 @@ import { monitorTransaction } from 'contexts/RelayerContext';
 import { KWENTA_TRACKING_CODE, ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
 import { PositionSide, FuturesTradeInputs, FuturesAccountType } from 'queries/futures/types';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
+import { setFuturesAccountType, setOrderType as setReduxOrderType } from 'state/futures/reducer';
+import { selectMarketAssetRate } from 'state/futures/selectors';
+import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
+import { useAppSelector, useAppDispatch } from 'state/hooks';
 import {
 	crossMarginMarginDeltaState,
-	currentMarketState,
 	tradeFeesState,
 	futuresAccountState,
 	leverageSideState,
-	marketInfoState,
 	maxLeverageState,
 	orderTypeState,
 	positionState,
@@ -48,6 +47,7 @@ import {
 	isAdvancedOrderState,
 	aboveMaxLeverageState,
 	crossMarginAccountOverviewState,
+	dynamicFeeRateState,
 } from 'store/futures';
 import { computeMarketFee } from 'utils/costCalculations';
 import { zeroBN, floorNumber, weiToString } from 'utils/formatters/number';
@@ -85,7 +85,7 @@ const useFuturesData = () => {
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const { handleRefetch, refetchUntilUpdate } = useRefetchContext();
 
-	const marketAsset = useRecoilValue(currentMarketState);
+	const marketAsset = useAppSelector(selectMarketAsset);
 	const [tradeInputs, setTradeInputs] = useRecoilState(futuresTradeInputsState);
 	const setSimulatedTrade = useSetRecoilState(simulatedTradeState);
 
@@ -93,11 +93,11 @@ const useFuturesData = () => {
 		crossMarginMarginDeltaState
 	);
 	const [tradeFees, setTradeFees] = useRecoilState(tradeFeesState);
+	const [dynamicFeeRate, setDynamicFeeRate] = useRecoilState(dynamicFeeRateState);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const feeCap = useRecoilValue(orderFeeCapState);
 	const position = useRecoilValue(positionState);
-	const market = useRecoilValue(marketInfoState);
 	const aboveMaxLeverage = useRecoilValue(aboveMaxLeverageState);
 	const maxLeverage = useRecoilValue(maxLeverageState);
 	const { crossMarginAvailable, crossMarginAddress } = useRecoilValue(futuresAccountState);
@@ -111,6 +111,8 @@ const useFuturesData = () => {
 	const [selectedAccountType, setSelectedAccountType] = useRecoilState(futuresAccountTypeState);
 	const [preferredLeverage] = usePersistedRecoilState(preferredLeverageState);
 	const dispatch = useAppDispatch();
+
+	const market = useAppSelector(selectMarketInfo);
 
 	const [maxFee, setMaxFee] = useState(zeroBN);
 	const [error, setError] = useState<string | null>(null);
@@ -225,42 +227,22 @@ const useFuturesData = () => {
 
 	const totalFeeRate = useCallback(
 		async (sizeDelta: Wei) => {
-			const [dynamicFeeRate] = await Promise.all([
-				synthetixjs.contracts.Exchanger.dynamicFeeRateForExchange(
-					ethers.utils.formatBytes32String('sUSD'),
-					ethers.utils.formatBytes32String(marketAsset)
-				),
-			]);
 			const staticRate = computeMarketFee(market, sizeDelta);
 
-			let total = crossMarginTradeFee
-				.add(dynamicFeeRate.feeRate)
-				.add(staticRate)
-				.add(advancedOrderFeeRate);
+			let total = crossMarginTradeFee.add(dynamicFeeRate).add(staticRate).add(advancedOrderFeeRate);
 
 			return total;
 		},
-		[
-			market,
-			marketAsset,
-			crossMarginTradeFee,
-			advancedOrderFeeRate,
-			synthetixjs.contracts.Exchanger,
-		]
+		[market, crossMarginTradeFee, dynamicFeeRate, advancedOrderFeeRate]
 	);
 
 	const calculateFees = useCallback(
 		async (susdSizeDelta: Wei, nativeSizeDelta: Wei) => {
 			if (!synthetixjs) return ZERO_FEES;
 
-			const volatilityFeeRate = await synthetixjs.contracts.Exchanger.dynamicFeeRateForExchange(
-				ethers.utils.formatBytes32String('sUSD'),
-				ethers.utils.formatBytes32String(marketAsset)
-			);
-			const volatilityFeeWei = wei(volatilityFeeRate.feeRate);
 			const susdSize = susdSizeDelta.abs();
 			const staticRate = computeMarketFee(market, nativeSizeDelta);
-			const tradeFee = susdSize.mul(staticRate).add(susdSize.mul(volatilityFeeWei));
+			const tradeFee = susdSize.mul(staticRate).add(susdSize.mul(dynamicFeeRate));
 
 			const currentDeposit =
 				orderType === 'limit' || orderType === 'stop market'
@@ -278,7 +260,7 @@ const useFuturesData = () => {
 			const fees = {
 				staticFee: tradeFeeWei,
 				crossMarginFee: crossMarginFee,
-				dynamicFeeRate: volatilityFeeWei,
+				dynamicFeeRate,
 				keeperEthDeposit: requiredDeposit,
 				limitStopOrderFee: limitStopOrderFee,
 				total: tradeFeeWei.add(crossMarginFee).add(limitStopOrderFee),
@@ -287,15 +269,15 @@ const useFuturesData = () => {
 			return fees;
 		},
 		[
-			crossMarginTradeFee,
-			selectedAccountType,
-			marketAsset,
 			synthetixjs,
-			orderType,
 			market,
+			dynamicFeeRate,
+			orderType,
+			getCrossMarginEthBal,
+			selectedAccountType,
+			crossMarginTradeFee,
 			calculateCrossMarginFee,
 			setTradeFees,
-			getCrossMarginEthBal,
 		]
 	);
 
@@ -624,6 +606,18 @@ const useFuturesData = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dispatch, router.query.accountType]);
 
+	useEffect(() => {
+		const getDynamicFee = async () => {
+			if (!synthetixjs) return;
+			const dynamicFeeRate = await synthetixjs.contracts.Exchanger.dynamicFeeRateForExchange(
+				ethers.utils.formatBytes32String('sUSD'),
+				ethers.utils.formatBytes32String(marketAsset)
+			);
+			setDynamicFeeRate(wei(dynamicFeeRate.feeRate));
+		};
+		getDynamicFee();
+	}, [marketAsset, setDynamicFeeRate, synthetixjs]);
+
 	return {
 		onLeverageChange,
 		onTradeAmountChange,
@@ -634,7 +628,6 @@ const useFuturesData = () => {
 		onChangeOpenPosLeverage,
 		marketAssetRate,
 		position,
-		marketAsset,
 		market,
 		orderTxn,
 		maxUsdInputAmount,

@@ -9,7 +9,9 @@ import {
 	FuturesTradeInputs,
 	TradeFees,
 } from 'queries/futures/types';
+import { FuturesMarket } from 'sdk/types/futures';
 import { PositionSide } from 'sections/futures/types';
+import { FundingRate, FundingRateSerialized } from 'state/futures/types';
 import logError from 'utils/logError';
 
 import { formatNumber, zeroBN } from './formatters/number';
@@ -354,4 +356,68 @@ export const calculateMarginDelta = (
 			const marginDelta = newMargin.sub(remainingMargin ?? zeroBN);
 			return marginDelta.add(fees.total);
 	}
+};
+
+export const serializeMarkets = (markets: FuturesMarket[]): FuturesMarket<string>[] => {
+	return markets.map((m) => {
+		return {
+			...m,
+			currentFundingRate: m.currentFundingRate.toString(),
+			currentRoundId: m.currentRoundId.toString(),
+			feeRates: {
+				makerFee: m.feeRates.makerFee.toString(),
+				takerFee: m.feeRates.takerFee.toString(),
+				makerFeeNextPrice: m.feeRates.makerFeeNextPrice.toString(),
+				takerFeeNextPrice: m.feeRates.takerFeeNextPrice.toString(),
+			},
+			openInterest: m.openInterest
+				? {
+						...m.openInterest,
+						shortUSD: m.openInterest.shortUSD.toString(),
+						longUSD: m.openInterest.longUSD.toString(),
+				  }
+				: undefined,
+			marketDebt: m.marketDebt.toString(),
+			marketSkew: m.marketSkew.toString(),
+			marketSize: m.marketSize.toString(),
+			maxLeverage: m.maxLeverage.toString(),
+			price: m.price.toString(),
+			minInitialMargin: m.minInitialMargin.toString(),
+			keeperDeposit: m.keeperDeposit.toString(),
+			marketLimit: m.marketLimit.toString(),
+		};
+	});
+};
+
+export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMarket[] => {
+	return markets.map((m) => ({
+		...m,
+		currentFundingRate: wei(m.currentFundingRate),
+		currentRoundId: wei(m.currentRoundId),
+		feeRates: {
+			makerFee: wei(m.feeRates.makerFee),
+			takerFee: wei(m.feeRates.takerFee),
+			makerFeeNextPrice: wei(m.feeRates.makerFeeNextPrice),
+			takerFeeNextPrice: wei(m.feeRates.takerFeeNextPrice),
+		},
+		openInterest: m.openInterest
+			? {
+					...m.openInterest,
+					shortUSD: wei(m.openInterest.shortUSD),
+					longUSD: wei(m.openInterest.longUSD),
+			  }
+			: undefined,
+		marketDebt: wei(m.marketDebt),
+		marketSkew: wei(m.marketSkew),
+		marketSize: wei(m.marketSize),
+		maxLeverage: wei(m.maxLeverage),
+		price: wei(m.price),
+		minInitialMargin: wei(m.minInitialMargin),
+		keeperDeposit: wei(m.keeperDeposit),
+		marketLimit: wei(m.marketLimit),
+	}));
+};
+
+export const unserializeFundingRates = (rates: FundingRateSerialized[]): FundingRate[] => {
+	return rates.map((r) => ({ ...r, fundingRate: r.fundingRate ? wei(r.fundingRate) : null }));
 };

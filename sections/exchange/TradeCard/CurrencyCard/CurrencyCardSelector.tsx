@@ -1,14 +1,14 @@
 import Wei from '@synthetixio/wei';
 import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { selectInsufficientBalance } from 'state/exchange/selectors';
-import { useAppSelector } from 'state/hooks';
 import styled, { css } from 'styled-components';
 
 import CaretDownIcon from 'assets/svg/app/caret-down-gray.svg';
 import { border } from 'components/Button';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { NO_VALUE } from 'constants/placeholder';
+import { selectInsufficientBalance } from 'state/exchange/selectors';
+import { useAppSelector } from 'state/hooks';
 import { CapitalizedText, FlexDivColCentered, FlexDivRow, numericValueCSS } from 'styles/common';
 import { formatCurrency } from 'utils/formatters/number';
 

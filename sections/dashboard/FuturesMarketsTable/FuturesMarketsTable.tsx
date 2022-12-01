@@ -15,26 +15,22 @@ import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
+import { selectMarkets } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import {
-	futuresMarketsState,
 	pastRatesState,
 	fundingRatesState,
 	futuresVolumesState,
 	futuresAccountTypeState,
 } from 'store/futures';
-import {
-	getSynthDescription,
-	isDecimalFour,
-	MarketKeyByAsset,
-	FuturesMarketAsset,
-} from 'utils/futures';
+import { getSynthDescription, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
 const FuturesMarketsTable: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const { synthsMap } = Connector.useContainer();
 
-	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	const futuresMarkets = useAppSelector(selectMarkets);
 	const fundingRates = useRecoilValue(fundingRatesState);
 	const pastRates = useRecoilValue(pastRatesState);
 	const futuresVolumes = useRecoilValue(futuresVolumesState);
@@ -120,9 +116,10 @@ const FuturesMarketsTable: FC = () => {
 								),
 								accessor: 'oraclePrice',
 								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = isDecimalFour(cellProps.row.original.asset)
-										? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
-										: {};
+									const formatOptions = {
+										minDecimals: DEFAULT_CRYPTO_DECIMALS,
+										isAssetPrice: true,
+									};
 									return (
 										<Currency.Price
 											currencyKey={'sUSD'}
@@ -302,11 +299,7 @@ const FuturesMarketsTable: FC = () => {
 												currencyKey={'sUSD'}
 												price={cellProps.row.original.price}
 												sign="$"
-												formatOptions={
-													isDecimalFour(cellProps.row.original.asset)
-														? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
-														: {}
-												}
+												formatOptions={{ minDecimals: DEFAULT_CRYPTO_DECIMALS, isAssetPrice: true }}
 											/>
 										</MarketContainer>
 									</div>

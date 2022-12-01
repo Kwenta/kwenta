@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import { chainId } from 'wagmi';
 
-import { PERIOD_IN_SECONDS } from 'constants/period';
+import { PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { minTimestampState } from 'store/stats';
 import { weiFromWei } from 'utils/formatters/number';
 import logError from 'utils/logError';

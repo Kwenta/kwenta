@@ -14,11 +14,11 @@ import { useFuturesContext } from 'contexts/FuturesContext';
 import useEstimateGasCost from 'hooks/useEstimateGasCost';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
+import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import {
 	confirmationModalOpenState,
-	currentMarketState,
 	leverageSideState,
-	marketInfoState,
 	nextPriceDisclaimerState,
 	positionState,
 	futuresTradeInputsState,
@@ -43,8 +43,8 @@ const NextPriceConfirmationModal: FC = () => {
 	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const position = useRecoilValue(positionState);
-	const market = useRecoilValue(currentMarketState);
-	const marketInfo = useRecoilValue(marketInfoState);
+	const marketInfo = useAppSelector(selectMarketInfo);
+	const marketAsset = useAppSelector(selectMarketAsset);
 
 	const setConfirmationModalOpen = useSetRecoilState(confirmationModalOpenState);
 
@@ -90,8 +90,8 @@ const NextPriceConfirmationModal: FC = () => {
 			},
 			{
 				label: t('futures.market.user.position.modal.size'),
-				value: formatCurrency(market || '', orderDetails.newSize.abs() ?? zeroBN, {
-					sign: market ? synthsMap[market]?.sign : '',
+				value: formatCurrency(marketAsset || '', orderDetails.newSize.abs() ?? zeroBN, {
+					sign: marketAsset ? synthsMap[marketAsset]?.sign : '',
 				}),
 			},
 			{
@@ -117,7 +117,7 @@ const NextPriceConfirmationModal: FC = () => {
 		[
 			t,
 			orderDetails,
-			market,
+			marketAsset,
 			synthsMap,
 			leverageSide,
 			nextPriceDiscount,

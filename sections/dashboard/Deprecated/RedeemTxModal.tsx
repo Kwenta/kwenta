@@ -1,15 +1,15 @@
 import Wei, { wei } from '@synthetixio/wei';
 import { FC, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { closeModal } from 'state/exchange/reducer';
-import { selectTotalRedeemableBalanceWei } from 'state/exchange/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
 import { CurrencyKey } from 'constants/currency';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
+import { closeModal } from 'state/exchange/reducer';
+import { selectTotalRedeemableBalanceWei } from 'state/exchange/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FlexDivColCentered, numericValueCSS } from 'styles/common';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 

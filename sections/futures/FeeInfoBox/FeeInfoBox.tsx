@@ -7,13 +7,15 @@ import TimerIcon from 'assets/svg/app/timer.svg';
 import InfoBox, { DetailedInfo } from 'components/InfoBox/InfoBox';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { NO_VALUE } from 'constants/placeholder';
+import { selectMarketInfo } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import {
 	tradeFeesState,
-	marketInfoState,
 	orderTypeState,
 	sizeDeltaState,
 	futuresAccountTypeState,
 	crossMarginSettingsState,
+	dynamicFeeRateState,
 } from 'store/futures';
 import { computeNPFee, computeMarketFee } from 'utils/costCalculations';
 import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
@@ -21,12 +23,13 @@ import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/form
 const FeeInfoBox: React.FC = () => {
 	const orderType = useRecoilValue(orderTypeState);
 	const fees = useRecoilValue(tradeFeesState);
+	const dynamicFeeRate = useRecoilValue(dynamicFeeRateState);
 	const sizeDelta = useRecoilValue(sizeDeltaState);
-	const marketInfo = useRecoilValue(marketInfoState);
 	const accountType = useRecoilValue(futuresAccountTypeState);
 	const { tradeFee: crossMarginTradeFee, limitOrderFee, stopOrderFee } = useRecoilValue(
 		crossMarginSettingsState
 	);
+	const marketInfo = useAppSelector(selectMarketInfo);
 
 	const { commitDeposit, nextPriceFee } = useMemo(() => computeNPFee(marketInfo, sizeDelta), [
 		marketInfo,
@@ -56,17 +59,17 @@ const FeeInfoBox: React.FC = () => {
 		() => (
 			<>
 				{formatPercent(staticRate ?? zeroBN)}
-				{fees.dynamicFeeRate?.gt(0) && (
+				{dynamicFeeRate?.gt(0) && (
 					<>
 						{' + '}
 						<ToolTip>
-							<StyledDynamicFee>{formatPercent(fees.dynamicFeeRate)}</StyledDynamicFee>
+							<StyledDynamicFee>{formatPercent(dynamicFeeRate)}</StyledDynamicFee>
 						</ToolTip>
 					</>
 				)}
 			</>
 		),
-		[staticRate, fees.dynamicFeeRate]
+		[staticRate, dynamicFeeRate]
 	);
 
 	const feesInfo = useMemo<Record<string, DetailedInfo | null | undefined>>(() => {

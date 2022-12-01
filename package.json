@@ -1,6 +1,6 @@
 {
 	"name": "kwenta",
-	"version": "5.1.3",
+	"version": "5.2.0",
 	"scripts": {
 		"dev": "next",
 		"build": "next build",
@@ -22,7 +22,8 @@
 		"postpublish": "pinst --enable",
 		"storybook": "start-storybook -p 6006",
 		"build-storybook": "build-storybook",
-		"generate-types": "typechain --target ethers-v5 --out-dir ./lib/abis/types './lib/abis/*.json'"
+		"generate-contract-types": "typechain --target ethers-v5 --out-dir ./sdk/contracts/types './sdk/contracts/abis/*.json' --show-stack-traces"
+
 	},
 	"dependencies": {
 		"@artsy/fresnel": "1.7.0",
@@ -32,7 +33,7 @@
 		"@kwenta/synthswap": "^1.0.3",
 		"@material-ui/core": "^4.12.3",
 		"@metamask/detect-provider": "1.2.0",
-		"@rainbow-me/rainbowkit": "0.5.3",
+		"@rainbow-me/rainbowkit": "0.8.0",
 		"@reach/accordion": "0.15.1",
 		"@reach/dialog": "0.15.0",
 		"@reduxjs/toolkit": "^1.8.5",
@@ -73,7 +74,7 @@
 		"react-input-autosize": "3.0.0",
 		"react-is": "^18.0.0",
 		"react-query": "3.35.0",
-		"react-redux": "^8.0.4",
+		"react-redux": "8.0.5",
 		"react-rnd": "^10.3.7",
 		"react-select": "4.3.1",
 		"react-slick": "0.29.0",

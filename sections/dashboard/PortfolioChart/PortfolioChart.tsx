@@ -1,3 +1,4 @@
+import Wei from '@synthetixio/wei';
 import { FC, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -6,11 +7,18 @@ import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import { balancesState, portfolioState } from 'store/futures';
 
-const PortfolioChart: FC = () => {
+type PortfolioChartProps = {
+	exchangeTokenBalances: Wei;
+};
+
+const PortfolioChart: FC<PortfolioChartProps> = ({ exchangeTokenBalances }) => {
 	const portfolio = useRecoilValue(portfolioState);
 	const balances = useRecoilValue(balancesState);
 
-	const total = useMemo(() => portfolio.total.add(balances.totalUSDBalance), [portfolio, balances]);
+	const total = useMemo(
+		() => portfolio.total.add(balances.totalUSDBalance).add(exchangeTokenBalances),
+		[portfolio.total, balances.totalUSDBalance, exchangeTokenBalances]
+	);
 
 	return (
 		<>

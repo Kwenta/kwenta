@@ -8,6 +8,7 @@ import { sdk } from './config';
 import earnReducer from './earn/reducer';
 import exchangeReducer from './exchange/reducer';
 import futuresReducer from './futures/reducer';
+import homeReducer from './home/reducer';
 import walletReducer from './wallet/reducer';
 
 const LOG_REDUX = process.env.NODE_ENV !== 'production';
@@ -18,6 +19,7 @@ const store = configureStore({
 		balances: balancesReducer,
 		exchange: exchangeReducer,
 		futures: futuresReducer,
+		home: homeReducer,
 		earn: earnReducer,
 	},
 	middleware: (getDefaultMiddleware) => {
