@@ -6,6 +6,7 @@ import moment from 'moment';
 import KwentaSDK from 'sdk';
 
 import { FLEEK_BASE_URL, FLEEK_STORAGE_BUCKET } from 'queries/files/constants';
+import { ContractName } from 'sdk/contracts';
 import { formatTruncatedDuration } from 'utils/formatters/date';
 
 import * as sdkErrors from '../common/errors';
@@ -23,7 +24,7 @@ const client = axios.create({
 
 export type ClaimParams = [number, string, string, string[], number];
 
-type EpochDataProps = {
+type EpochData = {
 	merkleRoot: string;
 	tokenTotal: string;
 	claims: {
@@ -35,6 +36,16 @@ type EpochDataProps = {
 	};
 };
 
+export type EscrowData = {
+	id: number;
+	date: string;
+	time: string;
+	vestable: number;
+	amount: number;
+	fee: number;
+	status: 'VESTING' | 'VESTED';
+};
+
 export default class KwentaTokenService {
 	private sdk: KwentaSDK;
 
@@ -42,33 +53,20 @@ export default class KwentaTokenService {
 		this.sdk = sdk;
 	}
 
-	public async changePoolTokens(amount: string, action: 'stake' | 'withdraw') {
+	public changePoolTokens(amount: string, action: 'stake' | 'withdraw') {
 		if (!this.sdk.context.contracts.StakingRewards) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
-		const { hash } = await this.sdk.transactions.createContractTxn(
+		return this.sdk.transactions.createContractTxn(
 			this.sdk.context.contracts.StakingRewards,
 			action,
 			[wei(amount).toBN()]
 		);
-
-		return hash;
 	}
 
-	public async approveLPToken() {
-		const { StakingRewards, KwentaArrakisVault } = this.sdk.context.contracts;
-
-		if (!StakingRewards || !KwentaArrakisVault) {
-			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
-		}
-
-		const { hash } = await this.sdk.transactions.createContractTxn(KwentaArrakisVault, 'approve', [
-			StakingRewards.address,
-			ethers.constants.MaxUint256,
-		]);
-
-		return hash;
+	public approveLPToken() {
+		return this.approveToken('KwentaArrakisVault', 'StakingRewards');
 	}
 
 	public async getEarnDetails() {
@@ -113,16 +111,14 @@ export default class KwentaTokenService {
 		};
 	}
 
-	public async claimRewards() {
+	public claimRewards() {
 		const StakingRewards = this.sdk.context.contracts.StakingRewards;
 
 		if (!StakingRewards) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
-		const { hash } = await this.sdk.transactions.createContractTxn(StakingRewards, 'getReward', []);
-
-		return hash;
+		return this.sdk.transactions.createContractTxn(StakingRewards, 'getReward', []);
 	}
 
 	public async getStakingData() {
@@ -230,72 +226,57 @@ export default class KwentaTokenService {
 
 		const vestingSchedules = schedules.filter((schedule) => schedule.escrowAmount.gt(0));
 
-		const calls = [];
-
-		for (const schedule of vestingSchedules) {
-			calls.push(
-				RewardEscrowContract.getVestingEntryClaimable(
-					this.sdk.context.walletAddress,
-					schedule.entryID
-				)
-			);
-		}
+		const calls = vestingSchedules.map((schedule) =>
+			RewardEscrowContract.getVestingEntryClaimable(
+				this.sdk.context.walletAddress,
+				schedule.entryID
+			)
+		);
 
 		const vestingEntries: {
 			quantity: ethers.BigNumber;
 			fee: ethers.BigNumber;
 		}[] = await this.sdk.context.multicallProvider.all(calls);
 
-		const escrowData = [];
+		const { escrowData, totalVestable } = vestingSchedules.reduce(
+			(acc, next, i) => {
+				const vestable = Number(ethers.utils.formatEther(vestingEntries[i].quantity));
+				const date = Number(next.endTime) * 1000;
 
-		let totalVestable = 0;
+				acc.totalVestable += vestable;
 
-		for (let i = 0; i < vestingSchedules.length; i++) {
-			const vestable = Number(ethers.utils.formatEther(vestingEntries[i].quantity));
-			const date = Number(vestingSchedules[i].endTime) * 1000;
+				acc.escrowData.push({
+					id: Number(next.entryID),
+					date: moment(date).format('MM/DD/YY'),
+					time: formatTruncatedDuration(Number(next.endTime) - new Date().getTime() / 1000),
+					vestable,
+					amount: Number(ethers.utils.formatEther(next.escrowAmount)),
+					fee: Number(ethers.utils.formatEther(vestingEntries[i].fee)),
+					status: date > Date.now() ? 'VESTING' : 'VESTED',
+				});
 
-			totalVestable += vestable;
-
-			escrowData[i] = {
-				id: Number(vestingSchedules[i].entryID),
-				date: moment(date).format('MM/DD/YY'),
-				time: formatTruncatedDuration(
-					Number(vestingSchedules[i].endTime) - new Date().getTime() / 1000
-				),
-				vestable,
-				amount: Number(ethers.utils.formatEther(vestingSchedules[i].escrowAmount)),
-				fee: Number(ethers.utils.formatEther(vestingEntries[i].fee)),
-				status: date > Date.now() ? 'VESTING' : 'VESTED',
-			};
-		}
+				return acc;
+			},
+			{ escrowData: [] as EscrowData[], totalVestable: 0 }
+		);
 
 		return { escrowData, totalVestable };
 	}
 
-	public async getReward() {
+	public getReward() {
 		const { KwentaStakingRewards } = this.sdk.context.contracts;
 
 		if (!KwentaStakingRewards) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
-		const { hash } = await this.sdk.transactions.createContractTxn(
-			KwentaStakingRewards,
-			'getReward',
-			[]
-		);
-
-		return hash;
+		return this.sdk.transactions.createContractTxn(KwentaStakingRewards, 'getReward', []);
 	}
 
 	// TODO: Delete `approveLPToken` method.
-	// Also, consider creating a generic service called 'util' or something,
-	// that has handy methods for approving, redeeming etc.
-	// Signature: approveToken(contract: ContractName, spender?: ContractName)
-	// spender should default to walletAddress.
 	// In that case, we can safely remove the map object from this method.
 
-	public async approveKwentaToken(token: 'kwenta' | 'vKwenta' | 'veKwenta') {
+	public approveKwentaToken(token: 'kwenta' | 'vKwenta' | 'veKwenta') {
 		const {
 			KwentaToken,
 			KwentaStakingRewards,
@@ -317,107 +298,79 @@ export default class KwentaTokenService {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
-		const { hash } = await this.sdk.transactions.createContractTxn(contract, 'approve', [
+		return this.sdk.transactions.createContractTxn(contract, 'approve', [
 			spender.address,
 			ethers.constants.MaxUint256,
 		]);
-
-		return hash;
 	}
 
-	public async redeemToken(token: 'vKwenta' | 'veKwenta') {
-		const { vKwentaRedeemer, veKwentaRedeemer } = this.sdk.context.contracts;
+	public approveToken(token: ContractName, spender?: ContractName) {
+		const tokenContract = this.sdk.context.contracts[token];
 
-		if (!vKwentaRedeemer || !veKwentaRedeemer) {
+		if (!tokenContract) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
-		const contract = token === 'vKwenta' ? vKwentaRedeemer : veKwentaRedeemer;
+		let spenderAddress = this.sdk.context.walletAddress;
 
-		const { hash } = await this.sdk.transactions.createContractTxn(contract, 'redeem', [
-			this.sdk.context.walletAddress,
+		if (spender) {
+			const spenderContract = this.sdk.context.contracts[spender];
+			if (spenderContract) spenderAddress = spenderContract.address;
+		}
+
+		return this.sdk.transactions.createContractTxn(tokenContract, 'approve', [
+			spenderAddress,
+			ethers.constants.MaxUint256,
 		]);
-
-		return hash;
 	}
 
-	public async vestToken(ids: number[]) {
+	public redeemToken(token: ContractName) {
+		const tokenContract = this.sdk.context.contracts[token];
+
+		if (!tokenContract) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
+		}
+
+		return this.sdk.transactions.createContractTxn(tokenContract, 'redeem', [
+			this.sdk.context.walletAddress,
+		]);
+	}
+
+	public redeemVKwenta() {
+		return this.redeemToken('vKwentaRedeemer');
+	}
+
+	public redeemVeKwenta() {
+		return this.redeemToken('veKwentaRedeemer');
+	}
+
+	public vestToken(ids: number[]) {
 		const { RewardEscrow } = this.sdk.context.contracts;
 
 		if (!RewardEscrow) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
-		const { hash } = await this.sdk.transactions.createContractTxn(RewardEscrow, 'vest', [ids]);
-
-		return hash;
+		return this.sdk.transactions.createContractTxn(RewardEscrow, 'vest', [ids]);
 	}
 
-	// TODO: Rename this and refactor.
-	public async performStakeAction(
-		action: 'stake' | 'unstake',
-		amount: string,
-		options: { escrow: boolean } = { escrow: true }
-	) {
-		const { RewardEscrow, KwentaStakingRewards } = this.sdk.context.contracts;
+	public stakeKwenta(amount: string) {
+		return this.performStakeAction('stake', amount);
+	}
 
-		if (!RewardEscrow || !KwentaStakingRewards) {
-			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
-		}
+	public async unstakeKwenta(amount: string) {
+		return this.performStakeAction('unstake', amount);
+	}
 
-		const contract = options?.escrow ? RewardEscrow : KwentaStakingRewards;
+	public async stakeEscrowedKwenta(amount: string) {
+		return this.performStakeAction('stake', amount, { escrow: true });
+	}
 
-		const { hash } = await this.sdk.transactions.createContractTxn(
-			contract,
-			`${action}${options?.escrow ? 'Escrow' : ''}`,
-			[amount]
-		);
-
-		return hash;
+	public async unstakeEscrowedKwenta(amount: string) {
+		return this.performStakeAction('unstake', amount, { escrow: true });
 	}
 
 	public async getClaimableRewards(periods: number[]) {
-		const fileNames = periods
-			.slice(0, -1)
-			.map(
-				(i) =>
-					`trading-rewards-snapshots/${
-						this.sdk.context.networkId === 420 ? `goerli-` : ''
-					}epoch-${i}.json`
-			);
-
-		const responses = [];
-
-		for (const fileName of fileNames) {
-			const response = await client.get(fileName);
-			responses.push(response.data ?? null);
-		}
-
-		const rewards: ClaimParams[] = responses
-			.map((d: EpochDataProps, period) => {
-				const index = Object.keys(d.claims).findIndex(
-					(key) => key === this.sdk.context.walletAddress
-				);
-
-				if (index !== -1) {
-					const walletReward = Object.values(d.claims)[index];
-					if (!!walletReward) {
-						return [
-							walletReward.index,
-							this.sdk.context.walletAddress,
-							walletReward.amount,
-							walletReward.proof,
-							period,
-						];
-					}
-				}
-
-				return null;
-			})
-			.filter((x): x is ClaimParams => !!x);
-
-		const calls = [];
-
 		const { MultipleMerkleDistributor } = this.sdk.context.contracts;
 
 		if (!MultipleMerkleDistributor) {
@@ -429,24 +382,45 @@ export default class KwentaTokenService {
 			MultipleMerkleDistributorABI
 		);
 
-		for (const reward of rewards) {
-			calls.push(MultipleMerkleDistributorContract.isClaimed(reward[0], reward[4]));
+		const fileNames = periods
+			.slice(0, -1)
+			.map(
+				(i) =>
+					`trading-rewards-snapshots/${
+						this.sdk.context.networkId === 420 ? `goerli-` : ''
+					}epoch-${i}.json`
+			);
+
+		const responses: EpochData[] = [];
+
+		for (const fileName of fileNames) {
+			const response = await client.get(fileName);
+			responses.push(response.data ?? null);
 		}
 
-		const claimed: boolean[] = await this.sdk.context.multicallProvider.all(calls);
+		const rewards = responses
+			.map((d, period) => {
+				const { walletAddress } = this.sdk.context;
+				const walletReward = d.claims[walletAddress];
+				return [walletReward.index, walletAddress, walletReward.amount, walletReward.proof, period];
+			})
+			.filter((x): x is ClaimParams => !!x);
 
-		const claimableRewards = [];
+		const claimed: boolean[] = await this.sdk.context.multicallProvider.all(
+			rewards.map((reward) => MultipleMerkleDistributorContract.isClaimed(reward[0], reward[4]))
+		);
 
-		const rewardsLength = rewards.length;
-		let totalRewards = 0;
+		const { totalRewards, claimableRewards } = rewards.reduce(
+			(acc, next, i) => {
+				if (!claimed[i]) {
+					acc.claimableRewards.push(next);
+					acc.totalRewards += Number(next[2]) / 1e18;
+				}
 
-		for (let i = 0; i < rewardsLength; i++) {
-			if (!claimed[i]) {
-				const reward = rewards[i];
-				claimableRewards.push(reward);
-				totalRewards += Number(reward[2]) / 1e18;
-			}
-		}
+				return acc;
+			},
+			{ claimableRewards: [] as ClaimParams[], totalRewards: 0 }
+		);
 
 		return { claimableRewards, totalRewards };
 	}
@@ -458,12 +432,28 @@ export default class KwentaTokenService {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
-		const { hash } = await this.sdk.transactions.createContractTxn(
-			MultipleMerkleDistributor,
-			'claimMultiple',
-			[claimableRewards]
-		);
+		return this.sdk.transactions.createContractTxn(MultipleMerkleDistributor, 'claimMultiple', [
+			claimableRewards,
+		]);
+	}
 
-		return hash;
+	private async performStakeAction(
+		action: 'stake' | 'unstake',
+		amount: string,
+		options: { escrow: boolean } = { escrow: false }
+	) {
+		const { RewardEscrow, KwentaStakingRewards } = this.sdk.context.contracts;
+
+		if (!RewardEscrow || !KwentaStakingRewards) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
+		}
+
+		const contract = options?.escrow ? RewardEscrow : KwentaStakingRewards;
+
+		return this.sdk.transactions.createContractTxn(
+			contract,
+			`${action}${options?.escrow ? 'Escrow' : ''}`,
+			[amount]
+		);
 	}
 }
