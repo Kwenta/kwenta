@@ -41,7 +41,7 @@ export default function ManageKeeperBalanceModal({ onDismiss, defaultType }: Pro
 	const { t } = useTranslation();
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const { provider, walletAddress } = Connector.useContainer();
-	const { refetchUntilUpdate } = useRefetchContext();
+	const { handleRefetch } = useRefetchContext();
 
 	const { keeperEthBal } = useAppSelector(selectCrossMarginBalanceInfo);
 	const openOrders = useRecoilValue(openOrdersState);
@@ -78,7 +78,7 @@ export default function ManageKeeperBalanceModal({ onDismiss, defaultType }: Pro
 				monitorTransaction({
 					txHash: tx.hash,
 					onTxConfirmed: async () => {
-						refetchUntilUpdate('account-margin-change');
+						handleRefetch('account-margin-change');
 						setTransacting(false);
 						onDismiss();
 					},
@@ -91,7 +91,7 @@ export default function ManageKeeperBalanceModal({ onDismiss, defaultType }: Pro
 			}
 			logError(err);
 		}
-	}, [keeperEthBal, crossMarginAccountContract, amount, t, refetchUntilUpdate, onDismiss]);
+	}, [keeperEthBal, crossMarginAccountContract, amount, t, onDismiss, handleRefetch]);
 
 	const onDepositKeeperDeposit = useCallback(async () => {
 		// if (!crossMarginAccountContract || !signer) return;

@@ -9,7 +9,7 @@ export const refetchWithComparator = async (
 	comparator: (previous: any, current: any) => boolean,
 	interval = 1000,
 	max = 25
-) => {
+): Promise<{ data: any; status: string }> => {
 	return new Promise((res) => {
 		let count = 1;
 
@@ -26,7 +26,7 @@ export const refetchWithComparator = async (
 						clearTimeout(timeout);
 						res({ data: next, status: 'complete' });
 					} else {
-						refetch(next);
+						refetch(existingResult);
 					}
 				}
 			}, interval);

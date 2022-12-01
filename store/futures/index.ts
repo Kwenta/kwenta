@@ -6,7 +6,6 @@ import {
 	FuturesAccountState,
 	FuturesAccountType,
 	FuturesPotentialTradeDetailsQuery,
-	SynthBalances,
 	TradeFees,
 	FuturesTradeInputs,
 	FuturesOrderType,
@@ -18,7 +17,7 @@ import {
 import { Price } from 'queries/rates/types';
 import { PositionSide } from 'sections/futures/types';
 import { localStorageEffect } from 'store/effects';
-import { getFuturesKey, getSynthsKey } from 'store/utils';
+import { getFuturesKey } from 'store/utils';
 import { zeroBN } from 'utils/formatters/number';
 import { FuturesMarketAsset } from 'utils/futures';
 
@@ -26,16 +25,6 @@ export const currentMarketState = atom({
 	key: getFuturesKey('currentMarket'),
 	default: FuturesMarketAsset.sETH,
 	effects: [localStorageEffect('currentMarketAsset')],
-});
-
-export const balancesState = atom<SynthBalances>({
-	key: getSynthsKey('balances'),
-	default: {
-		balancesMap: {},
-		balances: [],
-		totalUSDBalance: zeroBN,
-		susdWalletBalance: zeroBN,
-	},
 });
 
 export const activeTabState = atom<number>({

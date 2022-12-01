@@ -1,7 +1,6 @@
 import { wei } from '@synthetixio/wei';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
@@ -11,6 +10,7 @@ import CustomInput from 'components/Input/CustomInput';
 import Loader from 'components/Loader';
 import SegmentedControl from 'components/SegmentedControl';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
+import { selectBalances } from 'state/balances/selectors';
 import { approveCrossMargin, depositCrossMargin, withdrawCrossMargin } from 'state/futures/actions';
 import {
 	selectCrossMarginBalanceInfo,
@@ -19,7 +19,6 @@ import {
 	selectIsSubmittingCrossTransfer,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { balancesState } from 'store/futures';
 import { FlexDivRowCentered } from 'styles/common';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -38,7 +37,7 @@ export default function DepositWithdrawCrossMargin({
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
-	const balances = useRecoilValue(balancesState);
+	const balances = useAppSelector(selectBalances);
 	const crossMarginBalanceInfo = useAppSelector(selectCrossMarginBalanceInfo);
 	const transactionState = useAppSelector(selectFuturesTransaction);
 	const isSubmitting = useAppSelector(selectIsSubmittingCrossTransfer);

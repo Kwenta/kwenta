@@ -1,6 +1,11 @@
-import Wei from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
+import { orderBy } from 'lodash';
 import get from 'lodash/get';
+
+import { notNill } from 'queries/synths/utils';
+import { SynthBalance, TokenBalances } from 'sdk/types/tokens';
+import { BalancesActionReturn } from 'state/balances/types';
 
 import { CurrencyKey } from '../constants/currency';
 import { isSynth } from './currencies';
@@ -56,4 +61,84 @@ export const sortWei = (a: Wei, b: Wei, order: 'descending' | 'ascending'): numb
 	} else {
 		return 0;
 	}
+};
+
+export const serializeBalances = (
+	synthBalancesMap: Record<string, SynthBalance>,
+	totalUSDBalance: Wei,
+	tokenBalances: TokenBalances,
+	susdWalletBalance: Wei
+): BalancesActionReturn<string> => {
+	const balancesMapSerialized = Object.entries(synthBalancesMap).reduce<
+		Record<string, SynthBalance<string>>
+	>((acc, [key, value]) => {
+		if (value) {
+			acc[key] = {
+				...value,
+				balance: value.balance.toString(),
+				usdBalance: value.usdBalance.toString(),
+			};
+		}
+
+		return acc;
+	}, {});
+
+	const balancesList = orderBy(
+		Object.values(balancesMapSerialized).filter(notNill),
+		(balance) => Number(balance.usdBalance),
+		'desc'
+	);
+	return {
+		synthBalances: balancesList,
+		synthBalancesMap: balancesMapSerialized,
+		totalUSDBalance: totalUSDBalance.toString(),
+		susdWalletBalance: susdWalletBalance.toString(),
+		tokenBalances: Object.entries(tokenBalances).reduce((acc, [key, value]) => {
+			if (value) {
+				acc[key] = { ...value, balance: value.balance.toString() };
+			}
+
+			return acc;
+		}, {} as any),
+	};
+};
+
+export const unserializeBalances = (
+	synthBalancesMap: Record<string, SynthBalance<string>>,
+	totalUSDBalance: string,
+	tokenBalances: TokenBalances<string>,
+	susdWalletBalance: string
+): BalancesActionReturn => {
+	const balancesMapSerialized = Object.entries(synthBalancesMap).reduce<
+		Record<string, SynthBalance>
+	>((acc, [key, value]) => {
+		if (value) {
+			acc[key] = {
+				...value,
+				balance: wei(value.balance),
+				usdBalance: wei(value.usdBalance),
+			};
+		}
+
+		return acc;
+	}, {});
+
+	const balancesList = orderBy(
+		Object.values(balancesMapSerialized).filter(notNill),
+		(balance) => balance.usdBalance.toNumber(),
+		'desc'
+	);
+	return {
+		synthBalances: balancesList,
+		synthBalancesMap: balancesMapSerialized,
+		totalUSDBalance: wei(totalUSDBalance),
+		susdWalletBalance: wei(susdWalletBalance),
+		tokenBalances: Object.entries(tokenBalances).reduce((acc, [key, value]) => {
+			if (value) {
+				acc[key] = { ...value, balance: wei(value.balance) };
+			}
+
+			return acc;
+		}, {} as any),
+	};
 };

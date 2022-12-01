@@ -1,7 +1,7 @@
 import Wei from '@synthetixio/wei';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { erc20ABI, useContractRead } from 'wagmi';
 
@@ -15,6 +15,7 @@ import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
+import { selectBalances } from 'state/balances/selectors';
 import { sdk } from 'state/config';
 import {
 	selectCrossMarginPositions,
@@ -22,7 +23,6 @@ import {
 	selectIsolatedMarginPositions,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { balancesState } from 'store/futures';
 import { activePositionsTabState } from 'store/ui';
 import { formatDollars, toWei, weiFromWei, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -46,7 +46,7 @@ export enum PositionsTab {
 const Overview: FC = () => {
 	const { t } = useTranslation();
 
-	const balances = useRecoilValue(balancesState);
+	const balances = useAppSelector(selectBalances);
 	const portfolio = useAppSelector(selectFuturesPortfolio);
 	const crossPositions = useAppSelector(selectCrossMarginPositions);
 	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);

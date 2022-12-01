@@ -1,4 +1,4 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import SegmentedControl from 'components/SegmentedControl';
@@ -11,7 +11,7 @@ import {
 } from 'state/futures/reducer';
 import { selectPosition } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { balancesState, leverageSideState, orderTypeState } from 'store/futures';
+import { leverageSideState, orderTypeState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 
 import FeeInfoBox from '../FeeInfoBox';
@@ -32,7 +32,6 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 	const dispatch = useAppDispatch();
 
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
-	const { susdWalletBalance } = useRecoilValue(balancesState);
 	const position = useAppSelector(selectPosition);
 	const openModal = useAppSelector(selectOpenModal);
 
@@ -79,7 +78,6 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 			{openModal === 'futures_isolated_transfer' && (
 				<TransferIsolatedMarginModal
 					defaultTab="deposit"
-					sUSDBalance={susdWalletBalance}
 					onDismiss={() => dispatch(setOpenModal(null))}
 				/>
 			)}

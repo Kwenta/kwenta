@@ -1,20 +1,20 @@
 import Wei from '@synthetixio/wei';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SetterOrUpdater, useRecoilValue } from 'recoil';
+import { SetterOrUpdater } from 'recoil';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
+import { selectBalances } from 'state/balances/selectors';
 import {
 	selectCrossMarginPositions,
 	selectFuturesPortfolio,
 	selectIsolatedMarginPositions,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { balancesState } from 'store/futures';
 import { formatDollars } from 'utils/formatters/number';
 
 import FuturesPositionsTable from '../FuturesPositionsTable';
@@ -46,7 +46,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 	const crossPositions = useAppSelector(selectCrossMarginPositions);
 	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
 	const portfolio = useAppSelector(selectFuturesPortfolio);
-	const balances = useRecoilValue(balancesState);
+	const balances = useAppSelector(selectBalances);
 
 	const POSITIONS_TABS = useMemo(
 		() => [

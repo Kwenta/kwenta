@@ -3,15 +3,18 @@ import Wei from '@synthetixio/wei';
 import KwentaSDK from 'sdk';
 
 import { monitorTransaction } from 'contexts/RelayerContext';
+import { FuturesAccountType } from 'queries/futures/types';
 import { Period } from 'sdk/constants/period';
 import { TransactionStatus } from 'sdk/types/common';
 import { FuturesMarket, FuturesPosition, FuturesVolumes } from 'sdk/types/futures';
 import { setOpenModal } from 'state/app/reducer';
+import { fetchBalances } from 'state/balances/actions';
 import { serializeWeiObject } from 'state/helpers';
 import { AppDispatch, AppThunk } from 'state/store';
 import { ThunkConfig } from 'state/types';
 import { serializeCmBalanceInfo, serializeFuturesVolumes, serializeMarkets } from 'utils/futures';
 import logError from 'utils/logError';
+import { refetchWithComparator } from 'utils/queries';
 
 import {
 	handleTransactionError,
@@ -97,6 +100,46 @@ export const fetchIsolatedMarginPositions = createAsyncThunk<
 		positions: positions.map((p) => serializeWeiObject(p) as FuturesPosition<string>),
 		wallet: wallet.walletAddress,
 	};
+});
+
+export const refetchPosition = createAsyncThunk<
+	{ position: FuturesPosition<string>; wallet: string; futuresType: FuturesAccountType } | null,
+	FuturesAccountType,
+	ThunkConfig
+>('futures/refetchPosition', async (type, { getState, extra: { sdk } }) => {
+	const { wallet, futures } = getState();
+	const account = type === 'cross_margin' ? futures.crossMargin.account : wallet.walletAddress;
+	const positions =
+		type === 'cross_margin' ? futures.crossMargin.positions : futures.isolatedMargin.positions;
+
+	if (!account) throw new Error('No wallet connected');
+	const marketInfo = futures.markets.find(
+		(m) => m.asset === futures.isolatedMargin.selectedMarketAsset
+	);
+	const position = positions[account]?.find(
+		(p) => p.asset === futures.isolatedMargin.selectedMarketAsset
+	);
+
+	if (!marketInfo || !position) throw new Error('Market or position not found');
+
+	const result = await refetchWithComparator(
+		() =>
+			sdk.futures.getFuturesPositions(account!, [
+				{ asset: marketInfo.asset, address: marketInfo.market },
+			]),
+		position.remainingMargin,
+		(existing, next) => {
+			return existing === next[0]?.remainingMargin.toString();
+		}
+	);
+
+	if (result.data[0]) {
+		const serialized = serializeWeiObject(result.data[0] as FuturesPosition) as FuturesPosition<
+			string
+		>;
+		return { position: serialized, wallet: account, futuresType: type };
+	}
+	return null;
 });
 
 export const fetchDailyVolumes = createAsyncThunk<FuturesVolumes<string>, void, ThunkConfig>(
@@ -189,8 +232,10 @@ export const depositIsolatedMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 			const tx = await sdk.futures.depositIsolatedMargin(marketInfo.market, amount);
 			dispatch(updateTransactionHash(tx.hash));
 			await tx.wait();
-			dispatch(fetchIsolatedMarginPositions());
+			dispatch(refetchPosition('isolated_margin'));
 			dispatch(setOpenModal(null));
+			// TODO: More reliable balance updates
+			setTimeout(() => dispatch(fetchBalances()), 1000);
 		} catch (err) {
 			dispatch(handleTransactionError(err.message));
 			throw err;
@@ -217,8 +262,10 @@ export const withdrawIsolatedMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 			const tx = await sdk.futures.withdrawIsolatedMargin(marketInfo.market, amount);
 			dispatch(updateTransactionHash(tx.hash));
 			await tx.wait();
-			dispatch(fetchIsolatedMarginPositions());
+			dispatch(refetchPosition('isolated_margin'));
 			dispatch(setOpenModal(null));
+			// TODO: More reliable balance updates
+			setTimeout(() => dispatch(fetchBalances()), 1000);
 		} catch (err) {
 			dispatch(handleTransactionError(err.message));
 			throw err;
@@ -263,7 +310,10 @@ const submitCMTransferTransaction = async (
 				onTxConfirmed: () => {
 					dispatch(updateTransactionStatus(TransactionStatus.Confirmed));
 					dispatch(fetchCrossMarginBalanceInfo());
+					dispatch(refetchPosition('cross_margin'));
 					dispatch(setOpenModal(null));
+					// TODO: More reliable balance fetching
+					setTimeout(() => dispatch(fetchBalances()), 1000);
 				},
 			});
 		}

@@ -10,7 +10,7 @@ import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Select from 'components/Select';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import { FuturesPosition } from 'sdk/types/futures';
-import { selectSusdBalanceWei } from 'state/balances/selectors';
+import { selectSusdBalance } from 'state/balances/selectors';
 import { setFuturesAccountType as setFuturesAccountTypeRedux } from 'state/futures/reducer';
 import {
 	selectCrossMarginPositions,
@@ -40,7 +40,7 @@ const BalanceActions: FC = () => {
 	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
 	const setFuturesAccountType = useSetRecoilState(futuresAccountTypeState);
 	const portfolio = useAppSelector(selectFuturesPortfolio);
-	const susdWalletBalance = useAppSelector(selectSusdBalanceWei);
+	const susdWalletBalance = useAppSelector(selectSusdBalance);
 	const dispatch = useAppDispatch();
 
 	const setMarketConfig = useCallback(

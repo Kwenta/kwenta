@@ -20,7 +20,7 @@ type Props = {
 };
 
 export default function ClosePositionModalIsolatedMargin({ onDismiss }: Props) {
-	const { handleRefetch, refetchUntilUpdate } = useRefetchContext();
+	const { handleRefetch } = useRefetchContext();
 	const { useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const gasSpeed = useRecoilValue(gasSpeedState);
@@ -60,7 +60,7 @@ export default function ClosePositionModalIsolatedMargin({ onDismiss }: Props) {
 					onDismiss();
 					resetTradeState();
 					handleRefetch('close-position');
-					refetchUntilUpdate('account-margin-change');
+					handleRefetch('account-margin-change');
 				},
 			});
 		}

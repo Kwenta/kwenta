@@ -15,6 +15,7 @@ import {
 	fetchIsolatedMarginPositions,
 	fetchMarkets,
 	fetchDailyVolumes,
+	refetchPosition,
 } from './actions';
 import { FundingRate, FuturesState, FuturesTransaction } from './types';
 
@@ -62,7 +63,6 @@ const initialState: FuturesState = {
 		selectedLeverage: DEFAULT_LEVERAGE,
 		showCrossMarginOnboard: false,
 		tradeInputs: ZERO_STATE_CM_TRADE_INPUTS,
-		position: undefined,
 		positions: {},
 		balanceInfo: {
 			freeMargin: '0',
@@ -76,7 +76,6 @@ const initialState: FuturesState = {
 		orderType: 'market',
 		selectedLeverage: DEFAULT_LEVERAGE,
 		tradeInputs: ZERO_STATE_TRADE_INPUTS,
-		position: undefined,
 		positions: {},
 	},
 };
@@ -202,6 +201,19 @@ const futuresSlice = createSlice({
 		});
 		builder.addCase(fetchIsolatedMarginPositions.rejected, (futuresState) => {
 			futuresState.queryStatuses.crossMarginPositions = FetchStatus.Error;
+		});
+
+		// Refetch selected position
+		builder.addCase(refetchPosition.fulfilled, (futuresState, action) => {
+			const { positions } = futuresState.isolatedMargin;
+			if (action.payload && positions[action.payload.wallet]) {
+				const existingPositions = [...positions[action.payload.wallet]];
+				const index = existingPositions.findIndex(
+					(p) => p.asset === action.payload!.position.asset
+				);
+				existingPositions[index] = action.payload.position;
+				futuresState.isolatedMargin.positions[action.payload.wallet] = existingPositions;
+			}
 		});
 	},
 });

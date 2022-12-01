@@ -1,4 +1,4 @@
-import Wei, { wei } from '@synthetixio/wei';
+import { wei } from '@synthetixio/wei';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -10,6 +10,7 @@ import CustomInput from 'components/Input/CustomInput';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
+import { selectSusdBalance } from 'state/balances/selectors';
 import { depositIsolatedMargin, withdrawIsolatedMargin } from 'state/futures/actions';
 import {
 	selectIsolatedTransferError,
@@ -23,18 +24,18 @@ import { formatDollars, zeroBN } from 'utils/formatters/number';
 type Props = {
 	onDismiss(): void;
 	defaultTab: 'deposit' | 'withdraw';
-	sUSDBalance: Wei;
 };
 
 const PLACEHOLDER = '$0.00';
 
-const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, sUSDBalance, defaultTab }) => {
+const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab }) => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
 	const position = useAppSelector(selectPosition);
 	const submitting = useAppSelector(selectIsSubmittingIsolatedTransfer);
 	const txError = useAppSelector(selectIsolatedTransferError);
+	const susdBalance = useAppSelector(selectSusdBalance);
 
 	const minDeposit = useMemo(() => {
 		const accessibleMargin = position?.accessibleMargin ?? zeroBN;
@@ -45,7 +46,7 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, sUSDBalance, 
 	const [amount, setAmount] = useState('');
 	const [transferType, setTransferType] = useState(defaultTab === 'deposit' ? 0 : 1);
 
-	const susdBal = transferType === 0 ? sUSDBalance : position?.accessibleMargin || zeroBN;
+	const susdBal = transferType === 0 ? susdBalance : position?.accessibleMargin || zeroBN;
 	const accessibleMargin = useMemo(() => position?.accessibleMargin ?? zeroBN, [
 		position?.accessibleMargin,
 	]);

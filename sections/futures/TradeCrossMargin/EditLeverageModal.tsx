@@ -48,7 +48,7 @@ type DepositMarginModalProps = {
 
 export default function EditLeverageModal({ onDismiss, editMode }: DepositMarginModalProps) {
 	const { t } = useTranslation();
-	const { handleRefetch, refetchUntilUpdate } = useRefetchContext();
+	const { handleRefetch } = useRefetchContext();
 	const {
 		selectedLeverage,
 		onLeverageChange,
@@ -136,7 +136,7 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 							try {
 								resetTradeState();
 								handleRefetch('modify-position');
-								refetchUntilUpdate('account-margin-change');
+								handleRefetch('account-margin-change');
 								setSubmitting(false);
 								onDismiss();
 							} catch (err) {
@@ -172,7 +172,6 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 		onLeverageChange,
 		submitCrossMarginOrder,
 		setError,
-		refetchUntilUpdate,
 		handleRefetch,
 		onDismiss,
 	]);

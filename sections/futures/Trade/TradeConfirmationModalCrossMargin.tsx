@@ -26,7 +26,7 @@ import TradeConfirmationModal from './TradeConfirmationModal';
 
 export default function TradeConfirmationModalCrossMargin() {
 	const { t } = useTranslation();
-	const { handleRefetch, refetchUntilUpdate } = useRefetchContext();
+	const { handleRefetch } = useRefetchContext();
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const { estimateEthersContractTxCost } = useEstimateGasCost();
 
@@ -91,7 +91,7 @@ export default function TradeConfirmationModalCrossMargin() {
 					onTxConfirmed: () => {
 						resetTradeState();
 						handleRefetch('modify-position');
-						refetchUntilUpdate('account-margin-change');
+						handleRefetch('account-margin-change');
 					},
 				});
 				onDismiss();
@@ -102,16 +102,7 @@ export default function TradeConfirmationModalCrossMargin() {
 				setError(t('common.transaction.transaction-failed'));
 			}
 		}
-	}, [
-		gasLimit,
-		setError,
-		handleRefetch,
-		refetchUntilUpdate,
-		resetTradeState,
-		onDismiss,
-		submitCrossMarginOrder,
-		t,
-	]);
+	}, [gasLimit, setError, handleRefetch, resetTradeState, onDismiss, submitCrossMarginOrder, t]);
 
 	return (
 		<TradeConfirmationModal

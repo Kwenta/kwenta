@@ -6,7 +6,7 @@ import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
 import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesPositionHistory';
 import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
-import useSynthBalances from 'queries/synths/useSynthBalances';
+import { fetchBalances } from 'state/balances/actions';
 import { fetchCrossMarginBalanceInfo, fetchFuturesPositionsForType } from 'state/futures/actions';
 import { useAppDispatch } from 'state/hooks';
 import { futuresAccountState, futuresAccountTypeState } from 'store/futures';
@@ -20,10 +20,7 @@ type RefetchType =
 	| 'account-margin-change'
 	| 'cross-margin-account-change';
 
-type RefetchUntilType =
-	| 'wallet-balance-change'
-	| 'cross-margin-account-change'
-	| 'account-margin-change';
+type RefetchUntilType = 'cross-margin-account-change';
 
 type RefetchContextType = {
 	handleRefetch: (refetchType: RefetchType, timeout?: number) => void;
@@ -40,7 +37,6 @@ export const RefetchProvider: React.FC = ({ children }) => {
 	const { crossMarginAddress } = useRecoilValue(futuresAccountState);
 	const dispatch = useAppDispatch();
 
-	const synthsBalancesQuery = useSynthBalances();
 	const openOrdersQuery = useGetFuturesOpenOrders();
 	const positionHistoryQuery = useGetFuturesPositionHistory();
 	const queryCrossMarginAccount = useQueryCrossMarginAccount();
@@ -72,10 +68,10 @@ export const RefetchProvider: React.FC = ({ children }) => {
 					dispatch(fetchFuturesPositionsForType());
 					positionHistoryQuery.refetch();
 					openOrdersQuery.refetch();
-					synthsBalancesQuery.refetch();
+					dispatch(fetchBalances());
 					break;
 				case 'account-margin-change':
-					synthsBalancesQuery.refetch();
+					dispatch(fetchBalances());
 					break;
 				case 'cross-margin-account-change':
 					queryCrossMarginAccount();
@@ -86,16 +82,6 @@ export const RefetchProvider: React.FC = ({ children }) => {
 
 	const refetchUntilUpdate = async (refetchType: RefetchUntilType) => {
 		switch (refetchType) {
-			case 'account-margin-change':
-				return Promise.all([
-					refetchWithComparator(
-						synthsBalancesQuery.refetch,
-						synthsBalancesQuery,
-						(prev, next) =>
-							!next.data ||
-							prev?.data.susdWalletBalance?.toString() === next?.data.susdWalletBalance?.toString()
-					),
-				]);
 			case 'cross-margin-account-change':
 				return refetchWithComparator(
 					queryCrossMarginAccount,

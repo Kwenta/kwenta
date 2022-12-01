@@ -1,6 +1,5 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
@@ -10,7 +9,6 @@ import { setOpenModal } from 'state/app/reducer';
 import { selectOpenModal } from 'state/app/selectors';
 import { selectMarketInfo, selectPosition } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { balancesState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 
 import TransferIsolatedMarginModal from './TransferIsolatedMarginModal';
@@ -18,7 +16,6 @@ import TransferIsolatedMarginModal from './TransferIsolatedMarginModal';
 const MarketActions: React.FC = () => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
-	const { susdWalletBalance } = useRecoilValue(balancesState);
 	const dispatch = useAppDispatch();
 	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
@@ -54,14 +51,12 @@ const MarketActions: React.FC = () => {
 			{openModal === 'futures_isolated_transfer' && (
 				<TransferIsolatedMarginModal
 					defaultTab="deposit"
-					sUSDBalance={susdWalletBalance}
 					onDismiss={() => dispatch(setOpenModal(null))}
 				/>
 			)}
 
 			{openModal === 'futures_isolated_transfer' && (
 				<TransferIsolatedMarginModal
-					sUSDBalance={susdWalletBalance}
 					defaultTab="withdraw"
 					onDismiss={() => dispatch(setOpenModal(null))}
 				/>

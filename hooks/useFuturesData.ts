@@ -112,7 +112,7 @@ const useFuturesData = () => {
 	const getPotentialTrade = useGetFuturesPotentialTradeDetails();
 	const crossMarginBalanceInfo = useAppSelector(selectCrossMarginBalanceInfo);
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
-	const { handleRefetch, refetchUntilUpdate } = useRefetchContext();
+	const { handleRefetch } = useRefetchContext();
 
 	const networkId = useAppSelector(selectNetwork);
 	const markets = useAppSelector(selectMarkets);
@@ -156,7 +156,7 @@ const useFuturesData = () => {
 	useEffect(() => {
 		// Poll isolated margin data
 		if (markets.length && wallet && selectedAccountType === 'isolated_margin') {
-			startPolling('fetchIsolatedMarginPositions', fetchIsolatedMarginPositions, 60000);
+			startPolling('fetchIsolatedMarginPositions', fetchIsolatedMarginPositions, 30000);
 		}
 		// eslint-disable-next-line
 	}, [wallet, markets.length, selectedAccountType, networkId]);
@@ -164,7 +164,7 @@ const useFuturesData = () => {
 	useEffect(() => {
 		// Poll cross margin data
 		if (markets.length && wallet && crossMarginAddress) {
-			startPolling('fetchCrossMarginAccountData', fetchCrossMarginAccountData, 60000);
+			startPolling('fetchCrossMarginAccountData', fetchCrossMarginAccountData, 30000);
 		}
 		// eslint-disable-next-line
 	}, [wallet, markets.length, crossMarginAddress, networkId]);
@@ -579,7 +579,7 @@ const useFuturesData = () => {
 				onTxConfirmed: () => {
 					resetTradeState();
 					handleRefetch('modify-position');
-					refetchUntilUpdate('account-margin-change');
+					handleRefetch('account-margin-change');
 				},
 			});
 		}
