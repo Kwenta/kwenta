@@ -1,10 +1,11 @@
 import { wei } from '@synthetixio/wei';
+import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
-import Text from 'components/Text';
 import { EXTERNAL_LINKS } from 'constants/links';
+import { Heading } from 'sections/earn/common';
 import { useAppSelector } from 'state/hooks';
 import {
 	selectClaimableBalance,
@@ -19,7 +20,18 @@ import { truncateNumbers } from 'utils/formatters/number';
 
 import { SplitStakingCard } from './common';
 
-const StakingPortfolio = () => {
+export enum StakeTab {
+	Staking = 'staking',
+	Escrow = 'escrow',
+	TradingRewards = 'trading-rewards',
+	Redemption = 'redemption',
+}
+
+type StakingPortfolioProps = {
+	setCurrentTab(tab: StakeTab): void;
+};
+
+const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
 	const { t } = useTranslation();
 	const kwentaBalance = useAppSelector(selectKwentaBalance);
 	const escrowedKwentaBalance = useAppSelector(selectEscrowedKwentaBalance);
@@ -34,11 +46,13 @@ const StakingPortfolio = () => {
 				key: 'Liquid',
 				title: t('dashboard.stake.portfolio.liquid'),
 				value: truncateNumbers(kwentaBalance, 2),
+				onClick: () => setCurrentTab(StakeTab.Staking),
 			},
 			{
 				key: 'Escrow',
 				title: t('dashboard.stake.portfolio.escrow'),
 				value: truncateNumbers(escrowedKwentaBalance.sub(stakedEscrowedKwentaBalance), 2),
+				onClick: () => setCurrentTab(StakeTab.Escrow),
 			},
 		],
 		[
@@ -46,11 +60,13 @@ const StakingPortfolio = () => {
 				key: 'Staked',
 				title: t('dashboard.stake.portfolio.staked'),
 				value: truncateNumbers(stakedKwentaBalance, 2),
+				onClick: () => setCurrentTab(StakeTab.Staking),
 			},
 			{
 				key: 'StakedEscrow',
 				title: t('dashboard.stake.portfolio.staked-escrow'),
 				value: truncateNumbers(stakedEscrowedKwentaBalance, 2),
+				onClick: () => setCurrentTab(StakeTab.Escrow),
 			},
 		],
 		[
@@ -58,11 +74,13 @@ const StakingPortfolio = () => {
 				key: 'Claimable',
 				title: t('dashboard.stake.portfolio.claimable'),
 				value: truncateNumbers(claimableBalance, 2),
+				onClick: () => setCurrentTab(StakeTab.Staking),
 			},
 			{
 				key: 'Vestable',
 				title: t('dashboard.stake.portfolio.vestable'),
 				value: truncateNumbers(wei(totalVestable), 2),
+				onClick: () => setCurrentTab(StakeTab.Escrow),
 			},
 		],
 	];
@@ -70,19 +88,19 @@ const StakingPortfolio = () => {
 	return (
 		<StakingPortfolioContainer>
 			<FlexDivRowCentered>
-				<Header variant="h4">{t('dashboard.stake.portfolio.title')}</Header>
+				<Heading>{t('dashboard.stake.portfolio.title')}</Heading>
 				<StyledTabButton
 					isRounded
-					title={'Staking Docs'}
-					active={true}
+					title="Staking Docs"
+					active
 					onClick={() => window.open(EXTERNAL_LINKS.Docs.Staking, '_blank')}
 				/>
 			</FlexDivRowCentered>
 			<CardsContainer>
 				{DEFAULT_CARDS.map((card, i) => (
 					<SplitStakingCard key={i}>
-						{card.map(({ key, title, value }) => (
-							<div key={key}>
+						{card.map(({ key, title, value, onClick }) => (
+							<div key={key} onClick={onClick}>
 								<div className="title">{title}</div>
 								<div className="value">{value}</div>
 							</div>
@@ -108,12 +126,6 @@ const StakingPortfolioContainer = styled.div`
 	${media.greaterThan('mdUp')`
 		margin-bottom: 100px;
 	`}
-`;
-
-const Header = styled(Text.Heading)`
-	color: ${(props) => props.theme.colors.selectedTheme.text.value};
-	margin-bottom: 15px;
-	font-variant: all-small-caps;
 `;
 
 const CardsContainer = styled.div`

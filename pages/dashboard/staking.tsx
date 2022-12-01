@@ -1,9 +1,9 @@
 import Head from 'next/head';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import DashboardLayout from 'sections/dashboard/DashboardLayout';
-import StakingPortfolio from 'sections/dashboard/Stake/StakingPortfolio';
+import StakingPortfolio, { StakeTab } from 'sections/dashboard/Stake/StakingPortfolio';
 import StakingTabs from 'sections/dashboard/Stake/StakingTabs';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { fetchEscrowData, fetchStakingData } from 'state/staking/actions';
@@ -14,6 +14,7 @@ const StakingPage: StakingComponent = () => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const walletAddress = useAppSelector(({ wallet }) => wallet.walletAddress);
+	const [currentTab, setCurrentTab] = useState(StakeTab.Staking);
 
 	useEffect(() => {
 		if (!!walletAddress) {
@@ -22,13 +23,20 @@ const StakingPage: StakingComponent = () => {
 		}
 	}, [dispatch, walletAddress]);
 
+	const handleChangeTab = useCallback(
+		(tab: StakeTab) => () => {
+			setCurrentTab(tab);
+		},
+		[]
+	);
+
 	return (
 		<>
 			<Head>
 				<title>{t('dashboard-stake.page-title')}</title>
 			</Head>
-			<StakingPortfolio />
-			<StakingTabs />
+			<StakingPortfolio setCurrentTab={setCurrentTab} />
+			<StakingTabs currentTab={currentTab} onChangeTab={handleChangeTab} />
 		</>
 	);
 };

@@ -16,6 +16,7 @@ import {
 	selectIsUnstakingEscrowedKwenta,
 	selectStakedEscrowedKwentaBalance,
 } from 'state/staking/selectors';
+import { FlexDivRowCentered, numericValueCSS } from 'styles/common';
 import { toWei, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import { StakingCard } from '../common';
@@ -139,9 +140,12 @@ const EscrowInputCard: FC = () => {
 			<StakeInputContainer>
 				<StakeInputHeader>
 					<div>{t('dashboard.stake.tabs.stake-table.ekwenta-token')}</div>
-					<div className="max" onClick={onMaxClick}>
-						{t('dashboard.stake.tabs.stake-table.balance')} {balance}
-					</div>
+					<StyledFlexDivRowCentered>
+						<div>{t('dashboard.stake.tabs.stake-table.balance')}</div>
+						<div className="max" onClick={onMaxClick}>
+							{balance}
+						</div>
+					</StyledFlexDivRowCentered>
 				</StakeInputHeader>
 				<StyledInput value={amount} onChange={handleChange} />
 			</StakeInputContainer>
@@ -156,6 +160,10 @@ const EscrowInputCard: FC = () => {
 	);
 };
 
+const StyledFlexDivRowCentered = styled(FlexDivRowCentered)`
+	column-gap: 5px;
+`;
+
 const StakingInputCardContainer = styled(StakingCard)`
 	min-height: 125px;
 	max-height: 250px;
@@ -169,11 +177,13 @@ const StakeInputHeader = styled.div`
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 10px;
-	color: ${(props) => props.theme.colors.selectedTheme.text.label};
+	color: ${(props) => props.theme.colors.selectedTheme.title};
 	font-size: 14px;
 
 	.max {
 		cursor: pointer;
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+		${numericValueCSS};
 	}
 `;
 

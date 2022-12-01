@@ -798,11 +798,17 @@ export default class ExchangeService {
 		const baseCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey).toLowerCase();
 		const tokenAddresses = [quoteCurrencyTokenAddress, baseCurrencyTokenAddress];
 
+		return this.batchGetCoingeckoPrices(tokenAddresses);
+	}
+
+	public async batchGetCoingeckoPrices(tokenAddresses: string[], include24hrChange = false) {
 		const platform = this.sdk.context.isL2 ? 'optimistic-ethereum' : 'ethereum';
 		const response = await axios.get<PriceResponse>(
 			`${CG_BASE_API_URL}/simple/token_price/${platform}?contract_addresses=${tokenAddresses
 				.join(',')
-				.replace(ETH_ADDRESS, ETH_COINGECKO_ADDRESS)}&vs_currencies=usd`
+				.replace(ETH_ADDRESS, ETH_COINGECKO_ADDRESS)}&vs_currencies=usd${
+				include24hrChange ? '&include_24hr_change=true' : ''
+			}`
 		);
 		return response.data;
 	}

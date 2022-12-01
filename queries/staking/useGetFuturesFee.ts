@@ -2,45 +2,40 @@ import { useQuery, UseQueryOptions } from 'react-query';
 
 import { DEFAULT_NUMBER_OF_FUTURES_FEE } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
+import useIsL2 from 'hooks/useIsL2';
 import { FUTURES_ENDPOINT_OP_MAINNET } from 'queries/futures/constants';
-import { getFuturesTrades } from 'queries/futures/subgraph';
+import { getFuturesAggregateStats } from 'queries/futures/subgraph';
 
-const useGetFuturesFeeForAccount = (
-	account: string,
+const useGetFuturesFee = (
 	start: number,
 	end: number,
 	options?: UseQueryOptions<Number | null> & { forceAccount: boolean }
 ) => {
-	return useQuery<any>(
-		QUERY_KEYS.Staking.FuturesFee(account || null, start, end),
-		async () => {
-			if (!account) return null;
+	const isL2 = useIsL2();
 
-			const response = await getFuturesTrades(
+	return useQuery<any>(
+		QUERY_KEYS.Staking.TotalFuturesFee(start, end),
+		async () => {
+			const response = await getFuturesAggregateStats(
 				FUTURES_ENDPOINT_OP_MAINNET,
 				{
 					first: DEFAULT_NUMBER_OF_FUTURES_FEE,
 					where: {
-						account: account,
 						timestamp_gt: start,
 						timestamp_lt: end,
-						accountType: 'cross_margin',
 					},
 					orderDirection: 'desc',
 					orderBy: 'timestamp',
 				},
 				{
 					timestamp: true,
-					account: true,
-					abstractAccount: true,
-					accountType: true,
-					feesPaid: true,
+					feesCrossMarginAccounts: true,
 				}
 			);
 			return response;
 		},
-		{ enabled: !!account, ...options }
+		{ enabled: isL2, ...options }
 	);
 };
 
-export default useGetFuturesFeeForAccount;
+export default useGetFuturesFee;

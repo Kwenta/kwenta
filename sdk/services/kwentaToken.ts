@@ -5,6 +5,7 @@ import { ethers } from 'ethers';
 import moment from 'moment';
 import KwentaSDK from 'sdk';
 
+import { DEFAULT_NUMBER_OF_FUTURES_FEE } from 'constants/defaults';
 import { FLEEK_BASE_URL, FLEEK_STORAGE_BUCKET } from 'queries/files/constants';
 import { ContractName } from 'sdk/contracts';
 import { formatTruncatedDuration } from 'utils/formatters/date';
@@ -221,7 +222,7 @@ export default class KwentaTokenService {
 		const schedules = await RewardEscrow.getVestingSchedules(
 			this.sdk.context.walletAddress,
 			0,
-			1000
+			DEFAULT_NUMBER_OF_FUTURES_FEE
 		);
 
 		const vestingSchedules = schedules.filter((schedule) => schedule.escrowAmount.gt(0));

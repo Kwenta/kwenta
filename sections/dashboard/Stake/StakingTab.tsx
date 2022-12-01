@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
-import { getStakingApy } from 'queries/staking/utils';
+import { getApy } from 'queries/staking/utils';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { getReward } from 'state/staking/actions';
 import { selectClaimableBalance } from 'state/staking/selectors';
@@ -23,7 +23,7 @@ const StakingTab = () => {
 		weekCounter: staking.weekCounter,
 	}));
 
-	const apy = useMemo(() => getStakingApy(totalStakedBalance, weekCounter), [
+	const apy = useMemo(() => getApy(totalStakedBalance, weekCounter), [
 		totalStakedBalance,
 		weekCounter,
 	]);
@@ -96,6 +96,10 @@ const CardGrid = styled.div`
 
 	.value {
 		margin-top: 5px;
+	}
+
+	.title {
+		color: ${(props) => props.theme.colors.selectedTheme.title};
 	}
 `;
 

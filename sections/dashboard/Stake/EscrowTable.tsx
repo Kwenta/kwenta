@@ -261,6 +261,7 @@ const StyledTable = styled(Table)`
 
 const TableHeader = styled.div`
 	font-size: 10px;
+	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.selectedTheme.text.header};
 `;
 

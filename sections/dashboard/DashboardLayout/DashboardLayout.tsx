@@ -144,7 +144,7 @@ const TabGroupTitle = styled.div`
 	font-size: 13px;
 	text-transform: uppercase;
 	font-family: ${(props) => props.theme.fonts.black};
-	color: ${(props) => props.theme.colors.common.primaryGold};
+	color: ${(props) => props.theme.colors.selectedTheme.yellow};
 
 	&:not(:first-of-type) {
 		margin-top: 65px;

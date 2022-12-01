@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -16,6 +16,7 @@ import media from 'styles/media';
 
 import EscrowTab from './EscrowTab';
 import RedemptionTab from './RedemptionTab';
+import { StakeTab } from './StakingPortfolio';
 import StakingTab from './StakingTab';
 import TradingRewardsTab from './TradingRewardsTab';
 
@@ -26,29 +27,18 @@ type EpochValue = {
 	label: string;
 };
 
-enum StakeTab {
-	Staking = 'staking',
-	TradingRewards = 'trading-rewards',
-	Escrow = 'escrow',
-	Redemption = 'redemption',
-}
+type StakingTabsProp = {
+	currentTab: StakeTab;
+	onChangeTab(tab: StakeTab): () => void;
+};
 
-const StakingTabs: React.FC = () => {
+const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab, onChangeTab }) => {
 	const { t } = useTranslation();
 	const isL2 = useIsL2();
 	const dispatch = useAppDispatch();
 
-	const [activeTab, setActiveTab] = useState(StakeTab.Staking);
-
 	const epochData = useAppSelector(selectEpochData);
 	const selectedEpoch = useAppSelector(selectSelectedEpoch);
-
-	const handleTabSwitch = useCallback(
-		(tab: StakeTab) => () => {
-			setActiveTab(tab);
-		},
-		[]
-	);
 
 	const handleChangeEpoch = useCallback(
 		(value: EpochValue) => () => {
@@ -72,8 +62,13 @@ const StakingTabs: React.FC = () => {
 				<TabButtons>
 					<TabButton
 						title={t('dashboard.stake.tabs.staking.title')}
-						onClick={handleTabSwitch(StakeTab.Staking)}
-						active={activeTab === StakeTab.Staking}
+						onClick={onChangeTab(StakeTab.Staking)}
+						active={currentTab === StakeTab.Staking}
+					/>
+					<TabButton
+						title={t('dashboard.stake.tabs.escrow.title')}
+						onClick={onChangeTab(StakeTab.Escrow)}
+						active={currentTab === StakeTab.Escrow}
 					/>
 					<TabButton
 						title={
@@ -81,21 +76,16 @@ const StakingTabs: React.FC = () => {
 								? t('dashboard.stake.tabs.trading-rewards.title')
 								: t('dashboard.stake.tabs.trading-rewards.mobile-title')
 						}
-						onClick={handleTabSwitch(StakeTab.TradingRewards)}
-						active={activeTab === StakeTab.TradingRewards}
-					/>
-					<TabButton
-						title={t('dashboard.stake.tabs.escrow.title')}
-						onClick={handleTabSwitch(StakeTab.Escrow)}
-						active={activeTab === StakeTab.Escrow}
+						onClick={onChangeTab(StakeTab.TradingRewards)}
+						active={currentTab === StakeTab.TradingRewards}
 					/>
 					<TabButton
 						title={t('dashboard.stake.tabs.redemption.title')}
-						onClick={handleTabSwitch(StakeTab.Redemption)}
-						active={activeTab === StakeTab.Redemption}
+						onClick={onChangeTab(StakeTab.Redemption)}
+						active={currentTab === StakeTab.Redemption}
 					/>
 				</TabButtons>
-				<StyledFlexDivRowCentered active={activeTab === StakeTab.TradingRewards}>
+				<StyledFlexDivRowCentered active={currentTab === StakeTab.TradingRewards}>
 					{window.innerWidth < 768 && (
 						<PeriodLabel>{t('dashboard.stake.tabs.staking.current-trading-period')}</PeriodLabel>
 					)}
@@ -116,20 +106,20 @@ const StakingTabs: React.FC = () => {
 			</StakingTabsHeader>
 
 			<div>
-				<TabPanel name={StakeTab.Staking} activeTab={activeTab}>
+				<TabPanel name={StakeTab.Staking} activeTab={currentTab}>
 					<StakingTab />
 				</TabPanel>
-				<TabPanel name={StakeTab.TradingRewards} activeTab={activeTab}>
+				<TabPanel name={StakeTab.TradingRewards} activeTab={currentTab}>
 					<TradingRewardsTab
 						period={selectedEpoch.period}
 						start={selectedEpoch.start}
 						end={selectedEpoch.end}
 					/>
 				</TabPanel>
-				<TabPanel name={StakeTab.Escrow} activeTab={activeTab}>
+				<TabPanel name={StakeTab.Escrow} activeTab={currentTab}>
 					<EscrowTab />
 				</TabPanel>
-				<TabPanel name={StakeTab.Redemption} activeTab={activeTab}>
+				<TabPanel name={StakeTab.Redemption} activeTab={currentTab}>
 					<RedemptionTab />
 				</TabPanel>
 			</div>
@@ -148,6 +138,7 @@ const StakingSelect = styled(Select)`
 	.react-select__menu,
 	.react-select__menu-list {
 		border-radius: 20px;
+		background: ${(props) => props.theme.colors.selectedTheme.surfaceFill};
 	}
 
 	.react-select__value-container {

@@ -1,33 +1,35 @@
 import { wei } from '@synthetixio/wei';
-import { useCallback, useEffect, useMemo } from 'react';
+import { formatEther } from 'ethers/lib/utils.js';
+import { useCallback, useEffect, useMemo, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import HelpIcon from 'assets/svg/app/question-mark.svg';
 import Button from 'components/Button';
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import Connector from 'containers/Connector';
+import useGetFuturesFee from 'queries/staking/useGetFuturesFee';
 import useGetFuturesFeeForAccount from 'queries/staking/useGetFuturesFeeForAccount';
-import useGetSpotFeeForAccount from 'queries/staking/useGetSpotFeeForAccount';
+import {
+	FuturesFeeForAccountProps,
+	FuturesFeeProps,
+	TradingRewardProps,
+} from 'queries/staking/utils';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { claimMultipleRewards, fetchClaimableRewards } from 'state/staking/actions';
 import { selectResetTime } from 'state/staking/selectors';
 import { FlexDivRow } from 'styles/common';
 import media from 'styles/media';
 import { formatTruncatedDuration } from 'utils/formatters/date';
-import { formatDollars, truncateNumbers, zeroBN } from 'utils/formatters/number';
+import { formatDollars, formatPercent, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import { KwentaLabel, StakingCard } from './common';
 
-type TradingRewardProps = {
-	period: number | string;
-	start?: number;
-	end?: number;
-};
-
-const TradingRewardsTab: React.FC<TradingRewardProps> = ({
-	period = 'ALL',
+const TradingRewardsTab: FC<TradingRewardProps> = ({
+	period = 0,
 	start = 0,
 	end = Math.floor(Date.now() / 1000),
-}: TradingRewardProps) => {
+}) => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
 	const dispatch = useAppDispatch();
@@ -35,25 +37,23 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 	const resetTime = useAppSelector(selectResetTime);
 	const totalRewards = useAppSelector(({ staking }) => staking.totalRewards);
 
-	const SpotFeeQuery = useGetSpotFeeForAccount(walletAddress!, start, end);
-	const spotFeePaid = useMemo(() => {
-		const t = SpotFeeQuery.data?.synthExchanges ?? [];
-
-		return t
-			.map((trade: any) => Number(trade.feesInUSD))
-			.reduce((acc: number, curr: number) => acc + curr, 0);
-	}, [SpotFeeQuery.data]);
-
-	const FuturesFeeQuery = useGetFuturesFeeForAccount(walletAddress!, start, end);
+	const futuresFeeQuery = useGetFuturesFeeForAccount(walletAddress!, start, end);
 	const futuresFeePaid = useMemo(() => {
-		const t = FuturesFeeQuery.data ?? [];
+		const t = futuresFeeQuery.data ?? [];
 
 		return t
-			.map((trade: any) => Number(trade.feesPaid) / 1e18)
-			.reduce((acc: number, curr: number) => acc + curr, 0);
-	}, [FuturesFeeQuery.data]);
+			.map((trade: FuturesFeeForAccountProps) => formatEther(trade.feesPaid.toString()))
+			.reduce((acc: number, curr: number) => wei(acc).add(wei(curr)), zeroBN);
+	}, [futuresFeeQuery.data]);
 
-	const feePaid = useMemo(() => spotFeePaid + futuresFeePaid, [futuresFeePaid, spotFeePaid]);
+	const totalFuturesFeeQuery = useGetFuturesFee(start, end);
+	const totalFuturesFeePaid = useMemo(() => {
+		const t = totalFuturesFeeQuery.data ?? [];
+
+		return t
+			.map((trade: FuturesFeeProps) => formatEther(trade.feesCrossMarginAccounts.toString()))
+			.reduce((acc: number, curr: number) => wei(acc).add(wei(curr)), zeroBN);
+	}, [totalFuturesFeeQuery.data]);
 
 	useEffect(() => {
 		dispatch(fetchClaimableRewards());
@@ -62,6 +62,12 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 	const handleClaim = useCallback(() => {
 		dispatch(claimMultipleRewards());
 	}, [dispatch]);
+
+	const ratio = useMemo(
+		() =>
+			wei(totalFuturesFeePaid).gt(0) ? wei(futuresFeePaid).div(wei(totalFuturesFeePaid)) : zeroBN,
+		[futuresFeePaid, totalFuturesFeePaid]
+	);
 
 	return (
 		<TradingRewardsContainer>
@@ -78,7 +84,9 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 							{t('dashboard.stake.tabs.trading-rewards.trading-activity-reset')}
 						</div>
 						<div className="value">
-							{formatTruncatedDuration(resetTime - new Date().getTime() / 1000)}
+							{resetTime > new Date().getTime() / 1000
+								? formatTruncatedDuration(resetTime - new Date().getTime() / 1000)
+								: t('dashboard.stake.tabs.trading-rewards.pending-for-rewards')}
 						</div>
 					</div>
 				</CardGrid>
@@ -90,29 +98,57 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 			</CardGridContainer>
 			<CardGridContainer>
 				<CardGrid>
-					<div>
-						<div className="title">
-							{t('dashboard.stake.tabs.trading-rewards.spot-fee-paid', { EpochPeriod: period })}
+					<CustomStyledTooltip
+						preset="bottom"
+						width={'260px'}
+						height={'auto'}
+						content={t('dashboard.stake.tabs.trading-rewards.trading-rewards-tooltip')}
+					>
+						<div>
+							<WithCursor cursor="help">
+								<div className="title">
+									{t('dashboard.stake.tabs.trading-rewards.future-fee-paid', {
+										EpochPeriod: period,
+									})}
+								</div>
+								<div className="value">
+									{formatDollars(futuresFeePaid, { minDecimals: 2 })}
+									<HelpIcon />
+								</div>
+							</WithCursor>
 						</div>
-						<div className="value">{formatDollars(spotFeePaid, { minDecimals: 4 })}</div>
-					</div>
-					<div>
-						<div className="title">
-							{t('dashboard.stake.tabs.trading-rewards.future-fee-paid', { EpochPeriod: period })}
-						</div>
-						<div className="value">{formatDollars(futuresFeePaid, { minDecimals: 4 })}</div>
-					</div>
+					</CustomStyledTooltip>
 					<div>
 						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.fees-paid', { EpochPeriod: period })}
 						</div>
-						<div className="value">{formatDollars(feePaid, { minDecimals: 4 })}</div>
+						<div className="value">{formatDollars(totalFuturesFeePaid, { minDecimals: 2 })}</div>
+					</div>
+					<div>
+						<div className="title">
+							{t('dashboard.stake.tabs.trading-rewards.estimated-fee-share', {
+								EpochPeriod: period,
+							})}
+						</div>
+						<div className="value">{formatPercent(ratio, { minDecimals: 2 })}</div>
 					</div>
 				</CardGrid>
 			</CardGridContainer>
 		</TradingRewardsContainer>
 	);
 };
+
+const CustomStyledTooltip = styled(StyledTooltip)`
+	padding: 0px 10px 0px;
+	${media.lessThan('md')`
+		width: 310px;
+		left: -5px;
+	`}
+`;
+
+const WithCursor = styled.div<{ cursor: 'help' }>`
+	cursor: ${(props) => props.cursor};
+`;
 
 const StyledFlexDivRow = styled(FlexDivRow)`
 	column-gap: 15px;
@@ -136,6 +172,18 @@ const CardGrid = styled.div`
 	.value {
 		margin-top: 5px;
 	}
+
+	svg {
+		margin-left: 5px;
+	}
+
+	.title {
+		color: ${(props) => props.theme.colors.selectedTheme.title};
+	}
+
+	${media.lessThan('md')`
+		column-gap: 10px;
+	`}
 `;
 
 const TradingRewardsContainer = styled.div`

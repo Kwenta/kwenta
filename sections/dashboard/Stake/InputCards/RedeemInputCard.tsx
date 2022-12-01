@@ -11,6 +11,7 @@ import {
 	selectVeKwentaBalance,
 	selectVKwentaBalance,
 } from 'state/staking/selectors';
+import { FlexDivRowCentered, numericValueCSS } from 'styles/common';
 import { truncateNumbers } from 'utils/formatters/number';
 
 import { StakingCard } from '../common';
@@ -62,9 +63,10 @@ const RedeemInputCard: FC<RedeemInputCardProps> = ({ inputLabel, isVKwenta }) =>
 			<StakeInputContainer>
 				<StakeInputHeader>
 					<div>{inputLabel}</div>
-					<div>
-						{t('dashboard.stake.tabs.stake-table.balance')} {truncateNumbers(balance, 4)}
-					</div>
+					<StyledFlexDivRowCentered>
+						<div>{t('dashboard.stake.tabs.stake-table.balance')}</div>
+						<div className="max">{truncateNumbers(balance, 4)}</div>
+					</StyledFlexDivRowCentered>
 				</StakeInputHeader>
 			</StakeInputContainer>
 			<Button fullWidth variant="flat" size="sm" disabled={balance.eq(0)} onClick={submitRedeem}>
@@ -73,6 +75,10 @@ const RedeemInputCard: FC<RedeemInputCardProps> = ({ inputLabel, isVKwenta }) =>
 		</StakingInputCardContainer>
 	);
 };
+
+const StyledFlexDivRowCentered = styled(FlexDivRowCentered)`
+	column-gap: 5px;
+`;
 
 const StakingInputCardContainer = styled(StakingCard)`
 	min-height: 125px;
@@ -87,13 +93,12 @@ const StakeInputHeader = styled.div`
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 10px;
-	color: ${(props) => props.theme.colors.selectedTheme.text.label};
+	color: ${(props) => props.theme.colors.selectedTheme.title};
 	font-size: 14px;
 
 	.max {
-		text-transform: uppercase;
-		font-family: ${(props) => props.theme.fonts.bold};
-		cursor: pointer;
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+		${numericValueCSS};
 	}
 `;
 
