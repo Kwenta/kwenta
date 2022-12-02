@@ -1,6 +1,6 @@
 import Wei, { wei } from '@synthetixio/wei';
 import { Contract as EthCallContract } from 'ethcall';
-import { BigNumber, ethers, utils as ethersUtils } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { formatBytes32String, parseBytes32String } from 'ethers/lib/utils';
 import request, { gql } from 'graphql-request';
 import KwentaSDK from 'sdk';
@@ -25,6 +25,7 @@ import {
 	FundingRateUpdate,
 	FuturesMarket,
 	FuturesMarketAsset,
+	FuturesMarketKey,
 	FuturesOrder,
 	FuturesVolumes,
 	MarketClosureReason,
@@ -80,23 +81,22 @@ export default class FuturesService {
 		]);
 
 		const filteredMarkets = markets.filter((m: any) => {
-			const asset = parseBytes32String(m.asset) as FuturesMarketAsset;
+			const marketKey = parseBytes32String(m.key) as FuturesMarketKey;
 			const market = enabledMarkets.find((market) => {
-				return asset === market.asset;
+				return marketKey === market.key;
 			});
 			return !!market;
 		}) as FuturesMarketData.MarketSummaryStructOutput[];
 
-		const assetKeys = filteredMarkets.map((m: any) => {
-			const asset = parseBytes32String(m.asset) as FuturesMarketAsset;
-			return formatBytes32String(MarketKeyByAsset[asset]);
+		const marketKeys = filteredMarkets.map((m: any) => {
+			return m.key;
 		});
 
-		const currentRoundIdCalls = assetKeys.map((key: string) =>
+		const currentRoundIdCalls = marketKeys.map((key: string) =>
 			ExchangeRates.getCurrentRoundId(key)
 		);
 
-		const marketLimitCalls = assetKeys.map((key: string) =>
+		const marketLimitCalls = marketKeys.map((key: string) =>
 			FuturesMarketSettings.maxMarketValueUSD(key)
 		);
 
@@ -108,12 +108,13 @@ export default class FuturesService {
 		const currentRoundIds = responses.slice(0, currentRoundIdCalls.length);
 		const marketLimits = responses.slice(currentRoundIdCalls.length);
 
-		const { suspensions, reasons } = await SystemStatus.getFuturesMarketSuspensions(assetKeys);
+		const { suspensions, reasons } = await SystemStatus.getFuturesMarketSuspensions(marketKeys);
 
 		const futuresMarkets = filteredMarkets.map(
 			(
 				{
 					market,
+					key,
 					asset,
 					currentFundingRate,
 					feeRates,
@@ -126,7 +127,7 @@ export default class FuturesService {
 				i: number
 			): FuturesMarket => ({
 				market,
-				marketKey: MarketKeyByAsset[parseBytes32String(asset) as FuturesMarketAsset],
+				marketKey: parseBytes32String(key) as FuturesMarketKey,
 				marketName: getMarketName(parseBytes32String(asset) as FuturesMarketAsset),
 				asset: parseBytes32String(asset) as FuturesMarketAsset,
 				assetHex: asset,
@@ -170,7 +171,7 @@ export default class FuturesService {
 	// TODO: types
 	public async getFuturesPositions(
 		address: string, // Cross margin or EOA address
-		futuresMarkets: { asset: FuturesMarketAsset; address: string }[]
+		futuresMarkets: { asset: FuturesMarketAsset; marketKey: FuturesMarketKey; address: string }[]
 	) {
 		const marketDataContract = this.sdk.context.mutliCallContracts.FuturesMarketData;
 
@@ -181,12 +182,9 @@ export default class FuturesService {
 		const positionCalls = [];
 		const liquidationCalls = [];
 
-		for (const { address: marketAddress, asset } of futuresMarkets) {
+		for (const { address: marketAddress, marketKey } of futuresMarkets) {
 			positionCalls.push(
-				marketDataContract.positionDetailsForMarketKey(
-					ethersUtils.formatBytes32String(MarketKeyByAsset[asset]),
-					address
-				)
+				marketDataContract.positionDetailsForMarketKey(formatBytes32String(marketKey), address)
 			);
 			const marketContract = new EthCallContract(marketAddress, FuturesMarketABI);
 			liquidationCalls.push(marketContract.canLiquidate(address));
@@ -204,8 +202,9 @@ export default class FuturesService {
 		const positions = positionDetails
 			.map((position, ind) => {
 				const canLiquidate = canLiquidateState[ind];
+				const marketKey = futuresMarkets[ind].marketKey;
 				const asset = futuresMarkets[ind].asset;
-				return mapFuturesPosition(position, canLiquidate, asset);
+				return mapFuturesPosition(position, canLiquidate, asset, marketKey);
 			})
 			.filter(({ remainingMargin }) => remainingMargin.gt(0));
 

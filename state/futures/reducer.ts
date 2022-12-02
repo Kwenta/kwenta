@@ -2,12 +2,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { DEFAULT_FUTURES_MARGIN_TYPE, DEFAULT_LEVERAGE } from 'constants/defaults';
 import { TransactionStatus } from 'sdk/types/common';
-import { FuturesMarket } from 'sdk/types/futures';
+import { FuturesMarket, FuturesMarketKey } from 'sdk/types/futures';
 import { PositionSide } from 'sections/futures/types';
 import { accountType } from 'state/helpers';
 import { FetchStatus } from 'state/types';
 import { isUserDeniedError } from 'utils/formatters/error';
-import { FuturesMarketAsset } from 'utils/futures';
+import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
 
 import {
 	fetchCrossMarginBalanceInfo,
@@ -63,6 +63,7 @@ const initialState: FuturesState = {
 	crossMargin: {
 		account: undefined,
 		selectedMarketAsset: FuturesMarketAsset.sETH,
+		selectedMarketKey: FuturesMarketKey.sETH,
 		leverageSide: PositionSide.LONG,
 		orderType: 'market',
 		selectedLeverage: DEFAULT_LEVERAGE,
@@ -83,6 +84,7 @@ const initialState: FuturesState = {
 	},
 	isolatedMargin: {
 		selectedMarketAsset: FuturesMarketAsset.sETH,
+		selectedMarketKey: FuturesMarketKey.sETH,
 		leverageSide: PositionSide.LONG,
 		orderType: 'market',
 		selectedLeverage: DEFAULT_LEVERAGE,
@@ -98,6 +100,8 @@ const futuresSlice = createSlice({
 	reducers: {
 		setMarketAsset: (state, action) => {
 			state[accountType(state.selectedType)].selectedMarketAsset = action.payload;
+			state[accountType(state.selectedType)].selectedMarketKey =
+				MarketKeyByAsset[action.payload as FuturesMarketAsset];
 			if (state.selectedType === 'cross_margin') {
 				state.crossMargin.selectedMarketAsset = action.payload;
 				state.crossMargin.tradeInputs = ZERO_STATE_CM_TRADE_INPUTS;
@@ -221,7 +225,7 @@ const futuresSlice = createSlice({
 			if (action.payload && positions[action.payload.wallet]) {
 				const existingPositions = [...positions[action.payload.wallet]];
 				const index = existingPositions.findIndex(
-					(p) => p.asset === action.payload!.position.asset
+					(p) => p.marketKey === action.payload!.position.marketKey
 				);
 				existingPositions[index] = action.payload.position;
 				futuresState.isolatedMargin.positions[action.payload.wallet] = existingPositions;

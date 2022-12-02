@@ -88,6 +88,7 @@ export type CrossMarginState = {
 	orderType: CrossMarginOrderType;
 	selectedLeverage: string;
 	leverageSide: PositionSide;
+	selectedMarketKey: FuturesMarketKey;
 	selectedMarketAsset: FuturesMarketAsset;
 	showCrossMarginOnboard: boolean;
 	position?: FuturesPosition<string>;
@@ -107,6 +108,7 @@ export type IsolatedMarginState = {
 	orderType: IsolatedMarginOrderType;
 	selectedLeverage: string;
 	leverageSide: PositionSide;
+	selectedMarketKey: FuturesMarketKey;
 	selectedMarketAsset: FuturesMarketAsset;
 	position?: FuturesPosition<string>;
 	positions: {
