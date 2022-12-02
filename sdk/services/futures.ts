@@ -12,10 +12,7 @@ import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
 import { BPS_CONVERSION } from 'sdk/constants/futures';
 import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { getContractsByNetwork } from 'sdk/contracts';
-import ExchangeRatesABI from 'sdk/contracts/abis/ExchangeRates.json';
 import FuturesMarketABI from 'sdk/contracts/abis/FuturesMarket.json';
-import FuturesMarketDataABI from 'sdk/contracts/abis/FuturesMarketData.json';
-import FuturesMarketSettingsABI from 'sdk/contracts/abis/FuturesMarketSettings.json';
 import {
 	CrossMarginBase__factory,
 	FuturesMarketData,
@@ -66,25 +63,20 @@ export default class FuturesService {
 				? getContractsByNetwork(networkOverride.networkId, networkOverride.provider)
 				: this.sdk.context.contracts;
 
-		const { FuturesMarketSettings, SystemStatus, ExchangeRates, FuturesMarketData } = contracts;
+		const { SystemStatus } = contracts;
+		const {
+			FuturesMarketSettings,
+			ExchangeRates,
+			FuturesMarketData,
+		} = this.sdk.context.mutliCallContracts;
 
 		if (!FuturesMarketData || !FuturesMarketSettings || !SystemStatus || !ExchangeRates) {
 			throw new Error(UNSUPPORTED_NETWORK);
 		}
 
-		const FuturesMarketDataEthCall = new EthCallContract(
-			FuturesMarketData.address,
-			FuturesMarketDataABI
-		);
-		const ExchangeRatesEthCall = new EthCallContract(ExchangeRates.address, ExchangeRatesABI);
-		const FuturesMarketSettingsEthCall = new EthCallContract(
-			FuturesMarketSettings.address,
-			FuturesMarketSettingsABI
-		);
-
 		const [markets, globals] = await this.sdk.context.multicallProvider.all([
-			FuturesMarketDataEthCall.allMarketSummaries(),
-			FuturesMarketDataEthCall.globals(),
+			FuturesMarketData.allMarketSummaries(),
+			FuturesMarketData.globals(),
 		]);
 
 		const filteredMarkets = markets.filter((m: any) => {
@@ -101,11 +93,11 @@ export default class FuturesService {
 		});
 
 		const currentRoundIdCalls = assetKeys.map((key: string) =>
-			ExchangeRatesEthCall.getCurrentRoundId(key)
+			ExchangeRates.getCurrentRoundId(key)
 		);
 
 		const marketLimitCalls = assetKeys.map((key: string) =>
-			FuturesMarketSettingsEthCall.maxMarketValueUSD(key)
+			FuturesMarketSettings.maxMarketValueUSD(key)
 		);
 
 		const responses = await this.sdk.context.multicallProvider.all([
@@ -180,12 +172,11 @@ export default class FuturesService {
 		address: string, // Cross margin or EOA address
 		futuresMarkets: { asset: FuturesMarketAsset; address: string }[]
 	) {
-		const futuresDataAddress = this.sdk.context.contracts.FuturesMarketData?.address;
-		if (!this.sdk.context.isL2 || !futuresDataAddress) {
+		const marketDataContract = this.sdk.context.mutliCallContracts.FuturesMarketData;
+
+		if (!this.sdk.context.isL2 || !marketDataContract) {
 			throw new Error(UNSUPPORTED_NETWORK);
 		}
-
-		const marketDataContract = new EthCallContract(futuresDataAddress, FuturesMarketDataABI);
 
 		const positionCalls = [];
 		const liquidationCalls = [];
@@ -406,7 +397,7 @@ export default class FuturesService {
 	}
 
 	public async getCrossMarginSettings() {
-		const crossMarginBaseSettings = this.sdk.context.ethCallContracts.CrossMarginBaseSettings;
+		const crossMarginBaseSettings = this.sdk.context.mutliCallContracts.CrossMarginBaseSettings;
 		if (!crossMarginBaseSettings) throw new Error(UNSUPPORTED_NETWORK);
 
 		const [tradeFee, limitOrderFee, stopOrderFee] = await this.sdk.context.multicallProvider.all([

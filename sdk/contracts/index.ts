@@ -3,6 +3,9 @@ import { Contract as EthCallContract } from 'ethcall';
 import { Contract, ethers } from 'ethers';
 
 import CrossMarginBaseSettingsABI from './abis/CrossMarginBaseSettings.json';
+import ExchangeRatesABI from './abis/ExchangeRates.json';
+import FuturesMarketDataABI from './abis/FuturesMarketData.json';
+import FuturesMarketSettingsABI from './abis/FuturesMarketSettings.json';
 import { KwentaArrakisVaultABI, StakingRewardsABI } from './abis/main';
 import { ADDRESSES } from './constants';
 import {
@@ -90,7 +93,7 @@ export const getContractsByNetwork = (
 	};
 };
 
-export const getEthCallContractsByNetwork = (networkId: NetworkId) => {
+export const getMultiCallContractsByNetwork = (networkId: NetworkId) => {
 	return {
 		CrossMarginBaseSettings: ADDRESSES.CrossMarginBaseSettings[networkId]
 			? new EthCallContract(
@@ -98,9 +101,18 @@ export const getEthCallContractsByNetwork = (networkId: NetworkId) => {
 					CrossMarginBaseSettingsABI
 			  )
 			: undefined,
+		ExchangeRates: ADDRESSES.ExchangeRates[networkId]
+			? new EthCallContract(ADDRESSES.ExchangeRates[networkId], ExchangeRatesABI)
+			: undefined,
+		FuturesMarketData: ADDRESSES.FuturesMarketData[networkId]
+			? new EthCallContract(ADDRESSES.FuturesMarketData[networkId], FuturesMarketDataABI)
+			: undefined,
+		FuturesMarketSettings: ADDRESSES.FuturesMarketSettings[networkId]
+			? new EthCallContract(ADDRESSES.FuturesMarketSettings[networkId], FuturesMarketSettingsABI)
+			: undefined,
 	};
 };
 
 export type ContractsMap = ReturnType<typeof getContractsByNetwork>;
-export type EthCallContractsMap = ReturnType<typeof getEthCallContractsByNetwork>;
+export type MultiCallContractsMap = ReturnType<typeof getMultiCallContractsByNetwork>;
 export type ContractName = keyof ContractsMap;
