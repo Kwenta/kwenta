@@ -331,6 +331,7 @@ export default class FuturesService {
 			},
 			{
 				id: true,
+				marketKey: true,
 				asset: true,
 				volume: true,
 				trades: true,

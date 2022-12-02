@@ -1,9 +1,15 @@
 import Wei, { wei } from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
+import { parseBytes32String } from 'ethers/lib/utils.js';
 
 import { ETH_UNIT } from 'constants/network';
 import { FuturesAggregateStatResult } from 'queries/futures/subgraph';
-import { FUTURES_ENDPOINTS, MAINNET_MARKETS, TESTNET_MARKETS } from 'sdk/constants/futures';
+import {
+	FUTURES_ENDPOINTS,
+	MAINNET_MARKETS,
+	TESTNET_MARKETS,
+	AGGREGATE_ASSET_KEY,
+} from 'sdk/constants/futures';
 import { SECONDS_PER_DAY } from 'sdk/constants/period';
 import {
 	FundingRateUpdate,
@@ -117,12 +123,14 @@ export const calculateVolumes = (
 	futuresHourlyStats: FuturesAggregateStatResult[]
 ): FuturesVolumes => {
 	const volumes: FuturesVolumes = futuresHourlyStats.reduce(
-		(acc: FuturesVolumes, { asset, volume, trades }) => {
+		(acc: FuturesVolumes, { marketKey, volume, trades }) => {
+			const cleanMarketKey =
+				marketKey !== AGGREGATE_ASSET_KEY ? parseBytes32String(marketKey) : marketKey;
 			return {
 				...acc,
-				[asset]: {
-					volume: volume.div(ETH_UNIT).add(acc[asset]?.volume ?? 0),
-					trades: trades.add(acc[asset]?.trades ?? 0),
+				[cleanMarketKey]: {
+					volume: volume.div(ETH_UNIT).add(acc[cleanMarketKey]?.volume ?? 0),
+					trades: trades.add(acc[cleanMarketKey]?.trades ?? 0),
 				},
 			};
 		},
