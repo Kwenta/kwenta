@@ -1,4 +1,4 @@
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import moment from 'moment';
@@ -7,6 +7,7 @@ import KwentaSDK from 'sdk';
 import { DEFAULT_NUMBER_OF_FUTURES_FEE } from 'constants/defaults';
 import { FLEEK_BASE_URL, FLEEK_STORAGE_BUCKET } from 'queries/files/constants';
 import { ContractName } from 'sdk/contracts';
+import { RewardEscrow as IRewardEscrow } from 'sdk/contracts/types';
 import { formatTruncatedDuration } from 'utils/formatters/date';
 
 import * as sdkErrors from '../common/errors';
@@ -30,13 +31,13 @@ type EpochData = {
 	};
 };
 
-export type EscrowData = {
+export type EscrowData<T = Wei> = {
 	id: number;
 	date: string;
 	time: string;
-	vestable: number;
-	amount: number;
-	fee: number;
+	vestable: T;
+	amount: T;
+	fee: T;
 	status: 'VESTING' | 'VESTED';
 };
 
@@ -190,7 +191,7 @@ export default class KwentaTokenService {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
-		const schedules: any[] = await RewardEscrow.getVestingSchedules(
+		const schedules = await ((RewardEscrow as unknown) as IRewardEscrow).getVestingSchedules(
 			this.sdk.context.walletAddress,
 			0,
 			DEFAULT_NUMBER_OF_FUTURES_FEE
@@ -209,24 +210,24 @@ export default class KwentaTokenService {
 
 		const { escrowData, totalVestable } = vestingSchedules.reduce(
 			(acc, next, i) => {
-				const vestable = Number(ethers.utils.formatEther(vestingEntries[i].quantity));
+				const vestable = wei(vestingEntries[i].quantity);
 				const date = Number(next.endTime) * 1000;
 
-				acc.totalVestable += vestable;
+				acc.totalVestable = acc.totalVestable.add(vestable);
 
 				acc.escrowData.push({
 					id: Number(next.entryID),
 					date: moment(date).format('MM/DD/YY'),
 					time: formatTruncatedDuration(Number(next.endTime) - new Date().getTime() / 1000),
 					vestable,
-					amount: Number(ethers.utils.formatEther(next.escrowAmount)),
-					fee: Number(ethers.utils.formatEther(vestingEntries[i].fee)),
+					amount: wei(next.escrowAmount),
+					fee: wei(vestingEntries[i].fee),
 					status: date > Date.now() ? 'VESTING' : 'VESTED',
 				});
 
 				return acc;
 			},
-			{ escrowData: [] as EscrowData[], totalVestable: 0 }
+			{ escrowData: [] as EscrowData[], totalVestable: wei(0) }
 		);
 
 		return { escrowData, totalVestable };
@@ -382,12 +383,12 @@ export default class KwentaTokenService {
 			(acc, next, i) => {
 				if (!claimed[i]) {
 					acc.claimableRewards.push(next);
-					acc.totalRewards += Number(next[2]) / 1e18;
+					acc.totalRewards = acc.totalRewards.add(wei(next[2]));
 				}
 
 				return acc;
 			},
-			{ claimableRewards: [] as ClaimParams[], totalRewards: 0 }
+			{ claimableRewards: [] as ClaimParams[], totalRewards: wei(0) }
 		);
 
 		return { claimableRewards, totalRewards };

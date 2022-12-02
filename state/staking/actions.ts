@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import KwentaSDK from 'sdk';
 
 import { monitorTransaction } from 'contexts/RelayerContext';
+import { EscrowData } from 'sdk/services/kwentaToken';
 import { FetchStatus, ThunkConfig } from 'state/types';
 
 import { selectPeriods } from './selectors';
@@ -91,11 +92,21 @@ export const redeemToken = createAsyncThunk<void, 'vKwenta' | 'veKwenta', ThunkC
 );
 
 export const fetchEscrowData = createAsyncThunk<
-	Awaited<ReturnType<KwentaSDK['kwentaToken']['getEscrowData']>>,
+	{ escrowData: EscrowData<string>[]; totalVestable: string },
 	void,
 	ThunkConfig
->('staking/fetchEscrowData', (_, { extra: { sdk } }) => {
-	return sdk.kwentaToken.getEscrowData();
+>('staking/fetchEscrowData', async (_, { extra: { sdk } }) => {
+	const { escrowData, totalVestable } = await sdk.kwentaToken.getEscrowData();
+
+	return {
+		escrowData: escrowData.map((e) => ({
+			...e,
+			vestable: e.vestable.toString(),
+			amount: e.amount.toString(),
+			fee: e.fee.toString(),
+		})),
+		totalVestable: totalVestable.toString(),
+	};
 });
 
 export const vestEscrowedRewards = createAsyncThunk<void, number[], ThunkConfig>(
@@ -137,12 +148,20 @@ export const getReward = createAsyncThunk<void, void, ThunkConfig>(
 );
 
 export const fetchClaimableRewards = createAsyncThunk<
-	Awaited<ReturnType<KwentaSDK['kwentaToken']['getClaimableRewards']>>,
+	{
+		claimableRewards: Awaited<
+			ReturnType<KwentaSDK['kwentaToken']['getClaimableRewards']>
+		>['claimableRewards'];
+		totalRewards: string;
+	},
 	void,
 	ThunkConfig
->('staking/fetchClaimableRewards', (_, { getState, extra: { sdk } }) => {
+>('staking/fetchClaimableRewards', async (_, { getState, extra: { sdk } }) => {
 	const periods = selectPeriods(getState());
-	return sdk.kwentaToken.getClaimableRewards(periods);
+
+	const { claimableRewards, totalRewards } = await sdk.kwentaToken.getClaimableRewards(periods);
+
+	return { claimableRewards, totalRewards: totalRewards.toString() };
 });
 
 export const claimMultipleRewards = createAsyncThunk<void, void, ThunkConfig>(

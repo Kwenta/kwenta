@@ -13,6 +13,7 @@ import {
 	selectKwentaBalance,
 	selectStakedEscrowedKwentaBalance,
 	selectStakedKwentaBalance,
+	selectTotalVestable,
 } from 'state/staking/selectors';
 import { FlexDivRowCentered } from 'styles/common';
 import media from 'styles/media';
@@ -38,7 +39,7 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
 	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance);
 	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance);
 	const claimableBalance = useAppSelector(selectClaimableBalance);
-	const totalVestable = useAppSelector(({ staking }) => staking.totalVestable);
+	const totalVestable = useAppSelector(selectTotalVestable);
 
 	const DEFAULT_CARDS = [
 		[
@@ -79,7 +80,7 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
 			{
 				key: 'Vestable',
 				title: t('dashboard.stake.portfolio.vestable'),
-				value: truncateNumbers(wei(totalVestable), 2),
+				value: truncateNumbers(totalVestable, 2),
 				onClick: () => setCurrentTab(StakeTab.Escrow),
 			},
 		],

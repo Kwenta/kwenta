@@ -17,7 +17,7 @@ import {
 } from 'queries/staking/utils';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { claimMultipleRewards, fetchClaimableRewards } from 'state/staking/actions';
-import { selectResetTime } from 'state/staking/selectors';
+import { selectResetTime, selectTotalRewards } from 'state/staking/selectors';
 import { FlexDivRow } from 'styles/common';
 import media from 'styles/media';
 import { formatTruncatedDuration } from 'utils/formatters/date';
@@ -35,7 +35,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 	const dispatch = useAppDispatch();
 
 	const resetTime = useAppSelector(selectResetTime);
-	const totalRewards = useAppSelector(({ staking }) => staking.totalRewards);
+	const totalRewards = useAppSelector(selectTotalRewards);
 
 	const futuresFeeQuery = useGetFuturesFeeForAccount(walletAddress!, start, end);
 	const futuresFeePaid = useMemo(() => {
@@ -77,7 +77,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.claimable-rewards-all')}
 						</div>
-						<KwentaLabel>{truncateNumbers(wei(totalRewards) ?? zeroBN, 4)}</KwentaLabel>
+						<KwentaLabel>{truncateNumbers(totalRewards, 4)}</KwentaLabel>
 					</div>
 					<div>
 						<div className="title">

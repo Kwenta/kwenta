@@ -1,4 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
+import { wei } from '@synthetixio/wei';
 
 import { getEpochDetails, parseEpochData } from 'queries/staking/utils';
 import { RootState } from 'state/store';
@@ -118,4 +119,14 @@ export const selectIsClaimingRewards = createSelector(
 export const selectIsVestingEscrowedRewards = createSelector(
 	(state: RootState) => state.staking.vestEscrowedRewardsStatus,
 	(vestEscrowedRewardsStatus) => vestEscrowedRewardsStatus === FetchStatus.Loading
+);
+
+export const selectTotalRewards = createSelector(
+	(state: RootState) => state.staking.totalRewards,
+	wei
+);
+
+export const selectTotalVestable = createSelector(
+	(state: RootState) => state.staking.totalVestable,
+	wei
 );

@@ -9,7 +9,7 @@ import { TableCellHead } from 'components/Table/Table';
 import type { EscrowData } from 'sdk/services/kwentaToken';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { vestEscrowedRewards } from 'state/staking/actions';
-import { truncateNumbers } from 'utils/formatters/number';
+import { truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import { StakingCard } from './common';
 import VestConfirmationModal from './VestConfirmationModal';
@@ -47,13 +47,13 @@ const EscrowTable = () => {
 			checkedState.reduce(
 				(acc, current, index) => {
 					if (current) {
-						acc.totalVestable += escrowData[index].vestable;
-						acc.totalFee += escrowData[index].fee;
+						acc.totalVestable = acc.totalVestable.add(escrowData[index].vestable);
+						acc.totalFee = acc.totalFee.add(escrowData[index].fee);
 					}
 
 					return acc;
 				},
-				{ totalVestable: 0, totalFee: 0 }
+				{ totalVestable: zeroBN, totalFee: zeroBN }
 			),
 		[checkedState, escrowData]
 	);
