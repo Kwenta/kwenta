@@ -74,8 +74,10 @@ export const isDecimalFour = (marketKeyOrAsset: string | undefined): boolean =>
 	marketKeyOrAsset === 'DebtRatio';
 
 export enum FuturesMarketKey {
-	sBTC = 'sBTC',
+	sETHPERP = 'sETHPERP',
+	sBTCPERP = 'sBTCPERP',
 	sETH = 'sETH',
+	sBTC = 'sBTC',
 	sLINK = 'sLINK',
 	sSOL = 'sSOL',
 	sAVAX = 'sAVAX',
@@ -116,6 +118,8 @@ export enum FuturesMarketAsset {
 }
 
 export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
+	[FuturesMarketKey.sBTCPERP]: FuturesMarketAsset.sBTC,
+	[FuturesMarketKey.sETHPERP]: FuturesMarketAsset.sETH,
 	[FuturesMarketKey.sBTC]: FuturesMarketAsset.sBTC,
 	[FuturesMarketKey.sETH]: FuturesMarketAsset.sETH,
 	[FuturesMarketKey.sLINK]: FuturesMarketAsset.sLINK,
@@ -137,8 +141,11 @@ export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
 } as const;
 
 export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
-	[FuturesMarketAsset.sBTC]: FuturesMarketKey.sBTC,
-	[FuturesMarketAsset.sETH]: FuturesMarketKey.sETH,
+	// perps v2
+	[FuturesMarketAsset.sBTC]: FuturesMarketKey.sBTCPERP,
+	[FuturesMarketAsset.sETH]: FuturesMarketKey.sETHPERP,
+
+	// perps v1
 	[FuturesMarketAsset.sLINK]: FuturesMarketKey.sLINK,
 	[FuturesMarketAsset.SOL]: FuturesMarketKey.sSOL,
 	[FuturesMarketAsset.AVAX]: FuturesMarketKey.sAVAX,
@@ -165,15 +172,28 @@ export interface FuturesMarketConfig {
 }
 
 export const markets: Record<FuturesMarketKey, FuturesMarketConfig> = {
+	// perps v2
+	[FuturesMarketKey.sBTCPERP]: {
+		key: FuturesMarketKey.sBTCPERP,
+		asset: FuturesMarketAsset.sBTC,
+		supports: 'testnet',
+	},
+	[FuturesMarketKey.sETHPERP]: {
+		key: FuturesMarketKey.sETHPERP,
+		asset: FuturesMarketAsset.sETH,
+		supports: 'testnet',
+	},
+
+	// perps v1
 	[FuturesMarketKey.sBTC]: {
 		key: FuturesMarketKey.sBTC,
 		asset: FuturesMarketAsset.sBTC,
-		supports: 'both',
+		supports: 'mainnet',
 	},
 	[FuturesMarketKey.sETH]: {
 		key: FuturesMarketKey.sETH,
 		asset: FuturesMarketAsset.sETH,
-		supports: 'both',
+		supports: 'mainnet',
 	},
 	[FuturesMarketKey.sLINK]: {
 		key: FuturesMarketKey.sLINK,

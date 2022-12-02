@@ -59,6 +59,8 @@ export type FundingRateResponse = {
 };
 
 export enum FuturesMarketKey {
+	sBTCPERP = 'sBTCPERP',
+	sETHPERP = 'sETHPERP',
 	sBTC = 'sBTC',
 	sETH = 'sETH',
 	sLINK = 'sLINK',
