@@ -10,6 +10,14 @@ export const useAppDispatch: () => AppDispatch = useDispatch;
 
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
+const activePolls: Record<string, number> = {};
+
+const onPollRemoved = (id: string) => {
+	if (activePolls[id]) {
+		activePolls[id] = activePolls[id] - 1;
+	}
+};
+
 // TODO: explore potentially move polling to the sdk and register listeners from the app
 // The sdk would only poll when there are registered listeners
 
@@ -21,8 +29,14 @@ export const useStartPollingAction = () => {
 		(id: string, action: () => AsyncThunkAction<any, any, any>, intervalTime = 20000) => {
 			if (intervalRefs.current[id]) {
 				clearInterval(intervalRefs.current[id]);
+				onPollRemoved(id);
 			}
 			dispatch(action());
+			activePolls[id] = activePolls[id] ? activePolls[id] + 1 : 1;
+			if (activePolls[id] > 1) {
+				// eslint-disable-next-line
+				console.warn('There are multiple polling processes for ', id);
+			}
 			const interval = setInterval(() => {
 				dispatch(action());
 			}, intervalTime);
@@ -35,8 +49,10 @@ export const useStartPollingAction = () => {
 	useEffect(() => {
 		const refs = intervalRefs.current;
 		return () => {
-			Object.values(refs).forEach((i) => {
-				clearInterval(i);
+			Object.keys(refs).forEach((id) => {
+				const ref = refs[id];
+				clearInterval(ref);
+				onPollRemoved(id);
 			});
 		};
 	}, []);

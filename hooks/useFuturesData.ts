@@ -24,11 +24,7 @@ import { monitorTransaction } from 'contexts/RelayerContext';
 import { KWENTA_TRACKING_CODE, ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
 import { PositionSide, FuturesTradeInputs, FuturesAccountType } from 'queries/futures/types';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
-import {
-	fetchIsolatedMarginPositions,
-	fetchCrossMarginAccountData,
-	fetchSharedFuturesData,
-} from 'state/futures/actions';
+import { usePollFuturesData } from 'state/futures/hooks';
 import {
 	setCrossMarginTradeInputs,
 	setFuturesAccountType,
@@ -41,11 +37,9 @@ import {
 	selectPosition,
 	selectMaxLeverage,
 	selectAboveMaxLeverage,
-	selectMarkets,
 } from 'state/futures/selectors';
 import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
-import { useAppSelector, useAppDispatch, useStartPollingAction } from 'state/hooks';
-import { selectNetwork, selectWallet } from 'state/wallet/selectors';
+import { useAppSelector, useAppDispatch } from 'state/hooks';
 import {
 	crossMarginMarginDeltaState,
 	tradeFeesState,
@@ -96,28 +90,18 @@ const ZERO_FEES = {
 const useFuturesData = () => {
 	const router = useRouter();
 	const { t } = useTranslation();
-	const {
-		defaultSynthetixjs: synthetixjs,
-		network,
-		provider,
-		providerReady,
-	} = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs, network, provider } = Connector.useContainer();
 	const { useSynthetixTxn } = useSynthetixQueries();
 	const { crossMarginAvailable } = useRecoilValue(futuresAccountState);
-
+	usePollFuturesData();
 	const dispatch = useAppDispatch();
 	const crossMarginAddress = useAppSelector(selectCrossMarginAccount);
-
-	const startPolling = useStartPollingAction();
 
 	const getPotentialTrade = useGetFuturesPotentialTradeDetails();
 	const crossMarginBalanceInfo = useAppSelector(selectCrossMarginBalanceInfo);
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const { handleRefetch } = useRefetchContext();
 
-	const networkId = useAppSelector(selectNetwork);
-	const markets = useAppSelector(selectMarkets);
-	const wallet = useAppSelector(selectWallet);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const [tradeInputs, setTradeInputs] = useRecoilState(futuresTradeInputsState);
 	const setSimulatedTrade = useSetRecoilState(simulatedTradeState);
@@ -147,30 +131,6 @@ const useFuturesData = () => {
 
 	const [maxFee, setMaxFee] = useState(zeroBN);
 	const [error, setError] = useState<string | null>(null);
-
-	useEffect(() => {
-		// Poll shared futures data
-		if (providerReady) {
-			startPolling('fetchSharedFuturesData', fetchSharedFuturesData, 60000);
-		}
-		// eslint-disable-next-line
-	}, [providerReady, networkId]);
-
-	useEffect(() => {
-		// Poll isolated margin data
-		if (markets.length && wallet && selectedAccountType === 'isolated_margin') {
-			startPolling('fetchIsolatedMarginPositions', fetchIsolatedMarginPositions, 30000);
-		}
-		// eslint-disable-next-line
-	}, [wallet, markets.length, selectedAccountType, networkId]);
-
-	useEffect(() => {
-		// Poll cross margin data
-		if (markets.length && wallet && crossMarginAddress) {
-			startPolling('fetchCrossMarginAccountData', fetchCrossMarginAccountData, 30000);
-		}
-		// eslint-disable-next-line
-	}, [wallet, markets.length, crossMarginAddress, networkId]);
 
 	const tradePrice = useMemo(() => wei(isAdvancedOrder ? orderPrice || zeroBN : marketAssetRate), [
 		orderPrice,
