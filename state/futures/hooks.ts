@@ -26,11 +26,7 @@ export const usePollFuturesData = () => {
 	const { providerReady } = Connector.useContainer();
 
 	useEffect(() => {
-		if (providerReady) {
-			dispatch(fetchCrossMarginSettings());
-			dispatch(fetchIsolatedMarginAccountData());
-			dispatch(fetchCrossMarginAccountData());
-		}
+		if (providerReady) dispatch(fetchCrossMarginSettings());
 	}, [providerReady, networkId, dispatch]);
 
 	useEffect(() => {
@@ -40,6 +36,15 @@ export const usePollFuturesData = () => {
 		}
 		// eslint-disable-next-line
 	}, [providerReady, networkId]);
+
+	useEffect(() => {
+		// Fetch all positions on first load
+		if (markets.length && wallet) {
+			dispatch(fetchIsolatedMarginAccountData());
+			dispatch(fetchCrossMarginAccountData());
+		}
+		// eslint-disable-next-line
+	}, [wallet, markets.length, networkId]);
 
 	useEffect(() => {
 		// Poll isolated margin data
