@@ -111,6 +111,9 @@ const ManagePosition: React.FC = () => {
 			marketAssetRate,
 			orderType
 		);
+		// TODO: improve error handling
+		return null;
+
 		if (!leverageValid) return 'invalid_leverage';
 		if (!!error) return error;
 		if (marketInfo?.isSuspended) return 'market_suspended';

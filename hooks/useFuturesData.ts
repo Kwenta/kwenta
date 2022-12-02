@@ -68,6 +68,7 @@ import {
 import logError from 'utils/logError';
 
 import useCrossMarginAccountContracts from './useCrossMarginContracts';
+import usePerpsContracts from './usePerpsContracts';
 import usePersistedRecoilState from './usePersistedRecoilState';
 
 const ZERO_TRADE_INPUTS = {
@@ -100,6 +101,7 @@ const useFuturesData = () => {
 	const getPotentialTrade = useGetFuturesPotentialTradeDetails();
 	const crossMarginBalanceInfo = useAppSelector(selectCrossMarginBalanceInfo);
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
+	const { perpsMarketContract } = usePerpsContracts();
 	const { handleRefetch } = useRefetchContext();
 
 	const marketAsset = useAppSelector(selectMarketAsset);
@@ -387,7 +389,8 @@ const useFuturesData = () => {
 				// Allows us to keep it snappy updating the input values
 				setSimulatedTrade(newTradeInputs);
 			} else {
-				onStagePositionChange(newTradeInputs);
+				// TODO: add estimates on position change
+				// onStagePositionChange(newTradeInputs);
 			}
 		},
 		[
@@ -511,9 +514,19 @@ const useFuturesData = () => {
 		]
 	);
 
-	const submitIsolatedMarginOrder = useCallback(() => {
-		orderTxn.mutate();
-	}, [orderTxn]);
+	const submitIsolatedMarginOrder = useCallback(async () => {
+		if (!perpsMarketContract) return;
+		if (orderType === 'market') {
+			return await perpsMarketContract.modifyPositionWithTracking(
+				wei(1).toBN(), // TODO: remove hard coded size
+				wei(50).toBN(), // TODO: remove hard coded impact delta
+				KWENTA_TRACKING_CODE,
+				{
+					gasLimit: wei(0.000000000001).toBN(), // TODO: remove hard coded gas limit
+				}
+			);
+		}
+	}, [perpsMarketContract, orderType, tradeInputs.nativeSizeDelta]);
 
 	useEffect(() => {
 		if (orderTxn.hash) {

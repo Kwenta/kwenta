@@ -66,12 +66,12 @@ export default class FuturesService {
 
 		const { SystemStatus } = contracts;
 		const {
-			FuturesMarketSettings,
 			ExchangeRates,
 			PerpsV2MarketData,
+			PerpsV2MarketSettings,
 		} = this.sdk.context.mutliCallContracts;
 
-		if (!PerpsV2MarketData || !FuturesMarketSettings || !SystemStatus || !ExchangeRates) {
+		if (!PerpsV2MarketData || !PerpsV2MarketSettings || !SystemStatus || !ExchangeRates) {
 			throw new Error(UNSUPPORTED_NETWORK);
 		}
 
@@ -97,7 +97,7 @@ export default class FuturesService {
 		);
 
 		const marketLimitCalls = marketKeys.map((key: string) =>
-			FuturesMarketSettings.maxMarketValueUSD(key)
+			PerpsV2MarketSettings.maxMarketValue(key)
 		);
 
 		const responses = await this.sdk.context.multicallProvider.all([
@@ -159,7 +159,7 @@ export default class FuturesService {
 				marketSkew: wei(marketSkew),
 				maxLeverage: wei(maxLeverage),
 				marketSize: wei(marketSize),
-				marketLimit: wei(marketLimits[i]),
+				marketLimit: wei(marketLimits[i]).mul(wei(price)),
 				price: wei(price),
 				minInitialMargin: wei(globals.minInitialMargin),
 				keeperDeposit: wei(globals.minKeeperFee),

@@ -155,7 +155,8 @@ export default function TradeConfirmationModal({
 						data-testid="trade-open-position-confirm-order-button"
 						variant="flat"
 						onClick={onConfirmOrder}
-						disabled={!positionDetails || !!disabledReason}
+						// disabled={!positionDetails || !!disabledReason} // TODO: fix disabled reasons
+						disabled={false} // TODO: fix disabled reasons
 					>
 						{disabledReason || t('futures.market.trade.confirmation.modal.confirm-order')}
 					</ConfirmTradeButton>

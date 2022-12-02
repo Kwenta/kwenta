@@ -8,6 +8,7 @@ import FuturesMarketDataABI from './abis/FuturesMarketData.json';
 import FuturesMarketSettingsABI from './abis/FuturesMarketSettings.json';
 import { KwentaArrakisVaultABI, StakingRewardsABI } from './abis/main';
 import PerpsV2MarketDataABI from './abis/PerpsV2MarketData.json';
+import PerpsV2MarketSettingsABI from './abis/PerpsV2MarketSettings.json';
 import { ADDRESSES } from './constants';
 import {
 	CrossMarginAccountFactory__factory,
@@ -18,6 +19,7 @@ import {
 	FuturesMarketData__factory,
 	FuturesMarketSettings__factory,
 	PerpsV2MarketData__factory,
+	PerpsV2MarketSettings__factory,
 	Synthetix__factory,
 	SynthRedeemer__factory,
 	SynthSwap__factory,
@@ -63,6 +65,9 @@ export const getContractsByNetwork = (
 			: undefined,
 		PerpsV2MarketData: ADDRESSES.PerpsV2MarketData[networkId]
 			? PerpsV2MarketData__factory.connect(ADDRESSES.PerpsV2MarketData[networkId], provider)
+			: undefined,
+		PerpsV2MarketSettings: ADDRESSES.PerpsV2MarketSettings[networkId]
+			? PerpsV2MarketSettings__factory.connect(ADDRESSES.PerpsV2MarketSettings[networkId], provider)
 			: undefined,
 		FuturesMarketSettings: ADDRESSES.FuturesMarketSettings[networkId]
 			? FuturesMarketSettings__factory.connect(ADDRESSES.FuturesMarketSettings[networkId], provider)
@@ -112,11 +117,14 @@ export const getMultiCallContractsByNetwork = (networkId: NetworkId) => {
 		FuturesMarketData: ADDRESSES.FuturesMarketData[networkId]
 			? new EthCallContract(ADDRESSES.FuturesMarketData[networkId], FuturesMarketDataABI)
 			: undefined,
+		FuturesMarketSettings: ADDRESSES.FuturesMarketSettings[networkId]
+			? new EthCallContract(ADDRESSES.FuturesMarketSettings[networkId], FuturesMarketSettingsABI)
+			: undefined,
 		PerpsV2MarketData: ADDRESSES.PerpsV2MarketData[networkId]
 			? new EthCallContract(ADDRESSES.PerpsV2MarketData[networkId], PerpsV2MarketDataABI)
 			: undefined,
-		FuturesMarketSettings: ADDRESSES.FuturesMarketSettings[networkId]
-			? new EthCallContract(ADDRESSES.FuturesMarketSettings[networkId], FuturesMarketSettingsABI)
+		PerpsV2MarketSettings: ADDRESSES.PerpsV2MarketSettings[networkId]
+			? new EthCallContract(ADDRESSES.PerpsV2MarketSettings[networkId], PerpsV2MarketSettingsABI)
 			: undefined,
 	};
 };
