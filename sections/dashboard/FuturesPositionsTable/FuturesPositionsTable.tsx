@@ -19,7 +19,12 @@ import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesAccountType } from 'queries/futures/subgraph';
-import { selectFuturesPositions, selectMarketAsset, selectMarkets } from 'state/futures/selectors';
+import {
+	selectCrossMarginPositions,
+	selectIsolatedMarginPositions,
+	selectMarketAsset,
+	selectMarkets,
+} from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { positionHistoryState } from 'store/futures';
 import { formatNumber } from 'utils/formatters/number';
@@ -43,12 +48,14 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 	const isL2 = useIsL2();
 
-	const positions = useAppSelector(selectFuturesPositions);
+	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
+	const crossMarginPositions = useAppSelector(selectCrossMarginPositions);
 	const positionHistory = useRecoilValue(positionHistoryState);
 	const currentMarket = useAppSelector(selectMarketAsset);
 	const futuresMarkets = useAppSelector(selectMarkets);
 
 	let data = useMemo(() => {
+		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions;
 		return positions
 			.map((position) => {
 				const market = futuresMarkets.find((market) => market.asset === position.asset);
@@ -69,7 +76,8 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					position.position && (position?.market?.asset !== currentMarket || showCurrentMarket)
 			);
 	}, [
-		positions,
+		isolatedPositions,
+		crossMarginPositions,
 		accountType,
 		futuresMarkets,
 		positionHistory,
