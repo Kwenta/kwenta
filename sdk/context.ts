@@ -3,7 +3,12 @@ import { Provider as EthCallProvider } from 'ethcall';
 import { ethers } from 'ethers';
 
 import * as sdkErrors from './common/errors';
-import { ContractsMap, getContractsByNetwork } from './contracts';
+import {
+	ContractsMap,
+	MultiCallContractsMap,
+	getContractsByNetwork,
+	getMultiCallContractsByNetwork,
+} from './contracts';
 
 export interface IContext {
 	provider: ethers.providers.Provider;
@@ -20,6 +25,7 @@ export default class Context implements IContext {
 	private context: IContext;
 	public multicallProvider = new EthCallProvider();
 	public contracts: ContractsMap;
+	public mutliCallContracts: MultiCallContractsMap;
 
 	constructor(context: IContext) {
 		this.context = { ...DEFAULT_CONTEXT, ...context };
@@ -32,7 +38,8 @@ export default class Context implements IContext {
 			this.setSigner(context.signer);
 		}
 
-		this.contracts = getContractsByNetwork(context.networkId, context.provider);
+		this.contracts = getContractsByNetwork(context.networkId, context.signer ?? context.provider);
+		this.mutliCallContracts = getMultiCallContractsByNetwork(context.networkId);
 	}
 
 	get networkId() {
@@ -63,6 +70,10 @@ export default class Context implements IContext {
 		return [10, 420].includes(this.networkId);
 	}
 
+	get isMainnet() {
+		return [1, 10].includes(this.networkId);
+	}
+
 	public async setProvider(provider: ethers.providers.Provider) {
 		this.context.provider = provider;
 		this.multicallProvider.init(provider);
@@ -74,11 +85,14 @@ export default class Context implements IContext {
 
 	public setNetworkId(networkId: NetworkId) {
 		this.context.networkId = networkId;
-		this.contracts = getContractsByNetwork(networkId, this.provider);
+		this.contracts = getContractsByNetwork(networkId, this.context.signer ?? this.provider);
+		this.mutliCallContracts = getMultiCallContractsByNetwork(networkId);
 	}
 
 	public async setSigner(signer: ethers.Signer) {
 		this.context.walletAddress = await signer.getAddress();
 		this.context.signer = signer;
+		// Reinit contracts with signer when connected
+		this.contracts = getContractsByNetwork(this.networkId, signer);
 	}
 }

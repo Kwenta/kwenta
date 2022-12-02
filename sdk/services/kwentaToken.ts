@@ -1,6 +1,5 @@
 import { wei } from '@synthetixio/wei';
 import axios from 'axios';
-import { Contract as EthCallContract } from 'ethcall';
 import { ethers } from 'ethers';
 import moment from 'moment';
 import KwentaSDK from 'sdk';
@@ -11,12 +10,6 @@ import { ContractName } from 'sdk/contracts';
 import { formatTruncatedDuration } from 'utils/formatters/date';
 
 import * as sdkErrors from '../common/errors';
-import ERC20ABI from '../contracts/abis/ERC20.json';
-import KwentaArrakisVaultABI from '../contracts/abis/KwentaArrakisVault.json';
-import MultipleMerkleDistributorABI from '../contracts/abis/MultipleMerkleDistributor.json';
-import RewardEscrowABI from '../contracts/abis/RewardEscrow.json';
-import StakingRewardsABI from '../contracts/abis/StakingRewards.json';
-import SupplyScheduleABI from '../contracts/abis/SupplySchedule.json';
 
 const client = axios.create({
 	baseURL: `${FLEEK_BASE_URL}/${FLEEK_STORAGE_BUCKET}/data/`,
@@ -71,17 +64,11 @@ export default class KwentaTokenService {
 	}
 
 	public async getEarnDetails() {
-		const { StakingRewards, KwentaArrakisVault } = this.sdk.context.contracts;
+		const { StakingRewards, KwentaArrakisVault } = this.sdk.context.mutliCallContracts;
 
 		if (!StakingRewards || !KwentaArrakisVault) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
-
-		const StakingRewardsContract = new EthCallContract(StakingRewards.address, StakingRewardsABI);
-		const KwentaArrakisVaultContract = new EthCallContract(
-			KwentaArrakisVault.address,
-			KwentaArrakisVaultABI
-		);
 
 		const [
 			balance,
@@ -92,13 +79,13 @@ export default class KwentaTokenService {
 			lpTokenBalance,
 			allowance,
 		]: ethers.BigNumber[] = await this.sdk.context.multicallProvider.all([
-			StakingRewardsContract.balanceOf(this.sdk.context.walletAddress),
-			StakingRewardsContract.earned(this.sdk.context.walletAddress),
-			StakingRewardsContract.periodFinish(),
-			StakingRewardsContract.rewardRate(),
-			StakingRewardsContract.totalSupply(),
-			KwentaArrakisVaultContract.balanceOf(this.sdk.context.walletAddress),
-			KwentaArrakisVaultContract.allowance(this.sdk.context.walletAddress, StakingRewards.address),
+			StakingRewards.balanceOf(this.sdk.context.walletAddress),
+			StakingRewards.earned(this.sdk.context.walletAddress),
+			StakingRewards.periodFinish(),
+			StakingRewards.rewardRate(),
+			StakingRewards.totalSupply(),
+			KwentaArrakisVault.balanceOf(this.sdk.context.walletAddress),
+			KwentaArrakisVault.allowance(this.sdk.context.walletAddress, StakingRewards.address),
 		]);
 
 		return {
@@ -123,17 +110,17 @@ export default class KwentaTokenService {
 	}
 
 	public async getStakingData() {
+		const { vKwentaRedeemer, veKwentaRedeemer } = this.sdk.context.contracts;
+
 		const {
 			RewardEscrow,
+			KwentaStakingRewards,
 			KwentaToken,
 			SupplySchedule,
 			vKwentaToken,
-			MultipleMerkleDistributor,
 			veKwentaToken,
-			KwentaStakingRewards,
-			vKwentaRedeemer,
-			veKwentaRedeemer,
-		} = this.sdk.context.contracts;
+			MultipleMerkleDistributor,
+		} = this.sdk.context.mutliCallContracts;
 
 		if (
 			!RewardEscrow ||
@@ -148,20 +135,6 @@ export default class KwentaTokenService {
 		) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
-
-		const RewardEscrowContract = new EthCallContract(RewardEscrow.address, RewardEscrowABI);
-		const KwentaStakingRewardsContract = new EthCallContract(
-			KwentaStakingRewards.address,
-			StakingRewardsABI
-		);
-		const KwentaTokenContract = new EthCallContract(KwentaToken.address, ERC20ABI);
-		const SupplyScheduleContract = new EthCallContract(SupplySchedule.address, SupplyScheduleABI);
-		const vKwentaTokenContract = new EthCallContract(vKwentaToken.address, ERC20ABI);
-		const MultipleMerkleDistributorContract = new EthCallContract(
-			MultipleMerkleDistributor.address,
-			MultipleMerkleDistributorABI
-		);
-		const veKwentaTokenContract = new EthCallContract(veKwentaToken.address, ERC20ABI);
 
 		const [
 			rewardEscrowBalance,
@@ -178,19 +151,19 @@ export default class KwentaTokenService {
 			veKwentaBalance,
 			veKwentaAllowance,
 		]: ethers.BigNumber[] = await this.sdk.context.multicallProvider.all([
-			RewardEscrowContract.balanceOf(this.sdk.context.walletAddress),
-			KwentaStakingRewardsContract.nonEscrowedBalanceOf(this.sdk.context.walletAddress),
-			KwentaStakingRewardsContract.escrowedBalanceOf(this.sdk.context.walletAddress),
-			KwentaStakingRewardsContract.earned(this.sdk.context.walletAddress),
-			KwentaTokenContract.balanceOf(this.sdk.context.walletAddress),
-			SupplyScheduleContract.weekCounter(),
-			KwentaStakingRewardsContract.totalSupply(),
-			vKwentaTokenContract.balanceOf(this.sdk.context.walletAddress),
-			vKwentaTokenContract.allowance(this.sdk.context.walletAddress, vKwentaRedeemer.address),
-			KwentaTokenContract.allowance(this.sdk.context.walletAddress, KwentaStakingRewards.address),
-			MultipleMerkleDistributorContract.distributionEpoch(),
-			veKwentaTokenContract.balanceOf(this.sdk.context.walletAddress),
-			veKwentaTokenContract.allowance(this.sdk.context.walletAddress, veKwentaRedeemer.address),
+			RewardEscrow.balanceOf(this.sdk.context.walletAddress),
+			KwentaStakingRewards.nonEscrowedBalanceOf(this.sdk.context.walletAddress),
+			KwentaStakingRewards.escrowedBalanceOf(this.sdk.context.walletAddress),
+			KwentaStakingRewards.earned(this.sdk.context.walletAddress),
+			KwentaToken.balanceOf(this.sdk.context.walletAddress),
+			SupplySchedule.weekCounter(),
+			KwentaStakingRewards.totalSupply(),
+			vKwentaToken.balanceOf(this.sdk.context.walletAddress),
+			vKwentaToken.allowance(this.sdk.context.walletAddress, vKwentaRedeemer.address),
+			KwentaToken.allowance(this.sdk.context.walletAddress, KwentaStakingRewards.address),
+			MultipleMerkleDistributor.distributionEpoch(),
+			veKwentaToken.balanceOf(this.sdk.context.walletAddress),
+			veKwentaToken.allowance(this.sdk.context.walletAddress, veKwentaRedeemer.address),
 		]);
 
 		return {
@@ -211,27 +184,22 @@ export default class KwentaTokenService {
 	}
 
 	public async getEscrowData() {
-		const { RewardEscrow } = this.sdk.context.contracts;
+		const { RewardEscrow } = this.sdk.context.mutliCallContracts;
 
 		if (!RewardEscrow) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
-		const RewardEscrowContract = new EthCallContract(RewardEscrow.address, RewardEscrowABI);
-
-		const schedules = await RewardEscrow.getVestingSchedules(
+		const schedules: any[] = await RewardEscrow.getVestingSchedules(
 			this.sdk.context.walletAddress,
 			0,
 			DEFAULT_NUMBER_OF_FUTURES_FEE
 		);
 
-		const vestingSchedules = schedules.filter((schedule) => schedule.escrowAmount.gt(0));
+		const vestingSchedules = schedules.filter((schedule: any) => schedule.escrowAmount.gt(0));
 
-		const calls = vestingSchedules.map((schedule) =>
-			RewardEscrowContract.getVestingEntryClaimable(
-				this.sdk.context.walletAddress,
-				schedule.entryID
-			)
+		const calls = vestingSchedules.map((schedule: any) =>
+			RewardEscrow.getVestingEntryClaimable(this.sdk.context.walletAddress, schedule.entryID)
 		);
 
 		const vestingEntries: {
@@ -376,16 +344,11 @@ export default class KwentaTokenService {
 	}
 
 	public async getClaimableRewards(periods: number[]) {
-		const { MultipleMerkleDistributor } = this.sdk.context.contracts;
+		const { MultipleMerkleDistributor } = this.sdk.context.mutliCallContracts;
 
 		if (!MultipleMerkleDistributor) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
-
-		const MultipleMerkleDistributorContract = new EthCallContract(
-			MultipleMerkleDistributor.address,
-			MultipleMerkleDistributorABI
-		);
 
 		const fileNames = periods
 			.slice(0, -1)
@@ -412,7 +375,7 @@ export default class KwentaTokenService {
 			.filter((x): x is ClaimParams => !!x);
 
 		const claimed: boolean[] = await this.sdk.context.multicallProvider.all(
-			rewards.map((reward) => MultipleMerkleDistributorContract.isClaimed(reward[0], reward[4]))
+			rewards.map((reward) => MultipleMerkleDistributor.isClaimed(reward[0], reward[4]))
 		);
 
 		const { totalRewards, claimableRewards } = rewards.reduce(

@@ -1,6 +1,17 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
+import { Contract as EthCallContract } from 'ethcall';
 import { Contract, ethers } from 'ethers';
 
+import ERC20ABI from '../contracts/abis/ERC20.json';
+import KwentaArrakisVaultABI from '../contracts/abis/KwentaArrakisVault.json';
+import MultipleMerkleDistributorABI from '../contracts/abis/MultipleMerkleDistributor.json';
+import RewardEscrowABI from '../contracts/abis/RewardEscrow.json';
+import SupplyScheduleABI from '../contracts/abis/SupplySchedule.json';
+import CrossMarginBaseSettingsABI from './abis/CrossMarginBaseSettings.json';
+import ExchangeRatesABI from './abis/ExchangeRates.json';
+import FuturesMarketDataABI from './abis/FuturesMarketData.json';
+import FuturesMarketSettingsABI from './abis/FuturesMarketSettings.json';
+import StakingRewardsABI from './abis/StakingRewards.json';
 import { ADDRESSES } from './constants';
 import {
 	CrossMarginAccountFactory__factory,
@@ -35,7 +46,7 @@ export type AllContractsMap = Record<
 
 export const getContractsByNetwork = (
 	networkId: NetworkId,
-	provider: ethers.providers.Provider
+	provider: ethers.providers.Provider | ethers.Signer
 ) => {
 	return {
 		Exchanger: ADDRESSES.Exchanger[networkId]
@@ -117,5 +128,53 @@ export const getContractsByNetwork = (
 	};
 };
 
+export const getMultiCallContractsByNetwork = (networkId: NetworkId) => {
+	return {
+		CrossMarginBaseSettings: ADDRESSES.CrossMarginBaseSettings[networkId]
+			? new EthCallContract(
+					ADDRESSES.CrossMarginBaseSettings[networkId],
+					CrossMarginBaseSettingsABI
+			  )
+			: undefined,
+		ExchangeRates: ADDRESSES.ExchangeRates[networkId]
+			? new EthCallContract(ADDRESSES.ExchangeRates[networkId], ExchangeRatesABI)
+			: undefined,
+		FuturesMarketData: ADDRESSES.FuturesMarketData[networkId]
+			? new EthCallContract(ADDRESSES.FuturesMarketData[networkId], FuturesMarketDataABI)
+			: undefined,
+		FuturesMarketSettings: ADDRESSES.FuturesMarketSettings[networkId]
+			? new EthCallContract(ADDRESSES.FuturesMarketSettings[networkId], FuturesMarketSettingsABI)
+			: undefined,
+		StakingRewards: ADDRESSES.StakingRewards[networkId]
+			? new EthCallContract(ADDRESSES.StakingRewards[networkId], StakingRewardsABI)
+			: undefined,
+		KwentaArrakisVault: ADDRESSES.KwentaArrakisVault[networkId]
+			? new EthCallContract(ADDRESSES.KwentaArrakisVault[networkId], KwentaArrakisVaultABI)
+			: undefined,
+		RewardEscrow: ADDRESSES.RewardEscrow[networkId]
+			? new EthCallContract(ADDRESSES.RewardEscrow[networkId], RewardEscrowABI)
+			: undefined,
+		KwentaStakingRewards: ADDRESSES.KwentaStakingRewards[networkId]
+			? new EthCallContract(ADDRESSES.KwentaStakingRewards[networkId], StakingRewardsABI)
+			: undefined,
+		KwentaToken: ADDRESSES.KwentaToken[networkId]
+			? new EthCallContract(ADDRESSES.KwentaToken[networkId], ERC20ABI)
+			: undefined,
+		MultipleMerkleDistributor: ADDRESSES.TradingRewards[networkId]
+			? new EthCallContract(ADDRESSES.TradingRewards[networkId], MultipleMerkleDistributorABI)
+			: undefined,
+		vKwentaToken: ADDRESSES.vKwentaToken[networkId]
+			? new EthCallContract(ADDRESSES.vKwentaToken[networkId], ERC20ABI)
+			: undefined,
+		veKwentaToken: ADDRESSES.veKwentaToken[networkId]
+			? new EthCallContract(ADDRESSES.veKwentaToken[networkId], ERC20ABI)
+			: undefined,
+		SupplySchedule: ADDRESSES.SupplySchedule[networkId]
+			? new EthCallContract(ADDRESSES.SupplySchedule[networkId], SupplyScheduleABI)
+			: undefined,
+	};
+};
+
 export type ContractsMap = ReturnType<typeof getContractsByNetwork>;
+export type MultiCallContractsMap = ReturnType<typeof getMultiCallContractsByNetwork>;
 export type ContractName = keyof ContractsMap;
