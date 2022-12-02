@@ -26,7 +26,11 @@ export const usePollFuturesData = () => {
 	const { providerReady } = Connector.useContainer();
 
 	useEffect(() => {
-		if (providerReady) dispatch(fetchCrossMarginSettings());
+		if (providerReady) {
+			dispatch(fetchCrossMarginSettings());
+			dispatch(fetchIsolatedMarginAccountData());
+			dispatch(fetchCrossMarginAccountData());
+		}
 	}, [providerReady, networkId, dispatch]);
 
 	useEffect(() => {
