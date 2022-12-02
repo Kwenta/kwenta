@@ -26,8 +26,10 @@ export type FuturesMarket<T = Wei> = {
 	feeRates: {
 		makerFee: T;
 		takerFee: T;
-		makerFeeNextPrice: T;
-		takerFeeNextPrice: T;
+		makerFeeDelayedOrder: T;
+		takerFeeDelayedOrder: T;
+		makerFeeOffchainDelayedOrder: T;
+		takerFeeOffchainDelayedOrder: T;
 	};
 	openInterest?: {
 		shortPct: number;

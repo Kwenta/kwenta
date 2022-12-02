@@ -10,8 +10,8 @@ export const computeNPFee = (market: FuturesMarket | undefined, sizeDelta: Wei) 
 		!market?.price ||
 		!market?.feeRates.takerFee ||
 		!market?.feeRates.makerFee ||
-		!market?.feeRates.takerFeeNextPrice ||
-		!market?.feeRates.makerFeeNextPrice ||
+		!market?.feeRates.takerFeeDelayedOrder ||
+		!market?.feeRates.makerFeeDelayedOrder ||
 		!sizeDelta
 	) {
 		return { commitDeposit: undefined, nextPriceFee: undefined };
@@ -24,10 +24,10 @@ export const computeNPFee = (market: FuturesMarket | undefined, sizeDelta: Wei) 
 
 	if (sameSide(notionalDiff, market.marketSkew)) {
 		staticRate = market.feeRates.takerFee;
-		staticRateNP = market.feeRates.takerFeeNextPrice;
+		staticRateNP = market.feeRates.takerFeeDelayedOrder;
 	} else {
 		staticRate = market.feeRates.makerFee;
-		staticRateNP = market.feeRates.makerFeeNextPrice;
+		staticRateNP = market.feeRates.makerFeeDelayedOrder;
 	}
 
 	return {

@@ -12,6 +12,7 @@ export const FUTURES_ENDPOINTS: Record<number, string> = {
 };
 
 export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
+	// perps v2
 	[FuturesMarketKey.sBTCPERP]: {
 		key: FuturesMarketKey.sBTCPERP,
 		asset: FuturesMarketAsset.sBTC,
@@ -22,6 +23,8 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 		asset: FuturesMarketAsset.sETH,
 		supports: 'testnet',
 	},
+
+	// perps v1
 	[FuturesMarketKey.sBTC]: {
 		key: FuturesMarketKey.sBTC,
 		asset: FuturesMarketAsset.sBTC,

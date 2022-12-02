@@ -7,6 +7,7 @@ import ExchangeRatesABI from './abis/ExchangeRates.json';
 import FuturesMarketDataABI from './abis/FuturesMarketData.json';
 import FuturesMarketSettingsABI from './abis/FuturesMarketSettings.json';
 import { KwentaArrakisVaultABI, StakingRewardsABI } from './abis/main';
+import PerpsV2MarketDataABI from './abis/PerpsV2MarketData.json';
 import { ADDRESSES } from './constants';
 import {
 	CrossMarginAccountFactory__factory,
@@ -16,6 +17,7 @@ import {
 	Exchanger__factory,
 	FuturesMarketData__factory,
 	FuturesMarketSettings__factory,
+	PerpsV2MarketData__factory,
 	Synthetix__factory,
 	SynthRedeemer__factory,
 	SynthSwap__factory,
@@ -58,6 +60,9 @@ export const getContractsByNetwork = (
 			: undefined,
 		FuturesMarketData: ADDRESSES.FuturesMarketData[networkId]
 			? FuturesMarketData__factory.connect(ADDRESSES.FuturesMarketData[networkId], provider)
+			: undefined,
+		PerpsV2MarketData: ADDRESSES.PerpsV2MarketData[networkId]
+			? PerpsV2MarketData__factory.connect(ADDRESSES.PerpsV2MarketData[networkId], provider)
 			: undefined,
 		FuturesMarketSettings: ADDRESSES.FuturesMarketSettings[networkId]
 			? FuturesMarketSettings__factory.connect(ADDRESSES.FuturesMarketSettings[networkId], provider)
@@ -106,6 +111,9 @@ export const getMultiCallContractsByNetwork = (networkId: NetworkId) => {
 			: undefined,
 		FuturesMarketData: ADDRESSES.FuturesMarketData[networkId]
 			? new EthCallContract(ADDRESSES.FuturesMarketData[networkId], FuturesMarketDataABI)
+			: undefined,
+		PerpsV2MarketData: ADDRESSES.PerpsV2MarketData[networkId]
+			? new EthCallContract(ADDRESSES.PerpsV2MarketData[networkId], PerpsV2MarketDataABI)
 			: undefined,
 		FuturesMarketSettings: ADDRESSES.FuturesMarketSettings[networkId]
 			? new EthCallContract(ADDRESSES.FuturesMarketSettings[networkId], FuturesMarketSettingsABI)

@@ -15,7 +15,7 @@ import { getContractsByNetwork } from 'sdk/contracts';
 import FuturesMarketABI from 'sdk/contracts/abis/FuturesMarket.json';
 import {
 	CrossMarginBase__factory,
-	FuturesMarketData,
+	PerpsV2MarketData,
 	FuturesMarket__factory,
 } from 'sdk/contracts/types';
 import { NetworkOverrideOptions } from 'sdk/types/common';
@@ -68,16 +68,16 @@ export default class FuturesService {
 		const {
 			FuturesMarketSettings,
 			ExchangeRates,
-			FuturesMarketData,
+			PerpsV2MarketData,
 		} = this.sdk.context.mutliCallContracts;
 
-		if (!FuturesMarketData || !FuturesMarketSettings || !SystemStatus || !ExchangeRates) {
+		if (!PerpsV2MarketData || !FuturesMarketSettings || !SystemStatus || !ExchangeRates) {
 			throw new Error(UNSUPPORTED_NETWORK);
 		}
 
 		const [markets, globals] = await this.sdk.context.multicallProvider.all([
-			FuturesMarketData.allMarketSummaries(),
-			FuturesMarketData.globals(),
+			PerpsV2MarketData.allMarketSummaries(),
+			PerpsV2MarketData.globals(),
 		]);
 
 		const filteredMarkets = markets.filter((m: any) => {
@@ -86,7 +86,7 @@ export default class FuturesService {
 				return marketKey === market.key;
 			});
 			return !!market;
-		}) as FuturesMarketData.MarketSummaryStructOutput[];
+		}) as PerpsV2MarketData.MarketSummaryStructOutput[];
 
 		const marketKeys = filteredMarkets.map((m: any) => {
 			return m.key;
@@ -136,8 +136,10 @@ export default class FuturesService {
 				feeRates: {
 					makerFee: wei(feeRates.makerFee),
 					takerFee: wei(feeRates.takerFee),
-					makerFeeNextPrice: wei(feeRates.makerFeeNextPrice),
-					takerFeeNextPrice: wei(feeRates.takerFeeNextPrice),
+					makerFeeDelayedOrder: wei(feeRates.makerFeeDelayedOrder),
+					takerFeeDelayedOrder: wei(feeRates.takerFeeDelayedOrder),
+					makerFeeOffchainDelayedOrder: wei(feeRates.makerFeeOffchainDelayedOrder),
+					takerFeeOffchainDelayedOrder: wei(feeRates.takerFeeOffchainDelayedOrder),
 				},
 				openInterest: {
 					shortPct: wei(marketSize).eq(0)

@@ -388,8 +388,10 @@ export const serializeMarkets = (markets: FuturesMarket[]): FuturesMarket<string
 			feeRates: {
 				makerFee: m.feeRates.makerFee.toString(),
 				takerFee: m.feeRates.takerFee.toString(),
-				makerFeeNextPrice: m.feeRates.makerFeeNextPrice.toString(),
-				takerFeeNextPrice: m.feeRates.takerFeeNextPrice.toString(),
+				makerFeeDelayedOrder: m.feeRates.makerFeeDelayedOrder.toString(),
+				takerFeeDelayedOrder: m.feeRates.takerFeeDelayedOrder.toString(),
+				makerFeeOffchainDelayedOrder: m.feeRates.makerFeeOffchainDelayedOrder.toString(),
+				takerFeeOffchainDelayedOrder: m.feeRates.takerFeeOffchainDelayedOrder.toString(),
 			},
 			openInterest: m.openInterest
 				? {
@@ -418,8 +420,10 @@ export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMar
 		feeRates: {
 			makerFee: wei(m.feeRates.makerFee),
 			takerFee: wei(m.feeRates.takerFee),
-			makerFeeNextPrice: wei(m.feeRates.makerFeeNextPrice),
-			takerFeeNextPrice: wei(m.feeRates.takerFeeNextPrice),
+			makerFeeDelayedOrder: wei(m.feeRates.makerFeeDelayedOrder),
+			takerFeeDelayedOrder: wei(m.feeRates.takerFeeDelayedOrder),
+			makerFeeOffchainDelayedOrder: wei(m.feeRates.makerFeeOffchainDelayedOrder),
+			takerFeeOffchainDelayedOrder: wei(m.feeRates.takerFeeOffchainDelayedOrder),
 		},
 		openInterest: m.openInterest
 			? {

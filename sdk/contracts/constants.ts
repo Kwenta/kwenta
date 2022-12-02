@@ -43,6 +43,12 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 		10: '0xaE55F163337A2A46733AA66dA9F35299f9A46e9e',
 		420: '0x0dde87714C3bdACB93bB1d38605aFff209a85998',
 	},
+	PerpsV2MarketData: {
+		420: '0x72EBE50eAE6C73124F07E85138b751eb4981811F',
+	},
+	PerpsV2MarketSettings: {
+		420: '0xCC3bc93Be00FaAfD25eca9be262b9b9843e15dcA',
+	},
 	SUSD: {
 		1: '0x57Ab1ec28D129707052df4dF418D58a2D46d5f51',
 		10: '0x8c6f28f2F1A3C87F0f938b96d27520d9751ec8d9',
