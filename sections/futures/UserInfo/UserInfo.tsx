@@ -17,9 +17,9 @@ import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
 import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
 import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
-import { selectMarketAsset, selectPosition } from 'state/futures/selectors';
+import { selectMarketAsset, selectOpenOrders, selectPosition } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { futuresAccountTypeState, openOrdersState } from 'store/futures';
+import { futuresAccountTypeState } from 'store/futures';
 
 import PositionCard from '../PositionCard';
 import ProfitCalculator from '../ProfitCalculator';
@@ -46,7 +46,7 @@ const UserInfo: React.FC = () => {
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const position = useAppSelector(selectPosition);
 
-	const openOrders = useRecoilValue(openOrdersState);
+	const openOrders = useAppSelector(selectOpenOrders);
 	const accountType = useRecoilValue(futuresAccountTypeState);
 
 	const [showShareModal, setShowShareModal] = useState(false);

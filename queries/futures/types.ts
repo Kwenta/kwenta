@@ -2,8 +2,9 @@ import { Balances } from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 
+import { FuturesOrderTypeDisplay } from 'sdk/types/futures';
 import { PotentialTradeStatus } from 'sections/futures/types';
-import { FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
+import { FuturesMarketAsset } from 'utils/futures';
 
 export type FuturesOpenInterest = {
 	asset: string;
@@ -89,14 +90,6 @@ export type FuturesTradeWithPrice = {
 	price: string;
 };
 
-// This type exists to rename enum types from the subgraph to display-friendly types
-export type FuturesOrderTypeDisplay =
-	| 'Next Price'
-	| 'Limit'
-	| 'Stop Market'
-	| 'Market'
-	| 'Liquidation';
-
 export type FuturesTrade = {
 	size: Wei;
 	asset: string;
@@ -111,26 +104,6 @@ export type FuturesTrade = {
 	feesPaid: Wei;
 	orderType: FuturesOrderTypeDisplay;
 	accountType: FuturesAccountType;
-};
-
-export type FuturesOrder = {
-	id: string;
-	account: string;
-	asset: FuturesMarketAsset;
-	market: string;
-	marketKey: FuturesMarketKey;
-	size: Wei;
-	targetPrice: Wei | null;
-	marginDelta: Wei;
-	targetRoundId: Wei | null;
-	timestamp: Wei;
-	orderType: FuturesOrderTypeDisplay;
-	sizeTxt?: string;
-	targetPriceTxt?: string;
-	side?: PositionSide;
-	isStale?: boolean;
-	isExecutable?: boolean;
-	isCancelling?: boolean;
 };
 
 export type FuturesStat = {

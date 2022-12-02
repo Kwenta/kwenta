@@ -164,3 +164,31 @@ export type FuturesPosition<T = Wei> = {
 	accessibleMargin: T;
 	position: FuturesFilledPosition<T> | null;
 };
+
+// This type exists to rename enum types from the subgraph to display-friendly types
+export type FuturesOrderTypeDisplay =
+	| 'Next Price'
+	| 'Limit'
+	| 'Stop Market'
+	| 'Market'
+	| 'Liquidation';
+
+export type FuturesOrder<T = Wei> = {
+	id: string;
+	account: string;
+	asset: FuturesMarketAsset;
+	market: string;
+	marketKey: FuturesMarketKey;
+	size: T;
+	targetPrice: T | null;
+	marginDelta: T;
+	targetRoundId: T | null;
+	timestamp: T;
+	orderType: FuturesOrderTypeDisplay;
+	sizeTxt?: string;
+	targetPriceTxt?: string;
+	side?: PositionSide;
+	isStale?: boolean;
+	isExecutable?: boolean;
+	isCancelling?: boolean;
+};

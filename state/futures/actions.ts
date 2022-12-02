@@ -6,13 +6,20 @@ import { monitorTransaction } from 'contexts/RelayerContext';
 import { FuturesAccountType } from 'queries/futures/types';
 import { Period } from 'sdk/constants/period';
 import { TransactionStatus } from 'sdk/types/common';
-import { FuturesMarket, FuturesPosition, FuturesVolumes } from 'sdk/types/futures';
+import { FuturesMarket, FuturesOrder, FuturesPosition, FuturesVolumes } from 'sdk/types/futures';
 import { setOpenModal } from 'state/app/reducer';
 import { fetchBalances } from 'state/balances/actions';
 import { serializeWeiObject } from 'state/helpers';
 import { AppDispatch, AppThunk } from 'state/store';
 import { ThunkConfig } from 'state/types';
-import { serializeCmBalanceInfo, serializeFuturesVolumes, serializeMarkets } from 'utils/futures';
+import {
+	serializeCmBalanceInfo,
+	serializeCrossMarginSettings,
+	serializeFuturesOrders,
+	serializeFuturesVolumes,
+	serializeMarkets,
+	unserializeMarkets,
+} from 'utils/futures';
 import logError from 'utils/logError';
 import { refetchWithComparator } from 'utils/queries';
 
@@ -22,7 +29,7 @@ import {
 	updateTransactionHash,
 	updateTransactionStatus,
 } from './reducer';
-import { CrossMarginBalanceInfo, FundingRateSerialized } from './types';
+import { CrossMarginBalanceInfo, CrossMarginSettings, FundingRateSerialized } from './types';
 
 export const fetchMarkets = createAsyncThunk<
 	{ markets: FuturesMarket<string>[]; fundingRates: FundingRateSerialized[] },
@@ -49,6 +56,15 @@ export const fetchCrossMarginBalanceInfo = createAsyncThunk<
 	if (!account) throw new Error('No cross margin account');
 	const overview = await sdk.futures.getCrossMarginBalanceInfo(account);
 	return serializeCmBalanceInfo(overview);
+});
+
+export const fetchCrossMarginSettings = createAsyncThunk<
+	CrossMarginSettings<string>,
+	void,
+	ThunkConfig
+>('futures/fetchCrossMarginSettings', async (_, { extra: { sdk } }) => {
+	const settings = await sdk.futures.getCrossMarginSettings();
+	return serializeCrossMarginSettings(settings);
 });
 
 export const fetchFuturesPositionsForType = createAsyncThunk<void, void, ThunkConfig>(
@@ -155,6 +171,15 @@ export const fetchCrossMarginAccountData = createAsyncThunk<void, void, ThunkCon
 	async (_, { dispatch }) => {
 		dispatch(fetchCrossMarginPositions());
 		dispatch(fetchCrossMarginBalanceInfo());
+		dispatch(fetchOpenOrders());
+	}
+);
+
+export const fetchIsolatedMarginAccountData = createAsyncThunk<void, void, ThunkConfig>(
+	'futures/fetchIsolatedMarginAccountData',
+	async (_, { dispatch }) => {
+		dispatch(fetchIsolatedMarginPositions());
+		dispatch(fetchOpenOrders());
 	}
 );
 
@@ -165,6 +190,25 @@ export const fetchSharedFuturesData = createAsyncThunk<void, void, ThunkConfig>(
 		dispatch(fetchDailyVolumes());
 	}
 );
+
+export const fetchOpenOrders = createAsyncThunk<
+	{ orders: FuturesOrder<string>[]; account: string; accountType: FuturesAccountType },
+	void,
+	ThunkConfig
+>('futures/fetchOpenOrders', async (_, { getState, extra: { sdk } }) => {
+	const { wallet, futures } = getState();
+	const account =
+		futures.selectedType === 'cross_margin' ? futures.crossMargin.account : wallet.walletAddress;
+	if (!account) {
+		throw new Error('No account to fetch orders');
+	}
+	const orders = await sdk.futures.getOpenOrders(account, unserializeMarkets(futures.markets));
+	return {
+		orders: serializeFuturesOrders(orders),
+		account: account,
+		accountType: futures.selectedType,
+	};
+});
 
 // Contract Mutations
 

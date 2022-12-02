@@ -7,7 +7,9 @@ import KwentaSDK from 'sdk';
 
 import { DAY_PERIOD } from 'queries/futures/constants';
 import { getFuturesAggregateStats } from 'queries/futures/subgraph';
+import { mapFuturesOrders } from 'queries/futures/utils';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
+import { BPS_CONVERSION } from 'sdk/constants/futures';
 import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { getContractsByNetwork } from 'sdk/contracts';
 import ExchangeRatesABI from 'sdk/contracts/abis/ExchangeRates.json';
@@ -26,6 +28,7 @@ import {
 	FundingRateUpdate,
 	FuturesMarket,
 	FuturesMarketAsset,
+	FuturesOrder,
 	FuturesVolumes,
 	MarketClosureReason,
 	PositionDetail,
@@ -182,14 +185,14 @@ export default class FuturesService {
 			throw new Error(UNSUPPORTED_NETWORK);
 		}
 
-		const FMD = new EthCallContract(futuresDataAddress, FuturesMarketDataABI);
+		const marketDataContract = new EthCallContract(futuresDataAddress, FuturesMarketDataABI);
 
 		const positionCalls = [];
 		const liquidationCalls = [];
 
 		for (const { address: marketAddress, asset } of futuresMarkets) {
 			positionCalls.push(
-				FMD.positionDetailsForMarketKey(
+				marketDataContract.positionDetailsForMarketKey(
 					ethersUtils.formatBytes32String(MarketKeyByAsset[asset]),
 					address
 				)
@@ -357,6 +360,7 @@ export default class FuturesService {
 		const { SUSD } = this.sdk.context.contracts;
 		if (!SUSD) throw new Error(UNSUPPORTED_NETWORK);
 
+		// TODO: EthCall
 		const [freeMargin, keeperEthBal, allowance] = await Promise.all([
 			crossMarginAccountContract.freeMargin(),
 			this.sdk.context.provider.getBalance(crossMarginAddress),
@@ -367,6 +371,53 @@ export default class FuturesService {
 			freeMargin: wei(freeMargin),
 			keeperEthBal: wei(keeperEthBal),
 			allowance: wei(allowance),
+		};
+	}
+
+	public async getOpenOrders(account: string, markets: FuturesMarket[]) {
+		const response = await request(
+			this.futuresGqlEndpoint,
+			gql`
+				query OpenOrders($account: String!) {
+					futuresOrders(where: { abstractAccount: $account, status: Pending }) {
+						id
+						account
+						size
+						market
+						asset
+						targetRoundId
+						marginDelta
+						targetPrice
+						timestamp
+						orderType
+					}
+				}
+			`,
+			{ account: account }
+		);
+
+		const openOrders: FuturesOrder[] = response
+			? response.futuresOrders.map((o: any) => {
+					const marketInfo = markets.find((m) => m.asset === o.asset);
+					return mapFuturesOrders(o, marketInfo);
+			  })
+			: [];
+		return openOrders;
+	}
+
+	public async getCrossMarginSettings() {
+		const crossMarginBaseSettings = this.sdk.context.ethCallContracts.CrossMarginBaseSettings;
+		if (!crossMarginBaseSettings) throw new Error(UNSUPPORTED_NETWORK);
+
+		const [tradeFee, limitOrderFee, stopOrderFee] = await this.sdk.context.multicallProvider.all([
+			crossMarginBaseSettings.tradeFee(),
+			crossMarginBaseSettings.limitOrderFee(),
+			crossMarginBaseSettings.stopOrderFee(),
+		]);
+		return {
+			tradeFee: tradeFee ? wei(tradeFee.toNumber() / BPS_CONVERSION) : wei(0),
+			limitOrderFee: limitOrderFee ? wei(limitOrderFee.toNumber() / BPS_CONVERSION) : wei(0),
+			stopOrderFee: stopOrderFee ? wei(stopOrderFee.toNumber() / BPS_CONVERSION) : wei(0),
 		};
 	}
 

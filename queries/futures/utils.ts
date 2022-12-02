@@ -8,7 +8,7 @@ import { chain } from 'wagmi';
 import { ETH_UNIT } from 'constants/network';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
-import { FuturesMarket } from 'sdk/types/futures';
+import { FuturesMarket, FuturesOrder, FuturesOrderTypeDisplay } from 'sdk/types/futures';
 import { formatCurrency, formatDollars, weiFromWei } from 'utils/formatters/number';
 import {
 	FuturesMarketAsset,
@@ -34,8 +34,6 @@ import {
 	FundingRateUpdate,
 	FuturesTrade,
 	MarginTransfer,
-	FuturesOrder,
-	FuturesOrderTypeDisplay,
 } from './types';
 
 export const getFuturesEndpoint = (networkId: NetworkId): string => {

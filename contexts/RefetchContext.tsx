@@ -1,13 +1,15 @@
 import React from 'react';
 import { useRecoilValue } from 'recoil';
 
-import useGetCrossMarginSettings from 'queries/futures/useGetCrossMarginSettings';
-import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
 import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesPositionHistory';
 import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { fetchBalances } from 'state/balances/actions';
-import { fetchCrossMarginBalanceInfo, fetchFuturesPositionsForType } from 'state/futures/actions';
+import {
+	fetchCrossMarginBalanceInfo,
+	fetchFuturesPositionsForType,
+	fetchOpenOrders,
+} from 'state/futures/actions';
 import { useAppDispatch } from 'state/hooks';
 import { futuresAccountState, futuresAccountTypeState } from 'store/futures';
 import { refetchWithComparator } from 'utils/queries';
@@ -37,18 +39,16 @@ export const RefetchProvider: React.FC = ({ children }) => {
 	const { crossMarginAddress } = useRecoilValue(futuresAccountState);
 	const dispatch = useAppDispatch();
 
-	const openOrdersQuery = useGetFuturesOpenOrders();
 	const positionHistoryQuery = useGetFuturesPositionHistory();
 	const queryCrossMarginAccount = useQueryCrossMarginAccount();
 
 	useLaggedDailyPrice();
-	useGetCrossMarginSettings();
 
 	const handleRefetch = (refetchType: RefetchType, timeout?: number) => {
 		setTimeout(() => {
 			switch (refetchType) {
 				case 'modify-position':
-					openOrdersQuery.refetch();
+					dispatch(fetchOpenOrders());
 					positionHistoryQuery.refetch();
 					dispatch(fetchFuturesPositionsForType());
 					if (selectedAccountType === 'cross_margin') {
@@ -57,17 +57,16 @@ export const RefetchProvider: React.FC = ({ children }) => {
 					break;
 				case 'new-order':
 					dispatch(fetchFuturesPositionsForType());
-					openOrdersQuery.refetch();
+					dispatch(fetchOpenOrders());
 					break;
 				case 'close-position':
 					dispatch(fetchFuturesPositionsForType());
 					positionHistoryQuery.refetch();
-					openOrdersQuery.refetch();
+					dispatch(fetchOpenOrders());
 					break;
 				case 'margin-change':
 					dispatch(fetchFuturesPositionsForType());
 					positionHistoryQuery.refetch();
-					openOrdersQuery.refetch();
 					dispatch(fetchBalances());
 					break;
 				case 'account-margin-change':

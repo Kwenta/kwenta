@@ -6,7 +6,7 @@ import { ThemeContext } from 'styled-components';
 import { chain } from 'wagmi';
 
 import Connector from 'containers/Connector';
-import { FuturesOrder } from 'queries/futures/types';
+import { FuturesOrder } from 'sdk/types/futures';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
 import { currentThemeState } from 'store/ui';
 import darkTheme from 'styles/theme/colors/dark';

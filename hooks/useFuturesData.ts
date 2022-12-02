@@ -37,6 +37,7 @@ import {
 	selectPosition,
 	selectMaxLeverage,
 	selectAboveMaxLeverage,
+	selectCrossMarginSettings,
 } from 'state/futures/selectors';
 import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector, useAppDispatch } from 'state/hooks';
@@ -47,7 +48,6 @@ import {
 	leverageSideState,
 	orderTypeState,
 	futuresTradeInputsState,
-	crossMarginSettingsState,
 	futuresAccountTypeState,
 	preferredLeverageState,
 	simulatedTradeState,
@@ -118,8 +118,8 @@ const useFuturesData = () => {
 	const aboveMaxLeverage = useAppSelector(selectAboveMaxLeverage);
 	const maxLeverage = useAppSelector(selectMaxLeverage);
 
-	const { tradeFee: crossMarginTradeFee, stopOrderFee, limitOrderFee } = useRecoilValue(
-		crossMarginSettingsState
+	const { tradeFee: crossMarginTradeFee, stopOrderFee, limitOrderFee } = useAppSelector(
+		selectCrossMarginSettings
 	);
 	const isAdvancedOrder = useRecoilValue(isAdvancedOrderState);
 	const marketAssetRate = useAppSelector(selectMarketAssetRate);

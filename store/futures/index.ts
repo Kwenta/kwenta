@@ -12,7 +12,6 @@ import {
 	CrossMarginAccounts,
 	PositionHistoryState,
 	FuturesAccountTypes,
-	FuturesOrder,
 } from 'queries/futures/types';
 import { Price } from 'queries/rates/types';
 import { PositionSide } from 'sections/futures/types';
@@ -79,15 +78,6 @@ export const crossMarginMarginDeltaState = atom({
 	default: zeroBN,
 });
 
-export const crossMarginSettingsState = atom({
-	key: getFuturesKey('crossMarginSettings'),
-	default: {
-		tradeFee: zeroBN,
-		limitOrderFee: zeroBN,
-		stopOrderFee: zeroBN,
-	},
-});
-
 export const leverageSideState = atom<PositionSide>({
 	key: getFuturesKey('leverageSide'),
 	default: PositionSide.LONG,
@@ -141,11 +131,6 @@ export const dynamicFeeRateState = atom({
 export const leverageValueCommittedState = atom({
 	key: getFuturesKey('leverageValueCommitted'),
 	default: true,
-});
-
-export const openOrdersState = atom<FuturesOrder[]>({
-	key: getFuturesKey('openOrders'),
-	default: [],
 });
 
 export const sizeDeltaState = selector({

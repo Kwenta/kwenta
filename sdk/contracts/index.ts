@@ -1,6 +1,8 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
+import { Contract as EthCallContract } from 'ethcall';
 import { Contract, ethers } from 'ethers';
 
+import CrossMarginBaseSettingsABI from './abis/CrossMarginBaseSettings.json';
 import { KwentaArrakisVaultABI, StakingRewardsABI } from './abis/main';
 import { ADDRESSES } from './constants';
 import {
@@ -88,5 +90,17 @@ export const getContractsByNetwork = (
 	};
 };
 
+export const getEthCallContractsByNetwork = (networkId: NetworkId) => {
+	return {
+		CrossMarginBaseSettings: ADDRESSES.CrossMarginBaseSettings[networkId]
+			? new EthCallContract(
+					ADDRESSES.CrossMarginBaseSettings[networkId],
+					CrossMarginBaseSettingsABI
+			  )
+			: undefined,
+	};
+};
+
 export type ContractsMap = ReturnType<typeof getContractsByNetwork>;
+export type EthCallContractsMap = ReturnType<typeof getEthCallContractsByNetwork>;
 export type ContractName = keyof ContractsMap;

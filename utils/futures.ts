@@ -4,10 +4,11 @@ import { TFunction } from 'i18next';
 import { Dictionary } from 'lodash';
 
 import { FuturesOrderType, FuturesTradeInputs, TradeFees } from 'queries/futures/types';
-import { FuturesMarket, FuturesPosition, FuturesVolumes } from 'sdk/types/futures';
+import { FuturesMarket, FuturesOrder, FuturesPosition, FuturesVolumes } from 'sdk/types/futures';
 import { PositionSide } from 'sections/futures/types';
 import {
 	CrossMarginBalanceInfo,
+	CrossMarginSettings,
 	CrossMarginTradeInputs,
 	FundingRate,
 	FundingRateSerialized,
@@ -481,3 +482,41 @@ export const unserializeCrossMarginTradeInputs = (
 		susdSizeDelta: wei(tradeInputs.susdSizeDelta || 0),
 	};
 };
+
+export const serializeFuturesOrders = (orders: FuturesOrder[]): FuturesOrder<string>[] => {
+	return orders.map((o) => ({
+		...o,
+		size: o.size.toString(),
+		targetPrice: o.targetPrice?.toString() ?? null,
+		marginDelta: o.marginDelta.toString(),
+		targetRoundId: o.targetRoundId?.toString() ?? null,
+		timestamp: o.timestamp.toString(),
+	}));
+};
+
+export const unserializeFuturesOrders = (orders: FuturesOrder<string>[]): FuturesOrder[] => {
+	return orders.map((o) => ({
+		...o,
+		size: wei(o.size),
+		targetPrice: o.targetPrice ? wei(o.targetPrice) : null,
+		marginDelta: wei(o.marginDelta),
+		targetRoundId: o.targetRoundId ? wei(o.targetRoundId) : null,
+		timestamp: wei(o.timestamp),
+	}));
+};
+
+export const serializeCrossMarginSettings = (
+	settings: CrossMarginSettings
+): CrossMarginSettings<string> => ({
+	tradeFee: settings.tradeFee.toString(),
+	limitOrderFee: settings.limitOrderFee.toString(),
+	stopOrderFee: settings.stopOrderFee.toString(),
+});
+
+export const unserializeCrossMarginSettings = (
+	settings: CrossMarginSettings<string>
+): CrossMarginSettings => ({
+	tradeFee: wei(settings.tradeFee),
+	limitOrderFee: wei(settings.limitOrderFee),
+	stopOrderFee: wei(settings.stopOrderFee),
+});

@@ -16,6 +16,8 @@ import {
 	fetchMarkets,
 	fetchDailyVolumes,
 	refetchPosition,
+	fetchOpenOrders,
+	fetchCrossMarginSettings,
 } from './actions';
 import { FundingRate, FuturesState, FuturesTransaction } from './types';
 
@@ -53,6 +55,9 @@ const initialState: FuturesState = {
 		crossMarginBalanceInfo: FetchStatus.Idle,
 		dailyVolumes: FetchStatus.Idle,
 		crossMarginPositions: FetchStatus.Idle,
+		isolatedPositions: FetchStatus.Idle,
+		openOrders: FetchStatus.Idle,
+		crossMarginSettings: FetchStatus.Idle,
 	},
 	transaction: undefined,
 	crossMargin: {
@@ -64,10 +69,16 @@ const initialState: FuturesState = {
 		showCrossMarginOnboard: false,
 		tradeInputs: ZERO_STATE_CM_TRADE_INPUTS,
 		positions: {},
+		openOrders: {},
 		balanceInfo: {
 			freeMargin: '0',
 			keeperEthBal: '0',
 			allowance: '0',
+		},
+		settings: {
+			tradeFee: '0',
+			limitOrderFee: '0',
+			stopOrderFee: '0',
 		},
 	},
 	isolatedMargin: {
@@ -77,6 +88,7 @@ const initialState: FuturesState = {
 		selectedLeverage: DEFAULT_LEVERAGE,
 		tradeInputs: ZERO_STATE_TRADE_INPUTS,
 		positions: {},
+		openOrders: {},
 	},
 };
 
@@ -193,14 +205,14 @@ const futuresSlice = createSlice({
 
 		// Isolated margin positions
 		builder.addCase(fetchIsolatedMarginPositions.pending, (futuresState) => {
-			futuresState.queryStatuses.crossMarginPositions = FetchStatus.Loading;
+			futuresState.queryStatuses.isolatedPositions = FetchStatus.Loading;
 		});
 		builder.addCase(fetchIsolatedMarginPositions.fulfilled, (futuresState, action) => {
 			futuresState.isolatedMargin.positions[action.payload.wallet] = action.payload.positions;
-			futuresState.queryStatuses.crossMarginPositions = FetchStatus.Success;
+			futuresState.queryStatuses.isolatedPositions = FetchStatus.Success;
 		});
 		builder.addCase(fetchIsolatedMarginPositions.rejected, (futuresState) => {
-			futuresState.queryStatuses.crossMarginPositions = FetchStatus.Error;
+			futuresState.queryStatuses.isolatedPositions = FetchStatus.Error;
 		});
 
 		// Refetch selected position
@@ -214,6 +226,31 @@ const futuresSlice = createSlice({
 				existingPositions[index] = action.payload.position;
 				futuresState.isolatedMargin.positions[action.payload.wallet] = existingPositions;
 			}
+		});
+
+		// Fetch Open Orders
+		builder.addCase(fetchOpenOrders.pending, (futuresState) => {
+			futuresState.queryStatuses.openOrders = FetchStatus.Loading;
+		});
+		builder.addCase(fetchOpenOrders.fulfilled, (futuresState, action) => {
+			futuresState[accountType(action.payload.accountType)].openOrders[action.payload.account] =
+				action.payload.orders;
+			futuresState.queryStatuses.openOrders = FetchStatus.Success;
+		});
+		builder.addCase(fetchOpenOrders.rejected, (futuresState) => {
+			futuresState.queryStatuses.openOrders = FetchStatus.Error;
+		});
+
+		// Fetch Cross Margin Settings
+		builder.addCase(fetchCrossMarginSettings.pending, (futuresState) => {
+			futuresState.queryStatuses.openOrders = FetchStatus.Loading;
+		});
+		builder.addCase(fetchCrossMarginSettings.fulfilled, (futuresState, action) => {
+			futuresState.crossMargin.settings = action.payload;
+			futuresState.queryStatuses.crossMarginSettings = FetchStatus.Success;
+		});
+		builder.addCase(fetchCrossMarginSettings.rejected, (futuresState) => {
+			futuresState.queryStatuses.openOrders = FetchStatus.Error;
 		});
 	},
 });

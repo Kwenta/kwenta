@@ -1,7 +1,6 @@
 import { wei } from '@synthetixio/wei';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import ErrorView from 'components/Error';
@@ -13,9 +12,8 @@ import Connector from 'containers/Connector';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
-import { selectCrossMarginBalanceInfo } from 'state/futures/selectors';
+import { selectCrossMarginBalanceInfo, selectOpenOrders } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { openOrdersState } from 'store/futures';
 import { isUserDeniedError } from 'utils/formatters/error';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -44,7 +42,7 @@ export default function ManageKeeperBalanceModal({ onDismiss, defaultType }: Pro
 	const { handleRefetch } = useRefetchContext();
 
 	const { keeperEthBal } = useAppSelector(selectCrossMarginBalanceInfo);
-	const openOrders = useRecoilValue(openOrdersState);
+	const openOrders = useAppSelector(selectOpenOrders);
 
 	const [amount, setAmount] = useState('');
 	const [isMax, setMax] = useState(false);

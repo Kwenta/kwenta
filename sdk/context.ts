@@ -3,7 +3,12 @@ import { Provider as EthCallProvider } from 'ethcall';
 import { ethers } from 'ethers';
 
 import * as sdkErrors from './common/errors';
-import { ContractsMap, getContractsByNetwork } from './contracts';
+import {
+	ContractsMap,
+	EthCallContractsMap,
+	getContractsByNetwork,
+	getEthCallContractsByNetwork,
+} from './contracts';
 
 export interface IContext {
 	provider: ethers.providers.Provider;
@@ -20,6 +25,7 @@ export default class Context implements IContext {
 	private context: IContext;
 	public multicallProvider = new EthCallProvider();
 	public contracts: ContractsMap;
+	public ethCallContracts: EthCallContractsMap;
 
 	constructor(context: IContext) {
 		this.context = { ...DEFAULT_CONTEXT, ...context };
@@ -33,6 +39,7 @@ export default class Context implements IContext {
 		}
 
 		this.contracts = getContractsByNetwork(context.networkId, context.signer ?? context.provider);
+		this.ethCallContracts = getEthCallContractsByNetwork(context.networkId);
 	}
 
 	get networkId() {
@@ -79,6 +86,7 @@ export default class Context implements IContext {
 	public setNetworkId(networkId: NetworkId) {
 		this.context.networkId = networkId;
 		this.contracts = getContractsByNetwork(networkId, this.context.signer ?? this.provider);
+		this.ethCallContracts = getEthCallContractsByNetwork(networkId);
 	}
 
 	public async setSigner(signer: ethers.Signer) {

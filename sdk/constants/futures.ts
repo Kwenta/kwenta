@@ -113,3 +113,5 @@ export const MAINNET_MARKETS = MARKETS_LIST.filter(
 export const TESTNET_MARKETS = MARKETS_LIST.filter(
 	(m) => m.supports === 'testnet' || m.supports === 'both'
 );
+
+export const BPS_CONVERSION = 10000;

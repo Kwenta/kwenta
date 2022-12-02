@@ -15,8 +15,10 @@ import { zeroBN } from 'utils/formatters/number';
 import {
 	MarketKeyByAsset,
 	unserializeCmBalanceInfo,
+	unserializeCrossMarginSettings,
 	unserializeCrossMarginTradeInputs,
 	unserializeFundingRates,
+	unserializeFuturesOrders,
 	unserializeFuturesVolumes,
 	unserializeMarkets,
 } from 'utils/futures';
@@ -308,4 +310,43 @@ export const selectFuturesPortfolio = createSelector(
 			isolatedMarginFutures: isolatedValue,
 		};
 	}
+);
+
+export const selectCrossMarginOpenOrders = createSelector(
+	selectMarketAsset,
+	(state: RootState) => state.futures,
+	(asset, futures) => {
+		const orders =
+			futures.crossMargin.account && futures.crossMargin.openOrders[futures.crossMargin.account]
+				? unserializeFuturesOrders(futures.crossMargin.openOrders[futures.crossMargin.account])
+				: [];
+		return orders.filter((o) => o.asset === asset);
+	}
+);
+
+export const selectIsolatedMarginOpenOrders = createSelector(
+	selectMarketAsset,
+	selectWallet,
+	(state: RootState) => state.futures,
+	(asset, wallet, futures) => {
+		const orders =
+			wallet && futures.isolatedMargin.openOrders[wallet]
+				? unserializeFuturesOrders(futures.isolatedMargin.openOrders[wallet])
+				: [];
+		return orders.filter((o) => o.asset === asset);
+	}
+);
+
+export const selectOpenOrders = createSelector(
+	selectCrossMarginOpenOrders,
+	selectIsolatedMarginOpenOrders,
+	selectFuturesType,
+	(crossOrders, isolatedOrder, futuresType) => {
+		return futuresType === 'cross_margin' ? crossOrders : isolatedOrder;
+	}
+);
+
+export const selectCrossMarginSettings = createSelector(
+	(state: RootState) => state.futures.crossMargin.settings,
+	(settings) => unserializeCrossMarginSettings(settings)
 );
