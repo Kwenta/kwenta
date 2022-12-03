@@ -4,7 +4,7 @@ import { BigNumber } from 'ethers';
 
 import { FuturesOrderTypeDisplay } from 'sdk/types/futures';
 import { PotentialTradeStatus } from 'sections/futures/types';
-import { FuturesMarketAsset } from 'utils/futures';
+import { FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
 
 export type FuturesOpenInterest = {
 	asset: string;
@@ -34,6 +34,7 @@ export type PositionHistory = {
 	closeTimestamp: number | undefined;
 	market: string;
 	asset: FuturesMarketAsset;
+	marketKey: FuturesMarketKey;
 	account: string;
 	abstractAccount: string;
 	accountType: FuturesAccountType;

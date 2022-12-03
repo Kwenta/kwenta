@@ -12,6 +12,7 @@ import { FuturesMarket, FuturesOrder, FuturesOrderTypeDisplay } from 'sdk/types/
 import { formatCurrency, formatDollars, weiFromWei } from 'utils/formatters/number';
 import {
 	FuturesMarketAsset,
+	FuturesMarketKey,
 	getDisplayAsset,
 	getMarketName,
 	MarketKeyByAsset,
@@ -303,6 +304,7 @@ export const mapFuturesPositions = (
 			timestamp,
 			market,
 			asset,
+			marketKey,
 			account,
 			abstractAccount,
 			accountType,
@@ -335,6 +337,7 @@ export const mapFuturesPositions = (
 				closeTimestamp: closeTimestamp?.mul(1000).toNumber(),
 				market,
 				asset: utils.parseBytes32String(asset) as FuturesMarketAsset,
+				marketKey: utils.parseBytes32String(marketKey) as FuturesMarketKey,
 				account,
 				abstractAccount,
 				accountType,

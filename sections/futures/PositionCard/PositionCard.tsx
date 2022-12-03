@@ -88,9 +88,9 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 
 	const thisPositionHistory = useMemo(() => {
 		return positionHistory[futuresAccountType].find(
-			({ asset, isOpen }) => isOpen && asset === marketAsset
+			({ marketKey: positionMarketKey, isOpen }) => isOpen && positionMarketKey === marketKey
 		);
-	}, [positionHistory, marketAsset, futuresAccountType]);
+	}, [positionHistory, marketKey, futuresAccountType]);
 
 	const { marketAssetRate } = useFuturesContext();
 
