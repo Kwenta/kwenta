@@ -1,4 +1,3 @@
-import { wei } from '@synthetixio/wei';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
