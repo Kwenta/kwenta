@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { ethers } from 'ethers';
+import { BigNumber } from 'ethers';
 import KwentaSDK from 'sdk';
 
 import { monitorTransaction } from 'contexts/RelayerContext';
@@ -186,7 +186,7 @@ export const claimMultipleRewards = createAsyncThunk<void, void, ThunkConfig>(
 	}
 );
 
-export const stakeEscrow = createAsyncThunk<void, ethers.BigNumber, ThunkConfig>(
+export const stakeEscrow = createAsyncThunk<void, BigNumber, ThunkConfig>(
 	'staking/stakeEscrow',
 	async (amount, { dispatch, extra: { sdk } }) => {
 		const { hash } = await sdk.kwentaToken.stakeEscrowedKwenta(amount);
@@ -204,7 +204,7 @@ export const stakeEscrow = createAsyncThunk<void, ethers.BigNumber, ThunkConfig>
 	}
 );
 
-export const unstakeEscrow = createAsyncThunk<void, ethers.BigNumber, ThunkConfig>(
+export const unstakeEscrow = createAsyncThunk<void, BigNumber, ThunkConfig>(
 	'staking/unstakeEscrow',
 	async (amount, { dispatch, extra: { sdk } }) => {
 		const { hash } = await sdk.kwentaToken.unstakeEscrowedKwenta(amount);
@@ -224,7 +224,7 @@ export const unstakeEscrow = createAsyncThunk<void, ethers.BigNumber, ThunkConfi
 
 // TODO: Consider merging this with the (stake|unstake)Escrow actions.
 
-export const stakeKwenta = createAsyncThunk<void, ethers.BigNumber, ThunkConfig>(
+export const stakeKwenta = createAsyncThunk<void, BigNumber, ThunkConfig>(
 	'staking/stakeKwenta',
 	async (amount, { dispatch, extra: { sdk } }) => {
 		const { hash } = await sdk.kwentaToken.stakeKwenta(amount);
@@ -242,7 +242,7 @@ export const stakeKwenta = createAsyncThunk<void, ethers.BigNumber, ThunkConfig>
 	}
 );
 
-export const unstakeKwenta = createAsyncThunk<void, ethers.BigNumber, ThunkConfig>(
+export const unstakeKwenta = createAsyncThunk<void, BigNumber, ThunkConfig>(
 	'staking/unstakeKwenta',
 	async (amount, { dispatch, extra: { sdk } }) => {
 		const { hash } = await sdk.kwentaToken.unstakeKwenta(amount);

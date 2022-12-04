@@ -1,6 +1,6 @@
 import Wei, { wei } from '@synthetixio/wei';
 import axios from 'axios';
-import { ethers } from 'ethers';
+import { ethers, BigNumber } from 'ethers';
 import moment from 'moment';
 import KwentaSDK from 'sdk';
 
@@ -79,7 +79,7 @@ export default class KwentaTokenService {
 			totalSupply,
 			lpTokenBalance,
 			allowance,
-		]: ethers.BigNumber[] = await this.sdk.context.multicallProvider.all([
+		]: BigNumber[] = await this.sdk.context.multicallProvider.all([
 			StakingRewards.balanceOf(this.sdk.context.walletAddress),
 			StakingRewards.earned(this.sdk.context.walletAddress),
 			StakingRewards.periodFinish(),
@@ -151,7 +151,7 @@ export default class KwentaTokenService {
 			epochPeriod,
 			veKwentaBalance,
 			veKwentaAllowance,
-		]: ethers.BigNumber[] = await this.sdk.context.multicallProvider.all([
+		]: BigNumber[] = await this.sdk.context.multicallProvider.all([
 			RewardEscrow.balanceOf(this.sdk.context.walletAddress),
 			KwentaStakingRewards.nonEscrowedBalanceOf(this.sdk.context.walletAddress),
 			KwentaStakingRewards.escrowedBalanceOf(this.sdk.context.walletAddress),
@@ -204,8 +204,8 @@ export default class KwentaTokenService {
 		);
 
 		const vestingEntries: {
-			quantity: ethers.BigNumber;
-			fee: ethers.BigNumber;
+			quantity: BigNumber;
+			fee: BigNumber;
 		}[] = await this.sdk.context.multicallProvider.all(calls);
 
 		const { escrowData, totalVestable } = vestingSchedules.reduce(
@@ -328,19 +328,19 @@ export default class KwentaTokenService {
 		return this.sdk.transactions.createContractTxn(RewardEscrow, 'vest', [ids]);
 	}
 
-	public stakeKwenta(amount: string | ethers.BigNumber) {
+	public stakeKwenta(amount: string | BigNumber) {
 		return this.performStakeAction('stake', amount);
 	}
 
-	public async unstakeKwenta(amount: string | ethers.BigNumber) {
+	public async unstakeKwenta(amount: string | BigNumber) {
 		return this.performStakeAction('unstake', amount);
 	}
 
-	public async stakeEscrowedKwenta(amount: string | ethers.BigNumber) {
+	public async stakeEscrowedKwenta(amount: string | BigNumber) {
 		return this.performStakeAction('stake', amount, { escrow: true });
 	}
 
-	public async unstakeEscrowedKwenta(amount: string | ethers.BigNumber) {
+	public async unstakeEscrowedKwenta(amount: string | BigNumber) {
 		return this.performStakeAction('unstake', amount, { escrow: true });
 	}
 
@@ -408,7 +408,7 @@ export default class KwentaTokenService {
 
 	private performStakeAction(
 		action: 'stake' | 'unstake',
-		amount: string | ethers.BigNumber,
+		amount: string | BigNumber,
 		options: { escrow: boolean } = { escrow: false }
 	) {
 		const { RewardEscrow, KwentaStakingRewards } = this.sdk.context.contracts;
