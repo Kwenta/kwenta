@@ -16,7 +16,7 @@ import FuturesMarketABI from 'sdk/contracts/abis/FuturesMarket.json';
 import {
 	CrossMarginBase__factory,
 	PerpsV2MarketData,
-	FuturesMarket__factory,
+	PerpsV2Market__factory,
 } from 'sdk/contracts/types';
 import { NetworkOverrideOptions } from 'sdk/types/common';
 import {
@@ -131,7 +131,7 @@ export default class FuturesService {
 				marketName: getMarketName(parseBytes32String(asset) as FuturesMarketAsset),
 				asset: parseBytes32String(asset) as FuturesMarketAsset,
 				assetHex: asset,
-				currentFundingRate: wei(currentFundingRate).neg(),
+				currentFundingRate: wei(currentFundingRate).div(24),
 				currentRoundId: wei(currentRoundIds[i], 0),
 				feeRates: {
 					makerFee: wei(feeRates.makerFee),
@@ -443,12 +443,12 @@ export default class FuturesService {
 	}
 
 	public async depositIsolatedMargin(marketAddress: string, amount: Wei) {
-		const market = FuturesMarket__factory.connect(marketAddress, this.sdk.context.signer);
+		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
 		return market.transferMargin(amount.toBN());
 	}
 
 	public async withdrawIsolatedMargin(marketAddress: string, amount: Wei) {
-		const market = FuturesMarket__factory.connect(marketAddress, this.sdk.context.signer);
+		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
 		return market.transferMargin(amount.neg().toBN());
 	}
 }
