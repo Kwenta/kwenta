@@ -166,12 +166,20 @@ export const fetchDailyVolumes = createAsyncThunk<FuturesVolumes<string>, void, 
 	}
 );
 
+export const fetchDashboardFuturesData = createAsyncThunk<void, void, ThunkConfig>(
+	'futures/fetchDashboardFuturesData',
+	async (_, { dispatch }) => {
+		await dispatch(fetchMarkets());
+		dispatch(fetchCrossMarginBalanceInfo());
+		dispatch(fetchOpenOrders());
+	}
+);
+
 export const fetchCrossMarginAccountData = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/fetchCrossMarginAccountData',
 	async (_, { dispatch }) => {
 		dispatch(fetchCrossMarginPositions());
 		dispatch(fetchCrossMarginBalanceInfo());
-		dispatch(fetchOpenOrders());
 	}
 );
 
@@ -179,12 +187,11 @@ export const fetchIsolatedMarginAccountData = createAsyncThunk<void, void, Thunk
 	'futures/fetchIsolatedMarginAccountData',
 	async (_, { dispatch }) => {
 		dispatch(fetchIsolatedMarginPositions());
-		dispatch(fetchOpenOrders());
 	}
 );
 
 export const fetchSharedFuturesData = createAsyncThunk<void, void, ThunkConfig>(
-	'futures/fetchAllFuturesPositions',
+	'futures/fetchSharedFuturesData',
 	async (_, { dispatch }) => {
 		dispatch(fetchMarkets());
 		dispatch(fetchDailyVolumes());

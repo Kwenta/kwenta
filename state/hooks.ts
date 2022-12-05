@@ -60,20 +60,41 @@ export const useStartPollingAction = () => {
 	return startPolling;
 };
 
+const DEFAULT_INTERVAL = 20000;
+
 // This hook will wait until provider is ready before beginning to poll
 
-export const usePollWhenReady = (
-	id: string,
+export const usePollAction = (
+	actionName: string,
 	action: () => AsyncThunkAction<any, any, any>,
-	intervalTime = 20000
+	options?: { dependencies?: any[]; disabled?: boolean; intervalTime?: number }
 ) => {
 	const { providerReady } = Connector.useContainer();
 	const startPolling = useStartPollingAction();
 
 	useEffect(() => {
-		startPolling(id, action, intervalTime);
+		if (!options?.disabled) {
+			startPolling(actionName, action, options?.intervalTime || DEFAULT_INTERVAL);
+		}
 		// eslint-disable-next-line
-	}, [providerReady]);
+	}, [providerReady, options?.disabled, ...(options?.dependencies || [])]);
+};
+
+// This hook will wait until provider is ready before making a fetch
+
+export const useFetchAction = (
+	action: () => AsyncThunkAction<any, any, any>,
+	options?: { changeKeys?: any[]; disabled?: boolean }
+) => {
+	const { providerReady } = Connector.useContainer();
+	const dispatch = useAppDispatch();
+
+	useEffect(() => {
+		if (!options?.disabled) {
+			dispatch(action());
+		}
+		// eslint-disable-next-line
+	}, [providerReady, options?.disabled, ...(options?.changeKeys || [])]);
 };
 
 // TODO: Revisit this
