@@ -27,76 +27,88 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface StakingRewardsInterface extends utils.Interface {
+export interface KwentaStakingRewardsInterface extends utils.Interface {
   functions: {
+    "_totalSupply()": FunctionFragment;
     "acceptOwnership()": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "earned(address)": FunctionFragment;
+    "escrowedBalanceOf(address)": FunctionFragment;
     "exit()": FunctionFragment;
     "getReward()": FunctionFragment;
     "getRewardForDuration()": FunctionFragment;
-    "lastPauseTime()": FunctionFragment;
     "lastTimeRewardApplicable()": FunctionFragment;
     "lastUpdateTime()": FunctionFragment;
     "nominateNewOwner(address)": FunctionFragment;
     "nominatedOwner()": FunctionFragment;
+    "nonEscrowedBalanceOf(address)": FunctionFragment;
     "notifyRewardAmount(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
+    "pauseStakingRewards()": FunctionFragment;
     "paused()": FunctionFragment;
     "periodFinish()": FunctionFragment;
     "recoverERC20(address,uint256)": FunctionFragment;
+    "rewardEscrow()": FunctionFragment;
     "rewardPerToken()": FunctionFragment;
     "rewardPerTokenStored()": FunctionFragment;
     "rewardRate()": FunctionFragment;
     "rewards(address)": FunctionFragment;
-    "rewardsDistribution()": FunctionFragment;
     "rewardsDuration()": FunctionFragment;
-    "rewardsToken()": FunctionFragment;
-    "setPaused(bool)": FunctionFragment;
-    "setRewardsDistribution(address)": FunctionFragment;
     "setRewardsDuration(uint256)": FunctionFragment;
     "stake(uint256)": FunctionFragment;
-    "stakingToken()": FunctionFragment;
+    "stakeEscrow(address,uint256)": FunctionFragment;
+    "supplySchedule()": FunctionFragment;
+    "token()": FunctionFragment;
     "totalSupply()": FunctionFragment;
+    "unpauseStakingRewards()": FunctionFragment;
+    "unstake(uint256)": FunctionFragment;
+    "unstakeEscrow(address,uint256)": FunctionFragment;
     "userRewardPerTokenPaid(address)": FunctionFragment;
-    "withdraw(uint256)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "_totalSupply"
       | "acceptOwnership"
       | "balanceOf"
       | "earned"
+      | "escrowedBalanceOf"
       | "exit"
       | "getReward"
       | "getRewardForDuration"
-      | "lastPauseTime"
       | "lastTimeRewardApplicable"
       | "lastUpdateTime"
       | "nominateNewOwner"
       | "nominatedOwner"
+      | "nonEscrowedBalanceOf"
       | "notifyRewardAmount"
       | "owner"
+      | "pauseStakingRewards"
       | "paused"
       | "periodFinish"
       | "recoverERC20"
+      | "rewardEscrow"
       | "rewardPerToken"
       | "rewardPerTokenStored"
       | "rewardRate"
       | "rewards"
-      | "rewardsDistribution"
       | "rewardsDuration"
-      | "rewardsToken"
-      | "setPaused"
-      | "setRewardsDistribution"
       | "setRewardsDuration"
       | "stake"
-      | "stakingToken"
+      | "stakeEscrow"
+      | "supplySchedule"
+      | "token"
       | "totalSupply"
+      | "unpauseStakingRewards"
+      | "unstake"
+      | "unstakeEscrow"
       | "userRewardPerTokenPaid"
-      | "withdraw"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "_totalSupply",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "acceptOwnership",
     values?: undefined
@@ -109,14 +121,14 @@ export interface StakingRewardsInterface extends utils.Interface {
     functionFragment: "earned",
     values: [PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "escrowedBalanceOf",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(functionFragment: "exit", values?: undefined): string;
   encodeFunctionData(functionFragment: "getReward", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getRewardForDuration",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "lastPauseTime",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -136,10 +148,18 @@ export interface StakingRewardsInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "nonEscrowedBalanceOf",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "notifyRewardAmount",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "pauseStakingRewards",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "periodFinish",
@@ -148,6 +168,10 @@ export interface StakingRewardsInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "recoverERC20",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "rewardEscrow",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "rewardPerToken",
@@ -166,24 +190,8 @@ export interface StakingRewardsInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "rewardsDistribution",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "rewardsDuration",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rewardsToken",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setPaused",
-    values: [PromiseOrValue<boolean>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setRewardsDistribution",
-    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setRewardsDuration",
@@ -194,36 +202,53 @@ export interface StakingRewardsInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "stakingToken",
+    functionFragment: "stakeEscrow",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "supplySchedule",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "token", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "totalSupply",
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "unpauseStakingRewards",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "unstake",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "unstakeEscrow",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "userRewardPerTokenPaid",
     values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(
-    functionFragment: "withdraw",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
 
+  decodeFunctionResult(
+    functionFragment: "_totalSupply",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "acceptOwnership",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "earned", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "escrowedBalanceOf",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "exit", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getReward", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getRewardForDuration",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "lastPauseTime",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -243,10 +268,18 @@ export interface StakingRewardsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "nonEscrowedBalanceOf",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "notifyRewardAmount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "pauseStakingRewards",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "periodFinish",
@@ -254,6 +287,10 @@ export interface StakingRewardsInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "recoverERC20",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "rewardEscrow",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -267,20 +304,7 @@ export interface StakingRewardsInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "rewardRate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "rewards", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "rewardsDistribution",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "rewardsDuration",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "rewardsToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "setPaused", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setRewardsDistribution",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -289,41 +313,82 @@ export interface StakingRewardsInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "stake", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "stakingToken",
+    functionFragment: "stakeEscrow",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "supplySchedule",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
+  decodeFunctionResult(
     functionFragment: "totalSupply",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "unpauseStakingRewards",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "unstake", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "unstakeEscrow",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "userRewardPerTokenPaid",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
   events: {
+    "EscrowStaked(address,uint256)": EventFragment;
+    "EscrowUnstaked(address,uint256)": EventFragment;
     "OwnerChanged(address,address)": EventFragment;
     "OwnerNominated(address)": EventFragment;
-    "PauseChanged(bool)": EventFragment;
+    "Paused(address)": EventFragment;
     "Recovered(address,uint256)": EventFragment;
     "RewardAdded(uint256)": EventFragment;
     "RewardPaid(address,uint256)": EventFragment;
     "RewardsDurationUpdated(uint256)": EventFragment;
     "Staked(address,uint256)": EventFragment;
-    "Withdrawn(address,uint256)": EventFragment;
+    "Unpaused(address)": EventFragment;
+    "Unstaked(address,uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "EscrowStaked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EscrowUnstaked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerNominated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PauseChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Recovered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RewardAdded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RewardPaid"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RewardsDurationUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Staked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Withdrawn"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Unstaked"): EventFragment;
 }
+
+export interface EscrowStakedEventObject {
+  user: string;
+  amount: BigNumber;
+}
+export type EscrowStakedEvent = TypedEvent<
+  [string, BigNumber],
+  EscrowStakedEventObject
+>;
+
+export type EscrowStakedEventFilter = TypedEventFilter<EscrowStakedEvent>;
+
+export interface EscrowUnstakedEventObject {
+  user: string;
+  amount: BigNumber;
+}
+export type EscrowUnstakedEvent = TypedEvent<
+  [string, BigNumber],
+  EscrowUnstakedEventObject
+>;
+
+export type EscrowUnstakedEventFilter = TypedEventFilter<EscrowUnstakedEvent>;
 
 export interface OwnerChangedEventObject {
   oldOwner: string;
@@ -346,12 +411,12 @@ export type OwnerNominatedEvent = TypedEvent<
 
 export type OwnerNominatedEventFilter = TypedEventFilter<OwnerNominatedEvent>;
 
-export interface PauseChangedEventObject {
-  isPaused: boolean;
+export interface PausedEventObject {
+  account: string;
 }
-export type PauseChangedEvent = TypedEvent<[boolean], PauseChangedEventObject>;
+export type PausedEvent = TypedEvent<[string], PausedEventObject>;
 
-export type PauseChangedEventFilter = TypedEventFilter<PauseChangedEvent>;
+export type PausedEventFilter = TypedEventFilter<PausedEvent>;
 
 export interface RecoveredEventObject {
   token: string;
@@ -401,23 +466,30 @@ export type StakedEvent = TypedEvent<[string, BigNumber], StakedEventObject>;
 
 export type StakedEventFilter = TypedEventFilter<StakedEvent>;
 
-export interface WithdrawnEventObject {
+export interface UnpausedEventObject {
+  account: string;
+}
+export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
+
+export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
+
+export interface UnstakedEventObject {
   user: string;
   amount: BigNumber;
 }
-export type WithdrawnEvent = TypedEvent<
+export type UnstakedEvent = TypedEvent<
   [string, BigNumber],
-  WithdrawnEventObject
+  UnstakedEventObject
 >;
 
-export type WithdrawnEventFilter = TypedEventFilter<WithdrawnEvent>;
+export type UnstakedEventFilter = TypedEventFilter<UnstakedEvent>;
 
-export interface StakingRewards extends BaseContract {
+export interface KwentaStakingRewards extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: StakingRewardsInterface;
+  interface: KwentaStakingRewardsInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -439,6 +511,8 @@ export interface StakingRewards extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    _totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     acceptOwnership(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -453,6 +527,11 @@ export interface StakingRewards extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    escrowedBalanceOf(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     exit(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -462,8 +541,6 @@ export interface StakingRewards extends BaseContract {
     ): Promise<ContractTransaction>;
 
     getRewardForDuration(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    lastPauseTime(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     lastTimeRewardApplicable(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -476,12 +553,21 @@ export interface StakingRewards extends BaseContract {
 
     nominatedOwner(overrides?: CallOverrides): Promise<[string]>;
 
+    nonEscrowedBalanceOf(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     notifyRewardAmount(
       reward: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
+
+    pauseStakingRewards(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     paused(overrides?: CallOverrides): Promise<[boolean]>;
 
@@ -492,6 +578,8 @@ export interface StakingRewards extends BaseContract {
       tokenAmount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    rewardEscrow(overrides?: CallOverrides): Promise<[string]>;
 
     rewardPerToken(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -504,21 +592,7 @@ export interface StakingRewards extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    rewardsDistribution(overrides?: CallOverrides): Promise<[string]>;
-
     rewardsDuration(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    rewardsToken(overrides?: CallOverrides): Promise<[string]>;
-
-    setPaused(
-      _paused: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setRewardsDistribution(
-      _rewardsDistribution: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
 
     setRewardsDuration(
       _rewardsDuration: PromiseOrValue<BigNumberish>,
@@ -530,20 +604,40 @@ export interface StakingRewards extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    stakingToken(overrides?: CallOverrides): Promise<[string]>;
+    stakeEscrow(
+      account: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    supplySchedule(overrides?: CallOverrides): Promise<[string]>;
+
+    token(overrides?: CallOverrides): Promise<[string]>;
 
     totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    unpauseStakingRewards(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    unstake(
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    unstakeEscrow(
+      account: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     userRewardPerTokenPaid(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    withdraw(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
   };
+
+  _totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
   acceptOwnership(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -559,6 +653,11 @@ export interface StakingRewards extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  escrowedBalanceOf(
+    account: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   exit(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -568,8 +667,6 @@ export interface StakingRewards extends BaseContract {
   ): Promise<ContractTransaction>;
 
   getRewardForDuration(overrides?: CallOverrides): Promise<BigNumber>;
-
-  lastPauseTime(overrides?: CallOverrides): Promise<BigNumber>;
 
   lastTimeRewardApplicable(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -582,12 +679,21 @@ export interface StakingRewards extends BaseContract {
 
   nominatedOwner(overrides?: CallOverrides): Promise<string>;
 
+  nonEscrowedBalanceOf(
+    account: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   notifyRewardAmount(
     reward: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   owner(overrides?: CallOverrides): Promise<string>;
+
+  pauseStakingRewards(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   paused(overrides?: CallOverrides): Promise<boolean>;
 
@@ -598,6 +704,8 @@ export interface StakingRewards extends BaseContract {
     tokenAmount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  rewardEscrow(overrides?: CallOverrides): Promise<string>;
 
   rewardPerToken(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -610,21 +718,7 @@ export interface StakingRewards extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  rewardsDistribution(overrides?: CallOverrides): Promise<string>;
-
   rewardsDuration(overrides?: CallOverrides): Promise<BigNumber>;
-
-  rewardsToken(overrides?: CallOverrides): Promise<string>;
-
-  setPaused(
-    _paused: PromiseOrValue<boolean>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setRewardsDistribution(
-    _rewardsDistribution: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   setRewardsDuration(
     _rewardsDuration: PromiseOrValue<BigNumberish>,
@@ -636,21 +730,41 @@ export interface StakingRewards extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  stakingToken(overrides?: CallOverrides): Promise<string>;
+  stakeEscrow(
+    account: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  supplySchedule(overrides?: CallOverrides): Promise<string>;
+
+  token(overrides?: CallOverrides): Promise<string>;
 
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
+
+  unpauseStakingRewards(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  unstake(
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  unstakeEscrow(
+    account: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   userRewardPerTokenPaid(
     arg0: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  withdraw(
-    amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   callStatic: {
+    _totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
+
     acceptOwnership(overrides?: CallOverrides): Promise<void>;
 
     balanceOf(
@@ -663,13 +777,16 @@ export interface StakingRewards extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    escrowedBalanceOf(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     exit(overrides?: CallOverrides): Promise<void>;
 
     getReward(overrides?: CallOverrides): Promise<void>;
 
     getRewardForDuration(overrides?: CallOverrides): Promise<BigNumber>;
-
-    lastPauseTime(overrides?: CallOverrides): Promise<BigNumber>;
 
     lastTimeRewardApplicable(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -682,12 +799,19 @@ export interface StakingRewards extends BaseContract {
 
     nominatedOwner(overrides?: CallOverrides): Promise<string>;
 
+    nonEscrowedBalanceOf(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     notifyRewardAmount(
       reward: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     owner(overrides?: CallOverrides): Promise<string>;
+
+    pauseStakingRewards(overrides?: CallOverrides): Promise<void>;
 
     paused(overrides?: CallOverrides): Promise<boolean>;
 
@@ -698,6 +822,8 @@ export interface StakingRewards extends BaseContract {
       tokenAmount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    rewardEscrow(overrides?: CallOverrides): Promise<string>;
 
     rewardPerToken(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -710,21 +836,7 @@ export interface StakingRewards extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    rewardsDistribution(overrides?: CallOverrides): Promise<string>;
-
     rewardsDuration(overrides?: CallOverrides): Promise<BigNumber>;
-
-    rewardsToken(overrides?: CallOverrides): Promise<string>;
-
-    setPaused(
-      _paused: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setRewardsDistribution(
-      _rewardsDistribution: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     setRewardsDuration(
       _rewardsDuration: PromiseOrValue<BigNumberish>,
@@ -736,22 +848,53 @@ export interface StakingRewards extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    stakingToken(overrides?: CallOverrides): Promise<string>;
+    stakeEscrow(
+      account: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    supplySchedule(overrides?: CallOverrides): Promise<string>;
+
+    token(overrides?: CallOverrides): Promise<string>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
+
+    unpauseStakingRewards(overrides?: CallOverrides): Promise<void>;
+
+    unstake(
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    unstakeEscrow(
+      account: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     userRewardPerTokenPaid(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    withdraw(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
   };
 
   filters: {
+    "EscrowStaked(address,uint256)"(
+      user?: PromiseOrValue<string> | null,
+      amount?: null
+    ): EscrowStakedEventFilter;
+    EscrowStaked(
+      user?: PromiseOrValue<string> | null,
+      amount?: null
+    ): EscrowStakedEventFilter;
+
+    "EscrowUnstaked(address,uint256)"(
+      user?: null,
+      amount?: null
+    ): EscrowUnstakedEventFilter;
+    EscrowUnstaked(user?: null, amount?: null): EscrowUnstakedEventFilter;
+
     "OwnerChanged(address,address)"(
       oldOwner?: null,
       newOwner?: null
@@ -761,8 +904,8 @@ export interface StakingRewards extends BaseContract {
     "OwnerNominated(address)"(newOwner?: null): OwnerNominatedEventFilter;
     OwnerNominated(newOwner?: null): OwnerNominatedEventFilter;
 
-    "PauseChanged(bool)"(isPaused?: null): PauseChangedEventFilter;
-    PauseChanged(isPaused?: null): PauseChangedEventFilter;
+    "Paused(address)"(account?: null): PausedEventFilter;
+    Paused(account?: null): PausedEventFilter;
 
     "Recovered(address,uint256)"(
       token?: null,
@@ -798,17 +941,22 @@ export interface StakingRewards extends BaseContract {
       amount?: null
     ): StakedEventFilter;
 
-    "Withdrawn(address,uint256)"(
+    "Unpaused(address)"(account?: null): UnpausedEventFilter;
+    Unpaused(account?: null): UnpausedEventFilter;
+
+    "Unstaked(address,uint256)"(
       user?: PromiseOrValue<string> | null,
       amount?: null
-    ): WithdrawnEventFilter;
-    Withdrawn(
+    ): UnstakedEventFilter;
+    Unstaked(
       user?: PromiseOrValue<string> | null,
       amount?: null
-    ): WithdrawnEventFilter;
+    ): UnstakedEventFilter;
   };
 
   estimateGas: {
+    _totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
+
     acceptOwnership(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -819,6 +967,11 @@ export interface StakingRewards extends BaseContract {
     ): Promise<BigNumber>;
 
     earned(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    escrowedBalanceOf(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -833,8 +986,6 @@ export interface StakingRewards extends BaseContract {
 
     getRewardForDuration(overrides?: CallOverrides): Promise<BigNumber>;
 
-    lastPauseTime(overrides?: CallOverrides): Promise<BigNumber>;
-
     lastTimeRewardApplicable(overrides?: CallOverrides): Promise<BigNumber>;
 
     lastUpdateTime(overrides?: CallOverrides): Promise<BigNumber>;
@@ -846,12 +997,21 @@ export interface StakingRewards extends BaseContract {
 
     nominatedOwner(overrides?: CallOverrides): Promise<BigNumber>;
 
+    nonEscrowedBalanceOf(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     notifyRewardAmount(
       reward: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    pauseStakingRewards(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     paused(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -862,6 +1022,8 @@ export interface StakingRewards extends BaseContract {
       tokenAmount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    rewardEscrow(overrides?: CallOverrides): Promise<BigNumber>;
 
     rewardPerToken(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -874,21 +1036,7 @@ export interface StakingRewards extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    rewardsDistribution(overrides?: CallOverrides): Promise<BigNumber>;
-
     rewardsDuration(overrides?: CallOverrides): Promise<BigNumber>;
-
-    rewardsToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    setPaused(
-      _paused: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setRewardsDistribution(
-      _rewardsDistribution: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
 
     setRewardsDuration(
       _rewardsDuration: PromiseOrValue<BigNumberish>,
@@ -900,22 +1048,42 @@ export interface StakingRewards extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    stakingToken(overrides?: CallOverrides): Promise<BigNumber>;
+    stakeEscrow(
+      account: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    supplySchedule(overrides?: CallOverrides): Promise<BigNumber>;
+
+    token(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
+
+    unpauseStakingRewards(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    unstake(
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    unstakeEscrow(
+      account: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     userRewardPerTokenPaid(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    withdraw(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    _totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     acceptOwnership(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -926,6 +1094,11 @@ export interface StakingRewards extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     earned(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    escrowedBalanceOf(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -942,8 +1115,6 @@ export interface StakingRewards extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    lastPauseTime(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     lastTimeRewardApplicable(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -957,12 +1128,21 @@ export interface StakingRewards extends BaseContract {
 
     nominatedOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    nonEscrowedBalanceOf(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     notifyRewardAmount(
       reward: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    pauseStakingRewards(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -973,6 +1153,8 @@ export interface StakingRewards extends BaseContract {
       tokenAmount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    rewardEscrow(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     rewardPerToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -987,23 +1169,7 @@ export interface StakingRewards extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    rewardsDistribution(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     rewardsDuration(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    rewardsToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    setPaused(
-      _paused: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setRewardsDistribution(
-      _rewardsDistribution: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
 
     setRewardsDuration(
       _rewardsDuration: PromiseOrValue<BigNumberish>,
@@ -1015,18 +1181,36 @@ export interface StakingRewards extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    stakingToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    stakeEscrow(
+      account: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    supplySchedule(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    unpauseStakingRewards(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    unstake(
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    unstakeEscrow(
+      account: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     userRewardPerTokenPaid(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    withdraw(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

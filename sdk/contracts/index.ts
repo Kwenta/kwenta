@@ -30,8 +30,9 @@ import {
 	ERC20__factory,
 	SupplySchedule__factory,
 	MultipleMerkleDistributor__factory,
-	StakingRewards__factory,
+	KwentaStakingRewards__factory,
 	VKwentaRedeemer__factory,
+	StakingRewards__factory,
 } from './types';
 
 type ContractFactory = {
@@ -116,7 +117,7 @@ export const getContractsByNetwork = (
 			? ERC20__factory.connect(ADDRESSES.veKwentaToken[networkId], provider)
 			: undefined,
 		KwentaStakingRewards: ADDRESSES.KwentaStakingRewards[networkId]
-			? StakingRewards__factory.connect(ADDRESSES.KwentaStakingRewards[networkId], provider)
+			? KwentaStakingRewards__factory.connect(ADDRESSES.KwentaStakingRewards[networkId], provider)
 			: undefined,
 		vKwentaRedeemer: ADDRESSES.vKwentaRedeemer[networkId]
 			? VKwentaRedeemer__factory.connect(ADDRESSES.vKwentaRedeemer[networkId], provider)
