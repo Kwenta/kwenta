@@ -179,7 +179,7 @@ export const claimMultipleRewards = createAsyncThunk<void, void, ThunkConfig>(
 			onTxConfirmed: () => {
 				dispatch({ type: 'staking/setClaimRewardsStatus', payload: FetchStatus.Success });
 				dispatch(fetchStakingData());
-				dispatch(fetchEscrowData());
+				dispatch(fetchClaimableRewards());
 			},
 			onTxFailed: () => {
 				dispatch({ type: 'staking/setClaimRewardsStatus', payload: FetchStatus.Error });
