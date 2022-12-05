@@ -26,9 +26,11 @@ import { PositionSide, FuturesTradeInputs, FuturesAccountType } from 'queries/fu
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 import { usePollMarketFuturesData } from 'state/futures/hooks';
 import {
+	setIsolatedMarginTradeInputs,
 	setCrossMarginTradeInputs,
 	setFuturesAccountType,
 	setOrderType as setReduxOrderType,
+	ZERO_STATE_TRADE_INPUTS,
 } from 'state/futures/reducer';
 import {
 	selectCrossMarginBalanceInfo,
@@ -38,6 +40,8 @@ import {
 	selectMaxLeverage,
 	selectAboveMaxLeverage,
 	selectCrossMarginSettings,
+	selectIsolatedTradeInputs,
+	selectFuturesType,
 } from 'state/futures/selectors';
 import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector, useAppDispatch } from 'state/hooks';
@@ -48,7 +52,6 @@ import {
 	leverageSideState,
 	orderTypeState,
 	futuresTradeInputsState,
-	futuresAccountTypeState,
 	preferredLeverageState,
 	simulatedTradeState,
 	potentialTradeDetailsState,
@@ -127,12 +130,15 @@ const useFuturesData = () => {
 	const marketAssetRate = useAppSelector(selectMarketAssetRate);
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
 	const setPotentialTradeDetails = useSetRecoilState(potentialTradeDetailsState);
-	const [selectedAccountType, setSelectedAccountType] = useRecoilState(futuresAccountTypeState);
 	const [preferredLeverage] = usePersistedRecoilState(preferredLeverageState);
 	const market = useAppSelector(selectMarketInfo);
 
 	const [maxFee, setMaxFee] = useState(zeroBN);
 	const [error, setError] = useState<string | null>(null);
+
+	// perps v2
+	const selectedAccountType = useAppSelector(selectFuturesType);
+	const isolatedTradeInputs = useAppSelector(selectIsolatedTradeInputs);
 
 	const tradePrice = useMemo(() => wei(isAdvancedOrder ? orderPrice || zeroBN : marketAssetRate), [
 		orderPrice,
@@ -173,6 +179,7 @@ const useFuturesData = () => {
 
 	const resetTradeState = useCallback(() => {
 		dispatch(setCrossMarginTradeInputs(serializeCrossMarginTradeInputs(ZERO_TRADE_INPUTS)));
+		dispatch(setIsolatedMarginTradeInputs(ZERO_STATE_TRADE_INPUTS));
 		setSimulatedTrade(ZERO_TRADE_INPUTS);
 		setTradeInputs(ZERO_TRADE_INPUTS);
 		setCrossMarginMarginDelta(zeroBN);
@@ -391,6 +398,13 @@ const useFuturesData = () => {
 			} else {
 				// TODO: add estimates on position change
 				// onStagePositionChange(newTradeInputs);
+				dispatch(
+					setIsolatedMarginTradeInputs({
+						nativeSizeDelta: (positiveTrade ? nativeSize : nativeSize.neg()).toString(),
+						susdSizeDelta: (positiveTrade ? usdSize : usdSize.neg()).toString(),
+						priceImpactDelta: isolatedTradeInputs.priceImpactDelta,
+					})
+				);
 			}
 		},
 		[
@@ -518,15 +532,15 @@ const useFuturesData = () => {
 		if (!perpsMarketContract) return;
 		if (orderType === 'market') {
 			return await perpsMarketContract.modifyPositionWithTracking(
-				wei(1).toBN(), // TODO: remove hard coded size
-				wei(50).toBN(), // TODO: remove hard coded impact delta
+				wei(isolatedTradeInputs.nativeSizeDelta).toBN(),
+				wei(0.5).toBN(), // TODO: remove hard coded impact delta
 				KWENTA_TRACKING_CODE,
 				{
 					gasLimit: wei(0.000000000001).toBN(), // TODO: remove hard coded gas limit
 				}
 			);
 		}
-	}, [perpsMarketContract, orderType, tradeInputs.nativeSizeDelta]);
+	}, [perpsMarketContract, orderType, isolatedTradeInputs]);
 
 	useEffect(() => {
 		if (orderTxn.hash) {
@@ -619,7 +633,6 @@ const useFuturesData = () => {
 
 	useEffect(() => {
 		if (!CROSS_MARGIN_ENABLED) {
-			setSelectedAccountType(DEFAULT_FUTURES_MARGIN_TYPE);
 			dispatch(setFuturesAccountType(DEFAULT_FUTURES_MARGIN_TYPE));
 			return;
 		}
@@ -630,7 +643,6 @@ const useFuturesData = () => {
 		const accountType = ['cross_margin', 'isolated_margin'].includes(routerType)
 			? routerType
 			: DEFAULT_FUTURES_MARGIN_TYPE;
-		setSelectedAccountType(accountType);
 		dispatch(setFuturesAccountType(accountType));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dispatch, router.query.accountType]);

@@ -17,9 +17,10 @@ export type CrossMarginTradeInputs<T = Wei> = {
 	orderPrice?: string | undefined;
 };
 
-export type IsolatedMarginTradeInputs = {
-	nativeSizeDelta: string;
-	susdSizeDelta: string;
+export type IsolatedMarginTradeInputs<T = Wei> = {
+	nativeSizeDelta: T;
+	susdSizeDelta: T;
+	priceImpactDelta: T;
 };
 
 export type FundingRateSerialized = {
@@ -104,7 +105,7 @@ export type CrossMarginState = {
 };
 
 export type IsolatedMarginState = {
-	tradeInputs: IsolatedMarginTradeInputs;
+	tradeInputs: IsolatedMarginTradeInputs<string>;
 	orderType: IsolatedMarginOrderType;
 	selectedLeverage: string;
 	leverageSide: PositionSide;

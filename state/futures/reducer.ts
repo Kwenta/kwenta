@@ -1,6 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { DEFAULT_FUTURES_MARGIN_TYPE, DEFAULT_LEVERAGE } from 'constants/defaults';
+import {
+	DEFAULT_FUTURES_MARGIN_TYPE,
+	DEFAULT_LEVERAGE,
+	DEFAULT_PRICE_IMPACT_DELTA,
+} from 'constants/defaults';
 import { TransactionStatus } from 'sdk/types/common';
 import { FuturesMarket, FuturesMarketKey } from 'sdk/types/futures';
 import { PositionSide } from 'sections/futures/types';
@@ -31,12 +35,13 @@ export type CrossMarginTradeInputs = {
 export type IsolatedMarginTradeInputs = {
 	nativeSizeDelta: string;
 	susdSizeDelta: string;
+	priceImpactDelta: string;
 };
 
-const ZERO_STATE_TRADE_INPUTS = {
+export const ZERO_STATE_TRADE_INPUTS = {
 	nativeSizeDelta: '',
 	susdSizeDelta: '',
-	leverage: '',
+	priceImpactDelta: DEFAULT_PRICE_IMPACT_DELTA,
 };
 
 const ZERO_STATE_CM_TRADE_INPUTS = {
@@ -130,6 +135,9 @@ const futuresSlice = createSlice({
 		},
 		setTransaction: (state, action: PayloadAction<FuturesTransaction | undefined>) => {
 			state.transaction = action.payload;
+		},
+		setIsolatedMarginTradeInputs: (state, action: PayloadAction<IsolatedMarginTradeInputs>) => {
+			state.isolatedMargin.tradeInputs = action.payload;
 		},
 		setCrossMarginTradeInputs: (state, action: PayloadAction<CrossMarginTradeInputs>) => {
 			state.crossMargin.tradeInputs = action.payload;
@@ -270,6 +278,7 @@ export const {
 	setCrossMarginBalanceInfo,
 	setFuturesMarkets,
 	setTransaction,
+	setIsolatedMarginTradeInputs,
 	setCrossMarginTradeInputs,
 	setCrossMarginAccount,
 	updateTransactionStatus,

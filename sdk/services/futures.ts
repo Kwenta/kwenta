@@ -414,6 +414,13 @@ export default class FuturesService {
 		};
 	}
 
+	// Perps V2 read functions
+	public async getFillPrice(marketAddress: string, basePrice: Wei, sizeDelta: Wei) {
+		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
+		const fillPrice = await market.fillPriceWithBasePrice(sizeDelta.toBN(), basePrice.toBN());
+		return fillPrice;
+	}
+
 	// Contract mutations
 
 	public async approveCrossMarginDeposit(

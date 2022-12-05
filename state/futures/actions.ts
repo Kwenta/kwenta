@@ -269,7 +269,7 @@ export const depositIsolatedMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 	async (amount, { getState, dispatch, extra: { sdk } }) => {
 		const { futures } = getState();
 		const marketInfo = futures.markets.find(
-			(m) => m.asset === futures.isolatedMargin.selectedMarketAsset
+			(m) => m.marketKey === futures.isolatedMargin.selectedMarketKey
 		);
 		if (!marketInfo) throw new Error('Market info not found');
 		try {
@@ -299,7 +299,7 @@ export const withdrawIsolatedMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 	async (amount, { getState, dispatch, extra: { sdk } }) => {
 		const { futures } = getState();
 		const marketInfo = futures.markets.find(
-			(m) => m.asset === futures.isolatedMargin.selectedMarketAsset
+			(m) => m.marketKey === futures.isolatedMargin.selectedMarketKey
 		);
 		if (!marketInfo) throw new Error('Market info not found');
 		try {

@@ -12,6 +12,7 @@ import {
 	CrossMarginTradeInputs,
 	FundingRate,
 	FundingRateSerialized,
+	IsolatedMarginTradeInputs,
 } from 'state/futures/types';
 import logError from 'utils/logError';
 
