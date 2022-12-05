@@ -7,7 +7,6 @@ import KwentaSDK from 'sdk';
 import { DEFAULT_NUMBER_OF_FUTURES_FEE } from 'constants/defaults';
 import { FLEEK_BASE_URL, FLEEK_STORAGE_BUCKET } from 'queries/files/constants';
 import { ContractName } from 'sdk/contracts';
-import { RewardEscrow as IRewardEscrow } from 'sdk/contracts/types';
 import { formatTruncatedDuration } from 'utils/formatters/date';
 
 import * as sdkErrors from '../common/errors';
@@ -189,15 +188,16 @@ export default class KwentaTokenService {
 	}
 
 	public async getEscrowData() {
-		const { RewardEscrow } = this.sdk.context.mutliCallContracts;
+		const { RewardEscrow } = this.sdk.context.contracts;
+		const { RewardEscrow: RewardEscrowMulticall } = this.sdk.context.mutliCallContracts;
 
-		if (!RewardEscrow) {
+		if (!RewardEscrow || !RewardEscrowMulticall) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
 		const { walletAddress } = this.sdk.context;
 
-		const schedules = await ((RewardEscrow as unknown) as IRewardEscrow).getVestingSchedules(
+		const schedules = await RewardEscrow.getVestingSchedules(
 			walletAddress,
 			0,
 			DEFAULT_NUMBER_OF_FUTURES_FEE
@@ -206,7 +206,7 @@ export default class KwentaTokenService {
 		const vestingSchedules = schedules.filter((schedule) => schedule.escrowAmount.gt(0));
 
 		const calls = vestingSchedules.map((schedule) =>
-			RewardEscrow.getVestingEntryClaimable(walletAddress, schedule.entryID)
+			RewardEscrowMulticall.getVestingEntryClaimable(walletAddress, schedule.entryID)
 		);
 
 		const vestingEntries: {
@@ -304,16 +304,21 @@ export default class KwentaTokenService {
 		]);
 	}
 
-	public redeemToken(token: ContractName) {
+	public redeemToken(
+		token: ContractName,
+		options: { hasAddress: boolean } = { hasAddress: false }
+	) {
 		const tokenContract = this.sdk.context.contracts[token];
 
 		if (!tokenContract) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
-		return this.sdk.transactions.createContractTxn(tokenContract, 'redeem', [
-			this.sdk.context.walletAddress,
-		]);
+		return this.sdk.transactions.createContractTxn(
+			tokenContract,
+			'redeem',
+			options.hasAddress ? [this.sdk.context.walletAddress] : []
+		);
 	}
 
 	public redeemVKwenta() {
@@ -321,7 +326,7 @@ export default class KwentaTokenService {
 	}
 
 	public redeemVeKwenta() {
-		return this.redeemToken('veKwentaRedeemer');
+		return this.redeemToken('veKwentaRedeemer', { hasAddress: true });
 	}
 
 	public vestToken(ids: number[]) {

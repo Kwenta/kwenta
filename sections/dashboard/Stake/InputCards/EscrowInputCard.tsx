@@ -90,10 +90,8 @@ const EscrowInputCard: FC = () => {
 	const isDisabled = useMemo(() => {
 		if (!isKwentaTokenApproved) {
 			return false;
-		} else if (activeTab === 0) {
-			return stakeEnabled;
 		} else {
-			return unstakeEnabled;
+			return activeTab === 0 ? !stakeEnabled : !unstakeEnabled;
 		}
 	}, [isKwentaTokenApproved, activeTab, stakeEnabled, unstakeEnabled]);
 

@@ -3,7 +3,6 @@ import { Contract as EthCallContract } from 'ethcall';
 import { Contract, ethers } from 'ethers';
 
 import ERC20ABI from '../contracts/abis/ERC20.json';
-import KwentaArrakisVaultABI from '../contracts/abis/KwentaArrakisVault.json';
 import MultipleMerkleDistributorABI from '../contracts/abis/MultipleMerkleDistributor.json';
 import RewardEscrowABI from '../contracts/abis/RewardEscrow.json';
 import SupplyScheduleABI from '../contracts/abis/SupplySchedule.json';
@@ -149,7 +148,7 @@ export const getMultiCallContractsByNetwork = (networkId: NetworkId) => {
 			? new EthCallContract(ADDRESSES.StakingRewards[networkId], StakingRewardsABI)
 			: undefined,
 		KwentaArrakisVault: ADDRESSES.KwentaArrakisVault[networkId]
-			? new EthCallContract(ADDRESSES.KwentaArrakisVault[networkId], KwentaArrakisVaultABI)
+			? new EthCallContract(ADDRESSES.KwentaArrakisVault[networkId], ERC20ABI)
 			: undefined,
 		RewardEscrow: ADDRESSES.RewardEscrow[networkId]
 			? new EthCallContract(ADDRESSES.RewardEscrow[networkId], RewardEscrowABI)

@@ -79,7 +79,8 @@ export const redeemToken = createAsyncThunk<void, 'vKwenta' | 'veKwenta', ThunkC
 	'staking/redeemToken',
 	async (token, { dispatch, extra: { sdk } }) => {
 		const { hash } = await sdk.kwentaToken.redeemToken(
-			token === 'vKwenta' ? 'vKwentaRedeemer' : 'veKwentaRedeemer'
+			token === 'vKwenta' ? 'vKwentaRedeemer' : 'veKwentaRedeemer',
+			{ hasAddress: token === 'veKwenta' }
 		);
 
 		monitorTransaction({
@@ -178,6 +179,7 @@ export const claimMultipleRewards = createAsyncThunk<void, void, ThunkConfig>(
 			onTxConfirmed: () => {
 				dispatch({ type: 'staking/setClaimRewardsStatus', payload: FetchStatus.Success });
 				dispatch(fetchStakingData());
+				dispatch(fetchEscrowData());
 			},
 			onTxFailed: () => {
 				dispatch({ type: 'staking/setClaimRewardsStatus', payload: FetchStatus.Error });
