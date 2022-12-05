@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue, useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
@@ -20,10 +20,11 @@ import {
 	selectPosition,
 	selectMaxLeverage,
 	selectFuturesTransaction,
+	selectIsolatedTradeInputs,
+	selectLeverageSide,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import {
-	leverageSideState,
 	orderTypeState,
 	potentialTradeDetailsState,
 	sizeDeltaState,
@@ -55,8 +56,9 @@ const ManagePosition: React.FC = () => {
 		potentialTradeDetailsState
 	);
 	const orderType = useRecoilValue(orderTypeState);
-	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
-	const { leverage } = useRecoilValue(futuresTradeInputsState);
+
+	const { leverage } = useAppSelector(selectIsolatedTradeInputs);
+	const leverageSide = useAppSelector(selectLeverageSide);
 
 	const futuresTransaction = useAppSelector(selectFuturesTransaction);
 	const isMarketCapReached = useAppSelector(selectIsMarketCapReached);
@@ -173,7 +175,6 @@ const ManagePosition: React.FC = () => {
 									position.position.side === PositionSide.LONG
 										? PositionSide.SHORT
 										: PositionSide.LONG;
-								setLeverageSide(newLeverageSide);
 								dispatch(setReduxLeverageSide(newLeverageSide));
 								onTradeAmountChange(newTradeSize.toString(), tradePrice, 'native');
 								dispatch(setOpenModal('futures_modify_position_confirm'));

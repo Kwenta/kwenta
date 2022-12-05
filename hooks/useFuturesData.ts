@@ -44,6 +44,7 @@ import {
 	selectCrossMarginSettings,
 	selectIsolatedTradeInputs,
 	selectFuturesType,
+	selectLeverageSide,
 } from 'state/futures/selectors';
 import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector, useAppDispatch } from 'state/hooks';
@@ -51,7 +52,6 @@ import {
 	crossMarginMarginDeltaState,
 	tradeFeesState,
 	futuresAccountState,
-	leverageSideState,
 	orderTypeState,
 	futuresTradeInputsState,
 	preferredLeverageState,
@@ -126,7 +126,6 @@ const useFuturesData = () => {
 	);
 	const [tradeFees, setTradeFees] = useRecoilState(tradeFeesState);
 	const [dynamicFeeRate, setDynamicFeeRate] = useRecoilState(dynamicFeeRateState);
-	const leverageSide = useRecoilValue(leverageSideState);
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const feeCap = useRecoilValue(orderFeeCapState);
 	const position = useAppSelector(selectPosition);
@@ -149,6 +148,7 @@ const useFuturesData = () => {
 	// perps v2
 	const selectedAccountType = useAppSelector(selectFuturesType);
 	const isolatedTradeInputs = useAppSelector(selectIsolatedTradeInputs);
+	const leverageSide = useAppSelector(selectLeverageSide);
 
 	const tradePrice = useMemo(() => wei(isAdvancedOrder ? orderPrice || zeroBN : marketAssetRate), [
 		orderPrice,
@@ -402,19 +402,23 @@ const useFuturesData = () => {
 				leverage: String(floorNumber(leverage)),
 			};
 
+			if (selectedAccountType === 'isolated_margin') {
+				dispatch(
+					setIsolatedMarginTradeInputs({
+						nativeSizeDelta: (positiveTrade ? nativeSize : nativeSize.neg()).toString(),
+						susdSizeDelta: (positiveTrade ? usdSize : usdSize.neg()).toString(),
+						priceImpactDelta: isolatedTradeInputs.priceImpactDelta,
+						leverage: String(floorNumber(leverage)),
+					})
+				);
+			}
+
 			if (options?.simulateChange) {
 				// Allows us to keep it snappy updating the input values
 				setSimulatedTrade(newTradeInputs);
 			} else {
 				// TODO: add estimates on position change
 				// onStagePositionChange(newTradeInputs);
-				dispatch(
-					setIsolatedMarginTradeInputs({
-						nativeSizeDelta: (positiveTrade ? nativeSize : nativeSize.neg()).toString(),
-						susdSizeDelta: (positiveTrade ? usdSize : usdSize.neg()).toString(),
-						priceImpactDelta: isolatedTradeInputs.priceImpactDelta,
-					})
-				);
 			}
 		},
 		[

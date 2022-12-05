@@ -9,9 +9,9 @@ import {
 	setLeverageSide as setReduxLeverageSide,
 	setOrderType as setReduxOrderType,
 } from 'state/futures/reducer';
-import { selectPosition } from 'state/futures/selectors';
+import { selectLeverageSide, selectPosition } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { leverageSideState, orderTypeState } from 'store/futures';
+import { orderTypeState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 
 import FeeInfoBox from '../FeeInfoBox';
@@ -31,9 +31,9 @@ type Props = {
 const TradeIsolatedMargin = ({ isMobile }: Props) => {
 	const dispatch = useAppDispatch();
 
-	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const position = useAppSelector(selectPosition);
 	const openModal = useAppSelector(selectOpenModal);
+	const leverageSide = useAppSelector(selectLeverageSide);
 
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const totalMargin = position?.remainingMargin ?? zeroBN;
@@ -63,8 +63,7 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 			<PositionButtons
 				selected={leverageSide}
 				onSelect={(side) => {
-					setLeverageSide(side);
-					dispatch(setReduxLeverageSide(side));
+					dispatch(setReduxLeverageSide(side)); // TODO: Make sure trade inputs get updated
 				}}
 			/>
 

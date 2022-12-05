@@ -42,12 +42,14 @@ export type IsolatedMarginTradeInputs = {
 	nativeSizeDelta: string;
 	susdSizeDelta: string;
 	priceImpactDelta: string;
+	leverage: string;
 };
 
 export const ZERO_STATE_TRADE_INPUTS = {
 	nativeSizeDelta: '0',
 	susdSizeDelta: '0',
 	priceImpactDelta: DEFAULT_PRICE_IMPACT_DELTA,
+	leverage: '',
 };
 
 const ZERO_STATE_CM_TRADE_INPUTS = {

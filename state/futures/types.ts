@@ -21,6 +21,7 @@ export type IsolatedMarginTradeInputs<T = Wei> = {
 	nativeSizeDelta: T;
 	susdSizeDelta: T;
 	priceImpactDelta: T;
+	leverage: string;
 };
 
 export type FundingRateSerialized = {

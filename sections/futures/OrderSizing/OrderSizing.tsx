@@ -13,12 +13,12 @@ import {
 	selectMarketAssetRate,
 	selectCrossMarginBalanceInfo,
 	selectPosition,
+	selectIsolatedTradeInputs,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {
 	futuresAccountTypeState,
 	simulatedTradeState,
-	futuresTradeInputsState,
 	orderTypeState,
 	futuresOrderPriceState,
 	leverageSideState,
@@ -37,10 +37,12 @@ type OrderSizingProps = {
 const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	const { onTradeAmountChange, maxUsdInputAmount } = useFuturesContext();
 
-	const { nativeSize, susdSize } = useRecoilValue(futuresTradeInputsState);
 	const simulatedTrade = useRecoilValue(simulatedTradeState);
 
 	const { freeMargin: freeCrossMargin } = useAppSelector(selectCrossMarginBalanceInfo);
+
+	const { nativeSizeDelta, susdSizeDelta } = useAppSelector(selectIsolatedTradeInputs);
+
 	const position = useAppSelector(selectPosition);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 	const orderType = useRecoilValue(orderTypeState);
@@ -50,8 +52,8 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 
 	const marketKey = useAppSelector(selectMarketKey);
 
-	const [usdValue, setUsdValue] = useState(susdSize);
-	const [assetValue, setAssetValue] = useState(nativeSize);
+	const [usdValue, setUsdValue] = useState(susdSizeDelta);
+	const [assetValue, setAssetValue] = useState(nativeSizeDelta);
 	const [assetInputType, setAssetInputType] = useState<'usd' | 'native'>('usd');
 
 	const tradePrice = useMemo(() => (orderPrice ? wei(orderPrice) : marketAssetRate), [
@@ -65,23 +67,19 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 
 	useEffect(
 		() => {
-			if (simulatedTrade && simulatedTrade.susdSize !== susdSize) {
-				setUsdValue(simulatedTrade.susdSize);
-			} else if (susdSize !== usdValue) {
-				setUsdValue(susdSize);
+			if (susdSizeDelta !== usdValue) {
+				setUsdValue(wei(susdSizeDelta).abs().toString());
 			}
 
-			if (simulatedTrade && simulatedTrade.nativeSize !== nativeSize) {
-				setAssetValue(simulatedTrade.nativeSize);
-			} else if (assetValue !== nativeSize) {
-				setAssetValue(nativeSize);
+			if (assetValue !== nativeSizeDelta) {
+				setAssetValue(wei(nativeSizeDelta).abs().toString());
 			}
 		},
 		// Don't want to react to internal value changes
 		// eslint-disable-next-line
 		[
-			susdSize,
-			nativeSize,
+			susdSizeDelta,
+			nativeSizeDelta,
 			simulatedTrade?.susdSize,
 			simulatedTrade?.nativeSize,
 			setUsdValue,
