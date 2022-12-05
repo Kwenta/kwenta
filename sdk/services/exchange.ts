@@ -436,15 +436,15 @@ export default class ExchangeService {
 		return exchangeRates;
 	}
 
-	public async getAtomicRates(quoteCurrencyKey: string, baseCurrencyKey: string) {
+	public async getAtomicRates(currencyKey: string) {
 		if (!this.sdk.context.contracts.ExchangeRates) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
 		const { value } = await this.sdk.context.contracts.ExchangeRates.effectiveAtomicValueAndRates(
-			ethers.utils.formatBytes32String(quoteCurrencyKey),
+			ethers.utils.formatBytes32String(currencyKey),
 			UNIT_BIG_NUM,
-			ethers.utils.formatBytes32String(baseCurrencyKey)
+			ethers.utils.formatBytes32String('sUSD')
 		);
 
 		return wei(value) ?? wei(0);
@@ -744,8 +744,8 @@ export default class ExchangeService {
 				return wei(0);
 			}
 		} else {
-			return currencyKey !== 'sUSD' && this.checkIsAtomic(currencyKey, 'sUSD')
-				? await this.getAtomicRates(currencyKey, 'sUSD')
+			return this.checkIsAtomic(currencyKey, 'sUSD')
+				? await this.getAtomicRates(currencyKey)
 				: newGetExchangeRatesForCurrencies(this.exchangeRates, currencyKey, 'sUSD');
 		}
 	}
@@ -992,10 +992,9 @@ export default class ExchangeService {
 			baseCurrencyKey
 		);
 
-		pairRates[1] =
-			baseCurrencyKey !== 'sUSD' && this.checkIsAtomic(baseCurrencyKey, quoteCurrencyKey)
-				? await this.getAtomicRates(baseCurrencyKey, quoteCurrencyKey)
-				: pairRates[1];
+		pairRates[1] = this.checkIsAtomic(baseCurrencyKey, quoteCurrencyKey)
+			? await this.getAtomicRates(baseCurrencyKey)
+			: pairRates[1];
 
 		return pairRates;
 	}
