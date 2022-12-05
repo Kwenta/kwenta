@@ -23,7 +23,7 @@ import { selectExchangeRates } from 'state/exchange/selectors';
 import { selectMarketVolumes } from 'state/futures/selectors';
 import { fetchOptimismMarkets } from 'state/home/actions';
 import { selectOptimismMarkets } from 'state/home/selectors';
-import { useAppSelector, usePollWhenReady } from 'state/hooks';
+import { useAppSelector, usePollAction } from 'state/hooks';
 import { pastRatesState } from 'store/futures';
 import {
 	FlexDiv,
@@ -155,7 +155,7 @@ const Assets = () => {
 
 	const pastRates = useRecoilValue(pastRatesState);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
-	usePollWhenReady('fetchOptimismMarkets', () => fetchOptimismMarkets(l2Provider));
+	usePollAction('fetchOptimismMarkets', () => fetchOptimismMarkets(l2Provider));
 
 	const MARKETS_TABS = useMemo(
 		() => [

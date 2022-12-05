@@ -4,13 +4,13 @@ import { useTranslation } from 'react-i18next';
 import DashboardLayout from 'sections/dashboard/DashboardLayout';
 import Overview from 'sections/dashboard/Overview';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
-import { usePollFuturesData } from 'state/futures/hooks';
+import { usePollDashboardFuturesData } from 'state/futures/hooks';
 
 type DashboardComponent = React.FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
 const Dashboard: DashboardComponent = () => {
 	const { t } = useTranslation();
-	usePollFuturesData();
+	usePollDashboardFuturesData();
 
 	return (
 		<>

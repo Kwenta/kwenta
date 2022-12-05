@@ -1,8 +1,6 @@
-import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import Connector from 'containers/Connector';
-import { useAppDispatch, useAppSelector, useStartPollingAction } from 'state/hooks';
+import { useAppSelector, useFetchAction, usePollAction } from 'state/hooks';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import { futuresAccountTypeState } from 'store/futures';
 
@@ -10,55 +8,59 @@ import {
 	fetchCrossMarginAccountData,
 	fetchCrossMarginSettings,
 	fetchIsolatedMarginAccountData,
+	fetchMarkets,
+	fetchOpenOrders,
 	fetchSharedFuturesData,
 } from './actions';
 import { selectCrossMarginAccount, selectMarkets } from './selectors';
 
-export const usePollFuturesData = () => {
-	const startPolling = useStartPollingAction();
-	const dispatch = useAppDispatch();
+// TODO: Optimise polling and queries
+
+export const usePollMarketFuturesData = () => {
 	const networkId = useAppSelector(selectNetwork);
 	const markets = useAppSelector(selectMarkets);
 	const wallet = useAppSelector(selectWallet);
 	const crossMarginAddress = useAppSelector(selectCrossMarginAccount);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
 
-	const { providerReady } = Connector.useContainer();
+	useFetchAction(fetchCrossMarginSettings, { changeKeys: [networkId] });
+	usePollAction('fetchSharedFuturesData', fetchSharedFuturesData, {
+		dependencies: [networkId],
+		intervalTime: 60000,
+	});
+	usePollAction('fetchIsolatedMarginAccountData', fetchIsolatedMarginAccountData, {
+		intervalTime: 30000,
+		dependencies: [wallet, markets.length],
+		disabled: !wallet || !markets.length || selectedAccountType === 'cross_margin',
+	});
+	usePollAction('fetchCrossMarginAccountData', fetchCrossMarginAccountData, {
+		intervalTime: 30000,
+		dependencies: [markets.length, crossMarginAddress],
+		disabled: !markets.length || !crossMarginAddress || selectedAccountType === 'isolated_margin',
+	});
+	// TODO: Priority to optimise
+	usePollAction('fetchOpenOrders', fetchOpenOrders, {
+		dependencies: [networkId, wallet],
+		intervalTime: 10000,
+		disabled: !wallet,
+	});
+};
 
-	useEffect(() => {
-		if (providerReady) dispatch(fetchCrossMarginSettings());
-	}, [providerReady, networkId, dispatch]);
+export const usePollDashboardFuturesData = () => {
+	const networkId = useAppSelector(selectNetwork);
+	const markets = useAppSelector(selectMarkets);
+	const wallet = useAppSelector(selectWallet);
+	const crossMarginAddress = useAppSelector(selectCrossMarginAccount);
 
-	useEffect(() => {
-		// Poll shared futures data
-		if (providerReady) {
-			startPolling('fetchSharedFuturesData', fetchSharedFuturesData, 60000);
-		}
-		// eslint-disable-next-line
-	}, [providerReady, networkId]);
-
-	useEffect(() => {
-		// Fetch all positions on first load
-		if (markets.length && wallet) {
-			dispatch(fetchIsolatedMarginAccountData());
-			dispatch(fetchCrossMarginAccountData());
-		}
-		// eslint-disable-next-line
-	}, [wallet, markets.length, networkId]);
-
-	useEffect(() => {
-		// Poll isolated margin data
-		if (markets.length && wallet && selectedAccountType === 'isolated_margin') {
-			startPolling('fetchIsolatedMarginAccountData', fetchIsolatedMarginAccountData, 30000);
-		}
-		// eslint-disable-next-line
-	}, [wallet, markets.length, selectedAccountType, networkId]);
-
-	useEffect(() => {
-		// Poll cross margin data
-		if (markets.length && wallet && crossMarginAddress && selectedAccountType === 'cross_margin') {
-			startPolling('fetchCrossMarginAccountData', fetchCrossMarginAccountData, 30000);
-		}
-		// eslint-disable-next-line
-	}, [wallet, markets.length, crossMarginAddress, networkId, selectedAccountType]);
+	usePollAction('fetchMarkets', fetchMarkets, { intervalTime: 60000, dependencies: [networkId] });
+	usePollAction('fetchIsolatedMarginAccountData', fetchIsolatedMarginAccountData, {
+		intervalTime: 30000,
+		dependencies: [wallet, markets.length, networkId],
+		disabled: !markets.length || !wallet,
+	});
+	usePollAction('fetchCrossMarginAccountData', fetchCrossMarginAccountData, {
+		intervalTime: 30000,
+		dependencies: [wallet, markets.length, networkId, crossMarginAddress],
+		disabled: !markets.length || !crossMarginAddress,
+	});
 };

@@ -24,7 +24,7 @@ import { monitorTransaction } from 'contexts/RelayerContext';
 import { KWENTA_TRACKING_CODE, ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
 import { PositionSide, FuturesTradeInputs, FuturesAccountType } from 'queries/futures/types';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
-import { usePollFuturesData } from 'state/futures/hooks';
+import { usePollMarketFuturesData } from 'state/futures/hooks';
 import {
 	setCrossMarginTradeInputs,
 	setFuturesAccountType,
@@ -94,7 +94,7 @@ const useFuturesData = () => {
 	const { defaultSynthetixjs: synthetixjs, network, provider } = Connector.useContainer();
 	const { useSynthetixTxn } = useSynthetixQueries();
 	const { crossMarginAvailable } = useRecoilValue(futuresAccountState);
-	usePollFuturesData();
+	usePollMarketFuturesData();
 	const dispatch = useAppDispatch();
 	const crossMarginAddress = useAppSelector(selectCrossMarginAccount);
 

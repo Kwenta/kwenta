@@ -88,9 +88,9 @@ export function TVChart({
 	};
 
 	const renderOrderLines = () => {
-		clearOrderLines();
 		_widget.current?.onChartReady(() => {
 			_widget.current?.chart().dataReady(() => {
+				clearOrderLines();
 				_oderLineRefs.current = openOrders.reduce<IPositionLineAdapter[]>((acc, order) => {
 					if (order.targetPrice) {
 						const color =
