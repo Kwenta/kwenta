@@ -39,21 +39,23 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 
 	const futuresFeeQuery = useGetFuturesFeeForAccount(walletAddress!, start, end);
 	const futuresFeePaid = useMemo(() => {
-		const t = futuresFeeQuery.data ?? [];
+		const t: FuturesFeeForAccountProps[] = futuresFeeQuery.data ?? [];
 
 		return t
-			.map((trade: FuturesFeeForAccountProps) => formatEther(trade.feesPaid.toString()))
-			.reduce((acc: number, curr: number) => wei(acc).add(wei(curr)), zeroBN);
+			.map((trade) => formatEther(trade.feesPaid.toString()))
+			.reduce((acc, curr) => acc.add(wei(curr)), zeroBN);
 	}, [futuresFeeQuery.data]);
 
 	const totalFuturesFeeQuery = useGetFuturesFee(start, end);
 	const totalFuturesFeePaid = useMemo(() => {
-		const t = totalFuturesFeeQuery.data ?? [];
+		const t: FuturesFeeProps[] = totalFuturesFeeQuery.data ?? [];
 
 		return t
-			.map((trade: FuturesFeeProps) => formatEther(trade.feesCrossMarginAccounts.toString()))
-			.reduce((acc: number, curr: number) => wei(acc).add(wei(curr)), zeroBN);
+			.map((trade) => formatEther(trade.feesCrossMarginAccounts.toString()))
+			.reduce((acc, curr) => acc.add(wei(curr)), zeroBN);
 	}, [totalFuturesFeeQuery.data]);
+
+	const claimDisabled = useMemo(() => totalRewards.lte(0), [totalRewards]);
 
 	useEffect(() => {
 		dispatch(fetchClaimableRewards());
@@ -91,7 +93,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 					</div>
 				</CardGrid>
 				<StyledFlexDivRow>
-					<Button fullWidth variant="flat" size="sm" onClick={handleClaim}>
+					<Button fullWidth variant="flat" size="sm" onClick={handleClaim} disabled={claimDisabled}>
 						{t('dashboard.stake.tabs.trading-rewards.claim')}
 					</Button>
 				</StyledFlexDivRow>
