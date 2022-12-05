@@ -1,11 +1,12 @@
 import { wei } from '@synthetixio/wei';
 
 import { PositionSide } from 'sections/futures/types';
-import { calculateMarginDelta, FuturesMarketAsset } from 'utils/futures';
+import { calculateMarginDelta, FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
 
 const ETH_PRICE = 1500;
 
 const getPosition = (initialSize: number = 1, leverage = 10, side = 'long') => ({
+	marketKey: 'sETH' as FuturesMarketKey,
 	asset: 'sETH' as FuturesMarketAsset,
 	order: null,
 	remainingMargin: wei((initialSize * ETH_PRICE) / leverage),

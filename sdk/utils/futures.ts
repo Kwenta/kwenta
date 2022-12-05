@@ -8,6 +8,7 @@ import { SECONDS_PER_DAY } from 'sdk/constants/period';
 import {
 	FundingRateUpdate,
 	FuturesMarketAsset,
+	FuturesMarketKey,
 	FuturesPosition,
 	FuturesVolumes,
 	MarketClosureReason,
@@ -133,7 +134,8 @@ export const calculateVolumes = (
 export const mapFuturesPosition = (
 	positionDetail: PositionDetail,
 	canLiquidatePosition: boolean,
-	asset: FuturesMarketAsset
+	asset: FuturesMarketAsset,
+	marketKey: FuturesMarketKey
 ): FuturesPosition => {
 	const {
 		remainingMargin,
@@ -149,6 +151,7 @@ export const mapFuturesPosition = (
 	const pnlPct = initialMargin.gt(0) ? pnl.div(wei(initialMargin)) : wei(0);
 	return {
 		asset,
+		marketKey,
 		remainingMargin: wei(remainingMargin),
 		accessibleMargin: wei(accessibleMargin),
 		position: wei(size).eq(zeroBN)

@@ -96,7 +96,7 @@ export const fetchCrossMarginPositions = createAsyncThunk<
 	if (!futures.crossMargin.account) return [];
 	const positions = await sdk.futures.getFuturesPositions(
 		futures.crossMargin.account,
-		futures.markets.map((m) => ({ asset: m.asset, address: m.market }))
+		futures.markets.map((m) => ({ asset: m.asset, marketKey: m.marketKey, address: m.market }))
 	);
 	return positions.map((p) => serializeWeiObject(p) as FuturesPosition<string>);
 });
@@ -110,7 +110,7 @@ export const fetchIsolatedMarginPositions = createAsyncThunk<
 	if (!wallet.walletAddress) throw new Error('No wallet connected');
 	const positions = await sdk.futures.getFuturesPositions(
 		wallet.walletAddress,
-		futures.markets.map((m) => ({ asset: m.asset, address: m.market }))
+		futures.markets.map((m) => ({ asset: m.asset, marketKey: m.marketKey, address: m.market }))
 	);
 	return {
 		positions: positions.map((p) => serializeWeiObject(p) as FuturesPosition<string>),
@@ -130,10 +130,10 @@ export const refetchPosition = createAsyncThunk<
 
 	if (!account) throw new Error('No wallet connected');
 	const marketInfo = futures.markets.find(
-		(m) => m.asset === futures.isolatedMargin.selectedMarketAsset
+		(m) => m.marketKey === futures.isolatedMargin.selectedMarketKey
 	);
 	const position = positions[account]?.find(
-		(p) => p.asset === futures.isolatedMargin.selectedMarketAsset
+		(p) => p.marketKey === futures.isolatedMargin.selectedMarketKey
 	);
 
 	if (!marketInfo || !position) throw new Error('Market or position not found');
@@ -141,7 +141,7 @@ export const refetchPosition = createAsyncThunk<
 	const result = await refetchWithComparator(
 		() =>
 			sdk.futures.getFuturesPositions(account!, [
-				{ asset: marketInfo.asset, address: marketInfo.market },
+				{ asset: marketInfo.asset, marketKey: marketInfo.marketKey, address: marketInfo.market },
 			]),
 		position.remainingMargin,
 		(existing, next) => {

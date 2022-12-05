@@ -198,7 +198,7 @@ export const selectPosition = createSelector(
 	selectFuturesPositions,
 	selectMarketInfo,
 	(positions, market) => {
-		const position = positions.find((p) => p.asset === market?.asset);
+		const position = positions.find((p) => p.marketKey === market?.marketKey);
 		return position
 			? (deserializeWeiObject(position, futuresPositionKeys) as FuturesPosition)
 			: undefined;

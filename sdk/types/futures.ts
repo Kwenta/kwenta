@@ -17,7 +17,7 @@ export type MarketClosureReason = SynthSuspensionReason;
 
 export type FuturesMarket<T = Wei> = {
 	market: string;
-	marketKey?: FuturesMarketKey;
+	marketKey: FuturesMarketKey;
 	marketName: string;
 	asset: FuturesMarketAsset;
 	assetHex: string;
@@ -160,6 +160,7 @@ export type FuturesFilledPosition<T = Wei> = {
 
 export type FuturesPosition<T = Wei> = {
 	asset: FuturesMarketAsset;
+	marketKey: FuturesMarketKey;
 	remainingMargin: T;
 	accessibleMargin: T;
 	position: FuturesFilledPosition<T> | null;
