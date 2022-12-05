@@ -158,7 +158,7 @@ export default function TradeConfirmationModal({
 						data-testid="trade-open-position-confirm-order-button"
 						variant="flat"
 						onClick={onConfirmOrder}
-						disabled={false}
+						disabled={isSubmitting || !!disabledReason} // TODO: Add back position details condition
 					>
 						{isSubmitting ? (
 							<ButtonLoader />
