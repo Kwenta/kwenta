@@ -338,15 +338,15 @@ export default class KwentaTokenService {
 		return this.performStakeAction('stake', amount);
 	}
 
-	public async unstakeKwenta(amount: string | BigNumber) {
+	public unstakeKwenta(amount: string | BigNumber) {
 		return this.performStakeAction('unstake', amount);
 	}
 
-	public async stakeEscrowedKwenta(amount: string | BigNumber) {
+	public stakeEscrowedKwenta(amount: string | BigNumber) {
 		return this.performStakeAction('stake', amount, { escrow: true });
 	}
 
-	public async unstakeEscrowedKwenta(amount: string | BigNumber) {
+	public unstakeEscrowedKwenta(amount: string | BigNumber) {
 		return this.performStakeAction('unstake', amount, { escrow: true });
 	}
 
