@@ -71,6 +71,8 @@ export default class KwentaTokenService {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
+		const { walletAddress } = this.sdk.context;
+
 		const [
 			balance,
 			earned,
@@ -80,13 +82,13 @@ export default class KwentaTokenService {
 			lpTokenBalance,
 			allowance,
 		]: BigNumber[] = await this.sdk.context.multicallProvider.all([
-			StakingRewards.balanceOf(this.sdk.context.walletAddress),
-			StakingRewards.earned(this.sdk.context.walletAddress),
+			StakingRewards.balanceOf(walletAddress),
+			StakingRewards.earned(walletAddress),
 			StakingRewards.periodFinish(),
 			StakingRewards.rewardRate(),
 			StakingRewards.totalSupply(),
-			KwentaArrakisVault.balanceOf(this.sdk.context.walletAddress),
-			KwentaArrakisVault.allowance(this.sdk.context.walletAddress, StakingRewards.address),
+			KwentaArrakisVault.balanceOf(walletAddress),
+			KwentaArrakisVault.allowance(walletAddress, StakingRewards.address),
 		]);
 
 		return {
@@ -137,6 +139,8 @@ export default class KwentaTokenService {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
+		const { walletAddress } = this.sdk.context;
+
 		const [
 			rewardEscrowBalance,
 			stakedNonEscrowedBalance,
@@ -152,19 +156,19 @@ export default class KwentaTokenService {
 			veKwentaBalance,
 			veKwentaAllowance,
 		]: BigNumber[] = await this.sdk.context.multicallProvider.all([
-			RewardEscrow.balanceOf(this.sdk.context.walletAddress),
-			KwentaStakingRewards.nonEscrowedBalanceOf(this.sdk.context.walletAddress),
-			KwentaStakingRewards.escrowedBalanceOf(this.sdk.context.walletAddress),
-			KwentaStakingRewards.earned(this.sdk.context.walletAddress),
-			KwentaToken.balanceOf(this.sdk.context.walletAddress),
+			RewardEscrow.balanceOf(walletAddress),
+			KwentaStakingRewards.nonEscrowedBalanceOf(walletAddress),
+			KwentaStakingRewards.escrowedBalanceOf(walletAddress),
+			KwentaStakingRewards.earned(walletAddress),
+			KwentaToken.balanceOf(walletAddress),
 			SupplySchedule.weekCounter(),
 			KwentaStakingRewards.totalSupply(),
-			vKwentaToken.balanceOf(this.sdk.context.walletAddress),
-			vKwentaToken.allowance(this.sdk.context.walletAddress, vKwentaRedeemer.address),
-			KwentaToken.allowance(this.sdk.context.walletAddress, KwentaStakingRewards.address),
+			vKwentaToken.balanceOf(walletAddress),
+			vKwentaToken.allowance(walletAddress, vKwentaRedeemer.address),
+			KwentaToken.allowance(walletAddress, KwentaStakingRewards.address),
 			MultipleMerkleDistributor.distributionEpoch(),
-			veKwentaToken.balanceOf(this.sdk.context.walletAddress),
-			veKwentaToken.allowance(this.sdk.context.walletAddress, veKwentaRedeemer.address),
+			veKwentaToken.balanceOf(walletAddress),
+			veKwentaToken.allowance(walletAddress, veKwentaRedeemer.address),
 		]);
 
 		return {
@@ -191,16 +195,18 @@ export default class KwentaTokenService {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
+		const { walletAddress } = this.sdk.context;
+
 		const schedules = await ((RewardEscrow as unknown) as IRewardEscrow).getVestingSchedules(
-			this.sdk.context.walletAddress,
+			walletAddress,
 			0,
 			DEFAULT_NUMBER_OF_FUTURES_FEE
 		);
 
-		const vestingSchedules = schedules.filter((schedule: any) => schedule.escrowAmount.gt(0));
+		const vestingSchedules = schedules.filter((schedule) => schedule.escrowAmount.gt(0));
 
-		const calls = vestingSchedules.map((schedule: any) =>
-			RewardEscrow.getVestingEntryClaimable(this.sdk.context.walletAddress, schedule.entryID)
+		const calls = vestingSchedules.map((schedule) =>
+			RewardEscrow.getVestingEntryClaimable(walletAddress, schedule.entryID)
 		);
 
 		const vestingEntries: {
