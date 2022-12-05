@@ -123,7 +123,7 @@ function ClosePositionModal({
 					variant="flat"
 					size="lg"
 					onClick={onClosePosition}
-					disabled={!!error || disabled || gasFee?.eq(0)}
+					disabled={!!error || disabled}
 				>
 					{t('futures.market.user.position.modal.title')}
 				</StyledButton>
