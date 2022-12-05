@@ -243,7 +243,7 @@ export default class KwentaTokenService {
 		return this.sdk.transactions.createContractTxn(KwentaStakingRewards, 'getReward', []);
 	}
 
-	// TODO: Delete `approveLPToken` method.
+	// TODO: Replace this with separate functions that use `approveToken`
 	// In that case, we can safely remove the map object from this method.
 
 	public approveKwentaToken(
@@ -346,6 +346,7 @@ export default class KwentaTokenService {
 
 	public async getClaimableRewards(periods: number[]) {
 		const { MultipleMerkleDistributor } = this.sdk.context.mutliCallContracts;
+		const { walletAddress } = this.sdk.context;
 
 		if (!MultipleMerkleDistributor) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
@@ -369,7 +370,6 @@ export default class KwentaTokenService {
 
 		const rewards = responses
 			.map((d, period) => {
-				const { walletAddress } = this.sdk.context;
 				const walletReward = d.claims[walletAddress];
 				return [walletReward.index, walletAddress, walletReward.amount, walletReward.proof, period];
 			})
