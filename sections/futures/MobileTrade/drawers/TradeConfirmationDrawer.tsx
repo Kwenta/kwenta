@@ -6,12 +6,15 @@ import styled from 'styled-components';
 import Button from 'components/Button';
 import { CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
-import { useFuturesContext } from 'contexts/FuturesContext';
-import useEstimateGasCost from 'hooks/useEstimateGasCost';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { PositionSide } from 'sections/futures/types';
-import { selectMarketAsset } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { modifyIsolatedPosition } from 'state/futures/actions';
+import {
+	selectIsolatedTradeInputs,
+	selectMarketAsset,
+	selectModifyIsolatedGasEstimate,
+} from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { potentialTradeDetailsState } from 'store/futures';
 import { zeroBN, formatDollars, formatCurrency, formatNumber } from 'utils/formatters/number';
 
@@ -24,15 +27,16 @@ type TradeConfirmationDrawerProps = {
 
 const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({ open, closeDrawer }) => {
 	const { t } = useTranslation();
+	const dispatch = useAppDispatch();
 	const { synthsMap } = Connector.useContainer();
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { data: potentialTradeDetails } = useRecoilValue(potentialTradeDetailsState);
-	const { estimateSnxTxGasCost } = useEstimateGasCost();
+	const { nativeSizeDelta, priceImpactDelta } = useAppSelector(selectIsolatedTradeInputs);
 
-	const { orderTxn } = useFuturesContext();
+	const gasEstimate = useAppSelector(selectModifyIsolatedGasEstimate);
 
-	const transactionFee = estimateSnxTxGasCost(orderTxn);
+	const transactionFee = useMemo(() => gasEstimate?.cost ?? zeroBN, [gasEstimate?.cost]);
 
 	const positionDetails = useMemo(() => {
 		return potentialTradeDetails
@@ -96,7 +100,14 @@ const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({ open,
 				<ConfirmTradeButton
 					variant="primary"
 					onClick={() => {
-						orderTxn.mutate();
+						// TODO: improve transaction status feedback
+						dispatch(
+							modifyIsolatedPosition({
+								sizeDelta: nativeSizeDelta,
+								priceImpactDelta: priceImpactDelta,
+								useNextPrice: false,
+							})
+						);
 						closeDrawer();
 					}}
 					disabled={!positionDetails}

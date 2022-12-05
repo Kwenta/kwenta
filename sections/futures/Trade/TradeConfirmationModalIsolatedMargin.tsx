@@ -1,65 +1,60 @@
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
+import { useRecoilValue } from 'recoil';
 
-import { useFuturesContext } from 'contexts/FuturesContext';
-import { monitorTransaction } from 'contexts/RelayerContext';
-import useEstimateGasCost from 'hooks/useEstimateGasCost';
-import { confirmationModalOpenState, potentialTradeDetailsState } from 'store/futures';
+import { setOpenModal } from 'state/app/reducer';
+import { modifyIsolatedPosition, modifyIsolatedPositionEstimateGas } from 'state/futures/actions';
+import {
+	selectIsModifyingIsolatedPosition,
+	selectIsolatedTradeInputs,
+	selectModifyIsolatedGasEstimate,
+} from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { potentialTradeDetailsState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
-import logError from 'utils/logError';
 
 import TradeConfirmationModal from './TradeConfirmationModal';
 
 export default function TradeConfirmationModalIsolatedMargin() {
-	const { t } = useTranslation();
-	const [error, setError] = useState<null | string>(null);
+	const dispatch = useAppDispatch();
 
-	// const { estimateSnxTxGasCost } = useEstimateGasCost();
-	const { resetTradeState, submitIsolatedMarginOrder } = useFuturesContext();
-
-	const setConfirmationModalOpen = useSetRecoilState(confirmationModalOpenState);
 	const { data: potentialTradeDetails } = useRecoilValue(potentialTradeDetailsState);
+	const submitting = useAppSelector(selectIsModifyingIsolatedPosition);
+	const gasEstimate = useAppSelector(selectModifyIsolatedGasEstimate);
+	const { nativeSizeDelta, priceImpactDelta } = useAppSelector(selectIsolatedTradeInputs);
 
-	// const transactionFee = estimateSnxTxGasCost(orderTxn);
+	const transactionFee = useMemo(() => gasEstimate?.cost ?? zeroBN, [gasEstimate?.cost]);
 
-	const onDismiss = () => {
-		setConfirmationModalOpen(false);
-	};
+	useEffect(() => {
+		dispatch(
+			modifyIsolatedPositionEstimateGas({
+				sizeDelta: nativeSizeDelta,
+				priceImpactDelta: priceImpactDelta,
+				useNextPrice: false,
+			})
+		);
+	}, [nativeSizeDelta, priceImpactDelta, dispatch]);
+
+	const onDismiss = useCallback(() => {
+		dispatch(setOpenModal(null));
+	}, [dispatch]);
 
 	const handleConfirmOrder = async () => {
-		setError(null);
-		try {
-			const tx = await submitIsolatedMarginOrder();
-			if (tx?.hash) {
-				monitorTransaction({
-					txHash: tx.hash,
-					onTxFailed(failureMessage) {
-						setError(failureMessage?.failureReason || t('common.transaction.transaction-failed'));
-					},
-					onTxConfirmed: () => {
-						resetTradeState();
-						// handleRefetch('modify-position');
-						// handleRefetch('account-margin-change');
-					},
-				});
-				onDismiss();
-			}
-		} catch (err) {
-			logError(err);
-			setError(t('common.transaction.transaction-failed'));
-		}
-
-		onDismiss();
+		dispatch(
+			modifyIsolatedPosition({
+				sizeDelta: nativeSizeDelta,
+				priceImpactDelta: priceImpactDelta,
+				useNextPrice: false,
+			})
+		);
 	};
 
 	return (
 		<TradeConfirmationModal
 			onDismiss={onDismiss}
 			onConfirmOrder={handleConfirmOrder}
-			// gasFee={transactionFee}
-			// TODO: add back gas estimate calculation
-			gasFee={zeroBN}
+			gasFee={transactionFee}
+			isSubmitting={submitting}
 			tradeFee={potentialTradeDetails?.fee || zeroBN}
 		/>
 	);

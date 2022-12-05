@@ -19,11 +19,13 @@ import {
 	ORDER_KEEPER_ETH_DEPOSIT,
 } from 'constants/futures';
 import Connector from 'containers/Connector';
-import { useRefetchContext } from 'contexts/RefetchContext';
-import { monitorTransaction } from 'contexts/RelayerContext';
-import { KWENTA_TRACKING_CODE, ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
+import { ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
 import { PositionSide, FuturesTradeInputs, FuturesAccountType } from 'queries/futures/types';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
+import { serializeGasPrice } from 'state/app/helpers';
+import { setGasPrice } from 'state/app/reducer';
+import { selectGasSpeed } from 'state/app/selectors';
+import { modifyIsolatedPosition } from 'state/futures/actions';
 import { usePollMarketFuturesData } from 'state/futures/hooks';
 import {
 	setIsolatedMarginTradeInputs,
@@ -64,14 +66,12 @@ import { computeMarketFee } from 'utils/costCalculations';
 import { zeroBN, floorNumber, weiToString } from 'utils/formatters/number';
 import {
 	calculateMarginDelta,
-	getDisplayAsset,
 	MarketKeyByAsset,
 	serializeCrossMarginTradeInputs,
 } from 'utils/futures';
 import logError from 'utils/logError';
 
 import useCrossMarginAccountContracts from './useCrossMarginContracts';
-import usePerpsContracts from './usePerpsContracts';
 import usePersistedRecoilState from './usePersistedRecoilState';
 
 const ZERO_TRADE_INPUTS = {
@@ -95,7 +95,6 @@ const useFuturesData = () => {
 	const router = useRouter();
 	const { t } = useTranslation();
 	const { defaultSynthetixjs: synthetixjs, network, provider } = Connector.useContainer();
-	const { useSynthetixTxn } = useSynthetixQueries();
 	const { crossMarginAvailable } = useRecoilValue(futuresAccountState);
 	usePollMarketFuturesData();
 	const dispatch = useAppDispatch();
@@ -104,8 +103,19 @@ const useFuturesData = () => {
 	const getPotentialTrade = useGetFuturesPotentialTradeDetails();
 	const crossMarginBalanceInfo = useAppSelector(selectCrossMarginBalanceInfo);
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
-	const { perpsMarketContract } = usePerpsContracts();
-	const { handleRefetch } = useRefetchContext();
+
+	const gasSpeed = useAppSelector(selectGasSpeed);
+
+	// TODO: Move to sdk and redux
+	const { useEthGasPriceQuery } = useSynthetixQueries();
+	const ethGasPriceQuery = useEthGasPriceQuery();
+
+	useEffect(() => {
+		const price = ethGasPriceQuery.data?.[gasSpeed];
+		if (price) {
+			dispatch(setGasPrice(serializeGasPrice(price)));
+		}
+	}, [ethGasPriceQuery.data, gasSpeed, dispatch]);
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const [tradeInputs, setTradeInputs] = useRecoilState(futuresTradeInputsState);
@@ -408,11 +418,13 @@ const useFuturesData = () => {
 			}
 		},
 		[
+			isolatedTradeInputs,
 			remainingMargin,
 			maxLeverage,
 			selectedLeverage,
 			selectedAccountType,
 			leverageSide,
+			dispatch,
 			resetTradeState,
 			setSimulatedTrade,
 			onStagePositionChange,
@@ -473,22 +485,6 @@ const useFuturesData = () => {
 		[tradeInputs, onTradeAmountChange]
 	);
 
-	const orderTxn = useSynthetixTxn(
-		`FuturesMarket${getDisplayAsset(marketAsset)}`,
-		orderType === 'next price' ? 'submitNextPriceOrderWithTracking' : 'modifyPositionWithTracking',
-		[tradeInputs.nativeSizeDelta.toBN(), KWENTA_TRACKING_CODE],
-		{},
-		{
-			enabled:
-				selectedAccountType === 'isolated_margin' &&
-				!!marketAsset &&
-				!!tradeInputs.leverage &&
-				Number(tradeInputs.leverage) >= 0 &&
-				maxLeverage.gte(tradeInputs.leverage) &&
-				!tradeInputs.nativeSizeDelta.eq(zeroBN),
-		}
-	);
-
 	const submitCrossMarginOrder = useCallback(
 		async (fromEditLeverage?: boolean, gasLimit?: Wei | null) => {
 			if (!crossMarginAccountContract) return;
@@ -529,32 +525,14 @@ const useFuturesData = () => {
 	);
 
 	const submitIsolatedMarginOrder = useCallback(async () => {
-		if (!perpsMarketContract) return;
-		if (orderType === 'market') {
-			return await perpsMarketContract.modifyPositionWithTracking(
-				wei(isolatedTradeInputs.nativeSizeDelta).toBN(),
-				wei(0.5).toBN(), // TODO: remove hard coded impact delta
-				KWENTA_TRACKING_CODE,
-				{
-					gasLimit: wei(0.000000000001).toBN(), // TODO: remove hard coded gas limit
-				}
-			);
-		}
-	}, [perpsMarketContract, orderType, isolatedTradeInputs]);
-
-	useEffect(() => {
-		if (orderTxn.hash) {
-			monitorTransaction({
-				txHash: orderTxn.hash,
-				onTxConfirmed: () => {
-					resetTradeState();
-					handleRefetch('modify-position');
-					handleRefetch('account-margin-change');
-				},
-			});
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [orderTxn.hash]);
+		dispatch(
+			modifyIsolatedPosition({
+				sizeDelta: isolatedTradeInputs.nativeSizeDelta,
+				priceImpactDelta: isolatedTradeInputs.priceImpactDelta,
+				useNextPrice: orderType === 'next price',
+			})
+		);
+	}, [dispatch, isolatedTradeInputs, orderType]);
 
 	useEffect(() => {
 		const getMaxFee = async () => {
@@ -670,7 +648,6 @@ const useFuturesData = () => {
 		marketAssetRate,
 		position,
 		market,
-		orderTxn,
 		maxUsdInputAmount,
 		tradeFees,
 		selectedLeverage,

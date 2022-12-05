@@ -2,7 +2,7 @@ import Wei from '@synthetixio/wei';
 import { formatBytes32String } from 'ethers/lib/utils';
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { DEFAULT_CROSSMARGIN_GAS_BUFFER_PCT } from 'constants/defaults';
 import { useFuturesContext } from 'contexts/FuturesContext';
@@ -10,10 +10,10 @@ import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useEstimateGasCost from 'hooks/useEstimateGasCost';
+import { setOpenModal } from 'state/app/reducer';
 import { selectMarketKey } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import {
-	confirmationModalOpenState,
 	crossMarginMarginDeltaState,
 	futuresTradeInputsState,
 	isAdvancedOrderState,
@@ -29,6 +29,7 @@ export default function TradeConfirmationModalCrossMargin() {
 	const { handleRefetch } = useRefetchContext();
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const { estimateEthersContractTxCost } = useEstimateGasCost();
+	const dispatch = useAppDispatch();
 
 	const marketKey = useAppSelector(selectMarketKey);
 	const crossMarginMarginDelta = useRecoilValue(crossMarginMarginDeltaState);
@@ -37,11 +38,19 @@ export default function TradeConfirmationModalCrossMargin() {
 
 	const { submitCrossMarginOrder, resetTradeState, tradeFees } = useFuturesContext();
 
-	const setConfirmationModalOpen = useSetRecoilState(confirmationModalOpenState);
-
 	const [error, setError] = useState<null | string>(null);
 	const [gasFee, setGasFee] = useState<Wei | null>(null);
 	const [gasLimit, setGasLimit] = useState<Wei | null>(null);
+
+	useEffect(() => {
+		// TODO: Estimate gas for cross margin
+		// dispatch(
+		// 	modifyIsolatedPositionEstimateGas({
+		// 		sizeDelta: tradeInputs.nativeSizeDelta,
+		// 		useNextPrice: false,
+		// 	})
+		// );
+	}, []);
 
 	useEffect(() => {
 		if (!crossMarginAccountContract) return;
@@ -73,8 +82,8 @@ export default function TradeConfirmationModalCrossMargin() {
 	]);
 
 	const onDismiss = useCallback(() => {
-		setConfirmationModalOpen(false);
-	}, [setConfirmationModalOpen]);
+		dispatch(setOpenModal(null));
+	}, [dispatch]);
 
 	const handleConfirmOrder = useCallback(async () => {
 		setError(null);

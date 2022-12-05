@@ -45,16 +45,34 @@ export type FuturesQueryStatuses = {
 	crossMarginSettings: FetchStatus;
 };
 
+export type FuturesTransactionType =
+	| 'deposit_cross_margin'
+	| 'withdraw_cross_margin'
+	| 'approve_cross_margin'
+	| 'deposit_isolated'
+	| 'withdraw_isolated'
+	| 'modify_isolated';
+
 export type FuturesTransaction = {
-	type:
-		| 'deposit_cross_margin'
-		| 'withdraw_cross_margin'
-		| 'approve_cross_margin'
-		| 'deposit_isolated'
-		| 'withdraw_isolated';
+	type: FuturesTransactionType;
 	status: TransactionStatus;
 	error?: string;
 	hash: string | null;
+};
+
+export type TransactionEstimation<T = Wei> = {
+	error?: string | null | undefined;
+	limit: T;
+	cost: T;
+};
+
+export type TransactionEstimations = Record<FuturesTransactionType, TransactionEstimation<string>>;
+
+export type TransactionEstimationPayload = {
+	type: FuturesTransactionType;
+	limit: string;
+	cost: string;
+	error?: string | null | undefined;
 };
 
 // TODO: Separate in some way by network and wallet
@@ -70,6 +88,7 @@ export type FuturesState = {
 	queryStatuses: FuturesQueryStatuses;
 	dailyMarketVolumes: FuturesVolumes<string>;
 	transaction?: FuturesTransaction | undefined;
+	transactionEstimations: TransactionEstimations;
 };
 
 export type CrossMarginBalanceInfo<T = Wei> = {
@@ -118,6 +137,12 @@ export type IsolatedMarginState = {
 	openOrders: {
 		[account: string]: FuturesOrder<string>[];
 	};
+};
+
+export type ModifyIsolatedPositionInputs = {
+	sizeDelta: string;
+	priceImpactDelta: string;
+	useNextPrice: boolean;
 };
 
 export const futuresPositionKeys = new Set([

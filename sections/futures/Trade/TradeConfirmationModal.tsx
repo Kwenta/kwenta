@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import ErrorView from 'components/Error';
+import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import { selectMarketAsset, selectPosition } from 'state/futures/selectors';
@@ -30,6 +31,7 @@ type Props = {
 	tradeFee: Wei;
 	keeperFee?: Wei | null;
 	errorMessage?: string | null | undefined;
+	isSubmitting?: boolean;
 	onConfirmOrder: () => any;
 	onDismiss: () => void;
 };
@@ -39,6 +41,7 @@ export default function TradeConfirmationModal({
 	gasFee,
 	keeperFee,
 	errorMessage,
+	isSubmitting,
 	onConfirmOrder,
 	onDismiss,
 }: Props) {
@@ -155,10 +158,13 @@ export default function TradeConfirmationModal({
 						data-testid="trade-open-position-confirm-order-button"
 						variant="flat"
 						onClick={onConfirmOrder}
-						// disabled={!positionDetails || !!disabledReason} // TODO: fix disabled reasons
-						disabled={false} // TODO: fix disabled reasons
+						disabled={false}
 					>
-						{disabledReason || t('futures.market.trade.confirmation.modal.confirm-order')}
+						{isSubmitting ? (
+							<ButtonLoader />
+						) : (
+							disabledReason || t('futures.market.trade.confirmation.modal.confirm-order')
+						)}
 					</ConfirmTradeButton>
 					{errorMessage && (
 						<ErrorContainer>
@@ -176,9 +182,13 @@ export default function TradeConfirmationModal({
 						<MobileConfirmTradeButton
 							variant="flat"
 							onClick={onConfirmOrder}
-							disabled={!positionDetails || !!disabledReason}
+							disabled={!positionDetails || isSubmitting || !!disabledReason}
 						>
-							{disabledReason || t('futures.market.trade.confirmation.modal.confirm-order')}
+							{isSubmitting ? (
+								<ButtonLoader />
+							) : (
+								disabledReason || t('futures.market.trade.confirmation.modal.confirm-order')
+							)}
 						</MobileConfirmTradeButton>
 					}
 				/>
