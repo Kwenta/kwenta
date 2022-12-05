@@ -20,6 +20,7 @@ import {
 	unserializeFundingRates,
 	unserializeFuturesOrders,
 	unserializeFuturesVolumes,
+	unserializeGasEstimate,
 	unserializeMarkets,
 } from 'utils/futures';
 
@@ -32,6 +33,10 @@ export const selectFuturesTransaction = (state: RootState) => state.futures.tran
 export const selectCrossMarginAccount = (state: RootState) => state.futures.crossMargin.account;
 
 export const selectMarketsQueryStatus = (state: RootState) => state.futures.queryStatuses.markets;
+
+export const selectCrossMarginTransferOpen = (state: RootState) =>
+	state.app.openModal === 'futures_cross_deposit' ||
+	state.app.openModal === 'futures_cross_withdraw';
 
 export const selectMarketKey = createSelector(
 	(state: RootState) => state.futures[accountType(state.futures.selectedType)].selectedMarketAsset,
@@ -85,9 +90,9 @@ export const selectFundingRate = createSelector(
 
 export const selectMarketInfo = createSelector(
 	selectMarkets,
-	selectMarketAsset,
+	selectMarketKey,
 	(markets, selectedMarket) => {
-		return markets.find((market) => market.asset === selectedMarket);
+		return markets.find((market) => market.marketKey === selectedMarket);
 	}
 );
 export const selectMarketAssetRate = createSelector(
@@ -133,37 +138,44 @@ export const selectFuturesPositions = createSelector(
 	}
 );
 
-export const selectIsSubmittingCrossTransfer = createSelector(
+export const selectSubmittingFuturesTx = createSelector(
 	(state: RootState) => state.futures,
 	(futures) => {
 		return (
+			futures.transaction?.status === TransactionStatus.AwaitingExecution ||
+			futures.transaction?.status === TransactionStatus.Executed
+		);
+	}
+);
+
+export const selectIsSubmittingCrossTransfer = createSelector(
+	selectSubmittingFuturesTx,
+	(state: RootState) => state.futures,
+	(submitting, futures) => {
+		return (
 			(futures.transaction?.type === 'deposit_cross_margin' ||
 				futures.transaction?.type === 'withdraw_cross_margin') &&
-			(futures.transaction?.status === TransactionStatus.AwaitingExecution ||
-				futures.transaction?.status === TransactionStatus.Executed)
+			submitting
 		);
 	}
 );
 
 export const selectIsApprovingCrossDeposit = createSelector(
+	selectSubmittingFuturesTx,
 	(state: RootState) => state.futures,
-	(futures) => {
-		return (
-			futures.transaction?.type === 'approve_cross_margin' &&
-			(futures.transaction?.status === TransactionStatus.AwaitingExecution ||
-				futures.transaction?.status === TransactionStatus.Executed)
-		);
+	(submitting, futures) => {
+		return futures.transaction?.type === 'approve_cross_margin' && submitting;
 	}
 );
 
 export const selectIsSubmittingIsolatedTransfer = createSelector(
+	selectSubmittingFuturesTx,
 	(state: RootState) => state.futures,
-	(futures) => {
+	(submitting, futures) => {
 		return (
 			(futures.transaction?.type === 'deposit_isolated' ||
 				futures.transaction?.type === 'withdraw_isolated') &&
-			(futures.transaction?.status === TransactionStatus.AwaitingExecution ||
-				futures.transaction?.status === TransactionStatus.Executed)
+			submitting
 		);
 	}
 );
@@ -176,6 +188,14 @@ export const selectIsolatedTransferError = createSelector(
 			futures.transaction?.status === TransactionStatus.Failed
 			? futures.transaction?.error ?? 'Transaction failed'
 			: null;
+	}
+);
+
+export const selectIsModifyingIsolatedPosition = createSelector(
+	selectSubmittingFuturesTx,
+	(state: RootState) => state.futures,
+	(submitting, futures) => {
+		return futures.transaction?.type === 'modify_isolated' && submitting;
 	}
 );
 
@@ -349,4 +369,13 @@ export const selectOpenOrders = createSelector(
 export const selectCrossMarginSettings = createSelector(
 	(state: RootState) => state.futures.crossMargin.settings,
 	(settings) => unserializeCrossMarginSettings(settings)
+);
+
+export const selectModifyIsolatedGasEstimate = createSelector(
+	(state: RootState) => state.futures.transactionEstimations,
+	(transactionEstimations) => {
+		const estimate = transactionEstimations['modify_isolated'];
+		if (estimate) return unserializeGasEstimate(estimate);
+		return null;
+	}
 );

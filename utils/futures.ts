@@ -12,6 +12,7 @@ import {
 	CrossMarginTradeInputs,
 	FundingRate,
 	FundingRateSerialized,
+	TransactionEstimation,
 } from 'state/futures/types';
 import logError from 'utils/logError';
 
@@ -519,4 +520,12 @@ export const unserializeCrossMarginSettings = (
 	tradeFee: wei(settings.tradeFee),
 	limitOrderFee: wei(settings.limitOrderFee),
 	stopOrderFee: wei(settings.stopOrderFee),
+});
+
+export const unserializeGasEstimate = (
+	estimate: TransactionEstimation<string>
+): TransactionEstimation => ({
+	...estimate,
+	limit: wei(estimate.limit),
+	cost: wei(estimate.cost),
 });

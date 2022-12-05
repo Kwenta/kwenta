@@ -1,11 +1,11 @@
 import Wei, { wei } from '@synthetixio/wei';
 import { Contract as EthCallContract } from 'ethcall';
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber, ContractTransaction, ethers } from 'ethers';
 import { formatBytes32String, parseBytes32String } from 'ethers/lib/utils';
 import request, { gql } from 'graphql-request';
 import KwentaSDK from 'sdk';
 
-import { DAY_PERIOD } from 'queries/futures/constants';
+import { DAY_PERIOD, KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { getFuturesAggregateStats } from 'queries/futures/subgraph';
 import { mapFuturesOrders } from 'queries/futures/utils';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
@@ -448,4 +448,21 @@ export default class FuturesService {
 		const market = FuturesMarket__factory.connect(marketAddress, this.sdk.context.signer);
 		return market.transferMargin(amount.neg().toBN());
 	}
+
+	public async modifyIsolatedMarginPosition<T extends boolean>(
+		marketAddress: string,
+		sizeDelta: Wei,
+		useNextPrice = false,
+		estimationOnly: T
+	): TxReturn<T> {
+		const market = FuturesMarket__factory.connect(marketAddress, this.sdk.context.signer);
+		const root = estimationOnly ? market.estimateGas : market;
+		return useNextPrice
+			? (root.submitNextPriceOrderWithTracking(sizeDelta.toBN(), KWENTA_TRACKING_CODE) as any)
+			: (root.modifyPositionWithTracking(sizeDelta.toBN(), KWENTA_TRACKING_CODE) as any);
+	}
 }
+
+type TxReturn<T extends boolean = false> = Promise<
+	T extends true ? BigNumber : ContractTransaction
+>;

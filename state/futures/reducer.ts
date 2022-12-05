@@ -19,7 +19,13 @@ import {
 	fetchOpenOrders,
 	fetchCrossMarginSettings,
 } from './actions';
-import { FundingRate, FuturesState, FuturesTransaction } from './types';
+import {
+	FundingRate,
+	FuturesState,
+	FuturesTransaction,
+	TransactionEstimationPayload,
+	TransactionEstimations,
+} from './types';
 
 export type CrossMarginTradeInputs = {
 	leverage: string;
@@ -60,6 +66,7 @@ const initialState: FuturesState = {
 		crossMarginSettings: FetchStatus.Idle,
 	},
 	transaction: undefined,
+	transactionEstimations: {} as TransactionEstimations,
 	crossMargin: {
 		account: undefined,
 		selectedMarketAsset: FuturesMarketAsset.sETH,
@@ -154,6 +161,13 @@ const futuresSlice = createSlice({
 		},
 		setCrossMarginAccount: (state, action: PayloadAction<string>) => {
 			state.crossMargin.account = action.payload;
+		},
+		setTransactionEstimate: (state, action: PayloadAction<TransactionEstimationPayload>) => {
+			state.transactionEstimations[action.payload.type] = {
+				limit: action.payload.limit,
+				cost: action.payload.cost,
+				error: action.payload.error,
+			};
 		},
 	},
 	extraReducers: (builder) => {
@@ -274,4 +288,5 @@ export const {
 	setCrossMarginAccount,
 	updateTransactionStatus,
 	updateTransactionHash,
+	setTransactionEstimate,
 } = futuresSlice.actions;

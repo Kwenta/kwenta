@@ -185,8 +185,3 @@ export const showCrossMarginOnboardState = atom({
 	key: getFuturesKey('showCrossMarginOnboard'),
 	default: false,
 });
-
-export const confirmationModalOpenState = atom({
-	key: getFuturesKey('confirmationModalOpen'),
-	default: false,
-});
