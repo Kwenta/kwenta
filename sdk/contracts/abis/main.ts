@@ -12,6 +12,7 @@ export const SystemStatusABI = [
 
 export const ExchangeRatesABI = [
 	'function ratesForCurrencies(bytes32[] currencyKeys) external view returns (uint[])',
+	'function effectiveAtomicValueAndRates(bytes32 sourceCurrencyKey, uint256 amount, bytes32 destinationCurrencyKey) external view returns (uint value, uint systemValue, uint systemSourceRate, uint systemDestiationRate)',
 ];
 
 export const SynthUtilABI = [
