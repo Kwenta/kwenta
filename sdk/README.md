@@ -43,6 +43,7 @@ The following tasks are expected to be completed before the SDK can be considere
 - [ ] Set up foundation for retries on select methods.
 - [ ] Set up service for interacting with our subgraphs.
 - [ ] Remove Duplicated types.
+- [ ] Create a standard way of passing in numeric values (particularly amounts) to the SDK. Weigh pros and cons of (`Wei`, `ethers.BigNumber` and `string`).
 
 ## Exchange
 
