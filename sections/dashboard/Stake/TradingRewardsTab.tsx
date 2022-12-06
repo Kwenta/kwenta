@@ -1,4 +1,5 @@
 import { wei } from '@synthetixio/wei';
+import { BigNumber } from 'ethers';
 import { formatEther } from 'ethers/lib/utils.js';
 import { useCallback, useEffect, useMemo, FC } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +9,7 @@ import HelpIcon from 'assets/svg/app/question-mark.svg';
 import Button from 'components/Button';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import Connector from 'containers/Connector';
+import useGetFile from 'queries/files/useGetFile';
 import useGetFuturesFee from 'queries/staking/useGetFuturesFee';
 import useGetFuturesFeeForAccount from 'queries/staking/useGetFuturesFeeForAccount';
 import {
@@ -17,7 +19,7 @@ import {
 } from 'queries/staking/utils';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { claimMultipleRewards, fetchClaimableRewards } from 'state/staking/actions';
-import { selectResetTime, selectTotalRewards } from 'state/staking/selectors';
+import { selectEpochPeriod, selectResetTime, selectTotalRewards } from 'state/staking/selectors';
 import { FlexDivRow } from 'styles/common';
 import media from 'styles/media';
 import { formatTruncatedDuration } from 'utils/formatters/date';
@@ -31,11 +33,12 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 	end = Math.floor(Date.now() / 1000),
 }) => {
 	const { t } = useTranslation();
-	const { walletAddress } = Connector.useContainer();
+	const { walletAddress, network } = Connector.useContainer();
 	const dispatch = useAppDispatch();
 
 	const resetTime = useAppSelector(selectResetTime);
 	const totalRewards = useAppSelector(selectTotalRewards);
+	const epochPeriod = useAppSelector(selectEpochPeriod);
 
 	const futuresFeeQuery = useGetFuturesFeeForAccount(walletAddress!, start, end);
 	const futuresFeePaid = useMemo(() => {
@@ -54,6 +57,11 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 			.map((trade) => formatEther(trade.feesCrossMarginAccounts.toString()))
 			.reduce((acc, curr) => acc.add(wei(curr)), zeroBN);
 	}, [totalFuturesFeeQuery.data]);
+
+	const estimatedRewardQuery = useGetFile(
+		`trading-rewards-snapshots/${network.id === 420 ? `goerli-` : ''}epoch-current.json`
+	);
+	const estimatedReward = estimatedRewardQuery?.data?.claims[walletAddress!]?.amount ?? '0';
 
 	const claimDisabled = useMemo(() => totalRewards.lte(0), [totalRewards]);
 
@@ -126,6 +134,16 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 						</div>
 						<div className="value">{formatDollars(totalFuturesFeePaid, { minDecimals: 2 })}</div>
 					</div>
+					{wei(period).eq(epochPeriod) ? (
+						<div>
+							<div className="title">
+								{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}
+							</div>
+							<KwentaLabel>
+								{truncateNumbers(formatEther(BigNumber.from(estimatedReward)), 4)}
+							</KwentaLabel>
+						</div>
+					) : null}
 					<div>
 						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.estimated-fee-share', {
