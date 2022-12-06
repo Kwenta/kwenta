@@ -184,9 +184,6 @@ export const resetCurrencyKeys = createAsyncThunk<any, void, ThunkConfig>(
 					sdk.exchange.getPriceRate(baseCurrencyKey, txProvider, coinGeckoPrices),
 				]);
 
-				// eslint-disable-next-line no-console
-				console.log(`reset`, Number(rate));
-
 				if (txProvider === 'synthetix') {
 					if (!!quoteAmount) {
 						const baseAmountNoFee = wei(quoteAmount).mul(rate ?? 0);
