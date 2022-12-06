@@ -221,6 +221,32 @@ export const unserializePotentialTrade = (
 	notionalValue: wei(preview.notionalValue),
 });
 
+export const formatPotentialIsolatedTrade = (
+	preview: PostTradeDetailsResponse,
+	nativeSizeDelta: Wei,
+	leverageSide: PositionSide
+) => {
+	const { fee, liqPrice, margin, price, size, status } = preview;
+
+	const notionalValue = wei(size).mul(wei(price));
+	const leverage = notionalValue.div(wei(margin));
+
+	return {
+		fee: wei(fee),
+		liqPrice: wei(liqPrice),
+		margin: wei(margin),
+		price: wei(price),
+		size: wei(size),
+		sizeDelta: nativeSizeDelta,
+		side: leverageSide,
+		leverage: leverage,
+		notionalValue: wei(size).mul(wei(price)),
+		status,
+		showStatus: status > 0, // 0 is success
+		statusMessage: getTradeStatusMessage(status),
+	};
+};
+
 export const formatPotentialTrade = (
 	preview: PostTradeDetailsResponse,
 	nativeSizeDelta: Wei,
@@ -266,6 +292,7 @@ export const getTradeStatusMessage = (status: PotentialTradeStatus): string => {
 
 // https://github.com/Synthetixio/synthetix/blob/4d2add4f74c68ac4f1106f6e7be4c31d4f1ccc76/contracts/PerpsV2MarketBase.sol#L130-L141
 export const POTENTIAL_TRADE_STATUS_TO_MESSAGE: { [key: string]: string } = {
+	OK: 'Ok',
 	INVALID_PRICE: 'Invalid price',
 	PRICE_OUT_OF_BOUNDS: 'Price out of acceptable range',
 	CAN_LIQUIDATE: 'Position can be liquidated',
@@ -277,4 +304,5 @@ export const POTENTIAL_TRADE_STATUS_TO_MESSAGE: { [key: string]: string } = {
 	NIL_ORDER: 'Cannot submit empty order',
 	NO_POSITION_OPEN: 'No position open',
 	PRICE_TOO_VOLATILE: 'Price too volatile',
+	PRICE_IMPACT_TOLERANCE_EXCEEDED: 'Price impact tolerance exceeded',
 };

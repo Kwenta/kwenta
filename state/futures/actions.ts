@@ -235,29 +235,26 @@ export const fetchOpenOrders = createAsyncThunk<
 
 export const fetchIsolatedMarginTradePreview = createAsyncThunk<
 	{ data: FuturesPotentialTradeDetails<string> | null; error: string | null },
-	{ sizeDelta: Wei; priceImpactDelta: Wei },
+	Wei,
 	ThunkConfig
->(
-	'futures/fetchIsolatedMarginTradePreview',
-	async ({ sizeDelta, priceImpactDelta }, { getState, extra: { sdk } }) => {
-		const marketInfo = selectMarketInfo(getState());
-		const account = selectFuturesAccount(getState());
-		if (!account) throw new Error('No account to fetch orders');
-		if (!marketInfo) throw new Error('No market info');
-		const leverageSide = selectLeverageSide(getState());
-		try {
-			const preview = await sdk.futures.getIsolatedTradePreview(
-				marketInfo?.market,
-				sizeDelta,
-				priceImpactDelta,
-				leverageSide
-			);
-			return { data: serializePotentialTrade(preview), error: null };
-		} catch (err) {
-			return { data: null, error: err.message };
-		}
+>('futures/fetchIsolatedMarginTradePreview', async (sizeDelta, { getState, extra: { sdk } }) => {
+	const marketInfo = selectMarketInfo(getState());
+	const account = selectFuturesAccount(getState());
+	if (!account) throw new Error('No account to fetch orders');
+	if (!marketInfo) throw new Error('No market info');
+	const leverageSide = selectLeverageSide(getState());
+	try {
+		const preview = await sdk.futures.getIsolatedTradePreview(
+			marketInfo?.market,
+			sizeDelta,
+			marketInfo?.price,
+			leverageSide
+		);
+		return { data: serializePotentialTrade(preview), error: null };
+	} catch (err) {
+		return { data: null, error: err.message };
 	}
-);
+});
 
 export const fetchCrossMarginTradePreview = createAsyncThunk<
 	{ data: FuturesPotentialTradeDetails<string> | null; error: string | null },
@@ -415,6 +412,7 @@ export const modifyIsolatedPosition = createAsyncThunk<
 				false
 			);
 			dispatch(updateTransactionHash(tx.hash));
+			dispatch(clearTradePreviews());
 			await tx.wait();
 			dispatch(refetchPosition('isolated_margin'));
 			dispatch(setOpenModal(null));

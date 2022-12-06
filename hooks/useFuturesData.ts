@@ -2,7 +2,7 @@ import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
 import { formatBytes32String } from 'ethers/lib/utils';
-import { debounce, toNumber } from 'lodash';
+import { debounce } from 'lodash';
 import { useRouter } from 'next/router';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -328,12 +328,7 @@ const useFuturesData = () => {
 					setCrossMarginMarginDelta(nextMarginDelta);
 				}
 				if (selectedAccountType === 'isolated_margin') {
-					dispatch(
-						fetchIsolatedMarginTradePreview({
-							sizeDelta: nextTrade.nativeSizeDelta,
-							priceImpactDelta: wei(isolatedTradeInputs.priceImpactDelta, 0),
-						})
-					);
+					dispatch(fetchIsolatedMarginTradePreview(nextTrade.nativeSizeDelta));
 				} else {
 					dispatch(
 						fetchCrossMarginTradePreview({

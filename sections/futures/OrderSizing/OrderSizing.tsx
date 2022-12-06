@@ -69,14 +69,16 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 			if (simulatedTrade && simulatedTrade.susdSize !== susdSizeDelta) {
 				setUsdValue(simulatedTrade.susdSize);
 			} else if (susdSizeDelta !== usdValue) {
-				const cleanSusdSizeDelta = wei(susdSizeDelta).abs().toNumber().toString();
+				const cleanSusdSizeDelta =
+					susdSizeDelta === '' ? '' : wei(susdSizeDelta).abs().toNumber().toString();
 				setUsdValue(cleanSusdSizeDelta);
 			}
 
 			if (simulatedTrade && simulatedTrade.nativeSize !== nativeSizeDelta) {
 				setAssetValue(simulatedTrade.nativeSize);
 			} else if (assetValue !== nativeSizeDelta) {
-				const cleanNativeSizeDelta = wei(nativeSizeDelta).abs().toNumber().toString();
+				const cleanNativeSizeDelta =
+					nativeSizeDelta === '' ? '' : wei(nativeSizeDelta).abs().toNumber().toString();
 				setAssetValue(cleanNativeSizeDelta);
 			}
 		},

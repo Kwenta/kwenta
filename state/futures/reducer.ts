@@ -48,8 +48,8 @@ export type IsolatedMarginTradeInputs = {
 };
 
 export const ZERO_STATE_TRADE_INPUTS = {
-	nativeSizeDelta: '0',
-	susdSizeDelta: '0',
+	nativeSizeDelta: '',
+	susdSizeDelta: '',
 	priceImpactDelta: DEFAULT_PRICE_IMPACT_DELTA,
 	leverage: '',
 };
@@ -264,6 +264,7 @@ const futuresSlice = createSlice({
 		// Isolated margin positions
 		builder.addCase(fetchIsolatedMarginPositions.pending, (futuresState) => {
 			futuresState.queryStatuses.isolatedPositions = FetchStatus.Loading;
+			futuresState.isolatedMargin.tradeInputs = ZERO_STATE_TRADE_INPUTS;
 		});
 		builder.addCase(fetchIsolatedMarginPositions.fulfilled, (futuresState, action) => {
 			futuresState.isolatedMargin.positions[action.payload.wallet] = action.payload.positions;

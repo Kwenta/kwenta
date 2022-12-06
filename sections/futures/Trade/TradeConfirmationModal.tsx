@@ -11,9 +11,14 @@ import ErrorView from 'components/Error';
 import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
-import { selectMarketAsset, selectPosition, selectTradePreview } from 'state/futures/selectors';
+import {
+	selectLeverageSide,
+	selectMarketAsset,
+	selectPosition,
+	selectTradePreview,
+} from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { futuresOrderPriceState, leverageSideState, orderTypeState } from 'store/futures';
+import { futuresOrderPriceState, orderTypeState } from 'store/futures';
 import { FlexDivCentered } from 'styles/common';
 import { zeroBN, formatCurrency, formatDollars, formatNumber } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
@@ -47,7 +52,7 @@ export default function TradeConfirmationModal({
 	const orderType = useRecoilValue(orderTypeState);
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
 	const position = useAppSelector(selectPosition);
-	const leverageSide = useRecoilValue(leverageSideState);
+	const leverageSide = useAppSelector(selectLeverageSide);
 
 	const positionSide = useMemo(() => {
 		if (potentialTradeDetails?.size.eq(zeroBN)) {

@@ -36,6 +36,7 @@ import {
 import {
 	calculateFundingRate,
 	calculateVolumes,
+	formatPotentialIsolatedTrade,
 	formatPotentialTrade,
 	getFuturesEndpoint,
 	getMarketName,
@@ -427,16 +428,16 @@ export default class FuturesService {
 	public async getIsolatedTradePreview(
 		marketAddress: string,
 		sizeDelta: Wei,
-		priceImpactDelta: Wei,
+		price: Wei,
 		leverageSide: PositionSide
 	) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
 		const details = await market.postTradeDetails(
 			sizeDelta.toBN(),
-			priceImpactDelta.toBN(),
+			price.toBN(),
 			this.sdk.context.walletAddress
 		);
-		return formatPotentialTrade(details, sizeDelta, leverageSide);
+		return formatPotentialIsolatedTrade(details, sizeDelta, leverageSide);
 	}
 
 	public async getCrossMarginTradePreview(
