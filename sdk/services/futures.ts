@@ -36,6 +36,7 @@ import {
 import {
 	calculateFundingRate,
 	calculateVolumes,
+	formatDelayedOrder,
 	formatPotentialIsolatedTrade,
 	formatPotentialTrade,
 	getFuturesEndpoint,
@@ -419,6 +420,12 @@ export default class FuturesService {
 	}
 
 	// Perps V2 read functions
+	public async getDelayedOrder(account: string, marketInfo: FuturesMarket<Wei>) {
+		const market = PerpsV2Market__factory.connect(marketInfo.market, this.sdk.context.signer);
+		const order = await market.delayedOrders(account);
+		return formatDelayedOrder(account, marketInfo, order);
+	}
+
 	public async getFillPrice(marketAddress: string, basePrice: Wei, sizeDelta: Wei) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
 		const fillPrice = await market.fillPriceWithBasePrice(sizeDelta.toBN(), basePrice.toBN());
@@ -434,7 +441,7 @@ export default class FuturesService {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
 		const details = await market.postTradeDetails(
 			sizeDelta.toBN(),
-			price.toBN(),
+			price.toBN(), // TODO: Replace this price with the fill price
 			this.sdk.context.walletAddress
 		);
 		return formatPotentialIsolatedTrade(details, sizeDelta, leverageSide);

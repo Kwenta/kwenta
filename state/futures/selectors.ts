@@ -19,10 +19,10 @@ import {
 	unserializeCrossMarginSettings,
 	unserializeCrossMarginTradeInputs,
 	unserializeFundingRates,
-	unserializeFuturesOrders,
 	unserializeFuturesVolumes,
 	unserializeGasEstimate,
 	unserializeMarkets,
+	unserializeDelayedOrders,
 } from 'utils/futures';
 
 import { FundingRate, futuresPositionKeys } from './types';
@@ -361,27 +361,16 @@ export const selectFuturesPortfolio = createSelector(
 );
 
 export const selectCrossMarginOpenOrders = createSelector(
-	selectMarketAsset,
 	(state: RootState) => state.futures,
-	(asset, futures) => {
-		const orders =
-			futures.crossMargin.account && futures.crossMargin.openOrders[futures.crossMargin.account]
-				? unserializeFuturesOrders(futures.crossMargin.openOrders[futures.crossMargin.account])
-				: [];
-		return orders.filter((o) => o.asset === asset);
+	(futures) => {
+		return unserializeDelayedOrders(futures.crossMargin.openOrders);
 	}
 );
 
 export const selectIsolatedMarginOpenOrders = createSelector(
-	selectMarketAsset,
-	selectWallet,
 	(state: RootState) => state.futures,
-	(asset, wallet, futures) => {
-		const orders =
-			wallet && futures.isolatedMargin.openOrders[wallet]
-				? unserializeFuturesOrders(futures.isolatedMargin.openOrders[wallet])
-				: [];
-		return orders.filter((o) => o.asset === asset);
+	(futures) => {
+		return unserializeDelayedOrders(futures.isolatedMargin.openOrders);
 	}
 );
 

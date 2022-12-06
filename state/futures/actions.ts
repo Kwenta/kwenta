@@ -8,8 +8,8 @@ import { FuturesAccountType } from 'queries/futures/types';
 import { Period } from 'sdk/constants/period';
 import { TransactionStatus } from 'sdk/types/common';
 import {
+	DelayedOrder,
 	FuturesMarket,
-	FuturesOrder,
 	FuturesPosition,
 	FuturesPotentialTradeDetails,
 	FuturesVolumes,
@@ -25,10 +25,9 @@ import { ThunkConfig } from 'state/types';
 import {
 	serializeCmBalanceInfo,
 	serializeCrossMarginSettings,
-	serializeFuturesOrders,
+	serializeDelayedOrders,
 	serializeFuturesVolumes,
 	serializeMarkets,
-	unserializeMarkets,
 } from 'utils/futures';
 import logError from 'utils/logError';
 import { getTransactionPrice } from 'utils/network';
@@ -216,18 +215,22 @@ export const fetchSharedFuturesData = createAsyncThunk<void, void, ThunkConfig>(
 );
 
 export const fetchOpenOrders = createAsyncThunk<
-	{ orders: FuturesOrder<string>[]; account: string; accountType: FuturesAccountType },
+	{ orders: DelayedOrder<string>[]; account: string; accountType: FuturesAccountType },
 	void,
 	ThunkConfig
 >('futures/fetchOpenOrders', async (_, { getState, extra: { sdk } }) => {
 	const { futures } = getState();
 	const account = selectFuturesAccount(getState());
+	const marketInfo = selectMarketInfo(getState());
 	if (!account) {
 		throw new Error('No account to fetch orders');
 	}
-	const orders = await sdk.futures.getOpenOrders(account, unserializeMarkets(futures.markets));
+	if (!marketInfo) {
+		throw new Error('No market info');
+	}
+	const order = await sdk.futures.getDelayedOrder(account, marketInfo);
 	return {
-		orders: serializeFuturesOrders(orders),
+		orders: serializeDelayedOrders([order]),
 		account: account,
 		accountType: futures.selectedType,
 	};

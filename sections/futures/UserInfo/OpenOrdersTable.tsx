@@ -1,5 +1,5 @@
 import useSynthetixQueries from '@synthetixio/queries';
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
@@ -12,25 +12,22 @@ import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
-import useCrossMarginContracts from 'hooks/useCrossMarginContracts';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { PositionSide } from 'queries/futures/types';
-import { FuturesOrder } from 'sdk/types/futures';
+import { DelayedOrder } from 'sdk/types/futures';
 import { selectMarketAsset, selectOpenOrders } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { selectedFuturesAddressState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
-import { formatDollars } from 'utils/formatters/number';
+import { formatCurrency, formatDollars } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
-import logError from 'utils/logError';
 
 import OrderDrawer from '../MobileTrade/drawers/OrderDrawer';
 
 const OpenOrdersTable: React.FC = () => {
 	const { t } = useTranslation();
 	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
-	const { crossMarginAccountContract } = useCrossMarginContracts();
 	const { handleRefetch } = useRefetchContext();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const { switchToL2 } = useNetworkSwitcher();
@@ -43,7 +40,7 @@ const OpenOrdersTable: React.FC = () => {
 	const selectedFuturesAddress = useRecoilValue(selectedFuturesAddressState);
 
 	const [cancelling, setCancelling] = useState<string | null>(null);
-	const [selectedOrder, setSelectedOrder] = useState<FuturesOrder | undefined>();
+	const [selectedOrder, setSelectedOrder] = useState<DelayedOrder | undefined>();
 
 	const gasPrice = ethGasPriceQuery.data?.[gasSpeed];
 
@@ -56,14 +53,6 @@ const OpenOrdersTable: React.FC = () => {
 			setCancelling(null);
 		},
 	};
-
-	const cancelNextPriceOrder = useSynthetixTxn(
-		`FuturesMarket${getDisplayAsset(marketAsset)}`,
-		`cancelNextPriceOrder`,
-		[selectedFuturesAddress],
-		gasPrice,
-		synthetixTxCb
-	);
 
 	const executeNextPriceOrder = useSynthetixTxn(
 		`FuturesMarket${getDisplayAsset(marketAsset)}`,
@@ -86,38 +75,25 @@ const OpenOrdersTable: React.FC = () => {
 	);
 
 	const onCancel = useCallback(
-		async (order: FuturesOrder | undefined) => {
+		async (order: DelayedOrder | undefined) => {
 			if (!order) return;
-			setCancelling(order.id);
-			if (order.orderType === 'Limit' || order.orderType === 'Stop Market') {
-				try {
-					const id = order.id.split('-')[2];
-					const tx = await crossMarginAccountContract?.cancelOrder(id);
-					if (tx?.hash) handleTx(tx.hash);
-					setCancelling(null);
-				} catch (err) {
-					setCancelling(null);
-					logError(err);
-				}
-			} else {
-				cancelNextPriceOrder.mutate();
-			}
+			// setCancelling(order.id);
+			// TODO: Dispatch cancel order
 		},
-		[crossMarginAccountContract, cancelNextPriceOrder, handleTx]
+		[handleTx]
 	);
-
-	useEffect(() => {
-		if (cancelNextPriceOrder.hash) {
-			handleTx(cancelNextPriceOrder.hash);
-		} else if (executeNextPriceOrder.hash) {
-			handleTx(executeNextPriceOrder.hash);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [cancelNextPriceOrder.hash, executeNextPriceOrder.hash]);
 
 	const rowsData = useMemo(() => {
 		const ordersWithCancel = openOrders
-			.map((o) => ({ ...o, cancel: () => onCancel(o) }))
+			.map((o) => ({
+				...o,
+				sizeTxt: formatCurrency(o.asset, o.size.abs(), {
+					currencyKey: getDisplayAsset(o.asset) ?? '',
+					minDecimals: o.size.abs().lt(0.01) ? 4 : 2,
+				}),
+				totalDeposit: o.commitDeposit.add(o.keeperDeposit),
+				onCancel: onCancel(o),
+			}))
 			.sort((a, b) => {
 				return b.asset === marketAsset && a.asset !== marketAsset
 					? 1
@@ -125,11 +101,6 @@ const OpenOrdersTable: React.FC = () => {
 					? 0
 					: -1;
 			});
-		const cancellingIndex = ordersWithCancel.findIndex((o) => o.id === cancelling);
-		ordersWithCancel[cancellingIndex] = {
-			...ordersWithCancel[cancellingIndex],
-			isCancelling: true,
-		};
 		return ordersWithCancel;
 	}, [openOrders, cancelling, marketAsset, onCancel]);
 
@@ -201,7 +172,7 @@ const OpenOrdersTable: React.FC = () => {
 						{
 							Header: (
 								<StyledTableHeader>
-									{t('futures.market.user.open-orders.table.size-price')}
+									{t('futures.market.user.open-orders.table.size')}
 								</StyledTableHeader>
 							),
 							accessor: 'size',
@@ -209,14 +180,6 @@ const OpenOrdersTable: React.FC = () => {
 								return (
 									<div>
 										<div>{cellProps.row.original.sizeTxt}</div>
-										{cellProps.row.original.targetPrice && (
-											<Currency.Price
-												currencyKey={'sUSD'}
-												price={cellProps.row.original.targetPrice}
-												sign={'$'}
-												conversionRate={1}
-											/>
-										)}
 									</div>
 								);
 							},
@@ -231,8 +194,8 @@ const OpenOrdersTable: React.FC = () => {
 							),
 							accessor: 'marginDelta',
 							Cell: (cellProps: CellProps<any>) => {
-								const { marginDelta } = cellProps.row.original;
-								return <div>{formatDollars(marginDelta?.gt(0) ? marginDelta : '0')}</div>;
+								const { totalDeposit } = cellProps.row.original;
+								return <div>{formatDollars(totalDeposit?.gt(0) ? totalDeposit : '0')}</div>;
 							},
 							sortable: true,
 							width: 50,

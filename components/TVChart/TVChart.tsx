@@ -6,7 +6,7 @@ import { ThemeContext } from 'styled-components';
 import { chain } from 'wagmi';
 
 import Connector from 'containers/Connector';
-import { FuturesOrder } from 'sdk/types/futures';
+import { DelayedOrder } from 'sdk/types/futures';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
 import { currentThemeState } from 'store/ui';
 import darkTheme from 'styles/theme/colors/dark';
@@ -24,7 +24,7 @@ import { ChartPosition } from './types';
 export type ChartProps = {
 	activePosition?: ChartPosition | null;
 	potentialTrade?: ChartPosition | null;
-	openOrders: FuturesOrder[];
+	openOrders: DelayedOrder[];
 	showOrderLines: boolean;
 	onChartReady?: () => void;
 	onToggleShowOrderLines?: () => void;
@@ -87,54 +87,55 @@ export function TVChart({
 		_oderLineRefs.current = [];
 	};
 
-	const renderOrderLines = () => {
-		_widget.current?.onChartReady(() => {
-			_widget.current?.chart().dataReady(() => {
-				clearOrderLines();
-				_oderLineRefs.current = openOrders.reduce<IPositionLineAdapter[]>((acc, order) => {
-					if (order.targetPrice) {
-						const color =
-							order.side === 'long'
-								? colors.selectedTheme.chartLine.long
-								: colors.selectedTheme.red;
+	// TODO: Re-enable on implementation of limit orders
+	// const renderOrderLines = () => {
+	// 	_widget.current?.onChartReady(() => {
+	// 		_widget.current?.chart().dataReady(() => {
+	// 			clearOrderLines();
+	// 			_oderLineRefs.current = openOrders.reduce<IPositionLineAdapter[]>((acc, order) => {
+	// 				if (order.targetPrice) {
+	// 					const color =
+	// 						order.side === 'long'
+	// 							? colors.selectedTheme.chartLine.long
+	// 							: colors.selectedTheme.red;
 
-						const orderLine = _widget.current
-							?.chart()
-							.createPositionLine()
-							.setText(order.orderType)
-							.setTooltip('Average entry price')
-							.setQuantity(formatNumber(order.size.abs()))
-							.setPrice(order.targetPrice?.toNumber() ?? 0)
-							.setExtendLeft(false)
-							.setQuantityTextColor(colors.white)
-							.setBodyTextColor(darkTheme.black)
-							.setLineStyle(2)
-							.setLineColor(color)
-							.setBodyBorderColor(color)
-							.setQuantityBackgroundColor(color)
-							.setQuantityBorderColor(color)
-							.setLineLength(25);
-						if (orderLine) {
-							acc.push(orderLine);
-						}
-					}
-					return acc;
-				}, []);
-			});
-		});
-	};
+	// 					const orderLine = _widget.current
+	// 						?.chart()
+	// 						.createPositionLine()
+	// 						.setText(order.orderType)
+	// 						.setTooltip('Average entry price')
+	// 						.setQuantity(formatNumber(order.size.abs()))
+	// 						.setPrice(order.targetPrice?.toNumber() ?? 0)
+	// 						.setExtendLeft(false)
+	// 						.setQuantityTextColor(colors.white)
+	// 						.setBodyTextColor(darkTheme.black)
+	// 						.setLineStyle(2)
+	// 						.setLineColor(color)
+	// 						.setBodyBorderColor(color)
+	// 						.setQuantityBackgroundColor(color)
+	// 						.setQuantityBorderColor(color)
+	// 						.setLineLength(25);
+	// 					if (orderLine) {
+	// 						acc.push(orderLine);
+	// 					}
+	// 				}
+	// 				return acc;
+	// 			}, []);
+	// 		});
+	// 	});
+	// };
 
 	const onToggleOrderLines = () => {
 		if (_oderLineRefs.current.length) {
 			clearOrderLines();
 		} else {
-			renderOrderLines();
+			// renderOrderLines();
 		}
 	};
 
 	useEffect(() => {
 		if (showOrderLines) {
-			renderOrderLines();
+			// renderOrderLines();
 		}
 		// eslint-disable-next-line
 	}, [openOrders]);

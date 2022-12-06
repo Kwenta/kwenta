@@ -88,7 +88,7 @@ const initialState: FuturesState = {
 		showCrossMarginOnboard: false,
 		tradeInputs: ZERO_STATE_CM_TRADE_INPUTS,
 		positions: {},
-		openOrders: {},
+		openOrders: [],
 		tradePreview: {
 			data: null,
 			error: null,
@@ -116,7 +116,7 @@ const initialState: FuturesState = {
 		selectedLeverage: DEFAULT_LEVERAGE,
 		tradeInputs: ZERO_STATE_TRADE_INPUTS,
 		positions: {},
-		openOrders: {},
+		openOrders: [],
 	},
 };
 
@@ -292,8 +292,7 @@ const futuresSlice = createSlice({
 			futuresState.queryStatuses.openOrders = FetchStatus.Loading;
 		});
 		builder.addCase(fetchOpenOrders.fulfilled, (futuresState, action) => {
-			futuresState[accountType(action.payload.accountType)].openOrders[action.payload.account] =
-				action.payload.orders;
+			futuresState[accountType(action.payload.accountType)].openOrders = action.payload.orders;
 			futuresState.queryStatuses.openOrders = FetchStatus.Success;
 		});
 		builder.addCase(fetchOpenOrders.rejected, (futuresState) => {

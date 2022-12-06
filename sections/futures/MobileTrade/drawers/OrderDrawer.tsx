@@ -4,17 +4,18 @@ import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';
 import { PositionSide } from 'queries/futures/types';
-import { FuturesOrder } from 'sdk/types/futures';
+import { DelayedOrder } from 'sdk/types/futures';
+import { formatCurrency } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 
 import BaseDrawer from './BaseDrawer';
 
 type OrderDrawerProps = {
 	open: boolean;
-	order: FuturesOrder | undefined;
+	order: DelayedOrder | undefined;
 	closeDrawer(): void;
 	onExecute(): void;
-	onCancel(order: FuturesOrder | undefined): void;
+	onCancel(order: DelayedOrder | undefined): void;
 };
 
 const OrderDrawer: React.FC<OrderDrawerProps> = ({
@@ -29,15 +30,6 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({
 	const items = React.useMemo(() => {
 		if (!order || !order.side) return [];
 
-		const price = order.targetPrice
-			? [
-					{
-						label: t('futures.market.user.open-orders.table.price'),
-						value: order.targetPriceTxt,
-					},
-			  ]
-			: [];
-
 		return [
 			{
 				label: t('futures.market.user.open-orders.table.market'),
@@ -49,9 +41,11 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({
 			},
 			{
 				label: t('futures.market.user.open-orders.table.size'),
-				value: order.sizeTxt,
+				value: formatCurrency(order.asset, order.size.abs(), {
+					currencyKey: getDisplayAsset(order.asset) ?? '',
+					minDecimals: order.size.abs().lt(0.01) ? 4 : 2,
+				}),
 			},
-			...price,
 			{
 				label: t('futures.market.user.open-orders.table.type'),
 				value: order.orderType,

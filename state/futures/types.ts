@@ -3,8 +3,8 @@ import Wei from '@synthetixio/wei';
 import { FuturesAccountType } from 'queries/futures/types';
 import { TransactionStatus } from 'sdk/types/common';
 import {
+	DelayedOrder,
 	FuturesMarket,
-	FuturesOrder,
 	FuturesPosition,
 	FuturesPotentialTradeDetails,
 	FuturesVolumes,
@@ -133,9 +133,7 @@ export type CrossMarginState = {
 	positions: {
 		[account: string]: FuturesPosition<string>[];
 	};
-	openOrders: {
-		[account: string]: FuturesOrder<string>[];
-	};
+	openOrders: DelayedOrder<string>[];
 };
 
 export type IsolatedMarginState = {
@@ -153,9 +151,7 @@ export type IsolatedMarginState = {
 	positions: {
 		[account: string]: FuturesPosition<string>[];
 	};
-	openOrders: {
-		[account: string]: FuturesOrder<string>[];
-	};
+	openOrders: DelayedOrder<string>[];
 };
 
 export type ModifyIsolatedPositionInputs = {

@@ -177,7 +177,8 @@ export type FuturesOrderTypeDisplay =
 	| 'Limit'
 	| 'Stop Market'
 	| 'Market'
-	| 'Liquidation';
+	| 'Liquidation'
+	| 'Delayed';
 
 export type FuturesOrder<T = Wei> = {
 	id: string;
@@ -193,6 +194,26 @@ export type FuturesOrder<T = Wei> = {
 	orderType: FuturesOrderTypeDisplay;
 	sizeTxt?: string;
 	targetPriceTxt?: string;
+	side?: PositionSide;
+	isStale?: boolean;
+	isExecutable?: boolean;
+	isCancelling?: boolean;
+};
+
+export type DelayedOrder<T = Wei> = {
+	account: string;
+	asset: FuturesMarketAsset;
+	market: string;
+	marketKey: FuturesMarketKey;
+	size: T;
+	commitDeposit: T;
+	keeperDeposit: T;
+	submittedAtTimestamp: number;
+	executableAtTimestamp: number;
+	isOffchain: boolean;
+	priceImpactDelta: T;
+	targetRoundId: T | null;
+	orderType: FuturesOrderTypeDisplay;
 	side?: PositionSide;
 	isStale?: boolean;
 	isExecutable?: boolean;

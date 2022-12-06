@@ -11,8 +11,11 @@ import {
 	AGGREGATE_ASSET_KEY,
 } from 'sdk/constants/futures';
 import { SECONDS_PER_DAY } from 'sdk/constants/period';
+import { IPerpsV2MarketBaseTypes } from 'sdk/contracts/types/PerpsV2Market';
 import {
+	DelayedOrder,
 	FundingRateUpdate,
+	FuturesMarket,
 	FuturesMarketAsset,
 	FuturesMarketKey,
 	FuturesPosition,
@@ -220,6 +223,42 @@ export const unserializePotentialTrade = (
 	leverage: wei(preview.leverage),
 	notionalValue: wei(preview.notionalValue),
 });
+
+export const formatDelayedOrder = (
+	account: string,
+	marketInfo: FuturesMarket<Wei>,
+	order: IPerpsV2MarketBaseTypes.DelayedOrderStructOutput
+): DelayedOrder => {
+	const {
+		isOffchain,
+		sizeDelta,
+		priceImpactDelta,
+		targetRoundId,
+		commitDeposit,
+		keeperDeposit,
+		executableAtTime,
+		intentionTime,
+	} = order;
+
+	return {
+		account: account,
+		asset: marketInfo.asset,
+		market: getMarketName(marketInfo.asset),
+		marketKey: marketInfo.marketKey,
+		size: wei(sizeDelta),
+		commitDeposit: wei(commitDeposit),
+		keeperDeposit: wei(keeperDeposit),
+		submittedAtTimestamp: intentionTime.toNumber(),
+		executableAtTimestamp: executableAtTime.toNumber(),
+		isOffchain: isOffchain,
+		priceImpactDelta: wei(priceImpactDelta),
+		targetRoundId: wei(targetRoundId),
+		orderType: 'Delayed',
+		side: wei(sizeDelta).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
+		isExecutable: true, // TODO: fix
+		isCancelling: true, // TODO: fix
+	};
+};
 
 export const formatPotentialIsolatedTrade = (
 	preview: PostTradeDetailsResponse,
