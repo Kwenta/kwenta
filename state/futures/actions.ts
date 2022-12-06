@@ -7,7 +7,14 @@ import { monitorTransaction } from 'contexts/RelayerContext';
 import { FuturesAccountType } from 'queries/futures/types';
 import { Period } from 'sdk/constants/period';
 import { TransactionStatus } from 'sdk/types/common';
-import { FuturesMarket, FuturesOrder, FuturesPosition, FuturesVolumes } from 'sdk/types/futures';
+import {
+	FuturesMarket,
+	FuturesOrder,
+	FuturesPosition,
+	FuturesPotentialTradeDetails,
+	FuturesVolumes,
+} from 'sdk/types/futures';
+import { serializePotentialTrade } from 'sdk/utils/futures';
 import { unserializeGasPrice } from 'state/app/helpers';
 import { setOpenModal } from 'state/app/reducer';
 import { fetchBalances } from 'state/balances/actions';
@@ -29,12 +36,19 @@ import { refetchWithComparator } from 'utils/queries';
 
 import {
 	handleTransactionError,
+	setCrossMarginTradePreview,
+	setIsolatedTradePreview,
 	setTransaction,
 	setTransactionEstimate,
 	updateTransactionHash,
 	updateTransactionStatus,
 } from './reducer';
-import { selectMarketInfo, selectPosition } from './selectors';
+import {
+	selectFuturesAccount,
+	selectLeverageSide,
+	selectMarketInfo,
+	selectPosition,
+} from './selectors';
 import {
 	CrossMarginBalanceInfo,
 	CrossMarginSettings,
@@ -135,8 +149,7 @@ export const refetchPosition = createAsyncThunk<
 	FuturesAccountType,
 	ThunkConfig
 >('futures/refetchPosition', async (type, { getState, extra: { sdk } }) => {
-	const { wallet, futures } = getState();
-	const account = type === 'cross_margin' ? futures.crossMargin.account : wallet.walletAddress;
+	const account = selectFuturesAccount(getState());
 	if (!account) throw new Error('No wallet connected');
 	const marketInfo = selectMarketInfo(getState());
 	const position = selectPosition(getState());
@@ -207,9 +220,8 @@ export const fetchOpenOrders = createAsyncThunk<
 	void,
 	ThunkConfig
 >('futures/fetchOpenOrders', async (_, { getState, extra: { sdk } }) => {
-	const { wallet, futures } = getState();
-	const account =
-		futures.selectedType === 'cross_margin' ? futures.crossMargin.account : wallet.walletAddress;
+	const { futures } = getState();
+	const account = selectFuturesAccount(getState());
 	if (!account) {
 		throw new Error('No account to fetch orders');
 	}
@@ -220,6 +232,62 @@ export const fetchOpenOrders = createAsyncThunk<
 		accountType: futures.selectedType,
 	};
 });
+
+export const fetchIsolatedMarginTradePreview = createAsyncThunk<
+	{ data: FuturesPotentialTradeDetails<string> | null; error: string | null },
+	{ sizeDelta: Wei; priceImpactDelta: Wei },
+	ThunkConfig
+>(
+	'futures/fetchIsolatedMarginTradePreview',
+	async ({ sizeDelta, priceImpactDelta }, { getState, extra: { sdk } }) => {
+		const marketInfo = selectMarketInfo(getState());
+		const account = selectFuturesAccount(getState());
+		if (!account) throw new Error('No account to fetch orders');
+		if (!marketInfo) throw new Error('No market info');
+		const leverageSide = selectLeverageSide(getState());
+		try {
+			const preview = await sdk.futures.getIsolatedTradePreview(
+				marketInfo?.market,
+				sizeDelta,
+				priceImpactDelta,
+				leverageSide
+			);
+			return { data: serializePotentialTrade(preview), error: null };
+		} catch (err) {
+			return { data: null, error: err.message };
+		}
+	}
+);
+
+export const fetchCrossMarginTradePreview = createAsyncThunk<
+	{ data: FuturesPotentialTradeDetails<string> | null; error: string | null },
+	{ price?: Wei | undefined; sizeDelta: Wei; marginDelta: Wei },
+	ThunkConfig
+>('futures/fetchCrossMarginTradePreview', async (inputs, { getState, extra: { sdk } }) => {
+	const marketInfo = selectMarketInfo(getState());
+	const account = selectFuturesAccount(getState());
+	if (!account) throw new Error('No account to fetch orders');
+	if (!marketInfo) throw new Error('No market info');
+	const leverageSide = selectLeverageSide(getState());
+	try {
+		const preview = await sdk.futures.getCrossMarginTradePreview(
+			marketInfo.marketKey,
+			marketInfo.market,
+			{ ...inputs, leverageSide }
+		);
+		return { data: serializePotentialTrade(preview), error: null };
+	} catch (err) {
+		return { data: null, error: err.message };
+	}
+});
+
+export const clearTradePreviews = createAsyncThunk<void, void, ThunkConfig>(
+	'futures/clearTradePreviews',
+	async (_, { dispatch }) => {
+		dispatch(setIsolatedTradePreview({ data: null, error: null }));
+		dispatch(setCrossMarginTradePreview({ data: null, error: null }));
+	}
+);
 
 // Contract Mutations
 
@@ -380,6 +448,36 @@ export const modifyIsolatedPositionEstimateGas = createAsyncThunk<
 			'modify_isolated',
 			{ getState, dispatch }
 		);
+	}
+);
+
+export const closeIsolatedMarginPosition = createAsyncThunk<void, string, ThunkConfig>(
+	'futures/closeIsolatedMarginPosition',
+	async (priceImpactDelta, { getState, dispatch, extra: { sdk } }) => {
+		const marketInfo = selectMarketInfo(getState());
+		if (!marketInfo) throw new Error('Market info not found');
+		try {
+			dispatch(
+				setTransaction({
+					status: TransactionStatus.AwaitingExecution,
+					type: 'close_isolated',
+					hash: null,
+				})
+			);
+			const tx = await sdk.futures.closeIsolatedPosition(
+				marketInfo.market,
+				wei(priceImpactDelta, 0)
+			);
+			dispatch(updateTransactionHash(tx.hash));
+			await tx.wait();
+			dispatch(refetchPosition('isolated_margin'));
+			dispatch(setOpenModal(null));
+			// TODO: More reliable balance updates
+			setTimeout(() => dispatch(fetchBalances()), 1000);
+		} catch (err) {
+			dispatch(handleTransactionError(err.message));
+			throw err;
+		}
 	}
 );
 

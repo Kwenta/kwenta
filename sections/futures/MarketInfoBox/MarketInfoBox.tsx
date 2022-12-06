@@ -1,19 +1,19 @@
 import Wei, { wei } from '@synthetixio/wei';
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import InfoBox from 'components/InfoBox';
 import PreviewArrow from 'components/PreviewArrow';
-import { FuturesPotentialTradeDetails } from 'queries/futures/types';
-import { selectMarketInfo, selectMaxLeverage, selectPosition } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { FuturesPotentialTradeDetails } from 'sdk/types/futures';
 import {
-	leverageSideState,
-	orderTypeState,
-	potentialTradeDetailsState,
-	futuresTradeInputsState,
-} from 'store/futures';
+	selectMarketInfo,
+	selectMaxLeverage,
+	selectPosition,
+	selectTradePreview,
+} from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { leverageSideState, orderTypeState, futuresTradeInputsState } from 'store/futures';
 import { computeNPFee } from 'utils/costCalculations';
 import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
@@ -23,7 +23,7 @@ const MarketInfoBox: React.FC = () => {
 	const orderType = useRecoilValue(orderTypeState);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
-	const potentialTrade = useRecoilValue(potentialTradeDetailsState);
+	const potentialTrade = useAppSelector(selectTradePreview);
 
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const position = useAppSelector(selectPosition);
@@ -37,6 +37,10 @@ const MarketInfoBox: React.FC = () => {
 	const marginUsage = availableMargin.gt(zeroBN)
 		? totalMargin.sub(availableMargin).div(totalMargin)
 		: zeroBN;
+
+	const minInitialMargin = useMemo(() => marketInfo?.minInitialMargin ?? zeroBN, [
+		marketInfo?.minInitialMargin,
+	]);
 
 	const isNextPriceOrder = orderType === 'next price';
 
@@ -57,44 +61,44 @@ const MarketInfoBox: React.FC = () => {
 		return (commitDeposit ?? zeroBN).add(marketInfo?.keeperDeposit ?? zeroBN);
 	}, [commitDeposit, marketInfo?.keeperDeposit]);
 
-	const getPotentialAvailableMargin = (
-		trade: FuturesPotentialTradeDetails | null,
-		marketMaxLeverage: Wei | undefined
-	) => {
-		let inaccessible;
+	const getPotentialAvailableMargin = useCallback(
+		(trade: FuturesPotentialTradeDetails | null, marketMaxLeverage: Wei | undefined) => {
+			let inaccessible;
 
-		inaccessible =
-			(marketMaxLeverage && trade?.notionalValue.div(marketMaxLeverage).abs()) ?? zeroBN;
+			inaccessible =
+				(marketMaxLeverage && trade?.notionalValue.div(marketMaxLeverage).abs()) ?? zeroBN;
 
-		// If the user has a position open, we'll enforce a min initial margin requirement.
-		if (inaccessible.gt(0)) {
-			if (inaccessible.lt(trade?.minInitialMargin ?? zeroBN)) {
-				inaccessible = trade?.minInitialMargin ?? zeroBN;
+			// If the user has a position open, we'll enforce a min initial margin requirement.
+			if (inaccessible.gt(0)) {
+				if (inaccessible.lt(minInitialMargin)) {
+					inaccessible = minInitialMargin;
+				}
 			}
-		}
 
-		// check if available margin will be less than 0
-		return trade?.margin?.sub(inaccessible).gt(0) ? trade?.margin?.sub(inaccessible).abs() : zeroBN;
-	};
+			// check if available margin will be less than 0
+			return trade?.margin?.sub(inaccessible).gt(0)
+				? trade?.margin?.sub(inaccessible).abs()
+				: zeroBN;
+		},
+		[]
+	);
 
 	const previewAvailableMargin = React.useMemo(() => {
 		const potentialAvailableMargin = getPotentialAvailableMargin(
-			potentialTrade.data,
+			potentialTrade,
 			marketInfo?.maxLeverage
 		);
 		return isNextPriceOrder
 			? potentialAvailableMargin?.sub(totalDeposit) ?? zeroBN
 			: potentialAvailableMargin;
-	}, [potentialTrade.data, marketInfo?.maxLeverage, isNextPriceOrder, totalDeposit]);
+	}, [potentialTrade, marketInfo?.maxLeverage, isNextPriceOrder, totalDeposit]);
 
 	const previewTradeData = React.useMemo(() => {
 		const size = wei(nativeSize || zeroBN);
 
-		const potentialMarginUsage = potentialTrade.data?.margin.gt(0)
-			? potentialTrade.data?.margin
-					?.sub(previewAvailableMargin)
-					?.div(potentialTrade.data?.margin)
-					?.abs() ?? zeroBN
+		const potentialMarginUsage = potentialTrade?.margin.gt(0)
+			? potentialTrade!.margin.sub(previewAvailableMargin).div(potentialTrade!.margin).abs() ??
+			  zeroBN
 			: zeroBN;
 
 		const potentialBuyingPower =
@@ -102,12 +106,18 @@ const MarketInfoBox: React.FC = () => {
 
 		return {
 			showPreview: size && !size.eq(0),
-			totalMargin: potentialTrade.data?.margin || zeroBN,
+			totalMargin: potentialTrade?.margin || zeroBN,
 			availableMargin: previewAvailableMargin.gt(0) ? previewAvailableMargin : zeroBN,
 			buyingPower: potentialBuyingPower.gt(0) ? potentialBuyingPower : zeroBN,
 			marginUsage: potentialMarginUsage.gt(1) ? wei(1) : potentialMarginUsage,
 		};
-	}, [nativeSize, potentialTrade.data?.margin, previewAvailableMargin, maxLeverage]);
+	}, [
+		nativeSize,
+		potentialTrade,
+		previewAvailableMargin,
+		maxLeverage,
+		getPotentialAvailableMargin,
+	]);
 
 	return (
 		<StyledInfoBox
@@ -118,9 +128,7 @@ const MarketInfoBox: React.FC = () => {
 						currencyKey: undefined,
 					})}`,
 					valueNode: (
-						<PreviewArrow
-							showPreview={previewTradeData.showPreview && !potentialTrade.data?.showStatus}
-						>
+						<PreviewArrow showPreview={previewTradeData.showPreview && !potentialTrade?.showStatus}>
 							{formatDollars(previewTradeData?.availableMargin)}
 						</PreviewArrow>
 					),
@@ -130,9 +138,7 @@ const MarketInfoBox: React.FC = () => {
 						currencyKey: undefined,
 					})}`,
 					valueNode: previewTradeData?.buyingPower && (
-						<PreviewArrow
-							showPreview={previewTradeData.showPreview && !potentialTrade.data?.showStatus}
-						>
+						<PreviewArrow showPreview={previewTradeData.showPreview && !potentialTrade?.showStatus}>
 							{formatDollars(previewTradeData?.buyingPower)}
 						</PreviewArrow>
 					),
@@ -140,9 +146,7 @@ const MarketInfoBox: React.FC = () => {
 				'Margin Usage': {
 					value: `${formatPercent(marginUsage)}`,
 					valueNode: (
-						<PreviewArrow
-							showPreview={previewTradeData.showPreview && !potentialTrade.data?.showStatus}
-						>
+						<PreviewArrow showPreview={previewTradeData.showPreview && !potentialTrade?.showStatus}>
 							{formatPercent(previewTradeData?.marginUsage)}
 						</PreviewArrow>
 					),

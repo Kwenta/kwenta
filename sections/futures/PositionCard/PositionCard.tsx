@@ -14,13 +14,14 @@ import useAverageEntryPrice from 'hooks/useAverageEntryPrice';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { PositionSide } from 'queries/futures/types';
-import { selectMarketAsset, selectMarketKey, selectPosition } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
 import {
-	futuresAccountTypeState,
-	positionHistoryState,
-	potentialTradeDetailsState,
-} from 'store/futures';
+	selectMarketAsset,
+	selectMarketKey,
+	selectPosition,
+	selectTradePreview,
+} from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { futuresAccountTypeState, positionHistoryState } from 'store/futures';
 import { FlexDivCentered, FlexDivCol, PillButtonDiv } from 'styles/common';
 import media from 'styles/media';
 import { isFiatCurrency } from 'utils/currencies';
@@ -65,22 +66,22 @@ type PositionPreviewData = {
 
 const PositionCard: React.FC<PositionCardProps> = () => {
 	const { t } = useTranslation();
-	const futuresAccountType = useRecoilValue(futuresAccountTypeState);
+	const { synthsMap } = Connector.useContainer();
+	const { marketAssetRate } = useFuturesContext();
+	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const position = useAppSelector(selectPosition);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const marketKey = useAppSelector(selectMarketKey);
-
-	const positionDetails = position?.position ?? null;
+	const futuresAccountType = useRecoilValue(futuresAccountTypeState);
+	const positionHistory = useRecoilValue(positionHistoryState);
+	const previewTradeData = useAppSelector(selectTradePreview);
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketKey);
 
-	const positionHistory = useRecoilValue(positionHistoryState);
+	const positionDetails = position?.position ?? null;
 
 	const [showEditLeverage, setShowEditLeverage] = useState(false);
 
-	const { synthsMap } = Connector.useContainer();
-
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const minDecimals =
 		isFiatCurrency(selectedPriceCurrency.name) && isDecimalFour(marketKey)
 			? DEFAULT_CRYPTO_DECIMALS
@@ -91,10 +92,6 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			({ marketKey: positionMarketKey, isOpen }) => isOpen && positionMarketKey === marketKey
 		);
 	}, [positionHistory, marketKey, futuresAccountType]);
-
-	const { marketAssetRate } = useFuturesContext();
-
-	const { data: previewTradeData } = useRecoilValue(potentialTradeDetailsState);
 
 	const modifiedAverage = useAverageEntryPrice(thisPositionHistory);
 

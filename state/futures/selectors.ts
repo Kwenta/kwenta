@@ -5,6 +5,7 @@ import { DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import { DEFAULT_MAX_LEVERAGE } from 'constants/futures';
 import { TransactionStatus } from 'sdk/types/common';
 import { FuturesPosition } from 'sdk/types/futures';
+import { unserializePotentialTrade } from 'sdk/utils/futures';
 import { PositionSide } from 'sections/futures/types';
 import { selectExchangeRates } from 'state/exchange/selectors';
 import { accountType, deserializeWeiObject } from 'state/helpers';
@@ -109,6 +110,15 @@ export const selectIsolatedTradeInputs = createSelector(
 	(tradeInputs) => tradeInputs
 );
 
+export const selectFuturesAccount = createSelector(
+	selectFuturesType,
+	selectWallet,
+	selectCrossMarginAccount,
+	(selectedType, wallet, crossMarginAccount) => {
+		return selectedType === 'cross_margin' ? crossMarginAccount : wallet;
+	}
+);
+
 export const selectCrossMarginPositions = createSelector(
 	(state: RootState) => state.futures,
 	(futures) => {
@@ -150,6 +160,18 @@ export const selectSubmittingFuturesTx = createSelector(
 		return (
 			futures.transaction?.status === TransactionStatus.AwaitingExecution ||
 			futures.transaction?.status === TransactionStatus.Executed
+		);
+	}
+);
+
+export const selectIsClosingPosition = createSelector(
+	selectSubmittingFuturesTx,
+	(state: RootState) => state.futures,
+	(submitting, futures) => {
+		return (
+			(futures.transaction?.type === 'close_isolated' ||
+				futures.transaction?.type === 'close_cross_margin') &&
+			submitting
 		);
 	}
 );
@@ -289,11 +311,11 @@ export const selectNextPriceDisclaimer = createSelector(
 
 export const selectPlaceOrderTranslationKey = createSelector(
 	selectPosition,
+	selectFuturesType,
 	(state: RootState) => state.futures[accountType(state.futures.selectedType)].orderType,
-	(state: RootState) => state.futures.selectedType,
 	(state: RootState) => state.futures.crossMargin.balanceInfo,
 	selectIsMarketCapReached,
-	(position, orderType, selectedType, { freeMargin }, isMarketCapReached) => {
+	(position, selectedType, orderType, { freeMargin }, isMarketCapReached) => {
 		let remainingMargin;
 		if (selectedType === 'isolated_margin') {
 			remainingMargin = position?.remainingMargin || zeroBN;
@@ -360,6 +382,33 @@ export const selectIsolatedMarginOpenOrders = createSelector(
 				? unserializeFuturesOrders(futures.isolatedMargin.openOrders[wallet])
 				: [];
 		return orders.filter((o) => o.asset === asset);
+	}
+);
+
+export const selectTradePreview = createSelector(
+	selectFuturesType,
+	(state: RootState) => state.futures,
+	(type, futures) => {
+		const preview = futures[accountType(type)].tradePreview.data;
+		return preview ? unserializePotentialTrade(preview) : null;
+	}
+);
+
+export const selectTradePreviewError = createSelector(
+	selectFuturesType,
+	(state: RootState) => state.futures,
+	(type, futures) => {
+		return futures[accountType(type)].tradePreview.error;
+	}
+);
+
+export const selectTradePreviewStatus = createSelector(
+	selectFuturesType,
+	(state: RootState) => state.futures,
+	(type, futures) => {
+		return type === 'cross_margin'
+			? futures.queryStatuses.crossMarginTradePreview
+			: futures.queryStatuses.isolatedTradePreview;
 	}
 );
 

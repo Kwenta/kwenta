@@ -37,8 +37,6 @@ type OrderSizingProps = {
 const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	const { onTradeAmountChange, maxUsdInputAmount } = useFuturesContext();
 
-	const simulatedTrade = useRecoilValue(simulatedTradeState);
-
 	const { freeMargin: freeCrossMargin } = useAppSelector(selectCrossMarginBalanceInfo);
 
 	const { nativeSizeDelta, susdSizeDelta } = useAppSelector(selectIsolatedTradeInputs);
@@ -49,6 +47,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	const marketAssetRate = useAppSelector(selectMarketAssetRate);
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
 	const selectedLeverageSide = useRecoilValue(leverageSideState);
+	const simulatedTrade = useRecoilValue(simulatedTradeState);
 
 	const marketKey = useAppSelector(selectMarketKey);
 
@@ -67,12 +66,18 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 
 	useEffect(
 		() => {
-			if (susdSizeDelta !== usdValue) {
-				setUsdValue(wei(susdSizeDelta).abs().toString());
+			if (simulatedTrade && simulatedTrade.susdSize !== susdSizeDelta) {
+				setUsdValue(simulatedTrade.susdSize);
+			} else if (susdSizeDelta !== usdValue) {
+				const cleanSusdSizeDelta = wei(susdSizeDelta).abs().toNumber().toString();
+				setUsdValue(cleanSusdSizeDelta);
 			}
 
-			if (assetValue !== nativeSizeDelta) {
-				setAssetValue(wei(nativeSizeDelta).abs().toString());
+			if (simulatedTrade && simulatedTrade.nativeSize !== nativeSizeDelta) {
+				setAssetValue(simulatedTrade.nativeSize);
+			} else if (assetValue !== nativeSizeDelta) {
+				const cleanNativeSizeDelta = wei(nativeSizeDelta).abs().toNumber().toString();
+				setAssetValue(cleanNativeSizeDelta);
 			}
 		},
 		// Don't want to react to internal value changes

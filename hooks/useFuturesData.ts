@@ -2,7 +2,7 @@ import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
 import { formatBytes32String } from 'ethers/lib/utils';
-import { debounce } from 'lodash';
+import { debounce, toNumber } from 'lodash';
 import { useRouter } from 'next/router';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -21,11 +21,15 @@ import {
 import Connector from 'containers/Connector';
 import { ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
 import { PositionSide, FuturesTradeInputs, FuturesAccountType } from 'queries/futures/types';
-import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 import { serializeGasPrice } from 'state/app/helpers';
 import { setGasPrice } from 'state/app/reducer';
 import { selectGasSpeed } from 'state/app/selectors';
-import { modifyIsolatedPosition } from 'state/futures/actions';
+import {
+	clearTradePreviews,
+	fetchCrossMarginTradePreview,
+	fetchIsolatedMarginTradePreview,
+	modifyIsolatedPosition,
+} from 'state/futures/actions';
 import { usePollMarketFuturesData } from 'state/futures/hooks';
 import {
 	setIsolatedMarginTradeInputs,
@@ -56,7 +60,6 @@ import {
 	futuresTradeInputsState,
 	preferredLeverageState,
 	simulatedTradeState,
-	potentialTradeDetailsState,
 	futuresOrderPriceState,
 	orderFeeCapState,
 	isAdvancedOrderState,
@@ -100,7 +103,6 @@ const useFuturesData = () => {
 	const dispatch = useAppDispatch();
 	const crossMarginAddress = useAppSelector(selectCrossMarginAccount);
 
-	const getPotentialTrade = useGetFuturesPotentialTradeDetails();
 	const crossMarginBalanceInfo = useAppSelector(selectCrossMarginBalanceInfo);
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 
@@ -137,7 +139,6 @@ const useFuturesData = () => {
 	const isAdvancedOrder = useRecoilValue(isAdvancedOrderState);
 	const marketAssetRate = useAppSelector(selectMarketAssetRate);
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
-	const setPotentialTradeDetails = useSetRecoilState(potentialTradeDetailsState);
 	const [preferredLeverage] = usePersistedRecoilState(preferredLeverageState);
 	const market = useAppSelector(selectMarketInfo);
 
@@ -179,13 +180,9 @@ const useFuturesData = () => {
 	}, [position?.remainingMargin, crossMarginAccount?.freeMargin, selectedAccountType]);
 
 	const clearTradePreview = useCallback(() => {
-		setPotentialTradeDetails({
-			data: null,
-			status: 'idle',
-			error: null,
-		});
+		dispatch(clearTradePreviews());
 		setTradeFees(ZERO_FEES);
-	}, [setPotentialTradeDetails, setTradeFees]);
+	}, [dispatch, setTradeFees]);
 
 	const resetTradeState = useCallback(() => {
 		dispatch(setCrossMarginTradeInputs(serializeCrossMarginTradeInputs(ZERO_TRADE_INPUTS)));
@@ -330,12 +327,22 @@ const useFuturesData = () => {
 							: zeroBN;
 					setCrossMarginMarginDelta(nextMarginDelta);
 				}
-				getPotentialTrade(
-					nextTrade.nativeSizeDelta,
-					nextMarginDelta,
-					Number(nextTrade.leverage),
-					nextTrade.orderPrice
-				);
+				if (selectedAccountType === 'isolated_margin') {
+					dispatch(
+						fetchIsolatedMarginTradePreview({
+							sizeDelta: nextTrade.nativeSizeDelta,
+							priceImpactDelta: wei(isolatedTradeInputs.priceImpactDelta, 0),
+						})
+					);
+				} else {
+					dispatch(
+						fetchCrossMarginTradePreview({
+							price: nextTrade.orderPrice,
+							marginDelta: nextMarginDelta,
+							sizeDelta: nextTrade.nativeSizeDelta,
+						})
+					);
+				}
 			} catch (err) {
 				if (Object.values(ORDER_PREVIEW_ERRORS).includes(err.message)) {
 					setError(err.message);
@@ -349,12 +356,12 @@ const useFuturesData = () => {
 		[
 			setError,
 			calculateFees,
-			getPotentialTrade,
 			calculateMarginDelta,
 			position,
 			orderPrice,
 			orderType,
 			selectedAccountType,
+			isolatedTradeInputs.priceImpactDelta,
 			logError,
 			setCrossMarginMarginDelta,
 		]
@@ -405,8 +412,8 @@ const useFuturesData = () => {
 			if (selectedAccountType === 'isolated_margin') {
 				dispatch(
 					setIsolatedMarginTradeInputs({
-						nativeSizeDelta: (positiveTrade ? nativeSize : nativeSize.neg()).toString(),
-						susdSizeDelta: (positiveTrade ? usdSize : usdSize.neg()).toString(),
+						nativeSizeDelta: (positiveTrade ? nativeSize : nativeSize.neg()).toNumber().toString(),
+						susdSizeDelta: (positiveTrade ? usdSize : usdSize.neg()).toNumber().toString(),
 						priceImpactDelta: isolatedTradeInputs.priceImpactDelta,
 						leverage: String(floorNumber(leverage)),
 					})
@@ -417,8 +424,7 @@ const useFuturesData = () => {
 				// Allows us to keep it snappy updating the input values
 				setSimulatedTrade(newTradeInputs);
 			} else {
-				// TODO: add estimates on position change
-				// onStagePositionChange(newTradeInputs);
+				onStagePositionChange(newTradeInputs);
 			}
 		},
 		[

@@ -24,14 +24,11 @@ import {
 	selectMarketAsset,
 	selectMarketInfo,
 	selectPosition,
+	selectTradePreview,
+	selectTradePreviewError,
 } from 'state/futures/selectors';
 import { useAppSelector, useAppDispatch } from 'state/hooks';
-import {
-	orderTypeState,
-	potentialTradeDetailsState,
-	preferredLeverageState,
-	tradeFeesState,
-} from 'store/futures';
+import { orderTypeState, preferredLeverageState, tradeFeesState } from 'store/futures';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { isUserDeniedError } from 'utils/formatters/error';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
@@ -62,7 +59,9 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 	const market = useAppSelector(selectMarketInfo);
 	const position = useAppSelector(selectPosition);
 	const tradeFees = useRecoilValue(tradeFeesState);
-	const { error: previewError, data: previewData } = useRecoilValue(potentialTradeDetailsState);
+	const previewData = useAppSelector(selectTradePreview);
+	const previewError = useAppSelector(selectTradePreviewError);
+
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 
 	const [preferredLeverage, setPreferredLeverage] = usePersistedRecoilState(preferredLeverageState);

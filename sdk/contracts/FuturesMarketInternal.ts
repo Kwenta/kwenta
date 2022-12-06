@@ -1,15 +1,12 @@
-import { wei } from '@synthetixio/wei';
 import BN from 'bn.js';
 import { Provider, Contract as MultiCallContract } from 'ethcall';
 import { BigNumber, ethers, Contract } from 'ethers';
 import { formatBytes32String } from 'ethers/lib/utils';
-import { useCallback, useMemo } from 'react';
 
-import Connector from 'containers/Connector';
-import useIsL2 from 'hooks/useIsL2';
+import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import FuturesMarket from 'sdk/contracts/abis/FuturesMarket.json';
 import { FuturesMarket__factory } from 'sdk/contracts/types';
-import { PotentialTradeStatus } from 'sdk/types/futures';
+import { FuturesMarketKey, PotentialTradeStatus } from 'sdk/types/futures';
 import { sdk } from 'state/config';
 import {
 	zeroBN,
@@ -19,10 +16,6 @@ import {
 	multiplyDecimal,
 	divideDecimal,
 } from 'utils/formatters/number';
-import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
-import logError from 'utils/logError';
-
-import { KWENTA_TRACKING_CODE } from './constants';
 
 // Need to recreate postTradeDetails from the contract here locally
 // so we can modify margin for use with cross margin
@@ -51,38 +44,6 @@ type Position = {
 
 const ethcallProvider = new Provider();
 
-export default function useGetCrossMarginTradePreview(
-	marketAsset: FuturesMarketAsset,
-	address: string | null | undefined
-) {
-	const { provider } = Connector.useContainer();
-	const isL2 = useIsL2();
-
-	const contractInstance = useMemo(() => {
-		if (!provider || !address || !isL2) return null;
-		try {
-			return new FuturesMarketInternal(provider, marketAsset, address);
-		} catch (err) {
-			logError(err);
-			return null;
-		}
-	}, [provider, address, isL2, marketAsset]);
-
-	const getPreview = useCallback(
-		async (sizeDelta: BigNumber, marginDelta: BigNumber, orderPrice?: BigNumber) => {
-			if (contractInstance) {
-				const sizeBN = wei(sizeDelta || 0).toBN();
-				const marginBN = wei(marginDelta || 0).toBN();
-				const res = await contractInstance.getTradePreview(sizeBN, marginBN, orderPrice);
-				return res;
-			}
-		},
-		[contractInstance]
-	);
-
-	return getPreview;
-}
-
 class FuturesMarketInternal {
 	_provider: ethers.providers.Provider;
 	_futuresMarketContract: Contract;
@@ -103,14 +64,15 @@ class FuturesMarketInternal {
 
 	constructor(
 		provider: ethers.providers.Provider,
-		marketAsset: FuturesMarketAsset,
+		marketKey: FuturesMarketKey,
+		marketAddress: string,
 		account: string
 	) {
 		this._provider = provider;
 
-		this._futuresMarketContract = FuturesMarket__factory.connect(marketAsset, provider);
+		this._futuresMarketContract = FuturesMarket__factory.connect(marketAddress, provider);
 		this._futuresSettingsContract = sdk.context.contracts.FuturesMarketSettings;
-		this._marketKeyBytes = formatBytes32String(MarketKeyByAsset[marketAsset]);
+		this._marketKeyBytes = formatBytes32String(marketKey);
 		this._account = account;
 		this._cache = {};
 		this._onChainData = {
@@ -242,7 +204,11 @@ class FuturesMarketInternal {
 		);
 
 		if (maxLeverage.add(UNIT_BIG_NUM.div(100)).lt(leverage.abs())) {
-			return { newPos: oldPos, fee: zeroBN, status: PotentialTradeStatus.MAX_LEVERAGE_EXCEEDED };
+			return {
+				newPos: oldPos,
+				fee: ZERO_BIG_NUM,
+				status: PotentialTradeStatus.MAX_LEVERAGE_EXCEEDED,
+			};
 		}
 
 		const maxMarketValueUSD = await this._getSetting('maxMarketValueUSD', [this._marketKeyBytes]);
@@ -427,3 +393,5 @@ class FuturesMarketInternal {
 		return res;
 	};
 }
+
+export default FuturesMarketInternal;

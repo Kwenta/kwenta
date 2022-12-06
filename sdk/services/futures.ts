@@ -13,6 +13,7 @@ import { BPS_CONVERSION, DEFAULT_DESIRED_TIMEDELTA } from 'sdk/constants/futures
 import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { getContractsByNetwork } from 'sdk/contracts';
 import FuturesMarketABI from 'sdk/contracts/abis/FuturesMarket.json';
+import FuturesMarketInternal from 'sdk/contracts/FuturesMarketInternal';
 import {
 	CrossMarginBase__factory,
 	PerpsV2MarketData,
@@ -30,10 +31,12 @@ import {
 	FuturesVolumes,
 	MarketClosureReason,
 	PositionDetail,
+	PositionSide,
 } from 'sdk/types/futures';
 import {
 	calculateFundingRate,
 	calculateVolumes,
+	formatPotentialTrade,
 	getFuturesEndpoint,
 	getMarketName,
 	getReasonFromCode,
@@ -421,6 +424,41 @@ export default class FuturesService {
 		return fillPrice;
 	}
 
+	public async getIsolatedTradePreview(
+		marketAddress: string,
+		sizeDelta: Wei,
+		priceImpactDelta: Wei,
+		leverageSide: PositionSide
+	) {
+		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
+		const details = await market.postTradeDetails(
+			sizeDelta.toBN(),
+			priceImpactDelta.toBN(),
+			this.sdk.context.walletAddress
+		);
+		return formatPotentialTrade(details, sizeDelta, leverageSide);
+	}
+
+	public async getCrossMarginTradePreview(
+		marketKey: FuturesMarketKey,
+		marketAddress: string,
+		tradeParams: { sizeDelta: Wei; marginDelta: Wei; orderPrice?: Wei; leverageSide: PositionSide }
+	) {
+		const marketInternal = new FuturesMarketInternal(
+			this.sdk.context.provider,
+			marketKey,
+			marketAddress,
+			this.sdk.context.walletAddress
+		);
+		const preview = await marketInternal.getTradePreview(
+			tradeParams.sizeDelta.toBN(),
+			tradeParams.marginDelta.toBN(),
+			tradeParams.orderPrice?.toBN()
+		);
+
+		return formatPotentialTrade(preview, tradeParams.sizeDelta, tradeParams.leverageSide);
+	}
+
 	// Contract mutations
 
 	public async approveCrossMarginDeposit(
@@ -457,6 +495,11 @@ export default class FuturesService {
 	public async withdrawIsolatedMargin(marketAddress: string, amount: Wei) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
 		return market.transferMargin(amount.neg().toBN());
+	}
+
+	public async closeIsolatedPosition(marketAddress: string, priceImpactDelta: Wei) {
+		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
+		return market.closePositionWithTracking(priceImpactDelta.toBN(), KWENTA_TRACKING_CODE);
 	}
 
 	public async modifyIsolatedMarginPosition<T extends boolean>(

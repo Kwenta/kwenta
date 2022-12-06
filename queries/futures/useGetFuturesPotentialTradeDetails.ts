@@ -4,7 +4,8 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
-import { PotentialTradeStatus, POTENTIAL_TRADE_STATUS_TO_MESSAGE } from 'sections/futures/types';
+import { FuturesPotentialTradeDetails } from 'sdk/types/futures';
+import { getTradeStatusMessage } from 'sdk/utils/futures';
 import { selectCrossMarginBalanceInfo, selectMarketAsset } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {
@@ -16,12 +17,8 @@ import {
 } from 'store/futures';
 import logError from 'utils/logError';
 
-import { FuturesPotentialTradeDetails } from './types';
 import useGetCrossMarginPotentialTrade from './useGetCrossMarginTradePreview';
 import { getFuturesMarketContract } from './utils';
-
-const SUCCESS = 'Success';
-const UNKNOWN = 'Unknown';
 
 const useGetFuturesPotentialTradeDetails = () => {
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
@@ -61,13 +58,8 @@ const useGetFuturesPotentialTradeDetails = () => {
 				throw new Error('insufficient_margin');
 			}
 
-			const {
-				contracts: { FuturesMarketData },
-			} = synthetixjs!;
-
 			const FuturesMarketContract = getFuturesMarketContract(marketAsset, synthetixjs!.contracts);
 
-			const globals = await FuturesMarketData.globals();
 			const preview =
 				selectedAccountType === 'cross_margin'
 					? await getPreview(
@@ -101,10 +93,9 @@ const useGetFuturesPotentialTradeDetails = () => {
 				side: leverageSide,
 				leverage: wei(leverage ? leverage : 1),
 				notionalValue: wei(size).mul(wei(price)),
-				minInitialMargin: wei(globals.minInitialMargin),
 				status,
 				showStatus: status > 0, // 0 is success
-				statusMessage: getStatusMessage(status),
+				statusMessage: getTradeStatusMessage(status),
 			};
 
 			return potentialTradeDetails;
@@ -145,20 +136,6 @@ const useGetFuturesPotentialTradeDetails = () => {
 	);
 
 	return getTradeDetails;
-};
-
-const getStatusMessage = (status: PotentialTradeStatus): string => {
-	if (typeof status !== 'number') {
-		return UNKNOWN;
-	}
-
-	if (status === 0) {
-		return SUCCESS;
-	} else if (PotentialTradeStatus[status]) {
-		return POTENTIAL_TRADE_STATUS_TO_MESSAGE[PotentialTradeStatus[status]];
-	} else {
-		return UNKNOWN;
-	}
 };
 
 export default useGetFuturesPotentialTradeDetails;
