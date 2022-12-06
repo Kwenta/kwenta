@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { DEFAULT_FUTURES_MARGIN_TYPE, DEFAULT_LEVERAGE } from 'constants/defaults';
 import { TransactionStatus } from 'sdk/types/common';
-import { FuturesMarket, FuturesMarketKey } from 'sdk/types/futures';
+import { FuturesMarket, FuturesMarketKey, FuturesPotentialTradeDetails } from 'sdk/types/futures';
 import { PositionSide } from 'sections/futures/types';
 import { accountType } from 'state/helpers';
 import { FetchStatus } from 'state/types';
@@ -18,6 +18,8 @@ import {
 	refetchPosition,
 	fetchOpenOrders,
 	fetchCrossMarginSettings,
+	fetchIsolatedMarginTradePreview,
+	fetchCrossMarginTradePreview,
 } from './actions';
 import {
 	FundingRate,
@@ -64,6 +66,8 @@ const initialState: FuturesState = {
 		isolatedPositions: FetchStatus.Idle,
 		openOrders: FetchStatus.Idle,
 		crossMarginSettings: FetchStatus.Idle,
+		isolatedTradePreview: FetchStatus.Idle,
+		crossMarginTradePreview: FetchStatus.Idle,
 	},
 	transaction: undefined,
 	transactionEstimations: {} as TransactionEstimations,
@@ -78,6 +82,10 @@ const initialState: FuturesState = {
 		tradeInputs: ZERO_STATE_CM_TRADE_INPUTS,
 		positions: {},
 		openOrders: {},
+		tradePreview: {
+			data: null,
+			error: null,
+		},
 		balanceInfo: {
 			freeMargin: '0',
 			keeperEthBal: '0',
@@ -94,6 +102,10 @@ const initialState: FuturesState = {
 		selectedMarketKey: FuturesMarketKey.sETH,
 		leverageSide: PositionSide.LONG,
 		orderType: 'market',
+		tradePreview: {
+			data: null,
+			error: null,
+		},
 		selectedLeverage: DEFAULT_LEVERAGE,
 		tradeInputs: ZERO_STATE_TRADE_INPUTS,
 		positions: {},
@@ -168,6 +180,24 @@ const futuresSlice = createSlice({
 				cost: action.payload.cost,
 				error: action.payload.error,
 			};
+		},
+		setIsolatedTradePreview: (
+			state,
+			action: PayloadAction<{
+				data: FuturesPotentialTradeDetails<string> | null;
+				error: string | null;
+			}>
+		) => {
+			state.isolatedMargin.tradePreview = action.payload;
+		},
+		setCrossMarginTradePreview: (
+			state,
+			action: PayloadAction<{
+				data: FuturesPotentialTradeDetails<string> | null;
+				error: string | null;
+			}>
+		) => {
+			state.isolatedMargin.tradePreview = action.payload;
 		},
 	},
 	extraReducers: (builder) => {
@@ -270,6 +300,32 @@ const futuresSlice = createSlice({
 		builder.addCase(fetchCrossMarginSettings.rejected, (futuresState) => {
 			futuresState.queryStatuses.openOrders = FetchStatus.Error;
 		});
+
+		// Fetch Isolated Margin Trade Preview
+		builder.addCase(fetchIsolatedMarginTradePreview.pending, (futuresState) => {
+			futuresState.queryStatuses.isolatedTradePreview = FetchStatus.Loading;
+		});
+		builder.addCase(fetchIsolatedMarginTradePreview.fulfilled, (futuresState, action) => {
+			futuresState.isolatedMargin.tradePreview = action.payload;
+			futuresState.queryStatuses.isolatedTradePreview = FetchStatus.Success;
+		});
+		builder.addCase(fetchIsolatedMarginTradePreview.rejected, (futuresState) => {
+			futuresState.queryStatuses.isolatedTradePreview = FetchStatus.Error;
+			futuresState.isolatedMargin.tradePreview = { data: null, error: 'Failed to get preview' };
+		});
+
+		// Fetch Cross Margin Trade Preview
+		builder.addCase(fetchCrossMarginTradePreview.pending, (futuresState) => {
+			futuresState.queryStatuses.crossMarginTradePreview = FetchStatus.Loading;
+		});
+		builder.addCase(fetchCrossMarginTradePreview.fulfilled, (futuresState, action) => {
+			futuresState.crossMargin.tradePreview = action.payload;
+			futuresState.queryStatuses.crossMarginTradePreview = FetchStatus.Success;
+		});
+		builder.addCase(fetchCrossMarginTradePreview.rejected, (futuresState) => {
+			futuresState.queryStatuses.crossMarginTradePreview = FetchStatus.Error;
+			futuresState.crossMargin.tradePreview = { data: null, error: 'Failed to get preview' };
+		});
 	},
 });
 
@@ -289,4 +345,6 @@ export const {
 	updateTransactionStatus,
 	updateTransactionHash,
 	setTransactionEstimate,
+	setIsolatedTradePreview,
+	setCrossMarginTradePreview,
 } = futuresSlice.actions;

@@ -4,13 +4,14 @@ import styled from 'styled-components';
 
 import TVChart from 'components/TVChart';
 import useAverageEntryPrice from 'hooks/useAverageEntryPrice';
-import { selectMarketAsset, selectOpenOrders, selectPosition } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
 import {
-	potentialTradeDetailsState,
-	positionHistoryState,
-	futuresAccountTypeState,
-} from 'store/futures';
+	selectMarketAsset,
+	selectOpenOrders,
+	selectPosition,
+	selectTradePreview,
+} from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { positionHistoryState, futuresAccountTypeState } from 'store/futures';
 
 export default function PositionChart() {
 	const marketAsset = useAppSelector(selectMarketAsset);
@@ -18,7 +19,7 @@ export default function PositionChart() {
 	const positionHistory = useRecoilValue(positionHistoryState);
 	const futuresAccountType = useRecoilValue(futuresAccountTypeState);
 	const openOrders = useAppSelector(selectOpenOrders);
-	const { data: previewTrade } = useRecoilValue(potentialTradeDetailsState);
+	const previewTrade = useAppSelector(selectTradePreview);
 
 	const [showOrderLines, setShowOrderLines] = useState(true);
 	const [isChartReady, setIsChartReady] = useState(false);

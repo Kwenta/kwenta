@@ -2,7 +2,13 @@ import Wei from '@synthetixio/wei';
 
 import { FuturesAccountType } from 'queries/futures/types';
 import { TransactionStatus } from 'sdk/types/common';
-import { FuturesMarket, FuturesOrder, FuturesPosition, FuturesVolumes } from 'sdk/types/futures';
+import {
+	FuturesMarket,
+	FuturesOrder,
+	FuturesPosition,
+	FuturesPotentialTradeDetails,
+	FuturesVolumes,
+} from 'sdk/types/futures';
 import { PositionSide } from 'sections/futures/types';
 import { FetchStatus } from 'state/types';
 import { FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
@@ -17,9 +23,9 @@ export type CrossMarginTradeInputs<T = Wei> = {
 	orderPrice?: string | undefined;
 };
 
-export type IsolatedMarginTradeInputs = {
-	nativeSizeDelta: string;
-	susdSizeDelta: string;
+export type IsolatedMarginTradeInputs<T = Wei> = {
+	nativeSizeDelta: T;
+	susdSizeDelta: T;
 };
 
 export type FundingRateSerialized = {
@@ -42,6 +48,8 @@ export type FuturesQueryStatuses = {
 	isolatedPositions: FetchStatus;
 	openOrders: FetchStatus;
 	crossMarginSettings: FetchStatus;
+	isolatedTradePreview: FetchStatus;
+	crossMarginTradePreview: FetchStatus;
 };
 
 export type FuturesTransactionType =
@@ -114,6 +122,10 @@ export type CrossMarginState = {
 	showCrossMarginOnboard: boolean;
 	position?: FuturesPosition<string>;
 	balanceInfo: CrossMarginBalanceInfo<string>;
+	tradePreview: {
+		data: FuturesPotentialTradeDetails<string> | null;
+		error: string | null;
+	};
 	account: string | undefined;
 	settings: CrossMarginSettings<string>;
 	positions: {
@@ -125,9 +137,13 @@ export type CrossMarginState = {
 };
 
 export type IsolatedMarginState = {
-	tradeInputs: IsolatedMarginTradeInputs;
+	tradeInputs: IsolatedMarginTradeInputs<string>;
 	orderType: IsolatedMarginOrderType;
 	selectedLeverage: string;
+	tradePreview: {
+		data: FuturesPotentialTradeDetails<string> | null;
+		error: string | null;
+	};
 	leverageSide: PositionSide;
 	selectedMarketKey: FuturesMarketKey;
 	selectedMarketAsset: FuturesMarketAsset;

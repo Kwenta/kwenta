@@ -6,9 +6,10 @@ import { modifyIsolatedPosition, modifyIsolatedPositionEstimateGas } from 'state
 import {
 	selectIsModifyingIsolatedPosition,
 	selectModifyIsolatedGasEstimate,
+	selectTradePreview,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { futuresTradeInputsState, potentialTradeDetailsState } from 'store/futures';
+import { futuresTradeInputsState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 
 import TradeConfirmationModal from './TradeConfirmationModal';
@@ -16,7 +17,7 @@ import TradeConfirmationModal from './TradeConfirmationModal';
 export default function TradeConfirmationModalIsolatedMargin() {
 	const dispatch = useAppDispatch();
 
-	const { data: potentialTradeDetails } = useRecoilValue(potentialTradeDetailsState);
+	const potentialTradeDetails = useAppSelector(selectTradePreview);
 	const { nativeSizeDelta } = useRecoilValue(futuresTradeInputsState);
 	const submitting = useAppSelector(selectIsModifyingIsolatedPosition);
 	const gasEstimate = useAppSelector(selectModifyIsolatedGasEstimate);
@@ -40,7 +41,7 @@ export default function TradeConfirmationModalIsolatedMargin() {
 		dispatch(
 			modifyIsolatedPosition({
 				sizeDelta: nativeSizeDelta,
-				useNextPrice: true,
+				useNextPrice: false,
 			})
 		);
 	};

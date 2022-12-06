@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { PositionHistory, PositionSide } from 'queries/futures/types';
-import { potentialTradeDetailsState } from 'store/futures';
+import { selectTradePreview } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 
 // Used to calculate the new average entry price of a modified position
 const useAverageEntryPrice = (positionHistory?: PositionHistory) => {
-	const { data: previewTrade } = useRecoilValue(potentialTradeDetailsState);
+	const previewTrade = useAppSelector(selectTradePreview);
 
 	return useMemo(() => {
 		if (positionHistory && previewTrade) {

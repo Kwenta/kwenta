@@ -13,6 +13,7 @@ import { BPS_CONVERSION } from 'sdk/constants/futures';
 import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { getContractsByNetwork } from 'sdk/contracts';
 import FuturesMarketABI from 'sdk/contracts/abis/FuturesMarket.json';
+import FuturesMarketInternal from 'sdk/contracts/FuturesMarketInternal';
 import {
 	CrossMarginBase__factory,
 	FuturesMarketData,
@@ -30,10 +31,12 @@ import {
 	FuturesVolumes,
 	MarketClosureReason,
 	PositionDetail,
+	PositionSide,
 } from 'sdk/types/futures';
 import {
 	calculateFundingRate,
 	calculateVolumes,
+	formatPotentialTrade,
 	getFuturesEndpoint,
 	getMarketName,
 	getReasonFromCode,
@@ -409,6 +412,39 @@ export default class FuturesService {
 			limitOrderFee: limitOrderFee ? wei(limitOrderFee.toNumber() / BPS_CONVERSION) : wei(0),
 			stopOrderFee: stopOrderFee ? wei(stopOrderFee.toNumber() / BPS_CONVERSION) : wei(0),
 		};
+	}
+
+	public async getIsolatedTradePreview(
+		marketAddress: string,
+		sizeDelta: Wei,
+		leverageSide: PositionSide
+	) {
+		const market = FuturesMarket__factory.connect(marketAddress, this.sdk.context.signer);
+		const details = await market.postTradeDetails(
+			wei(sizeDelta).toBN(),
+			this.sdk.context.walletAddress
+		);
+		return formatPotentialTrade(details, sizeDelta, leverageSide);
+	}
+
+	public async getCrossMarginTradePreview(
+		marketKey: FuturesMarketKey,
+		marketAddress: string,
+		tradeParams: { sizeDelta: Wei; marginDelta: Wei; orderPrice?: Wei; leverageSide: PositionSide }
+	) {
+		const marketInternal = new FuturesMarketInternal(
+			this.sdk.context.provider,
+			marketKey,
+			marketAddress,
+			this.sdk.context.walletAddress
+		);
+		const preview = await marketInternal.getTradePreview(
+			tradeParams.sizeDelta.toBN(),
+			tradeParams.marginDelta.toBN(),
+			tradeParams.orderPrice?.toBN()
+		);
+
+		return formatPotentialTrade(preview, tradeParams.sizeDelta, tradeParams.leverageSide);
 	}
 
 	// Contract mutations

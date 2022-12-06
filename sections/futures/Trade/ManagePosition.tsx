@@ -20,12 +20,15 @@ import {
 	selectPosition,
 	selectMaxLeverage,
 	selectFuturesTransaction,
+	selectTradePreviewError,
+	selectTradePreview,
+	selectTradePreviewStatus,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { FetchStatus } from 'state/types';
 import {
 	leverageSideState,
 	orderTypeState,
-	potentialTradeDetailsState,
 	sizeDeltaState,
 	futuresTradeInputsState,
 	futuresAccountTypeState,
@@ -51,9 +54,9 @@ const ManagePosition: React.FC = () => {
 	const position = useAppSelector(selectPosition);
 	const maxLeverageValue = useAppSelector(selectMaxLeverage);
 	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
-	const { data: previewTrade, error: previewError, status } = useRecoilValue(
-		potentialTradeDetailsState
-	);
+	const previewTrade = useAppSelector(selectTradePreview);
+
+	const previewError = useAppSelector(selectTradePreviewError);
 	const orderType = useRecoilValue(orderTypeState);
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const { leverage } = useRecoilValue(futuresTradeInputsState);
@@ -68,6 +71,7 @@ const ManagePosition: React.FC = () => {
 	const isAdvancedOrder = useRecoilValue(isAdvancedOrderState);
 	const openModal = useAppSelector(selectOpenModal);
 	const marketInfo = useAppSelector(selectMarketInfo);
+	const previewStatus = useAppSelector(selectTradePreviewStatus);
 
 	const isCancelModalOpen = openModal === 'futures_close_position_confirm';
 	const isConfirmationModalOpen = openModal === 'futures_modify_position_confirm';
@@ -112,7 +116,7 @@ const ManagePosition: React.FC = () => {
 		if (placeOrderTranslationKey === 'futures.market.trade.button.deposit-margin-minimum')
 			return 'min_margin_required';
 		if (selectedAccountType === 'cross_margin') {
-			if ((isZero(marginDelta) && isZero(sizeDelta)) || status !== 'complete')
+			if ((isZero(marginDelta) && isZero(sizeDelta)) || previewStatus !== FetchStatus.Success)
 				return 'awaiting_preview';
 			if (orderType !== 'market' && isZero(orderPrice)) return 'price_required';
 		} else if (isZero(sizeDelta)) {
@@ -135,7 +139,7 @@ const ManagePosition: React.FC = () => {
 		maxUsdInputAmount,
 		selectedAccountType,
 		isMarketCapReached,
-		status,
+		previewStatus,
 	]);
 
 	// TODO: Better user feedback for disabled reasons
@@ -155,7 +159,7 @@ const ManagePosition: React.FC = () => {
 						disabled={!!placeOrderDisabledReason}
 						onClick={() => dispatch(setOpenModal('futures_modify_position_confirm'))}
 					>
-						{status === 'fetching' ? <Loader /> : t(placeOrderTranslationKey)}
+						{previewStatus === FetchStatus.Loading ? <Loader /> : t(placeOrderTranslationKey)}
 					</PlaceOrderButton>
 
 					<CloseOrderButton
