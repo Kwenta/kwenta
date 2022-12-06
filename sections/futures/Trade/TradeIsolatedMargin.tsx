@@ -1,4 +1,3 @@
-import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import SegmentedControl from 'components/SegmentedControl';
@@ -9,9 +8,8 @@ import {
 	setLeverageSide as setReduxLeverageSide,
 	setOrderType as setReduxOrderType,
 } from 'state/futures/reducer';
-import { selectLeverageSide, selectPosition } from 'state/futures/selectors';
+import { selectLeverageSide, selectOrderType, selectPosition } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { orderTypeState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 
 import FeeInfoBox from '../FeeInfoBox';
@@ -20,7 +18,6 @@ import MarketInfoBox from '../MarketInfoBox';
 import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
 import ManagePosition from './ManagePosition';
-import NextPrice from './NextPrice';
 import TradePanelHeader from './TradePanelHeader';
 import TransferIsolatedMarginModal from './TransferIsolatedMarginModal';
 
@@ -34,8 +31,8 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 	const position = useAppSelector(selectPosition);
 	const openModal = useAppSelector(selectOpenModal);
 	const leverageSide = useAppSelector(selectLeverageSide);
+	const orderType = useAppSelector(selectOrderType);
 
-	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const totalMargin = position?.remainingMargin ?? zeroBN;
 
 	return (
@@ -53,12 +50,11 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 				values={ISOLATED_MARGIN_ORDER_TYPES}
 				selectedIndex={ISOLATED_MARGIN_ORDER_TYPES.indexOf(orderType)}
 				onChange={(oType: number) => {
-					setOrderType(oType === 0 ? 'market' : 'next price');
-					dispatch(setReduxOrderType(oType === 0 ? 'market' : 'next price'));
+					dispatch(setReduxOrderType(oType === 0 ? 'market' : 'delayed'));
 				}}
 			/>
 
-			{orderType === 'next price' && <NextPrice />}
+			{/* {orderType === 'next price' && <NextPrice />} TODO: Replace with any delayed order CTAs */}
 
 			<PositionButtons
 				selected={leverageSide}

@@ -30,7 +30,7 @@ export default function TradeConfirmationModalIsolatedMargin() {
 			modifyIsolatedPositionEstimateGas({
 				sizeDelta: nativeSizeDelta,
 				priceImpactDelta: priceImpactDelta,
-				useNextPrice: false,
+				delayed: false,
 			})
 		);
 	}, [nativeSizeDelta, priceImpactDelta, dispatch]);
@@ -44,7 +44,7 @@ export default function TradeConfirmationModalIsolatedMargin() {
 			modifyIsolatedPosition({
 				sizeDelta: nativeSizeDelta,
 				priceImpactDelta: priceImpactDelta,
-				useNextPrice: false,
+				delayed: false,
 			})
 		);
 	};

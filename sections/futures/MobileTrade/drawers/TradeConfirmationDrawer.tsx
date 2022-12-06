@@ -105,7 +105,7 @@ const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({ open,
 							modifyIsolatedPosition({
 								sizeDelta: nativeSizeDelta,
 								priceImpactDelta: priceImpactDelta,
-								useNextPrice: false,
+								delayed: false,
 							})
 						);
 						closeDrawer();

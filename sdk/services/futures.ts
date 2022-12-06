@@ -9,7 +9,7 @@ import { DAY_PERIOD, KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { getFuturesAggregateStats } from 'queries/futures/subgraph';
 import { mapFuturesOrders } from 'queries/futures/utils';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
-import { BPS_CONVERSION } from 'sdk/constants/futures';
+import { BPS_CONVERSION, DEFAULT_DESIRED_TIMEDELTA } from 'sdk/constants/futures';
 import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { getContractsByNetwork } from 'sdk/contracts';
 import FuturesMarketABI from 'sdk/contracts/abis/FuturesMarket.json';
@@ -463,16 +463,23 @@ export default class FuturesService {
 		marketAddress: string,
 		sizeDelta: Wei,
 		priceImpactDelta: Wei,
-		useNextPrice = false,
+		delayed = false,
 		estimationOnly: T
 	): TxReturn<T> {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
 		const root = estimationOnly ? market.estimateGas : market;
-		return root.modifyPositionWithTracking(
-			sizeDelta.toBN(),
-			priceImpactDelta.toBN(),
-			KWENTA_TRACKING_CODE
-		) as any;
+		return delayed
+			? (root.submitDelayedOrderWithTracking(
+					sizeDelta.toBN(),
+					priceImpactDelta.toBN(),
+					wei(DEFAULT_DESIRED_TIMEDELTA, 0).toBN(),
+					KWENTA_TRACKING_CODE
+			  ) as any)
+			: (root.modifyPositionWithTracking(
+					sizeDelta.toBN(),
+					priceImpactDelta.toBN(),
+					KWENTA_TRACKING_CODE
+			  ) as any);
 	}
 }
 

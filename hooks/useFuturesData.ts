@@ -45,6 +45,7 @@ import {
 	selectIsolatedTradeInputs,
 	selectFuturesType,
 	selectLeverageSide,
+	selectOrderType,
 } from 'state/futures/selectors';
 import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector, useAppDispatch } from 'state/hooks';
@@ -52,7 +53,6 @@ import {
 	crossMarginMarginDeltaState,
 	tradeFeesState,
 	futuresAccountState,
-	orderTypeState,
 	futuresTradeInputsState,
 	preferredLeverageState,
 	simulatedTradeState,
@@ -126,7 +126,6 @@ const useFuturesData = () => {
 	);
 	const [tradeFees, setTradeFees] = useRecoilState(tradeFeesState);
 	const [dynamicFeeRate, setDynamicFeeRate] = useRecoilState(dynamicFeeRateState);
-	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const feeCap = useRecoilValue(orderFeeCapState);
 	const position = useAppSelector(selectPosition);
 	const aboveMaxLeverage = useAppSelector(selectAboveMaxLeverage);
@@ -149,6 +148,7 @@ const useFuturesData = () => {
 	const selectedAccountType = useAppSelector(selectFuturesType);
 	const isolatedTradeInputs = useAppSelector(selectIsolatedTradeInputs);
 	const leverageSide = useAppSelector(selectLeverageSide);
+	const orderType = useAppSelector(selectOrderType);
 
 	const tradePrice = useMemo(() => wei(isAdvancedOrder ? orderPrice || zeroBN : marketAssetRate), [
 		orderPrice,
@@ -533,7 +533,7 @@ const useFuturesData = () => {
 			modifyIsolatedPosition({
 				sizeDelta: isolatedTradeInputs.nativeSizeDelta,
 				priceImpactDelta: isolatedTradeInputs.priceImpactDelta,
-				useNextPrice: orderType === 'next price',
+				delayed: orderType === 'delayed',
 			})
 		);
 	}, [dispatch, isolatedTradeInputs, orderType]);
@@ -576,13 +576,11 @@ const useFuturesData = () => {
 
 	useEffect(() => {
 		if (selectedAccountType === 'cross_margin' && !CROSS_MARGIN_ORDER_TYPES.includes(orderType)) {
-			setOrderType('market');
 			dispatch(setReduxOrderType('market'));
 		} else if (
 			selectedAccountType === 'isolated_margin' &&
 			!ISOLATED_MARGIN_ORDER_TYPES.includes(orderType)
 		) {
-			setOrderType('market');
 			dispatch(setReduxOrderType('market'));
 		}
 		onTradeAmountChange(tradeInputs.susdSize, tradePrice, 'usd');

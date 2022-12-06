@@ -252,7 +252,7 @@ export const selectMaxLeverage = createSelector(
 		const positionSide = position?.position?.side;
 		const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
 		const adjustedMaxLeverage =
-			orderType === 'next price'
+			orderType === 'delayed'
 				? marketMaxLeverage.mul(DEFAULT_NP_LEVERAGE_ADJUSTMENT)
 				: marketMaxLeverage;
 
@@ -302,7 +302,7 @@ export const selectPlaceOrderTranslationKey = createSelector(
 			remainingMargin = positionMargin.add(freeMargin);
 		}
 
-		if (orderType === 'next price') return 'futures.market.trade.button.place-next-price-order';
+		if (orderType === 'delayed') return 'futures.market.trade.button.place-delayed-order';
 		if (orderType === 'limit') return 'futures.market.trade.button.place-limit-order';
 		if (orderType === 'stop market') return 'futures.market.trade.button.place-stop-order';
 		if (!!position?.position) return 'futures.market.trade.button.modify-position';

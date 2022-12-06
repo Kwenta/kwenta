@@ -7,7 +7,7 @@ import { PositionSide } from 'sections/futures/types';
 import { FetchStatus } from 'state/types';
 import { FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
 
-export type IsolatedMarginOrderType = 'next price' | 'market';
+export type IsolatedMarginOrderType = 'delayed' | 'market';
 export type CrossMarginOrderType = 'market' | 'stop market' | 'limit';
 
 export type CrossMarginTradeInputs<T = Wei> = {
@@ -143,7 +143,7 @@ export type IsolatedMarginState = {
 export type ModifyIsolatedPositionInputs = {
 	sizeDelta: string;
 	priceImpactDelta: string;
-	useNextPrice: boolean;
+	delayed: boolean;
 };
 
 export const futuresPositionKeys = new Set([

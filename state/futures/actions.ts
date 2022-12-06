@@ -328,7 +328,7 @@ export const modifyIsolatedPosition = createAsyncThunk<
 	ThunkConfig
 >(
 	'futures/modifyIsolatedPosition',
-	async ({ sizeDelta, priceImpactDelta, useNextPrice }, { getState, dispatch, extra: { sdk } }) => {
+	async ({ sizeDelta, priceImpactDelta, delayed }, { getState, dispatch, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
 		if (!marketInfo) throw new Error('Market info not found');
 		try {
@@ -343,7 +343,7 @@ export const modifyIsolatedPosition = createAsyncThunk<
 				marketInfo.market,
 				wei(sizeDelta),
 				wei(priceImpactDelta, 0),
-				useNextPrice,
+				delayed,
 				false
 			);
 			dispatch(updateTransactionHash(tx.hash));
@@ -365,7 +365,7 @@ export const modifyIsolatedPositionEstimateGas = createAsyncThunk<
 	ThunkConfig
 >(
 	'futures/modifyIsolatedPositionEstimateGas',
-	async ({ sizeDelta, priceImpactDelta, useNextPrice }, { getState, dispatch, extra: { sdk } }) => {
+	async ({ sizeDelta, priceImpactDelta, delayed }, { getState, dispatch, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
 		if (!marketInfo) throw new Error('Market info not found');
 		estimateGasInteralAction(
@@ -374,7 +374,7 @@ export const modifyIsolatedPositionEstimateGas = createAsyncThunk<
 					marketInfo.market,
 					wei(sizeDelta),
 					wei(priceImpactDelta, 0),
-					useNextPrice,
+					delayed,
 					true
 				),
 			'modify_isolated',

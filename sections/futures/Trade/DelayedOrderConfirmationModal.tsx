@@ -2,14 +2,12 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { FC, useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
@@ -18,6 +16,7 @@ import { modifyIsolatedPosition, modifyIsolatedPositionEstimateGas } from 'state
 import {
 	selectIsModifyingIsolatedPosition,
 	selectIsolatedTradeInputs,
+	selectLeverageSide,
 	selectMarketAsset,
 	selectMarketInfo,
 	selectModifyIsolatedGasEstimate,
@@ -25,7 +24,6 @@ import {
 	selectPosition,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { leverageSideState } from 'store/futures';
 import { FlexDivCol, FlexDivCentered } from 'styles/common';
 import { computeNPFee } from 'utils/costCalculations';
 import { zeroBN, formatCurrency, formatDollars } from 'utils/formatters/number';
@@ -43,10 +41,8 @@ const NextPriceConfirmationModal: FC = () => {
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const dispatch = useAppDispatch();
 
-	const { nativeSizeDelta, susdSizeDelta, priceImpactDelta } = useAppSelector(
-		selectIsolatedTradeInputs
-	);
-	const leverageSide = useRecoilValue(leverageSideState);
+	const { nativeSizeDelta, priceImpactDelta } = useAppSelector(selectIsolatedTradeInputs);
+	const leverageSide = useAppSelector(selectLeverageSide);
 	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const marketAsset = useAppSelector(selectMarketAsset);
@@ -74,29 +70,27 @@ const NextPriceConfirmationModal: FC = () => {
 
 	const orderDetails = useMemo(() => {
 		const newSize =
-			leverageSide === PositionSide.LONG ? wei(susdSizeDelta) : wei(susdSizeDelta).neg();
+			leverageSide === PositionSide.LONG ? wei(nativeSizeDelta) : wei(nativeSizeDelta).neg();
 
 		return { newSize, size: (positionSize ?? zeroBN).add(newSize).abs() };
-	}, [leverageSide, susdSizeDelta, positionSize]);
+	}, [leverageSide, nativeSizeDelta, positionSize]);
 
-	const { commitDeposit, nextPriceFee } = useMemo(
-		() => computeNPFee(marketInfo, wei(orderDetails.newSize)),
-		[marketInfo, orderDetails]
-	);
+	// TODO: check these fees
+	const { commitDeposit } = useMemo(() => computeNPFee(marketInfo, wei(orderDetails.newSize)), [
+		marketInfo,
+		orderDetails,
+	]);
 
+	// TODO: check this deposit
 	const totalDeposit = useMemo(() => {
 		return (commitDeposit ?? zeroBN).add(marketInfo?.keeperDeposit ?? zeroBN);
 	}, [commitDeposit, marketInfo?.keeperDeposit]);
-
-	const nextPriceDiscount = useMemo(() => {
-		return (nextPriceFee ?? zeroBN).sub(commitDeposit ?? zeroBN);
-	}, [commitDeposit, nextPriceFee]);
 
 	const dataRows = useMemo(
 		() => [
 			{
 				label: t('futures.market.user.position.modal.order-type'),
-				value: t('futures.market.user.position.modal.next-price-order'),
+				value: t('futures.market.user.position.modal.delayed-order'),
 			},
 			{
 				label: t('futures.market.user.position.modal.side'),
@@ -113,19 +107,11 @@ const NextPriceConfirmationModal: FC = () => {
 				value: formatDollars(totalDeposit),
 			},
 			{
-				label: t('futures.market.user.position.modal.np-discount'),
-				value: !!nextPriceDiscount ? formatDollars(nextPriceDiscount) : NO_VALUE,
-			},
-			{
 				label: t('futures.market.user.position.modal.fee-total'),
-				value: formatCurrency(
-					selectedPriceCurrency.name,
-					totalDeposit.add(nextPriceDiscount ?? zeroBN),
-					{
-						minDecimals: 2,
-						sign: selectedPriceCurrency.sign,
-					}
-				),
+				value: formatCurrency(selectedPriceCurrency.name, totalDeposit, {
+					minDecimals: 2,
+					sign: selectedPriceCurrency.sign,
+				}),
 			},
 		],
 		[
@@ -134,7 +120,6 @@ const NextPriceConfirmationModal: FC = () => {
 			marketAsset,
 			synthsMap,
 			leverageSide,
-			nextPriceDiscount,
 			totalDeposit,
 			selectedPriceCurrency.name,
 			selectedPriceCurrency.sign,

@@ -22,10 +22,10 @@ import {
 	selectFuturesTransaction,
 	selectIsolatedTradeInputs,
 	selectLeverageSide,
+	selectOrderType,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import {
-	orderTypeState,
 	potentialTradeDetailsState,
 	sizeDeltaState,
 	futuresTradeInputsState,
@@ -39,7 +39,7 @@ import { orderPriceInvalidLabel } from 'utils/futures';
 
 import ClosePositionModalCrossMargin from '../PositionCard/ClosePositionModalCrossMargin';
 import ClosePositionModalIsolatedMargin from '../PositionCard/ClosePositionModalIsolatedMargin';
-import NextPriceConfirmationModal from './NextPriceConfirmationModal';
+import DelayedOrderConfirmationModal from './DelayedOrderConfirmationModal';
 import TradeConfirmationModalCrossMargin from './TradeConfirmationModalCrossMargin';
 import TradeConfirmationModalIsolatedMargin from './TradeConfirmationModalIsolatedMargin';
 
@@ -55,10 +55,10 @@ const ManagePosition: React.FC = () => {
 	const { data: previewTrade, error: previewError, status } = useRecoilValue(
 		potentialTradeDetailsState
 	);
-	const orderType = useRecoilValue(orderTypeState);
 
 	const { leverage } = useAppSelector(selectIsolatedTradeInputs);
 	const leverageSide = useAppSelector(selectLeverageSide);
+	const orderType = useAppSelector(selectOrderType);
 
 	const futuresTransaction = useAppSelector(selectFuturesTransaction);
 	const isMarketCapReached = useAppSelector(selectIsMarketCapReached);
@@ -169,7 +169,7 @@ const ManagePosition: React.FC = () => {
 						noOutline
 						variant="danger"
 						onClick={() => {
-							if (orderType === 'next price' && position?.position?.size) {
+							if (orderType === 'delayed' && position?.position?.size) {
 								const newTradeSize = position.position.size;
 								const newLeverageSide =
 									position.position.side === PositionSide.LONG
@@ -203,8 +203,8 @@ const ManagePosition: React.FC = () => {
 			{isConfirmationModalOpen &&
 				(selectedAccountType === 'cross_margin' ? (
 					<TradeConfirmationModalCrossMargin />
-				) : orderType === 'next price' ? (
-					<NextPriceConfirmationModal />
+				) : orderType === 'delayed' ? (
+					<DelayedOrderConfirmationModal />
 				) : (
 					<TradeConfirmationModalIsolatedMargin />
 				))}
