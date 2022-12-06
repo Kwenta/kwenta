@@ -27,7 +27,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { leverageSideState } from 'store/futures';
 import { FlexDivCol, FlexDivCentered } from 'styles/common';
-import { computeNPFee } from 'utils/costCalculations';
+import { computeDelayedOrderFee } from 'utils/costCalculations';
 import { zeroBN, formatCurrency, formatDollars } from 'utils/formatters/number';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
@@ -80,7 +80,7 @@ const NextPriceConfirmationModal: FC = () => {
 	}, [leverageSide, susdSizeDelta, positionSize]);
 
 	const { commitDeposit, nextPriceFee } = useMemo(
-		() => computeNPFee(marketInfo, wei(orderDetails.newSize)),
+		() => computeDelayedOrderFee(marketInfo, wei(orderDetails.newSize)),
 		[marketInfo, orderDetails]
 	);
 

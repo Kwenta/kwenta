@@ -25,7 +25,7 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FlexDivCol, FlexDivCentered } from 'styles/common';
-import { computeNPFee } from 'utils/costCalculations';
+import { computeDelayedOrderFee } from 'utils/costCalculations';
 import { zeroBN, formatCurrency, formatDollars } from 'utils/formatters/number';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
@@ -76,10 +76,10 @@ const NextPriceConfirmationModal: FC = () => {
 	}, [leverageSide, nativeSizeDelta, positionSize]);
 
 	// TODO: check these fees
-	const { commitDeposit } = useMemo(() => computeNPFee(marketInfo, wei(orderDetails.newSize)), [
-		marketInfo,
-		orderDetails,
-	]);
+	const { commitDeposit } = useMemo(
+		() => computeDelayedOrderFee(marketInfo, wei(orderDetails.newSize)),
+		[marketInfo, orderDetails]
+	);
 
 	// TODO: check this deposit
 	const totalDeposit = useMemo(() => {

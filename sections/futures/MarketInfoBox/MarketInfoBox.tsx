@@ -14,7 +14,7 @@ import {
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { leverageSideState, orderTypeState, futuresTradeInputsState } from 'store/futures';
-import { computeNPFee } from 'utils/costCalculations';
+import { computeDelayedOrderFee } from 'utils/costCalculations';
 import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 import { PositionSide } from '../types';
@@ -52,10 +52,10 @@ const MarketInfoBox: React.FC = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [leverageSide, positionSize]);
 
-	const { commitDeposit } = useMemo(() => computeNPFee(marketInfo, wei(orderDetails.newSize)), [
-		marketInfo,
-		orderDetails,
-	]);
+	const { commitDeposit } = useMemo(
+		() => computeDelayedOrderFee(marketInfo, wei(orderDetails.newSize)),
+		[marketInfo, orderDetails]
+	);
 
 	const totalDeposit = useMemo(() => {
 		return (commitDeposit ?? zeroBN).add(marketInfo?.keeperDeposit ?? zeroBN);

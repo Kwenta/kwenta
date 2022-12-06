@@ -4,7 +4,7 @@ import { FuturesMarket } from 'sdk/types/futures';
 
 import { zeroBN } from './formatters/number';
 
-export const computeNPFee = (market: FuturesMarket | undefined, sizeDelta: Wei) => {
+export const computeDelayedOrderFee = (market: FuturesMarket | undefined, sizeDelta: Wei) => {
 	if (
 		!market?.marketSkew ||
 		!market?.price ||
@@ -20,19 +20,19 @@ export const computeNPFee = (market: FuturesMarket | undefined, sizeDelta: Wei) 
 	const notionalDiff = sizeDelta.mul(market.price);
 
 	let staticRate: Wei;
-	let staticRateNP: Wei;
+	let staticRateDelayed: Wei;
 
 	if (sameSide(notionalDiff, market.marketSkew)) {
 		staticRate = market.feeRates.takerFee;
-		staticRateNP = market.feeRates.takerFeeDelayedOrder;
+		staticRateDelayed = market.feeRates.takerFeeDelayedOrder;
 	} else {
 		staticRate = market.feeRates.makerFee;
-		staticRateNP = market.feeRates.makerFeeDelayedOrder;
+		staticRateDelayed = market.feeRates.makerFeeDelayedOrder;
 	}
 
 	return {
 		commitDeposit: notionalDiff.mul(staticRate).abs(),
-		nextPriceFee: notionalDiff.mul(staticRateNP).abs(),
+		delayedOrderFee: notionalDiff.mul(staticRateDelayed).abs(),
 	};
 };
 
