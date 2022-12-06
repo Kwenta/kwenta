@@ -148,6 +148,18 @@ export const selectSubmittingFuturesTx = createSelector(
 	}
 );
 
+export const selectIsClosingPosition = createSelector(
+	selectSubmittingFuturesTx,
+	(state: RootState) => state.futures,
+	(submitting, futures) => {
+		return (
+			(futures.transaction?.type === 'close_isolated' ||
+				futures.transaction?.type === 'close_cross_margin') &&
+			submitting
+		);
+	}
+);
+
 export const selectIsSubmittingCrossTransfer = createSelector(
 	selectSubmittingFuturesTx,
 	(state: RootState) => state.futures,

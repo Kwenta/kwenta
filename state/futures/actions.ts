@@ -376,6 +376,33 @@ export const modifyIsolatedPositionEstimateGas = createAsyncThunk<
 	}
 );
 
+export const closeIsolatedMarginPosition = createAsyncThunk<void, void, ThunkConfig>(
+	'futures/closeIsolatedMarginPosition',
+	async (_, { getState, dispatch, extra: { sdk } }) => {
+		const marketInfo = selectMarketInfo(getState());
+		if (!marketInfo) throw new Error('Market info not found');
+		try {
+			dispatch(
+				setTransaction({
+					status: TransactionStatus.AwaitingExecution,
+					type: 'close_isolated',
+					hash: null,
+				})
+			);
+			const tx = await sdk.futures.closeIsolatedPosition(marketInfo.market);
+			dispatch(updateTransactionHash(tx.hash));
+			await tx.wait();
+			dispatch(refetchPosition('isolated_margin'));
+			dispatch(setOpenModal(null));
+			// TODO: More reliable balance updates
+			setTimeout(() => dispatch(fetchBalances()), 1000);
+		} catch (err) {
+			dispatch(handleTransactionError(err.message));
+			throw err;
+		}
+	}
+);
+
 const estimateGasInteralAction = async (
 	gasLimitEstimate: () => Promise<BigNumber>,
 	type: FuturesTransactionType,

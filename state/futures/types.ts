@@ -50,7 +50,9 @@ export type FuturesTransactionType =
 	| 'approve_cross_margin'
 	| 'deposit_isolated'
 	| 'withdraw_isolated'
-	| 'modify_isolated';
+	| 'modify_isolated'
+	| 'close_isolated'
+	| 'close_cross_margin';
 
 export type FuturesTransaction = {
 	type: FuturesTransactionType;

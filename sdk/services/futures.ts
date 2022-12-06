@@ -449,6 +449,11 @@ export default class FuturesService {
 		return market.transferMargin(amount.neg().toBN());
 	}
 
+	public async closeIsolatedPosition(marketAddress: string) {
+		const market = FuturesMarket__factory.connect(marketAddress, this.sdk.context.signer);
+		return market.closePositionWithTracking(KWENTA_TRACKING_CODE);
+	}
+
 	public async modifyIsolatedMarginPosition<T extends boolean>(
 		marketAddress: string,
 		sizeDelta: Wei,
