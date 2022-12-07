@@ -48,7 +48,7 @@ const RedeemInputCard: FC<RedeemInputCardProps> = ({ inputLabel, isVKwenta }) =>
 			: 'dashboard.stake.tabs.stake-table.approve';
 	}, [isApproved]);
 
-	const submitRedeem = useCallback(async () => {
+	const submitRedeem = useCallback(() => {
 		const token = isVKwenta ? 'vKwenta' : 'veKwenta';
 
 		if (!isApproved) {

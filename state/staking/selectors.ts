@@ -36,6 +36,14 @@ export const selectStakedKwentaBalance = createSelector(
 	toWei
 );
 
+export const selectUnstakedEscrowedKwentaBalance = createSelector(
+	selectEscrowedKwentaBalance,
+	selectStakedEscrowedKwentaBalance,
+	(escrowedKwentaBalance, stakedEscrowedKwentaBalance) => {
+		return escrowedKwentaBalance.sub(stakedEscrowedKwentaBalance);
+	}
+);
+
 export const selectClaimableBalance = createSelector(
 	(state: RootState) => state.staking.claimableBalance,
 	toWei
@@ -129,4 +137,20 @@ export const selectTotalRewards = createSelector(
 export const selectTotalVestable = createSelector(
 	(state: RootState) => state.staking.totalVestable,
 	wei
+);
+
+export const selectCanStakeEscrowedKwenta = createSelector(
+	selectUnstakedEscrowedKwentaBalance,
+	selectIsStakingEscrowedKwenta,
+	(unstakedEscrowedKwentaBalance, isStakingEscrowedKwenta) => {
+		return unstakedEscrowedKwentaBalance.gt(0) && !isStakingEscrowedKwenta;
+	}
+);
+
+export const selectCanUnstakeEscrowedKwenta = createSelector(
+	selectStakedEscrowedKwentaBalance,
+	selectIsUnstakingEscrowedKwenta,
+	(stakedEscrowedKwentaBalance, isUnstakingEscrowedKwenta) => {
+		return stakedEscrowedKwentaBalance.gt(0) && !isUnstakingEscrowedKwenta;
+	}
 );

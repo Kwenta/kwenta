@@ -2,7 +2,7 @@ import { FetchStatus } from 'state/types';
 
 export type EarnState = {
 	amount: string;
-	balance?: string;
+	balance: string;
 	earnedRewards: string;
 	rewardRate: string;
 	totalSupply: string;

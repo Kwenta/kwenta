@@ -7,7 +7,7 @@ import { EarnState } from './types';
 
 const initialState: EarnState = {
 	amount: '',
-	balance: undefined,
+	balance: '0',
 	earnedRewards: '0',
 	rewardRate: '0',
 	totalSupply: '0',
