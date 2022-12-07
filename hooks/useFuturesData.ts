@@ -313,16 +313,14 @@ const useFuturesData = () => {
 			try {
 				const fees = await calculateFees(nextTrade.susdSizeDelta, nextTrade.nativeSizeDelta);
 				let nextMarginDelta = zeroBN;
-				if (selectedAccountType === 'cross_margin') {
+				if (selectedAccountType === 'isolated_margin') {
+					dispatch(fetchIsolatedMarginTradePreview(nextTrade.nativeSizeDelta));
+				} else {
 					nextMarginDelta =
 						nextTrade.nativeSizeDelta.abs().gt(0) || fromLeverage
 							? await calculateMarginDelta(nextTrade, fees, position)
 							: zeroBN;
 					setCrossMarginMarginDelta(nextMarginDelta);
-				}
-				if (selectedAccountType === 'isolated_margin') {
-					dispatch(fetchIsolatedMarginTradePreview(nextTrade.nativeSizeDelta));
-				} else {
 					dispatch(
 						fetchCrossMarginTradePreview({
 							price: nextTrade.orderPrice,

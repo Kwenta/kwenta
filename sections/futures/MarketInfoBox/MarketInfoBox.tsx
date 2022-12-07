@@ -80,7 +80,7 @@ const MarketInfoBox: React.FC = () => {
 				? trade?.margin?.sub(inaccessible).abs()
 				: zeroBN;
 		},
-		[]
+		[minInitialMargin]
 	);
 
 	const previewAvailableMargin = React.useMemo(() => {
@@ -91,7 +91,13 @@ const MarketInfoBox: React.FC = () => {
 		return isNextPriceOrder
 			? potentialAvailableMargin?.sub(totalDeposit) ?? zeroBN
 			: potentialAvailableMargin;
-	}, [potentialTrade, marketInfo?.maxLeverage, isNextPriceOrder, totalDeposit]);
+	}, [
+		potentialTrade,
+		marketInfo?.maxLeverage,
+		isNextPriceOrder,
+		totalDeposit,
+		getPotentialAvailableMargin,
+	]);
 
 	const previewTradeData = React.useMemo(() => {
 		const size = wei(nativeSize || zeroBN);
@@ -111,13 +117,7 @@ const MarketInfoBox: React.FC = () => {
 			buyingPower: potentialBuyingPower.gt(0) ? potentialBuyingPower : zeroBN,
 			marginUsage: potentialMarginUsage.gt(1) ? wei(1) : potentialMarginUsage,
 		};
-	}, [
-		nativeSize,
-		potentialTrade,
-		previewAvailableMargin,
-		maxLeverage,
-		getPotentialAvailableMargin,
-	]);
+	}, [nativeSize, potentialTrade, previewAvailableMargin, maxLeverage]);
 
 	return (
 		<StyledInfoBox

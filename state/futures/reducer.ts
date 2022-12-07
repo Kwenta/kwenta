@@ -44,12 +44,11 @@ export type IsolatedMarginTradeInputs = {
 const ZERO_STATE_TRADE_INPUTS = {
 	nativeSizeDelta: '',
 	susdSizeDelta: '',
-	leverage: '',
 };
 
 const ZERO_STATE_CM_TRADE_INPUTS = {
 	...ZERO_STATE_TRADE_INPUTS,
-	leverage: '',
+	leverage: '1',
 };
 
 const initialState: FuturesState = {
@@ -134,6 +133,9 @@ const futuresSlice = createSlice({
 		},
 		setLeverageSide: (state, action) => {
 			state[accountType(state.selectedType)].leverageSide = action.payload;
+		},
+		setCrossMarginLeverage: (state, action: PayloadAction<string>) => {
+			state.crossMargin.tradeInputs.leverage = action.payload;
 		},
 		setFuturesAccountType: (state, action) => {
 			state.selectedType = action.payload;
@@ -347,4 +349,5 @@ export const {
 	setTransactionEstimate,
 	setIsolatedTradePreview,
 	setCrossMarginTradePreview,
+	setCrossMarginLeverage,
 } = futuresSlice.actions;

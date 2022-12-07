@@ -428,16 +428,23 @@ export default class FuturesService {
 	}
 
 	public async getCrossMarginTradePreview(
+		crossMarginAccount: string,
 		marketKey: FuturesMarketKey,
 		marketAddress: string,
-		tradeParams: { sizeDelta: Wei; marginDelta: Wei; orderPrice?: Wei; leverageSide: PositionSide }
+		tradeParams: {
+			sizeDelta: Wei;
+			marginDelta: Wei;
+			orderPrice?: Wei;
+			leverageSide: PositionSide;
+		}
 	) {
 		const marketInternal = new FuturesMarketInternal(
 			this.sdk.context.provider,
 			marketKey,
 			marketAddress,
-			this.sdk.context.walletAddress
+			crossMarginAccount
 		);
+
 		const preview = await marketInternal.getTradePreview(
 			tradeParams.sizeDelta.toBN(),
 			tradeParams.marginDelta.toBN(),

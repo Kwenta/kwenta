@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
 
-import { DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
+import { DEFAULT_LEVERAGE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import { DEFAULT_MAX_LEVERAGE } from 'constants/futures';
 import { TransactionStatus } from 'sdk/types/common';
 import { FuturesPosition } from 'sdk/types/futures';
@@ -34,6 +34,9 @@ export const selectFuturesTransaction = (state: RootState) => state.futures.tran
 export const selectCrossMarginAccount = (state: RootState) => state.futures.crossMargin.account;
 
 export const selectMarketsQueryStatus = (state: RootState) => state.futures.queryStatuses.markets;
+
+export const selectCrossMarginSelectedLeverage = (state: RootState) =>
+	wei(state.futures.crossMargin.tradeInputs.leverage || DEFAULT_LEVERAGE);
 
 export const selectCrossMarginTransferOpen = (state: RootState) =>
 	state.app.openModal === 'futures_cross_deposit' ||

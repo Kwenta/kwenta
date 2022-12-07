@@ -267,6 +267,7 @@ export const fetchCrossMarginTradePreview = createAsyncThunk<
 	const leverageSide = selectLeverageSide(getState());
 	try {
 		const preview = await sdk.futures.getCrossMarginTradePreview(
+			account,
 			marketInfo.marketKey,
 			marketInfo.market,
 			{ ...inputs, leverageSide }

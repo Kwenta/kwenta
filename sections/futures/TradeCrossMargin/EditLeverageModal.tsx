@@ -18,7 +18,7 @@ import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 import { ORDER_PREVIEW_ERRORS_I18N, previewErrorI18n } from 'queries/futures/constants';
-import { setOrderType as setReduxOrderType } from 'state/futures/reducer';
+import { setCrossMarginLeverage, setOrderType as setReduxOrderType } from 'state/futures/reducer';
 import {
 	selectCrossMarginBalanceInfo,
 	selectMarketAsset,
@@ -151,7 +151,9 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 			}
 			resetTradeState();
 		} else {
+			// TODO: consolidate leverage states
 			onLeverageChange(leverage);
+			dispatch(setCrossMarginLeverage(String(leverage)));
 			setPreferredLeverage({
 				...preferredLeverage,
 				[marketAsset]: String(leverage),
@@ -173,6 +175,7 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 		setError,
 		handleRefetch,
 		onDismiss,
+		dispatch,
 	]);
 
 	const onClose = () => {
