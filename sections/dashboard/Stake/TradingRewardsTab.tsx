@@ -61,7 +61,13 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 	const estimatedRewardQuery = useGetFile(
 		`trading-rewards-snapshots/${network.id === 420 ? `goerli-` : ''}epoch-current.json`
 	);
-	const estimatedReward = estimatedRewardQuery?.data?.claims[walletAddress!]?.amount ?? '0';
+	const estimatedReward = useMemo(
+		() => Number(estimatedRewardQuery?.data?.claims[walletAddress!]?.amount) ?? 0,
+		[estimatedRewardQuery?.data?.claims, walletAddress]
+	);
+	const weeklyRewards = useMemo(() => Number(estimatedRewardQuery?.data?.tokenTotal) ?? 0, [
+		estimatedRewardQuery?.data?.tokenTotal,
+	]);
 
 	const claimDisabled = useMemo(() => totalRewards.lte(0), [totalRewards]);
 
@@ -73,12 +79,17 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 		dispatch(claimMultipleRewards());
 	}, [dispatch]);
 
-	const ratio = useMemo(
-		() =>
-			wei(totalFuturesFeePaid).gt(0) ? wei(futuresFeePaid).div(wei(totalFuturesFeePaid)) : zeroBN,
-		[futuresFeePaid, totalFuturesFeePaid]
-	);
+	const ratio = useMemo(() => {
+		return estimatedReward && wei(estimatedReward).gt(0)
+			? wei(estimatedReward).div(wei(weeklyRewards))
+			: zeroBN;
+	}, [estimatedReward, weeklyRewards]);
 
+	const showEstimatedValue = useMemo(() => estimatedReward && wei(period).eq(epochPeriod), [
+		epochPeriod,
+		estimatedReward,
+		period,
+	]);
 	return (
 		<TradingRewardsContainer>
 			<CardGridContainer>
@@ -100,11 +111,11 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 						</div>
 					</div>
 				</CardGrid>
-				<StyledFlexDivRow>
+				<FlexDivRow>
 					<Button fullWidth variant="flat" size="sm" onClick={handleClaim} disabled={claimDisabled}>
 						{t('dashboard.stake.tabs.trading-rewards.claim')}
 					</Button>
-				</StyledFlexDivRow>
+				</FlexDivRow>
 			</CardGridContainer>
 			<CardGridContainer>
 				<CardGrid>
@@ -134,29 +145,45 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 						</div>
 						<div className="value">{formatDollars(totalFuturesFeePaid, { minDecimals: 2 })}</div>
 					</div>
-					{wei(period).eq(epochPeriod) ? (
-						<div>
-							<div className="title">
-								{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}
+					{showEstimatedValue ? (
+						<>
+							<div>
+								<div className="title">
+									{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}
+								</div>
+								<KwentaLabel>
+									{truncateNumbers(formatEther(estimatedReward.toString()), 4)}
+								</KwentaLabel>
 							</div>
-							<KwentaLabel>
-								{truncateNumbers(formatEther(BigNumber.from(estimatedReward)), 4)}
-							</KwentaLabel>
-						</div>
+							<div>
+								<div className="title">
+									{t('dashboard.stake.tabs.trading-rewards.estimated-reward-share', {
+										EpochPeriod: period,
+									})}
+								</div>
+								<div className="value">{formatPercent(Number(ratio), { minDecimals: 2 })}</div>
+							</div>
+						</>
 					) : null}
-					<div>
-						<div className="title">
-							{t('dashboard.stake.tabs.trading-rewards.estimated-fee-share', {
-								EpochPeriod: period,
-							})}
-						</div>
-						<div className="value">{formatPercent(ratio, { minDecimals: 2 })}</div>
-					</div>
 				</CardGrid>
+				{showEstimatedValue ? (
+					<FlexDivRow>
+						<PeriodLabel>{t('dashboard.stake.tabs.trading-rewards.estimated-info')}</PeriodLabel>
+					</FlexDivRow>
+				) : null}
 			</CardGridContainer>
 		</TradingRewardsContainer>
 	);
 };
+
+const PeriodLabel = styled.div`
+	font-size: 14px;
+	line-height: 21px;
+	display: flex;
+	align-items: center;
+	font-family: ${(props) => props.theme.fonts.regular};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+`;
 
 const CustomStyledTooltip = styled(StyledTooltip)`
 	padding: 0px 10px 0px;
@@ -168,10 +195,6 @@ const CustomStyledTooltip = styled(StyledTooltip)`
 
 const WithCursor = styled.div<{ cursor: 'help' }>`
 	cursor: ${(props) => props.cursor};
-`;
-
-const StyledFlexDivRow = styled(FlexDivRow)`
-	column-gap: 15px;
 `;
 
 const CardGridContainer = styled(StakingCard)`
@@ -194,7 +217,7 @@ const CardGrid = styled.div`
 	}
 
 	svg {
-		margin-left: 5px;
+		margin-left: 8px;
 	}
 
 	.title {

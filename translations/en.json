@@ -524,14 +524,15 @@
 					"spot-fee-paid": "Spot Fee Paid: Epoch {{EpochPeriod}}",
 					"future-fee-paid": "Futures Fees Paid: Ep. {{EpochPeriod}}",					
 					"fees-paid": "Total Fees in Pool: Ep. {{EpochPeriod}}",
-					"estimated-rewards": "Estimated Rewards",
-					"estimated-fee-share": "Estimated Fee Share",
+					"estimated-rewards": "*Estimated Rewards",
+					"estimated-reward-share": "*Estimated Reward Share",
 					"trading-activity-reset": "Time until next epoch",
 					"epoch": "Epoch {{EpochPeriod}}: {{EpochDate}}",
 					"claimable-rewards-epoch": "Claimable Rewards: Epoch {{EpochPeriod}}",
 					"claimable-rewards-all": "Claimable Trading Rewards",
 					"claim-epoch": "Claim: Epoch {{EpochPeriod}}",
-					"claim": "Claim"
+					"claim": "Claim",
+					"estimated-info": "* Estimated values do not reflect the final reward value and is subject to change as a result of future fees paid and staked amounts by other participants."
 				},
 				"escrow": {
 					"title": "Escrow",
