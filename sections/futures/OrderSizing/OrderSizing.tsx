@@ -13,8 +13,8 @@ import {
 	selectMarketAssetRate,
 	selectCrossMarginBalanceInfo,
 	selectPosition,
-	selectIsolatedTradeInputs,
 	selectFuturesType,
+	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {
@@ -37,9 +37,10 @@ type OrderSizingProps = {
 const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	const { onTradeAmountChange, maxUsdInputAmount } = useFuturesContext();
 
-	const { freeMargin: freeCrossMargin } = useAppSelector(selectCrossMarginBalanceInfo);
+	const { susdSize, nativeSize } = useAppSelector(selectTradeSizeInputs);
+	const simulatedTrade = useRecoilValue(simulatedTradeState);
 
-	const { nativeSizeDelta, susdSizeDelta } = useAppSelector(selectIsolatedTradeInputs);
+	const { freeMargin: freeCrossMargin } = useAppSelector(selectCrossMarginBalanceInfo);
 
 	const marketAssetRate = useAppSelector(selectMarketAssetRate);
 	const selectedAccountType = useAppSelector(selectFuturesType);
@@ -47,12 +48,11 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	const orderType = useRecoilValue(orderTypeState);
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
 	const selectedLeverageSide = useRecoilValue(leverageSideState);
-	const simulatedTrade = useRecoilValue(simulatedTradeState);
 
 	const marketKey = useAppSelector(selectMarketKey);
 
-	const [usdValue, setUsdValue] = useState(susdSizeDelta);
-	const [assetValue, setAssetValue] = useState(nativeSizeDelta);
+	const [usdValue, setUsdValue] = useState(susdSize);
+	const [assetValue, setAssetValue] = useState(nativeSize);
 	const [assetInputType, setAssetInputType] = useState<'usd' | 'native'>('usd');
 
 	const tradePrice = useMemo(() => (orderPrice ? wei(orderPrice) : marketAssetRate), [
@@ -66,27 +66,26 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 
 	useEffect(
 		() => {
-			if (simulatedTrade && simulatedTrade.susdSize !== susdSizeDelta) {
+			if (simulatedTrade && simulatedTrade.susdSize !== susdSize) {
 				setUsdValue(simulatedTrade.susdSize);
-			} else if (susdSizeDelta !== usdValue) {
-				const cleanSusdSizeDelta =
-					susdSizeDelta === '' ? '' : wei(susdSizeDelta).abs().toNumber().toString();
+			} else if (susdSize !== usdValue) {
+				const cleanSusdSizeDelta = susdSize === '' ? '' : wei(susdSize).abs().toNumber().toString();
 				setUsdValue(cleanSusdSizeDelta);
 			}
 
-			if (simulatedTrade && simulatedTrade.nativeSize !== nativeSizeDelta) {
+			if (simulatedTrade && simulatedTrade.nativeSize !== nativeSize) {
 				setAssetValue(simulatedTrade.nativeSize);
-			} else if (assetValue !== nativeSizeDelta) {
+			} else if (assetValue !== nativeSize) {
 				const cleanNativeSizeDelta =
-					nativeSizeDelta === '' ? '' : wei(nativeSizeDelta).abs().toNumber().toString();
+					nativeSize === '' ? '' : wei(nativeSize).abs().toNumber().toString();
 				setAssetValue(cleanNativeSizeDelta);
 			}
 		},
 		// Don't want to react to internal value changes
 		// eslint-disable-next-line
 		[
-			susdSizeDelta,
-			nativeSizeDelta,
+			susdSize,
+			nativeSize,
 			simulatedTrade?.susdSize,
 			simulatedTrade?.nativeSize,
 			setUsdValue,

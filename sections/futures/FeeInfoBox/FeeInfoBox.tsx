@@ -22,16 +22,14 @@ import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/form
 
 const FeeInfoBox: React.FC = () => {
 	const orderType = useAppSelector(selectOrderType);
-	const { nativeSizeDelta } = useAppSelector(selectIsolatedTradeInputs);
+	const { nativeSize } = useAppSelector(selectIsolatedTradeInputs);
 	const accountType = useAppSelector(selectFuturesType);
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const { tradeFee: crossMarginTradeFee, limitOrderFee, stopOrderFee } = useAppSelector(
 		selectCrossMarginSettings
 	);
 
-	const sizeDelta = useMemo(() => wei(nativeSizeDelta === '' ? 0 : nativeSizeDelta), [
-		nativeSizeDelta,
-	]);
+	const sizeDelta = useMemo(() => wei(nativeSize === '' ? 0 : nativeSize), [nativeSize]);
 
 	const fees = useRecoilValue(tradeFeesState);
 	const dynamicFeeRate = useRecoilValue(dynamicFeeRateState);

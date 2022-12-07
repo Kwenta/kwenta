@@ -163,6 +163,7 @@ export const mapFuturesPosition = (
 	const initialMargin = wei(margin);
 	const pnl = wei(profitLoss).add(wei(accruedFunding));
 	const pnlPct = initialMargin.gt(0) ? pnl.div(wei(initialMargin)) : wei(0);
+
 	return {
 		asset,
 		marketKey,
@@ -292,9 +293,6 @@ export const formatPotentialTrade = (
 ) => {
 	const { fee, liqPrice, margin, price, size, status } = preview;
 
-	const notionalValue = wei(size).mul(wei(price));
-	const leverage = notionalValue.div(wei(margin));
-
 	return {
 		fee: wei(fee),
 		liqPrice: wei(liqPrice),
@@ -303,7 +301,7 @@ export const formatPotentialTrade = (
 		size: wei(size),
 		sizeDelta: nativeSizeDelta,
 		side: leverageSide,
-		leverage: leverage,
+		leverage: wei(margin).eq(0) ? wei(0) : wei(size).mul(wei(price)).div(wei(margin)).abs(),
 		notionalValue: wei(size).mul(wei(price)),
 		status,
 		showStatus: status > 0, // 0 is success

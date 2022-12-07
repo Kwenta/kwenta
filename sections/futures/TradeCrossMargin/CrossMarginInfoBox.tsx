@@ -15,13 +15,13 @@ import {
 	selectPosition,
 	selectTradePreview,
 	selectTradePreviewStatus,
+	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import {
 	crossMarginMarginDeltaState,
 	tradeFeesState,
-	futuresTradeInputsState,
 	orderTypeState,
 	futuresOrderPriceState,
 } from 'store/futures';
@@ -34,7 +34,7 @@ import {
 	zeroBN,
 } from 'utils/formatters/number';
 
-import EditLeverageModal from './EditLeverageModal';
+import EditLeverageModal from './EditCrossMarginLeverageModal';
 import ManageKeeperBalanceModal from './ManageKeeperBalanceModal';
 
 type Props = {
@@ -46,7 +46,7 @@ function MarginInfoBox({ editingLeverage }: Props) {
 
 	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
-	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
+	const { nativeSize } = useAppSelector(selectTradeSizeInputs);
 	const potentialTrade = useAppSelector(selectTradePreview);
 	const marginDelta = useRecoilValue(crossMarginMarginDeltaState);
 	const { freeMargin: crossMarginFreeMargin, keeperEthBal } = useAppSelector(
@@ -222,7 +222,7 @@ function MarginInfoBox({ editingLeverage }: Props) {
 			/>
 
 			{openModal === 'leverage' && (
-				<EditLeverageModal editMode="next_trade" onDismiss={() => setOpenModal(null)} />
+				<EditLeverageModal editMode="new_position" onDismiss={() => setOpenModal(null)} />
 			)}
 			{openModal === 'keeper-deposit' && (
 				<ManageKeeperBalanceModal defaultType="withdraw" onDismiss={() => setOpenModal(null)} />

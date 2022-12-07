@@ -26,37 +26,24 @@ import {
 	fetchCrossMarginTradePreview,
 } from './actions';
 import {
+	CrossMarginTradeInputs,
 	FundingRate,
 	FuturesState,
 	FuturesTransaction,
+	IsolatedMarginTradeInputs,
 	TransactionEstimationPayload,
 	TransactionEstimations,
 } from './types';
 
-export type CrossMarginTradeInputs = {
-	leverage: string;
-	nativeSizeDelta: string;
-	susdSizeDelta: string;
-	orderPrice?: string | undefined;
-};
-
-export type IsolatedMarginTradeInputs = {
-	nativeSizeDelta: string;
-	susdSizeDelta: string;
-	priceImpactDelta: string;
-	leverage: string;
-};
-
 export const ZERO_STATE_TRADE_INPUTS = {
-	nativeSizeDelta: '',
-	susdSizeDelta: '',
-	priceImpactDelta: DEFAULT_PRICE_IMPACT_DELTA,
+	nativeSize: '',
+	susdSize: '',
 	leverage: '',
 };
 
 export const ZERO_STATE_CM_TRADE_INPUTS = {
 	...ZERO_STATE_TRADE_INPUTS,
-	leverage: '',
+	leverage: '1',
 };
 
 const initialState: FuturesState = {
@@ -115,6 +102,7 @@ const initialState: FuturesState = {
 		},
 		selectedLeverage: DEFAULT_LEVERAGE,
 		tradeInputs: ZERO_STATE_TRADE_INPUTS,
+		priceImpact: DEFAULT_PRICE_IMPACT_DELTA,
 		positions: {},
 		openOrders: [],
 	},
@@ -142,6 +130,9 @@ const futuresSlice = createSlice({
 		setLeverageSide: (state, action) => {
 			state[accountType(state.selectedType)].leverageSide = action.payload;
 		},
+		setCrossMarginLeverage: (state, action: PayloadAction<string>) => {
+			state.crossMargin.tradeInputs.leverage = action.payload;
+		},
 		setFuturesAccountType: (state, action) => {
 			state.selectedType = action.payload;
 		},
@@ -157,11 +148,14 @@ const futuresSlice = createSlice({
 		setTransaction: (state, action: PayloadAction<FuturesTransaction | undefined>) => {
 			state.transaction = action.payload;
 		},
-		setIsolatedMarginTradeInputs: (state, action: PayloadAction<IsolatedMarginTradeInputs>) => {
-			state.isolatedMargin.tradeInputs = action.payload;
-		},
-		setCrossMarginTradeInputs: (state, action: PayloadAction<CrossMarginTradeInputs>) => {
+		setCrossMarginTradeInputs: (state, action: PayloadAction<CrossMarginTradeInputs<string>>) => {
 			state.crossMargin.tradeInputs = action.payload;
+		},
+		setIsolatedMarginTradeInputs: (
+			state,
+			action: PayloadAction<IsolatedMarginTradeInputs<string>>
+		) => {
+			state.isolatedMargin.tradeInputs = action.payload;
 		},
 		updateTransactionStatus: (state, action: PayloadAction<TransactionStatus>) => {
 			if (state.transaction) {
@@ -207,7 +201,7 @@ const futuresSlice = createSlice({
 				error: string | null;
 			}>
 		) => {
-			state.isolatedMargin.tradePreview = action.payload;
+			state.crossMargin.tradePreview = action.payload;
 		},
 	},
 	extraReducers: (builder) => {
@@ -349,7 +343,6 @@ export const {
 	setCrossMarginBalanceInfo,
 	setFuturesMarkets,
 	setTransaction,
-	setIsolatedMarginTradeInputs,
 	setCrossMarginTradeInputs,
 	setCrossMarginAccount,
 	updateTransactionStatus,
@@ -357,4 +350,6 @@ export const {
 	setTransactionEstimate,
 	setIsolatedTradePreview,
 	setCrossMarginTradePreview,
+	setCrossMarginLeverage,
+	setIsolatedMarginTradeInputs,
 } = futuresSlice.actions;

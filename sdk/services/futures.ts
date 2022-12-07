@@ -1,3 +1,4 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { Contract as EthCallContract } from 'ethcall';
 import { BigNumber, ContractTransaction, ethers } from 'ethers';
@@ -51,6 +52,9 @@ import { MarketKeyByAsset } from 'utils/futures';
 export default class FuturesService {
 	private sdk: KwentaSDK;
 	public markets: FuturesMarket[] | undefined;
+	public internalFuturesMarkets: Partial<
+		Record<NetworkId, { [marketAddress: string]: FuturesMarketInternal }>
+	> = {};
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
@@ -58,6 +62,20 @@ export default class FuturesService {
 
 	get futuresGqlEndpoint() {
 		return getFuturesEndpoint(this.sdk.context.networkId);
+	}
+
+	private getInternalFuturesMarket(marketAddress: string, marketKey: FuturesMarketKey) {
+		let market = this.internalFuturesMarkets[this.sdk.context.networkId]?.[marketAddress];
+		if (market) return market;
+		market = new FuturesMarketInternal(this.sdk.context.provider, marketKey, marketAddress);
+		this.internalFuturesMarkets = {
+			[this.sdk.context.networkId]: {
+				...this.internalFuturesMarkets[this.sdk.context.networkId],
+				[marketAddress]: market,
+			},
+		};
+
+		return market;
 	}
 
 	public async getMarkets(networkOverride?: NetworkOverrideOptions) {
@@ -448,17 +466,20 @@ export default class FuturesService {
 	}
 
 	public async getCrossMarginTradePreview(
+		crossMarginAccount: string,
 		marketKey: FuturesMarketKey,
 		marketAddress: string,
-		tradeParams: { sizeDelta: Wei; marginDelta: Wei; orderPrice?: Wei; leverageSide: PositionSide }
+		tradeParams: {
+			sizeDelta: Wei;
+			marginDelta: Wei;
+			orderPrice?: Wei;
+			leverageSide: PositionSide;
+		}
 	) {
-		const marketInternal = new FuturesMarketInternal(
-			this.sdk.context.provider,
-			marketKey,
-			marketAddress,
-			this.sdk.context.walletAddress
-		);
+		const marketInternal = this.getInternalFuturesMarket(marketAddress, marketKey);
+
 		const preview = await marketInternal.getTradePreview(
+			crossMarginAccount,
 			tradeParams.sizeDelta.toBN(),
 			tradeParams.marginDelta.toBN(),
 			tradeParams.orderPrice?.toBN()

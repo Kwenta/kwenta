@@ -10,6 +10,7 @@ import earnReducer from './earn/reducer';
 import exchangeReducer from './exchange/reducer';
 import futuresReducer from './futures/reducer';
 import homeReducer from './home/reducer';
+import stakingReducer from './staking/reducer';
 import walletReducer from './wallet/reducer';
 
 const LOG_REDUX = process.env.NODE_ENV !== 'production';
@@ -23,6 +24,7 @@ const store = configureStore({
 		futures: futuresReducer,
 		home: homeReducer,
 		earn: earnReducer,
+		staking: stakingReducer,
 	},
 	middleware: (getDefaultMiddleware) => {
 		const baseMiddleware = getDefaultMiddleware({ thunk: { extraArgument: { sdk } } });

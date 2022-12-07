@@ -276,6 +276,7 @@ export const fetchCrossMarginTradePreview = createAsyncThunk<
 	const leverageSide = selectLeverageSide(getState());
 	try {
 		const preview = await sdk.futures.getCrossMarginTradePreview(
+			account,
 			marketInfo.marketKey,
 			marketInfo.market,
 			{ ...inputs, leverageSide }
@@ -428,9 +429,9 @@ export const modifyIsolatedPosition = createAsyncThunk<
 				false
 			);
 			dispatch(updateTransactionHash(tx.hash));
-			dispatch(clearTradePreviews());
 			await tx.wait();
 			dispatch(clearTradeInputs());
+			dispatch(clearTradePreviews());
 			dispatch(refetchPosition('isolated_margin'));
 			dispatch(setOpenModal(null));
 			// TODO: More reliable balance updates

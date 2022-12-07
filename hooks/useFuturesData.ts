@@ -32,11 +32,10 @@ import {
 } from 'state/futures/actions';
 import { usePollMarketFuturesData } from 'state/futures/hooks';
 import {
-	setIsolatedMarginTradeInputs,
 	setCrossMarginTradeInputs,
 	setFuturesAccountType,
+	setIsolatedMarginTradeInputs,
 	setOrderType as setReduxOrderType,
-	ZERO_STATE_TRADE_INPUTS,
 } from 'state/futures/reducer';
 import {
 	selectCrossMarginBalanceInfo,
@@ -46,10 +45,11 @@ import {
 	selectMaxLeverage,
 	selectAboveMaxLeverage,
 	selectCrossMarginSettings,
-	selectIsolatedTradeInputs,
 	selectFuturesType,
 	selectLeverageSide,
 	selectOrderType,
+	selectTradeSizeInputs,
+	selectIsolatedPriceImpact,
 } from 'state/futures/selectors';
 import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector, useAppDispatch } from 'state/hooks';
@@ -57,7 +57,6 @@ import {
 	crossMarginMarginDeltaState,
 	tradeFeesState,
 	futuresAccountState,
-	futuresTradeInputsState,
 	preferredLeverageState,
 	simulatedTradeState,
 	futuresOrderPriceState,
@@ -67,11 +66,7 @@ import {
 } from 'store/futures';
 import { computeMarketFee } from 'utils/costCalculations';
 import { zeroBN, floorNumber, weiToString } from 'utils/formatters/number';
-import {
-	calculateMarginDelta,
-	MarketKeyByAsset,
-	serializeCrossMarginTradeInputs,
-} from 'utils/futures';
+import { calculateMarginDelta, FuturesMarketKey, MarketKeyByAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
 import useCrossMarginAccountContracts from './useCrossMarginContracts';
@@ -80,8 +75,6 @@ import usePersistedRecoilState from './usePersistedRecoilState';
 const ZERO_TRADE_INPUTS = {
 	nativeSize: '',
 	susdSize: '',
-	nativeSizeDelta: zeroBN,
-	susdSizeDelta: zeroBN,
 	leverage: '',
 };
 
@@ -120,7 +113,6 @@ const useFuturesData = () => {
 	}, [ethGasPriceQuery.data, gasSpeed, dispatch]);
 
 	const marketAsset = useAppSelector(selectMarketAsset);
-	const [tradeInputs, setTradeInputs] = useRecoilState(futuresTradeInputsState);
 	const setSimulatedTrade = useSetRecoilState(simulatedTradeState);
 
 	const [crossMarginMarginDelta, setCrossMarginMarginDelta] = useRecoilState(
@@ -132,6 +124,7 @@ const useFuturesData = () => {
 	const position = useAppSelector(selectPosition);
 	const aboveMaxLeverage = useAppSelector(selectAboveMaxLeverage);
 	const maxLeverage = useAppSelector(selectMaxLeverage);
+	const tradeSizeInputs = useAppSelector(selectTradeSizeInputs);
 
 	const { tradeFee: crossMarginTradeFee, stopOrderFee, limitOrderFee } = useAppSelector(
 		selectCrossMarginSettings
@@ -147,7 +140,8 @@ const useFuturesData = () => {
 
 	// perps v2
 	const selectedAccountType = useAppSelector(selectFuturesType);
-	const isolatedTradeInputs = useAppSelector(selectIsolatedTradeInputs);
+	const { nativeSize } = useAppSelector(selectTradeSizeInputs);
+	const priceImpact = useAppSelector(selectIsolatedPriceImpact);
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const orderType = useAppSelector(selectOrderType);
 
@@ -185,13 +179,12 @@ const useFuturesData = () => {
 	}, [dispatch, setTradeFees]);
 
 	const resetTradeState = useCallback(() => {
-		dispatch(setCrossMarginTradeInputs(serializeCrossMarginTradeInputs(ZERO_TRADE_INPUTS)));
-		dispatch(setIsolatedMarginTradeInputs(ZERO_STATE_TRADE_INPUTS));
+		dispatch(setCrossMarginTradeInputs(ZERO_TRADE_INPUTS));
+		dispatch(setIsolatedMarginTradeInputs(ZERO_TRADE_INPUTS));
 		setSimulatedTrade(ZERO_TRADE_INPUTS);
-		setTradeInputs(ZERO_TRADE_INPUTS);
 		setCrossMarginMarginDelta(zeroBN);
 		clearTradePreview();
-	}, [setSimulatedTrade, setTradeInputs, clearTradePreview, setCrossMarginMarginDelta, dispatch]);
+	}, [setSimulatedTrade, clearTradePreview, setCrossMarginMarginDelta, dispatch]);
 
 	const maxUsdInputAmount = useMemo(() => {
 		if (selectedAccountType === 'isolated_margin') {
@@ -320,16 +313,14 @@ const useFuturesData = () => {
 			try {
 				const fees = await calculateFees(nextTrade.susdSizeDelta, nextTrade.nativeSizeDelta);
 				let nextMarginDelta = zeroBN;
-				if (selectedAccountType === 'cross_margin') {
+				if (selectedAccountType === 'isolated_margin') {
+					dispatch(fetchIsolatedMarginTradePreview(nextTrade.nativeSizeDelta));
+				} else {
 					nextMarginDelta =
 						nextTrade.nativeSizeDelta.abs().gt(0) || fromLeverage
 							? await calculateMarginDelta(nextTrade, fees, position)
 							: zeroBN;
 					setCrossMarginMarginDelta(nextMarginDelta);
-				}
-				if (selectedAccountType === 'isolated_margin') {
-					dispatch(fetchIsolatedMarginTradePreview(nextTrade.nativeSizeDelta));
-				} else {
 					dispatch(
 						fetchCrossMarginTradePreview({
 							price: nextTrade.orderPrice,
@@ -356,7 +347,6 @@ const useFuturesData = () => {
 			orderPrice,
 			orderType,
 			selectedAccountType,
-			isolatedTradeInputs.priceImpactDelta,
 			logError,
 			setCrossMarginMarginDelta,
 		]
@@ -364,11 +354,28 @@ const useFuturesData = () => {
 
 	const onStagePositionChange = useCallback(
 		(trade: FuturesTradeInputs) => {
-			setTradeInputs(trade);
+			if (selectedAccountType === 'isolated_margin') {
+				dispatch(
+					setIsolatedMarginTradeInputs({
+						susdSize: trade.susdSize,
+						nativeSize: trade.nativeSize,
+						leverage: trade.leverage,
+					})
+				);
+			} else {
+				dispatch(
+					setCrossMarginTradeInputs({
+						susdSize: trade.susdSize,
+						nativeSize: trade.nativeSize,
+						leverage: trade.leverage,
+					})
+				);
+			}
+
 			setSimulatedTrade(null);
 			debounceFetchPreview(trade);
 		},
-		[setTradeInputs, setSimulatedTrade, debounceFetchPreview]
+		[dispatch, setSimulatedTrade, debounceFetchPreview, selectedAccountType]
 	);
 
 	const onTradeAmountChange = useCallback(
@@ -407,9 +414,8 @@ const useFuturesData = () => {
 			if (selectedAccountType === 'isolated_margin') {
 				dispatch(
 					setIsolatedMarginTradeInputs({
-						nativeSizeDelta: (positiveTrade ? nativeSize : nativeSize.neg()).toNumber().toString(),
-						susdSizeDelta: (positiveTrade ? usdSize : usdSize.neg()).toNumber().toString(),
-						priceImpactDelta: isolatedTradeInputs.priceImpactDelta,
+						nativeSize: (positiveTrade ? nativeSize : nativeSize.neg()).toNumber().toString(),
+						susdSize: (positiveTrade ? usdSize : usdSize.neg()).toNumber().toString(),
 						leverage: String(floorNumber(leverage)),
 					})
 				);
@@ -417,13 +423,15 @@ const useFuturesData = () => {
 
 			if (options?.simulateChange) {
 				// Allows us to keep it snappy updating the input values
-				setSimulatedTrade(newTradeInputs);
+				setSimulatedTrade({
+					...newTradeInputs,
+					orderPrice: newTradeInputs.orderPrice.toString(),
+				});
 			} else {
 				onStagePositionChange(newTradeInputs);
 			}
 		},
 		[
-			isolatedTradeInputs,
 			remainingMargin,
 			maxLeverage,
 			selectedLeverage,
@@ -452,42 +460,14 @@ const useFuturesData = () => {
 		[debounceFetchPreview]
 	);
 
-	const onLeverageChange = useCallback(
-		(leverage: number) => {
-			if (selectedAccountType === 'cross_margin') {
-				onTradeAmountChange('', tradePrice, 'usd', {
-					crossMarginLeverage: wei(leverage),
-				});
-			} else {
-				if (leverage <= 0) {
-					resetTradeState();
-				} else {
-					const newTradeSize =
-						marketAssetRate.eq(0) || remainingMargin.eq(0)
-							? ''
-							: wei(leverage).mul(remainingMargin).div(marketAssetRate).toString();
-					onTradeAmountChange(newTradeSize, tradePrice, 'native');
-				}
-			}
-		},
-		[
-			remainingMargin,
-			marketAssetRate,
-			selectedAccountType,
-			tradePrice,
-			resetTradeState,
-			onTradeAmountChange,
-		]
-	);
-
 	const onTradeOrderPriceChange = useCallback(
 		(price: string) => {
-			if (price && tradeInputs.susdSize) {
+			if (price && tradeSizeInputs.susdSize) {
 				// Recalc the trade
-				onTradeAmountChange(tradeInputs.susdSize, wei(price), 'usd');
+				onTradeAmountChange(tradeSizeInputs.susdSize, wei(price), 'usd');
 			}
 		},
-		[tradeInputs, onTradeAmountChange]
+		[tradeSizeInputs.susdSize, onTradeAmountChange]
 	);
 
 	const submitCrossMarginOrder = useCallback(
@@ -496,9 +476,9 @@ const useFuturesData = () => {
 			if (orderType === 'market' || fromEditLeverage) {
 				const newPosition = [
 					{
-						marketKey: formatBytes32String(MarketKeyByAsset[marketAsset]),
+						marketKey: formatBytes32String(MarketKeyByAsset[marketAsset] as FuturesMarketKey),
 						marginDelta: crossMarginMarginDelta.toBN(),
-						sizeDelta: tradeInputs.nativeSizeDelta.toBN(),
+						sizeDelta: tradeSizeInputs.nativeSizeDelta.toBN(),
 					},
 				];
 				return await crossMarginAccountContract.distributeMargin(newPosition, {
@@ -508,9 +488,9 @@ const useFuturesData = () => {
 			const enumType = orderType === 'limit' ? 0 : 1;
 
 			return await crossMarginAccountContract.placeOrderWithFeeCap(
-				formatBytes32String(MarketKeyByAsset[marketAsset]),
+				formatBytes32String(MarketKeyByAsset[marketAsset] as FuturesMarketKey),
 				crossMarginMarginDelta.toBN(),
-				tradeInputs.nativeSizeDelta.toBN(),
+				tradeSizeInputs.nativeSizeDelta.toBN(),
 				wei(orderPrice).toBN(),
 				enumType,
 				feeCap.toBN(),
@@ -524,7 +504,7 @@ const useFuturesData = () => {
 			orderType,
 			feeCap,
 			crossMarginMarginDelta,
-			tradeInputs.nativeSizeDelta,
+			tradeSizeInputs.nativeSizeDelta,
 			tradeFees.keeperEthDeposit,
 		]
 	);
@@ -532,12 +512,12 @@ const useFuturesData = () => {
 	const submitIsolatedMarginOrder = useCallback(async () => {
 		dispatch(
 			modifyIsolatedPosition({
-				sizeDelta: isolatedTradeInputs.nativeSizeDelta,
-				priceImpactDelta: isolatedTradeInputs.priceImpactDelta,
+				sizeDelta: nativeSize,
+				priceImpactDelta: priceImpact,
 				delayed: orderType === 'delayed',
 			})
 		);
-	}, [dispatch, isolatedTradeInputs, orderType]);
+	}, [dispatch, nativeSize, priceImpact, orderType]);
 
 	useEffect(() => {
 		const getMaxFee = async () => {
@@ -584,7 +564,7 @@ const useFuturesData = () => {
 		) {
 			dispatch(setReduxOrderType('delayed'));
 		}
-		onTradeAmountChange(tradeInputs.susdSize, tradePrice, 'usd');
+		onTradeAmountChange(tradeSizeInputs.susdSize, tradePrice, 'usd');
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dispatch, selectedAccountType, orderType, network.id]);
@@ -600,8 +580,8 @@ const useFuturesData = () => {
 	}, [router.events, resetTradeState]);
 
 	useEffect(() => {
-		if (tradeInputs.susdSizeDelta.eq(0)) return;
-		onTradeAmountChange(tradeInputs.susdSize, tradePrice, 'usd');
+		if (tradeSizeInputs.susdSizeDelta.eq(0)) return;
+		onTradeAmountChange(tradeSizeInputs.susdSize, tradePrice, 'usd');
 		// Only want to react to leverage side change
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [leverageSide]);
@@ -641,7 +621,6 @@ const useFuturesData = () => {
 	}, [marketAsset, setDynamicFeeRate, synthetixjs]);
 
 	return {
-		onLeverageChange,
 		onTradeAmountChange,
 		submitIsolatedMarginOrder,
 		submitCrossMarginOrder,

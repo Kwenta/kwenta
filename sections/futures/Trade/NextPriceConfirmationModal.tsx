@@ -17,12 +17,13 @@ import { setOpenModal } from 'state/app/reducer';
 import { modifyIsolatedPosition, modifyIsolatedPositionEstimateGas } from 'state/futures/actions';
 import {
 	selectIsModifyingIsolatedPosition,
-	selectIsolatedTradeInputs,
+	selectIsolatedPriceImpact,
 	selectMarketAsset,
 	selectMarketInfo,
 	selectModifyIsolatedGasEstimate,
 	selectNextPriceDisclaimer,
 	selectPosition,
+	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { leverageSideState } from 'store/futures';
@@ -43,9 +44,8 @@ const NextPriceConfirmationModal: FC = () => {
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const dispatch = useAppDispatch();
 
-	const { nativeSizeDelta, susdSizeDelta, priceImpactDelta } = useAppSelector(
-		selectIsolatedTradeInputs
-	);
+	const { nativeSize, susdSize } = useAppSelector(selectTradeSizeInputs);
+	const priceImpact = useAppSelector(selectIsolatedPriceImpact);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
@@ -61,23 +61,22 @@ const NextPriceConfirmationModal: FC = () => {
 	useEffect(() => {
 		dispatch(
 			modifyIsolatedPositionEstimateGas({
-				sizeDelta: nativeSizeDelta,
-				priceImpactDelta: priceImpactDelta,
+				sizeDelta: nativeSize,
+				priceImpactDelta: priceImpact,
 				delayed: true,
 			})
 		);
-	}, [nativeSizeDelta, priceImpactDelta, dispatch]);
+	}, [nativeSize, priceImpact, dispatch]);
 
 	const transactionFee = useMemo(() => gasEstimate?.cost ?? zeroBN, [gasEstimate?.cost]);
 
 	const positionSize = position?.position?.size ?? zeroBN;
 
 	const orderDetails = useMemo(() => {
-		const newSize =
-			leverageSide === PositionSide.LONG ? wei(susdSizeDelta) : wei(susdSizeDelta).neg();
+		const newSize = leverageSide === PositionSide.LONG ? wei(susdSize) : wei(susdSize).neg();
 
 		return { newSize, size: (positionSize ?? zeroBN).add(newSize).abs() };
-	}, [leverageSide, susdSizeDelta, positionSize]);
+	}, [leverageSide, susdSize, positionSize]);
 
 	const { commitDeposit, nextPriceFee } = useMemo(
 		() => computeDelayedOrderFee(marketInfo, wei(orderDetails.newSize)),
@@ -148,8 +147,8 @@ const NextPriceConfirmationModal: FC = () => {
 	const handleConfirmOrder = async () => {
 		dispatch(
 			modifyIsolatedPosition({
-				sizeDelta: nativeSizeDelta,
-				priceImpactDelta: priceImpactDelta,
+				sizeDelta: nativeSize,
+				priceImpactDelta: priceImpact,
 				delayed: true,
 			})
 		);

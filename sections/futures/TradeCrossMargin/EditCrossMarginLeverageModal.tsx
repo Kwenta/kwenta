@@ -18,7 +18,7 @@ import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 import { ORDER_PREVIEW_ERRORS_I18N, previewErrorI18n } from 'queries/futures/constants';
-import { setOrderType as setReduxOrderType } from 'state/futures/reducer';
+import { setCrossMarginLeverage, setOrderType as setReduxOrderType } from 'state/futures/reducer';
 import {
 	selectCrossMarginBalanceInfo,
 	selectMarketAsset,
@@ -40,7 +40,7 @@ import MarginInfoBox from './CrossMarginInfoBox';
 
 type DepositMarginModalProps = {
 	onDismiss(): void;
-	editMode: 'existing_position' | 'next_trade';
+	editMode: 'existing_position' | 'new_position';
 };
 
 export default function EditLeverageModal({ onDismiss, editMode }: DepositMarginModalProps) {
@@ -48,11 +48,21 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 	const { handleRefetch } = useRefetchContext();
 	const {
 		selectedLeverage,
-		onLeverageChange,
 		resetTradeState,
 		submitCrossMarginOrder,
+		onTradeAmountChange,
 		onChangeOpenPosLeverage,
+		tradePrice,
 	} = useFuturesContext();
+
+	const onLeverageChange = useCallback(
+		(leverage: number) => {
+			onTradeAmountChange('', tradePrice, 'usd', {
+				crossMarginLeverage: wei(leverage),
+			});
+		},
+		[tradePrice, onTradeAmountChange]
+	);
 
 	const balanceInfo = useAppSelector(selectCrossMarginBalanceInfo);
 	const marketAsset = useAppSelector(selectMarketAsset);
@@ -151,7 +161,9 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 			}
 			resetTradeState();
 		} else {
+			// TODO: consolidate leverage states
 			onLeverageChange(leverage);
+			dispatch(setCrossMarginLeverage(String(leverage)));
 			setPreferredLeverage({
 				...preferredLeverage,
 				[marketAsset]: String(leverage),
@@ -173,6 +185,7 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 		setError,
 		handleRefetch,
 		onDismiss,
+		dispatch,
 	]);
 
 	const onClose = () => {
@@ -232,7 +245,7 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 				</SliderInner>
 			</SliderOuter>
 
-			{editMode === 'next_trade' && (
+			{editMode === 'new_position' && (
 				<MaxPosContainer>
 					<Label>{t('futures.market.trade.leverage.modal.max-pos')}</Label>
 					<Label>

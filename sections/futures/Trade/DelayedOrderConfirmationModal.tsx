@@ -15,6 +15,7 @@ import { setOpenModal } from 'state/app/reducer';
 import { modifyIsolatedPosition, modifyIsolatedPositionEstimateGas } from 'state/futures/actions';
 import {
 	selectIsModifyingIsolatedPosition,
+	selectIsolatedPriceImpact,
 	selectIsolatedTradeInputs,
 	selectLeverageSide,
 	selectMarketAsset,
@@ -43,7 +44,8 @@ const NextPriceConfirmationModal: FC = () => {
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const dispatch = useAppDispatch();
 
-	const { nativeSizeDelta, priceImpactDelta } = useAppSelector(selectIsolatedTradeInputs);
+	const { nativeSize } = useAppSelector(selectIsolatedTradeInputs);
+	const priceImpact = useAppSelector(selectIsolatedPriceImpact);
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
@@ -58,16 +60,16 @@ const NextPriceConfirmationModal: FC = () => {
 	);
 
 	useEffect(() => {
-		if (nativeSizeDelta !== '') {
+		if (nativeSize !== '') {
 			dispatch(
 				modifyIsolatedPositionEstimateGas({
-					sizeDelta: nativeSizeDelta,
-					priceImpactDelta: priceImpactDelta,
+					sizeDelta: nativeSize,
+					priceImpactDelta: priceImpact,
 					delayed: true,
 				})
 			);
 		}
-	}, [nativeSizeDelta, priceImpactDelta, dispatch]);
+	}, [nativeSize, priceImpact, dispatch]);
 
 	const transactionFee = useMemo(() => gasEstimate?.cost ?? zeroBN, [gasEstimate?.cost]);
 
@@ -75,13 +77,13 @@ const NextPriceConfirmationModal: FC = () => {
 
 	const orderDetails = useMemo(() => {
 		const newSize =
-			nativeSizeDelta !== ''
+			nativeSize !== ''
 				? leverageSide === PositionSide.LONG
-					? wei(nativeSizeDelta)
-					: wei(nativeSizeDelta).neg()
+					? wei(nativeSize)
+					: wei(nativeSize).neg()
 				: wei(0);
 		return { newSize, size: (positionSize ?? zeroBN).add(newSize).abs() };
-	}, [leverageSide, nativeSizeDelta, positionSize]);
+	}, [leverageSide, nativeSize, positionSize]);
 
 	// TODO: check these fees
 	const { commitDeposit } = useMemo(
@@ -141,8 +143,8 @@ const NextPriceConfirmationModal: FC = () => {
 	const handleConfirmOrder = async () => {
 		dispatch(
 			modifyIsolatedPosition({
-				sizeDelta: nativeSizeDelta,
-				priceImpactDelta: priceImpactDelta,
+				sizeDelta: nativeSize,
+				priceImpactDelta: priceImpact,
 				delayed: true,
 			})
 		);

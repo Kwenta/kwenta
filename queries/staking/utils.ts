@@ -1,6 +1,8 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 
+import { formatShortDate, toJSTimestamp } from 'utils/formatters/date';
 import { zeroBN } from 'utils/formatters/number';
 
 export type TradingRewardProps = {
@@ -56,10 +58,7 @@ export function getEpochDetails(networkId: number, epoch: number) {
 		? EPOCH_START[networkId] + WEEK * epoch
 		: EPOCH_START[10];
 	const epochEndTime = currentEpochTime + WEEK;
-	return {
-		epochStart: currentEpochTime,
-		epochEnd: epochEndTime,
-	};
+	return { epochStart: currentEpochTime, epochEnd: epochEndTime };
 }
 
 export function getApy(totalStakedBalance: number, weekCounter: number) {
@@ -69,3 +68,11 @@ export function getApy(totalStakedBalance: number, weekCounter: number) {
 		? yearlyRewards.mul(wei(STAKING_REWARDS_RATIO)).div(wei(totalStakedBalance))
 		: zeroBN;
 }
+
+export const parseEpochData = (index: number, networkId?: NetworkId) => {
+	const { epochStart, epochEnd } = getEpochDetails(networkId ?? 10, index);
+	const startDate = formatShortDate(new Date(toJSTimestamp(epochStart)));
+	const endDate = formatShortDate(new Date(toJSTimestamp(epochEnd)));
+	const label = `Epoch ${index}: ${startDate} - ${endDate}`;
+	return { period: index, start: epochStart, end: epochEnd, label };
+};

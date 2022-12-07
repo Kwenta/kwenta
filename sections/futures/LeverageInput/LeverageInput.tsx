@@ -1,4 +1,5 @@
-import { FC, useMemo, useState } from 'react';
+import { wei } from '@synthetixio/wei';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -8,32 +9,47 @@ import CustomNumericInput from 'components/Input/CustomNumericInput';
 import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import {
-	selectIsolatedTradeInputs,
+	selectMarketAssetRate,
 	selectMarketInfo,
 	selectMaxLeverage,
 	selectNextPriceDisclaimer,
 	selectPosition,
+	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { leverageValueCommittedState, orderTypeState } from 'store/futures';
 import { FlexDivCol, FlexDivRow } from 'styles/common';
-import { truncateNumbers } from 'utils/formatters/number';
+import { truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import LeverageSlider from '../LeverageSlider';
 
 const LeverageInput: FC = () => {
 	const { t } = useTranslation();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
+	const [leverageInput, setLeverageInput] = useState<string>('0');
+	const { leverage } = useAppSelector(selectTradeSizeInputs);
 	const orderType = useRecoilValue(orderTypeState);
 	const isDisclaimerDisplayed = useAppSelector(selectNextPriceDisclaimer);
 	const setIsLeverageValueCommitted = useSetRecoilState(leverageValueCommittedState);
 	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const maxLeverage = useAppSelector(selectMaxLeverage);
+	const marketAssetRate = useAppSelector(selectMarketAssetRate);
 
-	const { leverage } = useAppSelector(selectIsolatedTradeInputs);
+	const { onTradeAmountChange } = useFuturesContext();
 
-	const { onLeverageChange } = useFuturesContext();
+	const onLeverageChange = useCallback(
+		(newLeverage: number) => {
+			const remainingMargin = position?.remainingMargin ?? zeroBN;
+			const newTradeSize =
+				marketAssetRate.eq(0) || remainingMargin.eq(0)
+					? ''
+					: wei(newLeverage).mul(remainingMargin).div(marketAssetRate).toString();
+			setLeverageInput(truncateNumbers(newLeverage, DEFAULT_FIAT_DECIMALS));
+			onTradeAmountChange(newTradeSize, marketAssetRate, 'native');
+		},
+		[position?.remainingMargin, marketAssetRate, onTradeAmountChange]
+	);
 
 	const modeButton = useMemo(() => {
 		return (
@@ -55,7 +71,11 @@ const LeverageInput: FC = () => {
 	const truncateMaxLeverage = maxLeverage.gte(0)
 		? truncateNumbers(maxLeverage, DEFAULT_FIAT_DECIMALS)
 		: 10;
-	const truncateLeverage = truncateNumbers(leverage, DEFAULT_FIAT_DECIMALS);
+
+	const truncateLeverage = useMemo(
+		() => truncateNumbers(wei(leverageInput ?? 0), DEFAULT_FIAT_DECIMALS),
+		[leverageInput]
+	);
 
 	return (
 		<LeverageInputWrapper>
