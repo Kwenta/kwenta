@@ -25,5 +25,5 @@ export const currentThemeState = atom<ThemeName>({
 
 export const activePositionsTabState = atom<PositionsTab>({
 	key: getUIKey('activePositionsTabState'),
-	default: PositionsTab.CROSS_MARGIN,
+	default: PositionsTab.ISOLATED_MARGIN,
 });
