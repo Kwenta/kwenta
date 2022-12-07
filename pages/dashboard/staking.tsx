@@ -6,7 +6,7 @@ import DashboardLayout from 'sections/dashboard/DashboardLayout';
 import StakingPortfolio, { StakeTab } from 'sections/dashboard/Stake/StakingPortfolio';
 import StakingTabs from 'sections/dashboard/Stake/StakingTabs';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { fetchEscrowData, fetchStakingData } from 'state/staking/actions';
+import { fetchClaimableRewards, fetchEscrowData, fetchStakingData } from 'state/staking/actions';
 
 type StakingComponent = React.FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
@@ -20,6 +20,7 @@ const StakingPage: StakingComponent = () => {
 		if (!!walletAddress) {
 			dispatch(fetchStakingData());
 			dispatch(fetchEscrowData());
+			dispatch(fetchClaimableRewards());
 		}
 	}, [dispatch, walletAddress]);
 
