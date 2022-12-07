@@ -58,13 +58,15 @@ const NextPriceConfirmationModal: FC = () => {
 	);
 
 	useEffect(() => {
-		dispatch(
-			modifyIsolatedPositionEstimateGas({
-				sizeDelta: nativeSizeDelta,
-				priceImpactDelta: priceImpactDelta,
-				delayed: true,
-			})
-		);
+		if (nativeSizeDelta !== '') {
+			dispatch(
+				modifyIsolatedPositionEstimateGas({
+					sizeDelta: nativeSizeDelta,
+					priceImpactDelta: priceImpactDelta,
+					delayed: true,
+				})
+			);
+		}
 	}, [nativeSizeDelta, priceImpactDelta, dispatch]);
 
 	const transactionFee = useMemo(() => gasEstimate?.cost ?? zeroBN, [gasEstimate?.cost]);
