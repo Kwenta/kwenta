@@ -54,7 +54,7 @@ const OpenOrdersTable: React.FC = () => {
 				}),
 				timeToExecution: countdownTimers ? countdownTimers[o.marketKey]?.timeToExecution : null,
 				timePastExecution: countdownTimers ? countdownTimers[o.marketKey]?.timePastExecution : null,
-				show: !!countdownTimers,
+				show: !!countdownTimers && countdownTimers[o.marketKey],
 				isStale: countdownTimers
 					? countdownTimers[o.marketKey]?.timeToExecution === 0 &&
 					  countdownTimers[o.marketKey]?.timePastExecution > 60

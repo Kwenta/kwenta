@@ -35,12 +35,16 @@ import { refetchWithComparator } from 'utils/queries';
 
 import {
 	handleTransactionError,
+	setCrossMarginTradeInputs,
 	setCrossMarginTradePreview,
+	setIsolatedMarginTradeInputs,
 	setIsolatedTradePreview,
 	setTransaction,
 	setTransactionEstimate,
 	updateTransactionHash,
 	updateTransactionStatus,
+	ZERO_STATE_CM_TRADE_INPUTS,
+	ZERO_STATE_TRADE_INPUTS,
 } from './reducer';
 import {
 	selectFuturesAccount,
@@ -282,6 +286,14 @@ export const fetchCrossMarginTradePreview = createAsyncThunk<
 	}
 });
 
+export const clearTradeInputs = createAsyncThunk<void, void, ThunkConfig>(
+	'futures/clearTradeInputs',
+	async (_, { dispatch }) => {
+		dispatch(setIsolatedMarginTradeInputs(ZERO_STATE_TRADE_INPUTS));
+		dispatch(setCrossMarginTradeInputs(ZERO_STATE_CM_TRADE_INPUTS));
+	}
+);
+
 export const clearTradePreviews = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/clearTradePreviews',
 	async (_, { dispatch }) => {
@@ -418,6 +430,7 @@ export const modifyIsolatedPosition = createAsyncThunk<
 			dispatch(updateTransactionHash(tx.hash));
 			dispatch(clearTradePreviews());
 			await tx.wait();
+			dispatch(clearTradeInputs());
 			dispatch(refetchPosition('isolated_margin'));
 			dispatch(setOpenModal(null));
 			// TODO: More reliable balance updates

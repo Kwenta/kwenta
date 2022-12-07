@@ -40,7 +40,7 @@ export const usePollMarketFuturesData = () => {
 	});
 	// TODO: Priority to optimise
 	usePollAction('fetchOpenOrders', fetchOpenOrders, {
-		dependencies: [networkId, wallet],
+		dependencies: [networkId, wallet, markets.length],
 		intervalTime: 10000,
 		disabled: !wallet,
 	});

@@ -54,7 +54,7 @@ export const ZERO_STATE_TRADE_INPUTS = {
 	leverage: '',
 };
 
-const ZERO_STATE_CM_TRADE_INPUTS = {
+export const ZERO_STATE_CM_TRADE_INPUTS = {
 	...ZERO_STATE_TRADE_INPUTS,
 	leverage: '',
 };
