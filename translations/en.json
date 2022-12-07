@@ -890,6 +890,7 @@
 						"size": "Size",
 						"size-price": "Size/Price",
 						"reserved-margin": "Reserved margin",
+						"commit-deposit": "Commit Deposit",
 						"price": "Price",
 						"status": "Status",
 						"parameters": "Parameters",

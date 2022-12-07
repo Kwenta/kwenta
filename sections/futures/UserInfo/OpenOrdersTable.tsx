@@ -144,7 +144,7 @@ const OpenOrdersTable: React.FC = () => {
 						{
 							Header: (
 								<StyledTableHeader>
-									{t('futures.market.user.open-orders.table.reserved-margin')}
+									{t('futures.market.user.open-orders.table.commit-deposit')}
 								</StyledTableHeader>
 							),
 							accessor: 'marginDelta',

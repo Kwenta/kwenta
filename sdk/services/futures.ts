@@ -523,7 +523,7 @@ export default class FuturesService {
 			? (root.submitDelayedOrderWithTracking(
 					sizeDelta.toBN(),
 					priceImpactDelta.toBN(),
-					wei(DEFAULT_DESIRED_TIMEDELTA, 0).toBN(),
+					wei(DEFAULT_DESIRED_TIMEDELTA).toBN(),
 					KWENTA_TRACKING_CODE
 			  ) as any)
 			: (root.modifyPositionWithTracking(
