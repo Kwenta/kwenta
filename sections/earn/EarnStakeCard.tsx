@@ -9,7 +9,6 @@ const EarnStakeCard: FC = () => {
 	const dispatch = useAppDispatch();
 	const lpTokenBalance = useAppSelector(selectLPTokenBalance);
 	const balance = useAppSelector(selectBalance);
-
 	const isApproved = useAppSelector(selectIsApproved);
 
 	const handleApprove = useCallback(() => {
