@@ -1,30 +1,29 @@
 import { useCallback, useMemo, useState } from 'react';
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
-import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
 import { TableCellHead } from 'components/Table/Table';
-import { monitorTransaction } from 'contexts/RelayerContext';
-import { useStakingContext } from 'contexts/StakingContext';
-import { EscrowRow } from 'hooks/useStakingData';
-import { truncateNumbers } from 'utils/formatters/number';
+import type { EscrowData } from 'sdk/services/kwentaToken';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { vestEscrowedRewards } from 'state/staking/actions';
+import { truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import { StakingCard } from './common';
 import VestConfirmationModal from './VestConfirmationModal';
 
 const EscrowTable = () => {
 	const { t } = useTranslation();
-	const { escrowRows, rewardEscrowContract } = useStakingContext();
-	const [checkedState, setCheckedState] = useState(escrowRows.map((_) => false));
+	const dispatch = useAppDispatch();
+	const escrowData = useAppSelector(({ staking }) => staking.escrowData);
+	const [checkedState, setCheckedState] = useState(escrowData.map((_) => false));
 	const [checkAllState, setCheckAllState] = useState(false);
-	const [openConfirmModal, setOpenConfirmModal] = useState(false);
+	const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
 
 	const handleOnChange = useCallback(
-		(position: number) => {
+		(position: number) => () => {
 			checkedState[position] = !checkedState[position];
 			setCheckedState([...checkedState]);
 		},
@@ -33,77 +32,68 @@ const EscrowTable = () => {
 
 	const selectAll = useCallback(() => {
 		if (checkAllState) {
-			setCheckedState(escrowRows.map((_) => false));
+			setCheckedState(escrowData.map((_) => false));
 			setCheckAllState(false);
 		} else {
-			setCheckedState(escrowRows.map((_) => true));
+			setCheckedState(escrowData.map((_) => true));
 			setCheckAllState(true);
 		}
-	}, [checkAllState, escrowRows]);
+	}, [checkAllState, escrowData]);
 
 	const columnsDeps = useMemo(() => [checkedState], [checkedState]);
 
-	const totalVestable = useMemo(
+	const { totalVestable, totalFee } = useMemo(
 		() =>
-			checkedState.reduce((acc, current, index) => {
-				if (current === true) {
-					return acc + escrowRows[index]?.vestable ?? 0;
-				}
-				return acc;
-			}, 0),
-		[checkedState, escrowRows]
+			checkedState.reduce(
+				(acc, current, index) => {
+					if (current) {
+						acc.totalVestable = acc.totalVestable.add(escrowData[index].vestable);
+						acc.totalFee = acc.totalFee.add(escrowData[index].fee);
+					}
+
+					return acc;
+				},
+				{ totalVestable: zeroBN, totalFee: zeroBN }
+			),
+		[checkedState, escrowData]
 	);
 
-	const totalFee = useMemo(
-		() =>
-			checkedState.reduce((acc, current, index) => {
-				if (current === true) {
-					return acc + escrowRows[index]?.fee ?? 0;
-				}
-				return acc;
-			}, 0),
-		[checkedState, escrowRows]
-	);
+	const { ids, vestEnabled } = useMemo(() => {
+		const ids = escrowData.filter((_, i) => !!checkedState[i]).map((d) => d.id);
+		const vestEnabled = ids.length > 0;
 
-	const { config } = usePrepareContractWrite({
-		...rewardEscrowContract,
-		functionName: 'vest',
-		args: [escrowRows.filter((d, index) => !!checkedState[index]).map((d) => d.id)],
-		enabled: escrowRows.filter((d, index) => !!checkedState[index]).map((d) => d.id).length > 0,
-	});
-
-	const { writeAsync: vest } = useContractWrite(config);
+		return { ids, vestEnabled };
+	}, [escrowData, checkedState]);
 
 	const handleVest = useCallback(async () => {
-		const tx = await vest?.();
-		setOpenConfirmModal(false);
-		monitorTransaction({
-			txHash: tx?.hash ?? '',
-			onTxConfirmed: () => {
-				setCheckedState(escrowRows.map((_) => false));
-				setCheckAllState(false);
-			},
-		});
-	}, [escrowRows, vest]);
+		if (vestEnabled) {
+			await dispatch(vestEscrowedRewards(ids));
+			setCheckedState(escrowData.map((_) => false));
+			setCheckAllState(false);
+		}
+
+		setConfirmModalOpen(false);
+	}, [dispatch, escrowData, ids, vestEnabled]);
+
+	const openConfirmModal = useCallback(() => setConfirmModalOpen(true), []);
+	const closeConfirmModal = useCallback(() => setConfirmModalOpen(false), []);
 
 	return (
 		<EscrowTableContainer $noPadding>
 			<DesktopOnlyView>
 				<StyledTable
-					data={escrowRows}
+					data={escrowData}
 					showPagination={false}
 					columnsDeps={columnsDeps}
 					columns={[
 						{
-							Header: () => (
-								<input type="checkbox" checked={checkAllState} onChange={() => selectAll()} />
-							),
-							Cell: (cellProps: CellProps<EscrowRow>) => (
+							Header: () => <input type="checkbox" checked={checkAllState} onChange={selectAll} />,
+							Cell: (cellProps: CellProps<EscrowData>) => (
 								<input
 									key={cellProps.row.index}
 									type="checkbox"
 									checked={checkedState[cellProps.row.index]}
-									onChange={() => handleOnChange(cellProps.row.index)}
+									onChange={handleOnChange(cellProps.row.index)}
 								/>
 							),
 							accessor: 'selected',
@@ -111,7 +101,7 @@ const EscrowTable = () => {
 						},
 						{
 							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.date')}</TableHeader>,
-							Cell: (cellProps: CellProps<EscrowRow>) => (
+							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{cellProps.row.original.date}</TableCell>
 							),
 							accessor: 'date',
@@ -123,7 +113,7 @@ const EscrowTable = () => {
 									<div>{t('dashboard.stake.tabs.escrow.time-until-vestable')}</div>
 								</TableHeader>
 							),
-							Cell: (cellProps: CellProps<EscrowRow>) => (
+							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{cellProps.row.original.time}</TableCell>
 							),
 							accessor: 'timeUntilVestable',
@@ -135,7 +125,7 @@ const EscrowTable = () => {
 									<div>{t('dashboard.stake.tabs.escrow.immediately-vestable')}</div>
 								</TableHeader>
 							),
-							Cell: (cellProps: CellProps<EscrowRow>) => (
+							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{truncateNumbers(cellProps.row.original.vestable, 4)}</TableCell>
 							),
 							accessor: 'immediatelyVestable',
@@ -143,7 +133,7 @@ const EscrowTable = () => {
 						},
 						{
 							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.amount')}</TableHeader>,
-							Cell: (cellProps: CellProps<EscrowRow>) => (
+							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{truncateNumbers(cellProps.row.original.amount, 4)}</TableCell>
 							),
 							accessor: 'amount',
@@ -155,7 +145,7 @@ const EscrowTable = () => {
 									<div>{t('dashboard.stake.tabs.escrow.early-vest-fee')}</div>
 								</TableHeader>
 							),
-							Cell: (cellProps: CellProps<EscrowRow>) => (
+							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{truncateNumbers(cellProps.row.original.fee, 4)}</TableCell>
 							),
 							accessor: 'earlyVestFee',
@@ -163,7 +153,7 @@ const EscrowTable = () => {
 						},
 						{
 							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.status')}</TableHeader>,
-							Cell: (cellProps: CellProps<EscrowRow>) => (
+							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{cellProps.row.original.status}</TableCell>
 							),
 							accessor: 'status',
@@ -174,19 +164,17 @@ const EscrowTable = () => {
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<StyledTable
-					data={escrowRows}
+					data={escrowData}
 					columnsDeps={columnsDeps}
 					columns={[
 						{
-							Header: () => (
-								<input type="checkbox" checked={checkAllState} onChange={() => selectAll()} />
-							),
-							Cell: (cellProps: CellProps<EscrowRow>) => (
+							Header: () => <input type="checkbox" checked={checkAllState} onChange={selectAll} />,
+							Cell: (cellProps: CellProps<EscrowData>) => (
 								<input
 									key={cellProps.row.index}
 									type="checkbox"
 									checked={checkedState[cellProps.row.index]}
-									onChange={() => handleOnChange(cellProps.row.index)}
+									onChange={handleOnChange(cellProps.row.index)}
 								/>
 							),
 							accessor: 'selected',
@@ -194,7 +182,7 @@ const EscrowTable = () => {
 						},
 						{
 							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.amount')}</TableHeader>,
-							Cell: (cellProps: CellProps<EscrowRow>) => (
+							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{truncateNumbers(cellProps.row.original.amount, 4)}</TableCell>
 							),
 							accessor: 'amount',
@@ -204,7 +192,7 @@ const EscrowTable = () => {
 							Header: () => (
 								<TableHeader>{t('dashboard.stake.tabs.escrow.early-vest-fee')}</TableHeader>
 							),
-							Cell: (cellProps: CellProps<EscrowRow>) => (
+							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{truncateNumbers(cellProps.row.original.fee, 4)}</TableCell>
 							),
 							accessor: 'earlyVestFee',
@@ -212,7 +200,7 @@ const EscrowTable = () => {
 						},
 						{
 							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.status')}</TableHeader>,
-							Cell: (cellProps: CellProps<EscrowRow>) => (
+							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{cellProps.row.original.status}</TableCell>
 							),
 							accessor: 'status',
@@ -226,26 +214,25 @@ const EscrowTable = () => {
 					<div>
 						<div className="stat-title">{t('dashboard.stake.tabs.escrow.total')}</div>
 						<div className="stat-value">
-							{truncateNumbers(totalVestable ?? 0, 4)}{' '}
+							{truncateNumbers(totalVestable, 4)}{' '}
 							{t('dashboard.stake.tabs.stake-table.kwenta-token')}
 						</div>
 					</div>
 					<div>
 						<div className="stat-title">{t('dashboard.stake.tabs.escrow.fee')}</div>
 						<div className="stat-value">
-							{truncateNumbers(totalFee ?? 0, 4)}{' '}
-							{t('dashboard.stake.tabs.stake-table.kwenta-token')}
+							{truncateNumbers(totalFee, 4)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
 						</div>
 					</div>
-					<VestButton disabled={!vest} onClick={() => setOpenConfirmModal(true)}>
+					<VestButton disabled={!vestEnabled} onClick={openConfirmModal}>
 						{t('dashboard.stake.tabs.escrow.vest')}
 					</VestButton>
 				</div>
 			</EscrowStats>
-			{openConfirmModal && (
+			{isConfirmModalOpen && (
 				<VestConfirmationModal
 					totalFee={totalFee}
-					onDismiss={() => setOpenConfirmModal(false)}
+					onDismiss={closeConfirmModal}
 					handleVest={handleVest}
 				/>
 			)}
@@ -311,7 +298,7 @@ const EscrowStats = styled.div`
 	}
 `;
 
-const VestButton = styled.button<{ disabled: boolean }>`
+const VestButton = styled.button`
 	border-width: 1px;
 	border-style: solid;
 	border-color: ${(props) =>

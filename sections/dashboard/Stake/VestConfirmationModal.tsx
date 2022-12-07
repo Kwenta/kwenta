@@ -1,3 +1,4 @@
+import Wei from '@synthetixio/wei';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -11,7 +12,7 @@ import { truncateNumbers } from 'utils/formatters/number';
 
 type Props = {
 	onDismiss(): void;
-	totalFee: number;
+	totalFee: Wei;
 	handleVest(): void;
 };
 
