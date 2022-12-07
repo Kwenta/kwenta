@@ -191,7 +191,7 @@ const OpenOrdersTable: React.FC = () => {
 										>
 											{cellProps.row.original.isExecutable
 												? t('futures.market.user.open-orders.actions.execute')
-												: cellProps.row.original.timeToExecution
+												: !!cellProps.row.original.timeToExecution
 												? `0:${cellProps.row.original.timeToExecution}` // TODO: write function to improve
 												: '...'}
 										</EditButton>
