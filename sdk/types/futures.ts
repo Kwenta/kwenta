@@ -204,6 +204,7 @@ export type DelayedOrder<T = Wei> = {
 	account: string;
 	asset: FuturesMarketAsset;
 	market: string;
+	marketAddress: string;
 	marketKey: FuturesMarketKey;
 	size: T;
 	commitDeposit: T;

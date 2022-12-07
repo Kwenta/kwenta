@@ -243,6 +243,7 @@ export const formatDelayedOrder = (
 	return {
 		account: account,
 		asset: marketInfo.asset,
+		marketAddress: marketInfo.market,
 		market: getMarketName(marketInfo.asset),
 		marketKey: marketInfo.marketKey,
 		size: wei(sizeDelta),

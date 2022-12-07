@@ -1,5 +1,5 @@
 import useSynthetixQueries from '@synthetixio/queries';
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
@@ -10,14 +10,13 @@ import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
-import { useRefetchContext } from 'contexts/RefetchContext';
-import { monitorTransaction } from 'contexts/RelayerContext';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { PositionSide } from 'queries/futures/types';
 import { DelayedOrder } from 'sdk/types/futures';
+import { cancelDelayedOrder } from 'state/futures/actions';
 import { selectMarketAsset, selectOpenOrders } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { selectedFuturesAddressState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { formatCurrency, formatDollars } from 'utils/formatters/number';
@@ -28,9 +27,9 @@ import OrderDrawer from '../MobileTrade/drawers/OrderDrawer';
 const OpenOrdersTable: React.FC = () => {
 	const { t } = useTranslation();
 	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
-	const { handleRefetch } = useRefetchContext();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const { switchToL2 } = useNetworkSwitcher();
+	const dispatch = useAppDispatch();
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 
@@ -62,27 +61,6 @@ const OpenOrdersTable: React.FC = () => {
 		synthetixTxCb
 	);
 
-	const handleTx = useCallback(
-		(txHash: string) => {
-			monitorTransaction({
-				txHash: txHash,
-				onTxConfirmed: () => {
-					handleRefetch('new-order');
-				},
-			});
-		},
-		[handleRefetch]
-	);
-
-	const onCancel = useCallback(
-		async (order: DelayedOrder | undefined) => {
-			if (!order) return;
-			// setCancelling(order.id);
-			// TODO: Dispatch cancel order
-		},
-		[handleTx]
-	);
-
 	const rowsData = useMemo(() => {
 		const ordersWithCancel = openOrders
 			.map((o) => ({
@@ -92,7 +70,9 @@ const OpenOrdersTable: React.FC = () => {
 					minDecimals: o.size.abs().lt(0.01) ? 4 : 2,
 				}),
 				totalDeposit: o.commitDeposit.add(o.keeperDeposit),
-				onCancel: onCancel(o),
+				onCancel: () => {
+					dispatch(cancelDelayedOrder(o.marketAddress));
+				},
 			}))
 			.sort((a, b) => {
 				return b.asset === marketAsset && a.asset !== marketAsset
@@ -102,7 +82,7 @@ const OpenOrdersTable: React.FC = () => {
 					: -1;
 			});
 		return ordersWithCancel;
-	}, [openOrders, cancelling, marketAsset, onCancel]);
+	}, [openOrders, marketAsset, dispatch]);
 
 	return (
 		<>
@@ -208,17 +188,17 @@ const OpenOrdersTable: React.FC = () => {
 							),
 							accessor: 'actions',
 							Cell: (cellProps: CellProps<any>) => {
-								const cancellingRow = cellProps.row.original.isCancelling;
 								return (
 									<div style={{ display: 'flex' }}>
-										<CancelButton disabled={cancellingRow} onClick={cellProps.row.original.cancel}>
+										<CancelButton onClick={cellProps.row.original.onCancel}>
 											{t('futures.market.user.open-orders.actions.cancel')}
 										</CancelButton>
-										{cellProps.row.original.isExecutable && (
+										{/* TODO: Should we allow execution? */}
+										{/* {cellProps.row.original.isExecutable && (
 											<EditButton onClick={() => executeNextPriceOrder.mutate()}>
 												{t('futures.market.user.open-orders.actions.execute')}
 											</EditButton>
-										)}
+										)} */}
 									</div>
 								);
 							},
@@ -291,7 +271,6 @@ const OpenOrdersTable: React.FC = () => {
 					open={!!selectedOrder}
 					order={selectedOrder}
 					closeDrawer={() => setSelectedOrder(undefined)}
-					onCancel={onCancel}
 					onExecute={executeNextPriceOrder.mutate}
 				/>
 			</MobileOrTabletView>

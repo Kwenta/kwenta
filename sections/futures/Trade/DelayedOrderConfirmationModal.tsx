@@ -70,8 +70,11 @@ const NextPriceConfirmationModal: FC = () => {
 
 	const orderDetails = useMemo(() => {
 		const newSize =
-			leverageSide === PositionSide.LONG ? wei(nativeSizeDelta) : wei(nativeSizeDelta).neg();
-
+			nativeSizeDelta !== ''
+				? leverageSide === PositionSide.LONG
+					? wei(nativeSizeDelta)
+					: wei(nativeSizeDelta).neg()
+				: wei(0);
 		return { newSize, size: (positionSize ?? zeroBN).add(newSize).abs() };
 	}, [leverageSide, nativeSizeDelta, positionSize]);
 

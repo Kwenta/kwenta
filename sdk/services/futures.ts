@@ -532,6 +532,11 @@ export default class FuturesService {
 					KWENTA_TRACKING_CODE
 			  ) as any);
 	}
+
+	public async cancelDelayedOrder(marketAddress: string, account: string) {
+		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
+		return market.cancelDelayedOrder(account);
+	}
 }
 
 type TxReturn<T extends boolean = false> = Promise<
