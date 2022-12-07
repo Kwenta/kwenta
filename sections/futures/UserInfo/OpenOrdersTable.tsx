@@ -1,8 +1,6 @@
-import useSynthetixQueries from '@synthetixio/queries';
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import Badge from 'components/Badge';
@@ -14,11 +12,9 @@ import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { PositionSide } from 'queries/futures/types';
 import { DelayedOrder } from 'sdk/types/futures';
-import { cancelDelayedOrder } from 'state/futures/actions';
+import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
 import { selectMarketAsset, selectOpenOrders } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { selectedFuturesAddressState } from 'store/futures';
-import { gasSpeedState } from 'store/wallet';
 import { formatCurrency, formatDollars } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 
@@ -26,40 +22,16 @@ import OrderDrawer from '../MobileTrade/drawers/OrderDrawer';
 
 const OpenOrdersTable: React.FC = () => {
 	const { t } = useTranslation();
-	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
-	const ethGasPriceQuery = useEthGasPriceQuery();
 	const { switchToL2 } = useNetworkSwitcher();
 	const dispatch = useAppDispatch();
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 
 	const isL2 = useIsL2();
-	const gasSpeed = useRecoilValue(gasSpeedState);
 	const openOrders = useAppSelector(selectOpenOrders);
-	const selectedFuturesAddress = useRecoilValue(selectedFuturesAddressState);
 
 	const [cancelling, setCancelling] = useState<string | null>(null);
 	const [selectedOrder, setSelectedOrder] = useState<DelayedOrder | undefined>();
-
-	const gasPrice = ethGasPriceQuery.data?.[gasSpeed];
-
-	const synthetixTxCb = {
-		enabled: !!selectedFuturesAddress,
-		onError: () => {
-			setCancelling(null);
-		},
-		onSettled: () => {
-			setCancelling(null);
-		},
-	};
-
-	const executeNextPriceOrder = useSynthetixTxn(
-		`FuturesMarket${getDisplayAsset(marketAsset)}`,
-		`executeNextPriceOrder`,
-		[selectedFuturesAddress],
-		gasPrice,
-		synthetixTxCb
-	);
 
 	const rowsData = useMemo(() => {
 		const ordersWithCancel = openOrders
@@ -72,6 +44,9 @@ const OpenOrdersTable: React.FC = () => {
 				totalDeposit: o.commitDeposit.add(o.keeperDeposit),
 				onCancel: () => {
 					dispatch(cancelDelayedOrder(o.marketAddress));
+				},
+				onExecute: () => {
+					dispatch(executeDelayedOrder(o.marketAddress));
 				},
 			}))
 			.sort((a, b) => {
@@ -193,12 +168,11 @@ const OpenOrdersTable: React.FC = () => {
 										<CancelButton onClick={cellProps.row.original.onCancel}>
 											{t('futures.market.user.open-orders.actions.cancel')}
 										</CancelButton>
-										{/* TODO: Should we allow execution? */}
-										{/* {cellProps.row.original.isExecutable && (
-											<EditButton onClick={() => executeNextPriceOrder.mutate()}>
-												{t('futures.market.user.open-orders.actions.execute')}
-											</EditButton>
-										)} */}
+										{/* {cellProps.row.original.isExecutable && ( */}
+										<EditButton onClick={cellProps.row.original.onExecute}>
+											{t('futures.market.user.open-orders.actions.execute')}
+										</EditButton>
+										{/* )} */}
 									</div>
 								);
 							},
@@ -271,7 +245,6 @@ const OpenOrdersTable: React.FC = () => {
 					open={!!selectedOrder}
 					order={selectedOrder}
 					closeDrawer={() => setSelectedOrder(undefined)}
-					onExecute={executeNextPriceOrder.mutate}
 				/>
 			</MobileOrTabletView>
 		</>

@@ -229,7 +229,7 @@ export const fetchOpenOrders = createAsyncThunk<
 		throw new Error('No market info');
 	}
 	const order = await sdk.futures.getDelayedOrder(account, marketInfo);
-	const orders = [order].filter((o) => o.size.gt(0));
+	const orders = [order].filter((o) => o.size.abs().gt(0));
 	return {
 		orders: serializeDelayedOrders(orders),
 		account: account,
@@ -467,6 +467,30 @@ export const cancelDelayedOrder = createAsyncThunk<void, string, ThunkConfig>(
 				})
 			);
 			const tx = await sdk.futures.cancelDelayedOrder(marketAddress, account);
+			dispatch(updateTransactionHash(tx.hash));
+			await tx.wait();
+			dispatch(fetchOpenOrders());
+		} catch (err) {
+			dispatch(handleTransactionError(err.message));
+			throw err;
+		}
+	}
+);
+
+export const executeDelayedOrder = createAsyncThunk<void, string, ThunkConfig>(
+	'futures/executeDelayedOrder',
+	async (marketAddress, { getState, dispatch, extra: { sdk } }) => {
+		const account = selectFuturesAccount(getState());
+		if (!account) throw new Error('No wallet connected');
+		try {
+			dispatch(
+				setTransaction({
+					status: TransactionStatus.AwaitingExecution,
+					type: 'executeDelayed_isolated',
+					hash: null,
+				})
+			);
+			const tx = await sdk.futures.executeDelayedOrder(marketAddress, account);
 			dispatch(updateTransactionHash(tx.hash));
 			await tx.wait();
 			dispatch(fetchOpenOrders());

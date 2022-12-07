@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components';
 import Button from 'components/Button';
 import { PositionSide } from 'queries/futures/types';
 import { DelayedOrder } from 'sdk/types/futures';
-import { cancelDelayedOrder } from 'state/futures/actions';
+import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
 import { useAppDispatch } from 'state/hooks';
 import { formatCurrency } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
@@ -16,16 +16,22 @@ type OrderDrawerProps = {
 	open: boolean;
 	order: DelayedOrder | undefined;
 	closeDrawer(): void;
-	onExecute(): void;
 };
 
-const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer, onExecute }) => {
+const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer }) => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
 	const onCancel = useCallback(
 		(order) => {
 			dispatch(cancelDelayedOrder(order.marketAddress));
+		},
+		[dispatch]
+	);
+
+	const onExecute = useCallback(
+		(order) => {
+			dispatch(executeDelayedOrder(order.marketAddress));
 		},
 		[dispatch]
 	);
@@ -64,7 +70,7 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer, onE
 			buttons={
 				<>
 					{order?.isExecutable && (
-						<ExecuteButton onClick={() => onExecute()}>Execute</ExecuteButton>
+						<ExecuteButton onClick={() => onExecute(order)}>Execute</ExecuteButton>
 					)}
 					<CancelOrderButton onClick={() => onCancel(order)}>Cancel</CancelOrderButton>
 				</>

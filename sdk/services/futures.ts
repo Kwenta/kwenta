@@ -537,6 +537,11 @@ export default class FuturesService {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
 		return market.cancelDelayedOrder(account);
 	}
+
+	public async executeDelayedOrder(marketAddress: string, account: string) {
+		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
+		return market.executeDelayedOrder(account);
+	}
 }
 
 type TxReturn<T extends boolean = false> = Promise<
