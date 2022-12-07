@@ -29,6 +29,7 @@ type EpochData = {
 			proof: string[];
 		};
 	};
+	period: number;
 };
 
 export type EscrowData<T = Wei> = {
@@ -374,18 +375,18 @@ export default class KwentaTokenService {
 			);
 
 		const responses: EpochData[] = await Promise.all(
-			fileNames.map(async (fileName) => {
+			fileNames.map(async (fileName, period) => {
 				const response = await client.get(fileName);
-				return response.data;
+				return { ...response.data, period };
 			})
 		);
 
 		const rewards = responses
-			.map((d, period) => {
+			.map((d) => {
 				const reward = d.claims[walletAddress];
 
 				if (reward) {
-					return [reward.index, walletAddress, reward.amount, reward.proof, period];
+					return [reward.index, walletAddress, reward.amount, reward.proof, d.period];
 				}
 
 				return null;
