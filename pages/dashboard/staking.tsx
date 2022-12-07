@@ -18,9 +18,10 @@ const StakingPage: StakingComponent = () => {
 
 	useEffect(() => {
 		if (!!walletAddress) {
-			dispatch(fetchStakingData());
+			dispatch(fetchStakingData()).then(() => {
+				dispatch(fetchClaimableRewards());
+			});
 			dispatch(fetchEscrowData());
-			dispatch(fetchClaimableRewards());
 		}
 	}, [dispatch, walletAddress]);
 
