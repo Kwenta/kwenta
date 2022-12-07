@@ -11,13 +11,9 @@ import { monitorTransaction } from 'contexts/RelayerContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useEstimateGasCost from 'hooks/useEstimateGasCost';
 import { setOpenModal } from 'state/app/reducer';
-import { selectMarketKey } from 'state/futures/selectors';
+import { selectMarketKey, selectTradeSizeInputs } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import {
-	crossMarginMarginDeltaState,
-	futuresTradeInputsState,
-	isAdvancedOrderState,
-} from 'store/futures';
+import { crossMarginMarginDeltaState, isAdvancedOrderState } from 'store/futures';
 import { isUserDeniedError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -33,7 +29,7 @@ export default function TradeConfirmationModalCrossMargin() {
 
 	const marketKey = useAppSelector(selectMarketKey);
 	const crossMarginMarginDelta = useRecoilValue(crossMarginMarginDeltaState);
-	const tradeInputs = useRecoilValue(futuresTradeInputsState);
+	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
 	const isAdvancedOrder = useRecoilValue(isAdvancedOrderState);
 
 	const { submitCrossMarginOrder, resetTradeState, tradeFees } = useFuturesContext();
@@ -43,23 +39,13 @@ export default function TradeConfirmationModalCrossMargin() {
 	const [gasLimit, setGasLimit] = useState<Wei | null>(null);
 
 	useEffect(() => {
-		// TODO: Estimate gas for cross margin
-		// dispatch(
-		// 	modifyIsolatedPositionEstimateGas({
-		// 		sizeDelta: tradeInputs.nativeSizeDelta,
-		// 		useNextPrice: false,
-		// 	})
-		// );
-	}, []);
-
-	useEffect(() => {
 		if (!crossMarginAccountContract) return;
 		const estimateGas = async () => {
 			const newPosition = [
 				{
 					marketKey: formatBytes32String(marketKey),
 					marginDelta: crossMarginMarginDelta.toBN(),
-					sizeDelta: tradeInputs.nativeSizeDelta.toBN(),
+					sizeDelta: nativeSizeDelta.toBN(),
 				},
 			];
 			const { gasPrice, gasLimit } = await estimateEthersContractTxCost(
@@ -77,7 +63,7 @@ export default function TradeConfirmationModalCrossMargin() {
 		crossMarginAccountContract,
 		marketKey,
 		crossMarginMarginDelta,
-		tradeInputs.nativeSizeDelta,
+		nativeSizeDelta,
 		estimateEthersContractTxCost,
 	]);
 

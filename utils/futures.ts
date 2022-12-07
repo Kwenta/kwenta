@@ -469,8 +469,8 @@ export const serializeCrossMarginTradeInputs = (
 ): CrossMarginTradeInputs<string> => {
 	return {
 		...tradeInputs,
-		nativeSizeDelta: tradeInputs.nativeSizeDelta.toString(),
-		susdSizeDelta: tradeInputs.susdSizeDelta.toString(),
+		nativeSize: tradeInputs.nativeSize.toString(),
+		susdSize: tradeInputs.susdSize.toString(),
 	};
 };
 
@@ -479,8 +479,8 @@ export const unserializeCrossMarginTradeInputs = (
 ): CrossMarginTradeInputs => {
 	return {
 		...tradeInputs,
-		nativeSizeDelta: wei(tradeInputs.nativeSizeDelta || 0),
-		susdSizeDelta: wei(tradeInputs.susdSizeDelta || 0),
+		nativeSize: wei(tradeInputs.nativeSize || 0),
+		susdSize: wei(tradeInputs.susdSize || 0),
 	};
 };
 

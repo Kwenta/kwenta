@@ -7,22 +7,22 @@ import InfoBox from 'components/InfoBox';
 import PreviewArrow from 'components/PreviewArrow';
 import { FuturesPotentialTradeDetails } from 'sdk/types/futures';
 import {
+	selectLeverageSide,
 	selectMarketInfo,
 	selectMaxLeverage,
 	selectPosition,
 	selectTradePreview,
+	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { leverageSideState, orderTypeState, futuresTradeInputsState } from 'store/futures';
+import { orderTypeState } from 'store/futures';
 import { computeNPFee } from 'utils/costCalculations';
 import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
-import { PositionSide } from '../types';
-
 const MarketInfoBox: React.FC = () => {
 	const orderType = useRecoilValue(orderTypeState);
-	const leverageSide = useRecoilValue(leverageSideState);
-	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
+	const leverageSide = useAppSelector(selectLeverageSide);
+	const { nativeSizeWei, nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
 	const potentialTrade = useAppSelector(selectTradePreview);
 
 	const marketInfo = useAppSelector(selectMarketInfo);
@@ -46,9 +46,10 @@ const MarketInfoBox: React.FC = () => {
 
 	const positionSize = position?.position?.size ? wei(position?.position?.size) : zeroBN;
 	const orderDetails = useMemo(() => {
-		const newSize =
-			leverageSide === PositionSide.LONG ? wei(nativeSize || 0) : wei(nativeSize || 0).neg();
-		return { newSize, size: (positionSize ?? zeroBN).add(newSize).abs() };
+		return {
+			newSize: nativeSizeWei,
+			size: (positionSize ?? zeroBN).add(nativeSizeDelta).abs(),
+		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [leverageSide, positionSize]);
 
@@ -100,7 +101,7 @@ const MarketInfoBox: React.FC = () => {
 	]);
 
 	const previewTradeData = React.useMemo(() => {
-		const size = wei(nativeSize || zeroBN);
+		const size = nativeSizeDelta.abs();
 
 		const potentialMarginUsage = potentialTrade?.margin.gt(0)
 			? potentialTrade!.margin.sub(previewAvailableMargin).div(potentialTrade!.margin).abs() ??
@@ -117,7 +118,7 @@ const MarketInfoBox: React.FC = () => {
 			buyingPower: potentialBuyingPower.gt(0) ? potentialBuyingPower : zeroBN,
 			marginUsage: potentialMarginUsage.gt(1) ? wei(1) : potentialMarginUsage,
 		};
-	}, [nativeSize, potentialTrade, previewAvailableMargin, maxLeverage]);
+	}, [nativeSizeDelta, potentialTrade, previewAvailableMargin, maxLeverage]);
 
 	return (
 		<StyledInfoBox

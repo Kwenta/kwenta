@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { setOpenModal } from 'state/app/reducer';
 import { modifyIsolatedPosition, modifyIsolatedPositionEstimateGas } from 'state/futures/actions';
@@ -7,9 +6,9 @@ import {
 	selectIsModifyingIsolatedPosition,
 	selectModifyIsolatedGasEstimate,
 	selectTradePreview,
+	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { futuresTradeInputsState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 
 import TradeConfirmationModal from './TradeConfirmationModal';
@@ -18,7 +17,7 @@ export default function TradeConfirmationModalIsolatedMargin() {
 	const dispatch = useAppDispatch();
 
 	const potentialTradeDetails = useAppSelector(selectTradePreview);
-	const { nativeSizeDelta } = useRecoilValue(futuresTradeInputsState);
+	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
 	const submitting = useAppSelector(selectIsModifyingIsolatedPosition);
 	const gasEstimate = useAppSelector(selectModifyIsolatedGasEstimate);
 

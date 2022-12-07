@@ -12,9 +12,10 @@ import {
 	selectCrossMarginBalanceInfo,
 	selectMaxLeverage,
 	selectPosition,
+	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { futuresTradeInputsState, leverageSideState } from 'store/futures';
+import { leverageSideState } from 'store/futures';
 import { FlexDivRow } from 'styles/common';
 
 export default function OrderSizeSlider() {
@@ -22,7 +23,7 @@ export default function OrderSizeSlider() {
 	const { onTradeAmountChange, maxUsdInputAmount, tradePrice } = useFuturesContext();
 
 	const { freeMargin: freeCrossMargin } = useAppSelector(selectCrossMarginBalanceInfo);
-	const { susdSize } = useRecoilValue(futuresTradeInputsState);
+	const { susdSize } = useAppSelector(selectTradeSizeInputs);
 	const aboveMaxLeverage = useAppSelector(selectAboveMaxLeverage);
 	const maxLeverage = useAppSelector(selectMaxLeverage);
 	const leverageSide = useRecoilValue(leverageSideState);

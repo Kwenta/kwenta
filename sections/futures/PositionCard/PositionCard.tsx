@@ -29,7 +29,7 @@ import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 import { formatNumber } from 'utils/formatters/number';
 import { getMarketName, getSynthDescription, isDecimalFour, MarketKeyByAsset } from 'utils/futures';
 
-import EditLeverageModal from '../TradeCrossMargin/EditLeverageModal';
+import EditLeverageModal from '../TradeCrossMargin/EditCrossMarginLeverageModal';
 
 type PositionCardProps = {
 	dashboard?: boolean;

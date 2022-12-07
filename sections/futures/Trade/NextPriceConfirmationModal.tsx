@@ -22,9 +22,10 @@ import {
 	selectModifyIsolatedGasEstimate,
 	selectNextPriceDisclaimer,
 	selectPosition,
+	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { leverageSideState, futuresTradeInputsState } from 'store/futures';
+import { leverageSideState } from 'store/futures';
 import { FlexDivCol, FlexDivCentered } from 'styles/common';
 import { computeNPFee } from 'utils/costCalculations';
 import { zeroBN, formatCurrency, formatDollars } from 'utils/formatters/number';
@@ -42,7 +43,7 @@ const NextPriceConfirmationModal: FC = () => {
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const dispatch = useAppDispatch();
 
-	const { nativeSize, nativeSizeDelta } = useRecoilValue(futuresTradeInputsState);
+	const { nativeSize, nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);

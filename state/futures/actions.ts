@@ -414,6 +414,7 @@ export const modifyIsolatedPosition = createAsyncThunk<
 			await tx.wait();
 			dispatch(refetchPosition('isolated_margin'));
 			dispatch(setOpenModal(null));
+			dispatch(clearTradePreviews());
 			// TODO: More reliable balance updates
 			setTimeout(() => dispatch(fetchBalances()), 1000);
 		} catch (err) {

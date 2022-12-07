@@ -13,12 +13,12 @@ import {
 	selectMarketAssetRate,
 	selectCrossMarginBalanceInfo,
 	selectPosition,
+	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {
 	futuresAccountTypeState,
 	simulatedTradeState,
-	futuresTradeInputsState,
 	orderTypeState,
 	futuresOrderPriceState,
 	leverageSideState,
@@ -37,7 +37,7 @@ type OrderSizingProps = {
 const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	const { onTradeAmountChange, maxUsdInputAmount } = useFuturesContext();
 
-	const { nativeSize, susdSize } = useRecoilValue(futuresTradeInputsState);
+	const { susdSize, nativeSize } = useAppSelector(selectTradeSizeInputs);
 	const simulatedTrade = useRecoilValue(simulatedTradeState);
 
 	const { freeMargin: freeCrossMargin } = useAppSelector(selectCrossMarginBalanceInfo);

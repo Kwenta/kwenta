@@ -7,12 +7,15 @@ import TimerIcon from 'assets/svg/app/timer.svg';
 import InfoBox, { DetailedInfo } from 'components/InfoBox/InfoBox';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { NO_VALUE } from 'constants/placeholder';
-import { selectCrossMarginSettings, selectMarketInfo } from 'state/futures/selectors';
+import {
+	selectCrossMarginSettings,
+	selectMarketInfo,
+	selectTradeSizeInputs,
+} from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {
 	tradeFeesState,
 	orderTypeState,
-	sizeDeltaState,
 	futuresAccountTypeState,
 	dynamicFeeRateState,
 } from 'store/futures';
@@ -23,16 +26,16 @@ const FeeInfoBox: React.FC = () => {
 	const orderType = useRecoilValue(orderTypeState);
 	const fees = useRecoilValue(tradeFeesState);
 	const dynamicFeeRate = useRecoilValue(dynamicFeeRateState);
-	const sizeDelta = useRecoilValue(sizeDeltaState);
+	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
 	const accountType = useRecoilValue(futuresAccountTypeState);
 	const { tradeFee: crossMarginTradeFee, limitOrderFee, stopOrderFee } = useAppSelector(
 		selectCrossMarginSettings
 	);
 	const marketInfo = useAppSelector(selectMarketInfo);
 
-	const { commitDeposit, nextPriceFee } = useMemo(() => computeNPFee(marketInfo, sizeDelta), [
+	const { commitDeposit, nextPriceFee } = useMemo(() => computeNPFee(marketInfo, nativeSizeDelta), [
 		marketInfo,
-		sizeDelta,
+		nativeSizeDelta,
 	]);
 
 	const totalDeposit = useMemo(() => {
@@ -43,9 +46,9 @@ const FeeInfoBox: React.FC = () => {
 		return (nextPriceFee ?? zeroBN).sub(commitDeposit ?? zeroBN);
 	}, [commitDeposit, nextPriceFee]);
 
-	const staticRate = useMemo(() => computeMarketFee(marketInfo, sizeDelta), [
+	const staticRate = useMemo(() => computeMarketFee(marketInfo, nativeSizeDelta), [
 		marketInfo,
-		sizeDelta,
+		nativeSizeDelta,
 	]);
 
 	const orderFeeRate = useMemo(

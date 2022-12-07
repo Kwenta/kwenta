@@ -22,28 +22,18 @@ import {
 	fetchCrossMarginTradePreview,
 } from './actions';
 import {
+	CrossMarginTradeInputs,
 	FundingRate,
 	FuturesState,
 	FuturesTransaction,
+	IsolatedMarginTradeInputs,
 	TransactionEstimationPayload,
 	TransactionEstimations,
 } from './types';
 
-export type CrossMarginTradeInputs = {
-	leverage: string;
-	nativeSizeDelta: string;
-	susdSizeDelta: string;
-	orderPrice?: string | undefined;
-};
-
-export type IsolatedMarginTradeInputs = {
-	nativeSizeDelta: string;
-	susdSizeDelta: string;
-};
-
 const ZERO_STATE_TRADE_INPUTS = {
-	nativeSizeDelta: '',
-	susdSizeDelta: '',
+	nativeSize: '',
+	susdSize: '',
 };
 
 const ZERO_STATE_CM_TRADE_INPUTS = {
@@ -152,8 +142,14 @@ const futuresSlice = createSlice({
 		setTransaction: (state, action: PayloadAction<FuturesTransaction | undefined>) => {
 			state.transaction = action.payload;
 		},
-		setCrossMarginTradeInputs: (state, action: PayloadAction<CrossMarginTradeInputs>) => {
+		setCrossMarginTradeInputs: (state, action: PayloadAction<CrossMarginTradeInputs<string>>) => {
 			state.crossMargin.tradeInputs = action.payload;
+		},
+		setIsolatedMarginTradeInputs: (
+			state,
+			action: PayloadAction<IsolatedMarginTradeInputs<string>>
+		) => {
+			state.isolatedMargin.tradeInputs = action.payload;
 		},
 		updateTransactionStatus: (state, action: PayloadAction<TransactionStatus>) => {
 			if (state.transaction) {
@@ -199,7 +195,7 @@ const futuresSlice = createSlice({
 				error: string | null;
 			}>
 		) => {
-			state.isolatedMargin.tradePreview = action.payload;
+			state.crossMargin.tradePreview = action.payload;
 		},
 	},
 	extraReducers: (builder) => {
@@ -350,4 +346,5 @@ export const {
 	setIsolatedTradePreview,
 	setCrossMarginTradePreview,
 	setCrossMarginLeverage,
+	setIsolatedMarginTradeInputs,
 } = futuresSlice.actions;

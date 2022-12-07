@@ -40,7 +40,7 @@ import MarginInfoBox from './CrossMarginInfoBox';
 
 type DepositMarginModalProps = {
 	onDismiss(): void;
-	editMode: 'existing_position' | 'next_trade';
+	editMode: 'existing_position' | 'new_position';
 };
 
 export default function EditLeverageModal({ onDismiss, editMode }: DepositMarginModalProps) {
@@ -48,11 +48,21 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 	const { handleRefetch } = useRefetchContext();
 	const {
 		selectedLeverage,
-		onLeverageChange,
 		resetTradeState,
 		submitCrossMarginOrder,
+		onTradeAmountChange,
 		onChangeOpenPosLeverage,
+		tradePrice,
 	} = useFuturesContext();
+
+	const onLeverageChange = useCallback(
+		(leverage: number) => {
+			onTradeAmountChange('', tradePrice, 'usd', {
+				crossMarginLeverage: wei(leverage),
+			});
+		},
+		[tradePrice, onTradeAmountChange]
+	);
 
 	const balanceInfo = useAppSelector(selectCrossMarginBalanceInfo);
 	const marketAsset = useAppSelector(selectMarketAsset);
@@ -235,7 +245,7 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 				</SliderInner>
 			</SliderOuter>
 
-			{editMode === 'next_trade' && (
+			{editMode === 'new_position' && (
 				<MaxPosContainer>
 					<Label>{t('futures.market.trade.leverage.modal.max-pos')}</Label>
 					<Label>

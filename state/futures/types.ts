@@ -16,17 +16,17 @@ import { FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
 export type IsolatedMarginOrderType = 'next price' | 'market';
 export type CrossMarginOrderType = 'market' | 'stop market' | 'limit';
 
-export type CrossMarginTradeInputs<T = Wei> = {
+export type TradeSizeInputs<T = Wei> = {
+	nativeSize: T;
+	susdSize: T;
+};
+
+export type CrossMarginTradeInputs<T = Wei> = TradeSizeInputs<T> & {
 	leverage: string;
-	nativeSizeDelta: T;
-	susdSizeDelta: T;
 	orderPrice?: string | undefined;
 };
 
-export type IsolatedMarginTradeInputs<T = Wei> = {
-	nativeSizeDelta: T;
-	susdSizeDelta: T;
-};
+export type IsolatedMarginTradeInputs<T = Wei> = TradeSizeInputs<T>;
 
 export type FundingRateSerialized = {
 	asset: FuturesMarketKey;
@@ -112,6 +112,11 @@ export type CrossMarginSettings<T = Wei> = {
 	stopOrderFee: T;
 };
 
+export type TradePreviewResult = {
+	data: FuturesPotentialTradeDetails<string> | null;
+	error: string | null;
+};
+
 export type CrossMarginState = {
 	tradeInputs: CrossMarginTradeInputs<string>;
 	orderType: CrossMarginOrderType;
@@ -122,10 +127,7 @@ export type CrossMarginState = {
 	showCrossMarginOnboard: boolean;
 	position?: FuturesPosition<string>;
 	balanceInfo: CrossMarginBalanceInfo<string>;
-	tradePreview: {
-		data: FuturesPotentialTradeDetails<string> | null;
-		error: string | null;
-	};
+	tradePreview: TradePreviewResult;
 	account: string | undefined;
 	settings: CrossMarginSettings<string>;
 	positions: {
@@ -140,10 +142,7 @@ export type IsolatedMarginState = {
 	tradeInputs: IsolatedMarginTradeInputs<string>;
 	orderType: IsolatedMarginOrderType;
 	selectedLeverage: string;
-	tradePreview: {
-		data: FuturesPotentialTradeDetails<string> | null;
-		error: string | null;
-	};
+	tradePreview: TradePreviewResult;
 	leverageSide: PositionSide;
 	selectedMarketKey: FuturesMarketKey;
 	selectedMarketAsset: FuturesMarketAsset;
