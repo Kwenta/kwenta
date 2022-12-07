@@ -50,7 +50,7 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 				values={ISOLATED_MARGIN_ORDER_TYPES}
 				selectedIndex={ISOLATED_MARGIN_ORDER_TYPES.indexOf(orderType)}
 				onChange={(oType: number) => {
-					dispatch(setReduxOrderType(oType === 0 ? 'market' : 'delayed'));
+					dispatch(setReduxOrderType(oType === 0 ? 'delayed' : 'market'));
 				}}
 			/>
 

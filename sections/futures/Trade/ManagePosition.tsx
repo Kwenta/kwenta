@@ -6,7 +6,6 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import Error from 'components/Error';
-import Loader from 'components/Loader';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { previewErrorI18n } from 'queries/futures/constants';
 import { PositionSide } from 'queries/futures/types';
@@ -160,7 +159,7 @@ const ManagePosition: React.FC = () => {
 						disabled={!!placeOrderDisabledReason}
 						onClick={() => dispatch(setOpenModal('futures_modify_position_confirm'))}
 					>
-						{previewStatus === FetchStatus.Loading ? <Loader /> : t(placeOrderTranslationKey)}
+						{t(placeOrderTranslationKey)}
 					</PlaceOrderButton>
 
 					<CloseOrderButton

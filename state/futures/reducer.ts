@@ -108,7 +108,7 @@ const initialState: FuturesState = {
 		selectedMarketAsset: FuturesMarketAsset.sETH,
 		selectedMarketKey: FuturesMarketKey.sETH,
 		leverageSide: PositionSide.LONG,
-		orderType: 'market',
+		orderType: 'delayed',
 		tradePreview: {
 			data: null,
 			error: null,
@@ -264,7 +264,6 @@ const futuresSlice = createSlice({
 		// Isolated margin positions
 		builder.addCase(fetchIsolatedMarginPositions.pending, (futuresState) => {
 			futuresState.queryStatuses.isolatedPositions = FetchStatus.Loading;
-			futuresState.isolatedMargin.tradeInputs = ZERO_STATE_TRADE_INPUTS;
 		});
 		builder.addCase(fetchIsolatedMarginPositions.fulfilled, (futuresState, action) => {
 			futuresState.isolatedMargin.positions[action.payload.wallet] = action.payload.positions;

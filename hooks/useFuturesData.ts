@@ -582,7 +582,7 @@ const useFuturesData = () => {
 			selectedAccountType === 'isolated_margin' &&
 			!ISOLATED_MARGIN_ORDER_TYPES.includes(orderType)
 		) {
-			dispatch(setReduxOrderType('market'));
+			dispatch(setReduxOrderType('delayed'));
 		}
 		onTradeAmountChange(tradeInputs.susdSize, tradePrice, 'usd');
 

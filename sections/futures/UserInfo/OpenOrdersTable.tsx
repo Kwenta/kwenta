@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components';
 
 import Badge from 'components/Badge';
 import Currency from 'components/Currency';
+import { MiniLoader } from 'components/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
@@ -15,10 +16,19 @@ import { DelayedOrder } from 'sdk/types/futures';
 import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
 import { selectMarketAsset, selectOpenOrders } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { formatTimer } from 'utils/formatters/date';
 import { formatCurrency, formatDollars } from 'utils/formatters/number';
 import { FuturesMarketKey, getDisplayAsset } from 'utils/futures';
 
 import OrderDrawer from '../MobileTrade/drawers/OrderDrawer';
+
+type CountdownTimers = Record<
+	FuturesMarketKey,
+	{
+		timeToExecution: number;
+		timePastExecution: number;
+	}
+>;
 
 const OpenOrdersTable: React.FC = () => {
 	const { t } = useTranslation();
@@ -31,7 +41,7 @@ const OpenOrdersTable: React.FC = () => {
 	const openOrders = useAppSelector(selectOpenOrders);
 
 	const [cancelling, setCancelling] = useState<string | null>(null);
-	const [countDownTimers, setCountdownTimers] = useState<Record<FuturesMarketKey, number>>();
+	const [countdownTimers, setCountdownTimers] = useState<CountdownTimers>();
 	const [selectedOrder, setSelectedOrder] = useState<DelayedOrder | undefined>();
 
 	const rowsData = useMemo(() => {
@@ -42,8 +52,17 @@ const OpenOrdersTable: React.FC = () => {
 					currencyKey: getDisplayAsset(o.asset) ?? '',
 					minDecimals: o.size.abs().lt(0.01) ? 4 : 2,
 				}),
-				timeToExecution: countDownTimers ? countDownTimers[o.marketKey] : null,
-				isExecutable: Date.now() > o.executableAtTimestamp,
+				timeToExecution: countdownTimers ? countdownTimers[o.marketKey]?.timeToExecution : null,
+				timePastExecution: countdownTimers ? countdownTimers[o.marketKey]?.timePastExecution : null,
+				show: !!countdownTimers,
+				isStale: countdownTimers
+					? countdownTimers[o.marketKey]?.timeToExecution === 0 &&
+					  countdownTimers[o.marketKey]?.timePastExecution > 60
+					: false,
+				isExecutable: countdownTimers
+					? countdownTimers[o.marketKey]?.timeToExecution === 0 &&
+					  countdownTimers[o.marketKey]?.timePastExecution <= 60 // SET DEFAULT
+					: false,
 				totalDeposit: o.commitDeposit.add(o.keeperDeposit),
 				onCancel: () => {
 					dispatch(cancelDelayedOrder(o.marketAddress));
@@ -60,16 +79,20 @@ const OpenOrdersTable: React.FC = () => {
 					: -1;
 			});
 		return ordersWithCancel;
-	}, [openOrders, marketAsset, countDownTimers, dispatch]);
+	}, [openOrders, marketAsset, countdownTimers, dispatch]);
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
 			const newCountdownTimers = rowsData.reduce((acc, order) => {
 				const timeToExecution = Math.floor((order.executableAtTimestamp - Date.now()) / 1000);
+				const timePastExecution = Math.floor((Date.now() - order.executableAtTimestamp) / 1000);
 				// Should we add a buffer here?
-				acc[order.marketKey] = Math.max(timeToExecution, 0);
+				acc[order.marketKey] = {
+					timeToExecution: Math.max(timeToExecution, 0),
+					timePastExecution: Math.max(timePastExecution, 0),
+				};
 				return acc;
-			}, {} as Record<FuturesMarketKey, number>);
+			}, {} as CountdownTimers);
 			setCountdownTimers(newCountdownTimers);
 		}, 1000);
 
@@ -111,11 +134,12 @@ const OpenOrdersTable: React.FC = () => {
 										</IconContainer>
 										<StyledText>
 											{cellProps.row.original.market}
+											{/* TODO: Do we enable this expired badge?
 											{cellProps.row.original.isStale && (
 												<ExpiredBadge color="red">
 													{t('futures.market.user.open-orders.badges.expired')}
 												</ExpiredBadge>
-											)}
+											)} */}
 										</StyledText>
 										<StyledValue>{cellProps.row.original.orderType}</StyledValue>
 									</MarketContainer>
@@ -185,16 +209,21 @@ const OpenOrdersTable: React.FC = () => {
 										<CancelButton onClick={cellProps.row.original.onCancel}>
 											{t('futures.market.user.open-orders.actions.cancel')}
 										</CancelButton>
-										<EditButton
-											disabled={!cellProps.row.original.isExecutable}
-											onClick={cellProps.row.original.onExecute}
-										>
-											{cellProps.row.original.isExecutable
-												? t('futures.market.user.open-orders.actions.execute')
-												: !!cellProps.row.original.timeToExecution
-												? `0:${cellProps.row.original.timeToExecution}` // TODO: write function to improve
-												: '...'}
-										</EditButton>
+										{cellProps.row.original.show && !cellProps.row.original.isStale && (
+											<EditButton
+												disabled={!cellProps.row.original.isExecutable}
+												onClick={cellProps.row.original.onExecute}
+											>
+												{cellProps.row.original.isExecutable ? (
+													t('futures.market.user.open-orders.actions.execute')
+												) : !!cellProps.row.original.timeToExecution &&
+												  cellProps.row.original.timeToExecution >= 0 ? (
+													formatTimer(cellProps.row.original.timeToExecution)
+												) : (
+													<MiniLoader centered />
+												)}
+											</EditButton>
+										)}
 									</div>
 								);
 							},
@@ -319,6 +348,7 @@ const MarketContainer = styled.div`
 const EditButton = styled.button`
 	border: 1px solid ${(props) => props.theme.colors.selectedTheme.gray};
 	height: 28px;
+	min-width: 72px;
 	box-sizing: border-box;
 	border-radius: 14px;
 	cursor: pointer;

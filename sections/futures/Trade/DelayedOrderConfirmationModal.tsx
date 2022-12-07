@@ -22,8 +22,10 @@ import {
 	selectModifyIsolatedGasEstimate,
 	selectNextPriceDisclaimer,
 	selectPosition,
+	selectTradePreviewStatus,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { FetchStatus } from 'state/types';
 import { FlexDivCol, FlexDivCentered } from 'styles/common';
 import { computeDelayedOrderFee } from 'utils/costCalculations';
 import { zeroBN, formatCurrency, formatDollars } from 'utils/formatters/number';
@@ -48,6 +50,7 @@ const NextPriceConfirmationModal: FC = () => {
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const submitting = useAppSelector(selectIsModifyingIsolatedPosition);
 	const gasEstimate = useAppSelector(selectModifyIsolatedGasEstimate);
+	const previewStatus = useAppSelector(selectTradePreviewStatus);
 
 	const gasPrices = useMemo(
 		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
@@ -181,7 +184,7 @@ const NextPriceConfirmationModal: FC = () => {
 					closeDrawer={onDismiss}
 					buttons={
 						<MobileConfirmTradeButton
-							disabled={submitting}
+							disabled={submitting || previewStatus !== FetchStatus.Success}
 							variant="primary"
 							onClick={handleConfirmOrder}
 						>
