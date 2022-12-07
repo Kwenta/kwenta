@@ -44,7 +44,8 @@ export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 	const positionSize = useMemo(() => positionDetails?.size ?? zeroBN, [positionDetails?.size]);
 
 	const crossMarginCloseParams = useMemo(() => {
-		return marketAsset === 'SOL' && position?.position?.side === PositionSide.SHORT
+		return ['SOL', 'DebtRatio'].includes(marketAsset) &&
+			position?.position?.side === PositionSide.SHORT
 			? [
 					{
 						marketKey: formatBytes32String(marketKey),
