@@ -1,6 +1,7 @@
 import Wei, { wei } from '@synthetixio/wei';
 import axios from 'axios';
 import { ethers, BigNumber } from 'ethers';
+import { formatEther } from 'ethers/lib/utils.js';
 import moment from 'moment';
 import KwentaSDK from 'sdk';
 
@@ -372,17 +373,22 @@ export default class KwentaTokenService {
 					}epoch-${i}.json`
 			);
 
-		const responses: EpochData[] = [];
-
-		for (const fileName of fileNames) {
-			const response = await client.get(fileName);
-			responses.push(response.data ?? null);
-		}
+		const responses: EpochData[] = await Promise.all(
+			fileNames.map(async (fileName) => {
+				const response = await client.get(fileName);
+				return response.data;
+			})
+		);
 
 		const rewards = responses
 			.map((d, period) => {
-				const walletReward = d.claims[walletAddress];
-				return [walletReward.index, walletAddress, walletReward.amount, walletReward.proof, period];
+				const reward = d.claims[walletAddress];
+
+				if (reward) {
+					return [reward.index, walletAddress, reward.amount, reward.proof, period];
+				}
+
+				return null;
 			})
 			.filter((x): x is ClaimParams => !!x);
 
@@ -394,7 +400,7 @@ export default class KwentaTokenService {
 			(acc, next, i) => {
 				if (!claimed[i]) {
 					acc.claimableRewards.push(next);
-					acc.totalRewards = acc.totalRewards.add(wei(next[2]));
+					acc.totalRewards = acc.totalRewards.add(wei(formatEther(next[2])));
 				}
 
 				return acc;
