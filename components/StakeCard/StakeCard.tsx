@@ -9,7 +9,7 @@ import SegmentedControl from 'components/SegmentedControl';
 import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
 import { StakingCard } from 'sections/dashboard/Stake/common';
 import { FlexDivRowCentered, numericValueCSS } from 'styles/common';
-import { truncateNumbers } from 'utils/formatters/number';
+import { toWei, truncateNumbers } from 'utils/formatters/number';
 
 type StakeCardProps = {
 	title: string;
@@ -44,7 +44,7 @@ const StakeCard: FC<StakeCardProps> = ({
 	}, [activeTab, stakeBalance, unstakeBalance]);
 
 	const isEnabled = useMemo(() => {
-		return !!parseFloat(amount) && balance.gt(0);
+		return toWei(amount).gt(0) && balance.gt(0);
 	}, [amount, balance]);
 
 	const isStakeEnabled = useMemo(() => {
@@ -56,8 +56,8 @@ const StakeCard: FC<StakeCardProps> = ({
 	}, [activeTab, isEnabled, unstakeEnabled]);
 
 	const isDisabled = useMemo(() => {
-		return activeTab === 0 ? !stakeEnabled : !unstakeEnabled;
-	}, [activeTab, stakeEnabled, unstakeEnabled]);
+		return activeTab === 0 ? !isStakeEnabled : !isUnstakeEnabled;
+	}, [activeTab, isStakeEnabled, isUnstakeEnabled]);
 
 	const balanceString = useMemo(() => {
 		return truncateNumbers(balance, DEFAULT_CRYPTO_DECIMALS);

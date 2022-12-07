@@ -26,12 +26,8 @@ const StakeGrid = () => {
 	const timeTillDeadline = useRewardsTimer(new Date(endDate * 1000));
 
 	const yieldPerDay = useMemo(() => {
-		const balanceWei = toWei(balance);
-		const rewardRateWei = wei(rewardRate);
-		const totalSupplyWei = wei(totalSupply);
-
-		const rawYield = totalSupplyWei.gt(0)
-			? balanceWei.mul(rewardRateWei).div(totalSupplyWei).mul(SECONDS_PER_DAY)
+		const rawYield = wei(totalSupply).gt(0)
+			? wei(balance).mul(rewardRate).div(totalSupply).mul(SECONDS_PER_DAY)
 			: wei(0);
 
 		return truncateNumbers(rawYield.toString(), 4);

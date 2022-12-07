@@ -4,13 +4,14 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import { getApy } from 'queries/staking/utils';
+import { BigText } from 'sections/earn/common';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { getReward } from 'state/staking/actions';
 import { selectClaimableBalance } from 'state/staking/selectors';
 import media from 'styles/media';
 import { formatPercent, truncateNumbers } from 'utils/formatters/number';
 
-import { KwentaLabel, StakingCard } from './common';
+import { StakingCard } from './common';
 import StakeInputCard from './InputCards/StakeInputCard';
 
 const StakingTab = () => {
@@ -38,7 +39,7 @@ const StakingTab = () => {
 				<CardGrid>
 					<div>
 						<div className="title">{t('dashboard.stake.tabs.staking.claimable-rewards')}</div>
-						<KwentaLabel>{truncateNumbers(claimableBalance, 4)}</KwentaLabel>
+						<BigText hasKwentaLogo>{truncateNumbers(claimableBalance, 4)}</BigText>
 					</div>
 					<div>
 						<div className="title">{t('dashboard.stake.tabs.staking.annual-percentage-yield')}</div>

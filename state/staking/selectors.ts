@@ -51,7 +51,7 @@ export const selectClaimableBalance = createSelector(
 
 export const selectPeriods = createSelector(
 	(state: RootState) => state.staking.epochPeriod,
-	(epochPeriod) => Array.from(new Array(epochPeriod + 1), (_, i) => i + 1)
+	(epochPeriod) => Array.from(new Array(epochPeriod + 1), (_, i) => i)
 );
 
 export const selectIsKwentaTokenApproved = createSelector(
