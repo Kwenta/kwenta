@@ -249,15 +249,13 @@ export const formatDelayedOrder = (
 		size: wei(sizeDelta),
 		commitDeposit: wei(commitDeposit),
 		keeperDeposit: wei(keeperDeposit),
-		submittedAtTimestamp: intentionTime.toNumber(),
-		executableAtTimestamp: executableAtTime.toNumber(),
+		submittedAtTimestamp: intentionTime.toNumber() * 1000,
+		executableAtTimestamp: executableAtTime.toNumber() * 1000,
 		isOffchain: isOffchain,
 		priceImpactDelta: wei(priceImpactDelta),
 		targetRoundId: wei(targetRoundId),
 		orderType: 'Delayed',
 		side: wei(sizeDelta).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
-		isExecutable: true, // TODO: fix
-		isCancelling: true, // TODO: fix
 	};
 };
 

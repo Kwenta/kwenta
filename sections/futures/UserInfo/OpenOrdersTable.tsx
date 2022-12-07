@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled, { css } from 'styled-components';
@@ -16,7 +16,7 @@ import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
 import { selectMarketAsset, selectOpenOrders } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatCurrency, formatDollars } from 'utils/formatters/number';
-import { getDisplayAsset } from 'utils/futures';
+import { FuturesMarketKey, getDisplayAsset } from 'utils/futures';
 
 import OrderDrawer from '../MobileTrade/drawers/OrderDrawer';
 
@@ -31,6 +31,7 @@ const OpenOrdersTable: React.FC = () => {
 	const openOrders = useAppSelector(selectOpenOrders);
 
 	const [cancelling, setCancelling] = useState<string | null>(null);
+	const [countDownTimers, setCountdownTimers] = useState<Record<FuturesMarketKey, number>>();
 	const [selectedOrder, setSelectedOrder] = useState<DelayedOrder | undefined>();
 
 	const rowsData = useMemo(() => {
@@ -41,6 +42,8 @@ const OpenOrdersTable: React.FC = () => {
 					currencyKey: getDisplayAsset(o.asset) ?? '',
 					minDecimals: o.size.abs().lt(0.01) ? 4 : 2,
 				}),
+				timeToExecution: countDownTimers ? countDownTimers[o.marketKey] : null,
+				isExecutable: Date.now() > o.executableAtTimestamp,
 				totalDeposit: o.commitDeposit.add(o.keeperDeposit),
 				onCancel: () => {
 					dispatch(cancelDelayedOrder(o.marketAddress));
@@ -57,7 +60,21 @@ const OpenOrdersTable: React.FC = () => {
 					: -1;
 			});
 		return ordersWithCancel;
-	}, [openOrders, marketAsset, dispatch]);
+	}, [openOrders, marketAsset, countDownTimers, dispatch]);
+
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			const newCountdownTimers = rowsData.reduce((acc, order) => {
+				const timeToExecution = Math.floor((order.executableAtTimestamp - Date.now()) / 1000);
+				// Should we add a buffer here?
+				acc[order.marketKey] = Math.max(timeToExecution, 0);
+				return acc;
+			}, {} as Record<FuturesMarketKey, number>);
+			setCountdownTimers(newCountdownTimers);
+		}, 1000);
+
+		return () => clearTimeout(timer);
+	});
 
 	return (
 		<>
@@ -168,11 +185,16 @@ const OpenOrdersTable: React.FC = () => {
 										<CancelButton onClick={cellProps.row.original.onCancel}>
 											{t('futures.market.user.open-orders.actions.cancel')}
 										</CancelButton>
-										{/* {cellProps.row.original.isExecutable && ( */}
-										<EditButton onClick={cellProps.row.original.onExecute}>
-											{t('futures.market.user.open-orders.actions.execute')}
+										<EditButton
+											disabled={!cellProps.row.original.isExecutable}
+											onClick={cellProps.row.original.onExecute}
+										>
+											{cellProps.row.original.isExecutable
+												? t('futures.market.user.open-orders.actions.execute')
+												: cellProps.row.original.timeToExecution
+												? `0:${cellProps.row.original.timeToExecution}` // TODO: write function to improve
+												: '...'}
 										</EditButton>
-										{/* )} */}
 									</div>
 								);
 							},
