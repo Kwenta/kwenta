@@ -49,7 +49,6 @@ class FuturesMarketInternal {
 	_futuresMarketContract: Contract;
 	_futuresSettingsContract: Contract | undefined;
 	_marketKeyBytes: string;
-	_account: string;
 
 	_onChainData: {
 		assetPrice: BigNumber;
@@ -65,15 +64,13 @@ class FuturesMarketInternal {
 	constructor(
 		provider: ethers.providers.Provider,
 		marketKey: FuturesMarketKey,
-		marketAddress: string,
-		account: string
+		marketAddress: string
 	) {
 		this._provider = provider;
 
 		this._futuresMarketContract = FuturesMarket__factory.connect(marketAddress, provider);
 		this._futuresSettingsContract = sdk.context.contracts.FuturesMarketSettings;
 		this._marketKeyBytes = formatBytes32String(marketKey);
-		this._account = account;
 		this._cache = {};
 		this._onChainData = {
 			assetPrice: BigNumber.from(0),
@@ -86,6 +83,7 @@ class FuturesMarketInternal {
 	}
 
 	getTradePreview = async (
+		account: string,
 		sizeDelta: BigNumber,
 		marginDelta: BigNumber,
 		limitStopPrice?: BigNumber
@@ -99,10 +97,10 @@ class FuturesMarketInternal {
 			multiCallContract.assetPrice(),
 			multiCallContract.marketSkew(),
 			multiCallContract.marketSize(),
-			multiCallContract.accruedFunding(this._account),
+			multiCallContract.accruedFunding(account),
 			multiCallContract.fundingSequenceLength(),
 			multiCallContract.fundingLastRecomputed(),
-			multiCallContract.positions(this._account),
+			multiCallContract.positions(account),
 		]);
 
 		this._onChainData = {
