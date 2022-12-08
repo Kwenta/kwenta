@@ -27,7 +27,6 @@ import {
 } from './actions';
 import {
 	CrossMarginTradeInputs,
-	FundingRate,
 	FuturesState,
 	FuturesTransaction,
 	IsolatedMarginTradeInputs,
@@ -49,7 +48,6 @@ export const ZERO_STATE_CM_TRADE_INPUTS = {
 const initialState: FuturesState = {
 	selectedType: DEFAULT_FUTURES_MARGIN_TYPE,
 	confirmationModalOpen: false,
-	fundingRates: [],
 	markets: [],
 	dailyMarketVolumes: {},
 	queryStatuses: {
@@ -142,9 +140,6 @@ const futuresSlice = createSlice({
 		setFuturesMarkets: (state, action: PayloadAction<FuturesMarket<string>[]>) => {
 			state.markets = action.payload;
 		},
-		setFundingRates: (state, action: PayloadAction<FundingRate<string>[]>) => {
-			state.fundingRates = action.payload;
-		},
 		setTransaction: (state, action: PayloadAction<FuturesTransaction | undefined>) => {
 			state.transaction = action.payload;
 		},
@@ -212,7 +207,6 @@ const futuresSlice = createSlice({
 		builder.addCase(fetchMarkets.fulfilled, (futuresState, action) => {
 			futuresState.queryStatuses.markets = FetchStatus.Success;
 			futuresState.markets = action.payload.markets;
-			futuresState.fundingRates = action.payload.fundingRates;
 		});
 		builder.addCase(fetchMarkets.rejected, (futuresState) => {
 			futuresState.queryStatuses.markets = FetchStatus.Error;

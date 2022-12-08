@@ -5,7 +5,6 @@ import KwentaSDK from 'sdk';
 
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { FuturesAccountType } from 'queries/futures/types';
-import { Period } from 'sdk/constants/period';
 import { TransactionStatus } from 'sdk/types/common';
 import {
 	DelayedOrder,
@@ -55,24 +54,18 @@ import {
 import {
 	CrossMarginBalanceInfo,
 	CrossMarginSettings,
-	FundingRateSerialized,
 	FuturesTransactionType,
 	ModifyIsolatedPositionInputs,
 } from './types';
 
 export const fetchMarkets = createAsyncThunk<
-	{ markets: FuturesMarket<string>[]; fundingRates: FundingRateSerialized[] },
+	{ markets: FuturesMarket<string>[] },
 	void,
 	ThunkConfig
 >('futures/fetchMarkets', async (_, { extra: { sdk } }) => {
 	const markets = await sdk.futures.getMarkets();
 	const serializedMarkets = serializeMarkets(markets);
-	const averageFundingRates = await sdk.futures.getAverageFundingRates(markets, Period.ONE_HOUR);
-	const seriailizedRates = averageFundingRates.map((r) => ({
-		...r,
-		fundingRate: r.fundingRate ? r.fundingRate.toString() : null,
-	}));
-	return { markets: serializedMarkets, fundingRates: seriailizedRates };
+	return { markets: serializedMarkets };
 });
 
 export const fetchCrossMarginBalanceInfo = createAsyncThunk<

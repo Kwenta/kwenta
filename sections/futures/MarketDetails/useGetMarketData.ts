@@ -8,7 +8,6 @@ import { NO_VALUE } from 'constants/placeholder';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useExternalPriceQuery from 'queries/rates/useExternalPriceQuery';
 import {
-	selectFundingRate,
 	selectMarketAsset,
 	selectMarketInfo,
 	selectMarketKey,
@@ -29,7 +28,6 @@ const useGetMarketData = (mobile?: boolean) => {
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const marketKey = useAppSelector(selectMarketKey);
-	const fundingRate = useAppSelector(selectFundingRate);
 	const marketInfo = useAppSelector(selectMarketInfo);
 
 	const pastRates = useRecoilValue(pastRatesState);
@@ -46,16 +44,8 @@ const useGetMarketData = (mobile?: boolean) => {
 
 	const pastPrice = pastRates.find((price) => price.synth === marketAsset);
 
-	const fundingTitle = useMemo(
-		() => `${fundingRate?.fundingTitle ?? t('futures.market.info.hourly-funding')}`,
-		[fundingRate, t]
-	);
-
 	const data: MarketData = useMemo(() => {
-		const fundingValue =
-			!fundingRate?.fundingRate && !!fundingRate
-				? marketInfo?.currentFundingRate
-				: fundingRate?.fundingRate;
+		const fundingValue = marketInfo?.currentFundingRate;
 
 		const marketPrice = wei(marketInfo?.price ?? 0);
 		const marketName = `${marketInfo?.marketName ?? t('futures.market.info.default-market')}`;
@@ -95,7 +85,7 @@ const useGetMarketData = (mobile?: boolean) => {
 						sign: '$',
 					}),
 				},
-				[fundingTitle]: {
+				[t('futures.market.info.hourly-funding')]: {
 					value: fundingValue
 						? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 })
 						: NO_VALUE,
@@ -172,7 +162,7 @@ const useGetMarketData = (mobile?: boolean) => {
 						  })
 						: NO_VALUE,
 				},
-				[fundingTitle]: {
+				[t('futures.market.info.hourly-funding')]: {
 					value: fundingValue
 						? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 })
 						: NO_VALUE,
@@ -189,9 +179,7 @@ const useGetMarketData = (mobile?: boolean) => {
 		selectedPriceCurrency.name,
 		externalPrice,
 		pastPrice?.price,
-		fundingRate,
 		minDecimals,
-		fundingTitle,
 		t,
 	]);
 

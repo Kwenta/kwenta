@@ -16,8 +16,6 @@ import {
 	CrossMarginBalanceInfo,
 	CrossMarginSettings,
 	CrossMarginTradeInputs,
-	FundingRate,
-	FundingRateSerialized,
 	TransactionEstimation,
 } from 'state/futures/types';
 import logError from 'utils/logError';
@@ -450,10 +448,6 @@ export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMar
 		keeperDeposit: wei(m.keeperDeposit),
 		marketLimit: wei(m.marketLimit),
 	}));
-};
-
-export const unserializeFundingRates = (rates: FundingRateSerialized[]): FundingRate[] => {
-	return rates.map((r) => ({ ...r, fundingRate: r.fundingRate ? wei(r.fundingRate) : null }));
 };
 
 export const serializeCmBalanceInfo = (

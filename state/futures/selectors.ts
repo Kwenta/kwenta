@@ -17,14 +17,13 @@ import {
 	MarketKeyByAsset,
 	unserializeCmBalanceInfo,
 	unserializeCrossMarginSettings,
-	unserializeFundingRates,
 	unserializeFuturesVolumes,
 	unserializeGasEstimate,
 	unserializeMarkets,
 	unserializeDelayedOrders,
 } from 'utils/futures';
 
-import { FundingRate, futuresPositionKeys } from './types';
+import { futuresPositionKeys } from './types';
 
 export const selectFuturesType = (state: RootState) => state.futures.selectedType;
 
@@ -78,19 +77,6 @@ export const selectMarketAssets = createSelector(
 	(markets) => markets.map(({ asset }) => asset)
 );
 
-export const selectAverageFundingRates = createSelector(
-	(state: RootState) => state.futures.fundingRates,
-	(fundingRates) => unserializeFundingRates(fundingRates)
-);
-
-export const selectFundingRate = createSelector(
-	selectMarketKey,
-	selectAverageFundingRates,
-	(marketKey, fundingRates) => {
-		return fundingRates.find((fundingRate: FundingRate) => fundingRate.asset === marketKey);
-	}
-);
-
 export const selectMarketInfo = createSelector(
 	selectMarkets,
 	selectMarketKey,
@@ -98,6 +84,10 @@ export const selectMarketInfo = createSelector(
 		return markets.find((market) => market.marketKey === selectedMarket);
 	}
 );
+
+export const selectFundingRate = createSelector(selectMarketInfo, (marketInfo) => {
+	return marketInfo?.currentFundingRate;
+});
 
 export const selectMarketAssetRate = createSelector(
 	(state: RootState) => state.futures[accountType(state.futures.selectedType)].selectedMarketAsset,

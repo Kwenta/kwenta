@@ -14,12 +14,7 @@ import Table from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
-import { FundingRateResponse } from 'sdk/types/futures';
-import {
-	selectAverageFundingRates,
-	selectMarkets,
-	selectMarketVolumes,
-} from 'state/futures/selectors';
+import { selectMarkets, selectMarketVolumes } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { pastRatesState, futuresAccountTypeState } from 'store/futures';
 import { getSynthDescription, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
@@ -30,7 +25,6 @@ const FuturesMarketsTable: FC = () => {
 	const { synthsMap } = Connector.useContainer();
 
 	const futuresMarkets = useAppSelector(selectMarkets);
-	const fundingRates = useAppSelector(selectAverageFundingRates);
 	const pastRates = useRecoilValue(pastRatesState);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
 	const accountType = useRecoilValue(futuresAccountTypeState);
@@ -40,9 +34,6 @@ const FuturesMarketsTable: FC = () => {
 			const description = getSynthDescription(market.asset, synthsMap, t);
 			const volume = futuresVolumes[market.marketKey]?.volume;
 			const pastPrice = pastRates.find((price) => price.synth === market.asset);
-			const fundingRate = fundingRates.find(
-				(funding) => (funding as FundingRateResponse)?.asset === MarketKeyByAsset[market.asset]
-			);
 
 			return {
 				asset: market.asset,
@@ -53,7 +44,7 @@ const FuturesMarketsTable: FC = () => {
 				volume: volume?.toNumber() ?? 0,
 				pastPrice: pastPrice?.price,
 				priceChange: pastPrice?.price && market.price.sub(pastPrice?.price).div(market.price),
-				fundingRate: fundingRate?.fundingRate ?? null,
+				fundingRate: market.currentFundingRate ?? null,
 				openInterest: market.marketSize.mul(market.price),
 				openInterestNative: market.marketSize,
 				longInterest: market.marketSize.add(market.marketSkew).div('2').abs().mul(market.price),
@@ -63,7 +54,7 @@ const FuturesMarketsTable: FC = () => {
 				marketClosureReason: market.marketClosureReason,
 			};
 		});
-	}, [synthsMap, futuresMarkets, fundingRates, pastRates, futuresVolumes, t]);
+	}, [synthsMap, futuresMarkets, pastRates, futuresVolumes, t]);
 
 	return (
 		<>

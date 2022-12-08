@@ -25,7 +25,6 @@ import {
 	selectTradePreview,
 	selectTradePreviewStatus,
 	selectTradeSizeInputs,
-	selectIsolatedMarginLeverage,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
@@ -50,7 +49,7 @@ const ManagePosition: React.FC = () => {
 
 	const { error, onTradeAmountChange, maxUsdInputAmount, tradePrice } = useFuturesContext();
 
-	const { susdSizeWei } = useAppSelector(selectTradeSizeInputs);
+	const { susdSizeWei, leverage } = useAppSelector(selectTradeSizeInputs);
 	const marginDelta = useRecoilValue(crossMarginMarginDeltaState);
 	const position = useAppSelector(selectPosition);
 	const maxLeverageValue = useAppSelector(selectMaxLeverage);
@@ -58,7 +57,6 @@ const ManagePosition: React.FC = () => {
 	const previewTrade = useAppSelector(selectTradePreview);
 	const orderType = useAppSelector(selectOrderType);
 	const leverageSide = useAppSelector(selectLeverageSide);
-	const leverage = useAppSelector(selectIsolatedMarginLeverage);
 
 	const previewError = useAppSelector(selectTradePreviewError);
 

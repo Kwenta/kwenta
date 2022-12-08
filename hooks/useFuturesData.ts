@@ -140,7 +140,6 @@ const useFuturesData = () => {
 
 	// perps v2
 	const selectedAccountType = useAppSelector(selectFuturesType);
-	const { nativeSize } = useAppSelector(selectTradeSizeInputs);
 	const priceImpact = useAppSelector(selectIsolatedPriceImpact);
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const orderType = useAppSelector(selectOrderType);
@@ -393,7 +392,7 @@ const useFuturesData = () => {
 			const nativeSize = currencyType === 'native' ? wei(value) : wei(value).div(usdPrice);
 			const usdSize = currencyType === 'native' ? usdPrice.mul(value) : wei(value);
 			const changeEnabled = remainingMargin.gt(0) && value !== '';
-			const isolatedMarginLeverage = changeEnabled ? usdSize.div(remainingMargin) : zeroBN;
+			const isolatedMarginLeverage = changeEnabled ? usdSize.div(remainingMargin).abs() : zeroBN;
 
 			const inputLeverage =
 				selectedAccountType === 'cross_margin'
@@ -403,23 +402,13 @@ const useFuturesData = () => {
 			leverage = maxLeverage.gt(leverage) ? leverage : maxLeverage;
 
 			const newTradeInputs = {
-				nativeSize: changeEnabled ? weiToString(nativeSize) : '',
-				susdSize: changeEnabled ? weiToString(usdSize) : '',
+				nativeSize: changeEnabled ? weiToString(positiveTrade ? nativeSize : nativeSize.neg()) : '',
+				susdSize: changeEnabled ? weiToString(positiveTrade ? usdSize : usdSize.neg()) : '',
 				nativeSizeDelta: positiveTrade ? nativeSize : nativeSize.neg(),
 				susdSizeDelta: positiveTrade ? usdSize : usdSize.neg(),
 				orderPrice: usdPrice,
 				leverage: String(floorNumber(leverage)),
 			};
-
-			if (selectedAccountType === 'isolated_margin') {
-				dispatch(
-					setIsolatedMarginTradeInputs({
-						nativeSize: (positiveTrade ? nativeSize : nativeSize.neg()).toNumber().toString(),
-						susdSize: (positiveTrade ? usdSize : usdSize.neg()).toNumber().toString(),
-						leverage: String(floorNumber(leverage)),
-					})
-				);
-			}
 
 			if (options?.simulateChange) {
 				// Allows us to keep it snappy updating the input values
@@ -437,7 +426,6 @@ const useFuturesData = () => {
 			selectedLeverage,
 			selectedAccountType,
 			leverageSide,
-			dispatch,
 			resetTradeState,
 			setSimulatedTrade,
 			onStagePositionChange,
@@ -512,12 +500,12 @@ const useFuturesData = () => {
 	const submitIsolatedMarginOrder = useCallback(async () => {
 		dispatch(
 			modifyIsolatedPosition({
-				sizeDelta: nativeSize,
+				sizeDelta: tradeSizeInputs.nativeSize,
 				priceImpactDelta: priceImpact,
 				delayed: orderType === 'delayed',
 			})
 		);
-	}, [dispatch, nativeSize, priceImpact, orderType]);
+	}, [dispatch, tradeSizeInputs, priceImpact, orderType]);
 
 	useEffect(() => {
 		const getMaxFee = async () => {

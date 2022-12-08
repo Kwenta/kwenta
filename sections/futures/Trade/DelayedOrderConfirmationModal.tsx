@@ -16,7 +16,6 @@ import { modifyIsolatedPosition, modifyIsolatedPositionEstimateGas } from 'state
 import {
 	selectIsModifyingIsolatedPosition,
 	selectIsolatedPriceImpact,
-	selectIsolatedTradeInputs,
 	selectLeverageSide,
 	selectMarketAsset,
 	selectMarketInfo,
@@ -24,6 +23,7 @@ import {
 	selectNextPriceDisclaimer,
 	selectPosition,
 	selectTradePreviewStatus,
+	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
@@ -44,7 +44,7 @@ const NextPriceConfirmationModal: FC = () => {
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const dispatch = useAppDispatch();
 
-	const { nativeSize } = useAppSelector(selectIsolatedTradeInputs);
+	const { nativeSize } = useAppSelector(selectTradeSizeInputs);
 	const priceImpact = useAppSelector(selectIsolatedPriceImpact);
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const position = useAppSelector(selectPosition);
