@@ -1,4 +1,5 @@
 import { wei } from '@synthetixio/wei';
+import { BigNumber } from 'ethers';
 import { formatEther } from 'ethers/lib/utils.js';
 import { useCallback, useMemo, FC } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -25,7 +26,6 @@ import { formatTruncatedDuration } from 'utils/formatters/date';
 import { formatDollars, formatPercent, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import { KwentaLabel, StakingCard } from './common';
-import { BigNumber } from 'ethers';
 
 const TradingRewardsTab: FC<TradingRewardProps> = ({
 	period = 0,
