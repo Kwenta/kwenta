@@ -50,11 +50,11 @@ const useGetMarketData = (mobile?: boolean) => {
 		const marketPrice = wei(marketInfo?.price ?? 0);
 		const marketName = `${marketInfo?.marketName ?? t('futures.market.info.default-market')}`;
 
-		const futuresTradingVolume = marketInfo?.assetHex
-			? futuresVolumes[marketInfo.assetHex]?.volume ?? wei(0)
+		const futuresTradingVolume = marketInfo?.marketKey
+			? futuresVolumes[marketInfo.marketKey]?.volume ?? wei(0)
 			: wei(0);
-		const futuresTradeCount = marketInfo?.assetHex
-			? futuresVolumes[marketInfo.assetHex]?.trades.toNumber() ?? 0
+		const futuresTradeCount = marketInfo?.marketKey
+			? futuresVolumes[marketInfo.marketKey]?.trades.toNumber() ?? 0
 			: 0;
 
 		if (mobile) {
