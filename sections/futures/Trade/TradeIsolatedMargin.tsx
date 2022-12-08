@@ -1,9 +1,5 @@
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import styled from 'styled-components';
-
-import SegmentedControl from 'components/SegmentedControl';
-import { ISOLATED_MARGIN_ORDER_TYPES } from 'constants/futures';
 import {
 	setLeverageSide as setReduxLeverageSide,
 	setOrderType as setReduxOrderType,
@@ -30,7 +26,6 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 	const { susdWalletBalance } = useRecoilValue(balancesState);
 	const position = useRecoilValue(positionState);
 
-	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const [openTransferModal, setOpenTransferModal] = useState<boolean>(false);
 	const totalMargin = position?.remainingMargin ?? zeroBN;
 	const dispatch = useAppDispatch();
@@ -44,16 +39,6 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 			/>
 
 			{!isMobile && <MarketInfoBox />}
-
-			<StyledSegmentedControl
-				styleType="check"
-				values={ISOLATED_MARGIN_ORDER_TYPES}
-				selectedIndex={ISOLATED_MARGIN_ORDER_TYPES.indexOf(orderType)}
-				onChange={() => {
-					setOrderType('market');
-					dispatch(setReduxOrderType('market'));
-				}}
-			/>
 
 			<PositionButtons
 				selected={leverageSide}
@@ -82,7 +67,3 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 };
 
 export default TradeIsolatedMargin;
-
-const StyledSegmentedControl = styled(SegmentedControl)`
-	margin-bottom: 16px;
-`;
