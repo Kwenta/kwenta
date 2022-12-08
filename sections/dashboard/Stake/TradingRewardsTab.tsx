@@ -177,7 +177,7 @@ const PeriodLabel = styled.div`
 	display: flex;
 	align-items: center;
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
 const CustomStyledTooltip = styled(StyledTooltip)`
