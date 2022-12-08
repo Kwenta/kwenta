@@ -150,6 +150,20 @@ export const selectFuturesPositions = createSelector(
 	}
 );
 
+export const selectActiveIsolatedPositionsCount = createSelector(
+	selectIsolatedMarginPositions,
+	(positions) => {
+		return positions.filter((p) => !!p.position).length;
+	}
+);
+
+export const selectActiveCrossPositionsCount = createSelector(
+	selectCrossMarginPositions,
+	(positions) => {
+		return positions.filter((p) => !!p.position).length;
+	}
+);
+
 export const selectSubmittingFuturesTx = createSelector(
 	(state: RootState) => state.futures,
 	(futures) => {
@@ -313,7 +327,9 @@ export const selectTradeSizeInputs = createSelector(
 			susdSizeDelta:
 				side === PositionSide.LONG ? wei(inputs.susdSize || 0) : wei(inputs.susdSize || 0).neg(),
 			nativeSizeDelta:
-				side === PositionSide.LONG ? wei(inputs.nativeSize || 0) : wei(inputs.susdSize || 0).neg(),
+				side === PositionSide.LONG
+					? wei(inputs.nativeSize || 0)
+					: wei(inputs.nativeSize || 0).neg(),
 		};
 		return {
 			...inputs,

@@ -492,15 +492,6 @@ const useFuturesData = () => {
 		]
 	);
 
-	const submitIsolatedMarginOrder = useCallback(async () => {
-		dispatch(
-			modifyIsolatedPosition({
-				sizeDelta: tradeSizeInputs.nativeSizeDelta,
-				useNextPrice: orderType === 'next price',
-			})
-		);
-	}, [dispatch, tradeSizeInputs.nativeSizeDelta, orderType]);
-
 	useEffect(() => {
 		const getMaxFee = async () => {
 			if (remainingMargin.eq(0) || tradePrice.eq(0)) {
@@ -608,7 +599,6 @@ const useFuturesData = () => {
 
 	return {
 		onTradeAmountChange,
-		submitIsolatedMarginOrder,
 		submitCrossMarginOrder,
 		resetTradeState,
 		onTradeOrderPriceChange,
