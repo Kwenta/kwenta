@@ -1,7 +1,7 @@
 import Wei, { wei } from '@synthetixio/wei';
 import axios from 'axios';
 import { ethers, BigNumber } from 'ethers';
-import { formatEther } from 'ethers/lib/utils.js';
+import { formatEther } from 'ethers/lib/utils';
 import moment from 'moment';
 import KwentaSDK from 'sdk';
 
@@ -29,6 +29,7 @@ type EpochData = {
 			proof: string[];
 		};
 	};
+	period: number;
 };
 
 export type EscrowData<T = Wei> = {
@@ -356,13 +357,15 @@ export default class KwentaTokenService {
 		return this.performStakeAction('unstake', amount, { escrow: true });
 	}
 
-	public async getClaimableRewards(periods: number[]) {
+	public async getClaimableRewards(epochPeriod: number) {
 		const { MultipleMerkleDistributor } = this.sdk.context.mutliCallContracts;
 		const { walletAddress } = this.sdk.context;
 
 		if (!MultipleMerkleDistributor) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
+
+		const periods = Array.from(new Array(Number(epochPeriod) + 1), (_, i) => i);
 
 		const fileNames = periods
 			.slice(0, -1)
@@ -374,18 +377,18 @@ export default class KwentaTokenService {
 			);
 
 		const responses: EpochData[] = await Promise.all(
-			fileNames.map(async (fileName) => {
+			fileNames.map(async (fileName, period) => {
 				const response = await client.get(fileName);
-				return response.data;
+				return { ...response.data, period };
 			})
 		);
 
 		const rewards = responses
-			.map((d, period) => {
+			.map((d) => {
 				const reward = d.claims[walletAddress];
 
 				if (reward) {
-					return [reward.index, walletAddress, reward.amount, reward.proof, period];
+					return [reward.index, walletAddress, reward.amount, reward.proof, d.period];
 				}
 
 				return null;

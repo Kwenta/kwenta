@@ -1,6 +1,6 @@
 import { wei } from '@synthetixio/wei';
 import { formatEther } from 'ethers/lib/utils.js';
-import { useCallback, useEffect, useMemo, FC } from 'react';
+import { useCallback, useMemo, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -17,7 +17,7 @@ import {
 } from 'queries/staking/utils';
 import { BigText } from 'sections/earn/common';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { claimMultipleRewards, fetchClaimableRewards } from 'state/staking/actions';
+import { claimMultipleRewards } from 'state/staking/actions';
 import { selectResetTime, selectTotalRewards } from 'state/staking/selectors';
 import { FlexDivRow } from 'styles/common';
 import media from 'styles/media';
@@ -57,10 +57,6 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 	}, [totalFuturesFeeQuery.data]);
 
 	const claimDisabled = useMemo(() => totalRewards.lte(0), [totalRewards]);
-
-	useEffect(() => {
-		dispatch(fetchClaimableRewards());
-	}, [dispatch]);
 
 	const handleClaim = useCallback(() => {
 		dispatch(claimMultipleRewards());

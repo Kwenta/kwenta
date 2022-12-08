@@ -49,11 +49,6 @@ export const selectClaimableBalance = createSelector(
 	toWei
 );
 
-export const selectPeriods = createSelector(
-	(state: RootState) => state.staking.epochPeriod,
-	(epochPeriod) => Array.from(new Array(epochPeriod + 1), (_, i) => i)
-);
-
 export const selectIsKwentaTokenApproved = createSelector(
 	selectKwentaBalance,
 	(state: RootState) => state.staking.kwentaAllowance,
@@ -82,9 +77,11 @@ export const selectResetTime = createSelector(
 );
 
 export const selectEpochData = createSelector(
-	selectPeriods,
+	(state: RootState) => state.staking.epochPeriod,
 	(state: RootState) => state.wallet.networkId,
-	(periods, networkId) => periods.map((i) => parseEpochData(i, networkId))
+	(epochPeriod, networkId) => {
+		return Array.from(new Array(epochPeriod + 1), (_, i) => parseEpochData(i, networkId));
+	}
 );
 
 export const selectSelectedEpoch = createSelector(
