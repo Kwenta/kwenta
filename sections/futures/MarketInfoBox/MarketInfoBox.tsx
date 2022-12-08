@@ -42,7 +42,7 @@ const MarketInfoBox: React.FC = () => {
 		marketInfo?.minInitialMargin,
 	]);
 
-	const isNextPriceOrder = orderType === 'next price';
+	const isDelayedOrder = useMemo(() => orderType === 'delayed', [orderType]);
 
 	const positionSize = position?.position?.size ? wei(position?.position?.size) : zeroBN;
 	const orderDetails = useMemo(() => {
@@ -89,13 +89,13 @@ const MarketInfoBox: React.FC = () => {
 			potentialTrade,
 			marketInfo?.maxLeverage
 		);
-		return isNextPriceOrder
+		return isDelayedOrder
 			? potentialAvailableMargin?.sub(totalDeposit) ?? zeroBN
 			: potentialAvailableMargin;
 	}, [
 		potentialTrade,
 		marketInfo?.maxLeverage,
-		isNextPriceOrder,
+		isDelayedOrder,
 		totalDeposit,
 		getPotentialAvailableMargin,
 	]);
@@ -112,7 +112,9 @@ const MarketInfoBox: React.FC = () => {
 			previewAvailableMargin?.mul(maxLeverage ?? zeroBN)?.abs() ?? zeroBN;
 
 		return {
-			showPreview: size && !size.eq(0) && !!potentialTrade,
+			// TODO: Reenable this, disabling because the preview margin looks incorrect
+			// showPreview: size && !size.eq(0) && !!potentialTrade,
+			showPreview: false,
 			totalMargin: potentialTrade?.margin || zeroBN,
 			availableMargin: previewAvailableMargin.gt(0) ? previewAvailableMargin : zeroBN,
 			buyingPower: potentialBuyingPower.gt(0) ? potentialBuyingPower : zeroBN,

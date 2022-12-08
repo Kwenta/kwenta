@@ -76,7 +76,7 @@ const NextPriceConfirmationModal: FC = () => {
 
 	const orderDetails = useMemo(() => {
 		return { nativeSizeWei, size: (positionSize ?? zeroBN).add(nativeSizeWei).abs() };
-	}, [leverageSide, nativeSizeWei, positionSize]);
+	}, [nativeSizeWei, positionSize]);
 
 	// TODO: check these fees
 	const { commitDeposit } = useMemo(() => computeDelayedOrderFee(marketInfo, nativeSizeWei), [
