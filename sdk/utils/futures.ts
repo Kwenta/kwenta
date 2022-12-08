@@ -11,15 +11,21 @@ import {
 	AGGREGATE_ASSET_KEY,
 } from 'sdk/constants/futures';
 import { SECONDS_PER_DAY } from 'sdk/constants/period';
+import { IPerpsV2MarketBaseTypes } from 'sdk/contracts/types/PerpsV2Market';
 import {
+	DelayedOrder,
 	FundingRateUpdate,
+	FuturesMarket,
 	FuturesMarketAsset,
 	FuturesMarketKey,
 	FuturesPosition,
+	FuturesPotentialTradeDetails,
 	FuturesVolumes,
 	MarketClosureReason,
 	PositionDetail,
 	PositionSide,
+	PostTradeDetailsResponse,
+	PotentialTradeStatus,
 } from 'sdk/types/futures';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -157,6 +163,7 @@ export const mapFuturesPosition = (
 	const initialMargin = wei(margin);
 	const pnl = wei(profitLoss).add(wei(accruedFunding));
 	const pnlPct = initialMargin.gt(0) ? pnl.div(wei(initialMargin)) : wei(0);
+
 	return {
 		asset,
 		marketKey,
@@ -188,4 +195,150 @@ export const mapFuturesPosition = (
 						: wei(notionalValue).div(wei(remainingMargin)).abs(),
 			  },
 	};
+};
+
+export const serializePotentialTrade = (
+	preview: FuturesPotentialTradeDetails
+): FuturesPotentialTradeDetails<string> => ({
+	...preview,
+	size: preview.size.toString(),
+	sizeDelta: preview.sizeDelta.toString(),
+	liqPrice: preview.liqPrice.toString(),
+	margin: preview.margin.toString(),
+	price: preview.price.toString(),
+	fee: preview.fee.toString(),
+	leverage: preview.leverage.toString(),
+	notionalValue: preview.notionalValue.toString(),
+});
+
+export const unserializePotentialTrade = (
+	preview: FuturesPotentialTradeDetails<string>
+): FuturesPotentialTradeDetails => ({
+	...preview,
+	size: wei(preview.size),
+	sizeDelta: wei(preview.sizeDelta),
+	liqPrice: wei(preview.liqPrice),
+	margin: wei(preview.margin),
+	price: wei(preview.price),
+	fee: wei(preview.fee),
+	leverage: wei(preview.leverage),
+	notionalValue: wei(preview.notionalValue),
+});
+
+export const formatDelayedOrder = (
+	account: string,
+	marketInfo: FuturesMarket<Wei>,
+	order: IPerpsV2MarketBaseTypes.DelayedOrderStructOutput
+): DelayedOrder => {
+	const {
+		isOffchain,
+		sizeDelta,
+		priceImpactDelta,
+		targetRoundId,
+		commitDeposit,
+		keeperDeposit,
+		executableAtTime,
+		intentionTime,
+	} = order;
+
+	return {
+		account: account,
+		asset: marketInfo.asset,
+		marketAddress: marketInfo.market,
+		market: getMarketName(marketInfo.asset),
+		marketKey: marketInfo.marketKey,
+		size: wei(sizeDelta),
+		commitDeposit: wei(commitDeposit),
+		keeperDeposit: wei(keeperDeposit),
+		submittedAtTimestamp: intentionTime.toNumber() * 1000,
+		executableAtTimestamp: executableAtTime.toNumber() * 1000,
+		isOffchain: isOffchain,
+		priceImpactDelta: wei(priceImpactDelta),
+		targetRoundId: wei(targetRoundId),
+		orderType: 'Delayed',
+		side: wei(sizeDelta).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
+	};
+};
+
+export const formatPotentialIsolatedTrade = (
+	preview: PostTradeDetailsResponse,
+	nativeSizeDelta: Wei,
+	leverageSide: PositionSide
+) => {
+	const { fee, liqPrice, margin, price, size, status } = preview;
+
+	const notionalValue = wei(size).mul(wei(price));
+	const leverage = notionalValue.div(wei(margin));
+
+	return {
+		fee: wei(fee),
+		liqPrice: wei(liqPrice),
+		margin: wei(margin),
+		price: wei(price),
+		size: wei(size),
+		sizeDelta: nativeSizeDelta,
+		side: leverageSide,
+		leverage: leverage,
+		notionalValue: wei(size).mul(wei(price)),
+		status,
+		showStatus: status > 0, // 0 is success
+		statusMessage: getTradeStatusMessage(status),
+	};
+};
+
+export const formatPotentialTrade = (
+	preview: PostTradeDetailsResponse,
+	nativeSizeDelta: Wei,
+	leverageSide: PositionSide
+) => {
+	const { fee, liqPrice, margin, price, size, status } = preview;
+
+	return {
+		fee: wei(fee),
+		liqPrice: wei(liqPrice),
+		margin: wei(margin),
+		price: wei(price),
+		size: wei(size),
+		sizeDelta: nativeSizeDelta,
+		side: leverageSide,
+		leverage: wei(margin).eq(0) ? wei(0) : wei(size).mul(wei(price)).div(wei(margin)).abs(),
+		notionalValue: wei(size).mul(wei(price)),
+		status,
+		showStatus: status > 0, // 0 is success
+		statusMessage: getTradeStatusMessage(status),
+	};
+};
+
+const SUCCESS = 'Success';
+const UNKNOWN = 'Unknown';
+
+export const getTradeStatusMessage = (status: PotentialTradeStatus): string => {
+	if (typeof status !== 'number') {
+		return UNKNOWN;
+	}
+
+	if (status === 0) {
+		return SUCCESS;
+	} else if (PotentialTradeStatus[status]) {
+		return POTENTIAL_TRADE_STATUS_TO_MESSAGE[PotentialTradeStatus[status]];
+	} else {
+		return UNKNOWN;
+	}
+};
+
+// https://github.com/Synthetixio/synthetix/blob/4d2add4f74c68ac4f1106f6e7be4c31d4f1ccc76/contracts/PerpsV2MarketBase.sol#L130-L141
+export const POTENTIAL_TRADE_STATUS_TO_MESSAGE: { [key: string]: string } = {
+	OK: 'Ok',
+	INVALID_PRICE: 'Invalid price',
+	PRICE_OUT_OF_BOUNDS: 'Price out of acceptable range',
+	CAN_LIQUIDATE: 'Position can be liquidated',
+	CANNOT_LIQUIDATE: 'Position cannot be liquidated',
+	MAX_MARKET_SIZE_EXCEEDED: 'Max market size exceeded',
+	MAX_LEVERAGE_EXCEEDED: 'Max leverage exceeded',
+	INSUFFICIENT_MARGIN: 'Insufficient margin',
+	NOT_PERMITTED: 'Not permitted by this address',
+	NIL_ORDER: 'Cannot submit empty order',
+	NO_POSITION_OPEN: 'No position open',
+	PRICE_TOO_VOLATILE: 'Price too volatile',
+	PRICE_IMPACT_TOLERANCE_EXCEEDED: 'Price impact tolerance exceeded',
 };

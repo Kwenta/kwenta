@@ -26,8 +26,19 @@ Loader.defaultProps = {
 	inline: false,
 };
 
-export const MiniLoader = () => {
-	return <Loader inline height="11px" width="11px" style={{ marginLeft: '10px' }} />;
+export const MiniLoader: FC<LoaderProps & { centered?: boolean }> = (props) => {
+	return (
+		<Loader
+			inline
+			height="11px"
+			width="11px"
+			style={{ marginLeft: `${!props.centered ? '10px' : '0px'}` }}
+		/>
+	);
+};
+
+export const ButtonLoader = () => {
+	return <Loader inline height="20x" width="20px" />;
 };
 
 export default Loader;

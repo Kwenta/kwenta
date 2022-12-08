@@ -1,3 +1,4 @@
+import { wei } from '@synthetixio/wei';
 import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -7,41 +8,44 @@ import TimerIcon from 'assets/svg/app/timer.svg';
 import InfoBox, { DetailedInfo } from 'components/InfoBox/InfoBox';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { NO_VALUE } from 'constants/placeholder';
-import { selectCrossMarginSettings, selectMarketInfo } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
 import {
-	tradeFeesState,
-	orderTypeState,
-	sizeDeltaState,
-	futuresAccountTypeState,
-	dynamicFeeRateState,
-} from 'store/futures';
-import { computeNPFee, computeMarketFee } from 'utils/costCalculations';
+	selectCrossMarginSettings,
+	selectFuturesType,
+	selectIsolatedTradeInputs,
+	selectMarketInfo,
+	selectOrderType,
+} from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { tradeFeesState, dynamicFeeRateState } from 'store/futures';
+import { computeDelayedOrderFee, computeMarketFee } from 'utils/costCalculations';
 import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 const FeeInfoBox: React.FC = () => {
-	const orderType = useRecoilValue(orderTypeState);
-	const fees = useRecoilValue(tradeFeesState);
-	const dynamicFeeRate = useRecoilValue(dynamicFeeRateState);
-	const sizeDelta = useRecoilValue(sizeDeltaState);
-	const accountType = useRecoilValue(futuresAccountTypeState);
+	const orderType = useAppSelector(selectOrderType);
+	const { nativeSize } = useAppSelector(selectIsolatedTradeInputs);
+	const accountType = useAppSelector(selectFuturesType);
+	const marketInfo = useAppSelector(selectMarketInfo);
 	const { tradeFee: crossMarginTradeFee, limitOrderFee, stopOrderFee } = useAppSelector(
 		selectCrossMarginSettings
 	);
-	const marketInfo = useAppSelector(selectMarketInfo);
 
-	const { commitDeposit, nextPriceFee } = useMemo(() => computeNPFee(marketInfo, sizeDelta), [
-		marketInfo,
-		sizeDelta,
-	]);
+	const sizeDelta = useMemo(() => wei(nativeSize === '' ? 0 : nativeSize), [nativeSize]);
+
+	const fees = useRecoilValue(tradeFeesState);
+	const dynamicFeeRate = useRecoilValue(dynamicFeeRateState);
+
+	const { commitDeposit, delayedOrderFee } = useMemo(
+		() => computeDelayedOrderFee(marketInfo, sizeDelta),
+		[marketInfo, sizeDelta]
+	);
 
 	const totalDeposit = useMemo(() => {
 		return (commitDeposit ?? zeroBN).add(marketInfo?.keeperDeposit ?? zeroBN);
 	}, [commitDeposit, marketInfo?.keeperDeposit]);
 
 	const nextPriceDiscount = useMemo(() => {
-		return (nextPriceFee ?? zeroBN).sub(commitDeposit ?? zeroBN);
-	}, [commitDeposit, nextPriceFee]);
+		return (delayedOrderFee ?? zeroBN).sub(commitDeposit ?? zeroBN);
+	}, [commitDeposit, delayedOrderFee]);
 
 	const staticRate = useMemo(() => computeMarketFee(marketInfo, sizeDelta), [
 		marketInfo,
@@ -112,7 +116,7 @@ const FeeInfoBox: React.FC = () => {
 				},
 			};
 		}
-		if (orderType === 'next price') {
+		if (orderType === 'delayed') {
 			return {
 				'Keeper Deposit': {
 					value: !!marketInfo?.keeperDeposit ? formatDollars(marketInfo.keeperDeposit) : NO_VALUE,
@@ -126,10 +130,10 @@ const FeeInfoBox: React.FC = () => {
 					value: formatDollars(totalDeposit),
 					spaceBeneath: true,
 				},
-				'Next Price Discount': {
-					value: !!nextPriceDiscount ? formatDollars(nextPriceDiscount) : NO_VALUE,
-					color: nextPriceDiscount.lt(0) ? 'green' : nextPriceDiscount.gt(0) ? 'red' : undefined,
-				},
+				// 'Next Price Discount': {
+				// 	value: !!nextPriceDiscount ? formatDollars(nextPriceDiscount) : NO_VALUE,
+				// 	color: nextPriceDiscount.lt(0) ? 'green' : nextPriceDiscount.gt(0) ? 'red' : undefined,
+				// },
 				'Estimated Fees': {
 					value: formatDollars(totalDeposit.add(nextPriceDiscount ?? zeroBN)),
 					keyNode: fees.dynamicFeeRate?.gt(0) ? <ToolTip /> : null,

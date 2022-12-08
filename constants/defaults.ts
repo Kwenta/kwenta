@@ -47,7 +47,11 @@ export const DEFAULT_NP_LEVERAGE_ADJUSTMENT: number = 0.9975;
 // for mobile leaderboard
 export const DEFAULT_LEADERBOARD_ROWS = 20;
 
-export const CROSS_MARGIN_ENABLED = true;
+// for perps v2
+export const DEFAULT_PRICE_IMPACT_DELTA = '500000000000000000';
+export const DEFAULT_DELAYED_EXECUTION_BUFFER = 3;
+
+export const CROSS_MARGIN_ENABLED = false;
 
 export const DEFAULT_FUTURES_MARGIN_TYPE = CROSS_MARGIN_ENABLED
 	? 'cross_margin'

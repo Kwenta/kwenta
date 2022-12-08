@@ -1,33 +1,34 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
-import { FC, useMemo } from 'react';
+import { FC, useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
+import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
-import { useFuturesContext } from 'contexts/FuturesContext';
-import useEstimateGasCost from 'hooks/useEstimateGasCost';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
+import { setOpenModal } from 'state/app/reducer';
+import { modifyIsolatedPosition, modifyIsolatedPositionEstimateGas } from 'state/futures/actions';
 import {
+	selectIsModifyingIsolatedPosition,
+	selectIsolatedPriceImpact,
 	selectMarketAsset,
 	selectMarketInfo,
+	selectModifyIsolatedGasEstimate,
 	selectNextPriceDisclaimer,
 	selectPosition,
+	selectTradeSizeInputs,
 } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
-import {
-	confirmationModalOpenState,
-	leverageSideState,
-	futuresTradeInputsState,
-} from 'store/futures';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { leverageSideState } from 'store/futures';
 import { FlexDivCol, FlexDivCentered } from 'styles/common';
-import { computeNPFee } from 'utils/costCalculations';
+import { computeDelayedOrderFee } from 'utils/costCalculations';
 import { zeroBN, formatCurrency, formatDollars } from 'utils/formatters/number';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
@@ -41,35 +42,44 @@ const NextPriceConfirmationModal: FC = () => {
 	const { useEthGasPriceQuery } = useSynthetixQueries();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const ethGasPriceQuery = useEthGasPriceQuery();
-	const { estimateSnxTxGasCost } = useEstimateGasCost();
+	const dispatch = useAppDispatch();
 
-	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
+	const { nativeSize, susdSize } = useAppSelector(selectTradeSizeInputs);
+	const priceImpact = useAppSelector(selectIsolatedPriceImpact);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const marketAsset = useAppSelector(selectMarketAsset);
-
-	const setConfirmationModalOpen = useSetRecoilState(confirmationModalOpenState);
-
-	const { orderTxn } = useFuturesContext();
+	const submitting = useAppSelector(selectIsModifyingIsolatedPosition);
+	const gasEstimate = useAppSelector(selectModifyIsolatedGasEstimate);
 
 	const gasPrices = useMemo(
 		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
 		[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data]
 	);
 
-	const transactionFee = estimateSnxTxGasCost(orderTxn);
+	useEffect(() => {
+		dispatch(
+			modifyIsolatedPositionEstimateGas({
+				sizeDelta: nativeSize,
+				priceImpactDelta: priceImpact,
+				delayed: true,
+			})
+		);
+	}, [nativeSize, priceImpact, dispatch]);
+
+	const transactionFee = useMemo(() => gasEstimate?.cost ?? zeroBN, [gasEstimate?.cost]);
 
 	const positionSize = position?.position?.size ?? zeroBN;
 
 	const orderDetails = useMemo(() => {
-		const newSize = leverageSide === PositionSide.LONG ? wei(nativeSize) : wei(nativeSize).neg();
+		const newSize = leverageSide === PositionSide.LONG ? wei(susdSize) : wei(susdSize).neg();
 
 		return { newSize, size: (positionSize ?? zeroBN).add(newSize).abs() };
-	}, [leverageSide, nativeSize, positionSize]);
+	}, [leverageSide, susdSize, positionSize]);
 
 	const { commitDeposit, nextPriceFee } = useMemo(
-		() => computeNPFee(marketInfo, wei(orderDetails.newSize)),
+		() => computeDelayedOrderFee(marketInfo, wei(orderDetails.newSize)),
 		[marketInfo, orderDetails]
 	);
 
@@ -130,13 +140,18 @@ const NextPriceConfirmationModal: FC = () => {
 		]
 	);
 
-	const onDismiss = () => {
-		setConfirmationModalOpen(false);
-	};
+	const onDismiss = useCallback(() => {
+		dispatch(setOpenModal(null));
+	}, [dispatch]);
 
 	const handleConfirmOrder = async () => {
-		orderTxn.mutate();
-		onDismiss();
+		dispatch(
+			modifyIsolatedPosition({
+				sizeDelta: nativeSize,
+				priceImpactDelta: priceImpact,
+				delayed: true,
+			})
+		);
 	};
 
 	return (
@@ -161,8 +176,12 @@ const NextPriceConfirmationModal: FC = () => {
 							{t('futures.market.trade.confirmation.modal.max-leverage-disclaimer')}
 						</Disclaimer>
 					)}
-					<ConfirmTradeButton variant="primary" onClick={handleConfirmOrder}>
-						{t('futures.market.trade.confirmation.modal.confirm-order')}
+					<ConfirmTradeButton disabled={submitting} variant="flat" onClick={handleConfirmOrder}>
+						{submitting ? (
+							<ButtonLoader />
+						) : (
+							t('futures.market.trade.confirmation.modal.confirm-order')
+						)}
 					</ConfirmTradeButton>
 				</StyledBaseModal>
 			</DesktopOnlyView>
@@ -172,8 +191,16 @@ const NextPriceConfirmationModal: FC = () => {
 					items={dataRows}
 					closeDrawer={onDismiss}
 					buttons={
-						<MobileConfirmTradeButton variant="primary" onClick={handleConfirmOrder}>
-							{t('futures.market.trade.confirmation.modal.confirm-order')}
+						<MobileConfirmTradeButton
+							disabled={submitting}
+							variant="primary"
+							onClick={handleConfirmOrder}
+						>
+							{submitting ? (
+								<ButtonLoader />
+							) : (
+								t('futures.market.trade.confirmation.modal.confirm-order')
+							)}
 						</MobileConfirmTradeButton>
 					}
 				/>

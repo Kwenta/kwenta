@@ -2,8 +2,7 @@ import { Balances } from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 
-import { FuturesOrderTypeDisplay } from 'sdk/types/futures';
-import { PotentialTradeStatus } from 'sections/futures/types';
+import { FuturesOrderTypeDisplay, FuturesPotentialTradeDetails } from 'sdk/types/futures';
 import { FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
 
 export type FuturesOpenInterest = {
@@ -145,22 +144,6 @@ export type FundingRates = {
 	[key in FuturesMarketAsset]: Wei;
 };
 
-export type FuturesPotentialTradeDetails = {
-	size: Wei;
-	sizeDelta: Wei;
-	liqPrice: Wei;
-	margin: Wei;
-	price: Wei;
-	fee: Wei;
-	leverage: Wei;
-	notionalValue: Wei;
-	minInitialMargin: Wei;
-	side: PositionSide;
-	status: PotentialTradeStatus;
-	showStatus: boolean;
-	statusMessage: string;
-};
-
 export type FuturesPotentialTradeDetailsQuery = {
 	data: FuturesPotentialTradeDetails | null;
 	error: string | null;
@@ -214,7 +197,7 @@ export type FuturesTradeInputs = {
 	orderPrice?: Wei | undefined;
 };
 
-export type FuturesOrderType = 'market' | 'next price' | 'stop market' | 'limit';
+export type FuturesOrderType = 'market' | 'next price' | 'stop market' | 'limit' | 'delayed';
 
 export type SpotsFee = {
 	timestamp: string;

@@ -1,26 +1,23 @@
 import { wei } from '@synthetixio/wei';
 import { formatEther } from 'ethers/lib/utils.js';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useContractReads, useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 import HelpIcon from 'assets/svg/app/question-mark.svg';
 import Button from 'components/Button';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import Connector from 'containers/Connector';
-import { monitorTransaction } from 'contexts/RelayerContext';
-import { useStakingContext } from 'contexts/StakingContext';
-import useGetFiles from 'queries/files/useGetFiles';
 import useGetFuturesFee from 'queries/staking/useGetFuturesFee';
 import useGetFuturesFeeForAccount from 'queries/staking/useGetFuturesFeeForAccount';
 import {
-	ClaimParams,
-	EpochDataProps,
 	FuturesFeeForAccountProps,
 	FuturesFeeProps,
 	TradingRewardProps,
 } from 'queries/staking/utils';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { claimMultipleRewards, fetchClaimableRewards } from 'state/staking/actions';
+import { selectResetTime, selectTotalRewards } from 'state/staking/selectors';
 import { FlexDivRow } from 'styles/common';
 import media from 'styles/media';
 import { formatTruncatedDuration } from 'utils/formatters/date';
@@ -28,95 +25,45 @@ import { formatDollars, formatPercent, truncateNumbers, zeroBN } from 'utils/for
 
 import { KwentaLabel, StakingCard } from './common';
 
-const TradingRewardsTab: React.FC<TradingRewardProps> = ({
+const TradingRewardsTab: FC<TradingRewardProps> = ({
 	period = 0,
 	start = 0,
 	end = Math.floor(Date.now() / 1000),
-}: TradingRewardProps) => {
+}) => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
-	const { multipleMerkleDistributorContract, periods, resetTime } = useStakingContext();
+	const dispatch = useAppDispatch();
 
-	const allEpochQuery = useGetFiles(periods);
-	const allEpochData = useMemo(() => allEpochQuery?.data ?? [], [allEpochQuery?.data]);
-
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	let rewards: ClaimParams[] = [];
-
-	allEpochData &&
-		allEpochData.length > 0 &&
-		allEpochData.forEach((d: EpochDataProps, period) => {
-			const index = Object.keys(d.claims).findIndex((key) => key === walletAddress);
-			if (index !== -1) {
-				const walletReward = Object.values(d.claims)[index];
-				if (!!walletReward && walletAddress != null) {
-					rewards.push([
-						walletReward?.index,
-						walletAddress,
-						walletReward?.amount,
-						walletReward?.proof,
-						period,
-					]);
-				}
-			}
-		});
-
-	const checkIsClaimed = useMemo(() => {
-		return rewards.map((reward: ClaimParams) => {
-			return {
-				...multipleMerkleDistributorContract,
-				functionName: 'isClaimed',
-				args: [reward[0], reward[4]],
-			};
-		});
-	}, [multipleMerkleDistributorContract, rewards]);
-
-	const { data: isClaimable } = useContractReads({
-		contracts: checkIsClaimed,
-		enabled: checkIsClaimed && checkIsClaimed.length > 0,
-		watch: true,
-		scopeKey: 'staking',
-	});
-
-	const claimableRewards = useMemo(
-		() =>
-			isClaimable && isClaimable.length > 0
-				? rewards.filter((_, index) => !isClaimable[index])
-				: [],
-		[isClaimable, rewards]
-	);
-
-	const totalRewards =
-		claimableRewards.length > 0
-			? claimableRewards.reduce((acc, curr) => wei(acc).add(formatEther(curr[2])), zeroBN)
-			: 0;
+	const resetTime = useAppSelector(selectResetTime);
+	const totalRewards = useAppSelector(selectTotalRewards);
 
 	const futuresFeeQuery = useGetFuturesFeeForAccount(walletAddress!, start, end);
 	const futuresFeePaid = useMemo(() => {
-		const t = futuresFeeQuery.data ?? [];
+		const t: FuturesFeeForAccountProps[] = futuresFeeQuery.data ?? [];
 
 		return t
-			.map((trade: FuturesFeeForAccountProps) => formatEther(trade.feesPaid.toString()))
-			.reduce((acc: number, curr: number) => wei(acc).add(wei(curr)), zeroBN);
+			.map((trade) => formatEther(trade.feesPaid.toString()))
+			.reduce((acc, curr) => acc.add(wei(curr)), zeroBN);
 	}, [futuresFeeQuery.data]);
 
 	const totalFuturesFeeQuery = useGetFuturesFee(start, end);
 	const totalFuturesFeePaid = useMemo(() => {
-		const t = totalFuturesFeeQuery.data ?? [];
+		const t: FuturesFeeProps[] = totalFuturesFeeQuery.data ?? [];
 
 		return t
-			.map((trade: FuturesFeeProps) => formatEther(trade.feesCrossMarginAccounts.toString()))
-			.reduce((acc: number, curr: number) => wei(acc).add(wei(curr)), zeroBN);
+			.map((trade) => formatEther(trade.feesCrossMarginAccounts.toString()))
+			.reduce((acc, curr) => acc.add(wei(curr)), zeroBN);
 	}, [totalFuturesFeeQuery.data]);
 
-	const { config } = usePrepareContractWrite({
-		...multipleMerkleDistributorContract,
-		functionName: 'claimMultiple',
-		args: [claimableRewards],
-		enabled: claimableRewards && claimableRewards.length > 0,
-	});
+	const claimDisabled = useMemo(() => totalRewards.lte(0), [totalRewards]);
 
-	const { writeAsync: claim } = useContractWrite(config);
+	useEffect(() => {
+		dispatch(fetchClaimableRewards());
+	}, [dispatch]);
+
+	const handleClaim = useCallback(() => {
+		dispatch(claimMultipleRewards());
+	}, [dispatch]);
 
 	const ratio = useMemo(
 		() =>
@@ -132,7 +79,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.claimable-rewards-all')}
 						</div>
-						<KwentaLabel>{truncateNumbers(wei(totalRewards) ?? zeroBN, 4)}</KwentaLabel>
+						<KwentaLabel>{truncateNumbers(totalRewards, 4)}</KwentaLabel>
 					</div>
 					<div>
 						<div className="title">
@@ -146,18 +93,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 					</div>
 				</CardGrid>
 				<StyledFlexDivRow>
-					<Button
-						fullWidth
-						variant="flat"
-						size="sm"
-						disabled={!claim}
-						onClick={async () => {
-							const tx = await claim?.();
-							monitorTransaction({
-								txHash: tx?.hash ?? '',
-							});
-						}}
-					>
+					<Button fullWidth variant="flat" size="sm" onClick={handleClaim} disabled={claimDisabled}>
 						{t('dashboard.stake.tabs.trading-rewards.claim')}
 					</Button>
 				</StyledFlexDivRow>

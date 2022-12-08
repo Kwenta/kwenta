@@ -23,7 +23,7 @@ The latest IPFS hash can be found under [releases](https://github.com/Kwenta/kwe
 
 ## Ethereum stack
 
-- ethers.js v5 - Ethereum wallet implementation.
+- [ethers.js v5](https://github.com/ethers-io/ethers.js) - Ethereum wallet implementation.
 - [Rainbowkit](https://github.com/rainbow-me/rainbowkit) - for ethereum wallet onboarding.
 - [@synthetixio/contracts-interface](https://github.com/Synthetixio/js-monorepo/tree/master/packages/contracts-interface) - for interactions with the Synthetix protocol.
 - [@synthetixio/queries](https://github.com/Synthetixio/js-monorepo/tree/master/packages/queries) - for historical data (powered by [TheGraph](https://thegraph.com/))
@@ -84,7 +84,7 @@ Page tests should be added to the \_\_tests\_\_ folder at the root as it is not 
 
 ### End-2-End testing
 
-In order to run fully automated end-2-end (e2e) tests Kwenta uses [Synpress](https://github.com/Synthetixio/synpress) (a wrapper around [Cynpress](https://www.cypress.io/)).
+In order to run fully automated end-2-end (e2e) tests Kwenta uses [Synpress](https://github.com/Synthetixio/synpress) (a wrapper around [Cypress](https://www.cypress.io/)).
 
 #### Constraints
 
@@ -127,4 +127,4 @@ Kwenta welcomes contributors. Regardless of the time you have available, everyon
 
 ## Contact
 
-Join the community on the [Kwenta Discord server](https://discord.gg/HUPyQ63TFF)!
+Join the community on the [Kwenta Discord server](https://discord.gg/kwenta)!

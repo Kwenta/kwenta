@@ -1,22 +1,24 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { Contract as EthCallContract } from 'ethcall';
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber, ContractTransaction, ethers } from 'ethers';
 import { formatBytes32String, parseBytes32String } from 'ethers/lib/utils';
 import request, { gql } from 'graphql-request';
 import KwentaSDK from 'sdk';
 
-import { DAY_PERIOD } from 'queries/futures/constants';
+import { DAY_PERIOD, KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { getFuturesAggregateStats } from 'queries/futures/subgraph';
 import { mapFuturesOrders } from 'queries/futures/utils';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
-import { BPS_CONVERSION } from 'sdk/constants/futures';
+import { BPS_CONVERSION, DEFAULT_DESIRED_TIMEDELTA } from 'sdk/constants/futures';
 import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { getContractsByNetwork } from 'sdk/contracts';
 import FuturesMarketABI from 'sdk/contracts/abis/FuturesMarket.json';
+import FuturesMarketInternal from 'sdk/contracts/FuturesMarketInternal';
 import {
 	CrossMarginBase__factory,
 	PerpsV2MarketData,
-	FuturesMarket__factory,
+	PerpsV2Market__factory,
 } from 'sdk/contracts/types';
 import { NetworkOverrideOptions } from 'sdk/types/common';
 import {
@@ -30,10 +32,14 @@ import {
 	FuturesVolumes,
 	MarketClosureReason,
 	PositionDetail,
+	PositionSide,
 } from 'sdk/types/futures';
 import {
 	calculateFundingRate,
 	calculateVolumes,
+	formatDelayedOrder,
+	formatPotentialIsolatedTrade,
+	formatPotentialTrade,
 	getFuturesEndpoint,
 	getMarketName,
 	getReasonFromCode,
@@ -46,6 +52,9 @@ import { MarketKeyByAsset } from 'utils/futures';
 export default class FuturesService {
 	private sdk: KwentaSDK;
 	public markets: FuturesMarket[] | undefined;
+	public internalFuturesMarkets: Partial<
+		Record<NetworkId, { [marketAddress: string]: FuturesMarketInternal }>
+	> = {};
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
@@ -53,6 +62,20 @@ export default class FuturesService {
 
 	get futuresGqlEndpoint() {
 		return getFuturesEndpoint(this.sdk.context.networkId);
+	}
+
+	private getInternalFuturesMarket(marketAddress: string, marketKey: FuturesMarketKey) {
+		let market = this.internalFuturesMarkets[this.sdk.context.networkId]?.[marketAddress];
+		if (market) return market;
+		market = new FuturesMarketInternal(this.sdk.context.provider, marketKey, marketAddress);
+		this.internalFuturesMarkets = {
+			[this.sdk.context.networkId]: {
+				...this.internalFuturesMarkets[this.sdk.context.networkId],
+				[marketAddress]: market,
+			},
+		};
+
+		return market;
 	}
 
 	public async getMarkets(networkOverride?: NetworkOverrideOptions) {
@@ -131,7 +154,7 @@ export default class FuturesService {
 				marketName: getMarketName(parseBytes32String(asset) as FuturesMarketAsset),
 				asset: parseBytes32String(asset) as FuturesMarketAsset,
 				assetHex: asset,
-				currentFundingRate: wei(currentFundingRate).neg(),
+				currentFundingRate: wei(currentFundingRate).div(24),
 				currentRoundId: wei(currentRoundIds[i], 0),
 				feeRates: {
 					makerFee: wei(feeRates.makerFee),
@@ -414,6 +437,57 @@ export default class FuturesService {
 		};
 	}
 
+	// Perps V2 read functions
+	public async getDelayedOrder(account: string, marketInfo: FuturesMarket<Wei>) {
+		const market = PerpsV2Market__factory.connect(marketInfo.market, this.sdk.context.signer);
+		const order = await market.delayedOrders(account);
+		return formatDelayedOrder(account, marketInfo, order);
+	}
+
+	public async getFillPrice(marketAddress: string, basePrice: Wei, sizeDelta: Wei) {
+		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
+		const fillPrice = await market.fillPriceWithBasePrice(sizeDelta.toBN(), basePrice.toBN());
+		return fillPrice;
+	}
+
+	public async getIsolatedTradePreview(
+		marketAddress: string,
+		sizeDelta: Wei,
+		price: Wei,
+		leverageSide: PositionSide
+	) {
+		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
+		const details = await market.postTradeDetails(
+			sizeDelta.toBN(),
+			price.toBN(), // TODO: Replace this price with the fill price
+			this.sdk.context.walletAddress
+		);
+		return formatPotentialIsolatedTrade(details, sizeDelta, leverageSide);
+	}
+
+	public async getCrossMarginTradePreview(
+		crossMarginAccount: string,
+		marketKey: FuturesMarketKey,
+		marketAddress: string,
+		tradeParams: {
+			sizeDelta: Wei;
+			marginDelta: Wei;
+			orderPrice?: Wei;
+			leverageSide: PositionSide;
+		}
+	) {
+		const marketInternal = this.getInternalFuturesMarket(marketAddress, marketKey);
+
+		const preview = await marketInternal.getTradePreview(
+			crossMarginAccount,
+			tradeParams.sizeDelta.toBN(),
+			tradeParams.marginDelta.toBN(),
+			tradeParams.orderPrice?.toBN()
+		);
+
+		return formatPotentialTrade(preview, tradeParams.sizeDelta, tradeParams.leverageSide);
+	}
+
 	// Contract mutations
 
 	public async approveCrossMarginDeposit(
@@ -443,12 +517,54 @@ export default class FuturesService {
 	}
 
 	public async depositIsolatedMargin(marketAddress: string, amount: Wei) {
-		const market = FuturesMarket__factory.connect(marketAddress, this.sdk.context.signer);
+		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
 		return market.transferMargin(amount.toBN());
 	}
 
 	public async withdrawIsolatedMargin(marketAddress: string, amount: Wei) {
-		const market = FuturesMarket__factory.connect(marketAddress, this.sdk.context.signer);
+		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
 		return market.transferMargin(amount.neg().toBN());
 	}
+
+	public async closeIsolatedPosition(marketAddress: string, priceImpactDelta: Wei) {
+		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
+		return market.closePositionWithTracking(priceImpactDelta.toBN(), KWENTA_TRACKING_CODE);
+	}
+
+	public async modifyIsolatedMarginPosition<T extends boolean>(
+		marketAddress: string,
+		sizeDelta: Wei,
+		priceImpactDelta: Wei,
+		delayed = false,
+		estimationOnly: T
+	): TxReturn<T> {
+		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
+		const root = estimationOnly ? market.estimateGas : market;
+		return delayed
+			? (root.submitDelayedOrderWithTracking(
+					sizeDelta.toBN(),
+					priceImpactDelta.toBN(),
+					wei(DEFAULT_DESIRED_TIMEDELTA).toBN(),
+					KWENTA_TRACKING_CODE
+			  ) as any)
+			: (root.modifyPositionWithTracking(
+					sizeDelta.toBN(),
+					priceImpactDelta.toBN(),
+					KWENTA_TRACKING_CODE
+			  ) as any);
+	}
+
+	public async cancelDelayedOrder(marketAddress: string, account: string) {
+		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
+		return market.cancelDelayedOrder(account);
+	}
+
+	public async executeDelayedOrder(marketAddress: string, account: string) {
+		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
+		return market.executeDelayedOrder(account);
+	}
 }
+
+type TxReturn<T extends boolean = false> = Promise<
+	T extends true ? BigNumber : ContractTransaction
+>;

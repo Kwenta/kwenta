@@ -1,4 +1,3 @@
-import { SynthetixJS } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import BN from 'bn.js';
 import { Provider, Contract as MultiCallContract } from 'ethcall';
@@ -9,7 +8,9 @@ import { useCallback, useMemo } from 'react';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import FuturesMarket from 'sdk/contracts/abis/FuturesMarket.json';
-import { PotentialTradeStatus } from 'sections/futures/types';
+import { FuturesMarket__factory } from 'sdk/contracts/types';
+import { PotentialTradeStatus } from 'sdk/types/futures';
+import { sdk } from 'state/config';
 import {
 	zeroBN,
 	ZERO_BIG_NUM,
@@ -22,7 +23,6 @@ import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
 import { KWENTA_TRACKING_CODE } from './constants';
-import { getFuturesMarketContract } from './utils';
 
 // Need to recreate postTradeDetails from the contract here locally
 // so we can modify margin for use with cross margin
@@ -55,18 +55,18 @@ export default function useGetCrossMarginTradePreview(
 	marketAsset: FuturesMarketAsset,
 	address: string | null | undefined
 ) {
-	const { defaultSynthetixjs: synthetixjs, provider } = Connector.useContainer();
+	const { provider } = Connector.useContainer();
 	const isL2 = useIsL2();
 
 	const contractInstance = useMemo(() => {
-		if (!synthetixjs || !provider || !address || !isL2) return null;
+		if (!provider || !address || !isL2) return null;
 		try {
-			return new FuturesMarketInternal(synthetixjs, provider, marketAsset, address);
+			return new FuturesMarketInternal(provider, marketAsset, address);
 		} catch (err) {
 			logError(err);
 			return null;
 		}
-	}, [synthetixjs, provider, address, isL2, marketAsset]);
+	}, [provider, address, isL2, marketAsset]);
 
 	const getPreview = useCallback(
 		async (sizeDelta: BigNumber, marginDelta: BigNumber, orderPrice?: BigNumber) => {
@@ -84,10 +84,9 @@ export default function useGetCrossMarginTradePreview(
 }
 
 class FuturesMarketInternal {
-	_synthetixjs: SynthetixJS;
 	_provider: ethers.providers.Provider;
 	_futuresMarketContract: Contract;
-	_futuresSettingsContract: Contract;
+	_futuresSettingsContract: Contract | undefined;
 	_marketKeyBytes: string;
 	_account: string;
 
@@ -103,16 +102,14 @@ class FuturesMarketInternal {
 	_cache: Record<string, BigNumber>;
 
 	constructor(
-		synthetixjs: SynthetixJS,
 		provider: ethers.providers.Provider,
 		marketAsset: FuturesMarketAsset,
 		account: string
 	) {
-		this._synthetixjs = synthetixjs;
 		this._provider = provider;
 
-		this._futuresMarketContract = getFuturesMarketContract(marketAsset, synthetixjs.contracts);
-		this._futuresSettingsContract = synthetixjs.contracts.FuturesMarketSettings;
+		this._futuresMarketContract = FuturesMarket__factory.connect(marketAsset, provider);
+		this._futuresSettingsContract = sdk.context.contracts.FuturesMarketSettings;
 		this._marketKeyBytes = formatBytes32String(MarketKeyByAsset[marketAsset]);
 		this._account = account;
 		this._cache = {};
@@ -186,7 +183,8 @@ class FuturesMarketInternal {
 		tradeParams: TradeParams,
 		marginDelta: BigNumber
 	) => {
-		const dynamicFee = await this._synthetixjs.contracts.Exchanger.dynamicFeeRateForExchange(
+		if (!sdk.context.contracts.Exchanger) throw new Error('Unsupported network');
+		const dynamicFee = await sdk.context.contracts.Exchanger?.dynamicFeeRateForExchange(
 			formatBytes32String('sUSD'),
 			this._marketKeyBytes
 		);
@@ -422,6 +420,7 @@ class FuturesMarketInternal {
 
 	_getSetting = async (settingGetter: string, params: any[] = []) => {
 		const cached = this._cache[settingGetter];
+		if (!this._futuresSettingsContract) throw new Error('Unsupported network');
 		if (cached) return cached;
 		const res = await this._futuresSettingsContract[settingGetter](...params);
 		this._cache[settingGetter] = res;

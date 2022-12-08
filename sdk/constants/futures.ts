@@ -129,4 +129,6 @@ export const TESTNET_MARKETS = MARKETS_LIST.filter(
 
 export const BPS_CONVERSION = 10000;
 
+export const DEFAULT_DESIRED_TIMEDELTA = 0;
+
 export const AGGREGATE_ASSET_KEY = '0x';

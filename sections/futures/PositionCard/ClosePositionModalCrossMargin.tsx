@@ -31,7 +31,6 @@ export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 	const { estimateEthersContractTxCost } = useEstimateGasCost();
 	const dispatch = useAppDispatch();
 
-	const [crossMarginGasFee, setCrossMarginGasFee] = useState<Wei | null>(null);
 	const [crossMarginGasLimit, setCrossMarginGasLimit] = useState<Wei | null>(null);
 	const [error, setError] = useState<null | string>(null);
 
@@ -72,13 +71,12 @@ export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 	useEffect(() => {
 		if (!crossMarginAccountContract) return;
 		const estimateGas = async () => {
-			const { gasPrice, gasLimit } = await estimateEthersContractTxCost(
+			const { gasLimit } = await estimateEthersContractTxCost(
 				crossMarginAccountContract,
 				'distributeMargin',
 				[crossMarginCloseParams],
 				DEFAULT_CROSSMARGIN_GAS_BUFFER_PCT
 			);
-			setCrossMarginGasFee(gasPrice);
 			setCrossMarginGasLimit(gasLimit);
 		};
 		estimateGas();
@@ -117,7 +115,6 @@ export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 	return (
 		<ClosePositionModal
 			onDismiss={onDismiss}
-			gasFee={crossMarginGasFee}
 			positionDetails={positionDetails}
 			onClosePosition={closePosition}
 			errorMessage={error}

@@ -1,42 +1,43 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';
 import { PositionSide } from 'queries/futures/types';
-import { FuturesOrder } from 'sdk/types/futures';
+import { DelayedOrder } from 'sdk/types/futures';
+import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
+import { useAppDispatch } from 'state/hooks';
+import { formatCurrency } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 
 import BaseDrawer from './BaseDrawer';
 
 type OrderDrawerProps = {
 	open: boolean;
-	order: FuturesOrder | undefined;
+	order: DelayedOrder | undefined;
 	closeDrawer(): void;
-	onExecute(): void;
-	onCancel(order: FuturesOrder | undefined): void;
 };
 
-const OrderDrawer: React.FC<OrderDrawerProps> = ({
-	open,
-	order,
-	closeDrawer,
-	onCancel,
-	onExecute,
-}) => {
+const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer }) => {
 	const { t } = useTranslation();
+	const dispatch = useAppDispatch();
+
+	const onCancel = useCallback(
+		(order) => {
+			dispatch(cancelDelayedOrder(order.marketAddress));
+		},
+		[dispatch]
+	);
+
+	const onExecute = useCallback(
+		(order) => {
+			dispatch(executeDelayedOrder(order.marketAddress));
+		},
+		[dispatch]
+	);
 
 	const items = React.useMemo(() => {
 		if (!order || !order.side) return [];
-
-		const price = order.targetPrice
-			? [
-					{
-						label: t('futures.market.user.open-orders.table.price'),
-						value: order.targetPriceTxt,
-					},
-			  ]
-			: [];
 
 		return [
 			{
@@ -49,9 +50,11 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({
 			},
 			{
 				label: t('futures.market.user.open-orders.table.size'),
-				value: order.sizeTxt,
+				value: formatCurrency(order.asset, order.size.abs(), {
+					currencyKey: getDisplayAsset(order.asset) ?? '',
+					minDecimals: order.size.abs().lt(0.01) ? 4 : 2,
+				}),
 			},
-			...price,
 			{
 				label: t('futures.market.user.open-orders.table.type'),
 				value: order.orderType,
@@ -67,7 +70,7 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({
 			buttons={
 				<>
 					{order?.isExecutable && (
-						<ExecuteButton onClick={() => onExecute()}>Execute</ExecuteButton>
+						<ExecuteButton onClick={() => onExecute(order)}>Execute</ExecuteButton>
 					)}
 					<CancelOrderButton onClick={() => onCancel(order)}>Cancel</CancelOrderButton>
 				</>

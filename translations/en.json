@@ -745,6 +745,7 @@
 					"deposit-margin-minimum": "Deposit Margin",
 					"oi-caps-reached": "Open Interest Cap Reached",
 					"place-next-price-order": "Place Next Price Order",
+					"place-delayed-order": "Place Delayed Order",
 					"place-limit-order": "Place Limit Order",
 					"place-stop-order": "Place Stop Market Order",
 					"connect-wallet": "Connect Wallet"
@@ -873,6 +874,7 @@
 						"order-type": "Order Type",
 						"market-order": "Market",
 						"next-price-order": "Next Price",
+						"delayed-order": "Delayed",
 						"deposit": "Total Deposit",
 						"np-discount": "Next Price Discount"
 					}
@@ -888,6 +890,7 @@
 						"size": "Size",
 						"size-price": "Size/Price",
 						"reserved-margin": "Reserved margin",
+						"commit-deposit": "Commit Deposit",
 						"price": "Price",
 						"status": "Status",
 						"parameters": "Parameters",

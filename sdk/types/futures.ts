@@ -1,4 +1,5 @@
 import Wei from '@synthetixio/wei';
+import { BigNumber } from 'ethers';
 
 export type FundingRateInput = {
 	marketAddress: string | undefined;
@@ -176,7 +177,8 @@ export type FuturesOrderTypeDisplay =
 	| 'Limit'
 	| 'Stop Market'
 	| 'Market'
-	| 'Liquidation';
+	| 'Liquidation'
+	| 'Delayed';
 
 export type FuturesOrder<T = Wei> = {
 	id: string;
@@ -196,4 +198,65 @@ export type FuturesOrder<T = Wei> = {
 	isStale?: boolean;
 	isExecutable?: boolean;
 	isCancelling?: boolean;
+};
+
+export type DelayedOrder<T = Wei> = {
+	account: string;
+	asset: FuturesMarketAsset;
+	market: string;
+	marketAddress: string;
+	marketKey: FuturesMarketKey;
+	size: T;
+	commitDeposit: T;
+	keeperDeposit: T;
+	submittedAtTimestamp: number;
+	executableAtTimestamp: number;
+	isOffchain: boolean;
+	priceImpactDelta: T;
+	targetRoundId: T | null;
+	orderType: FuturesOrderTypeDisplay;
+	side?: PositionSide;
+	isStale?: boolean;
+	isExecutable?: boolean;
+	isCancelling?: boolean;
+};
+
+export type FuturesPotentialTradeDetails<T = Wei> = {
+	size: T;
+	sizeDelta: T;
+	liqPrice: T;
+	margin: T;
+	price: T;
+	fee: T;
+	leverage: T;
+	notionalValue: T;
+	side: PositionSide;
+	status: PotentialTradeStatus;
+	showStatus: boolean;
+	statusMessage: string;
+};
+
+// https://github.com/Synthetixio/synthetix/blob/4d2add4f74c68ac4f1106f6e7be4c31d4f1ccc76/contracts/interfaces/IFuturesMarketBaseTypes.sol#L6-L19
+export enum PotentialTradeStatus {
+	OK = 0,
+	INVALID_PRICE = 1,
+	PRICE_OUT_OF_BOUNDS = 2,
+	CAN_LIQUIDATE = 3,
+	CANNOT_LIQUIDATE = 4,
+	MAX_MARKET_SIZE_EXCEEDED = 5,
+	MAX_LEVERAGE_EXCEEDED = 6,
+	INSUFFICIENT_MARGIN = 7,
+	NOT_PERMITTED = 8,
+	NIL_ORDER = 9,
+	NO_POSITION_OPEN = 10,
+	PRICE_TOO_VOLATILE = 11,
+}
+
+export type PostTradeDetailsResponse = {
+	margin: BigNumber;
+	size: BigNumber;
+	price: BigNumber;
+	liqPrice: BigNumber;
+	fee: BigNumber;
+	status: number;
 };

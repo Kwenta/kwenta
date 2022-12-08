@@ -4,14 +4,19 @@ import { TFunction } from 'i18next';
 import { Dictionary } from 'lodash';
 
 import { FuturesOrderType, FuturesTradeInputs, TradeFees } from 'queries/futures/types';
-import { FuturesMarket, FuturesOrder, FuturesPosition, FuturesVolumes } from 'sdk/types/futures';
+import {
+	DelayedOrder,
+	FuturesMarket,
+	FuturesOrder,
+	FuturesPosition,
+	FuturesVolumes,
+} from 'sdk/types/futures';
 import { PositionSide } from 'sections/futures/types';
 import {
 	CrossMarginBalanceInfo,
 	CrossMarginSettings,
 	CrossMarginTradeInputs,
-	FundingRate,
-	FundingRateSerialized,
+	TransactionEstimation,
 } from 'state/futures/types';
 import logError from 'utils/logError';
 
@@ -379,37 +384,39 @@ export const calculateMarginDelta = (
 	}
 };
 
+export const serializeMarket = (market: FuturesMarket): FuturesMarket<string> => {
+	return {
+		...market,
+		currentFundingRate: market.currentFundingRate.toString(),
+		currentRoundId: market.currentRoundId.toString(),
+		feeRates: {
+			makerFee: market.feeRates.makerFee.toString(),
+			takerFee: market.feeRates.takerFee.toString(),
+			makerFeeDelayedOrder: market.feeRates.makerFeeDelayedOrder.toString(),
+			takerFeeDelayedOrder: market.feeRates.takerFeeDelayedOrder.toString(),
+			makerFeeOffchainDelayedOrder: market.feeRates.makerFeeOffchainDelayedOrder.toString(),
+			takerFeeOffchainDelayedOrder: market.feeRates.takerFeeOffchainDelayedOrder.toString(),
+		},
+		openInterest: market.openInterest
+			? {
+					...market.openInterest,
+					shortUSD: market.openInterest.shortUSD.toString(),
+					longUSD: market.openInterest.longUSD.toString(),
+			  }
+			: undefined,
+		marketDebt: market.marketDebt.toString(),
+		marketSkew: market.marketSkew.toString(),
+		marketSize: market.marketSize.toString(),
+		maxLeverage: market.maxLeverage.toString(),
+		price: market.price.toString(),
+		minInitialMargin: market.minInitialMargin.toString(),
+		keeperDeposit: market.keeperDeposit.toString(),
+		marketLimit: market.marketLimit.toString(),
+	};
+};
+
 export const serializeMarkets = (markets: FuturesMarket[]): FuturesMarket<string>[] => {
-	return markets.map((m) => {
-		return {
-			...m,
-			currentFundingRate: m.currentFundingRate.toString(),
-			currentRoundId: m.currentRoundId.toString(),
-			feeRates: {
-				makerFee: m.feeRates.makerFee.toString(),
-				takerFee: m.feeRates.takerFee.toString(),
-				makerFeeDelayedOrder: m.feeRates.makerFeeDelayedOrder.toString(),
-				takerFeeDelayedOrder: m.feeRates.takerFeeDelayedOrder.toString(),
-				makerFeeOffchainDelayedOrder: m.feeRates.makerFeeOffchainDelayedOrder.toString(),
-				takerFeeOffchainDelayedOrder: m.feeRates.takerFeeOffchainDelayedOrder.toString(),
-			},
-			openInterest: m.openInterest
-				? {
-						...m.openInterest,
-						shortUSD: m.openInterest.shortUSD.toString(),
-						longUSD: m.openInterest.longUSD.toString(),
-				  }
-				: undefined,
-			marketDebt: m.marketDebt.toString(),
-			marketSkew: m.marketSkew.toString(),
-			marketSize: m.marketSize.toString(),
-			maxLeverage: m.maxLeverage.toString(),
-			price: m.price.toString(),
-			minInitialMargin: m.minInitialMargin.toString(),
-			keeperDeposit: m.keeperDeposit.toString(),
-			marketLimit: m.marketLimit.toString(),
-		};
-	});
+	return markets.map((m) => serializeMarket(m));
 };
 
 export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMarket[] => {
@@ -441,10 +448,6 @@ export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMar
 		keeperDeposit: wei(m.keeperDeposit),
 		marketLimit: wei(m.marketLimit),
 	}));
-};
-
-export const unserializeFundingRates = (rates: FundingRateSerialized[]): FundingRate[] => {
-	return rates.map((r) => ({ ...r, fundingRate: r.fundingRate ? wei(r.fundingRate) : null }));
 };
 
 export const serializeCmBalanceInfo = (
@@ -492,8 +495,8 @@ export const serializeCrossMarginTradeInputs = (
 ): CrossMarginTradeInputs<string> => {
 	return {
 		...tradeInputs,
-		nativeSizeDelta: tradeInputs.nativeSizeDelta.toString(),
-		susdSizeDelta: tradeInputs.susdSizeDelta.toString(),
+		nativeSize: tradeInputs.nativeSize.toString(),
+		susdSize: tradeInputs.susdSize.toString(),
 	};
 };
 
@@ -502,8 +505,8 @@ export const unserializeCrossMarginTradeInputs = (
 ): CrossMarginTradeInputs => {
 	return {
 		...tradeInputs,
-		nativeSizeDelta: wei(tradeInputs.nativeSizeDelta || 0),
-		susdSizeDelta: wei(tradeInputs.susdSizeDelta || 0),
+		nativeSize: wei(tradeInputs.nativeSize || 0),
+		susdSize: wei(tradeInputs.susdSize || 0),
 	};
 };
 
@@ -517,6 +520,30 @@ export const serializeFuturesOrders = (orders: FuturesOrder[]): FuturesOrder<str
 		timestamp: o.timestamp.toString(),
 	}));
 };
+
+export const serializeDelayedOrder = (order: DelayedOrder): DelayedOrder<string> => ({
+	...order,
+	size: order.size.toString(),
+	commitDeposit: order.commitDeposit.toString(),
+	keeperDeposit: order.keeperDeposit.toString(),
+	priceImpactDelta: order.priceImpactDelta.toString(),
+	targetRoundId: order.targetRoundId?.toString() ?? '',
+});
+
+export const serializeDelayedOrders = (orders: DelayedOrder[]): DelayedOrder<string>[] =>
+	orders.map((o) => serializeDelayedOrder(o));
+
+export const unserializeDelayedOrder = (order: DelayedOrder<string>): DelayedOrder => ({
+	...order,
+	size: wei(order.size),
+	commitDeposit: wei(order.commitDeposit),
+	keeperDeposit: wei(order.keeperDeposit),
+	priceImpactDelta: wei(order.priceImpactDelta),
+	targetRoundId: wei(order.targetRoundId),
+});
+
+export const unserializeDelayedOrders = (orders: DelayedOrder<string>[]): DelayedOrder[] =>
+	orders.map((o) => unserializeDelayedOrder(o));
 
 export const unserializeFuturesOrders = (orders: FuturesOrder<string>[]): FuturesOrder[] => {
 	return orders.map((o) => ({
@@ -543,4 +570,12 @@ export const unserializeCrossMarginSettings = (
 	tradeFee: wei(settings.tradeFee),
 	limitOrderFee: wei(settings.limitOrderFee),
 	stopOrderFee: wei(settings.stopOrderFee),
+});
+
+export const unserializeGasEstimate = (
+	estimate: TransactionEstimation<string>
+): TransactionEstimation => ({
+	...estimate,
+	limit: wei(estimate.limit),
+	cost: wei(estimate.cost),
 });

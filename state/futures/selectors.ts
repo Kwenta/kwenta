@@ -1,10 +1,11 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
 
-import { DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
+import { DEFAULT_LEVERAGE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import { DEFAULT_MAX_LEVERAGE } from 'constants/futures';
 import { TransactionStatus } from 'sdk/types/common';
 import { FuturesPosition } from 'sdk/types/futures';
+import { unserializePotentialTrade } from 'sdk/utils/futures';
 import { PositionSide } from 'sections/futures/types';
 import { selectExchangeRates } from 'state/exchange/selectors';
 import { accountType, deserializeWeiObject } from 'state/helpers';
@@ -16,14 +17,13 @@ import {
 	MarketKeyByAsset,
 	unserializeCmBalanceInfo,
 	unserializeCrossMarginSettings,
-	unserializeCrossMarginTradeInputs,
-	unserializeFundingRates,
-	unserializeFuturesOrders,
 	unserializeFuturesVolumes,
+	unserializeGasEstimate,
 	unserializeMarkets,
+	unserializeDelayedOrders,
 } from 'utils/futures';
 
-import { FundingRate, futuresPositionKeys } from './types';
+import { futuresPositionKeys } from './types';
 
 export const selectFuturesType = (state: RootState) => state.futures.selectedType;
 
@@ -32,6 +32,13 @@ export const selectFuturesTransaction = (state: RootState) => state.futures.tran
 export const selectCrossMarginAccount = (state: RootState) => state.futures.crossMargin.account;
 
 export const selectMarketsQueryStatus = (state: RootState) => state.futures.queryStatuses.markets;
+
+export const selectCrossMarginSelectedLeverage = (state: RootState) =>
+	wei(state.futures.crossMargin.tradeInputs.leverage || DEFAULT_LEVERAGE);
+
+export const selectCrossMarginTransferOpen = (state: RootState) =>
+	state.app.openModal === 'futures_cross_deposit' ||
+	state.app.openModal === 'futures_cross_withdraw';
 
 export const selectMarketKey = createSelector(
 	(state: RootState) => state.futures[accountType(state.futures.selectedType)].selectedMarketAsset,
@@ -70,31 +77,42 @@ export const selectMarketAssets = createSelector(
 	(markets) => markets.map(({ asset }) => asset)
 );
 
-export const selectAverageFundingRates = createSelector(
-	(state: RootState) => state.futures.fundingRates,
-	(fundingRates) => unserializeFundingRates(fundingRates)
-);
-
-export const selectFundingRate = createSelector(
-	selectMarketKey,
-	selectAverageFundingRates,
-	(marketKey, fundingRates) => {
-		return fundingRates.find((fundingRate: FundingRate) => fundingRate.asset === marketKey);
-	}
-);
-
 export const selectMarketInfo = createSelector(
 	selectMarkets,
-	selectMarketAsset,
+	selectMarketKey,
 	(markets, selectedMarket) => {
-		return markets.find((market) => market.asset === selectedMarket);
+		return markets.find((market) => market.marketKey === selectedMarket);
 	}
 );
+
+export const selectFundingRate = createSelector(selectMarketInfo, (marketInfo) => {
+	return marketInfo?.currentFundingRate;
+});
+
 export const selectMarketAssetRate = createSelector(
 	(state: RootState) => state.futures[accountType(state.futures.selectedType)].selectedMarketAsset,
 	selectExchangeRates,
 	(marketAsset, exchangeRates) => {
 		return newGetExchangeRatesForCurrencies(exchangeRates, marketAsset, 'sUSD');
+	}
+);
+
+export const selectIsolatedTradeInputs = createSelector(
+	(state: RootState) => state.futures.isolatedMargin.tradeInputs,
+	(tradeInputs) => tradeInputs
+);
+
+export const selectIsolatedPriceImpact = createSelector(
+	(state: RootState) => state.futures.isolatedMargin.priceImpact,
+	(priceImpact) => priceImpact
+);
+
+export const selectFuturesAccount = createSelector(
+	selectFuturesType,
+	selectWallet,
+	selectCrossMarginAccount,
+	(selectedType, wallet, crossMarginAccount) => {
+		return selectedType === 'cross_margin' ? crossMarginAccount : wallet;
 	}
 );
 
@@ -133,37 +151,56 @@ export const selectFuturesPositions = createSelector(
 	}
 );
 
-export const selectIsSubmittingCrossTransfer = createSelector(
+export const selectSubmittingFuturesTx = createSelector(
 	(state: RootState) => state.futures,
 	(futures) => {
 		return (
+			futures.transaction?.status === TransactionStatus.AwaitingExecution ||
+			futures.transaction?.status === TransactionStatus.Executed
+		);
+	}
+);
+
+export const selectIsClosingPosition = createSelector(
+	selectSubmittingFuturesTx,
+	(state: RootState) => state.futures,
+	(submitting, futures) => {
+		return (
+			(futures.transaction?.type === 'close_isolated' ||
+				futures.transaction?.type === 'close_cross_margin') &&
+			submitting
+		);
+	}
+);
+
+export const selectIsSubmittingCrossTransfer = createSelector(
+	selectSubmittingFuturesTx,
+	(state: RootState) => state.futures,
+	(submitting, futures) => {
+		return (
 			(futures.transaction?.type === 'deposit_cross_margin' ||
 				futures.transaction?.type === 'withdraw_cross_margin') &&
-			(futures.transaction?.status === TransactionStatus.AwaitingExecution ||
-				futures.transaction?.status === TransactionStatus.Executed)
+			submitting
 		);
 	}
 );
 
 export const selectIsApprovingCrossDeposit = createSelector(
+	selectSubmittingFuturesTx,
 	(state: RootState) => state.futures,
-	(futures) => {
-		return (
-			futures.transaction?.type === 'approve_cross_margin' &&
-			(futures.transaction?.status === TransactionStatus.AwaitingExecution ||
-				futures.transaction?.status === TransactionStatus.Executed)
-		);
+	(submitting, futures) => {
+		return futures.transaction?.type === 'approve_cross_margin' && submitting;
 	}
 );
 
 export const selectIsSubmittingIsolatedTransfer = createSelector(
+	selectSubmittingFuturesTx,
 	(state: RootState) => state.futures,
-	(futures) => {
+	(submitting, futures) => {
 		return (
 			(futures.transaction?.type === 'deposit_isolated' ||
 				futures.transaction?.type === 'withdraw_isolated') &&
-			(futures.transaction?.status === TransactionStatus.AwaitingExecution ||
-				futures.transaction?.status === TransactionStatus.Executed)
+			submitting
 		);
 	}
 );
@@ -176,6 +213,14 @@ export const selectIsolatedTransferError = createSelector(
 			futures.transaction?.status === TransactionStatus.Failed
 			? futures.transaction?.error ?? 'Transaction failed'
 			: null;
+	}
+);
+
+export const selectIsModifyingIsolatedPosition = createSelector(
+	selectSubmittingFuturesTx,
+	(state: RootState) => state.futures,
+	(submitting, futures) => {
+		return futures.transaction?.type === 'modify_isolated' && submitting;
 	}
 );
 
@@ -226,7 +271,7 @@ export const selectMaxLeverage = createSelector(
 		const positionSide = position?.position?.side;
 		const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
 		const adjustedMaxLeverage =
-			orderType === 'next price'
+			orderType === 'delayed'
 				? marketMaxLeverage.mul(DEFAULT_NP_LEVERAGE_ADJUSTMENT)
 				: marketMaxLeverage;
 
@@ -248,9 +293,45 @@ export const selectAboveMaxLeverage = createSelector(
 	}
 );
 
-export const selectCrossMarginTradeInputs = createSelector(
-	(state: RootState) => state.futures.crossMargin.tradeInputs,
-	(tradeInputs) => unserializeCrossMarginTradeInputs(tradeInputs)
+export const selectCrossMarginTradeInputs = (state: RootState) =>
+	state.futures.crossMargin.tradeInputs;
+
+export const selectIsolatedMarginTradeInputs = (state: RootState) =>
+	state.futures.isolatedMargin.tradeInputs;
+
+export const selectTradeSizeInputs = createSelector(
+	selectLeverageSide,
+	selectFuturesType,
+	selectCrossMarginTradeInputs,
+	selectIsolatedMarginTradeInputs,
+	(side, type, crossMarginInputs, isolatedInputs) => {
+		const inputs = type === 'cross_margin' ? crossMarginInputs : isolatedInputs;
+		const weiValues = {
+			susdSizeWei: wei(inputs.susdSize || 0),
+			nativeSizeWei: wei(inputs.nativeSize || 0),
+		};
+		const deltas = {
+			susdSizeDelta:
+				side === PositionSide.LONG ? wei(inputs.susdSize || 0) : wei(inputs.susdSize || 0).neg(),
+			nativeSizeDelta:
+				side === PositionSide.LONG ? wei(inputs.nativeSize || 0) : wei(inputs.susdSize || 0).neg(),
+		};
+		return {
+			...inputs,
+			...weiValues,
+			...deltas,
+		};
+	}
+);
+
+export const selectIsolatedMarginLeverage = createSelector(
+	selectPosition,
+	selectIsolatedMarginTradeInputs,
+	(position, { susdSize }) => {
+		const remainingMargin = position?.remainingMargin;
+		if (!remainingMargin || remainingMargin.eq(0) || !susdSize) return wei(0);
+		return wei(susdSize || 0).div(remainingMargin);
+	}
 );
 
 export const selectNextPriceDisclaimer = createSelector(
@@ -263,11 +344,11 @@ export const selectNextPriceDisclaimer = createSelector(
 
 export const selectPlaceOrderTranslationKey = createSelector(
 	selectPosition,
+	selectFuturesType,
 	(state: RootState) => state.futures[accountType(state.futures.selectedType)].orderType,
-	(state: RootState) => state.futures.selectedType,
 	(state: RootState) => state.futures.crossMargin.balanceInfo,
 	selectIsMarketCapReached,
-	(position, orderType, selectedType, { freeMargin }, isMarketCapReached) => {
+	(position, selectedType, orderType, { freeMargin }, isMarketCapReached) => {
 		let remainingMargin;
 		if (selectedType === 'isolated_margin') {
 			remainingMargin = position?.remainingMargin || zeroBN;
@@ -276,7 +357,7 @@ export const selectPlaceOrderTranslationKey = createSelector(
 			remainingMargin = positionMargin.add(freeMargin);
 		}
 
-		if (orderType === 'next price') return 'futures.market.trade.button.place-next-price-order';
+		if (orderType === 'delayed') return 'futures.market.trade.button.place-delayed-order';
 		if (orderType === 'limit') return 'futures.market.trade.button.place-limit-order';
 		if (orderType === 'stop market') return 'futures.market.trade.button.place-stop-order';
 		if (!!position?.position) return 'futures.market.trade.button.modify-position';
@@ -313,27 +394,43 @@ export const selectFuturesPortfolio = createSelector(
 );
 
 export const selectCrossMarginOpenOrders = createSelector(
-	selectMarketAsset,
 	(state: RootState) => state.futures,
-	(asset, futures) => {
-		const orders =
-			futures.crossMargin.account && futures.crossMargin.openOrders[futures.crossMargin.account]
-				? unserializeFuturesOrders(futures.crossMargin.openOrders[futures.crossMargin.account])
-				: [];
-		return orders.filter((o) => o.asset === asset);
+	(futures) => {
+		return unserializeDelayedOrders(futures.crossMargin.openOrders);
 	}
 );
 
 export const selectIsolatedMarginOpenOrders = createSelector(
-	selectMarketAsset,
-	selectWallet,
 	(state: RootState) => state.futures,
-	(asset, wallet, futures) => {
-		const orders =
-			wallet && futures.isolatedMargin.openOrders[wallet]
-				? unserializeFuturesOrders(futures.isolatedMargin.openOrders[wallet])
-				: [];
-		return orders.filter((o) => o.asset === asset);
+	(futures) => {
+		return unserializeDelayedOrders(futures.isolatedMargin.openOrders);
+	}
+);
+
+export const selectTradePreview = createSelector(
+	selectFuturesType,
+	(state: RootState) => state.futures,
+	(type, futures) => {
+		const preview = futures[accountType(type)].tradePreview.data;
+		return preview ? unserializePotentialTrade(preview) : null;
+	}
+);
+
+export const selectTradePreviewError = createSelector(
+	selectFuturesType,
+	(state: RootState) => state.futures,
+	(type, futures) => {
+		return futures[accountType(type)].tradePreview.error;
+	}
+);
+
+export const selectTradePreviewStatus = createSelector(
+	selectFuturesType,
+	(state: RootState) => state.futures,
+	(type, futures) => {
+		return type === 'cross_margin'
+			? futures.queryStatuses.crossMarginTradePreview
+			: futures.queryStatuses.isolatedTradePreview;
 	}
 );
 
@@ -346,7 +443,27 @@ export const selectOpenOrders = createSelector(
 	}
 );
 
+export const selectOpenOrder = createSelector(
+	selectCrossMarginOpenOrders,
+	selectIsolatedMarginOpenOrders,
+	selectFuturesType,
+	selectMarketKey,
+	(crossOrders, isolatedOrder, futuresType, marketKey) => {
+		const orders = futuresType === 'cross_margin' ? crossOrders : isolatedOrder;
+		return orders.find((o) => o.marketKey === marketKey);
+	}
+);
+
 export const selectCrossMarginSettings = createSelector(
 	(state: RootState) => state.futures.crossMargin.settings,
 	(settings) => unserializeCrossMarginSettings(settings)
+);
+
+export const selectModifyIsolatedGasEstimate = createSelector(
+	(state: RootState) => state.futures.transactionEstimations,
+	(transactionEstimations) => {
+		const estimate = transactionEstimations['modify_isolated'];
+		if (estimate) return unserializeGasEstimate(estimate);
+		return null;
+	}
 );

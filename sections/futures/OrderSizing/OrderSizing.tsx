@@ -13,12 +13,12 @@ import {
 	selectMarketAssetRate,
 	selectCrossMarginBalanceInfo,
 	selectPosition,
+	selectFuturesType,
+	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {
-	futuresAccountTypeState,
 	simulatedTradeState,
-	futuresTradeInputsState,
 	orderTypeState,
 	futuresOrderPriceState,
 	leverageSideState,
@@ -37,14 +37,15 @@ type OrderSizingProps = {
 const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	const { onTradeAmountChange, maxUsdInputAmount } = useFuturesContext();
 
-	const { nativeSize, susdSize } = useRecoilValue(futuresTradeInputsState);
+	const { susdSize, nativeSize } = useAppSelector(selectTradeSizeInputs);
 	const simulatedTrade = useRecoilValue(simulatedTradeState);
 
 	const { freeMargin: freeCrossMargin } = useAppSelector(selectCrossMarginBalanceInfo);
-	const position = useAppSelector(selectPosition);
-	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
-	const orderType = useRecoilValue(orderTypeState);
+
 	const marketAssetRate = useAppSelector(selectMarketAssetRate);
+	const selectedAccountType = useAppSelector(selectFuturesType);
+	const position = useAppSelector(selectPosition);
+	const orderType = useRecoilValue(orderTypeState);
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
 	const selectedLeverageSide = useRecoilValue(leverageSideState);
 
@@ -68,13 +69,16 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 			if (simulatedTrade && simulatedTrade.susdSize !== susdSize) {
 				setUsdValue(simulatedTrade.susdSize);
 			} else if (susdSize !== usdValue) {
-				setUsdValue(susdSize);
+				const cleanSusdSizeDelta = susdSize === '' ? '' : wei(susdSize).abs().toNumber().toString();
+				setUsdValue(cleanSusdSizeDelta);
 			}
 
 			if (simulatedTrade && simulatedTrade.nativeSize !== nativeSize) {
 				setAssetValue(simulatedTrade.nativeSize);
 			} else if (assetValue !== nativeSize) {
-				setAssetValue(nativeSize);
+				const cleanNativeSizeDelta =
+					nativeSize === '' ? '' : wei(nativeSize).abs().toNumber().toString();
+				setAssetValue(cleanNativeSizeDelta);
 			}
 		},
 		// Don't want to react to internal value changes

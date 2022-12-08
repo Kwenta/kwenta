@@ -14,60 +14,28 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "_token",
+        name: "_owner",
         type: "address",
       },
       {
         internalType: "address",
-        name: "_rewardEscrow",
+        name: "_rewardsDistribution",
         type: "address",
       },
       {
         internalType: "address",
-        name: "_supplySchedule",
+        name: "_rewardsToken",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_stakingToken",
         type: "address",
       },
     ],
+    payable: false,
     stateMutability: "nonpayable",
     type: "constructor",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "user",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-    ],
-    name: "EscrowStaked",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "user",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-    ],
-    name: "EscrowUnstaked",
-    type: "event",
   },
   {
     anonymous: false,
@@ -106,12 +74,12 @@ const _abi = [
     inputs: [
       {
         indexed: false,
-        internalType: "address",
-        name: "account",
-        type: "address",
+        internalType: "bool",
+        name: "isPaused",
+        type: "bool",
       },
     ],
-    name: "Paused",
+    name: "PauseChanged",
     type: "event",
   },
   {
@@ -201,19 +169,6 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: false,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "Unpaused",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
         indexed: true,
         internalType: "address",
         name: "user",
@@ -226,30 +181,20 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "Unstaked",
+    name: "Withdrawn",
     type: "event",
   },
   {
-    inputs: [],
-    name: "_totalSupply",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
+    constant: false,
     inputs: [],
     name: "acceptOwnership",
     outputs: [],
+    payable: false,
     stateMutability: "nonpayable",
     type: "function",
   },
   {
+    constant: true,
     inputs: [
       {
         internalType: "address",
@@ -265,10 +210,12 @@ const _abi = [
         type: "uint256",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
+    constant: true,
     inputs: [
       {
         internalType: "address",
@@ -284,43 +231,30 @@ const _abi = [
         type: "uint256",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "escrowedBalanceOf",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
+    constant: false,
     inputs: [],
     name: "exit",
     outputs: [],
+    payable: false,
     stateMutability: "nonpayable",
     type: "function",
   },
   {
+    constant: false,
     inputs: [],
     name: "getReward",
     outputs: [],
+    payable: false,
     stateMutability: "nonpayable",
     type: "function",
   },
   {
+    constant: true,
     inputs: [],
     name: "getRewardForDuration",
     outputs: [
@@ -330,10 +264,27 @@ const _abi = [
         type: "uint256",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
+    constant: true,
+    inputs: [],
+    name: "lastPauseTime",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    payable: false,
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    constant: true,
     inputs: [],
     name: "lastTimeRewardApplicable",
     outputs: [
@@ -343,10 +294,12 @@ const _abi = [
         type: "uint256",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
+    constant: true,
     inputs: [],
     name: "lastUpdateTime",
     outputs: [
@@ -356,10 +309,12 @@ const _abi = [
         type: "uint256",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
+    constant: false,
     inputs: [
       {
         internalType: "address",
@@ -369,10 +324,12 @@ const _abi = [
     ],
     name: "nominateNewOwner",
     outputs: [],
+    payable: false,
     stateMutability: "nonpayable",
     type: "function",
   },
   {
+    constant: true,
     inputs: [],
     name: "nominatedOwner",
     outputs: [
@@ -382,29 +339,12 @@ const _abi = [
         type: "address",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "nonEscrowedBalanceOf",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
+    constant: false,
     inputs: [
       {
         internalType: "uint256",
@@ -414,10 +354,12 @@ const _abi = [
     ],
     name: "notifyRewardAmount",
     outputs: [],
+    payable: false,
     stateMutability: "nonpayable",
     type: "function",
   },
   {
+    constant: true,
     inputs: [],
     name: "owner",
     outputs: [
@@ -427,17 +369,12 @@ const _abi = [
         type: "address",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [],
-    name: "pauseStakingRewards",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
+    constant: true,
     inputs: [],
     name: "paused",
     outputs: [
@@ -447,10 +384,12 @@ const _abi = [
         type: "bool",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
+    constant: true,
     inputs: [],
     name: "periodFinish",
     outputs: [
@@ -460,10 +399,12 @@ const _abi = [
         type: "uint256",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
+    constant: false,
     inputs: [
       {
         internalType: "address",
@@ -478,23 +419,12 @@ const _abi = [
     ],
     name: "recoverERC20",
     outputs: [],
+    payable: false,
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [],
-    name: "rewardEscrow",
-    outputs: [
-      {
-        internalType: "contract IRewardEscrow",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
+    constant: true,
     inputs: [],
     name: "rewardPerToken",
     outputs: [
@@ -504,10 +434,12 @@ const _abi = [
         type: "uint256",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
+    constant: true,
     inputs: [],
     name: "rewardPerTokenStored",
     outputs: [
@@ -517,10 +449,12 @@ const _abi = [
         type: "uint256",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
+    constant: true,
     inputs: [],
     name: "rewardRate",
     outputs: [
@@ -530,10 +464,12 @@ const _abi = [
         type: "uint256",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
+    constant: true,
     inputs: [
       {
         internalType: "address",
@@ -549,10 +485,27 @@ const _abi = [
         type: "uint256",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
+    constant: true,
+    inputs: [],
+    name: "rewardsDistribution",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    payable: false,
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    constant: true,
     inputs: [],
     name: "rewardsDuration",
     outputs: [
@@ -562,10 +515,57 @@ const _abi = [
         type: "uint256",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
+    constant: true,
+    inputs: [],
+    name: "rewardsToken",
+    outputs: [
+      {
+        internalType: "contract IERC20",
+        name: "",
+        type: "address",
+      },
+    ],
+    payable: false,
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    constant: false,
+    inputs: [
+      {
+        internalType: "bool",
+        name: "_paused",
+        type: "bool",
+      },
+    ],
+    name: "setPaused",
+    outputs: [],
+    payable: false,
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    constant: false,
+    inputs: [
+      {
+        internalType: "address",
+        name: "_rewardsDistribution",
+        type: "address",
+      },
+    ],
+    name: "setRewardsDistribution",
+    outputs: [],
+    payable: false,
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    constant: false,
     inputs: [
       {
         internalType: "uint256",
@@ -575,10 +575,12 @@ const _abi = [
     ],
     name: "setRewardsDuration",
     outputs: [],
+    payable: false,
     stateMutability: "nonpayable",
     type: "function",
   },
   {
+    constant: false,
     inputs: [
       {
         internalType: "uint256",
@@ -588,43 +590,14 @@ const _abi = [
     ],
     name: "stake",
     outputs: [],
+    payable: false,
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-    ],
-    name: "stakeEscrow",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
+    constant: true,
     inputs: [],
-    name: "supplySchedule",
-    outputs: [
-      {
-        internalType: "contract ISupplySchedule",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "token",
+    name: "stakingToken",
     outputs: [
       {
         internalType: "contract IERC20",
@@ -632,10 +605,12 @@ const _abi = [
         type: "address",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
+    constant: true,
     inputs: [],
     name: "totalSupply",
     outputs: [
@@ -645,48 +620,12 @@ const _abi = [
         type: "uint256",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [],
-    name: "unpauseStakingRewards",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-    ],
-    name: "unstake",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-    ],
-    name: "unstakeEscrow",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
+    constant: true,
     inputs: [
       {
         internalType: "address",
@@ -702,7 +641,23 @@ const _abi = [
         type: "uint256",
       },
     ],
+    payable: false,
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    constant: false,
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "withdraw",
+    outputs: [],
+    payable: false,
+    stateMutability: "nonpayable",
     type: "function",
   },
 ];

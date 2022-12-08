@@ -9,12 +9,15 @@ import Connector from 'containers/Connector';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { FuturesOrderType } from 'queries/futures/types';
 import { setOpenModal } from 'state/app/reducer';
-import { selectOpenModal } from 'state/app/selectors';
 import {
 	setLeverageSide as setReduxLeverageSide,
 	setOrderType as setReduxOrderType,
 } from 'state/futures/reducer';
-import { selectCrossMarginBalanceInfo, selectMarketAssetRate } from 'state/futures/selectors';
+import {
+	selectCrossMarginBalanceInfo,
+	selectCrossMarginTransferOpen,
+	selectMarketAssetRate,
+} from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import {
 	futuresAccountState,
@@ -51,7 +54,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 	const marketAssetRate = useAppSelector(selectMarketAssetRate);
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const [orderPrice, setOrderPrice] = useRecoilState(futuresOrderPriceState);
-	const openTransferModal = useAppSelector(selectOpenModal);
+	const openTransferModal = useAppSelector(selectCrossMarginTransferOpen);
 
 	const dispatch = useAppDispatch();
 
@@ -121,7 +124,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 					<FeeInfoBox />
 					{openTransferModal && (
 						<DepositWithdrawCrossMargin
-							defaultTab={openTransferModal === 'futures_cross_deposit' ? 'deposit' : 'withdraw'}
+							defaultTab={'deposit'}
 							onDismiss={() => dispatch(setOpenModal(null))}
 						/>
 					)}
