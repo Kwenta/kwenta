@@ -49,6 +49,7 @@ import {
 	selectFuturesAccount,
 	selectLeverageSide,
 	selectMarketInfo,
+	selectMarkets,
 	selectPosition,
 } from './selectors';
 import {
@@ -218,17 +219,20 @@ export const fetchOpenOrders = createAsyncThunk<
 >('futures/fetchOpenOrders', async (_, { getState, extra: { sdk } }) => {
 	const { futures } = getState();
 	const account = selectFuturesAccount(getState());
-	const marketInfo = selectMarketInfo(getState());
+	const markets = selectMarkets(getState());
 	if (!account) {
 		throw new Error('No account to fetch orders');
 	}
-	if (!marketInfo) {
-		throw new Error('No market info');
+	if (markets.length === 0) {
+		throw new Error('No markets available');
 	}
-	const order = await sdk.futures.getDelayedOrder(account, marketInfo);
-	const orders = [order].filter((o) => o.size.abs().gt(0));
+	// TODO: Make this multicall
+	const orders = await Promise.all(
+		markets.map((market) => sdk.futures.getDelayedOrder(account, market))
+	);
+	const nonzeroOrders = orders.filter((o) => o.size.abs().gt(0));
 	return {
-		orders: serializeDelayedOrders(orders),
+		orders: serializeDelayedOrders(nonzeroOrders),
 		account: account,
 		accountType: futures.selectedType,
 	};
