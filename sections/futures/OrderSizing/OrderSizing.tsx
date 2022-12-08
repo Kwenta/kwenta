@@ -9,12 +9,12 @@ import CustomInput from 'components/Input/CustomInput';
 import InputTitle from 'components/Input/InputTitle';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import {
-	selectMarketKey,
 	selectMarketAssetRate,
 	selectCrossMarginBalanceInfo,
 	selectPosition,
 	selectFuturesType,
 	selectTradeSizeInputs,
+	selectMarketAsset,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {
@@ -49,7 +49,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	const orderPrice = useRecoilValue(futuresOrderPriceState);
 	const selectedLeverageSide = useRecoilValue(leverageSideState);
 
-	const marketKey = useAppSelector(selectMarketKey);
+	const marketAsset = useAppSelector(selectMarketAsset);
 
 	const [usdValue, setUsdValue] = useState(susdSize);
 	const [assetValue, setAssetValue] = useState(nativeSize);
@@ -162,7 +162,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 						<InputButton
 							onClick={() => setAssetInputType(assetInputType === 'usd' ? 'native' : 'usd')}
 						>
-							{assetInputType === 'usd' ? 'sUSD' : getDisplayAsset(marketKey)}{' '}
+							{assetInputType === 'usd' ? 'sUSD' : getDisplayAsset(marketAsset)}{' '}
 							<span>{<SwitchAssetArrows />}</span>
 						</InputButton>
 					}
