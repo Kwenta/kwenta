@@ -459,6 +459,19 @@ export const selectCrossMarginSettings = createSelector(
 	(settings) => unserializeCrossMarginSettings(settings)
 );
 
+export const selectMarketFeeRates = createSelector(
+	selectMarkets,
+	selectMarketKey,
+	selectCrossMarginSettings,
+	(markets, selectedMarket, crossMarginSettings) => {
+		const feeRates = markets.find((market) => market.marketKey === selectedMarket)?.feeRates;
+		return {
+			...feeRates,
+			...crossMarginSettings,
+		};
+	}
+);
+
 export const selectModifyIsolatedGasEstimate = createSelector(
 	(state: RootState) => state.futures.transactionEstimations,
 	(transactionEstimations) => {

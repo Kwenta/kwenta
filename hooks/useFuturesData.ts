@@ -402,9 +402,11 @@ const useFuturesData = () => {
 			leverage = maxLeverage.gt(leverage) ? leverage : maxLeverage;
 
 			const newTradeInputs = {
-				nativeSize: changeEnabled ? weiToString(positiveTrade ? nativeSize : nativeSize.neg()) : '',
+				nativeSize: changeEnabled
+					? weiToString(positiveTrade ? nativeSize.abs() : nativeSize.abs().neg())
+					: '',
 				susdSize: changeEnabled ? weiToString(positiveTrade ? usdSize : usdSize.neg()) : '',
-				nativeSizeDelta: positiveTrade ? nativeSize : nativeSize.neg(),
+				nativeSizeDelta: positiveTrade ? nativeSize.abs() : nativeSize.abs().neg(),
 				susdSizeDelta: positiveTrade ? usdSize : usdSize.neg(),
 				orderPrice: usdPrice,
 				leverage: String(floorNumber(leverage)),

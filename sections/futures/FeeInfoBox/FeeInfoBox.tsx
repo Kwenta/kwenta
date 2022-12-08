@@ -9,14 +9,14 @@ import InfoBox, { DetailedInfo } from 'components/InfoBox/InfoBox';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { NO_VALUE } from 'constants/placeholder';
 import {
-	selectCrossMarginSettings,
 	selectFuturesType,
 	selectIsolatedTradeInputs,
+	selectMarketFeeRates,
 	selectMarketInfo,
 	selectOrderType,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { tradeFeesState, dynamicFeeRateState } from 'store/futures';
+import { tradeFeesState } from 'store/futures';
 import { computeDelayedOrderFee, computeMarketFee } from 'utils/costCalculations';
 import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
@@ -25,14 +25,11 @@ const FeeInfoBox: React.FC = () => {
 	const { nativeSize } = useAppSelector(selectIsolatedTradeInputs);
 	const accountType = useAppSelector(selectFuturesType);
 	const marketInfo = useAppSelector(selectMarketInfo);
-	const { tradeFee: crossMarginTradeFee, limitOrderFee, stopOrderFee } = useAppSelector(
-		selectCrossMarginSettings
-	);
+	const feeRates = useAppSelector(selectMarketFeeRates);
 
 	const sizeDelta = useMemo(() => wei(nativeSize === '' ? 0 : nativeSize), [nativeSize]);
 
 	const fees = useRecoilValue(tradeFeesState);
-	const dynamicFeeRate = useRecoilValue(dynamicFeeRateState);
 
 	const { commitDeposit, delayedOrderFee } = useMemo(
 		() => computeDelayedOrderFee(marketInfo, sizeDelta),
@@ -54,25 +51,25 @@ const FeeInfoBox: React.FC = () => {
 
 	const orderFeeRate = useMemo(
 		() =>
-			orderType === 'limit' ? limitOrderFee : orderType === 'stop market' ? stopOrderFee : null,
-		[orderType, stopOrderFee, limitOrderFee]
+			orderType === 'limit'
+				? feeRates.limitOrderFee
+				: orderType === 'stop market'
+				? feeRates.stopOrderFee
+				: null,
+		[orderType, feeRates.stopOrderFee, feeRates.limitOrderFee]
 	);
 
 	const marketCostTooltip = useMemo(
 		() => (
 			<>
-				{formatPercent(staticRate ?? zeroBN)}
-				{dynamicFeeRate?.gt(0) && (
-					<>
-						{' + '}
-						<ToolTip>
-							<StyledDynamicFee>{formatPercent(dynamicFeeRate)}</StyledDynamicFee>
-						</ToolTip>
-					</>
-				)}
+				{sizeDelta.abs().gt(0)
+					? formatPercent(staticRate ?? zeroBN)
+					: `${formatPercent(feeRates.makerFee ?? zeroBN)} / ${formatPercent(
+							feeRates.takerFee ?? zeroBN
+					  )}`}
 			</>
 		),
-		[staticRate, dynamicFeeRate]
+		[feeRates, staticRate, sizeDelta]
 	);
 
 	const feesInfo = useMemo<Record<string, DetailedInfo | null | undefined>>(() => {
@@ -97,7 +94,7 @@ const FeeInfoBox: React.FC = () => {
 					minDecimals: fees.crossMarginFee.lt(0.01) ? 4 : 2,
 				}),
 				spaceBeneath: true,
-				keyNode: formatPercent(crossMarginTradeFee),
+				keyNode: formatPercent(feeRates.tradeFee),
 			},
 
 			'Total Fee': {
@@ -125,6 +122,7 @@ const FeeInfoBox: React.FC = () => {
 					value: !!commitDeposit
 						? formatDollars(commitDeposit, { minDecimals: commitDeposit.lt(0.01) ? 4 : 2 })
 						: NO_VALUE,
+					keyNode: formatPercent(staticRate),
 				},
 				'Total Deposit': {
 					value: formatDollars(totalDeposit),
@@ -136,7 +134,6 @@ const FeeInfoBox: React.FC = () => {
 				// },
 				'Estimated Fees': {
 					value: formatDollars(totalDeposit.add(nextPriceDiscount ?? zeroBN)),
-					keyNode: fees.dynamicFeeRate?.gt(0) ? <ToolTip /> : null,
 				},
 			};
 		}
@@ -151,9 +148,10 @@ const FeeInfoBox: React.FC = () => {
 			  }
 			: crossMarginFeeInfo;
 	}, [
-		orderType,
-		crossMarginTradeFee,
+		feeRates,
+		staticRate,
 		fees,
+		orderType,
 		orderFeeRate,
 		commitDeposit,
 		accountType,
@@ -189,11 +187,6 @@ const StyledInfoBox = styled(InfoBox)`
 
 const DynamicStyledToolTip = styled(StyledTooltip)`
 	padding: 10px;
-`;
-
-const StyledDynamicFee = styled.span`
-	color: ${(props) => props.theme.colors.selectedTheme.gold};
-	margin-left: 5px;
 `;
 
 const StyledTimerIcon = styled(TimerIcon)`
