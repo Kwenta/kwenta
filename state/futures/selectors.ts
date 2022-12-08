@@ -443,6 +443,17 @@ export const selectOpenOrders = createSelector(
 	}
 );
 
+export const selectOpenOrder = createSelector(
+	selectCrossMarginOpenOrders,
+	selectIsolatedMarginOpenOrders,
+	selectFuturesType,
+	selectMarketKey,
+	(crossOrders, isolatedOrder, futuresType, marketKey) => {
+		const orders = futuresType === 'cross_margin' ? crossOrders : isolatedOrder;
+		return orders.find((o) => o.marketKey === marketKey);
+	}
+);
+
 export const selectCrossMarginSettings = createSelector(
 	(state: RootState) => state.futures.crossMargin.settings,
 	(settings) => unserializeCrossMarginSettings(settings)

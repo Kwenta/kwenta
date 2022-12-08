@@ -25,6 +25,7 @@ import {
 	selectTradePreview,
 	selectTradePreviewStatus,
 	selectTradeSizeInputs,
+	selectOpenOrder,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
@@ -69,6 +70,7 @@ const ManagePosition: React.FC = () => {
 	const openModal = useAppSelector(selectOpenModal);
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const previewStatus = useAppSelector(selectTradePreviewStatus);
+	const openOrder = useAppSelector(selectOpenOrder);
 
 	const isCancelModalOpen = openModal === 'futures_close_position_confirm';
 	const isConfirmationModalOpen = openModal === 'futures_modify_position_confirm';
@@ -117,6 +119,8 @@ const ManagePosition: React.FC = () => {
 			if ((isZero(marginDelta) && isZero(susdSizeWei)) || previewStatus !== FetchStatus.Success)
 				return 'awaiting_preview';
 			if (orderType !== 'market' && isZero(orderPrice)) return 'pricerequired';
+		} else if (selectedAccountType === 'isolated_margin') {
+			if (orderType === 'delayed' && !!openOrder) return 'order_open';
 		} else if (isZero(susdSizeWei)) {
 			return 'size_required';
 		}
