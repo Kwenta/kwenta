@@ -132,6 +132,7 @@ const ManagePosition: React.FC = () => {
 		susdSizeWei,
 		marginDelta,
 		orderType,
+		openOrder,
 		orderPrice,
 		leverageSide,
 		marketAssetRate,

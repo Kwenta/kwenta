@@ -1,5 +1,4 @@
 import useSynthetixQueries from '@synthetixio/queries';
-import { wei } from '@synthetixio/wei';
 import { FC, useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -44,7 +43,7 @@ const NextPriceConfirmationModal: FC = () => {
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const dispatch = useAppDispatch();
 
-	const { nativeSize } = useAppSelector(selectTradeSizeInputs);
+	const { nativeSize, nativeSizeWei } = useAppSelector(selectTradeSizeInputs);
 	const priceImpact = useAppSelector(selectIsolatedPriceImpact);
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const position = useAppSelector(selectPosition);
@@ -76,20 +75,14 @@ const NextPriceConfirmationModal: FC = () => {
 	const positionSize = position?.position?.size ?? zeroBN;
 
 	const orderDetails = useMemo(() => {
-		const newSize =
-			nativeSize !== ''
-				? leverageSide === PositionSide.LONG
-					? wei(nativeSize)
-					: wei(nativeSize).neg()
-				: wei(0);
-		return { newSize, size: (positionSize ?? zeroBN).add(newSize).abs() };
-	}, [leverageSide, nativeSize, positionSize]);
+		return { nativeSizeWei, size: (positionSize ?? zeroBN).add(nativeSizeWei).abs() };
+	}, [nativeSizeWei, positionSize]);
 
 	// TODO: check these fees
-	const { commitDeposit } = useMemo(
-		() => computeDelayedOrderFee(marketInfo, wei(orderDetails.newSize)),
-		[marketInfo, orderDetails]
-	);
+	const { commitDeposit } = useMemo(() => computeDelayedOrderFee(marketInfo, nativeSizeWei), [
+		marketInfo,
+		nativeSizeWei,
+	]);
 
 	// TODO: check this deposit
 	const totalDeposit = useMemo(() => {
@@ -108,7 +101,7 @@ const NextPriceConfirmationModal: FC = () => {
 			},
 			{
 				label: t('futures.market.user.position.modal.size'),
-				value: formatCurrency(marketAsset || '', orderDetails.newSize.abs() ?? zeroBN, {
+				value: formatCurrency(marketAsset || '', orderDetails.nativeSizeWei.abs(), {
 					sign: marketAsset ? synthsMap[marketAsset]?.sign : '',
 				}),
 			},

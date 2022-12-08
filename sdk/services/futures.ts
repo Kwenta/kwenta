@@ -462,7 +462,7 @@ export default class FuturesService {
 			price.toBN(), // TODO: Replace this price with the fill price
 			this.sdk.context.walletAddress
 		);
-		return formatPotentialIsolatedTrade(details, sizeDelta, leverageSide);
+		return formatPotentialIsolatedTrade(details, price, sizeDelta, leverageSide);
 	}
 
 	public async getCrossMarginTradePreview(

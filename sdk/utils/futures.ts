@@ -262,6 +262,7 @@ export const formatDelayedOrder = (
 
 export const formatPotentialIsolatedTrade = (
 	preview: PostTradeDetailsResponse,
+	basePrice: Wei,
 	nativeSizeDelta: Wei,
 	leverageSide: PositionSide
 ) => {
@@ -279,7 +280,7 @@ export const formatPotentialIsolatedTrade = (
 		sizeDelta: nativeSizeDelta,
 		side: leverageSide,
 		leverage: leverage,
-		notionalValue: wei(size).mul(wei(price)),
+		notionalValue: wei(size).mul(basePrice),
 		status,
 		showStatus: status > 0, // 0 is success
 		statusMessage: getTradeStatusMessage(status),

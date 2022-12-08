@@ -14,7 +14,7 @@ export const computeDelayedOrderFee = (market: FuturesMarket | undefined, sizeDe
 		!market?.feeRates.makerFeeDelayedOrder ||
 		!sizeDelta
 	) {
-		return { commitDeposit: undefined, nextPriceFee: undefined };
+		return { commitDeposit: undefined, delayedOrderFee: undefined };
 	}
 
 	const notionalDiff = sizeDelta.mul(market.price);
