@@ -25,6 +25,7 @@ import { formatTruncatedDuration } from 'utils/formatters/date';
 import { formatDollars, formatPercent, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import { KwentaLabel, StakingCard } from './common';
+import { BigNumber } from 'ethers';
 
 const TradingRewardsTab: FC<TradingRewardProps> = ({
 	period = 0,
@@ -61,10 +62,10 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 		`trading-rewards-snapshots/${network.id === 420 ? `goerli-` : ''}epoch-current.json`
 	);
 	const estimatedReward = useMemo(
-		() => Number(estimatedRewardQuery?.data?.claims[walletAddress!]?.amount) ?? 0,
+		() => BigNumber.from(estimatedRewardQuery?.data?.claims[walletAddress!]?.amount ?? 0),
 		[estimatedRewardQuery?.data?.claims, walletAddress]
 	);
-	const weeklyRewards = useMemo(() => Number(estimatedRewardQuery?.data?.tokenTotal) ?? 0, [
+	const weeklyRewards = useMemo(() => BigNumber.from(estimatedRewardQuery?.data?.tokenTotal ?? 0), [
 		estimatedRewardQuery?.data?.tokenTotal,
 	]);
 
@@ -75,16 +76,11 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 	}, [dispatch]);
 
 	const ratio = useMemo(() => {
-		return estimatedReward && wei(estimatedReward).gt(0)
-			? wei(estimatedReward).div(wei(weeklyRewards))
-			: zeroBN;
+		return wei(weeklyRewards).gt(0) ? wei(estimatedReward).div(wei(weeklyRewards)) : zeroBN;
 	}, [estimatedReward, weeklyRewards]);
 
-	const showEstimatedValue = useMemo(() => estimatedReward && wei(period).eq(epochPeriod), [
-		epochPeriod,
-		estimatedReward,
-		period,
-	]);
+	const showEstimatedValue = useMemo(() => wei(period).eq(epochPeriod), [epochPeriod, period]);
+
 	return (
 		<TradingRewardsContainer>
 			<CardGridContainer>
@@ -146,9 +142,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 								<div className="title">
 									{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}
 								</div>
-								<KwentaLabel>
-									{truncateNumbers(formatEther(estimatedReward.toString()), 4)}
-								</KwentaLabel>
+								<KwentaLabel>{truncateNumbers(wei(estimatedReward), 4)}</KwentaLabel>
 							</div>
 							<div>
 								<div className="title">
@@ -156,7 +150,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 										EpochPeriod: period,
 									})}
 								</div>
-								<div className="value">{formatPercent(Number(ratio), { minDecimals: 2 })}</div>
+								<div className="value">{formatPercent(ratio, { minDecimals: 2 })}</div>
 							</div>
 						</>
 					) : null}
@@ -172,12 +166,12 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 };
 
 const PeriodLabel = styled.div`
-	font-size: 14px;
-	line-height: 21px;
+	font-size: 13px;
+	line-height: 20px;
 	display: flex;
 	align-items: center;
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 const CustomStyledTooltip = styled(StyledTooltip)`
