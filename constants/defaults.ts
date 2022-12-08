@@ -49,6 +49,7 @@ export const DEFAULT_LEADERBOARD_ROWS = 20;
 
 // for perps v2
 export const DEFAULT_PRICE_IMPACT_DELTA = '500000000000000000';
+export const DEFAULT_DELAYED_EXECUTION_BUFFER = 3;
 
 export const CROSS_MARGIN_ENABLED = false;
 

@@ -9,6 +9,7 @@ import { MiniLoader } from 'components/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
+import { DEFAULT_DELAYED_EXECUTION_BUFFER } from 'constants/defaults';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { PositionSide } from 'queries/futures/types';
@@ -84,7 +85,9 @@ const OpenOrdersTable: React.FC = () => {
 	useEffect(() => {
 		const timer = setTimeout(() => {
 			const newCountdownTimers = rowsData.reduce((acc, order) => {
-				const timeToExecution = Math.floor((order.executableAtTimestamp - Date.now()) / 1000);
+				const timeToExecution =
+					Math.floor((order.executableAtTimestamp - Date.now()) / 1000) +
+					DEFAULT_DELAYED_EXECUTION_BUFFER;
 				const timePastExecution = Math.floor((Date.now() - order.executableAtTimestamp) / 1000);
 				// Should we add a buffer here?
 				acc[order.marketKey] = {
