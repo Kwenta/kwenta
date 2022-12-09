@@ -19,6 +19,7 @@ import {
 	selectMarketInfo,
 	selectModifyIsolatedGasEstimate,
 	selectNextPriceDisclaimer,
+	selectOrderType,
 	selectPosition,
 	selectTradePreviewStatus,
 	selectTradeSizeInputs,
@@ -50,6 +51,7 @@ const NextPriceConfirmationModal: FC = () => {
 	const submitting = useAppSelector(selectIsModifyingIsolatedPosition);
 	const gasEstimate = useAppSelector(selectModifyIsolatedGasEstimate);
 	const previewStatus = useAppSelector(selectTradePreviewStatus);
+	const orderType = useAppSelector(selectOrderType);
 
 	const gasPrices = useMemo(
 		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
@@ -61,9 +63,10 @@ const NextPriceConfirmationModal: FC = () => {
 			modifyIsolatedPositionEstimateGas({
 				sizeDelta: nativeSizeDelta,
 				delayed: true,
+				offchain: orderType === 'delayed offchain',
 			})
 		);
-	}, [nativeSizeDelta, dispatch]);
+	}, [nativeSizeDelta, orderType, dispatch]);
 
 	const transactionFee = useMemo(() => gasEstimate?.cost ?? zeroBN, [gasEstimate?.cost]);
 
@@ -88,7 +91,7 @@ const NextPriceConfirmationModal: FC = () => {
 		() => [
 			{
 				label: t('futures.market.user.position.modal.order-type'),
-				value: t('futures.market.user.position.modal.delayed-order'),
+				value: orderType,
 			},
 			{
 				label: t('futures.market.user.position.modal.side'),
@@ -133,6 +136,7 @@ const NextPriceConfirmationModal: FC = () => {
 			modifyIsolatedPosition({
 				sizeDelta: nativeSizeDelta,
 				delayed: true,
+				offchain: orderType === 'delayed offchain',
 			})
 		);
 	};
@@ -217,6 +221,7 @@ const Value = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 12px;
 	margin-top: 6px;
+	text-transform: capitalize;
 `;
 
 const NetworkFees = styled(FlexDivCol)`

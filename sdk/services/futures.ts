@@ -541,11 +541,18 @@ export default class FuturesService {
 		sizeDelta: Wei,
 		priceImpactDelta: Wei,
 		delayed = false,
+		offchain = false,
 		estimationOnly: T
 	): TxReturn<T> {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
 		const root = estimationOnly ? market.estimateGas : market;
-		return delayed
+		return delayed && offchain
+			? (root.submitOffchainDelayedOrderWithTracking(
+					sizeDelta.toBN(),
+					priceImpactDelta.toBN(),
+					KWENTA_TRACKING_CODE
+			  ) as any)
+			: delayed
 			? (root.submitDelayedOrderWithTracking(
 					sizeDelta.toBN(),
 					priceImpactDelta.toBN(),
@@ -559,9 +566,11 @@ export default class FuturesService {
 			  ) as any);
 	}
 
-	public async cancelDelayedOrder(marketAddress: string, account: string) {
+	public async cancelDelayedOrder(marketAddress: string, account: string, isOffchain: boolean) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
-		return market.cancelDelayedOrder(account);
+		return isOffchain
+			? market.cancelOffchainDelayedOrder(account)
+			: market.cancelDelayedOrder(account);
 	}
 
 	public async executeDelayedOrder(marketAddress: string, account: string) {

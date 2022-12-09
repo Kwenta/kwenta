@@ -116,7 +116,8 @@ const ManagePosition: React.FC = () => {
 				return 'awaiting_preview';
 			if (orderType !== 'market' && isZero(orderPrice)) return 'pricerequired';
 		} else if (selectedAccountType === 'isolated_margin') {
-			if (orderType === 'delayed' && !!openOrder) return 'order_open';
+			if ((orderType === 'delayed' || orderType === 'delayed offchain') && !!openOrder)
+				return 'order_open';
 		} else if (isZero(susdSize)) {
 			return 'size_required';
 		}
@@ -165,7 +166,10 @@ const ManagePosition: React.FC = () => {
 						noOutline
 						variant="danger"
 						onClick={() => {
-							if (orderType === 'delayed' && position?.position?.size) {
+							if (
+								(orderType === 'delayed' || orderType === 'delayed offchain') &&
+								position?.position?.size
+							) {
 								const newTradeSize = position.position.size;
 								const newLeverageSide =
 									position.position.side === PositionSide.LONG
@@ -199,7 +203,7 @@ const ManagePosition: React.FC = () => {
 			{isConfirmationModalOpen &&
 				(selectedAccountType === 'cross_margin' ? (
 					<TradeConfirmationModalCrossMargin />
-				) : orderType === 'delayed' ? (
+				) : orderType === 'delayed' || orderType === 'delayed offchain' ? (
 					<DelayedOrderConfirmationModal />
 				) : (
 					<TradeConfirmationModalIsolatedMargin />

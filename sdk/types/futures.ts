@@ -178,7 +178,8 @@ export type FuturesOrderTypeDisplay =
 	| 'Stop Market'
 	| 'Market'
 	| 'Liquidation'
-	| 'Delayed';
+	| 'Delayed'
+	| 'Delayed Offchain';
 
 export type FuturesOrder<T = Wei> = {
 	id: string;

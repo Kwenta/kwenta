@@ -86,6 +86,7 @@ import {
 	selectTradeSizeInputs,
 } from './selectors';
 import {
+	CancelDelayedOrderInputs,
 	CrossMarginBalanceInfo,
 	CrossMarginSettings,
 	FuturesTransactionType,
@@ -683,7 +684,7 @@ export const modifyIsolatedPosition = createAsyncThunk<
 	ThunkConfig
 >(
 	'futures/modifyIsolatedPosition',
-	async ({ sizeDelta, delayed }, { getState, dispatch, extra: { sdk } }) => {
+	async ({ sizeDelta, delayed, offchain }, { getState, dispatch, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
 		const priceImpact = selectIsolatedPriceImpact(getState());
 		if (!marketInfo) throw new Error('Market info not found');
@@ -700,6 +701,7 @@ export const modifyIsolatedPosition = createAsyncThunk<
 				wei(sizeDelta),
 				priceImpact,
 				delayed,
+				offchain,
 				false
 			);
 			dispatch(updateTransactionHash(tx.hash));
@@ -722,7 +724,7 @@ export const modifyIsolatedPositionEstimateGas = createAsyncThunk<
 	ThunkConfig
 >(
 	'futures/modifyIsolatedPositionEstimateGas',
-	async ({ sizeDelta, delayed }, { getState, dispatch, extra: { sdk } }) => {
+	async ({ sizeDelta, delayed, offchain }, { getState, dispatch, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
 		const priceImpact = selectIsolatedPriceImpact(getState());
 		if (!marketInfo) throw new Error('Market info not found');
@@ -733,6 +735,7 @@ export const modifyIsolatedPositionEstimateGas = createAsyncThunk<
 					wei(sizeDelta),
 					priceImpact,
 					delayed,
+					offchain,
 					true
 				),
 			'modify_isolated',
@@ -741,9 +744,9 @@ export const modifyIsolatedPositionEstimateGas = createAsyncThunk<
 	}
 );
 
-export const cancelDelayedOrder = createAsyncThunk<void, string, ThunkConfig>(
+export const cancelDelayedOrder = createAsyncThunk<void, CancelDelayedOrderInputs, ThunkConfig>(
 	'futures/cancelDelayedOrder',
-	async (marketAddress, { getState, dispatch, extra: { sdk } }) => {
+	async ({ marketAddress, isOffchain }, { getState, dispatch, extra: { sdk } }) => {
 		const account = selectFuturesAccount(getState());
 		if (!account) throw new Error('No wallet connected');
 		try {
@@ -754,7 +757,7 @@ export const cancelDelayedOrder = createAsyncThunk<void, string, ThunkConfig>(
 					hash: null,
 				})
 			);
-			const tx = await sdk.futures.cancelDelayedOrder(marketAddress, account);
+			const tx = await sdk.futures.cancelDelayedOrder(marketAddress, account, isOffchain);
 			dispatch(updateTransactionHash(tx.hash));
 			await tx.wait();
 			dispatch(fetchOpenOrders());
