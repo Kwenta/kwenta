@@ -66,7 +66,7 @@ export default class KwentaTokenService {
 	}
 
 	public async getEarnDetails() {
-		const { StakingRewards, KwentaArrakisVault } = this.sdk.context.mutliCallContracts;
+		const { StakingRewards, KwentaArrakisVault } = this.sdk.context.multicallContracts;
 
 		if (!StakingRewards || !KwentaArrakisVault) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
@@ -124,7 +124,7 @@ export default class KwentaTokenService {
 			vKwentaToken,
 			veKwentaToken,
 			MultipleMerkleDistributor,
-		} = this.sdk.context.mutliCallContracts;
+		} = this.sdk.context.multicallContracts;
 
 		if (
 			!RewardEscrow ||
@@ -191,7 +191,7 @@ export default class KwentaTokenService {
 
 	public async getEscrowData() {
 		const { RewardEscrow } = this.sdk.context.contracts;
-		const { RewardEscrow: RewardEscrowMulticall } = this.sdk.context.mutliCallContracts;
+		const { RewardEscrow: RewardEscrowMulticall } = this.sdk.context.multicallContracts;
 
 		if (!RewardEscrow || !RewardEscrowMulticall) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
@@ -358,7 +358,7 @@ export default class KwentaTokenService {
 	}
 
 	public async getClaimableRewards(epochPeriod: number) {
-		const { MultipleMerkleDistributor } = this.sdk.context.mutliCallContracts;
+		const { MultipleMerkleDistributor } = this.sdk.context.multicallContracts;
 		const { walletAddress } = this.sdk.context;
 
 		if (!MultipleMerkleDistributor) {
