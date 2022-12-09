@@ -237,7 +237,7 @@ const OpenOrdersTable: React.FC = () => {
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<StyledTable
-					data={openOrders}
+					data={rowsData}
 					noResultsMessage={
 						!isL2 ? (
 							<TableNoResults>
@@ -272,7 +272,7 @@ const OpenOrdersTable: React.FC = () => {
 						{
 							Header: (
 								<StyledTableHeader>
-									{t('futures.market.user.open-orders.table.size-price')}
+									{t('futures.market.user.open-orders.table.size')}
 								</StyledTableHeader>
 							),
 							accessor: 'size',
@@ -280,14 +280,6 @@ const OpenOrdersTable: React.FC = () => {
 								return (
 									<div>
 										<div>{cellProps.row.original.sizeTxt}</div>
-										{cellProps.row.original.targetPrice && (
-											<Currency.Price
-												currencyKey={'sUSD'}
-												price={cellProps.row.original.targetPrice}
-												sign={'$'}
-												conversionRate={1}
-											/>
-										)}
 									</div>
 								);
 							},
