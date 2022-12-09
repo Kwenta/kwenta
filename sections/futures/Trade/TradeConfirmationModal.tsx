@@ -20,7 +20,13 @@ import {
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FlexDivCentered } from 'styles/common';
-import { zeroBN, formatCurrency, formatDollars, formatNumber } from 'utils/formatters/number';
+import {
+	zeroBN,
+	formatCurrency,
+	formatDollars,
+	formatNumber,
+	formatPercent,
+} from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
@@ -96,16 +102,26 @@ export default function TradeConfirmationModal({
 				label: 'resulting leverage',
 				value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x`,
 			},
-
 			orderType === 'limit' || orderType === 'stop market'
 				? {
 						label: orderType + ' order price',
 						value: formatDollars(orderPrice, { isAssetPrice: true }),
 				  }
 				: {
-						label: 'current price',
+						label: 'fill price',
 						value: formatDollars(positionDetails?.price ?? zeroBN, { isAssetPrice: true }),
 				  },
+			{
+				label: 'slippage',
+				value: `${formatDollars(positionDetails?.slippageAmount ?? zeroBN)} (${formatPercent(
+					positionDetails?.slippagePercent ?? zeroBN
+				)})`,
+				color: positionDetails?.slippageAmount.gt(0)
+					? 'green'
+					: positionDetails?.slippageAmount.lt(0)
+					? 'red'
+					: '',
+			},
 			{
 				label: 'liquidation price',
 				value: formatDollars(positionDetails?.liqPrice ?? zeroBN, { isAssetPrice: true }),
@@ -150,7 +166,9 @@ export default function TradeConfirmationModal({
 						return (
 							<Row key={`datarow-${i}`}>
 								<Label>{row.label}</Label>
-								<Value>{row.value}</Value>
+								<Value>
+									<span className={row.color ? `value ${row.color}` : ''}>{row.value}</span>
+								</Value>
 							</Row>
 						);
 					})}
@@ -224,6 +242,20 @@ const Value = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 12px;
 	margin-top: 6px;
+
+	.value {
+		font-family: ${(props) => props.theme.fonts.mono};
+		font-size: 13px;
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+	}
+
+	.green {
+		color: ${(props) => props.theme.colors.selectedTheme.green};
+	}
+
+	.red {
+		color: ${(props) => props.theme.colors.selectedTheme.red};
+	}
 `;
 
 const ConfirmTradeButton = styled(Button)`

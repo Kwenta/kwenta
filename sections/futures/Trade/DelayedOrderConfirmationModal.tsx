@@ -1,4 +1,3 @@
-import useSynthetixQueries from '@synthetixio/queries';
 import { FC, useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -9,7 +8,6 @@ import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Connector from 'containers/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import { setOpenModal } from 'state/app/reducer';
 import { modifyIsolatedPosition, modifyIsolatedPositionEstimateGas } from 'state/futures/actions';
 import {
@@ -17,18 +15,18 @@ import {
 	selectLeverageSide,
 	selectMarketAsset,
 	selectMarketInfo,
-	selectModifyIsolatedGasEstimate,
 	selectNextPriceDisclaimer,
 	selectOrderType,
 	selectPosition,
+	selectTradePreview,
 	selectTradePreviewStatus,
 	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
-import { FlexDivCol, FlexDivCentered } from 'styles/common';
+import { FlexDivCentered } from 'styles/common';
 import { computeDelayedOrderFee } from 'utils/costCalculations';
-import { zeroBN, formatCurrency, formatDollars } from 'utils/formatters/number';
+import { zeroBN, formatCurrency, formatDollars, formatPercent } from 'utils/formatters/number';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
 import { PositionSide } from '../types';
@@ -38,9 +36,7 @@ const NextPriceConfirmationModal: FC = () => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
 	const isDisclaimerDisplayed = useAppSelector(selectNextPriceDisclaimer);
-	const { useEthGasPriceQuery } = useSynthetixQueries();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const ethGasPriceQuery = useEthGasPriceQuery();
 	const dispatch = useAppDispatch();
 
 	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
@@ -49,14 +45,9 @@ const NextPriceConfirmationModal: FC = () => {
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const submitting = useAppSelector(selectIsModifyingIsolatedPosition);
-	const gasEstimate = useAppSelector(selectModifyIsolatedGasEstimate);
+	const potentialTradeDetails = useAppSelector(selectTradePreview);
 	const previewStatus = useAppSelector(selectTradePreviewStatus);
 	const orderType = useAppSelector(selectOrderType);
-
-	const gasPrices = useMemo(
-		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
-		[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data]
-	);
 
 	useEffect(() => {
 		dispatch(
@@ -67,8 +58,6 @@ const NextPriceConfirmationModal: FC = () => {
 			})
 		);
 	}, [nativeSizeDelta, orderType, dispatch]);
-
-	const transactionFee = useMemo(() => gasEstimate?.cost ?? zeroBN, [gasEstimate?.cost]);
 
 	const positionSize = position?.position?.size ?? zeroBN;
 
@@ -108,6 +97,22 @@ const NextPriceConfirmationModal: FC = () => {
 				value: formatDollars(totalDeposit),
 			},
 			{
+				label: 'estimated fill price',
+				value: formatDollars(potentialTradeDetails?.price ?? zeroBN, { isAssetPrice: true }),
+			},
+			{
+				label: 'estimated slippage',
+				value: `${formatDollars(potentialTradeDetails?.slippageAmount ?? zeroBN)} (${formatPercent(
+					potentialTradeDetails?.slippagePercent ?? zeroBN
+				)})`,
+				color: potentialTradeDetails?.slippageAmount.gt(0)
+					? 'green'
+					: potentialTradeDetails?.slippageAmount.lt(0)
+					? 'red'
+					: '',
+			},
+
+			{
 				label: t('futures.market.user.position.modal.fee-total'),
 				value: formatCurrency(selectedPriceCurrency.name, totalDeposit, {
 					minDecimals: 2,
@@ -118,6 +123,8 @@ const NextPriceConfirmationModal: FC = () => {
 		[
 			t,
 			orderDetails,
+			orderType,
+			potentialTradeDetails,
 			marketAsset,
 			synthsMap,
 			leverageSide,
@@ -149,15 +156,14 @@ const NextPriceConfirmationModal: FC = () => {
 					isOpen
 					title={t('futures.market.trade.confirmation.modal.confirm-order')}
 				>
-					{dataRows.map(({ label, value }, i) => (
+					{dataRows.map((row, i) => (
 						<Row key={`datarow-${i}`}>
-							<Label>{label}</Label>
-							<Value>{value}</Value>
+							<Label>{row.label}</Label>
+							<Value>
+								<span className={row.color ? `value ${row.color}` : ''}>{row.value}</span>
+							</Value>
 						</Row>
 					))}
-					<NetworkFees>
-						<StyledGasPriceSelect {...{ gasPrices, transactionFee }} />
-					</NetworkFees>
 					{isDisclaimerDisplayed && (
 						<Disclaimer>
 							{t('futures.market.trade.confirmation.modal.max-leverage-disclaimer')}
@@ -222,23 +228,20 @@ const Value = styled.div`
 	font-size: 12px;
 	margin-top: 6px;
 	text-transform: capitalize;
-`;
 
-const NetworkFees = styled(FlexDivCol)`
-	margin-top: 12px;
-`;
+	.value {
+		font-family: ${(props) => props.theme.fonts.mono};
+		font-size: 13px;
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+	}
 
-const StyledGasPriceSelect = styled(GasPriceSelect)`
-	padding: 5px 0;
-	display: flex;
-	justify-content: space-between;
-	width: auto;
-	border-bottom: 1px solid ${(props) => props.theme.colors.selectedTheme.border};
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	font-size: 12px;
-	font-family: ${(props) => props.theme.fonts.regular};
-	text-transform: capitalize;
-	margin-bottom: 8px;
+	.green {
+		color: ${(props) => props.theme.colors.selectedTheme.green};
+	}
+
+	.red {
+		color: ${(props) => props.theme.colors.selectedTheme.red};
+	}
 `;
 
 const ConfirmTradeButton = styled(Button)`

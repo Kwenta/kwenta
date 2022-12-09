@@ -39,7 +39,7 @@ type PositionCardProps = {
 type PositionData = {
 	marketShortName: string;
 	marketLongName: string;
-	marketPrice: string;
+	marketPrice: JSX.Element;
 	positionSide: JSX.Element;
 	positionSize: string | React.ReactNode;
 	leverage: string | React.ReactNode;
@@ -55,6 +55,7 @@ type PositionData = {
 };
 
 type PositionPreviewData = {
+	fillPrice: Wei;
 	sizeIsNotZero: boolean;
 	positionSide: string;
 	positionSize: Wei;
@@ -105,6 +106,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 		const newSide = size?.gt(zeroBN) ? PositionSide.LONG : PositionSide.SHORT;
 
 		return {
+			fillPrice: previewTradeData.price,
 			sizeIsNotZero: size && !size?.eq(0),
 			positionSide: newSide,
 			positionSize: size?.abs(),
@@ -135,10 +137,22 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			currencyIconKey: MarketKeyByAsset[marketAsset],
 			marketShortName: marketAsset ? getMarketName(marketAsset) : 'Select a market',
 			marketLongName: getSynthDescription(marketAsset, synthsMap, t),
-			marketPrice: formatDollars(marketAssetRate, {
-				minDecimals,
-				isAssetPrice: true,
-			}),
+			marketPrice: (
+				<>
+					{`${formatDollars(marketAssetRate, {
+						minDecimals,
+						isAssetPrice: true,
+					})}`}
+					{
+						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
+							{formatDollars(previewData.fillPrice ?? zeroBN, {
+								minDecimals,
+								isAssetPrice: true,
+							})}
+						</PreviewArrow>
+					}
+				</>
+			),
 			positionSide: positionDetails ? (
 				<PositionValue
 					side={positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
@@ -260,14 +274,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 		marketAsset,
 		synthsMap,
 		t,
-		previewData.positionSide,
-		previewData.sizeIsNotZero,
-		previewData.showStatus,
-		previewData.positionSize,
-		previewData.notionalValue,
-		previewData?.leverage,
-		previewData?.liquidationPrice,
-		previewData.avgEntryPrice,
+		previewData,
 		minDecimals,
 	]);
 
