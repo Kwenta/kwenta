@@ -55,7 +55,7 @@ const ManagePosition: React.FC = () => {
 		potentialTradeDetailsState
 	);
 	const orderType = useRecoilValue(orderTypeState);
-	const leverageSide = useRecoilState(leverageSideState);
+	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const { leverage } = useRecoilValue(futuresTradeInputsState);
 	const [isConfirmationModalOpen, setConfirmationModalOpen] = useRecoilState(
 		confirmationModalOpenState
