@@ -19,9 +19,10 @@ import {
 	selectMarketKey,
 	selectPosition,
 	selectTradePreview,
+	selectFuturesType,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { futuresAccountTypeState, positionHistoryState } from 'store/futures';
+import { positionHistoryState } from 'store/futures';
 import { FlexDivCentered, FlexDivCol, PillButtonDiv } from 'styles/common';
 import media from 'styles/media';
 import { isFiatCurrency } from 'utils/currencies';
@@ -70,10 +71,10 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 	const { marketAssetRate } = useFuturesContext();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
+	const futuresAccountType = useAppSelector(selectFuturesType);
 	const position = useAppSelector(selectPosition);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const marketKey = useAppSelector(selectMarketKey);
-	const futuresAccountType = useRecoilValue(futuresAccountTypeState);
 	const positionHistory = useRecoilValue(positionHistoryState);
 	const previewTradeData = useAppSelector(selectTradePreview);
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketKey);

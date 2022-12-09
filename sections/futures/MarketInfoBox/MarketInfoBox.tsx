@@ -1,6 +1,5 @@
 import Wei, { wei } from '@synthetixio/wei';
 import React, { useCallback, useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import InfoBox from 'components/InfoBox';
@@ -10,19 +9,19 @@ import {
 	selectLeverageSide,
 	selectMarketInfo,
 	selectMaxLeverage,
+	selectOrderType,
 	selectPosition,
 	selectTradePreview,
 	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { orderTypeState } from 'store/futures';
 import { computeNPFee } from 'utils/costCalculations';
 import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 const MarketInfoBox: React.FC = () => {
-	const orderType = useRecoilValue(orderTypeState);
+	const orderType = useAppSelector(selectOrderType);
 	const leverageSide = useAppSelector(selectLeverageSide);
-	const { nativeSizeWei, nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
+	const { nativeSize, nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
 	const potentialTrade = useAppSelector(selectTradePreview);
 
 	const marketInfo = useAppSelector(selectMarketInfo);
@@ -47,7 +46,7 @@ const MarketInfoBox: React.FC = () => {
 	const positionSize = position?.position?.size ? wei(position?.position?.size) : zeroBN;
 	const orderDetails = useMemo(() => {
 		return {
-			newSize: nativeSizeWei,
+			newSize: nativeSize,
 			size: (positionSize ?? zeroBN).add(nativeSizeDelta).abs(),
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps

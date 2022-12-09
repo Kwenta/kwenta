@@ -1,28 +1,24 @@
 import { wei } from '@synthetixio/wei';
-import { debounce } from 'lodash';
-import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import React, { ChangeEvent, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import SwitchAssetArrows from 'assets/svg/futures/switch-arrows.svg';
 import CustomInput from 'components/Input/CustomInput';
 import InputTitle from 'components/Input/InputTitle';
 import { useFuturesContext } from 'contexts/FuturesContext';
+import { editTradeSizeInput } from 'state/futures/actions';
 import {
 	selectMarketKey,
 	selectMarketAssetRate,
 	selectCrossMarginBalanceInfo,
 	selectPosition,
 	selectTradeSizeInputs,
+	selectCrossMarginOrderPrice,
+	selectOrderType,
+	selectLeverageSide,
+	selectFuturesType,
 } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
-import {
-	futuresAccountTypeState,
-	simulatedTradeState,
-	orderTypeState,
-	futuresOrderPriceState,
-	leverageSideState,
-} from 'store/futures';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FlexDivRow } from 'styles/common';
 import { floorNumber, isZero, zeroBN } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
@@ -35,23 +31,21 @@ type OrderSizingProps = {
 };
 
 const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
-	const { onTradeAmountChange, maxUsdInputAmount } = useFuturesContext();
+	const { maxUsdInputAmount } = useFuturesContext();
+	const dispatch = useAppDispatch();
 
-	const { susdSize, nativeSize } = useAppSelector(selectTradeSizeInputs);
-	const simulatedTrade = useRecoilValue(simulatedTradeState);
+	const { susdSizeString, nativeSizeString } = useAppSelector(selectTradeSizeInputs);
 
 	const { freeMargin: freeCrossMargin } = useAppSelector(selectCrossMarginBalanceInfo);
 	const position = useAppSelector(selectPosition);
-	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
-	const orderType = useRecoilValue(orderTypeState);
+	const selectedAccountType = useAppSelector(selectFuturesType);
+	const orderType = useAppSelector(selectOrderType);
 	const marketAssetRate = useAppSelector(selectMarketAssetRate);
-	const orderPrice = useRecoilValue(futuresOrderPriceState);
-	const selectedLeverageSide = useRecoilValue(leverageSideState);
+	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
+	const selectedLeverageSide = useAppSelector(selectLeverageSide);
 
 	const marketKey = useAppSelector(selectMarketKey);
 
-	const [usdValue, setUsdValue] = useState(susdSize);
-	const [assetValue, setAssetValue] = useState(nativeSize);
 	const [assetInputType, setAssetInputType] = useState<'usd' | 'native'>('usd');
 
 	const tradePrice = useMemo(() => (orderPrice ? wei(orderPrice) : marketAssetRate), [
@@ -63,59 +57,24 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 		[tradePrice, maxUsdInputAmount]
 	);
 
-	useEffect(
-		() => {
-			if (simulatedTrade && simulatedTrade.susdSize !== susdSize) {
-				setUsdValue(simulatedTrade.susdSize);
-			} else if (susdSize !== usdValue) {
-				setUsdValue(susdSize);
-			}
-
-			if (simulatedTrade && simulatedTrade.nativeSize !== nativeSize) {
-				setAssetValue(simulatedTrade.nativeSize);
-			} else if (assetValue !== nativeSize) {
-				setAssetValue(nativeSize);
-			}
-		},
-		// Don't want to react to internal value changes
-		// eslint-disable-next-line
-		[
-			susdSize,
-			nativeSize,
-			simulatedTrade?.susdSize,
-			simulatedTrade?.nativeSize,
-			setUsdValue,
-			setAssetValue,
-		]
-	);
+	const onSizeChange = (value: string, assetType: 'native' | 'usd') => {
+		dispatch(editTradeSizeInput(value, assetType));
+	};
 
 	const handleSetMax = () => {
 		if (assetInputType === 'usd') {
-			onTradeAmountChange(String(floorNumber(maxUsdInputAmount)), tradePrice, 'usd');
+			onSizeChange(String(floorNumber(maxUsdInputAmount)), 'usd');
 		} else {
-			onTradeAmountChange(String(floorNumber(maxNativeValue)), tradePrice, 'native');
+			onSizeChange(String(floorNumber(maxNativeValue)), 'native');
 		}
 	};
 
 	const handleSetPositionSize = () => {
-		onTradeAmountChange(position?.position?.size.toString() ?? '0', tradePrice, 'native');
+		onSizeChange(position?.position?.size.toString() ?? '0', 'native');
 	};
 
-	// eslint-disable-next-line
-	const debounceOnChangeValue = useCallback(
-		debounce((value, assetType) => {
-			onTradeAmountChange(value, tradePrice, assetType);
-		}, 500),
-		[debounce, onTradeAmountChange]
-	);
-
-	useEffect(() => {
-		return () => debounceOnChangeValue?.cancel();
-	}, [debounceOnChangeValue]);
-
 	const onChangeValue = (_: ChangeEvent<HTMLInputElement>, v: string) => {
-		assetInputType === 'usd' ? setUsdValue(v) : setAssetValue(v);
-		debounceOnChangeValue(v, assetInputType);
+		dispatch(editTradeSizeInput(v, assetInputType));
 	};
 
 	const isDisabled = useMemo(() => {
@@ -132,8 +91,12 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 		position?.position.side !== selectedLeverageSide;
 
 	const invalid =
-		(assetInputType === 'usd' && usdValue !== '' && maxUsdInputAmount.lte(usdValue || 0)) ||
-		(assetInputType === 'native' && assetValue !== '' && maxNativeValue.lte(assetValue || 0));
+		(assetInputType === 'usd' &&
+			susdSizeString !== '' &&
+			maxUsdInputAmount.lte(susdSizeString || 0)) ||
+		(assetInputType === 'native' &&
+			nativeSizeString !== '' &&
+			maxNativeValue.lte(nativeSizeString || 0));
 
 	return (
 		<>
@@ -162,7 +125,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 							<span>{<SwitchAssetArrows />}</span>
 						</InputButton>
 					}
-					value={assetInputType === 'usd' ? usdValue : assetValue}
+					value={assetInputType === 'usd' ? susdSizeString : nativeSizeString}
 					placeholder="0.00"
 					onChange={onChangeValue}
 				/>

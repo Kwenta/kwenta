@@ -2,7 +2,6 @@ import Wei from '@synthetixio/wei';
 import { formatBytes32String } from 'ethers/lib/utils';
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 
 import { DEFAULT_CROSSMARGIN_GAS_BUFFER_PCT } from 'constants/defaults';
 import { useFuturesContext } from 'contexts/FuturesContext';
@@ -11,9 +10,13 @@ import { monitorTransaction } from 'contexts/RelayerContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useEstimateGasCost from 'hooks/useEstimateGasCost';
 import { setOpenModal } from 'state/app/reducer';
-import { selectMarketKey, selectTradeSizeInputs } from 'state/futures/selectors';
+import {
+	selectCrossMarginMarginDelta,
+	selectIsAdvancedOrder,
+	selectMarketKey,
+	selectTradeSizeInputs,
+} from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { crossMarginMarginDeltaState, isAdvancedOrderState } from 'store/futures';
 import { isUserDeniedError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -28,9 +31,9 @@ export default function TradeConfirmationModalCrossMargin() {
 	const dispatch = useAppDispatch();
 
 	const marketKey = useAppSelector(selectMarketKey);
-	const crossMarginMarginDelta = useRecoilValue(crossMarginMarginDeltaState);
+	const crossMarginMarginDelta = useAppSelector(selectCrossMarginMarginDelta);
 	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
-	const isAdvancedOrder = useRecoilValue(isAdvancedOrderState);
+	const isAdvancedOrder = useAppSelector(selectIsAdvancedOrder);
 
 	const { submitCrossMarginOrder, resetTradeState, tradeFees } = useFuturesContext();
 

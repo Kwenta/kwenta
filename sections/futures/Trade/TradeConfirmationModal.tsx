@@ -2,7 +2,6 @@ import Wei from '@synthetixio/wei';
 import { capitalize } from 'lodash';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
@@ -11,9 +10,15 @@ import ErrorView from 'components/Error';
 import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
-import { selectMarketAsset, selectPosition, selectTradePreview } from 'state/futures/selectors';
+import {
+	selectCrossMarginOrderPrice,
+	selectLeverageSide,
+	selectMarketAsset,
+	selectOrderType,
+	selectPosition,
+	selectTradePreview,
+} from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { futuresOrderPriceState, leverageSideState, orderTypeState } from 'store/futures';
 import { FlexDivCentered } from 'styles/common';
 import { zeroBN, formatCurrency, formatDollars, formatNumber } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
@@ -44,10 +49,10 @@ export default function TradeConfirmationModal({
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const potentialTradeDetails = useAppSelector(selectTradePreview);
-	const orderType = useRecoilValue(orderTypeState);
-	const orderPrice = useRecoilValue(futuresOrderPriceState);
+	const orderType = useAppSelector(selectOrderType);
+	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
 	const position = useAppSelector(selectPosition);
-	const leverageSide = useRecoilValue(leverageSideState);
+	const leverageSide = useAppSelector(selectLeverageSide);
 
 	const positionSide = useMemo(() => {
 		if (potentialTradeDetails?.size.eq(zeroBN)) {

@@ -10,7 +10,7 @@ import {
 	FuturesVolumes,
 } from 'sdk/types/futures';
 import { PositionSide } from 'sections/futures/types';
-import { FetchStatus } from 'state/types';
+import { QueryStatus } from 'state/types';
 import { FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
 
 export type IsolatedMarginOrderType = 'next price' | 'market';
@@ -23,7 +23,11 @@ export type TradeSizeInputs<T = Wei> = {
 
 export type CrossMarginTradeInputs<T = Wei> = TradeSizeInputs<T> & {
 	leverage: string;
-	orderPrice?: string | undefined;
+};
+
+export type CrossMarginTradeInputsWithDelta<T = Wei> = CrossMarginTradeInputs<T> & {
+	nativeSizeDelta: T;
+	susdSizeDelta: T;
 };
 
 export type IsolatedMarginTradeInputs<T = Wei> = TradeSizeInputs<T>;
@@ -41,15 +45,15 @@ export type FundingRate<T = Wei> = {
 };
 
 export type FuturesQueryStatuses = {
-	markets: FetchStatus;
-	crossMarginBalanceInfo: FetchStatus;
-	dailyVolumes: FetchStatus;
-	crossMarginPositions: FetchStatus;
-	isolatedPositions: FetchStatus;
-	openOrders: FetchStatus;
-	crossMarginSettings: FetchStatus;
-	isolatedTradePreview: FetchStatus;
-	crossMarginTradePreview: FetchStatus;
+	markets: QueryStatus;
+	crossMarginBalanceInfo: QueryStatus;
+	dailyVolumes: QueryStatus;
+	crossMarginPositions: QueryStatus;
+	isolatedPositions: QueryStatus;
+	openOrders: QueryStatus;
+	crossMarginSettings: QueryStatus;
+	isolatedTradePreview: QueryStatus;
+	crossMarginTradePreview: QueryStatus;
 };
 
 export type FuturesTransactionType =
@@ -84,6 +88,30 @@ export type TransactionEstimationPayload = {
 	error?: string | null | undefined;
 };
 
+export type CrossMarginBalanceInfo<T = Wei> = {
+	freeMargin: T;
+	keeperEthBal: T;
+	allowance: T;
+};
+
+export type CrossMarginSettings<T = Wei> = {
+	tradeFee: T;
+	limitOrderFee: T;
+	stopOrderFee: T;
+};
+
+export type CrossMarginTradeFees<T = Wei> = {
+	staticFee: T;
+	crossMarginFee: T;
+	limitStopOrderFee: T;
+	keeperEthDeposit: T;
+	total: T;
+};
+
+type FuturesErrors = {
+	tradePreview?: string | undefined | null;
+};
+
 // TODO: Separate in some way by network and wallet
 // so we can have persisted state between switching
 
@@ -98,27 +126,13 @@ export type FuturesState = {
 	dailyMarketVolumes: FuturesVolumes<string>;
 	transaction?: FuturesTransaction | undefined;
 	transactionEstimations: TransactionEstimations;
-};
-
-export type CrossMarginBalanceInfo<T = Wei> = {
-	freeMargin: T;
-	keeperEthBal: T;
-	allowance: T;
-};
-
-export type CrossMarginSettings<T = Wei> = {
-	tradeFee: T;
-	limitOrderFee: T;
-	stopOrderFee: T;
-};
-
-export type TradePreviewResult = {
-	data: FuturesPotentialTradeDetails<string> | null;
-	error: string | null;
+	dynamicFeeRate: string;
+	errors: FuturesErrors;
 };
 
 export type CrossMarginState = {
 	tradeInputs: CrossMarginTradeInputs<string>;
+	marginDelta: string;
 	orderType: CrossMarginOrderType;
 	selectedLeverage: string;
 	leverageSide: PositionSide;
@@ -127,9 +141,15 @@ export type CrossMarginState = {
 	showCrossMarginOnboard: boolean;
 	position?: FuturesPosition<string>;
 	balanceInfo: CrossMarginBalanceInfo<string>;
-	tradePreview: TradePreviewResult;
+	tradePreview: FuturesPotentialTradeDetails<string> | null;
 	account: string | undefined;
 	settings: CrossMarginSettings<string>;
+	fees: CrossMarginTradeFees<string>;
+	keeperEthBalance: string;
+	orderPrice: {
+		price?: string | undefined | null;
+		invalidLabel: string | undefined | null;
+	};
 	positions: {
 		[account: string]: FuturesPosition<string>[];
 	};
@@ -142,11 +162,13 @@ export type IsolatedMarginState = {
 	tradeInputs: IsolatedMarginTradeInputs<string>;
 	orderType: IsolatedMarginOrderType;
 	selectedLeverage: string;
-	tradePreview: TradePreviewResult;
+	tradePreview: FuturesPotentialTradeDetails<string> | null;
 	leverageSide: PositionSide;
 	selectedMarketKey: FuturesMarketKey;
 	selectedMarketAsset: FuturesMarketAsset;
 	position?: FuturesPosition<string>;
+	leverageInput: string;
+	tradeFee: string;
 	positions: {
 		[account: string]: FuturesPosition<string>[];
 	};

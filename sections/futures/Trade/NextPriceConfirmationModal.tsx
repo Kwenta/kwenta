@@ -2,7 +2,6 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { FC, useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
@@ -17,6 +16,7 @@ import { setOpenModal } from 'state/app/reducer';
 import { modifyIsolatedPosition, modifyIsolatedPositionEstimateGas } from 'state/futures/actions';
 import {
 	selectIsModifyingIsolatedPosition,
+	selectLeverageSide,
 	selectMarketAsset,
 	selectMarketInfo,
 	selectModifyIsolatedGasEstimate,
@@ -25,7 +25,6 @@ import {
 	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { leverageSideState } from 'store/futures';
 import { FlexDivCol, FlexDivCentered } from 'styles/common';
 import { computeNPFee } from 'utils/costCalculations';
 import { zeroBN, formatCurrency, formatDollars } from 'utils/formatters/number';
@@ -44,7 +43,7 @@ const NextPriceConfirmationModal: FC = () => {
 	const dispatch = useAppDispatch();
 
 	const { nativeSize, nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
-	const leverageSide = useRecoilValue(leverageSideState);
+	const leverageSide = useAppSelector(selectLeverageSide);
 	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const marketAsset = useAppSelector(selectMarketAsset);

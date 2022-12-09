@@ -1,42 +1,41 @@
 import { wei } from '@synthetixio/wei';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSetRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
 import CustomNumericInput from 'components/Input/CustomNumericInput';
 import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
-import { useFuturesContext } from 'contexts/FuturesContext';
+import { editIsolatedMarginSize } from 'state/futures/actions';
+import { setIsolatedMarginLeverageInput } from 'state/futures/reducer';
 import {
+	selectIsolatedLeverageInput,
 	selectIsolatedMarginLeverage,
 	selectMarketAssetRate,
 	selectMarketInfo,
 	selectMaxLeverage,
 	selectNextPriceDisclaimer,
+	selectOrderType,
 	selectPosition,
 } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
-import { leverageValueCommittedState, orderTypeState } from 'store/futures';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FlexDivCol, FlexDivRow } from 'styles/common';
-import { truncateNumbers, zeroBN } from 'utils/formatters/number';
+import { floorNumber, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import LeverageSlider from '../LeverageSlider';
 
 const LeverageInput: FC = () => {
 	const { t } = useTranslation();
+	const dispatch = useAppDispatch();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
-	const [leverageInput, setLeverageInput] = useState<string>('0');
 	const leverage = useAppSelector(selectIsolatedMarginLeverage);
-	const orderType = useRecoilValue(orderTypeState);
+	const orderType = useAppSelector(selectOrderType);
 	const isDisclaimerDisplayed = useAppSelector(selectNextPriceDisclaimer);
-	const setIsLeverageValueCommitted = useSetRecoilState(leverageValueCommittedState);
 	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const maxLeverage = useAppSelector(selectMaxLeverage);
 	const marketAssetRate = useAppSelector(selectMarketAssetRate);
-
-	const { onTradeAmountChange } = useFuturesContext();
+	const leverageInput = useAppSelector(selectIsolatedLeverageInput);
 
 	const onLeverageChange = useCallback(
 		(newLeverage: number) => {
@@ -45,10 +44,12 @@ const LeverageInput: FC = () => {
 				marketAssetRate.eq(0) || remainingMargin.eq(0)
 					? ''
 					: wei(newLeverage).mul(remainingMargin).div(marketAssetRate).toString();
-			setLeverageInput(truncateNumbers(newLeverage, DEFAULT_FIAT_DECIMALS));
-			onTradeAmountChange(newTradeSize, marketAssetRate, 'native');
+			const input = truncateNumbers(newLeverage, DEFAULT_FIAT_DECIMALS);
+			dispatch(setIsolatedMarginLeverageInput(input));
+			const floored = floorNumber(Number(newTradeSize), 4);
+			dispatch(editIsolatedMarginSize(String(floored), 'native'));
 		},
-		[position?.remainingMargin, marketAssetRate, onTradeAmountChange]
+		[position?.remainingMargin, marketAssetRate, dispatch]
 	);
 
 	const modeButton = useMemo(() => {
@@ -95,10 +96,8 @@ const LeverageInput: FC = () => {
 						maxValue={Number(truncateMaxLeverage)}
 						value={Number(truncateLeverage)}
 						onChange={(_, newValue) => {
-							setIsLeverageValueCommitted(false);
 							onLeverageChange(newValue as number);
 						}}
-						onChangeCommitted={() => setIsLeverageValueCommitted(true)}
 					/>
 				</SliderRow>
 			) : (
@@ -110,7 +109,6 @@ const LeverageInput: FC = () => {
 						suffix="x"
 						maxValue={maxLeverage.toNumber()}
 						onChange={(_, newValue) => {
-							setIsLeverageValueCommitted(true);
 							onLeverageChange(Number(newValue));
 						}}
 						disabled={isDisabled}

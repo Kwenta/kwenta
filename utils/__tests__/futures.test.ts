@@ -43,10 +43,10 @@ const getFees = (overrides: Record<string, any> = {}) => ({
 const getTrade = (sizeDelta: number = 1, leverage = 10) => ({
 	nativeSize: Math.abs(sizeDelta).toString(),
 	susdSize: (Math.abs(sizeDelta) * ETH_PRICE).toString(),
-	leverage: leverage.toString(),
+	leverage: wei(leverage),
 	nativeSizeDelta: wei(sizeDelta),
 	susdSizeDelta: wei(sizeDelta * ETH_PRICE),
-	orderPrice: wei(ETH_PRICE),
+	price: wei(ETH_PRICE),
 });
 
 describe('futures utils', () => {

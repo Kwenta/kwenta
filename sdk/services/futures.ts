@@ -468,6 +468,11 @@ export default class FuturesService {
 		return formatPotentialTrade(preview, tradeParams.sizeDelta, tradeParams.leverageSide);
 	}
 
+	public async getCrossMarginKeeperBalance(account: string) {
+		const bal = await this.sdk.context.provider.getBalance(account);
+		return wei(bal);
+	}
+
 	// Contract mutations
 
 	public async approveCrossMarginDeposit(

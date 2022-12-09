@@ -1,8 +1,5 @@
-import { useRecoilValue } from 'recoil';
-
 import { useAppSelector, useFetchAction, usePollAction } from 'state/hooks';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
-import { futuresAccountTypeState } from 'store/futures';
 
 import {
 	fetchCrossMarginAccountData,
@@ -12,7 +9,7 @@ import {
 	fetchOpenOrders,
 	fetchSharedFuturesData,
 } from './actions';
-import { selectCrossMarginAccount, selectMarkets } from './selectors';
+import { selectCrossMarginAccount, selectFuturesType, selectMarkets } from './selectors';
 
 // TODO: Optimise polling and queries
 
@@ -21,7 +18,7 @@ export const usePollMarketFuturesData = () => {
 	const markets = useAppSelector(selectMarkets);
 	const wallet = useAppSelector(selectWallet);
 	const crossMarginAddress = useAppSelector(selectCrossMarginAccount);
-	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
+	const selectedAccountType = useAppSelector(selectFuturesType);
 
 	useFetchAction(fetchCrossMarginSettings, { changeKeys: [networkId] });
 	usePollAction('fetchSharedFuturesData', fetchSharedFuturesData, {

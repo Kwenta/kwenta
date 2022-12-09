@@ -1,6 +1,5 @@
 import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import TimerIcon from 'assets/svg/app/timer.svg';
@@ -9,26 +8,26 @@ import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { NO_VALUE } from 'constants/placeholder';
 import {
 	selectCrossMarginSettings,
+	selectCrossMarginTradeFees,
+	selectDynamicFeeRate,
+	selectFuturesType,
+	selectIsolatedMarginFee,
 	selectMarketInfo,
+	selectOrderType,
 	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import {
-	tradeFeesState,
-	orderTypeState,
-	futuresAccountTypeState,
-	dynamicFeeRateState,
-} from 'store/futures';
 import { computeNPFee, computeMarketFee } from 'utils/costCalculations';
 import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 const FeeInfoBox: React.FC = () => {
-	const orderType = useRecoilValue(orderTypeState);
-	const fees = useRecoilValue(tradeFeesState);
-	const dynamicFeeRate = useRecoilValue(dynamicFeeRateState);
+	const orderType = useAppSelector(selectOrderType);
+	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
+	const isolatedMarginFee = useAppSelector(selectIsolatedMarginFee);
+	const dynamicFeeRate = useAppSelector(selectDynamicFeeRate);
 	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
-	const accountType = useRecoilValue(futuresAccountTypeState);
-	const { tradeFee: crossMarginTradeFee, limitOrderFee, stopOrderFee } = useAppSelector(
+	const accountType = useAppSelector(selectFuturesType);
+	const { tradeFee: crossMarginTradeFeeRate, limitOrderFee, stopOrderFee } = useAppSelector(
 		selectCrossMarginSettings
 	);
 	const marketInfo = useAppSelector(selectMarketInfo);
@@ -77,31 +76,31 @@ const FeeInfoBox: React.FC = () => {
 	const feesInfo = useMemo<Record<string, DetailedInfo | null | undefined>>(() => {
 		const crossMarginFeeInfo = {
 			'Protocol Fee': {
-				value: formatDollars(fees.staticFee, {
-					minDecimals: fees.staticFee.lt(0.01) ? 4 : 2,
+				value: formatDollars(crossMarginFees.staticFee, {
+					minDecimals: crossMarginFees.staticFee.lt(0.01) ? 4 : 2,
 				}),
 				keyNode: marketCostTooltip,
 			},
 			'Limit / Stop Fee':
-				fees.limitStopOrderFee.gt(0) && orderFeeRate
+				crossMarginFees.limitStopOrderFee.gt(0) && orderFeeRate
 					? {
-							value: formatDollars(fees.limitStopOrderFee, {
-								minDecimals: fees.limitStopOrderFee.lt(0.01) ? 4 : 2,
+							value: formatDollars(crossMarginFees.limitStopOrderFee, {
+								minDecimals: crossMarginFees.limitStopOrderFee.lt(0.01) ? 4 : 2,
 							}),
 							keyNode: formatPercent(orderFeeRate),
 					  }
 					: null,
 			'Cross Margin Fee': {
-				value: formatDollars(fees.crossMarginFee, {
-					minDecimals: fees.crossMarginFee.lt(0.01) ? 4 : 2,
+				value: formatDollars(crossMarginFees.crossMarginFee, {
+					minDecimals: crossMarginFees.crossMarginFee.lt(0.01) ? 4 : 2,
 				}),
 				spaceBeneath: true,
-				keyNode: formatPercent(crossMarginTradeFee),
+				keyNode: formatPercent(crossMarginTradeFeeRate),
 			},
 
 			'Total Fee': {
-				value: formatDollars(fees.total, {
-					minDecimals: fees.total.lt(0.01) ? 4 : 2,
+				value: formatDollars(crossMarginFees.total, {
+					minDecimals: crossMarginFees.total.lt(0.01) ? 4 : 2,
 				}),
 			},
 		};
@@ -110,7 +109,7 @@ const FeeInfoBox: React.FC = () => {
 				...crossMarginFeeInfo,
 				'Keeper Deposit': {
 					value: !!marketInfo?.keeperDeposit
-						? formatCurrency('ETH', fees.keeperEthDeposit, { currencyKey: 'ETH' })
+						? formatCurrency('ETH', crossMarginFees.keeperEthDeposit, { currencyKey: 'ETH' })
 						: NO_VALUE,
 				},
 			};
@@ -135,15 +134,15 @@ const FeeInfoBox: React.FC = () => {
 				},
 				'Estimated Fees': {
 					value: formatDollars(totalDeposit.add(nextPriceDiscount ?? zeroBN)),
-					keyNode: fees.dynamicFeeRate?.gt(0) ? <ToolTip /> : null,
+					keyNode: dynamicFeeRate?.gt(0) ? <ToolTip /> : null,
 				},
 			};
 		}
 		return accountType === 'isolated_margin'
 			? {
 					Fee: {
-						value: formatDollars(fees.total, {
-							minDecimals: fees.total.lt(0.01) ? 4 : 2,
+						value: formatDollars(isolatedMarginFee, {
+							minDecimals: isolatedMarginFee.lt(0.01) ? 4 : 2,
 						}),
 						keyNode: marketCostTooltip,
 					},
@@ -151,9 +150,11 @@ const FeeInfoBox: React.FC = () => {
 			: crossMarginFeeInfo;
 	}, [
 		orderType,
-		crossMarginTradeFee,
-		fees,
+		crossMarginTradeFeeRate,
+		isolatedMarginFee,
+		crossMarginFees,
 		orderFeeRate,
+		dynamicFeeRate,
 		commitDeposit,
 		accountType,
 		marketInfo?.keeperDeposit,

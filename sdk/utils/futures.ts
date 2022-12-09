@@ -18,6 +18,11 @@ import {
 	PostTradeDetailsResponse,
 	PotentialTradeStatus,
 } from 'sdk/types/futures';
+import {
+	CrossMarginOrderType,
+	CrossMarginSettings,
+	IsolatedMarginOrderType,
+} from 'state/futures/types';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
@@ -267,4 +272,15 @@ export const POTENTIAL_TRADE_STATUS_TO_MESSAGE: { [key: string]: string } = {
 	NIL_ORDER: 'Cannot submit empty order',
 	NO_POSITION_OPEN: 'No position open',
 	PRICE_TOO_VOLATILE: 'Price too volatile',
+};
+
+export const calculateCrossMarginFee = (
+	orderType: CrossMarginOrderType | IsolatedMarginOrderType,
+	susdSize: Wei,
+	feeRates: CrossMarginSettings
+) => {
+	if (orderType !== 'limit' && orderType !== 'stop market') return zeroBN;
+	const advancedOrderFeeRate =
+		orderType === 'limit' ? feeRates.limitOrderFee : feeRates.stopOrderFee;
+	return susdSize.mul(advancedOrderFeeRate);
 };

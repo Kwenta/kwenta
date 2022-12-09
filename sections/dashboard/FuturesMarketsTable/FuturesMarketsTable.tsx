@@ -17,11 +17,12 @@ import Connector from 'containers/Connector';
 import { FundingRateResponse } from 'sdk/types/futures';
 import {
 	selectAverageFundingRates,
+	selectFuturesType,
 	selectMarkets,
 	selectMarketVolumes,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { pastRatesState, futuresAccountTypeState } from 'store/futures';
+import { pastRatesState } from 'store/futures';
 import { getSynthDescription, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
 const FuturesMarketsTable: FC = () => {
@@ -33,7 +34,7 @@ const FuturesMarketsTable: FC = () => {
 	const fundingRates = useAppSelector(selectAverageFundingRates);
 	const pastRates = useRecoilValue(pastRatesState);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
-	const accountType = useRecoilValue(futuresAccountTypeState);
+	const accountType = useAppSelector(selectFuturesType);
 
 	let data = useMemo(() => {
 		return futuresMarkets.map((market) => {

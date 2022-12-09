@@ -2,7 +2,6 @@ import { useRouter } from 'next/router';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { components } from 'react-select';
-import { useSetRecoilState } from 'recoil';
 import styled, { useTheme } from 'styled-components';
 
 import Button from 'components/Button';
@@ -11,14 +10,13 @@ import Select from 'components/Select';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import { FuturesPosition } from 'sdk/types/futures';
 import { selectSusdBalance } from 'state/balances/selectors';
-import { setFuturesAccountType as setFuturesAccountTypeRedux } from 'state/futures/reducer';
+import { setFuturesAccountType } from 'state/futures/reducer';
 import {
 	selectCrossMarginPositions,
 	selectFuturesPortfolio,
 	selectIsolatedMarginPositions,
 } from 'state/futures/selectors';
 import { useAppSelector, useAppDispatch } from 'state/hooks';
-import { futuresAccountTypeState } from 'store/futures';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { zeroBN, formatDollars } from 'utils/formatters/number';
 import { getMarketName, MarketKeyByAsset } from 'utils/futures';
@@ -38,7 +36,6 @@ const BalanceActions: FC = () => {
 
 	const crossPositions = useAppSelector(selectCrossMarginPositions);
 	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
-	const setFuturesAccountType = useSetRecoilState(futuresAccountTypeState);
 	const portfolio = useAppSelector(selectFuturesPortfolio);
 	const susdWalletBalance = useAppSelector(selectSusdBalance);
 	const dispatch = useAppDispatch();
@@ -51,13 +48,12 @@ const BalanceActions: FC = () => {
 				marketRemainingMargin: formatDollars(position.remainingMargin),
 				onClick: () => {
 					// TODO: Remove eventually
-					setFuturesAccountType(accountType);
-					dispatch(setFuturesAccountTypeRedux(accountType));
+					dispatch(setFuturesAccountType(accountType));
 					return router.push(`/market/?asset=${position.asset}&accountType=${accountType}`);
 				},
 			};
 		},
-		[dispatch, router, setFuturesAccountType]
+		[dispatch, router]
 	);
 
 	const OPTIONS = useMemo(() => {

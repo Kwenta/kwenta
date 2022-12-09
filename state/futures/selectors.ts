@@ -17,10 +17,12 @@ import {
 	MarketKeyByAsset,
 	unserializeCmBalanceInfo,
 	unserializeCrossMarginSettings,
+	unserializeCrossMarginTradeInputs,
 	unserializeFundingRates,
 	unserializeFuturesOrders,
 	unserializeFuturesVolumes,
 	unserializeGasEstimate,
+	unserializeIsolatedMarginTradeInputs,
 	unserializeMarkets,
 } from 'utils/futures';
 
@@ -34,8 +36,14 @@ export const selectCrossMarginAccount = (state: RootState) => state.futures.cros
 
 export const selectMarketsQueryStatus = (state: RootState) => state.futures.queryStatuses.markets;
 
+export const selectIsolatedLeverageInput = (state: RootState) =>
+	state.futures.isolatedMargin.leverageInput;
+
 export const selectCrossMarginSelectedLeverage = (state: RootState) =>
 	wei(state.futures.crossMargin.tradeInputs.leverage || DEFAULT_LEVERAGE);
+
+export const selectCrossMarginMarginDelta = (state: RootState) =>
+	wei(state.futures.crossMargin.marginDelta || 0);
 
 export const selectCrossMarginTransferOpen = (state: RootState) =>
 	state.app.openModal === 'futures_cross_deposit' ||
@@ -306,38 +314,73 @@ export const selectAboveMaxLeverage = createSelector(
 	}
 );
 
-export const selectCrossMarginTradeInputs = (state: RootState) =>
-	state.futures.crossMargin.tradeInputs;
-
-export const selectIsolatedMarginTradeInputs = (state: RootState) =>
-	state.futures.isolatedMargin.tradeInputs;
-
-export const selectTradeSizeInputs = createSelector(
+export const selectCrossMarginTradeInputs = createSelector(
 	selectLeverageSide,
-	selectFuturesType,
-	selectCrossMarginTradeInputs,
-	selectIsolatedMarginTradeInputs,
-	(side, type, crossMarginInputs, isolatedInputs) => {
-		const inputs = type === 'cross_margin' ? crossMarginInputs : isolatedInputs;
-		const weiValues = {
-			susdSizeWei: wei(inputs.susdSize || 0),
-			nativeSizeWei: wei(inputs.nativeSize || 0),
-		};
+	(state: RootState) => state.futures.crossMargin.tradeInputs,
+	(side, tradeInputs) => {
+		const inputs = unserializeCrossMarginTradeInputs(tradeInputs);
 		const deltas = {
-			susdSizeDelta:
-				side === PositionSide.LONG ? wei(inputs.susdSize || 0) : wei(inputs.susdSize || 0).neg(),
-			nativeSizeDelta:
-				side === PositionSide.LONG
-					? wei(inputs.nativeSize || 0)
-					: wei(inputs.nativeSize || 0).neg(),
+			susdSizeDelta: side === PositionSide.LONG ? inputs.susdSize : inputs.susdSize.neg(),
+			nativeSizeDelta: side === PositionSide.LONG ? inputs.nativeSize : inputs.nativeSize.neg(),
 		};
 		return {
 			...inputs,
-			...weiValues,
 			...deltas,
+			susdSizeString: tradeInputs.susdSize,
+			nativeSizeString: tradeInputs.nativeSize,
 		};
 	}
 );
+
+export const selectIsolatedMarginTradeInputs = createSelector(
+	selectLeverageSide,
+	(state: RootState) => state.futures.isolatedMargin.tradeInputs,
+	(side, tradeInputs) => {
+		const inputs = unserializeIsolatedMarginTradeInputs(tradeInputs);
+		const deltas = {
+			susdSizeDelta: side === PositionSide.LONG ? inputs.susdSize : inputs.susdSize.neg(),
+			nativeSizeDelta: side === PositionSide.LONG ? inputs.nativeSize : inputs.nativeSize.neg(),
+		};
+		return {
+			...inputs,
+			...deltas,
+			susdSizeString: tradeInputs.susdSize,
+			nativeSizeString: tradeInputs.nativeSize,
+		};
+	}
+);
+export const selectDynamicFeeRate = (state: RootState) => wei(state.futures.dynamicFeeRate);
+
+export const selectIsolatedMarginFee = (state: RootState) =>
+	wei(state.futures.isolatedMargin.tradeFee);
+
+export const selectKeeperEthBalance = (state: RootState) =>
+	wei(state.futures.crossMargin.keeperEthBalance);
+
+export const selectCrossMarginTradeFees = createSelector(
+	(state: RootState) => state.futures.crossMargin.fees,
+	(fees) => {
+		return {
+			staticFee: wei(fees.staticFee),
+			crossMarginFee: wei(fees.crossMarginFee),
+			keeperEthDeposit: wei(fees.keeperEthDeposit),
+			limitStopOrderFee: wei(fees.limitStopOrderFee),
+			total: wei(fees.total),
+		};
+	}
+);
+
+export const selectTradeSizeInputs = createSelector(
+	selectFuturesType,
+	selectCrossMarginTradeInputs,
+	selectIsolatedMarginTradeInputs,
+	(type, crossMarginInputs, isolatedInputs) => {
+		return type === 'cross_margin' ? crossMarginInputs : isolatedInputs;
+	}
+);
+
+export const selectCrossMarginOrderPrice = (state: RootState) =>
+	state.futures.crossMargin.orderPrice.price ?? '';
 
 export const selectIsolatedMarginLeverage = createSelector(
 	selectPosition,
@@ -345,7 +388,7 @@ export const selectIsolatedMarginLeverage = createSelector(
 	(position, { susdSize }) => {
 		const remainingMargin = position?.remainingMargin;
 		if (!remainingMargin || remainingMargin.eq(0) || !susdSize) return wei(0);
-		return wei(susdSize || 0).div(remainingMargin);
+		return susdSize.div(remainingMargin);
 	}
 );
 
@@ -437,7 +480,7 @@ export const selectTradePreview = createSelector(
 	selectFuturesType,
 	(state: RootState) => state.futures,
 	(type, futures) => {
-		const preview = futures[accountType(type)].tradePreview.data;
+		const preview = futures[accountType(type)].tradePreview;
 		return preview ? unserializePotentialTrade(preview) : null;
 	}
 );
@@ -446,7 +489,9 @@ export const selectTradePreviewError = createSelector(
 	selectFuturesType,
 	(state: RootState) => state.futures,
 	(type, futures) => {
-		return futures[accountType(type)].tradePreview.error;
+		return type === 'cross_margin'
+			? futures.queryStatuses.crossMarginTradePreview.error
+			: futures.queryStatuses.isolatedTradePreview.error;
 	}
 );
 
@@ -472,6 +517,11 @@ export const selectOpenOrders = createSelector(
 export const selectCrossMarginSettings = createSelector(
 	(state: RootState) => state.futures.crossMargin.settings,
 	(settings) => unserializeCrossMarginSettings(settings)
+);
+
+export const selectIsAdvancedOrder = createSelector(
+	(state: RootState) => state.futures.crossMargin.orderType,
+	(type) => type === 'limit' || type === 'stop market'
 );
 
 export const selectModifyIsolatedGasEstimate = createSelector(

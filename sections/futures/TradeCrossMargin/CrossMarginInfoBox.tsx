@@ -1,6 +1,5 @@
 import Wei, { wei } from '@synthetixio/wei';
 import React, { useCallback, useMemo, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
@@ -11,7 +10,11 @@ import { useFuturesContext } from 'contexts/FuturesContext';
 import { FuturesPotentialTradeDetails } from 'sdk/types/futures';
 import {
 	selectCrossMarginBalanceInfo,
+	selectCrossMarginMarginDelta,
+	selectCrossMarginOrderPrice,
+	selectCrossMarginTradeFees,
 	selectMarketInfo,
+	selectOrderType,
 	selectPosition,
 	selectTradePreview,
 	selectTradePreviewStatus,
@@ -19,12 +22,6 @@ import {
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
-import {
-	crossMarginMarginDeltaState,
-	tradeFeesState,
-	orderTypeState,
-	futuresOrderPriceState,
-} from 'store/futures';
 import { PillButtonSpan } from 'styles/common';
 import {
 	formatCurrency,
@@ -48,14 +45,14 @@ function MarginInfoBox({ editingLeverage }: Props) {
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const { nativeSize } = useAppSelector(selectTradeSizeInputs);
 	const potentialTrade = useAppSelector(selectTradePreview);
-	const marginDelta = useRecoilValue(crossMarginMarginDeltaState);
+	const marginDelta = useAppSelector(selectCrossMarginMarginDelta);
 	const { freeMargin: crossMarginFreeMargin, keeperEthBal } = useAppSelector(
 		selectCrossMarginBalanceInfo
 	);
 	const previewStatus = useAppSelector(selectTradePreviewStatus);
-	const orderType = useRecoilValue(orderTypeState);
-	const orderPrice = useRecoilValue(futuresOrderPriceState);
-	const { crossMarginFee } = useRecoilValue(tradeFeesState);
+	const orderType = useAppSelector(selectOrderType);
+	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
+	const { crossMarginFee } = useAppSelector(selectCrossMarginTradeFees);
 
 	const [openModal, setOpenModal] = useState<'leverage' | 'keeper-deposit' | null>(null);
 
@@ -142,7 +139,7 @@ function MarginInfoBox({ editingLeverage }: Props) {
 
 	const showPreview = previewTradeData.showPreview && !potentialTrade?.showStatus;
 
-	const isLoading = previewStatus === FetchStatus.Loading;
+	const isLoading = previewStatus.status === FetchStatus.Loading;
 	return (
 		<>
 			<StyledInfoBox
