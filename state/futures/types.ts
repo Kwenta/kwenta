@@ -13,7 +13,7 @@ import { PositionSide } from 'sections/futures/types';
 import { QueryStatus } from 'state/types';
 import { FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
 
-export type IsolatedMarginOrderType = 'delayed' | 'market';
+export type IsolatedMarginOrderType = 'delayed' | 'delayed offchain' | 'market';
 export type CrossMarginOrderType = 'market' | 'stop market' | 'limit';
 
 export type TradeSizeInputs<T = Wei> = {
@@ -184,6 +184,12 @@ export type IsolatedMarginState = {
 export type ModifyIsolatedPositionInputs = {
 	sizeDelta: Wei;
 	delayed: boolean;
+	offchain: boolean;
+};
+
+export type CancelDelayedOrderInputs = {
+	marketAddress: string;
+	isOffchain: boolean;
 };
 
 export const futuresPositionKeys = new Set([

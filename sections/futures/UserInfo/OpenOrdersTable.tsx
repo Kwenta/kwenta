@@ -66,7 +66,12 @@ const OpenOrdersTable: React.FC = () => {
 					: false,
 				totalDeposit: o.commitDeposit.add(o.keeperDeposit),
 				onCancel: () => {
-					dispatch(cancelDelayedOrder(o.marketAddress));
+					dispatch(
+						cancelDelayedOrder({
+							marketAddress: o.marketAddress,
+							isOffchain: o.isOffchain,
+						})
+					);
 				},
 				onExecute: () => {
 					dispatch(executeDelayedOrder(o.marketAddress));
@@ -89,11 +94,14 @@ const OpenOrdersTable: React.FC = () => {
 					Math.floor((order.executableAtTimestamp - Date.now()) / 1000) +
 					DEFAULT_DELAYED_EXECUTION_BUFFER;
 				const timePastExecution = Math.floor((Date.now() - order.executableAtTimestamp) / 1000);
-				// Should we add a buffer here?
-				acc[order.marketKey] = {
-					timeToExecution: Math.max(timeToExecution, 0),
-					timePastExecution: Math.max(timePastExecution, 0),
-				};
+
+				// Only updated delayed orders
+				if (!order.isOffchain) {
+					acc[order.marketKey] = {
+						timeToExecution: Math.max(timeToExecution, 0),
+						timePastExecution: Math.max(timePastExecution, 0),
+					};
+				}
 				return acc;
 			}, {} as CountdownTimers);
 			setCountdownTimers(newCountdownTimers);

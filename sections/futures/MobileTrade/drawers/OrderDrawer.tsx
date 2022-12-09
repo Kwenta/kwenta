@@ -23,14 +23,21 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer }) =
 	const dispatch = useAppDispatch();
 
 	const onCancel = useCallback(
-		(order) => {
-			dispatch(cancelDelayedOrder(order.marketAddress));
+		(order: DelayedOrder | undefined) => {
+			if (!order) return;
+			dispatch(
+				cancelDelayedOrder({
+					marketAddress: order.marketAddress,
+					isOffchain: order.isOffchain,
+				})
+			);
 		},
 		[dispatch]
 	);
 
 	const onExecute = useCallback(
-		(order) => {
+		(order: DelayedOrder | undefined) => {
+			if (!order) return;
 			dispatch(executeDelayedOrder(order.marketAddress));
 		},
 		[dispatch]

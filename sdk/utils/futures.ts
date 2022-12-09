@@ -260,7 +260,7 @@ export const formatDelayedOrder = (
 		isOffchain: isOffchain,
 		priceImpactDelta: wei(priceImpactDelta),
 		targetRoundId: wei(targetRoundId),
-		orderType: 'Delayed',
+		orderType: isOffchain ? 'Delayed Offchain' : 'Delayed',
 		side: wei(sizeDelta).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
 	};
 };

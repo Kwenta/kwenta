@@ -85,7 +85,7 @@ const LeverageInput: FC = () => {
 				</LeverageTitle>
 				{modeButton}
 			</LeverageRow>
-			{orderType === 'delayed' && isDisclaimerDisplayed && (
+			{(orderType === 'delayed' || orderType === 'delayed offchain') && isDisclaimerDisplayed && (
 				<LeverageDisclaimer>
 					{t('futures.market.trade.input.leverage.disclaimer')}
 				</LeverageDisclaimer>
