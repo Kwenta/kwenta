@@ -985,17 +985,16 @@ export default class ExchangeService {
 	}
 
 	private async getPairRates(quoteCurrencyKey: string, baseCurrencyKey: string) {
-		const pairRates = newGetExchangeRatesTupleForCurrencies(
-			this.exchangeRates,
-			quoteCurrencyKey,
-			baseCurrencyKey
-		);
-
-		pairRates[1] = this.checkIsAtomic(baseCurrencyKey, quoteCurrencyKey)
-			? await this.getAtomicRates(baseCurrencyKey)
-			: pairRates[1];
-
-		return pairRates;
+		return this.checkIsAtomic(baseCurrencyKey, quoteCurrencyKey)
+			? await Promise.all([
+					this.getAtomicRates(quoteCurrencyKey),
+					this.getAtomicRates(baseCurrencyKey),
+			  ])
+			: newGetExchangeRatesTupleForCurrencies(
+					this.exchangeRates,
+					quoteCurrencyKey,
+					baseCurrencyKey
+			  );
 	}
 
 	private async getOneInchApproveAddress() {
