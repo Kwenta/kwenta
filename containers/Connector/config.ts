@@ -18,7 +18,7 @@ import Safe from 'components/Rainbowkit/Gnosis';
 import Tally from 'components/Rainbowkit/Tally';
 import { BLAST_NETWORK_LOOKUP } from 'constants/network';
 
-const { chains, provider } = configureChains(
+const { chains, provider, webSocketProvider } = configureChains(
 	[chain.optimism, chain.mainnet, chain.optimismGoerli, chain.goerli],
 	[
 		infuraProvider({
@@ -29,9 +29,15 @@ const { chains, provider } = configureChains(
 		jsonRpcProvider({
 			rpc: (networkChain) => {
 				return !BLAST_NETWORK_LOOKUP[networkChain.id]
-					? { http: networkChain.rpcUrls.default }
+					? {
+							http: networkChain.rpcUrls.default,
+							webSocket: networkChain.rpcUrls.default.replace('https', 'wss'),
+					  }
 					: {
 							http: `https://${BLAST_NETWORK_LOOKUP[networkChain.id]}.blastapi.io/${
+								process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID
+							}`,
+							webSocket: `wss://${BLAST_NETWORK_LOOKUP[networkChain.id]}.blastapi.io/${
 								process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID
 							}`,
 					  };
@@ -70,6 +76,7 @@ export const wagmiClient = createClient({
 	autoConnect: true,
 	connectors,
 	provider,
+	webSocketProvider,
 });
 
 export { chains };
