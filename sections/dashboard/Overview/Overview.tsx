@@ -18,9 +18,9 @@ import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner'
 import { selectBalances } from 'state/balances/selectors';
 import { sdk } from 'state/config';
 import {
-	selectCrossMarginPositions,
+	selectActiveCrossPositionsCount,
+	selectActiveIsolatedPositionsCount,
 	selectFuturesPortfolio,
-	selectIsolatedMarginPositions,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { activePositionsTabState } from 'store/ui';
@@ -48,8 +48,8 @@ const Overview: FC = () => {
 
 	const balances = useAppSelector(selectBalances);
 	const portfolio = useAppSelector(selectFuturesPortfolio);
-	const crossPositions = useAppSelector(selectCrossMarginPositions);
-	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
+	const isolatedPositionsCount = useAppSelector(selectActiveIsolatedPositionsCount);
+	const crossPositionsCount = useAppSelector(selectActiveCrossPositionsCount);
 
 	const [activePositionsTab, setActivePositionsTab] = useRecoilState<PositionsTab>(
 		activePositionsTabState
@@ -187,7 +187,7 @@ const Overview: FC = () => {
 			{
 				name: PositionsTab.ISOLATED_MARGIN,
 				label: t('dashboard.overview.positions-tabs.isolated-margin'),
-				badge: isolatedPositions.length,
+				badge: isolatedPositionsCount,
 				active: activePositionsTab === PositionsTab.ISOLATED_MARGIN,
 				titleIcon: <FuturesIcon type="isolated_margin" />,
 				detail: formatDollars(portfolio.isolatedMarginFutures),
@@ -204,8 +204,8 @@ const Overview: FC = () => {
 			},
 		];
 	}, [
-		crossPositions,
-		isolatedPositions,
+		crossPositionsCount,
+		isolatedPositionsCount,
 		exchangeTokens,
 		balances.totalUSDBalance,
 		t,

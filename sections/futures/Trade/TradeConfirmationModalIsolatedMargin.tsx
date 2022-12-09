@@ -4,7 +4,6 @@ import { setOpenModal } from 'state/app/reducer';
 import { modifyIsolatedPosition, modifyIsolatedPositionEstimateGas } from 'state/futures/actions';
 import {
 	selectIsModifyingIsolatedPosition,
-	selectIsolatedPriceImpact,
 	selectModifyIsolatedGasEstimate,
 	selectTradePreview,
 	selectTradeSizeInputs,
@@ -18,24 +17,20 @@ export default function TradeConfirmationModalIsolatedMargin() {
 	const dispatch = useAppDispatch();
 
 	const potentialTradeDetails = useAppSelector(selectTradePreview);
-	const { nativeSize } = useAppSelector(selectTradeSizeInputs);
+	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
 	const submitting = useAppSelector(selectIsModifyingIsolatedPosition);
 	const gasEstimate = useAppSelector(selectModifyIsolatedGasEstimate);
-	const priceImpact = useAppSelector(selectIsolatedPriceImpact);
 
 	const transactionFee = useMemo(() => gasEstimate?.cost ?? zeroBN, [gasEstimate?.cost]);
 
 	useEffect(() => {
-		if (nativeSize !== '') {
-			dispatch(
-				modifyIsolatedPositionEstimateGas({
-					sizeDelta: nativeSize,
-					priceImpactDelta: priceImpact,
-					delayed: false,
-				})
-			);
-		}
-	}, [nativeSize, priceImpact, dispatch]);
+		dispatch(
+			modifyIsolatedPositionEstimateGas({
+				sizeDelta: nativeSizeDelta,
+				delayed: false,
+			})
+		);
+	}, [nativeSizeDelta, dispatch]);
 
 	const onDismiss = useCallback(() => {
 		dispatch(setOpenModal(null));
@@ -44,8 +39,7 @@ export default function TradeConfirmationModalIsolatedMargin() {
 	const handleConfirmOrder = async () => {
 		dispatch(
 			modifyIsolatedPosition({
-				sizeDelta: nativeSize,
-				priceImpactDelta: priceImpact,
+				sizeDelta: nativeSizeDelta,
 				delayed: false,
 			})
 		);

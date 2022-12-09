@@ -14,9 +14,9 @@ import Table from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
-import { selectMarkets, selectMarketVolumes } from 'state/futures/selectors';
+import { selectFuturesType, selectMarkets, selectMarketVolumes } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { pastRatesState, futuresAccountTypeState } from 'store/futures';
+import { pastRatesState } from 'store/futures';
 import { getSynthDescription, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
 const FuturesMarketsTable: FC = () => {
@@ -27,7 +27,7 @@ const FuturesMarketsTable: FC = () => {
 	const futuresMarkets = useAppSelector(selectMarkets);
 	const pastRates = useRecoilValue(pastRatesState);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
-	const accountType = useRecoilValue(futuresAccountTypeState);
+	const accountType = useAppSelector(selectFuturesType);
 
 	let data = useMemo(() => {
 		return futuresMarkets.map((market) => {

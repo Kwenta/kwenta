@@ -10,8 +10,9 @@ import {
 	fetchFuturesPositionsForType,
 	fetchOpenOrders,
 } from 'state/futures/actions';
-import { useAppDispatch } from 'state/hooks';
-import { futuresAccountState, futuresAccountTypeState } from 'store/futures';
+import { selectFuturesType } from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { futuresAccountState } from 'store/futures';
 import { refetchWithComparator } from 'utils/queries';
 
 type RefetchType =
@@ -35,7 +36,7 @@ const RefetchContext = React.createContext<RefetchContextType>({
 });
 
 export const RefetchProvider: React.FC = ({ children }) => {
-	const selectedAccountType = useRecoilValue(futuresAccountTypeState);
+	const selectedAccountType = useAppSelector(selectFuturesType);
 	const { crossMarginAddress } = useRecoilValue(futuresAccountState);
 	const dispatch = useAppDispatch();
 

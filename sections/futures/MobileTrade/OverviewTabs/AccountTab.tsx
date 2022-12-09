@@ -1,15 +1,15 @@
 import React from 'react';
-import { useRecoilValue } from 'recoil';
 
 import MarketInfoBox from 'sections/futures/MarketInfoBox';
 import MarketActions from 'sections/futures/Trade/MarketActions';
 import MarginInfoBox from 'sections/futures/TradeCrossMargin/CrossMarginInfoBox';
-import { futuresAccountTypeState } from 'store/futures';
+import { selectFuturesType } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 
 import { Pane, SectionHeader, SectionTitle } from '../common';
 
 const AccountTab: React.FC = () => {
-	const accountType = useRecoilValue(futuresAccountTypeState);
+	const accountType = useAppSelector(selectFuturesType);
 	return (
 		<Pane>
 			<SectionHeader>

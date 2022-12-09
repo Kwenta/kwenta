@@ -1,36 +1,36 @@
 import { wei } from '@synthetixio/wei';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import ErrorView from 'components/Error';
 import StyledSlider from 'components/Slider/StyledSlider';
 import { useFuturesContext } from 'contexts/FuturesContext';
+import { editCrossMarginSize } from 'state/futures/actions';
 import {
 	selectAboveMaxLeverage,
 	selectCrossMarginBalanceInfo,
+	selectLeverageSide,
 	selectMaxLeverage,
 	selectPosition,
 	selectTradeSizeInputs,
 } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
-import { leverageSideState } from 'store/futures';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FlexDivRow } from 'styles/common';
 
 export default function OrderSizeSlider() {
 	const { t } = useTranslation();
-	const { onTradeAmountChange, maxUsdInputAmount, tradePrice } = useFuturesContext();
-
+	const { maxUsdInputAmount } = useFuturesContext();
+	const dispatch = useAppDispatch();
 	const { freeMargin: freeCrossMargin } = useAppSelector(selectCrossMarginBalanceInfo);
-	const { susdSize } = useAppSelector(selectTradeSizeInputs);
+	const { susdSizeString } = useAppSelector(selectTradeSizeInputs);
 	const aboveMaxLeverage = useAppSelector(selectAboveMaxLeverage);
 	const maxLeverage = useAppSelector(selectMaxLeverage);
-	const leverageSide = useRecoilValue(leverageSideState);
+	const leverageSide = useAppSelector(selectLeverageSide);
 	const position = useAppSelector(selectPosition);
 
 	const [percent, setPercent] = useState(0);
-	const [usdValue, setUsdValue] = useState(susdSize);
+	const [usdValue, setUsdValue] = useState(susdSizeString);
 
 	// eslint-disable-next-line
 	const onChangeMarginPercent = useCallback(
@@ -40,23 +40,25 @@ export default function OrderSizeSlider() {
 			const usdAmount = maxUsdInputAmount.mul(fraction).toString();
 			const usdValue = Number(usdAmount).toFixed(0);
 			setUsdValue(usdValue);
-			onTradeAmountChange(usdValue, tradePrice, 'usd', { simulateChange: !commit });
+			if (commit) {
+				dispatch(editCrossMarginSize(usdValue, 'usd'));
+			}
 		},
-		[onTradeAmountChange, maxUsdInputAmount, tradePrice]
+		[maxUsdInputAmount, dispatch]
 	);
 
 	useEffect(() => {
-		if (susdSize !== usdValue) {
-			if (!susdSize || maxUsdInputAmount.eq(0)) {
+		if (susdSizeString !== usdValue) {
+			if (!susdSizeString || maxUsdInputAmount.eq(0)) {
 				setPercent(0);
 				return;
 			}
 
-			const percent = wei(susdSize).div(maxUsdInputAmount).mul(100).toNumber();
+			const percent = wei(susdSizeString).div(maxUsdInputAmount).mul(100).toNumber();
 			setPercent(Number(percent.toFixed(2)));
 		}
 		// eslint-disable-next-line
-	}, [susdSize]);
+	}, [susdSizeString]);
 
 	if (aboveMaxLeverage && position?.position?.side === leverageSide) {
 		return (

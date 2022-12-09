@@ -3,7 +3,7 @@ import Wei, { wei } from '@synthetixio/wei';
 import { TFunction } from 'i18next';
 import { Dictionary } from 'lodash';
 
-import { FuturesOrderType, FuturesTradeInputs, TradeFees } from 'queries/futures/types';
+import { FuturesOrderType } from 'queries/futures/types';
 import {
 	DelayedOrder,
 	FuturesMarket,
@@ -15,7 +15,9 @@ import { PositionSide } from 'sections/futures/types';
 import {
 	CrossMarginBalanceInfo,
 	CrossMarginSettings,
+	CrossMarginTradeFees,
 	CrossMarginTradeInputs,
+	IsolatedMarginTradeInputs,
 	TransactionEstimation,
 } from 'state/futures/types';
 import logError from 'utils/logError';
@@ -342,8 +344,13 @@ const getPositionChangeState = (existingSize: Wei, newSize: Wei) => {
 };
 
 export const calculateMarginDelta = (
-	nextTrade: FuturesTradeInputs,
-	fees: TradeFees,
+	tradeInputs: {
+		nativeSizeDelta: Wei;
+		susdSizeDelta: Wei;
+		leverage: Wei;
+		price: Wei;
+	},
+	fees: CrossMarginTradeFees,
 	position: FuturesPosition | null | undefined
 ) => {
 	const existingSize = position?.position
@@ -352,7 +359,7 @@ export const calculateMarginDelta = (
 			: position?.position?.size.neg()
 		: zeroBN;
 
-	const newSize = existingSize.add(nextTrade.nativeSizeDelta);
+	const newSize = existingSize.add(tradeInputs.nativeSizeDelta);
 	const newSizeAbs = newSize.abs();
 	const posChangeState = getPositionChangeState(existingSize, newSize);
 
@@ -360,25 +367,24 @@ export const calculateMarginDelta = (
 		case 'closing':
 			return zeroBN;
 		case 'edit_leverage':
-			const nextMargin = position?.position?.notionalValue.div(nextTrade.leverage) ?? zeroBN;
+			const nextMargin = position?.position?.notionalValue.div(tradeInputs.leverage) ?? zeroBN;
 			const delta = nextMargin.sub(position?.remainingMargin);
 			return delta.add(fees.total);
 		case 'reduce_size':
 			// When a position is reducing we keep the leverage the same as the existing position
-			let marginDiff = nextTrade.susdSizeDelta.div(position?.position?.leverage ?? zeroBN);
-			return nextTrade.susdSizeDelta.gt(0)
+			let marginDiff = tradeInputs.susdSizeDelta.div(position?.position?.leverage ?? zeroBN);
+			return tradeInputs.susdSizeDelta.gt(0)
 				? marginDiff.neg().add(fees.total)
 				: marginDiff.add(fees.total);
 		case 'increase_size':
 			// When a position is increasing we calculate margin for selected leverage
-			return nextTrade.susdSizeDelta.abs().div(nextTrade.leverage).add(fees.total);
+			return tradeInputs.susdSizeDelta.abs().div(tradeInputs.leverage).add(fees.total);
 		case 'flip_side':
 			// When flipping sides we calculate the margin required for selected leverage
-			const newNotionalSize = newSizeAbs.mul(nextTrade.orderPrice);
-			const newMargin = newNotionalSize.div(nextTrade.leverage);
+			const newNotionalSize = newSizeAbs.mul(tradeInputs.price);
+			const newMargin = newNotionalSize.div(tradeInputs.leverage);
 			const remainingMargin =
-				position?.position?.size.mul(nextTrade.orderPrice).div(position?.position?.leverage) ??
-				zeroBN;
+				position?.position?.size.mul(tradeInputs.price).div(position?.position?.leverage) ?? zeroBN;
 			const marginDelta = newMargin.sub(remainingMargin ?? zeroBN);
 			return marginDelta.add(fees.total);
 	}
@@ -510,6 +516,15 @@ export const unserializeCrossMarginTradeInputs = (
 	};
 };
 
+export const unserializeIsolatedMarginTradeInputs = (
+	tradeInputs: IsolatedMarginTradeInputs<string>
+): IsolatedMarginTradeInputs => {
+	return {
+		nativeSize: wei(tradeInputs.nativeSize || 0),
+		susdSize: wei(tradeInputs.susdSize || 0),
+	};
+};
+
 export const serializeFuturesOrders = (orders: FuturesOrder[]): FuturesOrder<string>[] => {
 	return orders.map((o) => ({
 		...o,
@@ -578,4 +593,12 @@ export const unserializeGasEstimate = (
 	...estimate,
 	limit: wei(estimate.limit),
 	cost: wei(estimate.cost),
+});
+
+export const serializeTradeFees = (fees: CrossMarginTradeFees) => ({
+	staticFee: fees.staticFee.toString(),
+	crossMarginFee: fees.crossMarginFee.toString(),
+	keeperEthDeposit: fees.keeperEthDeposit.toString(),
+	limitStopOrderFee: fees.limitStopOrderFee.toString(),
+	total: fees.total.toString(),
 });

@@ -24,13 +24,9 @@ import TradeCrossMargin from 'sections/futures/TradeCrossMargin';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { setMarketAsset } from 'state/futures/reducer';
-import { selectMarketAsset } from 'state/futures/selectors';
+import { selectFuturesType, selectMarketAsset } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import {
-	futuresAccountState,
-	futuresAccountTypeState,
-	showCrossMarginOnboardState,
-} from 'store/futures';
+import { futuresAccountState, showCrossMarginOnboardState } from 'store/futures';
 import { PageContent, FullHeightContainer, RightSideContent } from 'styles/common';
 import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
 
@@ -91,7 +87,7 @@ function TradePanelDesktop({ walletAddress, account }: TradePanelProps) {
 	const { handleRefetch } = useRefetchContext();
 	const router = useRouter();
 	const isL2 = useIsL2();
-	const accountType = useRecoilValue(futuresAccountTypeState);
+	const accountType = useAppSelector(selectFuturesType);
 
 	if (walletAddress && !isL2) {
 		return <FuturesUnsupportedNetwork />;

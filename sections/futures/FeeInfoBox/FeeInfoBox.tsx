@@ -1,7 +1,5 @@
-import { wei } from '@synthetixio/wei';
 import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import TimerIcon from 'assets/svg/app/timer.svg';
@@ -9,31 +7,35 @@ import InfoBox, { DetailedInfo } from 'components/InfoBox/InfoBox';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { NO_VALUE } from 'constants/placeholder';
 import {
+	selectCrossMarginSettings,
+	selectCrossMarginTradeFees,
+	selectDynamicFeeRate,
 	selectFuturesType,
-	selectIsolatedTradeInputs,
-	selectMarketFeeRates,
+	selectIsolatedMarginFee,
 	selectMarketInfo,
 	selectOrderType,
+	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { tradeFeesState } from 'store/futures';
 import { computeDelayedOrderFee, computeMarketFee } from 'utils/costCalculations';
 import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 const FeeInfoBox: React.FC = () => {
 	const orderType = useAppSelector(selectOrderType);
-	const { nativeSize } = useAppSelector(selectIsolatedTradeInputs);
+	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
+	const isolatedMarginFee = useAppSelector(selectIsolatedMarginFee);
+	const dynamicFeeRate = useAppSelector(selectDynamicFeeRate);
+	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
 	const accountType = useAppSelector(selectFuturesType);
+	const { tradeFee: crossMarginTradeFeeRate, limitOrderFee, stopOrderFee } = useAppSelector(
+		selectCrossMarginSettings
+	);
 	const marketInfo = useAppSelector(selectMarketInfo);
-	const feeRates = useAppSelector(selectMarketFeeRates);
-
-	const sizeDelta = useMemo(() => wei(nativeSize === '' ? 0 : nativeSize), [nativeSize]);
-
-	const fees = useRecoilValue(tradeFeesState);
+	const feeRates = useMemo(() => marketInfo?.feeRates, [marketInfo]);
 
 	const { commitDeposit, delayedOrderFee } = useMemo(
-		() => computeDelayedOrderFee(marketInfo, sizeDelta),
-		[marketInfo, sizeDelta]
+		() => computeDelayedOrderFee(marketInfo, nativeSizeDelta),
+		[marketInfo, nativeSizeDelta]
 	);
 
 	const totalDeposit = useMemo(() => {
@@ -44,62 +46,58 @@ const FeeInfoBox: React.FC = () => {
 		return (delayedOrderFee ?? zeroBN).sub(commitDeposit ?? zeroBN);
 	}, [commitDeposit, delayedOrderFee]);
 
-	const staticRate = useMemo(() => computeMarketFee(marketInfo, sizeDelta), [
+	const staticRate = useMemo(() => computeMarketFee(marketInfo, nativeSizeDelta), [
 		marketInfo,
-		sizeDelta,
+		nativeSizeDelta,
 	]);
 
 	const orderFeeRate = useMemo(
 		() =>
-			orderType === 'limit'
-				? feeRates.limitOrderFee
-				: orderType === 'stop market'
-				? feeRates.stopOrderFee
-				: null,
-		[orderType, feeRates.stopOrderFee, feeRates.limitOrderFee]
+			orderType === 'limit' ? limitOrderFee : orderType === 'stop market' ? stopOrderFee : null,
+		[orderType, stopOrderFee, limitOrderFee]
 	);
 
 	const marketCostTooltip = useMemo(
 		() => (
 			<>
-				{sizeDelta.abs().gt(0)
+				{nativeSizeDelta.abs().gt(0)
 					? formatPercent(staticRate ?? zeroBN)
-					: `${formatPercent(feeRates.makerFee ?? zeroBN)} / ${formatPercent(
-							feeRates.takerFee ?? zeroBN
+					: `${formatPercent(feeRates?.makerFee ?? zeroBN)} / ${formatPercent(
+							feeRates?.takerFee ?? zeroBN
 					  )}`}
 			</>
 		),
-		[feeRates, staticRate, sizeDelta]
+		[feeRates, staticRate, nativeSizeDelta]
 	);
 
 	const feesInfo = useMemo<Record<string, DetailedInfo | null | undefined>>(() => {
 		const crossMarginFeeInfo = {
 			'Protocol Fee': {
-				value: formatDollars(fees.staticFee, {
-					minDecimals: fees.staticFee.lt(0.01) ? 4 : 2,
+				value: formatDollars(crossMarginFees.staticFee, {
+					minDecimals: crossMarginFees.staticFee.lt(0.01) ? 4 : 2,
 				}),
 				keyNode: marketCostTooltip,
 			},
 			'Limit / Stop Fee':
-				fees.limitStopOrderFee.gt(0) && orderFeeRate
+				crossMarginFees.limitStopOrderFee.gt(0) && orderFeeRate
 					? {
-							value: formatDollars(fees.limitStopOrderFee, {
-								minDecimals: fees.limitStopOrderFee.lt(0.01) ? 4 : 2,
+							value: formatDollars(crossMarginFees.limitStopOrderFee, {
+								minDecimals: crossMarginFees.limitStopOrderFee.lt(0.01) ? 4 : 2,
 							}),
 							keyNode: formatPercent(orderFeeRate),
 					  }
 					: null,
 			'Cross Margin Fee': {
-				value: formatDollars(fees.crossMarginFee, {
-					minDecimals: fees.crossMarginFee.lt(0.01) ? 4 : 2,
+				value: formatDollars(crossMarginFees.crossMarginFee, {
+					minDecimals: crossMarginFees.crossMarginFee.lt(0.01) ? 4 : 2,
 				}),
 				spaceBeneath: true,
-				keyNode: formatPercent(feeRates.tradeFee),
+				keyNode: formatPercent(crossMarginTradeFeeRate),
 			},
 
 			'Total Fee': {
-				value: formatDollars(fees.total, {
-					minDecimals: fees.total.lt(0.01) ? 4 : 2,
+				value: formatDollars(crossMarginFees.total, {
+					minDecimals: crossMarginFees.total.lt(0.01) ? 4 : 2,
 				}),
 			},
 		};
@@ -108,7 +106,7 @@ const FeeInfoBox: React.FC = () => {
 				...crossMarginFeeInfo,
 				'Keeper Deposit': {
 					value: !!marketInfo?.keeperDeposit
-						? formatCurrency('ETH', fees.keeperEthDeposit, { currencyKey: 'ETH' })
+						? formatCurrency('ETH', crossMarginFees.keeperEthDeposit, { currencyKey: 'ETH' })
 						: NO_VALUE,
 				},
 			};
@@ -134,25 +132,29 @@ const FeeInfoBox: React.FC = () => {
 				// },
 				'Estimated Fees': {
 					value: formatDollars(totalDeposit.add(nextPriceDiscount ?? zeroBN)),
+					// keyNode: dynamicFeeRate?.gt(0) ? <ToolTip /> : null,
 				},
 			};
 		}
 		return accountType === 'isolated_margin'
 			? {
 					Fee: {
-						value: formatDollars(fees.total, {
-							minDecimals: fees.total.lt(0.01) ? 4 : 2,
+						value: formatDollars(isolatedMarginFee, {
+							minDecimals: isolatedMarginFee.lt(0.01) ? 4 : 2,
 						}),
 						keyNode: marketCostTooltip,
 					},
 			  }
 			: crossMarginFeeInfo;
 	}, [
-		feeRates,
 		staticRate,
-		fees,
 		orderType,
+		orderType,
+		crossMarginTradeFeeRate,
+		isolatedMarginFee,
+		crossMarginFees,
 		orderFeeRate,
+		dynamicFeeRate,
 		commitDeposit,
 		accountType,
 		marketInfo?.keeperDeposit,

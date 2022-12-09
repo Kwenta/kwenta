@@ -14,7 +14,6 @@ import { setOpenModal } from 'state/app/reducer';
 import { modifyIsolatedPosition, modifyIsolatedPositionEstimateGas } from 'state/futures/actions';
 import {
 	selectIsModifyingIsolatedPosition,
-	selectIsolatedPriceImpact,
 	selectLeverageSide,
 	selectMarketAsset,
 	selectMarketInfo,
@@ -43,8 +42,7 @@ const NextPriceConfirmationModal: FC = () => {
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const dispatch = useAppDispatch();
 
-	const { nativeSize, nativeSizeWei } = useAppSelector(selectTradeSizeInputs);
-	const priceImpact = useAppSelector(selectIsolatedPriceImpact);
+	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
@@ -59,29 +57,26 @@ const NextPriceConfirmationModal: FC = () => {
 	);
 
 	useEffect(() => {
-		if (nativeSize !== '') {
-			dispatch(
-				modifyIsolatedPositionEstimateGas({
-					sizeDelta: nativeSize,
-					priceImpactDelta: priceImpact,
-					delayed: true,
-				})
-			);
-		}
-	}, [nativeSize, priceImpact, dispatch]);
+		dispatch(
+			modifyIsolatedPositionEstimateGas({
+				sizeDelta: nativeSizeDelta,
+				delayed: true,
+			})
+		);
+	}, [nativeSizeDelta, dispatch]);
 
 	const transactionFee = useMemo(() => gasEstimate?.cost ?? zeroBN, [gasEstimate?.cost]);
 
 	const positionSize = position?.position?.size ?? zeroBN;
 
 	const orderDetails = useMemo(() => {
-		return { nativeSizeWei, size: (positionSize ?? zeroBN).add(nativeSizeWei).abs() };
-	}, [nativeSizeWei, positionSize]);
+		return { nativeSizeDelta, size: (positionSize ?? zeroBN).add(nativeSizeDelta).abs() };
+	}, [nativeSizeDelta, positionSize]);
 
 	// TODO: check these fees
-	const { commitDeposit } = useMemo(() => computeDelayedOrderFee(marketInfo, nativeSizeWei), [
+	const { commitDeposit } = useMemo(() => computeDelayedOrderFee(marketInfo, nativeSizeDelta), [
 		marketInfo,
-		nativeSizeWei,
+		nativeSizeDelta,
 	]);
 
 	// TODO: check this deposit
@@ -101,7 +96,7 @@ const NextPriceConfirmationModal: FC = () => {
 			},
 			{
 				label: t('futures.market.user.position.modal.size'),
-				value: formatCurrency(marketAsset || '', orderDetails.nativeSizeWei.abs(), {
+				value: formatCurrency(marketAsset || '', orderDetails.nativeSizeDelta.abs(), {
 					sign: marketAsset ? synthsMap[marketAsset]?.sign : '',
 				}),
 			},
@@ -136,8 +131,7 @@ const NextPriceConfirmationModal: FC = () => {
 	const handleConfirmOrder = async () => {
 		dispatch(
 			modifyIsolatedPosition({
-				sizeDelta: nativeSize,
-				priceImpactDelta: priceImpact,
+				sizeDelta: nativeSizeDelta,
 				delayed: true,
 			})
 		);
@@ -181,7 +175,7 @@ const NextPriceConfirmationModal: FC = () => {
 					closeDrawer={onDismiss}
 					buttons={
 						<MobileConfirmTradeButton
-							disabled={submitting || previewStatus !== FetchStatus.Success}
+							disabled={submitting || previewStatus.status !== FetchStatus.Success}
 							variant="primary"
 							onClick={handleConfirmOrder}
 						>
