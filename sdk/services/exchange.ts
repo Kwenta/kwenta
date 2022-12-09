@@ -168,7 +168,7 @@ export default class ExchangeService {
 		]);
 
 		return sourceCurrencyFeeRate && destinationCurrencyFeeRate
-			? wei(sourceCurrencyFeeRate.add(destinationCurrencyFeeRate)).div(ETH_UNIT)
+			? wei(sourceCurrencyFeeRate.add(destinationCurrencyFeeRate))
 			: wei(0);
 	}
 
