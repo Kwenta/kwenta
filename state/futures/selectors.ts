@@ -1,6 +1,8 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
 
+import { DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
+import { DEFAULT_MAX_LEVERAGE } from 'constants/futures';
 import { FuturesPosition } from 'queries/futures/types';
 import { PositionSide } from 'sections/futures/types';
 import { selectExchangeRates } from 'state/exchange/selectors';
@@ -114,6 +116,33 @@ export const selectPosition = createSelector(
 	(state: RootState) => state.futures[accountType(state.futures.selectedType)].position,
 	(position) => {
 		return position ? (deserializeWeiObject(position, positionKeys) as FuturesPosition) : undefined;
+	}
+);
+
+export const selectMaxLeverage = createSelector(
+	(state: RootState) => state.futures,
+	selectPosition,
+	selectMarketInfo,
+	(futures, position, market) => {
+		const selectedAccountType = accountType(futures.selectedType);
+		const leverageSide = futures[selectedAccountType].leverageSide;
+		const orderType = futures[selectedAccountType].orderType;
+
+		const positionLeverage = position?.position?.leverage ?? wei(0);
+		const positionSide = position?.position?.side;
+		const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
+		const adjustedMaxLeverage =
+			orderType === 'next price'
+				? marketMaxLeverage.mul(DEFAULT_NP_LEVERAGE_ADJUSTMENT)
+				: marketMaxLeverage;
+
+		if (!positionLeverage || positionLeverage.eq(wei(0))) return adjustedMaxLeverage;
+		if (selectedAccountType === 'crossMargin') return adjustedMaxLeverage;
+		if (positionSide === leverageSide) {
+			return adjustedMaxLeverage?.sub(positionLeverage);
+		} else {
+			return positionLeverage.add(adjustedMaxLeverage);
+		}
 	}
 );
 

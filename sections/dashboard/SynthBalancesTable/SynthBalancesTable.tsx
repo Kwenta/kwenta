@@ -18,6 +18,7 @@ import { Price } from 'queries/rates/types';
 import { selectExchangeRates } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
 import { balancesState, pastRatesState } from 'store/futures';
+import { sortWei } from 'utils/balances';
 import { formatNumber, zeroBN } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
 
@@ -43,14 +44,25 @@ const calculatePriceChange = (current: Wei | null, past: Price | undefined) => {
 const conditionalRender = <T,>(prop: T, children: ReactElement): ReactElement =>
 	_.isNil(prop) ? <DefaultCell>{NO_VALUE}</DefaultCell> : children;
 
-const SynthBalancesTable: FC = () => {
+type SynthBalancesTableProps = {
+	exchangeTokens: {
+		synth: string;
+		description: string;
+		balance: Wei;
+		usdBalance: Wei;
+		price: Wei;
+		priceChange: Wei;
+	}[];
+};
+
+const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
 	const pastRates = useRecoilValue(pastRatesState);
 	const exchangeRates = useAppSelector(selectExchangeRates);
 	const { balances } = useRecoilValue(balancesState);
 
-	let data = useMemo(() => {
+	const synthTokens = useMemo(() => {
 		return balances.map((synthBalance: SynthBalance) => {
 			const { currencyKey, balance, usdBalance } = synthBalance;
 
@@ -68,6 +80,10 @@ const SynthBalancesTable: FC = () => {
 			};
 		});
 	}, [pastRates, exchangeRates, balances, synthsMap]);
+
+	const data = [...exchangeTokens, ...synthTokens].sort((a, b) =>
+		sortWei(a.usdBalance, b.usdBalance, 'descending')
+	);
 
 	return (
 		<>
@@ -97,9 +113,11 @@ const SynthBalancesTable: FC = () => {
 											</IconContainer>
 											<StyledText>{cellProps.row.original.synth}</StyledText>
 											<StyledValue>
-												{t('common.currency.synthetic-currency-name', {
-													currencyName: cellProps.row.original.description,
-												})}
+												{synthsMap[cellProps.row.original.synth]
+													? t('common.currency.synthetic-currency-name', {
+															currencyName: cellProps.row.original.description,
+													  })
+													: cellProps.row.original.description}
 											</StyledValue>
 										</MarketContainer>
 									);

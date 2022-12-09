@@ -1,4 +1,14 @@
-import { connectorsForWallets, wallet } from '@rainbow-me/rainbowkit';
+import { connectorsForWallets } from '@rainbow-me/rainbowkit';
+import {
+	braveWallet,
+	coinbaseWallet,
+	injectedWallet,
+	ledgerWallet,
+	metaMaskWallet,
+	rainbowWallet,
+	trustWallet,
+	walletConnectWallet,
+} from '@rainbow-me/rainbowkit/wallets';
 import { chain, configureChains, createClient } from 'wagmi';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
@@ -38,19 +48,20 @@ const connectors = connectorsForWallets([
 		groupName: 'Popular',
 		wallets: [
 			Safe({ chains }),
-			wallet.metaMask({ chains }),
-			wallet.rainbow({ chains }),
-			wallet.coinbase({ appName: 'Kwenta', chains }),
-			wallet.walletConnect({ chains }),
+			metaMaskWallet({ chains }),
+			rainbowWallet({ chains }),
+			coinbaseWallet({ appName: 'Kwenta', chains }),
+			walletConnectWallet({ chains }),
 		],
 	},
 	{
 		groupName: 'More',
 		wallets: [
-			wallet.ledger({ chains }),
-			wallet.brave({ chains, shimDisconnect: true }),
-			wallet.trust({ chains }),
+			ledgerWallet({ chains }),
+			braveWallet({ chains, shimDisconnect: true }),
+			trustWallet({ chains }),
 			Tally({ chains, shimDisconnect: true }),
+			injectedWallet({ chains, shimDisconnect: true }),
 		],
 	},
 ]);

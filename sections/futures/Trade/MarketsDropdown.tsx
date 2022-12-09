@@ -39,7 +39,7 @@ export type MarketsCurrencyOption = {
 	value: FuturesMarketAsset;
 	label: string;
 	description: string;
-	price?: string;
+	price?: string | JSX.Element;
 	change?: string;
 	negativeChange: boolean;
 	isMarketClosed: boolean;
@@ -49,7 +49,7 @@ export type MarketsCurrencyOption = {
 type AssetToCurrencyOptionArgs = {
 	asset: FuturesMarketAsset;
 	description: string;
-	price?: string;
+	price?: string | JSX.Element;
 	change?: string;
 	negativeChange: boolean;
 	isMarketClosed: boolean;
@@ -127,6 +127,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 					price: formatCurrency(selectedPriceCurrency.name, basePriceRate, {
 						sign: '$',
 						minDecimals: getMinDecimals(market.asset),
+						isAssetPrice: true,
 					}),
 					change: formatPercent(
 						basePriceRate && pastPrice?.price
@@ -167,20 +168,29 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				value={assetToCurrencyOption({
 					asset: marketAsset,
 					description: getSynthDescription(marketAsset, synthsMap, t),
-					price: mobile
-						? formatCurrency(selectedPriceCurrency.name, selectedBasePriceRate, {
+					price: mobile ? (
+						marketAsset === 'DebtRatio' ? (
+							<DeprecatedBanner>
+								{t('exchange.market-details-card.deprecated-info')}
+							</DeprecatedBanner>
+						) : (
+							formatCurrency(selectedPriceCurrency.name, selectedBasePriceRate, {
 								sign: '$',
 								minDecimals: getMinDecimals(marketAsset),
-						  })
-						: undefined,
+								isAssetPrice: true,
+							})
+						)
+					) : undefined,
 					change: mobile
-						? formatPercent(
-								selectedBasePriceRate && selectedPastPrice?.price
-									? wei(selectedBasePriceRate)
-											.sub(selectedPastPrice?.price)
-											.div(selectedBasePriceRate)
-									: zeroBN
-						  )
+						? marketAsset === 'DebtRatio'
+							? undefined
+							: formatPercent(
+									selectedBasePriceRate && selectedPastPrice?.price
+										? wei(selectedBasePriceRate)
+												.sub(selectedPastPrice?.price)
+												.div(selectedBasePriceRate)
+										: zeroBN
+							  )
 						: undefined,
 					negativeChange: mobile
 						? selectedBasePriceRate && selectedPastPrice?.price
@@ -206,6 +216,15 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 		</SelectContainer>
 	);
 };
+
+const DeprecatedBanner = styled.div`
+	font-size: 10px;
+	margin-left: 25px;
+	padding: 5px 10px;
+	white-space: pre-wrap;
+	background-color: ${(props) => props.theme.colors.red};
+	color: ${(props) => props.theme.colors.white};
+`;
 
 const SelectContainer = styled.div<{ mobile?: boolean }>`
 	margin-bottom: 16px;

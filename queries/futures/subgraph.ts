@@ -1150,6 +1150,14 @@ export type FuturesAggregateStatFilter = {
 	feesSynthetix_lte?: WeiSource | null;
 	feesSynthetix_in?: WeiSource[];
 	feesSynthetix_not_in?: WeiSource[];
+	feesCrossMarginAccounts?: WeiSource | null;
+	feesCrossMarginAccounts_not?: WeiSource | null;
+	feesCrossMarginAccounts_gt?: WeiSource | null;
+	feesCrossMarginAccounts_lt?: WeiSource | null;
+	feesCrossMarginAccounts_gte?: WeiSource | null;
+	feesCrossMarginAccounts_lte?: WeiSource | null;
+	feesCrossMarginAccounts_in?: WeiSource[];
+	feesCrossMarginAccounts_not_in?: WeiSource[];
 	_change_block?: any | null;
 };
 export type FuturesAggregateStatResult = {
@@ -1161,6 +1169,7 @@ export type FuturesAggregateStatResult = {
 	volume: Wei;
 	feesKwenta: Wei;
 	feesSynthetix: Wei;
+	feesCrossMarginAccounts: Wei;
 };
 export type FuturesAggregateStatFields = {
 	id: true;
@@ -1171,6 +1180,7 @@ export type FuturesAggregateStatFields = {
 	volume: true;
 	feesKwenta: true;
 	feesSynthetix: true;
+	feesCrossMarginAccounts: true;
 };
 export type FuturesAggregateStatArgs<K extends keyof FuturesAggregateStatResult> = {
 	[Property in keyof Pick<FuturesAggregateStatFields, K>]: FuturesAggregateStatFields[Property];
@@ -1199,6 +1209,8 @@ export const getFuturesAggregateStatById = async function <
 	if (obj['volume']) formattedObj['volume'] = wei(obj['volume'], 0);
 	if (obj['feesKwenta']) formattedObj['feesKwenta'] = wei(obj['feesKwenta'], 0);
 	if (obj['feesSynthetix']) formattedObj['feesSynthetix'] = wei(obj['feesSynthetix'], 0);
+	if (obj['feesCrossMarginAccounts'])
+		formattedObj['feesCrossMarginAccounts'] = wei(obj['feesCrossMarginAccounts'], 0);
 	return formattedObj as Pick<FuturesAggregateStatResult, K>;
 };
 export const getFuturesAggregateStats = async function <K extends keyof FuturesAggregateStatResult>(
@@ -1244,6 +1256,8 @@ export const getFuturesAggregateStats = async function <K extends keyof FuturesA
 			if (obj['volume']) formattedObj['volume'] = wei(obj['volume'], 0);
 			if (obj['feesKwenta']) formattedObj['feesKwenta'] = wei(obj['feesKwenta'], 0);
 			if (obj['feesSynthetix']) formattedObj['feesSynthetix'] = wei(obj['feesSynthetix'], 0);
+			if (obj['feesCrossMarginAccounts'])
+				formattedObj['feesCrossMarginAccounts'] = wei(obj['feesCrossMarginAccounts'], 0);
 			return formattedObj as Pick<FuturesAggregateStatResult, K>;
 		});
 		results = results.concat(newResults);

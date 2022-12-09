@@ -6,11 +6,10 @@ import styled from 'styled-components';
 import InfoBox from 'components/InfoBox';
 import PreviewArrow from 'components/PreviewArrow';
 import { FuturesPotentialTradeDetails } from 'queries/futures/types';
-import { selectMarketInfo } from 'state/futures/selectors';
+import { selectMarketInfo, selectMaxLeverage } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {
 	leverageSideState,
-	maxLeverageState,
 	orderTypeState,
 	positionState,
 	potentialTradeDetailsState,
@@ -22,13 +21,13 @@ import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 import { PositionSide } from '../types';
 
 const MarketInfoBox: React.FC = () => {
-	const maxLeverage = useRecoilValue(maxLeverageState);
 	const position = useRecoilValue(positionState);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
 	const potentialTrade = useRecoilValue(potentialTradeDetailsState);
 
 	const marketInfo = useAppSelector(selectMarketInfo);
+	const maxLeverage = useAppSelector(selectMaxLeverage);
 
 	const totalMargin = position?.remainingMargin ?? zeroBN;
 	const availableMargin = position?.accessibleMargin ?? zeroBN;

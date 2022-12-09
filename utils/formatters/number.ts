@@ -26,6 +26,7 @@ export type FormatNumberOptions = {
 	maxDecimals?: number;
 	prefix?: string;
 	suffix?: string;
+	isAssetPrice?: boolean;
 } & TruncatedOptions;
 
 export type FormatCurrencyOptions = {
@@ -33,6 +34,7 @@ export type FormatCurrencyOptions = {
 	maxDecimals?: number;
 	sign?: string;
 	currencyKey?: string;
+	isAssetPrice?: boolean;
 } & TruncatedOptions;
 
 const DEFAULT_CURRENCY_DECIMALS = 2;
@@ -57,7 +59,7 @@ export const truncateNumbers = (value: WeiSource, maxDecimalDigits: number) => {
 
 /**
  * ethers utils.commify method will reduce the decimals of a number to one digit if those decimals are zero.
- * This helper is used to reverse this behavior in order to display the specified decmials in the output.
+ * This helper is used to reverse this behavior in order to display the specified decimals in the output.
  *
  * ex: utils.commify('10000', 2) => '10,000.0'
  * ex: commifyAndPadDecimals('10000', 2)) => '10,000.00'
@@ -84,6 +86,7 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	const prefix = options?.prefix;
 	const suffix = options?.suffix;
 	const truncation = options?.truncation;
+	const isAssetPrice = options?.isAssetPrice;
 
 	let weiValue = wei(0);
 	try {
@@ -101,21 +104,23 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 		formattedValue.push(prefix);
 	}
 
-	let weiAsStringWithDecimals = truncation
-		? weiValue
-				.abs()
-				.div(truncation.divisor)
-				.toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS)
-		: weiValue.abs().toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS);
+	const weiBeforeAsString = truncation ? weiValue.abs().div(truncation.divisor) : weiValue.abs();
+
+	const dp = isAssetPrice
+		? suggestedDecimals(weiBeforeAsString)
+		: options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS;
+
+	let weiAsStringWithDecimals = weiBeforeAsString.toString(dp);
 
 	if (options?.maxDecimals || options?.maxDecimals === 0) {
 		weiAsStringWithDecimals = wei(weiAsStringWithDecimals).toString(options.maxDecimals);
 	}
 
-	const withCommas = commifyAndPadDecimals(
-		weiAsStringWithDecimals,
-		options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS
-	);
+	const decimals = isAssetPrice
+		? suggestedDecimals(weiAsStringWithDecimals)
+		: options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS;
+
+	const withCommas = commifyAndPadDecimals(weiAsStringWithDecimals, decimals);
 
 	formattedValue.push(withCommas);
 
@@ -136,6 +141,7 @@ export const formatCryptoCurrency = (value: WeiSource, options?: FormatCurrencyO
 		suffix: options?.currencyKey,
 		minDecimals: options?.minDecimals ?? DEFAULT_CRYPTO_DECIMALS,
 		maxDecimals: options?.maxDecimals,
+		isAssetPrice: options?.isAssetPrice,
 	});
 
 export const formatFiatCurrency = (value: WeiSource, options?: FormatCurrencyOptions) =>
@@ -145,6 +151,7 @@ export const formatFiatCurrency = (value: WeiSource, options?: FormatCurrencyOpt
 		minDecimals: options?.minDecimals ?? DEFAULT_FIAT_DECIMALS,
 		maxDecimals: options?.maxDecimals,
 		truncation: options?.truncation,
+		isAssetPrice: options?.isAssetPrice,
 	});
 
 export const formatCurrency = (
@@ -215,10 +222,10 @@ export const weiFromWei = (weiAmount: WeiSource) => {
 export const suggestedDecimals = (value: WeiSource) => {
 	value = wei(value).toNumber();
 	if (value >= 10000) return 0;
-	if (value >= 1) return 2;
-	if (value >= 0.01) return 3;
-	if (value >= 0.001) return 4;
-	return 5;
+	if (value >= 10 || value === 0) return 2;
+	if (value >= 0.1) return 4;
+	if (value >= 0.01) return 5;
+	return 6;
 };
 
 export const floorNumber = (num: WeiSource, decimals?: number) => {

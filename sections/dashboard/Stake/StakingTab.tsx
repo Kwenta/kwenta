@@ -1,12 +1,12 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useContractWrite } from 'wagmi';
 
 import Button from 'components/Button';
-import { monitorTransaction } from 'contexts/RelayerContext';
-import { useStakingContext } from 'contexts/StakingContext';
-import { getStakingApy } from 'queries/staking/utils';
+import { getApy } from 'queries/staking/utils';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { getReward } from 'state/staking/actions';
+import { selectClaimableBalance } from 'state/staking/selectors';
 import media from 'styles/media';
 import { formatPercent, truncateNumbers } from 'utils/formatters/number';
 
@@ -15,19 +15,22 @@ import StakeInputCard from './InputCards/StakeInputCard';
 
 const StakingTab = () => {
 	const { t } = useTranslation();
-	const {
-		claimableBalance,
-		totalStakedBalance,
-		weekCounter,
-		getRewardConfig,
-	} = useStakingContext();
+	const dispatch = useAppDispatch();
 
-	const apy = useMemo(() => getStakingApy(totalStakedBalance, weekCounter), [
+	const claimableBalance = useAppSelector(selectClaimableBalance);
+	const { totalStakedBalance, weekCounter } = useAppSelector(({ staking }) => ({
+		totalStakedBalance: Number(staking.totalStakedBalance),
+		weekCounter: staking.weekCounter,
+	}));
+
+	const apy = useMemo(() => getApy(totalStakedBalance, weekCounter), [
 		totalStakedBalance,
 		weekCounter,
 	]);
 
-	const { writeAsync: getReward } = useContractWrite(getRewardConfig);
+	const handleGetReward = useCallback(() => {
+		dispatch(getReward());
+	}, [dispatch]);
 
 	return (
 		<StakingTabContainer>
@@ -47,12 +50,7 @@ const StakingTab = () => {
 					variant="flat"
 					size="sm"
 					disabled={!getReward || claimableBalance.eq(0)}
-					onClick={async () => {
-						const tx = await getReward?.();
-						monitorTransaction({
-							txHash: tx?.hash ?? '',
-						});
-					}}
+					onClick={handleGetReward}
 				>
 					{t('dashboard.stake.tabs.staking.claim')}
 				</Button>
@@ -98,6 +96,10 @@ const CardGrid = styled.div`
 
 	.value {
 		margin-top: 5px;
+	}
+
+	.title {
+		color: ${(props) => props.theme.colors.selectedTheme.title};
 	}
 `;
 

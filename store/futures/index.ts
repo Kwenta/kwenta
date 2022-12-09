@@ -215,7 +215,7 @@ export const tradeFeesState = atom<TradeFees>({
 
 export const dynamicFeeRateState = atom({
 	key: getFuturesKey('dynamicFeeRate'),
-	default: null,
+	default: zeroBN,
 });
 
 export const leverageValueCommittedState = atom({
