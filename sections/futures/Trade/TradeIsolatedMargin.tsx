@@ -4,7 +4,8 @@ import SegmentedControl from 'components/SegmentedControl';
 import { ISOLATED_MARGIN_ORDER_TYPES } from 'constants/futures';
 import { setOpenModal } from 'state/app/reducer';
 import { selectOpenModal } from 'state/app/selectors';
-import { setLeverageSide, setOrderType } from 'state/futures/reducer';
+import { changeLeverageSide } from 'state/futures/actions';
+import { setOrderType } from 'state/futures/reducer';
 import { selectLeverageSide, selectOrderType, selectPosition } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { zeroBN } from 'utils/formatters/number';
@@ -57,7 +58,7 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 			<PositionButtons
 				selected={leverageSide}
 				onSelect={(side) => {
-					dispatch(setLeverageSide(side));
+					dispatch(changeLeverageSide(side));
 				}}
 			/>
 

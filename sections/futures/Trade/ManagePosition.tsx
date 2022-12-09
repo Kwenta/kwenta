@@ -10,8 +10,7 @@ import { previewErrorI18n } from 'queries/futures/constants';
 import { PositionSide } from 'queries/futures/types';
 import { setOpenModal } from 'state/app/reducer';
 import { selectOpenModal } from 'state/app/selectors';
-import { editTradeSizeInput } from 'state/futures/actions';
-import { setLeverageSide } from 'state/futures/reducer';
+import { changeLeverageSide, editTradeSizeInput } from 'state/futures/actions';
 import {
 	selectMarketInfo,
 	selectIsMarketCapReached,
@@ -171,7 +170,7 @@ const ManagePosition: React.FC = () => {
 									position.position.side === PositionSide.LONG
 										? PositionSide.SHORT
 										: PositionSide.LONG;
-								dispatch(setLeverageSide(newLeverageSide));
+								dispatch(changeLeverageSide(newLeverageSide));
 								dispatch(editTradeSizeInput(newTradeSize.toString(), 'native'));
 								dispatch(setOpenModal('futures_modify_position_confirm'));
 							} else {

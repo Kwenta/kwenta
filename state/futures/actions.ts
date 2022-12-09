@@ -15,6 +15,7 @@ import {
 	FuturesPosition,
 	FuturesPotentialTradeDetails,
 	FuturesVolumes,
+	PositionSide,
 } from 'sdk/types/futures';
 import { calculateCrossMarginFee, serializePotentialTrade } from 'sdk/utils/futures';
 import { unserializeGasPrice } from 'state/app/helpers';
@@ -55,6 +56,7 @@ import {
 	setIsolatedMarginLeverageInput,
 	setIsolatedMarginTradeInputs,
 	setIsolatedTradePreview,
+	setLeverageSide,
 	setTransaction,
 	setTransactionEstimate,
 	updateTransactionHash,
@@ -81,6 +83,7 @@ import {
 	selectMarketInfo,
 	selectOrderType,
 	selectPosition,
+	selectTradeSizeInputs,
 } from './selectors';
 import {
 	CrossMarginBalanceInfo,
@@ -462,6 +465,12 @@ export const editTradeSizeInput = (size: string, currencyType: 'usd' | 'native')
 	}
 };
 
+export const changeLeverageSide = (side: PositionSide): AppThunk => (dispatch, getState) => {
+	const { nativeSizeString } = selectTradeSizeInputs(getState());
+	dispatch(setLeverageSide(side));
+	dispatch(editTradeSizeInput(nativeSizeString, 'native'));
+};
+
 export const debouncedPrepareCrossMarginTradePreview = debounce((dispatch) => {
 	dispatch(prepareCrossMarginTradePreview());
 }, 500);
@@ -560,7 +569,7 @@ export const prepareIsolatedMarginTradePreview = createAsyncThunk<void, void, Th
 	'futures/prepareIsolatedMarginTradePreview',
 	async (_, { getState, dispatch }) => {
 		const tradeInputs = selectIsolatedMarginTradeInputs(getState());
-		dispatch(fetchIsolatedMarginTradePreview(tradeInputs.nativeSize));
+		dispatch(fetchIsolatedMarginTradePreview(tradeInputs.nativeSizeDelta));
 	}
 );
 

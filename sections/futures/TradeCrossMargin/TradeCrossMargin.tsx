@@ -8,8 +8,8 @@ import { CROSS_MARGIN_ORDER_TYPES } from 'constants/futures';
 import Connector from 'containers/Connector';
 import { FuturesOrderType } from 'queries/futures/types';
 import { setOpenModal } from 'state/app/reducer';
-import { editTradeOrderPrice } from 'state/futures/actions';
-import { setLeverageSide, setOrderType } from 'state/futures/reducer';
+import { changeLeverageSide, editTradeOrderPrice } from 'state/futures/actions';
+import { setOrderType } from 'state/futures/reducer';
 import {
 	selectCrossMarginBalanceInfo,
 	selectCrossMarginOrderPrice,
@@ -100,8 +100,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 					<PositionButtons
 						selected={leverageSide}
 						onSelect={(side) => {
-							setLeverageSide(side);
-							dispatch(setLeverageSide(side));
+							dispatch(changeLeverageSide(side));
 						}}
 					/>
 					<ManagePosition />
