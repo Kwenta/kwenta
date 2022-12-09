@@ -4239,5 +4239,11 @@ export const getTotals = async function <K extends keyof TotalResult>(
 
 // additional types
 export type FuturesAccountType = 'isolated_margin' | 'cross_margin';
-export type FuturesOrderType = 'NextPrice' | 'Limit' | 'Market' | 'StopMarket' | 'Delayed';
+export type FuturesOrderType =
+	| 'NextPrice'
+	| 'Limit'
+	| 'Market'
+	| 'StopMarket'
+	| 'Delayed'
+	| 'DelayedOffchain';
 export type FuturesOrderStatus = 'Pending' | 'Filled' | 'Cancelled' | 'Open';

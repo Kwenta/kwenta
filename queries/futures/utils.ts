@@ -54,6 +54,8 @@ const mapOrderType = (orderType: Partial<FuturesOrderType>): FuturesOrderTypeDis
 		? 'Next Price'
 		: orderType === 'StopMarket'
 		? 'Stop Market'
+		: orderType === 'DelayedOffchain'
+		? 'Delayed Offchain'
 		: orderType;
 };
 
