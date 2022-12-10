@@ -1,4 +1,5 @@
 import { wei } from '@synthetixio/wei';
+import { BigNumber } from 'ethers';
 import { formatEther } from 'ethers/lib/utils.js';
 import { useCallback, useMemo, FC } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +9,7 @@ import HelpIcon from 'assets/svg/app/question-mark.svg';
 import Button from 'components/Button';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import Connector from 'containers/Connector';
+import useGetFile from 'queries/files/useGetFile';
 import useGetFuturesFee from 'queries/staking/useGetFuturesFee';
 import useGetFuturesFeeForAccount from 'queries/staking/useGetFuturesFeeForAccount';
 import {
@@ -17,7 +19,7 @@ import {
 } from 'queries/staking/utils';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { claimMultipleRewards } from 'state/staking/actions';
-import { selectResetTime, selectTotalRewards } from 'state/staking/selectors';
+import { selectEpochPeriod, selectResetTime, selectTotalRewards } from 'state/staking/selectors';
 import { FlexDivRow } from 'styles/common';
 import media from 'styles/media';
 import { formatTruncatedDuration } from 'utils/formatters/date';
@@ -31,11 +33,12 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 	end = Math.floor(Date.now() / 1000),
 }) => {
 	const { t } = useTranslation();
-	const { walletAddress } = Connector.useContainer();
+	const { walletAddress, network } = Connector.useContainer();
 	const dispatch = useAppDispatch();
 
 	const resetTime = useAppSelector(selectResetTime);
 	const totalRewards = useAppSelector(selectTotalRewards);
+	const epochPeriod = useAppSelector(selectEpochPeriod);
 
 	const futuresFeeQuery = useGetFuturesFeeForAccount(walletAddress!, start, end);
 	const futuresFeePaid = useMemo(() => {
@@ -55,17 +58,28 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 			.reduce((acc, curr) => acc.add(wei(curr)), zeroBN);
 	}, [totalFuturesFeeQuery.data]);
 
+	const estimatedRewardQuery = useGetFile(
+		`trading-rewards-snapshots/${network.id === 420 ? `goerli-` : ''}epoch-current.json`
+	);
+	const estimatedReward = useMemo(
+		() => BigNumber.from(estimatedRewardQuery?.data?.claims[walletAddress!]?.amount ?? 0),
+		[estimatedRewardQuery?.data?.claims, walletAddress]
+	);
+	const weeklyRewards = useMemo(() => BigNumber.from(estimatedRewardQuery?.data?.tokenTotal ?? 0), [
+		estimatedRewardQuery?.data?.tokenTotal,
+	]);
+
 	const claimDisabled = useMemo(() => totalRewards.lte(0), [totalRewards]);
 
 	const handleClaim = useCallback(() => {
 		dispatch(claimMultipleRewards());
 	}, [dispatch]);
 
-	const ratio = useMemo(
-		() =>
-			wei(totalFuturesFeePaid).gt(0) ? wei(futuresFeePaid).div(wei(totalFuturesFeePaid)) : zeroBN,
-		[futuresFeePaid, totalFuturesFeePaid]
-	);
+	const ratio = useMemo(() => {
+		return wei(weeklyRewards).gt(0) ? wei(estimatedReward).div(wei(weeklyRewards)) : zeroBN;
+	}, [estimatedReward, weeklyRewards]);
+
+	const showEstimatedValue = useMemo(() => wei(period).eq(epochPeriod), [epochPeriod, period]);
 
 	return (
 		<TradingRewardsContainer>
@@ -88,11 +102,11 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 						</div>
 					</div>
 				</CardGrid>
-				<StyledFlexDivRow>
+				<FlexDivRow>
 					<Button fullWidth variant="flat" size="sm" onClick={handleClaim} disabled={claimDisabled}>
 						{t('dashboard.stake.tabs.trading-rewards.claim')}
 					</Button>
-				</StyledFlexDivRow>
+				</FlexDivRow>
 			</CardGridContainer>
 			<CardGridContainer>
 				<CardGrid>
@@ -122,19 +136,43 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 						</div>
 						<div className="value">{formatDollars(totalFuturesFeePaid, { minDecimals: 2 })}</div>
 					</div>
-					<div>
-						<div className="title">
-							{t('dashboard.stake.tabs.trading-rewards.estimated-fee-share', {
-								EpochPeriod: period,
-							})}
-						</div>
-						<div className="value">{formatPercent(ratio, { minDecimals: 2 })}</div>
-					</div>
+					{showEstimatedValue ? (
+						<>
+							<div>
+								<div className="title">
+									{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}
+								</div>
+								<KwentaLabel>{truncateNumbers(wei(estimatedReward), 4)}</KwentaLabel>
+							</div>
+							<div>
+								<div className="title">
+									{t('dashboard.stake.tabs.trading-rewards.estimated-reward-share', {
+										EpochPeriod: period,
+									})}
+								</div>
+								<div className="value">{formatPercent(ratio, { minDecimals: 2 })}</div>
+							</div>
+						</>
+					) : null}
 				</CardGrid>
+				{showEstimatedValue ? (
+					<FlexDivRow>
+						<PeriodLabel>{t('dashboard.stake.tabs.trading-rewards.estimated-info')}</PeriodLabel>
+					</FlexDivRow>
+				) : null}
 			</CardGridContainer>
 		</TradingRewardsContainer>
 	);
 };
+
+const PeriodLabel = styled.div`
+	font-size: 13px;
+	line-height: 20px;
+	display: flex;
+	align-items: center;
+	font-family: ${(props) => props.theme.fonts.regular};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
+`;
 
 const CustomStyledTooltip = styled(StyledTooltip)`
 	padding: 0px 10px 0px;
@@ -146,10 +184,6 @@ const CustomStyledTooltip = styled(StyledTooltip)`
 
 const WithCursor = styled.div<{ cursor: 'help' }>`
 	cursor: ${(props) => props.cursor};
-`;
-
-const StyledFlexDivRow = styled(FlexDivRow)`
-	column-gap: 15px;
 `;
 
 const CardGridContainer = styled(StakingCard)`
@@ -172,7 +206,7 @@ const CardGrid = styled.div`
 	}
 
 	svg {
-		margin-left: 5px;
+		margin-left: 8px;
 	}
 
 	.title {

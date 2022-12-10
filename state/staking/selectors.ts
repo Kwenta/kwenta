@@ -130,3 +130,8 @@ export const selectTotalVestable = createSelector(
 	(state: RootState) => state.staking.totalVestable,
 	wei
 );
+
+export const selectEpochPeriod = createSelector(
+	(state: RootState) => state.staking.epochPeriod,
+	wei
+);
