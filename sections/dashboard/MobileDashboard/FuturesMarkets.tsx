@@ -63,11 +63,7 @@ const FuturesMarkets = () => {
 						<div className="title">
 							{t('dashboard.overview.futures-markets-table.open-interest')}
 						</div>
-						<div className="value">
-							{formatDollars(openInterest, {
-								minDecimals: 0,
-							})}
-						</div>
+						<div className="value">{formatDollars(openInterest, { minDecimals: 0 })}</div>
 					</MarketStat>
 					<MarketStat>
 						<div className="title">

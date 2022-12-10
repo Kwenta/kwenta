@@ -14,7 +14,7 @@ const RatioSelect: FC = () => {
 	const quoteBalance = useAppSelector(selectQuoteBalanceWei);
 
 	const onRatioChange = useCallback(
-		(ratio: SwapRatio) => {
+		(ratio: SwapRatio) => () => {
 			dispatch(setRatio(ratio));
 		},
 		[dispatch]
@@ -26,7 +26,7 @@ const RatioSelect: FC = () => {
 				<RatioButton
 					key={`ratio-${v}`}
 					$selected={ratio === v}
-					onClick={() => onRatioChange(v)}
+					onClick={onRatioChange(v)}
 					disabled={quoteBalance.eq(0)}
 				>
 					{`${v}%`}

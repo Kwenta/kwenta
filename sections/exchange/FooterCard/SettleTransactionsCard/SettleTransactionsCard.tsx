@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -8,7 +8,7 @@ import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { EXTERNAL_LINKS } from 'constants/links';
 import TxSettleModal from 'sections/shared/modals/TxSettleModal';
 import { submitSettle } from 'state/exchange/actions';
-import { setOpenModal } from 'state/exchange/reducer';
+import { closeModal } from 'state/exchange/reducer';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { NoTextTransform, ExternalLink } from 'styles/common';
 import { secondsToTime } from 'utils/formatters/date';
@@ -37,13 +37,17 @@ const SettleTransactionsCard: FC = () => {
 	const settlementDisabledReason =
 		settlementWaitingPeriod > 0 ? t('exchange.summary-info.button.settle-waiting-period') : null;
 
-	const handleSettle = async () => {
+	const handleSettle = useCallback(() => {
 		try {
 			dispatch(submitSettle());
 		} catch (e) {
 			logError(e);
 		}
-	};
+	}, [dispatch]);
+
+	const handleCloseModal = useCallback(() => {
+		dispatch(closeModal());
+	}, [dispatch]);
 
 	return (
 		<>
@@ -94,11 +98,7 @@ const SettleTransactionsCard: FC = () => {
 				</ErrorTooltip>
 			</MessageContainer>
 			{openModal === 'settle' && (
-				<TxSettleModal
-					onDismiss={() => setOpenModal(undefined)}
-					txError={txError}
-					attemptRetry={handleSettle}
-				/>
+				<TxSettleModal onDismiss={handleCloseModal} txError={txError} attemptRetry={handleSettle} />
 			)}
 		</>
 	);
