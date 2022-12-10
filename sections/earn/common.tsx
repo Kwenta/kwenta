@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 import KwentaLogo from 'assets/svg/earn/KWENTA.svg';
-import Button from 'components/Button';
 import Text from 'components/Text';
 import media from 'styles/media';
 
@@ -34,11 +33,6 @@ export const Description = styled(Text.Body)`
 	font-size: 15px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	margin: 8px 0;
-`;
-
-export const StyledButton = styled(Button)`
-	font-size: 13px;
-	height: 38px;
 `;
 
 export const GridContainer = styled.div`
