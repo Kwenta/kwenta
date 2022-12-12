@@ -10,7 +10,7 @@ type FrameOptions = {
 
 const Frame = ({ chains, shimDisconnect }: FrameOptions): Wallet => ({
 	id: 'frame',
-	iconBackground: '#000',
+	iconBackground: '#FFF',
 	name: 'Frame',
 	iconUrl: async () => FrameIcon,
 	downloadUrls: {
