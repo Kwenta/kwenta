@@ -27,9 +27,9 @@ export const selectBalances = createSelector(
 	(balances) => {
 		return unserializeBalances(
 			balances.synthBalancesMap,
-			balances.susdWalletBalance || '0',
+			balances.totalUSDBalance || '0',
 			balances.tokenBalances,
-			balances.totalUSDBalance || '0'
+			balances.susdWalletBalance || '0'
 		);
 	}
 );
