@@ -88,7 +88,6 @@ export interface ExchangeRatesInterface extends utils.Interface {
     "currenciesUsingAggregator(address)": FunctionFragment;
     "currencyKeyDecimals(bytes32)": FunctionFragment;
     "effectiveAtomicValueAndRates(bytes32,uint256,bytes32)": FunctionFragment;
-    "effectiveAtomicValueAndRates((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint256,(bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
     "effectiveValue(bytes32,uint256,bytes32)": FunctionFragment;
     "effectiveValueAndRates(bytes32,uint256,bytes32)": FunctionFragment;
     "effectiveValueAndRatesAtRound(bytes32,uint256,bytes32,uint256,uint256)": FunctionFragment;
@@ -132,8 +131,7 @@ export interface ExchangeRatesInterface extends utils.Interface {
       | "anyRateIsInvalidAtRound"
       | "currenciesUsingAggregator"
       | "currencyKeyDecimals"
-      | "effectiveAtomicValueAndRates(bytes32,uint256,bytes32)"
-      | "effectiveAtomicValueAndRates((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint256,(bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))"
+      | "effectiveAtomicValueAndRates"
       | "effectiveValue"
       | "effectiveValueAndRates"
       | "effectiveValueAndRatesAtRound"
@@ -206,20 +204,11 @@ export interface ExchangeRatesInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "effectiveAtomicValueAndRates(bytes32,uint256,bytes32)",
+    functionFragment: "effectiveAtomicValueAndRates",
     values: [
       PromiseOrValue<BytesLike>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BytesLike>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "effectiveAtomicValueAndRates((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint256,(bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
-    values: [
-      IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
-      PromiseOrValue<BigNumberish>,
-      IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
-      IDirectIntegrationManager.ParameterIntegrationSettingsStruct
     ]
   ): string;
   encodeFunctionData(
@@ -397,11 +386,7 @@ export interface ExchangeRatesInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "effectiveAtomicValueAndRates(bytes32,uint256,bytes32)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "effectiveAtomicValueAndRates((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint256,(bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+    functionFragment: "effectiveAtomicValueAndRates",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -657,25 +642,10 @@ export interface ExchangeRates extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[number]>;
 
-    "effectiveAtomicValueAndRates(bytes32,uint256,bytes32)"(
+    effectiveAtomicValueAndRates(
       arg0: PromiseOrValue<BytesLike>,
       arg1: PromiseOrValue<BigNumberish>,
       arg2: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber] & {
-        value: BigNumber;
-        systemValue: BigNumber;
-        systemSourceRate: BigNumber;
-        systemDestinationRate: BigNumber;
-      }
-    >;
-
-    "effectiveAtomicValueAndRates((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint256,(bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))"(
-      arg0: IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
-      arg1: PromiseOrValue<BigNumberish>,
-      arg2: IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
-      arg3: IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber, BigNumber] & {
@@ -890,25 +860,10 @@ export interface ExchangeRates extends BaseContract {
     overrides?: CallOverrides
   ): Promise<number>;
 
-  "effectiveAtomicValueAndRates(bytes32,uint256,bytes32)"(
+  effectiveAtomicValueAndRates(
     arg0: PromiseOrValue<BytesLike>,
     arg1: PromiseOrValue<BigNumberish>,
     arg2: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber, BigNumber] & {
-      value: BigNumber;
-      systemValue: BigNumber;
-      systemSourceRate: BigNumber;
-      systemDestinationRate: BigNumber;
-    }
-  >;
-
-  "effectiveAtomicValueAndRates((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint256,(bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))"(
-    arg0: IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
-    arg1: PromiseOrValue<BigNumberish>,
-    arg2: IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
-    arg3: IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, BigNumber, BigNumber, BigNumber] & {
@@ -1119,25 +1074,10 @@ export interface ExchangeRates extends BaseContract {
       overrides?: CallOverrides
     ): Promise<number>;
 
-    "effectiveAtomicValueAndRates(bytes32,uint256,bytes32)"(
+    effectiveAtomicValueAndRates(
       arg0: PromiseOrValue<BytesLike>,
       arg1: PromiseOrValue<BigNumberish>,
       arg2: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber] & {
-        value: BigNumber;
-        systemValue: BigNumber;
-        systemSourceRate: BigNumber;
-        systemDestinationRate: BigNumber;
-      }
-    >;
-
-    "effectiveAtomicValueAndRates((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint256,(bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))"(
-      arg0: IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
-      arg1: PromiseOrValue<BigNumberish>,
-      arg2: IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
-      arg3: IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber, BigNumber] & {
@@ -1390,18 +1330,10 @@ export interface ExchangeRates extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "effectiveAtomicValueAndRates(bytes32,uint256,bytes32)"(
+    effectiveAtomicValueAndRates(
       arg0: PromiseOrValue<BytesLike>,
       arg1: PromiseOrValue<BigNumberish>,
       arg2: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "effectiveAtomicValueAndRates((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint256,(bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))"(
-      arg0: IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
-      arg1: PromiseOrValue<BigNumberish>,
-      arg2: IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
-      arg3: IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1594,18 +1526,10 @@ export interface ExchangeRates extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "effectiveAtomicValueAndRates(bytes32,uint256,bytes32)"(
+    effectiveAtomicValueAndRates(
       arg0: PromiseOrValue<BytesLike>,
       arg1: PromiseOrValue<BigNumberish>,
       arg2: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "effectiveAtomicValueAndRates((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint256,(bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))"(
-      arg0: IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
-      arg1: PromiseOrValue<BigNumberish>,
-      arg2: IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
-      arg3: IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
