@@ -152,7 +152,17 @@ export default function TradeConfirmationModal({
 				value: formatDollars(gasFee ?? zeroBN),
 			},
 		],
-		[positionDetails, marketAsset, keeperFee, gasFee, tradeFee, orderType, orderPrice, leverageSide]
+		[
+			positionDetails,
+			marketAsset,
+			keeperFee,
+			gasFee,
+			tradeFee,
+			orderType,
+			orderPrice,
+			leverageSide,
+			potentialTradeDetails,
+		]
 	);
 
 	const disabledReason = useMemo(() => {
