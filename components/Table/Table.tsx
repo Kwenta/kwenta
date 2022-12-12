@@ -15,7 +15,7 @@ export type TablePalette = 'primary';
 
 const CARD_HEIGHT = '40px';
 const MAX_PAGE_ROWS = 100;
-const MAX_TOTAL_ROWS = 1000;
+const MAX_TOTAL_ROWS = 9999;
 
 type ColumnWithSorting<D extends object = {}> = Column<D> & {
 	sortType?: string | ((rowA: Row<any>, rowB: Row<any>) => -1 | 1);
