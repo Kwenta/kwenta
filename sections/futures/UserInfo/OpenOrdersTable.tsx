@@ -15,10 +15,10 @@ import { monitorTransaction } from 'contexts/RelayerContext';
 import useCrossMarginContracts from 'hooks/useCrossMarginContracts';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { FuturesOrder, PositionSide } from 'queries/futures/types';
-import { selectMarketAsset } from 'state/futures/selectors';
+import { PositionSide } from 'queries/futures/types';
+import { FuturesOrder } from 'sdk/types/futures';
+import { selectFuturesAccount, selectMarketAsset, selectOpenOrders } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { openOrdersState, selectedFuturesAddressState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { formatDollars } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
@@ -38,8 +38,8 @@ const OpenOrdersTable: React.FC = () => {
 
 	const isL2 = useIsL2();
 	const gasSpeed = useRecoilValue(gasSpeedState);
-	const openOrders = useRecoilValue(openOrdersState);
-	const selectedFuturesAddress = useRecoilValue(selectedFuturesAddressState);
+	const openOrders = useAppSelector(selectOpenOrders);
+	const selectedFuturesAddress = useAppSelector(selectFuturesAccount);
 
 	const [cancelling, setCancelling] = useState<string | null>(null);
 	const [selectedOrder, setSelectedOrder] = useState<FuturesOrder | undefined>();

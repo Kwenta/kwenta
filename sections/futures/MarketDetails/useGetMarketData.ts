@@ -12,9 +12,10 @@ import {
 	selectMarketAsset,
 	selectMarketInfo,
 	selectMarketKey,
+	selectMarketVolumes,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { futuresVolumesState, pastRatesState } from 'store/futures';
+import { pastRatesState } from 'store/futures';
 import { isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
@@ -32,7 +33,7 @@ const useGetMarketData = (mobile?: boolean) => {
 	const marketInfo = useAppSelector(selectMarketInfo);
 
 	const pastRates = useRecoilValue(pastRatesState);
-	const futuresVolumes = useRecoilValue(futuresVolumesState);
+	const futuresVolumes = useAppSelector(selectMarketVolumes);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 

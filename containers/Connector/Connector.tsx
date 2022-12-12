@@ -63,7 +63,7 @@ const useConnector = () => {
 			setProviderReady(true);
 		});
 		transactionNotifier = new BaseTN(provider);
-	}, [provider, dispatch, handleNetworkChange]);
+	}, [provider, handleNetworkChange]);
 
 	useEffect(() => {
 		handleNetworkChange(network.id as NetworkId);

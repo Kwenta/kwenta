@@ -23,9 +23,9 @@ import { PriceResponse } from 'queries/coingecko/types';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { Rates } from 'queries/rates/types';
 import { getProxySynthSymbol } from 'queries/synths/utils';
-import { Token } from 'queries/walletBalances/types';
 import { getEthGasPrice } from 'sdk/common/gas';
 import erc20Abi from 'sdk/contracts/abis/ERC20.json';
+import { Token } from 'sdk/types/tokens';
 import { startInterval } from 'sdk/utils/interval';
 import {
 	newGetCoinGeckoPricesForCurrencies,
@@ -1088,7 +1088,8 @@ export default class ExchangeService {
 	// One idea is to create a "tokens" service that handles everything
 	// related to 1inch tokens.
 
-	public async getTokenBalances(walletAddress: string) {
+	public async getTokenBalances(walletAddress: string): Promise<TokenBalances> {
+		if (!this.sdk.context.isMainnet) return {};
 		const filteredTokens = this.tokenList.filter(
 			(t) => !FILTERED_TOKENS.includes(t.address.toLowerCase())
 		);

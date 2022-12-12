@@ -2,54 +2,8 @@ import { Balances } from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 
-import { PotentialTradeStatus } from 'sections/futures/types';
-import { FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
-
-export type PositionDetail = {
-	remainingMargin: Wei;
-	accessibleMargin: Wei;
-	orderPending: boolean;
-	order: {
-		pending: boolean;
-		fee: Wei;
-		leverage: Wei;
-	};
-	position: {
-		fundingIndex: Wei;
-		lastPrice: Wei;
-		size: Wei;
-		margin: Wei;
-	};
-	accruedFunding: Wei;
-	notionalValue: Wei;
-	liquidationPrice: Wei;
-	profitLoss: Wei;
-};
-
-export type FuturesFilledPosition<T = Wei> = {
-	canLiquidatePosition: boolean;
-	side: PositionSide;
-	notionalValue: T;
-	accruedFunding: T;
-	initialMargin: T;
-	profitLoss: T;
-	fundingIndex: number;
-	lastPrice: T;
-	size: T;
-	liquidationPrice: T;
-	initialLeverage: T;
-	leverage: T;
-	pnl: T;
-	pnlPct: T;
-	marginRatio: T;
-};
-
-export type FuturesPosition<T = Wei> = {
-	asset: FuturesMarketAsset;
-	remainingMargin: T;
-	accessibleMargin: T;
-	position: FuturesFilledPosition<T> | null;
-};
+import { FuturesOrderTypeDisplay, FuturesPotentialTradeDetails } from 'sdk/types/futures';
+import { FuturesMarketAsset } from 'utils/futures';
 
 export type FuturesOpenInterest = {
 	asset: string;
@@ -135,14 +89,6 @@ export type FuturesTradeWithPrice = {
 	price: string;
 };
 
-// This type exists to rename enum types from the subgraph to display-friendly types
-export type FuturesOrderTypeDisplay =
-	| 'Next Price'
-	| 'Limit'
-	| 'Stop Market'
-	| 'Market'
-	| 'Liquidation';
-
 export type FuturesTrade = {
 	size: Wei;
 	asset: string;
@@ -157,33 +103,6 @@ export type FuturesTrade = {
 	feesPaid: Wei;
 	orderType: FuturesOrderTypeDisplay;
 	accountType: FuturesAccountType;
-};
-
-export type FuturesOrder = {
-	id: string;
-	account: string;
-	asset: FuturesMarketAsset;
-	market: string;
-	marketKey: FuturesMarketKey;
-	size: Wei;
-	targetPrice: Wei | null;
-	marginDelta: Wei;
-	targetRoundId: Wei | null;
-	timestamp: Wei;
-	orderType: FuturesOrderTypeDisplay;
-	sizeTxt?: string;
-	targetPriceTxt?: string;
-	side?: PositionSide;
-	isStale?: boolean;
-	isExecutable?: boolean;
-	isCancelling?: boolean;
-};
-
-export type FuturesVolumes = {
-	[asset: string]: {
-		volume: Wei;
-		trades: Wei;
-	};
 };
 
 export type FuturesStat = {
@@ -224,22 +143,6 @@ export type FundingRates = {
 	[key in FuturesMarketAsset]: Wei;
 };
 
-export type FuturesPotentialTradeDetails = {
-	size: Wei;
-	sizeDelta: Wei;
-	liqPrice: Wei;
-	margin: Wei;
-	price: Wei;
-	fee: Wei;
-	leverage: Wei;
-	notionalValue: Wei;
-	minInitialMargin: Wei;
-	side: PositionSide;
-	status: PotentialTradeStatus;
-	showStatus: boolean;
-	statusMessage: string;
-};
-
 export type FuturesPotentialTradeDetailsQuery = {
 	data: FuturesPotentialTradeDetails | null;
 	error: string | null;
@@ -257,7 +160,6 @@ type CrossMarginAccount = string;
 type FactoryAddress = string;
 export type CrossMarginAccounts = Record<FactoryAddress, Record<Wallet, CrossMarginAccount>>;
 
-export type FuturesPositionsState = Record<FuturesAccountType, FuturesPosition[]>;
 export type PositionHistoryState = Record<FuturesAccountType, PositionHistory[]>;
 export type Portfolio = {
 	total: Wei;

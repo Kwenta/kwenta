@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';
-import { FuturesOrder, PositionSide } from 'queries/futures/types';
+import { PositionSide } from 'queries/futures/types';
+import { FuturesOrder } from 'sdk/types/futures';
 import { getDisplayAsset } from 'utils/futures';
 
 import BaseDrawer from './BaseDrawer';
