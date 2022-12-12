@@ -112,13 +112,20 @@ export default function TradeConfirmationModal({
 						value: formatDollars(positionDetails?.price ?? zeroBN, { isAssetPrice: true }),
 				  },
 			{
-				label: 'slippage',
-				value: `${formatDollars(positionDetails?.slippageAmount ?? zeroBN)} (${formatPercent(
-					positionDetails?.slippagePercent ?? zeroBN
-				)})`,
-				color: positionDetails?.slippageAmount.gt(0)
+				label: 'price impact',
+				value: `${formatPercent(potentialTradeDetails?.slippagePercent ?? zeroBN)}`,
+				color: potentialTradeDetails?.slippageAmount.gt(0)
 					? 'green'
-					: positionDetails?.slippageAmount.lt(0)
+					: potentialTradeDetails?.slippageAmount.lt(0)
+					? 'red'
+					: '',
+			},
+			{
+				label: 'slippage',
+				value: `${formatDollars(potentialTradeDetails?.slippageAmount ?? zeroBN)}`,
+				color: potentialTradeDetails?.slippageAmount.gt(0)
+					? 'green'
+					: potentialTradeDetails?.slippageAmount.lt(0)
 					? 'red'
 					: '',
 			},

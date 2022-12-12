@@ -101,17 +101,23 @@ const NextPriceConfirmationModal: FC = () => {
 				value: formatDollars(potentialTradeDetails?.price ?? zeroBN, { isAssetPrice: true }),
 			},
 			{
-				label: 'estimated slippage',
-				value: `${formatDollars(potentialTradeDetails?.slippageAmount ?? zeroBN)} (${formatPercent(
-					potentialTradeDetails?.slippagePercent ?? zeroBN
-				)})`,
+				label: 'estimated price impact',
+				value: `${formatPercent(potentialTradeDetails?.slippagePercent ?? zeroBN)}`,
 				color: potentialTradeDetails?.slippageAmount.gt(0)
 					? 'green'
 					: potentialTradeDetails?.slippageAmount.lt(0)
 					? 'red'
 					: '',
 			},
-
+			{
+				label: 'estimated slippage',
+				value: `${formatDollars(potentialTradeDetails?.slippageAmount ?? zeroBN)}`,
+				color: potentialTradeDetails?.slippageAmount.gt(0)
+					? 'green'
+					: potentialTradeDetails?.slippageAmount.lt(0)
+					? 'red'
+					: '',
+			},
 			{
 				label: t('futures.market.user.position.modal.fee-total'),
 				value: formatCurrency(selectedPriceCurrency.name, totalDeposit, {
