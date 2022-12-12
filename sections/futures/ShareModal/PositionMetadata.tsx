@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { futuresAccountTypeState, positionHistoryState } from 'store/futures';
 import getLocale from 'utils/formatters/getLocale';
+import { floorNumber } from 'utils/formatters/number';
 
 type PositionMetadataProps = {
 	marketAsset: string;
@@ -117,15 +118,15 @@ const PositionMetadata: FC<PositionMetadataProps> = ({ marketAsset }) => {
 				<ContainerText className="header">
 					{t('futures.modals.share.position-metadata.avg-open-price')}
 				</ContainerText>
-				<ContainerText className="date-or-price">{avgEntryPrice}</ContainerText>
+				<ContainerText className="date-or-price">
+					{avgEntryPrice && avgEntryPrice.length ? floorNumber(avgEntryPrice) : ''}
+				</ContainerText>
 			</BottomLeftContainer>
 			<BottomRightContainer>
 				<ContainerText className="header">
 					{t('futures.modals.share.position-metadata.current-price')}
 				</ContainerText>
-				<ContainerText className="date-or-price">
-					{marketAssetRate.toNumber().toFixed(2)}
-				</ContainerText>
+				<ContainerText className="date-or-price">{floorNumber(marketAssetRate)}</ContainerText>
 			</BottomRightContainer>
 		</>
 	);
