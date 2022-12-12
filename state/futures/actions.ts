@@ -638,8 +638,7 @@ export const depositIsolatedMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 			await tx.wait();
 			dispatch(setOpenModal(null));
 			dispatch(refetchPosition('isolated_margin'));
-			// TODO: More reliable balance updates
-			setTimeout(() => dispatch(fetchBalances()), 1000);
+			dispatch(fetchBalances());
 		} catch (err) {
 			dispatch(handleTransactionError(err.message));
 			throw err;
@@ -665,8 +664,7 @@ export const withdrawIsolatedMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 			await tx.wait();
 			dispatch(refetchPosition('isolated_margin'));
 			dispatch(setOpenModal(null));
-			// TODO: More reliable balance updates
-			setTimeout(() => dispatch(fetchBalances()), 1000);
+			dispatch(fetchBalances());
 		} catch (err) {
 			dispatch(handleTransactionError(err.message));
 			throw err;
@@ -702,8 +700,7 @@ export const modifyIsolatedPosition = createAsyncThunk<
 			dispatch(refetchPosition('isolated_margin'));
 			dispatch(setOpenModal(null));
 			dispatch(clearTradeInputs());
-			// TODO: More reliable balance updates
-			setTimeout(() => dispatch(fetchBalances()), 1000);
+			dispatch(fetchBalances());
 		} catch (err) {
 			dispatch(handleTransactionError(err.message));
 			throw err;
@@ -747,8 +744,7 @@ export const closeIsolatedMarginPosition = createAsyncThunk<void, void, ThunkCon
 			await tx.wait();
 			dispatch(setOpenModal(null));
 			dispatch(refetchPosition('isolated_margin'));
-			// TODO: More reliable balance updates
-			setTimeout(() => dispatch(fetchBalances()), 1000);
+			dispatch(fetchBalances());
 		} catch (err) {
 			dispatch(handleTransactionError(err.message));
 			throw err;
@@ -835,8 +831,7 @@ const submitCMTransferTransaction = async (
 					dispatch(fetchCrossMarginBalanceInfo());
 					dispatch(setOpenModal(null));
 					dispatch(refetchPosition('cross_margin'));
-					// TODO: More reliable balance fetching
-					setTimeout(() => dispatch(fetchBalances()), 1000);
+					dispatch(fetchBalances());
 				},
 			});
 		}
