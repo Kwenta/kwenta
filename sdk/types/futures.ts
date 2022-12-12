@@ -42,12 +42,22 @@ export type FuturesMarket<T = Wei> = {
 	marketSkew: T;
 	marketSize: T;
 	maxLeverage: T;
+	priceOracle: T;
 	price: T;
 	minInitialMargin: T;
 	keeperDeposit: T;
 	isSuspended: boolean;
 	marketClosureReason: SynthSuspensionReason;
 	marketLimit: T;
+	settings: {
+		maxMarketValue: T;
+		skewScale: T;
+		delayedOrderConfirmWindow: number;
+		offchainDelayedOrderMinAge: number;
+		offchainDelayedOrderMaxAge: number;
+		minDelayTimeDelta: number;
+		maxDelayTimeDelta: number;
+	};
 };
 
 export type FundingRateUpdate = {

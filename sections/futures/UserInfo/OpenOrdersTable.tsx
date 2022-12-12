@@ -15,7 +15,7 @@ import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { PositionSide } from 'queries/futures/types';
 import { DelayedOrder } from 'sdk/types/futures';
 import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
-import { selectMarketAsset, selectOpenOrders } from 'state/futures/selectors';
+import { selectMarketAsset, selectMarkets, selectOpenOrders } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatTimer } from 'utils/formatters/date';
 import { formatCurrency, formatDollars } from 'utils/formatters/number';
@@ -37,6 +37,7 @@ const OpenOrdersTable: React.FC = () => {
 	const dispatch = useAppDispatch();
 
 	const marketAsset = useAppSelector(selectMarketAsset);
+	const futuresMarkets = useAppSelector(selectMarkets);
 
 	const isL2 = useIsL2();
 	const openOrders = useAppSelector(selectOpenOrders);
@@ -47,36 +48,45 @@ const OpenOrdersTable: React.FC = () => {
 
 	const rowsData = useMemo(() => {
 		const ordersWithCancel = openOrders
-			.map((o) => ({
-				...o,
-				sizeTxt: formatCurrency(o.asset, o.size.abs(), {
-					currencyKey: getDisplayAsset(o.asset) ?? '',
-					minDecimals: o.size.abs().lt(0.01) ? 4 : 2,
-				}),
-				timeToExecution: countdownTimers ? countdownTimers[o.marketKey]?.timeToExecution : null,
-				timePastExecution: countdownTimers ? countdownTimers[o.marketKey]?.timePastExecution : null,
-				show: !!countdownTimers && countdownTimers[o.marketKey],
-				isStale: countdownTimers
-					? countdownTimers[o.marketKey]?.timeToExecution === 0 &&
-					  countdownTimers[o.marketKey]?.timePastExecution > 60
-					: false,
-				isExecutable: countdownTimers
-					? countdownTimers[o.marketKey]?.timeToExecution === 0 &&
-					  countdownTimers[o.marketKey]?.timePastExecution <= 60 // SET DEFAULT
-					: false,
-				totalDeposit: o.commitDeposit.add(o.keeperDeposit),
-				onCancel: () => {
-					dispatch(
-						cancelDelayedOrder({
-							marketAddress: o.marketAddress,
-							isOffchain: o.isOffchain,
-						})
-					);
-				},
-				onExecute: () => {
-					dispatch(executeDelayedOrder(o.marketAddress));
-				},
-			}))
+			.map((o) => {
+				const market = futuresMarkets.find((m) => m.marketKey === o.marketKey);
+				const order = {
+					...o,
+					sizeTxt: formatCurrency(o.asset, o.size.abs(), {
+						currencyKey: getDisplayAsset(o.asset) ?? '',
+						minDecimals: o.size.abs().lt(0.01) ? 4 : 2,
+					}),
+					timeToExecution: countdownTimers ? countdownTimers[o.marketKey]?.timeToExecution : null,
+					timePastExecution: countdownTimers
+						? countdownTimers[o.marketKey]?.timePastExecution
+						: null,
+					show: !!countdownTimers && countdownTimers[o.marketKey],
+					isStale:
+						countdownTimers && market?.settings
+							? countdownTimers[o.marketKey]?.timeToExecution === 0 &&
+							  countdownTimers[o.marketKey]?.timePastExecution > market.settings.maxDelayTimeDelta
+							: false,
+					isExecutable:
+						countdownTimers && market?.settings
+							? countdownTimers[o.marketKey]?.timeToExecution === 0 &&
+							  countdownTimers[o.marketKey]?.timePastExecution <=
+									market.settings.offchainDelayedOrderMaxAge
+							: false,
+					totalDeposit: o.commitDeposit.add(o.keeperDeposit),
+					onCancel: () => {
+						dispatch(
+							cancelDelayedOrder({
+								marketAddress: o.marketAddress,
+								isOffchain: o.isOffchain,
+							})
+						);
+					},
+					onExecute: () => {
+						dispatch(executeDelayedOrder(o.marketAddress));
+					},
+				};
+				return order;
+			})
 			.sort((a, b) => {
 				return b.asset === marketAsset && a.asset !== marketAsset
 					? 1
@@ -85,7 +95,7 @@ const OpenOrdersTable: React.FC = () => {
 					: -1;
 			});
 		return ordersWithCancel;
-	}, [openOrders, marketAsset, countdownTimers, dispatch]);
+	}, [openOrders, futuresMarkets, marketAsset, countdownTimers, dispatch]);
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
