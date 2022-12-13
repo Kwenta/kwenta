@@ -245,7 +245,7 @@ export type FuturesPotentialTradeDetails<T = Wei> = {
 	status: PotentialTradeStatus;
 	showStatus: boolean;
 	statusMessage: string;
-	slippagePercent: T;
+	priceImpact: T;
 	slippageAmount: T;
 };
 

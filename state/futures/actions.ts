@@ -288,6 +288,7 @@ export const fetchIsolatedMarginTradePreview = createAsyncThunk<
 			const preview = await sdk.futures.getIsolatedTradePreview(
 				marketInfo?.market,
 				sizeDelta,
+				marketInfo?.priceOracle,
 				marketInfo?.price,
 				leverageSide
 			);

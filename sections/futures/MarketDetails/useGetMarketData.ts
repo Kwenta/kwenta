@@ -48,6 +48,7 @@ const useGetMarketData = (mobile?: boolean) => {
 		const fundingValue = marketInfo?.currentFundingRate;
 
 		const marketPrice = wei(marketInfo?.price ?? 0);
+		const oraclePrice = wei(marketInfo?.priceOracle ?? 0);
 		const marketName = `${marketInfo?.marketName ?? t('futures.market.info.default-market')}`;
 
 		const futuresTradingVolume = marketInfo?.marketKey
@@ -59,14 +60,19 @@ const useGetMarketData = (mobile?: boolean) => {
 
 		if (mobile) {
 			return {
-				'Live Price': {
-					value:
-						externalPrice === 0
-							? '-'
-							: formatCurrency(selectedPriceCurrency.name, externalPrice, {
-									sign: '$',
-									minDecimals,
-							  }),
+				[marketName]: {
+					value: formatCurrency(selectedPriceCurrency.name, marketPrice, {
+						sign: '$',
+						minDecimals,
+						isAssetPrice: true,
+					}),
+				},
+				[MarketDataKey.oraclePrice]: {
+					value: formatCurrency(selectedPriceCurrency.name, oraclePrice, {
+						sign: '$',
+						minDecimals,
+						isAssetPrice: true,
+					}),
 				},
 				[MarketDataKey.dailyTrades]: {
 					value: `${futuresTradeCount}`,
@@ -119,15 +125,12 @@ const useGetMarketData = (mobile?: boolean) => {
 						isAssetPrice: true,
 					}),
 				},
-				[MarketDataKey.externalPrice]: {
-					value:
-						externalPrice === 0
-							? NO_VALUE
-							: formatCurrency(selectedPriceCurrency.name, externalPrice, {
-									sign: '$',
-									minDecimals,
-									isAssetPrice: true,
-							  }),
+				[MarketDataKey.oraclePrice]: {
+					value: formatCurrency(selectedPriceCurrency.name, oraclePrice, {
+						sign: '$',
+						minDecimals,
+						isAssetPrice: true,
+					}),
 				},
 				[MarketDataKey.dailyChange]: {
 					value:

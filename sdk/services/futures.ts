@@ -475,13 +475,14 @@ export default class FuturesService {
 	public async getIsolatedTradePreview(
 		marketAddress: string,
 		sizeDelta: Wei,
+		priceOracle: Wei,
 		price: Wei,
 		leverageSide: PositionSide
 	) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
 		const details = await market.postTradeDetails(
 			sizeDelta.toBN(),
-			price.toBN(), // TODO: Replace this price with the fill price
+			priceOracle.toBN(),
 			this.sdk.context.walletAddress
 		);
 		return formatPotentialIsolatedTrade(details, price, sizeDelta, leverageSide);

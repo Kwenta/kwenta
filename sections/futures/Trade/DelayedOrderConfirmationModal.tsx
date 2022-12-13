@@ -102,10 +102,10 @@ const NextPriceConfirmationModal: FC = () => {
 			},
 			{
 				label: 'estimated price impact',
-				value: `${formatPercent(potentialTradeDetails?.slippagePercent ?? zeroBN)}`,
-				color: potentialTradeDetails?.slippageAmount.gt(0)
+				value: `${formatPercent(potentialTradeDetails?.priceImpact ?? zeroBN)}`,
+				color: potentialTradeDetails?.priceImpact.gt(0)
 					? 'green'
-					: potentialTradeDetails?.slippageAmount.lt(0)
+					: potentialTradeDetails?.priceImpact.lt(0)
 					? 'red'
 					: '',
 			},
