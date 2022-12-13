@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { FC, useMemo, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Currency from 'components/Currency';
@@ -25,7 +24,8 @@ import { FuturesTrade } from 'queries/futures/types';
 import useGetAllFuturesTradesForAccount from 'queries/futures/useGetAllFuturesTradesForAccount';
 import TradeDrawer from 'sections/futures/MobileTrade/drawers/TradeDrawer';
 import { TradeStatus } from 'sections/futures/types';
-import { futuresAccountTypeState } from 'store/futures';
+import { selectFuturesType } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import { formatShortDateWithoutYear } from 'utils/formatters/date';
 import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
 import {
@@ -40,7 +40,7 @@ import TimeDisplay from '../../futures/Trades/TimeDisplay';
 
 const FuturesHistoryTable: FC = () => {
 	const [selectedTrade, setSelectedTrade] = useState<FuturesTrade>();
-	const accountType = useRecoilValue(futuresAccountTypeState);
+	const accountType = useAppSelector(selectFuturesType);
 
 	const { walletAddress } = Connector.useContainer();
 	const { t } = useTranslation();

@@ -151,3 +151,8 @@ export const selectCanUnstakeEscrowedKwenta = createSelector(
 		return stakedEscrowedKwentaBalance.gt(0) && !isUnstakingEscrowedKwenta;
 	}
 );
+
+export const selectEpochPeriod = createSelector(
+	(state: RootState) => state.staking.epochPeriod,
+	wei
+);

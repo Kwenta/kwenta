@@ -2,7 +2,7 @@ import { FC } from 'react';
 import styled from 'styled-components';
 
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import { FuturesPosition } from 'queries/futures/types';
+import { FuturesPosition } from 'sdk/types/futures';
 import { selectMarketAsset } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { formatNumber, zeroBN } from 'utils/formatters/number';

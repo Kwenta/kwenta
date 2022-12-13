@@ -2,17 +2,21 @@ import { useRouter } from 'next/router';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { components } from 'react-select';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled, { useTheme } from 'styled-components';
 
 import Button from 'components/Button';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Select from 'components/Select';
-import { FuturesAccountTypes, FuturesPosition } from 'queries/futures/types';
-import { selectSusdBalanceWei } from 'state/balances/selectors';
-import { setFuturesAccountType as setReduxFuturesAccountType } from 'state/futures/reducer';
+import { FuturesAccountTypes } from 'queries/futures/types';
+import { FuturesPosition } from 'sdk/types/futures';
+import { selectSusdBalance } from 'state/balances/selectors';
+import { setFuturesAccountType } from 'state/futures/reducer';
+import {
+	selectCrossMarginPositions,
+	selectFuturesPortfolio,
+	selectIsolatedMarginPositions,
+} from 'state/futures/selectors';
 import { useAppSelector, useAppDispatch } from 'state/hooks';
-import { positionsState, portfolioState, futuresAccountTypeState } from 'store/futures';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { zeroBN, formatDollars } from 'utils/formatters/number';
 import { getMarketName, MarketKeyByAsset } from 'utils/futures';
@@ -30,10 +34,10 @@ const BalanceActions: FC = () => {
 	const theme = useTheme();
 	const router = useRouter();
 
-	const positions = useRecoilValue(positionsState);
-	const setFuturesAccountType = useSetRecoilState(futuresAccountTypeState);
-	const portfolio = useRecoilValue(portfolioState);
-	const susdWalletBalance = useAppSelector(selectSusdBalanceWei);
+	const crossPositions = useAppSelector(selectCrossMarginPositions);
+	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
+	const portfolio = useAppSelector(selectFuturesPortfolio);
+	const susdWalletBalance = useAppSelector(selectSusdBalance);
 	const dispatch = useAppDispatch();
 
 	const setMarketConfig = useCallback(
@@ -43,30 +47,30 @@ const BalanceActions: FC = () => {
 				synthIcon: MarketKeyByAsset[position.asset],
 				marketRemainingMargin: formatDollars(position.remainingMargin),
 				onClick: () => {
-					setFuturesAccountType(accountType);
-					dispatch(setReduxFuturesAccountType(accountType));
+					// TODO: Remove eventually
+					dispatch(setFuturesAccountType(accountType));
 					return router.push(`/market/?asset=${position.asset}&accountType=${accountType}`);
 				},
 			};
 		},
-		[dispatch, router, setFuturesAccountType]
+		[dispatch, router]
 	);
 
 	const OPTIONS = useMemo(() => {
-		const isolatedPositions = positions.isolated_margin
+		const isolatedPositionsFiltered = isolatedPositions
 			.filter((position) => position.remainingMargin.gt(zeroBN))
 			.map((position) => setMarketConfig(position, FuturesAccountTypes.ISOLATED_MARGIN));
-		const crossPositions = positions.cross_margin
+		const crossPositionsFiltered = crossPositions
 			.filter((position) => position.remainingMargin.gt(zeroBN))
 			.map((position) => setMarketConfig(position, FuturesAccountTypes.CROSS_MARGIN));
 		return [
 			{
 				label: 'header.balance.total-margin-label',
 				totalAvailableMargin: formatDollars(portfolio.total),
-				options: [...isolatedPositions, ...crossPositions],
+				options: [...isolatedPositionsFiltered, ...crossPositionsFiltered],
 			},
 		];
-	}, [positions, setMarketConfig, portfolio]);
+	}, [crossPositions, isolatedPositions, setMarketConfig, portfolio]);
 
 	const OptionsGroupLabel: FC<{ label: string; totalAvailableMargin?: string }> = ({
 		label,

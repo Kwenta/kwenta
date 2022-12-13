@@ -2,7 +2,6 @@ import Wei from '@synthetixio/wei';
 import { formatBytes32String } from 'ethers/lib/utils';
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { DEFAULT_CROSSMARGIN_GAS_BUFFER_PCT } from 'constants/defaults';
 import { useFuturesContext } from 'contexts/FuturesContext';
@@ -10,14 +9,14 @@ import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useEstimateGasCost from 'hooks/useEstimateGasCost';
-import { selectMarketKey } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { setOpenModal } from 'state/app/reducer';
 import {
-	confirmationModalOpenState,
-	crossMarginMarginDeltaState,
-	futuresTradeInputsState,
-	isAdvancedOrderState,
-} from 'store/futures';
+	selectCrossMarginMarginDelta,
+	selectIsAdvancedOrder,
+	selectMarketKey,
+	selectTradeSizeInputs,
+} from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { isUserDeniedError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -26,18 +25,17 @@ import TradeConfirmationModal from './TradeConfirmationModal';
 
 export default function TradeConfirmationModalCrossMargin() {
 	const { t } = useTranslation();
-	const { handleRefetch, refetchUntilUpdate } = useRefetchContext();
+	const { handleRefetch } = useRefetchContext();
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const { estimateEthersContractTxCost } = useEstimateGasCost();
+	const dispatch = useAppDispatch();
 
 	const marketKey = useAppSelector(selectMarketKey);
-	const crossMarginMarginDelta = useRecoilValue(crossMarginMarginDeltaState);
-	const tradeInputs = useRecoilValue(futuresTradeInputsState);
-	const isAdvancedOrder = useRecoilValue(isAdvancedOrderState);
+	const crossMarginMarginDelta = useAppSelector(selectCrossMarginMarginDelta);
+	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
+	const isAdvancedOrder = useAppSelector(selectIsAdvancedOrder);
 
 	const { submitCrossMarginOrder, resetTradeState, tradeFees } = useFuturesContext();
-
-	const setConfirmationModalOpen = useSetRecoilState(confirmationModalOpenState);
 
 	const [error, setError] = useState<null | string>(null);
 	const [gasFee, setGasFee] = useState<Wei | null>(null);
@@ -50,7 +48,7 @@ export default function TradeConfirmationModalCrossMargin() {
 				{
 					marketKey: formatBytes32String(marketKey),
 					marginDelta: crossMarginMarginDelta.toBN(),
-					sizeDelta: tradeInputs.nativeSizeDelta.toBN(),
+					sizeDelta: nativeSizeDelta.toBN(),
 				},
 			];
 			const { gasPrice, gasLimit } = await estimateEthersContractTxCost(
@@ -68,13 +66,13 @@ export default function TradeConfirmationModalCrossMargin() {
 		crossMarginAccountContract,
 		marketKey,
 		crossMarginMarginDelta,
-		tradeInputs.nativeSizeDelta,
+		nativeSizeDelta,
 		estimateEthersContractTxCost,
 	]);
 
 	const onDismiss = useCallback(() => {
-		setConfirmationModalOpen(false);
-	}, [setConfirmationModalOpen]);
+		dispatch(setOpenModal(null));
+	}, [dispatch]);
 
 	const handleConfirmOrder = useCallback(async () => {
 		setError(null);
@@ -91,7 +89,7 @@ export default function TradeConfirmationModalCrossMargin() {
 					onTxConfirmed: () => {
 						resetTradeState();
 						handleRefetch('modify-position');
-						refetchUntilUpdate('account-margin-change');
+						handleRefetch('account-margin-change');
 					},
 				});
 				onDismiss();
@@ -102,16 +100,7 @@ export default function TradeConfirmationModalCrossMargin() {
 				setError(t('common.transaction.transaction-failed'));
 			}
 		}
-	}, [
-		gasLimit,
-		setError,
-		handleRefetch,
-		refetchUntilUpdate,
-		resetTradeState,
-		onDismiss,
-		submitCrossMarginOrder,
-		t,
-	]);
+	}, [gasLimit, setError, handleRefetch, resetTradeState, onDismiss, submitCrossMarginOrder, t]);
 
 	return (
 		<TradeConfirmationModal

@@ -1,14 +1,14 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
-import { selectMarketInfo } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
-import { balancesState, positionState } from 'store/futures';
+import { setOpenModal } from 'state/app/reducer';
+import { selectOpenModal } from 'state/app/selectors';
+import { selectMarketInfo, selectPosition } from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { zeroBN } from 'utils/formatters/number';
 
 import TransferIsolatedMarginModal from './TransferIsolatedMarginModal';
@@ -16,12 +16,12 @@ import TransferIsolatedMarginModal from './TransferIsolatedMarginModal';
 const MarketActions: React.FC = () => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
-	const { susdWalletBalance } = useRecoilValue(balancesState);
-
-	const position = useRecoilValue(positionState);
+	const dispatch = useAppDispatch();
+	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
+	const openModal = useAppSelector(selectOpenModal);
+
 	const isL2 = useIsL2();
-	const [openModal, setOpenModal] = React.useState<'deposit' | 'withdraw' | null>(null);
 
 	return (
 		<>
@@ -29,7 +29,7 @@ const MarketActions: React.FC = () => {
 				<MarketActionButton
 					data-testid="futures-market-trade-button-deposit"
 					disabled={marketInfo?.isSuspended || !isL2 || !walletAddress}
-					onClick={() => setOpenModal('deposit')}
+					onClick={() => dispatch(setOpenModal('futures_isolated_transfer'))}
 					noOutline
 				>
 					{t('futures.market.trade.button.deposit')}
@@ -42,25 +42,23 @@ const MarketActions: React.FC = () => {
 						!isL2 ||
 						!walletAddress
 					}
-					onClick={() => setOpenModal('withdraw')}
+					onClick={() => dispatch(setOpenModal('futures_isolated_transfer'))}
 					noOutline
 				>
 					{t('futures.market.trade.button.withdraw')}
 				</MarketActionButton>
 			</MarketActionsContainer>
-			{openModal === 'deposit' && (
+			{openModal === 'futures_isolated_transfer' && (
 				<TransferIsolatedMarginModal
 					defaultTab="deposit"
-					sUSDBalance={susdWalletBalance}
-					onDismiss={() => setOpenModal(null)}
+					onDismiss={() => dispatch(setOpenModal(null))}
 				/>
 			)}
 
-			{openModal === 'withdraw' && (
+			{openModal === 'futures_isolated_transfer' && (
 				<TransferIsolatedMarginModal
-					sUSDBalance={susdWalletBalance}
 					defaultTab="withdraw"
-					onDismiss={() => setOpenModal(null)}
+					onDismiss={() => dispatch(setOpenModal(null))}
 				/>
 			)}
 		</>

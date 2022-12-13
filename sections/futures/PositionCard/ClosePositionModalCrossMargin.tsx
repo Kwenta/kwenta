@@ -2,7 +2,6 @@ import Wei, { wei } from '@synthetixio/wei';
 import { formatBytes32String } from 'ethers/lib/utils';
 import { useMemo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 
 import { DEFAULT_CROSSMARGIN_GAS_BUFFER_PCT } from 'constants/defaults';
 import { useFuturesContext } from 'contexts/FuturesContext';
@@ -10,9 +9,9 @@ import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useEstimateGasCost from 'hooks/useEstimateGasCost';
-import { selectMarketAsset, selectMarketKey } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
-import { positionState } from 'store/futures';
+import { fetchCrossMarginBalanceInfo } from 'state/futures/actions';
+import { selectMarketAsset, selectMarketKey, selectPosition } from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { isUserDeniedError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -26,19 +25,19 @@ type Props = {
 
 export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 	const { t } = useTranslation();
-	const { handleRefetch, refetchUntilUpdate } = useRefetchContext();
+	const { handleRefetch } = useRefetchContext();
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const { resetTradeState } = useFuturesContext();
 	const { estimateEthersContractTxCost } = useEstimateGasCost();
+	const dispatch = useAppDispatch();
 
-	const [crossMarginGasFee, setCrossMarginGasFee] = useState<Wei | null>(null);
 	const [crossMarginGasLimit, setCrossMarginGasLimit] = useState<Wei | null>(null);
 	const [error, setError] = useState<null | string>(null);
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const marketKey = useAppSelector(selectMarketKey);
 
-	const position = useRecoilValue(positionState);
+	const position = useAppSelector(selectPosition);
 	const positionDetails = position?.position;
 
 	const positionSize = useMemo(() => positionDetails?.size ?? zeroBN, [positionDetails?.size]);
@@ -73,13 +72,12 @@ export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 	useEffect(() => {
 		if (!crossMarginAccountContract) return;
 		const estimateGas = async () => {
-			const { gasPrice, gasLimit } = await estimateEthersContractTxCost(
+			const { gasLimit } = await estimateEthersContractTxCost(
 				crossMarginAccountContract,
 				'distributeMargin',
 				[crossMarginCloseParams],
 				DEFAULT_CROSSMARGIN_GAS_BUFFER_PCT
 			);
-			setCrossMarginGasFee(gasPrice);
 			setCrossMarginGasLimit(gasLimit);
 		};
 		estimateGas();
@@ -93,7 +91,7 @@ export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 					onDismiss();
 					resetTradeState();
 					handleRefetch('close-position');
-					refetchUntilUpdate('account-margin-change');
+					dispatch(fetchCrossMarginBalanceInfo());
 				},
 			});
 		}
@@ -118,7 +116,6 @@ export default function ClosePositionModalCrossMargin({ onDismiss }: Props) {
 	return (
 		<ClosePositionModal
 			onDismiss={onDismiss}
-			gasFee={crossMarginGasFee}
 			positionDetails={positionDetails}
 			onClosePosition={closePosition}
 			errorMessage={error}

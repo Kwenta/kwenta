@@ -14,6 +14,7 @@ import { infuraProvider } from 'wagmi/providers/infura';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { publicProvider } from 'wagmi/providers/public';
 
+import Frame from 'components/Rainbowkit/Frame';
 import Safe from 'components/Rainbowkit/Gnosis';
 import Tally from 'components/Rainbowkit/Tally';
 import { BLAST_NETWORK_LOOKUP } from 'constants/network';
@@ -67,6 +68,7 @@ const connectors = connectorsForWallets([
 			braveWallet({ chains, shimDisconnect: true }),
 			trustWallet({ chains }),
 			Tally({ chains, shimDisconnect: true }),
+			Frame({ chains, shimDisconnect: true }),
 			injectedWallet({ chains, shimDisconnect: true }),
 		],
 	},

@@ -1,28 +1,48 @@
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useCallback, useEffect, useMemo } from 'react';
 
-import { useFuturesContext } from 'contexts/FuturesContext';
-import useEstimateGasCost from 'hooks/useEstimateGasCost';
-import { confirmationModalOpenState, potentialTradeDetailsState } from 'store/futures';
+import { setOpenModal } from 'state/app/reducer';
+import { modifyIsolatedPosition, modifyIsolatedPositionEstimateGas } from 'state/futures/actions';
+import {
+	selectIsModifyingIsolatedPosition,
+	selectModifyIsolatedGasEstimate,
+	selectTradePreview,
+	selectTradeSizeInputs,
+} from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { zeroBN } from 'utils/formatters/number';
 
 import TradeConfirmationModal from './TradeConfirmationModal';
 
 export default function TradeConfirmationModalIsolatedMargin() {
-	const { estimateSnxTxGasCost } = useEstimateGasCost();
-	const { orderTxn, submitIsolatedMarginOrder } = useFuturesContext();
+	const dispatch = useAppDispatch();
 
-	const setConfirmationModalOpen = useSetRecoilState(confirmationModalOpenState);
-	const { data: potentialTradeDetails } = useRecoilValue(potentialTradeDetailsState);
+	const potentialTradeDetails = useAppSelector(selectTradePreview);
+	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
+	const submitting = useAppSelector(selectIsModifyingIsolatedPosition);
+	const gasEstimate = useAppSelector(selectModifyIsolatedGasEstimate);
 
-	const transactionFee = estimateSnxTxGasCost(orderTxn);
+	const transactionFee = useMemo(() => gasEstimate?.cost ?? zeroBN, [gasEstimate?.cost]);
 
-	const onDismiss = () => {
-		setConfirmationModalOpen(false);
-	};
+	useEffect(() => {
+		dispatch(
+			modifyIsolatedPositionEstimateGas({
+				sizeDelta: nativeSizeDelta,
+				useNextPrice: false,
+			})
+		);
+	}, [nativeSizeDelta, dispatch]);
+
+	const onDismiss = useCallback(() => {
+		dispatch(setOpenModal(null));
+	}, [dispatch]);
 
 	const handleConfirmOrder = async () => {
-		submitIsolatedMarginOrder();
-		onDismiss();
+		dispatch(
+			modifyIsolatedPosition({
+				sizeDelta: nativeSizeDelta,
+				useNextPrice: false,
+			})
+		);
 	};
 
 	return (
@@ -30,6 +50,7 @@ export default function TradeConfirmationModalIsolatedMargin() {
 			onDismiss={onDismiss}
 			onConfirmOrder={handleConfirmOrder}
 			gasFee={transactionFee}
+			isSubmitting={submitting}
 			tradeFee={potentialTradeDetails?.fee || zeroBN}
 		/>
 	);
