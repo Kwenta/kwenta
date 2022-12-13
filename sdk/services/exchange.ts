@@ -753,28 +753,27 @@ export default class ExchangeService {
 		const deprecatedProxySynthsAddresses: string[] =
 			deprecatedSynthsEvents.map((e) => e.args?.synth).filter(Boolean) ?? [];
 
-		const symbolCalls = [];
-		const balanceCalls = [];
+		const calls = [];
 
 		for (const addr of deprecatedProxySynthsAddresses) {
-			symbolCalls.push(getProxySynthSymbol(addr));
-			balanceCalls.push(Redeemer.balanceOf(addr, walletAddress));
+			calls.push(getProxySynthSymbol(addr));
+			calls.push(Redeemer.balanceOf(addr, walletAddress));
 		}
 
-		const [deprecatedSynths, balanceData] = (await Promise.all([
-			this.sdk.context.multicallProvider.all(symbolCalls),
-			this.sdk.context.multicallProvider.all(balanceCalls),
-		])) as [CurrencyKey[], ethers.BigNumber[]];
+		const redeemableSynthData = (await this.sdk.context.multicallProvider.all(calls)) as (
+			| CurrencyKey
+			| ethers.BigNumber
+		)[];
 
 		let totalUSDBalance = wei(0);
 		const cryptoBalances: DeprecatedSynthBalance[] = [];
 
-		for (let i = 0; i < balanceData.length; i++) {
-			const usdBalance = wei(balanceData[i]);
+		for (let i = 0; i < redeemableSynthData.length; i += 2) {
+			const usdBalance = wei(redeemableSynthData[i + 1]);
 			if (usdBalance.gt(0)) {
 				totalUSDBalance = totalUSDBalance.add(usdBalance);
 				cryptoBalances.push({
-					currencyKey: deprecatedSynths[i],
+					currencyKey: redeemableSynthData[i] as CurrencyKey,
 					proxyAddress: deprecatedProxySynthsAddresses[i],
 					balance: wei(0),
 					usdBalance,
