@@ -15,9 +15,10 @@ import Table, { TableNoResults } from 'components/Table';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import { Price } from 'queries/rates/types';
+import { selectBalances } from 'state/balances/selectors';
 import { selectExchangeRates } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
-import { balancesState, pastRatesState } from 'store/futures';
+import { pastRatesState } from 'store/futures';
 import { sortWei } from 'utils/balances';
 import { formatNumber, zeroBN } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
@@ -60,10 +61,10 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 	const { synthsMap } = Connector.useContainer();
 	const pastRates = useRecoilValue(pastRatesState);
 	const exchangeRates = useAppSelector(selectExchangeRates);
-	const { balances } = useRecoilValue(balancesState);
+	const { synthBalances } = useAppSelector(selectBalances);
 
 	const synthTokens = useMemo(() => {
-		return balances.map((synthBalance: SynthBalance) => {
+		return synthBalances.map((synthBalance: SynthBalance) => {
 			const { currencyKey, balance, usdBalance } = synthBalance;
 
 			const price = exchangeRates && exchangeRates[currencyKey];
@@ -79,7 +80,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 				priceChange: calculatePriceChange(price, pastPrice),
 			};
 		});
-	}, [pastRates, exchangeRates, balances, synthsMap]);
+	}, [pastRates, exchangeRates, synthBalances, synthsMap]);
 
 	const data = [...exchangeTokens, ...synthTokens].sort((a, b) =>
 		sortWei(a.usdBalance, b.usdBalance, 'descending')

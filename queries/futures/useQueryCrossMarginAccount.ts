@@ -6,6 +6,9 @@ import { useRecoilState } from 'recoil';
 import { CROSS_MARGIN_ACCOUNT_FACTORY } from 'constants/address';
 import Connector from 'containers/Connector';
 import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
+import { setCrossMarginAccount } from 'state/futures/reducer';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { selectWallet } from 'state/wallet/selectors';
 import { crossMarginAccountsState, futuresAccountState } from 'store/futures';
 import logError from 'utils/logError';
 
@@ -41,12 +44,13 @@ const queryAccountsFromSubgraph = async (
 
 export default function useQueryCrossMarginAccount() {
 	const { crossMarginContractFactory } = useCrossMarginAccountContracts();
-	const { network, walletAddress, signer } = Connector.useContainer();
-
+	const { network, signer } = Connector.useContainer();
 	const [futuresAccount, setFuturesAccount] = useRecoilState(futuresAccountState);
 	const [storedCrossMarginAccounts, setStoredCrossMarginAccount] = usePersistedRecoilState(
 		crossMarginAccountsState
 	);
+	const dispatch = useAppDispatch();
+	const walletAddress = useAppSelector(selectWallet);
 	const [retryCount, setRetryCount] = useState(0);
 
 	const handleAccountQuery = async () => {
@@ -106,6 +110,7 @@ export default function useQueryCrossMarginAccount() {
 				crossMarginAvailable: true,
 				walletAddress,
 			});
+			dispatch(setCrossMarginAccount(existing));
 			return existing;
 		}
 
@@ -141,6 +146,7 @@ export default function useQueryCrossMarginAccount() {
 			walletAddress,
 		};
 		setFuturesAccount(accountState);
+		dispatch(setCrossMarginAccount(crossMarginAccount));
 		return crossMarginAccount;
 	};
 

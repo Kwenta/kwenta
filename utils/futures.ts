@@ -3,15 +3,19 @@ import Wei, { wei } from '@synthetixio/wei';
 import { TFunction } from 'i18next';
 import { Dictionary } from 'lodash';
 
-import {
-	FuturesOrderType,
-	FuturesPosition,
-	FuturesTradeInputs,
-	TradeFees,
-} from 'queries/futures/types';
-import { FuturesMarket } from 'sdk/types/futures';
+import { FuturesOrderType } from 'queries/futures/types';
+import { FuturesMarket, FuturesOrder, FuturesPosition, FuturesVolumes } from 'sdk/types/futures';
 import { PositionSide } from 'sections/futures/types';
-import { FundingRate, FundingRateSerialized } from 'state/futures/types';
+import {
+	CrossMarginBalanceInfo,
+	CrossMarginSettings,
+	CrossMarginTradeFees,
+	CrossMarginTradeInputs,
+	FundingRate,
+	FundingRateSerialized,
+	IsolatedMarginTradeInputs,
+	TransactionEstimation,
+} from 'state/futures/types';
 import logError from 'utils/logError';
 
 import { formatNumber, zeroBN } from './formatters/number';
@@ -316,9 +320,14 @@ const getPositionChangeState = (existingSize: Wei, newSize: Wei) => {
 };
 
 export const calculateMarginDelta = (
-	nextTrade: FuturesTradeInputs,
-	fees: TradeFees,
-	position: FuturesPosition | null
+	tradeInputs: {
+		nativeSizeDelta: Wei;
+		susdSizeDelta: Wei;
+		leverage: Wei;
+		price: Wei;
+	},
+	fees: CrossMarginTradeFees,
+	position: FuturesPosition | null | undefined
 ) => {
 	const existingSize = position?.position
 		? position?.position?.side === 'long'
@@ -326,7 +335,7 @@ export const calculateMarginDelta = (
 			: position?.position?.size.neg()
 		: zeroBN;
 
-	const newSize = existingSize.add(nextTrade.nativeSizeDelta);
+	const newSize = existingSize.add(tradeInputs.nativeSizeDelta);
 	const newSizeAbs = newSize.abs();
 	const posChangeState = getPositionChangeState(existingSize, newSize);
 
@@ -334,25 +343,24 @@ export const calculateMarginDelta = (
 		case 'closing':
 			return zeroBN;
 		case 'edit_leverage':
-			const nextMargin = position?.position?.notionalValue.div(nextTrade.leverage) ?? zeroBN;
+			const nextMargin = position?.position?.notionalValue.div(tradeInputs.leverage) ?? zeroBN;
 			const delta = nextMargin.sub(position?.remainingMargin);
 			return delta.add(fees.total);
 		case 'reduce_size':
 			// When a position is reducing we keep the leverage the same as the existing position
-			let marginDiff = nextTrade.susdSizeDelta.div(position?.position?.leverage ?? zeroBN);
-			return nextTrade.susdSizeDelta.gt(0)
+			let marginDiff = tradeInputs.susdSizeDelta.div(position?.position?.leverage ?? zeroBN);
+			return tradeInputs.susdSizeDelta.gt(0)
 				? marginDiff.neg().add(fees.total)
 				: marginDiff.add(fees.total);
 		case 'increase_size':
 			// When a position is increasing we calculate margin for selected leverage
-			return nextTrade.susdSizeDelta.abs().div(nextTrade.leverage).add(fees.total);
+			return tradeInputs.susdSizeDelta.abs().div(tradeInputs.leverage).add(fees.total);
 		case 'flip_side':
 			// When flipping sides we calculate the margin required for selected leverage
-			const newNotionalSize = newSizeAbs.mul(nextTrade.orderPrice);
-			const newMargin = newNotionalSize.div(nextTrade.leverage);
+			const newNotionalSize = newSizeAbs.mul(tradeInputs.price);
+			const newMargin = newNotionalSize.div(tradeInputs.leverage);
 			const remainingMargin =
-				position?.position?.size.mul(nextTrade.orderPrice).div(position?.position?.leverage) ??
-				zeroBN;
+				position?.position?.size.mul(tradeInputs.price).div(position?.position?.leverage) ?? zeroBN;
 			const marginDelta = newMargin.sub(remainingMargin ?? zeroBN);
 			return marginDelta.add(fees.total);
 	}
@@ -421,3 +429,126 @@ export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMar
 export const unserializeFundingRates = (rates: FundingRateSerialized[]): FundingRate[] => {
 	return rates.map((r) => ({ ...r, fundingRate: r.fundingRate ? wei(r.fundingRate) : null }));
 };
+
+export const serializeCmBalanceInfo = (
+	overview: CrossMarginBalanceInfo
+): CrossMarginBalanceInfo<string> => {
+	return {
+		freeMargin: overview.freeMargin.toString(),
+		keeperEthBal: overview.keeperEthBal.toString(),
+		allowance: overview.allowance.toString(),
+	};
+};
+
+export const unserializeCmBalanceInfo = (
+	overview: CrossMarginBalanceInfo<string>
+): CrossMarginBalanceInfo<Wei> => {
+	return {
+		freeMargin: wei(overview.freeMargin),
+		keeperEthBal: wei(overview.keeperEthBal),
+		allowance: wei(overview.allowance),
+	};
+};
+
+export const serializeFuturesVolumes = (volumes: FuturesVolumes) => {
+	return Object.keys(volumes).reduce<FuturesVolumes<string>>((acc, k) => {
+		acc[k] = {
+			trades: volumes[k].trades.toString(),
+			volume: volumes[k].volume.toString(),
+		};
+		return acc;
+	}, {});
+};
+
+export const unserializeFuturesVolumes = (volumes: FuturesVolumes<string>) => {
+	return Object.keys(volumes).reduce<FuturesVolumes>((acc, k) => {
+		acc[k] = {
+			trades: wei(volumes[k].trades),
+			volume: wei(volumes[k].volume),
+		};
+		return acc;
+	}, {});
+};
+
+export const serializeCrossMarginTradeInputs = (
+	tradeInputs: CrossMarginTradeInputs
+): CrossMarginTradeInputs<string> => {
+	return {
+		...tradeInputs,
+		nativeSize: tradeInputs.nativeSize.toString(),
+		susdSize: tradeInputs.susdSize.toString(),
+	};
+};
+
+export const unserializeCrossMarginTradeInputs = (
+	tradeInputs: CrossMarginTradeInputs<string>
+): CrossMarginTradeInputs => {
+	return {
+		...tradeInputs,
+		nativeSize: wei(tradeInputs.nativeSize || 0),
+		susdSize: wei(tradeInputs.susdSize || 0),
+	};
+};
+
+export const unserializeIsolatedMarginTradeInputs = (
+	tradeInputs: IsolatedMarginTradeInputs<string>
+): IsolatedMarginTradeInputs => {
+	return {
+		nativeSize: wei(tradeInputs.nativeSize || 0),
+		susdSize: wei(tradeInputs.susdSize || 0),
+	};
+};
+
+export const serializeFuturesOrders = (orders: FuturesOrder[]): FuturesOrder<string>[] => {
+	return orders.map((o) => ({
+		...o,
+		size: o.size.toString(),
+		targetPrice: o.targetPrice?.toString() ?? null,
+		marginDelta: o.marginDelta.toString(),
+		targetRoundId: o.targetRoundId?.toString() ?? null,
+		timestamp: o.timestamp.toString(),
+	}));
+};
+
+export const unserializeFuturesOrders = (orders: FuturesOrder<string>[]): FuturesOrder[] => {
+	return orders.map((o) => ({
+		...o,
+		size: wei(o.size),
+		targetPrice: o.targetPrice ? wei(o.targetPrice) : null,
+		marginDelta: wei(o.marginDelta),
+		targetRoundId: o.targetRoundId ? wei(o.targetRoundId) : null,
+		timestamp: wei(o.timestamp),
+	}));
+};
+
+export const serializeCrossMarginSettings = (
+	settings: CrossMarginSettings
+): CrossMarginSettings<string> => ({
+	tradeFee: settings.tradeFee.toString(),
+	limitOrderFee: settings.limitOrderFee.toString(),
+	stopOrderFee: settings.stopOrderFee.toString(),
+});
+
+export const unserializeCrossMarginSettings = (
+	settings: CrossMarginSettings<string>
+): CrossMarginSettings => ({
+	tradeFee: wei(settings.tradeFee),
+	limitOrderFee: wei(settings.limitOrderFee),
+	stopOrderFee: wei(settings.stopOrderFee),
+});
+
+export const unserializeGasEstimate = (
+	estimate: TransactionEstimation<string>
+): TransactionEstimation => ({
+	...estimate,
+	limit: wei(estimate.limit),
+	cost: wei(estimate.cost),
+});
+
+export const serializeTradeFees = (fees: CrossMarginTradeFees) => ({
+	staticFee: fees.staticFee.toString(),
+	crossMarginFee: fees.crossMarginFee.toString(),
+	keeperEthDeposit: fees.keeperEthDeposit.toString(),
+	limitStopOrderFee: fees.limitStopOrderFee.toString(),
+	total: fees.total.toString(),
+});

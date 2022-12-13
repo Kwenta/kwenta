@@ -1,12 +1,12 @@
 import React from 'react';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
 import { FuturesAccountType } from 'queries/futures/subgraph';
 import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
 import TradeCrossMargin from 'sections/futures/TradeCrossMargin';
-import { futuresAccountTypeState } from 'store/futures';
+import { selectFuturesType } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 
 import OrdersTab from './OrdersTab';
 import TradesTab from './TradesTab';
@@ -38,7 +38,7 @@ const getTabs = (accountType: FuturesAccountType) => [
 
 const UserTabs: React.FC = () => {
 	const [activeTab, setActiveTab] = React.useState(0);
-	const accountType = useRecoilValue(futuresAccountTypeState);
+	const accountType = useAppSelector(selectFuturesType);
 
 	const tabs = getTabs(accountType);
 

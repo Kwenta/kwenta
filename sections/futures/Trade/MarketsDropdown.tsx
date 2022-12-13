@@ -17,10 +17,11 @@ import {
 	selectMarketAsset,
 	selectMarkets,
 	selectMarketsQueryStatus,
+	selectFuturesType,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
-import { futuresAccountTypeState, pastRatesState } from 'store/futures';
+import { pastRatesState } from 'store/futures';
 import { assetToSynth, iStandardSynth } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import {
@@ -68,7 +69,7 @@ type MarketsDropdownProps = {
 
 const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const pastRates = useRecoilValue(pastRatesState);
-	const accountType = useRecoilValue(futuresAccountTypeState);
+	const accountType = useAppSelector(selectFuturesType);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const futuresMarkets = useAppSelector(selectMarkets);
 	const marketsQueryStatus = useAppSelector(selectMarketsQueryStatus);
@@ -151,7 +152,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 		getMinDecimals,
 	]);
 
-	const isFetching = !futuresMarkets.length && marketsQueryStatus === FetchStatus.Loading;
+	const isFetching = !futuresMarkets.length && marketsQueryStatus.status === FetchStatus.Loading;
 
 	return (
 		<SelectContainer mobile={mobile}>

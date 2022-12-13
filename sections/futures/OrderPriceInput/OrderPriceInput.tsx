@@ -2,7 +2,7 @@ import { wei } from '@synthetixio/wei';
 import { debounce } from 'lodash';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import CustomInput from 'components/Input/CustomInput';
@@ -10,9 +10,13 @@ import InputTitle from 'components/Input/InputTitle';
 import SegmentedControl from 'components/SegmentedControl';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { FuturesOrderType } from 'queries/futures/types';
-import { selectMarketAssetRate, selectMarketInfo } from 'state/futures/selectors';
+import {
+	selectMarketAssetRate,
+	selectMarketInfo,
+	selectLeverageSide,
+} from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { leverageSideState, orderFeeCapState } from 'store/futures';
+import { orderFeeCapState } from 'store/futures';
 import { weiToString, zeroBN } from 'utils/formatters/number';
 import { orderPriceInvalidLabel } from 'utils/futures';
 
@@ -33,7 +37,7 @@ export default function OrderPriceInput({
 }: Props) {
 	const { t } = useTranslation();
 	const marketAssetRate = useAppSelector(selectMarketAssetRate);
-	const leverageSide = useRecoilValue(leverageSideState);
+	const leverageSide = useAppSelector(selectLeverageSide);
 	const [selectedFeeCap, setSelectedFeeCap] = useRecoilState(orderFeeCapState);
 	const marketInfo = useAppSelector(selectMarketInfo);
 

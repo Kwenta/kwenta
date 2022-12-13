@@ -9,6 +9,11 @@ export enum FetchStatus {
 	Error,
 }
 
+export type QueryStatus = {
+	status: FetchStatus;
+	error: string | null | undefined;
+};
+
 export type ThunkConfig = {
 	dispatch: AppDispatch;
 	state: RootState;
