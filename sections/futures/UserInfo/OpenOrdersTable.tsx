@@ -18,7 +18,7 @@ import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
 import { selectMarketAsset, selectMarkets, selectOpenOrders } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatTimer } from 'utils/formatters/date';
-import { formatCurrency, formatDollars } from 'utils/formatters/number';
+import { formatCurrency, formatDollars, suggestedDecimals } from 'utils/formatters/number';
 import { FuturesMarketKey, getDisplayAsset } from 'utils/futures';
 
 import OrderDrawer from '../MobileTrade/drawers/OrderDrawer';
@@ -50,28 +50,26 @@ const OpenOrdersTable: React.FC = () => {
 		const ordersWithCancel = openOrders
 			.map((o) => {
 				const market = futuresMarkets.find((m) => m.marketKey === o.marketKey);
+				const timer = countdownTimers ? countdownTimers[o.marketKey] : null;
 				const order = {
 					...o,
 					sizeTxt: formatCurrency(o.asset, o.size.abs(), {
 						currencyKey: getDisplayAsset(o.asset) ?? '',
-						minDecimals: o.size.abs().lt(0.01) ? 4 : 2,
+						minDecimals: suggestedDecimals(o.size),
 					}),
-					timeToExecution: countdownTimers ? countdownTimers[o.marketKey]?.timeToExecution : null,
-					timePastExecution: countdownTimers
-						? countdownTimers[o.marketKey]?.timePastExecution
-						: null,
-					show: !!countdownTimers && countdownTimers[o.marketKey],
+					timeToExecution: timer?.timeToExecution,
+					timePastExecution: timer?.timePastExecution,
+					show: !!timer,
 					isStale:
-						countdownTimers && market?.settings
-							? countdownTimers[o.marketKey]?.timeToExecution === 0 &&
-							  countdownTimers[o.marketKey]?.timePastExecution > market.settings.maxDelayTimeDelta
-							: false,
+						timer &&
+						market?.settings &&
+						timer.timeToExecution === 0 &&
+						timer.timePastExecution > market.settings.maxDelayTimeDelta,
 					isExecutable:
-						countdownTimers && market?.settings
-							? countdownTimers[o.marketKey]?.timeToExecution === 0 &&
-							  countdownTimers[o.marketKey]?.timePastExecution <=
-									market.settings.offchainDelayedOrderMaxAge
-							: false,
+						timer &&
+						market?.settings &&
+						timer.timeToExecution === 0 &&
+						timer.timePastExecution <= market.settings.offchainDelayedOrderMaxAge,
 					totalDeposit: o.commitDeposit.add(o.keeperDeposit),
 					onCancel: () => {
 						dispatch(

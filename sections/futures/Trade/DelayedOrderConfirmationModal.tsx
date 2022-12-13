@@ -31,6 +31,7 @@ import { zeroBN, formatCurrency, formatDollars, formatPercent } from 'utils/form
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
 import { PositionSide } from '../types';
 import { MobileConfirmTradeButton } from './TradeConfirmationModal';
+import { getDisplayAsset } from 'sdk/utils/futures';
 
 const NextPriceConfirmationModal: FC = () => {
 	const { t } = useTranslation();
@@ -88,9 +89,13 @@ const NextPriceConfirmationModal: FC = () => {
 			},
 			{
 				label: t('futures.market.user.position.modal.size'),
-				value: formatCurrency(marketAsset || '', orderDetails.nativeSizeDelta.abs(), {
-					sign: marketAsset ? synthsMap[marketAsset]?.sign : '',
-				}),
+				value: formatCurrency(
+					getDisplayAsset(marketAsset) || '',
+					orderDetails.nativeSizeDelta.abs() ?? zeroBN,
+					{
+						currencyKey: getDisplayAsset(marketAsset) ?? '',
+					}
+				),
 			},
 			{
 				label: t('futures.market.user.position.modal.deposit'),
