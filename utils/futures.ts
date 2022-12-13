@@ -414,10 +414,16 @@ export const serializeMarket = (market: FuturesMarket): FuturesMarket<string> =>
 		marketSkew: market.marketSkew.toString(),
 		marketSize: market.marketSize.toString(),
 		maxLeverage: market.maxLeverage.toString(),
+		priceOracle: market.priceOracle.toString(),
 		price: market.price.toString(),
 		minInitialMargin: market.minInitialMargin.toString(),
 		keeperDeposit: market.keeperDeposit.toString(),
 		marketLimit: market.marketLimit.toString(),
+		settings: {
+			...market.settings,
+			maxMarketValue: market.settings.maxMarketValue.toString(),
+			skewScale: market.settings.skewScale.toString(),
+		},
 	};
 };
 
@@ -449,10 +455,16 @@ export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMar
 		marketSkew: wei(m.marketSkew),
 		marketSize: wei(m.marketSize),
 		maxLeverage: wei(m.maxLeverage),
+		priceOracle: wei(m.priceOracle),
 		price: wei(m.price),
 		minInitialMargin: wei(m.minInitialMargin),
 		keeperDeposit: wei(m.keeperDeposit),
 		marketLimit: wei(m.marketLimit),
+		settings: {
+			...m.settings,
+			maxMarketValue: wei(m.settings.maxMarketValue),
+			skewScale: wei(m.settings.skewScale),
+		},
 	}));
 };
 
