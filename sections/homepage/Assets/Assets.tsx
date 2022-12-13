@@ -19,7 +19,6 @@ import Connector from 'containers/Connector';
 import { Price } from 'queries/rates/types';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
-import { selectExchangeRates } from 'state/exchange/selectors';
 import { selectMarketVolumes } from 'state/futures/selectors';
 import { fetchOptimismMarkets } from 'state/home/actions';
 import { selectOptimismMarkets } from 'state/home/selectors';
@@ -34,6 +33,7 @@ import {
 } from 'styles/common';
 import media, { Media } from 'styles/media';
 import { getSynthDescription } from 'utils/futures';
+import { selectPrices } from 'state/prices/selectors';
 
 enum MarketsTab {
 	FUTURES = 'futures',
@@ -150,7 +150,7 @@ const Assets = () => {
 	const { l2SynthsMap, l2Provider } = Connector.useContainer();
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
-	const exchangeRates = useAppSelector(selectExchangeRates);
+	const prices = useAppSelector(selectPrices);
 	const futuresMarkets = useAppSelector(selectOptimismMarkets);
 
 	const pastRates = useRecoilValue(pastRatesState);
@@ -231,7 +231,7 @@ const Assets = () => {
 						currencyName: synth.description,
 				  })
 				: '';
-			const rate = exchangeRates && exchangeRates[synth.name];
+			const rate = prices && (prices[synth.name]?.onChain || prices[synth.name]?.offChain);
 			const price = isNil(rate) ? 0 : rate.toNumber();
 
 			const pastPrice = pastRates.find((price: Price) => {
@@ -251,7 +251,7 @@ const Assets = () => {
 				),
 			};
 		});
-	}, [synthVolumesQuery?.data, unfrozenSynths, t, exchangeRates, pastRates]);
+	}, [synthVolumesQuery?.data, unfrozenSynths, t, prices, pastRates]);
 
 	const title = (
 		<>

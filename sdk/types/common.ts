@@ -1,5 +1,7 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
-import { providers } from 'ethers';
+import Wei from '@synthetixio/wei';
+import { BigNumberish, providers } from 'ethers';
+import { FuturesMarketAsset } from './futures';
 
 export type NetworkOverrideOptions = {
 	networkId: NetworkId;
@@ -12,3 +14,15 @@ export enum TransactionStatus {
 	Confirmed = 'Confirmed',
 	Failed = 'Failed',
 }
+
+export type CurrencyRate = BigNumberish;
+export type SynthRatesTuple = [string[], CurrencyRate[]];
+export type Price<T = Wei> = {
+	offChain?: T | undefined;
+	onChain?: T | undefined;
+};
+export type Prices<T = Wei> = Record<string, Price<T>>;
+
+export type PricesMap<T = Wei> = Partial<Record<FuturesMarketAsset, T>>;
+
+export type PriceType = 'on_chain' | 'off_chain';

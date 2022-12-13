@@ -7,11 +7,11 @@ import { TransactionStatus } from 'sdk/types/common';
 import { FuturesPosition } from 'sdk/types/futures';
 import { unserializePotentialTrade } from 'sdk/utils/futures';
 import { PositionSide } from 'sections/futures/types';
-import { selectExchangeRates } from 'state/exchange/selectors';
 import { accountType, deserializeWeiObject } from 'state/helpers';
+import { selectPrices } from 'state/prices/selectors';
 import { RootState } from 'state/store';
 import { selectWallet } from 'state/wallet/selectors';
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import { getPricesForCurrencies, newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN } from 'utils/formatters/number';
 import {
 	MarketKeyByAsset,
@@ -59,12 +59,6 @@ export const selectMarketAsset = createSelector(
 	(futures, marginType) => futures[accountType(marginType)].selectedMarketAsset
 );
 
-export const selectMarketRate = createSelector(
-	selectMarketKey,
-	selectExchangeRates,
-	(marketKey, exchangeRates) => newGetExchangeRatesForCurrencies(exchangeRates, marketKey, 'sUSD')
-);
-
 export const selectMarkets = createSelector(
 	(state: RootState) => state.futures.markets,
 	(markets) => unserializeMarkets(markets)
@@ -103,10 +97,11 @@ export const selectIsolatedPriceImpact = createSelector(
 );
 
 export const selectMarketAssetRate = createSelector(
-	(state: RootState) => state.futures[accountType(state.futures.selectedType)].selectedMarketAsset,
-	selectExchangeRates,
-	(marketAsset, exchangeRates) => {
-		return newGetExchangeRatesForCurrencies(exchangeRates, marketAsset, 'sUSD');
+	selectMarketAsset,
+	selectPrices,
+	(marketAsset, prices) => {
+		const price = prices[marketAsset];
+		return price?.offChain ?? price?.onChain ?? wei(0);
 	}
 );
 

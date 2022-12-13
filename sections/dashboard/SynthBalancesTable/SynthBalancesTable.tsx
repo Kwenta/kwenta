@@ -16,12 +16,12 @@ import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import { Price } from 'queries/rates/types';
 import { selectBalances } from 'state/balances/selectors';
-import { selectExchangeRates } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
 import { pastRatesState } from 'store/futures';
 import { sortWei } from 'utils/balances';
 import { formatNumber, zeroBN } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
+import { selectPrices } from 'state/prices/selectors';
 
 type Cell = {
 	synth: CurrencyKey;
@@ -32,7 +32,7 @@ type Cell = {
 	priceChange: Wei | undefined;
 };
 
-const calculatePriceChange = (current: Wei | null, past: Price | undefined) => {
+const calculatePriceChange = (current: Wei | null | undefined, past: Price | undefined) => {
 	if (_.isNil(current) || _.isNil(past)) {
 		return undefined;
 	}
@@ -60,14 +60,14 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
 	const pastRates = useRecoilValue(pastRatesState);
-	const exchangeRates = useAppSelector(selectExchangeRates);
+	const prices = useAppSelector(selectPrices);
 	const { synthBalances } = useAppSelector(selectBalances);
 
 	const synthTokens = useMemo(() => {
 		return synthBalances.map((synthBalance: SynthBalance) => {
 			const { currencyKey, balance, usdBalance } = synthBalance;
 
-			const price = exchangeRates && exchangeRates[currencyKey];
+			const price = prices && prices[currencyKey].offChain;
 			const pastPrice = pastRates.find((price: Price) => price.synth === currencyKey);
 
 			const description = synthsMap != null ? synthsMap[currencyKey]?.description : '';
@@ -80,7 +80,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 				priceChange: calculatePriceChange(price, pastPrice),
 			};
 		});
-	}, [pastRates, exchangeRates, synthBalances, synthsMap]);
+	}, [pastRates, prices, synthBalances, synthsMap]);
 
 	const data = [...exchangeTokens, ...synthTokens].sort((a, b) =>
 		sortWei(a.usdBalance, b.usdBalance, 'descending')

@@ -20,7 +20,6 @@ import { calculateCrossMarginFee, serializePotentialTrade } from 'sdk/utils/futu
 import { unserializeGasPrice } from 'state/app/helpers';
 import { setOpenModal } from 'state/app/reducer';
 import { fetchBalances } from 'state/balances/actions';
-import { selectEthRate } from 'state/exchange/selectors';
 import { serializeWeiObject } from 'state/helpers';
 import { AppDispatch, AppThunk, RootState } from 'state/store';
 import { ThunkConfig } from 'state/types';
@@ -92,6 +91,7 @@ import {
 	FuturesTransactionType,
 	ModifyIsolatedPositionInputs,
 } from './types';
+import { selectLatestEthPrice } from 'state/prices/selectors';
 
 export const fetchMarkets = createAsyncThunk<
 	{ markets: FuturesMarket<string>[] },
@@ -829,7 +829,7 @@ const estimateGasInteralAction = async (
 	}
 ) => {
 	const { app } = config.getState();
-	const ethPrice = selectEthRate(config.getState());
+	const ethPrice = selectLatestEthPrice(config.getState());
 
 	try {
 		const limit = await gasLimitEstimate();

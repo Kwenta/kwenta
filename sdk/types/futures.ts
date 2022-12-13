@@ -109,6 +109,10 @@ export interface FuturesMarketConfig {
 	key: FuturesMarketKey;
 	asset: FuturesMarketAsset;
 	supports: 'mainnet' | 'testnet' | 'both';
+	pythIds?: {
+		mainnet: string;
+		testnet: string;
+	};
 	disabled?: boolean;
 }
 

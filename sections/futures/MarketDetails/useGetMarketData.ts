@@ -9,6 +9,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useExternalPriceQuery from 'queries/rates/useExternalPriceQuery';
 import {
 	selectMarketAsset,
+	selectMarketAssetRate,
 	selectMarketInfo,
 	selectMarketKey,
 	selectMarketVolumes,
@@ -32,6 +33,7 @@ const useGetMarketData = (mobile?: boolean) => {
 
 	const pastRates = useRecoilValue(pastRatesState);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
+	const marketPrice = useAppSelector(selectMarketAssetRate);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
@@ -47,7 +49,6 @@ const useGetMarketData = (mobile?: boolean) => {
 	const data: MarketData = useMemo(() => {
 		const fundingValue = marketInfo?.currentFundingRate;
 
-		const marketPrice = wei(marketInfo?.price ?? 0);
 		const marketName = `${marketInfo?.marketName ?? t('futures.market.info.default-market')}`;
 
 		const futuresTradingVolume = marketInfo?.marketKey
@@ -180,6 +181,7 @@ const useGetMarketData = (mobile?: boolean) => {
 		externalPrice,
 		pastPrice?.price,
 		minDecimals,
+		marketPrice,
 		t,
 	]);
 

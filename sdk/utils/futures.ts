@@ -34,6 +34,7 @@ import {
 } from 'state/futures/types';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
+import { NetworkId } from '@synthetixio/contracts-interface';
 
 export const getFuturesEndpoint = (networkId: number): string => {
 	return FUTURES_ENDPOINTS[networkId] || FUTURES_ENDPOINTS[10];
@@ -377,3 +378,9 @@ export const calculateCrossMarginFee = (
 		orderType === 'limit' ? feeRates.limitOrderFee : feeRates.stopOrderFee;
 	return susdSize.mul(advancedOrderFeeRate);
 };
+
+export const getPythNetworkUrl = (networkId: NetworkId) => {
+	return networkId === 420 ? 'https://xc-testnet.pyth.network' : 'https://xc-mainnet.pyth.network';
+};
+
+export const normalizePythId = (id: string) => (id.startsWith('0x') ? id : '0x' + id);

@@ -1,17 +1,18 @@
 import Wei from '@synthetixio/wei';
 import { useRecoilValue } from 'recoil';
 
-import { selectExchangeRates } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
+import { selectPrices } from 'state/prices/selectors';
 import { priceCurrencyState } from 'store/app';
 
 const useSelectedPriceCurrency = () => {
+	// TODO: Move to redux
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
-	const exchangeRates = useAppSelector(selectExchangeRates);
-	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
+	const prices = useAppSelector(selectPrices);
+	const selectPriceCurrencyRate = prices && prices[selectedPriceCurrency.name]?.onChain;
 
 	const getPriceAtCurrentRate = (price: Wei) =>
-		selectPriceCurrencyRate != null ? price.div(selectPriceCurrencyRate) : price;
+		selectPriceCurrencyRate ? price.div(selectPriceCurrencyRate) : price;
 
 	return {
 		selectPriceCurrencyRate,

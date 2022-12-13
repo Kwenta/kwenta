@@ -4,6 +4,7 @@ import { TFunction } from 'i18next';
 import { Dictionary } from 'lodash';
 
 import { FuturesOrderType } from 'queries/futures/types';
+import { Prices, PricesMap } from 'sdk/types/common';
 import {
 	DelayedOrder,
 	FuturesMarket,
@@ -602,3 +603,10 @@ export const serializeTradeFees = (fees: CrossMarginTradeFees) => ({
 	limitStopOrderFee: fees.limitStopOrderFee.toString(),
 	total: fees.total.toString(),
 });
+
+export const serializePrices = (prices: PricesMap) => {
+	return Object.entries(prices).reduce<PricesMap<string>>((acc, [key, price]) => {
+		acc[key as FuturesMarketAsset] = price.toString();
+		return acc;
+	}, {});
+};

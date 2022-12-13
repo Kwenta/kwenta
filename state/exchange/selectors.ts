@@ -5,6 +5,7 @@ import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
 import { Rates } from 'queries/rates/types';
 import { selectTotalUSDBalanceWei } from 'state/balances/selectors';
 import { sdk } from 'state/config';
+import { selectPrices } from 'state/prices/selectors';
 import type { RootState } from 'state/store';
 import { FetchStatus } from 'state/types';
 import { selectIsWalletConnected } from 'state/wallet/selectors';
@@ -213,23 +214,7 @@ export const selectIsSubmissionDisabled = createSelector(
 	(submissionDisabledReason) => !!submissionDisabledReason
 );
 
-export const selectExchangeRates = createSelector(
-	(state: RootState) => state.exchange.exchangeRates,
-	(exchangeRates) =>
-		Object.entries(exchangeRates).reduce((acc, [key, value]) => {
-			acc[key] = wei(value);
-			return acc;
-		}, {} as Rates)
-);
-
-export const selectUsdRateWei = createSelector(
-	selectExchangeRates,
-	(exchangeRates) => exchangeRates['sUSD']
-);
-
-export const selectEthRate = createSelector(selectExchangeRates, (exchangeRates) =>
-	newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', 'sUSD')
-);
+export const selectUsdRateWei = createSelector(selectPrices, (prices) => prices['sUSD'].onChain);
 
 export const selectTotalTradePrice = createSelector(
 	selectQuoteAmountWei,

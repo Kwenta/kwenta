@@ -1,5 +1,6 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
+import { BigNumberish } from 'ethers';
 
 export type SynthBalance<T = Wei> = {
 	currencyKey: string;
