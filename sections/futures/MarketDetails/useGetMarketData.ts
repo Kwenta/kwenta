@@ -6,7 +6,6 @@ import { useRecoilValue } from 'recoil';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useExternalPriceQuery from 'queries/rates/useExternalPriceQuery';
 import {
 	selectMarketAsset,
 	selectMarketInfo,
@@ -35,8 +34,6 @@ const useGetMarketData = (mobile?: boolean) => {
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
-	const externalPriceQuery = useExternalPriceQuery(marketKey);
-	const externalPrice = externalPriceQuery?.data ?? 0;
 	const minDecimals =
 		isFiatCurrency(selectedPriceCurrency.name) && isDecimalFour(marketKey)
 			? DEFAULT_CRYPTO_DECIMALS
@@ -180,7 +177,6 @@ const useGetMarketData = (mobile?: boolean) => {
 		marketInfo,
 		futuresVolumes,
 		selectedPriceCurrency.name,
-		externalPrice,
 		pastPrice?.price,
 		minDecimals,
 		t,
