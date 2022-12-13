@@ -14,7 +14,7 @@ import TableBodyRow, { TableCell } from './TableBodyRow';
 export type TablePalette = 'primary';
 
 const CARD_HEIGHT = '40px';
-const MAX_PAGE_ROWS = 100;
+const MAX_PAGE_ROWS = 10;
 const MAX_TOTAL_ROWS = 9999;
 
 type ColumnWithSorting<D extends object = {}> = Column<D> & {
