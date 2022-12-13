@@ -6,8 +6,8 @@ import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import Connector from 'containers/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { getDisplayAsset } from 'sdk/utils/futures';
 import { setOpenModal } from 'state/app/reducer';
 import { modifyIsolatedPosition, modifyIsolatedPositionEstimateGas } from 'state/futures/actions';
 import {
@@ -31,11 +31,9 @@ import { zeroBN, formatCurrency, formatDollars, formatPercent } from 'utils/form
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
 import { PositionSide } from '../types';
 import { MobileConfirmTradeButton } from './TradeConfirmationModal';
-import { getDisplayAsset } from 'sdk/utils/futures';
 
 const NextPriceConfirmationModal: FC = () => {
 	const { t } = useTranslation();
-	const { synthsMap } = Connector.useContainer();
 	const isDisclaimerDisplayed = useAppSelector(selectNextPriceDisclaimer);
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const dispatch = useAppDispatch();
@@ -67,10 +65,10 @@ const NextPriceConfirmationModal: FC = () => {
 	}, [nativeSizeDelta, positionSize]);
 
 	// TODO: check these fees
-	const { commitDeposit } = useMemo(() => computeDelayedOrderFee(marketInfo, nativeSizeDelta), [
-		marketInfo,
-		nativeSizeDelta,
-	]);
+	const { commitDeposit, delayedOrderFee } = useMemo(
+		() => computeDelayedOrderFee(marketInfo, nativeSizeDelta),
+		[marketInfo, nativeSizeDelta]
+	);
 
 	// TODO: check this deposit
 	const totalDeposit = useMemo(() => {
@@ -98,10 +96,6 @@ const NextPriceConfirmationModal: FC = () => {
 				),
 			},
 			{
-				label: t('futures.market.user.position.modal.deposit'),
-				value: formatDollars(totalDeposit),
-			},
-			{
 				label: 'estimated fill price',
 				value: formatDollars(potentialTradeDetails?.price ?? zeroBN, { isAssetPrice: true }),
 			},
@@ -124,11 +118,15 @@ const NextPriceConfirmationModal: FC = () => {
 					: '',
 			},
 			{
-				label: t('futures.market.user.position.modal.fee-total'),
-				value: formatCurrency(selectedPriceCurrency.name, totalDeposit, {
+				label: t('futures.market.user.position.modal.fee-estimated'),
+				value: formatCurrency(selectedPriceCurrency.name, delayedOrderFee ?? zeroBN, {
 					minDecimals: 2,
 					sign: selectedPriceCurrency.sign,
 				}),
+			},
+			{
+				label: t('futures.market.user.position.modal.deposit'),
+				value: formatDollars(totalDeposit),
 			},
 		],
 		[
@@ -136,8 +134,8 @@ const NextPriceConfirmationModal: FC = () => {
 			orderDetails,
 			orderType,
 			potentialTradeDetails,
+			delayedOrderFee,
 			marketAsset,
-			synthsMap,
 			leverageSide,
 			totalDeposit,
 			selectedPriceCurrency.name,

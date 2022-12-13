@@ -871,6 +871,7 @@
 						"ROI": "ROI",
 						"fee": "Protocol Fee",
 						"fee-total": "Total Fees",
+						"fee-estimated": "Estimated Fees",
 						"gas-fee": "Network Gas Fee",
 						"order-type": "Order Type",
 						"market-order": "Market",
