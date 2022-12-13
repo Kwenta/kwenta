@@ -1,5 +1,5 @@
 import Wei from '@synthetixio/wei';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, memo, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -23,105 +23,107 @@ type StakeCardProps = {
 	onApprove?: () => void;
 };
 
-const StakeCard: FC<StakeCardProps> = ({
-	title,
-	stakeBalance,
-	unstakeBalance,
-	onStake,
-	onUnstake,
-	stakeEnabled = true,
-	unstakeEnabled = true,
-	isApproved,
-	onApprove,
-}) => {
-	const { t } = useTranslation();
+const StakeCard: FC<StakeCardProps> = memo(
+	({
+		title,
+		stakeBalance,
+		unstakeBalance,
+		onStake,
+		onUnstake,
+		stakeEnabled = true,
+		unstakeEnabled = true,
+		isApproved,
+		onApprove,
+	}) => {
+		const { t } = useTranslation();
 
-	const [amount, setAmount] = useState('');
-	const [activeTab, setActiveTab] = useState(0);
+		const [amount, setAmount] = useState('');
+		const [activeTab, setActiveTab] = useState(0);
 
-	const balance = useMemo(() => {
-		return activeTab === 0 ? stakeBalance : unstakeBalance;
-	}, [activeTab, stakeBalance, unstakeBalance]);
+		const balance = useMemo(() => {
+			return activeTab === 0 ? stakeBalance : unstakeBalance;
+		}, [activeTab, stakeBalance, unstakeBalance]);
 
-	const isEnabled = useMemo(() => {
-		return toWei(amount).gt(0) && balance.gt(0);
-	}, [amount, balance]);
+		const isEnabled = useMemo(() => {
+			return toWei(amount).gt(0) && balance.gt(0);
+		}, [amount, balance]);
 
-	const isStakeEnabled = useMemo(() => {
-		return activeTab === 0 && isEnabled && stakeEnabled;
-	}, [activeTab, isEnabled, stakeEnabled]);
+		const isStakeEnabled = useMemo(() => {
+			return activeTab === 0 && isEnabled && stakeEnabled;
+		}, [activeTab, isEnabled, stakeEnabled]);
 
-	const isUnstakeEnabled = useMemo(() => {
-		return activeTab === 1 && isEnabled && unstakeEnabled;
-	}, [activeTab, isEnabled, unstakeEnabled]);
+		const isUnstakeEnabled = useMemo(() => {
+			return activeTab === 1 && isEnabled && unstakeEnabled;
+		}, [activeTab, isEnabled, unstakeEnabled]);
 
-	const isDisabled = useMemo(() => {
-		return activeTab === 0 ? !isStakeEnabled : !isUnstakeEnabled;
-	}, [activeTab, isStakeEnabled, isUnstakeEnabled]);
+		const isDisabled = useMemo(() => {
+			return activeTab === 0 ? !isStakeEnabled : !isUnstakeEnabled;
+		}, [activeTab, isStakeEnabled, isUnstakeEnabled]);
 
-	const balanceString = useMemo(() => {
-		return truncateNumbers(balance, DEFAULT_CRYPTO_DECIMALS);
-	}, [balance]);
+		const balanceString = useMemo(() => {
+			return truncateNumbers(balance, DEFAULT_CRYPTO_DECIMALS);
+		}, [balance]);
 
-	const onMaxClick = useCallback(() => {
-		setAmount(truncateNumbers(balance, DEFAULT_TOKEN_DECIMALS));
-	}, [balance]);
+		const onMaxClick = useCallback(() => {
+			setAmount(truncateNumbers(balance, DEFAULT_TOKEN_DECIMALS));
+		}, [balance]);
 
-	const handleTabChange = useCallback((tabIndex: number) => {
-		setAmount('');
-		setActiveTab(tabIndex);
-	}, []);
+		const handleTabChange = useCallback((tabIndex: number) => {
+			setAmount('');
+			setActiveTab(tabIndex);
+		}, []);
 
-	const handleSubmit = useCallback(() => {
-		if (!isApproved) {
-			onApprove?.();
-		} else if (isStakeEnabled) {
-			onStake(amount);
-		} else if (isUnstakeEnabled) {
-			onUnstake(amount);
-		}
-	}, [isStakeEnabled, isUnstakeEnabled, onStake, onUnstake, amount, onApprove, isApproved]);
+		const handleSubmit = useCallback(() => {
+			if (!isApproved) {
+				onApprove?.();
+			} else if (isStakeEnabled) {
+				onStake(amount);
+			} else if (isUnstakeEnabled) {
+				onUnstake(amount);
+			}
+		}, [isStakeEnabled, isUnstakeEnabled, onStake, onUnstake, amount, onApprove, isApproved]);
 
-	const handleChange = useCallback((_, newValue: string) => {
-		if (newValue !== '' && newValue.indexOf('.') === -1) {
-			setAmount(parseFloat(newValue).toString());
-		} else {
-			setAmount(newValue);
-		}
-	}, []);
+		const handleChange = useCallback((_, newValue: string) => {
+			if (newValue !== '' && newValue.indexOf('.') === -1) {
+				setAmount(parseFloat(newValue).toString());
+			} else {
+				setAmount(newValue);
+			}
+		}, []);
 
-	return (
-		<StakingInputCardContainer>
-			<SegmentedControl
-				values={[
-					t('dashboard.stake.tabs.stake-table.stake'),
-					t('dashboard.stake.tabs.stake-table.unstake'),
-				]}
-				onChange={handleTabChange}
-				selectedIndex={activeTab}
-			/>
-			<StakeInputContainer>
-				<StakeInputHeader>
-					<div>{title}</div>
-					<StyledFlexDivRowCentered>
-						<div>{t('dashboard.stake.tabs.stake-table.balance')}</div>
-						<div className="max" onClick={onMaxClick}>
-							{balanceString}
-						</div>
-					</StyledFlexDivRowCentered>
-				</StakeInputHeader>
-				<StyledInput value={amount} onChange={handleChange} />
-			</StakeInputContainer>
-			<Button fullWidth variant="flat" size="sm" disabled={isDisabled} onClick={handleSubmit}>
-				{!isApproved
-					? t('dashboard.stake.tabs.stake-table.approve')
-					: activeTab === 0
-					? t('dashboard.stake.tabs.stake-table.stake')
-					: t('dashboard.stake.tabs.stake-table.unstake')}
-			</Button>
-		</StakingInputCardContainer>
-	);
-};
+		return (
+			<StakingInputCardContainer>
+				<SegmentedControl
+					values={[
+						t('dashboard.stake.tabs.stake-table.stake'),
+						t('dashboard.stake.tabs.stake-table.unstake'),
+					]}
+					onChange={handleTabChange}
+					selectedIndex={activeTab}
+				/>
+				<StakeInputContainer>
+					<StakeInputHeader>
+						<div>{title}</div>
+						<StyledFlexDivRowCentered>
+							<div>{t('dashboard.stake.tabs.stake-table.balance')}</div>
+							<div className="max" onClick={onMaxClick}>
+								{balanceString}
+							</div>
+						</StyledFlexDivRowCentered>
+					</StakeInputHeader>
+					<StyledInput value={amount} onChange={handleChange} />
+				</StakeInputContainer>
+				<Button fullWidth variant="flat" size="sm" disabled={isDisabled} onClick={handleSubmit}>
+					{!isApproved
+						? t('dashboard.stake.tabs.stake-table.approve')
+						: activeTab === 0
+						? t('dashboard.stake.tabs.stake-table.stake')
+						: t('dashboard.stake.tabs.stake-table.unstake')}
+				</Button>
+			</StakingInputCardContainer>
+		);
+	}
+);
 
 const StyledFlexDivRowCentered = styled(FlexDivRowCentered)`
 	column-gap: 5px;

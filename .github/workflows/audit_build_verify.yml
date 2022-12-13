@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v2
+        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # pin@v2
 
       - name: Audit dependencies
         run: npm audit --audit-level=critical
@@ -29,7 +29,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v2
+        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # pin@v2
 
       - name: Set npm cache directory
         run: npm config set cache .npm-cache --global
@@ -79,7 +79,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v2
+        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # pin@v2
 
       - name: Set npm cache directory
         run: npm config set cache .npm-cache --global
