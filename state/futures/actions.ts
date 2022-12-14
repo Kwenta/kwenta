@@ -17,7 +17,11 @@ import {
 	FuturesVolumes,
 	PositionSide,
 } from 'sdk/types/futures';
-import { calculateCrossMarginFee, serializePotentialTrade } from 'sdk/utils/futures';
+import {
+	calculateCrossMarginFee,
+	getTradeStatusMessage,
+	serializePotentialTrade,
+} from 'sdk/utils/futures';
 import { unserializeGasPrice } from 'state/app/helpers';
 import { setOpenModal } from 'state/app/reducer';
 import { fetchBalances } from 'state/balances/actions';
@@ -66,6 +70,7 @@ import {
 } from './reducer';
 import {
 	selectCrossMarginAccount,
+	selectCrossMarginBalanceInfo,
 	selectCrossMarginMarginDelta,
 	selectCrossMarginOrderPrice,
 	selectCrossMarginSelectedLeverage,
@@ -304,6 +309,8 @@ export const fetchCrossMarginTradePreview = createAsyncThunk<
 	async (inputs, { dispatch, getState, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
 		const account = selectFuturesAccount(getState());
+		const marginDelta = selectCrossMarginMarginDelta(getState());
+		const { freeMargin } = selectCrossMarginBalanceInfo(getState());
 		if (!account) throw new Error('No account to fetch orders');
 		if (!marketInfo) throw new Error('No market info');
 		const leverageSide = selectLeverageSide(getState());
@@ -314,6 +321,12 @@ export const fetchCrossMarginTradePreview = createAsyncThunk<
 				marketInfo.market,
 				{ ...inputs, leverageSide }
 			);
+			if (marginDelta.gt(freeMargin) && preview.status === 0) {
+				// Show insufficient margin message
+				preview.status = 7;
+				preview.statusMessage = getTradeStatusMessage(7);
+				preview.showStatus = true;
+			}
 			return serializePotentialTrade(preview);
 		} catch (err) {
 			dispatch(handleCrossMarginPreviewError(err.message));
@@ -396,7 +409,6 @@ const stageCrossMarginSizeChange = createAsyncThunk<void, void, ThunkConfig>(
 export const editExistingPositionLeverage = createAsyncThunk<void, string, ThunkConfig>(
 	'futures/editExistingPositionLeverage',
 	async (leverage, { dispatch, getState }) => {
-		const tradeInputs = selectCrossMarginTradeInputs(getState());
 		const fees = selectCrossMarginTradeFees(getState());
 		const position = selectPosition(getState());
 		const rate = selectMarketAssetRate(getState());
@@ -404,8 +416,8 @@ export const editExistingPositionLeverage = createAsyncThunk<void, string, Thunk
 		dispatch(setCrossMarginLeverage(leverage));
 		const marginDelta = await calculateMarginDelta(
 			{
-				susdSizeDelta: tradeInputs.susdSizeDelta,
-				nativeSizeDelta: tradeInputs.nativeSizeDelta,
+				susdSizeDelta: wei(0),
+				nativeSizeDelta: wei(0),
 				price: price ? wei(price) : rate,
 				leverage: wei(leverage),
 			},
