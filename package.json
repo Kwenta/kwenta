@@ -57,7 +57,6 @@
 		"graphql-request": "3.4.0",
 		"i18next": "19.7.0",
 		"imagemin-mozjpeg": "^10.0.0",
-		"immer": "9.0.6",
 		"intercept-stdout": "^0.1.2",
 		"lightweight-charts": "^3.8.0",
 		"lodash": "4.17.21",
