@@ -5,7 +5,7 @@ import { ethers } from 'ethers';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { Rates } from 'queries/rates/types';
-import { fetchSynthBalances } from 'state/balances/actions';
+import { fetchBalances } from 'state/balances/actions';
 import { AppThunk } from 'state/store';
 import { FetchStatus, ThunkConfig } from 'state/types';
 import { toWei, truncateNumbers } from 'utils/formatters/number';
@@ -64,7 +64,6 @@ export const submitExchange = createAsyncThunk<void, void, ThunkConfig>(
 	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const {
 			exchange: { quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount },
-			wallet: { walletAddress },
 		} = getState();
 
 		if (quoteCurrencyKey && baseCurrencyKey) {
@@ -79,10 +78,10 @@ export const submitExchange = createAsyncThunk<void, void, ThunkConfig>(
 				monitorTransaction({
 					txHash: hash,
 					onTxConfirmed: () => {
-						if (walletAddress) dispatch(fetchSynthBalances(walletAddress));
 						dispatch(fetchNumEntries());
 						dispatch({ type: 'exchange/setQuoteAmount', payload: '' });
 						dispatch({ type: 'exchange/setBaseAmount', payload: '' });
+						dispatch(fetchBalances());
 					},
 				});
 			}
@@ -92,17 +91,14 @@ export const submitExchange = createAsyncThunk<void, void, ThunkConfig>(
 
 export const submitRedeem = createAsyncThunk<void, void, ThunkConfig>(
 	'exchange/submitRedeem',
-	async (_, { getState, dispatch, extra: { sdk } }) => {
-		const {
-			wallet: { walletAddress },
-		} = getState();
+	async (_, { dispatch, extra: { sdk } }) => {
 		const hash = await sdk.exchange.handleRedeem();
 
 		if (hash) {
 			monitorTransaction({
 				txHash: hash,
 				onTxConfirmed: () => {
-					if (walletAddress) dispatch(fetchSynthBalances(walletAddress));
+					dispatch(fetchBalances());
 					dispatch(fetchRedeemableBalances());
 				},
 			});

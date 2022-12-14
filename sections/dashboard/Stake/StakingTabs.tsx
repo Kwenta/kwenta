@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -7,13 +7,12 @@ import LabelContainer from 'components/Nav/DropDownLabel';
 import Select from 'components/Select';
 import { DropdownIndicator, IndicatorSeparator } from 'components/Select/Select';
 import { TabPanel } from 'components/Tab';
-import Connector from 'containers/Connector';
-import { useStakingContext } from 'contexts/StakingContext';
 import useIsL2 from 'hooks/useIsL2';
-import { getEpochDetails } from 'queries/staking/utils';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { setSelectedEpoch } from 'state/staking/reducer';
+import { selectEpochData, selectSelectedEpoch } from 'state/staking/selectors';
 import { FlexDivRowCentered } from 'styles/common';
 import media from 'styles/media';
-import { formatShortDate, toJSTimestamp } from 'utils/formatters/date';
 
 import EscrowTab from './EscrowTab';
 import RedemptionTab from './RedemptionTab';
@@ -21,77 +20,41 @@ import { StakeTab } from './StakingPortfolio';
 import StakingTab from './StakingTab';
 import TradingRewardsTab from './TradingRewardsTab';
 
-type EpochLabel = {
+type EpochValue = {
 	period: number;
 	start: number;
 	end: number;
-	startDate: string;
-	endDate: string;
 	label: string;
 };
 
 type StakingTabsProp = {
-	currentTab?: StakeTab;
+	currentTab: StakeTab;
+	onChangeTab(tab: StakeTab): () => void;
 };
 
-const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab }) => {
+const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab, onChangeTab }) => {
 	const { t } = useTranslation();
-	const { network } = Connector.useContainer();
 	const isL2 = useIsL2();
-	const { epochPeriod, periods } = useStakingContext();
+	const dispatch = useAppDispatch();
 
-	const [period, setPeriod] = useState(epochPeriod);
-	const [start, setStart] = useState(0);
-	const [end, setEnd] = useState(0);
-	const [currentEpochLabel, setCurrentEpochLabel] = useState(
-		`Epoch 1: Oct 23, 2022 - Oct 30, 2022`
+	const epochData = useAppSelector(selectEpochData);
+	const selectedEpoch = useAppSelector(selectSelectedEpoch);
+
+	const handleChangeEpoch = useCallback(
+		(value: EpochValue) => () => {
+			dispatch(setSelectedEpoch(value.period));
+		},
+		[dispatch]
 	);
-	const [activeTab, setActiveTab] = useState(StakeTab.Staking);
 
-	useEffect(() => {
-		setActiveTab(currentTab !== undefined ? currentTab : StakeTab.Staking);
-	}, [currentTab]);
-
-	const handleTabSwitch = useCallback((tab: StakeTab) => () => setActiveTab(tab), []);
-
-	const epochData = useMemo(() => {
-		const epochData = periods.map((i) => {
-			const { epochStart, epochEnd } = getEpochDetails(network?.id, i);
-			const startDate = formatShortDate(new Date(toJSTimestamp(epochStart)));
-			const endDate = formatShortDate(new Date(toJSTimestamp(epochEnd)));
-			const label = `Epoch ${i}: ${startDate} - ${endDate}`;
-
-			setPeriod(i);
-			setStart(epochStart ?? 0);
-			setEnd(epochEnd ?? 0);
-			setCurrentEpochLabel(label);
-
-			return {
-				period: i,
-				start: epochStart,
-				end: epochEnd,
-				startDate,
-				endDate,
-				label,
-			};
-		});
-		return epochData ?? [];
-	}, [network?.id, periods]);
-
-	const formatOptionLabel = ({ label, start, end, period }: EpochLabel) => {
-		return (
-			<div
-				onClick={() => {
-					setPeriod(period);
-					setStart(start ?? 0);
-					setEnd(end ?? 0);
-					setCurrentEpochLabel(label);
-				}}
-			>
-				<SelectLabelContainer>{label}</SelectLabelContainer>
+	const formatOptionLabel = useCallback(
+		(option: EpochValue) => (
+			<div onClick={handleChangeEpoch(option)}>
+				<SelectLabelContainer>{option.label}</SelectLabelContainer>
 			</div>
-		);
-	};
+		),
+		[handleChangeEpoch]
+	);
 
 	return (
 		<StakingTabsContainer>
@@ -99,13 +62,13 @@ const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab }) => {
 				<TabButtons>
 					<TabButton
 						title={t('dashboard.stake.tabs.staking.title')}
-						onClick={handleTabSwitch(StakeTab.Staking)}
-						active={activeTab === StakeTab.Staking}
+						onClick={onChangeTab(StakeTab.Staking)}
+						active={currentTab === StakeTab.Staking}
 					/>
 					<TabButton
 						title={t('dashboard.stake.tabs.escrow.title')}
-						onClick={handleTabSwitch(StakeTab.Escrow)}
-						active={activeTab === StakeTab.Escrow}
+						onClick={onChangeTab(StakeTab.Escrow)}
+						active={currentTab === StakeTab.Escrow}
 					/>
 					<TabButton
 						title={
@@ -113,16 +76,16 @@ const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab }) => {
 								? t('dashboard.stake.tabs.trading-rewards.title')
 								: t('dashboard.stake.tabs.trading-rewards.mobile-title')
 						}
-						onClick={handleTabSwitch(StakeTab.TradingRewards)}
-						active={activeTab === StakeTab.TradingRewards}
+						onClick={onChangeTab(StakeTab.TradingRewards)}
+						active={currentTab === StakeTab.TradingRewards}
 					/>
 					<TabButton
 						title={t('dashboard.stake.tabs.redemption.title')}
-						onClick={handleTabSwitch(StakeTab.Redemption)}
-						active={activeTab === StakeTab.Redemption}
+						onClick={onChangeTab(StakeTab.Redemption)}
+						active={currentTab === StakeTab.Redemption}
 					/>
 				</TabButtons>
-				<StyledFlexDivRowCentered active={activeTab === StakeTab.TradingRewards}>
+				<StyledFlexDivRowCentered active={currentTab === StakeTab.TradingRewards}>
 					{window.innerWidth < 768 && (
 						<PeriodLabel>{t('dashboard.stake.tabs.staking.current-trading-period')}</PeriodLabel>
 					)}
@@ -131,33 +94,32 @@ const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab }) => {
 						formatOptionLabel={formatOptionLabel}
 						controlHeight={41}
 						options={epochData.sort((a, b) => b.period - a.period)}
-						optionPadding={'0px'}
-						value={{
-							label: currentEpochLabel,
-							period,
-							start,
-							end,
-						}}
+						optionPadding="0px"
+						value={selectedEpoch}
 						menuWidth={240}
 						components={{ IndicatorSeparator, DropdownIndicator }}
 						isSearchable={false}
 						variant="flat"
 						isDisabled={!isL2}
-					></StakingSelect>
+					/>
 				</StyledFlexDivRowCentered>
 			</StakingTabsHeader>
 
 			<div>
-				<TabPanel name={StakeTab.Staking} activeTab={activeTab}>
+				<TabPanel name={StakeTab.Staking} activeTab={currentTab}>
 					<StakingTab />
 				</TabPanel>
-				<TabPanel name={StakeTab.TradingRewards} activeTab={activeTab}>
-					<TradingRewardsTab period={period} start={start} end={end} />
+				<TabPanel name={StakeTab.TradingRewards} activeTab={currentTab}>
+					<TradingRewardsTab
+						period={selectedEpoch.period}
+						start={selectedEpoch.start}
+						end={selectedEpoch.end}
+					/>
 				</TabPanel>
-				<TabPanel name={StakeTab.Escrow} activeTab={activeTab}>
+				<TabPanel name={StakeTab.Escrow} activeTab={currentTab}>
 					<EscrowTab />
 				</TabPanel>
-				<TabPanel name={StakeTab.Redemption} activeTab={activeTab}>
+				<TabPanel name={StakeTab.Redemption} activeTab={currentTab}>
 					<RedemptionTab />
 				</TabPanel>
 			</div>
@@ -178,11 +140,17 @@ const StakingSelect = styled(Select)`
 		border-radius: 20px;
 		background: ${(props) => props.theme.colors.selectedTheme.surfaceFill};
 	}
+
 	.react-select__value-container {
 		padding: 0;
 	}
+
 	.react-select__single-value > div > div {
 		font-size: 12px;
+	}
+
+	.react-select__dropdown-indicator {
+		margin-right: 10px;
 	}
 `;
 

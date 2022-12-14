@@ -4,27 +4,26 @@ import styled from 'styled-components';
 
 import TVChart from 'components/TVChart';
 import useAverageEntryPrice from 'hooks/useAverageEntryPrice';
-import { selectMarketAsset } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
 import {
-	positionState,
-	potentialTradeDetailsState,
-	positionHistoryState,
-	futuresAccountTypeState,
-	openOrdersState,
-} from 'store/futures';
+	selectFuturesType,
+	selectMarketAsset,
+	selectOpenOrders,
+	selectPosition,
+	selectTradePreview,
+} from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { positionHistoryState } from 'store/futures';
 
 export default function PositionChart() {
-	const [isChartReady, setIsChartReady] = useState(false);
 	const marketAsset = useAppSelector(selectMarketAsset);
-
-	const position = useRecoilValue(positionState);
+	const position = useAppSelector(selectPosition);
 	const positionHistory = useRecoilValue(positionHistoryState);
-	const futuresAccountType = useRecoilValue(futuresAccountTypeState);
-	const openOrders = useRecoilValue(openOrdersState);
-	const { data: previewTrade } = useRecoilValue(potentialTradeDetailsState);
+	const futuresAccountType = useAppSelector(selectFuturesType);
+	const openOrders = useAppSelector(selectOpenOrders);
+	const previewTrade = useAppSelector(selectTradePreview);
 
 	const [showOrderLines, setShowOrderLines] = useState(true);
+	const [isChartReady, setIsChartReady] = useState(false);
 
 	const subgraphPosition = useMemo(() => {
 		return positionHistory[futuresAccountType].find((p) => p.isOpen && p.asset === marketAsset);

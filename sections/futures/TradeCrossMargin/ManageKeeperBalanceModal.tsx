@@ -1,7 +1,6 @@
 import { wei } from '@synthetixio/wei';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import ErrorView from 'components/Error';
@@ -13,7 +12,8 @@ import Connector from 'containers/Connector';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
-import { crossMarginAccountOverviewState, openOrdersState } from 'store/futures';
+import { selectCrossMarginBalanceInfo, selectOpenOrders } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import { isUserDeniedError } from 'utils/formatters/error';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -39,10 +39,10 @@ export default function ManageKeeperBalanceModal({ onDismiss, defaultType }: Pro
 	const { t } = useTranslation();
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const { provider, walletAddress } = Connector.useContainer();
-	const { refetchUntilUpdate } = useRefetchContext();
+	const { handleRefetch } = useRefetchContext();
 
-	const { keeperEthBal } = useRecoilValue(crossMarginAccountOverviewState);
-	const openOrders = useRecoilValue(openOrdersState);
+	const { keeperEthBal } = useAppSelector(selectCrossMarginBalanceInfo);
+	const openOrders = useAppSelector(selectOpenOrders);
 
 	const [amount, setAmount] = useState('');
 	const [isMax, setMax] = useState(false);
@@ -76,7 +76,7 @@ export default function ManageKeeperBalanceModal({ onDismiss, defaultType }: Pro
 				monitorTransaction({
 					txHash: tx.hash,
 					onTxConfirmed: async () => {
-						refetchUntilUpdate('account-margin-change');
+						handleRefetch('account-margin-change');
 						setTransacting(false);
 						onDismiss();
 					},
@@ -89,7 +89,7 @@ export default function ManageKeeperBalanceModal({ onDismiss, defaultType }: Pro
 			}
 			logError(err);
 		}
-	}, [keeperEthBal, crossMarginAccountContract, amount, t, refetchUntilUpdate, onDismiss]);
+	}, [keeperEthBal, crossMarginAccountContract, amount, t, onDismiss, handleRefetch]);
 
 	const onDepositKeeperDeposit = useCallback(async () => {
 		// if (!crossMarginAccountContract || !signer) return;

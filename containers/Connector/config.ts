@@ -14,11 +14,12 @@ import { infuraProvider } from 'wagmi/providers/infura';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { publicProvider } from 'wagmi/providers/public';
 
+import Frame from 'components/Rainbowkit/Frame';
 import Safe from 'components/Rainbowkit/Gnosis';
 import Tally from 'components/Rainbowkit/Tally';
 import { BLAST_NETWORK_LOOKUP } from 'constants/network';
 
-const { chains, provider } = configureChains(
+const { chains, provider, webSocketProvider } = configureChains(
 	[chain.optimism, chain.mainnet, chain.optimismGoerli, chain.goerli],
 	[
 		infuraProvider({
@@ -29,9 +30,15 @@ const { chains, provider } = configureChains(
 		jsonRpcProvider({
 			rpc: (networkChain) => {
 				return !BLAST_NETWORK_LOOKUP[networkChain.id]
-					? { http: networkChain.rpcUrls.default }
+					? {
+							http: networkChain.rpcUrls.default,
+							webSocket: networkChain.rpcUrls.default.replace('https', 'wss'),
+					  }
 					: {
 							http: `https://${BLAST_NETWORK_LOOKUP[networkChain.id]}.blastapi.io/${
+								process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID
+							}`,
+							webSocket: `wss://${BLAST_NETWORK_LOOKUP[networkChain.id]}.blastapi.io/${
 								process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID
 							}`,
 					  };
@@ -61,6 +68,7 @@ const connectors = connectorsForWallets([
 			braveWallet({ chains, shimDisconnect: true }),
 			trustWallet({ chains }),
 			Tally({ chains, shimDisconnect: true }),
+			Frame({ chains, shimDisconnect: true }),
 			injectedWallet({ chains, shimDisconnect: true }),
 		],
 	},
@@ -70,6 +78,7 @@ export const wagmiClient = createClient({
 	autoConnect: true,
 	connectors,
 	provider,
+	webSocketProvider,
 });
 
 export { chains };

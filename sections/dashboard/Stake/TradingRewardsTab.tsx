@@ -1,128 +1,86 @@
 import { wei } from '@synthetixio/wei';
+import { BigNumber } from 'ethers';
 import { formatEther } from 'ethers/lib/utils.js';
-import { useMemo } from 'react';
+import { useCallback, useMemo, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useContractReads, useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 import HelpIcon from 'assets/svg/app/question-mark.svg';
 import Button from 'components/Button';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import Connector from 'containers/Connector';
-import { monitorTransaction } from 'contexts/RelayerContext';
-import { useStakingContext } from 'contexts/StakingContext';
-import useGetFiles from 'queries/files/useGetFiles';
+import useGetFile from 'queries/files/useGetFile';
 import useGetFuturesFee from 'queries/staking/useGetFuturesFee';
 import useGetFuturesFeeForAccount from 'queries/staking/useGetFuturesFeeForAccount';
 import {
-	ClaimParams,
-	EpochDataProps,
 	FuturesFeeForAccountProps,
 	FuturesFeeProps,
 	TradingRewardProps,
 } from 'queries/staking/utils';
+import { BigText } from 'sections/earn/common';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { claimMultipleRewards } from 'state/staking/actions';
+import { selectEpochPeriod, selectResetTime, selectTotalRewards } from 'state/staking/selectors';
 import { FlexDivRow } from 'styles/common';
 import media from 'styles/media';
 import { formatTruncatedDuration } from 'utils/formatters/date';
 import { formatDollars, formatPercent, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
-import { KwentaLabel, StakingCard } from './common';
+import { StakingCard } from './common';
 
-const TradingRewardsTab: React.FC<TradingRewardProps> = ({
+const TradingRewardsTab: FC<TradingRewardProps> = ({
 	period = 0,
 	start = 0,
 	end = Math.floor(Date.now() / 1000),
-}: TradingRewardProps) => {
+}) => {
 	const { t } = useTranslation();
-	const { walletAddress } = Connector.useContainer();
-	const { multipleMerkleDistributorContract, periods, resetTime } = useStakingContext();
+	const { walletAddress, network } = Connector.useContainer();
+	const dispatch = useAppDispatch();
 
-	const allEpochQuery = useGetFiles(periods);
-	const allEpochData = useMemo(() => allEpochQuery?.data ?? [], [allEpochQuery?.data]);
-
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	let rewards: ClaimParams[] = [];
-
-	allEpochData &&
-		allEpochData.length > 0 &&
-		allEpochData.forEach((d: EpochDataProps, period) => {
-			const index = Object.keys(d.claims).findIndex((key) => key === walletAddress);
-			if (index !== -1) {
-				const walletReward = Object.values(d.claims)[index];
-				if (!!walletReward && walletAddress != null) {
-					rewards.push([
-						walletReward?.index,
-						walletAddress,
-						walletReward?.amount,
-						walletReward?.proof,
-						period,
-					]);
-				}
-			}
-		});
-
-	const checkIsClaimed = useMemo(() => {
-		return rewards.map((reward: ClaimParams) => {
-			return {
-				...multipleMerkleDistributorContract,
-				functionName: 'isClaimed',
-				args: [reward[0], reward[4]],
-			};
-		});
-	}, [multipleMerkleDistributorContract, rewards]);
-
-	const { data: isClaimable } = useContractReads({
-		contracts: checkIsClaimed,
-		enabled: checkIsClaimed && checkIsClaimed.length > 0,
-		watch: true,
-		scopeKey: 'staking',
-	});
-
-	const claimableRewards = useMemo(
-		() =>
-			isClaimable && isClaimable.length > 0
-				? rewards.filter((_, index) => !isClaimable[index])
-				: [],
-		[isClaimable, rewards]
-	);
-
-	const totalRewards =
-		claimableRewards.length > 0
-			? claimableRewards.reduce((acc, curr) => wei(acc).add(formatEther(curr[2])), zeroBN)
-			: 0;
+	const resetTime = useAppSelector(selectResetTime);
+	const totalRewards = useAppSelector(selectTotalRewards);
+	const epochPeriod = useAppSelector(selectEpochPeriod);
 
 	const futuresFeeQuery = useGetFuturesFeeForAccount(walletAddress!, start, end);
 	const futuresFeePaid = useMemo(() => {
-		const t = futuresFeeQuery.data ?? [];
+		const t: FuturesFeeForAccountProps[] = futuresFeeQuery.data ?? [];
 
 		return t
-			.map((trade: FuturesFeeForAccountProps) => formatEther(trade.feesPaid.toString()))
-			.reduce((acc: number, curr: number) => wei(acc).add(wei(curr)), zeroBN);
+			.map((trade) => formatEther(trade.feesPaid.toString()))
+			.reduce((acc, curr) => acc.add(wei(curr)), zeroBN);
 	}, [futuresFeeQuery.data]);
 
 	const totalFuturesFeeQuery = useGetFuturesFee(start, end);
 	const totalFuturesFeePaid = useMemo(() => {
-		const t = totalFuturesFeeQuery.data ?? [];
+		const t: FuturesFeeProps[] = totalFuturesFeeQuery.data ?? [];
 
 		return t
-			.map((trade: FuturesFeeProps) => formatEther(trade.feesCrossMarginAccounts.toString()))
-			.reduce((acc: number, curr: number) => wei(acc).add(wei(curr)), zeroBN);
+			.map((trade) => formatEther(trade.feesCrossMarginAccounts.toString()))
+			.reduce((acc, curr) => acc.add(wei(curr)), zeroBN);
 	}, [totalFuturesFeeQuery.data]);
 
-	const { config } = usePrepareContractWrite({
-		...multipleMerkleDistributorContract,
-		functionName: 'claimMultiple',
-		args: [claimableRewards],
-		enabled: claimableRewards && claimableRewards.length > 0,
-	});
-
-	const { writeAsync: claim } = useContractWrite(config);
-
-	const ratio = useMemo(
-		() =>
-			wei(totalFuturesFeePaid).gt(0) ? wei(futuresFeePaid).div(wei(totalFuturesFeePaid)) : zeroBN,
-		[futuresFeePaid, totalFuturesFeePaid]
+	const estimatedRewardQuery = useGetFile(
+		`trading-rewards-snapshots/${network.id === 420 ? `goerli-` : ''}epoch-current.json`
 	);
+	const estimatedReward = useMemo(
+		() => BigNumber.from(estimatedRewardQuery?.data?.claims[walletAddress!]?.amount ?? 0),
+		[estimatedRewardQuery?.data?.claims, walletAddress]
+	);
+	const weeklyRewards = useMemo(() => BigNumber.from(estimatedRewardQuery?.data?.tokenTotal ?? 0), [
+		estimatedRewardQuery?.data?.tokenTotal,
+	]);
+
+	const claimDisabled = useMemo(() => totalRewards.lte(0), [totalRewards]);
+
+	const handleClaim = useCallback(() => {
+		dispatch(claimMultipleRewards());
+	}, [dispatch]);
+
+	const ratio = useMemo(() => {
+		return wei(weeklyRewards).gt(0) ? wei(estimatedReward).div(wei(weeklyRewards)) : zeroBN;
+	}, [estimatedReward, weeklyRewards]);
+
+	const showEstimatedValue = useMemo(() => wei(period).eq(epochPeriod), [epochPeriod, period]);
 
 	return (
 		<TradingRewardsContainer>
@@ -132,7 +90,7 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.claimable-rewards-all')}
 						</div>
-						<KwentaLabel>{truncateNumbers(wei(totalRewards) ?? zeroBN, 4)}</KwentaLabel>
+						<BigText hasKwentaLogo>{truncateNumbers(totalRewards, 4)}</BigText>
 					</div>
 					<div>
 						<div className="title">
@@ -145,22 +103,11 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 						</div>
 					</div>
 				</CardGrid>
-				<StyledFlexDivRow>
-					<Button
-						fullWidth
-						variant="flat"
-						size="sm"
-						disabled={!claim}
-						onClick={async () => {
-							const tx = await claim?.();
-							monitorTransaction({
-								txHash: tx?.hash ?? '',
-							});
-						}}
-					>
+				<FlexDivRow>
+					<Button fullWidth variant="flat" size="sm" onClick={handleClaim} disabled={claimDisabled}>
 						{t('dashboard.stake.tabs.trading-rewards.claim')}
 					</Button>
-				</StyledFlexDivRow>
+				</FlexDivRow>
 			</CardGridContainer>
 			<CardGridContainer>
 				<CardGrid>
@@ -190,19 +137,43 @@ const TradingRewardsTab: React.FC<TradingRewardProps> = ({
 						</div>
 						<div className="value">{formatDollars(totalFuturesFeePaid, { minDecimals: 2 })}</div>
 					</div>
-					<div>
-						<div className="title">
-							{t('dashboard.stake.tabs.trading-rewards.estimated-fee-share', {
-								EpochPeriod: period,
-							})}
-						</div>
-						<div className="value">{formatPercent(ratio, { minDecimals: 2 })}</div>
-					</div>
+					{showEstimatedValue ? (
+						<>
+							<div>
+								<div className="title">
+									{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}
+								</div>
+								<BigText hasKwentaLogo>{truncateNumbers(wei(estimatedReward), 4)}</BigText>
+							</div>
+							<div>
+								<div className="title">
+									{t('dashboard.stake.tabs.trading-rewards.estimated-reward-share', {
+										EpochPeriod: period,
+									})}
+								</div>
+								<div className="value">{formatPercent(ratio, { minDecimals: 2 })}</div>
+							</div>
+						</>
+					) : null}
 				</CardGrid>
+				{showEstimatedValue ? (
+					<FlexDivRow>
+						<PeriodLabel>{t('dashboard.stake.tabs.trading-rewards.estimated-info')}</PeriodLabel>
+					</FlexDivRow>
+				) : null}
 			</CardGridContainer>
 		</TradingRewardsContainer>
 	);
 };
+
+const PeriodLabel = styled.div`
+	font-size: 13px;
+	line-height: 20px;
+	display: flex;
+	align-items: center;
+	font-family: ${(props) => props.theme.fonts.regular};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
+`;
 
 const CustomStyledTooltip = styled(StyledTooltip)`
 	padding: 0px 10px 0px;
@@ -214,10 +185,6 @@ const CustomStyledTooltip = styled(StyledTooltip)`
 
 const WithCursor = styled.div<{ cursor: 'help' }>`
 	cursor: ${(props) => props.cursor};
-`;
-
-const StyledFlexDivRow = styled(FlexDivRow)`
-	column-gap: 15px;
 `;
 
 const CardGridContainer = styled(StakingCard)`
@@ -240,7 +207,7 @@ const CardGrid = styled.div`
 	}
 
 	svg {
-		margin-left: 5px;
+		margin-left: 8px;
 	}
 
 	.title {
