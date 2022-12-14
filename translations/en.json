@@ -21,7 +21,8 @@
 			"competition-round-2": "Round 2",
 			"leaderboard": "leaderboard",
 			"earn": "earn",
-			"beta-badge": "Beta"
+			"beta-badge": "Beta",
+			"reward-badge": "Reward"
 		},
 		"networks-switcher": {
 			"chains": "Switch Networks",
