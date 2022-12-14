@@ -889,7 +889,7 @@ export default class ExchangeService {
 	}
 
 	private get oneInchApiUrl() {
-		return `https://api.1inch.io/v4.0/${this.sdk.context.isL2 ? 10 : 1}/`;
+		return `https://api.1inch.io/v5.0/${this.sdk.context.isL2 ? 10 : 1}/`;
 	}
 
 	private getOneInchQuoteSwapParams(
