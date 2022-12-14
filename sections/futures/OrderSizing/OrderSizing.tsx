@@ -8,7 +8,7 @@ import InputTitle from 'components/Input/InputTitle';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { editTradeSizeInput } from 'state/futures/actions';
 import {
-	selectMarketAssetRate,
+	selectMarketPrice,
 	selectCrossMarginBalanceInfo,
 	selectPosition,
 	selectTradeSizeInputs,
@@ -40,7 +40,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	const position = useAppSelector(selectPosition);
 	const selectedAccountType = useAppSelector(selectFuturesType);
 	const orderType = useAppSelector(selectOrderType);
-	const marketAssetRate = useAppSelector(selectMarketAssetRate);
+	const marketAssetRate = useAppSelector(selectMarketPrice);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
 	const selectedLeverageSide = useAppSelector(selectLeverageSide);
 

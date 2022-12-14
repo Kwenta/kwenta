@@ -18,7 +18,6 @@ import {
 } from 'constants/currency';
 import { DEFAULT_1INCH_SLIPPAGE } from 'constants/defaults';
 import { ATOMIC_EXCHANGE_SLIPPAGE } from 'constants/exchange';
-import { ETH_UNIT } from 'constants/network';
 import { CG_BASE_API_URL } from 'queries/coingecko/constants';
 import { PriceResponse } from 'queries/coingecko/types';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
@@ -32,7 +31,7 @@ import {
 	newGetExchangeRatesForCurrencies,
 	newGetExchangeRatesTupleForCurrencies,
 } from 'utils/currencies';
-import { zeroBN } from 'utils/formatters/number';
+import { UNIT_BIG_NUM, zeroBN } from 'utils/formatters/number';
 import { getTransactionPrice, normalizeGasLimit } from 'utils/network';
 
 import * as sdkErrors from '../common/errors';
@@ -143,7 +142,7 @@ export default class ExchangeService {
 		]);
 
 		return sourceCurrencyFeeRate && destinationCurrencyFeeRate
-			? wei(sourceCurrencyFeeRate.add(destinationCurrencyFeeRate)).div(ETH_UNIT)
+			? wei(sourceCurrencyFeeRate.add(destinationCurrencyFeeRate))
 			: wei(0);
 	}
 
@@ -369,6 +368,20 @@ export default class ExchangeService {
 		return numEntries ? Number(numEntries.toString()) : 0;
 	}
 
+	public async getAtomicRates(currencyKey: string) {
+		if (!this.sdk.context.contracts.ExchangeRates) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
+		}
+
+		const { value } = await this.sdk.context.contracts.ExchangeRates.effectiveAtomicValueAndRates(
+			ethers.utils.formatBytes32String(currencyKey),
+			UNIT_BIG_NUM,
+			ethers.utils.formatBytes32String('sUSD')
+		);
+
+		return wei(value) ?? wei(0);
+	}
+
 	public async approveSwap(quoteCurrencyKey: string, baseCurrencyKey: string) {
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
 		const [oneInchApproveAddress, quoteCurrencyContract] = await Promise.all([
@@ -457,6 +470,7 @@ export default class ExchangeService {
 			);
 		} else {
 			const isAtomic = this.checkIsAtomic(baseCurrencyKey, quoteCurrencyKey);
+
 			const exchangeParams = this.getExchangeParams(
 				quoteCurrencyKey,
 				baseCurrencyKey,
@@ -662,7 +676,9 @@ export default class ExchangeService {
 				return wei(0);
 			}
 		} else {
-			return newGetExchangeRatesForCurrencies(this.exchangeRates, currencyKey, 'sUSD');
+			return this.checkIsAtomic(currencyKey, 'sUSD')
+				? await this.getAtomicRates(currencyKey)
+				: newGetExchangeRatesForCurrencies(this.exchangeRates, currencyKey, 'sUSD');
 		}
 	}
 
@@ -902,13 +918,16 @@ export default class ExchangeService {
 	}
 
 	private async getPairRates(quoteCurrencyKey: string, baseCurrencyKey: string) {
-		const pairRates = newGetExchangeRatesTupleForCurrencies(
-			this.exchangeRates,
-			quoteCurrencyKey,
-			baseCurrencyKey
-		);
-
-		return pairRates;
+		return this.checkIsAtomic(baseCurrencyKey, quoteCurrencyKey)
+			? await Promise.all([
+					this.getAtomicRates(quoteCurrencyKey),
+					this.getAtomicRates(baseCurrencyKey),
+			  ])
+			: newGetExchangeRatesTupleForCurrencies(
+					this.exchangeRates,
+					quoteCurrencyKey,
+					baseCurrencyKey
+			  );
 	}
 
 	private async getOneInchApproveAddress() {

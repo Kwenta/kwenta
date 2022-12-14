@@ -20,6 +20,7 @@ import {
 	PerpsV2MarketData,
 	PerpsV2Market__factory,
 } from 'sdk/contracts/types';
+import { IPerpsV2MarketSettings } from 'sdk/contracts/types/PerpsV2MarketData';
 import { NetworkOverrideOptions } from 'sdk/types/common';
 import {
 	FundingRateInput,
@@ -103,13 +104,15 @@ export default class FuturesService {
 			PerpsV2MarketData.globals(),
 		]);
 
-		const filteredMarkets = markets.filter((m: any) => {
-			const marketKey = parseBytes32String(m.key) as FuturesMarketKey;
-			const market = enabledMarkets.find((market) => {
-				return marketKey === market.key;
-			});
-			return !!market;
-		}) as PerpsV2MarketData.MarketSummaryStructOutput[];
+		const filteredMarkets = (markets as PerpsV2MarketData.MarketSummaryStructOutput[]).filter(
+			(m) => {
+				const marketKey = parseBytes32String(m.key) as FuturesMarketKey;
+				const market = enabledMarkets.find((market) => {
+					return marketKey === market.key;
+				});
+				return !!market;
+			}
+		);
 
 		const marketKeys = filteredMarkets.map((m: any) => {
 			return m.key;
@@ -119,17 +122,17 @@ export default class FuturesService {
 			ExchangeRates.getCurrentRoundId(key)
 		);
 
-		const marketLimitCalls = marketKeys.map((key: string) =>
-			PerpsV2MarketSettings.maxMarketValue(key)
-		);
+		const parametersCalls = marketKeys.map((key: string) => PerpsV2MarketSettings.parameters(key));
 
 		const responses = await this.sdk.context.multicallProvider.all([
 			...currentRoundIdCalls,
-			...marketLimitCalls,
+			...parametersCalls,
 		]);
 
 		const currentRoundIds = responses.slice(0, currentRoundIdCalls.length);
-		const marketLimits = responses.slice(currentRoundIdCalls.length);
+		const marketParameters = responses.slice(
+			currentRoundIdCalls.length
+		) as IPerpsV2MarketSettings.ParametersStructOutput[];
 
 		const { suspensions, reasons } = await SystemStatus.getFuturesMarketSuspensions(marketKeys);
 
@@ -182,12 +185,31 @@ export default class FuturesService {
 				marketSkew: wei(marketSkew),
 				maxLeverage: wei(maxLeverage),
 				marketSize: wei(marketSize),
-				marketLimit: wei(marketLimits[i]).mul(wei(price)),
-				price: wei(price),
+				marketLimit: wei(marketParameters[i].maxMarketValue).mul(wei(price)),
+				priceOracle: wei(price),
+				price: wei(price).mul(wei(marketSkew).div(wei(marketParameters[i].skewScale)).add(1)),
 				minInitialMargin: wei(globals.minInitialMargin),
 				keeperDeposit: wei(globals.minKeeperFee),
 				isSuspended: suspensions[i],
 				marketClosureReason: getReasonFromCode(reasons[i]) as MarketClosureReason,
+				settings: {
+					maxMarketValue: wei(marketParameters[i].maxMarketValue),
+					skewScale: wei(marketParameters[i].skewScale),
+					delayedOrderConfirmWindow: wei(
+						marketParameters[i].delayedOrderConfirmWindow,
+						0
+					).toNumber(),
+					offchainDelayedOrderMinAge: wei(
+						marketParameters[i].offchainDelayedOrderMinAge,
+						0
+					).toNumber(),
+					offchainDelayedOrderMaxAge: wei(
+						marketParameters[i].offchainDelayedOrderMaxAge,
+						0
+					).toNumber(),
+					minDelayTimeDelta: wei(marketParameters[i].minDelayTimeDelta, 0).toNumber(),
+					maxDelayTimeDelta: wei(marketParameters[i].maxDelayTimeDelta, 0).toNumber(),
+				},
 			})
 		);
 		return futuresMarkets;
@@ -453,13 +475,14 @@ export default class FuturesService {
 	public async getIsolatedTradePreview(
 		marketAddress: string,
 		sizeDelta: Wei,
+		priceOracle: Wei,
 		price: Wei,
 		leverageSide: PositionSide
 	) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
 		const details = await market.postTradeDetails(
 			sizeDelta.toBN(),
-			price.toBN(), // TODO: Replace this price with the fill price
+			priceOracle.toBN(),
 			this.sdk.context.walletAddress
 		);
 		return formatPotentialIsolatedTrade(details, price, sizeDelta, leverageSide);

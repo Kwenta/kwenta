@@ -215,7 +215,7 @@ export const serializePotentialTrade = (
 	fee: preview.fee.toString(),
 	leverage: preview.leverage.toString(),
 	notionalValue: preview.notionalValue.toString(),
-	slippagePercent: preview.slippagePercent.toString(),
+	priceImpact: preview.priceImpact.toString(),
 	slippageAmount: preview.slippageAmount.toString(),
 });
 
@@ -231,7 +231,7 @@ export const unserializePotentialTrade = (
 	fee: wei(preview.fee),
 	leverage: wei(preview.leverage),
 	notionalValue: wei(preview.notionalValue),
-	slippagePercent: wei(preview.slippagePercent),
+	priceImpact: wei(preview.priceImpact),
 	slippageAmount: wei(preview.slippageAmount),
 });
 
@@ -282,12 +282,12 @@ export const formatPotentialIsolatedTrade = (
 	const notionalValue = wei(size).mul(wei(basePrice));
 	const leverage = notionalValue.div(wei(margin));
 
-	const slippage = wei(price).sub(basePrice).div(basePrice);
+	const priceImpact = wei(price).sub(basePrice).div(basePrice);
 	const slippageDirection = nativeSizeDelta.gt(0)
-		? slippage.gt(0)
+		? priceImpact.gt(0)
 			? -1
 			: nativeSizeDelta.lt(0)
-			? slippage.lt(0)
+			? priceImpact.lt(0)
 			: -1
 		: 1;
 
@@ -304,8 +304,8 @@ export const formatPotentialIsolatedTrade = (
 		status,
 		showStatus: status > 0, // 0 is success
 		statusMessage: getTradeStatusMessage(status),
-		slippagePercent: slippage.mul(slippageDirection),
-		slippageAmount: slippage.mul(slippageDirection).mul(tradeValueWithoutSlippage),
+		priceImpact: priceImpact,
+		slippageAmount: priceImpact.mul(slippageDirection).mul(tradeValueWithoutSlippage),
 	};
 };
 
@@ -329,7 +329,7 @@ export const formatPotentialTrade = (
 		status,
 		showStatus: status > 0, // 0 is success
 		statusMessage: getTradeStatusMessage(status),
-		slippagePercent: wei(0),
+		priceImpact: wei(0),
 		slippageAmount: wei(0),
 	};
 };

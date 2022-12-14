@@ -96,12 +96,30 @@ export const selectIsolatedPriceImpact = createSelector(
 	(priceImpact) => wei(priceImpact, 0)
 );
 
-export const selectMarketAssetRate = createSelector(
+export const selectPerpsMarketRate = createSelector(selectMarketInfo, (marketInfo) => {
+	return marketInfo?.price ?? wei(0);
+});
+
+export const selectOrderType = createSelector(
+	(state: RootState) => state.futures,
+	(futures) => futures[accountType(futures.selectedType)].orderType
+);
+
+export const selectMarketPrice = createSelector(
+	selectMarketAsset,
+	selectPrices,
+	selectOrderType,
+	(marketAsset, prices, orderType) => {
+		const price = prices[marketAsset];
+		return orderType === 'delayed offchain' ? price?.offChain ?? wei(0) : price?.onChain ?? wei(0);
+	}
+);
+
+export const selectMarketPrices = createSelector(
 	selectMarketAsset,
 	selectPrices,
 	(marketAsset, prices) => {
-		const price = prices[marketAsset];
-		return price?.offChain ?? price?.onChain ?? wei(0);
+		return prices[marketAsset] ?? {};
 	}
 );
 
@@ -239,7 +257,7 @@ export const selectIsModifyingIsolatedPosition = createSelector(
 export const selectIsMarketCapReached = createSelector(
 	(state: RootState) => state.futures[accountType(state.futures.selectedType)].leverageSide,
 	selectMarketInfo,
-	selectMarketAssetRate,
+	selectMarketPrice,
 	(leverageSide, marketInfo, marketAssetRate) => {
 		const maxMarketValueUSD = marketInfo?.marketLimit ?? wei(0);
 		const marketSize = marketInfo?.marketSize ?? wei(0);
@@ -260,11 +278,6 @@ export const selectPosition = createSelector(
 			? (deserializeWeiObject(position, futuresPositionKeys) as FuturesPosition)
 			: undefined;
 	}
-);
-
-export const selectOrderType = createSelector(
-	(state: RootState) => state.futures,
-	(futures) => futures[accountType(futures.selectedType)].orderType
 );
 
 export const selectLeverageSide = createSelector(

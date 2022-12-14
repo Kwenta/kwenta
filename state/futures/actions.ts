@@ -77,7 +77,7 @@ import {
 	selectIsolatedPriceImpact,
 	selectKeeperEthBalance,
 	selectLeverageSide,
-	selectMarketAssetRate,
+	selectMarketPrice,
 	selectMarketInfo,
 	selectMarkets,
 	selectOrderType,
@@ -288,6 +288,7 @@ export const fetchIsolatedMarginTradePreview = createAsyncThunk<
 			const preview = await sdk.futures.getIsolatedTradePreview(
 				marketInfo?.market,
 				sizeDelta,
+				marketInfo?.priceOracle,
 				marketInfo?.price,
 				leverageSide
 			);
@@ -342,7 +343,7 @@ export const editCrossMarginSize = (size: string, currencyType: 'usd' | 'native'
 	getState
 ) => {
 	const leverage = selectCrossMarginSelectedLeverage(getState());
-	const assetRate = selectMarketAssetRate(getState());
+	const assetRate = selectMarketPrice(getState());
 	const orderPrice = selectCrossMarginOrderPrice(getState());
 	const isAdvancedOrder = selectIsAdvancedOrder(getState());
 	const price = isAdvancedOrder && Number(orderPrice) > 0 ? wei(orderPrice) : assetRate;
@@ -374,7 +375,7 @@ const stageCrossMarginSizeChange = createAsyncThunk<void, void, ThunkConfig>(
 	async (_, { dispatch, getState }) => {
 		const tradeInputs = selectCrossMarginTradeInputs(getState());
 		const fees = selectCrossMarginTradeFees(getState());
-		const rate = selectMarketAssetRate(getState());
+		const rate = selectMarketPrice(getState());
 		const price = selectCrossMarginOrderPrice(getState());
 		const leverage = selectCrossMarginSelectedLeverage(getState());
 		const position = selectPosition(getState());
@@ -403,7 +404,7 @@ export const editExistingPositionLeverage = createAsyncThunk<void, string, Thunk
 		const tradeInputs = selectCrossMarginTradeInputs(getState());
 		const fees = selectCrossMarginTradeFees(getState());
 		const position = selectPosition(getState());
-		const rate = selectMarketAssetRate(getState());
+		const rate = selectMarketPrice(getState());
 		const price = selectCrossMarginOrderPrice(getState());
 		dispatch(setCrossMarginLeverage(leverage));
 		const marginDelta = await calculateMarginDelta(
@@ -426,7 +427,7 @@ export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'nati
 	dispatch,
 	getState
 ) => {
-	const assetRate = selectMarketAssetRate(getState());
+	const assetRate = selectMarketPrice(getState());
 	const position = selectPosition(getState());
 	if (
 		!size ||
@@ -484,7 +485,7 @@ export const debouncedPrepareIsolatedMarginTradePreview = debounce((dispatch) =>
 }, 500);
 
 export const editTradeOrderPrice = (price: string): AppThunk => (dispatch, getState) => {
-	const rate = selectMarketAssetRate(getState());
+	const rate = selectMarketPrice(getState());
 	const orderType = selectOrderType(getState());
 	const side = selectLeverageSide(getState());
 	const inputs = selectCrossMarginTradeInputs(getState());
@@ -551,7 +552,7 @@ export const prepareCrossMarginTradePreview = createAsyncThunk<void, void, Thunk
 	'futures/prepareCrossMarginTradePreview',
 	async (_, { getState, dispatch }) => {
 		const tradeInputs = selectCrossMarginTradeInputs(getState());
-		const assetPrice = selectMarketAssetRate(getState());
+		const assetPrice = selectMarketPrice(getState());
 		const orderPrice = selectCrossMarginOrderPrice(getState());
 		const marginDelta = selectCrossMarginMarginDelta(getState());
 
@@ -642,8 +643,7 @@ export const depositIsolatedMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 			await tx.wait();
 			dispatch(setOpenModal(null));
 			dispatch(refetchPosition('isolated_margin'));
-			// TODO: More reliable balance updates
-			setTimeout(() => dispatch(fetchBalances()), 1000);
+			dispatch(fetchBalances());
 		} catch (err) {
 			dispatch(handleTransactionError(err.message));
 			throw err;
@@ -669,8 +669,7 @@ export const withdrawIsolatedMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 			await tx.wait();
 			dispatch(refetchPosition('isolated_margin'));
 			dispatch(setOpenModal(null));
-			// TODO: More reliable balance updates
-			setTimeout(() => dispatch(fetchBalances()), 1000);
+			dispatch(fetchBalances());
 		} catch (err) {
 			dispatch(handleTransactionError(err.message));
 			throw err;
@@ -709,8 +708,7 @@ export const modifyIsolatedPosition = createAsyncThunk<
 			dispatch(refetchPosition('isolated_margin'));
 			dispatch(setOpenModal(null));
 			dispatch(clearTradeInputs());
-			// TODO: More reliable balance updates
-			setTimeout(() => dispatch(fetchBalances()), 1000);
+			dispatch(fetchBalances());
 		} catch (err) {
 			dispatch(handleTransactionError(err.message));
 			throw err;
@@ -813,6 +811,7 @@ export const closeIsolatedMarginPosition = createAsyncThunk<void, void, ThunkCon
 			dispatch(setOpenModal(null));
 			// TODO: More reliable balance updates
 			setTimeout(() => dispatch(fetchBalances()), 1000);
+			dispatch(fetchBalances());
 		} catch (err) {
 			dispatch(handleTransactionError(err.message));
 			throw err;
@@ -899,8 +898,7 @@ const submitCMTransferTransaction = async (
 					dispatch(fetchCrossMarginBalanceInfo());
 					dispatch(setOpenModal(null));
 					dispatch(refetchPosition('cross_margin'));
-					// TODO: More reliable balance fetching
-					setTimeout(() => dispatch(fetchBalances()), 1000);
+					dispatch(fetchBalances());
 				},
 			});
 		}

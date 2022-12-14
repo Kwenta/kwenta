@@ -4,7 +4,7 @@ import { TFunction } from 'i18next';
 import { Dictionary } from 'lodash';
 
 import { FuturesOrderType } from 'queries/futures/types';
-import { Prices, PricesMap } from 'sdk/types/common';
+import { PricesMap } from 'sdk/types/common';
 import {
 	DelayedOrder,
 	FuturesMarket,
@@ -21,13 +21,8 @@ import {
 	IsolatedMarginTradeInputs,
 	TransactionEstimation,
 } from 'state/futures/types';
-import logError from 'utils/logError';
 
 import { formatNumber, zeroBN } from './formatters/number';
-
-export const getMarketAsset = (marketKey: FuturesMarketKey) => {
-	return markets[marketKey].asset;
-};
 
 export const getMarketName = (asset: FuturesMarketAsset | null) => {
 	switch (asset) {
@@ -172,143 +167,6 @@ export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 	[FuturesMarketAsset.OP]: FuturesMarketKey.sOP,
 } as const;
 
-export interface FuturesMarketConfig {
-	key: FuturesMarketKey;
-	asset: FuturesMarketAsset;
-	supports: 'mainnet' | 'testnet' | 'both';
-	disabled?: boolean;
-}
-
-export const markets: Record<FuturesMarketKey, FuturesMarketConfig> = {
-	// perps v2
-	[FuturesMarketKey.sBTCPERP]: {
-		key: FuturesMarketKey.sBTCPERP,
-		asset: FuturesMarketAsset.sBTC,
-		supports: 'testnet',
-	},
-	[FuturesMarketKey.sETHPERP]: {
-		key: FuturesMarketKey.sETHPERP,
-		asset: FuturesMarketAsset.sETH,
-		supports: 'testnet',
-	},
-
-	// perps v1
-	[FuturesMarketKey.sBTC]: {
-		key: FuturesMarketKey.sBTC,
-		asset: FuturesMarketAsset.sBTC,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sETH]: {
-		key: FuturesMarketKey.sETH,
-		asset: FuturesMarketAsset.sETH,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sLINK]: {
-		key: FuturesMarketKey.sLINK,
-		asset: FuturesMarketAsset.sLINK,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sSOL]: {
-		key: FuturesMarketKey.sSOL,
-		asset: FuturesMarketAsset.SOL,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sAVAX]: {
-		key: FuturesMarketKey.sAVAX,
-		asset: FuturesMarketAsset.AVAX,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sAAVE]: {
-		key: FuturesMarketKey.sAAVE,
-		asset: FuturesMarketAsset.AAVE,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sUNI]: {
-		key: FuturesMarketKey.sUNI,
-		asset: FuturesMarketAsset.UNI,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sMATIC]: {
-		key: FuturesMarketKey.sMATIC,
-		asset: FuturesMarketAsset.MATIC,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sXAU]: {
-		key: FuturesMarketKey.sXAU,
-		asset: FuturesMarketAsset.XAU,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sXAG]: {
-		key: FuturesMarketKey.sXAG,
-		asset: FuturesMarketAsset.XAG,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sEUR]: {
-		key: FuturesMarketKey.sEUR,
-		asset: FuturesMarketAsset.EUR,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sAPE]: {
-		key: FuturesMarketKey.sAPE,
-		asset: FuturesMarketAsset.APE,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sDYDX]: {
-		key: FuturesMarketKey.sDYDX,
-		asset: FuturesMarketAsset.DYDX,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sBNB]: {
-		key: FuturesMarketKey.sBNB,
-		asset: FuturesMarketAsset.BNB,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sDOGE]: {
-		key: FuturesMarketKey.sDOGE,
-		asset: FuturesMarketAsset.DOGE,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sDebtRatio]: {
-		key: FuturesMarketKey.sDebtRatio,
-		asset: FuturesMarketAsset.DebtRatio,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sXMR]: {
-		key: FuturesMarketKey.sXMR,
-		asset: FuturesMarketAsset.XMR,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sOP]: {
-		key: FuturesMarketKey.sOP,
-		asset: FuturesMarketAsset.OP,
-		supports: 'mainnet',
-	},
-};
-
-export const marketsList = Object.values(markets).filter((m) => !m.disabled);
-
-export const mainnetMarkets = marketsList.filter(
-	(m) => m.supports === 'mainnet' || m.supports === 'both'
-);
-
-export const testnetMarkets = marketsList.filter(
-	(m) => m.supports === 'testnet' || m.supports === 'both'
-);
-
-export const marketsForNetwork = (networkId: NetworkId) => {
-	const network = NetworkNameById[networkId];
-
-	switch (network) {
-		case 'mainnet-ovm':
-			return mainnetMarkets;
-		case 'goerli-ovm':
-			return testnetMarkets;
-		default:
-			logError('You cannot use futures on this network.');
-			return [];
-	}
-};
-
 export const orderPriceInvalidLabel = (
 	orderPrice: string,
 	leverageSide: PositionSide,
@@ -415,10 +273,16 @@ export const serializeMarket = (market: FuturesMarket): FuturesMarket<string> =>
 		marketSkew: market.marketSkew.toString(),
 		marketSize: market.marketSize.toString(),
 		maxLeverage: market.maxLeverage.toString(),
+		priceOracle: market.priceOracle.toString(),
 		price: market.price.toString(),
 		minInitialMargin: market.minInitialMargin.toString(),
 		keeperDeposit: market.keeperDeposit.toString(),
 		marketLimit: market.marketLimit.toString(),
+		settings: {
+			...market.settings,
+			maxMarketValue: market.settings.maxMarketValue.toString(),
+			skewScale: market.settings.skewScale.toString(),
+		},
 	};
 };
 
@@ -450,10 +314,16 @@ export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMar
 		marketSkew: wei(m.marketSkew),
 		marketSize: wei(m.marketSize),
 		maxLeverage: wei(m.maxLeverage),
+		priceOracle: wei(m.priceOracle),
 		price: wei(m.price),
 		minInitialMargin: wei(m.minInitialMargin),
 		keeperDeposit: wei(m.keeperDeposit),
 		marketLimit: wei(m.marketLimit),
+		settings: {
+			...m.settings,
+			maxMarketValue: wei(m.settings.maxMarketValue),
+			skewScale: wei(m.settings.skewScale),
+		},
 	}));
 };
 

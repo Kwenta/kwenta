@@ -78,12 +78,10 @@ export const submitExchange = createAsyncThunk<void, void, ThunkConfig>(
 				monitorTransaction({
 					txHash: hash,
 					onTxConfirmed: () => {
-						dispatch(fetchBalances());
 						dispatch(fetchNumEntries());
 						dispatch({ type: 'exchange/setQuoteAmount', payload: '' });
 						dispatch({ type: 'exchange/setBaseAmount', payload: '' });
-						// TODO: More reliable balance updates
-						setTimeout(() => dispatch(fetchBalances()), 1000);
+						dispatch(fetchBalances());
 					},
 				});
 			}

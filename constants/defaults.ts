@@ -2,6 +2,7 @@ import { CurrencyCategory, NetworkIdByName, Synth } from '@synthetixio/contracts
 import { Language } from 'translations/constants';
 
 import { languageStateKey, priceCurrencyStateKey } from 'store/app/constants';
+import { weiFromEth } from 'utils/formatters/number';
 import localStore from 'utils/localStore';
 
 // app defaults
@@ -48,7 +49,7 @@ export const DEFAULT_NP_LEVERAGE_ADJUSTMENT: number = 0.9975;
 export const DEFAULT_LEADERBOARD_ROWS = 20;
 
 // for perps v2
-export const DEFAULT_PRICE_IMPACT_DELTA = '500000000000000000';
+export const DEFAULT_PRICE_IMPACT_DELTA = weiFromEth(0.5).toString();
 export const DEFAULT_DELAYED_EXECUTION_BUFFER = 3;
 
 export const CROSS_MARGIN_ENABLED = false;
