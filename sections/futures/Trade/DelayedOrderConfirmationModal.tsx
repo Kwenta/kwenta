@@ -6,8 +6,8 @@ import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import Connector from 'containers/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { getDisplayAsset } from 'sdk/utils/futures';
 import { setOpenModal } from 'state/app/reducer';
 import { modifyIsolatedPosition, modifyIsolatedPositionEstimateGas } from 'state/futures/actions';
 import {
@@ -34,7 +34,6 @@ import { MobileConfirmTradeButton } from './TradeConfirmationModal';
 
 const NextPriceConfirmationModal: FC = () => {
 	const { t } = useTranslation();
-	const { synthsMap } = Connector.useContainer();
 	const isDisclaimerDisplayed = useAppSelector(selectNextPriceDisclaimer);
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const dispatch = useAppDispatch();
@@ -66,10 +65,10 @@ const NextPriceConfirmationModal: FC = () => {
 	}, [nativeSizeDelta, positionSize]);
 
 	// TODO: check these fees
-	const { commitDeposit } = useMemo(() => computeDelayedOrderFee(marketInfo, nativeSizeDelta), [
-		marketInfo,
-		nativeSizeDelta,
-	]);
+	const { commitDeposit, delayedOrderFee } = useMemo(
+		() => computeDelayedOrderFee(marketInfo, nativeSizeDelta),
+		[marketInfo, nativeSizeDelta]
+	);
 
 	// TODO: check this deposit
 	const totalDeposit = useMemo(() => {
@@ -88,36 +87,46 @@ const NextPriceConfirmationModal: FC = () => {
 			},
 			{
 				label: t('futures.market.user.position.modal.size'),
-				value: formatCurrency(marketAsset || '', orderDetails.nativeSizeDelta.abs(), {
-					sign: marketAsset ? synthsMap[marketAsset]?.sign : '',
-				}),
-			},
-			{
-				label: t('futures.market.user.position.modal.deposit'),
-				value: formatDollars(totalDeposit),
+				value: formatCurrency(
+					getDisplayAsset(marketAsset) || '',
+					orderDetails.nativeSizeDelta.abs() ?? zeroBN,
+					{
+						currencyKey: getDisplayAsset(marketAsset) ?? '',
+					}
+				),
 			},
 			{
 				label: 'estimated fill price',
 				value: formatDollars(potentialTradeDetails?.price ?? zeroBN, { isAssetPrice: true }),
 			},
 			{
+				label: 'estimated price impact',
+				value: `${formatPercent(potentialTradeDetails?.priceImpact ?? zeroBN)}`,
+				color: potentialTradeDetails?.priceImpact.gt(0)
+					? 'green'
+					: potentialTradeDetails?.priceImpact.lt(0)
+					? 'red'
+					: '',
+			},
+			{
 				label: 'estimated slippage',
-				value: `${formatDollars(potentialTradeDetails?.slippageAmount ?? zeroBN)} (${formatPercent(
-					potentialTradeDetails?.slippagePercent ?? zeroBN
-				)})`,
+				value: `${formatDollars(potentialTradeDetails?.slippageAmount ?? zeroBN)}`,
 				color: potentialTradeDetails?.slippageAmount.gt(0)
 					? 'green'
 					: potentialTradeDetails?.slippageAmount.lt(0)
 					? 'red'
 					: '',
 			},
-
 			{
-				label: t('futures.market.user.position.modal.fee-total'),
-				value: formatCurrency(selectedPriceCurrency.name, totalDeposit, {
+				label: t('futures.market.user.position.modal.fee-estimated'),
+				value: formatCurrency(selectedPriceCurrency.name, delayedOrderFee ?? zeroBN, {
 					minDecimals: 2,
 					sign: selectedPriceCurrency.sign,
 				}),
+			},
+			{
+				label: t('futures.market.user.position.modal.deposit'),
+				value: formatDollars(totalDeposit),
 			},
 		],
 		[
@@ -125,8 +134,8 @@ const NextPriceConfirmationModal: FC = () => {
 			orderDetails,
 			orderType,
 			potentialTradeDetails,
+			delayedOrderFee,
 			marketAsset,
-			synthsMap,
 			leverageSide,
 			totalDeposit,
 			selectedPriceCurrency.name,

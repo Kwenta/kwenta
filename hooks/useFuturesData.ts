@@ -24,7 +24,6 @@ import {
 import {
 	selectCrossMarginBalanceInfo,
 	selectCrossMarginAccount,
-	selectMarketAssetRate,
 	selectPosition,
 	selectMaxLeverage,
 	selectAboveMaxLeverage,
@@ -39,6 +38,7 @@ import {
 	selectCrossMarginTradeFees,
 	selectDynamicFeeRate,
 	selectCrossMarginMarginDelta,
+	selectPerpsMarketRate,
 } from 'state/futures/selectors';
 import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector, useAppDispatch } from 'state/hooks';
@@ -93,7 +93,7 @@ const useFuturesData = () => {
 		selectCrossMarginSettings
 	);
 	const isAdvancedOrder = useAppSelector(selectIsAdvancedOrder);
-	const marketAssetRate = useAppSelector(selectMarketAssetRate);
+	const marketAssetRate = useAppSelector(selectPerpsMarketRate);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
 	const market = useAppSelector(selectMarketInfo);
 

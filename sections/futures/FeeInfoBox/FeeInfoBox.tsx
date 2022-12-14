@@ -1,15 +1,11 @@
-import React, { FC, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
-import TimerIcon from 'assets/svg/app/timer.svg';
 import InfoBox, { DetailedInfo } from 'components/InfoBox/InfoBox';
-import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { NO_VALUE } from 'constants/placeholder';
 import {
 	selectCrossMarginSettings,
 	selectCrossMarginTradeFees,
-	selectDynamicFeeRate,
 	selectFuturesType,
 	selectIsolatedMarginFee,
 	selectMarketInfo,
@@ -24,7 +20,6 @@ const FeeInfoBox: React.FC = () => {
 	const orderType = useAppSelector(selectOrderType);
 	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
 	const isolatedMarginFee = useAppSelector(selectIsolatedMarginFee);
-	const dynamicFeeRate = useAppSelector(selectDynamicFeeRate);
 	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
 	const accountType = useAppSelector(selectFuturesType);
 	const { tradeFee: crossMarginTradeFeeRate, limitOrderFee, stopOrderFee } = useAppSelector(
@@ -126,13 +121,8 @@ const FeeInfoBox: React.FC = () => {
 					value: formatDollars(totalDeposit),
 					spaceBeneath: true,
 				},
-				// 'Next Price Discount': {
-				// 	value: !!nextPriceDiscount ? formatDollars(nextPriceDiscount) : NO_VALUE,
-				// 	color: nextPriceDiscount.lt(0) ? 'green' : nextPriceDiscount.gt(0) ? 'red' : undefined,
-				// },
 				'Estimated Fees': {
 					value: formatDollars(totalDeposit.add(nextPriceDiscount ?? zeroBN)),
-					// keyNode: dynamicFeeRate?.gt(0) ? <ToolTip /> : null,
 				},
 			};
 		}
@@ -149,12 +139,10 @@ const FeeInfoBox: React.FC = () => {
 	}, [
 		staticRate,
 		orderType,
-		orderType,
 		crossMarginTradeFeeRate,
 		isolatedMarginFee,
 		crossMarginFees,
 		orderFeeRate,
-		dynamicFeeRate,
 		commitDeposit,
 		accountType,
 		marketInfo?.keeperDeposit,
@@ -166,36 +154,8 @@ const FeeInfoBox: React.FC = () => {
 	return <StyledInfoBox details={feesInfo} />;
 };
 
-const ToolTip: FC = (props) => {
-	const { t } = useTranslation();
-
-	return (
-		<DynamicStyledToolTip
-			height={'auto'}
-			preset="bottom"
-			width="300px"
-			content={t('futures.market.trade.cost-basis.tooltip')}
-			style={{ textTransform: 'none' }}
-		>
-			{props.children}
-			<StyledTimerIcon />
-		</DynamicStyledToolTip>
-	);
-};
-
 const StyledInfoBox = styled(InfoBox)`
 	margin-bottom: 16px;
-`;
-
-const DynamicStyledToolTip = styled(StyledTooltip)`
-	padding: 10px;
-`;
-
-const StyledTimerIcon = styled(TimerIcon)`
-	margin-left: 5px;
-	path {
-		fill: ${(props) => props.theme.colors.selectedTheme.gold};
-	}
 `;
 
 export default FeeInfoBox;

@@ -102,6 +102,10 @@ export const selectIsolatedPriceImpact = createSelector(
 	(priceImpact) => wei(priceImpact, 0)
 );
 
+export const selectPerpsMarketRate = createSelector(selectMarketInfo, (marketInfo) => {
+	return marketInfo?.price ?? wei(0);
+});
+
 export const selectMarketAssetRate = createSelector(
 	(state: RootState) => state.futures[accountType(state.futures.selectedType)].selectedMarketAsset,
 	selectExchangeRates,
