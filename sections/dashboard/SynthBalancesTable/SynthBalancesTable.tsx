@@ -67,7 +67,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 		return synthBalances.map((synthBalance: SynthBalance) => {
 			const { currencyKey, balance, usdBalance } = synthBalance;
 
-			const price = prices && prices[currencyKey].offChain;
+			const price = prices[currencyKey].onChain;
 			const pastPrice = pastRates.find((price: Price) => price.synth === currencyKey);
 
 			const description = synthsMap != null ? synthsMap[currencyKey]?.description : '';

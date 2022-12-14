@@ -14,13 +14,9 @@ import Table from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
-import {
-	selectFuturesType,
-	selectLatestMarketPrice,
-	selectMarkets,
-	selectMarketVolumes,
-} from 'state/futures/selectors';
+import { selectFuturesType, selectMarkets, selectMarketVolumes } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
+import { selectPrices } from 'state/prices/selectors';
 import { pastRatesState } from 'store/futures';
 import { getSynthDescription, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
@@ -33,13 +29,14 @@ const FuturesMarketsTable: FC = () => {
 	const pastRates = useRecoilValue(pastRatesState);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
 	const accountType = useAppSelector(selectFuturesType);
-	const marketPrice = useAppSelector(selectLatestMarketPrice);
+	const prices = useAppSelector(selectPrices);
 
 	let data = useMemo(() => {
 		return futuresMarkets.map((market) => {
 			const description = getSynthDescription(market.asset, synthsMap, t);
 			const volume = futuresVolumes[market.marketKey]?.volume;
 			const pastPrice = pastRates.find((price) => price.synth === market.asset);
+			const marketPrice = prices[market.asset]?.offChain ?? prices[market.asset]?.onChain ?? wei(0);
 
 			return {
 				asset: market.asset,
@@ -60,7 +57,7 @@ const FuturesMarketsTable: FC = () => {
 				marketClosureReason: market.marketClosureReason,
 			};
 		});
-	}, [synthsMap, futuresMarkets, pastRates, futuresVolumes, marketPrice, t]);
+	}, [synthsMap, futuresMarkets, pastRates, futuresVolumes, prices, t]);
 
 	return (
 		<>

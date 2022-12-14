@@ -12,7 +12,7 @@ import {
 	selectMarketKey,
 	selectMarketVolumes,
 	selectMarketPrices,
-	selectLatestMarketPrice,
+	selectSkewAdjustedPrice,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { pastRatesState } from 'store/futures';
@@ -34,7 +34,7 @@ const useGetMarketData = (mobile?: boolean) => {
 	const pastRates = useRecoilValue(pastRatesState);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
 	const marketPrices = useAppSelector(selectMarketPrices);
-	const marketPrice = useAppSelector(selectLatestMarketPrice);
+	const marketPrice = useAppSelector(selectSkewAdjustedPrice);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 

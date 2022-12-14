@@ -1,3 +1,4 @@
+import { wei } from '@synthetixio/wei';
 import { ColorType, createChart, UTCTimestamp } from 'lightweight-charts';
 import isNil from 'lodash/isNil';
 import values from 'lodash/values';
@@ -19,7 +20,7 @@ import Connector from 'containers/Connector';
 import { Price } from 'queries/rates/types';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
-import { selectMarketPrice, selectMarketVolumes } from 'state/futures/selectors';
+import { selectMarketVolumes } from 'state/futures/selectors';
 import { fetchOptimismMarkets } from 'state/home/actions';
 import { selectOptimismMarkets } from 'state/home/selectors';
 import { useAppSelector, usePollAction } from 'state/hooks';
@@ -152,7 +153,6 @@ const Assets = () => {
 
 	const prices = useAppSelector(selectPrices);
 	const futuresMarkets = useAppSelector(selectOptimismMarkets);
-	const marketPrice = useAppSelector(selectMarketPrice);
 
 	const pastRates = useRecoilValue(pastRatesState);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
@@ -200,6 +200,8 @@ const Assets = () => {
 	const PERPS = useMemo(() => {
 		return (
 			futuresMarkets?.map((market) => {
+				const marketPrice =
+					prices[market.asset]?.offChain ?? prices[market.asset]?.onChain ?? wei(0);
 				const description = getSynthDescription(market.asset, l2SynthsMap, t);
 				const volume = futuresVolumes[market.assetHex]?.volume?.toNumber() ?? 0;
 				const pastPrice = pastRates.find(

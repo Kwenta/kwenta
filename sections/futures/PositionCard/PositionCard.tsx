@@ -19,7 +19,7 @@ import {
 	selectPosition,
 	selectTradePreview,
 	selectFuturesType,
-	selectMarketPrice,
+	selectSkewAdjustedPrice,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { positionHistoryState } from 'store/futures';
@@ -75,7 +75,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 	const position = useAppSelector(selectPosition);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const marketKey = useAppSelector(selectMarketKey);
-	const marketPrice = useAppSelector(selectMarketPrice);
+	const marketPrice = useAppSelector(selectSkewAdjustedPrice);
 	const previewTradeData = useAppSelector(selectTradePreview);
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketKey);
 	const positionHistory = useRecoilValue(positionHistoryState);

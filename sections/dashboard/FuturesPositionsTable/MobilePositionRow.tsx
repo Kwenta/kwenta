@@ -1,3 +1,4 @@
+import { wei } from '@synthetixio/wei';
 import React from 'react';
 import styled, { css } from 'styled-components';
 
@@ -6,8 +7,8 @@ import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { PositionSide } from 'sections/futures/types';
-import { selectMarketPrice } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
+import { selectPrices } from 'state/prices/selectors';
 import { formatNumber } from 'utils/formatters/number';
 import { getDisplayAsset, isDecimalFour } from 'utils/futures';
 
@@ -18,7 +19,9 @@ type MobilePositionRowProps = {
 };
 
 const MobilePositionRow: React.FC<MobilePositionRowProps> = ({ row, onClick }) => {
-	const marketPrice = useAppSelector(selectMarketPrice);
+	const prices = useAppSelector(selectPrices);
+	const marketPrice =
+		prices[row.market.asset]?.offChain ?? prices[row.market.asset]?.onChain ?? wei(0);
 	return (
 		<OpenPositionContainer side={row.position.position} key={row.market.asset} onClick={onClick}>
 			<CurrencyDetailsContainer>

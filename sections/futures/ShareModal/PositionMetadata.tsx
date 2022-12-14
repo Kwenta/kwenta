@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import { selectFuturesType, selectLatestMarketPrice } from 'state/futures/selectors';
+import { selectFuturesType, selectMarketPrice } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { positionHistoryState } from 'store/futures';
 import getLocale from 'utils/formatters/getLocale';
@@ -74,7 +74,7 @@ const PositionMetadata: FC<PositionMetadataProps> = ({ marketAsset }) => {
 
 	const futuresPositionHistory = useRecoilValue(positionHistoryState);
 	const futuresAccountType = useAppSelector(selectFuturesType);
-	const marketPrice = useAppSelector(selectLatestMarketPrice);
+	const marketPrice = useAppSelector(selectMarketPrice);
 
 	let avgEntryPrice = '',
 		openAtDate = '',

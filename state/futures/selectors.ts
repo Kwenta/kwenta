@@ -104,18 +104,9 @@ export const selectOrderType = createSelector(
 export const selectMarketPrice = createSelector(
 	selectMarketAsset,
 	selectPrices,
-	selectOrderType,
-	(marketAsset, prices, orderType) => {
-		const price = prices[marketAsset];
-		return orderType === 'delayed offchain' ? price?.offChain ?? wei(0) : price?.onChain ?? wei(0);
-	}
-);
-
-export const selectLatestMarketPrice = createSelector(
-	selectMarketAsset,
-	selectPrices,
 	(marketAsset, prices) => {
 		const price = prices[marketAsset];
+		// Note this assumes the order type is always delayed off chain
 		return price?.offChain ?? price?.onChain ?? wei(0);
 	}
 );
