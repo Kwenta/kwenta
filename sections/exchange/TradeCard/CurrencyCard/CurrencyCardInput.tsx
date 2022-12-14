@@ -83,7 +83,7 @@ const CurrencyCardInput: FC<CurrencyCardInputProps> = memo(
 						<Slippage>
 							{!isLoading &&
 								slippagePercent?.lt(0) &&
-								formatPercent(slippagePercent) + t('exchange.currency-card.slippage')}
+								formatPercent(slippagePercent) + t('exchange.currency-card.price-impact')}
 						</Slippage>
 					</FlexDivRowCentered>
 					{isLoading && <StyledLoader width="24px" height="24px" />}
