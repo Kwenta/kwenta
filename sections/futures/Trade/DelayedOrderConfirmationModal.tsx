@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
+import Error from 'components/Error';
 import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -15,6 +16,7 @@ import {
 	selectLeverageSide,
 	selectMarketAsset,
 	selectMarketInfo,
+	selectModifyPositionError,
 	selectNextPriceDisclaimer,
 	selectOrderType,
 	selectPosition,
@@ -39,6 +41,7 @@ const NextPriceConfirmationModal: FC = () => {
 	const dispatch = useAppDispatch();
 
 	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
+	const txError = useAppSelector(selectModifyPositionError);
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
@@ -185,6 +188,7 @@ const NextPriceConfirmationModal: FC = () => {
 							t('futures.market.trade.confirmation.modal.confirm-order')
 						)}
 					</ConfirmTradeButton>
+					{txError && <Error message={txError} formatter="revert" />}
 				</StyledBaseModal>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
@@ -255,6 +259,7 @@ const Value = styled.div`
 
 const ConfirmTradeButton = styled(Button)`
 	margin-top: 24px;
+	margin-bottom: 12px;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
