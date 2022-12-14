@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import { zIndex } from 'constants/ui';
-import { FixedFooterMixin, GridDivCenteredRow, numericValueCSS } from 'styles/common';
+import { FixedFooterMixin, GridDivCenteredRow } from 'styles/common';
 import media from 'styles/media';
 
 export const SummaryItems = styled.div`
@@ -17,31 +17,6 @@ export const SummaryItems = styled.div`
 		grid-template-rows: auto auto;
 		grid-gap: 20px;
 	`}
-`;
-
-export const SummaryItem = styled.div`
-	display: grid;
-	grid-gap: 4px;
-	width: 110px;
-	${media.lessThan('md')`
-		width: unset;
-	`}
-`;
-
-export const SummaryItemLabel = styled.div`
-	text-transform: capitalize;
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 13px;
-`;
-
-export const SummaryItemValue = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	${numericValueCSS};
-	max-width: 100px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	font-size: 13px;
 `;
 
 export const MessageContainer = styled(GridDivCenteredRow)<{
@@ -79,7 +54,7 @@ export const MessageButton = styled(Button).attrs({
 	size: 'lg',
 	noOutline: true,
 	isRounded: true,
-	fullwidth: true,
+	fullWidth: true,
 })`
 	font-size: 17px;
 	height: 55px;

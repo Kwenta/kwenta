@@ -17,6 +17,7 @@ import {
 	FuturesFeeProps,
 	TradingRewardProps,
 } from 'queries/staking/utils';
+import { BigText } from 'sections/earn/common';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { claimMultipleRewards } from 'state/staking/actions';
 import { selectEpochPeriod, selectResetTime, selectTotalRewards } from 'state/staking/selectors';
@@ -25,7 +26,7 @@ import media from 'styles/media';
 import { formatTruncatedDuration } from 'utils/formatters/date';
 import { formatDollars, formatPercent, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
-import { KwentaLabel, StakingCard } from './common';
+import { StakingCard } from './common';
 
 const TradingRewardsTab: FC<TradingRewardProps> = ({
 	period = 0,
@@ -89,7 +90,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.claimable-rewards-all')}
 						</div>
-						<KwentaLabel>{truncateNumbers(totalRewards, 4)}</KwentaLabel>
+						<BigText hasKwentaLogo>{truncateNumbers(totalRewards, 4)}</BigText>
 					</div>
 					<div>
 						<div className="title">
@@ -142,7 +143,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 								<div className="title">
 									{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}
 								</div>
-								<KwentaLabel>{truncateNumbers(wei(estimatedReward), 4)}</KwentaLabel>
+								<BigText hasKwentaLogo>{truncateNumbers(wei(estimatedReward), 4)}</BigText>
 							</div>
 							<div>
 								<div className="title">

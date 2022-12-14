@@ -1,8 +1,6 @@
 import styled, { css } from 'styled-components';
 
-import Button, { border } from 'components/Button';
-import NumericInput from 'components/Input/NumericInput';
-import { Tooltip as DefaultTooltip } from 'components/Tooltip/TooltipStyles';
+import { border } from 'components/Button';
 import { zIndex } from 'constants/ui';
 import media from 'styles/media';
 
@@ -60,16 +58,8 @@ export const GridDivCentered = styled(GridDiv)`
 	align-items: center;
 `;
 
-export const GridDivRow = styled(GridDiv)`
-	grid-auto-flow: row;
-`;
-
 export const GridDivCenteredRow = styled(GridDivCentered)`
 	grid-auto-flow: row;
-`;
-
-export const GridDivCol = styled(GridDiv)`
-	grid-auto-flow: column;
 `;
 
 export const GridDivCenteredCol = styled(GridDivCentered)`
@@ -86,16 +76,6 @@ export const NumericValue = styled.span`
 
 export const NoTextTransform = styled.span`
 	text-transform: none;
-`;
-
-export const TextButton = styled.button<{ disabled?: boolean }>`
-	${resetButtonCSS};
-	background: transparent;
-	cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
-`;
-
-export const ResetButton = styled.button`
-	${resetButtonCSS};
 `;
 
 export const SelectableCurrencyRow = styled(FlexDivRowCentered)<{ isSelectable: boolean }>`
@@ -151,16 +131,6 @@ export const BoldText = styled.span`
 	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
-export const BottomShadow = styled.div`
-	background: linear-gradient(360deg, #10101e 0%, rgba(16, 16, 30, 0) 100%);
-	position: fixed;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	height: 16px;
-	pointer-events: none;
-`;
-
 export const FullScreenContainer = styled(FlexDiv)`
 	flex-flow: column;
 	width: 100%;
@@ -180,65 +150,6 @@ export const MobileScreenContainer = styled.div`
 	height: 100vh;
 	overflow-y: scroll;
 	padding-bottom: 80px;
-`;
-
-export const Tooltip = styled(DefaultTooltip)`
-	background-color: ${(props) => props.theme.colors.cellGradient};
-	border: 0.5px solid ${(props) => props.theme.colors.navy};
-	border-radius: 4px;
-`;
-
-export const InfoTooltip = styled(DefaultTooltip)`
-	font-size: 12px;
-	background-color: ${(props) => props.theme.colors.navy};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	.tippy-arrow {
-		color: ${(props) => props.theme.colors.navy};
-	}
-`;
-
-export const InfoTooltipContent = styled.span`
-	display: inline-flex;
-	cursor: pointer;
-	margin-left: 5px;
-`;
-
-export const SolidTooltip = styled(Tooltip).attrs({
-	trigger: 'click',
-	arrow: false,
-	interactive: true,
-})`
-	width: 150px;
-`;
-
-export const SolidTooltipContent = styled.div`
-	padding: 16px 0 8px 0;
-`;
-
-export const SolidTooltipCustomValueContainer = styled.div`
-	margin: 0 10px 5px 10px;
-`;
-
-export const SolidTooltipCustomValue = styled(NumericInput)`
-	width: 100%;
-	border: 0;
-	font-size: 12px;
-	::placeholder {
-		font-family: ${(props) => props.theme.fonts.mono};
-	}
-`;
-
-export const SolidTooltipItemButton = styled(Button)`
-	width: 100%;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding-left: 10px;
-	padding-right: 10px;
-`;
-
-export const IconButton = styled.button`
-	${resetButtonCSS};
 `;
 
 export const FullHeightContainer = styled(FlexDiv)`
