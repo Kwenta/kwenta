@@ -82,7 +82,7 @@
 		"recoil": "0.6.1",
 		"redux-logger": "^3.0.6",
 		"slick-carousel": "1.8.1",
-		"styled-components": "5.1.1",
+		"styled-components": "5.3.6",
 		"styled-media-query": "2.1.2",
 		"unstated-next": "1.1.0",
 		"wagmi": "0.8.5"
@@ -116,7 +116,7 @@
 		"@types/react-slick": "0.23.10",
 		"@types/react-table": "7.0.22",
 		"@types/redux-logger": "^3.0.9",
-		"@types/styled-components": "5.1.2",
+		"@types/styled-components": "5.1.26",
 		"@typescript-eslint/eslint-plugin": "5.40.1",
 		"@typescript-eslint/parser": "5.40.1",
 		"babel-eslint": "10.1.0",
