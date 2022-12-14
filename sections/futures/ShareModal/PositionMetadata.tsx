@@ -84,7 +84,7 @@ const PositionMetadata: FC<PositionMetadataProps> = ({ marketAsset }) => {
 		(position) => position.isOpen && position.asset === marketAsset
 	);
 
-	avgEntryPrice = currentPosition?.avgEntryPrice.toNumber().toFixed(2) ?? '';
+	avgEntryPrice = currentPosition?.avgEntryPrice.toNumber().toFixed() ?? '';
 	const openTimestamp = currentPosition?.openTimestamp ?? 0;
 
 	openAtDate = format(openTimestamp, 'PP', { locale: getLocale() });
