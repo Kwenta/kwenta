@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { futuresAccountTypeState, positionHistoryState } from 'store/futures';
 import getLocale from 'utils/formatters/getLocale';
-import { formatNumber } from 'utils/formatters/number';
+import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 
 type PositionMetadataProps = {
 	marketAsset: string;
@@ -118,7 +118,9 @@ const PositionMetadata: FC<PositionMetadataProps> = ({ marketAsset }) => {
 					{t('futures.modals.share.position-metadata.avg-open-price')}
 				</ContainerText>
 				<ContainerText className="date-or-price">
-					{formatNumber(avgEntryPrice ?? '', { isAssetPrice: true })}
+					{formatDollars(avgEntryPrice ?? zeroBN, {
+						isAssetPrice: true,
+					})}
 				</ContainerText>
 			</BottomLeftContainer>
 			<BottomRightContainer>
