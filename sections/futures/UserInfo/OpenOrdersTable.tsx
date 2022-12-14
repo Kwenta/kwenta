@@ -49,12 +49,13 @@ const OpenOrdersTable: React.FC = () => {
 	const rowsData = useMemo(() => {
 		const ordersWithCancel = openOrders
 			.map((o) => {
-				const market = futuresMarkets.find((m) => m.marketKey === o.marketKey);
-				const timer = countdownTimers ? countdownTimers[o.marketKey] : null;
+				const market = futuresMarkets.find((m) => m.market === o.marketAddress);
+				const asset = o?.asset ?? '';
+				const timer = countdownTimers && o.marketKey ? countdownTimers[o.marketKey] : null;
 				const order = {
 					...o,
-					sizeTxt: formatCurrency(o.asset, o.size.abs(), {
-						currencyKey: getDisplayAsset(o.asset) ?? '',
+					sizeTxt: formatCurrency(asset, o.size.abs(), {
+						currencyKey: getDisplayAsset(asset) ?? '',
 						minDecimals: suggestedDecimals(o.size),
 					}),
 					timeToExecution: timer?.timeToExecution,
@@ -96,7 +97,7 @@ const OpenOrdersTable: React.FC = () => {
 	}, [openOrders, futuresMarkets, marketAsset, countdownTimers, dispatch]);
 
 	useEffect(() => {
-		const timer = setTimeout(() => {
+		const timer = setInterval(() => {
 			const newCountdownTimers = rowsData.reduce((acc, order) => {
 				const timeToExecution =
 					Math.floor((order.executableAtTimestamp - Date.now()) / 1000) +
@@ -104,7 +105,7 @@ const OpenOrdersTable: React.FC = () => {
 				const timePastExecution = Math.floor((Date.now() - order.executableAtTimestamp) / 1000);
 
 				// Only updated delayed orders
-				if (!order.isOffchain) {
+				if (!order.isOffchain && order.marketKey) {
 					acc[order.marketKey] = {
 						timeToExecution: Math.max(timeToExecution, 0),
 						timePastExecution: Math.max(timePastExecution, 0),

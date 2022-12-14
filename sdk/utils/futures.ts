@@ -15,7 +15,6 @@ import { IPerpsV2MarketBaseTypes } from 'sdk/contracts/types/PerpsV2Market';
 import {
 	DelayedOrder,
 	FundingRateUpdate,
-	FuturesMarket,
 	FuturesMarketAsset,
 	FuturesMarketKey,
 	FuturesPosition,
@@ -236,7 +235,7 @@ export const unserializePotentialTrade = (
 
 export const formatDelayedOrder = (
 	account: string,
-	marketInfo: FuturesMarket<Wei>,
+	marketAddress: string,
 	order: IPerpsV2MarketBaseTypes.DelayedOrderStructOutput
 ): DelayedOrder => {
 	const {
@@ -252,10 +251,7 @@ export const formatDelayedOrder = (
 
 	return {
 		account: account,
-		asset: marketInfo.asset,
-		marketAddress: marketInfo.market,
-		market: getMarketName(marketInfo.asset),
-		marketKey: marketInfo.marketKey,
+		marketAddress: marketAddress,
 		size: wei(sizeDelta),
 		commitDeposit: wei(commitDeposit),
 		keeperDeposit: wei(keeperDeposit),
