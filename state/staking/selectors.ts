@@ -36,14 +36,17 @@ export const selectStakedKwentaBalance = createSelector(
 	toWei
 );
 
+export const selectUnstakedEscrowedKwentaBalance = createSelector(
+	selectEscrowedKwentaBalance,
+	selectStakedEscrowedKwentaBalance,
+	(escrowedKwentaBalance, stakedEscrowedKwentaBalance) => {
+		return escrowedKwentaBalance.sub(stakedEscrowedKwentaBalance);
+	}
+);
+
 export const selectClaimableBalance = createSelector(
 	(state: RootState) => state.staking.claimableBalance,
 	toWei
-);
-
-export const selectPeriods = createSelector(
-	(state: RootState) => state.staking.epochPeriod,
-	(epochPeriod) => Array.from(new Array(epochPeriod + 1), (_, i) => i)
 );
 
 export const selectIsKwentaTokenApproved = createSelector(
@@ -74,9 +77,11 @@ export const selectResetTime = createSelector(
 );
 
 export const selectEpochData = createSelector(
-	selectPeriods,
+	(state: RootState) => state.staking.epochPeriod,
 	(state: RootState) => state.wallet.networkId,
-	(periods, networkId) => periods.map((i) => parseEpochData(i, networkId))
+	(epochPeriod, networkId) => {
+		return Array.from(new Array(epochPeriod + 1), (_, i) => parseEpochData(i, networkId));
+	}
 );
 
 export const selectSelectedEpoch = createSelector(
@@ -129,6 +134,22 @@ export const selectTotalRewards = createSelector(
 export const selectTotalVestable = createSelector(
 	(state: RootState) => state.staking.totalVestable,
 	wei
+);
+
+export const selectCanStakeEscrowedKwenta = createSelector(
+	selectUnstakedEscrowedKwentaBalance,
+	selectIsStakingEscrowedKwenta,
+	(unstakedEscrowedKwentaBalance, isStakingEscrowedKwenta) => {
+		return unstakedEscrowedKwentaBalance.gt(0) && !isStakingEscrowedKwenta;
+	}
+);
+
+export const selectCanUnstakeEscrowedKwenta = createSelector(
+	selectStakedEscrowedKwentaBalance,
+	selectIsUnstakingEscrowedKwenta,
+	(stakedEscrowedKwentaBalance, isUnstakingEscrowedKwenta) => {
+		return stakedEscrowedKwentaBalance.gt(0) && !isUnstakingEscrowedKwenta;
+	}
 );
 
 export const selectEpochPeriod = createSelector(

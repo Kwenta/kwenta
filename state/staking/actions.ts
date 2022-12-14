@@ -6,8 +6,6 @@ import { monitorTransaction } from 'contexts/RelayerContext';
 import { EscrowData } from 'sdk/services/kwentaToken';
 import { FetchStatus, ThunkConfig } from 'state/types';
 
-import { selectPeriods } from './selectors';
-
 export const fetchStakingData = createAsyncThunk<
 	{
 		rewardEscrowBalance: string;
@@ -158,9 +156,11 @@ export const fetchClaimableRewards = createAsyncThunk<
 	void,
 	ThunkConfig
 >('staking/fetchClaimableRewards', async (_, { getState, extra: { sdk } }) => {
-	const periods = selectPeriods(getState());
+	const {
+		staking: { epochPeriod },
+	} = getState();
 
-	const { claimableRewards, totalRewards } = await sdk.kwentaToken.getClaimableRewards(periods);
+	const { claimableRewards, totalRewards } = await sdk.kwentaToken.getClaimableRewards(epochPeriod);
 
 	return { claimableRewards, totalRewards: totalRewards.toString() };
 });

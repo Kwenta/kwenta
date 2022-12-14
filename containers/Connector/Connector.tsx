@@ -4,7 +4,7 @@ import { ethers } from 'ethers';
 import { keyBy } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createContainer } from 'unstated-next';
-import { chain, useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
+import { chain, useAccount, useNetwork, useSigner, useWebSocketProvider } from 'wagmi';
 
 import { sdk } from 'state/config';
 import { useAppDispatch } from 'state/hooks';
@@ -30,8 +30,8 @@ const useConnector = () => {
 
 	const walletAddress = useMemo(() => address ?? null, [address]);
 
-	const provider = useProvider({ chainId: network.id });
-	const l2Provider = useProvider({ chainId: chain.optimism.id });
+	const provider = useWebSocketProvider({ chainId: network.id });
+	const l2Provider = useWebSocketProvider({ chainId: chain.optimism.id });
 	const { data: signer } = useSigner();
 
 	// Provides a default mainnet provider, irrespective of the current network
@@ -58,11 +58,13 @@ const useConnector = () => {
 	);
 
 	useEffect(() => {
-		sdk.setProvider(provider).then((networkId) => {
-			handleNetworkChange(networkId);
-			setProviderReady(true);
-		});
-		transactionNotifier = new BaseTN(provider);
+		if (!!provider) {
+			sdk.setProvider(provider).then((networkId) => {
+				handleNetworkChange(networkId);
+				setProviderReady(true);
+			});
+			transactionNotifier = new BaseTN(provider);
+		}
 	}, [provider, handleNetworkChange]);
 
 	useEffect(() => {
@@ -90,8 +92,8 @@ const useConnector = () => {
 		unsupportedNetwork,
 		isWalletConnected,
 		walletAddress,
-		provider,
-		l2Provider,
+		provider: provider!,
+		l2Provider: l2Provider!,
 		signer,
 		network,
 		synthsMap,
