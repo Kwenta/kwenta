@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import Text from 'components/Text';
+import * as Text from 'components/Text';
 
 export const Title = styled(Text.Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};

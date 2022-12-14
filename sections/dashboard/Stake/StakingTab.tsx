@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
+import { BigText } from 'components/Text';
 import { getApy } from 'queries/staking/utils';
-import { BigText } from 'sections/earn/common';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { getReward } from 'state/staking/actions';
 import { selectClaimableBalance } from 'state/staking/selectors';
@@ -39,7 +39,9 @@ const StakingTab = () => {
 				<CardGrid>
 					<div>
 						<div className="title">{t('dashboard.stake.tabs.staking.claimable-rewards')}</div>
-						<BigText hasKwentaLogo>{truncateNumbers(claimableBalance, 4)}</BigText>
+						<BigText mono kwenta>
+							{truncateNumbers(claimableBalance, 4)}
+						</BigText>
 					</div>
 					<div>
 						<div className="title">{t('dashboard.stake.tabs.staking.annual-percentage-yield')}</div>

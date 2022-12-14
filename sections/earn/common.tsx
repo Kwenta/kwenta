@@ -1,27 +1,7 @@
 import styled from 'styled-components';
 
-import KwentaLogo from 'assets/svg/earn/KWENTA.svg';
-import Text from 'components/Text';
+import * as Text from 'components/Text';
 import media from 'styles/media';
-
-export const BigText: React.FC<{ hasKwentaLogo?: boolean }> = ({
-	children,
-	hasKwentaLogo,
-	...rest
-}) => (
-	<div style={{ display: 'flex', alignItems: 'center' }}>
-		<BigTextRaw {...rest}>{children}</BigTextRaw>
-		{hasKwentaLogo && <KwentaLogo />}
-	</div>
-);
-
-export const BigTextRaw = styled(Text.Heading)<{ $yellow?: boolean }>`
-	font-size: 25px;
-	font-family: AkkuratMonoLLWeb-Regular;
-	letter-spacing: -0.7px;
-	color: ${(props) => props.theme.colors.selectedTheme.yellow};
-	margin-right: 8px;
-`;
 
 export const Title = styled(Text.Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};

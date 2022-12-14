@@ -15,12 +15,10 @@ const StakingInfo: FC = () => {
 			<CardTitle>{t('dashboard.titles.staking')}</CardTitle>
 			<StakingBody>
 				<Title>APY:</Title>
-				<BigText white>--%</BigText>
+				<BigText>--%</BigText>
 
 				<Title>Claimable:</Title>
-				<BigText white logo>
-					--
-				</BigText>
+				<BigText kwenta>--</BigText>
 				<StyledButton fullWidth disabled>
 					Claim Rewards
 				</StyledButton>

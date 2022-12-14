@@ -5,30 +5,38 @@ import KwentaLogo from 'assets/svg/earn/KWENTA.svg';
 
 import Heading from './Heading';
 
-export const BigText: React.FC<{ white?: boolean; logo?: boolean }> = ({
-	children,
-	white,
-	logo,
-}) => {
+type BigTextProps = {
+	yellow?: boolean;
+	mono?: boolean;
+	kwenta?: boolean;
+};
+
+export const BigText: React.FC<BigTextProps> = ({ children, yellow, mono, kwenta }) => {
 	return (
 		<div style={{ display: 'flex', alignItems: 'center' }}>
-			<TitleText $gold={!white}>{children}</TitleText>
-			{logo && <StyledKwentaLogo />}
+			<TitleText $yellow={yellow} $mono={mono}>
+				{children}
+			</TitleText>
+			{kwenta && <KwentaLogo />}
 		</div>
 	);
 };
 
-const TitleText = styled(Heading)<{ $gold?: boolean }>`
+const TitleText = styled(Heading)<{ $yellow?: boolean; $mono?: boolean }>`
 	font-size: 25px;
-	${(props) =>
-		props.$gold &&
-		css`
-			color: ${(props) => props.theme.colors.common.primaryGold};
-		`}
-`;
+	margin-right: 8px;
 
-const StyledKwentaLogo = styled(KwentaLogo)`
-	margin-left: 8px;
+	${(props) =>
+		props.$mono &&
+		css`
+			font-family: AkkuratMonoLLWeb-Regular;
+		`}
+
+	${(props) =>
+		props.$yellow &&
+		css`
+			color: ${(props) => props.theme.colors.selectedTheme.yellow};
+		`}
 `;
 
 export default BigText;

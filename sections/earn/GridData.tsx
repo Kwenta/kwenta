@@ -1,9 +1,10 @@
 import { FC, memo } from 'react';
 import styled from 'styled-components';
 
+import { BigText } from 'components/Text';
 import media from 'styles/media';
 
-import { BigText, Title } from './common';
+import { Title } from './common';
 
 type GridDataProps = {
 	title: string;
@@ -14,7 +15,9 @@ type GridDataProps = {
 const GridData: FC<GridDataProps> = memo(({ title, value, hasKwentaLogo, children }) => (
 	<GridDataContainer>
 		<Title>{title}</Title>
-		<BigText hasKwentaLogo={hasKwentaLogo}>{value}</BigText>
+		<BigText mono kwenta={hasKwentaLogo}>
+			{value}
+		</BigText>
 		{children}
 	</GridDataContainer>
 ));
