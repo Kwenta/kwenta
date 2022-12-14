@@ -1,4 +1,4 @@
-import { NetworkId, NetworkNameById, Synth } from '@synthetixio/contracts-interface';
+import { Synth } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { TFunction } from 'i18next';
 import { Dictionary } from 'lodash';
@@ -273,8 +273,6 @@ export const serializeMarket = (market: FuturesMarket): FuturesMarket<string> =>
 		marketSkew: market.marketSkew.toString(),
 		marketSize: market.marketSize.toString(),
 		maxLeverage: market.maxLeverage.toString(),
-		priceOracle: market.priceOracle.toString(),
-		price: market.price.toString(),
 		minInitialMargin: market.minInitialMargin.toString(),
 		keeperDeposit: market.keeperDeposit.toString(),
 		marketLimit: market.marketLimit.toString(),
@@ -314,8 +312,6 @@ export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMar
 		marketSkew: wei(m.marketSkew),
 		marketSize: wei(m.marketSize),
 		maxLeverage: wei(m.maxLeverage),
-		priceOracle: wei(m.priceOracle),
-		price: wei(m.price),
 		minInitialMargin: wei(m.minInitialMargin),
 		keeperDeposit: wei(m.keeperDeposit),
 		marketLimit: wei(m.marketLimit),

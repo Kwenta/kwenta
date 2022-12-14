@@ -9,7 +9,6 @@ import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
-import { useFuturesContext } from 'contexts/FuturesContext';
 import useAverageEntryPrice from 'hooks/useAverageEntryPrice';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -20,6 +19,7 @@ import {
 	selectPosition,
 	selectTradePreview,
 	selectFuturesType,
+	selectMarketPrice,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { positionHistoryState } from 'store/futures';
@@ -69,13 +69,13 @@ type PositionPreviewData = {
 const PositionCard: React.FC<PositionCardProps> = () => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
-	const { marketAssetRate } = useFuturesContext();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const futuresAccountType = useAppSelector(selectFuturesType);
 	const position = useAppSelector(selectPosition);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const marketKey = useAppSelector(selectMarketKey);
+	const marketPrice = useAppSelector(selectMarketPrice);
 	const previewTradeData = useAppSelector(selectTradePreview);
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketKey);
 	const positionHistory = useRecoilValue(positionHistoryState);
@@ -139,7 +139,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			marketLongName: getSynthDescription(marketAsset, synthsMap, t),
 			marketPrice: (
 				<>
-					{`${formatDollars(marketAssetRate, {
+					{`${formatDollars(marketPrice, {
 						minDecimals,
 						isAssetPrice: true,
 					})}`}
@@ -270,7 +270,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 	}, [
 		positionDetails,
 		thisPositionHistory,
-		marketAssetRate,
+		marketPrice,
 		marketAsset,
 		synthsMap,
 		t,

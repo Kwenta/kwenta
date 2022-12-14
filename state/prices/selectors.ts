@@ -1,5 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
+
 import { Prices } from 'sdk/types/common';
 import { RootState } from 'state/store';
 import { getPricesForCurrencies } from 'utils/currencies';

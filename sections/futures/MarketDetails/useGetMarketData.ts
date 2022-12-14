@@ -8,11 +8,11 @@ import { NO_VALUE } from 'constants/placeholder';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import {
 	selectMarketAsset,
-	selectMarketPrice,
 	selectMarketInfo,
 	selectMarketKey,
 	selectMarketVolumes,
 	selectMarketPrices,
+	selectLatestMarketPrice,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { pastRatesState } from 'store/futures';
@@ -34,6 +34,7 @@ const useGetMarketData = (mobile?: boolean) => {
 	const pastRates = useRecoilValue(pastRatesState);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
 	const marketPrices = useAppSelector(selectMarketPrices);
+	const marketPrice = useAppSelector(selectLatestMarketPrice);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
@@ -45,7 +46,6 @@ const useGetMarketData = (mobile?: boolean) => {
 	const pastPrice = pastRates.find((price) => price.synth === marketAsset);
 
 	const oraclePrice = marketPrices.onChain ?? wei(0);
-	const marketPrice = marketPrices.offChain ?? oraclePrice;
 
 	const data: MarketData = useMemo(() => {
 		const fundingValue = marketInfo?.currentFundingRate;
@@ -177,6 +177,7 @@ const useGetMarketData = (mobile?: boolean) => {
 	}, [
 		marketAsset,
 		marketInfo,
+		oraclePrice,
 		futuresVolumes,
 		selectedPriceCurrency.name,
 		pastPrice?.price,

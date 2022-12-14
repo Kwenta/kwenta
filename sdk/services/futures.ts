@@ -21,7 +21,7 @@ import {
 	PerpsV2Market__factory,
 } from 'sdk/contracts/types';
 import { IPerpsV2MarketSettings } from 'sdk/contracts/types/PerpsV2MarketData';
-import { NetworkOverrideOptions } from 'sdk/types/common';
+import { NetworkOverrideOptions, PricesMap } from 'sdk/types/common';
 import {
 	FundingRateInput,
 	FundingRateResponse,
@@ -186,8 +186,6 @@ export default class FuturesService {
 				maxLeverage: wei(maxLeverage),
 				marketSize: wei(marketSize),
 				marketLimit: wei(marketParameters[i].maxMarketValue).mul(wei(price)),
-				priceOracle: wei(price),
-				price: wei(price).mul(wei(marketSkew).div(wei(marketParameters[i].skewScale)).add(1)),
 				minInitialMargin: wei(globals.minInitialMargin),
 				keeperDeposit: wei(globals.minKeeperFee),
 				isSuspended: suspensions[i],
@@ -258,9 +256,10 @@ export default class FuturesService {
 		return positions;
 	}
 
-	public async getAverageFundingRates(markets: FuturesMarket[], period: Period) {
+	public async getAverageFundingRates(markets: FuturesMarket[], prices: PricesMap, period: Period) {
 		const fundingRateInputs: FundingRateInput[] = markets.map(
-			({ asset, market, price, currentFundingRate }) => {
+			({ asset, market, currentFundingRate }) => {
+				const price = prices[asset];
 				return {
 					marketAddress: market,
 					marketKey: MarketKeyByAsset[asset],
@@ -475,17 +474,17 @@ export default class FuturesService {
 	public async getIsolatedTradePreview(
 		marketAddress: string,
 		sizeDelta: Wei,
-		priceOracle: Wei,
 		price: Wei,
+		skewAdjustedPrice: Wei,
 		leverageSide: PositionSide
 	) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
 		const details = await market.postTradeDetails(
 			sizeDelta.toBN(),
-			priceOracle.toBN(),
+			price.toBN(),
 			this.sdk.context.walletAddress
 		);
-		return formatPotentialIsolatedTrade(details, price, sizeDelta, leverageSide);
+		return formatPotentialIsolatedTrade(details, skewAdjustedPrice, sizeDelta, leverageSide);
 	}
 
 	public async getCrossMarginTradePreview(

@@ -1,3 +1,4 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 import { parseBytes32String } from 'ethers/lib/utils.js';
@@ -34,7 +35,6 @@ import {
 } from 'state/futures/types';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
-import { NetworkId } from '@synthetixio/contracts-interface';
 
 export const getFuturesEndpoint = (networkId: number): string => {
 	return FUTURES_ENDPOINTS[networkId] || FUTURES_ENDPOINTS[10];

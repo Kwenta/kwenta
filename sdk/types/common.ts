@@ -1,6 +1,7 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
 import { BigNumberish, providers } from 'ethers';
+
 import { FuturesMarketAsset } from './futures';
 
 export type NetworkOverrideOptions = {

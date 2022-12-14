@@ -17,11 +17,11 @@ import Connector from 'containers/Connector';
 import { Price } from 'queries/rates/types';
 import { selectBalances } from 'state/balances/selectors';
 import { useAppSelector } from 'state/hooks';
+import { selectPrices } from 'state/prices/selectors';
 import { pastRatesState } from 'store/futures';
 import { sortWei } from 'utils/balances';
 import { formatNumber, zeroBN } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
-import { selectPrices } from 'state/prices/selectors';
 
 type Cell = {
 	synth: CurrencyKey;

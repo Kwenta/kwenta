@@ -1,5 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 
 import { DEFAULT_LEVERAGE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import { DEFAULT_MAX_LEVERAGE } from 'constants/futures';
@@ -11,7 +11,7 @@ import { accountType, deserializeWeiObject } from 'state/helpers';
 import { selectPrices } from 'state/prices/selectors';
 import { RootState } from 'state/store';
 import { selectWallet } from 'state/wallet/selectors';
-import { getPricesForCurrencies, newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import { sameSide } from 'utils/costCalculations';
 import { zeroBN } from 'utils/formatters/number';
 import {
 	MarketKeyByAsset,
@@ -96,10 +96,6 @@ export const selectIsolatedPriceImpact = createSelector(
 	(priceImpact) => wei(priceImpact, 0)
 );
 
-export const selectPerpsMarketRate = createSelector(selectMarketInfo, (marketInfo) => {
-	return marketInfo?.price ?? wei(0);
-});
-
 export const selectOrderType = createSelector(
 	(state: RootState) => state.futures,
 	(futures) => futures[accountType(futures.selectedType)].orderType
@@ -112,6 +108,24 @@ export const selectMarketPrice = createSelector(
 	(marketAsset, prices, orderType) => {
 		const price = prices[marketAsset];
 		return orderType === 'delayed offchain' ? price?.offChain ?? wei(0) : price?.onChain ?? wei(0);
+	}
+);
+
+export const selectLatestMarketPrice = createSelector(
+	selectMarketAsset,
+	selectPrices,
+	(marketAsset, prices) => {
+		const price = prices[marketAsset];
+		return price?.offChain ?? price?.onChain ?? wei(0);
+	}
+);
+
+export const selectSkewAdjustedPrice = createSelector(
+	selectMarketPrice,
+	selectMarketInfo,
+	(price, marketInfo) => {
+		if (!marketInfo?.marketSkew || !marketInfo?.settings.skewScale) return price;
+		return wei(price).mul(wei(marketInfo.marketSkew).div(marketInfo.settings.skewScale).add(1));
 	}
 );
 
@@ -537,5 +551,43 @@ export const selectModifyIsolatedGasEstimate = createSelector(
 		const estimate = transactionEstimations['modify_isolated'];
 		if (estimate) return unserializeGasEstimate(estimate);
 		return null;
+	}
+);
+
+export const selectDelayedOrderFee = createSelector(
+	selectMarketInfo,
+	selectTradeSizeInputs,
+	selectSkewAdjustedPrice,
+	(market, { nativeSizeDelta }, price) => {
+		// TODO: check these fees
+
+		if (
+			!market?.marketSkew ||
+			!market?.feeRates.takerFee ||
+			!market?.feeRates.makerFee ||
+			!market?.feeRates.takerFeeDelayedOrder ||
+			!market?.feeRates.makerFeeDelayedOrder ||
+			!nativeSizeDelta
+		) {
+			return { commitDeposit: undefined, delayedOrderFee: undefined };
+		}
+
+		const notionalDiff = nativeSizeDelta.mul(price);
+
+		let staticRate: Wei;
+		let staticRateDelayed: Wei;
+
+		if (sameSide(notionalDiff, market.marketSkew)) {
+			staticRate = market.feeRates.takerFee;
+			staticRateDelayed = market.feeRates.takerFeeDelayedOrder;
+		} else {
+			staticRate = market.feeRates.makerFee;
+			staticRateDelayed = market.feeRates.makerFeeDelayedOrder;
+		}
+
+		return {
+			commitDeposit: notionalDiff.mul(staticRate).abs(),
+			delayedOrderFee: notionalDiff.mul(staticRateDelayed).abs(),
+		};
 	}
 );

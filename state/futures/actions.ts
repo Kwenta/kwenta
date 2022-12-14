@@ -21,6 +21,7 @@ import { unserializeGasPrice } from 'state/app/helpers';
 import { setOpenModal } from 'state/app/reducer';
 import { fetchBalances } from 'state/balances/actions';
 import { serializeWeiObject } from 'state/helpers';
+import { selectLatestEthPrice } from 'state/prices/selectors';
 import { AppDispatch, AppThunk, RootState } from 'state/store';
 import { ThunkConfig } from 'state/types';
 import { computeMarketFee } from 'utils/costCalculations';
@@ -83,6 +84,7 @@ import {
 	selectOrderType,
 	selectPosition,
 	selectTradeSizeInputs,
+	selectSkewAdjustedPrice,
 } from './selectors';
 import {
 	CancelDelayedOrderInputs,
@@ -91,7 +93,6 @@ import {
 	FuturesTransactionType,
 	ModifyIsolatedPositionInputs,
 } from './types';
-import { selectLatestEthPrice } from 'state/prices/selectors';
 
 export const fetchMarkets = createAsyncThunk<
 	{ markets: FuturesMarket<string>[] },
@@ -281,6 +282,9 @@ export const fetchIsolatedMarginTradePreview = createAsyncThunk<
 	async (sizeDelta, { dispatch, getState, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
 		const account = selectFuturesAccount(getState());
+		const marketPrice = selectMarketPrice(getState());
+		const skewAdjustedPrice = selectSkewAdjustedPrice(getState());
+
 		if (!account) throw new Error('No account to fetch orders');
 		if (!marketInfo) throw new Error('No market info');
 		const leverageSide = selectLeverageSide(getState());
@@ -288,8 +292,8 @@ export const fetchIsolatedMarginTradePreview = createAsyncThunk<
 			const preview = await sdk.futures.getIsolatedTradePreview(
 				marketInfo?.market,
 				sizeDelta,
-				marketInfo?.priceOracle,
-				marketInfo?.price,
+				skewAdjustedPrice,
+				marketPrice,
 				leverageSide
 			);
 			return serializePotentialTrade(preview);
@@ -514,9 +518,10 @@ export const calculateCrossMarginFees = (): AppThunk => (dispatch, getState) => 
 	const keeperBalance = selectKeeperEthBalance(getState());
 	const settings = selectCrossMarginSettings(getState());
 	const dynamicFeeRate = selectDynamicFeeRate(getState());
-	const { susdSize, nativeSizeDelta } = selectCrossMarginTradeInputs(getState());
 
-	const staticRate = computeMarketFee(market, nativeSizeDelta);
+	const { susdSize, susdSizeDelta } = selectCrossMarginTradeInputs(getState());
+
+	const staticRate = computeMarketFee(market, susdSizeDelta);
 	const tradeFee = susdSize.mul(staticRate).add(susdSize.mul(dynamicFeeRate));
 
 	const currentDeposit =
@@ -541,9 +546,9 @@ export const calculateCrossMarginFees = (): AppThunk => (dispatch, getState) => 
 export const calculateIsolatedMarginFees = (): AppThunk => (dispatch, getState) => {
 	const market = selectMarketInfo(getState());
 	const dynamicFeeRate = selectDynamicFeeRate(getState());
-	const { susdSize, nativeSizeDelta } = selectCrossMarginTradeInputs(getState());
+	const { susdSize, susdSizeDelta } = selectCrossMarginTradeInputs(getState());
 
-	const staticRate = computeMarketFee(market, nativeSizeDelta);
+	const staticRate = computeMarketFee(market, susdSizeDelta);
 	const tradeFee = susdSize.mul(staticRate).add(susdSize.mul(dynamicFeeRate));
 	dispatch(setIsolatedMarginFee(tradeFee.toString()));
 };

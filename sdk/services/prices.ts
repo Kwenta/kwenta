@@ -2,11 +2,11 @@ import { EvmPriceServiceConnection, PriceFeed } from '@pythnetwork/pyth-evm-js';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { formatEther, parseBytes32String } from 'ethers/lib/utils.js';
-
 import KwentaSDK from 'sdk';
+
 import { MARKET_ASSETS_BY_PYTH_ID } from 'sdk/constants/futures';
 import { ADDITIONAL_SYNTHS, PYTH_IDS } from 'sdk/constants/prices';
-import { CurrencyRate, Prices, PricesMap, PriceType, SynthRatesTuple } from 'sdk/types/common';
+import { CurrencyRate, PricesMap, PriceType, SynthRatesTuple } from 'sdk/types/common';
 import { FuturesMarketKey } from 'sdk/types/futures';
 import { getPythNetworkUrl, normalizePythId } from 'sdk/utils/futures';
 import { startInterval } from 'sdk/utils/interval';
@@ -15,6 +15,8 @@ import { MarketAssetByKey } from 'utils/futures';
 import logError from 'utils/logError';
 
 import * as sdkErrors from '../common/errors';
+
+const LOG_WS = process.env.NODE_ENV !== 'production';
 
 export default class PricesService {
 	private sdk: KwentaSDK;
@@ -25,19 +27,25 @@ export default class PricesService {
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
+
 		this.pyth = new EvmPriceServiceConnection(getPythNetworkUrl(sdk.context.networkId), {
-			logger: console,
-			timeout: 10000,
-			verbose: true,
+			logger: LOG_WS ? console : undefined,
 		});
+
 		// TODO: Typed events
 		this.sdk.context.events.on('network_changed', (params) => {
+			if (this.pyth) {
+				this.pyth.closeWebSocket();
+			}
 			this.pyth = new EvmPriceServiceConnection(getPythNetworkUrl(params.networkId), {
-				logger: console,
+				logger: LOG_WS ? console : undefined,
 			});
 			this.pyth.onWsError = (error) => {
-				console.log('err', error);
+				// TODO: Feedback connection issue and display
+				// prompt to try disabling add blocker
+				logError(error);
 			};
+			this.subscribeToPythPriceUpdates();
 		});
 	}
 
@@ -60,30 +68,6 @@ export default class PricesService {
 				}
 			}, intervalTime);
 		}
-
-		// Fetch and then subscribe to Pyth off-chain prices
-		try {
-			this.offChainPrices = await this.getOffChainPrices();
-			this.sdk.context.events.emit('prices_updated', {
-				prices: this.offChainPrices,
-				type: 'off_chain',
-			});
-		} catch (err) {
-			logError(err);
-		}
-
-		this.pyth.subscribePriceFeedUpdates(this.pythIds, (priceFeed) => {
-			const id = normalizePythId(priceFeed.id);
-			const assetKey = MARKET_ASSETS_BY_PYTH_ID[id];
-			if (assetKey) {
-				const price = this.formatPythPrice(priceFeed);
-				this.offChainPrices[assetKey] = price;
-			}
-			this.sdk.context.events.emit('prices_updated', {
-				prices: this.offChainPrices,
-				type: 'off_chain',
-			});
-		});
 	}
 
 	public onPricesUpdated(
@@ -148,5 +132,29 @@ export default class PricesService {
 	private formatPythPrice(priceFeed: PriceFeed): Wei {
 		const price = priceFeed.getPriceUnchecked();
 		return scale(wei(price.price), price.expo);
+	}
+
+	private async subscribeToPythPriceUpdates() {
+		try {
+			this.offChainPrices = await this.getOffChainPrices();
+			this.sdk.context.events.emit('prices_updated', {
+				prices: this.offChainPrices,
+				type: 'off_chain',
+			});
+		} catch (err) {
+			logError(err);
+		}
+		this.pyth.subscribePriceFeedUpdates(this.pythIds, (priceFeed) => {
+			const id = normalizePythId(priceFeed.id);
+			const assetKey = MARKET_ASSETS_BY_PYTH_ID[id];
+			if (assetKey) {
+				const price = this.formatPythPrice(priceFeed);
+				this.offChainPrices[assetKey] = price;
+			}
+			this.sdk.context.events.emit('prices_updated', {
+				prices: this.offChainPrices,
+				type: 'off_chain',
+			});
+		});
 	}
 }

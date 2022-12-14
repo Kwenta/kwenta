@@ -19,10 +19,11 @@ import Connector from 'containers/Connector';
 import { Price } from 'queries/rates/types';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
-import { selectMarketVolumes } from 'state/futures/selectors';
+import { selectMarketPrice, selectMarketVolumes } from 'state/futures/selectors';
 import { fetchOptimismMarkets } from 'state/home/actions';
 import { selectOptimismMarkets } from 'state/home/selectors';
 import { useAppSelector, usePollAction } from 'state/hooks';
+import { selectPrices } from 'state/prices/selectors';
 import { pastRatesState } from 'store/futures';
 import {
 	FlexDiv,
@@ -33,7 +34,6 @@ import {
 } from 'styles/common';
 import media, { Media } from 'styles/media';
 import { getSynthDescription } from 'utils/futures';
-import { selectPrices } from 'state/prices/selectors';
 
 enum MarketsTab {
 	FUTURES = 'futures',
@@ -152,6 +152,7 @@ const Assets = () => {
 
 	const prices = useAppSelector(selectPrices);
 	const futuresMarkets = useAppSelector(selectOptimismMarkets);
+	const marketPrice = useAppSelector(selectMarketPrice);
 
 	const pastRates = useRecoilValue(pastRatesState);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
@@ -208,10 +209,10 @@ const Assets = () => {
 					key: market.asset,
 					name: market.asset[0] === 's' ? market.asset.slice(1) : market.asset,
 					description: description.split(' ')[0],
-					price: market.price.toNumber(),
+					price: marketPrice.toNumber(),
 					volume,
 					priceChange:
-						(market.price.toNumber() - (pastPrice?.price ?? 0)) / market.price.toNumber() || 0,
+						(marketPrice.toNumber() - (pastPrice?.price ?? 0)) / marketPrice.toNumber() || 0,
 					image: <PriceChart asset={market.asset} />,
 					icon: (
 						<StyledCurrencyIcon currencyKey={(market.asset[0] !== 's' ? 's' : '') + market.asset} />

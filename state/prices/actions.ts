@@ -1,5 +1,8 @@
-import { Prices, PricesMap, PriceType } from 'sdk/types/common';
+import { throttle } from 'lodash';
+
+import { PricesMap, PriceType } from 'sdk/types/common';
 import { AppThunk } from 'state/store';
+
 import { setOffChainPrices, setOnChainPrices } from './reducer';
 
 export const updatePrices = (prices: PricesMap<string>, type: PriceType): AppThunk => (
@@ -11,3 +14,10 @@ export const updatePrices = (prices: PricesMap<string>, type: PriceType): AppThu
 		dispatch(setOnChainPrices(prices));
 	}
 };
+
+export const updatePriceThrottled = throttle(
+	(dispatch, prices: PricesMap<string>, type: PriceType) => {
+		dispatch(updatePrices(prices, type));
+	},
+	5000
+);

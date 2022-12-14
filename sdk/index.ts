@@ -4,9 +4,9 @@ import Context, { IContext } from './context';
 import ExchangeService from './services/exchange';
 import FuturesService from './services/futures';
 import KwentaTokenService from './services/kwentaToken';
+import PricesService from './services/prices';
 import SynthsService from './services/synths';
 import TransactionsService from './services/transactions';
-import PricesService from './services/prices';
 
 export default class KwentaSDK {
 	public context: Context;
