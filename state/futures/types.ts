@@ -160,7 +160,9 @@ export type CrossMarginState = {
 	positions: {
 		[account: string]: FuturesPosition<string>[];
 	};
-	openOrders: DelayedOrder<string>[];
+	openOrders: {
+		[account: string]: DelayedOrder<string>[];
+	};
 };
 
 export type IsolatedMarginState = {
@@ -178,7 +180,9 @@ export type IsolatedMarginState = {
 	positions: {
 		[account: string]: FuturesPosition<string>[];
 	};
-	openOrders: DelayedOrder<string>[];
+	openOrders: {
+		[account: string]: DelayedOrder<string>[];
+	};
 };
 
 export type ModifyIsolatedPositionInputs = {

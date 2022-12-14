@@ -457,14 +457,20 @@ export const selectFuturesPortfolio = createSelector(
 export const selectCrossMarginOpenOrders = createSelector(
 	(state: RootState) => state.futures,
 	(futures) => {
-		return unserializeDelayedOrders(futures.crossMargin.openOrders);
+		return futures.crossMargin.account &&
+			futures.crossMargin.openOrders[futures.crossMargin.account]
+			? unserializeDelayedOrders(futures.crossMargin.openOrders[futures.crossMargin.account])
+			: [];
 	}
 );
 
 export const selectIsolatedMarginOpenOrders = createSelector(
+	selectWallet,
 	(state: RootState) => state.futures,
-	(futures) => {
-		return unserializeDelayedOrders(futures.isolatedMargin.openOrders);
+	(wallet, futures) => {
+		return wallet && futures.isolatedMargin.openOrders[wallet]
+			? unserializeDelayedOrders(futures.isolatedMargin.openOrders[wallet])
+			: [];
 	}
 );
 
