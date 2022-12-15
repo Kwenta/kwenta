@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { PricesMap } from 'sdk/types/common';
+import { PricesMap } from 'sdk/types/prices';
 
 import { PricesState } from './types';
 

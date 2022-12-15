@@ -1,6 +1,6 @@
 import { throttle } from 'lodash';
 
-import { PricesMap, PriceType } from 'sdk/types/common';
+import { PricesMap, PriceType } from 'sdk/types/prices';
 import { AppThunk } from 'state/store';
 
 import { setOffChainPrices, setOnChainPrices } from './reducer';

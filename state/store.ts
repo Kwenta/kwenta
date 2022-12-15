@@ -14,7 +14,7 @@ import pricesReducer from './prices/reducer';
 import stakingReducer from './staking/reducer';
 import walletReducer from './wallet/reducer';
 
-const LOG_REDUX = process.env.NODE_ENV !== 'production';
+const LOG_REDUX = false;
 
 const store = configureStore({
 	reducer: {

@@ -9,7 +9,7 @@ import {
 	ETH_ADDRESS,
 	ETH_COINGECKO_ADDRESS,
 } from 'constants/currency';
-import { Price, Prices } from 'sdk/types/common';
+import { Price, Prices } from 'sdk/types/prices';
 
 import { PriceResponse } from '../queries/coingecko/types';
 import { FuturesMarketKey } from './futures';

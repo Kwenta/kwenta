@@ -21,7 +21,7 @@ import {
 	PerpsV2Market__factory,
 } from 'sdk/contracts/types';
 import { IPerpsV2MarketSettings } from 'sdk/contracts/types/PerpsV2MarketData';
-import { NetworkOverrideOptions, PricesMap } from 'sdk/types/common';
+import { NetworkOverrideOptions } from 'sdk/types/common';
 import {
 	FundingRateInput,
 	FundingRateResponse,
@@ -35,6 +35,7 @@ import {
 	PositionDetail,
 	PositionSide,
 } from 'sdk/types/futures';
+import { PricesMap } from 'sdk/types/prices';
 import {
 	calculateFundingRate,
 	calculateVolumes,

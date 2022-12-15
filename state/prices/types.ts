@@ -1,4 +1,4 @@
-import { PricesMap } from 'sdk/types/common';
+import { PricesMap } from 'sdk/types/prices';
 
 export type PricesState = {
 	onChainPrices: PricesMap<string>;

@@ -6,8 +6,8 @@ import KwentaSDK from 'sdk';
 
 import { MARKET_ASSETS_BY_PYTH_ID } from 'sdk/constants/futures';
 import { ADDITIONAL_SYNTHS, PYTH_IDS } from 'sdk/constants/prices';
-import { CurrencyRate, PricesMap, PriceType, SynthRatesTuple } from 'sdk/types/common';
 import { FuturesMarketKey } from 'sdk/types/futures';
+import { CurrencyRate, PricesListener, PricesMap, SynthRatesTuple } from 'sdk/types/prices';
 import { getPythNetworkUrl, normalizePythId } from 'sdk/utils/futures';
 import { startInterval } from 'sdk/utils/interval';
 import { scale } from 'utils/formatters/number';
@@ -16,7 +16,8 @@ import logError from 'utils/logError';
 
 import * as sdkErrors from '../common/errors';
 
-const LOG_WS = process.env.NODE_ENV !== 'production';
+const DEBUG_WS = false;
+const LOG_WS = process.env.NODE_ENV !== 'production' && DEBUG_WS;
 
 export default class PricesService {
 	private sdk: KwentaSDK;
@@ -70,10 +71,12 @@ export default class PricesService {
 		}
 	}
 
-	public onPricesUpdated(
-		listener: (updatedPrices: { type: PriceType; prices: PricesMap }) => void
-	) {
+	public onPricesUpdated(listener: PricesListener) {
 		return this.sdk.context.events.on('prices_updated', listener);
+	}
+
+	public removePricesListener(listener: PricesListener) {
+		return this.sdk.context.events.off('prices_updated', listener);
 	}
 
 	public removePricesListeners() {

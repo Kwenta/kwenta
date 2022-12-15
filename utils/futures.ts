@@ -4,7 +4,6 @@ import { TFunction } from 'i18next';
 import { Dictionary } from 'lodash';
 
 import { FuturesOrderType } from 'queries/futures/types';
-import { PricesMap } from 'sdk/types/common';
 import {
 	DelayedOrder,
 	FuturesMarket,
@@ -12,6 +11,7 @@ import {
 	FuturesPosition,
 	FuturesVolumes,
 } from 'sdk/types/futures';
+import { PricesMap } from 'sdk/types/prices';
 import { PositionSide } from 'sections/futures/types';
 import {
 	CrossMarginBalanceInfo,

@@ -7,7 +7,9 @@ import { chain } from 'wagmi';
 
 import Connector from 'containers/Connector';
 import { DelayedOrder } from 'sdk/types/futures';
+import { PricesListener } from 'sdk/types/prices';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
+import { sdk } from 'state/config';
 import { currentThemeState } from 'store/ui';
 import darkTheme from 'styles/theme/colors/dark';
 import { formatNumber } from 'utils/formatters/number';
@@ -64,6 +66,7 @@ export function TVChart({
 	const _toggleLinesButton = useRef<HTMLElement | null>(null);
 	const _intervalId = useRef<number | null>(null);
 	const _toggleListener = useRef<(() => void) | null>(null);
+	const _priceListener = useRef<PricesListener | undefined>();
 
 	const router = useRouter();
 
@@ -86,6 +89,17 @@ export function TVChart({
 		});
 		_oderLineRefs.current = [];
 	};
+
+	useEffect(() => {
+		return () => {
+			if (_intervalId.current) {
+				clearInterval(_intervalId.current);
+			}
+			if (_priceListener.current) {
+				sdk.prices.removePricesListener(_priceListener.current);
+			}
+		};
+	}, []);
 
 	// TODO: Re-enable on implementation of limit orders
 	// const renderOrderLines = () => {
@@ -195,6 +209,9 @@ export function TVChart({
 			if (_intervalId.current) {
 				clearInterval(_intervalId.current);
 			}
+			if (_priceListener.current) {
+				sdk.prices.removePricesListener(_priceListener.current);
+			}
 		};
 
 		clearExistingWidget();
@@ -292,8 +309,12 @@ export function TVChart({
 		});
 	}, [marketAsset]);
 
-	const onSubscribe = useCallback((newIntervalId: number) => {
+	const onSubscribe = useCallback((newIntervalId: number, priceListener: PricesListener) => {
+		if (_intervalId.current) {
+			clearInterval(_intervalId.current);
+		}
 		_intervalId.current = newIntervalId;
+		_priceListener.current = priceListener;
 	}, []);
 
 	return <ChartBody id={containerId} />;
