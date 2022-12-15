@@ -28,7 +28,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export declare namespace IPerpsV2MarketBaseTypes {
+export declare namespace IPerpsV2MarketConsolidated {
   export type DelayedOrderStruct = {
     isOffchain: PromiseOrValue<boolean>;
     sizeDelta: PromiseOrValue<BigNumberish>;
@@ -88,7 +88,6 @@ export declare namespace IPerpsV2MarketBaseTypes {
 
 export interface PerpsV2MarketInterface extends utils.Interface {
   functions: {
-    "acceptOwnership()": FunctionFragment;
     "accessibleMargin(address)": FunctionFragment;
     "accruedFunding(address)": FunctionFragment;
     "assetPrice()": FunctionFragment;
@@ -100,48 +99,29 @@ export interface PerpsV2MarketInterface extends utils.Interface {
     "closePositionWithTracking(uint256,bytes32)": FunctionFragment;
     "currentFundingRate()": FunctionFragment;
     "currentFundingVelocity()": FunctionFragment;
-    "currentLeverage(address)": FunctionFragment;
     "delayedOrders(address)": FunctionFragment;
-    "entryDebtCorrection()": FunctionFragment;
     "executeDelayedOrder(address)": FunctionFragment;
     "executeOffchainDelayedOrder(address,bytes[])": FunctionFragment;
-    "fillPriceWithBasePrice(int256,uint256)": FunctionFragment;
     "fundingLastRecomputed()": FunctionFragment;
     "fundingSequence(uint256)": FunctionFragment;
     "fundingSequenceLength()": FunctionFragment;
-    "isResolverCached()": FunctionFragment;
     "liquidatePosition(address)": FunctionFragment;
     "liquidationFee(address)": FunctionFragment;
-    "liquidationMargin(address)": FunctionFragment;
     "liquidationPrice(address)": FunctionFragment;
     "marketDebt()": FunctionFragment;
     "marketKey()": FunctionFragment;
     "marketSize()": FunctionFragment;
     "marketSizes()": FunctionFragment;
     "marketSkew()": FunctionFragment;
-    "marketState()": FunctionFragment;
-    "maxOrderSizes()": FunctionFragment;
-    "messageSender()": FunctionFragment;
     "modifyPosition(int256,uint256)": FunctionFragment;
     "modifyPositionWithTracking(int256,uint256,bytes32)": FunctionFragment;
-    "netFundingPerUnit(address)": FunctionFragment;
-    "nominateNewOwner(address)": FunctionFragment;
-    "nominatedOwner()": FunctionFragment;
     "notionalValue(address)": FunctionFragment;
-    "orderFee(int256)": FunctionFragment;
-    "owner()": FunctionFragment;
+    "orderFee(int256,uint8)": FunctionFragment;
     "positions(address)": FunctionFragment;
-    "postTradeDetails(int256,uint256,address)": FunctionFragment;
+    "postTradeDetails(int256,uint256,uint8,address)": FunctionFragment;
     "profitLoss(address)": FunctionFragment;
-    "proportionalSkew()": FunctionFragment;
-    "proxy()": FunctionFragment;
-    "rebuildCache()": FunctionFragment;
     "recomputeFunding()": FunctionFragment;
     "remainingMargin(address)": FunctionFragment;
-    "resolver()": FunctionFragment;
-    "resolverAddressesRequired()": FunctionFragment;
-    "setMessageSender(address)": FunctionFragment;
-    "setProxy(address)": FunctionFragment;
     "submitDelayedOrder(int256,uint256,uint256)": FunctionFragment;
     "submitDelayedOrderWithTracking(int256,uint256,uint256,bytes32)": FunctionFragment;
     "submitOffchainDelayedOrder(int256,uint256)": FunctionFragment;
@@ -153,7 +133,6 @@ export interface PerpsV2MarketInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "acceptOwnership"
       | "accessibleMargin"
       | "accruedFunding"
       | "assetPrice"
@@ -165,48 +144,29 @@ export interface PerpsV2MarketInterface extends utils.Interface {
       | "closePositionWithTracking"
       | "currentFundingRate"
       | "currentFundingVelocity"
-      | "currentLeverage"
       | "delayedOrders"
-      | "entryDebtCorrection"
       | "executeDelayedOrder"
       | "executeOffchainDelayedOrder"
-      | "fillPriceWithBasePrice"
       | "fundingLastRecomputed"
       | "fundingSequence"
       | "fundingSequenceLength"
-      | "isResolverCached"
       | "liquidatePosition"
       | "liquidationFee"
-      | "liquidationMargin"
       | "liquidationPrice"
       | "marketDebt"
       | "marketKey"
       | "marketSize"
       | "marketSizes"
       | "marketSkew"
-      | "marketState"
-      | "maxOrderSizes"
-      | "messageSender"
       | "modifyPosition"
       | "modifyPositionWithTracking"
-      | "netFundingPerUnit"
-      | "nominateNewOwner"
-      | "nominatedOwner"
       | "notionalValue"
       | "orderFee"
-      | "owner"
       | "positions"
       | "postTradeDetails"
       | "profitLoss"
-      | "proportionalSkew"
-      | "proxy"
-      | "rebuildCache"
       | "recomputeFunding"
       | "remainingMargin"
-      | "resolver"
-      | "resolverAddressesRequired"
-      | "setMessageSender"
-      | "setProxy"
       | "submitDelayedOrder"
       | "submitDelayedOrderWithTracking"
       | "submitOffchainDelayedOrder"
@@ -216,10 +176,6 @@ export interface PerpsV2MarketInterface extends utils.Interface {
       | "withdrawAllMargin"
   ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "acceptOwnership",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "accessibleMargin",
     values: [PromiseOrValue<string>]
@@ -262,16 +218,8 @@ export interface PerpsV2MarketInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "currentLeverage",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "delayedOrders",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "entryDebtCorrection",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "executeDelayedOrder",
@@ -280,10 +228,6 @@ export interface PerpsV2MarketInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "executeOffchainDelayedOrder",
     values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "fillPriceWithBasePrice",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "fundingLastRecomputed",
@@ -298,19 +242,11 @@ export interface PerpsV2MarketInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "isResolverCached",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "liquidatePosition",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "liquidationFee",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "liquidationMargin",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -335,18 +271,6 @@ export interface PerpsV2MarketInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "marketState",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "maxOrderSizes",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "messageSender",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "modifyPosition",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
@@ -359,26 +283,13 @@ export interface PerpsV2MarketInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "netFundingPerUnit",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "nominateNewOwner",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "nominatedOwner",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "notionalValue",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "orderFee",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "positions",
     values: [PromiseOrValue<string>]
@@ -386,6 +297,7 @@ export interface PerpsV2MarketInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "postTradeDetails",
     values: [
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>
@@ -396,33 +308,11 @@ export interface PerpsV2MarketInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "proportionalSkew",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "proxy", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "rebuildCache",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "recomputeFunding",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "remainingMargin",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(functionFragment: "resolver", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "resolverAddressesRequired",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setMessageSender",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setProxy",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -468,10 +358,6 @@ export interface PerpsV2MarketInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "acceptOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "accessibleMargin",
     data: BytesLike
   ): Result;
@@ -510,15 +396,7 @@ export interface PerpsV2MarketInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "currentLeverage",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "delayedOrders",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "entryDebtCorrection",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -527,10 +405,6 @@ export interface PerpsV2MarketInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "executeOffchainDelayedOrder",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "fillPriceWithBasePrice",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -546,19 +420,11 @@ export interface PerpsV2MarketInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "isResolverCached",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "liquidatePosition",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "liquidationFee",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "liquidationMargin",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -574,18 +440,6 @@ export interface PerpsV2MarketInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "marketSkew", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "marketState",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "maxOrderSizes",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "messageSender",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "modifyPosition",
     data: BytesLike
   ): Result;
@@ -594,38 +448,16 @@ export interface PerpsV2MarketInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "netFundingPerUnit",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "nominateNewOwner",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "nominatedOwner",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "notionalValue",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "orderFee", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "positions", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "postTradeDetails",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "profitLoss", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "proportionalSkew",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "proxy", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "rebuildCache",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "recomputeFunding",
     data: BytesLike
@@ -634,16 +466,6 @@ export interface PerpsV2MarketInterface extends utils.Interface {
     functionFragment: "remainingMargin",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "resolver", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "resolverAddressesRequired",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setMessageSender",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "setProxy", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "submitDelayedOrder",
     data: BytesLike
@@ -674,38 +496,79 @@ export interface PerpsV2MarketInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "CacheUpdated(bytes32,address)": EventFragment;
+    "DelayedOrderRemoved(address,bool,uint256,int256,uint256,uint256,uint256,bytes32)": EventFragment;
+    "DelayedOrderSubmitted(address,bool,int256,uint256,uint256,uint256,uint256,uint256,bytes32)": EventFragment;
     "FundingRecomputed(int256,int256,uint256,uint256)": EventFragment;
-    "FuturesTracking(bytes32,bytes32,bytes32,int256,uint256)": EventFragment;
     "MarginTransferred(address,int256)": EventFragment;
-    "OwnerChanged(address,address)": EventFragment;
-    "OwnerNominated(address)": EventFragment;
+    "PerpsTracking(bytes32,bytes32,bytes32,int256,uint256)": EventFragment;
     "PositionLiquidated(uint256,address,address,int256,uint256,uint256)": EventFragment;
     "PositionModified(uint256,address,uint256,int256,int256,uint256,uint256,uint256)": EventFragment;
-    "ProxyUpdated(address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "CacheUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DelayedOrderRemoved"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DelayedOrderSubmitted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FundingRecomputed"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "FuturesTracking"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MarginTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnerChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnerNominated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PerpsTracking"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PositionLiquidated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PositionModified"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ProxyUpdated"): EventFragment;
 }
 
-export interface CacheUpdatedEventObject {
-  name: string;
-  destination: string;
+export interface DelayedOrderRemovedEventObject {
+  account: string;
+  isOffchain: boolean;
+  currentRoundId: BigNumber;
+  sizeDelta: BigNumber;
+  targetRoundId: BigNumber;
+  commitDeposit: BigNumber;
+  keeperDeposit: BigNumber;
+  trackingCode: string;
 }
-export type CacheUpdatedEvent = TypedEvent<
-  [string, string],
-  CacheUpdatedEventObject
+export type DelayedOrderRemovedEvent = TypedEvent<
+  [
+    string,
+    boolean,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    string
+  ],
+  DelayedOrderRemovedEventObject
 >;
 
-export type CacheUpdatedEventFilter = TypedEventFilter<CacheUpdatedEvent>;
+export type DelayedOrderRemovedEventFilter =
+  TypedEventFilter<DelayedOrderRemovedEvent>;
+
+export interface DelayedOrderSubmittedEventObject {
+  account: string;
+  isOffchain: boolean;
+  sizeDelta: BigNumber;
+  targetRoundId: BigNumber;
+  intentionTime: BigNumber;
+  executableAtTime: BigNumber;
+  commitDeposit: BigNumber;
+  keeperDeposit: BigNumber;
+  trackingCode: string;
+}
+export type DelayedOrderSubmittedEvent = TypedEvent<
+  [
+    string,
+    boolean,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    string
+  ],
+  DelayedOrderSubmittedEventObject
+>;
+
+export type DelayedOrderSubmittedEventFilter =
+  TypedEventFilter<DelayedOrderSubmittedEvent>;
 
 export interface FundingRecomputedEventObject {
   funding: BigNumber;
@@ -721,20 +584,6 @@ export type FundingRecomputedEvent = TypedEvent<
 export type FundingRecomputedEventFilter =
   TypedEventFilter<FundingRecomputedEvent>;
 
-export interface FuturesTrackingEventObject {
-  trackingCode: string;
-  baseAsset: string;
-  marketKey: string;
-  sizeDelta: BigNumber;
-  fee: BigNumber;
-}
-export type FuturesTrackingEvent = TypedEvent<
-  [string, string, string, BigNumber, BigNumber],
-  FuturesTrackingEventObject
->;
-
-export type FuturesTrackingEventFilter = TypedEventFilter<FuturesTrackingEvent>;
-
 export interface MarginTransferredEventObject {
   account: string;
   marginDelta: BigNumber;
@@ -747,26 +596,19 @@ export type MarginTransferredEvent = TypedEvent<
 export type MarginTransferredEventFilter =
   TypedEventFilter<MarginTransferredEvent>;
 
-export interface OwnerChangedEventObject {
-  oldOwner: string;
-  newOwner: string;
+export interface PerpsTrackingEventObject {
+  trackingCode: string;
+  baseAsset: string;
+  marketKey: string;
+  sizeDelta: BigNumber;
+  fee: BigNumber;
 }
-export type OwnerChangedEvent = TypedEvent<
-  [string, string],
-  OwnerChangedEventObject
+export type PerpsTrackingEvent = TypedEvent<
+  [string, string, string, BigNumber, BigNumber],
+  PerpsTrackingEventObject
 >;
 
-export type OwnerChangedEventFilter = TypedEventFilter<OwnerChangedEvent>;
-
-export interface OwnerNominatedEventObject {
-  newOwner: string;
-}
-export type OwnerNominatedEvent = TypedEvent<
-  [string],
-  OwnerNominatedEventObject
->;
-
-export type OwnerNominatedEventFilter = TypedEventFilter<OwnerNominatedEvent>;
+export type PerpsTrackingEventFilter = TypedEventFilter<PerpsTrackingEvent>;
 
 export interface PositionLiquidatedEventObject {
   id: BigNumber;
@@ -811,13 +653,6 @@ export type PositionModifiedEvent = TypedEvent<
 export type PositionModifiedEventFilter =
   TypedEventFilter<PositionModifiedEvent>;
 
-export interface ProxyUpdatedEventObject {
-  proxyAddress: string;
-}
-export type ProxyUpdatedEvent = TypedEvent<[string], ProxyUpdatedEventObject>;
-
-export type ProxyUpdatedEventFilter = TypedEventFilter<ProxyUpdatedEvent>;
-
 export interface PerpsV2Market extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -845,10 +680,6 @@ export interface PerpsV2Market extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    acceptOwnership(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     accessibleMargin(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -899,21 +730,12 @@ export interface PerpsV2Market extends BaseContract {
 
     currentFundingVelocity(
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { fundingRateVelocity: BigNumber }>;
-
-    currentLeverage(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, boolean] & { leverage: BigNumber; invalid: boolean }
-    >;
+    ): Promise<[BigNumber] & { fundingVelocity: BigNumber }>;
 
     delayedOrders(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[IPerpsV2MarketBaseTypes.DelayedOrderStructOutput]>;
-
-    entryDebtCorrection(overrides?: CallOverrides): Promise<[BigNumber]>;
+    ): Promise<[IPerpsV2MarketConsolidated.DelayedOrderStructOutput]>;
 
     executeDelayedOrder(
       account: PromiseOrValue<string>,
@@ -925,12 +747,6 @@ export interface PerpsV2Market extends BaseContract {
       priceUpdateData: PromiseOrValue<BytesLike>[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    fillPriceWithBasePrice(
-      size: PromiseOrValue<BigNumberish>,
-      basePrice: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, boolean]>;
 
     fundingLastRecomputed(
       overrides?: CallOverrides
@@ -945,8 +761,6 @@ export interface PerpsV2Market extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { length: BigNumber }>;
 
-    isResolverCached(overrides?: CallOverrides): Promise<[boolean]>;
-
     liquidatePosition(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -956,11 +770,6 @@ export interface PerpsV2Market extends BaseContract {
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    liquidationMargin(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { lMargin: BigNumber }>;
 
     liquidationPrice(
       account: PromiseOrValue<string>,
@@ -985,20 +794,6 @@ export interface PerpsV2Market extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { skew: BigNumber }>;
 
-    marketState(overrides?: CallOverrides): Promise<[string]>;
-
-    maxOrderSizes(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, boolean] & {
-        long: BigNumber;
-        short: BigNumber;
-        invalid: boolean;
-      }
-    >;
-
-    messageSender(overrides?: CallOverrides): Promise<[string]>;
-
     modifyPosition(
       sizeDelta: PromiseOrValue<BigNumberish>,
       priceImpactDelta: PromiseOrValue<BigNumberish>,
@@ -1012,18 +807,6 @@ export interface PerpsV2Market extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    netFundingPerUnit(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    nominateNewOwner(
-      _owner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    nominatedOwner(overrides?: CallOverrides): Promise<[string]>;
-
     notionalValue(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1031,19 +814,19 @@ export interface PerpsV2Market extends BaseContract {
 
     orderFee(
       sizeDelta: PromiseOrValue<BigNumberish>,
+      orderType: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber, boolean] & { fee: BigNumber; invalid: boolean }>;
-
-    owner(overrides?: CallOverrides): Promise<[string]>;
 
     positions(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[IPerpsV2MarketBaseTypes.PositionStructOutput]>;
+    ): Promise<[IPerpsV2MarketConsolidated.PositionStructOutput]>;
 
     postTradeDetails(
       sizeDelta: PromiseOrValue<BigNumberish>,
       tradePrice: PromiseOrValue<BigNumberish>,
+      orderType: PromiseOrValue<BigNumberish>,
       sender: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<
@@ -1062,14 +845,6 @@ export interface PerpsV2Market extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber, boolean] & { pnl: BigNumber; invalid: boolean }>;
 
-    proportionalSkew(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    proxy(overrides?: CallOverrides): Promise<[string]>;
-
-    rebuildCache(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     recomputeFunding(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -1080,22 +855,6 @@ export interface PerpsV2Market extends BaseContract {
     ): Promise<
       [BigNumber, boolean] & { marginRemaining: BigNumber; invalid: boolean }
     >;
-
-    resolver(overrides?: CallOverrides): Promise<[string]>;
-
-    resolverAddressesRequired(
-      overrides?: CallOverrides
-    ): Promise<[string[]] & { addresses: string[] }>;
-
-    setMessageSender(
-      sender: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setProxy(
-      _proxy: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
 
     submitDelayedOrder(
       sizeDelta: PromiseOrValue<BigNumberish>,
@@ -1138,10 +897,6 @@ export interface PerpsV2Market extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
-
-  acceptOwnership(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   accessibleMargin(
     account: PromiseOrValue<string>,
@@ -1191,17 +946,10 @@ export interface PerpsV2Market extends BaseContract {
 
   currentFundingVelocity(overrides?: CallOverrides): Promise<BigNumber>;
 
-  currentLeverage(
-    account: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, boolean] & { leverage: BigNumber; invalid: boolean }>;
-
   delayedOrders(
     account: PromiseOrValue<string>,
     overrides?: CallOverrides
-  ): Promise<IPerpsV2MarketBaseTypes.DelayedOrderStructOutput>;
-
-  entryDebtCorrection(overrides?: CallOverrides): Promise<BigNumber>;
+  ): Promise<IPerpsV2MarketConsolidated.DelayedOrderStructOutput>;
 
   executeDelayedOrder(
     account: PromiseOrValue<string>,
@@ -1214,12 +962,6 @@ export interface PerpsV2Market extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  fillPriceWithBasePrice(
-    size: PromiseOrValue<BigNumberish>,
-    basePrice: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, boolean]>;
-
   fundingLastRecomputed(overrides?: CallOverrides): Promise<number>;
 
   fundingSequence(
@@ -1229,19 +971,12 @@ export interface PerpsV2Market extends BaseContract {
 
   fundingSequenceLength(overrides?: CallOverrides): Promise<BigNumber>;
 
-  isResolverCached(overrides?: CallOverrides): Promise<boolean>;
-
   liquidatePosition(
     account: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   liquidationFee(
-    account: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  liquidationMargin(
     account: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -1265,20 +1000,6 @@ export interface PerpsV2Market extends BaseContract {
 
   marketSkew(overrides?: CallOverrides): Promise<BigNumber>;
 
-  marketState(overrides?: CallOverrides): Promise<string>;
-
-  maxOrderSizes(
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, boolean] & {
-      long: BigNumber;
-      short: BigNumber;
-      invalid: boolean;
-    }
-  >;
-
-  messageSender(overrides?: CallOverrides): Promise<string>;
-
   modifyPosition(
     sizeDelta: PromiseOrValue<BigNumberish>,
     priceImpactDelta: PromiseOrValue<BigNumberish>,
@@ -1292,18 +1013,6 @@ export interface PerpsV2Market extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  netFundingPerUnit(
-    account: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  nominateNewOwner(
-    _owner: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  nominatedOwner(overrides?: CallOverrides): Promise<string>;
-
   notionalValue(
     account: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -1311,19 +1020,19 @@ export interface PerpsV2Market extends BaseContract {
 
   orderFee(
     sizeDelta: PromiseOrValue<BigNumberish>,
+    orderType: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<[BigNumber, boolean] & { fee: BigNumber; invalid: boolean }>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
 
   positions(
     account: PromiseOrValue<string>,
     overrides?: CallOverrides
-  ): Promise<IPerpsV2MarketBaseTypes.PositionStructOutput>;
+  ): Promise<IPerpsV2MarketConsolidated.PositionStructOutput>;
 
   postTradeDetails(
     sizeDelta: PromiseOrValue<BigNumberish>,
     tradePrice: PromiseOrValue<BigNumberish>,
+    orderType: PromiseOrValue<BigNumberish>,
     sender: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<
@@ -1342,14 +1051,6 @@ export interface PerpsV2Market extends BaseContract {
     overrides?: CallOverrides
   ): Promise<[BigNumber, boolean] & { pnl: BigNumber; invalid: boolean }>;
 
-  proportionalSkew(overrides?: CallOverrides): Promise<BigNumber>;
-
-  proxy(overrides?: CallOverrides): Promise<string>;
-
-  rebuildCache(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   recomputeFunding(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1360,20 +1061,6 @@ export interface PerpsV2Market extends BaseContract {
   ): Promise<
     [BigNumber, boolean] & { marginRemaining: BigNumber; invalid: boolean }
   >;
-
-  resolver(overrides?: CallOverrides): Promise<string>;
-
-  resolverAddressesRequired(overrides?: CallOverrides): Promise<string[]>;
-
-  setMessageSender(
-    sender: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setProxy(
-    _proxy: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   submitDelayedOrder(
     sizeDelta: PromiseOrValue<BigNumberish>,
@@ -1417,8 +1104,6 @@ export interface PerpsV2Market extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    acceptOwnership(overrides?: CallOverrides): Promise<void>;
-
     accessibleMargin(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1467,19 +1152,10 @@ export interface PerpsV2Market extends BaseContract {
 
     currentFundingVelocity(overrides?: CallOverrides): Promise<BigNumber>;
 
-    currentLeverage(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, boolean] & { leverage: BigNumber; invalid: boolean }
-    >;
-
     delayedOrders(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<IPerpsV2MarketBaseTypes.DelayedOrderStructOutput>;
-
-    entryDebtCorrection(overrides?: CallOverrides): Promise<BigNumber>;
+    ): Promise<IPerpsV2MarketConsolidated.DelayedOrderStructOutput>;
 
     executeDelayedOrder(
       account: PromiseOrValue<string>,
@@ -1492,12 +1168,6 @@ export interface PerpsV2Market extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    fillPriceWithBasePrice(
-      size: PromiseOrValue<BigNumberish>,
-      basePrice: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, boolean]>;
-
     fundingLastRecomputed(overrides?: CallOverrides): Promise<number>;
 
     fundingSequence(
@@ -1507,19 +1177,12 @@ export interface PerpsV2Market extends BaseContract {
 
     fundingSequenceLength(overrides?: CallOverrides): Promise<BigNumber>;
 
-    isResolverCached(overrides?: CallOverrides): Promise<boolean>;
-
     liquidatePosition(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     liquidationFee(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    liquidationMargin(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1543,20 +1206,6 @@ export interface PerpsV2Market extends BaseContract {
 
     marketSkew(overrides?: CallOverrides): Promise<BigNumber>;
 
-    marketState(overrides?: CallOverrides): Promise<string>;
-
-    maxOrderSizes(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, boolean] & {
-        long: BigNumber;
-        short: BigNumber;
-        invalid: boolean;
-      }
-    >;
-
-    messageSender(overrides?: CallOverrides): Promise<string>;
-
     modifyPosition(
       sizeDelta: PromiseOrValue<BigNumberish>,
       priceImpactDelta: PromiseOrValue<BigNumberish>,
@@ -1570,18 +1219,6 @@ export interface PerpsV2Market extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    netFundingPerUnit(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    nominateNewOwner(
-      _owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    nominatedOwner(overrides?: CallOverrides): Promise<string>;
-
     notionalValue(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1589,19 +1226,19 @@ export interface PerpsV2Market extends BaseContract {
 
     orderFee(
       sizeDelta: PromiseOrValue<BigNumberish>,
+      orderType: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber, boolean] & { fee: BigNumber; invalid: boolean }>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
 
     positions(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<IPerpsV2MarketBaseTypes.PositionStructOutput>;
+    ): Promise<IPerpsV2MarketConsolidated.PositionStructOutput>;
 
     postTradeDetails(
       sizeDelta: PromiseOrValue<BigNumberish>,
       tradePrice: PromiseOrValue<BigNumberish>,
+      orderType: PromiseOrValue<BigNumberish>,
       sender: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<
@@ -1620,12 +1257,6 @@ export interface PerpsV2Market extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber, boolean] & { pnl: BigNumber; invalid: boolean }>;
 
-    proportionalSkew(overrides?: CallOverrides): Promise<BigNumber>;
-
-    proxy(overrides?: CallOverrides): Promise<string>;
-
-    rebuildCache(overrides?: CallOverrides): Promise<void>;
-
     recomputeFunding(overrides?: CallOverrides): Promise<BigNumber>;
 
     remainingMargin(
@@ -1634,20 +1265,6 @@ export interface PerpsV2Market extends BaseContract {
     ): Promise<
       [BigNumber, boolean] & { marginRemaining: BigNumber; invalid: boolean }
     >;
-
-    resolver(overrides?: CallOverrides): Promise<string>;
-
-    resolverAddressesRequired(overrides?: CallOverrides): Promise<string[]>;
-
-    setMessageSender(
-      sender: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setProxy(
-      _proxy: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     submitDelayedOrder(
       sizeDelta: PromiseOrValue<BigNumberish>,
@@ -1690,11 +1307,49 @@ export interface PerpsV2Market extends BaseContract {
   };
 
   filters: {
-    "CacheUpdated(bytes32,address)"(
-      name?: null,
-      destination?: null
-    ): CacheUpdatedEventFilter;
-    CacheUpdated(name?: null, destination?: null): CacheUpdatedEventFilter;
+    "DelayedOrderRemoved(address,bool,uint256,int256,uint256,uint256,uint256,bytes32)"(
+      account?: PromiseOrValue<string> | null,
+      isOffchain?: null,
+      currentRoundId?: null,
+      sizeDelta?: null,
+      targetRoundId?: null,
+      commitDeposit?: null,
+      keeperDeposit?: null,
+      trackingCode?: null
+    ): DelayedOrderRemovedEventFilter;
+    DelayedOrderRemoved(
+      account?: PromiseOrValue<string> | null,
+      isOffchain?: null,
+      currentRoundId?: null,
+      sizeDelta?: null,
+      targetRoundId?: null,
+      commitDeposit?: null,
+      keeperDeposit?: null,
+      trackingCode?: null
+    ): DelayedOrderRemovedEventFilter;
+
+    "DelayedOrderSubmitted(address,bool,int256,uint256,uint256,uint256,uint256,uint256,bytes32)"(
+      account?: PromiseOrValue<string> | null,
+      isOffchain?: null,
+      sizeDelta?: null,
+      targetRoundId?: null,
+      intentionTime?: null,
+      executableAtTime?: null,
+      commitDeposit?: null,
+      keeperDeposit?: null,
+      trackingCode?: null
+    ): DelayedOrderSubmittedEventFilter;
+    DelayedOrderSubmitted(
+      account?: PromiseOrValue<string> | null,
+      isOffchain?: null,
+      sizeDelta?: null,
+      targetRoundId?: null,
+      intentionTime?: null,
+      executableAtTime?: null,
+      commitDeposit?: null,
+      keeperDeposit?: null,
+      trackingCode?: null
+    ): DelayedOrderSubmittedEventFilter;
 
     "FundingRecomputed(int256,int256,uint256,uint256)"(
       funding?: null,
@@ -1709,21 +1364,6 @@ export interface PerpsV2Market extends BaseContract {
       timestamp?: null
     ): FundingRecomputedEventFilter;
 
-    "FuturesTracking(bytes32,bytes32,bytes32,int256,uint256)"(
-      trackingCode?: PromiseOrValue<BytesLike> | null,
-      baseAsset?: null,
-      marketKey?: null,
-      sizeDelta?: null,
-      fee?: null
-    ): FuturesTrackingEventFilter;
-    FuturesTracking(
-      trackingCode?: PromiseOrValue<BytesLike> | null,
-      baseAsset?: null,
-      marketKey?: null,
-      sizeDelta?: null,
-      fee?: null
-    ): FuturesTrackingEventFilter;
-
     "MarginTransferred(address,int256)"(
       account?: PromiseOrValue<string> | null,
       marginDelta?: null
@@ -1733,14 +1373,20 @@ export interface PerpsV2Market extends BaseContract {
       marginDelta?: null
     ): MarginTransferredEventFilter;
 
-    "OwnerChanged(address,address)"(
-      oldOwner?: null,
-      newOwner?: null
-    ): OwnerChangedEventFilter;
-    OwnerChanged(oldOwner?: null, newOwner?: null): OwnerChangedEventFilter;
-
-    "OwnerNominated(address)"(newOwner?: null): OwnerNominatedEventFilter;
-    OwnerNominated(newOwner?: null): OwnerNominatedEventFilter;
+    "PerpsTracking(bytes32,bytes32,bytes32,int256,uint256)"(
+      trackingCode?: PromiseOrValue<BytesLike> | null,
+      baseAsset?: null,
+      marketKey?: null,
+      sizeDelta?: null,
+      fee?: null
+    ): PerpsTrackingEventFilter;
+    PerpsTracking(
+      trackingCode?: PromiseOrValue<BytesLike> | null,
+      baseAsset?: null,
+      marketKey?: null,
+      sizeDelta?: null,
+      fee?: null
+    ): PerpsTrackingEventFilter;
 
     "PositionLiquidated(uint256,address,address,int256,uint256,uint256)"(
       id?: null,
@@ -1779,16 +1425,9 @@ export interface PerpsV2Market extends BaseContract {
       fundingIndex?: null,
       fee?: null
     ): PositionModifiedEventFilter;
-
-    "ProxyUpdated(address)"(proxyAddress?: null): ProxyUpdatedEventFilter;
-    ProxyUpdated(proxyAddress?: null): ProxyUpdatedEventFilter;
   };
 
   estimateGas: {
-    acceptOwnership(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     accessibleMargin(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1833,17 +1472,10 @@ export interface PerpsV2Market extends BaseContract {
 
     currentFundingVelocity(overrides?: CallOverrides): Promise<BigNumber>;
 
-    currentLeverage(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     delayedOrders(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    entryDebtCorrection(overrides?: CallOverrides): Promise<BigNumber>;
 
     executeDelayedOrder(
       account: PromiseOrValue<string>,
@@ -1856,12 +1488,6 @@ export interface PerpsV2Market extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    fillPriceWithBasePrice(
-      size: PromiseOrValue<BigNumberish>,
-      basePrice: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     fundingLastRecomputed(overrides?: CallOverrides): Promise<BigNumber>;
 
     fundingSequence(
@@ -1871,19 +1497,12 @@ export interface PerpsV2Market extends BaseContract {
 
     fundingSequenceLength(overrides?: CallOverrides): Promise<BigNumber>;
 
-    isResolverCached(overrides?: CallOverrides): Promise<BigNumber>;
-
     liquidatePosition(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     liquidationFee(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    liquidationMargin(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1903,12 +1522,6 @@ export interface PerpsV2Market extends BaseContract {
 
     marketSkew(overrides?: CallOverrides): Promise<BigNumber>;
 
-    marketState(overrides?: CallOverrides): Promise<BigNumber>;
-
-    maxOrderSizes(overrides?: CallOverrides): Promise<BigNumber>;
-
-    messageSender(overrides?: CallOverrides): Promise<BigNumber>;
-
     modifyPosition(
       sizeDelta: PromiseOrValue<BigNumberish>,
       priceImpactDelta: PromiseOrValue<BigNumberish>,
@@ -1922,18 +1535,6 @@ export interface PerpsV2Market extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    netFundingPerUnit(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    nominateNewOwner(
-      _owner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    nominatedOwner(overrides?: CallOverrides): Promise<BigNumber>;
-
     notionalValue(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1941,10 +1542,9 @@ export interface PerpsV2Market extends BaseContract {
 
     orderFee(
       sizeDelta: PromiseOrValue<BigNumberish>,
+      orderType: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     positions(
       account: PromiseOrValue<string>,
@@ -1954,6 +1554,7 @@ export interface PerpsV2Market extends BaseContract {
     postTradeDetails(
       sizeDelta: PromiseOrValue<BigNumberish>,
       tradePrice: PromiseOrValue<BigNumberish>,
+      orderType: PromiseOrValue<BigNumberish>,
       sender: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1963,14 +1564,6 @@ export interface PerpsV2Market extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    proportionalSkew(overrides?: CallOverrides): Promise<BigNumber>;
-
-    proxy(overrides?: CallOverrides): Promise<BigNumber>;
-
-    rebuildCache(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     recomputeFunding(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1978,20 +1571,6 @@ export interface PerpsV2Market extends BaseContract {
     remainingMargin(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    resolver(overrides?: CallOverrides): Promise<BigNumber>;
-
-    resolverAddressesRequired(overrides?: CallOverrides): Promise<BigNumber>;
-
-    setMessageSender(
-      sender: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setProxy(
-      _proxy: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     submitDelayedOrder(
@@ -2035,10 +1614,6 @@ export interface PerpsV2Market extends BaseContract {
   };
 
   populateTransaction: {
-    acceptOwnership(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     accessibleMargin(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -2087,17 +1662,8 @@ export interface PerpsV2Market extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    currentLeverage(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     delayedOrders(
       account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    entryDebtCorrection(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2110,12 +1676,6 @@ export interface PerpsV2Market extends BaseContract {
       account: PromiseOrValue<string>,
       priceUpdateData: PromiseOrValue<BytesLike>[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    fillPriceWithBasePrice(
-      size: PromiseOrValue<BigNumberish>,
-      basePrice: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     fundingLastRecomputed(
@@ -2131,19 +1691,12 @@ export interface PerpsV2Market extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    isResolverCached(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     liquidatePosition(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     liquidationFee(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    liquidationMargin(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -2163,12 +1716,6 @@ export interface PerpsV2Market extends BaseContract {
 
     marketSkew(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    marketState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    maxOrderSizes(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    messageSender(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     modifyPosition(
       sizeDelta: PromiseOrValue<BigNumberish>,
       priceImpactDelta: PromiseOrValue<BigNumberish>,
@@ -2182,18 +1729,6 @@ export interface PerpsV2Market extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    netFundingPerUnit(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    nominateNewOwner(
-      _owner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    nominatedOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     notionalValue(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -2201,10 +1736,9 @@ export interface PerpsV2Market extends BaseContract {
 
     orderFee(
       sizeDelta: PromiseOrValue<BigNumberish>,
+      orderType: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     positions(
       account: PromiseOrValue<string>,
@@ -2214,6 +1748,7 @@ export interface PerpsV2Market extends BaseContract {
     postTradeDetails(
       sizeDelta: PromiseOrValue<BigNumberish>,
       tradePrice: PromiseOrValue<BigNumberish>,
+      orderType: PromiseOrValue<BigNumberish>,
       sender: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -2223,14 +1758,6 @@ export interface PerpsV2Market extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    proportionalSkew(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    proxy(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    rebuildCache(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     recomputeFunding(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -2238,22 +1765,6 @@ export interface PerpsV2Market extends BaseContract {
     remainingMargin(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    resolver(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    resolverAddressesRequired(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    setMessageSender(
-      sender: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setProxy(
-      _proxy: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     submitDelayedOrder(
