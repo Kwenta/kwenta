@@ -15,7 +15,7 @@ type GridDataProps = {
 const GridData: FC<GridDataProps> = memo(({ title, value, hasKwentaLogo, children }) => (
 	<GridDataContainer>
 		<Title>{title}</Title>
-		<BigText mono kwenta={hasKwentaLogo}>
+		<BigText yellow mono kwenta={hasKwentaLogo}>
 			{value}
 		</BigText>
 		{children}
@@ -24,7 +24,7 @@ const GridData: FC<GridDataProps> = memo(({ title, value, hasKwentaLogo, childre
 
 const GridDataContainer = styled.div`
 	background-color: ${(props) => props.theme.colors.selectedTheme.segmented.button.background};
-	padding: 20px 24px 18px 24px;
+	padding: 20px 24px 18px;
 	min-height: 95px;
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 

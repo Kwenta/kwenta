@@ -1,7 +1,7 @@
 // @ts-ignore TODO: remove once types are added
 import getFormattedSwapData from '@kwenta/synthswap';
 import { CurrencyKey, NetworkId } from '@synthetixio/contracts-interface';
-import { DeprecatedSynthBalance, TokenBalances } from '@synthetixio/queries';
+import { DeprecatedSynthBalance } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import axios from 'axios';
 import { Contract as EthCallContract } from 'ethcall';
@@ -25,7 +25,7 @@ import { Rates } from 'queries/rates/types';
 import { getProxySynthSymbol } from 'queries/synths/utils';
 import { getEthGasPrice } from 'sdk/common/gas';
 import erc20Abi from 'sdk/contracts/abis/ERC20.json';
-import { Token } from 'sdk/types/tokens';
+import { Token, TokenBalances } from 'sdk/types/tokens';
 import { startInterval } from 'sdk/utils/interval';
 import {
 	newGetCoinGeckoPricesForCurrencies,

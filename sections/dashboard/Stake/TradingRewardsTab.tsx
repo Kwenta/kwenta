@@ -90,7 +90,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.claimable-rewards-all')}
 						</div>
-						<BigText mono kwenta>
+						<BigText yellow mono kwenta>
 							{truncateNumbers(totalRewards, 4)}
 						</BigText>
 					</div>

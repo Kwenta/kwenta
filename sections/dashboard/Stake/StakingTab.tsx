@@ -1,13 +1,12 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
 import { BigText } from 'components/Text';
-import { getApy } from 'queries/staking/utils';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { getReward } from 'state/staking/actions';
-import { selectClaimableBalance } from 'state/staking/selectors';
+import { selectAPY, selectClaimableBalance } from 'state/staking/selectors';
 import media from 'styles/media';
 import { formatPercent, truncateNumbers } from 'utils/formatters/number';
 
@@ -19,15 +18,7 @@ const StakingTab = () => {
 	const dispatch = useAppDispatch();
 
 	const claimableBalance = useAppSelector(selectClaimableBalance);
-	const { totalStakedBalance, weekCounter } = useAppSelector(({ staking }) => ({
-		totalStakedBalance: Number(staking.totalStakedBalance),
-		weekCounter: staking.weekCounter,
-	}));
-
-	const apy = useMemo(() => getApy(totalStakedBalance, weekCounter), [
-		totalStakedBalance,
-		weekCounter,
-	]);
+	const apy = useAppSelector(selectAPY);
 
 	const handleGetReward = useCallback(() => {
 		dispatch(getReward());
@@ -39,7 +30,7 @@ const StakingTab = () => {
 				<CardGrid>
 					<div>
 						<div className="title">{t('dashboard.stake.tabs.staking.claimable-rewards')}</div>
-						<BigText mono kwenta>
+						<BigText yellow mono kwenta>
 							{truncateNumbers(claimableBalance, 4)}
 						</BigText>
 					</div>
