@@ -65,12 +65,18 @@ const OpenOrdersTable: React.FC = () => {
 						timer &&
 						market?.settings &&
 						timer.timeToExecution === 0 &&
-						timer.timePastExecution > market.settings.maxDelayTimeDelta,
+						timer.timePastExecution >
+							(o.isOffchain
+								? market.settings.offchainDelayedOrderMaxAge
+								: market.settings.maxDelayTimeDelta),
 					isExecutable:
 						timer &&
 						market?.settings &&
 						timer.timeToExecution === 0 &&
-						timer.timePastExecution <= market.settings.offchainDelayedOrderMaxAge,
+						timer.timePastExecution <=
+							(o.isOffchain
+								? market.settings.offchainDelayedOrderMinAge
+								: market.settings.minDelayTimeDelta),
 					totalDeposit: o.commitDeposit.add(o.keeperDeposit),
 					onCancel: () => {
 						dispatch(
@@ -230,17 +236,14 @@ const OpenOrdersTable: React.FC = () => {
 											{t('futures.market.user.open-orders.actions.cancel')}
 										</CancelButton>
 										{cellProps.row.original.show && !cellProps.row.original.isStale && (
-											<EditButton
-												disabled={!cellProps.row.original.isExecutable}
-												onClick={cellProps.row.original.onExecute}
-											>
+											<EditButton disabled={true} onClick={cellProps.row.original.onExecute}>
 												{cellProps.row.original.isExecutable ? (
-													t('futures.market.user.open-orders.actions.execute')
+													<MiniLoader centered />
 												) : !!cellProps.row.original.timeToExecution &&
 												  cellProps.row.original.timeToExecution >= 0 ? (
 													formatTimer(cellProps.row.original.timeToExecution)
 												) : (
-													<MiniLoader centered />
+													<></>
 												)}
 											</EditButton>
 										)}
