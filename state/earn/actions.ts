@@ -19,13 +19,9 @@ export const approveLPToken = createAsyncThunk<void, void, ThunkConfig>(
 	}
 );
 
-export const stakeTokens = createAsyncThunk<void, void, ThunkConfig>(
+export const stakeTokens = createAsyncThunk<void, string, ThunkConfig>(
 	'earn/stakeTokens',
-	async (_, { dispatch, getState, extra: { sdk } }) => {
-		const {
-			earn: { amount },
-		} = getState();
-
+	async (amount, { dispatch, extra: { sdk } }) => {
 		const { hash } = await sdk.kwentaToken.changePoolTokens(amount, 'stake');
 
 		if (hash) {
@@ -39,13 +35,9 @@ export const stakeTokens = createAsyncThunk<void, void, ThunkConfig>(
 	}
 );
 
-export const unstakeTokens = createAsyncThunk<void, void, ThunkConfig>(
+export const unstakeTokens = createAsyncThunk<void, string, ThunkConfig>(
 	'earn/unstakeTokens',
-	async (_, { dispatch, getState, extra: { sdk } }) => {
-		const {
-			earn: { amount },
-		} = getState();
-
+	async (amount, { dispatch, extra: { sdk } }) => {
 		const { hash } = await sdk.kwentaToken.changePoolTokens(amount, 'withdraw');
 
 		if (hash) {

@@ -94,14 +94,14 @@ const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab, onChangeTab }) => 
 						formatOptionLabel={formatOptionLabel}
 						controlHeight={41}
 						options={epochData.sort((a, b) => b.period - a.period)}
-						optionPadding={'0px'}
+						optionPadding="0px"
 						value={selectedEpoch}
 						menuWidth={240}
 						components={{ IndicatorSeparator, DropdownIndicator }}
 						isSearchable={false}
 						variant="flat"
 						isDisabled={!isL2}
-					></StakingSelect>
+					/>
 				</StyledFlexDivRowCentered>
 			</StakingTabsHeader>
 

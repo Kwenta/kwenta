@@ -1,15 +1,13 @@
-import { SynthetixJS } from '@synthetixio/contracts-interface';
-import { wei } from '@synthetixio/wei';
 import BN from 'bn.js';
 import { Provider, Contract as MultiCallContract } from 'ethcall';
 import { BigNumber, ethers, Contract } from 'ethers';
 import { formatBytes32String } from 'ethers/lib/utils';
-import { useCallback, useMemo } from 'react';
 
-import Connector from 'containers/Connector';
-import useIsL2 from 'hooks/useIsL2';
+import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import FuturesMarket from 'sdk/contracts/abis/FuturesMarket.json';
-import { PotentialTradeStatus } from 'sections/futures/types';
+import { FuturesMarket__factory } from 'sdk/contracts/types';
+import { FuturesMarketKey, PotentialTradeStatus } from 'sdk/types/futures';
+import { sdk } from 'state/config';
 import {
 	zeroBN,
 	ZERO_BIG_NUM,
@@ -18,11 +16,6 @@ import {
 	multiplyDecimal,
 	divideDecimal,
 } from 'utils/formatters/number';
-import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
-import logError from 'utils/logError';
-
-import { KWENTA_TRACKING_CODE } from './constants';
-import { getFuturesMarketContract } from './utils';
 
 // Need to recreate postTradeDetails from the contract here locally
 // so we can modify margin for use with cross margin
@@ -51,45 +44,11 @@ type Position = {
 
 const ethcallProvider = new Provider();
 
-export default function useGetCrossMarginTradePreview(
-	marketAsset: FuturesMarketAsset,
-	address: string | null | undefined
-) {
-	const { defaultSynthetixjs: synthetixjs, provider } = Connector.useContainer();
-	const isL2 = useIsL2();
-
-	const contractInstance = useMemo(() => {
-		if (!synthetixjs || !provider || !address || !isL2) return null;
-		try {
-			return new FuturesMarketInternal(synthetixjs, provider, marketAsset, address);
-		} catch (err) {
-			logError(err);
-			return null;
-		}
-	}, [synthetixjs, provider, address, isL2, marketAsset]);
-
-	const getPreview = useCallback(
-		async (sizeDelta: BigNumber, marginDelta: BigNumber, orderPrice?: BigNumber) => {
-			if (contractInstance) {
-				const sizeBN = wei(sizeDelta || 0).toBN();
-				const marginBN = wei(marginDelta || 0).toBN();
-				const res = await contractInstance.getTradePreview(sizeBN, marginBN, orderPrice);
-				return res;
-			}
-		},
-		[contractInstance]
-	);
-
-	return getPreview;
-}
-
 class FuturesMarketInternal {
-	_synthetixjs: SynthetixJS;
 	_provider: ethers.providers.Provider;
 	_futuresMarketContract: Contract;
-	_futuresSettingsContract: Contract;
+	_futuresSettingsContract: Contract | undefined;
 	_marketKeyBytes: string;
-	_account: string;
 
 	_onChainData: {
 		assetPrice: BigNumber;
@@ -103,18 +62,15 @@ class FuturesMarketInternal {
 	_cache: Record<string, BigNumber>;
 
 	constructor(
-		synthetixjs: SynthetixJS,
 		provider: ethers.providers.Provider,
-		marketAsset: FuturesMarketAsset,
-		account: string
+		marketKey: FuturesMarketKey,
+		marketAddress: string
 	) {
-		this._synthetixjs = synthetixjs;
 		this._provider = provider;
 
-		this._futuresMarketContract = getFuturesMarketContract(marketAsset, synthetixjs.contracts);
-		this._futuresSettingsContract = synthetixjs.contracts.FuturesMarketSettings;
-		this._marketKeyBytes = formatBytes32String(MarketKeyByAsset[marketAsset]);
-		this._account = account;
+		this._futuresMarketContract = FuturesMarket__factory.connect(marketAddress, provider);
+		this._futuresSettingsContract = sdk.context.contracts.FuturesMarketSettings;
+		this._marketKeyBytes = formatBytes32String(marketKey);
 		this._cache = {};
 		this._onChainData = {
 			assetPrice: BigNumber.from(0),
@@ -127,6 +83,7 @@ class FuturesMarketInternal {
 	}
 
 	getTradePreview = async (
+		account: string,
 		sizeDelta: BigNumber,
 		marginDelta: BigNumber,
 		limitStopPrice?: BigNumber
@@ -140,10 +97,10 @@ class FuturesMarketInternal {
 			multiCallContract.assetPrice(),
 			multiCallContract.marketSkew(),
 			multiCallContract.marketSize(),
-			multiCallContract.accruedFunding(this._account),
+			multiCallContract.accruedFunding(account),
 			multiCallContract.fundingSequenceLength(),
 			multiCallContract.fundingLastRecomputed(),
-			multiCallContract.positions(this._account),
+			multiCallContract.positions(account),
 		]);
 
 		this._onChainData = {
@@ -186,7 +143,8 @@ class FuturesMarketInternal {
 		tradeParams: TradeParams,
 		marginDelta: BigNumber
 	) => {
-		const dynamicFee = await this._synthetixjs.contracts.Exchanger.dynamicFeeRateForExchange(
+		if (!sdk.context.contracts.Exchanger) throw new Error('Unsupported network');
+		const dynamicFee = await sdk.context.contracts.Exchanger?.dynamicFeeRateForExchange(
 			formatBytes32String('sUSD'),
 			this._marketKeyBytes
 		);
@@ -244,7 +202,11 @@ class FuturesMarketInternal {
 		);
 
 		if (maxLeverage.add(UNIT_BIG_NUM.div(100)).lt(leverage.abs())) {
-			return { newPos: oldPos, fee: zeroBN, status: PotentialTradeStatus.MAX_LEVERAGE_EXCEEDED };
+			return {
+				newPos: oldPos,
+				fee: ZERO_BIG_NUM,
+				status: PotentialTradeStatus.MAX_LEVERAGE_EXCEEDED,
+			};
 		}
 
 		const maxMarketValueUSD = await this._getSetting('maxMarketValueUSD', [this._marketKeyBytes]);
@@ -422,9 +384,12 @@ class FuturesMarketInternal {
 
 	_getSetting = async (settingGetter: string, params: any[] = []) => {
 		const cached = this._cache[settingGetter];
+		if (!this._futuresSettingsContract) throw new Error('Unsupported network');
 		if (cached) return cached;
 		const res = await this._futuresSettingsContract[settingGetter](...params);
 		this._cache[settingGetter] = res;
 		return res;
 	};
 }
+
+export default FuturesMarketInternal;

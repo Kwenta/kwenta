@@ -30,4 +30,8 @@ export const MiniLoader = () => {
 	return <Loader inline height="11px" width="11px" style={{ marginLeft: '10px' }} />;
 };
 
+export const ButtonLoader = () => {
+	return <Loader inline height="20x" width="20px" />;
+};
+
 export default Loader;

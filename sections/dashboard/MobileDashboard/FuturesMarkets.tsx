@@ -1,12 +1,10 @@
 import { wei } from '@synthetixio/wei';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
-import { selectMarkets } from 'state/futures/selectors';
+import { selectMarkets, selectMarketVolumes } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { futuresVolumesState } from 'store/futures';
 import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
@@ -16,7 +14,7 @@ const FuturesMarkets = () => {
 	const { t } = useTranslation();
 
 	const futuresMarkets = useAppSelector(selectMarkets);
-	const futuresVolumes = useRecoilValue(futuresVolumesState);
+	const futuresVolumes = useAppSelector(selectMarketVolumes);
 
 	const openInterest = useMemo(() => {
 		return (
@@ -63,11 +61,7 @@ const FuturesMarkets = () => {
 						<div className="title">
 							{t('dashboard.overview.futures-markets-table.open-interest')}
 						</div>
-						<div className="value">
-							{formatDollars(openInterest, {
-								minDecimals: 0,
-							})}
-						</div>
+						<div className="value">{formatDollars(openInterest, { minDecimals: 0 })}</div>
 					</MarketStat>
 					<MarketStat>
 						<div className="title">

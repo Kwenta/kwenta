@@ -1,4 +1,3 @@
-import { CurrencyKey } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { useMemo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,11 +6,11 @@ import styled from 'styled-components';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import Error from 'components/Error';
+import { ButtonLoader } from 'components/Loader/Loader';
 import Connector from 'containers/Connector';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { FuturesFilledPosition } from 'queries/futures/types';
 import { getFuturesMarketContract } from 'queries/futures/utils';
-import { selectMarketAsset } from 'state/futures/selectors';
+import { FuturesFilledPosition } from 'sdk/types/futures';
+import { selectIsClosingPosition, selectMarketAsset } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FlexDivCentered, FlexDivCol } from 'styles/common';
 import { formatCurrency, formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
@@ -19,7 +18,6 @@ import { formatCurrency, formatDollars, formatNumber, zeroBN } from 'utils/forma
 import { PositionSide } from '../types';
 
 type ClosePositionModalProps = {
-	gasFee: Wei | null;
 	positionDetails: FuturesFilledPosition | null | undefined;
 	disabled?: boolean;
 	errorMessage?: string | null | undefined;
@@ -28,7 +26,6 @@ type ClosePositionModalProps = {
 };
 
 function ClosePositionModal({
-	gasFee,
 	positionDetails,
 	disabled,
 	errorMessage,
@@ -37,9 +34,9 @@ function ClosePositionModal({
 }: ClosePositionModalProps) {
 	const { t } = useTranslation();
 	const { defaultSynthetixjs: synthetixjs, synthsMap } = Connector.useContainer();
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const marketAsset = useAppSelector(selectMarketAsset);
+	const isClosing = useAppSelector(selectIsClosingPosition);
 
 	const [orderFee, setOrderFee] = useState<Wei>(wei(0));
 	const [error, setError] = useState<null | string>(null);
@@ -94,14 +91,8 @@ function ClosePositionModal({
 				label: t('futures.market.user.position.modal.fee'),
 				value: formatDollars(orderFee),
 			},
-			{
-				label: t('futures.market.user.position.modal.gas-fee'),
-				value: formatCurrency(selectedPriceCurrency.name as CurrencyKey, gasFee ?? zeroBN, {
-					sign: '$',
-				}),
-			},
 		];
-	}, [positionDetails, marketAsset, t, orderFee, gasFee, selectedPriceCurrency, synthsMap]);
+	}, [positionDetails, marketAsset, t, orderFee, synthsMap]);
 
 	return (
 		<StyledBaseModal
@@ -123,9 +114,9 @@ function ClosePositionModal({
 					variant="flat"
 					size="lg"
 					onClick={onClosePosition}
-					disabled={!!error || disabled || gasFee?.eq(0)}
+					disabled={!!error || disabled || isClosing}
 				>
-					{t('futures.market.user.position.modal.title')}
+					{isClosing ? <ButtonLoader /> : t('futures.market.user.position.modal.title')}
 				</StyledButton>
 				{errorMessage && <Error message={errorMessage} formatter="revert" />}
 			</>
@@ -166,7 +157,6 @@ const ValueColumn = styled(FlexDivCol)`
 
 const StyledButton = styled(Button)`
 	margin-top: 24px;
-	margin-bottom: 16px;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;

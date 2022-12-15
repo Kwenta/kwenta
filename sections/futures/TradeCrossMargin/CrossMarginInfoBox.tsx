@@ -1,6 +1,5 @@
 import Wei, { wei } from '@synthetixio/wei';
 import React, { useCallback, useMemo, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
@@ -8,19 +7,21 @@ import InfoBox from 'components/InfoBox';
 import { MiniLoader } from 'components/Loader';
 import PreviewArrow from 'components/PreviewArrow';
 import { useFuturesContext } from 'contexts/FuturesContext';
-import { FuturesPotentialTradeDetails } from 'queries/futures/types';
-import { selectMarketInfo } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { FuturesPotentialTradeDetails } from 'sdk/types/futures';
 import {
-	crossMarginMarginDeltaState,
-	positionState,
-	potentialTradeDetailsState,
-	tradeFeesState,
-	futuresTradeInputsState,
-	orderTypeState,
-	futuresOrderPriceState,
-	crossMarginAccountOverviewState,
-} from 'store/futures';
+	selectCrossMarginBalanceInfo,
+	selectCrossMarginMarginDelta,
+	selectCrossMarginOrderPrice,
+	selectCrossMarginTradeFees,
+	selectMarketInfo,
+	selectOrderType,
+	selectPosition,
+	selectTradePreview,
+	selectTradePreviewStatus,
+	selectTradeSizeInputs,
+} from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { FetchStatus } from 'state/types';
 import { PillButtonSpan } from 'styles/common';
 import {
 	formatCurrency,
@@ -30,7 +31,7 @@ import {
 	zeroBN,
 } from 'utils/formatters/number';
 
-import EditLeverageModal from './EditLeverageModal';
+import EditLeverageModal from './EditCrossMarginLeverageModal';
 import ManageKeeperBalanceModal from './ManageKeeperBalanceModal';
 
 type Props = {
@@ -40,17 +41,18 @@ type Props = {
 function MarginInfoBox({ editingLeverage }: Props) {
 	const { selectedLeverage } = useFuturesContext();
 
-	const position = useRecoilValue(positionState);
+	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
-	const { nativeSize } = useRecoilValue(futuresTradeInputsState);
-	const potentialTrade = useRecoilValue(potentialTradeDetailsState);
-	const marginDelta = useRecoilValue(crossMarginMarginDeltaState);
-	const { freeMargin: crossMarginFreeMargin, keeperEthBal } = useRecoilValue(
-		crossMarginAccountOverviewState
+	const { nativeSize } = useAppSelector(selectTradeSizeInputs);
+	const potentialTrade = useAppSelector(selectTradePreview);
+	const marginDelta = useAppSelector(selectCrossMarginMarginDelta);
+	const { freeMargin: crossMarginFreeMargin, keeperEthBal } = useAppSelector(
+		selectCrossMarginBalanceInfo
 	);
-	const orderType = useRecoilValue(orderTypeState);
-	const orderPrice = useRecoilValue(futuresOrderPriceState);
-	const { crossMarginFee } = useRecoilValue(tradeFeesState);
+	const previewStatus = useAppSelector(selectTradePreviewStatus);
+	const orderType = useAppSelector(selectOrderType);
+	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
+	const { crossMarginFee } = useAppSelector(selectCrossMarginTradeFees);
 
 	const [openModal, setOpenModal] = useState<'leverage' | 'keeper-deposit' | null>(null);
 
@@ -58,11 +60,13 @@ function MarginInfoBox({ editingLeverage }: Props) {
 	const remainingMargin = position?.remainingMargin ?? zeroBN;
 
 	const marginUsage = totalMargin.gt(zeroBN) ? remainingMargin.div(totalMargin) : zeroBN;
-
+	const minInitialMargin = useMemo(() => marketInfo?.minInitialMargin ?? zeroBN, [
+		marketInfo?.minInitialMargin,
+	]);
 	const previewTotalMargin = useMemo(() => {
 		const remainingMargin = crossMarginFreeMargin.sub(marginDelta);
-		return remainingMargin.add(potentialTrade.data?.margin || zeroBN);
-	}, [crossMarginFreeMargin, marginDelta, potentialTrade.data?.margin]);
+		return remainingMargin.add(potentialTrade?.margin || zeroBN);
+	}, [crossMarginFreeMargin, marginDelta, potentialTrade?.margin]);
 
 	const getPotentialAvailableMargin = useCallback(
 		(previewTrade: FuturesPotentialTradeDetails | null, marketMaxLeverage: Wei | undefined) => {
@@ -74,8 +78,8 @@ function MarginInfoBox({ editingLeverage }: Props) {
 
 			// If the user has a position open, we'll enforce a min initial margin requirement.
 			if (inaccessible.gt(0)) {
-				if (inaccessible.lt(previewTrade?.minInitialMargin ?? zeroBN)) {
-					inaccessible = previewTrade?.minInitialMargin ?? zeroBN;
+				if (inaccessible.lt(minInitialMargin)) {
+					inaccessible = minInitialMargin;
 				}
 			}
 
@@ -84,23 +88,23 @@ function MarginInfoBox({ editingLeverage }: Props) {
 				? previewTotalMargin.sub(inaccessible).abs()
 				: zeroBN;
 		},
-		[previewTotalMargin]
+		[previewTotalMargin, minInitialMargin]
 	);
 
 	const previewAvailableMargin = React.useMemo(() => {
 		const potentialAvailableMargin = getPotentialAvailableMargin(
-			potentialTrade.data,
+			potentialTrade,
 			marketInfo?.maxLeverage
 		);
 		return potentialAvailableMargin;
-	}, [potentialTrade.data, marketInfo?.maxLeverage, getPotentialAvailableMargin]);
+	}, [potentialTrade, marketInfo?.maxLeverage, getPotentialAvailableMargin]);
 
 	const potentialMarginUsage = useMemo(() => {
-		if (!potentialTrade.data) return zeroBN;
-		const notionalValue = potentialTrade.data.notionalValue.abs();
-		const maxSize = totalMargin.mul(potentialTrade.data.leverage);
+		if (!potentialTrade) return zeroBN;
+		const notionalValue = potentialTrade.notionalValue.abs();
+		const maxSize = totalMargin.mul(potentialTrade.leverage);
 		return maxSize.gt(0) ? notionalValue.div(maxSize) : zeroBN;
-	}, [potentialTrade.data, totalMargin]);
+	}, [potentialTrade, totalMargin]);
 
 	const previewTradeData = React.useMemo(() => {
 		const size = wei(nativeSize || zeroBN);
@@ -110,12 +114,12 @@ function MarginInfoBox({ editingLeverage }: Props) {
 				((orderType === 'market' || orderType === 'next price') &&
 					(!size.eq(0) || !marginDelta.eq(0))) ||
 				((orderType === 'limit' || orderType === 'stop market') && !!orderPrice && !size.eq(0)),
-			totalMargin: potentialTrade.data?.margin.sub(crossMarginFee) || zeroBN,
+			totalMargin: potentialTrade?.margin.sub(crossMarginFee) || zeroBN,
 			freeAccountMargin: crossMarginFreeMargin.sub(marginDelta),
 			availableMargin: previewAvailableMargin.gt(0) ? previewAvailableMargin : zeroBN,
-			size: potentialTrade.data?.size || zeroBN,
-			leverage: potentialTrade.data?.margin.gt(0)
-				? potentialTrade.data.notionalValue.div(potentialTrade.data.margin).abs()
+			size: potentialTrade?.size || zeroBN,
+			leverage: potentialTrade?.margin.gt(0)
+				? potentialTrade.notionalValue.div(potentialTrade.margin).abs()
 				: zeroBN,
 			marginUsage: potentialMarginUsage.gt(1) ? wei(1) : potentialMarginUsage,
 		};
@@ -125,16 +129,17 @@ function MarginInfoBox({ editingLeverage }: Props) {
 		crossMarginFee,
 		orderType,
 		orderPrice,
-		potentialTrade.data?.margin,
+		potentialTrade?.margin,
 		previewAvailableMargin,
-		potentialTrade.data?.notionalValue,
-		potentialTrade.data?.size,
+		potentialTrade?.notionalValue,
+		potentialTrade?.size,
 		crossMarginFreeMargin,
 		potentialMarginUsage,
 	]);
 
-	const showPreview = previewTradeData.showPreview && !potentialTrade.data?.showStatus;
+	const showPreview = previewTradeData.showPreview && !potentialTrade?.showStatus;
 
+	const isLoading = previewStatus.status === FetchStatus.Loading;
 	return (
 		<>
 			<StyledInfoBox
@@ -148,11 +153,7 @@ function MarginInfoBox({ editingLeverage }: Props) {
 										showPreview={showPreview}
 										color={previewTradeData.freeAccountMargin.lt(0) ? 'red' : 'yellow'}
 									>
-										{potentialTrade.status === 'fetching' ? (
-											<MiniLoader />
-										) : (
-											formatDollars(previewTradeData.freeAccountMargin)
-										)}
+										{isLoading ? <MiniLoader /> : formatDollars(previewTradeData.freeAccountMargin)}
 									</PreviewArrow>
 								),
 						  }
@@ -161,11 +162,7 @@ function MarginInfoBox({ editingLeverage }: Props) {
 						value: formatDollars(position?.remainingMargin || 0),
 						valueNode: (
 							<PreviewArrow showPreview={showPreview}>
-								{potentialTrade.status === 'fetching' ? (
-									<MiniLoader />
-								) : (
-									formatDollars(previewTradeData.totalMargin)
-								)}
+								{isLoading ? <MiniLoader /> : formatDollars(previewTradeData.totalMargin)}
 							</PreviewArrow>
 						),
 					},
@@ -173,11 +170,7 @@ function MarginInfoBox({ editingLeverage }: Props) {
 						value: formatPercent(marginUsage),
 						valueNode: (
 							<PreviewArrow showPreview={showPreview}>
-								{potentialTrade.status === 'fetching' ? (
-									<MiniLoader />
-								) : (
-									formatPercent(previewTradeData?.marginUsage)
-								)}
+								{isLoading ? <MiniLoader /> : formatPercent(previewTradeData?.marginUsage)}
 							</PreviewArrow>
 						),
 					},
@@ -217,11 +210,7 @@ function MarginInfoBox({ editingLeverage }: Props) {
 						),
 						valueNode: (
 							<PreviewArrow showPreview={showPreview && !!editingLeverage}>
-								{potentialTrade.status === 'fetching' ? (
-									<MiniLoader />
-								) : (
-									formatNumber(previewTradeData.leverage || 0) + 'x'
-								)}
+								{isLoading ? <MiniLoader /> : formatNumber(previewTradeData.leverage || 0) + 'x'}
 							</PreviewArrow>
 						),
 					},
@@ -230,7 +219,7 @@ function MarginInfoBox({ editingLeverage }: Props) {
 			/>
 
 			{openModal === 'leverage' && (
-				<EditLeverageModal editMode="next_trade" onDismiss={() => setOpenModal(null)} />
+				<EditLeverageModal editMode="new_position" onDismiss={() => setOpenModal(null)} />
 			)}
 			{openModal === 'keeper-deposit' && (
 				<ManageKeeperBalanceModal defaultType="withdraw" onDismiss={() => setOpenModal(null)} />

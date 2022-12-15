@@ -19,7 +19,6 @@ The latest IPFS hash can be found under [releases](https://github.com/Kwenta/kwe
 - Recoil
 - Unstated-next
 - Styled-Components
-- Immer
 
 ## Ethereum stack
 

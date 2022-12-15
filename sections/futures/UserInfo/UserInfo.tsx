@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router';
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import CalculatorIcon from 'assets/svg/futures/calculator-icon.svg';
@@ -17,9 +16,13 @@ import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
 import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
 import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
-import { selectMarketAsset, selectPosition } from 'state/futures/selectors';
+import {
+	selectFuturesType,
+	selectMarketAsset,
+	selectOpenOrders,
+	selectPosition,
+} from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { futuresAccountTypeState, openOrdersState } from 'store/futures';
 
 import PositionCard from '../PositionCard';
 import ProfitCalculator from '../ProfitCalculator';
@@ -46,8 +49,8 @@ const UserInfo: React.FC = () => {
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const position = useAppSelector(selectPosition);
 
-	const openOrders = useRecoilValue(openOrdersState);
-	const accountType = useRecoilValue(futuresAccountTypeState);
+	const openOrders = useAppSelector(selectOpenOrders);
+	const accountType = useAppSelector(selectFuturesType);
 
 	const [showShareModal, setShowShareModal] = useState(false);
 	const [hasOpenPosition, setHasOpenPosition] = useState(false);

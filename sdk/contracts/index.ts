@@ -12,6 +12,7 @@ import FuturesMarketDataABI from './abis/FuturesMarketData.json';
 import FuturesMarketSettingsABI from './abis/FuturesMarketSettings.json';
 import KwentaStakingRewardsABI from './abis/KwentaStakingRewards.json';
 import StakingRewardsABI from './abis/StakingRewards.json';
+import SynthRedeemerABI from './abis/SynthRedeemer.json';
 import { ADDRESSES } from './constants';
 import {
 	CrossMarginAccountFactory__factory,
@@ -80,6 +81,9 @@ export const getContractsByNetwork = (
 		SynthSwap: ADDRESSES.SynthSwap[networkId]
 			? SynthSwap__factory.connect(ADDRESSES.SynthSwap[networkId], provider)
 			: undefined,
+		SUSD: ADDRESSES.SUSD[networkId]
+			? ERC20__factory.connect(ADDRESSES.SUSD[networkId], provider)
+			: undefined,
 		CrossMarginAccountFactory: ADDRESSES.CrossMarginAccountFactory[networkId]
 			? CrossMarginAccountFactory__factory.connect(
 					ADDRESSES.CrossMarginAccountFactory[networkId],
@@ -129,8 +133,11 @@ export const getContractsByNetwork = (
 	};
 };
 
-export const getMultiCallContractsByNetwork = (networkId: NetworkId) => {
+export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 	return {
+		SynthRedeemer: ADDRESSES.SynthRedeemer[networkId]
+			? new EthCallContract(ADDRESSES.SynthRedeemer[networkId], SynthRedeemerABI)
+			: undefined,
 		CrossMarginBaseSettings: ADDRESSES.CrossMarginBaseSettings[networkId]
 			? new EthCallContract(
 					ADDRESSES.CrossMarginBaseSettings[networkId],
@@ -177,5 +184,5 @@ export const getMultiCallContractsByNetwork = (networkId: NetworkId) => {
 };
 
 export type ContractsMap = ReturnType<typeof getContractsByNetwork>;
-export type MultiCallContractsMap = ReturnType<typeof getMultiCallContractsByNetwork>;
+export type MulticallContractsMap = ReturnType<typeof getMulticallContractsByNetwork>;
 export type ContractName = keyof ContractsMap;

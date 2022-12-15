@@ -1,11 +1,11 @@
 import { CurrencyKey } from '@synthetixio/contracts-interface';
-import { SynthBalancesMap } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
 import { orderBy } from 'lodash';
 import KwentaSDK from 'sdk';
 
 import { notNill } from 'queries/synths/utils';
+import { SynthBalance } from 'sdk/types/tokens';
 import { zeroBN } from 'utils/formatters/number';
 
 import * as sdkErrors from '../common/errors';
@@ -24,7 +24,7 @@ export default class SynthsService {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
-		const balancesMap: SynthBalancesMap = {};
+		const balancesMap: Record<string, SynthBalance> = {};
 		const [
 			currencyKeys,
 			synthsBalances,

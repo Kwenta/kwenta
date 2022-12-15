@@ -5,7 +5,9 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import { useFuturesContext } from 'contexts/FuturesContext';
-import { futuresAccountTypeState, positionHistoryState } from 'store/futures';
+import { selectFuturesType } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { positionHistoryState } from 'store/futures';
 import getLocale from 'utils/formatters/getLocale';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 
@@ -73,7 +75,7 @@ const PositionMetadata: FC<PositionMetadataProps> = ({ marketAsset }) => {
 
 	const { marketAssetRate } = useFuturesContext();
 	const futuresPositionHistory = useRecoilValue(positionHistoryState);
-	const futuresAccountType = useRecoilValue(futuresAccountTypeState);
+	const futuresAccountType = useAppSelector(selectFuturesType);
 
 	let avgEntryPrice = '',
 		openAtDate = '',
