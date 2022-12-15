@@ -16,8 +16,12 @@ import { useFuturesContext } from 'contexts/FuturesContext';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { ORDER_PREVIEW_ERRORS_I18N, previewErrorI18n } from 'queries/futures/constants';
-import { editExistingPositionLeverage, editCrossMarginSize } from 'state/futures/actions';
-import { setCrossMarginLeverage, setOrderType as setReduxOrderType } from 'state/futures/reducer';
+import {
+	editExistingPositionLeverage,
+	editCrossMarginSize,
+	setCrossMarginLeverage,
+} from 'state/futures/actions';
+import { setOrderType as setReduxOrderType } from 'state/futures/reducer';
 import {
 	selectCrossMarginBalanceInfo,
 	selectCrossMarginSelectedLeverage,
@@ -260,13 +264,7 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 				<>
 					<Spacer height={12} />
 					<ErrorView
-						message={t(
-							errorMessage === 'insufficient_margin' || errorMessage === 'Insufficient margin'
-								? ORDER_PREVIEW_ERRORS_I18N.insufficient_margin_edit_leverage
-								: previewError
-								? previewErrorI18n(errorMessage)
-								: t('futures.market.trade.edit-leverage.failed')
-						)}
+						message={t(getStatusMessageI18n(errorMessage, previewError))}
 						formatter="revert"
 					/>
 				</>
@@ -274,6 +272,18 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 		</StyledBaseModal>
 	);
 }
+
+// TODO: Clean up preview error messaging
+
+const getStatusMessageI18n = (message: string, previewError: string | null | undefined) => {
+	if (message === 'insufficient_margin' || message === 'Insufficient margin') {
+		return ORDER_PREVIEW_ERRORS_I18N.insufficient_margin_edit_leverage;
+	} else if (message === 'insufficient_free_margin' || message === 'Insufficient free margin') {
+		return ORDER_PREVIEW_ERRORS_I18N.insufficient_free_margin_edit_leverage;
+	}
+	if (previewError) return previewErrorI18n(previewError);
+	return 'futures.market.trade.edit-leverage.failed';
+};
 
 const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {

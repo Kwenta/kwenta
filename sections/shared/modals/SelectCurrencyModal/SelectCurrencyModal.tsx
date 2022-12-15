@@ -92,11 +92,14 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 		const synthsList = assetSearch ? searchFilteredSynths : categoryFilteredSynths;
 		return orderBy(
 			synthsList,
-			(synth) => {
-				const synthBalance = synthBalancesMap[synth.name as CurrencyKey];
-				return !!synthBalance ? Number(synthBalance.usdBalance) : 0;
-			},
-			'desc'
+			[
+				(synth) => {
+					const synthBalance = synthBalancesMap[synth.name as CurrencyKey];
+					return !!synthBalance ? Number(synthBalance.usdBalance) : 0;
+				},
+				(synth) => synth.name.toLowerCase(),
+			],
+			['desc', 'asc']
 		);
 	}, [assetSearch, searchFilteredSynths, categoryFilteredSynths, synthBalancesMap]);
 
@@ -145,8 +148,11 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 							}
 							return token;
 						}),
-						({ usdBalance }) => (usdBalance ? usdBalance.toNumber() : 0),
-						'desc'
+						[
+							({ usdBalance }) => (usdBalance ? usdBalance.toNumber() : 0),
+							({ symbol }) => symbol.toLowerCase(),
+						],
+						['desc', 'asc']
 				  )
 				: searchFilteredTokens;
 		if (ordered.length > PAGE_LENGTH) return ordered.slice(0, PAGE_LENGTH * page);
