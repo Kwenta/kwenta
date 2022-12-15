@@ -177,7 +177,7 @@ const _abi = [
         type: "bytes32",
       },
     ],
-    name: "ParameterUpdated",
+    name: "ParameterUpdatedBytes32",
     type: "event",
   },
   {
@@ -590,6 +590,27 @@ const _abi = [
   },
   {
     constant: true,
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "_marketKey",
+        type: "bytes32",
+      },
+    ],
+    name: "overrideCommitFee",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    payable: false,
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    constant: true,
     inputs: [],
     name: "owner",
     outputs: [
@@ -624,6 +645,11 @@ const _abi = [
           {
             internalType: "uint256",
             name: "makerFee",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "overrideCommitFee",
             type: "uint256",
           },
           {
@@ -1104,6 +1130,26 @@ const _abi = [
         type: "bytes32",
       },
       {
+        internalType: "uint256",
+        name: "_overrideCommitFee",
+        type: "uint256",
+      },
+    ],
+    name: "setOverrideCommitFee",
+    outputs: [],
+    payable: false,
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    constant: false,
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "_marketKey",
+        type: "bytes32",
+      },
+      {
         components: [
           {
             internalType: "uint256",
@@ -1113,6 +1159,11 @@ const _abi = [
           {
             internalType: "uint256",
             name: "makerFee",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "overrideCommitFee",
             type: "uint256",
           },
           {

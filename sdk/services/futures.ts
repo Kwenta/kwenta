@@ -32,6 +32,7 @@ import {
 	FuturesOrder,
 	FuturesVolumes,
 	MarketClosureReason,
+	OrderType,
 	PositionDetail,
 	PositionSide,
 } from 'sdk/types/futures';
@@ -98,9 +99,8 @@ export default class FuturesService {
 		if (!PerpsV2MarketData || !PerpsV2MarketSettings || !SystemStatus || !ExchangeRates) {
 			throw new Error(UNSUPPORTED_NETWORK);
 		}
-
 		const [markets, globals] = await this.sdk.context.multicallProvider.all([
-			PerpsV2MarketData.allMarketSummaries(),
+			PerpsV2MarketData.allProxiedMarketSummaries(),
 			PerpsV2MarketData.globals(),
 		]);
 
@@ -466,23 +466,19 @@ export default class FuturesService {
 		return formatDelayedOrder(account, marketInfo, order);
 	}
 
-	public async getFillPrice(marketAddress: string, basePrice: Wei, sizeDelta: Wei) {
-		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
-		const fillPrice = await market.fillPriceWithBasePrice(sizeDelta.toBN(), basePrice.toBN());
-		return fillPrice;
-	}
-
 	public async getIsolatedTradePreview(
 		marketAddress: string,
 		sizeDelta: Wei,
 		priceOracle: Wei,
 		price: Wei,
-		leverageSide: PositionSide
+		leverageSide: PositionSide,
+		orderType: OrderType
 	) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
 		const details = await market.postTradeDetails(
 			sizeDelta.toBN(),
 			priceOracle.toBN(),
+			orderType,
 			this.sdk.context.walletAddress
 		);
 		return formatPotentialIsolatedTrade(details, price, sizeDelta, leverageSide);

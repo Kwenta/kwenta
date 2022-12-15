@@ -29,9 +29,11 @@ export declare namespace PerpsV2MarketData {
     makerFeeDelayedOrder: PromiseOrValue<BigNumberish>;
     takerFeeOffchainDelayedOrder: PromiseOrValue<BigNumberish>;
     makerFeeOffchainDelayedOrder: PromiseOrValue<BigNumberish>;
+    overrideCommitFee: PromiseOrValue<BigNumberish>;
   };
 
   export type FeeRatesStructOutput = [
+    BigNumber,
     BigNumber,
     BigNumber,
     BigNumber,
@@ -45,6 +47,7 @@ export declare namespace PerpsV2MarketData {
     makerFeeDelayedOrder: BigNumber;
     takerFeeOffchainDelayedOrder: BigNumber;
     makerFeeOffchainDelayedOrder: BigNumber;
+    overrideCommitFee: BigNumber;
   };
 
   export type MarketSummaryStruct = {
@@ -57,6 +60,7 @@ export declare namespace PerpsV2MarketData {
     marketSkew: PromiseOrValue<BigNumberish>;
     marketDebt: PromiseOrValue<BigNumberish>;
     currentFundingRate: PromiseOrValue<BigNumberish>;
+    currentFundingVelocity: PromiseOrValue<BigNumberish>;
     feeRates: PerpsV2MarketData.FeeRatesStruct;
   };
 
@@ -64,6 +68,7 @@ export declare namespace PerpsV2MarketData {
     string,
     string,
     string,
+    BigNumber,
     BigNumber,
     BigNumber,
     BigNumber,
@@ -81,6 +86,7 @@ export declare namespace PerpsV2MarketData {
     marketSkew: BigNumber;
     marketDebt: BigNumber;
     currentFundingRate: BigNumber;
+    currentFundingVelocity: BigNumber;
     feeRates: PerpsV2MarketData.FeeRatesStructOutput;
   };
 
@@ -229,6 +235,7 @@ export declare namespace IPerpsV2MarketSettings {
   export type ParametersStruct = {
     takerFee: PromiseOrValue<BigNumberish>;
     makerFee: PromiseOrValue<BigNumberish>;
+    overrideCommitFee: PromiseOrValue<BigNumberish>;
     takerFeeDelayedOrder: PromiseOrValue<BigNumberish>;
     makerFeeDelayedOrder: PromiseOrValue<BigNumberish>;
     takerFeeOffchainDelayedOrder: PromiseOrValue<BigNumberish>;
@@ -264,11 +271,13 @@ export declare namespace IPerpsV2MarketSettings {
     BigNumber,
     BigNumber,
     BigNumber,
+    BigNumber,
     string,
     BigNumber
   ] & {
     takerFee: BigNumber;
     makerFee: BigNumber;
+    overrideCommitFee: BigNumber;
     takerFeeDelayedOrder: BigNumber;
     makerFeeDelayedOrder: BigNumber;
     takerFeeOffchainDelayedOrder: BigNumber;
@@ -315,6 +324,7 @@ export declare namespace IPerpsV2MarketBaseTypes {
 export interface PerpsV2MarketDataInterface extends utils.Interface {
   functions: {
     "allMarketSummaries()": FunctionFragment;
+    "allProxiedMarketSummaries()": FunctionFragment;
     "globals()": FunctionFragment;
     "marketDetails(address)": FunctionFragment;
     "marketDetailsForKey(bytes32)": FunctionFragment;
@@ -329,6 +339,7 @@ export interface PerpsV2MarketDataInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "allMarketSummaries"
+      | "allProxiedMarketSummaries"
       | "globals"
       | "marketDetails"
       | "marketDetailsForKey"
@@ -342,6 +353,10 @@ export interface PerpsV2MarketDataInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "allMarketSummaries",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "allProxiedMarketSummaries",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "globals", values?: undefined): string;
@@ -380,6 +395,10 @@ export interface PerpsV2MarketDataInterface extends utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "allMarketSummaries",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "allProxiedMarketSummaries",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "globals", data: BytesLike): Result;
@@ -447,6 +466,10 @@ export interface PerpsV2MarketData extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[PerpsV2MarketData.MarketSummaryStructOutput[]]>;
 
+    allProxiedMarketSummaries(
+      overrides?: CallOverrides
+    ): Promise<[PerpsV2MarketData.MarketSummaryStructOutput[]]>;
+
     globals(
       overrides?: CallOverrides
     ): Promise<[PerpsV2MarketData.FuturesGlobalsStructOutput]>;
@@ -495,6 +518,10 @@ export interface PerpsV2MarketData extends BaseContract {
     overrides?: CallOverrides
   ): Promise<PerpsV2MarketData.MarketSummaryStructOutput[]>;
 
+  allProxiedMarketSummaries(
+    overrides?: CallOverrides
+  ): Promise<PerpsV2MarketData.MarketSummaryStructOutput[]>;
+
   globals(
     overrides?: CallOverrides
   ): Promise<PerpsV2MarketData.FuturesGlobalsStructOutput>;
@@ -540,6 +567,10 @@ export interface PerpsV2MarketData extends BaseContract {
 
   callStatic: {
     allMarketSummaries(
+      overrides?: CallOverrides
+    ): Promise<PerpsV2MarketData.MarketSummaryStructOutput[]>;
+
+    allProxiedMarketSummaries(
       overrides?: CallOverrides
     ): Promise<PerpsV2MarketData.MarketSummaryStructOutput[]>;
 
@@ -592,6 +623,8 @@ export interface PerpsV2MarketData extends BaseContract {
   estimateGas: {
     allMarketSummaries(overrides?: CallOverrides): Promise<BigNumber>;
 
+    allProxiedMarketSummaries(overrides?: CallOverrides): Promise<BigNumber>;
+
     globals(overrides?: CallOverrides): Promise<BigNumber>;
 
     marketDetails(
@@ -636,6 +669,10 @@ export interface PerpsV2MarketData extends BaseContract {
 
   populateTransaction: {
     allMarketSummaries(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    allProxiedMarketSummaries(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
