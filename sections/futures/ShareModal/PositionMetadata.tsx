@@ -3,6 +3,7 @@ import { FC, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { futuresAccountTypeState, positionHistoryState } from 'store/futures';
 import getLocale from 'utils/formatters/getLocale';
