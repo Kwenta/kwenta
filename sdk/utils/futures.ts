@@ -272,6 +272,7 @@ export const POTENTIAL_TRADE_STATUS_TO_MESSAGE: { [key: string]: string } = {
 	NIL_ORDER: 'Cannot submit empty order',
 	NO_POSITION_OPEN: 'No position open',
 	PRICE_TOO_VOLATILE: 'Price too volatile',
+	INSUFFICIENT_FREE_MARGIN: 'Insufficient free margin',
 };
 
 export const calculateCrossMarginFee = (

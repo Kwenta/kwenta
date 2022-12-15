@@ -137,8 +137,7 @@ function MarginInfoBox({ editingLeverage }: Props) {
 		potentialMarginUsage,
 	]);
 
-	const showPreview =
-		previewTradeData.showPreview && (!potentialTrade?.showStatus || !!editingLeverage);
+	const showPreview = previewTradeData.showPreview && !potentialTrade?.showStatus;
 
 	const isLoading = previewStatus.status === FetchStatus.Loading;
 	return (

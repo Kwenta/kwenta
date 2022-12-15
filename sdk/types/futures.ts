@@ -212,6 +212,7 @@ export type FuturesPotentialTradeDetails<T = Wei> = {
 
 // https://github.com/Synthetixio/synthetix/blob/4d2add4f74c68ac4f1106f6e7be4c31d4f1ccc76/contracts/interfaces/IFuturesMarketBaseTypes.sol#L6-L19
 export enum PotentialTradeStatus {
+	// Contract status mapping
 	OK = 0,
 	INVALID_PRICE = 1,
 	PRICE_OUT_OF_BOUNDS = 2,
@@ -224,6 +225,9 @@ export enum PotentialTradeStatus {
 	NIL_ORDER = 9,
 	NO_POSITION_OPEN = 10,
 	PRICE_TOO_VOLATILE = 11,
+
+	// Our own local status
+	INSUFFICIENT_FREE_MARGIN = 100,
 }
 
 export type PostTradeDetailsResponse = {

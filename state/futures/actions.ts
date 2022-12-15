@@ -16,6 +16,7 @@ import {
 	FuturesPotentialTradeDetails,
 	FuturesVolumes,
 	PositionSide,
+	PotentialTradeStatus,
 } from 'sdk/types/futures';
 import {
 	calculateCrossMarginFee,
@@ -324,8 +325,10 @@ export const fetchCrossMarginTradePreview = createAsyncThunk<
 			);
 			if (marginDelta.gt(freeMargin) && preview.status === 0) {
 				// Show insufficient margin message
-				preview.status = 7;
-				preview.statusMessage = getTradeStatusMessage(7);
+				preview.status = PotentialTradeStatus.INSUFFICIENT_FREE_MARGIN;
+				preview.statusMessage = getTradeStatusMessage(
+					PotentialTradeStatus.INSUFFICIENT_FREE_MARGIN
+				);
 				preview.showStatus = true;
 			}
 			return serializePotentialTrade(preview);
