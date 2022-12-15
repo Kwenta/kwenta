@@ -473,18 +473,25 @@ export default class FuturesService {
 
 	public async getIsolatedTradePreview(
 		marketAddress: string,
-		sizeDelta: Wei,
-		price: Wei,
-		skewAdjustedPrice: Wei,
-		leverageSide: PositionSide
+		inputs: {
+			sizeDelta: Wei;
+			price: Wei;
+			skewAdjustedPrice: Wei;
+			leverageSide: PositionSide;
+		}
 	) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
 		const details = await market.postTradeDetails(
-			sizeDelta.toBN(),
-			price.toBN(),
+			inputs.sizeDelta.toBN(),
+			inputs.price.toBN(),
 			this.sdk.context.walletAddress
 		);
-		return formatPotentialIsolatedTrade(details, skewAdjustedPrice, sizeDelta, leverageSide);
+		return formatPotentialIsolatedTrade(
+			details,
+			inputs.skewAdjustedPrice,
+			inputs.sizeDelta,
+			inputs.leverageSide
+		);
 	}
 
 	public async getCrossMarginTradePreview(

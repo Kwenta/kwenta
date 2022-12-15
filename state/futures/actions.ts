@@ -282,20 +282,19 @@ export const fetchIsolatedMarginTradePreview = createAsyncThunk<
 	async (sizeDelta, { dispatch, getState, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
 		const account = selectFuturesAccount(getState());
-		const marketPrice = selectMarketPrice(getState());
+		const price = selectMarketPrice(getState());
 		const skewAdjustedPrice = selectSkewAdjustedPrice(getState());
 
 		if (!account) throw new Error('No account to fetch orders');
 		if (!marketInfo) throw new Error('No market info');
 		const leverageSide = selectLeverageSide(getState());
 		try {
-			const preview = await sdk.futures.getIsolatedTradePreview(
-				marketInfo?.market,
+			const preview = await sdk.futures.getIsolatedTradePreview(marketInfo?.market, {
 				sizeDelta,
+				price,
 				skewAdjustedPrice,
-				marketPrice,
-				leverageSide
-			);
+				leverageSide,
+			});
 			return serializePotentialTrade(preview);
 		} catch (err) {
 			dispatch(handleIsolatedMarginPreviewError(err.message));
