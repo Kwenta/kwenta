@@ -5,8 +5,11 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import { useFuturesContext } from 'contexts/FuturesContext';
-import { futuresAccountTypeState, positionHistoryState } from 'store/futures';
+import { selectFuturesType } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { positionHistoryState } from 'store/futures';
 import getLocale from 'utils/formatters/getLocale';
+import { formatDollars, zeroBN } from 'utils/formatters/number';
 
 type PositionMetadataProps = {
 	marketAsset: string;
@@ -72,7 +75,7 @@ const PositionMetadata: FC<PositionMetadataProps> = ({ marketAsset }) => {
 
 	const { marketAssetRate } = useFuturesContext();
 	const futuresPositionHistory = useRecoilValue(positionHistoryState);
-	const futuresAccountType = useRecoilValue(futuresAccountTypeState);
+	const futuresAccountType = useAppSelector(selectFuturesType);
 
 	let avgEntryPrice = '',
 		openAtDate = '',
@@ -84,7 +87,7 @@ const PositionMetadata: FC<PositionMetadataProps> = ({ marketAsset }) => {
 		(position) => position.isOpen && position.asset === marketAsset
 	);
 
-	avgEntryPrice = currentPosition?.avgEntryPrice.toNumber().toFixed(2) ?? '';
+	avgEntryPrice = currentPosition?.avgEntryPrice.toNumber().toString() ?? '';
 	const openTimestamp = currentPosition?.openTimestamp ?? 0;
 
 	openAtDate = format(openTimestamp, 'PP', { locale: getLocale() });
@@ -117,14 +120,18 @@ const PositionMetadata: FC<PositionMetadataProps> = ({ marketAsset }) => {
 				<ContainerText className="header">
 					{t('futures.modals.share.position-metadata.avg-open-price')}
 				</ContainerText>
-				<ContainerText className="date-or-price">{avgEntryPrice}</ContainerText>
+				<ContainerText className="date-or-price">
+					{formatDollars(avgEntryPrice ?? zeroBN, {
+						isAssetPrice: true,
+					})}
+				</ContainerText>
 			</BottomLeftContainer>
 			<BottomRightContainer>
 				<ContainerText className="header">
 					{t('futures.modals.share.position-metadata.current-price')}
 				</ContainerText>
 				<ContainerText className="date-or-price">
-					{marketAssetRate.toNumber().toFixed(2)}
+					{formatDollars(marketAssetRate ?? '', { isAssetPrice: true })}
 				</ContainerText>
 			</BottomRightContainer>
 		</>

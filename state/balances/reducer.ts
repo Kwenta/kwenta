@@ -2,26 +2,21 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import { FetchStatus } from 'state/types';
 
-import { fetchSynthBalances } from './actions';
+import { fetchBalances } from './actions';
+import { BalancesState } from './types';
 
-type BalancesState = {
-	status: FetchStatus;
-	error: string | undefined;
-	balances: any[];
-	balancesMap: any;
-	totalUSDBalance?: string;
-	susdWalletBalance?: string;
-	tokenBalances: any;
+export const ZERO_BALANCES = {
+	synthBalances: [],
+	synthBalancesMap: {},
+	totalUSDBalance: '0',
+	susdWalletBalance: '0',
+	tokenBalances: {},
 };
 
 const initialState: BalancesState = {
 	status: FetchStatus.Idle,
-	balances: [],
-	balancesMap: {},
-	totalUSDBalance: undefined,
-	susdWalletBalance: undefined,
 	error: undefined,
-	tokenBalances: {},
+	...ZERO_BALANCES,
 };
 
 const balancesSlice = createSlice({
@@ -29,26 +24,26 @@ const balancesSlice = createSlice({
 	initialState,
 	reducers: {
 		clearBalances: (state) => {
-			state.balances = [];
-			state.balancesMap = {};
+			state.synthBalances = [];
+			state.synthBalancesMap = {};
 			state.totalUSDBalance = undefined;
 			state.susdWalletBalance = undefined;
 			state.error = undefined;
 		},
 	},
 	extraReducers: (builder) => {
-		builder.addCase(fetchSynthBalances.pending, (state) => {
+		builder.addCase(fetchBalances.pending, (state) => {
 			state.status = FetchStatus.Loading;
 		});
-		builder.addCase(fetchSynthBalances.fulfilled, (state, action) => {
+		builder.addCase(fetchBalances.fulfilled, (state, action) => {
 			state.status = FetchStatus.Success;
-			state.balances = action.payload.balances;
+			state.synthBalances = action.payload.synthBalances;
 			state.totalUSDBalance = action.payload.totalUSDBalance;
-			state.balancesMap = action.payload.balancesMap;
+			state.synthBalancesMap = action.payload.synthBalancesMap;
 			state.susdWalletBalance = action.payload.susdWalletBalance;
 			state.tokenBalances = action.payload.tokenBalances;
 		});
-		builder.addCase(fetchSynthBalances.rejected, (state) => {
+		builder.addCase(fetchBalances.rejected, (state) => {
 			state.status = FetchStatus.Error;
 		});
 	},

@@ -1,3 +1,4 @@
+import { Token } from 'sdk/types/tokens';
 import { FetchStatus } from 'state/types';
 
 type ExchangeModal = 'settle' | 'confirm' | 'approve' | 'redeem' | 'base-select' | 'quote-select';
@@ -27,7 +28,7 @@ export type ExchangeState = {
 	tokenListStatus: FetchStatus;
 	synthsMap: any;
 	tokensMap: any;
-	tokenList: any[];
+	tokenList: Token[];
 	txHash?: string;
 	feeReclaimPeriod: number;
 	settlementWaitingPeriod: number;

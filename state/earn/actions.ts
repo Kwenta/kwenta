@@ -3,10 +3,10 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { ThunkConfig } from 'state/types';
 
-export const approveLPToken = createAsyncThunk<any, void, ThunkConfig>(
+export const approveLPToken = createAsyncThunk<void, void, ThunkConfig>(
 	'earn/approveLPToken',
 	async (_, { dispatch, extra: { sdk } }) => {
-		const hash = await sdk.token.approveLPToken();
+		const { hash } = await sdk.kwentaToken.approveLPToken();
 
 		if (hash) {
 			monitorTransaction({
@@ -19,14 +19,10 @@ export const approveLPToken = createAsyncThunk<any, void, ThunkConfig>(
 	}
 );
 
-export const stakeTokens = createAsyncThunk<any, void, ThunkConfig>(
+export const stakeTokens = createAsyncThunk<void, string, ThunkConfig>(
 	'earn/stakeTokens',
-	async (_, { dispatch, getState, extra: { sdk } }) => {
-		const {
-			earn: { amount },
-		} = getState();
-
-		const hash = await sdk.token.changePoolTokens(amount, 'stake');
+	async (amount, { dispatch, extra: { sdk } }) => {
+		const { hash } = await sdk.kwentaToken.changePoolTokens(amount, 'stake');
 
 		if (hash) {
 			monitorTransaction({
@@ -39,14 +35,10 @@ export const stakeTokens = createAsyncThunk<any, void, ThunkConfig>(
 	}
 );
 
-export const unstakeTokens = createAsyncThunk<any, void, ThunkConfig>(
+export const unstakeTokens = createAsyncThunk<void, string, ThunkConfig>(
 	'earn/unstakeTokens',
-	async (_, { dispatch, getState, extra: { sdk } }) => {
-		const {
-			earn: { amount },
-		} = getState();
-
-		const hash = await sdk.token.changePoolTokens(amount, 'withdraw');
+	async (amount, { dispatch, extra: { sdk } }) => {
+		const { hash } = await sdk.kwentaToken.changePoolTokens(amount, 'withdraw');
 
 		if (hash) {
 			monitorTransaction({
@@ -59,10 +51,10 @@ export const unstakeTokens = createAsyncThunk<any, void, ThunkConfig>(
 	}
 );
 
-export const claimRewards = createAsyncThunk<any, void, ThunkConfig>(
+export const claimRewards = createAsyncThunk<void, void, ThunkConfig>(
 	'earn/claimRewards',
 	async (_, { dispatch, extra: { sdk } }) => {
-		const hash = await sdk.token.claimRewards();
+		const { hash } = await sdk.kwentaToken.claimRewards();
 
 		if (hash) {
 			monitorTransaction({
@@ -86,7 +78,7 @@ export const getEarnDetails = createAsyncThunk<void, string | undefined, ThunkCo
 			totalSupply,
 			lpTokenBalance,
 			allowance,
-		} = await sdk.token.getEarnDetails();
+		} = await sdk.kwentaToken.getEarnDetails();
 
 		dispatch({
 			type: 'earn/setEarnDetails',

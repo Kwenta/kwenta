@@ -23,15 +23,10 @@ import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
 import TradeCrossMargin from 'sections/futures/TradeCrossMargin';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
-import { fetchMarkets } from 'state/futures/actions';
 import { setMarketAsset } from 'state/futures/reducer';
-import { selectMarketAsset } from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks';
-import {
-	futuresAccountState,
-	futuresAccountTypeState,
-	showCrossMarginOnboardState,
-} from 'store/futures';
+import { selectFuturesType, selectMarketAsset } from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { futuresAccountState, showCrossMarginOnboardState } from 'store/futures';
 import { PageContent, FullHeightContainer, RightSideContent } from 'styles/common';
 import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
 
@@ -43,7 +38,6 @@ const Market: MarketComponent = () => {
 	const { walletAddress } = Connector.useContainer();
 	const futuresData = useFuturesData();
 	const dispatch = useAppDispatch();
-	usePollAction(fetchMarkets);
 
 	const routerMarketAsset = router.query.asset as FuturesMarketAsset;
 
@@ -93,7 +87,7 @@ function TradePanelDesktop({ walletAddress, account }: TradePanelProps) {
 	const { handleRefetch } = useRefetchContext();
 	const router = useRouter();
 	const isL2 = useIsL2();
-	const accountType = useRecoilValue(futuresAccountTypeState);
+	const accountType = useAppSelector(selectFuturesType);
 
 	if (walletAddress && !isL2) {
 		return <FuturesUnsupportedNetwork />;

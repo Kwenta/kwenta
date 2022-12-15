@@ -11,6 +11,8 @@ import { selectIsWalletConnected } from 'state/wallet/selectors';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { toWei, zeroBN } from 'utils/formatters/number';
 
+export const selectTokenList = (state: RootState) => state.exchange.tokenList;
+
 export const selectQuoteAmountWei = createSelector(
 	(state: RootState) => state.exchange.quoteAmount,
 	(quoteAmount) => toWei(quoteAmount)
@@ -59,7 +61,7 @@ export const selectInverseRate = createSelector(selectRateWei, (rate) =>
 );
 
 export const selectQuoteBalanceWei = createSelector(
-	(state: RootState) => state.balances.balancesMap,
+	(state: RootState) => state.balances.synthBalancesMap,
 	(state: RootState) => state.balances.tokenBalances,
 	(state: RootState) => state.exchange.quoteCurrencyKey,
 	(balancesMap, tokenBalances, quoteCurrencyKey) => {
@@ -76,7 +78,7 @@ export const selectInsufficientBalance = createSelector(
 );
 
 export const selectBaseBalanceWei = createSelector(
-	(state: RootState) => state.balances.balancesMap,
+	(state: RootState) => state.balances.synthBalancesMap,
 	(state: RootState) => state.balances.tokenBalances,
 	(state: RootState) => state.exchange.baseCurrencyKey,
 	(balancesMap, tokenBalances, baseCurrencyKey) => {

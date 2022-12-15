@@ -6,7 +6,7 @@ import { ThemeContext } from 'styled-components';
 import { chain } from 'wagmi';
 
 import Connector from 'containers/Connector';
-import { FuturesOrder } from 'queries/futures/types';
+import { FuturesOrder } from 'sdk/types/futures';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
 import { currentThemeState } from 'store/ui';
 import darkTheme from 'styles/theme/colors/dark';
@@ -88,9 +88,9 @@ export function TVChart({
 	};
 
 	const renderOrderLines = () => {
-		clearOrderLines();
 		_widget.current?.onChartReady(() => {
 			_widget.current?.chart().dataReady(() => {
+				clearOrderLines();
 				_oderLineRefs.current = openOrders.reduce<IPositionLineAdapter[]>((acc, order) => {
 					if (order.targetPrice) {
 						const color =
@@ -292,6 +292,9 @@ export function TVChart({
 	}, [marketAsset]);
 
 	const onSubscribe = useCallback((newIntervalId: number) => {
+		if (_intervalId.current) {
+			clearInterval(_intervalId.current);
+		}
 		_intervalId.current = newIntervalId;
 	}, []);
 

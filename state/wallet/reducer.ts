@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { resetNetwork, resetWalletAddress } from './actions';
+import { resetNetwork } from './actions';
 import { WalletState } from './types';
 
 const initialState: WalletState = {
@@ -26,9 +26,6 @@ const walletSlice = createSlice({
 	extraReducers: (builder) => {
 		builder.addCase(resetNetwork.fulfilled, (state, action) => {
 			state.networkId = action.payload;
-		});
-		builder.addCase(resetWalletAddress.fulfilled, (state, action) => {
-			state.walletAddress = action.payload;
 		});
 	},
 });

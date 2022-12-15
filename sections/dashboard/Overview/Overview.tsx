@@ -1,7 +1,7 @@
 import Wei from '@synthetixio/wei';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { erc20ABI, useContractRead } from 'wagmi';
 
@@ -15,9 +15,14 @@ import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
+import { selectBalances } from 'state/balances/selectors';
 import { sdk } from 'state/config';
+import {
+	selectActiveCrossPositionsCount,
+	selectActiveIsolatedPositionsCount,
+	selectFuturesPortfolio,
+} from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { balancesState, portfolioState, positionsState } from 'store/futures';
 import { activePositionsTabState } from 'store/ui';
 import { formatDollars, toWei, weiFromWei, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -41,9 +46,10 @@ export enum PositionsTab {
 const Overview: FC = () => {
 	const { t } = useTranslation();
 
-	const balances = useRecoilValue(balancesState);
-	const portfolio = useRecoilValue(portfolioState);
-	const positions = useRecoilValue(positionsState);
+	const balances = useAppSelector(selectBalances);
+	const portfolio = useAppSelector(selectFuturesPortfolio);
+	const isolatedPositionsCount = useAppSelector(selectActiveIsolatedPositionsCount);
+	const crossPositionsCount = useAppSelector(selectActiveCrossPositionsCount);
 
 	const [activePositionsTab, setActivePositionsTab] = useRecoilState<PositionsTab>(
 		activePositionsTabState
@@ -163,8 +169,6 @@ const Overview: FC = () => {
 	}, [kwentaBalance, noKwentaFound, oneInchEnabled, synthsMap, tokenBalances]);
 
 	const POSITIONS_TABS = useMemo(() => {
-		const crossPositions = positions.cross_margin.filter(({ position }) => !!position).length;
-		const isolatedPositions = positions.isolated_margin.filter(({ position }) => !!position).length;
 		const exchangeTokenBalances = exchangeTokens.reduce(
 			(initial: Wei, { usdBalance }: { usdBalance: Wei }) => initial.add(usdBalance),
 			zeroBN
@@ -173,7 +177,7 @@ const Overview: FC = () => {
 			{
 				name: PositionsTab.CROSS_MARGIN,
 				label: t('dashboard.overview.positions-tabs.cross-margin'),
-				badge: crossPositions,
+				badge: crossPositionsCount,
 				titleIcon: <FuturesIcon type="cross_margin" />,
 				active: activePositionsTab === PositionsTab.CROSS_MARGIN,
 				detail: formatDollars(portfolio.crossMarginFutures),
@@ -183,7 +187,7 @@ const Overview: FC = () => {
 			{
 				name: PositionsTab.ISOLATED_MARGIN,
 				label: t('dashboard.overview.positions-tabs.isolated-margin'),
-				badge: isolatedPositions,
+				badge: isolatedPositionsCount,
 				active: activePositionsTab === PositionsTab.ISOLATED_MARGIN,
 				titleIcon: <FuturesIcon type="isolated_margin" />,
 				detail: formatDollars(portfolio.isolatedMarginFutures),
@@ -200,8 +204,8 @@ const Overview: FC = () => {
 			},
 		];
 	}, [
-		positions.cross_margin,
-		positions.isolated_margin,
+		crossPositionsCount,
+		isolatedPositionsCount,
 		exchangeTokens,
 		balances.totalUSDBalance,
 		t,

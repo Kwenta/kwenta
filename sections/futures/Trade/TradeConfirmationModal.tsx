@@ -2,23 +2,23 @@ import Wei from '@synthetixio/wei';
 import { capitalize } from 'lodash';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import ErrorView from 'components/Error';
+import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
-import { selectMarketAsset } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
 import {
-	futuresOrderPriceState,
-	leverageSideState,
-	orderTypeState,
-	positionState,
-	potentialTradeDetailsState,
-} from 'store/futures';
+	selectCrossMarginOrderPrice,
+	selectLeverageSide,
+	selectMarketAsset,
+	selectOrderType,
+	selectPosition,
+	selectTradePreview,
+} from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import { FlexDivCentered } from 'styles/common';
 import { zeroBN, formatCurrency, formatDollars, formatNumber } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
@@ -31,6 +31,7 @@ type Props = {
 	tradeFee: Wei;
 	keeperFee?: Wei | null;
 	errorMessage?: string | null | undefined;
+	isSubmitting?: boolean;
 	onConfirmOrder: () => any;
 	onDismiss: () => void;
 };
@@ -40,17 +41,18 @@ export default function TradeConfirmationModal({
 	gasFee,
 	keeperFee,
 	errorMessage,
+	isSubmitting,
 	onConfirmOrder,
 	onDismiss,
 }: Props) {
 	const { t } = useTranslation();
 
 	const marketAsset = useAppSelector(selectMarketAsset);
-	const { data: potentialTradeDetails } = useRecoilValue(potentialTradeDetailsState);
-	const orderType = useRecoilValue(orderTypeState);
-	const orderPrice = useRecoilValue(futuresOrderPriceState);
-	const position = useRecoilValue(positionState);
-	const leverageSide = useRecoilValue(leverageSideState);
+	const potentialTradeDetails = useAppSelector(selectTradePreview);
+	const orderType = useAppSelector(selectOrderType);
+	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
+	const position = useAppSelector(selectPosition);
+	const leverageSide = useAppSelector(selectLeverageSide);
 
 	const positionSide = useMemo(() => {
 		if (potentialTradeDetails?.size.eq(zeroBN)) {
@@ -156,9 +158,13 @@ export default function TradeConfirmationModal({
 						data-testid="trade-open-position-confirm-order-button"
 						variant="flat"
 						onClick={onConfirmOrder}
-						disabled={!positionDetails || !!disabledReason || gasFee?.eq(0)}
+						disabled={!positionDetails || isSubmitting || !!disabledReason}
 					>
-						{disabledReason || t('futures.market.trade.confirmation.modal.confirm-order')}
+						{isSubmitting ? (
+							<ButtonLoader />
+						) : (
+							disabledReason || t('futures.market.trade.confirmation.modal.confirm-order')
+						)}
 					</ConfirmTradeButton>
 					{errorMessage && (
 						<ErrorContainer>
@@ -176,9 +182,13 @@ export default function TradeConfirmationModal({
 						<MobileConfirmTradeButton
 							variant="flat"
 							onClick={onConfirmOrder}
-							disabled={!positionDetails || !!disabledReason}
+							disabled={!positionDetails || isSubmitting || !!disabledReason}
 						>
-							{disabledReason || t('futures.market.trade.confirmation.modal.confirm-order')}
+							{isSubmitting ? (
+								<ButtonLoader />
+							) : (
+								disabledReason || t('futures.market.trade.confirmation.modal.confirm-order')
+							)}
 						</MobileConfirmTradeButton>
 					}
 				/>

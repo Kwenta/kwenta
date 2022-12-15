@@ -4,7 +4,7 @@ import { constants } from 'ethers';
 import { defaultAbiCoder } from 'ethers/lib/utils';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import CompleteCheck from 'assets/svg/futures/onboard-complete-check.svg';
@@ -26,7 +26,9 @@ import { FuturesAccountState } from 'queries/futures/types';
 import useQueryCrossMarginAccount, {
 	useStoredCrossMarginAccounts,
 } from 'queries/futures/useQueryCrossMarginAccount';
-import { balancesState, futuresAccountState } from 'store/futures';
+import { selectBalances } from 'state/balances/selectors';
+import { useAppSelector } from 'state/hooks';
+import { futuresAccountState } from 'store/futures';
 import { FlexDivRowCentered } from 'styles/common';
 import { isUserDeniedError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
@@ -59,7 +61,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 	const queryCrossMarginAccount = useQueryCrossMarginAccount();
 	const { storeCrossMarginAccount } = useStoredCrossMarginAccounts();
 	const [futuresAccount, setFuturesAccount] = useRecoilState(futuresAccountState);
-	const balances = useRecoilValue(balancesState);
+	const balances = useAppSelector(selectBalances);
 
 	const [depositAmount, setDepositAmount] = useState('');
 	const [depositComplete, setDepositComplete] = useState(false);

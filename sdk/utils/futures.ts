@@ -1,9 +1,29 @@
 import Wei, { wei } from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 
+import { ETH_UNIT } from 'constants/network';
+import { FuturesAggregateStatResult } from 'queries/futures/subgraph';
 import { FUTURES_ENDPOINTS, MAINNET_MARKETS, TESTNET_MARKETS } from 'sdk/constants/futures';
 import { SECONDS_PER_DAY } from 'sdk/constants/period';
-import { FundingRateUpdate, FuturesMarketAsset, MarketClosureReason } from 'sdk/types/futures';
+import {
+	FundingRateUpdate,
+	FuturesMarketAsset,
+	FuturesMarketKey,
+	FuturesPosition,
+	FuturesPotentialTradeDetails,
+	FuturesVolumes,
+	MarketClosureReason,
+	PositionDetail,
+	PositionSide,
+	PostTradeDetailsResponse,
+	PotentialTradeStatus,
+} from 'sdk/types/futures';
+import {
+	CrossMarginOrderType,
+	CrossMarginSettings,
+	IsolatedMarginOrderType,
+} from 'state/futures/types';
+import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
 export const getFuturesEndpoint = (networkId: number): string => {
@@ -99,4 +119,169 @@ export const getReasonFromCode = (
 		default:
 			return 'unknown';
 	}
+};
+
+export const calculateVolumes = (
+	futuresHourlyStats: FuturesAggregateStatResult[]
+): FuturesVolumes => {
+	const volumes: FuturesVolumes = futuresHourlyStats.reduce(
+		(acc: FuturesVolumes, { asset, volume, trades }) => {
+			return {
+				...acc,
+				[asset]: {
+					volume: volume.div(ETH_UNIT).add(acc[asset]?.volume ?? 0),
+					trades: trades.add(acc[asset]?.trades ?? 0),
+				},
+			};
+		},
+		{}
+	);
+	return volumes;
+};
+
+export const mapFuturesPosition = (
+	positionDetail: PositionDetail,
+	canLiquidatePosition: boolean,
+	asset: FuturesMarketAsset,
+	marketKey: FuturesMarketKey
+): FuturesPosition => {
+	const {
+		remainingMargin,
+		accessibleMargin,
+		position: { fundingIndex, lastPrice, size, margin },
+		accruedFunding,
+		notionalValue,
+		liquidationPrice,
+		profitLoss,
+	} = positionDetail;
+	const initialMargin = wei(margin);
+	const pnl = wei(profitLoss).add(wei(accruedFunding));
+	const pnlPct = initialMargin.gt(0) ? pnl.div(wei(initialMargin)) : wei(0);
+
+	return {
+		asset,
+		marketKey,
+		remainingMargin: wei(remainingMargin),
+		accessibleMargin: wei(accessibleMargin),
+		position: wei(size).eq(zeroBN)
+			? null
+			: {
+					canLiquidatePosition: !!canLiquidatePosition,
+					side: wei(size).gt(zeroBN) ? PositionSide.LONG : PositionSide.SHORT,
+					notionalValue: wei(notionalValue).abs(),
+					accruedFunding: wei(accruedFunding),
+					initialMargin,
+					profitLoss: wei(profitLoss),
+					fundingIndex: Number(fundingIndex),
+					lastPrice: wei(lastPrice),
+					size: wei(size).abs(),
+					liquidationPrice: wei(liquidationPrice),
+					initialLeverage: initialMargin.gt(0)
+						? wei(size).mul(wei(lastPrice)).div(initialMargin).abs()
+						: wei(0),
+					pnl,
+					pnlPct,
+					marginRatio: wei(notionalValue).eq(zeroBN)
+						? zeroBN
+						: wei(remainingMargin).div(wei(notionalValue).abs()),
+					leverage: wei(remainingMargin).eq(zeroBN)
+						? zeroBN
+						: wei(notionalValue).div(wei(remainingMargin)).abs(),
+			  },
+	};
+};
+
+export const serializePotentialTrade = (
+	preview: FuturesPotentialTradeDetails
+): FuturesPotentialTradeDetails<string> => ({
+	...preview,
+	size: preview.size.toString(),
+	sizeDelta: preview.sizeDelta.toString(),
+	liqPrice: preview.liqPrice.toString(),
+	margin: preview.margin.toString(),
+	price: preview.price.toString(),
+	fee: preview.fee.toString(),
+	leverage: preview.leverage.toString(),
+	notionalValue: preview.notionalValue.toString(),
+});
+
+export const unserializePotentialTrade = (
+	preview: FuturesPotentialTradeDetails<string>
+): FuturesPotentialTradeDetails => ({
+	...preview,
+	size: wei(preview.size),
+	sizeDelta: wei(preview.sizeDelta),
+	liqPrice: wei(preview.liqPrice),
+	margin: wei(preview.margin),
+	price: wei(preview.price),
+	fee: wei(preview.fee),
+	leverage: wei(preview.leverage),
+	notionalValue: wei(preview.notionalValue),
+});
+
+export const formatPotentialTrade = (
+	preview: PostTradeDetailsResponse,
+	nativeSizeDelta: Wei,
+	leverageSide: PositionSide
+) => {
+	const { fee, liqPrice, margin, price, size, status } = preview;
+
+	return {
+		fee: wei(fee),
+		liqPrice: wei(liqPrice),
+		margin: wei(margin),
+		price: wei(price),
+		size: wei(size),
+		sizeDelta: nativeSizeDelta,
+		side: leverageSide,
+		leverage: wei(margin).eq(0) ? wei(0) : wei(size).mul(wei(price)).div(wei(margin)).abs(),
+		notionalValue: wei(size).mul(wei(price)),
+		status,
+		showStatus: status > 0, // 0 is success
+		statusMessage: getTradeStatusMessage(status),
+	};
+};
+
+const SUCCESS = 'Success';
+const UNKNOWN = 'Unknown';
+
+export const getTradeStatusMessage = (status: PotentialTradeStatus): string => {
+	if (typeof status !== 'number') {
+		return UNKNOWN;
+	}
+
+	if (status === 0) {
+		return SUCCESS;
+	} else if (PotentialTradeStatus[status]) {
+		return POTENTIAL_TRADE_STATUS_TO_MESSAGE[PotentialTradeStatus[status]];
+	} else {
+		return UNKNOWN;
+	}
+};
+
+// https://github.com/Synthetixio/synthetix/blob/4d2add4f74c68ac4f1106f6e7be4c31d4f1ccc76/contracts/PerpsV2MarketBase.sol#L130-L141
+export const POTENTIAL_TRADE_STATUS_TO_MESSAGE: { [key: string]: string } = {
+	INVALID_PRICE: 'Invalid price',
+	PRICE_OUT_OF_BOUNDS: 'Price out of acceptable range',
+	CAN_LIQUIDATE: 'Position can be liquidated',
+	CANNOT_LIQUIDATE: 'Position cannot be liquidated',
+	MAX_MARKET_SIZE_EXCEEDED: 'Max market size exceeded',
+	MAX_LEVERAGE_EXCEEDED: 'Max leverage exceeded',
+	INSUFFICIENT_MARGIN: 'Insufficient margin',
+	NOT_PERMITTED: 'Not permitted by this address',
+	NIL_ORDER: 'Cannot submit empty order',
+	NO_POSITION_OPEN: 'No position open',
+	PRICE_TOO_VOLATILE: 'Price too volatile',
+	INSUFFICIENT_FREE_MARGIN: 'Insufficient free margin',
+};
+
+export const calculateCrossMarginFee = (
+	orderType: CrossMarginOrderType | IsolatedMarginOrderType,
+	susdSize: Wei,
+	feeRates: CrossMarginSettings
+) => {
+	if (orderType !== 'limit' && orderType !== 'stop market') return zeroBN;
+	const advancedOrderFeeRate =
+		orderType === 'limit' ? feeRates.limitOrderFee : feeRates.stopOrderFee;
+	return susdSize.mul(advancedOrderFeeRate);
 };

@@ -15,7 +15,7 @@ export type TablePalette = 'primary';
 
 const CARD_HEIGHT = '40px';
 const MAX_PAGE_ROWS = 100;
-const MAX_TOTAL_ROWS = 1000;
+const MAX_TOTAL_ROWS = 9999;
 
 type ColumnWithSorting<D extends object = {}> = Column<D> & {
 	sortType?: string | ((rowA: Row<any>, rowB: Row<any>) => -1 | 1);
@@ -66,6 +66,7 @@ type TableProps = {
 	sortBy?: object[];
 	showShortList?: boolean;
 	lastRef?: any;
+	compactPagination?: boolean;
 };
 
 export const Table: FC<TableProps> = ({
@@ -86,6 +87,7 @@ export const Table: FC<TableProps> = ({
 	showShortList,
 	sortBy = [],
 	lastRef = null,
+	compactPagination = false,
 }) => {
 	const memoizedColumns = useMemo(
 		() => columns,
@@ -209,6 +211,7 @@ export const Table: FC<TableProps> = ({
 			</TableContainer>
 			{showPagination && !showShortList && data.length > (pageSize ?? MAX_PAGE_ROWS) ? (
 				<Pagination
+					compact={compactPagination}
 					pageIndex={pageIndex}
 					pageCount={pageCount}
 					canNextPage={canNextPage}

@@ -14,13 +14,18 @@ import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
 import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
-import { getSynthsListForNetwork } from 'sdk/data/synths';
-import { selectSynthBalancesLoading } from 'state/balances/selectors';
+import { getSynthsListForNetwork, SynthSymbol } from 'sdk/data/synths';
+import {
+	selectBalances,
+	selectBalancesFetchStatus,
+	selectSynthBalancesLoading,
+} from 'state/balances/selectors';
+import { selectTokenList } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { FlexDivCentered } from 'styles/common';
 import media from 'styles/media';
-import { toWei } from 'utils/formatters/number';
+import { zeroBN } from 'utils/formatters/number';
 
 import { RowsHeader, CenteredModal } from '../common';
 import CurrencyRow from './CurrencyRow';
@@ -56,14 +61,9 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 		? allSynths.filter((synth) => synthsOverride.includes(synth.name))
 		: allSynths;
 
-	const { balancesMap, tokenList, tokenBalances, balancesStatus } = useAppSelector(
-		({ balances, exchange }) => ({
-			balancesMap: balances.balancesMap,
-			tokenList: exchange.tokenList,
-			tokenBalances: balances.tokenBalances,
-			balancesStatus: balances.status,
-		})
-	);
+	const { synthBalancesMap, tokenBalances } = useAppSelector(selectBalances);
+	const tokenList = useAppSelector(selectTokenList);
+	const balancesStatus = useAppSelector(selectBalancesFetchStatus);
 
 	const synthBalancesLoading = useAppSelector(selectSynthBalancesLoading);
 
@@ -92,18 +92,21 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 		const synthsList = assetSearch ? searchFilteredSynths : categoryFilteredSynths;
 		return orderBy(
 			synthsList,
-			(synth) => {
-				const synthBalance = balancesMap[synth.name as CurrencyKey];
-				return !!synthBalance ? Number(synthBalance.usdBalance) : 0;
-			},
-			'desc'
+			[
+				(synth) => {
+					const synthBalance = synthBalancesMap[synth.name as CurrencyKey];
+					return !!synthBalance ? Number(synthBalance.usdBalance) : 0;
+				},
+				(synth) => synth.name.toLowerCase(),
+			],
+			['desc', 'asc']
 		);
-	}, [assetSearch, searchFilteredSynths, categoryFilteredSynths, balancesMap]);
+	}, [assetSearch, searchFilteredSynths, categoryFilteredSynths, synthBalancesMap]);
 
 	const synthKeys = useMemo(() => synthsResults.map((s) => s.name), [synthsResults]);
 
 	const oneInchTokenList = useMemo(() => {
-		return tokenList.filter((i) => !synthKeys.includes(i.symbol));
+		return tokenList.filter((i) => !synthKeys.includes(i.symbol as SynthSymbol));
 	}, [synthKeys, tokenList]);
 
 	const searchFilteredTokens = useDebouncedMemo(
@@ -138,15 +141,18 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 								token.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : token.address;
 							if (coinGeckoPrices?.[tokenAddress] && tokenBalances !== null) {
 								const price = wei(coinGeckoPrices[tokenAddress].usd ?? 0);
-								const balance = toWei(tokenBalances[token.symbol]?.balance);
+								const balance = tokenBalances[token.symbol]?.balance ?? zeroBN;
 								const usdBalance = price.mul(balance);
 
 								return { ...token, usdBalance, balance };
 							}
 							return token;
 						}),
-						({ usdBalance }) => (usdBalance ? usdBalance.toNumber() : 0),
-						'desc'
+						[
+							({ usdBalance }) => (usdBalance ? usdBalance.toNumber() : 0),
+							({ symbol }) => symbol.toLowerCase(),
+						],
+						['desc', 'asc']
 				  )
 				: searchFilteredTokens;
 		if (ordered.length > PAGE_LENGTH) return ordered.slice(0, PAGE_LENGTH * page);
@@ -240,7 +246,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 										onSelect(currencyKey, false);
 										onDismiss();
 									}}
-									balance={balancesMap[currencyKey as CurrencyKey]}
+									balance={synthBalancesMap[currencyKey as CurrencyKey]}
 									token={{
 										name: synth.description,
 										symbol: synth.name,
