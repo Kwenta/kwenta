@@ -14,6 +14,7 @@ import {
 	FuturesPosition,
 	FuturesPotentialTradeDetails,
 	FuturesVolumes,
+	OrderTypeByName,
 	PositionSide,
 } from 'sdk/types/futures';
 import { calculateCrossMarginFee, getMarketName, serializePotentialTrade } from 'sdk/utils/futures';
@@ -299,6 +300,10 @@ export const fetchIsolatedMarginTradePreview = createAsyncThunk<
 	async (sizeDelta, { dispatch, getState, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
 		const account = selectFuturesAccount(getState());
+		const orderType = selectOrderType(getState());
+
+		const orderTypeNum = OrderTypeByName[orderType];
+
 		if (!account) throw new Error('No account to fetch orders');
 		if (!marketInfo) throw new Error('No market info');
 		const leverageSide = selectLeverageSide(getState());
@@ -308,7 +313,8 @@ export const fetchIsolatedMarginTradePreview = createAsyncThunk<
 				sizeDelta,
 				marketInfo?.priceOracle,
 				marketInfo?.price,
-				leverageSide
+				leverageSide,
+				orderTypeNum
 			);
 			return serializePotentialTrade(preview);
 		} catch (err) {

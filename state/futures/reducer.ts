@@ -124,7 +124,7 @@ const initialState: FuturesState = {
 		selectedMarketAsset: FuturesMarketAsset.sETH,
 		selectedMarketKey: FuturesMarketKey.sETH,
 		leverageSide: PositionSide.LONG,
-		orderType: 'delayed',
+		orderType: 'delayed offchain',
 		tradePreview: null,
 		selectedLeverage: DEFAULT_LEVERAGE,
 		tradeInputs: ZERO_STATE_TRADE_INPUTS,

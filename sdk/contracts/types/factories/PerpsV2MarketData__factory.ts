@@ -75,6 +75,11 @@ const _abi = [
             type: "int256",
           },
           {
+            internalType: "int256",
+            name: "currentFundingVelocity",
+            type: "int256",
+          },
+          {
             components: [
               {
                 internalType: "uint256",
@@ -104,6 +109,120 @@ const _abi = [
               {
                 internalType: "uint256",
                 name: "makerFeeOffchainDelayedOrder",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "overrideCommitFee",
+                type: "uint256",
+              },
+            ],
+            internalType: "struct PerpsV2MarketData.FeeRates",
+            name: "feeRates",
+            type: "tuple",
+          },
+        ],
+        internalType: "struct PerpsV2MarketData.MarketSummary[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
+    payable: false,
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    constant: true,
+    inputs: [],
+    name: "allProxiedMarketSummaries",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "address",
+            name: "market",
+            type: "address",
+          },
+          {
+            internalType: "bytes32",
+            name: "asset",
+            type: "bytes32",
+          },
+          {
+            internalType: "bytes32",
+            name: "key",
+            type: "bytes32",
+          },
+          {
+            internalType: "uint256",
+            name: "maxLeverage",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "price",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "marketSize",
+            type: "uint256",
+          },
+          {
+            internalType: "int256",
+            name: "marketSkew",
+            type: "int256",
+          },
+          {
+            internalType: "uint256",
+            name: "marketDebt",
+            type: "uint256",
+          },
+          {
+            internalType: "int256",
+            name: "currentFundingRate",
+            type: "int256",
+          },
+          {
+            internalType: "int256",
+            name: "currentFundingVelocity",
+            type: "int256",
+          },
+          {
+            components: [
+              {
+                internalType: "uint256",
+                name: "takerFee",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "makerFee",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "takerFeeDelayedOrder",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "makerFeeDelayedOrder",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "takerFeeOffchainDelayedOrder",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "makerFeeOffchainDelayedOrder",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "overrideCommitFee",
                 type: "uint256",
               },
             ],
@@ -216,6 +335,11 @@ const _abi = [
               {
                 internalType: "uint256",
                 name: "makerFeeOffchainDelayedOrder",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "overrideCommitFee",
                 type: "uint256",
               },
             ],
@@ -383,6 +507,11 @@ const _abi = [
                 name: "makerFeeOffchainDelayedOrder",
                 type: "uint256",
               },
+              {
+                internalType: "uint256",
+                name: "overrideCommitFee",
+                type: "uint256",
+              },
             ],
             internalType: "struct PerpsV2MarketData.FeeRates",
             name: "feeRates",
@@ -547,6 +676,11 @@ const _abi = [
             type: "int256",
           },
           {
+            internalType: "int256",
+            name: "currentFundingVelocity",
+            type: "int256",
+          },
+          {
             components: [
               {
                 internalType: "uint256",
@@ -576,6 +710,11 @@ const _abi = [
               {
                 internalType: "uint256",
                 name: "makerFeeOffchainDelayedOrder",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "overrideCommitFee",
                 type: "uint256",
               },
             ],
@@ -652,6 +791,11 @@ const _abi = [
             type: "int256",
           },
           {
+            internalType: "int256",
+            name: "currentFundingVelocity",
+            type: "int256",
+          },
+          {
             components: [
               {
                 internalType: "uint256",
@@ -681,6 +825,11 @@ const _abi = [
               {
                 internalType: "uint256",
                 name: "makerFeeOffchainDelayedOrder",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "overrideCommitFee",
                 type: "uint256",
               },
             ],
@@ -719,6 +868,11 @@ const _abi = [
           {
             internalType: "uint256",
             name: "makerFee",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "overrideCommitFee",
             type: "uint256",
           },
           {
