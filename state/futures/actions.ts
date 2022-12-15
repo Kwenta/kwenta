@@ -269,7 +269,6 @@ export const fetchOpenOrders = createAsyncThunk<
 		.filter((o) => o.size.abs().gt(0))
 		.map((o) => {
 			const market = markets.find((m) => m.market === o.marketAddress);
-
 			return {
 				...o,
 				marketKey: market?.marketKey,
@@ -279,7 +278,7 @@ export const fetchOpenOrders = createAsyncThunk<
 					market && o.isOffchain // Manual fix for an incorrect
 						? o.submittedAtTimestamp +
 						  (o.isOffchain
-								? market.settings.offchainDelayedOrderMinAge
+								? market.settings.offchainDelayedOrderMinAge * 1000
 								: market.settings.minDelayTimeDelta * 1000)
 						: o.executableAtTimestamp,
 			};
