@@ -16,8 +16,12 @@ import { useFuturesContext } from 'contexts/FuturesContext';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { ORDER_PREVIEW_ERRORS_I18N, previewErrorI18n } from 'queries/futures/constants';
-import { editExistingPositionLeverage, editCrossMarginSize } from 'state/futures/actions';
-import { setCrossMarginLeverage, setOrderType as setReduxOrderType } from 'state/futures/reducer';
+import {
+	editExistingPositionLeverage,
+	editCrossMarginSize,
+	setCrossMarginLeverage,
+} from 'state/futures/actions';
+import { setOrderType as setReduxOrderType } from 'state/futures/reducer';
 import {
 	selectCrossMarginBalanceInfo,
 	selectCrossMarginSelectedLeverage,
