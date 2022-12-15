@@ -105,7 +105,7 @@ const OpenOrdersTable: React.FC = () => {
 				const timePastExecution = Math.floor((Date.now() - order.executableAtTimestamp) / 1000);
 
 				// Only updated delayed orders
-				if (!order.isOffchain && order.marketKey) {
+				if (order.marketKey) {
 					acc[order.marketKey] = {
 						timeToExecution: Math.max(timeToExecution, 0),
 						timePastExecution: Math.max(timePastExecution, 0),
@@ -116,7 +116,7 @@ const OpenOrdersTable: React.FC = () => {
 			setCountdownTimers(newCountdownTimers);
 		}, 1000);
 
-		return () => clearTimeout(timer);
+		return () => clearInterval(timer);
 	});
 
 	return (

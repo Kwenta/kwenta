@@ -261,18 +261,26 @@ export const fetchOpenOrders = createAsyncThunk<
 		throw new Error('No markets available');
 	}
 	// TODO: Make this multicall
-	const orders = await Promise.all(
+	const orders: DelayedOrder[] = await Promise.all(
 		markets.map((market) => sdk.futures.getDelayedOrder(account, market.market))
 	);
 	const nonzeroOrders = orders
 		.filter((o) => o.size.abs().gt(0))
 		.map((o) => {
 			const market = markets.find((m) => m.market === o.marketAddress);
+
 			return {
 				...o,
 				marketKey: market?.marketKey,
 				marketAsset: market?.asset,
 				market: getMarketName(market?.asset ?? null),
+				executableAtTimestamp:
+					market && o.isOffchain // Manual fix for an incorrect
+						? o.submittedAtTimestamp +
+						  (o.isOffchain
+								? market.settings.offchainDelayedOrderMinAge
+								: market.settings.minDelayTimeDelta * 1000)
+						: o.executableAtTimestamp,
 			};
 		});
 	return {
