@@ -9,7 +9,6 @@ import ChevronUp from 'assets/svg/app/chevron-up.svg';
 import Badge from 'components/Badge';
 import ROUTES from 'constants/routes';
 import { currentThemeState } from 'store/ui';
-import { FlexDivRow } from 'styles/common';
 import { ThemeName } from 'styles/theme';
 
 import { SubMenuLink } from '../constants';
