@@ -150,7 +150,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 						}),
 						[
 							({ usdBalance }) => (usdBalance ? usdBalance.toNumber() : 0),
-							({ name }) => name.toLowerCase(),
+							({ symbol }) => symbol.toLowerCase(),
 						],
 						['desc', 'asc']
 				  )
