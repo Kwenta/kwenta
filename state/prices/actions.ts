@@ -1,5 +1,3 @@
-import { throttle } from 'lodash';
-
 import { PricesMap, PriceType } from 'sdk/types/prices';
 import { AppThunk } from 'state/store';
 
@@ -14,10 +12,3 @@ export const updatePrices = (prices: PricesMap<string>, type: PriceType): AppThu
 		dispatch(setOnChainPrices(prices));
 	}
 };
-
-export const updatePriceThrottled = throttle(
-	(dispatch, prices: PricesMap<string>, type: PriceType) => {
-		dispatch(updatePrices(prices, type));
-	},
-	5000
-);

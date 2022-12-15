@@ -1,4 +1,3 @@
-import { throttle } from 'lodash';
 import {
 	HistoryCallback,
 	IBasicDataFeed,
@@ -135,21 +134,6 @@ const updateBar = (bar: ChartBar, price: number) => {
 	};
 };
 
-const updateLatestPrice = throttle(
-	(asset: string, price: number, onTick: SubscribeBarsCallback) => {
-		if (asset !== _latestChartBar.current?.asset) {
-			// Asset changed since throttle resolved
-			return;
-		}
-		if (_latestChartBar.current && price !== _latestChartBar.current.bar.close) {
-			const updatedBar = updateBar(_latestChartBar.current.bar, price);
-			onTick(updatedBar);
-		}
-	},
-	3000,
-	{ trailing: true }
-);
-
 const subscribeOffChainPrices = (asset: FuturesMarketAsset, onTick: SubscribeBarsCallback) => {
 	if (_pricesListener.current) {
 		sdk.prices.removePricesListener(_pricesListener.current);
@@ -158,7 +142,12 @@ const subscribeOffChainPrices = (asset: FuturesMarketAsset, onTick: SubscribeBar
 		if (type === 'off_chain') {
 			const price = prices[asset];
 			if (price) {
-				updateLatestPrice(asset, price?.toNumber(), onTick);
+				if (_latestChartBar.current?.asset !== asset) return;
+				const priceNum = price.toNumber();
+				if (_latestChartBar.current && priceNum !== _latestChartBar.current.bar.close) {
+					const updatedBar = updateBar(_latestChartBar.current.bar, priceNum);
+					onTick(updatedBar);
+				}
 			}
 		}
 	};
@@ -186,6 +175,8 @@ const subscribeLastCandle = (
 				};
 			})[0];
 			if (chartBar) {
+				// Only create a new candle from on chain price and let
+				// offchain price handle updating prices within latest candle
 				const resolutionMs = resolutionToSeconds(resolution) * 1000;
 				if (Date.now() - chartBar.time > resolutionMs * 2.1) {
 					const latestBar = {
@@ -201,7 +192,6 @@ const subscribeLastCandle = (
 						asset: base,
 					};
 				} else {
-					onTick(chartBar);
 					_latestChartBar.current = {
 						bar: chartBar,
 						asset: base,

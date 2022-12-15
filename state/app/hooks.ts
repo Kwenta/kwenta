@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { fetchBalances } from 'state/balances/actions';
 import { sdk } from 'state/config';
 import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks';
-import { updatePrices, updatePriceThrottled } from 'state/prices/actions';
+import { updatePrices } from 'state/prices/actions';
 import { selectWallet } from 'state/wallet/selectors';
 import { serializePrices } from 'utils/futures';
 
@@ -21,11 +21,7 @@ export function useAppData(ready: boolean) {
 
 	useEffect(() => {
 		sdk.prices.onPricesUpdated(({ prices, type }) => {
-			if (type === 'off_chain') {
-				updatePriceThrottled(dispatch, serializePrices(prices), type);
-			} else {
-				dispatch(updatePrices(serializePrices(prices), type));
-			}
+			dispatch(updatePrices(serializePrices(prices), type));
 		});
 
 		return () => {

@@ -20,7 +20,6 @@ export default class KwentaSDK {
 
 	constructor(context: IContext) {
 		this.context = new Context(context);
-
 		this.exchange = new ExchangeService(this);
 		this.futures = new FuturesService(this);
 		this.prices = new PricesService(this);

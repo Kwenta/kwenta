@@ -2,10 +2,11 @@ import { EvmPriceServiceConnection, PriceFeed } from '@pythnetwork/pyth-evm-js';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { formatEther, parseBytes32String } from 'ethers/lib/utils.js';
+import { throttle } from 'lodash';
 import KwentaSDK from 'sdk';
 
 import { MARKET_ASSETS_BY_PYTH_ID } from 'sdk/constants/futures';
-import { ADDITIONAL_SYNTHS, PYTH_IDS } from 'sdk/constants/prices';
+import { ADDITIONAL_SYNTHS, PRICE_UPDATE_THROTTLE, PYTH_IDS } from 'sdk/constants/prices';
 import { FuturesMarketKey } from 'sdk/types/futures';
 import { CurrencyRate, PricesListener, PricesMap, SynthRatesTuple } from 'sdk/types/prices';
 import { getPythNetworkUrl, normalizePythId } from 'sdk/utils/futures';
@@ -137,6 +138,13 @@ export default class PricesService {
 		return scale(wei(price.price), price.expo);
 	}
 
+	throttleOffChainPricesUpdate = throttle((offChainPrices: PricesMap) => {
+		this.sdk.context.events.emit('prices_updated', {
+			prices: offChainPrices,
+			type: 'off_chain',
+		});
+	}, PRICE_UPDATE_THROTTLE);
+
 	private async subscribeToPythPriceUpdates() {
 		try {
 			this.offChainPrices = await this.getOffChainPrices();
@@ -154,10 +162,7 @@ export default class PricesService {
 				const price = this.formatPythPrice(priceFeed);
 				this.offChainPrices[assetKey] = price;
 			}
-			this.sdk.context.events.emit('prices_updated', {
-				prices: this.offChainPrices,
-				type: 'off_chain',
-			});
+			this.throttleOffChainPricesUpdate(this.offChainPrices);
 		});
 	}
 }
