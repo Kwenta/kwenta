@@ -199,6 +199,12 @@ export type FuturesPosition<T = Wei> = {
 	position: FuturesFilledPosition<T> | null;
 };
 
+export type ModifyPositionOptions<T extends boolean> = {
+	delayed?: boolean;
+	offchain?: boolean;
+	estimationOnly?: T;
+};
+
 // This type exists to rename enum types from the subgraph to display-friendly types
 export type FuturesOrderTypeDisplay =
 	| 'Next Price'
@@ -231,10 +237,10 @@ export type FuturesOrder<T = Wei> = {
 
 export type DelayedOrder<T = Wei> = {
 	account: string;
-	asset: FuturesMarketAsset;
-	market: string;
+	asset?: FuturesMarketAsset;
+	market?: string;
 	marketAddress: string;
-	marketKey: FuturesMarketKey;
+	marketKey?: FuturesMarketKey;
 	size: T;
 	commitDeposit: T;
 	keeperDeposit: T;

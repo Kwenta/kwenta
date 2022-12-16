@@ -35,6 +35,7 @@ import {
 	OrderType,
 	PositionDetail,
 	PositionSide,
+	ModifyPositionOptions,
 } from 'sdk/types/futures';
 import {
 	calculateFundingRate,
@@ -460,10 +461,10 @@ export default class FuturesService {
 	}
 
 	// Perps V2 read functions
-	public async getDelayedOrder(account: string, marketInfo: FuturesMarket<Wei>) {
-		const market = PerpsV2Market__factory.connect(marketInfo.market, this.sdk.context.signer);
+	public async getDelayedOrder(account: string, marketAddress: string) {
+		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
 		const order = await market.delayedOrders(account);
-		return formatDelayedOrder(account, marketInfo, order);
+		return formatDelayedOrder(account, marketAddress, order);
 	}
 
 	public async getIsolatedTradePreview(
@@ -559,19 +560,18 @@ export default class FuturesService {
 		marketAddress: string,
 		sizeDelta: Wei,
 		priceImpactDelta: Wei,
-		delayed = false,
-		offchain = false,
-		estimationOnly: T
+		options?: ModifyPositionOptions<T>
 	): TxReturn<T> {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
-		const root = estimationOnly ? market.estimateGas : market;
-		return delayed && offchain
+		const root = options?.estimationOnly ? market.estimateGas : market;
+
+		return options?.delayed && options?.offchain
 			? (root.submitOffchainDelayedOrderWithTracking(
 					sizeDelta.toBN(),
 					priceImpactDelta.toBN(),
 					KWENTA_TRACKING_CODE
 			  ) as any)
-			: delayed
+			: options?.delayed
 			? (root.submitDelayedOrderWithTracking(
 					sizeDelta.toBN(),
 					priceImpactDelta.toBN(),
