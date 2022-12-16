@@ -97,24 +97,20 @@ const DelayedOrderConfirmationModal: FC = () => {
 			{
 				label: 'estimated price impact',
 				value: `${formatPercent(potentialTradeDetails?.priceImpact ?? zeroBN)}`,
-				color: potentialTradeDetails?.priceImpact.gt(0)
-					? 'green'
-					: potentialTradeDetails?.priceImpact.lt(0)
-					? 'red'
-					: '',
-			},
-			{
-				label: 'estimated slippage',
-				value: `${formatDollars(potentialTradeDetails?.slippageAmount ?? zeroBN)}`,
-				color: potentialTradeDetails?.slippageAmount.gt(0)
-					? 'green'
-					: potentialTradeDetails?.slippageAmount.lt(0)
+				color: potentialTradeDetails?.priceImpact.abs().gt(0.45) // TODO: Make this configurable
 					? 'red'
 					: '',
 			},
 			{
 				label: t('futures.market.user.position.modal.fee-estimated'),
-				value: formatCurrency(selectedPriceCurrency.name, delayedOrderFee ?? zeroBN, {
+				value: formatCurrency(selectedPriceCurrency.name, commitDeposit ?? zeroBN, {
+					minDecimals: 2,
+					sign: selectedPriceCurrency.sign,
+				}),
+			},
+			{
+				label: t('futures.market.user.position.modal.keeper-deposit'),
+				value: formatCurrency(selectedPriceCurrency.name, marketInfo?.keeperDeposit ?? zeroBN, {
 					minDecimals: 2,
 					sign: selectedPriceCurrency.sign,
 				}),
