@@ -566,7 +566,7 @@ export const calculateCrossMarginFees = (): AppThunk => (dispatch, getState) => 
 export const calculateIsolatedMarginFees = (): AppThunk => (dispatch, getState) => {
 	const market = selectMarketInfo(getState());
 	const dynamicFeeRate = selectDynamicFeeRate(getState());
-	const { susdSize, susdSizeDelta } = selectCrossMarginTradeInputs(getState());
+	const { susdSize, susdSizeDelta } = selectIsolatedMarginTradeInputs(getState());
 
 	const staticRate = computeMarketFee(market, susdSizeDelta);
 	const tradeFee = susdSize.mul(staticRate).add(susdSize.mul(dynamicFeeRate));

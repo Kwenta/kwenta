@@ -1,5 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
-import Wei, { wei } from '@synthetixio/wei';
+import { wei } from '@synthetixio/wei';
 
 import { DEFAULT_LEVERAGE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import { DEFAULT_MAX_LEVERAGE } from 'constants/futures';
@@ -555,15 +555,14 @@ export const selectDelayedOrderFee = createSelector(
 	selectMarketInfo,
 	selectTradeSizeInputs,
 	selectSkewAdjustedPrice,
-	(market, { nativeSizeDelta }, price) => {
-		// TODO: check these fees
-
+	selectOrderType,
+	(market, { nativeSizeDelta }, price, orderType) => {
 		if (
 			!market?.marketSkew ||
-			!market?.feeRates.takerFee ||
-			!market?.feeRates.makerFee ||
 			!market?.feeRates.takerFeeDelayedOrder ||
 			!market?.feeRates.makerFeeDelayedOrder ||
+			!market?.feeRates.takerFeeOffchainDelayedOrder ||
+			!market?.feeRates.makerFeeOffchainDelayedOrder ||
 			!nativeSizeDelta
 		) {
 			return { commitDeposit: undefined, delayedOrderFee: undefined };
@@ -571,20 +570,20 @@ export const selectDelayedOrderFee = createSelector(
 
 		const notionalDiff = nativeSizeDelta.mul(price);
 
-		let staticRate: Wei;
-		let staticRateDelayed: Wei;
+		const makerFee =
+			orderType === 'delayed offchain'
+				? market.feeRates.makerFeeOffchainDelayedOrder
+				: market.feeRates.makerFeeDelayedOrder;
+		const takerFee =
+			orderType === 'delayed offchain'
+				? market.feeRates.takerFeeOffchainDelayedOrder
+				: market.feeRates.takerFeeDelayedOrder;
 
-		if (sameSide(notionalDiff, market.marketSkew)) {
-			staticRate = market.feeRates.takerFee;
-			staticRateDelayed = market.feeRates.takerFeeDelayedOrder;
-		} else {
-			staticRate = market.feeRates.makerFee;
-			staticRateDelayed = market.feeRates.makerFeeDelayedOrder;
-		}
+		const staticRate = sameSide(notionalDiff, market.marketSkew) ? takerFee : makerFee;
 
 		return {
 			commitDeposit: notionalDiff.mul(staticRate).abs(),
-			delayedOrderFee: notionalDiff.mul(staticRateDelayed).abs(),
+			delayedOrderFee: notionalDiff.mul(staticRate).abs(),
 		};
 	}
 );
