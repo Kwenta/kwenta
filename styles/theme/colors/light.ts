@@ -7,7 +7,7 @@ const lightTheme = {
 	badge: {
 		red: { background: '#A80300', text: 'white' },
 		yellow: { background: '#6A3300', text: 'white' },
-		neon: { background: common.light.neon, text: 'white' },
+		neon: { background: common.light.rewardBadge, text: 'white' },
 	},
 	tab: { background: { active: 'transparent', inactive: '#e8e8e8' } },
 	button: {

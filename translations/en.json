@@ -533,7 +533,9 @@
 					"claimable-rewards-all": "Claimable Trading Rewards",
 					"claim-epoch": "Claim: Epoch {{EpochPeriod}}",
 					"claim": "Claim",
-					"estimated-info": "* Estimated values do not reflect the final reward value and are subject to change as a result of Futures fees paid and staked amounts by other participants."
+					"estimated-info": "* Estimated values do not reflect the final reward value and are subject to change as a result of future fees paid and staked amounts by other participants.",
+					"stake-to-earn": "Stake To Earn",
+					"eligible": "Eligible"
 				},
 				"escrow": {
 					"title": "Escrow",

@@ -24,7 +24,7 @@ const common = {
 		black: '#171002',
 		gray: '#787878',
 		gray2: '#3F3F3F',
-		neon: '#C6FF4C',
+		rewardBadge: '#C6FF4C',
 	},
 	light: {
 		white: '#F2F2F2',
@@ -40,7 +40,7 @@ const common = {
 		black: '#171002',
 		gray: '#515151',
 		gray2: '#D2D2D2', // TODO: Update once added to designs
-		neon: '#C6FF4C',
+		rewardBadge: '#00A4C8',
 	},
 };
 

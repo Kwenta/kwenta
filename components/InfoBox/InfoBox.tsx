@@ -9,6 +9,7 @@ export type DetailedInfo = {
 	valueNode?: React.ReactNode;
 	color?: 'green' | 'red' | 'gold' | undefined;
 	spaceBeneath?: boolean;
+	hideKey?: boolean;
 };
 
 type InfoBoxProps = {
@@ -28,7 +29,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className, disabled, 
 						<React.Fragment key={key}>
 							<div>
 								<div className="key">
-									{key}: {value.keyNode}
+									{value.hideKey ? '' : `${key}:`} {value.keyNode}
 								</div>
 								<p
 									data-testid={`${dataTestId}-${index}`}
@@ -78,6 +79,40 @@ const InfoBoxContainer = styled.div`
 			font-family: ${(props) => props.theme.fonts.mono};
 			font-size: 13px;
 			cursor: default;
+		}
+
+		.neon {
+			color: ${(props) => props.theme.colors.selectedTheme.badge['neon'].text};
+			font-weight: 700;
+			font-family: ${(props) => props.theme.fonts.regular};
+			text-transform: uppercase;
+			letter-spacing: 1px;
+			font-size: 12px;
+		}
+
+		.bg-neon {
+			font-family: ${(props) => props.theme.fonts.black};
+			color: ${(props) => props.theme.colors.selectedTheme.badge['neon'].text};
+			background: ${(props) => props.theme.colors.selectedTheme.badge['neon'].background};
+			padding: 0px 6px;
+			border-radius: 100px;
+			font-weight: 900;
+			font-variant: all-small-caps;
+		}
+
+		.bg-red {
+			font-family: ${(props) => props.theme.fonts.black};
+			color: ${(props) => props.theme.colors.selectedTheme.badge['red'].text};
+			background: ${(props) => props.theme.colors.selectedTheme.badge['red'].background};
+			padding: 0px 6px;
+			border-radius: 100px;
+			font-weight: 900;
+			font-variant: all-small-caps;
+			cursor: pointer;
+		}
+
+		.white {
+			color: ${(props) => props.theme.colors.selectedTheme.text};
 		}
 
 		.red {

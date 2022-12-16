@@ -1,4 +1,5 @@
-import React, { FC, useMemo } from 'react';
+import router from 'next/router';
+import React, { FC, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -6,6 +7,8 @@ import TimerIcon from 'assets/svg/app/timer.svg';
 import InfoBox, { DetailedInfo } from 'components/InfoBox/InfoBox';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { NO_VALUE } from 'constants/placeholder';
+import ROUTES from 'constants/routes';
+import Connector from 'containers/Connector';
 import {
 	selectCrossMarginSettings,
 	selectCrossMarginTradeFees,
@@ -16,12 +19,22 @@ import {
 	selectOrderType,
 	selectTradeSizeInputs,
 } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { fetchStakingData } from 'state/staking/actions';
+import {
+	selectStakedEscrowedKwentaBalance,
+	selectStakedKwentaBalance,
+} from 'state/staking/selectors';
 import { computeNPFee, computeMarketFee } from 'utils/costCalculations';
 import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 const FeeInfoBox: React.FC = () => {
+	const { t } = useTranslation();
+	const { walletAddress } = Connector.useContainer();
+	const dispatch = useAppDispatch();
 	const orderType = useAppSelector(selectOrderType);
+	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance);
+	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance);
 	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
 	const isolatedMarginFee = useAppSelector(selectIsolatedMarginFee);
 	const dynamicFeeRate = useAppSelector(selectDynamicFeeRate);
@@ -73,6 +86,12 @@ const FeeInfoBox: React.FC = () => {
 		[staticRate, dynamicFeeRate]
 	);
 
+	useEffect(() => {
+		if (!!walletAddress) {
+			dispatch(fetchStakingData());
+		}
+	}, [dispatch, walletAddress]);
+
 	const feesInfo = useMemo<Record<string, DetailedInfo | null | undefined>>(() => {
 		const crossMarginFeeInfo = {
 			'Protocol Fee': {
@@ -94,10 +113,21 @@ const FeeInfoBox: React.FC = () => {
 				value: formatDollars(crossMarginFees.crossMarginFee, {
 					minDecimals: crossMarginFees.crossMarginFee.lt(0.01) ? 4 : 2,
 				}),
-				spaceBeneath: true,
 				keyNode: formatPercent(crossMarginTradeFeeRate),
 			},
-
+			'Trading Reward': {
+				value: '',
+				spaceBeneath: true,
+				hideKey: true,
+				keyNode: <div className="white">Trading Reward:</div>,
+				valueNode: stakedKwentaBalance.add(stakedEscrowedKwentaBalance).gt(0) ? (
+					<div className="bg-neon">{t('dashboard.stake.tabs.trading-rewards.eligible')}</div>
+				) : (
+					<div className="bg-red" onClick={() => router.push(ROUTES.Dashboard.Stake)}>
+						{t('dashboard.stake.tabs.trading-rewards.stake-to-earn')}
+					</div>
+				),
+			},
 			'Total Fee': {
 				value: formatDollars(crossMarginFees.total, {
 					minDecimals: crossMarginFees.total.lt(0.01) ? 4 : 2,
@@ -149,6 +179,9 @@ const FeeInfoBox: React.FC = () => {
 			  }
 			: crossMarginFeeInfo;
 	}, [
+		t,
+		stakedKwentaBalance,
+		stakedEscrowedKwentaBalance,
 		orderType,
 		crossMarginTradeFeeRate,
 		isolatedMarginFee,
