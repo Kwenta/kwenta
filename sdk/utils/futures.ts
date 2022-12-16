@@ -12,11 +12,10 @@ import {
 	AGGREGATE_ASSET_KEY,
 } from 'sdk/constants/futures';
 import { SECONDS_PER_DAY } from 'sdk/constants/period';
-import { IPerpsV2MarketBaseTypes } from 'sdk/contracts/types/PerpsV2Market';
+import { IPerpsV2MarketConsolidated } from 'sdk/contracts/types/PerpsV2Market';
 import {
 	DelayedOrder,
 	FundingRateUpdate,
-	FuturesMarket,
 	FuturesMarketAsset,
 	FuturesMarketKey,
 	FuturesPosition,
@@ -237,8 +236,8 @@ export const unserializePotentialTrade = (
 
 export const formatDelayedOrder = (
 	account: string,
-	marketInfo: FuturesMarket<Wei>,
-	order: IPerpsV2MarketBaseTypes.DelayedOrderStructOutput
+	marketAddress: string,
+	order: IPerpsV2MarketConsolidated.DelayedOrderStructOutput
 ): DelayedOrder => {
 	const {
 		isOffchain,
@@ -253,10 +252,7 @@ export const formatDelayedOrder = (
 
 	return {
 		account: account,
-		asset: marketInfo.asset,
-		marketAddress: marketInfo.market,
-		market: getMarketName(marketInfo.asset),
-		marketKey: marketInfo.marketKey,
+		marketAddress: marketAddress,
 		size: wei(sizeDelta),
 		commitDeposit: wei(commitDeposit),
 		keeperDeposit: wei(keeperDeposit),

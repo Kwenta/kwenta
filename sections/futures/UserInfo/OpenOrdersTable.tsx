@@ -49,12 +49,13 @@ const OpenOrdersTable: React.FC = () => {
 	const rowsData = useMemo(() => {
 		const ordersWithCancel = openOrders
 			.map((o) => {
-				const market = futuresMarkets.find((m) => m.marketKey === o.marketKey);
-				const timer = countdownTimers ? countdownTimers[o.marketKey] : null;
+				const market = futuresMarkets.find((m) => m.market === o.marketAddress);
+				const asset = o?.asset ?? '';
+				const timer = countdownTimers && o.marketKey ? countdownTimers[o.marketKey] : null;
 				const order = {
 					...o,
-					sizeTxt: formatCurrency(o.asset, o.size.abs(), {
-						currencyKey: getDisplayAsset(o.asset) ?? '',
+					sizeTxt: formatCurrency(asset, o.size.abs(), {
+						currencyKey: getDisplayAsset(asset) ?? '',
 						minDecimals: suggestedDecimals(o.size),
 					}),
 					timeToExecution: timer?.timeToExecution,
@@ -64,12 +65,18 @@ const OpenOrdersTable: React.FC = () => {
 						timer &&
 						market?.settings &&
 						timer.timeToExecution === 0 &&
-						timer.timePastExecution > market.settings.maxDelayTimeDelta,
+						timer.timePastExecution >
+							(o.isOffchain
+								? market.settings.offchainDelayedOrderMaxAge
+								: market.settings.maxDelayTimeDelta),
 					isExecutable:
 						timer &&
 						market?.settings &&
 						timer.timeToExecution === 0 &&
-						timer.timePastExecution <= market.settings.offchainDelayedOrderMaxAge,
+						timer.timePastExecution <=
+							(o.isOffchain
+								? market.settings.offchainDelayedOrderMaxAge
+								: market.settings.maxDelayTimeDelta),
 					totalDeposit: o.commitDeposit.add(o.keeperDeposit),
 					onCancel: () => {
 						dispatch(
@@ -96,7 +103,7 @@ const OpenOrdersTable: React.FC = () => {
 	}, [openOrders, futuresMarkets, marketAsset, countdownTimers, dispatch]);
 
 	useEffect(() => {
-		const timer = setTimeout(() => {
+		const timer = setInterval(() => {
 			const newCountdownTimers = rowsData.reduce((acc, order) => {
 				const timeToExecution =
 					Math.floor((order.executableAtTimestamp - Date.now()) / 1000) +
@@ -104,7 +111,7 @@ const OpenOrdersTable: React.FC = () => {
 				const timePastExecution = Math.floor((Date.now() - order.executableAtTimestamp) / 1000);
 
 				// Only updated delayed orders
-				if (!order.isOffchain) {
+				if (order.marketKey) {
 					acc[order.marketKey] = {
 						timeToExecution: Math.max(timeToExecution, 0),
 						timePastExecution: Math.max(timePastExecution, 0),
@@ -115,7 +122,7 @@ const OpenOrdersTable: React.FC = () => {
 			setCountdownTimers(newCountdownTimers);
 		}, 1000);
 
-		return () => clearTimeout(timer);
+		return () => clearInterval(timer);
 	});
 
 	return (
@@ -225,21 +232,20 @@ const OpenOrdersTable: React.FC = () => {
 							Cell: (cellProps: CellProps<any>) => {
 								return (
 									<div style={{ display: 'flex' }}>
-										<CancelButton onClick={cellProps.row.original.onCancel}>
-											{t('futures.market.user.open-orders.actions.cancel')}
-										</CancelButton>
+										{cellProps.row.original.show && cellProps.row.original.isStale && (
+											<CancelButton onClick={cellProps.row.original.onCancel}>
+												{t('futures.market.user.open-orders.actions.cancel')}
+											</CancelButton>
+										)}
 										{cellProps.row.original.show && !cellProps.row.original.isStale && (
-											<EditButton
-												disabled={!cellProps.row.original.isExecutable}
-												onClick={cellProps.row.original.onExecute}
-											>
+											<EditButton disabled={true} onClick={cellProps.row.original.onExecute}>
 												{cellProps.row.original.isExecutable ? (
-													t('futures.market.user.open-orders.actions.execute')
+													<MiniLoader centered />
 												) : !!cellProps.row.original.timeToExecution &&
 												  cellProps.row.original.timeToExecution >= 0 ? (
 													formatTimer(cellProps.row.original.timeToExecution)
 												) : (
-													<MiniLoader centered />
+													<></>
 												)}
 											</EditButton>
 										)}

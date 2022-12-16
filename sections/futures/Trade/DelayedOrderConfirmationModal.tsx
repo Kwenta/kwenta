@@ -32,7 +32,7 @@ import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
 import { PositionSide } from '../types';
 import { MobileConfirmTradeButton } from './TradeConfirmationModal';
 
-const NextPriceConfirmationModal: FC = () => {
+const DelayedOrderConfirmationModal: FC = () => {
 	const { t } = useTranslation();
 	const isDisclaimerDisplayed = useAppSelector(selectNextPriceDisclaimer);
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
@@ -263,4 +263,4 @@ const Disclaimer = styled.div`
 	margin-bottom: 12px;
 `;
 
-export default NextPriceConfirmationModal;
+export default DelayedOrderConfirmationModal;

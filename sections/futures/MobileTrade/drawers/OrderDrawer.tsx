@@ -44,7 +44,7 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer }) =
 	);
 
 	const items = React.useMemo(() => {
-		if (!order || !order.side) return [];
+		if (!order || !order.side || !order.asset) return [];
 
 		return [
 			{

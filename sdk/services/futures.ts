@@ -32,8 +32,10 @@ import {
 	FuturesOrder,
 	FuturesVolumes,
 	MarketClosureReason,
+	OrderType,
 	PositionDetail,
 	PositionSide,
+	ModifyPositionOptions,
 } from 'sdk/types/futures';
 import { PricesMap } from 'sdk/types/prices';
 import {
@@ -99,9 +101,8 @@ export default class FuturesService {
 		if (!PerpsV2MarketData || !PerpsV2MarketSettings || !SystemStatus || !ExchangeRates) {
 			throw new Error(UNSUPPORTED_NETWORK);
 		}
-
 		const [markets, globals] = await this.sdk.context.multicallProvider.all([
-			PerpsV2MarketData.allMarketSummaries(),
+			PerpsV2MarketData.allProxiedMarketSummaries(),
 			PerpsV2MarketData.globals(),
 		]);
 
@@ -460,20 +461,15 @@ export default class FuturesService {
 	}
 
 	// Perps V2 read functions
-	public async getDelayedOrder(account: string, marketInfo: FuturesMarket<Wei>) {
-		const market = PerpsV2Market__factory.connect(marketInfo.market, this.sdk.context.signer);
-		const order = await market.delayedOrders(account);
-		return formatDelayedOrder(account, marketInfo, order);
-	}
-
-	public async getFillPrice(marketAddress: string, basePrice: Wei, sizeDelta: Wei) {
+	public async getDelayedOrder(account: string, marketAddress: string) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
-		const fillPrice = await market.fillPriceWithBasePrice(sizeDelta.toBN(), basePrice.toBN());
-		return fillPrice;
+		const order = await market.delayedOrders(account);
+		return formatDelayedOrder(account, marketAddress, order);
 	}
 
 	public async getIsolatedTradePreview(
 		marketAddress: string,
+		orderType: OrderType,
 		inputs: {
 			sizeDelta: Wei;
 			price: Wei;
@@ -485,6 +481,7 @@ export default class FuturesService {
 		const details = await market.postTradeDetails(
 			inputs.sizeDelta.toBN(),
 			inputs.price.toBN(),
+			orderType,
 			this.sdk.context.walletAddress
 		);
 		return formatPotentialIsolatedTrade(
@@ -570,19 +567,18 @@ export default class FuturesService {
 		marketAddress: string,
 		sizeDelta: Wei,
 		priceImpactDelta: Wei,
-		delayed = false,
-		offchain = false,
-		estimationOnly: T
+		options?: ModifyPositionOptions<T>
 	): TxReturn<T> {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
-		const root = estimationOnly ? market.estimateGas : market;
-		return delayed && offchain
+		const root = options?.estimationOnly ? market.estimateGas : market;
+
+		return options?.delayed && options?.offchain
 			? (root.submitOffchainDelayedOrderWithTracking(
 					sizeDelta.toBN(),
 					priceImpactDelta.toBN(),
 					KWENTA_TRACKING_CODE
 			  ) as any)
-			: delayed
+			: options?.delayed
 			? (root.submitDelayedOrderWithTracking(
 					sizeDelta.toBN(),
 					priceImpactDelta.toBN(),

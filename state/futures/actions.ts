@@ -14,9 +14,10 @@ import {
 	FuturesPosition,
 	FuturesPotentialTradeDetails,
 	FuturesVolumes,
+	OrderTypeByName,
 	PositionSide,
 } from 'sdk/types/futures';
-import { calculateCrossMarginFee, serializePotentialTrade } from 'sdk/utils/futures';
+import { calculateCrossMarginFee, getMarketName, serializePotentialTrade } from 'sdk/utils/futures';
 import { unserializeGasPrice } from 'state/app/helpers';
 import { setOpenModal } from 'state/app/reducer';
 import { fetchBalances } from 'state/balances/actions';
@@ -262,10 +263,27 @@ export const fetchOpenOrders = createAsyncThunk<
 		throw new Error('No markets available');
 	}
 	// TODO: Make this multicall
-	const orders = await Promise.all(
-		markets.map((market) => sdk.futures.getDelayedOrder(account, market))
+	const orders: DelayedOrder[] = await Promise.all(
+		markets.map((market) => sdk.futures.getDelayedOrder(account, market.market))
 	);
-	const nonzeroOrders = orders.filter((o) => o.size.abs().gt(0));
+	const nonzeroOrders = orders
+		.filter((o) => o.size.abs().gt(0))
+		.map((o) => {
+			const market = markets.find((m) => m.market === o.marketAddress);
+			return {
+				...o,
+				marketKey: market?.marketKey,
+				marketAsset: market?.asset,
+				market: getMarketName(market?.asset ?? null),
+				executableAtTimestamp:
+					market && o.isOffchain // Manual fix for an incorrect
+						? o.submittedAtTimestamp +
+						  (o.isOffchain
+								? market.settings.offchainDelayedOrderMinAge * 1000
+								: market.settings.minDelayTimeDelta * 1000)
+						: o.executableAtTimestamp,
+			};
+		});
 	return {
 		orders: serializeDelayedOrders(nonzeroOrders),
 		account: account,
@@ -284,12 +302,15 @@ export const fetchIsolatedMarginTradePreview = createAsyncThunk<
 		const account = selectFuturesAccount(getState());
 		const price = selectMarketPrice(getState());
 		const skewAdjustedPrice = selectSkewAdjustedPrice(getState());
+		const orderType = selectOrderType(getState());
+
+		const orderTypeNum = OrderTypeByName[orderType];
 
 		if (!account) throw new Error('No account to fetch orders');
 		if (!marketInfo) throw new Error('No market info');
 		const leverageSide = selectLeverageSide(getState());
 		try {
-			const preview = await sdk.futures.getIsolatedTradePreview(marketInfo?.market, {
+			const preview = await sdk.futures.getIsolatedTradePreview(marketInfo?.market, orderTypeNum, {
 				sizeDelta,
 				price,
 				skewAdjustedPrice,
@@ -703,9 +724,11 @@ export const modifyIsolatedPosition = createAsyncThunk<
 				marketInfo.market,
 				wei(sizeDelta),
 				priceImpact,
-				delayed,
-				offchain,
-				false
+				{
+					delayed,
+					offchain,
+					estimationOnly: false,
+				}
 			);
 			dispatch(updateTransactionHash(tx.hash));
 			await tx.wait();
@@ -732,14 +755,11 @@ export const modifyIsolatedPositionEstimateGas = createAsyncThunk<
 		if (!marketInfo) throw new Error('Market info not found');
 		estimateGasInteralAction(
 			() =>
-				sdk.futures.modifyIsolatedMarginPosition(
-					marketInfo.market,
-					wei(sizeDelta),
-					priceImpact,
+				sdk.futures.modifyIsolatedMarginPosition(marketInfo.market, wei(sizeDelta), priceImpact, {
 					delayed,
 					offchain,
-					true
-				),
+					estimationOnly: true,
+				}),
 			'modify_isolated',
 			{ getState, dispatch }
 		);

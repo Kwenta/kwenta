@@ -102,7 +102,7 @@ const initialState: FuturesState = {
 		fees: ZERO_CM_FEES,
 		keeperEthBalance: '0',
 		positions: {},
-		openOrders: [],
+		openOrders: {},
 		tradePreview: null,
 		marginDelta: '0',
 		orderPrice: {
@@ -124,13 +124,13 @@ const initialState: FuturesState = {
 		selectedMarketAsset: FuturesMarketAsset.sETH,
 		selectedMarketKey: FuturesMarketKey.sETH,
 		leverageSide: PositionSide.LONG,
-		orderType: 'delayed',
+		orderType: 'delayed offchain',
 		tradePreview: null,
 		selectedLeverage: DEFAULT_LEVERAGE,
 		tradeInputs: ZERO_STATE_TRADE_INPUTS,
 		priceImpact: DEFAULT_PRICE_IMPACT_DELTA,
 		positions: {},
-		openOrders: [],
+		openOrders: {},
 		tradeFee: '0',
 		leverageInput: '0',
 	},
@@ -365,7 +365,8 @@ const futuresSlice = createSlice({
 			futuresState.queryStatuses.openOrders = LOADING_STATUS;
 		});
 		builder.addCase(fetchOpenOrders.fulfilled, (futuresState, action) => {
-			futuresState[accountType(action.payload.accountType)].openOrders = action.payload.orders;
+			futuresState[accountType(action.payload.accountType)].openOrders[action.payload.account] =
+				action.payload.orders;
 			futuresState.queryStatuses.openOrders = SUCCESS_STATUS;
 		});
 		builder.addCase(fetchOpenOrders.rejected, (futuresState) => {

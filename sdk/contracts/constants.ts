@@ -44,10 +44,10 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 		420: '0x0dde87714C3bdACB93bB1d38605aFff209a85998',
 	},
 	PerpsV2MarketData: {
-		420: '0x72EBE50eAE6C73124F07E85138b751eb4981811F',
+		420: '0x0D9eFa310a4771c444233B10bfB57e5b991ad529',
 	},
 	PerpsV2MarketSettings: {
-		420: '0xCC3bc93Be00FaAfD25eca9be262b9b9843e15dcA',
+		420: '0x14fA3376E2ffa41708A0636009A35CAE8D8E2bc7',
 	},
 	SUSD: {
 		1: '0x57Ab1ec28D129707052df4dF418D58a2D46d5f51',
