@@ -292,6 +292,9 @@ export function TVChart({
 	}, [marketAsset]);
 
 	const onSubscribe = useCallback((newIntervalId: number) => {
+		if (_intervalId.current) {
+			clearInterval(_intervalId.current);
+		}
 		_intervalId.current = newIntervalId;
 	}, []);
 
