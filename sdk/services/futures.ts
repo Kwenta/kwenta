@@ -37,6 +37,7 @@ import {
 	PositionSide,
 	ModifyPositionOptions,
 } from 'sdk/types/futures';
+import { PricesMap } from 'sdk/types/prices';
 import {
 	calculateFundingRate,
 	calculateVolumes,
@@ -187,8 +188,6 @@ export default class FuturesService {
 				maxLeverage: wei(maxLeverage),
 				marketSize: wei(marketSize),
 				marketLimit: wei(marketParameters[i].maxMarketValue).mul(wei(price)),
-				priceOracle: wei(price),
-				price: wei(price).mul(wei(marketSkew).div(wei(marketParameters[i].skewScale)).add(1)),
 				minInitialMargin: wei(globals.minInitialMargin),
 				keeperDeposit: wei(globals.minKeeperFee),
 				isSuspended: suspensions[i],
@@ -259,9 +258,10 @@ export default class FuturesService {
 		return positions;
 	}
 
-	public async getAverageFundingRates(markets: FuturesMarket[], period: Period) {
+	public async getAverageFundingRates(markets: FuturesMarket[], prices: PricesMap, period: Period) {
 		const fundingRateInputs: FundingRateInput[] = markets.map(
-			({ asset, market, price, currentFundingRate }) => {
+			({ asset, market, currentFundingRate }) => {
+				const price = prices[asset];
 				return {
 					marketAddress: market,
 					marketKey: MarketKeyByAsset[asset],
@@ -469,20 +469,27 @@ export default class FuturesService {
 
 	public async getIsolatedTradePreview(
 		marketAddress: string,
-		sizeDelta: Wei,
-		priceOracle: Wei,
-		price: Wei,
-		leverageSide: PositionSide,
-		orderType: OrderType
+		orderType: OrderType,
+		inputs: {
+			sizeDelta: Wei;
+			price: Wei;
+			skewAdjustedPrice: Wei;
+			leverageSide: PositionSide;
+		}
 	) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
 		const details = await market.postTradeDetails(
-			sizeDelta.toBN(),
-			priceOracle.toBN(),
+			inputs.sizeDelta.toBN(),
+			inputs.price.toBN(),
 			orderType,
 			this.sdk.context.walletAddress
 		);
-		return formatPotentialIsolatedTrade(details, price, sizeDelta, leverageSide);
+		return formatPotentialIsolatedTrade(
+			details,
+			inputs.skewAdjustedPrice,
+			inputs.sizeDelta,
+			inputs.leverageSide
+		);
 	}
 
 	public async getCrossMarginTradePreview(

@@ -1,5 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 
 import { DEFAULT_LEVERAGE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import { DEFAULT_MAX_LEVERAGE } from 'constants/futures';
@@ -7,11 +7,11 @@ import { TransactionStatus } from 'sdk/types/common';
 import { FuturesPosition } from 'sdk/types/futures';
 import { unserializePotentialTrade } from 'sdk/utils/futures';
 import { PositionSide } from 'sections/futures/types';
-import { selectExchangeRates } from 'state/exchange/selectors';
 import { accountType, deserializeWeiObject } from 'state/helpers';
+import { selectPrices } from 'state/prices/selectors';
 import { RootState } from 'state/store';
 import { selectWallet } from 'state/wallet/selectors';
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import { sameSide } from 'utils/costCalculations';
 import { zeroBN } from 'utils/formatters/number';
 import {
 	MarketKeyByAsset,
@@ -59,12 +59,6 @@ export const selectMarketAsset = createSelector(
 	(futures, marginType) => futures[accountType(marginType)].selectedMarketAsset
 );
 
-export const selectMarketRate = createSelector(
-	selectMarketKey,
-	selectExchangeRates,
-	(marketKey, exchangeRates) => newGetExchangeRatesForCurrencies(exchangeRates, marketKey, 'sUSD')
-);
-
 export const selectMarkets = createSelector(
 	(state: RootState) => state.futures.markets,
 	(markets) => unserializeMarkets(markets)
@@ -102,15 +96,35 @@ export const selectIsolatedPriceImpact = createSelector(
 	(priceImpact) => wei(priceImpact, 0)
 );
 
-export const selectPerpsMarketRate = createSelector(selectMarketInfo, (marketInfo) => {
-	return marketInfo?.price ?? wei(0);
-});
+export const selectOrderType = createSelector(
+	(state: RootState) => state.futures,
+	(futures) => futures[accountType(futures.selectedType)].orderType
+);
 
-export const selectMarketAssetRate = createSelector(
-	(state: RootState) => state.futures[accountType(state.futures.selectedType)].selectedMarketAsset,
-	selectExchangeRates,
-	(marketAsset, exchangeRates) => {
-		return newGetExchangeRatesForCurrencies(exchangeRates, marketAsset, 'sUSD');
+export const selectMarketPrice = createSelector(
+	selectMarketAsset,
+	selectPrices,
+	(marketAsset, prices) => {
+		const price = prices[marketAsset];
+		// Note this assumes the order type is always delayed off chain
+		return price?.offChain ?? price?.onChain ?? wei(0);
+	}
+);
+
+export const selectSkewAdjustedPrice = createSelector(
+	selectMarketPrice,
+	selectMarketInfo,
+	(price, marketInfo) => {
+		if (!marketInfo?.marketSkew || !marketInfo?.settings.skewScale) return price;
+		return wei(price).mul(wei(marketInfo.marketSkew).div(marketInfo.settings.skewScale).add(1));
+	}
+);
+
+export const selectMarketPrices = createSelector(
+	selectMarketAsset,
+	selectPrices,
+	(marketAsset, prices) => {
+		return prices[marketAsset] ?? {};
 	}
 );
 
@@ -248,7 +262,7 @@ export const selectIsModifyingIsolatedPosition = createSelector(
 export const selectIsMarketCapReached = createSelector(
 	(state: RootState) => state.futures[accountType(state.futures.selectedType)].leverageSide,
 	selectMarketInfo,
-	selectMarketAssetRate,
+	selectMarketPrice,
 	(leverageSide, marketInfo, marketAssetRate) => {
 		const maxMarketValueUSD = marketInfo?.marketLimit ?? wei(0);
 		const marketSize = marketInfo?.marketSize ?? wei(0);
@@ -269,11 +283,6 @@ export const selectPosition = createSelector(
 			? (deserializeWeiObject(position, futuresPositionKeys) as FuturesPosition)
 			: undefined;
 	}
-);
-
-export const selectOrderType = createSelector(
-	(state: RootState) => state.futures,
-	(futures) => futures[accountType(futures.selectedType)].orderType
 );
 
 export const selectLeverageSide = createSelector(
@@ -539,5 +548,43 @@ export const selectModifyIsolatedGasEstimate = createSelector(
 		const estimate = transactionEstimations['modify_isolated'];
 		if (estimate) return unserializeGasEstimate(estimate);
 		return null;
+	}
+);
+
+export const selectDelayedOrderFee = createSelector(
+	selectMarketInfo,
+	selectTradeSizeInputs,
+	selectSkewAdjustedPrice,
+	(market, { nativeSizeDelta }, price) => {
+		// TODO: check these fees
+
+		if (
+			!market?.marketSkew ||
+			!market?.feeRates.takerFee ||
+			!market?.feeRates.makerFee ||
+			!market?.feeRates.takerFeeDelayedOrder ||
+			!market?.feeRates.makerFeeDelayedOrder ||
+			!nativeSizeDelta
+		) {
+			return { commitDeposit: undefined, delayedOrderFee: undefined };
+		}
+
+		const notionalDiff = nativeSizeDelta.mul(price);
+
+		let staticRate: Wei;
+		let staticRateDelayed: Wei;
+
+		if (sameSide(notionalDiff, market.marketSkew)) {
+			staticRate = market.feeRates.takerFee;
+			staticRateDelayed = market.feeRates.takerFeeDelayedOrder;
+		} else {
+			staticRate = market.feeRates.makerFee;
+			staticRateDelayed = market.feeRates.makerFeeDelayedOrder;
+		}
+
+		return {
+			commitDeposit: notionalDiff.mul(staticRate).abs(),
+			delayedOrderFee: notionalDiff.mul(staticRateDelayed).abs(),
+		};
 	}
 );

@@ -10,11 +10,7 @@ import InputTitle from 'components/Input/InputTitle';
 import SegmentedControl from 'components/SegmentedControl';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { FuturesOrderType } from 'queries/futures/types';
-import {
-	selectMarketAssetRate,
-	selectMarketInfo,
-	selectLeverageSide,
-} from 'state/futures/selectors';
+import { selectMarketPrice, selectMarketInfo, selectLeverageSide } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { orderFeeCapState } from 'store/futures';
 import { weiToString, zeroBN } from 'utils/formatters/number';
@@ -36,7 +32,7 @@ export default function OrderPriceInput({
 	onChangeOrderPrice,
 }: Props) {
 	const { t } = useTranslation();
-	const marketAssetRate = useAppSelector(selectMarketAssetRate);
+	const marketPrice = useAppSelector(selectMarketPrice);
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const [selectedFeeCap, setSelectedFeeCap] = useRecoilState(orderFeeCapState);
 	const marketInfo = useAppSelector(selectMarketInfo);
@@ -55,8 +51,8 @@ export default function OrderPriceInput({
 	}, [marketInfo?.asset]);
 
 	const minMaxLabelString = useMemo(
-		() => orderPriceInvalidLabel(value, leverageSide, marketAssetRate, orderType),
-		[value, orderType, leverageSide, marketAssetRate]
+		() => orderPriceInvalidLabel(value, leverageSide, marketPrice, orderType),
+		[value, orderType, leverageSide, marketPrice]
 	);
 
 	// eslint-disable-next-line

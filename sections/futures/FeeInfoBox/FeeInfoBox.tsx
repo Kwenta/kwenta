@@ -6,6 +6,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import {
 	selectCrossMarginSettings,
 	selectCrossMarginTradeFees,
+	selectDelayedOrderFee,
 	selectFuturesType,
 	selectIsolatedMarginFee,
 	selectMarketInfo,
@@ -13,25 +14,22 @@ import {
 	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { computeDelayedOrderFee, computeMarketFee } from 'utils/costCalculations';
+import { computeMarketFee } from 'utils/costCalculations';
 import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 const FeeInfoBox: React.FC = () => {
 	const orderType = useAppSelector(selectOrderType);
 	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
 	const isolatedMarginFee = useAppSelector(selectIsolatedMarginFee);
-	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
+	const { nativeSizeDelta, susdSizeDelta } = useAppSelector(selectTradeSizeInputs);
 	const accountType = useAppSelector(selectFuturesType);
 	const { tradeFee: crossMarginTradeFeeRate, limitOrderFee, stopOrderFee } = useAppSelector(
 		selectCrossMarginSettings
 	);
 	const marketInfo = useAppSelector(selectMarketInfo);
-	const feeRates = useMemo(() => marketInfo?.feeRates, [marketInfo]);
+	const { commitDeposit, delayedOrderFee } = useAppSelector(selectDelayedOrderFee);
 
-	const { commitDeposit, delayedOrderFee } = useMemo(
-		() => computeDelayedOrderFee(marketInfo, nativeSizeDelta),
-		[marketInfo, nativeSizeDelta]
-	);
+	const feeRates = useMemo(() => marketInfo?.feeRates, [marketInfo]);
 
 	const totalDeposit = useMemo(() => {
 		return (commitDeposit ?? zeroBN).add(marketInfo?.keeperDeposit ?? zeroBN);
@@ -41,9 +39,9 @@ const FeeInfoBox: React.FC = () => {
 		return (delayedOrderFee ?? zeroBN).sub(commitDeposit ?? zeroBN);
 	}, [commitDeposit, delayedOrderFee]);
 
-	const staticRate = useMemo(() => computeMarketFee(marketInfo, nativeSizeDelta), [
+	const staticRate = useMemo(() => computeMarketFee(marketInfo, susdSizeDelta), [
 		marketInfo,
-		nativeSizeDelta,
+		susdSizeDelta,
 	]);
 
 	const orderFeeRate = useMemo(
