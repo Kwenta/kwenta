@@ -872,6 +872,7 @@
 						"fee": "Protocol Fee",
 						"fee-total": "Total Fees",
 						"fee-estimated": "Estimated Fees",
+						"keeper-deposit": "Keeper Deposit",
 						"gas-fee": "Network Gas Fee",
 						"order-type": "Order Type",
 						"market-order": "Market",
@@ -894,9 +895,8 @@
 						"reserved-margin": "Reserved margin",
 						"commit-deposit": "Commit Deposit",
 						"price": "Price",
-						"status": "Status",
 						"parameters": "Parameters",
-						"actions": "Actions",
+						"status": "Status",
 						"no-result": "You have no open orders",
 						"open-filter": "Only show open orders"
 					},
@@ -904,6 +904,10 @@
 						"cancel": "Cancel",
 						"edit": "Edit",
 						"execute": "Execute"
+					},
+					"status": {
+						"pending": "Pending",
+						"expired": "Expired"
 					},
 					"badges": {
 						"expired": "Expired"

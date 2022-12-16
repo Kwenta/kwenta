@@ -5,7 +5,6 @@ import styled, { css } from 'styled-components';
 
 import Badge from 'components/Badge';
 import Currency from 'components/Currency';
-import { MiniLoader } from 'components/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
@@ -17,7 +16,6 @@ import { DelayedOrder } from 'sdk/types/futures';
 import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
 import { selectMarketAsset, selectMarkets, selectOpenOrders } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatTimer } from 'utils/formatters/date';
 import { formatCurrency, formatDollars, suggestedDecimals } from 'utils/formatters/number';
 import { FuturesMarketKey, getDisplayAsset } from 'utils/futures';
 
@@ -160,19 +158,18 @@ const OpenOrdersTable: React.FC = () => {
 										</IconContainer>
 										<StyledText>
 											{cellProps.row.original.market}
-											{/* TODO: Do we enable this expired badge?
 											{cellProps.row.original.isStale && (
 												<ExpiredBadge color="red">
 													{t('futures.market.user.open-orders.badges.expired')}
 												</ExpiredBadge>
-											)} */}
+											)}
 										</StyledText>
 										<StyledValue>{cellProps.row.original.orderType}</StyledValue>
 									</MarketContainer>
 								);
 							},
 							sortable: true,
-							width: 50,
+							width: 60,
 						},
 						{
 							Header: (
@@ -189,7 +186,7 @@ const OpenOrdersTable: React.FC = () => {
 								);
 							},
 							sortable: true,
-							width: 50,
+							width: 40,
 						},
 						{
 							Header: (
@@ -225,29 +222,23 @@ const OpenOrdersTable: React.FC = () => {
 						{
 							Header: (
 								<StyledTableHeader>
-									{t('futures.market.user.open-orders.table.actions')}
+									{t('futures.market.user.open-orders.table.status')}
 								</StyledTableHeader>
 							),
 							accessor: 'actions',
 							Cell: (cellProps: CellProps<any>) => {
 								return (
-									<div style={{ display: 'flex' }}>
+									<div style={{ display: 'flex', alignItems: 'center' }}>
+										{cellProps.row.original.show &&
+											(cellProps.row.original.isStale ? (
+												<div>{t('futures.market.user.open-orders.status.expired')}</div>
+											) : (
+												<div>{t('futures.market.user.open-orders.status.pending')}</div>
+											))}
 										{cellProps.row.original.show && cellProps.row.original.isStale && (
 											<CancelButton onClick={cellProps.row.original.onCancel}>
 												{t('futures.market.user.open-orders.actions.cancel')}
 											</CancelButton>
-										)}
-										{cellProps.row.original.show && !cellProps.row.original.isStale && (
-											<EditButton disabled={true} onClick={cellProps.row.original.onExecute}>
-												{cellProps.row.original.isExecutable ? (
-													<MiniLoader centered />
-												) : !!cellProps.row.original.timeToExecution &&
-												  cellProps.row.original.timeToExecution >= 0 ? (
-													formatTimer(cellProps.row.original.timeToExecution)
-												) : (
-													<></>
-												)}
-											</EditButton>
 										)}
 									</div>
 								);
@@ -379,6 +370,7 @@ const EditButton = styled.button`
 
 const CancelButton = styled(EditButton)`
 	opacity: ${(props) => (props.disabled ? 0.4 : 1)};
+	margin-left: 8px;
 	border: 1px solid ${(props) => props.theme.colors.selectedTheme.red};
 	color: ${(props) => props.theme.colors.selectedTheme.red};
 	margin-right: 8px;
