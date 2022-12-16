@@ -782,6 +782,10 @@
 						}
 					}
 				},
+				"delayed-order": {
+					"description": "Delayed orders are subject to volatility and execute at a future price.",
+					"learn-more": "Learn more"
+				},
 				"next-price": {
 					"description": "Next Price orders are subject to volatility and execute at the very next on-chain price.",
 					"learn-more": "Learn more"
