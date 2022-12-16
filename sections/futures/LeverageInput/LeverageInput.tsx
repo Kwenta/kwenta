@@ -10,7 +10,7 @@ import { editIsolatedMarginSize } from 'state/futures/actions';
 import { setIsolatedMarginLeverageInput } from 'state/futures/reducer';
 import {
 	selectIsolatedLeverageInput,
-	selectMarketAssetRate,
+	selectMarketPrice,
 	selectMarketInfo,
 	selectMaxLeverage,
 	selectNextPriceDisclaimer,
@@ -32,22 +32,22 @@ const LeverageInput: FC = () => {
 	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const maxLeverage = useAppSelector(selectMaxLeverage);
-	const marketAssetRate = useAppSelector(selectMarketAssetRate);
+	const marketPrice = useAppSelector(selectMarketPrice);
 	const leverageInput = useAppSelector(selectIsolatedLeverageInput);
 
 	const onLeverageChange = useCallback(
 		(newLeverage: number) => {
 			const remainingMargin = position?.remainingMargin ?? zeroBN;
 			const newTradeSize =
-				marketAssetRate.eq(0) || remainingMargin.eq(0)
+				marketPrice.eq(0) || remainingMargin.eq(0)
 					? ''
-					: wei(newLeverage).mul(remainingMargin).div(marketAssetRate).toString();
+					: wei(newLeverage).mul(remainingMargin).div(marketPrice).toString();
 			const input = truncateNumbers(newLeverage, DEFAULT_FIAT_DECIMALS);
 			dispatch(setIsolatedMarginLeverageInput(input));
 			const floored = floorNumber(Number(newTradeSize), 4);
 			dispatch(editIsolatedMarginSize(String(floored), 'native'));
 		},
-		[position?.remainingMargin, marketAssetRate, dispatch]
+		[position?.remainingMargin, marketPrice, dispatch]
 	);
 
 	const modeButton = useMemo(() => {

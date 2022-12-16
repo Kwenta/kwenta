@@ -391,7 +391,6 @@ export const updateBaseAmount = createAsyncThunk<any, void, ThunkConfig>(
 		}
 
 		await dispatch(fetchTransactionFee());
-
 		return {
 			baseAmount,
 			slippagePercent: slippagePercent?.toString(),

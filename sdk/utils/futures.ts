@@ -1,3 +1,4 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 import { parseBytes32String } from 'ethers/lib/utils.js';
@@ -11,11 +12,10 @@ import {
 	AGGREGATE_ASSET_KEY,
 } from 'sdk/constants/futures';
 import { SECONDS_PER_DAY } from 'sdk/constants/period';
-import { IPerpsV2MarketBaseTypes } from 'sdk/contracts/types/PerpsV2Market';
+import { IPerpsV2MarketConsolidated } from 'sdk/contracts/types/PerpsV2Market';
 import {
 	DelayedOrder,
 	FundingRateUpdate,
-	FuturesMarket,
 	FuturesMarketAsset,
 	FuturesMarketKey,
 	FuturesPosition,
@@ -236,8 +236,8 @@ export const unserializePotentialTrade = (
 
 export const formatDelayedOrder = (
 	account: string,
-	marketInfo: FuturesMarket<Wei>,
-	order: IPerpsV2MarketBaseTypes.DelayedOrderStructOutput
+	marketAddress: string,
+	order: IPerpsV2MarketConsolidated.DelayedOrderStructOutput
 ): DelayedOrder => {
 	const {
 		isOffchain,
@@ -252,10 +252,7 @@ export const formatDelayedOrder = (
 
 	return {
 		account: account,
-		asset: marketInfo.asset,
-		marketAddress: marketInfo.market,
-		market: getMarketName(marketInfo.asset),
-		marketKey: marketInfo.marketKey,
+		marketAddress: marketAddress,
 		size: wei(sizeDelta),
 		commitDeposit: wei(commitDeposit),
 		keeperDeposit: wei(keeperDeposit),
@@ -377,3 +374,9 @@ export const calculateCrossMarginFee = (
 		orderType === 'limit' ? feeRates.limitOrderFee : feeRates.stopOrderFee;
 	return susdSize.mul(advancedOrderFeeRate);
 };
+
+export const getPythNetworkUrl = (networkId: NetworkId) => {
+	return networkId === 420 ? 'https://xc-testnet.pyth.network' : 'https://xc-mainnet.pyth.network';
+};
+
+export const normalizePythId = (id: string) => (id.startsWith('0x') ? id : '0x' + id);

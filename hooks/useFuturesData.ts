@@ -38,7 +38,7 @@ import {
 	selectCrossMarginTradeFees,
 	selectDynamicFeeRate,
 	selectCrossMarginMarginDelta,
-	selectPerpsMarketRate,
+	selectSkewAdjustedPrice,
 } from 'state/futures/selectors';
 import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector, useAppDispatch } from 'state/hooks';
@@ -88,20 +88,20 @@ const useFuturesData = () => {
 	const tradeSizeInputs = useAppSelector(selectTradeSizeInputs);
 	const selectedLeverage = useAppSelector(selectCrossMarginSelectedLeverage);
 	const selectedAccountType = useAppSelector(selectFuturesType);
+	const marketPrice = useAppSelector(selectSkewAdjustedPrice);
 
 	const { tradeFee: crossMarginTradeFee, stopOrderFee, limitOrderFee } = useAppSelector(
 		selectCrossMarginSettings
 	);
 	const isAdvancedOrder = useAppSelector(selectIsAdvancedOrder);
-	const marketAssetRate = useAppSelector(selectPerpsMarketRate);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
 	const market = useAppSelector(selectMarketInfo);
 
 	const [maxFee, setMaxFee] = useState(zeroBN);
 
-	const tradePrice = useMemo(() => wei(isAdvancedOrder ? orderPrice || zeroBN : marketAssetRate), [
+	const tradePrice = useMemo(() => wei(isAdvancedOrder ? orderPrice || zeroBN : marketPrice), [
 		orderPrice,
-		marketAssetRate,
+		marketPrice,
 		isAdvancedOrder,
 	]);
 
@@ -176,8 +176,8 @@ const useFuturesData = () => {
 	}, [orderType, limitOrderFee, stopOrderFee]);
 
 	const totalFeeRate = useCallback(
-		async (sizeDelta: Wei) => {
-			const staticRate = computeMarketFee(market, sizeDelta);
+		async (usdSizeDelta: Wei) => {
+			const staticRate = computeMarketFee(market, usdSizeDelta);
 
 			let total = crossMarginTradeFee.add(dynamicFeeRate).add(staticRate).add(advancedOrderFeeRate);
 
@@ -330,7 +330,6 @@ const useFuturesData = () => {
 	return {
 		submitCrossMarginOrder,
 		resetTradeState,
-		marketAssetRate,
 		position,
 		market,
 		maxUsdInputAmount,

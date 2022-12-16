@@ -1,4 +1,3 @@
-import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, FC } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -17,6 +16,7 @@ import { FuturesAccountState } from 'queries/futures/types';
 import CrossMarginOnboard from 'sections/futures/CrossMarginOnboard';
 import LeftSidebar from 'sections/futures/LeftSidebar/LeftSidebar';
 import MarketInfo from 'sections/futures/MarketInfo';
+import MarketHead from 'sections/futures/MarketInfo/MarketHead';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
 import FuturesUnsupportedNetwork from 'sections/futures/Trade/FuturesUnsupported';
 import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
@@ -33,7 +33,6 @@ import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
 type MarketComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
 const Market: MarketComponent = () => {
-	const { t } = useTranslation();
 	const router = useRouter();
 	const { walletAddress } = Connector.useContainer();
 	const futuresData = useFuturesData();
@@ -53,9 +52,7 @@ const Market: MarketComponent = () => {
 
 	return (
 		<FuturesContext.Provider value={futuresData}>
-			<Head>
-				<title>{t('futures.market.page-title', { pair: router.query.market })}</title>
-			</Head>
+			<MarketHead />
 			<CrossMarginOnboard onClose={() => setShowOnboard(false)} isOpen={showOnboard} />
 			<DesktopOnlyView>
 				<PageContent>

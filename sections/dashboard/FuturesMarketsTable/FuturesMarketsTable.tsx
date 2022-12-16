@@ -16,6 +16,7 @@ import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import { selectFuturesType, selectMarkets, selectMarketVolumes } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
+import { selectPrices } from 'state/prices/selectors';
 import { pastRatesState } from 'store/futures';
 import { getSynthDescription, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
@@ -28,33 +29,35 @@ const FuturesMarketsTable: FC = () => {
 	const pastRates = useRecoilValue(pastRatesState);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
 	const accountType = useAppSelector(selectFuturesType);
+	const prices = useAppSelector(selectPrices);
 
 	let data = useMemo(() => {
 		return futuresMarkets.map((market) => {
 			const description = getSynthDescription(market.asset, synthsMap, t);
 			const volume = futuresVolumes[market.marketKey]?.volume;
 			const pastPrice = pastRates.find((price) => price.synth === market.asset);
+			const marketPrice = prices[market.asset]?.offChain ?? prices[market.asset]?.onChain ?? wei(0);
 
 			return {
 				asset: market.asset,
 				market: market.marketName,
 				synth: synthsMap[market.asset],
 				description,
-				price: market.price,
+				price: marketPrice,
 				volume: volume?.toNumber() ?? 0,
 				pastPrice: pastPrice?.price,
-				priceChange: pastPrice?.price && market.price.sub(pastPrice?.price).div(market.price),
+				priceChange: pastPrice?.price && marketPrice.sub(pastPrice?.price).div(marketPrice),
 				fundingRate: market.currentFundingRate ?? null,
-				openInterest: market.marketSize.mul(market.price),
+				openInterest: market.marketSize.mul(marketPrice),
 				openInterestNative: market.marketSize,
-				longInterest: market.marketSize.add(market.marketSkew).div('2').abs().mul(market.price),
-				shortInterest: market.marketSize.sub(market.marketSkew).div('2').abs().mul(market.price),
+				longInterest: market.marketSize.add(market.marketSkew).div('2').abs().mul(marketPrice),
+				shortInterest: market.marketSize.sub(market.marketSkew).div('2').abs().mul(marketPrice),
 				marketSkew: market.marketSkew,
 				isSuspended: market.isSuspended,
 				marketClosureReason: market.marketClosureReason,
 			};
 		});
-	}, [synthsMap, futuresMarkets, pastRates, futuresVolumes, t]);
+	}, [synthsMap, futuresMarkets, pastRates, futuresVolumes, prices, t]);
 
 	return (
 		<>

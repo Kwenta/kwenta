@@ -42,8 +42,6 @@ export type FuturesMarket<T = Wei> = {
 	marketSkew: T;
 	marketSize: T;
 	maxLeverage: T;
-	priceOracle: T;
-	price: T;
 	minInitialMargin: T;
 	keeperDeposit: T;
 	isSuspended: boolean;
@@ -119,6 +117,11 @@ export interface FuturesMarketConfig {
 	key: FuturesMarketKey;
 	asset: FuturesMarketAsset;
 	supports: 'mainnet' | 'testnet' | 'both';
+	version: 1 | 2;
+	pythIds?: {
+		mainnet: string;
+		testnet: string;
+	};
 	disabled?: boolean;
 }
 
@@ -155,6 +158,24 @@ export enum PositionSide {
 	SHORT = 'short',
 }
 
+export enum OrderType {
+	MARKET = 0,
+	DELAYED = 1,
+	DELAYED_OFFCHAIN = 2,
+}
+
+export const OrderNameByType: Record<OrderType, string> = {
+	[OrderType.MARKET]: 'market',
+	[OrderType.DELAYED]: 'delayed',
+	[OrderType.DELAYED_OFFCHAIN]: 'delayed offchain',
+};
+
+export const OrderTypeByName: Record<string, OrderType> = {
+	market: OrderType.MARKET,
+	delayed: OrderType.DELAYED,
+	'delayed offchain': OrderType.DELAYED_OFFCHAIN,
+};
+
 export type FuturesFilledPosition<T = Wei> = {
 	canLiquidatePosition: boolean;
 	side: PositionSide;
@@ -179,6 +200,12 @@ export type FuturesPosition<T = Wei> = {
 	remainingMargin: T;
 	accessibleMargin: T;
 	position: FuturesFilledPosition<T> | null;
+};
+
+export type ModifyPositionOptions<T extends boolean> = {
+	delayed?: boolean;
+	offchain?: boolean;
+	estimationOnly?: T;
 };
 
 // This type exists to rename enum types from the subgraph to display-friendly types
@@ -213,10 +240,10 @@ export type FuturesOrder<T = Wei> = {
 
 export type DelayedOrder<T = Wei> = {
 	account: string;
-	asset: FuturesMarketAsset;
-	market: string;
+	asset?: FuturesMarketAsset;
+	market?: string;
 	marketAddress: string;
-	marketKey: FuturesMarketKey;
+	marketKey?: FuturesMarketKey;
 	size: T;
 	commitDeposit: T;
 	keeperDeposit: T;

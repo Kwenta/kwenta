@@ -114,18 +114,7 @@ export default function TradeConfirmationModal({
 			{
 				label: 'price impact',
 				value: `${formatPercent(potentialTradeDetails?.priceImpact ?? zeroBN)}`,
-				color: potentialTradeDetails?.priceImpact.gt(0)
-					? 'green'
-					: potentialTradeDetails?.priceImpact.lt(0)
-					? 'red'
-					: '',
-			},
-			{
-				label: 'slippage',
-				value: `${formatDollars(potentialTradeDetails?.slippageAmount ?? zeroBN)}`,
-				color: potentialTradeDetails?.slippageAmount.gt(0)
-					? 'green'
-					: potentialTradeDetails?.slippageAmount.lt(0)
+				color: potentialTradeDetails?.priceImpact.abs().gt(0.45) // TODO: Make this configurable
 					? 'red'
 					: '',
 			},

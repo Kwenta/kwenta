@@ -14,14 +14,15 @@ import {
 	FuturesPosition,
 	FuturesPotentialTradeDetails,
 	FuturesVolumes,
+	OrderTypeByName,
 	PositionSide,
 } from 'sdk/types/futures';
-import { calculateCrossMarginFee, serializePotentialTrade } from 'sdk/utils/futures';
+import { calculateCrossMarginFee, getMarketName, serializePotentialTrade } from 'sdk/utils/futures';
 import { unserializeGasPrice } from 'state/app/helpers';
 import { setOpenModal } from 'state/app/reducer';
 import { fetchBalances } from 'state/balances/actions';
-import { selectEthRate } from 'state/exchange/selectors';
 import { serializeWeiObject } from 'state/helpers';
+import { selectLatestEthPrice } from 'state/prices/selectors';
 import { AppDispatch, AppThunk, RootState } from 'state/store';
 import { ThunkConfig } from 'state/types';
 import { computeMarketFee } from 'utils/costCalculations';
@@ -78,12 +79,13 @@ import {
 	selectIsolatedPriceImpact,
 	selectKeeperEthBalance,
 	selectLeverageSide,
-	selectMarketAssetRate,
+	selectMarketPrice,
 	selectMarketInfo,
 	selectMarkets,
 	selectOrderType,
 	selectPosition,
 	selectTradeSizeInputs,
+	selectSkewAdjustedPrice,
 } from './selectors';
 import {
 	CancelDelayedOrderInputs,
@@ -261,10 +263,27 @@ export const fetchOpenOrders = createAsyncThunk<
 		throw new Error('No markets available');
 	}
 	// TODO: Make this multicall
-	const orders = await Promise.all(
-		markets.map((market) => sdk.futures.getDelayedOrder(account, market))
+	const orders: DelayedOrder[] = await Promise.all(
+		markets.map((market) => sdk.futures.getDelayedOrder(account, market.market))
 	);
-	const nonzeroOrders = orders.filter((o) => o.size.abs().gt(0));
+	const nonzeroOrders = orders
+		.filter((o) => o.size.abs().gt(0))
+		.map((o) => {
+			const market = markets.find((m) => m.market === o.marketAddress);
+			return {
+				...o,
+				marketKey: market?.marketKey,
+				marketAsset: market?.asset,
+				market: getMarketName(market?.asset ?? null),
+				executableAtTimestamp:
+					market && o.isOffchain // Manual fix for an incorrect
+						? o.submittedAtTimestamp +
+						  (o.isOffchain
+								? market.settings.offchainDelayedOrderMinAge * 1000
+								: market.settings.minDelayTimeDelta * 1000)
+						: o.executableAtTimestamp,
+			};
+		});
 	return {
 		orders: serializeDelayedOrders(nonzeroOrders),
 		account: account,
@@ -281,17 +300,22 @@ export const fetchIsolatedMarginTradePreview = createAsyncThunk<
 	async (sizeDelta, { dispatch, getState, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
 		const account = selectFuturesAccount(getState());
+		const price = selectMarketPrice(getState());
+		const skewAdjustedPrice = selectSkewAdjustedPrice(getState());
+		const orderType = selectOrderType(getState());
+
+		const orderTypeNum = OrderTypeByName[orderType];
+
 		if (!account) throw new Error('No account to fetch orders');
 		if (!marketInfo) throw new Error('No market info');
 		const leverageSide = selectLeverageSide(getState());
 		try {
-			const preview = await sdk.futures.getIsolatedTradePreview(
-				marketInfo?.market,
+			const preview = await sdk.futures.getIsolatedTradePreview(marketInfo?.market, orderTypeNum, {
 				sizeDelta,
-				marketInfo?.priceOracle,
-				marketInfo?.price,
-				leverageSide
-			);
+				price,
+				skewAdjustedPrice,
+				leverageSide,
+			});
 			return serializePotentialTrade(preview);
 		} catch (err) {
 			dispatch(handleIsolatedMarginPreviewError(err.message));
@@ -343,7 +367,7 @@ export const editCrossMarginSize = (size: string, currencyType: 'usd' | 'native'
 	getState
 ) => {
 	const leverage = selectCrossMarginSelectedLeverage(getState());
-	const assetRate = selectMarketAssetRate(getState());
+	const assetRate = selectMarketPrice(getState());
 	const orderPrice = selectCrossMarginOrderPrice(getState());
 	const isAdvancedOrder = selectIsAdvancedOrder(getState());
 	const price = isAdvancedOrder && Number(orderPrice) > 0 ? wei(orderPrice) : assetRate;
@@ -375,7 +399,7 @@ const stageCrossMarginSizeChange = createAsyncThunk<void, void, ThunkConfig>(
 	async (_, { dispatch, getState }) => {
 		const tradeInputs = selectCrossMarginTradeInputs(getState());
 		const fees = selectCrossMarginTradeFees(getState());
-		const rate = selectMarketAssetRate(getState());
+		const rate = selectMarketPrice(getState());
 		const price = selectCrossMarginOrderPrice(getState());
 		const leverage = selectCrossMarginSelectedLeverage(getState());
 		const position = selectPosition(getState());
@@ -404,7 +428,7 @@ export const editExistingPositionLeverage = createAsyncThunk<void, string, Thunk
 		const tradeInputs = selectCrossMarginTradeInputs(getState());
 		const fees = selectCrossMarginTradeFees(getState());
 		const position = selectPosition(getState());
-		const rate = selectMarketAssetRate(getState());
+		const rate = selectMarketPrice(getState());
 		const price = selectCrossMarginOrderPrice(getState());
 		dispatch(setCrossMarginLeverage(leverage));
 		const marginDelta = await calculateMarginDelta(
@@ -427,7 +451,7 @@ export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'nati
 	dispatch,
 	getState
 ) => {
-	const assetRate = selectMarketAssetRate(getState());
+	const assetRate = selectMarketPrice(getState());
 	const position = selectPosition(getState());
 	if (
 		!size ||
@@ -485,7 +509,7 @@ export const debouncedPrepareIsolatedMarginTradePreview = debounce((dispatch) =>
 }, 500);
 
 export const editTradeOrderPrice = (price: string): AppThunk => (dispatch, getState) => {
-	const rate = selectMarketAssetRate(getState());
+	const rate = selectMarketPrice(getState());
 	const orderType = selectOrderType(getState());
 	const side = selectLeverageSide(getState());
 	const inputs = selectCrossMarginTradeInputs(getState());
@@ -514,9 +538,10 @@ export const calculateCrossMarginFees = (): AppThunk => (dispatch, getState) => 
 	const keeperBalance = selectKeeperEthBalance(getState());
 	const settings = selectCrossMarginSettings(getState());
 	const dynamicFeeRate = selectDynamicFeeRate(getState());
-	const { susdSize, nativeSizeDelta } = selectCrossMarginTradeInputs(getState());
 
-	const staticRate = computeMarketFee(market, nativeSizeDelta);
+	const { susdSize, susdSizeDelta } = selectCrossMarginTradeInputs(getState());
+
+	const staticRate = computeMarketFee(market, susdSizeDelta);
 	const tradeFee = susdSize.mul(staticRate).add(susdSize.mul(dynamicFeeRate));
 
 	const currentDeposit =
@@ -541,9 +566,9 @@ export const calculateCrossMarginFees = (): AppThunk => (dispatch, getState) => 
 export const calculateIsolatedMarginFees = (): AppThunk => (dispatch, getState) => {
 	const market = selectMarketInfo(getState());
 	const dynamicFeeRate = selectDynamicFeeRate(getState());
-	const { susdSize, nativeSizeDelta } = selectCrossMarginTradeInputs(getState());
+	const { susdSize, susdSizeDelta } = selectIsolatedMarginTradeInputs(getState());
 
-	const staticRate = computeMarketFee(market, nativeSizeDelta);
+	const staticRate = computeMarketFee(market, susdSizeDelta);
 	const tradeFee = susdSize.mul(staticRate).add(susdSize.mul(dynamicFeeRate));
 	dispatch(setIsolatedMarginFee(tradeFee.toString()));
 };
@@ -552,7 +577,7 @@ export const prepareCrossMarginTradePreview = createAsyncThunk<void, void, Thunk
 	'futures/prepareCrossMarginTradePreview',
 	async (_, { getState, dispatch }) => {
 		const tradeInputs = selectCrossMarginTradeInputs(getState());
-		const assetPrice = selectMarketAssetRate(getState());
+		const assetPrice = selectMarketPrice(getState());
 		const orderPrice = selectCrossMarginOrderPrice(getState());
 		const marginDelta = selectCrossMarginMarginDelta(getState());
 
@@ -699,9 +724,11 @@ export const modifyIsolatedPosition = createAsyncThunk<
 				marketInfo.market,
 				wei(sizeDelta),
 				priceImpact,
-				delayed,
-				offchain,
-				false
+				{
+					delayed,
+					offchain,
+					estimationOnly: false,
+				}
 			);
 			dispatch(updateTransactionHash(tx.hash));
 			await tx.wait();
@@ -728,14 +755,11 @@ export const modifyIsolatedPositionEstimateGas = createAsyncThunk<
 		if (!marketInfo) throw new Error('Market info not found');
 		estimateGasInteralAction(
 			() =>
-				sdk.futures.modifyIsolatedMarginPosition(
-					marketInfo.market,
-					wei(sizeDelta),
-					priceImpact,
+				sdk.futures.modifyIsolatedMarginPosition(marketInfo.market, wei(sizeDelta), priceImpact, {
 					delayed,
 					offchain,
-					true
-				),
+					estimationOnly: true,
+				}),
 			'modify_isolated',
 			{ getState, dispatch }
 		);
@@ -828,7 +852,7 @@ const estimateGasInteralAction = async (
 	}
 ) => {
 	const { app } = config.getState();
-	const ethPrice = selectEthRate(config.getState());
+	const ethPrice = selectLatestEthPrice(config.getState());
 
 	try {
 		const limit = await gasLimitEstimate();

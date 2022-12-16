@@ -15,6 +15,7 @@ import LeverageInput from '../LeverageInput';
 import MarketInfoBox from '../MarketInfoBox';
 import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
+import DelayedOrderWarning from './DelayedOrderWarning';
 import ManagePosition from './ManagePosition';
 import TradePanelHeader from './TradePanelHeader';
 import TransferIsolatedMarginModal from './TransferIsolatedMarginModal';
@@ -53,7 +54,7 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 				}}
 			/>
 
-			{/* {orderType === 'next price' && <NextPrice />} TODO: Replace with any delayed order CTAs */}
+			{(orderType === 'delayed' || orderType === 'delayed offchain') && <DelayedOrderWarning />}
 
 			<PositionButtons
 				selected={leverageSide}

@@ -9,6 +9,7 @@ import {
 	ETH_ADDRESS,
 	ETH_COINGECKO_ADDRESS,
 } from 'constants/currency';
+import { Price, Prices } from 'sdk/types/prices';
 
 import { PriceResponse } from '../queries/coingecko/types';
 import { FuturesMarketKey } from './futures';
@@ -60,6 +61,34 @@ export const newGetExchangeRatesForCurrencies = (
 		rates[quote] === undefined
 		? wei(0)
 		: rates[base].div(rates[quote]);
+};
+
+export const getPricesForCurrencies = (
+	rates: Prices | null,
+	base: CurrencyKey | FuturesMarketKey | string | null,
+	quote: CurrencyKey | FuturesMarketKey | null
+): Price => {
+	base = new Set([
+		FuturesMarketKey.sAPE,
+		FuturesMarketKey.sDYDX,
+		FuturesMarketKey.sXAU,
+		FuturesMarketKey.sXAG,
+	]).has(base as FuturesMarketKey)
+		? synthToAsset(base as CurrencyKey)
+		: base;
+	if (!rates || !base || !quote || !rates[base] || !rates[quote]) {
+		return {
+			offChain: wei(0),
+			onChain: wei(0),
+		};
+	}
+	const hasOnChain = !!rates[base]?.onChain && !!rates[quote]?.onChain;
+	const hasOffChain = !!rates[base]?.offChain && !!rates[quote]?.offChain;
+
+	return {
+		onChain: hasOnChain ? rates[base].onChain!.div(rates[quote].onChain!) : wei(0),
+		offChain: hasOffChain ? rates[base].offChain!.div(rates[quote].offChain!) : wei(0),
+	};
 };
 
 export const newGetExchangeRatesTupleForCurrencies = (

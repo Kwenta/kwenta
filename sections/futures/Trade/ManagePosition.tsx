@@ -13,7 +13,7 @@ import { changeLeverageSide, editTradeSizeInput } from 'state/futures/actions';
 import {
 	selectMarketInfo,
 	selectIsMarketCapReached,
-	selectMarketAssetRate,
+	selectMarketPrice,
 	selectPlaceOrderTranslationKey,
 	selectPosition,
 	selectMaxLeverage,
@@ -67,7 +67,7 @@ const ManagePosition: React.FC = () => {
 	const isMarketCapReached = useAppSelector(selectIsMarketCapReached);
 	const placeOrderTranslationKey = useAppSelector(selectPlaceOrderTranslationKey);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
-	const marketAssetRate = useAppSelector(selectMarketAssetRate);
+	const marketAssetRate = useAppSelector(selectMarketPrice);
 	const isAdvancedOrder = useAppSelector(selectIsAdvancedOrder);
 	const openModal = useAppSelector(selectOpenModal);
 	const marketInfo = useAppSelector(selectMarketInfo);

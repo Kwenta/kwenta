@@ -5,7 +5,6 @@ import styled, { css } from 'styled-components';
 
 import Badge from 'components/Badge';
 import Currency from 'components/Currency';
-import { MiniLoader } from 'components/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
@@ -17,7 +16,6 @@ import { DelayedOrder } from 'sdk/types/futures';
 import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
 import { selectMarketAsset, selectMarkets, selectOpenOrders } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatTimer } from 'utils/formatters/date';
 import { formatCurrency, formatDollars, suggestedDecimals } from 'utils/formatters/number';
 import { FuturesMarketKey, getDisplayAsset } from 'utils/futures';
 
@@ -49,12 +47,13 @@ const OpenOrdersTable: React.FC = () => {
 	const rowsData = useMemo(() => {
 		const ordersWithCancel = openOrders
 			.map((o) => {
-				const market = futuresMarkets.find((m) => m.marketKey === o.marketKey);
-				const timer = countdownTimers ? countdownTimers[o.marketKey] : null;
+				const market = futuresMarkets.find((m) => m.market === o.marketAddress);
+				const asset = o?.asset ?? '';
+				const timer = countdownTimers && o.marketKey ? countdownTimers[o.marketKey] : null;
 				const order = {
 					...o,
-					sizeTxt: formatCurrency(o.asset, o.size.abs(), {
-						currencyKey: getDisplayAsset(o.asset) ?? '',
+					sizeTxt: formatCurrency(asset, o.size.abs(), {
+						currencyKey: getDisplayAsset(asset) ?? '',
 						minDecimals: suggestedDecimals(o.size),
 					}),
 					timeToExecution: timer?.timeToExecution,
@@ -64,12 +63,18 @@ const OpenOrdersTable: React.FC = () => {
 						timer &&
 						market?.settings &&
 						timer.timeToExecution === 0 &&
-						timer.timePastExecution > market.settings.maxDelayTimeDelta,
+						timer.timePastExecution >
+							(o.isOffchain
+								? market.settings.offchainDelayedOrderMaxAge
+								: market.settings.maxDelayTimeDelta),
 					isExecutable:
 						timer &&
 						market?.settings &&
 						timer.timeToExecution === 0 &&
-						timer.timePastExecution <= market.settings.offchainDelayedOrderMaxAge,
+						timer.timePastExecution <=
+							(o.isOffchain
+								? market.settings.offchainDelayedOrderMaxAge
+								: market.settings.maxDelayTimeDelta),
 					totalDeposit: o.commitDeposit.add(o.keeperDeposit),
 					onCancel: () => {
 						dispatch(
@@ -96,7 +101,7 @@ const OpenOrdersTable: React.FC = () => {
 	}, [openOrders, futuresMarkets, marketAsset, countdownTimers, dispatch]);
 
 	useEffect(() => {
-		const timer = setTimeout(() => {
+		const timer = setInterval(() => {
 			const newCountdownTimers = rowsData.reduce((acc, order) => {
 				const timeToExecution =
 					Math.floor((order.executableAtTimestamp - Date.now()) / 1000) +
@@ -104,7 +109,7 @@ const OpenOrdersTable: React.FC = () => {
 				const timePastExecution = Math.floor((Date.now() - order.executableAtTimestamp) / 1000);
 
 				// Only updated delayed orders
-				if (!order.isOffchain) {
+				if (order.marketKey) {
 					acc[order.marketKey] = {
 						timeToExecution: Math.max(timeToExecution, 0),
 						timePastExecution: Math.max(timePastExecution, 0),
@@ -115,7 +120,7 @@ const OpenOrdersTable: React.FC = () => {
 			setCountdownTimers(newCountdownTimers);
 		}, 1000);
 
-		return () => clearTimeout(timer);
+		return () => clearInterval(timer);
 	});
 
 	return (
@@ -153,19 +158,18 @@ const OpenOrdersTable: React.FC = () => {
 										</IconContainer>
 										<StyledText>
 											{cellProps.row.original.market}
-											{/* TODO: Do we enable this expired badge?
 											{cellProps.row.original.isStale && (
 												<ExpiredBadge color="red">
 													{t('futures.market.user.open-orders.badges.expired')}
 												</ExpiredBadge>
-											)} */}
+											)}
 										</StyledText>
 										<StyledValue>{cellProps.row.original.orderType}</StyledValue>
 									</MarketContainer>
 								);
 							},
 							sortable: true,
-							width: 50,
+							width: 60,
 						},
 						{
 							Header: (
@@ -182,7 +186,7 @@ const OpenOrdersTable: React.FC = () => {
 								);
 							},
 							sortable: true,
-							width: 50,
+							width: 40,
 						},
 						{
 							Header: (
@@ -218,30 +222,23 @@ const OpenOrdersTable: React.FC = () => {
 						{
 							Header: (
 								<StyledTableHeader>
-									{t('futures.market.user.open-orders.table.actions')}
+									{t('futures.market.user.open-orders.table.status')}
 								</StyledTableHeader>
 							),
 							accessor: 'actions',
 							Cell: (cellProps: CellProps<any>) => {
 								return (
-									<div style={{ display: 'flex' }}>
-										<CancelButton onClick={cellProps.row.original.onCancel}>
-											{t('futures.market.user.open-orders.actions.cancel')}
-										</CancelButton>
-										{cellProps.row.original.show && !cellProps.row.original.isStale && (
-											<EditButton
-												disabled={!cellProps.row.original.isExecutable}
-												onClick={cellProps.row.original.onExecute}
-											>
-												{cellProps.row.original.isExecutable ? (
-													t('futures.market.user.open-orders.actions.execute')
-												) : !!cellProps.row.original.timeToExecution &&
-												  cellProps.row.original.timeToExecution >= 0 ? (
-													formatTimer(cellProps.row.original.timeToExecution)
-												) : (
-													<MiniLoader centered />
-												)}
-											</EditButton>
+									<div style={{ display: 'flex', alignItems: 'center' }}>
+										{cellProps.row.original.show &&
+											(cellProps.row.original.isStale ? (
+												<div>{t('futures.market.user.open-orders.status.expired')}</div>
+											) : (
+												<div>{t('futures.market.user.open-orders.status.pending')}</div>
+											))}
+										{cellProps.row.original.show && cellProps.row.original.isStale && (
+											<CancelButton onClick={cellProps.row.original.onCancel}>
+												{t('futures.market.user.open-orders.actions.cancel')}
+											</CancelButton>
 										)}
 									</div>
 								);
@@ -373,6 +370,7 @@ const EditButton = styled.button`
 
 const CancelButton = styled(EditButton)`
 	opacity: ${(props) => (props.disabled ? 0.4 : 1)};
+	margin-left: 8px;
 	border: 1px solid ${(props) => props.theme.colors.selectedTheme.red};
 	color: ${(props) => props.theme.colors.selectedTheme.red};
 	margin-right: 8px;
