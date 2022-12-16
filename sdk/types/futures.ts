@@ -42,8 +42,6 @@ export type FuturesMarket<T = Wei> = {
 	marketSkew: T;
 	marketSize: T;
 	maxLeverage: T;
-	priceOracle: T;
-	price: T;
 	minInitialMargin: T;
 	keeperDeposit: T;
 	isSuspended: boolean;
@@ -119,6 +117,11 @@ export interface FuturesMarketConfig {
 	key: FuturesMarketKey;
 	asset: FuturesMarketAsset;
 	supports: 'mainnet' | 'testnet' | 'both';
+	version: 1 | 2;
+	pythIds?: {
+		mainnet: string;
+		testnet: string;
+	};
 	disabled?: boolean;
 }
 

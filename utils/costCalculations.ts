@@ -7,22 +7,19 @@ import { zeroBN } from './formatters/number';
 
 export const computeDelayedOrderFee = (
 	market: FuturesMarket | undefined,
-	sizeDelta: Wei,
+	susdSizeDelta: Wei,
 	isOffchain: boolean
 ) => {
 	if (
 		!market?.marketSkew ||
-		!market?.price ||
 		!market?.feeRates.takerFeeDelayedOrder ||
 		!market?.feeRates.makerFeeDelayedOrder ||
 		!market?.feeRates.takerFeeOffchainDelayedOrder ||
 		!market?.feeRates.makerFeeOffchainDelayedOrder ||
-		!sizeDelta
+		!susdSizeDelta
 	) {
 		return { commitDeposit: undefined, delayedOrderFee: undefined };
 	}
-
-	const notionalDiff = sizeDelta.mul(market.price);
 
 	const makerFee = isOffchain
 		? market.feeRates.makerFeeOffchainDelayedOrder
@@ -30,28 +27,27 @@ export const computeDelayedOrderFee = (
 	const takerFee = isOffchain
 		? market.feeRates.takerFeeOffchainDelayedOrder
 		: market.feeRates.takerFeeDelayedOrder;
-	const staticRate = sameSide(notionalDiff, market.marketSkew) ? takerFee : makerFee;
+	const staticRate = sameSide(susdSizeDelta, market.marketSkew) ? takerFee : makerFee;
 	return {
-		commitDeposit: notionalDiff.mul(staticRate).abs(),
-		delayedOrderFee: notionalDiff.mul(staticRate).abs(),
+		commitDeposit: susdSizeDelta.mul(staticRate).abs(),
+		delayedOrderFee: susdSizeDelta.mul(staticRate).abs(),
 	};
 };
 
 export const computeOrderFee = (
 	market: FuturesMarket | undefined,
-	sizeDelta: Wei,
+	susdSizeDelta: Wei,
 	orderType: FuturesOrderType
 ) => {
 	if (
 		!market?.marketSkew ||
-		!market?.price ||
 		!market?.feeRates.takerFee ||
 		!market?.feeRates.makerFee ||
 		!market?.feeRates.takerFeeDelayedOrder ||
 		!market?.feeRates.makerFeeDelayedOrder ||
 		!market?.feeRates.takerFeeOffchainDelayedOrder ||
 		!market?.feeRates.makerFeeOffchainDelayedOrder ||
-		!sizeDelta
+		!susdSizeDelta
 	) {
 		return {
 			orderFee: zeroBN,
@@ -73,28 +69,24 @@ export const computeOrderFee = (
 			? market.feeRates.takerFeeDelayedOrder
 			: market.feeRates.takerFee;
 
-	const notionalDiff = sizeDelta.mul(market.price);
 	return {
-		orderFee: sameSide(notionalDiff, market.marketSkew) ? takerFee : makerFee,
+		orderFee: sameSide(susdSizeDelta, market.marketSkew) ? takerFee : makerFee,
 		makerFee,
 		takerFee,
 	};
 };
 
-export const computeMarketFee = (market: FuturesMarket | undefined, sizeDelta: Wei) => {
+export const computeMarketFee = (market: FuturesMarket | undefined, usdSizeDelta: Wei) => {
 	if (
 		!market?.marketSkew ||
-		!market?.price ||
 		!market?.feeRates.takerFee ||
 		!market?.feeRates.makerFee ||
-		!sizeDelta
+		!usdSizeDelta
 	) {
 		return zeroBN;
 	}
 
-	const notionalDiff = sizeDelta.mul(market.price);
-
-	if (sameSide(notionalDiff, market.marketSkew)) {
+	if (sameSide(usdSizeDelta, market.marketSkew)) {
 		return market.feeRates.takerFee;
 	} else {
 		return market.feeRates.makerFee;

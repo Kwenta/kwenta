@@ -2,13 +2,12 @@ import { createSelector } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
 
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
-import { Rates } from 'queries/rates/types';
 import { selectTotalUSDBalanceWei } from 'state/balances/selectors';
 import { sdk } from 'state/config';
+import { selectPrices } from 'state/prices/selectors';
 import type { RootState } from 'state/store';
 import { FetchStatus } from 'state/types';
 import { selectIsWalletConnected } from 'state/wallet/selectors';
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { toWei, zeroBN } from 'utils/formatters/number';
 
 export const selectTokenList = (state: RootState) => state.exchange.tokenList;
@@ -88,6 +87,8 @@ export const selectBaseBalanceWei = createSelector(
 	}
 );
 
+// TODO: Should probably resolve these from state of prices
+// and asset rather than storing the price on state directly
 export const selectQuotePriceRateWei = createSelector(
 	(state: RootState) => state.exchange.quotePriceRate,
 	(quotePriceRate) => toWei(quotePriceRate)
@@ -213,23 +214,7 @@ export const selectIsSubmissionDisabled = createSelector(
 	(submissionDisabledReason) => !!submissionDisabledReason
 );
 
-export const selectExchangeRates = createSelector(
-	(state: RootState) => state.exchange.exchangeRates,
-	(exchangeRates) =>
-		Object.entries(exchangeRates).reduce((acc, [key, value]) => {
-			acc[key] = wei(value);
-			return acc;
-		}, {} as Rates)
-);
-
-export const selectUsdRateWei = createSelector(
-	selectExchangeRates,
-	(exchangeRates) => exchangeRates['sUSD']
-);
-
-export const selectEthRate = createSelector(selectExchangeRates, (exchangeRates) =>
-	newGetExchangeRatesForCurrencies(exchangeRates, 'sETH', 'sUSD')
-);
+export const selectUsdRateWei = createSelector(selectPrices, (prices) => prices['sUSD'].onChain);
 
 export const selectTotalTradePrice = createSelector(
 	selectQuoteAmountWei,

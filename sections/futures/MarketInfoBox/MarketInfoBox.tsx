@@ -6,27 +6,24 @@ import InfoBox from 'components/InfoBox';
 import PreviewArrow from 'components/PreviewArrow';
 import { FuturesPotentialTradeDetails } from 'sdk/types/futures';
 import {
-	selectLeverageSide,
+	selectDelayedOrderFee,
 	selectMarketInfo,
 	selectMaxLeverage,
 	selectOrderType,
 	selectPosition,
 	selectTradePreview,
-	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { computeDelayedOrderFee } from 'utils/costCalculations';
 import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 const MarketInfoBox: React.FC = () => {
 	const orderType = useAppSelector(selectOrderType);
-	const leverageSide = useAppSelector(selectLeverageSide);
-	const { nativeSize, nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
 	const potentialTrade = useAppSelector(selectTradePreview);
 
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const position = useAppSelector(selectPosition);
 	const maxLeverage = useAppSelector(selectMaxLeverage);
+	const { commitDeposit } = useAppSelector(selectDelayedOrderFee);
 
 	const totalMargin = position?.remainingMargin ?? zeroBN;
 	const availableMargin = position?.accessibleMargin ?? zeroBN;
@@ -42,25 +39,6 @@ const MarketInfoBox: React.FC = () => {
 	]);
 
 	const isDelayedOrder = useMemo(() => orderType === 'delayed', [orderType]);
-
-	const positionSize = position?.position?.size ? wei(position?.position?.size) : zeroBN;
-	const orderDetails = useMemo(() => {
-		return {
-			newSize: nativeSize,
-			size: (positionSize ?? zeroBN).add(nativeSizeDelta).abs(),
-		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [leverageSide, positionSize]);
-
-	const { commitDeposit } = useMemo(
-		() =>
-			computeDelayedOrderFee(
-				marketInfo,
-				wei(orderDetails.newSize),
-				orderType === 'delayed offchain'
-			),
-		[marketInfo, orderDetails, orderType]
-	);
 
 	const totalDeposit = useMemo(() => {
 		return (commitDeposit ?? zeroBN).add(marketInfo?.keeperDeposit ?? zeroBN);

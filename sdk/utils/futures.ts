@@ -1,3 +1,4 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 import { parseBytes32String } from 'ethers/lib/utils.js';
@@ -373,3 +374,9 @@ export const calculateCrossMarginFee = (
 		orderType === 'limit' ? feeRates.limitOrderFee : feeRates.stopOrderFee;
 	return susdSize.mul(advancedOrderFeeRate);
 };
+
+export const getPythNetworkUrl = (networkId: NetworkId) => {
+	return networkId === 420 ? 'https://xc-testnet.pyth.network' : 'https://xc-mainnet.pyth.network';
+};
+
+export const normalizePythId = (id: string) => (id.startsWith('0x') ? id : '0x' + id);

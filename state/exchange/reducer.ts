@@ -53,7 +53,6 @@ const initialState: ExchangeState = {
 	txError: undefined,
 	isApproved: undefined,
 	allowance: undefined,
-	exchangeRates: {},
 };
 
 const exchangeSlice = createSlice({
@@ -119,9 +118,6 @@ const exchangeSlice = createSlice({
 		},
 		setAllowance: (state, action) => {
 			state.allowance = action.payload;
-		},
-		setExchangeRates: (state, action) => {
-			state.exchangeRates = action.payload;
 		},
 	},
 	extraReducers: (builder) => {

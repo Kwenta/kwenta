@@ -11,6 +11,7 @@ import { getDisplayAsset } from 'sdk/utils/futures';
 import { setOpenModal } from 'state/app/reducer';
 import { modifyIsolatedPosition, modifyIsolatedPositionEstimateGas } from 'state/futures/actions';
 import {
+	selectDelayedOrderFee,
 	selectIsModifyingIsolatedPosition,
 	selectLeverageSide,
 	selectMarketAsset,
@@ -25,7 +26,6 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { FlexDivCentered } from 'styles/common';
-import { computeDelayedOrderFee } from 'utils/costCalculations';
 import { zeroBN, formatCurrency, formatDollars, formatPercent } from 'utils/formatters/number';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
@@ -47,6 +47,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 	const potentialTradeDetails = useAppSelector(selectTradePreview);
 	const previewStatus = useAppSelector(selectTradePreviewStatus);
 	const orderType = useAppSelector(selectOrderType);
+	const { commitDeposit, delayedOrderFee } = useAppSelector(selectDelayedOrderFee);
 
 	useEffect(() => {
 		dispatch(
@@ -63,12 +64,6 @@ const DelayedOrderConfirmationModal: FC = () => {
 	const orderDetails = useMemo(() => {
 		return { nativeSizeDelta, size: (positionSize ?? zeroBN).add(nativeSizeDelta).abs() };
 	}, [nativeSizeDelta, positionSize]);
-
-	// TODO: check these fees
-	const { commitDeposit, delayedOrderFee } = useMemo(
-		() => computeDelayedOrderFee(marketInfo, nativeSizeDelta, orderType === 'delayed offchain'),
-		[marketInfo, nativeSizeDelta, orderType]
-	);
 
 	// TODO: check this deposit
 	const totalDeposit = useMemo(() => {

@@ -6,6 +6,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import {
 	selectCrossMarginSettings,
 	selectCrossMarginTradeFees,
+	selectDelayedOrderFee,
 	selectFuturesType,
 	selectIsolatedMarginFee,
 	selectMarketInfo,
@@ -13,32 +14,28 @@ import {
 	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { computeDelayedOrderFee, computeOrderFee } from 'utils/costCalculations';
+import { computeOrderFee } from 'utils/costCalculations';
 import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 const FeeInfoBox: React.FC = () => {
 	const orderType = useAppSelector(selectOrderType);
 	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
 	const isolatedMarginFee = useAppSelector(selectIsolatedMarginFee);
-	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
+	const { nativeSizeDelta, susdSizeDelta } = useAppSelector(selectTradeSizeInputs);
 	const accountType = useAppSelector(selectFuturesType);
 	const { tradeFee: crossMarginTradeFeeRate, limitOrderFee, stopOrderFee } = useAppSelector(
 		selectCrossMarginSettings
 	);
 	const marketInfo = useAppSelector(selectMarketInfo);
-
-	const { commitDeposit } = useMemo(
-		() => computeDelayedOrderFee(marketInfo, nativeSizeDelta, orderType === 'delayed offchain'),
-		[marketInfo, orderType, nativeSizeDelta]
-	);
+	const { commitDeposit } = useAppSelector(selectDelayedOrderFee);
 
 	const totalDeposit = useMemo(() => {
 		return (commitDeposit ?? zeroBN).add(marketInfo?.keeperDeposit ?? zeroBN);
 	}, [commitDeposit, marketInfo?.keeperDeposit]);
 
 	const { orderFee, makerFee, takerFee } = useMemo(
-		() => computeOrderFee(marketInfo, nativeSizeDelta, orderType),
-		[marketInfo, nativeSizeDelta, orderType]
+		() => computeOrderFee(marketInfo, susdSizeDelta, orderType),
+		[marketInfo, susdSizeDelta, orderType]
 	);
 
 	const orderFeeRate = useMemo(
