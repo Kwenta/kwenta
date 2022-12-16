@@ -21,7 +21,6 @@ import { ATOMIC_EXCHANGE_SLIPPAGE } from 'constants/exchange';
 import { CG_BASE_API_URL } from 'queries/coingecko/constants';
 import { PriceResponse } from 'queries/coingecko/types';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
-import { Rates } from 'queries/rates/types';
 import { getProxySynthSymbol } from 'queries/synths/utils';
 import { getEthGasPrice } from 'sdk/common/gas';
 import erc20Abi from 'sdk/contracts/abis/ERC20.json';
@@ -55,10 +54,13 @@ export default class ExchangeService {
 	private tokenList: Token[] = [];
 	private allTokensMap: any;
 	private sdk: KwentaSDK;
-	private exchangeRates: Rates = {};
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
+	}
+
+	get exchangeRates() {
+		return this.sdk.prices.currentPrices.onChain;
 	}
 
 	public getTxProvider(baseCurrencyKey: string, quoteCurrencyKey: string) {
@@ -924,7 +926,7 @@ export default class ExchangeService {
 					this.getAtomicRates(baseCurrencyKey),
 			  ])
 			: newGetExchangeRatesTupleForCurrencies(
-					this.exchangeRates,
+					this.sdk.prices.currentPrices.onChain,
 					quoteCurrencyKey,
 					baseCurrencyKey
 			  );

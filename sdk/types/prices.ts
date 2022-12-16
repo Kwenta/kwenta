@@ -9,9 +9,12 @@ export type Price<T = Wei> = {
 	offChain?: T | undefined;
 	onChain?: T | undefined;
 };
+
+type AssetKey = FuturesMarketAsset | 'sUSD';
+
 export type Prices<T = Wei> = Record<string, Price<T>>;
 
-export type PricesMap<T = Wei> = Partial<Record<FuturesMarketAsset, T>>;
+export type PricesMap<T = Wei> = Partial<Record<AssetKey, T>>;
 
 export type PriceType = 'on_chain' | 'off_chain';
 

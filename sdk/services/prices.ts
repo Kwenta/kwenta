@@ -51,6 +51,13 @@ export default class PricesService {
 		});
 	}
 
+	get currentPrices() {
+		return {
+			onChain: this.onChainPrices,
+			offChain: this.offChainPrices,
+		};
+	}
+
 	get pythIds() {
 		return this.sdk.context.isMainnet ? PYTH_IDS.mainnet : PYTH_IDS.testnet;
 	}
