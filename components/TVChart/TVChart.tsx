@@ -64,7 +64,6 @@ export function TVChart({
 	const _liquidationLine = useRef<IPositionLineAdapter | null | undefined>(null);
 	const _oderLineRefs = useRef<IPositionLineAdapter[]>([]);
 	const _toggleLinesButton = useRef<HTMLElement | null>(null);
-	const _intervalId = useRef<number | null>(null);
 	const _toggleListener = useRef<(() => void) | null>(null);
 	const _priceListener = useRef<PricesListener | undefined>();
 
@@ -92,9 +91,6 @@ export function TVChart({
 
 	useEffect(() => {
 		return () => {
-			if (_intervalId.current) {
-				clearInterval(_intervalId.current);
-			}
 			if (_priceListener.current) {
 				sdk.prices.removePricesListener(_priceListener.current);
 			}
@@ -206,9 +202,6 @@ export function TVChart({
 				_widget.current.remove();
 				_widget.current = null;
 			}
-			if (_intervalId.current) {
-				clearInterval(_intervalId.current);
-			}
 			if (_priceListener.current) {
 				sdk.prices.removePricesListener(_priceListener.current);
 			}
@@ -309,11 +302,7 @@ export function TVChart({
 		});
 	}, [marketAsset]);
 
-	const onSubscribe = useCallback((newIntervalId: number, priceListener: PricesListener) => {
-		if (_intervalId.current) {
-			clearInterval(_intervalId.current);
-		}
-		_intervalId.current = newIntervalId;
+	const onSubscribe = useCallback((priceListener: PricesListener) => {
 		_priceListener.current = priceListener;
 	}, []);
 

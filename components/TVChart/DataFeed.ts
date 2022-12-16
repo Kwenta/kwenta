@@ -15,7 +15,6 @@ import { PricesListener } from 'sdk/types/prices';
 import { combineDataToPair } from 'sections/exchange/TradeCard/Charts/hooks/useCombinedCandleSticksChartData';
 import { sdk } from 'state/config';
 import { getDisplayAsset } from 'utils/futures';
-import logError from 'utils/logError';
 
 import { ChartBar } from './types';
 import { resolutionToSeconds } from './utils';
@@ -134,7 +133,11 @@ const updateBar = (bar: ChartBar, price: number) => {
 	};
 };
 
-const subscribeOffChainPrices = (asset: FuturesMarketAsset, onTick: SubscribeBarsCallback) => {
+const subscribeOffChainPrices = (
+	asset: FuturesMarketAsset,
+	resolution: ResolutionString,
+	onTick: SubscribeBarsCallback
+) => {
 	if (_pricesListener.current) {
 		sdk.prices.removePricesListener(_pricesListener.current);
 	}
@@ -146,7 +149,30 @@ const subscribeOffChainPrices = (asset: FuturesMarketAsset, onTick: SubscribeBar
 				const priceNum = price.toNumber();
 				if (_latestChartBar.current && priceNum !== _latestChartBar.current.bar.close) {
 					const updatedBar = updateBar(_latestChartBar.current.bar, priceNum);
-					onTick(updatedBar);
+					const resolutionMs = resolutionToSeconds(resolution) * 1000;
+					const timeSinceUpdate = Date.now() - updatedBar.time;
+
+					if (timeSinceUpdate > resolutionMs) {
+						const lastClose = _latestChartBar.current.bar.close;
+						const latestBar = {
+							high: lastClose,
+							low: lastClose,
+							open: lastClose,
+							close: lastClose,
+							time: Date.now(),
+						};
+						onTick(latestBar);
+						_latestChartBar.current = {
+							bar: latestBar,
+							asset: asset,
+						};
+					} else {
+						onTick(updatedBar);
+						_latestChartBar.current = {
+							bar: updatedBar,
+							asset: asset,
+						};
+					}
 				}
 			}
 		}
@@ -156,59 +182,9 @@ const subscribeOffChainPrices = (asset: FuturesMarketAsset, onTick: SubscribeBar
 	return listener;
 };
 
-const subscribeLastCandle = (
-	base: string,
-	quote: string,
-	resolution: ResolutionString,
-	networkId: number,
-	onTick: SubscribeBarsCallback
-): void => {
-	try {
-		fetchLastCandle(base, quote, resolution, networkId).then((bars) => {
-			const chartBar = bars.map((b) => {
-				return {
-					high: b.high,
-					low: b.low,
-					open: b.open,
-					close: b.close,
-					time: b.timestamp * 1000,
-				};
-			})[0];
-			if (chartBar) {
-				// Only create a new candle from on chain price and let
-				// offchain price handle updating prices within latest candle
-				const resolutionMs = resolutionToSeconds(resolution) * 1000;
-				if (Date.now() - chartBar.time > resolutionMs * 2.1) {
-					const latestBar = {
-						high: chartBar.close,
-						low: chartBar.close,
-						open: chartBar.close,
-						close: chartBar.close,
-						time: (Math.floor(Date.now() / resolutionMs) - 1) * resolutionMs,
-					};
-					onTick(latestBar);
-					_latestChartBar.current = {
-						bar: latestBar,
-						asset: base,
-					};
-				} else {
-					_latestChartBar.current = {
-						bar: chartBar,
-						asset: base,
-					};
-				}
-			}
-		});
-	} catch (err) {
-		logError(err);
-	}
-};
-
-let listener: PricesListener | undefined = undefined;
-
 const DataFeedFactory = (
 	networkId: number,
-	onSubscribe: (intervalId: number, priceListener: PricesListener) => void
+	onSubscribe: (priceListener: PricesListener) => void
 ): IBasicDataFeed => {
 	_latestChartBar.current = undefined;
 	return {
@@ -259,6 +235,14 @@ const DataFeedFactory = (
 							time: b.timestamp * 1000,
 						};
 					});
+					const latestBar = chartBars[chartBars.length - 1];
+					if (latestBar && latestBar.time > (_latestChartBar.current?.bar.time ?? 0)) {
+						_latestChartBar.current = {
+							bar: chartBars[chartBars.length - 1],
+							asset: base,
+						};
+					}
+
 					onHistoryCallback(chartBars, { noData: !chartBars.length });
 				});
 			} catch (err) {
@@ -314,14 +298,9 @@ const DataFeedFactory = (
 				}
 			});
 
-			// subscribe to new candles
-			const intervalId = setInterval(() => {
-				subscribeLastCandle(base, quote, _resolution, networkId, onTick);
-			}, 10000);
-
 			// subscribe to off chain prices
-			listener = subscribeOffChainPrices(base as FuturesMarketAsset, onTick);
-			onSubscribe(intervalId, listener);
+			const listener = subscribeOffChainPrices(base as FuturesMarketAsset, _resolution, onTick);
+			onSubscribe(listener);
 		},
 		unsubscribeBars: () => {},
 		searchSymbols: (
