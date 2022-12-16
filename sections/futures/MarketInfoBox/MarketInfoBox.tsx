@@ -53,8 +53,13 @@ const MarketInfoBox: React.FC = () => {
 	}, [leverageSide, positionSize]);
 
 	const { commitDeposit } = useMemo(
-		() => computeDelayedOrderFee(marketInfo, wei(orderDetails.newSize)),
-		[marketInfo, orderDetails]
+		() =>
+			computeDelayedOrderFee(
+				marketInfo,
+				wei(orderDetails.newSize),
+				orderType === 'delayed offchain'
+			),
+		[marketInfo, orderDetails, orderType]
 	);
 
 	const totalDeposit = useMemo(() => {

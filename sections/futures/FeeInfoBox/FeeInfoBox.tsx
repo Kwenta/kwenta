@@ -13,7 +13,7 @@ import {
 	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { computeDelayedOrderFee, computeMarketFee } from 'utils/costCalculations';
+import { computeDelayedOrderFee, computeOrderFee } from 'utils/costCalculations';
 import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 const FeeInfoBox: React.FC = () => {
@@ -26,25 +26,20 @@ const FeeInfoBox: React.FC = () => {
 		selectCrossMarginSettings
 	);
 	const marketInfo = useAppSelector(selectMarketInfo);
-	const feeRates = useMemo(() => marketInfo?.feeRates, [marketInfo]);
 
-	const { commitDeposit, delayedOrderFee } = useMemo(
-		() => computeDelayedOrderFee(marketInfo, nativeSizeDelta),
-		[marketInfo, nativeSizeDelta]
+	const { commitDeposit } = useMemo(
+		() => computeDelayedOrderFee(marketInfo, nativeSizeDelta, orderType === 'delayed offchain'),
+		[marketInfo, orderType, nativeSizeDelta]
 	);
 
 	const totalDeposit = useMemo(() => {
 		return (commitDeposit ?? zeroBN).add(marketInfo?.keeperDeposit ?? zeroBN);
 	}, [commitDeposit, marketInfo?.keeperDeposit]);
 
-	const nextPriceDiscount = useMemo(() => {
-		return (delayedOrderFee ?? zeroBN).sub(commitDeposit ?? zeroBN);
-	}, [commitDeposit, delayedOrderFee]);
-
-	const staticRate = useMemo(() => computeMarketFee(marketInfo, nativeSizeDelta), [
-		marketInfo,
-		nativeSizeDelta,
-	]);
+	const { orderFee, makerFee, takerFee } = useMemo(
+		() => computeOrderFee(marketInfo, nativeSizeDelta, orderType),
+		[marketInfo, nativeSizeDelta, orderType]
+	);
 
 	const orderFeeRate = useMemo(
 		() =>
@@ -56,13 +51,11 @@ const FeeInfoBox: React.FC = () => {
 		() => (
 			<>
 				{nativeSizeDelta.abs().gt(0)
-					? formatPercent(staticRate ?? zeroBN)
-					: `${formatPercent(feeRates?.makerFee ?? zeroBN)} / ${formatPercent(
-							feeRates?.takerFee ?? zeroBN
-					  )}`}
+					? formatPercent(orderFee ?? zeroBN)
+					: `${formatPercent(makerFee ?? zeroBN)} / ${formatPercent(takerFee ?? zeroBN)}`}
 			</>
 		),
-		[feeRates, staticRate, nativeSizeDelta]
+		[orderFee, makerFee, takerFee, nativeSizeDelta]
 	);
 
 	const feesInfo = useMemo<Record<string, DetailedInfo | null | undefined>>(() => {
@@ -115,14 +108,16 @@ const FeeInfoBox: React.FC = () => {
 					value: !!commitDeposit
 						? formatDollars(commitDeposit, { minDecimals: commitDeposit.lt(0.01) ? 4 : 2 })
 						: NO_VALUE,
-					keyNode: formatPercent(staticRate),
+					keyNode: marketCostTooltip,
 				},
 				'Total Deposit': {
 					value: formatDollars(totalDeposit),
 					spaceBeneath: true,
 				},
 				'Estimated Fees': {
-					value: formatDollars(totalDeposit.add(nextPriceDiscount ?? zeroBN)),
+					value: !!commitDeposit
+						? formatDollars(commitDeposit, { minDecimals: commitDeposit.lt(0.01) ? 4 : 2 })
+						: NO_VALUE,
 				},
 			};
 		}
@@ -137,7 +132,6 @@ const FeeInfoBox: React.FC = () => {
 			  }
 			: crossMarginFeeInfo;
 	}, [
-		staticRate,
 		orderType,
 		crossMarginTradeFeeRate,
 		isolatedMarginFee,
@@ -146,7 +140,6 @@ const FeeInfoBox: React.FC = () => {
 		commitDeposit,
 		accountType,
 		marketInfo?.keeperDeposit,
-		nextPriceDiscount,
 		marketCostTooltip,
 		totalDeposit,
 	]);

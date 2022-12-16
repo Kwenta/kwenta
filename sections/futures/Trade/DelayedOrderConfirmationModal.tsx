@@ -66,8 +66,8 @@ const DelayedOrderConfirmationModal: FC = () => {
 
 	// TODO: check these fees
 	const { commitDeposit, delayedOrderFee } = useMemo(
-		() => computeDelayedOrderFee(marketInfo, nativeSizeDelta),
-		[marketInfo, nativeSizeDelta]
+		() => computeDelayedOrderFee(marketInfo, nativeSizeDelta, orderType === 'delayed offchain'),
+		[marketInfo, nativeSizeDelta, orderType]
 	);
 
 	// TODO: check this deposit
