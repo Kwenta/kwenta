@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo, useMemo } from 'react';
 import styled, { css } from 'styled-components';
 
 type HeadingProps = {
@@ -6,19 +6,11 @@ type HeadingProps = {
 	className?: string;
 };
 
-const Heading: React.FC<HeadingProps> = ({ variant = 'h1', children, className }) => {
-	const StyledHeading = React.useMemo(() => {
-		return {
-			h1: StyledH1,
-			h2: StyledH2,
-			h3: StyledH3,
-			h4: StyledH4,
-			h5: StyledH5,
-		}[variant];
-	}, [variant]);
+const Heading: React.FC<HeadingProps> = memo(({ variant = 'h1', children, className }) => {
+	const StyledHeading = useMemo(() => headingMap[variant], [variant]);
 
 	return <StyledHeading className={className}>{children}</StyledHeading>;
-};
+});
 
 const commonStyles = css`
 	line-height: 1.4;
@@ -51,5 +43,13 @@ const StyledH5 = styled.h5`
 	${commonStyles}
 	font-size: 16px;
 `;
+
+const headingMap = {
+	h1: StyledH1,
+	h2: StyledH2,
+	h3: StyledH3,
+	h4: StyledH4,
+	h5: StyledH5,
+};
 
 export default Heading;

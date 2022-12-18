@@ -1,20 +1,28 @@
+import { memo } from 'react';
 import styled, { css } from 'styled-components';
 
 type BodyProps = {
 	size?: 'small' | 'medium' | 'large';
-	variant?: 'thin' | 'bold';
+	variant?: 'regular' | 'bold';
 	className?: string;
+	fontSize?: number;
 };
 
-const Body: React.FC<BodyProps> = ({ size = 'small', variant = 'thin', children, className }) => {
-	return (
-		<StyledBody $size={size} $variant={variant} className={className}>
-			{children}
-		</StyledBody>
-	);
-};
+const Body: React.FC<BodyProps> = memo(
+	({ size = 'small', variant = 'regular', children, className, fontSize }) => {
+		return (
+			<StyledBody $size={size} $variant={variant} className={className} $fontSize={fontSize}>
+				{children}
+			</StyledBody>
+		);
+	}
+);
 
-const StyledBody = styled.p<{ $size?: BodyProps['size']; $variant?: BodyProps['variant'] }>`
+const StyledBody = styled.p<{
+	$size?: BodyProps['size'];
+	$variant?: BodyProps['variant'];
+	$fontSize?: number;
+}>`
 	line-height: 1.4;
 	margin: 0;
 
@@ -41,6 +49,8 @@ const StyledBody = styled.p<{ $size?: BodyProps['size']; $variant?: BodyProps['v
 		css`
 			font-family: ${props.theme.fonts.bold};
 		`}
+
+		font-size: ${(props) => props.$fontSize}px;
 `;
 
 export default Body;

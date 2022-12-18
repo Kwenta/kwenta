@@ -8,3 +8,7 @@ export default {
 export const BigText = () => {
 	return <Text.BigText>100</Text.BigText>;
 };
+
+export const Heading = () => {
+	return <div />;
+};
