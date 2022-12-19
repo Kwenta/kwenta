@@ -15,6 +15,8 @@ module.exports = {
 			loader: require.resolve('@svgr/webpack'),
 		});
 
+		config.resolve.fallback = { path: false, stream: false };
+
 		return config;
 	},
 	staticDirs: ['../public'],

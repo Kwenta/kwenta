@@ -19,11 +19,6 @@ const SliderComponent: React.FC<SliderProps> = ({
 	maxValue,
 	defaultValue,
 	steps,
-	value,
-	className,
-	onChange,
-	onChangeCommitted,
-	disabled,
 	...props
 }) => {
 	return (
@@ -35,13 +30,8 @@ const SliderComponent: React.FC<SliderProps> = ({
 				marks
 				valueLabelDisplay="auto"
 				defaultValue={defaultValue ?? minValue}
-				value={value}
-				onChange={onChange}
-				onChangeCommitted={onChangeCommitted}
 				ValueLabelComponent={ValueLabel}
-				disabled={disabled}
 				{...props}
-				className={className}
 			/>
 		</SliderContainer>
 	);
