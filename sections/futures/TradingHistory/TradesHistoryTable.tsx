@@ -12,7 +12,7 @@ import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
 import { selectMarketAsset } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { CapitalizedText, NumericValue } from 'styles/common';
-import { formatNumber } from 'utils/formatters/number';
+import { formatNumber, suggestedDecimals } from 'utils/formatters/number';
 
 type TradesHistoryTableProps = {
 	mobile?: boolean;
@@ -119,24 +119,19 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 							accessor: TableColumnAccessor.Amount,
 							Cell: (cellProps: CellProps<any>) => {
 								const numValue = Math.abs(cellProps.row.original.amount / 1e18);
-								const numDecimals =
-									numValue === 0 ? 2 : numValue < 1 ? 4 : numValue >= 100000 ? 0 : 2;
+								const numDecimals = suggestedDecimals(numValue);
 
 								const normal = cellProps.row.original.orderType === 'Liquidation';
 								const negative = cellProps.row.original.amount > 0;
 
 								return (
-									<>
-										<div>
-											<DirectionalValue negative={negative} normal={normal}>
-												{cellProps.row.original.amount !== NO_VALUE
-													? `${formatNumber(numValue, {
-															minDecimals: numDecimals,
-													  })} ${normal ? '💀' : ''}`
-													: NO_VALUE}
-											</DirectionalValue>
-										</div>
-									</>
+									<DirectionalValue negative={negative} normal={normal}>
+										{cellProps.row.original.amount !== NO_VALUE
+											? `${formatNumber(numValue, {
+													minDecimals: numDecimals,
+											  })} ${normal ? '💀' : ''}`
+											: NO_VALUE}
+									</DirectionalValue>
 								);
 							},
 							width: 100,
@@ -267,6 +262,7 @@ const TimeValue = styled.p`
 
 const DirectionalValue = styled(PriceValue)<{ negative?: boolean; normal?: boolean }>`
 	padding-left: 4px;
+	white-space: nowrap;
 	color: ${(props) =>
 		props.normal
 			? props.theme.colors.selectedTheme.button.text.primary
