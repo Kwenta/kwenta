@@ -12,7 +12,7 @@ import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
 import { selectMarketAsset } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { CapitalizedText, NumericValue } from 'styles/common';
-import { formatNumber, suggestedDecimals } from 'utils/formatters/number';
+import { formatNumber } from 'utils/formatters/number';
 
 type TradesHistoryTableProps = {
 	mobile?: boolean;
@@ -119,7 +119,8 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 							accessor: TableColumnAccessor.Amount,
 							Cell: (cellProps: CellProps<any>) => {
 								const numValue = Math.abs(cellProps.row.original.amount / 1e18);
-								const numDecimals = suggestedDecimals(numValue);
+								const numDecimals =
+									numValue === 0 ? 2 : numValue < 1 ? 4 : numValue >= 100000 ? 0 : 2;
 
 								const normal = cellProps.row.original.orderType === 'Liquidation';
 								const negative = cellProps.row.original.amount > 0;
