@@ -715,6 +715,7 @@
 			"trade": {
 				"market": "isolated market",
 				"title": "trade",
+				"perpsv2-disclaimer": "Synthetix Perps V2 markets are currently being offered in a closed alpha. Users assume all risks of interacting with these smart contracts. Users also acknowledge that market settings and configurations can change at any time.",
 				"input": {
 					"buy": "buy",
 					"sell": "sell",
