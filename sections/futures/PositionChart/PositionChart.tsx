@@ -1,10 +1,10 @@
 import { useCallback, useMemo, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import TVChart from 'components/TVChart';
 import useAverageEntryPrice from 'hooks/useAverageEntryPrice';
 import {
+	selectFuturesPositionHistory,
 	selectFuturesType,
 	selectMarketAsset,
 	selectOpenOrders,
@@ -12,12 +12,11 @@ import {
 	selectTradePreview,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { positionHistoryState } from 'store/futures';
 
 export default function PositionChart() {
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const position = useAppSelector(selectPosition);
-	const positionHistory = useRecoilValue(positionHistoryState);
+	const positionHistory = useAppSelector(selectFuturesPositionHistory);
 	const futuresAccountType = useAppSelector(selectFuturesType);
 	const openOrders = useAppSelector(selectOpenOrders);
 	const previewTrade = useAppSelector(selectTradePreview);
@@ -26,7 +25,7 @@ export default function PositionChart() {
 	const [isChartReady, setIsChartReady] = useState(false);
 
 	const subgraphPosition = useMemo(() => {
-		return positionHistory[futuresAccountType].find((p) => p.isOpen && p.asset === marketAsset);
+		return positionHistory.find((p) => p.isOpen && p.asset === marketAsset);
 	}, [positionHistory, marketAsset, futuresAccountType]);
 
 	const modifiedAverage = useAverageEntryPrice(subgraphPosition);
