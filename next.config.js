@@ -103,7 +103,7 @@ const baseConfig = {
 				headers: [
 					{
 						key: 'Content-Security-Policy',
-						value: 'frame-ancestors *.dhedge.org dhedge.org',
+						value: 'frame-ancestors *.dhedge.org dhedge.org *.safe.global safe.global',
 					},
 				],
 			},
