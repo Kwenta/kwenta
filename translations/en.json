@@ -769,7 +769,6 @@
 							"disclaimer": "A $50 margin minimum is required to open a position.",
 							"min-deposit": "$50 minimum margin to open a position",
 							"min-margin-error": "Position size too small, minimum market margin of $50 required",
-							"insufficient-margin": "Insufficient margin for this order",
 							"exceeds-balance": "Amount exceeds balance"
 						},
 						"withdraw": {
@@ -949,6 +948,9 @@
 						"no-results": "You have no transfer history"
 					}
 				}
+			},
+			"errors": {
+				"insufficient-margin": "Insufficient margin for this order"
 			}
 		},
 		"modals": {

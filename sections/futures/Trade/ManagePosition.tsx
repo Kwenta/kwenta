@@ -30,7 +30,6 @@ import {
 	selectCrossMarginMarginDelta,
 	selectLeverageSide,
 	selectOpenOrder,
-	selectModifyPositionError,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
@@ -63,7 +62,6 @@ const ManagePosition: React.FC = () => {
 	const leverageSide = useAppSelector(selectLeverageSide);
 
 	const futuresTransaction = useAppSelector(selectFuturesTransaction);
-	const modifyError = useAppSelector(selectModifyPositionError);
 	const isMarketCapReached = useAppSelector(selectIsMarketCapReached);
 	const placeOrderTranslationKey = useAppSelector(selectPlaceOrderTranslationKey);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
@@ -82,7 +80,7 @@ const ManagePosition: React.FC = () => {
 		if (previewError) return t(previewErrorI18n(previewError));
 		if (previewTrade?.showStatus) return previewTrade?.statusMessage;
 		return null;
-	}, [previewTrade?.showStatus, previewTrade?.statusMessage, modifyError, previewError, t]);
+	}, [previewTrade?.showStatus, previewTrade?.statusMessage, previewError, t]);
 
 	const leverageValid = useMemo(() => {
 		if (selectedAccountType === 'cross_margin') return true;

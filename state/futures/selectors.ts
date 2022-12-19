@@ -11,9 +11,8 @@ import { accountType, deserializeWeiObject } from 'state/helpers';
 import { selectPrices } from 'state/prices/selectors';
 import { RootState } from 'state/store';
 import { selectWallet } from 'state/wallet/selectors';
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
-import { getKnownError } from 'utils/formatters/error';
 import { sameSide } from 'utils/costCalculations';
+import { getKnownError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
 import {
 	MarketKeyByAsset,

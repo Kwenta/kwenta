@@ -21,7 +21,7 @@ type ErrorProps = {
 };
 
 export const FRIENDLY_I18N_MESSAGES: Record<string, string> = {
-	'Insufficient margin': 'futures.market.trade.margin.modal.deposit.insufficient-margin',
+	'Insufficient margin': 'futures.market.errors.insufficient-margin',
 };
 
 export const Error: FC<ErrorProps> = ({

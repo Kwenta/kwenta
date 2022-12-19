@@ -129,7 +129,6 @@ const DelayedOrderConfirmationModal: FC = () => {
 			orderType,
 			commitDeposit,
 			potentialTradeDetails,
-			delayedOrderFee,
 			marketAsset,
 			leverageSide,
 			totalDeposit,
