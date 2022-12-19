@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import styled from 'styled-components';
 
 import { FlexDivCentered } from 'styles/common';
@@ -10,15 +10,12 @@ export type CardHeaderProps = {
 	noBorder?: boolean;
 };
 
-const CardHeader: FC<CardHeaderProps> = ({
-	children,
-	lowercase = false,
-	noBorder = false,
-	...rest
-}) => (
-	<Container lowercase={lowercase} noBorder={noBorder} {...rest}>
-		{children}
-	</Container>
+const CardHeader: FC<CardHeaderProps> = memo(
+	({ children, lowercase = false, noBorder = false, ...rest }) => (
+		<Container lowercase={lowercase} noBorder={noBorder} {...rest}>
+			{children}
+		</Container>
+	)
 );
 
 const Container = styled(FlexDivCentered)<{ lowercase: boolean; noBorder: boolean }>`

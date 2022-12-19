@@ -28,3 +28,11 @@ export const Heading = () => {
 		</div>
 	);
 };
+
+export const Body = () => {
+	return (
+		<div>
+			<Text.Body>This is some body text</Text.Body>
+		</div>
+	);
+};

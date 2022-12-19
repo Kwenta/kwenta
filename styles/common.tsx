@@ -256,7 +256,6 @@ export const WhiteHeader = styled.div`
 	text-align: center;
 	letter-spacing: 6px;
 	cursor: default;
-	/* width: 550px; */
 	${media.lessThan('sm')`
 		font-size: 32px;
 		width: 306px;
