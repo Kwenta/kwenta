@@ -8,9 +8,10 @@ export default {
 export const BigText = () => {
 	return (
 		<div>
-			<Text.BigText>100</Text.BigText>
+			<Text.BigText>Simple big text</Text.BigText>
+			<Text.BigText mono>Mono big text</Text.BigText>
 			<Text.BigText yellow mono kwenta>
-				100
+				With Kwenta logo
 			</Text.BigText>
 		</div>
 	);

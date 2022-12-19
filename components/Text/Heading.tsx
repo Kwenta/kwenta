@@ -4,19 +4,31 @@ import styled, { css } from 'styled-components';
 type HeadingProps = {
 	variant?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5';
 	className?: string;
+	fontSize?: number;
 };
 
-const Heading: React.FC<HeadingProps> = memo(({ variant = 'h1', children, className }) => {
-	const StyledHeading = useMemo(() => headingMap[variant], [variant]);
+const Heading: React.FC<HeadingProps> = memo(
+	({ variant = 'h1', children, className, fontSize }) => {
+		const StyledHeading = useMemo(() => headingMap[variant], [variant]);
 
-	return <StyledHeading className={className}>{children}</StyledHeading>;
-});
+		return (
+			<StyledHeading className={className} $fontSize={fontSize}>
+				{children}
+			</StyledHeading>
+		);
+	}
+);
 
-const commonStyles = css`
+const commonStyles = css<{ $fontSize?: number }>`
 	line-height: 1.4;
 	letter-spacing: 0.2px;
 	margin: 0;
 	color: ${(props) => props.theme.colors.common.primaryWhite};
+	${(props) =>
+		props.$fontSize &&
+		css`
+			font-size: ${props.$fontSize}px;
+		`}
 `;
 
 const StyledH1 = styled.h1`

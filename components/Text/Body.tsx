@@ -50,7 +50,11 @@ const StyledBody = styled.p<{
 			font-family: ${props.theme.fonts.bold};
 		`}
 
-		font-size: ${(props) => props.$fontSize}px;
+	${(props) =>
+		props.$fontSize &&
+		css`
+			font-size: ${props.$fontSize}px;
+		`}
 `;
 
 export default Body;
