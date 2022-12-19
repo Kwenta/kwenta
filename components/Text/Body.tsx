@@ -25,6 +25,7 @@ const StyledBody = styled.p<{
 }>`
 	line-height: 1.4;
 	margin: 0;
+	color: ${(props) => props.theme.colors.selectedTheme.text.value};
 
 	${(props) =>
 		props.$size === 'small' &&

@@ -1,3 +1,4 @@
+import Spacer from 'components/Spacer';
 import * as Text from 'components/Text';
 
 export default {
@@ -32,7 +33,17 @@ export const Heading = () => {
 export const Body = () => {
 	return (
 		<div>
-			<Text.Body>This is some body text</Text.Body>
+			<Text.Body>This is regular body text</Text.Body>
+			<Text.Body size="medium">This is regular body text</Text.Body>
+			<Text.Body size="large">This is regular body text</Text.Body>
+			<Spacer height={8} />
+			<Text.Body variant="bold">This is bold body text</Text.Body>
+			<Text.Body size="medium" variant="bold">
+				This is bold body text
+			</Text.Body>
+			<Text.Body size="large" variant="bold">
+				This is bold body text
+			</Text.Body>
 		</div>
 	);
 };

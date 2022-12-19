@@ -72,12 +72,7 @@ const SpotHistoryTable: FC = () => {
 						</Link>
 					</TableNoResults>
 				}
-				sortBy={[
-					{
-						id: 'dateTime',
-						asec: true,
-					},
-				]}
+				sortBy={[{ id: 'dateTime', asec: true }]}
 				columns={[
 					{
 						Header: (
@@ -117,7 +112,7 @@ const SpotHistoryTable: FC = () => {
 											totalValue={0}
 											conversionRate={selectPriceCurrencyRate}
 											showTotalValue={false}
-										></Currency.Amount>
+										/>
 									</StyledText>
 								</SynthContainer>
 							);
@@ -147,7 +142,7 @@ const SpotHistoryTable: FC = () => {
 											totalValue={0}
 											conversionRate={selectPriceCurrencyRate}
 											showTotalValue={false}
-										></Currency.Amount>
+										/>
 									</StyledText>
 								</SynthContainer>
 							);

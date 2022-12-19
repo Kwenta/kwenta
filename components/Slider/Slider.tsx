@@ -47,8 +47,9 @@ const styledMarkLabel = css`
 		top: 30px;
 	`}
 `;
+
 const SliderContainer = styled.div`
-	width: 100vw;
+	width: 100%;
 	height: 24px;
 	padding: 0px 12px 0px 4px;
 	box-sizing: border-box;
