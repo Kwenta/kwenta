@@ -4,7 +4,7 @@ import { wei } from '@synthetixio/wei';
 import { DEFAULT_LEVERAGE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import { DEFAULT_MAX_LEVERAGE } from 'constants/futures';
 import { TransactionStatus } from 'sdk/types/common';
-import { FuturesPosition } from 'sdk/types/futures';
+import { FuturesPosition, FuturesPositionHistory } from 'sdk/types/futures';
 import { unserializePotentialTrade } from 'sdk/utils/futures';
 import { PositionSide } from 'sections/futures/types';
 import { accountType, deserializeWeiObject } from 'state/helpers';
@@ -25,7 +25,7 @@ import {
 	unserializeCrossMarginTradeInputs,
 } from 'utils/futures';
 
-import { futuresPositionKeys } from './types';
+import { futuresPositionHistoryKeys, futuresPositionKeys } from './types';
 
 export const selectFuturesType = (state: RootState) => state.futures.selectedType;
 
@@ -172,6 +172,44 @@ export const selectFuturesPositions = createSelector(
 	}
 );
 
+export const selectCrossMarginPositionHistory = createSelector(
+	(state: RootState) => state.futures,
+	(futures) => {
+		return futures.crossMargin.account &&
+			futures.crossMargin.positionHistory[futures.crossMargin.account]
+			? futures.crossMargin.positionHistory[futures.crossMargin.account].map(
+					// TODO: Maybe change to explicit serializing functions to avoid casting
+					(p) => deserializeWeiObject(p, futuresPositionHistoryKeys) as FuturesPositionHistory
+			  )
+			: [];
+	}
+);
+
+export const selectIsolatedMarginPositionHistory = createSelector(
+	selectWallet,
+	(state: RootState) => state.futures,
+	(wallet, futures) => {
+		if (!wallet) return [];
+		return futures.isolatedMargin.positionHistory[wallet]
+			? futures.isolatedMargin.positionHistory[wallet].map(
+					// TODO: Maybe change to explicit serializing functions to avoid casting
+					(p) => deserializeWeiObject(p, futuresPositionHistoryKeys) as FuturesPositionHistory
+			  )
+			: [];
+	}
+);
+
+export const selectFuturesPositionHistory = createSelector(
+	selectCrossMarginPositionHistory,
+	selectIsolatedMarginPositionHistory,
+	(state: RootState) => state.futures.selectedType,
+	(crossMarginPositionHistory, isolatedMarginPositionHistory, selectedType) => {
+		return selectedType === 'cross_margin'
+			? crossMarginPositionHistory
+			: isolatedMarginPositionHistory;
+	}
+);
+
 export const selectActiveIsolatedPositionsCount = createSelector(
 	selectIsolatedMarginPositions,
 	(positions) => {
@@ -282,6 +320,14 @@ export const selectPosition = createSelector(
 		return position
 			? (deserializeWeiObject(position, futuresPositionKeys) as FuturesPosition)
 			: undefined;
+	}
+);
+
+export const selectActivePositionHistory = createSelector(
+	selectFuturesPositionHistory,
+	selectMarketInfo,
+	(positionHistory) => {
+		return positionHistory.filter((p) => p.isOpen);
 	}
 );
 

@@ -6,6 +6,7 @@ import {
 	DelayedOrder,
 	FuturesMarket,
 	FuturesPosition,
+	FuturesPositionHistory,
 	FuturesPotentialTradeDetails,
 	FuturesVolumes,
 } from 'sdk/types/futures';
@@ -49,7 +50,9 @@ export type FuturesQueryStatuses = {
 	crossMarginBalanceInfo: QueryStatus;
 	dailyVolumes: QueryStatus;
 	crossMarginPositions: QueryStatus;
+	crossMarginPositionHistory: QueryStatus;
 	isolatedPositions: QueryStatus;
+	isolatedPositionHistory: QueryStatus;
 	openOrders: QueryStatus;
 	crossMarginSettings: QueryStatus;
 	isolatedTradePreview: QueryStatus;
@@ -160,6 +163,9 @@ export type CrossMarginState = {
 	positions: {
 		[account: string]: FuturesPosition<string>[];
 	};
+	positionHistory: {
+		[account: string]: FuturesPositionHistory<string>[];
+	};
 	openOrders: {
 		[account: string]: DelayedOrder<string>[];
 	};
@@ -179,6 +185,9 @@ export type IsolatedMarginState = {
 	tradeFee: string;
 	positions: {
 		[account: string]: FuturesPosition<string>[];
+	};
+	positionHistory: {
+		[account: string]: FuturesPositionHistory<string>[];
 	};
 	openOrders: {
 		[account: string]: DelayedOrder<string>[];
@@ -213,4 +222,21 @@ export const futuresPositionKeys = new Set([
 	'position.pnl',
 	'position.pnlPct',
 	'position.marginRatio',
+]);
+
+export const futuresPositionHistoryKeys = new Set([
+	'size',
+	'feesPaid',
+	'netFunding',
+	'netTransfers',
+	'totalDeposits',
+	'initialMargin',
+	'margin',
+	'entryPrice',
+	'avgEntryPrice',
+	'exitPrice',
+	'leverage',
+	'pnl',
+	'pnlWithFeesPaid',
+	'totalVolume',
 ]);

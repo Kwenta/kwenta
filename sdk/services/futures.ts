@@ -7,7 +7,7 @@ import request, { gql } from 'graphql-request';
 import KwentaSDK from 'sdk';
 
 import { DAY_PERIOD, KWENTA_TRACKING_CODE } from 'queries/futures/constants';
-import { getFuturesAggregateStats } from 'queries/futures/subgraph';
+import { getFuturesAggregateStats, getFuturesPositions } from 'queries/futures/subgraph';
 import { mapFuturesOrders } from 'queries/futures/utils';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
 import { BPS_CONVERSION, DEFAULT_DESIRED_TIMEDELTA } from 'sdk/constants/futures';
@@ -48,6 +48,7 @@ import {
 	getMarketName,
 	getReasonFromCode,
 	mapFuturesPosition,
+	mapFuturesPositions,
 	marketsForNetwork,
 } from 'sdk/utils/futures';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
@@ -256,6 +257,55 @@ export default class FuturesService {
 			.filter(({ remainingMargin }) => remainingMargin.gt(0));
 
 		return positions;
+	}
+
+	public async getFuturesPositionHistory(
+		address: string // Cross margin or EOA address
+	) {
+		const response = await getFuturesPositions(
+			this.futuresGqlEndpoint,
+			{
+				where: {
+					account: address,
+				},
+				first: 99999,
+				orderBy: 'openTimestamp',
+				orderDirection: 'desc',
+			},
+			{
+				id: true,
+				lastTxHash: true,
+				openTimestamp: true,
+				closeTimestamp: true,
+				timestamp: true,
+				market: true,
+				asset: true,
+				marketKey: true,
+				account: true,
+				abstractAccount: true,
+				accountType: true,
+				isOpen: true,
+				isLiquidated: true,
+				trades: true,
+				totalVolume: true,
+				size: true,
+				initialMargin: true,
+				margin: true,
+				pnl: true,
+				feesPaid: true,
+				netFunding: true,
+				pnlWithFeesPaid: true,
+				netTransfers: true,
+				totalDeposits: true,
+				fundingIndex: true,
+				entryPrice: true,
+				avgEntryPrice: true,
+				lastPrice: true,
+				exitPrice: true,
+			}
+		);
+		const positionHistory = response ? mapFuturesPositions(response) : [];
+		return positionHistory;
 	}
 
 	public async getAverageFundingRates(markets: FuturesMarket[], prices: PricesMap, period: Period) {

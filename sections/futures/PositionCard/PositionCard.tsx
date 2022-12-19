@@ -1,7 +1,6 @@
 import Wei from '@synthetixio/wei';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import PreviewArrow from 'components/PreviewArrow';
@@ -20,9 +19,9 @@ import {
 	selectTradePreview,
 	selectFuturesType,
 	selectSkewAdjustedPrice,
+	selectActivePositionHistory,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { positionHistoryState } from 'store/futures';
 import { FlexDivCentered, FlexDivCol, PillButtonDiv } from 'styles/common';
 import media from 'styles/media';
 import { isFiatCurrency } from 'utils/currencies';
@@ -73,12 +72,12 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 
 	const futuresAccountType = useAppSelector(selectFuturesType);
 	const position = useAppSelector(selectPosition);
+	const positionHistory = useAppSelector(selectActivePositionHistory);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const marketKey = useAppSelector(selectMarketKey);
 	const marketPrice = useAppSelector(selectSkewAdjustedPrice);
 	const previewTradeData = useAppSelector(selectTradePreview);
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketKey);
-	const positionHistory = useRecoilValue(positionHistoryState);
 
 	const positionDetails = position?.position ?? null;
 
@@ -90,10 +89,10 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			: undefined;
 
 	const thisPositionHistory = useMemo(() => {
-		return positionHistory[futuresAccountType].find(
+		return positionHistory.find(
 			({ marketKey: positionMarketKey, isOpen }) => isOpen && positionMarketKey === marketKey
 		);
-	}, [positionHistory, marketKey, futuresAccountType]);
+	}, [positionHistory, marketKey]);
 
 	const modifiedAverage = useAverageEntryPrice(thisPositionHistory);
 

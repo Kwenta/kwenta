@@ -4,7 +4,7 @@ import { BigNumber } from 'ethers';
 import { parseBytes32String } from 'ethers/lib/utils.js';
 
 import { ETH_UNIT } from 'constants/network';
-import { FuturesAggregateStatResult } from 'queries/futures/subgraph';
+import { FuturesAggregateStatResult, FuturesPositionResult } from 'queries/futures/subgraph';
 import {
 	FUTURES_ENDPOINTS,
 	MAINNET_MARKETS,
@@ -19,6 +19,7 @@ import {
 	FuturesMarketAsset,
 	FuturesMarketKey,
 	FuturesPosition,
+	FuturesPositionHistory,
 	FuturesPotentialTradeDetails,
 	FuturesVolumes,
 	MarketClosureReason,
@@ -200,6 +201,78 @@ export const mapFuturesPosition = (
 						: wei(notionalValue).div(wei(remainingMargin)).abs(),
 			  },
 	};
+};
+
+export const mapFuturesPositions = (
+	futuresPositions: FuturesPositionResult[]
+): FuturesPositionHistory[] => {
+	return futuresPositions.map(
+		({
+			id,
+			lastTxHash,
+			openTimestamp,
+			closeTimestamp,
+			timestamp,
+			market,
+			asset,
+			marketKey,
+			account,
+			abstractAccount,
+			accountType,
+			isOpen,
+			isLiquidated,
+			trades,
+			totalVolume,
+			size,
+			initialMargin,
+			margin,
+			pnl,
+			feesPaid,
+			netFunding,
+			pnlWithFeesPaid,
+			netTransfers,
+			totalDeposits,
+			entryPrice,
+			avgEntryPrice,
+			exitPrice,
+		}: FuturesPositionResult) => {
+			const entryPriceWei = wei(entryPrice).div(ETH_UNIT);
+			const feesWei = wei(feesPaid || 0).div(ETH_UNIT);
+			const sizeWei = wei(size).div(ETH_UNIT);
+			const marginWei = wei(margin).div(ETH_UNIT);
+			return {
+				id: Number(id.split('-')[1].toString()),
+				transactionHash: lastTxHash,
+				timestamp: timestamp.mul(1000).toNumber(),
+				openTimestamp: openTimestamp.mul(1000).toNumber(),
+				closeTimestamp: closeTimestamp?.mul(1000).toNumber(),
+				market,
+				asset: parseBytes32String(asset) as FuturesMarketAsset,
+				marketKey: parseBytes32String(marketKey) as FuturesMarketKey,
+				account,
+				abstractAccount,
+				accountType,
+				isOpen,
+				isLiquidated,
+				size: sizeWei.abs(),
+				feesPaid: feesWei,
+				netFunding: wei(netFunding || 0).div(ETH_UNIT),
+				netTransfers: wei(netTransfers || 0).div(ETH_UNIT),
+				totalDeposits: wei(totalDeposits || 0).div(ETH_UNIT),
+				initialMargin: wei(initialMargin).div(ETH_UNIT),
+				margin: marginWei,
+				entryPrice: entryPriceWei,
+				exitPrice: wei(exitPrice || 0).div(ETH_UNIT),
+				pnl: wei(pnl).div(ETH_UNIT),
+				pnlWithFeesPaid: wei(pnlWithFeesPaid).div(ETH_UNIT),
+				totalVolume: wei(totalVolume).div(ETH_UNIT),
+				trades: trades.toNumber(),
+				avgEntryPrice: wei(avgEntryPrice).div(ETH_UNIT),
+				leverage: marginWei.eq(wei(0)) ? wei(0) : sizeWei.mul(entryPriceWei).div(marginWei).abs(),
+				side: sizeWei.gte(wei(0)) ? PositionSide.LONG : PositionSide.SHORT,
+			};
+		}
+	);
 };
 
 export const serializePotentialTrade = (

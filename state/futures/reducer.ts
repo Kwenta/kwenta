@@ -26,6 +26,8 @@ import {
 	fetchIsolatedMarginTradePreview,
 	fetchCrossMarginTradePreview,
 	fetchKeeperEthBalance,
+	fetchIsolatedMarginPositionHistory,
+	fetchCrossMarginPositionHistory,
 } from './actions';
 import {
 	CrossMarginTradeFees,
@@ -82,7 +84,9 @@ const initialState: FuturesState = {
 		crossMarginBalanceInfo: DEFAULT_QUERY_STATUS,
 		dailyVolumes: DEFAULT_QUERY_STATUS,
 		crossMarginPositions: DEFAULT_QUERY_STATUS,
+		crossMarginPositionHistory: DEFAULT_QUERY_STATUS,
 		isolatedPositions: DEFAULT_QUERY_STATUS,
+		isolatedPositionHistory: DEFAULT_QUERY_STATUS,
 		openOrders: DEFAULT_QUERY_STATUS,
 		crossMarginSettings: DEFAULT_QUERY_STATUS,
 		isolatedTradePreview: DEFAULT_QUERY_STATUS,
@@ -102,6 +106,7 @@ const initialState: FuturesState = {
 		fees: ZERO_CM_FEES,
 		keeperEthBalance: '0',
 		positions: {},
+		positionHistory: {},
 		openOrders: {},
 		tradePreview: null,
 		marginDelta: '0',
@@ -130,6 +135,7 @@ const initialState: FuturesState = {
 		tradeInputs: ZERO_STATE_TRADE_INPUTS,
 		priceImpact: DEFAULT_PRICE_IMPACT_DELTA,
 		positions: {},
+		positionHistory: {},
 		openOrders: {},
 		tradeFee: '0',
 		leverageInput: '0',
@@ -344,6 +350,38 @@ const futuresSlice = createSlice({
 			futuresState.queryStatuses.isolatedPositions = {
 				status: FetchStatus.Error,
 				error: 'Failed to fetch positions',
+			};
+		});
+
+		// Cross margin position history
+		builder.addCase(fetchCrossMarginPositionHistory.pending, (futuresState) => {
+			futuresState.queryStatuses.crossMarginPositionHistory = LOADING_STATUS;
+		});
+		builder.addCase(fetchCrossMarginPositionHistory.fulfilled, (futuresState, action) => {
+			if (!futuresState.crossMargin.account) return;
+			futuresState.crossMargin.positionHistory[futuresState.crossMargin.account] = action.payload;
+			futuresState.queryStatuses.crossMarginPositionHistory = SUCCESS_STATUS;
+		});
+		builder.addCase(fetchCrossMarginPositionHistory.rejected, (futuresState) => {
+			futuresState.queryStatuses.crossMarginPositionHistory = {
+				status: FetchStatus.Error,
+				error: 'Failed to fetch position history',
+			};
+		});
+
+		// Isolated margin position history
+		builder.addCase(fetchIsolatedMarginPositionHistory.pending, (futuresState) => {
+			futuresState.queryStatuses.isolatedPositionHistory = LOADING_STATUS;
+		});
+		builder.addCase(fetchIsolatedMarginPositionHistory.fulfilled, (futuresState, action) => {
+			futuresState.isolatedMargin.positionHistory[action.payload.wallet] =
+				action.payload.positionHistory;
+			futuresState.queryStatuses.isolatedPositionHistory = SUCCESS_STATUS;
+		});
+		builder.addCase(fetchIsolatedMarginPositionHistory.rejected, (futuresState) => {
+			futuresState.queryStatuses.isolatedPositionHistory = {
+				status: FetchStatus.Error,
+				error: 'Failed to fetch position history',
 			};
 		});
 
