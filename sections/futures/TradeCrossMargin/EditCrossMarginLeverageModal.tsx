@@ -204,8 +204,9 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 				dataTestId="futures-market-trade-leverage-modal-input"
 				value={String(leverage)}
 				onChange={(_, v) => {
-					setLeverage(Number(v));
-					previewPositionChange(Number(v));
+					const nextLeverage = Math.min(Number(v), maxLeverage);
+					setLeverage(nextLeverage);
+					previewPositionChange(nextLeverage);
 				}}
 				right={<MaxButton onClick={handleIncrease}>+</MaxButton>}
 				left={<MaxButton onClick={handleDecrease}>-</MaxButton>}
