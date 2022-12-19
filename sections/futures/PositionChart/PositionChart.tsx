@@ -5,7 +5,6 @@ import TVChart from 'components/TVChart';
 import useAverageEntryPrice from 'hooks/useAverageEntryPrice';
 import {
 	selectFuturesPositionHistory,
-	selectFuturesType,
 	selectMarketAsset,
 	selectOpenOrders,
 	selectPosition,
@@ -17,7 +16,6 @@ export default function PositionChart() {
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const position = useAppSelector(selectPosition);
 	const positionHistory = useAppSelector(selectFuturesPositionHistory);
-	const futuresAccountType = useAppSelector(selectFuturesType);
 	const openOrders = useAppSelector(selectOpenOrders);
 	const previewTrade = useAppSelector(selectTradePreview);
 
@@ -26,7 +24,7 @@ export default function PositionChart() {
 
 	const subgraphPosition = useMemo(() => {
 		return positionHistory.find((p) => p.isOpen && p.asset === marketAsset);
-	}, [positionHistory, marketAsset, futuresAccountType]);
+	}, [positionHistory, marketAsset]);
 
 	const modifiedAverage = useAverageEntryPrice(subgraphPosition);
 
