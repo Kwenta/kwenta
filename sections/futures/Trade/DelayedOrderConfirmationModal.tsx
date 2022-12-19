@@ -50,7 +50,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 	const potentialTradeDetails = useAppSelector(selectTradePreview);
 	const previewStatus = useAppSelector(selectTradePreviewStatus);
 	const orderType = useAppSelector(selectOrderType);
-	const { commitDeposit, delayedOrderFee } = useAppSelector(selectDelayedOrderFee);
+	const { commitDeposit } = useAppSelector(selectDelayedOrderFee);
 
 	useEffect(() => {
 		dispatch(
@@ -180,6 +180,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 							t('futures.market.trade.confirmation.modal.confirm-order')
 						)}
 					</ConfirmTradeButton>
+					<Disclaimer>{t('futures.market.trade.confirmation.modal.delayed-disclaimer')}</Disclaimer>
 					{txError && <Error message={txError} formatter="revert" />}
 				</StyledBaseModal>
 			</DesktopOnlyView>
