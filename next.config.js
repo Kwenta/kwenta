@@ -95,20 +95,6 @@ const baseConfig = {
 			},
 		];
 	},
-	async headers() {
-		return [
-			{
-				// Apply headers to all routes.
-				source: '/(.*)',
-				headers: [
-					{
-						key: 'Content-Security-Policy',
-						value: 'frame-ancestors *.dhedge.org dhedge.org',
-					},
-				],
-			},
-		];
-	},
 	productionBrowserSourceMaps: true,
 };
 
