@@ -7,7 +7,7 @@ import { FuturesMarket, FuturesMarketKey, FuturesPotentialTradeDetails } from 's
 import { PositionSide } from 'sections/futures/types';
 import { accountType } from 'state/helpers';
 import { FetchStatus } from 'state/types';
-import { isUserDeniedError } from 'utils/formatters/error';
+import { getKnownError, isUserDeniedError } from 'utils/formatters/error';
 import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
 
 import {
@@ -222,7 +222,7 @@ const futuresSlice = createSlice({
 				state.transaction = undefined;
 			} else if (state.transaction) {
 				state.transaction.status = TransactionStatus.Failed;
-				state.transaction.error = action.payload;
+				state.transaction.error = getKnownError(action.payload);
 			}
 		},
 		handleCrossMarginPreviewError: (futuresState, action: PayloadAction<string>) => {

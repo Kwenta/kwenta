@@ -715,6 +715,7 @@
 			"trade": {
 				"market": "isolated market",
 				"title": "trade",
+				"perpsv2-disclaimer": "Synthetix Perps V2 markets are currently being offered in a closed alpha. Users assume all risks of interacting with these smart contracts. Users also acknowledge that market settings and configurations can change at any time.",
 				"input": {
 					"buy": "buy",
 					"sell": "sell",
@@ -797,7 +798,8 @@
 					"modal": {
 						"confirm-order": "Confirm order",
 						"max-leverage-disclaimer": "Note: A next price update could cause your order to exceed maximum leverage resulting in the order being dropped by the keeper.",
-						"disabled-min-margin": "Minimum market margin of $50 required" 
+						"disabled-min-margin": "Minimum market margin of $50 required",
+						"delayed-disclaimer": "* The deposit is applied to trading fees and keeper fees on order execution. If an order is either cancelled or not executed, the deposit will be forfeit to the Synthetix debt pool."
 					}
 				},
 				"leverage": {
@@ -884,7 +886,7 @@
 						"market-order": "Market",
 						"next-price-order": "Next Price",
 						"delayed-order": "Delayed",
-						"deposit": "Total Deposit",
+						"deposit": "Total Deposit*",
 						"np-discount": "Next Price Discount"
 					}
 				},
@@ -950,6 +952,9 @@
 						"no-results": "You have no transfer history"
 					}
 				}
+			},
+			"errors": {
+				"insufficient-margin": "Insufficient margin for this order"
 			}
 		},
 		"modals": {

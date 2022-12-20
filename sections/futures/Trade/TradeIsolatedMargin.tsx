@@ -1,5 +1,7 @@
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import Error from 'components/Error';
 import SegmentedControl from 'components/SegmentedControl';
 import { ISOLATED_MARGIN_ORDER_TYPES } from 'constants/futures';
 import { setOpenModal } from 'state/app/reducer';
@@ -25,6 +27,7 @@ type Props = {
 };
 
 const TradeIsolatedMargin = ({ isMobile }: Props) => {
+	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
 	const leverageSide = useAppSelector(selectLeverageSide);
@@ -40,6 +43,8 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 				balance={totalMargin}
 				accountType={'isolated_margin'}
 			/>
+
+			<Error messageType="warn" message={t('futures.market.trade.perpsv2-disclaimer')} />
 
 			{!isMobile && <MarketInfoBox />}
 
