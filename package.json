@@ -116,7 +116,7 @@
 		"@types/react-table": "7.0.22",
 		"@types/redux-logger": "^3.0.9",
 		"@types/styled-components": "5.1.2",
-		"@typescript-eslint/eslint-plugin": "5.40.1",
+		"@typescript-eslint/eslint-plugin": "5.47.0",
 		"@typescript-eslint/parser": "5.40.1",
 		"babel-eslint": "10.1.0",
 		"eslint": "7.32.0",
