@@ -374,6 +374,11 @@ const CancelButton = styled(EditButton)`
 	border: 1px solid ${(props) => props.theme.colors.selectedTheme.red};
 	color: ${(props) => props.theme.colors.selectedTheme.red};
 	margin-right: 8px;
+
+	&:hover {
+		background: ${(props) => props.theme.colors.selectedTheme.red};
+		color: ${(props) => props.theme.colors.selectedTheme.white};
+	}
 `;
 
 const ExpiredBadge = styled(Badge)`

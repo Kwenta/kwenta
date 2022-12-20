@@ -2,6 +2,7 @@ const REVERT_REGEX = /execution reverted: /;
 
 const KNOWN_ERROR_PATTERNS: Record<string, string> = {
 	'order too old, use cancel': 'Order too old, use cancel',
+	'no previous order': 'You have no open orders',
 	'executability not reached': 'Cannot execute yet, try again in a few seconds',
 	'cannot cancel yet': 'Cannot cancel order yet',
 	'Insufficient margin': 'Insufficient margin',
