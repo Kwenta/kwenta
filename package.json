@@ -132,7 +132,7 @@
 		"eslint-plugin-react-hooks": "4.6.0",
 		"eslint-plugin-testing-library": "^5.1.0",
 		"eslint-plugin-ui-testing": "^2.0.0",
-		"html-to-image": "^1.9.0",
+		"html-to-image": "1.11.3",
 		"husky": "8.0.1",
 		"jest": "28.1.0",
 		"jest-environment-jsdom": "28.1.0",
