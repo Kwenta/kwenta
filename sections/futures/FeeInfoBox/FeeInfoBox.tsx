@@ -3,6 +3,7 @@ import React, { FC, useMemo, useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import LinkArrowIcon from 'assets/svg/app/link-arrow.svg';
 import TimerIcon from 'assets/svg/app/timer.svg';
 import InfoBox, { DetailedInfo } from 'components/InfoBox/InfoBox';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
@@ -25,7 +26,7 @@ import {
 	selectStakedEscrowedKwentaBalance,
 	selectStakedKwentaBalance,
 } from 'state/staking/selectors';
-import { Paragraph } from 'styles/common';
+import { FlexDivCol, Paragraph } from 'styles/common';
 import { computeNPFee, computeMarketFee } from 'utils/costCalculations';
 import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
@@ -87,6 +88,11 @@ const FeeInfoBox: React.FC = () => {
 		[staticRate, dynamicFeeRate]
 	);
 
+	const isRewardEligible = useMemo(
+		() => !!walletAddress && stakedKwentaBalance.add(stakedEscrowedKwentaBalance).gt(0),
+		[walletAddress, stakedKwentaBalance, stakedEscrowedKwentaBalance]
+	);
+
 	useEffect(() => {
 		if (!!walletAddress) {
 			dispatch(fetchStakingData());
@@ -121,30 +127,39 @@ const FeeInfoBox: React.FC = () => {
 				spaceBeneath: true,
 				hideKey: true,
 				keyNode: (
-					// {t('dashboard.stake.tabs.trading-rewards.stake-to-earn')}
-					<div
-						style={{
-							display: 'block',
-							marginTop: '10px',
-							borderLeft: '3px solid #FFB800',
-							paddingLeft: '8px',
-						}}
+					<StyledDiv
+						className={isRewardEligible ? 'border-yellow' : 'border-red'}
+						onClick={() => router.push(ROUTES.Dashboard.Stake)}
 					>
-						<div className="black">{t('dashboard.stake.tabs.trading-rewards.trading-reward')}</div>
+						<div className="reward-title">
+							{t('dashboard.stake.tabs.trading-rewards.trading-reward')}
+						</div>
 						<Paragraph style={{ marginTop: '5px' }}>
 							<Trans
 								i18nKey={'dashboard.stake.tabs.trading-rewards.stake-to-earn'}
 								components={[<Emphasis />]}
 							/>
 						</Paragraph>
-					</div>
+					</StyledDiv>
 				),
-				valueNode: stakedKwentaBalance.add(stakedEscrowedKwentaBalance).gt(0) ? (
-					<div className="bg-yellow">{t('dashboard.stake.tabs.trading-rewards.eligible')}</div>
-				) : (
-					<div className="bg-red" onClick={() => router.push(ROUTES.Dashboard.Stake)}>
-						{t('dashboard.stake.tabs.trading-rewards.not-eligible')}
-					</div>
+				valueNode: (
+					<FlexDivCol onClick={() => router.push(ROUTES.Dashboard.Stake)}>
+						{isRewardEligible ? (
+							<>
+								<div className="bg-yellow">
+									{t('dashboard.stake.tabs.trading-rewards.eligible')}
+								</div>
+								<StyledLinkArrowIcon style={{ marginLeft: '50px' }}></StyledLinkArrowIcon>
+							</>
+						) : (
+							<>
+								<div className="bg-red">
+									{t('dashboard.stake.tabs.trading-rewards.not-eligible')}
+								</div>
+								<StyledLinkArrowIcon style={{ marginLeft: '75px' }}></StyledLinkArrowIcon>
+							</>
+						)}
+					</FlexDivCol>
 				),
 			},
 			'Total Fee': {
@@ -199,8 +214,7 @@ const FeeInfoBox: React.FC = () => {
 			: crossMarginFeeInfo;
 	}, [
 		t,
-		stakedKwentaBalance,
-		stakedEscrowedKwentaBalance,
+		isRewardEligible,
 		orderType,
 		crossMarginTradeFeeRate,
 		isolatedMarginFee,
@@ -255,26 +269,20 @@ const StyledTimerIcon = styled(TimerIcon)`
 	}
 `;
 
+const StyledLinkArrowIcon = styled(LinkArrowIcon)`
+	margin-top: 15px;
+	cursor: pointer;
+`;
+
 const Emphasis = styled.b`
 	font-family: 700;
 `;
+
+const StyledDiv = styled.div`
+	display: block !important;
+	margin-top: 10px;
+	padding-left: 8px;
+	font-size: 13px;
+`;
+
 export default FeeInfoBox;
-
-// .neon {
-// 	color: ${(props) => props.theme.colors.selectedTheme.badge['neon'].text};
-// 	font-weight: 700;
-// 	font-family: ${(props) => props.theme.fonts.regular};
-// 	text-transform: uppercase;
-// 	letter-spacing: 1px;
-// 	font-size: 12px;
-// }
-
-// .bg-neon {
-// 	font-family: ${(props) => props.theme.fonts.black};
-// 	color: ${(props) => props.theme.colors.selectedTheme.badge['neon'].text};
-// 	background: ${(props) => props.theme.colors.selectedTheme.badge['neon'].background};
-// 	padding: 0px 6px;
-// 	border-radius: 100px;
-// 	font-weight: 900;
-// 	font-variant: all-small-caps;
-// }

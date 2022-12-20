@@ -92,6 +92,17 @@ const InfoBoxContainer = styled.div`
 			cursor: default;
 		}
 
+		.border-red {
+			border-left: 3px solid ${(props) => props.theme.colors.selectedTheme.badge['red'].background};
+			color: ${(props) => props.theme.colors.selectedTheme.text.title};
+		}
+
+		.border-yellow {
+			border-left: 3px solid
+				${(props) => props.theme.colors.selectedTheme.badge['yellow'].background};
+			color: ${(props) => props.theme.colors.selectedTheme.text.title};
+		}
+
 		.bg-red {
 			font-family: ${(props) => props.theme.fonts.black};
 			color: ${(props) => props.theme.colors.selectedTheme.badge['red'].text};
@@ -101,6 +112,7 @@ const InfoBoxContainer = styled.div`
 			font-weight: 900;
 			font-variant: all-small-caps;
 			cursor: pointer;
+			min-width: 93px;
 		}
 
 		.bg-yellow {
@@ -111,10 +123,11 @@ const InfoBoxContainer = styled.div`
 			border-radius: 100px;
 			font-weight: 900;
 			font-variant: all-small-caps;
+			cursor: pointer;
 		}
 
-		.white {
-			color: ${(props) => props.theme.colors.selectedTheme.text};
+		.reward-title {
+			color: ${(props) => props.theme.colors.selectedTheme.rewardTitle};
 		}
 
 		.red {
