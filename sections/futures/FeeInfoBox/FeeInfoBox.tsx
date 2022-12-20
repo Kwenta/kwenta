@@ -1,6 +1,6 @@
 import router from 'next/router';
 import React, { FC, useMemo, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import TimerIcon from 'assets/svg/app/timer.svg';
@@ -25,6 +25,7 @@ import {
 	selectStakedEscrowedKwentaBalance,
 	selectStakedKwentaBalance,
 } from 'state/staking/selectors';
+import { Paragraph } from 'styles/common';
 import { computeNPFee, computeMarketFee } from 'utils/costCalculations';
 import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
@@ -119,12 +120,30 @@ const FeeInfoBox: React.FC = () => {
 				value: '',
 				spaceBeneath: true,
 				hideKey: true,
-				keyNode: <div className="white">Trading Reward:</div>,
+				keyNode: (
+					// {t('dashboard.stake.tabs.trading-rewards.stake-to-earn')}
+					<div
+						style={{
+							display: 'block',
+							marginTop: '10px',
+							borderLeft: '3px solid #FFB800',
+							paddingLeft: '8px',
+						}}
+					>
+						<div className="black">{t('dashboard.stake.tabs.trading-rewards.trading-reward')}</div>
+						<Paragraph style={{ marginTop: '5px' }}>
+							<Trans
+								i18nKey={'dashboard.stake.tabs.trading-rewards.stake-to-earn'}
+								components={[<Emphasis />]}
+							/>
+						</Paragraph>
+					</div>
+				),
 				valueNode: stakedKwentaBalance.add(stakedEscrowedKwentaBalance).gt(0) ? (
-					<div className="bg-neon">{t('dashboard.stake.tabs.trading-rewards.eligible')}</div>
+					<div className="bg-yellow">{t('dashboard.stake.tabs.trading-rewards.eligible')}</div>
 				) : (
 					<div className="bg-red" onClick={() => router.push(ROUTES.Dashboard.Stake)}>
-						{t('dashboard.stake.tabs.trading-rewards.stake-to-earn')}
+						{t('dashboard.stake.tabs.trading-rewards.not-eligible')}
 					</div>
 				),
 			},
@@ -236,4 +255,26 @@ const StyledTimerIcon = styled(TimerIcon)`
 	}
 `;
 
+const Emphasis = styled.b`
+	font-family: 700;
+`;
 export default FeeInfoBox;
+
+// .neon {
+// 	color: ${(props) => props.theme.colors.selectedTheme.badge['neon'].text};
+// 	font-weight: 700;
+// 	font-family: ${(props) => props.theme.fonts.regular};
+// 	text-transform: uppercase;
+// 	letter-spacing: 1px;
+// 	font-size: 12px;
+// }
+
+// .bg-neon {
+// 	font-family: ${(props) => props.theme.fonts.black};
+// 	color: ${(props) => props.theme.colors.selectedTheme.badge['neon'].text};
+// 	background: ${(props) => props.theme.colors.selectedTheme.badge['neon'].background};
+// 	padding: 0px 6px;
+// 	border-radius: 100px;
+// 	font-weight: 900;
+// 	font-variant: all-small-caps;
+// }

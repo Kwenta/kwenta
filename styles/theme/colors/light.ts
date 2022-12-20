@@ -5,9 +5,9 @@ const lightTheme = {
 	table: { fill: '#EEE', hover: '#E6E6E6' },
 	gold: '#724713',
 	badge: {
-		red: { background: '#A80300', text: 'white' },
-		yellow: { background: '#6A3300', text: 'white' },
-		neon: { background: common.light.rewardBadge, text: 'white' },
+		red: { background: '#A80300', text: 'black' },
+		yellow: { background: common.primaryYellow, text: 'black' },
+		gray: { background: common.primaryGray, text: 'black' },
 	},
 	tab: { background: { active: 'transparent', inactive: '#e8e8e8' } },
 	button: {

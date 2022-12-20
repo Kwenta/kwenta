@@ -8,7 +8,7 @@ import ROUTES from 'constants/routes';
 
 export type Badge = {
 	i18nLabel: string;
-	color: 'yellow' | 'red' | 'neon';
+	color: 'yellow' | 'red' | 'gray';
 };
 
 export type SubMenuLink = {
@@ -90,11 +90,11 @@ export const getMenuLinks = (isMobile: boolean): MenuLinks => [
 						badge: [
 							{
 								i18nLabel: 'header.nav.beta-badge',
-								color: 'yellow',
+								color: 'gray',
 							},
 							{
 								i18nLabel: 'header.nav.reward-badge',
-								color: 'neon',
+								color: 'yellow',
 							},
 						],
 						Icon: CrossMarginIcon,

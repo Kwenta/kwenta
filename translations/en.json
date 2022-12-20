@@ -534,8 +534,10 @@
 					"claim-epoch": "Claim: Epoch {{EpochPeriod}}",
 					"claim": "Claim",
 					"estimated-info": "* Estimated values do not reflect the final reward value and are subject to change as a result of future fees paid and staked amounts by other participants.",
-					"stake-to-earn": "Stake To Earn",
-					"eligible": "Eligible"
+					"trading-reward": "Trading Reward:",
+					"not-eligible": "Not Eligible",
+					"eligible": "Eligible",
+					"stake-to-earn": "Stake <0>$KWENTA</0> to earn more trading rewards"
 				},
 				"escrow": {
 					"title": "Escrow",

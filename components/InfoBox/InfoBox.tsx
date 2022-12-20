@@ -28,9 +28,13 @@ const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className, disabled, 
 					return (
 						<React.Fragment key={key}>
 							<div>
-								<div className="key">
-									{value.hideKey ? '' : `${key}:`} {value.keyNode}
-								</div>
+								{value.hideKey ? (
+									<>{value.keyNode}</>
+								) : (
+									<div className="key">
+										{key}: {value.keyNode}
+									</div>
+								)}
 								<p
 									data-testid={`${dataTestId}-${index}`}
 									className={`${disabled ? 'value closed' : 'value'}${
@@ -81,23 +85,11 @@ const InfoBoxContainer = styled.div`
 			cursor: default;
 		}
 
-		.neon {
-			color: ${(props) => props.theme.colors.selectedTheme.badge['neon'].text};
-			font-weight: 700;
-			font-family: ${(props) => props.theme.fonts.regular};
-			text-transform: uppercase;
-			letter-spacing: 1px;
-			font-size: 12px;
-		}
-
-		.bg-neon {
-			font-family: ${(props) => props.theme.fonts.black};
-			color: ${(props) => props.theme.colors.selectedTheme.badge['neon'].text};
-			background: ${(props) => props.theme.colors.selectedTheme.badge['neon'].background};
-			padding: 0px 6px;
-			border-radius: 100px;
-			font-weight: 900;
-			font-variant: all-small-caps;
+		.key {
+			color: ${(props) => props.theme.colors.selectedTheme.text.title};
+			font-size: 13px;
+			text-transform: capitalize;
+			cursor: default;
 		}
 
 		.bg-red {
@@ -109,6 +101,16 @@ const InfoBoxContainer = styled.div`
 			font-weight: 900;
 			font-variant: all-small-caps;
 			cursor: pointer;
+		}
+
+		.bg-yellow {
+			font-family: ${(props) => props.theme.fonts.black};
+			color: ${(props) => props.theme.colors.selectedTheme.badge['yellow'].text};
+			background: ${(props) => props.theme.colors.selectedTheme.badge['yellow'].background};
+			padding: 0px 6px;
+			border-radius: 100px;
+			font-weight: 900;
+			font-variant: all-small-caps;
 		}
 
 		.white {

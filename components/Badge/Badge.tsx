@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const Badge = styled.span<{ color: 'yellow' | 'red' | 'neon' }>`
+const Badge = styled.span<{ color: 'yellow' | 'red' | 'gray' }>`
 	text-transform: uppercase;
 	padding: 1.6px 3px 1px 3px;
 	text-align: center;
