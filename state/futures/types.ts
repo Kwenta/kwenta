@@ -13,7 +13,7 @@ import { PositionSide } from 'sections/futures/types';
 import { QueryStatus } from 'state/types';
 import { FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
 
-export type IsolatedMarginOrderType = 'next price' | 'market';
+export type IsolatedMarginOrderType = 'market';
 export type CrossMarginOrderType = 'market' | 'stop market' | 'limit';
 
 export type TradeSizeInputs<T = Wei> = {
@@ -178,7 +178,6 @@ export type IsolatedMarginState = {
 
 export type ModifyIsolatedPositionInputs = {
 	sizeDelta: Wei;
-	useNextPrice: boolean;
 };
 
 export const futuresPositionKeys = new Set([

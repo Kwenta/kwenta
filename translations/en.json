@@ -745,7 +745,6 @@
 					"modify-position": "modify",
 					"deposit-margin-minimum": "Deposit Margin",
 					"oi-caps-reached": "Open Interest Cap Reached",
-					"place-next-price-order": "Place Next Price Order",
 					"place-limit-order": "Place Limit Order",
 					"place-stop-order": "Place Stop Market Order",
 					"connect-wallet": "Connect Wallet"

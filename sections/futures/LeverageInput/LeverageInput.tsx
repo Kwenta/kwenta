@@ -14,8 +14,6 @@ import {
 	selectMarketAssetRate,
 	selectMarketInfo,
 	selectMaxLeverage,
-	selectNextPriceDisclaimer,
-	selectOrderType,
 	selectPosition,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -29,8 +27,6 @@ const LeverageInput: FC = () => {
 	const dispatch = useAppDispatch();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
 	const leverage = useAppSelector(selectIsolatedMarginLeverage);
-	const orderType = useAppSelector(selectOrderType);
-	const isDisclaimerDisplayed = useAppSelector(selectNextPriceDisclaimer);
 	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const maxLeverage = useAppSelector(selectMaxLeverage);
@@ -83,11 +79,6 @@ const LeverageInput: FC = () => {
 				</LeverageTitle>
 				{modeButton}
 			</LeverageRow>
-			{orderType === 'next price' && isDisclaimerDisplayed && (
-				<LeverageDisclaimer>
-					{t('futures.market.trade.input.leverage.disclaimer')}
-				</LeverageDisclaimer>
-			)}
 			{mode === 'slider' ? (
 				<SliderRow>
 					<LeverageSlider
@@ -180,12 +171,6 @@ const TextButton = styled.button`
 	background-color: transparent;
 	border: none;
 	cursor: pointer;
-`;
-
-const LeverageDisclaimer = styled.div`
-	font-size: 13px;
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	margin: 0 8px 12px;
 `;
 
 export const StyledInput = styled(CustomNumericInput)`

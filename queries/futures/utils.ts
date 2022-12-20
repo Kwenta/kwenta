@@ -49,22 +49,14 @@ export const getFuturesMarketContract = (asset: string | null, contracts: Contra
 };
 
 const mapOrderType = (orderType: Partial<FuturesOrderType>): FuturesOrderTypeDisplay => {
-	return orderType === 'NextPrice'
-		? 'Next Price'
-		: orderType === 'StopMarket'
-		? 'Stop Market'
-		: orderType;
+	return orderType === 'StopMarket' ? 'Stop Market' : orderType;
 };
 
-export const mapFuturesOrders = (
-	o: FuturesOrderResult,
-	marketInfo: FuturesMarket | undefined
-): FuturesOrder => {
+export const mapFuturesOrders = (o: FuturesOrderResult): FuturesOrder => {
 	const asset: FuturesMarketAsset = parseBytes32String(o.asset) as FuturesMarketAsset;
 	const size = weiFromWei(o.size);
 	const targetPrice = weiFromWei(o.targetPrice ?? 0);
 	const targetRoundId = new Wei(o.targetRoundId, 0);
-	const currentRoundId = wei(marketInfo?.currentRoundId ?? 0);
 	const marginDelta = weiFromWei(o.marginDelta);
 	return {
 		...o,
@@ -82,11 +74,8 @@ export const mapFuturesOrders = (
 		}),
 		targetPriceTxt: formatDollars(targetPrice),
 		side: size.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
-		isStale: o.orderType === 'NextPrice' && currentRoundId.gte(wei(o.targetRoundId).add(2)),
-		isExecutable:
-			o.orderType === 'NextPrice' && targetRoundId
-				? currentRoundId.eq(targetRoundId) || currentRoundId.eq(targetRoundId.add(1))
-				: false,
+		isStale: false,
+		isExecutable: false,
 	};
 };
 
