@@ -12,6 +12,7 @@ import {
 	DelayedOrder,
 	FuturesMarket,
 	FuturesPosition,
+	FuturesPositionHistory,
 	FuturesPotentialTradeDetails,
 	FuturesVolumes,
 	OrderTypeByName,
@@ -140,8 +141,10 @@ export const fetchFuturesPositionsForType = createAsyncThunk<void, void, ThunkCo
 		const { futures } = getState();
 		if (futures.selectedType === 'cross_margin') {
 			dispatch(fetchCrossMarginPositions());
+			dispatch(fetchCrossMarginPositionHistory());
 		} else {
 			dispatch(fetchIsolatedMarginPositions());
+			dispatch(fetchIsolatedMarginPositionHistory());
 		}
 	}
 );
@@ -151,6 +154,9 @@ export const fetchAllFuturesPositions = createAsyncThunk<void, void, ThunkConfig
 	async (_, { dispatch }) => {
 		dispatch(fetchCrossMarginPositions());
 		dispatch(fetchIsolatedMarginPositions());
+
+		dispatch(fetchCrossMarginPositionHistory());
+		dispatch(fetchIsolatedMarginPositionHistory());
 	}
 );
 
@@ -181,6 +187,31 @@ export const fetchIsolatedMarginPositions = createAsyncThunk<
 	);
 	return {
 		positions: positions.map((p) => serializeWeiObject(p) as FuturesPosition<string>),
+		wallet: wallet.walletAddress,
+	};
+});
+
+export const fetchCrossMarginPositionHistory = createAsyncThunk<
+	FuturesPositionHistory<string>[],
+	void,
+	ThunkConfig
+>('futures/fetchCrossMarginPositionHistory', async (_, { getState, extra: { sdk } }) => {
+	const { futures } = getState();
+	if (!futures.crossMargin.account) return [];
+	const positions = await sdk.futures.getFuturesPositionHistory(futures.crossMargin.account);
+	return positions.map((p) => serializeWeiObject(p) as FuturesPositionHistory<string>);
+});
+
+export const fetchIsolatedMarginPositionHistory = createAsyncThunk<
+	{ positionHistory: FuturesPositionHistory<string>[]; wallet: string },
+	void,
+	ThunkConfig
+>('futures/fetchIsolatedMarginPositionHistory', async (_, { getState, extra: { sdk } }) => {
+	const { wallet } = getState();
+	if (!wallet.walletAddress) throw new Error('No wallet connected');
+	const positions = await sdk.futures.getFuturesPositionHistory(wallet.walletAddress);
+	return {
+		positionHistory: positions.map((p) => serializeWeiObject(p) as FuturesPositionHistory<string>),
 		wallet: wallet.walletAddress,
 	};
 });
@@ -237,6 +268,7 @@ export const fetchCrossMarginAccountData = createAsyncThunk<void, void, ThunkCon
 	'futures/fetchCrossMarginAccountData',
 	async (_, { dispatch }) => {
 		dispatch(fetchCrossMarginPositions());
+		dispatch(fetchCrossMarginPositionHistory());
 		dispatch(fetchCrossMarginBalanceInfo());
 	}
 );
@@ -245,6 +277,7 @@ export const fetchIsolatedMarginAccountData = createAsyncThunk<void, void, Thunk
 	'futures/fetchIsolatedMarginAccountData',
 	async (_, { dispatch }) => {
 		dispatch(fetchIsolatedMarginPositions());
+		dispatch(fetchIsolatedMarginPositionHistory());
 	}
 );
 

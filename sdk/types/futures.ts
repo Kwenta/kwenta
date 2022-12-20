@@ -158,6 +158,8 @@ export enum PositionSide {
 	SHORT = 'short',
 }
 
+export type FuturesAccountType = 'cross_margin' | 'isolated_margin';
+
 export enum OrderType {
 	MARKET = 0,
 	DELAYED = 1,
@@ -192,6 +194,38 @@ export type FuturesFilledPosition<T = Wei> = {
 	pnl: T;
 	pnlPct: T;
 	marginRatio: T;
+};
+
+export type FuturesPositionHistory<T = Wei> = {
+	id: Number;
+	transactionHash: string;
+	timestamp: number;
+	openTimestamp: number;
+	closeTimestamp: number | undefined;
+	market: string;
+	asset: FuturesMarketAsset;
+	marketKey: FuturesMarketKey;
+	account: string;
+	abstractAccount: string;
+	accountType: FuturesAccountType;
+	isOpen: boolean;
+	isLiquidated: boolean;
+	size: Wei;
+	feesPaid: Wei;
+	netFunding: Wei;
+	netTransfers: Wei;
+	totalDeposits: Wei;
+	initialMargin: Wei;
+	margin: Wei;
+	entryPrice: Wei;
+	avgEntryPrice: Wei;
+	exitPrice: Wei;
+	leverage: Wei;
+	side: PositionSide;
+	pnl: Wei;
+	pnlWithFeesPaid: Wei;
+	totalVolume: Wei;
+	trades: number;
 };
 
 export type FuturesPosition<T = Wei> = {

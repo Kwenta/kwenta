@@ -1,7 +1,6 @@
 import React from 'react';
 import { useRecoilValue } from 'recoil';
 
-import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesPositionHistory';
 import useQueryCrossMarginAccount from 'queries/futures/useQueryCrossMarginAccount';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { fetchBalances } from 'state/balances/actions';
@@ -40,7 +39,6 @@ export const RefetchProvider: React.FC = ({ children }) => {
 	const { crossMarginAddress } = useRecoilValue(futuresAccountState);
 	const dispatch = useAppDispatch();
 
-	const positionHistoryQuery = useGetFuturesPositionHistory();
 	const queryCrossMarginAccount = useQueryCrossMarginAccount();
 
 	useLaggedDailyPrice();
@@ -50,7 +48,6 @@ export const RefetchProvider: React.FC = ({ children }) => {
 			switch (refetchType) {
 				case 'modify-position':
 					dispatch(fetchOpenOrders());
-					positionHistoryQuery.refetch();
 					dispatch(fetchFuturesPositionsForType());
 					if (selectedAccountType === 'cross_margin') {
 						dispatch(fetchCrossMarginBalanceInfo());
@@ -62,12 +59,10 @@ export const RefetchProvider: React.FC = ({ children }) => {
 					break;
 				case 'close-position':
 					dispatch(fetchFuturesPositionsForType());
-					positionHistoryQuery.refetch();
 					dispatch(fetchOpenOrders());
 					break;
 				case 'margin-change':
 					dispatch(fetchFuturesPositionsForType());
-					positionHistoryQuery.refetch();
 					dispatch(fetchBalances());
 					break;
 				case 'account-margin-change':
