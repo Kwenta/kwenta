@@ -6,11 +6,11 @@ import NotificationContainer from 'constants/NotificationContainer';
 import Connector from 'containers/Connector';
 import ExchangeContent from 'sections/exchange/ExchangeContent';
 import ExchangeHead from 'sections/exchange/ExchangeHead';
+import AppLayout from 'sections/shared/Layout/AppLayout';
 import Header from 'sections/shared/Layout/AppLayout/Header';
 import { resetCurrencies } from 'state/exchange/actions';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FullScreenContainer, MobileScreenContainer } from 'styles/common';
-import AppLayout from 'sections/shared/Layout/AppLayout';
 
 type ExchangeComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
