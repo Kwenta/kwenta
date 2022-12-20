@@ -28,6 +28,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { FlexDivCentered } from 'styles/common';
+import { getKnownError } from 'utils/formatters/error';
 import { zeroBN, formatCurrency, formatDollars, formatPercent } from 'utils/formatters/number';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
@@ -181,7 +182,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 						)}
 					</ConfirmTradeButton>
 					<Disclaimer>{t('futures.market.trade.confirmation.modal.delayed-disclaimer')}</Disclaimer>
-					{txError && <Error message={txError} formatter="revert" />}
+					{txError && <Error message={getKnownError(txError)} formatter="revert" />}
 				</StyledBaseModal>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
