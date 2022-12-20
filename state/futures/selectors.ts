@@ -12,6 +12,7 @@ import { selectPrices } from 'state/prices/selectors';
 import { RootState } from 'state/store';
 import { selectWallet } from 'state/wallet/selectors';
 import { sameSide } from 'utils/costCalculations';
+import { getKnownError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
 import {
 	MarketKeyByAsset,
@@ -308,9 +309,13 @@ export const selectMaxLeverage = createSelector(
 		if (!positionLeverage || positionLeverage.eq(wei(0))) return adjustedMaxLeverage;
 		if (futuresType === 'cross_margin') return adjustedMaxLeverage;
 		if (positionSide === leverageSide) {
-			return adjustedMaxLeverage?.sub(positionLeverage);
+			return adjustedMaxLeverage?.sub(positionLeverage).gte(0)
+				? adjustedMaxLeverage.sub(positionLeverage)
+				: wei(0);
 		} else {
-			return positionLeverage.add(adjustedMaxLeverage);
+			return positionLeverage.add(adjustedMaxLeverage).gte(0)
+				? positionLeverage.add(adjustedMaxLeverage)
+				: wei(0);
 		}
 	}
 );
@@ -499,6 +504,15 @@ export const selectTradePreviewError = createSelector(
 		return type === 'cross_margin'
 			? futures.queryStatuses.crossMarginTradePreview.error
 			: futures.queryStatuses.isolatedTradePreview.error;
+	}
+);
+
+export const selectModifyPositionError = createSelector(
+	(state: RootState) => state.futures,
+	(futures) => {
+		return futures.transaction?.type === 'modify_isolated' && futures.transaction?.error
+			? getKnownError(futures.transaction.error)
+			: null;
 	}
 );
 

@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
+import Error from 'components/Error';
 import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -16,6 +17,7 @@ import {
 	selectLeverageSide,
 	selectMarketAsset,
 	selectMarketInfo,
+	selectModifyPositionError,
 	selectNextPriceDisclaimer,
 	selectOrderType,
 	selectPosition,
@@ -39,6 +41,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 	const dispatch = useAppDispatch();
 
 	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
+	const txError = useAppSelector(selectModifyPositionError);
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
@@ -47,7 +50,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 	const potentialTradeDetails = useAppSelector(selectTradePreview);
 	const previewStatus = useAppSelector(selectTradePreviewStatus);
 	const orderType = useAppSelector(selectOrderType);
-	const { commitDeposit, delayedOrderFee } = useAppSelector(selectDelayedOrderFee);
+	const { commitDeposit } = useAppSelector(selectDelayedOrderFee);
 
 	useEffect(() => {
 		dispatch(
@@ -126,7 +129,6 @@ const DelayedOrderConfirmationModal: FC = () => {
 			orderType,
 			commitDeposit,
 			potentialTradeDetails,
-			delayedOrderFee,
 			marketAsset,
 			leverageSide,
 			totalDeposit,
@@ -178,6 +180,8 @@ const DelayedOrderConfirmationModal: FC = () => {
 							t('futures.market.trade.confirmation.modal.confirm-order')
 						)}
 					</ConfirmTradeButton>
+					<Disclaimer>{t('futures.market.trade.confirmation.modal.delayed-disclaimer')}</Disclaimer>
+					{txError && <Error message={txError} formatter="revert" />}
 				</StyledBaseModal>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
@@ -248,6 +252,7 @@ const Value = styled.div`
 
 const ConfirmTradeButton = styled(Button)`
 	margin-top: 24px;
+	margin-bottom: 12px;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
