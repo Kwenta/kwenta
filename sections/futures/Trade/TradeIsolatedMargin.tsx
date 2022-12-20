@@ -1,8 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
 import Error from 'components/Error';
-import SegmentedControl from 'components/SegmentedControl';
 import { setOpenModal } from 'state/app/reducer';
 import { selectOpenModal } from 'state/app/selectors';
 import { changeLeverageSide } from 'state/futures/actions';
@@ -44,6 +42,8 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 			<Error messageType="warn" message={t('futures.market.trade.perpsv2-disclaimer')} />
 
 			{!isMobile && <MarketInfoBox />}
+
+			<DelayedOrderWarning />
 
 			<PositionButtons
 				selected={leverageSide}

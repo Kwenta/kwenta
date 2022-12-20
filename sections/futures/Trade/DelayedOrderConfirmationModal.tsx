@@ -29,7 +29,13 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { FlexDivCentered } from 'styles/common';
 import { getKnownError } from 'utils/formatters/error';
-import { zeroBN, formatCurrency, formatDollars, formatPercent } from 'utils/formatters/number';
+import {
+	zeroBN,
+	formatCurrency,
+	formatDollars,
+	formatPercent,
+	formatNumber,
+} from 'utils/formatters/number';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
 import { PositionSide } from '../types';
@@ -95,11 +101,17 @@ const DelayedOrderConfirmationModal: FC = () => {
 				),
 			},
 			{
-				label: 'estimated fill price',
+				label: t('futures.market.user.position.modal.estimated-fill'),
 				value: formatDollars(potentialTradeDetails?.price ?? zeroBN, { isAssetPrice: true }),
 			},
 			{
-				label: 'estimated price impact',
+				label: t('futures.market.user.position.modal.time-delay'),
+				value: `${formatNumber(marketInfo?.settings.offchainDelayedOrderMinAge ?? zeroBN, {
+					maxDecimals: 0,
+				})} sec`,
+			},
+			{
+				label: t('futures.market.user.position.modal.estimated-price-impact'),
 				value: `${formatPercent(potentialTradeDetails?.priceImpact ?? zeroBN)}`,
 				color: potentialTradeDetails?.priceImpact.abs().gt(0.45) // TODO: Make this configurable
 					? 'red'
@@ -134,6 +146,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 			leverageSide,
 			totalDeposit,
 			marketInfo?.keeperDeposit,
+			marketInfo?.settings.offchainDelayedOrderMinAge,
 			selectedPriceCurrency.name,
 			selectedPriceCurrency.sign,
 		]

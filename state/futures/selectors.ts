@@ -395,10 +395,8 @@ export const selectIsolatedMarginTradeInputs = createSelector(
 	(side, tradeInputs) => {
 		const inputs = unserializeIsolatedMarginTradeInputs(tradeInputs);
 		const deltas = {
-			susdSizeDelta:
-				side === PositionSide.LONG ? inputs.susdSize.abs() : inputs.susdSize.abs().neg(),
-			nativeSizeDelta:
-				side === PositionSide.LONG ? inputs.nativeSize.abs() : inputs.nativeSize.abs().neg(),
+			susdSizeDelta: side === PositionSide.LONG ? inputs.susdSize : inputs.susdSize.neg(),
+			nativeSizeDelta: side === PositionSide.LONG ? inputs.nativeSize : inputs.nativeSize.neg(),
 		};
 		return {
 			...inputs,

@@ -167,6 +167,12 @@ export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 	[FuturesMarketAsset.OP]: FuturesMarketKey.sOP,
 } as const;
 
+export const marketOverrides: Partial<Record<FuturesMarketKey, Record<string, any>>> = {
+	[FuturesMarketKey.sETHPERP]: {
+		maxLeverage: wei(25),
+	},
+};
+
 export const orderPriceInvalidLabel = (
 	orderPrice: string,
 	leverageSide: PositionSide,

@@ -56,6 +56,7 @@ const ManagePosition: React.FC = () => {
 	const previewTrade = useAppSelector(selectTradePreview);
 
 	const previewError = useAppSelector(selectTradePreviewError);
+	const transaction = useAppSelector(selectFuturesTransaction);
 	const leverage = useAppSelector(selectIsolatedMarginLeverage);
 	const orderType = useAppSelector(selectOrderType);
 	const openOrder = useAppSelector(selectOpenOrder);
@@ -78,9 +79,10 @@ const ManagePosition: React.FC = () => {
 
 	const orderError = useMemo(() => {
 		if (previewError) return t(previewErrorI18n(previewError));
+		if (transaction?.error) return transaction.error;
 		if (previewTrade?.showStatus) return previewTrade?.statusMessage;
 		return null;
-	}, [previewTrade?.showStatus, previewTrade?.statusMessage, previewError, t]);
+	}, [previewTrade?.showStatus, previewTrade?.statusMessage, previewError, t, transaction]);
 
 	const leverageValid = useMemo(() => {
 		if (selectedAccountType === 'cross_margin') return true;

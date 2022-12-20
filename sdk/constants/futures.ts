@@ -1,7 +1,7 @@
 import { FuturesMarketAsset, FuturesMarketConfig, FuturesMarketKey } from 'sdk/types/futures';
 
 export const FUTURES_ENDPOINT_OP_MAINNET =
-	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-futures';
+	'https://api.thegraph.com/subgraphs/name/tburm/optimism-futures';
 
 export const FUTURES_ENDPOINT_OP_GOERLI =
 	'https://api.thegraph.com/subgraphs/name/tburm/optimism-goerli-futures';
@@ -26,7 +26,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sETHPERP]: {
 		key: FuturesMarketKey.sETHPERP,
 		asset: FuturesMarketAsset.sETH,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace',
