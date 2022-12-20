@@ -829,7 +829,7 @@ export const cancelDelayedOrder = createAsyncThunk<void, CancelDelayedOrderInput
 			dispatch(
 				setTransaction({
 					status: TransactionStatus.AwaitingExecution,
-					type: 'cancelDelayed_isolated',
+					type: 'cancel_delayed_isolated',
 					hash: null,
 				})
 			);
@@ -853,7 +853,7 @@ export const executeDelayedOrder = createAsyncThunk<void, string, ThunkConfig>(
 			dispatch(
 				setTransaction({
 					status: TransactionStatus.AwaitingExecution,
-					type: 'executeDelayed_isolated',
+					type: 'execute_delayed_isolated',
 					hash: null,
 				})
 			);

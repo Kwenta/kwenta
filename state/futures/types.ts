@@ -68,8 +68,8 @@ export type FuturesTransactionType =
 	| 'modify_isolated'
 	| 'close_isolated'
 	| 'close_cross_margin'
-	| 'cancelDelayed_isolated'
-	| 'executeDelayed_isolated'
+	| 'cancel_delayed_isolated'
+	| 'execute_delayed_isolated'
 	| 'close_cross_margin';
 
 export type FuturesTransaction = {
