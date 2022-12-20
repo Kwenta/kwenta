@@ -4,14 +4,15 @@ import { wei } from '@synthetixio/wei';
 import { DEFAULT_LEVERAGE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import { DEFAULT_MAX_LEVERAGE } from 'constants/futures';
 import { TransactionStatus } from 'sdk/types/common';
-import { FuturesPosition } from 'sdk/types/futures';
+import { FuturesPosition, FuturesPositionHistory } from 'sdk/types/futures';
 import { unserializePotentialTrade } from 'sdk/utils/futures';
 import { PositionSide } from 'sections/futures/types';
-import { selectExchangeRates } from 'state/exchange/selectors';
 import { accountType, deserializeWeiObject } from 'state/helpers';
+import { selectPrices } from 'state/prices/selectors';
 import { RootState } from 'state/store';
 import { selectWallet } from 'state/wallet/selectors';
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import { sameSide } from 'utils/costCalculations';
+import { getKnownError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
 import {
 	MarketKeyByAsset,
@@ -25,7 +26,7 @@ import {
 	unserializeCrossMarginTradeInputs,
 } from 'utils/futures';
 
-import { futuresPositionKeys } from './types';
+import { futuresPositionHistoryKeys, futuresPositionKeys } from './types';
 
 export const selectFuturesType = (state: RootState) => state.futures.selectedType;
 
@@ -37,9 +38,6 @@ export const selectMarketsQueryStatus = (state: RootState) => state.futures.quer
 
 export const selectIsolatedLeverageInput = (state: RootState) =>
 	state.futures.isolatedMargin.leverageInput;
-
-export const selectCrossMarginSelectedLeverage = (state: RootState) =>
-	wei(state.futures.crossMargin.tradeInputs.leverage || DEFAULT_LEVERAGE);
 
 export const selectCrossMarginMarginDelta = (state: RootState) =>
 	wei(state.futures.crossMargin.marginDelta || 0);
@@ -57,12 +55,6 @@ export const selectMarketAsset = createSelector(
 	(state: RootState) => state.futures,
 	selectFuturesType,
 	(futures, marginType) => futures[accountType(marginType)].selectedMarketAsset
-);
-
-export const selectMarketRate = createSelector(
-	selectMarketKey,
-	selectExchangeRates,
-	(marketKey, exchangeRates) => newGetExchangeRatesForCurrencies(exchangeRates, marketKey, 'sUSD')
 );
 
 export const selectMarkets = createSelector(
@@ -102,15 +94,35 @@ export const selectIsolatedPriceImpact = createSelector(
 	(priceImpact) => wei(priceImpact, 0)
 );
 
-export const selectPerpsMarketRate = createSelector(selectMarketInfo, (marketInfo) => {
-	return marketInfo?.price ?? wei(0);
-});
+export const selectOrderType = createSelector(
+	(state: RootState) => state.futures,
+	(futures) => futures[accountType(futures.selectedType)].orderType
+);
 
-export const selectMarketAssetRate = createSelector(
-	(state: RootState) => state.futures[accountType(state.futures.selectedType)].selectedMarketAsset,
-	selectExchangeRates,
-	(marketAsset, exchangeRates) => {
-		return newGetExchangeRatesForCurrencies(exchangeRates, marketAsset, 'sUSD');
+export const selectMarketPrice = createSelector(
+	selectMarketAsset,
+	selectPrices,
+	(marketAsset, prices) => {
+		const price = prices[marketAsset];
+		// Note this assumes the order type is always delayed off chain
+		return price?.offChain ?? price?.onChain ?? wei(0);
+	}
+);
+
+export const selectSkewAdjustedPrice = createSelector(
+	selectMarketPrice,
+	selectMarketInfo,
+	(price, marketInfo) => {
+		if (!marketInfo?.marketSkew || !marketInfo?.settings.skewScale) return price;
+		return wei(price).mul(wei(marketInfo.marketSkew).div(marketInfo.settings.skewScale).add(1));
+	}
+);
+
+export const selectMarketPrices = createSelector(
+	selectMarketAsset,
+	selectPrices,
+	(marketAsset, prices) => {
+		return prices[marketAsset] ?? {};
 	}
 );
 
@@ -155,6 +167,44 @@ export const selectFuturesPositions = createSelector(
 	(state: RootState) => state.futures.selectedType,
 	(crossMarginPositions, isolatedMarginPositions, selectedType) => {
 		return selectedType === 'cross_margin' ? crossMarginPositions : isolatedMarginPositions;
+	}
+);
+
+export const selectCrossMarginPositionHistory = createSelector(
+	(state: RootState) => state.futures,
+	(futures) => {
+		return futures.crossMargin.account &&
+			futures.crossMargin.positionHistory[futures.crossMargin.account]
+			? futures.crossMargin.positionHistory[futures.crossMargin.account].map(
+					// TODO: Maybe change to explicit serializing functions to avoid casting
+					(p) => deserializeWeiObject(p, futuresPositionHistoryKeys) as FuturesPositionHistory
+			  )
+			: [];
+	}
+);
+
+export const selectIsolatedMarginPositionHistory = createSelector(
+	selectWallet,
+	(state: RootState) => state.futures,
+	(wallet, futures) => {
+		if (!wallet) return [];
+		return futures.isolatedMargin.positionHistory[wallet]
+			? futures.isolatedMargin.positionHistory[wallet].map(
+					// TODO: Maybe change to explicit serializing functions to avoid casting
+					(p) => deserializeWeiObject(p, futuresPositionHistoryKeys) as FuturesPositionHistory
+			  )
+			: [];
+	}
+);
+
+export const selectFuturesPositionHistory = createSelector(
+	selectCrossMarginPositionHistory,
+	selectIsolatedMarginPositionHistory,
+	(state: RootState) => state.futures.selectedType,
+	(crossMarginPositionHistory, isolatedMarginPositionHistory, selectedType) => {
+		return selectedType === 'cross_margin'
+			? crossMarginPositionHistory
+			: isolatedMarginPositionHistory;
 	}
 );
 
@@ -248,7 +298,7 @@ export const selectIsModifyingIsolatedPosition = createSelector(
 export const selectIsMarketCapReached = createSelector(
 	(state: RootState) => state.futures[accountType(state.futures.selectedType)].leverageSide,
 	selectMarketInfo,
-	selectMarketAssetRate,
+	selectMarketPrice,
 	(leverageSide, marketInfo, marketAssetRate) => {
 		const maxMarketValueUSD = marketInfo?.marketLimit ?? wei(0);
 		const marketSize = marketInfo?.marketSize ?? wei(0);
@@ -271,9 +321,12 @@ export const selectPosition = createSelector(
 	}
 );
 
-export const selectOrderType = createSelector(
-	(state: RootState) => state.futures,
-	(futures) => futures[accountType(futures.selectedType)].orderType
+export const selectActivePositionHistory = createSelector(
+	selectFuturesPositionHistory,
+	selectMarketInfo,
+	(positionHistory) => {
+		return positionHistory.filter((p) => p.isOpen);
+	}
 );
 
 export const selectLeverageSide = createSelector(
@@ -299,9 +352,13 @@ export const selectMaxLeverage = createSelector(
 		if (!positionLeverage || positionLeverage.eq(wei(0))) return adjustedMaxLeverage;
 		if (futuresType === 'cross_margin') return adjustedMaxLeverage;
 		if (positionSide === leverageSide) {
-			return adjustedMaxLeverage?.sub(positionLeverage);
+			return adjustedMaxLeverage?.sub(positionLeverage).gte(0)
+				? adjustedMaxLeverage.sub(positionLeverage)
+				: wei(0);
 		} else {
-			return positionLeverage.add(adjustedMaxLeverage);
+			return positionLeverage.add(adjustedMaxLeverage).gte(0)
+				? positionLeverage.add(adjustedMaxLeverage)
+				: wei(0);
 		}
 	}
 );
@@ -351,6 +408,13 @@ export const selectIsolatedMarginTradeInputs = createSelector(
 		};
 	}
 );
+
+export const selectCrossMarginSelectedLeverage = createSelector(
+	selectMarketKey,
+	(state: RootState) => state.futures.crossMargin.selectedLeverageByAsset,
+	(key, selectedLeverageByAsset) => wei(selectedLeverageByAsset[key] || DEFAULT_LEVERAGE)
+);
+
 export const selectDynamicFeeRate = (state: RootState) => wei(state.futures.dynamicFeeRate);
 
 export const selectIsolatedMarginFee = (state: RootState) =>
@@ -457,14 +521,20 @@ export const selectFuturesPortfolio = createSelector(
 export const selectCrossMarginOpenOrders = createSelector(
 	(state: RootState) => state.futures,
 	(futures) => {
-		return unserializeDelayedOrders(futures.crossMargin.openOrders);
+		return futures.crossMargin.account &&
+			futures.crossMargin.openOrders[futures.crossMargin.account]
+			? unserializeDelayedOrders(futures.crossMargin.openOrders[futures.crossMargin.account])
+			: [];
 	}
 );
 
 export const selectIsolatedMarginOpenOrders = createSelector(
+	selectWallet,
 	(state: RootState) => state.futures,
-	(futures) => {
-		return unserializeDelayedOrders(futures.isolatedMargin.openOrders);
+	(wallet, futures) => {
+		return wallet && futures.isolatedMargin.openOrders[wallet]
+			? unserializeDelayedOrders(futures.isolatedMargin.openOrders[wallet])
+			: [];
 	}
 );
 
@@ -484,6 +554,15 @@ export const selectTradePreviewError = createSelector(
 		return type === 'cross_margin'
 			? futures.queryStatuses.crossMarginTradePreview.error
 			: futures.queryStatuses.isolatedTradePreview.error;
+	}
+);
+
+export const selectModifyPositionError = createSelector(
+	(state: RootState) => state.futures,
+	(futures) => {
+		return futures.transaction?.type === 'modify_isolated' && futures.transaction?.error
+			? getKnownError(futures.transaction.error)
+			: null;
 	}
 );
 
@@ -533,5 +612,42 @@ export const selectModifyIsolatedGasEstimate = createSelector(
 		const estimate = transactionEstimations['modify_isolated'];
 		if (estimate) return unserializeGasEstimate(estimate);
 		return null;
+	}
+);
+
+export const selectDelayedOrderFee = createSelector(
+	selectMarketInfo,
+	selectTradeSizeInputs,
+	selectSkewAdjustedPrice,
+	selectOrderType,
+	(market, { nativeSizeDelta }, price, orderType) => {
+		if (
+			!market?.marketSkew ||
+			!market?.feeRates.takerFeeDelayedOrder ||
+			!market?.feeRates.makerFeeDelayedOrder ||
+			!market?.feeRates.takerFeeOffchainDelayedOrder ||
+			!market?.feeRates.makerFeeOffchainDelayedOrder ||
+			!nativeSizeDelta
+		) {
+			return { commitDeposit: undefined, delayedOrderFee: undefined };
+		}
+
+		const notionalDiff = nativeSizeDelta.mul(price);
+
+		const makerFee =
+			orderType === 'delayed offchain'
+				? market.feeRates.makerFeeOffchainDelayedOrder
+				: market.feeRates.makerFeeDelayedOrder;
+		const takerFee =
+			orderType === 'delayed offchain'
+				? market.feeRates.takerFeeOffchainDelayedOrder
+				: market.feeRates.takerFeeDelayedOrder;
+
+		const staticRate = sameSide(notionalDiff, market.marketSkew) ? takerFee : makerFee;
+
+		return {
+			commitDeposit: notionalDiff.mul(staticRate).abs(),
+			delayedOrderFee: notionalDiff.mul(staticRate).abs(),
+		};
 	}
 );

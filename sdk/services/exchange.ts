@@ -21,23 +21,19 @@ import { ATOMIC_EXCHANGE_SLIPPAGE } from 'constants/exchange';
 import { CG_BASE_API_URL } from 'queries/coingecko/constants';
 import { PriceResponse } from 'queries/coingecko/types';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
-import { Rates } from 'queries/rates/types';
 import { getProxySynthSymbol } from 'queries/synths/utils';
 import { getEthGasPrice } from 'sdk/common/gas';
 import erc20Abi from 'sdk/contracts/abis/ERC20.json';
 import { Token } from 'sdk/types/tokens';
-import { startInterval } from 'sdk/utils/interval';
 import {
 	newGetCoinGeckoPricesForCurrencies,
 	newGetExchangeRatesForCurrencies,
 	newGetExchangeRatesTupleForCurrencies,
 } from 'utils/currencies';
 import { UNIT_BIG_NUM, zeroBN } from 'utils/formatters/number';
-import { FuturesMarketKey, MarketAssetByKey } from 'utils/futures';
 import { getTransactionPrice, normalizeGasLimit } from 'utils/network';
 
 import * as sdkErrors from '../common/errors';
-import SynthRedeemerABI from '../contracts/abis/SynthRedeemer.json';
 import { getSynthsForNetwork, SynthSymbol } from '../data/synths';
 import {
 	OneInchApproveSpenderResponse,
@@ -45,9 +41,6 @@ import {
 	OneInchSwapResponse,
 	OneInchTokenListResponse,
 } from '../types/1inch';
-
-type CurrencyRate = ethers.BigNumberish;
-type SynthRatesTuple = [string[], CurrencyRate[]];
 
 const PROTOCOLS =
 	'OPTIMISM_UNISWAP_V3,OPTIMISM_SYNTHETIX,OPTIMISM_SYNTHETIX_WRAPPER,OPTIMISM_ONE_INCH_LIMIT_ORDER,OPTIMISM_ONE_INCH_LIMIT_ORDER_V2,OPTIMISM_CURVE,OPTIMISM_BALANCER_V2,OPTIMISM_VELODROME,OPTIMISM_KYBERSWAP_ELASTIC';
@@ -60,30 +53,13 @@ export default class ExchangeService {
 	private tokenList: Token[] = [];
 	private allTokensMap: any;
 	private sdk: KwentaSDK;
-	private exchangeRates: Rates = {};
-	private ratesInterval: number | undefined;
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
 	}
 
-	public startRateUpdates(ratesInterval: number) {
-		this.getOneInchTokens();
-
-		if (!this.ratesInterval) {
-			this.ratesInterval = startInterval(async () => {
-				this.exchangeRates = await this.getExchangeRates();
-				this.sdk.events.emit('exchangeRates_updated', this.exchangeRates);
-			}, ratesInterval);
-		}
-	}
-
-	public onRatesUpdated(listener: (exchangeRates: Rates) => void) {
-		return this.sdk.events.on('exchangeRates_updated', listener);
-	}
-
-	public removeRatesListeners() {
-		this.sdk.events.removeAllListeners('exchangeRates_updated');
+	get exchangeRates() {
+		return this.sdk.prices.currentPrices.onChain;
 	}
 
 	public getTxProvider(baseCurrencyKey: string, quoteCurrencyKey: string) {
@@ -393,48 +369,6 @@ export default class ExchangeService {
 		return numEntries ? Number(numEntries.toString()) : 0;
 	}
 
-	public async getExchangeRates() {
-		if (!this.sdk.context.contracts.SynthUtil || !this.sdk.context.contracts.ExchangeRates) {
-			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
-		}
-
-		const exchangeRates: Rates = {};
-
-		// Additional commonly used currencies to fetch, besides the one returned by the SynthUtil.synthsRates
-		const additionalCurrencies = [
-			'SNX',
-			'XAU',
-			'XAG',
-			'DYDX',
-			'APE',
-			'BNB',
-			'DOGE',
-			'DebtRatio',
-			'XMR',
-			'OP',
-		].map(ethers.utils.formatBytes32String);
-
-		const [synthsRates, ratesForCurrencies] = (await Promise.all([
-			this.sdk.context.contracts.SynthUtil.synthsRates(),
-			this.sdk.context.contracts.ExchangeRates.ratesForCurrencies(additionalCurrencies),
-		])) as [SynthRatesTuple, CurrencyRate[]];
-
-		const synths = [...synthsRates[0], ...additionalCurrencies] as CurrencyKey[];
-		const rates = [...synthsRates[1], ...ratesForCurrencies] as CurrencyRate[];
-
-		synths.forEach((currencyKeyBytes32: CurrencyKey, idx: number) => {
-			const currencyKey = ethers.utils.parseBytes32String(currencyKeyBytes32) as CurrencyKey;
-			const marketAsset = MarketAssetByKey[currencyKey as FuturesMarketKey];
-
-			const rate = Number(ethers.utils.formatEther(rates[idx]));
-
-			exchangeRates[currencyKey] = wei(rate);
-			if (marketAsset) exchangeRates[marketAsset] = wei(rate);
-		});
-
-		return exchangeRates;
-	}
-
 	public async getAtomicRates(currencyKey: string) {
 		if (!this.sdk.context.contracts.ExchangeRates) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
@@ -451,13 +385,8 @@ export default class ExchangeService {
 
 	public async approveSwap(quoteCurrencyKey: string, baseCurrencyKey: string) {
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
-		const [oneInchApproveAddress, quoteCurrencyContract] = await Promise.all([
-			this.getOneInchApproveAddress(),
-			this.getQuoteCurrencyContract(quoteCurrencyKey),
-		]);
-
-		const approveAddress =
-			txProvider === '1inch' ? oneInchApproveAddress : SYNTH_SWAP_OPTIMISM_ADDRESS;
+		const quoteCurrencyContract = this.getQuoteCurrencyContract(quoteCurrencyKey);
+		const approveAddress = await this.getApproveAddress(txProvider);
 
 		if (quoteCurrencyContract) {
 			const { hash } = await this.sdk.transactions.createContractTxn(
@@ -492,9 +421,10 @@ export default class ExchangeService {
 		}
 
 		const numEntries = await this.getNumEntries(baseCurrencyKey);
-		const destinationCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey);
 
 		if (numEntries > 12) {
+			const destinationCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey);
+
 			const { hash } = await this.sdk.transactions.createSynthetixTxn('Exchanger', 'settle', [
 				this.sdk.context.walletAddress,
 				destinationCurrencyKey,
@@ -578,6 +508,7 @@ export default class ExchangeService {
 
 		if (txProvider === 'synthswap' || txProvider === '1inch') {
 			const gasInfo = await this.getGasEstimateForExchange(
+				txProvider,
 				quoteCurrencyKey,
 				baseCurrencyKey,
 				quoteAmount
@@ -644,16 +575,16 @@ export default class ExchangeService {
 		return feeAmountInQuoteCurrency.mul(quotePriceRate);
 	}
 
-	public async getApproveAddress(quoteCurrencyKey: string, baseCurrencyKey: string) {
-		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
-		const oneInchApproveAddress = await this.getOneInchApproveAddress();
-		return txProvider === '1inch' ? oneInchApproveAddress : SYNTH_SWAP_OPTIMISM_ADDRESS;
+	public getApproveAddress(txProvider: ReturnType<ExchangeService['getTxProvider']>) {
+		return txProvider !== '1inch' ? SYNTH_SWAP_OPTIMISM_ADDRESS : this.getOneInchApproveAddress();
 	}
 
 	public async checkAllowance(quoteCurrencyKey: string, baseCurrencyKey: string) {
+		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
+
 		const [quoteCurrencyContract, approveAddress] = await Promise.all([
 			this.getQuoteCurrencyContract(quoteCurrencyKey),
-			this.getApproveAddress(quoteCurrencyKey, baseCurrencyKey),
+			this.getApproveAddress(txProvider),
 		]);
 
 		if (!!quoteCurrencyContract) {
@@ -664,13 +595,6 @@ export default class ExchangeService {
 
 			return wei(ethers.utils.formatEther(allowance));
 		}
-	}
-
-	public checkNeedsApproval(baseCurrencyKey: string, quoteCurrencyKey: string) {
-		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
-		const isQuoteCurrencyETH = this.isCurrencyETH(quoteCurrencyKey);
-
-		return (txProvider === '1inch' || txProvider === 'synthswap') && !isQuoteCurrencyETH;
 	}
 
 	public getCurrencyName(currencyKey: string): string | undefined {
@@ -686,7 +610,7 @@ export default class ExchangeService {
 
 		const synth = this.tokensMap[quoteCurrencyKey] || this.tokensMap[baseCurrencyKey];
 
-		const synthUsdRate = synth ? await this.getPairRates(synth, 'sUSD') : null;
+		const synthUsdRate = synth ? this.getPairRates(synth, 'sUSD') : null;
 
 		if (!quoteCurrencyKey || !baseCurrencyKey || !sUSD || !amount.length || wei(amount).eq(0)) {
 			return '';
@@ -734,11 +658,11 @@ export default class ExchangeService {
 		const tokenAddress = this.getTokenAddress(currencyKey, true).toLowerCase();
 
 		if (txProvider !== 'synthetix') {
-			const selectPriceCurrencyRate = this.exchangeRates['sUSD'];
+			const sUSDRate = this.exchangeRates['sUSD'];
+			const price = coinGeckoPrices && coinGeckoPrices[tokenAddress];
 
-			if (coinGeckoPrices && selectPriceCurrencyRate && coinGeckoPrices[tokenAddress]) {
-				const quotePrice = coinGeckoPrices[tokenAddress];
-				return quotePrice ? quotePrice.usd / selectPriceCurrencyRate.toNumber() : wei(0);
+			if (price && sUSDRate?.gt(0)) {
+				return wei(price.usd ?? 0).div(sUSDRate);
 			} else {
 				return wei(0);
 			}
@@ -750,46 +674,41 @@ export default class ExchangeService {
 	}
 
 	public async getRedeemableDeprecatedSynths() {
-		if (!this.sdk.context.contracts?.SynthRedeemer) {
+		const { SynthRedeemer } = this.sdk.context.contracts;
+		const { SynthRedeemer: Redeemer } = this.sdk.context.multicallContracts;
+
+		if (!SynthRedeemer || !Redeemer) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
-		const SynthRedeemer = this.sdk.context.contracts.SynthRedeemer.connect(
-			this.sdk.context.provider
-		);
+		const { walletAddress } = this.sdk.context;
 
 		const synthDeprecatedFilter = SynthRedeemer.filters.SynthDeprecated();
 		const deprecatedSynthsEvents = await SynthRedeemer.queryFilter(synthDeprecatedFilter);
 		const deprecatedProxySynthsAddresses: string[] =
 			deprecatedSynthsEvents.map((e) => e.args?.synth).filter(Boolean) ?? [];
 
-		const Redeemer = new EthCallContract(SynthRedeemer.address, SynthRedeemerABI);
-
-		const symbolCalls = [];
-		const balanceCalls = [];
+		const calls = [];
 
 		for (const addr of deprecatedProxySynthsAddresses) {
-			symbolCalls.push(getProxySynthSymbol(addr));
-			balanceCalls.push(Redeemer.balanceOf(addr, this.sdk.context.walletAddress));
+			calls.push(getProxySynthSymbol(addr));
+			calls.push(Redeemer.balanceOf(addr, walletAddress));
 		}
 
-		const [deprecatedSynths, balanceData] = (await Promise.all([
-			this.sdk.context.multicallProvider.all(symbolCalls),
-			this.sdk.context.multicallProvider.all(balanceCalls),
-		])) as [CurrencyKey[], ethers.BigNumber[]];
-
-		const balances = balanceData.map((balance) => wei(balance));
+		const redeemableSynthData = (await this.sdk.context.multicallProvider.all(calls)) as (
+			| CurrencyKey
+			| ethers.BigNumber
+		)[];
 
 		let totalUSDBalance = wei(0);
 		const cryptoBalances: DeprecatedSynthBalance[] = [];
 
-		for (let i = 0; i < balances.length; i++) {
-			const usdBalance = balances[i];
+		for (let i = 0; i < redeemableSynthData.length; i += 2) {
+			const usdBalance = wei(redeemableSynthData[i + 1]);
 			if (usdBalance.gt(0)) {
-				const currencyKey = deprecatedSynths[i];
 				totalUSDBalance = totalUSDBalance.add(usdBalance);
 				cryptoBalances.push({
-					currencyKey,
+					currencyKey: redeemableSynthData[i] as CurrencyKey,
 					proxyAddress: deprecatedProxySynthsAddresses[i],
 					balance: wei(0),
 					usdBalance,
@@ -842,9 +761,7 @@ export default class ExchangeService {
 	) {
 		const sourceCurrencyKey = ethers.utils.formatBytes32String(quoteCurrencyKey);
 		const destinationCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey);
-
 		const sourceAmountBN = sourceAmount.toBN();
-		const minAmountBN = minAmount.toBN();
 
 		if (isAtomic) {
 			return [
@@ -852,7 +769,7 @@ export default class ExchangeService {
 				sourceAmountBN,
 				destinationCurrencyKey,
 				KWENTA_TRACKING_CODE,
-				minAmountBN,
+				minAmount.toBN(),
 			];
 		} else {
 			return [
@@ -897,8 +814,8 @@ export default class ExchangeService {
 		return get(this.allTokensMap, [currencyKey, 'decimals'], undefined);
 	}
 
-	private async getQuoteCurrencyContract(quoteCurrencyKey: string) {
-		if (quoteCurrencyKey && this.allTokensMap[quoteCurrencyKey]) {
+	private getQuoteCurrencyContract(quoteCurrencyKey: string) {
+		if (this.allTokensMap[quoteCurrencyKey]) {
 			const quoteTknAddress = this.getTokenAddress(quoteCurrencyKey, true);
 			return this.createERC20Contract(quoteTknAddress);
 		}
@@ -991,7 +908,7 @@ export default class ExchangeService {
 					this.getAtomicRates(baseCurrencyKey),
 			  ])
 			: newGetExchangeRatesTupleForCurrencies(
-					this.exchangeRates,
+					this.sdk.prices.currentPrices.onChain,
 					quoteCurrencyKey,
 					baseCurrencyKey
 			  );
@@ -1006,13 +923,13 @@ export default class ExchangeService {
 	}
 
 	private async getGasEstimateForExchange(
+		txProvider: ReturnType<ExchangeService['getTxProvider']>,
 		quoteCurrencyKey: string,
 		baseCurrencyKey: string,
 		quoteAmount: string
 	) {
 		if (!this.sdk.context.isL2) return null;
 
-		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
 		const quoteCurrencyTokenAddress = this.getTokenAddress(quoteCurrencyKey);
 		const baseCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey);
 		const quoteDecimals = this.getTokenDecimals(quoteCurrencyKey);

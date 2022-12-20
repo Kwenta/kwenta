@@ -42,8 +42,6 @@ export type FuturesMarket<T = Wei> = {
 	marketSkew: T;
 	marketSize: T;
 	maxLeverage: T;
-	priceOracle: T;
-	price: T;
 	minInitialMargin: T;
 	keeperDeposit: T;
 	isSuspended: boolean;
@@ -119,6 +117,11 @@ export interface FuturesMarketConfig {
 	key: FuturesMarketKey;
 	asset: FuturesMarketAsset;
 	supports: 'mainnet' | 'testnet' | 'both';
+	version: 1 | 2;
+	pythIds?: {
+		mainnet: string;
+		testnet: string;
+	};
 	disabled?: boolean;
 }
 
@@ -155,6 +158,26 @@ export enum PositionSide {
 	SHORT = 'short',
 }
 
+export type FuturesAccountType = 'cross_margin' | 'isolated_margin';
+
+export enum OrderType {
+	MARKET = 0,
+	DELAYED = 1,
+	DELAYED_OFFCHAIN = 2,
+}
+
+export const OrderNameByType: Record<OrderType, string> = {
+	[OrderType.MARKET]: 'market',
+	[OrderType.DELAYED]: 'delayed',
+	[OrderType.DELAYED_OFFCHAIN]: 'delayed offchain',
+};
+
+export const OrderTypeByName: Record<string, OrderType> = {
+	market: OrderType.MARKET,
+	delayed: OrderType.DELAYED,
+	'delayed offchain': OrderType.DELAYED_OFFCHAIN,
+};
+
 export type FuturesFilledPosition<T = Wei> = {
 	canLiquidatePosition: boolean;
 	side: PositionSide;
@@ -173,12 +196,50 @@ export type FuturesFilledPosition<T = Wei> = {
 	marginRatio: T;
 };
 
+export type FuturesPositionHistory<T = Wei> = {
+	id: Number;
+	transactionHash: string;
+	timestamp: number;
+	openTimestamp: number;
+	closeTimestamp: number | undefined;
+	market: string;
+	asset: FuturesMarketAsset;
+	marketKey: FuturesMarketKey;
+	account: string;
+	abstractAccount: string;
+	accountType: FuturesAccountType;
+	isOpen: boolean;
+	isLiquidated: boolean;
+	size: Wei;
+	feesPaid: Wei;
+	netFunding: Wei;
+	netTransfers: Wei;
+	totalDeposits: Wei;
+	initialMargin: Wei;
+	margin: Wei;
+	entryPrice: Wei;
+	avgEntryPrice: Wei;
+	exitPrice: Wei;
+	leverage: Wei;
+	side: PositionSide;
+	pnl: Wei;
+	pnlWithFeesPaid: Wei;
+	totalVolume: Wei;
+	trades: number;
+};
+
 export type FuturesPosition<T = Wei> = {
 	asset: FuturesMarketAsset;
 	marketKey: FuturesMarketKey;
 	remainingMargin: T;
 	accessibleMargin: T;
 	position: FuturesFilledPosition<T> | null;
+};
+
+export type ModifyPositionOptions<T extends boolean> = {
+	delayed?: boolean;
+	offchain?: boolean;
+	estimationOnly?: T;
 };
 
 // This type exists to rename enum types from the subgraph to display-friendly types
@@ -213,10 +274,10 @@ export type FuturesOrder<T = Wei> = {
 
 export type DelayedOrder<T = Wei> = {
 	account: string;
-	asset: FuturesMarketAsset;
-	market: string;
+	asset?: FuturesMarketAsset;
+	market?: string;
 	marketAddress: string;
-	marketKey: FuturesMarketKey;
+	marketKey?: FuturesMarketKey;
 	size: T;
 	commitDeposit: T;
 	keeperDeposit: T;
@@ -251,6 +312,7 @@ export type FuturesPotentialTradeDetails<T = Wei> = {
 
 // https://github.com/Synthetixio/synthetix/blob/4d2add4f74c68ac4f1106f6e7be4c31d4f1ccc76/contracts/interfaces/IFuturesMarketBaseTypes.sol#L6-L19
 export enum PotentialTradeStatus {
+	// Contract status mapping
 	OK = 0,
 	INVALID_PRICE = 1,
 	PRICE_OUT_OF_BOUNDS = 2,
@@ -263,6 +325,9 @@ export enum PotentialTradeStatus {
 	NIL_ORDER = 9,
 	NO_POSITION_OPEN = 10,
 	PRICE_TOO_VOLATILE = 11,
+
+	// Our own local status
+	INSUFFICIENT_FREE_MARGIN = 100,
 }
 
 export type PostTradeDetailsResponse = {

@@ -20,6 +20,7 @@ import {
 	selectFuturesType,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
+import { selectPrices } from 'state/prices/selectors';
 import { FetchStatus } from 'state/types';
 import { pastRatesState } from 'store/futures';
 import { assetToSynth, iStandardSynth } from 'utils/currencies';
@@ -73,6 +74,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const futuresMarkets = useAppSelector(selectMarkets);
 	const marketsQueryStatus = useAppSelector(selectMarketsQueryStatus);
+	const prices = useAppSelector(selectPrices);
 
 	const { isFuturesMarketClosed, futuresClosureReason } = useFuturesMarketClosed(
 		MarketKeyByAsset[marketAsset]
@@ -84,7 +86,8 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const { t } = useTranslation();
 
 	const futureRates =
-		futuresMarkets?.reduce((acc: Rates, { asset, price }) => {
+		futuresMarkets?.reduce((acc: Rates, { asset }) => {
+			const price = prices[asset]?.offChain ?? prices[asset]?.onChain ?? wei(0);
 			const currencyKey = iStandardSynth(asset as CurrencyKey)
 				? asset
 				: assetToSynth(asset as CurrencyKey);

@@ -11,6 +11,8 @@ import {
 	selectMarketInfo,
 	selectMarketKey,
 	selectMarketVolumes,
+	selectMarketPrices,
+	selectSkewAdjustedPrice,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { pastRatesState } from 'store/futures';
@@ -31,6 +33,8 @@ const useGetMarketData = (mobile?: boolean) => {
 
 	const pastRates = useRecoilValue(pastRatesState);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
+	const marketPrices = useAppSelector(selectMarketPrices);
+	const marketPrice = useAppSelector(selectSkewAdjustedPrice);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
@@ -41,11 +45,11 @@ const useGetMarketData = (mobile?: boolean) => {
 
 	const pastPrice = pastRates.find((price) => price.synth === marketAsset);
 
+	const oraclePrice = marketPrices.onChain ?? wei(0);
+
 	const data: MarketData = useMemo(() => {
 		const fundingValue = marketInfo?.currentFundingRate;
 
-		const marketPrice = wei(marketInfo?.price ?? 0);
-		const oraclePrice = wei(marketInfo?.priceOracle ?? 0);
 		const marketName = `${marketInfo?.marketName ?? t('futures.market.info.default-market')}`;
 
 		const futuresTradingVolume = marketInfo?.marketKey
@@ -96,21 +100,20 @@ const useGetMarketData = (mobile?: boolean) => {
 				},
 				[MarketDataKey.dailyChange]: {
 					value:
-						marketPrice && marketPrice.gt(0) && pastPrice?.price
+						marketPrice.gt(0) && pastPrice?.price
 							? `${formatCurrency(
 									selectedPriceCurrency.name,
 									marketPrice.sub(pastPrice.price) ?? zeroBN,
 									{ sign: '$', minDecimals, isAssetPrice: true }
 							  )} (${formatPercent(marketPrice.sub(pastPrice.price).div(marketPrice) ?? zeroBN)})`
 							: NO_VALUE,
-					color:
-						marketPrice && pastPrice?.price
-							? marketPrice.sub(pastPrice.price).gt(zeroBN)
-								? 'green'
-								: marketPrice.sub(pastPrice.price).lt(zeroBN)
-								? 'red'
-								: ''
-							: undefined,
+					color: pastPrice?.price
+						? marketPrice.sub(pastPrice.price).gt(zeroBN)
+							? 'green'
+							: marketPrice.sub(pastPrice.price).lt(zeroBN)
+							? 'red'
+							: ''
+						: undefined,
 				},
 			};
 		} else {
@@ -131,21 +134,20 @@ const useGetMarketData = (mobile?: boolean) => {
 				},
 				[MarketDataKey.dailyChange]: {
 					value:
-						marketPrice && marketPrice.gt(0) && pastPrice?.price
+						marketPrice.gt(0) && pastPrice?.price
 							? `${formatCurrency(
 									selectedPriceCurrency.name,
 									marketPrice.sub(pastPrice.price) ?? zeroBN,
 									{ sign: '$', minDecimals, isAssetPrice: true }
 							  )} (${formatPercent(marketPrice.sub(pastPrice.price).div(marketPrice) ?? zeroBN)})`
 							: NO_VALUE,
-					color:
-						marketPrice && pastPrice?.price
-							? marketPrice.sub(pastPrice.price).gt(zeroBN)
-								? 'green'
-								: marketPrice.sub(pastPrice.price).lt(zeroBN)
-								? 'red'
-								: ''
-							: undefined,
+					color: pastPrice?.price
+						? marketPrice.sub(pastPrice.price).gt(zeroBN)
+							? 'green'
+							: marketPrice.sub(pastPrice.price).lt(zeroBN)
+							? 'red'
+							: ''
+						: undefined,
 				},
 				[MarketDataKey.dailyVolume]: {
 					value: formatCurrency(selectedPriceCurrency.name, futuresTradingVolume ?? zeroBN, {
@@ -175,10 +177,12 @@ const useGetMarketData = (mobile?: boolean) => {
 	}, [
 		marketAsset,
 		marketInfo,
+		oraclePrice,
 		futuresVolumes,
 		selectedPriceCurrency.name,
 		pastPrice?.price,
 		minDecimals,
+		marketPrice,
 		t,
 	]);
 

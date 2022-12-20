@@ -31,6 +31,7 @@ export declare namespace IPerpsV2MarketSettings {
   export type ParametersStruct = {
     takerFee: PromiseOrValue<BigNumberish>;
     makerFee: PromiseOrValue<BigNumberish>;
+    overrideCommitFee: PromiseOrValue<BigNumberish>;
     takerFeeDelayedOrder: PromiseOrValue<BigNumberish>;
     makerFeeDelayedOrder: PromiseOrValue<BigNumberish>;
     takerFeeOffchainDelayedOrder: PromiseOrValue<BigNumberish>;
@@ -66,11 +67,13 @@ export declare namespace IPerpsV2MarketSettings {
     BigNumber,
     BigNumber,
     BigNumber,
+    BigNumber,
     string,
     BigNumber
   ] & {
     takerFee: BigNumber;
     makerFee: BigNumber;
+    overrideCommitFee: BigNumber;
     takerFeeDelayedOrder: BigNumber;
     makerFeeDelayedOrder: BigNumber;
     takerFeeOffchainDelayedOrder: BigNumber;
@@ -114,6 +117,7 @@ export interface PerpsV2MarketSettingsInterface extends utils.Interface {
     "offchainDelayedOrderMinAge(bytes32)": FunctionFragment;
     "offchainMarketKey(bytes32)": FunctionFragment;
     "offchainPriceDivergence(bytes32)": FunctionFragment;
+    "overrideCommitFee(bytes32)": FunctionFragment;
     "owner()": FunctionFragment;
     "parameters(bytes32)": FunctionFragment;
     "rebuildCache()": FunctionFragment;
@@ -137,7 +141,8 @@ export interface PerpsV2MarketSettingsInterface extends utils.Interface {
     "setOffchainDelayedOrderMinAge(bytes32,uint256)": FunctionFragment;
     "setOffchainMarketKey(bytes32,bytes32)": FunctionFragment;
     "setOffchainPriceDivergence(bytes32,uint256)": FunctionFragment;
-    "setParameters(bytes32,(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,bytes32,uint256))": FunctionFragment;
+    "setOverrideCommitFee(bytes32,uint256)": FunctionFragment;
+    "setParameters(bytes32,(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,bytes32,uint256))": FunctionFragment;
     "setSkewScale(bytes32,uint256)": FunctionFragment;
     "setTakerFee(bytes32,uint256)": FunctionFragment;
     "setTakerFeeDelayedOrder(bytes32,uint256)": FunctionFragment;
@@ -172,6 +177,7 @@ export interface PerpsV2MarketSettingsInterface extends utils.Interface {
       | "offchainDelayedOrderMinAge"
       | "offchainMarketKey"
       | "offchainPriceDivergence"
+      | "overrideCommitFee"
       | "owner"
       | "parameters"
       | "rebuildCache"
@@ -195,6 +201,7 @@ export interface PerpsV2MarketSettingsInterface extends utils.Interface {
       | "setOffchainDelayedOrderMinAge"
       | "setOffchainMarketKey"
       | "setOffchainPriceDivergence"
+      | "setOverrideCommitFee"
       | "setParameters"
       | "setSkewScale"
       | "setTakerFee"
@@ -294,6 +301,10 @@ export interface PerpsV2MarketSettingsInterface extends utils.Interface {
     functionFragment: "offchainPriceDivergence",
     values: [PromiseOrValue<BytesLike>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "overrideCommitFee",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "parameters",
@@ -378,6 +389,10 @@ export interface PerpsV2MarketSettingsInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setOffchainPriceDivergence",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setOverrideCommitFee",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -502,6 +517,10 @@ export interface PerpsV2MarketSettingsInterface extends utils.Interface {
     functionFragment: "offchainPriceDivergence",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "overrideCommitFee",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "parameters", data: BytesLike): Result;
   decodeFunctionResult(
@@ -586,6 +605,10 @@ export interface PerpsV2MarketSettingsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setOverrideCommitFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setParameters",
     data: BytesLike
   ): Result;
@@ -625,7 +648,7 @@ export interface PerpsV2MarketSettingsInterface extends utils.Interface {
     "OwnerChanged(address,address)": EventFragment;
     "OwnerNominated(address)": EventFragment;
     "ParameterUpdated(bytes32,bytes32,uint256)": EventFragment;
-    "ParameterUpdated(bytes32,bytes32,bytes32)": EventFragment;
+    "ParameterUpdatedBytes32(bytes32,bytes32,bytes32)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "CacheUpdated"): EventFragment;
@@ -637,12 +660,8 @@ export interface PerpsV2MarketSettingsInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "MinKeeperFeeUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerNominated"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "ParameterUpdated(bytes32,bytes32,uint256)"
-  ): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "ParameterUpdated(bytes32,bytes32,bytes32)"
-  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ParameterUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ParameterUpdatedBytes32"): EventFragment;
 }
 
 export interface CacheUpdatedEventObject {
@@ -721,31 +740,31 @@ export type OwnerNominatedEvent = TypedEvent<
 
 export type OwnerNominatedEventFilter = TypedEventFilter<OwnerNominatedEvent>;
 
-export interface ParameterUpdated_bytes32_bytes32_uint256_EventObject {
+export interface ParameterUpdatedEventObject {
   marketKey: string;
   parameter: string;
   value: BigNumber;
 }
-export type ParameterUpdated_bytes32_bytes32_uint256_Event = TypedEvent<
+export type ParameterUpdatedEvent = TypedEvent<
   [string, string, BigNumber],
-  ParameterUpdated_bytes32_bytes32_uint256_EventObject
+  ParameterUpdatedEventObject
 >;
 
-export type ParameterUpdated_bytes32_bytes32_uint256_EventFilter =
-  TypedEventFilter<ParameterUpdated_bytes32_bytes32_uint256_Event>;
+export type ParameterUpdatedEventFilter =
+  TypedEventFilter<ParameterUpdatedEvent>;
 
-export interface ParameterUpdated_bytes32_bytes32_bytes32_EventObject {
+export interface ParameterUpdatedBytes32EventObject {
   marketKey: string;
   parameter: string;
   value: string;
 }
-export type ParameterUpdated_bytes32_bytes32_bytes32_Event = TypedEvent<
+export type ParameterUpdatedBytes32Event = TypedEvent<
   [string, string, string],
-  ParameterUpdated_bytes32_bytes32_bytes32_EventObject
+  ParameterUpdatedBytes32EventObject
 >;
 
-export type ParameterUpdated_bytes32_bytes32_bytes32_EventFilter =
-  TypedEventFilter<ParameterUpdated_bytes32_bytes32_bytes32_Event>;
+export type ParameterUpdatedBytes32EventFilter =
+  TypedEventFilter<ParameterUpdatedBytes32Event>;
 
 export interface PerpsV2MarketSettings extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -861,6 +880,11 @@ export interface PerpsV2MarketSettings extends BaseContract {
     ): Promise<[string]>;
 
     offchainPriceDivergence(
+      _marketKey: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    overrideCommitFee(
       _marketKey: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -983,6 +1007,12 @@ export interface PerpsV2MarketSettings extends BaseContract {
     setOffchainPriceDivergence(
       _marketKey: PromiseOrValue<BytesLike>,
       _offchainPriceDivergence: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setOverrideCommitFee(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _overrideCommitFee: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1128,6 +1158,11 @@ export interface PerpsV2MarketSettings extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  overrideCommitFee(
+    _marketKey: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   owner(overrides?: CallOverrides): Promise<string>;
 
   parameters(
@@ -1244,6 +1279,12 @@ export interface PerpsV2MarketSettings extends BaseContract {
   setOffchainPriceDivergence(
     _marketKey: PromiseOrValue<BytesLike>,
     _offchainPriceDivergence: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setOverrideCommitFee(
+    _marketKey: PromiseOrValue<BytesLike>,
+    _overrideCommitFee: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1387,6 +1428,11 @@ export interface PerpsV2MarketSettings extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    overrideCommitFee(
+      _marketKey: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<string>;
 
     parameters(
@@ -1504,6 +1550,12 @@ export interface PerpsV2MarketSettings extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setOverrideCommitFee(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _overrideCommitFee: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setParameters(
       _marketKey: PromiseOrValue<BytesLike>,
       _parameters: IPerpsV2MarketSettings.ParametersStruct,
@@ -1599,12 +1651,23 @@ export interface PerpsV2MarketSettings extends BaseContract {
       marketKey?: PromiseOrValue<BytesLike> | null,
       parameter?: PromiseOrValue<BytesLike> | null,
       value?: null
-    ): ParameterUpdated_bytes32_bytes32_uint256_EventFilter;
-    "ParameterUpdated(bytes32,bytes32,bytes32)"(
+    ): ParameterUpdatedEventFilter;
+    ParameterUpdated(
       marketKey?: PromiseOrValue<BytesLike> | null,
       parameter?: PromiseOrValue<BytesLike> | null,
       value?: null
-    ): ParameterUpdated_bytes32_bytes32_bytes32_EventFilter;
+    ): ParameterUpdatedEventFilter;
+
+    "ParameterUpdatedBytes32(bytes32,bytes32,bytes32)"(
+      marketKey?: PromiseOrValue<BytesLike> | null,
+      parameter?: PromiseOrValue<BytesLike> | null,
+      value?: null
+    ): ParameterUpdatedBytes32EventFilter;
+    ParameterUpdatedBytes32(
+      marketKey?: PromiseOrValue<BytesLike> | null,
+      parameter?: PromiseOrValue<BytesLike> | null,
+      value?: null
+    ): ParameterUpdatedBytes32EventFilter;
   };
 
   estimateGas: {
@@ -1695,6 +1758,11 @@ export interface PerpsV2MarketSettings extends BaseContract {
     ): Promise<BigNumber>;
 
     offchainPriceDivergence(
+      _marketKey: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    overrideCommitFee(
       _marketKey: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1815,6 +1883,12 @@ export interface PerpsV2MarketSettings extends BaseContract {
     setOffchainPriceDivergence(
       _marketKey: PromiseOrValue<BytesLike>,
       _offchainPriceDivergence: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setOverrideCommitFee(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _overrideCommitFee: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1965,6 +2039,11 @@ export interface PerpsV2MarketSettings extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    overrideCommitFee(
+      _marketKey: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     parameters(
@@ -2083,6 +2162,12 @@ export interface PerpsV2MarketSettings extends BaseContract {
     setOffchainPriceDivergence(
       _marketKey: PromiseOrValue<BytesLike>,
       _offchainPriceDivergence: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setOverrideCommitFee(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _overrideCommitFee: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -13,7 +13,7 @@ import { changeLeverageSide, editTradeSizeInput } from 'state/futures/actions';
 import {
 	selectMarketInfo,
 	selectIsMarketCapReached,
-	selectMarketAssetRate,
+	selectMarketPrice,
 	selectPlaceOrderTranslationKey,
 	selectPosition,
 	selectMaxLeverage,
@@ -65,7 +65,7 @@ const ManagePosition: React.FC = () => {
 	const isMarketCapReached = useAppSelector(selectIsMarketCapReached);
 	const placeOrderTranslationKey = useAppSelector(selectPlaceOrderTranslationKey);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
-	const marketAssetRate = useAppSelector(selectMarketAssetRate);
+	const marketAssetRate = useAppSelector(selectMarketPrice);
 	const isAdvancedOrder = useAppSelector(selectIsAdvancedOrder);
 	const openModal = useAppSelector(selectOpenModal);
 	const marketInfo = useAppSelector(selectMarketInfo);
@@ -78,16 +78,9 @@ const ManagePosition: React.FC = () => {
 
 	const orderError = useMemo(() => {
 		if (previewError) return t(previewErrorI18n(previewError));
-		if (futuresTransaction?.error) return futuresTransaction.error;
 		if (previewTrade?.showStatus) return previewTrade?.statusMessage;
 		return null;
-	}, [
-		previewTrade?.showStatus,
-		previewTrade?.statusMessage,
-		futuresTransaction?.error,
-		previewError,
-		t,
-	]);
+	}, [previewTrade?.showStatus, previewTrade?.statusMessage, previewError, t]);
 
 	const leverageValid = useMemo(() => {
 		if (selectedAccountType === 'cross_margin') return true;
@@ -154,7 +147,7 @@ const ManagePosition: React.FC = () => {
 						data-testid="trade-open-position-button"
 						noOutline
 						fullWidth
-						disabled={!!placeOrderDisabledReason}
+						disabled={!!placeOrderDisabledReason || !!orderError}
 						onClick={() => dispatch(setOpenModal('futures_modify_position_confirm'))}
 					>
 						{t(placeOrderTranslationKey)}

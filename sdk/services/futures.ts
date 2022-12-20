@@ -7,7 +7,7 @@ import request, { gql } from 'graphql-request';
 import KwentaSDK from 'sdk';
 
 import { DAY_PERIOD, KWENTA_TRACKING_CODE } from 'queries/futures/constants';
-import { getFuturesAggregateStats } from 'queries/futures/subgraph';
+import { getFuturesAggregateStats, getFuturesPositions } from 'queries/futures/subgraph';
 import { mapFuturesOrders } from 'queries/futures/utils';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
 import { BPS_CONVERSION, DEFAULT_DESIRED_TIMEDELTA } from 'sdk/constants/futures';
@@ -32,9 +32,12 @@ import {
 	FuturesOrder,
 	FuturesVolumes,
 	MarketClosureReason,
+	OrderType,
 	PositionDetail,
 	PositionSide,
+	ModifyPositionOptions,
 } from 'sdk/types/futures';
+import { PricesMap } from 'sdk/types/prices';
 import {
 	calculateFundingRate,
 	calculateVolumes,
@@ -45,6 +48,7 @@ import {
 	getMarketName,
 	getReasonFromCode,
 	mapFuturesPosition,
+	mapFuturesPositions,
 	marketsForNetwork,
 } from 'sdk/utils/futures';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
@@ -93,14 +97,13 @@ export default class FuturesService {
 			ExchangeRates,
 			PerpsV2MarketData,
 			PerpsV2MarketSettings,
-		} = this.sdk.context.mutliCallContracts;
+		} = this.sdk.context.multicallContracts;
 
 		if (!PerpsV2MarketData || !PerpsV2MarketSettings || !SystemStatus || !ExchangeRates) {
 			throw new Error(UNSUPPORTED_NETWORK);
 		}
-
 		const [markets, globals] = await this.sdk.context.multicallProvider.all([
-			PerpsV2MarketData.allMarketSummaries(),
+			PerpsV2MarketData.allProxiedMarketSummaries(),
 			PerpsV2MarketData.globals(),
 		]);
 
@@ -186,8 +189,6 @@ export default class FuturesService {
 				maxLeverage: wei(maxLeverage),
 				marketSize: wei(marketSize),
 				marketLimit: wei(marketParameters[i].maxMarketValue).mul(wei(price)),
-				priceOracle: wei(price),
-				price: wei(price).mul(wei(marketSkew).div(wei(marketParameters[i].skewScale)).add(1)),
 				minInitialMargin: wei(globals.minInitialMargin),
 				keeperDeposit: wei(globals.minKeeperFee),
 				isSuspended: suspensions[i],
@@ -220,7 +221,7 @@ export default class FuturesService {
 		address: string, // Cross margin or EOA address
 		futuresMarkets: { asset: FuturesMarketAsset; marketKey: FuturesMarketKey; address: string }[]
 	) {
-		const marketDataContract = this.sdk.context.mutliCallContracts.FuturesMarketData;
+		const marketDataContract = this.sdk.context.multicallContracts.FuturesMarketData;
 
 		if (!this.sdk.context.isL2 || !marketDataContract) {
 			throw new Error(UNSUPPORTED_NETWORK);
@@ -258,9 +259,59 @@ export default class FuturesService {
 		return positions;
 	}
 
-	public async getAverageFundingRates(markets: FuturesMarket[], period: Period) {
+	public async getFuturesPositionHistory(
+		address: string // Cross margin or EOA address
+	) {
+		const response = await getFuturesPositions(
+			this.futuresGqlEndpoint,
+			{
+				where: {
+					account: address,
+				},
+				first: 99999,
+				orderBy: 'openTimestamp',
+				orderDirection: 'desc',
+			},
+			{
+				id: true,
+				lastTxHash: true,
+				openTimestamp: true,
+				closeTimestamp: true,
+				timestamp: true,
+				market: true,
+				asset: true,
+				marketKey: true,
+				account: true,
+				abstractAccount: true,
+				accountType: true,
+				isOpen: true,
+				isLiquidated: true,
+				trades: true,
+				totalVolume: true,
+				size: true,
+				initialMargin: true,
+				margin: true,
+				pnl: true,
+				feesPaid: true,
+				netFunding: true,
+				pnlWithFeesPaid: true,
+				netTransfers: true,
+				totalDeposits: true,
+				fundingIndex: true,
+				entryPrice: true,
+				avgEntryPrice: true,
+				lastPrice: true,
+				exitPrice: true,
+			}
+		);
+		const positionHistory = response ? mapFuturesPositions(response) : [];
+		return positionHistory;
+	}
+
+	public async getAverageFundingRates(markets: FuturesMarket[], prices: PricesMap, period: Period) {
 		const fundingRateInputs: FundingRateInput[] = markets.map(
-			({ asset, market, price, currentFundingRate }) => {
+			({ asset, market, currentFundingRate }) => {
+				const price = prices[asset];
 				return {
 					marketAddress: market,
 					marketKey: MarketKeyByAsset[asset],
@@ -444,7 +495,7 @@ export default class FuturesService {
 	}
 
 	public async getCrossMarginSettings() {
-		const crossMarginBaseSettings = this.sdk.context.mutliCallContracts.CrossMarginBaseSettings;
+		const crossMarginBaseSettings = this.sdk.context.multicallContracts.CrossMarginBaseSettings;
 		if (!crossMarginBaseSettings) throw new Error(UNSUPPORTED_NETWORK);
 
 		const [tradeFee, limitOrderFee, stopOrderFee] = await this.sdk.context.multicallProvider.all([
@@ -460,32 +511,35 @@ export default class FuturesService {
 	}
 
 	// Perps V2 read functions
-	public async getDelayedOrder(account: string, marketInfo: FuturesMarket<Wei>) {
-		const market = PerpsV2Market__factory.connect(marketInfo.market, this.sdk.context.signer);
-		const order = await market.delayedOrders(account);
-		return formatDelayedOrder(account, marketInfo, order);
-	}
-
-	public async getFillPrice(marketAddress: string, basePrice: Wei, sizeDelta: Wei) {
+	public async getDelayedOrder(account: string, marketAddress: string) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
-		const fillPrice = await market.fillPriceWithBasePrice(sizeDelta.toBN(), basePrice.toBN());
-		return fillPrice;
+		const order = await market.delayedOrders(account);
+		return formatDelayedOrder(account, marketAddress, order);
 	}
 
 	public async getIsolatedTradePreview(
 		marketAddress: string,
-		sizeDelta: Wei,
-		priceOracle: Wei,
-		price: Wei,
-		leverageSide: PositionSide
+		orderType: OrderType,
+		inputs: {
+			sizeDelta: Wei;
+			price: Wei;
+			skewAdjustedPrice: Wei;
+			leverageSide: PositionSide;
+		}
 	) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
 		const details = await market.postTradeDetails(
-			sizeDelta.toBN(),
-			priceOracle.toBN(),
+			inputs.sizeDelta.toBN(),
+			inputs.price.toBN(),
+			orderType,
 			this.sdk.context.walletAddress
 		);
-		return formatPotentialIsolatedTrade(details, price, sizeDelta, leverageSide);
+		return formatPotentialIsolatedTrade(
+			details,
+			inputs.skewAdjustedPrice,
+			inputs.sizeDelta,
+			inputs.leverageSide
+		);
 	}
 
 	public async getCrossMarginTradePreview(
@@ -563,19 +617,18 @@ export default class FuturesService {
 		marketAddress: string,
 		sizeDelta: Wei,
 		priceImpactDelta: Wei,
-		delayed = false,
-		offchain = false,
-		estimationOnly: T
+		options?: ModifyPositionOptions<T>
 	): TxReturn<T> {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
-		const root = estimationOnly ? market.estimateGas : market;
-		return delayed && offchain
+		const root = options?.estimationOnly ? market.estimateGas : market;
+
+		return options?.delayed && options?.offchain
 			? (root.submitOffchainDelayedOrderWithTracking(
 					sizeDelta.toBN(),
 					priceImpactDelta.toBN(),
 					KWENTA_TRACKING_CODE
 			  ) as any)
-			: delayed
+			: options?.delayed
 			? (root.submitDelayedOrderWithTracking(
 					sizeDelta.toBN(),
 					priceImpactDelta.toBN(),

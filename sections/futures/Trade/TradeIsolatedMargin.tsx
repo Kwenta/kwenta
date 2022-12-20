@@ -1,5 +1,7 @@
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import Error from 'components/Error';
 import SegmentedControl from 'components/SegmentedControl';
 import { setOpenModal } from 'state/app/reducer';
 import { selectOpenModal } from 'state/app/selectors';
@@ -13,6 +15,7 @@ import LeverageInput from '../LeverageInput';
 import MarketInfoBox from '../MarketInfoBox';
 import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
+import DelayedOrderWarning from './DelayedOrderWarning';
 import ManagePosition from './ManagePosition';
 import TradePanelHeader from './TradePanelHeader';
 import TransferIsolatedMarginModal from './TransferIsolatedMarginModal';
@@ -22,6 +25,7 @@ type Props = {
 };
 
 const TradeIsolatedMargin = ({ isMobile }: Props) => {
+	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
 	const leverageSide = useAppSelector(selectLeverageSide);
@@ -36,6 +40,8 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 				balance={totalMargin}
 				accountType={'isolated_margin'}
 			/>
+
+			<Error messageType="warn" message={t('futures.market.trade.perpsv2-disclaimer')} />
 
 			{!isMobile && <MarketInfoBox />}
 

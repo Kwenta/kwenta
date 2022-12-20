@@ -118,6 +118,7 @@ const StyledTabButton = styled(TabButton)`
 	}
 	margin-bottom: 9px;
 `;
+
 const StakingPortfolioContainer = styled.div`
 	${media.lessThan('mdUp')`
 		padding: 15px;

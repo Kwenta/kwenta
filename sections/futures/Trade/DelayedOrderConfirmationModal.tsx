@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
+import Error from 'components/Error';
 import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -11,10 +12,12 @@ import { getDisplayAsset } from 'sdk/utils/futures';
 import { setOpenModal } from 'state/app/reducer';
 import { modifyIsolatedPosition, modifyIsolatedPositionEstimateGas } from 'state/futures/actions';
 import {
+	selectDelayedOrderFee,
 	selectIsModifyingIsolatedPosition,
 	selectLeverageSide,
 	selectMarketAsset,
 	selectMarketInfo,
+	selectModifyPositionError,
 	selectNextPriceDisclaimer,
 	selectOrderType,
 	selectPosition,
@@ -25,20 +28,21 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { FlexDivCentered } from 'styles/common';
-import { computeDelayedOrderFee } from 'utils/costCalculations';
+import { getKnownError } from 'utils/formatters/error';
 import { zeroBN, formatCurrency, formatDollars, formatPercent } from 'utils/formatters/number';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
 import { PositionSide } from '../types';
 import { MobileConfirmTradeButton } from './TradeConfirmationModal';
 
-const NextPriceConfirmationModal: FC = () => {
+const DelayedOrderConfirmationModal: FC = () => {
 	const { t } = useTranslation();
 	const isDisclaimerDisplayed = useAppSelector(selectNextPriceDisclaimer);
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const dispatch = useAppDispatch();
 
 	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
+	const txError = useAppSelector(selectModifyPositionError);
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
@@ -47,6 +51,7 @@ const NextPriceConfirmationModal: FC = () => {
 	const potentialTradeDetails = useAppSelector(selectTradePreview);
 	const previewStatus = useAppSelector(selectTradePreviewStatus);
 	const orderType = useAppSelector(selectOrderType);
+	const { commitDeposit } = useAppSelector(selectDelayedOrderFee);
 
 	useEffect(() => {
 		dispatch(
@@ -63,12 +68,6 @@ const NextPriceConfirmationModal: FC = () => {
 	const orderDetails = useMemo(() => {
 		return { nativeSizeDelta, size: (positionSize ?? zeroBN).add(nativeSizeDelta).abs() };
 	}, [nativeSizeDelta, positionSize]);
-
-	// TODO: check these fees
-	const { commitDeposit, delayedOrderFee } = useMemo(
-		() => computeDelayedOrderFee(marketInfo, nativeSizeDelta),
-		[marketInfo, nativeSizeDelta]
-	);
 
 	// TODO: check this deposit
 	const totalDeposit = useMemo(() => {
@@ -102,24 +101,20 @@ const NextPriceConfirmationModal: FC = () => {
 			{
 				label: 'estimated price impact',
 				value: `${formatPercent(potentialTradeDetails?.priceImpact ?? zeroBN)}`,
-				color: potentialTradeDetails?.priceImpact.gt(0)
-					? 'green'
-					: potentialTradeDetails?.priceImpact.lt(0)
-					? 'red'
-					: '',
-			},
-			{
-				label: 'estimated slippage',
-				value: `${formatDollars(potentialTradeDetails?.slippageAmount ?? zeroBN)}`,
-				color: potentialTradeDetails?.slippageAmount.gt(0)
-					? 'green'
-					: potentialTradeDetails?.slippageAmount.lt(0)
+				color: potentialTradeDetails?.priceImpact.abs().gt(0.45) // TODO: Make this configurable
 					? 'red'
 					: '',
 			},
 			{
 				label: t('futures.market.user.position.modal.fee-estimated'),
-				value: formatCurrency(selectedPriceCurrency.name, delayedOrderFee ?? zeroBN, {
+				value: formatCurrency(selectedPriceCurrency.name, commitDeposit ?? zeroBN, {
+					minDecimals: 2,
+					sign: selectedPriceCurrency.sign,
+				}),
+			},
+			{
+				label: t('futures.market.user.position.modal.keeper-deposit'),
+				value: formatCurrency(selectedPriceCurrency.name, marketInfo?.keeperDeposit ?? zeroBN, {
 					minDecimals: 2,
 					sign: selectedPriceCurrency.sign,
 				}),
@@ -133,11 +128,12 @@ const NextPriceConfirmationModal: FC = () => {
 			t,
 			orderDetails,
 			orderType,
+			commitDeposit,
 			potentialTradeDetails,
-			delayedOrderFee,
 			marketAsset,
 			leverageSide,
 			totalDeposit,
+			marketInfo?.keeperDeposit,
 			selectedPriceCurrency.name,
 			selectedPriceCurrency.sign,
 		]
@@ -185,6 +181,8 @@ const NextPriceConfirmationModal: FC = () => {
 							t('futures.market.trade.confirmation.modal.confirm-order')
 						)}
 					</ConfirmTradeButton>
+					<Disclaimer>{t('futures.market.trade.confirmation.modal.delayed-disclaimer')}</Disclaimer>
+					{txError && <Error message={getKnownError(txError)} formatter="revert" />}
 				</StyledBaseModal>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
@@ -255,6 +253,7 @@ const Value = styled.div`
 
 const ConfirmTradeButton = styled(Button)`
 	margin-top: 24px;
+	margin-bottom: 12px;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
@@ -268,4 +267,4 @@ const Disclaimer = styled.div`
 	margin-bottom: 12px;
 `;
 
-export default NextPriceConfirmationModal;
+export default DelayedOrderConfirmationModal;

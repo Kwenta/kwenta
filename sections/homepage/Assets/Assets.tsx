@@ -1,3 +1,4 @@
+import { wei } from '@synthetixio/wei';
 import { ColorType, createChart, UTCTimestamp } from 'lightweight-charts';
 import isNil from 'lodash/isNil';
 import values from 'lodash/values';
@@ -19,11 +20,11 @@ import Connector from 'containers/Connector';
 import { Price } from 'queries/rates/types';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
-import { selectExchangeRates } from 'state/exchange/selectors';
 import { selectMarketVolumes } from 'state/futures/selectors';
 import { fetchOptimismMarkets } from 'state/home/actions';
 import { selectOptimismMarkets } from 'state/home/selectors';
 import { useAppSelector, usePollAction } from 'state/hooks';
+import { selectPrices } from 'state/prices/selectors';
 import { pastRatesState } from 'store/futures';
 import {
 	FlexDiv,
@@ -150,7 +151,7 @@ const Assets = () => {
 	const { l2SynthsMap, l2Provider } = Connector.useContainer();
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
-	const exchangeRates = useAppSelector(selectExchangeRates);
+	const prices = useAppSelector(selectPrices);
 	const futuresMarkets = useAppSelector(selectOptimismMarkets);
 
 	const pastRates = useRecoilValue(pastRatesState);
@@ -199,6 +200,8 @@ const Assets = () => {
 	const PERPS = useMemo(() => {
 		return (
 			futuresMarkets?.map((market) => {
+				const marketPrice =
+					prices[market.asset]?.offChain ?? prices[market.asset]?.onChain ?? wei(0);
 				const description = getSynthDescription(market.asset, l2SynthsMap, t);
 				const volume = futuresVolumes[market.assetHex]?.volume?.toNumber() ?? 0;
 				const pastPrice = pastRates.find(
@@ -208,10 +211,10 @@ const Assets = () => {
 					key: market.asset,
 					name: market.asset[0] === 's' ? market.asset.slice(1) : market.asset,
 					description: description.split(' ')[0],
-					price: market.price.toNumber(),
+					price: marketPrice.toNumber(),
 					volume,
 					priceChange:
-						(market.price.toNumber() - (pastPrice?.price ?? 0)) / market.price.toNumber() || 0,
+						(marketPrice.toNumber() - (pastPrice?.price ?? 0)) / marketPrice.toNumber() || 0,
 					image: <PriceChart asset={market.asset} />,
 					icon: (
 						<StyledCurrencyIcon currencyKey={(market.asset[0] !== 's' ? 's' : '') + market.asset} />
@@ -231,7 +234,7 @@ const Assets = () => {
 						currencyName: synth.description,
 				  })
 				: '';
-			const rate = exchangeRates && exchangeRates[synth.name];
+			const rate = prices && (prices[synth.name]?.onChain || prices[synth.name]?.offChain);
 			const price = isNil(rate) ? 0 : rate.toNumber();
 
 			const pastPrice = pastRates.find((price: Price) => {
@@ -251,7 +254,7 @@ const Assets = () => {
 				),
 			};
 		});
-	}, [synthVolumesQuery?.data, unfrozenSynths, t, exchangeRates, pastRates]);
+	}, [synthVolumesQuery?.data, unfrozenSynths, t, prices, pastRates]);
 
 	const title = (
 		<>

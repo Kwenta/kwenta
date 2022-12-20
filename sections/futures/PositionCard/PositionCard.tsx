@@ -1,7 +1,6 @@
 import Wei from '@synthetixio/wei';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import PreviewArrow from 'components/PreviewArrow';
@@ -9,7 +8,6 @@ import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
-import { useFuturesContext } from 'contexts/FuturesContext';
 import useAverageEntryPrice from 'hooks/useAverageEntryPrice';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -20,9 +18,10 @@ import {
 	selectPosition,
 	selectTradePreview,
 	selectFuturesType,
+	selectSkewAdjustedPrice,
+	selectActivePositionHistory,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { positionHistoryState } from 'store/futures';
 import { FlexDivCentered, FlexDivCol, PillButtonDiv } from 'styles/common';
 import media from 'styles/media';
 import { isFiatCurrency } from 'utils/currencies';
@@ -69,16 +68,16 @@ type PositionPreviewData = {
 const PositionCard: React.FC<PositionCardProps> = () => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
-	const { marketAssetRate } = useFuturesContext();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const futuresAccountType = useAppSelector(selectFuturesType);
 	const position = useAppSelector(selectPosition);
+	const positionHistory = useAppSelector(selectActivePositionHistory);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const marketKey = useAppSelector(selectMarketKey);
+	const marketPrice = useAppSelector(selectSkewAdjustedPrice);
 	const previewTradeData = useAppSelector(selectTradePreview);
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketKey);
-	const positionHistory = useRecoilValue(positionHistoryState);
 
 	const positionDetails = position?.position ?? null;
 
@@ -90,10 +89,10 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			: undefined;
 
 	const thisPositionHistory = useMemo(() => {
-		return positionHistory[futuresAccountType].find(
+		return positionHistory.find(
 			({ marketKey: positionMarketKey, isOpen }) => isOpen && positionMarketKey === marketKey
 		);
-	}, [positionHistory, marketKey, futuresAccountType]);
+	}, [positionHistory, marketKey]);
 
 	const modifiedAverage = useAverageEntryPrice(thisPositionHistory);
 
@@ -139,7 +138,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			marketLongName: getSynthDescription(marketAsset, synthsMap, t),
 			marketPrice: (
 				<>
-					{`${formatDollars(marketAssetRate, {
+					{`${formatDollars(marketPrice, {
 						minDecimals,
 						isAssetPrice: true,
 					})}`}
@@ -270,7 +269,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 	}, [
 		positionDetails,
 		thisPositionHistory,
-		marketAssetRate,
+		marketPrice,
 		marketAsset,
 		synthsMap,
 		t,

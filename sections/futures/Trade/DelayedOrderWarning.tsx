@@ -2,27 +2,25 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { EXTERNAL_LINKS } from 'constants/links';
-
-const NextPrice: React.FC = () => {
+const DelayedOrderWarning: React.FC = () => {
 	const { t } = useTranslation();
 
 	return (
-		<NextPriceContainer>
-			<p className="next-price-description">
-				{t('futures.market.trade.next-price.description')}{' '}
-				<a href={EXTERNAL_LINKS.Trade.NextPriceBlogPost} rel="noreferrer" target="_blank">
+		<Container>
+			<p className="description">
+				{t('futures.market.trade.delayed-order.description')} {/* TODO: Add link to blog */}
+				{/* <a href={EXTERNAL_LINKS.Trade.NextPriceBlogPost} rel="noreferrer" target="_blank">
 					{t('futures.market.trade.next-price.learn-more')} ↗
-				</a>
+				</a> */}
 			</p>
-		</NextPriceContainer>
+		</Container>
 	);
 };
 
-const NextPriceContainer = styled.div`
+const Container = styled.div`
 	margin-bottom: 16px;
 
-	.next-price-description {
+	.description {
 		color: ${(props) => props.theme.colors.selectedTheme.gray};
 		margin: 0 8px;
 
@@ -32,4 +30,4 @@ const NextPriceContainer = styled.div`
 	}
 `;
 
-export default NextPrice;
+export default DelayedOrderWarning;

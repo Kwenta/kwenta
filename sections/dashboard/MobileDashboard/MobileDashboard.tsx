@@ -16,7 +16,7 @@ const MobileDashboard: FC<MobileDashboardProps> = ({ exchangeTokens }) => {
 	const [activePositionsTab, setActivePositionsTab] = useRecoilState(activePositionsTabState);
 
 	const exchangeTokenBalances = exchangeTokens.reduce(
-		(initial: Wei, { usdBalance }: { usdBalance: Wei }) => initial.add(usdBalance),
+		(initial: Wei, { usdBalance }) => initial.add(usdBalance),
 		zeroBN
 	);
 

@@ -7,11 +7,6 @@ import { ThemeName } from 'styles/theme';
 
 import { getUIKey } from '../utils';
 
-export const hasOrdersNotificationState = atom<boolean>({
-	key: getUIKey('hasOrderNotifications'),
-	default: false,
-});
-
 export const slippageState = atom<number>({
 	key: getUIKey('slippage'),
 	default: DEFAULT_SLIPPAGE,

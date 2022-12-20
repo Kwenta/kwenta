@@ -6,6 +6,7 @@ import {
 	DelayedOrder,
 	FuturesMarket,
 	FuturesPosition,
+	FuturesPositionHistory,
 	FuturesPotentialTradeDetails,
 	FuturesVolumes,
 } from 'sdk/types/futures';
@@ -49,7 +50,9 @@ export type FuturesQueryStatuses = {
 	crossMarginBalanceInfo: QueryStatus;
 	dailyVolumes: QueryStatus;
 	crossMarginPositions: QueryStatus;
+	crossMarginPositionHistory: QueryStatus;
 	isolatedPositions: QueryStatus;
+	isolatedPositionHistory: QueryStatus;
 	openOrders: QueryStatus;
 	crossMarginSettings: QueryStatus;
 	isolatedTradePreview: QueryStatus;
@@ -141,7 +144,7 @@ export type CrossMarginState = {
 	tradeInputs: CrossMarginTradeInputs<string>;
 	marginDelta: string;
 	orderType: CrossMarginOrderType;
-	selectedLeverage: string;
+	selectedLeverageByAsset: Partial<Record<FuturesMarketKey, string>>;
 	leverageSide: PositionSide;
 	selectedMarketKey: FuturesMarketKey;
 	selectedMarketAsset: FuturesMarketAsset;
@@ -160,13 +163,17 @@ export type CrossMarginState = {
 	positions: {
 		[account: string]: FuturesPosition<string>[];
 	};
-	openOrders: DelayedOrder<string>[];
+	positionHistory: {
+		[account: string]: FuturesPositionHistory<string>[];
+	};
+	openOrders: {
+		[account: string]: DelayedOrder<string>[];
+	};
 };
 
 export type IsolatedMarginState = {
 	tradeInputs: IsolatedMarginTradeInputs<string>;
 	orderType: IsolatedMarginOrderType;
-	selectedLeverage: string;
 	tradePreview: FuturesPotentialTradeDetails<string> | null;
 	leverageSide: PositionSide;
 	selectedMarketKey: FuturesMarketKey;
@@ -178,7 +185,12 @@ export type IsolatedMarginState = {
 	positions: {
 		[account: string]: FuturesPosition<string>[];
 	};
-	openOrders: DelayedOrder<string>[];
+	positionHistory: {
+		[account: string]: FuturesPositionHistory<string>[];
+	};
+	openOrders: {
+		[account: string]: DelayedOrder<string>[];
+	};
 };
 
 export type ModifyIsolatedPositionInputs = {
@@ -209,4 +221,21 @@ export const futuresPositionKeys = new Set([
 	'position.pnl',
 	'position.pnlPct',
 	'position.marginRatio',
+]);
+
+export const futuresPositionHistoryKeys = new Set([
+	'size',
+	'feesPaid',
+	'netFunding',
+	'netTransfers',
+	'totalDeposits',
+	'initialMargin',
+	'margin',
+	'entryPrice',
+	'avgEntryPrice',
+	'exitPrice',
+	'leverage',
+	'pnl',
+	'pnlWithFeesPaid',
+	'totalVolume',
 ]);
