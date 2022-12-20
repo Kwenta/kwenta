@@ -10,6 +10,7 @@ import Header from 'sections/shared/Layout/AppLayout/Header';
 import { resetCurrencies } from 'state/exchange/actions';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FullScreenContainer, MobileScreenContainer } from 'styles/common';
+import AppLayout from 'sections/shared/Layout/AppLayout';
 
 type ExchangeComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
@@ -47,6 +48,6 @@ const Exchange: ExchangeComponent = () => {
 	);
 };
 
-Exchange.getLayout = (page) => <>{page}</>;
+Exchange.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default Exchange;
