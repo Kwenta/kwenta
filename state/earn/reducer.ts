@@ -6,8 +6,7 @@ import { stakeTokens, unstakeTokens } from './actions';
 import { EarnState } from './types';
 
 const initialState: EarnState = {
-	amount: '',
-	balance: undefined,
+	balance: '0',
 	earnedRewards: '0',
 	rewardRate: '0',
 	totalSupply: '0',
@@ -23,9 +22,6 @@ const earnSlice = createSlice({
 	name: 'earn',
 	initialState,
 	reducers: {
-		setAmount: (state, action) => {
-			state.amount = action.payload;
-		},
 		setEarnDetails: (state, action) => {
 			state.balance = action.payload.balance;
 			state.earnedRewards = action.payload.earnedRewards;
@@ -45,7 +41,5 @@ const earnSlice = createSlice({
 		});
 	},
 });
-
-export const { setAmount } = earnSlice.actions;
 
 export default earnSlice.reducer;

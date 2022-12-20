@@ -96,7 +96,7 @@ export default class FuturesService {
 			ExchangeRates,
 			PerpsV2MarketData,
 			PerpsV2MarketSettings,
-		} = this.sdk.context.mutliCallContracts;
+		} = this.sdk.context.multicallContracts;
 
 		if (!PerpsV2MarketData || !PerpsV2MarketSettings || !SystemStatus || !ExchangeRates) {
 			throw new Error(UNSUPPORTED_NETWORK);
@@ -220,7 +220,7 @@ export default class FuturesService {
 		address: string, // Cross margin or EOA address
 		futuresMarkets: { asset: FuturesMarketAsset; marketKey: FuturesMarketKey; address: string }[]
 	) {
-		const marketDataContract = this.sdk.context.mutliCallContracts.FuturesMarketData;
+		const marketDataContract = this.sdk.context.multicallContracts.FuturesMarketData;
 
 		if (!this.sdk.context.isL2 || !marketDataContract) {
 			throw new Error(UNSUPPORTED_NETWORK);
@@ -445,7 +445,7 @@ export default class FuturesService {
 	}
 
 	public async getCrossMarginSettings() {
-		const crossMarginBaseSettings = this.sdk.context.mutliCallContracts.CrossMarginBaseSettings;
+		const crossMarginBaseSettings = this.sdk.context.multicallContracts.CrossMarginBaseSettings;
 		if (!crossMarginBaseSettings) throw new Error(UNSUPPORTED_NETWORK);
 
 		const [tradeFee, limitOrderFee, stopOrderFee] = await this.sdk.context.multicallProvider.all([

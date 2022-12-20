@@ -38,9 +38,6 @@ export const selectMarketsQueryStatus = (state: RootState) => state.futures.quer
 export const selectIsolatedLeverageInput = (state: RootState) =>
 	state.futures.isolatedMargin.leverageInput;
 
-export const selectCrossMarginSelectedLeverage = (state: RootState) =>
-	wei(state.futures.crossMargin.tradeInputs.leverage || DEFAULT_LEVERAGE);
-
 export const selectCrossMarginMarginDelta = (state: RootState) =>
 	wei(state.futures.crossMargin.marginDelta || 0);
 
@@ -360,6 +357,13 @@ export const selectIsolatedMarginTradeInputs = createSelector(
 		};
 	}
 );
+
+export const selectCrossMarginSelectedLeverage = createSelector(
+	selectMarketKey,
+	(state: RootState) => state.futures.crossMargin.selectedLeverageByAsset,
+	(key, selectedLeverageByAsset) => wei(selectedLeverageByAsset[key] || DEFAULT_LEVERAGE)
+);
+
 export const selectDynamicFeeRate = (state: RootState) => wei(state.futures.dynamicFeeRate);
 
 export const selectIsolatedMarginFee = (state: RootState) =>

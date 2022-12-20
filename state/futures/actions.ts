@@ -16,8 +16,14 @@ import {
 	FuturesVolumes,
 	OrderTypeByName,
 	PositionSide,
+	PotentialTradeStatus,
 } from 'sdk/types/futures';
-import { calculateCrossMarginFee, getMarketName, serializePotentialTrade } from 'sdk/utils/futures';
+import {
+	calculateCrossMarginFee,
+	getMarketName,
+	getTradeStatusMessage,
+	serializePotentialTrade,
+} from 'sdk/utils/futures';
 import { unserializeGasPrice } from 'state/app/helpers';
 import { setOpenModal } from 'state/app/reducer';
 import { fetchBalances } from 'state/balances/actions';
@@ -45,7 +51,7 @@ import {
 	handleIsolatedMarginPreviewError,
 	handleTransactionError,
 	setCrossMarginFees,
-	setCrossMarginLeverage,
+	setCrossMarginLeverageForAsset,
 	setCrossMarginMarginDelta,
 	setCrossMarginOrderPrice,
 	setCrossMarginOrderPriceInvalidLabel,
@@ -86,6 +92,8 @@ import {
 	selectPosition,
 	selectTradeSizeInputs,
 	selectSkewAdjustedPrice,
+	selectCrossMarginBalanceInfo,
+	selectMarketKey,
 } from './selectors';
 import {
 	CancelDelayedOrderInputs,
@@ -333,6 +341,8 @@ export const fetchCrossMarginTradePreview = createAsyncThunk<
 	async (inputs, { dispatch, getState, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
 		const account = selectFuturesAccount(getState());
+		const marginDelta = selectCrossMarginMarginDelta(getState());
+		const { freeMargin } = selectCrossMarginBalanceInfo(getState());
 		if (!account) throw new Error('No account to fetch orders');
 		if (!marketInfo) throw new Error('No market info');
 		const leverageSide = selectLeverageSide(getState());
@@ -343,6 +353,14 @@ export const fetchCrossMarginTradePreview = createAsyncThunk<
 				marketInfo.market,
 				{ ...inputs, leverageSide }
 			);
+			if (marginDelta.gt(freeMargin) && preview.status === 0) {
+				// Show insufficient margin message
+				preview.status = PotentialTradeStatus.INSUFFICIENT_FREE_MARGIN;
+				preview.statusMessage = getTradeStatusMessage(
+					PotentialTradeStatus.INSUFFICIENT_FREE_MARGIN
+				);
+				preview.showStatus = true;
+			}
 			return serializePotentialTrade(preview);
 		} catch (err) {
 			dispatch(handleCrossMarginPreviewError(err.message));
@@ -397,6 +415,7 @@ export const editCrossMarginSize = (size: string, currencyType: 'usd' | 'native'
 const stageCrossMarginSizeChange = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/stageCrossMarginSizeChange',
 	async (_, { dispatch, getState }) => {
+		dispatch(calculateCrossMarginFees());
 		const tradeInputs = selectCrossMarginTradeInputs(getState());
 		const fees = selectCrossMarginTradeFees(getState());
 		const rate = selectMarketPrice(getState());
@@ -417,7 +436,6 @@ const stageCrossMarginSizeChange = createAsyncThunk<void, void, ThunkConfig>(
 			  )
 			: wei(0);
 		dispatch(setCrossMarginMarginDelta(marginDelta.toString()));
-		dispatch(calculateCrossMarginFees());
 		debouncedPrepareCrossMarginTradePreview(dispatch);
 	}
 );
@@ -425,16 +443,15 @@ const stageCrossMarginSizeChange = createAsyncThunk<void, void, ThunkConfig>(
 export const editExistingPositionLeverage = createAsyncThunk<void, string, ThunkConfig>(
 	'futures/editExistingPositionLeverage',
 	async (leverage, { dispatch, getState }) => {
-		const tradeInputs = selectCrossMarginTradeInputs(getState());
+		dispatch(calculateCrossMarginFees());
 		const fees = selectCrossMarginTradeFees(getState());
 		const position = selectPosition(getState());
 		const rate = selectMarketPrice(getState());
 		const price = selectCrossMarginOrderPrice(getState());
-		dispatch(setCrossMarginLeverage(leverage));
 		const marginDelta = await calculateMarginDelta(
 			{
-				susdSizeDelta: tradeInputs.susdSizeDelta,
-				nativeSizeDelta: tradeInputs.nativeSizeDelta,
+				susdSizeDelta: wei(0),
+				nativeSizeDelta: wei(0),
 				price: price ? wei(price) : rate,
 				leverage: wei(leverage),
 			},
@@ -442,7 +459,6 @@ export const editExistingPositionLeverage = createAsyncThunk<void, string, Thunk
 			position
 		);
 		dispatch(setCrossMarginMarginDelta(marginDelta.toString()));
-		dispatch(calculateCrossMarginFees());
 		debouncedPrepareCrossMarginTradePreview(dispatch);
 	}
 );
@@ -498,6 +514,11 @@ export const changeLeverageSide = (side: PositionSide): AppThunk => (dispatch, g
 	const { nativeSizeString } = selectTradeSizeInputs(getState());
 	dispatch(setLeverageSide(side));
 	dispatch(editTradeSizeInput(nativeSizeString, 'native'));
+};
+
+export const setCrossMarginLeverage = (leverage: string): AppThunk => (dispatch, getState) => {
+	const marketKey = selectMarketKey(getState());
+	dispatch(setCrossMarginLeverageForAsset({ marketKey: marketKey, leverage: leverage }));
 };
 
 export const debouncedPrepareCrossMarginTradePreview = debounce((dispatch) => {

@@ -141,7 +141,7 @@ export type CrossMarginState = {
 	tradeInputs: CrossMarginTradeInputs<string>;
 	marginDelta: string;
 	orderType: CrossMarginOrderType;
-	selectedLeverage: string;
+	selectedLeverageByAsset: Partial<Record<FuturesMarketKey, string>>;
 	leverageSide: PositionSide;
 	selectedMarketKey: FuturesMarketKey;
 	selectedMarketAsset: FuturesMarketAsset;
@@ -168,7 +168,6 @@ export type CrossMarginState = {
 export type IsolatedMarginState = {
 	tradeInputs: IsolatedMarginTradeInputs<string>;
 	orderType: IsolatedMarginOrderType;
-	selectedLeverage: string;
 	tradePreview: FuturesPotentialTradeDetails<string> | null;
 	leverageSide: PositionSide;
 	selectedMarketKey: FuturesMarketKey;

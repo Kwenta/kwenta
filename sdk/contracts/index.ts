@@ -14,6 +14,7 @@ import KwentaStakingRewardsABI from './abis/KwentaStakingRewards.json';
 import PerpsV2MarketDataABI from './abis/PerpsV2MarketData.json';
 import PerpsV2MarketSettingsABI from './abis/PerpsV2MarketSettings.json';
 import StakingRewardsABI from './abis/StakingRewards.json';
+import SynthRedeemerABI from './abis/SynthRedeemer.json';
 import { ADDRESSES } from './constants';
 import {
 	CrossMarginAccountFactory__factory,
@@ -142,8 +143,11 @@ export const getContractsByNetwork = (
 	};
 };
 
-export const getMultiCallContractsByNetwork = (networkId: NetworkId) => {
+export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 	return {
+		SynthRedeemer: ADDRESSES.SynthRedeemer[networkId]
+			? new EthCallContract(ADDRESSES.SynthRedeemer[networkId], SynthRedeemerABI)
+			: undefined,
 		CrossMarginBaseSettings: ADDRESSES.CrossMarginBaseSettings[networkId]
 			? new EthCallContract(
 					ADDRESSES.CrossMarginBaseSettings[networkId],
@@ -196,5 +200,5 @@ export const getMultiCallContractsByNetwork = (networkId: NetworkId) => {
 };
 
 export type ContractsMap = ReturnType<typeof getContractsByNetwork>;
-export type MultiCallContractsMap = ReturnType<typeof getMultiCallContractsByNetwork>;
+export type MulticallContractsMap = ReturnType<typeof getMulticallContractsByNetwork>;
 export type ContractName = keyof ContractsMap;

@@ -4,7 +4,7 @@ import { ethers } from 'ethers';
 import { keyBy } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createContainer } from 'unstated-next';
-import { chain, useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
+import { chain, useAccount, useNetwork, useSigner, useProvider } from 'wagmi';
 
 import { sdk } from 'state/config';
 import { useAppDispatch } from 'state/hooks';
@@ -58,11 +58,13 @@ const useConnector = () => {
 	);
 
 	useEffect(() => {
-		sdk.setProvider(provider).then((networkId) => {
-			handleNetworkChange(networkId);
-			setProviderReady(true);
-		});
-		transactionNotifier = new BaseTN(provider);
+		if (!!provider) {
+			sdk.setProvider(provider).then((networkId) => {
+				handleNetworkChange(networkId);
+				setProviderReady(true);
+			});
+			transactionNotifier = new BaseTN(provider);
+		}
 	}, [provider, handleNetworkChange]);
 
 	useEffect(() => {

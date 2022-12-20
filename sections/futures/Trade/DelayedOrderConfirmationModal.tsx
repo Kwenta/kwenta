@@ -47,7 +47,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 	const potentialTradeDetails = useAppSelector(selectTradePreview);
 	const previewStatus = useAppSelector(selectTradePreviewStatus);
 	const orderType = useAppSelector(selectOrderType);
-	const { commitDeposit, delayedOrderFee } = useAppSelector(selectDelayedOrderFee);
+	const { commitDeposit } = useAppSelector(selectDelayedOrderFee);
 
 	useEffect(() => {
 		dispatch(
@@ -126,7 +126,6 @@ const DelayedOrderConfirmationModal: FC = () => {
 			orderType,
 			commitDeposit,
 			potentialTradeDetails,
-			delayedOrderFee,
 			marketAsset,
 			leverageSide,
 			totalDeposit,

@@ -362,6 +362,7 @@ export const POTENTIAL_TRADE_STATUS_TO_MESSAGE: { [key: string]: string } = {
 	NO_POSITION_OPEN: 'No position open',
 	PRICE_TOO_VOLATILE: 'Price too volatile',
 	PRICE_IMPACT_TOLERANCE_EXCEEDED: 'Price impact tolerance exceeded',
+	INSUFFICIENT_FREE_MARGIN: 'Insufficient free margin',
 };
 
 export const calculateCrossMarginFee = (

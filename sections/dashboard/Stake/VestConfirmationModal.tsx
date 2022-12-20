@@ -16,15 +16,18 @@ type Props = {
 	handleVest(): void;
 };
 
+const LinkText = () => {
+	const { t } = useTranslation();
+
+	return (
+		<ExternalLink href={EXTERNAL_LINKS.Docs.Staking}>
+			<b>{t('dashboard.stake.tabs.escrow.modal.more-info')}</b>
+		</ExternalLink>
+	);
+};
+
 const VestConfirmationModal: React.FC<Props> = ({ onDismiss, totalFee, handleVest }) => {
 	const { t } = useTranslation();
-	const LinkText = () => {
-		return (
-			<ExternalLink href={EXTERNAL_LINKS.Docs.Staking}>
-				<b>{t('dashboard.stake.tabs.escrow.modal.more-info')}</b>
-			</ExternalLink>
-		);
-	};
 
 	return (
 		<StyledBaseModal
@@ -43,7 +46,7 @@ const VestConfirmationModal: React.FC<Props> = ({ onDismiss, totalFee, handleVes
 					<Trans
 						i18nKey="dashboard.stake.tabs.escrow.modal.confirm-text"
 						values={{ totalFee: truncateNumbers(totalFee, 4) }}
-						components={[<Emphasis />]}
+						components={[<b />]}
 					/>
 				</BalanceText>
 			</BalanceContainer>
@@ -62,8 +65,6 @@ const VestConfirmationModal: React.FC<Props> = ({ onDismiss, totalFee, handleVes
 		</StyledBaseModal>
 	);
 };
-
-const Emphasis = styled.b``;
 
 export const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {

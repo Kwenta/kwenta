@@ -1,10 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import {
-	DEFAULT_FUTURES_MARGIN_TYPE,
-	DEFAULT_LEVERAGE,
-	DEFAULT_PRICE_IMPACT_DELTA,
-} from 'constants/defaults';
+import { DEFAULT_FUTURES_MARGIN_TYPE, DEFAULT_PRICE_IMPACT_DELTA } from 'constants/defaults';
 import { ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
 import { TransactionStatus } from 'sdk/types/common';
 import { FuturesMarket, FuturesMarketKey, FuturesPotentialTradeDetails } from 'sdk/types/futures';
@@ -96,7 +92,7 @@ const initialState: FuturesState = {
 		selectedMarketKey: FuturesMarketKey.sETH,
 		leverageSide: PositionSide.LONG,
 		orderType: 'market',
-		selectedLeverage: DEFAULT_LEVERAGE,
+		selectedLeverageByAsset: {},
 		showCrossMarginOnboard: false,
 		tradeInputs: ZERO_STATE_CM_TRADE_INPUTS,
 		fees: ZERO_CM_FEES,
@@ -126,7 +122,6 @@ const initialState: FuturesState = {
 		leverageSide: PositionSide.LONG,
 		orderType: 'delayed offchain',
 		tradePreview: null,
-		selectedLeverage: DEFAULT_LEVERAGE,
 		tradeInputs: ZERO_STATE_TRADE_INPUTS,
 		priceImpact: DEFAULT_PRICE_IMPACT_DELTA,
 		positions: {},
@@ -158,8 +153,11 @@ const futuresSlice = createSlice({
 		setLeverageSide: (state, action) => {
 			state[accountType(state.selectedType)].leverageSide = action.payload;
 		},
-		setCrossMarginLeverage: (state, action: PayloadAction<string>) => {
-			state.crossMargin.tradeInputs.leverage = action.payload;
+		setCrossMarginLeverageForAsset: (
+			state,
+			action: PayloadAction<{ marketKey: FuturesMarketKey; leverage: string }>
+		) => {
+			state.crossMargin.selectedLeverageByAsset[action.payload.marketKey] = action.payload.leverage;
 		},
 		setCrossMarginMarginDelta: (state, action: PayloadAction<string>) => {
 			state.crossMargin.marginDelta = action.payload;
@@ -458,6 +456,6 @@ export const {
 	setIsolatedTradePreview,
 	setIsolatedMarginFee,
 	setCrossMarginTradePreview,
-	setCrossMarginLeverage,
+	setCrossMarginLeverageForAsset,
 	setPreviewError,
 } = futuresSlice.actions;

@@ -1,20 +1,5 @@
 import styled, { css } from 'styled-components';
 
-import KwentaLogo from 'assets/svg/earn/KWENTA.svg';
-
-export const KwentaLabel: React.FC = ({ children }) => {
-	return (
-		<div className="value">
-			{children}
-			<StyledKwentaLogo />
-		</div>
-	);
-};
-
-const StyledKwentaLogo = styled(KwentaLogo)`
-	margin-left: 8px;
-`;
-
 export const StakingCard = styled.div<{ $noPadding?: boolean }>`
 	background: ${(props) => props.theme.colors.selectedTheme.surfaceFill};
 	padding: 20px;

@@ -837,7 +837,9 @@
 				},
 				"edit-leverage": {
 					"failed": "Transaction failed",
-					"insufficient-margin": "Leverage cannot be modified, please deposit more margin or reduce open position sizes"
+					"insufficient-margin": "Leverage cannot be increased, it exceeds the minimum margin requirement of $40",
+					"insufficient-free-margin": "Leverage cannot be modified, please deposit more margin or reduce open position sizes"
+
 				}
 			},
 			"history": {

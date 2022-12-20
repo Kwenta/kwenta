@@ -74,12 +74,7 @@ const SpotMarketsTable: FC = () => {
 								: router.push(`/exchange/`);
 						}}
 						highlightRowsOnHover
-						sortBy={[
-							{
-								id: 'price',
-								desc: true,
-							},
-						]}
+						sortBy={[{ id: 'price', desc: true }]}
 						columns={[
 							{
 								Header: (
