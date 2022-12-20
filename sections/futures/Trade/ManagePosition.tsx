@@ -149,7 +149,7 @@ const ManagePosition: React.FC = () => {
 						data-testid="trade-open-position-button"
 						noOutline
 						fullWidth
-						disabled={!!placeOrderDisabledReason || !!orderError}
+						disabled={!!placeOrderDisabledReason}
 						onClick={() => dispatch(setOpenModal('futures_modify_position_confirm'))}
 					>
 						{t(placeOrderTranslationKey)}
