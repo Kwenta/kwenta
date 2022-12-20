@@ -3,8 +3,8 @@ import { wei } from '@synthetixio/wei';
 import { FuturesOrderType } from 'queries/futures/types';
 
 export const ISOLATED_MARGIN_ORDER_TYPES: FuturesOrderType[] = [
-	'delayed',
 	'delayed offchain',
+	'delayed',
 	'market',
 ];
 export const CROSS_MARGIN_ORDER_TYPES: FuturesOrderType[] = ['market', 'limit', 'stop market'];
