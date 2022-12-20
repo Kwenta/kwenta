@@ -337,7 +337,7 @@
 			},
 			"tooltips": {
 				"market-key": "The current price of the futures market after adding a skew-based premium or discount to the oracle price",
-				"oracle-price": "The exact oracle price of this market without any adjustment for market skew applied.",
+				"oracle-price": "The exact oracle price of this market without any adjustment for market skew applied",
 				"external-price": "Aggregated market price provided by external sources (Coingecko, Forex Market, etc.)",
 				"24h-change": "Total change in asset value within the past 24 hours",
 				"24h-vol": "Total trade volume within the past 24 hours",
