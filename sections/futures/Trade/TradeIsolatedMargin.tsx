@@ -45,6 +45,8 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 
 			{!isMobile && <MarketInfoBox />}
 
+			<DelayedOrderWarning />
+
 			<PositionButtons
 				selected={leverageSide}
 				onSelect={(side) => {
