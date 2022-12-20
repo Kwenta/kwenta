@@ -36,6 +36,7 @@ import { computeMarketFee } from 'utils/costCalculations';
 import { stipZeros } from 'utils/formatters/number';
 import {
 	calculateMarginDelta,
+	marketOverrides,
 	orderPriceInvalidLabel,
 	serializeCmBalanceInfo,
 	serializeCrossMarginSettings,
@@ -110,7 +111,18 @@ export const fetchMarkets = createAsyncThunk<
 	ThunkConfig
 >('futures/fetchMarkets', async (_, { extra: { sdk } }) => {
 	const markets = await sdk.futures.getMarkets();
-	const serializedMarkets = serializeMarkets(markets);
+
+	// apply overrides
+	const overrideMarkets = markets.map((m) => {
+		return marketOverrides[m.marketKey]
+			? {
+					...m,
+					...marketOverrides[m.marketKey],
+			  }
+			: m;
+	});
+
+	const serializedMarkets = serializeMarkets(overrideMarkets);
 	return { markets: serializedMarkets };
 });
 
