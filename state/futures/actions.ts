@@ -268,7 +268,7 @@ export const fetchOpenOrders = createAsyncThunk<
 	if (!account) {
 		throw new Error('No account to fetch orders');
 	}
-	const orders = await sdk.futures.getOpenOrders(account, unserializeMarkets(futures.markets));
+	const orders = await sdk.futures.getOpenOrders(account);
 	return {
 		orders: serializeFuturesOrders(orders),
 		account: account,

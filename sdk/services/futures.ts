@@ -383,7 +383,7 @@ export default class FuturesService {
 		};
 	}
 
-	public async getOpenOrders(account: string, markets: FuturesMarket[]) {
+	public async getOpenOrders(account: string) {
 		const response = await request(
 			this.futuresGqlEndpoint,
 			gql`
