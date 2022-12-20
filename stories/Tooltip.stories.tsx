@@ -1,3 +1,4 @@
+import * as Text from 'components/Text';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 
 export default {
@@ -8,7 +9,7 @@ export default {
 export const Default = () => {
 	return (
 		<StyledTooltip height="auto" preset="fixed" content="This is the tooltip text">
-			<div>Text</div>
+			<Text.Body>Hover over this text</Text.Body>
 		</StyledTooltip>
 	);
 };
