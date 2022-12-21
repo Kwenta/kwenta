@@ -6,6 +6,7 @@ import { selectOpenModal } from 'state/app/selectors';
 import { changeLeverageSide } from 'state/futures/actions';
 import { selectLeverageSide, selectPosition } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { selectPricesConnectionError } from 'state/prices/selectors';
 import { zeroBN } from 'utils/formatters/number';
 
 import FeeInfoBox from '../FeeInfoBox';
@@ -29,6 +30,7 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const position = useAppSelector(selectPosition);
 	const openModal = useAppSelector(selectOpenModal);
+	const pricesConnectionError = useAppSelector(selectPricesConnectionError);
 	const totalMargin = position?.remainingMargin ?? zeroBN;
 
 	return (
@@ -38,6 +40,9 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 				balance={totalMargin}
 				accountType={'isolated_margin'}
 			/>
+			{pricesConnectionError && (
+				<Error message="Failed to connect to price feed. Please try disabling any add blockers and refresh." />
+			)}
 
 			<Error messageType="warn" message={t('futures.market.trade.perpsv2-disclaimer')} />
 
