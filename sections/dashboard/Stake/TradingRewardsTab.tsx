@@ -80,7 +80,8 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 		return wei(weeklyRewards).gt(0) ? wei(estimatedReward).div(wei(weeklyRewards)) : zeroBN;
 	}, [estimatedReward, weeklyRewards]);
 
-	const showEstimatedValue = useMemo(() => wei(period).eq(epochPeriod), [epochPeriod, period]);
+	// TODO this is a quick fix to disable the estimated rewards
+	const showEstimatedValue = false;
 
 	return (
 		<TradingRewardsContainer>
