@@ -34,7 +34,6 @@ const Exchange: ExchangeComponent = () => {
 			<ExchangeHead />
 			<DesktopOnlyView>
 				<FullScreenContainer>
-					<Header />
 					<ExchangeContent />
 					<NotificationContainer />
 				</FullScreenContainer>
