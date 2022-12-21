@@ -786,7 +786,7 @@
 					}
 				},
 				"delayed-order": {
-					"description": "All orders are subject to a delay before execution. The fill price is subject to volatility as the order is executed at future price.",
+					"description": "Delayed orders are subject to a time delay before execution by a keeper. The fill price is subject to volatility as the order is executed at a future price.",
 					"learn-more": "Learn more"
 				},
 				"next-price": {

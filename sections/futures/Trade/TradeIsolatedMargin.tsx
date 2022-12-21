@@ -1,10 +1,14 @@
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 import Error from 'components/Error';
+import SegmentedControl from 'components/SegmentedControl';
+import { ISOLATED_MARGIN_ORDER_TYPES } from 'constants/futures';
 import { setOpenModal } from 'state/app/reducer';
 import { selectOpenModal } from 'state/app/selectors';
 import { changeLeverageSide } from 'state/futures/actions';
-import { selectLeverageSide, selectPosition } from 'state/futures/selectors';
+import { setOrderType } from 'state/futures/reducer';
+import { selectLeverageSide, selectOrderType, selectPosition } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { selectPricesConnectionError } from 'state/prices/selectors';
 import { zeroBN } from 'utils/formatters/number';
@@ -29,6 +33,7 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const position = useAppSelector(selectPosition);
+	const orderType = useAppSelector(selectOrderType);
 	const openModal = useAppSelector(selectOpenModal);
 	const pricesConnectionError = useAppSelector(selectPricesConnectionError);
 	const totalMargin = position?.remainingMargin ?? zeroBN;
@@ -47,6 +52,16 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 			<Error messageType="warn" message={t('futures.market.trade.perpsv2-disclaimer')} />
 
 			{!isMobile && <MarketInfoBox />}
+
+			<StyledSegmentedControl
+				styleType="check"
+				values={ISOLATED_MARGIN_ORDER_TYPES}
+				selectedIndex={ISOLATED_MARGIN_ORDER_TYPES.indexOf(orderType)}
+				onChange={(oType: number) => {
+					const newOrderType = oType === 1 ? 'market' : 'delayed offchain';
+					dispatch(setOrderType(newOrderType));
+				}}
+			/>
 
 			<DelayedOrderWarning />
 
@@ -75,3 +90,7 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 };
 
 export default TradeIsolatedMargin;
+
+const StyledSegmentedControl = styled(SegmentedControl)`
+	margin-bottom: 16px;
+`;
