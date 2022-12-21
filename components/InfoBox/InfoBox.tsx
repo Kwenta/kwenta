@@ -83,12 +83,13 @@ const InfoBoxContainer = styled.div`
 		.badge-red {
 			color: ${(props) => props.theme.colors.selectedTheme.badge['red'].text};
 			background: ${(props) => props.theme.colors.selectedTheme.badge['red'].background};
-			min-width: 90px;
+			min-width: 100px;
 		}
 
 		.badge-yellow {
 			color: ${(props) => props.theme.colors.selectedTheme.badge['yellow'].text};
 			background: ${(props) => props.theme.colors.selectedTheme.badge['yellow'].background};
+			min-width: 70px;
 		}
 	}
 

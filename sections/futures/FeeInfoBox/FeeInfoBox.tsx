@@ -3,7 +3,9 @@ import React, { FC, useMemo, useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import EligibleIcon from 'assets/svg/app/eligible.svg';
 import LinkArrowIcon from 'assets/svg/app/link-arrow.svg';
+import NotEligibleIcon from 'assets/svg/app/not-eligible.svg';
 import TimerIcon from 'assets/svg/app/timer.svg';
 import InfoBox, { DetailedInfo } from 'components/InfoBox/InfoBox';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
@@ -124,10 +126,12 @@ const FeeInfoBox: React.FC = () => {
 								{isRewardEligible ? (
 									<div className="badge badge-yellow">
 										{t('dashboard.stake.tabs.trading-rewards.eligible')}
+										<EligibleIcon style={{ paddingLeft: '2px' }} />
 									</div>
 								) : (
 									<div className="badge badge-red">
 										{t('dashboard.stake.tabs.trading-rewards.not-eligible')}
+										<NotEligibleIcon />
 									</div>
 								)}
 							</p>
