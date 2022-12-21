@@ -185,6 +185,7 @@ const StakingTabsHeader = styled.div`
 `;
 
 const StakingTabsContainer = styled.div`
+	margin-bottom: 50px;
 	${media.lessThan('md')`
 		padding: 15px;
 	`}
