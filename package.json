@@ -23,7 +23,6 @@
 		"storybook": "start-storybook -p 6006",
 		"build-storybook": "build-storybook",
 		"generate-contract-types": "typechain --target ethers-v5 --out-dir ./sdk/contracts/types './sdk/contracts/abis/*.json' --show-stack-traces"
-
 	},
 	"dependencies": {
 		"@artsy/fresnel": "1.7.0",
@@ -36,6 +35,8 @@
 		"@rainbow-me/rainbowkit": "0.8.0",
 		"@reach/dialog": "0.15.0",
 		"@reduxjs/toolkit": "^1.8.5",
+		"@sentry/browser": "^7.28.0",
+		"@sentry/tracing": "^7.28.0",
 		"@synthetixio/contracts-interface": "2.76.3",
 		"@synthetixio/optimism-networks": "2.74.6",
 		"@synthetixio/providers": "2.74.10",
