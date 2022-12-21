@@ -31,3 +31,5 @@ export const selectLatestEthPrice = createSelector(selectPrices, (prices) => {
 	const price = getPricesForCurrencies(prices, 'sETH', 'sUSD');
 	return price.offChain ?? price.onChain ?? wei(0);
 });
+
+export const selectPricesConnectionError = (state: RootState) => state.prices.connectionError;

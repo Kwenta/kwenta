@@ -45,6 +45,10 @@ export default class PricesService {
 			this.pyth.onWsError = (error) => {
 				// TODO: Feedback connection issue and display
 				// prompt to try disabling add blocker
+				this.sdk.context.events.emit('prices_connection_update', {
+					connected: false,
+					error: error || new Error('pyth prices ws connection failed'),
+				});
 				logError(error);
 			};
 			this.subscribeToPythPriceUpdates();
@@ -89,6 +93,16 @@ export default class PricesService {
 
 	public removePricesListeners() {
 		this.sdk.context.events.removeAllListeners('prices_updated');
+	}
+
+	public onPricesConnectionUpdated(
+		listener: (status: { connected: boolean; error?: Error | undefined }) => void
+	) {
+		return this.sdk.context.events.on('prices_connection_update', listener);
+	}
+
+	public removeConnectionListeners() {
+		this.sdk.context.events.removeAllListeners('prices_connection_update');
 	}
 
 	public async getOnChainPrices() {
