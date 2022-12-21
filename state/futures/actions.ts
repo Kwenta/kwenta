@@ -40,7 +40,6 @@ import {
 	serializeFuturesOrders,
 	serializeFuturesVolumes,
 	serializeMarkets,
-	unserializeMarkets,
 } from 'utils/futures';
 import logError from 'utils/logError';
 import { getTransactionPrice } from 'utils/network';
@@ -268,7 +267,7 @@ export const fetchOpenOrders = createAsyncThunk<
 	if (!account) {
 		throw new Error('No account to fetch orders');
 	}
-	const orders = await sdk.futures.getOpenOrders(account, unserializeMarkets(futures.markets));
+	const orders = await sdk.futures.getOpenOrders(account);
 	return {
 		orders: serializeFuturesOrders(orders),
 		account: account,
@@ -698,7 +697,7 @@ export const modifyIsolatedPosition = createAsyncThunk<
 	ThunkConfig
 >(
 	'futures/modifyIsolatedPosition',
-	async ({ sizeDelta, useNextPrice }, { getState, dispatch, extra: { sdk } }) => {
+	async ({ sizeDelta }, { getState, dispatch, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
 		if (!marketInfo) throw new Error('Market info not found');
 		try {
@@ -712,7 +711,6 @@ export const modifyIsolatedPosition = createAsyncThunk<
 			const tx = await sdk.futures.modifyIsolatedMarginPosition(
 				marketInfo.market,
 				sizeDelta,
-				useNextPrice,
 				false
 			);
 			dispatch(updateTransactionHash(tx.hash));
@@ -734,12 +732,11 @@ export const modifyIsolatedPositionEstimateGas = createAsyncThunk<
 	ThunkConfig
 >(
 	'futures/modifyIsolatedPositionEstimateGas',
-	async ({ sizeDelta, useNextPrice }, { getState, dispatch, extra: { sdk } }) => {
+	async ({ sizeDelta }, { getState, dispatch, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
 		if (!marketInfo) throw new Error('Market info not found');
 		estimateGasInteralAction(
-			() =>
-				sdk.futures.modifyIsolatedMarginPosition(marketInfo.market, sizeDelta, useNextPrice, true),
+			() => sdk.futures.modifyIsolatedMarginPosition(marketInfo.market, sizeDelta, true),
 			'modify_isolated',
 			{ getState, dispatch }
 		);

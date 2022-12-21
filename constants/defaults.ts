@@ -41,9 +41,6 @@ export const MAX_TIMESTAMP: number = 8640000000000000;
 // for Fee History
 export const DEFAULT_NUMBER_OF_FUTURES_FEE: number = 9999;
 
-// leverage adjustment
-export const DEFAULT_NP_LEVERAGE_ADJUSTMENT: number = 0.9975;
-
 // for mobile leaderboard
 export const DEFAULT_LEADERBOARD_ROWS = 20;
 

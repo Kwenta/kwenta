@@ -6,22 +6,17 @@ import InfoBox from 'components/InfoBox';
 import PreviewArrow from 'components/PreviewArrow';
 import { FuturesPotentialTradeDetails } from 'sdk/types/futures';
 import {
-	selectLeverageSide,
 	selectMarketInfo,
 	selectMaxLeverage,
-	selectOrderType,
 	selectPosition,
 	selectTradePreview,
 	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { computeNPFee } from 'utils/costCalculations';
 import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 const MarketInfoBox: React.FC = () => {
-	const orderType = useAppSelector(selectOrderType);
-	const leverageSide = useAppSelector(selectLeverageSide);
-	const { nativeSize, nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
+	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
 	const potentialTrade = useAppSelector(selectTradePreview);
 
 	const marketInfo = useAppSelector(selectMarketInfo);
@@ -40,26 +35,6 @@ const MarketInfoBox: React.FC = () => {
 	const minInitialMargin = useMemo(() => marketInfo?.minInitialMargin ?? zeroBN, [
 		marketInfo?.minInitialMargin,
 	]);
-
-	const isNextPriceOrder = orderType === 'next price';
-
-	const positionSize = position?.position?.size ? wei(position?.position?.size) : zeroBN;
-	const orderDetails = useMemo(() => {
-		return {
-			newSize: nativeSize,
-			size: (positionSize ?? zeroBN).add(nativeSizeDelta).abs(),
-		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [leverageSide, positionSize]);
-
-	const { commitDeposit } = useMemo(() => computeNPFee(marketInfo, wei(orderDetails.newSize)), [
-		marketInfo,
-		orderDetails,
-	]);
-
-	const totalDeposit = useMemo(() => {
-		return (commitDeposit ?? zeroBN).add(marketInfo?.keeperDeposit ?? zeroBN);
-	}, [commitDeposit, marketInfo?.keeperDeposit]);
 
 	const getPotentialAvailableMargin = useCallback(
 		(trade: FuturesPotentialTradeDetails | null, marketMaxLeverage: Wei | undefined) => {
@@ -88,16 +63,8 @@ const MarketInfoBox: React.FC = () => {
 			potentialTrade,
 			marketInfo?.maxLeverage
 		);
-		return isNextPriceOrder
-			? potentialAvailableMargin?.sub(totalDeposit) ?? zeroBN
-			: potentialAvailableMargin;
-	}, [
-		potentialTrade,
-		marketInfo?.maxLeverage,
-		isNextPriceOrder,
-		totalDeposit,
-		getPotentialAvailableMargin,
-	]);
+		return potentialAvailableMargin;
+	}, [potentialTrade, marketInfo?.maxLeverage, getPotentialAvailableMargin]);
 
 	const previewTradeData = React.useMemo(() => {
 		const size = nativeSizeDelta.abs();

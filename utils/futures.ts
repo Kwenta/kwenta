@@ -375,8 +375,6 @@ export const serializeMarkets = (markets: FuturesMarket[]): FuturesMarket<string
 			feeRates: {
 				makerFee: m.feeRates.makerFee.toString(),
 				takerFee: m.feeRates.takerFee.toString(),
-				makerFeeNextPrice: m.feeRates.makerFeeNextPrice.toString(),
-				takerFeeNextPrice: m.feeRates.takerFeeNextPrice.toString(),
 			},
 			openInterest: m.openInterest
 				? {
@@ -405,8 +403,6 @@ export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMar
 		feeRates: {
 			makerFee: wei(m.feeRates.makerFee),
 			takerFee: wei(m.feeRates.takerFee),
-			makerFeeNextPrice: wei(m.feeRates.makerFeeNextPrice),
-			takerFeeNextPrice: wei(m.feeRates.takerFeeNextPrice),
 		},
 		openInterest: m.openInterest
 			? {
