@@ -126,17 +126,13 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 								const negative = cellProps.row.original.amount > 0;
 
 								return (
-									<>
-										<div>
-											<DirectionalValue negative={negative} normal={normal}>
-												{cellProps.row.original.amount !== NO_VALUE
-													? `${formatNumber(numValue, {
-															minDecimals: numDecimals,
-													  })} ${normal ? '💀' : ''}`
-													: NO_VALUE}
-											</DirectionalValue>
-										</div>
-									</>
+									<DirectionalValue negative={negative} normal={normal}>
+										{cellProps.row.original.amount !== NO_VALUE
+											? `${formatNumber(numValue, {
+													minDecimals: numDecimals,
+											  })} ${normal ? '💀' : ''}`
+											: NO_VALUE}
+									</DirectionalValue>
 								);
 							},
 							width: 100,
@@ -267,6 +263,7 @@ const TimeValue = styled.p`
 
 const DirectionalValue = styled(PriceValue)<{ negative?: boolean; normal?: boolean }>`
 	padding-left: 4px;
+	white-space: nowrap;
 	color: ${(props) =>
 		props.normal
 			? props.theme.colors.selectedTheme.button.text.primary
