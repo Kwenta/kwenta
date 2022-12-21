@@ -10,11 +10,7 @@ import { DAY_PERIOD, KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { getFuturesAggregateStats, getFuturesPositions } from 'queries/futures/subgraph';
 import { mapFuturesOrders } from 'queries/futures/utils';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
-import {
-	BPS_CONVERSION,
-	DEFAULT_DESIRED_TIMEDELTA,
-	DEFAULT_GAS_BUFFER_PCT,
-} from 'sdk/constants/futures';
+import { BPS_CONVERSION, DEFAULT_DESIRED_TIMEDELTA } from 'sdk/constants/futures';
 import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { getContractsByNetwork } from 'sdk/contracts';
 import FuturesMarketABI from 'sdk/contracts/abis/FuturesMarket.json';
@@ -604,22 +600,16 @@ export default class FuturesService {
 
 	public async depositIsolatedMargin(marketAddress: string, amount: Wei) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
-		const gasLimit = await market.estimateGas.transferMargin(amount.toBN());
-		const gasBuffer = gasLimit.mul(DEFAULT_GAS_BUFFER_PCT).div(100);
-
-		return market.transferMargin(amount.toBN(), {
-			gasLimit: gasLimit.add(gasBuffer),
-		});
+		const txn = this.sdk.transactions.createContractTxn(market, 'transferMargin', [amount.toBN()]);
+		return txn;
 	}
 
 	public async withdrawIsolatedMargin(marketAddress: string, amount: Wei) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
-		const gasLimit = await market.estimateGas.transferMargin(amount.toBN());
-		const gasBuffer = gasLimit.mul(DEFAULT_GAS_BUFFER_PCT).div(100);
-
-		return market.transferMargin(amount.neg().toBN(), {
-			gasLimit: gasLimit.add(gasBuffer),
-		});
+		const txn = this.sdk.transactions.createContractTxn(market, 'transferMargin', [
+			amount.neg().toBN(),
+		]);
+		return txn;
 	}
 
 	public async closeIsolatedPosition(marketAddress: string, priceImpactDelta: Wei) {
