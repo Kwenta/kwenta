@@ -26,7 +26,7 @@ import {
 	selectStakedEscrowedKwentaBalance,
 	selectStakedKwentaBalance,
 } from 'state/staking/selectors';
-import { FlexDivCol, Paragraph } from 'styles/common';
+import { Paragraph } from 'styles/common';
 import { computeMarketFee } from 'utils/costCalculations';
 import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
@@ -111,64 +111,41 @@ const FeeInfoBox: React.FC = () => {
 			},
 			'Trading Reward': {
 				value: '',
-				hideKey: true,
-				keyNode: (
-					<StyledDiv
-						className={isRewardEligible ? 'border-yellow' : 'border-red'}
-						onClick={() => router.push(ROUTES.Dashboard.Stake)}
-					>
-						<div className="reward-title">
-							{t('dashboard.stake.tabs.trading-rewards.trading-reward')}
-						</div>
-					</StyledDiv>
-				),
-				valueNode: (
-					<FlexDivCol onClick={() => router.push(ROUTES.Dashboard.Stake)}>
-						{isRewardEligible ? (
-							<>
-								<div className="bg-yellow">
-									{t('dashboard.stake.tabs.trading-rewards.eligible')}
-								</div>
-								<StyledLinkArrowIcon style={{ marginLeft: '50px' }}></StyledLinkArrowIcon>
-							</>
-						) : (
-							<>
-								<div className="bg-red">
-									{t('dashboard.stake.tabs.trading-rewards.not-eligible')}
-								</div>
-								<StyledLinkArrowIcon style={{ marginLeft: '75px' }}></StyledLinkArrowIcon>
-							</>
-						)}
-					</FlexDivCol>
-				),
-			},
-			'Stake Earn': {
-				value: '',
+				compactBox: true,
 				spaceBeneath: true,
-				hideKey: true,
 				keyNode: (
-					<StyledDiv
-						className={isRewardEligible ? 'border-yellow' : 'border-red'}
+					<p
+						className={`compact-box ${isRewardEligible ? 'border-yellow' : 'border-red'}`}
 						onClick={() => router.push(ROUTES.Dashboard.Stake)}
 					>
-						<div className="reward-title">
-							{isRewardEligible ? (
-								<Paragraph style={{ marginTop: '5px' }}>
-									<Trans
-										i18nKey={'dashboard.stake.tabs.trading-rewards.stake-to-earn'}
-										components={[<Emphasis />]}
-									/>
-								</Paragraph>
-							) : (
-								<Paragraph style={{ marginTop: '5px' }}>
-									<Trans
-										i18nKey={'dashboard.stake.tabs.trading-rewards.stake-to-start'}
-										components={[<Emphasis />]}
-									/>
-								</Paragraph>
-							)}
+						<div>
+							<div>{t('dashboard.stake.tabs.trading-rewards.trading-reward')}</div>
+							<p>
+								{isRewardEligible ? (
+									<div className="badge badge-yellow">
+										{t('dashboard.stake.tabs.trading-rewards.eligible')}
+									</div>
+								) : (
+									<div className="badge badge-red">
+										{t('dashboard.stake.tabs.trading-rewards.not-eligible')}
+									</div>
+								)}
+							</p>
 						</div>
-					</StyledDiv>
+						<div>
+							<Paragraph className="reward-copy">
+								<Trans
+									i18nKey={
+										isRewardEligible
+											? 'dashboard.stake.tabs.trading-rewards.stake-to-earn'
+											: 'dashboard.stake.tabs.trading-rewards.stake-to-start'
+									}
+									components={[<Emphasis />]}
+								/>
+							</Paragraph>
+							<StyledLinkArrowIcon />
+						</div>
+					</p>
 				),
 			},
 			'Total Fee': {
@@ -256,12 +233,6 @@ const StyledLinkArrowIcon = styled(LinkArrowIcon)`
 
 const Emphasis = styled.b`
 	font-family: ${(props) => props.theme.fonts.bold};
-`;
-
-const StyledDiv = styled.div`
-	margin-top: 10px;
-	padding-left: 8px;
-	font-size: 13px;
 `;
 
 export default FeeInfoBox;

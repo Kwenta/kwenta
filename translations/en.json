@@ -537,8 +537,8 @@
 					"trading-reward": "Trading Reward:",
 					"not-eligible": "Not Eligible",
 					"eligible": "Eligible",
-					"stake-to-earn": "Stake <0>$KWENTA</0> to earn more trading rewards",
-					"stake-to-start": "Stake <0>$KWENTA</0> to start earning trading rewards"
+					"stake-to-earn": "Stake <0>$KWENTA</0> to earn more rewards",
+					"stake-to-start": "Stake <0>$KWENTA</0> to start earning rewards"
 				},
 				"escrow": {
 					"title": "Escrow",
