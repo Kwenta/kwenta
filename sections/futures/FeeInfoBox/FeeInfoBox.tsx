@@ -124,7 +124,6 @@ const FeeInfoBox: React.FC = () => {
 			},
 			'Trading Reward': {
 				value: '',
-				spaceBeneath: true,
 				hideKey: true,
 				keyNode: (
 					<StyledDiv
@@ -134,12 +133,6 @@ const FeeInfoBox: React.FC = () => {
 						<div className="reward-title">
 							{t('dashboard.stake.tabs.trading-rewards.trading-reward')}
 						</div>
-						<Paragraph style={{ marginTop: '5px' }}>
-							<Trans
-								i18nKey={'dashboard.stake.tabs.trading-rewards.stake-to-earn'}
-								components={[<Emphasis />]}
-							/>
-						</Paragraph>
 					</StyledDiv>
 				),
 				valueNode: (
@@ -160,6 +153,35 @@ const FeeInfoBox: React.FC = () => {
 							</>
 						)}
 					</FlexDivCol>
+				),
+			},
+			'Stake Earn': {
+				value: '',
+				spaceBeneath: true,
+				hideKey: true,
+				keyNode: (
+					<StyledDiv
+						className={isRewardEligible ? 'border-yellow' : 'border-red'}
+						onClick={() => router.push(ROUTES.Dashboard.Stake)}
+					>
+						<div className="reward-title">
+							{isRewardEligible ? (
+								<Paragraph style={{ marginTop: '5px' }}>
+									<Trans
+										i18nKey={'dashboard.stake.tabs.trading-rewards.stake-to-earn'}
+										components={[<Emphasis />]}
+									/>
+								</Paragraph>
+							) : (
+								<Paragraph style={{ marginTop: '5px' }}>
+									<Trans
+										i18nKey={'dashboard.stake.tabs.trading-rewards.stake-to-start'}
+										components={[<Emphasis />]}
+									/>
+								</Paragraph>
+							)}
+						</div>
+					</StyledDiv>
 				),
 			},
 			'Total Fee': {
@@ -270,16 +292,14 @@ const StyledTimerIcon = styled(TimerIcon)`
 `;
 
 const StyledLinkArrowIcon = styled(LinkArrowIcon)`
-	margin-top: 15px;
 	cursor: pointer;
 `;
 
 const Emphasis = styled.b`
-	font-family: 700;
+	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
 const StyledDiv = styled.div`
-	display: block !important;
 	margin-top: 10px;
 	padding-left: 8px;
 	font-size: 13px;
