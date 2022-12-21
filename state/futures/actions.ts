@@ -40,7 +40,6 @@ import {
 	serializeFuturesOrders,
 	serializeFuturesVolumes,
 	serializeMarkets,
-	unserializeMarkets,
 } from 'utils/futures';
 import logError from 'utils/logError';
 import { getTransactionPrice } from 'utils/network';
