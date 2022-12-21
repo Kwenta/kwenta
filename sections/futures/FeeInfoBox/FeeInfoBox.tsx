@@ -17,7 +17,7 @@ import {
 	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { computeNPFee, computeMarketFee } from 'utils/costCalculations';
+import { computeMarketFee } from 'utils/costCalculations';
 import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 const FeeInfoBox: React.FC = () => {
@@ -31,19 +31,6 @@ const FeeInfoBox: React.FC = () => {
 		selectCrossMarginSettings
 	);
 	const marketInfo = useAppSelector(selectMarketInfo);
-
-	const { commitDeposit, nextPriceFee } = useMemo(() => computeNPFee(marketInfo, nativeSizeDelta), [
-		marketInfo,
-		nativeSizeDelta,
-	]);
-
-	const totalDeposit = useMemo(() => {
-		return (commitDeposit ?? zeroBN).add(marketInfo?.keeperDeposit ?? zeroBN);
-	}, [commitDeposit, marketInfo?.keeperDeposit]);
-
-	const nextPriceDiscount = useMemo(() => {
-		return (nextPriceFee ?? zeroBN).sub(commitDeposit ?? zeroBN);
-	}, [commitDeposit, nextPriceFee]);
 
 	const staticRate = useMemo(() => computeMarketFee(marketInfo, nativeSizeDelta), [
 		marketInfo,
@@ -114,30 +101,6 @@ const FeeInfoBox: React.FC = () => {
 				},
 			};
 		}
-		if (orderType === 'next price') {
-			return {
-				'Keeper Deposit': {
-					value: !!marketInfo?.keeperDeposit ? formatDollars(marketInfo.keeperDeposit) : NO_VALUE,
-				},
-				'Commit Deposit': {
-					value: !!commitDeposit
-						? formatDollars(commitDeposit, { minDecimals: commitDeposit.lt(0.01) ? 4 : 2 })
-						: NO_VALUE,
-				},
-				'Total Deposit': {
-					value: formatDollars(totalDeposit),
-					spaceBeneath: true,
-				},
-				'Next Price Discount': {
-					value: !!nextPriceDiscount ? formatDollars(nextPriceDiscount) : NO_VALUE,
-					color: nextPriceDiscount.lt(0) ? 'green' : nextPriceDiscount.gt(0) ? 'red' : undefined,
-				},
-				'Estimated Fees': {
-					value: formatDollars(totalDeposit.add(nextPriceDiscount ?? zeroBN)),
-					keyNode: dynamicFeeRate?.gt(0) ? <ToolTip /> : null,
-				},
-			};
-		}
 		return accountType === 'isolated_margin'
 			? {
 					Fee: {
@@ -154,13 +117,9 @@ const FeeInfoBox: React.FC = () => {
 		isolatedMarginFee,
 		crossMarginFees,
 		orderFeeRate,
-		dynamicFeeRate,
-		commitDeposit,
 		accountType,
 		marketInfo?.keeperDeposit,
-		nextPriceDiscount,
 		marketCostTooltip,
-		totalDeposit,
 	]);
 
 	return <StyledInfoBox details={feesInfo} />;

@@ -196,7 +196,7 @@ export type FuturesTradeInputs = {
 	orderPrice?: Wei | undefined;
 };
 
-export type FuturesOrderType = 'market' | 'next price' | 'stop market' | 'limit';
+export type FuturesOrderType = 'market' | 'stop market' | 'limit';
 
 export type SpotsFee = {
 	timestamp: string;

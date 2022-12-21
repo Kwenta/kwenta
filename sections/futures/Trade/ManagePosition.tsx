@@ -7,10 +7,8 @@ import Error from 'components/Error';
 import Loader from 'components/Loader';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { previewErrorI18n } from 'queries/futures/constants';
-import { PositionSide } from 'queries/futures/types';
 import { setOpenModal } from 'state/app/reducer';
 import { selectOpenModal } from 'state/app/selectors';
-import { changeLeverageSide, editTradeSizeInput } from 'state/futures/actions';
 import {
 	selectMarketInfo,
 	selectIsMarketCapReached,
@@ -38,7 +36,6 @@ import { orderPriceInvalidLabel } from 'utils/futures';
 
 import ClosePositionModalCrossMargin from '../PositionCard/ClosePositionModalCrossMargin';
 import ClosePositionModalIsolatedMargin from '../PositionCard/ClosePositionModalIsolatedMargin';
-import NextPriceConfirmationModal from './NextPriceConfirmationModal';
 import TradeConfirmationModalCrossMargin from './TradeConfirmationModalCrossMargin';
 import TradeConfirmationModalIsolatedMargin from './TradeConfirmationModalIsolatedMargin';
 
@@ -164,18 +161,7 @@ const ManagePosition: React.FC = () => {
 						noOutline
 						variant="danger"
 						onClick={() => {
-							if (orderType === 'next price' && position?.position?.size) {
-								const newTradeSize = position.position.size;
-								const newLeverageSide =
-									position.position.side === PositionSide.LONG
-										? PositionSide.SHORT
-										: PositionSide.LONG;
-								dispatch(changeLeverageSide(newLeverageSide));
-								dispatch(editTradeSizeInput(newTradeSize.toString(), 'native'));
-								dispatch(setOpenModal('futures_modify_position_confirm'));
-							} else {
-								dispatch(setOpenModal('futures_close_position_confirm'));
-							}
+							dispatch(setOpenModal('futures_close_position_confirm'));
 						}}
 						disabled={!positionDetails || marketInfo?.isSuspended || isAdvancedOrder}
 					>
@@ -198,8 +184,6 @@ const ManagePosition: React.FC = () => {
 			{isConfirmationModalOpen &&
 				(selectedAccountType === 'cross_margin' ? (
 					<TradeConfirmationModalCrossMargin />
-				) : orderType === 'next price' ? (
-					<NextPriceConfirmationModal />
 				) : (
 					<TradeConfirmationModalIsolatedMargin />
 				))}
