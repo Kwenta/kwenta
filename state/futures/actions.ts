@@ -64,6 +64,7 @@ import {
 	setIsolatedMarginTradeInputs,
 	setIsolatedTradePreview,
 	setLeverageSide,
+	setOrderType,
 	setTransaction,
 	setTransactionEstimate,
 	updateTransactionHash,
@@ -799,6 +800,7 @@ export const modifyIsolatedPosition = createAsyncThunk<
 			dispatch(updateTransactionHash(tx.hash));
 			await tx.wait();
 			dispatch(refetchPosition('isolated_margin'));
+			dispatch(setOrderType('delayed offchain'));
 			dispatch(setOpenModal(null));
 			dispatch(clearTradeInputs());
 			dispatch(fetchBalances());
