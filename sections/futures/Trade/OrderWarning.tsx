@@ -2,16 +2,19 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-const DelayedOrderWarning: React.FC = () => {
+import { selectOrderType } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+
+const OrderWarning: React.FC = () => {
 	const { t } = useTranslation();
+	const orderType = useAppSelector(selectOrderType);
 
 	return (
 		<Container>
 			<p className="description">
-				{t('futures.market.trade.delayed-order.description')} {/* TODO: Add link to blog */}
-				{/* <a href={EXTERNAL_LINKS.Trade.NextPriceBlogPost} rel="noreferrer" target="_blank">
-					{t('futures.market.trade.next-price.learn-more')} ↗
-				</a> */}
+				{orderType === 'delayed offchain'
+					? t('futures.market.trade.delayed-order.description')
+					: t('futures.market.trade.market-order.description')}
 			</p>
 		</Container>
 	);
@@ -30,4 +33,4 @@ const Container = styled.div`
 	}
 `;
 
-export default DelayedOrderWarning;
+export default OrderWarning;

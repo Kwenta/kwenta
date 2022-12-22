@@ -786,8 +786,11 @@
 					}
 				},
 				"delayed-order": {
-					"description": "All orders are subject to a delay before execution. The fill price is subject to volatility as the order is executed at future price.",
+					"description": "Delayed orders are subject to a time delay before execution by a keeper. The fill price is subject to volatility as the order is executed at a future price.",
 					"learn-more": "Learn more"
+				},
+				"market-order": {
+					"description": "Market order fees are significantly higher than delayed orders. Reducing your position size below max leverage will reenable closing your position using delayed orders."
 				},
 				"next-price": {
 					"description": "Next Price orders are subject to volatility and execute at the very next on-chain price.",
