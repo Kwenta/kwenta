@@ -90,7 +90,11 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 
 	return (
 		<StyledBaseModal
-			title={t('futures.market.trade.margin.modal.deposit.title')}
+			title={
+				transferType === 0
+					? t('futures.market.trade.margin.modal.deposit.title')
+					: t('futures.market.trade.margin.modal.withdraw.title')
+			}
 			isOpen
 			onDismiss={onDismiss}
 		>
