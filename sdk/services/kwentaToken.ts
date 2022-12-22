@@ -375,9 +375,11 @@ export default class KwentaTokenService {
 						this.sdk.context.networkId === 420 ? `goerli-` : ''
 					}epoch-${i}.json`
 			);
+
 		const responses: EpochData[] = await Promise.all(
-			fileNames.map(async (fileName, period) => {
+			fileNames.map(async (fileName, index) => {
 				const response = await client.get(fileName);
+				const period = index >= 5 ? index + 1 : index;
 				return { ...response.data, period };
 			})
 		);
