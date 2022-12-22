@@ -12,6 +12,7 @@ const darkTheme = {
 	badge: {
 		red: { background: common.dark.red, text: 'black' },
 		yellow: { background: common.primaryYellow, text: 'black' },
+		gray: { background: common.primaryGray, text: 'black' },
 	},
 	tab: { background: { active: '#252525', inactive: 'transparent' } },
 	button: {

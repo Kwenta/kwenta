@@ -8,13 +8,13 @@ import ROUTES from 'constants/routes';
 
 export type Badge = {
 	i18nLabel: string;
-	color: 'yellow' | 'red';
+	color: 'yellow' | 'red' | 'gray';
 };
 
 export type SubMenuLink = {
 	i18nLabel: string;
 	link: string;
-	badge?: Badge;
+	badge?: Badge[];
 	Icon?: FunctionComponent<any>;
 };
 
@@ -87,10 +87,16 @@ export const getMenuLinks = (isMobile: boolean): MenuLinks => [
 					{
 						link: ROUTES.Markets.Home('cross_margin'),
 						i18nLabel: 'header.nav.cross-margin',
-						badge: {
-							i18nLabel: 'header.nav.beta-badge',
-							color: 'yellow',
-						},
+						badge: [
+							{
+								i18nLabel: 'header.nav.beta-badge',
+								color: 'gray',
+							},
+							{
+								i18nLabel: 'header.nav.reward-badge',
+								color: 'yellow',
+							},
+						],
 						Icon: CrossMarginIcon,
 					},
 			  ]
