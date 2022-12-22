@@ -1,13 +1,16 @@
 import Wei from '@synthetixio/wei';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import HelpIcon from 'assets/svg/app/question-mark.svg';
 import SwitchAssetArrows from 'assets/svg/futures/deposit-withdraw-arrows.svg';
+import Button from 'components/Button';
 import FuturesIcon from 'components/Nav/FuturesIcon';
 import { NumberDiv } from 'components/Text/NumberLabel';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { FuturesAccountType } from 'queries/futures/subgraph';
+import { setOpenModal } from 'state/app/reducer';
+import { useAppDispatch } from 'state/hooks';
 import { BorderedPanel, YellowIconButton } from 'styles/common';
 import { formatDollars } from 'utils/formatters/number';
 
@@ -19,6 +22,29 @@ type Props = {
 
 export default function TradePanelHeader({ accountType, onManageBalance, balance }: Props) {
 	const { t } = useTranslation();
+	const dispatch = useAppDispatch();
+	const theme = useTheme();
+
+	if (balance.eq(0)) {
+		return (
+			<DepositButton
+				variant="yellow"
+				onClick={() =>
+					dispatch(
+						setOpenModal(
+							accountType === 'isolated_margin'
+								? 'futures_isolated_transfer'
+								: 'futures_cross_deposit'
+						)
+					)
+				}
+			>
+				<ButtonContent>
+					Deposit Margin <SwitchAssetArrows fill={theme.colors.selectedTheme.button.yellow.text} />
+				</ButtonContent>
+			</DepositButton>
+		);
+	}
 
 	return (
 		<Container>
@@ -44,6 +70,12 @@ export default function TradePanelHeader({ accountType, onManageBalance, balance
 		</Container>
 	);
 }
+
+const DepositButton = styled(Button)`
+	height: 55px;
+	width: 100%;
+	margin-bottom: 16px;
+`;
 
 const Container = styled(BorderedPanel)`
 	display: flex;
@@ -86,4 +118,12 @@ const FAQLink = styled.div`
 	}
 	cursor: pointer;
 	margin-left: 5px;
+`;
+
+const ButtonContent = styled.div`
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
 `;

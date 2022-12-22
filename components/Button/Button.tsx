@@ -9,7 +9,8 @@ export type ButtonVariant =
 	| 'success'
 	| 'danger'
 	| 'text'
-	| 'select';
+	| 'select'
+	| 'yellow';
 
 type ButtonProps = {
 	size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -84,6 +85,22 @@ const Button = styled.button<ButtonProps>`
 			box-shadow: none;
 			&:hover {
 				background: ${(props) => props.theme.colors.selectedTheme.button.fillHover};
+			}
+			&::before {
+				display: none;
+			}
+		`};
+
+	${(props) =>
+		props.variant === 'yellow' &&
+		css`
+			background: ${(props) => props.theme.colors.selectedTheme.button.yellow.fill};
+			border: 1px solid ${(props) => props.theme.colors.selectedTheme.button.yellow.border};
+			color: ${(props) => props.theme.colors.selectedTheme.button.yellow.text};
+
+			box-shadow: none;
+			&:hover {
+				background: ${(props) => props.theme.colors.selectedTheme.button.yellow.fillHover};
 			}
 			&::before {
 				display: none;
