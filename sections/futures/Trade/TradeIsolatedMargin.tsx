@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import Error from 'components/Error';
 import SegmentedControl from 'components/SegmentedControl';
-import { ISOLATED_MARGIN_ORDER_TYPES } from 'constants/futures';
+import { DEFAULT_DELAYED_LEVERAGE_CAP, ISOLATED_MARGIN_ORDER_TYPES } from 'constants/futures';
 import { setOpenModal } from 'state/app/reducer';
 import { selectOpenModal } from 'state/app/selectors';
 import { changeLeverageSide } from 'state/futures/actions';
@@ -18,8 +18,8 @@ import LeverageInput from '../LeverageInput';
 import MarketInfoBox from '../MarketInfoBox';
 import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
-import DelayedOrderWarning from './DelayedOrderWarning';
 import ManagePosition from './ManagePosition';
+import OrderWarning from './OrderWarning';
 import TradePanelHeader from './TradePanelHeader';
 import TransferIsolatedMarginModal from './TransferIsolatedMarginModal';
 
@@ -53,17 +53,19 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 
 			{!isMobile && <MarketInfoBox />}
 
-			<StyledSegmentedControl
-				styleType="check"
-				values={ISOLATED_MARGIN_ORDER_TYPES}
-				selectedIndex={ISOLATED_MARGIN_ORDER_TYPES.indexOf(orderType)}
-				onChange={(oType: number) => {
-					const newOrderType = oType === 1 ? 'market' : 'delayed offchain';
-					dispatch(setOrderType(newOrderType));
-				}}
-			/>
+			{position?.position && position.position.leverage.gte(DEFAULT_DELAYED_LEVERAGE_CAP) && (
+				<StyledSegmentedControl
+					styleType="check"
+					values={ISOLATED_MARGIN_ORDER_TYPES}
+					selectedIndex={ISOLATED_MARGIN_ORDER_TYPES.indexOf(orderType)}
+					onChange={(oType: number) => {
+						const newOrderType = oType === 1 ? 'market' : 'delayed offchain';
+						dispatch(setOrderType(newOrderType));
+					}}
+				/>
+			)}
 
-			<DelayedOrderWarning />
+			<OrderWarning />
 
 			<PositionButtons
 				selected={leverageSide}
