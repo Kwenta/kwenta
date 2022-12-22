@@ -66,9 +66,7 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({
 			items={items}
 			buttons={
 				<>
-					{order?.isExecutable && (
-						<ExecuteButton onClick={() => onExecute()}>Execute</ExecuteButton>
-					)}
+					{order?.isExecutable && <ExecuteButton onClick={onExecute}>Execute</ExecuteButton>}
 					<CancelOrderButton onClick={() => onCancel(order)}>Cancel</CancelOrderButton>
 				</>
 			}

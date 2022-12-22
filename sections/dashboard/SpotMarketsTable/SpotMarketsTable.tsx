@@ -1,4 +1,3 @@
-import { Synth } from '@synthetixio/contracts-interface';
 import * as _ from 'lodash/fp';
 import values from 'lodash/values';
 import { useRouter } from 'next/router';
@@ -15,7 +14,6 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import Connector from 'containers/Connector';
-import { Price } from 'queries/rates/types';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
 import { selectExchangeRates } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
@@ -35,7 +33,7 @@ const SpotMarketsTable: FC = () => {
 	const synthVolumesQuery = useGetSynthsTradingVolumeForAllMarkets(yesterday);
 
 	let data = useMemo(() => {
-		return synths.map((synth: Synth) => {
+		return synths.map((synth) => {
 			const description = synth.description
 				? t('common.currency.synthetic-currency-name', {
 						currencyName: synth.description,
@@ -43,7 +41,7 @@ const SpotMarketsTable: FC = () => {
 				: '';
 			const rate = exchangeRates && exchangeRates[synth.name];
 			const price = _.isNil(rate) ? 0 : rate.toNumber();
-			const pastPrice = pastRates.find((price: Price) => price.synth === synth.name);
+			const pastPrice = pastRates.find((price) => price.synth === synth.name);
 			const synthVolumes = synthVolumesQuery?.data ?? {};
 			return {
 				asset: synth.asset,

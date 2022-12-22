@@ -23,7 +23,7 @@ export const positionHistoryState = atom<PositionHistoryState>({
 	},
 });
 
-export const pastRatesState = atom<Price[] | []>({
+export const pastRatesState = atom<Price[]>({
 	key: getFuturesKey('pastRates'),
 	default: [],
 });

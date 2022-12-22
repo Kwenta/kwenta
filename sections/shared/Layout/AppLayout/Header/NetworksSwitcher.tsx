@@ -26,9 +26,7 @@ type ReactSelectOptionProps = {
 	onClick?: () => {};
 };
 
-type NetworksSwitcherProps = {};
-
-const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
+const NetworksSwitcher: FC = () => {
 	const { network: activeChain } = Connector.useContainer();
 	const { openChainModal } = useChainModal();
 	const { t } = useTranslation();

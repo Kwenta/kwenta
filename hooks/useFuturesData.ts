@@ -112,7 +112,7 @@ const useFuturesData = () => {
 		crossMarginAccount?.freeMargin,
 	]);
 
-	const remainingMargin: Wei = useMemo(() => {
+	const remainingMargin = useMemo(() => {
 		if (selectedAccountType === 'isolated_margin') {
 			return position?.remainingMargin || zeroBN;
 		}
@@ -175,7 +175,7 @@ const useFuturesData = () => {
 	}, [orderType, limitOrderFee, stopOrderFee]);
 
 	const totalFeeRate = useCallback(
-		async (sizeDelta: Wei) => {
+		(sizeDelta: Wei) => {
 			const staticRate = computeMarketFee(market, sizeDelta);
 
 			let total = crossMarginTradeFee.add(dynamicFeeRate).add(staticRate).add(advancedOrderFeeRate);
@@ -225,7 +225,7 @@ const useFuturesData = () => {
 	);
 
 	useEffect(() => {
-		const getMaxFee = async () => {
+		const getMaxFee = () => {
 			if (remainingMargin.eq(0) || tradePrice.eq(0)) {
 				return;
 			}
@@ -239,7 +239,7 @@ const useFuturesData = () => {
 				if (position?.position?.side !== leverageSide) {
 					maxUsd = maxUsd.add(position?.position?.notionalValue ?? zeroBN);
 				}
-				const totalRate = await totalFeeRate(maxUsd);
+				const totalRate = totalFeeRate(maxUsd);
 				const totalMaxFee = maxUsd.mul(totalRate);
 				setMaxFee(totalMaxFee);
 			} catch (e) {
