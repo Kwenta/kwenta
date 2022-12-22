@@ -4,7 +4,6 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import { MobileOrTabletView } from 'components/Media';
-import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { EXTERNAL_LINKS } from 'constants/links';
 import TxSettleModal from 'sections/shared/modals/TxSettleModal';
 import { submitSettle } from 'state/exchange/actions';
@@ -14,7 +13,7 @@ import { NoTextTransform, ExternalLink } from 'styles/common';
 import { secondsToTime } from 'utils/formatters/date';
 import logError from 'utils/logError';
 
-import { MessageContainer, Message, FixedMessageContainerSpacer } from '../common';
+import { MessageContainer, Message, FixedMessageContainerSpacer, ErrorTooltip } from '../common';
 
 const SettleTransactionsCard: FC = () => {
 	const { t } = useTranslation();
@@ -109,22 +108,13 @@ const MessageItem = styled(Message)`
 	text-align: left;
 `;
 
-export const UnderlineExternalLink = styled(ExternalLink)`
+const UnderlineExternalLink = styled(ExternalLink)`
 	text-decoration: underline;
 	grid-column-start: 2;
 `;
 
-export const MessageItems = styled.span`
+const MessageItems = styled.span`
 	display: grid;
-`;
-
-export const ErrorTooltip = styled(StyledTooltip)`
-	font-size: 12px;
-	background-color: ${(props) => props.theme.colors.red};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	.tippy-arrow {
-		color: ${(props) => props.theme.colors.red};
-	}
 `;
 
 export default SettleTransactionsCard;

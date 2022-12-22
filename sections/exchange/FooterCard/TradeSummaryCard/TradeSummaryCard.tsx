@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import Button from 'components/Button';
 import Card from 'components/Card';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import FeeCostSummaryItem from 'sections/shared/components/FeeCostSummary';
 import FeeRateSummaryItem from 'sections/shared/components/FeeRateSummary';
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
@@ -23,7 +22,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { secondsToTime } from 'utils/formatters/date';
 
-import { MessageContainer } from '../common';
+import { ErrorTooltip, MessageContainer } from '../common';
 import { SummaryItems } from '../common';
 
 const TradeSummaryCard: FC = memo(() => {
@@ -133,16 +132,7 @@ const SubmissionButton = ({ onSubmit, isApproved }: any) => {
 	);
 };
 
-export const ErrorTooltip = styled(StyledTooltip)`
-	font-size: 12px;
-	background-color: ${(props) => props.theme.colors.red};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	.tippy-arrow {
-		color: ${(props) => props.theme.colors.red};
-	}
-`;
-
-export const MobileCard = styled(Card)`
+const MobileCard = styled(Card)`
 	margin: 2px auto 20px auto;
 `;
 

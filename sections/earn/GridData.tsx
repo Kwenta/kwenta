@@ -1,10 +1,8 @@
 import { FC, memo } from 'react';
 import styled from 'styled-components';
 
-import { BigText } from 'components/Text';
+import { BigText, Body } from 'components/Text';
 import media from 'styles/media';
-
-import { Title } from './common';
 
 type GridDataProps = {
 	title: string;
@@ -21,6 +19,12 @@ const GridData: FC<GridDataProps> = memo(({ title, value, hasKwentaLogo, childre
 		{children}
 	</GridDataContainer>
 ));
+
+const Title = styled(Body)`
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
+	font-size: 14px;
+	margin-bottom: 5px;
+`;
 
 const GridDataContainer = styled.div`
 	background-color: ${(props) => props.theme.colors.selectedTheme.segmented.button.background};

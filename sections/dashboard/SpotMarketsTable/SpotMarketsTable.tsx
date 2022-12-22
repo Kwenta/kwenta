@@ -77,9 +77,7 @@ const SpotMarketsTable: FC = () => {
 						sortBy={[{ id: 'price', desc: true }]}
 						columns={[
 							{
-								Header: (
-									<TableHeader>{t('dashboard.overview.spot-markets-table.market')}</TableHeader>
-								),
+								Header: <div>{t('dashboard.overview.spot-markets-table.market')}</div>,
 								accessor: 'market',
 								Cell: (cellProps: CellProps<any>) => {
 									return (
@@ -107,9 +105,7 @@ const SpotMarketsTable: FC = () => {
 								width: 190,
 							},
 							{
-								Header: (
-									<TableHeader>{t('dashboard.overview.spot-markets-table.price')}</TableHeader>
-								),
+								Header: <div>{t('dashboard.overview.spot-markets-table.price')}</div>,
 								accessor: 'price',
 								Cell: (cellProps: CellProps<any>) => {
 									const formatOptions = isDecimalFour(cellProps.row.original.asset)
@@ -137,9 +133,7 @@ const SpotMarketsTable: FC = () => {
 								),
 							},
 							{
-								Header: (
-									<TableHeader>{t('dashboard.overview.spot-markets-table.24h-change')}</TableHeader>
-								),
+								Header: <div>{t('dashboard.overview.spot-markets-table.24h-change')}</div>,
 								accessor: '24hChange',
 								Cell: (cellProps: CellProps<any>) => {
 									return cellProps.row.original.change === '-' ? (
@@ -164,9 +158,7 @@ const SpotMarketsTable: FC = () => {
 								),
 							},
 							{
-								Header: (
-									<TableHeader>{t('dashboard.overview.spot-markets-table.24h-vol')}</TableHeader>
-								),
+								Header: <div>{t('dashboard.overview.spot-markets-table.24h-vol')}</div>,
 								accessor: '24hVolume',
 								Cell: (cellProps: CellProps<any>) => {
 									return (
@@ -210,9 +202,7 @@ const SpotMarketsTable: FC = () => {
 					]}
 					columns={[
 						{
-							Header: (
-								<TableHeader>{t('dashboard.overview.spot-markets-table.market')}</TableHeader>
-							),
+							Header: <div>{t('dashboard.overview.spot-markets-table.market')}</div>,
 							accessor: 'market',
 							Cell: (cellProps: CellProps<any>) => {
 								return (
@@ -240,9 +230,7 @@ const SpotMarketsTable: FC = () => {
 							width: 190,
 						},
 						{
-							Header: (
-								<TableHeader>{t('dashboard.overview.spot-markets-table.24h-change')}</TableHeader>
-							),
+							Header: <div>{t('dashboard.overview.spot-markets-table.24h-change')}</div>,
 							accessor: '24hChange',
 							Cell: (cellProps: CellProps<any>) => {
 								return cellProps.row.original.change === '-' ? (
@@ -267,9 +255,7 @@ const SpotMarketsTable: FC = () => {
 							),
 						},
 						{
-							Header: (
-								<TableHeader>{t('dashboard.overview.spot-markets-table.24h-vol')}</TableHeader>
-							),
+							Header: <div>{t('dashboard.overview.spot-markets-table.24h-vol')}</div>,
 							accessor: '24hVolume',
 							Cell: (cellProps: CellProps<any>) => {
 								return (
@@ -330,8 +316,6 @@ const TableContainer = styled.div`
 const StyledTable = styled(Table)`
 	margin-bottom: 20px;
 `;
-
-const TableHeader = styled.div``;
 
 const StyledText = styled.div`
 	display: flex;

@@ -3,12 +3,6 @@ import styled from 'styled-components';
 import * as Text from 'components/Text';
 import media from 'styles/media';
 
-export const Title = styled(Text.Body)`
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	font-size: 14px;
-	margin-bottom: 5px;
-`;
-
 export const Description = styled(Text.Body)`
 	font-size: 15px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};

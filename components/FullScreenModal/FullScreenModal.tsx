@@ -21,7 +21,7 @@ export const FullScreenModal: FC<FullScreenModalProps> = ({
 	<StyledDialogOverlay isOpen={isOpen} onDismiss={onDismiss} {...rest}>
 		<StyledDialogContent aria-label="modal">
 			{title && <Title className="title">{title}</Title>}
-			<Content className="content">{children}</Content>
+			<div className="content">{children}</div>
 		</StyledDialogContent>
 	</StyledDialogOverlay>
 );
@@ -46,6 +46,5 @@ const Title = styled.div`
 	line-height: 24px;
 	padding-bottom: 24px;
 `;
-const Content = styled.div``;
 
 export default FullScreenModal;

@@ -20,7 +20,7 @@ import { PositionSide, TradeStatus } from '../types';
 import TimeDisplay from './TimeDisplay';
 
 type TradesProps = {
-	history: FuturesTrade[] | [];
+	history: FuturesTrade[];
 	isLoading: boolean;
 	isLoaded: boolean;
 	marketAsset: string;
@@ -33,27 +33,25 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 	const isL2 = useIsL2();
 
 	const historyData = React.useMemo(() => {
-		return history.map((trade: FuturesTrade) => {
-			return {
-				...trade,
-				value: Number(trade?.price?.div(ETH_UNIT)),
-				amount: Number(trade?.size.div(ETH_UNIT).abs()),
-				time: Number(trade?.timestamp.mul(1000)),
-				pnl: trade?.pnl.div(ETH_UNIT),
-				feesPaid: trade?.feesPaid.div(ETH_UNIT),
-				id: trade?.txnHash,
-				asset: marketAsset,
-				type: trade?.orderType,
-				status: trade?.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
-			};
-		});
+		return history.map((trade) => ({
+			...trade,
+			value: Number(trade?.price?.div(ETH_UNIT)),
+			amount: Number(trade?.size.div(ETH_UNIT).abs()),
+			time: Number(trade?.timestamp.mul(1000)),
+			pnl: trade?.pnl.div(ETH_UNIT),
+			feesPaid: trade?.feesPaid.div(ETH_UNIT),
+			id: trade?.txnHash,
+			asset: marketAsset,
+			type: trade?.orderType,
+			status: trade?.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
+		}));
 	}, [history, marketAsset]);
 
 	const columnsDeps = useMemo(() => [historyData], [historyData]);
 
 	return (
 		<Card>
-			<StyledTable
+			<Table
 				highlightRowsOnHover
 				columns={[
 					{
@@ -182,9 +180,8 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 		</Card>
 	);
 };
-export default Trades;
 
-const StyledTable = styled(Table)``;
+export default Trades;
 
 const StyledTableHeader = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import styled from 'styled-components';
 
 import { NO_VALUE } from 'constants/placeholder';
@@ -19,8 +19,8 @@ type InfoBoxProps = {
 	dataTestId?: string;
 };
 
-const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className, disabled, dataTestId }) => {
-	return (
+const InfoBox: React.FC<InfoBoxProps> = memo(
+	({ details, style, className, disabled, dataTestId }) => (
 		<InfoBoxContainer style={style} className={className}>
 			{Object.entries(details).map(([key, value], index) => {
 				if (value) {
@@ -47,8 +47,8 @@ const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className, disabled, 
 				return null;
 			})}
 		</InfoBoxContainer>
-	);
-};
+	)
+);
 
 const InfoBoxContainer = styled.div`
 	border: ${(props) => props.theme.colors.selectedTheme.border};

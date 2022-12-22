@@ -183,14 +183,6 @@ const MinimumAmountDisclaimer = styled.div`
 	text-align: center;
 `;
 
-export const GasFeeContainer = styled(FlexDivRowCentered)`
-	margin: 13px 0px;
-	padding: 0 14px;
-	p {
-		margin: 0;
-	}
-`;
-
 const StyledSegmentedControl = styled(SegmentedControl)`
 	margin-bottom: 16px;
 `;

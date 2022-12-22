@@ -3,7 +3,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { selectMarketAsset, selectMarketAssetRate } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { formatCurrency } from 'utils/formatters/number';
@@ -11,7 +10,6 @@ import { getDisplayAsset, isDecimalFour } from 'utils/futures';
 
 const MarketHead: React.FC = () => {
 	const { t } = useTranslation();
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const marketAssetRate = useAppSelector(selectMarketAssetRate);
@@ -23,8 +21,8 @@ const MarketHead: React.FC = () => {
 				{marketAssetRate
 					? t('futures.market.page-title-rate', {
 							marketName,
-							rate: formatCurrency(selectedPriceCurrency.name, marketAssetRate, {
-								currencyKey: selectedPriceCurrency.name,
+							rate: formatCurrency('sUSD', marketAssetRate, {
+								currencyKey: 'sUSD',
 								minDecimals:
 									marketName != null && isDecimalFour(marketName)
 										? DEFAULT_CRYPTO_DECIMALS

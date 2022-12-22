@@ -90,7 +90,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	return (
 		<>
 			<DesktopOnlyView>
-				<TableContainer>
+				<div>
 					<Table
 						data={data}
 						showPagination
@@ -268,7 +268,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 							},
 						]}
 					/>
-				</TableContainer>
+				</div>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<OpenPositionsHeader>
@@ -329,8 +329,6 @@ const StyledValue = styled.div`
 const DefaultCell = styled.p`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
-
-const TableContainer = styled.div``;
 
 const TableHeader = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
