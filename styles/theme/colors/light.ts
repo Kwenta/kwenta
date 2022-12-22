@@ -52,6 +52,12 @@ const lightTheme = {
 			disabled: { border: '1px solid #353333', text: '#B3B3B3' },
 		},
 		pill: { background: common.light.yellow, text: common.light.yellow, hover: common.light.white },
+		yellow: {
+			fill: '#FFF4D7',
+			fillHover: '#FFF8E5',
+			border: '#F2E1B6',
+			text: '#C18C00',
+		},
 	},
 	input: {
 		background: '#dbdbdb',

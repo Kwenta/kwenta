@@ -55,6 +55,12 @@ const darkTheme = {
 			disabled: { border: '1px solid #353333', text: '#353333' },
 		},
 		pill: { background: common.dark.yellow, text: common.dark.yellow, hover: common.black },
+		yellow: {
+			fill: '#3E2D00',
+			fillHover: '#513C05',
+			border: '#514219',
+			text: common.dark.yellow,
+		},
 	},
 	input: {
 		background: '#151515',
