@@ -44,6 +44,24 @@ export const Body = () => {
 			<Text.Body size="large" variant="bold">
 				This is bold body text
 			</Text.Body>
+			<Spacer height={8} />
+			<Text.Body mono>This is monospaced body text</Text.Body>
+			<Text.Body size="medium" mono>
+				This is monospaced body text
+			</Text.Body>
+			<Text.Body size="large" mono>
+				This is monospaced body text
+			</Text.Body>
+			<Spacer height={8} />
+			<Text.Body mono variant="bold">
+				This is bold monospaced body text
+			</Text.Body>
+			<Text.Body size="medium" mono variant="bold">
+				This is bold monospaced body text
+			</Text.Body>
+			<Text.Body size="large" mono variant="bold">
+				This is bold monospaced body text
+			</Text.Body>
 		</div>
 	);
 };
