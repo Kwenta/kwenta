@@ -1,6 +1,6 @@
 import Wei from '@synthetixio/wei';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import HelpIcon from 'assets/svg/app/question-mark.svg';
 import SwitchAssetArrows from 'assets/svg/futures/deposit-withdraw-arrows.svg';
@@ -23,6 +23,7 @@ type Props = {
 export default function TradePanelHeader({ accountType, onManageBalance, balance }: Props) {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
+	const theme = useTheme();
 
 	if (balance.eq(0)) {
 		return (
@@ -39,7 +40,7 @@ export default function TradePanelHeader({ accountType, onManageBalance, balance
 				}
 			>
 				<ButtonContent>
-					Deposit Margin <SwitchAssetArrows />
+					Deposit Margin <SwitchAssetArrows fill={theme.colors.selectedTheme.button.yellow.text} />
 				</ButtonContent>
 			</DepositButton>
 		);

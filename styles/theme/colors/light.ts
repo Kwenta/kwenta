@@ -53,10 +53,10 @@ const lightTheme = {
 		},
 		pill: { background: common.light.yellow, text: common.light.yellow, hover: common.light.white },
 		yellow: {
-			fill: '#FFF4D7',
-			fillHover: '#FFF8E5',
-			border: '#F2E1B6',
-			text: '#C18C00',
+			fill: common.light.yellow,
+			fillHover: '#532800',
+			border: '#532800',
+			text: '#fff',
 		},
 	},
 	input: {
