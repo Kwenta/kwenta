@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
 
-import { DEFAULT_LEVERAGE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
+import { DEFAULT_LEVERAGE } from 'constants/defaults';
 import { DEFAULT_MAX_LEVERAGE } from 'constants/futures';
 import { TransactionStatus } from 'sdk/types/common';
 import { FuturesPosition } from 'sdk/types/futures';
@@ -38,9 +38,6 @@ export const selectMarketsQueryStatus = (state: RootState) => state.futures.quer
 
 export const selectIsolatedLeverageInput = (state: RootState) =>
 	state.futures.isolatedMargin.leverageInput;
-
-export const selectCrossMarginSelectedLeverage = (state: RootState) =>
-	wei(state.futures.crossMargin.tradeInputs.leverage || DEFAULT_LEVERAGE);
 
 export const selectCrossMarginMarginDelta = (state: RootState) =>
 	wei(state.futures.crossMargin.marginDelta || 0);
@@ -291,10 +288,7 @@ export const selectMaxLeverage = createSelector(
 		const positionLeverage = position?.position?.leverage ?? wei(0);
 		const positionSide = position?.position?.side;
 		const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
-		const adjustedMaxLeverage =
-			orderType === 'next price'
-				? marketMaxLeverage.mul(DEFAULT_NP_LEVERAGE_ADJUSTMENT)
-				: marketMaxLeverage;
+		const adjustedMaxLeverage = marketMaxLeverage;
 
 		if (!positionLeverage || positionLeverage.eq(wei(0))) return adjustedMaxLeverage;
 		if (futuresType === 'cross_margin') return adjustedMaxLeverage;
@@ -349,6 +343,13 @@ export const selectIsolatedMarginTradeInputs = createSelector(
 		};
 	}
 );
+
+export const selectCrossMarginSelectedLeverage = createSelector(
+	selectMarketKey,
+	(state: RootState) => state.futures.crossMargin.selectedLeverageByAsset,
+	(key, selectedLeverageByAsset) => wei(selectedLeverageByAsset[key] || DEFAULT_LEVERAGE)
+);
+
 export const selectDynamicFeeRate = (state: RootState) => wei(state.futures.dynamicFeeRate);
 
 export const selectIsolatedMarginFee = (state: RootState) =>
@@ -392,14 +393,6 @@ export const selectIsolatedMarginLeverage = createSelector(
 	}
 );
 
-export const selectNextPriceDisclaimer = createSelector(
-	selectMaxLeverage,
-	selectCrossMarginTradeInputs,
-	(maxLeverage, { leverage }) => {
-		return wei(leverage || 0).gte(maxLeverage.sub(wei(1))) && wei(leverage || 0).lte(maxLeverage);
-	}
-);
-
 export const selectPlaceOrderTranslationKey = createSelector(
 	selectPosition,
 	selectFuturesType,
@@ -415,7 +408,6 @@ export const selectPlaceOrderTranslationKey = createSelector(
 			remainingMargin = positionMargin.add(freeMargin);
 		}
 
-		if (orderType === 'next price') return 'futures.market.trade.button.place-next-price-order';
 		if (orderType === 'limit') return 'futures.market.trade.button.place-limit-order';
 		if (orderType === 'stop market') return 'futures.market.trade.button.place-stop-order';
 		if (!!position?.position) return 'futures.market.trade.button.modify-position';

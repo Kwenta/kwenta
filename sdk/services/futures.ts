@@ -157,8 +157,6 @@ export default class FuturesService {
 				feeRates: {
 					makerFee: wei(feeRates.makerFee),
 					takerFee: wei(feeRates.takerFee),
-					makerFeeNextPrice: wei(feeRates.makerFeeNextPrice),
-					takerFeeNextPrice: wei(feeRates.takerFeeNextPrice),
 				},
 				openInterest: {
 					shortPct: wei(marketSize).eq(0)
@@ -385,7 +383,7 @@ export default class FuturesService {
 		};
 	}
 
-	public async getOpenOrders(account: string, markets: FuturesMarket[]) {
+	public async getOpenOrders(account: string) {
 		const response = await request(
 			this.futuresGqlEndpoint,
 			gql`
@@ -409,8 +407,7 @@ export default class FuturesService {
 
 		const openOrders: FuturesOrder[] = response
 			? response.futuresOrders.map((o: any) => {
-					const marketInfo = markets.find((m) => m.asset === o.asset);
-					return mapFuturesOrders(o, marketInfo);
+					return mapFuturesOrders(o);
 			  })
 			: [];
 		return openOrders;
@@ -519,14 +516,11 @@ export default class FuturesService {
 	public async modifyIsolatedMarginPosition<T extends boolean>(
 		marketAddress: string,
 		sizeDelta: Wei,
-		useNextPrice = false,
 		estimationOnly: T
 	): TxReturn<T> {
 		const market = FuturesMarket__factory.connect(marketAddress, this.sdk.context.signer);
 		const root = estimationOnly ? market.estimateGas : market;
-		return useNextPrice
-			? (root.submitNextPriceOrderWithTracking(sizeDelta.toBN(), KWENTA_TRACKING_CODE) as any)
-			: (root.modifyPositionWithTracking(sizeDelta.toBN(), KWENTA_TRACKING_CODE) as any);
+		return root.modifyPositionWithTracking(sizeDelta.toBN(), KWENTA_TRACKING_CODE) as any;
 	}
 }
 

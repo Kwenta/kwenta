@@ -3,7 +3,7 @@ import { gql } from 'graphql-request';
 import { chain } from 'wagmi';
 
 export const FUTURES_ENDPOINT_OP_MAINNET =
-	'https://api.thegraph.com/subgraphs/name/tburm/optimism-futures';
+	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-futures';
 
 export const FUTURES_ENDPOINT_OP_GOERLI =
 	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-goerli-futures';
@@ -54,6 +54,8 @@ export const ORDER_PREVIEW_ERRORS = { insufficient_margin: 'Insufficient free ma
 export const ORDER_PREVIEW_ERRORS_I18N: Record<string, string> = {
 	insufficient_margin: 'futures.market.trade.preview.insufficient-margin',
 	insufficient_margin_edit_leverage: 'futures.market.trade.edit-leverage.insufficient-margin',
+	insufficient_free_margin_edit_leverage:
+		'futures.market.trade.edit-leverage.insufficient-free-margin',
 };
 
 export const previewErrorI18n = (message: string) => {

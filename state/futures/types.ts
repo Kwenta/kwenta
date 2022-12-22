@@ -13,7 +13,7 @@ import { PositionSide } from 'sections/futures/types';
 import { QueryStatus } from 'state/types';
 import { FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
 
-export type IsolatedMarginOrderType = 'next price' | 'market';
+export type IsolatedMarginOrderType = 'market';
 export type CrossMarginOrderType = 'market' | 'stop market' | 'limit';
 
 export type TradeSizeInputs<T = Wei> = {
@@ -134,7 +134,7 @@ export type CrossMarginState = {
 	tradeInputs: CrossMarginTradeInputs<string>;
 	marginDelta: string;
 	orderType: CrossMarginOrderType;
-	selectedLeverage: string;
+	selectedLeverageByAsset: Partial<Record<FuturesMarketKey, string>>;
 	leverageSide: PositionSide;
 	selectedMarketKey: FuturesMarketKey;
 	selectedMarketAsset: FuturesMarketAsset;
@@ -161,7 +161,6 @@ export type CrossMarginState = {
 export type IsolatedMarginState = {
 	tradeInputs: IsolatedMarginTradeInputs<string>;
 	orderType: IsolatedMarginOrderType;
-	selectedLeverage: string;
 	tradePreview: FuturesPotentialTradeDetails<string> | null;
 	leverageSide: PositionSide;
 	selectedMarketKey: FuturesMarketKey;
@@ -179,7 +178,6 @@ export type IsolatedMarginState = {
 
 export type ModifyIsolatedPositionInputs = {
 	sizeDelta: Wei;
-	useNextPrice: boolean;
 };
 
 export const futuresPositionKeys = new Set([

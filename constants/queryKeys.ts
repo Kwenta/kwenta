@@ -279,11 +279,6 @@ export const QUERY_KEYS = {
 			networkId,
 			market,
 		],
-		NextPriceDetails: (
-			networkId: NetworkId,
-			walletAddress: string | null,
-			currencyKey: string | null
-		) => ['futures', 'currentRoundId', networkId, walletAddress, currencyKey],
 		OverviewStats: (networkId: NetworkId) => ['futures', 'overview-stats', networkId],
 		CrossMarginSettings: (networkId: NetworkId, settingsAddress: string) => [
 			'futures',

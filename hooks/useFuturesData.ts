@@ -313,6 +313,8 @@ const useFuturesData = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dispatch, router.query.accountType]);
 
+	const priceString = marketAssetRate.toString();
+
 	useEffect(() => {
 		const getDynamicFee = async () => {
 			if (!synthetixjs) return;
@@ -324,7 +326,7 @@ const useFuturesData = () => {
 			dispatch(setDynamicFeeRateRedux(wei(dynamicFeeRate.feeRate).toString()));
 		};
 		getDynamicFee();
-	}, [marketAsset, synthetixjs, dispatch]);
+	}, [marketAsset, priceString, synthetixjs, dispatch]);
 
 	return {
 		submitCrossMarginOrder,

@@ -1,5 +1,7 @@
 import { createTheme, MuiThemeProvider } from '@material-ui/core';
 import { darkTheme, lightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import * as Sentry from '@sentry/browser';
+import { BrowserTracing } from '@sentry/tracing';
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
 import WithAppContainers from 'containers';
@@ -41,6 +43,18 @@ type NextPageWithLayout = NextPage & {
 type AppPropsWithLayout = AppProps & {
 	Component: NextPageWithLayout;
 };
+
+process.env.GIT_HASH_ID!.toString();
+Sentry.init({
+	dsn:
+		'https://d48644bc80d04977a26132b346417210@o4504363236851712.ingest.sentry.io/4504363261362177',
+	maxBreadcrumbs: 50,
+	debug: process.env.NODE_ENV !== 'production',
+	release: 'kwenta-legacy@' + process.env.GIT_HASH_ID!.toString(),
+	autoSessionTracking: true,
+	integrations: [new BrowserTracing()],
+	tracesSampleRate: 0.3,
+});
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {
 	const {
