@@ -44,7 +44,7 @@
 		"@synthetixio/transaction-notifier": "2.74.12",
 		"@synthetixio/wei": "2.74.4",
 		"axios": "0.27.2",
-		"bignumber.js": "9.0.0",
+		"bignumber.js": "9.1.1",
 		"codegen-graph-ts": "^0.1.4",
 		"cors": "^2.8.5",
 		"css-mediaquery": "^0.1.2",
