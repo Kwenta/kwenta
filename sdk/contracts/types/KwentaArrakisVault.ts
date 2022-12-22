@@ -4,6 +4,7 @@
 import type {
   BaseContract,
   BigNumber,
+  BigNumberish,
   BytesLike,
   CallOverrides,
   ContractTransaction,
@@ -34,6 +35,7 @@ export interface KwentaArrakisVaultInterface extends utils.Interface {
     "transferProxyAdmin(address)": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
+    "approve(address,uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -43,6 +45,7 @@ export interface KwentaArrakisVaultInterface extends utils.Interface {
       | "transferProxyAdmin"
       | "upgradeTo"
       | "upgradeToAndCall"
+      | "approve"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -65,6 +68,10 @@ export interface KwentaArrakisVaultInterface extends utils.Interface {
     functionFragment: "upgradeToAndCall",
     values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "approve",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
 
   decodeFunctionResult(functionFragment: "proxyAdmin", data: BytesLike): Result;
   decodeFunctionResult(
@@ -80,6 +87,7 @@ export interface KwentaArrakisVaultInterface extends utils.Interface {
     functionFragment: "upgradeToAndCall",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
 
   events: {
     "ProxyAdminTransferred(address,address)": EventFragment;
@@ -163,6 +171,12 @@ export interface KwentaArrakisVault extends BaseContract {
       data: PromiseOrValue<BytesLike>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    approve(
+      spender: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
   proxyAdmin(overrides?: CallOverrides): Promise<string>;
@@ -188,6 +202,12 @@ export interface KwentaArrakisVault extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  approve(
+    spender: PromiseOrValue<string>,
+    value: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     proxyAdmin(overrides?: CallOverrides): Promise<string>;
 
@@ -211,6 +231,12 @@ export interface KwentaArrakisVault extends BaseContract {
       data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    approve(
+      spender: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
   };
 
   filters: {
@@ -256,6 +282,12 @@ export interface KwentaArrakisVault extends BaseContract {
       data: PromiseOrValue<BytesLike>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    approve(
+      spender: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -280,6 +312,12 @@ export interface KwentaArrakisVault extends BaseContract {
       newImplementation: PromiseOrValue<string>,
       data: PromiseOrValue<BytesLike>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    approve(
+      spender: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }
