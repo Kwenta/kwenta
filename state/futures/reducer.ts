@@ -98,7 +98,6 @@ const initialState: FuturesState = {
 		showCrossMarginOnboard: false,
 		tradeInputs: ZERO_STATE_CM_TRADE_INPUTS,
 		fees: ZERO_CM_FEES,
-		keeperEthBalance: '0',
 		positions: {},
 		openOrders: {},
 		tradePreview: null,
@@ -428,7 +427,7 @@ const futuresSlice = createSlice({
 
 		// Fetch keeper balance
 		builder.addCase(fetchKeeperEthBalance.fulfilled, (futuresState, action) => {
-			futuresState.crossMargin.keeperEthBalance = action.payload;
+			futuresState.crossMargin.balanceInfo.keeperEthBal = action.payload;
 		});
 	},
 });
