@@ -145,7 +145,6 @@ export type CrossMarginState = {
 	account: string | undefined;
 	settings: CrossMarginSettings<string>;
 	fees: CrossMarginTradeFees<string>;
-	keeperEthBalance: string;
 	orderPrice: {
 		price?: string | undefined | null;
 		invalidLabel: string | undefined | null;

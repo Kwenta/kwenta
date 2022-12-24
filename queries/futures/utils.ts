@@ -12,8 +12,10 @@ import { FuturesOrder, FuturesOrderTypeDisplay } from 'sdk/types/futures';
 import { formatCurrency, formatDollars, weiFromWei } from 'utils/formatters/number';
 import {
 	FuturesMarketAsset,
+	FuturesMarketKey,
 	getDisplayAsset,
 	getMarketName,
+	MarketAssetByKey,
 	MarketKeyByAsset,
 } from 'utils/futures';
 
@@ -53,7 +55,9 @@ const mapOrderType = (orderType: Partial<FuturesOrderType>): FuturesOrderTypeDis
 };
 
 export const mapFuturesOrders = (o: FuturesOrderResult): FuturesOrder => {
-	const asset: FuturesMarketAsset = parseBytes32String(o.asset) as FuturesMarketAsset;
+	// TODO: Why has asset changed to key here?
+	const key = parseBytes32String(o.asset) as FuturesMarketKey;
+	const asset = MarketAssetByKey[key];
 	const size = weiFromWei(o.size);
 	const targetPrice = weiFromWei(o.targetPrice ?? 0);
 	const targetRoundId = new Wei(o.targetRoundId, 0);
