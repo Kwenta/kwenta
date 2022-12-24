@@ -2,7 +2,7 @@
 
 Kwenta is a dApp enabling derivates trading with infinite liquidity - powered by the Synthetix protocol. We're community driven and welcome all contributions. We aim to provide a constructive, respectful and fun environment for collaboration.
 
-If you wish to help out, please first join the **Kwenta devDAO** on our [Discord](https://discord.gg/kwenta) `#community-dev` channel. For more information, see [devDAO](#devdao) below.
+If you wish to help out, please first join the **Kwenta devDAO** on our [Discord](https://discord.gg/kwentaio) `#community-dev` channel. For more information, see [devDAO](#devdao) below.
 
 This guide is geared towards beginners. If you're an open-source veteran feel free to just skim this document and get straight into crushing issues.
 
@@ -21,13 +21,13 @@ There are many reasons you might contribute to Kwenta. For example, you may wish
 
 ## How to Contribute
 
-Regardless of the reason, the process to begin contributing is very much the same. We operate like a typical open-source project operating on GitHub: the repository [Issues](https://github.com/kwenta/kwenta/issues) is where we track what needs to be done and [Pull Requests](https://github.com/kwenta/kwenta/pulls) is where code gets reviewed. We use [Discord](https://discord.gg/kwenta) to chat and distribute tickets to community members.
+Regardless of the reason, the process to begin contributing is very much the same. We operate like a typical open-source project operating on GitHub: the repository [Issues](https://github.com/kwenta/kwenta/issues) is where we track what needs to be done and [Pull Requests](https://github.com/kwenta/kwenta/pulls) is where code gets reviewed. We use [Discord](https://discord.gg/kwentaio) to chat and distribute tickets to community members.
 
 ## <a id="devdao"></a>devDAO
 
 The devDAO has been created specifically to foster open community development and reward community developers. It is an essential piece in our collaborative effort to fully decentralize Kwenta.
 
-Be welcome to join the Kwenta devDAO on our [Discord](https://discord.gg/kwenta) `#community-dev` channel.
+Be welcome to join the Kwenta devDAO on our [Discord](https://discord.gg/kwentaio) `#community-dev` channel.
 
 This is where discussions take place, new tickets will be announced by the community PM and assigned to the respective community members and roles on a first come, first served base.
 
@@ -40,16 +40,15 @@ We recommend the following work-flow for contributors:
 1. **Find an open ticket** to work on in our Discord, either because it's interesting or suitable to your skill set. Use the `#community-dev channel` to communicate your intentions and ask questions.
 2. **Work in a feature branch** of your personal fork (github.com/YOUR_NAME/kwenta) of the main repository (github.com/kwenta/kwenta).
 3. Once you feel you have addressed the issue, **create a pull-request** to merge your changes into the main repository. In case of any doubts, don't hesitate to contact the community PM or ask away in the channel.
-4. Wait for a CC or auditor to **review your changes** to ensure the issue is addressed satisfactorily. Optionally, mention your PR on [Discord](https://discord.gg/kwenta).
+4. Wait for a CC or auditor to **review your changes** to ensure the issue is addressed satisfactorily. Optionally, mention your PR on [Discord](https://discord.gg/kwentaio).
 5. If the issue is addressed the repository maintainers will **merge your pull-request** and you'll be an official contributor!
-
 
 ### First-time Set-up
 
 First time contributors can get their git environment up and running with these steps:
 
 1. [Create a fork](https://help.github.com/articles/fork-a-repo/#fork-an-example-repository) and [clone it](https://help.github.com/articles/fork-a-repo/#step-2-create-a-local-clone-of-your-fork) to your local machine.
-2. [Add an _"upstream"_ branch](https://help.github.com/articles/fork-a-repo/#step-3-configure-git-to-sync-your-fork-with-the-original-spoon-knife-repository) that tracks the Kwenta repository using `$ git remote add upstream
+2. [Add an *"upstream"* branch](https://help.github.com/articles/fork-a-repo/#step-3-configure-git-to-sync-your-fork-with-the-original-spoon-knife-repository) that tracks the Kwenta repository using `$ git remote add upstream
 https://github.com/kwenta/kwenta.git` (pro-tip: [use SSH](https://help.github.com/articles/connecting-to-github-with-ssh/) instead of HTTPS).
 3. Create a new feature branch with `$ git checkout -b your_feature_name`. The name of your branch isn't critical but it should be short and instructive. E.g., if you're fixing a bug with serialization, you could name your branch `fix/serialization_bug`.
 4. Make sure you sign your commits. See the [relevant doc](https://help.github.com/en/github/authenticating-to-github/about-commit-signature-verification).
@@ -60,7 +59,7 @@ From there, the CCs or auditors will review the PR and either accept it or provi
 
 If you have any questions along the way, the community PM will be there to guide and assist you!
 
-There's a great [guide](https://akrabat.com/the-beginners-guide-to-contributing-to-a-github-project/) by Rob Allen that provides much more detail on each of these steps, if you're having trouble. As always, jump on [Discord](https://discord.gg/kwenta) if you get stuck.
+There's a great [guide](https://akrabat.com/the-beginners-guide-to-contributing-to-a-github-project/) by Rob Allen that provides much more detail on each of these steps, if you're having trouble. As always, jump on [Discord](https://discord.gg/kwentaio) if you get stuck.
 
 ## FAQs
 
