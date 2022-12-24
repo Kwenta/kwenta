@@ -126,4 +126,4 @@ Kwenta welcomes contributors. Regardless of the time you have available, everyon
 
 ## Contact
 
-Join the community on the [Kwenta Discord server](https://discord.gg/kwenta)!
+Join the community on the [Kwenta Discord server](https://discord.gg/kwentaio)!
