@@ -50,15 +50,15 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 
 	const POSITIONS_TABS = useMemo(
 		() => [
-			{
-				name: PositionsTab.CROSS_MARGIN,
-				label: t('dashboard.overview.positions-tabs.cross-margin'),
-				badge: crossPositions.length,
-				active: activePositionsTab === PositionsTab.CROSS_MARGIN,
-				detail: formatDollars(portfolio.crossMarginFutures),
-				disabled: false,
-				onClick: () => setActivePositionsTab(PositionsTab.CROSS_MARGIN),
-			},
+			// {
+			// 	name: PositionsTab.CROSS_MARGIN,
+			// 	label: t('dashboard.overview.positions-tabs.cross-margin'),
+			// 	badge: crossPositions.length,
+			// 	active: activePositionsTab === PositionsTab.CROSS_MARGIN,
+			// 	detail: formatDollars(portfolio.crossMarginFutures),
+			// 	disabled: false,
+			// 	onClick: () => setActivePositionsTab(PositionsTab.CROSS_MARGIN),
+			// },
 			{
 				name: PositionsTab.ISOLATED_MARGIN,
 				label: t('dashboard.overview.positions-tabs.isolated-margin'),

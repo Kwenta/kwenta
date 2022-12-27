@@ -2,6 +2,7 @@ import { CurrencyCategory, NetworkIdByName, Synth } from '@synthetixio/contracts
 import { Language } from 'translations/constants';
 
 import { languageStateKey, priceCurrencyStateKey } from 'store/app/constants';
+import { weiFromEth } from 'utils/formatters/number';
 import localStore from 'utils/localStore';
 
 // app defaults
@@ -39,15 +40,19 @@ export const DEFAULT_NUMBER_OF_TRADES: number = 16;
 export const MAX_TIMESTAMP: number = 8640000000000000;
 
 // for Fee History
-export const DEFAULT_NUMBER_OF_FUTURES_FEE: number = 5000;
+export const DEFAULT_NUMBER_OF_FUTURES_FEE: number = 9999;
 
 // leverage adjustment
-export const DEFAULT_NP_LEVERAGE_ADJUSTMENT: number = 0.9975;
+export const DEFAULT_NP_LEVERAGE_ADJUSTMENT: number = 1;
 
 // for mobile leaderboard
 export const DEFAULT_LEADERBOARD_ROWS = 20;
 
-export const CROSS_MARGIN_ENABLED = true;
+// for perps v2
+export const DEFAULT_PRICE_IMPACT_DELTA = weiFromEth(0.5).toString();
+export const DEFAULT_DELAYED_EXECUTION_BUFFER = 0;
+
+export const CROSS_MARGIN_ENABLED = false;
 
 export const DEFAULT_FUTURES_MARGIN_TYPE = CROSS_MARGIN_ENABLED
 	? 'cross_margin'

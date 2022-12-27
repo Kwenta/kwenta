@@ -21,19 +21,16 @@ import { ATOMIC_EXCHANGE_SLIPPAGE } from 'constants/exchange';
 import { CG_BASE_API_URL } from 'queries/coingecko/constants';
 import { PriceResponse } from 'queries/coingecko/types';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
-import { Rates } from 'queries/rates/types';
 import { getProxySynthSymbol } from 'queries/synths/utils';
 import { getEthGasPrice } from 'sdk/common/gas';
 import erc20Abi from 'sdk/contracts/abis/ERC20.json';
 import { Token } from 'sdk/types/tokens';
-import { startInterval } from 'sdk/utils/interval';
 import {
 	newGetCoinGeckoPricesForCurrencies,
 	newGetExchangeRatesForCurrencies,
 	newGetExchangeRatesTupleForCurrencies,
 } from 'utils/currencies';
 import { UNIT_BIG_NUM, zeroBN } from 'utils/formatters/number';
-import { FuturesMarketKey, MarketAssetByKey } from 'utils/futures';
 import { getTransactionPrice, normalizeGasLimit } from 'utils/network';
 
 import * as sdkErrors from '../common/errors';
@@ -44,9 +41,6 @@ import {
 	OneInchSwapResponse,
 	OneInchTokenListResponse,
 } from '../types/1inch';
-
-type CurrencyRate = ethers.BigNumberish;
-type SynthRatesTuple = [string[], CurrencyRate[]];
 
 const PROTOCOLS =
 	'OPTIMISM_UNISWAP_V3,OPTIMISM_SYNTHETIX,OPTIMISM_SYNTHETIX_WRAPPER,OPTIMISM_ONE_INCH_LIMIT_ORDER,OPTIMISM_ONE_INCH_LIMIT_ORDER_V2,OPTIMISM_CURVE,OPTIMISM_BALANCER_V2,OPTIMISM_VELODROME,OPTIMISM_KYBERSWAP_ELASTIC';
@@ -59,30 +53,13 @@ export default class ExchangeService {
 	private tokenList: Token[] = [];
 	private allTokensMap: any;
 	private sdk: KwentaSDK;
-	private exchangeRates: Rates = {};
-	private ratesInterval: number | undefined;
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
 	}
 
-	public startRateUpdates(ratesInterval: number) {
-		this.getOneInchTokens();
-
-		if (!this.ratesInterval) {
-			this.ratesInterval = startInterval(async () => {
-				this.exchangeRates = await this.getExchangeRates();
-				this.sdk.events.emit('exchangeRates_updated', this.exchangeRates);
-			}, ratesInterval);
-		}
-	}
-
-	public onRatesUpdated(listener: (exchangeRates: Rates) => void) {
-		return this.sdk.events.on('exchangeRates_updated', listener);
-	}
-
-	public removeRatesListeners() {
-		this.sdk.events.removeAllListeners('exchangeRates_updated');
+	get exchangeRates() {
+		return this.sdk.prices.currentPrices.onChain;
 	}
 
 	public getTxProvider(baseCurrencyKey: string, quoteCurrencyKey: string) {
@@ -392,48 +369,6 @@ export default class ExchangeService {
 		return numEntries ? Number(numEntries.toString()) : 0;
 	}
 
-	public async getExchangeRates() {
-		if (!this.sdk.context.contracts.SynthUtil || !this.sdk.context.contracts.ExchangeRates) {
-			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
-		}
-
-		const exchangeRates: Rates = {};
-
-		// Additional commonly used currencies to fetch, besides the one returned by the SynthUtil.synthsRates
-		const additionalCurrencies = [
-			'SNX',
-			'XAU',
-			'XAG',
-			'DYDX',
-			'APE',
-			'BNB',
-			'DOGE',
-			'DebtRatio',
-			'XMR',
-			'OP',
-		].map(ethers.utils.formatBytes32String);
-
-		const [synthsRates, ratesForCurrencies] = (await Promise.all([
-			this.sdk.context.contracts.SynthUtil.synthsRates(),
-			this.sdk.context.contracts.ExchangeRates.ratesForCurrencies(additionalCurrencies),
-		])) as [SynthRatesTuple, CurrencyRate[]];
-
-		const synths = [...synthsRates[0], ...additionalCurrencies] as CurrencyKey[];
-		const rates = [...synthsRates[1], ...ratesForCurrencies] as CurrencyRate[];
-
-		synths.forEach((currencyKeyBytes32: CurrencyKey, idx: number) => {
-			const currencyKey = ethers.utils.parseBytes32String(currencyKeyBytes32) as CurrencyKey;
-			const marketAsset = MarketAssetByKey[currencyKey as FuturesMarketKey];
-
-			const rate = Number(ethers.utils.formatEther(rates[idx]));
-
-			exchangeRates[currencyKey] = wei(rate);
-			if (marketAsset) exchangeRates[marketAsset] = wei(rate);
-		});
-
-		return exchangeRates;
-	}
-
 	public async getAtomicRates(currencyKey: string) {
 		if (!this.sdk.context.contracts.ExchangeRates) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
@@ -726,7 +661,7 @@ export default class ExchangeService {
 			const sUSDRate = this.exchangeRates['sUSD'];
 			const price = coinGeckoPrices && coinGeckoPrices[tokenAddress];
 
-			if (price && sUSDRate.gt(0)) {
+			if (price && sUSDRate?.gt(0)) {
 				return wei(price.usd ?? 0).div(sUSDRate);
 			} else {
 				return wei(0);
@@ -966,21 +901,17 @@ export default class ExchangeService {
 		return this.swapSynthSwap(fromToken, toToken, fromAmount, 'estimate_gas');
 	}
 
-	private getPairRates(quoteCurrencyKey: string, baseCurrencyKey: string) {
-		const isAtomic = this.checkIsAtomic(baseCurrencyKey, quoteCurrencyKey);
-
-		if (isAtomic) {
-			return Promise.all([
-				this.getAtomicRates(quoteCurrencyKey),
-				this.getAtomicRates(baseCurrencyKey),
-			]);
-		} else {
-			return newGetExchangeRatesTupleForCurrencies(
-				this.exchangeRates,
-				quoteCurrencyKey,
-				baseCurrencyKey
-			);
-		}
+	private async getPairRates(quoteCurrencyKey: string, baseCurrencyKey: string) {
+		return this.checkIsAtomic(baseCurrencyKey, quoteCurrencyKey)
+			? await Promise.all([
+					this.getAtomicRates(quoteCurrencyKey),
+					this.getAtomicRates(baseCurrencyKey),
+			  ])
+			: newGetExchangeRatesTupleForCurrencies(
+					this.sdk.prices.currentPrices.onChain,
+					quoteCurrencyKey,
+					baseCurrencyKey
+			  );
 	}
 
 	private async getOneInchApproveAddress() {

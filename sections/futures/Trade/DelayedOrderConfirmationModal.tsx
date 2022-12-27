@@ -1,97 +1,90 @@
-import useSynthetixQueries from '@synthetixio/queries';
-import { wei } from '@synthetixio/wei';
 import { FC, useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
+import Error from 'components/Error';
 import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { NO_VALUE } from 'constants/placeholder';
-import Connector from 'containers/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
+import { getDisplayAsset } from 'sdk/utils/futures';
 import { setOpenModal } from 'state/app/reducer';
 import { modifyIsolatedPosition, modifyIsolatedPositionEstimateGas } from 'state/futures/actions';
 import {
+	selectDelayedOrderFee,
 	selectIsModifyingIsolatedPosition,
 	selectLeverageSide,
 	selectMarketAsset,
 	selectMarketInfo,
-	selectModifyIsolatedGasEstimate,
+	selectModifyPositionError,
 	selectNextPriceDisclaimer,
+	selectOrderType,
 	selectPosition,
+	selectTradePreview,
+	selectTradePreviewStatus,
 	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { FlexDivCol, FlexDivCentered } from 'styles/common';
-import { computeNPFee } from 'utils/costCalculations';
-import { zeroBN, formatCurrency, formatDollars } from 'utils/formatters/number';
+import { FetchStatus } from 'state/types';
+import { FlexDivCentered } from 'styles/common';
+import { getKnownError } from 'utils/formatters/error';
+import {
+	zeroBN,
+	formatCurrency,
+	formatDollars,
+	formatPercent,
+	formatNumber,
+} from 'utils/formatters/number';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
 import { PositionSide } from '../types';
 import { MobileConfirmTradeButton } from './TradeConfirmationModal';
 
-const NextPriceConfirmationModal: FC = () => {
+const DelayedOrderConfirmationModal: FC = () => {
 	const { t } = useTranslation();
-	const { synthsMap } = Connector.useContainer();
 	const isDisclaimerDisplayed = useAppSelector(selectNextPriceDisclaimer);
-	const { useEthGasPriceQuery } = useSynthetixQueries();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const ethGasPriceQuery = useEthGasPriceQuery();
 	const dispatch = useAppDispatch();
 
-	const { nativeSize, nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
+	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
+	const txError = useAppSelector(selectModifyPositionError);
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const submitting = useAppSelector(selectIsModifyingIsolatedPosition);
-	const gasEstimate = useAppSelector(selectModifyIsolatedGasEstimate);
-
-	const gasPrices = useMemo(
-		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
-		[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data]
-	);
+	const potentialTradeDetails = useAppSelector(selectTradePreview);
+	const previewStatus = useAppSelector(selectTradePreviewStatus);
+	const orderType = useAppSelector(selectOrderType);
+	const { commitDeposit } = useAppSelector(selectDelayedOrderFee);
 
 	useEffect(() => {
 		dispatch(
 			modifyIsolatedPositionEstimateGas({
 				sizeDelta: nativeSizeDelta,
-				useNextPrice: true,
+				delayed: true,
+				offchain: orderType === 'delayed offchain',
 			})
 		);
-	}, [nativeSizeDelta, dispatch]);
-
-	const transactionFee = useMemo(() => gasEstimate?.cost ?? zeroBN, [gasEstimate?.cost]);
+	}, [nativeSizeDelta, orderType, dispatch]);
 
 	const positionSize = position?.position?.size ?? zeroBN;
 
 	const orderDetails = useMemo(() => {
-		const newSize = leverageSide === PositionSide.LONG ? wei(nativeSize) : wei(nativeSize).neg();
+		return { nativeSizeDelta, size: (positionSize ?? zeroBN).add(nativeSizeDelta).abs() };
+	}, [nativeSizeDelta, positionSize]);
 
-		return { newSize, size: (positionSize ?? zeroBN).add(newSize).abs() };
-	}, [leverageSide, nativeSize, positionSize]);
-
-	const { commitDeposit, nextPriceFee } = useMemo(
-		() => computeNPFee(marketInfo, wei(orderDetails.newSize)),
-		[marketInfo, orderDetails]
-	);
-
+	// TODO: check this deposit
 	const totalDeposit = useMemo(() => {
 		return (commitDeposit ?? zeroBN).add(marketInfo?.keeperDeposit ?? zeroBN);
 	}, [commitDeposit, marketInfo?.keeperDeposit]);
-
-	const nextPriceDiscount = useMemo(() => {
-		return (nextPriceFee ?? zeroBN).sub(commitDeposit ?? zeroBN);
-	}, [commitDeposit, nextPriceFee]);
 
 	const dataRows = useMemo(
 		() => [
 			{
 				label: t('futures.market.user.position.modal.order-type'),
-				value: t('futures.market.user.position.modal.next-price-order'),
+				value: orderType,
 			},
 			{
 				label: t('futures.market.user.position.modal.side'),
@@ -99,38 +92,61 @@ const NextPriceConfirmationModal: FC = () => {
 			},
 			{
 				label: t('futures.market.user.position.modal.size'),
-				value: formatCurrency(marketAsset || '', orderDetails.newSize.abs() ?? zeroBN, {
-					sign: marketAsset ? synthsMap[marketAsset]?.sign : '',
+				value: formatCurrency(
+					getDisplayAsset(marketAsset) || '',
+					orderDetails.nativeSizeDelta.abs() ?? zeroBN,
+					{
+						currencyKey: getDisplayAsset(marketAsset) ?? '',
+					}
+				),
+			},
+			{
+				label: t('futures.market.user.position.modal.estimated-fill'),
+				value: formatDollars(potentialTradeDetails?.price ?? zeroBN, { isAssetPrice: true }),
+			},
+			{
+				label: t('futures.market.user.position.modal.time-delay'),
+				value: `${formatNumber(marketInfo?.settings.offchainDelayedOrderMinAge ?? zeroBN, {
+					maxDecimals: 0,
+				})} sec`,
+			},
+			{
+				label: t('futures.market.user.position.modal.estimated-price-impact'),
+				value: `${formatPercent(potentialTradeDetails?.priceImpact ?? zeroBN)}`,
+				color: potentialTradeDetails?.priceImpact.abs().gt(0.45) // TODO: Make this configurable
+					? 'red'
+					: '',
+			},
+			{
+				label: t('futures.market.user.position.modal.fee-estimated'),
+				value: formatCurrency(selectedPriceCurrency.name, commitDeposit ?? zeroBN, {
+					minDecimals: 2,
+					sign: selectedPriceCurrency.sign,
+				}),
+			},
+			{
+				label: t('futures.market.user.position.modal.keeper-deposit'),
+				value: formatCurrency(selectedPriceCurrency.name, marketInfo?.keeperDeposit ?? zeroBN, {
+					minDecimals: 2,
+					sign: selectedPriceCurrency.sign,
 				}),
 			},
 			{
 				label: t('futures.market.user.position.modal.deposit'),
 				value: formatDollars(totalDeposit),
 			},
-			{
-				label: t('futures.market.user.position.modal.np-discount'),
-				value: !!nextPriceDiscount ? formatDollars(nextPriceDiscount) : NO_VALUE,
-			},
-			{
-				label: t('futures.market.user.position.modal.fee-total'),
-				value: formatCurrency(
-					selectedPriceCurrency.name,
-					totalDeposit.add(nextPriceDiscount ?? zeroBN),
-					{
-						minDecimals: 2,
-						sign: selectedPriceCurrency.sign,
-					}
-				),
-			},
 		],
 		[
 			t,
 			orderDetails,
+			orderType,
+			commitDeposit,
+			potentialTradeDetails,
 			marketAsset,
-			synthsMap,
 			leverageSide,
-			nextPriceDiscount,
 			totalDeposit,
+			marketInfo?.keeperDeposit,
+			marketInfo?.settings.offchainDelayedOrderMinAge,
 			selectedPriceCurrency.name,
 			selectedPriceCurrency.sign,
 		]
@@ -144,7 +160,8 @@ const NextPriceConfirmationModal: FC = () => {
 		dispatch(
 			modifyIsolatedPosition({
 				sizeDelta: nativeSizeDelta,
-				useNextPrice: true,
+				delayed: true,
+				offchain: orderType === 'delayed offchain',
 			})
 		);
 	};
@@ -157,15 +174,14 @@ const NextPriceConfirmationModal: FC = () => {
 					isOpen
 					title={t('futures.market.trade.confirmation.modal.confirm-order')}
 				>
-					{dataRows.map(({ label, value }, i) => (
+					{dataRows.map((row, i) => (
 						<Row key={`datarow-${i}`}>
-							<Label>{label}</Label>
-							<Value>{value}</Value>
+							<Label>{row.label}</Label>
+							<Value>
+								<span className={row.color ? `value ${row.color}` : ''}>{row.value}</span>
+							</Value>
 						</Row>
 					))}
-					<NetworkFees>
-						<StyledGasPriceSelect {...{ gasPrices, transactionFee }} />
-					</NetworkFees>
 					{isDisclaimerDisplayed && (
 						<Disclaimer>
 							{t('futures.market.trade.confirmation.modal.max-leverage-disclaimer')}
@@ -178,6 +194,8 @@ const NextPriceConfirmationModal: FC = () => {
 							t('futures.market.trade.confirmation.modal.confirm-order')
 						)}
 					</ConfirmTradeButton>
+					<Disclaimer>{t('futures.market.trade.confirmation.modal.delayed-disclaimer')}</Disclaimer>
+					{txError && <Error message={getKnownError(txError)} formatter="revert" />}
 				</StyledBaseModal>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
@@ -187,7 +205,7 @@ const NextPriceConfirmationModal: FC = () => {
 					closeDrawer={onDismiss}
 					buttons={
 						<MobileConfirmTradeButton
-							disabled={submitting}
+							disabled={submitting || previewStatus.status !== FetchStatus.Success}
 							variant="primary"
 							onClick={handleConfirmOrder}
 						>
@@ -229,27 +247,26 @@ const Value = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 12px;
 	margin-top: 6px;
-`;
-
-const NetworkFees = styled(FlexDivCol)`
-	margin-top: 12px;
-`;
-
-const StyledGasPriceSelect = styled(GasPriceSelect)`
-	padding: 5px 0;
-	display: flex;
-	justify-content: space-between;
-	width: auto;
-	border-bottom: 1px solid ${(props) => props.theme.colors.selectedTheme.border};
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	font-size: 12px;
-	font-family: ${(props) => props.theme.fonts.regular};
 	text-transform: capitalize;
-	margin-bottom: 8px;
+
+	.value {
+		font-family: ${(props) => props.theme.fonts.mono};
+		font-size: 13px;
+		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+	}
+
+	.green {
+		color: ${(props) => props.theme.colors.selectedTheme.green};
+	}
+
+	.red {
+		color: ${(props) => props.theme.colors.selectedTheme.red};
+	}
 `;
 
 const ConfirmTradeButton = styled(Button)`
 	margin-top: 24px;
+	margin-bottom: 12px;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
@@ -263,4 +280,4 @@ const Disclaimer = styled.div`
 	margin-bottom: 12px;
 `;
 
-export default NextPriceConfirmationModal;
+export default DelayedOrderConfirmationModal;

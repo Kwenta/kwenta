@@ -13,6 +13,9 @@ export { FuturesMarketSettings__factory } from "./FuturesMarketSettings__factory
 export { KwentaArrakisVault__factory } from "./KwentaArrakisVault__factory";
 export { KwentaStakingRewards__factory } from "./KwentaStakingRewards__factory";
 export { MultipleMerkleDistributor__factory } from "./MultipleMerkleDistributor__factory";
+export { PerpsV2Market__factory } from "./PerpsV2Market__factory";
+export { PerpsV2MarketData__factory } from "./PerpsV2MarketData__factory";
+export { PerpsV2MarketSettings__factory } from "./PerpsV2MarketSettings__factory";
 export { ReverseRecords__factory } from "./ReverseRecords__factory";
 export { RewardEscrow__factory } from "./RewardEscrow__factory";
 export { StakingRewards__factory } from "./StakingRewards__factory";

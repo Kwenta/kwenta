@@ -6,27 +6,24 @@ import InfoBox from 'components/InfoBox';
 import PreviewArrow from 'components/PreviewArrow';
 import { FuturesPotentialTradeDetails } from 'sdk/types/futures';
 import {
-	selectLeverageSide,
+	selectDelayedOrderFee,
 	selectMarketInfo,
 	selectMaxLeverage,
 	selectOrderType,
 	selectPosition,
 	selectTradePreview,
-	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { computeNPFee } from 'utils/costCalculations';
 import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 const MarketInfoBox: React.FC = () => {
 	const orderType = useAppSelector(selectOrderType);
-	const leverageSide = useAppSelector(selectLeverageSide);
-	const { nativeSize, nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
 	const potentialTrade = useAppSelector(selectTradePreview);
 
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const position = useAppSelector(selectPosition);
 	const maxLeverage = useAppSelector(selectMaxLeverage);
+	const { commitDeposit } = useAppSelector(selectDelayedOrderFee);
 
 	const totalMargin = position?.remainingMargin ?? zeroBN;
 	const availableMargin = position?.accessibleMargin ?? zeroBN;
@@ -41,21 +38,7 @@ const MarketInfoBox: React.FC = () => {
 		marketInfo?.minInitialMargin,
 	]);
 
-	const isNextPriceOrder = orderType === 'next price';
-
-	const positionSize = position?.position?.size ? wei(position?.position?.size) : zeroBN;
-	const orderDetails = useMemo(() => {
-		return {
-			newSize: nativeSize,
-			size: (positionSize ?? zeroBN).add(nativeSizeDelta).abs(),
-		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [leverageSide, positionSize]);
-
-	const { commitDeposit } = useMemo(() => computeNPFee(marketInfo, wei(orderDetails.newSize)), [
-		marketInfo,
-		orderDetails,
-	]);
+	const isDelayedOrder = useMemo(() => orderType === 'delayed', [orderType]);
 
 	const totalDeposit = useMemo(() => {
 		return (commitDeposit ?? zeroBN).add(marketInfo?.keeperDeposit ?? zeroBN);
@@ -88,20 +71,18 @@ const MarketInfoBox: React.FC = () => {
 			potentialTrade,
 			marketInfo?.maxLeverage
 		);
-		return isNextPriceOrder
+		return isDelayedOrder
 			? potentialAvailableMargin?.sub(totalDeposit) ?? zeroBN
 			: potentialAvailableMargin;
 	}, [
 		potentialTrade,
 		marketInfo?.maxLeverage,
-		isNextPriceOrder,
+		isDelayedOrder,
 		totalDeposit,
 		getPotentialAvailableMargin,
 	]);
 
 	const previewTradeData = React.useMemo(() => {
-		const size = nativeSizeDelta.abs();
-
 		const potentialMarginUsage = potentialTrade?.margin.gt(0)
 			? potentialTrade!.margin.sub(previewAvailableMargin).div(potentialTrade!.margin).abs() ??
 			  zeroBN
@@ -111,13 +92,15 @@ const MarketInfoBox: React.FC = () => {
 			previewAvailableMargin?.mul(maxLeverage ?? zeroBN)?.abs() ?? zeroBN;
 
 		return {
-			showPreview: size && !size.eq(0),
+			// TODO: Reenable this, disabling because the preview margin looks incorrect
+			// showPreview: size && !size.eq(0) && !!potentialTrade,
+			showPreview: false,
 			totalMargin: potentialTrade?.margin || zeroBN,
 			availableMargin: previewAvailableMargin.gt(0) ? previewAvailableMargin : zeroBN,
 			buyingPower: potentialBuyingPower.gt(0) ? potentialBuyingPower : zeroBN,
 			marginUsage: potentialMarginUsage.gt(1) ? wei(1) : potentialMarginUsage,
 		};
-	}, [nativeSizeDelta, potentialTrade, previewAvailableMargin, maxLeverage]);
+	}, [potentialTrade, previewAvailableMargin, maxLeverage]);
 
 	return (
 		<StyledInfoBox

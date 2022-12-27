@@ -1,28 +1,28 @@
-import { NetworkId, NetworkNameById, Synth } from '@synthetixio/contracts-interface';
+import { Synth } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { TFunction } from 'i18next';
 import { Dictionary } from 'lodash';
 
 import { FuturesOrderType } from 'queries/futures/types';
-import { FuturesMarket, FuturesOrder, FuturesPosition, FuturesVolumes } from 'sdk/types/futures';
+import {
+	DelayedOrder,
+	FuturesMarket,
+	FuturesOrder,
+	FuturesPosition,
+	FuturesVolumes,
+} from 'sdk/types/futures';
+import { PricesMap } from 'sdk/types/prices';
 import { PositionSide } from 'sections/futures/types';
 import {
 	CrossMarginBalanceInfo,
 	CrossMarginSettings,
 	CrossMarginTradeFees,
 	CrossMarginTradeInputs,
-	FundingRate,
-	FundingRateSerialized,
 	IsolatedMarginTradeInputs,
 	TransactionEstimation,
 } from 'state/futures/types';
-import logError from 'utils/logError';
 
 import { formatNumber, zeroBN } from './formatters/number';
-
-export const getMarketAsset = (marketKey: FuturesMarketKey) => {
-	return markets[marketKey].asset;
-};
 
 export const getMarketName = (asset: FuturesMarketAsset | null) => {
 	switch (asset) {
@@ -77,8 +77,10 @@ export const isDecimalFour = (marketKeyOrAsset: string | undefined): boolean =>
 	marketKeyOrAsset === 'DebtRatio';
 
 export enum FuturesMarketKey {
-	sBTC = 'sBTC',
+	sETHPERP = 'sETHPERP',
+	sBTCPERP = 'sBTCPERP',
 	sETH = 'sETH',
+	sBTC = 'sBTC',
 	sLINK = 'sLINK',
 	sSOL = 'sSOL',
 	sAVAX = 'sAVAX',
@@ -119,6 +121,8 @@ export enum FuturesMarketAsset {
 }
 
 export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
+	[FuturesMarketKey.sBTCPERP]: FuturesMarketAsset.sBTC,
+	[FuturesMarketKey.sETHPERP]: FuturesMarketAsset.sETH,
 	[FuturesMarketKey.sBTC]: FuturesMarketAsset.sBTC,
 	[FuturesMarketKey.sETH]: FuturesMarketAsset.sETH,
 	[FuturesMarketKey.sLINK]: FuturesMarketAsset.sLINK,
@@ -140,8 +144,11 @@ export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
 } as const;
 
 export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
-	[FuturesMarketAsset.sBTC]: FuturesMarketKey.sBTC,
-	[FuturesMarketAsset.sETH]: FuturesMarketKey.sETH,
+	// perps v2
+	[FuturesMarketAsset.sBTC]: FuturesMarketKey.sBTCPERP,
+	[FuturesMarketAsset.sETH]: FuturesMarketKey.sETHPERP,
+
+	// perps v1
 	[FuturesMarketAsset.sLINK]: FuturesMarketKey.sLINK,
 	[FuturesMarketAsset.SOL]: FuturesMarketKey.sSOL,
 	[FuturesMarketAsset.AVAX]: FuturesMarketKey.sAVAX,
@@ -160,128 +167,10 @@ export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 	[FuturesMarketAsset.OP]: FuturesMarketKey.sOP,
 } as const;
 
-export interface FuturesMarketConfig {
-	key: FuturesMarketKey;
-	asset: FuturesMarketAsset;
-	supports: 'mainnet' | 'testnet' | 'both';
-	disabled?: boolean;
-}
-
-export const markets: Record<FuturesMarketKey, FuturesMarketConfig> = {
-	[FuturesMarketKey.sBTC]: {
-		key: FuturesMarketKey.sBTC,
-		asset: FuturesMarketAsset.sBTC,
-		supports: 'both',
+export const marketOverrides: Partial<Record<FuturesMarketKey, Record<string, any>>> = {
+	[FuturesMarketKey.sETHPERP]: {
+		maxLeverage: wei(25),
 	},
-	[FuturesMarketKey.sETH]: {
-		key: FuturesMarketKey.sETH,
-		asset: FuturesMarketAsset.sETH,
-		supports: 'both',
-	},
-	[FuturesMarketKey.sLINK]: {
-		key: FuturesMarketKey.sLINK,
-		asset: FuturesMarketAsset.sLINK,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sSOL]: {
-		key: FuturesMarketKey.sSOL,
-		asset: FuturesMarketAsset.SOL,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sAVAX]: {
-		key: FuturesMarketKey.sAVAX,
-		asset: FuturesMarketAsset.AVAX,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sAAVE]: {
-		key: FuturesMarketKey.sAAVE,
-		asset: FuturesMarketAsset.AAVE,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sUNI]: {
-		key: FuturesMarketKey.sUNI,
-		asset: FuturesMarketAsset.UNI,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sMATIC]: {
-		key: FuturesMarketKey.sMATIC,
-		asset: FuturesMarketAsset.MATIC,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sXAU]: {
-		key: FuturesMarketKey.sXAU,
-		asset: FuturesMarketAsset.XAU,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sXAG]: {
-		key: FuturesMarketKey.sXAG,
-		asset: FuturesMarketAsset.XAG,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sEUR]: {
-		key: FuturesMarketKey.sEUR,
-		asset: FuturesMarketAsset.EUR,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sAPE]: {
-		key: FuturesMarketKey.sAPE,
-		asset: FuturesMarketAsset.APE,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sDYDX]: {
-		key: FuturesMarketKey.sDYDX,
-		asset: FuturesMarketAsset.DYDX,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sBNB]: {
-		key: FuturesMarketKey.sBNB,
-		asset: FuturesMarketAsset.BNB,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sDOGE]: {
-		key: FuturesMarketKey.sDOGE,
-		asset: FuturesMarketAsset.DOGE,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sDebtRatio]: {
-		key: FuturesMarketKey.sDebtRatio,
-		asset: FuturesMarketAsset.DebtRatio,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sXMR]: {
-		key: FuturesMarketKey.sXMR,
-		asset: FuturesMarketAsset.XMR,
-		supports: 'mainnet',
-	},
-	[FuturesMarketKey.sOP]: {
-		key: FuturesMarketKey.sOP,
-		asset: FuturesMarketAsset.OP,
-		supports: 'mainnet',
-	},
-};
-
-export const marketsList = Object.values(markets).filter((m) => !m.disabled);
-
-export const mainnetMarkets = marketsList.filter(
-	(m) => m.supports === 'mainnet' || m.supports === 'both'
-);
-
-export const testnetMarkets = marketsList.filter(
-	(m) => m.supports === 'testnet' || m.supports === 'both'
-);
-
-export const marketsForNetwork = (networkId: NetworkId) => {
-	const network = NetworkNameById[networkId];
-
-	switch (network) {
-		case 'mainnet-ovm':
-			return mainnetMarkets;
-		case 'goerli-ovm':
-			return testnetMarkets;
-		default:
-			logError('You cannot use futures on this network.');
-			return [];
-	}
 };
 
 export const orderPriceInvalidLabel = (
@@ -366,35 +255,43 @@ export const calculateMarginDelta = (
 	}
 };
 
+export const serializeMarket = (market: FuturesMarket): FuturesMarket<string> => {
+	return {
+		...market,
+		currentFundingRate: market.currentFundingRate.toString(),
+		currentRoundId: market.currentRoundId.toString(),
+		feeRates: {
+			makerFee: market.feeRates.makerFee.toString(),
+			takerFee: market.feeRates.takerFee.toString(),
+			makerFeeDelayedOrder: market.feeRates.makerFeeDelayedOrder.toString(),
+			takerFeeDelayedOrder: market.feeRates.takerFeeDelayedOrder.toString(),
+			makerFeeOffchainDelayedOrder: market.feeRates.makerFeeOffchainDelayedOrder.toString(),
+			takerFeeOffchainDelayedOrder: market.feeRates.takerFeeOffchainDelayedOrder.toString(),
+		},
+		openInterest: market.openInterest
+			? {
+					...market.openInterest,
+					shortUSD: market.openInterest.shortUSD.toString(),
+					longUSD: market.openInterest.longUSD.toString(),
+			  }
+			: undefined,
+		marketDebt: market.marketDebt.toString(),
+		marketSkew: market.marketSkew.toString(),
+		marketSize: market.marketSize.toString(),
+		maxLeverage: market.maxLeverage.toString(),
+		minInitialMargin: market.minInitialMargin.toString(),
+		keeperDeposit: market.keeperDeposit.toString(),
+		marketLimit: market.marketLimit.toString(),
+		settings: {
+			...market.settings,
+			maxMarketValue: market.settings.maxMarketValue.toString(),
+			skewScale: market.settings.skewScale.toString(),
+		},
+	};
+};
+
 export const serializeMarkets = (markets: FuturesMarket[]): FuturesMarket<string>[] => {
-	return markets.map((m) => {
-		return {
-			...m,
-			currentFundingRate: m.currentFundingRate.toString(),
-			currentRoundId: m.currentRoundId.toString(),
-			feeRates: {
-				makerFee: m.feeRates.makerFee.toString(),
-				takerFee: m.feeRates.takerFee.toString(),
-				makerFeeNextPrice: m.feeRates.makerFeeNextPrice.toString(),
-				takerFeeNextPrice: m.feeRates.takerFeeNextPrice.toString(),
-			},
-			openInterest: m.openInterest
-				? {
-						...m.openInterest,
-						shortUSD: m.openInterest.shortUSD.toString(),
-						longUSD: m.openInterest.longUSD.toString(),
-				  }
-				: undefined,
-			marketDebt: m.marketDebt.toString(),
-			marketSkew: m.marketSkew.toString(),
-			marketSize: m.marketSize.toString(),
-			maxLeverage: m.maxLeverage.toString(),
-			price: m.price.toString(),
-			minInitialMargin: m.minInitialMargin.toString(),
-			keeperDeposit: m.keeperDeposit.toString(),
-			marketLimit: m.marketLimit.toString(),
-		};
-	});
+	return markets.map((m) => serializeMarket(m));
 };
 
 export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMarket[] => {
@@ -405,8 +302,10 @@ export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMar
 		feeRates: {
 			makerFee: wei(m.feeRates.makerFee),
 			takerFee: wei(m.feeRates.takerFee),
-			makerFeeNextPrice: wei(m.feeRates.makerFeeNextPrice),
-			takerFeeNextPrice: wei(m.feeRates.takerFeeNextPrice),
+			makerFeeDelayedOrder: wei(m.feeRates.makerFeeDelayedOrder),
+			takerFeeDelayedOrder: wei(m.feeRates.takerFeeDelayedOrder),
+			makerFeeOffchainDelayedOrder: wei(m.feeRates.makerFeeOffchainDelayedOrder),
+			takerFeeOffchainDelayedOrder: wei(m.feeRates.takerFeeOffchainDelayedOrder),
 		},
 		openInterest: m.openInterest
 			? {
@@ -419,15 +318,15 @@ export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMar
 		marketSkew: wei(m.marketSkew),
 		marketSize: wei(m.marketSize),
 		maxLeverage: wei(m.maxLeverage),
-		price: wei(m.price),
 		minInitialMargin: wei(m.minInitialMargin),
 		keeperDeposit: wei(m.keeperDeposit),
 		marketLimit: wei(m.marketLimit),
+		settings: {
+			...m.settings,
+			maxMarketValue: wei(m.settings.maxMarketValue),
+			skewScale: wei(m.settings.skewScale),
+		},
 	}));
-};
-
-export const unserializeFundingRates = (rates: FundingRateSerialized[]): FundingRate[] => {
-	return rates.map((r) => ({ ...r, fundingRate: r.fundingRate ? wei(r.fundingRate) : null }));
 };
 
 export const serializeCmBalanceInfo = (
@@ -510,6 +409,30 @@ export const serializeFuturesOrders = (orders: FuturesOrder[]): FuturesOrder<str
 	}));
 };
 
+export const serializeDelayedOrder = (order: DelayedOrder): DelayedOrder<string> => ({
+	...order,
+	size: order.size.toString(),
+	commitDeposit: order.commitDeposit.toString(),
+	keeperDeposit: order.keeperDeposit.toString(),
+	priceImpactDelta: order.priceImpactDelta.toString(),
+	targetRoundId: order.targetRoundId?.toString() ?? '',
+});
+
+export const serializeDelayedOrders = (orders: DelayedOrder[]): DelayedOrder<string>[] =>
+	orders.map((o) => serializeDelayedOrder(o));
+
+export const unserializeDelayedOrder = (order: DelayedOrder<string>): DelayedOrder => ({
+	...order,
+	size: wei(order.size),
+	commitDeposit: wei(order.commitDeposit),
+	keeperDeposit: wei(order.keeperDeposit),
+	priceImpactDelta: wei(order.priceImpactDelta),
+	targetRoundId: wei(order.targetRoundId),
+});
+
+export const unserializeDelayedOrders = (orders: DelayedOrder<string>[]): DelayedOrder[] =>
+	orders.map((o) => unserializeDelayedOrder(o));
+
 export const unserializeFuturesOrders = (orders: FuturesOrder<string>[]): FuturesOrder[] => {
 	return orders.map((o) => ({
 		...o,
@@ -552,3 +475,10 @@ export const serializeTradeFees = (fees: CrossMarginTradeFees) => ({
 	limitStopOrderFee: fees.limitStopOrderFee.toString(),
 	total: fees.total.toString(),
 });
+
+export const serializePrices = (prices: PricesMap) => {
+	return Object.entries(prices).reduce<PricesMap<string>>((acc, [key, price]) => {
+		acc[key as FuturesMarketAsset] = price.toString();
+		return acc;
+	}, {});
+};

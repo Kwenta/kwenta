@@ -5,7 +5,6 @@ import {
 	fetchCrossMarginAccountData,
 	fetchCrossMarginSettings,
 	fetchIsolatedMarginAccountData,
-	fetchMarkets,
 	fetchOpenOrders,
 	fetchSharedFuturesData,
 } from './actions';
@@ -49,7 +48,10 @@ export const usePollDashboardFuturesData = () => {
 	const wallet = useAppSelector(selectWallet);
 	const crossMarginAddress = useAppSelector(selectCrossMarginAccount);
 
-	usePollAction('fetchMarkets', fetchMarkets, { intervalTime: 60000, dependencies: [networkId] });
+	usePollAction('fetchSharedFuturesData', fetchSharedFuturesData, {
+		dependencies: [networkId],
+		intervalTime: 60000,
+	});
 	usePollAction('fetchIsolatedMarginAccountData', fetchIsolatedMarginAccountData, {
 		intervalTime: 30000,
 		dependencies: [wallet, markets.length, networkId],

@@ -4,8 +4,9 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
-import { useFuturesContext } from 'contexts/FuturesContext';
 import PositionButtons from 'sections/futures/PositionButtons';
+import { selectMarketPrice } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import { FuturesMarketAsset, getMarketName } from 'utils/futures';
 
 import { PositionSide } from '../types';
@@ -23,6 +24,8 @@ const ProfitCalculator: FC<ProfitCalculatorProps> = ({ marketAsset, setOpenProfi
 	const marketAsset__RemovedSChar = marketAsset[0] === 's' ? marketAsset.slice(1) : marketAsset;
 	const { t } = useTranslation();
 
+	const marketPrice = useAppSelector(selectMarketPrice);
+
 	// Wei
 	const [entryPrice, setEntryPrice] = useState('');
 	const [exitPrice, setExitPrice] = useState('');
@@ -33,8 +36,6 @@ const ProfitCalculator: FC<ProfitCalculatorProps> = ({ marketAsset, setOpenProfi
 	const [basePositionSize, setBasePositionSize] = useState('');
 	// Custom type
 	const [leverageSide, setLeverageSide] = useState(PositionSide.LONG);
-
-	const { marketAssetRate } = useFuturesContext();
 
 	const onEntryPriceAmountChange = (value: string) => {
 		setEntryPrice(value);
@@ -119,7 +120,7 @@ const ProfitCalculator: FC<ProfitCalculatorProps> = ({ marketAsset, setOpenProfi
 	);
 
 	useEffect(() => {
-		setEntryPrice(marketAssetRate.toNumber().toString());
+		setEntryPrice(marketPrice.toNumber().toString());
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -154,14 +155,14 @@ const ProfitCalculator: FC<ProfitCalculatorProps> = ({ marketAsset, setOpenProfi
 							<LabelWithInput
 								id={'exit-price'}
 								labelText={'Exit Price: '}
-								placeholder={marketAssetRate.add(marketAssetRate.mul(0.05)).toNumber().toFixed(2)}
+								placeholder={marketPrice.add(marketPrice.mul(0.05)).toNumber().toFixed(2)}
 								value={exitPrice}
 								onChange={(_: any, v: any) => onExitPriceAmountChange(v)}
 							/>
 							<LabelWithInput
 								id={'stop-loss'}
 								labelText={'Stop Loss: '}
-								placeholder={marketAssetRate.sub(marketAssetRate.mul(0.05)).toNumber().toFixed(2)}
+								placeholder={marketPrice.sub(marketPrice.mul(0.05)).toNumber().toFixed(2)}
 								value={stopLoss}
 								onChange={(_: any, v: any) => onStopLossAmountChange(v)}
 							/>
@@ -193,7 +194,7 @@ const ProfitCalculator: FC<ProfitCalculatorProps> = ({ marketAsset, setOpenProfi
 							<LabelWithInput
 								id={'base-position-size'}
 								labelText="Position Size: "
-								placeholder={marketAssetRate.mul(10).toNumber().toFixed(2)}
+								placeholder={marketPrice.mul(10).toNumber().toFixed(2)}
 								right="sUSD"
 								value={basePositionSize}
 								onChange={(_: any, v: any) => onTradeAmountSUSDChange(v)}

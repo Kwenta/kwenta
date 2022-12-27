@@ -34,8 +34,10 @@ import { CRYPTO_CURRENCY_MAP, SynthsName } from 'constants/currency';
 import { FuturesMarketKey } from './futures';
 
 export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = {
-	sBTC: BTCIcon,
+	sETHPERP: ETHIcon,
+	sBTCPERP: BTCIcon,
 	sETH: ETHIcon,
+	sBTC: BTCIcon,
 	sLINK: LINKIcon,
 	sSOL: SOLIcon,
 	sAVAX: AVAXIcon,

@@ -3,7 +3,7 @@ import Wei from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 
 import { FuturesOrderTypeDisplay, FuturesPotentialTradeDetails } from 'sdk/types/futures';
-import { FuturesMarketAsset } from 'utils/futures';
+import { FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
 
 export type FuturesOpenInterest = {
 	asset: string;
@@ -33,6 +33,7 @@ export type PositionHistory = {
 	closeTimestamp: number | undefined;
 	market: string;
 	asset: FuturesMarketAsset;
+	marketKey: FuturesMarketKey;
 	account: string;
 	abstractAccount: string;
 	accountType: FuturesAccountType;
@@ -196,7 +197,13 @@ export type FuturesTradeInputs = {
 	orderPrice?: Wei | undefined;
 };
 
-export type FuturesOrderType = 'market' | 'next price' | 'stop market' | 'limit';
+export type FuturesOrderType =
+	| 'market'
+	| 'next price'
+	| 'stop market'
+	| 'limit'
+	| 'delayed'
+	| 'delayed offchain';
 
 export type SpotsFee = {
 	timestamp: string;

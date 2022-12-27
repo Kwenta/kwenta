@@ -336,6 +336,8 @@
 				"seconds-ago": "sec ago"
 			},
 			"tooltips": {
+				"market-key": "The current price of the futures market after adding a skew-based premium or discount to the oracle price",
+				"oracle-price": "The exact oracle price of this market without any adjustment for market skew applied",
 				"external-price": "Aggregated market price provided by external sources (Coingecko, Forex Market, etc.)",
 				"24h-change": "Total change in asset value within the past 24 hours",
 				"24h-vol": "Total trade volume within the past 24 hours",
@@ -715,6 +717,7 @@
 			"trade": {
 				"market": "isolated market",
 				"title": "trade",
+				"perpsv2-disclaimer": "Synthetix Perps V2 markets are currently in closed alpha. Users assume all risks of interacting with these smart contracts.",
 				"input": {
 					"buy": "buy",
 					"sell": "sell",
@@ -746,6 +749,7 @@
 					"deposit-margin-minimum": "Deposit Margin",
 					"oi-caps-reached": "Open Interest Cap Reached",
 					"place-next-price-order": "Place Next Price Order",
+					"place-delayed-order": "Place Order",
 					"place-limit-order": "Place Limit Order",
 					"place-stop-order": "Place Stop Market Order",
 					"connect-wallet": "Connect Wallet"
@@ -781,6 +785,13 @@
 						}
 					}
 				},
+				"delayed-order": {
+					"description": "Delayed orders are subject to a time delay before execution by a keeper. The fill price is subject to volatility as the order is executed at a future price.",
+					"learn-more": "Learn more"
+				},
+				"market-order": {
+					"description": "Market order fees are significantly higher than delayed orders. Reducing your position size below max leverage will reenable closing your position using delayed orders."
+				},
 				"next-price": {
 					"description": "Next Price orders are subject to volatility and execute at the very next on-chain price.",
 					"learn-more": "Learn more"
@@ -792,7 +803,8 @@
 					"modal": {
 						"confirm-order": "Confirm order",
 						"max-leverage-disclaimer": "Note: A next price update could cause your order to exceed maximum leverage resulting in the order being dropped by the keeper.",
-						"disabled-min-margin": "Minimum market margin of $50 required" 
+						"disabled-min-margin": "Minimum market margin of $50 required",
+						"delayed-disclaimer": "* The deposit is applied to trading fees and keeper fees on order execution. If an order is either cancelled or not executed, the deposit will be forfeit to the Synthetix debt pool."
 					}
 				},
 				"leverage": {
@@ -832,7 +844,9 @@
 				},
 				"edit-leverage": {
 					"failed": "Transaction failed",
-					"insufficient-margin": "Leverage cannot be modified, please deposit more margin or reduce open position sizes"
+					"insufficient-margin": "Leverage cannot be increased, it exceeds the minimum margin requirement of $40",
+					"insufficient-free-margin": "Leverage cannot be modified, please deposit more margin or reduce open position sizes"
+
 				}
 			},
 			"history": {
@@ -870,11 +884,17 @@
 						"ROI": "ROI",
 						"fee": "Protocol Fee",
 						"fee-total": "Total Fees",
+						"estimated-fill": "Estimated Fill Price",
+						"estimated-price-impact": "Estimated Price Impact",
+						"fee-estimated": "Estimated Fees",
+						"time-delay": "Delay Until Executable",
+						"keeper-deposit": "Keeper Deposit",
 						"gas-fee": "Network Gas Fee",
 						"order-type": "Order Type",
 						"market-order": "Market",
 						"next-price-order": "Next Price",
-						"deposit": "Total Deposit",
+						"delayed-order": "Delayed",
+						"deposit": "Total Deposit*",
 						"np-discount": "Next Price Discount"
 					}
 				},
@@ -889,10 +909,10 @@
 						"size": "Size",
 						"size-price": "Size/Price",
 						"reserved-margin": "Reserved margin",
+						"commit-deposit": "Commit Deposit",
 						"price": "Price",
-						"status": "Status",
 						"parameters": "Parameters",
-						"actions": "Actions",
+						"status": "Status",
 						"no-result": "You have no open orders",
 						"open-filter": "Only show open orders"
 					},
@@ -900,6 +920,10 @@
 						"cancel": "Cancel",
 						"edit": "Edit",
 						"execute": "Execute"
+					},
+					"status": {
+						"pending": "Pending",
+						"expired": "Expired"
 					},
 					"badges": {
 						"expired": "Expired"
@@ -936,6 +960,9 @@
 						"no-results": "You have no transfer history"
 					}
 				}
+			},
+			"errors": {
+				"insufficient-margin": "Insufficient margin for this order"
 			}
 		},
 		"modals": {

@@ -1,15 +1,12 @@
-import React, { FC, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
-import TimerIcon from 'assets/svg/app/timer.svg';
 import InfoBox, { DetailedInfo } from 'components/InfoBox/InfoBox';
-import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { NO_VALUE } from 'constants/placeholder';
 import {
 	selectCrossMarginSettings,
 	selectCrossMarginTradeFees,
-	selectDynamicFeeRate,
+	selectDelayedOrderFee,
 	selectFuturesType,
 	selectIsolatedMarginFee,
 	selectMarketInfo,
@@ -17,38 +14,29 @@ import {
 	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { computeNPFee, computeMarketFee } from 'utils/costCalculations';
+import { computeOrderFee } from 'utils/costCalculations';
 import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 const FeeInfoBox: React.FC = () => {
 	const orderType = useAppSelector(selectOrderType);
 	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
 	const isolatedMarginFee = useAppSelector(selectIsolatedMarginFee);
-	const dynamicFeeRate = useAppSelector(selectDynamicFeeRate);
-	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
+	const { nativeSizeDelta, susdSizeDelta } = useAppSelector(selectTradeSizeInputs);
 	const accountType = useAppSelector(selectFuturesType);
 	const { tradeFee: crossMarginTradeFeeRate, limitOrderFee, stopOrderFee } = useAppSelector(
 		selectCrossMarginSettings
 	);
 	const marketInfo = useAppSelector(selectMarketInfo);
-
-	const { commitDeposit, nextPriceFee } = useMemo(() => computeNPFee(marketInfo, nativeSizeDelta), [
-		marketInfo,
-		nativeSizeDelta,
-	]);
+	const { commitDeposit } = useAppSelector(selectDelayedOrderFee);
 
 	const totalDeposit = useMemo(() => {
 		return (commitDeposit ?? zeroBN).add(marketInfo?.keeperDeposit ?? zeroBN);
 	}, [commitDeposit, marketInfo?.keeperDeposit]);
 
-	const nextPriceDiscount = useMemo(() => {
-		return (nextPriceFee ?? zeroBN).sub(commitDeposit ?? zeroBN);
-	}, [commitDeposit, nextPriceFee]);
-
-	const staticRate = useMemo(() => computeMarketFee(marketInfo, nativeSizeDelta), [
-		marketInfo,
-		nativeSizeDelta,
-	]);
+	const { orderFee, makerFee, takerFee } = useMemo(
+		() => computeOrderFee(marketInfo, susdSizeDelta, orderType),
+		[marketInfo, susdSizeDelta, orderType]
+	);
 
 	const orderFeeRate = useMemo(
 		() =>
@@ -59,18 +47,12 @@ const FeeInfoBox: React.FC = () => {
 	const marketCostTooltip = useMemo(
 		() => (
 			<>
-				{formatPercent(staticRate ?? zeroBN)}
-				{dynamicFeeRate?.gt(0) && (
-					<>
-						{' + '}
-						<ToolTip>
-							<StyledDynamicFee>{formatPercent(dynamicFeeRate)}</StyledDynamicFee>
-						</ToolTip>
-					</>
-				)}
+				{nativeSizeDelta.abs().gt(0)
+					? formatPercent(orderFee ?? zeroBN)
+					: `${formatPercent(makerFee ?? zeroBN)} / ${formatPercent(takerFee ?? zeroBN)}`}
 			</>
 		),
-		[staticRate, dynamicFeeRate]
+		[orderFee, makerFee, takerFee, nativeSizeDelta]
 	);
 
 	const feesInfo = useMemo<Record<string, DetailedInfo | null | undefined>>(() => {
@@ -114,7 +96,7 @@ const FeeInfoBox: React.FC = () => {
 				},
 			};
 		}
-		if (orderType === 'next price') {
+		if (orderType === 'delayed' || orderType === 'delayed offchain') {
 			return {
 				'Keeper Deposit': {
 					value: !!marketInfo?.keeperDeposit ? formatDollars(marketInfo.keeperDeposit) : NO_VALUE,
@@ -123,18 +105,16 @@ const FeeInfoBox: React.FC = () => {
 					value: !!commitDeposit
 						? formatDollars(commitDeposit, { minDecimals: commitDeposit.lt(0.01) ? 4 : 2 })
 						: NO_VALUE,
+					keyNode: marketCostTooltip,
 				},
 				'Total Deposit': {
 					value: formatDollars(totalDeposit),
 					spaceBeneath: true,
 				},
-				'Next Price Discount': {
-					value: !!nextPriceDiscount ? formatDollars(nextPriceDiscount) : NO_VALUE,
-					color: nextPriceDiscount.lt(0) ? 'green' : nextPriceDiscount.gt(0) ? 'red' : undefined,
-				},
 				'Estimated Fees': {
-					value: formatDollars(totalDeposit.add(nextPriceDiscount ?? zeroBN)),
-					keyNode: dynamicFeeRate?.gt(0) ? <ToolTip /> : null,
+					value: !!commitDeposit
+						? formatDollars(commitDeposit, { minDecimals: commitDeposit.lt(0.01) ? 4 : 2 })
+						: NO_VALUE,
 				},
 			};
 		}
@@ -154,11 +134,9 @@ const FeeInfoBox: React.FC = () => {
 		isolatedMarginFee,
 		crossMarginFees,
 		orderFeeRate,
-		dynamicFeeRate,
 		commitDeposit,
 		accountType,
 		marketInfo?.keeperDeposit,
-		nextPriceDiscount,
 		marketCostTooltip,
 		totalDeposit,
 	]);
@@ -166,41 +144,8 @@ const FeeInfoBox: React.FC = () => {
 	return <StyledInfoBox details={feesInfo} />;
 };
 
-const ToolTip: FC = (props) => {
-	const { t } = useTranslation();
-
-	return (
-		<DynamicStyledToolTip
-			height={'auto'}
-			preset="bottom"
-			width="300px"
-			content={t('futures.market.trade.cost-basis.tooltip')}
-			style={{ textTransform: 'none' }}
-		>
-			{props.children}
-			<StyledTimerIcon />
-		</DynamicStyledToolTip>
-	);
-};
-
 const StyledInfoBox = styled(InfoBox)`
 	margin-bottom: 16px;
-`;
-
-const DynamicStyledToolTip = styled(StyledTooltip)`
-	padding: 10px;
-`;
-
-const StyledDynamicFee = styled.span`
-	color: ${(props) => props.theme.colors.selectedTheme.gold};
-	margin-left: 5px;
-`;
-
-const StyledTimerIcon = styled(TimerIcon)`
-	margin-left: 5px;
-	path {
-		fill: ${(props) => props.theme.colors.selectedTheme.gold};
-	}
 `;
 
 export default FeeInfoBox;

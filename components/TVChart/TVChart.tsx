@@ -6,8 +6,10 @@ import { ThemeContext } from 'styled-components';
 import { chain } from 'wagmi';
 
 import Connector from 'containers/Connector';
-import { FuturesOrder } from 'sdk/types/futures';
+import { DelayedOrder } from 'sdk/types/futures';
+import { PricesListener } from 'sdk/types/prices';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
+import { sdk } from 'state/config';
 import { currentThemeState } from 'store/ui';
 import darkTheme from 'styles/theme/colors/dark';
 import { formatNumber } from 'utils/formatters/number';
@@ -24,7 +26,7 @@ import { ChartPosition } from './types';
 export type ChartProps = {
 	activePosition?: ChartPosition | null;
 	potentialTrade?: ChartPosition | null;
-	openOrders: FuturesOrder[];
+	openOrders: DelayedOrder[];
 	showOrderLines: boolean;
 	onChartReady?: () => void;
 	onToggleShowOrderLines?: () => void;
@@ -62,8 +64,8 @@ export function TVChart({
 	const _liquidationLine = useRef<IPositionLineAdapter | null | undefined>(null);
 	const _oderLineRefs = useRef<IPositionLineAdapter[]>([]);
 	const _toggleLinesButton = useRef<HTMLElement | null>(null);
-	const _intervalId = useRef<number | null>(null);
 	const _toggleListener = useRef<(() => void) | null>(null);
+	const _priceListener = useRef<PricesListener | undefined>();
 
 	const router = useRouter();
 
@@ -87,54 +89,63 @@ export function TVChart({
 		_oderLineRefs.current = [];
 	};
 
-	const renderOrderLines = () => {
-		_widget.current?.onChartReady(() => {
-			_widget.current?.chart().dataReady(() => {
-				clearOrderLines();
-				_oderLineRefs.current = openOrders.reduce<IPositionLineAdapter[]>((acc, order) => {
-					if (order.targetPrice) {
-						const color =
-							order.side === 'long'
-								? colors.selectedTheme.chartLine.long
-								: colors.selectedTheme.red;
+	useEffect(() => {
+		return () => {
+			if (_priceListener.current) {
+				sdk.prices.removePricesListener(_priceListener.current);
+			}
+		};
+	}, []);
 
-						const orderLine = _widget.current
-							?.chart()
-							.createPositionLine()
-							.setText(order.orderType)
-							.setTooltip('Average entry price')
-							.setQuantity(formatNumber(order.size.abs()))
-							.setPrice(order.targetPrice?.toNumber() ?? 0)
-							.setExtendLeft(false)
-							.setQuantityTextColor(colors.white)
-							.setBodyTextColor(darkTheme.black)
-							.setLineStyle(2)
-							.setLineColor(color)
-							.setBodyBorderColor(color)
-							.setQuantityBackgroundColor(color)
-							.setQuantityBorderColor(color)
-							.setLineLength(25);
-						if (orderLine) {
-							acc.push(orderLine);
-						}
-					}
-					return acc;
-				}, []);
-			});
-		});
-	};
+	// TODO: Re-enable on implementation of limit orders
+	// const renderOrderLines = () => {
+	// 	_widget.current?.onChartReady(() => {
+	// 		_widget.current?.chart().dataReady(() => {
+	// 			clearOrderLines();
+	// 			_oderLineRefs.current = openOrders.reduce<IPositionLineAdapter[]>((acc, order) => {
+	// 				if (order.targetPrice) {
+	// 					const color =
+	// 						order.side === 'long'
+	// 							? colors.selectedTheme.chartLine.long
+	// 							: colors.selectedTheme.red;
+
+	// 					const orderLine = _widget.current
+	// 						?.chart()
+	// 						.createPositionLine()
+	// 						.setText(order.orderType)
+	// 						.setTooltip('Average entry price')
+	// 						.setQuantity(formatNumber(order.size.abs()))
+	// 						.setPrice(order.targetPrice?.toNumber() ?? 0)
+	// 						.setExtendLeft(false)
+	// 						.setQuantityTextColor(colors.white)
+	// 						.setBodyTextColor(darkTheme.black)
+	// 						.setLineStyle(2)
+	// 						.setLineColor(color)
+	// 						.setBodyBorderColor(color)
+	// 						.setQuantityBackgroundColor(color)
+	// 						.setQuantityBorderColor(color)
+	// 						.setLineLength(25);
+	// 					if (orderLine) {
+	// 						acc.push(orderLine);
+	// 					}
+	// 				}
+	// 				return acc;
+	// 			}, []);
+	// 		});
+	// 	});
+	// };
 
 	const onToggleOrderLines = () => {
 		if (_oderLineRefs.current.length) {
 			clearOrderLines();
 		} else {
-			renderOrderLines();
+			// renderOrderLines();
 		}
 	};
 
 	useEffect(() => {
 		if (showOrderLines) {
-			renderOrderLines();
+			// renderOrderLines();
 		}
 		// eslint-disable-next-line
 	}, [openOrders]);
@@ -191,8 +202,8 @@ export function TVChart({
 				_widget.current.remove();
 				_widget.current = null;
 			}
-			if (_intervalId.current) {
-				clearInterval(_intervalId.current);
+			if (_priceListener.current) {
+				sdk.prices.removePricesListener(_priceListener.current);
 			}
 		};
 
@@ -291,8 +302,8 @@ export function TVChart({
 		});
 	}, [marketAsset]);
 
-	const onSubscribe = useCallback((newIntervalId: number) => {
-		_intervalId.current = newIntervalId;
+	const onSubscribe = useCallback((priceListener: PricesListener) => {
+		_priceListener.current = priceListener;
 	}, []);
 
 	return <ChartBody id={containerId} />;
