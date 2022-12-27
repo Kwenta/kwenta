@@ -5,11 +5,6 @@ import { Price } from 'queries/rates/types';
 import { getFuturesKey } from 'store/utils';
 import { zeroBN } from 'utils/formatters/number';
 
-export const activeTabState = atom<number>({
-	key: getFuturesKey('activeTab'),
-	default: 0,
-});
-
 export const pastRatesState = atom<Price[]>({
 	key: getFuturesKey('pastRates'),
 	default: [],
