@@ -11,6 +11,8 @@ import ExchangeRatesABI from './abis/ExchangeRates.json';
 import FuturesMarketDataABI from './abis/FuturesMarketData.json';
 import FuturesMarketSettingsABI from './abis/FuturesMarketSettings.json';
 import KwentaStakingRewardsABI from './abis/KwentaStakingRewards.json';
+import PerpsV2MarketDataABI from './abis/PerpsV2MarketData.json';
+import PerpsV2MarketSettingsABI from './abis/PerpsV2MarketSettings.json';
 import StakingRewardsABI from './abis/StakingRewards.json';
 import SynthRedeemerABI from './abis/SynthRedeemer.json';
 import { ADDRESSES } from './constants';
@@ -21,6 +23,8 @@ import {
 	Exchanger__factory,
 	FuturesMarketData__factory,
 	FuturesMarketSettings__factory,
+	PerpsV2MarketData__factory,
+	PerpsV2MarketSettings__factory,
 	RewardEscrow__factory,
 	Synthetix__factory,
 	SynthRedeemer__factory,
@@ -71,6 +75,12 @@ export const getContractsByNetwork = (
 			: undefined,
 		FuturesMarketData: ADDRESSES.FuturesMarketData[networkId]
 			? FuturesMarketData__factory.connect(ADDRESSES.FuturesMarketData[networkId], provider)
+			: undefined,
+		PerpsV2MarketData: ADDRESSES.PerpsV2MarketData[networkId]
+			? PerpsV2MarketData__factory.connect(ADDRESSES.PerpsV2MarketData[networkId], provider)
+			: undefined,
+		PerpsV2MarketSettings: ADDRESSES.PerpsV2MarketSettings[networkId]
+			? PerpsV2MarketSettings__factory.connect(ADDRESSES.PerpsV2MarketSettings[networkId], provider)
 			: undefined,
 		FuturesMarketSettings: ADDRESSES.FuturesMarketSettings[networkId]
 			? FuturesMarketSettings__factory.connect(ADDRESSES.FuturesMarketSettings[networkId], provider)
@@ -152,6 +162,12 @@ export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 			: undefined,
 		FuturesMarketSettings: ADDRESSES.FuturesMarketSettings[networkId]
 			? new EthCallContract(ADDRESSES.FuturesMarketSettings[networkId], FuturesMarketSettingsABI)
+			: undefined,
+		PerpsV2MarketData: ADDRESSES.PerpsV2MarketData[networkId]
+			? new EthCallContract(ADDRESSES.PerpsV2MarketData[networkId], PerpsV2MarketDataABI)
+			: undefined,
+		PerpsV2MarketSettings: ADDRESSES.PerpsV2MarketSettings[networkId]
+			? new EthCallContract(ADDRESSES.PerpsV2MarketSettings[networkId], PerpsV2MarketSettingsABI)
 			: undefined,
 		StakingRewards: ADDRESSES.StakingRewards[networkId]
 			? new EthCallContract(ADDRESSES.StakingRewards[networkId], StakingRewardsABI)

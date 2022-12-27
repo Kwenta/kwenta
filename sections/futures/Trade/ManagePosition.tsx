@@ -4,15 +4,16 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import Error from 'components/Error';
-import Loader from 'components/Loader';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { previewErrorI18n } from 'queries/futures/constants';
+import { PositionSide } from 'queries/futures/types';
 import { setOpenModal } from 'state/app/reducer';
 import { selectOpenModal } from 'state/app/selectors';
+import { changeLeverageSide, editTradeSizeInput } from 'state/futures/actions';
 import {
 	selectMarketInfo,
 	selectIsMarketCapReached,
-	selectMarketAssetRate,
+	selectMarketPrice,
 	selectPlaceOrderTranslationKey,
 	selectPosition,
 	selectMaxLeverage,
@@ -28,6 +29,7 @@ import {
 	selectFuturesType,
 	selectCrossMarginMarginDelta,
 	selectLeverageSide,
+	selectOpenOrder,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
@@ -36,6 +38,7 @@ import { orderPriceInvalidLabel } from 'utils/futures';
 
 import ClosePositionModalCrossMargin from '../PositionCard/ClosePositionModalCrossMargin';
 import ClosePositionModalIsolatedMargin from '../PositionCard/ClosePositionModalIsolatedMargin';
+import DelayedOrderConfirmationModal from './DelayedOrderConfirmationModal';
 import TradeConfirmationModalCrossMargin from './TradeConfirmationModalCrossMargin';
 import TradeConfirmationModalIsolatedMargin from './TradeConfirmationModalIsolatedMargin';
 
@@ -53,15 +56,17 @@ const ManagePosition: React.FC = () => {
 	const previewTrade = useAppSelector(selectTradePreview);
 
 	const previewError = useAppSelector(selectTradePreviewError);
+	const transaction = useAppSelector(selectFuturesTransaction);
 	const leverage = useAppSelector(selectIsolatedMarginLeverage);
 	const orderType = useAppSelector(selectOrderType);
+	const openOrder = useAppSelector(selectOpenOrder);
 	const leverageSide = useAppSelector(selectLeverageSide);
 
 	const futuresTransaction = useAppSelector(selectFuturesTransaction);
 	const isMarketCapReached = useAppSelector(selectIsMarketCapReached);
 	const placeOrderTranslationKey = useAppSelector(selectPlaceOrderTranslationKey);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
-	const marketAssetRate = useAppSelector(selectMarketAssetRate);
+	const marketAssetRate = useAppSelector(selectMarketPrice);
 	const isAdvancedOrder = useAppSelector(selectIsAdvancedOrder);
 	const openModal = useAppSelector(selectOpenModal);
 	const marketInfo = useAppSelector(selectMarketInfo);
@@ -74,16 +79,10 @@ const ManagePosition: React.FC = () => {
 
 	const orderError = useMemo(() => {
 		if (previewError) return t(previewErrorI18n(previewError));
-		if (futuresTransaction?.error) return futuresTransaction.error;
+		if (transaction?.error) return transaction.error;
 		if (previewTrade?.showStatus) return previewTrade?.statusMessage;
 		return null;
-	}, [
-		previewTrade?.showStatus,
-		previewTrade?.statusMessage,
-		futuresTransaction?.error,
-		previewError,
-		t,
-	]);
+	}, [previewTrade?.showStatus, previewTrade?.statusMessage, previewError, t, transaction]);
 
 	const leverageValid = useMemo(() => {
 		if (selectedAccountType === 'cross_margin') return true;
@@ -98,6 +97,7 @@ const ManagePosition: React.FC = () => {
 			marketAssetRate,
 			orderType
 		);
+
 		if (!leverageValid) return 'invalid_leverage';
 		if (marketInfo?.isSuspended) return 'market_suspended';
 		if (isMarketCapReached) return 'market_cap_reached';
@@ -110,6 +110,9 @@ const ManagePosition: React.FC = () => {
 			if ((isZero(marginDelta) && isZero(susdSize)) || previewStatus.status !== FetchStatus.Success)
 				return 'awaiting_preview';
 			if (orderType !== 'market' && isZero(orderPrice)) return 'pricerequired';
+		} else if (selectedAccountType === 'isolated_margin') {
+			if ((orderType === 'delayed' || orderType === 'delayed offchain') && !!openOrder)
+				return 'order_open';
 		} else if (isZero(susdSize)) {
 			return 'size_required';
 		}
@@ -120,6 +123,7 @@ const ManagePosition: React.FC = () => {
 		susdSize,
 		marginDelta,
 		orderType,
+		openOrder,
 		orderPrice,
 		leverageSide,
 		marketAssetRate,
@@ -148,11 +152,7 @@ const ManagePosition: React.FC = () => {
 						disabled={!!placeOrderDisabledReason}
 						onClick={() => dispatch(setOpenModal('futures_modify_position_confirm'))}
 					>
-						{previewStatus.status === FetchStatus.Loading ? (
-							<Loader />
-						) : (
-							t(placeOrderTranslationKey)
-						)}
+						{t(placeOrderTranslationKey)}
 					</PlaceOrderButton>
 
 					<CloseOrderButton
@@ -161,7 +161,21 @@ const ManagePosition: React.FC = () => {
 						noOutline
 						variant="danger"
 						onClick={() => {
-							dispatch(setOpenModal('futures_close_position_confirm'));
+							if (
+								(orderType === 'delayed' || orderType === 'delayed offchain') &&
+								position?.position?.size
+							) {
+								const newTradeSize = position.position.size;
+								const newLeverageSide =
+									position.position.side === PositionSide.LONG
+										? PositionSide.SHORT
+										: PositionSide.LONG;
+								dispatch(changeLeverageSide(newLeverageSide));
+								dispatch(editTradeSizeInput(newTradeSize.toString(), 'native'));
+								dispatch(setOpenModal('futures_modify_position_confirm'));
+							} else {
+								dispatch(setOpenModal('futures_close_position_confirm'));
+							}
 						}}
 						disabled={!positionDetails || marketInfo?.isSuspended || isAdvancedOrder}
 					>
@@ -184,6 +198,8 @@ const ManagePosition: React.FC = () => {
 			{isConfirmationModalOpen &&
 				(selectedAccountType === 'cross_margin' ? (
 					<TradeConfirmationModalCrossMargin />
+				) : orderType === 'delayed' || orderType === 'delayed offchain' ? (
+					<DelayedOrderConfirmationModal />
 				) : (
 					<TradeConfirmationModalIsolatedMargin />
 				))}

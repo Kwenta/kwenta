@@ -72,6 +72,12 @@ export const calculatedTimeDifference = (dateLeft: Date, dateRight: Date) =>
 
 export const keepDoublePlaceholder = (num: number) => (num < 9 ? `0${num}` : num);
 
+export const formatTimer = (seconds: number) => {
+	const numMinutes = Math.floor(seconds / 60);
+	const numSeconds = seconds % 60;
+	return `${numMinutes}:${String(numSeconds).padStart(2, '0')}`;
+};
+
 export const formatTruncatedDuration = (delta: number): string => {
 	const days = Math.floor(delta / 86400);
 	delta -= days * 86400;

@@ -1,11 +1,9 @@
-import { ReactElement, useMemo } from 'react';
+import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
-import TimerTooltip from 'components/Tooltip/TimerTooltip';
-import useRateUpdateQuery from 'queries/rates/useRateUpdateQuery';
-import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
+import { selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 
 import { isMarketDataKey, marketDataKeyMap } from './utils';
@@ -19,17 +17,9 @@ type MarketDetailProps = {
 
 const MarketDetail: React.FC<MarketDetailProps> = ({ mobile, marketKey, color, value }) => {
 	const { t } = useTranslation();
-	const marketAsset = useAppSelector(selectMarketAsset);
 	const marketInfo = useAppSelector(selectMarketInfo);
 
 	const pausedClass = marketInfo?.isSuspended ? 'paused' : '';
-	const lastOracleUpdateTimeQuery = useRateUpdateQuery({
-		baseCurrencyKey: marketAsset,
-	});
-
-	const lastOracleUpdateTime: Date = useMemo(() => lastOracleUpdateTimeQuery?.data ?? new Date(), [
-		lastOracleUpdateTimeQuery,
-	]);
 	const children = (
 		<WithCursor cursor="help" key={marketKey}>
 			<div key={marketKey}>
@@ -41,14 +31,15 @@ const MarketDetail: React.FC<MarketDetailProps> = ({ mobile, marketKey, color, v
 
 	if (marketKey === marketInfo?.marketName) {
 		return (
-			<TimerTooltip
-				position={'fixed'}
+			<MarketDetailsTooltip
 				key={marketKey}
-				startTimeDate={lastOracleUpdateTime}
-				width={'131px'}
+				position={'fixed'}
+				height={'auto'}
+				mobile={mobile}
+				content={t(`exchange.market-details-card.tooltips.market-key`)}
 			>
 				{children}
-			</TimerTooltip>
+			</MarketDetailsTooltip>
 		);
 	}
 

@@ -1,3 +1,5 @@
+import { EventEmitter } from 'events';
+
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { Provider as EthCallProvider } from 'ethcall';
 import { ethers } from 'ethers';
@@ -26,6 +28,7 @@ export default class Context implements IContext {
 	public multicallProvider = new EthCallProvider();
 	public contracts: ContractsMap;
 	public multicallContracts: MulticallContractsMap;
+	public events = new EventEmitter().setMaxListeners(100);
 
 	constructor(context: IContext) {
 		this.context = { ...DEFAULT_CONTEXT, ...context };
@@ -87,6 +90,7 @@ export default class Context implements IContext {
 		this.context.networkId = networkId;
 		this.contracts = getContractsByNetwork(networkId, this.context.signer ?? this.provider);
 		this.multicallContracts = getMulticallContractsByNetwork(networkId);
+		this.events.emit('network_changed', { networkId: networkId });
 	}
 
 	public async setSigner(signer: ethers.Signer) {

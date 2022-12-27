@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import MarketBadge from 'components/Badge/MarketBadge';
@@ -21,12 +20,12 @@ import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesAccountType } from 'queries/futures/subgraph';
 import {
 	selectCrossMarginPositions,
+	selectFuturesPositionHistory,
 	selectIsolatedMarginPositions,
 	selectMarketAsset,
 	selectMarkets,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { positionHistoryState } from 'store/futures';
 import { formatNumber } from 'utils/formatters/number';
 import { getSynthDescription } from 'utils/futures';
 
@@ -50,7 +49,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
 	const crossMarginPositions = useAppSelector(selectCrossMarginPositions);
-	const positionHistory = useRecoilValue(positionHistoryState);
+	const positionHistory = useAppSelector(selectFuturesPositionHistory);
 	const currentMarket = useAppSelector(selectMarketAsset);
 	const futuresMarkets = useAppSelector(selectMarkets);
 
@@ -60,7 +59,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 			.map((position) => {
 				const market = futuresMarkets.find((market) => market.asset === position.asset);
 				const description = getSynthDescription(position.asset, synthsMap, t);
-				const thisPositionHistory = positionHistory[accountType].find((positionHistory) => {
+				const thisPositionHistory = positionHistory.find((positionHistory) => {
 					return positionHistory.isOpen && positionHistory.asset === position.asset;
 				});
 

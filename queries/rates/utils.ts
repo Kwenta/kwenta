@@ -48,6 +48,8 @@ const markets = new Set<FuturesMarketKey>([
 ]);
 
 const map: Record<FuturesMarketKey, string> = {
+	[FuturesMarketKey.sETHPERP]: 'ethereum',
+	[FuturesMarketKey.sBTCPERP]: 'bitcoin',
 	[FuturesMarketKey.sETH]: 'ethereum',
 	[FuturesMarketKey.sBTC]: 'bitcoin',
 	[FuturesMarketKey.sLINK]: 'chainlink',

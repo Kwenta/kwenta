@@ -30,7 +30,7 @@ const useGetFuturesTrades = (
 					{
 						first: DEFAULT_NUMBER_OF_TRADES,
 						where: {
-							asset: `${ethersUtils.formatBytes32String(currencyKey)}`,
+							marketKey: `${ethersUtils.formatBytes32String(currencyKey)}`,
 							timestamp_gt: pageParam.minTs,
 							timestamp_lt: pageParam.maxTs,
 						},
@@ -46,6 +46,7 @@ const useGetFuturesTrades = (
 						margin: true,
 						size: true,
 						asset: true,
+						marketKey: true,
 						price: true,
 						positionId: true,
 						positionSize: true,

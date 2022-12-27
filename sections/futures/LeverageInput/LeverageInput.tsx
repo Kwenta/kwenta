@@ -10,11 +10,12 @@ import { editIsolatedMarginSize } from 'state/futures/actions';
 import { setIsolatedMarginLeverageInput } from 'state/futures/reducer';
 import {
 	selectIsolatedLeverageInput,
-	selectIsolatedMarginLeverage,
-	selectMarketAssetRate,
+	selectMarketPrice,
 	selectMarketInfo,
 	selectMaxLeverage,
 	selectPosition,
+	selectOrderType,
+	selectNextPriceDisclaimer,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FlexDivCol, FlexDivRow } from 'styles/common';
@@ -26,26 +27,27 @@ const LeverageInput: FC = () => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
-	const leverage = useAppSelector(selectIsolatedMarginLeverage);
+	const orderType = useAppSelector(selectOrderType);
+	const isDisclaimerDisplayed = useAppSelector(selectNextPriceDisclaimer);
 	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const maxLeverage = useAppSelector(selectMaxLeverage);
-	const marketAssetRate = useAppSelector(selectMarketAssetRate);
+	const marketPrice = useAppSelector(selectMarketPrice);
 	const leverageInput = useAppSelector(selectIsolatedLeverageInput);
 
 	const onLeverageChange = useCallback(
 		(newLeverage: number) => {
 			const remainingMargin = position?.remainingMargin ?? zeroBN;
 			const newTradeSize =
-				marketAssetRate.eq(0) || remainingMargin.eq(0)
+				marketPrice.eq(0) || remainingMargin.eq(0)
 					? ''
-					: wei(newLeverage).mul(remainingMargin).div(marketAssetRate).toString();
+					: wei(newLeverage).mul(remainingMargin).div(marketPrice).toString();
 			const input = truncateNumbers(newLeverage, DEFAULT_FIAT_DECIMALS);
 			dispatch(setIsolatedMarginLeverageInput(input));
 			const floored = floorNumber(Number(newTradeSize), 4);
 			dispatch(editIsolatedMarginSize(String(floored), 'native'));
 		},
-		[position?.remainingMargin, marketAssetRate, dispatch]
+		[position?.remainingMargin, marketPrice, dispatch]
 	);
 
 	const modeButton = useMemo(() => {
@@ -68,7 +70,11 @@ const LeverageInput: FC = () => {
 	const truncateMaxLeverage = maxLeverage.gte(0)
 		? truncateNumbers(maxLeverage, DEFAULT_FIAT_DECIMALS)
 		: 10;
-	const truncateLeverage = truncateNumbers(leverage, DEFAULT_FIAT_DECIMALS);
+
+	const truncateLeverage = useMemo(
+		() => truncateNumbers(wei(leverageInput ?? 0), DEFAULT_FIAT_DECIMALS),
+		[leverageInput]
+	);
 
 	return (
 		<LeverageInputWrapper>
@@ -79,6 +85,11 @@ const LeverageInput: FC = () => {
 				</LeverageTitle>
 				{modeButton}
 			</LeverageRow>
+			{(orderType === 'delayed' || orderType === 'delayed offchain') && isDisclaimerDisplayed && (
+				<LeverageDisclaimer>
+					{t('futures.market.trade.input.leverage.disclaimer')}
+				</LeverageDisclaimer>
+			)}
 			{mode === 'slider' ? (
 				<SliderRow>
 					<LeverageSlider
@@ -171,6 +182,12 @@ const TextButton = styled.button`
 	background-color: transparent;
 	border: none;
 	cursor: pointer;
+`;
+
+const LeverageDisclaimer = styled.div`
+	font-size: 13px;
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
+	margin: 0 8px 12px;
 `;
 
 const StyledInput = styled(CustomNumericInput)`

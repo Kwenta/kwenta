@@ -8,8 +8,7 @@ import InputTitle from 'components/Input/InputTitle';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { editTradeSizeInput } from 'state/futures/actions';
 import {
-	selectMarketKey,
-	selectMarketAssetRate,
+	selectMarketPrice,
 	selectCrossMarginBalanceInfo,
 	selectPosition,
 	selectTradeSizeInputs,
@@ -17,6 +16,7 @@ import {
 	selectOrderType,
 	selectLeverageSide,
 	selectFuturesType,
+	selectMarketAsset,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FlexDivRow } from 'styles/common';
@@ -40,11 +40,11 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	const position = useAppSelector(selectPosition);
 	const selectedAccountType = useAppSelector(selectFuturesType);
 	const orderType = useAppSelector(selectOrderType);
-	const marketAssetRate = useAppSelector(selectMarketAssetRate);
+	const marketAssetRate = useAppSelector(selectMarketPrice);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
 	const selectedLeverageSide = useAppSelector(selectLeverageSide);
 
-	const marketKey = useAppSelector(selectMarketKey);
+	const marketAsset = useAppSelector(selectMarketAsset);
 
 	const [assetInputType, setAssetInputType] = useState<'usd' | 'native'>('usd');
 
@@ -121,7 +121,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 						<InputButton
 							onClick={() => setAssetInputType(assetInputType === 'usd' ? 'native' : 'usd')}
 						>
-							{assetInputType === 'usd' ? 'sUSD' : getDisplayAsset(marketKey)}{' '}
+							{assetInputType === 'usd' ? 'sUSD' : getDisplayAsset(marketAsset)}{' '}
 							<span>{<SwitchAssetArrows />}</span>
 						</InputButton>
 					}

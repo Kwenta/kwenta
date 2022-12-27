@@ -7,17 +7,23 @@ import Connector from 'containers/Connector';
 import ExchangeContent from 'sections/exchange/ExchangeContent';
 import ExchangeHead from 'sections/exchange/ExchangeHead';
 import AppLayout from 'sections/shared/Layout/AppLayout';
-import { resetCurrencies } from 'state/exchange/actions';
+import { fetchTokenList, resetCurrencies } from 'state/exchange/actions';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FullScreenContainer, MobileScreenContainer } from 'styles/common';
 
 type ExchangeComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
 const Exchange: ExchangeComponent = () => {
-	const { network } = Connector.useContainer();
+	const { network, providerReady } = Connector.useContainer();
 	const router = useRouter();
 	const dispatch = useAppDispatch();
 	const walletAddress = useAppSelector(({ wallet }) => wallet.walletAddress);
+
+	useEffect(() => {
+		if (providerReady) {
+			dispatch(fetchTokenList());
+		}
+	}, [providerReady, dispatch]);
 
 	useEffect(() => {
 		const quoteCurrencyFromQuery = (router.query.quote as string | undefined) ?? 'sUSD';

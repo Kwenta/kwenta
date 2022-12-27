@@ -6,13 +6,13 @@ import { useRecoilValue } from 'recoil';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useExternalPriceQuery from 'queries/rates/useExternalPriceQuery';
 import {
-	selectFundingRate,
 	selectMarketAsset,
 	selectMarketInfo,
 	selectMarketKey,
 	selectMarketVolumes,
+	selectMarketPrices,
+	selectSkewAdjustedPrice,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { pastRatesState } from 'store/futures';
@@ -29,16 +29,15 @@ const useGetMarketData = (mobile?: boolean) => {
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const marketKey = useAppSelector(selectMarketKey);
-	const fundingRate = useAppSelector(selectFundingRate);
 	const marketInfo = useAppSelector(selectMarketInfo);
 
 	const pastRates = useRecoilValue(pastRatesState);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
+	const marketPrices = useAppSelector(selectMarketPrices);
+	const marketPrice = useAppSelector(selectSkewAdjustedPrice);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
-	const externalPriceQuery = useExternalPriceQuery(marketKey);
-	const externalPrice = externalPriceQuery?.data ?? 0;
 	const minDecimals =
 		isFiatCurrency(selectedPriceCurrency.name) && isDecimalFour(marketKey)
 			? DEFAULT_CRYPTO_DECIMALS
@@ -46,37 +45,35 @@ const useGetMarketData = (mobile?: boolean) => {
 
 	const pastPrice = pastRates.find((price) => price.synth === marketAsset);
 
-	const fundingTitle = useMemo(
-		() => `${fundingRate?.fundingTitle ?? t('futures.market.info.hourly-funding')}`,
-		[fundingRate, t]
-	);
+	const oraclePrice = marketPrices.onChain ?? wei(0);
 
 	const data: MarketData = useMemo(() => {
-		const fundingValue =
-			!fundingRate?.fundingRate && !!fundingRate
-				? marketInfo?.currentFundingRate
-				: fundingRate?.fundingRate;
+		const fundingValue = marketInfo?.currentFundingRate;
 
-		const marketPrice = wei(marketInfo?.price ?? 0);
 		const marketName = `${marketInfo?.marketName ?? t('futures.market.info.default-market')}`;
 
-		const futuresTradingVolume = marketInfo?.assetHex
-			? futuresVolumes[marketInfo.assetHex]?.volume ?? wei(0)
+		const futuresTradingVolume = marketInfo?.marketKey
+			? futuresVolumes[marketInfo.marketKey]?.volume ?? wei(0)
 			: wei(0);
-		const futuresTradeCount = marketInfo?.assetHex
-			? futuresVolumes[marketInfo.assetHex]?.trades.toNumber() ?? 0
+		const futuresTradeCount = marketInfo?.marketKey
+			? futuresVolumes[marketInfo.marketKey]?.trades.toNumber() ?? 0
 			: 0;
 
 		if (mobile) {
 			return {
-				'Live Price': {
-					value:
-						externalPrice === 0
-							? '-'
-							: formatCurrency(selectedPriceCurrency.name, externalPrice, {
-									sign: '$',
-									minDecimals,
-							  }),
+				[marketName]: {
+					value: formatCurrency(selectedPriceCurrency.name, marketPrice, {
+						sign: '$',
+						minDecimals,
+						isAssetPrice: true,
+					}),
+				},
+				[MarketDataKey.oraclePrice]: {
+					value: formatCurrency(selectedPriceCurrency.name, oraclePrice, {
+						sign: '$',
+						minDecimals,
+						isAssetPrice: true,
+					}),
 				},
 				[MarketDataKey.dailyTrades]: {
 					value: `${futuresTradeCount}`,
@@ -95,7 +92,7 @@ const useGetMarketData = (mobile?: boolean) => {
 						sign: '$',
 					}),
 				},
-				[fundingTitle]: {
+				[t('futures.market.info.hourly-funding')]: {
 					value: fundingValue
 						? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 })
 						: NO_VALUE,
@@ -103,21 +100,20 @@ const useGetMarketData = (mobile?: boolean) => {
 				},
 				[MarketDataKey.dailyChange]: {
 					value:
-						marketPrice && marketPrice.gt(0) && pastPrice?.price
+						marketPrice.gt(0) && pastPrice?.price
 							? `${formatCurrency(
 									selectedPriceCurrency.name,
 									marketPrice.sub(pastPrice.price) ?? zeroBN,
 									{ sign: '$', minDecimals, isAssetPrice: true }
 							  )} (${formatPercent(marketPrice.sub(pastPrice.price).div(marketPrice) ?? zeroBN)})`
 							: NO_VALUE,
-					color:
-						marketPrice && pastPrice?.price
-							? marketPrice.sub(pastPrice.price).gt(zeroBN)
-								? 'green'
-								: marketPrice.sub(pastPrice.price).lt(zeroBN)
-								? 'red'
-								: ''
-							: undefined,
+					color: pastPrice?.price
+						? marketPrice.sub(pastPrice.price).gt(zeroBN)
+							? 'green'
+							: marketPrice.sub(pastPrice.price).lt(zeroBN)
+							? 'red'
+							: ''
+						: undefined,
 				},
 			};
 		} else {
@@ -129,33 +125,29 @@ const useGetMarketData = (mobile?: boolean) => {
 						isAssetPrice: true,
 					}),
 				},
-				[MarketDataKey.externalPrice]: {
-					value:
-						externalPrice === 0
-							? NO_VALUE
-							: formatCurrency(selectedPriceCurrency.name, externalPrice, {
-									sign: '$',
-									minDecimals,
-									isAssetPrice: true,
-							  }),
+				[MarketDataKey.oraclePrice]: {
+					value: formatCurrency(selectedPriceCurrency.name, oraclePrice, {
+						sign: '$',
+						minDecimals,
+						isAssetPrice: true,
+					}),
 				},
 				[MarketDataKey.dailyChange]: {
 					value:
-						marketPrice && marketPrice.gt(0) && pastPrice?.price
+						marketPrice.gt(0) && pastPrice?.price
 							? `${formatCurrency(
 									selectedPriceCurrency.name,
 									marketPrice.sub(pastPrice.price) ?? zeroBN,
 									{ sign: '$', minDecimals, isAssetPrice: true }
 							  )} (${formatPercent(marketPrice.sub(pastPrice.price).div(marketPrice) ?? zeroBN)})`
 							: NO_VALUE,
-					color:
-						marketPrice && pastPrice?.price
-							? marketPrice.sub(pastPrice.price).gt(zeroBN)
-								? 'green'
-								: marketPrice.sub(pastPrice.price).lt(zeroBN)
-								? 'red'
-								: ''
-							: undefined,
+					color: pastPrice?.price
+						? marketPrice.sub(pastPrice.price).gt(zeroBN)
+							? 'green'
+							: marketPrice.sub(pastPrice.price).lt(zeroBN)
+							? 'red'
+							: ''
+						: undefined,
 				},
 				[MarketDataKey.dailyVolume]: {
 					value: formatCurrency(selectedPriceCurrency.name, futuresTradingVolume ?? zeroBN, {
@@ -172,7 +164,7 @@ const useGetMarketData = (mobile?: boolean) => {
 						  })
 						: NO_VALUE,
 				},
-				[fundingTitle]: {
+				[t('futures.market.info.hourly-funding')]: {
 					value: fundingValue
 						? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 })
 						: NO_VALUE,
@@ -185,13 +177,12 @@ const useGetMarketData = (mobile?: boolean) => {
 	}, [
 		marketAsset,
 		marketInfo,
+		oraclePrice,
 		futuresVolumes,
 		selectedPriceCurrency.name,
-		externalPrice,
 		pastPrice?.price,
-		fundingRate,
 		minDecimals,
-		fundingTitle,
+		marketPrice,
 		t,
 	]);
 

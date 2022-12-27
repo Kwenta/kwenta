@@ -1,15 +1,25 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
+import { parseBytes32String } from 'ethers/lib/utils.js';
 
 import { ETH_UNIT } from 'constants/network';
-import { FuturesAggregateStatResult } from 'queries/futures/subgraph';
-import { FUTURES_ENDPOINTS, MAINNET_MARKETS, TESTNET_MARKETS } from 'sdk/constants/futures';
-import { SECONDS_PER_DAY } from 'sdk/constants/period';
+import { FuturesAggregateStatResult, FuturesPositionResult } from 'queries/futures/subgraph';
 import {
+	FUTURES_ENDPOINTS,
+	MAINNET_MARKETS,
+	TESTNET_MARKETS,
+	AGGREGATE_ASSET_KEY,
+} from 'sdk/constants/futures';
+import { SECONDS_PER_DAY } from 'sdk/constants/period';
+import { IPerpsV2MarketConsolidated } from 'sdk/contracts/types/PerpsV2Market';
+import {
+	DelayedOrder,
 	FundingRateUpdate,
 	FuturesMarketAsset,
 	FuturesMarketKey,
 	FuturesPosition,
+	FuturesPositionHistory,
 	FuturesPotentialTradeDetails,
 	FuturesVolumes,
 	MarketClosureReason,
@@ -125,12 +135,14 @@ export const calculateVolumes = (
 	futuresHourlyStats: FuturesAggregateStatResult[]
 ): FuturesVolumes => {
 	const volumes: FuturesVolumes = futuresHourlyStats.reduce(
-		(acc: FuturesVolumes, { asset, volume, trades }) => {
+		(acc: FuturesVolumes, { marketKey, volume, trades }) => {
+			const cleanMarketKey =
+				marketKey !== AGGREGATE_ASSET_KEY ? parseBytes32String(marketKey) : marketKey;
 			return {
 				...acc,
-				[asset]: {
-					volume: volume.div(ETH_UNIT).add(acc[asset]?.volume ?? 0),
-					trades: trades.add(acc[asset]?.trades ?? 0),
+				[cleanMarketKey]: {
+					volume: volume.div(ETH_UNIT).add(acc[cleanMarketKey]?.volume ?? 0),
+					trades: trades.add(acc[cleanMarketKey]?.trades ?? 0),
 				},
 			};
 		},
@@ -191,6 +203,78 @@ export const mapFuturesPosition = (
 	};
 };
 
+export const mapFuturesPositions = (
+	futuresPositions: FuturesPositionResult[]
+): FuturesPositionHistory[] => {
+	return futuresPositions.map(
+		({
+			id,
+			lastTxHash,
+			openTimestamp,
+			closeTimestamp,
+			timestamp,
+			market,
+			asset,
+			marketKey,
+			account,
+			abstractAccount,
+			accountType,
+			isOpen,
+			isLiquidated,
+			trades,
+			totalVolume,
+			size,
+			initialMargin,
+			margin,
+			pnl,
+			feesPaid,
+			netFunding,
+			pnlWithFeesPaid,
+			netTransfers,
+			totalDeposits,
+			entryPrice,
+			avgEntryPrice,
+			exitPrice,
+		}: FuturesPositionResult) => {
+			const entryPriceWei = wei(entryPrice).div(ETH_UNIT);
+			const feesWei = wei(feesPaid || 0).div(ETH_UNIT);
+			const sizeWei = wei(size).div(ETH_UNIT);
+			const marginWei = wei(margin).div(ETH_UNIT);
+			return {
+				id: Number(id.split('-')[1].toString()),
+				transactionHash: lastTxHash,
+				timestamp: timestamp.mul(1000).toNumber(),
+				openTimestamp: openTimestamp.mul(1000).toNumber(),
+				closeTimestamp: closeTimestamp?.mul(1000).toNumber(),
+				market,
+				asset: parseBytes32String(asset) as FuturesMarketAsset,
+				marketKey: parseBytes32String(marketKey) as FuturesMarketKey,
+				account,
+				abstractAccount,
+				accountType,
+				isOpen,
+				isLiquidated,
+				size: sizeWei.abs(),
+				feesPaid: feesWei,
+				netFunding: wei(netFunding || 0).div(ETH_UNIT),
+				netTransfers: wei(netTransfers || 0).div(ETH_UNIT),
+				totalDeposits: wei(totalDeposits || 0).div(ETH_UNIT),
+				initialMargin: wei(initialMargin).div(ETH_UNIT),
+				margin: marginWei,
+				entryPrice: entryPriceWei,
+				exitPrice: wei(exitPrice || 0).div(ETH_UNIT),
+				pnl: wei(pnl).div(ETH_UNIT),
+				pnlWithFeesPaid: wei(pnlWithFeesPaid).div(ETH_UNIT),
+				totalVolume: wei(totalVolume).div(ETH_UNIT),
+				trades: trades.toNumber(),
+				avgEntryPrice: wei(avgEntryPrice).div(ETH_UNIT),
+				leverage: marginWei.eq(wei(0)) ? wei(0) : sizeWei.mul(entryPriceWei).div(marginWei).abs(),
+				side: sizeWei.gte(wei(0)) ? PositionSide.LONG : PositionSide.SHORT,
+			};
+		}
+	);
+};
+
 export const serializePotentialTrade = (
 	preview: FuturesPotentialTradeDetails
 ): FuturesPotentialTradeDetails<string> => ({
@@ -203,6 +287,8 @@ export const serializePotentialTrade = (
 	fee: preview.fee.toString(),
 	leverage: preview.leverage.toString(),
 	notionalValue: preview.notionalValue.toString(),
+	priceImpact: preview.priceImpact.toString(),
+	slippageAmount: preview.slippageAmount.toString(),
 });
 
 export const unserializePotentialTrade = (
@@ -217,7 +303,80 @@ export const unserializePotentialTrade = (
 	fee: wei(preview.fee),
 	leverage: wei(preview.leverage),
 	notionalValue: wei(preview.notionalValue),
+	priceImpact: wei(preview.priceImpact),
+	slippageAmount: wei(preview.slippageAmount),
 });
+
+export const formatDelayedOrder = (
+	account: string,
+	marketAddress: string,
+	order: IPerpsV2MarketConsolidated.DelayedOrderStructOutput
+): DelayedOrder => {
+	const {
+		isOffchain,
+		sizeDelta,
+		priceImpactDelta,
+		targetRoundId,
+		commitDeposit,
+		keeperDeposit,
+		executableAtTime,
+		intentionTime,
+	} = order;
+
+	return {
+		account: account,
+		marketAddress: marketAddress,
+		size: wei(sizeDelta),
+		commitDeposit: wei(commitDeposit),
+		keeperDeposit: wei(keeperDeposit),
+		submittedAtTimestamp: intentionTime.toNumber() * 1000,
+		executableAtTimestamp: executableAtTime.toNumber() * 1000,
+		isOffchain: isOffchain,
+		priceImpactDelta: wei(priceImpactDelta),
+		targetRoundId: wei(targetRoundId),
+		orderType: isOffchain ? 'Delayed Offchain' : 'Delayed',
+		side: wei(sizeDelta).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
+	};
+};
+
+export const formatPotentialIsolatedTrade = (
+	preview: PostTradeDetailsResponse,
+	basePrice: Wei,
+	nativeSizeDelta: Wei,
+	leverageSide: PositionSide
+) => {
+	const { fee, liqPrice, margin, price, size, status } = preview;
+
+	const tradeValueWithoutSlippage = wei(nativeSizeDelta).abs().mul(wei(basePrice));
+	const notionalValue = wei(size).mul(wei(basePrice));
+	const leverage = notionalValue.div(wei(margin));
+
+	const priceImpact = wei(price).sub(basePrice).div(basePrice);
+	const slippageDirection = nativeSizeDelta.gt(0)
+		? priceImpact.gt(0)
+			? -1
+			: nativeSizeDelta.lt(0)
+			? priceImpact.lt(0)
+			: -1
+		: 1;
+
+	return {
+		fee: wei(fee),
+		liqPrice: wei(liqPrice),
+		margin: wei(margin),
+		price: wei(price),
+		size: wei(size),
+		sizeDelta: nativeSizeDelta,
+		side: leverageSide,
+		leverage: leverage,
+		notionalValue: notionalValue,
+		status,
+		showStatus: status > 0, // 0 is success
+		statusMessage: getTradeStatusMessage(status),
+		priceImpact: priceImpact,
+		slippageAmount: priceImpact.mul(slippageDirection).mul(tradeValueWithoutSlippage),
+	};
+};
 
 export const formatPotentialTrade = (
 	preview: PostTradeDetailsResponse,
@@ -239,6 +398,8 @@ export const formatPotentialTrade = (
 		status,
 		showStatus: status > 0, // 0 is success
 		statusMessage: getTradeStatusMessage(status),
+		priceImpact: wei(0),
+		slippageAmount: wei(0),
 	};
 };
 
@@ -261,6 +422,7 @@ export const getTradeStatusMessage = (status: PotentialTradeStatus): string => {
 
 // https://github.com/Synthetixio/synthetix/blob/4d2add4f74c68ac4f1106f6e7be4c31d4f1ccc76/contracts/PerpsV2MarketBase.sol#L130-L141
 export const POTENTIAL_TRADE_STATUS_TO_MESSAGE: { [key: string]: string } = {
+	OK: 'Ok',
 	INVALID_PRICE: 'Invalid price',
 	PRICE_OUT_OF_BOUNDS: 'Price out of acceptable range',
 	CAN_LIQUIDATE: 'Position can be liquidated',
@@ -272,6 +434,7 @@ export const POTENTIAL_TRADE_STATUS_TO_MESSAGE: { [key: string]: string } = {
 	NIL_ORDER: 'Cannot submit empty order',
 	NO_POSITION_OPEN: 'No position open',
 	PRICE_TOO_VOLATILE: 'Price too volatile',
+	PRICE_IMPACT_TOLERANCE_EXCEEDED: 'Price impact tolerance exceeded',
 	INSUFFICIENT_FREE_MARGIN: 'Insufficient free margin',
 };
 
@@ -285,3 +448,9 @@ export const calculateCrossMarginFee = (
 		orderType === 'limit' ? feeRates.limitOrderFee : feeRates.stopOrderFee;
 	return susdSize.mul(advancedOrderFeeRate);
 };
+
+export const getPythNetworkUrl = (networkId: NetworkId) => {
+	return networkId === 420 ? 'https://xc-testnet.pyth.network' : 'https://xc-mainnet.pyth.network';
+};
+
+export const normalizePythId = (id: string) => (id.startsWith('0x') ? id : '0x' + id);

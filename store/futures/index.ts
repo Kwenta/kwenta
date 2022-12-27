@@ -1,11 +1,6 @@
 import { atom } from 'recoil';
 
-import {
-	FuturesAccountState,
-	CrossMarginAccounts,
-	PositionHistoryState,
-	FuturesAccountTypes,
-} from 'queries/futures/types';
+import { FuturesAccountState, CrossMarginAccounts } from 'queries/futures/types';
 import { Price } from 'queries/rates/types';
 import { getFuturesKey } from 'store/utils';
 import { zeroBN } from 'utils/formatters/number';
@@ -13,14 +8,6 @@ import { zeroBN } from 'utils/formatters/number';
 export const activeTabState = atom<number>({
 	key: getFuturesKey('activeTab'),
 	default: 0,
-});
-
-export const positionHistoryState = atom<PositionHistoryState>({
-	key: getFuturesKey('positionHistory'),
-	default: {
-		[FuturesAccountTypes.CROSS_MARGIN]: [],
-		[FuturesAccountTypes.ISOLATED_MARGIN]: [],
-	},
 });
 
 export const pastRatesState = atom<Price[]>({

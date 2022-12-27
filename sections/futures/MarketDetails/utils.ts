@@ -34,6 +34,7 @@ const map: Record<typeof markets[number], string> = {
 
 export enum MarketDataKey {
 	externalPrice = 'External Price',
+	oraclePrice = 'Oracle Price',
 	dailyChange = '24H Change',
 	dailyVolume = '24H Volume',
 	dailyTrades = '24H Trades',
@@ -44,6 +45,7 @@ export enum MarketDataKey {
 
 export const marketDataKeyMap: Record<MarketDataKey, string> = {
 	[MarketDataKey.externalPrice]: 'external-price',
+	[MarketDataKey.oraclePrice]: 'oracle-price',
 	[MarketDataKey.dailyChange]: '24h-change',
 	[MarketDataKey.dailyVolume]: '24h-vol',
 	[MarketDataKey.dailyTrades]: '24h-trades',

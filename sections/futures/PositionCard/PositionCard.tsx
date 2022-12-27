@@ -1,7 +1,6 @@
 import Wei from '@synthetixio/wei';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import PreviewArrow from 'components/PreviewArrow';
@@ -9,7 +8,6 @@ import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
-import { useFuturesContext } from 'contexts/FuturesContext';
 import useAverageEntryPrice from 'hooks/useAverageEntryPrice';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -20,9 +18,10 @@ import {
 	selectPosition,
 	selectTradePreview,
 	selectFuturesType,
+	selectSkewAdjustedPrice,
+	selectActivePositionHistory,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { positionHistoryState } from 'store/futures';
 import { FlexDivCentered, FlexDivCol, PillButtonDiv } from 'styles/common';
 import media from 'styles/media';
 import { isFiatCurrency } from 'utils/currencies';
@@ -39,7 +38,7 @@ type PositionCardProps = {
 type PositionData = {
 	marketShortName: string;
 	marketLongName: string;
-	marketPrice: string;
+	marketPrice: JSX.Element;
 	positionSide: JSX.Element;
 	positionSize: string | React.ReactNode;
 	leverage: string | React.ReactNode;
@@ -55,6 +54,7 @@ type PositionData = {
 };
 
 type PositionPreviewData = {
+	fillPrice: Wei;
 	sizeIsNotZero: boolean;
 	positionSide: string;
 	positionSize: Wei;
@@ -68,14 +68,14 @@ type PositionPreviewData = {
 const PositionCard: React.FC<PositionCardProps> = () => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
-	const { marketAssetRate } = useFuturesContext();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const futuresAccountType = useAppSelector(selectFuturesType);
 	const position = useAppSelector(selectPosition);
+	const positionHistory = useAppSelector(selectActivePositionHistory);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const marketKey = useAppSelector(selectMarketKey);
-	const positionHistory = useRecoilValue(positionHistoryState);
+	const marketPrice = useAppSelector(selectSkewAdjustedPrice);
 	const previewTradeData = useAppSelector(selectTradePreview);
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketKey);
 
@@ -89,10 +89,10 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			: undefined;
 
 	const thisPositionHistory = useMemo(() => {
-		return positionHistory[futuresAccountType].find(
-			({ asset, isOpen }) => isOpen && asset === marketAsset
+		return positionHistory.find(
+			({ marketKey: positionMarketKey, isOpen }) => isOpen && positionMarketKey === marketKey
 		);
-	}, [positionHistory, marketAsset, futuresAccountType]);
+	}, [positionHistory, marketKey]);
 
 	const modifiedAverage = useAverageEntryPrice(thisPositionHistory);
 
@@ -105,6 +105,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 		const newSide = size?.gt(zeroBN) ? PositionSide.LONG : PositionSide.SHORT;
 
 		return {
+			fillPrice: previewTradeData.price,
 			sizeIsNotZero: size && !size?.eq(0),
 			positionSide: newSide,
 			positionSize: size?.abs(),
@@ -135,10 +136,22 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			currencyIconKey: MarketKeyByAsset[marketAsset],
 			marketShortName: marketAsset ? getMarketName(marketAsset) : 'Select a market',
 			marketLongName: getSynthDescription(marketAsset, synthsMap, t),
-			marketPrice: formatDollars(marketAssetRate, {
-				minDecimals,
-				isAssetPrice: true,
-			}),
+			marketPrice: (
+				<>
+					{`${formatDollars(marketPrice, {
+						minDecimals,
+						isAssetPrice: true,
+					})}`}
+					{
+						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
+							{formatDollars(previewData.fillPrice ?? zeroBN, {
+								minDecimals,
+								isAssetPrice: true,
+							})}
+						</PreviewArrow>
+					}
+				</>
+			),
 			positionSide: positionDetails ? (
 				<PositionValue
 					side={positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
@@ -256,18 +269,11 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 	}, [
 		positionDetails,
 		thisPositionHistory,
-		marketAssetRate,
+		marketPrice,
 		marketAsset,
 		synthsMap,
 		t,
-		previewData.positionSide,
-		previewData.sizeIsNotZero,
-		previewData.showStatus,
-		previewData.positionSize,
-		previewData.notionalValue,
-		previewData?.leverage,
-		previewData?.liquidationPrice,
-		previewData.avgEntryPrice,
+		previewData,
 		minDecimals,
 	]);
 

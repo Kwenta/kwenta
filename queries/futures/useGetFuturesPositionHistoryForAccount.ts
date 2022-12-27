@@ -44,6 +44,7 @@ const useGetFuturesPositionHistoryForAccount = (
 						timestamp: true,
 						market: true,
 						asset: true,
+						marketKey: true,
 						account: true,
 						abstractAccount: true,
 						accountType: true,

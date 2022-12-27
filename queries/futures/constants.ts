@@ -6,7 +6,7 @@ export const FUTURES_ENDPOINT_OP_MAINNET =
 	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-futures';
 
 export const FUTURES_ENDPOINT_OP_GOERLI =
-	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-goerli-futures';
+	'https://api.thegraph.com/subgraphs/name/tburm/optimism-goerli-futures';
 
 export const FUTURES_ENDPOINTS = {
 	[chain.optimism.id]: FUTURES_ENDPOINT_OP_MAINNET,

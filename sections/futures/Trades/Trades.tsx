@@ -1,4 +1,3 @@
-import { wei } from '@synthetixio/wei';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
@@ -95,7 +94,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 							};
 							return <>{formatDollars(cellProps.value, formatOptions)}</>;
 						},
-						width: 80,
+						width: 90,
 						sortable: true,
 					},
 					{
@@ -109,22 +108,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
 							<>{formatCryptoCurrency(cellProps.value)}</>
 						),
-						width: 80,
-						sortable: true,
-					},
-					{
-						Header: (
-							<StyledTableHeader>{t('futures.market.user.trades.table.pnl')}</StyledTableHeader>
-						),
-						accessor: 'pnl',
-						sortType: 'basic',
-						Cell: (cellProps: CellProps<FuturesTrade>) =>
-							cellProps.row.original.pnl.eq(wei(0)) ? (
-								<PNL normal>--</PNL>
-							) : (
-								<PNL negative={cellProps.value.lt(wei(0))}>{formatDollars(cellProps.value)}</PNL>
-							),
-						width: 80,
+						width: 90,
 						sortable: true,
 					},
 					{
@@ -136,7 +120,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
 							<>{cellProps.value.eq(0) ? '--' : formatDollars(cellProps.value)}</>
 						),
-						width: 80,
+						width: 90,
 						sortable: true,
 					},
 					{
@@ -201,15 +185,6 @@ const StyledPositionSide = styled.div<{ side: PositionSide }>`
 		css`
 			color: ${props.theme.colors.selectedTheme.red};
 		`}
-`;
-
-const PNL = styled.div<{ negative?: boolean; normal?: boolean }>`
-	color: ${(props) =>
-		props.normal
-			? props.theme.colors.selectedTheme.button.text.primary
-			: props.negative
-			? props.theme.colors.selectedTheme.red
-			: props.theme.colors.selectedTheme.green};
 `;
 
 const StyledExternalLink = styled(ExternalLink)`

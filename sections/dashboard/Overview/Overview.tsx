@@ -117,16 +117,16 @@ const Overview: FC = () => {
 			zeroBN
 		);
 		return [
-			{
-				name: PositionsTab.CROSS_MARGIN,
-				label: t('dashboard.overview.positions-tabs.cross-margin'),
-				badge: crossPositionsCount,
-				titleIcon: <FuturesIcon type="cross_margin" />,
-				active: activePositionsTab === PositionsTab.CROSS_MARGIN,
-				detail: formatDollars(portfolio.crossMarginFutures),
-				disabled: false,
-				onClick: () => setActivePositionsTab(PositionsTab.CROSS_MARGIN),
-			},
+			// {
+			// 	name: PositionsTab.CROSS_MARGIN,
+			// 	label: t('dashboard.overview.positions-tabs.cross-margin'),
+			// 	badge: crossPositions.length,
+			// 	titleIcon: <FuturesIcon type="cross_margin" />,
+			// 	active: activePositionsTab === PositionsTab.CROSS_MARGIN,
+			// 	detail: formatDollars(portfolio.crossMarginFutures),
+			// 	disabled: false,
+			// 	onClick: () => setActivePositionsTab(PositionsTab.CROSS_MARGIN),
+			// },
 			{
 				name: PositionsTab.ISOLATED_MARGIN,
 				label: t('dashboard.overview.positions-tabs.isolated-margin'),

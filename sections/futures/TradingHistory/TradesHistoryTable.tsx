@@ -9,7 +9,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import { blockExplorer } from 'containers/Connector/Connector';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
-import { selectMarketAsset } from 'state/futures/selectors';
+import { selectMarketKey } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { CapitalizedText, NumericValue } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
@@ -26,8 +26,8 @@ enum TableColumnAccessor {
 
 const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 	const { t } = useTranslation();
-	const marketAsset = useAppSelector(selectMarketAsset);
-	const futuresTradesQuery = useGetFuturesTrades(marketAsset);
+	const marketKey = useAppSelector(selectMarketKey);
+	const futuresTradesQuery = useGetFuturesTrades(marketKey);
 
 	let data = useMemo(() => {
 		const futuresTradesPages = futuresTradesQuery?.data?.pages ?? [];
@@ -46,13 +46,12 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 								amount: Number(trade?.size),
 								time: Number(trade?.timestamp),
 								id: trade?.txnHash,
-								marketAsset,
 								orderType: trade?.orderType,
 							};
 						})
 				: [];
 		return [...new Set(futuresTrades)];
-	}, [futuresTradesQuery.data, marketAsset]);
+	}, [futuresTradesQuery.data]);
 
 	const observer = useRef<IntersectionObserver | null>(null);
 	const lastElementRef = useCallback(

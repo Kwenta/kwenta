@@ -16,9 +16,10 @@ const PortfolioChart: FC<PortfolioChartProps> = ({ exchangeTokenBalances }) => {
 	const portfolio = useAppSelector(selectFuturesPortfolio);
 	const balances = useAppSelector(selectBalances);
 
+	// TODO: Add back cross margin when relevant
 	const total = useMemo(
-		() => portfolio.total.add(balances.totalUSDBalance).add(exchangeTokenBalances),
-		[portfolio.total, balances.totalUSDBalance, exchangeTokenBalances]
+		() => portfolio.isolatedMarginFutures.add(balances.totalUSDBalance).add(exchangeTokenBalances),
+		[portfolio.isolatedMarginFutures, balances.totalUSDBalance, exchangeTokenBalances]
 	);
 
 	return (
