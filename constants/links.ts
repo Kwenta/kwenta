@@ -22,7 +22,7 @@ export const EXTERNAL_LINKS = {
 	Social: {
 		Twitter: 'https://twitter.com/kwenta_io',
 		Mirror: 'https://mirror.xyz/kwenta.eth',
-		Discord: 'https://discord.gg/kwenta',
+		Discord: 'https://discord.gg/kwentaio',
 		GitHub: 'https://github.com/kwenta/kwenta',
 	},
 	TokenLists: {

@@ -5,9 +5,8 @@ import { useQuery, UseQueryOptions } from 'react-query';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
-import { selectFuturesAccount, selectFuturesType } from 'state/futures/selectors';
+import { selectFuturesAccount, selectFuturesType, selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
 import { MarginTransfer } from './types';
@@ -49,11 +48,9 @@ const CROSS_MARGIN_FRAGMENT = gql`
 	}
 `;
 
-const useGetFuturesMarginTransfers = (
-	currencyKey: string | null,
-	options?: UseQueryOptions<MarginTransfer[]>
-) => {
+const useGetFuturesMarginTransfers = (options?: UseQueryOptions<MarginTransfer[]>) => {
 	const selectedFuturesAddress = useAppSelector(selectFuturesAccount);
+	const marketInfo = useAppSelector(selectMarketInfo);
 	const futuresAccountType = useAppSelector(selectFuturesType);
 	const { defaultSynthetixjs: synthetixjs, network, isWalletConnected } = Connector.useContainer();
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
@@ -63,18 +60,16 @@ const useGetFuturesMarginTransfers = (
 		QUERY_KEYS.Futures.MarginTransfers(
 			network?.id as NetworkId,
 			selectedFuturesAddress ?? '',
-			currencyKey || null
+			marketInfo?.market || null
 		),
 		async () => {
-			if (!selectedFuturesAddress || !currencyKey || !synthetixjs || !isL2 || !isWalletConnected)
+			if (!selectedFuturesAddress || !marketInfo || !synthetixjs || !isL2 || !isWalletConnected)
 				return [];
-			const { contracts } = synthetixjs!;
-			const marketAddress = contracts[`FuturesMarket${getDisplayAsset(currencyKey)}`].address;
 
 			try {
-				if (futuresAccountType === 'isolated_margin' && !!marketAddress) {
+				if (futuresAccountType === 'isolated_margin' && !!marketInfo?.market) {
 					const response = await request(futuresEndpoint, ISOLATED_MARGIN_FRAGMENT, {
-						market: marketAddress,
+						market: marketInfo.market,
 						walletAddress: selectedFuturesAddress,
 					});
 					return response ? mapMarginTransfers(response.futuresMarginTransfers) : [];
@@ -92,7 +87,7 @@ const useGetFuturesMarginTransfers = (
 			}
 		},
 		{
-			enabled: !!currencyKey && !!synthetixjs && !!selectedFuturesAddress,
+			enabled: !!marketInfo && !!synthetixjs && !!selectedFuturesAddress,
 			...options,
 		}
 	);
