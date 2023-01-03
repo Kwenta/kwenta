@@ -8,6 +8,7 @@ import Button from 'components/Button';
 import Error from 'components/Error';
 import CustomInput from 'components/Input/CustomInput';
 import SegmentedControl from 'components/SegmentedControl';
+import SocketBridge from 'components/SocketBridge';
 import Spacer from 'components/Spacer';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import { selectSusdBalance } from 'state/balances/selectors';
@@ -98,6 +99,7 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 			isOpen
 			onDismiss={onDismiss}
 		>
+			<SocketBridge />
 			<StyledSegmentedControl
 				values={['Deposit', 'Withdraw']}
 				selectedIndex={transferType}
