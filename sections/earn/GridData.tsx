@@ -13,7 +13,11 @@ type GridDataProps = {
 const GridData: FC<GridDataProps> = memo(({ title, value, hasKwentaLogo, children }) => (
 	<GridDataContainer>
 		<Title>{title}</Title>
-		{hasKwentaLogo ? <LogoText yellow>{value}</LogoText> : <Heading>{value}</Heading>}
+		{hasKwentaLogo ? (
+			<LogoText yellow>{value}</LogoText>
+		) : (
+			<YellowHeading fontSize={25}>{value}</YellowHeading>
+		)}
 		{children}
 	</GridDataContainer>
 ));
@@ -36,6 +40,10 @@ const GridDataContainer = styled.div`
     border-radius: 15px;
 		border: ${(props) => props.theme.colors.selectedTheme.border};
   `}
+`;
+
+const YellowHeading = styled(Heading)`
+	color: ${(props) => props.theme.colors.selectedTheme.yellow};
 `;
 
 export default GridData;
