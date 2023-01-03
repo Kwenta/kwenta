@@ -1,6 +1,6 @@
 # Contributors Guide
 
-Kwenta is a dApp enabling derivates trading with infinite liquidity - powered by the Synthetix protocol. We're community driven and welcome all contributions. We aim to provide a constructive, respectful and fun environment for collaboration.
+Kwenta is a dApp enabling derivatives trading with infinite liquidity - powered by the Synthetix protocol. We're community driven and welcome all contributions. We aim to provide a constructive, respectful and fun environment for collaboration.
 
 If you wish to help out, please first join the **Kwenta devDAO** on our [Discord](https://discord.gg/kwentaio) `#community-dev` channel. For more information, see [devDAO](#devdao) below.
 
