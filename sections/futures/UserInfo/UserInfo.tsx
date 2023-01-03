@@ -56,7 +56,7 @@ const UserInfo: React.FC = () => {
 	const [hasOpenPosition, setHasOpenPosition] = useState(false);
 	const [openProfitCalcModal, setOpenProfitCalcModal] = useState(false);
 
-	const marginTransfersQuery = useGetFuturesMarginTransfers(marketAsset);
+	const marginTransfersQuery = useGetFuturesMarginTransfers();
 	const marginTransfers = useMemo(
 		() => (marginTransfersQuery.isSuccess ? marginTransfersQuery?.data ?? [] : []),
 		[marginTransfersQuery.isSuccess, marginTransfersQuery.data]

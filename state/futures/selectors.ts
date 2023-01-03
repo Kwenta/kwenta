@@ -419,7 +419,7 @@ export const selectIsolatedMarginFee = (state: RootState) =>
 	wei(state.futures.isolatedMargin.tradeFee);
 
 export const selectKeeperEthBalance = (state: RootState) =>
-	wei(state.futures.crossMargin.keeperEthBalance);
+	wei(state.futures.crossMargin.balanceInfo.keeperEthBal);
 
 export const selectCrossMarginTradeFees = createSelector(
 	(state: RootState) => state.futures.crossMargin.fees,

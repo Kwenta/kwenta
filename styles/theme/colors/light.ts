@@ -5,8 +5,9 @@ const lightTheme = {
 	table: { fill: '#EEE', hover: '#E6E6E6' },
 	gold: '#724713',
 	badge: {
-		red: { background: '#A80300', text: 'white' },
-		yellow: { background: '#6A3300', text: 'white' },
+		red: { background: '#FF8D8D', text: 'black' },
+		yellow: { background: common.primaryYellow, text: 'black' },
+		gray: { background: common.primaryGray, text: 'black' },
 	},
 	tab: { background: { active: 'transparent', inactive: '#e8e8e8' } },
 	button: {
@@ -52,6 +53,12 @@ const lightTheme = {
 			disabled: { border: '1px solid #353333', text: '#B3B3B3' },
 		},
 		pill: { background: common.light.yellow, text: common.light.yellow, hover: common.light.white },
+		yellow: {
+			fill: common.light.yellow,
+			fillHover: '#532800',
+			border: '#532800',
+			text: '#fff',
+		},
 	},
 	input: {
 		background: '#dbdbdb',

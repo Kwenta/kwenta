@@ -92,7 +92,7 @@ const MarketInfoBox: React.FC = () => {
 			previewAvailableMargin?.mul(maxLeverage ?? zeroBN)?.abs() ?? zeroBN;
 
 		return {
-			// TODO: Reenable this, disabling because the preview margin looks incorrect
+			// TODO: Re-enable this, disabling because the preview margin looks incorrect
 			// showPreview: size && !size.eq(0) && !!potentialTrade,
 			showPreview: false,
 			totalMargin: potentialTrade?.margin || zeroBN,

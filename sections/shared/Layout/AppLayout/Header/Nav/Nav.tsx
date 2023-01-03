@@ -19,7 +19,7 @@ type ReactSelectOptionProps = {
 	postfixIcon?: string;
 	isActive: boolean;
 	link: string;
-	badge: BadgeType;
+	badge: BadgeType[];
 	Icon: FunctionComponent<any>;
 };
 
@@ -51,7 +51,8 @@ const Nav: FC = () => {
 					<LabelContainer>
 						<NavLabel>
 							{t(i18nLabel)}
-							{badge && <Badge color="yellow">{t(badge.i18nLabel)}</Badge>}
+							{badge &&
+								badge.map(({ i18nLabel, color }) => <Badge color={color}>{t(i18nLabel)}</Badge>)}
 						</NavLabel>
 						{Icon && <Icon />}
 					</LabelContainer>
@@ -133,6 +134,10 @@ const MenuInside = styled.div<{ isActive: boolean; isDropDown?: boolean }>`
 `;
 
 const DropDownSelect = styled(Select)`
+	.react-select__menu {
+		width: 270px;
+	}
+
 	.react-select__control {
 		padding: 0 6px;
 	}
