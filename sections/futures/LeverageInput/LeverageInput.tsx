@@ -13,9 +13,9 @@ import {
 	selectMarketPrice,
 	selectMarketInfo,
 	selectMaxLeverage,
-	selectNextPriceDisclaimer,
-	selectOrderType,
 	selectPosition,
+	selectOrderType,
+	selectNextPriceDisclaimer,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FlexDivCol, FlexDivRow } from 'styles/common';

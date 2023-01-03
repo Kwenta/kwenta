@@ -9,6 +9,7 @@ export type DetailedInfo = {
 	valueNode?: React.ReactNode;
 	color?: 'green' | 'red' | 'gold' | undefined;
 	spaceBeneath?: boolean;
+	compactBox?: boolean;
 };
 
 type InfoBoxProps = {
@@ -26,20 +27,24 @@ const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className, disabled, 
 				if (value) {
 					return (
 						<React.Fragment key={key}>
-							<div>
-								<div className="key">
-									{key}: {value.keyNode}
+							{value.compactBox ? (
+								<>{value.keyNode}</>
+							) : (
+								<div>
+									<div className="key">
+										{key}: {value.keyNode}
+									</div>
+									<p
+										data-testid={`${dataTestId}-${index}`}
+										className={`${disabled ? 'value closed' : 'value'}${
+											value.color ? ` ${value.color}` : ''
+										}`}
+									>
+										{disabled ? NO_VALUE : value.value}
+										{value.valueNode}
+									</p>
 								</div>
-								<p
-									data-testid={`${dataTestId}-${index}`}
-									className={`${disabled ? 'value closed' : 'value'}${
-										value.color ? ` ${value.color}` : ''
-									}`}
-								>
-									{disabled ? NO_VALUE : value.value}
-									{value.valueNode}
-								</p>
-							</div>
+							)}
 							{value?.spaceBeneath && <br />}
 						</React.Fragment>
 					);
@@ -56,6 +61,45 @@ const InfoBoxContainer = styled.div`
 	padding: 14px;
 	box-sizing: border-box;
 	width: 100%;
+
+	.compact-box {
+		color: ${(props) => props.theme.colors.selectedTheme.rewardTitle};
+		font-size: 13px;
+		padding-left: 8px;
+		cursor: pointer;
+		margin-top: 16px;
+
+		.reward-copy {
+			color: ${(props) => props.theme.colors.selectedTheme.text.title};
+		}
+
+		.badge {
+			font-family: ${(props) => props.theme.fonts.black};
+			padding: 0px 6px;
+			border-radius: 100px;
+			font-variant: all-small-caps;
+		}
+
+		.badge-red {
+			color: ${(props) => props.theme.colors.selectedTheme.badge['red'].text};
+			background: ${(props) => props.theme.colors.selectedTheme.badge['red'].background};
+			min-width: 100px;
+		}
+
+		.badge-yellow {
+			color: ${(props) => props.theme.colors.selectedTheme.badge['yellow'].text};
+			background: ${(props) => props.theme.colors.selectedTheme.badge['yellow'].background};
+			min-width: 70px;
+		}
+	}
+
+	.border-red {
+		border-left: 3px solid ${(props) => props.theme.colors.selectedTheme.badge['red'].background};
+	}
+
+	.border-yellow {
+		border-left: 3px solid ${(props) => props.theme.colors.selectedTheme.badge['yellow'].background};
+	}
 
 	div {
 		display: flex;
@@ -77,6 +121,13 @@ const InfoBoxContainer = styled.div`
 			color: ${(props) => props.theme.colors.selectedTheme.text.value};
 			font-family: ${(props) => props.theme.fonts.mono};
 			font-size: 13px;
+			cursor: default;
+		}
+
+		.key {
+			color: ${(props) => props.theme.colors.selectedTheme.text.title};
+			font-size: 13px;
+			text-transform: capitalize;
 			cursor: default;
 		}
 
