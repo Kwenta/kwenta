@@ -8,13 +8,14 @@ import { chain } from 'wagmi';
 import { ETH_UNIT } from 'constants/network';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
-import { FuturesMarket, FuturesOrder, FuturesOrderTypeDisplay } from 'sdk/types/futures';
+import { FuturesOrder, FuturesOrderTypeDisplay } from 'sdk/types/futures';
 import { formatCurrency, formatDollars, weiFromWei } from 'utils/formatters/number';
 import {
 	FuturesMarketAsset,
 	FuturesMarketKey,
 	getDisplayAsset,
 	getMarketName,
+	MarketAssetByKey,
 	MarketKeyByAsset,
 } from 'utils/futures';
 
@@ -59,15 +60,13 @@ const mapOrderType = (orderType: Partial<FuturesOrderType>): FuturesOrderTypeDis
 		: orderType;
 };
 
-export const mapFuturesOrders = (
-	o: FuturesOrderResult,
-	marketInfo: FuturesMarket | undefined
-): FuturesOrder => {
-	const asset: FuturesMarketAsset = parseBytes32String(o.asset) as FuturesMarketAsset;
+export const mapFuturesOrders = (o: FuturesOrderResult): FuturesOrder => {
+	// TODO: Why has asset changed to key here?
+	const key = parseBytes32String(o.asset) as FuturesMarketKey;
+	const asset = MarketAssetByKey[key];
 	const size = weiFromWei(o.size);
 	const targetPrice = weiFromWei(o.targetPrice ?? 0);
 	const targetRoundId = new Wei(o.targetRoundId, 0);
-	const currentRoundId = wei(marketInfo?.currentRoundId ?? 0);
 	const marginDelta = weiFromWei(o.marginDelta);
 	return {
 		...o,
@@ -85,11 +84,8 @@ export const mapFuturesOrders = (
 		}),
 		targetPriceTxt: formatDollars(targetPrice),
 		side: size.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
-		isStale: o.orderType === 'NextPrice' && currentRoundId.gte(wei(o.targetRoundId).add(2)),
-		isExecutable:
-			o.orderType === 'NextPrice' && targetRoundId
-				? currentRoundId.eq(targetRoundId) || currentRoundId.eq(targetRoundId.add(1))
-				: false,
+		isStale: false,
+		isExecutable: false,
 	};
 };
 
