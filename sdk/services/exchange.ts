@@ -459,7 +459,7 @@ export default class ExchangeService {
 				quoteDecimals
 			);
 		} else if (txProvider === 'synthswap') {
-			// @ts-ignore TODO: Fix varibale types
+			// @ts-ignore TODO: Fix variable types
 			tx = await this.swapSynthSwap(
 				this.allTokensMap[quoteCurrencyKey],
 				this.allTokensMap[baseCurrencyKey],
