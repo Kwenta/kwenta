@@ -9,8 +9,9 @@ import { NumberDiv } from 'components/Text/NumberLabel';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { FuturesAccountType } from 'queries/futures/subgraph';
 import { setOpenModal } from 'state/app/reducer';
-import { selectPosition } from 'state/futures/selectors';
+import { selectPosition, selectPositionStatus } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { FetchStatus } from 'state/types';
 import { BorderedPanel, YellowIconButton } from 'styles/common';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 
@@ -24,9 +25,10 @@ export default function TradePanelHeader({ accountType, onManageBalance }: Props
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
 	const position = useAppSelector(selectPosition);
-	const balance = position?.remainingMargin ?? null;
+	const positionStatus = useAppSelector(selectPositionStatus);
+	const balance = position ? position.remainingMargin : null;
 
-	if (!!balance && balance.eq(0)) {
+	if (!balance && positionStatus.status === FetchStatus.Success) {
 		return (
 			<DepositButton
 				variant="yellow"

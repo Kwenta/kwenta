@@ -569,8 +569,18 @@ export const selectTradePreviewStatus = createSelector(
 	(state: RootState) => state.futures,
 	(type, futures) => {
 		return type === 'cross_margin'
-			? futures.queryStatuses.crossMarginTradePreview
-			: futures.queryStatuses.isolatedTradePreview;
+			? futures.queryStatuses.crossMarginPositions
+			: futures.queryStatuses.isolatedPositions;
+	}
+);
+
+export const selectPositionStatus = createSelector(
+	selectFuturesType,
+	(state: RootState) => state.futures,
+	(type, futures) => {
+		return type === 'cross_margin'
+			? futures.queryStatuses.crossMarginPositions
+			: futures.queryStatuses.isolatedPositions;
 	}
 );
 
