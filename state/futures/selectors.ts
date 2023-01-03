@@ -136,12 +136,35 @@ export const selectFuturesAccount = createSelector(
 );
 
 export const selectCrossMarginPositions = createSelector(
+	selectPrices,
 	(state: RootState) => state.futures,
-	(futures) => {
+	(prices, futures) => {
 		return futures.crossMargin.account && futures.crossMargin.positions[futures.crossMargin.account]
 			? futures.crossMargin.positions[futures.crossMargin.account].map(
 					// TODO: Maybe change to explicit serializing functions to avoid casting
-					(p) => deserializeWeiObject(p, futuresPositionKeys) as FuturesPosition
+					(p) => {
+						const positionDetails = deserializeWeiObject(p, futuresPositionKeys) as FuturesPosition;
+
+						const position = positionDetails.position;
+						const price = prices[positionDetails.asset]?.offChain ?? position?.lastPrice;
+
+						const pnl = position?.size.mul(
+							position.lastPrice.sub(price).mul(position.side === PositionSide.LONG ? -1 : 1)
+						);
+						const pnlPct = pnl?.div(position?.initialMargin);
+
+						// update unrealized pnl with offchain price
+						return {
+							...positionDetails,
+							position: position
+								? {
+										...position,
+										pnl: pnl ?? position.pnl,
+										pnlPct: pnlPct ?? position.pnlPct,
+								  }
+								: null,
+						};
+					}
 			  )
 			: [];
 	}
@@ -149,13 +172,36 @@ export const selectCrossMarginPositions = createSelector(
 
 export const selectIsolatedMarginPositions = createSelector(
 	selectWallet,
+	selectPrices,
 	(state: RootState) => state.futures,
-	(wallet, futures) => {
+	(wallet, prices, futures) => {
 		if (!wallet) return [];
 		return futures.isolatedMargin.positions[wallet]
 			? futures.isolatedMargin.positions[wallet].map(
 					// TODO: Maybe change to explicit serializing functions to avoid casting
-					(p) => deserializeWeiObject(p, futuresPositionKeys) as FuturesPosition
+					(p) => {
+						const positionDetails = deserializeWeiObject(p, futuresPositionKeys) as FuturesPosition;
+
+						const position = positionDetails.position;
+						const price = prices[positionDetails.asset]?.offChain ?? position?.lastPrice;
+
+						const pnl = position?.size.mul(
+							position.lastPrice.sub(price).mul(position.side === PositionSide.LONG ? -1 : 1)
+						);
+						const pnlPct = pnl?.div(position?.initialMargin);
+
+						// update unrealized pnl with offchain price
+						return {
+							...positionDetails,
+							position: position
+								? {
+										...position,
+										pnl: pnl ?? position.pnl,
+										pnlPct: pnlPct ?? position.pnlPct,
+								  }
+								: null,
+						};
+					}
 			  )
 			: [];
 	}
