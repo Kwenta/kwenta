@@ -120,7 +120,11 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 	}, [positionDetails, previewTradeData, modifiedAverage]);
 
 	const data: PositionData = React.useMemo(() => {
-		const pnl = positionDetails?.pnl ?? zeroBN;
+		const pnl = positionDetails?.size.mul(
+			positionDetails?.lastPrice
+				.sub(marketPrice)
+				.mul(positionDetails.side === PositionSide.LONG ? -1 : 1)
+		);
 		const pnlPct = positionDetails?.pnlPct ?? zeroBN;
 		const realizedPnl =
 			thisPositionHistory?.pnl
