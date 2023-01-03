@@ -47,14 +47,16 @@ const Nav: FC = () => {
 			);
 		return (
 			<Link href={link}>
-				<LabelContainer>
-					<NavLabel>
-						{t(i18nLabel)}
-						{badge &&
-							badge.map(({ i18nLabel, color }) => <Badge color={color}>{t(i18nLabel)}</Badge>)}
-					</NavLabel>
-					{Icon && <Icon />}
-				</LabelContainer>
+				<a>
+					<LabelContainer>
+						<NavLabel>
+							{t(i18nLabel)}
+							{badge &&
+								badge.map(({ i18nLabel, color }) => <Badge color={color}>{t(i18nLabel)}</Badge>)}
+						</NavLabel>
+						{Icon && <Icon />}
+					</LabelContainer>
+				</a>
 			</Link>
 		);
 	};
@@ -72,7 +74,9 @@ const Nav: FC = () => {
 						return (
 							<div key={url}>
 								<Link href={url}>
-									<MenuInside isActive={isActive}>{t(i18nLabel)}</MenuInside>
+									<a>
+										<MenuInside isActive={isActive}>{t(i18nLabel)}</MenuInside>
+									</a>
 								</Link>
 							</div>
 						);
