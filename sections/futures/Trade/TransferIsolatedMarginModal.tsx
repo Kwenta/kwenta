@@ -1,4 +1,5 @@
 import { wei } from '@synthetixio/wei';
+import dynamic from 'next/dynamic';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -8,7 +9,6 @@ import Button from 'components/Button';
 import Error from 'components/Error';
 import CustomInput from 'components/Input/CustomInput';
 import SegmentedControl from 'components/SegmentedControl';
-import SocketBridge from 'components/SocketBridge';
 import Spacer from 'components/Spacer';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import { selectSusdBalance } from 'state/balances/selectors';
@@ -26,6 +26,10 @@ type Props = {
 	onDismiss(): void;
 	defaultTab: 'deposit' | 'withdraw';
 };
+
+const SocketBridge = dynamic(() => import('../../../components/SocketBridge'), {
+	ssr: false,
+});
 
 const PLACEHOLDER = '$0.00';
 
