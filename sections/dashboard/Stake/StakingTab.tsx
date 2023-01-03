@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
-import { BigText } from 'components/Text';
+import { LogoText } from 'components/Text';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { getReward } from 'state/staking/actions';
 import { selectAPY, selectClaimableBalance } from 'state/staking/selectors';
@@ -30,9 +30,7 @@ const StakingTab = () => {
 				<CardGrid>
 					<div>
 						<div className="title">{t('dashboard.stake.tabs.staking.claimable-rewards')}</div>
-						<BigText yellow mono kwenta>
-							{truncateNumbers(claimableBalance, 4)}
-						</BigText>
+						<LogoText yellow>{truncateNumbers(claimableBalance, 4)}</LogoText>
 					</div>
 					<div>
 						<div className="title">{t('dashboard.stake.tabs.staking.annual-percentage-yield')}</div>

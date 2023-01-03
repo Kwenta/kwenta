@@ -7,7 +7,7 @@ import styled from 'styled-components';
 
 import HelpIcon from 'assets/svg/app/question-mark.svg';
 import Button from 'components/Button';
-import { BigText } from 'components/Text';
+import { LogoText } from 'components/Text';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import Connector from 'containers/Connector';
 import useGetFile from 'queries/files/useGetFile';
@@ -90,9 +90,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.claimable-rewards-all')}
 						</div>
-						<BigText yellow mono kwenta>
-							{truncateNumbers(totalRewards, 4)}
-						</BigText>
+						<LogoText yellow>{truncateNumbers(totalRewards, 4)}</LogoText>
 					</div>
 					<div>
 						<div className="title">
@@ -145,9 +143,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 								<div className="title">
 									{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}
 								</div>
-								<BigText mono kwenta>
-									{truncateNumbers(wei(estimatedReward), 4)}
-								</BigText>
+								<LogoText>{truncateNumbers(wei(estimatedReward), 4)}</LogoText>
 							</div>
 							<div>
 								<div className="title">

@@ -1,7 +1,7 @@
 import { FC, memo } from 'react';
 import styled from 'styled-components';
 
-import { BigText, Body } from 'components/Text';
+import { LogoText, Body, Heading } from 'components/Text';
 import media from 'styles/media';
 
 type GridDataProps = {
@@ -13,9 +13,7 @@ type GridDataProps = {
 const GridData: FC<GridDataProps> = memo(({ title, value, hasKwentaLogo, children }) => (
 	<GridDataContainer>
 		<Title>{title}</Title>
-		<BigText yellow mono kwenta={hasKwentaLogo}>
-			{value}
-		</BigText>
+		{hasKwentaLogo ? <LogoText yellow>{value}</LogoText> : <Heading>{value}</Heading>}
 		{children}
 	</GridDataContainer>
 ));

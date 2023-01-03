@@ -6,14 +6,11 @@ export default {
 	component: Text.Body,
 };
 
-export const BigText = () => {
+export const LogoText = () => {
 	return (
 		<div>
-			<Text.BigText>Simple big text</Text.BigText>
-			<Text.BigText mono>Mono big text</Text.BigText>
-			<Text.BigText yellow mono kwenta>
-				With Kwenta logo
-			</Text.BigText>
+			<Text.LogoText>White logo text</Text.LogoText>
+			<Text.LogoText yellow>White logo text</Text.LogoText>
 		</div>
 	);
 };

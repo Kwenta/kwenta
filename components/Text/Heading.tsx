@@ -32,28 +32,28 @@ const commonStyles = css<{ $fontSize?: number }>`
 `;
 
 const StyledH1 = styled.h1`
-	${commonStyles}
 	font-size: 64px;
+	${commonStyles}
 `;
 
 const StyledH2 = styled.h2`
-	${commonStyles}
 	font-size: 48px;
+	${commonStyles}
 `;
 
 const StyledH3 = styled.h3`
-	${commonStyles}
 	font-size: 32px;
+	${commonStyles}
 `;
 
 const StyledH4 = styled.h4`
-	${commonStyles}
 	font-size: 20px;
+	${commonStyles}
 `;
 
 const StyledH5 = styled.h5`
-	${commonStyles}
 	font-size: 16px;
+	${commonStyles}
 `;
 
 const headingMap = {

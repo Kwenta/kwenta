@@ -1,36 +1,27 @@
-import React from 'react';
+import { memo, FC } from 'react';
 import styled, { css } from 'styled-components';
 
 import KwentaLogo from 'assets/svg/earn/KWENTA.svg';
 
 import Heading from './Heading';
 
-type BigTextProps = {
+type LogoTextProps = {
 	yellow?: boolean;
-	mono?: boolean;
-	kwenta?: boolean;
 };
 
-export const BigText: React.FC<BigTextProps> = ({ children, yellow, mono, kwenta }) => {
+export const LogoText: FC<LogoTextProps> = memo(({ children, yellow }) => {
 	return (
 		<div style={{ display: 'flex', alignItems: 'center' }}>
-			<TitleText $yellow={yellow} $mono={mono}>
-				{children}
-			</TitleText>
-			{kwenta && <KwentaLogo />}
+			<TitleText $yellow={yellow}>{children}</TitleText>
+			<KwentaLogo />
 		</div>
 	);
-};
+});
 
 const TitleText = styled(Heading)<{ $yellow?: boolean; $mono?: boolean }>`
 	font-size: 25px;
 	margin-right: 8px;
-
-	${(props) =>
-		props.$mono &&
-		css`
-			font-family: AkkuratMonoLLWeb-Regular;
-		`}
+	font-family: AkkuratMonoLLWeb-Regular;
 
 	${(props) =>
 		props.$yellow &&
@@ -39,4 +30,4 @@ const TitleText = styled(Heading)<{ $yellow?: boolean; $mono?: boolean }>`
 		`}
 `;
 
-export default BigText;
+export default LogoText;
