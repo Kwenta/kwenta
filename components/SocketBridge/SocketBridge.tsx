@@ -3,12 +3,12 @@ import { Bridge } from '@socket.tech/plugin';
 import Connector from 'containers/Connector';
 
 const SocketBridge = () => {
-	const { l2Provider } = Connector.useContainer();
+	const { signer } = Connector.useContainer();
 
-	return (
+	return signer?.provider ? (
 		<div style={{ marginBottom: '20px' }}>
 			<Bridge
-				provider={l2Provider}
+				provider={signer.provider}
 				API_KEY={process.env.NEXT_PUBLIC_SOCKET_API_KEY ?? ''}
 				customize={{
 					width: 360,
@@ -22,10 +22,11 @@ const SocketBridge = () => {
 					onInteractive: 'rgb(240,240,240)',
 					text: 'rgb(255,255,255)',
 					secondaryText: 'rgb(200,200,200)',
+					fontFamily: 'AkkuratLLWeb-Regular',
 				}}
 			/>
 		</div>
-	);
+	) : null;
 };
 
 export default SocketBridge;
