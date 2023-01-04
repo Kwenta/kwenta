@@ -6,6 +6,7 @@ import { Dictionary } from 'lodash';
 import { FuturesOrderType } from 'queries/futures/types';
 import {
 	DelayedOrder,
+	FuturesFilledPosition,
 	FuturesMarket,
 	FuturesOrder,
 	FuturesPosition,
@@ -206,6 +207,19 @@ const getPositionChangeState = (existingSize: Wei, newSize: Wei) => {
 	)
 		return 'increase_size';
 	return 'reduce_size';
+};
+
+export const updatePositionUpnl = (position: FuturesFilledPosition, price: Wei) => {
+	const pnl = position.size.mul(
+		position.lastPrice.sub(price).mul(position.side === PositionSide.LONG ? -1 : 1)
+	);
+	const pnlPct = pnl.div(position?.initialMargin);
+
+	return {
+		...position,
+		pnl,
+		pnlPct,
+	};
 };
 
 export const calculateMarginDelta = (

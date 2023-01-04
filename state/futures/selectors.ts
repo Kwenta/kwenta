@@ -24,6 +24,7 @@ import {
 	unserializeMarkets,
 	unserializeDelayedOrders,
 	unserializeCrossMarginTradeInputs,
+	updatePositionUpnl,
 } from 'utils/futures';
 
 import { futuresPositionHistoryKeys, futuresPositionKeys } from './types';
@@ -144,25 +145,14 @@ export const selectCrossMarginPositions = createSelector(
 					// TODO: Maybe change to explicit serializing functions to avoid casting
 					(p) => {
 						const positionDetails = deserializeWeiObject(p, futuresPositionKeys) as FuturesPosition;
-
+						const offChainPrice = prices[positionDetails.asset]?.offChain;
 						const position = positionDetails.position;
-						const price = prices[positionDetails.asset]?.offChain ?? position?.lastPrice;
-
-						const pnl = position?.size.mul(
-							position.lastPrice.sub(price).mul(position.side === PositionSide.LONG ? -1 : 1)
-						);
-						const pnlPct = pnl?.div(position?.initialMargin);
 
 						// update unrealized pnl with offchain price
 						return {
 							...positionDetails,
-							position: position
-								? {
-										...position,
-										pnl: pnl ?? position.pnl,
-										pnlPct: pnlPct ?? position.pnlPct,
-								  }
-								: null,
+							position:
+								position && offChainPrice ? updatePositionUpnl(position, offChainPrice) : position,
 						};
 					}
 			  )
@@ -181,25 +171,14 @@ export const selectIsolatedMarginPositions = createSelector(
 					// TODO: Maybe change to explicit serializing functions to avoid casting
 					(p) => {
 						const positionDetails = deserializeWeiObject(p, futuresPositionKeys) as FuturesPosition;
-
+						const offChainPrice = prices[positionDetails.asset]?.offChain;
 						const position = positionDetails.position;
-						const price = prices[positionDetails.asset]?.offChain ?? position?.lastPrice;
-
-						const pnl = position?.size.mul(
-							position.lastPrice.sub(price).mul(position.side === PositionSide.LONG ? -1 : 1)
-						);
-						const pnlPct = pnl?.div(position?.initialMargin);
 
 						// update unrealized pnl with offchain price
 						return {
 							...positionDetails,
-							position: position
-								? {
-										...position,
-										pnl: pnl ?? position.pnl,
-										pnlPct: pnlPct ?? position.pnlPct,
-								  }
-								: null,
+							position:
+								position && offChainPrice ? updatePositionUpnl(position, offChainPrice) : position,
 						};
 					}
 			  )
