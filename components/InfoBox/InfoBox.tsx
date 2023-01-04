@@ -62,45 +62,6 @@ const InfoBoxContainer = styled.div`
 	box-sizing: border-box;
 	width: 100%;
 
-	.compact-box {
-		color: ${(props) => props.theme.colors.selectedTheme.rewardTitle};
-		font-size: 13px;
-		padding-left: 8px;
-		cursor: pointer;
-		margin-top: 16px;
-
-		.reward-copy {
-			color: ${(props) => props.theme.colors.selectedTheme.text.title};
-		}
-
-		.badge {
-			font-family: ${(props) => props.theme.fonts.black};
-			padding: 0px 6px;
-			border-radius: 100px;
-			font-variant: all-small-caps;
-		}
-
-		.badge-red {
-			color: ${(props) => props.theme.colors.selectedTheme.badge['red'].text};
-			background: ${(props) => props.theme.colors.selectedTheme.badge['red'].background};
-			min-width: 100px;
-		}
-
-		.badge-yellow {
-			color: ${(props) => props.theme.colors.selectedTheme.badge['yellow'].text};
-			background: ${(props) => props.theme.colors.selectedTheme.badge['yellow'].background};
-			min-width: 70px;
-		}
-	}
-
-	.border-red {
-		border-left: 3px solid ${(props) => props.theme.colors.selectedTheme.badge['red'].background};
-	}
-
-	.border-yellow {
-		border-left: 3px solid ${(props) => props.theme.colors.selectedTheme.badge['yellow'].background};
-	}
-
 	div {
 		display: flex;
 		justify-content: space-between;

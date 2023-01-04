@@ -1,12 +1,13 @@
 import router from 'next/router';
 import React, { useMemo, useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import EligibleIcon from 'assets/svg/app/eligible.svg';
 import LinkArrowIcon from 'assets/svg/app/link-arrow.svg';
 import NotEligibleIcon from 'assets/svg/app/not-eligible.svg';
 import InfoBox, { DetailedInfo } from 'components/InfoBox/InfoBox';
+import * as Text from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
@@ -26,7 +27,6 @@ import {
 	selectStakedEscrowedKwentaBalance,
 	selectStakedKwentaBalance,
 } from 'state/staking/selectors';
-import { Paragraph } from 'styles/common';
 import { computeOrderFee } from 'utils/costCalculations';
 import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
@@ -112,9 +112,9 @@ const FeeInfoBox: React.FC = () => {
 				compactBox: true,
 				spaceBeneath: true,
 				keyNode: (
-					<p
-						className={`compact-box ${isRewardEligible ? 'border-yellow' : 'border-red'}`}
+					<CompactBox
 						onClick={() => router.push(ROUTES.Dashboard.Stake)}
+						$isEligible={isRewardEligible}
 					>
 						<div>
 							<div>{t('dashboard.stake.tabs.trading-rewards.trading-reward')}</div>
@@ -133,19 +133,17 @@ const FeeInfoBox: React.FC = () => {
 							</p>
 						</div>
 						<div>
-							<Paragraph className="reward-copy">
+							<RewardCopy>
 								<Trans
-									i18nKey={
-										isRewardEligible
-											? 'dashboard.stake.tabs.trading-rewards.stake-to-earn'
-											: 'dashboard.stake.tabs.trading-rewards.stake-to-start'
-									}
+									i18nKey={`dashboard.stake.tabs.trading-rewards.stake-to-${
+										isRewardEligible ? 'earn' : 'start'
+									}`}
 									components={[<Emphasis />]}
 								/>
-							</Paragraph>
+							</RewardCopy>
 							<StyledLinkArrowIcon />
 						</div>
-					</p>
+					</CompactBox>
 				),
 			},
 			'Total Fee': {
@@ -224,6 +222,45 @@ const StyledLinkArrowIcon = styled(LinkArrowIcon)`
 
 const Emphasis = styled.b`
 	font-family: ${(props) => props.theme.fonts.bold};
+`;
+
+const RewardCopy = styled(Text.Body)`
+	color: ${(props) => props.theme.colors.selectedTheme.text.title};
+`;
+
+const CompactBox = styled.div<{ $isEligible: boolean }>`
+	color: ${(props) => props.theme.colors.selectedTheme.rewardTitle};
+	font-size: 13px;
+	padding-left: 8px;
+	cursor: pointer;
+	margin-top: 16px;
+
+	.badge {
+		font-family: ${(props) => props.theme.fonts.black};
+		padding: 0px 6px;
+		border-radius: 100px;
+		font-variant: all-small-caps;
+	}
+
+	.badge-red {
+		color: ${(props) => props.theme.colors.selectedTheme.badge['red'].text};
+		background: ${(props) => props.theme.colors.selectedTheme.badge['red'].background};
+		min-width: 100px;
+	}
+
+	.badge-yellow {
+		color: ${(props) => props.theme.colors.selectedTheme.badge['yellow'].text};
+		background: ${(props) => props.theme.colors.selectedTheme.badge['yellow'].background};
+		min-width: 70px;
+	}
+
+	${(props) =>
+		css`
+			border-left: 3px solid
+				${props.$isEligible
+					? props.theme.colors.selectedTheme.badge.yellow.background
+					: props.theme.colors.selectedTheme.badge.red.background};
+		`}
 `;
 
 export default FeeInfoBox;

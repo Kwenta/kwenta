@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import { MobileOrTabletView } from 'components/Media';
+import ErrorTooltip from 'components/Tooltip/ErrorTooltip';
 import { EXTERNAL_LINKS } from 'constants/links';
 import TxSettleModal from 'sections/shared/modals/TxSettleModal';
 import { submitSettle } from 'state/exchange/actions';
@@ -13,7 +14,7 @@ import { NoTextTransform, ExternalLink } from 'styles/common';
 import { secondsToTime } from 'utils/formatters/date';
 import logError from 'utils/logError';
 
-import { MessageContainer, Message, FixedMessageContainerSpacer, ErrorTooltip } from '../common';
+import { MessageContainer, Message, FixedMessageContainerSpacer } from '../common';
 
 const SettleTransactionsCard: FC = () => {
 	const { t } = useTranslation();

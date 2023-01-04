@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 import Button from 'components/Button';
-import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { zIndex } from 'constants/ui';
 import { FixedFooterMixin, GridDivCenteredRow } from 'styles/common';
 import media from 'styles/media';
@@ -60,13 +59,4 @@ export const MessageButton = styled(Button).attrs({
 	font-size: 17px;
 	height: 55px;
 	width: 100%;
-`;
-
-export const ErrorTooltip = styled(StyledTooltip)`
-	font-size: 12px;
-	background-color: ${(props) => props.theme.colors.red};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	.tippy-arrow {
-		color: ${(props) => props.theme.colors.red};
-	}
 `;
