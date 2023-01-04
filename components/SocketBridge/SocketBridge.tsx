@@ -1,7 +1,8 @@
 import { Bridge } from '@socket.tech/plugin';
-import { useTheme } from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import { chain } from 'wagmi';
 
+import BaseModal from 'components/BaseModal';
 import Connector from 'containers/Connector';
 
 import { SocketCustomizationProps } from './types';
@@ -12,7 +13,12 @@ import hexToRGB, {
 	SOCKET_SOURCE_TOKEN_ADDRESS,
 } from './utils';
 
-const SocketBridge = () => {
+type Props = {
+	onDismiss(): void;
+	title: string;
+};
+
+const SocketBridge: React.FC<Props> = ({ onDismiss, title }) => {
 	const { signer } = Connector.useContainer();
 	const theme = useTheme();
 
@@ -37,7 +43,7 @@ const SocketBridge = () => {
 	};
 
 	return signer?.provider ? (
-		<div style={{ marginBottom: '20px' }}>
+		<StyledBaseModal title={title} onDismiss={onDismiss}>
 			<Bridge
 				provider={signer?.provider}
 				API_KEY={process.env.NEXT_PUBLIC_SOCKET_API_KEY ?? ''}
@@ -47,9 +53,16 @@ const SocketBridge = () => {
 				defaultSourceNetwork={chain.mainnet.id}
 				defaultDestNetwork={chain.optimism.id}
 				customize={customize}
+				enableSameChainSwaps={true}
 			/>
-		</div>
+		</StyledBaseModal>
 	) : null;
 };
+
+export const StyledBaseModal = styled(BaseModal)`
+	[data-reach-dialog-content] {
+		width: 400px;
+	}
+`;
 
 export default SocketBridge;
