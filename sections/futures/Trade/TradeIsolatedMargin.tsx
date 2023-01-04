@@ -11,7 +11,6 @@ import { setOrderType } from 'state/futures/reducer';
 import { selectLeverageSide, selectOrderType, selectPosition } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { selectPricesConnectionError } from 'state/prices/selectors';
-import { zeroBN } from 'utils/formatters/number';
 
 import FeeInfoBox from '../FeeInfoBox';
 import LeverageInput from '../LeverageInput';
@@ -36,13 +35,11 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 	const orderType = useAppSelector(selectOrderType);
 	const openModal = useAppSelector(selectOpenModal);
 	const pricesConnectionError = useAppSelector(selectPricesConnectionError);
-	const totalMargin = position?.remainingMargin ?? zeroBN;
 
 	return (
 		<div>
 			<TradePanelHeader
 				onManageBalance={() => dispatch(setOpenModal('futures_isolated_transfer'))}
-				balance={totalMargin}
 				accountType={'isolated_margin'}
 			/>
 			{pricesConnectionError && (
