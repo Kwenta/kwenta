@@ -72,7 +72,9 @@ const Nav: FC = () => {
 						return (
 							<div key={url}>
 								<Link href={url}>
-									<MenuInside isActive={isActive}>{t(i18nLabel)}</MenuInside>
+									<a>
+										<MenuInside isActive={isActive}>{t(i18nLabel)}</MenuInside>
+									</a>
 								</Link>
 							</div>
 						);

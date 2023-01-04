@@ -206,8 +206,8 @@ export const QUERY_KEYS = {
 		MarginTransfers: (
 			networkId: NetworkId,
 			walletAddress: string | null,
-			currencyKey: string | null
-		) => ['futures', 'futuresMarginTransfers', networkId, walletAddress, currencyKey],
+			marketAddress: string | null
+		) => ['futures', 'futuresMarginTransfers', networkId, walletAddress, marketAddress],
 		FundingRate: (networkId: NetworkId, currencyKey: string | null) => [
 			'futures',
 			'fundingRates',

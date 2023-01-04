@@ -9,8 +9,8 @@ export const EXTERNAL_LINKS = {
 		Uniswap: 'https://uniswap.exchange/',
 		OneInch: `https://1inch.exchange/`,
 		OneInchApi: {
-			ethereum: 'https://api.1inch.io/v4.0/1/',
-			optimism: 'https://api.1inch.io/v4.0/10/',
+			ethereum: 'https://api.1inch.io/v5.0/1/',
+			optimism: 'https://api.1inch.io/v5.0/10/',
 		},
 		OneInchLink: (from: CurrencyKey, to: CurrencyKey) => `https://1inch.exchange/#/${from}/${to}`,
 		OptimismTokenBridge: 'https://gateway.optimism.io',
@@ -22,7 +22,7 @@ export const EXTERNAL_LINKS = {
 	Social: {
 		Twitter: 'https://twitter.com/kwenta_io',
 		Mirror: 'https://mirror.xyz/kwenta.eth',
-		Discord: 'https://discord.gg/kwenta',
+		Discord: 'https://discord.gg/kwentaio',
 		GitHub: 'https://github.com/kwenta/kwenta',
 	},
 	TokenLists: {

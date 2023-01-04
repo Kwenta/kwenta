@@ -459,7 +459,7 @@ export default class ExchangeService {
 				quoteDecimals
 			);
 		} else if (txProvider === 'synthswap') {
-			// @ts-ignore TODO: Fix varibale types
+			// @ts-ignore TODO: Fix variable types
 			tx = await this.swapSynthSwap(
 				this.allTokensMap[quoteCurrencyKey],
 				this.allTokensMap[baseCurrencyKey],
@@ -824,7 +824,7 @@ export default class ExchangeService {
 	}
 
 	private get oneInchApiUrl() {
-		return `https://api.1inch.io/v4.0/${this.sdk.context.isL2 ? 10 : 1}/`;
+		return `https://api.1inch.io/v5.0/${this.sdk.context.isL2 ? 10 : 1}/`;
 	}
 
 	private getOneInchQuoteSwapParams(

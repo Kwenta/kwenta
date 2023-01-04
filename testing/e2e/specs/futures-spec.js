@@ -12,7 +12,7 @@ describe('Futures Page', () => {
 			futures.acceptMetamaskAccessRequest();
 		});
 
-		it('should deposit, open long postiion, close long postion and withdraw sUSD in ETH-PERP market', () => {
+		it('should deposit, open long postiion, close long position and withdraw sUSD in ETH-PERP market', () => {
 			cy.findByTestId('market-info-box-0').then(() => {
 				// Need to give it some time for the page to populate with users account data
 				cy.wait(5000).then(() => {
@@ -40,7 +40,7 @@ describe('Futures Page', () => {
 							futures.openPositionBtnShouldBeDisabled();
 							futures.closePositionBtnShouldBeDisabled();
 							const amountInsUSD = 50;
-							// Use 50 sUSD for Opening Long Postion
+							// Use 50 sUSD for Opening Long Position
 							futures.getLongBtn().click();
 							futures.enterAmountInsUSD(amountInsUSD);
 

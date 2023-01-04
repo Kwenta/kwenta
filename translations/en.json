@@ -319,7 +319,7 @@
 				"select-token": "select token"
 			},
 			"max-button": "max",
-			"slippage": " slippage"
+			"price-impact": " price impact"
 		},
 		"market-details-card": {
 			"title": "Market Details",

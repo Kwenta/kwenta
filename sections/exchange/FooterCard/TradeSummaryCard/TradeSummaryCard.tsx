@@ -9,6 +9,7 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import FeeCostSummaryItem from 'sections/shared/components/FeeCostSummary';
 import FeeRateSummaryItem from 'sections/shared/components/FeeRateSummary';
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
+import PriceImpactSummary from 'sections/shared/components/PriceImpactSummary';
 import TxApproveModal from 'sections/shared/modals/TxApproveModal';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { submitApprove, submitExchange } from 'state/exchange/actions';
@@ -16,6 +17,7 @@ import {
 	selectFeeCostWei,
 	selectIsApproved,
 	selectShowFee,
+	selectSlippagePercentWei,
 	selectSubmissionDisabledReason,
 	selectTransactionFeeWei,
 } from 'state/exchange/selectors';
@@ -93,10 +95,12 @@ const SummaryItemsWrapper = () => {
 	const transactionFee = useAppSelector(selectTransactionFeeWei);
 	const feeCost = useAppSelector(selectFeeCostWei);
 	const showFee = useAppSelector(selectShowFee);
+	const slippagePercent = useAppSelector(selectSlippagePercentWei);
 
 	return (
 		<SummaryItems>
 			<GasPriceSelect gasPrices={gasPrices} transactionFee={transactionFee} />
+			<PriceImpactSummary slippagePercent={slippagePercent} />
 			{showFee && (
 				<>
 					<FeeRateSummaryItem />
