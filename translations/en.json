@@ -789,6 +789,10 @@
 						"actions": {
 							"withdraw": "Withdraw",
 							"deposit": "Deposit"
+						},
+						"bridge": {
+							"title": "Bridge & Swap",
+							"copy": "No sUSD balance, would you like to swap or bridge other assets?"
 						}
 					}
 				},

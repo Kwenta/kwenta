@@ -11,6 +11,7 @@ import CustomInput from 'components/Input/CustomInput';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
+import Connector from 'containers/Connector';
 import { selectSusdBalance } from 'state/balances/selectors';
 import { depositIsolatedMargin, withdrawIsolatedMargin } from 'state/futures/actions';
 import {
@@ -35,6 +36,7 @@ const PLACEHOLDER = '$0.00';
 
 const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab }) => {
 	const { t } = useTranslation();
+	const { walletAddress } = Connector.useContainer();
 	const dispatch = useAppDispatch();
 
 	const position = useAppSelector(selectPosition);
@@ -48,6 +50,7 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 		return min.lt(zeroBN) ? zeroBN : min;
 	}, [position?.accessibleMargin]);
 
+	const [openSocket, setOpenSocket] = useState(false);
 	const [amount, setAmount] = useState('');
 	const [transferType, setTransferType] = useState(defaultTab === 'deposit' ? 0 : 1);
 
@@ -56,7 +59,7 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 		position?.accessibleMargin,
 	]);
 
-	const isSufficientFund = useMemo(() => susdBalance.gte(minDeposit), [susdBalance, minDeposit]);
+	const isInsufficientFund = useMemo(() => susdBalance.lt(minDeposit), [susdBalance, minDeposit]);
 	const isDisabled = useMemo(() => {
 		if (!amount || submitting) {
 			return true;
@@ -95,64 +98,78 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 	};
 
 	return (
-		<>
-			<StyledBaseModal
-				title={
-					transferType === 0
-						? t('futures.market.trade.margin.modal.deposit.title')
-						: t('futures.market.trade.margin.modal.withdraw.title')
-				}
-				isOpen
-				onDismiss={onDismiss}
-			>
-				<StyledSegmentedControl
-					values={['Deposit', 'Withdraw']}
-					selectedIndex={transferType}
-					onChange={onChangeTab}
-				/>
-				<BalanceContainer>
-					<BalanceText $gold>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
-					<BalanceText>
-						<span>{formatDollars(susdBal)}</span> sUSD
-					</BalanceText>
-				</BalanceContainer>
-				<CustomInput
-					dataTestId="futures-market-trade-deposit-margin-input"
-					placeholder={PLACEHOLDER}
-					value={amount}
-					onChange={(_, v) => setAmount(v)}
-					right={
-						<MaxButton onClick={handleSetMax}>
-							{t('futures.market.trade.margin.modal.max')}
-						</MaxButton>
-					}
-				/>
-				{transferType === 0 ? (
+		<StyledBaseModal
+			title={
+				transferType === 0
+					? t('futures.market.trade.margin.modal.deposit.title')
+					: t('futures.market.trade.margin.modal.withdraw.title')
+			}
+			isOpen
+			onDismiss={onDismiss}
+		>
+			{walletAddress && isInsufficientFund ? (
+				<>
 					<MinimumAmountDisclaimer>
-						{t('futures.market.trade.margin.modal.deposit.disclaimer')}
+						{t('futures.market.trade.margin.modal.bridge.copy')}
 					</MinimumAmountDisclaimer>
-				) : (
-					<Spacer height={20} />
-				)}
+					<MarginActionButton
+						data-testid="futures-market-trade-swap-bridge-button"
+						fullWidth
+						onClick={() => setOpenSocket(true)}
+					>
+						{t('futures.market.trade.margin.modal.bridge.title')}
+					</MarginActionButton>
+				</>
+			) : (
+				<>
+					<StyledSegmentedControl
+						values={['Deposit', 'Withdraw']}
+						selectedIndex={transferType}
+						onChange={onChangeTab}
+					/>
+					<BalanceContainer>
+						<BalanceText $gold>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
+						<BalanceText>
+							<span>{formatDollars(susdBal)}</span> sUSD
+						</BalanceText>
+					</BalanceContainer>
+					<CustomInput
+						dataTestId="futures-market-trade-deposit-margin-input"
+						placeholder={PLACEHOLDER}
+						value={amount}
+						onChange={(_, v) => setAmount(v)}
+						right={
+							<MaxButton onClick={handleSetMax}>
+								{t('futures.market.trade.margin.modal.max')}
+							</MaxButton>
+						}
+					/>
+					{transferType === 0 ? (
+						<MinimumAmountDisclaimer>
+							{t('futures.market.trade.margin.modal.deposit.disclaimer')}
+						</MinimumAmountDisclaimer>
+					) : (
+						<Spacer height={20} />
+					)}
 
-				<MarginActionButton
-					data-testid="futures-market-trade-deposit-margin-button"
-					disabled={isDisabled}
-					fullWidth
-					onClick={transferType === 0 ? onDeposit : onWithdraw}
-				>
-					{transferType === 0
-						? t('futures.market.trade.margin.modal.deposit.button')
-						: t('futures.market.trade.margin.modal.withdraw.button')}
-				</MarginActionButton>
-
-				{txError && <Error message={txError} formatter="revert" />}
-			</StyledBaseModal>
-			{!isSufficientFund && <SocketBridge title={'Swap or Bridge'} onDismiss={onDismiss} />}
-		</>
+					<MarginActionButton
+						data-testid="futures-market-trade-deposit-margin-button"
+						disabled={isDisabled}
+						fullWidth
+						onClick={transferType === 0 ? onDeposit : onWithdraw}
+					>
+						{transferType === 0
+							? t('futures.market.trade.margin.modal.deposit.button')
+							: t('futures.market.trade.margin.modal.withdraw.button')}
+					</MarginActionButton>
+				</>
+			)}
+			{txError && <Error message={txError} formatter="revert" />}
+			{openSocket && <SocketBridge title={'Swap & Bridge'} onDismiss={onDismiss} />}
+		</StyledBaseModal>
 	);
 };
-
+// t('futures.market.trade.margin.modal.bridge.title')
 export const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
 		width: 400px;
