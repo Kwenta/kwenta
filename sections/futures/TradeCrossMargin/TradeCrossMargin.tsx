@@ -68,7 +68,6 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 			) : (
 				<>
 					<TradePanelHeader
-						balance={freeMargin}
 						accountType={selectedAccountType}
 						onManageBalance={() => dispatch(setOpenModal('futures_cross_deposit'))}
 					/>

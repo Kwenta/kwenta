@@ -1,4 +1,3 @@
-import Wei from '@synthetixio/wei';
 import { useTranslation } from 'react-i18next';
 import styled, { useTheme } from 'styled-components';
 
@@ -10,22 +9,26 @@ import { NumberDiv } from 'components/Text/NumberLabel';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { FuturesAccountType } from 'queries/futures/subgraph';
 import { setOpenModal } from 'state/app/reducer';
-import { useAppDispatch } from 'state/hooks';
+import { selectPosition, selectPositionStatus } from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { FetchStatus } from 'state/types';
 import { BorderedPanel, YellowIconButton } from 'styles/common';
-import { formatDollars } from 'utils/formatters/number';
+import { formatDollars, zeroBN } from 'utils/formatters/number';
 
 type Props = {
 	accountType: FuturesAccountType;
-	balance: Wei;
 	onManageBalance: () => void;
 };
 
-export default function TradePanelHeader({ accountType, onManageBalance, balance }: Props) {
+export default function TradePanelHeader({ accountType, onManageBalance }: Props) {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
+	const position = useAppSelector(selectPosition);
+	const positionStatus = useAppSelector(selectPositionStatus);
+	const balance = position ? position.remainingMargin : null;
 
-	if (balance.eq(0)) {
+	if (!balance && positionStatus.status === FetchStatus.Success) {
 		return (
 			<DepositButton
 				variant="yellow"
@@ -62,7 +65,7 @@ export default function TradePanelHeader({ accountType, onManageBalance, balance
 				)}
 			</Title>
 			<BalanceRow onClick={onManageBalance}>
-				<NumberDiv contrast="strong">{formatDollars(balance)}</NumberDiv>
+				<NumberDiv contrast="strong">{formatDollars(balance ?? zeroBN)}</NumberDiv>
 				<BalanceButton>
 					<SwitchAssetArrows />
 				</BalanceButton>
