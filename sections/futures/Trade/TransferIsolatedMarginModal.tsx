@@ -193,6 +193,7 @@ export const BalanceText = styled.p<{ $gold?: boolean }>`
 
 export const MarginActionButton = styled(Button)`
 	height: 55px;
+	margin-bottom: 20px;
 `;
 
 export const MaxButton = styled.button`
@@ -213,14 +214,6 @@ const MinimumAmountDisclaimer = styled.div`
 	margin: 20px 0;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	text-align: center;
-`;
-
-export const GasFeeContainer = styled(FlexDivRowCentered)`
-	margin: 13px 0px;
-	padding: 0 14px;
-	p {
-		margin: 0;
-	}
 `;
 
 const StyledSegmentedControl = styled(SegmentedControl)`

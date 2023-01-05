@@ -154,7 +154,7 @@ export const Table: FC<TableProps> = ({
 			<TableContainer>
 				<ReactTable {...getTableProps()} palette={palette} className={className}>
 					{headerGroups.map((headerGroup) => (
-						<TableRow className="table-row" {...headerGroup.getHeaderGroupProps()}>
+						<div className="table-row" {...headerGroup.getHeaderGroupProps()}>
 							{headerGroup.headers.map((column: any) => (
 								<TableCellHead
 									hideHeaders={hideHeaders}
@@ -181,7 +181,7 @@ export const Table: FC<TableProps> = ({
 									)}
 								</TableCellHead>
 							))}
-						</TableRow>
+						</div>
 					))}
 					{isLoading ? (
 						<StyledSpinner />
@@ -233,8 +233,6 @@ const StyledSpinner = styled(Spinner)`
 	display: block;
 	margin: 30px auto;
 `;
-
-export const TableRow = styled.div``;
 
 const TableBody = styled.div`
 	overflow-y: auto;

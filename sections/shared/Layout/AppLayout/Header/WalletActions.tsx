@@ -19,7 +19,7 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 	const { data: ensName } = useEnsName({ address: walletAddress!, chainId: 1 });
 
 	const [walletLabel, setWalletLabel] = useState('');
-	const truncatedWalletAddress = truncateAddress(walletAddress! ?? '');
+	const truncatedWalletAddress = truncateAddress(walletAddress ?? '');
 	const { openAccountModal } = useAccountModal();
 
 	useEffect(() => {

@@ -54,7 +54,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 	}
 	return (
 		<Container {...rest}>
-			<Price className="price">
+			<span className="price">
 				{formatCurrency(
 					currencyKey,
 					cleanConversionRate && cleanPrice && cleanConversionRate.gt(0)
@@ -66,7 +66,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 						...formatOptions,
 					}
 				)}
-			</Price>
+			</span>
 			{change != null && <ChangePercent className="percent" value={change} />}
 		</Container>
 	);
@@ -77,7 +77,5 @@ const Container = styled.span`
 	font-family: ${(props) => props.theme.fonts.mono};
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
-
-const Price = styled.span``;
 
 export default CurrencyPrice;

@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { FC, useState } from 'react';
+import { FC, useCallback, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import getLocale from 'utils/formatters/getLocale';
@@ -12,9 +12,9 @@ type TimeDisplayProps = {
 const TimeDisplay: FC<TimeDisplayProps> = ({ cellPropsValue, horizontal }) => {
 	const [show12hr, setShow12h] = useState<boolean>(false);
 
-	const handleOnClick = () => {
+	const handleOnClick = useCallback(() => {
 		setShow12h(!show12hr);
-	};
+	}, [show12hr]);
 
 	const date = format(
 		new Date(cellPropsValue),

@@ -101,9 +101,9 @@ const Header: FC = () => {
 		<>
 			<MobileHiddenView>
 				<Container>
-					<LogoContainer onClick={() => router.push(ROUTES.Home.Root)}>
+					<div onClick={() => router.push(ROUTES.Home.Root)}>
 						<Logo />
-					</LogoContainer>
+					</div>
 					<Links>
 						{LINKS.map(({ id, label, icon, onClick }) => (
 							<StyledTextButton key={id} className={id} onClick={onClick}>
@@ -140,9 +140,9 @@ const Header: FC = () => {
 			</MobileHiddenView>
 			<MobileOnlyView>
 				<MobileContainer>
-					<LogoContainer onClick={() => router.push(ROUTES.Dashboard.Markets)}>
+					<div onClick={() => router.push(ROUTES.Dashboard.Markets)}>
 						<Logo />
-					</LogoContainer>
+					</div>
 					<MobileUserMenu />
 				</MobileContainer>
 			</MobileOnlyView>
@@ -154,8 +154,6 @@ const MobileContainer = styled(FlexDivRow)`
 	justify-content: center;
 	align-items: center;
 `;
-
-const LogoContainer = styled.div``;
 
 const StyledMenu = styled.div`
 	position: absolute;

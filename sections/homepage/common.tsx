@@ -1,39 +1,11 @@
 import styled from 'styled-components';
 
-import { FlexDivColCentered, FlexDivRow, GridDiv, Paragraph } from 'styles/common';
+import { FlexDivColCentered, GridDiv, Paragraph } from 'styles/common';
 import media from 'styles/media';
-
-export const SubHeader = styled(Paragraph)`
-	font-size: 48px;
-	line-height: 120%;
-	letter-spacing: 0.2px;
-	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	${media.lessThan('md')`
-		font-size: 32px;
-		text-align: center;
-	`}
-`;
-
-export const LeftSubHeader = styled(SubHeader)`
-	text-align: left;
-`;
-
-export const CenterSubHeader = styled(SubHeader)`
-	text-align: center;
-`;
 
 export const StackSection = styled(FlexDivColCentered)`
 	width: 100%;
 	${(props) => props.theme.animations.show};
-`;
-
-export const FlexSection = styled(FlexDivRow)`
-	width: 100%;
-	${media.lessThan('lg')`
-		align-items: center;
-		flex-direction: column;
-	`}
 `;
 
 export const GridContainer = styled(GridDiv)`
