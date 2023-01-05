@@ -50,10 +50,10 @@ const SkewInfo: React.FC = () => {
 		<SkewContainer>
 			<SkewHeader>
 				<SkewTooltip
-					isNumber={true}
+					isNumber
 					preset="bottom-right"
 					width={'310px'}
-					height={'auto'}
+					height="auto"
 					content={data.shortText ?? 0}
 				>
 					<WithCursor cursor="help">
@@ -71,10 +71,10 @@ const SkewInfo: React.FC = () => {
 					</WithCursor>
 				</SkewTooltip>
 				<SkewTooltip
-					isNumber={true}
+					isNumber
 					preset="bottom-rigth"
-					width={'310px'}
-					height={'auto'}
+					width="310px"
+					height="auto"
 					content={data.longText ?? 0}
 				>
 					<WithCursor cursor="help">

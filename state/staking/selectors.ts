@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
 
-import { getEpochDetails, parseEpochData } from 'queries/staking/utils';
+import { getApy, getEpochDetails, parseEpochData } from 'queries/staking/utils';
 import { RootState } from 'state/store';
 import { FetchStatus } from 'state/types';
 import { toWei } from 'utils/formatters/number';
@@ -155,4 +155,12 @@ export const selectCanUnstakeEscrowedKwenta = createSelector(
 export const selectEpochPeriod = createSelector(
 	(state: RootState) => state.staking.epochPeriod,
 	wei
+);
+
+export const selectAPY = createSelector(
+	(state: RootState) => state.staking.totalStakedBalance,
+	(state: RootState) => state.staking.weekCounter,
+	(totalStakedBalance, weekCounter) => {
+		return getApy(Number(totalStakedBalance), weekCounter);
+	}
 );

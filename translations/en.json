@@ -525,7 +525,7 @@
 					"pending-for-rewards": "Pending...",
 					"trading-rewards-tooltip": "Only trades made using a Kwenta Cross Margin account are eligible for trading rewards.",
 					"spot-fee-paid": "Spot Fee Paid: Epoch {{EpochPeriod}}",
-					"future-fee-paid": "Futures Fees Paid: Ep. {{EpochPeriod}}",					
+					"future-fee-paid": "Futures Fees Paid: Ep. {{EpochPeriod}}",
 					"fees-paid": "Total Fees in Pool: Ep. {{EpochPeriod}}",
 					"estimated-rewards": "Estimated Reward*",
 					"estimated-reward-share": "Estimated Reward Share*",
@@ -541,7 +541,6 @@
 					"eligible": "Eligible",
 					"stake-to-earn": "Stake <0>$KWENTA</0> to earn more rewards",
 					"stake-to-start": "Stake <0>$KWENTA</0> to start earning rewards"
-
 				},
 				"escrow": {
 					"title": "Escrow",
@@ -574,7 +573,7 @@
 					"redeem": "Redeem",
 					"vekwenta-token": "veKwenta",
 					"vkwenta-token": "vKwenta",
-					"approve": "Approve",		
+					"approve": "Approve",
 					"balance": "Balance:"
 				}
 			}
@@ -660,7 +659,7 @@
 				"hourly-funding": "1H Funding Rate",
 				"instant-funding": "Inst. Funding Rate",
 				"fallback-funding": "Funding Rate"
- 			},
+			},
 			"position-card": {
 				"position-side": "Side",
 				"position-size": "Size",
@@ -843,7 +842,7 @@
 						"title": "Manage Account ETH Balance",
 						"withdraw": "Withdraw",
 						"deposit": "Deposit",
-						
+
 						"withdraw-warning": "Withdrawing ETH while you still have open orders pending risks leaving insufficient balance for orders to execute."
 					},
 					"fee-rejection-label": "Fee Rejection",
@@ -853,7 +852,6 @@
 					"failed": "Transaction failed",
 					"insufficient-margin": "Leverage cannot be increased, it exceeds the minimum margin requirement of $40",
 					"insufficient-free-margin": "Leverage cannot be modified, please deposit more margin or reduce open position sizes"
-
 				}
 			},
 			"history": {
@@ -1327,4 +1325,3 @@
 		"bridge": "Bridge"
 	}
 }
-

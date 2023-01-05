@@ -100,7 +100,6 @@ const useConnector = () => {
 		tokensMap,
 		staticMainnetProvider,
 		defaultSynthetixjs,
-		l2Synthetixjs,
 		l2SynthsMap,
 		providerReady,
 	};

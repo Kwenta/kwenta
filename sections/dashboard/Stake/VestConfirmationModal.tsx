@@ -66,20 +66,20 @@ const VestConfirmationModal: React.FC<Props> = ({ onDismiss, totalFee, handleVes
 	);
 };
 
-export const StyledBaseModal = styled(BaseModal)`
+const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
 		width: 400px;
 	}
 `;
 
-export const BalanceContainer = styled(FlexDivRowCentered)`
+const BalanceContainer = styled(FlexDivRowCentered)`
 	margin-bottom: 8px;
 	p {
 		margin: 0;
 	}
 `;
 
-export const BalanceText = styled.p<{ $gold?: boolean }>`
+const BalanceText = styled.p<{ $gold?: boolean }>`
 	color: ${(props) =>
 		props.$gold ? props.theme.colors.selectedTheme.yellow : props.theme.colors.selectedTheme.gray};
 	span {
@@ -87,22 +87,9 @@ export const BalanceText = styled.p<{ $gold?: boolean }>`
 	}
 `;
 
-export const VestConfirmButton = styled(Button)`
+const VestConfirmButton = styled(Button)`
 	height: 55px;
 	color: ${(props) => props.theme.colors.selectedTheme.red};
-`;
-
-export const MaxButton = styled.button`
-	height: 22px;
-	padding: 4px 10px;
-	background: ${(props) => props.theme.colors.selectedTheme.button.background};
-	border-radius: 11px;
-	font-family: ${(props) => props.theme.fonts.mono};
-	font-size: 13px;
-	line-height: 13px;
-	border: ${(props) => props.theme.colors.selectedTheme.border};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	cursor: pointer;
 `;
 
 const MinimumAmountDisclaimer = styled.div`

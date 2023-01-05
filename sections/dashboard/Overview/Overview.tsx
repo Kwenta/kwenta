@@ -3,16 +3,13 @@ import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
-import { erc20ABI, useContractRead } from 'wagmi';
 
 import TabButton from 'components/Button/TabButton';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import FuturesIcon from 'components/Nav/FuturesIcon';
 import { TabPanel } from 'components/Tab';
-import { KWENTA_TOKEN_ADDRESS } from 'constants/address';
 import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'constants/currency';
 import Connector from 'containers/Connector';
-import useIsL2 from 'hooks/useIsL2';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
 import { selectBalances } from 'state/balances/selectors';
@@ -24,7 +21,7 @@ import {
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { activePositionsTabState } from 'store/ui';
-import { formatDollars, toWei, weiFromWei, zeroBN } from 'utils/formatters/number';
+import { formatDollars, toWei, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
@@ -34,8 +31,6 @@ import MobileDashboard from '../MobileDashboard';
 import PortfolioChart from '../PortfolioChart';
 import SpotMarketsTable from '../SpotMarketsTable';
 import SynthBalancesTable from '../SynthBalancesTable';
-
-const kwentaAddress = KWENTA_TOKEN_ADDRESS['10'].toLowerCase();
 
 export enum PositionsTab {
 	CROSS_MARGIN = 'cross margin',
@@ -56,83 +51,31 @@ const Overview: FC = () => {
 	);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
-	const { network, walletAddress, synthsMap } = Connector.useContainer();
+	const { network, synthsMap } = Connector.useContainer();
 
 	const { tokenBalances } = useAppSelector(({ balances }) => balances);
 	// Only available on Optimism mainnet
 	const oneInchEnabled = network.id === 10;
 
-	const isL2 = useIsL2();
-
 	const [exchangeTokens, setExchangeTokens] = useState<any>([]);
-	const [kwentaBalance, setKwentaBalance] = useState(zeroBN);
-
-	useContractRead({
-		address: KWENTA_TOKEN_ADDRESS['10'],
-		abi: erc20ABI,
-		functionName: 'balanceOf',
-		args: [walletAddress!],
-		watch: false,
-		enabled: !!walletAddress && isL2,
-		onSettled(data, error) {
-			if (error) logError(error);
-			if (data) {
-				setKwentaBalance(weiFromWei(data));
-			}
-		},
-	});
-
-	const noKwentaFound = !Object.values(tokenBalances).find(
-		(token: any) => token.token.address.toLowerCase() === kwentaAddress
-	);
 
 	useEffect(() => {
 		const initExchangeTokens = async () => {
 			try {
-				const kwentaTokenObj = {
-					Kwenta: {
-						balance: kwentaBalance,
-						token: {
-							address: kwentaAddress,
-							symbol: 'KWENTA',
-							name: 'Kwenta',
-						},
-					},
-				};
-
-				const allTokens =
-					oneInchEnabled && noKwentaFound && kwentaBalance.gt(0)
-						? { ...kwentaTokenObj, ...tokenBalances }
-						: tokenBalances;
-
-				const exchangeBalances: {
-					name: string;
-					currencyKey: string;
-					balance: Wei;
-					address: string;
-				}[] = oneInchEnabled
-					? Object.values(allTokens)
-							.filter((token: any) => !synthsMap[token.token.symbol])
-							.map((value: any) => {
-								return {
-									name: value.token.name,
-									currencyKey: value.token.symbol,
-									balance: toWei(value.balance),
-									address:
-										value.token.address === ETH_ADDRESS
-											? ETH_COINGECKO_ADDRESS
-											: value.token.address,
-								};
-							})
+				const exchangeBalances = oneInchEnabled
+					? Object.values(tokenBalances)
+							.filter((token) => !synthsMap[token.token.symbol])
+							.map((value) => ({
+								name: value.token.name,
+								currencyKey: value.token.symbol,
+								balance: toWei(value.balance),
+								address:
+									value.token.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : value.token.address,
+							}))
 					: [];
 
 				const tokenAddresses = oneInchEnabled
-					? [
-							...Object.values(tokenBalances).map((value: any) =>
-								value.token.address.toLowerCase()
-							),
-							noKwentaFound ? [kwentaAddress] : [],
-					  ]
+					? [...Object.values(tokenBalances).map((value) => value.token.address.toLowerCase())]
 					: [];
 
 				const coinGeckoPrices = await sdk.exchange.batchGetCoingeckoPrices(tokenAddresses, true);
@@ -166,7 +109,7 @@ const Overview: FC = () => {
 		(async () => {
 			await initExchangeTokens();
 		})();
-	}, [kwentaBalance, noKwentaFound, oneInchEnabled, synthsMap, tokenBalances]);
+	}, [oneInchEnabled, synthsMap, tokenBalances]);
 
 	const POSITIONS_TABS = useMemo(() => {
 		const exchangeTokenBalances = exchangeTokens.reduce(

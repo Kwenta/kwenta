@@ -32,6 +32,7 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const position = useAppSelector(selectPosition);
+
 	const orderType = useAppSelector(selectOrderType);
 	const openModal = useAppSelector(selectOpenModal);
 	const pricesConnectionError = useAppSelector(selectPricesConnectionError);

@@ -75,12 +75,7 @@ const WalletButtons: React.FC = () => {
 					? walletIsConnectedButNotSupported
 					: walletIsConnectedAndSupported
 				: walletIsNotConnected}
-			<MenuButton
-				onClick={() => {
-					toggleTheme();
-				}}
-				noOutline
-			>
+			<MenuButton onClick={toggleTheme} noOutline>
 				<ThemeIcon width={20} />
 			</MenuButton>
 		</Container>

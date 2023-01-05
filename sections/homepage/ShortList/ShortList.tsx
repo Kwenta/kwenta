@@ -71,7 +71,7 @@ const ShortList = () => {
 						data={stats}
 						pageSize={5}
 						hideHeaders={false}
-						highlightRowsOnHover={true}
+						highlightRowsOnHover
 						columns={[
 							{
 								Header: <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
@@ -154,7 +154,7 @@ const ShortList = () => {
 						data={stats}
 						pageSize={5}
 						hideHeaders={false}
-						highlightRowsOnHover={true}
+						highlightRowsOnHover
 						columns={[
 							{
 								Header: <TableHeader>{t('leaderboard.leaderboard.table.rank-mobile')}</TableHeader>,
