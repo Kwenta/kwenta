@@ -1,14 +1,17 @@
 import Wei, { wei } from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
+import { parseBytes32String } from 'ethers/lib/utils.js';
 
 import { ETH_UNIT } from 'constants/network';
 import { FuturesAggregateStatResult } from 'queries/futures/subgraph';
 import { FUTURES_ENDPOINTS, MAINNET_MARKETS, TESTNET_MARKETS } from 'sdk/constants/futures';
 import { SECONDS_PER_DAY } from 'sdk/constants/period';
+import { OrderPlacedEvent } from 'sdk/contracts/types/CrossMarginBase';
 import {
 	FundingRateUpdate,
 	FuturesMarketAsset,
 	FuturesMarketKey,
+	FuturesOrder,
 	FuturesPosition,
 	FuturesPotentialTradeDetails,
 	FuturesVolumes,
@@ -23,7 +26,8 @@ import {
 	CrossMarginSettings,
 	IsolatedMarginOrderType,
 } from 'state/futures/types';
-import { zeroBN } from 'utils/formatters/number';
+import { formatCurrency, formatDollars, zeroBN } from 'utils/formatters/number';
+import { MarketAssetByKey } from 'utils/futures';
 import logError from 'utils/logError';
 
 export const getFuturesEndpoint = (networkId: number): string => {
@@ -284,4 +288,36 @@ export const calculateCrossMarginFee = (
 	const advancedOrderFeeRate =
 		orderType === 'limit' ? feeRates.limitOrderFee : feeRates.stopOrderFee;
 	return susdSize.mul(advancedOrderFeeRate);
+};
+
+export const mapFuturesOrderFromEvent = (
+	o: OrderPlacedEvent,
+	account: string,
+	timestamp: Wei
+): FuturesOrder => {
+	const marketKey = parseBytes32String(o.args.marketKey) as FuturesMarketKey;
+	const asset = MarketAssetByKey[marketKey];
+	const sizeDelta = wei(o.args.sizeDelta);
+	const size = sizeDelta.abs();
+	return {
+		id: `CM-${account}-${o.args.orderId}`,
+		account: account,
+		size: sizeDelta,
+		marginDelta: wei(o.args.marginDelta),
+		orderType: o.args.orderType === 0 ? 'Limit' : 'Stop Market',
+		targetPrice: wei(o.args.targetPrice),
+		sizeTxt: formatCurrency(asset, size, {
+			currencyKey: getDisplayAsset(asset) ?? '',
+			minDecimals: size.lt(0.01) ? 4 : 2,
+		}),
+		targetPriceTxt: formatDollars(wei(o.args.targetPrice)),
+		timestamp: timestamp,
+		marketKey: marketKey,
+		market: getMarketName(asset),
+		asset: asset,
+		targetRoundId: wei(0), // Only used for next price which is no longer supported
+		side: sizeDelta.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
+		isStale: false,
+		isExecutable: false,
+	};
 };
