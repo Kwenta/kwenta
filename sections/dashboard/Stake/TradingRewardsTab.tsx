@@ -143,7 +143,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 								<div className="title">
 									{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}
 								</div>
-								<LogoText>{truncateNumbers(wei(estimatedReward), 4)}</LogoText>
+								<LogoText yellow>{truncateNumbers(wei(estimatedReward), 4)}</LogoText>
 							</div>
 							<div>
 								<div className="title">
