@@ -165,6 +165,7 @@ export const BalanceText = styled.p<{ $gold?: boolean }>`
 
 export const MarginActionButton = styled(Button)`
 	height: 55px;
+	margin-bottom: 20px;
 `;
 
 export const MaxButton = styled.button`

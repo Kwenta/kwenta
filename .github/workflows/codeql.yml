@@ -2,11 +2,11 @@ name: CodeQL
 
 on:
   push:
-    branches: [main, dev]
+    branches: [main, dev, perps-v2, perps-v2-dev]
     paths-ignore:
       - node_modules
   pull_request:
-    branches: [main, dev]
+    branches: [main, dev, perps-v2, perps-v2-dev]
     paths-ignore:
       - node_modules
   schedule:
