@@ -70,7 +70,7 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 				<div>
 					{!(window.location.pathname === ROUTES.Home.Root) && (
 						<>
-							<MenuButtonContainer>
+							<div>
 								<MobileSubMenu
 									i18nLabel={t('mobile-menu.wallet')}
 									onDismiss={onDismiss}
@@ -93,9 +93,9 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 										},
 									]}
 								/>
-							</MenuButtonContainer>
+							</div>
 
-							<MenuButtonContainer>
+							<div>
 								<MobileSubMenu
 									i18nLabel={t('mobile-menu.network')}
 									onDismiss={onDismiss}
@@ -114,11 +114,11 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 										},
 									]}
 								/>
-							</MenuButtonContainer>
+							</div>
 						</>
 					)}
 
-					<MenuButtonContainer>
+					<div>
 						<MobileSubMenu
 							i18nLabel={t('mobile-menu.language')}
 							onDismiss={onDismiss}
@@ -131,10 +131,10 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 								onClick: () => setLanguage(option.value as Language),
 							}))}
 						/>
-					</MenuButtonContainer>
+					</div>
 
 					{!(window.location.pathname === ROUTES.Home.Root) && (
-						<MenuButtonContainer>
+						<div>
 							<MobileSubMenu
 								i18nLabel={t('mobile-menu.theme.title')}
 								onDismiss={onDismiss}
@@ -171,7 +171,7 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 									},
 								]}
 							/>
-						</MenuButtonContainer>
+						</div>
 					)}
 				</div>
 			</Container>
@@ -205,10 +205,6 @@ const Container = styled.div<{ hasBorder?: boolean }>`
 		css`
 			border-top: 1px solid ${(props) => props.theme.colors.common.secondaryGray};
 		`}
-`;
-
-const MenuButtonContainer = styled.div`
-	/* padding-bottom: 16px; */
 `;
 
 const LogoContainer = styled.div`

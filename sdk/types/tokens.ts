@@ -7,14 +7,12 @@ export type SynthBalance<T = Wei> = {
 	usdBalance: T;
 };
 
-export type TokenBalances<T = Wei> = Partial<
-	Record<
-		string,
-		{
-			balance: T;
-			token: Token;
-		}
-	>
+export type TokenBalances<T = Wei> = Record<
+	string,
+	{
+		balance: T;
+		token: Token;
+	}
 >;
 
 export type Token = {

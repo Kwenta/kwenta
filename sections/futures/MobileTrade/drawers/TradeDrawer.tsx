@@ -1,4 +1,3 @@
-import { wei } from '@synthetixio/wei';
 import React from 'react';
 import styled, { css } from 'styled-components';
 
@@ -42,10 +41,10 @@ const TradeDrawer: React.FC<TradeDrawerProps> = ({ trade, closeDrawer }) => {
 			{ label: 'Date/Time', value: <TimeDisplay cellPropsValue={trade.timestamp} horizontal /> },
 			{
 				label: 'PnL',
-				value: trade.pnl.eq(wei(0)) ? (
+				value: trade.pnl.eq(0) ? (
 					<PNL normal>--</PNL>
 				) : (
-					<PNL negative={trade.pnl.lt(wei(0))}>{formatDollars(trade.pnl)}</PNL>
+					<PNL negative={trade.pnl.lt(0)}>{formatDollars(trade.pnl)}</PNL>
 				),
 			},
 			{

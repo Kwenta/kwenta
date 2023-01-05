@@ -144,7 +144,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 
 	return (
 		<>
-			<CompetitionBanner compact={true} hideBanner={compact} />
+			<CompetitionBanner compact hideBanner={compact} />
 			<LeaderboardContainer>
 				<SearchContainer compact={compact} mobile={mobile}>
 					<TabButtonContainer numItems={competitionRound ? 3 : 2} mobile={mobile}>

@@ -10,7 +10,6 @@ import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
-import PositionType from 'components/Text/PositionType';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
@@ -18,6 +17,7 @@ import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesAccountType } from 'queries/futures/subgraph';
+import PositionType from 'sections/futures/PositionType';
 import {
 	selectCrossMarginPositions,
 	selectFuturesPositionHistory,
@@ -89,7 +89,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	return (
 		<>
 			<DesktopOnlyView>
-				<TableContainer>
+				<div>
 					<Table
 						data={data}
 						showPagination
@@ -267,7 +267,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 							},
 						]}
 					/>
-				</TableContainer>
+				</div>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<OpenPositionsHeader>
@@ -328,8 +328,6 @@ const StyledValue = styled.div`
 const DefaultCell = styled.p`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
-
-const TableContainer = styled.div``;
 
 const TableHeader = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};

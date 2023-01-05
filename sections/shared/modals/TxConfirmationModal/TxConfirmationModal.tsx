@@ -125,7 +125,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry
 				</CurrencyItem>
 			</Currencies>
 			<Subtitle>{t('modals.confirm-transaction.confirm-with-provider')}</Subtitle>
-			<Summary>
+			<div>
 				{quoteCurrencyKey != null && quoteAmount != null && (
 					<SummaryItem>
 						<SummaryItemLabel data-testid="quote-currency-label">
@@ -228,7 +228,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry
 						</SummaryItemValue>
 					</SummaryItem>
 				) : null}
-			</Summary>
+			</div>
 			{txProvider === '1inch' && (
 				<TxProviderContainer>
 					<Text>{t('common.powered-by')}</Text>
@@ -285,8 +285,6 @@ const Subtitle = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	padding-bottom: 48px;
 `;
-
-const Summary = styled.div``;
 
 const SummaryItem = styled(FlexDivRowCentered)`
 	margin-bottom: 8px;

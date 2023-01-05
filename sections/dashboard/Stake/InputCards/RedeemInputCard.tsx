@@ -60,7 +60,7 @@ const RedeemInputCard: FC<RedeemInputCardProps> = ({ inputLabel, isVKwenta }) =>
 
 	return (
 		<StakingInputCardContainer>
-			<StakeInputContainer>
+			<div>
 				<StakeInputHeader>
 					<div>{inputLabel}</div>
 					<StyledFlexDivRowCentered>
@@ -68,7 +68,7 @@ const RedeemInputCard: FC<RedeemInputCardProps> = ({ inputLabel, isVKwenta }) =>
 						<div className="max">{truncateNumbers(balance, 4)}</div>
 					</StyledFlexDivRowCentered>
 				</StakeInputHeader>
-			</StakeInputContainer>
+			</div>
 			<Button fullWidth variant="flat" size="sm" disabled={balance.eq(0)} onClick={submitRedeem}>
 				{t(buttonTranslationKey)}
 			</Button>
@@ -101,7 +101,5 @@ const StakeInputHeader = styled.div`
 		${numericValueCSS};
 	}
 `;
-
-const StakeInputContainer = styled.div``;
 
 export default RedeemInputCard;

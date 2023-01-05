@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import styled from 'styled-components';
 
 import { NO_VALUE } from 'constants/placeholder';
@@ -20,8 +20,8 @@ type InfoBoxProps = {
 	dataTestId?: string;
 };
 
-const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className, disabled, dataTestId }) => {
-	return (
+const InfoBox: React.FC<InfoBoxProps> = memo(
+	({ details, style, className, disabled, dataTestId }) => (
 		<InfoBoxContainer style={style} className={className}>
 			{Object.entries(details).map(([key, value], index) => {
 				if (value) {
@@ -52,8 +52,8 @@ const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className, disabled, 
 				return null;
 			})}
 		</InfoBoxContainer>
-	);
-};
+	)
+);
 
 const InfoBoxContainer = styled.div`
 	border: ${(props) => props.theme.colors.selectedTheme.border};
@@ -61,45 +61,6 @@ const InfoBoxContainer = styled.div`
 	padding: 14px;
 	box-sizing: border-box;
 	width: 100%;
-
-	.compact-box {
-		color: ${(props) => props.theme.colors.selectedTheme.rewardTitle};
-		font-size: 13px;
-		padding-left: 8px;
-		cursor: pointer;
-		margin-top: 16px;
-
-		.reward-copy {
-			color: ${(props) => props.theme.colors.selectedTheme.text.title};
-		}
-
-		.badge {
-			font-family: ${(props) => props.theme.fonts.black};
-			padding: 0px 6px;
-			border-radius: 100px;
-			font-variant: all-small-caps;
-		}
-
-		.badge-red {
-			color: ${(props) => props.theme.colors.selectedTheme.badge['red'].text};
-			background: ${(props) => props.theme.colors.selectedTheme.badge['red'].background};
-			min-width: 100px;
-		}
-
-		.badge-yellow {
-			color: ${(props) => props.theme.colors.selectedTheme.badge['yellow'].text};
-			background: ${(props) => props.theme.colors.selectedTheme.badge['yellow'].background};
-			min-width: 70px;
-		}
-	}
-
-	.border-red {
-		border-left: 3px solid ${(props) => props.theme.colors.selectedTheme.badge['red'].background};
-	}
-
-	.border-yellow {
-		border-left: 3px solid ${(props) => props.theme.colors.selectedTheme.badge['yellow'].background};
-	}
 
 	div {
 		display: flex;

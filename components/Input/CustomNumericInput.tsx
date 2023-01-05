@@ -71,7 +71,6 @@ export const InputWrapper = styled.div`
 		position: absolute;
 		top: calc(25%);
 		left: calc((var(--numchs) * 1ch + 1.3ch));
-		//left: 5.3ch;
 		content: var(--suffix, 'x');
 		font-family: ${(props) => props.theme.fonts.mono};
 		font-size: 18px;

@@ -12,12 +12,12 @@ import { timePresentation } from 'utils/formatters/date';
 import { truncateAddress } from 'utils/formatters/string';
 
 type TransferProps = {
-	marginTransfers: MarginTransfer[] | [];
+	marginTransfers: MarginTransfer[];
 	isLoading: boolean;
 	isLoaded: boolean;
 };
 
-const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: TransferProps) => {
+const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }) => {
 	const { t } = useTranslation();
 	const { switchToL2 } = useNetworkSwitcher();
 

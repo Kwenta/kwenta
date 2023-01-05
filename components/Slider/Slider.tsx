@@ -19,11 +19,6 @@ const SliderComponent: React.FC<SliderProps> = ({
 	maxValue,
 	defaultValue,
 	steps,
-	value,
-	className,
-	onChange,
-	onChangeCommitted,
-	disabled,
 	...props
 }) => {
 	return (
@@ -35,13 +30,8 @@ const SliderComponent: React.FC<SliderProps> = ({
 				marks
 				valueLabelDisplay="auto"
 				defaultValue={defaultValue ?? minValue}
-				value={value}
-				onChange={onChange}
-				onChangeCommitted={onChangeCommitted}
 				ValueLabelComponent={ValueLabel}
-				disabled={disabled}
 				{...props}
-				className={className}
 			/>
 		</SliderContainer>
 	);
@@ -57,8 +47,9 @@ const styledMarkLabel = css`
 		top: 30px;
 	`}
 `;
+
 const SliderContainer = styled.div`
-	width: 100vw;
+	width: 100%;
 	height: 24px;
 	padding: 0px 12px 0px 4px;
 	box-sizing: border-box;

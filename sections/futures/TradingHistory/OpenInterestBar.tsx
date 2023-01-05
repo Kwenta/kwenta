@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import styled from 'styled-components';
 
 import { formatPercent } from 'utils/formatters/number';
@@ -9,19 +10,19 @@ type OpenInterestProps = {
 	};
 };
 
-const OpenInterestChart: React.FC<OpenInterestProps> = ({ skew }) => {
+const OpenInterestChart: React.FC<OpenInterestProps> = memo(({ skew }) => {
 	return (
 		<OIContainer>
 			{skew.long !== 0 || skew.short !== 0 ? (
 				<LongOI>
-					<ShortOI skew={skew}></ShortOI>
+					<ShortOI skew={skew} />
 				</LongOI>
 			) : (
-				<ZeroOI></ZeroOI>
+				<ZeroOI />
 			)}
 		</OIContainer>
 	);
-};
+});
 
 export default OpenInterestChart;
 

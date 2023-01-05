@@ -33,8 +33,8 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import '@reach/dialog/styles.css';
 import '@rainbow-me/rainbowkit/styles.css';
-
 import '../i18n';
+import { getDesignTokens } from 'utils/theme';
 
 type NextPageWithLayout = NextPage & {
 	getLayout?: (page: ReactElement) => ReactNode;
@@ -113,13 +113,6 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 		</RainbowKitProvider>
 	) : null;
 };
-
-const getDesignTokens = (mode: 'dark' | 'light') => ({
-	palette: {
-		mode,
-		colors: themes[mode].colors,
-	},
-});
 
 const App: FC<AppProps> = (props) => {
 	const { t } = useTranslation();
