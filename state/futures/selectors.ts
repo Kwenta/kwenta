@@ -141,20 +141,8 @@ export const selectCrossMarginPositions = createSelector(
 	(state: RootState) => state.futures,
 	(prices, futures) => {
 		return futures.crossMargin.account && futures.crossMargin.positions[futures.crossMargin.account]
-			? futures.crossMargin.positions[futures.crossMargin.account].map(
-					// TODO: Maybe change to explicit serializing functions to avoid casting
-					(p) => {
-						const positionDetails = deserializeWeiObject(p, futuresPositionKeys) as FuturesPosition;
-						const offChainPrice = prices[positionDetails.asset]?.offChain;
-						const position = positionDetails.position;
-
-						// update unrealized pnl with offchain price
-						return {
-							...positionDetails,
-							position:
-								position && offChainPrice ? updatePositionUpnl(position, offChainPrice) : position,
-						};
-					}
+			? futures.crossMargin.positions[futures.crossMargin.account].map((p) =>
+					updatePositionUpnl(p, prices)
 			  )
 			: [];
 	}
@@ -167,21 +155,7 @@ export const selectIsolatedMarginPositions = createSelector(
 	(wallet, prices, futures) => {
 		if (!wallet) return [];
 		return futures.isolatedMargin.positions[wallet]
-			? futures.isolatedMargin.positions[wallet].map(
-					// TODO: Maybe change to explicit serializing functions to avoid casting
-					(p) => {
-						const positionDetails = deserializeWeiObject(p, futuresPositionKeys) as FuturesPosition;
-						const offChainPrice = prices[positionDetails.asset]?.offChain;
-						const position = positionDetails.position;
-
-						// update unrealized pnl with offchain price
-						return {
-							...positionDetails,
-							position:
-								position && offChainPrice ? updatePositionUpnl(position, offChainPrice) : position,
-						};
-					}
-			  )
+			? futures.isolatedMargin.positions[wallet].map((p) => updatePositionUpnl(p, prices))
 			: [];
 	}
 );

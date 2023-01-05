@@ -6,13 +6,12 @@ import { Dictionary } from 'lodash';
 import { FuturesOrderType } from 'queries/futures/types';
 import {
 	DelayedOrder,
-	FuturesFilledPosition,
 	FuturesMarket,
 	FuturesOrder,
 	FuturesPosition,
 	FuturesVolumes,
 } from 'sdk/types/futures';
-import { PricesMap } from 'sdk/types/prices';
+import { Prices, PricesMap } from 'sdk/types/prices';
 import { PositionSide } from 'sections/futures/types';
 import {
 	CrossMarginBalanceInfo,
@@ -21,7 +20,9 @@ import {
 	CrossMarginTradeInputs,
 	IsolatedMarginTradeInputs,
 	TransactionEstimation,
+	futuresPositionKeys,
 } from 'state/futures/types';
+import { deserializeWeiObject } from 'state/helpers';
 
 import { formatNumber, zeroBN } from './formatters/number';
 
@@ -209,16 +210,35 @@ const getPositionChangeState = (existingSize: Wei, newSize: Wei) => {
 	return 'reduce_size';
 };
 
-export const updatePositionUpnl = (position: FuturesFilledPosition, price: Wei) => {
-	const pnl = position.size.mul(
-		position.lastPrice.sub(price).mul(position.side === PositionSide.LONG ? -1 : 1)
-	);
-	const pnlPct = pnl.div(position?.initialMargin);
+export const updatePositionUpnl = (
+	positionDetails: FuturesPosition<string>,
+	prices: Prices
+): FuturesPosition => {
+	const deserializedPositionDetails = deserializeWeiObject(
+		positionDetails,
+		futuresPositionKeys
+	) as FuturesPosition;
+	const offChainPrice = prices[deserializedPositionDetails.asset]?.offChain;
+	const position = deserializedPositionDetails.position;
+
+	const pnl =
+		!!position && !!offChainPrice
+			? position.size.mul(
+					position.lastPrice.sub(offChainPrice).mul(position.side === PositionSide.LONG ? -1 : 1)
+			  )
+			: undefined;
+	const pnlPct = pnl?.div(position?.initialMargin);
 
 	return {
-		...position,
-		pnl,
-		pnlPct,
+		...deserializedPositionDetails,
+		position:
+			!!position && !!pnl && !!pnlPct
+				? {
+						...position,
+						pnl,
+						pnlPct,
+				  }
+				: position,
 	};
 };
 
