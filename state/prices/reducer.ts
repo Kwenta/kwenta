@@ -7,6 +7,8 @@ import { PricesState } from './types';
 const initialState: PricesState = {
 	onChainPrices: {},
 	offChainPrices: {},
+	onChainPriceColors: {},
+	offChainPriceColors: {},
 	connectionError: null,
 };
 
@@ -20,12 +22,24 @@ const pricesSlice = createSlice({
 		setOnChainPrices: (state, action) => {
 			state.onChainPrices = action.payload;
 		},
+		setOffChainPriceColors: (state, action) => {
+			state.offChainPriceColors = action.payload;
+		},
+		setOnChainPriceColors: (state, action) => {
+			state.offChainPriceColors = action.payload;
+		},
 		setConnectionError: (state, action) => {
 			state.connectionError = action.payload;
 		},
 	},
 });
 
-export const { setOffChainPrices, setOnChainPrices, setConnectionError } = pricesSlice.actions;
+export const {
+	setOffChainPrices,
+	setOnChainPrices,
+	setOffChainPriceColors,
+	setOnChainPriceColors,
+	setConnectionError,
+} = pricesSlice.actions;
 
 export default pricesSlice.reducer;

@@ -5,6 +5,8 @@ import { Prices } from 'sdk/types/prices';
 import { RootState } from 'state/store';
 import { getPricesForCurrencies } from 'utils/currencies';
 
+import { PriceColors } from './types';
+
 export const selectPrices = createSelector(
 	(state: RootState) => state.prices,
 	({ onChainPrices, offChainPrices }) => {
@@ -20,6 +22,28 @@ export const selectPrices = createSelector(
 			} else {
 				merged[key] = {
 					offChain: wei(value),
+				};
+			}
+		});
+		return merged;
+	}
+);
+
+export const selectPriceColors = createSelector(
+	(state: RootState) => state.prices,
+	({ onChainPriceColors, offChainPriceColors }) => {
+		const merged: PriceColors = {};
+		Object.entries(onChainPriceColors).forEach(([key, value]) => {
+			merged[key] = {
+				onChain: value,
+			};
+		});
+		Object.entries(offChainPriceColors).forEach(([key, value]) => {
+			if (merged[key]) {
+				merged[key].offChain = value;
+			} else {
+				merged[key] = {
+					offChain: value,
 				};
 			}
 		});
