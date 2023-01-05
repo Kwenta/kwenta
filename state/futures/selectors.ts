@@ -109,6 +109,17 @@ export const selectMarketPrice = createSelector(
 	}
 );
 
+export const selectMarketPriceColor = createSelector(
+	selectMarketInfo,
+	(state: RootState) => state.prices,
+	(marketInfo, { offChainPriceColors }) => {
+		if (!marketInfo || !offChainPriceColors[marketInfo.asset]) return 'white';
+		const color = offChainPriceColors[marketInfo.asset]?.color;
+		const expiresAt = offChainPriceColors[marketInfo.asset]?.expiresAt;
+		return !!expiresAt && !!color && Date.now() < expiresAt ? color : 'white';
+	}
+);
+
 export const selectSkewAdjustedPrice = createSelector(
 	selectMarketPrice,
 	selectMarketInfo,

@@ -17,7 +17,9 @@ import Connector from 'containers/Connector';
 import { selectFuturesType, selectMarkets, selectMarketVolumes } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { selectPrices } from 'state/prices/selectors';
+import { selectPriceColors } from 'state/prices/selectors';
 import { pastRatesState } from 'store/futures';
+import { formatDollars } from 'utils/formatters/number';
 import { getSynthDescription, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
 const FuturesMarketsTable: FC = () => {
@@ -30,6 +32,7 @@ const FuturesMarketsTable: FC = () => {
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
 	const accountType = useAppSelector(selectFuturesType);
 	const prices = useAppSelector(selectPrices);
+	const priceColors = useAppSelector(selectPriceColors);
 
 	let data = useMemo(() => {
 		return futuresMarkets.map((market) => {
@@ -37,6 +40,7 @@ const FuturesMarketsTable: FC = () => {
 			const volume = futuresVolumes[market.marketKey]?.volume;
 			const pastPrice = pastRates.find((price) => price.synth === market.asset);
 			const marketPrice = prices[market.asset]?.offChain ?? prices[market.asset]?.onChain ?? wei(0);
+			const marketPriceColor = priceColors[market.asset]?.offChain?.color ?? 'white';
 
 			return {
 				asset: market.asset,
@@ -44,6 +48,7 @@ const FuturesMarketsTable: FC = () => {
 				synth: synthsMap[market.asset],
 				description,
 				price: marketPrice,
+				priceColor: marketPriceColor,
 				volume: volume?.toNumber() ?? 0,
 				pastPrice: pastPrice?.price,
 				priceChange: pastPrice?.price && marketPrice.sub(pastPrice?.price).div(marketPrice),
@@ -57,7 +62,7 @@ const FuturesMarketsTable: FC = () => {
 				marketClosureReason: market.marketClosureReason,
 			};
 		});
-	}, [synthsMap, futuresMarkets, pastRates, futuresVolumes, prices, t]);
+	}, [synthsMap, futuresMarkets, pastRates, futuresVolumes, prices, priceColors, t]);
 
 	return (
 		<>
@@ -114,13 +119,9 @@ const FuturesMarketsTable: FC = () => {
 										isAssetPrice: true,
 									};
 									return (
-										<Currency.Price
-											currencyKey={'sUSD'}
-											price={cellProps.row.original.price}
-											sign={'$'}
-											conversionRate={1}
-											formatOptions={formatOptions}
-										/>
+										<ColoredPrice color={cellProps.row.original.priceColor}>
+											{formatDollars(cellProps.row.original.price, formatOptions)}
+										</ColoredPrice>
 									);
 								},
 								width: 130,
@@ -434,6 +435,15 @@ const StyledText = styled.div`
 	grid-row: 1;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-family: ${(props) => props.theme.fonts.bold};
+`;
+
+const ColoredPrice = styled.div<{ color: string }>`
+	color: ${(props) =>
+		props.color === 'red'
+			? props.theme.colors.selectedTheme.red
+			: props.color === 'green'
+			? props.theme.colors.selectedTheme.red
+			: props.theme.colors.selectedTheme.white};
 `;
 
 const MarketContainer = styled.div`

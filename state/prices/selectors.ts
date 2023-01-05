@@ -2,6 +2,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
 
 import { Prices } from 'sdk/types/prices';
+import { selectMarketInfo } from 'state/futures/selectors';
 import { RootState } from 'state/store';
 import { getPricesForCurrencies } from 'utils/currencies';
 

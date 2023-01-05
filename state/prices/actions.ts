@@ -37,42 +37,22 @@ const getPriceColors = (
 		const newPrice = wei(newPrices[asset]);
 		const oldPrice = wei(oldPrices[asset]);
 
-		priceColors[asset] =
-			!!newPrice && !!oldPrice
-				? newPrice.gt(oldPrice)
-					? 'green'
-					: oldPrice.gt(newPrice)
-					? 'red'
-					: 'white'
-				: 'white';
+		priceColors[asset] = {
+			color:
+				!!newPrice && !!oldPrice
+					? newPrice.gt(oldPrice)
+						? 'green'
+						: oldPrice.gt(newPrice)
+						? 'red'
+						: 'white'
+					: 'white',
+			expiresAt: Date.now() + 1000,
+		};
 	}
 
 	if (type === 'off_chain') {
 		dispatch(setOffChainPriceColors(priceColors));
-		setTimeout(() => {
-			dispatch(resetPriceColors(type));
-		}, 1000);
 	} else {
 		dispatch(setOnChainPriceColors(priceColors));
-		setTimeout(() => {
-			dispatch(resetPriceColors(type));
-		}, 1000);
-	}
-};
-
-const resetPriceColors = (type: PriceType): AppThunk => (dispatch, getState) => {
-	const { prices } = getState();
-	const priceColors = type === 'off_chain' ? prices.offChainPriceColors : prices.onChainPriceColors;
-
-	let newPriceColors: PriceColorMap = {};
-	let asset: keyof PricesMap;
-	for (asset in priceColors) {
-		newPriceColors[asset] = 'white';
-	}
-
-	if (type === 'off_chain') {
-		dispatch(setOffChainPriceColors(newPriceColors));
-	} else {
-		dispatch(setOnChainPriceColors(newPriceColors));
 	}
 };

@@ -20,6 +20,7 @@ import {
 	selectFuturesType,
 	selectSkewAdjustedPrice,
 	selectActivePositionHistory,
+	selectMarketPriceColor,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FlexDivCentered, FlexDivCol, PillButtonDiv } from 'styles/common';
@@ -78,6 +79,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 	const marketPrice = useAppSelector(selectSkewAdjustedPrice);
 	const previewTradeData = useAppSelector(selectTradePreview);
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketKey);
+	const marketPriceColor = useAppSelector(selectMarketPriceColor);
 
 	const positionDetails = position?.position ?? null;
 
@@ -290,7 +292,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 				<DataCol>
 					<InfoRow>
 						<StyledSubtitle>{data.marketShortName}</StyledSubtitle>
-						<StyledValue>{data.marketPrice}</StyledValue>
+						<StyledValue className={marketPriceColor}>{data.marketPrice}</StyledValue>
 					</InfoRow>
 					<InfoRow>
 						<PositionCardTooltip

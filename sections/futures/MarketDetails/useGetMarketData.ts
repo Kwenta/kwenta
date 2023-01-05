@@ -13,9 +13,9 @@ import {
 	selectMarketVolumes,
 	selectMarketPrices,
 	selectSkewAdjustedPrice,
+	selectMarketPriceColor,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { selectPriceColors } from 'state/prices/selectors';
 import { pastRatesState } from 'store/futures';
 import { isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
@@ -36,7 +36,7 @@ const useGetMarketData = (mobile?: boolean) => {
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
 	const marketPrices = useAppSelector(selectMarketPrices);
 	const marketPrice = useAppSelector(selectSkewAdjustedPrice);
-	const marketPriceColors = useAppSelector(selectPriceColors);
+	const marketPriceColor = useAppSelector(selectMarketPriceColor);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
@@ -69,7 +69,7 @@ const useGetMarketData = (mobile?: boolean) => {
 						minDecimals,
 						isAssetPrice: true,
 					}),
-					color: marketPriceColors[marketAsset]?.offChain ?? 'white',
+					color: marketPriceColor,
 				},
 				[MarketDataKey.oraclePrice]: {
 					value: formatCurrency(selectedPriceCurrency.name, oraclePrice, {
@@ -127,7 +127,7 @@ const useGetMarketData = (mobile?: boolean) => {
 						minDecimals,
 						isAssetPrice: true,
 					}),
-					color: marketPriceColors[marketAsset]?.offChain ?? 'white',
+					color: marketPriceColor,
 				},
 				[MarketDataKey.oraclePrice]: {
 					value: formatCurrency(selectedPriceCurrency.name, oraclePrice, {
@@ -180,7 +180,7 @@ const useGetMarketData = (mobile?: boolean) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [
 		marketAsset,
-		marketPriceColors,
+		marketPriceColor,
 		marketInfo,
 		oraclePrice,
 		futuresVolumes,

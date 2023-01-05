@@ -1,9 +1,13 @@
 import { AssetKey, PricesMap } from 'sdk/types/prices';
 
 type PriceColor = 'white' | 'red' | 'green';
-export type PriceColorMap = Partial<Record<AssetKey, PriceColor>>;
+type PriceColorInfo = {
+	color: PriceColor;
+	expiresAt: number;
+};
 
-export type PriceColors = Record<string, { onChain?: PriceColor; offChain?: PriceColor }>;
+export type PriceColorMap = Partial<Record<AssetKey, PriceColorInfo>>;
+export type PriceColors = Record<string, { onChain?: PriceColorInfo; offChain?: PriceColorInfo }>;
 
 export type PricesState = {
 	onChainPrices: PricesMap<string>;
