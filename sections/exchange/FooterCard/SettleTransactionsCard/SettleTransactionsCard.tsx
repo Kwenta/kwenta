@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import { MobileOrTabletView } from 'components/Media';
-import StyledTooltip from 'components/Tooltip/StyledTooltip';
+import ErrorTooltip from 'components/Tooltip/ErrorTooltip';
 import { EXTERNAL_LINKS } from 'constants/links';
 import TxSettleModal from 'sections/shared/modals/TxSettleModal';
 import { submitSettle } from 'state/exchange/actions';
@@ -109,22 +109,13 @@ const MessageItem = styled(Message)`
 	text-align: left;
 `;
 
-export const UnderlineExternalLink = styled(ExternalLink)`
+const UnderlineExternalLink = styled(ExternalLink)`
 	text-decoration: underline;
 	grid-column-start: 2;
 `;
 
-export const MessageItems = styled.span`
+const MessageItems = styled.span`
 	display: grid;
-`;
-
-export const ErrorTooltip = styled(StyledTooltip)`
-	font-size: 12px;
-	background-color: ${(props) => props.theme.colors.red};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	.tippy-arrow {
-		color: ${(props) => props.theme.colors.red};
-	}
 `;
 
 export default SettleTransactionsCard;

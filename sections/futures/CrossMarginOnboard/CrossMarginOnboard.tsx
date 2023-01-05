@@ -304,10 +304,10 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 			return (
 				<>
 					<Intro>{t('futures.modals.onboard.step2-intro')}</Intro>
-					<FAQs>
+					<div>
 						<FAQHeader>FAQ:</FAQHeader>
 						<CrossMarginFAQ />
-					</FAQs>
+					</div>
 					{renderProgress(2)}
 					<StyledButton variant="flat" onClick={onClickApprove} disabled={!!submitting}>
 						{submitting === 'approve' ? <Loader /> : 'Approve'}
@@ -347,10 +347,10 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 		return (
 			<>
 				<Intro>{t('futures.modals.onboard.step1-intro')}</Intro>
-				<FAQs>
+				<div>
 					<FAQHeader>FAQ:</FAQHeader>
 					<CrossMarginFAQ />
-				</FAQs>
+				</div>
 				{renderProgress(1)}
 				<StyledButton noOutline onClick={createAccount} disabled={!!submitting}>
 					{submitting === 'create' ? <Loader /> : 'Create Account'}
@@ -379,8 +379,6 @@ const StyledButton = styled(Button)`
 	height: 50px;
 	width: 100%;
 `;
-
-const FAQs = styled.div``;
 
 const FAQHeader = styled.div`
 	padding-bottom: 4px;

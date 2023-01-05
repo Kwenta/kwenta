@@ -1,9 +1,8 @@
 import { FC, memo } from 'react';
 import styled from 'styled-components';
 
+import { LogoText, Body, Heading } from 'components/Text';
 import media from 'styles/media';
-
-import { BigText, Title } from './common';
 
 type GridDataProps = {
 	title: string;
@@ -14,14 +13,24 @@ type GridDataProps = {
 const GridData: FC<GridDataProps> = memo(({ title, value, hasKwentaLogo, children }) => (
 	<GridDataContainer>
 		<Title>{title}</Title>
-		<BigText hasKwentaLogo={hasKwentaLogo}>{value}</BigText>
+		{hasKwentaLogo ? (
+			<LogoText yellow>{value}</LogoText>
+		) : (
+			<YellowHeading fontSize={25}>{value}</YellowHeading>
+		)}
 		{children}
 	</GridDataContainer>
 ));
 
+const Title = styled(Body)`
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
+	font-size: 14px;
+	margin-bottom: 5px;
+`;
+
 const GridDataContainer = styled.div`
 	background-color: ${(props) => props.theme.colors.selectedTheme.segmented.button.background};
-	padding: 20px 24px 18px 24px;
+	padding: 20px 24px 18px;
 	min-height: 95px;
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 
@@ -31,6 +40,10 @@ const GridDataContainer = styled.div`
     border-radius: 15px;
 		border: ${(props) => props.theme.colors.selectedTheme.border};
   `}
+`;
+
+const YellowHeading = styled(Heading)`
+	color: ${(props) => props.theme.colors.selectedTheme.yellow};
 `;
 
 export default GridData;

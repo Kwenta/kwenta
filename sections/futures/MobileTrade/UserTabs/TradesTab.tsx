@@ -31,13 +31,10 @@ const TradesTab: React.FC = () => {
 
 	const { isLoading, isFetched: isLoaded } = futuresTradesQuery;
 
-	const history: FuturesTrade[] = React.useMemo(
-		() => (futuresTradesQuery.isSuccess ? futuresTradesQuery?.data ?? [] : []),
-		[futuresTradesQuery.isSuccess, futuresTradesQuery.data]
-	);
+	const history = React.useMemo(() => futuresTradesQuery?.data ?? [], [futuresTradesQuery.data]);
 
 	const historyData = React.useMemo(() => {
-		return history.map((trade: FuturesTrade) => {
+		return history.map((trade) => {
 			const parsedAsset = ethersUtils.parseBytes32String(trade.asset) as FuturesMarketAsset;
 			return {
 				...trade,
@@ -61,7 +58,7 @@ const TradesTab: React.FC = () => {
 			<SectionHeader>
 				<SectionTitle>{t('futures.market.user.trades.tab')}</SectionTitle>
 			</SectionHeader>
-			<StyledTable
+			<Table
 				onTableRowClick={(row) => {
 					setSelectedTrade(row.original);
 				}}
@@ -129,8 +126,6 @@ const TradesTab: React.FC = () => {
 };
 
 export default TradesTab;
-
-const StyledTable = styled(Table)``;
 
 const StyledTableHeader = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};

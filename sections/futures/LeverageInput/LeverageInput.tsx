@@ -202,7 +202,7 @@ const LeverageDisclaimer = styled.div`
 	margin: 0 8px 12px;
 `;
 
-export const StyledInput = styled(CustomNumericInput)`
+const StyledInput = styled(CustomNumericInput)`
 	font-family: ${(props) => props.theme.fonts.mono};
 	text-overflow: ellipsis;
 `;

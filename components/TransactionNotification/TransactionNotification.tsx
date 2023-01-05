@@ -14,48 +14,43 @@ type NotificationProps = {
 
 const NotificationPending = () => {
 	return (
-		<NotificationContainer>
+		<FlexDivCentered>
 			<IconContainer>
 				<Spinner width={35} height={35} />
 			</IconContainer>
-			<TransactionInfo>{i18n.t('common.transaction.transaction-sent')}</TransactionInfo>
-		</NotificationContainer>
+			<FlexDivCol>{i18n.t('common.transaction.transaction-sent')}</FlexDivCol>
+		</FlexDivCentered>
 	);
 };
 
 const NotificationSuccess = () => {
 	return (
-		<NotificationContainer>
+		<FlexDivCentered>
 			<IconContainer>
 				<Success width={35} height={35} />
 			</IconContainer>
-			<TransactionInfo>{i18n.t('common.transaction.transaction-confirmed')}</TransactionInfo>
-		</NotificationContainer>
+			<FlexDivCol>{i18n.t('common.transaction.transaction-confirmed')}</FlexDivCol>
+		</FlexDivCentered>
 	);
 };
 
 const NotificationError = ({ failureReason }: NotificationProps) => {
 	return (
-		<NotificationContainer>
+		<FlexDivCentered>
 			<IconContainer>
 				<Failure width={35} />
 			</IconContainer>
-			<TransactionInfo>
-				<TransactionInfoBody>{i18n.t('common.transaction.transaction-failed')}</TransactionInfoBody>
-				<TransactionInfoBody isFailureMessage>{failureReason}</TransactionInfoBody>
-			</TransactionInfo>
-		</NotificationContainer>
+			<FlexDivCol>
+				<div>{i18n.t('common.transaction.transaction-failed')}</div>
+				<div>{failureReason}</div>
+			</FlexDivCol>
+		</FlexDivCentered>
 	);
 };
-
-const NotificationContainer = styled(FlexDivCentered)``;
 
 const IconContainer = styled(FlexDivRowCentered)`
 	width: 35px;
 	margin-right: 12px;
 `;
-
-const TransactionInfo = styled(FlexDivCol)``;
-const TransactionInfoBody = styled.div<{ isFailureMessage?: boolean }>``;
 
 export { NotificationPending, NotificationSuccess, NotificationError };

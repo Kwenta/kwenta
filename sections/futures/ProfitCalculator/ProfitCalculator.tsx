@@ -143,7 +143,7 @@ const ProfitCalculator: FC<ProfitCalculatorProps> = ({ marketAsset, setOpenProfi
 					minWidth: 500,
 				}}
 			>
-				<ModalWindow>
+				<div>
 					<LabelWithInput
 						labelText={'Entry Price: '}
 						value={entryPrice}
@@ -222,13 +222,13 @@ const ProfitCalculator: FC<ProfitCalculatorProps> = ({ marketAsset, setOpenProfi
 						leverageSide={leverageSide}
 						marketAssetPositionSize={marketAssetPositionSize}
 					/>
-				</ModalWindow>
+				</div>
 			</StyledBaseModal>
 		</>
 	);
 };
 
-export const StyledBaseModal = styled(BaseModal)`
+const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
 		width: 500px;
 		.react-draggable {
@@ -267,7 +267,5 @@ const ProfitCalcGrid = styled.div`
 	grid-gap: 1.1rem;
 	grid-template-columns: repeat(2, 1fr);
 `;
-
-const ModalWindow = styled.div``;
 
 export default ProfitCalculator;

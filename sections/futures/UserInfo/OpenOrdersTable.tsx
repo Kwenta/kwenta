@@ -7,12 +7,12 @@ import Badge from 'components/Badge';
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
-import PositionType from 'components/Text/PositionType';
 import { DEFAULT_DELAYED_EXECUTION_BUFFER } from 'constants/defaults';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { PositionSide } from 'queries/futures/types';
 import { DelayedOrder } from 'sdk/types/futures';
+import PositionType from 'sections/futures/PositionType';
 import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
 import { selectMarketAsset, selectMarkets, selectOpenOrders } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -40,7 +40,6 @@ const OpenOrdersTable: React.FC = () => {
 	const isL2 = useIsL2();
 	const openOrders = useAppSelector(selectOpenOrders);
 
-	const [cancelling, setCancelling] = useState<string | null>(null);
 	const [countdownTimers, setCountdownTimers] = useState<CountdownTimers>();
 	const [selectedOrder, setSelectedOrder] = useState<DelayedOrder | undefined>();
 

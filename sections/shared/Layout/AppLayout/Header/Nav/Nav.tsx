@@ -47,16 +47,14 @@ const Nav: FC = () => {
 			);
 		return (
 			<Link href={link}>
-				<a>
-					<LabelContainer>
-						<NavLabel>
-							{t(i18nLabel)}
-							{badge &&
-								badge.map(({ i18nLabel, color }) => <Badge color={color}>{t(i18nLabel)}</Badge>)}
-						</NavLabel>
-						{Icon && <Icon />}
-					</LabelContainer>
-				</a>
+				<LabelContainer>
+					<NavLabel>
+						{t(i18nLabel)}
+						{badge &&
+							badge.map(({ i18nLabel, color }) => <Badge color={color}>{t(i18nLabel)}</Badge>)}
+					</NavLabel>
+					{Icon && <Icon />}
+				</LabelContainer>
 			</Link>
 		);
 	};

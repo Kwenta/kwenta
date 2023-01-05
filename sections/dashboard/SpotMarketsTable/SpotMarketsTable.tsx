@@ -1,4 +1,3 @@
-import { Synth } from '@synthetixio/contracts-interface';
 import * as _ from 'lodash/fp';
 import values from 'lodash/values';
 import { useRouter } from 'next/router';
@@ -15,7 +14,6 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import Connector from 'containers/Connector';
-import { Price } from 'queries/rates/types';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
 import { useAppSelector } from 'state/hooks';
 import { selectPrices } from 'state/prices/selectors';
@@ -35,7 +33,7 @@ const SpotMarketsTable: FC = () => {
 	const synthVolumesQuery = useGetSynthsTradingVolumeForAllMarkets(yesterday);
 
 	let data = useMemo(() => {
-		return synths.map((synth: Synth) => {
+		return synths.map((synth) => {
 			const description = synth.description
 				? t('common.currency.synthetic-currency-name', {
 						currencyName: synth.description,
@@ -43,7 +41,7 @@ const SpotMarketsTable: FC = () => {
 				: '';
 			const rate = prices && prices[synth.name].onChain;
 			const price = _.isNil(rate) ? 0 : rate.toNumber();
-			const pastPrice = pastRates.find((price: Price) => price.synth === synth.name);
+			const pastPrice = pastRates.find((price) => price.synth === synth.name);
 			const synthVolumes = synthVolumesQuery?.data ?? {};
 			return {
 				asset: synth.asset,
@@ -77,9 +75,7 @@ const SpotMarketsTable: FC = () => {
 						sortBy={[{ id: 'price', desc: true }]}
 						columns={[
 							{
-								Header: (
-									<TableHeader>{t('dashboard.overview.spot-markets-table.market')}</TableHeader>
-								),
+								Header: <div>{t('dashboard.overview.spot-markets-table.market')}</div>,
 								accessor: 'market',
 								Cell: (cellProps: CellProps<any>) => {
 									return (
@@ -107,9 +103,7 @@ const SpotMarketsTable: FC = () => {
 								width: 190,
 							},
 							{
-								Header: (
-									<TableHeader>{t('dashboard.overview.spot-markets-table.price')}</TableHeader>
-								),
+								Header: <div>{t('dashboard.overview.spot-markets-table.price')}</div>,
 								accessor: 'price',
 								Cell: (cellProps: CellProps<any>) => {
 									const formatOptions = isDecimalFour(cellProps.row.original.asset)
@@ -137,9 +131,7 @@ const SpotMarketsTable: FC = () => {
 								),
 							},
 							{
-								Header: (
-									<TableHeader>{t('dashboard.overview.spot-markets-table.24h-change')}</TableHeader>
-								),
+								Header: <div>{t('dashboard.overview.spot-markets-table.24h-change')}</div>,
 								accessor: '24hChange',
 								Cell: (cellProps: CellProps<any>) => {
 									return cellProps.row.original.change === '-' ? (
@@ -164,9 +156,7 @@ const SpotMarketsTable: FC = () => {
 								),
 							},
 							{
-								Header: (
-									<TableHeader>{t('dashboard.overview.spot-markets-table.24h-vol')}</TableHeader>
-								),
+								Header: <div>{t('dashboard.overview.spot-markets-table.24h-vol')}</div>,
 								accessor: '24hVolume',
 								Cell: (cellProps: CellProps<any>) => {
 									return (
@@ -210,9 +200,7 @@ const SpotMarketsTable: FC = () => {
 					]}
 					columns={[
 						{
-							Header: (
-								<TableHeader>{t('dashboard.overview.spot-markets-table.market')}</TableHeader>
-							),
+							Header: <div>{t('dashboard.overview.spot-markets-table.market')}</div>,
 							accessor: 'market',
 							Cell: (cellProps: CellProps<any>) => {
 								return (
@@ -240,9 +228,7 @@ const SpotMarketsTable: FC = () => {
 							width: 190,
 						},
 						{
-							Header: (
-								<TableHeader>{t('dashboard.overview.spot-markets-table.24h-change')}</TableHeader>
-							),
+							Header: <div>{t('dashboard.overview.spot-markets-table.24h-change')}</div>,
 							accessor: '24hChange',
 							Cell: (cellProps: CellProps<any>) => {
 								return cellProps.row.original.change === '-' ? (
@@ -267,9 +253,7 @@ const SpotMarketsTable: FC = () => {
 							),
 						},
 						{
-							Header: (
-								<TableHeader>{t('dashboard.overview.spot-markets-table.24h-vol')}</TableHeader>
-							),
+							Header: <div>{t('dashboard.overview.spot-markets-table.24h-vol')}</div>,
 							accessor: '24hVolume',
 							Cell: (cellProps: CellProps<any>) => {
 								return (
@@ -330,8 +314,6 @@ const TableContainer = styled.div`
 const StyledTable = styled(Table)`
 	margin-bottom: 20px;
 `;
-
-const TableHeader = styled.div``;
 
 const StyledText = styled.div`
 	display: flex;

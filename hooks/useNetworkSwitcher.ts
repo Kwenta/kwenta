@@ -15,7 +15,7 @@ const useNetworkSwitcher = () => {
 	const { t } = useTranslation();
 
 	const switchToL1 = async () => {
-		if (!isWalletConnected) await connectWallet();
+		if (!isWalletConnected) connectWallet();
 		try {
 			if (!window.ethereum || !window.ethereum.isMetaMask) {
 				return setNetworkError(t('user-menu.error.please-install-metamask'));
@@ -35,7 +35,7 @@ const useNetworkSwitcher = () => {
 	};
 
 	const switchToL2 = async () => {
-		if (!isWalletConnected) await connectWallet();
+		if (!isWalletConnected) connectWallet();
 		try {
 			if (!window.ethereum || !window.ethereum.isMetaMask) {
 				return setNetworkError(t('user-menu.error.please-install-metamask'));
