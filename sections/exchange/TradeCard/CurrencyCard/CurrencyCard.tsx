@@ -3,7 +3,7 @@ import { FC, useMemo, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
-import Card from 'components/Card';
+import Card, { CardBody } from 'components/Card';
 import { FlexDivRowCentered } from 'styles/common';
 
 import { Side } from '../types';
@@ -117,7 +117,7 @@ const StyledCard = styled(Card)<{ interactive?: boolean }>`
 		`}
 `;
 
-const StyledCardBody = styled(Card.Body)`
+const StyledCardBody = styled(CardBody)`
 	padding: 20px 32px;
 `;
 

@@ -4,7 +4,7 @@ import { Rnd, Props } from 'react-rnd';
 import styled from 'styled-components';
 
 import CrossIcon from 'assets/svg/app/cross.svg';
-import Card from 'components/Card';
+import Card, { CardHeader, CardBody } from 'components/Card';
 import { zIndex } from 'constants/ui';
 import { resetButtonCSS } from 'styles/common';
 import media from 'styles/media';
@@ -100,14 +100,14 @@ const StyledCard = styled(Card)`
 	`}
 `;
 
-const StyledCardHeader = styled(Card.Header)`
+const StyledCardHeader = styled(CardHeader)`
 	height: 45px;
 	font-size: 16px;
 	font-family: ${(props) => props.theme.fonts.regular};
 	padding: 20px;
 `;
 
-const StyledCardBody = styled(Card.Body)`
+const StyledCardBody = styled(CardBody)`
 	overflow-y: scroll;
 	padding: 0 20px;
 	padding-bottom: 20px;

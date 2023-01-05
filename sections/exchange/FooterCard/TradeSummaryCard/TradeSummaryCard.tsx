@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
-import Card from 'components/Card';
+import Card, { CardBody } from 'components/Card';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import ErrorTooltip from 'components/Tooltip/ErrorTooltip';
 import FeeCostSummaryItem from 'sections/shared/components/FeeCostSummary';
@@ -57,9 +57,9 @@ const TradeSummaryCard: FC = memo(() => {
 		<>
 			<MobileOrTabletView>
 				<MobileCard className="trade-summary-card">
-					<Card.Body>
+					<CardBody>
 						<SummaryItemsWrapper />
-					</Card.Body>
+					</CardBody>
 				</MobileCard>
 			</MobileOrTabletView>
 			<MessageContainer className="footer-card">
