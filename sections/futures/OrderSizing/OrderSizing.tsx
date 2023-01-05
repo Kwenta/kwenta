@@ -1,5 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import React, { ChangeEvent, useMemo, useState } from 'react';
+import React, { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import SwitchAssetArrows from 'assets/svg/futures/switch-arrows.svg';
@@ -17,6 +17,7 @@ import {
 	selectLeverageSide,
 	selectFuturesType,
 	selectMarketAsset,
+	selectIsolatedLeverageInput,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FlexDivRow } from 'styles/common';
@@ -42,11 +43,21 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	const orderType = useAppSelector(selectOrderType);
 	const marketAssetRate = useAppSelector(selectMarketPrice);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
+	const leverageInput = useAppSelector(selectIsolatedLeverageInput);
 	const selectedLeverageSide = useAppSelector(selectLeverageSide);
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 
 	const [assetInputType, setAssetInputType] = useState<'usd' | 'native'>('usd');
+	const [localOrderSizeInput, setLocalOrderSizeInput] = useState<string>('');
+
+	useEffect(() => {
+		// reset the order size input any time the leverage changes
+		// exclude the case where it is reset to zero
+		if (leverageInput !== '0') {
+			setLocalOrderSizeInput('');
+		}
+	}, [leverageInput, setLocalOrderSizeInput]);
 
 	const tradePrice = useMemo(() => (orderPrice ? wei(orderPrice) : marketAssetRate), [
 		orderPrice,
@@ -74,6 +85,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	};
 
 	const onChangeValue = (_: ChangeEvent<HTMLInputElement>, v: string) => {
+		setLocalOrderSizeInput(v);
 		dispatch(editTradeSizeInput(v, assetInputType));
 	};
 
@@ -125,7 +137,13 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 							<span>{<SwitchAssetArrows />}</span>
 						</InputButton>
 					}
-					value={assetInputType === 'usd' ? susdSizeString : nativeSizeString}
+					value={
+						susdSizeString === ''
+							? localOrderSizeInput
+							: assetInputType === 'usd'
+							? susdSizeString
+							: nativeSizeString
+					}
 					placeholder="0.00"
 					onChange={onChangeValue}
 				/>

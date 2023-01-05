@@ -1,5 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -16,6 +16,7 @@ import {
 	selectPosition,
 	selectOrderType,
 	selectNextPriceDisclaimer,
+	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FlexDivCol, FlexDivRow } from 'styles/common';
@@ -34,9 +35,21 @@ const LeverageInput: FC = () => {
 	const maxLeverage = useAppSelector(selectMaxLeverage);
 	const marketPrice = useAppSelector(selectMarketPrice);
 	const leverageInput = useAppSelector(selectIsolatedLeverageInput);
+	const { susdSizeString } = useAppSelector(selectTradeSizeInputs);
+
+	const [localLeverageInput, setLocalLeverageInput] = useState<string>('');
+
+	useEffect(() => {
+		// reset the leverage input any time the order size changes
+		// exclude the case where it is reset to zero
+		if (susdSizeString !== '') {
+			setLocalLeverageInput('');
+		}
+	}, [susdSizeString, setLocalLeverageInput]);
 
 	const onLeverageChange = useCallback(
 		(newLeverage: string) => {
+			setLocalLeverageInput(newLeverage);
 			const remainingMargin = position?.remainingMargin ?? zeroBN;
 			const newTradeSize =
 				marketPrice.eq(0) || remainingMargin.eq(0)
@@ -46,7 +59,7 @@ const LeverageInput: FC = () => {
 			dispatch(editIsolatedMarginSize(String(floored), 'native'));
 			dispatch(setIsolatedMarginLeverageInput(newLeverage));
 		},
-		[position?.remainingMargin, marketPrice, dispatch]
+		[position?.remainingMargin, marketPrice, dispatch, setLocalLeverageInput]
 	);
 
 	const modeButton = useMemo(() => {
@@ -105,7 +118,7 @@ const LeverageInput: FC = () => {
 				<LeverageInputContainer>
 					<StyledInput
 						data-testid="leverage-input"
-						value={leverageInput === '0' ? '' : leverageInput}
+						value={leverageInput === '0' ? localLeverageInput : leverageInput}
 						placeholder="1"
 						suffix="x"
 						maxValue={maxLeverage.toNumber()}
