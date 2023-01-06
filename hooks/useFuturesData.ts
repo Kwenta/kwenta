@@ -41,7 +41,6 @@ import {
 } from 'state/futures/selectors';
 import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector, useAppDispatch } from 'state/hooks';
-import { fetchStakingData } from 'state/staking/actions';
 import { futuresAccountState, orderFeeCapState } from 'store/futures';
 import { computeMarketFee } from 'utils/costCalculations';
 import { zeroBN } from 'utils/formatters/number';
@@ -295,7 +294,6 @@ const useFuturesData = () => {
 
 	useEffect(() => {
 		resetTradeState();
-		dispatch(fetchStakingData());
 		// Clear trade state when switching address
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [crossMarginAddress]);
