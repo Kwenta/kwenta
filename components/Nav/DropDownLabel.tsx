@@ -10,7 +10,7 @@ export const LabelContainer = styled(FlexDivRow)<{ noPadding?: boolean; external
 	width: 100%;
 	color: ${(props) =>
 		props.external
-			? props.theme.colors.selectedTheme.button.text.yellow
+			? props.theme.colors.selectedTheme.button.yellow.text
 			: props.theme.colors.selectedTheme.button.text.primary};
 
 	:hover {
@@ -22,7 +22,10 @@ export const LabelContainer = styled(FlexDivRow)<{ noPadding?: boolean; external
 	}
 	> svg {
 		path {
-			fill: ${(props) => props.theme.colors.selectedTheme.icon.fill};
+			fill: ${(props) =>
+				props.external
+					? props.theme.colors.selectedTheme.white
+					: props.theme.colors.selectedTheme.icon.fill};
 		}
 	}
 `;

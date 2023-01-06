@@ -146,7 +146,6 @@ const DropDownSelect = styled(Select)`
 		padding: 20px;
 
 		.react-select__group-heading {
-			color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 			font-size: 12px;
 			padding: 0;
 			margin-bottom: 15px;

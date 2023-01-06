@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react';
 
-import LinkIcon from 'assets/svg/app/link-blue.svg';
+import LinkIconLight from 'assets/svg/app/link-light.svg';
 import { CrossMarginIcon, IsolatedMarginIcon } from 'components/Nav/FuturesIcon';
 import { COMPETITION_ENABLED } from 'constants/competition';
 import { CROSS_MARGIN_ENABLED, DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
@@ -111,7 +111,7 @@ export const getMenuLinks = (isMobile: boolean): MenuLinks => [
 								color: 'red',
 							},
 						],
-						Icon: LinkIcon,
+						Icon: LinkIconLight,
 					},
 			  ]
 			: null,
