@@ -1,5 +1,5 @@
 import router from 'next/router';
-import React, { FC, useMemo, useEffect } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -22,8 +22,7 @@ import {
 	selectOrderType,
 	selectTradeSizeInputs,
 } from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { fetchStakingData } from 'state/staking/actions';
+import { useAppSelector } from 'state/hooks';
 import {
 	selectStakedEscrowedKwentaBalance,
 	selectStakedKwentaBalance,
@@ -35,7 +34,6 @@ import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/form
 const FeeInfoBox: React.FC = () => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
-	const dispatch = useAppDispatch();
 	const orderType = useAppSelector(selectOrderType);
 	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance);
 	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance);
@@ -81,12 +79,6 @@ const FeeInfoBox: React.FC = () => {
 		() => !!walletAddress && stakedKwentaBalance.add(stakedEscrowedKwentaBalance).gt(0),
 		[walletAddress, stakedKwentaBalance, stakedEscrowedKwentaBalance]
 	);
-
-	useEffect(() => {
-		if (!!walletAddress) {
-			dispatch(fetchStakingData());
-		}
-	}, [dispatch, walletAddress]);
 
 	const feesInfo = useMemo<Record<string, DetailedInfo | null | undefined>>(() => {
 		const crossMarginFeeInfo = {
