@@ -1,4 +1,5 @@
 import { useAppSelector, useFetchAction, usePollAction } from 'state/hooks';
+import { fetchStakingData } from 'state/staking/actions';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 
 import {
@@ -21,6 +22,7 @@ export const usePollMarketFuturesData = () => {
 	const selectedAccountType = useAppSelector(selectFuturesType);
 
 	useFetchAction(fetchCrossMarginSettings, { changeKeys: [networkId] });
+	useFetchAction(fetchStakingData, { changeKeys: [networkId, wallet] });
 	usePollAction('fetchSharedFuturesData', fetchSharedFuturesData, {
 		dependencies: [networkId],
 		intervalTime: 60000,
