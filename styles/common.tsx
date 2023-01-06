@@ -318,10 +318,7 @@ export const YellowIconButton = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.yellow};
 	svg {
 		path {
-			${(props) =>
-				css`
-					fill: ${props.theme.colors.selectedTheme.yellow};
-				`}
+			fill: ${(props) => props.theme.colors.selectedTheme.yellow};
 		}
 	}
 	&:hover {

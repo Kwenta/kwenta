@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
 import PreviewArrow from 'components/PreviewArrow';
+import * as Text from 'components/Text';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
@@ -138,10 +139,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			marketLongName: getSynthDescription(marketAsset, synthsMap, t),
 			marketPrice: (
 				<>
-					{`${formatDollars(marketPrice, {
-						minDecimals,
-						isAssetPrice: true,
-					})}`}
+					{formatDollars(marketPrice, { minDecimals, isAssetPrice: true })}
 					{
 						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
 							{formatDollars(previewData.fillPrice ?? zeroBN, {
@@ -289,30 +287,22 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			<Container id={isFuturesMarketClosed ? 'closed' : undefined}>
 				<DataCol>
 					<InfoRow>
-						<StyledSubtitle>{data.marketShortName}</StyledSubtitle>
+						<Subtitle>{data.marketShortName}</Subtitle>
 						<StyledValue>{data.marketPrice}</StyledValue>
 					</InfoRow>
 					<InfoRow>
-						<PositionCardTooltip
-							preset="fixed"
-							height={'auto'}
-							content={t('futures.market.position-card.tooltips.position-side')}
-						>
-							<StyledSubtitleWithCursor>
+						<PositionCardTooltip content={t('futures.market.position-card.tooltips.position-side')}>
+							<SubtitleWithCursor>
 								{t('futures.market.position-card.position-side')}
-							</StyledSubtitleWithCursor>
+							</SubtitleWithCursor>
 						</PositionCardTooltip>
 						<div data-testid="position-card-side-value">{data.positionSide}</div>
 					</InfoRow>
 					<InfoRow>
-						<PositionCardTooltip
-							preset="fixed"
-							height={'auto'}
-							content={t('futures.market.position-card.tooltips.position-size')}
-						>
-							<StyledSubtitleWithCursor>
+						<PositionCardTooltip content={t('futures.market.position-card.tooltips.position-size')}>
+							<SubtitleWithCursor>
 								{t('futures.market.position-card.position-size')}
-							</StyledSubtitleWithCursor>
+							</SubtitleWithCursor>
 						</PositionCardTooltip>
 						<StyledValue>{data.positionSize}</StyledValue>
 					</InfoRow>
@@ -320,14 +310,10 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 				<DataColDivider />
 				<DataCol>
 					<InfoRow>
-						<PositionCardTooltip
-							preset="fixed"
-							height={'auto'}
-							content={t('futures.market.position-card.tooltips.net-funding')}
-						>
-							<StyledSubtitleWithCursor>
+						<PositionCardTooltip content={t('futures.market.position-card.tooltips.net-funding')}>
+							<SubtitleWithCursor>
 								{t('futures.market.position-card.net-funding')}
-							</StyledSubtitleWithCursor>
+							</SubtitleWithCursor>
 						</PositionCardTooltip>
 						{positionDetails ? (
 							<StyledValue
@@ -342,14 +328,8 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 						)}
 					</InfoRow>
 					<InfoRow>
-						<PositionCardTooltip
-							preset="fixed"
-							height={'auto'}
-							content={t('futures.market.position-card.tooltips.u-pnl')}
-						>
-							<StyledSubtitleWithCursor>
-								{t('futures.market.position-card.u-pnl')}
-							</StyledSubtitleWithCursor>
+						<PositionCardTooltip content={t('futures.market.position-card.tooltips.u-pnl')}>
+							<SubtitleWithCursor>{t('futures.market.position-card.u-pnl')}</SubtitleWithCursor>
 						</PositionCardTooltip>
 						{positionDetails ? (
 							<StyledValue className={data.pnl > zeroBN ? 'green' : data.pnl < zeroBN ? 'red' : ''}>
@@ -360,14 +340,8 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 						)}
 					</InfoRow>
 					<InfoRow>
-						<PositionCardTooltip
-							preset="fixed"
-							height={'auto'}
-							content={t('futures.market.position-card.tooltips.r-pnl')}
-						>
-							<StyledSubtitleWithCursor>
-								{t('futures.market.position-card.r-pnl')}
-							</StyledSubtitleWithCursor>
+						<PositionCardTooltip content={t('futures.market.position-card.tooltips.r-pnl')}>
+							<SubtitleWithCursor>{t('futures.market.position-card.r-pnl')}</SubtitleWithCursor>
 						</PositionCardTooltip>
 						{positionDetails ? (
 							<StyledValue
@@ -385,14 +359,8 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 				<DataColDivider />
 				<DataCol>
 					<InfoRow>
-						<PositionCardTooltip
-							preset="fixed"
-							height={'auto'}
-							content={t('futures.market.position-card.tooltips.leverage')}
-						>
-							<StyledSubtitleWithCursor>
-								{t('futures.market.position-card.leverage')}
-							</StyledSubtitleWithCursor>
+						<PositionCardTooltip content={t('futures.market.position-card.tooltips.leverage')}>
+							<SubtitleWithCursor>{t('futures.market.position-card.leverage')}</SubtitleWithCursor>
 						</PositionCardTooltip>
 						<FlexDivCentered>
 							<StyledValue data-testid="position-card-leverage-value">{data.leverage}</StyledValue>
@@ -403,25 +371,21 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 					</InfoRow>
 					<InfoRow>
 						<PositionCardTooltip
-							preset="fixed"
-							height={'auto'}
 							content={t('futures.market.position-card.tooltips.liquidation-price')}
 						>
-							<StyledSubtitleWithCursor>
+							<SubtitleWithCursor>
 								{t('futures.market.position-card.liquidation-price')}
-							</StyledSubtitleWithCursor>
+							</SubtitleWithCursor>
 						</PositionCardTooltip>
 						<StyledValue>{data.liquidationPrice}</StyledValue>
 					</InfoRow>
 					<InfoRow>
 						<PositionCardTooltip
-							preset="fixed"
-							height={'auto'}
 							content={t('futures.market.position-card.tooltips.avg-entry-price')}
 						>
-							<StyledSubtitleWithCursor>
+							<SubtitleWithCursor>
 								{t('futures.market.position-card.avg-entry-price')}
-							</StyledSubtitleWithCursor>
+							</SubtitleWithCursor>
 						</PositionCardTooltip>
 						<StyledValue>{data.avgEntryPrice}</StyledValue>
 					</InfoRow>
@@ -430,6 +394,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 		</>
 	);
 };
+
 export default PositionCard;
 
 const Container = styled.div`
@@ -482,33 +447,24 @@ const InfoRow = styled.div`
 	}
 `;
 
-const StyledSubtitle = styled.p`
-	font-family: ${(props) => props.theme.fonts.regular};
+const Subtitle = styled(Text.Body)`
 	font-size: 13px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	text-transform: capitalize;
-	margin: 0;
 `;
 
-const StyledSubtitleWithCursor = styled.p`
-	font-family: ${(props) => props.theme.fonts.regular};
-	font-size: 13px;
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	text-transform: capitalize;
-	margin: 0;
+const SubtitleWithCursor = styled(Subtitle)`
 	cursor: help;
 `;
 
-const PositionCardTooltip = styled(StyledTooltip)`
+const PositionCardTooltip = styled(StyledTooltip).attrs({ preset: 'fixed', height: 'auto' })`
 	z-index: 2;
 	padding: 0px 10px 0px 10px;
 `;
 
-const StyledValue = styled.p`
-	font-family: ${(props) => props.theme.fonts.mono};
+const StyledValue = styled(Text.Body).attrs({ mono: true })`
 	font-size: 13px;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	margin: 0;
 	text-align: end;
 	${Container}#closed & {
 		color: ${(props) => props.theme.colors.selectedTheme.gray};

@@ -1,7 +1,7 @@
 import router from 'next/router';
 import React, { useMemo, useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import EligibleIcon from 'assets/svg/app/eligible.svg';
 import LinkArrowIcon from 'assets/svg/app/link-arrow.svg';
@@ -138,7 +138,7 @@ const FeeInfoBox: React.FC = () => {
 									i18nKey={`dashboard.stake.tabs.trading-rewards.stake-to-${
 										isRewardEligible ? 'earn' : 'start'
 									}`}
-									components={[<Emphasis />]}
+									components={[<Text.Body variant="bold" />]}
 								/>
 							</RewardCopy>
 							<StyledLinkArrowIcon />
@@ -220,10 +220,6 @@ const StyledLinkArrowIcon = styled(LinkArrowIcon)`
 	cursor: pointer;
 `;
 
-const Emphasis = styled.b`
-	font-family: ${(props) => props.theme.fonts.bold};
-`;
-
 const RewardCopy = styled(Text.Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.text.title};
 `;
@@ -243,23 +239,24 @@ const CompactBox = styled.div<{ $isEligible: boolean }>`
 	}
 
 	.badge-red {
-		color: ${(props) => props.theme.colors.selectedTheme.badge['red'].text};
-		background: ${(props) => props.theme.colors.selectedTheme.badge['red'].background};
+		color: ${(props) => props.theme.colors.selectedTheme.badge.red.text};
+		background: ${(props) => props.theme.colors.selectedTheme.badge.red.background};
 		min-width: 100px;
 	}
 
 	.badge-yellow {
-		color: ${(props) => props.theme.colors.selectedTheme.badge['yellow'].text};
-		background: ${(props) => props.theme.colors.selectedTheme.badge['yellow'].background};
+		color: ${(props) => props.theme.colors.selectedTheme.badge.yellow.text};
+		background: ${(props) => props.theme.colors.selectedTheme.badge.yellow.background};
 		min-width: 70px;
 	}
 
 	${(props) =>
-		css`
-			border-left: 3px solid
-				${props.$isEligible
-					? props.theme.colors.selectedTheme.badge.yellow.background
-					: props.theme.colors.selectedTheme.badge.red.background};
+		`border-left: 3px solid 
+				${
+					props.$isEligible
+						? props.theme.colors.selectedTheme.badge.yellow.background
+						: props.theme.colors.selectedTheme.badge.red.background
+				};
 		`}
 `;
 
