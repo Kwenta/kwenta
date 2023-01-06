@@ -176,11 +176,9 @@ const useFuturesData = () => {
 	}, [orderType, limitOrderFee, stopOrderFee]);
 
 	const totalFeeRate = useCallback(
-		async (usdSizeDelta: Wei) => {
+		(usdSizeDelta: Wei) => {
 			const staticRate = computeMarketFee(market, usdSizeDelta);
-
 			let total = crossMarginTradeFee.add(dynamicFeeRate).add(staticRate).add(advancedOrderFeeRate);
-
 			return total;
 		},
 		[market, crossMarginTradeFee, dynamicFeeRate, advancedOrderFeeRate]
@@ -235,7 +233,6 @@ const useFuturesData = () => {
 					position?.position?.side === leverageSide
 						? freeMargin
 						: freeMargin.add(position?.remainingMargin ?? zeroBN);
-
 				let maxUsd = totalMargin.mul(selectedLeverage);
 				if (position?.position?.side !== leverageSide) {
 					maxUsd = maxUsd.add(position?.position?.notionalValue ?? zeroBN);
