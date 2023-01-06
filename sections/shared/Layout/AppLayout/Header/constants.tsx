@@ -105,6 +105,12 @@ export const getMenuLinks = (isMobile: boolean): MenuLinks => [
 						link: EXTERNAL_LINKS.Trade.PerpsV2,
 						externalLink: true,
 						i18nLabel: 'header.nav.v2-alpha',
+						badge: [
+							{
+								i18nLabel: 'header.nav.alpha-badge',
+								color: 'red',
+							},
+						],
 						Icon: LinkIcon,
 					},
 			  ]
