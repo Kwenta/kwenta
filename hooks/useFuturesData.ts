@@ -91,7 +91,6 @@ const useFuturesData = () => {
 	const { tradeFee: crossMarginTradeFee, stopOrderFee, limitOrderFee } = useAppSelector(
 		selectCrossMarginSettings
 	);
-
 	const isAdvancedOrder = useAppSelector(selectIsAdvancedOrder);
 	const marketAssetRate = useAppSelector(selectMarketAssetRate);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
