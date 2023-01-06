@@ -21,6 +21,7 @@ type ReactSelectOptionProps = {
 	link: string;
 	badge: BadgeType[];
 	Icon: FunctionComponent<any>;
+	externalLink?: boolean;
 };
 
 const Nav: FC = () => {
@@ -38,6 +39,7 @@ const Nav: FC = () => {
 		badge,
 		link,
 		isActive,
+		externalLink,
 	}: ReactSelectOptionProps) => {
 		if (i18nLabel === 'header.nav.markets' || i18nLabel === 'header.nav.leaderboard')
 			return (
@@ -47,14 +49,16 @@ const Nav: FC = () => {
 			);
 		return (
 			<Link href={link}>
-				<LabelContainer>
-					<NavLabel>
-						{t(i18nLabel)}
-						{badge &&
-							badge.map(({ i18nLabel, color }) => <Badge color={color}>{t(i18nLabel)}</Badge>)}
-					</NavLabel>
-					{Icon && <Icon />}
-				</LabelContainer>
+				<a target={externalLink ? '_blank' : ''} rel={externalLink ? 'noopener noreferrer' : ''}>
+					<LabelContainer external={externalLink}>
+						<NavLabel>
+							{t(i18nLabel)}
+							{badge &&
+								badge.map(({ i18nLabel, color }) => <Badge color={color}>{t(i18nLabel)}</Badge>)}
+						</NavLabel>
+						{Icon && <Icon />}
+					</LabelContainer>
+				</a>
 			</Link>
 		);
 	};
@@ -154,6 +158,12 @@ const DropDownSelect = styled(Select)`
 		margin-right: 5px;
 		margin-top: 2px;
 		padding: 0;
+	}
+
+	.react-select__menu-list {
+		.react-select__option:last-child {
+			background-color: ${(props) => props.theme.colors.selectedTheme.button.yellow.fill};
+		}
 	}
 
 	.react-select__value-container {
