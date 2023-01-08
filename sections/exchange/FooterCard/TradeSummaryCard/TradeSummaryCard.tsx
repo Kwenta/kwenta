@@ -31,12 +31,12 @@ import { SummaryItems } from '../common';
 const TradeSummaryCard: FC = memo(() => {
 	const { t } = useTranslation();
 
-	const { feeReclaimPeriod, openModal } = useAppSelector(({ exchange }) => ({
+	const { feeReclaimPeriod, openModal, quoteCurrencyKey } = useAppSelector(({ exchange }) => ({
 		feeReclaimPeriod: exchange.feeReclaimPeriod,
 		openModal: exchange.openModal,
+		quoteCurrencyKey: exchange.quoteCurrencyKey,
 	}));
 
-	const quoteCurrencyKey = useAppSelector(({ exchange }) => exchange.quoteCurrencyKey);
 	const dispatch = useAppDispatch();
 
 	const isApproved = useAppSelector(selectIsApproved);
