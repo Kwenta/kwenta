@@ -11,7 +11,7 @@ import {
 
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import { combineDataToPair } from 'sections/exchange/TradeCard/Charts/hooks/useCombinedCandleSticksChartData';
-import { getDisplayAsset } from 'utils/futures';
+import { MarketAssetByKey, getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
 import { resolutionToSeconds } from './utils';
@@ -57,7 +57,7 @@ const fetchCombinedCandles = async (
 	const baseCurrencyIsSUSD = base === 'sUSD';
 	const quoteCurrencyIsSUSD = quote === 'sUSD';
 	const baseDataPromise = requestCandlesticks(
-		base,
+		getDisplayAsset(base),
 		from,
 		to,
 		resolutionToSeconds(resolution),
