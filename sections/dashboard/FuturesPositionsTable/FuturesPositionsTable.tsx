@@ -39,7 +39,7 @@ type FuturesPositionTableProps = {
 const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	accountType,
 	showCurrentMarket = true,
-}: FuturesPositionTableProps) => {
+}) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
 	const router = useRouter();
@@ -167,9 +167,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 									return (
 										<Currency.Price
-											currencyKey={'sUSD'}
+											currencyKey="sUSD"
 											price={cellProps.row.original.position.notionalValue}
-											sign={'$'}
+											sign="$"
 											conversionRate={1}
 											formatOptions={formatOptions}
 										/>
@@ -204,9 +204,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 											<ChangePercent value={cellProps.row.original.position.pnlPct} />
 											<div>
 												<Currency.Price
-													currencyKey={'sUSD'}
+													currencyKey="sUSD"
 													price={cellProps.row.original.position.pnl}
-													sign={'$'}
+													sign="$"
 													conversionRate={1}
 												/>
 											</div>
@@ -233,7 +233,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 										<Currency.Price
 											currencyKey={'sUSD'}
 											price={cellProps.row.original.avgEntryPrice}
-											sign={'$'}
+											sign="$"
 											conversionRate={1}
 											formatOptions={formatOptions}
 										/>

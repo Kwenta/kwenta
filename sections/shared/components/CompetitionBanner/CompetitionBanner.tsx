@@ -1,8 +1,9 @@
-import React, { FC } from 'react';
+import { memo, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import CompetitionBannerBg from 'assets/svg/app/competition-banner-bg.svg';
+import * as Text from 'components/Text';
 import { COMPETITION_DATES, COMPETITION_ENABLED } from 'constants/competition';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { ExternalLink } from 'styles/common';
@@ -16,18 +17,14 @@ type CompetitionBannerProps = {
 	hideBanner?: boolean;
 };
 
-export const CompetitionBanner: FC<CompetitionBannerProps> = ({
-	compact,
-	hideBanner,
-}: CompetitionBannerProps) => {
+const formatedStartDate = formatDateWithoutYear(COMPETITION_DATES.START_DATE);
+const formatedEndDate = formatDateWithoutYear(COMPETITION_DATES.END_DATE);
+const competitionPeriod = `${formatedStartDate}-${formatedEndDate.split(' ')[1]}`;
+
+export const CompetitionBanner: FC<CompetitionBannerProps> = memo(({ compact, hideBanner }) => {
 	const { t } = useTranslation();
 
 	if (!COMPETITION_ENABLED) return null;
-
-	const formatedStartDate = formatDateWithoutYear(COMPETITION_DATES.START_DATE);
-	const formatedEndDate = formatDateWithoutYear(COMPETITION_DATES.END_DATE);
-
-	const competitionPeriod = `${formatedStartDate}-${formatedEndDate.split(' ')[1]}`;
 
 	return (
 		<BannerContainer compact={compact} hideBanner={hideBanner}>
@@ -38,12 +35,9 @@ export const CompetitionBanner: FC<CompetitionBannerProps> = ({
 			<StyledBg />
 		</BannerContainer>
 	);
-};
+});
 
-const BannerContainer = styled.div<{
-	compact: boolean | undefined;
-	hideBanner: boolean | undefined;
-}>`
+const BannerContainer = styled.div<{ compact?: boolean; hideBanner?: boolean }>`
 	position: relative;
 	width: 100%;
 	display: ${({ hideBanner }) => (hideBanner ? 'none' : 'flex')};
@@ -62,13 +56,11 @@ const BannerContainer = styled.div<{
 	gap: 10px;
 `;
 
-const CompetitionPeriod = styled.p`
-	font-family: ${(props) => props.theme.fonts.monoBold};
+const CompetitionPeriod = styled(Text.Body).attrs({ mono: true, variant: 'bold' })`
 	font-style: normal;
 	font-size: 13px;
 	line-height: 10px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	// clear UA style.
 	margin: 0;
 `;
 
@@ -97,7 +89,7 @@ const StyledBg = styled(CompetitionBannerBg)`
 	width: 100%;
 	height: 100%;
 
-	// prevent background-image from covering the text.
+	/* prevent background-image from covering the text. */
 	z-index: -1;
 
 	position: absolute;

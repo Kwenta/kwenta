@@ -29,13 +29,7 @@ const SplitContainer = styled.div`
 	${media.greaterThan('mdUp')`
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		& > div {
-			flex: 1;
-
-			&:first-child {
-				margin-right: 15px;
-			}
-		}
+		grid-gap: 15px;
 	`}
 
 	${media.lessThan('mdUp')`

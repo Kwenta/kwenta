@@ -10,7 +10,7 @@ import { FuturesAccountTypes } from 'queries/futures/types';
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
 import { selectBalances } from 'state/balances/selectors';
 import {
-	selectCrossMarginPositions,
+	// selectCrossMarginPositions,
 	selectFuturesPortfolio,
 	selectIsolatedMarginPositions,
 } from 'state/futures/selectors';
@@ -43,7 +43,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 	exchangeTokenBalances,
 }) => {
 	const { t } = useTranslation();
-	const crossPositions = useAppSelector(selectCrossMarginPositions);
+	// const crossPositions = useAppSelector(selectCrossMarginPositions);
 	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
 	const portfolio = useAppSelector(selectFuturesPortfolio);
 	const balances = useAppSelector(selectBalances);
@@ -80,9 +80,9 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 		[
 			t,
 			isolatedPositions,
-			crossPositions,
+			// crossPositions,
 			activePositionsTab,
-			portfolio.crossMarginFutures,
+			// portfolio.crossMarginFutures,
 			portfolio.isolatedMarginFutures,
 			balances.totalUSDBalance,
 			exchangeTokenBalances,

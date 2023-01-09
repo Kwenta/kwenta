@@ -46,7 +46,7 @@ export const RedeemTxModal: FC<RedeemTxModalProps> = ({ attemptRetry }) => {
 					/>
 				))}
 				<Title topPad>{t('modals.deprecated-synths.to')}</Title>
-				<BalanceItem currencyKey={'sUSD'} amount={totalRedeemableBalance} />
+				<BalanceItem currencyKey="sUSD" amount={totalRedeemableBalance} />
 			</Balances>
 			<Subtitle>{t('modals.confirm-transaction.confirm-with-provider')}</Subtitle>
 			{!!txError && (

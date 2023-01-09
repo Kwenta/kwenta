@@ -1,5 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import React from 'react';
+import { memo, FC } from 'react';
 import styled, { css } from 'styled-components';
 
 import { border } from 'components/Button';
@@ -18,7 +18,7 @@ type MobilePositionRowProps = {
 	onClick(): void;
 };
 
-const MobilePositionRow: React.FC<MobilePositionRowProps> = ({ row, onClick }) => {
+const MobilePositionRow: FC<MobilePositionRowProps> = memo(({ row, onClick }) => {
 	const prices = useAppSelector(selectPrices);
 	const marketPrice =
 		prices[row.market.asset]?.offChain ?? prices[row.market.asset]?.onChain ?? wei(0);
@@ -44,7 +44,7 @@ const MobilePositionRow: React.FC<MobilePositionRowProps> = ({ row, onClick }) =
 				<div>
 					<div>
 						<Currency.Price
-							currencyKey={'sUSD'}
+							currencyKey="sUSD"
 							price={marketPrice}
 							sign="$"
 							formatOptions={
@@ -54,7 +54,7 @@ const MobilePositionRow: React.FC<MobilePositionRowProps> = ({ row, onClick }) =
 					</div>
 					<EntryPrice>
 						<Currency.Price
-							currencyKey={'sUSD'}
+							currencyKey="sUSD"
 							price={marketPrice}
 							sign="$"
 							formatOptions={
@@ -72,7 +72,7 @@ const MobilePositionRow: React.FC<MobilePositionRowProps> = ({ row, onClick }) =
 			</RightColumnsContainer>
 		</OpenPositionContainer>
 	);
-};
+});
 
 const OpenPositionContainer = styled.div<{ side?: PositionSide }>`
 	display: flex;

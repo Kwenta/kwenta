@@ -34,7 +34,7 @@ const AllTime: FC<AllTimeProps> = ({
 	const { staticMainnetProvider, walletAddress } = Connector.useContainer();
 
 	if (compact) {
-		const ownPosition = stats.findIndex((i: { account: string }) => {
+		const ownPosition = stats.findIndex((i) => {
 			return i.account.toLowerCase() === walletAddress?.toLowerCase();
 		});
 
@@ -146,9 +146,9 @@ const AllTime: FC<AllTimeProps> = ({
 									accessor: 'totalVolume',
 									Cell: (cellProps: CellProps<any>) => (
 										<Currency.Price
-											currencyKey={'sUSD'}
+											currencyKey="sUSD"
 											price={cellProps.row.original.totalVolume}
-											sign={'$'}
+											sign="$"
 											conversionRate={1}
 										/>
 									),
@@ -159,9 +159,9 @@ const AllTime: FC<AllTimeProps> = ({
 									accessor: 'pnl',
 									Cell: (cellProps: CellProps<any>) => (
 										<ColorCodedPrice
-											currencyKey={'sUSD'}
+											currencyKey="sUSD"
 											price={cellProps.row.original.pnl}
-											sign={'$'}
+											sign="$"
 											conversionRate={1}
 										/>
 									),

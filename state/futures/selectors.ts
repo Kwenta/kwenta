@@ -658,3 +658,11 @@ export const selectDelayedOrderFee = createSelector(
 		};
 	}
 );
+
+export const selectOpenInterest = createSelector(selectMarkets, (futuresMarkets) =>
+	futuresMarkets.reduce(
+		(total, { openInterest }) =>
+			total.add(openInterest?.shortUSD ?? wei(0)).add(openInterest?.longUSD ?? wei(0)),
+		wei(0)
+	)
+);

@@ -32,7 +32,7 @@ enum LeaderboardTab {
 const LEADERBOARD_TABS = [LeaderboardTab.Top, LeaderboardTab.Bottom];
 
 const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps) => {
-	const [activeTab, setActiveTab] = useState<LeaderboardTab>(LeaderboardTab.Top);
+	const [activeTab, setActiveTab] = useState(LeaderboardTab.Top);
 	const [activeTier, setActiveTier] = useState<Tier>('bronze');
 	const [competitionRound, setCompetitionRound] = useState<CompetitionRound>();
 	const [searchInput, setSearchInput] = useState('');
@@ -47,24 +47,16 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 		leaderboardQuery,
 	]);
 
-	const traders = useMemo(
-		() =>
-			leaderboardData.all?.map((stat: AccountStat) => {
-				return stat.account;
-			}) ?? [],
-		[leaderboardData]
-	);
+	const traders = useMemo(() => leaderboardData.all?.map((stat) => stat.account) ?? [], [
+		leaderboardData,
+	]);
 
 	const ensInfoQuery = useENSs(traders);
 	const ensInfo = useMemo(() => ensInfoQuery.data ?? {}, [ensInfoQuery]);
 
-	const pinRow: AccountStat[] = useMemo(() => {
+	const pinRow = useMemo(() => {
 		return leaderboardData.wallet
-			? leaderboardData.wallet.map((trader) => ({
-					...trader,
-					rank: 0,
-					rankText: PIN,
-			  }))
+			? leaderboardData.wallet.map((trader) => ({ ...trader, rank: 0, rankText: PIN }))
 			: [];
 	}, [leaderboardData.wallet]);
 
@@ -85,7 +77,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 		return null;
 	}, [router.query, router.asPath]);
 
-	const onChangeSearch = async (text: string) => {
+	const onChangeSearch = (text: string) => {
 		setSearchInput(text?.toLowerCase());
 
 		if (isAddress(text)) {
@@ -119,16 +111,11 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 	};
 
 	useEffect(() => {
-		setSearchAddress(
-			searchEns.ensAddress ? searchEns.ensAddress : isAddress(searchTerm) ? searchTerm : ''
-		);
+		setSearchAddress(searchEns.ensAddress ?? (isAddress(searchTerm) ? searchTerm : ''));
 	}, [searchTerm, searchEns]);
 
 	const mapEnsName = useCallback(
-		(stat: AccountStat) => ({
-			...stat,
-			traderEns: ensInfo[stat.account] ?? null,
-		}),
+		(stat: AccountStat) => ({ ...stat, traderEns: ensInfo[stat.account] ?? null }),
 		[ensInfo]
 	);
 

@@ -86,10 +86,7 @@ const Competition: FC<CompetitionProps> = ({
 
 		const pinRow = cleanCompetitionData
 			.filter((trader) => trader.account.toLowerCase() === walletAddress?.toLowerCase())
-			.map((trader) => ({
-				...trader,
-				rankText: `${trader.rank}${PIN}`,
-			}));
+			.map((trader) => ({ ...trader, rankText: `${trader.rank}${PIN}` }));
 
 		return [...pinRow, ...cleanCompetitionData];
 	}, [competitionQuery, ensInfo, searchTerm, activeTier, walletAddress, walletTier, compact]);

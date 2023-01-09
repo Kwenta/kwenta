@@ -117,7 +117,7 @@ const FuturesMarketsTable: FC = () => {
 										<Currency.Price
 											currencyKey={'sUSD'}
 											price={cellProps.row.original.price}
-											sign={'$'}
+											sign="$"
 											conversionRate={1}
 											formatOptions={formatOptions}
 										/>
@@ -200,15 +200,15 @@ const FuturesMarketsTable: FC = () => {
 									return (
 										<OpenInterestContainer>
 											<StyledLongPrice
-												currencyKey={'sUSD'}
+												currencyKey="sUSD"
 												price={cellProps.row.original.longInterest}
-												sign={'$'}
+												sign="$"
 												truncate
 											/>
 											<StyledShortPrice
-												currencyKey={'sUSD'}
+												currencyKey="sUSD"
 												price={cellProps.row.original.shortInterest}
-												sign={'$'}
+												sign="$"
 												truncate
 											/>
 										</OpenInterestContainer>
@@ -237,9 +237,9 @@ const FuturesMarketsTable: FC = () => {
 								Cell: (cellProps: CellProps<any>) => {
 									return (
 										<Currency.Price
-											currencyKey={'sUSD'}
+											currencyKey="sUSD"
 											price={cellProps.row.original.volume}
-											sign={'$'}
+											sign="$"
 											conversionRate={1}
 											truncate
 										/>
@@ -289,7 +289,7 @@ const FuturesMarketsTable: FC = () => {
 											</IconContainer>
 											<StyledText>{cellProps.row.original.market}</StyledText>
 											<Currency.Price
-												currencyKey={'sUSD'}
+												currencyKey="sUSD"
 												price={cellProps.row.original.price}
 												sign="$"
 												formatOptions={{ minDecimals: DEFAULT_CRYPTO_DECIMALS, isAssetPrice: true }}
@@ -316,7 +316,7 @@ const FuturesMarketsTable: FC = () => {
 								return (
 									<div>
 										<Currency.Price
-											currencyKey={'sUSD'}
+											currencyKey="sUSD"
 											price={cellProps.row.original.openInterest}
 											sign="$"
 											truncate
@@ -358,7 +358,7 @@ const FuturesMarketsTable: FC = () => {
 										</div>
 										<div>
 											<Currency.Price
-												currencyKey={'sUSD'}
+												currencyKey="sUSD"
 												price={cellProps.row.original.volume ?? 0}
 												sign="$"
 												truncate
