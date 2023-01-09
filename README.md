@@ -28,7 +28,7 @@ The latest IPFS hash can be found under [releases](https://github.com/Kwenta/kwe
 
 ## Development
 
-- [Contributing to the Kwenta frontend](https://docs.kwenta.io/developers/contributing-to-the-kwenta-frontend) - Kwneta Code Style Guidelines
+- [Contributing to the Kwenta frontend](https://docs.kwenta.io/developers/contributing-to-the-kwenta-frontend) - Kwenta Code Style Guidelines
 - [The devDAO](https://docs.kwenta.io/developers/devdao-contribute) - How to contribute
 
 ### Install dependencies
