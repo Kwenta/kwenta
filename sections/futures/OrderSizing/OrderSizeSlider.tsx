@@ -32,7 +32,6 @@ export default function OrderSizeSlider() {
 	const [percent, setPercent] = useState(0);
 	const [usdValue, setUsdValue] = useState(susdSizeString);
 
-	// eslint-disable-next-line
 	const onChangeMarginPercent = useCallback(
 		(value, commit = false) => {
 			setPercent(value);

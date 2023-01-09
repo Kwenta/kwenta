@@ -111,7 +111,7 @@ const FuturesHistoryTable: FC = () => {
 									return conditionalRender(
 										cellProps.row.original.timestamp,
 										<StyledTimeDisplay>
-											<TimeDisplay cellPropsValue={cellProps.row.original.timestamp} />
+											<TimeDisplay value={cellProps.row.original.timestamp} />
 										</StyledTimeDisplay>
 									);
 								},

@@ -86,11 +86,14 @@ const ManagePosition: React.FC = () => {
 
 	const leverageValid = useMemo(() => {
 		if (selectedAccountType === 'cross_margin') return true;
-		const leverageNum = Number(leverage || 0);
-		return leverageNum > 0 && leverageNum < maxLeverageValue.toNumber();
+		return leverage.gt(0) && leverage.lt(maxLeverageValue);
 	}, [selectedAccountType, maxLeverageValue, leverage]);
 
 	const placeOrderDisabledReason = useMemo(() => {
+		if (!leverageValid) return 'invalid_leverage';
+		if (marketInfo?.isSuspended) return 'market_suspended';
+		if (isMarketCapReached) return 'market_cap_reached';
+
 		const invalidReason = orderPriceInvalidLabel(
 			orderPrice,
 			leverageSide,
@@ -98,9 +101,6 @@ const ManagePosition: React.FC = () => {
 			orderType
 		);
 
-		if (!leverageValid) return 'invalid_leverage';
-		if (marketInfo?.isSuspended) return 'market_suspended';
-		if (isMarketCapReached) return 'market_cap_reached';
 		if ((orderType === 'limit' || orderType === 'stop market') && !!invalidReason)
 			return invalidReason;
 		if (susdSize.gt(maxUsdInputAmount)) return 'max_size_exceeded';

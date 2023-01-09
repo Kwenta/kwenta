@@ -156,7 +156,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 		dispatch(setOpenModal(null));
 	}, [dispatch]);
 
-	const handleConfirmOrder = async () => {
+	const handleConfirmOrder = () => {
 		dispatch(
 			modifyIsolatedPosition({
 				sizeDelta: nativeSizeDelta,
@@ -178,7 +178,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 						<Row key={`datarow-${i}`}>
 							<Label>{row.label}</Label>
 							<Value>
-								<span className={row.color ? `value ${row.color}` : ''}>{row.value}</span>
+								<span className={`value ${row.color ?? ''}`}>{row.value}</span>
 							</Value>
 						</Row>
 					))}

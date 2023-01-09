@@ -111,7 +111,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 									Cell: (cellProps: CellProps<any>) => {
 										return (
 											<StyledCell>
-												<TimeDisplay cellPropsValue={cellProps.row.original.openTimestamp} />
+												<TimeDisplay value={cellProps.row.original.openTimestamp} />
 											</StyledCell>
 										);
 									},

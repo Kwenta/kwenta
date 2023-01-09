@@ -1,29 +1,31 @@
 import { format } from 'date-fns';
-import { FC, useCallback, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import getLocale from 'utils/formatters/getLocale';
 
 type TimeDisplayProps = {
-	cellPropsValue: any;
+	value: any;
 	horizontal?: boolean;
 };
 
-const TimeDisplay: FC<TimeDisplayProps> = ({ cellPropsValue, horizontal }) => {
-	const [show12hr, setShow12h] = useState<boolean>(false);
+const locale = getLocale();
+
+const TimeDisplay: FC<TimeDisplayProps> = ({ value, horizontal }) => {
+	const [show12hr, setShow12h] = useState(false);
 
 	const handleOnClick = useCallback(() => {
-		setShow12h(!show12hr);
-	}, [show12hr]);
+		setShow12h((current) => !current);
+	}, []);
 
-	const date = format(
-		new Date(cellPropsValue),
-		getLocale().formatLong?.date({ width: 'short' }) ?? 'MM/dd/yy'
+	const date = useMemo(
+		() => format(new Date(value), locale.formatLong?.date({ width: 'short' }) ?? 'MM/dd/yy'),
+		[value]
 	);
-	const time12hr = new Date(cellPropsValue).toLocaleTimeString(getLocale().code);
-	const time24hr = format(new Date(cellPropsValue), 'HH:mm:ss', {
-		locale: getLocale(),
-	});
+
+	const time12hr = useMemo(() => new Date(value).toLocaleTimeString(locale.code), [value]);
+
+	const time24hr = useMemo(() => format(new Date(value), 'HH:mm:ss', { locale }), [value]);
 
 	return (
 		<TimeDisplayContainer horizontal={horizontal} onClick={handleOnClick}>
@@ -42,7 +44,7 @@ const TimeDisplayContainer = styled.div<{ horizontal?: boolean }>`
 				margin-right: 5px;
 			}
 			div:last-child {
-				color: ${(props) => props.theme.colors.common.secondaryGray};
+				color: ${props.theme.colors.common.secondaryGray};
 			}
 		`}
 `;

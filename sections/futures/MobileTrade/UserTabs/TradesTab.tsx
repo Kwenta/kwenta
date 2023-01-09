@@ -70,7 +70,7 @@ const TradesTab: React.FC = () => {
 						accessor: 'timestamp',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
 							<GridDivCenteredRow>
-								<TimeDisplay cellPropsValue={cellProps.value} />
+								<TimeDisplay value={cellProps.value} />
 							</GridDivCenteredRow>
 						),
 						width: 70,

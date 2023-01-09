@@ -81,7 +81,7 @@ const SpotHistoryTable: FC = () => {
 							return conditionalRender(
 								cellProps.row.original.timestamp,
 								<StyledTimeDisplay>
-									<TimeDisplay cellPropsValue={cellProps.row.original.timestamp * 1000} />
+									<TimeDisplay value={cellProps.row.original.timestamp * 1000} />
 								</StyledTimeDisplay>
 							);
 						},
