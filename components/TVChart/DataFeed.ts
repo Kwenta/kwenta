@@ -11,7 +11,7 @@ import {
 
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import { combineDataToPair } from 'sections/exchange/TradeCard/Charts/hooks/useCombinedCandleSticksChartData';
-import { MarketAssetByKey, getDisplayAsset } from 'utils/futures';
+import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
 import { resolutionToSeconds } from './utils';
