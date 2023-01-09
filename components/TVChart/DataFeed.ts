@@ -88,7 +88,7 @@ const fetchLastCandle = async (
 	const from = 0;
 
 	const baseDataPromise = requestCandlesticks(
-		base,
+		getDisplayAsset(base),
 		from,
 		to,
 		resolutionToSeconds(resolution),

@@ -54,7 +54,7 @@ export type Candle = {
 export type Candles = Candle[];
 
 export type LatestRate = {
-	id: string;
+	synth: string;
 	rate: Wei;
 };
 
