@@ -1,4 +1,4 @@
-![Kwenta CI](https://github.com/kwenta/kwenta/workflows/Kwenta%20CI/badge.svg?branch=main) [![Discord](https://img.shields.io/discord/413890591840272394.svg?color=768AD4&label=discord&logo=https%3A%2F%2Fdiscordapp.com%2Fassets%2F8c9701b98ad4372b58f13fd9f65f966e.svg)](https://discordapp.com/channels/413890591840272394/)
+![Kwenta CI](https://github.com/kwenta/kwenta/workflows/Kwenta%20CI/badge.svg?branch=perps-v2) [![Discord](https://img.shields.io/discord/413890591840272394.svg?color=768AD4&label=discord&logo=https%3A%2F%2Fdiscordapp.com%2Fassets%2F8c9701b98ad4372b58f13fd9f65f966e.svg)](https://discordapp.com/channels/413890591840272394/)
 [![Twitter Follow](https://img.shields.io/twitter/follow/kwenta_io.svg?label=kwenta_io&style=social)](https://twitter.com/kwenta_io)
 [![GitPOAP Badge](https://public-api.gitpoap.io/v1/repo/Kwenta/kwenta/badge)](https://www.gitpoap.io/gh/Kwenta/kwenta)
 
@@ -6,7 +6,8 @@
 
 A dApp enabling derivatives trading — powered by the Synthetix protocol.
 
-The decentralized trading UI is available at [kwenta.eth.limo](https://kwenta.eth.limo).<br />
+The decentralized trading UI is available at [kwenta.eth.limo](https://kwenta.eth.limo).
+
 ENS link: [kwenta.eth](https://app.ens.domains/name/kwenta.eth).
 
 The latest IPFS hash can be found under [releases](https://github.com/Kwenta/kwenta/releases).
@@ -15,9 +16,7 @@ The latest IPFS hash can be found under [releases](https://github.com/Kwenta/kwe
 
 - Next.js
 - React
-- React Query
-- Recoil
-- Unstated-next
+- Redux
 - Styled-Components
 
 ## Ethereum stack
@@ -28,6 +27,9 @@ The latest IPFS hash can be found under [releases](https://github.com/Kwenta/kwe
 - [@synthetixio/queries](https://github.com/Synthetixio/js-monorepo/tree/master/packages/queries) - for historical data (powered by [TheGraph](https://thegraph.com/))
 
 ## Development
+
+- [Contributing to the Kwenta frontend](https://docs.kwenta.io/developers/contributing-to-the-kwenta-frontend) - Kwneta Code Style Guidelines
+- [The devDAO](https://docs.kwenta.io/developers/devdao-contribute) - How to contribute
 
 ### Install dependencies
 
@@ -47,13 +49,8 @@ Then, open `.env.local` and add the missing environment variables:
 
 Required:
 
-- `NEXT_PUBLIC_PORTIS_APP_ID` - Portis app id (get it from [portis.io](https://www.portis.io/))
-- `NEXT_PUBLIC_BN_ONBOARD_API_KEY` - Blocknative Onboard API key (get it from [blocknative.com](https://blocknative.com/))
 - `NEXT_PUBLIC_PROVIDER_ID` - Specifies the default provider, options are `INFURA` or `BLAST_API`
-
-Optional:
-
-- `NEXT_PUBLIC_INFURA_PROJECT_ID` - Infura project id (get it from [infura.io](https://infura.io/))
+- `NEXT_PUBLIC_INFURA_PROJECT_ID` - Infura project id (get it from [infura.io](https://infura.io/)) or
 - `NEXT_PUBLIC_BLASTAPI_PROJECT_ID` - Blast API project id (get it from [blastapi.io](https://blastapi.io/))
 
 ### Run
