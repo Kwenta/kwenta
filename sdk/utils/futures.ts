@@ -424,6 +424,7 @@ export const getTradeStatusMessage = (status: PotentialTradeStatus): string => {
 export const POTENTIAL_TRADE_STATUS_TO_MESSAGE: { [key: string]: string } = {
 	OK: 'Ok',
 	INVALID_PRICE: 'Invalid price',
+	INVALID_ORDER_PRICE: 'Invalid order price',
 	PRICE_OUT_OF_BOUNDS: 'Price out of acceptable range',
 	CAN_LIQUIDATE: 'Position can be liquidated',
 	CANNOT_LIQUIDATE: 'Position cannot be liquidated',
@@ -431,7 +432,6 @@ export const POTENTIAL_TRADE_STATUS_TO_MESSAGE: { [key: string]: string } = {
 	MAX_LEVERAGE_EXCEEDED: 'Max leverage exceeded',
 	INSUFFICIENT_MARGIN: 'Insufficient margin',
 	NOT_PERMITTED: 'Not permitted by this address',
-	NIL_ORDER: 'Cannot submit empty order',
 	NO_POSITION_OPEN: 'No position open',
 	PRICE_TOO_VOLATILE: 'Price too volatile',
 	PRICE_IMPACT_TOLERANCE_EXCEEDED: 'Price impact tolerance exceeded',
