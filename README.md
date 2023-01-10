@@ -4,7 +4,7 @@
 
 # Kwenta
 
-A dApp enabling derivatives trading — powered by the Synthetix protocol.
+A dApp enabling derivatives trading — powered by the Synthetix protocol. Test
 
 The decentralized trading UI is available at [kwenta.eth.limo](https://kwenta.eth.limo).<br />
 ENS link: [kwenta.eth](https://app.ens.domains/name/kwenta.eth).
