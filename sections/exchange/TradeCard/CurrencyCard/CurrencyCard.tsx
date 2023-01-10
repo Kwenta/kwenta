@@ -23,7 +23,6 @@ type CurrencyCardProps = {
 	className?: string;
 	label: string;
 	disableInput?: boolean;
-	slippagePercent?: Wei | null;
 	isLoading?: boolean;
 	disabled?: boolean;
 };
@@ -34,7 +33,6 @@ const CurrencyCard: FC<CurrencyCardProps> = memo(
 		currencyKey,
 		currencyName,
 		amount,
-		slippagePercent,
 		onAmountChange,
 		walletBalance,
 		onBalanceClick,
@@ -84,7 +82,6 @@ const CurrencyCard: FC<CurrencyCardProps> = memo(
 								currencyKeySelected={!!currencyKey}
 								hasWalletBalance={hasWalletBalance}
 								onBalanceClick={onBalanceClick}
-								slippagePercent={slippagePercent}
 								priceRate={priceRate}
 							/>
 

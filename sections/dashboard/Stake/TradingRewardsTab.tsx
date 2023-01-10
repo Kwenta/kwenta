@@ -7,6 +7,7 @@ import styled from 'styled-components';
 
 import HelpIcon from 'assets/svg/app/question-mark.svg';
 import Button from 'components/Button';
+import { LogoText } from 'components/Text';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import Connector from 'containers/Connector';
 import useGetFile from 'queries/files/useGetFile';
@@ -17,7 +18,6 @@ import {
 	FuturesFeeProps,
 	TradingRewardProps,
 } from 'queries/staking/utils';
-import { BigText } from 'sections/earn/common';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { claimMultipleRewards } from 'state/staking/actions';
 import { selectEpochPeriod, selectResetTime, selectTotalRewards } from 'state/staking/selectors';
@@ -90,7 +90,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 						<div className="title">
 							{t('dashboard.stake.tabs.trading-rewards.claimable-rewards-all')}
 						</div>
-						<BigText hasKwentaLogo>{truncateNumbers(totalRewards, 4)}</BigText>
+						<LogoText yellow>{truncateNumbers(totalRewards, 4)}</LogoText>
 					</div>
 					<div>
 						<div className="title">
@@ -143,7 +143,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = ({
 								<div className="title">
 									{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}
 								</div>
-								<BigText hasKwentaLogo>{truncateNumbers(wei(estimatedReward), 4)}</BigText>
+								<LogoText yellow>{truncateNumbers(wei(estimatedReward), 4)}</LogoText>
 							</div>
 							<div>
 								<div className="title">

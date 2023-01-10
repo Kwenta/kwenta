@@ -1,4 +1,4 @@
-import useSynthetixQueries, { GasPrice, GasPrices } from '@synthetixio/queries';
+import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -9,7 +9,7 @@ import { gasPriceInWei, normalizeGasLimit } from 'utils/network';
 
 import useIsL1 from './useIsL1';
 
-export const parseGasPriceObject = (gasPriceObject: GasPrice): number | null => {
+export const parseGasPriceObject = (gasPriceObject: GasPrice) => {
 	const { gasPrice, maxFeePerGas } = gasPriceObject;
 	if (gasPrice) {
 		return wei(gasPriceObject.gasPrice, 9).toNumber();
@@ -36,9 +36,9 @@ const useGas = () => {
 	const { useEthGasPriceQuery } = useSynthetixQueries();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
-	const [gasConfig, setGasConfig] = useState<GasConfig>({} as GasConfig);
+	const [gasConfig, setGasConfig] = useState({} as GasConfig);
 	const gasPrices = useMemo(() => ethGasPriceQuery?.data ?? undefined, [ethGasPriceQuery.data]);
-	const [gasSpeed, setGasSpeed] = useRecoilState<keyof GasPrices>(gasSpeedState);
+	const [gasSpeed, setGasSpeed] = useRecoilState(gasSpeedState);
 	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
 	const isCustomGasPrice: boolean = useMemo(() => customGasPrice !== '', [customGasPrice]);
 

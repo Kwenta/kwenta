@@ -1,7 +1,7 @@
 // @ts-ignore TODO: remove once types are added
 import getFormattedSwapData from '@kwenta/synthswap';
 import { CurrencyKey, NetworkId } from '@synthetixio/contracts-interface';
-import { DeprecatedSynthBalance, TokenBalances } from '@synthetixio/queries';
+import { DeprecatedSynthBalance } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import axios from 'axios';
 import { Contract as EthCallContract } from 'ethcall';
@@ -24,7 +24,7 @@ import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { getProxySynthSymbol } from 'queries/synths/utils';
 import { getEthGasPrice } from 'sdk/common/gas';
 import erc20Abi from 'sdk/contracts/abis/ERC20.json';
-import { Token } from 'sdk/types/tokens';
+import { Token, TokenBalances } from 'sdk/types/tokens';
 import {
 	newGetCoinGeckoPricesForCurrencies,
 	newGetExchangeRatesForCurrencies,
@@ -459,7 +459,7 @@ export default class ExchangeService {
 				quoteDecimals
 			);
 		} else if (txProvider === 'synthswap') {
-			// @ts-ignore TODO: Fix varibale types
+			// @ts-ignore TODO: Fix variable types
 			tx = await this.swapSynthSwap(
 				this.allTokensMap[quoteCurrencyKey],
 				this.allTokensMap[baseCurrencyKey],
@@ -824,7 +824,7 @@ export default class ExchangeService {
 	}
 
 	private get oneInchApiUrl() {
-		return `https://api.1inch.io/v4.0/${this.sdk.context.isL2 ? 10 : 1}/`;
+		return `https://api.1inch.io/v5.0/${this.sdk.context.isL2 ? 10 : 1}/`;
 	}
 
 	private getOneInchQuoteSwapParams(

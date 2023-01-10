@@ -463,7 +463,7 @@ export default class FuturesService {
 		};
 	}
 
-	public async getOpenOrders(account: string, markets: FuturesMarket[]) {
+	public async getOpenOrders(account: string) {
 		const response = await request(
 			this.futuresGqlEndpoint,
 			gql`
@@ -487,8 +487,7 @@ export default class FuturesService {
 
 		const openOrders: FuturesOrder[] = response
 			? response.futuresOrders.map((o: any) => {
-					const marketInfo = markets.find((m) => m.asset === o.asset);
-					return mapFuturesOrders(o, marketInfo);
+					return mapFuturesOrders(o);
 			  })
 			: [];
 		return openOrders;

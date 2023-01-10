@@ -7,7 +7,6 @@ import {
 	selectBaseBalanceWei,
 	selectBaseCurrencyName,
 	selectBasePriceRateWei,
-	selectSlippagePercentWei,
 } from 'state/exchange/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 
@@ -30,7 +29,6 @@ const BaseCurrencyCard: FC = memo(() => {
 	const baseBalance = useAppSelector(selectBaseBalanceWei);
 	const basePriceRate = useAppSelector(selectBasePriceRateWei);
 	const baseCurrencyName = useAppSelector(selectBaseCurrencyName);
-	const slippagePercent = useAppSelector(selectSlippagePercentWei);
 
 	const onBaseCurrencyAmountChange = useCallback(
 		(value: string) => {
@@ -58,7 +56,6 @@ const BaseCurrencyCard: FC = memo(() => {
 			onCurrencySelect={openBaseModal}
 			priceRate={basePriceRate}
 			label={t('exchange.common.into')}
-			slippagePercent={slippagePercent}
 			isLoading={txProvider === '1inch' && oneInchQuoteLoading}
 		/>
 	);

@@ -83,9 +83,9 @@ const EscrowTable = () => {
 			<DesktopOnlyView>
 				<StyledTable
 					data={escrowData}
-					compactPagination={true}
+					compactPagination
 					pageSize={10}
-					showPagination={true}
+					showPagination
 					columnsDeps={columnsDeps}
 					columns={[
 						{
@@ -167,9 +167,9 @@ const EscrowTable = () => {
 			<MobileOrTabletView>
 				<StyledTable
 					data={escrowData}
-					compactPagination={true}
+					compactPagination
 					pageSize={5}
-					showPagination={true}
+					showPagination
 					columnsDeps={columnsDeps}
 					columns={[
 						{

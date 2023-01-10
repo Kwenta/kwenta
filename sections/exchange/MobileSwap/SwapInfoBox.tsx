@@ -12,7 +12,11 @@ import { NO_VALUE } from 'constants/placeholder';
 import { parseGasPriceObject } from 'hooks/useGas';
 import useIsL1 from 'hooks/useIsL1';
 import useIsL2 from 'hooks/useIsL2';
-import { selectTransactionFeeWei, selectFeeCostWei } from 'state/exchange/selectors';
+import {
+	selectTransactionFeeWei,
+	selectFeeCostWei,
+	selectSlippagePercentWei,
+} from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
 import { customGasPriceState, gasSpeedState } from 'store/wallet';
 import { formatDollars, formatNumber, formatPercent, zeroBN } from 'utils/formatters/number';
@@ -52,6 +56,8 @@ const SwapInfoBox: React.FC = () => {
 				minDecimals: 2,
 		  })} Gwei`;
 
+	const slippagePercent = useAppSelector(selectSlippagePercentWei);
+
 	return (
 		<StyledInfoBox
 			details={{
@@ -59,6 +65,9 @@ const SwapInfoBox: React.FC = () => {
 					? t('common.summary.gas-prices.max-fee')
 					: t('common.summary.gas-prices.gas-price')]: {
 					value: gasPrice != null ? gasPriceItem : NO_VALUE,
+				},
+				[t('exchange.currency-card.price-impact')]: {
+					value: slippagePercent?.lt(0) ? formatPercent(slippagePercent) : NO_VALUE,
 				},
 				[t('exchange.summary-info.fee')]: {
 					value: '',

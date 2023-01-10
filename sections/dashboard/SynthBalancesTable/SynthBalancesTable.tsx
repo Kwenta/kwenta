@@ -89,7 +89,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 	return (
 		<>
 			<MobileHiddenView>
-				<TableContainer>
+				<div>
 					<Table
 						data={data}
 						showPagination
@@ -101,9 +101,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 						}
 						columns={[
 							{
-								Header: (
-									<TableHeader>{t('dashboard.overview.synth-balances-table.market')}</TableHeader>
-								),
+								Header: <div>{t('dashboard.overview.synth-balances-table.market')}</div>,
 								accessor: 'market',
 								Cell: (cellProps: CellProps<Cell>) => {
 									return conditionalRender<Cell['synth']>(
@@ -126,9 +124,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 								width: 198,
 							},
 							{
-								Header: (
-									<TableHeader>{t('dashboard.overview.synth-balances-table.amount')}</TableHeader>
-								),
+								Header: <div>{t('dashboard.overview.synth-balances-table.amount')}</div>,
 								accessor: 'amount',
 								Cell: (cellProps: CellProps<Cell>) => {
 									return conditionalRender<Cell['balance']>(
@@ -150,11 +146,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 								),
 							},
 							{
-								Header: (
-									<TableHeader>
-										{t('dashboard.overview.synth-balances-table.value-in-usd')}
-									</TableHeader>
-								),
+								Header: <div>{t('dashboard.overview.synth-balances-table.value-in-usd')}</div>,
 								accessor: 'valueInUSD',
 								Cell: (cellProps: CellProps<Cell>) => {
 									return conditionalRender<Cell['usdBalance']>(
@@ -179,11 +171,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 								),
 							},
 							{
-								Header: (
-									<TableHeader>
-										{t('dashboard.overview.synth-balances-table.oracle-price')}
-									</TableHeader>
-								),
+								Header: <div>{t('dashboard.overview.synth-balances-table.oracle-price')}</div>,
 								accessor: 'price',
 								Cell: (cellProps: CellProps<Cell>) => {
 									return conditionalRender<Cell['price']>(
@@ -211,11 +199,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 								),
 							},
 							{
-								Header: (
-									<TableHeader>
-										{t('dashboard.overview.synth-balances-table.daily-change')}
-									</TableHeader>
-								),
+								Header: <div>{t('dashboard.overview.synth-balances-table.daily-change')}</div>,
 								accessor: 'priceChange',
 								Cell: (cellProps: CellProps<Cell>) => {
 									return conditionalRender<Cell['priceChange']>(
@@ -241,7 +225,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 							},
 						]}
 					/>
-				</TableContainer>
+				</div>
 			</MobileHiddenView>
 			<MobileOnlyView>
 				<StyledMobileTable
@@ -255,8 +239,8 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 						{
 							Header: () => (
 								<div>
-									<TableHeader>Market</TableHeader>
-									<TableHeader>Oracle</TableHeader>
+									<div>Market</div>
+									<div>Oracle</div>
 								</div>
 							),
 							accessor: 'market',
@@ -285,8 +269,8 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 						{
 							Header: () => (
 								<div>
-									<TableHeader>Amount</TableHeader>
-									<TableHeader>USD Value</TableHeader>
+									<div>Amount</div>
+									<div>USD Value</div>
 								</div>
 							),
 							accessor: 'amount',
@@ -307,7 +291,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 						{
 							Header: () => (
 								<div>
-									<TableHeader>24H Change</TableHeader>
+									<div>24H Change</div>
 								</div>
 							),
 							accessor: 'priceChange',
@@ -359,10 +343,6 @@ const StyledValue = styled.div`
 const DefaultCell = styled.p`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
-
-const TableContainer = styled.div``;
-
-const TableHeader = styled.div``;
 
 const StyledText = styled.div`
 	display: flex;

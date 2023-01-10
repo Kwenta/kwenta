@@ -21,7 +21,8 @@
 			"competition-round-2": "Round 2",
 			"leaderboard": "leaderboard",
 			"earn": "earn",
-			"beta-badge": "Beta"
+			"beta-badge": "Beta",
+			"reward-badge": "Rewards"
 		},
 		"networks-switcher": {
 			"chains": "Switch Networks",
@@ -318,7 +319,7 @@
 				"select-token": "select token"
 			},
 			"max-button": "max",
-			"slippage": " slippage"
+			"price-impact": " price impact"
 		},
 		"market-details-card": {
 			"title": "Market Details",
@@ -524,7 +525,7 @@
 					"pending-for-rewards": "Pending...",
 					"trading-rewards-tooltip": "Only trades made using a Kwenta Cross Margin account are eligible for trading rewards.",
 					"spot-fee-paid": "Spot Fee Paid: Epoch {{EpochPeriod}}",
-					"future-fee-paid": "Futures Fees Paid: Ep. {{EpochPeriod}}",					
+					"future-fee-paid": "Futures Fees Paid: Ep. {{EpochPeriod}}",
 					"fees-paid": "Total Fees in Pool: Ep. {{EpochPeriod}}",
 					"estimated-rewards": "Estimated Reward*",
 					"estimated-reward-share": "Estimated Reward Share*",
@@ -534,7 +535,12 @@
 					"claimable-rewards-all": "Claimable Trading Rewards",
 					"claim-epoch": "Claim: Epoch {{EpochPeriod}}",
 					"claim": "Claim",
-					"estimated-info": "* Estimated values do not reflect the final reward value and are subject to change as a result of Futures fees paid and staked amounts by other participants."
+					"estimated-info": "* Estimated values do not reflect the final reward value and are subject to change as a result of future fees paid and staked amounts by other participants.",
+					"trading-reward": "Trading Reward:",
+					"not-eligible": "Not Eligible",
+					"eligible": "Eligible",
+					"stake-to-earn": "Stake <0>$KWENTA</0> to earn more rewards",
+					"stake-to-start": "Stake <0>$KWENTA</0> to start earning rewards"
 				},
 				"escrow": {
 					"title": "Escrow",
@@ -567,7 +573,7 @@
 					"redeem": "Redeem",
 					"vekwenta-token": "veKwenta",
 					"vkwenta-token": "vKwenta",
-					"approve": "Approve",		
+					"approve": "Approve",
 					"balance": "Balance:"
 				}
 			}
@@ -653,7 +659,7 @@
 				"hourly-funding": "1H Funding Rate",
 				"instant-funding": "Inst. Funding Rate",
 				"fallback-funding": "Funding Rate"
- 			},
+			},
 			"position-card": {
 				"position-side": "Side",
 				"position-size": "Size",
@@ -766,7 +772,7 @@
 						"gas-fee": "Gas Fee",
 						"max": "Max",
 						"deposit": {
-							"title": "Transfer Margin",
+							"title": "Deposit Margin",
 							"button": "Deposit Margin",
 							"approve-button": "Approve sUSD",
 							"disclaimer": "A $50 margin minimum is required to open a position.",
@@ -836,7 +842,7 @@
 						"title": "Manage Account ETH Balance",
 						"withdraw": "Withdraw",
 						"deposit": "Deposit",
-						
+
 						"withdraw-warning": "Withdrawing ETH while you still have open orders pending risks leaving insufficient balance for orders to execute."
 					},
 					"fee-rejection-label": "Fee Rejection",
@@ -846,7 +852,6 @@
 					"failed": "Transaction failed",
 					"insufficient-margin": "Leverage cannot be increased, it exceeds the minimum margin requirement of $40",
 					"insufficient-free-margin": "Leverage cannot be modified, please deposit more margin or reduce open position sizes"
-
 				}
 			},
 			"history": {
@@ -1320,4 +1325,3 @@
 		"bridge": "Bridge"
 	}
 }
-

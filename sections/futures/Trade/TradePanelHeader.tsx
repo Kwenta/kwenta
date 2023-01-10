@@ -1,24 +1,53 @@
-import Wei from '@synthetixio/wei';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import HelpIcon from 'assets/svg/app/question-mark.svg';
 import SwitchAssetArrows from 'assets/svg/futures/deposit-withdraw-arrows.svg';
+import Button from 'components/Button';
 import FuturesIcon from 'components/Nav/FuturesIcon';
 import { NumberDiv } from 'components/Text/NumberLabel';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { FuturesAccountType } from 'queries/futures/subgraph';
+import { setOpenModal } from 'state/app/reducer';
+import { selectPosition, selectPositionStatus } from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { FetchStatus } from 'state/types';
 import { BorderedPanel, YellowIconButton } from 'styles/common';
-import { formatDollars } from 'utils/formatters/number';
+import { formatDollars, zeroBN } from 'utils/formatters/number';
 
 type Props = {
 	accountType: FuturesAccountType;
-	balance: Wei;
 	onManageBalance: () => void;
 };
 
-export default function TradePanelHeader({ accountType, onManageBalance, balance }: Props) {
+export default function TradePanelHeader({ accountType, onManageBalance }: Props) {
 	const { t } = useTranslation();
+	const dispatch = useAppDispatch();
+	const theme = useTheme();
+	const position = useAppSelector(selectPosition);
+	const positionStatus = useAppSelector(selectPositionStatus);
+	const balance = position ? position.remainingMargin : null;
+
+	if (!balance && positionStatus.status === FetchStatus.Success) {
+		return (
+			<DepositButton
+				variant="yellow"
+				onClick={() =>
+					dispatch(
+						setOpenModal(
+							accountType === 'isolated_margin'
+								? 'futures_isolated_transfer'
+								: 'futures_cross_deposit'
+						)
+					)
+				}
+			>
+				<ButtonContent>
+					Deposit Margin <SwitchAssetArrows fill={theme.colors.selectedTheme.button.yellow.text} />
+				</ButtonContent>
+			</DepositButton>
+		);
+	}
 
 	return (
 		<Container>
@@ -36,7 +65,7 @@ export default function TradePanelHeader({ accountType, onManageBalance, balance
 				)}
 			</Title>
 			<BalanceRow onClick={onManageBalance}>
-				<NumberDiv contrast="strong">{formatDollars(balance)}</NumberDiv>
+				<NumberDiv contrast="strong">{formatDollars(balance ?? zeroBN)}</NumberDiv>
 				<BalanceButton>
 					<SwitchAssetArrows />
 				</BalanceButton>
@@ -44,6 +73,12 @@ export default function TradePanelHeader({ accountType, onManageBalance, balance
 		</Container>
 	);
 }
+
+const DepositButton = styled(Button)`
+	height: 55px;
+	width: 100%;
+	margin-bottom: 16px;
+`;
 
 const Container = styled(BorderedPanel)`
 	display: flex;
@@ -86,4 +121,12 @@ const FAQLink = styled.div`
 	}
 	cursor: pointer;
 	margin-left: 5px;
+`;
+
+const ButtonContent = styled.div`
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
 `;

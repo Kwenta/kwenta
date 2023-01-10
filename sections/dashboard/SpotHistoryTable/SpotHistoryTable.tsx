@@ -72,17 +72,10 @@ const SpotHistoryTable: FC = () => {
 						</Link>
 					</TableNoResults>
 				}
-				sortBy={[
-					{
-						id: 'dateTime',
-						asec: true,
-					},
-				]}
+				sortBy={[{ id: 'dateTime', asec: true }]}
 				columns={[
 					{
-						Header: (
-							<TableHeader>{t('dashboard.history.spot-history-table.date-time')}</TableHeader>
-						),
+						Header: <div>{t('dashboard.history.spot-history-table.date-time')}</div>,
 						accessor: 'dateTime',
 						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {
 							return conditionalRender(
@@ -95,7 +88,7 @@ const SpotHistoryTable: FC = () => {
 						width: 190,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.history.spot-history-table.from')}</TableHeader>,
+						Header: <div>{t('dashboard.history.spot-history-table.from')}</div>,
 						accessor: 'fromAmount',
 						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {
 							return conditionalRender(
@@ -117,7 +110,7 @@ const SpotHistoryTable: FC = () => {
 											totalValue={0}
 											conversionRate={selectPriceCurrencyRate}
 											showTotalValue={false}
-										></Currency.Amount>
+										/>
 									</StyledText>
 								</SynthContainer>
 							);
@@ -125,7 +118,7 @@ const SpotHistoryTable: FC = () => {
 						width: 190,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.history.spot-history-table.to')}</TableHeader>,
+						Header: <div>{t('dashboard.history.spot-history-table.to')}</div>,
 						accessor: 'toAmount',
 						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {
 							return conditionalRender(
@@ -147,7 +140,7 @@ const SpotHistoryTable: FC = () => {
 											totalValue={0}
 											conversionRate={selectPriceCurrencyRate}
 											showTotalValue={false}
-										></Currency.Amount>
+										/>
 									</StyledText>
 								</SynthContainer>
 							);
@@ -155,9 +148,7 @@ const SpotHistoryTable: FC = () => {
 						width: 190,
 					},
 					{
-						Header: (
-							<TableHeader>{t('dashboard.history.spot-history-table.usd-value')}</TableHeader>
-						),
+						Header: <div>{t('dashboard.history.spot-history-table.usd-value')}</div>,
 						accessor: 'amount',
 						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {
 							const currencyKey = cellProps.row.original.toSynth?.symbol as CurrencyKey;
@@ -239,8 +230,6 @@ const TableContainer = styled.div`
 const StyledTable = styled(Table)`
 	margin-bottom: 20px;
 `;
-
-const TableHeader = styled.div``;
 
 const StyledText = styled.div`
 	display: flex;

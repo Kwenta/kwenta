@@ -6,7 +6,7 @@ import NotificationContainer from 'constants/NotificationContainer';
 import Connector from 'containers/Connector';
 import ExchangeContent from 'sections/exchange/ExchangeContent';
 import ExchangeHead from 'sections/exchange/ExchangeHead';
-import Header from 'sections/shared/Layout/AppLayout/Header';
+import AppLayout from 'sections/shared/Layout/AppLayout';
 import { fetchTokenList, resetCurrencies } from 'state/exchange/actions';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FullScreenContainer, MobileScreenContainer } from 'styles/common';
@@ -39,7 +39,6 @@ const Exchange: ExchangeComponent = () => {
 			<ExchangeHead />
 			<DesktopOnlyView>
 				<FullScreenContainer>
-					<Header />
 					<ExchangeContent />
 					<NotificationContainer />
 				</FullScreenContainer>
@@ -53,6 +52,6 @@ const Exchange: ExchangeComponent = () => {
 	);
 };
 
-Exchange.getLayout = (page) => <>{page}</>;
+Exchange.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default Exchange;

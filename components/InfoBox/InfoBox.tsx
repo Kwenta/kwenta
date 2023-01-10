@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import styled from 'styled-components';
 
 import { NO_VALUE } from 'constants/placeholder';
@@ -9,6 +9,7 @@ export type DetailedInfo = {
 	valueNode?: React.ReactNode;
 	color?: 'green' | 'red' | 'gold' | undefined;
 	spaceBeneath?: boolean;
+	compactBox?: boolean;
 };
 
 type InfoBoxProps = {
@@ -19,27 +20,31 @@ type InfoBoxProps = {
 	dataTestId?: string;
 };
 
-const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className, disabled, dataTestId }) => {
-	return (
+const InfoBox: React.FC<InfoBoxProps> = memo(
+	({ details, style, className, disabled, dataTestId }) => (
 		<InfoBoxContainer style={style} className={className}>
 			{Object.entries(details).map(([key, value], index) => {
 				if (value) {
 					return (
 						<React.Fragment key={key}>
-							<div>
-								<div className="key">
-									{key}: {value.keyNode}
+							{value.compactBox ? (
+								<>{value.keyNode}</>
+							) : (
+								<div>
+									<div className="key">
+										{key}: {value.keyNode}
+									</div>
+									<p
+										data-testid={`${dataTestId}-${index}`}
+										className={`${disabled ? 'value closed' : 'value'}${
+											value.color ? ` ${value.color}` : ''
+										}`}
+									>
+										{disabled ? NO_VALUE : value.value}
+										{value.valueNode}
+									</p>
 								</div>
-								<p
-									data-testid={`${dataTestId}-${index}`}
-									className={`${disabled ? 'value closed' : 'value'}${
-										value.color ? ` ${value.color}` : ''
-									}`}
-								>
-									{disabled ? NO_VALUE : value.value}
-									{value.valueNode}
-								</p>
-							</div>
+							)}
 							{value?.spaceBeneath && <br />}
 						</React.Fragment>
 					);
@@ -47,8 +52,8 @@ const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className, disabled, 
 				return null;
 			})}
 		</InfoBoxContainer>
-	);
-};
+	)
+);
 
 const InfoBoxContainer = styled.div`
 	border: ${(props) => props.theme.colors.selectedTheme.border};
@@ -77,6 +82,13 @@ const InfoBoxContainer = styled.div`
 			color: ${(props) => props.theme.colors.selectedTheme.text.value};
 			font-family: ${(props) => props.theme.fonts.mono};
 			font-size: 13px;
+			cursor: default;
+		}
+
+		.key {
+			color: ${(props) => props.theme.colors.selectedTheme.text.title};
+			font-size: 13px;
+			text-transform: capitalize;
 			cursor: default;
 		}
 

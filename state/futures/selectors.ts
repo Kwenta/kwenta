@@ -24,6 +24,7 @@ import {
 	unserializeMarkets,
 	unserializeDelayedOrders,
 	unserializeCrossMarginTradeInputs,
+	updatePositionUpnl,
 } from 'utils/futures';
 
 import { futuresPositionHistoryKeys, futuresPositionKeys } from './types';
@@ -136,12 +137,12 @@ export const selectFuturesAccount = createSelector(
 );
 
 export const selectCrossMarginPositions = createSelector(
+	selectPrices,
 	(state: RootState) => state.futures,
-	(futures) => {
+	(prices, futures) => {
 		return futures.crossMargin.account && futures.crossMargin.positions[futures.crossMargin.account]
-			? futures.crossMargin.positions[futures.crossMargin.account].map(
-					// TODO: Maybe change to explicit serializing functions to avoid casting
-					(p) => deserializeWeiObject(p, futuresPositionKeys) as FuturesPosition
+			? futures.crossMargin.positions[futures.crossMargin.account].map((p) =>
+					updatePositionUpnl(p, prices)
 			  )
 			: [];
 	}
@@ -149,14 +150,12 @@ export const selectCrossMarginPositions = createSelector(
 
 export const selectIsolatedMarginPositions = createSelector(
 	selectWallet,
+	selectPrices,
 	(state: RootState) => state.futures,
-	(wallet, futures) => {
+	(wallet, prices, futures) => {
 		if (!wallet) return [];
 		return futures.isolatedMargin.positions[wallet]
-			? futures.isolatedMargin.positions[wallet].map(
-					// TODO: Maybe change to explicit serializing functions to avoid casting
-					(p) => deserializeWeiObject(p, futuresPositionKeys) as FuturesPosition
-			  )
+			? futures.isolatedMargin.positions[wallet].map((p) => updatePositionUpnl(p, prices))
 			: [];
 	}
 );
@@ -419,7 +418,7 @@ export const selectIsolatedMarginFee = (state: RootState) =>
 	wei(state.futures.isolatedMargin.tradeFee);
 
 export const selectKeeperEthBalance = (state: RootState) =>
-	wei(state.futures.crossMargin.keeperEthBalance);
+	wei(state.futures.crossMargin.balanceInfo.keeperEthBal);
 
 export const selectCrossMarginTradeFees = createSelector(
 	(state: RootState) => state.futures.crossMargin.fees,
@@ -569,8 +568,18 @@ export const selectTradePreviewStatus = createSelector(
 	(state: RootState) => state.futures,
 	(type, futures) => {
 		return type === 'cross_margin'
-			? futures.queryStatuses.crossMarginTradePreview
-			: futures.queryStatuses.isolatedTradePreview;
+			? futures.queryStatuses.crossMarginPositions
+			: futures.queryStatuses.isolatedPositions;
+	}
+);
+
+export const selectPositionStatus = createSelector(
+	selectFuturesType,
+	(state: RootState) => state.futures,
+	(type, futures) => {
+		return type === 'cross_margin'
+			? futures.queryStatuses.crossMarginPositions
+			: futures.queryStatuses.isolatedPositions;
 	}
 );
 

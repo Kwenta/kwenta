@@ -9,7 +9,6 @@ import ChevronUp from 'assets/svg/app/chevron-up.svg';
 import Badge from 'components/Badge';
 import ROUTES from 'constants/routes';
 import { currentThemeState } from 'store/ui';
-import { FlexDivRow } from 'styles/common';
 import { ThemeName } from 'styles/theme';
 
 import { SubMenuLink } from '../constants';
@@ -60,10 +59,13 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 									<SubMenuIcon>·</SubMenuIcon>
 									<StyledLink href={subLink}>
 										<SubMenuItem currentTheme={currentTheme} active={asPath.includes(subLink)}>
-											<SubMenuRow>
+											<div>
 												{t(i18nLabel)}{' '}
-												{badge && <StyledBadge color="yellow">{t(badge.i18nLabel)}</StyledBadge>}
-											</SubMenuRow>
+												{badge &&
+													badge.map(({ i18nLabel, color }) => (
+														<StyledBadge color={color}>{t(i18nLabel)}</StyledBadge>
+													))}
+											</div>
 										</SubMenuItem>
 									</StyledLink>
 								</SubMenuItemContainer>
@@ -102,11 +104,6 @@ const SubMenuButton = styled(MenuButton)`
 		css`
 			margin-bottom: 20px;
 		`}
-`;
-
-const SubMenuRow = styled(FlexDivRow)`
-	justify-content: flex-start;
-	align-items: center;
 `;
 
 const StyledBadge = styled(Badge)`

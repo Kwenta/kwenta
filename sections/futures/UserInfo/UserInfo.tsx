@@ -12,7 +12,6 @@ import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
-import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
 import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
 import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
@@ -56,18 +55,14 @@ const UserInfo: React.FC = () => {
 	const [hasOpenPosition, setHasOpenPosition] = useState(false);
 	const [openProfitCalcModal, setOpenProfitCalcModal] = useState(false);
 
-	const marginTransfersQuery = useGetFuturesMarginTransfers(marketAsset);
-	const marginTransfers = useMemo(
-		() => (marginTransfersQuery.isSuccess ? marginTransfersQuery?.data ?? [] : []),
-		[marginTransfersQuery.isSuccess, marginTransfersQuery.data]
-	);
+	const marginTransfersQuery = useGetFuturesMarginTransfers();
+	const marginTransfers = useMemo(() => marginTransfersQuery?.data ?? [], [
+		marginTransfersQuery.data,
+	]);
 
 	const futuresTradesQuery = useGetFuturesTradesForAccount(marketAsset, walletAddress);
 
-	const history: FuturesTrade[] = useMemo(
-		() => (futuresTradesQuery.isSuccess ? futuresTradesQuery?.data ?? [] : []),
-		[futuresTradesQuery.isSuccess, futuresTradesQuery.data]
-	);
+	const history = useMemo(() => futuresTradesQuery?.data ?? [], [futuresTradesQuery.data]);
 
 	const tabQuery = useMemo(() => {
 		if (router.query.tab) {

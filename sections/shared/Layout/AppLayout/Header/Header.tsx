@@ -3,16 +3,14 @@ import styled from 'styled-components';
 
 import { MobileHiddenView } from 'components/Media';
 import { zIndex } from 'constants/ui';
-import useIsL2 from 'hooks/useIsL2';
 
 import Logo from '../../Logo';
 import Nav from './Nav';
 import WalletButtons from './WalletButtons';
 
 const Header: FC = () => {
-	const isL2 = useIsL2();
 	return (
-		<Container isL2={isL2}>
+		<Container>
 			<MobileHiddenView>
 				<LogoNav>
 					<Logo />
@@ -24,7 +22,7 @@ const Header: FC = () => {
 	);
 };
 
-const Container = styled.header<{ isL2: boolean }>`
+const Container = styled.header`
 	top: 0;
 	left: 0;
 	right: 0;

@@ -4,16 +4,12 @@ import styled from 'styled-components';
 
 import Table, { TableNoResults } from 'components/Table';
 import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
-import { selectMarketAsset } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
 import { timePresentation } from 'utils/formatters/date';
 
 import { SectionHeader, SectionTitle } from '../common';
 
 const TransfersTab: React.FC = () => {
-	const marketAsset = useAppSelector(selectMarketAsset);
-
-	const marginTransfersQuery = useGetFuturesMarginTransfers(marketAsset);
+	const marginTransfersQuery = useGetFuturesMarginTransfers();
 	const marginTransfers = React.useMemo(
 		() => (marginTransfersQuery.isSuccess ? marginTransfersQuery?.data ?? [] : []),
 		[marginTransfersQuery.isSuccess, marginTransfersQuery.data]
