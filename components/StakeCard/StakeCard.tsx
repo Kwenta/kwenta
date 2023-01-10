@@ -111,7 +111,7 @@ const StakeCard: FC<StakeCardProps> = memo(
 							</div>
 						</StyledFlexDivRowCentered>
 					</StakeInputHeader>
-					<StyledInput value={amount} onChange={handleChange} />
+					<NumericInput value={amount} onChange={handleChange} bold />
 				</StakeInputContainer>
 				<Button fullWidth variant="flat" size="sm" disabled={isDisabled} onClick={handleSubmit}>
 					{!isApproved
@@ -154,10 +154,6 @@ const StakeInputHeader = styled.div`
 
 const StakeInputContainer = styled.div`
 	margin: 20px 0;
-`;
-
-const StyledInput = styled(NumericInput)`
-	font-family: ${(props) => props.theme.fonts.monoBold};
 `;
 
 export default StakeCard;

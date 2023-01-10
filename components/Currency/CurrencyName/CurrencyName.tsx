@@ -48,7 +48,7 @@ export const CurrencyName: FC<CurrencyNameProps> = memo(
 						<span>{symbol || currencyKey}</span>
 						{!isDeprecated ? null : (
 							<Deprecated>
-								<DeprecatedDot></DeprecatedDot> {t('common.currency.deprecated')}
+								<DeprecatedDot /> {t('common.currency.deprecated')}
 							</Deprecated>
 						)}
 					</Symbol>

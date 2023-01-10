@@ -1,5 +1,5 @@
 import { DialogOverlay, DialogContent } from '@reach/dialog';
-import { FC, ReactNode } from 'react';
+import { FC, memo, ReactNode, useMemo } from 'react';
 import { Rnd, Props } from 'react-rnd';
 import styled from 'styled-components';
 
@@ -19,32 +19,32 @@ type BaseModalProps = {
 	rndProps?: Props;
 };
 
-export const BaseModal: FC<BaseModalProps> = ({
-	onDismiss,
-	title,
-	children,
-	isOpen,
-	showCross = true,
-	lowercase,
-	rndProps = { disableDragging: true, enableResizing: false },
-	...rest
-}) => (
-	<StyledDialogOverlay onDismiss={onDismiss} isOpen={isOpen} {...rest}>
-		<StyledDialogContent aria-label="modal">
-			{rndProps.disableDragging ? (
-				<StyledCard className="card">
-					<StyledCardHeader lowercase={lowercase} noBorder className="card-header">
-						{title}
-						{showCross && (
-							<DismissButton onClick={onDismiss}>
-								<CrossIcon />
-							</DismissButton>
-						)}
-					</StyledCardHeader>
-					<StyledCardBody className="card-body">{children}</StyledCardBody>
-				</StyledCard>
-			) : (
-				<Rnd {...rndProps}>
+type ModalContentWrapperProps = {
+	rndProps?: Props;
+};
+
+const ModalContentWrapper: FC<ModalContentWrapperProps> = memo(({ children, rndProps }) => {
+	if (rndProps?.disableDragging) {
+		return <Rnd {...rndProps}>{children}</Rnd>;
+	} else {
+		return <>children</>;
+	}
+});
+
+export const BaseModal: FC<BaseModalProps> = memo(
+	({
+		onDismiss,
+		title,
+		children,
+		isOpen,
+		showCross = true,
+		lowercase,
+		rndProps = { disableDragging: true, enableResizing: false },
+		...rest
+	}) => (
+		<StyledDialogOverlay onDismiss={onDismiss} isOpen={isOpen} {...rest}>
+			<StyledDialogContent aria-label="modal">
+				<ModalContentWrapper rndProps={rndProps}>
 					<StyledCard className="card">
 						<StyledCardHeader lowercase={lowercase} noBorder className="card-header">
 							{title}
@@ -56,10 +56,10 @@ export const BaseModal: FC<BaseModalProps> = ({
 						</StyledCardHeader>
 						<StyledCardBody className="card-body">{children}</StyledCardBody>
 					</StyledCard>
-				</Rnd>
-			)}
-		</StyledDialogContent>
-	</StyledDialogOverlay>
+				</ModalContentWrapper>
+			</StyledDialogContent>
+		</StyledDialogOverlay>
+	)
 );
 
 const StyledDialogOverlay = styled(DialogOverlay)`

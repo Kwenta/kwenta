@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo, FC } from 'react';
 import styled from 'styled-components';
 
 import Button from './Button';
@@ -11,7 +11,7 @@ type NavButtonProps = {
 	noOutline?: boolean;
 };
 
-const NavButton: React.FC<NavButtonProps> = ({ title, ...props }) => {
+const NavButton: FC<NavButtonProps> = memo(({ title, ...props }) => {
 	return (
 		<div>
 			<StyledButton {...props}>
@@ -19,7 +19,7 @@ const NavButton: React.FC<NavButtonProps> = ({ title, ...props }) => {
 			</StyledButton>
 		</div>
 	);
-};
+});
 
 const StyledButton = styled(Button)`
 	height: initial;

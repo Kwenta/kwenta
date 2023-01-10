@@ -255,9 +255,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									};
 									return (
 										<Currency.Price
-											currencyKey={'sUSD'}
+											currencyKey="sUSD"
 											price={cellProps.row.original.position.liquidationPrice}
-											sign={'$'}
+											sign="$"
 											conversionRate={1}
 											formatOptions={formatOptions}
 										/>
