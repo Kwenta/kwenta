@@ -242,7 +242,7 @@ const Assets = () => {
 				description: description.slice(10),
 				price,
 				change: price !== 0 ? (price - (pastPrice?.price ?? 0)) / price || 0 : 0,
-				volume: synthVolumes[synth.name].toNumber() ?? 0,
+				volume: synthVolumes[synth.name]?.toNumber() ?? 0,
 				image: <PriceChart asset={synth.asset} />,
 				icon: (
 					<StyledCurrencyIcon currencyKey={(synth.asset[0] !== 's' ? 's' : '') + synth.asset} />

@@ -61,10 +61,9 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 										<SubMenuItem currentTheme={currentTheme} active={asPath.includes(subLink)}>
 											<div>
 												{t(i18nLabel)}{' '}
-												{badge &&
-													badge.map(({ i18nLabel, color }) => (
-														<StyledBadge color={color}>{t(i18nLabel)}</StyledBadge>
-													))}
+												{badge?.map(({ i18nLabel, color }) => (
+													<StyledBadge color={color}>{t(i18nLabel)}</StyledBadge>
+												))}
 											</div>
 										</SubMenuItem>
 									</StyledLink>
