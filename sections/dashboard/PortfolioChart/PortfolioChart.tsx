@@ -27,11 +27,11 @@ const PortfolioChart: FC<PortfolioChartProps> = ({ exchangeTokenBalances }) => {
 			<MobileHiddenView>
 				<Chart>
 					<PortfolioTitle>Portfolio Value</PortfolioTitle>
-					<PortfolioText currencyKey={'sUSD'} price={total} sign="$" />
+					<PortfolioText currencyKey="sUSD" price={total} sign="$" />
 				</Chart>
 			</MobileHiddenView>
 			<MobileOnlyView>
-				<PortfolioText currencyKey={'sUSD'} price={total} sign="$" />
+				<PortfolioText currencyKey="sUSD" price={total} sign="$" />
 				<MobileChartPlaceholder />
 			</MobileOnlyView>
 		</>

@@ -121,13 +121,10 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 
 const TabButtonsContainer = styled.div`
 	display: flex;
-	margin-top: 16px;
-	margin-bottom: 16px;
+	margin: 16px 0;
 
-	& > button {
-		&:not(:last-of-type) {
-			margin-right: 14px;
-		}
+	& > button:not(:last-of-type) {
+		margin-right: 14px;
 	}
 `;
 

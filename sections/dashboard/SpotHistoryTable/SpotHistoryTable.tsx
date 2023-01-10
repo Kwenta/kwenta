@@ -29,6 +29,9 @@ type WalletTradesExchangeResult = Omit<SynthTradesExchangeResult, 'timestamp'> &
 	timestamp: number;
 };
 
+const conditionalRender = <T,>(prop: T, children: ReactElement) =>
+	_.isNil(prop) ? <p>{NO_VALUE}</p> : children;
+
 const SpotHistoryTable: FC = () => {
 	const { t } = useTranslation();
 	const { network, walletAddress, synthsMap } = Connector.useContainer();
@@ -53,9 +56,6 @@ const SpotHistoryTable: FC = () => {
 			}),
 		[trades, synths]
 	);
-
-	const conditionalRender = <T,>(prop: T, children: ReactElement): ReactElement =>
-		_.isNil(prop) ? <p>{NO_VALUE}</p> : children;
 
 	return (
 		<TableContainer>
@@ -105,7 +105,7 @@ const SpotHistoryTable: FC = () => {
 
 									<StyledText>
 										<Currency.Amount
-											currencyKey={'sUSD'}
+											currencyKey="sUSD"
 											amount={cellProps.row.original.fromAmount}
 											totalValue={0}
 											conversionRate={selectPriceCurrencyRate}

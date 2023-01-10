@@ -46,10 +46,8 @@ const Overview: FC = () => {
 	const isolatedPositionsCount = useAppSelector(selectActiveIsolatedPositionsCount);
 	// const crossPositionsCount = useAppSelector(selectActiveCrossPositionsCount);
 
-	const [activePositionsTab, setActivePositionsTab] = useRecoilState<PositionsTab>(
-		activePositionsTabState
-	);
-	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
+	const [activePositionsTab, setActivePositionsTab] = useRecoilState(activePositionsTabState);
+	const [activeMarketsTab, setActiveMarketsTab] = useState(MarketsTab.FUTURES);
 
 	const { network, synthsMap } = Connector.useContainer();
 

@@ -45,10 +45,7 @@ const Competition: FC<CompetitionProps> = ({
 	}, [walletAddress, competitionQuery]);
 
 	const traders = useMemo(
-		() =>
-			competitionQuery?.data?.map((stat: AccountStat) => {
-				return stat.account;
-			}) ?? [],
+		() => competitionQuery?.data?.map((stat: AccountStat) => stat.account) ?? [],
 		[competitionQuery?.data]
 	);
 

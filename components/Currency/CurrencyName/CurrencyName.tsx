@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { memo, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
@@ -19,43 +19,45 @@ type CurrencyNameProps = {
 	isDeprecated?: boolean;
 };
 
-export const CurrencyName: FC<CurrencyNameProps> = ({
-	currencyKey,
-	symbol,
-	name = null,
-	showIcon = false,
-	iconProps = {},
-	marketClosureReason,
-	isDeprecated = false,
-	...rest
-}) => {
-	const { t } = useTranslation();
-	return (
-		<Container showIcon={showIcon} {...rest}>
-			{showIcon && (
-				<CurrencyIconContainer>
-					<CurrencyIcon className="icon" {...{ currencyKey, isDeprecated }} {...iconProps} />
-					{marketClosureReason != null ? (
-						<MarketClosureIconContainer>
-							<MarketClosureIcon marketClosureReason={marketClosureReason} size="sm" />
-						</MarketClosureIconContainer>
-					) : null}
-				</CurrencyIconContainer>
-			)}
-			<NameAndSymbol>
-				<Symbol className="symbol">
-					<span>{symbol || currencyKey}</span>
-					{!isDeprecated ? null : (
-						<Deprecated>
-							<DeprecatedDot></DeprecatedDot> {t('common.currency.deprecated')}
-						</Deprecated>
-					)}
-				</Symbol>
-				{name && <Name className="name">{name}</Name>}
-			</NameAndSymbol>
-		</Container>
-	);
-};
+export const CurrencyName: FC<CurrencyNameProps> = memo(
+	({
+		currencyKey,
+		symbol,
+		name = null,
+		showIcon = false,
+		iconProps = {},
+		marketClosureReason,
+		isDeprecated = false,
+		...rest
+	}) => {
+		const { t } = useTranslation();
+		return (
+			<Container showIcon={showIcon} {...rest}>
+				{showIcon && (
+					<CurrencyIconContainer>
+						<CurrencyIcon className="icon" {...{ currencyKey, isDeprecated }} {...iconProps} />
+						{marketClosureReason != null ? (
+							<MarketClosureIconContainer>
+								<MarketClosureIcon marketClosureReason={marketClosureReason} size="sm" />
+							</MarketClosureIconContainer>
+						) : null}
+					</CurrencyIconContainer>
+				)}
+				<NameAndSymbol>
+					<Symbol className="symbol">
+						<span>{symbol || currencyKey}</span>
+						{!isDeprecated ? null : (
+							<Deprecated>
+								<DeprecatedDot></DeprecatedDot> {t('common.currency.deprecated')}
+							</Deprecated>
+						)}
+					</Symbol>
+					{name && <Name className="name">{name}</Name>}
+				</NameAndSymbol>
+			</Container>
+		);
+	}
+);
 
 const Container = styled.span<{ showIcon?: boolean }>`
 	${(props) =>

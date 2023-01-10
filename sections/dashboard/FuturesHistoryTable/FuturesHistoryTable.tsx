@@ -38,6 +38,9 @@ import {
 
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
 
+const conditionalRender = <T,>(prop: T, children: ReactElement) =>
+	_.isNil(prop) ? <p>{NO_VALUE}</p> : children;
+
 const FuturesHistoryTable: FC = () => {
 	const [selectedTrade, setSelectedTrade] = useState<FuturesTrade>();
 	const accountType = useAppSelector(selectFuturesType);
@@ -48,10 +51,7 @@ const FuturesHistoryTable: FC = () => {
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { switchToL2 } = useNetworkSwitcher();
 	const futuresTradesQuery = useGetAllFuturesTradesForAccount(walletAddress);
-	const trades: FuturesTrade[] = useMemo(
-		() => (futuresTradesQuery.isSuccess ? futuresTradesQuery?.data ?? [] : []),
-		[futuresTradesQuery.isSuccess, futuresTradesQuery.data]
-	);
+	const trades = useMemo(() => futuresTradesQuery?.data ?? [], [futuresTradesQuery.data]);
 
 	const mappedHistoricalTrades = useMemo(
 		() =>
@@ -74,9 +74,6 @@ const FuturesHistoryTable: FC = () => {
 			}),
 		[trades]
 	);
-
-	const conditionalRender = <T,>(prop: T, children: ReactElement): ReactElement =>
-		_.isNil(prop) ? <p>{NO_VALUE}</p> : children;
 
 	return (
 		<>
@@ -200,7 +197,7 @@ const FuturesHistoryTable: FC = () => {
 									return conditionalRender(
 										cellProps.row.original.feesPaid,
 										<Currency.Price
-											currencyKey={'sUSD'}
+											currencyKey="sUSD"
 											price={cellProps.row.original.feesPaid}
 											sign={selectedPriceCurrency.sign}
 											conversionRate={selectPriceCurrencyRate}
