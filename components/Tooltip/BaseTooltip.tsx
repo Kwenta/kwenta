@@ -4,7 +4,7 @@ import media from 'styles/media';
 
 // base styles for each component that make up the tooltip.
 
-interface ToolTipStyleProps {
+interface BaseTooltipProps {
 	preset?: string;
 	width?: string;
 	height?: string;
@@ -15,7 +15,7 @@ interface ToolTipStyleProps {
 	position?: string;
 }
 
-export const Tooltip = styled.div<ToolTipStyleProps>`
+export const BaseTooltip = styled.div<BaseTooltipProps>`
 	width: max-content;
 	max-width: ${(props) => props.width || '472.5px'};
 	background: ${(props) => props.theme.colors.selectedTheme.button.fill};

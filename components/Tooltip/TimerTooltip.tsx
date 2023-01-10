@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState, useRef, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import useInterval from 'hooks/useInterval';
 
-import { Tooltip, ToolTipWrapper } from './TooltipStyles';
+import { BaseTooltip, ToolTipWrapper } from './BaseTooltip';
 
-interface ToolTipProps {
+type TooltipProps = {
 	startTimeDate: Date | undefined;
 	children?: React.ReactNode;
 	width?: string;
@@ -17,13 +17,13 @@ interface ToolTipProps {
 	right?: string;
 	style?: React.CSSProperties;
 	position?: string;
-}
+};
 
 const formatTimeUnit = (value: number) => {
 	return value < 10 ? '0' + value : String(value);
 };
 
-const TimerTooltip = (props: ToolTipProps) => {
+const TimerTooltip: FC<TooltipProps> = (props) => {
 	const { t } = useTranslation();
 	const [activeMouse, setActiveMouse] = useState(false);
 	const [position, setPosition] = useState({});
@@ -96,7 +96,7 @@ const TimerTooltip = (props: ToolTipProps) => {
 		<ToolTipWrapper ref={myRef} onMouseEnter={openToolTip} onMouseLeave={closeToolTip}>
 			{props.children}
 			{activeMouse && (
-				<Tooltip {...props} {...position}>
+				<BaseTooltip {...props} {...position}>
 					<Container>
 						<span>{t(`exchange.market-details-card.timer-tooltip.last-update`)}</span>
 						<p>
@@ -104,7 +104,7 @@ const TimerTooltip = (props: ToolTipProps) => {
 							<span>{t(timeUnitsFormat)}</span>
 						</p>
 					</Container>
-				</Tooltip>
+				</BaseTooltip>
 			)}
 		</ToolTipWrapper>
 	);

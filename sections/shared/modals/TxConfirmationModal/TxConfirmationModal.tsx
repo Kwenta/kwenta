@@ -11,7 +11,7 @@ import OneInchImage from 'assets/svg/providers/1inch.svg';
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
 import Error from 'components/Error';
-import StyledTooltip from 'components/Tooltip/StyledTooltip';
+import Tooltip from 'components/Tooltip/Tooltip';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import useCurrencyPrice from 'hooks/useCurrencyPrice';
@@ -318,19 +318,19 @@ const TxProviderContainer = styled(FlexDivRowCentered)`
 	justify-content: center;
 `;
 
-const CustomStyledTooltip = styled(StyledTooltip)`
+const CustomStyledTooltip = styled(Tooltip)`
 	padding: 10px;
 	width: 100%;
 	word-break: all;
 `;
 
-const ExchangeFeeHintTooltip = styled(StyledTooltip)`
+const ExchangeFeeHintTooltip = styled(Tooltip)`
 	width: 240px;
 	padding: 0px 10px;
 	margin: 0px 0px 0px 40px;
 `;
 
-const PriceAdjustmentTooltip = styled(StyledTooltip)`
+const PriceAdjustmentTooltip = styled(Tooltip)`
 	width: 240px;
 	padding: 0px 10px;
 	margin: 0px;

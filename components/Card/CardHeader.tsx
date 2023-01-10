@@ -21,7 +21,7 @@ const CardHeader: FC<CardHeaderProps> = memo(
 const Container = styled(FlexDivCentered)<{ lowercase: boolean; noBorder: boolean }>`
 	position: relative;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	border-bottom: ${(props) => (props.noBorder ? 'none' : `1px solid ${props.theme.colors.navy}`)};
+	border-bottom: ${(props) => (props.noBorder ? 'none' : props.theme.colors.selectedTheme.border)};
 	height: 32px;
 	padding: 0 18px;
 	justify-content: flex-start;

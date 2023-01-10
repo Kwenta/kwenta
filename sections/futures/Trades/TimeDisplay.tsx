@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useMemo, useState, memo } from 'react';
 import styled, { css } from 'styled-components';
 
 import getLocale from 'utils/formatters/getLocale';
@@ -9,7 +9,7 @@ type TimeDisplayProps = {
 	horizontal?: boolean;
 };
 
-const TimeDisplay: FC<TimeDisplayProps> = ({ value, horizontal }) => {
+const TimeDisplay: FC<TimeDisplayProps> = memo(({ value, horizontal }) => {
 	const [show12hr, setShow12h] = useState(false);
 
 	const handleOnClick = useCallback(() => {
@@ -33,7 +33,7 @@ const TimeDisplay: FC<TimeDisplayProps> = ({ value, horizontal }) => {
 			<div>{show12hr ? time12hr : time24hr}</div>
 		</TimeDisplayContainer>
 	);
-};
+});
 
 const TimeDisplayContainer = styled.div<{ horizontal?: boolean }>`
 	${(props) =>

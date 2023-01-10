@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import StyledTooltip from './StyledTooltip';
+import StyledTooltip from './Tooltip';
 
 const ErrorTooltip = styled(StyledTooltip)`
 	font-size: 12px;

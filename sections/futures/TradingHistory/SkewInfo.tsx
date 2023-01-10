@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import StyledTooltip from 'components/Tooltip/StyledTooltip';
+import Tooltip from 'components/Tooltip/Tooltip';
 import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { CapitalizedText, NumericValue } from 'styles/common';
@@ -93,7 +93,7 @@ const WithCursor = styled.div<{ cursor: 'help' }>`
 	cursor: ${(props) => props.cursor};
 `;
 
-const SkewTooltip = styled(StyledTooltip)<{ isNumber?: boolean }>`
+const SkewTooltip = styled(Tooltip)<{ isNumber?: boolean }>`
 	left: -30px;
 	z-index: 2;
 	padding: 10px;

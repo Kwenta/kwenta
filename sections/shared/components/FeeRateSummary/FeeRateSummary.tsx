@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import TimerIcon from 'assets/svg/app/timer.svg';
-import StyledTooltip from 'components/Tooltip/StyledTooltip';
+import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
 import { selectExchangeFeeRateWei, selectBaseFeeRateWei } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
@@ -79,7 +79,7 @@ export const DynamicFeeRateItem = styled.span`
 	}
 `;
 
-const CustomStyledTooltip = styled(StyledTooltip)`
+const CustomStyledTooltip = styled(Tooltip)`
 	width: 300px;
 	padding: 0px 4px;
 	text-align: center;

@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components';
 
 import PreviewArrow from 'components/PreviewArrow';
 import * as Text from 'components/Text';
-import StyledTooltip from 'components/Tooltip/StyledTooltip';
+import Tooltip from 'components/Tooltip/Tooltip';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
@@ -457,7 +457,7 @@ const SubtitleWithCursor = styled(Subtitle)`
 	cursor: help;
 `;
 
-const PositionCardTooltip = styled(StyledTooltip).attrs({ preset: 'fixed', height: 'auto' })`
+const PositionCardTooltip = styled(Tooltip).attrs({ preset: 'fixed', height: 'auto' })`
 	z-index: 2;
 	padding: 0px 10px 0px 10px;
 `;

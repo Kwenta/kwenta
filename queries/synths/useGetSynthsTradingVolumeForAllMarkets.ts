@@ -43,7 +43,7 @@ const useGetSynthsTradingVolumeForAllMarkets = (yesterday: number) => {
 							}
 						}
 					`,
-					{ yesterday: yesterday }
+					{ yesterday }
 				);
 				return response ? calculateTradeVolumeForAllSynths(response) : null;
 			} catch (e) {

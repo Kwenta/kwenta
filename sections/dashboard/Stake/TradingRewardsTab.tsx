@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import HelpIcon from 'assets/svg/app/question-mark.svg';
 import Button from 'components/Button';
 import { LogoText } from 'components/Text';
-import StyledTooltip from 'components/Tooltip/StyledTooltip';
+import Tooltip from 'components/Tooltip/Tooltip';
 import Connector from 'containers/Connector';
 import useGetFile from 'queries/files/useGetFile';
 import useGetFuturesFee from 'queries/staking/useGetFuturesFee';
@@ -175,7 +175,7 @@ const PeriodLabel = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
-const CustomStyledTooltip = styled(StyledTooltip)`
+const CustomStyledTooltip = styled(Tooltip)`
 	padding: 0px 10px 0px;
 	${media.lessThan('md')`
 		width: 310px;

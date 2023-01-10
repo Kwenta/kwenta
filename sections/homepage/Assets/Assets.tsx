@@ -1,6 +1,5 @@
 import { wei } from '@synthetixio/wei';
 import { ColorType, createChart, UTCTimestamp } from 'lightweight-charts';
-import isNil from 'lodash/isNil';
 import values from 'lodash/values';
 import router from 'next/router';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -17,7 +16,6 @@ import Currency from 'components/Currency';
 import { TabPanel } from 'components/Tab';
 import { CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
-import { Price } from 'queries/rates/types';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
 import { selectMarketVolumes } from 'state/futures/selectors';
@@ -149,7 +147,7 @@ export const PriceChart = ({ asset }: PriceChartProps) => {
 const Assets = () => {
 	const { t } = useTranslation();
 	const { l2SynthsMap, l2Provider } = Connector.useContainer();
-	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
+	const [activeMarketsTab, setActiveMarketsTab] = useState(MarketsTab.FUTURES);
 
 	const prices = useAppSelector(selectPrices);
 	const futuresMarkets = useAppSelector(selectOptimismMarkets);
@@ -188,7 +186,7 @@ const Assets = () => {
 	const frozenSynthsQuery = queryCache.find(['synths', 'frozenSynths', 10]);
 
 	const unfrozenSynths =
-		frozenSynthsQuery && frozenSynthsQuery.state.status === 'success'
+		frozenSynthsQuery?.state.status === 'success'
 			? synths.filter(
 					(synth) => !(frozenSynthsQuery.state.data as Set<CurrencyKey>).has(synth.name)
 			  )
@@ -198,30 +196,27 @@ const Assets = () => {
 	const synthVolumesQuery = useGetSynthsTradingVolumeForAllMarkets(yesterday);
 
 	const PERPS = useMemo(() => {
-		return (
-			futuresMarkets?.map((market) => {
-				const marketPrice =
-					prices[market.asset]?.offChain ?? prices[market.asset]?.onChain ?? wei(0);
-				const description = getSynthDescription(market.asset, l2SynthsMap, t);
-				const volume = futuresVolumes[market.assetHex]?.volume?.toNumber() ?? 0;
-				const pastPrice = pastRates.find(
-					(price: Price) => price.synth === market.asset || price.synth === market.asset.slice(1)
-				);
-				return {
-					key: market.asset,
-					name: market.asset[0] === 's' ? market.asset.slice(1) : market.asset,
-					description: description.split(' ')[0],
-					price: marketPrice.toNumber(),
-					volume,
-					priceChange:
-						(marketPrice.toNumber() - (pastPrice?.price ?? 0)) / marketPrice.toNumber() || 0,
-					image: <PriceChart asset={market.asset} />,
-					icon: (
-						<StyledCurrencyIcon currencyKey={(market.asset[0] !== 's' ? 's' : '') + market.asset} />
-					),
-				};
-			}) ?? []
-		);
+		return futuresMarkets.map((market) => {
+			const marketPrice = prices[market.asset]?.offChain ?? prices[market.asset]?.onChain ?? wei(0);
+			const description = getSynthDescription(market.asset, l2SynthsMap, t);
+			const volume = futuresVolumes[market.assetHex]?.volume?.toNumber() ?? 0;
+			const pastPrice = pastRates.find(
+				(price) => price.synth === market.asset || price.synth === market.asset.slice(1)
+			);
+			return {
+				key: market.asset,
+				name: market.asset[0] === 's' ? market.asset.slice(1) : market.asset,
+				description: description.split(' ')[0],
+				price: marketPrice.toNumber(),
+				volume,
+				priceChange:
+					(marketPrice.toNumber() - (pastPrice?.price ?? 0)) / marketPrice.toNumber() || 0,
+				image: <PriceChart asset={market.asset} />,
+				icon: (
+					<StyledCurrencyIcon currencyKey={(market.asset[0] !== 's' ? 's' : '') + market.asset} />
+				),
+			};
+		});
 		// eslint-disable-next-line
 	}, [futuresMarkets, l2SynthsMap, pastRates, futuresVolumes, t]);
 
@@ -234,10 +229,10 @@ const Assets = () => {
 						currencyName: synth.description,
 				  })
 				: '';
-			const rate = prices && (prices[synth.name]?.onChain || prices[synth.name]?.offChain);
-			const price = isNil(rate) ? 0 : rate.toNumber();
+			const rate = prices?.[synth.name]?.onChain || prices?.[synth.name]?.offChain;
+			const price = rate?.toNumber() ?? 0;
 
-			const pastPrice = pastRates.find((price: Price) => {
+			const pastPrice = pastRates.find((price) => {
 				return price.synth === synth.asset || price.synth === synth.name;
 			});
 
@@ -247,7 +242,7 @@ const Assets = () => {
 				description: description.slice(10),
 				price,
 				change: price !== 0 ? (price - (pastPrice?.price ?? 0)) / price || 0 : 0,
-				volume: !isNil(synthVolumes[synth.name]) ? Number(synthVolumes[synth.name]) ?? 0 : 0,
+				volume: synthVolumes[synth.name].toNumber() ?? 0,
 				image: <PriceChart asset={synth.asset} />,
 				icon: (
 					<StyledCurrencyIcon currencyKey={(synth.asset[0] !== 's' ? 's' : '') + synth.asset} />
@@ -310,9 +305,9 @@ const Assets = () => {
 										<ChartContainer>{image}</ChartContainer>
 										<AssetPrice>
 											<Currency.Price
-												currencyKey={'sUSD'}
+												currencyKey="sUSD"
 												price={price}
-												sign={'$'}
+												sign="$"
 												conversionRate={1}
 											/>
 										</AssetPrice>
@@ -331,9 +326,9 @@ const Assets = () => {
 													<>-</>
 												) : (
 													<Currency.Price
-														currencyKey={'sUSD'}
+														currencyKey="sUSD"
 														price={volume}
-														sign={'$'}
+														sign="$"
 														conversionRate={1}
 														formatOptions={{ minDecimals: 0 }}
 													/>
@@ -370,9 +365,9 @@ const Assets = () => {
 										<ChartContainer>{image}</ChartContainer>
 										<AssetPrice>
 											<Currency.Price
-												currencyKey={'sUSD'}
+												currencyKey="sUSD"
 												price={price}
-												sign={'$'}
+												sign="$"
 												conversionRate={1}
 											/>
 										</AssetPrice>
@@ -391,9 +386,9 @@ const Assets = () => {
 													<>-</>
 												) : (
 													<Currency.Price
-														currencyKey={'sUSD'}
+														currencyKey="sUSD"
 														price={volume}
-														sign={'$'}
+														sign="$"
 														conversionRate={1}
 														formatOptions={{ minDecimals: 0 }}
 													/>
@@ -440,9 +435,9 @@ const Assets = () => {
 										<ChartContainer>{image}</ChartContainer>
 										<AssetPrice>
 											<Currency.Price
-												currencyKey={'sUSD'}
+												currencyKey="sUSD"
 												price={price}
-												sign={'$'}
+												sign="$"
 												conversionRate={1}
 											/>
 										</AssetPrice>
@@ -461,9 +456,9 @@ const Assets = () => {
 													<>-</>
 												) : (
 													<Currency.Price
-														currencyKey={'sUSD'}
+														currencyKey="sUSD"
 														price={volume}
-														sign={'$'}
+														sign="$"
 														conversionRate={1}
 														formatOptions={{ minDecimals: 0 }}
 													/>
@@ -499,9 +494,9 @@ const Assets = () => {
 										<ChartContainer>{image}</ChartContainer>
 										<AssetPrice>
 											<Currency.Price
-												currencyKey={'sUSD'}
+												currencyKey="sUSD"
 												price={price}
-												sign={'$'}
+												sign="$"
 												conversionRate={1}
 											/>
 										</AssetPrice>
@@ -520,9 +515,9 @@ const Assets = () => {
 													<>-</>
 												) : (
 													<Currency.Price
-														currencyKey={'sUSD'}
+														currencyKey="sUSD"
 														price={volume}
-														sign={'$'}
+														sign="$"
 														conversionRate={1}
 														formatOptions={{ minDecimals: 0 }}
 													/>

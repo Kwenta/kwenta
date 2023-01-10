@@ -16,8 +16,6 @@ export const themeColors = {
 
 const colors = {
 	black: '#000000',
-	elderberry: '#10101E',
-	navy: '#1A1A2E',
 	silver: '#8A939F',
 	white: '#FFFFFF',
 	red: '#CB366D',
@@ -25,7 +23,6 @@ const colors = {
 	yellow: '#FFDF6D',
 	goldColors,
 	gold: `linear-gradient(180deg, ${goldColors.color1} 0%, ${goldColors.color2} 100%)`,
-	cellGradient: `linear-gradient(180deg, #1E1D1D 0%, #161515 100%)`,
 	// network colors
 	mainnet: '#29B6AF',
 	ropsten: '#FF4A8D',
@@ -35,7 +32,6 @@ const colors = {
 	goerli: 'rgb(48, 153, 242)',
 	connectedDefault: goldColors.color1,
 	noNetwork: '#EF6868',
-	transparentBlack: 'rgba(0, 0, 0, 0.5)',
 	common,
 };
 

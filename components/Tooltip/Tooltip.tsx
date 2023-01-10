@@ -1,10 +1,10 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef, memo, FC, useCallback } from 'react';
 
-import { Tooltip, ToolTipWrapper } from './TooltipStyles';
+import { BaseTooltip, ToolTipWrapper } from './BaseTooltip';
 
 // Import this tooltip to a new component and customize
 
-interface ToolTipProps {
+type TooltipProps = {
 	content?: any;
 	children?: React.ReactNode;
 	width?: string;
@@ -17,16 +17,16 @@ interface ToolTipProps {
 	style?: React.CSSProperties;
 	position?: string;
 	visible?: boolean;
-}
+};
 
-const StyledTooltip = (props: ToolTipProps) => {
+const Tooltip: FC<TooltipProps> = memo((props) => {
 	const [activeMouse, setActiveMouse] = useState(false);
 	const [position, setPosition] = useState({});
 	const myRef = useRef<HTMLDivElement>(null);
 
 	const isVisible = props.visible === undefined ? true : props.visible;
 
-	const setFixedPosition = () => {
+	const setFixedPosition = useCallback(() => {
 		const isFirefox = /firefox/i.test(navigator.userAgent);
 		if (myRef.current !== null) {
 			const { left, bottom, top } = myRef.current.getBoundingClientRect();
@@ -36,29 +36,29 @@ const StyledTooltip = (props: ToolTipProps) => {
 				setPosition({ left: `${left}px`, top: `${bottom + 20}px` });
 			}
 		}
-	};
+	}, []);
 
-	const openToolTip = () => {
+	const openToolTip = useCallback(() => {
 		setActiveMouse(true);
 		if (props.position === 'fixed') {
 			setFixedPosition();
 		}
-	};
+	}, [props.position, setFixedPosition]);
 
-	const closeToolTip = () => {
+	const closeToolTip = useCallback(() => {
 		setActiveMouse(false);
-	};
+	}, []);
 
 	return (
 		<ToolTipWrapper ref={myRef} onMouseEnter={openToolTip} onMouseLeave={closeToolTip}>
 			{props.children}
 			{activeMouse && isVisible && (
-				<Tooltip {...position} {...props} style={props.style}>
+				<BaseTooltip {...position} {...props} style={props.style}>
 					<p>{props.content}</p>
-				</Tooltip>
+				</BaseTooltip>
 			)}
 		</ToolTipWrapper>
 	);
-};
+});
 
-export default StyledTooltip;
+export default Tooltip;

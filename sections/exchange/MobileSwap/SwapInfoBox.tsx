@@ -7,7 +7,7 @@ import styled from 'styled-components';
 
 import TimerIcon from 'assets/svg/app/timer.svg';
 import InfoBox from 'components/InfoBox';
-import StyledTooltip from 'components/Tooltip/StyledTooltip';
+import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
 import { parseGasPriceObject } from 'hooks/useGas';
 import useIsL1 from 'hooks/useIsL1';
@@ -80,7 +80,7 @@ const SwapInfoBox: React.FC = () => {
 									.gt(0) ? (
 									<>
 										{' + '}
-										<StyledTooltip
+										<Tooltip
 											height="auto"
 											preset="bottom"
 											width="300px"
@@ -91,7 +91,7 @@ const SwapInfoBox: React.FC = () => {
 												{formatPercent(wei(exchangeFeeRate).sub(baseFeeRate), { minDecimals: 2 })}
 											</StyledDynamicFee>
 											<StyledTimerIcon />
-										</StyledTooltip>
+										</Tooltip>
 									</>
 								) : null
 							) : null}
@@ -101,9 +101,7 @@ const SwapInfoBox: React.FC = () => {
 				[t('common.summary.fee-cost')]: {
 					value:
 						feeCost != null
-							? formatDollars(feeCost, {
-									minDecimals: feeCost.lt(0.01) ? 4 : 2,
-							  })
+							? formatDollars(feeCost, { minDecimals: feeCost.lt(0.01) ? 4 : 2 })
 							: NO_VALUE,
 				},
 			}}
