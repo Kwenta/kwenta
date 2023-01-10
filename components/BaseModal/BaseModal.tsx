@@ -1,5 +1,5 @@
 import { DialogOverlay, DialogContent } from '@reach/dialog';
-import { FC, memo, ReactNode, useMemo } from 'react';
+import { FC, memo, ReactNode } from 'react';
 import { Rnd, Props } from 'react-rnd';
 import styled from 'styled-components';
 
@@ -27,7 +27,7 @@ const ModalContentWrapper: FC<ModalContentWrapperProps> = memo(({ children, rndP
 	if (rndProps?.disableDragging) {
 		return <Rnd {...rndProps}>{children}</Rnd>;
 	} else {
-		return <>children</>;
+		return <>{children}</>;
 	}
 });
 
