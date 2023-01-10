@@ -9,8 +9,6 @@ type TimeDisplayProps = {
 	horizontal?: boolean;
 };
 
-const locale = getLocale();
-
 const TimeDisplay: FC<TimeDisplayProps> = ({ value, horizontal }) => {
 	const [show12hr, setShow12h] = useState(false);
 
@@ -18,14 +16,16 @@ const TimeDisplay: FC<TimeDisplayProps> = ({ value, horizontal }) => {
 		setShow12h((current) => !current);
 	}, []);
 
+	const locale = useMemo(() => getLocale(), []);
+
 	const date = useMemo(
 		() => format(new Date(value), locale.formatLong?.date({ width: 'short' }) ?? 'MM/dd/yy'),
-		[value]
+		[value, locale]
 	);
 
-	const time12hr = useMemo(() => new Date(value).toLocaleTimeString(locale.code), [value]);
+	const time12hr = useMemo(() => new Date(value).toLocaleTimeString(locale.code), [value, locale]);
 
-	const time24hr = useMemo(() => format(new Date(value), 'HH:mm:ss', { locale }), [value]);
+	const time24hr = useMemo(() => format(new Date(value), 'HH:mm:ss', { locale }), [value, locale]);
 
 	return (
 		<TimeDisplayContainer horizontal={horizontal} onClick={handleOnClick}>

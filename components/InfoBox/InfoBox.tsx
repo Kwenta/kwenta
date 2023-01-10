@@ -1,4 +1,4 @@
-import { memo, FC, Fragment } from 'react';
+import { memo, FC } from 'react';
 import styled, { css } from 'styled-components';
 
 import * as Text from 'components/Text';
