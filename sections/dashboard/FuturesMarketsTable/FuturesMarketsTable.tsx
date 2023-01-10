@@ -15,6 +15,7 @@ import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import { FundingRateResponse } from 'sdk/types/futures';
+import { getDisplayAsset } from 'sdk/utils/futures';
 import {
 	selectAverageFundingRates,
 	selectFuturesType,
@@ -40,7 +41,7 @@ const FuturesMarketsTable: FC = () => {
 		return futuresMarkets.map((market) => {
 			const description = getSynthDescription(market.asset, synthsMap, t);
 			const volume = futuresVolumes[market.assetHex]?.volume;
-			const pastPrice = pastRates.find((price) => price.synth === market.asset);
+			const pastPrice = pastRates.find((price) => price.synth === getDisplayAsset(market.asset));
 			const fundingRate = fundingRates.find(
 				(funding) => (funding as FundingRateResponse)?.asset === MarketKeyByAsset[market.asset]
 			);
