@@ -2,6 +2,7 @@ import { Bridge } from '@socket.tech/plugin';
 import styled, { useTheme } from 'styled-components';
 import { chain } from 'wagmi';
 
+import ArrowIcon from 'assets/svg/app/arrow-down.svg';
 import BaseModal from 'components/BaseModal';
 import Connector from 'containers/Connector';
 
@@ -13,16 +14,11 @@ import hexToRGB, {
 	SOCKET_SOURCE_TOKEN_ADDRESS,
 } from './utils';
 
-type Props = {
-	onDismiss(): void;
-	title: string;
-};
-
-const SocketBridge: React.FC<Props> = ({ onDismiss, title }) => {
+const SocketBridge = () => {
 	const { signer } = Connector.useContainer();
 	const theme = useTheme();
 
-	const background = hexToRGB(theme.colors.selectedTheme.background);
+	const background = hexToRGB(theme.colors.selectedTheme.input.secondary.background);
 	const modalBg = hexToRGB(theme.colors.selectedTheme.input.secondary.background);
 	const text = hexToRGB(theme.colors.selectedTheme.text.header);
 	const primaryButtonBg = hexToRGB(theme.colors.selectedTheme.button.primary.background);
@@ -43,7 +39,7 @@ const SocketBridge: React.FC<Props> = ({ onDismiss, title }) => {
 	};
 
 	return signer?.provider ? (
-		<StyledBaseModal title={title} onDismiss={onDismiss}>
+		<div style={{ marginBottom: '20px' }}>
 			<Bridge
 				provider={signer?.provider}
 				API_KEY={process.env.NEXT_PUBLIC_SOCKET_API_KEY ?? ''}
@@ -55,7 +51,10 @@ const SocketBridge: React.FC<Props> = ({ onDismiss, title }) => {
 				customize={customize}
 				enableSameChainSwaps={true}
 			/>
-		</StyledBaseModal>
+			<StyledDiv>
+				<ArrowIcon />
+			</StyledDiv>
+		</div>
 	) : null;
 };
 
@@ -63,6 +62,15 @@ export const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
 		width: 400px;
 	}
+`;
+
+export const StyledDiv = styled.div`
+	svg {
+		height: 15px;
+		width: 15px;
+	}
+	text-align: center;
+	padding-top: 20px;
 `;
 
 export default SocketBridge;

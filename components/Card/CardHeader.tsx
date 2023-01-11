@@ -8,6 +8,7 @@ export type CardHeaderProps = {
 	className?: string;
 	lowercase?: boolean;
 	noBorder?: boolean;
+	onClick?: () => void;
 };
 
 const CardHeader: FC<CardHeaderProps> = memo(

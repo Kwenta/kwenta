@@ -772,7 +772,7 @@
 						"gas-fee": "Gas Fee",
 						"max": "Max",
 						"deposit": {
-							"title": "Deposit Margin",
+							"title": "Deposit",
 							"button": "Deposit Margin",
 							"approve-button": "Approve sUSD",
 							"disclaimer": "A $50 margin minimum is required to open a position.",
@@ -781,7 +781,7 @@
 							"exceeds-balance": "Amount exceeds balance"
 						},
 						"withdraw": {
-							"title": "Withdraw Margin",
+							"title": "Withdraw",
 							"button": "Withdraw Margin"
 						},
 						"title": "Edit margin",
@@ -790,8 +790,9 @@
 							"deposit": "Deposit"
 						},
 						"bridge": {
-							"title": "Bridge & Swap",
-							"copy": "No sUSD balance, would you like to swap or bridge other assets?"
+							"title": "Bridge",
+							"low-balance": "You sUSD balance is low. You can bridge more assets from another network below.",
+							"no-balance": "To get started, you need sUSD to trade on Kwenta. You can bridge assets from another network and swap it into sUSD below."
 						}
 					}
 				},

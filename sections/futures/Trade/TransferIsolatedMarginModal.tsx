@@ -1,11 +1,14 @@
 import { wei } from '@synthetixio/wei';
 import dynamic from 'next/dynamic';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import CaretDownIcon from 'assets/svg/app/caret-down-gray-slim.svg';
+import CaretUpIcon from 'assets/svg/app/caret-up-gray-slim.svg';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
+import Card from 'components/Card';
 import Error from 'components/Error';
 import CustomInput from 'components/Input/CustomInput';
 import SegmentedControl from 'components/SegmentedControl';
@@ -59,7 +62,16 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 		position?.accessibleMargin,
 	]);
 
-	const isInsufficientFund = useMemo(() => susdBalance.lt(minDeposit), [susdBalance, minDeposit]);
+	const isLowBalance = useMemo(() => susdBalance.gt(zeroBN) && susdBalance.lt(minDeposit), [
+		susdBalance,
+		minDeposit,
+	]);
+
+	const isNoBalance = useMemo(() => susdBalance.eq(zeroBN), [susdBalance]);
+	useEffect(() => (isLowBalance || isNoBalance ? setOpenSocket(true) : setOpenSocket(false)), [
+		isLowBalance,
+		isNoBalance,
+	]);
 	const isDisabled = useMemo(() => {
 		if (!amount || submitting) {
 			return true;
@@ -75,6 +87,8 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 		() => (accessibleMargin.eq(wei(amount || 0)) ? accessibleMargin : wei(amount || 0)),
 		[amount, accessibleMargin]
 	);
+
+	const onChangeSocket = useCallback(() => setOpenSocket(!openSocket), [openSocket]);
 
 	const handleSetMax = useCallback(() => {
 		if (transferType === 0) {
@@ -107,69 +121,61 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 			isOpen
 			onDismiss={onDismiss}
 		>
-			{walletAddress && isInsufficientFund ? (
-				<>
-					<MinimumAmountDisclaimer>
-						{t('futures.market.trade.margin.modal.bridge.copy')}
-					</MinimumAmountDisclaimer>
-					<MarginActionButton
-						data-testid="futures-market-trade-swap-bridge-button"
-						fullWidth
-						onClick={() => setOpenSocket(true)}
-					>
-						{t('futures.market.trade.margin.modal.bridge.title')}
-					</MarginActionButton>
-				</>
+			{!walletAddress || isNoBalance ? (
+				<Disclaimer>{t('futures.market.trade.margin.modal.bridge.no-balance')}</Disclaimer>
+			) : isLowBalance ? (
+				<Disclaimer>{t('futures.market.trade.margin.modal.bridge.low-balance')}</Disclaimer>
 			) : (
-				<>
-					<StyledSegmentedControl
-						values={['Deposit', 'Withdraw']}
-						selectedIndex={transferType}
-						onChange={onChangeTab}
-					/>
-					<BalanceContainer>
-						<BalanceText $gold>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
-						<BalanceText>
-							<span>{formatDollars(susdBal)}</span> sUSD
-						</BalanceText>
-					</BalanceContainer>
-					<CustomInput
-						dataTestId="futures-market-trade-deposit-margin-input"
-						placeholder={PLACEHOLDER}
-						value={amount}
-						onChange={(_, v) => setAmount(v)}
-						right={
-							<MaxButton onClick={handleSetMax}>
-								{t('futures.market.trade.margin.modal.max')}
-							</MaxButton>
-						}
-					/>
-					{transferType === 0 ? (
-						<MinimumAmountDisclaimer>
-							{t('futures.market.trade.margin.modal.deposit.disclaimer')}
-						</MinimumAmountDisclaimer>
-					) : (
-						<Spacer height={20} />
-					)}
-
-					<MarginActionButton
-						data-testid="futures-market-trade-deposit-margin-button"
-						disabled={isDisabled}
-						fullWidth
-						onClick={transferType === 0 ? onDeposit : onWithdraw}
-					>
-						{transferType === 0
-							? t('futures.market.trade.margin.modal.deposit.button')
-							: t('futures.market.trade.margin.modal.withdraw.button')}
-					</MarginActionButton>
-				</>
+				<StyledSegmentedControl
+					values={['Deposit', 'Withdraw']}
+					selectedIndex={transferType}
+					onChange={onChangeTab}
+				/>
 			)}
+			<StyledCardHeader onClick={onChangeSocket}>
+				<BalanceText>{t('futures.market.trade.margin.modal.bridge.title')}</BalanceText>
+				{!walletAddress || isNoBalance ? <CaretDownIcon /> : <CaretUpIcon />}
+			</StyledCardHeader>
+			<Spacer height={10} />
+			{openSocket && <SocketBridge />}
+			<BalanceContainer>
+				<BalanceText>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
+				<BalanceText>
+					<span>{formatDollars(susdBal)}</span> sUSD
+				</BalanceText>
+			</BalanceContainer>
+			<CustomInput
+				dataTestId="futures-market-trade-deposit-margin-input"
+				placeholder={PLACEHOLDER}
+				value={amount}
+				onChange={(_, v) => setAmount(v)}
+				right={
+					<MaxButton onClick={handleSetMax}>{t('futures.market.trade.margin.modal.max')}</MaxButton>
+				}
+			/>
+			{transferType === 0 ? (
+				<MinimumAmountDisclaimer>
+					{t('futures.market.trade.margin.modal.deposit.disclaimer')}
+				</MinimumAmountDisclaimer>
+			) : (
+				<Spacer height={20} />
+			)}
+
+			<MarginActionButton
+				data-testid="futures-market-trade-deposit-margin-button"
+				disabled={isDisabled}
+				fullWidth
+				onClick={transferType === 0 ? onDeposit : onWithdraw}
+			>
+				{transferType === 0
+					? t('futures.market.trade.margin.modal.deposit.button')
+					: t('futures.market.trade.margin.modal.withdraw.button')}
+			</MarginActionButton>
 			{txError && <Error message={txError} formatter="revert" />}
-			{openSocket && <SocketBridge title={'Swap & Bridge'} onDismiss={onDismiss} />}
 		</StyledBaseModal>
 	);
 };
-// t('futures.market.trade.margin.modal.bridge.title')
+
 export const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
 		width: 400px;
@@ -216,8 +222,29 @@ const MinimumAmountDisclaimer = styled.div`
 	text-align: center;
 `;
 
+const Disclaimer = styled.div`
+	font-size: 12px;
+	line-height: 120%;
+	margin: 15px 0 30px;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+	text-align: left;
+`;
+
 const StyledSegmentedControl = styled(SegmentedControl)`
 	margin-bottom: 16px;
+`;
+
+const StyledCardHeader = styled(Card.Header)`
+	display: flex;
+	justify-content: space-between;
+	height: 30px;
+	font-size: 13px;
+	font-family: ${(props) => props.theme.fonts.regular};
+	margin-left: 0px;
+	padding: 0px;
+	padding-right: 5px;
+	margin-bottom: 20px;
+	cursor: pointer;
 `;
 
 export default TransferIsolatedMarginModal;
