@@ -176,7 +176,7 @@ const useFuturesData = () => {
 	}, [orderType, limitOrderFee, stopOrderFee]);
 
 	const totalFeeRate = useCallback(
-		async (usdSizeDelta: Wei) => {
+		(usdSizeDelta: Wei) => {
 			const staticRate = computeMarketFee(market, usdSizeDelta);
 
 			let total = crossMarginTradeFee.add(dynamicFeeRate).add(staticRate).add(advancedOrderFeeRate);

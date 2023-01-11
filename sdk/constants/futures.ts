@@ -1,10 +1,10 @@
 import { FuturesMarketAsset, FuturesMarketConfig, FuturesMarketKey } from 'sdk/types/futures';
 
 export const FUTURES_ENDPOINT_OP_MAINNET =
-	'https://api.thegraph.com/subgraphs/name/tburm/optimism-futures';
+	'https://api.thegraph.com/subgraphs/name/tburm/optimism-perps';
 
 export const FUTURES_ENDPOINT_OP_GOERLI =
-	'https://api.thegraph.com/subgraphs/name/tburm/optimism-goerli-futures';
+	'https://api.thegraph.com/subgraphs/name/tburm/optimism-goerli-perps';
 
 export const FUTURES_ENDPOINTS: Record<number, string> = {
 	10: FUTURES_ENDPOINT_OP_MAINNET,

@@ -6,6 +6,7 @@ import { useRecoilValue } from 'recoil';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { getDisplayAsset } from 'sdk/utils/futures';
 import {
 	selectMarketAsset,
 	selectMarketInfo,
@@ -43,7 +44,7 @@ const useGetMarketData = (mobile?: boolean) => {
 			? DEFAULT_CRYPTO_DECIMALS
 			: undefined;
 
-	const pastPrice = pastRates.find((price) => price.synth === marketAsset);
+	const pastPrice = pastRates.find((price) => price.synth === getDisplayAsset(marketAsset));
 
 	const oraclePrice = marketPrices.onChain ?? wei(0);
 

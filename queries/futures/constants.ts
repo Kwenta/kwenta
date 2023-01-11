@@ -3,10 +3,10 @@ import { gql } from 'graphql-request';
 import { chain } from 'wagmi';
 
 export const FUTURES_ENDPOINT_OP_MAINNET =
-	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-futures';
+	'https://api.thegraph.com/subgraphs/name/tburm/optimism-perps';
 
 export const FUTURES_ENDPOINT_OP_GOERLI =
-	'https://api.thegraph.com/subgraphs/name/tburm/optimism-goerli-futures';
+	'https://api.thegraph.com/subgraphs/name/tburm/optimism-goerli-perps';
 
 export const FUTURES_ENDPOINTS = {
 	[chain.optimism.id]: FUTURES_ENDPOINT_OP_MAINNET,
