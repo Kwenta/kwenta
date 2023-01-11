@@ -43,13 +43,13 @@ const SocketBridge = () => {
 			<Bridge
 				provider={signer?.provider}
 				API_KEY={process.env.NEXT_PUBLIC_SOCKET_API_KEY ?? ''}
-				title={''}
+				title={'Bridge'}
 				defaultSourceToken={SOCKET_SOURCE_TOKEN_ADDRESS}
 				defaultDestToken={SOCKET_DEST_TOKEN_ADDRESS}
 				defaultSourceNetwork={chain.mainnet.id}
 				defaultDestNetwork={chain.optimism.id}
 				customize={customize}
-				enableSameChainSwaps={true}
+				enableSameChainSwaps={false}
 			/>
 			<StyledDiv>
 				<ArrowIcon />
