@@ -26,6 +26,7 @@ import OPIcon from 'assets/png/currencies/sOP.png';
 import SOLIcon from 'assets/png/currencies/sSOL.png';
 import UNIIcon from 'assets/png/currencies/sUNI.png';
 import USDIcon from 'assets/png/currencies/sUSD.png';
+import WBTCIcon from 'assets/png/currencies/WBTC.png';
 import XAGIcon from 'assets/png/currencies/sXAG.png';
 import XAUIcon from 'assets/png/currencies/sXAU.png';
 import XMRIcon from 'assets/png/currencies/sXMR.png';
@@ -68,4 +69,5 @@ export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = 
 	sOP: OPIcon,
 	KWENTA: KWENTAIcon,
 	[CRYPTO_CURRENCY_MAP.SNX]: SNXIcon,
+	WBTC: WBTCIcon,
 };
