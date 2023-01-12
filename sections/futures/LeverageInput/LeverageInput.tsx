@@ -36,16 +36,15 @@ const LeverageInput: FC = () => {
 	const leverageInput = useAppSelector(selectIsolatedLeverageInput);
 
 	const onLeverageChange = useCallback(
-		(newLeverage: number) => {
+		(newLeverage: string) => {
 			const remainingMargin = position?.remainingMargin ?? zeroBN;
 			const newTradeSize =
 				marketPrice.eq(0) || remainingMargin.eq(0)
 					? ''
-					: wei(newLeverage).mul(remainingMargin).div(marketPrice).toString();
-			const input = truncateNumbers(newLeverage, DEFAULT_FIAT_DECIMALS);
-			dispatch(setIsolatedMarginLeverageInput(input));
+					: wei(Number(newLeverage)).mul(remainingMargin).div(marketPrice).toString();
 			const floored = floorNumber(Number(newTradeSize), 4);
 			dispatch(editIsolatedMarginSize(String(floored), 'native'));
+			dispatch(setIsolatedMarginLeverageInput(newLeverage));
 		},
 		[position?.remainingMargin, marketPrice, dispatch]
 	);
@@ -72,7 +71,7 @@ const LeverageInput: FC = () => {
 		: 10;
 
 	const truncateLeverage = useMemo(
-		() => truncateNumbers(wei(leverageInput ?? 0), DEFAULT_FIAT_DECIMALS),
+		() => truncateNumbers(wei(Number(leverageInput) ?? 0), DEFAULT_FIAT_DECIMALS),
 		[leverageInput]
 	);
 
@@ -98,7 +97,7 @@ const LeverageInput: FC = () => {
 						maxValue={Number(truncateMaxLeverage)}
 						value={Number(truncateLeverage)}
 						onChange={(_, newValue) => {
-							onLeverageChange(newValue as number);
+							onLeverageChange(newValue.toString());
 						}}
 					/>
 				</SliderRow>
@@ -111,7 +110,7 @@ const LeverageInput: FC = () => {
 						suffix="x"
 						maxValue={maxLeverage.toNumber()}
 						onChange={(_, newValue) => {
-							onLeverageChange(Number(newValue));
+							onLeverageChange(newValue);
 						}}
 						disabled={isDisabled}
 					/>
@@ -121,7 +120,7 @@ const LeverageInput: FC = () => {
 							mono
 							variant="flat"
 							onClick={() => {
-								onLeverageChange(Number(l));
+								onLeverageChange(l);
 							}}
 							disabled={maxLeverage.lt(Number(l)) || marketInfo?.isSuspended}
 						>
