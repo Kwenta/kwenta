@@ -42,12 +42,9 @@ const FuturesBannerContainer = styled.div`
 
 	${media.lessThan('md')`
 		position: relative;
-		width: 100%;
-		display: flex;
 		margin-bottom: 0px;
 		flex-direction: column;
 		justify-content: center;
-		align-items: center;
 		text-align: center;
 		background: transaparent;
 		padding: 22px 10px;

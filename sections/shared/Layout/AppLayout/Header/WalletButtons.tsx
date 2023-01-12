@@ -42,7 +42,7 @@ const WalletButtons: React.FC = () => {
 				data-testid="connect-wallet"
 				mono
 			>
-				<StyledConnectionDot />
+				<ConnectionDot />
 				{t('common.wallet.connect-wallet')}
 			</ConnectButton>
 		</>
@@ -54,7 +54,7 @@ const WalletButtons: React.FC = () => {
 				{t('homepage.l2.cta-buttons.switch-networks')}
 			</SwitchNetworkButton>
 			<ConnectButton size="sm" variant="flat" data-testid="unsupported-network" mono>
-				<StyledConnectionDot />
+				<ConnectionDot />
 				{t('common.wallet.unsupported-network')}
 			</ConnectButton>
 		</>
@@ -86,10 +86,6 @@ const Container = styled.div`
 	display: grid;
 	grid-gap: 15px;
 	grid-auto-flow: column;
-`;
-
-const StyledConnectionDot = styled(ConnectionDot)`
-	margin-right: 6px;
 `;
 
 const MenuButton = styled(Button)`

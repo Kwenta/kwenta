@@ -17,7 +17,7 @@ import { FlexDivColCentered, FlexDivRow, SmallGoldenHeader, WhiteHeader } from '
 import media, { Media } from 'styles/media';
 import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 
-import { StackSection, Title } from '../common';
+import { StackSection, Title } from './common';
 
 const ShortList = () => {
 	const { t } = useTranslation();

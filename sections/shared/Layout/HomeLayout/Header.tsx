@@ -59,7 +59,6 @@ const Header: FC = () => {
 				onClick: () => window.open(EXTERNAL_LINKS.Docs.DocsRoot, '_blank'),
 			},
 		],
-		// eslint-disable-next-line
 		[t]
 	);
 

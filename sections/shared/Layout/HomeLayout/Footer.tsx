@@ -97,7 +97,7 @@ const Footer: React.FC = () => {
 		},
 	];
 	return (
-		<ThemeProvider theme={themes['dark']}>
+		<ThemeProvider theme={themes.dark}>
 			<StyledGridContainer>
 				<LogoFooter>
 					<Logo />

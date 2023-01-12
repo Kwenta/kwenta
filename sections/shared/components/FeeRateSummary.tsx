@@ -9,7 +9,7 @@ import { selectExchangeFeeRateWei, selectBaseFeeRateWei } from 'state/exchange/s
 import { useAppSelector } from 'state/hooks';
 import { formatPercent } from 'utils/formatters/number';
 
-import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
+import { SummaryItem, SummaryItemValue, SummaryItemLabel } from './common';
 
 const FeeRateSummaryItem: FC = memo(() => {
 	const { t } = useTranslation();

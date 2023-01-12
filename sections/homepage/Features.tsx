@@ -29,7 +29,7 @@ import {
 } from 'styles/common';
 import media from 'styles/media';
 
-import { Copy, Title } from '../common';
+import { Copy, Title } from './common';
 
 const FEATURES = [
 	{

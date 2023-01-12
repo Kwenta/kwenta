@@ -26,10 +26,34 @@ type ReactSelectOptionProps = {
 	onClick?: () => {};
 };
 
+const FormatOptionLabel: FC<ReactSelectOptionProps> = ({
+	label,
+	prefixIcon,
+	postfixIcon,
+	link,
+	onClick,
+}) => {
+	const { t } = useTranslation();
+
+	return (
+		<ExternalLink href={link} onClick={onClick}>
+			<LabelContainer noPadding={!!prefixIcon}>
+				{prefixIcon === 'Optimism' && (
+					<PrefixIcon>
+						<OptimismIcon width={20} height={14} />
+					</PrefixIcon>
+				)}
+				{t(label)}
+				{postfixIcon &&
+					(postfixIcon === 'Link' ? <LinkIcon width={14} height={14} /> : <SwitchIcon />)}
+			</LabelContainer>
+		</ExternalLink>
+	);
+};
+
 const NetworksSwitcher: FC = () => {
 	const { network: activeChain } = Connector.useContainer();
 	const { openChainModal } = useChainModal();
-	const { t } = useTranslation();
 	const isL2 = useIsL2();
 	const network = activeChain?.id === chain.optimismGoerli.id ? 'testnet' : 'mainnet';
 	const networkLabel = 'header.networks-switcher.optimism-' + network;
@@ -57,27 +81,6 @@ const NetworksSwitcher: FC = () => {
 		},
 	];
 
-	const formatOptionLabel = ({
-		label,
-		prefixIcon,
-		postfixIcon,
-		link,
-		onClick,
-	}: ReactSelectOptionProps) => (
-		<ExternalLink href={link} onClick={onClick}>
-			<LabelContainer noPadding={!!prefixIcon}>
-				{prefixIcon === 'Optimism' && (
-					<PrefixIcon>
-						<OptimismIcon width={20} height={14} />
-					</PrefixIcon>
-				)}
-				{t(label)}
-				{postfixIcon &&
-					(postfixIcon === 'Link' ? <LinkIcon width={14} height={14} /> : <SwitchIcon />)}
-			</LabelContainer>
-		</ExternalLink>
-	);
-
 	return !isL2 ? (
 		<Container onClick={openChainModal}>
 			<StyledButton noOutline size="sm">
@@ -90,16 +93,16 @@ const NetworksSwitcher: FC = () => {
 	) : (
 		<Container>
 			<L2Select
-				formatOptionLabel={formatOptionLabel}
+				formatOptionLabel={FormatOptionLabel}
 				controlHeight={41}
 				options={OPTIMISM_OPTIONS}
 				value={{ label: networkLabel, prefixIcon: 'Optimism' }}
 				menuWidth={240}
-				optionPadding={'0px'} //override default padding to 0
+				optionPadding="0px"
 				components={{ IndicatorSeparator, DropdownIndicator }}
 				isSearchable={false}
 				variant="flat"
-			></L2Select>
+			/>
 		</Container>
 	);
 };

@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router';
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { components } from 'react-select';
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
 
 import Button from 'components/Button';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
@@ -28,10 +28,70 @@ type ReactSelectOptionProps = {
 	onClick?: () => {};
 };
 
+const FormatOptionLabel: FC<ReactSelectOptionProps> = ({
+	label,
+	synthIcon,
+	marketRemainingMargin,
+	onClick,
+}) => {
+	const { t } = useTranslation();
+
+	return (
+		<LabelContainer onClick={onClick}>
+			<FlexDivRow>
+				{synthIcon && <StyledCurrencyIcon currencyKey={synthIcon} width="24px" height="24px" />}
+				<StyledLabel>{t(label)}</StyledLabel>
+			</FlexDivRow>
+			<Container>{marketRemainingMargin}</Container>
+		</LabelContainer>
+	);
+};
+
+const GetUsdButton = memo(() => {
+	const { t } = useTranslation();
+	const router = useRouter();
+
+	return (
+		<StyledButton textTransform="none" onClick={() => router.push(`/exchange/?quote=sUSD`)}>
+			{t('header.balance.get-more-susd')}
+		</StyledButton>
+	);
+});
+
+const Group: FC<any> = memo(({ children, ...props }) => (
+	<components.Group {...props}>
+		<StyledOptions>{children}</StyledOptions>
+		<GetUsdButton />
+	</components.Group>
+));
+
+const NoOptionsMessage: FC<any> = memo((props) => {
+	const { t } = useTranslation();
+
+	return (
+		<components.NoOptionsMessage {...props}>
+			<span>{t('header.balance.no-accessible-margin')}</span>
+			<GetUsdButton />
+		</components.NoOptionsMessage>
+	);
+});
+
+const OptionsGroupLabel: FC<{ label: string; totalAvailableMargin?: string }> = memo(
+	({ label, totalAvailableMargin }) => {
+		const { t } = useTranslation();
+
+		return (
+			<FlexDivRow>
+				<Container>{t(label)}</Container>
+				<Container>{totalAvailableMargin}</Container>
+			</FlexDivRow>
+		);
+	}
+);
+
 const BalanceActions: FC = () => {
 	const [balanceLabel, setBalanceLabel] = useState('');
 	const { t } = useTranslation();
-	const theme = useTheme();
 	const router = useRouter();
 
 	const crossPositions = useAppSelector(selectCrossMarginPositions);
@@ -41,22 +101,20 @@ const BalanceActions: FC = () => {
 	const dispatch = useAppDispatch();
 
 	const setMarketConfig = useCallback(
-		(position: FuturesPosition, accountType: FuturesAccountTypes): ReactSelectOptionProps => {
-			return {
-				label: getMarketName(position.asset),
-				synthIcon: MarketKeyByAsset[position.asset],
-				marketRemainingMargin: formatDollars(position.remainingMargin),
-				onClick: () => {
-					// TODO: Remove eventually
-					dispatch(setFuturesAccountType(accountType));
-					return router.push(`/market/?asset=${position.asset}&accountType=${accountType}`);
-				},
-			};
-		},
+		(position: FuturesPosition, accountType: FuturesAccountTypes) => ({
+			label: getMarketName(position.asset),
+			synthIcon: MarketKeyByAsset[position.asset],
+			marketRemainingMargin: formatDollars(position.remainingMargin),
+			onClick: () => {
+				// TODO: Remove eventually
+				dispatch(setFuturesAccountType(accountType));
+				return router.push(`/market/?asset=${position.asset}&accountType=${accountType}`);
+			},
+		}),
 		[dispatch, router]
 	);
 
-	const OPTIONS = useMemo(() => {
+	const options = useMemo(() => {
 		const isolatedPositionsFiltered = isolatedPositions
 			.filter((position) => position.remainingMargin.gt(zeroBN))
 			.map((position) => setMarketConfig(position, FuturesAccountTypes.ISOLATED_MARGIN));
@@ -72,55 +130,6 @@ const BalanceActions: FC = () => {
 		];
 	}, [crossPositions, isolatedPositions, setMarketConfig, portfolio]);
 
-	const OptionsGroupLabel: FC<{ label: string; totalAvailableMargin?: string }> = ({
-		label,
-		totalAvailableMargin,
-	}) => {
-		return (
-			<FlexDivRow>
-				<Container>{t(label)}</Container>
-				<Container>{totalAvailableMargin}</Container>
-			</FlexDivRow>
-		);
-	};
-
-	const formatOptionLabel = ({
-		label,
-		synthIcon,
-		marketRemainingMargin,
-		onClick,
-	}: ReactSelectOptionProps) => (
-		<LabelContainer onClick={onClick}>
-			<FlexDivRow>
-				{synthIcon && <StyledCurrencyIcon currencyKey={synthIcon} width="24px" height="24px" />}
-				<StyledLabel noPadding={!synthIcon}>{t(label)}</StyledLabel>
-			</FlexDivRow>
-			<Container>{marketRemainingMargin}</Container>
-		</LabelContainer>
-	);
-
-	const GetUsdButton = () => (
-		<StyledButton textTransform="none" onClick={() => router.push(`/exchange/?quote=sUSD`)}>
-			{t('header.balance.get-more-susd')}
-		</StyledButton>
-	);
-
-	const Group: FC<any> = ({ children, ...props }) => (
-		<components.Group {...props}>
-			<StyledOptions>{children}</StyledOptions>
-			<GetUsdButton />
-		</components.Group>
-	);
-
-	const NoOptionsMessage: FC<any> = (props) => {
-		return (
-			<components.NoOptionsMessage {...props}>
-				<span>{t('header.balance.no-accessible-margin')}</span>
-				<GetUsdButton />
-			</components.NoOptionsMessage>
-		);
-	};
-
 	useEffect(() => {
 		setBalanceLabel(formatDollars(susdWalletBalance, { sign: '$' }));
 	}, [balanceLabel, susdWalletBalance]);
@@ -131,26 +140,26 @@ const BalanceActions: FC = () => {
 
 	return (
 		<Container>
-			{susdWalletBalance.eq(zeroBN) && OPTIONS.length === 0 ? (
+			{susdWalletBalance.eq(zeroBN) && options.length === 0 ? (
 				<StyledWidgetButton
 					textTransform="none"
 					onClick={() => router.push(`/exchange/?quote=sUSD`)}
 					noOutline
+					mono
 				>
-					<StyledCurrencyIcon currencyKey={'sUSD'} width="20px" height="20px" />
+					<StyledCurrencyIcon currencyKey="sUSD" width="20px" height="20px" />
 					{t('header.balance.get-susd')}
 				</StyledWidgetButton>
 			) : (
 				<BalanceSelect
-					formatOptionLabel={formatOptionLabel}
+					formatOptionLabel={FormatOptionLabel}
 					formatGroupLabel={OptionsGroupLabel}
 					controlHeight={41}
-					options={OPTIONS}
+					options={options}
 					value={{ label: balanceLabel, synthIcon: 'sUSD' }}
 					menuWidth={290}
 					maxMenuHeight={500}
-					optionPadding={'0px'} //override default padding to 0
-					optionBorderBottom={theme.colors.selectedTheme.border}
+					optionPadding="0px"
 					components={{
 						Group,
 						NoOptionsMessage,
@@ -159,7 +168,7 @@ const BalanceActions: FC = () => {
 					}}
 					isSearchable={false}
 					variant="flat"
-				></BalanceSelect>
+				/>
 			)}
 		</Container>
 	);
@@ -198,6 +207,10 @@ const BalanceSelect = styled(Select)<{ value: { label: string } }>`
 	.react-select__menu-notice--no-options {
 		padding: 15px;
 	}
+
+	.react-select__option {
+		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+	}
 `;
 
 const StyledOptions = styled.div`
@@ -211,7 +224,7 @@ const StyledCurrencyIcon = styled(CurrencyIcon)`
 	width: 20px;
 `;
 
-const StyledLabel = styled.div<{ noPadding: boolean }>`
+const StyledLabel = styled.div`
 	white-space: nowrap;
 `;
 
@@ -236,7 +249,6 @@ const StyledButton = styled(Button)`
 const StyledWidgetButton = styled(Button)`
 	height: 41px;
 	font-size: 13px;
-	font-family: ${(props) => props.theme.fonts.mono};
 	padding: 10px;
 	white-space: nowrap;
 	display: flex;

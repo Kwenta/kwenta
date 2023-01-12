@@ -29,13 +29,7 @@ const MobileUserMenu: FC = () => {
 	const toggleModal = (modal: 'menu' | 'settings') => () => {
 		setIsOpen((s) => {
 			if (!!s) {
-				if (s === modal) {
-					return undefined;
-				} else if (s === 'menu') {
-					return 'settings';
-				} else {
-					return 'menu';
-				}
+				return s === modal ? undefined : s === 'menu' ? 'settings' : 'menu';
 			} else {
 				return modal;
 			}

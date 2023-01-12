@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { FC, FunctionComponent } from 'react';
+import { FC, FunctionComponent, memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -12,7 +12,7 @@ import { selectMarketAsset } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { linkCSS } from 'styles/common';
 
-import { DESKTOP_NAV_LINKS, Badge as BadgeType } from '../constants';
+import { DESKTOP_NAV_LINKS, Badge as BadgeType } from './constants';
 
 type ReactSelectOptionProps = {
 	i18nLabel: string;
@@ -23,41 +23,49 @@ type ReactSelectOptionProps = {
 	Icon: FunctionComponent<any>;
 };
 
-const Nav: FC = () => {
+const FormatOptionLabel: FC<ReactSelectOptionProps> = ({
+	i18nLabel,
+	Icon,
+	badge,
+	link,
+	isActive,
+}) => {
+	const { t } = useTranslation();
+
+	if (i18nLabel === 'header.nav.markets' || i18nLabel === 'header.nav.leaderboard') {
+		return (
+			<MenuInside isDropDown isActive={isActive}>
+				{t(i18nLabel)}
+			</MenuInside>
+		);
+	}
+
+	return (
+		<Link href={link}>
+			<LabelContainer>
+				<NavLabel>
+					{t(i18nLabel)}
+					{badge?.map(({ i18nLabel, color }) => (
+						<Badge color={color}>{t(i18nLabel)}</Badge>
+					))}
+				</NavLabel>
+				{Icon && <Icon />}
+			</LabelContainer>
+		</Link>
+	);
+};
+
+const Nav: FC = memo(() => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
 	const marketAsset = useAppSelector(selectMarketAsset);
 
-	function getLink(link: string) {
-		return link.slice(0, 7) === '/market' ? `/market/?asset=${marketAsset}` : link;
-	}
-
-	const formatOptionLabel = ({
-		i18nLabel,
-		Icon,
-		badge,
-		link,
-		isActive,
-	}: ReactSelectOptionProps) => {
-		if (i18nLabel === 'header.nav.markets' || i18nLabel === 'header.nav.leaderboard')
-			return (
-				<MenuInside isDropDown isActive={isActive}>
-					{t(i18nLabel)}
-				</MenuInside>
-			);
-		return (
-			<Link href={link}>
-				<LabelContainer>
-					<NavLabel>
-						{t(i18nLabel)}
-						{badge &&
-							badge.map(({ i18nLabel, color }) => <Badge color={color}>{t(i18nLabel)}</Badge>)}
-					</NavLabel>
-					{Icon && <Icon />}
-				</LabelContainer>
-			</Link>
-		);
-	};
+	const getLink = useCallback(
+		(link: string) => {
+			return link.indexOf('/market') === 0 ? `/market/?asset=${marketAsset}` : link;
+		},
+		[marketAsset]
+	);
 
 	return (
 		<nav>
@@ -66,17 +74,13 @@ const Nav: FC = () => {
 					const routeBase = asPath.split('/')[1];
 					const linkBase = link.split('/')[1]?.split('?')[0];
 					const isActive = routeBase === linkBase;
-
 					const url = getLink(link);
+
 					if (!links) {
 						return (
-							<div key={url}>
-								<Link href={url}>
-									<a>
-										<MenuInside isActive={isActive}>{t(i18nLabel)}</MenuInside>
-									</a>
-								</Link>
-							</div>
+							<Link key={url} href={url}>
+								<MenuInside isActive={isActive}>{t(i18nLabel)}</MenuInside>
+							</Link>
 						);
 					}
 
@@ -84,7 +88,7 @@ const Nav: FC = () => {
 						<DropDownSelect
 							key={url}
 							variant="transparent"
-							formatOptionLabel={formatOptionLabel}
+							formatOptionLabel={FormatOptionLabel}
 							controlHeight={34}
 							options={links}
 							value={{ i18nLabel, isActive }}
@@ -97,7 +101,7 @@ const Nav: FC = () => {
 			</MenuLinks>
 		</nav>
 	);
-};
+});
 
 const MenuLinks = styled.ul`
 	display: flex;

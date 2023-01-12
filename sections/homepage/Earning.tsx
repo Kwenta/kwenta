@@ -16,7 +16,7 @@ import {
 } from 'styles/common';
 import media, { Media } from 'styles/media';
 
-import { Copy, StackSection, Title } from '../common';
+import { Copy, StackSection, Title } from './common';
 
 const EARNINGS = [
 	{

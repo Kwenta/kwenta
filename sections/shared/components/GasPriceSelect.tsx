@@ -11,7 +11,7 @@ import useIsL2 from 'hooks/useIsL2';
 import { customGasPriceState, gasSpeedState } from 'store/wallet';
 import { formatNumber, formatDollars } from 'utils/formatters/number';
 
-import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
+import { SummaryItem, SummaryItemValue, SummaryItemLabel } from './common';
 
 type GasPriceSelectProps = {
 	gasPrices: GasPrices | undefined;

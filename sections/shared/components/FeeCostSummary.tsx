@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { NO_VALUE } from 'constants/placeholder';
 import { formatDollars } from 'utils/formatters/number';
 
-import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
+import { SummaryItem, SummaryItemValue, SummaryItemLabel } from './common';
 
 type FeeRateSummaryItemProps = {
 	feeCost?: Wei;

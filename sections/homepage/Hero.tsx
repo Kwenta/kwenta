@@ -12,7 +12,7 @@ import ROUTES from 'constants/routes';
 import { FlexDivColCentered, GridDiv, Paragraph } from 'styles/common';
 import media from 'styles/media';
 
-import { StackSection } from '../common';
+import { StackSection } from './common';
 
 const Hero = () => {
 	const { t } = useTranslation();

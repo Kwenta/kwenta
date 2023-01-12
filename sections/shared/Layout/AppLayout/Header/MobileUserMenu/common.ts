@@ -36,8 +36,6 @@ export const MenuButton = styled.div<{
 export const SUB_MENUS = {
 	[ROUTES.Dashboard.Overview]: [
 		{ label: 'Overview', link: '/dashboard/overview' },
-		// { label: 'Positions', link: '/positions' },
-		// { label: 'Rewards', link: '/rewards' },
 		{ label: 'Markets', link: '/dashboard/markets' },
 		// { label: 'Governance', link: '/governance' },
 	],
