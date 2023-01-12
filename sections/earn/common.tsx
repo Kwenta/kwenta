@@ -17,7 +17,7 @@ export const GridContainer = styled.div`
 		border-radius: 15px;
 		border: ${(props) => props.theme.colors.selectedTheme.border};
 		overflow: hidden;
-		background-color: ${(props) => props.theme.colors.selectedTheme.segmented.button.background};
+		background-color: ${(props) => props.theme.colors.selectedTheme.surfaceFill};
 
 		& > div {
 			box-sizing: border-box;

@@ -36,7 +36,7 @@ const BigButton = styled.div`
 	align-items: center;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 15px;
-	background-color: ${(props) => props.theme.colors.selectedTheme.segmented.button.background};
+	background-color: ${(props) => props.theme.colors.selectedTheme.surfaceFill};
 `;
 
 export default StepOne;

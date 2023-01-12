@@ -23,38 +23,6 @@ type ReactSelectOptionProps = {
 	Icon: FunctionComponent<any>;
 };
 
-const FormatOptionLabel: FC<ReactSelectOptionProps> = ({
-	i18nLabel,
-	Icon,
-	badge,
-	link,
-	isActive,
-}) => {
-	const { t } = useTranslation();
-
-	if (i18nLabel === 'header.nav.markets' || i18nLabel === 'header.nav.leaderboard') {
-		return (
-			<MenuInside isDropDown isActive={isActive}>
-				{t(i18nLabel)}
-			</MenuInside>
-		);
-	}
-
-	return (
-		<Link href={link}>
-			<LabelContainer>
-				<NavLabel>
-					{t(i18nLabel)}
-					{badge?.map(({ i18nLabel, color }) => (
-						<Badge color={color}>{t(i18nLabel)}</Badge>
-					))}
-				</NavLabel>
-				{Icon && <Icon />}
-			</LabelContainer>
-		</Link>
-	);
-};
-
 const Nav: FC = memo(() => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
@@ -66,6 +34,36 @@ const Nav: FC = memo(() => {
 		},
 		[marketAsset]
 	);
+
+	const formatOptionLabel = ({
+		i18nLabel,
+		Icon,
+		badge,
+		link,
+		isActive,
+	}: ReactSelectOptionProps) => {
+		if (i18nLabel === 'header.nav.markets' || i18nLabel === 'header.nav.leaderboard') {
+			return (
+				<MenuInside isDropDown isActive={isActive}>
+					{t(i18nLabel)}
+				</MenuInside>
+			);
+		}
+
+		return (
+			<Link href={link}>
+				<LabelContainer>
+					<NavLabel>
+						{t(i18nLabel)}
+						{badge?.map(({ i18nLabel, color }) => (
+							<Badge color={color}>{t(i18nLabel)}</Badge>
+						))}
+					</NavLabel>
+					{Icon && <Icon />}
+				</LabelContainer>
+			</Link>
+		);
+	};
 
 	return (
 		<nav>
@@ -88,7 +86,7 @@ const Nav: FC = memo(() => {
 						<DropDownSelect
 							key={url}
 							variant="transparent"
-							formatOptionLabel={FormatOptionLabel}
+							formatOptionLabel={formatOptionLabel}
 							controlHeight={34}
 							options={links}
 							value={{ i18nLabel, isActive }}

@@ -29,7 +29,7 @@ const Title = styled(Body)`
 `;
 
 const GridDataContainer = styled.div`
-	background-color: ${(props) => props.theme.colors.selectedTheme.segmented.button.background};
+	background-color: ${(props) => props.theme.colors.selectedTheme.surfaceFill};
 	padding: 20px 24px 18px;
 	min-height: 95px;
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};

@@ -28,25 +28,6 @@ type ReactSelectOptionProps = {
 	onClick?: () => {};
 };
 
-const FormatOptionLabel: FC<ReactSelectOptionProps> = ({
-	label,
-	synthIcon,
-	marketRemainingMargin,
-	onClick,
-}) => {
-	const { t } = useTranslation();
-
-	return (
-		<LabelContainer onClick={onClick}>
-			<FlexDivRow>
-				{synthIcon && <StyledCurrencyIcon currencyKey={synthIcon} width="24px" height="24px" />}
-				<StyledLabel>{t(label)}</StyledLabel>
-			</FlexDivRow>
-			<Container>{marketRemainingMargin}</Container>
-		</LabelContainer>
-	);
-};
-
 const GetUsdButton = memo(() => {
 	const { t } = useTranslation();
 	const router = useRouter();
@@ -75,19 +56,6 @@ const NoOptionsMessage: FC<any> = memo((props) => {
 		</components.NoOptionsMessage>
 	);
 });
-
-const OptionsGroupLabel: FC<{ label: string; totalAvailableMargin?: string }> = memo(
-	({ label, totalAvailableMargin }) => {
-		const { t } = useTranslation();
-
-		return (
-			<FlexDivRow>
-				<Container>{t(label)}</Container>
-				<Container>{totalAvailableMargin}</Container>
-			</FlexDivRow>
-		);
-	}
-);
 
 const BalanceActions: FC = () => {
 	const [balanceLabel, setBalanceLabel] = useState('');
@@ -130,6 +98,31 @@ const BalanceActions: FC = () => {
 		];
 	}, [crossPositions, isolatedPositions, setMarketConfig, portfolio]);
 
+	const OptionsGroupLabel: FC<{ label: string; totalAvailableMargin?: string }> = ({
+		label,
+		totalAvailableMargin,
+	}) => (
+		<FlexDivRow>
+			<Container>{t(label)}</Container>
+			<Container>{totalAvailableMargin}</Container>
+		</FlexDivRow>
+	);
+
+	const formatOptionLabel: FC<ReactSelectOptionProps> = ({
+		label,
+		synthIcon,
+		marketRemainingMargin,
+		onClick,
+	}: ReactSelectOptionProps) => (
+		<LabelContainer onClick={onClick}>
+			<FlexDivRow>
+				{synthIcon && <StyledCurrencyIcon currencyKey={synthIcon} width="24px" height="24px" />}
+				<StyledLabel>{t(label)}</StyledLabel>
+			</FlexDivRow>
+			<Container>{marketRemainingMargin}</Container>
+		</LabelContainer>
+	);
+
 	useEffect(() => {
 		setBalanceLabel(formatDollars(susdWalletBalance, { sign: '$' }));
 	}, [balanceLabel, susdWalletBalance]);
@@ -152,7 +145,7 @@ const BalanceActions: FC = () => {
 				</StyledWidgetButton>
 			) : (
 				<BalanceSelect
-					formatOptionLabel={FormatOptionLabel}
+					formatOptionLabel={formatOptionLabel}
 					formatGroupLabel={OptionsGroupLabel}
 					controlHeight={41}
 					options={options}

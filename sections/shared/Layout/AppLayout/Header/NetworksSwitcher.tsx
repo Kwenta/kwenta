@@ -26,33 +26,9 @@ type ReactSelectOptionProps = {
 	onClick?: () => {};
 };
 
-const FormatOptionLabel: FC<ReactSelectOptionProps> = ({
-	label,
-	prefixIcon,
-	postfixIcon,
-	link,
-	onClick,
-}) => {
-	const { t } = useTranslation();
-
-	return (
-		<ExternalLink href={link} onClick={onClick}>
-			<LabelContainer noPadding={!!prefixIcon}>
-				{prefixIcon === 'Optimism' && (
-					<PrefixIcon>
-						<OptimismIcon width={20} height={14} />
-					</PrefixIcon>
-				)}
-				{t(label)}
-				{postfixIcon &&
-					(postfixIcon === 'Link' ? <LinkIcon width={14} height={14} /> : <SwitchIcon />)}
-			</LabelContainer>
-		</ExternalLink>
-	);
-};
-
 const NetworksSwitcher: FC = () => {
 	const { network: activeChain } = Connector.useContainer();
+	const { t } = useTranslation();
 	const { openChainModal } = useChainModal();
 	const isL2 = useIsL2();
 	const network = activeChain?.id === chain.optimismGoerli.id ? 'testnet' : 'mainnet';
@@ -81,6 +57,27 @@ const NetworksSwitcher: FC = () => {
 		},
 	];
 
+	const formatOptionLabel = ({
+		label,
+		prefixIcon,
+		postfixIcon,
+		link,
+		onClick,
+	}: ReactSelectOptionProps) => (
+		<ExternalLink href={link} onClick={onClick}>
+			<LabelContainer noPadding={!!prefixIcon}>
+				{prefixIcon === 'Optimism' && (
+					<PrefixIcon>
+						<OptimismIcon width={20} height={14} />
+					</PrefixIcon>
+				)}
+				{t(label)}
+				{postfixIcon &&
+					(postfixIcon === 'Link' ? <LinkIcon width={14} height={14} /> : <SwitchIcon />)}
+			</LabelContainer>
+		</ExternalLink>
+	);
+
 	return !isL2 ? (
 		<Container onClick={openChainModal}>
 			<StyledButton noOutline size="sm">
@@ -93,7 +90,7 @@ const NetworksSwitcher: FC = () => {
 	) : (
 		<Container>
 			<L2Select
-				formatOptionLabel={FormatOptionLabel}
+				formatOptionLabel={formatOptionLabel}
 				controlHeight={41}
 				options={OPTIMISM_OPTIONS}
 				value={{ label: networkLabel, prefixIcon: 'Optimism' }}
