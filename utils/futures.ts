@@ -502,7 +502,6 @@ export const serializeFuturesOrders = (orders: FuturesOrder[]): FuturesOrder<str
 		targetPrice: o.targetPrice?.toString() ?? null,
 		marginDelta: o.marginDelta.toString(),
 		targetRoundId: o.targetRoundId?.toString() ?? null,
-		timestamp: o.timestamp.toString(),
 	}));
 };
 
@@ -513,7 +512,6 @@ export const unserializeFuturesOrders = (orders: FuturesOrder<string>[]): Future
 		targetPrice: o.targetPrice ? wei(o.targetPrice) : null,
 		marginDelta: wei(o.marginDelta),
 		targetRoundId: o.targetRoundId ? wei(o.targetRoundId) : null,
-		timestamp: wei(o.timestamp),
 	}));
 };
 
