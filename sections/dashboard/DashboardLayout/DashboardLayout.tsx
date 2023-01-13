@@ -92,14 +92,14 @@ const DashboardLayout: FC = ({ children }) => {
 							<StyledTabList>
 								<TabGroupTitle>{t('dashboard.titles.trading')}</TabGroupTitle>
 								{TABS.slice(0, 3).map(({ name, label, active, ...rest }) => (
-									<NavLink key={name} title={name} isActive={active} {...rest} noOutline>
+									<NavLink key={name} title={name} isActive={active} {...rest}>
 										{label}
 									</NavLink>
 								))}
 
 								<TabGroupTitle>{t('dashboard.titles.community')}</TabGroupTitle>
 								{TABS.slice(3).map(({ name, label, active, ...rest }) => (
-									<NavLink key={name} title={name} isActive={active} {...rest} noOutline>
+									<NavLink key={name} title={name} isActive={active} {...rest}>
 										{label}
 									</NavLink>
 								))}
