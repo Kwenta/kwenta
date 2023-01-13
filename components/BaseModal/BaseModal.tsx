@@ -25,9 +25,9 @@ type ModalContentWrapperProps = {
 
 const ModalContentWrapper: FC<ModalContentWrapperProps> = memo(({ children, rndProps }) => {
 	if (rndProps?.disableDragging) {
-		return <Rnd {...rndProps}>{children}</Rnd>;
-	} else {
 		return <>{children}</>;
+	} else {
+		return <Rnd {...rndProps}>{children}</Rnd>;
 	}
 });
 
