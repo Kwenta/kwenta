@@ -12,7 +12,6 @@ export const SectionTitle = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.yellow};
 	text-transform: uppercase;
 	font-size: 13px;
-	text-shadow: 0px 1px 3px rgb(242, 242, 242);
 `;
 
 export const SectionSubTitle = styled.div`
