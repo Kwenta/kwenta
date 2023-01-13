@@ -11,6 +11,7 @@ import {
 	selectTradePreview,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
+import media from 'styles/media';
 
 export default function PositionChart() {
 	const marketAsset = useAppSelector(selectMarketAsset);
@@ -72,6 +73,9 @@ export default function PositionChart() {
 
 const Container = styled.div<{ visible: boolean }>`
 	border: ${(props) => props.theme.colors.selectedTheme.border};
+	${media.lessThan('md')`
+		border: none;
+	`}
 	border-radius: 10px;
 	padding: 3px;
 	min-height: 450px;
