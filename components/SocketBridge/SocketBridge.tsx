@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { chain } from 'wagmi';
 
 import ArrowIcon from 'assets/svg/app/arrow-down.svg';
-import BaseModal from 'components/BaseModal';
 import Connector from 'containers/Connector';
 
 import { SocketCustomizationProps } from './types';
@@ -19,7 +18,7 @@ const SocketBridge = () => {
 
 	const customize: SocketCustomizationProps = {
 		width: window.innerWidth > 768 ? DEFAULT_WIDTH : DEFAULT_MOBILE_WIDTH,
-		responsiveWidth: true,
+		responsiveWidth: false,
 		borderRadius: 1,
 		secondary: 'rgb(37,37,37)',
 		primary: 'rgb(30,30,30)',
@@ -33,7 +32,7 @@ const SocketBridge = () => {
 	};
 
 	return signer?.provider ? (
-		<div style={{ marginBottom: '20px' }}>
+		<BridgeContainer style={{ marginBottom: '20px' }}>
 			<Bridge
 				provider={signer?.provider}
 				API_KEY={process.env.NEXT_PUBLIC_SOCKET_API_KEY ?? ''}
@@ -47,13 +46,21 @@ const SocketBridge = () => {
 			<StyledDiv>
 				<ArrowIcon />
 			</StyledDiv>
-		</div>
+		</BridgeContainer>
 	) : null;
 };
 
-export const StyledBaseModal = styled(BaseModal)`
-	[data-reach-dialog-content] {
-		width: 400px;
+export const BridgeContainer = styled.div`
+	p {
+		display: none;
+	}
+
+	.mt-3 {
+		margin-top: 0.25rem;
+	}
+
+	.mt-6 {
+		margin-top: 0.5rem;
 	}
 `;
 
