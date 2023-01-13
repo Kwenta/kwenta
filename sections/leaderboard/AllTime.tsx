@@ -11,7 +11,7 @@ import Connector from 'containers/Connector';
 import useENSAvatar from 'hooks/useENSAvatar';
 import { AccountStat } from 'queries/futures/types';
 
-import { getMedal, StyledTrader } from '../common';
+import { getMedal, StyledTrader } from './common';
 
 type AllTimeProps = {
 	stats: AccountStat[];

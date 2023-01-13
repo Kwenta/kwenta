@@ -32,3 +32,7 @@ export const StyledTrader = styled.a`
 		cursor: pointer;
 	}
 `;
+
+export const getCompetitionDataLocation = (round: CompetitionRound) => {
+	return `crossmargin_competition_${round}/leaderboard_latest.json`;
+};

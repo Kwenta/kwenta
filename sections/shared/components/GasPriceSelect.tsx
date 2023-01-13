@@ -19,13 +19,15 @@ type GasPriceSelectProps = {
 	className?: string;
 };
 
-const GasPriceSelect: FC<GasPriceSelectProps> = memo(({ gasPrices, transactionFee, ...rest }) => {
-	const { t } = useTranslation();
+type GasPriceItemProps = {
+	gasPrices: GasPrices | undefined;
+	transactionFee?: Wei | number | null;
+};
+
+const GasPriceItem: FC<GasPriceItemProps> = memo(({ gasPrices, transactionFee }) => {
+	const isL2 = useIsL2();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const customGasPrice = useRecoilValue(customGasPriceState);
-	const isL2 = useIsL2();
-	const isMainnet = useIsL1();
-
 	const formattedTransactionFee = useMemo(() => {
 		return transactionFee ? formatDollars(transactionFee, { maxDecimals: 1 }) : NO_VALUE;
 	}, [transactionFee]);
@@ -33,18 +35,22 @@ const GasPriceSelect: FC<GasPriceSelectProps> = memo(({ gasPrices, transactionFe
 	const hasCustomGasPrice = customGasPrice !== '';
 	const gasPrice = gasPrices ? parseGasPriceObject(gasPrices[gasSpeed]) : null;
 
-	const gasPriceItem = useMemo(
-		() => (
-			<span data-testid="gas-price">
-				{isL2
-					? formattedTransactionFee
-					: `${formatNumber(hasCustomGasPrice ? +customGasPrice : gasPrice ?? 0, {
-							minDecimals: 2,
-					  })} Gwei`}
-			</span>
-		),
-		[isL2, formattedTransactionFee, hasCustomGasPrice, customGasPrice, gasPrice]
+	if (!gasPrice) return <>{NO_VALUE}</>;
+
+	return (
+		<span data-testid="gas-price">
+			{isL2
+				? formattedTransactionFee
+				: `${formatNumber(hasCustomGasPrice ? +customGasPrice : gasPrice ?? 0, {
+						minDecimals: 2,
+				  })} Gwei`}
+		</span>
 	);
+});
+
+const GasPriceSelect: FC<GasPriceSelectProps> = memo(({ gasPrices, transactionFee, ...rest }) => {
+	const { t } = useTranslation();
+	const isMainnet = useIsL1();
 
 	return (
 		<SummaryItem {...rest}>
@@ -53,7 +59,9 @@ const GasPriceSelect: FC<GasPriceSelectProps> = memo(({ gasPrices, transactionFe
 					? t('common.summary.gas-prices.max-fee')
 					: t('common.summary.gas-prices.gas-price')}
 			</SummaryItemLabel>
-			<SummaryItemValue>{gasPrice != null ? gasPriceItem : NO_VALUE}</SummaryItemValue>
+			<SummaryItemValue>
+				<GasPriceItem gasPrices={gasPrices} transactionFee={transactionFee} />
+			</SummaryItemValue>
 		</SummaryItem>
 	);
 });

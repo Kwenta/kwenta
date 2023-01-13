@@ -14,10 +14,10 @@ import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner'
 import { FlexDivCol } from 'styles/common';
 import media from 'styles/media';
 
-import AllTime from '../AllTime';
-import { CompetitionRound, COMPETITION_TIERS, PIN, Tier } from '../common';
-import Competition from '../Competition';
-import TraderHistory from '../TraderHistory';
+import AllTime from './AllTime';
+import { CompetitionRound, COMPETITION_TIERS, PIN, Tier } from './common';
+import Competition from './Competition';
+import TraderHistory from './TraderHistory';
 
 type LeaderboardProps = {
 	compact?: boolean;

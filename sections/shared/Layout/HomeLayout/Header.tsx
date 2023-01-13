@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import router from 'next/router';
-import { FC, useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -21,7 +21,7 @@ import Logo from '../Logo';
 
 export type TPages = 'landing-page' | 'stats-page';
 
-const Header: FC = () => {
+const Header = memo(() => {
 	const { t } = useTranslation();
 
 	const LINKS = useMemo(
@@ -147,7 +147,7 @@ const Header: FC = () => {
 			</MobileOnlyView>
 		</>
 	);
-};
+});
 
 const MobileContainer = styled(FlexDivRow)`
 	justify-content: center;

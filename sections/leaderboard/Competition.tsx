@@ -14,8 +14,14 @@ import { AccountStat } from 'queries/futures/types';
 import { formatPercent } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';
 
-import { CompetitionRound, getMedal, PIN, StyledTrader, Tier } from '../common';
-import { getCompetitionDataLocation } from './constants';
+import {
+	CompetitionRound,
+	getMedal,
+	PIN,
+	StyledTrader,
+	Tier,
+	getCompetitionDataLocation,
+} from './common';
 
 type CompetitionProps = {
 	round: CompetitionRound;

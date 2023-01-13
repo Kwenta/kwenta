@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { ThemeProvider } from 'styled-components';
 
@@ -14,7 +14,7 @@ import { themes } from 'styles/theme';
 
 import Logo from '../Logo';
 
-const Footer: React.FC = () => {
+const Footer = memo(() => {
 	const { t } = useTranslation();
 	const DOC_LINKS = [
 		{
@@ -132,7 +132,7 @@ const Footer: React.FC = () => {
 			</StyledGridContainer>
 		</ThemeProvider>
 	);
-};
+});
 
 const StyledLink = styled.a`
 	cursor: pointer;

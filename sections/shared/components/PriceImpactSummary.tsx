@@ -18,7 +18,7 @@ const PriceImpactSummary: FC<PriceImpactProps> = memo(({ slippagePercent }) => {
 		<SummaryItem>
 			<SummaryItemLabel>{t('exchange.currency-card.price-impact')}</SummaryItemLabel>
 			<SummaryItemValue>
-				{slippagePercent?.lt(0) ? formatPercent(slippagePercent) : NO_VALUE}
+				{slippagePercent.lt(0) ? formatPercent(slippagePercent) : NO_VALUE}
 			</SummaryItemValue>
 		</SummaryItem>
 	);

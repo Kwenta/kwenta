@@ -1,7 +1,7 @@
-import React from 'react';
+import { memo } from 'react';
 import styled, { keyframes } from 'styled-components';
 
-const Background = () => {
+const Background = memo(() => {
 	return (
 		<Container>
 			<div className="line" />
@@ -9,7 +9,7 @@ const Background = () => {
 			<div className="line" />
 		</Container>
 	);
-};
+});
 
 const drop = keyframes`
 	from {

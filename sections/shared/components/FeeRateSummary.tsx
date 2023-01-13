@@ -29,25 +29,23 @@ const FeeRateSummaryItem: FC = memo(() => {
 							? formatPercent(exchangeFeeRate, { minDecimals: 2 })
 							: NO_VALUE}
 					</span>
-					{!!exchangeFeeRate && !!baseFeeRate ? (
-						exchangeFeeRate.sub(baseFeeRate).gt(0) ? (
-							<>
-								<DynamicFeeLabel>+</DynamicFeeLabel>
-								<CustomStyledTooltip
-									position="fixed"
-									content={t('exchange.summary-info.dynamic-fee-tooltip')}
-								>
-									<DynamicFeeRateItem>
-										<span>
-											{formatPercent(exchangeFeeRate.sub(baseFeeRate), {
-												minDecimals: 2,
-											})}
-										</span>
-										<TimerIcon />
-									</DynamicFeeRateItem>
-								</CustomStyledTooltip>
-							</>
-						) : null
+					{exchangeFeeRate.sub(baseFeeRate).gt(0) ? (
+						<>
+							<DynamicFeeLabel>+</DynamicFeeLabel>
+							<CustomStyledTooltip
+								position="fixed"
+								content={t('exchange.summary-info.dynamic-fee-tooltip')}
+							>
+								<DynamicFeeRateItem>
+									<span>
+										{formatPercent(exchangeFeeRate.sub(baseFeeRate), {
+											minDecimals: 2,
+										})}
+									</span>
+									<TimerIcon />
+								</DynamicFeeRateItem>
+							</CustomStyledTooltip>
+						</>
 					) : null}
 				</FeeRateItem>
 			</SummaryItemValue>
