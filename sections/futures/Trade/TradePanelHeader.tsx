@@ -32,8 +32,16 @@ export default function TradePanelHeader({ accountType, onManageBalance }: Props
 	const positionStatus = useAppSelector(selectPositionStatus);
 	const balance = position ? position.remainingMargin : null;
 
+	if (!isWalletConnected) {
+		return (
+			<DepositButton variant="yellow" onClick={openConnectModal}>
+				<ButtonContent>{t('common.wallet.connect-wallet')}</ButtonContent>
+			</DepositButton>
+		);
+	}
+
 	if (!balance && positionStatus.status === FetchStatus.Success) {
-		return isWalletConnected ? (
+		return (
 			<DepositButton
 				variant="yellow"
 				onClick={() =>
@@ -49,10 +57,6 @@ export default function TradePanelHeader({ accountType, onManageBalance }: Props
 				<ButtonContent>
 					Deposit Margin <SwitchAssetArrows fill={theme.colors.selectedTheme.button.yellow.text} />
 				</ButtonContent>
-			</DepositButton>
-		) : (
-			<DepositButton variant="yellow" onClick={openConnectModal}>
-				<ButtonContent>{t('common.wallet.connect-wallet')}</ButtonContent>
 			</DepositButton>
 		);
 	}
