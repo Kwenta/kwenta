@@ -4,10 +4,10 @@ import styled from 'styled-components';
 
 import { BoldText } from 'styles/common';
 
-import BaseCurrencyCard from '../TradeCard/Cards/BaseCurrencyCard';
-import FooterCard from '../TradeCard/Cards/FooterCard';
-import QuoteCurrencyCard from '../TradeCard/Cards/QuoteCurrencyCard';
 import SwapCurrencies from './SwapCurrencies';
+import BaseCurrencyCard from './TradeCard/Cards/BaseCurrencyCard';
+import FooterCard from './TradeCard/Cards/FooterCard';
+import QuoteCurrencyCard from './TradeCard/Cards/QuoteCurrencyCard';
 
 const BasicSwap: FC = memo(() => {
 	const { t } = useTranslation();

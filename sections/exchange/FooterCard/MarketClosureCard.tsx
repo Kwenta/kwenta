@@ -1,13 +1,13 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, memo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import useMarketClosed from 'hooks/useMarketClosed';
 import { useAppSelector } from 'state/hooks';
 
-import { MessageContainer, Message, MessageButton, FixedMessageContainerSpacer } from '../common';
+import { MessageContainer, Message, MessageButton, FixedMessageContainerSpacer } from './common';
 
-const MarketClosureCard: FC = () => {
+const MarketClosureCard: FC = memo(() => {
 	const { t } = useTranslation();
 	const { quoteCurrencyKey, baseCurrencyKey } = useAppSelector(({ exchange }) => ({
 		quoteCurrencyKey: exchange.quoteCurrencyKey,
@@ -50,6 +50,6 @@ const MarketClosureCard: FC = () => {
 			</MessageContainer>
 		</>
 	);
-};
+});
 
 export default MarketClosureCard;

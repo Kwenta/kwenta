@@ -1,4 +1,4 @@
-import { FC, useCallback } from 'react';
+import { FC, useCallback, memo } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -14,9 +14,9 @@ import { NoTextTransform, ExternalLink } from 'styles/common';
 import { secondsToTime } from 'utils/formatters/date';
 import logError from 'utils/logError';
 
-import { MessageContainer, Message, FixedMessageContainerSpacer } from '../common';
+import { MessageContainer, Message, FixedMessageContainerSpacer } from './common';
 
-const SettleTransactionsCard: FC = () => {
+const SettleTransactionsCard: FC = memo(() => {
 	const { t } = useTranslation();
 
 	const {
@@ -59,7 +59,7 @@ const SettleTransactionsCard: FC = () => {
 					<MessageItem>
 						<Trans
 							t={t}
-							i18nKey={'exchange.footer-card.settle.message'}
+							i18nKey="exchange.footer-card.settle.message"
 							values={{ currencyKey: baseCurrencyKey, numEntries }}
 							components={[<NoTextTransform />]}
 						/>
@@ -67,7 +67,7 @@ const SettleTransactionsCard: FC = () => {
 					<UnderlineExternalLink href={EXTERNAL_LINKS.Docs.FeeReclamation}>
 						<Trans
 							t={t}
-							i18nKey={'exchange.footer-card.settle.learn-more'}
+							i18nKey="exchange.footer-card.settle.learn-more"
 							components={[<NoTextTransform />]}
 						/>
 					</UnderlineExternalLink>
@@ -102,7 +102,7 @@ const SettleTransactionsCard: FC = () => {
 			)}
 		</>
 	);
-};
+});
 
 const MessageItem = styled(Message)`
 	grid-column-start: 2;

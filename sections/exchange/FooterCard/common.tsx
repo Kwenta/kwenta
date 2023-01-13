@@ -19,13 +19,10 @@ export const SummaryItems = styled.div`
 	`}
 `;
 
-export const MessageContainer = styled(GridDivCenteredRow)<{
-	showProvider?: boolean;
-}>`
+export const MessageContainer = styled(GridDivCenteredRow)`
 	-webkit-box-align: center;
 	width: 100%;
 	border-radius: 4px;
-	grid-template-columns: ${(props) => props.showProvider && '.5fr'} 1fr;
 	grid-template-rows: 99px 70px;
 	margin: 0 0 20px;
 

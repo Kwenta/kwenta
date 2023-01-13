@@ -25,22 +25,15 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { secondsToTime } from 'utils/formatters/date';
 
-import { MessageContainer } from '../common';
-import { SummaryItems } from '../common';
+import { MessageContainer } from './common';
+import { SummaryItems } from './common';
 
 const TradeSummaryCard: FC = memo(() => {
-	const { t } = useTranslation();
-
-	const { feeReclaimPeriod, openModal, quoteCurrencyKey } = useAppSelector(({ exchange }) => ({
-		feeReclaimPeriod: exchange.feeReclaimPeriod,
-		openModal: exchange.openModal,
-		quoteCurrencyKey: exchange.quoteCurrencyKey,
-	}));
-
 	const dispatch = useAppDispatch();
-
+	const openModal = useAppSelector(({ exchange }) => exchange.openModal);
 	const isApproved = useAppSelector(selectIsApproved);
 
+	// TODO: Make this a Redux action in itself.
 	const onSubmit = useCallback(() => {
 		if (!isApproved) {
 			dispatch(submitApprove());
@@ -66,22 +59,7 @@ const TradeSummaryCard: FC = memo(() => {
 				<DesktopOnlyView>
 					<SummaryItemsWrapper />
 				</DesktopOnlyView>
-				<ErrorTooltip
-					visible={feeReclaimPeriod > 0}
-					preset="top"
-					content={
-						<div>
-							{t('exchange.errors.fee-reclamation', {
-								waitingPeriod: secondsToTime(feeReclaimPeriod),
-								currencyKey: quoteCurrencyKey,
-							})}
-						</div>
-					}
-				>
-					<span>
-						<SubmissionButton onSubmit={onSubmit} isApproved={isApproved} />
-					</span>
-				</ErrorTooltip>
+				<TradeErrorTooltip {...{ onSubmit, isApproved }} />
 			</MessageContainer>
 			{openModal === 'confirm' && <TxConfirmationModal attemptRetry={onSubmit} />}
 			{openModal === 'approve' && <TxApproveModal attemptRetry={handleApprove} />}
@@ -136,6 +114,39 @@ const SubmissionButton = ({ onSubmit, isApproved }: any) => {
 		</Button>
 	);
 };
+
+type TradeErrorTooltipProps = {
+	onSubmit(): void;
+};
+
+const TradeErrorTooltip: FC<TradeErrorTooltipProps> = memo(({ onSubmit }) => {
+	const { t } = useTranslation();
+
+	const isApproved = useAppSelector(selectIsApproved);
+	const { feeReclaimPeriod, quoteCurrencyKey } = useAppSelector(({ exchange }) => ({
+		feeReclaimPeriod: exchange.feeReclaimPeriod,
+		quoteCurrencyKey: exchange.quoteCurrencyKey,
+	}));
+
+	return (
+		<ErrorTooltip
+			visible={feeReclaimPeriod > 0}
+			preset="top"
+			content={
+				<div>
+					{t('exchange.errors.fee-reclamation', {
+						waitingPeriod: secondsToTime(feeReclaimPeriod),
+						currencyKey: quoteCurrencyKey,
+					})}
+				</div>
+			}
+		>
+			<span>
+				<SubmissionButton onSubmit={onSubmit} isApproved={isApproved} />
+			</span>
+		</ErrorTooltip>
+	);
+});
 
 const MobileCard = styled(Card)`
 	margin: 2px auto 20px auto;
