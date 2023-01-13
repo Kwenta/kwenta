@@ -1,3 +1,4 @@
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useTranslation } from 'react-i18next';
 import styled, { useTheme } from 'styled-components';
 
@@ -7,6 +8,7 @@ import Button from 'components/Button';
 import FuturesIcon from 'components/Nav/FuturesIcon';
 import { NumberDiv } from 'components/Text/NumberLabel';
 import { EXTERNAL_LINKS } from 'constants/links';
+import Connector from 'containers/Connector';
 import { FuturesAccountType } from 'queries/futures/subgraph';
 import { setOpenModal } from 'state/app/reducer';
 import { selectPosition, selectPositionStatus } from 'state/futures/selectors';
@@ -22,14 +24,16 @@ type Props = {
 
 export default function TradePanelHeader({ accountType, onManageBalance }: Props) {
 	const { t } = useTranslation();
+	const { isWalletConnected } = Connector.useContainer();
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
+	const { openConnectModal } = useConnectModal();
 	const position = useAppSelector(selectPosition);
 	const positionStatus = useAppSelector(selectPositionStatus);
 	const balance = position ? position.remainingMargin : null;
 
 	if (!balance && positionStatus.status === FetchStatus.Success) {
-		return (
+		return isWalletConnected ? (
 			<DepositButton
 				variant="yellow"
 				onClick={() =>
@@ -45,6 +49,10 @@ export default function TradePanelHeader({ accountType, onManageBalance }: Props
 				<ButtonContent>
 					Deposit Margin <SwitchAssetArrows fill={theme.colors.selectedTheme.button.yellow.text} />
 				</ButtonContent>
+			</DepositButton>
+		) : (
+			<DepositButton variant="yellow" onClick={openConnectModal}>
+				<ButtonContent>{t('common.wallet.connect-wallet')}</ButtonContent>
 			</DepositButton>
 		);
 	}

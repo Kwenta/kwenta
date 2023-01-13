@@ -4,8 +4,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import CaretDownIcon from 'assets/svg/app/caret-down-gray-slim.svg';
-import CaretUpIcon from 'assets/svg/app/caret-up-gray-slim.svg';
+import CaretDownIcon from 'assets/svg/app/caret-down-slim.svg';
+import CaretUpIcon from 'assets/svg/app/caret-up-slim.svg';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import Card from 'components/Card';
@@ -134,7 +134,7 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 			)}
 			<StyledCardHeader onClick={onChangeSocket}>
 				<BalanceText>{t('futures.market.trade.margin.modal.bridge.title')}</BalanceText>
-				{!walletAddress || isNoBalance ? <CaretDownIcon /> : <CaretUpIcon />}
+				{openSocket ? <CaretUpIcon /> : <CaretDownIcon />}
 			</StyledCardHeader>
 			<Spacer height={10} />
 			{openSocket && <SocketBridge />}
