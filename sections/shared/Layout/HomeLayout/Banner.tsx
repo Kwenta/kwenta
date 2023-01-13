@@ -1,16 +1,12 @@
+import { memo } from 'react';
 import styled from 'styled-components';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { BANNER_ENABLED, BANNER_LINK_URL, BANNER_TEXT } from 'constants/announcement';
 import media from 'styles/media';
 
-const Banner = () => {
+const Banner = memo(() => {
 	if (!BANNER_ENABLED) return null;
-
-	const linkProps = BANNER_LINK_URL
-		? { href: BANNER_LINK_URL, target: '_blank' }
-		: { as: 'p' as const };
-	const bannerLink = <FuturesLink {...linkProps}>{BANNER_TEXT}</FuturesLink>;
 
 	return (
 		<>
@@ -24,7 +20,7 @@ const Banner = () => {
 			</MobileOrTabletView>
 		</>
 	);
-};
+});
 
 const FuturesLink = styled.a`
 	margin-right: 5px;
@@ -32,6 +28,12 @@ const FuturesLink = styled.a`
 	padding: 4px 9px;
 	border-radius: 20px;
 `;
+
+const linkProps = BANNER_LINK_URL
+	? { href: BANNER_LINK_URL, target: '_blank' }
+	: { as: 'p' as const };
+
+const bannerLink = <FuturesLink {...linkProps}>{BANNER_TEXT}</FuturesLink>;
 
 const FuturesBannerContainer = styled.div`
 	height: 70px;
