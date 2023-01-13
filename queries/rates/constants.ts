@@ -3,10 +3,10 @@ import { chain } from 'wagmi';
 export const RATES_ENDPOINT_MAIN = 'https://api.thegraph.com/subgraphs/name/kwenta/mainnet-main';
 
 export const RATES_ENDPOINT_OP_MAINNET =
-	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-main';
+	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-latest-rates';
 
 export const RATES_ENDPOINT_OP_GOERLI =
-	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-goerli-main';
+	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-goerli-latest-rates';
 
 export const RATES_ENDPOINT_GOERLI = 'https://api.thegraph.com/subgraphs/name/kwenta/goerli-main';
 

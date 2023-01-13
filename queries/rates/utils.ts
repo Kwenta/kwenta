@@ -17,9 +17,9 @@ export const getRatesEndpoint = (networkId: NetworkId) => {
 export const mapLaggedDailyPrices = (rates: LatestRate[]): Prices => {
 	return rates.map((rate) => {
 		return {
-			synth: rate.id,
+			synth: rate.synth,
 			price:
-				rate.id === 'DebtRatio'
+				rate.synth === 'DebtRatio'
 					? wei(rate.rate).div(DEBT_RATIO_UNIT).toNumber()
 					: wei(rate.rate).toNumber(),
 		};
