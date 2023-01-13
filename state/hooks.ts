@@ -73,7 +73,7 @@ export const usePollAction = (
 	const startPolling = useStartPollingAction();
 
 	useEffect(() => {
-		if (!options?.disabled) {
+		if (!options?.disabled && providerReady) {
 			startPolling(actionName, action, options?.intervalTime || DEFAULT_INTERVAL);
 		}
 		// eslint-disable-next-line
@@ -90,7 +90,7 @@ export const useFetchAction = (
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
-		if (!options?.disabled) {
+		if (!options?.disabled && providerReady) {
 			dispatch(action());
 		}
 		// eslint-disable-next-line

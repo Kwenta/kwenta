@@ -385,36 +385,32 @@ export default class FuturesService {
 	}
 
 	public async getOpenOrders(account: string) {
-		if (!this.sdk.context.signer) return [];
-
 		const crossMarginBaseMultiCall = new EthCallContract(account, CrossMarginBaseABI);
 		const crossMarginBaseContract = CrossMarginBase__factory.connect(
 			account,
-			this.sdk.context.signer
+			this.sdk.context.provider
 		);
-		const accountFilter = crossMarginBaseContract.filters.OrderPlaced(account);
+
 		const orders = [];
 
-		if (accountFilter) {
-			const logs = await crossMarginBaseContract.queryFilter(accountFilter);
-			if (logs.length) {
-				const orderCalls = logs.map((l) => crossMarginBaseMultiCall.orders(l.args.orderId));
-				const contractOrders = (await this.sdk.context.multicallProvider.all(orderCalls)) as any;
-				for (let i = 0; i < logs.length; i++) {
-					const log = logs[i];
-					const contractOrder = contractOrders[i];
-					// Checks if the order is still pending
-					// Orders are never removed but all values set to zero so we check a zero value on price to filter pending
-					if (contractOrder && contractOrder.targetPrice.gt(0)) {
-						const block = await log.getBlock();
-						const order = mapFuturesOrderFromEvent(log, account, wei(block.timestamp));
-						orders.push(order);
-					}
-				}
+		const orderIdBigNum = await crossMarginBaseContract.orderId();
+		const orderId = orderIdBigNum.toNumber();
+
+		const orderCalls = Array(orderId)
+			.fill(0)
+			.map((_, i) => crossMarginBaseMultiCall.orders(i));
+		const contractOrders = (await this.sdk.context.multicallProvider.all(orderCalls)) as any;
+		for (let i = 0; i < orderId; i++) {
+			const contractOrder = contractOrders[i];
+			// Checks if the order is still pending
+			// Orders are never removed but all values set to zero so we check a zero value on price to filter pending
+			if (contractOrder && contractOrder.targetPrice.gt(0)) {
+				const order = mapFuturesOrderFromEvent({ ...contractOrder, id: i }, account);
+				orders.push(order);
 			}
 		}
 
-		return orderBy(orders, ['timestamp'], 'desc');
+		return orderBy(orders, ['contractId'], 'desc');
 	}
 
 	public async getCrossMarginSettings() {
@@ -438,7 +434,7 @@ export default class FuturesService {
 		sizeDelta: Wei,
 		leverageSide: PositionSide
 	) {
-		const market = FuturesMarket__factory.connect(marketAddress, this.sdk.context.signer);
+		const market = FuturesMarket__factory.connect(marketAddress, this.sdk.context.provider);
 		const details = await market.postTradeDetails(
 			wei(sizeDelta).toBN(),
 			this.sdk.context.walletAddress

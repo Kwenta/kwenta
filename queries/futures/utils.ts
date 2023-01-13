@@ -2,28 +2,19 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { ContractsMap, NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { utils } from 'ethers';
-import { parseBytes32String } from 'ethers/lib/utils';
 import { chain } from 'wagmi';
 
 import { ETH_UNIT } from 'constants/network';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
-import { FuturesOrder, FuturesOrderTypeDisplay } from 'sdk/types/futures';
-import { formatCurrency, formatDollars, weiFromWei } from 'utils/formatters/number';
-import {
-	FuturesMarketAsset,
-	FuturesMarketKey,
-	getDisplayAsset,
-	getMarketName,
-	MarketAssetByKey,
-	MarketKeyByAsset,
-} from 'utils/futures';
+import { FuturesOrderTypeDisplay } from 'sdk/types/futures';
+import { formatDollars, weiFromWei } from 'utils/formatters/number';
+import { FuturesMarketAsset } from 'utils/futures';
 
 import { SECONDS_PER_DAY, FUTURES_ENDPOINTS } from './constants';
 import {
 	CrossMarginAccountTransferResult,
 	FuturesMarginTransferResult,
-	FuturesOrderResult,
 	FuturesOrderType,
 	FuturesPositionResult,
 	FuturesTradeResult,
@@ -52,35 +43,6 @@ export const getFuturesMarketContract = (asset: string | null, contracts: Contra
 
 const mapOrderType = (orderType: Partial<FuturesOrderType>): FuturesOrderTypeDisplay => {
 	return orderType === 'StopMarket' ? 'Stop Market' : orderType;
-};
-
-export const mapFuturesOrders = (o: FuturesOrderResult): FuturesOrder => {
-	// TODO: Why has asset changed to key here?
-	const key = parseBytes32String(o.asset) as FuturesMarketKey;
-	const asset = MarketAssetByKey[key];
-	const size = weiFromWei(o.size);
-	const targetPrice = weiFromWei(o.targetPrice ?? 0);
-	const targetRoundId = new Wei(o.targetRoundId, 0);
-	const marginDelta = weiFromWei(o.marginDelta);
-	return {
-		...o,
-		asset,
-		targetRoundId,
-		marginDelta,
-		targetPrice: targetPrice.gt(0) ? targetPrice : null,
-		size: size,
-		market: getMarketName(asset),
-		marketKey: MarketKeyByAsset[asset],
-		orderType: mapOrderType(o.orderType),
-		sizeTxt: formatCurrency(asset, size.abs(), {
-			currencyKey: getDisplayAsset(asset) ?? '',
-			minDecimals: size.abs().lt(0.01) ? 4 : 2,
-		}),
-		targetPriceTxt: formatDollars(targetPrice),
-		side: size.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
-		isStale: false,
-		isExecutable: false,
-	};
 };
 
 type MarketSizes = {
