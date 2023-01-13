@@ -170,6 +170,7 @@ export type FuturesOrderTypeDisplay = 'Limit' | 'Stop Market' | 'Market' | 'Liqu
 
 export type FuturesOrder<T = Wei> = {
 	id: string;
+	contractId: number;
 	account: string;
 	asset: FuturesMarketAsset;
 	market: string;
@@ -178,7 +179,6 @@ export type FuturesOrder<T = Wei> = {
 	targetPrice: T | null;
 	marginDelta: T;
 	targetRoundId: T | null;
-	timestamp: T;
 	orderType: FuturesOrderTypeDisplay;
 	sizeTxt?: string;
 	targetPriceTxt?: string;

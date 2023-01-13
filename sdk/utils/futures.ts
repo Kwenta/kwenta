@@ -6,7 +6,6 @@ import { ETH_UNIT } from 'constants/network';
 import { FuturesAggregateStatResult } from 'queries/futures/subgraph';
 import { FUTURES_ENDPOINTS, MAINNET_MARKETS, TESTNET_MARKETS } from 'sdk/constants/futures';
 import { SECONDS_PER_DAY } from 'sdk/constants/period';
-import { OrderPlacedEvent } from 'sdk/contracts/types/CrossMarginBase';
 import {
 	FundingRateUpdate,
 	FuturesMarketAsset,
@@ -291,27 +290,34 @@ export const calculateCrossMarginFee = (
 };
 
 export const mapFuturesOrderFromEvent = (
-	o: OrderPlacedEvent,
-	account: string,
-	timestamp: Wei
+	orderDetails: {
+		id: number;
+		marketKey: string;
+		orderType: number;
+		targetPrice: BigNumber;
+		sizeDelta: BigNumber;
+		marginDelta: BigNumber;
+	},
+	account: string
 ): FuturesOrder => {
-	const marketKey = parseBytes32String(o.args.marketKey) as FuturesMarketKey;
+	const marketKey = parseBytes32String(orderDetails.marketKey) as FuturesMarketKey;
 	const asset = MarketAssetByKey[marketKey];
-	const sizeDelta = wei(o.args.sizeDelta);
+	const sizeDelta = wei(orderDetails.sizeDelta);
+
 	const size = sizeDelta.abs();
 	return {
-		id: `CM-${account}-${o.args.orderId}`,
+		contractId: orderDetails.id,
+		id: `CM-${account}-${orderDetails.id}`,
 		account: account,
 		size: sizeDelta,
-		marginDelta: wei(o.args.marginDelta),
-		orderType: o.args.orderType === 0 ? 'Limit' : 'Stop Market',
-		targetPrice: wei(o.args.targetPrice),
+		marginDelta: wei(orderDetails.marginDelta),
+		orderType: orderDetails.orderType === 0 ? 'Limit' : 'Stop Market',
+		targetPrice: wei(orderDetails.targetPrice),
 		sizeTxt: formatCurrency(asset, size, {
 			currencyKey: getDisplayAsset(asset) ?? '',
 			minDecimals: size.lt(0.01) ? 4 : 2,
 		}),
-		targetPriceTxt: formatDollars(wei(o.args.targetPrice)),
-		timestamp: timestamp,
+		targetPriceTxt: formatDollars(wei(orderDetails.targetPrice)),
 		marketKey: marketKey,
 		market: getMarketName(asset),
 		asset: asset,
