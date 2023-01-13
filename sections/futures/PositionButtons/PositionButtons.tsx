@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo, FC } from 'react';
 import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';
@@ -13,7 +13,7 @@ interface PositionButtonsProps {
 	type?: 'button' | 'submit' | 'reset' | undefined;
 }
 
-const PositionButtons: React.FC<PositionButtonsProps> = ({ selected, onSelect }) => {
+const PositionButtons: FC<PositionButtonsProps> = memo(({ selected, onSelect }) => {
 	const marketInfo = useAppSelector(selectMarketInfo);
 
 	return (
@@ -40,7 +40,7 @@ const PositionButtons: React.FC<PositionButtonsProps> = ({ selected, onSelect })
 			</StyledPositionButton>
 		</PositionButtonsContainer>
 	);
-};
+});
 
 type PositionButtonProps = {
 	$position: PositionSide;

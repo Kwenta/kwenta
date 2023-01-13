@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useEffect, FC } from 'react';
+import { useEffect, FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -79,7 +79,7 @@ type TradePanelProps = {
 	account: FuturesAccountState;
 };
 
-function TradePanelDesktop({ walletAddress, account }: TradePanelProps) {
+const TradePanelDesktop: FC<TradePanelProps> = memo(({ walletAddress, account }) => {
 	const { t } = useTranslation();
 	const { handleRefetch } = useRefetchContext();
 	const router = useRouter();
@@ -113,7 +113,7 @@ function TradePanelDesktop({ walletAddress, account }: TradePanelProps) {
 		);
 	}
 	return <TradeIsolatedMargin />;
-}
+});
 
 Market.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 

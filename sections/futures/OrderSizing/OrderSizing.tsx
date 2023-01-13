@@ -1,5 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import React, { ChangeEvent, useMemo, useState } from 'react';
+import React, { ChangeEvent, useMemo, useState, memo } from 'react';
 import styled from 'styled-components';
 
 import SwitchAssetArrows from 'assets/svg/futures/switch-arrows.svg';
@@ -30,7 +30,7 @@ type OrderSizingProps = {
 	disabled?: boolean;
 };
 
-const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
+const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) => {
 	const { maxUsdInputAmount } = useFuturesContext();
 	const dispatch = useAppDispatch();
 
@@ -133,7 +133,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 			{selectedAccountType === 'cross_margin' && <OrderSizeSlider />}
 		</>
 	);
-};
+});
 
 const OrderSizingContainer = styled.div`
 	margin-top: 28px;
