@@ -6,6 +6,7 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
+import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import Select from 'components/Select';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import { FuturesPosition } from 'sdk/types/futures';
@@ -17,7 +18,6 @@ import {
 	selectIsolatedMarginPositions,
 } from 'state/futures/selectors';
 import { useAppSelector, useAppDispatch } from 'state/hooks';
-import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { zeroBN, formatDollars } from 'utils/formatters/number';
 import { getMarketName, MarketKeyByAsset } from 'utils/futures';
 

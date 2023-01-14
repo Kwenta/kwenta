@@ -6,7 +6,7 @@ import styled, { css } from 'styled-components';
 import SortDownIcon from 'assets/svg/app/caret-down.svg';
 import SortUpIcon from 'assets/svg/app/caret-up.svg';
 import Spinner from 'assets/svg/app/loader.svg';
-import { GridDivCenteredRow } from 'styles/common';
+import { GridDivCenteredRow } from 'components/layout/grid';
 
 import Pagination from './Pagination';
 import TableBodyRow, { TableCell } from './TableBodyRow';

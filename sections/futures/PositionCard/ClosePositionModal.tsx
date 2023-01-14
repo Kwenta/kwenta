@@ -6,13 +6,13 @@ import styled from 'styled-components';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import Error from 'components/Error';
+import { FlexDivCentered, FlexDivCol } from 'components/layout/flex';
 import { ButtonLoader } from 'components/Loader/Loader';
 import Connector from 'containers/Connector';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import { FuturesFilledPosition } from 'sdk/types/futures';
 import { selectIsClosingPosition, selectMarketAsset } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { FlexDivCentered, FlexDivCol } from 'styles/common';
 import { formatCurrency, formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 

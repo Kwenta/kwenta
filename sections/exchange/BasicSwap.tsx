@@ -2,7 +2,7 @@ import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { BoldText } from 'styles/common';
+import * as Text from 'components/Text';
 
 import SwapCurrencies from './SwapCurrencies';
 import BaseCurrencyCard from './TradeCard/Cards/BaseCurrencyCard';
@@ -29,7 +29,7 @@ const BasicSwap: FC = memo(() => {
 
 export default BasicSwap;
 
-const ExchangeTitle = styled(BoldText)`
+const ExchangeTitle = styled(Text.Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 30px;
 	margin-bottom: 1.5em;

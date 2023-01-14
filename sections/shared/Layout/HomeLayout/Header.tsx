@@ -10,11 +10,12 @@ import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg';
 import DiscordLogo from 'assets/svg/social/discord.svg';
 import MirrorLogo from 'assets/svg/social/mirror.svg';
 import Button from 'components/Button';
+import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
+import { GridDivCenteredCol } from 'components/layout/grid';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
-import { FlexDivRow, FlexDivRowCentered, GridDivCenteredCol } from 'styles/common';
 
 import MobileUserMenu from '../AppLayout/Header/MobileUserMenu';
 import Logo from '../Logo';

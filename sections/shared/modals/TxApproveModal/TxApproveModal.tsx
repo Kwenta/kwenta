@@ -4,10 +4,11 @@ import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
+import { FlexDivColCentered } from 'components/layout/flex';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
 import { setOpenModal } from 'state/exchange/reducer';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { FlexDivColCentered, NoTextTransform } from 'styles/common';
+import { NoTextTransform } from 'styles/common';
 import { formatRevert } from 'utils/formatters/error';
 
 type TxApproveModalProps = {

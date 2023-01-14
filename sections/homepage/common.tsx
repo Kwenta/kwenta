@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
-import { FlexDivColCentered, GridDiv, Paragraph } from 'styles/common';
+import { FlexDivColCentered } from 'components/layout/flex';
+import { GridDiv } from 'components/layout/grid';
+import * as Text from 'components/Text';
 import media from 'styles/media';
 
 export const StackSection = styled(FlexDivColCentered)`
@@ -20,14 +22,13 @@ export const GridContainer = styled(GridDiv)`
 	`}
 `;
 
-export const Title = styled(Paragraph)`
+export const Title = styled(Text.Body).attrs({ variant: 'bold' })`
 	font-size: 16px;
-	font-family: ${(props) => props.theme.fonts.bold};
 	text-align: left;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
-export const Copy = styled(Paragraph)`
+export const Copy = styled(Text.Body)`
 	font-size: 16px;
 	font-style: normal;
 	line-height: 24px;

@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components';
 
 import LinkIcon from 'assets/svg/app/link-blue.svg';
 import Card from 'components/Card';
+import { GridDivCenteredRow } from 'components/layout/grid';
 import Table, { TableNoResults } from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { ETH_UNIT } from 'constants/network';
@@ -12,7 +13,7 @@ import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesTrade } from 'queries/futures/types';
-import { ExternalLink, GridDivCenteredRow } from 'styles/common';
+import { ExternalLink } from 'styles/common';
 import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
 
 import { PositionSide, TradeStatus } from '../types';

@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 
 import MarketBadge from 'components/Badge/MarketBadge';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import { FlexDivCentered } from 'styles/common';
+import { FlexDivCentered } from 'components/layout/flex';
 
 import { MarketsCurrencyOption } from './MarketsDropdown';
 import { CurrencyLabel, SingleValueContainer } from './MarketsDropdownSingleValue';

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
 import Card, { CardBody } from 'components/Card';
-import { FlexDivRowCentered } from 'styles/common';
+import { FlexDivRowCentered } from 'components/layout/flex';
 
 import { Side } from '../types';
 import CurrencyCardInput from './CurrencyCardInput';

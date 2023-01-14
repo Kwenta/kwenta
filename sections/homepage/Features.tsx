@@ -23,10 +23,9 @@ import {
 	FlexDivCol,
 	FlexDivColCentered,
 	FlexDivRow,
-	GridDivCentered,
-	SmallGoldenHeader,
-	WhiteHeader,
-} from 'styles/common';
+} from 'components/layout/flex';
+import { GridDivCentered } from 'components/layout/grid';
+import { SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media from 'styles/media';
 
 import { Copy, Title } from './common';

@@ -8,6 +8,7 @@ import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';
 import SearchInput from 'components/Input/SearchInput';
+import { FlexDivCentered } from 'components/layout/flex';
 import Loader from 'components/Loader';
 import { CurrencyKey, CATEGORY_MAP, ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'constants/currency';
 import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
@@ -23,7 +24,6 @@ import {
 import { selectTokenList } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
-import { FlexDivCentered } from 'styles/common';
 import media from 'styles/media';
 import { zeroBN } from 'utils/formatters/number';
 

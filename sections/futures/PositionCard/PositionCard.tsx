@@ -3,6 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
+import { FlexDivCentered, FlexDivCol } from 'components/layout/flex';
 import PreviewArrow from 'components/PreviewArrow';
 import * as Text from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
@@ -23,7 +24,7 @@ import {
 	selectActivePositionHistory,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { FlexDivCentered, FlexDivCol, PillButtonDiv } from 'styles/common';
+import { PillButtonDiv } from 'styles/common';
 import media from 'styles/media';
 import { isFiatCurrency } from 'utils/currencies';
 import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';

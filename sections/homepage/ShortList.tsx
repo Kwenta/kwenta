@@ -7,13 +7,14 @@ import styled from 'styled-components';
 import GridSvg from 'assets/svg/app/grid.svg';
 import Button from 'components/Button';
 import Currency from 'components/Currency';
+import { FlexDivColCentered, FlexDivRow } from 'components/layout/flex';
 import Loader from 'components/Loader';
 import Table from 'components/Table';
 import ROUTES from 'constants/routes';
 import useENS from 'hooks/useENS';
 import useGetFuturesCumulativeStats from 'queries/futures/useGetFuturesCumulativeStats';
 import useGetStats from 'queries/futures/useGetStats';
-import { FlexDivColCentered, FlexDivRow, SmallGoldenHeader, WhiteHeader } from 'styles/common';
+import { SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media, { Media } from 'styles/media';
 import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 

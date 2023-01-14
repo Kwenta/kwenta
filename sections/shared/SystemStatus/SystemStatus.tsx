@@ -8,16 +8,12 @@ import SystemDownIcon from 'assets/svg/app/system-down.svg';
 import DiscordIcon from 'assets/svg/social/discord.svg';
 import GithubIcon from 'assets/svg/social/github.svg';
 import TwitterIcon from 'assets/svg/social/twitter.svg';
+import { FlexDivColCentered } from 'components/layout/flex';
+import { GridDivCenteredCol } from 'components/layout/grid';
 import { EXTERNAL_LINKS, PROD_HOSTNAME } from 'constants/links';
 import { HEADER_HEIGHT } from 'constants/ui';
 import Logo from 'sections/shared/Layout/Logo';
-import {
-	FlexDivColCentered,
-	PageContent,
-	FullScreenContainer,
-	ExternalLink,
-	GridDivCenteredCol,
-} from 'styles/common';
+import { PageContent, FullScreenContainer, ExternalLink } from 'styles/common';
 import media from 'styles/media';
 
 type SystemStatusProps = {

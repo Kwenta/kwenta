@@ -13,6 +13,7 @@ import GridSvg from 'assets/svg/app/grid.svg';
 import Button from 'components/Button';
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
+import { FlexDiv, FlexDivColCentered, FlexDivRow } from 'components/layout/flex';
 import { TabPanel } from 'components/Tab';
 import { CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
@@ -24,13 +25,7 @@ import { selectOptimismMarkets } from 'state/home/selectors';
 import { useAppSelector, usePollAction } from 'state/hooks';
 import { selectPrices } from 'state/prices/selectors';
 import { pastRatesState } from 'store/futures';
-import {
-	FlexDiv,
-	FlexDivColCentered,
-	FlexDivRow,
-	SmallGoldenHeader,
-	WhiteHeader,
-} from 'styles/common';
+import { SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media, { Media } from 'styles/media';
 import { getSynthDescription } from 'utils/futures';
 

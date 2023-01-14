@@ -1,32 +1,10 @@
 import styled, { css } from 'styled-components';
 
 import { border } from 'components/Button';
+import { FlexDiv, FlexDivRowCentered } from 'components/layout/flex';
+import * as Text from 'components/Text';
 import { zIndex } from 'constants/ui';
 import media from 'styles/media';
-
-export const FlexDiv = styled.div`
-	display: flex;
-`;
-
-export const FlexDivCentered = styled(FlexDiv)`
-	align-items: center;
-`;
-
-export const FlexDivCol = styled(FlexDiv)`
-	flex-direction: column;
-`;
-
-export const FlexDivColCentered = styled(FlexDivCol)`
-	align-items: center;
-`;
-
-export const FlexDivRow = styled(FlexDiv)`
-	justify-content: space-between;
-`;
-
-export const FlexDivRowCentered = styled(FlexDivRow)`
-	align-items: center;
-`;
 
 export const linkCSS = css`
 	text-decoration: none;
@@ -48,22 +26,6 @@ export const resetButtonCSS = css`
 	outline: none;
 	cursor: pointer;
 	padding: 0;
-`;
-
-export const GridDiv = styled.div`
-	display: grid;
-`;
-
-export const GridDivCentered = styled(GridDiv)`
-	align-items: center;
-`;
-
-export const GridDivCenteredRow = styled(GridDivCentered)`
-	grid-auto-flow: row;
-`;
-
-export const GridDivCenteredCol = styled(GridDivCentered)`
-	grid-auto-flow: column;
 `;
 
 export const numericValueCSS = css`
@@ -125,10 +87,6 @@ export const FixedFooterMixin = `
 export const Paragraph = styled.p`
 	margin: 0;
 	cursor: default;
-`;
-
-export const BoldText = styled.span`
-	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
 export const FullScreenContainer = styled(FlexDiv)`
@@ -230,7 +188,7 @@ export const SwapCurrenciesButton = styled.button`
 	}
 `;
 
-export const SmallGoldenHeader = styled(Paragraph)`
+export const SmallGoldenHeader = styled(Text.Body).attrs({ variant: 'bold' })`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 14px;
 	line-height: 100%;

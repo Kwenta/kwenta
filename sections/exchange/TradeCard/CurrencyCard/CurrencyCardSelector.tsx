@@ -6,10 +6,11 @@ import styled, { css } from 'styled-components';
 import CaretDownIcon from 'assets/svg/app/caret-down-gray.svg';
 import { border } from 'components/Button';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
+import { FlexDivColCentered, FlexDivRow } from 'components/layout/flex';
 import { NO_VALUE } from 'constants/placeholder';
 import { selectInsufficientBalance } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
-import { CapitalizedText, FlexDivColCentered, FlexDivRow, numericValueCSS } from 'styles/common';
+import { CapitalizedText, numericValueCSS } from 'styles/common';
 import { formatCurrency } from 'utils/formatters/number';
 
 type CurrencyCardSelectorProps = {

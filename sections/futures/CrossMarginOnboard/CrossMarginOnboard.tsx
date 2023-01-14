@@ -13,6 +13,7 @@ import Button from 'components/Button';
 import ErrorView from 'components/Error';
 import InputBalanceLabel from 'components/Input/InputBalanceLabel';
 import NumericInput from 'components/Input/NumericInput';
+import { FlexDivRowCentered } from 'components/layout/flex';
 import Loader from 'components/Loader';
 import ProgressSteps from 'components/ProgressSteps';
 import { CROSS_MARGIN_BASE_SETTINGS } from 'constants/address';
@@ -29,7 +30,6 @@ import useQueryCrossMarginAccount, {
 import { selectBalances } from 'state/balances/selectors';
 import { useAppSelector } from 'state/hooks';
 import { futuresAccountState } from 'store/futures';
-import { FlexDivRowCentered } from 'styles/common';
 import { isUserDeniedError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';

@@ -1,8 +1,9 @@
 import styled from 'styled-components';
 
 import Button from 'components/Button';
+import { GridDivCenteredRow } from 'components/layout/grid';
 import { zIndex } from 'constants/ui';
-import { FixedFooterMixin, GridDivCenteredRow } from 'styles/common';
+import { FixedFooterMixin } from 'styles/common';
 import media from 'styles/media';
 
 export const SummaryItems = styled.div`

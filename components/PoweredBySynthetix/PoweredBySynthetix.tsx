@@ -3,8 +3,9 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import TextLogo from 'assets/svg/brand/text-logo-white.svg';
+import { FlexDivColCentered } from 'components/layout/flex';
 import { EXTERNAL_LINKS } from 'constants/links';
-import { ExternalLink, FlexDivColCentered, Paragraph } from 'styles/common';
+import { ExternalLink, Paragraph } from 'styles/common';
 
 const PoweredBySynthetix = () => {
 	const { t } = useTranslation();

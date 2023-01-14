@@ -4,9 +4,10 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
+import { FlexDivColCentered } from 'components/layout/flex';
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import ROUTES from 'constants/routes';
-import { FlexDivColCentered, Paragraph, SmallGoldenHeader, WhiteHeader } from 'styles/common';
+import { Paragraph, SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media from 'styles/media';
 
 const TradeNow = () => {

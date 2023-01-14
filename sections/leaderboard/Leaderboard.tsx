@@ -4,6 +4,7 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
+import { FlexDivCol } from 'components/layout/flex';
 import Search from 'components/Table/Search';
 import ROUTES from 'constants/routes';
 import useENS from 'hooks/useENS';
@@ -11,7 +12,6 @@ import useENSs from 'hooks/useENSs';
 import { AccountStat } from 'queries/futures/types';
 import useLeaderboard, { DEFAULT_LEADERBOARD_DATA } from 'queries/futures/useLeaderboard';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
-import { FlexDivCol } from 'styles/common';
 import media from 'styles/media';
 
 import AllTime from './AllTime';
@@ -31,7 +31,7 @@ enum LeaderboardTab {
 
 const LEADERBOARD_TABS = [LeaderboardTab.Top, LeaderboardTab.Bottom];
 
-const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps) => {
+const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 	const [activeTab, setActiveTab] = useState(LeaderboardTab.Top);
 	const [activeTier, setActiveTier] = useState<Tier>('bronze');
 	const [competitionRound, setCompetitionRound] = useState<CompetitionRound>();

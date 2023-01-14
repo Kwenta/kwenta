@@ -10,10 +10,9 @@ import {
 	FlexDivCol,
 	FlexDivColCentered,
 	FlexDivRow,
-	GridDiv,
-	SmallGoldenHeader,
-	WhiteHeader,
-} from 'styles/common';
+} from 'components/layout/flex';
+import { GridDiv } from 'components/layout/grid';
+import { SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media, { Media } from 'styles/media';
 
 import { Copy, StackSection, Title } from './common';

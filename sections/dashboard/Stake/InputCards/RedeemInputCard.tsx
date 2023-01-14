@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
+import { FlexDivRowCentered } from 'components/layout/flex';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { approveKwentaToken, redeemToken } from 'state/staking/actions';
 import {
@@ -11,7 +12,7 @@ import {
 	selectVeKwentaBalance,
 	selectVKwentaBalance,
 } from 'state/staking/selectors';
-import { FlexDivRowCentered, numericValueCSS } from 'styles/common';
+import { numericValueCSS } from 'styles/common';
 import { truncateNumbers } from 'utils/formatters/number';
 
 import { StakingCard } from '../common';

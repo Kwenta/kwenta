@@ -5,11 +5,13 @@ import styled from 'styled-components';
 
 import MarketOrderPreview from 'assets/png/marketing/market-order-preview.png';
 import Button from 'components/Button';
+import { FlexDivColCentered } from 'components/layout/flex';
+import { GridDiv } from 'components/layout/grid';
 import PoweredBySynthetix from 'components/PoweredBySynthetix';
+import * as Text from 'components/Text';
 import Webp from 'components/Webp';
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import ROUTES from 'constants/routes';
-import { FlexDivColCentered, GridDiv, Paragraph } from 'styles/common';
 import media from 'styles/media';
 
 import { StackSection } from './common';
@@ -53,8 +55,7 @@ const Emphasis = styled.b`
 	color: ${(props) => props.theme.colors.common.primaryWhite};
 `;
 
-const Header = styled(Paragraph)`
-	font-family: ${(props) => props.theme.fonts.monoBold};
+const Header = styled(Text.Body).attrs({ variant: 'bold', mono: true })`
 	max-width: 636px;
 	font-size: 80px;
 	line-height: 85%;
@@ -68,8 +69,7 @@ const Header = styled(Paragraph)`
 	`}
 `;
 
-const ProductDescription = styled(Paragraph)`
-	font-family: ${(props) => props.theme.fonts.regular};
+const ProductDescription = styled(Text.Body)`
 	max-width: 530px;
 	font-size: 24px;
 	line-height: 120%;

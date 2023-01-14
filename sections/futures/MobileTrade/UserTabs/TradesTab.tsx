@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled, { css } from 'styled-components';
 
+import { GridDivCenteredRow } from 'components/layout/grid';
 import Table, { TableNoResults } from 'components/Table';
 import { ETH_UNIT } from 'constants/network';
 import Connector from 'containers/Connector';
@@ -13,7 +14,6 @@ import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { PositionSide, TradeStatus } from 'sections/futures/types';
 import { selectMarketAsset } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { GridDivCenteredRow } from 'styles/common';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName } from 'utils/futures';
 
