@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo, FC, useCallback } from 'react';
 import styled from 'styled-components';
 
 type CustomInputProps = {
@@ -19,53 +19,50 @@ type CustomInputProps = {
 
 const INVALID_CHARS = ['-', '+', 'e'];
 
-const CustomInput: React.FC<CustomInputProps> = ({
-	value,
-	placeholder,
-	onChange,
-	right,
-	left,
-	style,
-	className,
-	disabled,
-	id,
-	defaultValue,
-	dataTestId,
-	invalid,
-	textAlign = 'left',
-}) => {
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		onChange(e, e.target.value.replace(/,/g, '.').replace(/[e+-]/gi, ''));
-	};
+const CustomInput: FC<CustomInputProps> = memo(
+	({
+		value,
+		placeholder,
+		onChange,
+		right,
+		left,
+		disabled,
+		id,
+		defaultValue,
+		dataTestId,
+		textAlign = 'left',
+		...props
+	}) => {
+		const handleChange = useCallback(
+			(e: React.ChangeEvent<HTMLInputElement>) => {
+				onChange(e, e.target.value.replace(/,/g, '.').replace(/[e+-]/gi, ''));
+			},
+			[onChange]
+		);
 
-	return (
-		<CustomInputContainer
-			style={style}
-			className={className}
-			textAlign={textAlign}
-			invalid={invalid}
-		>
-			{typeof left === 'string' ? <span>{left}</span> : left}
-
-			<input
-				data-testid={dataTestId}
-				disabled={disabled}
-				placeholder={placeholder}
-				value={value}
-				type="number"
-				onChange={handleChange}
-				onKeyDown={(e) => {
-					if (INVALID_CHARS.includes(e.key)) {
-						e.preventDefault();
-					}
-				}}
-				id={id}
-				defaultValue={defaultValue}
-			/>
-			{typeof right === 'string' ? <span>{right}</span> : right}
-		</CustomInputContainer>
-	);
-};
+		return (
+			<CustomInputContainer textAlign={textAlign} {...props}>
+				{typeof left === 'string' ? <span>{left}</span> : left}
+				<input
+					data-testid={dataTestId}
+					disabled={disabled}
+					placeholder={placeholder}
+					value={value}
+					type="number"
+					onChange={handleChange}
+					onKeyDown={(e) => {
+						if (INVALID_CHARS.includes(e.key)) {
+							e.preventDefault();
+						}
+					}}
+					id={id}
+					defaultValue={defaultValue}
+				/>
+				{typeof right === 'string' ? <span>{right}</span> : right}
+			</CustomInputContainer>
+		);
+	}
+);
 
 const CustomInputContainer = styled.div<{ textAlign: string; invalid?: boolean }>`
 	display: flex;

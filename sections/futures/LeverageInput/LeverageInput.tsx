@@ -1,5 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, memo, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -23,7 +23,7 @@ import { floorNumber, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import LeverageSlider from '../LeverageSlider';
 
-const LeverageInput: FC = () => {
+const LeverageInput: FC = memo(() => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
@@ -131,7 +131,7 @@ const LeverageInput: FC = () => {
 			)}
 		</LeverageInputWrapper>
 	);
-};
+});
 
 const LeverageInputWrapper = styled(FlexDivCol)`
 	margin-bottom: 16px;

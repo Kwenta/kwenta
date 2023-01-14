@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { FlexDivRow } from 'styles/common';
+import { FlexDivRow } from 'components/layout/flex';
 
 export const LabelContainer = styled(FlexDivRow)<{ noPadding?: boolean }>`
 	padding: ${(props) => !props.noPadding && '16px'};

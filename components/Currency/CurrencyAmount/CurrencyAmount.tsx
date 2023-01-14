@@ -1,6 +1,6 @@
 import Wei, { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
-import React, { FC } from 'react';
+import { FC, memo } from 'react';
 import styled from 'styled-components';
 
 import { formatCurrency, FormatCurrencyOptions } from 'utils/formatters/number';
@@ -21,32 +21,36 @@ type CurrencyAmountProps = {
 	showValue?: boolean;
 };
 
-export const CurrencyAmount: FC<CurrencyAmountProps> = ({
-	currencyKey,
-	amount,
-	totalValue,
-	sign,
-	conversionRate,
-	formatAmountOptions = {},
-	formatTotalValueOptions = {},
-	showTotalValue = true,
-	showValue = true,
-	...rest
-}) => (
-	<Container {...rest}>
-		{!showValue ? null : (
-			<Amount className="amount">{formatCurrency(currencyKey, amount, formatAmountOptions)}</Amount>
-		)}
-		{!showTotalValue ? null : (
-			<TotalValue className="total-value">
-				{formatCurrency(
-					currencyKey,
-					conversionRate != null ? wei(totalValue).div(conversionRate) : totalValue,
-					{ sign, ...formatTotalValueOptions }
-				)}
-			</TotalValue>
-		)}
-	</Container>
+export const CurrencyAmount: FC<CurrencyAmountProps> = memo(
+	({
+		currencyKey,
+		amount,
+		totalValue,
+		sign,
+		conversionRate,
+		formatAmountOptions = {},
+		formatTotalValueOptions = {},
+		showTotalValue = true,
+		showValue = true,
+		...rest
+	}) => (
+		<Container {...rest}>
+			{!showValue ? null : (
+				<Amount className="amount">
+					{formatCurrency(currencyKey, amount, formatAmountOptions)}
+				</Amount>
+			)}
+			{!showTotalValue ? null : (
+				<TotalValue className="total-value">
+					{formatCurrency(
+						currencyKey,
+						conversionRate != null ? wei(totalValue).div(conversionRate) : totalValue,
+						{ sign, ...formatTotalValueOptions }
+					)}
+				</TotalValue>
+			)}
+		</Container>
+	)
 );
 
 const Container = styled.span`

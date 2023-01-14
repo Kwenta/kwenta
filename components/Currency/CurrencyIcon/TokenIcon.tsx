@@ -1,8 +1,8 @@
 import { FC, memo } from 'react';
 import styled from 'styled-components';
 
+import { FlexDivCentered } from 'components/layout/flex';
 import { useAppSelector } from 'state/hooks';
-import { FlexDivCentered } from 'styles/common';
 
 export type TokenIconProps = {
 	currencyKey: string;
