@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import * as Text from 'components/Text';
 import { selectBalances } from 'state/balances/selectors';
 import { selectFuturesPortfolio } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
@@ -45,14 +46,12 @@ const Chart = styled.div`
 	height: 200px;
 `;
 
-const PortfolioTitle = styled.p`
+const PortfolioTitle = styled(Text.Body).attrs({ variant: 'bold' })`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 16px;
-	margin-top: 26px;
-	margin-left: 26px;
-	margin-bottom: 10px;
+	margin: 26px 0 10px 26px;
 `;
+
 const PortfolioText = styled(Currency.Price)`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-family: ${(props) => props.theme.fonts.monoBold};

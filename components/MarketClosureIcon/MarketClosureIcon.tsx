@@ -21,19 +21,16 @@ export const MarketClosureIcon: FC<MarketClosureIconProps> = ({
 		className: 'market-closure-icon',
 	};
 
-	const defaultIcon = <MarketPauseIcon {...sharedProps} />;
-
 	switch (marketClosureReason) {
 		case 'frozen':
 			return <FrozenIcon {...sharedProps} />;
-		case 'market-closure':
-			return defaultIcon;
 		case 'circuit-breaker':
 			return <CircuitBreakerIcon {...sharedProps} />;
 		case 'emergency':
 			return <EmergencyShutdownIcon {...sharedProps} />;
+		case 'market-closure':
 		default:
-			return defaultIcon;
+			return <MarketPauseIcon {...sharedProps} />;
 	}
 };
 

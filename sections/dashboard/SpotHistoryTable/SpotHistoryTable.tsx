@@ -1,6 +1,4 @@
 import { SynthExchangeResult } from '@synthetixio/queries';
-import * as _ from 'lodash/fp';
-import values from 'lodash/values';
 import Link from 'next/link';
 import { FC, useMemo, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -30,7 +28,7 @@ type WalletTradesExchangeResult = Omit<SynthTradesExchangeResult, 'timestamp'> &
 };
 
 const conditionalRender = <T,>(prop: T, children: ReactElement) =>
-	_.isNil(prop) ? <p>{NO_VALUE}</p> : children;
+	!prop ? <p>{NO_VALUE}</p> : children;
 
 const SpotHistoryTable: FC = () => {
 	const { t } = useTranslation();
@@ -38,14 +36,11 @@ const SpotHistoryTable: FC = () => {
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const walletTradesQuery = useGetWalletTrades(walletAddress!);
 
-	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
+	const synths = useMemo(() => Object.values(synthsMap) || [], [synthsMap]);
 	const trades = useMemo(() => {
 		const t = walletTradesQuery.data?.synthExchanges ?? [];
 
-		return t.map((trade: any) => ({
-			...trade,
-			hash: trade.id.split('-')[0],
-		}));
+		return t.map((trade: any) => ({ ...trade, hash: trade.id.split('-')[0] }));
 	}, [walletTradesQuery.data]);
 
 	const filteredHistoricalTrades = useMemo(

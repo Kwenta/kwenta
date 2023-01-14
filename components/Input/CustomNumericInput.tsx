@@ -1,4 +1,4 @@
-import { ChangeEvent, FC } from 'react';
+import { ChangeEvent, FC, memo } from 'react';
 import styled from 'styled-components';
 
 import Input from './Input';
@@ -15,54 +15,56 @@ type CustomNumericInputProps = {
 	id?: string;
 };
 
-const CustomNumericInput: FC<CustomNumericInputProps> = ({
-	value,
-	placeholder,
-	suffix,
-	onChange,
-	className,
-	defaultValue,
-	maxValue,
-	disabled,
-	id,
-	...rest
-}) => {
-	const style = {
-		'--numchs': value.length,
-		'--suffix': `'${value.length === 0 ? '' : suffix}'`,
-	};
+const CustomNumericInput: FC<CustomNumericInputProps> = memo(
+	({
+		value,
+		placeholder,
+		suffix,
+		onChange,
+		className,
+		defaultValue,
+		maxValue,
+		disabled,
+		id,
+		...rest
+	}) => {
+		const style = {
+			'--numchs': value.length,
+			'--suffix': `'${value.length === 0 ? '' : suffix}'`,
+		};
 
-	const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
-		const { value } = e.target;
-		const max = maxValue || 0;
-		const valueIsAboveMax = max !== 0 && Number(value) > max;
-		if (!valueIsAboveMax) {
-			onChange(
-				e,
-				value
-					.replace(/[^0-9.,]/g, '')
-					.replace(/,/g, '.')
-					.substring(0, 4)
-			);
-		}
-	};
+		const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+			const { value } = e.target;
+			const max = maxValue || 0;
+			const valueIsAboveMax = max !== 0 && Number(value) > max;
+			if (!valueIsAboveMax) {
+				onChange(
+					e,
+					value
+						.replace(/[^0-9.,]/g, '')
+						.replace(/,/g, '.')
+						.substring(0, 4)
+				);
+			}
+		};
 
-	return (
-		<InputWrapper style={style as React.CSSProperties}>
-			<StyledInput
-				type="number"
-				value={value}
-				placeholder={placeholder ? `${placeholder} ${suffix}` : suffix}
-				onChange={handleOnChange}
-				className={className}
-				defaultValue={defaultValue}
-				disabled={disabled}
-				id={id}
-				{...rest}
-			/>
-		</InputWrapper>
-	);
-};
+		return (
+			<InputWrapper style={style as React.CSSProperties}>
+				<StyledInput
+					type="number"
+					value={value}
+					placeholder={placeholder ? `${placeholder} ${suffix}` : suffix}
+					onChange={handleOnChange}
+					className={className}
+					defaultValue={defaultValue}
+					disabled={disabled}
+					id={id}
+					{...rest}
+				/>
+			</InputWrapper>
+		);
+	}
+);
 
 export const InputWrapper = styled.div`
 	position: relative;

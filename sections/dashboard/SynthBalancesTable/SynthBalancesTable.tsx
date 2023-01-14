@@ -1,7 +1,6 @@
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { SynthBalance } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
-import * as _ from 'lodash/fp';
 import { FC, ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps, Row } from 'react-table';
@@ -32,18 +31,13 @@ type Cell = {
 	priceChange: Wei | undefined;
 };
 
-const calculatePriceChange = (current: Wei | null | undefined, past: Price | undefined) => {
-	if (_.isNil(current) || _.isNil(past)) {
-		return undefined;
-	}
-
-	const priceChange = current.sub(past.price).div(current);
-
-	return priceChange;
+const calculatePriceChange = (current?: Wei | null, past?: Price) => {
+	if (!current || !past) return undefined;
+	return current.sub(past.price).div(current);
 };
 
-const conditionalRender = <T,>(prop: T, children: ReactElement): ReactElement =>
-	_.isNil(prop) ? <DefaultCell>{NO_VALUE}</DefaultCell> : children;
+const conditionalRender = <T,>(prop: T, children: ReactElement) =>
+	!prop ? <DefaultCell>{NO_VALUE}</DefaultCell> : children;
 
 type SynthBalancesTableProps = {
 	exchangeTokens: {
@@ -68,9 +62,9 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 			const { currencyKey, balance, usdBalance } = synthBalance;
 
 			const price = prices[currencyKey].onChain;
-			const pastPrice = pastRates.find((price: Price) => price.synth === currencyKey);
+			const pastPrice = pastRates.find((price) => price.synth === currencyKey);
+			const description = synthsMap?.[currencyKey]?.description ?? '';
 
-			const description = synthsMap != null ? synthsMap[currencyKey]?.description : '';
 			return {
 				synth: currencyKey,
 				description,
@@ -279,7 +273,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 									<div>
 										<div>{formatNumber(cellProps.row.original.balance ?? 0)}</div>
 										<Currency.Price
-											currencyKey={'sUSD'}
+											currencyKey="sUSD"
 											price={cellProps.row.original.usdBalance ?? 0}
 											sign="$"
 										/>
