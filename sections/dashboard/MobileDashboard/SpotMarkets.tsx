@@ -2,10 +2,10 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
+import { HeaderContainer } from 'components/mobile/dashboard';
+import { SectionHeader, SectionTitle } from 'components/mobile/futures';
 
 import SpotMarketsTable from '../SpotMarketsTable';
-import { HeaderContainer } from './common';
 
 const SpotMarkets: React.FC = () => {
 	const { t } = useTranslation();

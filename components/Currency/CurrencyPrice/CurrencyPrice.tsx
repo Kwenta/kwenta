@@ -4,10 +4,9 @@ import React, { FC, memo, useMemo } from 'react';
 import styled from 'styled-components';
 
 import ChangePercent from 'components/ChangePercent';
+import { ContainerRowMixin } from 'components/layout/grid';
 import { CurrencyKey } from 'constants/currency';
 import { formatCurrency, FormatCurrencyOptions } from 'utils/formatters/number';
-
-import { ContainerRowMixin } from '../common';
 
 type WeiSource = Wei | number | string | ethers.BigNumber;
 

@@ -4,6 +4,7 @@ import { CellProps } from 'react-table';
 import styled from 'styled-components';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import { StakingCard } from 'components/staking/card';
 import Table from 'components/Table';
 import { TableCellHead } from 'components/Table/Table';
 import type { EscrowData } from 'sdk/services/kwentaToken';
@@ -11,7 +12,6 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { vestEscrowedRewards } from 'state/staking/actions';
 import { truncateNumbers, zeroBN } from 'utils/formatters/number';
 
-import { StakingCard } from './common';
 import VestConfirmationModal from './VestConfirmationModal';
 
 const EscrowTable = () => {

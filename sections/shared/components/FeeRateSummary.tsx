@@ -3,13 +3,12 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import TimerIcon from 'assets/svg/app/timer.svg';
+import { SummaryItem, SummaryItemValue, SummaryItemLabel } from 'components/exchange/summary';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
 import { selectExchangeFeeRateWei, selectBaseFeeRateWei } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
 import { formatPercent } from 'utils/formatters/number';
-
-import { SummaryItem, SummaryItemValue, SummaryItemLabel } from './common';
 
 const FeeRateSummaryItem: FC = memo(() => {
 	const { t } = useTranslation();

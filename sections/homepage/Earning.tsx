@@ -5,6 +5,8 @@ import styled from 'styled-components';
 import StakeNEarnIcon from 'assets/svg/earn/stake-n-earn.svg';
 import TradeNEarnIcon from 'assets/svg/earn/trade-n-earn.svg';
 import VoteNGovernIcon from 'assets/svg/earn/vote-n-govern.svg';
+import { StackSection } from 'components/homepage/section';
+import { Copy, Title } from 'components/homepage/text';
 import {
 	FlexDivCentered,
 	FlexDivCol,
@@ -14,8 +16,6 @@ import {
 import { GridDiv } from 'components/layout/grid';
 import { SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media, { Media } from 'styles/media';
-
-import { Copy, StackSection, Title } from './common';
 
 const EARNINGS = [
 	{

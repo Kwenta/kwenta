@@ -1,6 +1,5 @@
 import styled, { css } from 'styled-components';
 
-import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
 import type { ThemeName } from 'styles/theme';
 
@@ -32,19 +31,3 @@ export const MenuButton = styled.div<{
 			}
 		`}
 `;
-
-export const SUB_MENUS = {
-	[ROUTES.Dashboard.Overview]: [
-		{ label: 'Overview', link: '/dashboard/overview' },
-		{ label: 'Markets', link: '/dashboard/markets' },
-		// { label: 'Governance', link: '/governance' },
-	],
-	[ROUTES.Home.Root]: [
-		{ label: 'Overview', link: EXTERNAL_LINKS.Docs.Governance },
-		{ label: 'KIPs', link: EXTERNAL_LINKS.Governance.Kips },
-	],
-};
-
-export const languageIcon = {
-	en: '🌐',
-};

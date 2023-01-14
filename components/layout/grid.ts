@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import media from 'styles/media';
 
@@ -26,4 +26,9 @@ export const SplitContainer = styled.div`
 	${media.greaterThan('mdUp')`
 		grid-template-columns: 1fr 1fr;
 	`}
+`;
+
+export const ContainerRowMixin = css`
+	display: inline-grid;
+	grid-gap: 1px;
 `;

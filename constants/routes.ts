@@ -1,6 +1,8 @@
 import { FuturesAccountType } from 'queries/futures/types';
 import { FuturesMarketAsset } from 'utils/futures';
 
+import { EXTERNAL_LINKS } from './links';
+
 const prettyURLsDisabled = !!process.env.NEXT_PUBLIC_DISABLE_PRETTY_URLS;
 
 const normalizeRoute = (baseURL: string, path: string, queryParam: string) =>
@@ -56,6 +58,18 @@ export const ROUTES = {
 	Earn: {
 		Home: '/earn',
 	},
+};
+
+export const SUB_MENUS = {
+	[ROUTES.Dashboard.Overview]: [
+		{ label: 'Overview', link: '/dashboard/overview' },
+		{ label: 'Markets', link: '/dashboard/markets' },
+		// { label: 'Governance', link: '/governance' },
+	],
+	[ROUTES.Home.Root]: [
+		{ label: 'Overview', link: EXTERNAL_LINKS.Docs.Governance },
+		{ label: 'KIPs', link: EXTERNAL_LINKS.Governance.Kips },
+	],
 };
 
 export const setLastVisited = (baseCurrencyPair: string, accountType: FuturesAccountType): void => {

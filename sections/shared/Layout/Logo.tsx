@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { FC } from 'react';
+import { FC, memo } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
@@ -8,7 +8,7 @@ import LogoSvg from 'assets/svg/brand/logo.svg';
 import ROUTES from 'constants/routes';
 import { currentThemeState } from 'store/ui';
 
-const SvgLogo = () => {
+const SvgLogo = memo(() => {
 	const currentTheme = useRecoilValue(currentThemeState);
 
 	if (window.location.pathname === ROUTES.Home.Root) {
@@ -20,9 +20,9 @@ const SvgLogo = () => {
 	}
 
 	return <LogoSvg />;
-};
+});
 
-const Logo: FC = () => {
+const Logo: FC = memo(() => {
 	return (
 		<Link href={ROUTES.Home.Root}>
 			<LogoContainer>
@@ -30,7 +30,7 @@ const Logo: FC = () => {
 			</LogoContainer>
 		</Link>
 	);
-};
+});
 
 const LogoContainer = styled.span`
 	display: flex;

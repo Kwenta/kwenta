@@ -3,6 +3,20 @@ import styled from 'styled-components';
 import { numericValueCSS } from 'styles/common';
 import media from 'styles/media';
 
+export const SummaryItems = styled.div`
+	display: grid;
+	grid-auto-flow: column;
+	flex-grow: 1;
+	padding-left: 32px;
+	justify-content: space-between;
+	${media.lessThan('md')`
+		grid-auto-flow: unset;
+		grid-template-columns: auto auto;
+		grid-template-rows: auto auto;
+		grid-gap: 20px;
+	`}
+`;
+
 export const SummaryItem = styled.div`
 	display: grid;
 	grid-gap: 4px;

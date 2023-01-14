@@ -9,6 +9,7 @@ import styled, { css } from 'styled-components';
 import Button from 'components/Button';
 import SearchInput from 'components/Input/SearchInput';
 import { FlexDivCentered } from 'components/layout/flex';
+import { RowsHeader, CenteredModal } from 'components/layout/modals';
 import Loader from 'components/Loader';
 import { CurrencyKey, CATEGORY_MAP, ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'constants/currency';
 import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
@@ -27,7 +28,6 @@ import { FetchStatus } from 'state/types';
 import media from 'styles/media';
 import { zeroBN } from 'utils/formatters/number';
 
-import { RowsHeader, CenteredModal } from '../common';
 import CurrencyRow from './CurrencyRow';
 
 const PAGE_LENGTH = 50;

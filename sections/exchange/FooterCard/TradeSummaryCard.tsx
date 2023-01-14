@@ -5,6 +5,8 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import Card, { CardBody } from 'components/Card';
+import { MessageContainer } from 'components/exchange/message';
+import { SummaryItems } from 'components/exchange/summary';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import ErrorTooltip from 'components/Tooltip/ErrorTooltip';
 import FeeCostSummaryItem from 'sections/shared/components/FeeCostSummary';
@@ -24,9 +26,6 @@ import {
 } from 'state/exchange/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { secondsToTime } from 'utils/formatters/date';
-
-import { MessageContainer } from './common';
-import { SummaryItems } from './common';
 
 const TradeSummaryCard: FC = memo(() => {
 	const dispatch = useAppDispatch();

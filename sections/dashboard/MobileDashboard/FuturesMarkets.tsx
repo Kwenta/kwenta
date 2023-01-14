@@ -2,13 +2,13 @@ import { wei } from '@synthetixio/wei';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
+import { HeaderContainer, MarketStatsContainer, MarketStat } from 'components/mobile/dashboard';
+import { SectionHeader, SectionTitle } from 'components/mobile/futures';
 import { selectMarketVolumes, selectOpenInterest } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { formatDollars, formatNumber } from 'utils/formatters/number';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
-import { HeaderContainer, MarketStatsContainer, MarketStat } from './common';
 
 const FuturesMarkets = () => {
 	const { t } = useTranslation();

@@ -84,11 +84,6 @@ export const FixedFooterMixin = `
 	border-radius: 0;
 `;
 
-export const Paragraph = styled.p`
-	margin: 0;
-	cursor: default;
-`;
-
 export const FullScreenContainer = styled(FlexDiv)`
 	flex-flow: column;
 	width: 100%;

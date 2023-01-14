@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import TabButton from 'components/Button/TabButton';
 import { FlexDivCol } from 'components/layout/flex';
 import Search from 'components/Table/Search';
+import { CompetitionRound, COMPETITION_TIERS, PIN, Tier } from 'constants/competition';
 import ROUTES from 'constants/routes';
 import useENS from 'hooks/useENS';
 import useENSs from 'hooks/useENSs';
@@ -15,7 +16,6 @@ import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner'
 import media from 'styles/media';
 
 import AllTime from './AllTime';
-import { CompetitionRound, COMPETITION_TIERS, PIN, Tier } from './common';
 import Competition from './Competition';
 import TraderHistory from './TraderHistory';
 

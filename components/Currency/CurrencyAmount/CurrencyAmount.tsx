@@ -3,9 +3,8 @@ import { ethers } from 'ethers';
 import { FC, memo } from 'react';
 import styled from 'styled-components';
 
+import { ContainerRowMixin } from 'components/layout/grid';
 import { formatCurrency, FormatCurrencyOptions } from 'utils/formatters/number';
-
-import { ContainerRowMixin } from '../common';
 
 type WeiSource = Wei | number | string | ethers.BigNumber;
 

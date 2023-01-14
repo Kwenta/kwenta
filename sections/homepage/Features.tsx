@@ -18,6 +18,7 @@ import LyraIcon from 'assets/svg/partners/lyra.svg';
 import OptimismIcon from 'assets/svg/partners/optimism.svg';
 import SynthetixIcon from 'assets/svg/partners/synthetix.svg';
 import ThalesIcon from 'assets/svg/partners/thales.svg';
+import { Copy, Title } from 'components/homepage/text';
 import {
 	FlexDivCentered,
 	FlexDivCol,
@@ -27,8 +28,6 @@ import {
 import { GridDivCentered } from 'components/layout/grid';
 import { SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media from 'styles/media';
-
-import { Copy, Title } from './common';
 
 const FEATURES = [
 	{

@@ -5,9 +5,10 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import { FlexDivColCentered } from 'components/layout/flex';
+import * as Text from 'components/Text';
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import ROUTES from 'constants/routes';
-import { Paragraph, SmallGoldenHeader, WhiteHeader } from 'styles/common';
+import { SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media from 'styles/media';
 
 const TradeNow = () => {
@@ -69,7 +70,7 @@ const Container = styled.div`
 	`};
 `;
 
-const GrayDescription = styled(Paragraph)`
+const GrayDescription = styled(Text.Body)`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	font-size: 24px;
 	line-height: 120%;

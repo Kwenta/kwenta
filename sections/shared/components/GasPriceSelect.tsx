@@ -4,14 +4,13 @@ import { FC, useMemo, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
+import { SummaryItem, SummaryItemValue, SummaryItemLabel } from 'components/exchange/summary';
 import { NO_VALUE } from 'constants/placeholder';
 import { parseGasPriceObject } from 'hooks/useGas';
 import useIsL1 from 'hooks/useIsL1';
 import useIsL2 from 'hooks/useIsL2';
 import { customGasPriceState, gasSpeedState } from 'store/wallet';
 import { formatNumber, formatDollars } from 'utils/formatters/number';
-
-import { SummaryItem, SummaryItemValue, SummaryItemLabel } from './common';
 
 type GasPriceSelectProps = {
 	gasPrices: GasPrices | undefined;

@@ -1,8 +1,7 @@
 import React from 'react';
 
+import { SectionHeader, SectionTitle } from 'components/mobile/futures';
 import OpenOrdersTable from 'sections/futures/UserInfo/OpenOrdersTable';
-
-import { SectionHeader, SectionTitle } from '../common';
 
 const OrdersTab: React.FC = () => {
 	return (

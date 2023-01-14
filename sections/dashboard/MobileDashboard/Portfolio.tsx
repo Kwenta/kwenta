@@ -2,7 +2,7 @@ import Wei from '@synthetixio/wei';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
+import { SectionHeader, SectionTitle } from 'components/mobile/futures';
 
 import PortfolioChart from '../PortfolioChart';
 

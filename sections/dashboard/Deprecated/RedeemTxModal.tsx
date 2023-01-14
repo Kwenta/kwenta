@@ -5,9 +5,9 @@ import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
+import { MessageButton } from 'components/exchange/message';
 import { FlexDivColCentered } from 'components/layout/flex';
 import { CurrencyKey } from 'constants/currency';
-import { MessageButton } from 'sections/exchange/FooterCard/common';
 import { closeModal } from 'state/exchange/reducer';
 import { selectTotalRedeemableBalanceWei } from 'state/exchange/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';

@@ -6,20 +6,6 @@ import { zIndex } from 'constants/ui';
 import { FixedFooterMixin } from 'styles/common';
 import media from 'styles/media';
 
-export const SummaryItems = styled.div`
-	display: grid;
-	grid-auto-flow: column;
-	flex-grow: 1;
-	padding-left: 32px;
-	justify-content: space-between;
-	${media.lessThan('md')`
-		grid-auto-flow: unset;
-		grid-template-columns: auto auto;
-		grid-template-rows: auto auto;
-		grid-gap: 20px;
-	`}
-`;
-
 export const MessageContainer = styled(GridDivCenteredRow)`
 	-webkit-box-align: center;
 	width: 100%;

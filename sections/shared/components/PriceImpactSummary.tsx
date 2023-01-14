@@ -2,10 +2,9 @@ import Wei from '@synthetixio/wei';
 import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { SummaryItem, SummaryItemValue, SummaryItemLabel } from 'components/exchange/summary';
 import { NO_VALUE } from 'constants/placeholder';
 import { formatPercent } from 'utils/formatters/number';
-
-import { SummaryItem, SummaryItemValue, SummaryItemLabel } from './common';
 
 type PriceImpactProps = {
 	slippagePercent: Wei;

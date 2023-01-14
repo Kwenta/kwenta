@@ -3,6 +3,11 @@ import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
+import {
+	MessageContainer,
+	Message,
+	FixedMessageContainerSpacer,
+} from 'components/exchange/message';
 import { MobileOrTabletView } from 'components/Media';
 import ErrorTooltip from 'components/Tooltip/ErrorTooltip';
 import { EXTERNAL_LINKS } from 'constants/links';
@@ -13,8 +18,6 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { NoTextTransform, ExternalLink } from 'styles/common';
 import { secondsToTime } from 'utils/formatters/date';
 import logError from 'utils/logError';
-
-import { MessageContainer, Message, FixedMessageContainerSpacer } from './common';
 
 const SettleTransactionsCard: FC = memo(() => {
 	const { t } = useTranslation();

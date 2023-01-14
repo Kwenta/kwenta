@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import TabButton from 'components/Button/TabButton';
 import { Heading } from 'components/earn/text';
 import { FlexDivRowCentered } from 'components/layout/flex';
+import { SplitStakingCard } from 'components/staking/card';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { useAppSelector } from 'state/hooks';
 import {
@@ -17,8 +18,6 @@ import {
 } from 'state/staking/selectors';
 import media from 'styles/media';
 import { truncateNumbers } from 'utils/formatters/number';
-
-import { SplitStakingCard } from './common';
 
 export enum StakeTab {
 	Staking = 'staking',

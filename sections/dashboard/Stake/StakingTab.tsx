@@ -4,13 +4,13 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import { SplitContainer } from 'components/layout/grid';
+import { StakingCard } from 'components/staking/card';
 import { LogoText } from 'components/Text';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { getReward } from 'state/staking/actions';
 import { selectAPY, selectClaimableBalance } from 'state/staking/selectors';
 import { formatPercent, truncateNumbers } from 'utils/formatters/number';
 
-import { StakingCard } from './common';
 import StakeInputCard from './InputCards/StakeInputCard';
 
 const StakingTab = () => {

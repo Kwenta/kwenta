@@ -7,6 +7,8 @@ import styled from 'styled-components';
 import GridSvg from 'assets/svg/app/grid.svg';
 import Button from 'components/Button';
 import Currency from 'components/Currency';
+import { StackSection } from 'components/homepage/section';
+import { Title } from 'components/homepage/text';
 import { FlexDivColCentered, FlexDivRow } from 'components/layout/flex';
 import Loader from 'components/Loader';
 import Table from 'components/Table';
@@ -17,8 +19,6 @@ import useGetStats from 'queries/futures/useGetStats';
 import { SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media, { Media } from 'styles/media';
 import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
-
-import { StackSection, Title } from './common';
 
 const ShortList = () => {
 	const { t } = useTranslation();

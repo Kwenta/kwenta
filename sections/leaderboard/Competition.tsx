@@ -5,23 +5,17 @@ import { CellProps } from 'react-table';
 import styled from 'styled-components';
 
 import Currency from 'components/Currency';
+import { StyledTrader } from 'components/leaderboard/trader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
+import { CompetitionRound, PIN, Tier } from 'constants/competition';
 import Connector from 'containers/Connector';
 import useENSs from 'hooks/useENSs';
 import useGetFile from 'queries/files/useGetFile';
 import { AccountStat } from 'queries/futures/types';
+import { getMedal, getCompetitionDataLocation } from 'utils/competition';
 import { formatPercent } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';
-
-import {
-	CompetitionRound,
-	getMedal,
-	PIN,
-	StyledTrader,
-	Tier,
-	getCompetitionDataLocation,
-} from './common';
 
 type CompetitionProps = {
 	round: CompetitionRound;
