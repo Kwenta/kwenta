@@ -477,7 +477,10 @@ export default class FuturesService {
 		amount: BigNumber = ethers.constants.MaxUint256
 	) {
 		if (!this.sdk.context.contracts.SUSD) throw new Error(UNSUPPORTED_NETWORK);
-		return this.sdk.context.contracts.SUSD.approve(crossMarginAddress, amount);
+		return this.sdk.transactions.createContractTxn(this.sdk.context.contracts.SUSD, 'approve', [
+			crossMarginAddress,
+			amount,
+		]);
 	}
 
 	public async depositCrossMargin(crossMarginAddress: string, amount: Wei) {
