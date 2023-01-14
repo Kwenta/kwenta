@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 
+import media from 'styles/media';
+
 export const GridDiv = styled.div`
 	display: grid;
 `;
@@ -14,4 +16,14 @@ export const GridDivCenteredRow = styled(GridDivCentered)`
 
 export const GridDivCenteredCol = styled(GridDivCentered)`
 	grid-auto-flow: column;
+`;
+
+export const SplitContainer = styled.div`
+	display: grid;
+	grid-gap: 15px;
+	margin-top: 10px;
+
+	${media.greaterThan('mdUp')`
+		grid-template-columns: 1fr 1fr;
+	`}
 `;
