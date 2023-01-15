@@ -24,7 +24,7 @@ const SocketBridge = () => {
 
 	const customize: SocketCustomizationProps = {
 		width: window.innerWidth > 768 ? DEFAULT_WIDTH : DEFAULT_MOBILE_WIDTH,
-		responsiveWidth: false,
+		responsiveWidth: true,
 		borderRadius: 1,
 		secondary: `rgb(${modalBg.r},${modalBg.g},${modalBg.b})`,
 		primary: `rgb(${background.r},${background.g},${background.b})`,
