@@ -1,12 +1,12 @@
 import { Bridge } from '@socket.tech/plugin';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import { chain } from 'wagmi';
 
 import ArrowIcon from 'assets/svg/app/arrow-down.svg';
 import Connector from 'containers/Connector';
 
 import { SocketCustomizationProps } from './types';
-import {
+import hexToRGB, {
 	DEFAULT_MOBILE_WIDTH,
 	DEFAULT_WIDTH,
 	SOCKET_DEST_TOKEN_ADDRESS,
@@ -15,24 +15,31 @@ import {
 
 const SocketBridge = () => {
 	const { signer } = Connector.useContainer();
+	const theme = useTheme();
+
+	const background = hexToRGB(theme.colors.selectedTheme.input.secondary.background);
+	const modalBg = hexToRGB(theme.colors.selectedTheme.input.secondary.background);
+	const text = hexToRGB(theme.colors.selectedTheme.text.header);
+	const primaryButtonBg = hexToRGB(theme.colors.selectedTheme.button.primary.background);
 
 	const customize: SocketCustomizationProps = {
 		width: window.innerWidth > 768 ? DEFAULT_WIDTH : DEFAULT_MOBILE_WIDTH,
 		responsiveWidth: false,
 		borderRadius: 1,
-		secondary: 'rgb(37,37,37)',
-		primary: 'rgb(30,30,30)',
-		accent: 'rgb(131,249,151)',
-		onAccent: 'rgb(0,0,0)',
-		interactive: 'rgb(37,37,37)',
-		onInteractive: 'rgb(236,232,227)',
-		text: 'rgb(236,232,227)',
-		secondaryText: 'rgb(236,232,227)',
+		secondary: `rgb(${modalBg.r},${modalBg.g},${modalBg.b})`,
+		primary: `rgb(${background.r},${background.g},${background.b})`,
+		accent: `rgb(${primaryButtonBg.r},${primaryButtonBg.g},${primaryButtonBg.b})`,
+		onAccent: `rgb(${text.r},${text.g},${text.b})`,
+		interactive: `rgb(${background.r},${background.g},${background.b})`,
+		onInteractive: `rgb(${text.r},${text.g},${text.b})`,
+		text: `rgb(${text.r},${text.g},${text.b})`,
+		outline: `rgb(${text.r},${text.g},${text.b})`,
+		secondaryText: `rgb(${text.r},${text.g},${text.b})`,
 		fontFamily: `AkkuratLLWeb-Regular`,
 	};
 
 	return signer?.provider ? (
-		<BridgeContainer style={{ marginBottom: '20px' }}>
+		<BridgeContainer style={{ marginBottom: '10px' }}>
 			<Bridge
 				provider={signer?.provider}
 				API_KEY={process.env.NEXT_PUBLIC_SOCKET_API_KEY ?? ''}
@@ -62,6 +69,10 @@ export const BridgeContainer = styled.div`
 	.mt-6 {
 		margin-top: 0.5rem;
 	}
+
+	.bg-widget-primary {
+		border: ${(props) => props.theme.colors.common.dark.border};
+	}
 `;
 
 export const StyledDiv = styled.div`
@@ -70,7 +81,7 @@ export const StyledDiv = styled.div`
 		width: 15px;
 	}
 	text-align: center;
-	padding-top: 20px;
+	padding-top: 10px;
 `;
 
 export default SocketBridge;

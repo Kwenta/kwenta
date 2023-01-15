@@ -132,12 +132,11 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 					onChange={onChangeTab}
 				/>
 			)}
-			<StyledCardHeader onClick={onChangeSocket}>
+			<StyledCardHeader onClick={onChangeSocket} noBorder={openSocket}>
 				<BalanceText>{t('futures.market.trade.margin.modal.bridge.title')}</BalanceText>
 				{openSocket ? <CaretUpIcon /> : <CaretDownIcon />}
 			</StyledCardHeader>
-			<Spacer height={10} />
-			{openSocket && <SocketBridge />}
+			{openSocket ? <SocketBridge /> : <Spacer height={20} />}
 			<BalanceContainer>
 				<BalanceText>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
 				<BalanceText>
@@ -181,6 +180,10 @@ export const StyledBaseModal = styled(BaseModal)`
 		width: 400px;
 		margin-top: 5vh;
 	}
+
+	.card-header {
+		padding: 10px 20px 0px;
+	}
 `;
 
 export const BalanceContainer = styled(FlexDivRowCentered)`
@@ -218,7 +221,7 @@ export const MaxButton = styled.button`
 
 const MinimumAmountDisclaimer = styled.div`
 	font-size: 12px;
-	margin: 20px 0;
+	margin: 10px 0;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	text-align: center;
 `;
@@ -226,7 +229,7 @@ const MinimumAmountDisclaimer = styled.div`
 const Disclaimer = styled.div`
 	font-size: 12px;
 	line-height: 120%;
-	margin: 15px 0 30px;
+	margin: 10px 0;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	text-align: left;
 `;
@@ -235,16 +238,17 @@ const StyledSegmentedControl = styled(SegmentedControl)`
 	margin-bottom: 16px;
 `;
 
-const StyledCardHeader = styled(Card.Header)`
+const StyledCardHeader = styled(Card.Header)<{ noBorder: boolean }>`
 	display: flex;
 	justify-content: space-between;
 	height: 30px;
 	font-size: 13px;
 	font-family: ${(props) => props.theme.fonts.regular};
+	border-bottom: ${(props) => (props.noBorder ? 'none' : props.theme.colors.common.dark.border)};
 	margin-left: 0px;
 	padding: 0px;
 	padding-right: 5px;
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 	cursor: pointer;
 `;
 
