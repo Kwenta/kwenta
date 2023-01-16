@@ -69,11 +69,20 @@ const DelayedOrderConfirmationModal: FC = () => {
 		);
 	}, [nativeSizeDelta, orderType, dispatch]);
 
-	const positionSize = position?.position?.size ?? zeroBN;
+	const positionSize = useMemo(() => {
+		const positionDetails = position?.position;
+		return positionDetails
+			? positionDetails.size.mul(positionDetails.side === PositionSide.LONG ? 1 : -1)
+			: zeroBN;
+	}, [position]);
 
 	const orderDetails = useMemo(() => {
 		return { nativeSizeDelta, size: (positionSize ?? zeroBN).add(nativeSizeDelta).abs() };
 	}, [nativeSizeDelta, positionSize]);
+
+	const isClosing = useMemo(() => {
+		return orderDetails.size.eq(zeroBN);
+	}, [orderDetails]);
 
 	// TODO: check this deposit
 	const totalDeposit = useMemo(() => {
@@ -172,7 +181,11 @@ const DelayedOrderConfirmationModal: FC = () => {
 				<StyledBaseModal
 					onDismiss={onDismiss}
 					isOpen
-					title={t('futures.market.trade.confirmation.modal.confirm-order')}
+					title={
+						isClosing
+							? t('futures.market.trade.confirmation.modal.close-order')
+							: t('futures.market.trade.confirmation.modal.confirm-order')
+					}
 				>
 					{dataRows.map((row, i) => (
 						<Row key={`datarow-${i}`}>
@@ -190,6 +203,8 @@ const DelayedOrderConfirmationModal: FC = () => {
 					<ConfirmTradeButton disabled={submitting} variant="flat" onClick={handleConfirmOrder}>
 						{submitting ? (
 							<ButtonLoader />
+						) : isClosing ? (
+							t('futures.market.trade.confirmation.modal.close-order')
 						) : (
 							t('futures.market.trade.confirmation.modal.confirm-order')
 						)}
@@ -211,6 +226,8 @@ const DelayedOrderConfirmationModal: FC = () => {
 						>
 							{submitting ? (
 								<ButtonLoader />
+							) : isClosing ? (
+								t('futures.market.trade.confirmation.modal.close-order')
 							) : (
 								t('futures.market.trade.confirmation.modal.confirm-order')
 							)}
