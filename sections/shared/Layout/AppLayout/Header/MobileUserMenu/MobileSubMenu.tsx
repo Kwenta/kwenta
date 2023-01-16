@@ -8,12 +8,12 @@ import styled, { css } from 'styled-components';
 import ChevronDown from 'assets/svg/app/chevron-down.svg';
 import ChevronUp from 'assets/svg/app/chevron-up.svg';
 import Badge from 'components/Badge';
-import { MenuButton } from 'components/mobile/menu';
 import ROUTES from 'constants/routes';
 import { currentThemeState } from 'store/ui';
 import { ThemeName } from 'styles/theme';
 
 import { SubMenuLink } from '../constants';
+import { MenuButton } from './menu';
 
 type MobileSubMenuOption = {
 	label: string;

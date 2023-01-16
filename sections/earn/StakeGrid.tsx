@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import Button from 'components/Button';
-import { GridContainer } from 'components/earn/grid';
+import { GridContainer } from 'sections/earn/grid';
 import useRewardsTimer from 'hooks/useRewardsTimer';
 import { claimRewards } from 'state/earn/actions';
 import { selectYieldPerDay } from 'state/earn/selectors';

@@ -5,7 +5,7 @@ import { CellProps } from 'react-table';
 import styled from 'styled-components';
 
 import Currency from 'components/Currency';
-import { StyledTrader } from 'components/leaderboard/trader';
+import { StyledTrader } from 'sections/leaderboard/trader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import { CompetitionRound, PIN, Tier } from 'constants/competition';

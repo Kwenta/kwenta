@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { SectionHeader, SectionTitle } from 'components/mobile/futures';
+import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
 import Table, { TableNoResults } from 'components/Table';
 import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
 import { timePresentation } from 'utils/formatters/date';

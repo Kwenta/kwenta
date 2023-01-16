@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Pane, SectionHeader, SectionTitle } from 'components/mobile/futures';
+import { Pane, SectionHeader, SectionTitle } from 'sections/futures/mobile';
 import MarketDetails from 'sections/futures/MarketDetails';
 
 const StatsTab: React.FC = () => {

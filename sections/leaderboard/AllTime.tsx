@@ -4,13 +4,13 @@ import { CellProps } from 'react-table';
 import styled from 'styled-components';
 
 import Currency from 'components/Currency';
-import { StyledTrader } from 'components/leaderboard/trader';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Table from 'components/Table';
 import { DEFAULT_LEADERBOARD_ROWS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import useENSAvatar from 'hooks/useENSAvatar';
 import { AccountStat } from 'queries/futures/types';
+import { StyledTrader } from 'sections/leaderboard/trader';
 import { getMedal } from 'utils/competition';
 
 type AllTimeProps = {

@@ -1,4 +1,4 @@
-import { Medal } from 'components/leaderboard/medal';
+import { Medal } from 'sections/leaderboard/medal';
 
 export type CompetitionRound = '1' | '2' | null;
 

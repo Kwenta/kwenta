@@ -2,13 +2,13 @@ import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import {
 	MessageButton,
 	MessageContainer,
 	Message,
 	FixedMessageContainerSpacer,
-} from 'components/exchange/message';
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+} from 'sections/exchange/message';
 
 type ConnectWalletCardProps = {
 	className?: string;

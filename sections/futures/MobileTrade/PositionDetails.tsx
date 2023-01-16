@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { SectionHeader, SectionSeparator, SectionTitle } from 'components/mobile/futures';
+import { SectionHeader, SectionSeparator, SectionTitle } from 'sections/futures/mobile';
 import { selectPosition } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 

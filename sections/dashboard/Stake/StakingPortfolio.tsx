@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
-import { Heading } from 'components/earn/text';
+import { Heading } from 'sections/earn/text';
 import { FlexDivRowCentered } from 'components/layout/flex';
-import { SplitStakingCard } from 'components/staking/card';
+import { SplitStakingCard } from 'sections/dashboard/Stake/card';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { useAppSelector } from 'state/hooks';
 import {

@@ -5,10 +5,10 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import Card, { CardBody } from 'components/Card';
-import { MessageContainer } from 'components/exchange/message';
-import { SummaryItems } from 'components/exchange/summary';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import ErrorTooltip from 'components/Tooltip/ErrorTooltip';
+import { MessageContainer } from 'sections/exchange/message';
+import { SummaryItems } from 'sections/exchange/summary';
 import FeeCostSummaryItem from 'sections/shared/components/FeeCostSummary';
 import FeeRateSummaryItem from 'sections/shared/components/FeeRateSummary';
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';

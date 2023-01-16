@@ -5,7 +5,7 @@ import styled, { ThemeProvider } from 'styled-components';
 import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg';
 import DiscordLogo from 'assets/svg/social/discord.svg';
 import MirrorLogo from 'assets/svg/social/mirror.svg';
-import { GridContainer } from 'components/homepage/section';
+import { GridContainer } from 'sections/homepage/section';
 import { FlexDivCentered } from 'components/layout/flex';
 import PoweredBySynthetix from 'components/PoweredBySynthetix';
 import { EXTERNAL_LINKS } from 'constants/links';

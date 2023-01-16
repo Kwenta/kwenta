@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import MarketOrderPreview from 'assets/png/marketing/market-order-preview.png';
 import Button from 'components/Button';
-import { StackSection } from 'components/homepage/section';
+import { StackSection } from 'sections/homepage/section';
 import { FlexDivColCentered } from 'components/layout/flex';
 import { GridDiv } from 'components/layout/grid';
 import PoweredBySynthetix from 'components/PoweredBySynthetix';

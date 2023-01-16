@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import CaretDownIcon from 'assets/svg/app/caret-down-gray.svg';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import NumericInput from 'components/Input/NumericInput';
-import { SectionHeader, SectionSubTitle, SectionTitle } from 'components/mobile/futures';
+import { SectionHeader, SectionSubTitle, SectionTitle } from 'sections/futures/mobile';
 import { NO_VALUE } from 'constants/placeholder';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';

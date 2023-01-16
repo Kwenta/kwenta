@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import TimerIcon from 'assets/svg/app/timer.svg';
-import { SummaryItem, SummaryItemValue, SummaryItemLabel } from 'components/exchange/summary';
+import { SummaryItem, SummaryItemValue, SummaryItemLabel } from 'sections/exchange/summary';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
 import { selectExchangeFeeRateWei, selectBaseFeeRateWei } from 'state/exchange/selectors';

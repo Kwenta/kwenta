@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Pane } from 'components/mobile/futures';
+import { Pane } from 'sections/futures/mobile';
 import TradesHistoryTable from 'sections/futures/TradingHistory/TradesHistoryTable';
 
 const TradesTab: React.FC = () => {

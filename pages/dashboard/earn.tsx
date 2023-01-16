@@ -3,7 +3,7 @@ import { FC, useEffect } from 'react';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
-import { Heading } from 'components/earn/text';
+import { Heading } from 'sections/earn/text';
 import * as Text from 'components/Text';
 import DashboardLayout from 'sections/dashboard/DashboardLayout';
 import StepOne from 'sections/earn/StepOne';

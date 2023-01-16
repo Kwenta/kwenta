@@ -7,13 +7,13 @@ import styled, { css } from 'styled-components';
 
 import MobileMenuArrow from 'assets/svg/app/mobile-menu-arrow.svg';
 import FullScreenModal from 'components/FullScreenModal';
-import { MenuButton } from 'components/mobile/menu';
 import ROUTES from 'constants/routes';
 import Links from 'sections/dashboard/Links';
 import Logo from 'sections/shared/Layout/Logo';
 import { currentThemeState } from 'store/ui';
 
 import { HOMEPAGE_MENU_LINKS, MOBILE_NAV_LINKS } from '../constants';
+import { MenuButton } from './menu';
 import MobileSubMenu from './MobileSubMenu';
 
 type MobileMenuModalProps = {

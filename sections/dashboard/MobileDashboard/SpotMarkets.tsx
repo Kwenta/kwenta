@@ -2,8 +2,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { HeaderContainer } from 'components/mobile/dashboard';
-import { SectionHeader, SectionTitle } from 'components/mobile/futures';
+import { HeaderContainer } from 'sections/dashboard/mobile';
+import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
 
 import SpotMarketsTable from '../SpotMarketsTable';
 

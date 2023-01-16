@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import { SplitContainer } from 'components/layout/grid';
-import { StakingCard } from 'components/staking/card';
+import { StakingCard } from 'sections/dashboard/Stake/card';
 import { LogoText } from 'components/Text';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { getReward } from 'state/staking/actions';

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Heading, Description } from 'components/earn/text';
+import { Heading, Description } from 'sections/earn/text';
 
 const StepOne = () => {
 	return (

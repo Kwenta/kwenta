@@ -5,7 +5,7 @@ import { CellProps } from 'react-table';
 import styled, { css } from 'styled-components';
 
 import { GridDivCenteredRow } from 'components/layout/grid';
-import { SectionHeader, SectionTitle } from 'components/mobile/futures';
+import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
 import Table, { TableNoResults } from 'components/Table';
 import { ETH_UNIT } from 'constants/network';
 import Connector from 'containers/Connector';

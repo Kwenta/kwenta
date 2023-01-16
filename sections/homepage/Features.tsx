@@ -18,7 +18,6 @@ import LyraIcon from 'assets/svg/partners/lyra.svg';
 import OptimismIcon from 'assets/svg/partners/optimism.svg';
 import SynthetixIcon from 'assets/svg/partners/synthetix.svg';
 import ThalesIcon from 'assets/svg/partners/thales.svg';
-import { Copy, Title } from 'components/homepage/text';
 import {
 	FlexDivCentered,
 	FlexDivCol,
@@ -26,6 +25,7 @@ import {
 	FlexDivRow,
 } from 'components/layout/flex';
 import { GridDivCentered } from 'components/layout/grid';
+import { Copy, Title } from 'sections/homepage/text';
 import { SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media from 'styles/media';
 

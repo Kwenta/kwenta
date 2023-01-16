@@ -1,14 +1,14 @@
 import { FC, useMemo, memo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import useMarketClosed from 'hooks/useMarketClosed';
 import {
 	MessageContainer,
 	Message,
 	MessageButton,
 	FixedMessageContainerSpacer,
-} from 'components/exchange/message';
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import useMarketClosed from 'hooks/useMarketClosed';
+} from 'sections/exchange/message';
 import { useAppSelector } from 'state/hooks';
 
 const MarketClosureCard: FC = memo(() => {

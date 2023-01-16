@@ -4,8 +4,8 @@ import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
-import { MessageButton } from 'components/exchange/message';
 import { FlexDivColCentered } from 'components/layout/flex';
+import { MessageButton } from 'sections/exchange/message';
 import { setOpenModal } from 'state/exchange/reducer';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { NoTextTransform } from 'styles/common';

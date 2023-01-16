@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import { FlexDivRowCentered } from 'components/layout/flex';
-import { StakingCard } from 'components/staking/card';
+import { StakingCard } from 'sections/dashboard/Stake/card';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { approveKwentaToken, redeemToken } from 'state/staking/actions';
 import {

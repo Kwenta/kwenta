@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import HelpIcon from 'assets/svg/app/question-mark.svg';
 import Button from 'components/Button';
 import { FlexDivRow } from 'components/layout/flex';
-import { StakingCard } from 'components/staking/card';
+import { StakingCard } from 'sections/dashboard/Stake/card';
 import { LogoText } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
 import Connector from 'containers/Connector';
