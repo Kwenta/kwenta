@@ -44,6 +44,7 @@ const NumericInput: FC<NumericInputProps> = memo(
 				defaultValue={defaultValue}
 				disabled={disabled}
 				id={id}
+				lang="en-US"
 			/>
 		);
 	}
