@@ -181,7 +181,11 @@ const DelayedOrderConfirmationModal: FC = () => {
 				<StyledBaseModal
 					onDismiss={onDismiss}
 					isOpen
-					title={t('futures.market.trade.confirmation.modal.confirm-order')}
+					title={
+						isClosing
+							? t('futures.market.trade.confirmation.modal.close-order')
+							: t('futures.market.trade.confirmation.modal.confirm-order')
+					}
 				>
 					{dataRows.map((row, i) => (
 						<Row key={`datarow-${i}`}>
