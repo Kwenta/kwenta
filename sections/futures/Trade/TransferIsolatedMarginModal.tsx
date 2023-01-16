@@ -14,7 +14,6 @@ import CustomInput from 'components/Input/CustomInput';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
-import Connector from 'containers/Connector';
 import { selectSusdBalance } from 'state/balances/selectors';
 import { depositIsolatedMargin, withdrawIsolatedMargin } from 'state/futures/actions';
 import {
@@ -23,6 +22,7 @@ import {
 	selectPosition,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { selectWallet } from 'state/wallet/selectors';
 import { FlexDivRowCentered } from 'styles/common';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 
@@ -30,6 +30,8 @@ type Props = {
 	onDismiss(): void;
 	defaultTab: 'deposit' | 'withdraw';
 };
+
+type BalanceStatus = 'low_balance' | 'no_balance' | 'high_balance';
 
 const SocketBridge = dynamic(() => import('../../../components/SocketBridge'), {
 	ssr: false,
@@ -39,7 +41,7 @@ const PLACEHOLDER = '$0.00';
 
 const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab }) => {
 	const { t } = useTranslation();
-	const { walletAddress } = Connector.useContainer();
+	const wallet = useAppSelector(selectWallet);
 	const dispatch = useAppDispatch();
 
 	const position = useAppSelector(selectPosition);
@@ -62,16 +64,27 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 		position?.accessibleMargin,
 	]);
 
-	const isLowBalance = useMemo(() => susdBalance.gt(zeroBN) && susdBalance.lt(minDeposit), [
-		susdBalance,
-		minDeposit,
-	]);
+	const balanceStatus: BalanceStatus = useMemo(
+		() =>
+			susdBalance.lte(zeroBN)
+				? 'no_balance'
+				: susdBalance.lt(minDeposit)
+				? 'low_balance'
+				: 'high_balance',
+		[minDeposit, susdBalance]
+	);
 
-	const isNoBalance = useMemo(() => susdBalance.eq(zeroBN), [susdBalance]);
-	useEffect(() => (isLowBalance || isNoBalance ? setOpenSocket(true) : setOpenSocket(false)), [
-		isLowBalance,
-		isNoBalance,
-	]);
+	useEffect(() => {
+		switch (balanceStatus) {
+			case 'no_balance':
+			case 'low_balance':
+				setOpenSocket(true);
+				break;
+			case 'high_balance':
+				setOpenSocket(false);
+		}
+	}, [balanceStatus]);
+
 	const isDisabled = useMemo(() => {
 		if (!amount || submitting) {
 			return true;
@@ -88,7 +101,7 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 		[amount, accessibleMargin]
 	);
 
-	const onChangeSocket = useCallback(() => setOpenSocket(!openSocket), [openSocket]);
+	const onChangeShowSocket = useCallback(() => setOpenSocket(!openSocket), [openSocket]);
 
 	const handleSetMax = useCallback(() => {
 		if (transferType === 0) {
@@ -121,9 +134,9 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 			isOpen
 			onDismiss={onDismiss}
 		>
-			{!walletAddress || isNoBalance ? (
+			{!wallet || balanceStatus === 'no_balance' ? (
 				<Disclaimer>{t('futures.market.trade.margin.modal.bridge.no-balance')}</Disclaimer>
-			) : isLowBalance ? (
+			) : balanceStatus === 'low_balance' ? (
 				<Disclaimer>{t('futures.market.trade.margin.modal.bridge.low-balance')}</Disclaimer>
 			) : (
 				<StyledSegmentedControl
@@ -132,7 +145,7 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 					onChange={onChangeTab}
 				/>
 			)}
-			<StyledCardHeader onClick={onChangeSocket} noBorder={openSocket}>
+			<StyledCardHeader onClick={onChangeShowSocket} noBorder={openSocket}>
 				<BalanceText>{t('futures.market.trade.margin.modal.bridge.title')}</BalanceText>
 				{openSocket ? <CaretUpIcon /> : <CaretDownIcon />}
 			</StyledCardHeader>
@@ -244,7 +257,7 @@ const StyledCardHeader = styled(Card.Header)<{ noBorder: boolean }>`
 	height: 30px;
 	font-size: 13px;
 	font-family: ${(props) => props.theme.fonts.regular};
-	border-bottom: ${(props) => (props.noBorder ? 'none' : props.theme.colors.common.dark.border)};
+	border-bottom: ${(props) => (props.noBorder ? 'none' : props.theme.colors.selectedTheme.border)};
 	margin-left: 0px;
 	padding: 0px;
 	padding-right: 5px;

@@ -71,7 +71,7 @@ export const BridgeContainer = styled.div`
 	}
 
 	.bg-widget-primary {
-		border: ${(props) => props.theme.colors.common.dark.border};
+		border: ${(props) => props.theme.colors.selectedTheme.border};
 	}
 `;
 
