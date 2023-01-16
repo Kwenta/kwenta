@@ -260,8 +260,6 @@ const StyledCardHeader = styled(Card.Header)<{ noBorder: boolean }>`
 	border-bottom: ${(props) => (props.noBorder ? 'none' : props.theme.colors.selectedTheme.border)};
 	margin-left: 0px;
 	padding: 0px;
-	padding-right: 5px;
-	margin-bottom: 10px;
 	cursor: pointer;
 `;
 

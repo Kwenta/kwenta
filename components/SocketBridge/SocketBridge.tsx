@@ -18,28 +18,28 @@ const SocketBridge = () => {
 	const theme = useTheme();
 
 	const background = hexToRGB(theme.colors.selectedTheme.input.secondary.background);
-	const modalBg = hexToRGB(theme.colors.selectedTheme.input.secondary.background);
-	const text = hexToRGB(theme.colors.selectedTheme.text.header);
+	const surface = hexToRGB(theme.colors.selectedTheme.background);
+	const text = hexToRGB(theme.colors.selectedTheme.button.text.primary);
 	const primaryButtonBg = hexToRGB(theme.colors.selectedTheme.button.primary.background);
 
 	const customize: SocketCustomizationProps = {
 		width: window.innerWidth > 768 ? DEFAULT_WIDTH : DEFAULT_MOBILE_WIDTH,
 		responsiveWidth: true,
 		borderRadius: 1,
-		secondary: `rgb(${modalBg.r},${modalBg.g},${modalBg.b})`,
-		primary: `rgb(${background.r},${background.g},${background.b})`,
-		accent: `rgb(${primaryButtonBg.r},${primaryButtonBg.g},${primaryButtonBg.b})`,
-		onAccent: `rgb(${text.r},${text.g},${text.b})`,
-		interactive: `rgb(${background.r},${background.g},${background.b})`,
-		onInteractive: `rgb(${text.r},${text.g},${text.b})`,
-		text: `rgb(${text.r},${text.g},${text.b})`,
+		secondary: `rgb(${surface.r},${surface.g},${surface.b})`, //socket surface
+		primary: `rgb(${background.r},${background.g},${background.b})`, //socket bg
+		accent: `rgb(${primaryButtonBg.r},${primaryButtonBg.g},${primaryButtonBg.b})`, //toggle-slippage accent
+		onAccent: `rgb(${text.r},${text.g},${text.b})`, //toggle thumb
+		interactive: `rgb(${surface.r},${surface.g},${surface.b})`, //asset toggle
+		onInteractive: `rgb(${text.r},${text.g},${text.b})`, //asset toggle text
+		text: `rgb(${text.r},${text.g},${text.b})`, //main text
 		outline: `rgb(${text.r},${text.g},${text.b})`,
-		secondaryText: `rgb(${text.r},${text.g},${text.b})`,
+		secondaryText: `rgb(${text.r},${text.g},${text.b})`, //secondary text
 		fontFamily: `AkkuratLLWeb-Regular`,
 	};
 
 	return signer?.provider ? (
-		<BridgeContainer style={{ marginBottom: '10px' }}>
+		<BridgeContainer>
 			<Bridge
 				provider={signer?.provider}
 				API_KEY={process.env.NEXT_PUBLIC_SOCKET_API_KEY ?? ''}
@@ -79,9 +79,12 @@ export const StyledDiv = styled.div`
 	svg {
 		height: 15px;
 		width: 15px;
+		path {
+			fill: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+		}
 	}
 	text-align: center;
-	padding-top: 10px;
+	padding-top: 20px;
 `;
 
 export default SocketBridge;
