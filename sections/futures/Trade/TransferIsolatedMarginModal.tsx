@@ -41,9 +41,9 @@ const PLACEHOLDER = '$0.00';
 
 const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab }) => {
 	const { t } = useTranslation();
-	const wallet = useAppSelector(selectWallet);
 	const dispatch = useAppDispatch();
 
+	const wallet = useAppSelector(selectWallet);
 	const position = useAppSelector(selectPosition);
 	const submitting = useAppSelector(selectIsSubmittingIsolatedTransfer);
 	const txError = useAppSelector(selectIsolatedTransferError);

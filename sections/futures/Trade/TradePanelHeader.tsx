@@ -11,11 +11,14 @@ import { EXTERNAL_LINKS } from 'constants/links';
 import Connector from 'containers/Connector';
 import { FuturesAccountType } from 'queries/futures/subgraph';
 import { setOpenModal } from 'state/app/reducer';
+import { selectOpenModal } from 'state/app/selectors';
 import { selectPosition, selectPositionStatus } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { BorderedPanel, YellowIconButton } from 'styles/common';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
+
+import TransferIsolatedMarginModal from './TransferIsolatedMarginModal';
 
 type Props = {
 	accountType: FuturesAccountType;
@@ -31,7 +34,7 @@ export default function TradePanelHeader({ accountType, onManageBalance }: Props
 	const position = useAppSelector(selectPosition);
 	const positionStatus = useAppSelector(selectPositionStatus);
 	const balance = position ? position.remainingMargin : null;
-
+	const openModal = useAppSelector(selectOpenModal);
 	if (!isWalletConnected) {
 		return (
 			<DepositButton variant="yellow" onClick={openConnectModal}>
@@ -82,6 +85,12 @@ export default function TradePanelHeader({ accountType, onManageBalance }: Props
 					<SwitchAssetArrows />
 				</BalanceButton>
 			</BalanceRow>
+			{openModal === 'futures_isolated_transfer' && (
+				<TransferIsolatedMarginModal
+					defaultTab="deposit"
+					onDismiss={() => dispatch(setOpenModal(null))}
+				/>
+			)}
 		</Container>
 	);
 }

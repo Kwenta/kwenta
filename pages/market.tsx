@@ -29,6 +29,8 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { futuresAccountState, showCrossMarginOnboardState } from 'store/futures';
 import { PageContent, FullHeightContainer, RightSideContent } from 'styles/common';
 import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
+import TradePanelHeader from 'sections/futures/Trade/TradePanelHeader';
+import { setOpenModal } from 'state/app/reducer';
 
 type MarketComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
@@ -60,6 +62,10 @@ const Market: MarketComponent = () => {
 						<LeftSidebar />
 						<MarketInfo />
 						<StyledRightSideContent>
+							<TradePanelHeader
+								onManageBalance={() => dispatch(setOpenModal('futures_isolated_transfer'))}
+								accountType={'isolated_margin'}
+							/>
 							<TradePanelDesktop walletAddress={walletAddress} account={account} />
 						</StyledRightSideContent>
 					</StyledFullHeightContainer>

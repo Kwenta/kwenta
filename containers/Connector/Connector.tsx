@@ -38,8 +38,8 @@ const useConnector = () => {
 	const staticMainnetProvider = new ethers.providers.InfuraProvider();
 
 	const defaultSynthetixjs = useMemo(
-		() => synthetix({ provider, networkId: network.id as NetworkId }),
-		[provider, network.id]
+		() => synthetix({ provider, networkId: chain.optimism.id as NetworkId }),
+		[provider]
 	);
 
 	const l2Synthetixjs = useMemo(

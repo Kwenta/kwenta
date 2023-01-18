@@ -1,9 +1,12 @@
 import { Bridge } from '@socket.tech/plugin';
+import { useCallback } from 'react';
 import styled, { useTheme } from 'styled-components';
 import { chain } from 'wagmi';
 
 import ArrowIcon from 'assets/svg/app/arrow-down.svg';
 import Connector from 'containers/Connector';
+import { fetchBalances } from 'state/balances/actions';
+import { useAppDispatch } from 'state/hooks';
 
 import { SocketCustomizationProps } from './types';
 import hexToRGB, {
@@ -15,7 +18,11 @@ import hexToRGB, {
 
 const SocketBridge = () => {
 	const { signer } = Connector.useContainer();
+	const dispatch = useAppDispatch();
 	const theme = useTheme();
+	const onBridgeSuccess = useCallback(() => {
+		dispatch(fetchBalances());
+	}, [dispatch]);
 
 	const background = hexToRGB(theme.colors.selectedTheme.input.secondary.background);
 	const surface = hexToRGB(theme.colors.selectedTheme.background);
@@ -48,7 +55,8 @@ const SocketBridge = () => {
 				defaultSourceNetwork={chain.mainnet.id}
 				defaultDestNetwork={chain.optimism.id}
 				customize={customize}
-				enableSameChainSwaps={false}
+				enableSameChainSwaps={true}
+				onBridgeSuccess={onBridgeSuccess}
 			/>
 			<StyledDiv>
 				<ArrowIcon />
@@ -58,10 +66,6 @@ const SocketBridge = () => {
 };
 
 export const BridgeContainer = styled.div`
-	p {
-		display: none;
-	}
-
 	.mt-3 {
 		margin-top: 0.25rem;
 	}
