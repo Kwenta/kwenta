@@ -6,14 +6,16 @@ import * as Text from 'components/Text';
 import { zIndex } from 'constants/ui';
 import media from 'styles/media';
 
-export const linkCSS = css`
-	text-decoration: none;
+export const linkCSS = css<{ underline?: boolean; hoverUnderline?: boolean }>`
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+	text-decoration: ${(props) => (props.underline ? 'underline' : 'none')};
+
 	&:hover {
-		text-decoration: none;
+		text-decoration: ${(props) => (props.hoverUnderline ? 'underline' : 'none')};
 	}
 `;
 
-export const ExternalLink = styled.a.attrs({
+export const ExternalLink = styled.a.attrs<{ underline?: boolean; hoverUnderline?: boolean }>({
 	target: '_blank',
 	rel: 'noopener noreferrer',
 })`

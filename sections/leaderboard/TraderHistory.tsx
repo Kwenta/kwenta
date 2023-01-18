@@ -14,6 +14,7 @@ import ROUTES from 'constants/routes';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import useGetFuturesPositionHistoryForAccount from 'queries/futures/useGetFuturesPositionHistoryForAccount';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
+import { ExternalLink } from 'styles/common';
 import { getMarketName } from 'utils/futures';
 
 type TraderHistoryProps = {
@@ -87,13 +88,12 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 											{t('leaderboard.trader-history.table.back')}
 										</TitleText>
 										<TitleSeparator>&gt;</TitleSeparator>
-										<TraderText
+										<ExternalLink
 											href={`https://optimistic.etherscan.io/address/${trader}`}
-											target="_blank"
-											rel="noreferrer noopener"
+											hoverUnderline
 										>
 											{traderENSName ?? trader}
-										</TraderText>
+										</ExternalLink>
 									</TableTitle>
 								),
 								accessor: 'title',
@@ -224,13 +224,12 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 											{t('leaderboard.leaderboard.table.title')}
 										</TitleText>
 										<TitleSeparator>&gt;</TitleSeparator>
-										<TraderText
+										<ExternalLink
 											href={`https://optimistic.etherscan.io/address/${trader}`}
-											target="_blank"
-											rel="noreferrer noopener"
+											hoverUnderline
 										>
 											{traderENSName ?? trader}
-										</TraderText>
+										</ExternalLink>
 									</TableTitle>
 								),
 								accessor: 'title',
@@ -299,7 +298,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 	}
 );
 
-const StyledTable = styled(Table)<{ compact: boolean | undefined }>`
+const StyledTable = styled(Table)<{ compact?: boolean }>`
 	margin-top: ${({ compact }) => (compact ? '0' : '15px')};
 `;
 
@@ -315,7 +314,6 @@ const TitleText = styled.a`
 
 	&:hover {
 		text-decoration: underline;
-		cursor: pointer;
 	}
 `;
 
@@ -329,15 +327,6 @@ const TitleSeparator = styled.div`
 	margin-right: 10px;
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
-
-const TraderText = styled.a`
-	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-
-	&:hover {
-		text-decoration: underline;
-	}
 `;
 
 const StyledCurrencyIcon = styled(CurrencyIcon)`

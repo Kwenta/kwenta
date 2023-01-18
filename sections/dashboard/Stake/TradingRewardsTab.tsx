@@ -9,7 +9,7 @@ import HelpIcon from 'assets/svg/app/question-mark.svg';
 import Button from 'components/Button';
 import { FlexDivRow } from 'components/layout/flex';
 import { SplitContainer } from 'components/layout/grid';
-import { LogoText } from 'components/Text';
+import { Body, LogoText } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
 import Connector from 'containers/Connector';
 import useGetFile from 'queries/files/useGetFile';
@@ -85,20 +85,18 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 				<CardGridContainer>
 					<CardGrid>
 						<div>
-							<div className="title">
-								{t('dashboard.stake.tabs.trading-rewards.claimable-rewards-all')}
-							</div>
+							<Title>{t('dashboard.stake.tabs.trading-rewards.claimable-rewards-all')}</Title>
 							<LogoText yellow>{truncateNumbers(totalRewards, 4)}</LogoText>
 						</div>
 						<div>
 							<div className="title">
 								{t('dashboard.stake.tabs.trading-rewards.trading-activity-reset')}
 							</div>
-							<div className="value">
+							<Value>
 								{resetTime > new Date().getTime() / 1000
 									? formatTruncatedDuration(resetTime - new Date().getTime() / 1000)
 									: t('dashboard.stake.tabs.trading-rewards.pending-for-rewards')}
-							</div>
+							</Value>
 						</div>
 					</CardGrid>
 					<FlexDivRow>
@@ -121,41 +119,39 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 							height="auto"
 							content={t('dashboard.stake.tabs.trading-rewards.trading-rewards-tooltip')}
 						>
-							<div>
-								<WithCursor cursor="help">
-									<div className="title">
-										{t('dashboard.stake.tabs.trading-rewards.future-fee-paid', {
-											EpochPeriod: period,
-										})}
-									</div>
-									<div className="value">
-										{formatDollars(futuresFeePaid, { minDecimals: 2 })}
-										<HelpIcon />
-									</div>
-								</WithCursor>
-							</div>
+							<WithCursor cursor="help">
+								<Title>
+									{t('dashboard.stake.tabs.trading-rewards.future-fee-paid', {
+										EpochPeriod: period,
+									})}
+								</Title>
+								<Value>
+									{formatDollars(futuresFeePaid, { minDecimals: 2 })}
+									<HelpIcon />
+								</Value>
+							</WithCursor>
 						</CustomStyledTooltip>
 						<div>
-							<div className="title">
+							<Title>
 								{t('dashboard.stake.tabs.trading-rewards.fees-paid', { EpochPeriod: period })}
-							</div>
-							<div className="value">{formatDollars(totalFuturesFeePaid, { minDecimals: 2 })}</div>
+							</Title>
+							<Value>{formatDollars(totalFuturesFeePaid, { minDecimals: 2 })}</Value>
 						</div>
 						{showEstimatedValue ? (
 							<>
 								<div>
-									<div className="title">
+									<Title className="title">
 										{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}
-									</div>
+									</Title>
 									<LogoText yellow>{truncateNumbers(wei(estimatedReward), 4)}</LogoText>
 								</div>
 								<div>
-									<div className="title">
+									<Title>
 										{t('dashboard.stake.tabs.trading-rewards.estimated-reward-share', {
 											EpochPeriod: period,
 										})}
-									</div>
-									<div className="value">{formatPercent(ratio, { minDecimals: 2 })}</div>
+									</Title>
+									<Value>{formatPercent(ratio, { minDecimals: 2 })}</Value>
 								</div>
 							</>
 						) : null}
@@ -198,6 +194,14 @@ const CardGridContainer = styled(StakingCard)`
 	justify-content: space-between;
 `;
 
+const Value = styled(Body)`
+	margin-top: 5px;
+`;
+
+const Title = styled(Body)`
+	color: ${(props) => props.theme.colors.selectedTheme.title};
+`;
+
 const CardGrid = styled.div`
 	display: grid;
 	grid-auto-flow: column;
@@ -213,10 +217,6 @@ const CardGrid = styled.div`
 
 	svg {
 		margin-left: 8px;
-	}
-
-	.title {
-		color: ${(props) => props.theme.colors.selectedTheme.title};
 	}
 
 	${media.lessThan('md')`
