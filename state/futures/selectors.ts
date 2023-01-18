@@ -4,9 +4,8 @@ import { wei } from '@synthetixio/wei';
 import { DEFAULT_LEVERAGE } from 'constants/defaults';
 import { DEFAULT_MAX_LEVERAGE } from 'constants/futures';
 import { TransactionStatus } from 'sdk/types/common';
-import { FuturesPosition } from 'sdk/types/futures';
+import { FuturesPosition, PositionSide } from 'sdk/types/futures';
 import { unserializePotentialTrade } from 'sdk/utils/futures';
-import { PositionSide } from 'sections/futures/types';
 import { selectExchangeRates } from 'state/exchange/selectors';
 import { accountType, deserializeWeiObject } from 'state/helpers';
 import { RootState } from 'state/store';
@@ -316,7 +315,7 @@ export const selectOrderType = createSelector(
 	(futures) => futures[accountType(futures.selectedType)].orderType
 );
 
-export const selectOrerFeeCap = (state: RootState) =>
+export const selectOrderFeeCap = (state: RootState) =>
 	wei(state.futures.crossMargin.orderFeeCap || '0');
 
 export const selectLeverageSide = createSelector(
@@ -591,6 +590,14 @@ export const selectPositionHistory = createSelector(
 			return unserializePositionHistory(futures.isolatedMargin.positionHistory[account] ?? []);
 		}
 		return [];
+	}
+);
+
+export const selectSelectedMarketPositionHistory = createSelector(
+	selectMarketAsset,
+	selectPositionHistory,
+	(marketAsset, positionHistory) => {
+		return positionHistory.find(({ asset, isOpen }) => isOpen && asset === marketAsset);
 	}
 );
 

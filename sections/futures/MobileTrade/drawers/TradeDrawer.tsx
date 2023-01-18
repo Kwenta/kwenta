@@ -2,7 +2,7 @@ import { wei } from '@synthetixio/wei';
 import React from 'react';
 import styled, { css } from 'styled-components';
 
-import { PositionSide } from 'queries/futures/types';
+import { PositionSide } from 'sdk/types/futures';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
 

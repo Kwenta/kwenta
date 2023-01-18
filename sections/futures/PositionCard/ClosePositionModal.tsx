@@ -9,14 +9,12 @@ import Error from 'components/Error';
 import { ButtonLoader } from 'components/Loader/Loader';
 import Connector from 'containers/Connector';
 import { getFuturesMarketContract } from 'queries/futures/utils';
-import { FuturesFilledPosition } from 'sdk/types/futures';
+import { FuturesFilledPosition, PositionSide } from 'sdk/types/futures';
 import { selectIsClosingPosition, selectMarketAsset } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FlexDivCentered, FlexDivCol } from 'styles/common';
 import { formatCurrency, formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
-
-import { PositionSide } from '../types';
 
 type ClosePositionModalProps = {
 	positionDetails: FuturesFilledPosition | null | undefined;

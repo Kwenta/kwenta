@@ -13,10 +13,11 @@ import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesTrade } from 'queries/futures/types';
+import { PositionSide } from 'sdk/types/futures';
 import { ExternalLink, GridDivCenteredRow } from 'styles/common';
 import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
 
-import { PositionSide, TradeStatus } from '../types';
+import { TradeStatus } from '../types';
 import TimeDisplay from './TimeDisplay';
 
 type TradesProps = {

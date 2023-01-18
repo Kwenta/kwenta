@@ -224,11 +224,9 @@ function MarginInfoBox({ editingLeverage }: Props) {
 				disabled={marketInfo?.isSuspended}
 			/>
 
-			{openModal === 'futures_edit_input_leverage' && (
-				<EditLeverageModal editMode="new_position" onDismiss={() => setOpenModal(null)} />
-			)}
+			{openModal === 'futures_edit_input_leverage' && <EditLeverageModal editMode="new_position" />}
 			{openModal === 'futures_withdraw_keeper_balance' && (
-				<ManageKeeperBalanceModal defaultType="withdraw" onDismiss={() => setOpenModal(null)} />
+				<ManageKeeperBalanceModal defaultType="withdraw" />
 			)}
 		</>
 	);

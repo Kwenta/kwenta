@@ -11,8 +11,7 @@ import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { PositionSide } from 'queries/futures/types';
-import { FuturesOrder } from 'sdk/types/futures';
+import { FuturesOrder, PositionSide } from 'sdk/types/futures';
 import { cancelCrossMarginOrder } from 'state/futures/actions';
 import {
 	selectCancellingOrder,

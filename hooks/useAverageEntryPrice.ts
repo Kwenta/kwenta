@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { PositionSide } from 'queries/futures/types';
+import { PositionSide } from 'sdk/types/futures';
 import { selectTradePreview } from 'state/futures/selectors';
 import { PositionHistory } from 'state/futures/types';
 import { useAppSelector } from 'state/hooks';

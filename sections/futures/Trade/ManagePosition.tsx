@@ -8,7 +8,7 @@ import Loader from 'components/Loader';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { previewErrorI18n } from 'queries/futures/constants';
 import { setOpenModal } from 'state/app/reducer';
-import { selectOpenModal, selectTransaction } from 'state/app/selectors';
+import { selectOpenModal } from 'state/app/selectors';
 import {
 	selectMarketInfo,
 	selectIsMarketCapReached,
@@ -56,7 +56,6 @@ const ManagePosition: React.FC = () => {
 	const orderType = useAppSelector(selectOrderType);
 	const leverageSide = useAppSelector(selectLeverageSide);
 
-	const futuresTransaction = useAppSelector(selectTransaction);
 	const isMarketCapReached = useAppSelector(selectIsMarketCapReached);
 	const placeOrderTranslationKey = useAppSelector(selectPlaceOrderTranslationKey);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
@@ -73,16 +72,9 @@ const ManagePosition: React.FC = () => {
 
 	const orderError = useMemo(() => {
 		if (previewError) return t(previewErrorI18n(previewError));
-		if (futuresTransaction?.error) return futuresTransaction.error;
 		if (previewTrade?.showStatus) return previewTrade?.statusMessage;
 		return null;
-	}, [
-		previewTrade?.showStatus,
-		previewTrade?.statusMessage,
-		futuresTransaction?.error,
-		previewError,
-		t,
-	]);
+	}, [previewTrade?.showStatus, previewTrade?.statusMessage, previewError, t]);
 
 	const leverageValid = useMemo(() => {
 		if (selectedAccountType === 'cross_margin') return true;
@@ -169,9 +161,7 @@ const ManagePosition: React.FC = () => {
 				</ManagePositionContainer>
 			</div>
 
-			{orderError && (
-				<Error message={orderError} formatter={futuresTransaction?.error ? 'revert' : undefined} />
-			)}
+			{orderError && <Error message={orderError} />}
 
 			{isCancelModalOpen &&
 				(selectedAccountType === 'cross_margin' ? (

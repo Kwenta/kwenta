@@ -3,8 +3,12 @@ import { NetworkId } from '@synthetixio/contracts-interface';
 
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import { ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
-import { FuturesMarket, FuturesMarketKey, FuturesPotentialTradeDetails } from 'sdk/types/futures';
-import { PositionSide } from 'sections/futures/types';
+import {
+	FuturesMarket,
+	FuturesMarketKey,
+	FuturesPotentialTradeDetails,
+	PositionSide,
+} from 'sdk/types/futures';
 import { accountType } from 'state/helpers';
 import { FetchStatus } from 'state/types';
 import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
@@ -559,8 +563,10 @@ const futuresSlice = createSlice({
 		builder.addCase(fetchPositionHistoryForTrader.fulfilled, (futuresState, { payload }) => {
 			futuresState.queryStatuses.selectedTraderPositionHistory = SUCCESS_STATUS;
 			if (!payload) return;
-			futuresState.leaderboard.selectedTraderPositionHistory[payload.networkId][payload.address] =
-				payload.history;
+			futuresState.leaderboard.selectedTraderPositionHistory[payload.networkId] = {
+				...futuresState.leaderboard.selectedTraderPositionHistory[payload.networkId],
+				[payload.address]: payload.history,
+			};
 		});
 		builder.addCase(fetchPositionHistoryForTrader.rejected, (futuresState) => {
 			futuresState.queryStatuses.selectedTraderPositionHistory = {

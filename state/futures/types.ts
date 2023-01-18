@@ -10,8 +10,8 @@ import {
 	FuturesPotentialTradeDetails,
 	FuturesVolumes,
 	IsolatedMarginOrderType,
+	PositionSide,
 } from 'sdk/types/futures';
-import { PositionSide } from 'sections/futures/types';
 import { QueryStatus } from 'state/types';
 import { FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
 

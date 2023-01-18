@@ -1,5 +1,5 @@
 import Wei from '@synthetixio/wei';
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
@@ -12,14 +12,14 @@ import { useFuturesContext } from 'contexts/FuturesContext';
 import useAverageEntryPrice from 'hooks/useAverageEntryPrice';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { PositionSide } from 'queries/futures/types';
+import { PositionSide } from 'sdk/types/futures';
 import {
 	selectMarketAsset,
 	selectMarketKey,
 	selectPosition,
 	selectTradePreview,
 	selectFuturesType,
-	selectPositionHistory,
+	selectSelectedMarketPositionHistory,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FlexDivCentered, FlexDivCol, PillButtonDiv } from 'styles/common';
@@ -74,8 +74,8 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 	const position = useAppSelector(selectPosition);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const marketKey = useAppSelector(selectMarketKey);
-	const positionHistory = useAppSelector(selectPositionHistory);
 	const previewTradeData = useAppSelector(selectTradePreview);
+	const thisPositionHistory = useAppSelector(selectSelectedMarketPositionHistory);
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketKey);
 
 	const positionDetails = position?.position ?? null;
@@ -86,10 +86,6 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 		isFiatCurrency(selectedPriceCurrency.name) && isDecimalFour(marketKey)
 			? DEFAULT_CRYPTO_DECIMALS
 			: undefined;
-
-	const thisPositionHistory = useMemo(() => {
-		return positionHistory.find(({ asset, isOpen }) => isOpen && asset === marketAsset);
-	}, [positionHistory, marketAsset]);
 
 	const modifiedAverage = useAverageEntryPrice(thisPositionHistory);
 
@@ -270,12 +266,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 
 	return (
 		<>
-			{showEditLeverage && (
-				<EditLeverageModal
-					editMode="existing_position"
-					onDismiss={() => setShowEditLeverage(false)}
-				/>
-			)}
+			{showEditLeverage && <EditLeverageModal editMode="existing_position" />}
 
 			<Container id={isFuturesMarketClosed ? 'closed' : undefined}>
 				<DataCol>

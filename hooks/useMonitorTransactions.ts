@@ -2,8 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { monitorTransaction } from 'contexts/RelayerContext';
-import { TransactionStatus } from 'sdk/types/common';
-import { handleTransactionError, updateTransactionStatus } from 'state/app/reducer';
+import { handleTransactionError } from 'state/app/reducer';
 import { selectTransaction } from 'state/app/selectors';
 import { useAppSelector } from 'state/hooks';
 
@@ -17,9 +16,6 @@ export default function useMonitorTransactions() {
 				txHash: transaction.hash,
 				onTxFailed: (err) => {
 					dispatch(handleTransactionError(err.failureReason ?? 'transaction_failed'));
-				},
-				onTxConfirmed: () => {
-					dispatch(updateTransactionStatus(TransactionStatus.Confirmed));
 				},
 			});
 		}

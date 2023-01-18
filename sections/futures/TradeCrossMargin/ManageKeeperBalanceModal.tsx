@@ -10,6 +10,7 @@ import Loader from 'components/Loader';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
 import Connector from 'containers/Connector';
+import { setOpenModal } from 'state/app/reducer';
 import { withdrawAccountKeeperBalance } from 'state/futures/actions';
 import {
 	selectCrossMarginBalanceInfo,
@@ -31,13 +32,12 @@ import {
 type TransferType = 'deposit' | 'withdraw';
 
 type Props = {
-	onDismiss(): void;
 	defaultType: TransferType;
 };
 
 const DEPOSIT_ENABLED = false;
 
-export default function ManageKeeperBalanceModal({ onDismiss, defaultType }: Props) {
+export default function ManageKeeperBalanceModal({ defaultType }: Props) {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const { provider, walletAddress } = Connector.useContainer();
@@ -100,7 +100,7 @@ export default function ManageKeeperBalanceModal({ onDismiss, defaultType }: Pro
 		<StyledBaseModal
 			title={t('futures.market.trade.orders.manage-keeper-deposit.title')}
 			isOpen
-			onDismiss={onDismiss}
+			onDismiss={() => dispatch(setOpenModal(null))}
 		>
 			<Spacer height={16} />
 			{DEPOSIT_ENABLED && (

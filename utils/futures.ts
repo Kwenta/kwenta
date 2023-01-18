@@ -4,8 +4,13 @@ import { TFunction } from 'i18next';
 import { Dictionary } from 'lodash';
 
 import { FuturesOrderType } from 'queries/futures/types';
-import { FuturesMarket, FuturesOrder, FuturesPosition, FuturesVolumes } from 'sdk/types/futures';
-import { PositionSide } from 'sections/futures/types';
+import {
+	FuturesMarket,
+	FuturesOrder,
+	FuturesPosition,
+	FuturesVolumes,
+	PositionSide,
+} from 'sdk/types/futures';
 import {
 	CrossMarginBalanceInfo,
 	CrossMarginSettings,

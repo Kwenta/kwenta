@@ -2,10 +2,9 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';
+import { PositionSide } from 'sdk/types/futures';
 import { selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-
-import { PositionSide } from '../types';
 
 interface PositionButtonsProps {
 	selected: PositionSide;

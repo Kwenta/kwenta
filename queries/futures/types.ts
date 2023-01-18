@@ -2,7 +2,11 @@ import { Balances } from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 
-import { FuturesOrderTypeDisplay, FuturesPotentialTradeDetails } from 'sdk/types/futures';
+import {
+	FuturesOrderTypeDisplay,
+	FuturesPotentialTradeDetails,
+	PositionSide,
+} from 'sdk/types/futures';
 import { FuturesMarketAsset } from 'utils/futures';
 
 export type FuturesOpenInterest = {
@@ -24,11 +28,6 @@ export type MarginTransfer = {
 	market?: string;
 	asset?: FuturesMarketAsset;
 };
-
-export enum PositionSide {
-	LONG = 'long',
-	SHORT = 'short',
-}
 
 export type Participant = {
 	username: string;

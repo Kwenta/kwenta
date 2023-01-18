@@ -14,7 +14,7 @@ import {
 	selectMarketAssetRate,
 	selectMarketInfo,
 	selectLeverageSide,
-	selectOrerFeeCap,
+	selectOrderFeeCap,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { weiToString, zeroBN } from 'utils/formatters/number';
@@ -39,7 +39,7 @@ export default function OrderPriceInput({
 	const dispatch = useAppDispatch();
 	const marketAssetRate = useAppSelector(selectMarketAssetRate);
 	const leverageSide = useAppSelector(selectLeverageSide);
-	const selectedFeeCap = useAppSelector(selectOrerFeeCap);
+	const selectedFeeCap = useAppSelector(selectOrderFeeCap);
 	const marketInfo = useAppSelector(selectMarketInfo);
 
 	const [localValue, setLocalValue] = useState(value);

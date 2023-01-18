@@ -1,7 +1,8 @@
 import { wei } from '@synthetixio/wei';
 import React from 'react';
 
-import { PositionSide } from '../types';
+import { PositionSide } from 'sdk/types/futures';
+
 import StatWithContainer from './StatWithContainer';
 
 type PnLsProps = {

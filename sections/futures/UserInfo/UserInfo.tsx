@@ -217,13 +217,7 @@ const UserInfo: React.FC = () => {
 					setOpenProfitCalcModal={setOpenProfitCalcModal}
 				/>
 			)}
-			{showShareModal && (
-				<ShareModal
-					position={position}
-					marketAsset={marketAsset}
-					setShowShareModal={setShowShareModal}
-				/>
-			)}
+			{showShareModal && <ShareModal position={position} setShowShareModal={setShowShareModal} />}
 		</>
 	);
 };

@@ -14,6 +14,7 @@ import { NumberSpan } from 'components/Text/NumberLabel';
 import { DEFAULT_LEVERAGE } from 'constants/defaults';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { ORDER_PREVIEW_ERRORS_I18N, previewErrorI18n } from 'queries/futures/constants';
+import { setOpenModal } from 'state/app/reducer';
 import {
 	editExistingPositionLeverage,
 	editCrossMarginSize,
@@ -42,11 +43,10 @@ import LeverageSlider from '../LeverageSlider';
 import MarginInfoBox from './CrossMarginInfoBox';
 
 type DepositMarginModalProps = {
-	onDismiss(): void;
 	editMode: 'existing_position' | 'new_position';
 };
 
-export default function EditLeverageModal({ onDismiss, editMode }: DepositMarginModalProps) {
+export default function EditLeverageModal({ editMode }: DepositMarginModalProps) {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const { resetTradeState } = useFuturesContext();
@@ -119,15 +119,19 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 	);
 
 	const onConfirm = useCallback(async () => {
-		dispatch(submitCrossMarginOrder());
-	}, [dispatch]);
+		if (editMode === 'existing_position') {
+			dispatch(submitCrossMarginOrder());
+		} else {
+			dispatch(setOpenModal(null));
+		}
+	}, [dispatch, editMode]);
 
-	const onClose = () => {
+	const onClose = useCallback(() => {
 		if (position?.position) {
 			resetTradeState();
 		}
-		onDismiss();
-	};
+		dispatch(setOpenModal(null));
+	}, [dispatch, position?.position, resetTradeState]);
 
 	useEffect(() => {
 		if (position?.position) {

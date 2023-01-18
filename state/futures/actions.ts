@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
-import { BigNumber } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { debounce } from 'lodash';
 import KwentaSDK from 'sdk';
 
@@ -102,7 +102,7 @@ import {
 	selectMarketKey,
 	selectMarkets,
 	selectOrderType,
-	selectOrerFeeCap,
+	selectOrderFeeCap,
 	selectPosition,
 	selectTradeSizeInputs,
 } from './selectors';
@@ -803,8 +803,7 @@ export const approveCrossMargin = createAsyncThunk<void, void, ThunkConfig>(
 				})
 			);
 			const tx = await sdk.futures.approveCrossMarginDeposit(account);
-			dispatch(updateTransactionHash(tx.hash));
-			await tx.wait();
+			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(fetchCrossMarginBalanceInfo());
 		} catch (err) {
 			dispatch(handleTransactionError(err.message));
@@ -827,8 +826,7 @@ export const depositIsolatedMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 				})
 			);
 			const tx = await sdk.futures.depositIsolatedMargin(marketInfo.market, amount);
-			dispatch(updateTransactionHash(tx.hash));
-			await tx.wait();
+			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(setOpenModal(null));
 			dispatch(refetchPosition('isolated_margin'));
 			dispatch(fetchBalances());
@@ -853,8 +851,7 @@ export const withdrawIsolatedMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 				})
 			);
 			const tx = await sdk.futures.withdrawIsolatedMargin(marketInfo.market, amount);
-			dispatch(updateTransactionHash(tx.hash));
-			await tx.wait();
+			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(refetchPosition('isolated_margin'));
 			dispatch(setOpenModal(null));
 			dispatch(fetchBalances());
@@ -887,8 +884,7 @@ export const modifyIsolatedPosition = createAsyncThunk<
 				sizeDelta,
 				false
 			);
-			dispatch(updateTransactionHash(tx.hash));
-			await tx.wait();
+			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(refetchPosition('isolated_margin'));
 			dispatch(setOpenModal(null));
 			dispatch(clearTradeInputs());
@@ -931,8 +927,7 @@ export const closeIsolatedMarginPosition = createAsyncThunk<void, void, ThunkCon
 				})
 			);
 			const tx = await sdk.futures.closeIsolatedPosition(marketInfo.market);
-			dispatch(updateTransactionHash(tx.hash));
-			await tx.wait();
+			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(setOpenModal(null));
 			dispatch(refetchPosition('isolated_margin'));
 			dispatch(fetchBalances());
@@ -950,7 +945,7 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 		const account = selectCrossMarginAccount(getState());
 		const tradeInputs = selectCrossMarginTradeInputs(getState());
 		const marginDelta = selectCrossMarginMarginDelta(getState());
-		const feeCap = selectOrerFeeCap(getState());
+		const feeCap = selectOrderFeeCap(getState());
 		const orderType = selectOrderType(getState());
 		const orderPrice = selectCrossMarginOrderPrice(getState());
 		const { keeperEthDeposit } = selectCrossMarginTradeFees(getState());
@@ -976,8 +971,7 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 					price: wei(orderPrice || '0'),
 				},
 			});
-			dispatch(updateTransactionHash(tx.hash));
-			await tx.wait();
+			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(setOpenModal(null));
 			dispatch(refetchPosition('cross_margin'));
 			dispatch(fetchBalances());
@@ -1011,8 +1005,7 @@ export const closeCrossMarginPosition = createAsyncThunk<void, void, ThunkConfig
 				size: position.position.size,
 				side: position.position?.side,
 			});
-			dispatch(updateTransactionHash(tx.hash));
-			await tx.wait();
+			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(setOpenModal(null));
 			dispatch(refetchPosition('cross_margin'));
 			dispatch(fetchBalances());
@@ -1042,8 +1035,7 @@ export const cancelCrossMarginOrder = createAsyncThunk<void, string, ThunkConfig
 
 			dispatch(setCrossMarginOrderCancelling(orderId));
 			const tx = await sdk.futures.cancelCrossMarginOrder(crossMarginAccount, id);
-			dispatch(updateTransactionHash(tx.hash));
-			await tx.wait();
+			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(setCrossMarginOrderCancelling(undefined));
 			dispatch(setOpenModal(null));
 			dispatch(fetchCrossMarginOpenOrders());
@@ -1070,8 +1062,7 @@ export const withdrawAccountKeeperBalance = createAsyncThunk<void, Wei, ThunkCon
 			);
 
 			const tx = await sdk.futures.withdrawAccountKeeperBalance(crossMarginAccount, amount);
-			dispatch(updateTransactionHash(tx.hash));
-			await tx.wait();
+			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(setOpenModal(null));
 			dispatch(fetchCrossMarginBalanceInfo());
 		} catch (err) {
@@ -1148,26 +1139,24 @@ const submitCMTransferTransaction = async (
 			type === 'deposit_cross_margin'
 				? await sdk.futures.depositCrossMargin(account, amount)
 				: await sdk.futures.withdrawCrossMargin(account, amount);
-		dispatch(updateTransactionHash(tx.hash));
-		if (tx.hash) {
-			monitorTransaction({
-				txHash: tx.hash,
-				onTxFailed: (err) => {
-					dispatch(handleTransactionError(err.failureReason ?? 'transaction_failed'));
-				},
-				onTxConfirmed: () => {
-					dispatch(updateTransactionStatus(TransactionStatus.Confirmed));
-					dispatch(fetchCrossMarginBalanceInfo());
-					dispatch(setOpenModal(null));
-					dispatch(refetchPosition('cross_margin'));
-					dispatch(fetchBalances());
-				},
-			});
-		}
+		await monitorAndAwaitTransaction(dispatch, tx);
+		dispatch(fetchCrossMarginBalanceInfo());
+		dispatch(setOpenModal(null));
+		dispatch(refetchPosition('cross_margin'));
+		dispatch(fetchBalances());
 		return tx;
 	} catch (err) {
 		logError(err);
 		dispatch(handleTransactionError(err.message));
 		throw err;
 	}
+};
+
+const monitorAndAwaitTransaction = async (
+	dispatch: AppDispatch,
+	tx: ethers.providers.TransactionResponse
+) => {
+	dispatch(updateTransactionHash(tx.hash));
+	await tx.wait();
+	dispatch(updateTransactionStatus(TransactionStatus.Confirmed));
 };
