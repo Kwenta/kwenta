@@ -8,13 +8,13 @@ import Button from 'components/Button';
 import FuturesIcon from 'components/Nav/FuturesIcon';
 import { NumberDiv } from 'components/Text/NumberLabel';
 import { EXTERNAL_LINKS } from 'constants/links';
-import Connector from 'containers/Connector';
 import { FuturesAccountType } from 'queries/futures/subgraph';
 import { setOpenModal } from 'state/app/reducer';
 import { selectOpenModal } from 'state/app/selectors';
 import { selectPosition, selectPositionStatus } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
+import { selectWallet } from 'state/wallet/selectors';
 import { BorderedPanel, YellowIconButton } from 'styles/common';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 
@@ -27,15 +27,17 @@ type Props = {
 
 export default function TradePanelHeader({ accountType, onManageBalance }: Props) {
 	const { t } = useTranslation();
-	const { isWalletConnected } = Connector.useContainer();
+
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
+
 	const { openConnectModal } = useConnectModal();
+	const wallet = useAppSelector(selectWallet);
 	const position = useAppSelector(selectPosition);
 	const positionStatus = useAppSelector(selectPositionStatus);
 	const balance = position ? position.remainingMargin : null;
 	const openModal = useAppSelector(selectOpenModal);
-	if (!isWalletConnected) {
+	if (!wallet) {
 		return (
 			<DepositButton variant="yellow" onClick={openConnectModal}>
 				<ButtonContent>{t('common.wallet.connect-wallet')}</ButtonContent>

@@ -40,7 +40,7 @@ const useConnector = () => {
 
 	const defaultSynthetixjs = useMemo(
 		() => synthetix({ provider, networkId: network.id as NetworkId }),
-		[network.id, provider]
+		[provider, network.id]
 	);
 
 	const l2Synthetixjs = useMemo(
