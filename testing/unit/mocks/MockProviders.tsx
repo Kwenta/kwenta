@@ -9,7 +9,6 @@ import { ThemeProvider } from 'styled-components';
 import { WagmiConfig } from 'wagmi';
 
 import { wagmiClient } from 'containers/Connector/config';
-import { RefetchProvider } from 'contexts/RefetchContext';
 import { themes } from 'styles/theme';
 
 import { DEFAULT_NETWORK } from '../constants';
@@ -90,9 +89,7 @@ const MockProviders = ({ children, ethProviderOverrides, route }: Props) => {
 			<SynthetixProvider ethProviderOverrides={ethProviderOverrides}>
 				<WagmiConfig client={wagmiClient}>
 					<WithAppContainers>
-						<RefetchProvider>
-							<ThemeProvider theme={themes.dark}>{children}</ThemeProvider>
-						</RefetchProvider>
+						<ThemeProvider theme={themes.dark}>{children}</ThemeProvider>
 					</WithAppContainers>
 				</WagmiConfig>
 			</SynthetixProvider>

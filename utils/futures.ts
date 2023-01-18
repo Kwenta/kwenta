@@ -14,6 +14,7 @@ import {
 	FundingRate,
 	FundingRateSerialized,
 	IsolatedMarginTradeInputs,
+	PositionHistory,
 	TransactionEstimation,
 } from 'state/futures/types';
 import logError from 'utils/logError';
@@ -437,12 +438,12 @@ export const serializeCmBalanceInfo = (
 };
 
 export const unserializeCmBalanceInfo = (
-	overview: CrossMarginBalanceInfo<string>
+	balanceInfo: CrossMarginBalanceInfo<string>
 ): CrossMarginBalanceInfo<Wei> => {
 	return {
-		freeMargin: wei(overview.freeMargin),
-		keeperEthBal: wei(overview.keeperEthBal),
-		allowance: wei(overview.allowance),
+		freeMargin: wei(balanceInfo.freeMargin),
+		keeperEthBal: wei(balanceInfo.keeperEthBal),
+		allowance: wei(balanceInfo.allowance),
 	};
 };
 
@@ -546,3 +547,47 @@ export const serializeTradeFees = (fees: CrossMarginTradeFees) => ({
 	limitStopOrderFee: fees.limitStopOrderFee.toString(),
 	total: fees.total.toString(),
 });
+
+export const serializePositionHistory = (
+	positions: PositionHistory[]
+): PositionHistory<string>[] => {
+	return positions.map((p) => ({
+		...p,
+		size: p.size.toString(),
+		feesPaid: p.feesPaid.toString(),
+		netFunding: p.netFunding.toString(),
+		netTransfers: p.netTransfers.toString(),
+		totalDeposits: p.totalDeposits.toString(),
+		initialMargin: p.initialMargin.toString(),
+		margin: p.margin.toString(),
+		entryPrice: p.entryPrice.toString(),
+		exitPrice: p.exitPrice.toString(),
+		pnl: p.pnl.toString(),
+		pnlWithFeesPaid: p.pnlWithFeesPaid.toString(),
+		totalVolume: p.totalVolume.toString(),
+		avgEntryPrice: p.avgEntryPrice.toString(),
+		leverage: p.leverage.toString(),
+	}));
+};
+
+export const unserializePositionHistory = (
+	positions: PositionHistory<string>[]
+): PositionHistory[] => {
+	return positions.map((p) => ({
+		...p,
+		size: wei(p.size),
+		feesPaid: wei(p.feesPaid),
+		netFunding: wei(p.netFunding),
+		netTransfers: wei(p.netTransfers),
+		totalDeposits: wei(p.totalDeposits),
+		initialMargin: wei(p.initialMargin),
+		margin: wei(p.margin),
+		entryPrice: wei(p.entryPrice),
+		exitPrice: wei(p.exitPrice),
+		pnl: wei(p.pnl),
+		pnlWithFeesPaid: wei(p.pnlWithFeesPaid),
+		totalVolume: wei(p.totalVolume),
+		avgEntryPrice: wei(p.avgEntryPrice),
+		leverage: wei(p.leverage),
+	}));
+};

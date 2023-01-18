@@ -1,6 +1,17 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import type { AnyAction, ThunkAction } from '@reduxjs/toolkit';
 import logger from 'redux-logger';
+import {
+	persistReducer,
+	persistStore,
+	FLUSH,
+	REHYDRATE,
+	PAUSE,
+	PERSIST,
+	PURGE,
+	REGISTER,
+} from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 import KwentaSDK from 'sdk';
 
 import appReducer from './app/reducer';
@@ -15,19 +26,35 @@ import walletReducer from './wallet/reducer';
 
 const LOG_REDUX = process.env.NODE_ENV !== 'production';
 
+const persistConfig = {
+	key: 'root1',
+	storage,
+	version: 2,
+	blacklist: ['app', 'wallet'],
+};
+
+const combinedReducers = combineReducers({
+	app: appReducer,
+	wallet: walletReducer,
+	balances: balancesReducer,
+	exchange: exchangeReducer,
+	futures: futuresReducer,
+	home: homeReducer,
+	earn: earnReducer,
+	staking: stakingReducer,
+});
+
+const persistedReducer = persistReducer(persistConfig, combinedReducers);
+
 const store = configureStore({
-	reducer: {
-		app: appReducer,
-		wallet: walletReducer,
-		balances: balancesReducer,
-		exchange: exchangeReducer,
-		futures: futuresReducer,
-		home: homeReducer,
-		earn: earnReducer,
-		staking: stakingReducer,
-	},
+	reducer: persistedReducer,
 	middleware: (getDefaultMiddleware) => {
-		const baseMiddleware = getDefaultMiddleware({ thunk: { extraArgument: { sdk } } });
+		const baseMiddleware = getDefaultMiddleware({
+			serializableCheck: {
+				ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+			},
+			thunk: { extraArgument: { sdk } },
+		});
 		return LOG_REDUX ? baseMiddleware.concat(logger) : baseMiddleware;
 	},
 });
@@ -45,5 +72,9 @@ export type AppThunk<ReturnType = void> = ThunkAction<
 	{ sdk: KwentaSDK },
 	AnyAction
 >;
+
+export const persistor = persistStore(store);
+
+// persistor.purge();
 
 export default store;

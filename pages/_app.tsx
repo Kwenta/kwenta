@@ -17,6 +17,7 @@ import { RecoilRoot, useRecoilValue } from 'recoil';
 import { ThemeProvider } from 'styled-components';
 import { chain, WagmiConfig } from 'wagmi';
 
+import ErrorNotifier from 'components/Error/ErrorNotifier';
 import Connector from 'containers/Connector';
 import { chains, wagmiClient } from 'containers/Connector/config';
 import useMonitorTransactions from 'hooks/useMonitorTransactions';
@@ -105,6 +106,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 								<AcknowledgementModal />
 								<SystemStatus>{getLayout(<Component {...pageProps} />)}</SystemStatus>
 							</Layout>
+							<ErrorNotifier />
 							<ReactQueryDevtools position="top-left" />
 						</SynthetixQueryContextProvider>
 					</MediaContextProvider>

@@ -8,6 +8,7 @@ import { ETH_UNIT } from 'constants/network';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
 import { FuturesOrderTypeDisplay } from 'sdk/types/futures';
+import { PositionHistory } from 'state/futures/types';
 import { formatDollars, weiFromWei } from 'utils/formatters/number';
 import { FuturesMarketAsset } from 'utils/futures';
 
@@ -23,7 +24,6 @@ import {
 	FuturesOpenInterest,
 	FuturesOneMinuteStat,
 	PositionSide,
-	PositionHistory,
 	FundingRateUpdate,
 	FuturesTrade,
 	MarginTransfer,

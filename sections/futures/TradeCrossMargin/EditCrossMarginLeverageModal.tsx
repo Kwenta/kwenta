@@ -13,13 +13,12 @@ import Spacer from 'components/Spacer';
 import { NumberSpan } from 'components/Text/NumberLabel';
 import { DEFAULT_LEVERAGE } from 'constants/defaults';
 import { useFuturesContext } from 'contexts/FuturesContext';
-import { useRefetchContext } from 'contexts/RefetchContext';
-import { monitorTransaction } from 'contexts/RelayerContext';
 import { ORDER_PREVIEW_ERRORS_I18N, previewErrorI18n } from 'queries/futures/constants';
 import {
 	editExistingPositionLeverage,
 	editCrossMarginSize,
 	setCrossMarginLeverage,
+	submitCrossMarginOrder,
 } from 'state/futures/actions';
 import { setOrderType as setReduxOrderType } from 'state/futures/reducer';
 import {
@@ -29,6 +28,7 @@ import {
 	selectMarketInfo,
 	selectOrderType,
 	selectPosition,
+	selectSubmittingFuturesTx,
 	selectTradePreview,
 	selectTradePreviewError,
 } from 'state/futures/selectors';
@@ -36,7 +36,6 @@ import { useAppSelector, useAppDispatch } from 'state/hooks';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { isUserDeniedError } from 'utils/formatters/error';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
-import logError from 'utils/logError';
 
 import FeeInfoBox from '../FeeInfoBox';
 import LeverageSlider from '../LeverageSlider';
@@ -49,9 +48,8 @@ type DepositMarginModalProps = {
 
 export default function EditLeverageModal({ onDismiss, editMode }: DepositMarginModalProps) {
 	const { t } = useTranslation();
-	const { handleRefetch } = useRefetchContext();
 	const dispatch = useAppDispatch();
-	const { resetTradeState, submitCrossMarginOrder } = useFuturesContext();
+	const { resetTradeState } = useFuturesContext();
 
 	const onLeverageChange = useCallback(
 		(leverage: number) => {
@@ -69,14 +67,13 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 	const previewError = useAppSelector(selectTradePreviewError);
 	const orderType = useAppSelector(selectOrderType);
 	const selectedLeverage = useAppSelector(selectCrossMarginSelectedLeverage);
+	const submitting = useAppSelector(selectSubmittingFuturesTx);
 
 	const [leverage, setLeverage] = useState<number>(
 		editMode === 'existing_position' && position?.position
 			? Number(position.position.leverage.toNumber().toFixed(2))
 			: Number(Number(selectedLeverage).toFixed(2))
 	);
-	const [submitting, setSubmitting] = useState(false);
-	const [error, setError] = useState<null | string>(null);
 
 	const totalMargin = useMemo(() => {
 		return position?.remainingMargin.add(balanceInfo.freeMargin) ?? zeroBN;
@@ -122,56 +119,8 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 	);
 
 	const onConfirm = useCallback(async () => {
-		setError(null);
-		if (editMode === 'existing_position' && position?.position) {
-			try {
-				setSubmitting(true);
-				const tx = await submitCrossMarginOrder(true);
-				if (tx?.hash) {
-					monitorTransaction({
-						txHash: tx.hash,
-						onTxFailed(failureMessage) {
-							setError(failureMessage?.failureReason || t('common.transaction.transaction-failed'));
-						},
-						onTxConfirmed: () => {
-							try {
-								resetTradeState();
-								handleRefetch('modify-position');
-								handleRefetch('account-margin-change');
-								setSubmitting(false);
-								onDismiss();
-							} catch (err) {
-								logError(err);
-							}
-						},
-					});
-				}
-			} catch (err) {
-				setSubmitting(false);
-				setError(t('common.transaction.transaction-failed'));
-				logError(err);
-			}
-			resetTradeState();
-		} else {
-			// TODO: consolidate leverage states
-			onLeverageChange(leverage);
-			dispatch(setCrossMarginLeverage(String(leverage)));
-			onDismiss();
-		}
-	}, [
-		leverage,
-		position?.position,
-		editMode,
-		setSubmitting,
-		resetTradeState,
-		t,
-		onLeverageChange,
-		submitCrossMarginOrder,
-		setError,
-		handleRefetch,
-		onDismiss,
-		dispatch,
-	]);
+		dispatch(submitCrossMarginOrder());
+	}, [dispatch]);
 
 	const onClose = () => {
 		if (position?.position) {
@@ -189,8 +138,8 @@ export default function EditLeverageModal({ onDismiss, editMode }: DepositMargin
 	}, []);
 
 	const errorMessage = useMemo(
-		() => error || previewError || (previewData?.showStatus && previewData?.statusMessage),
-		[error, previewError, previewData?.showStatus, previewData?.statusMessage]
+		() => previewError || (previewData?.showStatus && previewData?.statusMessage),
+		[previewError, previewData?.showStatus, previewData?.statusMessage]
 	);
 
 	return (

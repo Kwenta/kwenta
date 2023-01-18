@@ -8,9 +8,12 @@ import { orderBy } from 'lodash';
 import KwentaSDK from 'sdk';
 
 import { DAY_PERIOD, KWENTA_TRACKING_CODE } from 'queries/futures/constants';
-import { getFuturesAggregateStats } from 'queries/futures/subgraph';
+import { getFuturesAggregateStats, getFuturesPositions } from 'queries/futures/subgraph';
+import { mapFuturesPositions } from 'queries/futures/utils';
+import { LatestRate } from 'queries/rates/types';
+import { getRatesEndpoint, mapLaggedDailyPrices } from 'queries/rates/utils';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
-import { BPS_CONVERSION } from 'sdk/constants/futures';
+import { BPS_CONVERSION, CREATE_ACCOUNT_GAS_LIMIT } from 'sdk/constants/futures';
 import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { getContractsByNetwork } from 'sdk/contracts';
 import CrossMarginBaseABI from 'sdk/contracts/abis/CrossMarginBase.json';
@@ -21,8 +24,10 @@ import {
 	FuturesMarketData,
 	FuturesMarket__factory,
 } from 'sdk/contracts/types';
+import { queryCrossMarginAccounts } from 'sdk/queries/futures';
 import { NetworkOverrideOptions } from 'sdk/types/common';
 import {
+	CrossMarginOrderType,
 	FundingRateInput,
 	FundingRateResponse,
 	FundingRateUpdate,
@@ -38,6 +43,7 @@ import {
 	calculateFundingRate,
 	calculateVolumes,
 	formatPotentialTrade,
+	getDisplayAsset,
 	getFuturesEndpoint,
 	getMarketName,
 	getReasonFromCode,
@@ -46,7 +52,7 @@ import {
 	marketsForNetwork,
 } from 'sdk/utils/futures';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
-import { MarketKeyByAsset } from 'utils/futures';
+import { MarketAssetByKey, MarketKeyByAsset } from 'utils/futures';
 
 export default class FuturesService {
 	private sdk: KwentaSDK;
@@ -362,7 +368,12 @@ export default class FuturesService {
 		return response ? calculateVolumes(response) : {};
 	}
 
-	public async getCrossMarginBalanceInfo(crossMarginAddress: string) {
+	public async getCrossMarginAccounts(walletAddress?: string | undefined | null) {
+		const address = walletAddress ?? this.sdk.context.walletAddress;
+		return await queryCrossMarginAccounts(this.sdk, address);
+	}
+
+	public async getCrossMarginBalanceInfo(walletAddress: string, crossMarginAddress: string) {
 		const crossMarginAccountContract = CrossMarginBase__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.provider
@@ -374,7 +385,7 @@ export default class FuturesService {
 		const [freeMargin, keeperEthBal, allowance] = await Promise.all([
 			crossMarginAccountContract.freeMargin(),
 			this.sdk.context.provider.getBalance(crossMarginAddress),
-			SUSD.allowance(this.sdk.context.walletAddress, crossMarginAccountContract.address),
+			SUSD.allowance(walletAddress, crossMarginAccountContract.address),
 		]);
 
 		return {
@@ -384,7 +395,7 @@ export default class FuturesService {
 		};
 	}
 
-	public async getOpenOrders(account: string) {
+	public async getCrossMarginOpenOrders(account: string) {
 		const crossMarginBaseMultiCall = new EthCallContract(account, CrossMarginBaseABI);
 		const crossMarginBaseContract = CrossMarginBase__factory.connect(
 			account,
@@ -470,6 +481,98 @@ export default class FuturesService {
 		return wei(bal);
 	}
 
+	public async getDynamicFeeRate(marketAsset: FuturesMarketAsset) {
+		const dynamicFeeRate = await this.sdk.context.contracts.Exchanger?.dynamicFeeRateForExchange(
+			ethers.utils.formatBytes32String('sUSD'),
+			ethers.utils.formatBytes32String(marketAsset)
+		);
+		if (dynamicFeeRate) {
+			return { feeRate: wei(dynamicFeeRate.feeRate), tooVolatile: dynamicFeeRate.tooVolatile };
+		}
+		return undefined;
+	}
+
+	public async getPreviousDayRates(marketAssets: FuturesMarketAsset[], networkId?: NetworkId) {
+		const ratesEndpoint = getRatesEndpoint(networkId || this.sdk.context.networkId);
+		const minTimestamp = Math.floor((Date.now() - 60 * 60 * 24 * 1000) / 1000);
+
+		const rateUpdateQueries = marketAssets.map((asset) => {
+			return gql`
+			# last before timestamp
+			${asset}: rateUpdates(
+				first: 1
+				where: { synth: "${getDisplayAsset(asset) ?? asset}", timestamp_gte: $minTimestamp }
+				orderBy: timestamp
+				orderDirection: asc
+			) {
+				synth
+				rate
+			}
+		`;
+		});
+
+		const response = await request(
+			ratesEndpoint,
+			gql`
+				query rateUpdates($minTimestamp: BigInt!) {
+					${rateUpdateQueries.reduce((acc: string, curr: string) => {
+						return acc + curr;
+					})}
+			}`,
+			{
+				minTimestamp: minTimestamp,
+			}
+		);
+		const latestRates = (response ? Object.values(response).flat() : []) as LatestRate[];
+		return mapLaggedDailyPrices(latestRates);
+	}
+
+	public async getPositionHistory(account: string) {
+		const response = await getFuturesPositions(
+			this.futuresGqlEndpoint,
+			{
+				where: {
+					account: account,
+				},
+				first: 99999,
+				orderBy: 'openTimestamp',
+				orderDirection: 'desc',
+			},
+			{
+				id: true,
+				lastTxHash: true,
+				openTimestamp: true,
+				closeTimestamp: true,
+				timestamp: true,
+				market: true,
+				asset: true,
+				account: true,
+				abstractAccount: true,
+				accountType: true,
+				isOpen: true,
+				isLiquidated: true,
+				trades: true,
+				totalVolume: true,
+				size: true,
+				initialMargin: true,
+				margin: true,
+				pnl: true,
+				feesPaid: true,
+				netFunding: true,
+				pnlWithFeesPaid: true,
+				netTransfers: true,
+				totalDeposits: true,
+				fundingIndex: true,
+				entryPrice: true,
+				avgEntryPrice: true,
+				lastPrice: true,
+				exitPrice: true,
+			}
+		);
+
+		return response ? mapFuturesPositions(response) : [];
+	}
+
 	// Contract mutations
 
 	public async approveCrossMarginDeposit(
@@ -524,6 +627,126 @@ export default class FuturesService {
 		const market = FuturesMarket__factory.connect(marketAddress, this.sdk.context.signer);
 		const root = estimationOnly ? market.estimateGas : market;
 		return root.modifyPositionWithTracking(sizeDelta.toBN(), KWENTA_TRACKING_CODE) as any;
+	}
+
+	public async createCrossMarginAccount() {
+		return this.sdk.context.contracts.CrossMarginAccountFactory?.newAccount({
+			gasLimit: CREATE_ACCOUNT_GAS_LIMIT,
+		});
+	}
+
+	public async submitCrossMarginOrder(
+		market: FuturesMarketKey,
+		crossMarginAddress: string,
+		order: {
+			type: CrossMarginOrderType;
+			sizeDelta: Wei;
+			marginDelta: Wei;
+			advancedOrderInputs?: {
+				price: Wei;
+				feeCap: Wei;
+				keeperEthDeposit: Wei;
+			};
+		}
+	) {
+		const crossMarginAccountContract = CrossMarginBase__factory.connect(
+			crossMarginAddress,
+			this.sdk.context.signer
+		);
+		if (order.type === 'market') {
+			const newPosition = [
+				{
+					marketKey: formatBytes32String(market),
+					marginDelta: order.marginDelta.toBN(),
+					sizeDelta: order.sizeDelta.toBN(),
+				},
+			];
+
+			return await crossMarginAccountContract.distributeMargin(newPosition);
+		}
+		if ((order.type === 'limit' || order.type === 'stop market') && !order.advancedOrderInputs) {
+			throw new Error('Missing inputs for advanced order');
+		}
+
+		const enumType = order.type === 'limit' ? 0 : 1;
+
+		return this.sdk.transactions.createContractTxn(
+			crossMarginAccountContract,
+			'placeOrderWithFeeCap',
+			[
+				formatBytes32String(market),
+				order.marginDelta.toBN(),
+				order.sizeDelta.toBN(),
+				order.advancedOrderInputs?.price.toBN() ?? '0',
+				enumType,
+				order.advancedOrderInputs?.feeCap.toBN() ?? '0',
+			],
+			{ value: order.advancedOrderInputs?.keeperEthDeposit.toBN() ?? '0' }
+		);
+	}
+
+	public async closeCrossMarginPosition(
+		marketKey: FuturesMarketKey,
+		crossMarginAddress: string,
+		position: {
+			size: Wei;
+			side: PositionSide;
+		}
+	) {
+		const crossMarginAccountContract = CrossMarginBase__factory.connect(
+			crossMarginAddress,
+			this.sdk.context.signer
+		);
+
+		const closeParams =
+			['SOL', 'DebtRatio'].includes(MarketAssetByKey[marketKey]) &&
+			position.side === PositionSide.SHORT
+				? [
+						{
+							marketKey: formatBytes32String(marketKey),
+							marginDelta: wei('0').toBN(),
+							sizeDelta: position.size.add(wei(1, 18, true)).toBN(),
+						},
+						{
+							marketKey: formatBytes32String(marketKey),
+							marginDelta: wei('0').toBN(),
+							sizeDelta: wei(1, 18, true).neg().toBN(),
+						},
+				  ]
+				: [
+						{
+							marketKey: formatBytes32String(marketKey),
+							marginDelta: wei('0').toBN(),
+							sizeDelta:
+								position.side === PositionSide.LONG
+									? position.size.neg().toBN()
+									: position.size.toBN(),
+						},
+				  ];
+
+		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'distributeMargin', [
+			closeParams,
+		]);
+	}
+
+	public async cancelCrossMarginOrder(crossMarginAddress: string, orderId: string) {
+		const crossMarginAccountContract = CrossMarginBase__factory.connect(
+			crossMarginAddress,
+			this.sdk.context.signer
+		);
+		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'cancelOrder', [
+			orderId,
+		]);
+	}
+
+	public async withdrawAccountKeeperBalance(crossMarginAddress: string, amount: Wei) {
+		const crossMarginAccountContract = CrossMarginBase__factory.connect(
+			crossMarginAddress,
+			this.sdk.context.signer
+		);
+		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'withdrawEth', [
+			amount.toBN(),
+		]);
 	}
 }
 

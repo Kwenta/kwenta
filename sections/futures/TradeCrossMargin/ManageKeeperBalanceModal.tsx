@@ -4,17 +4,19 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import ErrorView from 'components/Error';
+import { notifyError } from 'components/Error/ErrorNotifier';
 import CustomInput from 'components/Input/CustomInput';
 import Loader from 'components/Loader';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
 import Connector from 'containers/Connector';
-import { useRefetchContext } from 'contexts/RefetchContext';
-import { monitorTransaction } from 'contexts/RelayerContext';
-import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
-import { selectCrossMarginBalanceInfo, selectOpenOrders } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
-import { isUserDeniedError } from 'utils/formatters/error';
+import { withdrawAccountKeeperBalance } from 'state/futures/actions';
+import {
+	selectCrossMarginBalanceInfo,
+	selectOpenOrders,
+	selectSubmittingFuturesTx,
+} from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
@@ -37,18 +39,16 @@ const DEPOSIT_ENABLED = false;
 
 export default function ManageKeeperBalanceModal({ onDismiss, defaultType }: Props) {
 	const { t } = useTranslation();
-	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
+	const dispatch = useAppDispatch();
 	const { provider, walletAddress } = Connector.useContainer();
-	const { handleRefetch } = useRefetchContext();
 
 	const { keeperEthBal } = useAppSelector(selectCrossMarginBalanceInfo);
 	const openOrders = useAppSelector(selectOpenOrders);
+	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
 
 	const [amount, setAmount] = useState('');
 	const [isMax, setMax] = useState(false);
 	const [userEthBal, setUserEthBal] = useState(zeroBN);
-	const [error, setError] = useState<string | null>(null);
-	const [transacting, setTransacting] = useState(false);
 	const [transferType, setTransferType] = useState(defaultType === 'deposit' ? 0 : 1);
 
 	const getUserEthBal = useCallback(async () => {
@@ -57,6 +57,7 @@ export default function ManageKeeperBalanceModal({ onDismiss, defaultType }: Pro
 			const bal = await provider.getBalance(walletAddress);
 			setUserEthBal(wei(bal));
 		} catch (err) {
+			notifyError(err.message);
 			logError(err);
 		}
 	}, [walletAddress, provider]);
@@ -67,54 +68,12 @@ export default function ManageKeeperBalanceModal({ onDismiss, defaultType }: Pro
 	}, [walletAddress]);
 
 	const onWithdrawKeeperDeposit = useCallback(async () => {
-		try {
-			if (keeperEthBal.eq(0)) return;
-			setTransacting(true);
-			setError(null);
-			const tx = await crossMarginAccountContract?.withdrawEth(wei(amount).toBN());
-			if (tx?.hash) {
-				monitorTransaction({
-					txHash: tx.hash,
-					onTxConfirmed: async () => {
-						handleRefetch('account-margin-change');
-						setTransacting(false);
-						onDismiss();
-					},
-				});
-			}
-		} catch (err) {
-			setTransacting(false);
-			if (!isUserDeniedError(err.message)) {
-				setError(t('common.transaction.transaction-failed'));
-			}
-			logError(err);
-		}
-	}, [keeperEthBal, crossMarginAccountContract, amount, t, onDismiss, handleRefetch]);
+		if (keeperEthBal.eq(0)) return;
+		dispatch(withdrawAccountKeeperBalance(wei(amount)));
+	}, [dispatch, amount, keeperEthBal]);
 
 	const onDepositKeeperDeposit = useCallback(async () => {
-		// if (!crossMarginAccountContract || !signer) return;
-		// try {
-		// 	setTransacting(true);
-		// 	setError(null);
 		// 	// TODO: Waiting for the function to be added to the smart contract
-		// 	const tx = await crossMarginAccountContract?.depositEth(wei(amount).toBN());
-		// 	if (tx?.hash) {
-		// 		monitorTransaction({
-		// 			txHash: tx.hash,
-		// 			onTxConfirmed: () => {
-		// 				setTransacting(false);
-		// 				getUserEthBal();
-		// 				onDismiss();
-		// 			},
-		// 		});
-		// 	}
-		// } catch (err) {
-		// 	setTransacting(false);
-		// 	if (!isUserDeniedError(err.message)) {
-		// 		setError(t('common.transaction.transaction-failed'));
-		// 	}
-		// 	logError(err);
-		// }
 	}, []);
 
 	const exceedsLimit = useMemo(() => {
@@ -123,9 +82,9 @@ export default function ManageKeeperBalanceModal({ onDismiss, defaultType }: Pro
 	}, [transferType, amount, userEthBal, keeperEthBal]);
 
 	const isDisabled = useMemo(() => {
-		if (!amount || transacting || exceedsLimit) return true;
+		if (!amount || isSubmitting || exceedsLimit) return true;
 		return false;
-	}, [amount, transacting, exceedsLimit]);
+	}, [amount, isSubmitting, exceedsLimit]);
 
 	const handleSetMax = React.useCallback(() => {
 		setMax(true);
@@ -182,7 +141,7 @@ export default function ManageKeeperBalanceModal({ onDismiss, defaultType }: Pro
 				fullWidth
 				onClick={transferType === 0 ? onDepositKeeperDeposit : onWithdrawKeeperDeposit}
 			>
-				{transacting ? (
+				{isSubmitting ? (
 					<Loader />
 				) : (
 					t(
@@ -199,8 +158,6 @@ export default function ManageKeeperBalanceModal({ onDismiss, defaultType }: Pro
 					message={t('futures.market.trade.orders.manage-keeper-deposit.withdraw-warning')}
 				/>
 			)}
-
-			{error && <ErrorView containerStyle={{ margin: '16px 0 0 0' }} message={error} />}
 		</StyledBaseModal>
 	);
 }

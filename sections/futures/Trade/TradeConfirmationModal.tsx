@@ -27,7 +27,7 @@ import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
 import { PositionSide } from '../types';
 
 type Props = {
-	gasFee: Wei | null;
+	gasFee?: Wei | null;
 	tradeFee: Wei;
 	keeperFee?: Wei | null;
 	errorMessage?: string | null | undefined;

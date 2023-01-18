@@ -1,13 +1,11 @@
 import { format } from 'date-fns';
 import { FC, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import { useFuturesContext } from 'contexts/FuturesContext';
-import { selectFuturesType } from 'state/futures/selectors';
+import { selectPositionHistory } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { positionHistoryState } from 'store/futures';
 import getLocale from 'utils/formatters/getLocale';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 
@@ -74,8 +72,7 @@ const PositionMetadata: FC<PositionMetadataProps> = ({ marketAsset }) => {
 	const [currentTimestamp, setCurrentTimestamp] = useState(0);
 
 	const { marketAssetRate } = useFuturesContext();
-	const futuresPositionHistory = useRecoilValue(positionHistoryState);
-	const futuresAccountType = useAppSelector(selectFuturesType);
+	const positionHistory = useAppSelector(selectPositionHistory);
 
 	let avgEntryPrice = '',
 		openAtDate = '',
@@ -83,7 +80,7 @@ const PositionMetadata: FC<PositionMetadataProps> = ({ marketAsset }) => {
 		createdOnDate = '',
 		createdOnTime = '';
 
-	const currentPosition = futuresPositionHistory[futuresAccountType].find(
+	const currentPosition = positionHistory.find(
 		(position) => position.isOpen && position.asset === marketAsset
 	);
 

@@ -7,6 +7,7 @@ import { FuturesAggregateStatResult } from 'queries/futures/subgraph';
 import { FUTURES_ENDPOINTS, MAINNET_MARKETS, TESTNET_MARKETS } from 'sdk/constants/futures';
 import { SECONDS_PER_DAY } from 'sdk/constants/period';
 import {
+	CrossMarginOrderType,
 	FundingRateUpdate,
 	FuturesMarketAsset,
 	FuturesMarketKey,
@@ -14,17 +15,14 @@ import {
 	FuturesPosition,
 	FuturesPotentialTradeDetails,
 	FuturesVolumes,
+	IsolatedMarginOrderType,
 	MarketClosureReason,
 	PositionDetail,
 	PositionSide,
 	PostTradeDetailsResponse,
 	PotentialTradeStatus,
 } from 'sdk/types/futures';
-import {
-	CrossMarginOrderType,
-	CrossMarginSettings,
-	IsolatedMarginOrderType,
-} from 'state/futures/types';
+import { CrossMarginSettings } from 'state/futures/types';
 import { formatCurrency, formatDollars, zeroBN } from 'utils/formatters/number';
 import { MarketAssetByKey } from 'utils/futures';
 import logError from 'utils/logError';
@@ -303,7 +301,6 @@ export const mapFuturesOrderFromEvent = (
 	const marketKey = parseBytes32String(orderDetails.marketKey) as FuturesMarketKey;
 	const asset = MarketAssetByKey[marketKey];
 	const sizeDelta = wei(orderDetails.sizeDelta);
-
 	const size = sizeDelta.abs();
 	return {
 		contractId: orderDetails.id,

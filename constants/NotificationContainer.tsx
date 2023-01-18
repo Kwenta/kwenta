@@ -14,7 +14,13 @@ const NotificationContainer = memo(() => {
 
 	return mounted
 		? createPortal(
-				<StyledToastContainer autoClose={false} position="bottom-right" closeOnClick={false} />,
+				<StyledToastContainer
+					enableMultiContainer
+					containerId="notifications"
+					autoClose={false}
+					position="bottom-right"
+					closeOnClick={false}
+				/>,
 				document.body
 		  )
 		: null;

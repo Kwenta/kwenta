@@ -1,7 +1,6 @@
 import { wei } from '@synthetixio/wei';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
@@ -14,9 +13,9 @@ import {
 	selectMarketInfo,
 	selectMarketKey,
 	selectMarketVolumes,
+	selectPreviousDayRates,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { pastRatesState } from 'store/futures';
 import { isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
@@ -33,7 +32,7 @@ const useGetMarketData = (mobile?: boolean) => {
 	const fundingRate = useAppSelector(selectFundingRate);
 	const marketInfo = useAppSelector(selectMarketInfo);
 
-	const pastRates = useRecoilValue(pastRatesState);
+	const pastRates = useAppSelector(selectPreviousDayRates);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();

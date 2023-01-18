@@ -169,7 +169,7 @@ export type FuturesPosition<T = Wei> = {
 export type FuturesOrderTypeDisplay = 'Limit' | 'Stop Market' | 'Market' | 'Liquidation';
 
 export type FuturesOrder<T = Wei> = {
-	id: string;
+	id: string; // formatted subgraph id
 	contractId: number;
 	account: string;
 	asset: FuturesMarketAsset;
@@ -231,3 +231,6 @@ export type PostTradeDetailsResponse = {
 	fee: BigNumber;
 	status: number;
 };
+
+export type IsolatedMarginOrderType = 'market';
+export type CrossMarginOrderType = 'market' | 'stop market' | 'limit';

@@ -1,7 +1,6 @@
 import Wei from '@synthetixio/wei';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import PreviewArrow from 'components/PreviewArrow';
@@ -20,9 +19,9 @@ import {
 	selectPosition,
 	selectTradePreview,
 	selectFuturesType,
+	selectPositionHistory,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { positionHistoryState } from 'store/futures';
 import { FlexDivCentered, FlexDivCol, PillButtonDiv } from 'styles/common';
 import media from 'styles/media';
 import { isFiatCurrency } from 'utils/currencies';
@@ -75,7 +74,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 	const position = useAppSelector(selectPosition);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const marketKey = useAppSelector(selectMarketKey);
-	const positionHistory = useRecoilValue(positionHistoryState);
+	const positionHistory = useAppSelector(selectPositionHistory);
 	const previewTradeData = useAppSelector(selectTradePreview);
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketKey);
 
@@ -89,10 +88,8 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			: undefined;
 
 	const thisPositionHistory = useMemo(() => {
-		return positionHistory[futuresAccountType].find(
-			({ asset, isOpen }) => isOpen && asset === marketAsset
-		);
-	}, [positionHistory, marketAsset, futuresAccountType]);
+		return positionHistory.find(({ asset, isOpen }) => isOpen && asset === marketAsset);
+	}, [positionHistory, marketAsset]);
 
 	const modifiedAverage = useAverageEntryPrice(thisPositionHistory);
 

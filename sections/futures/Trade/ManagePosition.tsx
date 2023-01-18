@@ -8,7 +8,7 @@ import Loader from 'components/Loader';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { previewErrorI18n } from 'queries/futures/constants';
 import { setOpenModal } from 'state/app/reducer';
-import { selectOpenModal } from 'state/app/selectors';
+import { selectOpenModal, selectTransaction } from 'state/app/selectors';
 import {
 	selectMarketInfo,
 	selectIsMarketCapReached,
@@ -16,7 +16,6 @@ import {
 	selectPlaceOrderTranslationKey,
 	selectPosition,
 	selectMaxLeverage,
-	selectFuturesTransaction,
 	selectTradePreviewError,
 	selectTradePreview,
 	selectTradePreviewStatus,
@@ -57,7 +56,7 @@ const ManagePosition: React.FC = () => {
 	const orderType = useAppSelector(selectOrderType);
 	const leverageSide = useAppSelector(selectLeverageSide);
 
-	const futuresTransaction = useAppSelector(selectFuturesTransaction);
+	const futuresTransaction = useAppSelector(selectTransaction);
 	const isMarketCapReached = useAppSelector(selectIsMarketCapReached);
 	const placeOrderTranslationKey = useAppSelector(selectPlaceOrderTranslationKey);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);

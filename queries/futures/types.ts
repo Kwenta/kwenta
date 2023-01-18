@@ -25,37 +25,6 @@ export type MarginTransfer = {
 	asset?: FuturesMarketAsset;
 };
 
-export type PositionHistory = {
-	id: Number;
-	transactionHash: string;
-	timestamp: number;
-	openTimestamp: number;
-	closeTimestamp: number | undefined;
-	market: string;
-	asset: FuturesMarketAsset;
-	account: string;
-	abstractAccount: string;
-	accountType: FuturesAccountType;
-	isOpen: boolean;
-	isLiquidated: boolean;
-	size: Wei;
-	feesPaid: Wei;
-	netFunding: Wei;
-	netTransfers: Wei;
-	totalDeposits: Wei;
-	initialMargin: Wei;
-	margin: Wei;
-	entryPrice: Wei;
-	avgEntryPrice: Wei;
-	exitPrice: Wei;
-	leverage: Wei;
-	side: PositionSide;
-	pnl: Wei;
-	pnlWithFeesPaid: Wei;
-	totalVolume: Wei;
-	trades: number;
-};
-
 export enum PositionSide {
 	LONG = 'long',
 	SHORT = 'short',
@@ -160,18 +129,10 @@ type CrossMarginAccount = string;
 type FactoryAddress = string;
 export type CrossMarginAccounts = Record<FactoryAddress, Record<Wallet, CrossMarginAccount>>;
 
-export type PositionHistoryState = Record<FuturesAccountType, PositionHistory[]>;
 export type Portfolio = {
 	total: Wei;
 	crossMarginFutures: Wei;
 	isolatedMarginFutures: Wei;
-};
-
-export type FuturesAccountState = {
-	walletAddress: string | null;
-	crossMarginAddress: string | null;
-	crossMarginAvailable: boolean;
-	status: 'initial-fetch' | 'complete' | 'error' | 'refetching' | 'idle';
 };
 
 export type SynthBalances = Balances & {

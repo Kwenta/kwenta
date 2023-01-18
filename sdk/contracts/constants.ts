@@ -58,8 +58,8 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 		10: '0x6d6273f52b0C8eaB388141393c1e8cfDB3311De6',
 	},
 	CrossMarginAccountFactory: {
-		10: '0x1fcFf1c7911dc209bdFc1648E5cDdB320f08AC08',
-		420: '0x73a70947fe787A4167a27f8bd876349b7206ee77',
+		10: '0x8e43BF1910ad1461EEe0Daca10547c7e6d9D2f36',
+		420: '0x9320170B37eDEb4f41cb6E5A8F82B984aD9c44eE',
 	},
 	CrossMarginBaseSettings: {
 		10: '0x8954C7b1417E3De398c7F33520EbAe142929Ba2A',

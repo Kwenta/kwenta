@@ -5,64 +5,43 @@ import styled, { css } from 'styled-components';
 
 import Badge from 'components/Badge';
 import Currency from 'components/Currency';
+import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
-import { useRefetchContext } from 'contexts/RefetchContext';
-import { monitorTransaction } from 'contexts/RelayerContext';
-import useCrossMarginContracts from 'hooks/useCrossMarginContracts';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { PositionSide } from 'queries/futures/types';
 import { FuturesOrder } from 'sdk/types/futures';
-import { selectMarketAsset, selectOpenOrders } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { cancelCrossMarginOrder } from 'state/futures/actions';
+import {
+	selectCancellingOrder,
+	selectMarketAsset,
+	selectOpenOrders,
+} from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatDollars } from 'utils/formatters/number';
-import logError from 'utils/logError';
 
 import OrderDrawer from '../MobileTrade/drawers/OrderDrawer';
 
 const OpenOrdersTable: React.FC = () => {
 	const { t } = useTranslation();
-	const { crossMarginAccountContract } = useCrossMarginContracts();
-	const { handleRefetch } = useRefetchContext();
+	const dispatch = useAppDispatch();
 	const { switchToL2 } = useNetworkSwitcher();
+	const isL2 = useIsL2();
 
 	const marketAsset = useAppSelector(selectMarketAsset);
-
-	const isL2 = useIsL2();
+	const cancellingOrder = useAppSelector(selectCancellingOrder);
 	const openOrders = useAppSelector(selectOpenOrders);
 
-	const [cancelling, setCancelling] = useState<string | null>(null);
 	const [selectedOrder, setSelectedOrder] = useState<FuturesOrder | undefined>();
-
-	const handleTx = useCallback(
-		(txHash: string) => {
-			monitorTransaction({
-				txHash: txHash,
-				onTxConfirmed: () => {
-					handleRefetch('new-order');
-				},
-			});
-		},
-		[handleRefetch]
-	);
 
 	const onCancel = useCallback(
 		async (order: FuturesOrder | undefined) => {
 			if (!order) return;
-			setCancelling(order.id);
-			try {
-				const id = order.id.split('-')[2];
-				const tx = await crossMarginAccountContract?.cancelOrder(id);
-				if (tx?.hash) handleTx(tx.hash);
-				setCancelling(null);
-			} catch (err) {
-				setCancelling(null);
-				logError(err);
-			}
+			dispatch(cancelCrossMarginOrder(order.id));
 		},
-		[crossMarginAccountContract, handleTx]
+		[dispatch]
 	);
 
 	const rowsData = useMemo(() => {
@@ -75,13 +54,13 @@ const OpenOrdersTable: React.FC = () => {
 					? 0
 					: -1;
 			});
-		const cancellingIndex = ordersWithCancel.findIndex((o) => o.id === cancelling);
+		const cancellingIndex = ordersWithCancel.findIndex((o) => o.id === cancellingOrder);
 		ordersWithCancel[cancellingIndex] = {
 			...ordersWithCancel[cancellingIndex],
 			isCancelling: true,
 		};
 		return ordersWithCancel;
-	}, [openOrders, cancelling, marketAsset, onCancel]);
+	}, [openOrders, cancellingOrder, marketAsset, onCancel]);
 
 	return (
 		<>
@@ -196,7 +175,9 @@ const OpenOrdersTable: React.FC = () => {
 							accessor: 'actions',
 							Cell: (cellProps: CellProps<any>) => {
 								const cancellingRow = cellProps.row.original.isCancelling;
-								return (
+								return cancellingRow ? (
+									<ButtonLoader />
+								) : (
 									<div style={{ display: 'flex' }}>
 										<CancelButton disabled={cancellingRow} onClick={cellProps.row.original.cancel}>
 											{t('futures.market.user.open-orders.actions.cancel')}
