@@ -87,6 +87,7 @@ import {
 	selectMarketAssetRate,
 	selectMarketInfo,
 	selectMarketKey,
+	selectMarkets,
 	selectOrderType,
 	selectPosition,
 	selectTradeSizeInputs,
@@ -99,20 +100,27 @@ import {
 	ModifyIsolatedPositionInputs,
 } from './types';
 
-export const fetchMarkets = createAsyncThunk<
-	{ markets: FuturesMarket<string>[]; fundingRates: FundingRateSerialized[] },
-	void,
-	ThunkConfig
->('futures/fetchMarkets', async (_, { extra: { sdk } }) => {
-	const markets = await sdk.futures.getMarkets();
-	const serializedMarkets = serializeMarkets(markets);
-	const averageFundingRates = await sdk.futures.getAverageFundingRates(markets, Period.ONE_HOUR);
-	const seriailizedRates = averageFundingRates.map((r) => ({
-		...r,
-		fundingRate: r.fundingRate ? r.fundingRate.toString() : null,
-	}));
-	return { markets: serializedMarkets, fundingRates: seriailizedRates };
-});
+export const fetchMarkets = createAsyncThunk<FuturesMarket<string>[], void, ThunkConfig>(
+	'futures/fetchMarkets',
+	async (_, { extra: { sdk } }) => {
+		const markets = await sdk.futures.getMarkets();
+		const serializedMarkets = serializeMarkets(markets);
+		return serializedMarkets;
+	}
+);
+
+export const fetchFundingRates = createAsyncThunk<FundingRateSerialized[], void, ThunkConfig>(
+	'futures/fetchFundingRates',
+	async (_, { getState, extra: { sdk } }) => {
+		const markets = selectMarkets(getState());
+		const averageFundingRates = await sdk.futures.getAverageFundingRates(markets, Period.ONE_HOUR);
+		const seriailizedRates = averageFundingRates.map((r) => ({
+			...r,
+			fundingRate: r.fundingRate ? r.fundingRate.toString() : null,
+		}));
+		return seriailizedRates;
+	}
+);
 
 export const fetchCrossMarginBalanceInfo = createAsyncThunk<
 	CrossMarginBalanceInfo<string>,
