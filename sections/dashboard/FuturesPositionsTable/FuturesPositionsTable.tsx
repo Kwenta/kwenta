@@ -231,7 +231,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 										<DefaultCell>{NO_VALUE}</DefaultCell>
 									) : (
 										<Currency.Price
-											currencyKey={'sUSD'}
+											currencyKey="sUSD"
 											price={cellProps.row.original.avgEntryPrice}
 											sign="$"
 											conversionRate={1}

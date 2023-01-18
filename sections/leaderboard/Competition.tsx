@@ -5,14 +5,14 @@ import { CellProps } from 'react-table';
 import styled from 'styled-components';
 
 import Currency from 'components/Currency';
-import { StyledTrader } from 'sections/leaderboard/trader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import Table, { TableNoResults } from 'components/Table';
+import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { CompetitionRound, PIN, Tier } from 'constants/competition';
 import Connector from 'containers/Connector';
 import useENSs from 'hooks/useENSs';
 import useGetFile from 'queries/files/useGetFile';
 import { AccountStat } from 'queries/futures/types';
+import { StyledTrader } from 'sections/leaderboard/trader';
 import { getMedal, getCompetitionDataLocation } from 'utils/competition';
 import { formatPercent } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';
@@ -163,9 +163,9 @@ const Competition: FC<CompetitionProps> = ({
 									sortType: 'basic',
 									Cell: (cellProps: CellProps<any>) => (
 										<Currency.Price
-											currencyKey={'sUSD'}
+											currencyKey="sUSD"
 											price={cellProps.row.original.totalVolume}
-											sign={'$'}
+											sign="$"
 											conversionRate={1}
 										/>
 									),
@@ -177,11 +177,11 @@ const Competition: FC<CompetitionProps> = ({
 									accessor: 'pnlNumber',
 									sortType: 'basic',
 									Cell: (cellProps: CellProps<any>) => (
-										<PnlContainer direction={'column'}>
+										<PnlContainer direction="column">
 											<ColorCodedPrice
-												currencyKey={'sUSD'}
+												currencyKey="sUSD"
 												price={cellProps.row.original.pnl}
-												sign={'$'}
+												sign="$"
 												conversionRate={1}
 											/>
 											<StyledValue>{cellProps.row.original.pnlPct}</StyledValue>
@@ -231,9 +231,9 @@ const Competition: FC<CompetitionProps> = ({
 							Cell: (cellProps: CellProps<any>) => (
 								<PnlContainer direction={'column'}>
 									<ColorCodedPrice
-										currencyKey={'sUSD'}
+										currencyKey="sUSD"
 										price={cellProps.row.original.pnl}
-										sign={'$'}
+										sign="$"
 										conversionRate={1}
 									/>
 									<StyledValue>{cellProps.row.original.pnlPct}</StyledValue>
@@ -259,11 +259,6 @@ const TableTitle = styled.div`
 `;
 
 const TitleText = styled.a`
-	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
-
-const TableHeader = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;

@@ -2,9 +2,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
-import Table, { TableNoResults } from 'components/Table';
+import Table, { TableHeader, TableNoResults } from 'components/Table';
 import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
+import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
 import { timePresentation } from 'utils/formatters/date';
 
 const TransfersTab: React.FC = () => {
@@ -28,21 +28,13 @@ const TransfersTab: React.FC = () => {
 				highlightRowsOnHover
 				columns={[
 					{
-						Header: (
-							<StyledTableHeader>
-								{t('futures.market.user.transfers.table.action')}
-							</StyledTableHeader>
-						),
+						Header: <TableHeader>{t('futures.market.user.transfers.table.action')}</TableHeader>,
 						accessor: 'action',
 						Cell: (cellProps: any) => <StyledActionCell>{cellProps.value}</StyledActionCell>,
 						width: 50,
 					},
 					{
-						Header: (
-							<StyledTableHeader>
-								{t('futures.market.user.transfers.table.amount')}
-							</StyledTableHeader>
-						),
+						Header: <TableHeader>{t('futures.market.user.transfers.table.amount')}</TableHeader>,
 						accessor: 'amount',
 						sortType: 'basic',
 						Cell: (cellProps: any) => (
@@ -54,9 +46,7 @@ const TransfersTab: React.FC = () => {
 						width: 50,
 					},
 					{
-						Header: (
-							<StyledTableHeader>{t('futures.market.user.transfers.table.date')}</StyledTableHeader>
-						),
+						Header: <TableHeader>{t('futures.market.user.transfers.table.date')}</TableHeader>,
 						accessor: 'timestamp',
 						Cell: (cellProps: any) => (
 							<DefaultCell>{timePresentation(cellProps.value, t)}</DefaultCell>
@@ -100,11 +90,6 @@ const StyledAmountCell = styled(DefaultCell)<{ isPositive: boolean }>`
 		props.isPositive
 			? props.theme.colors.selectedTheme.green
 			: props.theme.colors.selectedTheme.red};
-`;
-
-const StyledTableHeader = styled.div`
-	font-family: ${(props) => props.theme.fonts.regular};
-	text-transform: capitalize;
 `;
 
 export default TransfersTab;

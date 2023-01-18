@@ -7,15 +7,15 @@ import styled from 'styled-components';
 import GridSvg from 'assets/svg/app/grid.svg';
 import Button from 'components/Button';
 import Currency from 'components/Currency';
-import { StackSection } from 'sections/homepage/section';
-import { Title } from 'sections/homepage/text';
 import { FlexDivColCentered, FlexDivRow } from 'components/layout/flex';
 import Loader from 'components/Loader';
-import Table from 'components/Table';
+import Table, { TableHeader } from 'components/Table';
 import ROUTES from 'constants/routes';
 import useENS from 'hooks/useENS';
 import useGetFuturesCumulativeStats from 'queries/futures/useGetFuturesCumulativeStats';
 import useGetStats from 'queries/futures/useGetStats';
+import { StackSection } from 'sections/homepage/section';
+import { Title } from 'sections/homepage/text';
 import { SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media, { Media } from 'styles/media';
 import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
@@ -135,9 +135,9 @@ const ShortList = () => {
 								accessor: 'pnl',
 								Cell: (cellProps: CellProps<any>) => (
 									<ColorCodedPrice
-										currencyKey={'sUSD'}
+										currencyKey="sUSD"
 										price={cellProps.row.original.pnl}
-										sign={'$'}
+										sign="$"
 										conversionRate={1}
 									/>
 								),
@@ -198,9 +198,9 @@ const ShortList = () => {
 								accessor: 'pnl',
 								Cell: (cellProps: CellProps<any>) => (
 									<ColorCodedPrice
-										currencyKey={'sUSD'}
+										currencyKey="sUSD"
 										price={cellProps.row.original.pnl}
-										sign={'$'}
+										sign="$"
 										conversionRate={1}
 									/>
 								),
@@ -342,12 +342,6 @@ const ColorCodedPrice = styled(Currency.Price)`
 const Container = styled(FlexDivColCentered)`
 	padding-bottom: 140px;
 	justify-content: center;
-`;
-
-const TableHeader = styled.div`
-	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.common.secondaryGray};
-	font-size: 13px;
 `;
 
 const StyledOrderType = styled.div`

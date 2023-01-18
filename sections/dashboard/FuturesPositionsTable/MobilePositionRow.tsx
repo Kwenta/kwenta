@@ -66,7 +66,7 @@ const MobilePositionRow: FC<MobilePositionRowProps> = memo(({ row, onClick }) =>
 				<div>
 					<ChangePercent value={row.position.pnlPct ?? 0} />
 					<div>
-						<Currency.Price currencyKey={'sUSD'} price={row.position.pnl ?? 0} sign="$" />
+						<Currency.Price currencyKey="sUSD" price={row.position.pnl ?? 0} sign="$" />
 					</div>
 				</div>
 			</RightColumnsContainer>

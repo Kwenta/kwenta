@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import HelpIcon from 'assets/svg/app/question-mark.svg';
 import Button from 'components/Button';
 import { FlexDivRow } from 'components/layout/flex';
-import { StakingCard } from 'sections/dashboard/Stake/card';
+import { SplitContainer } from 'components/layout/grid';
 import { LogoText } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
 import Connector from 'containers/Connector';
@@ -20,6 +20,7 @@ import {
 	FuturesFeeProps,
 	TradingRewardProps,
 } from 'queries/staking/utils';
+import { StakingCard } from 'sections/dashboard/Stake/card';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { claimMultipleRewards } from 'state/staking/actions';
 import { selectEpochPeriod, selectResetTime, selectTotalRewards } from 'state/staking/selectors';
@@ -80,7 +81,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 		const showEstimatedValue = useMemo(() => wei(period).eq(epochPeriod), [epochPeriod, period]);
 
 		return (
-			<TradingRewardsContainer>
+			<SplitContainer>
 				<CardGridContainer>
 					<CardGrid>
 						<div>
@@ -165,7 +166,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 						</FlexDivRow>
 					) : null}
 				</CardGridContainer>
-			</TradingRewardsContainer>
+			</SplitContainer>
 		);
 	}
 );
@@ -221,15 +222,6 @@ const CardGrid = styled.div`
 	${media.lessThan('md')`
 		column-gap: 10px;
 	`}
-`;
-
-const TradingRewardsContainer = styled.div`
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	${media.lessThan('md')`
-		grid-template-columns: repeat(1, 1fr);
-	`}
-	grid-gap: 15px;
 `;
 
 export default TradingRewardsTab;

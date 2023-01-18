@@ -10,7 +10,7 @@ import MarketBadge from 'components/Badge/MarketBadge';
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import Table from 'components/Table';
+import Table, { TableHeader } from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
@@ -418,10 +418,6 @@ const TableContainer = styled.div`
 
 const StyledTable = styled(Table)`
 	margin-bottom: 20px;
-`;
-
-const TableHeader = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 const StyledText = styled.div`

@@ -6,7 +6,7 @@ import styled, { css } from 'styled-components';
 import LinkIcon from 'assets/svg/app/link-blue.svg';
 import Card from 'components/Card';
 import { GridDivCenteredRow } from 'components/layout/grid';
-import Table, { TableNoResults } from 'components/Table';
+import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { ETH_UNIT } from 'constants/network';
 import { blockExplorer } from 'containers/Connector/Connector';
@@ -55,9 +55,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 				highlightRowsOnHover
 				columns={[
 					{
-						Header: (
-							<StyledTableHeader>{t('futures.market.user.trades.table.date')}</StyledTableHeader>
-						),
+						Header: <TableHeader>{t('futures.market.user.trades.table.date')}</TableHeader>,
 						accessor: 'time',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
 							<GridDivCenteredRow>
@@ -68,9 +66,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						sortable: true,
 					},
 					{
-						Header: (
-							<StyledTableHeader>{t('futures.market.user.trades.table.side')}</StyledTableHeader>
-						),
+						Header: <TableHeader>{t('futures.market.user.trades.table.side')}</TableHeader>,
 						accessor: 'side',
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
@@ -82,9 +78,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						sortable: true,
 					},
 					{
-						Header: (
-							<StyledTableHeader>{t('futures.market.user.trades.table.price')}</StyledTableHeader>
-						),
+						Header: <TableHeader>{t('futures.market.user.trades.table.price')}</TableHeader>,
 						accessor: 'value',
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
@@ -99,11 +93,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						sortable: true,
 					},
 					{
-						Header: (
-							<StyledTableHeader>
-								{t('futures.market.user.trades.table.trade-size')}
-							</StyledTableHeader>
-						),
+						Header: <TableHeader>{t('futures.market.user.trades.table.trade-size')}</TableHeader>,
 						accessor: 'amount',
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
@@ -113,9 +103,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						sortable: true,
 					},
 					{
-						Header: (
-							<StyledTableHeader>{t('futures.market.user.trades.table.fees')}</StyledTableHeader>
-						),
+						Header: <TableHeader>{t('futures.market.user.trades.table.fees')}</TableHeader>,
 						sortType: 'basic',
 						accessor: 'feesPaid',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
@@ -125,11 +113,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						sortable: true,
 					},
 					{
-						Header: (
-							<StyledTableHeader>
-								{t('futures.market.user.trades.table.order-type')}
-							</StyledTableHeader>
-						),
+						Header: <TableHeader>{t('futures.market.user.trades.table.order-type')}</TableHeader>,
 						accessor: 'type',
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) => <>{cellProps.value}</>,
@@ -167,11 +151,6 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 };
 
 export default Trades;
-
-const StyledTableHeader = styled.div`
-	font-family: ${(props) => props.theme.fonts.regular};
-	text-transform: capitalize;
-`;
 
 const StyledPositionSide = styled.div<{ side: PositionSide }>`
 	text-transform: uppercase;

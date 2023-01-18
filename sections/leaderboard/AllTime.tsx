@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-import Table from 'components/Table';
+import Table, { TableHeader } from 'components/Table';
 import { DEFAULT_LEADERBOARD_ROWS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import useENSAvatar from 'hooks/useENSAvatar';
@@ -230,7 +230,7 @@ const AllTime: FC<AllTimeProps> = ({
 							Header: () => <TableHeader>{t('leaderboard.leaderboard.table.pnl')}</TableHeader>,
 							accessor: 'pnl',
 							Cell: (cellProps: CellProps<any>) => (
-								<ColorCodedPrice currencyKey={'sUSD'} price={cellProps.row.original.pnl} sign="$" />
+								<ColorCodedPrice currencyKey="sUSD" price={cellProps.row.original.pnl} sign="$" />
 							),
 							width: 125,
 						},
@@ -265,11 +265,6 @@ const TitleText = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	text-transform: capitalize;
-`;
-
-const TableHeader = styled.div`
-	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 const StyledOrderType = styled.div`

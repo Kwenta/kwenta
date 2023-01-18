@@ -4,10 +4,10 @@ import { CellProps } from 'react-table';
 import styled from 'styled-components';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { StakingCard } from 'sections/dashboard/Stake/card';
 import Table from 'components/Table';
-import { TableCellHead } from 'components/Table/Table';
+import { TableCellHead, TableHeader } from 'components/Table';
 import type { EscrowData } from 'sdk/services/kwentaToken';
+import { StakingCard } from 'sections/dashboard/Stake/card';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { vestEscrowedRewards } from 'state/staking/actions';
 import { truncateNumbers, zeroBN } from 'utils/formatters/number';
@@ -262,12 +262,6 @@ const StyledTable = styled(Table)`
 			padding-left: 14px;
 		}
 	}
-`;
-
-const TableHeader = styled.div`
-	font-size: 10px;
-	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.selectedTheme.text.header};
 `;
 
 const TableCell = styled.div`

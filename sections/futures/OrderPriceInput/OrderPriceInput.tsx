@@ -96,7 +96,7 @@ export default function OrderPriceInput({
 				invalid={!!minMaxLabelString}
 				dataTestId="order-price-input"
 				disabled={isDisabled}
-				right={'sUSD'}
+				right="sUSD"
 				value={localValue}
 				placeholder="0.0"
 				onChange={handleOnChange}
