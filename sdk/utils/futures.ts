@@ -84,7 +84,7 @@ export const marketsForNetwork = (networkId: number) => {
 		case 420:
 			return TESTNET_MARKETS;
 		default:
-			logError('Futures is not supported on this network.');
+			logError(new Error('Futures is not supported on this network.'));
 			return [];
 	}
 };

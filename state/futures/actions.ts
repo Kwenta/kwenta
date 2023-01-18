@@ -100,6 +100,7 @@ import {
 	selectMarketAssets,
 	selectMarketInfo,
 	selectMarketKey,
+	selectMarkets,
 	selectOrderType,
 	selectOrerFeeCap,
 	selectPosition,
@@ -114,26 +115,33 @@ import {
 	PositionHistory,
 } from './types';
 
-export const fetchMarkets = createAsyncThunk<
-	{ markets: FuturesMarket<string>[]; fundingRates: FundingRateSerialized[] },
-	void,
-	ThunkConfig
->('futures/fetchMarkets', async (_, { extra: { sdk } }) => {
-	try {
-		const markets = await sdk.futures.getMarkets();
-		const serializedMarkets = serializeMarkets(markets);
+export const fetchMarkets = createAsyncThunk<FuturesMarket<string>[], void, ThunkConfig>(
+	'futures/fetchMarkets',
+	async (_, { extra: { sdk } }) => {
+		try {
+			const markets = await sdk.futures.getMarkets();
+			const serializedMarkets = serializeMarkets(markets);
+			return serializedMarkets;
+		} catch (err) {
+			logError(err);
+			notifyError(err);
+			throw err;
+		}
+	}
+);
+
+export const fetchFundingRates = createAsyncThunk<FundingRateSerialized[], void, ThunkConfig>(
+	'futures/fetchFundingRates',
+	async (_, { getState, extra: { sdk } }) => {
+		const markets = selectMarkets(getState());
 		const averageFundingRates = await sdk.futures.getAverageFundingRates(markets, Period.ONE_HOUR);
 		const seriailizedRates = averageFundingRates.map((r) => ({
 			...r,
 			fundingRate: r.fundingRate ? r.fundingRate.toString() : null,
 		}));
-		return { markets: serializedMarkets, fundingRates: seriailizedRates };
-	} catch (err) {
-		logError(err);
-		notifyError('Failed to fetch markets');
-		throw err;
+		return seriailizedRates;
 	}
-});
+);
 
 export const fetchCrossMarginBalanceInfo = createAsyncThunk<
 	{ balanceInfo: CrossMarginBalanceInfo<string>; account: string; network: NetworkId } | undefined,

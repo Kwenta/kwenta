@@ -14,6 +14,7 @@ import { selectIsClosingPosition, selectMarketAsset } from 'state/futures/select
 import { useAppSelector } from 'state/hooks';
 import { FlexDivCentered, FlexDivCol } from 'styles/common';
 import { formatCurrency, formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
+import logError from 'utils/logError';
 
 import { PositionSide } from '../types';
 
@@ -53,9 +54,7 @@ function ClosePositionModal({
 				const orderFee = await FuturesMarketContract.orderFee(size.toBN());
 				setOrderFee(wei(orderFee.fee));
 			} catch (e) {
-				// @ts-ignore
-				logError(e.message);
-				// @ts-ignore
+				logError(e);
 				setError(e?.data?.message ?? e.message);
 			}
 		};

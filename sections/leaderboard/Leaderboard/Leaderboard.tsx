@@ -11,9 +11,9 @@ import useENSs from 'hooks/useENSs';
 import { AccountStat } from 'queries/futures/types';
 import useLeaderboard, { DEFAULT_LEADERBOARD_DATA } from 'queries/futures/useLeaderboard';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { setSelectedTrader } from 'state/futures/reducer';
 import { selectSelectedTrader } from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FlexDivCol } from 'styles/common';
 import media from 'styles/media';
 

@@ -1,4 +1,4 @@
-import { NetworkId, NetworkNameById, Synth } from '@synthetixio/contracts-interface';
+import { Synth } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { TFunction } from 'i18next';
 import { Dictionary } from 'lodash';
@@ -17,7 +17,6 @@ import {
 	PositionHistory,
 	TransactionEstimation,
 } from 'state/futures/types';
-import logError from 'utils/logError';
 
 import { formatNumber, zeroBN } from './formatters/number';
 
@@ -270,20 +269,6 @@ export const mainnetMarkets = marketsList.filter(
 export const testnetMarkets = marketsList.filter(
 	(m) => m.supports === 'testnet' || m.supports === 'both'
 );
-
-export const marketsForNetwork = (networkId: NetworkId) => {
-	const network = NetworkNameById[networkId];
-
-	switch (network) {
-		case 'mainnet-ovm':
-			return mainnetMarkets;
-		case 'goerli-ovm':
-			return testnetMarkets;
-		default:
-			logError('You cannot use futures on this network.');
-			return [];
-	}
-};
 
 export const orderPriceInvalidLabel = (
 	orderPrice: string,
