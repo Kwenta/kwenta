@@ -1,8 +1,9 @@
+import { wei, WeiSource } from '@synthetixio/wei';
 import router from 'next/router';
 import { FC, memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import Currency from 'components/Currency';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
@@ -178,18 +179,11 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 												<ColorCodedPrice
 													currencyKey="sUSD"
 													price={cellProps.row.original.pnl}
+													$value={cellProps.row.original.pnl}
 													sign="$"
 													conversionRate={1}
 												/>
-												<StyledValue
-													color={
-														cellProps.row.original.pnl.gt(0)
-															? 'green'
-															: cellProps.row.original.pnl.lt(0)
-															? 'red'
-															: ''
-													}
-												>
+												<StyledValue $value={cellProps.row.original.pnl}>
 													{cellProps.row.original.pnlPct}
 												</StyledValue>
 											</PnlContainer>
@@ -268,18 +262,11 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 												<ColorCodedPrice
 													currencyKey="sUSD"
 													price={cellProps.row.original.pnl}
+													$value={cellProps.row.original.pnl}
 													sign="$"
 													conversionRate={1}
 												/>
-												<StyledValue
-													color={
-														cellProps.row.original.pnl.gt(0)
-															? 'green'
-															: cellProps.row.original.pnl.lt(0)
-															? 'red'
-															: ''
-													}
-												>
+												<StyledValue $value={cellProps.row.original.pnl}>
 													{cellProps.row.original.pnlPct}
 												</StyledValue>
 											</PnlContainer>
@@ -352,27 +339,26 @@ const PnlContainer = styled.div`
 	align-items: center;
 `;
 
-const ColorCodedPrice = styled(Currency.Price)`
-	align-items: right;
+const valueColor = css<{ $value: WeiSource }>`
 	color: ${(props) =>
-		props.price > 0
+		wei(props.$value).gt(0)
 			? props.theme.colors.selectedTheme.green
-			: props.price < 0
+			: wei(props.$value).lt(0)
 			? props.theme.colors.selectedTheme.red
 			: props.theme.colors.selectedTheme.button.text.primary};
 `;
 
-const StyledValue = styled.div`
+const ColorCodedPrice = styled(Currency.Price)<{ $value: WeiSource }>`
+	align-items: right;
+	${valueColor}
+`;
+
+const StyledValue = styled.div<{ $value: WeiSource }>`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 13px;
-	color: ${(props) =>
-		props.color === 'green'
-			? props.theme.colors.selectedTheme.green
-			: props.color === 'red'
-			? props.theme.colors.selectedTheme.red
-			: props.theme.colors.selectedTheme.button.text.primary};
 	margin: 0;
 	text-align: end;
+	${valueColor}
 `;
 
 const StyledFuturesIcon = styled(FuturesIcon)`
