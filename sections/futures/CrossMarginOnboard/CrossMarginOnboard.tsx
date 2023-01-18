@@ -18,11 +18,7 @@ import Connector from 'containers/Connector';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { selectBalances } from 'state/balances/selectors';
 import { sdk } from 'state/config';
-import {
-	approveCrossMargin,
-	depositCrossMargin,
-	fetchCrossMarginAccount,
-} from 'state/futures/actions';
+import { approveCrossMargin, depositCrossMargin } from 'state/futures/actions';
 import { setCrossMarginAccount } from 'state/futures/reducer';
 import {
 	selectCMAccountQueryStatus,
@@ -63,7 +59,6 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 
 	const [depositAmount, setDepositAmount] = useState('');
 	const [submitting, setSubmitting] = useState<null | 'create'>(null);
-	const [error, setError] = useState<string | null>(null);
 
 	const susdBal = balances?.susdWalletBalance;
 
@@ -81,10 +76,6 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 	}, [crossMarginAccount]);
 
 	const createAccount = useCallback(async () => {
-		notifyError(
-			'tweh fjhdsjhj hsdjkhfjk shdjfhk jasdjkf jsdfjkashdjkf jksdh ajskdf hadjsfj sdahkfhsjadfhjksdfsjfhsdhfjkdshjfhajkshfjsdhjahjfhjshjkdfjkfjk'
-		);
-		setError(null);
 		if (submitting) return;
 		setSubmitting('create');
 		try {
@@ -108,16 +99,25 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 							const log = receipt?.logs.find(
 								(l) => l.address === sdk.context.contracts.CrossMarginAccountFactory?.address
 							);
-							if (log?.data) {
+							if (log?.data && walletAddress) {
 								const account = defaultAbiCoder.decode(['address'], log.data)[0];
-								dispatch(setCrossMarginAccount(account));
+								dispatch(
+									setCrossMarginAccount({ account: account, wallet: walletAddress, network })
+								);
 							}
 						} catch (err) {
 							logError(err);
-							// Fallback to querying logs and subgraph if tx not available
+							// Fallback to querying logs if tx not available
 							try {
-								await dispatch(fetchCrossMarginAccount());
+								const addresses = await sdk.futures.getCrossMarginAccounts(walletAddress);
+								if (addresses.length && walletAddress) {
+									dispatch(
+										setCrossMarginAccount({ account: existing[0], wallet: walletAddress, network })
+									);
+								}
+								setSubmitting(null);
 							} catch (err) {
+								notifyError('Failed to fetch account after the transaction completed');
 								logError(err);
 								setSubmitting(null);
 							}
@@ -130,7 +130,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 			}
 		} catch (err) {
 			if (!isUserDeniedError(err.message)) {
-				setError('Failed to create account');
+				notifyError('Failed to create account');
 				logError(err);
 			}
 			setSubmitting(null);
@@ -251,7 +251,6 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 	return (
 		<StyledBaseModal onDismiss={onClose} isOpen={isOpen} title={t('futures.modals.onboard.title')}>
 			{renderContent()}
-			{error && <ErrorView message={error} containerStyle={{ marginTop: '20px' }} />}
 		</StyledBaseModal>
 	);
 }

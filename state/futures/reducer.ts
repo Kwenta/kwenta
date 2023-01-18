@@ -252,18 +252,21 @@ const futuresSlice = createSlice({
 			action: PayloadAction<{ wallet: string; account: string; network: NetworkId }>
 		) => {
 			const { account, wallet, network } = action.payload;
-			if (!state.crossMargin.accounts[network][wallet]) {
-				state.crossMargin.accounts[network][wallet] = {
-					account: account,
-					position: undefined,
-					balanceInfo: {
-						freeMargin: '0',
-						keeperEthBal: '0',
-						allowance: '0',
+			if (!state.crossMargin.accounts[network]?.[wallet]?.account) {
+				state.crossMargin.accounts[network] = {
+					...state.crossMargin.accounts[network],
+					[wallet]: {
+						account: account,
+						position: undefined,
+						balanceInfo: {
+							freeMargin: '0',
+							keeperEthBal: '0',
+							allowance: '0',
+						},
+						positions: [],
+						openOrders: [],
+						positionHistory: [],
 					},
-					positions: [],
-					openOrders: [],
-					positionHistory: [],
 				};
 			}
 		},
@@ -481,17 +484,20 @@ const futuresSlice = createSlice({
 		builder.addCase(fetchCrossMarginAccount.fulfilled, (futuresState, action) => {
 			if (action.payload) {
 				const { network, account, wallet } = action.payload;
-				futuresState.crossMargin.accounts[network][wallet] = {
-					account: account,
-					position: undefined,
-					balanceInfo: {
-						freeMargin: '0',
-						keeperEthBal: '0',
-						allowance: '0',
+				futuresState.crossMargin.accounts[network] = {
+					...futuresState.crossMargin.accounts[network],
+					[wallet]: {
+						account: account,
+						position: undefined,
+						balanceInfo: {
+							freeMargin: '0',
+							keeperEthBal: '0',
+							allowance: '0',
+						},
+						positions: [],
+						openOrders: [],
+						positionHistory: [],
 					},
-					positions: [],
-					openOrders: [],
-					positionHistory: [],
 				};
 			}
 			futuresState.queryStatuses.crossMarginAccount = SUCCESS_STATUS;

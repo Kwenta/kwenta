@@ -43,11 +43,6 @@ export const queryCrossMarginAccounts = async (
 	sdk: KwentaSDK,
 	walletAddress: string
 ): Promise<string[]> => {
-	try {
-		const accounts = await queryAccountFromLogs(sdk, walletAddress);
-		return accounts;
-	} catch (err) {
-		// Logs query fails with some wallets so we fallback to subgraph
-		return queryAccountsFromSubgraph(sdk.context.networkId, walletAddress);
-	}
+	const accounts = await queryAccountFromLogs(sdk, walletAddress);
+	return accounts;
 };

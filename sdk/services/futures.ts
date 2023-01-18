@@ -13,7 +13,7 @@ import { mapFuturesPositions } from 'queries/futures/utils';
 import { LatestRate } from 'queries/rates/types';
 import { getRatesEndpoint, mapLaggedDailyPrices } from 'queries/rates/utils';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
-import { BPS_CONVERSION, CREATE_ACCOUNT_GAS_LIMIT } from 'sdk/constants/futures';
+import { BPS_CONVERSION } from 'sdk/constants/futures';
 import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { getContractsByNetwork } from 'sdk/contracts';
 import CrossMarginBaseABI from 'sdk/contracts/abis/CrossMarginBase.json';
@@ -630,9 +630,12 @@ export default class FuturesService {
 	}
 
 	public async createCrossMarginAccount() {
-		return this.sdk.context.contracts.CrossMarginAccountFactory?.newAccount({
-			gasLimit: CREATE_ACCOUNT_GAS_LIMIT,
-		});
+		if (!this.sdk.context.contracts.CrossMarginAccountFactory) throw new Error(UNSUPPORTED_NETWORK);
+		return this.sdk.transactions.createContractTxn(
+			this.sdk.context.contracts.CrossMarginAccountFactory,
+			'newAccount',
+			[]
+		);
 	}
 
 	public async submitCrossMarginOrder(
