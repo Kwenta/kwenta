@@ -22,6 +22,7 @@ import {
 	fetchIsolatedMarginTradePreview,
 	fetchCrossMarginTradePreview,
 	fetchKeeperEthBalance,
+	fetchFundingRates,
 } from './actions';
 import {
 	CrossMarginTradeFees,
@@ -85,6 +86,7 @@ const initialState: FuturesState = {
 		crossMarginSettings: DEFAULT_QUERY_STATUS,
 		isolatedTradePreview: DEFAULT_QUERY_STATUS,
 		crossMarginTradePreview: DEFAULT_QUERY_STATUS,
+		fetchFundingRates: DEFAULT_QUERY_STATUS,
 	},
 	transaction: undefined,
 	transactionEstimations: {} as TransactionEstimations,
@@ -278,8 +280,7 @@ const futuresSlice = createSlice({
 		});
 		builder.addCase(fetchMarkets.fulfilled, (futuresState, action) => {
 			futuresState.queryStatuses.markets = SUCCESS_STATUS;
-			futuresState.markets = action.payload.markets;
-			futuresState.fundingRates = action.payload.fundingRates;
+			futuresState.markets = action.payload;
 		});
 		builder.addCase(fetchMarkets.rejected, (futuresState) => {
 			futuresState.queryStatuses.markets = {
@@ -428,6 +429,21 @@ const futuresSlice = createSlice({
 		// Fetch keeper balance
 		builder.addCase(fetchKeeperEthBalance.fulfilled, (futuresState, action) => {
 			futuresState.crossMargin.balanceInfo.keeperEthBal = action.payload;
+		});
+
+		// Fetch funding rates
+		builder.addCase(fetchFundingRates.pending, (futuresState) => {
+			futuresState.queryStatuses.fetchFundingRates = LOADING_STATUS;
+		});
+		builder.addCase(fetchFundingRates.fulfilled, (futuresState, action) => {
+			futuresState.queryStatuses.fetchFundingRates = SUCCESS_STATUS;
+			futuresState.fundingRates = action.payload;
+		});
+		builder.addCase(fetchFundingRates.rejected, (futuresState) => {
+			futuresState.queryStatuses.fetchFundingRates = {
+				status: FetchStatus.Error,
+				error: 'Failed to fetch funding rates',
+			};
 		});
 	},
 });
