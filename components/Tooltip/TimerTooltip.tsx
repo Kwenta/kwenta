@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState, useRef, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { Body } from 'components/Text';
 import useInterval from 'hooks/useInterval';
 
 import { BaseTooltip, ToolTipWrapper } from './BaseTooltip';
@@ -99,10 +100,10 @@ const TimerTooltip: FC<TooltipProps> = (props) => {
 				<BaseTooltip {...props} {...position}>
 					<Container>
 						<span>{t(`exchange.market-details-card.timer-tooltip.last-update`)}</span>
-						<p>
+						<Body mono>
 							{`${formatTimeUnit(minutes)}:${formatTimeUnit(seconds)} `}
 							<span>{t(timeUnitsFormat)}</span>
-						</p>
+						</Body>
 					</Container>
 				</BaseTooltip>
 			)}
@@ -113,10 +114,7 @@ const TimerTooltip: FC<TooltipProps> = (props) => {
 export default TimerTooltip;
 
 const Container = styled.div`
-	p {
-		font-family: ${(props) => props.theme.fonts.mono};
-		span {
-			font-family: ${(props) => props.theme.fonts.regular};
-		}
+	span {
+		font-family: ${(props) => props.theme.fonts.regular};
 	}
 `;

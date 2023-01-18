@@ -1,6 +1,8 @@
 import { memo, FC } from 'react';
 import styled from 'styled-components';
 
+import { Body } from 'components/Text';
+
 import Button from './Button';
 
 type NavButtonProps = {
@@ -15,7 +17,7 @@ const NavButton: FC<NavButtonProps> = memo(({ title, ...props }) => {
 	return (
 		<div>
 			<StyledButton {...props}>
-				<p className="title">{title}</p>
+				<Body className="title">{title}</Body>
 			</StyledButton>
 		</div>
 	);
@@ -38,7 +40,6 @@ const StyledButton = styled(Button)`
 	border-radius: 100px;
 
 	p {
-		margin: 0;
 		font-size: 15px;
 		text-align: left;
 	}

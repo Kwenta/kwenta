@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components';
 
 import { FlexDivCentered, FlexDivCol } from 'components/layout/flex';
 import PreviewArrow from 'components/PreviewArrow';
-import * as Text from 'components/Text';
+import { Body } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
@@ -448,7 +448,7 @@ const InfoRow = styled.div`
 	}
 `;
 
-const Subtitle = styled(Text.Body)`
+const Subtitle = styled(Body)`
 	font-size: 13px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	text-transform: capitalize;
@@ -463,7 +463,7 @@ const PositionCardTooltip = styled(Tooltip).attrs({ preset: 'fixed', height: 'au
 	padding: 0px 10px 0px 10px;
 `;
 
-const StyledValue = styled(Text.Body).attrs({ mono: true })`
+const StyledValue = styled(Body).attrs({ mono: true })`
 	font-size: 13px;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	text-align: end;

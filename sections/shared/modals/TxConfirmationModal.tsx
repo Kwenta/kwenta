@@ -10,7 +10,7 @@ import InfoIcon from 'assets/svg/app/info.svg';
 import OneInchImage from 'assets/svg/providers/1inch.svg';
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
-import Error from 'components/Error';
+import Error from 'components/ErrorView';
 import { FlexDivRowCentered, FlexDivColCentered } from 'components/layout/flex';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { ESTIMATE_VALUE } from 'constants/placeholder';

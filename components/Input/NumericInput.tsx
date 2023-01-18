@@ -1,9 +1,9 @@
-import { ChangeEvent, FC, memo, useCallback } from 'react';
+import React, { ChangeEvent, FC, memo, useCallback } from 'react';
 import styled, { css } from 'styled-components';
 
 import Input from './Input';
 
-type NumericInputProps = {
+type NumericInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> & {
 	value: string | number;
 	placeholder?: string;
 	onChange: (e: ChangeEvent<HTMLInputElement>, value: string) => void;
@@ -19,9 +19,7 @@ const INVALID_CHARS = ['-', '+', 'e'];
 const NumericInput: FC<NumericInputProps> = memo(({ onChange, bold, ...props }) => {
 	const handleOnChange = useCallback(
 		(e: ChangeEvent<HTMLInputElement>) => {
-			const { value } = e.target;
-
-			onChange(e, value.replace(/,/g, '.').replace(/[e+-]/gi, ''));
+			onChange(e, e.target.value.replace(/,/g, '.').replace(/[e+-]/gi, ''));
 		},
 		[onChange]
 	);

@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
-import Error from 'components/Error';
+import Error from 'components/ErrorView';
 import { FlexDivCentered, FlexDivCol } from 'components/layout/flex';
 import { ButtonLoader } from 'components/Loader/Loader';
 import Connector from 'containers/Connector';

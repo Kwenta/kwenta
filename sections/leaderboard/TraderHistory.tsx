@@ -11,7 +11,7 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import FuturesIcon from 'components/Nav/FuturesIcon';
 import Table from 'components/Table';
 import ROUTES from 'constants/routes';
-import { FuturesAccountTypes, PositionHistory } from 'queries/futures/types';
+import { FuturesAccountTypes } from 'queries/futures/types';
 import useGetFuturesPositionHistoryForAccount from 'queries/futures/useGetFuturesPositionHistoryForAccount';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { getMarketName } from 'utils/futures';
@@ -41,8 +41,8 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 
 		let data = useMemo(() => {
 			return positions
-				.sort((a: PositionHistory, b: PositionHistory) => b.timestamp - a.timestamp)
-				.map((stat: PositionHistory, i: number) => {
+				.sort((a, b) => b.timestamp - a.timestamp)
+				.map((stat, i: number) => {
 					return {
 						...stat,
 						rank: i + 1,
@@ -57,7 +57,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 							.toFixed(2)}%)`,
 					};
 				})
-				.filter((i: { marketShortName: string; status: string }) =>
+				.filter((i) =>
 					searchTerm?.length
 						? i.marketShortName.toLowerCase().includes(searchTerm) ||
 						  i.status.toLowerCase().includes(searchTerm)

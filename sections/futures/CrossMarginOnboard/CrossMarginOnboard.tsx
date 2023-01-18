@@ -10,7 +10,7 @@ import styled from 'styled-components';
 import CompleteCheck from 'assets/svg/futures/onboard-complete-check.svg';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
-import ErrorView from 'components/Error';
+import ErrorView from 'components/ErrorView';
 import InputBalanceLabel from 'components/Input/InputBalanceLabel';
 import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRowCentered } from 'components/layout/flex';

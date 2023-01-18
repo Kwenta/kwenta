@@ -24,7 +24,7 @@ export const FRIENDLY_I18N_MESSAGES: Record<string, string> = {
 	'Insufficient margin': 'futures.market.errors.insufficient-margin',
 };
 
-export const Error: FC<ErrorProps> = memo(
+export const ErrorView: FC<ErrorProps> = memo(
 	({ message, formatter, retryButton, containerStyle, messageType = 'error' }) => {
 		const { t } = useTranslation();
 		const formattedMessage = useMemo(() => {
@@ -80,4 +80,4 @@ const ErrorContainer = styled.div<{ messageType: MessageType; style: Record<stri
 	}
 `;
 
-export default Error;
+export default ErrorView;

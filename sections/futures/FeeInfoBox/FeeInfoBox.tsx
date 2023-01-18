@@ -7,7 +7,7 @@ import EligibleIcon from 'assets/svg/app/eligible.svg';
 import LinkArrowIcon from 'assets/svg/app/link-arrow.svg';
 import NotEligibleIcon from 'assets/svg/app/not-eligible.svg';
 import InfoBox, { DetailedInfo } from 'components/InfoBox/InfoBox';
-import * as Text from 'components/Text';
+import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
@@ -138,7 +138,7 @@ const FeeInfoBox: React.FC = () => {
 									i18nKey={`dashboard.stake.tabs.trading-rewards.stake-to-${
 										isRewardEligible ? 'earn' : 'start'
 									}`}
-									components={[<Text.Body variant="bold" />]}
+									components={[<Body variant="bold" />]}
 								/>
 							</RewardCopy>
 							<StyledLinkArrowIcon />
@@ -220,7 +220,7 @@ const StyledLinkArrowIcon = styled(LinkArrowIcon)`
 	cursor: pointer;
 `;
 
-const RewardCopy = styled(Text.Body)`
+const RewardCopy = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.text.title};
 `;
 

@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
-import ErrorView from 'components/Error';
+import ErrorView from 'components/ErrorView';
 import CustomInput from 'components/Input/CustomInput';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import Loader from 'components/Loader';

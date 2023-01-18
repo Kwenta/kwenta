@@ -1,6 +1,6 @@
 import Wei, { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
-import React, { FC, memo, useMemo } from 'react';
+import React, { FC, memo } from 'react';
 import styled from 'styled-components';
 
 import ChangePercent from 'components/ChangePercent';
@@ -33,41 +33,27 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
 		truncate = false,
 		...rest
 	}) => {
-		const cleanPrice = useMemo(() => {
-			try {
-				return wei(price);
-			} catch {
-				return '';
-			}
-		}, [price]);
-
-		const cleanConversionRate = useMemo(() => {
-			try {
-				return wei(conversionRate);
-			} catch {
-				return '';
-			}
-		}, [conversionRate]);
+		const cleanPrice = wei(price);
+		const cleanConversionRate = wei(conversionRate ?? 0);
 
 		if (truncate && price > 1e6) {
 			formatOptions = { ...formatOptions, truncation: { divisor: 1e6, unit: 'M' } };
 		}
+
 		return (
 			<Container {...rest}>
 				<span className="price">
 					{formatCurrency(
 						currencyKey,
-						cleanConversionRate && cleanPrice && cleanConversionRate.gt(0)
-							? cleanPrice.div(cleanConversionRate)
-							: cleanPrice,
+						cleanConversionRate.gt(0) ? cleanPrice.div(cleanConversionRate) : cleanPrice,
 						{
 							sign,
-							currencyKey: showCurrencyKey != null ? currencyKey : undefined,
+							currencyKey: showCurrencyKey ? currencyKey : undefined,
 							...formatOptions,
 						}
 					)}
 				</span>
-				{change != null && <ChangePercent className="percent" value={change} />}
+				{!!change && <ChangePercent className="percent" value={change} />}
 			</Container>
 		);
 	}

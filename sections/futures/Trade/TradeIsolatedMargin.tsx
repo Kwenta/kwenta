@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import Error from 'components/Error';
+import Error from 'components/ErrorView';
 import SegmentedControl from 'components/SegmentedControl';
 import { DEFAULT_DELAYED_LEVERAGE_CAP, ISOLATED_MARGIN_ORDER_TYPES } from 'constants/futures';
 import { setOpenModal } from 'state/app/reducer';
