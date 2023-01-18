@@ -11,7 +11,7 @@ import { useAppDispatch } from 'state/hooks';
 import { resetNetwork, setSigner } from 'state/wallet/actions';
 
 import { generateExplorerFunctions, getBaseUrl } from './blockExplorer';
-import { wagmiClient } from './config';
+import { activeChains, wagmiClient } from './config';
 
 export let transactionNotifier = new BaseTN(wagmiClient.provider);
 export let blockExplorer = generateExplorerFunctions(getBaseUrl(10));
@@ -21,10 +21,11 @@ const useConnector = () => {
 	const { address, isConnected: isWalletConnected } = useAccount();
 	const [providerReady, setProviderReady] = useState(false);
 
-	const unsupportedNetwork = useMemo(() => activeChain?.unsupported ?? false, [activeChain]);
-
 	const network = useMemo(
-		() => (activeChain?.unsupported ? chain.optimism : activeChain ?? chain.optimism),
+		() =>
+			activeChains.includes(activeChain ?? chain.optimism)
+				? activeChain ?? chain.optimism
+				: chain.optimism,
 		[activeChain]
 	);
 
@@ -38,8 +39,8 @@ const useConnector = () => {
 	const staticMainnetProvider = new ethers.providers.InfuraProvider();
 
 	const defaultSynthetixjs = useMemo(
-		() => synthetix({ provider, networkId: chain.optimism.id as NetworkId }),
-		[provider]
+		() => synthetix({ provider, networkId: network.id as NetworkId }),
+		[network.id, provider]
 	);
 
 	const l2Synthetixjs = useMemo(
@@ -89,7 +90,6 @@ const useConnector = () => {
 
 	return {
 		activeChain,
-		unsupportedNetwork,
 		isWalletConnected,
 		walletAddress,
 		provider,

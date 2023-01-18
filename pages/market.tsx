@@ -20,17 +20,17 @@ import MarketHead from 'sections/futures/MarketInfo/MarketHead';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
 import FuturesUnsupportedNetwork from 'sections/futures/Trade/FuturesUnsupported';
 import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
+import TradePanelHeader from 'sections/futures/Trade/TradePanelHeader';
 import TradeCrossMargin from 'sections/futures/TradeCrossMargin';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
+import { setOpenModal } from 'state/app/reducer';
 import { setMarketAsset } from 'state/futures/reducer';
 import { selectFuturesType, selectMarketAsset } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { futuresAccountState, showCrossMarginOnboardState } from 'store/futures';
 import { PageContent, FullHeightContainer, RightSideContent } from 'styles/common';
 import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
-import TradePanelHeader from 'sections/futures/Trade/TradePanelHeader';
-import { setOpenModal } from 'state/app/reducer';
 
 type MarketComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 

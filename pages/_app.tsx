@@ -45,16 +45,16 @@ type AppPropsWithLayout = AppProps & {
 };
 
 process.env.GIT_HASH_ID!.toString();
-// Sentry.init({
-// 	dsn:
-// 		'https://d48644bc80d04977a26132b346417210@o4504363236851712.ingest.sentry.io/4504363261362177',
-// 	maxBreadcrumbs: 50,
-// 	debug: process.env.NODE_ENV !== 'production',
-// 	release: 'kwenta@' + process.env.GIT_HASH_ID!.toString(),
-// 	autoSessionTracking: true,
-// 	integrations: [new BrowserTracing()],
-// 	tracesSampleRate: 0.3,
-// });
+Sentry.init({
+	dsn:
+		'https://d48644bc80d04977a26132b346417210@o4504363236851712.ingest.sentry.io/4504363261362177',
+	maxBreadcrumbs: 50,
+	debug: process.env.NODE_ENV !== 'production',
+	release: 'kwenta@' + process.env.GIT_HASH_ID!.toString(),
+	autoSessionTracking: true,
+	integrations: [new BrowserTracing()],
+	tracesSampleRate: 0.3,
+});
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {
 	const {
@@ -87,19 +87,18 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 					<MediaContextProvider>
 						<SynthetixQueryContextProvider
 							value={
-								// provider && network && synthetixjs
-								// 	? createQueryContext({
-								// 			provider,
-								// 			signer: signer || undefined,
-								// 			networkId: network.id as NetworkId,
-								// 			synthetixjs,
-								// 	  })
-								// 	:
-								createQueryContext({
-									provider: l2Provider,
-									networkId: chain.optimism.id as NetworkId,
-									synthetixjs,
-								})
+								provider && network && synthetixjs
+									? createQueryContext({
+											provider,
+											signer: signer || undefined,
+											networkId: network.id as NetworkId,
+											synthetixjs,
+									  })
+									: createQueryContext({
+											provider: l2Provider,
+											networkId: chain.optimism.id as NetworkId,
+											synthetixjs,
+									  })
 							}
 						>
 							<Layout>

@@ -20,7 +20,14 @@ import Tally from 'components/Rainbowkit/Tally';
 import { BLAST_NETWORK_LOOKUP } from 'constants/network';
 
 const { chains, provider } = configureChains(
-	[chain.optimism, chain.mainnet, chain.optimismGoerli, chain.goerli],
+	[
+		chain.optimism,
+		chain.mainnet,
+		chain.optimismGoerli,
+		chain.goerli,
+		chain.polygon,
+		chain.arbitrum,
+	],
 	[
 		infuraProvider({
 			apiKey: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID!,
@@ -75,5 +82,7 @@ export const wagmiClient = createClient({
 	connectors,
 	provider,
 });
+
+export const activeChains = [chain.optimism, chain.mainnet, chain.optimismGoerli, chain.goerli];
 
 export { chains };

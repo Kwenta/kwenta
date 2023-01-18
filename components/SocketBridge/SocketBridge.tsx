@@ -16,8 +16,15 @@ import hexToRGB, {
 	SOCKET_SOURCE_TOKEN_ADDRESS,
 } from './utils';
 
+const socketDefaultChains = [
+	chain.arbitrum.id,
+	chain.mainnet.id,
+	chain.optimism.id,
+	chain.polygon.id,
+];
+
 const SocketBridge = () => {
-	const { signer } = Connector.useContainer();
+	const { activeChain, signer } = Connector.useContainer();
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
 	const onBridgeSuccess = useCallback(() => {
@@ -50,9 +57,15 @@ const SocketBridge = () => {
 			<Bridge
 				provider={signer?.provider}
 				API_KEY={process.env.NEXT_PUBLIC_SOCKET_API_KEY ?? ''}
+				sourceNetworks={socketDefaultChains}
+				destNetworks={socketDefaultChains}
 				defaultSourceToken={SOCKET_SOURCE_TOKEN_ADDRESS}
 				defaultDestToken={SOCKET_DEST_TOKEN_ADDRESS}
-				defaultSourceNetwork={chain.mainnet.id}
+				defaultSourceNetwork={
+					!!activeChain && socketDefaultChains.includes(activeChain.id)
+						? activeChain.id
+						: chain.mainnet.id
+				}
 				defaultDestNetwork={chain.optimism.id}
 				customize={customize}
 				enableSameChainSwaps={true}
