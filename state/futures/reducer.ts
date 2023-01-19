@@ -37,6 +37,7 @@ import {
 	CrossMarginTradeInputs,
 	FundingRate,
 	FuturesState,
+	InputCurrencyDenomination,
 	IsolatedMarginTradeInputs,
 	TransactionEstimationPayload,
 	TransactionEstimations,
@@ -89,6 +90,7 @@ const initialState: FuturesState = {
 	errors: {},
 	dynamicFeeRate: '0',
 	previousDayRates: [],
+	selectedInputDenomination: 'usd',
 	leaderboard: {
 		selectedTrader: undefined,
 		selectedTraderPositionHistory: DEFAULT_MAP_BY_NETWORK,
@@ -197,7 +199,6 @@ const futuresSlice = createSlice({
 		setDynamicFeeRate: (state, action: PayloadAction<string>) => {
 			state.dynamicFeeRate = action.payload;
 		},
-
 		setCrossMarginTradeInputs: (state, action: PayloadAction<CrossMarginTradeInputs<string>>) => {
 			state.crossMargin.tradeInputs = action.payload;
 		},
@@ -215,6 +216,9 @@ const futuresSlice = createSlice({
 			action: PayloadAction<IsolatedMarginTradeInputs<string>>
 		) => {
 			state.isolatedMargin.tradeInputs = action.payload;
+		},
+		setSelectedInputDenomination: (state, action: PayloadAction<InputCurrencyDenomination>) => {
+			state.selectedInputDenomination = action.payload;
 		},
 		setIsolatedMarginFee: (state, action: PayloadAction<string>) => {
 			state.isolatedMargin.tradeFee = action.payload;
@@ -621,6 +625,7 @@ export const {
 	setCrossMarginOrderCancelling,
 	setShowCrossMarginOnboard,
 	setSelectedTrader,
+	setSelectedInputDenomination,
 } = futuresSlice.actions;
 
 const findWalletForAccount = (

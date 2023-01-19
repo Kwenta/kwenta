@@ -7,7 +7,6 @@ import KwentaSDK from 'sdk';
 
 import { notifyError } from 'components/Error/ErrorNotifier';
 import { ORDER_KEEPER_ETH_DEPOSIT } from 'constants/futures';
-import { monitorTransaction } from 'contexts/RelayerContext';
 import { FuturesAccountType } from 'queries/futures/types';
 import { Prices } from 'queries/rates/types';
 import { Period } from 'sdk/constants/period';

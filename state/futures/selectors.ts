@@ -389,6 +389,9 @@ export const selectIsolatedMarginTradeInputs = createSelector(
 	}
 );
 
+export const selectSelectedInputDenomination = (state: RootState) =>
+	state.futures.selectedInputDenomination;
+
 export const selectCrossMarginSelectedLeverage = createSelector(
 	selectMarketKey,
 	(state: RootState) => state.futures.crossMargin.selectedLeverageByAsset,

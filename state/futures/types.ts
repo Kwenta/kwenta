@@ -114,6 +114,8 @@ type FuturesErrors = {
 
 type CrossMarginNetwork = number;
 
+export type InputCurrencyDenomination = 'usd' | 'native';
+
 export type CrossMarginAccount = {
 	account: string;
 	position?: FuturesPosition<string>;
@@ -139,6 +141,7 @@ export type FuturesState = {
 	transactionEstimations: TransactionEstimations;
 	dynamicFeeRate: string;
 	errors: FuturesErrors;
+	selectedInputDenomination: InputCurrencyDenomination;
 	leaderboard: {
 		selectedTrader: string | undefined;
 		selectedTraderPositionHistory: Record<
