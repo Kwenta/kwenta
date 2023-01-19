@@ -49,7 +49,8 @@ const useGetMarketData = (mobile?: boolean) => {
 	const oraclePrice = marketPrices.onChain ?? wei(0);
 
 	const data: MarketData = useMemo(() => {
-		const fundingValue = marketInfo?.currentFundingRate;
+		// TODO: remove this hard-coded display fix for funding
+		const fundingValue = marketInfo?.currentFundingRate.div(oraclePrice);
 
 		const marketName = `${marketInfo?.marketName ?? t('futures.market.info.default-market')}`;
 
