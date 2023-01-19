@@ -32,19 +32,18 @@ const SocketBridge = () => {
 	}, [dispatch]);
 
 	const background = hexToRGB(theme.colors.selectedTheme.input.secondary.background);
-	const surface = hexToRGB(theme.colors.selectedTheme.background);
 	const text = hexToRGB(theme.colors.selectedTheme.button.text.primary);
-	const primaryButtonBg = hexToRGB(theme.colors.selectedTheme.button.primary.background);
+	const primaryButtonBg = hexToRGB(theme.colors.selectedTheme.socket.accent);
 
 	const customize: SocketCustomizationProps = {
 		width: window.innerWidth > 768 ? DEFAULT_WIDTH : DEFAULT_MOBILE_WIDTH,
 		responsiveWidth: true,
 		borderRadius: 1,
-		secondary: `rgb(${surface.r},${surface.g},${surface.b})`, //socket surface
+		secondary: `rgb(${background.r},${background.g},${background.b})`, //socket surface
 		primary: `rgb(${background.r},${background.g},${background.b})`, //socket bg
 		accent: `rgb(${primaryButtonBg.r},${primaryButtonBg.g},${primaryButtonBg.b})`, //toggle-slippage accent
 		onAccent: `rgb(${text.r},${text.g},${text.b})`, //toggle thumb
-		interactive: `rgb(${surface.r},${surface.g},${surface.b})`, //asset toggle
+		interactive: `rgb(${primaryButtonBg.r},${primaryButtonBg.g},${primaryButtonBg.b})`, //asset toggle
 		onInteractive: `rgb(${text.r},${text.g},${text.b})`, //asset toggle text
 		text: `rgb(${text.r},${text.g},${text.b})`, //main text
 		outline: `rgb(${text.r},${text.g},${text.b})`,
