@@ -28,11 +28,6 @@ const CustomNumericInput: FC<CustomNumericInputProps> = memo(
 		id,
 		...rest
 	}) => {
-		const style = {
-			'--numchs': value.length,
-			'--suffix': `'${value.length === 0 ? '' : suffix}'`,
-		};
-
 		const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
 			const { value } = e.target;
 			const max = maxValue || 0;
@@ -49,7 +44,7 @@ const CustomNumericInput: FC<CustomNumericInputProps> = memo(
 		};
 
 		return (
-			<InputWrapper style={style as React.CSSProperties}>
+			<InputWrapper $length={value.length} $suffix={suffix}>
 				<StyledInput
 					type="number"
 					value={value}
@@ -66,14 +61,14 @@ const CustomNumericInput: FC<CustomNumericInputProps> = memo(
 	}
 );
 
-export const InputWrapper = styled.div`
+export const InputWrapper = styled.div<{ $length: number; $suffix: string }>`
 	position: relative;
 	overflow: hidden;
 	::after {
 		position: absolute;
 		top: calc(25%);
-		left: calc((var(--numchs) * 1ch + 1.3ch));
-		content: var(--suffix, 'x');
+		left: calc(${(props) => props.$length} * 1ch + 1.3ch));
+		content: var(${(props) => (props.$length === 0 ? '' : props.$suffix)});
 		font-family: ${(props) => props.theme.fonts.mono};
 		font-size: 18px;
 		color: ${(props) => props.theme.colors.selectedTheme.input.placeholder};
