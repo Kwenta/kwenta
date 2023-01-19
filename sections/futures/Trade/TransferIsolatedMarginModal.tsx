@@ -248,7 +248,7 @@ const Disclaimer = styled.div`
 `;
 
 const StyledSegmentedControl = styled(SegmentedControl)`
-	margin-bottom: 16px;
+	margin: 16px 0;
 `;
 
 const StyledCardHeader = styled(Card.Header)<{ noBorder: boolean }>`

@@ -58,15 +58,15 @@ const SocketBridge = () => {
 				provider={signer?.provider}
 				API_KEY={process.env.NEXT_PUBLIC_SOCKET_API_KEY ?? ''}
 				sourceNetworks={socketDefaultChains}
-				destNetworks={socketDefaultChains}
+				destNetworks={[chain.optimism.id]}
 				defaultSourceToken={SOCKET_SOURCE_TOKEN_ADDRESS}
 				defaultDestToken={SOCKET_DEST_TOKEN_ADDRESS}
 				defaultSourceNetwork={
-					!!activeChain && socketDefaultChains.includes(activeChain.id)
-						? activeChain.id
+					activeChain?.id !== 10 &&
+					socketDefaultChains.includes(activeChain?.id ?? chain.mainnet.id)
+						? activeChain?.id
 						: chain.mainnet.id
 				}
-				defaultDestNetwork={chain.optimism.id}
 				customize={customize}
 				enableSameChainSwaps={true}
 				onBridgeSuccess={onBridgeSuccess}
@@ -79,6 +79,10 @@ const SocketBridge = () => {
 };
 
 export const BridgeContainer = styled.div`
+	p:empty {
+		display: none;
+	}
+
 	.mt-3 {
 		margin-top: 0.25rem;
 	}

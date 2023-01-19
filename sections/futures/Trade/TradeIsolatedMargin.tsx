@@ -4,8 +4,6 @@ import styled from 'styled-components';
 import Error from 'components/Error';
 import SegmentedControl from 'components/SegmentedControl';
 import { DEFAULT_DELAYED_LEVERAGE_CAP, ISOLATED_MARGIN_ORDER_TYPES } from 'constants/futures';
-import { setOpenModal } from 'state/app/reducer';
-import { selectOpenModal } from 'state/app/selectors';
 import { changeLeverageSide } from 'state/futures/actions';
 import { setOrderType } from 'state/futures/reducer';
 import { selectLeverageSide, selectOrderType, selectPosition } from 'state/futures/selectors';
@@ -19,7 +17,6 @@ import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
 import ManagePosition from './ManagePosition';
 import OrderWarning from './OrderWarning';
-import TransferIsolatedMarginModal from './TransferIsolatedMarginModal';
 
 type Props = {
 	isMobile?: boolean;
@@ -33,7 +30,6 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 	const position = useAppSelector(selectPosition);
 
 	const orderType = useAppSelector(selectOrderType);
-	const openModal = useAppSelector(selectOpenModal);
 	const pricesConnectionError = useAppSelector(selectPricesConnectionError);
 
 	return (
@@ -74,12 +70,6 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 			<ManagePosition />
 
 			<FeeInfoBox />
-			{openModal === 'futures_isolated_transfer' && (
-				<TransferIsolatedMarginModal
-					defaultTab="deposit"
-					onDismiss={() => dispatch(setOpenModal(null))}
-				/>
-			)}
 		</div>
 	);
 };
