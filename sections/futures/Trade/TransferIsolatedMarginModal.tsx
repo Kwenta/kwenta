@@ -178,6 +178,7 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 				disabled={isDisabled}
 				fullWidth
 				onClick={transferType === 0 ? onDeposit : onWithdraw}
+				variant="flat"
 			>
 				{transferType === 0
 					? t('futures.market.trade.margin.modal.deposit.button')
