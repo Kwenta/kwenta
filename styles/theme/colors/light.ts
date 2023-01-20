@@ -52,7 +52,11 @@ const lightTheme = {
 			},
 			disabled: { border: '1px solid #353333', text: '#B3B3B3' },
 		},
-		pill: { background: common.light.yellow, text: common.light.yellow, hover: common.light.white },
+		pill: {
+			background: common.dark.yellow,
+			text: common.primaryYellow,
+			hover: common.primaryWhite,
+		},
 		yellow: {
 			fill: common.light.yellow,
 			fillHover: '#532800',
