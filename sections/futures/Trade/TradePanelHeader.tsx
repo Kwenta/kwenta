@@ -40,10 +40,7 @@ export default function TradePanelHeader({ accountType, onManageBalance, balance
 				}
 			>
 				<ButtonContent>
-					Deposit Margin{' '}
-					<StyledPillButtonSpan>
-						<SwitchAssetArrows fill={theme.colors.selectedTheme.button.yellow.text} />
-					</StyledPillButtonSpan>
+					Deposit Margin <SwitchAssetArrows fill={theme.colors.selectedTheme.button.yellow.text} />
 				</ButtonContent>
 			</DepositButton>
 		);
