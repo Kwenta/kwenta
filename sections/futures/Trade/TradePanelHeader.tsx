@@ -11,7 +11,7 @@ import { EXTERNAL_LINKS } from 'constants/links';
 import { FuturesAccountType } from 'queries/futures/subgraph';
 import { setOpenModal } from 'state/app/reducer';
 import { useAppDispatch } from 'state/hooks';
-import { BorderedPanel, YellowIconButton } from 'styles/common';
+import { BorderedPanel, YellowIconButton, PillButtonSpan } from 'styles/common';
 import { formatDollars } from 'utils/formatters/number';
 
 type Props = {
@@ -40,7 +40,10 @@ export default function TradePanelHeader({ accountType, onManageBalance, balance
 				}
 			>
 				<ButtonContent>
-					Deposit Margin <SwitchAssetArrows fill={theme.colors.selectedTheme.button.yellow.text} />
+					Deposit Margin{' '}
+					<StyledPillButtonSpan>
+						<SwitchAssetArrows fill={theme.colors.selectedTheme.button.yellow.text} />
+					</StyledPillButtonSpan>
 				</ButtonContent>
 			</DepositButton>
 		);
@@ -64,12 +67,23 @@ export default function TradePanelHeader({ accountType, onManageBalance, balance
 			<BalanceRow onClick={onManageBalance}>
 				<NumberDiv contrast="strong">{formatDollars(balance)}</NumberDiv>
 				<BalanceButton>
-					<SwitchAssetArrows />
+					<StyledPillButtonSpan>
+						<SwitchAssetArrows />
+					</StyledPillButtonSpan>
 				</BalanceButton>
 			</BalanceRow>
 		</Container>
 	);
 }
+
+const StyledPillButtonSpan = styled(PillButtonSpan)`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 20px;
+	width: 20px;
+	margin-left: 0;
+`;
 
 const DepositButton = styled(Button)`
 	height: 55px;
@@ -107,9 +121,6 @@ const BalanceButton = styled(YellowIconButton)`
 	display: flex;
 	gap: 8px;
 	align-items: center;
-	&:hover {
-		opacity: 0.7;
-	}
 `;
 
 const FAQLink = styled.div`
