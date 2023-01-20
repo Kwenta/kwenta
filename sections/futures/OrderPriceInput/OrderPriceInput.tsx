@@ -133,9 +133,10 @@ const StyledSegmentedControl = styled(SegmentedControl)`
 
 	button {
 		:hover {
-			background-color: ${(props) => props.theme.colors.selectedTheme.yellow};
-			color: ${(props) => props.theme.colors.selectedTheme.button.pill.hover};
+			background-color: ${(props) => props.theme.colors.common.primaryYellow};
+			color: ${(props) => props.theme.colors.common.black};
 		}
+		border: ${(props) => props.theme.colors.selectedTheme.border};
 
 		display: flex;
 		align-items: center;
