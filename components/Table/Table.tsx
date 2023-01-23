@@ -315,9 +315,15 @@ const StyledSortUpIcon = styled(SortUpIcon)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
-export const TableHeader = styled(Body)`
+export const TableHeader = styled(Body)<{ $small?: boolean }>`
 	text-transform: capitalize;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
+
+	${(props) =>
+		props.$small &&
+		css`
+			font-size: 10px;
+		`}
 `;
 
 export default Table;

@@ -89,9 +89,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 							<LogoText yellow>{truncateNumbers(totalRewards, 4)}</LogoText>
 						</div>
 						<div>
-							<div className="title">
-								{t('dashboard.stake.tabs.trading-rewards.trading-activity-reset')}
-							</div>
+							<Title>{t('dashboard.stake.tabs.trading-rewards.trading-activity-reset')}</Title>
 							<Value>
 								{resetTime > new Date().getTime() / 1000
 									? formatTruncatedDuration(resetTime - new Date().getTime() / 1000)
@@ -140,9 +138,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 						{showEstimatedValue ? (
 							<>
 								<div>
-									<Title className="title">
-										{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}
-									</Title>
+									<Title>{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}</Title>
 									<LogoText yellow>{truncateNumbers(wei(estimatedReward), 4)}</LogoText>
 								</div>
 								<div>
@@ -198,7 +194,7 @@ const Value = styled(Body)`
 	margin-top: 5px;
 `;
 
-const Title = styled(Body)`
+const Title = styled(Body).attrs({ size: 'medium' })`
 	color: ${(props) => props.theme.colors.selectedTheme.title};
 `;
 
@@ -207,12 +203,9 @@ const CardGrid = styled.div`
 	grid-auto-flow: column;
 	grid-template-rows: 1fr 1fr;
 	grid-template-columns: 1fr 1fr;
+
 	& > div {
 		margin-bottom: 20px;
-	}
-
-	.value {
-		margin-top: 5px;
 	}
 
 	svg {

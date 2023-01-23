@@ -31,19 +31,19 @@ const StyledBody = styled.p<{
 	${(props) =>
 		props.$size === 'small' &&
 		css`
-			font-size: 12px;
+			font-size: 13px;
 		`};
 
 	${(props) =>
 		props.$size === 'medium' &&
 		css`
-			font-size: 14px;
+			font-size: 15px;
 		`};
 
 	${(props) =>
 		props.$size === 'large' &&
 		css`
-			font-size: 16px;
+			font-size: 18px;
 		`};
 
 	${(props) =>
