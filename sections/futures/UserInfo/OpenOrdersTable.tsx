@@ -6,7 +6,7 @@ import styled, { css } from 'styled-components';
 import Badge from 'components/Badge';
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import Table, { TableNoResults } from 'components/Table';
+import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { DEFAULT_DELAYED_EXECUTION_BUFFER } from 'constants/defaults';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
@@ -144,9 +144,7 @@ const OpenOrdersTable: React.FC = () => {
 					columns={[
 						{
 							Header: (
-								<StyledTableHeader>
-									{t('futures.market.user.open-orders.table.market-type')}
-								</StyledTableHeader>
+								<TableHeader>{t('futures.market.user.open-orders.table.market-type')}</TableHeader>
 							),
 							accessor: 'market',
 							Cell: (cellProps: CellProps<any>) => {
@@ -171,11 +169,7 @@ const OpenOrdersTable: React.FC = () => {
 							width: 60,
 						},
 						{
-							Header: (
-								<StyledTableHeader>
-									{t('futures.market.user.open-orders.table.side')}
-								</StyledTableHeader>
-							),
+							Header: <TableHeader>{t('futures.market.user.open-orders.table.side')}</TableHeader>,
 							accessor: 'side',
 							Cell: (cellProps: CellProps<any>) => {
 								return (
@@ -188,11 +182,7 @@ const OpenOrdersTable: React.FC = () => {
 							width: 40,
 						},
 						{
-							Header: (
-								<StyledTableHeader>
-									{t('futures.market.user.open-orders.table.size')}
-								</StyledTableHeader>
-							),
+							Header: <TableHeader>{t('futures.market.user.open-orders.table.size')}</TableHeader>,
 							accessor: 'size',
 							Cell: (cellProps: CellProps<any>) => {
 								return (
@@ -206,9 +196,9 @@ const OpenOrdersTable: React.FC = () => {
 						},
 						{
 							Header: (
-								<StyledTableHeader>
+								<TableHeader>
 									{t('futures.market.user.open-orders.table.commit-deposit')}
-								</StyledTableHeader>
+								</TableHeader>
 							),
 							accessor: 'marginDelta',
 							Cell: (cellProps: CellProps<any>) => {
@@ -220,9 +210,7 @@ const OpenOrdersTable: React.FC = () => {
 						},
 						{
 							Header: (
-								<StyledTableHeader>
-									{t('futures.market.user.open-orders.table.status')}
-								</StyledTableHeader>
+								<TableHeader>{t('futures.market.user.open-orders.table.status')}</TableHeader>
 							),
 							accessor: 'actions',
 							Cell: (cellProps: CellProps<any>) => {
@@ -266,9 +254,7 @@ const OpenOrdersTable: React.FC = () => {
 					columns={[
 						{
 							Header: (
-								<StyledTableHeader>
-									{t('futures.market.user.open-orders.table.side-type')}
-								</StyledTableHeader>
+								<TableHeader>{t('futures.market.user.open-orders.table.side-type')}</TableHeader>
 							),
 							accessor: 'side/type',
 							Cell: (cellProps: CellProps<any>) => (
@@ -282,11 +268,7 @@ const OpenOrdersTable: React.FC = () => {
 							width: 100,
 						},
 						{
-							Header: (
-								<StyledTableHeader>
-									{t('futures.market.user.open-orders.table.size')}
-								</StyledTableHeader>
-							),
+							Header: <TableHeader>{t('futures.market.user.open-orders.table.size')}</TableHeader>,
 							accessor: 'size',
 							Cell: (cellProps: CellProps<any>) => {
 								return (
@@ -311,11 +293,6 @@ const OpenOrdersTable: React.FC = () => {
 
 const StyledTable = styled(Table)`
 	margin-bottom: 20px;
-`;
-
-const StyledTableHeader = styled.div`
-	font-family: ${(props) => props.theme.fonts.regular};
-	text-transform: capitalize;
 `;
 
 const StyledCurrencyIcon = styled(Currency.Icon)`

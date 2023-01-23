@@ -1,24 +1,26 @@
 import { useCallback } from 'react';
 
 import Button from 'components/Button';
+import { GridContainer } from 'sections/earn/grid';
 import useRewardsTimer from 'hooks/useRewardsTimer';
 import { claimRewards } from 'state/earn/actions';
 import { selectYieldPerDay } from 'state/earn/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { toWei, truncateNumbers } from 'utils/formatters/number';
 
-import { GridContainer } from './common';
 import GridData from './GridData';
+
+const TimeRemainingData = () => {
+	const endDate = useAppSelector(({ earn }) => earn.endDate);
+	const timeTillDeadline = useRewardsTimer(new Date(endDate * 1000));
+
+	return <GridData title="Time Remaining" value={timeTillDeadline} />;
+};
 
 const StakeGrid = () => {
 	const dispatch = useAppDispatch();
-	const { earnedRewards, endDate } = useAppSelector(({ earn }) => ({
-		earnedRewards: earn.earnedRewards,
-		endDate: earn.endDate,
-	}));
+	const earnedRewards = useAppSelector(({ earn }) => earn.earnedRewards);
 	const yieldPerDay = useAppSelector(selectYieldPerDay);
-
-	const timeTillDeadline = useRewardsTimer(new Date(endDate * 1000));
 
 	const handleClaim = useCallback(() => {
 		dispatch(claimRewards());
@@ -39,7 +41,7 @@ const StakeGrid = () => {
 					Claim Rewards
 				</Button>
 			</GridData>
-			<GridData title="Time Remaining" value={timeTillDeadline} />
+			<TimeRemainingData />
 		</GridContainer>
 	);
 };

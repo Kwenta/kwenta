@@ -1,8 +1,8 @@
-import { FC } from 'react';
+import { FC, memo } from 'react';
 import styled from 'styled-components';
 
+import { FlexDivCentered } from 'components/layout/flex';
 import { useAppSelector } from 'state/hooks';
-import { FlexDivCentered } from 'styles/common';
 
 export type TokenIconProps = {
 	currencyKey: string;
@@ -15,7 +15,7 @@ export type TokenIconProps = {
 	url?: string;
 };
 
-const TokenIcon: FC<TokenIconProps> = ({ currencyKey, isDeprecated, ...props }) => {
+const TokenIcon: FC<TokenIconProps> = memo(({ currencyKey, isDeprecated, ...props }) => {
 	const tokensMap = useAppSelector(({ exchange }) => exchange.tokensMap);
 
 	if (!!tokensMap[currencyKey]) {
@@ -29,7 +29,7 @@ const TokenIcon: FC<TokenIconProps> = ({ currencyKey, isDeprecated, ...props }) 
 			</Placeholder>
 		);
 	}
-};
+});
 
 const TokenImage = styled.img<{ $isDeprecated?: boolean }>`
 	border-radius: 100%;

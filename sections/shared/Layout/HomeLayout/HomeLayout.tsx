@@ -16,7 +16,7 @@ type HomeLayoutProps = {
 };
 
 const HomeLayout: FC<HomeLayoutProps> = ({ children }) => (
-	<ThemeProvider theme={themes['dark']}>
+	<ThemeProvider theme={themes.dark}>
 		<Background />
 		<Banner />
 

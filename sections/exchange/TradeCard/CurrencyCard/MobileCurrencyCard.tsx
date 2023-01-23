@@ -6,9 +6,9 @@ import styled from 'styled-components';
 import CaretDownIcon from 'assets/svg/app/caret-down-gray.svg';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import NumericInput from 'components/Input/NumericInput';
+import { SectionHeader, SectionSubTitle, SectionTitle } from 'sections/futures/mobile';
 import { NO_VALUE } from 'constants/placeholder';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { SectionHeader, SectionSubTitle, SectionTitle } from 'sections/futures/MobileTrade/common';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 
 type MobileCurrencyCardProps = {
@@ -140,7 +140,6 @@ const SwapTextInput = styled(NumericInput)`
 	border: none;
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
 	font-size: 18px;
-	font-family: ${(props) => props.theme.fonts.mono};
 	margin-bottom: 10px;
 	height: initial;
 

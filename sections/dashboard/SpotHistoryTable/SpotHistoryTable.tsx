@@ -1,6 +1,4 @@
 import { SynthExchangeResult } from '@synthetixio/queries';
-import * as _ from 'lodash/fp';
-import values from 'lodash/values';
 import Link from 'next/link';
 import { FC, useMemo, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -29,20 +27,20 @@ type WalletTradesExchangeResult = Omit<SynthTradesExchangeResult, 'timestamp'> &
 	timestamp: number;
 };
 
+const conditionalRender = <T,>(prop: T, children: ReactElement) =>
+	!prop ? <p>{NO_VALUE}</p> : children;
+
 const SpotHistoryTable: FC = () => {
 	const { t } = useTranslation();
 	const { network, walletAddress, synthsMap } = Connector.useContainer();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const walletTradesQuery = useGetWalletTrades(walletAddress!);
 
-	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
+	const synths = useMemo(() => Object.values(synthsMap) || [], [synthsMap]);
 	const trades = useMemo(() => {
 		const t = walletTradesQuery.data?.synthExchanges ?? [];
 
-		return t.map((trade: any) => ({
-			...trade,
-			hash: trade.id.split('-')[0],
-		}));
+		return t.map((trade: any) => ({ ...trade, hash: trade.id.split('-')[0] }));
 	}, [walletTradesQuery.data]);
 
 	const filteredHistoricalTrades = useMemo(
@@ -53,9 +51,6 @@ const SpotHistoryTable: FC = () => {
 			}),
 		[trades, synths]
 	);
-
-	const conditionalRender = <T,>(prop: T, children: ReactElement): ReactElement =>
-		_.isNil(prop) ? <p>{NO_VALUE}</p> : children;
 
 	return (
 		<TableContainer>
@@ -81,7 +76,7 @@ const SpotHistoryTable: FC = () => {
 							return conditionalRender(
 								cellProps.row.original.timestamp,
 								<StyledTimeDisplay>
-									<TimeDisplay cellPropsValue={cellProps.row.original.timestamp * 1000} />
+									<TimeDisplay value={cellProps.row.original.timestamp * 1000} />
 								</StyledTimeDisplay>
 							);
 						},
@@ -105,7 +100,7 @@ const SpotHistoryTable: FC = () => {
 
 									<StyledText>
 										<Currency.Amount
-											currencyKey={'sUSD'}
+											currencyKey="sUSD"
 											amount={cellProps.row.original.fromAmount}
 											totalValue={0}
 											conversionRate={selectPriceCurrencyRate}
@@ -135,7 +130,7 @@ const SpotHistoryTable: FC = () => {
 
 									<StyledText>
 										<Currency.Amount
-											currencyKey={'sUSD'}
+											currencyKey="sUSD"
 											amount={cellProps.row.original.toAmount}
 											totalValue={0}
 											conversionRate={selectPriceCurrencyRate}

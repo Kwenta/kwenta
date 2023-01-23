@@ -4,7 +4,6 @@ import styled from 'styled-components';
 
 import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import InfoBox from 'components/InfoBox';
-import { MiniLoader } from 'components/Loader';
 import PreviewArrow from 'components/PreviewArrow';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { FuturesPotentialTradeDetails } from 'sdk/types/futures';
@@ -152,8 +151,9 @@ function MarginInfoBox({ editingLeverage }: Props) {
 									<PreviewArrow
 										showPreview={showPreview}
 										color={previewTradeData.freeAccountMargin.lt(0) ? 'red' : 'yellow'}
+										loading={isLoading}
 									>
-										{isLoading ? <MiniLoader /> : formatDollars(previewTradeData.freeAccountMargin)}
+										{formatDollars(previewTradeData.freeAccountMargin)}
 									</PreviewArrow>
 								),
 						  }
@@ -161,16 +161,16 @@ function MarginInfoBox({ editingLeverage }: Props) {
 					'Market Margin': {
 						value: formatDollars(position?.remainingMargin || 0),
 						valueNode: (
-							<PreviewArrow showPreview={showPreview}>
-								{isLoading ? <MiniLoader /> : formatDollars(previewTradeData.totalMargin)}
+							<PreviewArrow showPreview={showPreview} loading={isLoading}>
+								{formatDollars(previewTradeData.totalMargin)}
 							</PreviewArrow>
 						),
 					},
 					'Margin Usage': {
 						value: formatPercent(marginUsage),
 						valueNode: (
-							<PreviewArrow showPreview={showPreview}>
-								{isLoading ? <MiniLoader /> : formatPercent(previewTradeData?.marginUsage)}
+							<PreviewArrow showPreview={showPreview} loading={isLoading}>
+								{formatPercent(previewTradeData?.marginUsage)}
 							</PreviewArrow>
 						),
 					},
@@ -209,8 +209,8 @@ function MarginInfoBox({ editingLeverage }: Props) {
 							</>
 						),
 						valueNode: (
-							<PreviewArrow showPreview={showPreview && !!editingLeverage}>
-								{isLoading ? <MiniLoader /> : formatNumber(previewTradeData.leverage || 0) + 'x'}
+							<PreviewArrow showPreview={showPreview && !!editingLeverage} loading={isLoading}>
+								{formatNumber(previewTradeData.leverage || 0) + 'x'}
 							</PreviewArrow>
 						),
 					},

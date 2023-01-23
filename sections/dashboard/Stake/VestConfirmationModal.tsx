@@ -5,9 +5,10 @@ import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
+import { FlexDivRowCentered } from 'components/layout/flex';
 import Spacer from 'components/Spacer';
 import { EXTERNAL_LINKS } from 'constants/links';
-import { ExternalLink, FlexDivRowCentered } from 'styles/common';
+import { ExternalLink } from 'styles/common';
 import { truncateNumbers } from 'utils/formatters/number';
 
 type Props = {

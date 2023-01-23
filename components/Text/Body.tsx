@@ -7,20 +7,13 @@ type BodyProps = {
 	className?: string;
 	fontSize?: number;
 	mono?: boolean;
+	color?: 'title' | 'value' | 'body';
 };
 
 const Body: React.FC<BodyProps> = memo(
-	({ size = 'small', variant = 'regular', children, className, fontSize, mono }) => {
+	({ size = 'small', variant = 'regular', fontSize, mono, ...props }) => {
 		return (
-			<StyledBody
-				$size={size}
-				$variant={variant}
-				className={className}
-				$fontSize={fontSize}
-				$mono={mono}
-			>
-				{children}
-			</StyledBody>
+			<StyledBody $size={size} $variant={variant} $fontSize={fontSize} $mono={mono} {...props} />
 		);
 	}
 );
@@ -38,19 +31,19 @@ const StyledBody = styled.p<{
 	${(props) =>
 		props.$size === 'small' &&
 		css`
-			font-size: 12px;
+			font-size: 13px;
 		`};
 
 	${(props) =>
 		props.$size === 'medium' &&
 		css`
-			font-size: 14px;
+			font-size: 15px;
 		`};
 
 	${(props) =>
 		props.$size === 'large' &&
 		css`
-			font-size: 16px;
+			font-size: 18px;
 		`};
 
 	${(props) =>

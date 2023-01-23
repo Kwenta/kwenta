@@ -18,5 +18,5 @@ export const getProxySynthSymbol = (address: string) => {
 };
 
 export function notNill<Value>(value: Value | null | undefined): value is Value {
-	return value !== null && value !== undefined;
+	return !!value;
 }

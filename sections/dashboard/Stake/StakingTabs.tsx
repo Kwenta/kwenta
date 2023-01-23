@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
+import { FlexDivRowCentered } from 'components/layout/flex';
 import LabelContainer from 'components/Nav/DropDownLabel';
 import Select from 'components/Select';
 import { DropdownIndicator, IndicatorSeparator } from 'components/Select/Select';
@@ -11,7 +12,6 @@ import useIsL2 from 'hooks/useIsL2';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { setSelectedEpoch } from 'state/staking/reducer';
 import { selectEpochData, selectSelectedEpoch } from 'state/staking/selectors';
-import { FlexDivRowCentered } from 'styles/common';
 import media from 'styles/media';
 
 import EscrowTab from './EscrowTab';

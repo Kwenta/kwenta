@@ -1,10 +1,11 @@
 import { wei } from '@synthetixio/wei';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, memo, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
 import CustomNumericInput from 'components/Input/CustomNumericInput';
+import { FlexDivCol, FlexDivRow } from 'components/layout/flex';
 import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import { editIsolatedMarginSize } from 'state/futures/actions';
 import { setIsolatedMarginLeverageInput } from 'state/futures/reducer';
@@ -18,12 +19,11 @@ import {
 	selectNextPriceDisclaimer,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { FlexDivCol, FlexDivRow } from 'styles/common';
 import { floorNumber, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import LeverageSlider from '../LeverageSlider';
 
-const LeverageInput: FC = () => {
+const LeverageInput: FC = memo(() => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
@@ -131,7 +131,7 @@ const LeverageInput: FC = () => {
 			)}
 		</LeverageInputWrapper>
 	);
-};
+});
 
 const LeverageInputWrapper = styled(FlexDivCol)`
 	margin-bottom: 16px;

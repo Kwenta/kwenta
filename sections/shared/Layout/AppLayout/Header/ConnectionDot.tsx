@@ -46,6 +46,7 @@ const Dot = styled.span<{ background: string }>`
 	height: 8px;
 	border-radius: 100%;
 	background-color: ${(props) => props.background};
+	margin-right: 6px;
 `;
 
 export default ConnectionDot;

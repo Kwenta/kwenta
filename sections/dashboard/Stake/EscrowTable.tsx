@@ -5,13 +5,13 @@ import styled from 'styled-components';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
-import { TableCellHead } from 'components/Table/Table';
+import { TableCellHead, TableHeader } from 'components/Table';
 import type { EscrowData } from 'sdk/services/kwentaToken';
+import { StakingCard } from 'sections/dashboard/Stake/card';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { vestEscrowedRewards } from 'state/staking/actions';
 import { truncateNumbers, zeroBN } from 'utils/formatters/number';
 
-import { StakingCard } from './common';
 import VestConfirmationModal from './VestConfirmationModal';
 
 const EscrowTable = () => {
@@ -102,7 +102,9 @@ const EscrowTable = () => {
 							width: 40,
 						},
 						{
-							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.date')}</TableHeader>,
+							Header: () => (
+								<TableHeader $small>{t('dashboard.stake.tabs.escrow.date')}</TableHeader>
+							),
 							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{cellProps.row.original.date}</TableCell>
 							),
@@ -111,7 +113,7 @@ const EscrowTable = () => {
 						},
 						{
 							Header: () => (
-								<TableHeader>
+								<TableHeader $small>
 									<div>{t('dashboard.stake.tabs.escrow.time-until-vestable')}</div>
 								</TableHeader>
 							),
@@ -123,7 +125,7 @@ const EscrowTable = () => {
 						},
 						{
 							Header: () => (
-								<TableHeader>
+								<TableHeader $small>
 									<div>{t('dashboard.stake.tabs.escrow.immediately-vestable')}</div>
 								</TableHeader>
 							),
@@ -134,7 +136,9 @@ const EscrowTable = () => {
 							width: 80,
 						},
 						{
-							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.amount')}</TableHeader>,
+							Header: () => (
+								<TableHeader $small>{t('dashboard.stake.tabs.escrow.amount')}</TableHeader>
+							),
 							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{truncateNumbers(cellProps.row.original.amount, 4)}</TableCell>
 							),
@@ -143,7 +147,7 @@ const EscrowTable = () => {
 						},
 						{
 							Header: () => (
-								<TableHeader>
+								<TableHeader $small>
 									<div>{t('dashboard.stake.tabs.escrow.early-vest-fee')}</div>
 								</TableHeader>
 							),
@@ -154,7 +158,9 @@ const EscrowTable = () => {
 							width: 80,
 						},
 						{
-							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.status')}</TableHeader>,
+							Header: () => (
+								<TableHeader $small>{t('dashboard.stake.tabs.escrow.status')}</TableHeader>
+							),
 							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{cellProps.row.original.status}</TableCell>
 							),
@@ -186,7 +192,9 @@ const EscrowTable = () => {
 							width: 40,
 						},
 						{
-							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.amount')}</TableHeader>,
+							Header: () => (
+								<TableHeader $small>{t('dashboard.stake.tabs.escrow.amount')}</TableHeader>
+							),
 							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{truncateNumbers(cellProps.row.original.amount, 4)}</TableCell>
 							),
@@ -195,7 +203,7 @@ const EscrowTable = () => {
 						},
 						{
 							Header: () => (
-								<TableHeader>{t('dashboard.stake.tabs.escrow.early-vest-fee')}</TableHeader>
+								<TableHeader $small>{t('dashboard.stake.tabs.escrow.early-vest-fee')}</TableHeader>
 							),
 							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{truncateNumbers(cellProps.row.original.fee, 4)}</TableCell>
@@ -204,7 +212,9 @@ const EscrowTable = () => {
 							width: 80,
 						},
 						{
-							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.status')}</TableHeader>,
+							Header: () => (
+								<TableHeader $small>{t('dashboard.stake.tabs.escrow.status')}</TableHeader>
+							),
 							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{cellProps.row.original.status}</TableCell>
 							),
@@ -262,12 +272,6 @@ const StyledTable = styled(Table)`
 			padding-left: 14px;
 		}
 	}
-`;
-
-const TableHeader = styled.div`
-	font-size: 10px;
-	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.selectedTheme.text.header};
 `;
 
 const TableCell = styled.div`

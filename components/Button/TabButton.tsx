@@ -19,8 +19,8 @@ export type TabButtonProps = {
 };
 
 const TabButton: React.FC<TabButtonProps> = React.memo(
-	({ title, detail, badge, active, icon, vertical, titleIcon, nofill, ...props }) => (
-		<StyledButton {...props} {...{ active, vertical, nofill }} noOutline>
+	({ title, detail, badge, icon, titleIcon, ...props }) => (
+		<StyledButton noOutline {...props}>
 			{!!icon && <div>{icon}</div>}
 			<div>
 				<div className="title-container">

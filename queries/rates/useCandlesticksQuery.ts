@@ -19,7 +19,7 @@ export const requestCandlesticks = async (
 	const response = await getCandles(
 		ratesEndpoint,
 		{
-			first: limit ? limit : 999999,
+			first: limit ?? 999999,
 			where: {
 				synth: `${currencyKey}`,
 				timestamp_gt: `${minTimestamp}`,
@@ -27,7 +27,7 @@ export const requestCandlesticks = async (
 				period: `${period}`,
 			},
 			orderBy: 'timestamp',
-			orderDirection: orderDirection,
+			orderDirection,
 		},
 		{
 			id: true,
