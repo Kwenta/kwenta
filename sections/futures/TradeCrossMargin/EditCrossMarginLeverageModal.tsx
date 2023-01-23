@@ -6,8 +6,9 @@ import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
-import ErrorView from 'components/Error';
+import ErrorView from 'components/ErrorView';
 import CustomInput from 'components/Input/CustomInput';
+import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import Loader from 'components/Loader';
 import Spacer from 'components/Spacer';
 import { NumberSpan } from 'components/Text/NumberLabel';
@@ -33,7 +34,6 @@ import {
 	selectTradePreviewError,
 } from 'state/futures/selectors';
 import { useAppSelector, useAppDispatch } from 'state/hooks';
-import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { isUserDeniedError } from 'utils/formatters/error';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';

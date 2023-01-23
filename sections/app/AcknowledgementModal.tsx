@@ -33,7 +33,7 @@ export default function AcknowledgementModal() {
 		return null;
 	}
 
-	const onAccept = async () => {
+	const onAccept = () => {
 		try {
 			acknowledgedAddresses[walletAddress.toLowerCase()] = true;
 			localStore.set('acknowledgedAddresses', acknowledgedAddresses);

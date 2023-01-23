@@ -77,5 +77,5 @@ const CreateAccountButton = styled(Button)`
 
 const Questions = styled.div`
 	margin-top: 10px;
-	border-top: ${(props) => `${props.theme.colors.selectedTheme.border}`};
+	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 `;

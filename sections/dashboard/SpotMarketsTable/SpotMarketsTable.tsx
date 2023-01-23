@@ -111,9 +111,9 @@ const SpotMarketsTable: FC = () => {
 										: {};
 									return (
 										<Currency.Price
-											currencyKey={'sUSD'}
+											currencyKey="sUSD"
 											price={cellProps.row.original.price}
-											sign={'$'}
+											sign="$"
 											conversionRate={1}
 											formatOptions={formatOptions}
 										/>
@@ -161,9 +161,9 @@ const SpotMarketsTable: FC = () => {
 								Cell: (cellProps: CellProps<any>) => {
 									return (
 										<Currency.Price
-											currencyKey={'sUSD'}
+											currencyKey="sUSD"
 											price={cellProps.row.original.volume}
-											sign={'$'}
+											sign="$"
 											conversionRate={1}
 										/>
 									);
@@ -258,9 +258,9 @@ const SpotMarketsTable: FC = () => {
 							Cell: (cellProps: CellProps<any>) => {
 								return (
 									<Currency.Price
-										currencyKey={'sUSD'}
+										currencyKey="sUSD"
 										price={cellProps.row.original.volume}
-										sign={'$'}
+										sign="$"
 										conversionRate={1}
 									/>
 								);

@@ -5,12 +5,13 @@ import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
+import { FlexDivColCentered } from 'components/layout/flex';
 import { CurrencyKey } from 'constants/currency';
-import { MessageButton } from 'sections/exchange/FooterCard/common';
+import { MessageButton } from 'sections/exchange/message';
 import { closeModal } from 'state/exchange/reducer';
 import { selectTotalRedeemableBalanceWei } from 'state/exchange/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { FlexDivColCentered, numericValueCSS } from 'styles/common';
+import { numericValueCSS } from 'styles/common';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 
 export type TxProvider = 'synthetix' | '1inch';
@@ -46,7 +47,7 @@ export const RedeemTxModal: FC<RedeemTxModalProps> = ({ attemptRetry }) => {
 					/>
 				))}
 				<Title topPad>{t('modals.deprecated-synths.to')}</Title>
-				<BalanceItem currencyKey={'sUSD'} amount={totalRedeemableBalance} />
+				<BalanceItem currencyKey="sUSD" amount={totalRedeemableBalance} />
 			</Balances>
 			<Subtitle>{t('modals.confirm-transaction.confirm-with-provider')}</Subtitle>
 			{!!txError && (

@@ -45,17 +45,13 @@ const MarketInfoBox: React.FC = () => {
 	}, [commitDeposit, marketInfo?.keeperDeposit]);
 
 	const getPotentialAvailableMargin = useCallback(
-		(trade: FuturesPotentialTradeDetails | null, marketMaxLeverage: Wei | undefined) => {
-			let inaccessible;
-
-			inaccessible =
+		(trade: FuturesPotentialTradeDetails | null, marketMaxLeverage?: Wei) => {
+			let inaccessible =
 				(marketMaxLeverage && trade?.notionalValue.div(marketMaxLeverage).abs()) ?? zeroBN;
 
 			// If the user has a position open, we'll enforce a min initial margin requirement.
-			if (inaccessible.gt(0)) {
-				if (inaccessible.lt(minInitialMargin)) {
-					inaccessible = minInitialMargin;
-				}
+			if (inaccessible.gt(0) && inaccessible.lt(minInitialMargin)) {
+				inaccessible = minInitialMargin;
 			}
 
 			// check if available margin will be less than 0
@@ -107,9 +103,7 @@ const MarketInfoBox: React.FC = () => {
 			dataTestId="market-info-box"
 			details={{
 				'Available Margin': {
-					value: `${formatDollars(availableMargin, {
-						currencyKey: undefined,
-					})}`,
+					value: formatDollars(availableMargin, { currencyKey: undefined }),
 					valueNode: (
 						<PreviewArrow showPreview={previewTradeData.showPreview && !potentialTrade?.showStatus}>
 							{formatDollars(previewTradeData?.availableMargin)}
@@ -117,9 +111,7 @@ const MarketInfoBox: React.FC = () => {
 					),
 				},
 				'Buying Power': {
-					value: `${formatDollars(buyingPower, {
-						currencyKey: undefined,
-					})}`,
+					value: formatDollars(buyingPower, { currencyKey: undefined }),
 					valueNode: previewTradeData?.buyingPower && (
 						<PreviewArrow showPreview={previewTradeData.showPreview && !potentialTrade?.showStatus}>
 							{formatDollars(previewTradeData?.buyingPower)}
@@ -127,7 +119,7 @@ const MarketInfoBox: React.FC = () => {
 					),
 				},
 				'Margin Usage': {
-					value: `${formatPercent(marginUsage)}`,
+					value: formatPercent(marginUsage),
 					valueNode: (
 						<PreviewArrow showPreview={previewTradeData.showPreview && !potentialTrade?.showStatus}>
 							{formatPercent(previewTradeData?.marginUsage)}

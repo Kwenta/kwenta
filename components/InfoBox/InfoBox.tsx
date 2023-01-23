@@ -1,6 +1,7 @@
-import React, { memo } from 'react';
-import styled from 'styled-components';
+import { memo, FC } from 'react';
+import styled, { css } from 'styled-components';
 
+import * as Text from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 
 export type DetailedInfo = {
@@ -20,40 +21,49 @@ type InfoBoxProps = {
 	dataTestId?: string;
 };
 
-const InfoBox: React.FC<InfoBoxProps> = memo(
-	({ details, style, className, disabled, dataTestId }) => (
-		<InfoBoxContainer style={style} className={className}>
-			{Object.entries(details).map(([key, value], index) => {
-				if (value) {
-					return (
-						<React.Fragment key={key}>
-							{value.compactBox ? (
-								<>{value.keyNode}</>
-							) : (
-								<div>
-									<div className="key">
-										{key}: {value.keyNode}
-									</div>
-									<p
-										data-testid={`${dataTestId}-${index}`}
-										className={`${disabled ? 'value closed' : 'value'}${
-											value.color ? ` ${value.color}` : ''
-										}`}
-									>
-										{disabled ? NO_VALUE : value.value}
-										{value.valueNode}
-									</p>
-								</div>
-							)}
-							{value?.spaceBeneath && <br />}
-						</React.Fragment>
-					);
-				}
-				return null;
-			})}
-		</InfoBoxContainer>
-	)
-);
+const InfoBox: FC<InfoBoxProps> = memo(({ details, disabled, dataTestId, ...props }) => (
+	<InfoBoxContainer {...props}>
+		{Object.entries(details).map(([key, value], index) => (
+			<InfoBoxValue
+				key={key}
+				title={key}
+				value={value}
+				disabled={disabled}
+				dataTestId={`${dataTestId}-${index}`}
+			/>
+		))}
+	</InfoBoxContainer>
+));
+
+type InfoBoxValueProps = {
+	title: string;
+	value?: DetailedInfo | null;
+	disabled?: boolean;
+	dataTestId: string;
+};
+
+const InfoBoxValue: FC<InfoBoxValueProps> = memo(({ title, value, disabled, dataTestId }) => {
+	if (!value) return null;
+
+	return (
+		<>
+			{value.compactBox ? (
+				value.keyNode
+			) : (
+				<div>
+					<InfoBoxKey>
+						{title}: {value.keyNode}
+					</InfoBoxKey>
+					<ValueText data-testid={dataTestId} $disabled={disabled} $color={value.color}>
+						{disabled ? NO_VALUE : value.value}
+						{value.valueNode}
+					</ValueText>
+				</div>
+			)}
+			{value?.spaceBeneath && <br />}
+		</>
+	);
+});
 
 const InfoBoxContainer = styled.div`
 	border: ${(props) => props.theme.colors.selectedTheme.border};
@@ -67,51 +77,48 @@ const InfoBoxContainer = styled.div`
 		justify-content: space-between;
 		align-items: center;
 
-		p {
-			margin: 0;
-		}
-
-		.key {
-			color: ${(props) => props.theme.colors.selectedTheme.text.title};
-			font-size: 13px;
-			text-transform: capitalize;
-			cursor: default;
-		}
-
-		.value {
-			color: ${(props) => props.theme.colors.selectedTheme.text.value};
-			font-family: ${(props) => props.theme.fonts.mono};
-			font-size: 13px;
-			cursor: default;
-		}
-
-		.key {
-			color: ${(props) => props.theme.colors.selectedTheme.text.title};
-			font-size: 13px;
-			text-transform: capitalize;
-			cursor: default;
-		}
-
-		.red {
-			color: ${(props) => props.theme.colors.selectedTheme.red};
-		}
-
-		.green {
-			color: ${(props) => props.theme.colors.selectedTheme.green};
-		}
-
-		.gold {
-			color: ${(props) => props.theme.colors.common.primaryGold};
-		}
-
-		.closed {
-			color: ${(props) => props.theme.colors.selectedTheme.gray};
-		}
-
 		&:not(:last-of-type) {
 			margin-bottom: 8px;
 		}
 	}
+`;
+
+const InfoBoxKey = styled(Text.Body)`
+	color: ${(props) => props.theme.colors.selectedTheme.text.title};
+	font-size: 13px;
+	text-transform: capitalize;
+	cursor: default;
+`;
+
+const ValueText = styled(Text.Body)<{ $disabled?: boolean; $color?: DetailedInfo['color'] }>`
+	color: ${(props) => props.theme.colors.selectedTheme.text.value};
+	font-family: ${(props) => props.theme.fonts.mono};
+	font-size: 13px;
+	cursor: default;
+
+	${(props) =>
+		props.$color === 'red' &&
+		css`
+			color: ${(props) => props.theme.colors.selectedTheme.red};
+		`}
+
+	${(props) =>
+		props.$color === 'green' &&
+		css`
+			color: ${(props) => props.theme.colors.selectedTheme.green};
+		`}
+
+	${(props) =>
+		props.$color === 'gold' &&
+		css`
+			color: ${(props) => props.theme.colors.common.primaryGold};
+		`}
+
+	${(props) =>
+		props.$disabled &&
+		css`
+			color: ${(props) => props.theme.colors.selectedTheme.gray};
+		`}
 `;
 
 export default InfoBox;

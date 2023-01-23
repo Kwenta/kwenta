@@ -1,6 +1,5 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
-import WithAppContainers from 'containers';
 import mockRouter from 'next-router-mock';
 import { ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -8,6 +7,7 @@ import { RecoilRoot } from 'recoil';
 import { ThemeProvider } from 'styled-components';
 import { WagmiConfig } from 'wagmi';
 
+import Connector from 'containers/Connector';
 import { wagmiClient } from 'containers/Connector/config';
 import { RefetchProvider } from 'contexts/RefetchContext';
 import { themes } from 'styles/theme';
@@ -89,11 +89,11 @@ const MockProviders = ({ children, ethProviderOverrides, route }: Props) => {
 		<QueryClientProvider client={queryClient}>
 			<SynthetixProvider ethProviderOverrides={ethProviderOverrides}>
 				<WagmiConfig client={wagmiClient}>
-					<WithAppContainers>
+					<Connector.Provider>
 						<RefetchProvider>
 							<ThemeProvider theme={themes.dark}>{children}</ThemeProvider>
 						</RefetchProvider>
-					</WithAppContainers>
+					</Connector.Provider>
 				</WagmiConfig>
 			</SynthetixProvider>
 		</QueryClientProvider>

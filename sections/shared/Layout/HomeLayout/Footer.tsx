@@ -1,20 +1,21 @@
-import React from 'react';
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { ThemeProvider } from 'styled-components';
 
 import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg';
 import DiscordLogo from 'assets/svg/social/discord.svg';
 import MirrorLogo from 'assets/svg/social/mirror.svg';
+import { GridContainer } from 'sections/homepage/section';
+import { FlexDivCentered } from 'components/layout/flex';
 import PoweredBySynthetix from 'components/PoweredBySynthetix';
 import { EXTERNAL_LINKS } from 'constants/links';
-import { GridContainer } from 'sections/homepage/common';
-import { FlexDivCentered, ExternalLink } from 'styles/common';
+import { ExternalLink } from 'styles/common';
 import media from 'styles/media';
 import { themes } from 'styles/theme';
 
 import Logo from '../Logo';
 
-const Footer: React.FC = () => {
+const Footer = memo(() => {
 	const { t } = useTranslation();
 	const DOC_LINKS = [
 		{
@@ -97,7 +98,7 @@ const Footer: React.FC = () => {
 		},
 	];
 	return (
-		<ThemeProvider theme={themes['dark']}>
+		<ThemeProvider theme={themes.dark}>
 			<StyledGridContainer>
 				<LogoFooter>
 					<Logo />
@@ -132,7 +133,7 @@ const Footer: React.FC = () => {
 			</StyledGridContainer>
 		</ThemeProvider>
 	);
-};
+});
 
 const StyledLink = styled.a`
 	cursor: pointer;

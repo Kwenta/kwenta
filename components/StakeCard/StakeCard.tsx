@@ -5,10 +5,11 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import NumericInput from 'components/Input/NumericInput';
+import { FlexDivRowCentered } from 'components/layout/flex';
 import SegmentedControl from 'components/SegmentedControl';
+import { StakingCard } from 'sections/dashboard/Stake/card';
 import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
-import { StakingCard } from 'sections/dashboard/Stake/common';
-import { FlexDivRowCentered, numericValueCSS } from 'styles/common';
+import { numericValueCSS } from 'styles/common';
 import { toWei, truncateNumbers } from 'utils/formatters/number';
 
 type StakeCardProps = {
@@ -111,7 +112,7 @@ const StakeCard: FC<StakeCardProps> = memo(
 							</div>
 						</StyledFlexDivRowCentered>
 					</StakeInputHeader>
-					<StyledInput value={amount} onChange={handleChange} />
+					<NumericInput value={amount} onChange={handleChange} bold />
 				</StakeInputContainer>
 				<Button fullWidth variant="flat" size="sm" disabled={isDisabled} onClick={handleSubmit}>
 					{!isApproved
@@ -154,10 +155,6 @@ const StakeInputHeader = styled.div`
 
 const StakeInputContainer = styled.div`
 	margin: 20px 0;
-`;
-
-const StyledInput = styled(NumericInput)`
-	font-family: ${(props) => props.theme.fonts.monoBold};
 `;
 
 export default StakeCard;

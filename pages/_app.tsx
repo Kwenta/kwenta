@@ -4,7 +4,6 @@ import * as Sentry from '@sentry/browser';
 import { BrowserTracing } from '@sentry/tracing';
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
-import WithAppContainers from 'containers';
 import { NextPage } from 'next';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
@@ -143,9 +142,9 @@ const App: FC<AppProps> = (props) => {
 				<RecoilRoot>
 					<QueryClientProvider client={new QueryClient()}>
 						<WagmiConfig client={wagmiClient}>
-							<WithAppContainers>
+							<Connector.Provider>
 								<InnerApp {...props} />
-							</WithAppContainers>
+							</Connector.Provider>
 						</WagmiConfig>
 					</QueryClientProvider>
 				</RecoilRoot>

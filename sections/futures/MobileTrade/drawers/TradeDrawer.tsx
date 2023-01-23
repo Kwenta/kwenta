@@ -38,7 +38,7 @@ const TradeDrawer: React.FC<TradeDrawerProps> = ({ trade, closeDrawer }) => {
 				label: 'Price',
 				value: formatDollars(trade.price),
 			},
-			{ label: 'Date/Time', value: <TimeDisplay cellPropsValue={trade.timestamp} horizontal /> },
+			{ label: 'Date/Time', value: <TimeDisplay value={trade.timestamp} horizontal /> },
 			{
 				label: 'PnL',
 				value: trade.pnl.eq(0) ? (

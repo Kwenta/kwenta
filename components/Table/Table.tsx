@@ -6,7 +6,8 @@ import styled, { css } from 'styled-components';
 import SortDownIcon from 'assets/svg/app/caret-down.svg';
 import SortUpIcon from 'assets/svg/app/caret-up.svg';
 import Spinner from 'assets/svg/app/loader.svg';
-import { GridDivCenteredRow } from 'styles/common';
+import { GridDivCenteredRow } from 'components/layout/grid';
+import { Body } from 'components/Text';
 
 import Pagination from './Pagination';
 import TableBodyRow, { TableCell } from './TableBodyRow';
@@ -312,6 +313,17 @@ const StyledSortUpIcon = styled(SortUpIcon)`
 	width: 5px;
 	height: 5px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
+`;
+
+export const TableHeader = styled(Body)<{ $small?: boolean }>`
+	text-transform: capitalize;
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
+
+	${(props) =>
+		props.$small &&
+		css`
+			font-size: 10px;
+		`}
 `;
 
 export default Table;

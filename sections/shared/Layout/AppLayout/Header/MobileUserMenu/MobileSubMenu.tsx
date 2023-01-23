@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
@@ -12,7 +13,7 @@ import { currentThemeState } from 'store/ui';
 import { ThemeName } from 'styles/theme';
 
 import { SubMenuLink } from '../constants';
-import { MenuButton } from './common';
+import { MenuButton } from './menu';
 
 type MobileSubMenuOption = {
 	label: string;
@@ -32,71 +33,64 @@ type MobileSubMenuProps = {
 	onToggle(): void;
 };
 
-const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
-	i18nLabel,
-	active,
-	options,
-	links,
-	onDismiss,
-	onToggle,
-}) => {
-	const { t } = useTranslation();
-	const { asPath } = useRouter();
+const MobileSubMenu: React.FC<MobileSubMenuProps> = memo(
+	({ i18nLabel, active, options, links, onDismiss, onToggle }) => {
+		const { t } = useTranslation();
+		const { asPath } = useRouter();
+		const currentTheme = useRecoilValue(currentThemeState);
 
-	const currentTheme = useRecoilValue(currentThemeState);
-
-	return (
-		<>
-			<SubMenuButton currentTheme={currentTheme} isActive={active} onClick={onToggle}>
-				{t(i18nLabel)}
-				{active ? <ChevronUp /> : <ChevronDown />}
-			</SubMenuButton>
-			{active && (
-				<SubMenuContainer onClick={onDismiss}>
-					{links
-						? links.map(({ i18nLabel, link: subLink, badge }) => (
-								<SubMenuItemContainer key={i18nLabel}>
-									<SubMenuIcon>·</SubMenuIcon>
-									<StyledLink href={subLink}>
-										<SubMenuItem currentTheme={currentTheme} active={asPath.includes(subLink)}>
-											<div>
-												{t(i18nLabel)}{' '}
-												{badge &&
-													badge.map(({ i18nLabel, color }) => (
+		return (
+			<>
+				<SubMenuButton currentTheme={currentTheme} isActive={active} onClick={onToggle}>
+					{t(i18nLabel)}
+					{active ? <ChevronUp /> : <ChevronDown />}
+				</SubMenuButton>
+				{active && (
+					<SubMenuContainer onClick={onDismiss}>
+						{links
+							? links.map(({ i18nLabel, link: subLink, badge }) => (
+									<SubMenuItemContainer key={i18nLabel}>
+										<SubMenuIcon>·</SubMenuIcon>
+										<StyledLink href={subLink}>
+											<SubMenuItem currentTheme={currentTheme} active={asPath.includes(subLink)}>
+												<div>
+													{t(i18nLabel)}{' '}
+													{badge?.map(({ i18nLabel, color }) => (
 														<StyledBadge color={color}>{t(i18nLabel)}</StyledBadge>
 													))}
-											</div>
-										</SubMenuItem>
-									</StyledLink>
-								</SubMenuItemContainer>
-						  ))
-						: options?.map(({ label, icon, onClick, selected, externalLink }) => (
-								<SubMenuItemContainer key={label}>
-									<SubMenuIcon selected={selected}>{icon ?? '·'}</SubMenuIcon>
-									{externalLink ? (
-										<SubMenuExternalLink href={externalLink} target="_blank" rel="noreferrer">
-											<SubMenuItem currentTheme={currentTheme} selected={selected}>
-												{label}
+												</div>
 											</SubMenuItem>
-										</SubMenuExternalLink>
-									) : (
-										<SubMenuFlex>
-											<SubMenuItem
-												currentTheme={currentTheme}
-												onClick={selected ? undefined : onClick}
-												selected={selected}
-											>
-												{label}
-											</SubMenuItem>
-										</SubMenuFlex>
-									)}
-								</SubMenuItemContainer>
-						  ))}
-				</SubMenuContainer>
-			)}
-		</>
-	);
-};
+										</StyledLink>
+									</SubMenuItemContainer>
+							  ))
+							: options?.map(({ label, icon, onClick, selected, externalLink }) => (
+									<SubMenuItemContainer key={label}>
+										<SubMenuIcon selected={selected}>{icon ?? '·'}</SubMenuIcon>
+										{externalLink ? (
+											<SubMenuExternalLink href={externalLink} target="_blank" rel="noreferrer">
+												<SubMenuItem currentTheme={currentTheme} selected={selected}>
+													{label}
+												</SubMenuItem>
+											</SubMenuExternalLink>
+										) : (
+											<SubMenuFlex>
+												<SubMenuItem
+													currentTheme={currentTheme}
+													onClick={selected ? undefined : onClick}
+													selected={selected}
+												>
+													{label}
+												</SubMenuItem>
+											</SubMenuFlex>
+										)}
+									</SubMenuItemContainer>
+							  ))}
+					</SubMenuContainer>
+				)}
+			</>
+		);
+	}
+);
 
 const SubMenuButton = styled(MenuButton)`
 	${(props) =>

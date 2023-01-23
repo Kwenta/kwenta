@@ -4,7 +4,8 @@ import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
-import Error from 'components/Error';
+import Error from 'components/ErrorView';
+import { FlexDivCentered } from 'components/layout/flex';
 import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -27,7 +28,6 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
-import { FlexDivCentered } from 'styles/common';
 import { getKnownError } from 'utils/formatters/error';
 import {
 	zeroBN,
@@ -165,7 +165,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 		dispatch(setOpenModal(null));
 	}, [dispatch]);
 
-	const handleConfirmOrder = async () => {
+	const handleConfirmOrder = () => {
 		dispatch(
 			modifyIsolatedPosition({
 				sizeDelta: nativeSizeDelta,
@@ -191,7 +191,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 						<Row key={`datarow-${i}`}>
 							<Label>{row.label}</Label>
 							<Value>
-								<span className={row.color ? `value ${row.color}` : ''}>{row.value}</span>
+								<span className={`value ${row.color ?? ''}`}>{row.value}</span>
 							</Value>
 						</Row>
 					))}

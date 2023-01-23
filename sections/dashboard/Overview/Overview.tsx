@@ -15,7 +15,7 @@ import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner'
 import { selectBalances } from 'state/balances/selectors';
 import { sdk } from 'state/config';
 import {
-	selectActiveCrossPositionsCount,
+	// selectActiveCrossPositionsCount,
 	selectActiveIsolatedPositionsCount,
 	selectFuturesPortfolio,
 } from 'state/futures/selectors';
@@ -44,12 +44,10 @@ const Overview: FC = () => {
 	const balances = useAppSelector(selectBalances);
 	const portfolio = useAppSelector(selectFuturesPortfolio);
 	const isolatedPositionsCount = useAppSelector(selectActiveIsolatedPositionsCount);
-	const crossPositionsCount = useAppSelector(selectActiveCrossPositionsCount);
+	// const crossPositionsCount = useAppSelector(selectActiveCrossPositionsCount);
 
-	const [activePositionsTab, setActivePositionsTab] = useRecoilState<PositionsTab>(
-		activePositionsTabState
-	);
-	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
+	const [activePositionsTab, setActivePositionsTab] = useRecoilState(activePositionsTabState);
+	const [activeMarketsTab, setActiveMarketsTab] = useState(MarketsTab.FUTURES);
 
 	const { network, synthsMap } = Connector.useContainer();
 
@@ -147,13 +145,13 @@ const Overview: FC = () => {
 			},
 		];
 	}, [
-		crossPositionsCount,
+		// crossPositionsCount,
 		isolatedPositionsCount,
 		exchangeTokens,
 		balances.totalUSDBalance,
 		t,
 		activePositionsTab,
-		portfolio.crossMarginFutures,
+		// portfolio.crossMarginFutures,
 		portfolio.isolatedMarginFutures,
 		setActivePositionsTab,
 	]);

@@ -14,7 +14,7 @@ export const ChartHeader = styled.div`
 `;
 
 export const StatsContainer = styled.div`
-	margin: 40px 0 40px 0;
+	margin: 40px 0;
 	padding: 0;
 	display: grid;
 	grid-template-columns: 1 100%;

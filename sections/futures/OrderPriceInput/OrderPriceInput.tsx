@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import CustomInput from 'components/Input/CustomInput';
 import InputTitle from 'components/Input/InputTitle';
 import SegmentedControl from 'components/SegmentedControl';
-import StyledTooltip from 'components/Tooltip/StyledTooltip';
+import Tooltip from 'components/Tooltip/Tooltip';
 import { FuturesOrderType } from 'queries/futures/types';
 import { selectMarketPrice, selectMarketInfo, selectLeverageSide } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
@@ -96,13 +96,13 @@ export default function OrderPriceInput({
 				invalid={!!minMaxLabelString}
 				dataTestId="order-price-input"
 				disabled={isDisabled}
-				right={'sUSD'}
+				right="sUSD"
 				value={localValue}
 				placeholder="0.0"
 				onChange={handleOnChange}
 			/>
 			<FeeCapContainer>
-				<StyledTooltip
+				<Tooltip
 					width={'310px'}
 					height="auto"
 					style={{ padding: '0 15px', textTransform: 'none' }}
@@ -111,7 +111,7 @@ export default function OrderPriceInput({
 					<FeeRejectionLabel>
 						{t('futures.market.trade.orders.fee-rejection-label')}:
 					</FeeRejectionLabel>
-				</StyledTooltip>
+				</Tooltip>
 				<SegmentedControl
 					onChange={onChangeFeeCap}
 					selectedIndex={FEE_CAP_OPTIONS.indexOf(selectedFeeCapLabel)}

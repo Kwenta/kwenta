@@ -10,7 +10,7 @@ import { RATES_ENDPOINTS } from './constants';
 import { Candle, LatestRate } from './types';
 import { Prices } from './types';
 
-export const getRatesEndpoint = (networkId: NetworkId): string => {
+export const getRatesEndpoint = (networkId: NetworkId) => {
 	return RATES_ENDPOINTS[networkId] || RATES_ENDPOINTS[chain.optimism.id];
 };
 
@@ -79,7 +79,7 @@ export const synthToCoingeckoPriceId = (marketKey: FuturesMarketKey) => {
 };
 
 export const mapCandles = (candles: CandleResult[]): Candle[] => {
-	return candles?.map(({ id, synth, open, high, low, close, timestamp }: CandleResult) => {
+	return candles.map(({ id, synth, open, high, low, close, timestamp }) => {
 		return {
 			id: id,
 			synth: synth,
@@ -93,7 +93,7 @@ export const mapCandles = (candles: CandleResult[]): Candle[] => {
 };
 
 export const mapPriceChart = (candles: CandleResult[]): Candle[] => {
-	return candles?.map(({ id, synth, open, high, low, close, average, timestamp }: CandleResult) => {
+	return candles.map(({ id, synth, open, high, low, close, average, timestamp }) => {
 		return {
 			id: id,
 			synth: synth,

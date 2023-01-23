@@ -8,9 +8,10 @@ import CaretDownIcon from 'assets/svg/app/caret-down-slim.svg';
 import CaretUpIcon from 'assets/svg/app/caret-up-slim.svg';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
-import Card from 'components/Card';
-import Error from 'components/Error';
+import { CardHeader } from 'components/Card';
+import Error from 'components/ErrorView';
 import CustomInput from 'components/Input/CustomInput';
+import { FlexDivRowCentered } from 'components/layout/flex';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
@@ -23,7 +24,6 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { selectWallet } from 'state/wallet/selectors';
-import { FlexDivRowCentered } from 'styles/common';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 
 type Props = {
@@ -252,7 +252,7 @@ const StyledSegmentedControl = styled(SegmentedControl)`
 	margin: 16px 0;
 `;
 
-const StyledCardHeader = styled(Card.Header)<{ noBorder: boolean }>`
+const StyledCardHeader = styled(CardHeader)<{ noBorder: boolean }>`
 	display: flex;
 	justify-content: space-between;
 	height: 30px;

@@ -44,8 +44,8 @@ export default function PositionChart() {
 	}, [subgraphPosition, position]);
 
 	const onToggleLines = useCallback(() => {
-		setShowOrderLines(!showOrderLines);
-	}, [setShowOrderLines, showOrderLines]);
+		setShowOrderLines((show) => !show);
+	}, [setShowOrderLines]);
 
 	return (
 		<Container visible={isChartReady}>

@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import { SectionHeader, SectionSeparator, SectionTitle } from 'sections/futures/mobile';
 import { selectPosition } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 
 import PositionCard from '../PositionCard';
-import { SectionHeader, SectionSeparator, SectionTitle } from './common';
 
 const PositionDetails = () => {
 	const position = useAppSelector(selectPosition);
