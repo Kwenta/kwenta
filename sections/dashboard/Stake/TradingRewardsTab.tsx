@@ -191,6 +191,7 @@ const CardGridContainer = styled(StakingCard)`
 `;
 
 const Value = styled(Body).attrs({ variant: 'bold', mono: true })`
+	color: ${(props) => props.theme.colors.selectedTheme.yellow};
 	font-size: 26px;
 	margin-top: 10px;
 `;
