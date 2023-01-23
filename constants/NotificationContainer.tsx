@@ -28,8 +28,6 @@ const NotificationContainer = memo(() => {
 
 const StyledToastContainer = styled(ToastContainer)`
 	.Toastify__toast-container {
-		background-color: ${(props) => props.theme.colors.navy};
-		border: 1px solid ${(props) => props.theme.colors.green};
 		border-radius: 4px;
 	}
 	.Toastify__toast {

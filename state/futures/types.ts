@@ -74,7 +74,7 @@ export type FuturesTransactionType =
 	| 'withdraw_keeper_balance';
 
 export type TransactionEstimation<T = Wei> = {
-	error?: string | null | undefined;
+	error?: string | null;
 	limit: T;
 	cost: T;
 };
@@ -85,7 +85,7 @@ export type TransactionEstimationPayload = {
 	type: FuturesTransactionType;
 	limit: string;
 	cost: string;
-	error?: string | null | undefined;
+	error?: string | null;
 };
 
 export type CrossMarginBalanceInfo<T = Wei> = {

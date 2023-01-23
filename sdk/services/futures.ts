@@ -368,7 +368,7 @@ export default class FuturesService {
 		return response ? calculateVolumes(response) : {};
 	}
 
-	public async getCrossMarginAccounts(walletAddress?: string | undefined | null) {
+	public async getCrossMarginAccounts(walletAddress?: string | null) {
 		const address = walletAddress ?? this.sdk.context.walletAddress;
 		return await queryCrossMarginAccounts(this.sdk, address);
 	}
