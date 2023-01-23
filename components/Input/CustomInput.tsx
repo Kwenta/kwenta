@@ -48,7 +48,8 @@ const CustomInput: FC<CustomInputProps> = memo(
 					disabled={disabled}
 					placeholder={placeholder}
 					value={value}
-					type="number"
+					type="text"
+					inputMode="decimal"
 					onChange={handleChange}
 					onKeyDown={(e) => {
 						if (INVALID_CHARS.includes(e.key)) {

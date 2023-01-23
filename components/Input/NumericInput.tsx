@@ -26,15 +26,14 @@ const NumericInput: FC<NumericInputProps> = memo(({ onChange, bold, ...props }) 
 
 	return (
 		<StyledInput
-			type="number"
+			type="text"
+			inputMode="decimal"
 			onChange={handleOnChange}
 			onKeyDown={(e) => {
 				if (INVALID_CHARS.includes(e.key)) {
 					e.preventDefault();
 				}
 			}}
-			min="0"
-			step="any"
 			$bold={bold}
 			{...props}
 		/>

@@ -46,7 +46,8 @@ const CustomNumericInput: FC<CustomNumericInputProps> = memo(
 		return (
 			<InputWrapper $length={value.length} $suffix={suffix}>
 				<StyledInput
-					type="number"
+					type="text"
+					inputMode="decimal"
 					value={value}
 					placeholder={placeholder ? `${placeholder} ${suffix}` : suffix}
 					onChange={handleOnChange}
