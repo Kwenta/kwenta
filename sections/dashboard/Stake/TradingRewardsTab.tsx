@@ -9,7 +9,7 @@ import HelpIcon from 'assets/svg/app/question-mark.svg';
 import Button from 'components/Button';
 import { FlexDivRow } from 'components/layout/flex';
 import { SplitContainer } from 'components/layout/grid';
-import { Body, LogoText } from 'components/Text';
+import { Body, Heading, LogoText } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
 import Connector from 'containers/Connector';
 import useGetFile from 'queries/files/useGetFile';
@@ -90,11 +90,11 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 						</div>
 						<div>
 							<Title>{t('dashboard.stake.tabs.trading-rewards.trading-activity-reset')}</Title>
-							<Value>
+							<Heading>
 								{resetTime > new Date().getTime() / 1000
 									? formatTruncatedDuration(resetTime - new Date().getTime() / 1000)
 									: t('dashboard.stake.tabs.trading-rewards.pending-for-rewards')}
-							</Value>
+							</Heading>
 						</div>
 					</CardGrid>
 					<FlexDivRow>
@@ -190,8 +190,9 @@ const CardGridContainer = styled(StakingCard)`
 	justify-content: space-between;
 `;
 
-const Value = styled(Body)`
-	margin-top: 5px;
+const Value = styled(Body).attrs({ variant: 'bold', mono: true })`
+	font-size: 26px;
+	margin-top: 10px;
 `;
 
 const Title = styled(Body).attrs({ size: 'medium' })`
