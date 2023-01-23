@@ -2,7 +2,6 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import TimerIcon from 'assets/svg/app/timer.svg';
@@ -12,15 +11,15 @@ import { NO_VALUE } from 'constants/placeholder';
 import { parseGasPriceObject } from 'hooks/useGas';
 import useIsL1 from 'hooks/useIsL1';
 import useIsL2 from 'hooks/useIsL2';
+import { selectGasPrice, selectGasSpeed } from 'state/app/selectors';
 import { selectTransactionFeeWei, selectFeeCostWei } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
-import { customGasPriceState, gasSpeedState } from 'store/wallet';
 import { formatDollars, formatNumber, formatPercent, zeroBN } from 'utils/formatters/number';
 
 const SwapInfoBox: React.FC = () => {
 	const { t } = useTranslation();
-	const gasSpeed = useRecoilValue(gasSpeedState);
-	const customGasPrice = useRecoilValue(customGasPriceState);
+	const gasSpeed = useAppSelector(selectGasSpeed);
+	const customGasPrice = useAppSelector(selectGasPrice);
 	const isL2 = useIsL2();
 	const isMainnet = useIsL1();
 	const { exchangeFeeRate, baseFeeRate } = useAppSelector(({ exchange }) => ({

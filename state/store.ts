@@ -21,7 +21,9 @@ import earnReducer from './earn/reducer';
 import exchangeReducer from './exchange/reducer';
 import futuresReducer from './futures/reducer';
 import homeReducer from './home/reducer';
+import preferencesReducer from './preferences/reducer';
 import stakingReducer from './staking/reducer';
+import statsReducer from './stats/reducer';
 import walletReducer from './wallet/reducer';
 
 const LOG_REDUX = process.env.NODE_ENV !== 'production';
@@ -42,6 +44,8 @@ const combinedReducers = combineReducers({
 	home: homeReducer,
 	earn: earnReducer,
 	staking: stakingReducer,
+	preferenes: preferencesReducer,
+	stats: statsReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, combinedReducers);

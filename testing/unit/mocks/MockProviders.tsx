@@ -4,7 +4,6 @@ import WithAppContainers from 'containers';
 import mockRouter from 'next-router-mock';
 import { ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { RecoilRoot } from 'recoil';
 import { ThemeProvider } from 'styled-components';
 import { WagmiConfig } from 'wagmi';
 
@@ -76,7 +75,7 @@ export const SynthetixProvider = ({ children, ethProviderOverrides }: Props) => 
 				synthetixjs: null,
 			})}
 		>
-			<RecoilRoot>{children}</RecoilRoot>
+			{children}
 		</SynthetixQueryContextProvider>
 	);
 };

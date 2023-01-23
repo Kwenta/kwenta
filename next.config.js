@@ -6,20 +6,6 @@ const gitRevision = require('child_process')
 	.toString()
 	.trim();
 
-// https://github.com/facebookexperimental/Recoil/issues/733#issuecomment-925072943
-const intercept = require('intercept-stdout');
-
-// safely ignore recoil stdout warning messages
-function interceptStdout(text) {
-	if (text.includes('Duplicate atom key')) {
-		return '';
-	}
-	return text;
-}
-
-// Intercept in dev and prod
-intercept(interceptStdout);
-
 const { withPlugins } = require('next-compose-plugins');
 const optimizedImages = require('next-optimized-images');
 const transpile = require('next-transpile-modules');

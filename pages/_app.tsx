@@ -13,7 +13,6 @@ import { useTranslation } from 'react-i18next';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Provider } from 'react-redux';
-import { RecoilRoot, useRecoilValue } from 'recoil';
 import { ThemeProvider } from 'styled-components';
 import { chain, WagmiConfig } from 'wagmi';
 
@@ -25,8 +24,9 @@ import AcknowledgementModal from 'sections/app/AcknowledgementModal';
 import Layout from 'sections/shared/Layout';
 import SystemStatus from 'sections/shared/SystemStatus';
 import { useAppData } from 'state/app/hooks';
+import { useAppSelector } from 'state/hooks';
+import { selectCurrentTheme } from 'state/preferences/selectors';
 import store from 'state/store';
-import { currentThemeState } from 'store/ui';
 import { MediaContextProvider } from 'styles/media';
 import { themes } from 'styles/theme';
 import 'styles/main.css';
@@ -71,9 +71,9 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 	useMonitorTransactions();
 
 	const getLayout = Component.getLayout || ((page) => page);
+	const currentTheme = useAppSelector(selectCurrentTheme);
 
 	const isReady = useMemo(() => typeof window !== 'undefined', []);
-	const currentTheme = useRecoilValue(currentThemeState);
 	const theme = useMemo(() => themes[currentTheme], [currentTheme]);
 	// @ts-ignore palette options
 	const muiTheme = useMemo(() => createTheme(getDesignTokens(currentTheme)), [currentTheme]);
@@ -149,15 +149,13 @@ const App: FC<AppProps> = (props) => {
 				<link rel="icon" href="/images/favicon.svg" />
 			</Head>
 			<Provider store={store}>
-				<RecoilRoot>
-					<QueryClientProvider client={new QueryClient()}>
-						<WagmiConfig client={wagmiClient}>
-							<WithAppContainers>
-								<InnerApp {...props} />
-							</WithAppContainers>
-						</WagmiConfig>
-					</QueryClientProvider>
-				</RecoilRoot>
+				<QueryClientProvider client={new QueryClient()}>
+					<WagmiConfig client={wagmiClient}>
+						<WithAppContainers>
+							<InnerApp {...props} />
+						</WithAppContainers>
+					</WagmiConfig>
+				</QueryClientProvider>
 			</Provider>
 		</>
 	);
