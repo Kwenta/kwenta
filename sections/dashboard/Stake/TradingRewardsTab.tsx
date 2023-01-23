@@ -125,7 +125,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 								</Title>
 								<Value>
 									{formatDollars(futuresFeePaid, { minDecimals: 2 })}
-									<HelpIcon />
+									<SpacedHelpIcon />
 								</Value>
 							</WithCursor>
 						</CustomStyledTooltip>
@@ -211,13 +211,13 @@ const CardGrid = styled.div`
 		margin-bottom: 20px;
 	}
 
-	svg {
-		margin-left: 8px;
-	}
-
 	${media.lessThan('md')`
 		column-gap: 10px;
 	`}
+`;
+
+const SpacedHelpIcon = styled(HelpIcon)`
+	margin-left: 8px;
 `;
 
 export default TradingRewardsTab;
