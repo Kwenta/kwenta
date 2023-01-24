@@ -602,7 +602,6 @@ export const selectSelectedMarketPositionHistory = createSelector(
 	selectMarketAsset,
 	selectPositionHistory,
 	(marketAsset, positionHistory) => {
-		console.log('positionHistory', positionHistory);
 		return positionHistory.find(({ asset, isOpen }) => isOpen && asset === marketAsset);
 	}
 );
@@ -619,7 +618,24 @@ export const selectPositionHistoryForSelectedTrader = createSelector(
 	}
 );
 
-export const selectTradesForSelectedAccount = createSelector(
+export const selectUsersTradesForMarket = createSelector(
+	selectFuturesType,
+	selectFuturesAccount,
+	selectMarketAsset,
+	selectCrossMarginAccountData,
+	(state: RootState) => state.futures,
+	(type, account, asset, accountData, futures) => {
+		let trades;
+		if (type === 'cross_margin') {
+			trades = unserializeTrades(accountData?.trades ?? []);
+		} else if (account) {
+			trades = unserializeTrades(futures.isolatedMargin.trades?.[account] ?? []);
+		}
+		return trades?.filter((t) => t.asset === asset) ?? [];
+	}
+);
+
+export const selectAllUsersTrades = createSelector(
 	selectFuturesType,
 	selectFuturesAccount,
 	selectCrossMarginAccountData,

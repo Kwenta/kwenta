@@ -9,12 +9,12 @@ import { ETH_UNIT } from 'constants/network';
 import { FuturesTrade, PositionSide } from 'sdk/types/futures';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { TradeStatus } from 'sections/futures/types';
-import { fetchTrades } from 'state/futures/actions';
+import { fetchTradesForSelectedMarket } from 'state/futures/actions';
 import {
 	selectFuturesType,
 	selectMarketAsset,
 	selectQueryStatuses,
-	selectTradesForSelectedAccount,
+	selectUsersTradesForMarket,
 } from 'state/futures/selectors';
 import { useAppSelector, useFetchAction } from 'state/hooks';
 import { FetchStatus } from 'state/types';
@@ -31,12 +31,12 @@ const TradesTab: React.FC = () => {
 	const walletAddress = useAppSelector(selectWallet);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const accountType = useAppSelector(selectFuturesType);
-	const history = useAppSelector(selectTradesForSelectedAccount);
+	const history = useAppSelector(selectUsersTradesForMarket);
 	const { trades: tradesQuery } = useAppSelector(selectQueryStatuses);
 
 	const [selectedTrade, setSelectedTrade] = React.useState<any>();
 
-	useFetchAction(fetchTrades, {
+	useFetchAction(fetchTradesForSelectedMarket, {
 		dependencies: [walletAddress, accountType, marketAsset],
 		disabled: !walletAddress,
 	});

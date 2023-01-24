@@ -35,6 +35,7 @@ import {
 	updateTransactionStatus,
 } from 'state/app/reducer';
 import { fetchBalances } from 'state/balances/actions';
+import { ZERO_CM_FEES, ZERO_STATE_CM_TRADE_INPUTS } from 'state/constants';
 import { selectEthRate } from 'state/exchange/selectors';
 import { serializeWeiObject } from 'state/helpers';
 import { AppDispatch, AppThunk, RootState } from 'state/store';
@@ -75,8 +76,6 @@ import {
 	setIsolatedTradePreview,
 	setLeverageSide,
 	setTransactionEstimate,
-	ZERO_CM_FEES,
-	ZERO_STATE_CM_TRADE_INPUTS,
 } from './reducer';
 import {
 	selectCrossMarginAccount,
@@ -286,7 +285,6 @@ export const fetchCrossMarginAccount = createAsyncThunk<
 	const wallet = selectWallet(getState());
 	const supportedNetwork = selectCrossMarginSupportedNetwork(getState());
 	const network = selectNetwork(getState());
-
 	if (!wallet || !supportedNetwork) return undefined;
 	const accounts = getState().futures.crossMargin.accounts;
 
@@ -565,7 +563,6 @@ export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'nati
 	const nativeSize = currencyType === 'native' ? size : wei(size).div(assetRate).toString();
 	const usdSize = currencyType === 'native' ? stipZeros(assetRate.mul(size).toString()) : size;
 	const leverage = wei(usdSize).div(position?.remainingMargin);
-	console.log('usdSize', usdSize.toString());
 	dispatch(setIsolatedMarginLeverageInput(leverage.toNumber().toFixed(2)));
 
 	dispatch(
@@ -695,7 +692,7 @@ export const fetchPositionHistoryForTrader = createAsyncThunk<
 	}
 });
 
-export const fetchTrades = createAsyncThunk<
+export const fetchTradesForSelectedMarket = createAsyncThunk<
 	| {
 			trades: FuturesTrade<string>[];
 			account: string;
@@ -706,9 +703,8 @@ export const fetchTrades = createAsyncThunk<
 	| undefined,
 	void,
 	ThunkConfig
->('futures/fetchTrades', async (_, { getState, extra: { sdk } }) => {
+>('futures/fetchTradesForSelectedMarket', async (_, { getState, extra: { sdk } }) => {
 	try {
-		console.log('>>>> START FETCHING TRADES');
 		const wallet = selectWallet(getState());
 		const networkId = selectNetwork(getState());
 		const marketAsset = selectMarketAsset(getState());
@@ -716,8 +712,34 @@ export const fetchTrades = createAsyncThunk<
 		const account = selectFuturesAccount(getState());
 		const futuresSupported = selectFuturesSupportedNetwork(getState());
 		if (!futuresSupported || !wallet || !account) return;
-		const trades = await sdk.futures.getTrades(marketAsset, wallet, accountType);
-		console.log('GOT TRADES', trades);
+		const trades = await sdk.futures.getTradesForMarket(marketAsset, wallet, accountType);
+		return { trades: serializeTrades(trades), networkId, account, accountType, wallet };
+	} catch (err) {
+		notifyError('Failed to fetch futures trades', err);
+		throw err;
+	}
+});
+
+export const fetchAllTradesForAccount = createAsyncThunk<
+	| {
+			trades: FuturesTrade<string>[];
+			account: string;
+			wallet: string;
+			networkId: NetworkId;
+			accountType: FuturesAccountType;
+	  }
+	| undefined,
+	void,
+	ThunkConfig
+>('futures/fetchAllTradesForAccount', async (_, { getState, extra: { sdk } }) => {
+	try {
+		const wallet = selectWallet(getState());
+		const networkId = selectNetwork(getState());
+		const accountType = selectFuturesType(getState());
+		const account = selectFuturesAccount(getState());
+		const futuresSupported = selectFuturesSupportedNetwork(getState());
+		if (!futuresSupported || !wallet || !account) return;
+		const trades = await sdk.futures.getAllTrades(wallet, accountType);
 		return { trades: serializeTrades(trades), networkId, account, accountType, wallet };
 	} catch (err) {
 		notifyError('Failed to fetch futures trades', err);

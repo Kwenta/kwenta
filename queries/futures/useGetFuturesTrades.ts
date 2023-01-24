@@ -6,12 +6,12 @@ import { DEFAULT_NUMBER_OF_TRADES, MAX_TIMESTAMP } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { notNill } from 'queries/synths/utils';
+import { FuturesTrade } from 'sdk/types/futures';
+import { mapTrades } from 'sdk/utils/futures';
 import logError from 'utils/logError';
 
 import { getFuturesTrades } from './subgraph';
 import { getFuturesEndpoint } from './utils';
-import { FuturesTrade } from 'sdk/types/futures';
-import { mapTrades } from 'sdk/utils/futures';
 
 const useGetFuturesTrades = (
 	currencyKey: string | undefined,

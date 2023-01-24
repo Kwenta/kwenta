@@ -1,7 +1,13 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
+import { formatBytes32String } from 'ethers/lib/utils.js';
 import request, { gql } from 'graphql-request';
 import KwentaSDK from 'sdk';
 
+import {
+	FuturesAccountType,
+	getFuturesPositions,
+	getFuturesTrades,
+} from 'queries/futures/subgraph';
 import { getFuturesEndpoint } from 'sdk/utils/futures';
 
 export const queryAccountsFromSubgraph = async (
@@ -45,4 +51,92 @@ export const queryCrossMarginAccounts = async (
 ): Promise<string[]> => {
 	const accounts = await queryAccountFromLogs(sdk, walletAddress);
 	return accounts;
+};
+
+export const queryTrades = async (
+	sdk: KwentaSDK,
+	params: {
+		walletAddress: string;
+		accountType: FuturesAccountType;
+		marketAsset?: string;
+		pageLength: number;
+	}
+) => {
+	const filter: Record<string, string> = {
+		account: params.walletAddress,
+		accountType: params.accountType,
+	};
+	if (params.marketAsset) {
+		filter['asset'] = formatBytes32String(params.marketAsset);
+	}
+	return getFuturesTrades(
+		sdk.futures.futuresGqlEndpoint,
+		{
+			first: params.pageLength,
+			where: filter,
+			orderDirection: 'desc',
+			orderBy: 'timestamp',
+		},
+		{
+			id: true,
+			timestamp: true,
+			account: true,
+			abstractAccount: true,
+			accountType: true,
+			margin: true,
+			size: true,
+			asset: true,
+			price: true,
+			positionId: true,
+			positionSize: true,
+			positionClosed: true,
+			pnl: true,
+			feesPaid: true,
+			orderType: true,
+		}
+	);
+};
+
+export const queryPositionHistory = (sdk: KwentaSDK, account: string) => {
+	return getFuturesPositions(
+		sdk.futures.futuresGqlEndpoint,
+		{
+			where: {
+				account: account,
+			},
+			first: 99999,
+			orderBy: 'openTimestamp',
+			orderDirection: 'desc',
+		},
+		{
+			id: true,
+			lastTxHash: true,
+			openTimestamp: true,
+			closeTimestamp: true,
+			timestamp: true,
+			market: true,
+			asset: true,
+			account: true,
+			abstractAccount: true,
+			accountType: true,
+			isOpen: true,
+			isLiquidated: true,
+			trades: true,
+			totalVolume: true,
+			size: true,
+			initialMargin: true,
+			margin: true,
+			pnl: true,
+			feesPaid: true,
+			netFunding: true,
+			pnlWithFeesPaid: true,
+			netTransfers: true,
+			totalDeposits: true,
+			fundingIndex: true,
+			entryPrice: true,
+			avgEntryPrice: true,
+			lastPrice: true,
+			exitPrice: true,
+		}
+	);
 };

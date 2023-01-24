@@ -9,6 +9,16 @@ import {
 	FuturesPotentialTradeDetails,
 	PositionSide,
 } from 'sdk/types/futures';
+import {
+	DEFAULT_MAP_BY_NETWORK,
+	DEFAULT_QUERY_STATUS,
+	LOADING_STATUS,
+	SUCCESS_STATUS,
+	ZERO_CM_FEES,
+	ZERO_STATE_CM_ACCOUNT,
+	ZERO_STATE_CM_TRADE_INPUTS,
+	ZERO_STATE_TRADE_INPUTS,
+} from 'state/constants';
 import { accountType } from 'state/helpers';
 import { FetchStatus } from 'state/types';
 import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
@@ -30,7 +40,8 @@ import {
 	fetchFuturesPositionHistory,
 	fetchPositionHistoryForTrader,
 	fetchFundingRates,
-	fetchTrades,
+	fetchTradesForSelectedMarket,
+	fetchAllTradesForAccount,
 } from './actions';
 import {
 	CrossMarginState,
@@ -43,44 +54,6 @@ import {
 	TransactionEstimationPayload,
 	TransactionEstimations,
 } from './types';
-
-const ZERO_STATE_TRADE_INPUTS = {
-	nativeSize: '',
-	susdSize: '',
-};
-
-export const ZERO_STATE_CM_TRADE_INPUTS = {
-	...ZERO_STATE_TRADE_INPUTS,
-	leverage: '1',
-};
-
-export const ZERO_CM_FEES = {
-	staticFee: '0',
-	crossMarginFee: '0',
-	limitStopOrderFee: '0',
-	keeperEthDeposit: '0',
-	total: '0',
-};
-
-const DEFAULT_QUERY_STATUS = {
-	status: FetchStatus.Idle,
-	error: null,
-};
-
-const LOADING_STATUS = {
-	status: FetchStatus.Loading,
-	error: null,
-};
-
-const SUCCESS_STATUS = {
-	status: FetchStatus.Success,
-	error: null,
-};
-
-const DEFAULT_MAP_BY_NETWORK = {
-	420: {},
-	10: {},
-};
 
 const initialState: FuturesState = {
 	selectedType: DEFAULT_FUTURES_MARGIN_TYPE,
@@ -268,15 +241,7 @@ const futuresSlice = createSlice({
 					...state.crossMargin.accounts[network],
 					[wallet]: {
 						account: account,
-						position: undefined,
-						balanceInfo: {
-							freeMargin: '0',
-							keeperEthBal: '0',
-							allowance: '0',
-						},
-						positions: [],
-						openOrders: [],
-						positionHistory: [],
+						...ZERO_STATE_CM_ACCOUNT,
 					},
 				};
 			}
@@ -499,15 +464,7 @@ const futuresSlice = createSlice({
 					...futuresState.crossMargin.accounts[network],
 					[wallet]: {
 						account: account,
-						position: undefined,
-						balanceInfo: {
-							freeMargin: '0',
-							keeperEthBal: '0',
-							allowance: '0',
-						},
-						positions: [],
-						openOrders: [],
-						positionHistory: [],
+						...ZERO_STATE_CM_ACCOUNT,
 					},
 				};
 			}
@@ -600,11 +557,11 @@ const futuresSlice = createSlice({
 			};
 		});
 
-		// Fetch trades
-		builder.addCase(fetchTrades.pending, (futuresState) => {
+		// Fetch trades for market
+		builder.addCase(fetchTradesForSelectedMarket.pending, (futuresState) => {
 			futuresState.queryStatuses.trades = LOADING_STATUS;
 		});
-		builder.addCase(fetchTrades.fulfilled, (futuresState, { payload }) => {
+		builder.addCase(fetchTradesForSelectedMarket.fulfilled, (futuresState, { payload }) => {
 			futuresState.queryStatuses.trades = SUCCESS_STATUS;
 			if (!payload) return;
 			if (payload.accountType === 'isolated_margin') {
@@ -614,7 +571,30 @@ const futuresSlice = createSlice({
 					payload.trades;
 			}
 		});
-		builder.addCase(fetchTrades.rejected, (futuresState) => {
+		builder.addCase(fetchTradesForSelectedMarket.rejected, (futuresState) => {
+			futuresState.queryStatuses.trades = {
+				error: 'Failed to fetch trades',
+				status: FetchStatus.Error,
+			};
+		});
+
+		// TODO: Combine all with market trades rather than overwrite as the filter is done on selector
+
+		// Fetch all trades for account
+		builder.addCase(fetchAllTradesForAccount.pending, (futuresState) => {
+			futuresState.queryStatuses.trades = LOADING_STATUS;
+		});
+		builder.addCase(fetchAllTradesForAccount.fulfilled, (futuresState, { payload }) => {
+			futuresState.queryStatuses.trades = SUCCESS_STATUS;
+			if (!payload) return;
+			if (payload.accountType === 'isolated_margin') {
+				futuresState.isolatedMargin.trades[payload.account] = payload.trades;
+			} else {
+				futuresState.crossMargin.accounts[payload.networkId][payload.wallet].trades =
+					payload.trades;
+			}
+		});
+		builder.addCase(fetchAllTradesForAccount.rejected, (futuresState) => {
 			futuresState.queryStatuses.trades = {
 				error: 'Failed to fetch trades',
 				status: FetchStatus.Error,

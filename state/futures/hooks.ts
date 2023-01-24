@@ -78,6 +78,12 @@ export const usePollDashboardFuturesData = () => {
 	const markets = useAppSelector(selectMarkets);
 	const wallet = useAppSelector(selectWallet);
 	const crossMarginAddress = useAppSelector(selectCrossMarginAccount);
+	const networkSupportsCrossMargin = useAppSelector(selectCrossMarginSupportedNetwork);
+
+	useFetchAction(fetchCrossMarginAccount, {
+		dependencies: [networkId, wallet],
+		disabled: !wallet || !networkSupportsCrossMargin,
+	});
 
 	usePollAction('fetchMarkets', fetchMarkets, { intervalTime: 60000, dependencies: [networkId] });
 	usePollAction('fetchFundingRates', fetchFundingRates, {

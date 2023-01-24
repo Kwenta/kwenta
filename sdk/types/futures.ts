@@ -1,5 +1,6 @@
 import Wei from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
+
 import { FuturesAccountType } from 'queries/futures/subgraph';
 
 export type FundingRateInput = {

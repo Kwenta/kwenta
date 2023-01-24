@@ -12,8 +12,7 @@ import { ETH_UNIT } from 'constants/network';
 import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { FuturesTrade } from 'queries/futures/types';
-import { PositionSide } from 'sdk/types/futures';
+import { FuturesTrade, PositionSide } from 'sdk/types/futures';
 import { ExternalLink, GridDivCenteredRow } from 'styles/common';
 import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
 
@@ -34,7 +33,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 	const isL2 = useIsL2();
 
 	const historyData = React.useMemo(() => {
-		return history.map((trade: FuturesTrade) => {
+		return history.map((trade) => {
 			return {
 				...trade,
 				value: Number(trade?.price?.div(ETH_UNIT)),
@@ -51,8 +50,6 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 	}, [history, marketAsset]);
 
 	const columnsDeps = useMemo(() => [historyData], [historyData]);
-
-	console.log('historyData', historyData);
 
 	return (
 		<Card>

@@ -7,7 +7,7 @@ import { chain } from 'wagmi';
 import { ETH_UNIT } from 'constants/network';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
-import { FuturesOrderTypeDisplay, PositionSide } from 'sdk/types/futures';
+import { PositionSide } from 'sdk/types/futures';
 import { PositionHistory } from 'state/futures/types';
 import { formatDollars, weiFromWei } from 'utils/formatters/number';
 import { FuturesMarketAsset } from 'utils/futures';
@@ -16,7 +16,6 @@ import { SECONDS_PER_DAY, FUTURES_ENDPOINTS } from './constants';
 import {
 	CrossMarginAccountTransferResult,
 	FuturesMarginTransferResult,
-	FuturesOrderType,
 	FuturesPositionResult,
 } from './subgraph';
 import {

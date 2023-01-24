@@ -12,9 +12,9 @@ import { FuturesAccountType } from 'queries/futures/subgraph';
 import { setOpenModal } from 'state/app/reducer';
 import { selectPosition } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { selectWallet } from 'state/wallet/selectors';
 import { BorderedPanel, YellowIconButton } from 'styles/common';
 import { formatDollars } from 'utils/formatters/number';
-import { selectWallet } from 'state/wallet/selectors';
 
 type Props = {
 	accountType: FuturesAccountType;

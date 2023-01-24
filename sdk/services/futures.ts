@@ -8,14 +8,12 @@ import { orderBy } from 'lodash';
 import KwentaSDK from 'sdk';
 
 import { DAY_PERIOD, KWENTA_TRACKING_CODE } from 'queries/futures/constants';
-import {
-	getFuturesAggregateStats,
-	getFuturesPositions,
-	getFuturesTrades,
-} from 'queries/futures/subgraph';
+import { getFuturesAggregateStats } from 'queries/futures/subgraph';
+import { FuturesAccountType } from 'queries/futures/types';
 import { mapFuturesPositions } from 'queries/futures/utils';
 import { LatestRate } from 'queries/rates/types';
 import { getRatesEndpoint, mapLaggedDailyPrices } from 'queries/rates/utils';
+
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
 import { BPS_CONVERSION } from 'sdk/constants/futures';
 import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';
@@ -28,7 +26,7 @@ import {
 	FuturesMarketData,
 	FuturesMarket__factory,
 } from 'sdk/contracts/types';
-import { queryCrossMarginAccounts } from 'sdk/queries/futures';
+import { queryCrossMarginAccounts, queryPositionHistory, queryTrades } from 'sdk/queries/futures';
 import { NetworkOverrideOptions } from 'sdk/types/common';
 import {
 	CrossMarginOrderType,
@@ -58,7 +56,6 @@ import {
 } from 'sdk/utils/futures';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import { MarketAssetByKey, MarketKeyByAsset } from 'utils/futures';
-import { FuturesAccountType, FuturesAccountTypes } from 'queries/futures/types';
 
 export default class FuturesService {
 	private sdk: KwentaSDK;
@@ -533,90 +530,38 @@ export default class FuturesService {
 		return mapLaggedDailyPrices(latestRates);
 	}
 
-	public async getPositionHistory(account: string) {
-		const response = await getFuturesPositions(
-			this.futuresGqlEndpoint,
-			{
-				where: {
-					account: account,
-				},
-				first: 99999,
-				orderBy: 'openTimestamp',
-				orderDirection: 'desc',
-			},
-			{
-				id: true,
-				lastTxHash: true,
-				openTimestamp: true,
-				closeTimestamp: true,
-				timestamp: true,
-				market: true,
-				asset: true,
-				account: true,
-				abstractAccount: true,
-				accountType: true,
-				isOpen: true,
-				isLiquidated: true,
-				trades: true,
-				totalVolume: true,
-				size: true,
-				initialMargin: true,
-				margin: true,
-				pnl: true,
-				feesPaid: true,
-				netFunding: true,
-				pnlWithFeesPaid: true,
-				netTransfers: true,
-				totalDeposits: true,
-				fundingIndex: true,
-				entryPrice: true,
-				avgEntryPrice: true,
-				lastPrice: true,
-				exitPrice: true,
-			}
-		);
-
+	public async getPositionHistory(walletAddress: string) {
+		const response = await queryPositionHistory(this.sdk, walletAddress);
 		return response ? mapFuturesPositions(response) : [];
 	}
 
 	// TODO: Support pagination
 
-	public async getTrades(
+	public async getTradesForMarket(
 		marketAsset: FuturesMarketAsset,
-		address: string,
+		walletAddress: string,
 		accountType: FuturesAccountType,
 		pageLength: number = 16
 	) {
-		const response = await getFuturesTrades(
-			this.futuresGqlEndpoint,
-			{
-				first: pageLength,
-				where: {
-					asset: `${formatBytes32String(marketAsset)}`,
-					account: address,
-					accountType: accountType,
-				},
-				orderDirection: 'desc',
-				orderBy: 'timestamp',
-			},
-			{
-				id: true,
-				timestamp: true,
-				account: true,
-				abstractAccount: true,
-				accountType: true,
-				margin: true,
-				size: true,
-				asset: true,
-				price: true,
-				positionId: true,
-				positionSize: true,
-				positionClosed: true,
-				pnl: true,
-				feesPaid: true,
-				orderType: true,
-			}
-		);
+		const response = await queryTrades(this.sdk, {
+			marketAsset,
+			walletAddress,
+			accountType,
+			pageLength,
+		});
+		return response ? mapTrades(response) : [];
+	}
+
+	public async getAllTrades(
+		walletAddress: string,
+		accountType: FuturesAccountType,
+		pageLength: number = 16
+	) {
+		const response = await queryTrades(this.sdk, {
+			walletAddress,
+			accountType,
+			pageLength,
+		});
 		return response ? mapTrades(response) : [];
 	}
 

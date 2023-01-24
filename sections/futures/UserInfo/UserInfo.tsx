@@ -13,16 +13,17 @@ import { TabPanel } from 'components/Tab';
 import ROUTES from 'constants/routes';
 import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
 import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
-import { fetchTrades } from 'state/futures/actions';
+import { fetchTradesForSelectedMarket } from 'state/futures/actions';
 import {
 	selectFuturesType,
 	selectMarketAsset,
 	selectOpenOrders,
 	selectPosition,
 	selectQueryStatuses,
-	selectTradesForSelectedAccount,
+	selectUsersTradesForMarket,
 } from 'state/futures/selectors';
 import { useAppSelector, useFetchAction, useAppDispatch } from 'state/hooks';
+import { FetchStatus } from 'state/types';
 import { selectWallet } from 'state/wallet/selectors';
 
 import PositionCard from '../PositionCard';
@@ -31,7 +32,6 @@ import ShareModal from '../ShareModal';
 import Trades from '../Trades';
 import Transfers from '../Transfers';
 import OpenOrdersTable from './OpenOrdersTable';
-import { FetchStatus } from 'state/types';
 
 enum FuturesTab {
 	POSITION = 'position',
@@ -51,14 +51,14 @@ const UserInfo: React.FC = () => {
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const position = useAppSelector(selectPosition);
 	const walletAddress = useAppSelector(selectWallet);
-	const { trades: tradesQuery } = useAppSelector(selectQueryStatuses);
+	const statues = useAppSelector(selectQueryStatuses);
+	const tradesQuery = statues.trades;
 
 	const openOrders = useAppSelector(selectOpenOrders);
 	const accountType = useAppSelector(selectFuturesType);
-	const trades = useAppSelector(selectTradesForSelectedAccount);
+	const trades = useAppSelector(selectUsersTradesForMarket);
 
-	console.log('render fetchTrades', walletAddress);
-	useFetchAction(fetchTrades, {
+	useFetchAction(fetchTradesForSelectedMarket, {
 		dependencies: [walletAddress, accountType, position],
 		disabled: !walletAddress,
 	});
@@ -95,7 +95,7 @@ const UserInfo: React.FC = () => {
 	}, [showShareModal]);
 
 	const refetchTrades = useCallback(() => {
-		dispatch(fetchTrades);
+		dispatch(fetchTradesForSelectedMarket);
 		marginTransfersQuery.refetch();
 	}, [dispatch, marginTransfersQuery]);
 
