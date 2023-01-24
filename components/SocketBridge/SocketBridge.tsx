@@ -51,7 +51,7 @@ const SocketBridge = () => {
 		fontFamily: `AkkuratLLWeb-Regular`,
 	};
 
-	return signer?.provider ? (
+	return (
 		<BridgeContainer>
 			<Bridge
 				provider={signer?.provider}
@@ -73,7 +73,7 @@ const SocketBridge = () => {
 				<ArrowIcon />
 			</StyledDiv>
 		</BridgeContainer>
-	) : null;
+	);
 };
 
 export const BridgeContainer = styled.div`
