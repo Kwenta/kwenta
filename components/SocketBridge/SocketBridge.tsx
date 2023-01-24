@@ -68,10 +68,6 @@ const SocketBridge = () => {
 				customize={customize}
 				enableSameChainSwaps={true}
 				onBridgeSuccess={onBridgeSuccess}
-				onSourceNetworkChange={(data) => {
-					// eslint-disable-next-line no-console
-					console.log(`source network change`, data);
-				}}
 			/>
 			<StyledDiv>
 				<ArrowIcon />
