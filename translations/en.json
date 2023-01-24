@@ -893,6 +893,7 @@
 						"estimated-fill": "Estimated Fill Price",
 						"estimated-price-impact": "Estimated Price Impact",
 						"fee-estimated": "Estimated Fees",
+						"liquidation-price": "Liquidation Price",
 						"time-delay": "Delay Until Executable",
 						"keeper-deposit": "Keeper Deposit",
 						"gas-fee": "Network Gas Fee",
