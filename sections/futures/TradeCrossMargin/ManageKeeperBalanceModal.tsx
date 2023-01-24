@@ -57,7 +57,7 @@ export default function ManageKeeperBalanceModal({ defaultType }: Props) {
 			const bal = await provider.getBalance(walletAddress);
 			setUserEthBal(wei(bal));
 		} catch (err) {
-			notifyError(err.message);
+			notifyError('Failed to read ETH balance', err);
 			logError(err);
 		}
 	}, [walletAddress, provider]);

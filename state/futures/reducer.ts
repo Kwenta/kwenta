@@ -30,6 +30,7 @@ import {
 	fetchFuturesPositionHistory,
 	fetchPositionHistoryForTrader,
 	fetchFundingRates,
+	fetchTrades,
 } from './actions';
 import {
 	CrossMarginState,
@@ -110,6 +111,7 @@ const initialState: FuturesState = {
 		positionHistory: DEFAULT_QUERY_STATUS,
 		selectedTraderPositionHistory: DEFAULT_QUERY_STATUS,
 		fetchFundingRates: DEFAULT_QUERY_STATUS,
+		trades: DEFAULT_QUERY_STATUS,
 	},
 	transactionEstimations: {} as TransactionEstimations,
 	crossMargin: {
@@ -147,6 +149,7 @@ const initialState: FuturesState = {
 		tradeInputs: ZERO_STATE_TRADE_INPUTS,
 		positions: {},
 		openOrders: {},
+		trades: {},
 		positionHistory: {},
 		tradeFee: '0',
 		leverageInput: '0',
@@ -537,9 +540,12 @@ const futuresSlice = createSlice({
 			futuresState.queryStatuses.positionHistory = LOADING_STATUS;
 		});
 		builder.addCase(fetchFuturesPositionHistory.fulfilled, (futuresState, { payload }) => {
+			futuresState.queryStatuses.positionHistory = SUCCESS_STATUS;
 			if (!payload) return;
 			if (payload.accountType === 'isolated_margin') {
-				futuresState.isolatedMargin.positionHistory[payload.account] = payload.history;
+				futuresState.isolatedMargin.positionHistory[payload.account] = payload.history.filter(
+					(p) => p.accountType === 'isolated_margin'
+				);
 			} else {
 				const wallet = findWalletForAccount(
 					futuresState.crossMargin,
@@ -547,11 +553,11 @@ const futuresSlice = createSlice({
 					payload.networkId
 				);
 				if (wallet) {
-					futuresState.crossMargin.accounts[payload.networkId][wallet].positionHistory =
-						payload.history;
+					futuresState.crossMargin.accounts[payload.networkId][
+						wallet
+					].positionHistory = payload.history.filter((p) => p.accountType === 'cross_margin');
 				}
 			}
-			futuresState.queryStatuses.positionHistory = SUCCESS_STATUS;
 		});
 		builder.addCase(fetchFuturesPositionHistory.rejected, (futuresState) => {
 			futuresState.queryStatuses.positionHistory = {
@@ -591,6 +597,27 @@ const futuresSlice = createSlice({
 			futuresState.queryStatuses.fetchFundingRates = {
 				status: FetchStatus.Error,
 				error: 'Failed to fetch funding rates',
+			};
+		});
+
+		// Fetch trades
+		builder.addCase(fetchTrades.pending, (futuresState) => {
+			futuresState.queryStatuses.trades = LOADING_STATUS;
+		});
+		builder.addCase(fetchTrades.fulfilled, (futuresState, { payload }) => {
+			futuresState.queryStatuses.trades = SUCCESS_STATUS;
+			if (!payload) return;
+			if (payload.accountType === 'isolated_margin') {
+				futuresState.isolatedMargin.trades[payload.account] = payload.trades;
+			} else {
+				futuresState.crossMargin.accounts[payload.networkId][payload.wallet].trades =
+					payload.trades;
+			}
+		});
+		builder.addCase(fetchTrades.rejected, (futuresState) => {
+			futuresState.queryStatuses.trades = {
+				error: 'Failed to fetch trades',
+				status: FetchStatus.Error,
 			};
 		});
 	},

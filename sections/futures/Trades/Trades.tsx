@@ -52,6 +52,8 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 
 	const columnsDeps = useMemo(() => [historyData], [historyData]);
 
+	console.log('historyData', historyData);
+
 	return (
 		<Card>
 			<StyledTable

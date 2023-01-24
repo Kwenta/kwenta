@@ -7,8 +7,9 @@ import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 
 import { getFuturesTrades } from './subgraph';
-import { FuturesTrade } from './types';
-import { getFuturesEndpoint, mapTrades } from './utils';
+import { getFuturesEndpoint } from './utils';
+import { FuturesTrade } from 'sdk/types/futures';
+import { mapTrades } from 'sdk/utils/futures';
 
 const useGetAllFuturesTradesForAccount = (
 	account?: string | null,

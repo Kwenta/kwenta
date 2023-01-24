@@ -84,7 +84,7 @@ export const usePollAction = (
 
 export const useFetchAction = (
 	action: () => AsyncThunkAction<any, any, any>,
-	options?: { changeKeys?: any[]; disabled?: boolean }
+	options?: { dependencies?: any[]; disabled?: boolean }
 ) => {
 	const { providerReady } = Connector.useContainer();
 	const dispatch = useAppDispatch();
@@ -94,5 +94,5 @@ export const useFetchAction = (
 			dispatch(action());
 		}
 		// eslint-disable-next-line
-	}, [providerReady, options?.disabled, ...(options?.changeKeys || [])]);
+	}, [providerReady, options?.disabled, ...(options?.dependencies || [])]);
 };

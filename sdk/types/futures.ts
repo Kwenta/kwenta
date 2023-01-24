@@ -1,5 +1,6 @@
 import Wei from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
+import { FuturesAccountType } from 'queries/futures/subgraph';
 
 export type FundingRateInput = {
 	marketAddress: string | undefined;
@@ -234,3 +235,19 @@ export type PostTradeDetailsResponse = {
 
 export type IsolatedMarginOrderType = 'market';
 export type CrossMarginOrderType = 'market' | 'stop market' | 'limit';
+
+export type FuturesTrade<T = Wei> = {
+	size: T;
+	asset: string;
+	price: T;
+	txnHash: string;
+	timestamp: T;
+	positionId?: string;
+	positionSize: T;
+	positionClosed: boolean;
+	side: PositionSide;
+	pnl: T;
+	feesPaid: T;
+	orderType: FuturesOrderTypeDisplay;
+	accountType: FuturesAccountType;
+};

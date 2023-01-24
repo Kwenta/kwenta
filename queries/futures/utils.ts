@@ -18,13 +18,11 @@ import {
 	FuturesMarginTransferResult,
 	FuturesOrderType,
 	FuturesPositionResult,
-	FuturesTradeResult,
 } from './subgraph';
 import {
 	FuturesOpenInterest,
 	FuturesOneMinuteStat,
 	FundingRateUpdate,
-	FuturesTrade,
 	MarginTransfer,
 } from './types';
 
@@ -38,10 +36,6 @@ export const getFuturesMarketContract = (asset: string | null, contracts: Contra
 	const contract = contracts[contractName];
 	if (!contract) throw new Error(`${contractName} for ${asset} does not exist`);
 	return contract;
-};
-
-const mapOrderType = (orderType: Partial<FuturesOrderType>): FuturesOrderTypeDisplay => {
-	return orderType === 'StopMarket' ? 'Stop Market' : orderType;
 };
 
 type MarketSizes = {
@@ -310,39 +304,6 @@ export const mapFuturesPositions = (
 				avgEntryPrice: weiFromWei(avgEntryPrice),
 				leverage: marginWei.eq(wei(0)) ? wei(0) : sizeWei.mul(entryPriceWei).div(marginWei).abs(),
 				side: sizeWei.gte(wei(0)) ? PositionSide.LONG : PositionSide.SHORT,
-			};
-		}
-	);
-};
-
-export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] => {
-	return futuresTrades?.map(
-		({
-			id,
-			timestamp,
-			size,
-			price,
-			asset,
-			positionSize,
-			positionClosed,
-			pnl,
-			feesPaid,
-			orderType,
-			accountType,
-		}: FuturesTradeResult) => {
-			return {
-				asset,
-				accountType,
-				size: new Wei(size, 18, true),
-				price: new Wei(price, 18, true),
-				txnHash: id.split('-')[0].toString(),
-				timestamp: timestamp,
-				positionSize: new Wei(positionSize, 18, true),
-				positionClosed,
-				side: size.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
-				pnl: new Wei(pnl, 18, true),
-				feesPaid: new Wei(feesPaid, 18, true),
-				orderType: mapOrderType(orderType),
 			};
 		}
 	);

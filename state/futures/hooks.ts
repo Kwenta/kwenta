@@ -34,12 +34,12 @@ export const usePollMarketFuturesData = () => {
 	const networkSupportsFutures = useAppSelector(selectFuturesSupportedNetwork);
 
 	useFetchAction(fetchCrossMarginAccount, {
-		changeKeys: [networkId, wallet],
+		dependencies: [networkId, wallet],
 		disabled: !wallet || !networkSupportsCrossMargin,
 	});
 
-	useFetchAction(fetchCrossMarginSettings, { changeKeys: [networkId] });
-	useFetchAction(fetchStakingData, { changeKeys: [networkId, wallet] });
+	useFetchAction(fetchCrossMarginSettings, { dependencies: [networkId] });
+	useFetchAction(fetchStakingData, { dependencies: [networkId, wallet] });
 	usePollAction('fetchSharedFuturesData', fetchSharedFuturesData, {
 		dependencies: [networkId],
 		intervalTime: 60000,

@@ -1,14 +1,30 @@
+import { useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import styled, { useTheme } from 'styled-components';
 
 import ErrorIcon from 'assets/svg/app/error.svg';
 import { truncateString } from 'utils/formatters/string';
 
-export const notifyError = (message: string) => {
+function ToastContent({ message, error }: { message: string; error?: Error }) {
+	const [expanded, setExpanded] = useState(false);
+	if (!error) return <>{message}</>;
+	return (
+		<div>
+			<div>{message}</div>
+			<TextButton onClick={() => setExpanded(!expanded)}>
+				{expanded ? 'Hide' : 'Show'} Details
+			</TextButton>
+			{expanded ? <ErrorDetails>{error.message}</ErrorDetails> : null}
+		</div>
+	);
+}
+
+export const notifyError = (message: string, error?: Error) => {
 	const formatted = formatError(message);
 	const truncated = truncateString(formatted);
-	toast.error(truncated, {
+	toast.error(<ToastContent message={truncated} error={error} />, {
 		position: toast.POSITION.TOP_RIGHT,
+		toastId: truncated,
 		containerId: 'errors',
 	});
 };
@@ -24,7 +40,7 @@ export default function ErrorNotifier() {
 			autoClose={5000}
 			hideProgressBar={false}
 			newestOnTop={false}
-			closeOnClick
+			closeOnClick={false}
 			rtl={false}
 			pauseOnFocusLoss
 			pauseOnHover
@@ -61,4 +77,23 @@ const StyledToastContainer = styled(ToastContainer)`
 	.Toastify__close-button > svg {
 		fill: white;
 	}
+`;
+
+// TODO: Use re-useable component once merged with component refactor
+
+const TextButton = styled.div`
+	text-decoration: underline;
+	font-size: 13px;
+	margin-top: 6px;
+	line-height: 11px;
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
+	background-color: transparent;
+	border: none;
+	cursor: pointer;
+`;
+
+const ErrorDetails = styled.div`
+	margin-top: 8px;
+	font-size: 11px;
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;

@@ -124,10 +124,12 @@ export default function TradeConfirmationModal({
 						value: formatCurrency('ETH', keeperFee, { currencyKey: 'ETH' }),
 				  }
 				: null,
-			{
-				label: 'network gas fee',
-				value: formatDollars(gasFee ?? zeroBN),
-			},
+			gasFee && gasFee.gt(0)
+				? {
+						label: 'network gas fee',
+						value: formatDollars(gasFee ?? zeroBN),
+				  }
+				: null,
 		],
 		[positionDetails, marketAsset, keeperFee, gasFee, tradeFee, orderType, orderPrice, leverageSide]
 	);

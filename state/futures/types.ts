@@ -8,6 +8,7 @@ import {
 	FuturesOrder,
 	FuturesPosition,
 	FuturesPotentialTradeDetails,
+	FuturesTrade,
 	FuturesVolumes,
 	IsolatedMarginOrderType,
 	PositionSide,
@@ -57,6 +58,7 @@ export type FuturesQueryStatuses = {
 	crossMarginAccount: QueryStatus;
 	previousDayRates: QueryStatus;
 	positionHistory: QueryStatus;
+	trades: QueryStatus;
 	selectedTraderPositionHistory: QueryStatus;
 };
 
@@ -123,6 +125,7 @@ export type CrossMarginAccount = {
 	positions: FuturesPosition<string>[];
 	openOrders: FuturesOrder<string>[];
 	positionHistory: PositionHistory<string>[];
+	trades: FuturesTrade<string>[];
 };
 
 // TODO: Separate in some way by network and wallet
@@ -201,6 +204,9 @@ export type IsolatedMarginState = {
 	};
 	openOrders: {
 		[account: string]: FuturesOrder<string>[];
+	};
+	trades: {
+		[account: string]: FuturesTrade<string>[];
 	};
 };
 

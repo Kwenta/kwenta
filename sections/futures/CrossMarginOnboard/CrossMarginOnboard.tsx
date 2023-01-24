@@ -117,7 +117,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 								}
 								setSubmitting(null);
 							} catch (err) {
-								notifyError('Failed to fetch account after the transaction completed');
+								notifyError('Failed to fetch account after the transaction completed', err);
 								logError(err);
 								setSubmitting(null);
 							}
@@ -130,7 +130,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 			}
 		} catch (err) {
 			if (!isUserDeniedError(err.message)) {
-				notifyError('Failed to create account');
+				notifyError('Failed to create account', err);
 				logError(err);
 			}
 			setSubmitting(null);

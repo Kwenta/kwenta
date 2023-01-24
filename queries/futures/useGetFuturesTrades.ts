@@ -9,8 +9,9 @@ import { notNill } from 'queries/synths/utils';
 import logError from 'utils/logError';
 
 import { getFuturesTrades } from './subgraph';
-import { FuturesTrade } from './types';
-import { getFuturesEndpoint, mapTrades } from './utils';
+import { getFuturesEndpoint } from './utils';
+import { FuturesTrade } from 'sdk/types/futures';
+import { mapTrades } from 'sdk/utils/futures';
 
 const useGetFuturesTrades = (
 	currencyKey: string | undefined,

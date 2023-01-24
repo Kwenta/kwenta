@@ -6,14 +6,19 @@ import styled, { css } from 'styled-components';
 
 import Table, { TableNoResults } from 'components/Table';
 import { ETH_UNIT } from 'constants/network';
-import Connector from 'containers/Connector';
-import { FuturesTrade } from 'queries/futures/types';
-import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
-import { PositionSide } from 'sdk/types/futures';
+import { FuturesTrade, PositionSide } from 'sdk/types/futures';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { TradeStatus } from 'sections/futures/types';
-import { selectMarketAsset } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { fetchTrades } from 'state/futures/actions';
+import {
+	selectFuturesType,
+	selectMarketAsset,
+	selectQueryStatuses,
+	selectTradesForSelectedAccount,
+} from 'state/futures/selectors';
+import { useAppSelector, useFetchAction } from 'state/hooks';
+import { FetchStatus } from 'state/types';
+import { selectWallet } from 'state/wallet/selectors';
 import { GridDivCenteredRow } from 'styles/common';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName } from 'utils/futures';
@@ -23,19 +28,18 @@ import TradeDrawer from '../drawers/TradeDrawer';
 
 const TradesTab: React.FC = () => {
 	const { t } = useTranslation();
-	const { walletAddress } = Connector.useContainer();
+	const walletAddress = useAppSelector(selectWallet);
 	const marketAsset = useAppSelector(selectMarketAsset);
+	const accountType = useAppSelector(selectFuturesType);
+	const history = useAppSelector(selectTradesForSelectedAccount);
+	const { trades: tradesQuery } = useAppSelector(selectQueryStatuses);
 
 	const [selectedTrade, setSelectedTrade] = React.useState<any>();
 
-	const futuresTradesQuery = useGetFuturesTradesForAccount(marketAsset, walletAddress);
-
-	const { isLoading, isFetched: isLoaded } = futuresTradesQuery;
-
-	const history: FuturesTrade[] = React.useMemo(
-		() => (futuresTradesQuery.isSuccess ? futuresTradesQuery?.data ?? [] : []),
-		[futuresTradesQuery.isSuccess, futuresTradesQuery.data]
-	);
+	useFetchAction(fetchTrades, {
+		dependencies: [walletAddress, accountType, marketAsset],
+		disabled: !walletAddress,
+	});
 
 	const historyData = React.useMemo(() => {
 		return history.map((trade: FuturesTrade) => {
@@ -114,9 +118,9 @@ const TradesTab: React.FC = () => {
 				]}
 				columnsDeps={columnsDeps}
 				data={historyData}
-				isLoading={isLoading && isLoaded}
+				isLoading={tradesQuery.status === FetchStatus.Loading}
 				noResultsMessage={
-					isLoaded && historyData?.length === 0 ? (
+					tradesQuery.status === FetchStatus.Success && historyData?.length === 0 ? (
 						<TableNoResults>{t('futures.market.user.trades.table.no-results')}</TableNoResults>
 					) : undefined
 				}

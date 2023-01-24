@@ -8,6 +8,7 @@ import {
 	FuturesMarket,
 	FuturesOrder,
 	FuturesPosition,
+	FuturesTrade,
 	FuturesVolumes,
 	PositionSide,
 } from 'sdk/types/futures';
@@ -579,5 +580,29 @@ export const unserializePositionHistory = (
 		totalVolume: wei(p.totalVolume),
 		avgEntryPrice: wei(p.avgEntryPrice),
 		leverage: wei(p.leverage),
+	}));
+};
+
+export const serializeTrades = (trades: FuturesTrade[]): FuturesTrade<string>[] => {
+	return trades.map((t) => ({
+		...t,
+		size: t.size.toString(),
+		price: t.price.toString(),
+		timestamp: t.timestamp.toString(),
+		positionSize: t.positionSize.toString(),
+		pnl: t.pnl.toString(),
+		feesPaid: t.feesPaid.toString(),
+	}));
+};
+
+export const unserializeTrades = (trades: FuturesTrade<string>[]): FuturesTrade<Wei>[] => {
+	return trades.map((t) => ({
+		...t,
+		size: wei(t.size),
+		price: wei(t.price),
+		timestamp: wei(t.timestamp),
+		positionSize: wei(t.positionSize),
+		pnl: wei(t.pnl),
+		feesPaid: wei(t.feesPaid),
 	}));
 };

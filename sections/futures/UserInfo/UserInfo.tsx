@@ -11,18 +11,19 @@ import UploadIcon from 'assets/svg/futures/upload-icon.svg';
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
 import ROUTES from 'constants/routes';
-import Connector from 'containers/Connector';
-import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
-import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
 import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
+import { fetchTrades } from 'state/futures/actions';
 import {
 	selectFuturesType,
 	selectMarketAsset,
 	selectOpenOrders,
 	selectPosition,
+	selectQueryStatuses,
+	selectTradesForSelectedAccount,
 } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { useAppSelector, useFetchAction, useAppDispatch } from 'state/hooks';
+import { selectWallet } from 'state/wallet/selectors';
 
 import PositionCard from '../PositionCard';
 import ProfitCalculator from '../ProfitCalculator';
@@ -30,6 +31,7 @@ import ShareModal from '../ShareModal';
 import Trades from '../Trades';
 import Transfers from '../Transfers';
 import OpenOrdersTable from './OpenOrdersTable';
+import { FetchStatus } from 'state/types';
 
 enum FuturesTab {
 	POSITION = 'position',
@@ -44,29 +46,32 @@ const FutureTabs = Object.values(FuturesTab);
 
 const UserInfo: React.FC = () => {
 	const router = useRouter();
-	const { walletAddress } = Connector.useContainer();
+	const dispatch = useAppDispatch();
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const position = useAppSelector(selectPosition);
+	const walletAddress = useAppSelector(selectWallet);
+	const { trades: tradesQuery } = useAppSelector(selectQueryStatuses);
 
 	const openOrders = useAppSelector(selectOpenOrders);
 	const accountType = useAppSelector(selectFuturesType);
+	const trades = useAppSelector(selectTradesForSelectedAccount);
+
+	console.log('render fetchTrades', walletAddress);
+	useFetchAction(fetchTrades, {
+		dependencies: [walletAddress, accountType, position],
+		disabled: !walletAddress,
+	});
 
 	const [showShareModal, setShowShareModal] = useState(false);
 	const [hasOpenPosition, setHasOpenPosition] = useState(false);
 	const [openProfitCalcModal, setOpenProfitCalcModal] = useState(false);
 
+	// TODO: Move to sdk / redux
 	const marginTransfersQuery = useGetFuturesMarginTransfers(marketAsset);
 	const marginTransfers = useMemo(
 		() => (marginTransfersQuery.isSuccess ? marginTransfersQuery?.data ?? [] : []),
 		[marginTransfersQuery.isSuccess, marginTransfersQuery.data]
-	);
-
-	const futuresTradesQuery = useGetFuturesTradesForAccount(marketAsset, walletAddress);
-
-	const history: FuturesTrade[] = useMemo(
-		() => (futuresTradesQuery.isSuccess ? futuresTradesQuery?.data ?? [] : []),
-		[futuresTradesQuery.isSuccess, futuresTradesQuery.data]
 	);
 
 	const tabQuery = useMemo(() => {
@@ -90,13 +95,12 @@ const UserInfo: React.FC = () => {
 	}, [showShareModal]);
 
 	const refetchTrades = useCallback(() => {
-		futuresTradesQuery.refetch();
+		dispatch(fetchTrades);
 		marginTransfersQuery.refetch();
-	}, [futuresTradesQuery, marginTransfersQuery]);
+	}, [dispatch, marginTransfersQuery]);
 
 	useEffect(() => {
 		refetchTrades();
-
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [position]);
 
@@ -197,9 +201,9 @@ const UserInfo: React.FC = () => {
 			</TabPanel>
 			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab}>
 				<Trades
-					history={history}
-					isLoading={futuresTradesQuery.isLoading}
-					isLoaded={futuresTradesQuery.isFetched}
+					history={trades}
+					isLoading={!trades.length && tradesQuery.status === FetchStatus.Loading}
+					isLoaded={tradesQuery.status === FetchStatus.Success}
 					marketAsset={marketAsset}
 				/>
 			</TabPanel>

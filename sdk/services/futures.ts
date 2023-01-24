@@ -8,7 +8,11 @@ import { orderBy } from 'lodash';
 import KwentaSDK from 'sdk';
 
 import { DAY_PERIOD, KWENTA_TRACKING_CODE } from 'queries/futures/constants';
-import { getFuturesAggregateStats, getFuturesPositions } from 'queries/futures/subgraph';
+import {
+	getFuturesAggregateStats,
+	getFuturesPositions,
+	getFuturesTrades,
+} from 'queries/futures/subgraph';
 import { mapFuturesPositions } from 'queries/futures/utils';
 import { LatestRate } from 'queries/rates/types';
 import { getRatesEndpoint, mapLaggedDailyPrices } from 'queries/rates/utils';
@@ -49,10 +53,12 @@ import {
 	getReasonFromCode,
 	mapFuturesOrderFromEvent,
 	mapFuturesPosition,
+	mapTrades,
 	marketsForNetwork,
 } from 'sdk/utils/futures';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import { MarketAssetByKey, MarketKeyByAsset } from 'utils/futures';
+import { FuturesAccountType, FuturesAccountTypes } from 'queries/futures/types';
 
 export default class FuturesService {
 	private sdk: KwentaSDK;
@@ -571,6 +577,47 @@ export default class FuturesService {
 		);
 
 		return response ? mapFuturesPositions(response) : [];
+	}
+
+	// TODO: Support pagination
+
+	public async getTrades(
+		marketAsset: FuturesMarketAsset,
+		address: string,
+		accountType: FuturesAccountType,
+		pageLength: number = 16
+	) {
+		const response = await getFuturesTrades(
+			this.futuresGqlEndpoint,
+			{
+				first: pageLength,
+				where: {
+					asset: `${formatBytes32String(marketAsset)}`,
+					account: address,
+					accountType: accountType,
+				},
+				orderDirection: 'desc',
+				orderBy: 'timestamp',
+			},
+			{
+				id: true,
+				timestamp: true,
+				account: true,
+				abstractAccount: true,
+				accountType: true,
+				margin: true,
+				size: true,
+				asset: true,
+				price: true,
+				positionId: true,
+				positionSize: true,
+				positionClosed: true,
+				pnl: true,
+				feesPaid: true,
+				orderType: true,
+			}
+		);
+		return response ? mapTrades(response) : [];
 	}
 
 	// Contract mutations

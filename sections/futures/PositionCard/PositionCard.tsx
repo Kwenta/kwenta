@@ -111,6 +111,8 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 		};
 	}, [positionDetails, previewTradeData, modifiedAverage]);
 
+	console.log('thisPositionHistory', thisPositionHistory);
+
 	const data: PositionData = React.useMemo(() => {
 		const pnl = positionDetails?.pnl ?? zeroBN;
 		const pnlPct = positionDetails?.pnlPct ?? zeroBN;

@@ -16,6 +16,7 @@ import {
 	FuturesOrder,
 	FuturesPosition,
 	FuturesPotentialTradeDetails,
+	FuturesTrade,
 	FuturesVolumes,
 	PositionSide,
 	PotentialTradeStatus,
@@ -50,6 +51,7 @@ import {
 	serializeFuturesVolumes,
 	serializeMarkets,
 	serializePositionHistory,
+	serializeTrades,
 } from 'utils/futures';
 import logError from 'utils/logError';
 import { getTransactionPrice } from 'utils/network';
@@ -123,7 +125,7 @@ export const fetchMarkets = createAsyncThunk<FuturesMarket<string>[], void, Thun
 			return serializedMarkets;
 		} catch (err) {
 			logError(err);
-			notifyError(err);
+			notifyError('Failed to fetch markets', err);
 			throw err;
 		}
 	}
@@ -159,7 +161,7 @@ export const fetchCrossMarginBalanceInfo = createAsyncThunk<
 			return { balanceInfo: serializeCmBalanceInfo(balanceInfo), account, network };
 		} catch (err) {
 			logError(err);
-			notifyError('Failed to fetch cross-margin balance info');
+			notifyError('Failed to fetch cross-margin balance info', err);
 			rejectWithValue(err.message);
 			return undefined;
 		}
@@ -178,7 +180,7 @@ export const fetchCrossMarginSettings = createAsyncThunk<
 		return serializeCrossMarginSettings(settings);
 	} catch (err) {
 		logError(err);
-		notifyError('Failed to fetch cross margin settings');
+		notifyError('Failed to fetch cross margin settings', err);
 		throw err;
 	}
 });
@@ -217,7 +219,7 @@ export const fetchCrossMarginPositions = createAsyncThunk<
 		return { positions: serializedPositions, account, network };
 	} catch (err) {
 		logError(err);
-		notifyError('Failed to fetch cross-margin positions');
+		notifyError('Failed to fetch cross-margin positions', err);
 		throw err;
 	}
 });
@@ -240,7 +242,7 @@ export const fetchIsolatedMarginPositions = createAsyncThunk<
 		};
 	} catch (err) {
 		logError(err);
-		notifyError('Failed to fetch isolated margin positions');
+		notifyError('Failed to fetch isolated margin positions', err);
 		throw err;
 	}
 });
@@ -297,7 +299,7 @@ export const fetchCrossMarginAccount = createAsyncThunk<
 		if (account) return { account, wallet, network };
 		return undefined;
 	} catch (err) {
-		notifyError(err);
+		notifyError('Failed to fetch cross margin account', err);
 		rejectWithValue(err.message);
 	}
 });
@@ -378,7 +380,7 @@ export const fetchCrossMarginOpenOrders = createAsyncThunk<
 			accountType: futures.selectedType,
 		};
 	} catch (err) {
-		notifyError('Failed to fetch open orders');
+		notifyError('Failed to fetch open orders', err);
 		logError(err);
 		throw err;
 	}
@@ -563,7 +565,7 @@ export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'nati
 	const nativeSize = currencyType === 'native' ? size : wei(size).div(assetRate).toString();
 	const usdSize = currencyType === 'native' ? stipZeros(assetRate.mul(size).toString()) : size;
 	const leverage = wei(usdSize).div(position?.remainingMargin);
-
+	console.log('usdSize', usdSize.toString());
 	dispatch(setIsolatedMarginLeverageInput(leverage.toNumber().toFixed(2)));
 
 	dispatch(
@@ -644,7 +646,7 @@ export const fetchPreviousDayRates = createAsyncThunk<Prices, boolean | undefine
 			);
 			return laggedPrices;
 		} catch (err) {
-			notifyError(err);
+			notifyError('Failed to fetch historical rates', err);
 			throw err;
 		}
 	}
@@ -665,12 +667,13 @@ export const fetchFuturesPositionHistory = createAsyncThunk<
 		const account = selectFuturesAccount(getState());
 		const accountType = selectFuturesType(getState());
 		const networkId = selectNetwork(getState());
+		const wallet = selectWallet(getState());
 		const futuresSupported = selectFuturesSupportedNetwork(getState());
-		if (!account || !futuresSupported) return;
-		const history = await sdk.futures.getPositionHistory(account);
+		if (!wallet || !account || !futuresSupported) return;
+		const history = await sdk.futures.getPositionHistory(wallet);
 		return { accountType, account, networkId, history: serializePositionHistory(history) };
 	} catch (err) {
-		notifyError(err);
+		notifyError('Failed to fetch position history', err);
 		throw err;
 	}
 });
@@ -687,7 +690,37 @@ export const fetchPositionHistoryForTrader = createAsyncThunk<
 		const history = await sdk.futures.getPositionHistory(traderAddress);
 		return { history: serializePositionHistory(history), networkId, address: traderAddress };
 	} catch (err) {
-		notifyError(err);
+		notifyError('Failed to fetch history for trader ' + traderAddress, err);
+		throw err;
+	}
+});
+
+export const fetchTrades = createAsyncThunk<
+	| {
+			trades: FuturesTrade<string>[];
+			account: string;
+			wallet: string;
+			networkId: NetworkId;
+			accountType: FuturesAccountType;
+	  }
+	| undefined,
+	void,
+	ThunkConfig
+>('futures/fetchTrades', async (_, { getState, extra: { sdk } }) => {
+	try {
+		console.log('>>>> START FETCHING TRADES');
+		const wallet = selectWallet(getState());
+		const networkId = selectNetwork(getState());
+		const marketAsset = selectMarketAsset(getState());
+		const accountType = selectFuturesType(getState());
+		const account = selectFuturesAccount(getState());
+		const futuresSupported = selectFuturesSupportedNetwork(getState());
+		if (!futuresSupported || !wallet || !account) return;
+		const trades = await sdk.futures.getTrades(marketAsset, wallet, accountType);
+		console.log('GOT TRADES', trades);
+		return { trades: serializeTrades(trades), networkId, account, accountType, wallet };
+	} catch (err) {
+		notifyError('Failed to fetch futures trades', err);
 		throw err;
 	}
 });
@@ -725,8 +758,7 @@ export const calculateCrossMarginFees = (): AppThunk => (dispatch, getState) => 
 export const calculateIsolatedMarginFees = (): AppThunk => (dispatch, getState) => {
 	const market = selectMarketInfo(getState());
 	const dynamicFeeRate = selectDynamicFeeRate(getState());
-	const { susdSize, nativeSizeDelta } = selectCrossMarginTradeInputs(getState());
-
+	const { susdSize, nativeSizeDelta } = selectIsolatedMarginTradeInputs(getState());
 	const staticRate = computeMarketFee(market, nativeSizeDelta);
 	const tradeFee = susdSize.mul(staticRate).add(susdSize.mul(dynamicFeeRate));
 	dispatch(setIsolatedMarginFee(tradeFee.toString()));

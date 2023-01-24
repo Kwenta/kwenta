@@ -18,6 +18,7 @@ import {
 	selectFuturesType,
 	selectLeverageSide,
 	selectOrderType,
+	selectPosition,
 	selectShowCrossMarginOnboard,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';

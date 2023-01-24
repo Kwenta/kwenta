@@ -2,7 +2,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
 
 import { DEFAULT_LEVERAGE } from 'constants/defaults';
-import { DEFAULT_MAX_LEVERAGE } from 'constants/futures';
+import { APP_MAX_LEVERAGE, DEFAULT_MAX_LEVERAGE } from 'constants/futures';
 import { TransactionStatus } from 'sdk/types/common';
 import { FuturesPosition, PositionSide } from 'sdk/types/futures';
 import { unserializePotentialTrade } from 'sdk/utils/futures';
@@ -24,6 +24,7 @@ import {
 	unserializeIsolatedMarginTradeInputs,
 	unserializeMarkets,
 	unserializePositionHistory,
+	unserializeTrades,
 } from 'utils/futures';
 
 import { FundingRate, futuresPositionKeys } from './types';
@@ -325,15 +326,16 @@ export const selectLeverageSide = createSelector(
 
 export const selectMaxLeverage = createSelector(
 	selectPosition,
-	selectOrderType,
 	selectMarketInfo,
 	selectLeverageSide,
 	selectFuturesType,
-	(position, orderType, market, leverageSide, futuresType) => {
+	(position, market, leverageSide, futuresType) => {
 		const positionLeverage = position?.position?.leverage ?? wei(0);
 		const positionSide = position?.position?.side;
 		const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
-		const adjustedMaxLeverage = marketMaxLeverage;
+		const adjustedMaxLeverage = marketMaxLeverage.gt(APP_MAX_LEVERAGE)
+			? APP_MAX_LEVERAGE
+			: marketMaxLeverage;
 
 		if (!positionLeverage || positionLeverage.eq(wei(0))) return adjustedMaxLeverage;
 		if (futuresType === 'cross_margin') return adjustedMaxLeverage;
@@ -600,6 +602,7 @@ export const selectSelectedMarketPositionHistory = createSelector(
 	selectMarketAsset,
 	selectPositionHistory,
 	(marketAsset, positionHistory) => {
+		console.log('positionHistory', positionHistory);
 		return positionHistory.find(({ asset, isOpen }) => isOpen && asset === marketAsset);
 	}
 );
@@ -613,6 +616,21 @@ export const selectPositionHistoryForSelectedTrader = createSelector(
 		const history =
 			futures.leaderboard.selectedTraderPositionHistory[networkId]?.[selectedTrader] ?? [];
 		return unserializePositionHistory(history);
+	}
+);
+
+export const selectTradesForSelectedAccount = createSelector(
+	selectFuturesType,
+	selectFuturesAccount,
+	selectCrossMarginAccountData,
+	(state: RootState) => state.futures,
+	(type, account, accountData, futures) => {
+		if (type === 'cross_margin') {
+			return unserializeTrades(accountData?.trades ?? []);
+		} else if (account) {
+			return unserializeTrades(futures.isolatedMargin.trades?.[account] ?? []);
+		}
+		return [];
 	}
 );
 

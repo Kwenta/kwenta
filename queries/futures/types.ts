@@ -57,22 +57,6 @@ export type FuturesTradeWithPrice = {
 	price: string;
 };
 
-export type FuturesTrade = {
-	size: Wei;
-	asset: string;
-	price?: Wei;
-	txnHash: string;
-	timestamp: Wei;
-	positionId?: string;
-	positionSize: Wei;
-	positionClosed: boolean;
-	side?: PositionSide | null;
-	pnl: Wei;
-	feesPaid: Wei;
-	orderType: FuturesOrderTypeDisplay;
-	accountType: FuturesAccountType;
-};
-
 export type FuturesStat = {
 	account: string;
 	pnlWithFeesPaid: Wei;
