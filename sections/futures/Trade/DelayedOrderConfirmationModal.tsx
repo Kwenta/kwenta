@@ -114,6 +114,10 @@ const DelayedOrderConfirmationModal: FC = () => {
 				value: formatDollars(potentialTradeDetails?.price ?? zeroBN, { isAssetPrice: true }),
 			},
 			{
+				label: 'liquidation price',
+				value: formatDollars(potentialTradeDetails?.liqPrice ?? zeroBN, { isAssetPrice: true }),
+			},
+			{
 				label: t('futures.market.user.position.modal.time-delay'),
 				value: `${formatNumber(marketInfo?.settings.offchainDelayedOrderMinAge ?? zeroBN, {
 					maxDecimals: 0,
