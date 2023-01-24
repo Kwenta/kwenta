@@ -61,14 +61,17 @@ const SocketBridge = () => {
 				defaultSourceToken={SOCKET_SOURCE_TOKEN_ADDRESS}
 				defaultDestToken={SOCKET_DEST_TOKEN_ADDRESS}
 				defaultSourceNetwork={
-					activeChain?.id !== 10 &&
-					socketDefaultChains.includes(activeChain?.id ?? chain.mainnet.id)
+					socketDefaultChains.includes(activeChain?.id ?? chain.optimism.id)
 						? activeChain?.id
-						: chain.mainnet.id
+						: chain.optimism.id
 				}
 				customize={customize}
 				enableSameChainSwaps={true}
 				onBridgeSuccess={onBridgeSuccess}
+				onSourceNetworkChange={(data) => {
+					// eslint-disable-next-line no-console
+					console.log(`source network change`, data);
+				}}
 			/>
 			<StyledDiv>
 				<ArrowIcon />
