@@ -46,7 +46,6 @@ const SocketBridge = () => {
 		interactive: `rgb(${primaryButtonBg.r},${primaryButtonBg.g},${primaryButtonBg.b})`, //asset toggle
 		onInteractive: `rgb(${text.r},${text.g},${text.b})`, //asset toggle text
 		text: `rgb(${text.r},${text.g},${text.b})`, //main text
-		outline: `rgb(${text.r},${text.g},${text.b})`,
 		secondaryText: `rgb(${text.r},${text.g},${text.b})`, //secondary text
 		fontFamily: `AkkuratLLWeb-Regular`,
 	};

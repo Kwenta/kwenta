@@ -16,6 +16,5 @@ export type SocketCustomizationProps = {
 	secondaryText?: string; // Color of labels, icons, footer text on widget
 	interactive?: string; // Background color of dropdown elements
 	onInteractive?: string; // Color of text in dropdowns
-	outline?: string; // Outline color of lines, borders and icons
 	fontFamily?: string; // Font of the widget
 };

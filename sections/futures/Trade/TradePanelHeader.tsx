@@ -1,3 +1,4 @@
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useTranslation } from 'react-i18next';
 import styled, { useTheme } from 'styled-components';
 
@@ -12,6 +13,7 @@ import { setOpenModal } from 'state/app/reducer';
 import { selectPosition, selectPositionStatus } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
+import { selectWallet } from 'state/wallet/selectors';
 import { BorderedPanel, YellowIconButton } from 'styles/common';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 
@@ -25,10 +27,19 @@ export default function TradePanelHeader({ accountType, onManageBalance }: Props
 
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
-
+	const wallet = useAppSelector(selectWallet);
+	const { openConnectModal } = useConnectModal();
 	const position = useAppSelector(selectPosition);
 	const positionStatus = useAppSelector(selectPositionStatus);
 	const balance = position ? position.remainingMargin : null;
+
+	if (!wallet) {
+		return (
+			<DepositButton variant="yellow" onClick={openConnectModal}>
+				<ButtonContent>{t('common.wallet.connect-wallet')}</ButtonContent>
+			</DepositButton>
+		);
+	}
 
 	if (!balance && positionStatus.status === FetchStatus.Success) {
 		return (

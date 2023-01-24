@@ -1,4 +1,3 @@
-import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useRouter } from 'next/router';
 import { useEffect, FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -41,14 +40,13 @@ type MarketComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 const Market: MarketComponent = () => {
 	const router = useRouter();
 	const { walletAddress } = Connector.useContainer();
-	const { t } = useTranslation();
 	const futuresData = useFuturesData();
 	const dispatch = useAppDispatch();
 
 	const routerMarketAsset = router.query.asset as FuturesMarketAsset;
 
 	const setCurrentMarket = useAppSelector(selectMarketAsset);
-	const { openConnectModal } = useConnectModal();
+
 	const openModal = useAppSelector(selectOpenModal);
 	const account = useRecoilValue(futuresAccountState);
 	const [showOnboard, setShowOnboard] = useRecoilState(showCrossMarginOnboardState);
@@ -69,16 +67,10 @@ const Market: MarketComponent = () => {
 						<LeftSidebar />
 						<MarketInfo />
 						<StyledRightSideContent>
-							{!walletAddress ? (
-								<DepositButton variant="yellow" onClick={openConnectModal}>
-									<ButtonContent>{t('common.wallet.connect-wallet')}</ButtonContent>
-								</DepositButton>
-							) : (
-								<TradePanelHeader
-									onManageBalance={() => dispatch(setOpenModal('futures_isolated_transfer'))}
-									accountType={'isolated_margin'}
-								/>
-							)}
+							<TradePanelHeader
+								onManageBalance={() => dispatch(setOpenModal('futures_isolated_transfer'))}
+								accountType={'isolated_margin'}
+							/>
 							<TradePanelDesktop walletAddress={walletAddress} account={account} />
 							{openModal === 'futures_isolated_transfer' && (
 								<TransferIsolatedMarginModal
@@ -163,18 +155,4 @@ const StyledFullHeightContainer = styled(FullHeightContainer)`
 		grid-template-columns: 70% 30%;
 		width: calc(100% - 15px);
 	}
-`;
-
-const DepositButton = styled(Button)`
-	height: 55px;
-	width: 100%;
-	margin-bottom: 16px;
-`;
-
-const ButtonContent = styled.div`
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: center;
-	gap: 10px;
 `;

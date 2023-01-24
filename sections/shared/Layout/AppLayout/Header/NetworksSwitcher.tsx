@@ -30,8 +30,8 @@ type ReactSelectOptionProps = {
 
 const NetworksSwitcher: FC = () => {
 	const { activeChain } = Connector.useContainer();
-	const { openChainModal } = useChainModal();
 	const { t } = useTranslation();
+	const { openChainModal } = useChainModal();
 	const isL2 = useIsL2();
 	const network = activeChain?.id === chain.optimismGoerli.id ? 'testnet' : 'mainnet';
 	const networkLabel = 'header.networks-switcher.optimism-' + network;
