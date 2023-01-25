@@ -11,7 +11,6 @@ import CustomInput from 'components/Input/CustomInput';
 import Loader from 'components/Loader';
 import Spacer from 'components/Spacer';
 import { NumberSpan } from 'components/Text/NumberLabel';
-import { DEFAULT_LEVERAGE } from 'constants/defaults';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { ORDER_PREVIEW_ERRORS_I18N, previewErrorI18n } from 'queries/futures/constants';
 import { setOpenModal } from 'state/app/reducer';
@@ -26,7 +25,7 @@ import {
 	selectCrossMarginBalanceInfo,
 	selectCrossMarginSelectedLeverage,
 	selectCrossMarginTradeFees,
-	selectMarketInfo,
+	selectMaxLeverage,
 	selectOrderType,
 	selectPosition,
 	selectSubmittingFuturesTx,
@@ -60,7 +59,6 @@ export default function EditLeverageModal({ editMode }: DepositMarginModalProps)
 	);
 
 	const balanceInfo = useAppSelector(selectCrossMarginBalanceInfo);
-	const market = useAppSelector(selectMarketInfo);
 	const position = useAppSelector(selectPosition);
 	const tradeFees = useAppSelector(selectCrossMarginTradeFees);
 	const previewData = useAppSelector(selectTradePreview);
@@ -68,6 +66,7 @@ export default function EditLeverageModal({ editMode }: DepositMarginModalProps)
 	const orderType = useAppSelector(selectOrderType);
 	const selectedLeverage = useAppSelector(selectCrossMarginSelectedLeverage);
 	const submitting = useAppSelector(selectSubmittingFuturesTx);
+	const maxLeverage = useAppSelector(selectMaxLeverage);
 
 	const [leverage, setLeverage] = useState<number>(
 		editMode === 'existing_position' && position?.position
@@ -79,7 +78,7 @@ export default function EditLeverageModal({ editMode }: DepositMarginModalProps)
 		return position?.remainingMargin.add(balanceInfo.freeMargin) ?? zeroBN;
 	}, [position?.remainingMargin, balanceInfo.freeMargin]);
 
-	const maxLeverage = Number((market?.maxLeverage || wei(DEFAULT_LEVERAGE)).toString(2));
+	const maxLeverageNum = useMemo(() => Number(maxLeverage.toString(2)), [maxLeverage]);
 
 	useEffect(() => {
 		if (editMode === 'existing_position' && orderType !== 'market') {
@@ -95,7 +94,7 @@ export default function EditLeverageModal({ editMode }: DepositMarginModalProps)
 	const handleIncrease = () => {
 		let newLeverage = wei(leverage).add(1).toNumber();
 		newLeverage = Math.max(newLeverage, 1);
-		setLeverage(Math.min(newLeverage, maxLeverage));
+		setLeverage(Math.min(newLeverage, maxLeverageNum));
 		previewPositionChange(newLeverage);
 	};
 
@@ -157,7 +156,7 @@ export default function EditLeverageModal({ editMode }: DepositMarginModalProps)
 				dataTestId="futures-market-trade-leverage-modal-input"
 				value={String(leverage)}
 				onChange={(_, v) => {
-					const nextLeverage = Math.min(Number(v), maxLeverage);
+					const nextLeverage = Math.min(Number(v), maxLeverageNum);
 					setLeverage(nextLeverage);
 					previewPositionChange(nextLeverage);
 				}}
@@ -172,7 +171,7 @@ export default function EditLeverageModal({ editMode }: DepositMarginModalProps)
 					<FlexDivRow>
 						<LeverageSlider
 							minValue={1}
-							maxValue={maxLeverage}
+							maxValue={maxLeverageNum}
 							value={leverage}
 							onChange={(_, newValue) => {
 								setLeverage(newValue as number);
