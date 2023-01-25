@@ -1,4 +1,5 @@
 import { getAddress, isAddress } from 'ethers/lib/utils';
+import DOMPurify from 'isomorphic-dompurify';
 import { useRouter } from 'next/router';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
@@ -73,9 +74,16 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 			: [];
 	}, [leaderboardData.wallet]);
 
+	const urlPath = DOMPurify.sanitize(router.asPath);
+	const trader = DOMPurify.sanitize(router.query.trader as string);
+	const compRound =
+		router.query.competitionRound && typeof router.query.competitionRound === 'string'
+			? (DOMPurify.sanitize(router.query.competitionRound) as CompetitionRound)
+			: null;
+
 	useMemo(() => {
 		if (router.asPath.startsWith(ROUTES.Leaderboard.Home) && router.query.trader) {
-			const trader = router.query.trader as string;
+			const trader = DOMPurify.sanitize(router.query.trader as string);
 			dispatch(setSelectedTrader(trader));
 		} else if (router.asPath.startsWith(ROUTES.Leaderboard.Home) && router.query.competitionRound) {
 			const round = router.query.competitionRound as CompetitionRound;
@@ -88,7 +96,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 			setCompetitionRound(null);
 		}
 		return null;
-	}, [router.query.competitionRound, router.query.trader, router.asPath, dispatch]);
+	}, [compRound, trader, urlPath, dispatch]);
 
 	const onChangeSearch = async (text: string) => {
 		setSearchInput(text?.toLowerCase());

@@ -58,6 +58,7 @@
 		"i18next": "19.7.0",
 		"imagemin-mozjpeg": "^10.0.0",
 		"intercept-stdout": "^0.1.2",
+		"isomorphic-dompurify": "^0.26.0",
 		"lightweight-charts": "^3.8.0",
 		"lodash": "4.17.21",
 		"moment-business-time": "1.1.1",
