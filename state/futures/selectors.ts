@@ -1,5 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
+import { formatBytes32String } from 'ethers/lib/utils';
 
 import { DEFAULT_LEVERAGE } from 'constants/defaults';
 import { APP_MAX_LEVERAGE, DEFAULT_MAX_LEVERAGE } from 'constants/futures';
@@ -631,7 +632,7 @@ export const selectUsersTradesForMarket = createSelector(
 		} else if (account) {
 			trades = unserializeTrades(futures.isolatedMargin.trades?.[account] ?? []);
 		}
-		return trades?.filter((t) => t.asset === asset) ?? [];
+		return trades?.filter((t) => t.asset === formatBytes32String(asset)) ?? [];
 	}
 );
 
