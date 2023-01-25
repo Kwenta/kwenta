@@ -12,6 +12,10 @@ ENS link: [kwenta.eth](https://app.ens.domains/name/kwenta.eth).
 
 The latest IPFS hash can be found under [releases](https://github.com/Kwenta/kwenta/releases).
 
+## Contributing
+
+Kwenta welcomes contributors. Regardless of the time you have available, everyone can provide meaningful contributions to the project by submitting bug reports, feature requests or even the smallest of fixes! To submit your contribution, please fork, fix, commit and create a pull-request describing your work in detail. For more details, please have a look at the [Contribution guidelines](CONTRIBUTING.md).
+
 ## Tech stack
 
 - Next.js
@@ -116,10 +120,6 @@ npm run build
 npm start
 npm run test:e2e:only:tests
 ```
-
-## Contributing
-
-Kwenta welcomes contributors. Regardless of the time you have available, everyone can provide meaningful contributions to the project by submitting bug reports, feature requests or even the smallest of fixes! To submit your contribution, please fork, fix, commit and create a pull-request describing your work in detail. For more details, please have a look at the [Contribution guidelines](CONTRIBUTING.md).
 
 ## Contact
 
