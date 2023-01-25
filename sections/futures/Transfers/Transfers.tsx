@@ -2,7 +2,7 @@ import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import Table, { TableNoResults } from 'components/Table';
+import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
@@ -29,17 +29,13 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }) 
 			highlightRowsOnHover
 			columns={[
 				{
-					Header: (
-						<StyledTableHeader>{t('futures.market.user.transfers.table.action')}</StyledTableHeader>
-					),
+					Header: <TableHeader>{t('futures.market.user.transfers.table.action')}</TableHeader>,
 					accessor: 'action',
 					Cell: (cellProps: any) => <StyledActionCell>{cellProps.value}</StyledActionCell>,
 					width: 50,
 				},
 				{
-					Header: (
-						<StyledTableHeader>{t('futures.market.user.transfers.table.amount')}</StyledTableHeader>
-					),
+					Header: <TableHeader>{t('futures.market.user.transfers.table.amount')}</TableHeader>,
 					accessor: 'amount',
 					sortType: 'basic',
 					Cell: (cellProps: any) => (
@@ -51,9 +47,7 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }) 
 					width: 50,
 				},
 				{
-					Header: (
-						<StyledTableHeader>{t('futures.market.user.transfers.table.date')}</StyledTableHeader>
-					),
+					Header: <TableHeader>{t('futures.market.user.transfers.table.date')}</TableHeader>,
 					accessor: 'timestamp',
 					Cell: (cellProps: any) => (
 						<DefaultCell>{timePresentation(cellProps.value, t)}</DefaultCell>
@@ -61,11 +55,7 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }) 
 					width: 50,
 				},
 				{
-					Header: (
-						<StyledTableHeader>
-							{t('futures.market.user.transfers.table.transaction')}
-						</StyledTableHeader>
-					),
+					Header: <TableHeader>{t('futures.market.user.transfers.table.transaction')}</TableHeader>,
 					accessor: 'txHash',
 					Cell: (cellProps: any) => {
 						return (
@@ -129,9 +119,4 @@ const StyledAmountCell = styled(DefaultCell)<{ isPositive: boolean }>`
 		props.isPositive
 			? props.theme.colors.selectedTheme.green
 			: props.theme.colors.selectedTheme.red};
-`;
-
-const StyledTableHeader = styled.div`
-	font-family: ${(props) => props.theme.fonts.regular};
-	text-transform: capitalize;
 `;

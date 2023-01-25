@@ -5,12 +5,12 @@ import { SetterOrUpdater } from 'recoil';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
+import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
 import { TabPanel } from 'components/Tab';
 import { FuturesAccountTypes } from 'queries/futures/types';
-import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
 import { selectBalances } from 'state/balances/selectors';
 import {
-	selectCrossMarginPositions,
+	// selectCrossMarginPositions,
 	selectFuturesPortfolio,
 	selectIsolatedMarginPositions,
 } from 'state/futures/selectors';
@@ -43,7 +43,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 	exchangeTokenBalances,
 }) => {
 	const { t } = useTranslation();
-	const crossPositions = useAppSelector(selectCrossMarginPositions);
+	// const crossPositions = useAppSelector(selectCrossMarginPositions);
 	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
 	const portfolio = useAppSelector(selectFuturesPortfolio);
 	const balances = useAppSelector(selectBalances);
@@ -80,9 +80,9 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 		[
 			t,
 			isolatedPositions,
-			crossPositions,
+			// crossPositions,
 			activePositionsTab,
-			portfolio.crossMarginFutures,
+			// portfolio.crossMarginFutures,
 			portfolio.isolatedMarginFutures,
 			balances.totalUSDBalance,
 			exchangeTokenBalances,
@@ -121,13 +121,10 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 
 const TabButtonsContainer = styled.div`
 	display: flex;
-	margin-top: 16px;
-	margin-bottom: 16px;
+	margin: 16px 0;
 
-	& > button {
-		&:not(:last-of-type) {
-			margin-right: 14px;
-		}
+	& > button:not(:last-of-type) {
+		margin-right: 14px;
 	}
 `;
 

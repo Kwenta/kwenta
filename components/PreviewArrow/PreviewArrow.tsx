@@ -1,20 +1,26 @@
+import { memo } from 'react';
 import styled from 'styled-components';
+
+import { MiniLoader } from 'components/Loader';
 
 type TextColor = 'yellow' | 'red';
 
 type PreviewArrowProps = {
 	color?: TextColor;
 	showPreview: boolean;
+	loading?: boolean;
 };
 
-const PreviewArrow: React.FC<PreviewArrowProps> = ({ showPreview, children, color }) => {
-	return showPreview ? (
-		<>
-			<StyledArrow />
-			<StyledPreviewGold color={color}>{children}</StyledPreviewGold>
-		</>
-	) : null;
-};
+const PreviewArrow: React.FC<PreviewArrowProps> = memo(
+	({ showPreview, children, color, loading }) => {
+		return showPreview ? (
+			<>
+				<StyledArrow />
+				<StyledPreviewGold color={color}>{loading ? <MiniLoader /> : children}</StyledPreviewGold>
+			</>
+		) : null;
+	}
+);
 
 const StyledArrow = styled.span`
 	::before {

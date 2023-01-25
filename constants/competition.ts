@@ -9,3 +9,11 @@ export const COMPETITION_DATES = {
 };
 
 export const COMPETITION_ENABLED = false;
+
+export type Tier = 'gold' | 'silver' | 'bronze' | null;
+
+export type CompetitionRound = '1' | '2' | null;
+
+export const COMPETITION_TIERS: Tier[] = ['bronze', 'silver', 'gold'];
+
+export const PIN = ' 📌';

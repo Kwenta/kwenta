@@ -1,8 +1,8 @@
-import { ReactElement } from 'react';
+import { ReactElement, memo, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import StyledTooltip from 'components/Tooltip/StyledTooltip';
+import Tooltip from 'components/Tooltip/Tooltip';
 import { selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 
@@ -15,7 +15,7 @@ type MarketDetailProps = {
 	value: string | ReactElement;
 };
 
-const MarketDetail: React.FC<MarketDetailProps> = ({ mobile, marketKey, color, value }) => {
+const MarketDetail: FC<MarketDetailProps> = memo(({ mobile, marketKey, color, value }) => {
 	const { t } = useTranslation();
 	const marketInfo = useAppSelector(selectMarketInfo);
 
@@ -33,8 +33,6 @@ const MarketDetail: React.FC<MarketDetailProps> = ({ mobile, marketKey, color, v
 		return (
 			<MarketDetailsTooltip
 				key={marketKey}
-				position={'fixed'}
-				height={'auto'}
 				mobile={mobile}
 				content={t(`exchange.market-details-card.tooltips.market-key`)}
 			>
@@ -47,8 +45,6 @@ const MarketDetail: React.FC<MarketDetailProps> = ({ mobile, marketKey, color, v
 		return (
 			<MarketDetailsTooltip
 				key={marketKey}
-				position={'fixed'}
-				height={'auto'}
 				mobile={mobile}
 				content={t(`exchange.market-details-card.tooltips.${marketDataKeyMap[marketKey]}`)}
 			>
@@ -58,7 +54,7 @@ const MarketDetail: React.FC<MarketDetailProps> = ({ mobile, marketKey, color, v
 	}
 
 	return children;
-};
+});
 
 export default MarketDetail;
 
@@ -67,7 +63,9 @@ const WithCursor = styled.div<{ cursor: 'help' }>`
 	cursor: ${(props) => props.cursor};
 `;
 
-const MarketDetailsTooltip = styled(StyledTooltip)<{ mobile?: boolean }>`
+const MarketDetailsTooltip = styled(Tooltip).attrs({ position: 'fixed', height: 'auto' })<{
+	mobile?: boolean;
+}>`
 	z-index: 2;
 	padding: 10px;
 	right: ${(props) => props.mobile && '1px'};

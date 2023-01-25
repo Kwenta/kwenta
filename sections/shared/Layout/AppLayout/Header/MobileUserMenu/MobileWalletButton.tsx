@@ -16,13 +16,11 @@ type MobileWalletButtonProps = {
 	closeModal(): void;
 };
 
-const MobileWalletButton: React.FC<MobileWalletButtonProps> = ({ toggleModal }) => {
+const MobileConnectButton = () => {
 	const { t } = useTranslation();
-	const { network, isWalletConnected } = Connector.useContainer();
 	const { openConnectModal: connectWallet } = useConnectModal();
-	const { openChainModal } = useChainModal();
 
-	const walletIsNotConnected = (
+	return (
 		<ConnectButton
 			size="sm"
 			variant="flat"
@@ -31,12 +29,17 @@ const MobileWalletButton: React.FC<MobileWalletButtonProps> = ({ toggleModal }) 
 			data-testid="connect-wallet"
 			mono
 		>
-			<StyledConnectionDot />
+			<ConnectionDot />
 			{t('common.wallet.connect-wallet')}
 		</ConnectButton>
 	);
+};
 
-	const walletIsConnectedButNotSupported = (
+const MobileUnsupportedButton = () => {
+	const { t } = useTranslation();
+	const { openChainModal } = useChainModal();
+
+	return (
 		<ConnectButton
 			size="sm"
 			variant="flat"
@@ -44,23 +47,23 @@ const MobileWalletButton: React.FC<MobileWalletButtonProps> = ({ toggleModal }) 
 			mono
 			onClick={openChainModal}
 		>
-			<StyledConnectionDot />
+			<ConnectionDot />
 			{t('common.wallet.unsupported-network')}
 		</ConnectButton>
 	);
-
-	const walletIsConnectedAndSupported = <MobileWalletActions toggleModal={toggleModal} />;
-
-	return isWalletConnected
-		? isSupportedNetworkId(network?.id as NetworkId)
-			? walletIsConnectedAndSupported
-			: walletIsConnectedButNotSupported
-		: walletIsNotConnected;
 };
 
-const StyledConnectionDot = styled(ConnectionDot)`
-	margin-right: 6px;
-`;
+const MobileWalletButton: React.FC<MobileWalletButtonProps> = ({ toggleModal }) => {
+	const { network, isWalletConnected } = Connector.useContainer();
+
+	if (!isWalletConnected) {
+		return <MobileConnectButton />;
+	} else if (isSupportedNetworkId(network?.id as NetworkId)) {
+		return <MobileWalletActions toggleModal={toggleModal} />;
+	} else {
+		return <MobileUnsupportedButton />;
+	}
+};
 
 const ConnectButton = styled(Button)`
 	font-size: 13px;

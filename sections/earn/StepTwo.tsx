@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
-import media from 'styles/media';
+import { Heading, Description } from 'sections/earn/text';
+import { SplitContainer } from 'components/layout/grid';
 
-import { Heading, Description } from './common';
 import EarnStakeCard from './EarnStakeCard';
 import StakeGrid from './StakeGrid';
 
@@ -21,28 +21,6 @@ const StepTwo = () => {
 
 const StepTwoContainer = styled.div`
 	margin-bottom: 50px;
-`;
-
-const SplitContainer = styled.div`
-	margin-top: 10px;
-
-	${media.greaterThan('mdUp')`
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		& > div {
-			flex: 1;
-
-			&:first-child {
-				margin-right: 15px;
-			}
-		}
-	`}
-
-	${media.lessThan('mdUp')`
-		& > div:first-child {
-			margin-bottom: 15px;
-		}
-	`}
 `;
 
 export default StepTwo;

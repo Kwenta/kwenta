@@ -4,7 +4,8 @@ import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
-import Error from 'components/Error';
+import Error from 'components/ErrorView';
+import { FlexDivCentered } from 'components/layout/flex';
 import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -27,7 +28,6 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
-import { FlexDivCentered } from 'styles/common';
 import { getKnownError } from 'utils/formatters/error';
 import {
 	zeroBN,
@@ -69,11 +69,20 @@ const DelayedOrderConfirmationModal: FC = () => {
 		);
 	}, [nativeSizeDelta, orderType, dispatch]);
 
-	const positionSize = position?.position?.size ?? zeroBN;
+	const positionSize = useMemo(() => {
+		const positionDetails = position?.position;
+		return positionDetails
+			? positionDetails.size.mul(positionDetails.side === PositionSide.LONG ? 1 : -1)
+			: zeroBN;
+	}, [position]);
 
 	const orderDetails = useMemo(() => {
 		return { nativeSizeDelta, size: (positionSize ?? zeroBN).add(nativeSizeDelta).abs() };
 	}, [nativeSizeDelta, positionSize]);
+
+	const isClosing = useMemo(() => {
+		return orderDetails.size.eq(zeroBN);
+	}, [orderDetails]);
 
 	// TODO: check this deposit
 	const totalDeposit = useMemo(() => {
@@ -156,7 +165,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 		dispatch(setOpenModal(null));
 	}, [dispatch]);
 
-	const handleConfirmOrder = async () => {
+	const handleConfirmOrder = () => {
 		dispatch(
 			modifyIsolatedPosition({
 				sizeDelta: nativeSizeDelta,
@@ -172,13 +181,17 @@ const DelayedOrderConfirmationModal: FC = () => {
 				<StyledBaseModal
 					onDismiss={onDismiss}
 					isOpen
-					title={t('futures.market.trade.confirmation.modal.confirm-order')}
+					title={
+						isClosing
+							? t('futures.market.trade.confirmation.modal.close-order')
+							: t('futures.market.trade.confirmation.modal.confirm-order')
+					}
 				>
 					{dataRows.map((row, i) => (
 						<Row key={`datarow-${i}`}>
 							<Label>{row.label}</Label>
 							<Value>
-								<span className={row.color ? `value ${row.color}` : ''}>{row.value}</span>
+								<span className={`value ${row.color ?? ''}`}>{row.value}</span>
 							</Value>
 						</Row>
 					))}
@@ -190,6 +203,8 @@ const DelayedOrderConfirmationModal: FC = () => {
 					<ConfirmTradeButton disabled={submitting} variant="flat" onClick={handleConfirmOrder}>
 						{submitting ? (
 							<ButtonLoader />
+						) : isClosing ? (
+							t('futures.market.trade.confirmation.modal.close-order')
 						) : (
 							t('futures.market.trade.confirmation.modal.confirm-order')
 						)}
@@ -211,6 +226,8 @@ const DelayedOrderConfirmationModal: FC = () => {
 						>
 							{submitting ? (
 								<ButtonLoader />
+							) : isClosing ? (
+								t('futures.market.trade.confirmation.modal.close-order')
 							) : (
 								t('futures.market.trade.confirmation.modal.confirm-order')
 							)}

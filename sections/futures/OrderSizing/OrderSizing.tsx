@@ -1,10 +1,11 @@
 import { wei } from '@synthetixio/wei';
-import React, { ChangeEvent, useMemo, useState } from 'react';
+import React, { ChangeEvent, useMemo, useState, memo } from 'react';
 import styled from 'styled-components';
 
 import SwitchAssetArrows from 'assets/svg/futures/switch-arrows.svg';
 import CustomInput from 'components/Input/CustomInput';
 import InputTitle from 'components/Input/InputTitle';
+import { FlexDivRow } from 'components/layout/flex';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { editTradeSizeInput } from 'state/futures/actions';
 import {
@@ -19,7 +20,6 @@ import {
 	selectMarketAsset,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { FlexDivRow } from 'styles/common';
 import { floorNumber, isZero, zeroBN } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 
@@ -30,7 +30,7 @@ type OrderSizingProps = {
 	disabled?: boolean;
 };
 
-const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
+const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) => {
 	const { maxUsdInputAmount } = useFuturesContext();
 	const dispatch = useAppDispatch();
 
@@ -133,7 +133,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 			{selectedAccountType === 'cross_margin' && <OrderSizeSlider />}
 		</>
 	);
-};
+});
 
 const OrderSizingContainer = styled.div`
 	margin-top: 28px;

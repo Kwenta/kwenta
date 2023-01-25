@@ -3,14 +3,14 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
+import { SplitContainer } from 'components/layout/grid';
+import { StakingCard } from 'sections/dashboard/Stake/card';
 import { LogoText } from 'components/Text';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { getReward } from 'state/staking/actions';
 import { selectAPY, selectClaimableBalance } from 'state/staking/selectors';
-import media from 'styles/media';
 import { formatPercent, truncateNumbers } from 'utils/formatters/number';
 
-import { StakingCard } from './common';
 import StakeInputCard from './InputCards/StakeInputCard';
 
 const StakingTab = () => {
@@ -25,7 +25,7 @@ const StakingTab = () => {
 	}, [dispatch]);
 
 	return (
-		<StakingTabContainer>
+		<SplitContainer>
 			<CardGridContainer>
 				<CardGrid>
 					<div>
@@ -48,23 +48,9 @@ const StakingTab = () => {
 				</Button>
 			</CardGridContainer>
 			<StakeInputCard />
-		</StakingTabContainer>
+		</SplitContainer>
 	);
 };
-
-const StakingTabContainer = styled.div`
-	${media.greaterThan('mdUp')`
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		grid-gap: 15px;
-	`}
-
-	${media.lessThan('mdUp')`
-		& > div:first-child {
-			margin-bottom: 15px;
-		}
-	`}
-`;
 
 const CardGridContainer = styled(StakingCard)`
 	display: flex;

@@ -26,7 +26,7 @@ import { deserializeWeiObject } from 'state/helpers';
 
 import { formatNumber, zeroBN } from './formatters/number';
 
-export const getMarketName = (asset: FuturesMarketAsset | null) => {
+export const getMarketName = (asset: FuturesMarketAsset) => {
 	switch (asset) {
 		case 'DebtRatio':
 			return `DEBT-PERP`;

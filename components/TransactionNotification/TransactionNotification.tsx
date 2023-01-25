@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import Failure from 'assets/svg/app/failure.svg';
 import Spinner from 'assets/svg/app/spinner.svg';
 import Success from 'assets/svg/app/success.svg';
-import { FlexDivCentered, FlexDivCol, FlexDivRowCentered } from 'styles/common';
+import { FlexDivCentered, FlexDivCol, FlexDivRowCentered } from 'components/layout/flex';
 
 type NotificationProps = {
 	closeToast?: Function;

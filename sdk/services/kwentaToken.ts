@@ -183,7 +183,7 @@ export default class KwentaTokenService {
 			vKwentaBalance: wei(vKwentaBalance),
 			vKwentaAllowance: wei(vKwentaAllowance),
 			kwentaAllowance: wei(kwentaAllowance),
-			epochPeriod: Number(epochPeriod) - 1,
+			epochPeriod: Number(epochPeriod) - 2,
 			veKwentaBalance: wei(veKwentaBalance),
 			veKwentaAllowance: wei(veKwentaAllowance),
 		};
@@ -379,7 +379,7 @@ export default class KwentaTokenService {
 		const responses: EpochData[] = await Promise.all(
 			fileNames.map(async (fileName, index) => {
 				const response = await client.get(fileName);
-				const period = index >= 5 ? index + 1 : index;
+				const period = index >= 5 ? (index >= 10 ? index + 2 : index + 1) : index;
 				return { ...response.data, period };
 			})
 		);

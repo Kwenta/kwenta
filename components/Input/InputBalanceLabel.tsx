@@ -2,7 +2,7 @@ import Wei from '@synthetixio/wei';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { FlexDivRowCentered } from 'styles/common';
+import { FlexDivRowCentered } from 'components/layout/flex';
 import { formatCurrency } from 'utils/formatters/number';
 
 type Props = {

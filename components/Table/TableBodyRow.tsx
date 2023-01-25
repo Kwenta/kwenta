@@ -2,7 +2,7 @@ import React from 'react';
 import { Row, TableRowProps } from 'react-table';
 import styled, { css } from 'styled-components';
 
-import { FlexDivCentered } from 'styles/common';
+import { FlexDivCentered } from 'components/layout/flex';
 
 type TableBodyRowProps = TableRowProps & {
 	row: Row;

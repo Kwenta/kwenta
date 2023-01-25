@@ -13,7 +13,7 @@ import Logo from 'sections/shared/Layout/Logo';
 import { currentThemeState } from 'store/ui';
 
 import { HOMEPAGE_MENU_LINKS, MOBILE_NAV_LINKS } from '../constants';
-import { MenuButton } from './common';
+import { MenuButton } from './menu';
 import MobileSubMenu from './MobileSubMenu';
 
 type MobileMenuModalProps = {

@@ -6,7 +6,8 @@ import LeftEndArrowIcon from 'assets/svg/app/caret-left-end.svg';
 import LeftArrowIcon from 'assets/svg/app/caret-left.svg';
 import RightEndArrowIcon from 'assets/svg/app/caret-right-end.svg';
 import RightArrowIcon from 'assets/svg/app/caret-right.svg';
-import { GridDivCenteredCol, resetButtonCSS } from 'styles/common';
+import { GridDivCenteredCol } from 'components/layout/grid';
+import { resetButtonCSS } from 'styles/common';
 
 type PaginationProps = {
 	pageIndex: number;

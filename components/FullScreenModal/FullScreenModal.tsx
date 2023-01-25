@@ -1,5 +1,5 @@
 import { DialogOverlay, DialogContent } from '@reach/dialog';
-import { FC, ReactNode, SyntheticEvent } from 'react';
+import { FC, ReactNode, SyntheticEvent, memo } from 'react';
 import styled from 'styled-components';
 
 import { HEADER_HEIGHT, zIndex } from 'constants/ui';
@@ -11,19 +11,15 @@ type FullScreenModalProps = {
 	onDismiss?: (event?: SyntheticEvent<Element, Event> | undefined) => void;
 };
 
-export const FullScreenModal: FC<FullScreenModalProps> = ({
-	title,
-	children,
-	isOpen,
-	onDismiss,
-	...rest
-}) => (
-	<StyledDialogOverlay isOpen={isOpen} onDismiss={onDismiss} {...rest}>
-		<StyledDialogContent aria-label="modal">
-			{title && <Title className="title">{title}</Title>}
-			<div className="content">{children}</div>
-		</StyledDialogContent>
-	</StyledDialogOverlay>
+export const FullScreenModal: FC<FullScreenModalProps> = memo(
+	({ title, children, isOpen, onDismiss, ...rest }) => (
+		<StyledDialogOverlay isOpen={isOpen} onDismiss={onDismiss} {...rest}>
+			<StyledDialogContent aria-label="modal">
+				{title && <Title className="title">{title}</Title>}
+				<div className="content">{children}</div>
+			</StyledDialogContent>
+		</StyledDialogOverlay>
+	)
 );
 
 const StyledDialogOverlay = styled(DialogOverlay)`

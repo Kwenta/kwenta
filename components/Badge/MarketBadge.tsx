@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -20,45 +20,43 @@ type TransitionBadgeProps = {
 	isOpen: boolean;
 };
 
-export const TransitionBadge: FC<TransitionBadgeProps> = ({ isOpen }) => {
+export const TransitionBadge: FC<TransitionBadgeProps> = memo(({ isOpen }) => {
 	const { t } = useTranslation();
 
 	return (
 		<StyledBadge color={isOpen ? 'yellow' : 'red'}>
-			{t(`futures.market.state.${isOpen ? 'closes-soon' : 'opens-soon'}`)}
+			{t(`futures.market.state.${isOpen ? 'closes' : 'opens'}-soon`)}
 		</StyledBadge>
 	);
-};
+});
 
-export const MarketBadge: FC<MarketBadgeProps> = ({
-	currencyKey,
-	isFuturesMarketClosed,
-	futuresClosureReason,
-}) => {
-	const { t } = useTranslation();
-	const isOpen = marketIsOpen((currencyKey as CurrencyKey) ?? null);
+export const MarketBadge: FC<MarketBadgeProps> = memo(
+	({ currencyKey, isFuturesMarketClosed, futuresClosureReason }) => {
+		const { t } = useTranslation();
+		const isOpen = marketIsOpen((currencyKey as CurrencyKey) ?? null);
 
-	const nextOpen = marketNextOpen((currencyKey as CurrencyKey) ?? '');
-	const nextTransition = marketNextTransition((currencyKey as CurrencyKey) ?? '');
+		const nextOpen = marketNextOpen((currencyKey as CurrencyKey) ?? '');
+		const nextTransition = marketNextTransition((currencyKey as CurrencyKey) ?? '');
 
-	const timerSetting = isOpen === null ? null : isOpen ? nextTransition : nextOpen;
-	const isMarketTransitioning = useIsMarketTransitioning(timerSetting ?? null);
+		const timerSetting = isOpen === null ? null : isOpen ? nextTransition : nextOpen;
+		const isMarketTransitioning = useIsMarketTransitioning(timerSetting ?? null);
 
-	if (typeof isFuturesMarketClosed !== 'boolean') {
+		if (typeof isFuturesMarketClosed !== 'boolean') {
+			return null;
+		}
+
+		if (isFuturesMarketClosed) {
+			const reason = futuresClosureReason || 'unknown';
+			return <Badge color="red">{t(`futures.market.state.${reason}`)}</Badge>;
+		}
+
+		if (isMarketTransitioning && isOpen !== null) {
+			return <TransitionBadge isOpen={isOpen} />;
+		}
+
 		return null;
 	}
-
-	if (isFuturesMarketClosed) {
-		const reason = futuresClosureReason || 'unknown';
-		return <Badge color="red">{t(`futures.market.state.${reason}`)}</Badge>;
-	}
-
-	if (isMarketTransitioning && isOpen !== null) {
-		return <TransitionBadge isOpen={isOpen} />;
-	}
-
-	return null;
-};
+);
 
 export default MarketBadge;
 

@@ -10,12 +10,10 @@ const FuturesUnsupportedNetwork = () => {
 	return (
 		<MessageContainer>
 			<Title>{t('futures.page-title')}</Title>
-			<>
-				<UnsupportedMessage>{t('common.l2-cta')}</UnsupportedMessage>
-				<LinkContainer>
-					<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
-				</LinkContainer>
-			</>
+			<UnsupportedMessage>{t('common.l2-cta')}</UnsupportedMessage>
+			<LinkContainer>
+				<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+			</LinkContainer>
 		</MessageContainer>
 	);
 };

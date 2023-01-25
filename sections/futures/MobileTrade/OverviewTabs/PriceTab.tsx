@@ -1,9 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import { Pane } from 'sections/futures/mobile';
 import PositionChart from 'sections/futures/PositionChart';
-
-import { Pane } from '../common';
 
 const PriceTab: React.FC = () => {
 	return (

@@ -14,6 +14,7 @@ import MoonIcon from 'assets/svg/app/moon.svg';
 import SunIcon from 'assets/svg/app/sun.svg';
 import FullScreenModal from 'components/FullScreenModal';
 import { EXTERNAL_LINKS } from 'constants/links';
+import { languageIcon } from 'constants/menu';
 import ROUTES from 'constants/routes';
 import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 import Logo from 'sections/shared/Layout/Logo';
@@ -21,7 +22,6 @@ import { languageState } from 'store/app';
 import { currentThemeState } from 'store/ui';
 import colors from 'styles/theme/colors';
 
-import { languageIcon } from './common';
 import MobileSubMenu from './MobileSubMenu';
 
 type MobileSettingsModalProps = {

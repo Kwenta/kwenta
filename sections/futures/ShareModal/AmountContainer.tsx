@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
@@ -14,12 +14,6 @@ type AmountContainerProps = {
 	position: FuturesPosition | null | undefined;
 };
 
-const currencyIconStyle = {
-	height: '1.94vw',
-	width: 'auto',
-	margin: '-0.3vw 0.5vw 0vw 0vw',
-};
-
 const AmountContainer: FC<AmountContainerProps> = ({ position }) => {
 	const marketAsset = useAppSelector(selectMarketAsset);
 
@@ -29,7 +23,7 @@ const AmountContainer: FC<AmountContainerProps> = ({ position }) => {
 	const side = positionDetails?.side === 'long' ? PositionSide.LONG : PositionSide.SHORT;
 	const pnlPct = positionDetails?.pnlPct.mul(100);
 
-	const amount = () => {
+	const amount = useMemo(() => {
 		if (pnlPct) {
 			return pnlPct.gt(0)
 				? `+${pnlPct.toNumber().toFixed(2)}%`
@@ -37,30 +31,33 @@ const AmountContainer: FC<AmountContainerProps> = ({ position }) => {
 				? `+0.00%`
 				: `${pnlPct.toNumber().toFixed(2)}%`;
 		}
-	};
+	}, [pnlPct]);
 
 	return (
-		<>
-			<Container>
-				<StyledPositionType>
-					<CurrencyIcon style={currencyIconStyle} currencyKey={MarketKeyByAsset[marketAsset]} />
-					<StyledPositionDetails>{marketName}</StyledPositionDetails>
-					<StyledPositionDetails className="line-separator">{`|`}</StyledPositionDetails>
-					<StyledPositionSide className={side}>{side.toUpperCase()}</StyledPositionSide>
-					<StyledPositionDetails className="line-separator">{`|`}</StyledPositionDetails>
-					<StyledPositionLeverage>{`${leverage}`}</StyledPositionLeverage>
-				</StyledPositionType>
-				<StyledAmount className={`${amount()}`}>{amount()}</StyledAmount>
-			</Container>
-		</>
+		<Container>
+			<StyledPositionType>
+				<StyledCurrencyIcon currencyKey={MarketKeyByAsset[marketAsset]} />
+				<StyledPositionDetails>{marketName}</StyledPositionDetails>
+				<StyledPositionDetails className="line-separator">|</StyledPositionDetails>
+				<StyledPositionSide className={side}>{side.toUpperCase()}</StyledPositionSide>
+				<StyledPositionDetails className="line-separator">|</StyledPositionDetails>
+				<StyledPositionLeverage>{leverage}</StyledPositionLeverage>
+			</StyledPositionType>
+			<StyledAmount className={amount}>{amount}</StyledAmount>
+		</Container>
 	);
 };
+
+const StyledCurrencyIcon = styled(CurrencyIcon)`
+	height: 1.94vw;
+	width: auto;
+	margin: -0.3vw 0.5vw 0vw 0vw;
+`;
 
 const StyledPositionLeverage = styled.div`
 	display: flex;
 	flex-direction: column;
 	color: ${(props) => props.theme.colors.common.primaryGold};
-
 	font-size: 1.07vw;
 `;
 

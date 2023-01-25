@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, memo } from 'react';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import NotificationContainer from 'constants/NotificationContainer';
@@ -12,7 +12,7 @@ type AppLayoutProps = {
 	children: React.ReactNode;
 };
 
-const AppLayout: FC<AppLayoutProps> = ({ children }) => (
+const AppLayout: FC<AppLayoutProps> = memo(({ children }) => (
 	<RefetchProvider>
 		<DesktopOnlyView>
 			<FullScreenContainer>
@@ -28,6 +28,6 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => (
 			</MobileScreenContainer>
 		</MobileOrTabletView>
 	</RefetchProvider>
-);
+));
 
 export default AppLayout;

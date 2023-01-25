@@ -1,4 +1,3 @@
-import Wei from '@synthetixio/wei';
 import { FC } from 'react';
 import { useRecoilState } from 'recoil';
 
@@ -16,7 +15,7 @@ const MobileDashboard: FC<MobileDashboardProps> = ({ exchangeTokens }) => {
 	const [activePositionsTab, setActivePositionsTab] = useRecoilState(activePositionsTabState);
 
 	const exchangeTokenBalances = exchangeTokens.reduce(
-		(initial: Wei, { usdBalance }) => initial.add(usdBalance),
+		(initial, { usdBalance }) => initial.add(usdBalance),
 		zeroBN
 	);
 
