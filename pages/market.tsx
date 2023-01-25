@@ -20,7 +20,6 @@ import MarketHead from 'sections/futures/MarketInfo/MarketHead';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
 import FuturesUnsupportedNetwork from 'sections/futures/Trade/FuturesUnsupported';
 import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
-import TradePanelHeader from 'sections/futures/Trade/TradePanelHeader';
 import TransferIsolatedMarginModal from 'sections/futures/Trade/TransferIsolatedMarginModal';
 import TradeCrossMargin from 'sections/futures/TradeCrossMargin';
 import AppLayout from 'sections/shared/Layout/AppLayout';
@@ -45,7 +44,6 @@ const Market: MarketComponent = () => {
 	const routerMarketAsset = router.query.asset as FuturesMarketAsset;
 
 	const setCurrentMarket = useAppSelector(selectMarketAsset);
-
 	const openModal = useAppSelector(selectOpenModal);
 	const account = useRecoilValue(futuresAccountState);
 	const [showOnboard, setShowOnboard] = useRecoilState(showCrossMarginOnboardState);
@@ -66,10 +64,6 @@ const Market: MarketComponent = () => {
 						<LeftSidebar />
 						<MarketInfo />
 						<StyledRightSideContent>
-							<TradePanelHeader
-								onManageBalance={() => dispatch(setOpenModal('futures_isolated_transfer'))}
-								accountType={'isolated_margin'}
-							/>
 							<TradePanelDesktop walletAddress={walletAddress} account={account} />
 							{openModal === 'futures_isolated_transfer' && (
 								<TransferIsolatedMarginModal
