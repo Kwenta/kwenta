@@ -94,7 +94,7 @@ export const BridgeContainer = styled.div`
 
 	span.ml-2 {
 		font-size: 17px;
-		font-family: ${(props) => props.theme.fonts.bold};
+		font-family: ${(props) => props.theme.fonts.regular};
 	}
 `;
 
