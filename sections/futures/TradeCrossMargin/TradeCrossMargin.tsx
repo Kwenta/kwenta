@@ -64,6 +64,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 	if (
 		!showOnboard &&
 		!crossMarginAddress &&
+		!!walletAddress &&
 		(queryStatus.status === FetchStatus.Loading || queryStatus.status === FetchStatus.Idle)
 	)
 		return <Loader />;
