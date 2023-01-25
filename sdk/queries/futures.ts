@@ -1,4 +1,3 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { formatBytes32String } from 'ethers/lib/utils.js';
 import request, { gql } from 'graphql-request';
 import KwentaSDK from 'sdk';
@@ -8,17 +7,14 @@ import {
 	getFuturesPositions,
 	getFuturesTrades,
 } from 'queries/futures/subgraph';
-import { getFuturesEndpoint } from 'sdk/utils/futures';
 
 export const queryAccountsFromSubgraph = async (
-	networkId: NetworkId,
+	sdk: KwentaSDK,
 	walletAddress: string | null
 ): Promise<string[]> => {
 	if (!walletAddress) return [];
-
-	const futuresEndpoint = getFuturesEndpoint(networkId);
 	const response = await request(
-		futuresEndpoint,
+		sdk.futures.futuresGqlEndpoint,
 		gql`
 			query crossMarginAccounts($owner: String!) {
 				crossMarginAccounts(where: { owner: $owner }) {
