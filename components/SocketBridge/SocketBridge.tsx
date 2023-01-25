@@ -7,48 +7,20 @@ import ArrowIcon from 'assets/svg/app/arrow-down.svg';
 import Connector from 'containers/Connector';
 import { fetchBalances } from 'state/balances/actions';
 import { useAppDispatch } from 'state/hooks';
-
-import { SocketCustomizationProps } from './types';
-import hexToRGB, {
-	DEFAULT_MOBILE_WIDTH,
-	DEFAULT_WIDTH,
+import {
+	customizeSocket,
+	socketDefaultChains,
 	SOCKET_DEST_TOKEN_ADDRESS,
 	SOCKET_SOURCE_TOKEN_ADDRESS,
-} from './utils';
-
-const socketDefaultChains = [
-	chain.arbitrum.id,
-	chain.mainnet.id,
-	chain.optimism.id,
-	chain.polygon.id,
-];
+} from 'utils/socket';
 
 const SocketBridge = () => {
 	const { activeChain, signer } = Connector.useContainer();
 	const dispatch = useAppDispatch();
-	const theme = useTheme();
+	const customize = customizeSocket(useTheme());
 	const onBridgeSuccess = useCallback(() => {
 		dispatch(fetchBalances());
 	}, [dispatch]);
-
-	const background = hexToRGB(theme.colors.selectedTheme.input.secondary.background);
-	const text = hexToRGB(theme.colors.selectedTheme.button.text.primary);
-	const primaryButtonBg = hexToRGB(theme.colors.selectedTheme.socket.accent);
-
-	const customize: SocketCustomizationProps = {
-		width: window.innerWidth > 768 ? DEFAULT_WIDTH : DEFAULT_MOBILE_WIDTH,
-		responsiveWidth: true,
-		borderRadius: 1,
-		secondary: `rgb(${background.r},${background.g},${background.b})`, //socket surface
-		primary: `rgb(${background.r},${background.g},${background.b})`, //socket bg
-		accent: `rgb(${primaryButtonBg.r},${primaryButtonBg.g},${primaryButtonBg.b})`, //toggle-slippage accent
-		onAccent: `rgb(${text.r},${text.g},${text.b})`, //toggle thumb
-		interactive: `rgb(${primaryButtonBg.r},${primaryButtonBg.g},${primaryButtonBg.b})`, //asset toggle
-		onInteractive: `rgb(${text.r},${text.g},${text.b})`, //asset toggle text
-		text: `rgb(${text.r},${text.g},${text.b})`, //main text
-		secondaryText: `rgb(${text.r},${text.g},${text.b})`, //secondary text
-		fontFamily: `AkkuratLLWeb-Regular`,
-	};
 
 	return (
 		<BridgeContainer>
