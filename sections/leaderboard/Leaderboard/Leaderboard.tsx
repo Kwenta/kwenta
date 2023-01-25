@@ -88,7 +88,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 			setCompetitionRound(null);
 		}
 		return null;
-	}, [router.query, router.asPath, dispatch]);
+	}, [router.query.competitionRound, router.query.trader, router.asPath, dispatch]);
 
 	const onChangeSearch = async (text: string) => {
 		setSearchInput(text?.toLowerCase());
