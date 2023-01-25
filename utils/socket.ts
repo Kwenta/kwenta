@@ -1,9 +1,8 @@
 import { DefaultTheme } from 'styled-components';
 import { chain } from 'wagmi';
 
+import { RGB, SocketCustomizationProps } from 'components/SocketBridge/types';
 import { ADDRESSES } from 'sdk/contracts/constants';
-
-import { RGB, SocketCustomizationProps } from './types';
 
 export const DEFAULT_WIDTH = 360;
 export const DEFAULT_MOBILE_WIDTH = 180;
