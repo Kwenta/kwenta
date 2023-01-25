@@ -117,7 +117,7 @@ export default function OrderPriceInput({
 						{t('futures.market.trade.orders.fee-rejection-label')}:
 					</FeeRejectionLabel>
 				</StyledTooltip>
-				<SegmentedControl
+				<StyledSegmentedControl
 					onChange={onChangeFeeCap}
 					selectedIndex={FEE_CAP_OPTIONS.indexOf(selectedFeeCapLabel)}
 					styleType="button"
@@ -127,6 +127,29 @@ export default function OrderPriceInput({
 		</>
 	);
 }
+
+const StyledSegmentedControl = styled(SegmentedControl)`
+	display: flex;
+	justify-content: space-between;
+
+	button {
+		:hover {
+			background-color: ${(props) => props.theme.colors.common.primaryYellow};
+			color: ${(props) => props.theme.colors.common.black};
+		}
+		border: ${(props) => props.theme.colors.selectedTheme.border};
+
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		font-variant-caps: all-small-caps;
+		font-variant-numeric: tabular-nums;
+		text-transform: uppercase;
+
+		padding: 0 8px;
+	}
+`;
 
 const StyledInputTitle = styled(InputTitle)`
 	text-transform: capitalize;
@@ -140,12 +163,12 @@ const FeeCapContainer = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin: 10px 0;
+	margin: 15px 0;
 `;
 
 const FeeRejectionLabel = styled.div`
 	min-width: 100px;
-	font-size: 12px;
+	font-size: 13px;
 	color: ${(props) => props.theme.colors.selectedTheme.text.label};
 	cursor: default;
 `;

@@ -337,7 +337,8 @@ export const fetchIsolatedMarginAccountData = createAsyncThunk<void, void, Thunk
 export const fetchSharedFuturesData = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/fetchSharedFuturesData',
 	async (_, { dispatch }) => {
-		dispatch(fetchMarkets());
+		await dispatch(fetchMarkets());
+		dispatch(fetchFundingRates());
 		dispatch(fetchDailyVolumes());
 	}
 );

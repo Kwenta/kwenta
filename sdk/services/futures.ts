@@ -13,7 +13,6 @@ import { FuturesAccountType } from 'queries/futures/types';
 import { mapFuturesPositions } from 'queries/futures/utils';
 import { LatestRate } from 'queries/rates/types';
 import { getRatesEndpoint, mapLaggedDailyPrices } from 'queries/rates/utils';
-
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
 import { BPS_CONVERSION } from 'sdk/constants/futures';
 import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';

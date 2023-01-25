@@ -82,12 +82,10 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 			: null;
 
 	useMemo(() => {
-		if (router.asPath.startsWith(ROUTES.Leaderboard.Home) && router.query.trader) {
-			const trader = DOMPurify.sanitize(router.query.trader as string);
+		if (urlPath.startsWith(ROUTES.Leaderboard.Home) && trader) {
 			dispatch(setSelectedTrader(trader));
-		} else if (router.asPath.startsWith(ROUTES.Leaderboard.Home) && router.query.competitionRound) {
-			const round = router.query.competitionRound as CompetitionRound;
-			setCompetitionRound(round);
+		} else if (urlPath.startsWith(ROUTES.Leaderboard.Home) && compRound) {
+			setCompetitionRound(compRound);
 		} else {
 			setSearchInput('');
 			setSearchTerm('');

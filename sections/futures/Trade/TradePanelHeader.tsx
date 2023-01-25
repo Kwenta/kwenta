@@ -13,7 +13,7 @@ import { setOpenModal } from 'state/app/reducer';
 import { selectPosition } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { selectWallet } from 'state/wallet/selectors';
-import { BorderedPanel, YellowIconButton } from 'styles/common';
+import { BorderedPanel, YellowIconButton, PillButtonSpan } from 'styles/common';
 import { formatDollars } from 'utils/formatters/number';
 
 type Props = {
@@ -68,12 +68,23 @@ export default function TradePanelHeader({ accountType, onManageBalance, balance
 			<BalanceRow onClick={onManageBalance}>
 				<NumberDiv contrast="strong">{formatDollars(balance)}</NumberDiv>
 				<BalanceButton>
-					<SwitchAssetArrows />
+					<StyledPillButtonSpan>
+						<SwitchAssetArrows />
+					</StyledPillButtonSpan>
 				</BalanceButton>
 			</BalanceRow>
 		</Container>
 	);
 }
+
+const StyledPillButtonSpan = styled(PillButtonSpan)`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 20px;
+	width: 20px;
+	margin-left: 0;
+`;
 
 const DepositButton = styled(Button)`
 	height: 55px;
@@ -111,9 +122,6 @@ const BalanceButton = styled(YellowIconButton)`
 	display: flex;
 	gap: 8px;
 	align-items: center;
-	&:hover {
-		opacity: 0.7;
-	}
 `;
 
 const FAQLink = styled.div`
