@@ -127,7 +127,7 @@ export default function TradeConfirmationModal({
 			gasFee && gasFee.gt(0)
 				? {
 						label: 'network gas fee',
-						value: formatDollars(gasFee ?? zeroBN),
+						value: formatDollars(gasFee),
 				  }
 				: null,
 		],
