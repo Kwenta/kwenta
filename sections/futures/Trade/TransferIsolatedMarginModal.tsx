@@ -66,12 +66,12 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 
 	const balanceStatus: BalanceStatus = useMemo(
 		() =>
-			susdBalance.lte(zeroBN)
+			accessibleMargin.gt(zeroBN) || susdBalance.gt(minDeposit)
+				? 'high_balance'
+				: susdBalance.eq(zeroBN)
 				? 'no_balance'
-				: susdBalance.lt(minDeposit)
-				? 'low_balance'
-				: 'high_balance',
-		[minDeposit, susdBalance]
+				: 'low_balance',
+		[accessibleMargin, minDeposit, susdBalance]
 	);
 
 	useEffect(() => {
@@ -134,13 +134,13 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 			isOpen
 			onDismiss={onDismiss}
 		>
-			{accessibleMargin.gt(zeroBN) || balanceStatus === 'high_balance' ? (
+			{balanceStatus === 'high_balance' ? (
 				<StyledSegmentedControl
 					values={['Deposit', 'Withdraw']}
 					selectedIndex={transferType}
 					onChange={onChangeTab}
 				/>
-			) : !wallet || balanceStatus === 'no_balance' ? (
+			) : balanceStatus === 'no_balance' ? (
 				<Disclaimer>{t('futures.market.trade.margin.modal.bridge.no-balance')}</Disclaimer>
 			) : (
 				<Disclaimer>{t('futures.market.trade.margin.modal.bridge.low-balance')}</Disclaimer>
