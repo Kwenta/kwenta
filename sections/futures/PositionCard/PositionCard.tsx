@@ -1,7 +1,6 @@
 import Wei from '@synthetixio/wei';
-import React, { useMemo, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import PreviewArrow from 'components/PreviewArrow';
@@ -13,16 +12,18 @@ import { useFuturesContext } from 'contexts/FuturesContext';
 import useAverageEntryPrice from 'hooks/useAverageEntryPrice';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { PositionSide } from 'queries/futures/types';
+import { PositionSide } from 'sdk/types/futures';
+import { setOpenModal } from 'state/app/reducer';
+import { selectOpenModal } from 'state/app/selectors';
 import {
 	selectMarketAsset,
 	selectMarketKey,
 	selectPosition,
 	selectTradePreview,
 	selectFuturesType,
+	selectSelectedMarketPositionHistory,
 } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
-import { positionHistoryState } from 'store/futures';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FlexDivCentered, FlexDivCol, PillButtonDiv } from 'styles/common';
 import media from 'styles/media';
 import { isFiatCurrency } from 'utils/currencies';
@@ -70,29 +71,23 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 	const { synthsMap } = Connector.useContainer();
 	const { marketAssetRate } = useFuturesContext();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+	const dispatch = useAppDispatch();
 
 	const futuresAccountType = useAppSelector(selectFuturesType);
 	const position = useAppSelector(selectPosition);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const marketKey = useAppSelector(selectMarketKey);
-	const positionHistory = useRecoilValue(positionHistoryState);
 	const previewTradeData = useAppSelector(selectTradePreview);
+	const thisPositionHistory = useAppSelector(selectSelectedMarketPositionHistory);
+	const openModal = useAppSelector(selectOpenModal);
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketKey);
 
 	const positionDetails = position?.position ?? null;
-
-	const [showEditLeverage, setShowEditLeverage] = useState(false);
 
 	const minDecimals =
 		isFiatCurrency(selectedPriceCurrency.name) && isDecimalFour(marketKey)
 			? DEFAULT_CRYPTO_DECIMALS
 			: undefined;
-
-	const thisPositionHistory = useMemo(() => {
-		return positionHistory[futuresAccountType].find(
-			({ asset, isOpen }) => isOpen && asset === marketAsset
-		);
-	}, [positionHistory, marketAsset, futuresAccountType]);
 
 	const modifiedAverage = useAverageEntryPrice(thisPositionHistory);
 
@@ -273,12 +268,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 
 	return (
 		<>
-			{showEditLeverage && (
-				<EditLeverageModal
-					editMode="existing_position"
-					onDismiss={() => setShowEditLeverage(false)}
-				/>
-			)}
+			{openModal === 'futures_cross_leverage' && <EditLeverageModal editMode="existing_position" />}
 
 			<Container id={isFuturesMarketClosed ? 'closed' : undefined}>
 				<DataCol>
@@ -391,7 +381,9 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 						<FlexDivCentered>
 							<StyledValue data-testid="position-card-leverage-value">{data.leverage}</StyledValue>
 							{position?.position && futuresAccountType === 'cross_margin' && (
-								<PillButtonDiv onClick={() => setShowEditLeverage(true)}>Edit</PillButtonDiv>
+								<PillButtonDiv onClick={() => dispatch(setOpenModal('futures_cross_leverage'))}>
+									Edit
+								</PillButtonDiv>
 							)}
 						</FlexDivCentered>
 					</InfoRow>

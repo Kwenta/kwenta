@@ -1,6 +1,6 @@
 import { wei } from '@synthetixio/wei';
 
-import { PositionSide } from 'sections/futures/types';
+import { PositionSide } from 'sdk/types/futures';
 import { calculateMarginDelta, FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
 
 const ETH_PRICE = 1500;

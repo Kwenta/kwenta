@@ -5,10 +5,10 @@ import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import { useFuturesContext } from 'contexts/FuturesContext';
+import { PositionSide } from 'sdk/types/futures';
 import PositionButtons from 'sections/futures/PositionButtons';
 import { FuturesMarketAsset, getMarketName } from 'utils/futures';
 
-import { PositionSide } from '../types';
 import LabelWithInput from './LabelWithInput';
 import PnLs from './PnLs';
 import ProfitDetails from './ProfitDetails';

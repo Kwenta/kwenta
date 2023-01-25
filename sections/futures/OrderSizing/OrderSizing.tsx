@@ -1,5 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import React, { ChangeEvent, useMemo, useState } from 'react';
+import React, { ChangeEvent, useMemo } from 'react';
 import styled from 'styled-components';
 
 import SwitchAssetArrows from 'assets/svg/futures/switch-arrows.svg';
@@ -7,6 +7,7 @@ import CustomInput from 'components/Input/CustomInput';
 import InputTitle from 'components/Input/InputTitle';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { editTradeSizeInput } from 'state/futures/actions';
+import { setSelectedInputDenomination } from 'state/futures/reducer';
 import {
 	selectMarketKey,
 	selectMarketAssetRate,
@@ -17,6 +18,7 @@ import {
 	selectOrderType,
 	selectLeverageSide,
 	selectFuturesType,
+	selectSelectedInputDenomination,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FlexDivRow } from 'styles/common';
@@ -43,10 +45,9 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	const marketAssetRate = useAppSelector(selectMarketAssetRate);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
 	const selectedLeverageSide = useAppSelector(selectLeverageSide);
+	const assetInputType = useAppSelector(selectSelectedInputDenomination);
 
 	const marketKey = useAppSelector(selectMarketKey);
-
-	const [assetInputType, setAssetInputType] = useState<'usd' | 'native'>('usd');
 
 	const tradePrice = useMemo(() => (orderPrice ? wei(orderPrice) : marketAssetRate), [
 		orderPrice,
@@ -119,7 +120,9 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 					disabled={isDisabled}
 					right={
 						<InputButton
-							onClick={() => setAssetInputType(assetInputType === 'usd' ? 'native' : 'usd')}
+							onClick={() =>
+								dispatch(setSelectedInputDenomination(assetInputType === 'usd' ? 'native' : 'usd'))
+							}
 						>
 							{assetInputType === 'usd' ? 'sUSD' : getDisplayAsset(marketKey)}{' '}
 							<span>{<SwitchAssetArrows />}</span>

@@ -10,7 +10,9 @@ import { NumberDiv } from 'components/Text/NumberLabel';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { FuturesAccountType } from 'queries/futures/subgraph';
 import { setOpenModal } from 'state/app/reducer';
-import { useAppDispatch } from 'state/hooks';
+import { selectPosition } from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { selectWallet } from 'state/wallet/selectors';
 import { BorderedPanel, YellowIconButton, PillButtonSpan } from 'styles/common';
 import { formatDollars } from 'utils/formatters/number';
 
@@ -24,8 +26,10 @@ export default function TradePanelHeader({ accountType, onManageBalance, balance
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
+	const position = useAppSelector(selectPosition);
+	const wallet = useAppSelector(selectWallet);
 
-	if (balance.eq(0)) {
+	if (!!wallet && balance.eq(0) && (!position || position?.remainingMargin.eq(0))) {
 		return (
 			<DepositButton
 				variant="yellow"

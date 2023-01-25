@@ -1,7 +1,6 @@
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { useNetwork } from 'wagmi';
 
@@ -10,7 +9,9 @@ import SunIcon from 'assets/svg/app/sun.svg';
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import { useAutoConnect } from 'hooks/useAutoConnect';
-import { currentThemeState } from 'store/ui';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { setTheme } from 'state/preferences/reducer';
+import { selectCurrentTheme } from 'state/preferences/selectors';
 
 import BalanceActions from './BalanceActions';
 import ConnectionDot from './ConnectionDot';
@@ -21,14 +22,16 @@ const WalletButtons: React.FC = () => {
 	const { t } = useTranslation();
 	const { isWalletConnected } = Connector.useContainer();
 	const { chain: network } = useNetwork();
-	const [currentTheme, setTheme] = useRecoilState(currentThemeState);
+	const dispatch = useAppDispatch();
+
+	const currentTheme = useAppSelector(selectCurrentTheme);
 	const { openConnectModal } = useConnectModal();
 	const { openChainModal } = useChainModal();
 
 	const ThemeIcon = currentTheme === 'dark' ? SunIcon : MoonIcon;
 
 	const toggleTheme = () => {
-		setTheme((curr) => (curr === 'light' ? 'dark' : 'light'));
+		dispatch(setTheme(currentTheme === 'light' ? 'dark' : 'light'));
 	};
 
 	useAutoConnect();

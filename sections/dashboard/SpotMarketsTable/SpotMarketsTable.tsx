@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import MarketBadge from 'components/Badge/MarketBadge';
@@ -18,14 +17,14 @@ import Connector from 'containers/Connector';
 import { Price } from 'queries/rates/types';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
 import { selectExchangeRates } from 'state/exchange/selectors';
+import { selectPreviousDayRates } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { pastRatesState } from 'store/futures';
 import { isDecimalFour, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
 const SpotMarketsTable: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const pastRates = useRecoilValue(pastRatesState);
+	const pastRates = useAppSelector(selectPreviousDayRates);
 	const exchangeRates = useAppSelector(selectExchangeRates);
 
 	const { synthsMap } = Connector.useContainer();

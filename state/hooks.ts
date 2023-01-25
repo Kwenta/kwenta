@@ -84,7 +84,7 @@ export const usePollAction = (
 
 export const useFetchAction = (
 	action: () => AsyncThunkAction<any, any, any>,
-	options?: { changeKeys?: any[]; disabled?: boolean }
+	options?: { dependencies?: any[]; disabled?: boolean }
 ) => {
 	const { providerReady } = Connector.useContainer();
 	const dispatch = useAppDispatch();
@@ -94,42 +94,5 @@ export const useFetchAction = (
 			dispatch(action());
 		}
 		// eslint-disable-next-line
-	}, [providerReady, options?.disabled, ...(options?.changeKeys || [])]);
+	}, [providerReady, options?.disabled, ...(options?.dependencies || [])]);
 };
-
-// TODO: Revisit this
-
-// export function usePolledRefetch() {
-// 	// TODO: Replace with redux
-// 	const futuresAccount = useRecoilValue(futuresAccountState);
-// 	const cmAccount = useAppSelector(selectCrossMarginBalanceInfo);
-
-// 	const refetchCMAccountOverview = useCallback(() => {
-// 		if (!futuresAccount?.crossMarginAddress)
-// 			return { freeMargin: '0', keeperEthBal: '0', allowance: '0' };
-// 		const existingMargin = cmAccount.freeMargin.toString();
-// 		return refetchWithComparator(
-// 			() => sdk.futures.getCrossMarginBalanceInfo(futuresAccount.crossMarginAddress!),
-// 			existingMargin,
-// 			(a, b) => {
-// 				return a?.freeMargin?.toString() === existingMargin;
-// 			}
-// 		);
-// 	}, [
-// 		futuresAccount?.crossMarginAddress,
-// 		cmAccount.freeMargin,
-// 		sdk.futures.getCrossMarginBalanceInfo,
-// 	]);
-
-// 	const handleRefetch = useCallback(
-// 		(event: string) => {
-// 			switch (event) {
-// 				case 'cm-margin-changed':
-// 					refetchCMAccountOverview();
-// 			}
-// 		},
-// 		[refetchCMAccountOverview]
-// 	);
-
-// 	return handleRefetch;
-// }

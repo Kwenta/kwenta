@@ -1,4 +1,5 @@
 import { getAddress, isAddress } from 'ethers/lib/utils';
+import DOMPurify from 'isomorphic-dompurify';
 import { useRouter } from 'next/router';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
@@ -11,6 +12,9 @@ import useENSs from 'hooks/useENSs';
 import { AccountStat } from 'queries/futures/types';
 import useLeaderboard, { DEFAULT_LEADERBOARD_DATA } from 'queries/futures/useLeaderboard';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
+import { setSelectedTrader } from 'state/futures/reducer';
+import { selectSelectedTrader } from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FlexDivCol } from 'styles/common';
 import media from 'styles/media';
 
@@ -32,15 +36,17 @@ enum LeaderboardTab {
 const LEADERBOARD_TABS = [LeaderboardTab.Top, LeaderboardTab.Bottom];
 
 const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps) => {
+	const router = useRouter();
+	const dispatch = useAppDispatch();
+
 	const [activeTab, setActiveTab] = useState<LeaderboardTab>(LeaderboardTab.Top);
 	const [activeTier, setActiveTier] = useState<Tier>('bronze');
 	const [competitionRound, setCompetitionRound] = useState<CompetitionRound>();
 	const [searchInput, setSearchInput] = useState('');
 	const [searchTerm, setSearchTerm] = useState('');
 	const [searchAddress, setSearchAddress] = useState('');
-	const [selectedTrader, setSelectedTrader] = useState('');
+	const selectedTrader = useAppSelector(selectSelectedTrader);
 	const searchEns = useENS(searchTerm);
-	const router = useRouter();
 
 	const leaderboardQuery = useLeaderboard(searchAddress);
 	const leaderboardData = useMemo(() => leaderboardQuery.data ?? DEFAULT_LEADERBOARD_DATA, [
@@ -68,22 +74,27 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 			: [];
 	}, [leaderboardData.wallet]);
 
+	const urlPath = DOMPurify.sanitize(router.asPath);
+	const trader = DOMPurify.sanitize(router.query.trader as string);
+	const compRound =
+		router.query.competitionRound && typeof router.query.competitionRound === 'string'
+			? (DOMPurify.sanitize(router.query.competitionRound) as CompetitionRound)
+			: null;
+
 	useMemo(() => {
-		if (router.asPath.startsWith(ROUTES.Leaderboard.Home) && router.query.trader) {
-			const trader = router.query.trader as string;
-			setSelectedTrader(trader);
-		} else if (router.asPath.startsWith(ROUTES.Leaderboard.Home) && router.query.competitionRound) {
-			const round = router.query.competitionRound as CompetitionRound;
-			setCompetitionRound(round);
+		if (urlPath.startsWith(ROUTES.Leaderboard.Home) && trader) {
+			dispatch(setSelectedTrader(trader));
+		} else if (urlPath.startsWith(ROUTES.Leaderboard.Home) && compRound) {
+			setCompetitionRound(compRound);
 		} else {
 			setSearchInput('');
 			setSearchTerm('');
 			setSearchAddress('');
-			setSelectedTrader('');
+			dispatch(setSelectedTrader(undefined));
 			setCompetitionRound(null);
 		}
 		return null;
-	}, [router.query, router.asPath]);
+	}, [compRound, trader, urlPath, dispatch]);
 
 	const onChangeSearch = async (text: string) => {
 		setSearchInput(text?.toLowerCase());
@@ -177,7 +188,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }: LeaderboardProps
 					</SearchBarContainer>
 				</SearchContainer>
 				<TableContainer compact={compact}>
-					{!compact && selectedTrader !== '' ? (
+					{!compact && selectedTrader ? (
 						<TraderHistory
 							trader={selectedTrader}
 							ensInfo={ensInfo}

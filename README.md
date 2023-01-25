@@ -16,7 +16,8 @@ The latest IPFS hash can be found under [releases](https://github.com/Kwenta/kwe
 - Next.js
 - React
 - React Query
-- Recoil
+- Kwenta SDK
+- Redux
 - Unstated-next
 - Styled-Components
 

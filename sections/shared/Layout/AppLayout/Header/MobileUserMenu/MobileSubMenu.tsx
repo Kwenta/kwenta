@@ -1,14 +1,14 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import ChevronDown from 'assets/svg/app/chevron-down.svg';
 import ChevronUp from 'assets/svg/app/chevron-up.svg';
 import Badge from 'components/Badge';
 import ROUTES from 'constants/routes';
-import { currentThemeState } from 'store/ui';
+import { useAppSelector } from 'state/hooks';
+import { selectCurrentTheme } from 'state/preferences/selectors';
 import { ThemeName } from 'styles/theme';
 
 import { SubMenuLink } from '../constants';
@@ -43,7 +43,7 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
 
-	const currentTheme = useRecoilValue(currentThemeState);
+	const currentTheme = useAppSelector(selectCurrentTheme);
 
 	return (
 		<>

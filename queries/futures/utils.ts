@@ -7,7 +7,8 @@ import { chain } from 'wagmi';
 import { ETH_UNIT } from 'constants/network';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
-import { FuturesOrderTypeDisplay } from 'sdk/types/futures';
+import { PositionSide } from 'sdk/types/futures';
+import { PositionHistory } from 'state/futures/types';
 import { formatDollars, weiFromWei } from 'utils/formatters/number';
 import { FuturesMarketAsset } from 'utils/futures';
 
@@ -15,17 +16,12 @@ import { SECONDS_PER_DAY, FUTURES_ENDPOINTS } from './constants';
 import {
 	CrossMarginAccountTransferResult,
 	FuturesMarginTransferResult,
-	FuturesOrderType,
 	FuturesPositionResult,
-	FuturesTradeResult,
 } from './subgraph';
 import {
 	FuturesOpenInterest,
 	FuturesOneMinuteStat,
-	PositionSide,
-	PositionHistory,
 	FundingRateUpdate,
-	FuturesTrade,
 	MarginTransfer,
 } from './types';
 
@@ -39,10 +35,6 @@ export const getFuturesMarketContract = (asset: string | null, contracts: Contra
 	const contract = contracts[contractName];
 	if (!contract) throw new Error(`${contractName} for ${asset} does not exist`);
 	return contract;
-};
-
-const mapOrderType = (orderType: Partial<FuturesOrderType>): FuturesOrderTypeDisplay => {
-	return orderType === 'StopMarket' ? 'Stop Market' : orderType;
 };
 
 type MarketSizes = {
@@ -311,39 +303,6 @@ export const mapFuturesPositions = (
 				avgEntryPrice: weiFromWei(avgEntryPrice),
 				leverage: marginWei.eq(wei(0)) ? wei(0) : sizeWei.mul(entryPriceWei).div(marginWei).abs(),
 				side: sizeWei.gte(wei(0)) ? PositionSide.LONG : PositionSide.SHORT,
-			};
-		}
-	);
-};
-
-export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] => {
-	return futuresTrades?.map(
-		({
-			id,
-			timestamp,
-			size,
-			price,
-			asset,
-			positionSize,
-			positionClosed,
-			pnl,
-			feesPaid,
-			orderType,
-			accountType,
-		}: FuturesTradeResult) => {
-			return {
-				asset,
-				accountType,
-				size: new Wei(size, 18, true),
-				price: new Wei(price, 18, true),
-				txnHash: id.split('-')[0].toString(),
-				timestamp: timestamp,
-				positionSize: new Wei(positionSize, 18, true),
-				positionClosed,
-				side: size.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
-				pnl: new Wei(pnl, 18, true),
-				feesPaid: new Wei(feesPaid, 18, true),
-				orderType: mapOrderType(orderType),
 			};
 		}
 	);

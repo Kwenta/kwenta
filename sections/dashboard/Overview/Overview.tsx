@@ -1,7 +1,6 @@
 import Wei from '@synthetixio/wei';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { erc20ABI, useContractRead } from 'wagmi';
 
@@ -23,7 +22,6 @@ import {
 	selectFuturesPortfolio,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { activePositionsTabState } from 'store/ui';
 import { formatDollars, toWei, weiFromWei, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
@@ -51,8 +49,8 @@ const Overview: FC = () => {
 	const isolatedPositionsCount = useAppSelector(selectActiveIsolatedPositionsCount);
 	const crossPositionsCount = useAppSelector(selectActiveCrossPositionsCount);
 
-	const [activePositionsTab, setActivePositionsTab] = useRecoilState<PositionsTab>(
-		activePositionsTabState
+	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(
+		PositionsTab.CROSS_MARGIN
 	);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 

@@ -3,28 +3,32 @@ import { BigNumber } from 'ethers';
 import { parseBytes32String } from 'ethers/lib/utils.js';
 
 import { ETH_UNIT } from 'constants/network';
-import { FuturesAggregateStatResult } from 'queries/futures/subgraph';
+import {
+	FuturesAggregateStatResult,
+	FuturesOrderType,
+	FuturesTradeResult,
+} from 'queries/futures/subgraph';
 import { FUTURES_ENDPOINTS, MAINNET_MARKETS, TESTNET_MARKETS } from 'sdk/constants/futures';
 import { SECONDS_PER_DAY } from 'sdk/constants/period';
 import {
+	CrossMarginOrderType,
 	FundingRateUpdate,
 	FuturesMarketAsset,
 	FuturesMarketKey,
 	FuturesOrder,
+	FuturesOrderTypeDisplay,
 	FuturesPosition,
 	FuturesPotentialTradeDetails,
+	FuturesTrade,
 	FuturesVolumes,
+	IsolatedMarginOrderType,
 	MarketClosureReason,
 	PositionDetail,
 	PositionSide,
 	PostTradeDetailsResponse,
 	PotentialTradeStatus,
 } from 'sdk/types/futures';
-import {
-	CrossMarginOrderType,
-	CrossMarginSettings,
-	IsolatedMarginOrderType,
-} from 'state/futures/types';
+import { CrossMarginSettings } from 'state/futures/types';
 import { formatCurrency, formatDollars, zeroBN } from 'utils/formatters/number';
 import { MarketAssetByKey } from 'utils/futures';
 import logError from 'utils/logError';
@@ -86,7 +90,7 @@ export const marketsForNetwork = (networkId: number) => {
 		case 420:
 			return TESTNET_MARKETS;
 		default:
-			logError('Futures is not supported on this network.');
+			logError(new Error('Futures is not supported on this network.'));
 			return [];
 	}
 };
@@ -303,7 +307,6 @@ export const mapFuturesOrderFromEvent = (
 	const marketKey = parseBytes32String(orderDetails.marketKey) as FuturesMarketKey;
 	const asset = MarketAssetByKey[marketKey];
 	const sizeDelta = wei(orderDetails.sizeDelta);
-
 	const size = sizeDelta.abs();
 	return {
 		contractId: orderDetails.id,
@@ -326,4 +329,41 @@ export const mapFuturesOrderFromEvent = (
 		isStale: false,
 		isExecutable: false,
 	};
+};
+
+const mapOrderType = (orderType: Partial<FuturesOrderType>): FuturesOrderTypeDisplay => {
+	return orderType === 'StopMarket' ? 'Stop Market' : orderType;
+};
+
+export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] => {
+	return futuresTrades?.map(
+		({
+			id,
+			timestamp,
+			size,
+			price,
+			asset,
+			positionSize,
+			positionClosed,
+			pnl,
+			feesPaid,
+			orderType,
+			accountType,
+		}: FuturesTradeResult) => {
+			return {
+				asset,
+				accountType,
+				size: new Wei(size, 18, true),
+				price: new Wei(price, 18, true),
+				txnHash: id.split('-')[0].toString(),
+				timestamp: timestamp,
+				positionSize: new Wei(positionSize, 18, true),
+				positionClosed,
+				side: size.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
+				pnl: new Wei(pnl, 18, true),
+				feesPaid: new Wei(feesPaid, 18, true),
+				orderType: mapOrderType(orderType),
+			};
+		}
+	);
 };

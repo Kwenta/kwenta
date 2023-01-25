@@ -1,16 +1,13 @@
 import { useMemo } from 'react';
-import { useRecoilState } from 'recoil';
 
 import { useGetFuturesTradersStats } from 'queries/futures/useGetFuturesTradersStats';
 import { useGetStatsVolumes } from 'queries/futures/useGetStatsVolumes';
 import { selectMarkets } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { selectedTimeframeState } from 'store/stats';
 
 export type StatsTimeframe = '1M' | '1Y' | 'MAX';
 
 const useStatsData = () => {
-	const [selectedTimeframe, setSelectedTimeframe] = useRecoilState(selectedTimeframeState);
 	const futuresMarkets = useAppSelector(selectMarkets);
 
 	const { data: volumeData, isLoading: volumeIsLoading } = useGetStatsVolumes();
@@ -31,8 +28,6 @@ const useStatsData = () => {
 		tradersData,
 		tradersIsLoading,
 		openInterestData,
-		selectedTimeframe,
-		setSelectedTimeframe,
 	};
 };
 

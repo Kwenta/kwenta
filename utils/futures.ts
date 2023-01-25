@@ -1,11 +1,17 @@
-import { NetworkId, NetworkNameById, Synth } from '@synthetixio/contracts-interface';
+import { Synth } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { TFunction } from 'i18next';
 import { Dictionary } from 'lodash';
 
 import { FuturesOrderType } from 'queries/futures/types';
-import { FuturesMarket, FuturesOrder, FuturesPosition, FuturesVolumes } from 'sdk/types/futures';
-import { PositionSide } from 'sections/futures/types';
+import {
+	FuturesMarket,
+	FuturesOrder,
+	FuturesPosition,
+	FuturesTrade,
+	FuturesVolumes,
+	PositionSide,
+} from 'sdk/types/futures';
 import {
 	CrossMarginBalanceInfo,
 	CrossMarginSettings,
@@ -14,9 +20,9 @@ import {
 	FundingRate,
 	FundingRateSerialized,
 	IsolatedMarginTradeInputs,
+	PositionHistory,
 	TransactionEstimation,
 } from 'state/futures/types';
-import logError from 'utils/logError';
 
 import { formatNumber, zeroBN } from './formatters/number';
 
@@ -270,20 +276,6 @@ export const testnetMarkets = marketsList.filter(
 	(m) => m.supports === 'testnet' || m.supports === 'both'
 );
 
-export const marketsForNetwork = (networkId: NetworkId) => {
-	const network = NetworkNameById[networkId];
-
-	switch (network) {
-		case 'mainnet-ovm':
-			return mainnetMarkets;
-		case 'goerli-ovm':
-			return testnetMarkets;
-		default:
-			logError('You cannot use futures on this network.');
-			return [];
-	}
-};
-
 export const orderPriceInvalidLabel = (
 	orderPrice: string,
 	leverageSide: PositionSide,
@@ -437,12 +429,12 @@ export const serializeCmBalanceInfo = (
 };
 
 export const unserializeCmBalanceInfo = (
-	overview: CrossMarginBalanceInfo<string>
+	balanceInfo: CrossMarginBalanceInfo<string>
 ): CrossMarginBalanceInfo<Wei> => {
 	return {
-		freeMargin: wei(overview.freeMargin),
-		keeperEthBal: wei(overview.keeperEthBal),
-		allowance: wei(overview.allowance),
+		freeMargin: wei(balanceInfo.freeMargin),
+		keeperEthBal: wei(balanceInfo.keeperEthBal),
+		allowance: wei(balanceInfo.allowance),
 	};
 };
 
@@ -546,3 +538,71 @@ export const serializeTradeFees = (fees: CrossMarginTradeFees) => ({
 	limitStopOrderFee: fees.limitStopOrderFee.toString(),
 	total: fees.total.toString(),
 });
+
+export const serializePositionHistory = (
+	positions: PositionHistory[]
+): PositionHistory<string>[] => {
+	return positions.map((p) => ({
+		...p,
+		size: p.size.toString(),
+		feesPaid: p.feesPaid.toString(),
+		netFunding: p.netFunding.toString(),
+		netTransfers: p.netTransfers.toString(),
+		totalDeposits: p.totalDeposits.toString(),
+		initialMargin: p.initialMargin.toString(),
+		margin: p.margin.toString(),
+		entryPrice: p.entryPrice.toString(),
+		exitPrice: p.exitPrice.toString(),
+		pnl: p.pnl.toString(),
+		pnlWithFeesPaid: p.pnlWithFeesPaid.toString(),
+		totalVolume: p.totalVolume.toString(),
+		avgEntryPrice: p.avgEntryPrice.toString(),
+		leverage: p.leverage.toString(),
+	}));
+};
+
+export const unserializePositionHistory = (
+	positions: PositionHistory<string>[]
+): PositionHistory[] => {
+	return positions.map((p) => ({
+		...p,
+		size: wei(p.size),
+		feesPaid: wei(p.feesPaid),
+		netFunding: wei(p.netFunding),
+		netTransfers: wei(p.netTransfers),
+		totalDeposits: wei(p.totalDeposits),
+		initialMargin: wei(p.initialMargin),
+		margin: wei(p.margin),
+		entryPrice: wei(p.entryPrice),
+		exitPrice: wei(p.exitPrice),
+		pnl: wei(p.pnl),
+		pnlWithFeesPaid: wei(p.pnlWithFeesPaid),
+		totalVolume: wei(p.totalVolume),
+		avgEntryPrice: wei(p.avgEntryPrice),
+		leverage: wei(p.leverage),
+	}));
+};
+
+export const serializeTrades = (trades: FuturesTrade[]): FuturesTrade<string>[] => {
+	return trades.map((t) => ({
+		...t,
+		size: t.size.toString(),
+		price: t.price.toString(),
+		timestamp: t.timestamp.toString(),
+		positionSize: t.positionSize.toString(),
+		pnl: t.pnl.toString(),
+		feesPaid: t.feesPaid.toString(),
+	}));
+};
+
+export const unserializeTrades = (trades: FuturesTrade<string>[]): FuturesTrade<Wei>[] => {
+	return trades.map((t) => ({
+		...t,
+		size: wei(t.size),
+		price: wei(t.price),
+		timestamp: wei(t.timestamp),
+		positionSize: wei(t.positionSize),
+		pnl: wei(t.pnl),
+		feesPaid: wei(t.feesPaid),
+	}));
+};
