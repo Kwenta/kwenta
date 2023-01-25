@@ -62,29 +62,13 @@ const NetworksSwitcher: FC = () => {
 	const networkIcon = (prefixIcon: string) => {
 		switch (prefixIcon) {
 			case 'Polygon':
-				return (
-					<PrefixIcon>
-						<PolygonIcon width={20} height={14} />
-					</PrefixIcon>
-				);
+				return <PolygonIcon width={20} height={14} />;
 			case 'Arbitrum One':
-				return (
-					<PrefixIcon>
-						<ArbitrumIcon width={20} height={14} />
-					</PrefixIcon>
-				);
+				return <ArbitrumIcon width={20} height={14} />;
 			case 'Ethereum':
-				return (
-					<PrefixIcon>
-						<EthereumIcon width={20} height={14} />
-					</PrefixIcon>
-				);
+				return <EthereumIcon width={20} height={14} />;
 			default:
-				return (
-					<PrefixIcon>
-						<OptimismIcon width={20} height={14} />
-					</PrefixIcon>
-				);
+				return <OptimismIcon width={20} height={14} />;
 		}
 	};
 
@@ -97,7 +81,7 @@ const NetworksSwitcher: FC = () => {
 	}: ReactSelectOptionProps) => (
 		<ExternalLink href={link} onClick={onClick}>
 			<LabelContainer noPadding={!!prefixIcon}>
-				{!!prefixIcon && activeChain && networkIcon(activeChain.name)}
+				{!!prefixIcon && activeChain && <PrefixIcon>{networkIcon(activeChain.name)}</PrefixIcon>}
 				{t(label)}
 				{postfixIcon &&
 					(postfixIcon === 'Link' ? <LinkIcon width={14} height={14} /> : <SwitchIcon />)}
@@ -108,7 +92,7 @@ const NetworksSwitcher: FC = () => {
 	return !isL2 ? (
 		<Container onClick={openChainModal}>
 			<StyledButton noOutline size="sm">
-				{activeChain && networkIcon(activeChain.name)}
+				{activeChain && <PrefixIcon>{networkIcon(activeChain.name)}</PrefixIcon>}
 				{activeChain?.name}
 			</StyledButton>
 		</Container>
