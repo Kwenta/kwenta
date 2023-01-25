@@ -134,16 +134,16 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 			isOpen
 			onDismiss={onDismiss}
 		>
-			{!wallet || balanceStatus === 'no_balance' ? (
-				<Disclaimer>{t('futures.market.trade.margin.modal.bridge.no-balance')}</Disclaimer>
-			) : balanceStatus === 'low_balance' ? (
-				<Disclaimer>{t('futures.market.trade.margin.modal.bridge.low-balance')}</Disclaimer>
-			) : (
+			{accessibleMargin.gt(zeroBN) || balanceStatus === 'high_balance' ? (
 				<StyledSegmentedControl
 					values={['Deposit', 'Withdraw']}
 					selectedIndex={transferType}
 					onChange={onChangeTab}
 				/>
+			) : !wallet || balanceStatus === 'no_balance' ? (
+				<Disclaimer>{t('futures.market.trade.margin.modal.bridge.no-balance')}</Disclaimer>
+			) : (
+				<Disclaimer>{t('futures.market.trade.margin.modal.bridge.low-balance')}</Disclaimer>
 			)}
 			<StyledCardHeader onClick={onChangeShowSocket} noBorder={openSocket}>
 				<BalanceText>{t('futures.market.trade.margin.modal.bridge.title')}</BalanceText>
