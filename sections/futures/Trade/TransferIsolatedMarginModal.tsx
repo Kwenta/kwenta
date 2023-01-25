@@ -23,7 +23,6 @@ import {
 	selectPosition,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { selectWallet } from 'state/wallet/selectors';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 
 type Props = {
@@ -43,7 +42,6 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
-	const wallet = useAppSelector(selectWallet);
 	const position = useAppSelector(selectPosition);
 	const submitting = useAppSelector(selectIsSubmittingIsolatedTransfer);
 	const txError = useAppSelector(selectIsolatedTransferError);
