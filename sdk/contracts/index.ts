@@ -39,6 +39,7 @@ import {
 	KwentaStakingRewards__factory,
 	VKwentaRedeemer__factory,
 	StakingRewards__factory,
+	VeKwentaRedeemer__factory,
 } from './types';
 
 type ContractFactory = {
@@ -138,7 +139,7 @@ export const getContractsByNetwork = (
 			? VKwentaRedeemer__factory.connect(ADDRESSES.vKwentaRedeemer[networkId], provider)
 			: undefined,
 		veKwentaRedeemer: ADDRESSES.veKwentaRedeemer[networkId]
-			? VKwentaRedeemer__factory.connect(ADDRESSES.veKwentaRedeemer[networkId], provider)
+			? VeKwentaRedeemer__factory.connect(ADDRESSES.veKwentaRedeemer[networkId], provider)
 			: undefined,
 	};
 };
