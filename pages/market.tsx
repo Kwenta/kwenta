@@ -65,12 +65,6 @@ const Market: MarketComponent = () => {
 						<MarketInfo />
 						<StyledRightSideContent>
 							<TradePanelDesktop walletAddress={walletAddress} account={account} />
-							{openModal === 'futures_isolated_transfer' && (
-								<TransferIsolatedMarginModal
-									defaultTab="deposit"
-									onDismiss={() => dispatch(setOpenModal(null))}
-								/>
-							)}
 						</StyledRightSideContent>
 					</StyledFullHeightContainer>
 					<GitHashID />
@@ -80,6 +74,12 @@ const Market: MarketComponent = () => {
 				{walletAddress && account.status === 'initial-fetch' ? <Loader /> : <MobileTrade />}
 				<GitHashID />
 			</MobileOrTabletView>
+			{openModal === 'futures_isolated_transfer' && (
+				<TransferIsolatedMarginModal
+					defaultTab="deposit"
+					onDismiss={() => dispatch(setOpenModal(null))}
+				/>
+			)}
 		</FuturesContext.Provider>
 	);
 };

@@ -91,6 +91,11 @@ export const BridgeContainer = styled.div`
 	.bg-widget-primary {
 		border: ${(props) => props.theme.colors.selectedTheme.border};
 	}
+
+	span.ml-2 {
+		font-size: 17px;
+		font-family: ${(props) => props.theme.fonts.bold};
+	}
 `;
 
 export const StyledDiv = styled.div`
