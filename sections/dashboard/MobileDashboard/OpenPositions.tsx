@@ -5,9 +5,9 @@ import { SetterOrUpdater } from 'recoil';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
-import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
 import { TabPanel } from 'components/Tab';
 import { FuturesAccountTypes } from 'queries/futures/types';
+import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
 import { selectBalances } from 'state/balances/selectors';
 import {
 	// selectCrossMarginPositions,

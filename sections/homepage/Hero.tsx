@@ -5,7 +5,6 @@ import styled from 'styled-components';
 
 import MarketOrderPreview from 'assets/png/marketing/market-order-preview.png';
 import Button from 'components/Button';
-import { StackSection } from 'sections/homepage/section';
 import { FlexDivColCentered } from 'components/layout/flex';
 import { GridDiv } from 'components/layout/grid';
 import PoweredBySynthetix from 'components/PoweredBySynthetix';
@@ -13,6 +12,7 @@ import * as Text from 'components/Text';
 import Webp from 'components/Webp';
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import ROUTES from 'constants/routes';
+import { StackSection } from 'sections/homepage/section';
 import media from 'styles/media';
 
 const Hero = () => {

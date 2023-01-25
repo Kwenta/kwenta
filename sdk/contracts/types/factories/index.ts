@@ -16,6 +16,7 @@ export { MultipleMerkleDistributor__factory } from "./MultipleMerkleDistributor_
 export { PerpsV2Market__factory } from "./PerpsV2Market__factory";
 export { PerpsV2MarketData__factory } from "./PerpsV2MarketData__factory";
 export { PerpsV2MarketSettings__factory } from "./PerpsV2MarketSettings__factory";
+export { Pyth__factory } from "./Pyth__factory";
 export { ReverseRecords__factory } from "./ReverseRecords__factory";
 export { RewardEscrow__factory } from "./RewardEscrow__factory";
 export { StakingRewards__factory } from "./StakingRewards__factory";

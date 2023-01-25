@@ -11,7 +11,7 @@ import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
 import { selectMarketKey } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { CapitalizedText, NumericValue } from 'styles/common';
+import { NumericValue } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
 
 type TradesHistoryTableProps = {

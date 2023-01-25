@@ -7,8 +7,8 @@ import Button from 'components/Button';
 import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import SegmentedControl from 'components/SegmentedControl';
-import { StakingCard } from 'sections/dashboard/Stake/card';
 import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
+import { StakingCard } from 'sections/dashboard/Stake/card';
 import { numericValueCSS } from 'styles/common';
 import { toWei, truncateNumbers } from 'utils/formatters/number';
 
