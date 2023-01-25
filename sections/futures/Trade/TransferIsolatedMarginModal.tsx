@@ -143,11 +143,15 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 			) : (
 				<Disclaimer>{t('futures.market.trade.margin.modal.bridge.low-balance')}</Disclaimer>
 			)}
-			<StyledCardHeader onClick={onChangeShowSocket} noBorder={openSocket}>
-				<BalanceText>{t('futures.market.trade.margin.modal.bridge.title')}</BalanceText>
-				{openSocket ? <CaretUpIcon /> : <CaretDownIcon />}
-			</StyledCardHeader>
-			{openSocket ? <SocketBridge /> : <Spacer height={20} />}
+			{transferType === 0 && (
+				<>
+					<StyledCardHeader onClick={onChangeShowSocket} noBorder={openSocket}>
+						<BalanceText>{t('futures.market.trade.margin.modal.bridge.title')}</BalanceText>
+						{openSocket ? <CaretUpIcon /> : <CaretDownIcon />}
+					</StyledCardHeader>
+					{openSocket ? <SocketBridge /> : <Spacer height={20} />}
+				</>
+			)}
 			<BalanceContainer>
 				<BalanceText>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
 				<BalanceText>
