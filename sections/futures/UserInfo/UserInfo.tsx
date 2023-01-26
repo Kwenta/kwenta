@@ -27,6 +27,7 @@ import { FetchStatus } from 'state/types';
 import { selectWallet } from 'state/wallet/selectors';
 
 import PositionCard from '../PositionCard';
+import EmptyPositionCard from '../PositionCard/EmptyPositionCard';
 import ProfitCalculator from '../ProfitCalculator';
 import ShareModal from '../ShareModal';
 import Trades from '../Trades';
@@ -192,7 +193,7 @@ const UserInfo: React.FC = () => {
 			</TabButtonsContainer>
 
 			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}>
-				<PositionCard />
+				{position?.position ? <PositionCard /> : <EmptyPositionCard />}
 				<FuturesPositionsTable accountType={accountType} showCurrentMarket={false} />
 			</TabPanel>
 			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}>

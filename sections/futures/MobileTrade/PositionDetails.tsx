@@ -1,11 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { SectionHeader, SectionSeparator, SectionTitle } from 'sections/futures/mobile';
+import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
 import { selectPosition } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 
 import PositionCard from '../PositionCard';
+import EmptyPositionCard from '../PositionCard/EmptyPositionCard';
 
 const PositionDetails = () => {
 	const position = useAppSelector(selectPosition);
@@ -18,7 +19,12 @@ const PositionDetails = () => {
 			<PositionCard />
 		</PositionDetailsContainer>
 	) : (
-		<SectionSeparator />
+		<PositionDetailsContainer>
+			<SectionHeader>
+				<SectionTitle>Open Position</SectionTitle>
+			</SectionHeader>
+			<EmptyPositionCard />
+		</PositionDetailsContainer>
 	);
 };
 

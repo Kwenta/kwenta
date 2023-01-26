@@ -684,6 +684,10 @@
 					"avg-entry-price": "The average price at which the position was opened"
 				}
 			},
+			"empty-position-card": {
+				"no-position": "No Open Position",
+				"explore-markets": "Explore available Markets"
+			},
 			"state": {
 				"opens-soon": "opens soon",
 				"closes-soon": "closes soon",
