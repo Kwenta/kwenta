@@ -37,8 +37,14 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer }) =
 
 	const onExecute = useCallback(
 		(order: DelayedOrder | undefined) => {
-			if (!order) return;
-			dispatch(executeDelayedOrder(order.marketAddress));
+			if (!order || !order.marketKey) return;
+			dispatch(
+				executeDelayedOrder({
+					marketKey: order.marketKey,
+					marketAddress: order.marketAddress,
+					isOffchain: order.isOffchain,
+				})
+			);
 		},
 		[dispatch]
 	);
