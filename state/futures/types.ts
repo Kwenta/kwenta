@@ -203,6 +203,12 @@ export type CancelDelayedOrderInputs = {
 	isOffchain: boolean;
 };
 
+export type ExecuteDelayedOrderInputs = {
+	marketKey: FuturesMarketKey;
+	marketAddress: string;
+	isOffchain: boolean;
+};
+
 export const futuresPositionKeys = new Set([
 	'remainingMargin',
 	'accessibleMargin',

@@ -84,7 +84,14 @@ const OpenOrdersTable: React.FC = () => {
 						);
 					},
 					onExecute: () => {
-						dispatch(executeDelayedOrder(o.marketAddress));
+						if (!o.marketKey) return null;
+						dispatch(
+							executeDelayedOrder({
+								marketKey: o.marketKey,
+								marketAddress: o.marketAddress,
+								isOffchain: o.isOffchain,
+							})
+						);
 					},
 				};
 				return order;
@@ -227,6 +234,11 @@ const OpenOrdersTable: React.FC = () => {
 												{t('futures.market.user.open-orders.actions.cancel')}
 											</CancelButton>
 										)}
+										{cellProps.row.original.show && cellProps.row.original.isExecutable && (
+											<EditButton onClick={cellProps.row.original.onExecute}>
+												{t('futures.market.user.open-orders.actions.execute')}
+											</EditButton>
+										)}
 									</div>
 								);
 							},
@@ -342,6 +354,11 @@ const EditButton = styled.button`
 	font-size: 12px;
 	padding-left: 12px;
 	padding-right: 12px;
+
+	&:hover {
+		background: ${(props) => props.theme.colors.selectedTheme.gray};
+		color: ${(props) => props.theme.colors.selectedTheme.white};
+	}
 `;
 
 const CancelButton = styled(EditButton)`

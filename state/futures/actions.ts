@@ -102,6 +102,7 @@ import {
 	CancelDelayedOrderInputs,
 	CrossMarginBalanceInfo,
 	CrossMarginSettings,
+	ExecuteDelayedOrderInputs,
 	FuturesTransactionType,
 	ModifyIsolatedPositionInputs,
 } from './types';
@@ -858,9 +859,9 @@ export const cancelDelayedOrder = createAsyncThunk<void, CancelDelayedOrderInput
 	}
 );
 
-export const executeDelayedOrder = createAsyncThunk<void, string, ThunkConfig>(
+export const executeDelayedOrder = createAsyncThunk<void, ExecuteDelayedOrderInputs, ThunkConfig>(
 	'futures/executeDelayedOrder',
-	async (marketAddress, { getState, dispatch, extra: { sdk } }) => {
+	async ({ marketKey, marketAddress, isOffchain }, { getState, dispatch, extra: { sdk } }) => {
 		const account = selectFuturesAccount(getState());
 		if (!account) throw new Error('No wallet connected');
 		try {
@@ -871,7 +872,9 @@ export const executeDelayedOrder = createAsyncThunk<void, string, ThunkConfig>(
 					hash: null,
 				})
 			);
-			const tx = await sdk.futures.executeDelayedOrder(marketAddress, account);
+			const tx = isOffchain
+				? await sdk.futures.executeDelayedOffchainOrder(marketKey, marketAddress, account)
+				: await sdk.futures.executeDelayedOrder(marketAddress, account);
 			dispatch(updateTransactionHash(tx.hash));
 			await tx.wait();
 			dispatch(fetchOpenOrders());
