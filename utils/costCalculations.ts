@@ -1,4 +1,4 @@
-import Wei, { wei } from '@synthetixio/wei';
+import Wei from '@synthetixio/wei';
 
 import { FuturesOrderType } from 'queries/futures/types';
 import { FuturesMarket } from 'sdk/types/futures';
@@ -94,5 +94,5 @@ export const computeMarketFee = (market: FuturesMarket | undefined, usdSizeDelta
 };
 
 export const sameSide = (a: Wei, b: Wei) => {
-	return a.gt(wei(0)) === b.gt(wei(0));
+	return a.gt(0) === b.gt(0);
 };

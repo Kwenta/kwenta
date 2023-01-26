@@ -78,7 +78,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 	}, [router.query, router.asPath]);
 
 	const onChangeSearch = (text: string) => {
-		setSearchInput(text?.toLowerCase());
+		setSearchInput(text.toLowerCase());
 
 		if (isAddress(text)) {
 			setSearchTerm(getAddress(text));

@@ -66,8 +66,8 @@ const FeeInfoBox: React.FC = () => {
 		() => (
 			<>
 				{nativeSizeDelta.abs().gt(0)
-					? formatPercent(orderFee ?? zeroBN)
-					: `${formatPercent(makerFee ?? zeroBN)} / ${formatPercent(takerFee ?? zeroBN)}`}
+					? formatPercent(orderFee)
+					: `${formatPercent(makerFee)} / ${formatPercent(takerFee)}`}
 			</>
 		),
 		[orderFee, makerFee, takerFee, nativeSizeDelta]

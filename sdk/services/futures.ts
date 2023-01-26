@@ -110,22 +110,16 @@ export default class FuturesService {
 		const filteredMarkets = (markets as PerpsV2MarketData.MarketSummaryStructOutput[]).filter(
 			(m) => {
 				const marketKey = parseBytes32String(m.key) as FuturesMarketKey;
-				const market = enabledMarkets.find((market) => {
-					return marketKey === market.key;
-				});
+				const market = enabledMarkets.find((market) => marketKey === market.key);
 				return !!market;
 			}
 		);
 
-		const marketKeys = filteredMarkets.map((m: any) => {
-			return m.key;
-		});
+		const marketKeys = filteredMarkets.map((m) => m.key);
 
-		const currentRoundIdCalls = marketKeys.map((key: string) =>
-			ExchangeRates.getCurrentRoundId(key)
-		);
+		const currentRoundIdCalls = marketKeys.map((key) => ExchangeRates.getCurrentRoundId(key));
 
-		const parametersCalls = marketKeys.map((key: string) => PerpsV2MarketSettings.parameters(key));
+		const parametersCalls = marketKeys.map((key) => PerpsV2MarketSettings.parameters(key));
 
 		const responses = await this.sdk.context.multicallProvider.all([
 			...currentRoundIdCalls,
@@ -311,11 +305,10 @@ export default class FuturesService {
 	public async getAverageFundingRates(markets: FuturesMarket[], prices: PricesMap, period: Period) {
 		const fundingRateInputs: FundingRateInput[] = markets.map(
 			({ asset, market, currentFundingRate }) => {
-				const price = prices[asset];
 				return {
 					marketAddress: market,
 					marketKey: MarketKeyByAsset[asset],
-					price: price,
+					price: prices[asset],
 					currentFundingRate: currentFundingRate,
 				};
 			}
@@ -364,12 +357,10 @@ export default class FuturesService {
 			this.futuresGqlEndpoint,
 			gql`
 			query fundingRateUpdates($minTimestamp: BigInt!) {
-				${fundingRateQueries.reduce((acc: string, curr: string) => {
-					return acc + curr;
-				})}
+				${fundingRateQueries.reduce((acc, curr) => acc + curr)}
 			}
 		`,
-			{ minTimestamp: minTimestamp }
+			{ minTimestamp }
 		);
 
 		const periodTitle = period === Period.ONE_HOUR ? '1H Funding Rate' : 'Funding Rate';

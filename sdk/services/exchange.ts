@@ -380,7 +380,7 @@ export default class ExchangeService {
 			ethers.utils.formatBytes32String('sUSD')
 		);
 
-		return wei(value) ?? wei(0);
+		return wei(value ?? 0);
 	}
 
 	public async approveSwap(quoteCurrencyKey: string, baseCurrencyKey: string) {
