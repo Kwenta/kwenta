@@ -2,9 +2,13 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import MobilePNLGraphicPNG from 'assets/png/mobile-pnl-graphic.png';
 import PNLGraphicPNG from 'assets/png/pnl-graphic.png';
 import BaseModal from 'components/BaseModal';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { FuturesPosition } from 'sdk/types/futures';
+import media from 'styles/media';
+import { FuturesMarketAsset } from 'utils/futures';
 
 import AmountContainer from './AmountContainer';
 import PositionMetadata from './PositionMetadata';
@@ -28,7 +32,12 @@ const ShareModal: FC<ShareModalProps> = ({ position, setShowShareModal }) => {
 				<ModalWindow>
 					<PNLGraphic id="pnl-graphic">
 						<PNLImageFrame>
-							<PNLImage src={PNLGraphicPNG} aria-label="pnl-graphic" />
+							<DesktopOnlyView>
+								<PNLImage src={PNLGraphicPNG} aria-label="pnl-graphic" />
+							</DesktopOnlyView>
+							<MobileOrTabletView>
+								<PNLImage src={MobilePNLGraphicPNG} aria-label="pnl-graphic" />
+							</MobileOrTabletView>
 						</PNLImageFrame>
 						<AmountContainer position={position} />
 						<PositionMetadata />
@@ -63,6 +72,10 @@ const PNLGraphic = styled.div`
 const ModalWindow = styled.div`
 	padding: 0px 25px;
 	box-shadow: 0 0 0.1px ${(props) => props.theme.colors.common.primaryGold};
+
+	${media.lessThan('md')`
+		padding: 0px 12px;
+	`}
 `;
 
 export default ShareModal;

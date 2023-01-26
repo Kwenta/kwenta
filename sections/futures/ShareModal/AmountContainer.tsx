@@ -5,6 +5,7 @@ import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { FuturesPosition, PositionSide } from 'sdk/types/futures';
 import { selectMarketAsset } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
+import media from 'styles/media';
 import { formatNumber, zeroBN } from 'utils/formatters/number';
 import { getMarketName, MarketKeyByAsset } from 'utils/futures';
 
@@ -57,6 +58,10 @@ const StyledPositionLeverage = styled.div`
 	flex-direction: column;
 	color: ${(props) => props.theme.colors.common.primaryGold};
 	font-size: 1.07vw;
+
+	${media.lessThan('md')`
+		font-size: 4vw;
+	`}
 `;
 
 const StyledPositionSide = styled.div`
@@ -66,6 +71,10 @@ const StyledPositionSide = styled.div`
 		props.className === 'long' ? props.theme.colors.green : props.theme.colors.red};
 
 	font-size: 1.07vw;
+
+	${media.lessThan('md')`
+		font-size: 4vw;
+	`}
 `;
 
 const StyledPositionDetails = styled.div`
@@ -77,11 +86,20 @@ const StyledPositionDetails = styled.div`
 	font-size: 1.07vw;
 
 	color: ${(props) => props.theme.colors.white};
+
+	${media.lessThan('md')`
+		font-size: 4vw;
+	`}
 `;
 
 const StyledPositionType = styled.div`
 	display: flex;
 	flex-direction: row;
+
+	${media.lessThan('md')`
+		align-items: center;
+		gap: 2vw;
+	`}
 `;
 
 const StyledAmount = styled.div`
@@ -100,12 +118,28 @@ const StyledAmount = styled.div`
 			props.className && parseFloat(props.className) > 0
 				? 'rgba(127, 212, 130, 0.35)'
 				: 'rgb(255, 4, 32, 0.35)'};
+
+	${media.lessThan('md')`
+		position: static;
+		font-size: 10vw;
+	`}
 `;
 
 const Container = styled.div`
 	position: absolute;
 	top: 6vw;
 	left: 2.02vw;
+
+	${media.lessThan('md')`
+		top: 50%;
+		transform: translateY(-110%);
+		left: 0;
+		right: 0;
+		display: flex;
+		flex-direction: column;
+		justify-items: center;
+		align-items: center;
+	`}
 `;
 
 export default AmountContainer;
