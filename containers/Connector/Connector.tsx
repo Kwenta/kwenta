@@ -11,7 +11,7 @@ import { useAppDispatch } from 'state/hooks';
 import { resetNetwork, setSigner } from 'state/wallet/actions';
 
 import { generateExplorerFunctions, getBaseUrl } from './blockExplorer';
-import { activeChains, wagmiClient } from './config';
+import { activeChainIds, wagmiClient } from './config';
 
 export let transactionNotifier = new BaseTN(wagmiClient.provider);
 export let blockExplorer = generateExplorerFunctions(getBaseUrl(10));
@@ -21,13 +21,11 @@ const useConnector = () => {
 	const { address, isConnected: isWalletConnected } = useAccount();
 	const [providerReady, setProviderReady] = useState(false);
 
-	const network = useMemo(
-		() =>
-			activeChains.includes(activeChain ?? chain.optimism)
-				? activeChain ?? chain.optimism
-				: chain.optimism,
-		[activeChain]
-	);
+	const network = useMemo(() => {
+		return activeChainIds.includes(activeChain?.id ?? chain.optimism.id)
+			? activeChain ?? chain.optimism
+			: chain.optimism;
+	}, [activeChain]);
 
 	const walletAddress = useMemo(() => address ?? null, [address]);
 
