@@ -16,7 +16,7 @@ import PositionType from 'sections/futures/PositionType';
 import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
 import { selectMarketAsset, selectMarkets, selectOpenOrders } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatCurrency, formatDollars, suggestedDecimals } from 'utils/formatters/number';
+import { formatCurrency, suggestedDecimals } from 'utils/formatters/number';
 import { FuturesMarketKey, getDisplayAsset } from 'utils/futures';
 
 import OrderDrawer from '../MobileTrade/drawers/OrderDrawer';
@@ -66,6 +66,15 @@ const OpenOrdersTable: React.FC = () => {
 							(o.isOffchain
 								? market.settings.offchainDelayedOrderMaxAge
 								: market.settings.maxDelayTimeDelta),
+					isFailed:
+						timer &&
+						market?.settings &&
+						timer.timeToExecution === 0 &&
+						timer.timePastExecution >
+							DEFAULT_DELAYED_EXECUTION_BUFFER +
+								(o.isOffchain
+									? market.settings.offchainDelayedOrderMaxAge
+									: market.settings.maxDelayTimeDelta),
 					isExecutable:
 						timer &&
 						market?.settings &&
@@ -107,11 +116,9 @@ const OpenOrdersTable: React.FC = () => {
 	}, [openOrders, futuresMarkets, marketAsset, countdownTimers, dispatch]);
 
 	useEffect(() => {
-		const timer = setInterval(() => {
+		const updateTimers = () => {
 			const newCountdownTimers = rowsData.reduce((acc, order) => {
-				const timeToExecution =
-					Math.floor((order.executableAtTimestamp - Date.now()) / 1000) +
-					DEFAULT_DELAYED_EXECUTION_BUFFER;
+				const timeToExecution = Math.floor((order.executableAtTimestamp - Date.now()) / 1000);
 				const timePastExecution = Math.floor((Date.now() - order.executableAtTimestamp) / 1000);
 
 				// Only updated delayed orders
@@ -124,6 +131,10 @@ const OpenOrdersTable: React.FC = () => {
 				return acc;
 			}, {} as CountdownTimers);
 			setCountdownTimers(newCountdownTimers);
+		};
+
+		const timer = setInterval(() => {
+			updateTimers();
 		}, 1000);
 
 		return () => clearInterval(timer);
@@ -203,38 +214,40 @@ const OpenOrdersTable: React.FC = () => {
 						},
 						{
 							Header: (
-								<TableHeader>
-									{t('futures.market.user.open-orders.table.commit-deposit')}
-								</TableHeader>
+								<TableHeader>{t('futures.market.user.open-orders.table.status')}</TableHeader>
 							),
-							accessor: 'marginDelta',
+							accessor: 'status',
 							Cell: (cellProps: CellProps<any>) => {
-								const { totalDeposit } = cellProps.row.original;
-								return <div>{formatDollars(totalDeposit?.gt(0) ? totalDeposit : '0')}</div>;
+								return (
+									<div>
+										{cellProps.row.original.show &&
+											(cellProps.row.original.isStale ? (
+												<div>{t('futures.market.user.open-orders.status.expired')}</div>
+											) : cellProps.row.original.isFailed ? (
+												<div>{t('futures.market.user.open-orders.status.failed')}</div>
+											) : (
+												<div>{t('futures.market.user.open-orders.status.pending')}</div>
+											))}
+									</div>
+								);
 							},
 							sortable: true,
 							width: 50,
 						},
 						{
 							Header: (
-								<TableHeader>{t('futures.market.user.open-orders.table.status')}</TableHeader>
+								<TableHeader>{t('futures.market.user.open-orders.table.actions')}</TableHeader>
 							),
 							accessor: 'actions',
 							Cell: (cellProps: CellProps<any>) => {
 								return (
-									<div style={{ display: 'flex', alignItems: 'center' }}>
-										{cellProps.row.original.show &&
-											(cellProps.row.original.isStale ? (
-												<div>{t('futures.market.user.open-orders.status.expired')}</div>
-											) : (
-												<div>{t('futures.market.user.open-orders.status.pending')}</div>
-											))}
+									<div>
 										{cellProps.row.original.show && cellProps.row.original.isStale && (
 											<CancelButton onClick={cellProps.row.original.onCancel}>
 												{t('futures.market.user.open-orders.actions.cancel')}
 											</CancelButton>
 										)}
-										{cellProps.row.original.show && cellProps.row.original.isExecutable && (
+										{cellProps.row.original.show && cellProps.row.original.isFailed && (
 											<EditButton onClick={cellProps.row.original.onExecute}>
 												{t('futures.market.user.open-orders.actions.execute')}
 											</EditButton>

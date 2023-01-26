@@ -920,6 +920,7 @@
 						"price": "Price",
 						"parameters": "Parameters",
 						"status": "Status",
+						"actions": "Actions",
 						"no-result": "You have no open orders",
 						"open-filter": "Only show open orders"
 					},
@@ -930,7 +931,8 @@
 					},
 					"status": {
 						"pending": "Pending",
-						"expired": "Expired"
+						"expired": "Expired",
+						"failed": "Failed to execute"
 					},
 					"badges": {
 						"expired": "Expired"
