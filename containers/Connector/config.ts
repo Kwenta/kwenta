@@ -83,6 +83,11 @@ export const wagmiClient = createClient({
 	provider,
 });
 
-export const activeChains = [chain.optimism, chain.mainnet, chain.optimismGoerli, chain.goerli];
+export const activeChainIds = [
+	chain.optimism.id,
+	chain.mainnet.id,
+	chain.optimismGoerli.id,
+	chain.goerli.id,
+];
 
 export { chains };
