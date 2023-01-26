@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components';
 
 import Badge from 'components/Badge';
 import Currency from 'components/Currency';
+import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { DEFAULT_DELAYED_EXECUTION_BUFFER } from 'constants/defaults';
@@ -14,7 +15,13 @@ import { PositionSide } from 'queries/futures/types';
 import { DelayedOrder } from 'sdk/types/futures';
 import PositionType from 'sections/futures/PositionType';
 import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
-import { selectMarketAsset, selectMarkets, selectOpenOrders } from 'state/futures/selectors';
+import {
+	selectIsCancellingOrder,
+	selectIsExecutingOrder,
+	selectMarketAsset,
+	selectMarkets,
+	selectOpenOrders,
+} from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatCurrency, suggestedDecimals } from 'utils/formatters/number';
 import { FuturesMarketKey, getDisplayAsset } from 'utils/futures';
@@ -36,6 +43,8 @@ const OpenOrdersTable: React.FC = () => {
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const futuresMarkets = useAppSelector(selectMarkets);
+	const isCancelling = useAppSelector(selectIsCancellingOrder);
+	const isExecuting = useAppSelector(selectIsExecutingOrder);
 
 	const isL2 = useIsL2();
 	const openOrders = useAppSelector(selectOpenOrders);
@@ -73,8 +82,8 @@ const OpenOrdersTable: React.FC = () => {
 						timer.timePastExecution >
 							DEFAULT_DELAYED_EXECUTION_BUFFER +
 								(o.isOffchain
-									? market.settings.offchainDelayedOrderMaxAge
-									: market.settings.maxDelayTimeDelta),
+									? market.settings.offchainDelayedOrderMinAge
+									: market.settings.minDelayTimeDelta),
 					isExecutable:
 						timer &&
 						market?.settings &&
@@ -145,6 +154,7 @@ const OpenOrdersTable: React.FC = () => {
 			<DesktopOnlyView>
 				<StyledTable
 					data={rowsData}
+					columnsDeps={[isCancelling, isExecuting]}
 					highlightRowsOnHover
 					showPagination
 					noResultsMessage={
@@ -242,16 +252,25 @@ const OpenOrdersTable: React.FC = () => {
 							Cell: (cellProps: CellProps<any>) => {
 								return (
 									<div>
-										{cellProps.row.original.show && cellProps.row.original.isStale && (
-											<CancelButton onClick={cellProps.row.original.onCancel}>
-												{t('futures.market.user.open-orders.actions.cancel')}
-											</CancelButton>
-										)}
-										{cellProps.row.original.show && cellProps.row.original.isFailed && (
-											<EditButton onClick={cellProps.row.original.onExecute}>
-												{t('futures.market.user.open-orders.actions.execute')}
-											</EditButton>
-										)}
+										{cellProps.row.original.show &&
+											cellProps.row.original.isStale &&
+											(isCancelling ? (
+												<ButtonLoader />
+											) : (
+												<CancelButton onClick={cellProps.row.original.onCancel}>
+													{t('futures.market.user.open-orders.actions.cancel')}
+												</CancelButton>
+											))}
+										{cellProps.row.original.show &&
+											!cellProps.row.original.isStale &&
+											cellProps.row.original.isFailed &&
+											(isExecuting ? (
+												<ButtonLoader />
+											) : (
+												<EditButton onClick={cellProps.row.original.onExecute}>
+													{t('futures.market.user.open-orders.actions.execute')}
+												</EditButton>
+											))}
 									</div>
 								);
 							},
@@ -376,10 +395,8 @@ const EditButton = styled.button`
 
 const CancelButton = styled(EditButton)`
 	opacity: ${(props) => (props.disabled ? 0.4 : 1)};
-	margin-left: 8px;
 	border: 1px solid ${(props) => props.theme.colors.selectedTheme.red};
 	color: ${(props) => props.theme.colors.selectedTheme.red};
-	margin-right: 8px;
 
 	&:hover {
 		background: ${(props) => props.theme.colors.selectedTheme.red};

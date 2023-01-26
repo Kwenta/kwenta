@@ -294,6 +294,22 @@ export const selectIsModifyingIsolatedPosition = createSelector(
 	}
 );
 
+export const selectIsCancellingOrder = createSelector(
+	selectSubmittingFuturesTx,
+	(state: RootState) => state.futures,
+	(submitting, futures) => {
+		return futures.transaction?.type === 'cancel_delayed_isolated' && submitting;
+	}
+);
+
+export const selectIsExecutingOrder = createSelector(
+	selectSubmittingFuturesTx,
+	(state: RootState) => state.futures,
+	(submitting, futures) => {
+		return futures.transaction?.type === 'execute_delayed_isolated' && submitting;
+	}
+);
+
 export const selectIsMarketCapReached = createSelector(
 	(state: RootState) => state.futures[accountType(state.futures.selectedType)].leverageSide,
 	selectMarketInfo,
