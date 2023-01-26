@@ -1,6 +1,6 @@
 {
 	"name": "kwenta",
-	"version": "6.0.3-alpha",
+	"version": "6.0.5-alpha",
 	"scripts": {
 		"dev": "next",
 		"build": "next build",
@@ -36,6 +36,7 @@
 		"@rainbow-me/rainbowkit": "0.8.0",
 		"@reach/dialog": "0.15.0",
 		"@reduxjs/toolkit": "^1.8.5",
+		"@socket.tech/plugin": "^1.0.3",
 		"@sentry/browser": "^7.28.0",
 		"@sentry/tracing": "^7.28.0",
 		"@synthetixio/contracts-interface": "2.76.3",

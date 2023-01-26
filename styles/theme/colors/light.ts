@@ -132,6 +132,9 @@ const lightTheme = {
 	chartLine: {
 		long: common.light.green,
 	},
+	socket: {
+		accent: `#d5d5d5`,
+	},
 };
 
 export default lightTheme;

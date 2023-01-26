@@ -135,6 +135,9 @@ const darkTheme = {
 	chartLine: {
 		long: '#37A141',
 	},
+	socket: {
+		accent: `#252525`,
+	},
 };
 
 export default darkTheme;

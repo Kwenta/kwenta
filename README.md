@@ -12,6 +12,10 @@ ENS link: [kwenta.eth](https://app.ens.domains/name/kwenta.eth).
 
 The latest IPFS hash can be found under [releases](https://github.com/Kwenta/kwenta/releases).
 
+## Contributing
+
+Kwenta welcomes contributors. Regardless of the time you have available, everyone can provide meaningful contributions to the project by submitting bug reports, feature requests or even the smallest of fixes! To submit your contribution, please fork, fix, commit and create a pull-request describing your work in detail. For more details, please have a look at the [Contribution guidelines](CONTRIBUTING.md).
+
 ## Tech stack
 
 - Next.js
@@ -52,6 +56,7 @@ Required:
 - `NEXT_PUBLIC_PROVIDER_ID` - Specifies the default provider, options are `INFURA` or `BLAST_API`
 - `NEXT_PUBLIC_INFURA_PROJECT_ID` - Infura project id (get it from [infura.io](https://infura.io/)) or
 - `NEXT_PUBLIC_BLASTAPI_PROJECT_ID` - Blast API project id (get it from [blastapi.io](https://blastapi.io/))
+- `NEXT_PUBLIC_SOCKET_API_KEY` - Socket API key (get it from [socket.tech](https://docs.socket.tech/socket-api/v2#api-key)
 
 ### Run
 
@@ -116,10 +121,6 @@ npm run build
 npm start
 npm run test:e2e:only:tests
 ```
-
-## Contributing
-
-Kwenta welcomes contributors. Regardless of the time you have available, everyone can provide meaningful contributions to the project by submitting bug reports, feature requests or even the smallest of fixes! To submit your contribution, please fork, fix, commit and create a pull-request describing your work in detail. For more details, please have a look at the [Contribution guidelines](CONTRIBUTING.md).
 
 ## Contact
 
