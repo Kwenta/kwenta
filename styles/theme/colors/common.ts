@@ -1,5 +1,7 @@
 // Common colors shared between themes.
 
+export const pallete = {};
+
 const common = {
 	primaryWhite: '#ECE8E3',
 	primaryGold: '#C9975B',
