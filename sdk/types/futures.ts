@@ -32,7 +32,7 @@ export type FuturesMarket<T = Wei> = {
 		makerFeeOffchainDelayedOrder: T;
 		takerFeeOffchainDelayedOrder: T;
 	};
-	openInterest?: {
+	openInterest: {
 		shortPct: number;
 		longPct: number;
 		shortUSD: T;

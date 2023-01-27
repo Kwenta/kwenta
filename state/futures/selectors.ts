@@ -27,7 +27,7 @@ import {
 	updatePositionUpnl,
 } from 'utils/futures';
 
-import { futuresPositionHistoryKeys, futuresPositionKeys } from './types';
+import { MarkPrices, futuresPositionHistoryKeys, futuresPositionKeys } from './types';
 
 export const selectFuturesType = (state: RootState) => state.futures.selectedType;
 
@@ -126,6 +126,19 @@ export const selectMarketPrices = createSelector(
 		return prices[marketAsset] ?? {};
 	}
 );
+
+export const selectMarkPrices = createSelector(selectMarkets, selectPrices, (markets, prices) => {
+	const markPrices: MarkPrices = {};
+	return markets.reduce((acc, market) => {
+		const price = prices[market.asset].offChain ?? wei(0);
+		return {
+			...acc,
+			[market.marketKey]: wei(price).mul(
+				wei(market.marketSkew).div(market.settings.skewScale).add(1)
+			),
+		};
+	}, markPrices);
+});
 
 export const selectFuturesAccount = createSelector(
 	selectFuturesType,
@@ -661,8 +674,7 @@ export const selectDelayedOrderFee = createSelector(
 
 export const selectOpenInterest = createSelector(selectMarkets, (futuresMarkets) =>
 	futuresMarkets.reduce(
-		(total, { openInterest }) =>
-			total.add(openInterest?.shortUSD ?? wei(0)).add(openInterest?.longUSD ?? wei(0)),
+		(total, { openInterest }) => total.add(openInterest.shortUSD).add(openInterest.longUSD),
 		wei(0)
 	)
 );

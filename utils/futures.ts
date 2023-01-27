@@ -302,13 +302,11 @@ export const serializeMarket = (market: FuturesMarket): FuturesMarket<string> =>
 			makerFeeOffchainDelayedOrder: market.feeRates.makerFeeOffchainDelayedOrder.toString(),
 			takerFeeOffchainDelayedOrder: market.feeRates.takerFeeOffchainDelayedOrder.toString(),
 		},
-		openInterest: market.openInterest
-			? {
-					...market.openInterest,
-					shortUSD: market.openInterest.shortUSD.toString(),
-					longUSD: market.openInterest.longUSD.toString(),
-			  }
-			: undefined,
+		openInterest: {
+			...market.openInterest,
+			shortUSD: market.openInterest.shortUSD.toString(),
+			longUSD: market.openInterest.longUSD.toString(),
+		},
 		marketDebt: market.marketDebt.toString(),
 		marketSkew: market.marketSkew.toString(),
 		marketSize: market.marketSize.toString(),
@@ -341,13 +339,11 @@ export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMar
 			makerFeeOffchainDelayedOrder: wei(m.feeRates.makerFeeOffchainDelayedOrder),
 			takerFeeOffchainDelayedOrder: wei(m.feeRates.takerFeeOffchainDelayedOrder),
 		},
-		openInterest: m.openInterest
-			? {
-					...m.openInterest,
-					shortUSD: wei(m.openInterest.shortUSD),
-					longUSD: wei(m.openInterest.longUSD),
-			  }
-			: undefined,
+		openInterest: {
+			...m.openInterest,
+			shortUSD: wei(m.openInterest.shortUSD),
+			longUSD: wei(m.openInterest.longUSD),
+		},
 		marketDebt: wei(m.marketDebt),
 		marketSkew: wei(m.marketSkew),
 		marketSize: wei(m.marketSize),

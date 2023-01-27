@@ -467,7 +467,7 @@
 			"futures-markets-table": {
 				"market": "Market",
 				"oracle": "Oracle",
-				"oracle-price": "Oracle Price",
+				"mark-price": "Mark Price",
 				"daily-change": "24H Change",
 				"funding-rate": "1H Funding Rate",
 				"open-interest": "Open Interest",
