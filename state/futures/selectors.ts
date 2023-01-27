@@ -344,7 +344,7 @@ export const selectMaxLeverage = createSelector(
 		const positionSide = position?.position?.side;
 		const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
 		const adjustedMaxLeverage =
-			orderType === 'delayed' || orderType === 'delayed offchain'
+			orderType === 'delayed' || orderType === 'delayedOffchain'
 				? marketMaxLeverage.mul(DEFAULT_NP_LEVERAGE_ADJUSTMENT)
 				: marketMaxLeverage;
 
@@ -478,10 +478,10 @@ export const selectPlaceOrderTranslationKey = createSelector(
 			remainingMargin = positionMargin.add(freeMargin);
 		}
 
-		if (orderType === 'delayed' || orderType === 'delayed offchain')
+		if (orderType === 'delayed' || orderType === 'delayedOffchain')
 			return 'futures.market.trade.button.place-delayed-order';
 		if (orderType === 'limit') return 'futures.market.trade.button.place-limit-order';
-		if (orderType === 'stop market') return 'futures.market.trade.button.place-stop-order';
+		if (orderType === 'stopMarket') return 'futures.market.trade.button.place-stop-order';
 		if (!!position?.position) return 'futures.market.trade.button.modify-position';
 		return remainingMargin.lt('50')
 			? 'futures.market.trade.button.deposit-margin-minimum'
@@ -610,7 +610,7 @@ export const selectCrossMarginSettings = createSelector(
 
 export const selectIsAdvancedOrder = createSelector(
 	(state: RootState) => state.futures.crossMargin.orderType,
-	(type) => type === 'limit' || type === 'stop market'
+	(type) => type === 'limit' || type === 'stopMarket'
 );
 
 export const selectModifyIsolatedGasEstimate = createSelector(
@@ -642,11 +642,11 @@ export const selectDelayedOrderFee = createSelector(
 		const notionalDiff = nativeSizeDelta.mul(price);
 
 		const makerFee =
-			orderType === 'delayed offchain'
+			orderType === 'delayedOffchain'
 				? market.feeRates.makerFeeOffchainDelayedOrder
 				: market.feeRates.makerFeeDelayedOrder;
 		const takerFee =
-			orderType === 'delayed offchain'
+			orderType === 'delayedOffchain'
 				? market.feeRates.takerFeeOffchainDelayedOrder
 				: market.feeRates.takerFeeDelayedOrder;
 

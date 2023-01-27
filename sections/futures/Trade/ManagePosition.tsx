@@ -101,7 +101,7 @@ const ManagePosition: React.FC = () => {
 			orderType
 		);
 
-		if ((orderType === 'limit' || orderType === 'stop market') && !!invalidReason)
+		if ((orderType === 'limit' || orderType === 'stopMarket') && !!invalidReason)
 			return invalidReason;
 		if (susdSize.gt(maxUsdInputAmount)) return 'max_size_exceeded';
 		if (placeOrderTranslationKey === 'futures.market.trade.button.deposit-margin-minimum')
@@ -111,7 +111,7 @@ const ManagePosition: React.FC = () => {
 				return 'awaiting_preview';
 			if (orderType !== 'market' && isZero(orderPrice)) return 'pricerequired';
 		} else if (selectedAccountType === 'isolated_margin') {
-			if ((orderType === 'delayed' || orderType === 'delayed offchain') && !!openOrder)
+			if ((orderType === 'delayed' || orderType === 'delayedOffchain') && !!openOrder)
 				return 'order_open';
 		} else if (isZero(susdSize)) {
 			return 'size_required';
@@ -162,7 +162,7 @@ const ManagePosition: React.FC = () => {
 						variant="danger"
 						onClick={() => {
 							if (
-								(orderType === 'delayed' || orderType === 'delayed offchain') &&
+								(orderType === 'delayed' || orderType === 'delayedOffchain') &&
 								position?.position?.size
 							) {
 								const newTradeSize = position.position.size;
@@ -198,7 +198,7 @@ const ManagePosition: React.FC = () => {
 			{isConfirmationModalOpen &&
 				(selectedAccountType === 'cross_margin' ? (
 					<TradeConfirmationModalCrossMargin />
-				) : orderType === 'delayed' || orderType === 'delayed offchain' ? (
+				) : orderType === 'delayed' || orderType === 'delayedOffchain' ? (
 					<DelayedOrderConfirmationModal />
 				) : (
 					<TradeConfirmationModalIsolatedMargin />

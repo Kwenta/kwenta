@@ -184,12 +184,12 @@ export const orderPriceInvalidLabel = (
 	if (!orderPrice || Number(orderPrice) <= 0) return null;
 	const isLong = leverageSide === 'long';
 	if (
-		((isLong && orderType === 'limit') || (!isLong && orderType === 'stop market')) &&
+		((isLong && orderType === 'limit') || (!isLong && orderType === 'stopMarket')) &&
 		wei(orderPrice).gt(currentPrice)
 	)
 		return 'max ' + formatNumber(currentPrice);
 	if (
-		((!isLong && orderType === 'limit') || (isLong && orderType === 'stop market')) &&
+		((!isLong && orderType === 'limit') || (isLong && orderType === 'stopMarket')) &&
 		wei(orderPrice).lt(currentPrice)
 	)
 		return 'min ' + formatNumber(currentPrice);

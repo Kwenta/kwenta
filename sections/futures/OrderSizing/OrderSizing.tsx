@@ -87,7 +87,7 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 
 	const showPosSizeHelper =
 		position?.position?.size &&
-		(orderType === 'limit' || orderType === 'stop market') &&
+		(orderType === 'limit' || orderType === 'stopMarket') &&
 		position?.position.side !== selectedLeverageSide;
 
 	const invalid =
