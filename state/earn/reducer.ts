@@ -16,6 +16,9 @@ const initialState: EarnState = {
 	stakeStatus: FetchStatus.Idle,
 	unstakeStatus: FetchStatus.Idle,
 	endDate: 0,
+	amount0: '0',
+	amount1: '0',
+	lpTotalSupply: '0',
 };
 
 const earnSlice = createSlice({
@@ -30,6 +33,9 @@ const earnSlice = createSlice({
 			state.totalSupply = action.payload.totalSupply;
 			state.lpTokenBalance = action.payload.lpTokenBalance;
 			state.allowance = action.payload.allowance;
+			state.amount0 = action.payload.amount0;
+			state.amount1 = action.payload.amount1;
+			state.lpTotalSupply = action.payload.lpTotalSupply;
 		},
 	},
 	extraReducers: (builder) => {

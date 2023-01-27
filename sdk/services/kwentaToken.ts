@@ -82,7 +82,9 @@ export default class KwentaTokenService {
 			totalSupply,
 			lpTokenBalance,
 			allowance,
-		]: BigNumber[] = await this.sdk.context.multicallProvider.all([
+			[amount0, amount1],
+			lpTotalSupply,
+		]: any[] = await this.sdk.context.multicallProvider.all([
 			StakingRewards.balanceOf(walletAddress),
 			StakingRewards.earned(walletAddress),
 			StakingRewards.periodFinish(),
@@ -90,6 +92,8 @@ export default class KwentaTokenService {
 			StakingRewards.totalSupply(),
 			KwentaArrakisVault.balanceOf(walletAddress),
 			KwentaArrakisVault.allowance(walletAddress, StakingRewards.address),
+			KwentaArrakisVault.getUnderlyingBalances(),
+			KwentaArrakisVault.totalSupply(),
 		]);
 
 		return {
@@ -100,6 +104,9 @@ export default class KwentaTokenService {
 			totalSupply: wei(totalSupply),
 			lpTokenBalance: wei(lpTokenBalance),
 			allowance: wei(allowance),
+			amount0: wei(amount0),
+			amount1: wei(amount1),
+			lpTotalSupply: wei(lpTotalSupply),
 		};
 	}
 

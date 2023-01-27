@@ -78,6 +78,9 @@ export const getEarnDetails = createAsyncThunk<void, string | undefined, ThunkCo
 			totalSupply,
 			lpTokenBalance,
 			allowance,
+			amount0,
+			amount1,
+			lpTotalSupply,
 		} = await sdk.kwentaToken.getEarnDetails();
 
 		dispatch({
@@ -90,6 +93,9 @@ export const getEarnDetails = createAsyncThunk<void, string | undefined, ThunkCo
 				totalSupply: totalSupply.toString(),
 				lpTokenBalance: lpTokenBalance.toString(),
 				allowance: allowance.toString(),
+				amount0: amount0.toString(),
+				amount1: amount1.toString(),
+				lpTotalSupply: lpTotalSupply.toString(),
 			},
 		});
 	}

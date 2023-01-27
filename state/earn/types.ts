@@ -11,4 +11,7 @@ export type EarnState = {
 	error?: string;
 	stakeStatus: FetchStatus;
 	unstakeStatus: FetchStatus;
+	amount0: string;
+	amount1: string;
+	lpTotalSupply: string;
 };
