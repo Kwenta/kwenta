@@ -3,7 +3,7 @@
 		"en": "English"
 	},
 	"meta": {
-		"description": "Gain exposure to cryptocurrencies, forex, indices, and commodities on Ethereum with zero slippage",
+		"description": "Gain exposure to cryptocurrencies, forex and commodities on Ethereum with zero slippage",
 		"og": {
 			"title": "Kwenta",
 			"site-name": "Kwenta"
@@ -52,7 +52,7 @@
 			"governance": {
 				"title": "Governance",
 				"overview": "Overview",
-				"kips": "KIPs"
+				"kips": "Kwenta State Log"
 			},
 			"socials": {
 				"title": "Socials",
@@ -70,9 +70,7 @@
 		"assets": {
 			"title": "UNIQUE MARKETS",
 			"description": "Backed by Chainlink Oracles",
-			"index": "Unique Indices",
 			"forex": "Forex",
-			"equities": "Traditional Equities",
 			"crypto": "Cryptocurrencies",
 			"commodity": "Commodities",
 			"short": "Short positions"
@@ -284,7 +282,7 @@
 				"governance": "Governance",
 				"dev-dao": "Dev DAO",
 				"marketing-dao": "Marketing DAO",
-				"kips": "KIPs"
+				"kips": "Kwenta State Log"
 			}
 		}
 	},
