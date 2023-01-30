@@ -39,7 +39,6 @@ import {
 	fetchPreviousDayRates,
 	fetchFuturesPositionHistory,
 	fetchPositionHistoryForTrader,
-	fetchFundingRates,
 	fetchTradesForSelectedMarket,
 	fetchAllTradesForAccount,
 	fetchIsolatedOpenOrders,
@@ -84,7 +83,6 @@ export const INITIAL_STATE: FuturesState = {
 		previousDayRates: DEFAULT_QUERY_STATUS,
 		positionHistory: DEFAULT_QUERY_STATUS,
 		selectedTraderPositionHistory: DEFAULT_QUERY_STATUS,
-		fetchFundingRates: DEFAULT_QUERY_STATUS,
 		trades: DEFAULT_QUERY_STATUS,
 	},
 	transactionEstimations: {} as TransactionEstimations,
@@ -555,21 +553,6 @@ const futuresSlice = createSlice({
 			futuresState.queryStatuses.selectedTraderPositionHistory = {
 				error: 'Failed to fetch traders position history',
 				status: FetchStatus.Error,
-			};
-		});
-
-		// Fetch funding rates
-		builder.addCase(fetchFundingRates.pending, (futuresState) => {
-			futuresState.queryStatuses.fetchFundingRates = LOADING_STATUS;
-		});
-		builder.addCase(fetchFundingRates.fulfilled, (futuresState, action) => {
-			futuresState.queryStatuses.fetchFundingRates = SUCCESS_STATUS;
-			futuresState.fundingRates = action.payload;
-		});
-		builder.addCase(fetchFundingRates.rejected, (futuresState) => {
-			futuresState.queryStatuses.fetchFundingRates = {
-				status: FetchStatus.Error,
-				error: 'Failed to fetch funding rates',
 			};
 		});
 

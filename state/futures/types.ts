@@ -43,7 +43,6 @@ export type FundingRate<T = Wei> = {
 
 export type FuturesQueryStatuses = {
 	markets: QueryStatus;
-	fetchFundingRates: QueryStatus;
 	crossMarginBalanceInfo: QueryStatus;
 	dailyVolumes: QueryStatus;
 	crossMarginPositions: QueryStatus;

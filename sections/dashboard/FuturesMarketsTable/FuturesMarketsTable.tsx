@@ -13,10 +13,8 @@ import Table, { TableHeader } from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
-import { FundingRateResponse } from 'sdk/types/futures';
 import { getDisplayAsset } from 'sdk/utils/futures';
 import {
-	selectAverageFundingRates,
 	selectFuturesType,
 	selectMarkets,
 	selectMarketVolumes,
@@ -32,7 +30,6 @@ const FuturesMarketsTable: FC = () => {
 	const { synthsMap } = Connector.useContainer();
 
 	const futuresMarkets = useAppSelector(selectMarkets);
-	const fundingRates = useAppSelector(selectAverageFundingRates);
 	const pastRates = useAppSelector(selectPreviousDayRates);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
 	const accountType = useAppSelector(selectFuturesType);
@@ -41,12 +38,9 @@ const FuturesMarketsTable: FC = () => {
 	let data = useMemo(() => {
 		return futuresMarkets.map((market) => {
 			const description = getSynthDescription(market.asset, synthsMap, t);
-			const volume = futuresVolumes[market.assetHex]?.volume;
+			const volume = futuresVolumes[market.marketKey]?.volume;
 			const pastPrice = pastRates.find((price) => price.synth === getDisplayAsset(market.asset));
 			const marketPrice = prices[market.asset]?.offChain ?? prices[market.asset]?.onChain ?? wei(0);
-			const fundingRate = fundingRates.find(
-				(funding) => (funding as FundingRateResponse)?.asset === MarketKeyByAsset[market.asset]
-			);
 
 			return {
 				asset: market.asset,
@@ -57,7 +51,7 @@ const FuturesMarketsTable: FC = () => {
 				volume: volume?.toNumber() ?? 0,
 				pastPrice: pastPrice?.price,
 				priceChange: pastPrice?.price && marketPrice.sub(pastPrice?.price).div(marketPrice),
-				fundingRate: fundingRate?.fundingRate?.div(marketPrice) ?? null,
+				fundingRate: market.currentFundingRate ?? null,
 				openInterest: market.marketSize.mul(marketPrice),
 				openInterestNative: market.marketSize,
 				longInterest: market.marketSize.add(market.marketSkew).div('2').abs().mul(marketPrice),
@@ -67,7 +61,7 @@ const FuturesMarketsTable: FC = () => {
 				marketClosureReason: market.marketClosureReason,
 			};
 		});
-	}, [synthsMap, futuresMarkets, pastRates, futuresVolumes, prices, t, fundingRates]);
+	}, [synthsMap, futuresMarkets, pastRates, futuresVolumes, prices, t]);
 
 	return (
 		<>

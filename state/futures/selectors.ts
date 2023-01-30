@@ -28,10 +28,9 @@ import {
 	unserializePositionHistory,
 	unserializeTrades,
 	unserializeFuturesOrders,
-	unserializeFundingRates,
 } from 'utils/futures';
 
-import { FundingRate, futuresPositionKeys } from './types';
+import { futuresPositionKeys } from './types';
 
 export const selectFuturesType = (state: RootState) => state.futures.selectedType;
 
@@ -129,19 +128,6 @@ export const selectMarketInfo = createSelector(
 	selectMarketKey,
 	(markets, selectedMarket) => {
 		return markets.find((market) => market.marketKey === selectedMarket);
-	}
-);
-
-export const selectAverageFundingRates = createSelector(
-	(state: RootState) => state.futures.fundingRates,
-	(fundingRates) => unserializeFundingRates(fundingRates)
-);
-
-export const selectFundingRate = createSelector(
-	selectMarketKey,
-	selectAverageFundingRates,
-	(marketKey, fundingRates) => {
-		return fundingRates.find((fundingRate: FundingRate) => fundingRate.asset === marketKey);
 	}
 );
 

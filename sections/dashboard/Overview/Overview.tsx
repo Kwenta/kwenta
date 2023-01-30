@@ -45,7 +45,7 @@ const Overview: FC = () => {
 	// const crossPositionsCount = useAppSelector(selectActiveCrossPositionsCount);
 
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(
-		PositionsTab.CROSS_MARGIN
+		PositionsTab.ISOLATED_MARGIN
 	);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 

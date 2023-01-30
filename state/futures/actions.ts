@@ -9,7 +9,6 @@ import { notifyError } from 'components/ErrorView/ErrorNotifier';
 import { ORDER_KEEPER_ETH_DEPOSIT } from 'constants/futures';
 import { FuturesAccountType } from 'queries/futures/types';
 import { Prices } from 'queries/rates/types';
-import { Period } from 'sdk/constants/period';
 import { TransactionStatus } from 'sdk/types/common';
 import {
 	CrossMarginOrderType,
@@ -42,7 +41,7 @@ import {
 import { fetchBalances } from 'state/balances/actions';
 import { ZERO_CM_FEES, ZERO_STATE_CM_TRADE_INPUTS } from 'state/constants';
 import { serializeWeiObject } from 'state/helpers';
-import { selectLatestEthPrice, selectPrices } from 'state/prices/selectors';
+import { selectLatestEthPrice } from 'state/prices/selectors';
 import { AppDispatch, AppThunk, RootState } from 'state/store';
 import { ThunkConfig } from 'state/types';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
@@ -118,7 +117,6 @@ import {
 	CancelDelayedOrderInputs,
 	CrossMarginBalanceInfo,
 	CrossMarginSettings,
-	FundingRate,
 	FuturesTransactionType,
 	ModifyIsolatedPositionInputs,
 } from './types';
@@ -148,24 +146,6 @@ export const fetchMarkets = createAsyncThunk<
 		throw err;
 	}
 });
-
-export const fetchFundingRates = createAsyncThunk<FundingRate<string>[], void, ThunkConfig>(
-	'futures/fetchFundingRates',
-	async (_, { getState, extra: { sdk } }) => {
-		const markets = selectMarkets(getState());
-		const prices = selectPrices(getState());
-		const averageFundingRates = await sdk.futures.getAverageFundingRates(
-			markets,
-			prices,
-			Period.ONE_HOUR
-		);
-		const seriailizedRates = averageFundingRates.map((r) => ({
-			...r,
-			fundingRate: r.fundingRate ? r.fundingRate.toString() : null,
-		}));
-		return seriailizedRates;
-	}
-);
 
 export const fetchCrossMarginBalanceInfo = createAsyncThunk<
 	{ balanceInfo: CrossMarginBalanceInfo<string>; account: string; network: NetworkId } | undefined,
@@ -362,7 +342,6 @@ export const fetchSharedFuturesData = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/fetchSharedFuturesData',
 	async (_, { dispatch }) => {
 		await dispatch(fetchMarkets());
-		dispatch(fetchFundingRates());
 		dispatch(fetchDailyVolumes());
 	}
 );
