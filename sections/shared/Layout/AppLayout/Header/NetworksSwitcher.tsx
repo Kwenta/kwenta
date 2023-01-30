@@ -6,6 +6,8 @@ import styled from 'styled-components';
 import LinkIcon from 'assets/svg/app/link-blue.svg';
 import SwitchIcon from 'assets/svg/app/switch.svg';
 import ArbitrumIcon from 'assets/svg/providers/arbitrum.svg';
+import AvalancheIcon from 'assets/svg/providers/avalanche.svg';
+import BinanceIcon from 'assets/svg/providers/binance.svg';
 import EthereumIcon from 'assets/svg/providers/ethereum.svg';
 import OptimismIcon from 'assets/svg/providers/optimism.svg';
 import PolygonIcon from 'assets/svg/providers/polygon.svg';
@@ -67,6 +69,10 @@ const NetworksSwitcher: FC = () => {
 				return <ArbitrumIcon width={20} height={14} />;
 			case 'Ethereum':
 				return <EthereumIcon width={20} height={14} />;
+			case 'Avalanche':
+				return <AvalancheIcon width={20} height={14} />;
+			case 'BNB Smart Chain':
+				return <BinanceIcon width={20} height={14} />;
 			default:
 				return <OptimismIcon width={20} height={14} />;
 		}
