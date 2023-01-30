@@ -56,7 +56,7 @@ const BannerContainer = styled.div<{ compact?: boolean; hideBanner?: boolean }>`
 	gap: 10px;
 `;
 
-const CompetitionPeriod = styled(Text.Body).attrs({ mono: true, variant: 'bold' })`
+const CompetitionPeriod = styled(Text.Body).attrs({ mono: true, weight: 'bold' })`
 	font-style: normal;
 	line-height: 10px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};

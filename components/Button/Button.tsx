@@ -1,3 +1,4 @@
+import { FC } from 'react';
 import styled, { css } from 'styled-components';
 
 // TODO: Clean up these styles
@@ -185,5 +186,11 @@ const Button = styled.button<ButtonProps>`
 		}
 	}
 `;
+
+type NewButtonProps = {};
+
+const NewButton: FC<NewButtonProps> = ({ children }) => {
+	return <Button>{children}</Button>;
+};
 
 export default Button;
