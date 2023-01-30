@@ -11,6 +11,7 @@ import ExchangeRatesABI from './abis/ExchangeRates.json';
 import FuturesMarketDataABI from './abis/FuturesMarketData.json';
 import FuturesMarketSettingsABI from './abis/FuturesMarketSettings.json';
 import KwentaStakingRewardsABI from './abis/KwentaStakingRewards.json';
+import PerpsV2MarketABI from './abis/PerpsV2Market.json';
 import PerpsV2MarketDataABI from './abis/PerpsV2MarketData.json';
 import PerpsV2MarketSettingsABI from './abis/PerpsV2MarketSettings.json';
 import StakingRewardsABI from './abis/StakingRewards.json';
@@ -51,6 +52,9 @@ export type AllContractsMap = Record<
 	ContractName,
 	{ addresses: Partial<Record<NetworkId, string>>; Factory: ContractFactory }
 >;
+
+export const getPerpsV2MarketMulticall = (marketAddress: string) =>
+	new EthCallContract(marketAddress, PerpsV2MarketABI);
 
 export const getContractsByNetwork = (
 	networkId: NetworkId,

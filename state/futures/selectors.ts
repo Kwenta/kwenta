@@ -27,7 +27,7 @@ import {
 	updatePositionUpnl,
 } from 'utils/futures';
 
-import { futuresPositionHistoryKeys, futuresPositionKeys } from './types';
+import { MarkPrices, futuresPositionHistoryKeys, futuresPositionKeys } from './types';
 
 export const selectFuturesType = (state: RootState) => state.futures.selectedType;
 
@@ -126,6 +126,19 @@ export const selectMarketPrices = createSelector(
 		return prices[marketAsset] ?? {};
 	}
 );
+
+export const selectMarkPrices = createSelector(selectMarkets, selectPrices, (markets, prices) => {
+	const markPrices: MarkPrices = {};
+	return markets.reduce((acc, market) => {
+		const price = prices[market.asset].offChain ?? wei(0);
+		return {
+			...acc,
+			[market.marketKey]: wei(price).mul(
+				wei(market.marketSkew).div(market.settings.skewScale).add(1)
+			),
+		};
+	}, markPrices);
+});
 
 export const selectFuturesAccount = createSelector(
 	selectFuturesType,
@@ -360,7 +373,7 @@ export const selectMaxLeverage = createSelector(
 		const positionSide = position?.position?.side;
 		const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
 		const adjustedMaxLeverage =
-			orderType === 'delayed' || orderType === 'delayed offchain'
+			orderType === 'delayed' || orderType === 'delayedOffchain'
 				? marketMaxLeverage.mul(DEFAULT_NP_LEVERAGE_ADJUSTMENT)
 				: marketMaxLeverage;
 
@@ -494,10 +507,10 @@ export const selectPlaceOrderTranslationKey = createSelector(
 			remainingMargin = positionMargin.add(freeMargin);
 		}
 
-		if (orderType === 'delayed' || orderType === 'delayed offchain')
+		if (orderType === 'delayed' || orderType === 'delayedOffchain')
 			return 'futures.market.trade.button.place-delayed-order';
 		if (orderType === 'limit') return 'futures.market.trade.button.place-limit-order';
-		if (orderType === 'stop market') return 'futures.market.trade.button.place-stop-order';
+		if (orderType === 'stopMarket') return 'futures.market.trade.button.place-stop-order';
 		if (!!position?.position) return 'futures.market.trade.button.modify-position';
 		return remainingMargin.lt('50')
 			? 'futures.market.trade.button.deposit-margin-minimum'
@@ -626,7 +639,7 @@ export const selectCrossMarginSettings = createSelector(
 
 export const selectIsAdvancedOrder = createSelector(
 	(state: RootState) => state.futures.crossMargin.orderType,
-	(type) => type === 'limit' || type === 'stop market'
+	(type) => type === 'limit' || type === 'stopMarket'
 );
 
 export const selectModifyIsolatedGasEstimate = createSelector(
@@ -658,11 +671,11 @@ export const selectDelayedOrderFee = createSelector(
 		const notionalDiff = nativeSizeDelta.mul(price);
 
 		const makerFee =
-			orderType === 'delayed offchain'
+			orderType === 'delayedOffchain'
 				? market.feeRates.makerFeeOffchainDelayedOrder
 				: market.feeRates.makerFeeDelayedOrder;
 		const takerFee =
-			orderType === 'delayed offchain'
+			orderType === 'delayedOffchain'
 				? market.feeRates.takerFeeOffchainDelayedOrder
 				: market.feeRates.takerFeeDelayedOrder;
 
@@ -677,8 +690,7 @@ export const selectDelayedOrderFee = createSelector(
 
 export const selectOpenInterest = createSelector(selectMarkets, (futuresMarkets) =>
 	futuresMarkets.reduce(
-		(total, { openInterest }) =>
-			total.add(openInterest?.shortUSD ?? wei(0)).add(openInterest?.longUSD ?? wei(0)),
+		(total, { openInterest }) => total.add(openInterest.shortUSD).add(openInterest.longUSD),
 		wei(0)
 	)
 );

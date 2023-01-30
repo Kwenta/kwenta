@@ -30,15 +30,15 @@ const SkewInfo: React.FC = () => {
 	const data = useMemo(() => {
 		return marketInfo?.openInterest
 			? {
-					short: marketInfo?.openInterest?.shortPct,
-					long: marketInfo?.openInterest?.longPct,
-					shortValue: marketInfo?.openInterest?.shortUSD,
-					longValue: marketInfo?.openInterest?.longUSD,
-					shortText: formatCurrency(marketAsset, marketInfo?.openInterest?.shortUSD, {
+					short: marketInfo?.openInterest.shortPct,
+					long: marketInfo?.openInterest.longPct,
+					shortValue: marketInfo?.openInterest.shortUSD,
+					longValue: marketInfo?.openInterest.longUSD,
+					shortText: formatCurrency(marketAsset, marketInfo?.openInterest.shortUSD, {
 						sign: '$',
 						minDecimals: 0,
 					}),
-					longText: formatCurrency(marketAsset, marketInfo?.openInterest?.longUSD, {
+					longText: formatCurrency(marketAsset, marketInfo?.openInterest.longUSD, {
 						sign: '$',
 						minDecimals: 0,
 					}),
