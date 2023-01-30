@@ -2,7 +2,6 @@ import { FC, memo } from 'react';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import NotificationContainer from 'constants/NotificationContainer';
-import { RefetchProvider } from 'contexts/RefetchContext';
 import { FullScreenContainer, MobileScreenContainer } from 'styles/common';
 
 import Header from './Header';
@@ -13,7 +12,7 @@ type AppLayoutProps = {
 };
 
 const AppLayout: FC<AppLayoutProps> = memo(({ children }) => (
-	<RefetchProvider>
+	<>
 		<DesktopOnlyView>
 			<FullScreenContainer>
 				<Header />
@@ -27,7 +26,7 @@ const AppLayout: FC<AppLayoutProps> = memo(({ children }) => (
 				<MobileUserMenu />
 			</MobileScreenContainer>
 		</MobileOrTabletView>
-	</RefetchProvider>
+	</>
 ));
 
 export default AppLayout;

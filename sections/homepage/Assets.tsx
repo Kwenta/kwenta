@@ -6,7 +6,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
 import Slider from 'react-slick';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import GridSvg from 'assets/svg/app/grid.svg';
@@ -19,12 +18,11 @@ import { CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
-import { selectMarketVolumes } from 'state/futures/selectors';
+import { selectMarketVolumes, selectPreviousDayRates } from 'state/futures/selectors';
 import { fetchOptimismMarkets } from 'state/home/actions';
 import { selectOptimismMarkets } from 'state/home/selectors';
 import { useAppSelector, usePollAction } from 'state/hooks';
 import { selectPrices } from 'state/prices/selectors';
-import { pastRatesState } from 'store/futures';
 import { SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media, { Media } from 'styles/media';
 import { getSynthDescription } from 'utils/futures';
@@ -146,8 +144,7 @@ const Assets = () => {
 
 	const prices = useAppSelector(selectPrices);
 	const futuresMarkets = useAppSelector(selectOptimismMarkets);
-
-	const pastRates = useRecoilValue(pastRatesState);
+	const pastRates = useAppSelector(selectPreviousDayRates);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
 	usePollAction('fetchOptimismMarkets', () => fetchOptimismMarkets(l2Provider));
 

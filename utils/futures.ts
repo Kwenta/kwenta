@@ -9,10 +9,12 @@ import {
 	FuturesMarket,
 	FuturesOrder,
 	FuturesPosition,
+	FuturesPositionHistory,
+	FuturesTrade,
 	FuturesVolumes,
+	PositionSide,
 } from 'sdk/types/futures';
 import { Prices, PricesMap } from 'sdk/types/prices';
-import { PositionSide } from 'sections/futures/types';
 import {
 	CrossMarginBalanceInfo,
 	CrossMarginSettings,
@@ -21,6 +23,7 @@ import {
 	IsolatedMarginTradeInputs,
 	TransactionEstimation,
 	futuresPositionKeys,
+	FundingRate,
 } from 'state/futures/types';
 import { deserializeWeiObject } from 'state/helpers';
 
@@ -374,12 +377,12 @@ export const serializeCmBalanceInfo = (
 };
 
 export const unserializeCmBalanceInfo = (
-	overview: CrossMarginBalanceInfo<string>
+	balanceInfo: CrossMarginBalanceInfo<string>
 ): CrossMarginBalanceInfo<Wei> => {
 	return {
-		freeMargin: wei(overview.freeMargin),
-		keeperEthBal: wei(overview.keeperEthBal),
-		allowance: wei(overview.allowance),
+		freeMargin: wei(balanceInfo.freeMargin),
+		keeperEthBal: wei(balanceInfo.keeperEthBal),
+		allowance: wei(balanceInfo.allowance),
 	};
 };
 
@@ -439,7 +442,6 @@ export const serializeFuturesOrders = (orders: FuturesOrder[]): FuturesOrder<str
 		targetPrice: o.targetPrice?.toString() ?? null,
 		marginDelta: o.marginDelta.toString(),
 		targetRoundId: o.targetRoundId?.toString() ?? null,
-		timestamp: o.timestamp.toString(),
 	}));
 };
 
@@ -474,7 +476,6 @@ export const unserializeFuturesOrders = (orders: FuturesOrder<string>[]): Future
 		targetPrice: o.targetPrice ? wei(o.targetPrice) : null,
 		marginDelta: wei(o.marginDelta),
 		targetRoundId: o.targetRoundId ? wei(o.targetRoundId) : null,
-		timestamp: wei(o.timestamp),
 	}));
 };
 
@@ -515,4 +516,76 @@ export const serializePrices = (prices: PricesMap) => {
 		acc[key as FuturesMarketAsset] = price.toString();
 		return acc;
 	}, {});
+};
+
+export const serializePositionHistory = (
+	positions: FuturesPositionHistory[]
+): FuturesPositionHistory<string>[] => {
+	return positions.map((p) => ({
+		...p,
+		size: p.size.toString(),
+		feesPaid: p.feesPaid.toString(),
+		netFunding: p.netFunding.toString(),
+		netTransfers: p.netTransfers.toString(),
+		totalDeposits: p.totalDeposits.toString(),
+		initialMargin: p.initialMargin.toString(),
+		margin: p.margin.toString(),
+		entryPrice: p.entryPrice.toString(),
+		exitPrice: p.exitPrice.toString(),
+		pnl: p.pnl.toString(),
+		pnlWithFeesPaid: p.pnlWithFeesPaid.toString(),
+		totalVolume: p.totalVolume.toString(),
+		avgEntryPrice: p.avgEntryPrice.toString(),
+		leverage: p.leverage.toString(),
+	}));
+};
+
+export const unserializePositionHistory = (
+	positions: FuturesPositionHistory<string>[]
+): FuturesPositionHistory[] => {
+	return positions.map((p) => ({
+		...p,
+		size: wei(p.size),
+		feesPaid: wei(p.feesPaid),
+		netFunding: wei(p.netFunding),
+		netTransfers: wei(p.netTransfers),
+		totalDeposits: wei(p.totalDeposits),
+		initialMargin: wei(p.initialMargin),
+		margin: wei(p.margin),
+		entryPrice: wei(p.entryPrice),
+		exitPrice: wei(p.exitPrice),
+		pnl: wei(p.pnl),
+		pnlWithFeesPaid: wei(p.pnlWithFeesPaid),
+		totalVolume: wei(p.totalVolume),
+		avgEntryPrice: wei(p.avgEntryPrice),
+		leverage: wei(p.leverage),
+	}));
+};
+
+export const serializeTrades = (trades: FuturesTrade[]): FuturesTrade<string>[] => {
+	return trades.map((t) => ({
+		...t,
+		size: t.size.toString(),
+		price: t.price.toString(),
+		timestamp: t.timestamp.toString(),
+		positionSize: t.positionSize.toString(),
+		pnl: t.pnl.toString(),
+		feesPaid: t.feesPaid.toString(),
+	}));
+};
+
+export const unserializeTrades = (trades: FuturesTrade<string>[]): FuturesTrade<Wei>[] => {
+	return trades.map((t) => ({
+		...t,
+		size: wei(t.size),
+		price: wei(t.price),
+		timestamp: wei(t.timestamp),
+		positionSize: wei(t.positionSize),
+		pnl: wei(t.pnl),
+		feesPaid: wei(t.feesPaid),
+	}));
+};
+
+export const unserializeFundingRates = (rates: FundingRate<string>[]): FundingRate[] => {
+	return rates.map((r) => ({ ...r, fundingRate: r.fundingRate ? wei(r.fundingRate) : null }));
 };

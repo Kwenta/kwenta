@@ -53,7 +53,7 @@ export type AllContractsMap = Record<
 
 export const getContractsByNetwork = (
 	networkId: NetworkId,
-	provider: ethers.providers.Provider | ethers.Signer
+	provider: ethers.providers.Provider
 ) => {
 	return {
 		Exchanger: ADDRESSES.Exchanger[networkId]

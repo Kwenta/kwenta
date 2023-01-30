@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import MarketBadge from 'components/Badge/MarketBadge';
@@ -14,11 +13,17 @@ import Table, { TableHeader } from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
+import { FundingRateResponse } from 'sdk/types/futures';
 import { getDisplayAsset } from 'sdk/utils/futures';
-import { selectFuturesType, selectMarkets, selectMarketVolumes } from 'state/futures/selectors';
+import {
+	selectAverageFundingRates,
+	selectFuturesType,
+	selectMarkets,
+	selectMarketVolumes,
+	selectPreviousDayRates,
+} from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { selectPrices } from 'state/prices/selectors';
-import { pastRatesState } from 'store/futures';
 import { getSynthDescription, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
 const FuturesMarketsTable: FC = () => {
@@ -27,7 +32,8 @@ const FuturesMarketsTable: FC = () => {
 	const { synthsMap } = Connector.useContainer();
 
 	const futuresMarkets = useAppSelector(selectMarkets);
-	const pastRates = useRecoilValue(pastRatesState);
+	const fundingRates = useAppSelector(selectAverageFundingRates);
+	const pastRates = useAppSelector(selectPreviousDayRates);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
 	const accountType = useAppSelector(selectFuturesType);
 	const prices = useAppSelector(selectPrices);
@@ -35,9 +41,12 @@ const FuturesMarketsTable: FC = () => {
 	let data = useMemo(() => {
 		return futuresMarkets.map((market) => {
 			const description = getSynthDescription(market.asset, synthsMap, t);
-			const volume = futuresVolumes[market.marketKey]?.volume;
+			const volume = futuresVolumes[market.assetHex]?.volume;
 			const pastPrice = pastRates.find((price) => price.synth === getDisplayAsset(market.asset));
 			const marketPrice = prices[market.asset]?.offChain ?? prices[market.asset]?.onChain ?? wei(0);
+			const fundingRate = fundingRates.find(
+				(funding) => (funding as FundingRateResponse)?.asset === MarketKeyByAsset[market.asset]
+			);
 
 			return {
 				asset: market.asset,
@@ -48,7 +57,7 @@ const FuturesMarketsTable: FC = () => {
 				volume: volume?.toNumber() ?? 0,
 				pastPrice: pastPrice?.price,
 				priceChange: pastPrice?.price && marketPrice.sub(pastPrice?.price).div(marketPrice),
-				fundingRate: market.currentFundingRate.div(marketPrice) ?? null,
+				fundingRate: fundingRate?.fundingRate?.div(marketPrice) ?? null,
 				openInterest: market.marketSize.mul(marketPrice),
 				openInterestNative: market.marketSize,
 				longInterest: market.marketSize.add(market.marketSkew).div('2').abs().mul(marketPrice),
@@ -58,7 +67,7 @@ const FuturesMarketsTable: FC = () => {
 				marketClosureReason: market.marketClosureReason,
 			};
 		});
-	}, [synthsMap, futuresMarkets, pastRates, futuresVolumes, prices, t]);
+	}, [synthsMap, futuresMarkets, pastRates, futuresVolumes, prices, t, fundingRates]);
 
 	return (
 		<>

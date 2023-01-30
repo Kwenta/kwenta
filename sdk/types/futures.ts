@@ -253,7 +253,8 @@ export type FuturesOrderTypeDisplay =
 	| 'Delayed Offchain';
 
 export type FuturesOrder<T = Wei> = {
-	id: string;
+	id: string; // formatted subgraph id
+	contractId: number;
 	account: string;
 	asset: FuturesMarketAsset;
 	market: string;
@@ -262,7 +263,6 @@ export type FuturesOrder<T = Wei> = {
 	targetPrice: T | null;
 	marginDelta: T;
 	targetRoundId: T | null;
-	timestamp: T;
 	orderType: FuturesOrderTypeDisplay;
 	sizeTxt?: string;
 	targetPriceTxt?: string;
@@ -339,4 +339,23 @@ export type PostTradeDetailsResponse = {
 	liqPrice: BigNumber;
 	fee: BigNumber;
 	status: number;
+};
+
+export type IsolatedMarginOrderType = 'delayed' | 'delayed offchain' | 'market';
+export type CrossMarginOrderType = 'market' | 'stop market' | 'limit';
+
+export type FuturesTrade<T = Wei> = {
+	size: T;
+	asset: string;
+	price: T;
+	txnHash: string;
+	timestamp: T;
+	positionId?: string;
+	positionSize: T;
+	positionClosed: boolean;
+	side: PositionSide;
+	pnl: T;
+	feesPaid: T;
+	orderType: FuturesOrderTypeDisplay;
+	accountType: FuturesAccountType;
 };

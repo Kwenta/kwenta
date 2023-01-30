@@ -1,7 +1,6 @@
 import Wei from '@synthetixio/wei';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
@@ -20,7 +19,6 @@ import {
 	selectFuturesPortfolio,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { activePositionsTabState } from 'store/ui';
 import { formatDollars, toWei, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
@@ -46,8 +44,10 @@ const Overview: FC = () => {
 	const isolatedPositionsCount = useAppSelector(selectActiveIsolatedPositionsCount);
 	// const crossPositionsCount = useAppSelector(selectActiveCrossPositionsCount);
 
-	const [activePositionsTab, setActivePositionsTab] = useRecoilState(activePositionsTabState);
-	const [activeMarketsTab, setActiveMarketsTab] = useState(MarketsTab.FUTURES);
+	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(
+		PositionsTab.CROSS_MARGIN
+	);
+	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
 	const { network, synthsMap } = Connector.useContainer();
 

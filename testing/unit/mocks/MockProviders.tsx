@@ -3,13 +3,11 @@ import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/
 import mockRouter from 'next-router-mock';
 import { ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { RecoilRoot } from 'recoil';
 import { ThemeProvider } from 'styled-components';
 import { WagmiConfig } from 'wagmi';
 
 import Connector from 'containers/Connector';
 import { wagmiClient } from 'containers/Connector/config';
-import { RefetchProvider } from 'contexts/RefetchContext';
 import { themes } from 'styles/theme';
 
 import { DEFAULT_NETWORK } from '../constants';
@@ -77,7 +75,7 @@ export const SynthetixProvider = ({ children, ethProviderOverrides }: Props) => 
 				synthetixjs: null,
 			})}
 		>
-			<RecoilRoot>{children}</RecoilRoot>
+			{children}
 		</SynthetixQueryContextProvider>
 	);
 };
@@ -90,9 +88,7 @@ const MockProviders = ({ children, ethProviderOverrides, route }: Props) => {
 			<SynthetixProvider ethProviderOverrides={ethProviderOverrides}>
 				<WagmiConfig client={wagmiClient}>
 					<Connector.Provider>
-						<RefetchProvider>
-							<ThemeProvider theme={themes.dark}>{children}</ThemeProvider>
-						</RefetchProvider>
+						<ThemeProvider theme={themes.dark}>{children}</ThemeProvider>
 					</Connector.Provider>
 				</WagmiConfig>
 			</SynthetixProvider>

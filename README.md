@@ -21,6 +21,7 @@ Kwenta welcomes contributors. Regardless of the time you have available, everyon
 - Next.js
 - React
 - Redux
+- Kwenta SDK
 - Styled-Components
 
 ## Ethereum stack

@@ -9,3 +9,4 @@ export const DEFAULT_MAX_LEVERAGE = wei(10);
 export const DEFAULT_DELAYED_LEVERAGE_CAP = wei(100);
 export const MAX_POSITION_BUFFER = 0.01;
 export const MIN_MARGIN_AMOUNT = wei(50);
+export const APP_MAX_LEVERAGE = wei(25);

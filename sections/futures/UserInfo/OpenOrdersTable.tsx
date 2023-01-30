@@ -10,16 +10,19 @@ import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { DEFAULT_DELAYED_EXECUTION_BUFFER } from 'constants/defaults';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { PositionSide } from 'queries/futures/types';
-import { DelayedOrder } from 'sdk/types/futures';
-import PositionType from 'sections/futures/PositionType';
+import { DelayedOrder, PositionSide } from 'sdk/types/futures';
 import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
-import { selectMarketAsset, selectMarkets, selectOpenOrders } from 'state/futures/selectors';
+import {
+	selectIsolatedMarginOpenOrders,
+	selectMarketAsset,
+	selectMarkets,
+} from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatCurrency, formatDollars, suggestedDecimals } from 'utils/formatters/number';
 import { FuturesMarketKey, getDisplayAsset } from 'utils/futures';
 
 import OrderDrawer from '../MobileTrade/drawers/OrderDrawer';
+import PositionType from '../PositionType';
 
 type CountdownTimers = Record<
 	FuturesMarketKey,
@@ -31,14 +34,14 @@ type CountdownTimers = Record<
 
 const OpenOrdersTable: React.FC = () => {
 	const { t } = useTranslation();
-	const { switchToL2 } = useNetworkSwitcher();
 	const dispatch = useAppDispatch();
+	const { switchToL2 } = useNetworkSwitcher();
+	const isL2 = useIsL2();
 
 	const marketAsset = useAppSelector(selectMarketAsset);
+	// TODO: Requires changes to bring back support for cross margin
+	const openOrders = useAppSelector(selectIsolatedMarginOpenOrders);
 	const futuresMarkets = useAppSelector(selectMarkets);
-
-	const isL2 = useIsL2();
-	const openOrders = useAppSelector(selectOpenOrders);
 
 	const [countdownTimers, setCountdownTimers] = useState<CountdownTimers>();
 	const [selectedOrder, setSelectedOrder] = useState<DelayedOrder | undefined>();

@@ -11,6 +11,7 @@ import { FlexDivCentered } from 'components/layout/flex';
 import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
+import { PositionSide } from 'sdk/types/futures';
 import {
 	selectLeverageSide,
 	selectMarketAsset,
@@ -30,10 +31,9 @@ import {
 import { getDisplayAsset } from 'utils/futures';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
-import { PositionSide } from '../types';
 
 type Props = {
-	gasFee: Wei | null;
+	gasFee?: Wei | null;
 	tradeFee: Wei;
 	keeperFee?: Wei | null;
 	errorMessage?: string | null | undefined;
@@ -136,10 +136,12 @@ export default function TradeConfirmationModal({
 						value: formatCurrency('ETH', keeperFee, { currencyKey: 'ETH' }),
 				  }
 				: null,
-			{
-				label: 'network gas fee',
-				value: formatDollars(gasFee ?? zeroBN),
-			},
+			gasFee && gasFee.gt(0)
+				? {
+						label: 'network gas fee',
+						value: formatDollars(gasFee),
+				  }
+				: null,
 		],
 		[
 			positionDetails,

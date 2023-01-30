@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
 import Error from 'components/ErrorView';
 import SegmentedControl from 'components/SegmentedControl';
@@ -52,7 +51,7 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 			{!isMobile && <MarketInfoBox />}
 
 			{position?.position && position.position.leverage.gte(DEFAULT_DELAYED_LEVERAGE_CAP) && (
-				<StyledSegmentedControl
+				<SegmentedControl
 					styleType="check"
 					values={ISOLATED_MARGIN_ORDER_TYPES}
 					selectedIndex={ISOLATED_MARGIN_ORDER_TYPES.indexOf(orderType)}
@@ -90,7 +89,3 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 };
 
 export default TradeIsolatedMargin;
-
-const StyledSegmentedControl = styled(SegmentedControl)`
-	margin-bottom: 16px;
-`;

@@ -2,8 +2,8 @@ import { Balances } from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 
-import { FuturesOrderTypeDisplay, FuturesPotentialTradeDetails } from 'sdk/types/futures';
-import { FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
+import { FuturesPotentialTradeDetails } from 'sdk/types/futures';
+import { FuturesMarketAsset } from 'utils/futures';
 
 export type FuturesOpenInterest = {
 	asset: string;
@@ -24,43 +24,6 @@ export type MarginTransfer = {
 	market?: string;
 	asset?: FuturesMarketAsset;
 };
-
-export type PositionHistory = {
-	id: Number;
-	transactionHash: string;
-	timestamp: number;
-	openTimestamp: number;
-	closeTimestamp: number | undefined;
-	market: string;
-	asset: FuturesMarketAsset;
-	marketKey: FuturesMarketKey;
-	account: string;
-	abstractAccount: string;
-	accountType: FuturesAccountType;
-	isOpen: boolean;
-	isLiquidated: boolean;
-	size: Wei;
-	feesPaid: Wei;
-	netFunding: Wei;
-	netTransfers: Wei;
-	totalDeposits: Wei;
-	initialMargin: Wei;
-	margin: Wei;
-	entryPrice: Wei;
-	avgEntryPrice: Wei;
-	exitPrice: Wei;
-	leverage: Wei;
-	side: PositionSide;
-	pnl: Wei;
-	pnlWithFeesPaid: Wei;
-	totalVolume: Wei;
-	trades: number;
-};
-
-export enum PositionSide {
-	LONG = 'long',
-	SHORT = 'short',
-}
 
 export type Participant = {
 	username: string;
@@ -88,22 +51,6 @@ export type FuturesLiquidations = {
 export type FuturesTradeWithPrice = {
 	size: string;
 	price: string;
-};
-
-export type FuturesTrade = {
-	size: Wei;
-	asset: string;
-	price?: Wei;
-	txnHash: string;
-	timestamp: Wei;
-	positionId?: string;
-	positionSize: Wei;
-	positionClosed: boolean;
-	side?: PositionSide | null;
-	pnl: Wei;
-	feesPaid: Wei;
-	orderType: FuturesOrderTypeDisplay;
-	accountType: FuturesAccountType;
 };
 
 export type FuturesStat = {
@@ -161,18 +108,10 @@ type CrossMarginAccount = string;
 type FactoryAddress = string;
 export type CrossMarginAccounts = Record<FactoryAddress, Record<Wallet, CrossMarginAccount>>;
 
-export type PositionHistoryState = Record<FuturesAccountType, PositionHistory[]>;
 export type Portfolio = {
 	total: Wei;
 	crossMarginFutures: Wei;
 	isolatedMarginFutures: Wei;
-};
-
-export type FuturesAccountState = {
-	walletAddress: string | null;
-	crossMarginAddress: string | null;
-	crossMarginAvailable: boolean;
-	status: 'initial-fetch' | 'complete' | 'error' | 'refetching' | 'idle';
 };
 
 export type SynthBalances = Balances & {
