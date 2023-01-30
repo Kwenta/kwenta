@@ -1,66 +1,23 @@
-import { memo, useMemo } from 'react';
-import styled, { css } from 'styled-components';
+import { memo } from 'react';
+import styled from 'styled-components';
 
 type HeadingProps = {
 	variant?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
-	className?: string;
 	fontSize?: number;
+	className?: string;
 };
 
 const Heading: React.FC<HeadingProps> = memo(({ variant = 'h1', fontSize, ...props }) => {
-	const StyledHeading = useMemo(() => headingMap[variant], [variant]);
-
-	return <StyledHeading $fontSize={fontSize} {...props} />;
+	return <StyledHeading as={variant} $fontSize={fontSize} $variant={variant} {...props} />;
 });
 
-const commonStyles = css<{ $fontSize?: number }>`
+const sizes = { h1: 30, h2: 26, h3: 23, h4: 21, h5: 19, h6: 16 } as const;
+
+const StyledHeading = styled.h1<{ $fontSize?: number; $variant: HeadingProps['variant'] }>`
 	line-height: 1.2;
 	margin: 0;
 	color: ${(props) => props.theme.colors.common.primaryWhite};
-	${(props) =>
-		props.$fontSize &&
-		css`
-			font-size: ${props.$fontSize}px;
-		`}
+	font-size: ${(props) => sizes[props.$variant ?? 'h1']}px;
 `;
-
-const Heading1 = styled.h1`
-	font-size: 30px;
-	${commonStyles}
-`;
-
-const Heading2 = styled.h2`
-	font-size: 26px;
-	${commonStyles}
-`;
-
-const Heading3 = styled.h3`
-	font-size: 23px;
-	${commonStyles}
-`;
-
-const Heading4 = styled.h4`
-	font-size: 21px;
-	${commonStyles}
-`;
-
-const Heading5 = styled.h5`
-	font-size: 19px;
-	${commonStyles}
-`;
-
-const Heading6 = styled.h6`
-	font-size: 16px;
-	${commonStyles}
-`;
-
-const headingMap = {
-	h1: Heading1,
-	h2: Heading2,
-	h3: Heading3,
-	h4: Heading4,
-	h5: Heading5,
-	h6: Heading6,
-};
 
 export default Heading;
