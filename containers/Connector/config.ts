@@ -9,7 +9,17 @@ import {
 	trustWallet,
 	walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets';
-import { chain, configureChains, createClient } from 'wagmi';
+import { configureChains, createClient } from 'wagmi';
+import {
+	arbitrum,
+	avalanche,
+	bsc,
+	mainnet,
+	polygon,
+	optimism,
+	goerli,
+	optimismGoerli,
+} from 'wagmi/chains';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { publicProvider } from 'wagmi/providers/public';
@@ -20,14 +30,7 @@ import Tally from 'components/Rainbowkit/Tally';
 import { BLAST_NETWORK_LOOKUP } from 'constants/network';
 
 const { chains, provider } = configureChains(
-	[
-		chain.optimism,
-		chain.mainnet,
-		chain.optimismGoerli,
-		chain.goerli,
-		chain.polygon,
-		chain.arbitrum,
-	],
+	[optimism, mainnet, optimismGoerli, goerli, polygon, arbitrum, avalanche, bsc],
 	[
 		infuraProvider({
 			apiKey: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID!,
@@ -35,17 +38,13 @@ const { chains, provider } = configureChains(
 			priority: process.env.NEXT_PUBLIC_PROVIDER_ID === 'INFURA' ? 0 : 2,
 		}),
 		jsonRpcProvider({
-			rpc: (networkChain) => {
-				return !BLAST_NETWORK_LOOKUP[networkChain.id]
-					? {
-							http: networkChain.rpcUrls.default,
-					  }
-					: {
-							http: `https://${BLAST_NETWORK_LOOKUP[networkChain.id]}.blastapi.io/${
-								process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID
-							}`,
-					  };
-			},
+			rpc: (networkChain) => ({
+				http: !BLAST_NETWORK_LOOKUP[networkChain.id]
+					? networkChain.rpcUrls.default.http[0]
+					: `https://${BLAST_NETWORK_LOOKUP[networkChain.id]}.blastapi.io/${
+							process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID
+					  }`,
+			}),
 			stallTimeout: 5000,
 			priority: 1,
 		}),
@@ -83,11 +82,17 @@ export const wagmiClient = createClient({
 	provider,
 });
 
-export const activeChainIds = [
-	chain.optimism.id,
-	chain.mainnet.id,
-	chain.optimismGoerli.id,
-	chain.goerli.id,
-];
+export const activeChainIds = [optimism.id, mainnet.id, optimismGoerli.id, goerli.id];
 
 export { chains };
+
+export const chain = {
+	optimism,
+	mainnet,
+	optimismGoerli,
+	goerli,
+	polygon,
+	arbitrum,
+	avalanche,
+	bsc,
+};

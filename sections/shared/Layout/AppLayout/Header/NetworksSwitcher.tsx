@@ -2,7 +2,6 @@ import { useChainModal } from '@rainbow-me/rainbowkit';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { chain } from 'wagmi';
 
 import LinkIcon from 'assets/svg/app/link-blue.svg';
 import SwitchIcon from 'assets/svg/app/switch.svg';
@@ -16,6 +15,7 @@ import Select from 'components/Select';
 import { IndicatorSeparator, DropdownIndicator } from 'components/Select/Select';
 import { EXTERNAL_LINKS } from 'constants/links';
 import Connector from 'containers/Connector';
+import { chain } from 'containers/Connector/config';
 import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import { ExternalLink } from 'styles/common';

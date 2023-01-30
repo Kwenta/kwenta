@@ -3,9 +3,10 @@ import { L2_TO_L1_NETWORK_MAPPER } from '@synthetixio/optimism-networks';
 import { utils, BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { chain, useConnect } from 'wagmi';
+import { useConnect } from 'wagmi';
 
 import Connector from 'containers/Connector';
+import { chain } from 'containers/Connector/config';
 
 const useNetworkSwitcher = () => {
 	const { network, isWalletConnected } = Connector.useContainer();

@@ -1,8 +1,9 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { useQuery } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import { chainId } from 'wagmi';
 
+import { chain } from 'containers/Connector/config';
 import { PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { minTimestampState } from 'store/stats';
 import { weiFromWei } from 'utils/formatters/number';
@@ -20,7 +21,7 @@ type VolumeStat = {
 };
 
 export const useGetStatsVolumes = () => {
-	const futuresEndpoint = getFuturesEndpoint(chainId.optimism);
+	const futuresEndpoint = getFuturesEndpoint(chain.optimism.id as NetworkId);
 	const minTimestamp = useRecoilValue(minTimestampState);
 
 	const query = async () => {

@@ -33,7 +33,7 @@
 		"@material-ui/core": "^4.12.3",
 		"@metamask/detect-provider": "1.2.0",
 		"@pythnetwork/pyth-evm-js": "^1.0.1",
-		"@rainbow-me/rainbowkit": "0.8.0",
+		"@rainbow-me/rainbowkit": "0.8.1",
 		"@reach/dialog": "0.15.0",
 		"@reduxjs/toolkit": "^1.8.5",
 		"@socket.tech/plugin": "^1.0.3",
@@ -87,7 +87,7 @@
 		"styled-components": "5.1.1",
 		"styled-media-query": "2.1.2",
 		"unstated-next": "1.1.0",
-		"wagmi": "0.8.5"
+		"wagmi": "0.9.6"
 	},
 	"devDependencies": {
 		"@microsoft/eslint-formatter-sarif": "2.1.7",

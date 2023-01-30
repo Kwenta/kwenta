@@ -1,4 +1,4 @@
-import { chain } from 'wagmi';
+import { chain } from 'containers/Connector/config';
 
 export const RATES_ENDPOINT_MAIN = 'https://api.thegraph.com/subgraphs/name/kwenta/mainnet-main';
 

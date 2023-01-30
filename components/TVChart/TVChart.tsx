@@ -3,9 +3,9 @@ import { useRouter } from 'next/router';
 import { useRef, useContext, useEffect, useCallback, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ThemeContext } from 'styled-components';
-import { chain } from 'wagmi';
 
 import Connector from 'containers/Connector';
+import { chain } from 'containers/Connector/config';
 import { DelayedOrder } from 'sdk/types/futures';
 import { PricesListener } from 'sdk/types/prices';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
