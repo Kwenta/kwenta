@@ -241,14 +241,12 @@ export default class FuturesService {
 		)) as boolean[];
 
 		// map the positions using the results
-		const positions = positionDetails
-			.map((position, ind) => {
-				const canLiquidate = canLiquidateState[ind];
-				const marketKey = futuresMarkets[ind].marketKey;
-				const asset = futuresMarkets[ind].asset;
-				return mapFuturesPosition(position, canLiquidate, asset, marketKey);
-			})
-			.filter(({ remainingMargin }) => remainingMargin.gt(0));
+		const positions = positionDetails.map((position, ind) => {
+			const canLiquidate = canLiquidateState[ind];
+			const marketKey = futuresMarkets[ind].marketKey;
+			const asset = futuresMarkets[ind].asset;
+			return mapFuturesPosition(position, canLiquidate, asset, marketKey);
+		});
 
 		return positions;
 	}

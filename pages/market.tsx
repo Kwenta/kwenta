@@ -20,9 +20,12 @@ import MarketHead from 'sections/futures/MarketInfo/MarketHead';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
 import FuturesUnsupportedNetwork from 'sections/futures/Trade/FuturesUnsupported';
 import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
+import TransferIsolatedMarginModal from 'sections/futures/Trade/TransferIsolatedMarginModal';
 import TradeCrossMargin from 'sections/futures/TradeCrossMargin';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
+import { setOpenModal } from 'state/app/reducer';
+import { selectOpenModal } from 'state/app/selectors';
 import { setMarketAsset } from 'state/futures/reducer';
 import { selectFuturesType, selectMarketAsset } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -41,6 +44,7 @@ const Market: MarketComponent = () => {
 	const routerMarketAsset = router.query.asset as FuturesMarketAsset;
 
 	const setCurrentMarket = useAppSelector(selectMarketAsset);
+	const openModal = useAppSelector(selectOpenModal);
 	const account = useRecoilValue(futuresAccountState);
 	const [showOnboard, setShowOnboard] = useRecoilState(showCrossMarginOnboardState);
 
@@ -70,6 +74,12 @@ const Market: MarketComponent = () => {
 				{walletAddress && account.status === 'initial-fetch' ? <Loader /> : <MobileTrade />}
 				<GitHashID />
 			</MobileOrTabletView>
+			{openModal === 'futures_isolated_transfer' && (
+				<TransferIsolatedMarginModal
+					defaultTab="deposit"
+					onDismiss={() => dispatch(setOpenModal(null))}
+				/>
+			)}
 		</FuturesContext.Provider>
 	);
 };
