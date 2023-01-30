@@ -316,10 +316,9 @@ export const fetchOpenOrders = createAsyncThunk<
 	if (markets.length === 0) {
 		throw new Error('No markets available');
 	}
-	// TODO: Make this multicall
-	const orders: DelayedOrder[] = await Promise.all(
-		markets.map((market) => sdk.futures.getDelayedOrder(account, market.market))
-	);
+	const marketAddresses = markets.map((market) => market.market);
+
+	const orders: DelayedOrder[] = await sdk.futures.getDelayedOrders(account, marketAddresses);
 	const nonzeroOrders = orders
 		.filter((o) => o.size.abs().gt(0))
 		.map((o) => {

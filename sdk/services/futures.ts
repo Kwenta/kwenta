@@ -12,7 +12,7 @@ import { mapFuturesOrders } from 'queries/futures/utils';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
 import { BPS_CONVERSION, DEFAULT_DESIRED_TIMEDELTA } from 'sdk/constants/futures';
 import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';
-import { getContractsByNetwork } from 'sdk/contracts';
+import { getContractsByNetwork, getPerpsV2MarketMulticall } from 'sdk/contracts';
 import FuturesMarketABI from 'sdk/contracts/abis/FuturesMarket.json';
 import FuturesMarketInternal from 'sdk/contracts/FuturesMarketInternal';
 import {
@@ -20,6 +20,7 @@ import {
 	PerpsV2MarketData,
 	PerpsV2Market__factory,
 } from 'sdk/contracts/types';
+import { IPerpsV2MarketConsolidated } from 'sdk/contracts/types/PerpsV2Market';
 import { IPerpsV2MarketSettings } from 'sdk/contracts/types/PerpsV2MarketData';
 import { NetworkOverrideOptions } from 'sdk/types/common';
 import {
@@ -509,9 +510,21 @@ export default class FuturesService {
 
 	// Perps V2 read functions
 	public async getDelayedOrder(account: string, marketAddress: string) {
-		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
+		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.provider);
 		const order = await market.delayedOrders(account);
 		return formatDelayedOrder(account, marketAddress, order);
+	}
+
+	public async getDelayedOrders(account: string, marketAddresses: string[]) {
+		const marketContracts = marketAddresses.map(getPerpsV2MarketMulticall);
+
+		const orders = (await this.sdk.context.multicallProvider.all(
+			marketContracts.map((market) => market.delayedOrders(account))
+		)) as IPerpsV2MarketConsolidated.DelayedOrderStructOutput[];
+
+		return orders.map((order, ind) => {
+			return formatDelayedOrder(account, marketAddresses[ind], order);
+		});
 	}
 
 	public async getIsolatedTradePreview(
@@ -524,7 +537,7 @@ export default class FuturesService {
 			leverageSide: PositionSide;
 		}
 	) {
-		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
+		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.provider);
 		const details = await market.postTradeDetails(
 			inputs.sizeDelta.toBN(),
 			inputs.price.toBN(),
