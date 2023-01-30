@@ -103,8 +103,8 @@ const StakeGrid = () => {
 				</Button>
 			</GridData>
 			<GridData
-				title={t('dashboard.stake.tabs.staking.annual-percentage-yield')}
-				value={formatPercent(apy.div(toWei('100')))}
+				title={t('dashboard.stake.tabs.staking.annual-percentage-rate')}
+				value={formatPercent(apy.div(toWei('100')), { minDecimals: 2 })}
 			/>
 			<TimeRemainingData />
 		</GridContainer>
