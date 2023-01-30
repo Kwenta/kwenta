@@ -33,6 +33,8 @@ export type CrossMarginTradeInputsWithDelta<T = Wei> = CrossMarginTradeInputs<T>
 
 export type IsolatedMarginTradeInputs<T = Wei> = TradeSizeInputs<T>;
 
+export type MarkPrices<T = Wei> = Partial<Record<FuturesMarketKey, T>>;
+
 export type FundingRateSerialized = {
 	asset: FuturesMarketKey;
 	fundingTitle: string;
