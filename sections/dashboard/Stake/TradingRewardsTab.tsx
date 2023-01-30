@@ -27,6 +27,7 @@ import { selectEpochPeriod, selectResetTime, selectTotalRewards } from 'state/st
 import media from 'styles/media';
 import { formatTruncatedDuration } from 'utils/formatters/date';
 import { formatDollars, formatPercent, truncateNumbers, zeroBN } from 'utils/formatters/number';
+import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 
 const TradingRewardsTab: FC<TradingRewardProps> = memo(
 	({ period = 0, start = 0, end = Math.floor(Date.now() / 1000) }) => {
@@ -109,55 +110,106 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 						</Button>
 					</FlexDivRow>
 				</CardGridContainer>
-				<CardGridContainer>
-					<CardGrid>
-						<CustomStyledTooltip
-							preset="bottom"
-							width="260px"
-							height="auto"
-							content={t('dashboard.stake.tabs.trading-rewards.trading-rewards-tooltip')}
-						>
-							<WithCursor cursor="help">
-								<Title>
-									{t('dashboard.stake.tabs.trading-rewards.future-fee-paid', {
-										EpochPeriod: period,
-									})}
-								</Title>
-								<Value>
-									{formatDollars(futuresFeePaid, { minDecimals: 2 })}
-									<SpacedHelpIcon />
-								</Value>
-							</WithCursor>
-						</CustomStyledTooltip>
-						<div>
-							<Title>
-								{t('dashboard.stake.tabs.trading-rewards.fees-paid', { EpochPeriod: period })}
-							</Title>
-							<Value>{formatDollars(totalFuturesFeePaid, { minDecimals: 2 })}</Value>
-						</div>
-						{showEstimatedValue ? (
-							<>
-								<div>
-									<Title>{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}</Title>
-									<LogoText yellow>{truncateNumbers(wei(estimatedReward), 4)}</LogoText>
-								</div>
-								<div>
+				<MobileHiddenView>
+					<CardGridContainer>
+						<CardGrid>
+							<CustomStyledTooltip
+								preset="bottom"
+								width="260px"
+								height="auto"
+								content={t('dashboard.stake.tabs.trading-rewards.trading-rewards-tooltip')}
+							>
+								<WithCursor cursor="help">
 									<Title>
-										{t('dashboard.stake.tabs.trading-rewards.estimated-reward-share', {
+										{t('dashboard.stake.tabs.trading-rewards.future-fee-paid', {
 											EpochPeriod: period,
 										})}
 									</Title>
-									<Value>{formatPercent(ratio, { minDecimals: 2 })}</Value>
-								</div>
-							</>
+									<Value>
+										{formatDollars(futuresFeePaid, { minDecimals: 2 })}
+										<SpacedHelpIcon />
+									</Value>
+								</WithCursor>
+							</CustomStyledTooltip>
+							<div>
+								<Title>
+									{t('dashboard.stake.tabs.trading-rewards.fees-paid', { EpochPeriod: period })}
+								</Title>
+								<Value>{formatDollars(totalFuturesFeePaid, { minDecimals: 2 })}</Value>
+							</div>
+							{showEstimatedValue ? (
+								<>
+									<div>
+										<Title>{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}</Title>
+										<LogoText yellow>{truncateNumbers(wei(estimatedReward), 4)}</LogoText>
+									</div>
+									<div>
+										<Title>
+											{t('dashboard.stake.tabs.trading-rewards.estimated-reward-share', {
+												EpochPeriod: period,
+											})}
+										</Title>
+										<Value>{formatPercent(ratio, { minDecimals: 2 })}</Value>
+									</div>
+								</>
+							) : null}
+						</CardGrid>
+						{showEstimatedValue ? (
+							<FlexDivRow>
+								<PeriodLabel>
+									{t('dashboard.stake.tabs.trading-rewards.estimated-info')}
+								</PeriodLabel>
+							</FlexDivRow>
 						) : null}
-					</CardGrid>
-					{showEstimatedValue ? (
-						<FlexDivRow>
-							<PeriodLabel>{t('dashboard.stake.tabs.trading-rewards.estimated-info')}</PeriodLabel>
-						</FlexDivRow>
-					) : null}
-				</CardGridContainer>
+					</CardGridContainer>
+				</MobileHiddenView>
+				<MobileOnlyView>
+					<CardGridContainer>
+						<CardGrid>
+							<CustomStyledTooltip
+								preset="bottom"
+								width="260px"
+								height="auto"
+								content={t('dashboard.stake.tabs.trading-rewards.trading-rewards-tooltip')}
+							>
+								<WithCursor cursor="help">
+									<Title>{t('dashboard.stake.tabs.trading-rewards.future-fee-paid-mobile')}</Title>
+									<Value>
+										{formatDollars(futuresFeePaid, { minDecimals: 2 })}
+										<SpacedHelpIcon />
+									</Value>
+								</WithCursor>
+							</CustomStyledTooltip>
+							<div>
+								<Title>{t('dashboard.stake.tabs.trading-rewards.fees-paid-mobile')}</Title>
+								<Value>{formatDollars(totalFuturesFeePaid, { minDecimals: 2 })}</Value>
+							</div>
+							{showEstimatedValue ? (
+								<>
+									<div>
+										<Title>{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}</Title>
+										<LogoText yellow>{truncateNumbers(wei(estimatedReward), 4)}</LogoText>
+									</div>
+									<div>
+										<Title>
+											{t('dashboard.stake.tabs.trading-rewards.estimated-reward-share-mobile', {
+												EpochPeriod: period,
+											})}
+										</Title>
+										<Value>{formatPercent(ratio, { minDecimals: 2 })}</Value>
+									</div>
+								</>
+							) : null}
+						</CardGrid>
+						{showEstimatedValue ? (
+							<FlexDivRow>
+								<PeriodLabel>
+									{t('dashboard.stake.tabs.trading-rewards.estimated-info')}
+								</PeriodLabel>
+							</FlexDivRow>
+						) : null}
+					</CardGridContainer>
+				</MobileOnlyView>
 			</SplitContainer>
 		);
 	}
@@ -199,6 +251,7 @@ const Value = styled(Body).attrs({ weight: 'bold', mono: true })`
 
 const Title = styled(Body).attrs({ size: 'medium' })`
 	color: ${(props) => props.theme.colors.selectedTheme.title};
+	white-space: nowrap;
 `;
 
 const CardGrid = styled.div`

@@ -14,8 +14,8 @@ import { PositionSide } from 'sections/futures/types';
 import { QueryStatus } from 'state/types';
 import { FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
 
-export type IsolatedMarginOrderType = 'delayed' | 'delayed offchain' | 'market';
-export type CrossMarginOrderType = 'market' | 'stop market' | 'limit';
+export type IsolatedMarginOrderType = 'delayed' | 'delayedOffchain' | 'market';
+export type CrossMarginOrderType = 'market' | 'stopMarket' | 'limit';
 
 export type TradeSizeInputs<T = Wei> = {
 	nativeSize: T;
