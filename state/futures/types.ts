@@ -151,7 +151,6 @@ export type FuturesState = {
 	dailyMarketVolumes: FuturesVolumes<string>;
 	previousDayRates: Prices;
 	transactionEstimations: TransactionEstimations;
-	dynamicFeeRate: string;
 	errors: FuturesErrors;
 	selectedInputDenomination: InputCurrencyDenomination;
 	leaderboard: {

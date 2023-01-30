@@ -8,7 +8,7 @@ import { FuturesAccountType } from 'queries/futures/types';
 import { serializeGasPrice } from 'state/app/helpers';
 import { setGasPrice } from 'state/app/reducer';
 import { selectGasSpeed } from 'state/app/selectors';
-import { clearTradeInputs, fetchDynamicFeeRate } from 'state/futures/actions';
+import { clearTradeInputs } from 'state/futures/actions';
 import { usePollMarketFuturesData } from 'state/futures/hooks';
 import { setFuturesAccountType } from 'state/futures/reducer';
 import {
@@ -25,10 +25,9 @@ import {
 	selectOrderType,
 	selectIsAdvancedOrder,
 	selectCrossMarginTradeFees,
-	selectDynamicFeeRate,
 	selectSkewAdjustedPrice,
 } from 'state/futures/selectors';
-import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
+import { selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector, useAppDispatch } from 'state/hooks';
 import { computeMarketFee } from 'utils/costCalculations';
 import { zeroBN } from 'utils/formatters/number';
@@ -55,10 +54,7 @@ const useFuturesData = () => {
 		}
 	}, [ethGasPriceQuery.data, gasSpeed, dispatch]);
 
-	const marketAsset = useAppSelector(selectMarketAsset);
-
 	const tradeFees = useAppSelector(selectCrossMarginTradeFees);
-	const dynamicFeeRate = useAppSelector(selectDynamicFeeRate);
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const orderType = useAppSelector(selectOrderType);
 	const position = useAppSelector(selectPosition);
@@ -149,11 +145,11 @@ const useFuturesData = () => {
 		(usdSizeDelta: Wei) => {
 			const staticRate = computeMarketFee(market, usdSizeDelta);
 
-			let total = crossMarginTradeFee.add(dynamicFeeRate).add(staticRate).add(advancedOrderFeeRate);
+			let total = crossMarginTradeFee.add(staticRate).add(advancedOrderFeeRate);
 
 			return total;
 		},
-		[market, crossMarginTradeFee, dynamicFeeRate, advancedOrderFeeRate]
+		[market, crossMarginTradeFee, advancedOrderFeeRate]
 	);
 
 	useEffect(() => {
@@ -223,13 +219,6 @@ const useFuturesData = () => {
 		dispatch(setFuturesAccountType(accountType));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dispatch, router.query.accountType]);
-
-	useEffect(() => {
-		const getDynamicFee = async () => {
-			dispatch(fetchDynamicFeeRate());
-		};
-		getDynamicFee();
-	}, [marketAsset, orderPrice, dispatch]);
 
 	return {
 		resetTradeState,

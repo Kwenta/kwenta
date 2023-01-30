@@ -120,7 +120,6 @@ export type SynthBalances = Balances & {
 
 export type TradeFees = {
 	staticFee: Wei;
-	dynamicFeeRate: Wei;
 	crossMarginFee: Wei;
 	keeperEthDeposit: Wei;
 	limitStopOrderFee: Wei;

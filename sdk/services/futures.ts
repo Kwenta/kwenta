@@ -255,14 +255,12 @@ export default class FuturesService {
 		)) as boolean[];
 
 		// map the positions using the results
-		const positions = positionDetails
-			.map((position, ind) => {
-				const canLiquidate = canLiquidateState[ind];
-				const marketKey = futuresMarkets[ind].marketKey;
-				const asset = futuresMarkets[ind].asset;
-				return mapFuturesPosition(position, canLiquidate, asset, marketKey);
-			})
-			.filter(({ remainingMargin }) => remainingMargin.gt(0));
+		const positions = positionDetails.map((position, ind) => {
+			const canLiquidate = canLiquidateState[ind];
+			const marketKey = futuresMarkets[ind].marketKey;
+			const asset = futuresMarkets[ind].asset;
+			return mapFuturesPosition(position, canLiquidate, asset, marketKey);
+		});
 
 		return positions;
 	}
@@ -530,17 +528,6 @@ export default class FuturesService {
 	public async getCrossMarginKeeperBalance(account: string) {
 		const bal = await this.sdk.context.provider.getBalance(account);
 		return wei(bal);
-	}
-
-	public async getDynamicFeeRate(marketAsset: FuturesMarketAsset) {
-		const dynamicFeeRate = await this.sdk.context.contracts.Exchanger?.dynamicFeeRateForExchange(
-			ethers.utils.formatBytes32String('sUSD'),
-			ethers.utils.formatBytes32String(marketAsset)
-		);
-		if (dynamicFeeRate) {
-			return { feeRate: wei(dynamicFeeRate.feeRate), tooVolatile: dynamicFeeRate.tooVolatile };
-		}
-		return undefined;
 	}
 
 	public async getPreviousDayRates(marketAssets: FuturesMarketAsset[], networkId?: NetworkId) {

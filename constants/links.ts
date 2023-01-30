@@ -51,7 +51,8 @@ export const EXTERNAL_LINKS = {
 		PerpsV2: 'https://alpha.kwenta.eth.limo/market/?accountType=isolated_margin&asset=sETH',
 	},
 	Governance: {
-		Kips: 'https://kips.kwenta.io/all-kip/',
+		Kips:
+			'https://app.radicle.xyz/seeds/maple.radicle.garden/rad:git:hnrkq1oex148yz4zi9tm7spfnjaryyuc93yay/tree/master',
 		Vote: 'https://snapshot.org/#/kwenta.eth',
 	},
 	Competition: {

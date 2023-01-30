@@ -61,7 +61,6 @@ export const INITIAL_STATE: FuturesState = {
 	markets: [],
 	dailyMarketVolumes: {},
 	errors: {},
-	dynamicFeeRate: '0',
 	previousDayRates: [],
 	fundingRates: [],
 	selectedInputDenomination: 'usd',
@@ -171,9 +170,6 @@ const futuresSlice = createSlice({
 		},
 		setFuturesMarkets: (state, action: PayloadAction<FuturesMarket<string>[]>) => {
 			state.markets = action.payload;
-		},
-		setDynamicFeeRate: (state, action: PayloadAction<string>) => {
-			state.dynamicFeeRate = action.payload;
 		},
 		setCrossMarginTradeInputs: (state, action: PayloadAction<CrossMarginTradeInputs<string>>) => {
 			state.crossMargin.tradeInputs = action.payload;
@@ -640,7 +636,6 @@ export const {
 	setCrossMarginFees,
 	setCrossMarginOrderPrice,
 	setCrossMarginOrderPriceInvalidLabel,
-	setDynamicFeeRate,
 	setTransactionEstimate,
 	setIsolatedMarginLeverageInput,
 	setIsolatedMarginTradeInputs,

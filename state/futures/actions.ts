@@ -76,7 +76,6 @@ import {
 	setCrossMarginOrderPriceInvalidLabel,
 	setCrossMarginTradeInputs,
 	setCrossMarginTradePreview,
-	setDynamicFeeRate,
 	setIsolatedMarginFee,
 	setIsolatedMarginLeverageInput,
 	setIsolatedMarginTradeInputs,
@@ -94,7 +93,6 @@ import {
 	selectCrossMarginSupportedNetwork,
 	selectCrossMarginTradeFees,
 	selectCrossMarginTradeInputs,
-	selectDynamicFeeRate,
 	selectFuturesAccount,
 	selectFuturesSupportedNetwork,
 	selectFuturesType,
@@ -366,17 +364,6 @@ export const fetchSharedFuturesData = createAsyncThunk<void, void, ThunkConfig>(
 		await dispatch(fetchMarkets());
 		dispatch(fetchFundingRates());
 		dispatch(fetchDailyVolumes());
-	}
-);
-
-export const fetchDynamicFeeRate = createAsyncThunk<void, void, ThunkConfig>(
-	'futures/fetchDynamicFeeRate',
-	async (_, { dispatch, getState, extra: { sdk } }) => {
-		const marketAsset = selectMarketAsset(getState());
-		const dynamicFeeRate = await sdk.futures.getDynamicFeeRate(marketAsset);
-		if (dynamicFeeRate) {
-			dispatch(setDynamicFeeRate(dynamicFeeRate.feeRate.toString()));
-		}
 	}
 );
 
@@ -826,12 +813,11 @@ export const calculateCrossMarginFees = (): AppThunk => (dispatch, getState) => 
 	const orderType = selectOrderType(getState());
 	const keeperBalance = selectKeeperEthBalance(getState());
 	const settings = selectCrossMarginSettings(getState());
-	const dynamicFeeRate = selectDynamicFeeRate(getState());
 
 	const { susdSize, susdSizeDelta } = selectCrossMarginTradeInputs(getState());
 
 	const staticRate = computeMarketFee(market, susdSizeDelta);
-	const tradeFee = susdSize.mul(staticRate).add(susdSize.mul(dynamicFeeRate));
+	const tradeFee = susdSize.mul(staticRate);
 
 	const currentDeposit =
 		orderType === 'limit' || orderType === 'stop market' ? keeperBalance : wei(0);
@@ -854,10 +840,9 @@ export const calculateCrossMarginFees = (): AppThunk => (dispatch, getState) => 
 
 export const calculateIsolatedMarginFees = (): AppThunk => (dispatch, getState) => {
 	const market = selectMarketInfo(getState());
-	const dynamicFeeRate = selectDynamicFeeRate(getState());
 	const { susdSize, susdSizeDelta } = selectIsolatedMarginTradeInputs(getState());
 	const staticRate = computeMarketFee(market, susdSizeDelta);
-	const tradeFee = susdSize.mul(staticRate).add(susdSize.mul(dynamicFeeRate));
+	const tradeFee = susdSize.mul(staticRate);
 	dispatch(setIsolatedMarginFee(tradeFee.toString()));
 };
 

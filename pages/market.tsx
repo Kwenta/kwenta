@@ -17,9 +17,12 @@ import MarketHead from 'sections/futures/MarketInfo/MarketHead';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
 import FuturesUnsupportedNetwork from 'sections/futures/Trade/FuturesUnsupported';
 import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
+import TransferIsolatedMarginModal from 'sections/futures/Trade/TransferIsolatedMarginModal';
 import TradeCrossMargin from 'sections/futures/TradeCrossMargin';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
+import { setOpenModal } from 'state/app/reducer';
+import { selectOpenModal } from 'state/app/selectors';
 import { fetchCrossMarginAccount } from 'state/futures/actions';
 import { setMarketAsset, setShowCrossMarginOnboard } from 'state/futures/reducer';
 import {
@@ -48,6 +51,7 @@ const Market: MarketComponent = () => {
 	const showOnboard = useAppSelector(selectShowCrossMarginOnboard);
 	const queryStatus = useAppSelector(selectCMAccountQueryStatus);
 	const crossMarginAccount = useAppSelector(selectCrossMarginAccount);
+	const openModal = useAppSelector(selectOpenModal);
 
 	useEffect(() => {
 		if (routerMarketAsset && MarketKeyByAsset[routerMarketAsset]) {
@@ -83,6 +87,12 @@ const Market: MarketComponent = () => {
 				)}
 				<GitHashID />
 			</MobileOrTabletView>
+			{openModal === 'futures_isolated_transfer' && (
+				<TransferIsolatedMarginModal
+					defaultTab="deposit"
+					onDismiss={() => dispatch(setOpenModal(null))}
+				/>
+			)}
 		</FuturesContext.Provider>
 	);
 };

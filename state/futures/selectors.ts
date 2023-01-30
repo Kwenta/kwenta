@@ -431,8 +431,6 @@ export const selectCrossMarginSelectedLeverage = createSelector(
 	(key, selectedLeverageByAsset) => wei(selectedLeverageByAsset[key] || DEFAULT_LEVERAGE)
 );
 
-export const selectDynamicFeeRate = (state: RootState) => wei(state.futures.dynamicFeeRate);
-
 export const selectIsolatedMarginFee = (state: RootState) =>
 	wei(state.futures.isolatedMargin.tradeFee);
 
