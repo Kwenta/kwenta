@@ -1006,7 +1006,8 @@
 			"share": {
 				"title": "Share",
 				"buttons": {
-					"download": "Download"
+					"download": "Download",
+					"twitter": "Tweet it"
 				},
 				"position-metadata": {
 					"open-at": "opened on",

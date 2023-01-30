@@ -131,7 +131,7 @@ const Container = styled.div`
 	left: 2.02vw;
 
 	${media.lessThan('md')`
-		top: 50%;
+		top: 46%;
 		transform: translateY(-110%);
 		left: 0;
 		right: 0;

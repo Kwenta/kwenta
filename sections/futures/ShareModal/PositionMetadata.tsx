@@ -169,7 +169,7 @@ const TopRightContainer = styled.div`
 
 	${media.lessThan('md')`
 		top: unset;
-		bottom: 39%;
+		bottom: 45%;
 		right: 0;
 		left: unset;
 		width: 48%;
@@ -189,7 +189,7 @@ const TopLeftContainer = styled.div`
 
 	${media.lessThan('md')`
 		top: unset;
-		bottom: 39%;
+		bottom: 45%;
 		right: unset;
 		left: 0;
 		width: 48%;
@@ -209,7 +209,7 @@ const BottomRightContainer = styled.div`
 
 	${media.lessThan('md')`
 		top: unset;
-		bottom: 28%;
+		bottom: 35%;
 		right: 0;
 		left: unset;
 		width: 48%;
@@ -229,7 +229,7 @@ const BottomLeftContainer = styled.div`
 
 	${media.lessThan('md')`
 		top: unset;
-		bottom: 28%;
+		bottom: 35%;
 		right: unset;
 		left: 0;
 		width: 48%;

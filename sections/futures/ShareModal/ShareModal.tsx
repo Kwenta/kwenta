@@ -42,7 +42,7 @@ const ShareModal: FC<ShareModalProps> = ({ position, setShowShareModal }) => {
 						<AmountContainer position={position} />
 						<PositionMetadata />
 					</PNLGraphic>
-					<ShareModalButton />
+					<ShareModalButton position={position} marketAsset={marketAsset} />
 				</ModalWindow>
 			</BaseModal>
 		</>
