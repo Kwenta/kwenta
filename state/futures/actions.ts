@@ -368,20 +368,20 @@ export const fetchSharedFuturesData = createAsyncThunk<void, void, ThunkConfig>(
 );
 
 export const fetchIsolatedOpenOrders = createAsyncThunk<
-	{ orders: DelayedOrder<string>[]; account: string; network: NetworkId } | undefined,
+	{ orders: DelayedOrder<string>[]; wallet: string; network: NetworkId } | undefined,
 	void,
 	ThunkConfig
 >('futures/fetchIsolatedOpenOrders', async (_, { getState, extra: { sdk } }) => {
-	const account = selectCrossMarginAccount(getState());
+	const wallet = selectWallet(getState());
 	const supportedNetwork = selectFuturesSupportedNetwork(getState());
 	const network = selectNetwork(getState());
 	const markets = selectMarkets(getState());
 
-	if (!account || !supportedNetwork) return;
+	if (!wallet || !supportedNetwork) return;
 
 	// TODO: Make this multicall
 	const orders: DelayedOrder[] = await Promise.all(
-		markets.map((market) => sdk.futures.getDelayedOrder(account, market.market))
+		markets.map((market) => sdk.futures.getDelayedOrder(wallet, market.market))
 	);
 
 	const nonzeroOrders = orders
@@ -406,7 +406,7 @@ export const fetchIsolatedOpenOrders = createAsyncThunk<
 	return {
 		network,
 		orders: serializeDelayedOrders(nonzeroOrders),
-		account: account,
+		wallet: wallet,
 	};
 });
 

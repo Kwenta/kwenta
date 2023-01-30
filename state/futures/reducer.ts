@@ -397,10 +397,10 @@ const futuresSlice = createSlice({
 		builder.addCase(fetchIsolatedOpenOrders.fulfilled, (futuresState, action) => {
 			futuresState.queryStatuses.openOrders = SUCCESS_STATUS;
 			if (!action.payload) return;
-			const { account, orders } = action.payload;
-			if (account) {
+			const { wallet, orders } = action.payload;
+			if (wallet) {
 				// TODO: Store by network
-				futuresState.isolatedMargin.openOrders[account] = orders;
+				futuresState.isolatedMargin.openOrders[wallet] = orders;
 			}
 		});
 		builder.addCase(fetchIsolatedOpenOrders.rejected, (futuresState) => {
