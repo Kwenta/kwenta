@@ -1,4 +1,4 @@
-import { connectorsForWallets } from '@rainbow-me/rainbowkit';
+import { Chain, connectorsForWallets } from '@rainbow-me/rainbowkit';
 import {
 	braveWallet,
 	coinbaseWallet,
@@ -24,33 +24,47 @@ import { infuraProvider } from 'wagmi/providers/infura';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { publicProvider } from 'wagmi/providers/public';
 
+import BinanceIcon from 'assets/png/rainbowkit/binance.png';
 import Frame from 'components/Rainbowkit/Frame';
 import Safe from 'components/Rainbowkit/Gnosis';
 import Tally from 'components/Rainbowkit/Tally';
 import { BLAST_NETWORK_LOOKUP } from 'constants/network';
 
-const { chains, provider } = configureChains(
-	[optimism, mainnet, optimismGoerli, goerli, polygon, arbitrum, avalanche, bsc],
-	[
-		infuraProvider({
-			apiKey: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID!,
-			stallTimeout: 5000,
-			priority: process.env.NEXT_PUBLIC_PROVIDER_ID === 'INFURA' ? 0 : 2,
+const bscWithIcon: Chain = {
+	...bsc,
+	iconUrl: async () => BinanceIcon,
+};
+
+export const chain = {
+	optimism,
+	mainnet,
+	arbitrum,
+	polygon,
+	avalanche,
+	bsc: bscWithIcon,
+	goerli,
+	optimismGoerli,
+};
+
+const { chains, provider } = configureChains(Object.values(chain), [
+	infuraProvider({
+		apiKey: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID!,
+		stallTimeout: 5000,
+		priority: process.env.NEXT_PUBLIC_PROVIDER_ID === 'INFURA' ? 0 : 2,
+	}),
+	jsonRpcProvider({
+		rpc: (networkChain) => ({
+			http: !BLAST_NETWORK_LOOKUP[networkChain.id]
+				? networkChain.rpcUrls.default.http[0]
+				: `https://${BLAST_NETWORK_LOOKUP[networkChain.id]}.blastapi.io/${
+						process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID
+				  }`,
 		}),
-		jsonRpcProvider({
-			rpc: (networkChain) => ({
-				http: !BLAST_NETWORK_LOOKUP[networkChain.id]
-					? networkChain.rpcUrls.default.http[0]
-					: `https://${BLAST_NETWORK_LOOKUP[networkChain.id]}.blastapi.io/${
-							process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID
-					  }`,
-			}),
-			stallTimeout: 5000,
-			priority: 1,
-		}),
-		publicProvider({ stallTimeout: 5000, priority: 5 }),
-	]
-);
+		stallTimeout: 5000,
+		priority: 1,
+	}),
+	publicProvider({ stallTimeout: 5000, priority: 5 }),
+]);
 
 const connectors = connectorsForWallets([
 	{
@@ -82,17 +96,11 @@ export const wagmiClient = createClient({
 	provider,
 });
 
-export const activeChainIds = [optimism.id, mainnet.id, optimismGoerli.id, goerli.id];
+export const activeChainIds = [
+	chain.optimism.id,
+	chain.mainnet.id,
+	chain.optimismGoerli.id,
+	chain.goerli.id,
+];
 
 export { chains };
-
-export const chain = {
-	optimism,
-	mainnet,
-	optimismGoerli,
-	goerli,
-	polygon,
-	arbitrum,
-	avalanche,
-	bsc,
-};
