@@ -80,6 +80,7 @@ const LeverageInput: FC = memo(() => {
 				</LeverageTitle>
 				{modeButton}
 			</LeverageRow>
+
 			{mode === 'slider' ? (
 				<SliderRow>
 					<LeverageSlider

@@ -355,14 +355,11 @@ export const fetchIsolatedOpenOrders = createAsyncThunk<
 	const supportedNetwork = selectFuturesSupportedNetwork(getState());
 	const network = selectNetwork(getState());
 	const markets = selectMarkets(getState());
+	if (!wallet || !supportedNetwork || !markets.length) return;
 
-	if (!wallet || !supportedNetwork) return;
+	const marketAddresses = markets.map((market) => market.market);
 
-	// TODO: Make this multicall
-	const orders: DelayedOrder[] = await Promise.all(
-		markets.map((market) => sdk.futures.getDelayedOrder(wallet, market.market))
-	);
-
+	const orders: DelayedOrder[] = await sdk.futures.getDelayedOrders(wallet, marketAddresses);
 	const nonzeroOrders = orders
 		.filter((o) => o.size.abs().gt(0))
 		.map((o) => {
@@ -444,8 +441,9 @@ export const fetchIsolatedMarginTradePreview = createAsyncThunk<
 			});
 			return serializePotentialTrade(preview);
 		} catch (err) {
+			notifyError('Failed to generate trade preview', err);
 			dispatch(handleIsolatedMarginPreviewError(err.message));
-			return null;
+			throw err;
 		}
 	}
 );
@@ -799,7 +797,7 @@ export const calculateCrossMarginFees = (): AppThunk => (dispatch, getState) => 
 	const tradeFee = susdSize.mul(staticRate);
 
 	const currentDeposit =
-		orderType === 'limit' || orderType === 'stop market' ? keeperBalance : wei(0);
+		orderType === 'limit' || orderType === 'stop_market' ? keeperBalance : wei(0);
 	const requiredDeposit = currentDeposit.lt(ORDER_KEEPER_ETH_DEPOSIT)
 		? ORDER_KEEPER_ETH_DEPOSIT.sub(currentDeposit)
 		: wei(0);
@@ -986,7 +984,7 @@ export const modifyIsolatedPosition = createAsyncThunk<
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(fetchIsolatedOpenOrders());
 			dispatch(refetchPosition('isolated_margin'));
-			dispatch(setOrderType('delayed offchain'));
+			dispatch(setOrderType('delayed_offchain'));
 			dispatch(setOpenModal(null));
 			dispatch(clearTradeInputs());
 			dispatch(fetchBalances());

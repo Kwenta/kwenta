@@ -135,14 +135,6 @@ export type FuturesTradeInputs = {
 	orderPrice?: Wei | undefined;
 };
 
-export type FuturesOrderType =
-	| 'market'
-	| 'next price'
-	| 'stop market'
-	| 'limit'
-	| 'delayed'
-	| 'delayed offchain';
-
 export type SpotsFee = {
 	timestamp: string;
 	toAddress: string;

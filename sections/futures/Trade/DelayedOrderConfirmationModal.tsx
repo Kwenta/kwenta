@@ -164,7 +164,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 			modifyIsolatedPosition({
 				sizeDelta: nativeSizeDelta,
 				delayed: true,
-				offchain: orderType === 'delayed offchain',
+				offchain: orderType === 'delayed_offchain',
 			})
 		);
 	};

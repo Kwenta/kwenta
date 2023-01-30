@@ -8,7 +8,7 @@ import CustomInput from 'components/Input/CustomInput';
 import InputTitle from 'components/Input/InputTitle';
 import SegmentedControl from 'components/SegmentedControl';
 import Tooltip from 'components/Tooltip/Tooltip';
-import { FuturesOrderType } from 'queries/futures/types';
+import { FuturesOrderType } from 'sdk/types/futures';
 import { setOrderFeeCap } from 'state/futures/reducer';
 import {
 	selectMarketInfo,

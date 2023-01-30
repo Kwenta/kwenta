@@ -15,7 +15,7 @@ import { getRatesEndpoint, mapLaggedDailyPrices } from 'queries/rates/utils';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
 import { BPS_CONVERSION, DEFAULT_DESIRED_TIMEDELTA } from 'sdk/constants/futures';
 import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';
-import { getContractsByNetwork } from 'sdk/contracts';
+import { getContractsByNetwork, getPerpsV2MarketMulticall } from 'sdk/contracts';
 import CrossMarginBaseABI from 'sdk/contracts/abis/CrossMarginBase.json';
 import FuturesMarketABI from 'sdk/contracts/abis/FuturesMarket.json';
 import FuturesMarketInternal from 'sdk/contracts/FuturesMarketInternal';
@@ -24,6 +24,7 @@ import {
 	PerpsV2MarketData,
 	PerpsV2Market__factory,
 } from 'sdk/contracts/types';
+import { IPerpsV2MarketConsolidated } from 'sdk/contracts/types/PerpsV2Market';
 import { IPerpsV2MarketSettings } from 'sdk/contracts/types/PerpsV2MarketData';
 import { queryCrossMarginAccounts, queryPositionHistory, queryTrades } from 'sdk/queries/futures';
 import { NetworkOverrideOptions } from 'sdk/types/common';
@@ -37,7 +38,7 @@ import {
 	FuturesMarketKey,
 	FuturesVolumes,
 	MarketClosureReason,
-	OrderType,
+	ContractOrderType,
 	PositionDetail,
 	PositionSide,
 	ModifyPositionOptions,
@@ -472,14 +473,26 @@ export default class FuturesService {
 
 	// Perps V2 read functions
 	public async getDelayedOrder(account: string, marketAddress: string) {
-		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
+		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.provider);
 		const order = await market.delayedOrders(account);
 		return formatDelayedOrder(account, marketAddress, order);
 	}
 
+	public async getDelayedOrders(account: string, marketAddresses: string[]) {
+		const marketContracts = marketAddresses.map(getPerpsV2MarketMulticall);
+
+		const orders = (await this.sdk.context.multicallProvider.all(
+			marketContracts.map((market) => market.delayedOrders(account))
+		)) as IPerpsV2MarketConsolidated.DelayedOrderStructOutput[];
+
+		return orders.map((order, ind) => {
+			return formatDelayedOrder(account, marketAddresses[ind], order);
+		});
+	}
+
 	public async getIsolatedTradePreview(
 		marketAddress: string,
-		orderType: OrderType,
+		orderType: ContractOrderType,
 		inputs: {
 			sizeDelta: Wei;
 			price: Wei;
@@ -494,6 +507,7 @@ export default class FuturesService {
 			orderType,
 			this.sdk.context.walletAddress
 		);
+
 		return formatPotentialIsolatedTrade(
 			details,
 			inputs.skewAdjustedPrice,
@@ -729,7 +743,7 @@ export default class FuturesService {
 
 			return await crossMarginAccountContract.distributeMargin(newPosition);
 		}
-		if ((order.type === 'limit' || order.type === 'stop market') && !order.advancedOrderInputs) {
+		if ((order.type === 'limit' || order.type === 'stop_market') && !order.advancedOrderInputs) {
 			throw new Error('Missing inputs for advanced order');
 		}
 

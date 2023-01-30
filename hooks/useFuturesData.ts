@@ -134,7 +134,7 @@ const useFuturesData = () => {
 		switch (orderType) {
 			case 'limit':
 				return limitOrderFee;
-			case 'stop market':
+			case 'stop_market':
 				return stopOrderFee;
 			default:
 				return zeroBN;

@@ -3,11 +3,11 @@ import Wei, { wei } from '@synthetixio/wei';
 import { TFunction } from 'i18next';
 import { Dictionary } from 'lodash';
 
-import { FuturesOrderType } from 'queries/futures/types';
 import {
 	DelayedOrder,
 	FuturesMarket,
 	FuturesOrder,
+	FuturesOrderType,
 	FuturesPosition,
 	FuturesPositionHistory,
 	FuturesTrade,
@@ -187,12 +187,12 @@ export const orderPriceInvalidLabel = (
 	if (!orderPrice || Number(orderPrice) <= 0) return null;
 	const isLong = leverageSide === 'long';
 	if (
-		((isLong && orderType === 'limit') || (!isLong && orderType === 'stop market')) &&
+		((isLong && orderType === 'limit') || (!isLong && orderType === 'stop_market')) &&
 		wei(orderPrice).gt(currentPrice)
 	)
 		return 'max ' + formatNumber(currentPrice);
 	if (
-		((!isLong && orderType === 'limit') || (isLong && orderType === 'stop market')) &&
+		((!isLong && orderType === 'limit') || (isLong && orderType === 'stop_market')) &&
 		wei(orderPrice).lt(currentPrice)
 	)
 		return 'min ' + formatNumber(currentPrice);
@@ -305,13 +305,11 @@ export const serializeMarket = (market: FuturesMarket): FuturesMarket<string> =>
 			makerFeeOffchainDelayedOrder: market.feeRates.makerFeeOffchainDelayedOrder.toString(),
 			takerFeeOffchainDelayedOrder: market.feeRates.takerFeeOffchainDelayedOrder.toString(),
 		},
-		openInterest: market.openInterest
-			? {
-					...market.openInterest,
-					shortUSD: market.openInterest.shortUSD.toString(),
-					longUSD: market.openInterest.longUSD.toString(),
-			  }
-			: undefined,
+		openInterest: {
+			...market.openInterest,
+			shortUSD: market.openInterest.shortUSD.toString(),
+			longUSD: market.openInterest.longUSD.toString(),
+		},
 		marketDebt: market.marketDebt.toString(),
 		marketSkew: market.marketSkew.toString(),
 		marketSize: market.marketSize.toString(),
@@ -344,13 +342,11 @@ export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMar
 			makerFeeOffchainDelayedOrder: wei(m.feeRates.makerFeeOffchainDelayedOrder),
 			takerFeeOffchainDelayedOrder: wei(m.feeRates.takerFeeOffchainDelayedOrder),
 		},
-		openInterest: m.openInterest
-			? {
-					...m.openInterest,
-					shortUSD: wei(m.openInterest.shortUSD),
-					longUSD: wei(m.openInterest.longUSD),
-			  }
-			: undefined,
+		openInterest: {
+			...m.openInterest,
+			shortUSD: wei(m.openInterest.shortUSD),
+			longUSD: wei(m.openInterest.longUSD),
+		},
 		marketDebt: wei(m.marketDebt),
 		marketSkew: wei(m.marketSkew),
 		marketSize: wei(m.marketSize),

@@ -113,9 +113,9 @@ function MarginInfoBox({ editingLeverage }: Props) {
 
 		return {
 			showPreview:
-				((orderType === 'market' || orderType === 'delayed' || orderType === 'delayed offchain') &&
+				((orderType === 'market' || orderType === 'delayed' || orderType === 'delayed_offchain') &&
 					(!size.eq(0) || !marginDelta.eq(0))) ||
-				((orderType === 'limit' || orderType === 'stop market') && !!orderPrice && !size.eq(0)),
+				((orderType === 'limit' || orderType === 'stop_market') && !!orderPrice && !size.eq(0)),
 			totalMargin: potentialTrade?.margin.sub(crossMarginFee) || zeroBN,
 			freeAccountMargin: crossMarginFreeMargin.sub(marginDelta),
 			availableMargin: previewAvailableMargin.gt(0) ? previewAvailableMargin : zeroBN,

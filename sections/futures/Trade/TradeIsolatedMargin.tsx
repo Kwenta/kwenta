@@ -53,7 +53,7 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 					values={ISOLATED_MARGIN_ORDER_TYPES}
 					selectedIndex={ISOLATED_MARGIN_ORDER_TYPES.indexOf(orderType)}
 					onChange={(oType: number) => {
-						const newOrderType = oType === 1 ? 'market' : 'delayed offchain';
+						const newOrderType = oType === 1 ? 'market' : 'delayed_offchain';
 						dispatch(setOrderType(newOrderType));
 					}}
 				/>

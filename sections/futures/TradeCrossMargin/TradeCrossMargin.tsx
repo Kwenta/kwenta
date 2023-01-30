@@ -4,7 +4,7 @@ import Loader from 'components/Loader';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
 import { CROSS_MARGIN_ORDER_TYPES } from 'constants/futures';
-import { FuturesOrderType } from 'queries/futures/types';
+import { FuturesOrderType } from 'sdk/types/futures';
 import { setOpenModal } from 'state/app/reducer';
 import { changeLeverageSide, editTradeOrderPrice } from 'state/futures/actions';
 import { setOrderType, setShowCrossMarginOnboard } from 'state/futures/reducer';

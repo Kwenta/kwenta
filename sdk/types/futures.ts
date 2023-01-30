@@ -32,7 +32,7 @@ export type FuturesMarket<T = Wei> = {
 		makerFeeOffchainDelayedOrder: T;
 		takerFeeOffchainDelayedOrder: T;
 	};
-	openInterest?: {
+	openInterest: {
 		shortPct: number;
 		longPct: number;
 		shortUSD: T;
@@ -160,22 +160,22 @@ export enum PositionSide {
 
 export type FuturesAccountType = 'cross_margin' | 'isolated_margin';
 
-export enum OrderType {
+export enum ContractOrderType {
 	MARKET = 0,
 	DELAYED = 1,
 	DELAYED_OFFCHAIN = 2,
 }
 
-export const OrderNameByType: Record<OrderType, string> = {
-	[OrderType.MARKET]: 'market',
-	[OrderType.DELAYED]: 'delayed',
-	[OrderType.DELAYED_OFFCHAIN]: 'delayed offchain',
+export const OrderNameByType: Record<ContractOrderType, string> = {
+	[ContractOrderType.MARKET]: 'market',
+	[ContractOrderType.DELAYED]: 'delayed',
+	[ContractOrderType.DELAYED_OFFCHAIN]: 'delayed_offchain',
 };
 
-export const OrderTypeByName: Record<string, OrderType> = {
-	market: OrderType.MARKET,
-	delayed: OrderType.DELAYED,
-	'delayed offchain': OrderType.DELAYED_OFFCHAIN,
+export const OrderTypeByName: Record<string, ContractOrderType> = {
+	market: ContractOrderType.MARKET,
+	delayed: ContractOrderType.DELAYED,
+	delayed_offchain: ContractOrderType.DELAYED_OFFCHAIN,
 };
 
 export type FuturesFilledPosition<T = Wei> = {
@@ -341,8 +341,9 @@ export type PostTradeDetailsResponse = {
 	status: number;
 };
 
-export type IsolatedMarginOrderType = 'delayed' | 'delayed offchain' | 'market';
-export type CrossMarginOrderType = 'market' | 'stop market' | 'limit';
+export type IsolatedMarginOrderType = 'delayed' | 'delayed_offchain' | 'market';
+export type CrossMarginOrderType = 'market' | 'stop_market' | 'limit';
+export type FuturesOrderType = IsolatedMarginOrderType | CrossMarginOrderType;
 
 export type FuturesTrade<T = Wei> = {
 	size: T;

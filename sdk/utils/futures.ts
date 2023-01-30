@@ -450,7 +450,7 @@ export const calculateCrossMarginFee = (
 	susdSize: Wei,
 	feeRates: CrossMarginSettings
 ) => {
-	if (orderType !== 'limit' && orderType !== 'stop market') return zeroBN;
+	if (orderType !== 'limit' && orderType !== 'stop_market') return zeroBN;
 	const advancedOrderFeeRate =
 		orderType === 'limit' ? feeRates.limitOrderFee : feeRates.stopOrderFee;
 	return susdSize.mul(advancedOrderFeeRate);
@@ -502,9 +502,9 @@ export const mapFuturesOrderFromEvent = (
 const mapOrderType = (orderType: Partial<FuturesOrderType>): FuturesOrderTypeDisplay => {
 	return orderType === 'NextPrice'
 		? 'Next Price'
-		: orderType === 'StopMarket'
+		: orderType === 'stop_market'
 		? 'Stop Market'
-		: orderType === 'DelayedOffchain'
+		: orderType === 'delayed_offchain'
 		? 'Delayed Offchain'
 		: orderType;
 };
