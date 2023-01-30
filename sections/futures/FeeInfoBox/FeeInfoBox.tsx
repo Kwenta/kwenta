@@ -138,7 +138,7 @@ const FeeInfoBox: React.FC = () => {
 									i18nKey={`dashboard.stake.tabs.trading-rewards.stake-to-${
 										isRewardEligible ? 'earn' : 'start'
 									}`}
-									components={[<Body variant="bold" />]}
+									components={[<Body weight="bold" />]}
 								/>
 							</RewardCopy>
 							<StyledLinkArrowIcon />

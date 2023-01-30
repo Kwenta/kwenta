@@ -23,6 +23,7 @@ export const Heading = () => {
 			<Text.Heading variant="h3">Heading 3</Text.Heading>
 			<Text.Heading variant="h4">Heading 4</Text.Heading>
 			<Text.Heading variant="h5">Heading 5</Text.Heading>
+			<Text.Heading variant="h6">Heading 5</Text.Heading>
 		</div>
 	);
 };
@@ -34,11 +35,11 @@ export const Body = () => {
 			<Text.Body size="medium">This is regular body text</Text.Body>
 			<Text.Body size="large">This is regular body text</Text.Body>
 			<Spacer height={8} />
-			<Text.Body variant="bold">This is bold body text</Text.Body>
-			<Text.Body size="medium" variant="bold">
+			<Text.Body weight="bold">This is bold body text</Text.Body>
+			<Text.Body size="medium" weight="bold">
 				This is bold body text
 			</Text.Body>
-			<Text.Body size="large" variant="bold">
+			<Text.Body size="large" weight="bold">
 				This is bold body text
 			</Text.Body>
 			<Spacer height={8} />
@@ -50,13 +51,13 @@ export const Body = () => {
 				This is monospaced body text
 			</Text.Body>
 			<Spacer height={8} />
-			<Text.Body mono variant="bold">
+			<Text.Body mono weight="bold">
 				This is bold monospaced body text
 			</Text.Body>
-			<Text.Body size="medium" mono variant="bold">
+			<Text.Body size="medium" mono weight="bold">
 				This is bold monospaced body text
 			</Text.Body>
-			<Text.Body size="large" mono variant="bold">
+			<Text.Body size="large" mono weight="bold">
 				This is bold monospaced body text
 			</Text.Body>
 		</div>
