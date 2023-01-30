@@ -65,7 +65,6 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 
 	> span {
 		position: relative;
-		top: -2px;
 	}
 
 	${(props) =>
