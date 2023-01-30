@@ -58,10 +58,8 @@ const BannerContainer = styled.div<{ compact?: boolean; hideBanner?: boolean }>`
 
 const CompetitionPeriod = styled(Text.Body).attrs({ mono: true, variant: 'bold' })`
 	font-style: normal;
-	font-size: 13px;
 	line-height: 10px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	margin: 0;
 `;
 
 const CTA = styled(ExternalLink)`

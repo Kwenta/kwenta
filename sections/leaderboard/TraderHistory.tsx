@@ -11,6 +11,7 @@ import { FlexDiv } from 'components/layout/flex';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import FuturesIcon from 'components/Nav/FuturesIcon';
 import Table, { TableHeader } from 'components/Table';
+import { Body } from 'components/Text';
 import ROUTES from 'constants/routes';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import useGetFuturesPositionHistoryForAccount from 'queries/futures/useGetFuturesPositionHistoryForAccount';
@@ -326,9 +327,7 @@ const CurrencyInfo = styled(FlexDiv)`
 	align-items: center;
 `;
 
-const StyledSubtitle = styled.div`
-	font-family: ${(props) => props.theme.fonts.regular};
-	font-size: 13px;
+const StyledSubtitle = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	text-transform: capitalize;
 `;

@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import Error from 'components/ErrorView';
+import { Body } from 'components/Text';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { previewErrorI18n } from 'queries/futures/constants';
 import { PositionSide } from 'sdk/types/futures';
@@ -239,9 +240,8 @@ const CloseOrderButton = styled(Button)`
 	}
 `;
 
-const ManageOrderTitle = styled.p`
+const ManageOrderTitle = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	font-size: 13px;
 	margin-bottom: 8px;
 
 	span {

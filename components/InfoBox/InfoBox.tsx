@@ -85,7 +85,6 @@ const InfoBoxContainer = styled.div`
 
 const InfoBoxKey = styled(Text.Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.text.title};
-	font-size: 13px;
 	text-transform: capitalize;
 	cursor: default;
 `;
@@ -93,7 +92,6 @@ const InfoBoxKey = styled(Text.Body)`
 const ValueText = styled(Text.Body)<{ $disabled?: boolean; $color?: DetailedInfo['color'] }>`
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
 	font-family: ${(props) => props.theme.fonts.mono};
-	font-size: 13px;
 	cursor: default;
 
 	${(props) =>

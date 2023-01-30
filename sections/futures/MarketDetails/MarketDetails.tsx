@@ -100,13 +100,11 @@ const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	}
 
 	.heading {
-		font-size: 13px;
 		color: ${(props) => props.theme.colors.selectedTheme.text.title};
 	}
 
 	.value {
 		font-family: ${(props) => props.theme.fonts.mono};
-		font-size: 13px;
 		color: ${(props) => props.theme.colors.selectedTheme.text.value};
 	}
 

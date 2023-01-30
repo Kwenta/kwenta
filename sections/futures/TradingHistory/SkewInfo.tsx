@@ -52,7 +52,7 @@ const SkewInfo: React.FC = () => {
 				<SkewTooltip
 					isNumber
 					preset="bottom-right"
-					width={'310px'}
+					width="310px"
 					height="auto"
 					content={data.shortText ?? 0}
 				>
@@ -62,8 +62,8 @@ const SkewInfo: React.FC = () => {
 				</SkewTooltip>
 				<SkewTooltip
 					preset="bottom"
-					width={'310px'}
-					height={'auto'}
+					width="310px"
+					height="auto"
 					content={t('futures.market.history.skew-tooltip')}
 				>
 					<WithCursor cursor="help">
