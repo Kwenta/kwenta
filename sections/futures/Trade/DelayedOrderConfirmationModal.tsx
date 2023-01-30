@@ -64,7 +64,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 			modifyIsolatedPositionEstimateGas({
 				sizeDelta: nativeSizeDelta,
 				delayed: true,
-				offchain: orderType === 'delayed offchain',
+				offchain: orderType === 'delayedOffchain',
 			})
 		);
 	}, [nativeSizeDelta, orderType, dispatch]);
@@ -174,7 +174,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 			modifyIsolatedPosition({
 				sizeDelta: nativeSizeDelta,
 				delayed: true,
-				offchain: orderType === 'delayed offchain',
+				offchain: orderType === 'delayedOffchain',
 			})
 		);
 	};

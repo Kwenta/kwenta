@@ -611,7 +611,7 @@ export const calculateCrossMarginFees = (): AppThunk => (dispatch, getState) => 
 	const tradeFee = susdSize.mul(staticRate).add(susdSize.mul(dynamicFeeRate));
 
 	const currentDeposit =
-		orderType === 'limit' || orderType === 'stop market' ? keeperBalance : wei(0);
+		orderType === 'limit' || orderType === 'stopMarket' ? keeperBalance : wei(0);
 	const requiredDeposit = currentDeposit.lt(ORDER_KEEPER_ETH_DEPOSIT)
 		? ORDER_KEEPER_ETH_DEPOSIT.sub(currentDeposit)
 		: wei(0);
@@ -799,7 +799,7 @@ export const modifyIsolatedPosition = createAsyncThunk<
 			dispatch(updateTransactionHash(tx.hash));
 			await tx.wait();
 			dispatch(refetchPosition('isolated_margin'));
-			dispatch(setOrderType('delayed offchain'));
+			dispatch(setOrderType('delayedOffchain'));
 			dispatch(setOpenModal(null));
 			dispatch(clearTradeInputs());
 			dispatch(fetchBalances());
