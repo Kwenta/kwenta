@@ -57,13 +57,13 @@ export const computeOrderFee = (
 	}
 
 	const makerFee =
-		orderType === 'delayed offchain'
+		orderType === 'delayedOffchain'
 			? market.feeRates.makerFeeOffchainDelayedOrder
 			: orderType === 'delayed'
 			? market.feeRates.makerFeeDelayedOrder
 			: market.feeRates.makerFee;
 	const takerFee =
-		orderType === 'delayed offchain'
+		orderType === 'delayedOffchain'
 			? market.feeRates.takerFeeOffchainDelayedOrder
 			: orderType === 'delayed'
 			? market.feeRates.takerFeeDelayedOrder

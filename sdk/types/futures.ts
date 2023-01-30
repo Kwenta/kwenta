@@ -32,7 +32,7 @@ export type FuturesMarket<T = Wei> = {
 		makerFeeOffchainDelayedOrder: T;
 		takerFeeOffchainDelayedOrder: T;
 	};
-	openInterest?: {
+	openInterest: {
 		shortPct: number;
 		longPct: number;
 		shortUSD: T;
@@ -169,13 +169,13 @@ export enum OrderType {
 export const OrderNameByType: Record<OrderType, string> = {
 	[OrderType.MARKET]: 'market',
 	[OrderType.DELAYED]: 'delayed',
-	[OrderType.DELAYED_OFFCHAIN]: 'delayed offchain',
+	[OrderType.DELAYED_OFFCHAIN]: 'delayedOffchain',
 };
 
 export const OrderTypeByName: Record<string, OrderType> = {
 	market: OrderType.MARKET,
 	delayed: OrderType.DELAYED,
-	'delayed offchain': OrderType.DELAYED_OFFCHAIN,
+	delayedOffchain: OrderType.DELAYED_OFFCHAIN,
 };
 
 export type FuturesFilledPosition<T = Wei> = {

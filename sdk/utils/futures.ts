@@ -443,7 +443,7 @@ export const calculateCrossMarginFee = (
 	susdSize: Wei,
 	feeRates: CrossMarginSettings
 ) => {
-	if (orderType !== 'limit' && orderType !== 'stop market') return zeroBN;
+	if (orderType !== 'limit' && orderType !== 'stopMarket') return zeroBN;
 	const advancedOrderFeeRate =
 		orderType === 'limit' ? feeRates.limitOrderFee : feeRates.stopOrderFee;
 	return susdSize.mul(advancedOrderFeeRate);
