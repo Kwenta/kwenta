@@ -8,15 +8,15 @@ const gitRevision = require('child_process')
 
 const { withPlugins } = require('next-compose-plugins');
 const optimizedImages = require('next-optimized-images');
-const transpile = require('next-transpile-modules');
-const withTM = [transpile(['echarts', 'zrender'])];
 
 const baseConfig = {
+	transpilePackages: ['echarts', 'zrender'],
 	env: {
 		GIT_HASH_ID: gitRevision,
 	},
 	images: {
 		disableStaticImages: true,
+		unoptimized: true,
 	},
 	webpack: (config, options) => {
 		config.resolve.mainFields = ['module', 'browser', 'main'];
@@ -61,7 +61,6 @@ const baseConfig = {
 		// ssr and displayName are configured by default
 		styledComponents: true,
 	},
-	experimental: { images: { unoptimized: true } },
 	async redirects() {
 		return [
 			{
@@ -95,5 +94,4 @@ module.exports = withPlugins([
 		},
 	],
 	baseConfig,
-	...withTM,
 ]);
