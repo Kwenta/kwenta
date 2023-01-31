@@ -102,6 +102,7 @@ import {
 	CancelDelayedOrderInputs,
 	CrossMarginBalanceInfo,
 	CrossMarginSettings,
+	DelayedOrderWithDetails,
 	ExecuteDelayedOrderInputs,
 	FuturesTransactionType,
 	ModifyIsolatedPositionInputs,
@@ -322,13 +323,15 @@ export const fetchOpenOrders = createAsyncThunk<
 	const orders: DelayedOrder[] = await sdk.futures.getDelayedOrders(account, marketAddresses);
 	const nonzeroOrders = orders
 		.filter((o) => o.size.abs().gt(0))
-		.map((o) => {
+		.reduce((acc, o) => {
 			const market = markets.find((m) => m.market === o.marketAddress);
-			return {
+			if (!market) return acc;
+
+			acc.push({
 				...o,
-				marketKey: market?.marketKey,
-				marketAsset: market?.asset,
-				market: getMarketName(market?.asset ?? null),
+				marketKey: market.marketKey,
+				asset: market.asset,
+				market: getMarketName(market.asset),
 				executableAtTimestamp:
 					market && o.isOffchain // Manual fix for an incorrect
 						? o.submittedAtTimestamp +
@@ -336,8 +339,9 @@ export const fetchOpenOrders = createAsyncThunk<
 								? market.settings.offchainDelayedOrderMinAge * 1000
 								: market.settings.minDelayTimeDelta * 1000)
 						: o.executableAtTimestamp,
-			};
-		});
+			});
+			return acc;
+		}, [] as DelayedOrderWithDetails[]);
 	return {
 		orders: serializeDelayedOrders(nonzeroOrders),
 		account: account,

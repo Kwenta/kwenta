@@ -274,10 +274,7 @@ export type FuturesOrder<T = Wei> = {
 
 export type DelayedOrder<T = Wei> = {
 	account: string;
-	asset?: FuturesMarketAsset;
-	market?: string;
 	marketAddress: string;
-	marketKey?: FuturesMarketKey;
 	size: T;
 	commitDeposit: T;
 	keeperDeposit: T;
@@ -287,10 +284,7 @@ export type DelayedOrder<T = Wei> = {
 	priceImpactDelta: T;
 	targetRoundId: T | null;
 	orderType: FuturesOrderTypeDisplay;
-	side?: PositionSide;
-	isStale?: boolean;
-	isExecutable?: boolean;
-	isCancelling?: boolean;
+	side: PositionSide;
 };
 
 export type FuturesPotentialTradeDetails<T = Wei> = {

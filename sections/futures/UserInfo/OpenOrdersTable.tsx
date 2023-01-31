@@ -12,7 +12,6 @@ import { DEFAULT_DELAYED_EXECUTION_BUFFER } from 'constants/defaults';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { PositionSide } from 'queries/futures/types';
-import { DelayedOrder } from 'sdk/types/futures';
 import PositionType from 'sections/futures/PositionType';
 import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
 import {
@@ -22,6 +21,7 @@ import {
 	selectMarkets,
 	selectOpenOrders,
 } from 'state/futures/selectors';
+import { DelayedOrderWithDetails } from 'state/futures/types';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatCurrency, suggestedDecimals } from 'utils/formatters/number';
 import { FuturesMarketKey, getDisplayAsset } from 'utils/futures';
@@ -50,18 +50,17 @@ const OpenOrdersTable: React.FC = () => {
 	const openOrders = useAppSelector(selectOpenOrders);
 
 	const [countdownTimers, setCountdownTimers] = useState<CountdownTimers>();
-	const [selectedOrder, setSelectedOrder] = useState<DelayedOrder | undefined>();
+	const [selectedOrder, setSelectedOrder] = useState<DelayedOrderWithDetails | undefined>();
 
 	const rowsData = useMemo(() => {
 		const ordersWithCancel = openOrders
 			.map((o) => {
 				const market = futuresMarkets.find((m) => m.market === o.marketAddress);
-				const asset = o?.asset ?? '';
-				const timer = countdownTimers && o.marketKey ? countdownTimers[o.marketKey] : null;
+				const timer = countdownTimers ? countdownTimers[o.marketKey] : null;
 				const order = {
 					...o,
-					sizeTxt: formatCurrency(asset, o.size.abs(), {
-						currencyKey: getDisplayAsset(asset) ?? '',
+					sizeTxt: formatCurrency(o.asset, o.size.abs(), {
+						currencyKey: getDisplayAsset(o.asset) ?? '',
 						minDecimals: suggestedDecimals(o.size),
 					}),
 					timeToExecution: timer?.timeToExecution,
@@ -102,7 +101,6 @@ const OpenOrdersTable: React.FC = () => {
 						);
 					},
 					onExecute: () => {
-						if (!o.marketKey) return null;
 						dispatch(
 							executeDelayedOrder({
 								marketKey: o.marketKey,
@@ -131,12 +129,10 @@ const OpenOrdersTable: React.FC = () => {
 				const timePastExecution = Math.floor((Date.now() - order.executableAtTimestamp) / 1000);
 
 				// Only updated delayed orders
-				if (order.marketKey) {
-					acc[order.marketKey] = {
-						timeToExecution: Math.max(timeToExecution, 0),
-						timePastExecution: Math.max(timePastExecution, 0),
-					};
-				}
+				acc[order.marketKey] = {
+					timeToExecution: Math.max(timeToExecution, 0),
+					timePastExecution: Math.max(timePastExecution, 0),
+				};
 				return acc;
 			}, {} as CountdownTimers);
 			setCountdownTimers(newCountdownTimers);
@@ -325,11 +321,13 @@ const OpenOrdersTable: React.FC = () => {
 					]}
 				/>
 
-				<OrderDrawer
-					open={!!selectedOrder}
-					order={selectedOrder}
-					closeDrawer={() => setSelectedOrder(undefined)}
-				/>
+				{selectedOrder && (
+					<OrderDrawer
+						open={!!selectedOrder}
+						order={selectedOrder}
+						closeDrawer={() => setSelectedOrder(undefined)}
+					/>
+				)}
 			</MobileOrTabletView>
 		</>
 	);

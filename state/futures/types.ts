@@ -5,6 +5,7 @@ import { TransactionStatus } from 'sdk/types/common';
 import {
 	DelayedOrder,
 	FuturesMarket,
+	FuturesOrderTypeDisplay,
 	FuturesPosition,
 	FuturesPositionHistory,
 	FuturesPotentialTradeDetails,
@@ -168,7 +169,7 @@ export type CrossMarginState = {
 		[account: string]: FuturesPositionHistory<string>[];
 	};
 	openOrders: {
-		[account: string]: DelayedOrder<string>[];
+		[account: string]: DelayedOrderWithDetails<string>[];
 	};
 };
 
@@ -190,7 +191,7 @@ export type IsolatedMarginState = {
 		[account: string]: FuturesPositionHistory<string>[];
 	};
 	openOrders: {
-		[account: string]: DelayedOrder<string>[];
+		[account: string]: DelayedOrderWithDetails<string>[];
 	};
 };
 
@@ -209,6 +210,27 @@ export type ExecuteDelayedOrderInputs = {
 	marketKey: FuturesMarketKey;
 	marketAddress: string;
 	isOffchain: boolean;
+};
+
+export type DelayedOrderWithDetails<T = Wei> = {
+	account: string;
+	marketAddress: string;
+	market: string;
+	asset: FuturesMarketAsset;
+	marketKey: FuturesMarketKey;
+	size: T;
+	commitDeposit: T;
+	keeperDeposit: T;
+	submittedAtTimestamp: number;
+	executableAtTimestamp: number;
+	isOffchain: boolean;
+	priceImpactDelta: T;
+	targetRoundId: T | null;
+	orderType: FuturesOrderTypeDisplay;
+	side: PositionSide;
+	isStale?: boolean;
+	isExecutable?: boolean;
+	isCancelling?: boolean;
 };
 
 export const futuresPositionKeys = new Set([
