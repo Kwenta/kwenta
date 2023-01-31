@@ -25,7 +25,7 @@ export const resetNetwork = createAsyncThunk<any, NetworkId, ThunkConfig>(
 	}
 );
 
-export const resetWalletAddress = createAsyncThunk<void, string, ThunkConfig>(
+export const resetWalletAddress = createAsyncThunk<void, string | undefined, ThunkConfig>(
 	'wallet/resetWalletAddress',
 	async (walletAddress, { dispatch, getState }) => {
 		const {
@@ -47,6 +47,7 @@ export const setSigner = createAsyncThunk<void, ethers.Signer | null | undefined
 			const [address] = await Promise.all([signer?.getAddress(), sdk.setSigner(signer)]);
 			dispatch(resetWalletAddress(address));
 		} else {
+			dispatch(resetWalletAddress(undefined));
 			dispatch({ type: 'balances/clearBalances' });
 		}
 	}

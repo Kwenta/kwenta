@@ -7,11 +7,11 @@ import Table, { TableHeader } from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import { blockExplorer } from 'containers/Connector/Connector';
-import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
+import { FuturesTrade } from 'sdk/types/futures';
 import { selectMarketKey } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { CapitalizedText, NumericValue } from 'styles/common';
+import { NumericValue } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
 
 type TradesHistoryTableProps = {

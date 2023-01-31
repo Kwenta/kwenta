@@ -4,7 +4,12 @@ import { BigNumber } from 'ethers';
 import { parseBytes32String } from 'ethers/lib/utils.js';
 
 import { ETH_UNIT } from 'constants/network';
-import { FuturesAggregateStatResult, FuturesPositionResult } from 'queries/futures/subgraph';
+import {
+	FuturesAggregateStatResult,
+	FuturesOrderType as SubgraphOrderType,
+	FuturesPositionResult,
+	FuturesTradeResult,
+} from 'queries/futures/subgraph';
 import {
 	FUTURES_ENDPOINTS,
 	MAINNET_MARKETS,
@@ -15,25 +20,28 @@ import { SECONDS_PER_DAY } from 'sdk/constants/period';
 import { IPerpsV2MarketConsolidated } from 'sdk/contracts/types/PerpsV2Market';
 import {
 	DelayedOrder,
+	CrossMarginOrderType,
 	FundingRateUpdate,
 	FuturesMarketAsset,
 	FuturesMarketKey,
+	FuturesOrder,
+	FuturesOrderType,
+	FuturesOrderTypeDisplay,
 	FuturesPosition,
 	FuturesPositionHistory,
 	FuturesPotentialTradeDetails,
+	FuturesTrade,
 	FuturesVolumes,
+	IsolatedMarginOrderType,
 	MarketClosureReason,
 	PositionDetail,
 	PositionSide,
 	PostTradeDetailsResponse,
 	PotentialTradeStatus,
 } from 'sdk/types/futures';
-import {
-	CrossMarginOrderType,
-	CrossMarginSettings,
-	IsolatedMarginOrderType,
-} from 'state/futures/types';
-import { zeroBN } from 'utils/formatters/number';
+import { CrossMarginSettings } from 'state/futures/types';
+import { formatCurrency, formatDollars, zeroBN } from 'utils/formatters/number';
+import { MarketAssetByKey } from 'utils/futures';
 import logError from 'utils/logError';
 
 export const getFuturesEndpoint = (networkId: number): string => {
@@ -93,7 +101,7 @@ export const marketsForNetwork = (networkId: number) => {
 		case 420:
 			return TESTNET_MARKETS;
 		default:
-			logError('Futures is not supported on this network.');
+			logError(new Error('Futures is not supported on this network.'));
 			return [];
 	}
 };
@@ -443,7 +451,7 @@ export const calculateCrossMarginFee = (
 	susdSize: Wei,
 	feeRates: CrossMarginSettings
 ) => {
-	if (orderType !== 'limit' && orderType !== 'stopMarket') return zeroBN;
+	if (orderType !== 'limit' && orderType !== 'stop_market') return zeroBN;
 	const advancedOrderFeeRate =
 		orderType === 'limit' ? feeRates.limitOrderFee : feeRates.stopOrderFee;
 	return susdSize.mul(advancedOrderFeeRate);
@@ -454,3 +462,91 @@ export const getPythNetworkUrl = (networkId: NetworkId) => {
 };
 
 export const normalizePythId = (id: string) => (id.startsWith('0x') ? id : '0x' + id);
+export const mapFuturesOrderFromEvent = (
+	orderDetails: {
+		id: number;
+		marketKey: string;
+		orderType: number;
+		targetPrice: BigNumber;
+		sizeDelta: BigNumber;
+		marginDelta: BigNumber;
+	},
+	account: string
+): FuturesOrder => {
+	const marketKey = parseBytes32String(orderDetails.marketKey) as FuturesMarketKey;
+	const asset = MarketAssetByKey[marketKey];
+	const sizeDelta = wei(orderDetails.sizeDelta);
+	const size = sizeDelta.abs();
+	return {
+		contractId: orderDetails.id,
+		id: `CM-${account}-${orderDetails.id}`,
+		account: account,
+		size: sizeDelta,
+		marginDelta: wei(orderDetails.marginDelta),
+		orderType: orderDetails.orderType === 0 ? 'Limit' : 'Stop Market',
+		targetPrice: wei(orderDetails.targetPrice),
+		sizeTxt: formatCurrency(asset, size, {
+			currencyKey: getDisplayAsset(asset) ?? '',
+			minDecimals: size.lt(0.01) ? 4 : 2,
+		}),
+		targetPriceTxt: formatDollars(wei(orderDetails.targetPrice)),
+		marketKey: marketKey,
+		market: getMarketName(asset),
+		asset: asset,
+		targetRoundId: wei(0), // Only used for next price which is no longer supported
+		side: sizeDelta.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
+		isStale: false,
+		isExecutable: false,
+	};
+};
+
+export const OrderNameByType: Record<FuturesOrderType, FuturesOrderTypeDisplay> = {
+	market: 'Market',
+	delayed: 'Delayed',
+	delayed_offchain: 'Delayed Offchain',
+	stop_market: 'Stop Market',
+	limit: 'Limit',
+};
+
+const mapOrderType = (orderType: Partial<SubgraphOrderType>): FuturesOrderTypeDisplay => {
+	return orderType === 'NextPrice'
+		? 'Next Price'
+		: orderType === 'stop_market'
+		? 'Stop Market'
+		: orderType === 'delayed_offchain'
+		? 'Delayed Offchain'
+		: orderType;
+};
+
+export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] => {
+	return futuresTrades?.map(
+		({
+			id,
+			timestamp,
+			size,
+			price,
+			asset,
+			positionSize,
+			positionClosed,
+			pnl,
+			feesPaid,
+			orderType,
+			accountType,
+		}: FuturesTradeResult) => {
+			return {
+				asset,
+				accountType,
+				size: new Wei(size, 18, true),
+				price: new Wei(price, 18, true),
+				txnHash: id.split('-')[0].toString(),
+				timestamp: timestamp,
+				positionSize: new Wei(positionSize, 18, true),
+				positionClosed,
+				side: size.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
+				pnl: new Wei(pnl, 18, true),
+				feesPaid: new Wei(feesPaid, 18, true),
+				orderType: mapOrderType(orderType),
+			};
+		}
+	);
+};

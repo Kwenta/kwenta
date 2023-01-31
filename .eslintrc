@@ -97,6 +97,10 @@
 						"group": "internal"
 					},
 					{
+						"pattern": "translations/**",
+						"group": "internal"
+					},
+					{
 						"pattern": "utils/**",
 						"group": "internal"
 					},

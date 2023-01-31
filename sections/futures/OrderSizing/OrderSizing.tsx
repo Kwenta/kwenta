@@ -1,5 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import React, { ChangeEvent, useMemo, useState, memo } from 'react';
+import React, { ChangeEvent, useMemo, memo } from 'react';
 import styled from 'styled-components';
 
 import SwitchAssetArrows from 'assets/svg/futures/switch-arrows.svg';
@@ -8,6 +8,7 @@ import InputTitle from 'components/Input/InputTitle';
 import { FlexDivRow } from 'components/layout/flex';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { editTradeSizeInput } from 'state/futures/actions';
+import { setSelectedInputDenomination } from 'state/futures/reducer';
 import {
 	selectMarketPrice,
 	selectCrossMarginBalanceInfo,
@@ -18,6 +19,7 @@ import {
 	selectLeverageSide,
 	selectFuturesType,
 	selectMarketAsset,
+	selectSelectedInputDenomination,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { floorNumber, isZero, zeroBN } from 'utils/formatters/number';
@@ -43,10 +45,9 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 	const marketAssetRate = useAppSelector(selectMarketPrice);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
 	const selectedLeverageSide = useAppSelector(selectLeverageSide);
+	const assetInputType = useAppSelector(selectSelectedInputDenomination);
 
 	const marketAsset = useAppSelector(selectMarketAsset);
-
-	const [assetInputType, setAssetInputType] = useState<'usd' | 'native'>('usd');
 
 	const tradePrice = useMemo(() => (orderPrice ? wei(orderPrice) : marketAssetRate), [
 		orderPrice,
@@ -87,7 +88,7 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 
 	const showPosSizeHelper =
 		position?.position?.size &&
-		(orderType === 'limit' || orderType === 'stopMarket') &&
+		(orderType === 'limit' || orderType === 'stop_market') &&
 		position?.position.side !== selectedLeverageSide;
 
 	const invalid =
@@ -119,7 +120,9 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 					disabled={isDisabled}
 					right={
 						<InputButton
-							onClick={() => setAssetInputType(assetInputType === 'usd' ? 'native' : 'usd')}
+							onClick={() =>
+								dispatch(setSelectedInputDenomination(assetInputType === 'usd' ? 'native' : 'usd'))
+							}
 						>
 							{assetInputType === 'usd' ? 'sUSD' : getDisplayAsset(marketAsset)}{' '}
 							<span>{<SwitchAssetArrows />}</span>

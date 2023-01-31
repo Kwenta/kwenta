@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import MarketBadge from 'components/Badge/MarketBadge';
@@ -19,10 +18,10 @@ import {
 	selectFuturesType,
 	selectMarkets,
 	selectMarketVolumes,
+	selectPreviousDayRates,
 	selectMarkPrices,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { pastRatesState } from 'store/futures';
 import { getSynthDescription, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
 const FuturesMarketsTable: FC = () => {
@@ -31,7 +30,7 @@ const FuturesMarketsTable: FC = () => {
 	const { synthsMap } = Connector.useContainer();
 
 	const futuresMarkets = useAppSelector(selectMarkets);
-	const pastRates = useRecoilValue(pastRatesState);
+	const pastRates = useAppSelector(selectPreviousDayRates);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
 	const accountType = useAppSelector(selectFuturesType);
 	const markPrices = useAppSelector(selectMarkPrices);

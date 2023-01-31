@@ -4,7 +4,6 @@ import Wei, { wei } from '@synthetixio/wei';
 import { FC, ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps, Row } from 'react-table';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import ChangePercent from 'components/ChangePercent';
@@ -15,9 +14,9 @@ import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import { Price } from 'queries/rates/types';
 import { selectBalances } from 'state/balances/selectors';
+import { selectPreviousDayRates } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { selectPrices } from 'state/prices/selectors';
-import { pastRatesState } from 'store/futures';
 import { sortWei } from 'utils/balances';
 import { formatNumber, zeroBN } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
@@ -53,8 +52,8 @@ type SynthBalancesTableProps = {
 const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
-	const pastRates = useRecoilValue(pastRatesState);
 	const prices = useAppSelector(selectPrices);
+	const pastRates = useAppSelector(selectPreviousDayRates);
 	const { synthBalances } = useAppSelector(selectBalances);
 
 	const synthTokens = useMemo(() => {

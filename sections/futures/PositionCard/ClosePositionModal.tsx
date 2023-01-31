@@ -10,13 +10,11 @@ import { FlexDivCentered, FlexDivCol } from 'components/layout/flex';
 import { ButtonLoader } from 'components/Loader/Loader';
 import Connector from 'containers/Connector';
 import { getFuturesMarketContract } from 'queries/futures/utils';
-import { FuturesFilledPosition } from 'sdk/types/futures';
+import { FuturesFilledPosition, PositionSide } from 'sdk/types/futures';
 import { selectIsClosingPosition, selectMarketAsset } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { formatCurrency, formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
-
-import { PositionSide } from '../types';
 
 type ClosePositionModalProps = {
 	positionDetails: FuturesFilledPosition | null | undefined;
@@ -54,7 +52,7 @@ function ClosePositionModal({
 				const orderFee = await FuturesMarketContract.orderFee(size.toBN());
 				setOrderFee(wei(orderFee.fee));
 			} catch (e) {
-				logError(e.message);
+				logError(e);
 				setError(e?.data?.message ?? e.message);
 			}
 		};

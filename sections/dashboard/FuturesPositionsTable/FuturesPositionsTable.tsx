@@ -20,10 +20,10 @@ import { FuturesAccountType } from 'queries/futures/subgraph';
 import PositionType from 'sections/futures/PositionType';
 import {
 	selectCrossMarginPositions,
-	selectFuturesPositionHistory,
 	selectIsolatedMarginPositions,
 	selectMarketAsset,
 	selectMarkets,
+	selectPositionHistory,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { formatNumber } from 'utils/formatters/number';
@@ -49,7 +49,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
 	const crossMarginPositions = useAppSelector(selectCrossMarginPositions);
-	const positionHistory = useAppSelector(selectFuturesPositionHistory);
+	const positionHistory = useAppSelector(selectPositionHistory);
 	const currentMarket = useAppSelector(selectMarketAsset);
 	const futuresMarkets = useAppSelector(selectMarkets);
 
@@ -59,8 +59,8 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 			.map((position) => {
 				const market = futuresMarkets.find((market) => market.asset === position.asset);
 				const description = getSynthDescription(position.asset, synthsMap, t);
-				const thisPositionHistory = positionHistory.find((positionHistory) => {
-					return positionHistory.isOpen && positionHistory.asset === position.asset;
+				const thisPositionHistory = positionHistory.find((ph) => {
+					return ph.isOpen && ph.asset === position.asset;
 				});
 
 				return {

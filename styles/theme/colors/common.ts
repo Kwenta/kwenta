@@ -11,6 +11,7 @@ const common = {
 	secondaryGold: '#E4B378',
 	primaryYellow: '#FFB800',
 	black: '#171002',
+	darkYellow: '#3E2D00',
 	dark: {
 		white: '#ECE8E3',
 		yellow: '#FFB800',

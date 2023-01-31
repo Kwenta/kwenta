@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
-import { Heading } from 'sections/earn/text';
 import { FlexDivRowCentered } from 'components/layout/flex';
-import { SplitStakingCard } from 'sections/dashboard/Stake/card';
 import { EXTERNAL_LINKS } from 'constants/links';
+import { SplitStakingCard } from 'sections/dashboard/Stake/card';
+import { Heading } from 'sections/earn/text';
 import { useAppSelector } from 'state/hooks';
 import {
 	selectClaimableBalance,
