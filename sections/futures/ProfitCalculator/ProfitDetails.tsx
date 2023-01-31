@@ -3,7 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { PositionSide } from '../types';
+import { PositionSide } from 'sdk/types/futures';
 
 function textColor(props: any) {
 	if (!props.className || props.className === 'row-name')

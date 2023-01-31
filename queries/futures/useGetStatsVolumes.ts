@@ -1,11 +1,11 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { useQuery } from 'react-query';
-import { useRecoilValue } from 'recoil';
 
 import { chain } from 'containers/Connector/config';
 import { PERIOD_IN_SECONDS } from 'sdk/constants/period';
-import { minTimestampState } from 'store/stats';
+import { useAppSelector } from 'state/hooks';
+import { selectMinTimestamp } from 'state/stats/selectors';
 import { weiFromWei } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
@@ -22,7 +22,7 @@ type VolumeStat = {
 
 export const useGetStatsVolumes = () => {
 	const futuresEndpoint = getFuturesEndpoint(chain.optimism.id as NetworkId);
-	const minTimestamp = useRecoilValue(minTimestampState);
+	const minTimestamp = useAppSelector(selectMinTimestamp);
 
 	const query = async () => {
 		try {

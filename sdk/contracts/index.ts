@@ -57,7 +57,7 @@ export const getPerpsV2MarketMulticall = (marketAddress: string) =>
 
 export const getContractsByNetwork = (
 	networkId: NetworkId,
-	provider: ethers.providers.Provider | ethers.Signer
+	provider: ethers.providers.Provider
 ) => {
 	return {
 		Exchanger: ADDRESSES.Exchanger[networkId]

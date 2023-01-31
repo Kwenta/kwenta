@@ -1,8 +1,8 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import { Language } from 'translations/constants';
 
 import { DEFAULT_LANGUAGE } from 'constants/defaults';
+import { Language } from 'translations/constants';
 
 import enTranslation from './translations/en.json';
 

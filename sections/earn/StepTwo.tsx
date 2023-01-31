@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-import { Heading, Description } from 'sections/earn/text';
 import { SplitContainer } from 'components/layout/grid';
+import { Heading, Description } from 'sections/earn/text';
 
 import EarnStakeCard from './EarnStakeCard';
 import StakeGrid from './StakeGrid';

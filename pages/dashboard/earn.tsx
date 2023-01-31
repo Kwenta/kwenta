@@ -3,11 +3,11 @@ import { FC, useEffect } from 'react';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
-import { Heading } from 'sections/earn/text';
 import * as Text from 'components/Text';
 import DashboardLayout from 'sections/dashboard/DashboardLayout';
 import StepOne from 'sections/earn/StepOne';
 import StepTwo from 'sections/earn/StepTwo';
+import { Heading } from 'sections/earn/text';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { getEarnDetails } from 'state/earn/actions';
 import { useAppDispatch, useAppSelector } from 'state/hooks';

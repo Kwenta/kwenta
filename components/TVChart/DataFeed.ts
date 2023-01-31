@@ -68,7 +68,7 @@ const fetchCombinedCandles = async (
 	const baseCurrencyIsSUSD = base === 'sUSD';
 	const quoteCurrencyIsSUSD = quote === 'sUSD';
 	const baseDataPromise = requestCandlesticks(
-		base,
+		getDisplayAsset(base),
 		from,
 		to,
 		resolutionToSeconds(resolution),
@@ -99,7 +99,7 @@ const fetchLastCandle = async (
 	const from = 0;
 
 	const baseDataPromise = requestCandlesticks(
-		base,
+		getDisplayAsset(base),
 		from,
 		to,
 		resolutionToSeconds(resolution),

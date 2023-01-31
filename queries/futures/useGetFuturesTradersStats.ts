@@ -1,9 +1,9 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { useQuery } from 'react-query';
-import { useRecoilValue } from 'recoil';
 
 import { chain } from 'containers/Connector/config';
-import { minTimestampState } from 'store/stats';
+import { useAppSelector } from 'state/hooks';
+import { selectMinTimestamp } from 'state/stats/selectors';
 import logError from 'utils/logError';
 
 import { getFuturesPositions } from './subgraph';
@@ -23,7 +23,7 @@ type TradersStat = {
 };
 
 export const useGetFuturesTradersStats = () => {
-	const minTimestamp = useRecoilValue(minTimestampState);
+	const minTimestamp = useAppSelector(selectMinTimestamp);
 
 	const query = async () => {
 		try {
