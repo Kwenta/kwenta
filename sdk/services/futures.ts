@@ -715,7 +715,7 @@ export default class FuturesService {
 		if (!Pyth) throw new Error(UNSUPPORTED_NETWORK);
 
 		// get price update data
-		const priceUpdateData = await this.sdk.prices.getPriceUpdateData(marketKey);
+		const priceUpdateData = await this.sdk.prices.getPythPriceUpdateData(marketKey);
 		const updateFee = await Pyth.getUpdateFee(priceUpdateData);
 
 		return market.executeOffchainDelayedOrder(account, priceUpdateData, { value: updateFee });

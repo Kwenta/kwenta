@@ -139,7 +139,7 @@ export default class PricesService {
 		return this.formatOffChainPrices(pythPrices ?? []);
 	}
 
-	public async getPriceUpdateData(marketKey: FuturesMarketKey) {
+	public async getPythPriceUpdateData(marketKey: FuturesMarketKey) {
 		const pythIds = MARKETS[marketKey]?.pythIds;
 		const pythId = pythIds ? pythIds[this.sdk.context.isMainnet ? 'mainnet' : 'testnet'] : null;
 		if (!pythId) throw new Error(sdkErrors.NO_PYTH_ID);
