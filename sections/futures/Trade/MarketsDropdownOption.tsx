@@ -13,8 +13,8 @@ const MarketsDropdownOption: React.FC<OptionProps<MarketsCurrencyOption>> = (pro
 		<OptionDetailsContainer $isSelected={props.isSelected}>
 			<CurrencyIcon
 				currencyKey={(props.data.value[0] !== 's' ? 's' : '') + props.data.value}
-				width="31px"
-				height="31px"
+				width={31}
+				height={31}
 			/>
 			<CurrencyMeta $isSelected={props.isSelected}>
 				<div>

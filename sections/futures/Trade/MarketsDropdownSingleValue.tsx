@@ -12,7 +12,7 @@ import { MarketsCurrencyOption } from './MarketsDropdown';
 const MarketsDropdownSingleValue: React.FC<SingleValueProps<MarketsCurrencyOption>> = (props) => (
 	<SingleValueWrapper {...props}>
 		<SingleValueContainer>
-			<CurrencyIcon currencyKey={MarketKeyByAsset[props.data.value]} width="31px" height="31px" />
+			<CurrencyIcon currencyKey={MarketKeyByAsset[props.data.value]} width={31} height={31} />
 			<div className="currency-meta">
 				<CurrencyLabel>
 					{props.data.label}

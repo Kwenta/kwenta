@@ -116,7 +116,7 @@ const BalanceActions: FC = () => {
 	}: ReactSelectOptionProps) => (
 		<LabelContainer onClick={onClick}>
 			<FlexDivRow>
-				{synthIcon && <StyledCurrencyIcon currencyKey={synthIcon} width="24px" height="24px" />}
+				{synthIcon && <StyledCurrencyIcon currencyKey={synthIcon} width={24} height={24} />}
 				<StyledLabel>{t(label)}</StyledLabel>
 			</FlexDivRow>
 			<Container>{marketRemainingMargin}</Container>
@@ -140,7 +140,7 @@ const BalanceActions: FC = () => {
 					noOutline
 					mono
 				>
-					<StyledCurrencyIcon currencyKey="sUSD" width="20px" height="20px" />
+					<StyledCurrencyIcon currencyKey="sUSD" width={20} height={20} />
 					{t('header.balance.get-susd')}
 				</StyledWidgetButton>
 			) : (

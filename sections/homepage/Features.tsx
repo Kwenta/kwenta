@@ -52,7 +52,7 @@ const FEATURES = [
 		key: 'open-source',
 		title: 'homepage.features.open-source.title',
 		copy: 'homepage.features.open-source.copy',
-		image: <Image src={OpenSourceIcon} layout="fixed" height="64px" width="64px" />,
+		image: <Image src={OpenSourceIcon} alt="Open source" height={64} width={64} />,
 	},
 	{
 		key: 'mobile',
