@@ -1,16 +1,16 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
+import { formatBytes32String } from 'ethers/lib/utils';
 
 import { DEFAULT_LEVERAGE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
-import { DEFAULT_MAX_LEVERAGE } from 'constants/futures';
+import { APP_MAX_LEVERAGE, DEFAULT_MAX_LEVERAGE } from 'constants/futures';
 import { TransactionStatus } from 'sdk/types/common';
-import { FuturesPosition, FuturesPositionHistory } from 'sdk/types/futures';
+import { FuturesPosition, PositionSide } from 'sdk/types/futures';
 import { unserializePotentialTrade } from 'sdk/utils/futures';
-import { PositionSide } from 'sections/futures/types';
 import { accountType, deserializeWeiObject } from 'state/helpers';
 import { selectPrices } from 'state/prices/selectors';
 import { RootState } from 'state/store';
-import { selectWallet } from 'state/wallet/selectors';
+import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import { sameSide } from 'utils/costCalculations';
 import { getKnownError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
@@ -25,17 +25,30 @@ import {
 	unserializeDelayedOrders,
 	unserializeCrossMarginTradeInputs,
 	updatePositionUpnl,
+	unserializePositionHistory,
+	unserializeTrades,
+	unserializeFuturesOrders,
 } from 'utils/futures';
 
-import { MarkPrices, futuresPositionHistoryKeys, futuresPositionKeys } from './types';
+import { MarkPrices, futuresPositionKeys } from './types';
 
 export const selectFuturesType = (state: RootState) => state.futures.selectedType;
 
-export const selectFuturesTransaction = (state: RootState) => state.futures.transaction;
+export const selectCrossMarginAccount = createSelector(
+	selectWallet,
+	selectNetwork,
+	(state: RootState) => state.futures.crossMargin,
+	(wallet, network, crossMargin) => {
+		return wallet ? crossMargin.accounts[network]?.[wallet]?.account : undefined;
+	}
+);
 
-export const selectCrossMarginAccount = (state: RootState) => state.futures.crossMargin.account;
+export const selectQueryStatuses = (state: RootState) => state.futures.queryStatuses;
 
 export const selectMarketsQueryStatus = (state: RootState) => state.futures.queryStatuses.markets;
+
+export const selectCMAccountQueryStatus = (state: RootState) =>
+	state.futures.queryStatuses.crossMarginAccount;
 
 export const selectIsolatedLeverageInput = (state: RootState) =>
 	state.futures.isolatedMargin.leverageInput;
@@ -43,9 +56,41 @@ export const selectIsolatedLeverageInput = (state: RootState) =>
 export const selectCrossMarginMarginDelta = (state: RootState) =>
 	wei(state.futures.crossMargin.marginDelta || 0);
 
+export const selectCrossMarginSupportedNetwork = (state: RootState) =>
+	state.wallet.networkId === 10 || state.wallet.networkId === 420;
+
+export const selectFuturesSupportedNetwork = (state: RootState) =>
+	state.wallet.networkId === 10 || state.wallet.networkId === 420;
+
 export const selectCrossMarginTransferOpen = (state: RootState) =>
 	state.app.openModal === 'futures_cross_deposit' ||
 	state.app.openModal === 'futures_cross_withdraw';
+
+export const selectShowCrossMarginOnboard = (state: RootState) =>
+	state.futures.crossMargin.showOnboard;
+
+export const selectPreviousDayRates = (state: RootState) => state.futures.previousDayRates;
+
+export const selectSelectedTrader = (state: RootState) => state.futures.leaderboard.selectedTrader;
+
+export const selectCrossMarginAccountData = createSelector(
+	selectWallet,
+	selectNetwork,
+	selectCrossMarginSupportedNetwork,
+	(state: RootState) => state.futures.crossMargin,
+	(wallet, network, supportedNetwork, crossMargin) => {
+		return wallet && supportedNetwork ? crossMargin.accounts[network][wallet] : null;
+	}
+);
+
+export const selectCMDepositApproved = createSelector(selectCrossMarginAccountData, (account) => {
+	if (!account) return false;
+	return wei(account.balanceInfo.allowance || 0).gt(0);
+});
+
+export const selectCMBalance = createSelector(selectCrossMarginAccountData, (account) =>
+	wei(account?.balanceInfo.freeMargin || 0)
+);
 
 export const selectMarketKey = createSelector(
 	(state: RootState) => state.futures[accountType(state.futures.selectedType)].selectedMarketAsset,
@@ -85,10 +130,6 @@ export const selectMarketInfo = createSelector(
 		return markets.find((market) => market.marketKey === selectedMarket);
 	}
 );
-
-export const selectFundingRate = createSelector(selectMarketInfo, (marketInfo) => {
-	return marketInfo?.currentFundingRate;
-});
 
 export const selectIsolatedPriceImpact = createSelector(
 	(state: RootState) => state.futures.isolatedMargin.priceImpact,
@@ -150,12 +191,12 @@ export const selectFuturesAccount = createSelector(
 );
 
 export const selectCrossMarginPositions = createSelector(
-	selectPrices,
-	(state: RootState) => state.futures,
-	(prices, futures) => {
-		return futures.crossMargin.account && futures.crossMargin.positions[futures.crossMargin.account]
-			? futures.crossMargin.positions[futures.crossMargin.account].map((p) =>
-					updatePositionUpnl(p, prices)
+	selectCrossMarginAccountData,
+	(account) => {
+		return account
+			? account.positions.map(
+					// TODO: Maybe change to explicit serializing functions to avoid casting
+					(p) => deserializeWeiObject(p, futuresPositionKeys) as FuturesPosition
 			  )
 			: [];
 	}
@@ -182,44 +223,6 @@ export const selectFuturesPositions = createSelector(
 	}
 );
 
-export const selectCrossMarginPositionHistory = createSelector(
-	(state: RootState) => state.futures,
-	(futures) => {
-		return futures.crossMargin.account &&
-			futures.crossMargin.positionHistory[futures.crossMargin.account]
-			? futures.crossMargin.positionHistory[futures.crossMargin.account].map(
-					// TODO: Maybe change to explicit serializing functions to avoid casting
-					(p) => deserializeWeiObject(p, futuresPositionHistoryKeys) as FuturesPositionHistory
-			  )
-			: [];
-	}
-);
-
-export const selectIsolatedMarginPositionHistory = createSelector(
-	selectWallet,
-	(state: RootState) => state.futures,
-	(wallet, futures) => {
-		if (!wallet) return [];
-		return futures.isolatedMargin.positionHistory[wallet]
-			? futures.isolatedMargin.positionHistory[wallet].map(
-					// TODO: Maybe change to explicit serializing functions to avoid casting
-					(p) => deserializeWeiObject(p, futuresPositionHistoryKeys) as FuturesPositionHistory
-			  )
-			: [];
-	}
-);
-
-export const selectFuturesPositionHistory = createSelector(
-	selectCrossMarginPositionHistory,
-	selectIsolatedMarginPositionHistory,
-	(state: RootState) => state.futures.selectedType,
-	(crossMarginPositionHistory, isolatedMarginPositionHistory, selectedType) => {
-		return selectedType === 'cross_margin'
-			? crossMarginPositionHistory
-			: isolatedMarginPositionHistory;
-	}
-);
-
 export const selectActiveIsolatedPositionsCount = createSelector(
 	selectIsolatedMarginPositions,
 	(positions) => {
@@ -235,22 +238,22 @@ export const selectActiveCrossPositionsCount = createSelector(
 );
 
 export const selectSubmittingFuturesTx = createSelector(
-	(state: RootState) => state.futures,
-	(futures) => {
+	(state: RootState) => state.app,
+	(app) => {
 		return (
-			futures.transaction?.status === TransactionStatus.AwaitingExecution ||
-			futures.transaction?.status === TransactionStatus.Executed
+			app.transaction?.status === TransactionStatus.AwaitingExecution ||
+			app.transaction?.status === TransactionStatus.Executed
 		);
 	}
 );
 
 export const selectIsClosingPosition = createSelector(
 	selectSubmittingFuturesTx,
-	(state: RootState) => state.futures,
-	(submitting, futures) => {
+	(state: RootState) => state.app,
+	(submitting, app) => {
 		return (
-			(futures.transaction?.type === 'close_isolated' ||
-				futures.transaction?.type === 'close_cross_margin') &&
+			(app.transaction?.type === 'close_isolated' ||
+				app.transaction?.type === 'close_cross_margin') &&
 			submitting
 		);
 	}
@@ -258,11 +261,11 @@ export const selectIsClosingPosition = createSelector(
 
 export const selectIsSubmittingCrossTransfer = createSelector(
 	selectSubmittingFuturesTx,
-	(state: RootState) => state.futures,
-	(submitting, futures) => {
+	(state: RootState) => state.app,
+	(submitting, app) => {
 		return (
-			(futures.transaction?.type === 'deposit_cross_margin' ||
-				futures.transaction?.type === 'withdraw_cross_margin') &&
+			(app.transaction?.type === 'deposit_cross_margin' ||
+				app.transaction?.type === 'withdraw_cross_margin') &&
 			submitting
 		);
 	}
@@ -270,56 +273,56 @@ export const selectIsSubmittingCrossTransfer = createSelector(
 
 export const selectIsApprovingCrossDeposit = createSelector(
 	selectSubmittingFuturesTx,
-	(state: RootState) => state.futures,
-	(submitting, futures) => {
-		return futures.transaction?.type === 'approve_cross_margin' && submitting;
+	(state: RootState) => state.app,
+	(submitting, app) => {
+		return app.transaction?.type === 'approve_cross_margin' && submitting;
 	}
 );
 
 export const selectIsSubmittingIsolatedTransfer = createSelector(
 	selectSubmittingFuturesTx,
-	(state: RootState) => state.futures,
-	(submitting, futures) => {
+	(state: RootState) => state.app,
+	(submitting, app) => {
 		return (
-			(futures.transaction?.type === 'deposit_isolated' ||
-				futures.transaction?.type === 'withdraw_isolated') &&
+			(app.transaction?.type === 'deposit_isolated' ||
+				app.transaction?.type === 'withdraw_isolated') &&
 			submitting
 		);
 	}
 );
 
 export const selectIsolatedTransferError = createSelector(
-	(state: RootState) => state.futures,
-	(futures) => {
-		return (futures.transaction?.type === 'deposit_isolated' ||
-			futures.transaction?.type === 'withdraw_isolated') &&
-			futures.transaction?.status === TransactionStatus.Failed
-			? futures.transaction?.error ?? 'Transaction failed'
+	(state: RootState) => state.app,
+	(app) => {
+		return (app.transaction?.type === 'deposit_isolated' ||
+			app.transaction?.type === 'withdraw_isolated') &&
+			app.transaction?.status === TransactionStatus.Failed
+			? app.transaction?.error ?? 'Transaction failed'
 			: null;
 	}
 );
 
 export const selectIsModifyingIsolatedPosition = createSelector(
 	selectSubmittingFuturesTx,
-	(state: RootState) => state.futures,
-	(submitting, futures) => {
-		return futures.transaction?.type === 'modify_isolated' && submitting;
+	(state: RootState) => state.app,
+	(submitting, app) => {
+		return app.transaction?.type === 'modify_isolated' && submitting;
 	}
 );
 
 export const selectIsCancellingOrder = createSelector(
 	selectSubmittingFuturesTx,
-	(state: RootState) => state.futures,
-	(submitting, futures) => {
-		return futures.transaction?.type === 'cancel_delayed_isolated' && submitting;
+	(state: RootState) => state.app,
+	(submitting, app) => {
+		return app.transaction?.type === 'cancel_delayed_isolated' && submitting;
 	}
 );
 
 export const selectIsExecutingOrder = createSelector(
 	selectSubmittingFuturesTx,
-	(state: RootState) => state.futures,
-	(submitting, futures) => {
-		return futures.transaction?.type === 'execute_delayed_isolated' && submitting;
+	(state: RootState) => state.app,
+	(submitting, app) => {
+		return app.transaction?.type === 'execute_delayed_isolated' && submitting;
 	}
 );
 
@@ -349,13 +352,8 @@ export const selectPosition = createSelector(
 	}
 );
 
-export const selectActivePositionHistory = createSelector(
-	selectFuturesPositionHistory,
-	selectMarketInfo,
-	(positionHistory) => {
-		return positionHistory.filter((p) => p.isOpen);
-	}
-);
+export const selectOrderFeeCap = (state: RootState) =>
+	wei(state.futures.crossMargin.orderFeeCap || '0');
 
 export const selectLeverageSide = createSelector(
 	(state: RootState) => state.futures,
@@ -364,18 +362,22 @@ export const selectLeverageSide = createSelector(
 
 export const selectMaxLeverage = createSelector(
 	selectPosition,
-	selectOrderType,
 	selectMarketInfo,
 	selectLeverageSide,
+	selectOrderType,
 	selectFuturesType,
-	(position, orderType, market, leverageSide, futuresType) => {
+	(position, market, leverageSide, orderType, futuresType) => {
 		const positionLeverage = position?.position?.leverage ?? wei(0);
 		const positionSide = position?.position?.side;
 		const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
-		const adjustedMaxLeverage =
-			orderType === 'delayed' || orderType === 'delayedOffchain'
-				? marketMaxLeverage.mul(DEFAULT_NP_LEVERAGE_ADJUSTMENT)
-				: marketMaxLeverage;
+		let adjustedMaxLeverage = marketMaxLeverage.gt(APP_MAX_LEVERAGE)
+			? APP_MAX_LEVERAGE
+			: marketMaxLeverage;
+
+		adjustedMaxLeverage =
+			orderType === 'delayed' || orderType === 'delayed_offchain'
+				? adjustedMaxLeverage.mul(DEFAULT_NP_LEVERAGE_ADJUSTMENT)
+				: adjustedMaxLeverage;
 
 		if (!positionLeverage || positionLeverage.eq(wei(0))) return adjustedMaxLeverage;
 		if (futuresType === 'cross_margin') return adjustedMaxLeverage;
@@ -435,19 +437,21 @@ export const selectIsolatedMarginTradeInputs = createSelector(
 	}
 );
 
+export const selectSelectedInputDenomination = (state: RootState) =>
+	state.futures.selectedInputDenomination;
+
 export const selectCrossMarginSelectedLeverage = createSelector(
 	selectMarketKey,
 	(state: RootState) => state.futures.crossMargin.selectedLeverageByAsset,
 	(key, selectedLeverageByAsset) => wei(selectedLeverageByAsset[key] || DEFAULT_LEVERAGE)
 );
 
-export const selectDynamicFeeRate = (state: RootState) => wei(state.futures.dynamicFeeRate);
-
 export const selectIsolatedMarginFee = (state: RootState) =>
 	wei(state.futures.isolatedMargin.tradeFee);
 
-export const selectKeeperEthBalance = (state: RootState) =>
-	wei(state.futures.crossMargin.balanceInfo.keeperEthBal);
+export const selectKeeperEthBalance = createSelector(selectCrossMarginAccountData, (account) =>
+	wei(account?.balanceInfo.keeperEthBal || 0)
+);
 
 export const selectCrossMarginTradeFees = createSelector(
 	(state: RootState) => state.futures.crossMargin.fees,
@@ -484,6 +488,19 @@ export const selectIsolatedMarginLeverage = createSelector(
 	}
 );
 
+export const selectCrossMarginBalanceInfo = createSelector(
+	selectCrossMarginAccountData,
+	(account) => {
+		return account
+			? unserializeCmBalanceInfo(account.balanceInfo)
+			: {
+					freeMargin: wei(0),
+					keeperEthBal: wei(0),
+					allowance: wei(0),
+			  };
+	}
+);
+
 export const selectNextPriceDisclaimer = createSelector(
 	selectMaxLeverage,
 	selectCrossMarginTradeInputs,
@@ -496,7 +513,7 @@ export const selectPlaceOrderTranslationKey = createSelector(
 	selectPosition,
 	selectFuturesType,
 	(state: RootState) => state.futures[accountType(state.futures.selectedType)].orderType,
-	(state: RootState) => state.futures.crossMargin.balanceInfo,
+	selectCrossMarginBalanceInfo,
 	selectIsMarketCapReached,
 	(position, selectedType, orderType, { freeMargin }, isMarketCapReached) => {
 		let remainingMargin;
@@ -507,10 +524,10 @@ export const selectPlaceOrderTranslationKey = createSelector(
 			remainingMargin = positionMargin.add(freeMargin);
 		}
 
-		if (orderType === 'delayed' || orderType === 'delayedOffchain')
+		if (orderType === 'delayed' || orderType === 'delayed_offchain')
 			return 'futures.market.trade.button.place-delayed-order';
 		if (orderType === 'limit') return 'futures.market.trade.button.place-limit-order';
-		if (orderType === 'stopMarket') return 'futures.market.trade.button.place-stop-order';
+		if (orderType === 'stop_market') return 'futures.market.trade.button.place-stop-order';
 		if (!!position?.position) return 'futures.market.trade.button.modify-position';
 		return remainingMargin.lt('50')
 			? 'futures.market.trade.button.deposit-margin-minimum'
@@ -519,9 +536,6 @@ export const selectPlaceOrderTranslationKey = createSelector(
 			: 'futures.market.trade.button.open-position';
 	}
 );
-
-export const selectCrossMarginBalanceInfo = (state: RootState) =>
-	unserializeCmBalanceInfo(state.futures.crossMargin.balanceInfo);
 
 export const selectFuturesPortfolio = createSelector(
 	selectCrossMarginPositions,
@@ -545,12 +559,11 @@ export const selectFuturesPortfolio = createSelector(
 );
 
 export const selectCrossMarginOpenOrders = createSelector(
-	(state: RootState) => state.futures,
-	(futures) => {
-		return futures.crossMargin.account &&
-			futures.crossMargin.openOrders[futures.crossMargin.account]
-			? unserializeDelayedOrders(futures.crossMargin.openOrders[futures.crossMargin.account])
-			: [];
+	selectMarketAsset,
+	selectCrossMarginAccountData,
+	(asset, account) => {
+		const orders = account ? unserializeFuturesOrders(account.openOrders) : [];
+		return orders.filter((o) => o.asset === asset);
 	}
 );
 
@@ -584,10 +597,10 @@ export const selectTradePreviewError = createSelector(
 );
 
 export const selectModifyPositionError = createSelector(
-	(state: RootState) => state.futures,
-	(futures) => {
-		return futures.transaction?.type === 'modify_isolated' && futures.transaction?.error
-			? getKnownError(futures.transaction.error)
+	(state: RootState) => state.app,
+	(app) => {
+		return app.transaction?.type === 'modify_isolated' && app.transaction?.error
+			? getKnownError(app.transaction.error)
 			: null;
 	}
 );
@@ -627,8 +640,10 @@ export const selectOpenOrder = createSelector(
 	selectFuturesType,
 	selectMarketKey,
 	(crossOrders, isolatedOrder, futuresType, marketKey) => {
-		const orders = futuresType === 'cross_margin' ? crossOrders : isolatedOrder;
-		return orders.find((o) => o.marketKey === marketKey);
+		if (futuresType === 'cross_margin') {
+			return crossOrders.find((o) => o.marketKey === marketKey);
+		}
+		return isolatedOrder.find((o) => o.marketKey === marketKey);
 	}
 );
 
@@ -639,7 +654,7 @@ export const selectCrossMarginSettings = createSelector(
 
 export const selectIsAdvancedOrder = createSelector(
 	(state: RootState) => state.futures.crossMargin.orderType,
-	(type) => type === 'limit' || type === 'stopMarket'
+	(type) => type === 'limit' || type === 'stop_market'
 );
 
 export const selectModifyIsolatedGasEstimate = createSelector(
@@ -671,11 +686,11 @@ export const selectDelayedOrderFee = createSelector(
 		const notionalDiff = nativeSizeDelta.mul(price);
 
 		const makerFee =
-			orderType === 'delayedOffchain'
+			orderType === 'delayed_offchain'
 				? market.feeRates.makerFeeOffchainDelayedOrder
 				: market.feeRates.makerFeeDelayedOrder;
 		const takerFee =
-			orderType === 'delayedOffchain'
+			orderType === 'delayed_offchain'
 				? market.feeRates.takerFeeOffchainDelayedOrder
 				: market.feeRates.takerFeeDelayedOrder;
 
@@ -693,4 +708,85 @@ export const selectOpenInterest = createSelector(selectMarkets, (futuresMarkets)
 		(total, { openInterest }) => total.add(openInterest.shortUSD).add(openInterest.longUSD),
 		wei(0)
 	)
+);
+export const selectPositionHistory = createSelector(
+	selectFuturesType,
+	selectFuturesAccount,
+	selectCrossMarginAccountData,
+	(state: RootState) => state.futures,
+	(type, account, accountData, futures) => {
+		if (type === 'cross_margin') {
+			return unserializePositionHistory(accountData?.positionHistory ?? []);
+		} else if (account) {
+			return unserializePositionHistory(futures.isolatedMargin.positionHistory[account] ?? []);
+		}
+		return [];
+	}
+);
+
+export const selectSelectedMarketPositionHistory = createSelector(
+	selectMarketAsset,
+	selectPositionHistory,
+	(marketAsset, positionHistory) => {
+		return positionHistory.find(({ asset, isOpen }) => isOpen && asset === marketAsset);
+	}
+);
+
+export const selectPositionHistoryForSelectedTrader = createSelector(
+	selectNetwork,
+	(state: RootState) => state.futures,
+	(networkId, futures) => {
+		const { selectedTrader } = futures.leaderboard;
+		if (!selectedTrader) return [];
+		const history =
+			futures.leaderboard.selectedTraderPositionHistory[networkId]?.[selectedTrader] ?? [];
+		return unserializePositionHistory(history);
+	}
+);
+
+export const selectUsersTradesForMarket = createSelector(
+	selectFuturesType,
+	selectFuturesAccount,
+	selectMarketAsset,
+	selectCrossMarginAccountData,
+	(state: RootState) => state.futures,
+	(type, account, asset, accountData, futures) => {
+		let trades;
+		if (type === 'cross_margin') {
+			trades = unserializeTrades(accountData?.trades ?? []);
+		} else if (account) {
+			trades = unserializeTrades(futures.isolatedMargin.trades?.[account] ?? []);
+		}
+		return trades?.filter((t) => t.asset === formatBytes32String(asset)) ?? [];
+	}
+);
+
+export const selectAllUsersTrades = createSelector(
+	selectFuturesType,
+	selectFuturesAccount,
+	selectCrossMarginAccountData,
+	(state: RootState) => state.futures,
+	(type, account, accountData, futures) => {
+		if (type === 'cross_margin') {
+			return unserializeTrades(accountData?.trades ?? []);
+		} else if (account) {
+			return unserializeTrades(futures.isolatedMargin.trades?.[account] ?? []);
+		}
+		return [];
+	}
+);
+
+export const selectCancellingOrder = (state: RootState) =>
+	state.futures.crossMargin.cancellingOrder;
+
+export const selectHasRemainingMargin = createSelector(
+	selectPosition,
+	selectFuturesType,
+	selectCrossMarginBalanceInfo,
+	(position, futuresType, balanceInfo) => {
+		const posMargin = position?.remainingMargin ?? zeroBN;
+		return futuresType === 'cross_margin'
+			? balanceInfo.freeMargin.add(posMargin).gt(0)
+			: posMargin.gt(0);
+	}
 );

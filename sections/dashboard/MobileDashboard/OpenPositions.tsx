@@ -1,7 +1,6 @@
 import Wei from '@synthetixio/wei';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SetterOrUpdater } from 'recoil';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
@@ -23,8 +22,6 @@ import { PositionsTab } from '../Overview/Overview';
 import SynthBalancesTable from '../SynthBalancesTable';
 
 export type OpenPositionsProps = {
-	activePositionsTab: PositionsTab;
-	setActivePositionsTab: SetterOrUpdater<PositionsTab>;
 	exchangeTokens: {
 		synth: string;
 		description: string;
@@ -36,17 +33,16 @@ export type OpenPositionsProps = {
 	exchangeTokenBalances: Wei;
 };
 
-const OpenPositions: React.FC<OpenPositionsProps> = ({
-	activePositionsTab,
-	setActivePositionsTab,
-	exchangeTokens,
-	exchangeTokenBalances,
-}) => {
+const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeTokenBalances }) => {
 	const { t } = useTranslation();
 	// const crossPositions = useAppSelector(selectCrossMarginPositions);
 	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
 	const portfolio = useAppSelector(selectFuturesPortfolio);
 	const balances = useAppSelector(selectBalances);
+
+	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(
+		PositionsTab.ISOLATED_MARGIN
+	);
 
 	const POSITIONS_TABS = useMemo(
 		() => [

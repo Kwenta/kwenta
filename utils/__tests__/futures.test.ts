@@ -1,6 +1,6 @@
 import { wei } from '@synthetixio/wei';
 
-import { PositionSide } from 'sections/futures/types';
+import { PositionSide } from 'sdk/types/futures';
 import { calculateMarginDelta, FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
 
 const ETH_PRICE = 1500;
@@ -32,7 +32,6 @@ const getPosition = (initialSize: number = 1, leverage = 10, side = 'long') => (
 
 const getFees = (overrides: Record<string, any> = {}) => ({
 	staticFee: wei(0.01),
-	dynamicFeeRate: wei(0.01),
 	crossMarginFee: wei(5),
 	keeperEthDeposit: wei(0.01),
 	limitStopOrderFee: wei(5),

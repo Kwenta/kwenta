@@ -2,17 +2,17 @@ import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { Contract } from 'ethers';
 import { useMemo, useCallback } from 'react';
-import { useRecoilValue } from 'recoil';
 
+import { selectGasSpeed } from 'state/app/selectors';
 import { sdk } from 'state/config';
-import { gasSpeedState } from 'store/wallet';
+import { useAppSelector } from 'state/hooks';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 import { getTransactionPrice } from 'utils/network';
 
 export default function useEstimateGasCost() {
-	const gasSpeed = useRecoilValue(gasSpeedState);
+	const gasSpeed = useAppSelector(selectGasSpeed);
 
 	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries();
 	const ethGasPriceQuery = useEthGasPriceQuery();

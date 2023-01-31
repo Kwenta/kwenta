@@ -1,18 +1,17 @@
-import { useRecoilValue } from 'recoil';
-
 import CrossMarginIconDark from 'assets/svg/futures/cross-margin-icon-dark.svg';
 import CrossMarginIconLight from 'assets/svg/futures/cross-margin-icon-light.svg';
 import IsolatedMarginIconDark from 'assets/svg/futures/isolated-margin-icon-dark.svg';
 import IsolatedMarginIconLight from 'assets/svg/futures/isolated-margin-icon-light.svg';
 import { FuturesAccountType } from 'queries/futures/subgraph';
-import { currentThemeState } from 'store/ui';
+import { useAppSelector } from 'state/hooks';
+import { selectCurrentTheme } from 'state/preferences/selectors';
 
 type IconProps = {
 	type: FuturesAccountType;
 };
 
 export default function FuturesIcon(props: IconProps) {
-	const currentTheme = useRecoilValue(currentThemeState);
+	const currentTheme = useAppSelector(selectCurrentTheme);
 
 	const CrossMarginIcon = currentTheme === 'dark' ? CrossMarginIconDark : CrossMarginIconLight;
 	const IsolatedMarginIcon =
@@ -25,14 +24,14 @@ export default function FuturesIcon(props: IconProps) {
 }
 
 export function CrossMarginIcon() {
-	const currentTheme = useRecoilValue(currentThemeState);
+	const currentTheme = useAppSelector(selectCurrentTheme);
 
 	const Icon = currentTheme === 'dark' ? CrossMarginIconDark : CrossMarginIconLight;
 	return <Icon />;
 }
 
 export function IsolatedMarginIcon() {
-	const currentTheme = useRecoilValue(currentThemeState);
+	const currentTheme = useAppSelector(selectCurrentTheme);
 
 	const Icon = currentTheme === 'dark' ? IsolatedMarginIconDark : IsolatedMarginIconLight;
 	return <Icon />;

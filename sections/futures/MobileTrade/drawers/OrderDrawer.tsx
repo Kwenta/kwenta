@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';
-import { PositionSide } from 'queries/futures/types';
+import { PositionSide } from 'sdk/types/futures';
 import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
 import { DelayedOrderWithDetails } from 'state/futures/types';
 import { useAppDispatch } from 'state/hooks';

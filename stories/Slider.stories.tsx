@@ -1,8 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
-import logError from 'utils/logError';
-
 import Slider from '../components/Slider/Slider';
 
 export default {
@@ -30,6 +28,8 @@ Default.args = {
 		{ value: 0, label: '0x' },
 		{ value: 10, label: '10x' },
 	],
-	onChange: (_, v) => logError(`Value: ${v}`),
-	onChangeCommitted: (_, v) => logError(`Value committed: ${v}`),
+	// eslint-disable-next-line
+	onChange: (_, v) => console.log(`Value: ${v}`),
+	// eslint-disable-next-line
+	onChangeCommitted: (_, v) => console.log(`Value committed: ${v}`),
 };

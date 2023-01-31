@@ -1,16 +1,16 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { useRouter } from 'next/router';
 import { useRef, useContext, useEffect, useCallback, useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 import { ThemeContext } from 'styled-components';
 import { chain } from 'wagmi';
 
 import Connector from 'containers/Connector';
-import { DelayedOrder } from 'sdk/types/futures';
+import { FuturesOrder } from 'sdk/types/futures';
 import { PricesListener } from 'sdk/types/prices';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
 import { sdk } from 'state/config';
-import { currentThemeState } from 'store/ui';
+import { useAppSelector } from 'state/hooks';
+import { selectCurrentTheme } from 'state/preferences/selectors';
 import darkTheme from 'styles/theme/colors/dark';
 import { formatNumber } from 'utils/formatters/number';
 
@@ -26,7 +26,7 @@ import { ChartPosition } from './types';
 export type ChartProps = {
 	activePosition?: ChartPosition | null;
 	potentialTrade?: ChartPosition | null;
-	openOrders: DelayedOrder[];
+	openOrders: FuturesOrder[];
 	showOrderLines: boolean;
 	onChartReady?: () => void;
 	onToggleShowOrderLines?: () => void;
@@ -58,7 +58,7 @@ export function TVChart({
 		return;
 	},
 }: Props) {
-	const currentTheme = useRecoilValue(currentThemeState);
+	const currentTheme = useAppSelector(selectCurrentTheme);
 	const _widget = useRef<IChartingLibraryWidget | null>(null);
 	const _entryLine = useRef<IPositionLineAdapter | null | undefined>(null);
 	const _liquidationLine = useRef<IPositionLineAdapter | null | undefined>(null);

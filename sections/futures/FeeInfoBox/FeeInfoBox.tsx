@@ -1,5 +1,5 @@
 import router from 'next/router';
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -21,8 +21,7 @@ import {
 	selectOrderType,
 	selectTradeSizeInputs,
 } from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { fetchStakingData } from 'state/staking/actions';
+import { useAppSelector } from 'state/hooks';
 import {
 	selectStakedEscrowedKwentaBalance,
 	selectStakedKwentaBalance,
@@ -33,7 +32,6 @@ import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/form
 const FeeInfoBox: React.FC = () => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
-	const dispatch = useAppDispatch();
 	const orderType = useAppSelector(selectOrderType);
 	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance);
 	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance);
@@ -58,7 +56,7 @@ const FeeInfoBox: React.FC = () => {
 
 	const orderFeeRate = useMemo(
 		() =>
-			orderType === 'limit' ? limitOrderFee : orderType === 'stopMarket' ? stopOrderFee : null,
+			orderType === 'limit' ? limitOrderFee : orderType === 'stop_market' ? stopOrderFee : null,
 		[orderType, stopOrderFee, limitOrderFee]
 	);
 
@@ -77,12 +75,6 @@ const FeeInfoBox: React.FC = () => {
 		() => !!walletAddress && stakedKwentaBalance.add(stakedEscrowedKwentaBalance).gt(0),
 		[walletAddress, stakedKwentaBalance, stakedEscrowedKwentaBalance]
 	);
-
-	useEffect(() => {
-		if (!!walletAddress) {
-			dispatch(fetchStakingData());
-		}
-	}, [dispatch, walletAddress]);
 
 	const feesInfo = useMemo<Record<string, DetailedInfo | null | undefined>>(() => {
 		const crossMarginFeeInfo = {
@@ -113,8 +105,8 @@ const FeeInfoBox: React.FC = () => {
 				spaceBeneath: true,
 				keyNode: (
 					<CompactBox
-						onClick={() => router.push(ROUTES.Dashboard.Stake)}
 						$isEligible={isRewardEligible}
+						onClick={() => router.push(ROUTES.Dashboard.Stake)}
 					>
 						<div>
 							<div>{t('dashboard.stake.tabs.trading-rewards.trading-reward')}</div>
@@ -152,7 +144,7 @@ const FeeInfoBox: React.FC = () => {
 				}),
 			},
 		};
-		if (orderType === 'limit' || orderType === 'stopMarket') {
+		if (orderType === 'limit' || orderType === 'stop_market') {
 			return {
 				...crossMarginFeeInfo,
 				'Keeper Deposit': {
@@ -162,7 +154,7 @@ const FeeInfoBox: React.FC = () => {
 				},
 			};
 		}
-		if (orderType === 'delayed' || orderType === 'delayedOffchain') {
+		if (orderType === 'delayed' || orderType === 'delayed_offchain') {
 			return {
 				'Keeper Deposit': {
 					value: !!marketInfo?.keeperDeposit ? formatDollars(marketInfo.keeperDeposit) : NO_VALUE,
@@ -198,6 +190,7 @@ const FeeInfoBox: React.FC = () => {
 		t,
 		isRewardEligible,
 		orderType,
+		totalDeposit,
 		crossMarginTradeFeeRate,
 		isolatedMarginFee,
 		crossMarginFees,
@@ -206,7 +199,6 @@ const FeeInfoBox: React.FC = () => {
 		accountType,
 		marketInfo?.keeperDeposit,
 		marketCostTooltip,
-		totalDeposit,
 	]);
 
 	return <StyledInfoBox details={feesInfo} />;

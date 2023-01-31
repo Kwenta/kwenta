@@ -57,7 +57,7 @@ const useRateUpdateQuery = (
 
 				return updateTime;
 			} catch (e) {
-				logError(`query ERROR ${e}`);
+				logError(e);
 				return null;
 			}
 		},

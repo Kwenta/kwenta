@@ -3,14 +3,10 @@ import { FC, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { selectFuturesPositionHistory, selectMarketPrice } from 'state/futures/selectors';
+import { selectMarketPrice, selectSelectedMarketPositionHistory } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import getLocale from 'utils/formatters/getLocale';
 import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
-
-type PositionMetadataProps = {
-	marketAsset: string;
-};
 
 function getColor(props: any) {
 	let color = '';
@@ -66,11 +62,11 @@ function getFontFamily(props: any) {
 	}
 }
 
-const PositionMetadata: FC<PositionMetadataProps> = ({ marketAsset }) => {
+const PositionMetadata: FC = () => {
 	const { t } = useTranslation();
 	const [currentTimestamp, setCurrentTimestamp] = useState(0);
 
-	const futuresPositionHistory = useAppSelector(selectFuturesPositionHistory);
+	const currentPosition = useAppSelector(selectSelectedMarketPositionHistory);
 	const marketPrice = useAppSelector(selectMarketPrice);
 
 	let avgEntryPrice = '',
@@ -79,13 +75,7 @@ const PositionMetadata: FC<PositionMetadataProps> = ({ marketAsset }) => {
 		createdOnDate = '',
 		createdOnTime = '';
 
-	const currentPosition = futuresPositionHistory.find(
-		(position) => position.isOpen && position.asset === marketAsset
-	);
-
-	avgEntryPrice = currentPosition?.avgEntryPrice
-		? formatNumber(currentPosition?.avgEntryPrice)
-		: '';
+	avgEntryPrice = currentPosition?.avgEntryPrice.toNumber().toString() ?? '';
 	const openTimestamp = currentPosition?.openTimestamp ?? 0;
 
 	openAtDate = format(openTimestamp, 'PP', { locale: getLocale() });

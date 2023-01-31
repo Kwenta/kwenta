@@ -228,31 +228,33 @@ const PillButtonCss = css<{ padding?: string }>`
 	transition: all 0.1s ease-in-out;
 	margin-left: 8px;
 	cursor: pointer;
-	font-size: 10px;
+	font-size: 11px;
 	line-height: 12px;
 	font-family: ${(props) => props.theme.fonts.black};
 	font-variant: all-small-caps;
-	border: 1px solid ${(props) => props.theme.colors.selectedTheme.yellow};
-	color: ${(props) => props.theme.colors.selectedTheme.button.pill.background};
+	color: ${(props) => props.theme.colors.selectedTheme.button.pill.text};
 	border-radius: 10px;
+	border: ${(props) => props.theme.colors.selectedTheme.border};
 	padding: ${(props) => props.padding ?? '3px 5px'};
+	background-color: ${(props) => props.theme.colors.common.darkYellow};
+
 	svg {
 		path {
 			${(props) =>
 				css`
-					fill: ${props.theme.colors.selectedTheme.yellow};
+					fill: ${props.theme.colors.common.primaryYellow};
 				`}
 		}
 	}
+
 	&:hover {
 		background-color: ${(props) => props.theme.colors.selectedTheme.button.pill.background};
-		color: ${(props) => props.theme.colors.selectedTheme.button.pill.hover};
-		opacity: 0.7;
+		color: ${(props) => props.theme.colors.common.black};
 		svg {
 			path {
 				${(props) =>
 					css`
-						fill: ${props.theme.colors.selectedTheme.button.pill.hover};
+						fill: ${props.theme.colors.common.black};
 					`}
 			}
 		}
@@ -271,12 +273,9 @@ export const YellowIconButton = styled.div`
 	transition: all 0.1s ease-in-out;
 	cursor: pointer;
 	color: ${(props) => props.theme.colors.selectedTheme.yellow};
-	svg {
+	/* svg {
 		path {
 			fill: ${(props) => props.theme.colors.selectedTheme.yellow};
 		}
-	}
-	&:hover {
-		opacity: 0.7;
-	}
+	} */
 `;

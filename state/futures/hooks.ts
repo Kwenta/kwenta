@@ -1,14 +1,25 @@
 import { useAppSelector, useFetchAction, usePollAction } from 'state/hooks';
+import { fetchStakingData } from 'state/staking/actions';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 
 import {
+	fetchCrossMarginAccount,
 	fetchCrossMarginAccountData,
 	fetchCrossMarginSettings,
+	fetchFuturesPositionHistory,
 	fetchIsolatedMarginAccountData,
-	fetchOpenOrders,
+	fetchCrossMarginOpenOrders,
+	fetchPreviousDayRates,
 	fetchSharedFuturesData,
+	fetchIsolatedOpenOrders,
 } from './actions';
-import { selectCrossMarginAccount, selectFuturesType, selectMarkets } from './selectors';
+import {
+	selectCrossMarginAccount,
+	selectCrossMarginSupportedNetwork,
+	selectFuturesSupportedNetwork,
+	selectFuturesType,
+	selectMarkets,
+} from './selectors';
 
 // TODO: Optimise polling and queries
 
@@ -18,11 +29,20 @@ export const usePollMarketFuturesData = () => {
 	const wallet = useAppSelector(selectWallet);
 	const crossMarginAddress = useAppSelector(selectCrossMarginAccount);
 	const selectedAccountType = useAppSelector(selectFuturesType);
+	const networkSupportsCrossMargin = useAppSelector(selectCrossMarginSupportedNetwork);
+	const networkSupportsFutures = useAppSelector(selectFuturesSupportedNetwork);
 
-	useFetchAction(fetchCrossMarginSettings, { changeKeys: [networkId] });
+	useFetchAction(fetchCrossMarginAccount, {
+		dependencies: [networkId, wallet],
+		disabled: !wallet || !networkSupportsCrossMargin,
+	});
+
+	useFetchAction(fetchCrossMarginSettings, { dependencies: [networkId] });
+	useFetchAction(fetchStakingData, { dependencies: [networkId, wallet] });
 	usePollAction('fetchSharedFuturesData', fetchSharedFuturesData, {
 		dependencies: [networkId],
 		intervalTime: 60000,
+		disabled: !networkSupportsFutures,
 	});
 	usePollAction('fetchIsolatedMarginAccountData', fetchIsolatedMarginAccountData, {
 		intervalTime: 30000,
@@ -34,11 +54,26 @@ export const usePollMarketFuturesData = () => {
 		dependencies: [markets.length, crossMarginAddress],
 		disabled: !markets.length || !crossMarginAddress || selectedAccountType === 'isolated_margin',
 	});
-	// TODO: Priority to optimise
-	usePollAction('fetchOpenOrders', fetchOpenOrders, {
+	usePollAction('fetchPreviousDayRates', fetchPreviousDayRates, {
+		intervalTime: 60000 * 15,
+		dependencies: [markets.length],
+		disabled: !markets.length,
+	});
+	usePollAction('fetchFuturesPositionHistory', fetchFuturesPositionHistory, {
+		intervalTime: 15000,
+		dependencies: [wallet, crossMarginAddress],
+		disabled: !wallet,
+	});
+	usePollAction('fetchIsolatedOpenOrders', fetchIsolatedOpenOrders, {
 		dependencies: [networkId, wallet, markets.length],
 		intervalTime: 10000,
-		disabled: !wallet,
+		disabled: !wallet || selectedAccountType === 'cross_margin',
+	});
+
+	usePollAction('fetchCrossMarginOpenOrders', fetchCrossMarginOpenOrders, {
+		dependencies: [networkId, wallet, markets.length],
+		intervalTime: 20000,
+		disabled: !wallet || selectedAccountType === 'isolated_margin',
 	});
 };
 
@@ -47,11 +82,18 @@ export const usePollDashboardFuturesData = () => {
 	const markets = useAppSelector(selectMarkets);
 	const wallet = useAppSelector(selectWallet);
 	const crossMarginAddress = useAppSelector(selectCrossMarginAccount);
+	const networkSupportsCrossMargin = useAppSelector(selectCrossMarginSupportedNetwork);
+
+	useFetchAction(fetchCrossMarginAccount, {
+		dependencies: [networkId, wallet],
+		disabled: !wallet || !networkSupportsCrossMargin,
+	});
 
 	usePollAction('fetchSharedFuturesData', fetchSharedFuturesData, {
 		dependencies: [networkId],
 		intervalTime: 60000,
 	});
+
 	usePollAction('fetchIsolatedMarginAccountData', fetchIsolatedMarginAccountData, {
 		intervalTime: 30000,
 		dependencies: [wallet, markets.length, networkId],
