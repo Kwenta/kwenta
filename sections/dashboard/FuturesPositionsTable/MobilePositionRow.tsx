@@ -6,7 +6,7 @@ import { border } from 'components/Button';
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
-import { PositionSide } from 'sections/futures/types';
+import { PositionSide } from 'sdk/types/futures';
 import { useAppSelector } from 'state/hooks';
 import { selectPrices } from 'state/prices/selectors';
 import { formatNumber } from 'utils/formatters/number';

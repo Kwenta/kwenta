@@ -1,6 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { AppState, GasPrice, ModalType } from './types';
+import { notifyError } from 'components/ErrorView/ErrorNotifier';
+import { TransactionStatus } from 'sdk/types/common';
+import { isUserDeniedError } from 'utils/formatters/error';
+
+import { AppState, GasPrice, ModalType, Transaction } from './types';
 
 const initialState: AppState = {
 	openModal: null,
@@ -23,9 +27,40 @@ const appSlice = createSlice({
 		setGasPrice: (state, action: PayloadAction<GasPrice<string>>) => {
 			state.gasPrice = action.payload;
 		},
+		setTransaction: (state, action: PayloadAction<Transaction | undefined>) => {
+			state.transaction = action.payload;
+		},
+		updateTransactionStatus: (state, action: PayloadAction<TransactionStatus>) => {
+			if (state.transaction) {
+				state.transaction.status = action.payload;
+			}
+		},
+		updateTransactionHash: (state, action: PayloadAction<string>) => {
+			if (state.transaction) {
+				state.transaction.hash = action.payload;
+			}
+		},
+		handleTransactionError: (state, action: PayloadAction<string>) => {
+			if (isUserDeniedError(action.payload)) {
+				state.transaction = undefined;
+			} else {
+				notifyError(action.payload);
+				if (state.transaction) {
+					state.transaction.status = TransactionStatus.Failed;
+					state.transaction.error = action.payload;
+				}
+			}
+		},
 	},
 });
 
-export const { setOpenModal, setGasPrice } = appSlice.actions;
+export const {
+	setOpenModal,
+	setGasPrice,
+	setTransaction,
+	handleTransactionError,
+	updateTransactionStatus,
+	updateTransactionHash,
+} = appSlice.actions;
 
 export default appSlice.reducer;

@@ -17,7 +17,7 @@ export const refetchWithComparator = async (
 			const timeout = setTimeout(async () => {
 				if (count > max) {
 					clearTimeout(timeout);
-					logError('refetch timeout');
+					logError(new Error('refetch timeout'));
 					res({ data: null, status: 'timeout' });
 				} else {
 					const next = await query();

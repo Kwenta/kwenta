@@ -1,6 +1,6 @@
 import { wei, WeiSource } from '@synthetixio/wei';
 import router from 'next/router';
-import { FC, memo, useMemo } from 'react';
+import { FC, memo, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled, { css } from 'styled-components';
@@ -12,9 +12,15 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import FuturesIcon from 'components/Nav/FuturesIcon';
 import Table, { TableHeader } from 'components/Table';
 import ROUTES from 'constants/routes';
-import { FuturesAccountTypes } from 'queries/futures/types';
-import useGetFuturesPositionHistoryForAccount from 'queries/futures/useGetFuturesPositionHistoryForAccount';
+import { FuturesPositionHistory } from 'sdk/types/futures';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
+import { fetchPositionHistoryForTrader } from 'state/futures/actions';
+import {
+	selectPositionHistoryForSelectedTrader,
+	selectQueryStatuses,
+} from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { FetchStatus } from 'state/types';
 import { ExternalLink } from 'styles/common';
 import { getMarketName } from 'utils/futures';
 
@@ -29,22 +35,20 @@ type TraderHistoryProps = {
 const TraderHistory: FC<TraderHistoryProps> = memo(
 	({ trader, ensInfo, resetSelection, compact, searchTerm }) => {
 		const { t } = useTranslation();
-		const positionsQuery = useGetFuturesPositionHistoryForAccount(trader);
-		const positions = useMemo(() => {
-			const positionData = positionsQuery.data;
-			return positionData
-				? [
-						...positionData[FuturesAccountTypes.ISOLATED_MARGIN],
-						...positionData[FuturesAccountTypes.CROSS_MARGIN],
-				  ]
-				: [];
-		}, [positionsQuery]);
+		const dispatch = useAppDispatch();
+		const positions = useAppSelector(selectPositionHistoryForSelectedTrader);
+		const { selectedTraderPositionHistory: queryStatus } = useAppSelector(selectQueryStatuses);
 		const traderENSName = useMemo(() => ensInfo[trader] ?? null, [trader, ensInfo]);
+
+		useEffect(() => {
+			dispatch(fetchPositionHistoryForTrader(trader));
+		}, [trader, dispatch]);
 
 		let data = useMemo(() => {
 			return positions
-				.sort((a, b) => b.timestamp - a.timestamp)
-				.map((stat, i) => {
+				.sort((a: FuturesPositionHistory, b: FuturesPositionHistory) => b.timestamp - a.timestamp)
+				.map((stat: FuturesPositionHistory, i: number) => {
+					const totalDeposit = stat.initialMargin.add(stat.totalDeposits);
 					return {
 						...stat,
 						rank: i + 1,
@@ -52,14 +56,16 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 						marketShortName: getMarketName(stat.asset),
 						status: stat.isOpen ? 'Open' : stat.isLiquidated ? 'Liquidated' : 'Closed',
 						pnl: stat.pnlWithFeesPaid,
-						pnlPct: `(${stat.pnlWithFeesPaid
-							.div(stat.initialMargin.add(stat.totalDeposits))
-							.mul(100)
-							.toNumber()
-							.toFixed(2)}%)`,
+						pnlPct: totalDeposit.gt(0)
+							? `(${stat.pnlWithFeesPaid
+									.div(stat.initialMargin.add(stat.totalDeposits))
+									.mul(100)
+									.toNumber()
+									.toFixed(2)}%)`
+							: '0%',
 					};
 				})
-				.filter((i) =>
+				.filter((i: { marketShortName: string; status: string }) =>
 					searchTerm?.length
 						? i.marketShortName.toLowerCase().includes(searchTerm) ||
 						  i.status.toLowerCase().includes(searchTerm)
@@ -74,7 +80,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 						compact={compact}
 						showPagination
 						pageSize={10}
-						isLoading={positionsQuery.isLoading}
+						isLoading={queryStatus.status === FetchStatus.Loading}
 						data={data}
 						hideHeaders={compact}
 						columns={[

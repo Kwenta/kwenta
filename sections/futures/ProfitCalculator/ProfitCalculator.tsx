@@ -4,12 +4,12 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
+import { PositionSide } from 'sdk/types/futures';
 import PositionButtons from 'sections/futures/PositionButtons';
 import { selectMarketPrice } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FuturesMarketAsset, getMarketName } from 'utils/futures';
 
-import { PositionSide } from '../types';
 import LabelWithInput from './LabelWithInput';
 import PnLs from './PnLs';
 import ProfitDetails from './ProfitDetails';

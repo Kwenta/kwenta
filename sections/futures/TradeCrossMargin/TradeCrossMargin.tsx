@@ -1,25 +1,28 @@
 import { useCallback } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
 
 import Loader from 'components/Loader';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
 import { CROSS_MARGIN_ORDER_TYPES } from 'constants/futures';
-import Connector from 'containers/Connector';
-import { FuturesOrderType } from 'queries/futures/types';
+import { FuturesOrderType } from 'sdk/types/futures';
 import { setOpenModal } from 'state/app/reducer';
 import { changeLeverageSide, editTradeOrderPrice } from 'state/futures/actions';
-import { setOrderType } from 'state/futures/reducer';
+import { setOrderType, setShowCrossMarginOnboard } from 'state/futures/reducer';
 import {
+	selectCMAccountQueryStatus,
+	selectCrossMarginAccount,
 	selectCrossMarginBalanceInfo,
 	selectCrossMarginOrderPrice,
+	selectCrossMarginSupportedNetwork,
 	selectCrossMarginTransferOpen,
 	selectFuturesType,
 	selectLeverageSide,
 	selectOrderType,
+	selectShowCrossMarginOnboard,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { futuresAccountState, showCrossMarginOnboardState } from 'store/futures';
+import { FetchStatus } from 'state/types';
+import { selectWallet } from 'state/wallet/selectors';
 
 import FeeInfoBox from '../FeeInfoBox';
 import OrderPriceInput from '../OrderPriceInput/OrderPriceInput';
@@ -37,18 +40,19 @@ type Props = {
 };
 
 export default function TradeCrossMargin({ isMobile }: Props) {
-	const { walletAddress } = Connector.useContainer();
 	const dispatch = useAppDispatch();
 
 	const leverageSide = useAppSelector(selectLeverageSide);
-	const { crossMarginAddress, crossMarginAvailable, status } = useRecoilValue(futuresAccountState);
 	const selectedAccountType = useAppSelector(selectFuturesType);
 	const { freeMargin } = useAppSelector(selectCrossMarginBalanceInfo);
 	const orderType = useAppSelector(selectOrderType);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
 	const openTransferModal = useAppSelector(selectCrossMarginTransferOpen);
-
-	const [showOnboard, setShowOnboard] = useRecoilState(showCrossMarginOnboardState);
+	const crossMarginAvailable = useAppSelector(selectCrossMarginSupportedNetwork);
+	const crossMarginAddress = useAppSelector(selectCrossMarginAccount);
+	const queryStatus = useAppSelector(selectCMAccountQueryStatus);
+	const showOnboard = useAppSelector(selectShowCrossMarginOnboard);
+	const walletAddress = useAppSelector(selectWallet);
 
 	const onChangeOrderPrice = useCallback(
 		(price: string) => {
@@ -57,14 +61,21 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 		[dispatch]
 	);
 
-	if (!showOnboard && (status === 'refetching' || status === 'initial-fetch')) return <Loader />;
+	if (
+		!showOnboard &&
+		!crossMarginAddress &&
+		!!walletAddress &&
+		(queryStatus.status === FetchStatus.Loading || queryStatus.status === FetchStatus.Idle)
+	)
+		return <Loader />;
 
 	return (
 		<>
 			{walletAddress && !crossMarginAvailable ? (
 				<CrossMarginUnsupported />
-			) : (walletAddress && !crossMarginAddress && status !== 'idle') || showOnboard ? (
-				<CreateAccount onShowOnboard={() => setShowOnboard(true)} />
+			) : (walletAddress && !crossMarginAddress && queryStatus.status !== FetchStatus.Idle) ||
+			  showOnboard ? (
+				<CreateAccount onShowOnboard={() => dispatch(setShowCrossMarginOnboard(true))} />
 			) : (
 				<>
 					<TradePanelHeader

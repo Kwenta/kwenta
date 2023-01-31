@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -9,9 +9,10 @@ import { FlexDivCentered } from 'components/layout/flex';
 import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { getDisplayAsset } from 'sdk/utils/futures';
+import { PositionSide } from 'sdk/types/futures';
+import { getDisplayAsset, OrderNameByType } from 'sdk/utils/futures';
 import { setOpenModal } from 'state/app/reducer';
-import { modifyIsolatedPosition, modifyIsolatedPositionEstimateGas } from 'state/futures/actions';
+import { modifyIsolatedPosition } from 'state/futures/actions';
 import {
 	selectDelayedOrderFee,
 	selectIsModifyingIsolatedPosition,
@@ -38,7 +39,6 @@ import {
 } from 'utils/formatters/number';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
-import { PositionSide } from '../types';
 import { MobileConfirmTradeButton } from './TradeConfirmationModal';
 
 const DelayedOrderConfirmationModal: FC = () => {
@@ -58,16 +58,6 @@ const DelayedOrderConfirmationModal: FC = () => {
 	const previewStatus = useAppSelector(selectTradePreviewStatus);
 	const orderType = useAppSelector(selectOrderType);
 	const { commitDeposit } = useAppSelector(selectDelayedOrderFee);
-
-	useEffect(() => {
-		dispatch(
-			modifyIsolatedPositionEstimateGas({
-				sizeDelta: nativeSizeDelta,
-				delayed: true,
-				offchain: orderType === 'delayed offchain',
-			})
-		);
-	}, [nativeSizeDelta, orderType, dispatch]);
 
 	const positionSize = useMemo(() => {
 		const positionDetails = position?.position;
@@ -93,7 +83,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 		() => [
 			{
 				label: t('futures.market.user.position.modal.order-type'),
-				value: orderType,
+				value: OrderNameByType[orderType],
 			},
 			{
 				label: t('futures.market.user.position.modal.side'),
@@ -174,7 +164,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 			modifyIsolatedPosition({
 				sizeDelta: nativeSizeDelta,
 				delayed: true,
-				offchain: orderType === 'delayed offchain',
+				offchain: orderType === 'delayed_offchain',
 			})
 		);
 	};

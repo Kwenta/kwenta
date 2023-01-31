@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import MarketBadge from 'components/Badge/MarketBadge';
@@ -15,10 +14,14 @@ import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import { getDisplayAsset } from 'sdk/utils/futures';
-import { selectFuturesType, selectMarkets, selectMarketVolumes } from 'state/futures/selectors';
+import {
+	selectFuturesType,
+	selectMarkets,
+	selectMarketVolumes,
+	selectPreviousDayRates,
+	selectMarkPrices,
+} from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { selectPrices } from 'state/prices/selectors';
-import { pastRatesState } from 'store/futures';
 import { getSynthDescription, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
 const FuturesMarketsTable: FC = () => {
@@ -27,17 +30,17 @@ const FuturesMarketsTable: FC = () => {
 	const { synthsMap } = Connector.useContainer();
 
 	const futuresMarkets = useAppSelector(selectMarkets);
-	const pastRates = useRecoilValue(pastRatesState);
+	const pastRates = useAppSelector(selectPreviousDayRates);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
 	const accountType = useAppSelector(selectFuturesType);
-	const prices = useAppSelector(selectPrices);
+	const markPrices = useAppSelector(selectMarkPrices);
 
 	let data = useMemo(() => {
 		return futuresMarkets.map((market) => {
 			const description = getSynthDescription(market.asset, synthsMap, t);
 			const volume = futuresVolumes[market.marketKey]?.volume;
 			const pastPrice = pastRates.find((price) => price.synth === getDisplayAsset(market.asset));
-			const marketPrice = prices[market.asset]?.offChain ?? prices[market.asset]?.onChain ?? wei(0);
+			const marketPrice = markPrices[market.marketKey] ?? wei(0);
 
 			return {
 				asset: market.asset,
@@ -51,14 +54,14 @@ const FuturesMarketsTable: FC = () => {
 				fundingRate: market.currentFundingRate ?? null,
 				openInterest: market.marketSize.mul(marketPrice),
 				openInterestNative: market.marketSize,
-				longInterest: market.marketSize.add(market.marketSkew).div('2').abs().mul(marketPrice),
-				shortInterest: market.marketSize.sub(market.marketSkew).div('2').abs().mul(marketPrice),
+				longInterest: market.openInterest.longUSD,
+				shortInterest: market.openInterest.shortUSD,
 				marketSkew: market.marketSkew,
 				isSuspended: market.isSuspended,
 				marketClosureReason: market.marketClosureReason,
 			};
 		});
-	}, [synthsMap, futuresMarkets, pastRates, futuresVolumes, prices, t]);
+	}, [synthsMap, futuresMarkets, pastRates, futuresVolumes, markPrices, t]);
 
 	return (
 		<>
@@ -103,10 +106,10 @@ const FuturesMarketsTable: FC = () => {
 							{
 								Header: (
 									<TableHeader>
-										{t('dashboard.overview.futures-markets-table.oracle-price')}
+										{t('dashboard.overview.futures-markets-table.mark-price')}
 									</TableHeader>
 								),
-								accessor: 'oraclePrice',
+								accessor: 'price',
 								Cell: (cellProps: CellProps<typeof data[number]>) => {
 									const formatOptions = {
 										minDecimals: DEFAULT_CRYPTO_DECIMALS,

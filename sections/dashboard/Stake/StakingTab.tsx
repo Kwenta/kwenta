@@ -4,8 +4,8 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import { SplitContainer } from 'components/layout/grid';
-import { StakingCard } from 'sections/dashboard/Stake/card';
 import { LogoText } from 'components/Text';
+import { StakingCard } from 'sections/dashboard/Stake/card';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { getReward } from 'state/staking/actions';
 import { selectAPY, selectClaimableBalance } from 'state/staking/selectors';

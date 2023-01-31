@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';
-import { PositionSide } from 'queries/futures/types';
 import { DelayedOrder } from 'sdk/types/futures';
+import { PositionSide } from 'sdk/types/futures';
 import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
 import { useAppDispatch } from 'state/hooks';
 import { formatCurrency } from 'utils/formatters/number';

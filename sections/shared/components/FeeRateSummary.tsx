@@ -2,10 +2,9 @@ import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import TimerIcon from 'assets/svg/app/timer.svg';
-import { SummaryItem, SummaryItemValue, SummaryItemLabel } from 'sections/exchange/summary';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
+import { SummaryItem, SummaryItemValue, SummaryItemLabel } from 'sections/exchange/summary';
 import { selectExchangeFeeRateWei, selectBaseFeeRateWei } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
 import { formatPercent } from 'utils/formatters/number';
@@ -34,16 +33,7 @@ const FeeRateSummaryItem: FC = memo(() => {
 							<CustomStyledTooltip
 								position="fixed"
 								content={t('exchange.summary-info.dynamic-fee-tooltip')}
-							>
-								<DynamicFeeRateItem>
-									<span>
-										{formatPercent(exchangeFeeRate.sub(baseFeeRate), {
-											minDecimals: 2,
-										})}
-									</span>
-									<TimerIcon />
-								</DynamicFeeRateItem>
-							</CustomStyledTooltip>
+							/>
 						</>
 					) : null}
 				</FeeRateItem>
@@ -60,20 +50,6 @@ export const FeeRateItem = styled.span`
 
 export const DynamicFeeLabel = styled.span`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
-`;
-
-export const DynamicFeeRateItem = styled.span`
-	color: ${(props) => props.theme.colors.selectedTheme.gold};
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	cursor: pointer;
-	svg {
-		margin-left: 3px;
-		path {
-			fill: ${(props) => props.theme.colors.selectedTheme.gold};
-		}
-	}
 `;
 
 const CustomStyledTooltip = styled(Tooltip)`

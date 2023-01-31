@@ -11,7 +11,7 @@ export enum FetchStatus {
 
 export type QueryStatus = {
 	status: FetchStatus;
-	error: string | null | undefined;
+	error?: string | null;
 };
 
 export type ThunkConfig = {

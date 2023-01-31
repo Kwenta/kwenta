@@ -2,14 +2,14 @@ import { GasPrices } from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
 import { FC, useMemo, memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 
-import { SummaryItem, SummaryItemValue, SummaryItemLabel } from 'sections/exchange/summary';
 import { NO_VALUE } from 'constants/placeholder';
 import { parseGasPriceObject } from 'hooks/useGas';
 import useIsL1 from 'hooks/useIsL1';
 import useIsL2 from 'hooks/useIsL2';
-import { customGasPriceState, gasSpeedState } from 'store/wallet';
+import { SummaryItem, SummaryItemValue, SummaryItemLabel } from 'sections/exchange/summary';
+import { selectGasPrice, selectGasSpeed } from 'state/app/selectors';
+import { useAppSelector } from 'state/hooks';
 import { formatNumber, formatDollars } from 'utils/formatters/number';
 
 type GasPriceSelectProps = {
@@ -24,9 +24,10 @@ type GasPriceItemProps = {
 };
 
 const GasPriceItem: FC<GasPriceItemProps> = memo(({ gasPrices, transactionFee }) => {
+	const gasSpeed = useAppSelector(selectGasSpeed);
+	const customGasPrice = useAppSelector(selectGasPrice);
 	const isL2 = useIsL2();
-	const gasSpeed = useRecoilValue(gasSpeedState);
-	const customGasPrice = useRecoilValue(customGasPriceState);
+
 	const formattedTransactionFee = useMemo(() => {
 		return transactionFee ? formatDollars(transactionFee, { maxDecimals: 1 }) : NO_VALUE;
 	}, [transactionFee]);

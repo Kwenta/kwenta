@@ -4243,7 +4243,7 @@ export type FuturesOrderType =
 	| 'NextPrice'
 	| 'Limit'
 	| 'Market'
-	| 'StopMarket'
+	| 'stop_market'
 	| 'Delayed'
-	| 'DelayedOffchain';
+	| 'delayed_offchain';
 export type FuturesOrderStatus = 'Pending' | 'Filled' | 'Cancelled' | 'Open';

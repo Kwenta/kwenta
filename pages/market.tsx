@@ -1,7 +1,6 @@
 import { useRouter } from 'next/router';
-import { useEffect, FC, memo } from 'react';
+import { useEffect, FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Error from 'components/ErrorView';
@@ -9,10 +8,8 @@ import Loader from 'components/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Connector from 'containers/Connector';
 import { FuturesContext } from 'contexts/FuturesContext';
-import { useRefetchContext } from 'contexts/RefetchContext';
 import useFuturesData from 'hooks/useFuturesData';
 import useIsL2 from 'hooks/useIsL2';
-import { FuturesAccountState } from 'queries/futures/types';
 import CrossMarginOnboard from 'sections/futures/CrossMarginOnboard';
 import LeftSidebar from 'sections/futures/LeftSidebar/LeftSidebar';
 import MarketInfo from 'sections/futures/MarketInfo';
@@ -26,10 +23,17 @@ import AppLayout from 'sections/shared/Layout/AppLayout';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { setOpenModal } from 'state/app/reducer';
 import { selectOpenModal } from 'state/app/selectors';
-import { setMarketAsset } from 'state/futures/reducer';
-import { selectFuturesType, selectMarketAsset } from 'state/futures/selectors';
+import { fetchCrossMarginAccount } from 'state/futures/actions';
+import { setMarketAsset, setShowCrossMarginOnboard } from 'state/futures/reducer';
+import {
+	selectCMAccountQueryStatus,
+	selectCrossMarginAccount,
+	selectFuturesType,
+	selectMarketAsset,
+	selectShowCrossMarginOnboard,
+} from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { futuresAccountState, showCrossMarginOnboardState } from 'store/futures';
+import { FetchStatus } from 'state/types';
 import { PageContent, FullHeightContainer, RightSideContent } from 'styles/common';
 import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
 
@@ -44,9 +48,10 @@ const Market: MarketComponent = () => {
 	const routerMarketAsset = router.query.asset as FuturesMarketAsset;
 
 	const setCurrentMarket = useAppSelector(selectMarketAsset);
+	const showOnboard = useAppSelector(selectShowCrossMarginOnboard);
+	const queryStatus = useAppSelector(selectCMAccountQueryStatus);
+	const crossMarginAccount = useAppSelector(selectCrossMarginAccount);
 	const openModal = useAppSelector(selectOpenModal);
-	const account = useRecoilValue(futuresAccountState);
-	const [showOnboard, setShowOnboard] = useRecoilState(showCrossMarginOnboardState);
 
 	useEffect(() => {
 		if (routerMarketAsset && MarketKeyByAsset[routerMarketAsset]) {
@@ -57,21 +62,29 @@ const Market: MarketComponent = () => {
 	return (
 		<FuturesContext.Provider value={futuresData}>
 			<MarketHead />
-			<CrossMarginOnboard onClose={() => setShowOnboard(false)} isOpen={showOnboard} />
+
+			<CrossMarginOnboard
+				onClose={() => dispatch(setShowCrossMarginOnboard(false))}
+				isOpen={showOnboard}
+			/>
 			<DesktopOnlyView>
 				<PageContent>
 					<StyledFullHeightContainer>
 						<LeftSidebar />
 						<MarketInfo />
 						<StyledRightSideContent>
-							<TradePanelDesktop walletAddress={walletAddress} account={account} />
+							<TradePanelDesktop />
 						</StyledRightSideContent>
 					</StyledFullHeightContainer>
 					<GitHashID />
 				</PageContent>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
-				{walletAddress && account.status === 'initial-fetch' ? <Loader /> : <MobileTrade />}
+				{walletAddress && !crossMarginAccount && queryStatus.status === FetchStatus.Idle ? (
+					<Loader />
+				) : (
+					<MobileTrade />
+				)}
 				<GitHashID />
 			</MobileOrTabletView>
 			{openModal === 'futures_isolated_transfer' && (
@@ -84,17 +97,15 @@ const Market: MarketComponent = () => {
 	);
 };
 
-type TradePanelProps = {
-	walletAddress: string | null;
-	account: FuturesAccountState;
-};
-
-const TradePanelDesktop: FC<TradePanelProps> = memo(({ walletAddress, account }) => {
+function TradePanelDesktop() {
 	const { t } = useTranslation();
-	const { handleRefetch } = useRefetchContext();
+	const dispatch = useAppDispatch();
 	const router = useRouter();
 	const isL2 = useIsL2();
+	const { walletAddress } = Connector.useContainer();
 	const accountType = useAppSelector(selectFuturesType);
+	const queryStatus = useAppSelector(selectCMAccountQueryStatus);
+	const crossMarginAccount = useAppSelector(selectCrossMarginAccount);
 
 	if (walletAddress && !isL2) {
 		return <FuturesUnsupportedNetwork />;
@@ -102,18 +113,21 @@ const TradePanelDesktop: FC<TradePanelProps> = memo(({ walletAddress, account })
 
 	if (
 		!router.isReady ||
-		(accountType === 'cross_margin' && walletAddress && account.status === 'initial-fetch')
+		(accountType === 'cross_margin' &&
+			walletAddress &&
+			!crossMarginAccount &&
+			queryStatus.status === FetchStatus.Idle)
 	) {
 		return <Loader />;
 	}
 
 	if (accountType === 'cross_margin') {
-		return account.status === 'error' && !account.crossMarginAddress ? (
+		return queryStatus.status === FetchStatus.Error && !crossMarginAccount ? (
 			<div>
 				<Error
 					message={t('futures.market.trade.cross-margin.account-query-failed')}
 					retryButton={{
-						onClick: () => handleRefetch('cross-margin-account-change', 5),
+						onClick: () => dispatch(fetchCrossMarginAccount()),
 						label: 'Retry',
 					}}
 				/>
@@ -123,7 +137,7 @@ const TradePanelDesktop: FC<TradePanelProps> = memo(({ walletAddress, account })
 		);
 	}
 	return <TradeIsolatedMargin />;
-});
+}
 
 Market.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 

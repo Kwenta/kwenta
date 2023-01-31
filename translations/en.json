@@ -16,6 +16,7 @@
 			"markets": "futures",
 			"isolated-margin": "Isolated Margin",
 			"cross-margin": "Cross Margin",
+			"v2-alpha": "Try Futures V2 Alpha",
 			"leaderboard-alltime": "All Time",
 			"competition-round-1": "Round 1",
 			"competition-round-2": "Round 2",
@@ -465,7 +466,7 @@
 			"futures-markets-table": {
 				"market": "Market",
 				"oracle": "Oracle",
-				"oracle-price": "Oracle Price",
+				"mark-price": "Mark Price",
 				"daily-change": "24H Change",
 				"funding-rate": "1H Funding Rate",
 				"open-interest": "Open Interest",
