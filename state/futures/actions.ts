@@ -122,10 +122,12 @@ import {
 } from './types';
 
 export const fetchMarkets = createAsyncThunk<
-	{ markets: FuturesMarket<string>[] },
+	{ markets: FuturesMarket<string>[] } | undefined,
 	void,
 	ThunkConfig
->('futures/fetchMarkets', async (_, { extra: { sdk } }) => {
+>('futures/fetchMarkets', async (_, { getState, extra: { sdk } }) => {
+	const supportedNetwork = selectFuturesSupportedNetwork(getState());
+	if (!supportedNetwork) return;
 	try {
 		const markets = await sdk.futures.getMarkets();
 		// apply overrides
@@ -233,7 +235,8 @@ export const fetchIsolatedMarginPositions = createAsyncThunk<
 	ThunkConfig
 >('futures/fetchIsolatedMarginPositions', async (_, { getState, extra: { sdk } }) => {
 	const { wallet, futures } = getState();
-	if (!wallet.walletAddress) return;
+	const supportedNetwork = selectFuturesSupportedNetwork(getState());
+	if (!wallet.walletAddress || !supportedNetwork) return;
 	try {
 		const positions = await sdk.futures.getFuturesPositions(
 			wallet.walletAddress,

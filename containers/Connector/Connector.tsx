@@ -17,8 +17,11 @@ export let transactionNotifier = new BaseTN(wagmiClient.provider);
 export let blockExplorer = generateExplorerFunctions(getBaseUrl(10));
 
 const useConnector = () => {
+	const dispatch = useAppDispatch();
 	const { chain: activeChain } = useNetwork();
-	const { address, isConnected: isWalletConnected } = useAccount();
+	const { address, isConnected: isWalletConnected } = useAccount({
+		onDisconnect: () => dispatch(setSigner(null)),
+	});
 	const [providerReady, setProviderReady] = useState(false);
 
 	const network = useMemo(() => {
@@ -45,8 +48,6 @@ const useConnector = () => {
 		() => synthetix({ provider: l2Provider, networkId: chain.optimism.id as NetworkId }),
 		[l2Provider]
 	);
-
-	const dispatch = useAppDispatch();
 
 	const handleNetworkChange = useCallback(
 		(networkId: NetworkId) => {

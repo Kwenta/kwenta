@@ -267,13 +267,16 @@ const futuresSlice = createSlice({
 		},
 	},
 	extraReducers: (builder) => {
+		// TODO: Separate markets by network
 		// Markets
 		builder.addCase(fetchMarkets.pending, (futuresState) => {
 			futuresState.queryStatuses.markets = LOADING_STATUS;
 		});
 		builder.addCase(fetchMarkets.fulfilled, (futuresState, action) => {
 			futuresState.queryStatuses.markets = SUCCESS_STATUS;
-			futuresState.markets = action.payload.markets;
+			if (action.payload?.markets) {
+				futuresState.markets = action.payload.markets;
+			}
 		});
 		builder.addCase(fetchMarkets.rejected, (futuresState) => {
 			futuresState.queryStatuses.markets = {
