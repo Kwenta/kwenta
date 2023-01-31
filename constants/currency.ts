@@ -82,7 +82,7 @@ export const ETH_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'; // For 
 
 // For coingecko API
 export const ETH_COINGECKO_ADDRESS = '0x4200000000000000000000000000000000000006';
-export const KWENTA_COINGECKO_ADDRESS = '0x920cf626a271321c151d027030d5d08af699456b';
+export const KWENTA_ADDRESS = '0x920cf626a271321c151d027030d5d08af699456b';
 
 export const ATOMIC_EXCHANGES_L1 = [
 	'sBTC',

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import Button from 'components/Button';
-import { ETH_COINGECKO_ADDRESS, KWENTA_COINGECKO_ADDRESS } from 'constants/currency';
+import { ETH_COINGECKO_ADDRESS, KWENTA_ADDRESS } from 'constants/currency';
 import useRewardsTimer from 'hooks/useRewardsTimer';
 import { GridContainer } from 'sections/earn/grid';
 import { sdk } from 'state/config';
@@ -43,12 +43,12 @@ const StakeGrid = () => {
 	useEffect(() => {
 		const tokens = async () => {
 			const coinGeckoPrices = await sdk.exchange.batchGetCoingeckoPrices(
-				[KWENTA_COINGECKO_ADDRESS, ETH_COINGECKO_ADDRESS],
+				[KWENTA_ADDRESS, ETH_COINGECKO_ADDRESS],
 				true
 			);
 
 			const kwentaPrice = coinGeckoPrices
-				? toWei(coinGeckoPrices[KWENTA_COINGECKO_ADDRESS]?.usd?.toString())
+				? toWei(coinGeckoPrices[KWENTA_ADDRESS]?.usd?.toString())
 				: zeroBN;
 
 			const wethPrice = coinGeckoPrices
