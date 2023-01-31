@@ -2,13 +2,12 @@ import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 import UploadIcon from 'assets/svg/futures/upload-icon.svg';
-import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
+import { SectionHeader, SectionSeparator, SectionTitle } from 'sections/futures/mobile';
 import { selectMarketAsset, selectPosition } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { resetButtonCSS } from 'styles/common';
 
 import PositionCard from '../PositionCard';
-import EmptyPositionCard from '../PositionCard/EmptyPositionCard';
 import ShareModal from '../ShareModal';
 
 const PositionDetails = () => {
@@ -41,12 +40,7 @@ const PositionDetails = () => {
 			)}
 		</>
 	) : (
-		<PositionDetailsContainer>
-			<SectionHeader>
-				<SectionTitle>Open Position</SectionTitle>
-			</SectionHeader>
-			<EmptyPositionCard />
-		</PositionDetailsContainer>
+		<SectionSeparator />
 	);
 };
 
