@@ -166,13 +166,7 @@ export enum ContractOrderType {
 	DELAYED_OFFCHAIN = 2,
 }
 
-export const OrderNameByType: Record<ContractOrderType, string> = {
-	[ContractOrderType.MARKET]: 'market',
-	[ContractOrderType.DELAYED]: 'delayed',
-	[ContractOrderType.DELAYED_OFFCHAIN]: 'delayed_offchain',
-};
-
-export const OrderTypeByName: Record<string, ContractOrderType> = {
+export const OrderEnumByType: Record<string, ContractOrderType> = {
 	market: ContractOrderType.MARKET,
 	delayed: ContractOrderType.DELAYED,
 	delayed_offchain: ContractOrderType.DELAYED_OFFCHAIN,

@@ -20,7 +20,7 @@ import {
 	FuturesPotentialTradeDetails,
 	FuturesTrade,
 	FuturesVolumes,
-	OrderTypeByName,
+	OrderEnumByType,
 	PositionSide,
 	PotentialTradeStatus,
 } from 'sdk/types/futures';
@@ -427,7 +427,7 @@ export const fetchIsolatedMarginTradePreview = createAsyncThunk<
 		const skewAdjustedPrice = selectSkewAdjustedPrice(getState());
 		const orderType = selectOrderType(getState());
 
-		const orderTypeNum = OrderTypeByName[orderType];
+		const orderTypeNum = OrderEnumByType[orderType];
 
 		if (!account) throw new Error('No account to fetch orders');
 		if (!marketInfo) throw new Error('No market info');

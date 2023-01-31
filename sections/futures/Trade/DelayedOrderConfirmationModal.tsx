@@ -10,7 +10,7 @@ import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { PositionSide } from 'sdk/types/futures';
-import { getDisplayAsset } from 'sdk/utils/futures';
+import { getDisplayAsset, OrderNameByType } from 'sdk/utils/futures';
 import { setOpenModal } from 'state/app/reducer';
 import { modifyIsolatedPosition } from 'state/futures/actions';
 import {
@@ -83,7 +83,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 		() => [
 			{
 				label: t('futures.market.user.position.modal.order-type'),
-				value: orderType,
+				value: OrderNameByType[orderType],
 			},
 			{
 				label: t('futures.market.user.position.modal.side'),

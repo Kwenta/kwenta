@@ -6,8 +6,8 @@ import { parseBytes32String } from 'ethers/lib/utils.js';
 import { ETH_UNIT } from 'constants/network';
 import {
 	FuturesAggregateStatResult,
+	FuturesOrderType as SubgraphOrderType,
 	FuturesPositionResult,
-	FuturesOrderType,
 	FuturesTradeResult,
 } from 'queries/futures/subgraph';
 import {
@@ -25,6 +25,7 @@ import {
 	FuturesMarketAsset,
 	FuturesMarketKey,
 	FuturesOrder,
+	FuturesOrderType,
 	FuturesOrderTypeDisplay,
 	FuturesPosition,
 	FuturesPositionHistory,
@@ -499,7 +500,15 @@ export const mapFuturesOrderFromEvent = (
 	};
 };
 
-const mapOrderType = (orderType: Partial<FuturesOrderType>): FuturesOrderTypeDisplay => {
+export const OrderNameByType: Record<FuturesOrderType, FuturesOrderTypeDisplay> = {
+	market: 'Market',
+	delayed: 'Delayed',
+	delayed_offchain: 'Delayed Offchain',
+	stop_market: 'Stop Market',
+	limit: 'Limit',
+};
+
+const mapOrderType = (orderType: Partial<SubgraphOrderType>): FuturesOrderTypeDisplay => {
 	return orderType === 'NextPrice'
 		? 'Next Price'
 		: orderType === 'stop_market'
