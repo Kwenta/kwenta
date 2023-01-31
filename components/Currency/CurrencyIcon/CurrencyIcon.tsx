@@ -10,8 +10,8 @@ import TokenIcon from './TokenIcon';
 export type CurrencyIconProps = {
 	currencyKey: string;
 	className?: string;
-	width?: string;
-	height?: string;
+	width?: number;
+	height?: number;
 	isDeprecated?: boolean;
 	style?: any;
 	url?: string;
@@ -29,7 +29,7 @@ const CurrencyIconContainer: FC<CurrencyIconProps> = React.memo(({ className, ..
 ));
 
 const CurrencyIcon: FC<CurrencyIconProps> = React.memo(({ currencyKey, isDeprecated, ...rest }) => {
-	const props = { width: '30px', height: '30px', alt: currencyKey, ...rest };
+	const props = { width: 30, height: 30, alt: currencyKey, ...rest };
 	const src = SYNTH_ICONS[currencyKey];
 
 	if (src) {

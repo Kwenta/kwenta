@@ -68,7 +68,7 @@ const BalanceItem: FC<{ currencyKey: CurrencyKey; amount: Wei | null }> = ({
 }) => (
 	<StyledBalanceItem>
 		<BalanceItemTitle>
-			<Currency.Icon {...{ currencyKey }} width={'24px'} height={'24px'} />
+			<Currency.Icon {...{ currencyKey }} width={24} height={24} />
 			{currencyKey}
 		</BalanceItemTitle>
 

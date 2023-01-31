@@ -13,8 +13,8 @@ const MarketsDropdownOption: React.FC<OptionProps<MarketsCurrencyOption>> = (pro
 		<OptionDetailsContainer $isSelected={props.isSelected}>
 			<CurrencyIcon
 				currencyKey={(props.data.value[0] !== 's' ? 's' : '') + props.data.value}
-				width="31px"
-				height="31px"
+				width={31}
+				height={31}
 			/>
 			<CurrencyMeta $isSelected={props.isSelected}>
 				<div>
@@ -44,6 +44,7 @@ const MarketsDropdownOption: React.FC<OptionProps<MarketsCurrencyOption>> = (pro
 const StyledCurrencyLabel = styled(CurrencyLabel)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
+
 const CurrencyMeta = styled(FlexDivCentered)<{ $isSelected: boolean }>`
 	flex: 1;
 	margin-left: 12px;

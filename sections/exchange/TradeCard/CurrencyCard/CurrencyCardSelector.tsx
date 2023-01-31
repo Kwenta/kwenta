@@ -49,7 +49,7 @@ const CurrencyCardSelector: FC<CurrencyCardSelectorProps> = memo(
 					data-testid="currency-selector"
 				>
 					<TokenLabel>
-						{!!currencyKey && <CurrencyIcon currencyKey={currencyKey} width="25px" height="25px" />}
+						{!!currencyKey && <CurrencyIcon currencyKey={currencyKey} width={25} height={25} />}
 						{currencyKey ?? (
 							<CapitalizedText>
 								{t('exchange.currency-card.currency-selector.select-token')}

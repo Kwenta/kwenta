@@ -6,9 +6,9 @@ import styled from 'styled-components';
 import CaretDownIcon from 'assets/svg/app/caret-down-gray.svg';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import NumericInput from 'components/Input/NumericInput';
-import { SectionHeader, SectionSubTitle, SectionTitle } from 'sections/futures/mobile';
 import { NO_VALUE } from 'constants/placeholder';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { SectionHeader, SectionSubTitle, SectionTitle } from 'sections/futures/mobile';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 
 type MobileCurrencyCardProps = {
@@ -89,7 +89,7 @@ const MobileCurrencyCard: FC<MobileCurrencyCardProps> = memo(
 						onClick={hasCurrencySelectCallback ? onCurrencySelect : undefined}
 						data-testid="currency-selector"
 					>
-						{!!currencyKey && <CurrencyIcon currencyKey={currencyKey} width="20px" height="20px" />}
+						{!!currencyKey && <CurrencyIcon currencyKey={currencyKey} width={20} height={20} />}
 						<div className="label">{currencyKey ?? 'Select'}</div>
 						{hasCurrencySelectCallback && <CaretDownIcon />}
 					</MobileCurrencySelector>
