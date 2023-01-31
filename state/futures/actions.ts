@@ -305,7 +305,7 @@ export const fetchSharedFuturesData = createAsyncThunk<void, void, ThunkConfig>(
 );
 
 export const fetchOpenOrders = createAsyncThunk<
-	{ orders: DelayedOrder<string>[]; account: string; accountType: FuturesAccountType },
+	{ orders: DelayedOrderWithDetails<string>[]; account: string; accountType: FuturesAccountType },
 	void,
 	ThunkConfig
 >('futures/fetchOpenOrders', async (_, { getState, extra: { sdk } }) => {
