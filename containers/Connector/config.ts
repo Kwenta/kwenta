@@ -28,7 +28,7 @@ import BinanceIcon from 'assets/png/rainbowkit/binance.png';
 import Frame from 'components/Rainbowkit/Frame';
 import Safe from 'components/Rainbowkit/Gnosis';
 import Tally from 'components/Rainbowkit/Tally';
-import { BLAST_NETWORK_LOOKUP } from 'constants/network';
+import { BLAST_NETWORK_LOOKUP, STALL_TIMEOUT } from 'constants/network';
 
 const bscWithIcon: Chain = {
 	...bsc,
@@ -49,7 +49,7 @@ export const chain = {
 const { chains, provider } = configureChains(Object.values(chain), [
 	infuraProvider({
 		apiKey: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID!,
-		stallTimeout: 5000,
+		stallTimeout: STALL_TIMEOUT,
 		priority: process.env.NEXT_PUBLIC_PROVIDER_ID === 'INFURA' ? 0 : 2,
 	}),
 	jsonRpcProvider({
@@ -60,10 +60,10 @@ const { chains, provider } = configureChains(Object.values(chain), [
 						process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID
 				  }`,
 		}),
-		stallTimeout: 5000,
+		stallTimeout: STALL_TIMEOUT,
 		priority: 1,
 	}),
-	publicProvider({ stallTimeout: 5000, priority: 5 }),
+	publicProvider({ stallTimeout: STALL_TIMEOUT, priority: 5 }),
 ]);
 
 const connectors = connectorsForWallets([
