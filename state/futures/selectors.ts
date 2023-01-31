@@ -762,3 +762,15 @@ export const selectAllUsersTrades = createSelector(
 
 export const selectCancellingOrder = (state: RootState) =>
 	state.futures.crossMargin.cancellingOrder;
+
+export const selectHasRemainingMargin = createSelector(
+	selectPosition,
+	selectFuturesType,
+	selectCrossMarginBalanceInfo,
+	(position, futuresType, balanceInfo) => {
+		const posMargin = position?.remainingMargin ?? zeroBN;
+		return futuresType === 'cross_margin'
+			? balanceInfo.freeMargin.add(posMargin).gt(0)
+			: posMargin.gt(0);
+	}
+);

@@ -67,7 +67,7 @@ export default function ManageKeeperBalanceModal({ defaultType }: Props) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [walletAddress]);
 
-	const onWithdrawKeeperDeposit = useCallback(async () => {
+	const onWithdrawKeeperDeposit = useCallback(() => {
 		if (keeperEthBal.eq(0)) return;
 		dispatch(withdrawAccountKeeperBalance(wei(amount)));
 	}, [dispatch, amount, keeperEthBal]);

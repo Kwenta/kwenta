@@ -17,7 +17,7 @@ import {
 	selectMarketPrice,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { weiToString, zeroBN } from 'utils/formatters/number';
+import { weiToString } from 'utils/formatters/number';
 import { orderPriceInvalidLabel } from 'utils/futures';
 
 type Props = {
@@ -79,9 +79,9 @@ export default function OrderPriceInput({
 	const onChangeFeeCap = (index: number) => {
 		const val = FEE_CAP_OPTIONS[index];
 		if (val === 'none') {
-			dispatch(setOrderFeeCap(zeroBN));
+			dispatch(setOrderFeeCap('0'));
 		} else {
-			dispatch(setOrderFeeCap(wei(val.replace('%', ''))));
+			dispatch(setOrderFeeCap(wei(val.replace('%', '')).toString()));
 		}
 	};
 

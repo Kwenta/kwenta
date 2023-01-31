@@ -12,7 +12,7 @@ import { FuturesAccountType } from 'queries/futures/subgraph';
 import { setOpenModal } from 'state/app/reducer';
 import {
 	selectCrossMarginBalanceInfo,
-	selectFuturesType,
+	selectHasRemainingMargin,
 	selectPosition,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -27,18 +27,17 @@ type Props = {
 
 export default function TradePanelHeader({ accountType, onManageBalance }: Props) {
 	const { t } = useTranslation();
-
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
 	const { openConnectModal } = useConnectModal();
+
 	const position = useAppSelector(selectPosition);
-	const futuresType = useAppSelector(selectFuturesType);
-	const balanceInfo = useAppSelector(selectCrossMarginBalanceInfo);
+	const { freeMargin } = useAppSelector(selectCrossMarginBalanceInfo);
+	const hasMargin = useAppSelector(selectHasRemainingMargin);
 	const wallet = useAppSelector(selectWallet);
 
-	const balance = position ? position.remainingMargin : zeroBN;
-	const hasMargin =
-		futuresType === 'cross_margin' ? balanceInfo.freeMargin.add(balance).gt(0) : balance.gt(0);
+	const balance =
+		accountType === 'isolated_margin' ? position?.remainingMargin ?? zeroBN : freeMargin;
 
 	if (!wallet) {
 		return (

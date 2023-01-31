@@ -33,7 +33,7 @@ const FeeRateSummaryItem: FC = memo(() => {
 							<CustomStyledTooltip
 								position="fixed"
 								content={t('exchange.summary-info.dynamic-fee-tooltip')}
-							></CustomStyledTooltip>
+							/>
 						</>
 					) : null}
 				</FeeRateItem>

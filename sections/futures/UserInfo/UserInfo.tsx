@@ -69,10 +69,9 @@ const UserInfo: React.FC = () => {
 
 	// TODO: Move to sdk / redux
 	const marginTransfersQuery = useGetFuturesMarginTransfers();
-	const marginTransfers = useMemo(
-		() => (marginTransfersQuery.isSuccess ? marginTransfersQuery?.data ?? [] : []),
-		[marginTransfersQuery.isSuccess, marginTransfersQuery.data]
-	);
+	const marginTransfers = useMemo(() => marginTransfersQuery?.data ?? [], [
+		marginTransfersQuery.data,
+	]);
 
 	const tabQuery = useMemo(() => {
 		if (router.query.tab) {
