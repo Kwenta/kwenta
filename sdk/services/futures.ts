@@ -9,7 +9,7 @@ import KwentaSDK from 'sdk';
 import { DAY_PERIOD, KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { getFuturesAggregateStats, getFuturesPositions } from 'queries/futures/subgraph';
 import { mapFuturesOrders } from 'queries/futures/utils';
-import { NO_CONTRACT, UNSUPPORTED_NETWORK } from 'sdk/common/errors';
+import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
 import { BPS_CONVERSION, DEFAULT_DESIRED_TIMEDELTA } from 'sdk/constants/futures';
 import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { getContractsByNetwork, getPerpsV2MarketMulticall } from 'sdk/contracts';
@@ -675,7 +675,7 @@ export default class FuturesService {
 	) {
 		const { Pyth } = this.sdk.context.contracts;
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
-		if (!Pyth) throw new Error(NO_CONTRACT);
+		if (!Pyth) throw new Error(UNSUPPORTED_NETWORK);
 
 		// get price update data
 		const priceUpdateData = await this.sdk.prices.getPriceUpdateData(marketKey);
