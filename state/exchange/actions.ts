@@ -10,7 +10,12 @@ import { AppThunk } from 'state/store';
 import { FetchStatus, ThunkConfig } from 'state/types';
 import { toWei, truncateNumbers } from 'utils/formatters/number';
 
-import { selectBaseBalanceWei, selectQuoteBalanceWei } from './selectors';
+import {
+	selectBaseBalanceWei,
+	selectInsufficientBalance,
+	selectIsApproved,
+	selectQuoteBalanceWei,
+} from './selectors';
 import { SwapRatio } from './types';
 
 export const fetchRedeemableBalances = createAsyncThunk<any, void, ThunkConfig>(
@@ -43,6 +48,15 @@ export const fetchTransactionFee = createAsyncThunk<
 	const {
 		exchange: { quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount },
 	} = getState();
+
+	const isApproved = selectIsApproved(getState());
+	const insufficientBalance = selectInsufficientBalance(getState());
+	if (!isApproved || insufficientBalance) {
+		return {
+			transactionFee: '0',
+			feeCost: '0',
+		};
+	}
 
 	if (baseCurrencyKey && quoteCurrencyKey) {
 		const [transactionFee, feeCost] = await Promise.all([
