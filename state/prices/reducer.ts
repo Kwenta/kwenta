@@ -7,7 +7,7 @@ import { FetchStatus } from 'state/types';
 import { fetchPreviousDayRates } from './actions';
 import { PricesState } from './types';
 
-const initialState: PricesState = {
+export const PRICES_INITIAL_STATE: PricesState = {
 	onChainPrices: {},
 	offChainPrices: {},
 	connectionError: null,
@@ -19,7 +19,7 @@ const initialState: PricesState = {
 
 const pricesSlice = createSlice({
 	name: 'prices',
-	initialState,
+	initialState: PRICES_INITIAL_STATE,
 	reducers: {
 		setOffChainPrices: (state, action: PayloadAction<PricesMap<string>>) => {
 			state.offChainPrices = action.payload;

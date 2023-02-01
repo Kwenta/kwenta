@@ -53,7 +53,7 @@ import {
 	TransactionEstimations,
 } from './types';
 
-export const INITIAL_STATE: FuturesState = {
+export const FUTURES_INITIAL_STATE: FuturesState = {
 	selectedType: DEFAULT_FUTURES_MARGIN_TYPE,
 	confirmationModalOpen: false,
 	markets: [],
@@ -128,7 +128,7 @@ export const INITIAL_STATE: FuturesState = {
 
 const futuresSlice = createSlice({
 	name: 'futures',
-	initialState: INITIAL_STATE,
+	initialState: FUTURES_INITIAL_STATE,
 	reducers: {
 		setMarketAsset: (state, action) => {
 			state[accountType(state.selectedType)].selectedMarketAsset = action.payload;

@@ -16,7 +16,7 @@ export type Prices<T = Wei> = Record<string, Price<T>>;
 
 export type PricesMap<T = Wei> = Partial<Record<AssetKey, T>>;
 
-export type LatestRate = {
+export type SynthRate = {
 	synth: string;
 	rate: Wei;
 };

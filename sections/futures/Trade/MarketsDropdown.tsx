@@ -12,7 +12,7 @@ import Connector from 'containers/Connector';
 import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { Rates } from 'queries/rates/types';
-import { LatestRate } from 'sdk/types/prices';
+import { SynthRate } from 'sdk/types/prices';
 import {
 	selectMarketAsset,
 	selectMarkets,
@@ -106,7 +106,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	);
 
 	const getPastPrice = React.useCallback(
-		(asset: string) => pastRates.find((price: LatestRate) => price.synth === asset),
+		(asset: string) => pastRates.find((price) => price.synth === asset),
 		[pastRates]
 	);
 

@@ -1,4 +1,4 @@
-import { LatestRate, PricesMap } from 'sdk/types/prices';
+import { SynthRate, PricesMap } from 'sdk/types/prices';
 import { QueryStatus } from 'state/types';
 
 export type PricesQueryStatuses = {
@@ -9,6 +9,6 @@ export type PricesState = {
 	onChainPrices: PricesMap<string>;
 	offChainPrices: PricesMap<string>;
 	connectionError: string | null | undefined;
-	previousDayRates: LatestRate[];
+	previousDayRates: SynthRate[];
 	queryStatuses: PricesQueryStatuses;
 };

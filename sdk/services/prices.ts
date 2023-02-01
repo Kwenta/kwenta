@@ -12,7 +12,7 @@ import { ADDITIONAL_SYNTHS, PRICE_UPDATE_THROTTLE, PYTH_IDS } from 'sdk/constant
 import { FuturesMarketKey } from 'sdk/types/futures';
 import {
 	CurrencyRate,
-	LatestRate,
+	SynthRate,
 	PricesListener,
 	PricesMap,
 	SynthRatesTuple,
@@ -179,7 +179,7 @@ export default class PricesService {
 				minTimestamp: minTimestamp,
 			}
 		);
-		const latestRates = (response ? Object.values(response).flat() : []) as LatestRate[];
+		const latestRates = (response ? Object.values(response).flat() : []) as SynthRate[];
 		return latestRates;
 	}
 

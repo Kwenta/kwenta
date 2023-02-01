@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import { notifyError } from 'components/ErrorView/ErrorNotifier';
-import { LatestRate, PricesMap, PriceType } from 'sdk/types/prices';
+import { SynthRate, PricesMap, PriceType } from 'sdk/types/prices';
 import { selectPrices } from 'state/prices/selectors';
 import { AppThunk } from 'state/store';
 import { ThunkConfig } from 'state/types';
@@ -19,7 +19,7 @@ export const updatePrices = (prices: PricesMap<string>, type: PriceType): AppThu
 };
 
 export const fetchPreviousDayRates = createAsyncThunk<
-	LatestRate[],
+	SynthRate[],
 	boolean | undefined,
 	ThunkConfig
 >('prices/fetchPreviousDayRates', async (mainnet, { getState, extra: { sdk } }) => {
