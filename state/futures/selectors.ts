@@ -69,8 +69,6 @@ export const selectCrossMarginTransferOpen = (state: RootState) =>
 export const selectShowCrossMarginOnboard = (state: RootState) =>
 	state.futures.crossMargin.showOnboard;
 
-export const selectPreviousDayRates = (state: RootState) => state.futures.previousDayRates;
-
 export const selectSelectedTrader = (state: RootState) => state.futures.leaderboard.selectedTrader;
 
 export const selectCrossMarginAccountData = createSelector(

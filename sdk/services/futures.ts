@@ -10,8 +10,6 @@ import KwentaSDK from 'sdk';
 import { DAY_PERIOD, KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { getFuturesAggregateStats } from 'queries/futures/subgraph';
 import { FuturesAccountType } from 'queries/futures/types';
-import { LatestRate } from 'queries/rates/types';
-import { getRatesEndpoint, mapLaggedDailyPrices } from 'queries/rates/utils';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
 import { BPS_CONVERSION, DEFAULT_DESIRED_TIMEDELTA } from 'sdk/constants/futures';
 import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';
@@ -50,7 +48,6 @@ import {
 	formatDelayedOrder,
 	formatPotentialIsolatedTrade,
 	formatPotentialTrade,
-	getDisplayAsset,
 	getFuturesEndpoint,
 	getMarketName,
 	getReasonFromCode,
@@ -542,41 +539,6 @@ export default class FuturesService {
 	public async getCrossMarginKeeperBalance(account: string) {
 		const bal = await this.sdk.context.provider.getBalance(account);
 		return wei(bal);
-	}
-
-	public async getPreviousDayRates(marketAssets: string[], networkId?: NetworkId) {
-		const ratesEndpoint = getRatesEndpoint(networkId || this.sdk.context.networkId);
-		const minTimestamp = Math.floor((Date.now() - 60 * 60 * 24 * 1000) / 1000);
-
-		const rateUpdateQueries = marketAssets.map((asset) => {
-			return gql`
-			# last before timestamp
-			${asset}: rateUpdates(
-				first: 1
-				where: { synth: "${getDisplayAsset(asset) ?? asset}", timestamp_gte: $minTimestamp }
-				orderBy: timestamp
-				orderDirection: asc
-			) {
-				synth
-				rate
-			}
-		`;
-		});
-
-		const response = await request(
-			ratesEndpoint,
-			gql`
-				query rateUpdates($minTimestamp: BigInt!) {
-					${rateUpdateQueries.reduce((acc: string, curr: string) => {
-						return acc + curr;
-					})}
-			}`,
-			{
-				minTimestamp: minTimestamp,
-			}
-		);
-		const latestRates = (response ? Object.values(response).flat() : []) as LatestRate[];
-		return mapLaggedDailyPrices(latestRates);
 	}
 
 	public async getPositionHistory(walletAddress: string) {

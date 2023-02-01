@@ -1,7 +1,6 @@
 import Wei from '@synthetixio/wei';
 
 import { FuturesAccountType } from 'queries/futures/types';
-import { Prices } from 'queries/rates/types';
 import { TransactionStatus } from 'sdk/types/common';
 import {
 	CrossMarginOrderType,
@@ -56,7 +55,6 @@ export type FuturesQueryStatuses = {
 	isolatedTradePreview: QueryStatus;
 	crossMarginTradePreview: QueryStatus;
 	crossMarginAccount: QueryStatus;
-	previousDayRates: QueryStatus;
 	positionHistory: QueryStatus;
 	trades: QueryStatus;
 	selectedTraderPositionHistory: QueryStatus;
@@ -150,7 +148,6 @@ export type FuturesState = {
 	markets: FuturesMarket<string>[];
 	queryStatuses: FuturesQueryStatuses;
 	dailyMarketVolumes: FuturesVolumes<string>;
-	previousDayRates: Prices;
 	transactionEstimations: TransactionEstimations;
 	errors: FuturesErrors;
 	selectedInputDenomination: InputCurrencyDenomination;

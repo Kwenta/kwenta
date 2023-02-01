@@ -18,11 +18,11 @@ import { CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
-import { selectMarketVolumes, selectPreviousDayRates } from 'state/futures/selectors';
+import { selectMarketVolumes } from 'state/futures/selectors';
 import { fetchOptimismMarkets } from 'state/home/actions';
 import { selectOptimismMarkets } from 'state/home/selectors';
 import { useAppSelector, usePollAction } from 'state/hooks';
-import { selectPrices } from 'state/prices/selectors';
+import { selectPreviousDayRates, selectPrices } from 'state/prices/selectors';
 import { SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media, { Media } from 'styles/media';
 import { getSynthDescription } from 'utils/futures';
@@ -202,7 +202,9 @@ const Assets = () => {
 				price: marketPrice.toNumber(),
 				volume,
 				priceChange:
-					(marketPrice.toNumber() - (pastPrice?.price ?? 0)) / marketPrice.toNumber() || 0,
+					!!marketPrice && !marketPrice.eq(0) && !!pastPrice?.rate
+						? marketPrice.sub(pastPrice.rate).div(marketPrice)
+						: 0,
 				image: <PriceChart asset={market.asset} />,
 				icon: (
 					<StyledCurrencyIcon currencyKey={(market.asset[0] !== 's' ? 's' : '') + market.asset} />
@@ -233,7 +235,7 @@ const Assets = () => {
 				market: synth.name,
 				description: description.slice(10),
 				price,
-				change: price !== 0 ? (price - (pastPrice?.price ?? 0)) / price || 0 : 0,
+				change: !!rate && !rate.eq(0) && !!pastPrice?.rate ? rate.sub(pastPrice.rate).div(rate) : 0,
 				volume: synthVolumes[synth.name]?.toNumber() ?? 0,
 				image: <PriceChart asset={synth.asset} />,
 				icon: (

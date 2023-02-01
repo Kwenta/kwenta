@@ -27,6 +27,8 @@ export const selectPrices = createSelector(
 	}
 );
 
+export const selectPreviousDayRates = (state: RootState) => state.prices.previousDayRates;
+
 export const selectLatestEthPrice = createSelector(selectPrices, (prices) => {
 	const price = getPricesForCurrencies(prices, 'sETH', 'sUSD');
 	return price.offChain ?? price.onChain ?? wei(0);

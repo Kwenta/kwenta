@@ -36,7 +36,6 @@ import {
 	fetchCrossMarginTradePreview,
 	fetchKeeperEthBalance,
 	fetchCrossMarginAccount,
-	fetchPreviousDayRates,
 	fetchFuturesPositionHistory,
 	fetchPositionHistoryForTrader,
 	fetchTradesForSelectedMarket,
@@ -60,7 +59,6 @@ export const INITIAL_STATE: FuturesState = {
 	markets: [],
 	dailyMarketVolumes: {},
 	errors: {},
-	previousDayRates: [],
 	fundingRates: [],
 	selectedInputDenomination: 'usd',
 	leaderboard: {
@@ -80,7 +78,6 @@ export const INITIAL_STATE: FuturesState = {
 		isolatedTradePreview: DEFAULT_QUERY_STATUS,
 		crossMarginTradePreview: DEFAULT_QUERY_STATUS,
 		crossMarginAccount: DEFAULT_QUERY_STATUS,
-		previousDayRates: DEFAULT_QUERY_STATUS,
 		positionHistory: DEFAULT_QUERY_STATUS,
 		selectedTraderPositionHistory: DEFAULT_QUERY_STATUS,
 		trades: DEFAULT_QUERY_STATUS,
@@ -491,21 +488,6 @@ const futuresSlice = createSlice({
 			futuresState.queryStatuses.crossMarginAccount = {
 				status: FetchStatus.Error,
 				error: 'Failed to fetch cross margin account',
-			};
-		});
-
-		// Fetch past daily prices
-		builder.addCase(fetchPreviousDayRates.pending, (futuresState) => {
-			futuresState.queryStatuses.previousDayRates = LOADING_STATUS;
-		});
-		builder.addCase(fetchPreviousDayRates.fulfilled, (futuresState, action) => {
-			futuresState.previousDayRates = action.payload;
-			futuresState.queryStatuses.previousDayRates = SUCCESS_STATUS;
-		});
-		builder.addCase(fetchPreviousDayRates.rejected, (futuresState) => {
-			futuresState.queryStatuses.previousDayRates = {
-				error: 'Failed to fetch past rates',
-				status: FetchStatus.Error,
 			};
 		});
 

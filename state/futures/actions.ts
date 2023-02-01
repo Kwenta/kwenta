@@ -8,7 +8,6 @@ import KwentaSDK from 'sdk';
 import { notifyError } from 'components/ErrorView/ErrorNotifier';
 import { ORDER_KEEPER_ETH_DEPOSIT } from 'constants/futures';
 import { FuturesAccountType } from 'queries/futures/types';
-import { Prices } from 'queries/rates/types';
 import { TransactionStatus } from 'sdk/types/common';
 import {
 	CrossMarginOrderType,
@@ -41,7 +40,7 @@ import {
 import { fetchBalances } from 'state/balances/actions';
 import { ZERO_CM_FEES, ZERO_STATE_CM_TRADE_INPUTS } from 'state/constants';
 import { serializeWeiObject } from 'state/helpers';
-import { selectLatestEthPrice, selectPrices } from 'state/prices/selectors';
+import { selectLatestEthPrice } from 'state/prices/selectors';
 import { AppDispatch, AppThunk, RootState } from 'state/store';
 import { ThunkConfig } from 'state/types';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
@@ -675,25 +674,6 @@ export const fetchKeeperEthBalance = createAsyncThunk<
 	const bal = await sdk.futures.getCrossMarginKeeperBalance(account);
 	return { balance: bal.toString(), account, network };
 });
-
-export const fetchPreviousDayRates = createAsyncThunk<Prices, boolean | undefined, ThunkConfig>(
-	'futures/fetchPreviousDayRates',
-	async (mainnet, { getState, extra: { sdk } }) => {
-		try {
-			const prices = selectPrices(getState());
-			const marketAssets = Object.keys(prices);
-
-			const laggedPrices = await sdk.futures.getPreviousDayRates(
-				marketAssets,
-				mainnet ? 10 : undefined
-			);
-			return laggedPrices;
-		} catch (err) {
-			notifyError('Failed to fetch historical rates', err);
-			throw err;
-		}
-	}
-);
 
 export const fetchFuturesPositionHistory = createAsyncThunk<
 	| {

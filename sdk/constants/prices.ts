@@ -2,6 +2,12 @@ import { formatBytes32String } from 'ethers/lib/utils.js';
 
 import { V2_MARKETS_LIST } from './futures';
 
+export const MAIN_ENDPOINT_OP_MAINNET =
+	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-latest-rates';
+
+export const MAIN_ENDPOINT_OP_GOERLI =
+	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-goerli-latest-rates';
+
 // Additional commonly used currencies to fetch, besides the one returned by the SynthUtil.synthsRates
 export const ADDITIONAL_SYNTHS = [
 	'SNX',

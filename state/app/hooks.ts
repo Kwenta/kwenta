@@ -2,8 +2,9 @@ import { useEffect } from 'react';
 
 import { fetchBalances } from 'state/balances/actions';
 import { sdk } from 'state/config';
+import { selectMarkets } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks';
-import { updatePrices } from 'state/prices/actions';
+import { fetchPreviousDayRates, updatePrices } from 'state/prices/actions';
 import { setConnectionError } from 'state/prices/reducer';
 import { selectWallet } from 'state/wallet/selectors';
 import { serializePrices } from 'utils/futures';
@@ -11,8 +12,15 @@ import { serializePrices } from 'utils/futures';
 export function useAppData(ready: boolean) {
 	const dispatch = useAppDispatch();
 	const wallet = useAppSelector(selectWallet);
+	const markets = useAppSelector(selectMarkets);
 
 	usePollAction('fetchBalances', fetchBalances, { dependencies: [wallet] });
+
+	usePollAction('fetchPreviousDayRates', fetchPreviousDayRates, {
+		intervalTime: 60000 * 15,
+		dependencies: [markets.length],
+		disabled: !markets.length,
+	});
 
 	useEffect(() => {
 		if (ready) {

@@ -1,5 +1,4 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
-import { wei } from '@synthetixio/wei';
 import { chain } from 'wagmi';
 
 import { DEBT_RATIO_UNIT } from 'constants/network';
@@ -7,23 +6,10 @@ import { CandleResult } from 'queries/futures/subgraph';
 import { FuturesMarketKey } from 'utils/futures';
 
 import { RATES_ENDPOINTS } from './constants';
-import { Candle, LatestRate } from './types';
-import { Prices } from './types';
+import { Candle } from './types';
 
 export const getRatesEndpoint = (networkId: NetworkId) => {
 	return RATES_ENDPOINTS[networkId] || RATES_ENDPOINTS[chain.optimism.id];
-};
-
-export const mapLaggedDailyPrices = (rates: LatestRate[]): Prices => {
-	return rates.map((rate) => {
-		return {
-			synth: rate.synth,
-			price:
-				rate.synth === 'DebtRatio'
-					? wei(rate.rate).div(DEBT_RATIO_UNIT).toNumber()
-					: wei(rate.rate).toNumber(),
-		};
-	});
 };
 
 const markets = new Set<FuturesMarketKey>([

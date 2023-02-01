@@ -1,16 +1,25 @@
 import { EvmPriceServiceConnection, PriceFeed } from '@pythnetwork/pyth-evm-js';
-import { CurrencyKey } from '@synthetixio/contracts-interface';
+import { CurrencyKey, NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { formatEther, parseBytes32String } from 'ethers/lib/utils.js';
+import request, { gql } from 'graphql-request';
 import { throttle } from 'lodash';
 import KwentaSDK from 'sdk';
 
 import { MARKETS, MARKET_ASSETS_BY_PYTH_ID } from 'sdk/constants/futures';
+import { PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { ADDITIONAL_SYNTHS, PRICE_UPDATE_THROTTLE, PYTH_IDS } from 'sdk/constants/prices';
 import { FuturesMarketKey } from 'sdk/types/futures';
-import { CurrencyRate, PricesListener, PricesMap, SynthRatesTuple } from 'sdk/types/prices';
-import { getPythNetworkUrl, normalizePythId } from 'sdk/utils/futures';
+import {
+	CurrencyRate,
+	LatestRate,
+	PricesListener,
+	PricesMap,
+	SynthRatesTuple,
+} from 'sdk/types/prices';
+import { getDisplayAsset, getPythNetworkUrl, normalizePythId } from 'sdk/utils/futures';
 import { startInterval } from 'sdk/utils/interval';
+import { getRatesEndpoint } from 'sdk/utils/prices';
 import { scale } from 'utils/formatters/number';
 import { MarketAssetByKey } from 'utils/futures';
 import logError from 'utils/logError';
@@ -137,6 +146,41 @@ export default class PricesService {
 	public async getOffChainPrices() {
 		const pythPrices = await this.pyth.getLatestPriceFeeds(this.pythIds);
 		return this.formatOffChainPrices(pythPrices ?? []);
+	}
+
+	public async getPreviousDayRates(marketAssets: string[], networkId?: NetworkId) {
+		const ratesEndpoint = getRatesEndpoint(networkId || this.sdk.context.networkId);
+		const minTimestamp = Math.floor((Date.now() - PERIOD_IN_SECONDS.ONE_DAY * 1000) / 1000);
+
+		const rateUpdateQueries = marketAssets.map((asset) => {
+			return gql`
+			# last before timestamp
+			${asset}: rateUpdates(
+				first: 1
+				where: { synth: "${getDisplayAsset(asset) ?? asset}", timestamp_gte: $minTimestamp }
+				orderBy: timestamp
+				orderDirection: asc
+			) {
+				synth
+				rate
+			}
+		`;
+		});
+
+		const response = await request(
+			ratesEndpoint,
+			gql`
+				query rateUpdates($minTimestamp: BigInt!) {
+					${rateUpdateQueries.reduce((acc: string, curr: string) => {
+						return acc + curr;
+					})}
+			}`,
+			{
+				minTimestamp: minTimestamp,
+			}
+		);
+		const latestRates = (response ? Object.values(response).flat() : []) as LatestRate[];
+		return latestRates;
 	}
 
 	public async getPythPriceUpdateData(marketKey: FuturesMarketKey) {

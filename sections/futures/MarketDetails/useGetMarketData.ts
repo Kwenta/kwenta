@@ -13,9 +13,9 @@ import {
 	selectMarketVolumes,
 	selectMarketPrices,
 	selectSkewAdjustedPrice,
-	selectPreviousDayRates,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
+import { selectPreviousDayRates } from 'state/prices/selectors';
 import { isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
@@ -100,17 +100,17 @@ const useGetMarketData = (mobile?: boolean) => {
 				},
 				[MarketDataKey.dailyChange]: {
 					value:
-						marketPrice.gt(0) && pastPrice?.price
+						marketPrice.gt(0) && pastPrice?.rate
 							? `${formatCurrency(
 									selectedPriceCurrency.name,
-									marketPrice.sub(pastPrice.price) ?? zeroBN,
+									marketPrice.sub(pastPrice.rate) ?? zeroBN,
 									{ sign: '$', minDecimals, isAssetPrice: true }
-							  )} (${formatPercent(marketPrice.sub(pastPrice.price).div(marketPrice) ?? zeroBN)})`
+							  )} (${formatPercent(marketPrice.sub(pastPrice.rate).div(marketPrice) ?? zeroBN)})`
 							: NO_VALUE,
-					color: pastPrice?.price
-						? marketPrice.sub(pastPrice.price).gt(zeroBN)
+					color: pastPrice?.rate
+						? marketPrice.sub(pastPrice.rate).gt(zeroBN)
 							? 'green'
-							: marketPrice.sub(pastPrice.price).lt(zeroBN)
+							: marketPrice.sub(pastPrice.rate).lt(zeroBN)
 							? 'red'
 							: ''
 						: undefined,
@@ -134,17 +134,17 @@ const useGetMarketData = (mobile?: boolean) => {
 				},
 				[MarketDataKey.dailyChange]: {
 					value:
-						marketPrice.gt(0) && pastPrice?.price
+						marketPrice.gt(0) && pastPrice?.rate
 							? `${formatCurrency(
 									selectedPriceCurrency.name,
-									marketPrice.sub(pastPrice.price) ?? zeroBN,
+									marketPrice.sub(pastPrice.rate) ?? zeroBN,
 									{ sign: '$', minDecimals, isAssetPrice: true }
-							  )} (${formatPercent(marketPrice.sub(pastPrice.price).div(marketPrice) ?? zeroBN)})`
+							  )} (${formatPercent(marketPrice.sub(pastPrice.rate).div(marketPrice) ?? zeroBN)})`
 							: NO_VALUE,
-					color: pastPrice?.price
-						? marketPrice.sub(pastPrice.price).gt(zeroBN)
+					color: pastPrice?.rate
+						? marketPrice.sub(pastPrice.rate).gt(zeroBN)
 							? 'green'
-							: marketPrice.sub(pastPrice.price).lt(zeroBN)
+							: marketPrice.sub(pastPrice.rate).lt(zeroBN)
 							? 'red'
 							: ''
 						: undefined,
@@ -180,7 +180,7 @@ const useGetMarketData = (mobile?: boolean) => {
 		oraclePrice,
 		futuresVolumes,
 		selectedPriceCurrency.name,
-		pastPrice?.price,
+		pastPrice?.rate,
 		minDecimals,
 		marketPrice,
 		t,

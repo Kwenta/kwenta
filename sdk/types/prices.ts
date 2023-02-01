@@ -16,6 +16,11 @@ export type Prices<T = Wei> = Record<string, Price<T>>;
 
 export type PricesMap<T = Wei> = Partial<Record<AssetKey, T>>;
 
+export type LatestRate = {
+	synth: string;
+	rate: Wei;
+};
+
 export type PriceType = 'on_chain' | 'off_chain';
 
 export type PricesListener = (updatedPrices: { type: PriceType; prices: PricesMap }) => void;
