@@ -6,9 +6,8 @@ import { chain } from 'wagmi';
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
-import { calculateTradeVolumeForAllSynths } from 'queries/futures/utils';
-import { RATES_ENDPOINT_OP_MAINNET } from 'queries/rates/constants';
-import { getRatesEndpoint } from 'queries/rates/utils';
+import { MAIN_ENDPOINT_OP_MAINNET } from 'queries/futures/constants';
+import { calculateTradeVolumeForAllSynths, getMainEndpoint } from 'queries/futures/utils';
 import logError from 'utils/logError';
 
 import { SynthsVolumes } from './type';
@@ -17,8 +16,8 @@ const useGetSynthsTradingVolumeForAllMarkets = (yesterday: number) => {
 	const { network } = Connector.useContainer();
 	const synthsEndpoint =
 		window.location.pathname === ROUTES.Home.Root || network === undefined
-			? RATES_ENDPOINT_OP_MAINNET
-			: getRatesEndpoint(network?.id as NetworkId);
+			? MAIN_ENDPOINT_OP_MAINNET
+			: getMainEndpoint(network?.id as NetworkId);
 
 	return useQuery<SynthsVolumes | null>(
 		QUERY_KEYS.Synths.TradingVolumeForAllSynths((network?.id ?? chain.optimism.id) as NetworkId),

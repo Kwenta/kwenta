@@ -41,7 +41,7 @@ import {
 import { fetchBalances } from 'state/balances/actions';
 import { ZERO_CM_FEES, ZERO_STATE_CM_TRADE_INPUTS } from 'state/constants';
 import { serializeWeiObject } from 'state/helpers';
-import { selectLatestEthPrice } from 'state/prices/selectors';
+import { selectLatestEthPrice, selectPrices } from 'state/prices/selectors';
 import { AppDispatch, AppThunk, RootState } from 'state/store';
 import { ThunkConfig } from 'state/types';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
@@ -102,7 +102,6 @@ import {
 	selectLeverageSide,
 	selectMarketPrice,
 	selectMarketAsset,
-	selectMarketAssets,
 	selectMarketInfo,
 	selectMarketKey,
 	selectMarkets,
@@ -681,7 +680,9 @@ export const fetchPreviousDayRates = createAsyncThunk<Prices, boolean | undefine
 	'futures/fetchPreviousDayRates',
 	async (mainnet, { getState, extra: { sdk } }) => {
 		try {
-			const marketAssets = selectMarketAssets(getState());
+			const prices = selectPrices(getState());
+			const marketAssets = Object.keys(prices);
+
 			const laggedPrices = await sdk.futures.getPreviousDayRates(
 				marketAssets,
 				mainnet ? 10 : undefined

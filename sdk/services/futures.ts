@@ -544,7 +544,7 @@ export default class FuturesService {
 		return wei(bal);
 	}
 
-	public async getPreviousDayRates(marketAssets: FuturesMarketAsset[], networkId?: NetworkId) {
+	public async getPreviousDayRates(marketAssets: string[], networkId?: NetworkId) {
 		const ratesEndpoint = getRatesEndpoint(networkId || this.sdk.context.networkId);
 		const minTimestamp = Math.floor((Date.now() - 60 * 60 * 24 * 1000) / 1000);
 

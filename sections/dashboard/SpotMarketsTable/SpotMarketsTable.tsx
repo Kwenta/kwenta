@@ -40,7 +40,7 @@ const SpotMarketsTable: FC = () => {
 				: '';
 			const rate = prices && prices[synth.name].onChain;
 			const price = _.isNil(rate) ? 0 : rate.toNumber();
-			const pastPrice = pastRates.find((price) => price.synth === synth.name);
+			const pastPrice = pastRates.find((price) => price.synth === synth.asset);
 			const synthVolumes = synthVolumesQuery?.data ?? {};
 			return {
 				asset: synth.asset,
