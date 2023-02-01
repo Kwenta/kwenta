@@ -4,7 +4,7 @@ import { useQuery, UseQueryOptions } from 'react-query';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import { getRatesEndpoint } from 'queries/rates/utils';
+import { getMainEndpoint } from 'queries/futures/utils';
 import logError from 'utils/logError';
 
 import { SynthsVolumes } from './type';
@@ -14,7 +14,7 @@ const useGetWalletTrades = (
 	options?: UseQueryOptions<SynthsVolumes | null>
 ) => {
 	const { network } = Connector.useContainer();
-	const synthsEndpoint = getRatesEndpoint(network?.id as NetworkId);
+	const synthsEndpoint = getMainEndpoint(network?.id as NetworkId);
 
 	return useQuery<any>(
 		QUERY_KEYS.Trades.WalletTrades(walletAddress, network?.id as NetworkId),
