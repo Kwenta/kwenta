@@ -29,12 +29,16 @@ const Title = styled(Body)`
 `;
 
 const GridDataContainer = styled.div`
+	background-color: ${(props) => props.theme.colors.selectedTheme.surfaceFill};
 	padding: 20px 24px 18px;
 	min-height: 95px;
 
 	${media.lessThan('mdUp')`
-		padding: 20px 16px;
-   `}
+		padding: 20px;
+		margin-top: 15px;
+		border-radius: 15px;
+		border: ${(props) => props.theme.colors.selectedTheme.border};
+	`}
 `;
 
 const YellowHeading = styled(Heading)`
