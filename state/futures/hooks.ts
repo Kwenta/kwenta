@@ -34,10 +34,13 @@ export const usePollMarketFuturesData = () => {
 
 	useFetchAction(fetchCrossMarginAccount, {
 		dependencies: [networkId, wallet],
-		disabled: !wallet || !networkSupportsCrossMargin,
+		disabled: !wallet || !networkSupportsCrossMargin || selectedAccountType === 'isolated_margin',
 	});
 
-	useFetchAction(fetchCrossMarginSettings, { dependencies: [networkId] });
+	useFetchAction(fetchCrossMarginSettings, {
+		dependencies: [networkId],
+		disabled: !networkSupportsCrossMargin || selectedAccountType === 'isolated_margin',
+	});
 	useFetchAction(fetchStakingData, { dependencies: [networkId, wallet] });
 	usePollAction('fetchSharedFuturesData', fetchSharedFuturesData, {
 		dependencies: [networkId],
