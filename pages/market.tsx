@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useEffect, FC } from 'react';
+import { useEffect, FC, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -7,8 +7,6 @@ import Error from 'components/ErrorView';
 import Loader from 'components/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Connector from 'containers/Connector';
-import { FuturesContext } from 'contexts/FuturesContext';
-import useFuturesData from 'hooks/useFuturesData';
 import useIsL2 from 'hooks/useIsL2';
 import CrossMarginOnboard from 'sections/futures/CrossMarginOnboard';
 import LeftSidebar from 'sections/futures/LeftSidebar/LeftSidebar';
@@ -23,7 +21,7 @@ import AppLayout from 'sections/shared/Layout/AppLayout';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { setOpenModal } from 'state/app/reducer';
 import { selectOpenModal } from 'state/app/selectors';
-import { fetchCrossMarginAccount } from 'state/futures/actions';
+import { clearTradeInputs, fetchCrossMarginAccount } from 'state/futures/actions';
 import { setMarketAsset, setShowCrossMarginOnboard } from 'state/futures/reducer';
 import {
 	selectCMAccountQueryStatus,
@@ -42,7 +40,6 @@ type MarketComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 const Market: MarketComponent = () => {
 	const router = useRouter();
 	const { walletAddress } = Connector.useContainer();
-	const futuresData = useFuturesData();
 	const dispatch = useAppDispatch();
 
 	const routerMarketAsset = router.query.asset as FuturesMarketAsset;
@@ -53,6 +50,26 @@ const Market: MarketComponent = () => {
 	const crossMarginAccount = useAppSelector(selectCrossMarginAccount);
 	const openModal = useAppSelector(selectOpenModal);
 
+	const resetTradeState = useCallback(() => {
+		dispatch(clearTradeInputs());
+	}, [dispatch]);
+
+	useEffect(() => {
+		const handleRouteChange = () => {
+			resetTradeState();
+		};
+		router.events.on('routeChangeStart', handleRouteChange);
+		return () => {
+			router.events.off('routeChangeStart', handleRouteChange);
+		};
+	}, [router.events, resetTradeState]);
+
+	useEffect(() => {
+		resetTradeState();
+		// Clear trade state when switching address
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [walletAddress]);
+
 	useEffect(() => {
 		if (routerMarketAsset && MarketKeyByAsset[routerMarketAsset]) {
 			dispatch(setMarketAsset(routerMarketAsset));
@@ -60,7 +77,7 @@ const Market: MarketComponent = () => {
 	}, [router, setCurrentMarket, dispatch, routerMarketAsset]);
 
 	return (
-		<FuturesContext.Provider value={futuresData}>
+		<>
 			<MarketHead />
 
 			<CrossMarginOnboard
@@ -93,7 +110,7 @@ const Market: MarketComponent = () => {
 					onDismiss={() => dispatch(setOpenModal(null))}
 				/>
 			)}
-		</FuturesContext.Provider>
+		</>
 	);
 };
 
