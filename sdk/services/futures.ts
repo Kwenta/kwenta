@@ -705,6 +705,22 @@ export default class FuturesService {
 		return market.executeDelayedOrder(account);
 	}
 
+	public async executeDelayedOffchainOrder(
+		marketKey: FuturesMarketKey,
+		marketAddress: string,
+		account: string
+	) {
+		const { Pyth } = this.sdk.context.contracts;
+		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
+		if (!Pyth) throw new Error(UNSUPPORTED_NETWORK);
+
+		// get price update data
+		const priceUpdateData = await this.sdk.prices.getPythPriceUpdateData(marketKey);
+		const updateFee = await Pyth.getUpdateFee(priceUpdateData);
+
+		return market.executeOffchainDelayedOrder(account, priceUpdateData, { value: updateFee });
+	}
+
 	public async createCrossMarginAccount() {
 		if (!this.sdk.context.contracts.CrossMarginAccountFactory) throw new Error(UNSUPPORTED_NETWORK);
 		return this.sdk.transactions.createContractTxn(
