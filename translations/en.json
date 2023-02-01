@@ -845,6 +845,9 @@
 					"insufficient-margin": "Insufficient free margin",
 					"error": "Error generating preview"
 				},
+				"fees": {
+					"tooltip": "Fees are displayed as maker/taker. Maker fees apply to orders that reduce the market skew. Taker fees apply to orders that increase the market skew."
+				},
 				"orders": {
 					"manage-keeper-deposit": {
 						"title": "Manage Account ETH Balance",
