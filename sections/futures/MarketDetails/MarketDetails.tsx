@@ -101,7 +101,7 @@ const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 
 	.heading {
 		font-size: 13px;
-		color: ${(props) => props.theme.colors.selectedTheme.text.title};
+		color: ${(props) => props.theme.colors.selectedTheme.text.label};
 	}
 
 	.value {
