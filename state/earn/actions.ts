@@ -78,8 +78,8 @@ export const getEarnDetails = createAsyncThunk<void, string | undefined, ThunkCo
 			totalSupply,
 			lpTokenBalance,
 			allowance,
-			amount0,
-			amount1,
+			wethAmount,
+			kwentaAmount,
 			lpTotalSupply,
 		} = await sdk.kwentaToken.getEarnDetails();
 
@@ -93,10 +93,26 @@ export const getEarnDetails = createAsyncThunk<void, string | undefined, ThunkCo
 				totalSupply: totalSupply.toString(),
 				lpTokenBalance: lpTokenBalance.toString(),
 				allowance: allowance.toString(),
-				amount0: amount0.toString(),
-				amount1: amount1.toString(),
+				wethAmount: wethAmount.toString(),
+				kwentaAmount: kwentaAmount.toString(),
 				lpTotalSupply: lpTotalSupply.toString(),
 			},
 		});
 	}
 );
+
+export const fetchEarnTokenPrice = createAsyncThunk<
+	{
+		kwentaPrice: string;
+		wethPrice: string;
+	},
+	void,
+	ThunkConfig
+>('earn/fetchEarnTokenPrice', async (_, { extra: { sdk } }) => {
+	const { kwentaPrice, wethPrice } = await sdk.kwentaToken.getEarnTokenPrice();
+
+	return {
+		kwentaPrice: kwentaPrice.toString(),
+		wethPrice: wethPrice.toString(),
+	};
+});

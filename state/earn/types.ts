@@ -11,7 +11,9 @@ export type EarnState = {
 	error?: string;
 	stakeStatus: FetchStatus;
 	unstakeStatus: FetchStatus;
-	amount0: string;
-	amount1: string;
+	wethAmount: string;
+	kwentaAmount: string;
 	lpTotalSupply: string;
+	kwentaPrice: string;
+	wethPrice: string;
 };

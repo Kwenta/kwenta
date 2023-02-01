@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 
 import { fetchBalances } from 'state/balances/actions';
 import { sdk } from 'state/config';
+import { fetchEarnTokenPrice } from 'state/earn/actions';
 import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks';
 import { updatePrices } from 'state/prices/actions';
 import { setConnectionError } from 'state/prices/reducer';
@@ -13,6 +14,7 @@ export function useAppData(ready: boolean) {
 	const wallet = useAppSelector(selectWallet);
 
 	usePollAction('fetchBalances', fetchBalances, { dependencies: [wallet] });
+	usePollAction('fetchEarnTokenPrice', fetchEarnTokenPrice, { intervalTime: 60000 });
 
 	useEffect(() => {
 		if (ready) {
