@@ -343,7 +343,7 @@
 				"24h-vol": "Total trade volume within the past 24 hours",
 				"24h-trades": "Total amount of trades on selected pair within the past 24h",
 				"open-interest": "Total notional value on all outstanding positions of the selected market",
-				"1h-funding-rate": "Funding applies to all open positions. A positive rate means longs pay shorts, a negative rate means shorts pay longs. The rate is calculated as the average funding paid by open positions for the last hour. Funding accrues on a position every time it is opened, modified, or closed. Funding accrues on open positions."
+				"1h-funding-rate": "Funding applies to all open positions. A positive rate means longs pay shorts, a negative rate means shorts pay longs. The rate increases when a market is skewed long, and decreases when it is skewed short. Funding accrues on a position every time it is opened, modified, or closed."
 			},
 			"deprecated-info": "DEBT-PERP is being deprecated soon. Please close your positions at your earliest convenience."
 		},
@@ -845,6 +845,9 @@
 					"insufficient-margin": "Insufficient free margin",
 					"error": "Error generating preview"
 				},
+				"fees": {
+					"tooltip": "Fees are displayed as maker/taker. Maker fees apply to orders that reduce the market skew. Taker fees apply to orders that increase the market skew."
+				},
 				"orders": {
 					"manage-keeper-deposit": {
 						"title": "Manage Account ETH Balance",
@@ -927,6 +930,7 @@
 						"price": "Price",
 						"parameters": "Parameters",
 						"status": "Status",
+						"actions": "Actions",
 						"no-result": "You have no open orders",
 						"open-filter": "Only show open orders"
 					},
@@ -937,7 +941,8 @@
 					},
 					"status": {
 						"pending": "Pending",
-						"expired": "Expired"
+						"expired": "Expired",
+						"failed": "Failed to execute"
 					},
 					"badges": {
 						"expired": "Expired"

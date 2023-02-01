@@ -5,7 +5,7 @@ import { formatEther, parseBytes32String } from 'ethers/lib/utils.js';
 import { throttle } from 'lodash';
 import KwentaSDK from 'sdk';
 
-import { MARKET_ASSETS_BY_PYTH_ID } from 'sdk/constants/futures';
+import { MARKETS, MARKET_ASSETS_BY_PYTH_ID } from 'sdk/constants/futures';
 import { ADDITIONAL_SYNTHS, PRICE_UPDATE_THROTTLE, PYTH_IDS } from 'sdk/constants/prices';
 import { FuturesMarketKey } from 'sdk/types/futures';
 import { CurrencyRate, PricesListener, PricesMap, SynthRatesTuple } from 'sdk/types/prices';
@@ -137,6 +137,15 @@ export default class PricesService {
 	public async getOffChainPrices() {
 		const pythPrices = await this.pyth.getLatestPriceFeeds(this.pythIds);
 		return this.formatOffChainPrices(pythPrices ?? []);
+	}
+
+	public async getPythPriceUpdateData(marketKey: FuturesMarketKey) {
+		const pythIds = MARKETS[marketKey]?.pythIds;
+		const pythId = pythIds ? pythIds[this.sdk.context.isMainnet ? 'mainnet' : 'testnet'] : null;
+		if (!pythId) throw new Error(sdkErrors.NO_PYTH_ID);
+
+		const updateData = await this.pyth.getPriceFeedsUpdateData([pythId]);
+		return updateData;
 	}
 
 	private formatOffChainPrices(pythPrices: PriceFeed[]) {

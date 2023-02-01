@@ -14,7 +14,6 @@ import { getDisplayAsset, OrderNameByType } from 'sdk/utils/futures';
 import { setOpenModal } from 'state/app/reducer';
 import { modifyIsolatedPosition } from 'state/futures/actions';
 import {
-	selectDelayedOrderFee,
 	selectIsModifyingIsolatedPosition,
 	selectLeverageSide,
 	selectMarketAsset,
@@ -57,7 +56,6 @@ const DelayedOrderConfirmationModal: FC = () => {
 	const potentialTradeDetails = useAppSelector(selectTradePreview);
 	const previewStatus = useAppSelector(selectTradePreviewStatus);
 	const orderType = useAppSelector(selectOrderType);
-	const { commitDeposit } = useAppSelector(selectDelayedOrderFee);
 
 	const positionSize = useMemo(() => {
 		const positionDetails = position?.position;
@@ -74,10 +72,9 @@ const DelayedOrderConfirmationModal: FC = () => {
 		return orderDetails.size.eq(zeroBN);
 	}, [orderDetails]);
 
-	// TODO: check this deposit
 	const totalDeposit = useMemo(() => {
-		return (commitDeposit ?? zeroBN).add(marketInfo?.keeperDeposit ?? zeroBN);
-	}, [commitDeposit, marketInfo?.keeperDeposit]);
+		return (potentialTradeDetails?.fee ?? zeroBN).add(marketInfo?.keeperDeposit ?? zeroBN);
+	}, [potentialTradeDetails?.fee, marketInfo?.keeperDeposit]);
 
 	const dataRows = useMemo(
 		() => [
@@ -122,7 +119,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 			},
 			{
 				label: t('futures.market.user.position.modal.fee-estimated'),
-				value: formatCurrency(selectedPriceCurrency.name, commitDeposit ?? zeroBN, {
+				value: formatCurrency(selectedPriceCurrency.name, potentialTradeDetails?.fee ?? zeroBN, {
 					minDecimals: 2,
 					sign: selectedPriceCurrency.sign,
 				}),
@@ -143,7 +140,6 @@ const DelayedOrderConfirmationModal: FC = () => {
 			t,
 			orderDetails,
 			orderType,
-			commitDeposit,
 			potentialTradeDetails,
 			marketAsset,
 			leverageSide,
