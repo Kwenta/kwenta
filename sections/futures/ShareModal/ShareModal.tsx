@@ -8,7 +8,6 @@ import BaseModal from 'components/BaseModal';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { FuturesPosition } from 'sdk/types/futures';
 import media from 'styles/media';
-import { FuturesMarketAsset } from 'utils/futures';
 
 import AmountContainer from './AmountContainer';
 import PositionMetadata from './PositionMetadata';
@@ -42,7 +41,7 @@ const ShareModal: FC<ShareModalProps> = ({ position, setShowShareModal }) => {
 						<AmountContainer position={position} />
 						<PositionMetadata />
 					</PNLGraphic>
-					<ShareModalButton position={position} marketAsset={marketAsset} />
+					<ShareModalButton position={position} />
 				</ModalWindow>
 			</BaseModal>
 		</>

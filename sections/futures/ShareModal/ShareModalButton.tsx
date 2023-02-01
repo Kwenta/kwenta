@@ -6,13 +6,15 @@ import styled from 'styled-components';
 import TwitterIcon from 'assets/svg/social/twitter.svg';
 import Button from 'components/Button';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { FuturesPosition } from 'sdk/types/futures';
-import { selectFuturesPositionHistory, selectMarketPrice } from 'state/futures/selectors';
+import { FuturesPosition, PositionSide } from 'sdk/types/futures';
+import {
+	selectMarketAsset,
+	selectMarketPrice,
+	selectSelectedMarketPositionHistory,
+} from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
-import { FuturesMarketAsset, getMarketName } from 'utils/futures';
-
-import { PositionSide } from '../types';
+import { getMarketName } from 'utils/futures';
 
 function getTwitterText(
 	side: PositionSide,
@@ -41,14 +43,14 @@ function downloadPng(dataUrl: string) {
 
 type ShareModalButtonProps = {
 	position: FuturesPosition | null | undefined;
-	marketAsset: FuturesMarketAsset;
 };
 
-const ShareModalButton: FC<ShareModalButtonProps> = ({ position, marketAsset }) => {
+const ShareModalButton: FC<ShareModalButtonProps> = ({ position }) => {
 	const { t } = useTranslation();
 
+	const marketAsset = useAppSelector(selectMarketAsset);
 	const marketPrice = useAppSelector(selectMarketPrice);
-	const futuresPositionHistory = useAppSelector(selectFuturesPositionHistory);
+	const currentPosition = useAppSelector(selectSelectedMarketPositionHistory);
 
 	const handleDownloadImage = async () => {
 		let node = document.getElementById('pnl-graphic');
@@ -65,9 +67,7 @@ const ShareModalButton: FC<ShareModalButtonProps> = ({ position, marketAsset }) 
 		const marketName = getMarketName(marketAsset);
 		const leverage = formatNumber(positionDetails?.leverage ?? zeroBN) + 'x';
 		const pnlPct = `+${positionDetails?.pnlPct.mul(100).toNumber().toFixed(2)}%`;
-		const currentPosition = futuresPositionHistory.find(
-			(position) => position.isOpen && position.asset === marketAsset
-		);
+
 		const avgEntryPrice = currentPosition?.avgEntryPrice
 			? formatNumber(currentPosition?.avgEntryPrice)
 			: '';

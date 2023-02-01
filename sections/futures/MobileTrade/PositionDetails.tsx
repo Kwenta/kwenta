@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import UploadIcon from 'assets/svg/futures/upload-icon.svg';
 import { SectionHeader, SectionSeparator, SectionTitle } from 'sections/futures/mobile';
-import { selectMarketAsset, selectPosition } from 'state/futures/selectors';
+import { selectPosition } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { resetButtonCSS } from 'styles/common';
 
@@ -12,7 +12,6 @@ import ShareModal from '../ShareModal';
 
 const PositionDetails = () => {
 	const position = useAppSelector(selectPosition);
-	const marketAsset = useAppSelector(selectMarketAsset);
 
 	const [showShareModal, setShowShareModal] = useState(false);
 
@@ -31,13 +30,7 @@ const PositionDetails = () => {
 				</SectionHeader>
 				<PositionCard />
 			</PositionDetailsContainer>
-			{showShareModal && (
-				<ShareModal
-					position={position}
-					marketAsset={marketAsset}
-					setShowShareModal={setShowShareModal}
-				/>
-			)}
+			{showShareModal && <ShareModal position={position} setShowShareModal={setShowShareModal} />}
 		</>
 	) : (
 		<SectionSeparator />
