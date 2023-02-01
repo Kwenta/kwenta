@@ -287,7 +287,7 @@ const EscrowStats = styled.div`
 
 	.stat-title {
 		font-size: 10px;
-		color: ${(props) => props.theme.colors.selectedTheme.text.title};
+		color: ${(props) => props.theme.colors.selectedTheme.text.label};
 	}
 
 	.stat-value {

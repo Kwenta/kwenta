@@ -443,7 +443,7 @@ const InfoRow = styled.div`
 
 const Subtitle = styled(Body)`
 	font-size: 13px;
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
+	color: ${(props) => props.theme.colors.selectedTheme.text.label};
 	text-transform: capitalize;
 `;
 
