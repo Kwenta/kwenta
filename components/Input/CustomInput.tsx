@@ -35,7 +35,9 @@ const CustomInput: FC<CustomInputProps> = memo(
 	}) => {
 		const handleChange = useCallback(
 			(e: React.ChangeEvent<HTMLInputElement>) => {
-				onChange(e, e.target.value.replace(/,/g, '.').replace(/[e+-]/gi, ''));
+				const standardizedNum = e.target.value.replace(/,/g, '.').replace(/[e+-]/gi, '');
+				if (isNaN(Number(standardizedNum))) return;
+				onChange(e, standardizedNum);
 			},
 			[onChange]
 		);

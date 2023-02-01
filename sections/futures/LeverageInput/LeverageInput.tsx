@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import CustomNumericInput from 'components/Input/CustomNumericInput';
+import InputTitle from 'components/Input/InputTitle';
 import { FlexDivCol, FlexDivRow } from 'components/layout/flex';
 import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import { editIsolatedMarginSize } from 'state/futures/actions';
@@ -135,14 +136,8 @@ const LeverageRow = styled(FlexDivRow)`
 	margin-bottom: 8px;
 `;
 
-const LeverageTitle = styled.div`
-	font-size: 13px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+const LeverageTitle = styled(InputTitle)`
 	text-transform: capitalize;
-
-	span {
-		color: ${(props) => props.theme.colors.selectedTheme.gray};
-	}
 `;
 
 const SliderRow = styled(FlexDivRow)`

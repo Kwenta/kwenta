@@ -117,6 +117,8 @@ import {
 	CancelDelayedOrderInputs,
 	CrossMarginBalanceInfo,
 	CrossMarginSettings,
+	DelayedOrderWithDetails,
+	ExecuteDelayedOrderInputs,
 	FuturesTransactionType,
 	ModifyIsolatedPositionInputs,
 } from './types';
@@ -350,7 +352,7 @@ export const fetchSharedFuturesData = createAsyncThunk<void, void, ThunkConfig>(
 );
 
 export const fetchIsolatedOpenOrders = createAsyncThunk<
-	{ orders: DelayedOrder<string>[]; wallet: string; network: NetworkId } | undefined,
+	{ orders: DelayedOrderWithDetails<string>[]; wallet: string; network: NetworkId } | undefined,
 	void,
 	ThunkConfig
 >('futures/fetchIsolatedOpenOrders', async (_, { getState, extra: { sdk } }) => {
@@ -365,13 +367,15 @@ export const fetchIsolatedOpenOrders = createAsyncThunk<
 	const orders: DelayedOrder[] = await sdk.futures.getDelayedOrders(wallet, marketAddresses);
 	const nonzeroOrders = orders
 		.filter((o) => o.size.abs().gt(0))
-		.map((o) => {
+		.reduce((acc, o) => {
 			const market = markets.find((m) => m.market === o.marketAddress);
-			return {
+			if (!market) return acc;
+
+			acc.push({
 				...o,
-				marketKey: market?.marketKey,
-				marketAsset: market?.asset,
-				market: getMarketName(market?.asset ?? null),
+				marketKey: market.marketKey,
+				asset: market.asset,
+				market: getMarketName(market.asset),
 				executableAtTimestamp:
 					market && o.isOffchain // Manual fix for an incorrect
 						? o.submittedAtTimestamp +
@@ -379,9 +383,9 @@ export const fetchIsolatedOpenOrders = createAsyncThunk<
 								? market.settings.offchainDelayedOrderMinAge * 1000
 								: market.settings.minDelayTimeDelta * 1000)
 						: o.executableAtTimestamp,
-			};
-		});
-
+			});
+			return acc;
+		}, [] as DelayedOrderWithDetails[]);
 	return {
 		network,
 		orders: serializeDelayedOrders(nonzeroOrders),
@@ -1044,9 +1048,9 @@ export const cancelDelayedOrder = createAsyncThunk<void, CancelDelayedOrderInput
 	}
 );
 
-export const executeDelayedOrder = createAsyncThunk<void, string, ThunkConfig>(
+export const executeDelayedOrder = createAsyncThunk<void, ExecuteDelayedOrderInputs, ThunkConfig>(
 	'futures/executeDelayedOrder',
-	async (marketAddress, { getState, dispatch, extra: { sdk } }) => {
+	async ({ marketKey, marketAddress, isOffchain }, { getState, dispatch, extra: { sdk } }) => {
 		const account = selectFuturesAccount(getState());
 		if (!account) throw new Error('No wallet connected');
 		try {
@@ -1057,7 +1061,10 @@ export const executeDelayedOrder = createAsyncThunk<void, string, ThunkConfig>(
 					hash: null,
 				})
 			);
-			const tx = await sdk.futures.executeDelayedOrder(marketAddress, account);
+			const tx = isOffchain
+				? await sdk.futures.executeDelayedOffchainOrder(marketKey, marketAddress, account)
+				: await sdk.futures.executeDelayedOrder(marketAddress, account);
+			dispatch(updateTransactionHash(tx.hash));
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(fetchIsolatedOpenOrders());
 		} catch (err) {

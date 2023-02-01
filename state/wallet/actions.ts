@@ -1,4 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import * as Sentry from '@sentry/browser';
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
 
@@ -45,6 +46,7 @@ export const setSigner = createAsyncThunk<void, ethers.Signer | null | undefined
 	async (signer, { dispatch, extra: { sdk } }) => {
 		if (!!signer) {
 			const [address] = await Promise.all([signer?.getAddress(), sdk.setSigner(signer)]);
+			Sentry.setUser({ id: address });
 			dispatch(resetWalletAddress(address));
 		} else {
 			dispatch(resetWalletAddress(undefined));
