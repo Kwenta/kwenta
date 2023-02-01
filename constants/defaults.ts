@@ -41,7 +41,7 @@ export const DEFAULT_LEADERBOARD_ROWS = 20;
 
 // for perps v2
 export const DEFAULT_PRICE_IMPACT_DELTA = weiFromEth(0.5).toString();
-export const DEFAULT_DELAYED_EXECUTION_BUFFER = 0;
+export const DEFAULT_DELAYED_EXECUTION_BUFFER = 30;
 
 export const CROSS_MARGIN_ENABLED = false;
 

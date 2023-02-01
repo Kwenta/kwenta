@@ -42,6 +42,7 @@ import {
 	VKwentaRedeemer__factory,
 	StakingRewards__factory,
 	VeKwentaRedeemer__factory,
+	Pyth__factory,
 } from './types';
 
 type ContractFactory = {
@@ -87,6 +88,9 @@ export const getContractsByNetwork = (
 			: undefined,
 		PerpsV2MarketSettings: ADDRESSES.PerpsV2MarketSettings[networkId]
 			? PerpsV2MarketSettings__factory.connect(ADDRESSES.PerpsV2MarketSettings[networkId], provider)
+			: undefined,
+		Pyth: ADDRESSES.Pyth[networkId]
+			? Pyth__factory.connect(ADDRESSES.Pyth[networkId], provider)
 			: undefined,
 		FuturesMarketSettings: ADDRESSES.FuturesMarketSettings[networkId]
 			? FuturesMarketSettings__factory.connect(ADDRESSES.FuturesMarketSettings[networkId], provider)
