@@ -12,7 +12,6 @@ import Connector from 'containers/Connector';
 import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { Rates } from 'queries/rates/types';
-import { SynthRate } from 'sdk/types/prices';
 import {
 	selectMarketAsset,
 	selectMarkets,

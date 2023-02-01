@@ -25,6 +25,7 @@ import { useAppSelector, usePollAction } from 'state/hooks';
 import { selectPreviousDayRates, selectPrices } from 'state/prices/selectors';
 import { SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media, { Media } from 'styles/media';
+import { zeroBN } from 'utils/formatters/number';
 import { getSynthDescription } from 'utils/futures';
 
 enum MarketsTab {
@@ -236,7 +237,7 @@ const Assets = () => {
 				description: description.slice(10),
 				price,
 				change: !!rate && !rate.eq(0) && !!pastPrice?.rate ? rate.sub(pastPrice.rate).div(rate) : 0,
-				volume: synthVolumes[synth.name]?.toNumber() ?? 0,
+				volume: synthVolumes[synth.name].toNumber() ?? zeroBN,
 				image: <PriceChart asset={synth.asset} />,
 				icon: (
 					<StyledCurrencyIcon currencyKey={(synth.asset[0] !== 's' ? 's' : '') + synth.asset} />

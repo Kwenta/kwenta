@@ -85,16 +85,17 @@ export const mapOpenInterest = async (
 };
 
 export const calculateTradeVolumeForAllSynths = (SynthTrades: SynthsTrades): SynthsVolumes => {
+	const synthVolumes: SynthsVolumes = {};
 	const result = SynthTrades.synthExchanges
 		.filter((i) => i.fromSynth !== null)
-		.reduce((acc: any, curr: any) => {
-			if (curr.fromSynth.symbol) {
+		.reduce((acc, curr) => {
+			if (curr.fromSynth?.symbol) {
 				acc[curr.fromSynth.symbol] = acc[curr.fromSynth.symbol]
-					? acc[curr.fromSynth.symbol] + Number(curr.fromAmountInUSD)
-					: Number(curr.fromAmountInUSD);
+					? acc[curr.fromSynth.symbol].add(curr.fromAmountInUSD)
+					: curr.fromAmountInUSD;
 			}
 			return acc;
-		}, {});
+		}, synthVolumes);
 	return result;
 };
 
