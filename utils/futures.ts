@@ -4,7 +4,6 @@ import { TFunction } from 'i18next';
 import { Dictionary } from 'lodash';
 
 import {
-	DelayedOrder,
 	FuturesMarket,
 	FuturesOrder,
 	FuturesOrderType,
@@ -20,6 +19,7 @@ import {
 	CrossMarginSettings,
 	CrossMarginTradeFees,
 	CrossMarginTradeInputs,
+	DelayedOrderWithDetails,
 	IsolatedMarginTradeInputs,
 	TransactionEstimation,
 	futuresPositionKeys,
@@ -441,7 +441,9 @@ export const serializeFuturesOrders = (orders: FuturesOrder[]): FuturesOrder<str
 	}));
 };
 
-export const serializeDelayedOrder = (order: DelayedOrder): DelayedOrder<string> => ({
+export const serializeDelayedOrder = (
+	order: DelayedOrderWithDetails
+): DelayedOrderWithDetails<string> => ({
 	...order,
 	size: order.size.toString(),
 	commitDeposit: order.commitDeposit.toString(),
@@ -450,10 +452,13 @@ export const serializeDelayedOrder = (order: DelayedOrder): DelayedOrder<string>
 	targetRoundId: order.targetRoundId?.toString() ?? '',
 });
 
-export const serializeDelayedOrders = (orders: DelayedOrder[]): DelayedOrder<string>[] =>
-	orders.map((o) => serializeDelayedOrder(o));
+export const serializeDelayedOrders = (
+	orders: DelayedOrderWithDetails[]
+): DelayedOrderWithDetails<string>[] => orders.map((o) => serializeDelayedOrder(o));
 
-export const unserializeDelayedOrder = (order: DelayedOrder<string>): DelayedOrder => ({
+export const unserializeDelayedOrder = (
+	order: DelayedOrderWithDetails<string>
+): DelayedOrderWithDetails => ({
 	...order,
 	size: wei(order.size),
 	commitDeposit: wei(order.commitDeposit),
@@ -462,8 +467,9 @@ export const unserializeDelayedOrder = (order: DelayedOrder<string>): DelayedOrd
 	targetRoundId: wei(order.targetRoundId),
 });
 
-export const unserializeDelayedOrders = (orders: DelayedOrder<string>[]): DelayedOrder[] =>
-	orders.map((o) => unserializeDelayedOrder(o));
+export const unserializeDelayedOrders = (
+	orders: DelayedOrderWithDetails<string>[]
+): DelayedOrderWithDetails[] => orders.map((o) => unserializeDelayedOrder(o));
 
 export const unserializeFuturesOrders = (orders: FuturesOrder<string>[]): FuturesOrder[] => {
 	return orders.map((o) => ({

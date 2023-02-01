@@ -16,6 +16,7 @@ export type { MultipleMerkleDistributor } from "./MultipleMerkleDistributor";
 export type { PerpsV2Market } from "./PerpsV2Market";
 export type { PerpsV2MarketData } from "./PerpsV2MarketData";
 export type { PerpsV2MarketSettings } from "./PerpsV2MarketSettings";
+export type { Pyth } from "./Pyth";
 export type { ReverseRecords } from "./ReverseRecords";
 export type { RewardEscrow } from "./RewardEscrow";
 export type { StakingRewards } from "./StakingRewards";
@@ -45,6 +46,7 @@ export { MultipleMerkleDistributor__factory } from "./factories/MultipleMerkleDi
 export { PerpsV2Market__factory } from "./factories/PerpsV2Market__factory";
 export { PerpsV2MarketData__factory } from "./factories/PerpsV2MarketData__factory";
 export { PerpsV2MarketSettings__factory } from "./factories/PerpsV2MarketSettings__factory";
+export { Pyth__factory } from "./factories/Pyth__factory";
 export { ReverseRecords__factory } from "./factories/ReverseRecords__factory";
 export { RewardEscrow__factory } from "./factories/RewardEscrow__factory";
 export { StakingRewards__factory } from "./factories/StakingRewards__factory";

@@ -2130,7 +2130,7 @@ const _abi = [
     stateMutability: "view",
     type: "function",
   },
-];
+] as const;
 
 export class SystemSettings__factory {
   static readonly abi = _abi;
