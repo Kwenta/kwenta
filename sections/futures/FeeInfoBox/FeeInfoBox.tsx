@@ -213,7 +213,7 @@ const StyledLinkArrowIcon = styled(LinkArrowIcon)`
 `;
 
 const RewardCopy = styled(Body)`
-	color: ${(props) => props.theme.colors.selectedTheme.text.title};
+	color: ${(props) => props.theme.colors.selectedTheme.text.label};
 `;
 
 const CompactBox = styled.div<{ $isEligible: boolean }>`
