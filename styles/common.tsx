@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 
 import { border } from 'components/Button';
 import { FlexDiv, FlexDivRowCentered } from 'components/layout/flex';
-import * as Text from 'components/Text';
+import { Body } from 'components/Text';
 import { zIndex } from 'constants/ui';
 import media from 'styles/media';
 
@@ -185,7 +185,7 @@ export const SwapCurrenciesButton = styled.button`
 	}
 `;
 
-export const SmallGoldenHeader = styled(Text.Body).attrs({ variant: 'bold' })`
+export const SmallGoldenHeader = styled(Body).attrs({ weight: 'bold' })`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 14px;
 	line-height: 100%;

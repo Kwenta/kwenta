@@ -4,6 +4,7 @@ import { CellProps } from 'react-table';
 import styled, { css } from 'styled-components';
 
 import Table, { TableHeader } from 'components/Table';
+import { Body } from 'components/Text';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import { blockExplorer } from 'containers/Connector/Connector';
@@ -248,9 +249,7 @@ const PriceValue = styled(NumericValue)`
 	padding-left: 5px;
 `;
 
-const TimeValue = styled.p`
-	font-size: 13px;
-	font-family: ${(props) => props.theme.fonts.regular};
+const TimeValue = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	text-decoration: underline;
 `;

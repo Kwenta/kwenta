@@ -2,64 +2,77 @@ import { memo } from 'react';
 import styled, { css } from 'styled-components';
 
 type BodyProps = {
-	size?: 'small' | 'medium' | 'large';
-	variant?: 'regular' | 'bold';
+	size?: 'xsmall' | 'small' | 'medium' | 'large';
+	weight?: 'regular' | 'bold' | 'black';
 	className?: string;
 	fontSize?: number;
 	mono?: boolean;
 	color?: 'title' | 'value' | 'body';
+	capitalized?: boolean;
 };
 
 const Body: React.FC<BodyProps> = memo(
-	({ size = 'small', variant = 'regular', fontSize, mono, ...props }) => {
+	({ size = 'medium', weight = 'regular', fontSize, mono, capitalized, ...props }) => {
 		return (
-			<StyledBody $size={size} $variant={variant} $fontSize={fontSize} $mono={mono} {...props} />
+			<StyledBody
+				$size={size}
+				$weight={weight}
+				$fontSize={fontSize}
+				$mono={mono}
+				$capitalized={capitalized}
+				{...props}
+			/>
 		);
 	}
 );
 
 const StyledBody = styled.p<{
 	$size?: BodyProps['size'];
-	$variant?: BodyProps['variant'];
+	$weight?: BodyProps['weight'];
 	$fontSize?: number;
 	$mono?: boolean;
+	$capitalized?: boolean;
 }>`
-	line-height: 1.4;
+	line-height: 1.2;
 	margin: 0;
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
-
+	${(props) =>
+		props.$size === 'xsmall' &&
+		css`
+			font-size: 10px;
+		`};
 	${(props) =>
 		props.$size === 'small' &&
 		css`
-			font-size: 13px;
+			font-size: 12px;
 		`};
-
 	${(props) =>
 		props.$size === 'medium' &&
 		css`
-			font-size: 15px;
+			font-size: 13px;
 		`};
-
 	${(props) =>
 		props.$size === 'large' &&
 		css`
-			font-size: 18px;
+			font-size: 15px;
 		`};
-
 	${(props) =>
-		props.$variant === 'bold' &&
+		props.$weight === 'bold' &&
 		css`
 			font-family: ${props.theme.fonts.bold};
 		`}
-
 		${(props) =>
 			props.$mono &&
 			css`
-				font-family: ${props.$variant === 'bold'
+				font-family: ${props.$weight !== 'regular'
 					? props.theme.fonts.monoBold
 					: props.theme.fonts.mono};
 			`}
-
+			${(props) =>
+				props.$capitalized &&
+				css`
+					font-variant: all-small-caps;
+				`}
 	${(props) =>
 		props.$fontSize &&
 		css`

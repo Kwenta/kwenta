@@ -442,7 +442,6 @@ const InfoRow = styled.div`
 `;
 
 const Subtitle = styled(Body)`
-	font-size: 13px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	text-transform: capitalize;
 `;
@@ -457,7 +456,6 @@ const PositionCardTooltip = styled(Tooltip).attrs({ preset: 'fixed', height: 'au
 `;
 
 const StyledValue = styled(Body).attrs({ mono: true })`
-	font-size: 13px;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	text-align: end;
 	${Container}#closed & {

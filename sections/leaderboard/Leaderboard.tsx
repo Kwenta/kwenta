@@ -89,7 +89,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 	}, [compRound, trader, urlPath, dispatch]);
 
 	const onChangeSearch = (text: string) => {
-		setSearchInput(text?.toLowerCase());
+		setSearchInput(text.toLowerCase());
 
 		if (isAddress(text)) {
 			setSearchTerm(getAddress(text));

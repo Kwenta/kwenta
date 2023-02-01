@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { Body } from 'components/Text';
 
-export const Title = styled(Body).attrs({ variant: 'bold' })`
+export const Title = styled(Body).attrs({ weight: 'bold' })`
 	font-size: 16px;
 	text-align: left;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};

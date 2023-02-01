@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 
+import { Body } from 'components/Text';
+
 type StatWithContainerProps = {
 	label: string;
 	stat: any;
@@ -32,9 +34,7 @@ const Stat = styled.div<{ colorNum: any }>`
 	color: ${(props) => textColor(props)};
 `;
 
-const StatLabel = styled.p`
-	font-size: 13px;
-	line-height: 12px;
+const StatLabel = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	margin-left: 12px;
 `;

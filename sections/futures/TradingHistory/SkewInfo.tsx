@@ -49,34 +49,17 @@ const SkewInfo: React.FC = () => {
 	return (
 		<SkewContainer>
 			<SkewHeader>
-				<SkewTooltip
-					isNumber
-					preset="bottom-right"
-					width={'310px'}
-					height="auto"
-					content={data.shortText ?? 0}
-				>
+				<SkewTooltip isNumber preset="bottom-right" content={data.shortText ?? 0}>
 					<WithCursor cursor="help">
 						<SkewValue>{formatPercent(data.short, { minDecimals: 0 })}</SkewValue>
 					</WithCursor>
 				</SkewTooltip>
-				<SkewTooltip
-					preset="bottom"
-					width={'310px'}
-					height={'auto'}
-					content={t('futures.market.history.skew-tooltip')}
-				>
+				<SkewTooltip preset="bottom" content={t('futures.market.history.skew-tooltip')}>
 					<WithCursor cursor="help">
 						<SkewLabel>{t('futures.market.history.skew-label')}</SkewLabel>
 					</WithCursor>
 				</SkewTooltip>
-				<SkewTooltip
-					isNumber
-					preset="bottom-rigth"
-					width="310px"
-					height="auto"
-					content={data.longText ?? 0}
-				>
+				<SkewTooltip isNumber preset="bottom-rigth" content={data.longText ?? 0}>
 					<WithCursor cursor="help">
 						<SkewValue>{formatPercent(data.long, { minDecimals: 0 })}</SkewValue>
 					</WithCursor>
@@ -93,7 +76,9 @@ const WithCursor = styled.div<{ cursor: 'help' }>`
 	cursor: ${(props) => props.cursor};
 `;
 
-const SkewTooltip = styled(Tooltip)<{ isNumber?: boolean }>`
+const SkewTooltip = styled(Tooltip).attrs({ width: '310px', height: 'auto' })<{
+	isNumber?: boolean;
+}>`
 	left: -30px;
 	z-index: 2;
 	padding: 10px;

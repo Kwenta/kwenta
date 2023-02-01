@@ -54,7 +54,7 @@ const Emphasis = styled.b`
 	color: ${(props) => props.theme.colors.common.primaryWhite};
 `;
 
-const Header = styled(Text.Body).attrs({ variant: 'bold', mono: true })`
+const Header = styled(Text.Body).attrs({ weight: 'bold', mono: true })`
 	max-width: 636px;
 	font-size: 80px;
 	line-height: 85%;

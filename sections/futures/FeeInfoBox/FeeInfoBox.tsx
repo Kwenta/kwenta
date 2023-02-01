@@ -64,8 +64,8 @@ const FeeInfoBox: React.FC = () => {
 		() => (
 			<>
 				{nativeSizeDelta.abs().gt(0)
-					? formatPercent(orderFee ?? zeroBN)
-					: `${formatPercent(makerFee ?? zeroBN)} / ${formatPercent(takerFee ?? zeroBN)}`}
+					? formatPercent(orderFee)
+					: `${formatPercent(makerFee)} / ${formatPercent(takerFee)}`}
 			</>
 		),
 		[orderFee, makerFee, takerFee, nativeSizeDelta]
@@ -130,7 +130,7 @@ const FeeInfoBox: React.FC = () => {
 									i18nKey={`dashboard.stake.tabs.trading-rewards.stake-to-${
 										isRewardEligible ? 'earn' : 'start'
 									}`}
-									components={[<Body variant="bold" />]}
+									components={[<Body weight="bold" />]}
 								/>
 							</RewardCopy>
 							<StyledLinkArrowIcon />
