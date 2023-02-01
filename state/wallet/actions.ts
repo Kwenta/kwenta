@@ -9,7 +9,7 @@ import { setWalletAddress } from './reducer';
 
 export const resetNetwork = createAsyncThunk<any, NetworkId, ThunkConfig>(
 	'wallet/resetNetwork',
-	async (networkId, { getState, dispatch }) => {
+	async (networkId, { dispatch }) => {
 		dispatch(fetchBalances());
 		return networkId;
 	}
