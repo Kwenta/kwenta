@@ -19,7 +19,7 @@ import {
 	selectFuturesType,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { selectPreviousDayRates, selectPrices } from 'state/prices/selectors';
+import { selectPreviousDayPrices, selectPrices } from 'state/prices/selectors';
 import { FetchStatus } from 'state/types';
 import { assetToSynth, iStandardSynth } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
@@ -67,7 +67,7 @@ type MarketsDropdownProps = {
 };
 
 const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
-	const pastRates = useAppSelector(selectPreviousDayRates);
+	const pastRates = useAppSelector(selectPreviousDayPrices);
 	const accountType = useAppSelector(selectFuturesType);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const futuresMarkets = useAppSelector(selectMarkets);

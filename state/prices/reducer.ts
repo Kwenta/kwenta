@@ -4,16 +4,16 @@ import { PricesMap } from 'sdk/types/prices';
 import { DEFAULT_QUERY_STATUS, LOADING_STATUS, SUCCESS_STATUS } from 'state/constants';
 import { FetchStatus } from 'state/types';
 
-import { fetchPreviousDayRates } from './actions';
+import { fetchPreviousDayPrices } from './actions';
 import { PricesState } from './types';
 
 export const PRICES_INITIAL_STATE: PricesState = {
 	onChainPrices: {},
 	offChainPrices: {},
 	connectionError: null,
-	previousDayRates: [],
+	previousDayPrices: [],
 	queryStatuses: {
-		previousDayRates: DEFAULT_QUERY_STATUS,
+		previousDayPrices: DEFAULT_QUERY_STATUS,
 	},
 };
 
@@ -33,16 +33,16 @@ const pricesSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		// Fetch past daily prices
-		builder.addCase(fetchPreviousDayRates.pending, (pricesState) => {
-			pricesState.queryStatuses.previousDayRates = LOADING_STATUS;
+		builder.addCase(fetchPreviousDayPrices.pending, (pricesState) => {
+			pricesState.queryStatuses.previousDayPrices = LOADING_STATUS;
 		});
-		builder.addCase(fetchPreviousDayRates.fulfilled, (pricesState, action) => {
-			pricesState.previousDayRates = action.payload;
-			pricesState.queryStatuses.previousDayRates = SUCCESS_STATUS;
+		builder.addCase(fetchPreviousDayPrices.fulfilled, (pricesState, action) => {
+			pricesState.previousDayPrices = action.payload;
+			pricesState.queryStatuses.previousDayPrices = SUCCESS_STATUS;
 		});
-		builder.addCase(fetchPreviousDayRates.rejected, (pricesState) => {
-			pricesState.queryStatuses.previousDayRates = {
-				error: 'Failed to fetch past rates',
+		builder.addCase(fetchPreviousDayPrices.rejected, (pricesState) => {
+			pricesState.queryStatuses.previousDayPrices = {
+				error: 'Failed to fetch past prices',
 				status: FetchStatus.Error,
 			};
 		});

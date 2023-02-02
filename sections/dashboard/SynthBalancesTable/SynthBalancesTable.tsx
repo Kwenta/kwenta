@@ -14,7 +14,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import { selectBalances } from 'state/balances/selectors';
 import { useAppSelector } from 'state/hooks';
-import { selectPreviousDayRates, selectPrices } from 'state/prices/selectors';
+import { selectPreviousDayPrices, selectPrices } from 'state/prices/selectors';
 import { sortWei } from 'utils/balances';
 import { formatNumber, zeroBN } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
@@ -46,7 +46,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
 	const prices = useAppSelector(selectPrices);
-	const pastRates = useAppSelector(selectPreviousDayRates);
+	const pastRates = useAppSelector(selectPreviousDayPrices);
 	const { synthBalances } = useAppSelector(selectBalances);
 
 	const synthTokens = useMemo(() => {

@@ -15,7 +15,7 @@ import {
 	selectSkewAdjustedPrice,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { selectPreviousDayRates } from 'state/prices/selectors';
+import { selectPreviousDayPrices } from 'state/prices/selectors';
 import { isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
@@ -31,7 +31,7 @@ const useGetMarketData = (mobile?: boolean) => {
 	const marketKey = useAppSelector(selectMarketKey);
 	const marketInfo = useAppSelector(selectMarketInfo);
 
-	const pastRates = useAppSelector(selectPreviousDayRates);
+	const pastRates = useAppSelector(selectPreviousDayPrices);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
 	const marketPrices = useAppSelector(selectMarketPrices);
 	const marketPrice = useAppSelector(selectSkewAdjustedPrice);

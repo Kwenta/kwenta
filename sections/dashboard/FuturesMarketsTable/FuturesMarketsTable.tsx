@@ -21,7 +21,7 @@ import {
 	selectMarkPrices,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { selectPreviousDayRates } from 'state/prices/selectors';
+import { selectPreviousDayPrices } from 'state/prices/selectors';
 import { getSynthDescription, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
 const FuturesMarketsTable: FC = () => {
@@ -30,7 +30,7 @@ const FuturesMarketsTable: FC = () => {
 	const { synthsMap } = Connector.useContainer();
 
 	const futuresMarkets = useAppSelector(selectMarkets);
-	const pastRates = useAppSelector(selectPreviousDayRates);
+	const pastRates = useAppSelector(selectPreviousDayPrices);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
 	const accountType = useAppSelector(selectFuturesType);
 	const markPrices = useAppSelector(selectMarkPrices);

@@ -91,8 +91,8 @@ export const calculateTradeVolumeForAllSynths = (SynthTrades: SynthsTrades): Syn
 		.reduce((acc, curr) => {
 			if (curr.fromSynth?.symbol) {
 				acc[curr.fromSynth.symbol] = acc[curr.fromSynth.symbol]
-					? acc[curr.fromSynth.symbol].add(curr.fromAmountInUSD)
-					: curr.fromAmountInUSD;
+					? wei(acc[curr.fromSynth.symbol]).add(curr.fromAmountInUSD)
+					: wei(curr.fromAmountInUSD);
 			}
 			return acc;
 		}, synthVolumes);

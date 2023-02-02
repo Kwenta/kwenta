@@ -15,14 +15,14 @@ import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
 import { useAppSelector } from 'state/hooks';
-import { selectPreviousDayRates, selectPrices } from 'state/prices/selectors';
+import { selectPreviousDayPrices, selectPrices } from 'state/prices/selectors';
 import { isDecimalFour, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
 const SpotMarketsTable: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const prices = useAppSelector(selectPrices);
-	const pastRates = useAppSelector(selectPreviousDayRates);
+	const pastRates = useAppSelector(selectPreviousDayPrices);
 
 	const { synthsMap } = Connector.useContainer();
 	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);

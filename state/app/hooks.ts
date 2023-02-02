@@ -4,7 +4,7 @@ import { fetchBalances } from 'state/balances/actions';
 import { sdk } from 'state/config';
 import { selectMarkets } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks';
-import { fetchPreviousDayRates, updatePrices } from 'state/prices/actions';
+import { fetchPreviousDayPrices, updatePrices } from 'state/prices/actions';
 import { setConnectionError } from 'state/prices/reducer';
 import { selectWallet } from 'state/wallet/selectors';
 import { serializePrices } from 'utils/futures';
@@ -16,7 +16,7 @@ export function useAppData(ready: boolean) {
 
 	usePollAction('fetchBalances', fetchBalances, { dependencies: [wallet] });
 
-	usePollAction('fetchPreviousDayRates', fetchPreviousDayRates, {
+	usePollAction('fetchPreviousDayPrices', fetchPreviousDayPrices, {
 		intervalTime: 60000 * 15,
 		dependencies: [markets.length],
 		disabled: !markets.length,

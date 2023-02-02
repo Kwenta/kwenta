@@ -11,11 +11,11 @@ import { PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { ADDITIONAL_SYNTHS, PRICE_UPDATE_THROTTLE, PYTH_IDS } from 'sdk/constants/prices';
 import { FuturesMarketKey } from 'sdk/types/futures';
 import {
-	CurrencyRate,
-	SynthRate,
+	CurrencyPrice,
+	SynthPrice,
 	PricesListener,
 	PricesMap,
-	SynthRatesTuple,
+	SynthPricesTuple,
 } from 'sdk/types/prices';
 import { getDisplayAsset, getPythNetworkUrl, normalizePythId } from 'sdk/utils/futures';
 import { startInterval } from 'sdk/utils/interval';
@@ -124,10 +124,10 @@ export default class PricesService {
 		const [synthsRates, ratesForCurrencies] = (await Promise.all([
 			this.sdk.context.contracts.SynthUtil.synthsRates(),
 			this.sdk.context.contracts.ExchangeRates.ratesForCurrencies(ADDITIONAL_SYNTHS),
-		])) as [SynthRatesTuple, CurrencyRate[]];
+		])) as [SynthPricesTuple, CurrencyPrice[]];
 
 		const synths = [...synthsRates[0], ...ADDITIONAL_SYNTHS] as CurrencyKey[];
-		const rates = [...synthsRates[1], ...ratesForCurrencies] as CurrencyRate[];
+		const rates = [...synthsRates[1], ...ratesForCurrencies] as CurrencyPrice[];
 
 		synths.forEach((currencyKeyBytes32: CurrencyKey, idx: number) => {
 			const currencyKey = parseBytes32String(currencyKeyBytes32) as CurrencyKey;
@@ -148,7 +148,7 @@ export default class PricesService {
 		return this.formatOffChainPrices(pythPrices ?? []);
 	}
 
-	public async getPreviousDayRates(marketAssets: string[], networkId?: NetworkId) {
+	public async getPreviousDayPrices(marketAssets: string[], networkId?: NetworkId) {
 		const ratesEndpoint = getRatesEndpoint(networkId || this.sdk.context.networkId);
 		const minTimestamp = Math.floor((Date.now() - PERIOD_IN_SECONDS.ONE_DAY * 1000) / 1000);
 
@@ -179,8 +179,8 @@ export default class PricesService {
 				minTimestamp: minTimestamp,
 			}
 		);
-		const latestRates = (response ? Object.values(response).flat() : []) as SynthRate[];
-		return latestRates;
+		const prices = (response ? Object.values(response).flat() : []) as SynthPrice[];
+		return prices;
 	}
 
 	public async getPythPriceUpdateData(marketKey: FuturesMarketKey) {
