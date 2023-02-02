@@ -35,6 +35,7 @@ import '@reach/dialog/styles.css';
 import '@rainbow-me/rainbowkit/styles.css';
 import '../i18n';
 import { getDesignTokens } from 'utils/theme';
+import { IGNORE_ERRORS } from 'utils/logError';
 
 type NextPageWithLayout = NextPage & {
 	getLayout?: (page: ReactElement) => ReactNode;
@@ -54,6 +55,7 @@ Sentry.init({
 	autoSessionTracking: true,
 	integrations: [new BrowserTracing()],
 	tracesSampleRate: 0.3,
+	ignoreErrors: IGNORE_ERRORS,
 });
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {
