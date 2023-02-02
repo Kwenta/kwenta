@@ -13,25 +13,6 @@ import { toWei, truncateNumbers } from 'utils/formatters/number';
 import { selectBaseBalanceWei, selectQuoteBalanceWei } from './selectors';
 import { SwapRatio } from './types';
 
-export const fetchRedeemableBalances = createAsyncThunk<any, void, ThunkConfig>(
-	'exchange/fetchRedeemableBalances',
-	async (_, { extra: { sdk } }) => {
-		const {
-			balances: redeemableBalances,
-			totalUSDBalance: totalRedeemableBalance,
-		} = await sdk.exchange.getRedeemableDeprecatedSynths();
-
-		return {
-			redeemableSynthBalances: redeemableBalances.map((r) => ({
-				...r,
-				balance: '0',
-				usdBalance: r.usdBalance.toString(),
-			})),
-			totalRedeemableBalance: totalRedeemableBalance.toString(),
-		};
-	}
-);
-
 export const fetchTransactionFee = createAsyncThunk<
 	{
 		transactionFee?: string;
@@ -85,23 +66,6 @@ export const submitExchange = createAsyncThunk<void, void, ThunkConfig>(
 					},
 				});
 			}
-		}
-	}
-);
-
-export const submitRedeem = createAsyncThunk<void, void, ThunkConfig>(
-	'exchange/submitRedeem',
-	async (_, { dispatch, extra: { sdk } }) => {
-		const hash = await sdk.exchange.handleRedeem();
-
-		if (hash) {
-			monitorTransaction({
-				txHash: hash,
-				onTxConfirmed: () => {
-					dispatch(fetchBalances());
-					dispatch(fetchRedeemableBalances());
-				},
-			});
 		}
 	}
 );
