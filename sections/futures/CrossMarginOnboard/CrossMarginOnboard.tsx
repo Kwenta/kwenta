@@ -26,7 +26,7 @@ import {
 	selectCMBalance,
 	selectCMDepositApproved,
 	selectCrossMarginAccount,
-	selectCrossMarginSupportedNetwork,
+	selectFuturesSupportedNetwork,
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -48,7 +48,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 	const { provider } = Connector.useContainer();
 	const dispatch = useAppDispatch();
 	const balances = useAppSelector(selectBalances);
-	const crossMarginAvailable = useAppSelector(selectCrossMarginSupportedNetwork);
+	const crossMarginAvailable = useAppSelector(selectFuturesSupportedNetwork);
 	const crossMarginAccount = useAppSelector(selectCrossMarginAccount);
 	const queryStatus = useAppSelector(selectCMAccountQueryStatus);
 	const depositApproved = useAppSelector(selectCMDepositApproved);
