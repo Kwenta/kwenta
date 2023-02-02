@@ -22,6 +22,7 @@ import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { setOpenModal } from 'state/app/reducer';
 import { selectOpenModal } from 'state/app/selectors';
 import { clearTradeInputs, fetchCrossMarginAccount } from 'state/futures/actions';
+import { usePollMarketFuturesData } from 'state/futures/hooks';
 import { setMarketAsset, setShowCrossMarginOnboard } from 'state/futures/reducer';
 import {
 	selectCMAccountQueryStatus,
@@ -41,6 +42,7 @@ const Market: MarketComponent = () => {
 	const router = useRouter();
 	const { walletAddress } = Connector.useContainer();
 	const dispatch = useAppDispatch();
+	usePollMarketFuturesData();
 
 	const routerMarketAsset = router.query.asset as FuturesMarketAsset;
 
