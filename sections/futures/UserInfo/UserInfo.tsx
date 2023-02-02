@@ -104,8 +104,8 @@ const UserInfo: React.FC = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [position]);
 
-	const TABS = useMemo(
-		() => [
+	const TABS = useMemo(() => {
+		const tabs = [
 			{
 				name: FuturesTab.POSITION,
 				label: 'Position',
@@ -138,21 +138,22 @@ const UserInfo: React.FC = () => {
 						scroll: false,
 					}),
 			},
-			{
+		];
+		if (accountType === 'isolated_margin') {
+			tabs.push({
 				name: FuturesTab.TRANSFERS,
 				label: 'Transfers',
 				badge: undefined,
-				disabled: false, // leave this until we determine a disbaled state
 				active: activeTab === FuturesTab.TRANSFERS,
 				icon: <TransfersIcon width={11} height={11} />,
 				onClick: () =>
 					router.push(ROUTES.Markets.Transfers(marketAsset, accountType), undefined, {
 						scroll: false,
 					}),
-			},
-		],
-		[activeTab, router, marketAsset, openOrders?.length, accountType]
-	);
+			});
+		}
+		return tabs;
+	}, [activeTab, router, marketAsset, openOrders?.length, accountType]);
 
 	useEffect(() => {
 		setHasOpenPosition(!!position && !!position.position);
@@ -162,13 +163,12 @@ const UserInfo: React.FC = () => {
 		<>
 			<TabButtonsContainer>
 				<TabLeft>
-					{TABS.map(({ name, label, badge, active, disabled, onClick, icon }) => (
+					{TABS.map(({ name, label, badge, active, onClick, icon }) => (
 						<TabButton
 							key={name}
 							title={label}
 							badge={badge}
 							active={active}
-							disabled={disabled}
 							onClick={onClick}
 							icon={icon}
 						/>
@@ -214,7 +214,6 @@ const UserInfo: React.FC = () => {
 					isLoaded={marginTransfersQuery.isFetched}
 				/>
 			</TabPanel>
-
 			{openProfitCalcModal && (
 				<ProfitCalculator
 					marketAsset={marketAsset}

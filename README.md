@@ -51,6 +51,7 @@ Required:
 - `NEXT_PUBLIC_PORTIS_APP_ID` - Portis app id (get it from [portis.io](https://www.portis.io/))
 - `NEXT_PUBLIC_BN_ONBOARD_API_KEY` - Blocknative Onboard API key (get it from [blocknative.com](https://blocknative.com/))
 - `NEXT_PUBLIC_PROVIDER_ID` - Specifies the default provider, options are `INFURA` or `BLAST_API`
+- `NEXT_PUBLIC_SATSUMA_API_KEY` - API key for Satsuma subgraph queries
 
 Optional:
 
