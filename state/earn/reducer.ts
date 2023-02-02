@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import { FetchStatus } from 'state/types';
 
-import { stakeTokens, unstakeTokens } from './actions';
+import { fetchEarnTokenPrices, stakeTokens, unstakeTokens } from './actions';
 import { EarnState } from './types';
 
 const initialState: EarnState = {
@@ -16,6 +16,11 @@ const initialState: EarnState = {
 	stakeStatus: FetchStatus.Idle,
 	unstakeStatus: FetchStatus.Idle,
 	endDate: 0,
+	wethAmount: '0',
+	kwentaAmount: '0',
+	lpTotalSupply: '0',
+	wethPrice: '0',
+	kwentaPrice: '0',
 };
 
 const earnSlice = createSlice({
@@ -30,9 +35,16 @@ const earnSlice = createSlice({
 			state.totalSupply = action.payload.totalSupply;
 			state.lpTokenBalance = action.payload.lpTokenBalance;
 			state.allowance = action.payload.allowance;
+			state.wethAmount = action.payload.wethAmount;
+			state.kwentaAmount = action.payload.kwentaAmount;
+			state.lpTotalSupply = action.payload.lpTotalSupply;
 		},
 	},
 	extraReducers: (builder) => {
+		builder.addCase(fetchEarnTokenPrices.fulfilled, (state, action) => {
+			state.kwentaPrice = action.payload.kwentaPrice;
+			state.wethPrice = action.payload.wethPrice;
+		});
 		builder.addCase(stakeTokens.pending, (state) => {
 			state.stakeStatus = FetchStatus.Loading;
 		});
