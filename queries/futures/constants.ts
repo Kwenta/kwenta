@@ -2,7 +2,7 @@ import { utils as ethersUtils } from 'ethers';
 import { gql } from 'graphql-request';
 import { chain } from 'wagmi';
 
-export const FUTURES_ENDPOINT_OP_MAINNET = `https://subgraph.satsuma-prod.com/${process.env.NEXT_PUBLIC_INFURA_PROJECT_ID}/kwenta/optimism-futures/api`;
+export const FUTURES_ENDPOINT_OP_MAINNET = `https://subgraph.satsuma-prod.com/${process.env.SATSUMA_API_KEY}/kwenta/optimism-futures/api`;
 
 export const FUTURES_ENDPOINT_OP_GOERLI =
 	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-goerli-futures';
