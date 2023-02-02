@@ -2,9 +2,9 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { ContractsMap, NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { utils } from 'ethers';
-import { chain } from 'wagmi';
 
 import { ETH_UNIT } from 'constants/network';
+import { chain } from 'containers/Connector/config';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
 import { formatDollars } from 'utils/formatters/number';

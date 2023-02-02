@@ -401,20 +401,6 @@ export default class ExchangeService {
 		return undefined;
 	}
 
-	public async handleRedeem() {
-		const redeemableDeprecatedSynths = await this.getRedeemableDeprecatedSynths();
-
-		if (redeemableDeprecatedSynths.totalUSDBalance.gt(0)) {
-			const { hash } = await this.sdk.transactions.createSynthetixTxn(
-				'SynthRedeemer',
-				'redeemAll',
-				[redeemableDeprecatedSynths.balances.map((b) => b.proxyAddress)]
-			);
-
-			return hash;
-		}
-	}
-
 	public async handleSettle(baseCurrencyKey: string) {
 		if (!this.sdk.context.isL2) {
 			throw new Error(sdkErrors.REQUIRES_L2);

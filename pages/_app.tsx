@@ -13,11 +13,11 @@ import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
-import { chain, WagmiConfig } from 'wagmi';
+import { WagmiConfig } from 'wagmi';
 
 import ErrorNotifier from 'components/ErrorView/ErrorNotifier';
 import Connector from 'containers/Connector';
-import { chains, wagmiClient } from 'containers/Connector/config';
+import { chains, wagmiClient, chain } from 'containers/Connector/config';
 import useMonitorTransactions from 'hooks/useMonitorTransactions';
 import AcknowledgementModal from 'sections/app/AcknowledgementModal';
 import Layout from 'sections/shared/Layout';

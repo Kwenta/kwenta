@@ -4,14 +4,14 @@ import { ethers } from 'ethers';
 import { keyBy } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createContainer } from 'unstated-next';
-import { chain, useAccount, useNetwork, useSigner, useProvider } from 'wagmi';
+import { useAccount, useNetwork, useSigner, useProvider } from 'wagmi';
 
 import { sdk } from 'state/config';
 import { useAppDispatch } from 'state/hooks';
 import { resetNetwork, setSigner } from 'state/wallet/actions';
 
 import { generateExplorerFunctions, getBaseUrl } from './blockExplorer';
-import { activeChainIds, wagmiClient } from './config';
+import { activeChainIds, chain, wagmiClient } from './config';
 
 export let transactionNotifier = new BaseTN(wagmiClient.provider);
 export let blockExplorer = generateExplorerFunctions(getBaseUrl(10));
