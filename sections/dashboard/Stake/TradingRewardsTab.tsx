@@ -102,7 +102,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 						<Button
 							fullWidth
 							variant="flat"
-							size="sm"
+							size="small"
 							onClick={handleClaim}
 							disabled={claimDisabled}
 						>

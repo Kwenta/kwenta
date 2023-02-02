@@ -114,7 +114,7 @@ const StakeCard: FC<StakeCardProps> = memo(
 					</StakeInputHeader>
 					<NumericInput value={amount} onChange={handleChange} bold />
 				</StakeInputContainer>
-				<Button fullWidth variant="flat" size="sm" disabled={isDisabled} onClick={handleSubmit}>
+				<Button fullWidth variant="flat" size="small" disabled={isDisabled} onClick={handleSubmit}>
 					{!isApproved
 						? t('dashboard.stake.tabs.stake-table.approve')
 						: activeTab === 0

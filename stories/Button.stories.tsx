@@ -26,20 +26,20 @@ const Template: ComponentStory<typeof Button> = (args) => <Button children="Butt
 export const Small = Template.bind({});
 
 Small.args = {
-	size: 'sm',
+	size: 'small',
 };
 
 export const Medium = Template.bind({});
 
 Medium.args = {
-	size: 'md',
+	size: 'medium',
 	style: { width: '157px' },
 };
 
 export const Danger = Template.bind({});
 
 Danger.args = {
-	size: 'md',
+	size: 'medium',
 	variant: 'danger',
 	fullWidth: true,
 	style: { width: '157px' },
@@ -48,7 +48,7 @@ Danger.args = {
 export const Disabled = Template.bind({});
 
 Disabled.args = {
-	size: 'md',
+	size: 'medium',
 	style: { width: '157px' },
 	disabled: true,
 };
@@ -56,21 +56,21 @@ Disabled.args = {
 export const Primary = Template.bind({});
 
 Primary.args = {
-	size: 'md',
+	size: 'medium',
 	variant: 'primary',
 };
 
 export const Secondary = Template.bind({});
 
 Secondary.args = {
-	size: 'md',
+	size: 'medium',
 	variant: 'secondary',
 };
 
 export const Monospace = Template.bind({});
 
 Monospace.args = {
-	size: 'sm',
+	size: 'small',
 	children: '10x',
 	mono: true,
 };

@@ -101,7 +101,7 @@ const SubmissionButton = ({ onSubmit, isApproved }: any) => {
 		<Button
 			disabled={isSubmissionDisabled}
 			onClick={onSubmit}
-			size="lg"
+			size="large"
 			data-testid="submit-order"
 			fullWidth
 		>

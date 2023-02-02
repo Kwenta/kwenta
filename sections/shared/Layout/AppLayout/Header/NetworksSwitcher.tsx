@@ -91,7 +91,7 @@ const NetworksSwitcher: FC = () => {
 
 	return !isL2 ? (
 		<Container onClick={openChainModal}>
-			<StyledButton noOutline size="sm">
+			<StyledButton noOutline size="small">
 				{activeChain && <PrefixIcon>{networkIcon(activeChain.name)}</PrefixIcon>}
 				{activeChain?.name}
 			</StyledButton>

@@ -131,7 +131,7 @@ const Header = memo(() => {
 					</Links>
 					<MenuContainer>
 						<Link href={ROUTES.Markets.Home(DEFAULT_FUTURES_MARGIN_TYPE)}>
-							<Button noOutline size="sm">
+							<Button noOutline size="small">
 								{t('homepage.nav.start-trade')}
 							</Button>
 						</Link>

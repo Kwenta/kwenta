@@ -60,7 +60,7 @@ export default function AcknowledgementModal() {
 				<br />
 				<br />
 			</BodyText>
-			<Button variant="flat" size="md" onClick={onAccept}>
+			<Button variant="flat" size="medium" onClick={onAccept}>
 				Accept & Continue
 			</Button>
 		</StyledBaseModal>

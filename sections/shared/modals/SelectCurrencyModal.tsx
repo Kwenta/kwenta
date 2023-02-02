@@ -190,7 +190,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 						return (
 							<CategoryButton
 								variant="secondary"
-								isActive={isActive}
+								active={isActive}
 								disabled={noItem}
 								onClick={() => {
 									setAssetSearch('');
@@ -352,7 +352,7 @@ const CategoryButton = styled(Button)`
 	font-size: 12px;
 
 	${(props) =>
-		props.isActive &&
+		props.active &&
 		css`
 			color: ${props.theme.colors.selectedTheme.button.text.primary};
 			background: ${props.theme.colors.selectedTheme.button.fill};

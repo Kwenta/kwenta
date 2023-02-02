@@ -40,7 +40,7 @@ const StakingTab = () => {
 				<Button
 					fullWidth
 					variant="flat"
-					size="sm"
+					size="small"
 					disabled={!getReward || claimableBalance.eq(0)}
 					onClick={handleGetReward}
 				>

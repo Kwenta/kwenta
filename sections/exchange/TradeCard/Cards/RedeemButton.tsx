@@ -21,7 +21,7 @@ const RedeemButton: FC = memo(() => {
 				variant="primary"
 				disabled={false}
 				onClick={handleRedeem}
-				size="lg"
+				size="large"
 				data-testid="submit-order"
 				fullWidth
 			>

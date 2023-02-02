@@ -28,7 +28,7 @@ const ShareModalButton = () => {
 	return (
 		<>
 			<ButtonContainer>
-				<Button variant="primary" onClick={handleDownloadImage} size="sm" disabled={false}>
+				<Button variant="primary" onClick={handleDownloadImage} size="small" disabled={false}>
 					{t('futures.modals.share.buttons.download')}
 				</Button>
 			</ButtonContainer>
