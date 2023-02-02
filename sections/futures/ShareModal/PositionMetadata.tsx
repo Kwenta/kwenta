@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 import { selectMarketPrice, selectSelectedMarketPositionHistory } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
+import media from 'styles/media';
 import getLocale from 'utils/formatters/getLocale';
 import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 
@@ -45,6 +46,23 @@ function getFontSize(props: any) {
 
 		default:
 			fontSize = '0.83vw';
+	}
+
+	return fontSize;
+}
+
+function getMobileFontSize(props: any) {
+	let fontSize = '';
+
+	switch (props.className) {
+		case 'date-or-price':
+			fontSize = '3vw';
+			break;
+		case 'header':
+		case 'time':
+		default:
+			fontSize = '2vw';
+			break;
 	}
 
 	return fontSize;
@@ -134,6 +152,9 @@ const ContainerText = styled.div`
 	width: 100%;
 
 	font-family: ${(props) => getFontFamily(props)};
+	${media.lessThan('md')`
+		font-size: ${(props) => getMobileFontSize(props)};
+	`}
 `;
 
 const TopRightContainer = styled.div`
@@ -145,6 +166,15 @@ const TopRightContainer = styled.div`
 
 	bottom: 5.5vw;
 	left: 12.02vw;
+
+	${media.lessThan('md')`
+		top: unset;
+		bottom: 45%;
+		right: 0;
+		left: unset;
+		width: 48%;
+		text-align: left;
+	`}
 `;
 
 const TopLeftContainer = styled.div`
@@ -156,6 +186,15 @@ const TopLeftContainer = styled.div`
 
 	bottom: 5.5vw;
 	left: 2.02vw;
+
+	${media.lessThan('md')`
+		top: unset;
+		bottom: 45%;
+		right: unset;
+		left: 0;
+		width: 48%;
+		text-align: right;
+	`}
 `;
 
 const BottomRightContainer = styled.div`
@@ -167,6 +206,15 @@ const BottomRightContainer = styled.div`
 
 	bottom: 2vw;
 	left: 12.02vw;
+
+	${media.lessThan('md')`
+		top: unset;
+		bottom: 35%;
+		right: 0;
+		left: unset;
+		width: 48%;
+		text-align: left;
+	`}
 `;
 
 const BottomLeftContainer = styled.div`
@@ -178,6 +226,15 @@ const BottomLeftContainer = styled.div`
 
 	bottom: 2vw;
 	left: 2.02vw;
+
+	${media.lessThan('md')`
+		top: unset;
+		bottom: 35%;
+		right: unset;
+		left: 0;
+		width: 48%;
+		text-align: right;
+	`}
 `;
 
 export default PositionMetadata;
