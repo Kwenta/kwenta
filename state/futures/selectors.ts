@@ -788,3 +788,18 @@ export const selectHasRemainingMargin = createSelector(
 			: posMargin.gt(0);
 	}
 );
+
+export const selectMaxUsdInputAmount = createSelector(
+	selectFuturesType,
+	selectPosition,
+	selectCrossMarginBalanceInfo,
+	selectMaxLeverage,
+	(futuresType, position, balance, maxLeverage) => {
+		const margin =
+			futuresType === 'cross_margin'
+				? balance.freeMargin.add(position?.remainingMargin ?? '0')
+				: position?.remainingMargin ?? wei(0);
+
+		return maxLeverage.mul(margin);
+	}
+);

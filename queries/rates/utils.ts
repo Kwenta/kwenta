@@ -1,7 +1,7 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
-import { chain } from 'wagmi';
 
 import { DEBT_RATIO_UNIT } from 'constants/network';
+import { chain } from 'containers/Connector/config';
 import { CandleResult } from 'queries/futures/subgraph';
 import { FuturesMarketKey } from 'utils/futures';
 

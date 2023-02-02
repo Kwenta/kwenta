@@ -13,11 +13,11 @@ import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
-import { chain, WagmiConfig } from 'wagmi';
+import { WagmiConfig } from 'wagmi';
 
 import ErrorNotifier from 'components/ErrorView/ErrorNotifier';
 import Connector from 'containers/Connector';
-import { chains, wagmiClient } from 'containers/Connector/config';
+import { chains, wagmiClient, chain } from 'containers/Connector/config';
 import useMonitorTransactions from 'hooks/useMonitorTransactions';
 import AcknowledgementModal from 'sections/app/AcknowledgementModal';
 import Layout from 'sections/shared/Layout';
@@ -28,13 +28,15 @@ import { selectCurrentTheme } from 'state/preferences/selectors';
 import store from 'state/store';
 import { MediaContextProvider } from 'styles/media';
 import { themes } from 'styles/theme';
+import { IGNORE_ERRORS } from 'utils/logError';
+import { getDesignTokens } from 'utils/theme';
+
 import 'styles/main.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import '@reach/dialog/styles.css';
 import '@rainbow-me/rainbowkit/styles.css';
 import '../i18n';
-import { getDesignTokens } from 'utils/theme';
 
 type NextPageWithLayout = NextPage & {
 	getLayout?: (page: ReactElement) => ReactNode;
@@ -50,10 +52,12 @@ Sentry.init({
 		'https://d48644bc80d04977a26132b346417210@o4504363236851712.ingest.sentry.io/4504363261362177',
 	maxBreadcrumbs: 50,
 	debug: process.env.NODE_ENV !== 'production',
+	enabled: process.env.NODE_ENV === 'production',
 	release: 'kwenta@' + process.env.GIT_HASH_ID!.toString(),
 	autoSessionTracking: true,
 	integrations: [new BrowserTracing()],
 	tracesSampleRate: 0.3,
+	ignoreErrors: IGNORE_ERRORS,
 });
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {

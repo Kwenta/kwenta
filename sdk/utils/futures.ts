@@ -516,9 +516,9 @@ export const OrderNameByType: Record<FuturesOrderType, FuturesOrderTypeDisplay> 
 const mapOrderType = (orderType: Partial<SubgraphOrderType>): FuturesOrderTypeDisplay => {
 	return orderType === 'NextPrice'
 		? 'Next Price'
-		: orderType === 'stop_market'
+		: orderType === 'StopMarket'
 		? 'Stop Market'
-		: orderType === 'delayed_offchain'
+		: orderType === 'DelayedOffchain'
 		? 'Delayed Offchain'
 		: orderType;
 };

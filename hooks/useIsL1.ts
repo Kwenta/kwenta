@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { chain } from 'wagmi';
 
 import Connector from 'containers/Connector';
+import { chain } from 'containers/Connector/config';
 import { notNill } from 'queries/synths/utils';
 
 const useIsL1 = () => {

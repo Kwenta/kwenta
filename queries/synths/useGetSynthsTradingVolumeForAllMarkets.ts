@@ -1,11 +1,11 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
 import { useQuery } from 'react-query';
-import { chain } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
+import { chain } from 'containers/Connector/config';
 import { MAIN_ENDPOINT_OP_MAINNET } from 'queries/futures/constants';
 import { calculateTradeVolumeForAllSynths, getMainEndpoint } from 'queries/futures/utils';
 import logError from 'utils/logError';

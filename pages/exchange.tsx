@@ -3,27 +3,23 @@ import { FC, useEffect } from 'react';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import NotificationContainer from 'constants/NotificationContainer';
-import Connector from 'containers/Connector';
 import ExchangeContent from 'sections/exchange/ExchangeContent';
 import ExchangeHead from 'sections/exchange/ExchangeHead';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import { fetchTokenList, resetCurrencies } from 'state/exchange/actions';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { useAppDispatch, useAppSelector, useFetchAction } from 'state/hooks';
+import { selectNetwork } from 'state/wallet/selectors';
 import { FullScreenContainer, MobileScreenContainer } from 'styles/common';
 
 type ExchangeComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
 const Exchange: ExchangeComponent = () => {
-	const { network, providerReady } = Connector.useContainer();
 	const router = useRouter();
 	const dispatch = useAppDispatch();
 	const walletAddress = useAppSelector(({ wallet }) => wallet.walletAddress);
+	const network = useAppSelector(selectNetwork);
 
-	useEffect(() => {
-		if (providerReady) {
-			dispatch(fetchTokenList());
-		}
-	}, [providerReady, dispatch]);
+	useFetchAction(fetchTokenList, { dependencies: [network] });
 
 	useEffect(() => {
 		const quoteCurrencyFromQuery = (router.query.quote as string | undefined) ?? 'sUSD';
@@ -32,7 +28,7 @@ const Exchange: ExchangeComponent = () => {
 		if (!!walletAddress && (!!quoteCurrencyFromQuery || !!baseCurrencyFromQuery)) {
 			dispatch(resetCurrencies({ quoteCurrencyFromQuery, baseCurrencyFromQuery }));
 		}
-	}, [router.query, network.id, dispatch, walletAddress]);
+	}, [router.query, network, dispatch, walletAddress]);
 
 	return (
 		<>

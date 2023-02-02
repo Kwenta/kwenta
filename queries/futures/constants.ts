@@ -1,6 +1,7 @@
 import { utils as ethersUtils } from 'ethers';
 import { gql } from 'graphql-request';
-import { chain } from 'wagmi';
+
+import { chain } from 'containers/Connector/config';
 
 export const FUTURES_ENDPOINT_OP_MAINNET =
 	'https://api.thegraph.com/subgraphs/name/tburm/optimism-perps';

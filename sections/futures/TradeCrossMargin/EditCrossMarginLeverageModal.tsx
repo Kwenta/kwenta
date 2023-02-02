@@ -12,7 +12,6 @@ import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import Loader from 'components/Loader';
 import Spacer from 'components/Spacer';
 import { NumberSpan } from 'components/Text/NumberLabel';
-import { useFuturesContext } from 'contexts/FuturesContext';
 import { ORDER_PREVIEW_ERRORS_I18N, previewErrorI18n } from 'queries/futures/constants';
 import { setOpenModal } from 'state/app/reducer';
 import {
@@ -20,6 +19,7 @@ import {
 	editCrossMarginSize,
 	setCrossMarginLeverage,
 	submitCrossMarginOrder,
+	clearTradeInputs,
 } from 'state/futures/actions';
 import { setOrderType as setReduxOrderType } from 'state/futures/reducer';
 import {
@@ -48,7 +48,6 @@ type DepositMarginModalProps = {
 export default function EditLeverageModal({ editMode }: DepositMarginModalProps) {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
-	const { resetTradeState } = useFuturesContext();
 
 	const onLeverageChange = useCallback(
 		(leverage: number) => {
@@ -127,15 +126,15 @@ export default function EditLeverageModal({ editMode }: DepositMarginModalProps)
 
 	const onClose = useCallback(() => {
 		if (position?.position) {
-			resetTradeState();
+			dispatch(clearTradeInputs());
 		}
 		dispatch(setOpenModal(null));
-	}, [dispatch, position?.position, resetTradeState]);
+	}, [dispatch, position?.position]);
 
 	useEffect(() => {
 		if (position?.position) {
 			// Clear size inputs on mount if there is a position open
-			resetTradeState();
+			dispatch(clearTradeInputs());
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);

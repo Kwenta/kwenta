@@ -514,7 +514,7 @@
 					"claimable-rewards": "Claimable Rewards",
 					"escrowed-rewards": "Escrowed Rewards",
 					"liquid-rewards": "Liquid Rewards",
-					"annual-percentage-yield": "Annual Percentage Yield",
+					"annual-percentage-rate": "Annual Percentage Rate",
 					"claim": "Claim",
 					"current-trading-period": "Current Trading Period:"
 				},
@@ -844,6 +844,9 @@
 				"preview": {
 					"insufficient-margin": "Insufficient free margin",
 					"error": "Error generating preview"
+				},
+				"fees": {
+					"tooltip": "Fees are displayed as maker/taker. Maker fees apply to orders that reduce the market skew. Taker fees apply to orders that increase the market skew."
 				},
 				"orders": {
 					"manage-keeper-deposit": {
