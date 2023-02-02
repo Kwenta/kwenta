@@ -74,6 +74,7 @@ const sizeMap = {
 
 const BaseButton = styled.button<BaseButtonProps>`
 	display: flex;
+	justify-content: center;
 	align-items: center;
 
 	height: auto;
