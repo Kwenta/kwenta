@@ -55,6 +55,7 @@ Sentry.init({
 	autoSessionTracking: true,
 	integrations: [new BrowserTracing()],
 	tracesSampleRate: 0.3,
+	enabled: false, // Disabling on V1 as dropping support
 });
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {
