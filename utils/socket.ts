@@ -1,7 +1,7 @@
 import { DefaultTheme } from 'styled-components';
-import { chain } from 'wagmi';
 
 import { RGB, SocketCustomizationProps } from 'components/SocketBridge/types';
+import { chain } from 'containers/Connector/config';
 import { ADDRESSES } from 'sdk/contracts/constants';
 
 export const DEFAULT_WIDTH = 360;
@@ -23,6 +23,8 @@ export default function hexToRGB(hex: string): RGB {
 
 export const socketDefaultChains = [
 	chain.arbitrum.id,
+	chain.avalanche.id,
+	chain.bsc.id,
 	chain.mainnet.id,
 	chain.optimism.id,
 	chain.polygon.id,
