@@ -15,7 +15,6 @@ import {
 } from './actions';
 import {
 	selectCrossMarginAccount,
-	selectCrossMarginSupportedNetwork,
 	selectFuturesSupportedNetwork,
 	selectFuturesType,
 	selectMarkets,
@@ -29,7 +28,7 @@ export const usePollMarketFuturesData = () => {
 	const wallet = useAppSelector(selectWallet);
 	const crossMarginAddress = useAppSelector(selectCrossMarginAccount);
 	const selectedAccountType = useAppSelector(selectFuturesType);
-	const networkSupportsCrossMargin = useAppSelector(selectCrossMarginSupportedNetwork);
+	const networkSupportsCrossMargin = useAppSelector(selectFuturesSupportedNetwork);
 	const networkSupportsFutures = useAppSelector(selectFuturesSupportedNetwork);
 
 	useFetchAction(fetchCrossMarginAccount, {
@@ -82,7 +81,7 @@ export const usePollDashboardFuturesData = () => {
 	const markets = useAppSelector(selectMarkets);
 	const wallet = useAppSelector(selectWallet);
 	const crossMarginAddress = useAppSelector(selectCrossMarginAccount);
-	const networkSupportsCrossMargin = useAppSelector(selectCrossMarginSupportedNetwork);
+	const networkSupportsCrossMargin = useAppSelector(selectFuturesSupportedNetwork);
 
 	useFetchAction(fetchCrossMarginAccount, {
 		dependencies: [networkId, wallet],

@@ -39,7 +39,7 @@ const FeeInfoBox: React.FC = () => {
 	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance);
 	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
 	const isolatedMarginFee = useAppSelector(selectIsolatedMarginFee);
-	const { nativeSizeDelta, susdSizeDelta } = useAppSelector(selectTradeSizeInputs);
+	const { susdSizeDelta } = useAppSelector(selectTradeSizeInputs);
 	const accountType = useAppSelector(selectFuturesType);
 	const { tradeFee: crossMarginTradeFeeRate, limitOrderFee, stopOrderFee } = useAppSelector(
 		selectCrossMarginSettings
@@ -79,7 +79,7 @@ const FeeInfoBox: React.FC = () => {
 				</Tooltip>
 			</CostContainer>
 		),
-		[t, orderFee, makerFee, takerFee, nativeSizeDelta]
+		[t, makerFee, takerFee]
 	);
 
 	const isRewardEligible = useMemo(

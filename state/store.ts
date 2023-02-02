@@ -34,7 +34,7 @@ const LOG_REDUX = process.env.NODE_ENV !== 'production';
 const persistConfig = {
 	key: 'root1',
 	storage,
-	version: 3,
+	version: 4,
 	blacklist: ['app', 'wallet'],
 	migrate: createMigrate(migrations, { debug: true }),
 };
