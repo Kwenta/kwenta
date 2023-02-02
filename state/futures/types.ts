@@ -213,7 +213,6 @@ export type IsolatedMarginState = {
 	leverageSide: PositionSide;
 	selectedMarketKey: FuturesMarketKey;
 	selectedMarketAsset: FuturesMarketAsset;
-	position?: FuturesPosition<string>;
 	leverageInput: string;
 	priceImpact: string;
 	tradeFee: string;

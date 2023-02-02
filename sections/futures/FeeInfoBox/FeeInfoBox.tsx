@@ -53,7 +53,7 @@ const FeeInfoBox: React.FC = () => {
 		return commitDeposit.add(marketInfo?.keeperDeposit ?? zeroBN);
 	}, [commitDeposit, marketInfo?.keeperDeposit]);
 
-	const { orderFee, makerFee, takerFee } = useMemo(
+	const { makerFee, takerFee } = useMemo(
 		() => computeOrderFee(marketInfo, susdSizeDelta, orderType),
 		[marketInfo, susdSizeDelta, orderType]
 	);
