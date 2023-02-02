@@ -9,10 +9,10 @@ export const migrations = {
 			prices: PRICES_INITIAL_STATE,
 		};
 	},
-	4: (state: any) => {
+	5: (state: any) => {
 		return {
 			...state,
-			futures: INITIAL_STATE,
+			futures: FUTURES_INITIAL_STATE,
 		};
 	},
 };
