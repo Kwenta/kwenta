@@ -1,10 +1,10 @@
 import { Bridge } from '@socket.tech/plugin';
 import { useCallback } from 'react';
 import styled, { useTheme } from 'styled-components';
-import { chain } from 'wagmi';
 
 import ArrowIcon from 'assets/svg/app/arrow-down.svg';
 import Connector from 'containers/Connector';
+import { chain } from 'containers/Connector/config';
 import { fetchBalances } from 'state/balances/actions';
 import { useAppDispatch } from 'state/hooks';
 import {

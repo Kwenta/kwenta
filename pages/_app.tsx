@@ -13,11 +13,11 @@ import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
-import { chain, WagmiConfig } from 'wagmi';
+import { WagmiConfig } from 'wagmi';
 
 import ErrorNotifier from 'components/ErrorView/ErrorNotifier';
 import Connector from 'containers/Connector';
-import { chains, wagmiClient } from 'containers/Connector/config';
+import { chains, wagmiClient, chain } from 'containers/Connector/config';
 import useMonitorTransactions from 'hooks/useMonitorTransactions';
 import AcknowledgementModal from 'sections/app/AcknowledgementModal';
 import Layout from 'sections/shared/Layout';
@@ -35,6 +35,7 @@ import '@reach/dialog/styles.css';
 import '@rainbow-me/rainbowkit/styles.css';
 import '../i18n';
 import { getDesignTokens } from 'utils/theme';
+import { IGNORE_ERRORS } from 'utils/logError';
 
 type NextPageWithLayout = NextPage & {
 	getLayout?: (page: ReactElement) => ReactNode;
@@ -55,6 +56,7 @@ Sentry.init({
 	autoSessionTracking: true,
 	integrations: [new BrowserTracing()],
 	tracesSampleRate: 0.3,
+	ignoreErrors: IGNORE_ERRORS,
 });
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {
