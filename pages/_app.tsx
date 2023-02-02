@@ -13,10 +13,10 @@ import { useTranslation } from 'react-i18next';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Provider } from 'react-redux';
-import { RecoilRoot, useRecoilValue } from 'recoil';
 import { ThemeProvider } from 'styled-components';
 import { chain, WagmiConfig } from 'wagmi';
 
+import ErrorNotifier from 'components/Error/ErrorNotifier';
 import Connector from 'containers/Connector';
 import { chains, wagmiClient } from 'containers/Connector/config';
 import useMonitorTransactions from 'hooks/useMonitorTransactions';
@@ -24,8 +24,9 @@ import AcknowledgementModal from 'sections/app/AcknowledgementModal';
 import Layout from 'sections/shared/Layout';
 import SystemStatus from 'sections/shared/SystemStatus';
 import { useAppData } from 'state/app/hooks';
+import { useAppSelector } from 'state/hooks';
+import { selectCurrentTheme } from 'state/preferences/selectors';
 import store from 'state/store';
-import { currentThemeState } from 'store/ui';
 import { MediaContextProvider } from 'styles/media';
 import { themes } from 'styles/theme';
 import 'styles/main.css';
@@ -54,6 +55,7 @@ Sentry.init({
 	autoSessionTracking: true,
 	integrations: [new BrowserTracing()],
 	tracesSampleRate: 0.3,
+	enabled: false, // Disabling on V1 as dropping support
 });
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {
@@ -70,9 +72,9 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 	useMonitorTransactions();
 
 	const getLayout = Component.getLayout || ((page) => page);
+	const currentTheme = useAppSelector(selectCurrentTheme);
 
 	const isReady = useMemo(() => typeof window !== 'undefined', []);
-	const currentTheme = useRecoilValue(currentThemeState);
 	const theme = useMemo(() => themes[currentTheme], [currentTheme]);
 	// @ts-ignore palette options
 	const muiTheme = useMemo(() => createTheme(getDesignTokens(currentTheme)), [currentTheme]);
@@ -105,6 +107,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 								<AcknowledgementModal />
 								<SystemStatus>{getLayout(<Component {...pageProps} />)}</SystemStatus>
 							</Layout>
+							<ErrorNotifier />
 							<ReactQueryDevtools position="top-left" />
 						</SynthetixQueryContextProvider>
 					</MediaContextProvider>
@@ -147,15 +150,13 @@ const App: FC<AppProps> = (props) => {
 				<link rel="icon" href="/images/favicon.svg" />
 			</Head>
 			<Provider store={store}>
-				<RecoilRoot>
-					<QueryClientProvider client={new QueryClient()}>
-						<WagmiConfig client={wagmiClient}>
-							<WithAppContainers>
-								<InnerApp {...props} />
-							</WithAppContainers>
-						</WagmiConfig>
-					</QueryClientProvider>
-				</RecoilRoot>
+				<QueryClientProvider client={new QueryClient()}>
+					<WagmiConfig client={wagmiClient}>
+						<WithAppContainers>
+							<InnerApp {...props} />
+						</WithAppContainers>
+					</WagmiConfig>
+				</QueryClientProvider>
 			</Provider>
 		</>
 	);

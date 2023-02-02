@@ -1,15 +1,15 @@
 import Link from 'next/link';
 import { FC } from 'react';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import LogoDarkSvg from 'assets/svg/brand/logo-dark.svg';
 import LogoSvg from 'assets/svg/brand/logo.svg';
 import ROUTES from 'constants/routes';
-import { currentThemeState } from 'store/ui';
+import { useAppSelector } from 'state/hooks';
+import { selectCurrentTheme } from 'state/preferences/selectors';
 
 const SvgLogo = () => {
-	const currentTheme = useRecoilValue(currentThemeState);
+	const currentTheme = useAppSelector(selectCurrentTheme);
 
 	if (window.location.pathname === ROUTES.Home.Root) {
 		return <LogoSvg />;

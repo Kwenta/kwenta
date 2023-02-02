@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 
-import { PositionSide } from 'queries/futures/types';
+import { PositionSide } from 'sdk/types/futures';
 
 type PositionProps = {
 	side: PositionSide;

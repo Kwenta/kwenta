@@ -16,7 +16,6 @@ import {
 	selectPlaceOrderTranslationKey,
 	selectPosition,
 	selectMaxLeverage,
-	selectFuturesTransaction,
 	selectTradePreviewError,
 	selectTradePreview,
 	selectTradePreviewStatus,
@@ -57,7 +56,6 @@ const ManagePosition: React.FC = () => {
 	const orderType = useAppSelector(selectOrderType);
 	const leverageSide = useAppSelector(selectLeverageSide);
 
-	const futuresTransaction = useAppSelector(selectFuturesTransaction);
 	const isMarketCapReached = useAppSelector(selectIsMarketCapReached);
 	const placeOrderTranslationKey = useAppSelector(selectPlaceOrderTranslationKey);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
@@ -74,16 +72,9 @@ const ManagePosition: React.FC = () => {
 
 	const orderError = useMemo(() => {
 		if (previewError) return t(previewErrorI18n(previewError));
-		if (futuresTransaction?.error) return futuresTransaction.error;
 		if (previewTrade?.showStatus) return previewTrade?.statusMessage;
 		return null;
-	}, [
-		previewTrade?.showStatus,
-		previewTrade?.statusMessage,
-		futuresTransaction?.error,
-		previewError,
-		t,
-	]);
+	}, [previewTrade?.showStatus, previewTrade?.statusMessage, previewError, t]);
 
 	const leverageValid = useMemo(() => {
 		if (selectedAccountType === 'cross_margin') return true;
@@ -170,9 +161,7 @@ const ManagePosition: React.FC = () => {
 				</ManagePositionContainer>
 			</div>
 
-			{orderError && (
-				<Error message={orderError} formatter={futuresTransaction?.error ? 'revert' : undefined} />
-			)}
+			{orderError && <Error message={orderError} />}
 
 			{isCancelModalOpen &&
 				(selectedAccountType === 'cross_margin' ? (

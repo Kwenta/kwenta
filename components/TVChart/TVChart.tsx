@@ -1,14 +1,14 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { useRouter } from 'next/router';
 import { useRef, useContext, useEffect, useCallback, useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 import { ThemeContext } from 'styled-components';
 import { chain } from 'wagmi';
 
 import Connector from 'containers/Connector';
 import { FuturesOrder } from 'sdk/types/futures';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
-import { currentThemeState } from 'store/ui';
+import { useAppSelector } from 'state/hooks';
+import { selectCurrentTheme } from 'state/preferences/selectors';
 import darkTheme from 'styles/theme/colors/dark';
 import { formatNumber } from 'utils/formatters/number';
 
@@ -56,7 +56,7 @@ export function TVChart({
 		return;
 	},
 }: Props) {
-	const currentTheme = useRecoilValue(currentThemeState);
+	const currentTheme = useAppSelector(selectCurrentTheme);
 	const _widget = useRef<IChartingLibraryWidget | null>(null);
 	const _entryLine = useRef<IPositionLineAdapter | null | undefined>(null);
 	const _liquidationLine = useRef<IPositionLineAdapter | null | undefined>(null);

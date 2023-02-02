@@ -12,29 +12,34 @@ import OrdersTab from './OrdersTab';
 import TradesTab from './TradesTab';
 import TransfersTab from './TransfersTab';
 
-const getTabs = (accountType: FuturesAccountType) => [
-	{
-		title: 'Position',
-		component:
-			accountType === 'isolated_margin' ? (
-				<TradeIsolatedMargin isMobile />
-			) : (
-				<TradeCrossMargin isMobile />
-			),
-	},
-	{
-		title: 'Orders',
-		component: <OrdersTab />,
-	},
-	{
-		title: 'Trades',
-		component: <TradesTab />,
-	},
-	{
-		title: 'Transfers',
-		component: <TransfersTab />,
-	},
-];
+const getTabs = (accountType: FuturesAccountType) => {
+	const tabs = [
+		{
+			title: 'Position',
+			component:
+				accountType === 'isolated_margin' ? (
+					<TradeIsolatedMargin isMobile />
+				) : (
+					<TradeCrossMargin isMobile />
+				),
+		},
+		{
+			title: 'Orders',
+			component: <OrdersTab />,
+		},
+		{
+			title: 'Trades',
+			component: <TradesTab />,
+		},
+	];
+	if (accountType === 'isolated_margin') {
+		tabs.push({
+			title: 'Transfers',
+			component: <TransfersTab />,
+		});
+	}
+	return tabs;
+};
 
 const UserTabs: React.FC = () => {
 	const [activeTab, setActiveTab] = React.useState(0);

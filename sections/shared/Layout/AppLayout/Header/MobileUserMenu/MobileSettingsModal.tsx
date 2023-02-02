@@ -1,9 +1,7 @@
 import { useAccountModal, useChainModal } from '@rainbow-me/rainbowkit';
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState } from 'recoil';
 import styled, { css } from 'styled-components';
-import { Language } from 'translations/constants';
 import { useDisconnect } from 'wagmi';
 
 import MobileAccountIcon from 'assets/svg/app/account-info.svg';
@@ -15,11 +13,12 @@ import SunIcon from 'assets/svg/app/sun.svg';
 import FullScreenModal from 'components/FullScreenModal';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
-import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 import Logo from 'sections/shared/Layout/Logo';
-import { languageState } from 'store/app';
-import { currentThemeState } from 'store/ui';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { setTheme, setLanguage } from 'state/preferences/reducer';
+import { selectCurrentTheme, selectLanguage } from 'state/preferences/selectors';
 import colors from 'styles/theme/colors';
+import { Language } from 'translations/constants';
 
 import { languageIcon } from './common';
 import MobileSubMenu from './MobileSubMenu';
@@ -32,7 +31,8 @@ type SettingCategories = 'wallet' | 'network' | 'language' | 'currency' | 'theme
 
 export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
-	const [language, setLanguage] = usePersistedRecoilState(languageState);
+	const dispatch = useAppDispatch();
+	const language = useAppSelector(selectLanguage);
 
 	const languages = t('languages', { returnObjects: true }) as Record<Language, string>;
 
@@ -50,10 +50,10 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 	const { disconnect } = useDisconnect();
 
 	const [expanded, setExpanded] = useState<SettingCategories>();
-	const [currentTheme, setTheme] = useRecoilState(currentThemeState);
+	const currentTheme = useAppSelector(selectCurrentTheme);
 
 	const toggleTheme = () => {
-		setTheme((curr) => (curr === 'light' ? 'dark' : 'light'));
+		dispatch(setTheme(currentTheme === 'light' ? 'dark' : 'light'));
 	};
 
 	const handleToggle = (category: SettingCategories) => () => {
@@ -128,7 +128,7 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 								label: option.label,
 								icon: <div>{languageIcon[option.value as Language]}</div>,
 								selected: languages[language] === option.value,
-								onClick: () => setLanguage(option.value as Language),
+								onClick: () => dispatch(setLanguage(option.value as Language)),
 							}))}
 						/>
 					</MenuButtonContainer>

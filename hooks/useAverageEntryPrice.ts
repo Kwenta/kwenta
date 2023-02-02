@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 
-import { PositionHistory, PositionSide } from 'queries/futures/types';
+import { PositionSide } from 'sdk/types/futures';
 import { selectTradePreview } from 'state/futures/selectors';
+import { PositionHistory } from 'state/futures/types';
 import { useAppSelector } from 'state/hooks';
 
 // Used to calculate the new average entry price of a modified position

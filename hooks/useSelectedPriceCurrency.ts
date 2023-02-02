@@ -1,12 +1,11 @@
 import Wei from '@synthetixio/wei';
-import { useRecoilValue } from 'recoil';
 
 import { selectExchangeRates } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
-import { priceCurrencyState } from 'store/app';
+import { selectPreferredCurrency } from 'state/preferences/selectors';
 
 const useSelectedPriceCurrency = () => {
-	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
+	const selectedPriceCurrency = useAppSelector(selectPreferredCurrency);
 	const exchangeRates = useAppSelector(selectExchangeRates);
 	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
 

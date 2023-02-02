@@ -22,6 +22,7 @@ export const monitorTransaction = ({
 
 	const toastProps = {
 		onClick: () => window.open(link, '_blank'),
+		containerId: 'notifications',
 	};
 	const emitter = transactionNotifier.hash(txHash);
 	emitter.on('txSent', () => {

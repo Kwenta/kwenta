@@ -1,6 +1,8 @@
 import Wei from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 
+import { FuturesAccountType } from 'queries/futures/subgraph';
+
 export type FundingRateInput = {
 	marketAddress: string | undefined;
 	marketKey: FuturesMarketKey;
@@ -169,7 +171,7 @@ export type FuturesPosition<T = Wei> = {
 export type FuturesOrderTypeDisplay = 'Limit' | 'Stop Market' | 'Market' | 'Liquidation';
 
 export type FuturesOrder<T = Wei> = {
-	id: string;
+	id: string; // formatted subgraph id
 	contractId: number;
 	account: string;
 	asset: FuturesMarketAsset;
@@ -230,4 +232,23 @@ export type PostTradeDetailsResponse = {
 	liqPrice: BigNumber;
 	fee: BigNumber;
 	status: number;
+};
+
+export type IsolatedMarginOrderType = 'market';
+export type CrossMarginOrderType = 'market' | 'stop market' | 'limit';
+
+export type FuturesTrade<T = Wei> = {
+	size: T;
+	asset: string;
+	price: T;
+	txnHash: string;
+	timestamp: T;
+	positionId?: string;
+	positionSize: T;
+	positionClosed: boolean;
+	side: PositionSide;
+	pnl: T;
+	feesPaid: T;
+	orderType: FuturesOrderTypeDisplay;
+	accountType: FuturesAccountType;
 };
