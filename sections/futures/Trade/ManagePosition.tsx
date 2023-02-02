@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import Button from 'components/Button';
 import Error from 'components/ErrorView';
 import InputTitle from 'components/Input/InputTitle';
-import { useFuturesContext } from 'contexts/FuturesContext';
 import { previewErrorI18n } from 'queries/futures/constants';
 import { PositionSide } from 'sdk/types/futures';
 import { setOpenModal } from 'state/app/reducer';
@@ -30,6 +29,7 @@ import {
 	selectCrossMarginMarginDelta,
 	selectLeverageSide,
 	selectOpenOrder,
+	selectMaxUsdInputAmount,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
@@ -46,21 +46,18 @@ const ManagePosition: React.FC = () => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
-	const { maxUsdInputAmount } = useFuturesContext();
-
 	const { susdSize } = useAppSelector(selectTradeSizeInputs);
 	const marginDelta = useAppSelector(selectCrossMarginMarginDelta);
 	const position = useAppSelector(selectPosition);
 	const maxLeverageValue = useAppSelector(selectMaxLeverage);
 	const selectedAccountType = useAppSelector(selectFuturesType);
 	const previewTrade = useAppSelector(selectTradePreview);
-
 	const previewError = useAppSelector(selectTradePreviewError);
 	const leverage = useAppSelector(selectIsolatedMarginLeverage);
 	const orderType = useAppSelector(selectOrderType);
 	const openOrder = useAppSelector(selectOpenOrder);
 	const leverageSide = useAppSelector(selectLeverageSide);
-
+	const maxUsdInputAmount = useAppSelector(selectMaxUsdInputAmount);
 	const isMarketCapReached = useAppSelector(selectIsMarketCapReached);
 	const placeOrderTranslationKey = useAppSelector(selectPlaceOrderTranslationKey);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
