@@ -2,8 +2,7 @@ import { chain } from 'wagmi';
 
 export const RATES_ENDPOINT_MAIN = 'https://api.thegraph.com/subgraphs/name/kwenta/mainnet-main';
 
-export const RATES_ENDPOINT_OP_MAINNET =
-	'https://subgraph.satsuma-prod.com/05943208e921/kwenta/optimism-latest-rates/api';
+export const RATES_ENDPOINT_OP_MAINNET = `https://subgraph.satsuma-prod.com/${process.env.NEXT_PUBLIC_INFURA_PROJECT_ID}/kwenta/optimism-latest-rates/api`;
 
 export const RATES_ENDPOINT_OP_GOERLI =
 	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-goerli-main';
