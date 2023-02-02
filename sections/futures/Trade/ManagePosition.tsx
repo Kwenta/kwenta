@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import Error from 'components/ErrorView';
-import { Body } from 'components/Text';
+import InputTitle from 'components/Input/InputTitle';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { previewErrorI18n } from 'queries/futures/constants';
 import { PositionSide } from 'sdk/types/futures';
@@ -234,13 +234,8 @@ const CloseOrderButton = styled(Button)`
 	}
 `;
 
-const ManageOrderTitle = styled(Body)`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+const ManageOrderTitle = styled(InputTitle)`
 	margin-bottom: 8px;
-
-	span {
-		color: ${(props) => props.theme.colors.selectedTheme.gray};
-	}
 `;
 
 export default ManagePosition;

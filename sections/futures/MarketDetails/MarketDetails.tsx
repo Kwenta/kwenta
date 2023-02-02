@@ -100,7 +100,7 @@ const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	}
 
 	.heading {
-		color: ${(props) => props.theme.colors.selectedTheme.text.title};
+		color: ${(props) => props.theme.colors.selectedTheme.text.label};
 	}
 
 	.value {

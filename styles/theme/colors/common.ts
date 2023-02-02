@@ -88,6 +88,7 @@ const common = {
 	primaryGreen: '#7FD482',
 	primaryGray: '#B1B1B1',
 	secondaryGray: '#515151',
+	neautralGray: '#A9A8A6',
 	tertiaryGray: '#999999',
 	secondaryGold: '#E4B378',
 	primaryYellow: '#FFB800',
