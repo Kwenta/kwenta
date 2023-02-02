@@ -14,16 +14,15 @@ import Table from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
-import { selectPreviousDayRates } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { selectPrices } from 'state/prices/selectors';
+import { selectPreviousDayPrices, selectPrices } from 'state/prices/selectors';
 import { isDecimalFour, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
 const SpotMarketsTable: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const prices = useAppSelector(selectPrices);
-	const pastRates = useAppSelector(selectPreviousDayRates);
+	const pastRates = useAppSelector(selectPreviousDayPrices);
 
 	const { synthsMap } = Connector.useContainer();
 	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
@@ -40,7 +39,7 @@ const SpotMarketsTable: FC = () => {
 				: '';
 			const rate = prices && prices[synth.name].onChain;
 			const price = _.isNil(rate) ? 0 : rate.toNumber();
-			const pastPrice = pastRates.find((price) => price.synth === synth.name);
+			const pastPrice = pastRates.find((price) => price.synth === synth.asset);
 			const synthVolumes = synthVolumesQuery?.data ?? {};
 			return {
 				asset: synth.asset,
@@ -50,9 +49,7 @@ const SpotMarketsTable: FC = () => {
 				description,
 				price,
 				change:
-					price !== 0 && pastPrice?.price
-						? (price - (pastPrice?.price ?? 0)) / price || null
-						: null,
+					!!rate && !rate.eq(0) && !!pastPrice?.rate ? rate?.sub(pastPrice.rate).div(rate) : null,
 				volume: synthVolumes[synth.name] ?? 0,
 			};
 		});

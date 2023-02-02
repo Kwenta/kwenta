@@ -8,7 +8,6 @@ import KwentaSDK from 'sdk';
 import { notifyError } from 'components/ErrorView/ErrorNotifier';
 import { ORDER_KEEPER_ETH_DEPOSIT } from 'constants/futures';
 import { FuturesAccountType } from 'queries/futures/types';
-import { Prices } from 'queries/rates/types';
 import { TransactionStatus } from 'sdk/types/common';
 import {
 	CrossMarginOrderType,
@@ -102,7 +101,6 @@ import {
 	selectLeverageSide,
 	selectMarketPrice,
 	selectMarketAsset,
-	selectMarketAssets,
 	selectMarketInfo,
 	selectMarketKey,
 	selectMarkets,
@@ -676,23 +674,6 @@ export const fetchKeeperEthBalance = createAsyncThunk<
 	const bal = await sdk.futures.getCrossMarginKeeperBalance(account);
 	return { balance: bal.toString(), account, network };
 });
-
-export const fetchPreviousDayRates = createAsyncThunk<Prices, boolean | undefined, ThunkConfig>(
-	'futures/fetchPreviousDayRates',
-	async (mainnet, { getState, extra: { sdk } }) => {
-		try {
-			const marketAssets = selectMarketAssets(getState());
-			const laggedPrices = await sdk.futures.getPreviousDayRates(
-				marketAssets,
-				mainnet ? 10 : undefined
-			);
-			return laggedPrices;
-		} catch (err) {
-			notifyError('Failed to fetch historical rates', err);
-			throw err;
-		}
-	}
-);
 
 export const fetchFuturesPositionHistory = createAsyncThunk<
 	| {

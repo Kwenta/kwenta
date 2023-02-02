@@ -9,7 +9,6 @@ import {
 	fetchFuturesPositionHistory,
 	fetchIsolatedMarginAccountData,
 	fetchCrossMarginOpenOrders,
-	fetchPreviousDayRates,
 	fetchSharedFuturesData,
 	fetchIsolatedOpenOrders,
 } from './actions';
@@ -56,11 +55,6 @@ export const usePollMarketFuturesData = () => {
 		intervalTime: 30000,
 		dependencies: [markets.length, crossMarginAddress],
 		disabled: !markets.length || !crossMarginAddress || selectedAccountType === 'isolated_margin',
-	});
-	usePollAction('fetchPreviousDayRates', fetchPreviousDayRates, {
-		intervalTime: 60000 * 15,
-		dependencies: [markets.length],
-		disabled: !markets.length,
 	});
 	usePollAction('fetchFuturesPositionHistory', fetchFuturesPositionHistory, {
 		intervalTime: 15000,

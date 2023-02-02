@@ -36,7 +36,6 @@ import {
 	fetchCrossMarginTradePreview,
 	fetchKeeperEthBalance,
 	fetchCrossMarginAccount,
-	fetchPreviousDayRates,
 	fetchFuturesPositionHistory,
 	fetchPositionHistoryForTrader,
 	fetchTradesForSelectedMarket,
@@ -54,13 +53,12 @@ import {
 	TransactionEstimations,
 } from './types';
 
-export const INITIAL_STATE: FuturesState = {
+export const FUTURES_INITIAL_STATE: FuturesState = {
 	selectedType: DEFAULT_FUTURES_MARGIN_TYPE,
 	confirmationModalOpen: false,
 	markets: [],
 	dailyMarketVolumes: {},
 	errors: {},
-	previousDayRates: [],
 	fundingRates: [],
 	selectedInputDenomination: 'usd',
 	leaderboard: {
@@ -80,7 +78,6 @@ export const INITIAL_STATE: FuturesState = {
 		isolatedTradePreview: DEFAULT_QUERY_STATUS,
 		crossMarginTradePreview: DEFAULT_QUERY_STATUS,
 		crossMarginAccount: DEFAULT_QUERY_STATUS,
-		previousDayRates: DEFAULT_QUERY_STATUS,
 		positionHistory: DEFAULT_QUERY_STATUS,
 		selectedTraderPositionHistory: DEFAULT_QUERY_STATUS,
 		trades: DEFAULT_QUERY_STATUS,
@@ -131,7 +128,7 @@ export const INITIAL_STATE: FuturesState = {
 
 const futuresSlice = createSlice({
 	name: 'futures',
-	initialState: INITIAL_STATE,
+	initialState: FUTURES_INITIAL_STATE,
 	reducers: {
 		setMarketAsset: (state, action) => {
 			state[accountType(state.selectedType)].selectedMarketAsset = action.payload;
@@ -491,21 +488,6 @@ const futuresSlice = createSlice({
 			futuresState.queryStatuses.crossMarginAccount = {
 				status: FetchStatus.Error,
 				error: 'Failed to fetch cross margin account',
-			};
-		});
-
-		// Fetch past daily prices
-		builder.addCase(fetchPreviousDayRates.pending, (futuresState) => {
-			futuresState.queryStatuses.previousDayRates = LOADING_STATUS;
-		});
-		builder.addCase(fetchPreviousDayRates.fulfilled, (futuresState, action) => {
-			futuresState.previousDayRates = action.payload;
-			futuresState.queryStatuses.previousDayRates = SUCCESS_STATUS;
-		});
-		builder.addCase(fetchPreviousDayRates.rejected, (futuresState) => {
-			futuresState.queryStatuses.previousDayRates = {
-				error: 'Failed to fetch past rates',
-				status: FetchStatus.Error,
 			};
 		});
 

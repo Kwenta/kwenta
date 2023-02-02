@@ -10,7 +10,7 @@ import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
 import { formatDollars } from 'utils/formatters/number';
 import { FuturesMarketAsset } from 'utils/futures';
 
-import { SECONDS_PER_DAY, FUTURES_ENDPOINTS } from './constants';
+import { SECONDS_PER_DAY, FUTURES_ENDPOINTS, MAIN_ENDPOINTS } from './constants';
 import { CrossMarginAccountTransferResult, FuturesMarginTransferResult } from './subgraph';
 import {
 	FuturesOpenInterest,
@@ -21,6 +21,10 @@ import {
 
 export const getFuturesEndpoint = (networkId: NetworkId): string => {
 	return FUTURES_ENDPOINTS[networkId] || FUTURES_ENDPOINTS[chain.optimism.id];
+};
+
+export const getMainEndpoint = (networkId: NetworkId): string => {
+	return MAIN_ENDPOINTS[networkId] || MAIN_ENDPOINTS[chain.optimism.id];
 };
 
 export const getFuturesMarketContract = (asset: string | null, contracts: ContractsMap) => {
@@ -81,16 +85,17 @@ export const mapOpenInterest = async (
 };
 
 export const calculateTradeVolumeForAllSynths = (SynthTrades: SynthsTrades): SynthsVolumes => {
+	const synthVolumes: SynthsVolumes = {};
 	const result = SynthTrades.synthExchanges
 		.filter((i) => i.fromSynth !== null)
-		.reduce((acc: any, curr: any) => {
-			if (curr.fromSynth.symbol) {
+		.reduce((acc, curr) => {
+			if (curr.fromSynth?.symbol) {
 				acc[curr.fromSynth.symbol] = acc[curr.fromSynth.symbol]
-					? acc[curr.fromSynth.symbol] + Number(curr.fromAmountInUSD)
-					: Number(curr.fromAmountInUSD);
+					? wei(acc[curr.fromSynth.symbol]).add(curr.fromAmountInUSD)
+					: wei(curr.fromAmountInUSD);
 			}
 			return acc;
-		}, {});
+		}, synthVolumes);
 	return result;
 };
 

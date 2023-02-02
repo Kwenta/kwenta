@@ -14,6 +14,17 @@ export const FUTURES_ENDPOINTS = {
 	[chain.optimismGoerli.id]: FUTURES_ENDPOINT_OP_GOERLI,
 };
 
+export const MAIN_ENDPOINT_OP_MAINNET =
+	'https://api.thegraph.com/subgraphs/name/tburm/optimism-main';
+
+export const MAIN_ENDPOINT_OP_GOERLI =
+	'https://api.thegraph.com/subgraphs/name/tburm/optimism-goerli-main';
+
+export const MAIN_ENDPOINTS = {
+	[chain.optimism.id]: MAIN_ENDPOINT_OP_MAINNET,
+	[chain.optimismGoerli.id]: MAIN_ENDPOINT_OP_GOERLI,
+};
+
 export const DAY_PERIOD = 24;
 
 export const SECONDS_PER_DAY = 24 * 60 * 60;

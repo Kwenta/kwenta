@@ -15,6 +15,7 @@ import {
 	MAINNET_MARKETS,
 	TESTNET_MARKETS,
 	AGGREGATE_ASSET_KEY,
+	MAIN_ENDPOINTS,
 } from 'sdk/constants/futures';
 import { SECONDS_PER_DAY } from 'sdk/constants/period';
 import { IPerpsV2MarketConsolidated } from 'sdk/contracts/types/PerpsV2Market';
@@ -46,6 +47,10 @@ import logError from 'utils/logError';
 
 export const getFuturesEndpoint = (networkId: number): string => {
 	return FUTURES_ENDPOINTS[networkId] || FUTURES_ENDPOINTS[10];
+};
+
+export const getMainEndpoint = (networkId: number): string => {
+	return MAIN_ENDPOINTS[networkId] || MAIN_ENDPOINTS[10];
 };
 
 export const calculateFundingRate = (
