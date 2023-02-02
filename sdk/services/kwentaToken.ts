@@ -112,7 +112,7 @@ export default class KwentaTokenService {
 		};
 	}
 
-	public async getEarnTokenPrice() {
+	public async getEarnTokenPrices() {
 		const coinGeckoPrices = await this.sdk.exchange.batchGetCoingeckoPrices(
 			[KWENTA_ADDRESS, ETH_COINGECKO_ADDRESS],
 			false

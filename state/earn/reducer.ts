@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import { FetchStatus } from 'state/types';
 
-import { fetchEarnTokenPrice, stakeTokens, unstakeTokens } from './actions';
+import { fetchEarnTokenPrices, stakeTokens, unstakeTokens } from './actions';
 import { EarnState } from './types';
 
 const initialState: EarnState = {
@@ -41,7 +41,7 @@ const earnSlice = createSlice({
 		},
 	},
 	extraReducers: (builder) => {
-		builder.addCase(fetchEarnTokenPrice.fulfilled, (state, action) => {
+		builder.addCase(fetchEarnTokenPrices.fulfilled, (state, action) => {
 			state.kwentaPrice = action.payload.kwentaPrice;
 			state.wethPrice = action.payload.wethPrice;
 		});
