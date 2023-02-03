@@ -3,24 +3,25 @@ import { gql } from 'graphql-request';
 
 import { chain } from 'containers/Connector/config';
 
-export const FUTURES_ENDPOINT_OP_MAINNET =
-	'https://api.thegraph.com/subgraphs/name/tburm/optimism-perps';
+export const FUTURES_ENDPOINT_OP_MAINNET = `https://subgraph.satsuma-prod.com/${process.env.NEXT_PUBLIC_SATSUMA_API_KEY}/kwenta/optimism-perps/api`;
 
 export const FUTURES_ENDPOINT_OP_GOERLI =
-	'https://api.thegraph.com/subgraphs/name/tburm/optimism-goerli-perps';
+	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-goerli-perps';
 
 export const FUTURES_ENDPOINTS = {
 	[chain.optimism.id]: FUTURES_ENDPOINT_OP_MAINNET,
 	[chain.optimismGoerli.id]: FUTURES_ENDPOINT_OP_GOERLI,
 };
 
-export const MAIN_ENDPOINT_OP_MAINNET =
-	'https://api.thegraph.com/subgraphs/name/tburm/optimism-main';
+export const MAIN_ENDPOINT_MAINNET = `https://gateway.thegraph.com/api/${process.env.NEXT_PUBLIC_THEGRAPH_API_KEY}/subgraphs/id/HLy7PdmPJuVGjjmPNz1vW5RCCRpqzRWony2fSn7UKpf9`;
+
+export const MAIN_ENDPOINT_OP_MAINNET = `https://subgraph.satsuma-prod.com/${process.env.NEXT_PUBLIC_SATSUMA_API_KEY}/kwenta/optimism-main/api`;
 
 export const MAIN_ENDPOINT_OP_GOERLI =
-	'https://api.thegraph.com/subgraphs/name/tburm/optimism-goerli-main';
+	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-goerli-main';
 
 export const MAIN_ENDPOINTS = {
+	[chain.mainnet.id]: MAIN_ENDPOINT_MAINNET,
 	[chain.optimism.id]: MAIN_ENDPOINT_OP_MAINNET,
 	[chain.optimismGoerli.id]: MAIN_ENDPOINT_OP_GOERLI,
 };
