@@ -7,17 +7,11 @@ type HeadingProps = {
 	fontSize?: number;
 };
 
-const Heading: React.FC<HeadingProps> = memo(
-	({ variant = 'h1', children, className, fontSize }) => {
-		const StyledHeading = useMemo(() => headingMap[variant], [variant]);
+const Heading: React.FC<HeadingProps> = memo(({ variant = 'h1', fontSize, ...props }) => {
+	const StyledHeading = useMemo(() => headingMap[variant], [variant]);
 
-		return (
-			<StyledHeading className={className} $fontSize={fontSize}>
-				{children}
-			</StyledHeading>
-		);
-	}
-);
+	return <StyledHeading $fontSize={fontSize} {...props} />;
+});
 
 const commonStyles = css<{ $fontSize?: number }>`
 	line-height: 1.4;

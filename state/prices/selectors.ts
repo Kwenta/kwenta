@@ -50,6 +50,7 @@ export const selectPriceColors = createSelector(
 		return merged;
 	}
 );
+export const selectPreviousDayPrices = (state: RootState) => state.prices.previousDayPrices;
 
 export const selectLatestEthPrice = createSelector(selectPrices, (prices) => {
 	const price = getPricesForCurrencies(prices, 'sETH', 'sUSD');

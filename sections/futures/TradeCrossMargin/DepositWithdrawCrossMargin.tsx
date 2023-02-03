@@ -5,21 +5,21 @@ import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
-import ErrorView from 'components/Error';
+import ErrorView from 'components/ErrorView';
 import CustomInput from 'components/Input/CustomInput';
+import { FlexDivRowCentered } from 'components/layout/flex';
 import Loader from 'components/Loader';
 import SegmentedControl from 'components/SegmentedControl';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
+import { selectTransaction } from 'state/app/selectors';
 import { selectBalances } from 'state/balances/selectors';
 import { approveCrossMargin, depositCrossMargin, withdrawCrossMargin } from 'state/futures/actions';
 import {
 	selectCrossMarginBalanceInfo,
-	selectFuturesTransaction,
 	selectIsApprovingCrossDeposit,
 	selectIsSubmittingCrossTransfer,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { FlexDivRowCentered } from 'styles/common';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
@@ -39,7 +39,7 @@ export default function DepositWithdrawCrossMargin({
 
 	const balances = useAppSelector(selectBalances);
 	const crossMarginBalanceInfo = useAppSelector(selectCrossMarginBalanceInfo);
-	const transactionState = useAppSelector(selectFuturesTransaction);
+	const transactionState = useAppSelector(selectTransaction);
 	const isSubmitting = useAppSelector(selectIsSubmittingCrossTransfer);
 	const isApproving = useAppSelector(selectIsApprovingCrossDeposit);
 

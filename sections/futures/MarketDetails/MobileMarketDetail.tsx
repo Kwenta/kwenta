@@ -12,10 +12,10 @@ const MobileMarketDetail: React.FC = () => {
 
 	const longSkewText = useMemo(() => {
 		return (
-			marketInfo?.openInterest &&
+			!!marketInfo &&
 			formatDollars(marketInfo.openInterest.longUSD, {
 				maxDecimals: 2,
-				...(marketInfo?.openInterest?.longUSD.gt(1e6)
+				...(marketInfo?.openInterest.longUSD.gt(1e6)
 					? { truncation: { divisor: 1e6, unit: 'M' } }
 					: {}),
 			})
@@ -24,10 +24,10 @@ const MobileMarketDetail: React.FC = () => {
 
 	const shortSkewText = useMemo(() => {
 		return (
-			marketInfo?.openInterest &&
+			!!marketInfo &&
 			formatDollars(marketInfo.openInterest.shortUSD, {
 				maxDecimals: 2,
-				...(marketInfo?.openInterest?.shortUSD.gt(1e6)
+				...(marketInfo?.openInterest.shortUSD.gt(1e6)
 					? { truncation: { divisor: 1e6, unit: 'M' } }
 					: {}),
 			})
@@ -39,13 +39,11 @@ const MobileMarketDetail: React.FC = () => {
 			<p className="heading">Skew</p>
 			<SkewDataContainer>
 				<div className={`value green ${pausedClass}`}>
-					{marketInfo?.openInterest &&
-						formatPercent(marketInfo.openInterest.longPct ?? 0, { minDecimals: 0 })}{' '}
+					{!!marketInfo && formatPercent(marketInfo.openInterest.longPct ?? 0, { minDecimals: 0 })}{' '}
 					({longSkewText})
 				</div>
 				<div className={`value red ${pausedClass}`}>
-					{marketInfo?.openInterest &&
-						formatPercent(marketInfo.openInterest.shortPct ?? 0, { minDecimals: 0 })}{' '}
+					{!!marketInfo && formatPercent(marketInfo.openInterest.shortPct ?? 0, { minDecimals: 0 })}{' '}
 					({shortSkewText})
 				</div>
 			</SkewDataContainer>

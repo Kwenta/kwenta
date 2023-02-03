@@ -1,28 +1,29 @@
 import router from 'next/router';
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import EligibleIcon from 'assets/svg/app/eligible.svg';
 import LinkArrowIcon from 'assets/svg/app/link-arrow.svg';
 import NotEligibleIcon from 'assets/svg/app/not-eligible.svg';
+import HelpIcon from 'assets/svg/app/question-mark.svg';
 import InfoBox, { DetailedInfo } from 'components/InfoBox/InfoBox';
-import * as Text from 'components/Text';
+import { Body } from 'components/Text';
+import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import {
 	selectCrossMarginSettings,
 	selectCrossMarginTradeFees,
-	selectDelayedOrderFee,
 	selectFuturesType,
 	selectIsolatedMarginFee,
 	selectMarketInfo,
 	selectOrderType,
+	selectTradePreview,
 	selectTradeSizeInputs,
 } from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { fetchStakingData } from 'state/staking/actions';
+import { useAppSelector } from 'state/hooks';
 import {
 	selectStakedEscrowedKwentaBalance,
 	selectStakedKwentaBalance,
@@ -33,56 +34,58 @@ import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/form
 const FeeInfoBox: React.FC = () => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
-	const dispatch = useAppDispatch();
 	const orderType = useAppSelector(selectOrderType);
 	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance);
 	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance);
 	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
 	const isolatedMarginFee = useAppSelector(selectIsolatedMarginFee);
-	const { nativeSizeDelta, susdSizeDelta } = useAppSelector(selectTradeSizeInputs);
+	const { susdSizeDelta } = useAppSelector(selectTradeSizeInputs);
 	const accountType = useAppSelector(selectFuturesType);
 	const { tradeFee: crossMarginTradeFeeRate, limitOrderFee, stopOrderFee } = useAppSelector(
 		selectCrossMarginSettings
 	);
 	const marketInfo = useAppSelector(selectMarketInfo);
-	const { commitDeposit } = useAppSelector(selectDelayedOrderFee);
+	const tradePreview = useAppSelector(selectTradePreview);
+
+	const commitDeposit = useMemo(() => tradePreview?.fee ?? zeroBN, [tradePreview?.fee]);
 
 	const totalDeposit = useMemo(() => {
-		return (commitDeposit ?? zeroBN).add(marketInfo?.keeperDeposit ?? zeroBN);
+		return commitDeposit.add(marketInfo?.keeperDeposit ?? zeroBN);
 	}, [commitDeposit, marketInfo?.keeperDeposit]);
 
-	const { orderFee, makerFee, takerFee } = useMemo(
+	const { makerFee, takerFee } = useMemo(
 		() => computeOrderFee(marketInfo, susdSizeDelta, orderType),
 		[marketInfo, susdSizeDelta, orderType]
 	);
 
 	const orderFeeRate = useMemo(
 		() =>
-			orderType === 'limit' ? limitOrderFee : orderType === 'stop market' ? stopOrderFee : null,
+			orderType === 'limit' ? limitOrderFee : orderType === 'stop_market' ? stopOrderFee : null,
 		[orderType, stopOrderFee, limitOrderFee]
 	);
 
 	const marketCostTooltip = useMemo(
 		() => (
-			<>
-				{nativeSizeDelta.abs().gt(0)
-					? formatPercent(orderFee ?? zeroBN)
-					: `${formatPercent(makerFee ?? zeroBN)} / ${formatPercent(takerFee ?? zeroBN)}`}
-			</>
+			<CostContainer>
+				<>{`${formatPercent(makerFee ?? zeroBN)} / ${formatPercent(takerFee ?? zeroBN)}`}</>
+				<Tooltip
+					height={'auto'}
+					preset="top"
+					width="300px"
+					content={t('futures.market.trade.fees.tooltip')}
+					style={{ textTransform: 'none' }}
+				>
+					<StyledHelpIcon />
+				</Tooltip>
+			</CostContainer>
 		),
-		[orderFee, makerFee, takerFee, nativeSizeDelta]
+		[t, makerFee, takerFee]
 	);
 
 	const isRewardEligible = useMemo(
 		() => !!walletAddress && stakedKwentaBalance.add(stakedEscrowedKwentaBalance).gt(0),
 		[walletAddress, stakedKwentaBalance, stakedEscrowedKwentaBalance]
 	);
-
-	useEffect(() => {
-		if (!!walletAddress) {
-			dispatch(fetchStakingData());
-		}
-	}, [dispatch, walletAddress]);
 
 	const feesInfo = useMemo<Record<string, DetailedInfo | null | undefined>>(() => {
 		const crossMarginFeeInfo = {
@@ -113,8 +116,8 @@ const FeeInfoBox: React.FC = () => {
 				spaceBeneath: true,
 				keyNode: (
 					<CompactBox
-						onClick={() => router.push(ROUTES.Dashboard.Stake)}
 						$isEligible={isRewardEligible}
+						onClick={() => router.push(ROUTES.Dashboard.Stake)}
 					>
 						<div>
 							<div>{t('dashboard.stake.tabs.trading-rewards.trading-reward')}</div>
@@ -138,7 +141,7 @@ const FeeInfoBox: React.FC = () => {
 									i18nKey={`dashboard.stake.tabs.trading-rewards.stake-to-${
 										isRewardEligible ? 'earn' : 'start'
 									}`}
-									components={[<Emphasis />]}
+									components={[<Body variant="bold" />]}
 								/>
 							</RewardCopy>
 							<StyledLinkArrowIcon />
@@ -152,7 +155,7 @@ const FeeInfoBox: React.FC = () => {
 				}),
 			},
 		};
-		if (orderType === 'limit' || orderType === 'stop market') {
+		if (orderType === 'limit' || orderType === 'stop_market') {
 			return {
 				...crossMarginFeeInfo,
 				'Keeper Deposit': {
@@ -162,7 +165,7 @@ const FeeInfoBox: React.FC = () => {
 				},
 			};
 		}
-		if (orderType === 'delayed' || orderType === 'delayed offchain') {
+		if (orderType === 'delayed' || orderType === 'delayed_offchain') {
 			return {
 				'Keeper Deposit': {
 					value: !!marketInfo?.keeperDeposit ? formatDollars(marketInfo.keeperDeposit) : NO_VALUE,
@@ -171,7 +174,6 @@ const FeeInfoBox: React.FC = () => {
 					value: !!commitDeposit
 						? formatDollars(commitDeposit, { minDecimals: commitDeposit.lt(0.01) ? 4 : 2 })
 						: NO_VALUE,
-					keyNode: marketCostTooltip,
 				},
 				'Total Deposit': {
 					value: formatDollars(totalDeposit),
@@ -181,6 +183,7 @@ const FeeInfoBox: React.FC = () => {
 					value: !!commitDeposit
 						? formatDollars(commitDeposit, { minDecimals: commitDeposit.lt(0.01) ? 4 : 2 })
 						: NO_VALUE,
+					keyNode: marketCostTooltip,
 				},
 			};
 		}
@@ -198,6 +201,7 @@ const FeeInfoBox: React.FC = () => {
 		t,
 		isRewardEligible,
 		orderType,
+		totalDeposit,
 		crossMarginTradeFeeRate,
 		isolatedMarginFee,
 		crossMarginFees,
@@ -206,7 +210,6 @@ const FeeInfoBox: React.FC = () => {
 		accountType,
 		marketInfo?.keeperDeposit,
 		marketCostTooltip,
-		totalDeposit,
 	]);
 
 	return <StyledInfoBox details={feesInfo} />;
@@ -216,16 +219,22 @@ const StyledInfoBox = styled(InfoBox)`
 	margin-bottom: 16px;
 `;
 
+const CostContainer = styled.div`
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+`;
+
+const StyledHelpIcon = styled(HelpIcon)`
+	margin-left: 4px;
+`;
+
 const StyledLinkArrowIcon = styled(LinkArrowIcon)`
 	cursor: pointer;
 `;
 
-const Emphasis = styled.b`
-	font-family: ${(props) => props.theme.fonts.bold};
-`;
-
-const RewardCopy = styled(Text.Body)`
-	color: ${(props) => props.theme.colors.selectedTheme.text.title};
+const RewardCopy = styled(Body)`
+	color: ${(props) => props.theme.colors.selectedTheme.text.label};
 `;
 
 const CompactBox = styled.div<{ $isEligible: boolean }>`
@@ -243,23 +252,24 @@ const CompactBox = styled.div<{ $isEligible: boolean }>`
 	}
 
 	.badge-red {
-		color: ${(props) => props.theme.colors.selectedTheme.badge['red'].text};
-		background: ${(props) => props.theme.colors.selectedTheme.badge['red'].background};
+		color: ${(props) => props.theme.colors.selectedTheme.badge.red.text};
+		background: ${(props) => props.theme.colors.selectedTheme.badge.red.background};
 		min-width: 100px;
 	}
 
 	.badge-yellow {
-		color: ${(props) => props.theme.colors.selectedTheme.badge['yellow'].text};
-		background: ${(props) => props.theme.colors.selectedTheme.badge['yellow'].background};
+		color: ${(props) => props.theme.colors.selectedTheme.badge.yellow.text};
+		background: ${(props) => props.theme.colors.selectedTheme.badge.yellow.background};
 		min-width: 70px;
 	}
 
 	${(props) =>
-		css`
-			border-left: 3px solid
-				${props.$isEligible
-					? props.theme.colors.selectedTheme.badge.yellow.background
-					: props.theme.colors.selectedTheme.badge.red.background};
+		`border-left: 3px solid 
+				${
+					props.$isEligible
+						? props.theme.colors.selectedTheme.badge.yellow.background
+						: props.theme.colors.selectedTheme.badge.red.background
+				};
 		`}
 `;
 

@@ -1,5 +1,5 @@
 import { useAccountModal } from '@rainbow-me/rainbowkit';
-import { FC, useEffect, useState } from 'react';
+import { FC, useMemo } from 'react';
 import styled, { css } from 'styled-components';
 import { useEnsAvatar, useEnsName } from 'wagmi';
 
@@ -18,12 +18,11 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 	const { data: ensAvatar } = useEnsAvatar({ address: walletAddress!, chainId: 1 });
 	const { data: ensName } = useEnsName({ address: walletAddress!, chainId: 1 });
 
-	const [walletLabel, setWalletLabel] = useState('');
 	const truncatedWalletAddress = truncateAddress(walletAddress ?? '');
 	const { openAccountModal } = useAccountModal();
 
-	useEffect(() => {
-		setWalletLabel(ensName || truncatedWalletAddress!);
+	const walletLabel = useMemo(() => {
+		return ensName || truncatedWalletAddress!;
 	}, [ensName, truncatedWalletAddress]);
 
 	return (
@@ -45,17 +44,13 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 						style={{ borderRadius: '50%', marginRight: '8px' }}
 					/>
 				) : (
-					<StyledConnectionDot />
+					<ConnectionDot />
 				)}
 				{walletLabel}
 			</ConnectButton>
 		</Container>
 	);
 };
-
-const StyledConnectionDot = styled(ConnectionDot)`
-	margin-right: 6px;
-`;
 
 const Container = styled.div<{ isMobile?: boolean }>`
 	font-size: 12px;

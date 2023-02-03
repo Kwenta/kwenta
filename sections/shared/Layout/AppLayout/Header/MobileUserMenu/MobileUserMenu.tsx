@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import CloseIcon from 'assets/svg/app/close.svg';
@@ -9,7 +8,8 @@ import MenuIcon from 'assets/svg/app/menu.svg';
 import Button from 'components/Button';
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import ROUTES from 'constants/routes';
-import { currentThemeState } from 'store/ui';
+import { useAppSelector } from 'state/hooks';
+import { selectCurrentTheme } from 'state/preferences/selectors';
 import { FixedFooterMixin } from 'styles/common';
 
 import MobileMenuModal from './MobileMenuModal';
@@ -20,7 +20,7 @@ const MobileUserMenu: FC = () => {
 	const [isOpen, setIsOpen] = useState<'menu' | 'settings' | undefined>();
 	const { t } = useTranslation();
 
-	const currentTheme = useRecoilValue(currentThemeState);
+	const currentTheme = useAppSelector(selectCurrentTheme);
 
 	const closeModal = () => {
 		setIsOpen(undefined);
@@ -29,13 +29,7 @@ const MobileUserMenu: FC = () => {
 	const toggleModal = (modal: 'menu' | 'settings') => () => {
 		setIsOpen((s) => {
 			if (!!s) {
-				if (s === modal) {
-					return undefined;
-				} else if (s === 'menu') {
-					return 'settings';
-				} else {
-					return 'menu';
-				}
+				return s === modal ? undefined : s === 'menu' ? 'settings' : 'menu';
 			} else {
 				return modal;
 			}

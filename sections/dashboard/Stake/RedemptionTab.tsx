@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
-import media from 'styles/media';
+import { SplitContainer } from 'components/layout/grid';
 
 import RedeemInputCard from './InputCards/RedeemInputCard';
 
@@ -9,34 +8,14 @@ const RedemptionTab = () => {
 	const { t } = useTranslation();
 
 	return (
-		<StakingTabContainer>
+		<SplitContainer>
 			<RedeemInputCard inputLabel={t('dashboard.stake.tabs.stake-table.vkwenta-token')} isVKwenta />
 			<RedeemInputCard
 				inputLabel={t('dashboard.stake.tabs.stake-table.vekwenta-token')}
 				isVKwenta={false}
 			/>
-		</StakingTabContainer>
+		</SplitContainer>
 	);
 };
-
-const StakingTabContainer = styled.div`
-	${media.greaterThan('mdUp')`
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		& > div {
-			flex: 1;
-
-			&:first-child {
-				margin-right: 15px;
-			}
-		}
-	`}
-
-	${media.lessThan('mdUp')`
-		& > div:first-child {
-			margin-bottom: 15px;
-		}
-	`}
-`;
 
 export default RedemptionTab;

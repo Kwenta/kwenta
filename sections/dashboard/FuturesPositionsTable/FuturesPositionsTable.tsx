@@ -20,10 +20,10 @@ import { FuturesAccountType } from 'queries/futures/subgraph';
 import PositionType from 'sections/futures/PositionType';
 import {
 	selectCrossMarginPositions,
-	selectFuturesPositionHistory,
 	selectIsolatedMarginPositions,
 	selectMarketAsset,
 	selectMarkets,
+	selectPositionHistory,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { formatNumber } from 'utils/formatters/number';
@@ -39,7 +39,7 @@ type FuturesPositionTableProps = {
 const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	accountType,
 	showCurrentMarket = true,
-}: FuturesPositionTableProps) => {
+}) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
 	const router = useRouter();
@@ -49,7 +49,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
 	const crossMarginPositions = useAppSelector(selectCrossMarginPositions);
-	const positionHistory = useAppSelector(selectFuturesPositionHistory);
+	const positionHistory = useAppSelector(selectPositionHistory);
 	const currentMarket = useAppSelector(selectMarketAsset);
 	const futuresMarkets = useAppSelector(selectMarkets);
 
@@ -59,8 +59,8 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 			.map((position) => {
 				const market = futuresMarkets.find((market) => market.asset === position.asset);
 				const description = getSynthDescription(position.asset, synthsMap, t);
-				const thisPositionHistory = positionHistory.find((positionHistory) => {
-					return positionHistory.isOpen && positionHistory.asset === position.asset;
+				const thisPositionHistory = positionHistory.find((ph) => {
+					return ph.isOpen && ph.asset === position.asset;
 				});
 
 				return {
@@ -167,9 +167,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 									return (
 										<Currency.Price
-											currencyKey={'sUSD'}
+											currencyKey="sUSD"
 											price={cellProps.row.original.position.notionalValue}
-											sign={'$'}
+											sign="$"
 											conversionRate={1}
 											formatOptions={formatOptions}
 										/>
@@ -204,9 +204,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 											<ChangePercent value={cellProps.row.original.position.pnlPct} />
 											<div>
 												<Currency.Price
-													currencyKey={'sUSD'}
+													currencyKey="sUSD"
 													price={cellProps.row.original.position.pnl}
-													sign={'$'}
+													sign="$"
 													conversionRate={1}
 												/>
 											</div>
@@ -231,9 +231,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 										<DefaultCell>{NO_VALUE}</DefaultCell>
 									) : (
 										<Currency.Price
-											currencyKey={'sUSD'}
+											currencyKey="sUSD"
 											price={cellProps.row.original.avgEntryPrice}
-											sign={'$'}
+											sign="$"
 											conversionRate={1}
 											formatOptions={formatOptions}
 										/>
@@ -255,9 +255,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									};
 									return (
 										<Currency.Price
-											currencyKey={'sUSD'}
+											currencyKey="sUSD"
 											price={cellProps.row.original.position.liquidationPrice}
-											sign={'$'}
+											sign="$"
 											conversionRate={1}
 											formatOptions={formatOptions}
 										/>

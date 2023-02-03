@@ -28,16 +28,12 @@ export const MobileWalletActions: FC<MobileWalletButtonProps> = ({ toggleModal }
 			{ensAvatar ? (
 				<StyledImage src={ensAvatar} alt={ensName || walletAddress!} width={16} height={16} />
 			) : (
-				<StyledConnectionDot />
+				<ConnectionDot />
 			)}
 			{walletLabel}
 		</StyledButton>
 	);
 };
-
-const StyledConnectionDot = styled(ConnectionDot)`
-	margin-right: 6px;
-`;
 
 const StyledButton = styled(Button)`
 	font-size: 13px;

@@ -5,10 +5,12 @@ import { formatEther } from 'ethers/lib/utils';
 import moment from 'moment';
 import KwentaSDK from 'sdk';
 
+import { ETH_COINGECKO_ADDRESS, KWENTA_ADDRESS } from 'constants/currency';
 import { DEFAULT_NUMBER_OF_FUTURES_FEE } from 'constants/defaults';
 import { FLEEK_BASE_URL, FLEEK_STORAGE_BUCKET } from 'queries/files/constants';
 import { ContractName } from 'sdk/contracts';
 import { formatTruncatedDuration } from 'utils/formatters/date';
+import { zeroBN } from 'utils/formatters/number';
 
 import * as sdkErrors from '../common/errors';
 
@@ -82,7 +84,9 @@ export default class KwentaTokenService {
 			totalSupply,
 			lpTokenBalance,
 			allowance,
-		]: BigNumber[] = await this.sdk.context.multicallProvider.all([
+			[wethAmount, kwentaAmount],
+			lpTotalSupply,
+		]: any[] = await this.sdk.context.multicallProvider.all([
 			StakingRewards.balanceOf(walletAddress),
 			StakingRewards.earned(walletAddress),
 			StakingRewards.periodFinish(),
@@ -90,6 +94,8 @@ export default class KwentaTokenService {
 			StakingRewards.totalSupply(),
 			KwentaArrakisVault.balanceOf(walletAddress),
 			KwentaArrakisVault.allowance(walletAddress, StakingRewards.address),
+			KwentaArrakisVault.getUnderlyingBalances(),
+			KwentaArrakisVault.totalSupply(),
 		]);
 
 		return {
@@ -100,6 +106,21 @@ export default class KwentaTokenService {
 			totalSupply: wei(totalSupply),
 			lpTokenBalance: wei(lpTokenBalance),
 			allowance: wei(allowance),
+			wethAmount: wei(wethAmount),
+			kwentaAmount: wei(kwentaAmount),
+			lpTotalSupply: wei(lpTotalSupply),
+		};
+	}
+
+	public async getEarnTokenPrices() {
+		const coinGeckoPrices = await this.sdk.exchange.batchGetCoingeckoPrices(
+			[KWENTA_ADDRESS, ETH_COINGECKO_ADDRESS],
+			false
+		);
+
+		return {
+			kwentaPrice: coinGeckoPrices ? wei(coinGeckoPrices[KWENTA_ADDRESS]?.usd) : zeroBN,
+			wethPrice: coinGeckoPrices ? wei(coinGeckoPrices[ETH_COINGECKO_ADDRESS]?.usd) : zeroBN,
 		};
 	}
 
@@ -183,7 +204,7 @@ export default class KwentaTokenService {
 			vKwentaBalance: wei(vKwentaBalance),
 			vKwentaAllowance: wei(vKwentaAllowance),
 			kwentaAllowance: wei(kwentaAllowance),
-			epochPeriod: Number(epochPeriod) - 1,
+			epochPeriod: Number(epochPeriod) - 2,
 			veKwentaBalance: wei(veKwentaBalance),
 			veKwentaAllowance: wei(veKwentaAllowance),
 		};
@@ -379,7 +400,7 @@ export default class KwentaTokenService {
 		const responses: EpochData[] = await Promise.all(
 			fileNames.map(async (fileName, index) => {
 				const response = await client.get(fileName);
-				const period = index >= 5 ? index + 1 : index;
+				const period = index >= 5 ? (index >= 10 ? index + 2 : index + 1) : index;
 				return { ...response.data, period };
 			})
 		);

@@ -1,9 +1,9 @@
-import { ChangeEvent, FC, memo, useCallback } from 'react';
-import styled from 'styled-components';
+import React, { ChangeEvent, FC, memo, useCallback } from 'react';
+import styled, { css } from 'styled-components';
 
 import Input from './Input';
 
-type NumericInputProps = {
+type NumericInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> & {
 	value: string | number;
 	placeholder?: string;
 	onChange: (e: ChangeEvent<HTMLInputElement>, value: string) => void;
@@ -11,46 +11,44 @@ type NumericInputProps = {
 	defaultValue?: any;
 	disabled?: boolean;
 	id?: string;
+	bold?: boolean;
 };
 
 const INVALID_CHARS = ['-', '+', 'e'];
 
-const NumericInput: FC<NumericInputProps> = memo(
-	({ value, onChange, placeholder, className, defaultValue, disabled, id, ...rest }) => {
-		const handleOnChange = useCallback(
-			(e: ChangeEvent<HTMLInputElement>) => {
-				const { value } = e.target;
+const NumericInput: FC<NumericInputProps> = memo(({ onChange, bold, ...props }) => {
+	const handleOnChange = useCallback(
+		(e: ChangeEvent<HTMLInputElement>) => {
+			const standardizedNum = e.target.value.replace(/,/g, '.').replace(/[e+-]/gi, '');
+			if (isNaN(Number(standardizedNum))) return;
+			onChange(e, standardizedNum);
+		},
+		[onChange]
+	);
 
-				onChange(e, value.replace(/,/g, '.').replace(/[e+-]/gi, ''));
-			},
-			[onChange]
-		);
+	return (
+		<StyledInput
+			type="text"
+			inputMode="decimal"
+			onChange={handleOnChange}
+			onKeyDown={(e) => {
+				if (INVALID_CHARS.includes(e.key)) {
+					e.preventDefault();
+				}
+			}}
+			$bold={bold}
+			{...props}
+		/>
+	);
+});
 
-		return (
-			<StyledInput
-				{...rest}
-				value={value}
-				type="number"
-				onChange={handleOnChange}
-				placeholder={placeholder}
-				className={className}
-				onKeyDown={(e) => {
-					if (INVALID_CHARS.includes(e.key)) {
-						e.preventDefault();
-					}
-				}}
-				min="0"
-				step="any"
-				defaultValue={defaultValue}
-				disabled={disabled}
-				id={id}
-			/>
-		);
-	}
-);
-
-export const StyledInput = styled(Input)`
+export const StyledInput = styled(Input)<{ $bold?: boolean }>`
 	font-family: ${(props) => props.theme.fonts.mono};
+	${(props) =>
+		props.$bold &&
+		css`
+			font-family: ${props.theme.fonts.monoBold};
+		`}
 	text-overflow: ellipsis;
 `;
 

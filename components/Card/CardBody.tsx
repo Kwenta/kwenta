@@ -1,7 +1,7 @@
 import { FC, memo } from 'react';
 import styled from 'styled-components';
 
-import { FlexDivCol } from 'styles/common';
+import { FlexDivCol } from 'components/layout/flex';
 
 export type CardBodyProps = {
 	children: React.ReactNode;

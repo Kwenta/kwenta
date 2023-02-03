@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 
-import { PositionHistory, PositionSide } from 'queries/futures/types';
+import { FuturesPositionHistory, PositionSide } from 'sdk/types/futures';
 import { selectTradePreview } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 
 // Used to calculate the new average entry price of a modified position
-const useAverageEntryPrice = (positionHistory?: PositionHistory) => {
+const useAverageEntryPrice = (positionHistory?: FuturesPositionHistory) => {
 	const previewTrade = useAppSelector(selectTradePreview);
 
 	return useMemo(() => {

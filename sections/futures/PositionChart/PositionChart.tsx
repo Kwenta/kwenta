@@ -4,27 +4,22 @@ import styled from 'styled-components';
 import TVChart from 'components/TVChart';
 import useAverageEntryPrice from 'hooks/useAverageEntryPrice';
 import {
-	selectFuturesPositionHistory,
-	selectMarketAsset,
-	selectOpenOrders,
+	selectCrossMarginOpenOrders,
 	selectPosition,
+	selectSelectedMarketPositionHistory,
 	selectTradePreview,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
+import media from 'styles/media';
 
 export default function PositionChart() {
-	const marketAsset = useAppSelector(selectMarketAsset);
 	const position = useAppSelector(selectPosition);
-	const positionHistory = useAppSelector(selectFuturesPositionHistory);
-	const openOrders = useAppSelector(selectOpenOrders);
+	const openOrders = useAppSelector(selectCrossMarginOpenOrders);
 	const previewTrade = useAppSelector(selectTradePreview);
+	const subgraphPosition = useAppSelector(selectSelectedMarketPositionHistory);
 
 	const [showOrderLines, setShowOrderLines] = useState(true);
 	const [isChartReady, setIsChartReady] = useState(false);
-
-	const subgraphPosition = useMemo(() => {
-		return positionHistory.find((p) => p.isOpen && p.asset === marketAsset);
-	}, [positionHistory, marketAsset]);
 
 	const modifiedAverage = useAverageEntryPrice(subgraphPosition);
 
@@ -43,8 +38,8 @@ export default function PositionChart() {
 	}, [subgraphPosition, position]);
 
 	const onToggleLines = useCallback(() => {
-		setShowOrderLines(!showOrderLines);
-	}, [setShowOrderLines, showOrderLines]);
+		setShowOrderLines((show) => !show);
+	}, [setShowOrderLines]);
 
 	return (
 		<Container visible={isChartReady}>
@@ -72,6 +67,9 @@ export default function PositionChart() {
 
 const Container = styled.div<{ visible: boolean }>`
 	border: ${(props) => props.theme.colors.selectedTheme.border};
+	${media.lessThan('md')`
+		border: none;
+	`}
 	border-radius: 10px;
 	padding: 3px;
 	min-height: 450px;

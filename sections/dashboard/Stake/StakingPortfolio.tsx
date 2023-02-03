@@ -3,8 +3,10 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
+import { FlexDivRowCentered } from 'components/layout/flex';
 import { EXTERNAL_LINKS } from 'constants/links';
-import { Heading } from 'sections/earn/common';
+import { SplitStakingCard } from 'sections/dashboard/Stake/card';
+import { Heading } from 'sections/earn/text';
 import { useAppSelector } from 'state/hooks';
 import {
 	selectClaimableBalance,
@@ -14,11 +16,8 @@ import {
 	selectStakedKwentaBalance,
 	selectTotalVestable,
 } from 'state/staking/selectors';
-import { FlexDivRowCentered } from 'styles/common';
 import media from 'styles/media';
 import { truncateNumbers } from 'utils/formatters/number';
-
-import { SplitStakingCard } from './common';
 
 export enum StakeTab {
 	Staking = 'staking',

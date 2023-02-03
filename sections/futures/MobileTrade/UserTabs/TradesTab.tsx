@@ -4,34 +4,42 @@ import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled, { css } from 'styled-components';
 
-import Table, { TableNoResults } from 'components/Table';
+import { GridDivCenteredRow } from 'components/layout/grid';
+import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { ETH_UNIT } from 'constants/network';
-import Connector from 'containers/Connector';
-import { FuturesTrade } from 'queries/futures/types';
-import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
+import { FuturesTrade, PositionSide } from 'sdk/types/futures';
+import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
-import { PositionSide, TradeStatus } from 'sections/futures/types';
-import { selectMarketAsset } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
-import { GridDivCenteredRow } from 'styles/common';
+import { TradeStatus } from 'sections/futures/types';
+import { fetchTradesForSelectedMarket } from 'state/futures/actions';
+import {
+	selectFuturesType,
+	selectMarketAsset,
+	selectQueryStatuses,
+	selectUsersTradesForMarket,
+} from 'state/futures/selectors';
+import { useAppSelector, useFetchAction } from 'state/hooks';
+import { FetchStatus } from 'state/types';
+import { selectWallet } from 'state/wallet/selectors';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 import { FuturesMarketAsset, getMarketName } from 'utils/futures';
 
-import { SectionHeader, SectionTitle } from '../common';
 import TradeDrawer from '../drawers/TradeDrawer';
 
 const TradesTab: React.FC = () => {
 	const { t } = useTranslation();
-	const { walletAddress } = Connector.useContainer();
+	const walletAddress = useAppSelector(selectWallet);
 	const marketAsset = useAppSelector(selectMarketAsset);
+	const accountType = useAppSelector(selectFuturesType);
+	const history = useAppSelector(selectUsersTradesForMarket);
+	const { trades: tradesQuery } = useAppSelector(selectQueryStatuses);
 
 	const [selectedTrade, setSelectedTrade] = React.useState<any>();
 
-	const futuresTradesQuery = useGetFuturesTradesForAccount(marketAsset, walletAddress);
-
-	const { isLoading, isFetched: isLoaded } = futuresTradesQuery;
-
-	const history = React.useMemo(() => futuresTradesQuery?.data ?? [], [futuresTradesQuery.data]);
+	useFetchAction(fetchTradesForSelectedMarket, {
+		dependencies: [walletAddress, accountType, marketAsset],
+		disabled: !walletAddress,
+	});
 
 	const historyData = React.useMemo(() => {
 		return history.map((trade) => {
@@ -64,24 +72,18 @@ const TradesTab: React.FC = () => {
 				}}
 				columns={[
 					{
-						Header: (
-							<StyledTableHeader>{t('futures.market.user.trades.table.date')}</StyledTableHeader>
-						),
+						Header: <TableHeader>{t('futures.market.user.trades.table.date')}</TableHeader>,
 						accessor: 'timestamp',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
 							<GridDivCenteredRow>
-								<TimeDisplay cellPropsValue={cellProps.value} />
+								<TimeDisplay value={cellProps.value} />
 							</GridDivCenteredRow>
 						),
 						width: 70,
 						sortable: true,
 					},
 					{
-						Header: (
-							<StyledTableHeader>
-								{t('futures.market.user.trades.table.side-type')}
-							</StyledTableHeader>
-						),
+						Header: <TableHeader>{t('futures.market.user.trades.table.side-type')}</TableHeader>,
 						accessor: 'side',
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
@@ -94,11 +96,7 @@ const TradesTab: React.FC = () => {
 						sortable: true,
 					},
 					{
-						Header: (
-							<StyledTableHeader>
-								{t('futures.market.user.trades.table.trade-size')}
-							</StyledTableHeader>
-						),
+						Header: <TableHeader>{t('futures.market.user.trades.table.trade-size')}</TableHeader>,
 						accessor: 'size',
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
@@ -110,9 +108,9 @@ const TradesTab: React.FC = () => {
 				]}
 				columnsDeps={columnsDeps}
 				data={historyData}
-				isLoading={isLoading && isLoaded}
+				isLoading={tradesQuery.status === FetchStatus.Loading}
 				noResultsMessage={
-					isLoaded && historyData?.length === 0 ? (
+					tradesQuery.status === FetchStatus.Success && historyData?.length === 0 ? (
 						<TableNoResults>{t('futures.market.user.trades.table.no-results')}</TableNoResults>
 					) : undefined
 				}
@@ -126,11 +124,6 @@ const TradesTab: React.FC = () => {
 };
 
 export default TradesTab;
-
-const StyledTableHeader = styled.div`
-	font-family: ${(props) => props.theme.fonts.regular};
-	text-transform: capitalize;
-`;
 
 const StyledPositionSide = styled.div<{ side: PositionSide }>`
 	text-transform: uppercase;

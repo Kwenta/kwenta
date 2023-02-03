@@ -1,11 +1,10 @@
-import React from 'react';
+import { memo, FC } from 'react';
 import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';
+import { PositionSide } from 'sdk/types/futures';
 import { selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-
-import { PositionSide } from '../types';
 
 interface PositionButtonsProps {
 	selected: PositionSide;
@@ -13,7 +12,7 @@ interface PositionButtonsProps {
 	type?: 'button' | 'submit' | 'reset' | undefined;
 }
 
-const PositionButtons: React.FC<PositionButtonsProps> = ({ selected, onSelect }) => {
+const PositionButtons: FC<PositionButtonsProps> = memo(({ selected, onSelect }) => {
 	const marketInfo = useAppSelector(selectMarketInfo);
 
 	return (
@@ -40,7 +39,7 @@ const PositionButtons: React.FC<PositionButtonsProps> = ({ selected, onSelect })
 			</StyledPositionButton>
 		</PositionButtonsContainer>
 	);
-};
+});
 
 type PositionButtonProps = {
 	$position: PositionSide;
@@ -65,7 +64,6 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 
 	> span {
 		position: relative;
-		top: -2px;
 	}
 
 	${(props) =>
@@ -74,7 +72,7 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 			color: ${props.theme.colors.selectedTheme.green};
 			${props.$isActive &&
 			css`
-				border: 1px solid ${(props) => props.theme.colors.selectedTheme.green};
+				border: 1px solid ${props.theme.colors.selectedTheme.green};
 				border-radius: 8px;
 				background: linear-gradient(
 					180deg,

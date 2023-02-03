@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 
-import { PositionSide } from 'queries/futures/types';
+import { PositionSide } from 'sdk/types/futures';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
 
@@ -38,7 +38,7 @@ const TradeDrawer: React.FC<TradeDrawerProps> = ({ trade, closeDrawer }) => {
 				label: 'Price',
 				value: formatDollars(trade.price),
 			},
-			{ label: 'Date/Time', value: <TimeDisplay cellPropsValue={trade.timestamp} horizontal /> },
+			{ label: 'Date/Time', value: <TimeDisplay value={trade.timestamp} horizontal /> },
 			{
 				label: 'PnL',
 				value: trade.pnl.eq(0) ? (

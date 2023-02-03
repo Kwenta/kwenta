@@ -1,0 +1,64 @@
+import { useState, useRef, memo, FC, useCallback } from 'react';
+
+import { BaseTooltip, ToolTipWrapper } from './BaseTooltip';
+
+// Import this tooltip to a new component and customize
+
+type TooltipProps = {
+	content?: any;
+	children?: React.ReactNode;
+	width?: string;
+	height?: string;
+	preset?: string;
+	top?: string;
+	bottom?: string;
+	left?: string;
+	right?: string;
+	style?: React.CSSProperties;
+	position?: string;
+	visible?: boolean;
+};
+
+const Tooltip: FC<TooltipProps> = memo((props) => {
+	const [activeMouse, setActiveMouse] = useState(false);
+	const [position, setPosition] = useState({});
+	const myRef = useRef<HTMLDivElement>(null);
+
+	const isVisible = props.visible === undefined ? true : props.visible;
+
+	const setFixedPosition = useCallback(() => {
+		const isFirefox = /firefox/i.test(navigator.userAgent);
+		if (myRef.current !== null) {
+			const { left, bottom, top } = myRef.current.getBoundingClientRect();
+			if (isFirefox) {
+				setPosition({ left: `${left - 24}px`, top: `${top - 36}px` });
+			} else {
+				setPosition({ left: `${left}px`, top: `${bottom + 20}px` });
+			}
+		}
+	}, []);
+
+	const openToolTip = useCallback(() => {
+		setActiveMouse(true);
+		if (props.position === 'fixed') {
+			setFixedPosition();
+		}
+	}, [props.position, setFixedPosition]);
+
+	const closeToolTip = useCallback(() => {
+		setActiveMouse(false);
+	}, []);
+
+	return (
+		<ToolTipWrapper ref={myRef} onMouseEnter={openToolTip} onMouseLeave={closeToolTip}>
+			{props.children}
+			{activeMouse && isVisible && (
+				<BaseTooltip {...position} {...props} style={props.style}>
+					<p>{props.content}</p>
+				</BaseTooltip>
+			)}
+		</ToolTipWrapper>
+	);
+});
+
+export default Tooltip;

@@ -1,24 +1,31 @@
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Button from 'components/Button';
 import useRewardsTimer from 'hooks/useRewardsTimer';
-import { claimRewards } from 'state/earn/actions';
-import { selectYieldPerDay } from 'state/earn/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { toWei, truncateNumbers } from 'utils/formatters/number';
+import { GridContainer } from 'sections/earn/grid';
+import { claimRewards, fetchEarnTokenPrices } from 'state/earn/actions';
+import { selectEarnApy, selectEarnedRewards, selectYieldPerDay } from 'state/earn/selectors';
+import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks';
+import { formatPercent, toWei, truncateNumbers } from 'utils/formatters/number';
 
-import { GridContainer } from './common';
 import GridData from './GridData';
 
-const StakeGrid = () => {
-	const dispatch = useAppDispatch();
-	const { earnedRewards, endDate } = useAppSelector(({ earn }) => ({
-		earnedRewards: earn.earnedRewards,
-		endDate: earn.endDate,
-	}));
-	const yieldPerDay = useAppSelector(selectYieldPerDay);
-
+const TimeRemainingData = () => {
+	const endDate = useAppSelector(({ earn }) => earn.endDate);
 	const timeTillDeadline = useRewardsTimer(new Date(endDate * 1000));
+
+	return <GridData title="Time Remaining" value={timeTillDeadline} />;
+};
+
+const StakeGrid = () => {
+	const { t } = useTranslation();
+	const dispatch = useAppDispatch();
+	const earnedRewards = useAppSelector(selectEarnedRewards);
+	const yieldPerDay = useAppSelector(selectYieldPerDay);
+	const earnApy = useAppSelector(selectEarnApy);
+
+	usePollAction('fetchEarnTokenPrices', fetchEarnTokenPrices, { intervalTime: 30000 });
 
 	const handleClaim = useCallback(() => {
 		dispatch(claimRewards());
@@ -33,13 +40,17 @@ const StakeGrid = () => {
 					variant="flat"
 					size="sm"
 					style={{ marginTop: 10 }}
-					disabled={toWei(earnedRewards).lte(0)}
+					disabled={earnedRewards.lte(0)}
 					onClick={handleClaim}
 				>
 					Claim Rewards
 				</Button>
 			</GridData>
-			<GridData title="Time Remaining" value={timeTillDeadline} />
+			<GridData
+				title={t('dashboard.stake.tabs.staking.annual-percentage-rate')}
+				value={formatPercent(earnApy.div(toWei('100')), { minDecimals: 2 })}
+			/>
+			<TimeRemainingData />
 		</GridContainer>
 	);
 };

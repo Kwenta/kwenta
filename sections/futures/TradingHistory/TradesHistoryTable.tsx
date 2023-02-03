@@ -3,15 +3,15 @@ import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled, { css } from 'styled-components';
 
-import Table from 'components/Table';
+import Table, { TableHeader } from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import { blockExplorer } from 'containers/Connector/Connector';
-import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
+import { FuturesTrade } from 'sdk/types/futures';
 import { selectMarketKey } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { CapitalizedText, NumericValue } from 'styles/common';
+import { NumericValue } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
 
 type TradesHistoryTableProps = {
@@ -240,11 +240,6 @@ const StyledTable = styled(Table)<{ mobile?: boolean }>`
 	.table-body-row {
 		padding: 0;
 	}
-`;
-
-const TableHeader = styled(CapitalizedText)`
-	font-size: 13px;
-	font-family: ${(props) => props.theme.fonts.regular};
 `;
 
 const PriceValue = styled(NumericValue)`

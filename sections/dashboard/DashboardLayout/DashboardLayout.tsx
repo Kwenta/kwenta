@@ -3,8 +3,8 @@ import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import NavButton from 'components/Button/NavButton';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import NavLink from 'components/Nav/NavLink';
 import { TabList, TabPanel } from 'components/Tab';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
@@ -45,41 +45,42 @@ const DashboardLayout: FC = ({ children }) => {
 				name: Tab.Overview,
 				label: t('dashboard.tabs.overview'),
 				active: activeTab === Tab.Overview,
-				onClick: () => router.push(ROUTES.Dashboard.Home),
+				href: ROUTES.Dashboard.Home,
 			},
 			{
 				name: Tab.History,
 				label: t('dashboard.tabs.history'),
 				active: activeTab === Tab.History,
-				onClick: () => router.push(ROUTES.Dashboard.History),
+				href: ROUTES.Dashboard.History,
 			},
 			{
 				name: Tab.Markets,
 				label: t('dashboard.tabs.markets'),
 				active: activeTab === Tab.Markets,
 				disabled: false,
-				onClick: () => router.push(ROUTES.Dashboard.Markets),
+				href: ROUTES.Dashboard.Markets,
 			},
 			{
 				name: Tab.Stake,
 				label: t('dashboard.tabs.staking'),
 				active: activeTab === Tab.Stake,
-				onClick: () => router.push(ROUTES.Dashboard.Stake),
+				href: ROUTES.Dashboard.Stake,
 			},
 			{
 				name: Tab.Earn,
 				label: t('dashboard.tabs.earn'),
 				active: activeTab === Tab.Earn,
-				onClick: () => router.push(ROUTES.Dashboard.Earn),
+				href: ROUTES.Dashboard.Earn,
 			},
 			{
 				name: Tab.Governance,
 				label: t('dashboard.tabs.governance'),
 				active: activeTab === Tab.Governance,
-				onClick: () => window.open(EXTERNAL_LINKS.Governance.Vote, '_blank'),
+				href: EXTERNAL_LINKS.Governance.Vote,
+				external: true,
 			},
 		],
-		[t, activeTab, router]
+		[t, activeTab]
 	);
 
 	return (
@@ -90,31 +91,17 @@ const DashboardLayout: FC = ({ children }) => {
 						<LeftSideContent>
 							<StyledTabList>
 								<TabGroupTitle>{t('dashboard.titles.trading')}</TabGroupTitle>
-								{TABS.slice(0, 3).map(({ name, label, active, disabled, onClick }) => (
-									<NavButton
-										key={name}
-										title={name}
-										isActive={active}
-										disabled={disabled}
-										onClick={onClick}
-										noOutline
-									>
+								{TABS.slice(0, 3).map(({ name, label, active, ...rest }) => (
+									<NavLink key={name} title={name} isActive={active} {...rest}>
 										{label}
-									</NavButton>
+									</NavLink>
 								))}
 
 								<TabGroupTitle>{t('dashboard.titles.community')}</TabGroupTitle>
-								{TABS.slice(3).map(({ name, label, active, disabled, onClick }) => (
-									<NavButton
-										key={name}
-										title={name}
-										isActive={active}
-										disabled={disabled}
-										onClick={onClick}
-										noOutline
-									>
+								{TABS.slice(3).map(({ name, label, active, ...rest }) => (
+									<NavLink key={name} title={name} isActive={active} {...rest}>
 										{label}
-									</NavButton>
+									</NavLink>
 								))}
 							</StyledTabList>
 							<Links />

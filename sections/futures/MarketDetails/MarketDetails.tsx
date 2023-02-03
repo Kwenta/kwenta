@@ -2,9 +2,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
+import { FlexDivCentered } from 'components/layout/flex';
 import { selectMarketAsset } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { FlexDivCentered } from 'styles/common';
 import media from 'styles/media';
 
 import MarketsDropdown from '../Trade/MarketsDropdown';
@@ -101,7 +101,7 @@ const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 
 	.heading {
 		font-size: 13px;
-		color: ${(props) => props.theme.colors.selectedTheme.text.title};
+		color: ${(props) => props.theme.colors.selectedTheme.text.label};
 	}
 
 	.value {

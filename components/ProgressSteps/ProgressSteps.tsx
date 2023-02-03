@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, memo } from 'react';
 import styled from 'styled-components';
 
 type Props = {
@@ -7,7 +7,7 @@ type Props = {
 	complete?: boolean;
 };
 
-const ProgressSteps: FC<Props> = ({ step, totalSteps, complete }) => {
+const ProgressSteps: FC<Props> = memo(({ step, totalSteps, complete }) => {
 	const stepList = [...Array(totalSteps)];
 	return (
 		<div>
@@ -30,7 +30,7 @@ const ProgressSteps: FC<Props> = ({ step, totalSteps, complete }) => {
 			</Labels>
 		</div>
 	);
-};
+});
 
 const BAR_HEIGHT = 3;
 const CIRCLE_HEIGHT = 18;

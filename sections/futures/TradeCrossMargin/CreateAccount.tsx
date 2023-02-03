@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import CrossMarginIconDark from 'assets/svg/futures/cross-margin-icon-dark.svg';
 import CrossMarginIconLight from 'assets/svg/futures/cross-margin-icon-light.svg';
 import Button from 'components/Button';
-import { currentThemeState } from 'store/ui';
+import { useAppSelector } from 'state/hooks';
+import { selectCurrentTheme } from 'state/preferences/selectors';
 import { BorderedPanel } from 'styles/common';
 
 import CrossMarginFAQ from '../CrossMarginOnboard/CrossMarginFAQ';
@@ -16,7 +16,7 @@ type Props = {
 
 export default function CreateAccount({ onShowOnboard }: Props) {
 	const { t } = useTranslation();
-	const currentTheme = useRecoilValue(currentThemeState);
+	const currentTheme = useAppSelector(selectCurrentTheme);
 
 	const Icon = currentTheme === 'dark' ? CrossMarginIconDark : CrossMarginIconLight;
 
@@ -77,5 +77,5 @@ const CreateAccountButton = styled(Button)`
 
 const Questions = styled.div`
 	margin-top: 10px;
-	border-top: ${(props) => `${props.theme.colors.selectedTheme.border}`};
+	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 `;

@@ -1,35 +1,37 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
-import { constants } from 'ethers';
 import { defaultAbiCoder } from 'ethers/lib/utils';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import CompleteCheck from 'assets/svg/futures/onboard-complete-check.svg';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
-import ErrorView from 'components/Error';
+import ErrorView from 'components/ErrorView';
+import { notifyError } from 'components/ErrorView/ErrorNotifier';
 import InputBalanceLabel from 'components/Input/InputBalanceLabel';
 import NumericInput from 'components/Input/NumericInput';
+import { FlexDivRowCentered } from 'components/layout/flex';
 import Loader from 'components/Loader';
 import ProgressSteps from 'components/ProgressSteps';
-import { CROSS_MARGIN_BASE_SETTINGS } from 'constants/address';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import Connector from 'containers/Connector';
-import { useRefetchContext } from 'contexts/RefetchContext';
 import { monitorTransaction } from 'contexts/RelayerContext';
-import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
-import useSUSDContract from 'hooks/useSUSDContract';
-import { FuturesAccountState } from 'queries/futures/types';
-import useQueryCrossMarginAccount, {
-	useStoredCrossMarginAccounts,
-} from 'queries/futures/useQueryCrossMarginAccount';
 import { selectBalances } from 'state/balances/selectors';
-import { useAppSelector } from 'state/hooks';
-import { futuresAccountState } from 'store/futures';
-import { FlexDivRowCentered } from 'styles/common';
+import { sdk } from 'state/config';
+import { approveCrossMargin, depositCrossMargin } from 'state/futures/actions';
+import { setCrossMarginAccount } from 'state/futures/reducer';
+import {
+	selectCMAccountQueryStatus,
+	selectCMBalance,
+	selectCMDepositApproved,
+	selectCrossMarginAccount,
+	selectFuturesSupportedNetwork,
+	selectSubmittingFuturesTx,
+} from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { FetchStatus } from 'state/types';
+import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import { isUserDeniedError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
@@ -41,33 +43,22 @@ type Props = {
 	onClose: () => any;
 };
 
-const MAX_REFETCH_COUNT = 20;
-export const CREATE_ACCOUNT_GAS_LIMIT = 230000;
-
 export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 	const { t } = useTranslation();
-	const {
-		defaultSynthetixjs: synthetixjs,
-		network,
-		walletAddress,
-		provider,
-	} = Connector.useContainer();
-	const {
-		crossMarginAccountContract,
-		crossMarginContractFactory,
-	} = useCrossMarginAccountContracts();
-	const susdContract = useSUSDContract();
-	const { handleRefetch, refetchUntilUpdate } = useRefetchContext();
-	const queryCrossMarginAccount = useQueryCrossMarginAccount();
-	const { storeCrossMarginAccount } = useStoredCrossMarginAccounts();
-	const [futuresAccount, setFuturesAccount] = useRecoilState(futuresAccountState);
+	const { provider } = Connector.useContainer();
+	const dispatch = useAppDispatch();
 	const balances = useAppSelector(selectBalances);
+	const crossMarginAvailable = useAppSelector(selectFuturesSupportedNetwork);
+	const crossMarginAccount = useAppSelector(selectCrossMarginAccount);
+	const queryStatus = useAppSelector(selectCMAccountQueryStatus);
+	const depositApproved = useAppSelector(selectCMDepositApproved);
+	const txProcessing = useAppSelector(selectSubmittingFuturesTx);
+	const crossMarginBalance = useAppSelector(selectCMBalance);
+	const walletAddress = useAppSelector(selectWallet);
+	const network = useAppSelector(selectNetwork);
 
 	const [depositAmount, setDepositAmount] = useState('');
-	const [depositComplete, setDepositComplete] = useState(false);
-	const [submitting, setSubmitting] = useState<null | 'approve' | 'create' | 'deposit'>(null);
-	const [allowance, setAllowance] = useState(zeroBN);
-	const [error, setError] = useState<string | null>(null);
+	const [submitting, setSubmitting] = useState<null | 'create'>(null);
 
 	const susdBal = balances?.susdWalletBalance;
 
@@ -77,189 +68,87 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 		return wei(depositAmount).lt(MIN_MARGIN_AMOUNT);
 	}, [depositAmount]);
 
-	const fetchAllowance = useCallback(async () => {
-		if (!crossMarginAccountContract || !susdContract || !walletAddress) return;
-		try {
-			const allowanceBN = await susdContract.allowance(
-				walletAddress,
-				crossMarginAccountContract.address
-			);
-			const allowanceWei = wei(allowanceBN);
-			setAllowance(allowanceWei);
-			return allowanceWei;
-		} catch (err) {
-			logError(err);
-		}
-	}, [crossMarginAccountContract, susdContract, walletAddress]);
-
 	useEffect(() => {
-		fetchAllowance();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [crossMarginAccountContract?.address, walletAddress]);
-
-	useEffect(() => {
-		if (futuresAccount?.crossMarginAddress) {
+		if (crossMarginAccount) {
 			// Only re-enable the button when account has been created
 			setSubmitting(null);
 		}
-	}, [futuresAccount?.crossMarginAddress]);
+	}, [crossMarginAccount]);
 
 	const createAccount = useCallback(async () => {
-		setError(null);
 		if (submitting) return;
 		setSubmitting('create');
 		try {
-			if (!synthetixjs || !crossMarginContractFactory) throw new Error('Signer or snx lib missing');
-
-			const crossMarginSettingsAddress =
-				CROSS_MARGIN_BASE_SETTINGS[String(network?.id as NetworkId)];
-
-			if (!crossMarginSettingsAddress) throw new Error('Unsupported network');
-			const existing = await queryCrossMarginAccount(true);
-			if (existing) {
+			const existing = await sdk.futures.getCrossMarginAccounts(walletAddress);
+			if (existing?.length) {
+				if (!walletAddress) return;
+				dispatch(setCrossMarginAccount({ account: existing[0], wallet: walletAddress, network }));
 				// This is a safety measure in the case a user gets
 				// into this flow when they already have an account
 				setSubmitting(null);
 				return;
 			}
 
-			const tx = await crossMarginContractFactory.newAccount({
-				gasLimit: CREATE_ACCOUNT_GAS_LIMIT,
-			});
-
-			monitorTransaction({
-				txHash: tx.hash,
-				onTxConfirmed: async () => {
-					try {
-						const receipt = await provider.getTransactionReceipt(tx.hash);
-						const log = receipt?.logs.find((l) => l.address === crossMarginContractFactory.address);
-						if (log?.data) {
-							const account = defaultAbiCoder.decode(['address'], log.data)[0];
-							storeCrossMarginAccount(account);
-							const accountState: FuturesAccountState = {
-								status: 'complete',
-								crossMarginAvailable: true,
-								crossMarginAddress: account,
-								walletAddress,
-							};
-							setFuturesAccount(accountState);
-						}
-					} catch (err) {
-						logError(err);
-						// Fallback to querying logs and subgraph if tx not available
-						try {
-							await refetchUntilUpdate('cross-margin-account-change');
-						} catch (err) {
-							logError(err);
-							setSubmitting(null);
-						}
-					}
-				},
-				onTxFailed: () => {
-					setSubmitting(null);
-				},
-			});
-		} catch (err) {
-			if (!isUserDeniedError(err.message)) {
-				setError('Failed to create account');
-				logError(err);
-			}
-			setSubmitting(null);
-		}
-	}, [
-		synthetixjs,
-		crossMarginContractFactory,
-		network,
-		submitting,
-		provider,
-		walletAddress,
-		storeCrossMarginAccount,
-		setFuturesAccount,
-		setSubmitting,
-		refetchUntilUpdate,
-		queryCrossMarginAccount,
-	]);
-
-	const submitDeposit = useCallback(
-		async (weiAmount: string) => {
-			try {
-				if (!crossMarginAccountContract) throw new Error('No cross-margin account');
-				setSubmitting('deposit');
-				const tx = await crossMarginAccountContract.deposit(weiAmount);
+			const tx = await sdk.futures.createCrossMarginAccount();
+			if (tx) {
 				monitorTransaction({
 					txHash: tx.hash,
-					onTxConfirmed: () => {
+					onTxConfirmed: async () => {
+						try {
+							const receipt = await provider.getTransactionReceipt(tx.hash);
+							const log = receipt?.logs.find(
+								(l) => l.address === sdk.context.contracts.CrossMarginAccountFactory?.address
+							);
+							if (log?.data && walletAddress) {
+								const account = defaultAbiCoder.decode(['address'], log.data)[0];
+								dispatch(
+									setCrossMarginAccount({ account: account, wallet: walletAddress, network })
+								);
+							}
+						} catch (err) {
+							logError(err);
+							// Fallback to querying logs if tx not available
+							try {
+								const addresses = await sdk.futures.getCrossMarginAccounts(walletAddress);
+								if (addresses.length && walletAddress) {
+									dispatch(
+										setCrossMarginAccount({ account: existing[0], wallet: walletAddress, network })
+									);
+								}
+								setSubmitting(null);
+							} catch (err) {
+								notifyError('Failed to fetch account after the transaction completed', err);
+								logError(err);
+								setSubmitting(null);
+							}
+						}
+					},
+					onTxFailed: () => {
 						setSubmitting(null);
-						setDepositComplete(true);
-						handleRefetch('account-margin-change');
 					},
 				});
-			} catch (err) {
-				setSubmitting(null);
+			}
+		} catch (err) {
+			if (!isUserDeniedError(err.message)) {
+				notifyError('Failed to create account', err);
 				logError(err);
 			}
-		},
-		[crossMarginAccountContract, handleRefetch]
-	);
-
-	const fetchUntilAllowance = useCallback(async () => {
-		let count = 0;
-		return new Promise(async (res, rej) => {
-			const refetchAllowance = async () => {
-				const fetchedAllowance = await fetchAllowance();
-				if (fetchedAllowance?.eq(0) && count < MAX_REFETCH_COUNT) {
-					setTimeout(() => {
-						count++;
-						refetchAllowance();
-					}, 1000);
-				} else if (count === MAX_REFETCH_COUNT) {
-					rej(new Error('Timeout fetching allowance'));
-				} else {
-					res(fetchedAllowance);
-				}
-			};
-			refetchAllowance();
-		});
-	}, [fetchAllowance]);
+			setSubmitting(null);
+		}
+	}, [network, submitting, provider, walletAddress, dispatch, setSubmitting]);
 
 	const onClickApprove = useCallback(async () => {
-		try {
-			if (!crossMarginAccountContract || !susdContract)
-				throw new Error('Smart contracts not initialized');
-			setSubmitting('approve');
-			const tx = await susdContract.approve(
-				crossMarginAccountContract.address,
-				constants.MaxUint256
-			);
-			monitorTransaction({
-				txHash: tx.hash,
-				onTxConfirmed: async () => {
-					try {
-						await fetchUntilAllowance();
-						setSubmitting(null);
-					} catch (err) {
-						setSubmitting(null);
-						logError(err);
-					}
-				},
-			});
-		} catch (err) {
-			setSubmitting(null);
-			logError(err);
-		}
-	}, [crossMarginAccountContract, susdContract, fetchUntilAllowance]);
+		dispatch(approveCrossMargin());
+	}, [dispatch]);
 
 	const depositToAccount = useCallback(async () => {
 		try {
-			if (!crossMarginAccountContract || !susdContract)
-				throw new Error('Smart contracts not initialized');
-			const weiAmount = wei(depositAmount ?? 0, 18);
-			const weiAmountString = weiAmount.toString(18, true);
-			submitDeposit(weiAmountString);
+			const weiAmount = wei(depositAmount);
+			dispatch(depositCrossMargin(weiAmount));
 		} catch (err) {
 			logError(err);
 		}
-	}, [crossMarginAccountContract, depositAmount, susdContract, submitDeposit]);
+	}, [depositAmount, dispatch]);
 
 	const onEditAmount = (_: ChangeEvent<HTMLInputElement>, value: string) => {
 		setDepositAmount(value);
@@ -274,10 +163,10 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 	};
 
 	const renderContent = () => {
-		if (futuresAccount && !futuresAccount.crossMarginAvailable) {
+		if (!crossMarginAvailable) {
 			return <ErrorView message={t('futures.modals.onboard.unsupported-network')} />;
 		}
-		if (!futuresAccount || futuresAccount.status === 'initial-fetch') {
+		if (!crossMarginAccount && queryStatus.status === FetchStatus.Loading) {
 			return (
 				<LoaderContainer>
 					<Loader />
@@ -285,7 +174,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 			);
 		}
 
-		if (depositComplete) {
+		if (depositApproved && crossMarginBalance.gt(0)) {
 			return (
 				<>
 					<Intro>{t('futures.modals.onboard.step3-complete')}</Intro>
@@ -300,7 +189,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 			);
 		}
 
-		if (futuresAccount?.crossMarginAddress && allowance.eq(0)) {
+		if (crossMarginAccount && !depositApproved) {
 			return (
 				<>
 					<Intro>{t('futures.modals.onboard.step2-intro')}</Intro>
@@ -309,14 +198,14 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 						<CrossMarginFAQ />
 					</div>
 					{renderProgress(2)}
-					<StyledButton variant="flat" onClick={onClickApprove} disabled={!!submitting}>
-						{submitting === 'approve' ? <Loader /> : 'Approve'}
+					<StyledButton variant="flat" onClick={onClickApprove} disabled={txProcessing}>
+						{txProcessing ? <Loader /> : 'Approve'}
 					</StyledButton>
 				</>
 			);
 		}
 
-		if (futuresAccount?.crossMarginAddress) {
+		if (crossMarginAccount) {
 			return (
 				<>
 					<Intro>{t('futures.modals.onboard.step3-intro')}</Intro>
@@ -333,12 +222,12 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 						</MinimumAmountDisclaimer>
 					)}
 					<StyledButton
-						disabled={isDepositDisabled || !!submitting}
+						disabled={isDepositDisabled || txProcessing}
 						variant="flat"
 						textTransform="none"
 						onClick={depositToAccount}
 					>
-						{submitting === 'deposit' ? <Loader /> : 'Deposit sUSD'}
+						{txProcessing ? <Loader /> : 'Deposit sUSD'}
 					</StyledButton>
 				</>
 			);
@@ -362,7 +251,6 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 	return (
 		<StyledBaseModal onDismiss={onClose} isOpen={isOpen} title={t('futures.modals.onboard.title')}>
 			{renderContent()}
-			{error && <ErrorView message={error} containerStyle={{ marginTop: '20px' }} />}
 		</StyledBaseModal>
 	);
 }

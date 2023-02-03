@@ -106,7 +106,6 @@ const lightTheme = {
 	},
 	text: {
 		header: '#171002',
-		title: common.secondaryGray,
 		value: '#000000',
 		label: common.secondaryGray,
 		body: common.light.gray,
@@ -131,6 +130,9 @@ const lightTheme = {
 	},
 	chartLine: {
 		long: common.light.green,
+	},
+	socket: {
+		accent: `#d5d5d5`,
 	},
 };
 

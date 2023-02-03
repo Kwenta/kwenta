@@ -1,10 +1,12 @@
 import { wei } from '@synthetixio/wei';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, memo, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
 import CustomNumericInput from 'components/Input/CustomNumericInput';
+import InputTitle from 'components/Input/InputTitle';
+import { FlexDivCol, FlexDivRow } from 'components/layout/flex';
 import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import { editIsolatedMarginSize } from 'state/futures/actions';
 import { setIsolatedMarginLeverageInput } from 'state/futures/reducer';
@@ -14,21 +16,16 @@ import {
 	selectMarketInfo,
 	selectMaxLeverage,
 	selectPosition,
-	selectOrderType,
-	selectNextPriceDisclaimer,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { FlexDivCol, FlexDivRow } from 'styles/common';
 import { floorNumber, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import LeverageSlider from '../LeverageSlider';
 
-const LeverageInput: FC = () => {
+const LeverageInput: FC = memo(() => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
-	const orderType = useAppSelector(selectOrderType);
-	const isDisclaimerDisplayed = useAppSelector(selectNextPriceDisclaimer);
 	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const maxLeverage = useAppSelector(selectMaxLeverage);
@@ -36,16 +33,15 @@ const LeverageInput: FC = () => {
 	const leverageInput = useAppSelector(selectIsolatedLeverageInput);
 
 	const onLeverageChange = useCallback(
-		(newLeverage: number) => {
+		(newLeverage: string) => {
 			const remainingMargin = position?.remainingMargin ?? zeroBN;
 			const newTradeSize =
 				marketPrice.eq(0) || remainingMargin.eq(0)
 					? ''
-					: wei(newLeverage).mul(remainingMargin).div(marketPrice).toString();
-			const input = truncateNumbers(newLeverage, DEFAULT_FIAT_DECIMALS);
-			dispatch(setIsolatedMarginLeverageInput(input));
+					: wei(Number(newLeverage)).mul(remainingMargin).div(marketPrice).toString();
 			const floored = floorNumber(Number(newTradeSize), 4);
 			dispatch(editIsolatedMarginSize(String(floored), 'native'));
+			dispatch(setIsolatedMarginLeverageInput(newLeverage));
 		},
 		[position?.remainingMargin, marketPrice, dispatch]
 	);
@@ -72,7 +68,7 @@ const LeverageInput: FC = () => {
 		: 10;
 
 	const truncateLeverage = useMemo(
-		() => truncateNumbers(wei(leverageInput ?? 0), DEFAULT_FIAT_DECIMALS),
+		() => truncateNumbers(wei(Number(leverageInput) ?? 0), DEFAULT_FIAT_DECIMALS),
 		[leverageInput]
 	);
 
@@ -85,11 +81,7 @@ const LeverageInput: FC = () => {
 				</LeverageTitle>
 				{modeButton}
 			</LeverageRow>
-			{(orderType === 'delayed' || orderType === 'delayed offchain') && isDisclaimerDisplayed && (
-				<LeverageDisclaimer>
-					{t('futures.market.trade.input.leverage.disclaimer')}
-				</LeverageDisclaimer>
-			)}
+
 			{mode === 'slider' ? (
 				<SliderRow>
 					<LeverageSlider
@@ -98,7 +90,7 @@ const LeverageInput: FC = () => {
 						maxValue={Number(truncateMaxLeverage)}
 						value={Number(truncateLeverage)}
 						onChange={(_, newValue) => {
-							onLeverageChange(newValue as number);
+							onLeverageChange(newValue.toString());
 						}}
 					/>
 				</SliderRow>
@@ -111,7 +103,7 @@ const LeverageInput: FC = () => {
 						suffix="x"
 						maxValue={maxLeverage.toNumber()}
 						onChange={(_, newValue) => {
-							onLeverageChange(Number(newValue));
+							onLeverageChange(newValue);
 						}}
 						disabled={isDisabled}
 					/>
@@ -121,7 +113,7 @@ const LeverageInput: FC = () => {
 							mono
 							variant="flat"
 							onClick={() => {
-								onLeverageChange(Number(l));
+								onLeverageChange(l);
 							}}
 							disabled={maxLeverage.lt(Number(l)) || marketInfo?.isSuspended}
 						>
@@ -132,7 +124,7 @@ const LeverageInput: FC = () => {
 			)}
 		</LeverageInputWrapper>
 	);
-};
+});
 
 const LeverageInputWrapper = styled(FlexDivCol)`
 	margin-bottom: 16px;
@@ -144,14 +136,8 @@ const LeverageRow = styled(FlexDivRow)`
 	margin-bottom: 8px;
 `;
 
-const LeverageTitle = styled.div`
-	font-size: 13px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+const LeverageTitle = styled(InputTitle)`
 	text-transform: capitalize;
-
-	span {
-		color: ${(props) => props.theme.colors.selectedTheme.gray};
-	}
 `;
 
 const SliderRow = styled(FlexDivRow)`
@@ -182,12 +168,6 @@ const TextButton = styled.button`
 	background-color: transparent;
 	border: none;
 	cursor: pointer;
-`;
-
-const LeverageDisclaimer = styled.div`
-	font-size: 13px;
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	margin: 0 8px 12px;
 `;
 
 const StyledInput = styled(CustomNumericInput)`

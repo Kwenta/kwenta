@@ -6,10 +6,12 @@ import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
-import ErrorView from 'components/Error';
+import ErrorView from 'components/ErrorView';
+import { FlexDivCentered } from 'components/layout/flex';
 import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
+import { PositionSide } from 'sdk/types/futures';
 import {
 	selectLeverageSide,
 	selectMarketAsset,
@@ -19,7 +21,6 @@ import {
 	selectTradePreview,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { FlexDivCentered } from 'styles/common';
 import {
 	zeroBN,
 	formatCurrency,
@@ -30,10 +31,9 @@ import {
 import { getDisplayAsset } from 'utils/futures';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
-import { PositionSide } from '../types';
 
 type Props = {
-	gasFee: Wei | null;
+	gasFee?: Wei | null;
 	tradeFee: Wei;
 	keeperFee?: Wei | null;
 	errorMessage?: string | null | undefined;
@@ -102,7 +102,7 @@ export default function TradeConfirmationModal({
 				label: 'resulting leverage',
 				value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x`,
 			},
-			orderType === 'limit' || orderType === 'stop market'
+			orderType === 'limit' || orderType === 'stop_market'
 				? {
 						label: orderType + ' order price',
 						value: formatDollars(orderPrice, { isAssetPrice: true }),
@@ -136,10 +136,12 @@ export default function TradeConfirmationModal({
 						value: formatCurrency('ETH', keeperFee, { currencyKey: 'ETH' }),
 				  }
 				: null,
-			{
-				label: 'network gas fee',
-				value: formatDollars(gasFee ?? zeroBN),
-			},
+			gasFee && gasFee.gt(0)
+				? {
+						label: 'network gas fee',
+						value: formatDollars(gasFee),
+				  }
+				: null,
 		],
 		[
 			positionDetails,

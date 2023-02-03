@@ -1,1 +1,1 @@
-export { default, TableNoResults, compareNumericString } from './Table';
+export { default, TableNoResults, compareNumericString, TableHeader, TableCellHead } from './Table';

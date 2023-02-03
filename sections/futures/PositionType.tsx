@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 
-import { PositionSide } from 'queries/futures/types';
+import { PositionSide } from 'sdk/types/futures';
 
 type PositionProps = {
 	side: PositionSide;
@@ -25,12 +25,12 @@ const StyledText = styled.p<{ side: PositionSide }>`
 	${(props) =>
 		props.side === PositionSide.LONG
 			? css`
-					color: ${(props) => props.theme.colors.common.primaryGreen};
+					color: ${(props) => props.theme.colors.selectedTheme.green};
 					background: rgba(127, 212, 130, 0.1);
 					letter-spacing: 1.4px;
 			  `
 			: css`
-					color: ${(props) => props.theme.colors.common.primaryRed};
+					color: ${(props) => props.theme.colors.selectedTheme.red};
 					background: rgba(239, 104, 104, 0.1);
 					letter-spacing: -0.2px;
 			  `};

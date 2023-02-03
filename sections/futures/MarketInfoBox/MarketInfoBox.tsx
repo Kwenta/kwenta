@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import InfoBox from 'components/InfoBox';
 import PreviewArrow from 'components/PreviewArrow';
-import { FuturesPotentialTradeDetails } from 'sdk/types/futures';
+import { PositionSide } from 'sdk/types/futures';
 import {
 	selectDelayedOrderFee,
 	selectMarketInfo,
@@ -25,18 +25,41 @@ const MarketInfoBox: React.FC = () => {
 	const maxLeverage = useAppSelector(selectMaxLeverage);
 	const { commitDeposit } = useAppSelector(selectDelayedOrderFee);
 
+	const minInitialMargin = useMemo(() => marketInfo?.minInitialMargin ?? zeroBN, [
+		marketInfo?.minInitialMargin,
+	]);
+
 	const totalMargin = position?.remainingMargin ?? zeroBN;
-	const availableMargin = position?.accessibleMargin ?? zeroBN;
+
+	// function for calculating available margin
+	const getAvailableMargin = useCallback(
+		(notionalValue: Wei, margin: Wei, marketMaxLeverage: Wei) => {
+			let inaccessible = notionalValue.div(marketMaxLeverage).abs() ?? zeroBN;
+
+			// If the user has a position open, we'll enforce a min initial margin requirement.
+			if (inaccessible.gt(0) && inaccessible.lt(minInitialMargin)) {
+				inaccessible = minInitialMargin;
+			}
+
+			// check if available margin will be less than 0
+			return margin.sub(inaccessible).gt(0) ? margin.sub(inaccessible).abs() : zeroBN;
+		},
+		[minInitialMargin]
+	);
+
+	// adjust accessible margin due to frontend soft cap on leverage
+	const availableMargin = useMemo(() => {
+		if (!position?.position || !marketInfo) return zeroBN;
+		return getAvailableMargin(position.position.notionalValue, totalMargin, marketInfo.maxLeverage);
+	}, [position?.position, marketInfo, totalMargin, getAvailableMargin]);
 
 	const buyingPower = totalMargin.gt(zeroBN) ? totalMargin.mul(maxLeverage ?? zeroBN) : zeroBN;
 
 	const marginUsage = availableMargin.gt(zeroBN)
 		? totalMargin.sub(availableMargin).div(totalMargin)
+		: totalMargin.gt(zeroBN)
+		? wei(1)
 		: zeroBN;
-
-	const minInitialMargin = useMemo(() => marketInfo?.minInitialMargin ?? zeroBN, [
-		marketInfo?.minInitialMargin,
-	]);
 
 	const isDelayedOrder = useMemo(() => orderType === 'delayed', [orderType]);
 
@@ -44,72 +67,53 @@ const MarketInfoBox: React.FC = () => {
 		return (commitDeposit ?? zeroBN).add(marketInfo?.keeperDeposit ?? zeroBN);
 	}, [commitDeposit, marketInfo?.keeperDeposit]);
 
-	const getPotentialAvailableMargin = useCallback(
-		(trade: FuturesPotentialTradeDetails | null, marketMaxLeverage: Wei | undefined) => {
-			let inaccessible;
-
-			inaccessible =
-				(marketMaxLeverage && trade?.notionalValue.div(marketMaxLeverage).abs()) ?? zeroBN;
-
-			// If the user has a position open, we'll enforce a min initial margin requirement.
-			if (inaccessible.gt(0)) {
-				if (inaccessible.lt(minInitialMargin)) {
-					inaccessible = minInitialMargin;
-				}
-			}
-
-			// check if available margin will be less than 0
-			return trade?.margin?.sub(inaccessible).gt(0)
-				? trade?.margin?.sub(inaccessible).abs()
+	const previewAvailableMargin = useMemo(() => {
+		const potentialAvailableMargin =
+			!!potentialTrade && !!marketInfo
+				? getAvailableMargin(
+						potentialTrade.notionalValue,
+						potentialTrade.margin,
+						marketInfo.maxLeverage
+				  )
 				: zeroBN;
-		},
-		[minInitialMargin]
-	);
 
-	const previewAvailableMargin = React.useMemo(() => {
-		const potentialAvailableMargin = getPotentialAvailableMargin(
-			potentialTrade,
-			marketInfo?.maxLeverage
-		);
 		return isDelayedOrder
 			? potentialAvailableMargin?.sub(totalDeposit) ?? zeroBN
 			: potentialAvailableMargin;
-	}, [
-		potentialTrade,
-		marketInfo?.maxLeverage,
-		isDelayedOrder,
-		totalDeposit,
-		getPotentialAvailableMargin,
-	]);
+	}, [potentialTrade, marketInfo, isDelayedOrder, totalDeposit, getAvailableMargin]);
 
-	const previewTradeData = React.useMemo(() => {
+	const previewTradeData = useMemo(() => {
 		const potentialMarginUsage = potentialTrade?.margin.gt(0)
 			? potentialTrade!.margin.sub(previewAvailableMargin).div(potentialTrade!.margin).abs() ??
 			  zeroBN
 			: zeroBN;
 
-		const potentialBuyingPower =
-			previewAvailableMargin?.mul(maxLeverage ?? zeroBN)?.abs() ?? zeroBN;
+		const maxPositionSize =
+			!!potentialTrade && !!marketInfo
+				? potentialTrade.margin
+						.mul(marketInfo.maxLeverage)
+						.mul(potentialTrade.side === PositionSide.LONG ? 1 : -1)
+				: null;
+
+		const potentialBuyingPower = !!maxPositionSize
+			? maxPositionSize.sub(potentialTrade?.notionalValue).abs()
+			: zeroBN;
 
 		return {
-			// TODO: Re-enable this, disabling because the preview margin looks incorrect
-			// showPreview: size && !size.eq(0) && !!potentialTrade,
-			showPreview: false,
+			showPreview: !!potentialTrade && potentialTrade.sizeDelta.abs().gt(0),
 			totalMargin: potentialTrade?.margin || zeroBN,
 			availableMargin: previewAvailableMargin.gt(0) ? previewAvailableMargin : zeroBN,
 			buyingPower: potentialBuyingPower.gt(0) ? potentialBuyingPower : zeroBN,
 			marginUsage: potentialMarginUsage.gt(1) ? wei(1) : potentialMarginUsage,
 		};
-	}, [potentialTrade, previewAvailableMargin, maxLeverage]);
+	}, [potentialTrade, previewAvailableMargin, marketInfo]);
 
 	return (
 		<StyledInfoBox
 			dataTestId="market-info-box"
 			details={{
 				'Available Margin': {
-					value: `${formatDollars(availableMargin, {
-						currencyKey: undefined,
-					})}`,
+					value: formatDollars(availableMargin, { currencyKey: undefined }),
 					valueNode: (
 						<PreviewArrow showPreview={previewTradeData.showPreview && !potentialTrade?.showStatus}>
 							{formatDollars(previewTradeData?.availableMargin)}
@@ -117,9 +121,7 @@ const MarketInfoBox: React.FC = () => {
 					),
 				},
 				'Buying Power': {
-					value: `${formatDollars(buyingPower, {
-						currencyKey: undefined,
-					})}`,
+					value: formatDollars(buyingPower, { currencyKey: undefined }),
 					valueNode: previewTradeData?.buyingPower && (
 						<PreviewArrow showPreview={previewTradeData.showPreview && !potentialTrade?.showStatus}>
 							{formatDollars(previewTradeData?.buyingPower)}
@@ -127,7 +129,7 @@ const MarketInfoBox: React.FC = () => {
 					),
 				},
 				'Margin Usage': {
-					value: `${formatPercent(marginUsage)}`,
+					value: formatPercent(marginUsage),
 					valueNode: (
 						<PreviewArrow showPreview={previewTradeData.showPreview && !potentialTrade?.showStatus}>
 							{formatPercent(previewTradeData?.marginUsage)}

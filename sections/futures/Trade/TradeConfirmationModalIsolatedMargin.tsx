@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { setOpenModal } from 'state/app/reducer';
 import { modifyIsolatedPosition, modifyIsolatedPositionEstimateGas } from 'state/futures/actions';
 import {
 	selectIsModifyingIsolatedPosition,
-	selectModifyIsolatedGasEstimate,
 	selectTradePreview,
 	selectTradeSizeInputs,
 } from 'state/futures/selectors';
@@ -19,9 +18,6 @@ export default function TradeConfirmationModalIsolatedMargin() {
 	const potentialTradeDetails = useAppSelector(selectTradePreview);
 	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
 	const submitting = useAppSelector(selectIsModifyingIsolatedPosition);
-	const gasEstimate = useAppSelector(selectModifyIsolatedGasEstimate);
-
-	const transactionFee = useMemo(() => gasEstimate?.cost ?? zeroBN, [gasEstimate?.cost]);
 
 	useEffect(() => {
 		dispatch(
@@ -51,7 +47,6 @@ export default function TradeConfirmationModalIsolatedMargin() {
 		<TradeConfirmationModal
 			onDismiss={onDismiss}
 			onConfirmOrder={handleConfirmOrder}
-			gasFee={transactionFee}
 			isSubmitting={submitting}
 			tradeFee={potentialTradeDetails?.fee || zeroBN}
 		/>

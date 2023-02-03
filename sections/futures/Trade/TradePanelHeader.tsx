@@ -1,3 +1,4 @@
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useTranslation } from 'react-i18next';
 import styled, { useTheme } from 'styled-components';
 
@@ -9,10 +10,14 @@ import { NumberDiv } from 'components/Text/NumberLabel';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { FuturesAccountType } from 'queries/futures/subgraph';
 import { setOpenModal } from 'state/app/reducer';
-import { selectPosition, selectPositionStatus } from 'state/futures/selectors';
+import {
+	selectCrossMarginBalanceInfo,
+	selectHasRemainingMargin,
+	selectPosition,
+} from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { FetchStatus } from 'state/types';
-import { BorderedPanel, YellowIconButton } from 'styles/common';
+import { selectWallet } from 'state/wallet/selectors';
+import { BorderedPanel, YellowIconButton, PillButtonSpan } from 'styles/common';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 
 type Props = {
@@ -24,11 +29,25 @@ export default function TradePanelHeader({ accountType, onManageBalance }: Props
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
-	const position = useAppSelector(selectPosition);
-	const positionStatus = useAppSelector(selectPositionStatus);
-	const balance = position ? position.remainingMargin : null;
+	const { openConnectModal } = useConnectModal();
 
-	if (!balance && positionStatus.status === FetchStatus.Success) {
+	const position = useAppSelector(selectPosition);
+	const { freeMargin } = useAppSelector(selectCrossMarginBalanceInfo);
+	const hasMargin = useAppSelector(selectHasRemainingMargin);
+	const wallet = useAppSelector(selectWallet);
+
+	const balance =
+		accountType === 'isolated_margin' ? position?.remainingMargin ?? zeroBN : freeMargin;
+
+	if (!wallet) {
+		return (
+			<DepositButton variant="yellow" onClick={openConnectModal}>
+				<ButtonContent>{t('common.wallet.connect-wallet')}</ButtonContent>
+			</DepositButton>
+		);
+	}
+
+	if (!hasMargin) {
 		return (
 			<DepositButton
 				variant="yellow"
@@ -67,12 +86,23 @@ export default function TradePanelHeader({ accountType, onManageBalance }: Props
 			<BalanceRow onClick={onManageBalance}>
 				<NumberDiv contrast="strong">{formatDollars(balance ?? zeroBN)}</NumberDiv>
 				<BalanceButton>
-					<SwitchAssetArrows />
+					<StyledPillButtonSpan>
+						<SwitchAssetArrows />
+					</StyledPillButtonSpan>
 				</BalanceButton>
 			</BalanceRow>
 		</Container>
 	);
 }
+
+const StyledPillButtonSpan = styled(PillButtonSpan)`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 20px;
+	width: 20px;
+	margin-left: 0;
+`;
 
 const DepositButton = styled(Button)`
 	height: 55px;
@@ -110,9 +140,6 @@ const BalanceButton = styled(YellowIconButton)`
 	display: flex;
 	gap: 8px;
 	align-items: center;
-	&:hover {
-		opacity: 0.7;
-	}
 `;
 
 const FAQLink = styled.div`

@@ -4,29 +4,31 @@ import { ethers } from 'ethers';
 import { keyBy } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createContainer } from 'unstated-next';
-import { chain, useAccount, useNetwork, useSigner, useProvider } from 'wagmi';
+import { useAccount, useNetwork, useSigner, useProvider } from 'wagmi';
 
 import { sdk } from 'state/config';
 import { useAppDispatch } from 'state/hooks';
 import { resetNetwork, setSigner } from 'state/wallet/actions';
 
 import { generateExplorerFunctions, getBaseUrl } from './blockExplorer';
-import { wagmiClient } from './config';
+import { activeChainIds, chain, wagmiClient } from './config';
 
 export let transactionNotifier = new BaseTN(wagmiClient.provider);
 export let blockExplorer = generateExplorerFunctions(getBaseUrl(10));
 
 const useConnector = () => {
+	const dispatch = useAppDispatch();
 	const { chain: activeChain } = useNetwork();
-	const { address, isConnected: isWalletConnected } = useAccount();
+	const { address, isConnected: isWalletConnected } = useAccount({
+		onDisconnect: () => dispatch(setSigner(null)),
+	});
 	const [providerReady, setProviderReady] = useState(false);
 
-	const unsupportedNetwork = useMemo(() => activeChain?.unsupported ?? false, [activeChain]);
-
-	const network = useMemo(
-		() => (activeChain?.unsupported ? chain.optimism : activeChain ?? chain.optimism),
-		[activeChain]
-	);
+	const network = useMemo(() => {
+		return activeChainIds.includes(activeChain?.id ?? chain.optimism.id)
+			? activeChain ?? chain.optimism
+			: chain.optimism;
+	}, [activeChain]);
 
 	const walletAddress = useMemo(() => address ?? null, [address]);
 
@@ -46,8 +48,6 @@ const useConnector = () => {
 		() => synthetix({ provider: l2Provider, networkId: chain.optimism.id as NetworkId }),
 		[l2Provider]
 	);
-
-	const dispatch = useAppDispatch();
 
 	const handleNetworkChange = useCallback(
 		(networkId: NetworkId) => {
@@ -89,7 +89,6 @@ const useConnector = () => {
 
 	return {
 		activeChain,
-		unsupportedNetwork,
 		isWalletConnected,
 		walletAddress,
 		provider,

@@ -3,24 +3,23 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import ErrorView from 'components/Error';
+import ErrorView from 'components/ErrorView';
+import { FlexDivRow } from 'components/layout/flex';
 import StyledSlider from 'components/Slider/StyledSlider';
-import { useFuturesContext } from 'contexts/FuturesContext';
 import { editCrossMarginSize } from 'state/futures/actions';
 import {
 	selectAboveMaxLeverage,
 	selectCrossMarginBalanceInfo,
 	selectLeverageSide,
 	selectMaxLeverage,
+	selectMaxUsdInputAmount,
 	selectPosition,
 	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { FlexDivRow } from 'styles/common';
 
 export default function OrderSizeSlider() {
 	const { t } = useTranslation();
-	const { maxUsdInputAmount } = useFuturesContext();
 	const dispatch = useAppDispatch();
 	const { freeMargin: freeCrossMargin } = useAppSelector(selectCrossMarginBalanceInfo);
 	const { susdSizeString } = useAppSelector(selectTradeSizeInputs);
@@ -28,11 +27,11 @@ export default function OrderSizeSlider() {
 	const maxLeverage = useAppSelector(selectMaxLeverage);
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const position = useAppSelector(selectPosition);
+	const maxUsdInputAmount = useAppSelector(selectMaxUsdInputAmount);
 
 	const [percent, setPercent] = useState(0);
 	const [usdValue, setUsdValue] = useState(susdSizeString);
 
-	// eslint-disable-next-line
 	const onChangeMarginPercent = useCallback(
 		(value, commit = false) => {
 			setPercent(value);

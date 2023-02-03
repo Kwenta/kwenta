@@ -1,9 +1,9 @@
 import i18n from 'i18n';
 import { FC, useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
 import { createGlobalStyle } from 'styled-components';
 
-import { languageState } from 'store/app';
+import { useAppSelector } from 'state/hooks';
+import { selectLanguage } from 'state/preferences/selectors';
 import { linkCSS } from 'styles/common';
 
 type LayoutProps = {
@@ -11,7 +11,7 @@ type LayoutProps = {
 };
 
 const Layout: FC<LayoutProps> = ({ children }) => {
-	const language = useRecoilValue(languageState);
+	const language = useAppSelector(selectLanguage);
 
 	useEffect(() => {
 		i18n.changeLanguage(language);

@@ -15,17 +15,23 @@ import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { ETH_UNIT } from 'constants/network';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
-import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { FuturesTrade } from 'queries/futures/types';
-import useGetAllFuturesTradesForAccount from 'queries/futures/useGetAllFuturesTradesForAccount';
+import { FuturesTrade } from 'sdk/types/futures';
 import TradeDrawer from 'sections/futures/MobileTrade/drawers/TradeDrawer';
 import PositionType from 'sections/futures/PositionType';
 import { TradeStatus } from 'sections/futures/types';
-import { selectFuturesType } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { fetchAllTradesForAccount } from 'state/futures/actions';
+import {
+	selectAllUsersTrades,
+	selectFuturesAccount,
+	selectFuturesType,
+	selectQueryStatuses,
+} from 'state/futures/selectors';
+import { useAppSelector, useFetchAction } from 'state/hooks';
+import { FetchStatus } from 'state/types';
+import { selectNetwork } from 'state/wallet/selectors';
 import { formatShortDateWithoutYear } from 'utils/formatters/date';
 import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
 import {
@@ -38,20 +44,26 @@ import {
 
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
 
+const conditionalRender = <T,>(prop: T, children: ReactElement) =>
+	_.isNil(prop) ? <p>{NO_VALUE}</p> : children;
+
 const FuturesHistoryTable: FC = () => {
 	const [selectedTrade, setSelectedTrade] = useState<FuturesTrade>();
-	const accountType = useAppSelector(selectFuturesType);
-
-	const { walletAddress } = Connector.useContainer();
 	const { t } = useTranslation();
 	const isL2 = useIsL2();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { switchToL2 } = useNetworkSwitcher();
-	const futuresTradesQuery = useGetAllFuturesTradesForAccount(walletAddress);
-	const trades: FuturesTrade[] = useMemo(
-		() => (futuresTradesQuery.isSuccess ? futuresTradesQuery?.data ?? [] : []),
-		[futuresTradesQuery.isSuccess, futuresTradesQuery.data]
-	);
+
+	const accountType = useAppSelector(selectFuturesType);
+	const account = useAppSelector(selectFuturesAccount);
+	const network = useAppSelector(selectNetwork);
+	const trades = useAppSelector(selectAllUsersTrades);
+	const { trades: tradesQueryStatus } = useAppSelector(selectQueryStatuses);
+
+	useFetchAction(fetchAllTradesForAccount, {
+		dependencies: [account, network],
+		disabled: !account,
+	});
 
 	const mappedHistoricalTrades = useMemo(
 		() =>
@@ -75,9 +87,6 @@ const FuturesHistoryTable: FC = () => {
 		[trades]
 	);
 
-	const conditionalRender = <T,>(prop: T, children: ReactElement): ReactElement =>
-		_.isNil(prop) ? <p>{NO_VALUE}</p> : children;
-
 	return (
 		<>
 			<DesktopOnlyView>
@@ -85,7 +94,7 @@ const FuturesHistoryTable: FC = () => {
 					<StyledTable
 						data={isL2 ? mappedHistoricalTrades : []}
 						showPagination
-						isLoading={futuresTradesQuery.isLoading}
+						isLoading={tradesQueryStatus.status === FetchStatus.Loading}
 						noResultsMessage={
 							!isL2 ? (
 								<TableNoResults>
@@ -111,7 +120,7 @@ const FuturesHistoryTable: FC = () => {
 									return conditionalRender(
 										cellProps.row.original.timestamp,
 										<StyledTimeDisplay>
-											<TimeDisplay cellPropsValue={cellProps.row.original.timestamp} />
+											<TimeDisplay value={cellProps.row.original.timestamp} />
 										</StyledTimeDisplay>
 									);
 								},
@@ -200,7 +209,7 @@ const FuturesHistoryTable: FC = () => {
 									return conditionalRender(
 										cellProps.row.original.feesPaid,
 										<Currency.Price
-											currencyKey={'sUSD'}
+											currencyKey="sUSD"
 											price={cellProps.row.original.feesPaid}
 											sign={selectedPriceCurrency.sign}
 											conversionRate={selectPriceCurrencyRate}
@@ -231,7 +240,7 @@ const FuturesHistoryTable: FC = () => {
 						onTableRowClick={(row) => {
 							setSelectedTrade(row.original);
 						}}
-						isLoading={futuresTradesQuery.isLoading}
+						isLoading={tradesQueryStatus.status === FetchStatus.Loading}
 						noResultsMessage={
 							!isL2 ? (
 								<TableNoResults>

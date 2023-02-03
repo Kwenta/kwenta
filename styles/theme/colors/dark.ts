@@ -109,9 +109,8 @@ const darkTheme = {
 	},
 	text: {
 		header: '#B1B1B1',
-		title: common.secondaryGray,
 		value: common.primaryWhite,
-		label: common.secondaryGray,
+		label: common.neautralGray,
 		body: common.dark.gray,
 	},
 	icon: {
@@ -134,6 +133,9 @@ const darkTheme = {
 	},
 	chartLine: {
 		long: '#37A141',
+	},
+	socket: {
+		accent: `#252525`,
 	},
 };
 

@@ -1,12 +1,13 @@
 import { wei } from '@synthetixio/wei';
-import React, { ChangeEvent, useMemo, useState } from 'react';
+import React, { ChangeEvent, useMemo, memo } from 'react';
 import styled from 'styled-components';
 
 import SwitchAssetArrows from 'assets/svg/futures/switch-arrows.svg';
 import CustomInput from 'components/Input/CustomInput';
 import InputTitle from 'components/Input/InputTitle';
-import { useFuturesContext } from 'contexts/FuturesContext';
+import { FlexDivRow } from 'components/layout/flex';
 import { editTradeSizeInput } from 'state/futures/actions';
+import { setSelectedInputDenomination } from 'state/futures/reducer';
 import {
 	selectMarketPrice,
 	selectCrossMarginBalanceInfo,
@@ -17,9 +18,10 @@ import {
 	selectLeverageSide,
 	selectFuturesType,
 	selectMarketAsset,
+	selectSelectedInputDenomination,
+	selectMaxUsdInputAmount,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { FlexDivRow } from 'styles/common';
 import { floorNumber, isZero, zeroBN } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 
@@ -30,8 +32,7 @@ type OrderSizingProps = {
 	disabled?: boolean;
 };
 
-const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
-	const { maxUsdInputAmount } = useFuturesContext();
+const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) => {
 	const dispatch = useAppDispatch();
 
 	const { susdSizeString, nativeSizeString } = useAppSelector(selectTradeSizeInputs);
@@ -43,10 +44,10 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 	const marketAssetRate = useAppSelector(selectMarketPrice);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
 	const selectedLeverageSide = useAppSelector(selectLeverageSide);
+	const assetInputType = useAppSelector(selectSelectedInputDenomination);
+	const maxUsdInputAmount = useAppSelector(selectMaxUsdInputAmount);
 
 	const marketAsset = useAppSelector(selectMarketAsset);
-
-	const [assetInputType, setAssetInputType] = useState<'usd' | 'native'>('usd');
 
 	const tradePrice = useMemo(() => (orderPrice ? wei(orderPrice) : marketAssetRate), [
 		orderPrice,
@@ -87,7 +88,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 
 	const showPosSizeHelper =
 		position?.position?.size &&
-		(orderType === 'limit' || orderType === 'stop market') &&
+		(orderType === 'limit' || orderType === 'stop_market') &&
 		position?.position.side !== selectedLeverageSide;
 
 	const invalid =
@@ -119,7 +120,9 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 					disabled={isDisabled}
 					right={
 						<InputButton
-							onClick={() => setAssetInputType(assetInputType === 'usd' ? 'native' : 'usd')}
+							onClick={() =>
+								dispatch(setSelectedInputDenomination(assetInputType === 'usd' ? 'native' : 'usd'))
+							}
 						>
 							{assetInputType === 'usd' ? 'sUSD' : getDisplayAsset(marketAsset)}{' '}
 							<span>{<SwitchAssetArrows />}</span>
@@ -133,7 +136,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled, isMobile }) => {
 			{selectedAccountType === 'cross_margin' && <OrderSizeSlider />}
 		</>
 	);
-};
+});
 
 const OrderSizingContainer = styled.div`
 	margin-top: 28px;

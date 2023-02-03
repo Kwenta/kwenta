@@ -1,7 +1,6 @@
 import Wei from '@synthetixio/wei';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
@@ -15,12 +14,11 @@ import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner'
 import { selectBalances } from 'state/balances/selectors';
 import { sdk } from 'state/config';
 import {
-	selectActiveCrossPositionsCount,
+	// selectActiveCrossPositionsCount,
 	selectActiveIsolatedPositionsCount,
 	selectFuturesPortfolio,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { activePositionsTabState } from 'store/ui';
 import { formatDollars, toWei, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
@@ -44,10 +42,10 @@ const Overview: FC = () => {
 	const balances = useAppSelector(selectBalances);
 	const portfolio = useAppSelector(selectFuturesPortfolio);
 	const isolatedPositionsCount = useAppSelector(selectActiveIsolatedPositionsCount);
-	const crossPositionsCount = useAppSelector(selectActiveCrossPositionsCount);
+	// const crossPositionsCount = useAppSelector(selectActiveCrossPositionsCount);
 
-	const [activePositionsTab, setActivePositionsTab] = useRecoilState<PositionsTab>(
-		activePositionsTabState
+	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(
+		PositionsTab.ISOLATED_MARGIN
 	);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
@@ -147,13 +145,13 @@ const Overview: FC = () => {
 			},
 		];
 	}, [
-		crossPositionsCount,
+		// crossPositionsCount,
 		isolatedPositionsCount,
 		exchangeTokens,
 		balances.totalUSDBalance,
 		t,
 		activePositionsTab,
-		portfolio.crossMarginFutures,
+		// portfolio.crossMarginFutures,
 		portfolio.isolatedMarginFutures,
 		setActivePositionsTab,
 	]);

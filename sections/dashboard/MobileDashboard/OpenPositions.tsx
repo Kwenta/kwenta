@@ -1,16 +1,15 @@
 import Wei from '@synthetixio/wei';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SetterOrUpdater } from 'recoil';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
 import { FuturesAccountTypes } from 'queries/futures/types';
-import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
+import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
 import { selectBalances } from 'state/balances/selectors';
 import {
-	selectCrossMarginPositions,
+	// selectCrossMarginPositions,
 	selectFuturesPortfolio,
 	selectIsolatedMarginPositions,
 } from 'state/futures/selectors';
@@ -23,8 +22,6 @@ import { PositionsTab } from '../Overview/Overview';
 import SynthBalancesTable from '../SynthBalancesTable';
 
 export type OpenPositionsProps = {
-	activePositionsTab: PositionsTab;
-	setActivePositionsTab: SetterOrUpdater<PositionsTab>;
 	exchangeTokens: {
 		synth: string;
 		description: string;
@@ -36,17 +33,16 @@ export type OpenPositionsProps = {
 	exchangeTokenBalances: Wei;
 };
 
-const OpenPositions: React.FC<OpenPositionsProps> = ({
-	activePositionsTab,
-	setActivePositionsTab,
-	exchangeTokens,
-	exchangeTokenBalances,
-}) => {
+const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeTokenBalances }) => {
 	const { t } = useTranslation();
-	const crossPositions = useAppSelector(selectCrossMarginPositions);
+	// const crossPositions = useAppSelector(selectCrossMarginPositions);
 	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
 	const portfolio = useAppSelector(selectFuturesPortfolio);
 	const balances = useAppSelector(selectBalances);
+
+	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(
+		PositionsTab.ISOLATED_MARGIN
+	);
 
 	const POSITIONS_TABS = useMemo(
 		() => [
@@ -80,9 +76,9 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 		[
 			t,
 			isolatedPositions,
-			crossPositions,
+			// crossPositions,
 			activePositionsTab,
-			portfolio.crossMarginFutures,
+			// portfolio.crossMarginFutures,
 			portfolio.isolatedMarginFutures,
 			balances.totalUSDBalance,
 			exchangeTokenBalances,
@@ -121,13 +117,10 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({
 
 const TabButtonsContainer = styled.div`
 	display: flex;
-	margin-top: 16px;
-	margin-bottom: 16px;
+	margin: 16px 0;
 
-	& > button {
-		&:not(:last-of-type) {
-			margin-right: 14px;
-		}
+	& > button:not(:last-of-type) {
+		margin-right: 14px;
 	}
 `;
 

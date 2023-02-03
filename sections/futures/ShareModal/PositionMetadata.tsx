@@ -3,14 +3,11 @@ import { FC, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { selectFuturesPositionHistory, selectMarketPrice } from 'state/futures/selectors';
+import { selectMarketPrice, selectSelectedMarketPositionHistory } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
+import media from 'styles/media';
 import getLocale from 'utils/formatters/getLocale';
 import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
-
-type PositionMetadataProps = {
-	marketAsset: string;
-};
 
 function getColor(props: any) {
 	let color = '';
@@ -54,6 +51,23 @@ function getFontSize(props: any) {
 	return fontSize;
 }
 
+function getMobileFontSize(props: any) {
+	let fontSize = '';
+
+	switch (props.className) {
+		case 'date-or-price':
+			fontSize = '3vw';
+			break;
+		case 'header':
+		case 'time':
+		default:
+			fontSize = '2vw';
+			break;
+	}
+
+	return fontSize;
+}
+
 function getFontFamily(props: any) {
 	const fontFamilyObj: any = {
 		time: props.theme.fonts.regular,
@@ -66,11 +80,11 @@ function getFontFamily(props: any) {
 	}
 }
 
-const PositionMetadata: FC<PositionMetadataProps> = ({ marketAsset }) => {
+const PositionMetadata: FC = () => {
 	const { t } = useTranslation();
 	const [currentTimestamp, setCurrentTimestamp] = useState(0);
 
-	const futuresPositionHistory = useAppSelector(selectFuturesPositionHistory);
+	const currentPosition = useAppSelector(selectSelectedMarketPositionHistory);
 	const marketPrice = useAppSelector(selectMarketPrice);
 
 	let avgEntryPrice = '',
@@ -79,13 +93,7 @@ const PositionMetadata: FC<PositionMetadataProps> = ({ marketAsset }) => {
 		createdOnDate = '',
 		createdOnTime = '';
 
-	const currentPosition = futuresPositionHistory.find(
-		(position) => position.isOpen && position.asset === marketAsset
-	);
-
-	avgEntryPrice = currentPosition?.avgEntryPrice
-		? formatNumber(currentPosition?.avgEntryPrice)
-		: '';
+	avgEntryPrice = currentPosition?.avgEntryPrice.toNumber().toString() ?? '';
 	const openTimestamp = currentPosition?.openTimestamp ?? 0;
 
 	openAtDate = format(openTimestamp, 'PP', { locale: getLocale() });
@@ -144,6 +152,9 @@ const ContainerText = styled.div`
 	width: 100%;
 
 	font-family: ${(props) => getFontFamily(props)};
+	${media.lessThan('md')`
+		font-size: ${(props) => getMobileFontSize(props)};
+	`}
 `;
 
 const TopRightContainer = styled.div`
@@ -155,6 +166,15 @@ const TopRightContainer = styled.div`
 
 	bottom: 5.5vw;
 	left: 12.02vw;
+
+	${media.lessThan('md')`
+		top: unset;
+		bottom: 45%;
+		right: 0;
+		left: unset;
+		width: 48%;
+		text-align: left;
+	`}
 `;
 
 const TopLeftContainer = styled.div`
@@ -166,6 +186,15 @@ const TopLeftContainer = styled.div`
 
 	bottom: 5.5vw;
 	left: 2.02vw;
+
+	${media.lessThan('md')`
+		top: unset;
+		bottom: 45%;
+		right: unset;
+		left: 0;
+		width: 48%;
+		text-align: right;
+	`}
 `;
 
 const BottomRightContainer = styled.div`
@@ -177,6 +206,15 @@ const BottomRightContainer = styled.div`
 
 	bottom: 2vw;
 	left: 12.02vw;
+
+	${media.lessThan('md')`
+		top: unset;
+		bottom: 35%;
+		right: 0;
+		left: unset;
+		width: 48%;
+		text-align: left;
+	`}
 `;
 
 const BottomLeftContainer = styled.div`
@@ -188,6 +226,15 @@ const BottomLeftContainer = styled.div`
 
 	bottom: 2vw;
 	left: 2.02vw;
+
+	${media.lessThan('md')`
+		top: unset;
+		bottom: 35%;
+		right: unset;
+		left: 0;
+		width: 48%;
+		text-align: right;
+	`}
 `;
 
 export default PositionMetadata;

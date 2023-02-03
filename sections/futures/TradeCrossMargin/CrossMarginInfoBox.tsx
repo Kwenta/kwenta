@@ -1,17 +1,18 @@
 import Wei, { wei } from '@synthetixio/wei';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 
 import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import InfoBox from 'components/InfoBox';
-import { MiniLoader } from 'components/Loader';
 import PreviewArrow from 'components/PreviewArrow';
-import { useFuturesContext } from 'contexts/FuturesContext';
 import { FuturesPotentialTradeDetails } from 'sdk/types/futures';
+import { setOpenModal } from 'state/app/reducer';
+import { selectOpenModal } from 'state/app/selectors';
 import {
 	selectCrossMarginBalanceInfo,
 	selectCrossMarginMarginDelta,
 	selectCrossMarginOrderPrice,
+	selectCrossMarginSelectedLeverage,
 	selectCrossMarginTradeFees,
 	selectMarketInfo,
 	selectOrderType,
@@ -20,7 +21,7 @@ import {
 	selectTradePreviewStatus,
 	selectTradeSizeInputs,
 } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { PillButtonSpan } from 'styles/common';
 import {
@@ -39,7 +40,7 @@ type Props = {
 };
 
 function MarginInfoBox({ editingLeverage }: Props) {
-	const { selectedLeverage } = useFuturesContext();
+	const dispatch = useAppDispatch();
 
 	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
@@ -52,9 +53,10 @@ function MarginInfoBox({ editingLeverage }: Props) {
 	const previewStatus = useAppSelector(selectTradePreviewStatus);
 	const orderType = useAppSelector(selectOrderType);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
-	const { crossMarginFee } = useAppSelector(selectCrossMarginTradeFees);
+	const openModal = useAppSelector(selectOpenModal);
+	const selectedLeverage = useAppSelector(selectCrossMarginSelectedLeverage);
 
-	const [openModal, setOpenModal] = useState<'leverage' | 'keeper-deposit' | null>(null);
+	const { crossMarginFee } = useAppSelector(selectCrossMarginTradeFees);
 
 	const totalMargin = position?.remainingMargin.add(crossMarginFreeMargin) ?? zeroBN;
 	const remainingMargin = position?.remainingMargin ?? zeroBN;
@@ -111,9 +113,9 @@ function MarginInfoBox({ editingLeverage }: Props) {
 
 		return {
 			showPreview:
-				((orderType === 'market' || orderType === 'delayed' || orderType === 'delayed offchain') &&
+				((orderType === 'market' || orderType === 'delayed' || orderType === 'delayed_offchain') &&
 					(!size.eq(0) || !marginDelta.eq(0))) ||
-				((orderType === 'limit' || orderType === 'stop market') && !!orderPrice && !size.eq(0)),
+				((orderType === 'limit' || orderType === 'stop_market') && !!orderPrice && !size.eq(0)),
 			totalMargin: potentialTrade?.margin.sub(crossMarginFee) || zeroBN,
 			freeAccountMargin: crossMarginFreeMargin.sub(marginDelta),
 			availableMargin: previewAvailableMargin.gt(0) ? previewAvailableMargin : zeroBN,
@@ -152,8 +154,9 @@ function MarginInfoBox({ editingLeverage }: Props) {
 									<PreviewArrow
 										showPreview={showPreview}
 										color={previewTradeData.freeAccountMargin.lt(0) ? 'red' : 'yellow'}
+										loading={isLoading}
 									>
-										{isLoading ? <MiniLoader /> : formatDollars(previewTradeData.freeAccountMargin)}
+										{formatDollars(previewTradeData.freeAccountMargin)}
 									</PreviewArrow>
 								),
 						  }
@@ -161,16 +164,16 @@ function MarginInfoBox({ editingLeverage }: Props) {
 					'Market Margin': {
 						value: formatDollars(position?.remainingMargin || 0),
 						valueNode: (
-							<PreviewArrow showPreview={showPreview}>
-								{isLoading ? <MiniLoader /> : formatDollars(previewTradeData.totalMargin)}
+							<PreviewArrow showPreview={showPreview} loading={isLoading}>
+								{formatDollars(previewTradeData.totalMargin)}
 							</PreviewArrow>
 						),
 					},
 					'Margin Usage': {
 						value: formatPercent(marginUsage),
 						valueNode: (
-							<PreviewArrow showPreview={showPreview}>
-								{isLoading ? <MiniLoader /> : formatPercent(previewTradeData?.marginUsage)}
+							<PreviewArrow showPreview={showPreview} loading={isLoading}>
+								{formatPercent(previewTradeData?.marginUsage)}
 							</PreviewArrow>
 						),
 					},
@@ -182,7 +185,7 @@ function MarginInfoBox({ editingLeverage }: Props) {
 										{keeperEthBal.gt(0) && (
 											<PillButtonSpan
 												padding={'4px 3px 1px 3px'}
-												onClick={() => setOpenModal('keeper-deposit')}
+												onClick={() => dispatch(setOpenModal('futures_withdraw_keeper_balance'))}
 											>
 												<WithdrawArrow width="12px" height="9px" />
 											</PillButtonSpan>
@@ -204,13 +207,17 @@ function MarginInfoBox({ editingLeverage }: Props) {
 								)}
 								x
 								{!editingLeverage && (
-									<PillButtonSpan onClick={() => setOpenModal('leverage')}>Edit</PillButtonSpan>
+									<PillButtonSpan
+										onClick={() => dispatch(setOpenModal('futures_edit_input_leverage'))}
+									>
+										Edit
+									</PillButtonSpan>
 								)}
 							</>
 						),
 						valueNode: (
-							<PreviewArrow showPreview={showPreview && !!editingLeverage}>
-								{isLoading ? <MiniLoader /> : formatNumber(previewTradeData.leverage || 0) + 'x'}
+							<PreviewArrow showPreview={showPreview && !!editingLeverage} loading={isLoading}>
+								{formatNumber(previewTradeData.leverage || 0) + 'x'}
 							</PreviewArrow>
 						),
 					},
@@ -218,11 +225,9 @@ function MarginInfoBox({ editingLeverage }: Props) {
 				disabled={marketInfo?.isSuspended}
 			/>
 
-			{openModal === 'leverage' && (
-				<EditLeverageModal editMode="new_position" onDismiss={() => setOpenModal(null)} />
-			)}
-			{openModal === 'keeper-deposit' && (
-				<ManageKeeperBalanceModal defaultType="withdraw" onDismiss={() => setOpenModal(null)} />
+			{openModal === 'futures_edit_input_leverage' && <EditLeverageModal editMode="new_position" />}
+			{openModal === 'futures_withdraw_keeper_balance' && (
+				<ManageKeeperBalanceModal defaultType="withdraw" />
 			)}
 		</>
 	);

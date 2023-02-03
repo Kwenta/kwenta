@@ -4,7 +4,6 @@ import * as Sentry from '@sentry/browser';
 import { BrowserTracing } from '@sentry/tracing';
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
-import WithAppContainers from 'containers';
 import { NextPage } from 'next';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
@@ -13,28 +12,31 @@ import { useTranslation } from 'react-i18next';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Provider } from 'react-redux';
-import { RecoilRoot, useRecoilValue } from 'recoil';
 import { ThemeProvider } from 'styled-components';
-import { chain, WagmiConfig } from 'wagmi';
+import { WagmiConfig } from 'wagmi';
 
+import ErrorNotifier from 'components/ErrorView/ErrorNotifier';
 import Connector from 'containers/Connector';
-import { chains, wagmiClient } from 'containers/Connector/config';
+import { chains, wagmiClient, chain } from 'containers/Connector/config';
 import useMonitorTransactions from 'hooks/useMonitorTransactions';
 import AcknowledgementModal from 'sections/app/AcknowledgementModal';
 import Layout from 'sections/shared/Layout';
 import SystemStatus from 'sections/shared/SystemStatus';
 import { useAppData } from 'state/app/hooks';
+import { useAppSelector } from 'state/hooks';
+import { selectCurrentTheme } from 'state/preferences/selectors';
 import store from 'state/store';
-import { currentThemeState } from 'store/ui';
 import { MediaContextProvider } from 'styles/media';
 import { themes } from 'styles/theme';
+import { IGNORE_ERRORS } from 'utils/logError';
+import { getDesignTokens } from 'utils/theme';
+
 import 'styles/main.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import '@reach/dialog/styles.css';
 import '@rainbow-me/rainbowkit/styles.css';
 import '../i18n';
-import { getDesignTokens } from 'utils/theme';
 
 type NextPageWithLayout = NextPage & {
 	getLayout?: (page: ReactElement) => ReactNode;
@@ -50,10 +52,12 @@ Sentry.init({
 		'https://d48644bc80d04977a26132b346417210@o4504363236851712.ingest.sentry.io/4504363261362177',
 	maxBreadcrumbs: 50,
 	debug: process.env.NODE_ENV !== 'production',
+	enabled: process.env.NODE_ENV === 'production',
 	release: 'kwenta@' + process.env.GIT_HASH_ID!.toString(),
 	autoSessionTracking: true,
 	integrations: [new BrowserTracing()],
 	tracesSampleRate: 0.3,
+	ignoreErrors: IGNORE_ERRORS,
 });
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {
@@ -70,9 +74,9 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 	useMonitorTransactions();
 
 	const getLayout = Component.getLayout || ((page) => page);
+	const currentTheme = useAppSelector(selectCurrentTheme);
 
 	const isReady = useMemo(() => typeof window !== 'undefined', []);
-	const currentTheme = useRecoilValue(currentThemeState);
 	const theme = useMemo(() => themes[currentTheme], [currentTheme]);
 	// @ts-ignore palette options
 	const muiTheme = useMemo(() => createTheme(getDesignTokens(currentTheme)), [currentTheme]);
@@ -105,6 +109,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 								<AcknowledgementModal />
 								<SystemStatus>{getLayout(<Component {...pageProps} />)}</SystemStatus>
 							</Layout>
+							<ErrorNotifier />
 							<ReactQueryDevtools position="top-left" />
 						</SynthetixQueryContextProvider>
 					</MediaContextProvider>
@@ -140,15 +145,13 @@ const App: FC<AppProps> = (props) => {
 				<link rel="icon" href="/images/favicon.svg" />
 			</Head>
 			<Provider store={store}>
-				<RecoilRoot>
-					<QueryClientProvider client={new QueryClient()}>
-						<WagmiConfig client={wagmiClient}>
-							<WithAppContainers>
-								<InnerApp {...props} />
-							</WithAppContainers>
-						</WagmiConfig>
-					</QueryClientProvider>
-				</RecoilRoot>
+				<QueryClientProvider client={new QueryClient()}>
+					<WagmiConfig client={wagmiClient}>
+						<Connector.Provider>
+							<InnerApp {...props} />
+						</Connector.Provider>
+					</WagmiConfig>
+				</QueryClientProvider>
 			</Provider>
 		</>
 	);

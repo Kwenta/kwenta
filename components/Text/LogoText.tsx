@@ -19,9 +19,9 @@ export const LogoText: FC<LogoTextProps> = memo(({ children, yellow }) => {
 });
 
 const TitleText = styled(Heading)<{ $yellow?: boolean; $mono?: boolean }>`
-	font-size: 25px;
+	font-size: 26px;
 	margin-right: 8px;
-	font-family: AkkuratMonoLLWeb-Regular;
+	font-family: ${(props) => props.theme.fonts.monoBold};
 
 	${(props) =>
 		props.$yellow &&

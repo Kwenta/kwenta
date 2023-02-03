@@ -41,7 +41,7 @@ export default class Context implements IContext {
 			this.setSigner(context.signer);
 		}
 
-		this.contracts = getContractsByNetwork(context.networkId, context.signer ?? context.provider);
+		this.contracts = getContractsByNetwork(context.networkId, context.provider);
 		this.multicallContracts = getMulticallContractsByNetwork(context.networkId);
 	}
 
@@ -88,7 +88,7 @@ export default class Context implements IContext {
 
 	public setNetworkId(networkId: NetworkId) {
 		this.context.networkId = networkId;
-		this.contracts = getContractsByNetwork(networkId, this.context.signer ?? this.provider);
+		this.contracts = getContractsByNetwork(networkId, this.provider);
 		this.multicallContracts = getMulticallContractsByNetwork(networkId);
 		this.events.emit('network_changed', { networkId: networkId });
 	}
@@ -96,7 +96,5 @@ export default class Context implements IContext {
 	public async setSigner(signer: ethers.Signer) {
 		this.context.walletAddress = await signer.getAddress();
 		this.context.signer = signer;
-		// Reinit contracts with signer when connected
-		this.contracts = getContractsByNetwork(this.networkId, signer);
 	}
 }

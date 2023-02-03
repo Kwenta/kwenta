@@ -3,7 +3,6 @@ import { wei } from '@synthetixio/wei';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import Select from 'components/Select';
@@ -12,7 +11,7 @@ import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { Price, Rates } from 'queries/rates/types';
+import { Rates } from 'queries/rates/types';
 import {
 	selectMarketAsset,
 	selectMarkets,
@@ -20,9 +19,8 @@ import {
 	selectFuturesType,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { selectPrices } from 'state/prices/selectors';
+import { selectPreviousDayPrices, selectPrices } from 'state/prices/selectors';
 import { FetchStatus } from 'state/types';
-import { pastRatesState } from 'store/futures';
 import { assetToSynth, iStandardSynth } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import {
@@ -69,7 +67,7 @@ type MarketsDropdownProps = {
 };
 
 const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
-	const pastRates = useRecoilValue(pastRatesState);
+	const pastRates = useAppSelector(selectPreviousDayPrices);
 	const accountType = useAppSelector(selectFuturesType);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const futuresMarkets = useAppSelector(selectMarkets);
@@ -107,7 +105,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	);
 
 	const getPastPrice = React.useCallback(
-		(asset: string) => pastRates.find((price: Price) => price.synth === asset),
+		(asset: string) => pastRates.find((price) => price.synth === asset),
 		[pastRates]
 	);
 
@@ -134,12 +132,12 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 						isAssetPrice: true,
 					}),
 					change: formatPercent(
-						basePriceRate && pastPrice?.price
-							? wei(basePriceRate).sub(pastPrice?.price).div(basePriceRate)
+						basePriceRate && pastPrice?.rate
+							? wei(basePriceRate).sub(pastPrice?.rate).div(basePriceRate)
 							: zeroBN
 					),
 					negativeChange:
-						basePriceRate && pastPrice?.price ? wei(basePriceRate).lt(pastPrice?.price) : false,
+						basePriceRate && pastPrice?.rate ? wei(basePriceRate).lt(pastPrice?.rate) : false,
 					isMarketClosed: market.isSuspended,
 					closureReason: market.marketClosureReason,
 				});
@@ -189,16 +187,16 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 						? marketAsset === 'DebtRatio'
 							? undefined
 							: formatPercent(
-									selectedBasePriceRate && selectedPastPrice?.price
+									selectedBasePriceRate && selectedPastPrice?.rate
 										? wei(selectedBasePriceRate)
-												.sub(selectedPastPrice?.price)
+												.sub(selectedPastPrice?.rate)
 												.div(selectedBasePriceRate)
 										: zeroBN
 							  )
 						: undefined,
 					negativeChange: mobile
-						? selectedBasePriceRate && selectedPastPrice?.price
-							? wei(selectedBasePriceRate).lt(selectedPastPrice?.price)
+						? selectedBasePriceRate && selectedPastPrice?.rate
+							? wei(selectedBasePriceRate).lt(selectedPastPrice?.rate)
 							: false
 						: false,
 					isMarketClosed: isFuturesMarketClosed,

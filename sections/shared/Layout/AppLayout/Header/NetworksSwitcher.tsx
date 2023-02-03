@@ -2,18 +2,22 @@ import { useChainModal } from '@rainbow-me/rainbowkit';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { chain } from 'wagmi';
 
 import LinkIcon from 'assets/svg/app/link-blue.svg';
 import SwitchIcon from 'assets/svg/app/switch.svg';
+import ArbitrumIcon from 'assets/svg/providers/arbitrum.svg';
+import AvalancheIcon from 'assets/svg/providers/avalanche.svg';
+import BinanceIcon from 'assets/svg/providers/binance.svg';
 import EthereumIcon from 'assets/svg/providers/ethereum.svg';
 import OptimismIcon from 'assets/svg/providers/optimism.svg';
+import PolygonIcon from 'assets/svg/providers/polygon.svg';
 import Button from 'components/Button';
 import LabelContainer from 'components/Nav/DropDownLabel';
 import Select from 'components/Select';
 import { IndicatorSeparator, DropdownIndicator } from 'components/Select/Select';
 import { EXTERNAL_LINKS } from 'constants/links';
 import Connector from 'containers/Connector';
+import { chain } from 'containers/Connector/config';
 import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import { ExternalLink } from 'styles/common';
@@ -27,9 +31,9 @@ type ReactSelectOptionProps = {
 };
 
 const NetworksSwitcher: FC = () => {
-	const { network: activeChain } = Connector.useContainer();
-	const { openChainModal } = useChainModal();
+	const { activeChain } = Connector.useContainer();
 	const { t } = useTranslation();
+	const { openChainModal } = useChainModal();
 	const isL2 = useIsL2();
 	const network = activeChain?.id === chain.optimismGoerli.id ? 'testnet' : 'mainnet';
 	const networkLabel = 'header.networks-switcher.optimism-' + network;
@@ -57,6 +61,23 @@ const NetworksSwitcher: FC = () => {
 		},
 	];
 
+	const networkIcon = (prefixIcon: string) => {
+		switch (prefixIcon) {
+			case 'Polygon':
+				return <PolygonIcon width={20} height={14} />;
+			case 'Arbitrum One':
+				return <ArbitrumIcon width={20} height={14} />;
+			case 'Ethereum':
+				return <EthereumIcon width={20} height={14} />;
+			case 'Avalanche':
+				return <AvalancheIcon width={20} height={14} />;
+			case 'BNB Smart Chain':
+				return <BinanceIcon width={20} height={14} />;
+			default:
+				return <OptimismIcon width={20} height={14} />;
+		}
+	};
+
 	const formatOptionLabel = ({
 		label,
 		prefixIcon,
@@ -66,11 +87,7 @@ const NetworksSwitcher: FC = () => {
 	}: ReactSelectOptionProps) => (
 		<ExternalLink href={link} onClick={onClick}>
 			<LabelContainer noPadding={!!prefixIcon}>
-				{prefixIcon === 'Optimism' && (
-					<PrefixIcon>
-						<OptimismIcon width={20} height={14} />
-					</PrefixIcon>
-				)}
+				{!!prefixIcon && activeChain && <PrefixIcon>{networkIcon(activeChain.name)}</PrefixIcon>}
 				{t(label)}
 				{postfixIcon &&
 					(postfixIcon === 'Link' ? <LinkIcon width={14} height={14} /> : <SwitchIcon />)}
@@ -81,9 +98,7 @@ const NetworksSwitcher: FC = () => {
 	return !isL2 ? (
 		<Container onClick={openChainModal}>
 			<StyledButton noOutline size="sm">
-				<PrefixIcon>
-					<EthereumIcon width={20} height={14} />
-				</PrefixIcon>
+				{activeChain && <PrefixIcon>{networkIcon(activeChain.name)}</PrefixIcon>}
 				{activeChain?.name}
 			</StyledButton>
 		</Container>
@@ -95,11 +110,11 @@ const NetworksSwitcher: FC = () => {
 				options={OPTIMISM_OPTIONS}
 				value={{ label: networkLabel, prefixIcon: 'Optimism' }}
 				menuWidth={240}
-				optionPadding={'0px'} //override default padding to 0
+				optionPadding="0px"
 				components={{ IndicatorSeparator, DropdownIndicator }}
 				isSearchable={false}
 				variant="flat"
-			></L2Select>
+			/>
 		</Container>
 	);
 };

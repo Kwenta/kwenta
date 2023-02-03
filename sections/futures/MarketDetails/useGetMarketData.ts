@@ -1,11 +1,11 @@
 import { wei } from '@synthetixio/wei';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { getDisplayAsset } from 'sdk/utils/futures';
 import {
 	selectMarketAsset,
 	selectMarketInfo,
@@ -16,7 +16,7 @@ import {
 	selectMarketPriceColor,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { pastRatesState } from 'store/futures';
+import { selectPreviousDayPrices } from 'state/prices/selectors';
 import { isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
@@ -32,7 +32,7 @@ const useGetMarketData = (mobile?: boolean) => {
 	const marketKey = useAppSelector(selectMarketKey);
 	const marketInfo = useAppSelector(selectMarketInfo);
 
-	const pastRates = useRecoilValue(pastRatesState);
+	const pastRates = useAppSelector(selectPreviousDayPrices);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
 	const marketPrices = useAppSelector(selectMarketPrices);
 	const marketPrice = useAppSelector(selectSkewAdjustedPrice);
@@ -45,7 +45,7 @@ const useGetMarketData = (mobile?: boolean) => {
 			? DEFAULT_CRYPTO_DECIMALS
 			: undefined;
 
-	const pastPrice = pastRates.find((price) => price.synth === marketAsset);
+	const pastPrice = pastRates.find((price) => price.synth === getDisplayAsset(marketAsset));
 
 	const oraclePrice = marketPrices.onChain ?? wei(0);
 
@@ -103,17 +103,17 @@ const useGetMarketData = (mobile?: boolean) => {
 				},
 				[MarketDataKey.dailyChange]: {
 					value:
-						marketPrice.gt(0) && pastPrice?.price
+						marketPrice.gt(0) && pastPrice?.rate
 							? `${formatCurrency(
 									selectedPriceCurrency.name,
-									marketPrice.sub(pastPrice.price) ?? zeroBN,
+									marketPrice.sub(pastPrice.rate) ?? zeroBN,
 									{ sign: '$', minDecimals, isAssetPrice: true }
-							  )} (${formatPercent(marketPrice.sub(pastPrice.price).div(marketPrice) ?? zeroBN)})`
+							  )} (${formatPercent(marketPrice.sub(pastPrice.rate).div(marketPrice) ?? zeroBN)})`
 							: NO_VALUE,
-					color: pastPrice?.price
-						? marketPrice.sub(pastPrice.price).gt(zeroBN)
+					color: pastPrice?.rate
+						? marketPrice.sub(pastPrice.rate).gt(zeroBN)
 							? 'green'
-							: marketPrice.sub(pastPrice.price).lt(zeroBN)
+							: marketPrice.sub(pastPrice.rate).lt(zeroBN)
 							? 'red'
 							: ''
 						: undefined,
@@ -138,17 +138,17 @@ const useGetMarketData = (mobile?: boolean) => {
 				},
 				[MarketDataKey.dailyChange]: {
 					value:
-						marketPrice.gt(0) && pastPrice?.price
+						marketPrice.gt(0) && pastPrice?.rate
 							? `${formatCurrency(
 									selectedPriceCurrency.name,
-									marketPrice.sub(pastPrice.price) ?? zeroBN,
+									marketPrice.sub(pastPrice.rate) ?? zeroBN,
 									{ sign: '$', minDecimals, isAssetPrice: true }
-							  )} (${formatPercent(marketPrice.sub(pastPrice.price).div(marketPrice) ?? zeroBN)})`
+							  )} (${formatPercent(marketPrice.sub(pastPrice.rate).div(marketPrice) ?? zeroBN)})`
 							: NO_VALUE,
-					color: pastPrice?.price
-						? marketPrice.sub(pastPrice.price).gt(zeroBN)
+					color: pastPrice?.rate
+						? marketPrice.sub(pastPrice.rate).gt(zeroBN)
 							? 'green'
-							: marketPrice.sub(pastPrice.price).lt(zeroBN)
+							: marketPrice.sub(pastPrice.rate).lt(zeroBN)
 							? 'red'
 							: ''
 						: undefined,
@@ -185,7 +185,7 @@ const useGetMarketData = (mobile?: boolean) => {
 		oraclePrice,
 		futuresVolumes,
 		selectedPriceCurrency.name,
-		pastPrice?.price,
+		pastPrice?.rate,
 		minDecimals,
 		marketPrice,
 		t,

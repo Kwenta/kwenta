@@ -3,7 +3,7 @@
 		"en": "English"
 	},
 	"meta": {
-		"description": "Gain exposure to cryptocurrencies, forex, indices, and commodities on Ethereum with zero slippage",
+		"description": "Gain exposure to cryptocurrencies, forex and commodities on Ethereum with zero slippage",
 		"og": {
 			"title": "Kwenta",
 			"site-name": "Kwenta"
@@ -16,6 +16,7 @@
 			"markets": "futures",
 			"isolated-margin": "Isolated Margin",
 			"cross-margin": "Cross Margin",
+			"v2-alpha": "Try Futures V2 Alpha",
 			"leaderboard-alltime": "All Time",
 			"competition-round-1": "Round 1",
 			"competition-round-2": "Round 2",
@@ -52,7 +53,7 @@
 			"governance": {
 				"title": "Governance",
 				"overview": "Overview",
-				"kips": "KIPs"
+				"kips": "Kwenta State Log"
 			},
 			"socials": {
 				"title": "Socials",
@@ -70,9 +71,7 @@
 		"assets": {
 			"title": "UNIQUE MARKETS",
 			"description": "Backed by Chainlink Oracles",
-			"index": "Unique Indices",
 			"forex": "Forex",
-			"equities": "Traditional Equities",
 			"crypto": "Cryptocurrencies",
 			"commodity": "Commodities",
 			"short": "Short positions"
@@ -284,7 +283,7 @@
 				"governance": "Governance",
 				"dev-dao": "Dev DAO",
 				"marketing-dao": "Marketing DAO",
-				"kips": "KIPs"
+				"kips": "Kwenta State Log"
 			}
 		}
 	},
@@ -344,7 +343,7 @@
 				"24h-vol": "Total trade volume within the past 24 hours",
 				"24h-trades": "Total amount of trades on selected pair within the past 24h",
 				"open-interest": "Total notional value on all outstanding positions of the selected market",
-				"1h-funding-rate": "Funding applies to all open positions. A positive rate means longs pay shorts, a negative rate means shorts pay longs. The rate is calculated as the average funding paid by open positions for the last hour. Funding accrues on a position every time it is opened, modified, or closed. Funding accrues on open positions."
+				"1h-funding-rate": "Funding applies to all open positions. A positive rate means longs pay shorts, a negative rate means shorts pay longs. The rate increases when a market is skewed long, and decreases when it is skewed short. Funding accrues on a position every time it is opened, modified, or closed."
 			},
 			"deprecated-info": "DEBT-PERP is being deprecated soon. Please close your positions at your earliest convenience."
 		},
@@ -467,7 +466,7 @@
 			"futures-markets-table": {
 				"market": "Market",
 				"oracle": "Oracle",
-				"oracle-price": "Oracle Price",
+				"mark-price": "Mark Price",
 				"daily-change": "24H Change",
 				"funding-rate": "1H Funding Rate",
 				"open-interest": "Open Interest",
@@ -515,7 +514,7 @@
 					"claimable-rewards": "Claimable Rewards",
 					"escrowed-rewards": "Escrowed Rewards",
 					"liquid-rewards": "Liquid Rewards",
-					"annual-percentage-yield": "Annual Percentage Yield",
+					"annual-percentage-rate": "Annual Percentage Rate",
 					"claim": "Claim",
 					"current-trading-period": "Current Trading Period:"
 				},
@@ -526,9 +525,12 @@
 					"trading-rewards-tooltip": "Only trades made using a Kwenta Cross Margin account are eligible for trading rewards.",
 					"spot-fee-paid": "Spot Fee Paid: Epoch {{EpochPeriod}}",
 					"future-fee-paid": "Futures Fees Paid: Ep. {{EpochPeriod}}",
+					"future-fee-paid-mobile": "Futures Fees Paid",
 					"fees-paid": "Total Fees in Pool: Ep. {{EpochPeriod}}",
+					"fees-paid-mobile": "Total Fees in Pool",
 					"estimated-rewards": "Estimated Reward*",
 					"estimated-reward-share": "Estimated Reward Share*",
+					"estimated-reward-share-mobile": "Est. Reward Share*",
 					"trading-activity-reset": "Time until next epoch",
 					"epoch": "Epoch {{EpochPeriod}}: {{EpochDate}}",
 					"claimable-rewards-epoch": "Claimable Rewards: Epoch {{EpochPeriod}}",
@@ -682,6 +684,10 @@
 					"avg-entry-price": "The average price at which the position was opened"
 				}
 			},
+			"empty-position-card": {
+				"no-position": "No Open Position",
+				"explore-markets": "Explore available Markets"
+			},
 			"state": {
 				"opens-soon": "opens soon",
 				"closes-soon": "closes soon",
@@ -723,7 +729,7 @@
 			"trade": {
 				"market": "isolated market",
 				"title": "trade",
-				"perpsv2-disclaimer": "Synthetix Perps V2 markets are currently in closed alpha. Users assume all risks of interacting with these smart contracts.",
+				"perpsv2-disclaimer": "Synthetix Perps V2 markets are currently in alpha. Users assume all risks of interacting with these smart contracts.",
 				"input": {
 					"buy": "buy",
 					"sell": "sell",
@@ -772,7 +778,7 @@
 						"gas-fee": "Gas Fee",
 						"max": "Max",
 						"deposit": {
-							"title": "Deposit Margin",
+							"title": "Deposit",
 							"button": "Deposit Margin",
 							"approve-button": "Approve sUSD",
 							"disclaimer": "A $50 margin minimum is required to open a position.",
@@ -781,13 +787,18 @@
 							"exceeds-balance": "Amount exceeds balance"
 						},
 						"withdraw": {
-							"title": "Withdraw Margin",
+							"title": "Withdraw",
 							"button": "Withdraw Margin"
 						},
 						"title": "Edit margin",
 						"actions": {
 							"withdraw": "Withdraw",
 							"deposit": "Deposit"
+						},
+						"bridge": {
+							"title": "Bridge",
+							"low-balance": "Your sUSD balance is low. You can bridge more assets from another network below.",
+							"no-balance": "To get started, you need sUSD to trade on Kwenta. You can bridge assets from another network into sUSD below."
 						}
 					}
 				},
@@ -808,6 +819,7 @@
 				"confirmation": {
 					"modal": {
 						"confirm-order": "Confirm order",
+						"close-order": "Close position",
 						"max-leverage-disclaimer": "Note: A next price update could cause your order to exceed maximum leverage resulting in the order being dropped by the keeper.",
 						"disabled-min-margin": "Minimum market margin of $50 required",
 						"delayed-disclaimer": "* The deposit is applied to trading fees and keeper fees on order execution. If an order is either cancelled or not executed, the deposit will be forfeit to the Synthetix debt pool."
@@ -836,6 +848,9 @@
 				"preview": {
 					"insufficient-margin": "Insufficient free margin",
 					"error": "Error generating preview"
+				},
+				"fees": {
+					"tooltip": "Fees are displayed as maker/taker. Maker fees apply to orders that reduce the market skew. Taker fees apply to orders that increase the market skew."
 				},
 				"orders": {
 					"manage-keeper-deposit": {
@@ -892,6 +907,7 @@
 						"estimated-fill": "Estimated Fill Price",
 						"estimated-price-impact": "Estimated Price Impact",
 						"fee-estimated": "Estimated Fees",
+						"liquidation-price": "Liquidation Price",
 						"time-delay": "Delay Until Executable",
 						"keeper-deposit": "Keeper Deposit",
 						"gas-fee": "Network Gas Fee",
@@ -918,6 +934,7 @@
 						"price": "Price",
 						"parameters": "Parameters",
 						"status": "Status",
+						"actions": "Actions",
 						"no-result": "You have no open orders",
 						"open-filter": "Only show open orders"
 					},
@@ -928,7 +945,8 @@
 					},
 					"status": {
 						"pending": "Pending",
-						"expired": "Expired"
+						"expired": "Expired",
+						"failed": "Failed to execute"
 					},
 					"badges": {
 						"expired": "Expired"
@@ -991,7 +1009,8 @@
 			"share": {
 				"title": "Share",
 				"buttons": {
-					"download": "Download"
+					"download": "Download",
+					"twitter": "Tweet it"
 				},
 				"position-metadata": {
 					"open-at": "opened on",

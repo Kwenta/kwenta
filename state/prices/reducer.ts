@@ -1,20 +1,27 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { PricesMap } from 'sdk/types/prices';
+import { DEFAULT_QUERY_STATUS, LOADING_STATUS, SUCCESS_STATUS } from 'state/constants';
+import { FetchStatus } from 'state/types';
 
+import { fetchPreviousDayPrices } from './actions';
 import { PricesState } from './types';
 
-const initialState: PricesState = {
+export const PRICES_INITIAL_STATE: PricesState = {
 	onChainPrices: {},
 	offChainPrices: {},
 	onChainPriceColors: {},
 	offChainPriceColors: {},
 	connectionError: null,
+	previousDayPrices: [],
+	queryStatuses: {
+		previousDayPrices: DEFAULT_QUERY_STATUS,
+	},
 };
 
 const pricesSlice = createSlice({
 	name: 'prices',
-	initialState,
+	initialState: PRICES_INITIAL_STATE,
 	reducers: {
 		setOffChainPrices: (state, action: PayloadAction<PricesMap<string>>) => {
 			state.offChainPrices = action.payload;
@@ -31,6 +38,22 @@ const pricesSlice = createSlice({
 		setConnectionError: (state, action) => {
 			state.connectionError = action.payload;
 		},
+	},
+	extraReducers: (builder) => {
+		// Fetch past daily prices
+		builder.addCase(fetchPreviousDayPrices.pending, (pricesState) => {
+			pricesState.queryStatuses.previousDayPrices = LOADING_STATUS;
+		});
+		builder.addCase(fetchPreviousDayPrices.fulfilled, (pricesState, action) => {
+			pricesState.previousDayPrices = action.payload;
+			pricesState.queryStatuses.previousDayPrices = SUCCESS_STATUS;
+		});
+		builder.addCase(fetchPreviousDayPrices.rejected, (pricesState) => {
+			pricesState.queryStatuses.previousDayPrices = {
+				error: 'Failed to fetch past prices',
+				status: FetchStatus.Error,
+			};
+		});
 	},
 });
 
