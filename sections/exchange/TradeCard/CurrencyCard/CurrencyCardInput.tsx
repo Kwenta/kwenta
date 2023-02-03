@@ -141,6 +141,7 @@ const CurrencyAmount = styled(NumericInput)`
 	line-height: 2.25em;
 	letter-spacing: -1px;
 	background: transparent;
+	box-shadow: none;
 `;
 
 const CurrencyAmountContainer = styled.div<{ disableInput?: boolean }>`
