@@ -19,7 +19,19 @@ const INVALID_CHARS = ['-', '+', 'e'];
 const isInvalid = (key: string) => INVALID_CHARS.includes(key);
 
 const NumericInput: FC<NumericInputProps> = memo(
-	({ value, onChange, left, right, dataTestId, invalid, bold, textAlign, max = 0, ...props }) => {
+	({
+		value,
+		onChange,
+		left,
+		right,
+		dataTestId,
+		invalid,
+		bold,
+		textAlign,
+		max = 0,
+		className,
+		...props
+	}) => {
 		const handleChange = useCallback(
 			(e: React.ChangeEvent<HTMLInputElement>) => {
 				const standardizedNum = e.target.value.replace(/,/g, '.').replace(/[e+-]/gi, '');
@@ -40,7 +52,13 @@ const NumericInput: FC<NumericInputProps> = memo(
 		);
 
 		return (
-			<InputContainer $invalid={invalid} $bold={bold} $textAlign={textAlign} $length={value.length}>
+			<InputContainer
+				$invalid={invalid}
+				$bold={bold}
+				$textAlign={textAlign}
+				$length={value.length}
+				className={className}
+			>
 				{left && <div className="left">{left}</div>}
 				<input
 					data-testid={dataTestId}
