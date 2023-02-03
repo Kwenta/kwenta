@@ -95,7 +95,8 @@ const InputContainer = styled.div<{
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 10px;
 	padding: 0 10px;
-	min-height: 46px;
+	height: 46px;
+	box-sizing: border-box;
 
 	& > input {
 		display: flex;
@@ -103,6 +104,7 @@ const InputContainer = styled.div<{
 		font-family: ${(props) => (props.$bold ? props.theme.fonts.monoBold : props.theme.fonts.mono)};
 		font-size: 18px;
 		line-height: 22px;
+		padding: 0;
 		background-color: transparent;
 		border: none;
 		text-overflow: ellipsis;
@@ -137,17 +139,15 @@ const InputContainer = styled.div<{
 	${(props) =>
 		props.$suffix &&
 		css`
-
-	::after {
-		position: absolute;
-		top: calc(25%);
-		left: calc(${props.$length} * 1ch + 1.3ch));
-		content: var(${props.$length === 0 ? '' : props.$suffix});
-		font-family: ${props.theme.fonts.mono};
-		font-size: 18px;
-		color: ${props.theme.colors.selectedTheme.input.placeholder};
-	}
-	
+		::after {
+			position: absolute;
+			top: calc(25%);
+			left: calc(${props.$length} * 1ch + 1.3ch));
+			content: var(${props.$length === 0 ? '""' : props.$suffix});
+			font-family: ${props.theme.fonts.mono};
+			font-size: 18px;
+			color: ${props.theme.colors.selectedTheme.input.placeholder};
+		}
 	`}
 `;
 

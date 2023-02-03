@@ -1,4 +1,3 @@
-import useSynthetixQueries from '@synthetixio/queries';
 import { FC, useMemo, memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -17,12 +16,9 @@ import TxApproveModal from 'sections/shared/modals/TxApproveModal';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { submitApprove, submitExchange } from 'state/exchange/actions';
 import {
-	selectFeeCostWei,
 	selectIsApproved,
 	selectShowFee,
-	selectSlippagePercentWei,
 	selectSubmissionDisabledReason,
-	selectTransactionFeeWei,
 } from 'state/exchange/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { secondsToTime } from 'utils/formatters/date';
@@ -66,31 +62,26 @@ const TradeSummaryCard: FC = memo(() => {
 	);
 });
 
-const SummaryItemsWrapper = () => {
-	const { useEthGasPriceQuery } = useSynthetixQueries();
-	const ethGasPriceQuery = useEthGasPriceQuery();
-	const gasPrices = useMemo(() => ethGasPriceQuery?.data, [ethGasPriceQuery.data]);
-	const transactionFee = useAppSelector(selectTransactionFeeWei);
-	const feeCost = useAppSelector(selectFeeCostWei);
+const SummaryItemsWrapper = memo(() => {
 	const showFee = useAppSelector(selectShowFee);
-	const slippagePercent = useAppSelector(selectSlippagePercentWei);
 
 	return (
 		<SummaryItems>
-			<GasPriceSelect gasPrices={gasPrices} transactionFee={transactionFee} />
-			<PriceImpactSummary slippagePercent={slippagePercent} />
+			<GasPriceSelect />
+			<PriceImpactSummary />
 			{showFee && (
 				<>
 					<FeeRateSummaryItem />
-					<FeeCostSummaryItem feeCost={feeCost} />
+					<FeeCostSummaryItem />
 				</>
 			)}
 		</SummaryItems>
 	);
-};
+});
 
-const SubmissionButton = ({ onSubmit, isApproved }: any) => {
+const SubmissionButton = ({ onSubmit }: any) => {
 	const { t } = useTranslation();
+	const isApproved = useAppSelector(selectIsApproved);
 	const submissionDisabledReason = useAppSelector(selectSubmissionDisabledReason);
 
 	const isSubmissionDisabled = useMemo(() => submissionDisabledReason != null, [
@@ -121,7 +112,6 @@ type TradeErrorTooltipProps = {
 const TradeErrorTooltip: FC<TradeErrorTooltipProps> = memo(({ onSubmit }) => {
 	const { t } = useTranslation();
 
-	const isApproved = useAppSelector(selectIsApproved);
 	const { feeReclaimPeriod, quoteCurrencyKey } = useAppSelector(({ exchange }) => ({
 		feeReclaimPeriod: exchange.feeReclaimPeriod,
 		quoteCurrencyKey: exchange.quoteCurrencyKey,
@@ -141,7 +131,7 @@ const TradeErrorTooltip: FC<TradeErrorTooltipProps> = memo(({ onSubmit }) => {
 			}
 		>
 			<span>
-				<SubmissionButton onSubmit={onSubmit} isApproved={isApproved} />
+				<SubmissionButton onSubmit={onSubmit} />
 			</span>
 		</ErrorTooltip>
 	);

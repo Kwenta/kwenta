@@ -1,5 +1,4 @@
-import { GasPrices } from '@synthetixio/queries';
-import Wei from '@synthetixio/wei';
+import useSynthetixQueries from '@synthetixio/queries';
 import { FC, useMemo, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -9,30 +8,28 @@ import useIsL1 from 'hooks/useIsL1';
 import useIsL2 from 'hooks/useIsL2';
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from 'sections/exchange/summary';
 import { selectGasPrice, selectGasSpeed } from 'state/app/selectors';
+import { selectTransactionFeeWei } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
 import { formatNumber, formatDollars } from 'utils/formatters/number';
 
 type GasPriceSelectProps = {
-	gasPrices: GasPrices | undefined;
-	transactionFee?: Wei | number | null;
 	className?: string;
 };
 
-type GasPriceItemProps = {
-	gasPrices: GasPrices | undefined;
-	transactionFee?: Wei | number | null;
-};
-
-const GasPriceItem: FC<GasPriceItemProps> = memo(({ gasPrices, transactionFee }) => {
+const GasPriceItem: FC = memo(() => {
 	const gasSpeed = useAppSelector(selectGasSpeed);
 	const customGasPrice = useAppSelector(selectGasPrice);
 	const isL2 = useIsL2();
+	const { useEthGasPriceQuery } = useSynthetixQueries();
+	const ethGasPriceQuery = useEthGasPriceQuery();
+	const gasPrices = useMemo(() => ethGasPriceQuery?.data, [ethGasPriceQuery.data]);
+	const transactionFee = useAppSelector(selectTransactionFeeWei);
 
 	const formattedTransactionFee = useMemo(() => {
 		return transactionFee ? formatDollars(transactionFee, { maxDecimals: 1 }) : NO_VALUE;
 	}, [transactionFee]);
 
-	const hasCustomGasPrice = customGasPrice !== '';
+	const hasCustomGasPrice = !!customGasPrice;
 	const gasPrice = gasPrices ? parseGasPriceObject(gasPrices[gasSpeed]) : null;
 
 	if (!gasPrice) return <>{NO_VALUE}</>;
@@ -48,7 +45,7 @@ const GasPriceItem: FC<GasPriceItemProps> = memo(({ gasPrices, transactionFee })
 	);
 });
 
-const GasPriceSelect: FC<GasPriceSelectProps> = memo(({ gasPrices, transactionFee, ...rest }) => {
+const GasPriceSelect: FC<GasPriceSelectProps> = memo(({ ...rest }) => {
 	const { t } = useTranslation();
 	const isMainnet = useIsL1();
 
@@ -60,7 +57,7 @@ const GasPriceSelect: FC<GasPriceSelectProps> = memo(({ gasPrices, transactionFe
 					: t('common.summary.gas-prices.gas-price')}
 			</SummaryItemLabel>
 			<SummaryItemValue>
-				<GasPriceItem gasPrices={gasPrices} transactionFee={transactionFee} />
+				<GasPriceItem />
 			</SummaryItemValue>
 		</SummaryItem>
 	);
