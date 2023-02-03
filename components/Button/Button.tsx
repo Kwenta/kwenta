@@ -107,11 +107,11 @@ const BaseButton = styled.button<BaseButtonProps>`
 	${(props) =>
 		(props.noOutline || props.$variant === 'flat') &&
 		css`
-			background: ${(props) => props.theme.colors.selectedTheme.button.fill};
-			border: ${(props) => props.theme.colors.selectedTheme.border};
+			background: ${props.theme.colors.selectedTheme.button.fill};
+			border: ${props.theme.colors.selectedTheme.border};
 			box-shadow: none;
 			&:hover {
-				background: ${(props) => props.theme.colors.selectedTheme.button.fillHover};
+				background: ${props.theme.colors.selectedTheme.button.fillHover};
 			}
 			&::before {
 				display: none;
@@ -121,23 +121,20 @@ const BaseButton = styled.button<BaseButtonProps>`
 	${(props) =>
 		props.$variant === 'yellow' &&
 		css`
-			background: ${(props) => props.theme.colors.selectedTheme.button.yellow.fill};
-			border: 1px solid ${(props) => props.theme.colors.selectedTheme.button.yellow.border};
-			color: ${(props) => props.theme.colors.selectedTheme.button.yellow.text};
+			background: ${props.theme.colors.selectedTheme.button.yellow.fill};
+			border: 1px solid ${props.theme.colors.selectedTheme.button.yellow.border};
+			color: ${props.theme.colors.selectedTheme.button.yellow.text};
 
 			box-shadow: none;
 			&:hover {
-				background: ${(props) => props.theme.colors.selectedTheme.button.yellow.fillHover};
+				background: ${props.theme.colors.selectedTheme.button.yellow.fillHover};
 			}
 			&::before {
 				display: none;
 			}
 		`}
 
-	${(props) =>
-		css`
-			font-family: ${props.$mono ? props.theme.fonts.mono : props.theme.fonts.bold};
-		`}
+	font-family: ${(props) => (props.$mono ? props.theme.fonts.mono : props.theme.fonts.bold)};
 
 	${(props) =>
 		props.$variant === 'secondary' &&
