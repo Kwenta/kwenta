@@ -1,6 +1,6 @@
 import { chain } from 'containers/Connector/config';
 
-export const RATES_ENDPOINT_MAIN = 'https://api.thegraph.com/subgraphs/name/kwenta/mainnet-main';
+export const RATES_ENDPOINT_MAIN = `https://gateway.thegraph.com/api/${process.env.NEXT_PUBLIC_THEGRAPH_API_KEY}/subgraphs/id/HLy7PdmPJuVGjjmPNz1vW5RCCRpqzRWony2fSn7UKpf9`;
 
 export const RATES_ENDPOINT_OP_MAINNET = `https://subgraph.satsuma-prod.com/${process.env.NEXT_PUBLIC_SATSUMA_API_KEY}/kwenta/optimism-latest-rates/api`;
 
