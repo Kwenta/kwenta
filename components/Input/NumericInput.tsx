@@ -1,5 +1,5 @@
 import { FC, memo, useCallback } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 type NumericInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> & {
 	onChange: (e: React.ChangeEvent<HTMLInputElement>, value: string) => void;
@@ -8,6 +8,7 @@ type NumericInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onCh
 	dataTestId?: string;
 	invalid?: boolean;
 	bold?: boolean;
+	textAlign?: string;
 };
 
 const INVALID_CHARS = ['-', '+', 'e'];
@@ -15,7 +16,7 @@ const INVALID_CHARS = ['-', '+', 'e'];
 const isInvalid = (key: string) => INVALID_CHARS.includes(key);
 
 const NumericInput: FC<NumericInputProps> = memo(
-	({ onChange, left, right, dataTestId, invalid, bold, ...props }) => {
+	({ onChange, left, right, dataTestId, invalid, bold, textAlign, ...props }) => {
 		const handleChange = useCallback(
 			(e: React.ChangeEvent<HTMLInputElement>) => {
 				const standardizedNum = e.target.value.replace(/,/g, '.').replace(/[e+-]/gi, '');
@@ -27,7 +28,7 @@ const NumericInput: FC<NumericInputProps> = memo(
 		);
 
 		return (
-			<InputContainer $invalid={invalid} $bold={bold}>
+			<InputContainer $invalid={invalid} $bold={bold} $textAlign={textAlign}>
 				{left && <div className="left">{left}</div>}
 				<input
 					data-testid={dataTestId}
@@ -47,7 +48,7 @@ const NumericInput: FC<NumericInputProps> = memo(
 	}
 );
 
-const InputContainer = styled.div<{ $invalid?: boolean; $bold?: boolean }>`
+const InputContainer = styled.div<{ $invalid?: boolean; $bold?: boolean; $textAlign?: string }>`
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -72,6 +73,12 @@ const InputContainer = styled.div<{ $invalid?: boolean; $bold?: boolean }>`
 			props.$invalid
 				? props.theme.colors.selectedTheme.red
 				: props.theme.colors.selectedTheme.button.text.primary};
+
+		${(props) =>
+			props.$textAlign &&
+			css`
+				text-align: ${props.$textAlign};
+			`}
 
 		&:focus {
 			outline: none;

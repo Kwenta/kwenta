@@ -4,8 +4,8 @@ import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import CustomInput from 'components/Input/CustomInput';
 import InputTitle from 'components/Input/InputTitle';
+import NumericInput from 'components/Input/NumericInput';
 import SegmentedControl from 'components/SegmentedControl';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { FuturesOrderType } from 'sdk/types/futures';
@@ -97,7 +97,7 @@ export default function OrderPriceInput({
 					</>
 				)}
 			</StyledInputTitle>
-			<CustomInput
+			<NumericInput
 				invalid={!!minMaxLabelString}
 				dataTestId="order-price-input"
 				disabled={isDisabled}

@@ -3,8 +3,8 @@ import React, { ChangeEvent, useMemo, memo } from 'react';
 import styled from 'styled-components';
 
 import SwitchAssetArrows from 'assets/svg/futures/switch-arrows.svg';
-import CustomInput from 'components/Input/CustomInput';
 import InputTitle from 'components/Input/InputTitle';
+import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRow } from 'components/layout/flex';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { editTradeSizeInput } from 'state/futures/actions';
@@ -114,7 +114,7 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 					</InputHelpers>
 				</OrderSizingRow>
 
-				<CustomInput
+				<NumericInput
 					invalid={invalid}
 					dataTestId={'set-order-size-amount-susd' + (isMobile ? '-mobile' : '-desktop')}
 					disabled={isDisabled}

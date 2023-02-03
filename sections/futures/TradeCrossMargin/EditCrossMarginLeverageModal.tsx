@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import ErrorView from 'components/ErrorView';
-import CustomInput from 'components/Input/CustomInput';
+import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import Loader from 'components/Loader';
 import Spacer from 'components/Spacer';
@@ -271,7 +271,7 @@ const MaxButton = styled.div`
 	cursor: pointer;
 `;
 
-const InputContainer = styled(CustomInput)`
+const InputContainer = styled(NumericInput)`
 	margin-bottom: 15px;
 `;
 
