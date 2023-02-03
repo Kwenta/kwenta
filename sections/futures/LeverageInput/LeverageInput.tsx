@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
-import CustomNumericInput from 'components/Input/CustomNumericInput';
 import InputTitle from 'components/Input/InputTitle';
+import NumericInput from 'components/Input/NumericInput';
 import { FlexDivCol, FlexDivRow } from 'components/layout/flex';
 import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import { editIsolatedMarginSize } from 'state/futures/actions';
@@ -96,12 +96,12 @@ const LeverageInput: FC = memo(() => {
 				</SliderRow>
 			) : (
 				<LeverageInputContainer>
-					<StyledInput
+					<NumericInput
 						data-testid="leverage-input"
 						value={leverageInput}
 						placeholder="1"
 						suffix="x"
-						maxValue={maxLeverage.toNumber()}
+						max={maxLeverage.toNumber()}
 						onChange={(_, newValue) => {
 							onLeverageChange(newValue);
 						}}
@@ -168,11 +168,6 @@ const TextButton = styled.button`
 	background-color: transparent;
 	border: none;
 	cursor: pointer;
-`;
-
-const StyledInput = styled(CustomNumericInput)`
-	font-family: ${(props) => props.theme.fonts.mono};
-	text-overflow: ellipsis;
 `;
 
 export default LeverageInput;
