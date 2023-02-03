@@ -52,7 +52,6 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 	const synthTokens = useMemo(() => {
 		return synthBalances.map((synthBalance: SynthBalance) => {
 			const { currencyKey, balance, usdBalance } = synthBalance;
-
 			const price = prices[currencyKey].onChain;
 			const pastPrice = pastRates.find((price) => price.synth === currencyKey);
 			const description = synthsMap?.[currencyKey]?.description ?? '';
@@ -63,7 +62,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 				balance,
 				usdBalance,
 				price,
-				priceChange: price?.sub(pastPrice?.rate).div(price),
+				priceChange: price?.sub(pastPrice?.rate ?? 0).div(price),
 			};
 		});
 	}, [pastRates, prices, synthBalances, synthsMap]);
