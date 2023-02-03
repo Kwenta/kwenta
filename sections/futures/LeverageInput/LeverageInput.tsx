@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import CustomNumericInput from 'components/Input/CustomNumericInput';
+import InputTitle from 'components/Input/InputTitle';
 import { FlexDivCol, FlexDivRow } from 'components/layout/flex';
 import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import { editIsolatedMarginSize } from 'state/futures/actions';
@@ -15,8 +16,6 @@ import {
 	selectMarketInfo,
 	selectMaxLeverage,
 	selectPosition,
-	selectOrderType,
-	selectNextPriceDisclaimer,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { floorNumber, truncateNumbers, zeroBN } from 'utils/formatters/number';
@@ -27,8 +26,6 @@ const LeverageInput: FC = memo(() => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
-	const orderType = useAppSelector(selectOrderType);
-	const isDisclaimerDisplayed = useAppSelector(selectNextPriceDisclaimer);
 	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const maxLeverage = useAppSelector(selectMaxLeverage);
@@ -84,11 +81,7 @@ const LeverageInput: FC = memo(() => {
 				</LeverageTitle>
 				{modeButton}
 			</LeverageRow>
-			{(orderType === 'delayed' || orderType === 'delayedOffchain') && isDisclaimerDisplayed && (
-				<LeverageDisclaimer>
-					{t('futures.market.trade.input.leverage.disclaimer')}
-				</LeverageDisclaimer>
-			)}
+
 			{mode === 'slider' ? (
 				<SliderRow>
 					<LeverageSlider
@@ -143,14 +136,8 @@ const LeverageRow = styled(FlexDivRow)`
 	margin-bottom: 8px;
 `;
 
-const LeverageTitle = styled.div`
-	font-size: 13px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+const LeverageTitle = styled(InputTitle)`
 	text-transform: capitalize;
-
-	span {
-		color: ${(props) => props.theme.colors.selectedTheme.gray};
-	}
 `;
 
 const SliderRow = styled(FlexDivRow)`
@@ -181,12 +168,6 @@ const TextButton = styled.button`
 	background-color: transparent;
 	border: none;
 	cursor: pointer;
-`;
-
-const LeverageDisclaimer = styled.div`
-	font-size: 13px;
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	margin: 0 8px 12px;
 `;
 
 const StyledInput = styled(CustomNumericInput)`

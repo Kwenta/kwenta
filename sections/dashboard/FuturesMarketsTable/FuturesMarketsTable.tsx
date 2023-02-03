@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import MarketBadge from 'components/Badge/MarketBadge';
@@ -22,7 +21,7 @@ import {
 	selectMarkPrices,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { pastRatesState } from 'store/futures';
+import { selectPreviousDayPrices } from 'state/prices/selectors';
 import { getSynthDescription, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
 const FuturesMarketsTable: FC = () => {
@@ -31,7 +30,7 @@ const FuturesMarketsTable: FC = () => {
 	const { synthsMap } = Connector.useContainer();
 
 	const futuresMarkets = useAppSelector(selectMarkets);
-	const pastRates = useRecoilValue(pastRatesState);
+	const pastRates = useAppSelector(selectPreviousDayPrices);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
 	const accountType = useAppSelector(selectFuturesType);
 	const markPrices = useAppSelector(selectMarkPrices);
@@ -50,8 +49,8 @@ const FuturesMarketsTable: FC = () => {
 				description,
 				price: marketPrice,
 				volume: volume?.toNumber() ?? 0,
-				pastPrice: pastPrice?.price,
-				priceChange: pastPrice?.price && marketPrice.sub(pastPrice?.price).div(marketPrice),
+				pastPrice: pastPrice?.rate,
+				priceChange: pastPrice?.rate && marketPrice.sub(pastPrice?.rate).div(marketPrice),
 				fundingRate: market.currentFundingRate ?? null,
 				openInterest: market.marketSize.mul(marketPrice),
 				openInterestNative: market.marketSize,

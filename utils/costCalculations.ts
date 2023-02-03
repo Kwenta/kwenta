@@ -1,7 +1,6 @@
 import Wei, { wei } from '@synthetixio/wei';
 
-import { FuturesOrderType } from 'queries/futures/types';
-import { FuturesMarket } from 'sdk/types/futures';
+import { FuturesMarket, FuturesOrderType } from 'sdk/types/futures';
 
 import { zeroBN } from './formatters/number';
 
@@ -57,13 +56,13 @@ export const computeOrderFee = (
 	}
 
 	const makerFee =
-		orderType === 'delayedOffchain'
+		orderType === 'delayed_offchain'
 			? market.feeRates.makerFeeOffchainDelayedOrder
 			: orderType === 'delayed'
 			? market.feeRates.makerFeeDelayedOrder
 			: market.feeRates.makerFee;
 	const takerFee =
-		orderType === 'delayedOffchain'
+		orderType === 'delayed_offchain'
 			? market.feeRates.takerFeeOffchainDelayedOrder
 			: orderType === 'delayed'
 			? market.feeRates.takerFeeDelayedOrder

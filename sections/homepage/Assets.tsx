@@ -6,7 +6,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
 import Slider from 'react-slick';
-import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import GridSvg from 'assets/svg/app/grid.svg';
@@ -23,10 +22,10 @@ import { selectMarketVolumes } from 'state/futures/selectors';
 import { fetchOptimismMarkets } from 'state/home/actions';
 import { selectOptimismMarkets } from 'state/home/selectors';
 import { useAppSelector, usePollAction } from 'state/hooks';
-import { selectPrices } from 'state/prices/selectors';
-import { pastRatesState } from 'store/futures';
+import { selectPreviousDayPrices, selectPrices } from 'state/prices/selectors';
 import { SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media, { Media } from 'styles/media';
+import { zeroBN } from 'utils/formatters/number';
 import { getSynthDescription } from 'utils/futures';
 
 enum MarketsTab {
@@ -146,8 +145,7 @@ const Assets = () => {
 
 	const prices = useAppSelector(selectPrices);
 	const futuresMarkets = useAppSelector(selectOptimismMarkets);
-
-	const pastRates = useRecoilValue(pastRatesState);
+	const pastRates = useAppSelector(selectPreviousDayPrices);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
 	usePollAction('fetchOptimismMarkets', () => fetchOptimismMarkets(l2Provider));
 
@@ -194,7 +192,7 @@ const Assets = () => {
 		return futuresMarkets.map((market) => {
 			const marketPrice = prices[market.asset]?.offChain ?? prices[market.asset]?.onChain ?? wei(0);
 			const description = getSynthDescription(market.asset, l2SynthsMap, t);
-			const volume = futuresVolumes[market.assetHex]?.volume?.toNumber() ?? 0;
+			const volume = futuresVolumes[market.marketKey]?.volume?.toNumber() ?? 0;
 			const pastPrice = pastRates.find(
 				(price) => price.synth === market.asset || price.synth === market.asset.slice(1)
 			);
@@ -205,7 +203,9 @@ const Assets = () => {
 				price: marketPrice.toNumber(),
 				volume,
 				priceChange:
-					(marketPrice.toNumber() - (pastPrice?.price ?? 0)) / marketPrice.toNumber() || 0,
+					!!marketPrice && !marketPrice.eq(0) && !!pastPrice?.rate
+						? marketPrice.sub(pastPrice.rate).div(marketPrice)
+						: 0,
 				image: <PriceChart asset={market.asset} />,
 				icon: (
 					<StyledCurrencyIcon currencyKey={(market.asset[0] !== 's' ? 's' : '') + market.asset} />
@@ -236,8 +236,8 @@ const Assets = () => {
 				market: synth.name,
 				description: description.slice(10),
 				price,
-				change: price !== 0 ? (price - (pastPrice?.price ?? 0)) / price || 0 : 0,
-				volume: synthVolumes[synth.name]?.toNumber() ?? 0,
+				change: !!rate && !rate.eq(0) && !!pastPrice?.rate ? rate.sub(pastPrice.rate).div(rate) : 0,
+				volume: synthVolumes[synth.name]?.toNumber() ?? zeroBN,
 				image: <PriceChart asset={synth.asset} />,
 				icon: (
 					<StyledCurrencyIcon currencyKey={(synth.asset[0] !== 's' ? 's' : '') + synth.asset} />

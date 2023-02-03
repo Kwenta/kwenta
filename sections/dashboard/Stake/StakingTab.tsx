@@ -4,8 +4,8 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import { SplitContainer } from 'components/layout/grid';
-import { StakingCard } from 'sections/dashboard/Stake/card';
 import { LogoText } from 'components/Text';
+import { StakingCard } from 'sections/dashboard/Stake/card';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { getReward } from 'state/staking/actions';
 import { selectAPY, selectClaimableBalance } from 'state/staking/selectors';
@@ -33,7 +33,7 @@ const StakingTab = () => {
 						<LogoText yellow>{truncateNumbers(claimableBalance, 4)}</LogoText>
 					</div>
 					<div>
-						<div className="title">{t('dashboard.stake.tabs.staking.annual-percentage-yield')}</div>
+						<div className="title">{t('dashboard.stake.tabs.staking.annual-percentage-rate')}</div>
 						<div className="value">{formatPercent(apy, { minDecimals: 2 })}</div>
 					</div>
 				</CardGrid>

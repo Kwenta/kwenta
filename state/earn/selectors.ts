@@ -1,20 +1,19 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { wei } from '@synthetixio/wei';
 
 import { PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { RootState } from 'state/store';
-import { truncateNumbers } from 'utils/formatters/number';
+import { toWei, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
-export const selectBalance = createSelector((state: RootState) => state.earn.balance, wei);
+export const selectBalance = createSelector((state: RootState) => state.earn.balance, toWei);
 
-export const selectLPTokenBalance = createSelector(
+export const selectLpTokenBalance = createSelector(
 	(state: RootState) => state.earn.lpTokenBalance,
-	wei
+	toWei
 );
 
 export const selectIsApproved = createSelector(
 	(state: RootState) => state.earn.allowance,
-	selectLPTokenBalance,
+	selectLpTokenBalance,
 	(allowance, lpTokenBalance) => {
 		return lpTokenBalance.lte(allowance);
 	}
@@ -25,10 +24,59 @@ export const selectYieldPerDay = createSelector(
 	(state: RootState) => state.earn.rewardRate,
 	(state: RootState) => state.earn.totalSupply,
 	(balance, rewardRate, totalSupply) => {
-		const rawYield = wei(totalSupply).gt(0)
-			? wei(balance).mul(rewardRate).div(totalSupply).mul(PERIOD_IN_SECONDS.ONE_DAY)
-			: wei(0);
+		const rawYield = toWei(totalSupply).gt(0)
+			? toWei(balance).mul(rewardRate).div(totalSupply).mul(PERIOD_IN_SECONDS.ONE_DAY)
+			: zeroBN;
 
 		return truncateNumbers(rawYield.toString(), 4);
 	}
+);
+
+export const selectEarnedRewards = createSelector(
+	(state: RootState) => state.earn.earnedRewards,
+	toWei
+);
+
+export const selectKwentaAmount = createSelector(
+	(state: RootState) => state.earn.kwentaAmount,
+	toWei
+);
+
+export const selectKwentaPrice = createSelector(
+	(state: RootState) => state.earn.kwentaPrice,
+	toWei
+);
+
+export const selectWethAmount = createSelector((state: RootState) => state.earn.wethAmount, toWei);
+
+export const selectWethPrice = createSelector((state: RootState) => state.earn.wethPrice, toWei);
+
+export const selectLpTvl = createSelector(
+	selectKwentaAmount,
+	selectKwentaPrice,
+	selectWethAmount,
+	selectWethPrice,
+	(kwentaAmount, kwentaPrice, wethAmount, wethPrice) =>
+		kwentaAmount.mul(kwentaPrice).add(wethAmount.mul(wethPrice))
+);
+
+export const selectLpTotalSupply = createSelector(
+	(state: RootState) => state.earn.lpTotalSupply,
+	toWei
+);
+
+export const selectLpTokenValue = createSelector(
+	selectLpTvl,
+	selectLpTotalSupply,
+	(tvl, lpTotalSupply) => (lpTotalSupply.gt(0) ? tvl.div(lpTotalSupply) : zeroBN)
+);
+
+export const selectEarnApy = createSelector(
+	selectLpTokenValue,
+	selectYieldPerDay,
+	selectKwentaPrice,
+	(lpTokenValue, yieldPerDay, kwentaPrice) =>
+		lpTokenValue.gt(0)
+			? toWei(yieldPerDay).mul(kwentaPrice).mul(toWei('365')).div(lpTokenValue)
+			: zeroBN
 );

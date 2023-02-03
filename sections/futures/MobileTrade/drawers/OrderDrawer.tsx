@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';
-import { PositionSide } from 'queries/futures/types';
-import { DelayedOrder } from 'sdk/types/futures';
+import { PositionSide } from 'sdk/types/futures';
 import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
+import { DelayedOrderWithDetails } from 'state/futures/types';
 import { useAppDispatch } from 'state/hooks';
 import { formatCurrency } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
@@ -14,7 +14,7 @@ import BaseDrawer from './BaseDrawer';
 
 type OrderDrawerProps = {
 	open: boolean;
-	order: DelayedOrder | undefined;
+	order: DelayedOrderWithDetails;
 	closeDrawer(): void;
 };
 
@@ -23,8 +23,7 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer }) =
 	const dispatch = useAppDispatch();
 
 	const onCancel = useCallback(
-		(order: DelayedOrder | undefined) => {
-			if (!order) return;
+		(order: DelayedOrderWithDetails) => {
 			dispatch(
 				cancelDelayedOrder({
 					marketAddress: order.marketAddress,
@@ -36,9 +35,14 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer }) =
 	);
 
 	const onExecute = useCallback(
-		(order: DelayedOrder | undefined) => {
-			if (!order) return;
-			dispatch(executeDelayedOrder(order.marketAddress));
+		(order: DelayedOrderWithDetails) => {
+			dispatch(
+				executeDelayedOrder({
+					marketKey: order.marketKey,
+					marketAddress: order.marketAddress,
+					isOffchain: order.isOffchain,
+				})
+			);
 		},
 		[dispatch]
 	);

@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import { ThemeProvider, createGlobalStyle } from 'styled-components';
 
-import { RefetchProvider } from 'contexts/RefetchContext';
 import { FullScreenContainer } from 'styles/common';
 import { themes } from 'styles/theme';
 import darkTheme from 'styles/theme/colors/dark';
@@ -23,7 +22,7 @@ const HomeLayout: FC<HomeLayoutProps> = ({ children }) => (
 		<FullScreenContainer>
 			<GlobalStyle />
 			<Header />
-			<RefetchProvider>{children}</RefetchProvider>
+			{children}
 			<Footer />
 		</FullScreenContainer>
 	</ThemeProvider>

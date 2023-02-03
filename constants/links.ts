@@ -48,6 +48,7 @@ export const EXTERNAL_LINKS = {
 	},
 	Trade: {
 		NextPriceBlogPost: 'https://docs.kwenta.io/products/futures/next-price',
+		PerpsV2: 'https://alpha.kwenta.eth.limo/market/?accountType=isolated_margin&asset=sETH',
 	},
 	Governance: {
 		Kips:

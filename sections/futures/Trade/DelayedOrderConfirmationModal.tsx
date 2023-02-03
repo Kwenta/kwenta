@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -9,11 +9,11 @@ import { FlexDivCentered } from 'components/layout/flex';
 import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { getDisplayAsset } from 'sdk/utils/futures';
+import { PositionSide } from 'sdk/types/futures';
+import { getDisplayAsset, OrderNameByType } from 'sdk/utils/futures';
 import { setOpenModal } from 'state/app/reducer';
-import { modifyIsolatedPosition, modifyIsolatedPositionEstimateGas } from 'state/futures/actions';
+import { modifyIsolatedPosition } from 'state/futures/actions';
 import {
-	selectDelayedOrderFee,
 	selectIsModifyingIsolatedPosition,
 	selectLeverageSide,
 	selectMarketAsset,
@@ -38,7 +38,6 @@ import {
 } from 'utils/formatters/number';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
-import { PositionSide } from '../types';
 import { MobileConfirmTradeButton } from './TradeConfirmationModal';
 
 const DelayedOrderConfirmationModal: FC = () => {
@@ -57,17 +56,6 @@ const DelayedOrderConfirmationModal: FC = () => {
 	const potentialTradeDetails = useAppSelector(selectTradePreview);
 	const previewStatus = useAppSelector(selectTradePreviewStatus);
 	const orderType = useAppSelector(selectOrderType);
-	const { commitDeposit } = useAppSelector(selectDelayedOrderFee);
-
-	useEffect(() => {
-		dispatch(
-			modifyIsolatedPositionEstimateGas({
-				sizeDelta: nativeSizeDelta,
-				delayed: true,
-				offchain: orderType === 'delayedOffchain',
-			})
-		);
-	}, [nativeSizeDelta, orderType, dispatch]);
 
 	const positionSize = useMemo(() => {
 		const positionDetails = position?.position;
@@ -84,16 +72,15 @@ const DelayedOrderConfirmationModal: FC = () => {
 		return orderDetails.size.eq(zeroBN);
 	}, [orderDetails]);
 
-	// TODO: check this deposit
 	const totalDeposit = useMemo(() => {
-		return (commitDeposit ?? zeroBN).add(marketInfo?.keeperDeposit ?? zeroBN);
-	}, [commitDeposit, marketInfo?.keeperDeposit]);
+		return (potentialTradeDetails?.fee ?? zeroBN).add(marketInfo?.keeperDeposit ?? zeroBN);
+	}, [potentialTradeDetails?.fee, marketInfo?.keeperDeposit]);
 
 	const dataRows = useMemo(
 		() => [
 			{
 				label: t('futures.market.user.position.modal.order-type'),
-				value: orderType,
+				value: OrderNameByType[orderType],
 			},
 			{
 				label: t('futures.market.user.position.modal.side'),
@@ -132,7 +119,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 			},
 			{
 				label: t('futures.market.user.position.modal.fee-estimated'),
-				value: formatCurrency(selectedPriceCurrency.name, commitDeposit ?? zeroBN, {
+				value: formatCurrency(selectedPriceCurrency.name, potentialTradeDetails?.fee ?? zeroBN, {
 					minDecimals: 2,
 					sign: selectedPriceCurrency.sign,
 				}),
@@ -153,7 +140,6 @@ const DelayedOrderConfirmationModal: FC = () => {
 			t,
 			orderDetails,
 			orderType,
-			commitDeposit,
 			potentialTradeDetails,
 			marketAsset,
 			leverageSide,
@@ -174,7 +160,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 			modifyIsolatedPosition({
 				sizeDelta: nativeSizeDelta,
 				delayed: true,
-				offchain: orderType === 'delayedOffchain',
+				offchain: orderType === 'delayed_offchain',
 			})
 		);
 	};

@@ -16,6 +16,7 @@
 			"markets": "futures",
 			"isolated-margin": "Isolated Margin",
 			"cross-margin": "Cross Margin",
+			"v2-alpha": "Try Futures V2 Alpha",
 			"leaderboard-alltime": "All Time",
 			"competition-round-1": "Round 1",
 			"competition-round-2": "Round 2",
@@ -342,7 +343,7 @@
 				"24h-vol": "Total trade volume within the past 24 hours",
 				"24h-trades": "Total amount of trades on selected pair within the past 24h",
 				"open-interest": "Total notional value on all outstanding positions of the selected market",
-				"1h-funding-rate": "Funding applies to all open positions. A positive rate means longs pay shorts, a negative rate means shorts pay longs. The rate is calculated as the average funding paid by open positions for the last hour. Funding accrues on a position every time it is opened, modified, or closed. Funding accrues on open positions."
+				"1h-funding-rate": "Funding applies to all open positions. A positive rate means longs pay shorts, a negative rate means shorts pay longs. The rate increases when a market is skewed long, and decreases when it is skewed short. Funding accrues on a position every time it is opened, modified, or closed."
 			},
 			"deprecated-info": "DEBT-PERP is being deprecated soon. Please close your positions at your earliest convenience."
 		},
@@ -513,7 +514,7 @@
 					"claimable-rewards": "Claimable Rewards",
 					"escrowed-rewards": "Escrowed Rewards",
 					"liquid-rewards": "Liquid Rewards",
-					"annual-percentage-yield": "Annual Percentage Yield",
+					"annual-percentage-rate": "Annual Percentage Rate",
 					"claim": "Claim",
 					"current-trading-period": "Current Trading Period:"
 				},
@@ -683,6 +684,10 @@
 					"avg-entry-price": "The average price at which the position was opened"
 				}
 			},
+			"empty-position-card": {
+				"no-position": "No Open Position",
+				"explore-markets": "Explore available Markets"
+			},
 			"state": {
 				"opens-soon": "opens soon",
 				"closes-soon": "closes soon",
@@ -844,6 +849,9 @@
 					"insufficient-margin": "Insufficient free margin",
 					"error": "Error generating preview"
 				},
+				"fees": {
+					"tooltip": "Fees are displayed as maker/taker. Maker fees apply to orders that reduce the market skew. Taker fees apply to orders that increase the market skew."
+				},
 				"orders": {
 					"manage-keeper-deposit": {
 						"title": "Manage Account ETH Balance",
@@ -926,6 +934,7 @@
 						"price": "Price",
 						"parameters": "Parameters",
 						"status": "Status",
+						"actions": "Actions",
 						"no-result": "You have no open orders",
 						"open-filter": "Only show open orders"
 					},
@@ -936,7 +945,8 @@
 					},
 					"status": {
 						"pending": "Pending",
-						"expired": "Expired"
+						"expired": "Expired",
+						"failed": "Failed to execute"
 					},
 					"badges": {
 						"expired": "Expired"
@@ -999,7 +1009,8 @@
 			"share": {
 				"title": "Share",
 				"buttons": {
-					"download": "Download"
+					"download": "Download",
+					"twitter": "Tweet it"
 				},
 				"position-metadata": {
 					"open-at": "opened on",

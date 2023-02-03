@@ -12,7 +12,7 @@ const OrderWarning: React.FC = () => {
 	return (
 		<Container>
 			<p className="description">
-				{orderType === 'delayedOffchain'
+				{orderType === 'delayed_offchain'
 					? t('futures.market.trade.delayed-order.description')
 					: t('futures.market.trade.market-order.description')}
 			</p>

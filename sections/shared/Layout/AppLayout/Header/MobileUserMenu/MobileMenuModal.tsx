@@ -2,7 +2,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import MobileMenuArrow from 'assets/svg/app/mobile-menu-arrow.svg';
@@ -10,7 +9,8 @@ import FullScreenModal from 'components/FullScreenModal';
 import ROUTES from 'constants/routes';
 import Links from 'sections/dashboard/Links';
 import Logo from 'sections/shared/Layout/Logo';
-import { currentThemeState } from 'store/ui';
+import { useAppSelector } from 'state/hooks';
+import { selectCurrentTheme } from 'state/preferences/selectors';
 
 import { HOMEPAGE_MENU_LINKS, MOBILE_NAV_LINKS } from '../constants';
 import { MenuButton } from './menu';
@@ -27,7 +27,7 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
 	const menuLinks =
 		window.location.pathname === ROUTES.Home.Root ? HOMEPAGE_MENU_LINKS : MOBILE_NAV_LINKS;
 
-	const currentTheme = useRecoilValue(currentThemeState);
+	const currentTheme = useAppSelector(selectCurrentTheme);
 
 	const [expanded, setExpanded] = useState<string | undefined>();
 

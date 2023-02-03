@@ -10,6 +10,7 @@ import CrossMarginBaseSettingsABI from './abis/CrossMarginBaseSettings.json';
 import ExchangeRatesABI from './abis/ExchangeRates.json';
 import FuturesMarketDataABI from './abis/FuturesMarketData.json';
 import FuturesMarketSettingsABI from './abis/FuturesMarketSettings.json';
+import KwentaArrakisVaultABI from './abis/KwentaArrakisVault.json';
 import KwentaStakingRewardsABI from './abis/KwentaStakingRewards.json';
 import PerpsV2MarketABI from './abis/PerpsV2Market.json';
 import PerpsV2MarketDataABI from './abis/PerpsV2MarketData.json';
@@ -41,6 +42,7 @@ import {
 	VKwentaRedeemer__factory,
 	StakingRewards__factory,
 	VeKwentaRedeemer__factory,
+	Pyth__factory,
 } from './types';
 
 type ContractFactory = {
@@ -57,7 +59,7 @@ export const getPerpsV2MarketMulticall = (marketAddress: string) =>
 
 export const getContractsByNetwork = (
 	networkId: NetworkId,
-	provider: ethers.providers.Provider | ethers.Signer
+	provider: ethers.providers.Provider
 ) => {
 	return {
 		Exchanger: ADDRESSES.Exchanger[networkId]
@@ -86,6 +88,9 @@ export const getContractsByNetwork = (
 			: undefined,
 		PerpsV2MarketSettings: ADDRESSES.PerpsV2MarketSettings[networkId]
 			? PerpsV2MarketSettings__factory.connect(ADDRESSES.PerpsV2MarketSettings[networkId], provider)
+			: undefined,
+		Pyth: ADDRESSES.Pyth[networkId]
+			? Pyth__factory.connect(ADDRESSES.Pyth[networkId], provider)
 			: undefined,
 		FuturesMarketSettings: ADDRESSES.FuturesMarketSettings[networkId]
 			? FuturesMarketSettings__factory.connect(ADDRESSES.FuturesMarketSettings[networkId], provider)
@@ -178,7 +183,7 @@ export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 			? new EthCallContract(ADDRESSES.StakingRewards[networkId], StakingRewardsABI)
 			: undefined,
 		KwentaArrakisVault: ADDRESSES.KwentaArrakisVault[networkId]
-			? new EthCallContract(ADDRESSES.KwentaArrakisVault[networkId], ERC20ABI)
+			? new EthCallContract(ADDRESSES.KwentaArrakisVault[networkId], KwentaArrakisVaultABI)
 			: undefined,
 		RewardEscrow: ADDRESSES.RewardEscrow[networkId]
 			? new EthCallContract(ADDRESSES.RewardEscrow[networkId], RewardEscrowABI)

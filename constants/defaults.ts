@@ -1,19 +1,10 @@
-import { CurrencyCategory, NetworkIdByName, Synth } from '@synthetixio/contracts-interface';
-import { Language } from 'translations/constants';
+import { NetworkIdByName } from '@synthetixio/contracts-interface';
 
-import { languageStateKey, priceCurrencyStateKey } from 'store/app/constants';
+import { Language } from 'translations/constants';
 import { weiFromEth } from 'utils/formatters/number';
-import localStore from 'utils/localStore';
 
 // app defaults
-export const DEFAULT_LANGUAGE: Language = localStore.get(languageStateKey) ?? Language.EN;
-export const DEFAULT_PRICE_CURRENCY: Synth = localStore.get(priceCurrencyStateKey) ?? {
-	name: 'sUSD',
-	asset: 'USD',
-	sign: '$',
-	category: 'crypto' as CurrencyCategory,
-	description: '',
-};
+export const DEFAULT_LANGUAGE: Language = Language.EN;
 
 // network defaults
 export const DEFAULT_NETWORK_ID = NetworkIdByName['mainnet-ovm'];
@@ -50,7 +41,7 @@ export const DEFAULT_LEADERBOARD_ROWS = 20;
 
 // for perps v2
 export const DEFAULT_PRICE_IMPACT_DELTA = weiFromEth(0.5).toString();
-export const DEFAULT_DELAYED_EXECUTION_BUFFER = 0;
+export const DEFAULT_DELAYED_EXECUTION_BUFFER = 30;
 
 export const CROSS_MARGIN_ENABLED = false;
 

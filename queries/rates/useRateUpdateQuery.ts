@@ -1,10 +1,10 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { chain } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
+import { chain } from 'containers/Connector/config';
 import useIsL2 from 'hooks/useIsL2';
 import logError from 'utils/logError';
 
@@ -57,7 +57,7 @@ const useRateUpdateQuery = (
 
 				return updateTime;
 			} catch (e) {
-				logError(`query ERROR ${e}`);
+				logError(e);
 				return null;
 			}
 		},

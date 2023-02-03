@@ -160,22 +160,16 @@ export enum PositionSide {
 
 export type FuturesAccountType = 'cross_margin' | 'isolated_margin';
 
-export enum OrderType {
+export enum ContractOrderType {
 	MARKET = 0,
 	DELAYED = 1,
 	DELAYED_OFFCHAIN = 2,
 }
 
-export const OrderNameByType: Record<OrderType, string> = {
-	[OrderType.MARKET]: 'market',
-	[OrderType.DELAYED]: 'delayed',
-	[OrderType.DELAYED_OFFCHAIN]: 'delayedOffchain',
-};
-
-export const OrderTypeByName: Record<string, OrderType> = {
-	market: OrderType.MARKET,
-	delayed: OrderType.DELAYED,
-	delayedOffchain: OrderType.DELAYED_OFFCHAIN,
+export const OrderEnumByType: Record<string, ContractOrderType> = {
+	market: ContractOrderType.MARKET,
+	delayed: ContractOrderType.DELAYED,
+	delayed_offchain: ContractOrderType.DELAYED_OFFCHAIN,
 };
 
 export type FuturesFilledPosition<T = Wei> = {
@@ -253,7 +247,8 @@ export type FuturesOrderTypeDisplay =
 	| 'Delayed Offchain';
 
 export type FuturesOrder<T = Wei> = {
-	id: string;
+	id: string; // formatted subgraph id
+	contractId: number;
 	account: string;
 	asset: FuturesMarketAsset;
 	market: string;
@@ -262,7 +257,6 @@ export type FuturesOrder<T = Wei> = {
 	targetPrice: T | null;
 	marginDelta: T;
 	targetRoundId: T | null;
-	timestamp: T;
 	orderType: FuturesOrderTypeDisplay;
 	sizeTxt?: string;
 	targetPriceTxt?: string;
@@ -274,10 +268,7 @@ export type FuturesOrder<T = Wei> = {
 
 export type DelayedOrder<T = Wei> = {
 	account: string;
-	asset?: FuturesMarketAsset;
-	market?: string;
 	marketAddress: string;
-	marketKey?: FuturesMarketKey;
 	size: T;
 	commitDeposit: T;
 	keeperDeposit: T;
@@ -287,10 +278,7 @@ export type DelayedOrder<T = Wei> = {
 	priceImpactDelta: T;
 	targetRoundId: T | null;
 	orderType: FuturesOrderTypeDisplay;
-	side?: PositionSide;
-	isStale?: boolean;
-	isExecutable?: boolean;
-	isCancelling?: boolean;
+	side: PositionSide;
 };
 
 export type FuturesPotentialTradeDetails<T = Wei> = {
@@ -339,4 +327,24 @@ export type PostTradeDetailsResponse = {
 	liqPrice: BigNumber;
 	fee: BigNumber;
 	status: number;
+};
+
+export type IsolatedMarginOrderType = 'delayed' | 'delayed_offchain' | 'market';
+export type CrossMarginOrderType = 'market' | 'stop_market' | 'limit';
+export type FuturesOrderType = IsolatedMarginOrderType | CrossMarginOrderType;
+
+export type FuturesTrade<T = Wei> = {
+	size: T;
+	asset: string;
+	price: T;
+	txnHash: string;
+	timestamp: T;
+	positionId?: string;
+	positionSize: T;
+	positionClosed: boolean;
+	side: PositionSide;
+	pnl: T;
+	feesPaid: T;
+	orderType: FuturesOrderTypeDisplay;
+	accountType: FuturesAccountType;
 };

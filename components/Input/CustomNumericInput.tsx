@@ -30,16 +30,15 @@ const CustomNumericInput: FC<CustomNumericInputProps> = memo(
 	}) => {
 		const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
 			const { value } = e.target;
+			const standardizedNum = value
+				.replace(/[^0-9.,]/g, '')
+				.replace(/,/g, '.')
+				.substring(0, 4);
+			if (isNaN(Number(standardizedNum))) return;
 			const max = maxValue || 0;
-			const valueIsAboveMax = max !== 0 && Number(value) > max;
+			const valueIsAboveMax = max !== 0 && Number(standardizedNum) > max;
 			if (!valueIsAboveMax) {
-				onChange(
-					e,
-					value
-						.replace(/[^0-9.,]/g, '')
-						.replace(/,/g, '.')
-						.substring(0, 4)
-				);
+				onChange(e, standardizedNum);
 			}
 		};
 

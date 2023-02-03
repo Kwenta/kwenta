@@ -99,11 +99,6 @@ export const selectBasePriceRateWei = createSelector(
 	(basePriceRate) => toWei(basePriceRate)
 );
 
-export const selectTotalRedeemableBalanceWei = createSelector(
-	(state: RootState) => state.exchange.totalRedeemableBalance,
-	(totalRedeemableBalance) => toWei(totalRedeemableBalance)
-);
-
 export const selectExchangeFeeRateWei = createSelector(
 	(state: RootState) => state.exchange.exchangeFeeRate,
 	(exchangeFeeRate) => toWei(exchangeFeeRate)
@@ -127,13 +122,6 @@ export const selectFeeCostWei = createSelector(
 export const selectBaseFeeRateWei = createSelector(
 	(state: RootState) => state.exchange.baseFeeRate,
 	(baseFeeRate) => toWei(baseFeeRate)
-);
-
-export const selectCanRedeem = createSelector(
-	selectTotalRedeemableBalanceWei,
-	(state: RootState) => state.exchange.redeemableSynthBalances,
-	(totalRedeemableBalance, redeemableSynthBalances) =>
-		totalRedeemableBalance.gt(0) && redeemableSynthBalances.length > 0
 );
 
 export const selectNeedsApproval = createSelector(

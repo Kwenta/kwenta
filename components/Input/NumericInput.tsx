@@ -19,7 +19,9 @@ const INVALID_CHARS = ['-', '+', 'e'];
 const NumericInput: FC<NumericInputProps> = memo(({ onChange, bold, ...props }) => {
 	const handleOnChange = useCallback(
 		(e: ChangeEvent<HTMLInputElement>) => {
-			onChange(e, e.target.value.replace(/,/g, '.').replace(/[e+-]/gi, ''));
+			const standardizedNum = e.target.value.replace(/,/g, '.').replace(/[e+-]/gi, '');
+			if (isNaN(Number(standardizedNum))) return;
+			onChange(e, standardizedNum);
 		},
 		[onChange]
 	);

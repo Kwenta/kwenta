@@ -84,7 +84,7 @@ const InfoBoxContainer = styled.div`
 `;
 
 const InfoBoxKey = styled(Text.Body)`
-	color: ${(props) => props.theme.colors.selectedTheme.text.title};
+	color: ${(props) => props.theme.colors.selectedTheme.text.label};
 	font-size: 13px;
 	text-transform: capitalize;
 	cursor: default;

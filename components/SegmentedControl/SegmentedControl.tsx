@@ -80,7 +80,7 @@ const SegmentedControlOption = styled.button<{ isSelected: boolean; styleType: S
 			: undefined};
 	color: ${(props) =>
 		props.isSelected && props.styleType === 'button'
-			? props.theme.colors.selectedTheme.yellow
+			? props.theme.colors.common.primaryYellow
 			: props.isSelected
 			? props.theme.colors.selectedTheme.button.text.primary
 			: props.theme.colors.selectedTheme.segmented.button.inactive.color};
@@ -89,9 +89,20 @@ const SegmentedControlOption = styled.button<{ isSelected: boolean; styleType: S
 		props.isSelected && props.styleType === 'tab'
 			? props.theme.colors.selectedTheme.segmented.button.background
 			: 'transparent'};
+
+	background-color: ${(props) =>
+		props.isSelected && props.styleType === 'button' && props.theme.colors.common.darkYellow};
+	transition: all 0.1s ease-in-out;
+	&:hover {
+		color: ${(props) => props.theme.colors.selectedTheme.icon.hover};
+		> div {
+			background-color: ${(props) => !props.isSelected && props.theme.colors.common.darkYellow};
+		}
+	}
 `;
 
 const CheckBox = styled.div<{ selected: boolean }>`
+	transition: all 0.1s ease-in-out;
 	margin-right: 10px;
 	outline: ${(props) => props.theme.colors.selectedTheme.outlineBorder};
 	border-radius: 2px;

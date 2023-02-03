@@ -1,5 +1,6 @@
 import { FunctionComponent } from 'react';
 
+import LinkIconLight from 'assets/svg/app/link-light.svg';
 import { CrossMarginIcon, IsolatedMarginIcon } from 'components/Nav/FuturesIcon';
 import { COMPETITION_ENABLED } from 'constants/competition';
 import { CROSS_MARGIN_ENABLED, DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
@@ -16,6 +17,7 @@ export type SubMenuLink = {
 	link: string;
 	badge?: Badge[];
 	Icon?: FunctionComponent<any>;
+	externalLink?: boolean;
 };
 
 export type MenuLink = {
@@ -98,6 +100,18 @@ export const getMenuLinks = (isMobile: boolean): MenuLinks => [
 							},
 						],
 						Icon: CrossMarginIcon,
+					},
+					{
+						link: EXTERNAL_LINKS.Trade.PerpsV2,
+						externalLink: true,
+						i18nLabel: 'header.nav.v2-alpha',
+						badge: [
+							{
+								i18nLabel: 'header.nav.alpha-badge',
+								color: 'red',
+							},
+						],
+						Icon: LinkIconLight,
 					},
 			  ]
 			: null,

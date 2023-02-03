@@ -9,6 +9,7 @@ import HelpIcon from 'assets/svg/app/question-mark.svg';
 import Button from 'components/Button';
 import { FlexDivRow } from 'components/layout/flex';
 import { SplitContainer } from 'components/layout/grid';
+import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import { Body, LogoText } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
 import Connector from 'containers/Connector';
@@ -27,7 +28,6 @@ import { selectEpochPeriod, selectResetTime, selectTotalRewards } from 'state/st
 import media from 'styles/media';
 import { formatTruncatedDuration } from 'utils/formatters/date';
 import { formatDollars, formatPercent, truncateNumbers, zeroBN } from 'utils/formatters/number';
-import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 
 const TradingRewardsTab: FC<TradingRewardProps> = memo(
 	({ period = 0, start = 0, end = Math.floor(Date.now() / 1000) }) => {
