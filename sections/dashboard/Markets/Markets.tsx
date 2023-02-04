@@ -29,14 +29,6 @@ const Markets: FC = () => {
 					setActiveMarketsTab(MarketsTab.FUTURES);
 				},
 			},
-			{
-				name: MarketsTab.SPOT,
-				label: t('dashboard.overview.markets-tabs.spot'),
-				active: activeMarketsTab === MarketsTab.SPOT,
-				onClick: () => {
-					setActiveMarketsTab(MarketsTab.SPOT);
-				},
-			},
 		],
 		[activeMarketsTab, t]
 	);
