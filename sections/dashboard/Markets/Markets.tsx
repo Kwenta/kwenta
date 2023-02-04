@@ -7,7 +7,6 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { TabPanel } from 'components/Tab';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
-import SpotMarketsTable from '../SpotMarketsTable';
 
 export enum MarketsTab {
 	FUTURES = 'futures',
@@ -52,10 +51,6 @@ const Markets: FC = () => {
 
 			<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
 				<FuturesMarketsTable />
-			</TabPanel>
-
-			<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
-				<SpotMarketsTable />
 			</TabPanel>
 		</>
 	);

@@ -27,7 +27,6 @@ import FuturesPositionsTable from '../FuturesPositionsTable';
 import { MarketsTab } from '../Markets/Markets';
 import MobileDashboard from '../MobileDashboard';
 import PortfolioChart from '../PortfolioChart';
-import SpotMarketsTable from '../SpotMarketsTable';
 import SynthBalancesTable from '../SynthBalancesTable';
 
 export enum PositionsTab {
@@ -204,10 +203,6 @@ const Overview: FC = () => {
 				</TabButtonsContainer>
 				<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
 					<FuturesMarketsTable />
-				</TabPanel>
-
-				<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
-					<SpotMarketsTable />
 				</TabPanel>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
