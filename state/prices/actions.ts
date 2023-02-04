@@ -6,6 +6,7 @@ import { SynthPrice, PricesMap, PriceType } from 'sdk/types/prices';
 import { selectPrices } from 'state/prices/selectors';
 import { AppThunk } from 'state/store';
 import { ThunkConfig } from 'state/types';
+import { resetExpiredPriceColors } from 'utils/prices';
 
 import {
 	setOffChainPriceColors,
@@ -59,7 +60,31 @@ const getPriceColors = (
 	} else {
 		dispatch(setOnChainPriceColors(priceColors));
 	}
+
+	setTimeout(() => {
+		dispatch(resetPriceColors());
+	}, 1000);
 };
+
+const resetPriceColors = createAsyncThunk<null, undefined, ThunkConfig>(
+	'prices/resetPriceColors',
+	async (_, { getState, dispatch }) => {
+		try {
+			const {
+				prices: { offChainPriceColors, onChainPriceColors },
+			} = getState();
+			const newOffChainPriceColors = resetExpiredPriceColors(offChainPriceColors);
+			const newOnChainPriceColors = resetExpiredPriceColors(onChainPriceColors);
+
+			dispatch(setOffChainPriceColors(newOffChainPriceColors));
+			dispatch(setOnChainPriceColors(newOnChainPriceColors));
+			return null;
+		} catch (err) {
+			notifyError('Failed to reset price colors', err);
+			throw err;
+		}
+	}
+);
 
 export const fetchPreviousDayPrices = createAsyncThunk<
 	SynthPrice[],
