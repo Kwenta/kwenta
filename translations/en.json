@@ -461,7 +461,7 @@
 				"value-in-usd": "Value in USD",
 				"oracle-price": "Price",
 				"daily-change": "24H Change",
-				"no-result": "You have no synths"
+				"no-result": "You have no tokens"
 			},
 			"futures-markets-table": {
 				"market": "Market",
