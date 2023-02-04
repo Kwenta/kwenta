@@ -147,13 +147,9 @@ export const selectMarketInfo = createSelector(
 		return markets.find((market) => market.marketKey === selectedMarket);
 	}
 );
-export const selectMarketAssetRate = createSelector(
-	(state: RootState) => state.futures[accountType(state.futures.selectedType)].selectedMarketAsset,
-	selectExchangeRates,
-	(marketAsset, exchangeRates) => {
-		return newGetExchangeRatesForCurrencies(exchangeRates, marketAsset, 'sUSD');
-	}
-);
+export const selectMarketAssetRate = createSelector(selectMarketInfo, (marketInfo) => {
+	return marketInfo?.price ?? zeroBN;
+});
 
 export const selectFuturesAccount = createSelector(
 	selectFuturesType,
