@@ -29,8 +29,9 @@ const Banner = () => {
 const FuturesLink = styled.a`
 	margin-right: 5px;
 	background: #313131;
-	padding: 4px 9px;
+	padding: 6px 9px;
 	border-radius: 20px;
+	z-index: 1;
 `;
 
 const FuturesBannerContainer = styled.div`
