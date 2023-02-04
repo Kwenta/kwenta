@@ -13,12 +13,13 @@ import { FuturesAccountTypes } from 'queries/futures/types';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
 import { selectBalances } from 'state/balances/selectors';
 import { sdk } from 'state/config';
+import { fetchTokenList } from 'state/exchange/actions';
 import {
 	// selectActiveCrossPositionsCount,
 	selectActiveIsolatedPositionsCount,
 	selectFuturesPortfolio,
 } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { useAppSelector, useFetchAction } from 'state/hooks';
 import { formatDollars, toWei, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
@@ -56,6 +57,8 @@ const Overview: FC = () => {
 	const oneInchEnabled = network.id === 10;
 
 	const [exchangeTokens, setExchangeTokens] = useState<any>([]);
+
+	useFetchAction(fetchTokenList, { dependencies: [network] });
 
 	useEffect(() => {
 		const initExchangeTokens = async () => {
