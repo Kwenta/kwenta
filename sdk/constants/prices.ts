@@ -16,9 +16,10 @@ export const ADDITIONAL_SYNTHS = [
 	'APE',
 	'BNB',
 	'DOGE',
-	'DebtRatio',
 	'XMR',
 	'OP',
+	'UNI',
+	'DYDX',
 ].map(formatBytes32String);
 
 export const PYTH_IDS = {

@@ -13,6 +13,7 @@ import Table, { TableHeader } from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
+import { FuturesMarketAsset } from 'sdk/types/futures';
 import { getDisplayAsset } from 'sdk/utils/futures';
 import {
 	selectFuturesType,
@@ -22,7 +23,7 @@ import {
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices } from 'state/prices/selectors';
-import { getSynthDescription, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
+import { getSynthDescription, MarketKeyByAsset } from 'utils/futures';
 
 const FuturesMarketsTable: FC = () => {
 	const { t } = useTranslation();
@@ -50,7 +51,8 @@ const FuturesMarketsTable: FC = () => {
 				price: marketPrice,
 				volume: volume?.toNumber() ?? 0,
 				pastPrice: pastPrice?.rate,
-				priceChange: pastPrice?.rate && marketPrice.sub(pastPrice?.rate).div(marketPrice),
+				priceChange:
+					pastPrice?.rate && marketPrice.gt(0) && marketPrice.sub(pastPrice?.rate).div(marketPrice),
 				fundingRate: market.currentFundingRate ?? null,
 				openInterest: market.marketSize.mul(marketPrice),
 				openInterestNative: market.marketSize,

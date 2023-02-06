@@ -9,10 +9,10 @@ import {
 	ETH_ADDRESS,
 	ETH_COINGECKO_ADDRESS,
 } from 'constants/currency';
+import { FuturesMarketKey } from 'sdk/types/futures';
 import { Price, Prices } from 'sdk/types/prices';
 
 import { PriceResponse } from '../queries/coingecko/types';
-import { FuturesMarketKey } from './futures';
 
 export const isSynth = (currencyKey: CurrencyKey) => !!Synths[currencyKey];
 export const isCryptoCurrency = (currencyKey: CurrencyKey) => !!CRYPTO_CURRENCY_MAP[currencyKey];
@@ -47,10 +47,10 @@ export const newGetExchangeRatesForCurrencies = (
 	quote: CurrencyKey | FuturesMarketKey | null
 ) => {
 	base = new Set([
-		FuturesMarketKey.sAPE,
-		FuturesMarketKey.sDYDX,
-		FuturesMarketKey.sXAU,
-		FuturesMarketKey.sXAG,
+		FuturesMarketKey.sAPEPERP,
+		FuturesMarketKey.sDYDXPERP,
+		FuturesMarketKey.sXAUPERP,
+		FuturesMarketKey.sXAGPERP,
 	]).has(base as FuturesMarketKey)
 		? synthToAsset(base as CurrencyKey)
 		: base;
@@ -69,10 +69,10 @@ export const getPricesForCurrencies = (
 	quote: CurrencyKey | FuturesMarketKey | null
 ): Price => {
 	base = new Set([
-		FuturesMarketKey.sAPE,
-		FuturesMarketKey.sDYDX,
-		FuturesMarketKey.sXAU,
-		FuturesMarketKey.sXAG,
+		FuturesMarketKey.sAPEPERP,
+		FuturesMarketKey.sDYDXPERP,
+		FuturesMarketKey.sXAUPERP,
+		FuturesMarketKey.sXAGPERP,
 	]).has(base as FuturesMarketKey)
 		? synthToAsset(base as CurrencyKey)
 		: base;
@@ -97,10 +97,10 @@ export const newGetExchangeRatesTupleForCurrencies = (
 	quote: CurrencyKey | FuturesMarketKey | null
 ) => {
 	base = new Set([
-		FuturesMarketKey.sAPE,
-		FuturesMarketKey.sDYDX,
-		FuturesMarketKey.sXAU,
-		FuturesMarketKey.sXAG,
+		FuturesMarketKey.sAPEPERP,
+		FuturesMarketKey.sDYDXPERP,
+		FuturesMarketKey.sXAUPERP,
+		FuturesMarketKey.sXAGPERP,
 	]).has(base as FuturesMarketKey)
 		? synthToAsset(base as CurrencyKey)
 		: base;

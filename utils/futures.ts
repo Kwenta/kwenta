@@ -5,6 +5,8 @@ import { Dictionary } from 'lodash';
 
 import {
 	FuturesMarket,
+	FuturesMarketAsset,
+	FuturesMarketKey,
 	FuturesOrder,
 	FuturesOrderType,
 	FuturesPosition,
@@ -30,12 +32,7 @@ import { deserializeWeiObject } from 'state/helpers';
 import { formatNumber, zeroBN } from './formatters/number';
 
 export const getMarketName = (asset: FuturesMarketAsset) => {
-	switch (asset) {
-		case 'DebtRatio':
-			return `DEBT-PERP`;
-		default:
-			return `${getDisplayAsset(asset)}-PERP`;
-	}
+	return `${getDisplayAsset(asset)}-PERP`;
 };
 
 export const getDisplayAsset = (asset: string | null) => {
@@ -77,99 +74,46 @@ export const isDecimalFour = (marketKeyOrAsset: string | undefined): boolean =>
 	marketKeyOrAsset === 'sEUR' ||
 	marketKeyOrAsset === 'EUR' ||
 	marketKeyOrAsset === 'sDOGE' ||
-	marketKeyOrAsset === 'DOGE' ||
-	marketKeyOrAsset === 'sDebtRatio' ||
-	marketKeyOrAsset === 'DebtRatio';
-
-export enum FuturesMarketKey {
-	sETHPERP = 'sETHPERP',
-	sBTCPERP = 'sBTCPERP',
-	sETH = 'sETH',
-	sBTC = 'sBTC',
-	sLINK = 'sLINK',
-	sSOL = 'sSOL',
-	sAVAX = 'sAVAX',
-	sAAVE = 'sAAVE',
-	sUNI = 'sUNI',
-	sMATIC = 'sMATIC',
-	sXAU = 'sXAU',
-	sXAG = 'sXAG',
-	sEUR = 'sEUR',
-	sAPE = 'sAPE',
-	sDYDX = 'sDYDX',
-	sBNB = 'sBNB',
-	sDOGE = 'sDOGE',
-	sDebtRatio = 'sDebtRatio',
-	sXMR = 'sXMR',
-	sOP = 'sOP',
-}
-
-export enum FuturesMarketAsset {
-	sBTC = 'sBTC',
-	sETH = 'sETH',
-	sLINK = 'sLINK',
-	SOL = 'SOL',
-	AVAX = 'AVAX',
-	AAVE = 'AAVE',
-	UNI = 'UNI',
-	MATIC = 'MATIC',
-	XAU = 'XAU',
-	XAG = 'XAG',
-	EUR = 'EUR',
-	APE = 'APE',
-	DYDX = 'DYDX',
-	BNB = 'BNB',
-	DOGE = 'DOGE',
-	DebtRatio = 'DebtRatio',
-	XMR = 'XMR',
-	OP = 'OP',
-}
+	marketKeyOrAsset === 'DOGE';
 
 export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
 	[FuturesMarketKey.sBTCPERP]: FuturesMarketAsset.sBTC,
 	[FuturesMarketKey.sETHPERP]: FuturesMarketAsset.sETH,
-	[FuturesMarketKey.sBTC]: FuturesMarketAsset.sBTC,
-	[FuturesMarketKey.sETH]: FuturesMarketAsset.sETH,
-	[FuturesMarketKey.sLINK]: FuturesMarketAsset.sLINK,
-	[FuturesMarketKey.sSOL]: FuturesMarketAsset.SOL,
-	[FuturesMarketKey.sAVAX]: FuturesMarketAsset.AVAX,
-	[FuturesMarketKey.sAAVE]: FuturesMarketAsset.AAVE,
-	[FuturesMarketKey.sUNI]: FuturesMarketAsset.UNI,
-	[FuturesMarketKey.sMATIC]: FuturesMarketAsset.MATIC,
-	[FuturesMarketKey.sXAU]: FuturesMarketAsset.XAU,
-	[FuturesMarketKey.sXAG]: FuturesMarketAsset.XAG,
-	[FuturesMarketKey.sEUR]: FuturesMarketAsset.EUR,
-	[FuturesMarketKey.sAPE]: FuturesMarketAsset.APE,
-	[FuturesMarketKey.sDYDX]: FuturesMarketAsset.DYDX,
-	[FuturesMarketKey.sBNB]: FuturesMarketAsset.BNB,
-	[FuturesMarketKey.sDOGE]: FuturesMarketAsset.DOGE,
-	[FuturesMarketKey.sDebtRatio]: FuturesMarketAsset.DebtRatio,
-	[FuturesMarketKey.sXMR]: FuturesMarketAsset.XMR,
-	[FuturesMarketKey.sOP]: FuturesMarketAsset.OP,
+	[FuturesMarketKey.sLINKPERP]: FuturesMarketAsset.LINK,
+	[FuturesMarketKey.sSOLPERP]: FuturesMarketAsset.SOL,
+	[FuturesMarketKey.sAVAXPERP]: FuturesMarketAsset.AVAX,
+	[FuturesMarketKey.sAAVEPERP]: FuturesMarketAsset.AAVE,
+	[FuturesMarketKey.sUNIPERP]: FuturesMarketAsset.UNI,
+	[FuturesMarketKey.sMATICPERP]: FuturesMarketAsset.MATIC,
+	[FuturesMarketKey.sXAUPERP]: FuturesMarketAsset.XAU,
+	[FuturesMarketKey.sXAGPERP]: FuturesMarketAsset.XAG,
+	[FuturesMarketKey.sEURPERP]: FuturesMarketAsset.EUR,
+	[FuturesMarketKey.sAPEPERP]: FuturesMarketAsset.APE,
+	[FuturesMarketKey.sDYDXPERP]: FuturesMarketAsset.DYDX,
+	[FuturesMarketKey.sBNBPERP]: FuturesMarketAsset.BNB,
+	[FuturesMarketKey.sDOGEPERP]: FuturesMarketAsset.DOGE,
+	[FuturesMarketKey.sXMRPERP]: FuturesMarketAsset.XMR,
+	[FuturesMarketKey.sOPPERP]: FuturesMarketAsset.OP,
 } as const;
 
 export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
-	// perps v2
 	[FuturesMarketAsset.sBTC]: FuturesMarketKey.sBTCPERP,
 	[FuturesMarketAsset.sETH]: FuturesMarketKey.sETHPERP,
-
-	// perps v1
-	[FuturesMarketAsset.sLINK]: FuturesMarketKey.sLINK,
-	[FuturesMarketAsset.SOL]: FuturesMarketKey.sSOL,
-	[FuturesMarketAsset.AVAX]: FuturesMarketKey.sAVAX,
-	[FuturesMarketAsset.AAVE]: FuturesMarketKey.sAAVE,
-	[FuturesMarketAsset.UNI]: FuturesMarketKey.sUNI,
-	[FuturesMarketAsset.MATIC]: FuturesMarketKey.sMATIC,
-	[FuturesMarketAsset.XAU]: FuturesMarketKey.sXAU,
-	[FuturesMarketAsset.XAG]: FuturesMarketKey.sXAG,
-	[FuturesMarketAsset.EUR]: FuturesMarketKey.sEUR,
-	[FuturesMarketAsset.APE]: FuturesMarketKey.sAPE,
-	[FuturesMarketAsset.DYDX]: FuturesMarketKey.sDYDX,
-	[FuturesMarketAsset.BNB]: FuturesMarketKey.sBNB,
-	[FuturesMarketAsset.DOGE]: FuturesMarketKey.sDOGE,
-	[FuturesMarketAsset.DebtRatio]: FuturesMarketKey.sDebtRatio,
-	[FuturesMarketAsset.XMR]: FuturesMarketKey.sXMR,
-	[FuturesMarketAsset.OP]: FuturesMarketKey.sOP,
+	[FuturesMarketAsset.LINK]: FuturesMarketKey.sLINKPERP,
+	[FuturesMarketAsset.SOL]: FuturesMarketKey.sSOLPERP,
+	[FuturesMarketAsset.AVAX]: FuturesMarketKey.sAVAXPERP,
+	[FuturesMarketAsset.AAVE]: FuturesMarketKey.sAAVEPERP,
+	[FuturesMarketAsset.UNI]: FuturesMarketKey.sUNIPERP,
+	[FuturesMarketAsset.MATIC]: FuturesMarketKey.sMATICPERP,
+	[FuturesMarketAsset.XAU]: FuturesMarketKey.sXAUPERP,
+	[FuturesMarketAsset.XAG]: FuturesMarketKey.sXAGPERP,
+	[FuturesMarketAsset.EUR]: FuturesMarketKey.sEURPERP,
+	[FuturesMarketAsset.APE]: FuturesMarketKey.sAPEPERP,
+	[FuturesMarketAsset.DYDX]: FuturesMarketKey.sDYDXPERP,
+	[FuturesMarketAsset.BNB]: FuturesMarketKey.sBNBPERP,
+	[FuturesMarketAsset.DOGE]: FuturesMarketKey.sDOGEPERP,
+	[FuturesMarketAsset.XMR]: FuturesMarketKey.sXMRPERP,
+	[FuturesMarketAsset.OP]: FuturesMarketKey.sOPPERP,
 } as const;
 
 export const marketOverrides: Partial<Record<FuturesMarketKey, Record<string, any>>> = {

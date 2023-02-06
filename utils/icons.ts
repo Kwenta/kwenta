@@ -7,7 +7,6 @@ import AVAXIcon from 'assets/png/currencies/sAVAX.png';
 import BNBIcon from 'assets/png/currencies/sBNB.png';
 import BTCIcon from 'assets/png/currencies/sBTC.png';
 import CHFIcon from 'assets/png/currencies/sCHF.png';
-import DEBTIcon from 'assets/png/currencies/sDebt.png';
 import DOGEIcon from 'assets/png/currencies/sDOGE.png';
 import DOTIcon from 'assets/png/currencies/sDOT.png';
 import DYDXIcon from 'assets/png/currencies/sDYDX.png';
@@ -31,25 +30,22 @@ import XAUIcon from 'assets/png/currencies/sXAU.png';
 import XMRIcon from 'assets/png/currencies/sXMR.png';
 import WBTCIcon from 'assets/png/currencies/WBTC.png';
 import { CRYPTO_CURRENCY_MAP, SynthsName } from 'constants/currency';
-
-import { FuturesMarketKey } from './futures';
+import { FuturesMarketKey } from 'sdk/types/futures';
 
 export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = {
 	sETHPERP: ETHIcon,
 	sBTCPERP: BTCIcon,
-	sETH: ETHIcon,
-	sBTC: BTCIcon,
-	sLINK: LINKIcon,
-	sSOL: SOLIcon,
-	sAVAX: AVAXIcon,
-	sAAVE: AAVEIcon,
-	sUNI: UNIIcon,
-	sMATIC: MATICIcon,
-	sXAU: XAUIcon,
-	sXAG: XAGIcon,
-	sEUR: EURIcon,
-	sAPE: APEIcon,
-	sDYDX: DYDXIcon,
+	sLINKPERP: LINKIcon,
+	sSOLPERP: SOLIcon,
+	sAVAXPERP: AVAXIcon,
+	sAAVEPERP: AAVEIcon,
+	sUNIPERP: UNIIcon,
+	sMATICPERP: MATICIcon,
+	sXAUPERP: XAUIcon,
+	sXAGPERP: XAGIcon,
+	sEURPERP: EURIcon,
+	sAPEPERP: APEIcon,
+	sDYDXPERP: DYDXIcon,
 	sWTI: OILIcon,
 	sAXS: null,
 	sUSD: USDIcon,
@@ -62,11 +58,10 @@ export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = 
 	sETHBTC: ETHBTCIcon,
 	sADA: ADAIcon,
 	sAUD: AUDIcon,
-	sBNB: BNBIcon,
-	sDOGE: DOGEIcon,
-	sDebtRatio: DEBTIcon,
-	sXMR: XMRIcon,
-	sOP: OPIcon,
+	sBNBPERP: BNBIcon,
+	sDOGEPERP: DOGEIcon,
+	sXMRPERP: XMRIcon,
+	sOPPERP: OPIcon,
 	KWENTA: KWENTAIcon,
 	[CRYPTO_CURRENCY_MAP.SNX]: SNXIcon,
 	WBTC: WBTCIcon,

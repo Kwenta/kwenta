@@ -25,7 +25,7 @@ const TokenIcon: FC<TokenIconProps> = memo(({ currencyKey, isDeprecated, ...prop
 	} else {
 		return (
 			<Placeholder $isDeprecated={isDeprecated} {...props}>
-				{currencyKey === 'sDebtRatio' ? 'DEBT' : currencyKey}
+				{currencyKey}
 			</Placeholder>
 		);
 	}
