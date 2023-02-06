@@ -48,8 +48,6 @@ const Market: MarketComponent = () => {
 
 	const setCurrentMarket = useAppSelector(selectMarketAsset);
 	const showOnboard = useAppSelector(selectShowCrossMarginOnboard);
-	const queryStatus = useAppSelector(selectCMAccountQueryStatus);
-	const crossMarginAccount = useAppSelector(selectCrossMarginAccount);
 	const openModal = useAppSelector(selectOpenModal);
 
 	const resetTradeState = useCallback(() => {
@@ -99,11 +97,7 @@ const Market: MarketComponent = () => {
 				</PageContent>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
-				{walletAddress && !crossMarginAccount && queryStatus.status === FetchStatus.Idle ? (
-					<Loader />
-				) : (
-					<MobileTrade />
-				)}
+				<MobileTrade />
 				<GitHashID />
 			</MobileOrTabletView>
 			{openModal === 'futures_isolated_transfer' && (
