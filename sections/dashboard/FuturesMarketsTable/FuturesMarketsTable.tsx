@@ -42,7 +42,7 @@ const FuturesMarketsTable: FC = () => {
 		return futuresMarkets.map((market) => {
 			const description = getSynthDescription(market.asset, synthsMap, t);
 			const volume = futuresVolumes[market.marketKey]?.volume;
-			const marketPriceColor = priceColors[market.asset].offChain ?? 'white';
+			const marketPriceColor = priceColors[market.asset]?.offChain ?? 'white';
 			const pastPrice = pastRates.find((price) => price.synth === getDisplayAsset(market.asset));
 			const marketPrice = markPrices[market.marketKey] ?? wei(0);
 

@@ -9,19 +9,18 @@ export const getPricesInfo = (oldPrices: PricesInfoMap, newPrices: PricesMap<str
 	let asset: keyof PricesMap<string>;
 	for (asset in newPrices) {
 		const newPrice = wei(newPrices[asset]);
-		const oldPrice = wei(oldPrices[asset]?.price);
+		const oldPrice = wei(oldPrices[asset]?.price) ?? null;
 		const oldChange = oldPrices[asset]?.change;
 
 		pricesInfo[asset] = {
 			price: newPrice.toString(),
-			change:
-				!!oldPrice && !!oldChange
-					? newPrice.gt(oldPrice)
-						? 'up'
-						: oldPrice.gt(newPrice)
-						? 'down'
-						: oldChange
-					: null,
+			change: !!oldPrice
+				? newPrice.gt(oldPrice)
+					? 'up'
+					: oldPrice.gt(newPrice)
+					? 'down'
+					: oldChange ?? null
+				: null,
 		};
 	}
 	return pricesInfo;

@@ -186,7 +186,7 @@ export const selectMarketPrices = createSelector(
 export const selectMarkPrices = createSelector(selectMarkets, selectPrices, (markets, prices) => {
 	const markPrices: MarkPrices = {};
 	return markets.reduce((acc, market) => {
-		const price = prices[market.asset].offChain ?? wei(0);
+		const price = prices[market.asset]?.offChain ?? wei(0);
 		return {
 			...acc,
 			[market.marketKey]: wei(price).mul(
