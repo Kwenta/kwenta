@@ -15,6 +15,12 @@ export const migrations = {
 			futures: FUTURES_INITIAL_STATE,
 		};
 	},
+	6: (state: any) => {
+		return {
+			...state,
+			prices: PRICES_INITIAL_STATE,
+		};
+	},
 };
 
 export default migrations;
