@@ -48,6 +48,10 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 		asset: FuturesMarketAsset.LINK,
 		supports: 'testnet',
 		version: 2,
+		pythIds: {
+			mainnet: '0x8ac0c70fff57e9aefdf5edf44b51d62c2d433653cbb2cf5cc06bb115af04d221',
+			testnet: '0x83be4ed61dd8a3518d198098ce37240c494710a7b9d85e35d9fceac21df08994',
+		},
 	},
 	[FuturesMarketKey.sSOLPERP]: {
 		key: FuturesMarketKey.sSOLPERP,
@@ -84,6 +88,10 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 		asset: FuturesMarketAsset.UNI,
 		supports: 'testnet',
 		version: 2,
+		pythIds: {
+			mainnet: '0x78d185a741d07edb3412b09008b7c5cfb9bbbd7d568bf00ba737b456ba171501',
+			testnet: '0x64ae1fc7ceacf2cd59bee541382ff3770d847e63c40eb6cf2413e7de5e93078a',
+		},
 	},
 	[FuturesMarketKey.sMATICPERP]: {
 		key: FuturesMarketKey.sMATICPERP,
@@ -140,6 +148,10 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 		asset: FuturesMarketAsset.DYDX,
 		supports: 'testnet',
 		version: 2,
+		pythIds: {
+			mainnet: '0x6489800bb8974169adfe35937bf6736507097d13c190d760c557108c7e93a81b',
+			testnet: '0x05a934cb3bbadef93b525978ab5bd3d5ce3b8fc6717b9ea182a688c5d8ee8e02',
+		},
 	},
 	[FuturesMarketKey.sBNBPERP]: {
 		key: FuturesMarketKey.sBNBPERP,
@@ -161,17 +173,85 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 			testnet: '0x31775e1d6897129e8a84eeba975778fb50015b88039e9bc140bbd839694ac0ae',
 		},
 	},
-	[FuturesMarketKey.sXMRPERP]: {
-		key: FuturesMarketKey.sXMRPERP,
-		asset: FuturesMarketAsset.XMR,
-		supports: 'testnet',
-		version: 2,
-	},
 	[FuturesMarketKey.sOPPERP]: {
 		key: FuturesMarketKey.sOPPERP,
 		asset: FuturesMarketAsset.OP,
 		supports: 'testnet',
 		version: 2,
+		pythIds: {
+			mainnet: '0x385f64d993f7b77d8182ed5003d97c60aa3361f3cecfe711544d2d59165e9bdf',
+			testnet: '0x71334dcd37620ce3c33e3bafef04cc80dec083042e49b734315b36d1aad7991f',
+		},
+	},
+	[FuturesMarketKey.sATOMPERP]: {
+		key: FuturesMarketKey.sATOMPERP,
+		asset: FuturesMarketAsset.ATOM,
+		supports: 'testnet',
+		version: 2,
+		pythIds: {
+			mainnet: '0xb00b60f88b03a6a625a8d1c048c3f66653edf217439983d037e7222c4e612819',
+			testnet: '0x61226d39beea19d334f17c2febce27e12646d84675924ebb02b9cdaea68727e3',
+		},
+	},
+	[FuturesMarketKey.sFTMPERP]: {
+		key: FuturesMarketKey.sFTMPERP,
+		asset: FuturesMarketAsset.FTM,
+		supports: 'testnet',
+		version: 2,
+		pythIds: {
+			mainnet: '0x5c6c0d2386e3352356c3ab84434fafb5ea067ac2678a38a338c4a69ddc4bdb0c',
+			testnet: '0x9b7bfd7654cbb80099d5edc0a29159afc9e9b4636c811cf8c3b95bd11dd8e3dd',
+		},
+	},
+	[FuturesMarketKey.sNEARPERP]: {
+		key: FuturesMarketKey.sNEARPERP,
+		asset: FuturesMarketAsset.NEAR,
+		supports: 'testnet',
+		version: 2,
+		pythIds: {
+			mainnet: '0xc415de8d2eba7db216527dff4b60e8f3a5311c740dadb233e13e12547e226750',
+			testnet: '0x27e867f0f4f61076456d1a73b14c7edc1cf5cef4f4d6193a33424288f11bd0f4',
+		},
+	},
+	[FuturesMarketKey.sFLOWPERP]: {
+		key: FuturesMarketKey.sFLOWPERP,
+		asset: FuturesMarketAsset.FLOW,
+		supports: 'testnet',
+		version: 2,
+		pythIds: {
+			mainnet: '0x2fb245b9a84554a0f15aa123cbb5f64cd263b59e9a87d80148cbffab50c69f30',
+			testnet: '0xaa67a6594d0e1578faa3bba80bec5b31e461b945e4fbab59eeab38ece09335fb',
+		},
+	},
+	[FuturesMarketKey.sAXSPERP]: {
+		key: FuturesMarketKey.sAXSPERP,
+		asset: FuturesMarketAsset.AXS,
+		supports: 'testnet',
+		version: 2,
+		pythIds: {
+			mainnet: '0xb7e3904c08ddd9c0c10c6d207d390fd19e87eb6aab96304f571ed94caebdefa0',
+			testnet: '0xb327d9cf0ecd793a175fa70ac8d2dc109d4462758e556962c4a87b02ec4f3f15',
+		},
+	},
+	[FuturesMarketKey.sAUDPERP]: {
+		key: FuturesMarketKey.sAUDPERP,
+		asset: FuturesMarketAsset.AUD,
+		supports: 'testnet',
+		version: 2,
+		pythIds: {
+			mainnet: '0x67a6f93030420c1c9e3fe37c1ab6b77966af82f995944a9fefce357a22854a80',
+			testnet: '0x2646ca1e1186fd2bb48b2ab3effa841d233b7e904b2caebb19c8030784a89c97',
+		},
+	},
+	[FuturesMarketKey.sGBPPERP]: {
+		key: FuturesMarketKey.sGBPPERP,
+		asset: FuturesMarketAsset.GBP,
+		supports: 'testnet',
+		version: 2,
+		pythIds: {
+			mainnet: '0x84c2dde9633d93d1bcad84e7dc41c9d56578b7ec52fabedc1f335d673df0a7c1',
+			testnet: '0xbcbdc2755bd74a2065f9d3283c2b8acbd898e473bdb90a6764b3dbd467c56ecd',
+		},
 	},
 };
 

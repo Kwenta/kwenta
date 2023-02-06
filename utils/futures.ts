@@ -92,8 +92,14 @@ export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
 	[FuturesMarketKey.sDYDXPERP]: FuturesMarketAsset.DYDX,
 	[FuturesMarketKey.sBNBPERP]: FuturesMarketAsset.BNB,
 	[FuturesMarketKey.sDOGEPERP]: FuturesMarketAsset.DOGE,
-	[FuturesMarketKey.sXMRPERP]: FuturesMarketAsset.XMR,
 	[FuturesMarketKey.sOPPERP]: FuturesMarketAsset.OP,
+	[FuturesMarketKey.sATOMPERP]: FuturesMarketAsset.ATOM,
+	[FuturesMarketKey.sFTMPERP]: FuturesMarketAsset.FTM,
+	[FuturesMarketKey.sNEARPERP]: FuturesMarketAsset.NEAR,
+	[FuturesMarketKey.sFLOWPERP]: FuturesMarketAsset.FLOW,
+	[FuturesMarketKey.sAXSPERP]: FuturesMarketAsset.AXS,
+	[FuturesMarketKey.sAUDPERP]: FuturesMarketAsset.AUD,
+	[FuturesMarketKey.sGBPPERP]: FuturesMarketAsset.GBP,
 } as const;
 
 export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
@@ -112,8 +118,14 @@ export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 	[FuturesMarketAsset.DYDX]: FuturesMarketKey.sDYDXPERP,
 	[FuturesMarketAsset.BNB]: FuturesMarketKey.sBNBPERP,
 	[FuturesMarketAsset.DOGE]: FuturesMarketKey.sDOGEPERP,
-	[FuturesMarketAsset.XMR]: FuturesMarketKey.sXMRPERP,
 	[FuturesMarketAsset.OP]: FuturesMarketKey.sOPPERP,
+	[FuturesMarketAsset.ATOM]: FuturesMarketKey.sATOMPERP,
+	[FuturesMarketAsset.FTM]: FuturesMarketKey.sFTMPERP,
+	[FuturesMarketAsset.NEAR]: FuturesMarketKey.sNEARPERP,
+	[FuturesMarketAsset.FLOW]: FuturesMarketKey.sFLOWPERP,
+	[FuturesMarketAsset.AXS]: FuturesMarketKey.sAXSPERP,
+	[FuturesMarketAsset.AUD]: FuturesMarketKey.sAUDPERP,
+	[FuturesMarketAsset.GBP]: FuturesMarketKey.sGBPPERP,
 } as const;
 
 export const marketOverrides: Partial<Record<FuturesMarketKey, Record<string, any>>> = {

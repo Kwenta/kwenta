@@ -12,7 +12,7 @@ import Connector from 'containers/Connector';
 import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { Rates } from 'queries/rates/types';
-import { FuturesMarketAsset } from 'sdk/types/futures';
+import { FuturesMarketAsset, FuturesMarketKey } from 'sdk/types/futures';
 import {
 	selectMarketAsset,
 	selectMarkets,
@@ -32,6 +32,7 @@ import MarketsDropdownSingleValue from './MarketsDropdownSingleValue';
 
 export type MarketsCurrencyOption = {
 	value: FuturesMarketAsset;
+	key: FuturesMarketKey;
 	label: string;
 	description: string;
 	price?: string | JSX.Element;
@@ -43,6 +44,7 @@ export type MarketsCurrencyOption = {
 
 type AssetToCurrencyOptionArgs = {
 	asset: FuturesMarketAsset;
+	key: FuturesMarketKey;
 	description: string;
 	price?: string | JSX.Element;
 	change?: string;
@@ -120,6 +122,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 
 				return assetToCurrencyOption({
 					asset: market.asset,
+					key: market.marketKey,
 					description: getSynthDescription(market.asset, synthsMap, t),
 					price: formatCurrency(selectedPriceCurrency.name, basePriceRate, {
 						sign: '$',
@@ -164,6 +167,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				}}
 				value={assetToCurrencyOption({
 					asset: marketAsset,
+					key: MarketKeyByAsset[marketAsset],
 					description: getSynthDescription(marketAsset, synthsMap, t),
 					price: mobile
 						? formatCurrency(selectedPriceCurrency.name, selectedBasePriceRate, {

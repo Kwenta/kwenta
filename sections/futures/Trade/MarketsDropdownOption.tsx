@@ -11,11 +11,7 @@ import { CurrencyLabel, SingleValueContainer } from './MarketsDropdownSingleValu
 const MarketsDropdownOption: React.FC<OptionProps<MarketsCurrencyOption>> = (props) => (
 	<components.Option {...props}>
 		<OptionDetailsContainer $isSelected={props.isSelected}>
-			<CurrencyIcon
-				currencyKey={(props.data.value[0] !== 's' ? 's' : '') + props.data.value}
-				width="31px"
-				height="31px"
-			/>
+			<CurrencyIcon currencyKey={props.data.key} width="31px" height="31px" />
 			<CurrencyMeta $isSelected={props.isSelected}>
 				<div>
 					<StyledCurrencyLabel>

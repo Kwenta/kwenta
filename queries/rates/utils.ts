@@ -27,8 +27,14 @@ const markets = new Set<FuturesMarketKey>([
 	FuturesMarketKey.sAPEPERP,
 	FuturesMarketKey.sBNBPERP,
 	FuturesMarketKey.sDOGEPERP,
-	FuturesMarketKey.sXMRPERP,
 	FuturesMarketKey.sOPPERP,
+	FuturesMarketKey.sATOMPERP,
+	FuturesMarketKey.sFTMPERP,
+	FuturesMarketKey.sNEARPERP,
+	FuturesMarketKey.sFLOWPERP,
+	FuturesMarketKey.sAXSPERP,
+	FuturesMarketKey.sAUDPERP,
+	FuturesMarketKey.sGBPPERP,
 ]);
 
 const map: Record<FuturesMarketKey, string> = {
@@ -47,8 +53,14 @@ const map: Record<FuturesMarketKey, string> = {
 	[FuturesMarketKey.sAPEPERP]: 'apecoin',
 	[FuturesMarketKey.sDOGEPERP]: 'dogecoin',
 	[FuturesMarketKey.sBNBPERP]: 'binancecoin',
-	[FuturesMarketKey.sXMRPERP]: 'monero',
 	[FuturesMarketKey.sOPPERP]: 'optimism',
+	[FuturesMarketKey.sATOMPERP]: '',
+	[FuturesMarketKey.sFTMPERP]: '',
+	[FuturesMarketKey.sNEARPERP]: '',
+	[FuturesMarketKey.sFLOWPERP]: '',
+	[FuturesMarketKey.sAXSPERP]: '',
+	[FuturesMarketKey.sAUDPERP]: '',
+	[FuturesMarketKey.sGBPPERP]: '',
 };
 
 export const synthToCoingeckoPriceId = (marketKey: FuturesMarketKey) => {
