@@ -191,7 +191,7 @@ const FeeInfoBox: React.FC = () => {
 								: NO_VALUE,
 							keyNode: executionFeeTooltip,
 						},
-						[`Est Trade Fee (${formatPercent(makerFee ?? zeroBN)} / ${formatPercent(
+						[`Est. Trade Fee (${formatPercent(makerFee ?? zeroBN)} / ${formatPercent(
 							takerFee ?? zeroBN
 						)})`]: {
 							value: !!commitDeposit
