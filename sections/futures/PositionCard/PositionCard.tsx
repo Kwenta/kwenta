@@ -3,6 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
+import ColoredPrice from 'components/ColoredPrice';
 import { FlexDivCentered, FlexDivCol } from 'components/layout/flex';
 import PreviewArrow from 'components/PreviewArrow';
 import { Body } from 'components/Text';
@@ -282,7 +283,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 				<DataCol>
 					<InfoRow>
 						<Subtitle>{data.marketShortName}</Subtitle>
-						<StyledValue className={marketPriceColor}>{data.marketPrice}</StyledValue>
+						<ColoredPrice color={marketPriceColor}>{data.marketPrice}</ColoredPrice>
 					</InfoRow>
 					<InfoRow>
 						<PositionCardTooltip content={t('futures.market.position-card.tooltips.position-side')}>

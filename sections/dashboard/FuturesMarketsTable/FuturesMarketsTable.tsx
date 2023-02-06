@@ -7,6 +7,7 @@ import styled from 'styled-components';
 
 import MarketBadge from 'components/Badge/MarketBadge';
 import ChangePercent from 'components/ChangePercent';
+import ColoredPrice from 'components/ColoredPrice';
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableHeader } from 'components/Table';
@@ -431,10 +432,6 @@ const StyledText = styled.div`
 	grid-row: 1;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-family: ${(props) => props.theme.fonts.bold};
-`;
-
-const ColoredPrice = styled.div<{ color: 'white' | 'red' | 'green' }>`
-	color: ${(props) => props.theme.colors.selectedTheme[props.color]};
 `;
 
 const MarketContainer = styled.div`
