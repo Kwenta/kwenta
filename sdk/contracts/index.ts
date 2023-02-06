@@ -10,6 +10,7 @@ import CrossMarginBaseSettingsABI from './abis/CrossMarginBaseSettings.json';
 import ExchangeRatesABI from './abis/ExchangeRates.json';
 import FuturesMarketDataABI from './abis/FuturesMarketData.json';
 import FuturesMarketSettingsABI from './abis/FuturesMarketSettings.json';
+import KwentaArrakisVaultABI from './abis/KwentaArrakisVault.json';
 import KwentaStakingRewardsABI from './abis/KwentaStakingRewards.json';
 import PerpsV2MarketABI from './abis/PerpsV2Market.json';
 import PerpsV2MarketDataABI from './abis/PerpsV2MarketData.json';
@@ -182,7 +183,7 @@ export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 			? new EthCallContract(ADDRESSES.StakingRewards[networkId], StakingRewardsABI)
 			: undefined,
 		KwentaArrakisVault: ADDRESSES.KwentaArrakisVault[networkId]
-			? new EthCallContract(ADDRESSES.KwentaArrakisVault[networkId], ERC20ABI)
+			? new EthCallContract(ADDRESSES.KwentaArrakisVault[networkId], KwentaArrakisVaultABI)
 			: undefined,
 		RewardEscrow: ADDRESSES.RewardEscrow[networkId]
 			? new EthCallContract(ADDRESSES.RewardEscrow[networkId], RewardEscrowABI)

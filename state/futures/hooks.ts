@@ -9,13 +9,11 @@ import {
 	fetchFuturesPositionHistory,
 	fetchIsolatedMarginAccountData,
 	fetchCrossMarginOpenOrders,
-	fetchPreviousDayRates,
 	fetchSharedFuturesData,
 	fetchIsolatedOpenOrders,
 } from './actions';
 import {
 	selectCrossMarginAccount,
-	selectCrossMarginSupportedNetwork,
 	selectFuturesSupportedNetwork,
 	selectFuturesType,
 	selectMarkets,
@@ -29,7 +27,7 @@ export const usePollMarketFuturesData = () => {
 	const wallet = useAppSelector(selectWallet);
 	const crossMarginAddress = useAppSelector(selectCrossMarginAccount);
 	const selectedAccountType = useAppSelector(selectFuturesType);
-	const networkSupportsCrossMargin = useAppSelector(selectCrossMarginSupportedNetwork);
+	const networkSupportsCrossMargin = useAppSelector(selectFuturesSupportedNetwork);
 	const networkSupportsFutures = useAppSelector(selectFuturesSupportedNetwork);
 
 	useFetchAction(fetchCrossMarginAccount, {
@@ -57,11 +55,6 @@ export const usePollMarketFuturesData = () => {
 		dependencies: [markets.length, crossMarginAddress],
 		disabled: !markets.length || !crossMarginAddress || selectedAccountType === 'isolated_margin',
 	});
-	usePollAction('fetchPreviousDayRates', fetchPreviousDayRates, {
-		intervalTime: 60000 * 15,
-		dependencies: [markets.length],
-		disabled: !markets.length,
-	});
 	usePollAction('fetchFuturesPositionHistory', fetchFuturesPositionHistory, {
 		intervalTime: 15000,
 		dependencies: [wallet, crossMarginAddress],
@@ -85,7 +78,7 @@ export const usePollDashboardFuturesData = () => {
 	const markets = useAppSelector(selectMarkets);
 	const wallet = useAppSelector(selectWallet);
 	const crossMarginAddress = useAppSelector(selectCrossMarginAccount);
-	const networkSupportsCrossMargin = useAppSelector(selectCrossMarginSupportedNetwork);
+	const networkSupportsCrossMargin = useAppSelector(selectFuturesSupportedNetwork);
 
 	useFetchAction(fetchCrossMarginAccount, {
 		dependencies: [networkId, wallet],

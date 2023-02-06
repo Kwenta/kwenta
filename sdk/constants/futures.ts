@@ -1,14 +1,24 @@
 import { FuturesMarketAsset, FuturesMarketConfig, FuturesMarketKey } from 'sdk/types/futures';
 
-export const FUTURES_ENDPOINT_OP_MAINNET =
-	'https://api.thegraph.com/subgraphs/name/tburm/optimism-perps';
+export const FUTURES_ENDPOINT_OP_MAINNET = `https://subgraph.satsuma-prod.com/${process.env.NEXT_PUBLIC_SATSUMA_API_KEY}/kwenta/optimism-perps/api`;
 
 export const FUTURES_ENDPOINT_OP_GOERLI =
-	'https://api.thegraph.com/subgraphs/name/tburm/optimism-goerli-perps';
+	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-goerli-perps';
+
+export const MAIN_ENDPOINT_OP_MAINNET =
+	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-main';
+
+export const MAIN_ENDPOINT_OP_GOERLI =
+	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-goerli-main';
 
 export const FUTURES_ENDPOINTS: Record<number, string> = {
 	10: FUTURES_ENDPOINT_OP_MAINNET,
 	420: FUTURES_ENDPOINT_OP_GOERLI,
+};
+
+export const MAIN_ENDPOINTS: Record<number, string> = {
+	10: MAIN_ENDPOINT_OP_MAINNET,
+	420: MAIN_ENDPOINT_OP_GOERLI,
 };
 
 export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {

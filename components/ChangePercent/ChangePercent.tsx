@@ -19,10 +19,9 @@ export const ChangePercent: FC<ChangePercentProps> = memo(
 		const isValid = !!value;
 		const isZero = value && wei(value).eq(0);
 		const isPositive = value && wei(value).gt(0);
-
 		return (
-			<CurrencyChange isValid={isValid} isPositive={isPositive} {...rest}>
-				{!isValid ? (
+			<CurrencyChange isValid={isValid} isPositive={isPositive} isZero={isZero} {...rest}>
+				{!isValid || isZero ? (
 					<>{NO_VALUE}</>
 				) : !showArrow ? (
 					<></>
@@ -31,17 +30,17 @@ export const ChangePercent: FC<ChangePercentProps> = memo(
 				) : (
 					<ChangeNegativeIcon />
 				)}
-				{value && formatPercent(wei(value).abs(), { minDecimals: decimals })}
+				{!isZero && value && formatPercent(wei(value).abs(), { minDecimals: decimals })}
 			</CurrencyChange>
 		);
 	}
 );
 
-const CurrencyChange = styled.span<{ isValid: boolean; isPositive: boolean }>`
+const CurrencyChange = styled.span<{ isValid: boolean; isPositive: boolean; isZero: boolean }>`
 	display: inline-flex;
 	align-items: center;
 	color: ${(props) =>
-		!props.isValid
+		!props.isValid || props.isZero
 			? props.theme.colors.selectedTheme.white
 			: props.isPositive
 			? props.theme.colors.selectedTheme.green

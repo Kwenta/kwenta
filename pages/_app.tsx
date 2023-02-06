@@ -28,13 +28,15 @@ import { selectCurrentTheme } from 'state/preferences/selectors';
 import store from 'state/store';
 import { MediaContextProvider } from 'styles/media';
 import { themes } from 'styles/theme';
+import { IGNORE_ERRORS } from 'utils/logError';
+import { getDesignTokens } from 'utils/theme';
+
 import 'styles/main.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import '@reach/dialog/styles.css';
 import '@rainbow-me/rainbowkit/styles.css';
 import '../i18n';
-import { getDesignTokens } from 'utils/theme';
 
 type NextPageWithLayout = NextPage & {
 	getLayout?: (page: ReactElement) => ReactNode;
@@ -55,6 +57,7 @@ Sentry.init({
 	autoSessionTracking: true,
 	integrations: [new BrowserTracing()],
 	tracesSampleRate: 0.3,
+	ignoreErrors: IGNORE_ERRORS,
 });
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {

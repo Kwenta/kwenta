@@ -12,12 +12,12 @@ export type SynthsTrades = {
 export type SynthsTrade = {
 	id: string;
 	fromSynth: Partial<SynthResult> | null;
-	fromAmount: Wei;
-	fromAmountInUSD: Wei;
-	toAmount: Wei;
-	toAmountInUSD: Wei;
-	feesInUSD: Wei;
+	fromAmount: string;
+	fromAmountInUSD: string;
+	toAmount: string;
+	toAmountInUSD: string;
+	feesInUSD: string;
 	toAddress: string;
-	timestamp: Wei;
-	gasPrice: Wei;
+	timestamp: string;
+	gasPrice: string;
 };

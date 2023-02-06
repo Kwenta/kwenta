@@ -6,7 +6,6 @@ import SwitchAssetArrows from 'assets/svg/futures/switch-arrows.svg';
 import CustomInput from 'components/Input/CustomInput';
 import InputTitle from 'components/Input/InputTitle';
 import { FlexDivRow } from 'components/layout/flex';
-import { useFuturesContext } from 'contexts/FuturesContext';
 import { editTradeSizeInput } from 'state/futures/actions';
 import { setSelectedInputDenomination } from 'state/futures/reducer';
 import {
@@ -20,6 +19,7 @@ import {
 	selectFuturesType,
 	selectMarketAsset,
 	selectSelectedInputDenomination,
+	selectMaxUsdInputAmount,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { floorNumber, isZero, zeroBN } from 'utils/formatters/number';
@@ -33,7 +33,6 @@ type OrderSizingProps = {
 };
 
 const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) => {
-	const { maxUsdInputAmount } = useFuturesContext();
 	const dispatch = useAppDispatch();
 
 	const { susdSizeString, nativeSizeString } = useAppSelector(selectTradeSizeInputs);
@@ -46,6 +45,7 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
 	const selectedLeverageSide = useAppSelector(selectLeverageSide);
 	const assetInputType = useAppSelector(selectSelectedInputDenomination);
+	const maxUsdInputAmount = useAppSelector(selectMaxUsdInputAmount);
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 

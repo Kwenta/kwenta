@@ -1,9 +1,12 @@
 import { useCallback } from 'react';
 
-import { useFuturesContext } from 'contexts/FuturesContext';
 import { setOpenModal } from 'state/app/reducer';
 import { submitCrossMarginOrder } from 'state/futures/actions';
-import { selectIsAdvancedOrder, selectSubmittingFuturesTx } from 'state/futures/selectors';
+import {
+	selectCrossMarginTradeFees,
+	selectIsAdvancedOrder,
+	selectSubmittingFuturesTx,
+} from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import TradeConfirmationModal from './TradeConfirmationModal';
@@ -13,8 +16,7 @@ export default function TradeConfirmationModalCrossMargin() {
 
 	const isAdvancedOrder = useAppSelector(selectIsAdvancedOrder);
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
-
-	const { tradeFees } = useFuturesContext();
+	const tradeFees = useAppSelector(selectCrossMarginTradeFees);
 
 	const onDismiss = useCallback(() => {
 		dispatch(setOpenModal(null));
