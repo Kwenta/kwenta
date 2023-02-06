@@ -1,5 +1,5 @@
 import { FuturesAccountType } from 'queries/futures/types';
-import { FuturesMarketAsset } from 'utils/futures';
+import { FuturesMarketAsset } from 'sdk/types/futures';
 
 import { EXTERNAL_LINKS } from './links';
 

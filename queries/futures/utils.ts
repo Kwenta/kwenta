@@ -7,8 +7,8 @@ import { ETH_UNIT } from 'constants/network';
 import { chain } from 'containers/Connector/config';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
+import { FuturesMarketAsset } from 'sdk/types/futures';
 import { formatDollars } from 'utils/formatters/number';
-import { FuturesMarketAsset } from 'utils/futures';
 
 import { SECONDS_PER_DAY, FUTURES_ENDPOINTS, MAIN_ENDPOINTS } from './constants';
 import { CrossMarginAccountTransferResult, FuturesMarginTransferResult } from './subgraph';

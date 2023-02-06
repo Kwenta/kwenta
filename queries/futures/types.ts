@@ -2,8 +2,7 @@ import { Balances } from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 
-import { FuturesPotentialTradeDetails } from 'sdk/types/futures';
-import { FuturesMarketAsset } from 'utils/futures';
+import { FuturesMarketAsset, FuturesPotentialTradeDetails } from 'sdk/types/futures';
 
 export type FuturesOpenInterest = {
 	asset: string;
