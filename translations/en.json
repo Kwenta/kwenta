@@ -850,7 +850,9 @@
 					"error": "Error generating preview"
 				},
 				"fees": {
-					"tooltip": "Fees are displayed as maker/taker. Maker fees apply to orders that reduce the market skew. Taker fees apply to orders that increase the market skew."
+					"tooltip": "Fees are displayed as maker / taker. Maker fees apply to orders that reduce the market skew. Taker fees apply to orders that increase the market skew.",
+					"keeper-tooltip": "This is a fixed fee to pay for automated order execution"
+
 				},
 				"orders": {
 					"manage-keeper-deposit": {

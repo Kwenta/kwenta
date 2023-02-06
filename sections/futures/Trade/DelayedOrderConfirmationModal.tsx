@@ -2,12 +2,14 @@ import { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import HelpIcon from 'assets/svg/app/question-mark.svg';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import Error from 'components/ErrorView';
 import { FlexDivCentered } from 'components/layout/flex';
 import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import Tooltip from 'components/Tooltip/Tooltip';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { PositionSide } from 'sdk/types/futures';
 import { getDisplayAsset, OrderNameByType } from 'sdk/utils/futures';
@@ -98,6 +100,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 			},
 			{
 				label: t('futures.market.user.position.modal.estimated-fill'),
+				tooltipContent: t('futures.market.trade.delayed-order.description'),
 				value: formatDollars(potentialTradeDetails?.price ?? zeroBN, { isAssetPrice: true }),
 			},
 			{
@@ -179,7 +182,21 @@ const DelayedOrderConfirmationModal: FC = () => {
 				>
 					{dataRows.map((row, i) => (
 						<Row key={`datarow-${i}`}>
-							<Label>{row.label}</Label>
+							{row.tooltipContent ? (
+								<Tooltip
+									height="auto"
+									width="240px"
+									content={row.tooltipContent}
+									style={{ textTransform: 'none' }}
+								>
+									<Label>
+										{row.label}
+										<StyledHelpIcon />
+									</Label>
+								</Tooltip>
+							) : (
+								<Label>{row.label}</Label>
+							)}
 							<Value>
 								<span className={`value ${row.color ?? ''}`}>{row.value}</span>
 							</Value>
@@ -285,6 +302,10 @@ const Disclaimer = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	margin-top: 12px;
 	margin-bottom: 12px;
+`;
+
+const StyledHelpIcon = styled(HelpIcon)`
+	margin-left: 8px;
 `;
 
 export default DelayedOrderConfirmationModal;
