@@ -12,6 +12,7 @@ import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
+import { getDisplayAsset } from 'sdk/utils/futures';
 import { selectBalances } from 'state/balances/selectors';
 import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices, selectPrices } from 'state/prices/selectors';
@@ -52,9 +53,8 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 	const synthTokens = useMemo(() => {
 		return synthBalances.map((synthBalance: SynthBalance) => {
 			const { currencyKey, balance, usdBalance } = synthBalance;
-
 			const price = prices[currencyKey].onChain;
-			const pastPrice = pastRates.find((price) => price.synth === currencyKey);
+			const pastPrice = pastRates.find((price) => price.synth === getDisplayAsset(currencyKey));
 			const description = synthsMap?.[currencyKey]?.description ?? '';
 
 			return {
@@ -63,7 +63,8 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 				balance,
 				usdBalance,
 				price,
-				priceChange: price?.sub(pastPrice?.rate).div(price),
+				priceChange:
+					currencyKey === 'sUSD' ? zeroBN : price?.sub(pastPrice?.rate ?? zeroBN).div(price),
 			};
 		});
 	}, [pastRates, prices, synthBalances, synthsMap]);
@@ -285,7 +286,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 								return conditionalRender<Cell['priceChange']>(
 									cellProps.row.original.priceChange,
 									<ChangePercent
-										value={cellProps.row.original.priceChange ?? 0}
+										value={cellProps.row.original.priceChange ?? zeroBN}
 										decimals={2}
 										className="change-pct"
 									/>

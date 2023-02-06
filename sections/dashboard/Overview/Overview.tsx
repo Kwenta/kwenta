@@ -13,12 +13,13 @@ import { FuturesAccountTypes } from 'queries/futures/types';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
 import { selectBalances } from 'state/balances/selectors';
 import { sdk } from 'state/config';
+import { fetchTokenList } from 'state/exchange/actions';
 import {
 	// selectActiveCrossPositionsCount,
 	selectActiveIsolatedPositionsCount,
 	selectFuturesPortfolio,
 } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { useAppSelector, useFetchAction } from 'state/hooks';
 import { formatDollars, toWei, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
@@ -27,7 +28,6 @@ import FuturesPositionsTable from '../FuturesPositionsTable';
 import { MarketsTab } from '../Markets/Markets';
 import MobileDashboard from '../MobileDashboard';
 import PortfolioChart from '../PortfolioChart';
-import SpotMarketsTable from '../SpotMarketsTable';
 import SynthBalancesTable from '../SynthBalancesTable';
 
 export enum PositionsTab {
@@ -56,6 +56,8 @@ const Overview: FC = () => {
 	const oneInchEnabled = network.id === 10;
 
 	const [exchangeTokens, setExchangeTokens] = useState<any>([]);
+
+	useFetchAction(fetchTokenList, { dependencies: [network] });
 
 	useEffect(() => {
 		const initExchangeTokens = async () => {
@@ -164,12 +166,6 @@ const Overview: FC = () => {
 				active: activeMarketsTab === MarketsTab.FUTURES,
 				onClick: () => setActiveMarketsTab(MarketsTab.FUTURES),
 			},
-			{
-				name: MarketsTab.SPOT,
-				label: t('dashboard.overview.markets-tabs.spot'),
-				active: activeMarketsTab === MarketsTab.SPOT,
-				onClick: () => setActiveMarketsTab(MarketsTab.SPOT),
-			},
 		],
 		[activeMarketsTab, setActiveMarketsTab, t]
 	);
@@ -210,10 +206,6 @@ const Overview: FC = () => {
 				</TabButtonsContainer>
 				<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
 					<FuturesMarketsTable />
-				</TabPanel>
-
-				<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
-					<SpotMarketsTable />
 				</TabPanel>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
