@@ -41,7 +41,7 @@ const FuturesMarketsTable: FC = () => {
 		return futuresMarkets.map((market) => {
 			const description = getSynthDescription(market.asset, synthsMap, t);
 			const volume = futuresVolumes[market.marketKey]?.volume;
-			const marketPriceColor = priceColors[market.asset]?.offChain?.color ?? 'white';
+			const marketPriceColor = priceColors[market.asset].offChain ?? 'white';
 			const pastPrice = pastRates.find((price) => price.synth === getDisplayAsset(market.asset));
 			const marketPrice = markPrices[market.marketKey] ?? wei(0);
 
@@ -433,13 +433,8 @@ const StyledText = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
-const ColoredPrice = styled.div<{ color: string }>`
-	color: ${(props) =>
-		props.color === 'red'
-			? props.theme.colors.selectedTheme.red
-			: props.color === 'green'
-			? props.theme.colors.selectedTheme.red
-			: props.theme.colors.selectedTheme.white};
+const ColoredPrice = styled.div<{ color: 'white' | 'red' | 'green' }>`
+	color: ${(props) => props.theme.colors.selectedTheme[props.color]};
 `;
 
 const MarketContainer = styled.div`

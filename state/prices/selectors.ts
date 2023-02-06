@@ -4,6 +4,7 @@ import { wei } from '@synthetixio/wei';
 import { Prices } from 'sdk/types/prices';
 import { RootState } from 'state/store';
 import { getPricesForCurrencies } from 'utils/currencies';
+import { priceChangeToColor } from 'utils/prices';
 
 import { PriceColors } from './types';
 
@@ -11,17 +12,17 @@ export const selectPrices = createSelector(
 	(state: RootState) => state.prices,
 	({ onChainPrices, offChainPrices }) => {
 		const merged: Prices = {};
-		Object.entries(onChainPrices).forEach(([key, value]) => {
+		Object.entries(onChainPrices).forEach(([key, { price }]) => {
 			merged[key] = {
-				onChain: wei(value),
+				onChain: wei(price),
 			};
 		});
-		Object.entries(offChainPrices).forEach(([key, value]) => {
+		Object.entries(offChainPrices).forEach(([key, { price }]) => {
 			if (merged[key]) {
-				merged[key].offChain = wei(value);
+				merged[key].offChain = wei(price);
 			} else {
 				merged[key] = {
-					offChain: wei(value),
+					offChain: wei(price),
 				};
 			}
 		});
@@ -31,25 +32,26 @@ export const selectPrices = createSelector(
 
 export const selectPriceColors = createSelector(
 	(state: RootState) => state.prices,
-	({ onChainPriceColors, offChainPriceColors }) => {
+	({ onChainPrices, offChainPrices }) => {
 		const merged: PriceColors = {};
-		Object.entries(onChainPriceColors).forEach(([key, value]) => {
+		Object.entries(onChainPrices).forEach(([key, { change }]) => {
 			merged[key] = {
-				onChain: value,
+				onChain: priceChangeToColor(change),
 			};
 		});
-		Object.entries(offChainPriceColors).forEach(([key, value]) => {
+		Object.entries(offChainPrices).forEach(([key, { change }]) => {
 			if (merged[key]) {
-				merged[key].offChain = value;
+				merged[key].offChain = priceChangeToColor(change);
 			} else {
 				merged[key] = {
-					offChain: value,
+					offChain: priceChangeToColor(change),
 				};
 			}
 		});
 		return merged;
 	}
 );
+
 export const selectPreviousDayPrices = (state: RootState) => state.prices.previousDayPrices;
 
 export const selectLatestEthPrice = createSelector(selectPrices, (prices) => {

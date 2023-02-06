@@ -159,11 +159,10 @@ export const selectMarketPrice = createSelector(
 export const selectMarketPriceColor = createSelector(
 	selectMarketInfo,
 	selectPriceColors,
-	(state: RootState) => state.prices,
 	(marketInfo, priceColors) => {
 		if (!marketInfo || !priceColors[marketInfo.asset]?.offChain) return 'white';
-		const colorInfo = priceColors[marketInfo.asset].offChain;
-		return colorInfo?.color ?? 'white';
+		const color = priceColors[marketInfo.asset].offChain;
+		return color ?? 'white';
 	}
 );
 

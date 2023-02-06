@@ -1,20 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { wei } from '@synthetixio/wei';
 
 import { notifyError } from 'components/ErrorView/ErrorNotifier';
 import { SynthPrice, PricesMap, PriceType } from 'sdk/types/prices';
 import { selectPrices } from 'state/prices/selectors';
 import { AppThunk } from 'state/store';
 import { ThunkConfig } from 'state/types';
-import { resetExpiredPriceColors } from 'utils/prices';
+import { getPricesInfo } from 'utils/prices';
 
-import {
-	setOffChainPriceColors,
-	setOffChainPrices,
-	setOnChainPriceColors,
-	setOnChainPrices,
-} from './reducer';
-import { PriceColorMap } from './types';
+import { setOffChainPrices, setOnChainPrices } from './reducer';
 
 export const updatePrices = (newPrices: PricesMap<string>, type: PriceType): AppThunk => (
 	dispatch,
@@ -22,69 +15,11 @@ export const updatePrices = (newPrices: PricesMap<string>, type: PriceType): App
 ) => {
 	const { prices } = getState();
 	if (type === 'off_chain') {
-		dispatch(setOffChainPrices(newPrices));
-		dispatch(getPriceColors(prices.offChainPrices, newPrices, type));
+		dispatch(setOffChainPrices(getPricesInfo(prices.offChainPrices, newPrices)));
 	} else {
-		dispatch(setOnChainPrices(newPrices));
-		dispatch(getPriceColors(prices.onChainPrices, newPrices, type));
+		dispatch(setOnChainPrices(getPricesInfo(prices.onChainPrices, newPrices)));
 	}
 };
-
-const getPriceColors = (
-	oldPrices: PricesMap<string>,
-	newPrices: PricesMap<string>,
-	type: PriceType
-): AppThunk => (dispatch) => {
-	let priceColors: PriceColorMap = {};
-
-	let asset: keyof PricesMap;
-	for (asset in newPrices) {
-		const newPrice = wei(newPrices[asset]);
-		const oldPrice = wei(oldPrices[asset]);
-
-		priceColors[asset] = {
-			color:
-				!!newPrice && !!oldPrice
-					? newPrice.gt(oldPrice)
-						? 'green'
-						: oldPrice.gt(newPrice)
-						? 'red'
-						: 'white'
-					: 'white',
-			expiresAt: Date.now() + 1000,
-		};
-	}
-
-	if (type === 'off_chain') {
-		dispatch(setOffChainPriceColors(priceColors));
-	} else {
-		dispatch(setOnChainPriceColors(priceColors));
-	}
-
-	setTimeout(() => {
-		dispatch(resetPriceColors());
-	}, 1000);
-};
-
-const resetPriceColors = createAsyncThunk<null, undefined, ThunkConfig>(
-	'prices/resetPriceColors',
-	async (_, { getState, dispatch }) => {
-		try {
-			const {
-				prices: { offChainPriceColors, onChainPriceColors },
-			} = getState();
-			const newOffChainPriceColors = resetExpiredPriceColors(offChainPriceColors);
-			const newOnChainPriceColors = resetExpiredPriceColors(onChainPriceColors);
-
-			dispatch(setOffChainPriceColors(newOffChainPriceColors));
-			dispatch(setOnChainPriceColors(newOnChainPriceColors));
-			return null;
-		} catch (err) {
-			notifyError('Failed to reset price colors', err);
-			throw err;
-		}
-	}
-);
 
 export const fetchPreviousDayPrices = createAsyncThunk<
 	SynthPrice[],

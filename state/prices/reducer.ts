@@ -1,6 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
-import { PricesMap } from 'sdk/types/prices';
 import { DEFAULT_QUERY_STATUS, LOADING_STATUS, SUCCESS_STATUS } from 'state/constants';
 import { FetchStatus } from 'state/types';
 
@@ -10,8 +9,6 @@ import { PricesState } from './types';
 export const PRICES_INITIAL_STATE: PricesState = {
 	onChainPrices: {},
 	offChainPrices: {},
-	onChainPriceColors: {},
-	offChainPriceColors: {},
 	connectionError: null,
 	previousDayPrices: [],
 	queryStatuses: {
@@ -23,17 +20,11 @@ const pricesSlice = createSlice({
 	name: 'prices',
 	initialState: PRICES_INITIAL_STATE,
 	reducers: {
-		setOffChainPrices: (state, action: PayloadAction<PricesMap<string>>) => {
+		setOffChainPrices: (state, action) => {
 			state.offChainPrices = action.payload;
 		},
 		setOnChainPrices: (state, action) => {
 			state.onChainPrices = action.payload;
-		},
-		setOffChainPriceColors: (state, action) => {
-			state.offChainPriceColors = action.payload;
-		},
-		setOnChainPriceColors: (state, action) => {
-			state.offChainPriceColors = action.payload;
 		},
 		setConnectionError: (state, action) => {
 			state.connectionError = action.payload;
@@ -57,12 +48,6 @@ const pricesSlice = createSlice({
 	},
 });
 
-export const {
-	setOffChainPrices,
-	setOnChainPrices,
-	setOffChainPriceColors,
-	setOnChainPriceColors,
-	setConnectionError,
-} = pricesSlice.actions;
+export const { setOffChainPrices, setOnChainPrices, setConnectionError } = pricesSlice.actions;
 
 export default pricesSlice.reducer;

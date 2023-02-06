@@ -1,24 +1,32 @@
-import { SynthPrice, PricesMap, AssetKey } from 'sdk/types/prices';
+import Wei from '@synthetixio/wei';
+
+import { SynthPrice, AssetKey } from 'sdk/types/prices';
 import { QueryStatus } from 'state/types';
 
-type PriceColor = 'white' | 'red' | 'green';
-type PriceColorInfo = {
-	color: PriceColor;
-	expiresAt: number;
+export type PriceChange = 'up' | 'down' | null;
+export type PriceColorOptions = 'red' | 'green' | 'white';
+
+type PricesInfo<T = Wei> = {
+	price: T;
+	change: PriceChange;
 };
 
-export type PriceColorMap = Partial<Record<AssetKey, PriceColorInfo>>;
-export type PriceColors = Record<string, { onChain?: PriceColorInfo; offChain?: PriceColorInfo }>;
+export type PriceColor = {
+	offChain?: PriceColorOptions;
+	onChain?: PriceColorOptions;
+};
+
+export type PriceColors = Record<string, PriceColor>;
+
+export type PricesInfoMap = Partial<Record<AssetKey, PricesInfo<string>>>;
 
 export type PricesQueryStatuses = {
 	previousDayPrices: QueryStatus;
 };
 
 export type PricesState = {
-	onChainPrices: PricesMap<string>;
-	offChainPrices: PricesMap<string>;
-	onChainPriceColors: PriceColorMap;
-	offChainPriceColors: PriceColorMap;
+	onChainPrices: PricesInfoMap;
+	offChainPrices: PricesInfoMap;
 	connectionError: string | null | undefined;
 	previousDayPrices: SynthPrice[];
 	queryStatuses: PricesQueryStatuses;
