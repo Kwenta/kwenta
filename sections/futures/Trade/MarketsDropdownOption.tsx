@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components';
 import MarketBadge from 'components/Badge/MarketBadge';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { FlexDivCentered } from 'components/layout/flex';
+import { Body } from 'components/Text';
 
 import { MarketsCurrencyOption } from './MarketsDropdown';
 import { CurrencyLabel, SingleValueContainer } from './MarketsDropdownSingleValue';
@@ -11,42 +12,43 @@ import { CurrencyLabel, SingleValueContainer } from './MarketsDropdownSingleValu
 const MarketsDropdownOption: React.FC<OptionProps<MarketsCurrencyOption>> = (props) => (
 	<components.Option {...props}>
 		<OptionDetailsContainer $isSelected={props.isSelected}>
-			<CurrencyIcon
-				currencyKey={(props.data.value[0] !== 's' ? 's' : '') + props.data.value}
-				width="31px"
-				height="31px"
-			/>
 			<CurrencyMeta $isSelected={props.isSelected}>
-				<div>
-					<StyledCurrencyLabel>
-						{props.data.label}
-						<MarketBadge
-							currencyKey={props.data.value}
-							isFuturesMarketClosed={props.data.isFuturesMarketClosed}
-							futuresClosureReason={props.data.futuresClosureReason}
-						/>
-					</StyledCurrencyLabel>
-					<p className="name">{props.data.description}</p>
-				</div>
+				<CurrencyIcon
+					currencyKey={(props.data.value[0] !== 's' ? 's' : '') + props.data.value}
+					width="24px"
+					height="24px"
+				/>
+				<StyledCurrencyLabel>
+					{props.data.label}
+					<MarketBadge
+						currencyKey={props.data.value}
+						isFuturesMarketClosed={props.data.isFuturesMarketClosed}
+						futuresClosureReason={props.data.futuresClosureReason}
+					/>
+				</StyledCurrencyLabel>
 			</CurrencyMeta>
-			<div>
-				<p className={props.data.negativeChange ? 'price red' : 'price green'}>
+			<PriceLabel>
+				<Body className={props.data.negativeChange ? 'price red' : 'price green'}>
 					{props.data.price}
-				</p>
-				<p className={props.data.negativeChange ? `change red` : 'change green'}>
+				</Body>
+			</PriceLabel>
+			<div>
+				{' '}
+				<Body className={props.data.negativeChange ? `change red` : 'change green'}>
 					{props.data.change}
-				</p>
+				</Body>
 			</div>
 		</OptionDetailsContainer>
 	</components.Option>
 );
 
 const StyledCurrencyLabel = styled(CurrencyLabel)`
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
+	color: ${(props) => props.theme.colors.selectedTheme.white};
+	font-size: 13px;
 `;
 const CurrencyMeta = styled(FlexDivCentered)<{ $isSelected: boolean }>`
-	flex: 1;
-	margin-left: 12px;
+	gap: 7px;
+	width: 125px;
 
 	${(props) =>
 		props.$isSelected &&
@@ -58,8 +60,14 @@ const CurrencyMeta = styled(FlexDivCentered)<{ $isSelected: boolean }>`
 		`}
 `;
 
+const PriceLabel = styled.div`
+	flex: 1;
+`;
+
 const OptionDetailsContainer = styled(SingleValueContainer)<{ $isSelected: boolean }>`
-	padding: 6px;
+	padding: 7px;
+	justify-content: space-between;
+	gap: 5px;
 
 	p {
 		margin: 0;
@@ -68,12 +76,12 @@ const OptionDetailsContainer = styled(SingleValueContainer)<{ $isSelected: boole
 	.price {
 		font-family: ${(props) => props.theme.fonts.mono};
 		color: ${(props) => props.theme.colors.selectedTheme.gray};
-		font-size: 15px;
+		font-size: 13px;
 	}
 
 	.change {
 		font-family: ${(props) => props.theme.fonts.mono};
-		font-size: 11.5px;
+		font-size: 13px;
 		text-align: right;
 	}
 
