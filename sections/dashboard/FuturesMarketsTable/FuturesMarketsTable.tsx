@@ -25,7 +25,7 @@ import {
 import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices, selectOffchainPricesInfo } from 'state/prices/selectors';
 import { formatDollars } from 'utils/formatters/number';
-import { getSynthDescription, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
+import { getSynthDescription, MarketKeyByAsset } from 'utils/futures';
 
 const FuturesMarketsTable: FC = () => {
 	const { t } = useTranslation();
