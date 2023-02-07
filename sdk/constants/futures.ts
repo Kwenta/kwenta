@@ -23,16 +23,6 @@ export const MAIN_ENDPOINTS: Record<number, string> = {
 
 export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	// perps v2
-	[FuturesMarketKey.sBTCPERP]: {
-		key: FuturesMarketKey.sBTCPERP,
-		asset: FuturesMarketAsset.sBTC,
-		supports: 'testnet',
-		version: 2,
-		pythIds: {
-			mainnet: '0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43',
-			testnet: '0xf9c0172ba10dfa4d19088d94f5bf61d3b54d5bd7483a322a982e1373ee8ea31b',
-		},
-	},
 	[FuturesMarketKey.sETHPERP]: {
 		key: FuturesMarketKey.sETHPERP,
 		asset: FuturesMarketAsset.sETH,
@@ -43,10 +33,20 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 			testnet: '0xca80ba6dc32e08d06f1aa886011eed1d77c77be9eb761cc10d72b7d0a2fd57a6',
 		},
 	},
+	[FuturesMarketKey.sBTCPERP]: {
+		key: FuturesMarketKey.sBTCPERP,
+		asset: FuturesMarketAsset.sBTC,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43',
+			testnet: '0xf9c0172ba10dfa4d19088d94f5bf61d3b54d5bd7483a322a982e1373ee8ea31b',
+		},
+	},
 	[FuturesMarketKey.sLINKPERP]: {
 		key: FuturesMarketKey.sLINKPERP,
 		asset: FuturesMarketAsset.LINK,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0x8ac0c70fff57e9aefdf5edf44b51d62c2d433653cbb2cf5cc06bb115af04d221',
@@ -56,7 +56,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sSOLPERP]: {
 		key: FuturesMarketKey.sSOLPERP,
 		asset: FuturesMarketAsset.SOL,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0xef0d8b6fda2ceba41da15d4095d1da392a0d2f8ed0c6c7bc0f4cfac8c280b56d',
@@ -66,7 +66,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sAVAXPERP]: {
 		key: FuturesMarketKey.sAVAXPERP,
 		asset: FuturesMarketAsset.AVAX,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0x93da3352f9f1d105fdfe4971cfa80e9dd777bfc5d0f683ebb6e1294b92137bb7',
@@ -76,7 +76,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sAAVEPERP]: {
 		key: FuturesMarketKey.sAAVEPERP,
 		asset: FuturesMarketAsset.AAVE,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0x2b9ab1e972a281585084148ba1389800799bd4be63b957507db1349314e47445',
@@ -86,7 +86,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sUNIPERP]: {
 		key: FuturesMarketKey.sUNIPERP,
 		asset: FuturesMarketAsset.UNI,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0x78d185a741d07edb3412b09008b7c5cfb9bbbd7d568bf00ba737b456ba171501',
@@ -96,7 +96,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sMATICPERP]: {
 		key: FuturesMarketKey.sMATICPERP,
 		asset: FuturesMarketAsset.MATIC,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0x5de33a9112c2b700b8d30b8a3402c103578ccfa2765696471cc672bd5cf6ac52',
@@ -106,7 +106,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sXAUPERP]: {
 		key: FuturesMarketKey.sXAUPERP,
 		asset: FuturesMarketAsset.XAU,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0x765d2ba906dbc32ca17cc11f5310a89e9ee1f6420508c63861f2f8ba4ee34bb2',
@@ -116,7 +116,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sXAGPERP]: {
 		key: FuturesMarketKey.sXAGPERP,
 		asset: FuturesMarketAsset.XAG,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0xf2fb02c32b055c805e7238d628e5e9dadef274376114eb1f012337cabe93871e',
@@ -126,7 +126,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sEURPERP]: {
 		key: FuturesMarketKey.sEURPERP,
 		asset: FuturesMarketAsset.EUR,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0xa995d00bb36a63cef7fd2c287dc105fc8f3d93779f062f09551b0af3e81ec30b',
@@ -136,7 +136,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sAPEPERP]: {
 		key: FuturesMarketKey.sAPEPERP,
 		asset: FuturesMarketAsset.APE,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0x15add95022ae13563a11992e727c91bdb6b55bc183d9d747436c80a483d8c864',
@@ -146,7 +146,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sDYDXPERP]: {
 		key: FuturesMarketKey.sDYDXPERP,
 		asset: FuturesMarketAsset.DYDX,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0x6489800bb8974169adfe35937bf6736507097d13c190d760c557108c7e93a81b',
@@ -156,7 +156,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sBNBPERP]: {
 		key: FuturesMarketKey.sBNBPERP,
 		asset: FuturesMarketAsset.BNB,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0x2f95862b045670cd22bee3114c39763a4a08beeb663b145d283c31d7d1101c4f',
@@ -166,7 +166,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sDOGEPERP]: {
 		key: FuturesMarketKey.sDOGEPERP,
 		asset: FuturesMarketAsset.DOGE,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0xdcef50dd0a4cd2dcc17e45df1676dcb336a11a61c69df7a0299b0150c672d25c',
@@ -176,7 +176,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sOPPERP]: {
 		key: FuturesMarketKey.sOPPERP,
 		asset: FuturesMarketAsset.OP,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0x385f64d993f7b77d8182ed5003d97c60aa3361f3cecfe711544d2d59165e9bdf',
@@ -186,7 +186,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sATOMPERP]: {
 		key: FuturesMarketKey.sATOMPERP,
 		asset: FuturesMarketAsset.ATOM,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0xb00b60f88b03a6a625a8d1c048c3f66653edf217439983d037e7222c4e612819',
@@ -196,7 +196,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sFTMPERP]: {
 		key: FuturesMarketKey.sFTMPERP,
 		asset: FuturesMarketAsset.FTM,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0x5c6c0d2386e3352356c3ab84434fafb5ea067ac2678a38a338c4a69ddc4bdb0c',
@@ -206,7 +206,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sNEARPERP]: {
 		key: FuturesMarketKey.sNEARPERP,
 		asset: FuturesMarketAsset.NEAR,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0xc415de8d2eba7db216527dff4b60e8f3a5311c740dadb233e13e12547e226750',
@@ -216,7 +216,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sFLOWPERP]: {
 		key: FuturesMarketKey.sFLOWPERP,
 		asset: FuturesMarketAsset.FLOW,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0x2fb245b9a84554a0f15aa123cbb5f64cd263b59e9a87d80148cbffab50c69f30',
@@ -226,7 +226,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sAXSPERP]: {
 		key: FuturesMarketKey.sAXSPERP,
 		asset: FuturesMarketAsset.AXS,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0xb7e3904c08ddd9c0c10c6d207d390fd19e87eb6aab96304f571ed94caebdefa0',
@@ -236,7 +236,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sAUDPERP]: {
 		key: FuturesMarketKey.sAUDPERP,
 		asset: FuturesMarketAsset.AUD,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0x67a6f93030420c1c9e3fe37c1ab6b77966af82f995944a9fefce357a22854a80',
@@ -246,7 +246,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sGBPPERP]: {
 		key: FuturesMarketKey.sGBPPERP,
 		asset: FuturesMarketAsset.GBP,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0x84c2dde9633d93d1bcad84e7dc41c9d56578b7ec52fabedc1f335d673df0a7c1',
