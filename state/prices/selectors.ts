@@ -2,11 +2,9 @@ import { createSelector } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
 
 import { Prices } from 'sdk/types/prices';
-import { deserializeWeiObject } from 'state/helpers';
 import { RootState } from 'state/store';
 import { getPricesForCurrencies } from 'utils/currencies';
-
-import { PricesInfoMap, pricesInfoKeys } from './types';
+import { deserializePricesInfo } from 'utils/prices';
 
 export const selectPrices = createSelector(
 	(state: RootState) => state.prices,
@@ -31,7 +29,7 @@ export const selectPrices = createSelector(
 );
 
 export const selectOffchainPricesInfo = (state: RootState) =>
-	deserializeWeiObject(state.prices.offChainPrices, pricesInfoKeys) as PricesInfoMap;
+	deserializePricesInfo(state.prices.offChainPrices);
 
 export const selectPreviousDayPrices = (state: RootState) => state.prices.previousDayPrices;
 
