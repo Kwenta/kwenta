@@ -39,35 +39,15 @@ export const getDisplayAsset = (asset: string | null) => {
 	return asset ? (asset[0] === 's' ? asset.slice(1) : asset) : null;
 };
 
-export const getSynthDescription = (synth: string, synthsMap: Dictionary<Synth>, t: TFunction) => {
-	const parsedSynthKey = synth ? (synth[0] !== 's' ? `s${synth}` : synth) : '';
-	switch (parsedSynthKey) {
-		case 'sXAU':
-			return t('common.currency.futures-market-gold-short-name');
-		case 'sXAG':
-			return t('common.currency.futures-market-silver-short-name');
-		case 'sAPE':
-			return t('common.currency.futures-market-ape-short-name');
-		case 'sBNB':
-			return t('common.currency.futures-market-bnb-short-name');
-		case 'sDOGE':
-			return t('common.currency.futures-market-doge-short-name');
-		case 'sXMR':
-			return t('common.currency.futures-market-xmr-short-name');
-		case 'sDebtRatio':
-			return t('common.currency.futures-market-debtratio-short-name');
-		case 'sOP':
-			return t('common.currency.futures-market-op-short-name');
-		case 'sDYDX':
-			return t('common.currency.futures-market-short-name', {
-				currencyName: getDisplayAsset(synth),
-			});
-		default:
-			return t('common.currency.futures-market-short-name', {
-				currencyName:
-					parsedSynthKey && synthsMap[parsedSynthKey] ? synthsMap[parsedSynthKey].description : '',
-			});
-	}
+export const getSynthDescription = (
+	synth: FuturesMarketAsset,
+	synthsMap: Dictionary<Synth>,
+	t: TFunction
+) => {
+	const assetDisplayName = AssetDisplayByAsset[synth];
+	return t('common.currency.futures-market-short-name', {
+		currencyName: assetDisplayName,
+	});
 };
 
 export const isDecimalFour = (marketKeyOrAsset: string | undefined): boolean =>
@@ -126,6 +106,32 @@ export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 	[FuturesMarketAsset.AXS]: FuturesMarketKey.sAXSPERP,
 	[FuturesMarketAsset.AUD]: FuturesMarketKey.sAUDPERP,
 	[FuturesMarketAsset.GBP]: FuturesMarketKey.sGBPPERP,
+} as const;
+
+export const AssetDisplayByAsset: Record<FuturesMarketAsset, string> = {
+	[FuturesMarketAsset.sBTC]: 'Bitcoin',
+	[FuturesMarketAsset.sETH]: 'Ether',
+	[FuturesMarketAsset.LINK]: 'Chainlink',
+	[FuturesMarketAsset.SOL]: 'Solana',
+	[FuturesMarketAsset.AVAX]: 'Avalanche',
+	[FuturesMarketAsset.AAVE]: 'Aave',
+	[FuturesMarketAsset.UNI]: 'Uniswap',
+	[FuturesMarketAsset.MATIC]: 'Polygon',
+	[FuturesMarketAsset.XAU]: 'Gold',
+	[FuturesMarketAsset.XAG]: 'Silver',
+	[FuturesMarketAsset.EUR]: 'Euro',
+	[FuturesMarketAsset.APE]: 'ApeCoin',
+	[FuturesMarketAsset.DYDX]: 'DYDX',
+	[FuturesMarketAsset.BNB]: 'Binance Coin',
+	[FuturesMarketAsset.DOGE]: 'Dogecoin',
+	[FuturesMarketAsset.OP]: 'Optimism',
+	[FuturesMarketAsset.ATOM]: 'Atom',
+	[FuturesMarketAsset.FTM]: 'Fantom',
+	[FuturesMarketAsset.NEAR]: 'Near',
+	[FuturesMarketAsset.FLOW]: 'Flow',
+	[FuturesMarketAsset.AXS]: 'Axie Infinity',
+	[FuturesMarketAsset.AUD]: 'Australian Dollar',
+	[FuturesMarketAsset.GBP]: 'Pound Silver',
 } as const;
 
 export const marketOverrides: Partial<Record<FuturesMarketKey, Record<string, any>>> = {
