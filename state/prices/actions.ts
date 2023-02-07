@@ -5,16 +5,19 @@ import { SynthPrice, PricesMap, PriceType } from 'sdk/types/prices';
 import { selectPrices } from 'state/prices/selectors';
 import { AppThunk } from 'state/store';
 import { ThunkConfig } from 'state/types';
+import { getPricesInfo } from 'utils/prices';
 
 import { setOffChainPrices, setOnChainPrices } from './reducer';
 
-export const updatePrices = (prices: PricesMap<string>, type: PriceType): AppThunk => (
-	dispatch
+export const updatePrices = (newPrices: PricesMap<string>, type: PriceType): AppThunk => (
+	dispatch,
+	getState
 ) => {
+	const { prices } = getState();
 	if (type === 'off_chain') {
-		dispatch(setOffChainPrices(prices));
+		dispatch(setOffChainPrices(getPricesInfo(prices.offChainPrices, newPrices)));
 	} else {
-		dispatch(setOnChainPrices(prices));
+		dispatch(setOnChainPrices(getPricesInfo(prices.onChainPrices, newPrices)));
 	}
 };
 

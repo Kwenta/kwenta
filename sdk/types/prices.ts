@@ -10,7 +10,7 @@ export type Price<T = Wei> = {
 	onChain?: T | undefined;
 };
 
-type AssetKey = FuturesMarketAsset | 'sUSD';
+export type AssetKey = FuturesMarketAsset | 'sUSD';
 
 export type Prices<T = Wei> = Record<string, Price<T>>;
 
