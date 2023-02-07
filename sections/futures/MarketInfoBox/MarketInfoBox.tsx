@@ -49,17 +49,22 @@ const MarketInfoBox: React.FC = () => {
 
 	// adjust accessible margin due to frontend soft cap on leverage
 	const availableMargin = useMemo(() => {
-		if (!position?.position || !marketInfo) return zeroBN;
+		if (!marketInfo) return zeroBN;
+		if (!position?.position) return totalMargin;
 		return getAvailableMargin(position.position.notionalValue, totalMargin, marketInfo.maxLeverage);
 	}, [position?.position, marketInfo, totalMargin, getAvailableMargin]);
 
 	const buyingPower = totalMargin.gt(zeroBN) ? totalMargin.mul(maxLeverage ?? zeroBN) : zeroBN;
 
-	const marginUsage = availableMargin.gt(zeroBN)
-		? totalMargin.sub(availableMargin).div(totalMargin)
-		: totalMargin.gt(zeroBN)
-		? wei(1)
-		: zeroBN;
+	const marginUsage = useMemo(
+		() =>
+			availableMargin.gt(zeroBN)
+				? totalMargin.sub(availableMargin).div(totalMargin)
+				: totalMargin.gt(zeroBN)
+				? wei(1)
+				: zeroBN,
+		[availableMargin, totalMargin]
+	);
 
 	const isDelayedOrder = useMemo(() => orderType === 'delayed', [orderType]);
 
