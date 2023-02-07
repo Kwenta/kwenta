@@ -2,6 +2,7 @@ import { wei } from '@synthetixio/wei';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { getColorFromPriceInfo } from 'components/ColoredPrice/ColoredPrice';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -13,7 +14,7 @@ import {
 	selectMarketVolumes,
 	selectMarketPrices,
 	selectSkewAdjustedPrice,
-	selectMarketPriceColor,
+	selectMarketPriceInfo,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices } from 'state/prices/selectors';
@@ -36,7 +37,7 @@ const useGetMarketData = (mobile?: boolean) => {
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
 	const marketPrices = useAppSelector(selectMarketPrices);
 	const marketPrice = useAppSelector(selectSkewAdjustedPrice);
-	const marketPriceColor = useAppSelector(selectMarketPriceColor);
+	const marketPriceInfo = useAppSelector(selectMarketPriceInfo);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
@@ -69,7 +70,7 @@ const useGetMarketData = (mobile?: boolean) => {
 						minDecimals,
 						isAssetPrice: true,
 					}),
-					color: marketPriceColor,
+					color: getColorFromPriceInfo(marketPriceInfo),
 				},
 				[MarketDataKey.oraclePrice]: {
 					value: formatCurrency(selectedPriceCurrency.name, oraclePrice, {
@@ -127,7 +128,7 @@ const useGetMarketData = (mobile?: boolean) => {
 						minDecimals,
 						isAssetPrice: true,
 					}),
-					color: marketPriceColor,
+					color: getColorFromPriceInfo(marketPriceInfo),
 				},
 				[MarketDataKey.oraclePrice]: {
 					value: formatCurrency(selectedPriceCurrency.name, oraclePrice, {
@@ -180,7 +181,7 @@ const useGetMarketData = (mobile?: boolean) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [
 		marketAsset,
-		marketPriceColor,
+		marketPriceInfo,
 		marketInfo,
 		oraclePrice,
 		futuresVolumes,

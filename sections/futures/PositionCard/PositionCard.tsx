@@ -24,7 +24,7 @@ import {
 	selectTradePreview,
 	selectFuturesType,
 	selectSkewAdjustedPrice,
-	selectMarketPriceColor,
+	selectMarketPriceInfo,
 	selectSelectedMarketPositionHistory,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -86,7 +86,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 	const thisPositionHistory = useAppSelector(selectSelectedMarketPositionHistory);
 	const openModal = useAppSelector(selectOpenModal);
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketKey);
-	const marketPriceColor = useAppSelector(selectMarketPriceColor);
+	const marketPriceInfo = useAppSelector(selectMarketPriceInfo);
 
 	const positionDetails = position?.position ?? null;
 
@@ -283,7 +283,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 				<DataCol>
 					<InfoRow>
 						<Subtitle>{data.marketShortName}</Subtitle>
-						<ColoredPrice color={marketPriceColor}>{data.marketPrice}</ColoredPrice>
+						<ColoredPrice priceInfo={marketPriceInfo}>{data.marketPrice}</ColoredPrice>
 					</InfoRow>
 					<InfoRow>
 						<PositionCardTooltip content={t('futures.market.position-card.tooltips.position-side')}>

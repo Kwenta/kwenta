@@ -2,11 +2,11 @@ import { createSelector } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
 
 import { Prices } from 'sdk/types/prices';
+import { deserializeWeiObject } from 'state/helpers';
 import { RootState } from 'state/store';
 import { getPricesForCurrencies } from 'utils/currencies';
-import { priceChangeToColor } from 'utils/prices';
 
-import { PriceColors } from './types';
+import { PricesInfoMap, pricesInfoKeys } from './types';
 
 export const selectPrices = createSelector(
 	(state: RootState) => state.prices,
@@ -30,27 +30,8 @@ export const selectPrices = createSelector(
 	}
 );
 
-export const selectPriceColors = createSelector(
-	(state: RootState) => state.prices,
-	({ onChainPrices, offChainPrices }) => {
-		const merged: PriceColors = {};
-		Object.entries(onChainPrices).forEach(([key, { change }]) => {
-			merged[key] = {
-				onChain: priceChangeToColor(change),
-			};
-		});
-		Object.entries(offChainPrices).forEach(([key, { change }]) => {
-			if (merged[key]) {
-				merged[key].offChain = priceChangeToColor(change);
-			} else {
-				merged[key] = {
-					offChain: priceChangeToColor(change),
-				};
-			}
-		});
-		return merged;
-	}
-);
+export const selectOffchainPricesInfo = (state: RootState) =>
+	deserializeWeiObject(state.prices.offChainPrices, pricesInfoKeys) as PricesInfoMap;
 
 export const selectPreviousDayPrices = (state: RootState) => state.prices.previousDayPrices;
 

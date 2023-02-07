@@ -1,7 +1,7 @@
 import { wei } from '@synthetixio/wei';
 
 import { PricesMap } from 'sdk/types/prices';
-import { PriceChange, PriceColorOptions, PricesInfoMap } from 'state/prices/types';
+import { PricesInfoMap } from 'state/prices/types';
 
 export const getPricesInfo = (oldPrices: PricesInfoMap, newPrices: PricesMap<string>) => {
 	let pricesInfo: PricesInfoMap = {};
@@ -13,7 +13,7 @@ export const getPricesInfo = (oldPrices: PricesInfoMap, newPrices: PricesMap<str
 		const oldChange = oldPrices[asset]?.change;
 
 		pricesInfo[asset] = {
-			price: newPrice.toString(),
+			price: newPrice,
 			change: !!oldPrice
 				? newPrice.gt(oldPrice)
 					? 'up'
@@ -24,8 +24,4 @@ export const getPricesInfo = (oldPrices: PricesInfoMap, newPrices: PricesMap<str
 		};
 	}
 	return pricesInfo;
-};
-
-export const priceChangeToColor = (change: PriceChange): PriceColorOptions => {
-	return !change ? 'white' : change === 'up' ? 'green' : 'red';
 };

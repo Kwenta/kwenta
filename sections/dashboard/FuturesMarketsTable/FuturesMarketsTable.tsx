@@ -22,7 +22,7 @@ import {
 	selectMarkPrices,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { selectPriceColors, selectPreviousDayPrices } from 'state/prices/selectors';
+import { selectPreviousDayPrices, selectOffchainPricesInfo } from 'state/prices/selectors';
 import { formatDollars } from 'utils/formatters/number';
 import { getSynthDescription, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
@@ -35,14 +35,14 @@ const FuturesMarketsTable: FC = () => {
 	const pastRates = useAppSelector(selectPreviousDayPrices);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
 	const accountType = useAppSelector(selectFuturesType);
-	const priceColors = useAppSelector(selectPriceColors);
+	const pricesInfo = useAppSelector(selectOffchainPricesInfo);
 	const markPrices = useAppSelector(selectMarkPrices);
 
 	let data = useMemo(() => {
 		return futuresMarkets.map((market) => {
 			const description = getSynthDescription(market.asset, synthsMap, t);
 			const volume = futuresVolumes[market.marketKey]?.volume;
-			const marketPriceColor = priceColors[market.asset]?.offChain ?? 'white';
+			const assetPriceInfo = pricesInfo[market.asset];
 			const pastPrice = pastRates.find((price) => price.synth === getDisplayAsset(market.asset));
 			const marketPrice = markPrices[market.marketKey] ?? wei(0);
 
@@ -52,7 +52,7 @@ const FuturesMarketsTable: FC = () => {
 				synth: synthsMap[market.asset],
 				description,
 				price: marketPrice,
-				priceColor: marketPriceColor,
+				priceInfo: assetPriceInfo,
 				volume: volume?.toNumber() ?? 0,
 				pastPrice: pastPrice?.rate,
 				priceChange: pastPrice?.rate && marketPrice.sub(pastPrice?.rate).div(marketPrice),
@@ -66,7 +66,7 @@ const FuturesMarketsTable: FC = () => {
 				marketClosureReason: market.marketClosureReason,
 			};
 		});
-	}, [synthsMap, futuresMarkets, pastRates, futuresVolumes, markPrices, priceColors, t]);
+	}, [synthsMap, futuresMarkets, pastRates, futuresVolumes, markPrices, pricesInfo, t]);
 
 	return (
 		<>
@@ -121,7 +121,7 @@ const FuturesMarketsTable: FC = () => {
 										isAssetPrice: true,
 									};
 									return (
-										<ColoredPrice color={cellProps.row.original.priceColor}>
+										<ColoredPrice priceInfo={cellProps.row.original.priceInfo}>
 											{formatDollars(cellProps.row.original.price, formatOptions)}
 										</ColoredPrice>
 									);

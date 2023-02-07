@@ -8,7 +8,7 @@ import { TransactionStatus } from 'sdk/types/common';
 import { FuturesPosition, PositionSide } from 'sdk/types/futures';
 import { unserializePotentialTrade } from 'sdk/utils/futures';
 import { accountType, deserializeWeiObject } from 'state/helpers';
-import { selectPriceColors, selectPrices } from 'state/prices/selectors';
+import { selectOffchainPricesInfo, selectPrices } from 'state/prices/selectors';
 import { RootState } from 'state/store';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import { sameSide } from 'utils/costCalculations';
@@ -156,13 +156,12 @@ export const selectMarketPrice = createSelector(
 	}
 );
 
-export const selectMarketPriceColor = createSelector(
+export const selectMarketPriceInfo = createSelector(
 	selectMarketInfo,
-	selectPriceColors,
-	(marketInfo, priceColors) => {
-		if (!marketInfo || !priceColors[marketInfo.asset]?.offChain) return 'white';
-		const color = priceColors[marketInfo.asset].offChain;
-		return color ?? 'white';
+	selectOffchainPricesInfo,
+	(marketInfo, pricesInfo) => {
+		if (!marketInfo || !pricesInfo[marketInfo.asset]) return;
+		return pricesInfo[marketInfo.asset];
 	}
 );
 

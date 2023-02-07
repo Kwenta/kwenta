@@ -27,4 +27,4 @@ export const PYTH_IDS = {
 };
 
 // Allow to be set from config so users can customise
-export const PRICE_UPDATE_THROTTLE = 500;
+export const PRICE_UPDATE_THROTTLE = 1000;
