@@ -131,7 +131,7 @@ const lightTheme = {
 		state: {
 			text: '#171002',
 		},
-		bg: '#515151',
+		bg: '#e8e8e8',
 	},
 	chartLine: {
 		long: common.light.green,

@@ -6,6 +6,7 @@ import PriceIcon from 'assets/svg/app/price.svg';
 import StatsIcon from 'assets/svg/app/stats.svg';
 import OrderHistoryIcon from 'assets/svg/futures/icon-order-history.svg';
 import TabButton from 'components/Button/TabButton';
+import media from 'styles/media';
 
 import AccountTab from './AccountTab';
 import PriceTab from './PriceTab';
@@ -62,6 +63,10 @@ const OverviewTabs: React.FC = () => {
 
 const OverviewTabsContainer = styled.div`
 	margin-top: 55px;
+
+	${media.lessThan('md')`
+		margin-top: 0px;
+	`}
 `;
 
 const MainTabButtonsContainer = styled.div`

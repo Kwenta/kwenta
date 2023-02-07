@@ -130,7 +130,7 @@ const darkTheme = {
 		state: {
 			text: common.primaryWhite,
 		},
-		bg: '#fff',
+		bg: '#313131',
 	},
 	chartLine: {
 		long: '#37A141',
