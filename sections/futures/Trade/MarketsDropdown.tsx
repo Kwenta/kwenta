@@ -242,7 +242,7 @@ const SelectContainer = styled.div<{ mobile?: boolean }>`
 		css`
 			position: absolute;
 			width: 100%;
-			top: 0;
+			top: 30;
 			z-index: 5;
 
 			.react-select__control {
