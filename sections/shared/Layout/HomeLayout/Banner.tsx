@@ -28,7 +28,7 @@ const Banner = () => {
 
 const FuturesLink = styled.a`
 	margin-right: 5px;
-	background: #313131;
+	background: ${(props) => props.theme.colors.selectedTheme.competitionBanner.bg};
 	padding: 6px 9px;
 	border-radius: 20px;
 	z-index: 1;
@@ -62,7 +62,7 @@ const FuturesBannerLinkWrapper = styled.div`
 	text-align: center;
 	position: absolute;
 
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.competitionBanner.state.text};
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 16px;
 	display: flex;
