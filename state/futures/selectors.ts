@@ -402,6 +402,27 @@ export const selectAboveMaxLeverage = createSelector(
 	}
 );
 
+export const selectAvailableMargin = createSelector(
+	selectMarketInfo,
+	selectPosition,
+	(marketInfo, position) => {
+		if (!marketInfo || !position) return zeroBN;
+		if (!position?.position) return position.remainingMargin;
+
+		let inaccessible = position.position.notionalValue.div(marketInfo.maxLeverage).abs() ?? zeroBN;
+
+		// If the user has a position open, we'll enforce a min initial margin requirement.
+		if (inaccessible.gt(0) && inaccessible.lt(marketInfo.minInitialMargin)) {
+			inaccessible = marketInfo.minInitialMargin;
+		}
+
+		// check if available margin will be less than 0
+		return position.remainingMargin.sub(inaccessible).gt(0)
+			? position.remainingMargin.sub(inaccessible).abs()
+			: zeroBN;
+	}
+);
+
 export const selectCrossMarginTradeInputs = createSelector(
 	selectLeverageSide,
 	(state: RootState) => state.futures.crossMargin.tradeInputs,
@@ -794,5 +815,29 @@ export const selectMaxUsdInputAmount = createSelector(
 				: position?.remainingMargin ?? wei(0);
 
 		return maxLeverage.mul(margin);
+	}
+);
+
+export const selectPreviewAvailableMargin = createSelector(
+	selectMarketInfo,
+	selectTradePreview,
+	selectDelayedOrderFee,
+	(marketInfo, tradePreview, delayedOrderFee) => {
+		if (!marketInfo || !tradePreview) return zeroBN;
+
+		let inaccessible = tradePreview.notionalValue.div(marketInfo.maxLeverage).abs() ?? zeroBN;
+		const totalDeposit = !!delayedOrderFee.commitDeposit
+			? delayedOrderFee.commitDeposit.add(marketInfo.keeperDeposit)
+			: zeroBN;
+
+		// If the user has a position open, we'll enforce a min initial margin requirement.
+		if (inaccessible.gt(0) && inaccessible.lt(marketInfo.minInitialMargin)) {
+			inaccessible = marketInfo.minInitialMargin;
+		}
+
+		// check if available margin will be less than 0
+		return tradePreview.margin.sub(inaccessible).sub(totalDeposit).gt(0)
+			? tradePreview.margin.sub(inaccessible).sub(totalDeposit).abs()
+			: zeroBN;
 	}
 );
