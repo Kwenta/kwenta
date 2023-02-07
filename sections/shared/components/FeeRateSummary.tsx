@@ -54,7 +54,7 @@ export const DynamicFeeLabel = styled.span`
 
 const CustomStyledTooltip = styled(Tooltip)`
 	width: 300px;
-	padding: 0px 4px;
+	padding: 4px;
 	text-align: center;
 `;
 

@@ -13,6 +13,7 @@ import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMa
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { Rates } from 'queries/rates/types';
 import { FuturesMarketAsset, FuturesMarketKey } from 'sdk/types/futures';
+import { getDisplayAsset } from 'sdk/utils/futures';
 import {
 	selectMarketAsset,
 	selectMarkets,
@@ -102,7 +103,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	);
 
 	const getPastPrice = React.useCallback(
-		(asset: string) => pastRates.find((price) => price.synth === asset),
+		(asset: string) => pastRates.find((price) => price.synth === getDisplayAsset(asset)),
 		[pastRates]
 	);
 

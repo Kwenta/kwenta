@@ -1,5 +1,3 @@
-import { useTranslation } from 'react-i18next';
-
 import Error from 'components/ErrorView';
 import SegmentedControl from 'components/SegmentedControl';
 import { DEFAULT_DELAYED_LEVERAGE_CAP, ISOLATED_MARGIN_ORDER_TYPES } from 'constants/futures';
@@ -16,7 +14,6 @@ import MarketInfoBox from '../MarketInfoBox';
 import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
 import ManagePosition from './ManagePosition';
-import OrderWarning from './OrderWarning';
 import TradePanelHeader from './TradePanelHeader';
 
 type Props = {
@@ -24,7 +21,6 @@ type Props = {
 };
 
 const TradeIsolatedMargin = ({ isMobile }: Props) => {
-	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
 	const leverageSide = useAppSelector(selectLeverageSide);
@@ -43,8 +39,6 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 				<Error message="Failed to connect to price feed. Please try disabling any add blockers and refresh." />
 			)}
 
-			<Error messageType="warn" message={t('futures.market.trade.perpsv2-disclaimer')} />
-
 			{!isMobile && <MarketInfoBox />}
 
 			{position?.position && position.position.leverage.gte(DEFAULT_DELAYED_LEVERAGE_CAP) && (
@@ -58,8 +52,6 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 					}}
 				/>
 			)}
-
-			<OrderWarning />
 
 			<PositionButtons
 				selected={leverageSide}

@@ -32,6 +32,7 @@ export const BaseTooltip = styled.div<BaseTooltipProps>`
 	z-index: 2;
 
 	p, span {
+		margin: 0;
 		font-size: 13px;
 		font-family: ${(props) => props.theme.fonts.regular};
 		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
@@ -43,7 +44,6 @@ export const BaseTooltip = styled.div<BaseTooltipProps>`
 			top: 0;
 			left: 50%;
 			transform: translate(-50%, -150%);
-			text-align: center;
 			display: inline-block;
 		`}
 

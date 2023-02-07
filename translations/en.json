@@ -822,7 +822,7 @@
 						"close-order": "Close position",
 						"max-leverage-disclaimer": "Note: A next price update could cause your order to exceed maximum leverage resulting in the order being dropped by the keeper.",
 						"disabled-min-margin": "Minimum market margin of $50 required",
-						"delayed-disclaimer": "* The deposit is applied to trading fees and keeper fees on order execution. If an order is either cancelled or not executed, the deposit will be forfeit to the Synthetix debt pool."
+						"delayed-disclaimer": "The fee amount will be deposited to cover trade and automated execution fees. If an order is cancelled or not executed, the deposit will be forfeited to the Synthetix debt pool."
 					}
 				},
 				"leverage": {
@@ -850,7 +850,9 @@
 					"error": "Error generating preview"
 				},
 				"fees": {
-					"tooltip": "Fees are displayed as maker/taker. Maker fees apply to orders that reduce the market skew. Taker fees apply to orders that increase the market skew."
+					"tooltip": "Fees are displayed as maker / taker. Maker fees apply to orders that reduce the market skew. Taker fees apply to orders that increase the market skew.",
+					"keeper-tooltip": "Fixed fee to cover automated order execution"
+
 				},
 				"orders": {
 					"manage-keeper-deposit": {
@@ -906,16 +908,16 @@
 						"fee-total": "Total Fees",
 						"estimated-fill": "Estimated Fill Price",
 						"estimated-price-impact": "Estimated Price Impact",
-						"fee-estimated": "Estimated Fees",
+						"fee-estimated": "Estimated Trade Fee",
 						"liquidation-price": "Liquidation Price",
 						"time-delay": "Delay Until Executable",
-						"keeper-deposit": "Keeper Deposit",
+						"keeper-deposit": "Execution Fee",
 						"gas-fee": "Network Gas Fee",
 						"order-type": "Order Type",
 						"market-order": "Market",
 						"next-price-order": "Next Price",
 						"delayed-order": "Delayed",
-						"deposit": "Total Deposit*",
+						"deposit": "Total Fees",
 						"np-discount": "Next Price Discount"
 					}
 				},
