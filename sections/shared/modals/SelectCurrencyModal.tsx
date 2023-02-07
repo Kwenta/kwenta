@@ -222,7 +222,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 					}
 					scrollableTarget="scrollableDiv"
 				>
-					{synthCategory ? (
+					{synthCategory || !oneInchEnabled ? (
 						<>
 							<RowsHeader>
 								<span>
@@ -240,7 +240,6 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 							{synthBalancesLoading ? (
 								<Loader />
 							) : synthsResults.length > 0 ? (
-								// TODO: use `Synth` type from contracts-interface
 								synthsResults.map((synth) => {
 									const currencyKey = synth.name;
 									return (
