@@ -453,7 +453,7 @@ const SubtitleWithCursor = styled(Subtitle)`
 
 const PositionCardTooltip = styled(Tooltip).attrs({ preset: 'fixed', height: 'auto' })`
 	z-index: 2;
-	padding: 0px 10px 0px 10px;
+	padding: 10px;
 `;
 
 const StyledValue = styled(Body).attrs({ mono: true })`

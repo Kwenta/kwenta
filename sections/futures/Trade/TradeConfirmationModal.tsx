@@ -4,12 +4,14 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import HelpIcon from 'assets/svg/app/question-mark.svg';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import ErrorView from 'components/ErrorView';
 import { FlexDivCentered } from 'components/layout/flex';
 import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import Tooltip from 'components/Tooltip/Tooltip';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import { PositionSide } from 'sdk/types/futures';
 import {
@@ -113,6 +115,7 @@ export default function TradeConfirmationModal({
 				  },
 			{
 				label: 'price impact',
+				tooltipContent: t('futures.market.trade.delayed-order.description'),
 				value: `${formatPercent(potentialTradeDetails?.priceImpact ?? zeroBN)}`,
 				color: potentialTradeDetails?.priceImpact.abs().gt(0.45) // TODO: Make this configurable
 					? 'red'
@@ -144,6 +147,7 @@ export default function TradeConfirmationModal({
 				: null,
 		],
 		[
+			t,
 			positionDetails,
 			marketAsset,
 			keeperFee,
@@ -173,7 +177,23 @@ export default function TradeConfirmationModal({
 						if (!row) return null;
 						return (
 							<Row key={`datarow-${i}`}>
-								<Label>{row.label}</Label>
+								{row.tooltipContent ? (
+									<Tooltip
+										height="auto"
+										preset="bottom"
+										width="300px"
+										content={row.tooltipContent}
+										style={{ padding: 10, textTransform: 'none' }}
+									>
+										<Label>
+											{row.label}
+											<StyledHelpIcon />
+										</Label>
+									</Tooltip>
+								) : (
+									<Label>{row.label}</Label>
+								)}
+
 								<Value>
 									<span className={row.color ? `value ${row.color}` : ''}>{row.value}</span>
 								</Value>
@@ -286,4 +306,8 @@ export const MobileConfirmTradeButton = styled(Button)`
 
 const ErrorContainer = styled.div`
 	margin-top: 20px;
+`;
+
+const StyledHelpIcon = styled(HelpIcon)`
+	margin-left: 8px;
 `;
