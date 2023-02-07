@@ -136,6 +136,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 			},
 			{
 				label: t('futures.market.user.position.modal.deposit'),
+				tooltipContent: t('futures.market.trade.confirmation.modal.delayed-disclaimer'),
 				value: formatDollars(totalDeposit),
 			},
 		],
@@ -185,7 +186,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 							{row.tooltipContent ? (
 								<Tooltip
 									height="auto"
-									width="240px"
+									width="250px"
 									content={row.tooltipContent}
 									style={{ textTransform: 'none' }}
 								>
@@ -216,7 +217,6 @@ const DelayedOrderConfirmationModal: FC = () => {
 							t('futures.market.trade.confirmation.modal.confirm-order')
 						)}
 					</ConfirmTradeButton>
-					<Disclaimer>{t('futures.market.trade.confirmation.modal.delayed-disclaimer')}</Disclaimer>
 					{txError && <Error message={getKnownError(txError)} formatter="revert" />}
 				</StyledBaseModal>
 			</DesktopOnlyView>
@@ -249,9 +249,6 @@ const DelayedOrderConfirmationModal: FC = () => {
 const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
 		width: 400px;
-	}
-	.card-body {
-		padding: 28px;
 	}
 `;
 
@@ -290,7 +287,6 @@ const Value = styled.div`
 
 const ConfirmTradeButton = styled(Button)`
 	margin-top: 24px;
-	margin-bottom: 12px;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
@@ -305,6 +301,7 @@ const Disclaimer = styled.div`
 `;
 
 const StyledHelpIcon = styled(HelpIcon)`
+	margin-bottom: -1px;
 	margin-left: 8px;
 `;
 
