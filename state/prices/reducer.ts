@@ -1,6 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
-import { PricesMap } from 'sdk/types/prices';
 import { DEFAULT_QUERY_STATUS, LOADING_STATUS, SUCCESS_STATUS } from 'state/constants';
 import { FetchStatus } from 'state/types';
 
@@ -21,7 +20,7 @@ const pricesSlice = createSlice({
 	name: 'prices',
 	initialState: PRICES_INITIAL_STATE,
 	reducers: {
-		setOffChainPrices: (state, action: PayloadAction<PricesMap<string>>) => {
+		setOffChainPrices: (state, action) => {
 			state.offChainPrices = action.payload;
 		},
 		setOnChainPrices: (state, action) => {
