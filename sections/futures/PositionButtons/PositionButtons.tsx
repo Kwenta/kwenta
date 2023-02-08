@@ -19,23 +19,21 @@ const PositionButtons: FC<PositionButtonsProps> = memo(({ selected, onSelect }) 
 		<PositionButtonsContainer>
 			<StyledPositionButton
 				data-testid="position-side-long-button"
-				fullWidth
 				$position={PositionSide.LONG}
 				$isActive={selected === 'long'}
 				disabled={marketInfo?.isSuspended}
 				onClick={() => onSelect(PositionSide.LONG)}
 			>
-				<span>Long</span>
+				Long
 			</StyledPositionButton>
 			<StyledPositionButton
 				data-testid="position-side-short-button"
-				fullWidth
 				$position={PositionSide.SHORT}
 				$isActive={selected === 'short'}
 				disabled={marketInfo?.isSuspended}
 				onClick={() => onSelect(PositionSide.SHORT)}
 			>
-				<span>Short</span>
+				Short
 			</StyledPositionButton>
 		</PositionButtonsContainer>
 	);
@@ -54,9 +52,12 @@ const PositionButtonsContainer = styled.div`
 	margin-top: 8px;
 `;
 
-const StyledPositionButton = styled(Button)<PositionButtonProps>`
-	font-size: 14px;
-	height: 40px;
+const StyledPositionButton = styled(Button).attrs({ fullWidth: true })<PositionButtonProps>`
+	font-size: 16px;
+	height: 57px;
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-variant: all-small-caps;
+	text-transform: uppercase;
 
 	&:active {
 		transform: scale(0.96);
@@ -67,57 +68,61 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 	}
 
 	${(props) =>
-		props.$position === PositionSide.LONG &&
+		props.$isActive &&
 		css`
-			color: ${props.theme.colors.selectedTheme.green};
-			${props.$isActive &&
-			css`
-				border: 1px solid ${props.theme.colors.selectedTheme.green};
-				border-radius: 8px;
+			border-radius: 8px;
+
+			&::before {
+				display: none;
+			}
+		`}
+
+		${(props) => css`
+			color: ${props.theme.colors.selectedTheme[
+				props.$position === PositionSide.LONG ? 'green' : 'red'
+			]};
+		`}
+
+	${(props) =>
+		props.$position === PositionSide.LONG &&
+		props.$isActive &&
+		css`
+			border: 1px solid ${props.theme.colors.selectedTheme.green};
+			background: linear-gradient(
+				180deg,
+				rgba(127, 212, 130, 0.15) 0%,
+				rgba(71, 122, 73, 0.05) 100%
+			);
+			box-shadow: rgb(127 212 130 / 50%) 0px 0 3px;
+
+			&:hover {
 				background: linear-gradient(
 					180deg,
 					rgba(127, 212, 130, 0.15) 0%,
 					rgba(71, 122, 73, 0.05) 100%
 				);
-				box-shadow: rgb(127 212 130 / 50%) 0px 0 3px;
-
-				&::before {
-					display: none;
-				}
-				&:hover {
-					background: linear-gradient(
-						180deg,
-						rgba(127, 212, 130, 0.15) 0%,
-						rgba(71, 122, 73, 0.05) 100%
-					);
-				}
-			`};
+			}
 		`};
+		};
 
 	${(props) =>
 		props.$position === PositionSide.SHORT &&
+		props.$isActive &&
 		css`
-			color: ${props.theme.colors.selectedTheme.red};
-			${props.$isActive &&
-			css`
-				border: 1px solid rgba(239, 104, 104, 0.7);
-				border-radius: 8px;
+			border: 1px solid rgba(239, 104, 104, 0.7);
+			background: linear-gradient(
+				180deg,
+				rgba(239, 104, 104, 0.15) 0%,
+				rgba(116, 56, 56, 0.05) 100%
+			);
+			box-shadow: rgb(239 104 104 / 50%) 0px 0 3px;
+			&:hover {
 				background: linear-gradient(
 					180deg,
 					rgba(239, 104, 104, 0.15) 0%,
 					rgba(116, 56, 56, 0.05) 100%
 				);
-				box-shadow: rgb(239 104 104 / 50%) 0px 0 3px;
-				&::before {
-					display: none;
-				}
-				&:hover {
-					background: linear-gradient(
-					180deg,
-					rgba(239, 104, 104, 0.15) 0%,
-					rgba(116, 56, 56, 0.05) 100%
-				);
-			`};
+			}
 		`};
 `;
 

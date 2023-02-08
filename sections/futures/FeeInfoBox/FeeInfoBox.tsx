@@ -1,6 +1,6 @@
 import router from 'next/router';
 import React, { useMemo } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import EligibleIcon from 'assets/svg/app/eligible.svg';
@@ -31,6 +31,33 @@ import {
 import { computeOrderFee } from 'utils/costCalculations';
 import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
+const MarketCostTooltip = () => {
+	const { t } = useTranslation();
+	const marketInfo = useAppSelector(selectMarketInfo);
+	const { susdSizeDelta } = useAppSelector(selectTradeSizeInputs);
+	const orderType = useAppSelector(selectOrderType);
+
+	const { makerFee, takerFee } = useMemo(
+		() => computeOrderFee(marketInfo, susdSizeDelta, orderType),
+		[marketInfo, susdSizeDelta, orderType]
+	);
+
+	return (
+		<CostContainer>
+			<>{`${formatPercent(makerFee)} / ${formatPercent(takerFee)}`}</>
+			<Tooltip
+				height="auto"
+				preset="top"
+				width="300px"
+				content={t('futures.market.trade.fees.tooltip')}
+				style={{ textTransform: 'none' }}
+			>
+				<StyledHelpIcon />
+			</Tooltip>
+		</CostContainer>
+	);
+};
+
 const FeeInfoBox: React.FC = () => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
@@ -39,7 +66,6 @@ const FeeInfoBox: React.FC = () => {
 	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance);
 	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
 	const isolatedMarginFee = useAppSelector(selectIsolatedMarginFee);
-	const { susdSizeDelta } = useAppSelector(selectTradeSizeInputs);
 	const accountType = useAppSelector(selectFuturesType);
 	const { tradeFee: crossMarginTradeFeeRate, limitOrderFee, stopOrderFee } = useAppSelector(
 		selectCrossMarginSettings
@@ -53,33 +79,10 @@ const FeeInfoBox: React.FC = () => {
 		return commitDeposit.add(marketInfo?.keeperDeposit ?? zeroBN);
 	}, [commitDeposit, marketInfo?.keeperDeposit]);
 
-	const { makerFee, takerFee } = useMemo(
-		() => computeOrderFee(marketInfo, susdSizeDelta, orderType),
-		[marketInfo, susdSizeDelta, orderType]
-	);
-
 	const orderFeeRate = useMemo(
 		() =>
 			orderType === 'limit' ? limitOrderFee : orderType === 'stop_market' ? stopOrderFee : null,
 		[orderType, stopOrderFee, limitOrderFee]
-	);
-
-	const marketCostTooltip = useMemo(
-		() => (
-			<CostContainer>
-				<>{`${formatPercent(makerFee)} / ${formatPercent(takerFee)}`}</>
-				<Tooltip
-					height={'auto'}
-					preset="top"
-					width="300px"
-					content={t('futures.market.trade.fees.tooltip')}
-					style={{ textTransform: 'none' }}
-				>
-					<StyledHelpIcon />
-				</Tooltip>
-			</CostContainer>
-		),
-		[t, makerFee, takerFee]
 	);
 
 	const isRewardEligible = useMemo(
@@ -93,7 +96,7 @@ const FeeInfoBox: React.FC = () => {
 				value: formatDollars(crossMarginFees.staticFee, {
 					minDecimals: crossMarginFees.staticFee.lt(0.01) ? 4 : 2,
 				}),
-				keyNode: marketCostTooltip,
+				keyNode: <MarketCostTooltip />,
 			},
 			'Limit / Stop Fee':
 				crossMarginFees.limitStopOrderFee.gt(0) && orderFeeRate
@@ -121,7 +124,7 @@ const FeeInfoBox: React.FC = () => {
 					>
 						<div>
 							<div>{t('dashboard.stake.tabs.trading-rewards.trading-reward')}</div>
-							<p>
+							<div>
 								{isRewardEligible ? (
 									<div className="badge badge-yellow">
 										{t('dashboard.stake.tabs.trading-rewards.eligible')}
@@ -133,16 +136,15 @@ const FeeInfoBox: React.FC = () => {
 										<NotEligibleIcon />
 									</div>
 								)}
-							</p>
+							</div>
 						</div>
 						<div>
 							<RewardCopy>
-								<Trans
-									i18nKey={`dashboard.stake.tabs.trading-rewards.stake-to-${
+								{t(
+									`dashboard.stake.tabs.trading-rewards.stake-to-${
 										isRewardEligible ? 'earn' : 'start'
-									}`}
-									components={[<Body weight="bold" />]}
-								/>
+									}`
+								)}
 							</RewardCopy>
 							<StyledLinkArrowIcon />
 						</div>
@@ -183,7 +185,7 @@ const FeeInfoBox: React.FC = () => {
 					value: !!commitDeposit
 						? formatDollars(commitDeposit, { minDecimals: commitDeposit.lt(0.01) ? 4 : 2 })
 						: NO_VALUE,
-					keyNode: marketCostTooltip,
+					keyNode: <MarketCostTooltip />,
 				},
 			};
 		}
@@ -193,7 +195,7 @@ const FeeInfoBox: React.FC = () => {
 						value: formatDollars(isolatedMarginFee, {
 							minDecimals: isolatedMarginFee.lt(0.01) ? 4 : 2,
 						}),
-						keyNode: marketCostTooltip,
+						keyNode: <MarketCostTooltip />,
 					},
 			  }
 			: crossMarginFeeInfo;
@@ -209,7 +211,6 @@ const FeeInfoBox: React.FC = () => {
 		commitDeposit,
 		accountType,
 		marketInfo?.keeperDeposit,
-		marketCostTooltip,
 	]);
 
 	return <StyledInfoBox details={feesInfo} />;
@@ -233,7 +234,7 @@ const StyledLinkArrowIcon = styled(LinkArrowIcon)`
 	cursor: pointer;
 `;
 
-const RewardCopy = styled(Body)`
+const RewardCopy = styled(Body).attrs({ weight: 'bold' })`
 	color: ${(props) => props.theme.colors.selectedTheme.text.label};
 `;
 

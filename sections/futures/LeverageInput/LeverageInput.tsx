@@ -38,8 +38,8 @@ const LeverageInput: FC = memo(() => {
 			const newTradeSize =
 				marketPrice.eq(0) || remainingMargin.eq(0)
 					? ''
-					: wei(Number(newLeverage)).mul(remainingMargin).div(marketPrice).toString();
-			const floored = floorNumber(Number(newTradeSize), 4);
+					: wei(newLeverage).mul(remainingMargin).div(marketPrice).toString();
+			const floored = floorNumber(newTradeSize, 4);
 			dispatch(editIsolatedMarginSize(String(floored), 'native'));
 			dispatch(setIsolatedMarginLeverageInput(newLeverage));
 		},
@@ -115,7 +115,7 @@ const LeverageInput: FC = memo(() => {
 							onClick={() => {
 								onLeverageChange(l);
 							}}
-							disabled={maxLeverage.lt(Number(l)) || marketInfo?.isSuspended}
+							disabled={maxLeverage.lt(l) || marketInfo?.isSuspended}
 						>
 							{l}x
 						</LeverageButton>

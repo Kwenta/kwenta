@@ -89,7 +89,6 @@ const InputContainer = styled.div<{
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	width: 100%;
 	background: ${(props) => props.theme.colors.selectedTheme.input.secondary.background};
 	box-shadow: ${(props) => props.theme.colors.selectedTheme.input.shadow};
 	border: ${(props) => props.theme.colors.selectedTheme.border};
@@ -108,6 +107,8 @@ const InputContainer = styled.div<{
 		background-color: transparent;
 		border: none;
 		text-overflow: ellipsis;
+		min-width: 0px;
+		width: 100%;
 		color: ${(props) =>
 			props.$invalid
 				? props.theme.colors.selectedTheme.red

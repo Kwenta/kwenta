@@ -1,7 +1,7 @@
 import { memo, FC } from 'react';
 import styled, { css } from 'styled-components';
 
-import * as Text from 'components/Text';
+import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 
 export type DetailedInfo = {
@@ -83,17 +83,17 @@ const InfoBoxContainer = styled.div`
 	}
 `;
 
-const InfoBoxKey = styled(Text.Body)`
+const InfoBoxKey = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.text.label};
-	font-size: 13px;
 	text-transform: capitalize;
 	cursor: default;
 `;
 
-const ValueText = styled(Text.Body)<{ $disabled?: boolean; $color?: DetailedInfo['color'] }>`
+const ValueText = styled(Body).attrs({ mono: true })<{
+	$disabled?: boolean;
+	$color?: DetailedInfo['color'];
+}>`
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
-	font-family: ${(props) => props.theme.fonts.mono};
-	font-size: 13px;
 	cursor: default;
 
 	${(props) =>
