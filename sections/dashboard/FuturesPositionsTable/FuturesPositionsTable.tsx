@@ -270,11 +270,11 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 							},
 						]}
 					/>
-					<Link href={EXTERNAL_LINKS.Trade.V1}>
+					<a target="_blank" rel="noopener noreferrer" href={EXTERNAL_LINKS.Trade.V1}>
 						<StyledBody>
 							{t('dashboard.overview.futures-positions-table.legacy-link')} <LinkArrow />
 						</StyledBody>
-					</Link>
+					</a>
 				</div>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
@@ -304,11 +304,11 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						))
 					)}
 				</div>
-				<Link href={EXTERNAL_LINKS.Trade.V1}>
+				<a target="_blank" rel="noopener noreferrer" href={EXTERNAL_LINKS.Trade.V1}>
 					<StyledBody>
 						{t('dashboard.overview.futures-positions-table.legacy-link')} <LinkArrow />
 					</StyledBody>
-				</Link>
+				</a>
 			</MobileOrTabletView>
 		</>
 	);
