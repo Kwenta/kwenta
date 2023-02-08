@@ -450,6 +450,7 @@
 				"notionalValue": "Size",
 				"liquidationPrice": "Liq. Price",
 				"no-result": "You have no other open positions",
+				"legacy-link": "Missing a position? Check the legacy app",
 				"mobile": {
 					"market": "Market/Side",
 					"price": "Oracle/Entry",
@@ -1084,7 +1085,7 @@
 	},
 	"modals": {
 		"select-currency": {
-			"title": "select synth",
+			"title": "select tokens",
 			"header": {
 				"search-results": "search results",
 				"category-synths": "{{category}} synths",
@@ -1094,7 +1095,7 @@
 				"holdings": "holdings"
 			},
 			"search": {
-				"placeholder": "search synths",
+				"placeholder": "search tokens",
 				"empty-results": "No results found. Please try again."
 			}
 		},

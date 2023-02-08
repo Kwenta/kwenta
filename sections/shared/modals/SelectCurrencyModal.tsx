@@ -64,7 +64,6 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	const { synthBalancesMap, tokenBalances } = useAppSelector(selectBalances);
 	const tokenList = useAppSelector(selectTokenList);
 	const balancesStatus = useAppSelector(selectBalancesFetchStatus);
-
 	const synthBalancesLoading = useAppSelector(selectSynthBalancesLoading);
 
 	const categoryFilteredSynths = useMemo(
@@ -106,7 +105,11 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	const synthKeys = useMemo(() => synthsResults.map((s) => s.name), [synthsResults]);
 
 	const oneInchTokenList = useMemo(() => {
-		return tokenList.filter((i) => !synthKeys.includes(i.symbol as SynthSymbol));
+		const withSynthTokensCombined = [
+			...tokenList?.filter((i) => !synthKeys.includes(i.symbol as SynthSymbol)),
+			...synthsResults?.map((synthToken) => ({ symbol: synthToken?.name, ...synthToken })),
+		];
+		return withSynthTokensCombined;
 	}, [synthKeys, tokenList]);
 
 	const searchFilteredTokens = useDebouncedMemo(
@@ -219,45 +222,47 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 					}
 					scrollableTarget="scrollableDiv"
 				>
-					<RowsHeader>
-						<span>
-							{assetSearch ? (
-								<span>{t('modals.select-currency.header.search-results')}</span>
-							) : synthCategory != null ? (
-								t('modals.select-currency.header.category-synths', {
-									category: synthCategory,
+					{synthCategory || !oneInchEnabled ? (
+						<>
+							<RowsHeader>
+								<span>
+									{synthCategory != null && assetSearch ? (
+										<span>{t('modals.select-currency.header.search-results')}</span>
+									) : (
+										t('modals.select-currency.header.category-synths', {
+											category: synthCategory,
+										})
+									)}
+								</span>
+								<span>{t('modals.select-currency.header.holdings')}</span>
+							</RowsHeader>
+
+							{synthBalancesLoading ? (
+								<Loader />
+							) : synthsResults.length > 0 ? (
+								synthsResults.map((synth) => {
+									const currencyKey = synth.name;
+									return (
+										<CurrencyRow
+											key={currencyKey}
+											onClick={() => {
+												onSelect(currencyKey, false);
+												onDismiss();
+											}}
+											balance={synthBalancesMap[currencyKey as CurrencyKey]}
+											token={{
+												name: synth.description,
+												symbol: synth.name,
+												isSynth: true,
+											}}
+										/>
+									);
 								})
 							) : (
-								t('modals.select-currency.header.all-synths')
+								<EmptyDisplay>{t('modals.select-currency.search.empty-results')}</EmptyDisplay>
 							)}
-						</span>
-						<span>{t('modals.select-currency.header.holdings')}</span>
-					</RowsHeader>
-					{synthBalancesLoading ? (
-						<Loader />
-					) : synthsResults.length > 0 ? (
-						// TODO: use `Synth` type from contracts-interface
-						synthsResults.map((synth) => {
-							const currencyKey = synth.name;
-							return (
-								<CurrencyRow
-									key={currencyKey}
-									onClick={() => {
-										onSelect(currencyKey, false);
-										onDismiss();
-									}}
-									balance={synthBalancesMap[currencyKey as CurrencyKey]}
-									token={{
-										name: synth.description,
-										symbol: synth.name,
-										isSynth: true,
-									}}
-								/>
-							);
-						})
-					) : (
-						<EmptyDisplay>{t('modals.select-currency.search.empty-results')}</EmptyDisplay>
-					)}
+						</>
+					) : null}
 					{oneInchTokensPaged.length ? (
 						<>
 							<TokensHeader>
