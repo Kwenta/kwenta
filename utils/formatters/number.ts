@@ -20,7 +20,7 @@ type TruncatedOptions = {
 		// Maybe remove manual truncation params
 		unit: string;
 		divisor: number;
-		decimals?: number;
+		decimals: number;
 	};
 };
 
@@ -112,26 +112,24 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	if (shouldTruncate && !truncation) {
 		if (weiValue.gt(1e6)) {
 			truncation = { divisor: 1e6, unit: 'M', decimals: 2 };
+		} else if (weiValue.gt(1e3)) {
+			truncation = { divisor: 1e3, unit: 'K', decimals: 0 };
 		}
 	}
 
 	const weiBeforeAsString = truncation ? weiValue.abs().div(truncation.divisor) : weiValue.abs();
 
-	const dp =
-		truncation?.decimals ||
-		(isAssetPrice
-			? suggestedDecimals(weiBeforeAsString)
-			: options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS);
+	const decimals = truncation
+		? truncation.decimals
+		: isAssetPrice
+		? suggestedDecimals(weiBeforeAsString)
+		: options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS;
 
-	let weiAsStringWithDecimals = weiBeforeAsString.toString(dp);
+	let weiAsStringWithDecimals = weiBeforeAsString.toString(decimals);
 
 	if (options?.maxDecimals || options?.maxDecimals === 0) {
 		weiAsStringWithDecimals = wei(weiAsStringWithDecimals).toString(options.maxDecimals);
 	}
-
-	const decimals = isAssetPrice
-		? suggestedDecimals(weiAsStringWithDecimals)
-		: options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS;
 
 	const withCommas = commifyAndPadDecimals(weiAsStringWithDecimals, decimals);
 
