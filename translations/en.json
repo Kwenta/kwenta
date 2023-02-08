@@ -1083,7 +1083,7 @@
 	},
 	"modals": {
 		"select-currency": {
-			"title": "select synth",
+			"title": "select tokens",
 			"header": {
 				"search-results": "search results",
 				"category-synths": "{{category}} synths",
@@ -1093,7 +1093,7 @@
 				"holdings": "holdings"
 			},
 			"search": {
-				"placeholder": "search synths",
+				"placeholder": "search tokens",
 				"empty-results": "No results found. Please try again."
 			}
 		},
