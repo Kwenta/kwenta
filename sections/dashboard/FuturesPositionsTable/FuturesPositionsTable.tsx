@@ -270,11 +270,11 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 							},
 						]}
 					/>
-					<a target="_blank" rel="noopener noreferrer" href={EXTERNAL_LINKS.Trade.V1}>
-						<StyledBody>
+					<StyledBody>
+						<a target="_blank" rel="noopener noreferrer" href={EXTERNAL_LINKS.Trade.V1}>
 							{t('dashboard.overview.futures-positions-table.legacy-link')} <LinkArrow />
-						</StyledBody>
-					</a>
+						</a>
+					</StyledBody>
 				</div>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
@@ -304,25 +304,26 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						))
 					)}
 				</div>
-				<a target="_blank" rel="noopener noreferrer" href={EXTERNAL_LINKS.Trade.V1}>
-					<StyledBody>
+				<StyledBody>
+					<a target="_blank" rel="noopener noreferrer" href={EXTERNAL_LINKS.Trade.V1}>
 						{t('dashboard.overview.futures-positions-table.legacy-link')} <LinkArrow />
-					</StyledBody>
-				</a>
+					</a>
+				</StyledBody>
 			</MobileOrTabletView>
 		</>
 	);
 };
 
 const StyledBody = styled(Body)`
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 100%;
 	margin-top: 8px;
 	text-align: center;
 	text-decoration: underline;
-	cursor: pointer;
+
+	a {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 `;
 
 const PnlContainer = styled.div`
