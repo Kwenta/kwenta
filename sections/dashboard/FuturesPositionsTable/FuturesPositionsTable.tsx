@@ -3,9 +3,9 @@ import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
-import LinkArrow from 'assets/svg/app/link-white.svg';
+import LinkArrow from 'assets/svg/app/link-arrow.svg';
 import MarketBadge from 'components/Badge/MarketBadge';
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
@@ -44,6 +44,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	showCurrentMarket = true,
 }) => {
 	const { t } = useTranslation();
+	const theme = useTheme();
 	const { synthsMap } = Connector.useContainer();
 	const router = useRouter();
 	const { switchToL2 } = useNetworkSwitcher();
@@ -272,7 +273,8 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					/>
 					<StyledBody>
 						<a target="_blank" rel="noopener noreferrer" href={EXTERNAL_LINKS.Trade.V1}>
-							{t('dashboard.overview.futures-positions-table.legacy-link')} <LinkArrow />
+							{t('dashboard.overview.futures-positions-table.legacy-link')}{' '}
+							<StyledArrow fill={theme.colors.selectedTheme.text.value} />
 						</a>
 					</StyledBody>
 				</div>
@@ -306,7 +308,8 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				</div>
 				<StyledBody>
 					<a target="_blank" rel="noopener noreferrer" href={EXTERNAL_LINKS.Trade.V1}>
-						{t('dashboard.overview.futures-positions-table.legacy-link')} <LinkArrow />
+						{t('dashboard.overview.futures-positions-table.legacy-link')}{' '}
+						<StyledArrow fill={theme.colors.selectedTheme.text.value} />
 					</a>
 				</StyledBody>
 			</MobileOrTabletView>
@@ -318,12 +321,13 @@ const StyledBody = styled(Body)`
 	margin-top: 8px;
 	text-align: center;
 	text-decoration: underline;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+`;
 
-	a {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
+const StyledArrow = styled(LinkArrow)`
+	margin-left: 2px;
 `;
 
 const PnlContainer = styled.div`
