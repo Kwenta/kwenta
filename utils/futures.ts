@@ -125,13 +125,13 @@ export const AssetDisplayByAsset: Record<FuturesMarketAsset, string> = {
 	[FuturesMarketAsset.BNB]: 'Binance Coin',
 	[FuturesMarketAsset.DOGE]: 'Dogecoin',
 	[FuturesMarketAsset.OP]: 'Optimism',
-	[FuturesMarketAsset.ATOM]: 'Atom',
+	[FuturesMarketAsset.ATOM]: 'Cosmos',
 	[FuturesMarketAsset.FTM]: 'Fantom',
 	[FuturesMarketAsset.NEAR]: 'Near',
 	[FuturesMarketAsset.FLOW]: 'Flow',
 	[FuturesMarketAsset.AXS]: 'Axie Infinity',
 	[FuturesMarketAsset.AUD]: 'Australian Dollar',
-	[FuturesMarketAsset.GBP]: 'Pound Silver',
+	[FuturesMarketAsset.GBP]: 'Pound Sterling',
 } as const;
 
 export const marketOverrides: Partial<Record<FuturesMarketKey, Record<string, any>>> = {
