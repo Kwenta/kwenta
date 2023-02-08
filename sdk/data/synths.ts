@@ -4,7 +4,6 @@ export type SynthSymbol =
 	| 'sAAVE'
 	| 'sADA'
 	| 'sAUD'
-	| 'sAVAX'
 	| 'sBTC'
 	| 'sCHF'
 	| 'sDOT'
@@ -16,9 +15,6 @@ export type SynthSymbol =
 	| 'sJPY'
 	| 'sKRW'
 	| 'sLINK'
-	| 'sMATIC'
-	| 'sSOL'
-	| 'sUNI'
 	| 'sUSD';
 
 export type SynthToken = {
@@ -45,7 +41,6 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 		asset: 'AAVE',
 		addresses: {
 			1: '0xd2dF355C19471c8bd7D8A3aa27Ff4e26A21b4076',
-			10: '0x00B8D5a5e1Ac97Cb4341c4Bc4367443c8776e8d9',
 		},
 		category: 'crypto',
 	},
@@ -64,14 +59,6 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 			1: '0xF48e200EAF9906362BB1442fca31e0835773b8B4',
 		},
 		category: 'forex',
-	},
-	sAVAX: {
-		name: 'Avalanche',
-		asset: 'AVAX',
-		addresses: {
-			10: '0xB2b42B231C68cbb0b4bF2FFEbf57782Fd97D3dA4',
-		},
-		category: 'crypto',
 	},
 	sBTC: {
 		name: 'Bitcoin',
@@ -165,31 +152,6 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 		asset: 'LINK',
 		addresses: {
 			1: '0xbBC455cb4F1B9e4bFC4B73970d360c8f032EfEE6',
-			10: '0xc5Db22719A06418028A40A9B5E9A7c02959D0d08',
-		},
-		category: 'crypto',
-	},
-	sMATIC: {
-		name: 'Matic',
-		asset: 'MATIC',
-		addresses: {
-			10: '0x81DDfAc111913d3d5218DEA999216323B7CD6356',
-		},
-		category: 'crypto',
-	},
-	sSOL: {
-		name: 'Solana',
-		asset: 'SOL',
-		addresses: {
-			10: '0x8b2F7Ae8cA8EE8428B6D76dE88326bB413db2766',
-		},
-		category: 'crypto',
-	},
-	sUNI: {
-		name: 'Uniswap',
-		asset: 'UNI',
-		addresses: {
-			10: '0xf5a6115Aa582Fd1BEEa22BC93B7dC7a785F60d03',
 		},
 		category: 'crypto',
 	},
