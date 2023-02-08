@@ -5,12 +5,15 @@ import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
 
+import LinkArrow from 'assets/svg/app/link-white.svg';
 import MarketBadge from 'components/Badge/MarketBadge';
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
+import { Body } from 'components/Text';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
+import { EXTERNAL_LINKS } from 'constants/links';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
@@ -267,6 +270,11 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 							},
 						]}
 					/>
+					<Link href={EXTERNAL_LINKS.Trade.V1}>
+						<StyledBody>
+							{t('dashboard.overview.futures-positions-table.legacy-link')} <LinkArrow />
+						</StyledBody>
+					</Link>
 				</div>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
@@ -296,10 +304,26 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						))
 					)}
 				</div>
+				<Link href={EXTERNAL_LINKS.Trade.V1}>
+					<StyledBody>
+						{t('dashboard.overview.futures-positions-table.legacy-link')} <LinkArrow />
+					</StyledBody>
+				</Link>
 			</MobileOrTabletView>
 		</>
 	);
 };
+
+const StyledBody = styled(Body)`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	margin-top: 8px;
+	text-align: center;
+	text-decoration: underline;
+	cursor: pointer;
+`;
 
 const PnlContainer = styled.div`
 	display: flex;
