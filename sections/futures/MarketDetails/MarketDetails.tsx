@@ -67,6 +67,7 @@ const DeprecatedBannerContainer = styled.div`
 
 const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	flex: 1;
+	gap: 26px;
 	height: 55px;
 	padding: 10px 45px 10px 15px;
 	margin-bottom: 16px;

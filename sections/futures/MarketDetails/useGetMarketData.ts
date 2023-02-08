@@ -19,7 +19,7 @@ import {
 import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices } from 'state/prices/selectors';
 import { isFiatCurrency } from 'utils/currencies';
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
 
 import { MarketDataKey } from './utils';
@@ -58,42 +58,21 @@ const useGetMarketData = (mobile?: boolean) => {
 		const futuresTradingVolume = marketInfo?.marketKey
 			? futuresVolumes[marketInfo.marketKey]?.volume ?? wei(0)
 			: wei(0);
-		const futuresTradeCount = marketInfo?.marketKey
-			? futuresVolumes[marketInfo.marketKey]?.trades.toNumber() ?? 0
-			: 0;
 
 		if (mobile) {
 			return {
 				[marketName]: {
-					value: formatCurrency(selectedPriceCurrency.name, marketPrice, {
-						sign: '$',
-						minDecimals,
-						isAssetPrice: true,
-					}),
+					value: formatDollars(marketPrice, { isAssetPrice: true }),
 					color: getColorFromPriceInfo(marketPriceInfo),
-				},
-				[MarketDataKey.oraclePrice]: {
-					value: formatCurrency(selectedPriceCurrency.name, oraclePrice, {
-						sign: '$',
-						minDecimals,
-						isAssetPrice: true,
-					}),
-				},
-				[MarketDataKey.dailyTrades]: {
-					value: `${futuresTradeCount}`,
 				},
 				[MarketDataKey.openInterest]: {
 					value: marketInfo?.marketSize?.mul(marketPrice)
-						? formatCurrency(
-								selectedPriceCurrency.name,
-								marketInfo?.marketSize?.mul(marketPrice).toNumber(),
-								{ sign: '$' }
-						  )
+						? formatDollars(marketInfo?.marketSize?.mul(marketPrice).toNumber(), { truncate: true })
 						: NO_VALUE,
 				},
 				[MarketDataKey.dailyVolume]: {
-					value: formatCurrency(selectedPriceCurrency.name, futuresTradingVolume ?? zeroBN, {
-						sign: '$',
+					value: formatDollars(futuresTradingVolume ?? zeroBN, {
+						truncate: true,
 					}),
 				},
 				[t('futures.market.info.hourly-funding')]: {
@@ -123,28 +102,15 @@ const useGetMarketData = (mobile?: boolean) => {
 		} else {
 			return {
 				[marketName]: {
-					value: formatCurrency(selectedPriceCurrency.name, marketPrice, {
-						sign: '$',
-						minDecimals,
-						isAssetPrice: true,
-					}),
+					value: formatDollars(marketPrice),
 					color: getColorFromPriceInfo(marketPriceInfo),
-				},
-				[MarketDataKey.oraclePrice]: {
-					value: formatCurrency(selectedPriceCurrency.name, oraclePrice, {
-						sign: '$',
-						minDecimals,
-						isAssetPrice: true,
-					}),
 				},
 				[MarketDataKey.dailyChange]: {
 					value:
 						marketPrice.gt(0) && pastPrice?.rate
-							? `${formatCurrency(
-									selectedPriceCurrency.name,
-									marketPrice.sub(pastPrice.rate) ?? zeroBN,
-									{ sign: '$', minDecimals, isAssetPrice: true }
-							  )} (${formatPercent(marketPrice.sub(pastPrice.rate).div(marketPrice) ?? zeroBN)})`
+							? `${formatDollars(marketPrice.sub(pastPrice.rate) ?? zeroBN)} (${formatPercent(
+									marketPrice.sub(pastPrice.rate).div(marketPrice) ?? zeroBN
+							  )})`
 							: NO_VALUE,
 					color: pastPrice?.rate
 						? marketPrice.sub(pastPrice.rate).gt(zeroBN)
@@ -155,18 +121,20 @@ const useGetMarketData = (mobile?: boolean) => {
 						: undefined,
 				},
 				[MarketDataKey.dailyVolume]: {
-					value: formatCurrency(selectedPriceCurrency.name, futuresTradingVolume ?? zeroBN, {
-						sign: '$',
+					value: formatDollars(futuresTradingVolume ?? zeroBN, {
+						truncate: true,
 					}),
-				},
-				[MarketDataKey.dailyTrades]: {
-					value: `${futuresTradeCount}`,
 				},
 				[MarketDataKey.openInterest]: {
 					value: marketInfo?.marketSize?.mul(marketPrice)
-						? formatCurrency(selectedPriceCurrency.name, marketInfo?.marketSize?.mul(marketPrice), {
-								sign: '$',
+						? formatDollars(marketInfo?.marketSize?.mul(marketPrice), {
+								truncate: true,
 						  })
+						: NO_VALUE,
+				},
+				[MarketDataKey.oiCap]: {
+					value: marketInfo?.marketLimit
+						? formatDollars(marketInfo.marketLimit, { truncate: true })
 						: NO_VALUE,
 				},
 				[t('futures.market.info.hourly-funding')]: {

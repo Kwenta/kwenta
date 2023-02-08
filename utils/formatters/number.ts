@@ -15,9 +15,12 @@ import logError from 'utils/logError';
 type WeiSource = Wei | number | string | ethers.BigNumber;
 
 type TruncatedOptions = {
+	truncate?: boolean;
 	truncation?: {
+		// Maybe remove manual truncation params
 		unit: string;
 		divisor: number;
+		decimals?: number;
 	};
 };
 
@@ -85,8 +88,9 @@ export const commifyAndPadDecimals = (value: string, decimals: number) => {
 export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) => {
 	const prefix = options?.prefix;
 	const suffix = options?.suffix;
-	const truncation = options?.truncation;
+	const shouldTruncate = options?.truncate;
 	const isAssetPrice = options?.isAssetPrice;
+	let truncation = options?.truncation;
 
 	let weiValue = wei(0);
 	try {
@@ -104,11 +108,20 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 		formattedValue.push(prefix);
 	}
 
+	// specified truncation params overrides universal truncate
+	if (shouldTruncate && !truncation) {
+		if (weiValue.gt(1e6)) {
+			truncation = { divisor: 1e6, unit: 'M', decimals: 2 };
+		}
+	}
+
 	const weiBeforeAsString = truncation ? weiValue.abs().div(truncation.divisor) : weiValue.abs();
 
-	const dp = isAssetPrice
-		? suggestedDecimals(weiBeforeAsString)
-		: options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS;
+	const dp =
+		truncation?.decimals ||
+		(isAssetPrice
+			? suggestedDecimals(weiBeforeAsString)
+			: options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS);
 
 	let weiAsStringWithDecimals = weiBeforeAsString.toString(dp);
 
@@ -146,12 +159,10 @@ export const formatCryptoCurrency = (value: WeiSource, options?: FormatCurrencyO
 
 export const formatFiatCurrency = (value: WeiSource, options?: FormatCurrencyOptions) =>
 	formatNumber(value, {
+		...options,
 		prefix: options?.sign,
 		suffix: options?.currencyKey,
 		minDecimals: options?.minDecimals ?? DEFAULT_FIAT_DECIMALS,
-		maxDecimals: options?.maxDecimals,
-		truncation: options?.truncation,
-		isAssetPrice: options?.isAssetPrice,
 	});
 
 export const formatCurrency = (

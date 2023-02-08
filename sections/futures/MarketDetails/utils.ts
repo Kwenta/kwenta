@@ -41,6 +41,7 @@ export enum MarketDataKey {
 	openInterest = 'Open Interest',
 	instFundingRate = 'Inst. Funding Rate',
 	hourlyFundingRate = '1H Funding Rate',
+	oiCap = 'OI Cap',
 }
 
 export const marketDataKeyMap: Record<MarketDataKey, string> = {
@@ -52,6 +53,7 @@ export const marketDataKeyMap: Record<MarketDataKey, string> = {
 	[MarketDataKey.openInterest]: 'open-interest',
 	[MarketDataKey.instFundingRate]: '1h-funding-rate',
 	[MarketDataKey.hourlyFundingRate]: '1h-funding-rate',
+	[MarketDataKey.oiCap]: 'oi-cap',
 };
 
 export const isMarketDataKey = (key: string): key is MarketDataKey => {
