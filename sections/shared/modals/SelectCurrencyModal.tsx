@@ -110,7 +110,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 			...synthsResults?.map((synthToken) => ({ symbol: synthToken?.name, ...synthToken })),
 		];
 		return withSynthTokensCombined;
-	}, [synthKeys, tokenList]);
+	}, [synthKeys, synthsResults, tokenList]);
 
 	const searchFilteredTokens = useDebouncedMemo(
 		() =>
