@@ -168,7 +168,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								accessor: 'notionalValue',
 								Cell: (cellProps: CellProps<any>) => {
 									const formatOptions = cellProps.row.original.position.notionalValue.gte(1e6)
-										? { truncation: { divisor: 1e6, unit: 'M' } }
+										? { truncate: true }
 										: {};
 
 									return (
