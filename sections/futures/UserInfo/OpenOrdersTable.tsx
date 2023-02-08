@@ -8,7 +8,10 @@ import Currency from 'components/Currency';
 import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
-import { DEFAULT_DELAYED_EXECUTION_BUFFER } from 'constants/defaults';
+import {
+	DEFAULT_DELAYED_CANCEL_BUFFER,
+	DEFAULT_DELAYED_EXECUTION_BUFFER,
+} from 'constants/defaults';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesMarketKey, PositionSide } from 'sdk/types/futures';
@@ -71,9 +74,10 @@ const OpenOrdersTable: React.FC = () => {
 						market?.settings &&
 						timer.timeToExecution === 0 &&
 						timer.timePastExecution >
-							(o.isOffchain
-								? market.settings.offchainDelayedOrderMaxAge
-								: market.settings.maxDelayTimeDelta),
+							DEFAULT_DELAYED_CANCEL_BUFFER +
+								(o.isOffchain
+									? market.settings.offchainDelayedOrderMaxAge
+									: market.settings.maxDelayTimeDelta),
 					isFailed:
 						timer &&
 						market?.settings &&
