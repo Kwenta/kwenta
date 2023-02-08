@@ -4,9 +4,8 @@ import orderBy from 'lodash/orderBy';
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
-import Button from 'components/Button';
 import SearchInput from 'components/Input/SearchInput';
 import { FlexDivCentered } from 'components/layout/flex';
 import { RowsHeader, CenteredModal } from 'components/layout/modals';
@@ -25,7 +24,6 @@ import {
 import { selectTokenList } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
-import media from 'styles/media';
 import { zeroBN } from 'utils/formatters/number';
 
 import CurrencyRow from './CurrencyRow';
@@ -49,7 +47,6 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	const { network } = Connector.useContainer();
 
 	const [assetSearch, setAssetSearch] = useState('');
-	const [synthCategory, setSynthCategory] = useState<string | null>(null);
 	const [page, setPage] = useState(1);
 
 	// Only available on Optimism mainnet
@@ -66,15 +63,10 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	const balancesStatus = useAppSelector(selectBalancesFetchStatus);
 	const synthBalancesLoading = useAppSelector(selectSynthBalancesLoading);
 
-	const categoryFilteredSynths = useMemo(
-		() => (!!synthCategory ? synths.filter((synth) => synth.category === synthCategory) : synths),
-		[synths, synthCategory]
-	);
-
 	const searchFilteredSynths = useDebouncedMemo(
 		() =>
 			assetSearch
-				? categoryFilteredSynths.filter(({ name, description }) => {
+				? synths.filter(({ name, description }) => {
 						const assetSearchLC = assetSearch.toLowerCase();
 
 						return (
@@ -82,13 +74,13 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 							description.toLowerCase().includes(assetSearchLC)
 						);
 				  })
-				: categoryFilteredSynths,
-		[categoryFilteredSynths, assetSearch],
+				: synths,
+		[synths, assetSearch],
 		DEFAULT_SEARCH_DEBOUNCE_MS
 	);
 
 	const synthsResults = useMemo(() => {
-		const synthsList = assetSearch ? searchFilteredSynths : categoryFilteredSynths;
+		const synthsList = assetSearch ? searchFilteredSynths : synths;
 		return orderBy(
 			synthsList,
 			[
@@ -100,22 +92,22 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 			],
 			['desc', 'asc']
 		);
-	}, [assetSearch, searchFilteredSynths, categoryFilteredSynths, synthBalancesMap]);
+	}, [assetSearch, searchFilteredSynths, synths, synthBalancesMap]);
 
 	const synthKeys = useMemo(() => synthsResults.map((s) => s.name), [synthsResults]);
 
-	const oneInchTokenList = useMemo(() => {
+	const combinedTokenList = useMemo(() => {
 		const withSynthTokensCombined = [
 			...tokenList?.filter((i) => !synthKeys.includes(i.symbol as SynthSymbol)),
 			...synthsResults?.map((synthToken) => ({ symbol: synthToken?.name, ...synthToken })),
 		];
 		return withSynthTokensCombined;
-	}, [synthKeys, tokenList]);
+	}, [synthKeys, synthsResults, tokenList]);
 
 	const searchFilteredTokens = useDebouncedMemo(
 		() =>
 			assetSearch
-				? oneInchTokenList
+				? combinedTokenList
 						.filter(({ name, symbol }: any) => {
 							const assetSearchLC = assetSearch.toLowerCase();
 							return (
@@ -124,8 +116,8 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 							);
 						})
 						.map((t: any) => ({ ...t, isSynth: false }))
-				: oneInchTokenList,
-		[oneInchTokenList, assetSearch],
+				: combinedTokenList,
+		[combinedTokenList, assetSearch],
 		DEFAULT_SEARCH_DEBOUNCE_MS
 	);
 
@@ -135,7 +127,6 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	const coinGeckoPrices = coinGeckoTokenPricesQuery.data ?? null;
 
 	const oneInchTokensPaged = useMemo(() => {
-		if (!oneInchEnabled || (synthCategory && synthCategory !== 'crypto')) return [];
 		const ordered =
 			balancesStatus === FetchStatus.Success
 				? orderBy(
@@ -160,15 +151,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 				: searchFilteredTokens;
 		if (ordered.length > PAGE_LENGTH) return ordered.slice(0, PAGE_LENGTH * page);
 		return ordered;
-	}, [
-		oneInchEnabled,
-		synthCategory,
-		searchFilteredTokens,
-		page,
-		coinGeckoPrices,
-		tokenBalances,
-		balancesStatus,
-	]);
+	}, [searchFilteredTokens, page, coinGeckoPrices, tokenBalances, balancesStatus]);
 
 	return (
 		<StyledCenteredModal onDismiss={onDismiss} isOpen title={t('modals.select-currency.title')}>
@@ -177,44 +160,20 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 					<AssetSearchInput
 						placeholder={t('modals.select-currency.search.placeholder')}
 						onChange={(e) => {
-							setSynthCategory(null);
 							setAssetSearch(e.target.value);
 						}}
 						value={assetSearch}
 						autoFocus
 					/>
 				</SearchContainer>
-				<CategoryFilters>
-					{CATEGORY_FILTERS.map((category) => {
-						const isActive = synthCategory === category;
-						const noItem =
-							synths.filter((synth) => synth.category.toString() === category).length === 0;
-
-						return (
-							<CategoryButton
-								variant="secondary"
-								isActive={isActive}
-								disabled={noItem}
-								onClick={() => {
-									setAssetSearch('');
-									setSynthCategory(isActive ? null : category);
-								}}
-								key={category}
-							>
-								{t(`common.currency-category.${category}`)}
-							</CategoryButton>
-						);
-					})}
-				</CategoryFilters>
-
 				<InfiniteScroll
-					dataLength={synthsResults.length + oneInchTokensPaged.length}
+					dataLength={searchFilteredTokens.length}
 					next={() => {
 						setTimeout(() => {
 							setPage(page + 1);
 						}, 200);
 					}}
-					hasMore={oneInchEnabled && oneInchTokensPaged.length !== oneInchTokenList.length}
+					hasMore={oneInchEnabled && oneInchTokensPaged.length !== searchFilteredTokens.length}
 					loader={
 						<LoadingMore>
 							<Loader inline />
@@ -222,24 +181,16 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 					}
 					scrollableTarget="scrollableDiv"
 				>
-					{synthCategory || !oneInchEnabled ? (
+					{!oneInchEnabled ? (
 						<>
-							<RowsHeader>
-								<span>
-									{synthCategory != null && assetSearch ? (
-										<span>{t('modals.select-currency.header.search-results')}</span>
-									) : (
-										t('modals.select-currency.header.category-synths', {
-											category: synthCategory,
-										})
-									)}
-								</span>
+							<TokensHeader>
+								<span>{t('modals.select-currency.header.tokens')}</span>
 								<span>{t('modals.select-currency.header.holdings')}</span>
-							</RowsHeader>
-
+							</TokensHeader>
 							{synthBalancesLoading ? (
 								<Loader />
 							) : synthsResults.length > 0 ? (
+								// TODO: use `Synth` type from contracts-interface
 								synthsResults.map((synth) => {
 									const currencyKey = synth.name;
 									return (
@@ -262,47 +213,32 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 								<EmptyDisplay>{t('modals.select-currency.search.empty-results')}</EmptyDisplay>
 							)}
 						</>
-					) : null}
-					{oneInchTokensPaged.length ? (
-						<>
-							<TokensHeader>
-								<span>
-									{assetSearch ? (
-										<span>{t('modals.select-currency.header.search-results')}</span>
-									) : (
-										t('modals.select-currency.header.other-tokens')
-									)}
-								</span>
-								<span>{t('modals.select-currency.header.holdings')}</span>
-							</TokensHeader>
-							{oneInchTokensPaged.length > 0 ? (
-								oneInchTokensPaged.map((token) => {
-									const { symbol: currencyKey, balance, usdBalance } = token;
-									return (
-										<CurrencyRow
-											key={currencyKey}
-											onClick={() => {
-												onSelect(currencyKey, true);
-												onDismiss();
-											}}
-											balance={
-												balance && usdBalance
-													? {
-															currencyKey,
-															balance,
-															usdBalance,
-													  }
-													: undefined
-											}
-											token={{ ...token, isSynth: false }}
-										/>
-									);
-								})
-							) : (
-								<EmptyDisplay>{t('modals.select-currency.search.empty-results')}</EmptyDisplay>
-							)}
-						</>
-					) : null}
+					) : oneInchTokensPaged.length > 0 ? (
+						oneInchTokensPaged.map((token) => {
+							const { symbol: currencyKey, balance, usdBalance } = token;
+							return (
+								<CurrencyRow
+									key={currencyKey}
+									onClick={() => {
+										onSelect(currencyKey, true);
+										onDismiss();
+									}}
+									balance={
+										balance && usdBalance
+											? {
+													currencyKey,
+													balance,
+													usdBalance,
+											  }
+											: undefined
+									}
+									token={{ ...token, isSynth: false }}
+								/>
+							);
+						})
+					) : (
+						<EmptyDisplay>{t('modals.select-currency.search.empty-results')}</EmptyDisplay>
+					)}
 				</InfiniteScroll>
 			</Container>
 		</StyledCenteredModal>
@@ -337,37 +273,6 @@ const AssetSearchInput = styled(SearchInput)`
 		text-transform: capitalize;
 		color: ${(props) => props.theme.colors.selectedTheme.button.secondary};
 	}
-`;
-
-const CategoryFilters = styled.div`
-	display: grid;
-	grid-auto-flow: column;
-	${media.lessThan('sm')`
-		justify-content: space-between;
-	`}
-	justify-content: flex-start;
-	column-gap: 10px;
-	padding: 0 16px;
-	margin-bottom: 18px;
-`;
-
-const CategoryButton = styled(Button)`
-	height: 30px;
-	text-transform: uppercase;
-	font-size: 12px;
-
-	${(props) =>
-		props.isActive &&
-		css`
-			color: ${props.theme.colors.selectedTheme.button.text.primary};
-			background: ${props.theme.colors.selectedTheme.button.fill};
-		`};
-	${(props) =>
-		props.disabled &&
-		css`
-			color: ${props.theme.colors.selectedTheme.button.disabled.text};
-			background: ${props.theme.colors.selectedTheme.button.disabled.background};
-		`};
 `;
 
 const EmptyDisplay = styled(FlexDivCentered)`
