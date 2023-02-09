@@ -1,7 +1,7 @@
 import { SynthSuspensionReason } from '@synthetixio/queries';
 
 import useFuturesSuspensionQuery from 'queries/futures/useFuturesSuspensionQuery';
-import { FuturesMarketKey } from 'utils/futures';
+import { FuturesMarketKey } from 'sdk/types/futures';
 
 export type FuturesClosureReason = SynthSuspensionReason;
 export type MarketClosure = ReturnType<typeof useFuturesMarketClosed>;

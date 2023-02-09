@@ -5,6 +5,7 @@ import { DEFAULT_FUTURES_MARGIN_TYPE, DEFAULT_PRICE_IMPACT_DELTA } from 'constan
 import { ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
 import {
 	FuturesMarket,
+	FuturesMarketAsset,
 	FuturesMarketKey,
 	FuturesPotentialTradeDetails,
 	PositionSide,
@@ -21,7 +22,7 @@ import {
 } from 'state/constants';
 import { accountType } from 'state/helpers';
 import { FetchStatus } from 'state/types';
-import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
+import { MarketKeyByAsset } from 'utils/futures';
 
 import {
 	fetchCrossMarginBalanceInfo,
@@ -86,7 +87,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 	crossMargin: {
 		accounts: DEFAULT_MAP_BY_NETWORK,
 		selectedMarketAsset: FuturesMarketAsset.sETH,
-		selectedMarketKey: FuturesMarketKey.sETH,
+		selectedMarketKey: FuturesMarketKey.sETHPERP,
 		leverageSide: PositionSide.LONG,
 		orderType: 'market',
 		orderFeeCap: '0',
@@ -112,7 +113,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 	isolatedMargin: {
 		accounts: DEFAULT_MAP_BY_NETWORK,
 		selectedMarketAsset: FuturesMarketAsset.sETH,
-		selectedMarketKey: FuturesMarketKey.sETH,
+		selectedMarketKey: FuturesMarketKey.sETHPERP,
 		leverageSide: PositionSide.LONG,
 		orderType: 'delayed_offchain',
 		tradePreview: null,

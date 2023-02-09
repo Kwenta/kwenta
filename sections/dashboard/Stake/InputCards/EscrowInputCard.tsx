@@ -9,6 +9,8 @@ import {
 	selectCanStakeEscrowedKwenta,
 	selectCanUnstakeEscrowedKwenta,
 	selectIsKwentaTokenApproved,
+	selectIsStakedEscrowedKwenta,
+	selectIsUnstakedEscrowedKwenta,
 	selectStakedEscrowedKwentaBalance,
 	selectUnstakedEscrowedKwentaBalance,
 } from 'state/staking/selectors';
@@ -22,6 +24,8 @@ const EscrowInputCard: FC = () => {
 	const unstakedEscrowedKwentaBalance = useAppSelector(selectUnstakedEscrowedKwentaBalance);
 	const stakeEnabled = useAppSelector(selectCanStakeEscrowedKwenta);
 	const unstakeEnabled = useAppSelector(selectCanUnstakeEscrowedKwenta);
+	const isStakedEscrowedKwenta = useAppSelector(selectIsStakedEscrowedKwenta);
+	const isUnstakedEscrowedKwenta = useAppSelector(selectIsUnstakedEscrowedKwenta);
 
 	const handleApprove = useCallback(() => {
 		dispatch(approveKwentaToken('kwenta'));
@@ -48,6 +52,8 @@ const EscrowInputCard: FC = () => {
 			unstakeBalance={stakedEscrowedKwentaBalance}
 			stakeEnabled={stakeEnabled}
 			unstakeEnabled={unstakeEnabled}
+			isStaked={isStakedEscrowedKwenta}
+			isUnstaked={isUnstakedEscrowedKwenta}
 			isApproved={isKwentaTokenApproved}
 			onStake={handleStakeEscrow}
 			onUnstake={handleUnstakeEscrow}

@@ -112,12 +112,7 @@ export const marketsForNetwork = (networkId: number) => {
 };
 
 export const getMarketName = (asset: FuturesMarketAsset | null) => {
-	switch (asset) {
-		case 'DebtRatio':
-			return `DEBT-PERP`;
-		default:
-			return `${getDisplayAsset(asset)}-PERP`;
-	}
+	return `${getDisplayAsset(asset)}-PERP`;
 };
 
 export const getDisplayAsset = (asset: string | null) => {

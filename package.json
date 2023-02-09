@@ -1,6 +1,6 @@
 {
 	"name": "kwenta",
-	"version": "6.0.5-alpha",
+	"version": "6.1.0",
 	"scripts": {
 		"dev": "next",
 		"build": "next build",
@@ -31,7 +31,7 @@
 		"@gnosis.pm/safe-apps-sdk": "^7.7.0",
 		"@kwenta/synthswap": "^1.0.3",
 		"@material-ui/core": "^4.12.3",
-		"@metamask/detect-provider": "1.2.0",
+		"@metamask/detect-provider": "2.0.0",
 		"@pythnetwork/pyth-evm-js": "^1.0.1",
 		"@rainbow-me/rainbowkit": "0.8.1",
 		"@reach/dialog": "0.15.0",
@@ -63,7 +63,7 @@
 		"isomorphic-dompurify": "^0.26.0",
 		"lightweight-charts": "^3.8.0",
 		"lodash": "4.17.21",
-		"moment-business-time": "1.1.1",
+		"moment-business-time": "2.0.0",
 		"next": "12.2.4",
 		"next-compose-plugins": "2.2.1",
 		"next-connect": "^0.13.0",

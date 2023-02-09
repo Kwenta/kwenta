@@ -225,7 +225,7 @@ const PeriodLabel = styled.div`
 `;
 
 const CustomStyledTooltip = styled(Tooltip)`
-	padding: 0px 10px 0px;
+	padding: 10px;
 	${media.lessThan('md')`
 		width: 310px;
 		left: -5px;

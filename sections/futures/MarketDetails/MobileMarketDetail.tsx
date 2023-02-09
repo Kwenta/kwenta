@@ -14,10 +14,7 @@ const MobileMarketDetail: React.FC = () => {
 		return (
 			!!marketInfo &&
 			formatDollars(marketInfo.openInterest.longUSD, {
-				maxDecimals: 2,
-				...(marketInfo?.openInterest.longUSD.gt(1e6)
-					? { truncation: { divisor: 1e6, unit: 'M' } }
-					: {}),
+				truncate: true,
 			})
 		);
 	}, [marketInfo]);
@@ -26,10 +23,7 @@ const MobileMarketDetail: React.FC = () => {
 		return (
 			!!marketInfo &&
 			formatDollars(marketInfo.openInterest.shortUSD, {
-				maxDecimals: 2,
-				...(marketInfo?.openInterest.shortUSD.gt(1e6)
-					? { truncation: { divisor: 1e6, unit: 'M' } }
-					: {}),
+				truncate: true,
 			})
 		);
 	}, [marketInfo]);

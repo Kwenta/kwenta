@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { CurrencyKey } from 'constants/currency';
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import useIsMarketTransitioning from 'hooks/useIsMarketTransitioning';
-import { FuturesMarketAsset } from 'utils/futures';
+import { FuturesMarketAsset } from 'sdk/types/futures';
 import { marketIsOpen, marketNextOpen, marketNextTransition } from 'utils/marketHours';
 
 import Badge from './Badge';

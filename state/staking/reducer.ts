@@ -87,6 +87,10 @@ const stakingSlice = createSlice({
 			state.epochPeriod = action.payload.epochPeriod;
 			state.veKwentaBalance = action.payload.veKwentaBalance;
 			state.veKwentaAllowance = action.payload.veKwentaAllowance;
+			state.stakeStatus = FetchStatus.Idle;
+			state.unstakeStatus = FetchStatus.Idle;
+			state.stakeEscrowedStatus = FetchStatus.Idle;
+			state.unstakeEscrowedStatus = FetchStatus.Idle;
 		});
 		builder.addCase(fetchEscrowData.fulfilled, (state, action) => {
 			state.totalVestable = action.payload.totalVestable;

@@ -14,9 +14,10 @@ import {
 	IsolatedMarginOrderType,
 	PositionSide,
 	FuturesOrder as CrossMarginOrder,
+	FuturesMarketKey,
+	FuturesMarketAsset,
 } from 'sdk/types/futures';
 import { QueryStatus } from 'state/types';
-import { FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
 
 export type TradeSizeInputs<T = Wei> = {
 	nativeSize: T;

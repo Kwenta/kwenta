@@ -2,12 +2,14 @@ import { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import HelpIcon from 'assets/svg/app/question-mark.svg';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import Error from 'components/ErrorView';
 import { FlexDivCentered } from 'components/layout/flex';
 import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import Tooltip from 'components/Tooltip/Tooltip';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { PositionSide } from 'sdk/types/futures';
 import { getDisplayAsset, OrderNameByType } from 'sdk/utils/futures';
@@ -98,6 +100,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 			},
 			{
 				label: t('futures.market.user.position.modal.estimated-fill'),
+				tooltipContent: t('futures.market.trade.delayed-order.description'),
 				value: formatDollars(potentialTradeDetails?.price ?? zeroBN, { isAssetPrice: true }),
 			},
 			{
@@ -133,6 +136,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 			},
 			{
 				label: t('futures.market.user.position.modal.deposit'),
+				tooltipContent: t('futures.market.trade.confirmation.modal.delayed-disclaimer'),
 				value: formatDollars(totalDeposit),
 			},
 		],
@@ -179,7 +183,21 @@ const DelayedOrderConfirmationModal: FC = () => {
 				>
 					{dataRows.map((row, i) => (
 						<Row key={`datarow-${i}`}>
-							<Label>{row.label}</Label>
+							{row.tooltipContent ? (
+								<Tooltip
+									height="auto"
+									width="250px"
+									content={row.tooltipContent}
+									style={{ textTransform: 'none' }}
+								>
+									<Label>
+										{row.label}
+										<StyledHelpIcon />
+									</Label>
+								</Tooltip>
+							) : (
+								<Label>{row.label}</Label>
+							)}
 							<Value>
 								<span className={`value ${row.color ?? ''}`}>{row.value}</span>
 							</Value>
@@ -199,7 +217,6 @@ const DelayedOrderConfirmationModal: FC = () => {
 							t('futures.market.trade.confirmation.modal.confirm-order')
 						)}
 					</ConfirmTradeButton>
-					<Disclaimer>{t('futures.market.trade.confirmation.modal.delayed-disclaimer')}</Disclaimer>
 					{txError && <Error message={getKnownError(txError)} formatter="revert" />}
 				</StyledBaseModal>
 			</DesktopOnlyView>
@@ -232,9 +249,6 @@ const DelayedOrderConfirmationModal: FC = () => {
 const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
 		width: 400px;
-	}
-	.card-body {
-		padding: 28px;
 	}
 `;
 
@@ -273,7 +287,6 @@ const Value = styled.div`
 
 const ConfirmTradeButton = styled(Button)`
 	margin-top: 24px;
-	margin-bottom: 12px;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
@@ -285,6 +298,11 @@ const Disclaimer = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	margin-top: 12px;
 	margin-bottom: 12px;
+`;
+
+const StyledHelpIcon = styled(HelpIcon)`
+	margin-bottom: -1px;
+	margin-left: 8px;
 `;
 
 export default DelayedOrderConfirmationModal;

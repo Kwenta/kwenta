@@ -8,6 +8,7 @@ import Loader from 'components/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
+import { FuturesMarketAsset } from 'sdk/types/futures';
 import CrossMarginOnboard from 'sections/futures/CrossMarginOnboard';
 import LeftSidebar from 'sections/futures/LeftSidebar/LeftSidebar';
 import MarketInfo from 'sections/futures/MarketInfo';
@@ -34,7 +35,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { PageContent, FullHeightContainer, RightSideContent } from 'styles/common';
-import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
+import { MarketKeyByAsset } from 'utils/futures';
 
 type MarketComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
@@ -48,8 +49,6 @@ const Market: MarketComponent = () => {
 
 	const setCurrentMarket = useAppSelector(selectMarketAsset);
 	const showOnboard = useAppSelector(selectShowCrossMarginOnboard);
-	const queryStatus = useAppSelector(selectCMAccountQueryStatus);
-	const crossMarginAccount = useAppSelector(selectCrossMarginAccount);
 	const openModal = useAppSelector(selectOpenModal);
 
 	const resetTradeState = useCallback(() => {
@@ -99,11 +98,7 @@ const Market: MarketComponent = () => {
 				</PageContent>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
-				{walletAddress && !crossMarginAccount && queryStatus.status === FetchStatus.Idle ? (
-					<Loader />
-				) : (
-					<MobileTrade />
-				)}
+				<MobileTrade />
 				<GitHashID />
 			</MobileOrTabletView>
 			{openModal === 'futures_isolated_transfer' && (
