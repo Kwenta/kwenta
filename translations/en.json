@@ -1089,8 +1089,7 @@
 			"header": {
 				"search-results": "search results",
 				"category-synths": "{{category}} synths",
-				"all-synths": "synths",
-				"other-tokens": "tokens",
+				"tokens": "tokens",
 				"your-synths": "your synths",
 				"holdings": "holdings"
 			},
