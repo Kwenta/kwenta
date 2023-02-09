@@ -17,7 +17,7 @@ const PositionButtons: FC<PositionButtonsProps> = memo(({ selected, onSelect }) 
 
 	return (
 		<PositionButtonsContainer>
-			<StyledPositionButton
+			<PositionButton
 				data-testid="position-side-long-button"
 				$position={PositionSide.LONG}
 				$isActive={selected === 'long'}
@@ -25,8 +25,8 @@ const PositionButtons: FC<PositionButtonsProps> = memo(({ selected, onSelect }) 
 				onClick={() => onSelect(PositionSide.LONG)}
 			>
 				<span>Long</span>
-			</StyledPositionButton>
-			<StyledPositionButton
+			</PositionButton>
+			<PositionButton
 				data-testid="position-side-short-button"
 				$position={PositionSide.SHORT}
 				$isActive={selected === 'short'}
@@ -34,7 +34,7 @@ const PositionButtons: FC<PositionButtonsProps> = memo(({ selected, onSelect }) 
 				onClick={() => onSelect(PositionSide.SHORT)}
 			>
 				<span>Short</span>
-			</StyledPositionButton>
+			</PositionButton>
 		</PositionButtonsContainer>
 	);
 });
@@ -52,14 +52,12 @@ const PositionButtonsContainer = styled.div`
 	margin-top: 8px;
 `;
 
-const StyledPositionButton = styled(Button).attrs({ fullWidth: true })<PositionButtonProps>`
+const PositionButton = styled(Button).attrs({ fullWidth: true })<PositionButtonProps>`
 	font-size: 16px;
 	height: 57px;
-	font-family: ${(props) => props.theme.fonts.bold};
 	font-variant: all-small-caps;
 	text-transform: uppercase;
 	border-radius: 8px;
-	background: ${(props) => props.theme.colors.selectedTheme.newTheme.button.position.background}
 
 	&:active {
 		transform: scale(0.96);
@@ -69,50 +67,33 @@ const StyledPositionButton = styled(Button).attrs({ fullWidth: true })<PositionB
 		position: relative;
 	}
 
+	${(props) => css`
+		font-family: ${props.theme.fonts.bold};
+		color: ${props.theme.colors.selectedTheme.newTheme.button.position[props.$position].color};
+		background: ${props.theme.colors.selectedTheme.newTheme.button.position.background};
+
+		&:hover {
+			background: ${props.theme.colors.selectedTheme.newTheme.button.position.hover.background};
+		}
+	`}
+
 	${(props) =>
 		props.$isActive &&
 		css`
 			&::before {
 				display: none;
 			}
-		`}
 
-		${(props) => css`
-			color: ${props.theme.colors.selectedTheme.newTheme.button.position[props.$position].color};
-		`}
-
-	${(props) =>
-		props.$position === PositionSide.LONG &&
-		props.$isActive &&
-		css`
 			border: 1px solid
-				${props.theme.colors.selectedTheme.newTheme.button.position.long.active.border};
-			background: ${props.theme.colors.selectedTheme.newTheme.button.position.long.active
-				.background};
-			color: ${props.theme.colors.selectedTheme.newTheme.button.position.long.active.color};
-
+				${props.theme.colors.selectedTheme.newTheme.button.position[props.$position].active.border};
+			background: ${props.theme.colors.selectedTheme.newTheme.button.position[props.$position]
+				.active.background};
+			color: ${props.theme.colors.selectedTheme.newTheme.button.position[props.$position].active
+				.color};
 			&:hover {
-				background: ${props.theme.colors.selectedTheme.newTheme.button.position.long.active
-					.background};
+				background: ${props.theme.colors.selectedTheme.newTheme.button.position[props.$position]
+					.active.background};
 			}
-			box-shadow: rgb(127 212 130 / 50%) 0px 0 3px;
-		`};
-		};
-
-	${(props) =>
-		props.$position === PositionSide.SHORT &&
-		props.$isActive &&
-		css`
-			border: 1px solid
-				${props.theme.colors.selectedTheme.newTheme.button.position.short.active.border};
-			background: ${props.theme.colors.selectedTheme.newTheme.button.position.short.active
-				.background};
-			color: ${props.theme.colors.selectedTheme.newTheme.button.position.short.active.color};
-			&:hover {
-				background: ${props.theme.colors.selectedTheme.newTheme.button.position.short.active
-					.background};
-			}
-			box-shadow: rgb(239 104 104 / 50%) 0px 0 3px;
 		`};
 `;
 
