@@ -11,7 +11,7 @@ import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import Loader from 'components/Loader';
 import Spacer from 'components/Spacer';
-import { NumberSpan } from 'components/Text/NumberLabel';
+import { NumberDiv } from 'components/Text/NumberLabel';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { ORDER_PREVIEW_ERRORS_I18N, previewErrorI18n } from 'queries/futures/constants';
 import { setOpenModal } from 'state/app/reducer';
@@ -187,7 +187,10 @@ export default function EditLeverageModal({ editMode }: DepositMarginModalProps)
 				<MaxPosContainer>
 					<Label>{t('futures.market.trade.leverage.modal.max-pos')}</Label>
 					<Label>
-						<NumberSpan fontWeight="bold">{formatDollars(maxPositionUsd)}</NumberSpan> sUSD
+						<NumberDiv as="span" fontWeight="bold">
+							{formatDollars(maxPositionUsd)}
+						</NumberDiv>{' '}
+						sUSD
 					</Label>
 				</MaxPosContainer>
 			)}

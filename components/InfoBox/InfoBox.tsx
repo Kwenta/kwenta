@@ -5,7 +5,7 @@ import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 
 export type DetailedInfo = {
-	value: string | React.ReactNode;
+	value: React.ReactNode;
 	keyNode?: React.ReactNode;
 	valueNode?: React.ReactNode;
 	color?: 'green' | 'red' | 'gold' | undefined;
@@ -24,7 +24,7 @@ type InfoBoxProps = {
 const InfoBox: FC<InfoBoxProps> = memo(({ details, disabled, dataTestId, ...props }) => (
 	<InfoBoxContainer {...props}>
 		{Object.entries(details).map(([key, value], index) => (
-			<InfoBoxValue
+			<InfoBoxRow
 				key={key}
 				title={key}
 				value={value}
@@ -35,14 +35,14 @@ const InfoBox: FC<InfoBoxProps> = memo(({ details, disabled, dataTestId, ...prop
 	</InfoBoxContainer>
 ));
 
-type InfoBoxValueProps = {
+type InfoBoxRowProps = {
 	title: string;
 	value?: DetailedInfo | null;
 	disabled?: boolean;
 	dataTestId: string;
 };
 
-const InfoBoxValue: FC<InfoBoxValueProps> = memo(({ title, value, disabled, dataTestId }) => {
+const InfoBoxRow: FC<InfoBoxRowProps> = memo(({ title, value, disabled, dataTestId }) => {
 	if (!value) return null;
 
 	return (

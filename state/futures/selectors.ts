@@ -11,7 +11,7 @@ import { accountType, deserializeWeiObject } from 'state/helpers';
 import { selectPrices } from 'state/prices/selectors';
 import { RootState } from 'state/store';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
-import { sameSide } from 'utils/costCalculations';
+import { computeOrderFee, sameSide } from 'utils/costCalculations';
 import { getKnownError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
 import {
@@ -788,5 +788,14 @@ export const selectHasRemainingMargin = createSelector(
 		return futuresType === 'cross_margin'
 			? balanceInfo.freeMargin.add(posMargin).gt(0)
 			: posMargin.gt(0);
+	}
+);
+
+export const selectOrderFee = createSelector(
+	selectMarketInfo,
+	selectTradeSizeInputs,
+	selectOrderType,
+	(marketInfo, { susdSizeDelta }, orderType) => {
+		return computeOrderFee(marketInfo, susdSizeDelta, orderType);
 	}
 );

@@ -19,28 +19,20 @@ import {
 	selectFuturesType,
 	selectIsolatedMarginFee,
 	selectMarketInfo,
+	selectOrderFee,
 	selectOrderType,
 	selectTradePreview,
-	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {
 	selectStakedEscrowedKwentaBalance,
 	selectStakedKwentaBalance,
 } from 'state/staking/selectors';
-import { computeOrderFee } from 'utils/costCalculations';
 import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 const MarketCostTooltip = () => {
 	const { t } = useTranslation();
-	const marketInfo = useAppSelector(selectMarketInfo);
-	const { susdSizeDelta } = useAppSelector(selectTradeSizeInputs);
-	const orderType = useAppSelector(selectOrderType);
-
-	const { makerFee, takerFee } = useMemo(
-		() => computeOrderFee(marketInfo, susdSizeDelta, orderType),
-		[marketInfo, susdSizeDelta, orderType]
-	);
+	const { makerFee, takerFee } = useAppSelector(selectOrderFee);
 
 	return (
 		<CostContainer>
