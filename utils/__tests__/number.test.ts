@@ -18,4 +18,8 @@ describe('number utils', () => {
 		let weiVal = weiFromWei(BigNumber.from('100000000000000000'));
 		expect(weiVal.toNumber()).toEqual(0.1);
 	});
+	test('should truncate', () => {
+		const formatted = formatDollars('3251764', { truncate: true });
+		expect(formatted).toEqual('$3.25M');
+	});
 });

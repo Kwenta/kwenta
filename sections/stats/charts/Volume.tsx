@@ -58,7 +58,7 @@ export const Volume = () => {
 					position: 'right',
 					axisLabel: {
 						formatter: (value: WeiSource) =>
-							formatDollars(value, { truncation: { divisor: 1e6, unit: 'M' }, maxDecimals: 0 }),
+							formatDollars(value, { truncate: true, maxDecimals: 0 }),
 					},
 				},
 			],

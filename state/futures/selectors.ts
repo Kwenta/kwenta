@@ -8,7 +8,7 @@ import { TransactionStatus } from 'sdk/types/common';
 import { FuturesPosition, PositionSide } from 'sdk/types/futures';
 import { unserializePotentialTrade } from 'sdk/utils/futures';
 import { accountType, deserializeWeiObject } from 'state/helpers';
-import { selectPrices } from 'state/prices/selectors';
+import { selectOffchainPricesInfo, selectPrices } from 'state/prices/selectors';
 import { RootState } from 'state/store';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import { sameSide } from 'utils/costCalculations';
@@ -156,6 +156,15 @@ export const selectMarketPrice = createSelector(
 	}
 );
 
+export const selectMarketPriceInfo = createSelector(
+	selectMarketInfo,
+	selectOffchainPricesInfo,
+	(marketInfo, pricesInfo) => {
+		if (!marketInfo || !pricesInfo[marketInfo.asset]) return;
+		return pricesInfo[marketInfo.asset];
+	}
+);
+
 export const selectSkewAdjustedPrice = createSelector(
 	selectMarketPrice,
 	selectMarketInfo,
@@ -176,7 +185,7 @@ export const selectMarketPrices = createSelector(
 export const selectMarkPrices = createSelector(selectMarkets, selectPrices, (markets, prices) => {
 	const markPrices: MarkPrices = {};
 	return markets.reduce((acc, market) => {
-		const price = prices[market.asset].offChain ?? wei(0);
+		const price = prices[market.asset]?.offChain ?? wei(0);
 		return {
 			...acc,
 			[market.marketKey]: wei(price).mul(
