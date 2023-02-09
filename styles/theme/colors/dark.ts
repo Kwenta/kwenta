@@ -1,5 +1,37 @@
 import common from './common';
 
+const newTheme = {
+	button: {
+		position: {
+			border: common.palette.neutral.n700,
+			active: {
+				long: {
+					background: common.palette.green.g500,
+					border: common.palette.green.g600,
+				},
+				short: {
+					background: common.palette.red.r400,
+					border: common.palette.red.r500,
+				},
+			},
+			hover: {
+				background: common.palette.alpha.darkButtonHover,
+			},
+		},
+	},
+	text: {
+		primary: '',
+		secondary: '',
+		tertiary: '',
+		number: {
+			positive: '',
+			negative: '',
+			neutral: '',
+		},
+	},
+	badge: {},
+};
+
 const darkTheme = {
 	...common.dark,
 	red: common.dark.red,
@@ -137,6 +169,7 @@ const darkTheme = {
 	socket: {
 		accent: `#252525`,
 	},
+	newTheme,
 };
 
 export default darkTheme;

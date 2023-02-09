@@ -186,7 +186,6 @@ export const SwapCurrenciesButton = styled.button`
 `;
 
 export const SmallGoldenHeader = styled(Body).attrs({ weight: 'bold' })`
-	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 14px;
 	line-height: 100%;
 	color: ${(props) => props.theme.colors.common.primaryYellow};

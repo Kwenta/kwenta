@@ -35,10 +35,6 @@ import { getMarketName, getSynthDescription, isDecimalFour, MarketKeyByAsset } f
 
 import EditLeverageModal from '../TradeCrossMargin/EditCrossMarginLeverageModal';
 
-type PositionCardProps = {
-	dashboard?: boolean;
-};
-
 type PositionData = {
 	marketShortName: string;
 	marketLongName: string;
@@ -69,7 +65,7 @@ type PositionPreviewData = {
 	showStatus: boolean;
 };
 
-const PositionCard: React.FC<PositionCardProps> = () => {
+const PositionCard: React.FC = () => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
@@ -99,7 +95,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			return {} as PositionPreviewData;
 		}
 
-		const size: Wei = previewTradeData?.size;
+		const size = previewTradeData?.size;
 		const newSide = size?.gt(zeroBN) ? PositionSide.LONG : PositionSide.SHORT;
 
 		return {

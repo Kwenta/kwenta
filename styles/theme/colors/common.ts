@@ -1,4 +1,4 @@
-export const pallete = {
+export const palette = {
 	yellow: {
 		y50: '#fff8e6',
 		y100: '#ff39b0',
@@ -78,6 +78,10 @@ export const pallete = {
 		white10: 'rgb(250,250,250,0.1)',
 		red10: 'rgb(241,43,43,0.1)',
 		green10: 'rgb(127,212,130,0.1)',
+		lightButton: 'linear-gradient(180deg, #EEEEEE 0%, #E0E0E0 100%)',
+		lightButtonHover: 'linear-gradient(180deg, #E6E6E6 0%, #CCCCCC 100%)',
+		darkButton: 'linear-gradient(180deg, #282727 0%, #191818 100%)',
+		darkButtonHover: 'linear-gradient(180deg, #383838 0%, #1E1E1E 100%)',
 	},
 };
 
@@ -126,6 +130,7 @@ const common = {
 		gray2: '#D2D2D2', // TODO: Update once added to designs
 		rewardTitle: '#171002',
 	},
+	palette,
 };
 
 export default common;

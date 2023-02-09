@@ -24,7 +24,7 @@ const PositionButtons: FC<PositionButtonsProps> = memo(({ selected, onSelect }) 
 				disabled={marketInfo?.isSuspended}
 				onClick={() => onSelect(PositionSide.LONG)}
 			>
-				Long
+				<span>Long</span>
 			</StyledPositionButton>
 			<StyledPositionButton
 				data-testid="position-side-short-button"
@@ -33,7 +33,7 @@ const PositionButtons: FC<PositionButtonsProps> = memo(({ selected, onSelect }) 
 				disabled={marketInfo?.isSuspended}
 				onClick={() => onSelect(PositionSide.SHORT)}
 			>
-				Short
+				<span>Short</span>
 			</StyledPositionButton>
 		</PositionButtonsContainer>
 	);
@@ -58,6 +58,7 @@ const StyledPositionButton = styled(Button).attrs({ fullWidth: true })<PositionB
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-variant: all-small-caps;
 	text-transform: uppercase;
+	border-radius: 8px;
 
 	&:active {
 		transform: scale(0.96);
@@ -70,8 +71,6 @@ const StyledPositionButton = styled(Button).attrs({ fullWidth: true })<PositionB
 	${(props) =>
 		props.$isActive &&
 		css`
-			border-radius: 8px;
-
 			&::before {
 				display: none;
 			}
@@ -87,12 +86,8 @@ const StyledPositionButton = styled(Button).attrs({ fullWidth: true })<PositionB
 		props.$position === PositionSide.LONG &&
 		props.$isActive &&
 		css`
-			border: 1px solid ${props.theme.colors.selectedTheme.green};
-			background: linear-gradient(
-				180deg,
-				rgba(127, 212, 130, 0.15) 0%,
-				rgba(71, 122, 73, 0.05) 100%
-			);
+			border: 1px solid ${props.theme.colors.common.palette.green.g600};
+			background: ${props.theme.colors.common.palette.green.g500};
 			box-shadow: rgb(127 212 130 / 50%) 0px 0 3px;
 
 			&:hover {

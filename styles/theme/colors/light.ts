@@ -1,5 +1,37 @@
 import common from './common';
 
+const newTheme = {
+	button: {
+		position: {
+			border: common.palette.neutral.n80,
+			active: {
+				long: {
+					background: common.palette.green.g500,
+					border: common.palette.green.g600,
+				},
+				short: {
+					background: common.palette.red.r400,
+					border: common.palette.red.r500,
+				},
+			},
+			hover: {
+				background: common.palette.alpha.lightButtonHover,
+			},
+		},
+	},
+	text: {
+		primary: common.palette.neutral,
+		secondary: common.palette.neutral,
+		tertiary: common.palette.neutral,
+		number: {
+			positive: common.palette.green,
+			negative: common.palette.red,
+			neutral: common.palette.neutral,
+		},
+	},
+	badge: {},
+};
+
 const lightTheme = {
 	...common.light,
 	table: { fill: '#EEE', hover: '#E6E6E6' },
@@ -134,6 +166,7 @@ const lightTheme = {
 	socket: {
 		accent: `#d5d5d5`,
 	},
+	newTheme,
 };
 
 export default lightTheme;
