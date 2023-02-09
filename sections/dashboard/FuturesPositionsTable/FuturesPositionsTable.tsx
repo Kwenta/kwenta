@@ -76,7 +76,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 			})
 			.filter(
 				(position) =>
-					position.position && (position?.market?.asset !== currentMarket || showCurrentMarket)
+					position.position &&
+					position.market &&
+					(position?.market?.asset !== currentMarket || showCurrentMarket)
 			);
 	}, [
 		isolatedPositions,

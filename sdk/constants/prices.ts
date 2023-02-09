@@ -10,15 +10,30 @@ export const MAIN_ENDPOINT_OP_GOERLI =
 // Additional commonly used currencies to fetch, besides the one returned by the SynthUtil.synthsRates
 export const ADDITIONAL_SYNTHS = [
 	'SNX',
+	'ETH',
+	'BTC',
+	'LINK',
+	'SOL',
+	'AVAX',
+	'MATIC',
+	'EUR',
+	'AAVE',
+	'UNI',
 	'XAU',
 	'XAG',
-	'DYDX',
 	'APE',
+	'DYDX',
 	'BNB',
-	'DOGE',
-	'DebtRatio',
 	'XMR',
+	'DOGE',
 	'OP',
+	'ATOM',
+	'FLOW',
+	'FTM',
+	'NEAR',
+	'AXS',
+	'AUD',
+	'GBP',
 ].map(formatBytes32String);
 
 export const PYTH_IDS = {

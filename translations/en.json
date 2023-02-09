@@ -1206,16 +1206,7 @@
 			"swap-currency": "Swap for <0>{{currencyKey}}</0>",
 			"trade-into": "Trade into <0>{{currencyKey}}</0>",
 			"price-adjustment": "Price Adjustment",
-			"deprecated": "Deprecated",
-			"futures-market-oil-short-name": "Oil Perpetual",
-			"futures-market-gold-short-name": "Gold Perpetual",
-			"futures-market-silver-short-name": "Silver Perpetual",
-			"futures-market-ape-short-name": "ApeCoin Perpetual",
-			"futures-market-bnb-short-name": "Binance Coin Perpetual",
-			"futures-market-doge-short-name": "Dogecoin Perpetual",
-			"futures-market-debtratio-short-name": "Debt Ratio Perpetual",
-			"futures-market-xmr-short-name": "Monero Perpetual",
-			"futures-market-op-short-name": "Optimism Perpetual"
+			"deprecated": "Deprecated"
 		},
 		"currency-category": {
 			"crypto": "crypto",

@@ -12,6 +12,7 @@ import Connector from 'containers/Connector';
 import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { Rates } from 'queries/rates/types';
+import { FuturesMarketAsset, FuturesMarketKey } from 'sdk/types/futures';
 import { getDisplayAsset } from 'sdk/utils/futures';
 import {
 	selectMarketAsset,
@@ -24,13 +25,7 @@ import { selectPreviousDayPrices, selectPrices } from 'state/prices/selectors';
 import { FetchStatus } from 'state/types';
 import { assetToSynth, iStandardSynth } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
-import {
-	FuturesMarketAsset,
-	getMarketName,
-	getSynthDescription,
-	isDecimalFour,
-	MarketKeyByAsset,
-} from 'utils/futures';
+import { getMarketName, getSynthDescription, isDecimalFour, MarketKeyByAsset } from 'utils/futures';
 
 import MarketsDropdownIndicator, { DropdownLoadingIndicator } from './MarketsDropdownIndicator';
 import MarketsDropdownOption from './MarketsDropdownOption';
@@ -38,6 +33,7 @@ import MarketsDropdownSingleValue from './MarketsDropdownSingleValue';
 
 export type MarketsCurrencyOption = {
 	value: FuturesMarketAsset;
+	key: FuturesMarketKey;
 	label: string;
 	description: string;
 	price?: string | JSX.Element;
@@ -49,6 +45,7 @@ export type MarketsCurrencyOption = {
 
 type AssetToCurrencyOptionArgs = {
 	asset: FuturesMarketAsset;
+	key: FuturesMarketKey;
 	description: string;
 	price?: string | JSX.Element;
 	change?: string;
@@ -126,6 +123,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 
 				return assetToCurrencyOption({
 					asset: market.asset,
+					key: market.marketKey,
 					description: getSynthDescription(market.asset, synthsMap, t),
 					price: formatCurrency(selectedPriceCurrency.name, basePriceRate, {
 						sign: '$',
@@ -170,30 +168,23 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				}}
 				value={assetToCurrencyOption({
 					asset: marketAsset,
+					key: MarketKeyByAsset[marketAsset],
 					description: getSynthDescription(marketAsset, synthsMap, t),
-					price: mobile ? (
-						marketAsset === 'DebtRatio' ? (
-							<DeprecatedBanner>
-								{t('exchange.market-details-card.deprecated-info')}
-							</DeprecatedBanner>
-						) : (
-							formatCurrency(selectedPriceCurrency.name, selectedBasePriceRate, {
+					price: mobile
+						? formatCurrency(selectedPriceCurrency.name, selectedBasePriceRate, {
 								sign: '$',
 								minDecimals: getMinDecimals(marketAsset),
 								isAssetPrice: true,
-							})
-						)
-					) : undefined,
+						  })
+						: undefined,
 					change: mobile
-						? marketAsset === 'DebtRatio'
-							? undefined
-							: formatPercent(
-									selectedBasePriceRate && selectedPastPrice?.rate
-										? wei(selectedBasePriceRate)
-												.sub(selectedPastPrice?.rate)
-												.div(selectedBasePriceRate)
-										: zeroBN
-							  )
+						? formatPercent(
+								selectedBasePriceRate && selectedPastPrice?.rate
+									? wei(selectedBasePriceRate)
+											.sub(selectedPastPrice?.rate)
+											.div(selectedBasePriceRate)
+									: zeroBN
+						  )
 						: undefined,
 					negativeChange: mobile
 						? selectedBasePriceRate && selectedPastPrice?.rate
@@ -219,15 +210,6 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 		</SelectContainer>
 	);
 };
-
-const DeprecatedBanner = styled.div`
-	font-size: 10px;
-	margin-left: 25px;
-	padding: 5px 10px;
-	white-space: pre-wrap;
-	background-color: ${(props) => props.theme.colors.red};
-	color: ${(props) => props.theme.colors.white};
-`;
 
 const SelectContainer = styled.div<{ mobile?: boolean }>`
 	margin-bottom: 16px;

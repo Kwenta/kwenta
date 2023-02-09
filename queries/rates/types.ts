@@ -1,7 +1,7 @@
 import Wei from '@synthetixio/wei';
 
 import { CurrencyKey } from 'constants/currency';
-import { FuturesMarketAsset } from 'utils/futures';
+import { FuturesMarketAsset } from 'sdk/types/futures';
 
 export type SynthExchange = {
 	block: number;

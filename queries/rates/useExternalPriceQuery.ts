@@ -3,8 +3,8 @@ import { UseQueryOptions, useQuery } from 'react-query';
 
 import { FIAT_SYNTHS, COMMODITY_SYNTHS, INDEX_SYNTHS, CurrencyKey } from 'constants/currency';
 import QUERY_KEYS from 'constants/queryKeys';
+import { FuturesMarketKey } from 'sdk/types/futures';
 import { synthToAsset } from 'utils/currencies';
-import { FuturesMarketKey } from 'utils/futures';
 
 import { CG_BASE_API_URL } from './constants';
 import { PriceResponse } from './types';
