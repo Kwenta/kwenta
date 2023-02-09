@@ -12,7 +12,6 @@ import { RowsHeader, CenteredModal } from 'components/layout/modals';
 import Loader from 'components/Loader';
 import { CurrencyKey, CATEGORY_MAP, ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'constants/currency';
 import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
-import Connector from 'containers/Connector';
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
 import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
 import { getSynthsListForNetwork, SynthSymbol } from 'sdk/data/synths';
@@ -24,6 +23,7 @@ import {
 import { selectTokenList } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
+import { selectNetwork } from 'state/wallet/selectors';
 import { zeroBN } from 'utils/formatters/number';
 
 import CurrencyRow from './CurrencyRow';
@@ -44,15 +44,15 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	onSelect,
 }) => {
 	const { t } = useTranslation();
-	const { network } = Connector.useContainer();
+	const network = useAppSelector(selectNetwork);
 
 	const [assetSearch, setAssetSearch] = useState('');
 	const [page, setPage] = useState(1);
 
 	// Only available on Optimism mainnet
-	const oneInchEnabled = network.id === 10;
+	const oneInchEnabled = network === 10;
 
-	const allSynths = useMemo(() => getSynthsListForNetwork(network.id as NetworkId), [network.id]);
+	const allSynths = useMemo(() => getSynthsListForNetwork(network as NetworkId), [network]);
 
 	const synths = !!synthsOverride
 		? allSynths.filter((synth) => synthsOverride.includes(synth.name))
@@ -151,7 +151,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 				: searchFilteredTokens;
 		if (ordered.length > PAGE_LENGTH) return ordered.slice(0, PAGE_LENGTH * page);
 		return ordered;
-	}, [searchFilteredTokens, page, coinGeckoPrices, tokenBalances, balancesStatus]);
+	}, [balancesStatus, searchFilteredTokens, page, coinGeckoPrices, tokenBalances]);
 
 	return (
 		<StyledCenteredModal onDismiss={onDismiss} isOpen title={t('modals.select-currency.title')}>
@@ -181,12 +181,12 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 					}
 					scrollableTarget="scrollableDiv"
 				>
+					<TokensHeader>
+						<span>{t('modals.select-currency.header.tokens')}</span>
+						<span>{t('modals.select-currency.header.holdings')}</span>
+					</TokensHeader>
 					{!oneInchEnabled ? (
 						<>
-							<TokensHeader>
-								<span>{t('modals.select-currency.header.tokens')}</span>
-								<span>{t('modals.select-currency.header.holdings')}</span>
-							</TokensHeader>
 							{synthBalancesLoading ? (
 								<Loader />
 							) : synthsResults.length > 0 ? (
