@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled, { css } from 'styled-components';
@@ -12,6 +12,7 @@ import {
 	DEFAULT_DELAYED_CANCEL_BUFFER,
 	DEFAULT_DELAYED_EXECUTION_BUFFER,
 } from 'constants/defaults';
+import useInterval from 'hooks/useInterval';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesMarketKey, PositionSide } from 'sdk/types/futures';
@@ -126,8 +127,8 @@ const OpenOrdersTable: React.FC = () => {
 		return ordersWithCancel;
 	}, [openOrders, futuresMarkets, marketAsset, countdownTimers, dispatch]);
 
-	useEffect(() => {
-		const updateTimers = () => {
+	useInterval(
+		() => {
 			const newCountdownTimers = rowsData.reduce((acc, order) => {
 				const timeToExecution = Math.floor((order.executableAtTimestamp - Date.now()) / 1000);
 				const timePastExecution = Math.floor((Date.now() - order.executableAtTimestamp) / 1000);
@@ -140,14 +141,10 @@ const OpenOrdersTable: React.FC = () => {
 				return acc;
 			}, {} as CountdownTimers);
 			setCountdownTimers(newCountdownTimers);
-		};
-
-		const timer = setInterval(() => {
-			updateTimers();
-		}, 1000);
-
-		return () => clearInterval(timer);
-	});
+		},
+		1000,
+		[rowsData]
+	);
 
 	return (
 		<>
