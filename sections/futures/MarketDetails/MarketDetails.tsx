@@ -32,12 +32,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 			<MarketDetailsContainer mobile={mobile}>
 				{marketAsset !== 'DebtRatio' ? (
 					Object.entries(marketData).map(([marketKey, data]) => (
-						<MarketDetail
-							{...data}
-							key={marketKey}
-							marketKey={marketKey}
-							mobile={Boolean(mobile)}
-						/>
+						<MarketDetail {...data} key={marketKey} marketKey={marketKey} mobile={mobile} />
 					))
 				) : (
 					<DeprecatedBannerContainer>

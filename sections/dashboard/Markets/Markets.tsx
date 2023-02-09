@@ -1,12 +1,12 @@
 import { FC, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { TabPanel } from 'components/Tab';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
+import { TabButtonsContainer } from '../History/History';
 import SpotMarketsTable from '../SpotMarketsTable';
 
 export enum MarketsTab {
@@ -68,22 +68,5 @@ const Markets: FC = () => {
 		</>
 	);
 };
-
-const TabButtonsContainer = styled.div<{ mobile?: boolean }>`
-	display: flex;
-	margin-top: 16px;
-	margin-bottom: 16px;
-
-	margin-left: ${(props) => (props.mobile ? '16px' : '0')};
-
-	& > button {
-		height: 38px;
-		font-size: 13px;
-
-		&:not(:last-of-type) {
-			margin-right: 14px;
-		}
-	}
-`;
 
 export default Markets;

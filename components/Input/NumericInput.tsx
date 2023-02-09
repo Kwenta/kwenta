@@ -46,7 +46,6 @@ const NumericInput: FC<NumericInputProps> = memo(
 				if (!valueIsAboveMax) {
 					onChange(e, standardizedNum);
 				}
-				onChange(e, standardizedNum);
 			},
 			[onChange, max]
 		);

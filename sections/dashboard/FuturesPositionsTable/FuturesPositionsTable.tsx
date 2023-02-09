@@ -10,6 +10,7 @@ import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
+import { Body } from 'components/Text';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
@@ -71,8 +72,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				};
 			})
 			.filter(
-				(position) =>
-					position.position && (position?.market?.asset !== currentMarket || showCurrentMarket)
+				({ position, market }) => position && (market?.asset !== currentMarket || showCurrentMarket)
 			);
 	}, [
 		isolatedPositions,
@@ -325,7 +325,7 @@ const StyledValue = styled.div`
 	grid-row: 2;
 `;
 
-const DefaultCell = styled.p`
+const DefaultCell = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 

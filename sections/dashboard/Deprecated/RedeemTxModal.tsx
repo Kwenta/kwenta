@@ -1,17 +1,17 @@
 import Wei, { wei } from '@synthetixio/wei';
 import { FC, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
 import { FlexDivColCentered } from 'components/layout/flex';
+import { Body } from 'components/Text';
 import { CurrencyKey } from 'constants/currency';
 import { MessageButton } from 'sections/exchange/message';
 import { closeModal } from 'state/exchange/reducer';
 import { selectTotalRedeemableBalanceWei } from 'state/exchange/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { numericValueCSS } from 'styles/common';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 
 export type TxProvider = 'synthetix' | '1inch';
@@ -110,9 +110,8 @@ const BalanceItemTitle = styled.div`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
-const BalanceItemAmount = styled.div`
+const BalanceItemAmount = styled(Body).attrs({ mono: true })`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	${numericValueCSS};
 `;
 
 const Subtitle = styled.div`
@@ -148,7 +147,11 @@ const Title = styled.div<{ topPad?: boolean }>`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 12px;
 	margin-bottom: 12px;
-	${(props) => (!props.topPad ? '' : 'margin-top: 24px;')}
+	${(props) =>
+		props.topPad &&
+		css`
+			margin-top: 24px;
+		`}
 `;
 
 export default RedeemTxModal;

@@ -50,7 +50,7 @@ const FuturesMarketsTable: FC = () => {
 				price: marketPrice,
 				volume: volume?.toNumber() ?? 0,
 				pastPrice: pastPrice?.price,
-				priceChange: pastPrice?.price && marketPrice.sub(pastPrice?.price).div(marketPrice),
+				priceChange: pastPrice?.price && marketPrice.sub(pastPrice.price).div(marketPrice),
 				fundingRate: market.currentFundingRate ?? null,
 				openInterest: market.marketSize.mul(marketPrice),
 				openInterestNative: market.marketSize,
@@ -201,17 +201,19 @@ const FuturesMarketsTable: FC = () => {
 								Cell: (cellProps: CellProps<typeof data[number]>) => {
 									return (
 										<OpenInterestContainer>
-											<StyledLongPrice
+											<Currency.Price
 												currencyKey="sUSD"
 												price={cellProps.row.original.longInterest}
 												sign="$"
 												truncate
+												side="positive"
 											/>
-											<StyledShortPrice
+											<Currency.Price
 												currencyKey="sUSD"
 												price={cellProps.row.original.shortInterest}
 												sign="$"
 												truncate
+												side="negative"
 											/>
 										</OpenInterestContainer>
 									);

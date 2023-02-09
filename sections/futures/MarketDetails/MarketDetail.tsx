@@ -9,7 +9,7 @@ import { useAppSelector } from 'state/hooks';
 import { isMarketDataKey, marketDataKeyMap } from './utils';
 
 type MarketDetailProps = {
-	mobile: boolean;
+	mobile?: boolean;
 	marketKey: string;
 	color?: string;
 	value: string | ReactElement;

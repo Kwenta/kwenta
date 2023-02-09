@@ -367,8 +367,7 @@ const MobileStyledCurrencyIcon = styled(Currency.Icon)`
 
 const TableContainer = styled.div`
 	margin-top: 16px;
-	margin-bottom: '40px';
-	font-family: ${(props) => props.theme.fonts.regular};
+	margin-bottom: 40px;
 	.paused {
 		color: ${(props) => props.theme.colors.common.secondaryGray};
 	}
