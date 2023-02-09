@@ -9,7 +9,9 @@ import { approveKwentaToken } from 'state/staking/actions';
 import { stakeKwenta, unstakeKwenta } from 'state/staking/actions';
 import {
 	selectIsKwentaTokenApproved,
+	selectIsStakedKwenta,
 	selectIsStakingKwenta,
+	selectIsUnstakedKwenta,
 	selectIsUnstakingKwenta,
 	selectKwentaBalance,
 	selectStakedKwentaBalance,
@@ -24,6 +26,8 @@ const StakeInputCard: FC = () => {
 	const isKwentaTokenApproved = useAppSelector(selectIsKwentaTokenApproved);
 	const isStakingKwenta = useAppSelector(selectIsStakingKwenta);
 	const isUnstakingKwenta = useAppSelector(selectIsUnstakingKwenta);
+	const isStakedKwenta = useAppSelector(selectIsStakedKwenta);
+	const isUnstakedKwenta = useAppSelector(selectIsUnstakedKwenta);
 
 	const handleApprove = useCallback(() => {
 		dispatch(approveKwentaToken('kwenta'));
@@ -60,6 +64,8 @@ const StakeInputCard: FC = () => {
 			onUnstake={handleUnstakeKwenta}
 			stakeEnabled={stakeEnabled}
 			unstakeEnabled={unstakeEnabled}
+			isStaked={isStakedKwenta}
+			isUnstaked={isUnstakedKwenta}
 			isApproved={isKwentaTokenApproved}
 			onApprove={handleApprove}
 		/>
