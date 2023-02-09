@@ -1,5 +1,5 @@
 import Wei from '@synthetixio/wei';
-import { FC, memo, useCallback, useMemo, useState } from 'react';
+import { FC, memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -20,6 +20,8 @@ type StakeCardProps = {
 	onUnstake(amount: string): void;
 	stakeEnabled?: boolean;
 	unstakeEnabled?: boolean;
+	isStaked?: boolean | undefined;
+	isUnstaked?: boolean | undefined;
 	isApproved?: boolean;
 	onApprove?: () => void;
 };
@@ -33,6 +35,8 @@ const StakeCard: FC<StakeCardProps> = memo(
 		onUnstake,
 		stakeEnabled = true,
 		unstakeEnabled = true,
+		isStaked = false,
+		isUnstaked = false,
 		isApproved,
 		onApprove,
 	}) => {
@@ -91,6 +95,12 @@ const StakeCard: FC<StakeCardProps> = memo(
 				setAmount(newValue);
 			}
 		}, []);
+
+		useEffect(() => {
+			if ((activeTab === 0 && isStaked) || (activeTab === 1 && isUnstaked)) {
+				setAmount('');
+			}
+		}, [activeTab, isStaked, isUnstaked]);
 
 		return (
 			<StakingInputCardContainer>
