@@ -217,7 +217,7 @@ export const selectCrossMarginPositions = createSelector(
 );
 
 export const selectIsolatedMarginPositions = createSelector(
-	selectPrices,
+	selectMarkPrices,
 	selectIsolatedAccountData,
 	(prices, account) => {
 		return account?.positions?.map((p) => updatePositionUpnl(p, prices)) ?? [];
