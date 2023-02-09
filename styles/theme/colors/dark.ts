@@ -4,16 +4,23 @@ const newTheme = {
 	button: {
 		position: {
 			border: common.palette.neutral.n700,
-			active: {
-				long: {
+			long: {
+				color: common.palette.green.g500,
+				active: {
 					background: common.palette.green.g500,
 					border: common.palette.green.g600,
-				},
-				short: {
-					background: common.palette.red.r400,
-					border: common.palette.red.r500,
+					color: common.palette.neutral.n900,
 				},
 			},
+			short: {
+				color: common.palette.red.r300,
+				active: {
+					background: common.palette.red.r400,
+					border: common.palette.red.r500,
+					color: common.palette.neutral.n900,
+				},
+			},
+			background: common.palette.alpha.darkButton,
 			hover: {
 				background: common.palette.alpha.darkButtonHover,
 			},

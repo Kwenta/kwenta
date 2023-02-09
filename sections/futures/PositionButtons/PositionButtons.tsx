@@ -59,6 +59,7 @@ const StyledPositionButton = styled(Button).attrs({ fullWidth: true })<PositionB
 	font-variant: all-small-caps;
 	text-transform: uppercase;
 	border-radius: 8px;
+	background: ${(props) => props.theme.colors.selectedTheme.newTheme.button.position.background}
 
 	&:active {
 		transform: scale(0.96);
@@ -77,26 +78,24 @@ const StyledPositionButton = styled(Button).attrs({ fullWidth: true })<PositionB
 		`}
 
 		${(props) => css`
-			color: ${props.theme.colors.selectedTheme[
-				props.$position === PositionSide.LONG ? 'green' : 'red'
-			]};
+			color: ${props.theme.colors.selectedTheme.newTheme.button.position[props.$position].color};
 		`}
 
 	${(props) =>
 		props.$position === PositionSide.LONG &&
 		props.$isActive &&
 		css`
-			border: 1px solid ${props.theme.colors.common.palette.green.g600};
-			background: ${props.theme.colors.common.palette.green.g500};
-			box-shadow: rgb(127 212 130 / 50%) 0px 0 3px;
+			border: 1px solid
+				${props.theme.colors.selectedTheme.newTheme.button.position.long.active.border};
+			background: ${props.theme.colors.selectedTheme.newTheme.button.position.long.active
+				.background};
+			color: ${props.theme.colors.selectedTheme.newTheme.button.position.long.active.color};
 
 			&:hover {
-				background: linear-gradient(
-					180deg,
-					rgba(127, 212, 130, 0.15) 0%,
-					rgba(71, 122, 73, 0.05) 100%
-				);
+				background: ${props.theme.colors.selectedTheme.newTheme.button.position.long.active
+					.background};
 			}
+			box-shadow: rgb(127 212 130 / 50%) 0px 0 3px;
 		`};
 		};
 
@@ -104,20 +103,16 @@ const StyledPositionButton = styled(Button).attrs({ fullWidth: true })<PositionB
 		props.$position === PositionSide.SHORT &&
 		props.$isActive &&
 		css`
-			border: 1px solid rgba(239, 104, 104, 0.7);
-			background: linear-gradient(
-				180deg,
-				rgba(239, 104, 104, 0.15) 0%,
-				rgba(116, 56, 56, 0.05) 100%
-			);
-			box-shadow: rgb(239 104 104 / 50%) 0px 0 3px;
+			border: 1px solid
+				${props.theme.colors.selectedTheme.newTheme.button.position.short.active.border};
+			background: ${props.theme.colors.selectedTheme.newTheme.button.position.short.active
+				.background};
+			color: ${props.theme.colors.selectedTheme.newTheme.button.position.short.active.color};
 			&:hover {
-				background: linear-gradient(
-					180deg,
-					rgba(239, 104, 104, 0.15) 0%,
-					rgba(116, 56, 56, 0.05) 100%
-				);
+				background: ${props.theme.colors.selectedTheme.newTheme.button.position.short.active
+					.background};
 			}
+			box-shadow: rgb(239 104 104 / 50%) 0px 0 3px;
 		`};
 `;
 
