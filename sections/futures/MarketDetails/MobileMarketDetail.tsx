@@ -14,7 +14,6 @@ const MobileMarketDetail: React.FC = () => {
 		return (
 			!!marketInfo &&
 			formatDollars(marketInfo.openInterest.longUSD, {
-				maxDecimals: 2,
 				truncate: true,
 			})
 		);
@@ -24,7 +23,6 @@ const MobileMarketDetail: React.FC = () => {
 		return (
 			!!marketInfo &&
 			formatDollars(marketInfo.openInterest.shortUSD, {
-				maxDecimals: 2,
 				truncate: true,
 			})
 		);

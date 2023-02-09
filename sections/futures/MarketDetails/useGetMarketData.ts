@@ -63,6 +63,13 @@ const useGetMarketData = (mobile?: boolean) => {
 			? formatDollars(marketInfo?.marketLimit, { truncate: true })
 			: null;
 
+		const longOi = marketInfo?.openInterest.longUSD
+			? `${formatDollars(marketInfo?.openInterest.longUSD, { truncate: true })} / ${oiCap}`
+			: NO_VALUE;
+		const shortOi = marketInfo?.openInterest.shortUSD
+			? `${formatDollars(marketInfo?.openInterest.shortUSD, { truncate: true })} / ${oiCap}`
+			: NO_VALUE;
+
 		if (mobile) {
 			return {
 				[marketName]: {
@@ -70,14 +77,10 @@ const useGetMarketData = (mobile?: boolean) => {
 					color: getColorFromPriceInfo(marketPriceInfo),
 				},
 				[MarketDataKey.openInterestLong]: {
-					value: marketInfo?.openInterest.longUSD
-						? `${formatDollars(marketInfo?.openInterest.longUSD, { truncate: true })} / ${oiCap}`
-						: NO_VALUE,
+					value: longOi,
 				},
 				[MarketDataKey.openInterestShort]: {
-					value: marketInfo?.openInterest.shortUSD
-						? `${formatDollars(marketInfo?.openInterest.shortUSD, { truncate: true })} / ${oiCap}`
-						: NO_VALUE,
+					value: shortOi,
 				},
 				[MarketDataKey.dailyVolume]: {
 					value: formatDollars(futuresTradingVolume ?? zeroBN, {
@@ -135,14 +138,10 @@ const useGetMarketData = (mobile?: boolean) => {
 					}),
 				},
 				[MarketDataKey.openInterestLong]: {
-					value: marketInfo?.openInterest.longUSD
-						? `${formatDollars(marketInfo?.openInterest.longUSD, { truncate: true })} / ${oiCap}`
-						: NO_VALUE,
+					value: longOi,
 				},
 				[MarketDataKey.openInterestShort]: {
-					value: marketInfo?.openInterest.shortUSD
-						? `${formatDollars(marketInfo?.openInterest.shortUSD, { truncate: true })} / ${oiCap}`
-						: NO_VALUE,
+					value: shortOi,
 				},
 				[t('futures.market.info.hourly-funding')]: {
 					value: fundingValue
