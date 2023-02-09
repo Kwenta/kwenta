@@ -342,7 +342,8 @@
 				"24h-change": "Total change in asset value within the past 24 hours",
 				"24h-vol": "Total trade volume within the past 24 hours",
 				"24h-trades": "Total amount of trades on selected pair within the past 24h",
-				"open-interest": "Total notional value on all outstanding positions of the selected market",
+				"open-interest-s": "Total notional value on all short positions / max open interest",
+				"open-interest-l": "Total notional value on all long positions / max open interest",
 				"1h-funding-rate": "Funding applies to all open positions. A positive rate means longs pay shorts, a negative rate means shorts pay longs. The rate increases when a market is skewed long, and decreases when it is skewed short. Funding accrues on a position every time it is opened, modified, or closed."
 			},
 			"deprecated-info": "DEBT-PERP is being deprecated soon. Please close your positions at your earliest convenience."
@@ -449,6 +450,7 @@
 				"notionalValue": "Size",
 				"liquidationPrice": "Liq. Price",
 				"no-result": "You have no other open positions",
+				"legacy-link": "Missing a position? Check the legacy app",
 				"mobile": {
 					"market": "Market/Side",
 					"price": "Oracle/Entry",
