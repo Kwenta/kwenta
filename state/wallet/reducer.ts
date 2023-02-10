@@ -3,14 +3,14 @@ import { createSlice } from '@reduxjs/toolkit';
 import { resetNetwork } from './actions';
 import { WalletState } from './types';
 
-const initialState: WalletState = {
+export const WALLET_INITIAL_STATE: WalletState = {
 	walletAddress: undefined,
 	networkId: undefined,
 };
 
 const walletSlice = createSlice({
 	name: 'wallet',
-	initialState,
+	initialState: WALLET_INITIAL_STATE,
 	reducers: {
 		setWalletAddress: (state, action) => {
 			state.walletAddress = action.payload;

@@ -6,7 +6,7 @@ import { isUserDeniedError } from 'utils/formatters/error';
 
 import { AppState, GasPrice, ModalType, Transaction } from './types';
 
-const initialState: AppState = {
+export const APP_INITIAL_STATE: AppState = {
 	openModal: null,
 	gasPrice: {
 		baseFeePerGas: '0', // Note that this is used for estimating price and should not be included in the transaction
@@ -19,7 +19,7 @@ const initialState: AppState = {
 
 const appSlice = createSlice({
 	name: 'app',
-	initialState,
+	initialState: APP_INITIAL_STATE,
 	reducers: {
 		setOpenModal: (state, action: PayloadAction<ModalType>) => {
 			state.openModal = action.payload;
