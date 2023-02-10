@@ -336,9 +336,8 @@
 				"seconds-ago": "sec ago"
 			},
 			"tooltips": {
-				"market-key": "The current price of the futures market after adding a skew-based premium or discount to the oracle price",
-				"oracle-price": "The exact oracle price of this market without any adjustment for market skew applied",
-				"external-price": "Aggregated market price provided by external sources (Coingecko, Forex Market, etc.)",
+				"market-price": "The current price of the futures market after adding a skew-based premium or discount to the oracle price",
+				"index-price": "The exact index price of this market without any adjustment for market skew applied",
 				"24h-change": "Total change in asset value within the past 24 hours",
 				"24h-vol": "Total trade volume within the past 24 hours",
 				"24h-trades": "Total amount of trades on selected pair within the past 24h",
@@ -468,7 +467,7 @@
 			"futures-markets-table": {
 				"market": "Market",
 				"oracle": "Oracle",
-				"mark-price": "Mark Price",
+				"mark-price": "Market Price",
 				"daily-change": "24H Change",
 				"funding-rate": "1H Funding Rate",
 				"open-interest": "Open Interest",

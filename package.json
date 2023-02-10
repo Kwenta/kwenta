@@ -1,6 +1,6 @@
 {
 	"name": "kwenta",
-	"version": "6.1.0",
+	"version": "6.1.1",
 	"scripts": {
 		"dev": "next",
 		"build": "next build",
@@ -37,8 +37,8 @@
 		"@reach/dialog": "0.15.0",
 		"@reduxjs/toolkit": "^1.8.5",
 		"@socket.tech/plugin": "^1.0.3",
-		"@sentry/browser": "^7.28.0",
-		"@sentry/tracing": "^7.28.0",
+		"@sentry/browser": "^7.37.0",
+		"@sentry/tracing": "^7.37.0",
 		"@synthetixio/contracts-interface": "2.76.3",
 		"@synthetixio/optimism-networks": "2.74.6",
 		"@synthetixio/providers": "2.74.10",

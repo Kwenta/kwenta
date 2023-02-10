@@ -170,7 +170,25 @@ export const selectSkewAdjustedPrice = createSelector(
 	selectMarketInfo,
 	(price, marketInfo) => {
 		if (!marketInfo?.marketSkew || !marketInfo?.settings.skewScale) return price;
-		return wei(price).mul(wei(marketInfo.marketSkew).div(marketInfo.settings.skewScale).add(1));
+		return price
+			? wei(price).mul(wei(marketInfo.marketSkew).div(marketInfo.settings.skewScale).add(1))
+			: zeroBN;
+	}
+);
+
+export const selectSkewAdjustedPriceInfo = createSelector(
+	selectMarketPriceInfo,
+	selectMarketInfo,
+	(priceInfo, marketInfo) => {
+		if (!marketInfo?.marketSkew || !marketInfo?.settings.skewScale) return priceInfo;
+		return priceInfo
+			? {
+					price: wei(priceInfo.price).mul(
+						wei(marketInfo.marketSkew).div(marketInfo.settings.skewScale).add(1)
+					),
+					change: priceInfo?.change,
+			  }
+			: undefined;
 	}
 );
 
@@ -217,7 +235,7 @@ export const selectCrossMarginPositions = createSelector(
 );
 
 export const selectIsolatedMarginPositions = createSelector(
-	selectPrices,
+	selectMarkPrices,
 	selectIsolatedAccountData,
 	(prices, account) => {
 		return account?.positions?.map((p) => updatePositionUpnl(p, prices)) ?? [];
