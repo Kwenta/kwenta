@@ -15,7 +15,7 @@ import {
 	FuturesVolumes,
 	PositionSide,
 } from 'sdk/types/futures';
-import { Prices, PricesMap } from 'sdk/types/prices';
+import { PricesMap } from 'sdk/types/prices';
 import {
 	CrossMarginBalanceInfo,
 	CrossMarginSettings,
@@ -26,6 +26,7 @@ import {
 	TransactionEstimation,
 	futuresPositionKeys,
 	FundingRate,
+	MarkPrices,
 } from 'state/futures/types';
 import { deserializeWeiObject } from 'state/helpers';
 
@@ -243,13 +244,13 @@ const getPositionChangeState = (existingSize: Wei, newSize: Wei) => {
 
 export const updatePositionUpnl = (
 	positionDetails: FuturesPosition<string>,
-	prices: Prices
+	prices: MarkPrices
 ): FuturesPosition => {
 	const deserializedPositionDetails = deserializeWeiObject(
 		positionDetails,
 		futuresPositionKeys
 	) as FuturesPosition;
-	const offChainPrice = prices[deserializedPositionDetails.asset]?.offChain;
+	const offChainPrice = prices[MarketKeyByAsset[deserializedPositionDetails.asset]];
 	const position = deserializedPositionDetails.position;
 
 	const pnl =
