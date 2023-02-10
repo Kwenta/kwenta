@@ -6,7 +6,6 @@ import media from 'styles/media';
 
 import MarketsDropdown from '../Trade/MarketsDropdown';
 import MarketDetail from './MarketDetail';
-import MobileMarketDetail from './MobileMarketDetail';
 import useGetMarketData from './useGetMarketData';
 
 type MarketDetailsProps = {
@@ -34,7 +33,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 						mobile={Boolean(mobile)}
 					/>
 				))}
-				{mobile && <MobileMarketDetail />}
 			</MarketDetailsContainer>
 		</FlexDivCentered>
 	);

@@ -1,4 +1,3 @@
-import { wei } from '@synthetixio/wei';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -11,8 +10,6 @@ import {
 	selectMarketAsset,
 	selectMarketInfo,
 	selectMarketKey,
-	selectMarketVolumes,
-	selectMarketPrices,
 	selectMarketPriceInfo,
 	selectSkewAdjustedPriceInfo,
 } from 'state/futures/selectors';
@@ -34,8 +31,6 @@ const useGetMarketData = (mobile?: boolean) => {
 	const marketInfo = useAppSelector(selectMarketInfo);
 
 	const pastRates = useAppSelector(selectPreviousDayPrices);
-	const futuresVolumes = useAppSelector(selectMarketVolumes);
-	const marketPrices = useAppSelector(selectMarketPrices);
 	const markPrice = useAppSelector(selectSkewAdjustedPriceInfo);
 	const indexPrice = useAppSelector(selectMarketPriceInfo);
 
@@ -48,14 +43,8 @@ const useGetMarketData = (mobile?: boolean) => {
 
 	const pastPrice = pastRates.find((price) => price.synth === getDisplayAsset(marketAsset));
 
-	const rawPrice = marketPrices.offChain ?? wei(0);
-
 	const data: MarketData = useMemo(() => {
 		const fundingValue = marketInfo?.currentFundingRate;
-
-		const futuresTradingVolume = marketInfo?.marketKey
-			? futuresVolumes[marketInfo.marketKey]?.volume ?? wei(0)
-			: wei(0);
 
 		const oiCap = marketInfo?.marketLimit
 			? formatDollars(marketInfo?.marketLimit, { truncate: true })
@@ -72,30 +61,12 @@ const useGetMarketData = (mobile?: boolean) => {
 
 		if (mobile) {
 			return {
-				[MarketDataKey.indexPrice]: {
-					value: indexPrice ? formatDollars(indexPrice.price) : NO_VALUE,
-					color: getColorFromPriceInfo(indexPrice),
-				},
 				[MarketDataKey.marketPrice]: {
 					value: markPrice ? formatDollars(markPrice.price) : NO_VALUE,
 					color: getColorFromPriceInfo(markPrice),
 				},
-				[MarketDataKey.openInterestLong]: {
-					value: longOi,
-				},
-				[MarketDataKey.openInterestShort]: {
-					value: shortOi,
-				},
-				[MarketDataKey.dailyVolume]: {
-					value: formatDollars(futuresTradingVolume ?? zeroBN, {
-						truncate: true,
-					}),
-				},
-				[t('futures.market.info.hourly-funding')]: {
-					value: fundingValue
-						? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 })
-						: NO_VALUE,
-					color: fundingValue?.gt(zeroBN) ? 'green' : fundingValue?.lt(zeroBN) ? 'red' : undefined,
+				[MarketDataKey.indexPrice]: {
+					value: indexPrice ? formatDollars(indexPrice.price) : NO_VALUE,
 				},
 				[MarketDataKey.dailyChange]: {
 					value:
@@ -116,23 +87,32 @@ const useGetMarketData = (mobile?: boolean) => {
 							: ''
 						: undefined,
 				},
+				[t('futures.market.info.hourly-funding')]: {
+					value: fundingValue
+						? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 })
+						: NO_VALUE,
+					color: fundingValue?.gt(zeroBN) ? 'green' : fundingValue?.lt(zeroBN) ? 'red' : undefined,
+				},
+				[MarketDataKey.openInterestLong]: {
+					value: longOi,
+				},
+				[MarketDataKey.openInterestShort]: {
+					value: shortOi,
+				},
 			};
 		} else {
 			return {
-				[MarketDataKey.indexPrice]: {
-					value: indexPrice ? formatDollars(indexPrice.price) : NO_VALUE,
-					color: getColorFromPriceInfo(indexPrice),
-				},
 				[MarketDataKey.marketPrice]: {
 					value: markPrice ? formatDollars(markPrice.price) : NO_VALUE,
 					color: getColorFromPriceInfo(markPrice),
 				},
+				[MarketDataKey.indexPrice]: {
+					value: indexPrice ? formatDollars(indexPrice.price) : NO_VALUE,
+				},
 				[MarketDataKey.dailyChange]: {
 					value:
 						indexPriceWei.gt(0) && pastPrice?.rate
-							? `${formatDollars(indexPriceWei.sub(pastPrice.rate) ?? zeroBN)} (${formatPercent(
-									indexPriceWei.sub(pastPrice.rate).div(indexPriceWei) ?? zeroBN
-							  )})`
+							? formatPercent(indexPriceWei.sub(pastPrice.rate).div(indexPriceWei) ?? zeroBN)
 							: NO_VALUE,
 					color: pastPrice?.rate
 						? indexPriceWei.sub(pastPrice.rate).gt(zeroBN)
@@ -142,22 +122,17 @@ const useGetMarketData = (mobile?: boolean) => {
 							: ''
 						: undefined,
 				},
-				[MarketDataKey.dailyVolume]: {
-					value: formatDollars(futuresTradingVolume ?? zeroBN, {
-						truncate: true,
-					}),
+				[t('futures.market.info.hourly-funding')]: {
+					value: fundingValue
+						? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 })
+						: NO_VALUE,
+					color: fundingValue?.gt(zeroBN) ? 'green' : fundingValue?.lt(zeroBN) ? 'red' : undefined,
 				},
 				[MarketDataKey.openInterestLong]: {
 					value: longOi,
 				},
 				[MarketDataKey.openInterestShort]: {
 					value: shortOi,
-				},
-				[t('futures.market.info.hourly-funding')]: {
-					value: fundingValue
-						? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 })
-						: NO_VALUE,
-					color: fundingValue?.gt(zeroBN) ? 'green' : fundingValue?.lt(zeroBN) ? 'red' : undefined,
 				},
 			};
 		}
@@ -167,8 +142,6 @@ const useGetMarketData = (mobile?: boolean) => {
 		marketAsset,
 		markPrice,
 		marketInfo,
-		rawPrice,
-		futuresVolumes,
 		selectedPriceCurrency.name,
 		pastPrice?.rate,
 		minDecimals,
