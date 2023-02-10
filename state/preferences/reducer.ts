@@ -6,7 +6,7 @@ import { Language } from 'translations/constants';
 
 import { PreferncesState } from './types';
 
-const initialState: PreferncesState = {
+export const PREFERENCES_INITIAL_STATE: PreferncesState = {
 	currentTheme: 'dark',
 	language: DEFAULT_LANGUAGE,
 	currency: {
@@ -19,7 +19,7 @@ const initialState: PreferncesState = {
 
 const preferencesSlice = createSlice({
 	name: 'preferences',
-	initialState,
+	initialState: PREFERENCES_INITIAL_STATE,
 	reducers: {
 		setTheme: (state, action: PayloadAction<ThemeName>) => {
 			state.currentTheme = action.payload;

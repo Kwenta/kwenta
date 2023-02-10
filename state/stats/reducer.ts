@@ -4,13 +4,13 @@ import { StatsTimeframe } from 'hooks/useStatsData';
 
 import { StatsState } from './types';
 
-const initialState: StatsState = {
+export const STATS_INITIAL_STATE: StatsState = {
 	selectedTimeframe: '1M',
 };
 
 const statsSlice = createSlice({
 	name: 'stats',
-	initialState,
+	initialState: STATS_INITIAL_STATE,
 	reducers: {
 		setSelectedTimeframe: (state, action: PayloadAction<StatsTimeframe>) => {
 			state.selectedTimeframe = action.payload;
