@@ -71,13 +71,7 @@ const useGetMarketData = (mobile?: boolean) => {
 				[MarketDataKey.dailyChange]: {
 					value:
 						indexPriceWei.gt(0) && pastPrice?.rate
-							? `${formatCurrency(
-									selectedPriceCurrency.name,
-									indexPriceWei.sub(pastPrice.rate) ?? zeroBN,
-									{ sign: '$', minDecimals, isAssetPrice: true }
-							  )} (${formatPercent(
-									indexPriceWei.sub(pastPrice.rate).div(indexPriceWei) ?? zeroBN
-							  )})`
+							? formatPercent(indexPriceWei.sub(pastPrice.rate).div(indexPriceWei) ?? zeroBN)
 							: NO_VALUE,
 					color: pastPrice?.rate
 						? indexPriceWei.sub(pastPrice.rate).gt(zeroBN)
