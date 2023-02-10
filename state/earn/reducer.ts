@@ -5,7 +5,7 @@ import { FetchStatus } from 'state/types';
 import { fetchEarnTokenPrices, stakeTokens, unstakeTokens } from './actions';
 import { EarnState } from './types';
 
-const initialState: EarnState = {
+export const EARN_INITIAL_STATE: EarnState = {
 	balance: '0',
 	earnedRewards: '0',
 	rewardRate: '0',
@@ -25,7 +25,7 @@ const initialState: EarnState = {
 
 const earnSlice = createSlice({
 	name: 'earn',
-	initialState,
+	initialState: EARN_INITIAL_STATE,
 	reducers: {
 		setEarnDetails: (state, action) => {
 			state.balance = action.payload.balance;

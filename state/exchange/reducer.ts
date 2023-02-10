@@ -18,7 +18,7 @@ import {
 } from './actions';
 import { ExchangeState } from './types';
 
-const initialState: ExchangeState = {
+export const EXCHANGES_INITIAL_STATE: ExchangeState = {
 	baseCurrencyKey: undefined,
 	quoteCurrencyKey: 'sUSD',
 	txProvider: undefined,
@@ -53,7 +53,7 @@ const initialState: ExchangeState = {
 
 const exchangeSlice = createSlice({
 	name: 'exchange',
-	initialState,
+	initialState: EXCHANGES_INITIAL_STATE,
 	reducers: {
 		setQuoteAmount: (state, action) => {
 			state.ratio = undefined;

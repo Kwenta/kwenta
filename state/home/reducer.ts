@@ -10,14 +10,14 @@ type HomeState = {
 	marketsQueryStatus: FetchStatus;
 };
 
-const initialState: HomeState = {
+export const HOME_INITIAL_STATE: HomeState = {
 	optimismMarkets: [],
 	marketsQueryStatus: FetchStatus.Idle,
 };
 
 export const homeSlice = createSlice({
 	name: 'home',
-	initialState,
+	initialState: HOME_INITIAL_STATE,
 	reducers: {},
 	extraReducers: (builder) => {
 		builder.addCase(fetchOptimismMarkets.pending, (state) => {
