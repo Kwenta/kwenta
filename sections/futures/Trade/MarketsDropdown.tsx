@@ -157,6 +157,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	return (
 		<SelectContainer mobile={mobile}>
 			<Select
+				maxMenuHeight={Math.max(window.innerHeight - (mobile ? 135 : 250), 300)}
 				instanceId={`markets-dropdown-${marketAsset}`}
 				controlHeight={55}
 				menuWidth={'100%'}
