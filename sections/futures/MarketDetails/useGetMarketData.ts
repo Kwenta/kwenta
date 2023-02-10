@@ -16,7 +16,7 @@ import {
 import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices } from 'state/prices/selectors';
 import { isFiatCurrency } from 'utils/currencies';
-import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
 
 import { MarketDataKey } from './utils';
