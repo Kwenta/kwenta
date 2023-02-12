@@ -29,6 +29,7 @@ import {
 	selectPositionHistory,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
+import media from 'styles/media';
 import { formatNumber } from 'utils/formatters/number';
 import { getSynthDescription } from 'utils/futures';
 
@@ -96,6 +97,12 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 		<>
 			<DesktopOnlyView>
 				<div>
+					<StyledBody>
+						<a target="_blank" rel="noopener noreferrer" href={EXTERNAL_LINKS.Trade.V1}>
+							{t('dashboard.overview.futures-positions-table.legacy-link')}{' '}
+							<StyledArrow fill={theme.colors.selectedTheme.text.value} />
+						</a>
+					</StyledBody>
 					<Table
 						data={data}
 						showPagination
@@ -273,15 +280,15 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 							},
 						]}
 					/>
-					<StyledBody>
-						<a target="_blank" rel="noopener noreferrer" href={EXTERNAL_LINKS.Trade.V1}>
-							{t('dashboard.overview.futures-positions-table.legacy-link')}{' '}
-							<StyledArrow fill={theme.colors.selectedTheme.text.value} />
-						</a>
-					</StyledBody>
 				</div>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
+				<StyledBody>
+					<a target="_blank" rel="noopener noreferrer" href={EXTERNAL_LINKS.Trade.V1}>
+						{t('dashboard.overview.futures-positions-table.legacy-link')}{' '}
+						<StyledArrow fill={theme.colors.selectedTheme.text.value} />
+					</a>
+				</StyledBody>
 				<OpenPositionsHeader>
 					<div>{t('dashboard.overview.futures-positions-table.mobile.market')}</div>
 					<OpenPositionsRightHeader>
@@ -308,24 +315,22 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						))
 					)}
 				</div>
-				<StyledBody>
-					<a target="_blank" rel="noopener noreferrer" href={EXTERNAL_LINKS.Trade.V1}>
-						{t('dashboard.overview.futures-positions-table.legacy-link')}{' '}
-						<StyledArrow fill={theme.colors.selectedTheme.text.value} />
-					</a>
-				</StyledBody>
 			</MobileOrTabletView>
 		</>
 	);
 };
 
 const StyledBody = styled(Body)`
-	margin-top: 8px;
+	margin: 8px 0px 16px;
+	padding: 15px 0px;
+	border-radius: 10px;
 	text-align: center;
-	text-decoration: underline;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	background: ${(props) => props.theme.colors.selectedTheme.tab.background.active};
+	border: ${(props) => props.theme.colors.selectedTheme.border};
+
+	${media.lessThan('md')`
+		margin: 8px 15px 16px;
+	`};
 `;
 
 const StyledArrow = styled(LinkArrow)`
