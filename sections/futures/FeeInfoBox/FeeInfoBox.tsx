@@ -46,6 +46,22 @@ const MarketCostTooltip = () => {
 	);
 };
 
+const ExecutionFeeTooltip = () => {
+	const { t } = useTranslation();
+
+	return (
+		<Tooltip
+			height="auto"
+			preset="top"
+			width="300px"
+			content={t('futures.market.trade.fees.keeper-tooltip')}
+			style={{ textTransform: 'none' }}
+		>
+			<StyledHelpIcon />
+		</Tooltip>
+	);
+};
+
 const FeeInfoBox: React.FC = () => {
 	const { t } = useTranslation();
 	const { walletAddress } = Connector.useContainer();
@@ -74,36 +90,6 @@ const FeeInfoBox: React.FC = () => {
 		() =>
 			orderType === 'limit' ? limitOrderFee : orderType === 'stop_market' ? stopOrderFee : null,
 		[orderType, stopOrderFee, limitOrderFee]
-	);
-
-	const marketCostTooltip = useMemo(
-		() => (
-			<Tooltip
-				height={'auto'}
-				preset="top"
-				width="300px"
-				content={t('futures.market.trade.fees.tooltip')}
-				style={{ textTransform: 'none' }}
-			>
-				<StyledHelpIcon />
-			</Tooltip>
-		),
-		[t]
-	);
-
-	const executionFeeTooltip = useMemo(
-		() => (
-			<Tooltip
-				height={'auto'}
-				preset="top"
-				width="300px"
-				content={t('futures.market.trade.fees.keeper-tooltip')}
-				style={{ textTransform: 'none' }}
-			>
-				<StyledHelpIcon />
-			</Tooltip>
-		),
-		[t]
 	);
 
 	const isRewardEligible = useMemo(
@@ -198,7 +184,7 @@ const FeeInfoBox: React.FC = () => {
 							value: !!marketInfo?.keeperDeposit
 								? formatDollars(marketInfo.keeperDeposit)
 								: NO_VALUE,
-							keyNode: executionFeeTooltip,
+							keyNode: <ExecutionFeeTooltip />,
 						},
 						[`Est. Trade Fee (${formatPercent(makerFee ?? zeroBN)} / ${formatPercent(
 							takerFee ?? zeroBN
@@ -206,7 +192,7 @@ const FeeInfoBox: React.FC = () => {
 							value: !!commitDeposit
 								? formatDollars(commitDeposit, { minDecimals: commitDeposit.lt(0.01) ? 4 : 2 })
 								: NO_VALUE,
-							keyNode: marketCostTooltip,
+							keyNode: <MarketCostTooltip />,
 						},
 					},
 					onClick: () => setFeesExpanded(!feesExpanded),
@@ -235,8 +221,6 @@ const FeeInfoBox: React.FC = () => {
 		commitDeposit,
 		accountType,
 		marketInfo?.keeperDeposit,
-		marketCostTooltip,
-		executionFeeTooltip,
 		feesExpanded,
 		makerFee,
 		takerFee,

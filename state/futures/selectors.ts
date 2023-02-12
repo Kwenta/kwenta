@@ -1,5 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import { formatBytes32String } from 'ethers/lib/utils';
 
 import { DEFAULT_LEVERAGE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
@@ -875,5 +875,66 @@ export const selectPreviewAvailableMargin = createSelector(
 		return tradePreview.margin.sub(inaccessible).sub(totalDeposit).gt(0)
 			? tradePreview.margin.sub(inaccessible).sub(totalDeposit).abs()
 			: zeroBN;
+	}
+);
+
+export const selectAverageEntryPrice = createSelector(
+	selectTradePreview,
+	selectSelectedMarketPositionHistory,
+	(tradePreview, positionHistory) => {
+		if (positionHistory && tradePreview) {
+			const { avgEntryPrice, side, size } = positionHistory;
+			const currentSize = side === PositionSide.SHORT ? size.neg() : size;
+
+			// If the trade switched sides (long -> short or short -> long), use oracle price
+			if (currentSize.mul(tradePreview.size).lt(0)) return tradePreview.price;
+
+			// If the trade reduced position size on the same side, average entry remains the same
+			if (tradePreview.size.abs().lt(size)) return avgEntryPrice;
+
+			// If the trade increased position size on the same side, calculate new average
+			const existingValue = avgEntryPrice.mul(size);
+			const newValue = tradePreview.price.mul(tradePreview.sizeDelta.abs());
+			const totalValue = existingValue.add(newValue);
+			return totalValue.div(tradePreview.size.abs());
+		}
+		return null;
+	}
+);
+
+type PositionPreviewData = {
+	fillPrice: Wei;
+	sizeIsNotZero: boolean;
+	positionSide: string;
+	positionSize: Wei;
+	leverage: Wei;
+	liquidationPrice: Wei;
+	avgEntryPrice: Wei;
+	notionalValue: Wei;
+	showStatus: boolean;
+};
+
+export const selectPreviewData = createSelector(
+	selectTradePreview,
+	selectPosition,
+	selectAverageEntryPrice,
+	(tradePreview, position, modifiedAverage) => {
+		if (!position?.position || tradePreview === null) {
+			return {} as PositionPreviewData;
+		}
+
+		return {
+			fillPrice: tradePreview.price,
+			sizeIsNotZero: tradePreview.size && !tradePreview.size?.eq(0),
+			positionSide: tradePreview.size?.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
+			positionSize: tradePreview.size?.abs(),
+			notionalValue: tradePreview.notionalValue,
+			leverage: tradePreview.margin.gt(0)
+				? tradePreview.notionalValue.div(tradePreview.margin).abs()
+				: zeroBN,
+			liquidationPrice: tradePreview.liqPrice,
+			avgEntryPrice: modifiedAverage || zeroBN,
+			showStatus: tradePreview.showStatus,
+		} as PositionPreviewData;
 	}
 );

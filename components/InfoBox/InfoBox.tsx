@@ -111,7 +111,7 @@ const InfoBoxRow: FC<InfoBoxRowProps> = memo(
 	}
 );
 
-const Row = styled.div<{ onClick?: (title: string) => void; isSubtItem?: boolean }>`
+const Row = styled.div<{ isSubtItem?: boolean }>`
 	cursor: ${(props) => (props.onClick ? 'pointer' : 'default')};
 	padding-left: ${(props) => (props.isSubtItem ? '10px' : '0')};
 	border-left: ${(props) => (props.isSubtItem ? props.theme.colors.selectedTheme.border : '0')};
