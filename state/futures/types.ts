@@ -1,7 +1,6 @@
 import Wei from '@synthetixio/wei';
 
 import { FuturesAccountType } from 'queries/futures/types';
-import { Prices } from 'queries/rates/types';
 import { TransactionStatus } from 'sdk/types/common';
 import {
 	CrossMarginOrderType,
@@ -14,10 +13,11 @@ import {
 	FuturesVolumes,
 	IsolatedMarginOrderType,
 	PositionSide,
-	FuturesOrder,
+	FuturesOrder as CrossMarginOrder,
+	FuturesMarketKey,
+	FuturesMarketAsset,
 } from 'sdk/types/futures';
 import { QueryStatus } from 'state/types';
-import { FuturesMarketAsset, FuturesMarketKey } from 'utils/futures';
 
 export type TradeSizeInputs<T = Wei> = {
 	nativeSize: T;
@@ -56,7 +56,6 @@ export type FuturesQueryStatuses = {
 	isolatedTradePreview: QueryStatus;
 	crossMarginTradePreview: QueryStatus;
 	crossMarginAccount: QueryStatus;
-	previousDayRates: QueryStatus;
 	positionHistory: QueryStatus;
 	trades: QueryStatus;
 	selectedTraderPositionHistory: QueryStatus;
@@ -124,18 +123,25 @@ type FuturesErrors = {
 	tradePreview?: string | undefined | null;
 };
 
-type CrossMarginNetwork = number;
+type FuturesNetwork = number;
 
 export type InputCurrencyDenomination = 'usd' | 'native';
 
-export type CrossMarginAccount = {
-	account: string;
+export type FuturesAccountData = {
 	position?: FuturesPosition<string>;
+	positions?: FuturesPosition<string>[];
+	positionHistory?: FuturesPositionHistory<string>[];
+	trades?: FuturesTrade<string>[];
+};
+
+export type IsolatedAccountData = FuturesAccountData & {
+	openOrders?: DelayedOrderWithDetails<string>[];
+};
+
+export type CrossMarginAccountData = FuturesAccountData & {
+	account: string;
 	balanceInfo: CrossMarginBalanceInfo<string>;
-	positions: FuturesPosition<string>[];
-	openOrders: FuturesOrder<string>[];
-	positionHistory: FuturesPositionHistory<string>[];
-	trades: FuturesTrade<string>[];
+	openOrders: CrossMarginOrder<string>[];
 };
 
 // TODO: Separate in some way by network and wallet
@@ -150,14 +156,13 @@ export type FuturesState = {
 	markets: FuturesMarket<string>[];
 	queryStatuses: FuturesQueryStatuses;
 	dailyMarketVolumes: FuturesVolumes<string>;
-	previousDayRates: Prices;
 	transactionEstimations: TransactionEstimations;
 	errors: FuturesErrors;
 	selectedInputDenomination: InputCurrencyDenomination;
 	leaderboard: {
 		selectedTrader: string | undefined;
 		selectedTraderPositionHistory: Record<
-			CrossMarginNetwork,
+			FuturesNetwork,
 			{
 				[wallet: string]: FuturesPositionHistory<string>[];
 			}
@@ -187,9 +192,9 @@ export type CrossMarginState = {
 	cancellingOrder: string | undefined;
 	showOnboard: boolean;
 	accounts: Record<
-		CrossMarginNetwork,
+		FuturesNetwork,
 		{
-			[wallet: string]: CrossMarginAccount;
+			[wallet: string]: CrossMarginAccountData;
 		}
 	>;
 
@@ -206,23 +211,15 @@ export type IsolatedMarginState = {
 	leverageSide: PositionSide;
 	selectedMarketKey: FuturesMarketKey;
 	selectedMarketAsset: FuturesMarketAsset;
-	position?: FuturesPosition<string>;
 	leverageInput: string;
 	priceImpact: string;
 	tradeFee: string;
-	// TODO: Update to map by network similar to cross margin
-	positions: {
-		[account: string]: FuturesPosition<string>[];
-	};
-	positionHistory: {
-		[account: string]: FuturesPositionHistory<string>[];
-	};
-	openOrders: {
-		[account: string]: DelayedOrderWithDetails<string>[];
-	};
-	trades: {
-		[account: string]: FuturesTrade<string>[];
-	};
+	accounts: Record<
+		FuturesNetwork,
+		{
+			[wallet: string]: IsolatedAccountData;
+		}
+	>;
 };
 
 export type ModifyIsolatedPositionInputs = {

@@ -5,6 +5,7 @@ import { DEFAULT_FUTURES_MARGIN_TYPE, DEFAULT_PRICE_IMPACT_DELTA } from 'constan
 import { ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
 import {
 	FuturesMarket,
+	FuturesMarketAsset,
 	FuturesMarketKey,
 	FuturesPotentialTradeDetails,
 	PositionSide,
@@ -21,7 +22,7 @@ import {
 } from 'state/constants';
 import { accountType } from 'state/helpers';
 import { FetchStatus } from 'state/types';
-import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
+import { MarketKeyByAsset } from 'utils/futures';
 
 import {
 	fetchCrossMarginBalanceInfo,
@@ -36,7 +37,6 @@ import {
 	fetchCrossMarginTradePreview,
 	fetchKeeperEthBalance,
 	fetchCrossMarginAccount,
-	fetchPreviousDayRates,
 	fetchFuturesPositionHistory,
 	fetchPositionHistoryForTrader,
 	fetchTradesForSelectedMarket,
@@ -54,13 +54,12 @@ import {
 	TransactionEstimations,
 } from './types';
 
-export const INITIAL_STATE: FuturesState = {
+export const FUTURES_INITIAL_STATE: FuturesState = {
 	selectedType: DEFAULT_FUTURES_MARGIN_TYPE,
 	confirmationModalOpen: false,
 	markets: [],
 	dailyMarketVolumes: {},
 	errors: {},
-	previousDayRates: [],
 	fundingRates: [],
 	selectedInputDenomination: 'usd',
 	leaderboard: {
@@ -80,7 +79,6 @@ export const INITIAL_STATE: FuturesState = {
 		isolatedTradePreview: DEFAULT_QUERY_STATUS,
 		crossMarginTradePreview: DEFAULT_QUERY_STATUS,
 		crossMarginAccount: DEFAULT_QUERY_STATUS,
-		previousDayRates: DEFAULT_QUERY_STATUS,
 		positionHistory: DEFAULT_QUERY_STATUS,
 		selectedTraderPositionHistory: DEFAULT_QUERY_STATUS,
 		trades: DEFAULT_QUERY_STATUS,
@@ -89,7 +87,7 @@ export const INITIAL_STATE: FuturesState = {
 	crossMargin: {
 		accounts: DEFAULT_MAP_BY_NETWORK,
 		selectedMarketAsset: FuturesMarketAsset.sETH,
-		selectedMarketKey: FuturesMarketKey.sETH,
+		selectedMarketKey: FuturesMarketKey.sETHPERP,
 		leverageSide: PositionSide.LONG,
 		orderType: 'market',
 		orderFeeCap: '0',
@@ -113,17 +111,14 @@ export const INITIAL_STATE: FuturesState = {
 		},
 	},
 	isolatedMargin: {
+		accounts: DEFAULT_MAP_BY_NETWORK,
 		selectedMarketAsset: FuturesMarketAsset.sETH,
-		selectedMarketKey: FuturesMarketKey.sETH,
+		selectedMarketKey: FuturesMarketKey.sETHPERP,
 		leverageSide: PositionSide.LONG,
 		orderType: 'delayed_offchain',
 		tradePreview: null,
 		tradeInputs: ZERO_STATE_TRADE_INPUTS,
 		priceImpact: DEFAULT_PRICE_IMPACT_DELTA,
-		positions: {},
-		positionHistory: {},
-		openOrders: {},
-		trades: {},
 		tradeFee: '0',
 		leverageInput: '0',
 	},
@@ -131,7 +126,7 @@ export const INITIAL_STATE: FuturesState = {
 
 const futuresSlice = createSlice({
 	name: 'futures',
-	initialState: INITIAL_STATE,
+	initialState: FUTURES_INITIAL_STATE,
 	reducers: {
 		setMarketAsset: (state, action) => {
 			state[accountType(state.selectedType)].selectedMarketAsset = action.payload;
@@ -345,10 +340,13 @@ const futuresSlice = createSlice({
 		builder.addCase(fetchIsolatedMarginPositions.pending, (futuresState) => {
 			futuresState.queryStatuses.isolatedPositions = LOADING_STATUS;
 		});
-		builder.addCase(fetchIsolatedMarginPositions.fulfilled, (futuresState, action) => {
+		builder.addCase(fetchIsolatedMarginPositions.fulfilled, (futuresState, { payload }) => {
 			futuresState.queryStatuses.isolatedPositions = SUCCESS_STATUS;
-			if (action.payload) {
-				futuresState.isolatedMargin.positions[action.payload.wallet] = action.payload.positions;
+			if (payload && futuresState.isolatedMargin.accounts[payload.network]) {
+				futuresState.isolatedMargin.accounts[payload.network][payload.wallet] = {
+					...futuresState.isolatedMargin.accounts[payload.network][payload.wallet],
+					positions: payload.positions,
+				};
 			}
 		});
 		builder.addCase(fetchIsolatedMarginPositions.rejected, (futuresState) => {
@@ -359,15 +357,18 @@ const futuresSlice = createSlice({
 		});
 
 		// Refetch selected position
-		builder.addCase(refetchPosition.fulfilled, (futuresState, action) => {
-			const { positions } = futuresState.isolatedMargin;
-			if (action.payload && positions[action.payload.wallet]) {
-				const existingPositions = [...positions[action.payload.wallet]];
+		builder.addCase(refetchPosition.fulfilled, (futuresState, { payload }) => {
+			if (payload && futuresState.isolatedMargin.accounts[payload.networkId]) {
+				const existingPositions =
+					futuresState.isolatedMargin.accounts[payload.networkId][payload.wallet]?.positions || [];
 				const index = existingPositions.findIndex(
-					(p) => p.marketKey === action.payload!.position.marketKey
+					(p) => p.marketKey === payload!.position.marketKey
 				);
-				existingPositions[index] = action.payload.position;
-				futuresState.isolatedMargin.positions[action.payload.wallet] = existingPositions;
+				existingPositions[index] = payload.position;
+				futuresState.isolatedMargin.accounts[payload.networkId][payload.wallet] = {
+					...futuresState.isolatedMargin.accounts[payload.networkId][payload.wallet],
+					positions: existingPositions,
+				};
 			}
 		});
 
@@ -395,13 +396,17 @@ const futuresSlice = createSlice({
 		builder.addCase(fetchIsolatedOpenOrders.pending, (futuresState) => {
 			futuresState.queryStatuses.openOrders = LOADING_STATUS;
 		});
-		builder.addCase(fetchIsolatedOpenOrders.fulfilled, (futuresState, action) => {
+		builder.addCase(fetchIsolatedOpenOrders.fulfilled, (futuresState, { payload }) => {
 			futuresState.queryStatuses.openOrders = SUCCESS_STATUS;
-			if (!action.payload) return;
-			const { wallet, orders } = action.payload;
+			if (!payload) return;
+			const { wallet, orders } = payload;
 			if (wallet) {
-				// TODO: Store by network
-				futuresState.isolatedMargin.openOrders[wallet] = orders;
+				if (futuresState.isolatedMargin.accounts[payload.networkId]) {
+					futuresState.isolatedMargin.accounts[payload.networkId][wallet] = {
+						...futuresState.isolatedMargin.accounts[payload.networkId][wallet],
+						openOrders: orders,
+					};
+				}
 			}
 		});
 		builder.addCase(fetchIsolatedOpenOrders.rejected, (futuresState) => {
@@ -494,21 +499,6 @@ const futuresSlice = createSlice({
 			};
 		});
 
-		// Fetch past daily prices
-		builder.addCase(fetchPreviousDayRates.pending, (futuresState) => {
-			futuresState.queryStatuses.previousDayRates = LOADING_STATUS;
-		});
-		builder.addCase(fetchPreviousDayRates.fulfilled, (futuresState, action) => {
-			futuresState.previousDayRates = action.payload;
-			futuresState.queryStatuses.previousDayRates = SUCCESS_STATUS;
-		});
-		builder.addCase(fetchPreviousDayRates.rejected, (futuresState) => {
-			futuresState.queryStatuses.previousDayRates = {
-				error: 'Failed to fetch past rates',
-				status: FetchStatus.Error,
-			};
-		});
-
 		// Fetch position history
 		builder.addCase(fetchFuturesPositionHistory.pending, (futuresState) => {
 			futuresState.queryStatuses.positionHistory = LOADING_STATUS;
@@ -517,9 +507,12 @@ const futuresSlice = createSlice({
 			futuresState.queryStatuses.positionHistory = SUCCESS_STATUS;
 			if (!payload) return;
 			if (payload.accountType === 'isolated_margin') {
-				futuresState.isolatedMargin.positionHistory[payload.account] = payload.history.filter(
-					(p) => p.accountType === 'isolated_margin'
-				);
+				if (futuresState.isolatedMargin.accounts[payload.networkId]) {
+					futuresState.isolatedMargin.accounts[payload.networkId][payload.account] = {
+						...futuresState.isolatedMargin.accounts[payload.networkId][payload.account],
+						positionHistory: payload.history,
+					};
+				}
 			} else {
 				const wallet = findWalletForAccount(
 					futuresState.crossMargin,
@@ -567,7 +560,12 @@ const futuresSlice = createSlice({
 			futuresState.queryStatuses.trades = SUCCESS_STATUS;
 			if (!payload) return;
 			if (payload.accountType === 'isolated_margin') {
-				futuresState.isolatedMargin.trades[payload.account] = payload.trades;
+				if (futuresState.isolatedMargin.accounts[payload.networkId]) {
+					futuresState.isolatedMargin.accounts[payload.networkId][payload.account] = {
+						...futuresState.isolatedMargin.accounts[payload.networkId][payload.account],
+						trades: payload.trades,
+					};
+				}
 			} else {
 				futuresState.crossMargin.accounts[payload.networkId][payload.wallet].trades =
 					payload.trades;
@@ -590,7 +588,12 @@ const futuresSlice = createSlice({
 			futuresState.queryStatuses.trades = SUCCESS_STATUS;
 			if (!payload) return;
 			if (payload.accountType === 'isolated_margin') {
-				futuresState.isolatedMargin.trades[payload.account] = payload.trades;
+				if (futuresState.isolatedMargin.accounts[payload.networkId]) {
+					futuresState.isolatedMargin.accounts[payload.networkId][payload.account] = {
+						...futuresState.isolatedMargin.accounts[payload.networkId][payload.account],
+						trades: payload.trades,
+					};
+				}
 			} else {
 				futuresState.crossMargin.accounts[payload.networkId][payload.wallet].trades =
 					payload.trades;

@@ -1,12 +1,13 @@
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Button from 'components/Button';
 import useRewardsTimer from 'hooks/useRewardsTimer';
 import { GridContainer } from 'sections/earn/grid';
-import { claimRewards } from 'state/earn/actions';
-import { selectYieldPerDay } from 'state/earn/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { toWei, truncateNumbers } from 'utils/formatters/number';
+import { claimRewards, fetchEarnTokenPrices } from 'state/earn/actions';
+import { selectEarnApy, selectEarnedRewards, selectYieldPerDay } from 'state/earn/selectors';
+import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks';
+import { formatPercent, toWei, truncateNumbers } from 'utils/formatters/number';
 
 import GridData from './GridData';
 
@@ -18,9 +19,13 @@ const TimeRemainingData = () => {
 };
 
 const StakeGrid = () => {
+	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
-	const earnedRewards = useAppSelector(({ earn }) => earn.earnedRewards);
+	const earnedRewards = useAppSelector(selectEarnedRewards);
 	const yieldPerDay = useAppSelector(selectYieldPerDay);
+	const earnApy = useAppSelector(selectEarnApy);
+
+	usePollAction('fetchEarnTokenPrices', fetchEarnTokenPrices, { intervalTime: 30000 });
 
 	const handleClaim = useCallback(() => {
 		dispatch(claimRewards());
@@ -35,12 +40,16 @@ const StakeGrid = () => {
 					variant="flat"
 					size="small"
 					style={{ marginTop: 10 }}
-					disabled={toWei(earnedRewards).lte(0)}
+					disabled={earnedRewards.lte(0)}
 					onClick={handleClaim}
 				>
 					Claim Rewards
 				</Button>
 			</GridData>
+			<GridData
+				title={t('dashboard.stake.tabs.staking.annual-percentage-rate')}
+				value={formatPercent(earnApy.div(toWei('100')), { minDecimals: 2 })}
+			/>
 			<TimeRemainingData />
 		</GridContainer>
 	);

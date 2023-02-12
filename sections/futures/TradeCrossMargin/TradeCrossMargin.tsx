@@ -13,7 +13,7 @@ import {
 	selectCrossMarginAccount,
 	selectCrossMarginBalanceInfo,
 	selectCrossMarginOrderPrice,
-	selectCrossMarginSupportedNetwork,
+	selectFuturesSupportedNetwork,
 	selectCrossMarginTransferOpen,
 	selectFuturesType,
 	selectLeverageSide,
@@ -48,7 +48,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 	const orderType = useAppSelector(selectOrderType);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
 	const openTransferModal = useAppSelector(selectCrossMarginTransferOpen);
-	const crossMarginAvailable = useAppSelector(selectCrossMarginSupportedNetwork);
+	const crossMarginAvailable = useAppSelector(selectFuturesSupportedNetwork);
 	const crossMarginAddress = useAppSelector(selectCrossMarginAccount);
 	const queryStatus = useAppSelector(selectCMAccountQueryStatus);
 	const showOnboard = useAppSelector(selectShowCrossMarginOnboard);

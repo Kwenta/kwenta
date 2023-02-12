@@ -18,6 +18,7 @@ import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import { selectSusdBalance } from 'state/balances/selectors';
 import { depositIsolatedMargin, withdrawIsolatedMargin } from 'state/futures/actions';
 import {
+	selectAvailableMargin,
 	selectIsolatedTransferError,
 	selectIsSubmittingIsolatedTransfer,
 	selectPosition,
@@ -46,6 +47,7 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 	const submitting = useAppSelector(selectIsSubmittingIsolatedTransfer);
 	const txError = useAppSelector(selectIsolatedTransferError);
 	const susdBalance = useAppSelector(selectSusdBalance);
+	const availableMargin = useAppSelector(selectAvailableMargin);
 
 	const minDeposit = useMemo(() => {
 		const accessibleMargin = position?.accessibleMargin ?? zeroBN;
@@ -57,19 +59,16 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 	const [amount, setAmount] = useState('');
 	const [transferType, setTransferType] = useState(defaultTab === 'deposit' ? 0 : 1);
 
-	const susdBal = transferType === 0 ? susdBalance : position?.accessibleMargin || zeroBN;
-	const accessibleMargin = useMemo(() => position?.accessibleMargin ?? zeroBN, [
-		position?.accessibleMargin,
-	]);
+	const susdBal = transferType === 0 ? susdBalance : availableMargin;
 
 	const balanceStatus: BalanceStatus = useMemo(
 		() =>
-			accessibleMargin.gt(zeroBN) || susdBalance.gt(minDeposit)
+			availableMargin.gt(zeroBN) || susdBalance.gt(minDeposit)
 				? 'high_balance'
 				: susdBalance.eq(zeroBN)
 				? 'no_balance'
 				: 'low_balance',
-		[accessibleMargin, minDeposit, susdBalance]
+		[availableMargin, minDeposit, susdBalance]
 	);
 
 	useEffect(() => {
@@ -95,8 +94,8 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 	}, [amount, susdBal, minDeposit, transferType, submitting]);
 
 	const computedWithdrawAmount = useMemo(
-		() => (accessibleMargin.eq(wei(amount || 0)) ? accessibleMargin : wei(amount || 0)),
-		[amount, accessibleMargin]
+		() => (availableMargin.eq(wei(amount || 0)) ? availableMargin : wei(amount || 0)),
+		[amount, availableMargin]
 	);
 
 	const onChangeShowSocket = useCallback(() => setOpenSocket(!openSocket), [openSocket]);
@@ -105,9 +104,9 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 		if (transferType === 0) {
 			setAmount(susdBal.toString());
 		} else {
-			setAmount(accessibleMargin.toString());
+			setAmount(availableMargin.toString());
 		}
-	}, [susdBal, accessibleMargin, transferType]);
+	}, [susdBal, availableMargin, transferType]);
 
 	const onChangeTab = (selection: number) => {
 		setTransferType(selection);

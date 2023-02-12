@@ -16,7 +16,7 @@ import {
 } from './actions';
 import { StakingState } from './types';
 
-const initialState: StakingState = {
+export const STAKING_INITIAL_STATE: StakingState = {
 	kwentaBalance: '0',
 	escrowedKwentaBalance: '0',
 	vKwentaBalance: '0',
@@ -45,7 +45,7 @@ const initialState: StakingState = {
 
 const stakingSlice = createSlice({
 	name: 'staking',
-	initialState,
+	initialState: STAKING_INITIAL_STATE,
 	reducers: {
 		setStakeStatus: (state, action) => {
 			state.stakeStatus = action.payload;
@@ -87,6 +87,10 @@ const stakingSlice = createSlice({
 			state.epochPeriod = action.payload.epochPeriod;
 			state.veKwentaBalance = action.payload.veKwentaBalance;
 			state.veKwentaAllowance = action.payload.veKwentaAllowance;
+			state.stakeStatus = FetchStatus.Idle;
+			state.unstakeStatus = FetchStatus.Idle;
+			state.stakeEscrowedStatus = FetchStatus.Idle;
+			state.unstakeEscrowedStatus = FetchStatus.Idle;
 		});
 		builder.addCase(fetchEscrowData.fulfilled, (state, action) => {
 			state.totalVestable = action.payload.totalVestable;

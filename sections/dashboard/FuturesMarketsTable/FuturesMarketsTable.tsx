@@ -7,22 +7,25 @@ import styled from 'styled-components';
 
 import MarketBadge from 'components/Badge/MarketBadge';
 import ChangePercent from 'components/ChangePercent';
+import ColoredPrice from 'components/ColoredPrice';
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableHeader } from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
+import { FuturesMarketAsset } from 'sdk/types/futures';
 import { getDisplayAsset } from 'sdk/utils/futures';
 import {
 	selectFuturesType,
 	selectMarkets,
 	selectMarketVolumes,
-	selectPreviousDayRates,
 	selectMarkPrices,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { getSynthDescription, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
+import { selectPreviousDayPrices, selectOffchainPricesInfo } from 'state/prices/selectors';
+import { formatDollars } from 'utils/formatters/number';
+import { getSynthDescription, MarketKeyByAsset } from 'utils/futures';
 
 const FuturesMarketsTable: FC = () => {
 	const { t } = useTranslation();
@@ -30,15 +33,17 @@ const FuturesMarketsTable: FC = () => {
 	const { synthsMap } = Connector.useContainer();
 
 	const futuresMarkets = useAppSelector(selectMarkets);
-	const pastRates = useAppSelector(selectPreviousDayRates);
+	const pastRates = useAppSelector(selectPreviousDayPrices);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
 	const accountType = useAppSelector(selectFuturesType);
+	const pricesInfo = useAppSelector(selectOffchainPricesInfo);
 	const markPrices = useAppSelector(selectMarkPrices);
 
 	let data = useMemo(() => {
 		return futuresMarkets.map((market) => {
 			const description = getSynthDescription(market.asset, synthsMap, t);
 			const volume = futuresVolumes[market.marketKey]?.volume;
+			const assetPriceInfo = pricesInfo[market.asset];
 			const pastPrice = pastRates.find((price) => price.synth === getDisplayAsset(market.asset));
 			const marketPrice = markPrices[market.marketKey] ?? wei(0);
 
@@ -48,9 +53,11 @@ const FuturesMarketsTable: FC = () => {
 				synth: synthsMap[market.asset],
 				description,
 				price: marketPrice,
+				priceInfo: assetPriceInfo,
 				volume: volume?.toNumber() ?? 0,
-				pastPrice: pastPrice?.price,
-				priceChange: pastPrice?.price && marketPrice.sub(pastPrice.price).div(marketPrice),
+				pastPrice: pastPrice?.rate,
+				priceChange:
+					pastPrice?.rate && marketPrice.gt(0) && marketPrice.sub(pastPrice?.rate).div(marketPrice),
 				fundingRate: market.currentFundingRate ?? null,
 				openInterest: market.marketSize.mul(marketPrice),
 				openInterestNative: market.marketSize,
@@ -61,7 +68,7 @@ const FuturesMarketsTable: FC = () => {
 				marketClosureReason: market.marketClosureReason,
 			};
 		});
-	}, [synthsMap, futuresMarkets, pastRates, futuresVolumes, markPrices, t]);
+	}, [synthsMap, futuresMarkets, pastRates, futuresVolumes, markPrices, pricesInfo, t]);
 
 	return (
 		<>
@@ -116,13 +123,9 @@ const FuturesMarketsTable: FC = () => {
 										isAssetPrice: true,
 									};
 									return (
-										<Currency.Price
-											currencyKey="sUSD"
-											price={cellProps.row.original.price}
-											sign="$"
-											conversionRate={1}
-											formatOptions={formatOptions}
-										/>
+										<ColoredPrice priceInfo={cellProps.row.original.priceInfo}>
+											{formatDollars(cellProps.row.original.price, formatOptions)}
+										</ColoredPrice>
 									);
 								},
 								width: 130,
@@ -379,14 +382,6 @@ const FuturesMarketsTable: FC = () => {
 		</>
 	);
 };
-
-const StyledLongPrice = styled(Currency.Price)`
-	color: ${(props) => props.theme.colors.selectedTheme.green};
-`;
-
-const StyledShortPrice = styled(Currency.Price)`
-	color: ${(props) => props.theme.colors.selectedTheme.red};
-`;
 
 const StyledCurrencyIcon = styled(Currency.Icon)`
 	width: 30px;

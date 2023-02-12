@@ -34,8 +34,8 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
 		const cleanPrice = wei(price);
 		const cleanConversionRate = wei(conversionRate ?? 0);
 
-		if (truncate && price > 1e6) {
-			formatOptions = { ...formatOptions, truncation: { divisor: 1e6, unit: 'M' } };
+		if (truncate) {
+			formatOptions = { ...formatOptions, truncate: true };
 		}
 
 		return (

@@ -1,73 +1,66 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
-import { wei } from '@synthetixio/wei';
-import { chain } from 'wagmi';
 
-import { DEBT_RATIO_UNIT } from 'constants/network';
+import { chain } from 'containers/Connector/config';
 import { CandleResult } from 'queries/futures/subgraph';
-import { FuturesMarketKey } from 'utils/futures';
+import { FuturesMarketKey } from 'sdk/types/futures';
 
 import { RATES_ENDPOINTS } from './constants';
-import { Candle, LatestRate } from './types';
-import { Prices } from './types';
+import { Candle } from './types';
 
 export const getRatesEndpoint = (networkId: NetworkId) => {
 	return RATES_ENDPOINTS[networkId] || RATES_ENDPOINTS[chain.optimism.id];
 };
 
-export const mapLaggedDailyPrices = (rates: LatestRate[]): Prices => {
-	return rates.map((rate) => {
-		return {
-			synth: rate.synth,
-			price:
-				rate.synth === 'DebtRatio'
-					? wei(rate.rate).div(DEBT_RATIO_UNIT).toNumber()
-					: wei(rate.rate).toNumber(),
-		};
-	});
-};
-
 const markets = new Set<FuturesMarketKey>([
-	FuturesMarketKey.sETH,
-	FuturesMarketKey.sBTC,
-	FuturesMarketKey.sLINK,
-	FuturesMarketKey.sSOL,
-	FuturesMarketKey.sAVAX,
-	FuturesMarketKey.sMATIC,
-	FuturesMarketKey.sAAVE,
-	FuturesMarketKey.sUNI,
-	FuturesMarketKey.sEUR,
-	FuturesMarketKey.sXAU,
-	FuturesMarketKey.sXAG,
-	FuturesMarketKey.sDYDX,
-	FuturesMarketKey.sAPE,
-	FuturesMarketKey.sBNB,
-	FuturesMarketKey.sDOGE,
-	FuturesMarketKey.sDebtRatio,
-	FuturesMarketKey.sXMR,
-	FuturesMarketKey.sOP,
+	FuturesMarketKey.sETHPERP,
+	FuturesMarketKey.sBTCPERP,
+	FuturesMarketKey.sLINKPERP,
+	FuturesMarketKey.sSOLPERP,
+	FuturesMarketKey.sAVAXPERP,
+	FuturesMarketKey.sMATICPERP,
+	FuturesMarketKey.sAAVEPERP,
+	FuturesMarketKey.sUNIPERP,
+	FuturesMarketKey.sEURPERP,
+	FuturesMarketKey.sXAUPERP,
+	FuturesMarketKey.sXAGPERP,
+	FuturesMarketKey.sDYDXPERP,
+	FuturesMarketKey.sAPEPERP,
+	FuturesMarketKey.sBNBPERP,
+	FuturesMarketKey.sDOGEPERP,
+	FuturesMarketKey.sOPPERP,
+	FuturesMarketKey.sATOMPERP,
+	FuturesMarketKey.sFTMPERP,
+	FuturesMarketKey.sNEARPERP,
+	FuturesMarketKey.sFLOWPERP,
+	FuturesMarketKey.sAXSPERP,
+	FuturesMarketKey.sAUDPERP,
+	FuturesMarketKey.sGBPPERP,
 ]);
 
 const map: Record<FuturesMarketKey, string> = {
 	[FuturesMarketKey.sETHPERP]: 'ethereum',
 	[FuturesMarketKey.sBTCPERP]: 'bitcoin',
-	[FuturesMarketKey.sETH]: 'ethereum',
-	[FuturesMarketKey.sBTC]: 'bitcoin',
-	[FuturesMarketKey.sLINK]: 'chainlink',
-	[FuturesMarketKey.sSOL]: 'solana',
-	[FuturesMarketKey.sAVAX]: 'avalanche-2',
-	[FuturesMarketKey.sMATIC]: 'matic-network',
-	[FuturesMarketKey.sAAVE]: 'aave',
-	[FuturesMarketKey.sUNI]: 'uniswap',
-	[FuturesMarketKey.sEUR]: 'euro',
-	[FuturesMarketKey.sXAU]: '',
-	[FuturesMarketKey.sXAG]: '',
-	[FuturesMarketKey.sDYDX]: 'dydx',
-	[FuturesMarketKey.sAPE]: 'apecoin',
-	[FuturesMarketKey.sDOGE]: 'dogecoin',
-	[FuturesMarketKey.sBNB]: 'binancecoin',
-	[FuturesMarketKey.sDebtRatio]: '',
-	[FuturesMarketKey.sXMR]: 'monero',
-	[FuturesMarketKey.sOP]: 'optimism',
+	[FuturesMarketKey.sLINKPERP]: 'chainlink',
+	[FuturesMarketKey.sSOLPERP]: 'solana',
+	[FuturesMarketKey.sAVAXPERP]: 'avalanche-2',
+	[FuturesMarketKey.sMATICPERP]: 'matic-network',
+	[FuturesMarketKey.sAAVEPERP]: 'aave',
+	[FuturesMarketKey.sUNIPERP]: 'uniswap',
+	[FuturesMarketKey.sEURPERP]: 'euro',
+	[FuturesMarketKey.sXAUPERP]: '',
+	[FuturesMarketKey.sXAGPERP]: '',
+	[FuturesMarketKey.sDYDXPERP]: 'dydx',
+	[FuturesMarketKey.sAPEPERP]: 'apecoin',
+	[FuturesMarketKey.sDOGEPERP]: 'dogecoin',
+	[FuturesMarketKey.sBNBPERP]: 'binancecoin',
+	[FuturesMarketKey.sOPPERP]: 'optimism',
+	[FuturesMarketKey.sATOMPERP]: '',
+	[FuturesMarketKey.sFTMPERP]: '',
+	[FuturesMarketKey.sNEARPERP]: '',
+	[FuturesMarketKey.sFLOWPERP]: '',
+	[FuturesMarketKey.sAXSPERP]: '',
+	[FuturesMarketKey.sAUDPERP]: '',
+	[FuturesMarketKey.sGBPPERP]: '',
 };
 
 export const synthToCoingeckoPriceId = (marketKey: FuturesMarketKey) => {
@@ -83,10 +76,10 @@ export const mapCandles = (candles: CandleResult[]): Candle[] => {
 		return {
 			id: id,
 			synth: synth,
-			open: synth === 'DebtRatio' ? open.div(DEBT_RATIO_UNIT).toNumber() : open.toNumber(),
-			high: synth === 'DebtRatio' ? high.div(DEBT_RATIO_UNIT).toNumber() : high.toNumber(),
-			low: synth === 'DebtRatio' ? low.div(DEBT_RATIO_UNIT).toNumber() : low.toNumber(),
-			close: synth === 'DebtRatio' ? close.div(DEBT_RATIO_UNIT).toNumber() : close.toNumber(),
+			open: open.toNumber(),
+			high: high.toNumber(),
+			low: low.toNumber(),
+			close: close.toNumber(),
 			timestamp: timestamp.toNumber(),
 		};
 	});
@@ -97,11 +90,11 @@ export const mapPriceChart = (candles: CandleResult[]): Candle[] => {
 		return {
 			id: id,
 			synth: synth,
-			open: synth === 'DebtRatio' ? open.div(DEBT_RATIO_UNIT).toNumber() : open.toNumber(),
-			high: synth === 'DebtRatio' ? high.div(DEBT_RATIO_UNIT).toNumber() : high.toNumber(),
-			low: synth === 'DebtRatio' ? low.div(DEBT_RATIO_UNIT).toNumber() : low.toNumber(),
-			close: synth === 'DebtRatio' ? close.div(DEBT_RATIO_UNIT).toNumber() : close.toNumber(),
-			average: synth === 'DebtRatio' ? average.div(DEBT_RATIO_UNIT).toNumber() : average.toNumber(),
+			open: open.toNumber(),
+			high: high.toNumber(),
+			low: low.toNumber(),
+			close: close.toNumber(),
+			average: average.toNumber(),
 			timestamp: timestamp.toNumber(),
 		};
 	});

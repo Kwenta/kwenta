@@ -33,7 +33,7 @@ const StakingTab = () => {
 						<LogoText yellow>{truncateNumbers(claimableBalance, 4)}</LogoText>
 					</div>
 					<div>
-						<div className="title">{t('dashboard.stake.tabs.staking.annual-percentage-yield')}</div>
+						<div className="title">{t('dashboard.stake.tabs.staking.annual-percentage-rate')}</div>
 						<div className="value">{formatPercent(apy, { minDecimals: 2 })}</div>
 					</div>
 				</CardGrid>

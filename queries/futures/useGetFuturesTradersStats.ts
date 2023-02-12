@@ -1,6 +1,7 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { useQuery } from 'react-query';
-import { chainId } from 'wagmi';
 
+import { chain } from 'containers/Connector/config';
 import { useAppSelector } from 'state/hooks';
 import { selectMinTimestamp } from 'state/stats/selectors';
 import logError from 'utils/logError';
@@ -26,7 +27,7 @@ export const useGetFuturesTradersStats = () => {
 
 	const query = async () => {
 		try {
-			const futuresEndpoint = getFuturesEndpoint(chainId.optimism);
+			const futuresEndpoint = getFuturesEndpoint(chain.optimism.id as NetworkId);
 			const response = await getFuturesPositions(
 				futuresEndpoint,
 				{

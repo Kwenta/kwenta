@@ -3,6 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
+import ColoredPrice from 'components/ColoredPrice';
 import { FlexDivCentered, FlexDivCol } from 'components/layout/flex';
 import PreviewArrow from 'components/PreviewArrow';
 import { Body } from 'components/Text';
@@ -23,6 +24,7 @@ import {
 	selectTradePreview,
 	selectFuturesType,
 	selectSkewAdjustedPrice,
+	selectMarketPriceInfo,
 	selectSelectedMarketPositionHistory,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -80,6 +82,7 @@ const PositionCard: React.FC = () => {
 	const thisPositionHistory = useAppSelector(selectSelectedMarketPositionHistory);
 	const openModal = useAppSelector(selectOpenModal);
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketKey);
+	const marketPriceInfo = useAppSelector(selectMarketPriceInfo);
 
 	const positionDetails = position?.position ?? null;
 
@@ -276,7 +279,7 @@ const PositionCard: React.FC = () => {
 				<DataCol>
 					<InfoRow>
 						<Subtitle>{data.marketShortName}</Subtitle>
-						<StyledValue>{data.marketPrice}</StyledValue>
+						<ColoredPrice priceInfo={marketPriceInfo}>{data.marketPrice}</ColoredPrice>
 					</InfoRow>
 					<InfoRow>
 						<PositionCardTooltip content={t('futures.market.position-card.tooltips.position-side')}>
@@ -448,7 +451,7 @@ const SubtitleWithCursor = styled(Subtitle)`
 
 const PositionCardTooltip = styled(Tooltip).attrs({ preset: 'fixed', height: 'auto' })`
 	z-index: 2;
-	padding: 0px 10px 0px 10px;
+	padding: 10px;
 `;
 
 const StyledValue = styled(Body).attrs({ mono: true })`

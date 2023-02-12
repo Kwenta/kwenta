@@ -1,10 +1,8 @@
 import { wei } from '@synthetixio/wei';
 import { ColorType, createChart, UTCTimestamp } from 'lightweight-charts';
-import values from 'lodash/values';
 import router from 'next/router';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQueryClient } from 'react-query';
 import Slider from 'react-slick';
 import styled from 'styled-components';
 
@@ -14,15 +12,13 @@ import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { FlexDiv, FlexDivColCentered, FlexDivRow } from 'components/layout/flex';
 import { TabPanel } from 'components/Tab';
-import { CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
-import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
-import { selectMarketVolumes, selectPreviousDayRates } from 'state/futures/selectors';
+import { selectMarketVolumes } from 'state/futures/selectors';
 import { fetchOptimismMarkets } from 'state/home/actions';
 import { selectOptimismMarkets } from 'state/home/selectors';
 import { useAppSelector, usePollAction } from 'state/hooks';
-import { selectPrices } from 'state/prices/selectors';
+import { selectPreviousDayPrices, selectPrices } from 'state/prices/selectors';
 import { SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media, { Media } from 'styles/media';
 import { getSynthDescription } from 'utils/futures';
@@ -140,52 +136,13 @@ export const PriceChart = ({ asset }: PriceChartProps) => {
 const Assets = () => {
 	const { t } = useTranslation();
 	const { l2SynthsMap, l2Provider } = Connector.useContainer();
-	const [activeMarketsTab, setActiveMarketsTab] = useState(MarketsTab.FUTURES);
+	const activeMarketsTab = MarketsTab.FUTURES;
 
 	const prices = useAppSelector(selectPrices);
 	const futuresMarkets = useAppSelector(selectOptimismMarkets);
-	const pastRates = useAppSelector(selectPreviousDayRates);
+	const pastRates = useAppSelector(selectPreviousDayPrices);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
 	usePollAction('fetchOptimismMarkets', () => fetchOptimismMarkets(l2Provider));
-
-	const MARKETS_TABS = useMemo(
-		() => [
-			{
-				key: 'futures',
-				name: MarketsTab.FUTURES,
-				label: t('dashboard.overview.markets-tabs.futures').replace('Markets', ''),
-				active: activeMarketsTab === MarketsTab.FUTURES,
-				onClick: () => {
-					setActiveMarketsTab(MarketsTab.FUTURES);
-				},
-			},
-			{
-				key: 'synths',
-				name: MarketsTab.SPOT,
-				label: t('dashboard.overview.markets-tabs.spot').replace('Markets', ''),
-				active: activeMarketsTab === MarketsTab.SPOT,
-				onClick: () => {
-					setActiveMarketsTab(MarketsTab.SPOT);
-				},
-			},
-		],
-		[activeMarketsTab, t]
-	);
-
-	const synths = useMemo(() => values(l2SynthsMap) || [], [l2SynthsMap]);
-	const queryCache = useQueryClient().getQueryCache();
-	// KM-NOTE: come back and delete
-	const frozenSynthsQuery = queryCache.find(['synths', 'frozenSynths', 10]);
-
-	const unfrozenSynths =
-		frozenSynthsQuery?.state.status === 'success'
-			? synths.filter(
-					(synth) => !(frozenSynthsQuery.state.data as Set<CurrencyKey>).has(synth.name)
-			  )
-			: synths;
-
-	const yesterday = Math.floor(new Date().setDate(new Date().getDate() - 1) / 1000);
-	const synthVolumesQuery = useGetSynthsTradingVolumeForAllMarkets(yesterday);
 
 	const PERPS = useMemo(() => {
 		return futuresMarkets.map((market) => {
@@ -202,7 +159,9 @@ const Assets = () => {
 				price: marketPrice.toNumber(),
 				volume,
 				priceChange:
-					(marketPrice.toNumber() - (pastPrice?.price ?? 0)) / marketPrice.toNumber() || 0,
+					!!marketPrice && !marketPrice.eq(0) && !!pastPrice?.rate
+						? marketPrice.sub(pastPrice.rate).div(marketPrice)
+						: 0,
 				image: <PriceChart asset={market.asset} />,
 				icon: (
 					<StyledCurrencyIcon currencyKey={(market.asset[0] !== 's' ? 's' : '') + market.asset} />
@@ -211,37 +170,6 @@ const Assets = () => {
 		});
 		// eslint-disable-next-line
 	}, [futuresMarkets, l2SynthsMap, pastRates, futuresVolumes, t]);
-
-	const SPOTS = useMemo(() => {
-		const synthVolumes = synthVolumesQuery?.data ?? {};
-
-		return unfrozenSynths.map((synth) => {
-			const description = synth.description
-				? t('common.currency.synthetic-currency-name', {
-						currencyName: synth.description,
-				  })
-				: '';
-			const rate = prices?.[synth.name]?.onChain || prices?.[synth.name]?.offChain;
-			const price = rate?.toNumber() ?? 0;
-
-			const pastPrice = pastRates.find((price) => {
-				return price.synth === synth.asset || price.synth === synth.name;
-			});
-
-			return {
-				key: synth.asset,
-				market: synth.name,
-				description: description.slice(10),
-				price,
-				change: price !== 0 ? (price - (pastPrice?.price ?? 0)) / price || 0 : 0,
-				volume: synthVolumes[synth.name]?.toNumber() ?? 0,
-				image: <PriceChart asset={synth.asset} />,
-				icon: (
-					<StyledCurrencyIcon currencyKey={(synth.asset[0] !== 's' ? 's' : '') + synth.asset} />
-				),
-			};
-		});
-	}, [synthVolumesQuery?.data, unfrozenSynths, t, prices, pastRates]);
 
 	const title = (
 		<>
@@ -268,13 +196,6 @@ const Assets = () => {
 		<Container>
 			<Media lessThan="sm">
 				<FlexDivColCentered>{title}</FlexDivColCentered>
-				<TabButtonsContainer>
-					{MARKETS_TABS.map(({ name, label, active, onClick }) => (
-						<MarketSwitcher key={name} className={name} isActive={active} onClick={onClick}>
-							{label}
-						</MarketSwitcher>
-					))}
-				</TabButtonsContainer>
 				<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
 					<SliderContainer>
 						<StyledSlider {...settings}>
@@ -333,78 +254,10 @@ const Assets = () => {
 						</StyledSlider>
 					</SliderContainer>
 				</TabPanel>
-				<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
-					<SliderContainer>
-						<StyledSlider {...settings}>
-							{SPOTS.map(({ key, market, description, price, volume, change, image, icon }) => (
-								<StatsCardContainer key={key} className={key}>
-									<StatsCard
-										noOutline
-										onClick={() => {
-											market !== 'sUSD'
-												? router.push(`/exchange/?quote=sUSD&base=${market}`)
-												: router.push(`/exchange/`);
-										}}
-									>
-										<GridSvg className="bg" objectfit="cover" layout="fill" />
-										<StatsIconContainer>
-											{icon}
-											<StatsNameContainer>
-												<AssetName>{market}</AssetName>
-												<AssetDescription>{description}</AssetDescription>
-											</StatsNameContainer>
-										</StatsIconContainer>
-										<ChartContainer>{image}</ChartContainer>
-										<AssetPrice>
-											<Currency.Price
-												currencyKey="sUSD"
-												price={price}
-												sign="$"
-												conversionRate={1}
-											/>
-										</AssetPrice>
-										<StatsValueContainer>
-											<StatsValue>
-												{'CHG    '}
-												{change === 0 ? (
-													<>-</>
-												) : (
-													<ChangePercent value={change} decimals={1} className="change-pct" />
-												)}
-											</StatsValue>
-											<StatsValue>
-												{'VOL    '}
-												{volume === 0 ? (
-													<>-</>
-												) : (
-													<Currency.Price
-														currencyKey="sUSD"
-														price={volume}
-														sign="$"
-														conversionRate={1}
-														formatOptions={{ minDecimals: 0 }}
-													/>
-												)}
-											</StatsValue>
-										</StatsValueContainer>
-									</StatsCard>
-								</StatsCardContainer>
-							))}
-						</StyledSlider>
-					</SliderContainer>
-				</TabPanel>
 			</Media>
 			<Media greaterThanOrEqual="sm">
 				<FlexDivColCentered>
 					{title}
-					<TabButtonsContainer>
-						{MARKETS_TABS.map(({ name, label, active, onClick }) => (
-							<MarketSwitcher key={name} className={name} isActive={active} onClick={onClick}>
-								{label}
-							</MarketSwitcher>
-						))}
-					</TabButtonsContainer>
-
 					<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
 						<StyledFlexDivRow>
 							{PERPS.map(({ key, name, description, price, volume, priceChange, image, icon }) => (
@@ -440,65 +293,6 @@ const Assets = () => {
 													<>-</>
 												) : (
 													<ChangePercent value={priceChange} decimals={1} className="change-pct" />
-												)}
-											</StatsValue>
-											<StatsValue>
-												{'VOL    '}
-												{volume === 0 ? (
-													<>-</>
-												) : (
-													<Currency.Price
-														currencyKey="sUSD"
-														price={volume}
-														sign="$"
-														conversionRate={1}
-														formatOptions={{ minDecimals: 0 }}
-													/>
-												)}
-											</StatsValue>
-										</StatsValueContainer>
-									</StatsCard>
-								</StatsCardContainer>
-							))}
-						</StyledFlexDivRow>
-					</TabPanel>
-					<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
-						<StyledFlexDivRow>
-							{SPOTS.map(({ key, market, description, price, volume, change, image, icon }) => (
-								<StatsCardContainer key={key}>
-									<StatsCard
-										className={key}
-										noOutline={false}
-										onClick={() => {
-											market !== 'sUSD'
-												? router.push(`/exchange/?quote=sUSD&base=${market}`)
-												: router.push(`/exchange/`);
-										}}
-									>
-										<GridSvg className="bg" objectfit="cover" layout="fill" />
-										<StatsIconContainer>
-											{icon}
-											<StatsNameContainer>
-												<AssetName>{market}</AssetName>
-												<AssetDescription>{description}</AssetDescription>
-											</StatsNameContainer>
-										</StatsIconContainer>
-										<ChartContainer>{image}</ChartContainer>
-										<AssetPrice>
-											<Currency.Price
-												currencyKey="sUSD"
-												price={price}
-												sign="$"
-												conversionRate={1}
-											/>
-										</AssetPrice>
-										<StatsValueContainer>
-											<StatsValue>
-												{'CHG    '}
-												{change === 0 ? (
-													<>-</>
-												) : (
-													<ChangePercent value={change} decimals={1} className="change-pct" />
 												)}
 											</StatsValue>
 											<StatsValue>
@@ -730,50 +524,6 @@ const StyledCurrencyIcon = styled(Currency.Icon).attrs({ width: '45px', height: 
 	width: 40px;
 	height: 40px;
 	margin-right: 15px;
-`;
-
-const TabButtonsContainer = styled.div`
-	display: flex;
-	margin-top: 40px;
-	margin-bottom: 35px;
-	width: 150px;
-	height: 28px;
-	justify-content: center;
-	align-items: center;
-	border-radius: 134px;
-
-	${media.lessThan('sm')`
-		margin: auto;
-		margin-top: 40px;
-		margin-bottom: 40px;
-	`}
-`;
-
-const MarketSwitcher = styled(FlexDiv)<{ isActive: boolean }>`
-	cursor: pointer;
-	height: 28px;
-	font-size: 13px;
-	width: 88px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	border-radius: ${(props) => (props.isActive ? '100px' : '134px')};
-	color: ${(props) =>
-		props.isActive
-			? props.theme.colors.selectedTheme.white
-			: props.theme.colors.common.secondaryGray};
-	border: ${(props) =>
-		props.isActive ? `1px solid  ${props.theme.colors.common.primaryYellow}` : null};
-	font-family: ${(props) => props.theme.fonts.bold};
-	padding: 12px 15px;
-	box-shadow: ${(props) =>
-		props.isActive
-			? '0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1), inset 0px 0px 20px rgba(255, 255, 255, 0.03)'
-			: null};
-
-	&.short {
-		cursor: not-allowed;
-	}
 `;
 
 export default Assets;

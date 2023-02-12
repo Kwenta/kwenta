@@ -22,8 +22,6 @@ export type ExchangeState = {
 	exchangeFeeRate?: string;
 	rate?: string;
 	numEntries: number;
-	redeemableSynthBalances: any[];
-	totalRedeemableBalance?: string;
 	approvalStatus: FetchStatus;
 	tokenListStatus: FetchStatus;
 	synthsMap: any;

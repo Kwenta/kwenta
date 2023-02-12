@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import InfoBox from 'components/InfoBox';
 import PreviewArrow from 'components/PreviewArrow';
-import { useFuturesContext } from 'contexts/FuturesContext';
 import { FuturesPotentialTradeDetails } from 'sdk/types/futures';
 import { setOpenModal } from 'state/app/reducer';
 import { selectOpenModal } from 'state/app/selectors';
@@ -13,6 +12,7 @@ import {
 	selectCrossMarginBalanceInfo,
 	selectCrossMarginMarginDelta,
 	selectCrossMarginOrderPrice,
+	selectCrossMarginSelectedLeverage,
 	selectCrossMarginTradeFees,
 	selectMarketInfo,
 	selectOrderType,
@@ -40,7 +40,6 @@ type Props = {
 };
 
 function MarginInfoBox({ editingLeverage }: Props) {
-	const { selectedLeverage } = useFuturesContext();
 	const dispatch = useAppDispatch();
 
 	const position = useAppSelector(selectPosition);
@@ -55,6 +54,7 @@ function MarginInfoBox({ editingLeverage }: Props) {
 	const orderType = useAppSelector(selectOrderType);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
 	const openModal = useAppSelector(selectOpenModal);
+	const selectedLeverage = useAppSelector(selectCrossMarginSelectedLeverage);
 
 	const { crossMarginFee } = useAppSelector(selectCrossMarginTradeFees);
 

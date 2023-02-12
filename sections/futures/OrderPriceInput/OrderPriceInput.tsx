@@ -110,7 +110,7 @@ export default function OrderPriceInput({
 				<Tooltip
 					width={'310px'}
 					height="auto"
-					style={{ padding: '0 15px', textTransform: 'none' }}
+					style={{ padding: '15px', textTransform: 'none' }}
 					content={t('futures.market.trade.orders.fee-rejection-tooltip')}
 				>
 					<FeeRejectionLabel>

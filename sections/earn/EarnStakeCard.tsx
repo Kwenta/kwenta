@@ -2,12 +2,12 @@ import { FC, useCallback } from 'react';
 
 import StakeCard from 'components/StakeCard/StakeCard';
 import { approveLPToken, stakeTokens, unstakeTokens } from 'state/earn/actions';
-import { selectBalance, selectIsApproved, selectLPTokenBalance } from 'state/earn/selectors';
+import { selectBalance, selectIsApproved, selectLpTokenBalance } from 'state/earn/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 const EarnStakeCard: FC = () => {
 	const dispatch = useAppDispatch();
-	const lpTokenBalance = useAppSelector(selectLPTokenBalance);
+	const lpTokenBalance = useAppSelector(selectLpTokenBalance);
 	const balance = useAppSelector(selectBalance);
 	const isApproved = useAppSelector(selectIsApproved);
 

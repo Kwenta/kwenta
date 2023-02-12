@@ -10,6 +10,7 @@ type DashboardComponent = React.FC & { getLayout: (page: HTMLElement) => JSX.Ele
 
 const Dashboard: DashboardComponent = () => {
 	const { t } = useTranslation();
+
 	usePollDashboardFuturesData();
 
 	return (

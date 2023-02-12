@@ -336,13 +336,13 @@
 				"seconds-ago": "sec ago"
 			},
 			"tooltips": {
-				"market-key": "The current price of the futures market after adding a skew-based premium or discount to the oracle price",
-				"oracle-price": "The exact oracle price of this market without any adjustment for market skew applied",
-				"external-price": "Aggregated market price provided by external sources (Coingecko, Forex Market, etc.)",
+				"market-price": "The current price of the futures market after adding a skew-based premium or discount to the oracle price",
+				"index-price": "The exact index price of this market without any adjustment for market skew applied",
 				"24h-change": "Total change in asset value within the past 24 hours",
 				"24h-vol": "Total trade volume within the past 24 hours",
 				"24h-trades": "Total amount of trades on selected pair within the past 24h",
-				"open-interest": "Total notional value on all outstanding positions of the selected market",
+				"open-interest-s": "Total notional value on all short positions / max open interest",
+				"open-interest-l": "Total notional value on all long positions / max open interest",
 				"1h-funding-rate": "Funding applies to all open positions. A positive rate means longs pay shorts, a negative rate means shorts pay longs. The rate increases when a market is skewed long, and decreases when it is skewed short. Funding accrues on a position every time it is opened, modified, or closed."
 			},
 			"deprecated-info": "DEBT-PERP is being deprecated soon. Please close your positions at your earliest convenience."
@@ -449,6 +449,7 @@
 				"notionalValue": "Size",
 				"liquidationPrice": "Liq. Price",
 				"no-result": "You have no other open positions",
+				"legacy-link": "Missing a position? Check the legacy app",
 				"mobile": {
 					"market": "Market/Side",
 					"price": "Oracle/Entry",
@@ -461,12 +462,12 @@
 				"value-in-usd": "Value in USD",
 				"oracle-price": "Price",
 				"daily-change": "24H Change",
-				"no-result": "You have no synths"
+				"no-result": "You have no tokens"
 			},
 			"futures-markets-table": {
 				"market": "Market",
 				"oracle": "Oracle",
-				"mark-price": "Mark Price",
+				"mark-price": "Market Price",
 				"daily-change": "24H Change",
 				"funding-rate": "1H Funding Rate",
 				"open-interest": "Open Interest",
@@ -514,7 +515,7 @@
 					"claimable-rewards": "Claimable Rewards",
 					"escrowed-rewards": "Escrowed Rewards",
 					"liquid-rewards": "Liquid Rewards",
-					"annual-percentage-yield": "Annual Percentage Yield",
+					"annual-percentage-rate": "Annual Percentage Rate",
 					"claim": "Claim",
 					"current-trading-period": "Current Trading Period:"
 				},
@@ -684,6 +685,10 @@
 					"avg-entry-price": "The average price at which the position was opened"
 				}
 			},
+			"empty-position-card": {
+				"no-position": "No Open Position",
+				"explore-markets": "Explore available Markets"
+			},
 			"state": {
 				"opens-soon": "opens soon",
 				"closes-soon": "closes soon",
@@ -818,7 +823,7 @@
 						"close-order": "Close position",
 						"max-leverage-disclaimer": "Note: A next price update could cause your order to exceed maximum leverage resulting in the order being dropped by the keeper.",
 						"disabled-min-margin": "Minimum market margin of $50 required",
-						"delayed-disclaimer": "* The deposit is applied to trading fees and keeper fees on order execution. If an order is either cancelled or not executed, the deposit will be forfeit to the Synthetix debt pool."
+						"delayed-disclaimer": "The fee amount will be deposited to cover trade and automated execution fees. If an order is cancelled or not executed, the deposit will be forfeited to the Synthetix debt pool."
 					}
 				},
 				"leverage": {
@@ -846,7 +851,9 @@
 					"error": "Error generating preview"
 				},
 				"fees": {
-					"tooltip": "Fees are displayed as maker/taker. Maker fees apply to orders that reduce the market skew. Taker fees apply to orders that increase the market skew."
+					"tooltip": "Fees are displayed as maker / taker. Maker fees apply to orders that reduce the market skew. Taker fees apply to orders that increase the market skew.",
+					"keeper-tooltip": "Fixed fee to cover automated order execution"
+
 				},
 				"orders": {
 					"manage-keeper-deposit": {
@@ -902,16 +909,16 @@
 						"fee-total": "Total Fees",
 						"estimated-fill": "Estimated Fill Price",
 						"estimated-price-impact": "Estimated Price Impact",
-						"fee-estimated": "Estimated Fees",
+						"fee-estimated": "Estimated Trade Fee",
 						"liquidation-price": "Liquidation Price",
 						"time-delay": "Delay Until Executable",
-						"keeper-deposit": "Keeper Deposit",
+						"keeper-deposit": "Execution Fee",
 						"gas-fee": "Network Gas Fee",
 						"order-type": "Order Type",
 						"market-order": "Market",
 						"next-price-order": "Next Price",
 						"delayed-order": "Delayed",
-						"deposit": "Total Deposit*",
+						"deposit": "Total Fees",
 						"np-discount": "Next Price Discount"
 					}
 				},
@@ -1005,7 +1012,8 @@
 			"share": {
 				"title": "Share",
 				"buttons": {
-					"download": "Download"
+					"download": "Download",
+					"twitter": "Tweet it"
 				},
 				"position-metadata": {
 					"open-at": "opened on",
@@ -1076,17 +1084,16 @@
 	},
 	"modals": {
 		"select-currency": {
-			"title": "select synth",
+			"title": "select tokens",
 			"header": {
 				"search-results": "search results",
 				"category-synths": "{{category}} synths",
-				"all-synths": "synths",
-				"other-tokens": "tokens",
+				"tokens": "tokens",
 				"your-synths": "your synths",
 				"holdings": "holdings"
 			},
 			"search": {
-				"placeholder": "search synths",
+				"placeholder": "search tokens",
 				"empty-results": "No results found. Please try again."
 			}
 		},
@@ -1197,16 +1204,7 @@
 			"swap-currency": "Swap for <0>{{currencyKey}}</0>",
 			"trade-into": "Trade into <0>{{currencyKey}}</0>",
 			"price-adjustment": "Price Adjustment",
-			"deprecated": "Deprecated",
-			"futures-market-oil-short-name": "Oil Perpetual",
-			"futures-market-gold-short-name": "Gold Perpetual",
-			"futures-market-silver-short-name": "Silver Perpetual",
-			"futures-market-ape-short-name": "ApeCoin Perpetual",
-			"futures-market-bnb-short-name": "Binance Coin Perpetual",
-			"futures-market-doge-short-name": "Dogecoin Perpetual",
-			"futures-market-debtratio-short-name": "Debt Ratio Perpetual",
-			"futures-market-xmr-short-name": "Monero Perpetual",
-			"futures-market-op-short-name": "Optimism Perpetual"
+			"deprecated": "Deprecated"
 		},
 		"currency-category": {
 			"crypto": "crypto",

@@ -33,23 +33,25 @@ const map: Record<typeof markets[number], string> = {
 };
 
 export enum MarketDataKey {
-	externalPrice = 'External Price',
-	oraclePrice = 'Oracle Price',
+	indexPrice = 'Index Price',
+	marketPrice = 'Market Price',
 	dailyChange = '24H Change',
 	dailyVolume = '24H Volume',
 	dailyTrades = '24H Trades',
-	openInterest = 'Open Interest',
+	openInterestLong = 'Open Interest (L)',
+	openInterestShort = 'Open Interest (S)',
 	instFundingRate = 'Inst. Funding Rate',
 	hourlyFundingRate = '1H Funding Rate',
 }
 
 export const marketDataKeyMap: Record<MarketDataKey, string> = {
-	[MarketDataKey.externalPrice]: 'external-price',
-	[MarketDataKey.oraclePrice]: 'oracle-price',
+	[MarketDataKey.indexPrice]: 'index-price',
+	[MarketDataKey.marketPrice]: 'market-price',
 	[MarketDataKey.dailyChange]: '24h-change',
 	[MarketDataKey.dailyVolume]: '24h-vol',
 	[MarketDataKey.dailyTrades]: '24h-trades',
-	[MarketDataKey.openInterest]: 'open-interest',
+	[MarketDataKey.openInterestLong]: 'open-interest-l',
+	[MarketDataKey.openInterestShort]: 'open-interest-s',
 	[MarketDataKey.instFundingRate]: '1h-funding-rate',
 	[MarketDataKey.hourlyFundingRate]: '1h-funding-rate',
 };

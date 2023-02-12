@@ -7,7 +7,7 @@ import styled, { css } from 'styled-components';
 import { GridDivCenteredRow } from 'components/layout/grid';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { ETH_UNIT } from 'constants/network';
-import { FuturesTrade, PositionSide } from 'sdk/types/futures';
+import { FuturesMarketAsset, FuturesTrade, PositionSide } from 'sdk/types/futures';
 import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { TradeStatus } from 'sections/futures/types';
@@ -22,7 +22,7 @@ import { useAppSelector, useFetchAction } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { selectWallet } from 'state/wallet/selectors';
 import { formatCryptoCurrency } from 'utils/formatters/number';
-import { FuturesMarketAsset, getMarketName } from 'utils/futures';
+import { getMarketName } from 'utils/futures';
 
 import TradeDrawer from '../drawers/TradeDrawer';
 

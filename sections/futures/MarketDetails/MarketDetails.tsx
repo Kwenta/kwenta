@@ -1,15 +1,11 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
 import { FlexDivCentered } from 'components/layout/flex';
-import { selectMarketAsset } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
 import media from 'styles/media';
 
 import MarketsDropdown from '../Trade/MarketsDropdown';
 import MarketDetail from './MarketDetail';
-import MobileMarketDetail from './MobileMarketDetail';
 import useGetMarketData from './useGetMarketData';
 
 type MarketDetailsProps = {
@@ -17,9 +13,7 @@ type MarketDetailsProps = {
 };
 
 const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
-	const { t } = useTranslation();
 	const marketData = useGetMarketData(mobile);
-	const marketAsset = useAppSelector(selectMarketAsset);
 
 	return (
 		<FlexDivCentered>
@@ -30,38 +24,23 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 			)}
 
 			<MarketDetailsContainer mobile={mobile}>
-				{marketAsset !== 'DebtRatio' ? (
-					Object.entries(marketData).map(([marketKey, data]) => (
-						<MarketDetail {...data} key={marketKey} marketKey={marketKey} mobile={mobile} />
-					))
-				) : (
-					<DeprecatedBannerContainer>
-						{t('exchange.market-details-card.deprecated-info')}
-					</DeprecatedBannerContainer>
-				)}
-				{mobile && <MobileMarketDetail />}
+				{Object.entries(marketData).map(([marketKey, data]) => (
+					<MarketDetail
+						color={data.color}
+						value={data.value}
+						key={marketKey}
+						marketKey={marketKey}
+						mobile={Boolean(mobile)}
+					/>
+				))}
 			</MarketDetailsContainer>
 		</FlexDivCentered>
 	);
 };
 
-const DeprecatedBannerContainer = styled.div`
-	height: 40px;
-	width: 100%;
-	padding: 22px 5px;
-	border-radius: 8px;
-	margin-top: -5px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: ${(props) => props.theme.colors.white};
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 16px;
-	background-color: ${(props) => props.theme.colors.red};
-`;
-
 const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	flex: 1;
+	gap: 26px;
 	height: 55px;
 	padding: 10px 45px 10px 15px;
 	margin-bottom: 16px;

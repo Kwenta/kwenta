@@ -8,7 +8,7 @@ import { TransactionStatus } from 'sdk/types/common';
 import { FuturesPosition, PositionSide } from 'sdk/types/futures';
 import { unserializePotentialTrade } from 'sdk/utils/futures';
 import { accountType, deserializeWeiObject } from 'state/helpers';
-import { selectPrices } from 'state/prices/selectors';
+import { selectOffchainPricesInfo, selectPrices } from 'state/prices/selectors';
 import { RootState } from 'state/store';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import { computeOrderFee, sameSide } from 'utils/costCalculations';
@@ -56,9 +56,6 @@ export const selectIsolatedLeverageInput = (state: RootState) =>
 export const selectCrossMarginMarginDelta = (state: RootState) =>
 	wei(state.futures.crossMargin.marginDelta || 0);
 
-export const selectCrossMarginSupportedNetwork = (state: RootState) =>
-	state.wallet.networkId === 10 || state.wallet.networkId === 420;
-
 export const selectFuturesSupportedNetwork = (state: RootState) =>
 	state.wallet.networkId === 10 || state.wallet.networkId === 420;
 
@@ -69,17 +66,25 @@ export const selectCrossMarginTransferOpen = (state: RootState) =>
 export const selectShowCrossMarginOnboard = (state: RootState) =>
 	state.futures.crossMargin.showOnboard;
 
-export const selectPreviousDayRates = (state: RootState) => state.futures.previousDayRates;
-
 export const selectSelectedTrader = (state: RootState) => state.futures.leaderboard.selectedTrader;
 
 export const selectCrossMarginAccountData = createSelector(
 	selectWallet,
 	selectNetwork,
-	selectCrossMarginSupportedNetwork,
+	selectFuturesSupportedNetwork,
 	(state: RootState) => state.futures.crossMargin,
 	(wallet, network, supportedNetwork, crossMargin) => {
 		return wallet && supportedNetwork ? crossMargin.accounts[network][wallet] : null;
+	}
+);
+
+export const selectIsolatedAccountData = createSelector(
+	selectWallet,
+	selectNetwork,
+	selectFuturesSupportedNetwork,
+	(state: RootState) => state.futures.isolatedMargin,
+	(wallet, network, supportedNetwork, isolatedMargin) => {
+		return wallet && supportedNetwork ? isolatedMargin.accounts[network][wallet] : null;
 	}
 );
 
@@ -151,12 +156,39 @@ export const selectMarketPrice = createSelector(
 	}
 );
 
+export const selectMarketPriceInfo = createSelector(
+	selectMarketInfo,
+	selectOffchainPricesInfo,
+	(marketInfo, pricesInfo) => {
+		if (!marketInfo || !pricesInfo[marketInfo.asset]) return;
+		return pricesInfo[marketInfo.asset];
+	}
+);
+
 export const selectSkewAdjustedPrice = createSelector(
 	selectMarketPrice,
 	selectMarketInfo,
 	(price, marketInfo) => {
 		if (!marketInfo?.marketSkew || !marketInfo?.settings.skewScale) return price;
-		return wei(price).mul(wei(marketInfo.marketSkew).div(marketInfo.settings.skewScale).add(1));
+		return price
+			? wei(price).mul(wei(marketInfo.marketSkew).div(marketInfo.settings.skewScale).add(1))
+			: zeroBN;
+	}
+);
+
+export const selectSkewAdjustedPriceInfo = createSelector(
+	selectMarketPriceInfo,
+	selectMarketInfo,
+	(priceInfo, marketInfo) => {
+		if (!marketInfo?.marketSkew || !marketInfo?.settings.skewScale) return priceInfo;
+		return priceInfo
+			? {
+					price: wei(priceInfo.price).mul(
+						wei(marketInfo.marketSkew).div(marketInfo.settings.skewScale).add(1)
+					),
+					change: priceInfo?.change,
+			  }
+			: undefined;
 	}
 );
 
@@ -171,7 +203,7 @@ export const selectMarketPrices = createSelector(
 export const selectMarkPrices = createSelector(selectMarkets, selectPrices, (markets, prices) => {
 	const markPrices: MarkPrices = {};
 	return markets.reduce((acc, market) => {
-		const price = prices[market.asset].offChain ?? wei(0);
+		const price = prices[market.asset]?.offChain ?? wei(0);
 		return {
 			...acc,
 			[market.marketKey]: wei(price).mul(
@@ -193,24 +225,20 @@ export const selectFuturesAccount = createSelector(
 export const selectCrossMarginPositions = createSelector(
 	selectCrossMarginAccountData,
 	(account) => {
-		return account
-			? account.positions.map(
-					// TODO: Maybe change to explicit serializing functions to avoid casting
-					(p) => deserializeWeiObject(p, futuresPositionKeys) as FuturesPosition
-			  )
-			: [];
+		return (
+			account?.positions?.map(
+				// TODO: Maybe change to explicit serializing functions to avoid casting
+				(p) => deserializeWeiObject(p, futuresPositionKeys) as FuturesPosition
+			) ?? []
+		);
 	}
 );
 
 export const selectIsolatedMarginPositions = createSelector(
-	selectWallet,
-	selectPrices,
-	(state: RootState) => state.futures,
-	(wallet, prices, futures) => {
-		if (!wallet) return [];
-		return futures.isolatedMargin.positions[wallet]
-			? futures.isolatedMargin.positions[wallet].map((p) => updatePositionUpnl(p, prices))
-			: [];
+	selectMarkPrices,
+	selectIsolatedAccountData,
+	(prices, account) => {
+		return account?.positions?.map((p) => updatePositionUpnl(p, prices)) ?? [];
 	}
 );
 
@@ -401,6 +429,27 @@ export const selectAboveMaxLeverage = createSelector(
 	}
 );
 
+export const selectAvailableMargin = createSelector(
+	selectMarketInfo,
+	selectPosition,
+	(marketInfo, position) => {
+		if (!marketInfo || !position) return zeroBN;
+		if (!position?.position) return position.remainingMargin;
+
+		let inaccessible = position.position.notionalValue.div(marketInfo.maxLeverage).abs() ?? zeroBN;
+
+		// If the user has a position open, we'll enforce a min initial margin requirement.
+		if (inaccessible.gt(0) && inaccessible.lt(marketInfo.minInitialMargin)) {
+			inaccessible = marketInfo.minInitialMargin;
+		}
+
+		// check if available margin will be less than 0
+		return position.remainingMargin.sub(inaccessible).gt(0)
+			? position.remainingMargin.sub(inaccessible).abs()
+			: zeroBN;
+	}
+);
+
 export const selectCrossMarginTradeInputs = createSelector(
 	selectLeverageSide,
 	(state: RootState) => state.futures.crossMargin.tradeInputs,
@@ -567,14 +616,8 @@ export const selectCrossMarginOpenOrders = createSelector(
 	}
 );
 
-export const selectIsolatedMarginOpenOrders = createSelector(
-	selectWallet,
-	(state: RootState) => state.futures,
-	(wallet, futures) => {
-		return wallet && futures.isolatedMargin.openOrders[wallet]
-			? unserializeDelayedOrders(futures.isolatedMargin.openOrders[wallet])
-			: [];
-	}
+export const selectIsolatedMarginOpenOrders = createSelector(selectIsolatedAccountData, (account) =>
+	unserializeDelayedOrders(account?.openOrders ?? [])
 );
 
 export const selectTradePreview = createSelector(
@@ -711,16 +754,14 @@ export const selectOpenInterest = createSelector(selectMarkets, (futuresMarkets)
 );
 export const selectPositionHistory = createSelector(
 	selectFuturesType,
-	selectFuturesAccount,
 	selectCrossMarginAccountData,
-	(state: RootState) => state.futures,
-	(type, account, accountData, futures) => {
+	selectIsolatedAccountData,
+	(type, crossAccountData, isolatedAccountData) => {
 		if (type === 'cross_margin') {
-			return unserializePositionHistory(accountData?.positionHistory ?? []);
-		} else if (account) {
-			return unserializePositionHistory(futures.isolatedMargin.positionHistory[account] ?? []);
+			return unserializePositionHistory(crossAccountData?.positionHistory ?? []);
+		} else {
+			return unserializePositionHistory(isolatedAccountData?.positionHistory ?? []);
 		}
-		return [];
 	}
 );
 
@@ -749,13 +790,13 @@ export const selectUsersTradesForMarket = createSelector(
 	selectFuturesAccount,
 	selectMarketAsset,
 	selectCrossMarginAccountData,
-	(state: RootState) => state.futures,
-	(type, account, asset, accountData, futures) => {
+	selectIsolatedAccountData,
+	(type, account, asset, crossAccountData, isolatedAccountData) => {
 		let trades;
 		if (type === 'cross_margin') {
-			trades = unserializeTrades(accountData?.trades ?? []);
+			trades = unserializeTrades(crossAccountData?.trades ?? []);
 		} else if (account) {
-			trades = unserializeTrades(futures.isolatedMargin.trades?.[account] ?? []);
+			trades = unserializeTrades(isolatedAccountData?.trades ?? []);
 		}
 		return trades?.filter((t) => t.asset === formatBytes32String(asset)) ?? [];
 	}
@@ -763,16 +804,14 @@ export const selectUsersTradesForMarket = createSelector(
 
 export const selectAllUsersTrades = createSelector(
 	selectFuturesType,
-	selectFuturesAccount,
 	selectCrossMarginAccountData,
-	(state: RootState) => state.futures,
-	(type, account, accountData, futures) => {
+	selectIsolatedAccountData,
+	(type, crossAccountData, isolatedAccountData) => {
 		if (type === 'cross_margin') {
-			return unserializeTrades(accountData?.trades ?? []);
-		} else if (account) {
-			return unserializeTrades(futures.isolatedMargin.trades?.[account] ?? []);
+			return unserializeTrades(crossAccountData?.trades ?? []);
+		} else {
+			return unserializeTrades(isolatedAccountData?.trades ?? []);
 		}
-		return [];
 	}
 );
 
@@ -797,5 +836,44 @@ export const selectOrderFee = createSelector(
 	selectOrderType,
 	(marketInfo, { susdSizeDelta }, orderType) => {
 		return computeOrderFee(marketInfo, susdSizeDelta, orderType);
+	}
+);
+
+export const selectMaxUsdInputAmount = createSelector(
+	selectFuturesType,
+	selectPosition,
+	selectCrossMarginBalanceInfo,
+	selectMaxLeverage,
+	(futuresType, position, balance, maxLeverage) => {
+		const margin =
+			futuresType === 'cross_margin'
+				? balance.freeMargin.add(position?.remainingMargin ?? '0')
+				: position?.remainingMargin ?? wei(0);
+
+		return maxLeverage.mul(margin);
+	}
+);
+
+export const selectPreviewAvailableMargin = createSelector(
+	selectMarketInfo,
+	selectTradePreview,
+	selectDelayedOrderFee,
+	(marketInfo, tradePreview, delayedOrderFee) => {
+		if (!marketInfo || !tradePreview) return zeroBN;
+
+		let inaccessible = tradePreview.notionalValue.div(marketInfo.maxLeverage).abs() ?? zeroBN;
+		const totalDeposit = !!delayedOrderFee.commitDeposit
+			? delayedOrderFee.commitDeposit.add(marketInfo.keeperDeposit)
+			: zeroBN;
+
+		// If the user has a position open, we'll enforce a min initial margin requirement.
+		if (inaccessible.gt(0) && inaccessible.lt(marketInfo.minInitialMargin)) {
+			inaccessible = marketInfo.minInitialMargin;
+		}
+
+		// check if available margin will be less than 0
+		return tradePreview.margin.sub(inaccessible).sub(totalDeposit).gt(0)
+			? tradePreview.margin.sub(inaccessible).sub(totalDeposit).abs()
+			: zeroBN;
 	}
 );

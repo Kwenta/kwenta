@@ -10,27 +10,13 @@ import { AppThunk } from 'state/store';
 import { FetchStatus, ThunkConfig } from 'state/types';
 import { toWei, truncateNumbers } from 'utils/formatters/number';
 
-import { selectBaseBalanceWei, selectQuoteBalanceWei } from './selectors';
+import {
+	selectBaseBalanceWei,
+	selectInsufficientBalance,
+	selectIsApproved,
+	selectQuoteBalanceWei,
+} from './selectors';
 import { SwapRatio } from './types';
-
-export const fetchRedeemableBalances = createAsyncThunk<any, void, ThunkConfig>(
-	'exchange/fetchRedeemableBalances',
-	async (_, { extra: { sdk } }) => {
-		const {
-			balances: redeemableBalances,
-			totalUSDBalance: totalRedeemableBalance,
-		} = await sdk.exchange.getRedeemableDeprecatedSynths();
-
-		return {
-			redeemableSynthBalances: redeemableBalances.map((r) => ({
-				...r,
-				balance: '0',
-				usdBalance: r.usdBalance.toString(),
-			})),
-			totalRedeemableBalance: totalRedeemableBalance.toString(),
-		};
-	}
-);
 
 export const fetchTransactionFee = createAsyncThunk<
 	{
@@ -43,6 +29,15 @@ export const fetchTransactionFee = createAsyncThunk<
 	const {
 		exchange: { quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount },
 	} = getState();
+
+	const isApproved = selectIsApproved(getState());
+	const insufficientBalance = selectInsufficientBalance(getState());
+	if (!isApproved || insufficientBalance) {
+		return {
+			transactionFee: '0',
+			feeCost: '0',
+		};
+	}
 
 	if (baseCurrencyKey && quoteCurrencyKey) {
 		const [transactionFee, feeCost] = await Promise.all([
@@ -85,23 +80,6 @@ export const submitExchange = createAsyncThunk<void, void, ThunkConfig>(
 					},
 				});
 			}
-		}
-	}
-);
-
-export const submitRedeem = createAsyncThunk<void, void, ThunkConfig>(
-	'exchange/submitRedeem',
-	async (_, { dispatch, extra: { sdk } }) => {
-		const hash = await sdk.exchange.handleRedeem();
-
-		if (hash) {
-			monitorTransaction({
-				txHash: hash,
-				onTxConfirmed: () => {
-					dispatch(fetchBalances());
-					dispatch(fetchRedeemableBalances());
-				},
-			});
 		}
 	}
 );

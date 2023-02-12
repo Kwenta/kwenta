@@ -18,7 +18,7 @@ import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { FuturesTrade } from 'sdk/types/futures';
+import { FuturesMarketAsset, FuturesTrade } from 'sdk/types/futures';
 import TradeDrawer from 'sections/futures/MobileTrade/drawers/TradeDrawer';
 import PositionType from 'sections/futures/PositionType';
 import { TradeStatus } from 'sections/futures/types';
@@ -34,13 +34,7 @@ import { FetchStatus } from 'state/types';
 import { selectNetwork } from 'state/wallet/selectors';
 import { formatShortDateWithoutYear } from 'utils/formatters/date';
 import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
-import {
-	FuturesMarketAsset,
-	getDisplayAsset,
-	getMarketName,
-	isDecimalFour,
-	MarketKeyByAsset,
-} from 'utils/futures';
+import { getDisplayAsset, getMarketName, isDecimalFour, MarketKeyByAsset } from 'utils/futures';
 
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
 

@@ -13,7 +13,7 @@ export const ZERO_BALANCES = {
 	tokenBalances: {},
 };
 
-const initialState: BalancesState = {
+export const BALANCES_INITIAL_STATE: BalancesState = {
 	status: FetchStatus.Idle,
 	error: undefined,
 	...ZERO_BALANCES,
@@ -21,7 +21,7 @@ const initialState: BalancesState = {
 
 const balancesSlice = createSlice({
 	name: 'balances',
-	initialState,
+	initialState: BALANCES_INITIAL_STATE,
 	reducers: {
 		clearBalances: (state) => {
 			state.synthBalances = [];

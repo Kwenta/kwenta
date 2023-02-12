@@ -1,5 +1,5 @@
 import router from 'next/router';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -32,21 +32,17 @@ import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/form
 
 const MarketCostTooltip = () => {
 	const { t } = useTranslation();
-	const { makerFee, takerFee } = useAppSelector(selectOrderFee);
 
 	return (
-		<CostContainer>
-			<>{`${formatPercent(makerFee)} / ${formatPercent(takerFee)}`}</>
-			<Tooltip
-				height="auto"
-				preset="top"
-				width="300px"
-				content={t('futures.market.trade.fees.tooltip')}
-				style={{ textTransform: 'none' }}
-			>
-				<StyledHelpIcon />
-			</Tooltip>
-		</CostContainer>
+		<Tooltip
+			height="auto"
+			preset="top"
+			width="300px"
+			content={t('futures.market.trade.fees.tooltip')}
+			style={{ textTransform: 'none' }}
+		>
+			<StyledHelpIcon />
+		</Tooltip>
 	);
 };
 
@@ -58,12 +54,15 @@ const FeeInfoBox: React.FC = () => {
 	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance);
 	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
 	const isolatedMarginFee = useAppSelector(selectIsolatedMarginFee);
+	const { takerFee, makerFee } = useAppSelector(selectOrderFee);
 	const accountType = useAppSelector(selectFuturesType);
 	const { tradeFee: crossMarginTradeFeeRate, limitOrderFee, stopOrderFee } = useAppSelector(
 		selectCrossMarginSettings
 	);
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const tradePreview = useAppSelector(selectTradePreview);
+
+	const [feesExpanded, setFeesExpanded] = useState(false);
 
 	const commitDeposit = useMemo(() => tradePreview?.fee ?? zeroBN, [tradePreview?.fee]);
 
@@ -75,6 +74,36 @@ const FeeInfoBox: React.FC = () => {
 		() =>
 			orderType === 'limit' ? limitOrderFee : orderType === 'stop_market' ? stopOrderFee : null,
 		[orderType, stopOrderFee, limitOrderFee]
+	);
+
+	const marketCostTooltip = useMemo(
+		() => (
+			<Tooltip
+				height={'auto'}
+				preset="top"
+				width="300px"
+				content={t('futures.market.trade.fees.tooltip')}
+				style={{ textTransform: 'none' }}
+			>
+				<StyledHelpIcon />
+			</Tooltip>
+		),
+		[t]
+	);
+
+	const executionFeeTooltip = useMemo(
+		() => (
+			<Tooltip
+				height={'auto'}
+				preset="top"
+				width="300px"
+				content={t('futures.market.trade.fees.keeper-tooltip')}
+				style={{ textTransform: 'none' }}
+			>
+				<StyledHelpIcon />
+			</Tooltip>
+		),
+		[t]
 	);
 
 	const isRewardEligible = useMemo(
@@ -161,23 +190,26 @@ const FeeInfoBox: React.FC = () => {
 		}
 		if (orderType === 'delayed' || orderType === 'delayed_offchain') {
 			return {
-				'Keeper Deposit': {
-					value: !!marketInfo?.keeperDeposit ? formatDollars(marketInfo.keeperDeposit) : NO_VALUE,
-				},
-				'Commit Deposit': {
-					value: !!commitDeposit
-						? formatDollars(commitDeposit, { minDecimals: commitDeposit.lt(0.01) ? 4 : 2 })
-						: NO_VALUE,
-				},
-				'Total Deposit': {
+				'Total Fees': {
+					expandable: true,
 					value: formatDollars(totalDeposit),
-					spaceBeneath: true,
-				},
-				'Estimated Fees': {
-					value: !!commitDeposit
-						? formatDollars(commitDeposit, { minDecimals: commitDeposit.lt(0.01) ? 4 : 2 })
-						: NO_VALUE,
-					keyNode: <MarketCostTooltip />,
+					subItems: {
+						'Execution Fee': {
+							value: !!marketInfo?.keeperDeposit
+								? formatDollars(marketInfo.keeperDeposit)
+								: NO_VALUE,
+							keyNode: executionFeeTooltip,
+						},
+						[`Est. Trade Fee (${formatPercent(makerFee ?? zeroBN)} / ${formatPercent(
+							takerFee ?? zeroBN
+						)})`]: {
+							value: !!commitDeposit
+								? formatDollars(commitDeposit, { minDecimals: commitDeposit.lt(0.01) ? 4 : 2 })
+								: NO_VALUE,
+							keyNode: marketCostTooltip,
+						},
+					},
+					onClick: () => setFeesExpanded(!feesExpanded),
 				},
 			};
 		}
@@ -203,6 +235,11 @@ const FeeInfoBox: React.FC = () => {
 		commitDeposit,
 		accountType,
 		marketInfo?.keeperDeposit,
+		marketCostTooltip,
+		executionFeeTooltip,
+		feesExpanded,
+		makerFee,
+		takerFee,
 	]);
 
 	return <StyledInfoBox details={feesInfo} />;
@@ -210,12 +247,6 @@ const FeeInfoBox: React.FC = () => {
 
 const StyledInfoBox = styled(InfoBox)`
 	margin-bottom: 16px;
-`;
-
-const CostContainer = styled.div`
-	display: flex;
-	flex-direction: row;
-	align-items: center;
 `;
 
 const StyledHelpIcon = styled(HelpIcon)`

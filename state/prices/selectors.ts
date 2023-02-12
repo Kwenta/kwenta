@@ -4,28 +4,34 @@ import { wei } from '@synthetixio/wei';
 import { Prices } from 'sdk/types/prices';
 import { RootState } from 'state/store';
 import { getPricesForCurrencies } from 'utils/currencies';
+import { deserializePricesInfo } from 'utils/prices';
 
 export const selectPrices = createSelector(
 	(state: RootState) => state.prices,
 	({ onChainPrices, offChainPrices }) => {
 		const merged: Prices = {};
-		Object.entries(onChainPrices).forEach(([key, value]) => {
+		Object.entries(onChainPrices).forEach(([key, { price }]) => {
 			merged[key] = {
-				onChain: wei(value),
+				onChain: wei(price),
 			};
 		});
-		Object.entries(offChainPrices).forEach(([key, value]) => {
+		Object.entries(offChainPrices).forEach(([key, { price }]) => {
 			if (merged[key]) {
-				merged[key].offChain = wei(value);
+				merged[key].offChain = wei(price);
 			} else {
 				merged[key] = {
-					offChain: wei(value),
+					offChain: wei(price),
 				};
 			}
 		});
 		return merged;
 	}
 );
+
+export const selectOffchainPricesInfo = (state: RootState) =>
+	deserializePricesInfo(state.prices.offChainPrices);
+
+export const selectPreviousDayPrices = (state: RootState) => state.prices.previousDayPrices;
 
 export const selectLatestEthPrice = createSelector(selectPrices, (prices) => {
 	const price = getPricesForCurrencies(prices, 'sETH', 'sUSD');

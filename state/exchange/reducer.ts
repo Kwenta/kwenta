@@ -6,7 +6,6 @@ import { FetchStatus } from 'state/types';
 import { truncateNumbers } from 'utils/formatters/number';
 
 import {
-	fetchRedeemableBalances,
 	fetchFeeReclaimPeriod,
 	fetchNumEntries,
 	fetchTokenList,
@@ -14,13 +13,12 @@ import {
 	resetCurrencyKeys,
 	submitApprove,
 	submitExchange,
-	submitRedeem,
 	submitSettle,
 	updateBaseAmount,
 } from './actions';
 import { ExchangeState } from './types';
 
-const initialState: ExchangeState = {
+export const EXCHANGES_INITIAL_STATE: ExchangeState = {
 	baseCurrencyKey: undefined,
 	quoteCurrencyKey: 'sUSD',
 	txProvider: undefined,
@@ -36,8 +34,6 @@ const initialState: ExchangeState = {
 	baseFeeRate: undefined,
 	rate: undefined,
 	numEntries: 0,
-	redeemableSynthBalances: [],
-	totalRedeemableBalance: undefined,
 	approvalStatus: FetchStatus.Idle,
 	tokenListStatus: FetchStatus.Idle,
 	synthsMap: {},
@@ -57,7 +53,7 @@ const initialState: ExchangeState = {
 
 const exchangeSlice = createSlice({
 	name: 'exchange',
-	initialState,
+	initialState: EXCHANGES_INITIAL_STATE,
 	reducers: {
 		setQuoteAmount: (state, action) => {
 			state.ratio = undefined;
@@ -121,10 +117,6 @@ const exchangeSlice = createSlice({
 		},
 	},
 	extraReducers: (builder) => {
-		builder.addCase(fetchRedeemableBalances.fulfilled, (state, action) => {
-			state.redeemableSynthBalances = action.payload.redeemableSynthBalances;
-			state.totalRedeemableBalance = action.payload.totalRedeemableBalance;
-		});
 		builder.addCase(fetchTransactionFee.fulfilled, (state, action) => {
 			state.transactionFee = action.payload.transactionFee;
 			state.feeCost = action.payload.feeCost;
@@ -154,17 +146,6 @@ const exchangeSlice = createSlice({
 		builder.addCase(submitApprove.rejected, (state, action) => {
 			state.openModal = undefined;
 			state.approvalStatus = FetchStatus.Error;
-			state.txError = action.error.message;
-		});
-		builder.addCase(submitRedeem.pending, (state) => {
-			state.openModal = 'redeem';
-			state.txError = undefined;
-		});
-		builder.addCase(submitRedeem.fulfilled, (state) => {
-			state.openModal = undefined;
-		});
-		builder.addCase(submitRedeem.rejected, (state, action) => {
-			state.openModal = undefined;
 			state.txError = action.error.message;
 		});
 		builder.addCase(submitSettle.pending, (state) => {
