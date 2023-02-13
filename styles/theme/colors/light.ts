@@ -9,7 +9,7 @@ const lightTheme = {
 		yellow: { background: common.primaryYellow, text: 'black' },
 		gray: { background: common.primaryGray, text: 'black' },
 	},
-	tab: { background: { active: '#e8e8e8', inactive: 'transparent' } },
+	tab: { background: { active: 'transparent', inactive: '#e8e8e8' } },
 	button: {
 		border: 'rgb(0 0 0 / 10%)',
 		fill: '#e8e8e8',
