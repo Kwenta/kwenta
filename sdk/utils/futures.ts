@@ -9,6 +9,8 @@ import {
 	FuturesOrderType as SubgraphOrderType,
 	FuturesPositionResult,
 	FuturesTradeResult,
+	FuturesMarginTransferResult,
+	CrossMarginAccountTransferResult,
 } from 'queries/futures/subgraph';
 import {
 	FUTURES_ENDPOINTS,
@@ -39,6 +41,7 @@ import {
 	PositionSide,
 	PostTradeDetailsResponse,
 	PotentialTradeStatus,
+	MarginTransfer,
 } from 'sdk/types/futures';
 import { CrossMarginSettings } from 'state/futures/types';
 import { formatCurrency, formatDollars, zeroBN } from 'utils/formatters/number';
@@ -546,6 +549,63 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 				pnl: new Wei(pnl, 18, true),
 				feesPaid: new Wei(feesPaid, 18, true),
 				orderType: mapOrderType(orderType),
+			};
+		}
+	);
+};
+
+export const mapMarginTransfers = (
+	marginTransfers: FuturesMarginTransferResult[]
+): MarginTransfer[] => {
+	return marginTransfers?.map(
+		({
+			timestamp,
+			account,
+			market,
+			size,
+			asset,
+			txHash,
+		}: FuturesMarginTransferResult): MarginTransfer => {
+			const sizeWei = new Wei(size);
+			const cleanSize = sizeWei.div(ETH_UNIT).abs();
+			const isPositive = sizeWei.gt(0);
+			const amount = `${isPositive ? '+' : '-'}${formatDollars(cleanSize)}`;
+			const numTimestamp = wei(timestamp).toNumber();
+
+			return {
+				timestamp: numTimestamp,
+				account,
+				market,
+				size,
+				action: isPositive ? 'deposit' : 'withdraw',
+				amount,
+				isPositive,
+				asset: parseBytes32String(asset) as FuturesMarketAsset,
+				txHash,
+			};
+		}
+	);
+};
+
+export const mapCrossMarginTransfers = (
+	marginTransfers: CrossMarginAccountTransferResult[]
+): MarginTransfer[] => {
+	return marginTransfers?.map(
+		({ timestamp, account, size, txHash }: CrossMarginAccountTransferResult): MarginTransfer => {
+			const sizeWei = new Wei(size);
+			const cleanSize = sizeWei.div(ETH_UNIT).abs();
+			const isPositive = sizeWei.gt(0);
+			const amount = `${isPositive ? '+' : '-'}${formatDollars(cleanSize)}`;
+			const numTimestamp = wei(timestamp).toNumber();
+
+			return {
+				timestamp: numTimestamp,
+				account,
+				size,
+				action: isPositive ? 'deposit' : 'withdraw',
+				amount,
+				isPositive,
+				txHash,
 			};
 		}
 	);

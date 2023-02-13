@@ -19,6 +19,7 @@ import {
 	FuturesPotentialTradeDetails,
 	FuturesTrade,
 	FuturesVolumes,
+	MarginTransfer,
 	OrderEnumByType,
 	PositionSide,
 	PotentialTradeStatus,
@@ -55,6 +56,7 @@ import {
 	serializeDelayedOrders,
 	serializeFuturesOrders,
 	serializeFuturesVolumes,
+	serializeMarginTransfers,
 	serializeMarkets,
 	serializePositionHistory,
 	serializeTrades,
@@ -324,6 +326,39 @@ export const fetchDailyVolumes = createAsyncThunk<FuturesVolumes<string>, void, 
 		return serializeFuturesVolumes(volumes);
 	}
 );
+
+export const fetchMarginTransfers = createAsyncThunk<
+	| {
+			marginTransfers: MarginTransfer<string>[];
+			wallet: string;
+			network: NetworkId;
+			accountType: FuturesAccountType;
+	  }
+	| undefined,
+	void,
+	ThunkConfig
+>('futures/fetchCrossMarginTransfers', async (_, { getState, extra: { sdk } }) => {
+	const { wallet, futures } = getState();
+	const supportedNetwork = selectFuturesSupportedNetwork(getState());
+	const network = selectNetwork(getState());
+	if (!wallet.walletAddress || !supportedNetwork) return;
+	try {
+		const transfers =
+			futures.selectedType === 'cross_margin'
+				? await sdk.futures.getCrossMarginTransfers()
+				: await sdk.futures.getIsolatedMarginTransfers();
+		return {
+			marginTransfers: serializeMarginTransfers(transfers),
+			wallet: wallet.walletAddress,
+			network: network,
+			accountType: futures.selectedType,
+		};
+	} catch (err) {
+		logError(err);
+		notifyError('Failed to fetch isolated margin positions', err);
+		throw err;
+	}
+});
 
 export const fetchDashboardFuturesData = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/fetchDashboardFuturesData',
@@ -916,6 +951,7 @@ export const depositIsolatedMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 			dispatch(setOpenModal(null));
 			dispatch(refetchPosition('isolated_margin'));
 			dispatch(fetchBalances());
+			dispatch(fetchMarginTransfers());
 		} catch (err) {
 			dispatch(handleTransactionError(err.message));
 			throw err;
@@ -941,6 +977,7 @@ export const withdrawIsolatedMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 			dispatch(refetchPosition('isolated_margin'));
 			dispatch(setOpenModal(null));
 			dispatch(fetchBalances());
+			dispatch(fetchMarginTransfers());
 		} catch (err) {
 			dispatch(handleTransactionError(err.message));
 			throw err;
@@ -1298,6 +1335,7 @@ const submitCMTransferTransaction = async (
 		dispatch(setOpenModal(null));
 		dispatch(refetchPosition('cross_margin'));
 		dispatch(fetchBalances());
+		dispatch(fetchMarginTransfers());
 		return tx;
 	} catch (err) {
 		logError(err);

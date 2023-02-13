@@ -11,7 +11,12 @@ import { DAY_PERIOD, KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { getFuturesAggregateStats } from 'queries/futures/subgraph';
 import { FuturesAccountType } from 'queries/futures/types';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
-import { BPS_CONVERSION, DEFAULT_DESIRED_TIMEDELTA } from 'sdk/constants/futures';
+import {
+	BPS_CONVERSION,
+	CROSS_MARGIN_FRAGMENT,
+	DEFAULT_DESIRED_TIMEDELTA,
+	ISOLATED_MARGIN_FRAGMENT,
+} from 'sdk/constants/futures';
 import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { getContractsByNetwork, getPerpsV2MarketMulticall } from 'sdk/contracts';
 import CrossMarginBaseABI from 'sdk/contracts/abis/CrossMarginBase.json';
@@ -40,6 +45,7 @@ import {
 	PositionDetail,
 	PositionSide,
 	ModifyPositionOptions,
+	MarginTransfer,
 } from 'sdk/types/futures';
 import { PricesMap } from 'sdk/types/prices';
 import {
@@ -51,9 +57,11 @@ import {
 	getFuturesEndpoint,
 	getMarketName,
 	getReasonFromCode,
+	mapCrossMarginTransfers,
 	mapFuturesOrderFromEvent,
 	mapFuturesPosition,
 	mapFuturesPositions,
+	mapMarginTransfers,
 	mapTrades,
 	marketsForNetwork,
 } from 'sdk/utils/futures';
@@ -394,6 +402,24 @@ export default class FuturesService {
 			}
 		);
 		return response ? calculateVolumes(response) : {};
+	}
+
+	public async getIsolatedMarginTransfers(
+		walletAddress?: string | null
+	): Promise<MarginTransfer[]> {
+		const address = walletAddress ?? this.sdk.context.walletAddress;
+		const response = await request(this.futuresGqlEndpoint, ISOLATED_MARGIN_FRAGMENT, {
+			walletAddress: address,
+		});
+		return response ? mapMarginTransfers(response.futuresMarginTransfers) : [];
+	}
+
+	public async getCrossMarginTransfers(walletAddress?: string | null): Promise<MarginTransfer[]> {
+		const address = walletAddress ?? this.sdk.context.walletAddress;
+		const response = await request(this.futuresGqlEndpoint, CROSS_MARGIN_FRAGMENT, {
+			walletAddress: address,
+		});
+		return response ? mapCrossMarginTransfers(response.crossMarginAccountTransfers) : [];
 	}
 
 	public async getCrossMarginAccounts(walletAddress?: string | null) {
