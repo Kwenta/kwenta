@@ -1,4 +1,4 @@
-import React, { FC, useMemo, DependencyList, useEffect, useRef } from 'react';
+import React, { FC, useMemo, DependencyList, useEffect, useRef, memo } from 'react';
 import { useTable, useFlexLayout, useSortBy, Column, Row, usePagination } from 'react-table';
 import type { TableInstance, UsePaginationInstanceProps, UsePaginationState } from 'react-table';
 import styled, { css } from 'styled-components';
@@ -70,161 +70,163 @@ type TableProps = {
 	compactPagination?: boolean;
 };
 
-export const Table: FC<TableProps> = ({
-	columns = [],
-	columnsDeps = [],
-	data = [],
-	options = {},
-	noResultsMessage = null,
-	onTableRowClick = undefined,
-	palette = 'primary',
-	isLoading = false,
-	className,
-	showPagination = false,
-	pageSize = null,
-	hiddenColumns = [],
-	hideHeaders,
-	highlightRowsOnHover,
-	showShortList,
-	sortBy = [],
-	lastRef = null,
-	compactPagination = false,
-}) => {
-	const memoizedColumns = useMemo(
-		() => columns,
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		columnsDeps
-	);
+export const Table: FC<TableProps> = memo(
+	({
+		columns = [],
+		columnsDeps = [],
+		data = [],
+		options = {},
+		noResultsMessage = null,
+		onTableRowClick = undefined,
+		palette = 'primary',
+		isLoading = false,
+		className,
+		showPagination = false,
+		pageSize = null,
+		hiddenColumns = [],
+		hideHeaders,
+		highlightRowsOnHover,
+		showShortList,
+		sortBy = [],
+		lastRef = null,
+		compactPagination = false,
+	}) => {
+		const memoizedColumns = useMemo(
+			() => columns,
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+			columnsDeps
+		);
 
-	const {
-		getTableProps,
-		getTableBodyProps,
-		headerGroups,
-		page,
-		prepareRow,
-		canPreviousPage,
-		canNextPage,
-		pageCount,
-		gotoPage,
-		nextPage,
-		previousPage,
-		state: { pageIndex },
-		setHiddenColumns,
-	} = useTable(
-		{
-			columns: memoizedColumns,
-			data,
-			initialState: {
-				pageSize: showPagination
-					? pageSize
+		const {
+			getTableProps,
+			getTableBodyProps,
+			headerGroups,
+			page,
+			prepareRow,
+			canPreviousPage,
+			canNextPage,
+			pageCount,
+			gotoPage,
+			nextPage,
+			previousPage,
+			state: { pageIndex },
+			setHiddenColumns,
+		} = useTable(
+			{
+				columns: memoizedColumns,
+				data,
+				initialState: {
+					pageSize: showPagination
 						? pageSize
-						: MAX_PAGE_ROWS
-					: showShortList
-					? pageSize ?? 5
-					: MAX_TOTAL_ROWS,
-				hiddenColumns: hiddenColumns,
-				sortBy: sortBy,
+							? pageSize
+							: MAX_PAGE_ROWS
+						: showShortList
+						? pageSize ?? 5
+						: MAX_TOTAL_ROWS,
+					hiddenColumns: hiddenColumns,
+					sortBy: sortBy,
+				},
+				autoResetPage: false,
+				autoResetSortBy: false,
+				...options,
 			},
-			autoResetPage: false,
-			autoResetSortBy: false,
-			...options,
-		},
-		useSortBy,
-		usePagination,
-		useFlexLayout
-	) as TableWithPagination<object>;
+			useSortBy,
+			usePagination,
+			useFlexLayout
+		) as TableWithPagination<object>;
 
-	useEffect(() => {
-		setHiddenColumns(hiddenColumns);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+		useEffect(() => {
+			setHiddenColumns(hiddenColumns);
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+		}, []);
 
-	// reset to the first page
-	// this fires when filters are applied that change the data
-	// if a filter is applied that reduces the data size below max pages for that filter, reset to the first page
-	useEffect(() => {
-		if (pageIndex > pageCount) {
-			gotoPage(0);
-		}
-	}, [pageIndex, pageCount, gotoPage]);
+		// reset to the first page
+		// this fires when filters are applied that change the data
+		// if a filter is applied that reduces the data size below max pages for that filter, reset to the first page
+		useEffect(() => {
+			if (pageIndex > pageCount) {
+				gotoPage(0);
+			}
+		}, [pageIndex, pageCount, gotoPage]);
 
-	const defaultRef = useRef(null);
+		const defaultRef = useRef(null);
 
-	return (
-		<>
-			<TableContainer>
-				<ReactTable {...getTableProps()} palette={palette} className={className}>
-					{headerGroups.map((headerGroup) => (
-						<div className="table-row" {...headerGroup.getHeaderGroupProps()}>
-							{headerGroup.headers.map((column: any) => (
-								<TableCellHead
-									hideHeaders={hideHeaders}
-									{...column.getHeaderProps(
-										column.sortable ? column.getSortByToggleProps() : undefined
-									)}
-								>
-									{column.render('Header')}
-									{column.sortable && (
-										<SortIconContainer>
-											{column.isSorted ? (
-												column.isSortedDesc ? (
-													<StyledSortDownIcon />
+		return (
+			<>
+				<TableContainer>
+					<ReactTable {...getTableProps()} palette={palette} className={className}>
+						{headerGroups.map((headerGroup) => (
+							<div className="table-row" {...headerGroup.getHeaderGroupProps()}>
+								{headerGroup.headers.map((column: any) => (
+									<TableCellHead
+										hideHeaders={hideHeaders}
+										{...column.getHeaderProps(
+											column.sortable ? column.getSortByToggleProps() : undefined
+										)}
+									>
+										{column.render('Header')}
+										{column.sortable && (
+											<SortIconContainer>
+												{column.isSorted ? (
+													column.isSortedDesc ? (
+														<StyledSortDownIcon />
+													) : (
+														<StyledSortUpIcon />
+													)
 												) : (
-													<StyledSortUpIcon />
-												)
-											) : (
-												<>
-													<StyledSortUpIcon />
-													<StyledSortDownIcon />
-												</>
-											)}
-										</SortIconContainer>
-									)}
-								</TableCellHead>
-							))}
-						</div>
-					))}
-					{isLoading ? (
-						<StyledSpinner />
-					) : (
-						page.length > 0 && (
-							<TableBody className="table-body" {...getTableBodyProps()}>
-								{page.map((row: Row, idx: number) => {
-									prepareRow(row);
-									const props = row.getRowProps();
-									const localRef = lastRef && idx === page.length - 1 ? lastRef : defaultRef;
-									const handleClick = onTableRowClick ? () => onTableRowClick(row) : undefined;
-									return (
-										<TableBodyRow
-											localRef={localRef}
-											highlightRowsOnHover={highlightRowsOnHover}
-											row={row}
-											onClick={handleClick}
-											{...props}
-										/>
-									);
-								})}
-							</TableBody>
-						)
-					)}
-					{!!noResultsMessage && !isLoading && data.length === 0 && noResultsMessage}
-				</ReactTable>
-			</TableContainer>
-			{showPagination && !showShortList && data.length > (pageSize ?? MAX_PAGE_ROWS) ? (
-				<Pagination
-					compact={compactPagination}
-					pageIndex={pageIndex}
-					pageCount={pageCount}
-					canNextPage={canNextPage}
-					canPreviousPage={canPreviousPage}
-					setPage={gotoPage}
-					previousPage={previousPage}
-					nextPage={nextPage}
-				/>
-			) : undefined}
-		</>
-	);
-};
+													<>
+														<StyledSortUpIcon />
+														<StyledSortDownIcon />
+													</>
+												)}
+											</SortIconContainer>
+										)}
+									</TableCellHead>
+								))}
+							</div>
+						))}
+						{isLoading ? (
+							<StyledSpinner />
+						) : (
+							page.length > 0 && (
+								<TableBody className="table-body" {...getTableBodyProps()}>
+									{page.map((row: Row, idx: number) => {
+										prepareRow(row);
+										const props = row.getRowProps();
+										const localRef = lastRef && idx === page.length - 1 ? lastRef : defaultRef;
+										const handleClick = onTableRowClick ? () => onTableRowClick(row) : undefined;
+										return (
+											<TableBodyRow
+												localRef={localRef}
+												highlightRowsOnHover={highlightRowsOnHover}
+												row={row}
+												onClick={handleClick}
+												{...props}
+											/>
+										);
+									})}
+								</TableBody>
+							)
+						)}
+						{!!noResultsMessage && !isLoading && data.length === 0 && noResultsMessage}
+					</ReactTable>
+				</TableContainer>
+				{showPagination && !showShortList && data.length > (pageSize ?? MAX_PAGE_ROWS) ? (
+					<Pagination
+						compact={compactPagination}
+						pageIndex={pageIndex}
+						pageCount={pageCount}
+						canNextPage={canNextPage}
+						canPreviousPage={canPreviousPage}
+						setPage={gotoPage}
+						previousPage={previousPage}
+						nextPage={nextPage}
+					/>
+				) : undefined}
+			</>
+		);
+	}
+);
 
 const TableContainer = styled.div`
 	overflow-x: auto;

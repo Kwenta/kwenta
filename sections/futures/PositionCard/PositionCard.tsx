@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
@@ -34,7 +34,7 @@ import { getMarketName, isDecimalFour } from 'utils/futures';
 
 import EditLeverageModal from '../TradeCrossMargin/EditCrossMarginLeverageModal';
 
-const PositionCard: React.FC = () => {
+const PositionCard = memo(() => {
 	const marketKey = useAppSelector(selectMarketKey);
 	const openModal = useAppSelector(selectOpenModal);
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketKey);
@@ -64,9 +64,9 @@ const PositionCard: React.FC = () => {
 			</Container>
 		</>
 	);
-};
+});
 
-const MarketNameRow = () => {
+const MarketNameRow = memo(() => {
 	const marketPriceInfo = useAppSelector(selectMarketPriceInfo);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const marketKey = useAppSelector(selectMarketKey);
@@ -95,9 +95,9 @@ const MarketNameRow = () => {
 			</ColoredPrice>
 		</InfoRow>
 	);
-};
+});
 
-const PositionSideRow = () => {
+const PositionSideRow = memo(() => {
 	const { t } = useTranslation();
 	const position = useAppSelector(selectPosition);
 	const previewData = useAppSelector(selectPreviewData);
@@ -134,9 +134,9 @@ const PositionSideRow = () => {
 			</div>
 		</InfoRow>
 	);
-};
+});
 
-const PositionSizeRow = () => {
+const PositionSizeRow = memo(() => {
 	const { t } = useTranslation();
 	const position = useAppSelector(selectPosition);
 	const previewData = useAppSelector(selectPreviewData);
@@ -173,9 +173,9 @@ const PositionSizeRow = () => {
 			</StyledValue>
 		</InfoRow>
 	);
-};
+});
 
-const NetFundingRow = () => {
+const NetFundingRow = memo(() => {
 	const { t } = useTranslation();
 	const position = useAppSelector(selectPosition);
 	const positionDetails = position?.position;
@@ -204,9 +204,9 @@ const NetFundingRow = () => {
 			)}
 		</InfoRow>
 	);
-};
+});
 
-const UnrealizedPNLRow = () => {
+const UnrealizedPNLRow = memo(() => {
 	const { t } = useTranslation();
 	const position = useAppSelector(selectPosition);
 	const positionDetails = position?.position;
@@ -234,9 +234,9 @@ const UnrealizedPNLRow = () => {
 			)}
 		</InfoRow>
 	);
-};
+});
 
-const RealizedPNLRow = () => {
+const RealizedPNLRow = memo(() => {
 	const { t } = useTranslation();
 	const positionHistory = useAppSelector(selectSelectedMarketPositionHistory);
 	const position = useAppSelector(selectPosition);
@@ -267,9 +267,9 @@ const RealizedPNLRow = () => {
 			)}
 		</InfoRow>
 	);
-};
+});
 
-const LeverageRow = () => {
+const LeverageRow = memo(() => {
 	const { t } = useTranslation();
 	const futuresAccountType = useAppSelector(selectFuturesType);
 	const dispatch = useAppDispatch();
@@ -305,9 +305,9 @@ const LeverageRow = () => {
 			</FlexDivCentered>
 		</InfoRow>
 	);
-};
+});
 
-const LiquidationPriceRow = () => {
+const LiquidationPriceRow = memo(() => {
 	const { t } = useTranslation();
 	const position = useAppSelector(selectPosition);
 	const previewData = useAppSelector(selectPreviewData);
@@ -349,9 +349,9 @@ const LiquidationPriceRow = () => {
 			</StyledValue>
 		</InfoRow>
 	);
-};
+});
 
-const AverageEntryPriceRow = () => {
+const AverageEntryPriceRow = memo(() => {
 	const { t } = useTranslation();
 	const position = useAppSelector(selectPosition);
 	const previewData = useAppSelector(selectPreviewData);
@@ -392,7 +392,7 @@ const AverageEntryPriceRow = () => {
 			</StyledValue>
 		</InfoRow>
 	);
-};
+});
 
 export default PositionCard;
 

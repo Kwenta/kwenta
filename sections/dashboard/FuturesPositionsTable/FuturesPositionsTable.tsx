@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { FC, useMemo } from 'react';
+import { FC, memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled, { useTheme } from 'styled-components';
@@ -39,283 +39,286 @@ type FuturesPositionTableProps = {
 	showCurrentMarket?: boolean;
 };
 
-const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
-	accountType,
-	showCurrentMarket = true,
-}) => {
-	const { t } = useTranslation();
-	const theme = useTheme();
-	const { synthsMap } = Connector.useContainer();
-	const router = useRouter();
-	const { switchToL2 } = useNetworkSwitcher();
+const FuturesPositionsTable: FC<FuturesPositionTableProps> = memo(
+	({ accountType, showCurrentMarket = true }) => {
+		const { t } = useTranslation();
+		const theme = useTheme();
+		const { synthsMap } = Connector.useContainer();
+		const router = useRouter();
+		const { switchToL2 } = useNetworkSwitcher();
 
-	const isL2 = useIsL2();
+		const isL2 = useIsL2();
 
-	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
-	const crossMarginPositions = useAppSelector(selectCrossMarginPositions);
-	const positionHistory = useAppSelector(selectPositionHistory);
-	const currentMarket = useAppSelector(selectMarketAsset);
-	const futuresMarkets = useAppSelector(selectMarkets);
+		const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
+		const crossMarginPositions = useAppSelector(selectCrossMarginPositions);
+		const positionHistory = useAppSelector(selectPositionHistory);
+		const currentMarket = useAppSelector(selectMarketAsset);
+		const futuresMarkets = useAppSelector(selectMarkets);
 
-	let data = useMemo(() => {
-		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions;
-		return positions
-			.map((position) => {
-				const market = futuresMarkets.find((market) => market.asset === position.asset);
-				const description = getSynthDescription(position.asset, synthsMap, t);
-				const thisPositionHistory = positionHistory.find((ph) => {
-					return ph.isOpen && ph.asset === position.asset;
-				});
+		let data = useMemo(() => {
+			const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions;
+			return positions
+				.map((position) => {
+					const market = futuresMarkets.find((market) => market.asset === position.asset);
+					const description = getSynthDescription(position.asset, synthsMap, t);
+					const thisPositionHistory = positionHistory.find((ph) => {
+						return ph.isOpen && ph.asset === position.asset;
+					});
 
-				return {
-					market,
-					position: position.position,
-					description,
-					avgEntryPrice: thisPositionHistory?.entryPrice,
-				};
-			})
-			.filter(
-				({ position, market }) =>
-					position && market && (market?.asset !== currentMarket || showCurrentMarket)
-			);
-	}, [
-		isolatedPositions,
-		crossMarginPositions,
-		accountType,
-		futuresMarkets,
-		positionHistory,
-		currentMarket,
-		synthsMap,
-		t,
-		showCurrentMarket,
-	]);
+					return {
+						market,
+						position: position.position,
+						description,
+						avgEntryPrice: thisPositionHistory?.entryPrice,
+					};
+				})
+				.filter(
+					({ position, market }) =>
+						position && market && (market?.asset !== currentMarket || showCurrentMarket)
+				);
+		}, [
+			isolatedPositions,
+			crossMarginPositions,
+			accountType,
+			futuresMarkets,
+			positionHistory,
+			currentMarket,
+			synthsMap,
+			t,
+			showCurrentMarket,
+		]);
 
-	return (
-		<>
-			<DesktopOnlyView>
-				<div>
-					<Table
-						data={data}
-						showPagination
-						onTableRowClick={(row) =>
-							router.push(ROUTES.Markets.MarketPair(row.original.market.asset, accountType))
-						}
-						noResultsMessage={
-							!isL2 ? (
-								<TableNoResults>
-									{t('common.l2-cta')}
-									<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
-								</TableNoResults>
-							) : (
-								<TableNoResults>
-									{!showCurrentMarket ? (
-										t('dashboard.overview.futures-positions-table.no-result')
-									) : (
-										<Link href={ROUTES.Markets.Home(accountType)}>
-											<div>{t('common.perp-cta')}</div>
-										</Link>
-									)}
-								</TableNoResults>
-							)
-						}
-						highlightRowsOnHover
-						columns={[
-							{
-								Header: (
-									<TableHeader>
-										{t('dashboard.overview.futures-positions-table.market')}
-									</TableHeader>
-								),
-								accessor: 'market',
-								Cell: (cellProps: CellProps<any>) => {
-									return (
-										<MarketContainer>
-											<IconContainer>
-												<StyledCurrencyIcon currencyKey={cellProps.row.original.market.marketKey} />
-											</IconContainer>
-											<StyledText>
-												{cellProps.row.original.market.marketName}
-												<MarketBadge
-													currencyKey={cellProps.row.original.market.marketKey}
-													isFuturesMarketClosed={cellProps.row.original.market.isSuspended}
-													futuresClosureReason={cellProps.row.original.market.marketClosureReason}
-												/>
-											</StyledText>
-											<StyledValue>{cellProps.row.original.description}</StyledValue>
-										</MarketContainer>
-									);
+		return (
+			<>
+				<DesktopOnlyView>
+					<div>
+						<Table
+							data={data}
+							showPagination
+							onTableRowClick={(row) =>
+								router.push(ROUTES.Markets.MarketPair(row.original.market.asset, accountType))
+							}
+							noResultsMessage={
+								!isL2 ? (
+									<TableNoResults>
+										{t('common.l2-cta')}
+										<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+									</TableNoResults>
+								) : (
+									<TableNoResults>
+										{!showCurrentMarket ? (
+											t('dashboard.overview.futures-positions-table.no-result')
+										) : (
+											<Link href={ROUTES.Markets.Home(accountType)}>
+												<div>{t('common.perp-cta')}</div>
+											</Link>
+										)}
+									</TableNoResults>
+								)
+							}
+							highlightRowsOnHover
+							columns={[
+								{
+									Header: (
+										<TableHeader>
+											{t('dashboard.overview.futures-positions-table.market')}
+										</TableHeader>
+									),
+									accessor: 'market',
+									Cell: (cellProps: CellProps<any>) => {
+										return (
+											<MarketContainer>
+												<IconContainer>
+													<StyledCurrencyIcon
+														currencyKey={cellProps.row.original.market.marketKey}
+													/>
+												</IconContainer>
+												<StyledText>
+													{cellProps.row.original.market.marketName}
+													<MarketBadge
+														currencyKey={cellProps.row.original.market.marketKey}
+														isFuturesMarketClosed={cellProps.row.original.market.isSuspended}
+														futuresClosureReason={cellProps.row.original.market.marketClosureReason}
+													/>
+												</StyledText>
+												<StyledValue>{cellProps.row.original.description}</StyledValue>
+											</MarketContainer>
+										);
+									},
+									width: 198,
 								},
-								width: 198,
-							},
-							{
-								Header: (
-									<TableHeader>{t('dashboard.overview.futures-positions-table.side')}</TableHeader>
-								),
-								accessor: 'position',
-								Cell: (cellProps: CellProps<any>) => {
-									return <PositionType side={cellProps.row.original.position.side} />;
+								{
+									Header: (
+										<TableHeader>
+											{t('dashboard.overview.futures-positions-table.side')}
+										</TableHeader>
+									),
+									accessor: 'position',
+									Cell: (cellProps: CellProps<any>) => {
+										return <PositionType side={cellProps.row.original.position.side} />;
+									},
+									width: 90,
 								},
-								width: 90,
-							},
-							{
-								Header: (
-									<TableHeader>
-										{t('dashboard.overview.futures-positions-table.notionalValue')}
-									</TableHeader>
-								),
-								accessor: 'notionalValue',
-								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = cellProps.row.original.position.notionalValue.gte(1e6)
-										? { truncate: true }
-										: {};
+								{
+									Header: (
+										<TableHeader>
+											{t('dashboard.overview.futures-positions-table.notionalValue')}
+										</TableHeader>
+									),
+									accessor: 'notionalValue',
+									Cell: (cellProps: CellProps<any>) => {
+										const formatOptions = cellProps.row.original.position.notionalValue.gte(1e6)
+											? { truncate: true }
+											: {};
 
-									return (
-										<Currency.Price
-											currencyKey="sUSD"
-											price={cellProps.row.original.position.notionalValue}
-											sign="$"
-											conversionRate={1}
-											formatOptions={formatOptions}
-										/>
-									);
+										return (
+											<Currency.Price
+												currencyKey="sUSD"
+												price={cellProps.row.original.position.notionalValue}
+												sign="$"
+												conversionRate={1}
+												formatOptions={formatOptions}
+											/>
+										);
+									},
+									width: 90,
 								},
-								width: 90,
-							},
-							{
-								Header: (
-									<TableHeader>
-										{t('dashboard.overview.futures-positions-table.leverage')}
-									</TableHeader>
-								),
-								accessor: 'leverage',
-								Cell: (cellProps: CellProps<any>) => {
-									return (
-										<DefaultCell>
-											{formatNumber(cellProps.row.original.position.leverage ?? 0)}x
-										</DefaultCell>
-									);
+								{
+									Header: (
+										<TableHeader>
+											{t('dashboard.overview.futures-positions-table.leverage')}
+										</TableHeader>
+									),
+									accessor: 'leverage',
+									Cell: (cellProps: CellProps<any>) => {
+										return (
+											<DefaultCell>
+												{formatNumber(cellProps.row.original.position.leverage ?? 0)}x
+											</DefaultCell>
+										);
+									},
+									width: 90,
 								},
-								width: 90,
-							},
-							{
-								Header: (
-									<TableHeader>{t('dashboard.overview.futures-positions-table.pnl')}</TableHeader>
-								),
-								accessor: 'pnl',
-								Cell: (cellProps: CellProps<any>) => {
-									return (
-										<PnlContainer>
-											<ChangePercent value={cellProps.row.original.position.pnlPct} />
-											<div>
-												<Currency.Price
-													currencyKey="sUSD"
-													price={cellProps.row.original.position.pnl}
-													sign="$"
-													conversionRate={1}
-												/>
-											</div>
-										</PnlContainer>
-									);
+								{
+									Header: (
+										<TableHeader>{t('dashboard.overview.futures-positions-table.pnl')}</TableHeader>
+									),
+									accessor: 'pnl',
+									Cell: (cellProps: CellProps<any>) => {
+										return (
+											<PnlContainer>
+												<ChangePercent value={cellProps.row.original.position.pnlPct} />
+												<div>
+													<Currency.Price
+														currencyKey="sUSD"
+														price={cellProps.row.original.position.pnl}
+														sign="$"
+														conversionRate={1}
+													/>
+												</div>
+											</PnlContainer>
+										);
+									},
+									width: 125,
 								},
-								width: 125,
-							},
-							{
-								Header: (
-									<TableHeader>
-										{t('dashboard.overview.futures-positions-table.avg-entry')}
-									</TableHeader>
-								),
-								accessor: 'avgEntryPrice',
-								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = {
-										minDecimals: DEFAULT_CRYPTO_DECIMALS,
-										isAssetPrice: true,
-									};
-									return cellProps.row.original.avgEntryPrice === undefined ? (
-										<DefaultCell>{NO_VALUE}</DefaultCell>
-									) : (
-										<Currency.Price
-											currencyKey="sUSD"
-											price={cellProps.row.original.avgEntryPrice}
-											sign="$"
-											conversionRate={1}
-											formatOptions={formatOptions}
-										/>
-									);
+								{
+									Header: (
+										<TableHeader>
+											{t('dashboard.overview.futures-positions-table.avg-entry')}
+										</TableHeader>
+									),
+									accessor: 'avgEntryPrice',
+									Cell: (cellProps: CellProps<any>) => {
+										const formatOptions = {
+											minDecimals: DEFAULT_CRYPTO_DECIMALS,
+											isAssetPrice: true,
+										};
+										return cellProps.row.original.avgEntryPrice === undefined ? (
+											<DefaultCell>{NO_VALUE}</DefaultCell>
+										) : (
+											<Currency.Price
+												currencyKey="sUSD"
+												price={cellProps.row.original.avgEntryPrice}
+												sign="$"
+												conversionRate={1}
+												formatOptions={formatOptions}
+											/>
+										);
+									},
+									width: 125,
 								},
-								width: 125,
-							},
-							{
-								Header: (
-									<TableHeader>
-										{t('dashboard.overview.futures-positions-table.liquidationPrice')}
-									</TableHeader>
-								),
-								accessor: 'liquidationPrice',
-								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = {
-										minDecimals: DEFAULT_CRYPTO_DECIMALS,
-										isAssetPrice: true,
-									};
-									return (
-										<Currency.Price
-											currencyKey="sUSD"
-											price={cellProps.row.original.position.liquidationPrice}
-											sign="$"
-											conversionRate={1}
-											formatOptions={formatOptions}
-										/>
-									);
+								{
+									Header: (
+										<TableHeader>
+											{t('dashboard.overview.futures-positions-table.liquidationPrice')}
+										</TableHeader>
+									),
+									accessor: 'liquidationPrice',
+									Cell: (cellProps: CellProps<any>) => {
+										const formatOptions = {
+											minDecimals: DEFAULT_CRYPTO_DECIMALS,
+											isAssetPrice: true,
+										};
+										return (
+											<Currency.Price
+												currencyKey="sUSD"
+												price={cellProps.row.original.position.liquidationPrice}
+												sign="$"
+												conversionRate={1}
+												formatOptions={formatOptions}
+											/>
+										);
+									},
+									width: 115,
 								},
-								width: 115,
-							},
-						]}
-					/>
+							]}
+						/>
+						<StyledBody>
+							<a target="_blank" rel="noopener noreferrer" href={EXTERNAL_LINKS.Trade.V1}>
+								{t('dashboard.overview.futures-positions-table.legacy-link')}{' '}
+								<StyledArrow fill={theme.colors.selectedTheme.text.value} />
+							</a>
+						</StyledBody>
+					</div>
+				</DesktopOnlyView>
+				<MobileOrTabletView>
+					<OpenPositionsHeader>
+						<div>{t('dashboard.overview.futures-positions-table.mobile.market')}</div>
+						<OpenPositionsRightHeader>
+							<div>{t('dashboard.overview.futures-positions-table.mobile.price')}</div>
+							<div>{t('dashboard.overview.futures-positions-table.mobile.pnl')}</div>
+						</OpenPositionsRightHeader>
+					</OpenPositionsHeader>
+					<div style={{ margin: '0 15px' }}>
+						{data.length === 0 ? (
+							<NoPositionsText>
+								<Link href={ROUTES.Markets.Home(accountType)}>
+									<div>{t('common.perp-cta')}</div>
+								</Link>
+							</NoPositionsText>
+						) : (
+							data.map((row) => (
+								<MobilePositionRow
+									onClick={() =>
+										router.push(ROUTES.Markets.MarketPair(row.market?.asset ?? 'sETH', accountType))
+									}
+									key={row.market?.asset}
+									row={row}
+								/>
+							))
+						)}
+					</div>
 					<StyledBody>
 						<a target="_blank" rel="noopener noreferrer" href={EXTERNAL_LINKS.Trade.V1}>
 							{t('dashboard.overview.futures-positions-table.legacy-link')}{' '}
 							<StyledArrow fill={theme.colors.selectedTheme.text.value} />
 						</a>
 					</StyledBody>
-				</div>
-			</DesktopOnlyView>
-			<MobileOrTabletView>
-				<OpenPositionsHeader>
-					<div>{t('dashboard.overview.futures-positions-table.mobile.market')}</div>
-					<OpenPositionsRightHeader>
-						<div>{t('dashboard.overview.futures-positions-table.mobile.price')}</div>
-						<div>{t('dashboard.overview.futures-positions-table.mobile.pnl')}</div>
-					</OpenPositionsRightHeader>
-				</OpenPositionsHeader>
-				<div style={{ margin: '0 15px' }}>
-					{data.length === 0 ? (
-						<NoPositionsText>
-							<Link href={ROUTES.Markets.Home(accountType)}>
-								<div>{t('common.perp-cta')}</div>
-							</Link>
-						</NoPositionsText>
-					) : (
-						data.map((row) => (
-							<MobilePositionRow
-								onClick={() =>
-									router.push(ROUTES.Markets.MarketPair(row.market?.asset ?? 'sETH', accountType))
-								}
-								key={row.market?.asset}
-								row={row}
-							/>
-						))
-					)}
-				</div>
-				<StyledBody>
-					<a target="_blank" rel="noopener noreferrer" href={EXTERNAL_LINKS.Trade.V1}>
-						{t('dashboard.overview.futures-positions-table.legacy-link')}{' '}
-						<StyledArrow fill={theme.colors.selectedTheme.text.value} />
-					</a>
-				</StyledBody>
-			</MobileOrTabletView>
-		</>
-	);
-};
+				</MobileOrTabletView>
+			</>
+		);
+	}
+);
 
 const StyledBody = styled(Body)`
 	margin-top: 8px;
