@@ -454,6 +454,7 @@ const MarketContainer = styled.div`
 `;
 
 const StyledMobileTable = styled(StyledTable)`
+	margin-top: 4px;
 	border-radius: initial;
 	border-top: none;
 	border-left: none;

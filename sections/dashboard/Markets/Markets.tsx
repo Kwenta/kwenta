@@ -41,13 +41,6 @@ const Markets: FC = () => {
 					))}
 				</TabButtonsContainer>
 			</DesktopOnlyView>
-			<MobileOrTabletView>
-				<TabButtonsContainer mobile>
-					{MARKETS_TABS.map(({ name, label, active, onClick }) => (
-						<TabButton key={name} title={label} active={active} onClick={onClick} />
-					))}
-				</TabButtonsContainer>
-			</MobileOrTabletView>
 
 			<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
 				<FuturesMarketsTable />
