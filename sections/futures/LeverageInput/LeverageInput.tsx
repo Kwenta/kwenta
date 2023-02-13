@@ -1,5 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import { FC, memo, useCallback, useMemo, useState } from 'react';
+import { Dispatch, FC, memo, SetStateAction, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -21,6 +21,17 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { floorNumber, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import LeverageSlider from '../LeverageSlider';
+
+const ModeButton: FC<{
+	mode: 'slider' | 'input';
+	setMode: Dispatch<SetStateAction<'slider' | 'input'>>;
+}> = ({ mode, setMode }) => {
+	const toggleMode = useCallback(() => {
+		setMode((m) => (m === 'slider' ? 'input' : 'slider'));
+	}, [setMode]);
+
+	return <TextButton onClick={toggleMode}>{mode === 'slider' ? 'Manual' : 'Slider'}</TextButton>;
+};
 
 const LeverageInput: FC = memo(() => {
 	const { t } = useTranslation();
@@ -46,18 +57,6 @@ const LeverageInput: FC = memo(() => {
 		[position?.remainingMargin, marketPrice, dispatch]
 	);
 
-	const modeButton = useMemo(() => {
-		return (
-			<TextButton
-				onClick={() => {
-					setMode(mode === 'slider' ? 'input' : 'slider');
-				}}
-			>
-				{mode === 'slider' ? 'Manual' : 'Slider'}
-			</TextButton>
-		);
-	}, [mode]);
-
 	const isDisabled = useMemo(() => {
 		return position?.remainingMargin.lte(0) || maxLeverage.lte(0);
 	}, [position, maxLeverage]);
@@ -79,7 +78,7 @@ const LeverageInput: FC = memo(() => {
 					{t('futures.market.trade.input.leverage.title')}&nbsp; —
 					<span>&nbsp; Up to {truncateMaxLeverage}x</span>
 				</LeverageTitle>
-				{modeButton}
+				<ModeButton mode={mode} setMode={setMode} />
 			</LeverageRow>
 
 			{mode === 'slider' ? (

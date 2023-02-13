@@ -10,7 +10,6 @@ import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { Rates } from 'queries/rates/types';
 import { FuturesMarketAsset, FuturesMarketKey } from 'sdk/types/futures';
 import { getDisplayAsset } from 'sdk/utils/futures';
@@ -64,6 +63,9 @@ type MarketsDropdownProps = {
 	mobile?: boolean;
 };
 
+const getMinDecimals = (asset: string) =>
+	isDecimalFour(asset) ? DEFAULT_CRYPTO_DECIMALS : undefined;
+
 const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const pastRates = useAppSelector(selectPreviousDayPrices);
 	const accountType = useAppSelector(selectFuturesType);
@@ -76,20 +78,18 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 		MarketKeyByAsset[marketAsset]
 	);
 
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const router = useRouter();
 	const { synthsMap } = Connector.useContainer();
 	const { t } = useTranslation();
 
-	const futureRates =
-		futuresMarkets?.reduce((acc: Rates, { asset }) => {
-			const price = prices[asset]?.offChain ?? prices[asset]?.onChain ?? wei(0);
-			const currencyKey = iStandardSynth(asset as CurrencyKey)
-				? asset
-				: assetToSynth(asset as CurrencyKey);
-			acc[currencyKey] = price;
-			return acc;
-		}, {}) ?? null;
+	const futureRates = futuresMarkets.reduce((acc, { asset }) => {
+		const price = prices[asset]?.offChain ?? prices[asset]?.onChain ?? wei(0);
+		const currencyKey = iStandardSynth(asset as CurrencyKey)
+			? asset
+			: assetToSynth(asset as CurrencyKey);
+		acc[currencyKey] = price;
+		return acc;
+	}, {} as Rates);
 
 	const getBasePriceRate = React.useCallback(
 		(asset: FuturesMarketAsset) => {
@@ -110,47 +110,32 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const selectedBasePriceRate = getBasePriceRate(marketAsset);
 	const selectedPastPrice = getPastPrice(marketAsset);
 
-	const getMinDecimals = React.useCallback(
-		(asset: string) => (isDecimalFour(asset) ? DEFAULT_CRYPTO_DECIMALS : undefined),
-		[]
-	);
-
 	const options = React.useMemo(() => {
-		return (
-			futuresMarkets?.map((market) => {
-				const pastPrice = getPastPrice(market.asset);
-				const basePriceRate = getBasePriceRate(market.asset);
+		return futuresMarkets.map((market) => {
+			const pastPrice = getPastPrice(market.asset);
+			const basePriceRate = getBasePriceRate(market.asset);
 
-				return assetToCurrencyOption({
-					asset: market.asset,
-					key: market.marketKey,
-					description: getSynthDescription(market.asset, synthsMap, t),
-					price: formatCurrency(selectedPriceCurrency.name, basePriceRate, {
-						sign: '$',
-						minDecimals: getMinDecimals(market.asset),
-						isAssetPrice: true,
-					}),
-					change: formatPercent(
-						basePriceRate && pastPrice?.rate
-							? wei(basePriceRate).sub(pastPrice?.rate).div(basePriceRate)
-							: zeroBN
-					),
-					negativeChange:
-						basePriceRate && pastPrice?.rate ? wei(basePriceRate).lt(pastPrice?.rate) : false,
-					isMarketClosed: market.isSuspended,
-					closureReason: market.marketClosureReason,
-				});
-			}) ?? []
-		);
-	}, [
-		futuresMarkets,
-		selectedPriceCurrency.name,
-		synthsMap,
-		t,
-		getBasePriceRate,
-		getPastPrice,
-		getMinDecimals,
-	]);
+			return assetToCurrencyOption({
+				asset: market.asset,
+				key: market.marketKey,
+				description: getSynthDescription(market.asset, synthsMap, t),
+				price: formatCurrency('sUSD', basePriceRate, {
+					sign: '$',
+					minDecimals: getMinDecimals(market.asset),
+					isAssetPrice: true,
+				}),
+				change: formatPercent(
+					basePriceRate && pastPrice?.rate
+						? wei(basePriceRate).sub(pastPrice?.rate).div(basePriceRate)
+						: zeroBN
+				),
+				negativeChange:
+					basePriceRate && pastPrice?.rate ? wei(basePriceRate).lt(pastPrice?.rate) : false,
+				isMarketClosed: market.isSuspended,
+				closureReason: market.marketClosureReason,
+			});
+		});
+	}, [futuresMarkets, synthsMap, t, getBasePriceRate, getPastPrice, getMinDecimals]);
 
 	const isFetching = !futuresMarkets.length && marketsQueryStatus.status === FetchStatus.Loading;
 
@@ -160,7 +145,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				maxMenuHeight={Math.max(window.innerHeight - (mobile ? 135 : 250), 300)}
 				instanceId={`markets-dropdown-${marketAsset}`}
 				controlHeight={55}
-				menuWidth={'100%'}
+				menuWidth="100%"
 				onChange={(x) => {
 					// Types are not perfect from react-select, this should always be true (just helping typescript)
 					if (x && 'value' in x) {
@@ -172,7 +157,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 					key: MarketKeyByAsset[marketAsset],
 					description: getSynthDescription(marketAsset, synthsMap, t),
 					price: mobile
-						? formatCurrency(selectedPriceCurrency.name, selectedBasePriceRate, {
+						? formatCurrency('sUSD', selectedBasePriceRate, {
 								sign: '$',
 								minDecimals: getMinDecimals(marketAsset),
 								isAssetPrice: true,

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import TimerIcon from 'assets/svg/app/timer.svg';
-import InfoBox from 'components/InfoBox';
+import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
 import { parseGasPriceObject } from 'hooks/useGas';
@@ -20,21 +20,88 @@ import {
 import { useAppSelector } from 'state/hooks';
 import { formatDollars, formatNumber, formatPercent, zeroBN } from 'utils/formatters/number';
 
-const SwapInfoBox: React.FC = () => {
+const PriceImpactRow = () => {
 	const { t } = useTranslation();
-	const gasSpeed = useAppSelector(selectGasSpeed);
-	const customGasPrice = useAppSelector(selectGasPrice);
-	const isL2 = useIsL2();
-	const isMainnet = useIsL1();
+	const slippagePercent = useAppSelector(selectSlippagePercentWei);
+
+	return (
+		<InfoBoxRow
+			title={t('exchange.currency-card.price-impact')}
+			value={slippagePercent.lt(0) ? formatPercent(slippagePercent) : NO_VALUE}
+			dataTestId=""
+		/>
+	);
+};
+
+const FeeCostRow = () => {
+	const { t } = useTranslation();
+	const feeCost = useAppSelector(selectFeeCostWei);
+
+	return (
+		<InfoBoxRow
+			title={t('common.summary.fee-cost')}
+			value={
+				feeCost != null
+					? formatDollars(feeCost, { minDecimals: feeCost.lt(0.01) ? 4 : 2 })
+					: NO_VALUE
+			}
+			dataTestId=""
+		/>
+	);
+};
+
+const FeeRow = () => {
+	const { t } = useTranslation();
 	const { exchangeFeeRate, baseFeeRate } = useAppSelector(({ exchange }) => ({
 		exchangeFeeRate: exchange.exchangeFeeRate,
 		baseFeeRate: exchange.baseFeeRate,
 	}));
 
+	return (
+		<InfoBoxRow
+			title={t('exchange.summary-info.fee')}
+			value=""
+			dataTestId=""
+			valueNode={
+				<div style={{ display: 'flex' }}>
+					{formatPercent(baseFeeRate ?? zeroBN)}
+					{exchangeFeeRate != null && baseFeeRate != null ? (
+						wei(exchangeFeeRate)
+							.sub(baseFeeRate ?? 0)
+							.gt(0) ? (
+							<>
+								{' + '}
+								<Tooltip
+									height="auto"
+									preset="bottom"
+									width="300px"
+									content="This transaction will incur an additional dynamic fee due to market volatility."
+									style={{ padding: 10, textTransform: 'none' }}
+								>
+									<StyledDynamicFee>
+										{formatPercent(wei(exchangeFeeRate).sub(baseFeeRate), { minDecimals: 2 })}
+									</StyledDynamicFee>
+									<StyledTimerIcon />
+								</Tooltip>
+							</>
+						) : null
+					) : null}
+				</div>
+			}
+		/>
+	);
+};
+
+const GasPriceRow = () => {
+	const { t } = useTranslation();
+	const gasSpeed = useAppSelector(selectGasSpeed);
+	const customGasPrice = useAppSelector(selectGasPrice);
+	const isL2 = useIsL2();
+	const isMainnet = useIsL1();
+
 	const { useEthGasPriceQuery } = useSynthetixQueries();
 
 	const transactionFee = useAppSelector(selectTransactionFeeWei);
-	const feeCost = useAppSelector(selectFeeCostWei);
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
@@ -42,7 +109,7 @@ const SwapInfoBox: React.FC = () => {
 		ethGasPriceQuery.data,
 	]);
 
-	const hasCustomGasPrice = customGasPrice !== '';
+	const hasCustomGasPrice = !!customGasPrice;
 	const gasPrice = gasPrices ? parseGasPriceObject(gasPrices[gasSpeed]) : null;
 
 	const formattedTransactionFee = React.useMemo(() => {
@@ -55,60 +122,31 @@ const SwapInfoBox: React.FC = () => {
 				minDecimals: 2,
 		  })} Gwei`;
 
-	const slippagePercent = useAppSelector(selectSlippagePercentWei);
-
 	return (
-		<StyledInfoBox
-			details={{
-				[isMainnet
+		<InfoBoxRow
+			title={
+				isMainnet
 					? t('common.summary.gas-prices.max-fee')
-					: t('common.summary.gas-prices.gas-price')]: {
-					value: gasPrice != null ? gasPriceItem : NO_VALUE,
-				},
-				[t('exchange.currency-card.price-impact')]: {
-					value: slippagePercent?.lt(0) ? formatPercent(slippagePercent) : NO_VALUE,
-				},
-				[t('exchange.summary-info.fee')]: {
-					value: '',
-					valueNode: (
-						<div style={{ display: 'flex' }}>
-							{formatPercent(baseFeeRate ?? zeroBN)}
-							{exchangeFeeRate != null && baseFeeRate != null ? (
-								wei(exchangeFeeRate)
-									.sub(baseFeeRate ?? 0)
-									.gt(0) ? (
-									<>
-										{' + '}
-										<Tooltip
-											height="auto"
-											preset="bottom"
-											width="300px"
-											content="This transaction will incur an additional dynamic fee due to market volatility."
-											style={{ padding: 10, textTransform: 'none' }}
-										>
-											<StyledDynamicFee>
-												{formatPercent(wei(exchangeFeeRate).sub(baseFeeRate), { minDecimals: 2 })}
-											</StyledDynamicFee>
-											<StyledTimerIcon />
-										</Tooltip>
-									</>
-								) : null
-							) : null}
-						</div>
-					),
-				},
-				[t('common.summary.fee-cost')]: {
-					value:
-						feeCost != null
-							? formatDollars(feeCost, { minDecimals: feeCost.lt(0.01) ? 4 : 2 })
-							: NO_VALUE,
-				},
-			}}
+					: t('common.summary.gas-prices.gas-price')
+			}
+			value={gasPrice != null ? gasPriceItem : NO_VALUE}
+			dataTestId=""
 		/>
 	);
 };
 
-const StyledInfoBox = styled(InfoBox)`
+const SwapInfoBox: React.FC = () => {
+	return (
+		<SwapInfoBoxContainer>
+			<GasPriceRow />
+			<PriceImpactRow />
+			<FeeRow />
+			<FeeCostRow />
+		</SwapInfoBoxContainer>
+	);
+};
+
+const SwapInfoBoxContainer = styled(InfoBoxContainer)`
 	margin-bottom: 15px;
 `;
 

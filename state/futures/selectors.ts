@@ -938,3 +938,60 @@ export const selectPreviewData = createSelector(
 		} as PositionPreviewData;
 	}
 );
+
+export const selectPreviewTradeData = createSelector(
+	selectTradePreview,
+	selectPreviewAvailableMargin,
+	selectMarketInfo,
+	(tradePreview, previewAvailableMargin, marketInfo) => {
+		const potentialMarginUsage = tradePreview?.margin.gt(0)
+			? tradePreview!.margin.sub(previewAvailableMargin).div(tradePreview!.margin).abs() ?? zeroBN
+			: zeroBN;
+
+		const maxPositionSize =
+			!!tradePreview && !!marketInfo
+				? tradePreview.margin
+						.mul(marketInfo.maxLeverage)
+						.mul(tradePreview.side === PositionSide.LONG ? 1 : -1)
+				: null;
+
+		const potentialBuyingPower = !!maxPositionSize
+			? maxPositionSize.sub(tradePreview?.notionalValue).abs()
+			: zeroBN;
+
+		return {
+			showPreview: !!tradePreview && tradePreview.sizeDelta.abs().gt(0),
+			totalMargin: tradePreview?.margin || zeroBN,
+			availableMargin: previewAvailableMargin.gt(0) ? previewAvailableMargin : zeroBN,
+			buyingPower: potentialBuyingPower.gt(0) ? potentialBuyingPower : zeroBN,
+			marginUsage: potentialMarginUsage.gt(1) ? wei(1) : potentialMarginUsage,
+		};
+	}
+);
+
+export const selectBuyingPower = createSelector(
+	selectPosition,
+	selectMaxLeverage,
+	(position, maxLeverage) => {
+		const totalMargin = position?.remainingMargin ?? zeroBN;
+		return totalMargin.gt(zeroBN) ? totalMargin.mul(maxLeverage ?? zeroBN) : zeroBN;
+	}
+);
+
+export const selectMarginUsage = createSelector(
+	selectAvailableMargin,
+	selectPosition,
+	(availableMargin, position) => {
+		const totalMargin = position?.remainingMargin ?? zeroBN;
+		return availableMargin.gt(zeroBN)
+			? totalMargin.sub(availableMargin).div(totalMargin)
+			: totalMargin.gt(zeroBN)
+			? wei(1)
+			: zeroBN;
+	}
+);
+
+export const selectMarketSuspended = createSelector(
+	selectMarketInfo,
+	(marketInfo) => marketInfo?.isSuspended
+);

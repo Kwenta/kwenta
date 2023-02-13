@@ -1,4 +1,4 @@
-import { ReactElement, memo, FC } from 'react';
+import { ReactElement, memo, FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -10,50 +10,38 @@ import { isMarketDataKey, marketDataKeyMap } from './utils';
 
 type MarketDetailProps = {
 	mobile?: boolean;
-	marketKey: string;
+	dataKey: string;
 	color?: string;
 	value: string | ReactElement;
 };
 
-const MarketDetail: FC<MarketDetailProps> = memo(({ mobile, marketKey, color, value }) => {
+const MarketDetail: FC<MarketDetailProps> = memo(({ mobile, dataKey, color, value }) => {
 	const { t } = useTranslation();
 	const marketInfo = useAppSelector(selectMarketInfo);
-
 	const pausedClass = marketInfo?.isSuspended ? 'paused' : '';
-	const children = (
-		<WithCursor cursor="help" key={marketKey}>
-			<div key={marketKey}>
-				<p className="heading">{marketKey}</p>
+
+	const contentSuffix = useMemo(() => {
+		if (dataKey === marketInfo?.marketName) {
+			return 'market-key';
+		} else if (isMarketDataKey(dataKey)) {
+			return marketDataKeyMap[dataKey];
+		} else {
+			return '';
+		}
+	}, [dataKey, marketInfo]);
+
+	return (
+		<MarketDetailsTooltip
+			key={dataKey}
+			mobile={mobile}
+			content={t(`exchange.market-details-card.tooltips.${contentSuffix}`)}
+		>
+			<WithCursor cursor="help">
+				<p className="heading">{dataKey}</p>
 				<span className={`value ${color || ''} ${pausedClass}`}>{value}</span>
-			</div>
-		</WithCursor>
+			</WithCursor>
+		</MarketDetailsTooltip>
 	);
-
-	if (marketKey === marketInfo?.marketName) {
-		return (
-			<MarketDetailsTooltip
-				key={marketKey}
-				mobile={mobile}
-				content={t(`exchange.market-details-card.tooltips.market-key`)}
-			>
-				{children}
-			</MarketDetailsTooltip>
-		);
-	}
-
-	if (isMarketDataKey(marketKey)) {
-		return (
-			<MarketDetailsTooltip
-				key={marketKey}
-				mobile={mobile}
-				content={t(`exchange.market-details-card.tooltips.${marketDataKeyMap[marketKey]}`)}
-			>
-				{children}
-			</MarketDetailsTooltip>
-		);
-	}
-
-	return children;
 });
 
 export default MarketDetail;

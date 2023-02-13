@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { components, OptionProps } from 'react-select';
 import styled, { css } from 'styled-components';
 
@@ -9,7 +10,7 @@ import { Body } from 'components/Text';
 import { MarketsCurrencyOption } from './MarketsDropdown';
 import { CurrencyLabel, SingleValueContainer } from './MarketsDropdownSingleValue';
 
-const MarketsDropdownOption: React.FC<OptionProps<MarketsCurrencyOption>> = (props) => (
+const MarketsDropdownOption: React.FC<OptionProps<MarketsCurrencyOption>> = memo((props) => (
 	<components.Option {...props}>
 		<OptionDetailsContainer $isSelected={props.isSelected}>
 			<CurrencyMeta $isSelected={props.isSelected}>
@@ -36,12 +37,13 @@ const MarketsDropdownOption: React.FC<OptionProps<MarketsCurrencyOption>> = (pro
 			</div>
 		</OptionDetailsContainer>
 	</components.Option>
-);
+));
 
 const StyledCurrencyLabel = styled(CurrencyLabel)`
 	color: ${(props) => props.theme.colors.selectedTheme.white};
 	font-size: 13px;
 `;
+
 const CurrencyMeta = styled(FlexDivCentered)<{ $isSelected: boolean }>`
 	gap: 7px;
 	width: 125px;

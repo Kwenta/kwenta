@@ -1,5 +1,5 @@
 import router from 'next/router';
-import React, { useMemo, useState } from 'react';
+import React, { memo, useMemo, useReducer } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -7,7 +7,7 @@ import EligibleIcon from 'assets/svg/app/eligible.svg';
 import LinkArrowIcon from 'assets/svg/app/link-arrow.svg';
 import NotEligibleIcon from 'assets/svg/app/not-eligible.svg';
 import HelpIcon from 'assets/svg/app/question-mark.svg';
-import InfoBox, { DetailedInfo } from 'components/InfoBox/InfoBox';
+import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox';
 import { Body } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
@@ -16,7 +16,6 @@ import Connector from 'containers/Connector';
 import {
 	selectCrossMarginSettings,
 	selectCrossMarginTradeFees,
-	selectFuturesType,
 	selectIsolatedMarginFee,
 	selectMarketInfo,
 	selectOrderFee,
@@ -30,7 +29,7 @@ import {
 } from 'state/staking/selectors';
 import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
-const MarketCostTooltip = () => {
+const MarketCostTooltip = memo(() => {
 	const { t } = useTranslation();
 
 	return (
@@ -44,9 +43,9 @@ const MarketCostTooltip = () => {
 			<StyledHelpIcon />
 		</Tooltip>
 	);
-};
+});
 
-const ExecutionFeeTooltip = () => {
+const ExecutionFeeTooltip = memo(() => {
 	const { t } = useTranslation();
 
 	return (
@@ -60,31 +59,66 @@ const ExecutionFeeTooltip = () => {
 			<StyledHelpIcon />
 		</Tooltip>
 	);
-};
+});
 
-const FeeInfoBox: React.FC = () => {
-	const { t } = useTranslation();
-	const { walletAddress } = Connector.useContainer();
+export const CrossMarginFeeInfoBox = memo(() => {
 	const orderType = useAppSelector(selectOrderType);
-	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance);
-	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance);
-	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
-	const isolatedMarginFee = useAppSelector(selectIsolatedMarginFee);
-	const { takerFee, makerFee } = useAppSelector(selectOrderFee);
-	const accountType = useAppSelector(selectFuturesType);
-	const { tradeFee: crossMarginTradeFeeRate, limitOrderFee, stopOrderFee } = useAppSelector(
-		selectCrossMarginSettings
+
+	return (
+		<FeeInfoBoxContainer>
+			<ProtocolFeeRow />
+			<LimitStopFeeRow />
+			<CrossMarginFeeRow />
+			<TradingRewardRow />
+			<TotalFeeRow />
+			{(orderType === 'limit' || orderType === 'stop_market') && <KeeperDepositRow />}
+		</FeeInfoBoxContainer>
 	);
-	const marketInfo = useAppSelector(selectMarketInfo);
-	const tradePreview = useAppSelector(selectTradePreview);
+});
 
-	const [feesExpanded, setFeesExpanded] = useState(false);
+export const IsolatedMarginFeeInfoBox = memo(() => {
+	const orderType = useAppSelector(selectOrderType);
+	return (
+		<FeeInfoBoxContainer>
+			{orderType === 'delayed' || orderType === 'delayed_offchain' ? <TotalFeesRow /> : <FeeRow />}
+		</FeeInfoBoxContainer>
+	);
+});
 
-	const commitDeposit = useMemo(() => tradePreview?.fee ?? zeroBN, [tradePreview?.fee]);
+const FeeRow = memo(() => {
+	const isolatedMarginFee = useAppSelector(selectIsolatedMarginFee);
 
-	const totalDeposit = useMemo(() => {
-		return commitDeposit.add(marketInfo?.keeperDeposit ?? zeroBN);
-	}, [commitDeposit, marketInfo?.keeperDeposit]);
+	return (
+		<InfoBoxRow
+			title="Fee"
+			value={formatDollars(isolatedMarginFee, {
+				minDecimals: isolatedMarginFee.lt(0.01) ? 4 : 2,
+			})}
+			keyNode={<MarketCostTooltip />}
+			dataTestId=""
+		/>
+	);
+});
+
+const ProtocolFeeRow = memo(() => {
+	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
+
+	return (
+		<InfoBoxRow
+			title="Protocol Fee"
+			value={formatDollars(crossMarginFees.staticFee, {
+				minDecimals: crossMarginFees.staticFee.lt(0.01) ? 4 : 2,
+			})}
+			keyNode={<MarketCostTooltip />}
+			dataTestId=""
+		/>
+	);
+});
+
+const LimitStopFeeRow = memo(() => {
+	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
+	const orderType = useAppSelector(selectOrderType);
+	const { limitOrderFee, stopOrderFee } = useAppSelector(selectCrossMarginSettings);
 
 	const orderFeeRate = useMemo(
 		() =>
@@ -92,144 +126,180 @@ const FeeInfoBox: React.FC = () => {
 		[orderType, stopOrderFee, limitOrderFee]
 	);
 
+	return (
+		<InfoBoxRow
+			dataTestId="limit-stop"
+			title="Limit / Stop Fee"
+			{...(crossMarginFees.limitStopOrderFee.gt(0) && orderFeeRate
+				? {
+						value: formatDollars(crossMarginFees.limitStopOrderFee, {
+							minDecimals: crossMarginFees.limitStopOrderFee.lt(0.01) ? 4 : 2,
+						}),
+						keyNode: formatPercent(orderFeeRate),
+				  }
+				: { value: '' })}
+		/>
+	);
+});
+
+const CrossMarginFeeRow = memo(() => {
+	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
+	const { tradeFee: crossMarginTradeFeeRate } = useAppSelector(selectCrossMarginSettings);
+
+	return (
+		<InfoBoxRow
+			title="Cross Margin Fee"
+			value={formatDollars(crossMarginFees.crossMarginFee, {
+				minDecimals: crossMarginFees.crossMarginFee.lt(0.01) ? 4 : 2,
+			})}
+			keyNode={formatPercent(crossMarginTradeFeeRate)}
+			dataTestId=""
+		/>
+	);
+});
+
+const TradingRewardRow = memo(() => {
+	const { t } = useTranslation();
+	const { walletAddress } = Connector.useContainer();
+	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance);
+	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance);
+
 	const isRewardEligible = useMemo(
 		() => !!walletAddress && stakedKwentaBalance.add(stakedEscrowedKwentaBalance).gt(0),
 		[walletAddress, stakedKwentaBalance, stakedEscrowedKwentaBalance]
 	);
 
-	const feesInfo = useMemo<Record<string, DetailedInfo | null | undefined>>(() => {
-		const crossMarginFeeInfo = {
-			'Protocol Fee': {
-				value: formatDollars(crossMarginFees.staticFee, {
-					minDecimals: crossMarginFees.staticFee.lt(0.01) ? 4 : 2,
-				}),
-				keyNode: <MarketCostTooltip />,
-			},
-			'Limit / Stop Fee':
-				crossMarginFees.limitStopOrderFee.gt(0) && orderFeeRate
-					? {
-							value: formatDollars(crossMarginFees.limitStopOrderFee, {
-								minDecimals: crossMarginFees.limitStopOrderFee.lt(0.01) ? 4 : 2,
-							}),
-							keyNode: formatPercent(orderFeeRate),
-					  }
-					: null,
-			'Cross Margin Fee': {
-				value: formatDollars(crossMarginFees.crossMarginFee, {
-					minDecimals: crossMarginFees.crossMarginFee.lt(0.01) ? 4 : 2,
-				}),
-				keyNode: formatPercent(crossMarginTradeFeeRate),
-			},
-			'Trading Reward': {
-				value: '',
-				compactBox: true,
-				spaceBeneath: true,
-				keyNode: (
-					<CompactBox
-						$isEligible={isRewardEligible}
-						onClick={() => router.push(ROUTES.Dashboard.Stake)}
-					>
+	return (
+		<InfoBoxRow
+			title="Trading Reward"
+			compactBox
+			spaceBeneath
+			dataTestId=""
+			value=""
+			keyNode={
+				<CompactBox
+					$isEligible={isRewardEligible}
+					onClick={() => router.push(ROUTES.Dashboard.Stake)}
+				>
+					<div>
+						<div>{t('dashboard.stake.tabs.trading-rewards.trading-reward')}</div>
 						<div>
-							<div>{t('dashboard.stake.tabs.trading-rewards.trading-reward')}</div>
-							<div>
-								{isRewardEligible ? (
-									<div className="badge badge-yellow">
-										{t('dashboard.stake.tabs.trading-rewards.eligible')}
-										<EligibleIcon style={{ paddingLeft: '2px' }} />
-									</div>
-								) : (
-									<div className="badge badge-red">
-										{t('dashboard.stake.tabs.trading-rewards.not-eligible')}
-										<NotEligibleIcon />
-									</div>
-								)}
-							</div>
+							{isRewardEligible ? (
+								<div className="badge badge-yellow">
+									{t('dashboard.stake.tabs.trading-rewards.eligible')}
+									<EligibleIcon style={{ paddingLeft: '2px' }} />
+								</div>
+							) : (
+								<div className="badge badge-red">
+									{t('dashboard.stake.tabs.trading-rewards.not-eligible')}
+									<NotEligibleIcon />
+								</div>
+							)}
 						</div>
-						<div>
-							<RewardCopy>
-								{t(
-									`dashboard.stake.tabs.trading-rewards.stake-to-${
-										isRewardEligible ? 'earn' : 'start'
-									}`
-								)}
-							</RewardCopy>
-							<StyledLinkArrowIcon />
-						</div>
-					</CompactBox>
-				),
-			},
-			'Total Fee': {
-				value: formatDollars(crossMarginFees.total, {
-					minDecimals: crossMarginFees.total.lt(0.01) ? 4 : 2,
-				}),
-			},
-		};
-		if (orderType === 'limit' || orderType === 'stop_market') {
-			return {
-				...crossMarginFeeInfo,
-				'Keeper Deposit': {
-					value: !!marketInfo?.keeperDeposit
-						? formatCurrency('ETH', crossMarginFees.keeperEthDeposit, { currencyKey: 'ETH' })
-						: NO_VALUE,
-				},
-			};
-		}
-		if (orderType === 'delayed' || orderType === 'delayed_offchain') {
-			return {
-				'Total Fees': {
-					expandable: true,
-					value: formatDollars(totalDeposit),
-					subItems: {
-						'Execution Fee': {
-							value: !!marketInfo?.keeperDeposit
-								? formatDollars(marketInfo.keeperDeposit)
-								: NO_VALUE,
-							keyNode: <ExecutionFeeTooltip />,
-						},
-						[`Est. Trade Fee (${formatPercent(makerFee ?? zeroBN)} / ${formatPercent(
-							takerFee ?? zeroBN
-						)})`]: {
-							value: !!commitDeposit
-								? formatDollars(commitDeposit, { minDecimals: commitDeposit.lt(0.01) ? 4 : 2 })
-								: NO_VALUE,
-							keyNode: <MarketCostTooltip />,
-						},
-					},
-					onClick: () => setFeesExpanded(!feesExpanded),
-				},
-			};
-		}
-		return accountType === 'isolated_margin'
-			? {
-					Fee: {
-						value: formatDollars(isolatedMarginFee, {
-							minDecimals: isolatedMarginFee.lt(0.01) ? 4 : 2,
-						}),
-						keyNode: <MarketCostTooltip />,
-					},
-			  }
-			: crossMarginFeeInfo;
-	}, [
-		t,
-		isRewardEligible,
-		orderType,
-		totalDeposit,
-		crossMarginTradeFeeRate,
-		isolatedMarginFee,
-		crossMarginFees,
-		orderFeeRate,
-		commitDeposit,
-		accountType,
-		marketInfo?.keeperDeposit,
-		feesExpanded,
-		makerFee,
-		takerFee,
-	]);
+					</div>
+					<div>
+						<RewardCopy>
+							{t(
+								`dashboard.stake.tabs.trading-rewards.stake-to-${
+									isRewardEligible ? 'earn' : 'start'
+								}`
+							)}
+						</RewardCopy>
+						<StyledLinkArrowIcon />
+					</div>
+				</CompactBox>
+			}
+		/>
+	);
+});
 
-	return <StyledInfoBox details={feesInfo} />;
-};
+const TotalFeeRow = memo(() => {
+	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
+	return (
+		<InfoBoxRow
+			title="Total Fee"
+			value={formatDollars(crossMarginFees.total, {
+				minDecimals: crossMarginFees.total.lt(0.01) ? 4 : 2,
+			})}
+			dataTestId=""
+		/>
+	);
+});
 
-const StyledInfoBox = styled(InfoBox)`
+const KeeperDepositRow = memo(() => {
+	const marketInfo = useAppSelector(selectMarketInfo);
+	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
+
+	return (
+		<InfoBoxRow
+			title="Keeper Deposit"
+			value={
+				!!marketInfo?.keeperDeposit
+					? formatCurrency('ETH', crossMarginFees.keeperEthDeposit, { currencyKey: 'ETH' })
+					: NO_VALUE
+			}
+			dataTestId=""
+		/>
+	);
+});
+
+const TotalFeesRow = memo(() => {
+	const [expanded, toggleExpanded] = useReducer((s) => !s, false);
+	const tradePreview = useAppSelector(selectTradePreview);
+	const commitDeposit = useMemo(() => tradePreview?.fee ?? zeroBN, [tradePreview?.fee]);
+	const marketInfo = useAppSelector(selectMarketInfo);
+	const totalDeposit = useMemo(() => {
+		return commitDeposit.add(marketInfo?.keeperDeposit ?? zeroBN);
+	}, [commitDeposit, marketInfo?.keeperDeposit]);
+
+	return (
+		<InfoBoxRow
+			title="Total Fees"
+			value={formatDollars(totalDeposit)}
+			expandable
+			expanded={expanded}
+			onToggleExpand={toggleExpanded}
+			dataTestId=""
+		>
+			<ExecutionFeeRow />
+			<EstimatedTradeFeeRow />
+		</InfoBoxRow>
+	);
+});
+
+const ExecutionFeeRow = memo(() => {
+	const marketInfo = useAppSelector(selectMarketInfo);
+
+	return (
+		<InfoBoxRow
+			title="Execution Fee"
+			value={!!marketInfo?.keeperDeposit ? formatDollars(marketInfo.keeperDeposit) : NO_VALUE}
+			keyNode={<ExecutionFeeTooltip />}
+			dataTestId=""
+		/>
+	);
+});
+
+const EstimatedTradeFeeRow = memo(() => {
+	const { takerFee, makerFee } = useAppSelector(selectOrderFee);
+	const tradePreview = useAppSelector(selectTradePreview);
+	const commitDeposit = useMemo(() => tradePreview?.fee ?? zeroBN, [tradePreview?.fee]);
+
+	return (
+		<InfoBoxRow
+			title={`Est. Trade Fee (${formatPercent(makerFee)} / ${formatPercent(takerFee)})`}
+			value={
+				!!commitDeposit
+					? formatDollars(commitDeposit, { minDecimals: commitDeposit.lt(0.01) ? 4 : 2 })
+					: NO_VALUE
+			}
+			keyNode={<MarketCostTooltip />}
+			dataTestId=""
+		/>
+	);
+});
+
+const FeeInfoBoxContainer = styled(InfoBoxContainer)`
 	margin-bottom: 16px;
 `;
 
@@ -280,5 +350,3 @@ const CompactBox = styled.div<{ $isEligible: boolean }>`
 				};
 		`}
 `;
-
-export default FeeInfoBox;

@@ -1,5 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import React, { ChangeEvent, useMemo, memo } from 'react';
+import React, { useMemo, memo, useCallback } from 'react';
 import styled from 'styled-components';
 
 import SwitchAssetArrows from 'assets/svg/futures/switch-arrows.svg';
@@ -32,6 +32,23 @@ type OrderSizingProps = {
 	disabled?: boolean;
 };
 
+const DenominationToggle = memo(() => {
+	const assetInputType = useAppSelector(selectSelectedInputDenomination);
+	const dispatch = useAppDispatch();
+	const marketAsset = useAppSelector(selectMarketAsset);
+
+	const toggleDenomination = useCallback(() => {
+		dispatch(setSelectedInputDenomination(assetInputType === 'usd' ? 'native' : 'usd'));
+	}, [dispatch, assetInputType]);
+
+	return (
+		<InputButton onClick={toggleDenomination}>
+			{assetInputType === 'usd' ? 'sUSD' : getDisplayAsset(marketAsset)}{' '}
+			<span>{<SwitchAssetArrows />}</span>
+		</InputButton>
+	);
+});
+
 const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) => {
 	const dispatch = useAppDispatch();
 
@@ -47,36 +64,41 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 	const assetInputType = useAppSelector(selectSelectedInputDenomination);
 	const maxUsdInputAmount = useAppSelector(selectMaxUsdInputAmount);
 
-	const marketAsset = useAppSelector(selectMarketAsset);
-
 	const tradePrice = useMemo(() => (orderPrice ? wei(orderPrice) : marketAssetRate), [
 		orderPrice,
 		marketAssetRate,
 	]);
+
 	const maxNativeValue = useMemo(
 		() => (!isZero(tradePrice) ? maxUsdInputAmount.div(tradePrice) : zeroBN),
 		[tradePrice, maxUsdInputAmount]
 	);
 
-	const onSizeChange = (value: string, assetType: 'native' | 'usd') => {
-		dispatch(editTradeSizeInput(value, assetType));
-	};
+	const onSizeChange = useCallback(
+		(value: string, assetType: 'native' | 'usd') => {
+			dispatch(editTradeSizeInput(value, assetType));
+		},
+		[dispatch]
+	);
 
-	const handleSetMax = () => {
+	const handleSetMax = useCallback(() => {
 		if (assetInputType === 'usd') {
 			onSizeChange(String(floorNumber(maxUsdInputAmount)), 'usd');
 		} else {
 			onSizeChange(String(floorNumber(maxNativeValue)), 'native');
 		}
-	};
+	}, [onSizeChange, assetInputType, maxUsdInputAmount, maxNativeValue]);
 
 	const handleSetPositionSize = () => {
 		onSizeChange(position?.position?.size.toString() ?? '0', 'native');
 	};
 
-	const onChangeValue = (_: ChangeEvent<HTMLInputElement>, v: string) => {
-		dispatch(editTradeSizeInput(v, assetInputType));
-	};
+	const onChangeValue = useCallback(
+		(_, v: string) => {
+			dispatch(editTradeSizeInput(v, assetInputType));
+		},
+		[dispatch, assetInputType]
+	);
 
 	const isDisabled = useMemo(() => {
 		const remaining =
@@ -118,16 +140,7 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 					invalid={invalid}
 					dataTestId={'set-order-size-amount-susd' + (isMobile ? '-mobile' : '-desktop')}
 					disabled={isDisabled}
-					right={
-						<InputButton
-							onClick={() =>
-								dispatch(setSelectedInputDenomination(assetInputType === 'usd' ? 'native' : 'usd'))
-							}
-						>
-							{assetInputType === 'usd' ? 'sUSD' : getDisplayAsset(marketAsset)}{' '}
-							<span>{<SwitchAssetArrows />}</span>
-						</InputButton>
-					}
+					right={<DenominationToggle />}
 					value={assetInputType === 'usd' ? susdSizeString : nativeSizeString}
 					placeholder="0.00"
 					onChange={onChangeValue}

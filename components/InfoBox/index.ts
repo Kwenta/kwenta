@@ -1,1 +1,1 @@
-export { default } from './InfoBox';
+export { InfoBoxContainer, InfoBoxRow } from './InfoBox';
