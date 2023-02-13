@@ -29,7 +29,7 @@ export type FormatNumberOptions = {
 	maxDecimals?: number;
 	prefix?: string;
 	suffix?: string;
-	isAssetPrice?: boolean;
+	suggestDecimals?: boolean;
 } & TruncatedOptions;
 
 export type FormatCurrencyOptions = {
@@ -37,7 +37,7 @@ export type FormatCurrencyOptions = {
 	maxDecimals?: number;
 	sign?: string;
 	currencyKey?: string;
-	isAssetPrice?: boolean;
+	suggestDecimals?: boolean;
 } & TruncatedOptions;
 
 const DEFAULT_CURRENCY_DECIMALS = 2;
@@ -88,7 +88,7 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	const prefix = options?.prefix;
 	const suffix = options?.suffix;
 	const shouldTruncate = options?.truncate;
-	const isAssetPrice = options?.isAssetPrice;
+	const suggestDecimals = options?.suggestDecimals;
 	let truncation = options?.truncation;
 
 	let weiValue = wei(0);
@@ -120,7 +120,7 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 
 	const decimals = truncation
 		? truncation.decimals
-		: isAssetPrice
+		: suggestDecimals
 		? suggestedDecimals(weiBeforeAsString)
 		: options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS;
 
@@ -151,7 +151,7 @@ export const formatCryptoCurrency = (value: WeiSource, options?: FormatCurrencyO
 		suffix: options?.currencyKey,
 		minDecimals: options?.minDecimals ?? DEFAULT_CRYPTO_DECIMALS,
 		maxDecimals: options?.maxDecimals,
-		isAssetPrice: options?.isAssetPrice,
+		suggestDecimals: options?.suggestDecimals,
 	});
 
 export const formatFiatCurrency = (value: WeiSource, options?: FormatCurrencyOptions) =>
@@ -229,8 +229,9 @@ export const weiFromWei = (weiAmount: WeiSource) => {
 
 export const suggestedDecimals = (value: WeiSource) => {
 	value = wei(value).toNumber();
-	if (value >= 10000) return 0;
-	if (value >= 10 || value === 0) return 2;
+	if (value >= 100000) return 0;
+	if (value >= 100 || value === 0) return 2;
+	if (value >= 10) return 3;
 	if (value >= 0.1) return 4;
 	if (value >= 0.01) return 5;
 	return 6;

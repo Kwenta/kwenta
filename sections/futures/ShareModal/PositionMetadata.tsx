@@ -128,7 +128,7 @@ const PositionMetadata: FC = () => {
 				</ContainerText>
 				<ContainerText className="date-or-price">
 					{formatDollars(avgEntryPrice ?? zeroBN, {
-						isAssetPrice: true,
+						suggestDecimals: true,
 					})}
 				</ContainerText>
 			</BottomLeftContainer>

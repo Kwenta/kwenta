@@ -71,7 +71,7 @@ const ShareModalButton: FC<ShareModalButtonProps> = ({ position }) => {
 		const avgEntryPrice = currentPosition?.avgEntryPrice
 			? formatNumber(currentPosition?.avgEntryPrice)
 			: '';
-		const dollarEntry = formatDollars(avgEntryPrice ?? zeroBN, { isAssetPrice: true });
+		const dollarEntry = formatDollars(avgEntryPrice ?? zeroBN, { suggestDecimals: true });
 		const dollarCurrent = formatNumber(marketPrice);
 		const text = getTwitterText(side, marketName, leverage, pnlPct, dollarEntry, dollarCurrent);
 		window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');

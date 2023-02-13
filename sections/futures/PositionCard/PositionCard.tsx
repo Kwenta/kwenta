@@ -139,12 +139,12 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			marketLongName: getSynthDescription(marketAsset, synthsMap, t),
 			marketPrice: (
 				<>
-					{formatDollars(marketPrice, { minDecimals, isAssetPrice: true })}
+					{formatDollars(marketPrice, { minDecimals, suggestDecimals: true })}
 					{
 						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
 							{formatDollars(previewData.fillPrice ?? zeroBN, {
 								minDecimals,
-								isAssetPrice: true,
+								suggestDecimals: true,
 							})}
 						</PreviewArrow>
 					}
@@ -210,13 +210,13 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 				<>
 					{formatDollars(positionDetails?.liquidationPrice ?? zeroBN, {
 						minDecimals,
-						isAssetPrice: true,
+						suggestDecimals: true,
 					})}
 					{
 						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
 							{formatDollars(previewData?.liquidationPrice ?? zeroBN, {
 								minDecimals,
-								isAssetPrice: true,
+								suggestDecimals: true,
 							})}
 						</PreviewArrow>
 					}
@@ -249,13 +249,13 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 				<>
 					{formatDollars(thisPositionHistory?.entryPrice ?? zeroBN, {
 						minDecimals,
-						isAssetPrice: true,
+						suggestDecimals: true,
 					})}
 					{
 						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
 							{formatDollars(previewData.avgEntryPrice ?? zeroBN, {
 								minDecimals,
-								isAssetPrice: true,
+								suggestDecimals: true,
 							})}
 						</PreviewArrow>
 					}

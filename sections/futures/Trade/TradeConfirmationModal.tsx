@@ -107,11 +107,11 @@ export default function TradeConfirmationModal({
 			orderType === 'limit' || orderType === 'stop_market'
 				? {
 						label: orderType + ' order price',
-						value: formatDollars(orderPrice, { isAssetPrice: true }),
+						value: formatDollars(orderPrice, { suggestDecimals: true }),
 				  }
 				: {
 						label: 'fill price',
-						value: formatDollars(positionDetails?.price ?? zeroBN, { isAssetPrice: true }),
+						value: formatDollars(positionDetails?.price ?? zeroBN, { suggestDecimals: true }),
 				  },
 			{
 				label: 'price impact',
@@ -123,7 +123,7 @@ export default function TradeConfirmationModal({
 			},
 			{
 				label: 'liquidation price',
-				value: formatDollars(positionDetails?.liqPrice ?? zeroBN, { isAssetPrice: true }),
+				value: formatDollars(positionDetails?.liqPrice ?? zeroBN, { suggestDecimals: true }),
 			},
 			{
 				label: 'resulting margin',
