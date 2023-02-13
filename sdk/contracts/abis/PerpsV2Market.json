@@ -622,6 +622,23 @@
         "type": "function"
     },
     {
+        "constant":true,
+        "inputs":[
+           
+        ],
+        "name":"fundingRateLastRecomputed",
+        "outputs":[
+           {
+              "internalType":"int128",
+              "name":"",
+              "type":"int128"
+           }
+        ],
+        "payable":false,
+        "stateMutability":"view",
+        "type":"function"
+     },
+    {
         "constant": true,
         "inputs": [
             {

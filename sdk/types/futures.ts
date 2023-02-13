@@ -356,3 +356,14 @@ export type FuturesTrade<T = Wei> = {
 	orderType: FuturesOrderTypeDisplay;
 	accountType: FuturesAccountType;
 };
+
+export enum AccountExecuteFunctions {
+	PERPS_V2_MODIFY_MARGIN = 0,
+	PERPS_V2_WITHDRAW_ALL_MARGIN = 1,
+	PERPS_V2_SUBMIT_ATOMIC_ORDER = 2,
+	PERPS_V2_SUBMIT_DELAYED_ORDER = 3,
+	PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER = 4,
+	PERPS_V2_CANCEL_DELAYED_ORDER = 5,
+	PERPS_V2_CANCEL_OFFCHAIN_DELAYED_ORDER = 6,
+	PERPS_V2_CLOSE_POSITION = 7,
+}

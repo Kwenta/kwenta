@@ -5,7 +5,7 @@ type CustomInputProps = {
 	placeholder?: string;
 	value?: string | number;
 	onChange: (e: React.ChangeEvent<HTMLInputElement>, value: string) => void;
-	right: React.ReactNode;
+	right?: React.ReactNode;
 	left?: React.ReactNode;
 	style?: React.CSSProperties;
 	className?: string;

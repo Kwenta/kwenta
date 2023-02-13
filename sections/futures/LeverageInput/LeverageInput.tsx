@@ -8,14 +8,16 @@ import CustomNumericInput from 'components/Input/CustomNumericInput';
 import InputTitle from 'components/Input/InputTitle';
 import { FlexDivCol, FlexDivRow } from 'components/layout/flex';
 import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
-import { editIsolatedMarginSize } from 'state/futures/actions';
-import { setIsolatedMarginLeverageInput } from 'state/futures/reducer';
+import { editTradeSizeInput } from 'state/futures/actions';
+import { setLeverageInput } from 'state/futures/reducer';
 import {
-	selectIsolatedLeverageInput,
+	selectLeverageInput,
 	selectMarketPrice,
 	selectMarketInfo,
 	selectMaxLeverage,
 	selectPosition,
+	selectFuturesType,
+	selectCrossMarginBalanceInfo,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { floorNumber, truncateNumbers, zeroBN } from 'utils/formatters/number';
@@ -30,20 +32,26 @@ const LeverageInput: FC = memo(() => {
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const maxLeverage = useAppSelector(selectMaxLeverage);
 	const marketPrice = useAppSelector(selectMarketPrice);
-	const leverageInput = useAppSelector(selectIsolatedLeverageInput);
+	const leverageInput = useAppSelector(selectLeverageInput);
+	const futuresType = useAppSelector(selectFuturesType);
+	const { freeMargin } = useAppSelector(selectCrossMarginBalanceInfo);
+
+	const availableMargin = useMemo(() => {
+		return futuresType === 'isolated_margin' ? position?.remainingMargin : freeMargin;
+	}, [position?.remainingMargin, freeMargin, futuresType]);
 
 	const onLeverageChange = useCallback(
 		(newLeverage: string) => {
-			const remainingMargin = position?.remainingMargin ?? zeroBN;
+			const remainingMargin = availableMargin ?? zeroBN;
 			const newTradeSize =
 				marketPrice.eq(0) || remainingMargin.eq(0)
 					? ''
 					: wei(Number(newLeverage)).mul(remainingMargin).div(marketPrice).toString();
 			const floored = floorNumber(Number(newTradeSize), 4);
-			dispatch(editIsolatedMarginSize(String(floored), 'native'));
-			dispatch(setIsolatedMarginLeverageInput(newLeverage));
+			dispatch(editTradeSizeInput(String(floored), 'native'));
+			dispatch(setLeverageInput(newLeverage));
 		},
-		[position?.remainingMargin, marketPrice, dispatch]
+		[marketPrice, dispatch, availableMargin]
 	);
 
 	const modeButton = useMemo(() => {
@@ -59,8 +67,8 @@ const LeverageInput: FC = memo(() => {
 	}, [mode]);
 
 	const isDisabled = useMemo(() => {
-		return position?.remainingMargin.lte(0) || maxLeverage.lte(0);
-	}, [position, maxLeverage]);
+		return availableMargin?.lte(0) || maxLeverage.lte(0);
+	}, [maxLeverage, availableMargin]);
 
 	const leverageButtons = marketInfo?.maxLeverage.eq(25) ? ['5', '10', '25'] : ['2', '5', '10'];
 	const truncateMaxLeverage = maxLeverage.gte(0)

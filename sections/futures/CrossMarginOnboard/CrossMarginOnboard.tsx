@@ -1,6 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import { defaultAbiCoder } from 'ethers/lib/utils';
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -8,19 +7,18 @@ import CompleteCheck from 'assets/svg/futures/onboard-complete-check.svg';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import ErrorView from 'components/ErrorView';
-import { notifyError } from 'components/ErrorView/ErrorNotifier';
 import InputBalanceLabel from 'components/Input/InputBalanceLabel';
 import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import Loader from 'components/Loader';
 import ProgressSteps from 'components/ProgressSteps';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
-import Connector from 'containers/Connector';
-import { monitorTransaction } from 'contexts/RelayerContext';
 import { selectBalances } from 'state/balances/selectors';
-import { sdk } from 'state/config';
-import { approveCrossMargin, depositCrossMargin } from 'state/futures/actions';
-import { setCrossMarginAccount } from 'state/futures/reducer';
+import {
+	approveCrossMargin,
+	createCrossMarginAccount,
+	depositCrossMargin,
+} from 'state/futures/actions';
 import {
 	selectCMAccountQueryStatus,
 	selectCMBalance,
@@ -31,8 +29,6 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
-import { selectNetwork, selectWallet } from 'state/wallet/selectors';
-import { isUserDeniedError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
@@ -45,7 +41,6 @@ type Props = {
 
 export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 	const { t } = useTranslation();
-	const { provider } = Connector.useContainer();
 	const dispatch = useAppDispatch();
 	const balances = useAppSelector(selectBalances);
 	const crossMarginAvailable = useAppSelector(selectFuturesSupportedNetwork);
@@ -54,11 +49,8 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 	const depositApproved = useAppSelector(selectCMDepositApproved);
 	const txProcessing = useAppSelector(selectSubmittingFuturesTx);
 	const crossMarginBalance = useAppSelector(selectCMBalance);
-	const walletAddress = useAppSelector(selectWallet);
-	const network = useAppSelector(selectNetwork);
 
 	const [depositAmount, setDepositAmount] = useState('');
-	const [submitting, setSubmitting] = useState<null | 'create'>(null);
 
 	const susdBal = balances?.susdWalletBalance;
 
@@ -68,74 +60,9 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 		return wei(depositAmount).lt(MIN_MARGIN_AMOUNT);
 	}, [depositAmount]);
 
-	useEffect(() => {
-		if (crossMarginAccount) {
-			// Only re-enable the button when account has been created
-			setSubmitting(null);
-		}
-	}, [crossMarginAccount]);
-
 	const createAccount = useCallback(async () => {
-		if (submitting) return;
-		setSubmitting('create');
-		try {
-			const existing = await sdk.futures.getCrossMarginAccounts(walletAddress);
-			if (existing?.length) {
-				if (!walletAddress) return;
-				dispatch(setCrossMarginAccount({ account: existing[0], wallet: walletAddress, network }));
-				// This is a safety measure in the case a user gets
-				// into this flow when they already have an account
-				setSubmitting(null);
-				return;
-			}
-
-			const tx = await sdk.futures.createCrossMarginAccount();
-			if (tx) {
-				monitorTransaction({
-					txHash: tx.hash,
-					onTxConfirmed: async () => {
-						try {
-							const receipt = await provider.getTransactionReceipt(tx.hash);
-							const log = receipt?.logs.find(
-								(l) => l.address === sdk.context.contracts.CrossMarginAccountFactory?.address
-							);
-							if (log?.data && walletAddress) {
-								const account = defaultAbiCoder.decode(['address'], log.data)[0];
-								dispatch(
-									setCrossMarginAccount({ account: account, wallet: walletAddress, network })
-								);
-							}
-						} catch (err) {
-							logError(err);
-							// Fallback to querying logs if tx not available
-							try {
-								const addresses = await sdk.futures.getCrossMarginAccounts(walletAddress);
-								if (addresses.length && walletAddress) {
-									dispatch(
-										setCrossMarginAccount({ account: existing[0], wallet: walletAddress, network })
-									);
-								}
-								setSubmitting(null);
-							} catch (err) {
-								notifyError('Failed to fetch account after the transaction completed', err);
-								logError(err);
-								setSubmitting(null);
-							}
-						}
-					},
-					onTxFailed: () => {
-						setSubmitting(null);
-					},
-				});
-			}
-		} catch (err) {
-			if (!isUserDeniedError(err.message)) {
-				notifyError('Failed to create account', err);
-				logError(err);
-			}
-			setSubmitting(null);
-		}
-	}, [network, submitting, provider, walletAddress, dispatch, setSubmitting]);
+		dispatch(createCrossMarginAccount());
+	}, [dispatch]);
 
 	const onClickApprove = useCallback(async () => {
 		dispatch(approveCrossMargin());
@@ -241,8 +168,8 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 					<CrossMarginFAQ />
 				</div>
 				{renderProgress(1)}
-				<StyledButton noOutline onClick={createAccount} disabled={!!submitting}>
-					{submitting === 'create' ? <Loader /> : 'Create Account'}
+				<StyledButton noOutline onClick={createAccount} disabled={txProcessing}>
+					{txProcessing ? <Loader /> : 'Create Account'}
 				</StyledButton>
 			</>
 		);

@@ -103,6 +103,7 @@ export interface PerpsV2MarketInterface extends utils.Interface {
     "executeDelayedOrder(address)": FunctionFragment;
     "executeOffchainDelayedOrder(address,bytes[])": FunctionFragment;
     "fundingLastRecomputed()": FunctionFragment;
+    "fundingRateLastRecomputed()": FunctionFragment;
     "fundingSequence(uint256)": FunctionFragment;
     "fundingSequenceLength()": FunctionFragment;
     "liquidatePosition(address)": FunctionFragment;
@@ -148,6 +149,7 @@ export interface PerpsV2MarketInterface extends utils.Interface {
       | "executeDelayedOrder"
       | "executeOffchainDelayedOrder"
       | "fundingLastRecomputed"
+      | "fundingRateLastRecomputed"
       | "fundingSequence"
       | "fundingSequenceLength"
       | "liquidatePosition"
@@ -231,6 +233,10 @@ export interface PerpsV2MarketInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "fundingLastRecomputed",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "fundingRateLastRecomputed",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -409,6 +415,10 @@ export interface PerpsV2MarketInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "fundingLastRecomputed",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "fundingRateLastRecomputed",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -752,6 +762,8 @@ export interface PerpsV2Market extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[number] & { timestamp: number }>;
 
+    fundingRateLastRecomputed(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     fundingSequence(
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -964,6 +976,8 @@ export interface PerpsV2Market extends BaseContract {
 
   fundingLastRecomputed(overrides?: CallOverrides): Promise<number>;
 
+  fundingRateLastRecomputed(overrides?: CallOverrides): Promise<BigNumber>;
+
   fundingSequence(
     index: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -1169,6 +1183,8 @@ export interface PerpsV2Market extends BaseContract {
     ): Promise<void>;
 
     fundingLastRecomputed(overrides?: CallOverrides): Promise<number>;
+
+    fundingRateLastRecomputed(overrides?: CallOverrides): Promise<BigNumber>;
 
     fundingSequence(
       index: PromiseOrValue<BigNumberish>,
@@ -1490,6 +1506,8 @@ export interface PerpsV2Market extends BaseContract {
 
     fundingLastRecomputed(overrides?: CallOverrides): Promise<BigNumber>;
 
+    fundingRateLastRecomputed(overrides?: CallOverrides): Promise<BigNumber>;
+
     fundingSequence(
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1679,6 +1697,10 @@ export interface PerpsV2Market extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     fundingLastRecomputed(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    fundingRateLastRecomputed(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

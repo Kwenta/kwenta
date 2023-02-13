@@ -139,7 +139,7 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 });
 
 const OrderSizingContainer = styled.div`
-	margin-top: 28px;
+	margin-top: 18px;
 	margin-bottom: 16px;
 `;
 

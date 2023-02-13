@@ -91,6 +91,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		leverageSide: PositionSide.LONG,
 		orderType: 'market',
 		orderFeeCap: '0',
+		leverageInput: '0',
 		selectedLeverageByAsset: {},
 		showCrossMarginOnboard: false,
 		tradeInputs: ZERO_STATE_CM_TRADE_INPUTS,
@@ -188,8 +189,8 @@ const futuresSlice = createSlice({
 		setIsolatedMarginFee: (state, action: PayloadAction<string>) => {
 			state.isolatedMargin.tradeFee = action.payload;
 		},
-		setIsolatedMarginLeverageInput: (state, action: PayloadAction<string>) => {
-			state.isolatedMargin.leverageInput = action.payload;
+		setLeverageInput: (state, action: PayloadAction<string>) => {
+			state[accountType(state.selectedType)].leverageInput = action.payload;
 		},
 		setCrossMarginFees: (state, action: PayloadAction<CrossMarginTradeFees<string>>) => {
 			state.crossMargin.fees = action.payload;
@@ -379,10 +380,11 @@ const futuresSlice = createSlice({
 		builder.addCase(fetchCrossMarginOpenOrders.fulfilled, (futuresState, action) => {
 			futuresState.queryStatuses.openOrders = SUCCESS_STATUS;
 			if (!action.payload) return;
-			const { network, account, orders } = action.payload;
+			const { network, account, delayedOrders, advancedOrders } = action.payload;
 			const wallet = findWalletForAccount(futuresState.crossMargin, account, network);
 			if (wallet) {
-				futuresState.crossMargin.accounts[network][wallet].openOrders = orders;
+				futuresState.crossMargin.accounts[network][wallet].advancedOrders = advancedOrders;
+				futuresState.crossMargin.accounts[network][wallet].delayedOrders = delayedOrders;
 			}
 		});
 		builder.addCase(fetchCrossMarginOpenOrders.rejected, (futuresState) => {
@@ -404,7 +406,7 @@ const futuresSlice = createSlice({
 				if (futuresState.isolatedMargin.accounts[payload.networkId]) {
 					futuresState.isolatedMargin.accounts[payload.networkId][wallet] = {
 						...futuresState.isolatedMargin.accounts[payload.networkId][wallet],
-						openOrders: orders,
+						delayedOrders: orders,
 					};
 				}
 			}
@@ -626,7 +628,7 @@ export const {
 	setCrossMarginOrderPrice,
 	setCrossMarginOrderPriceInvalidLabel,
 	setTransactionEstimate,
-	setIsolatedMarginLeverageInput,
+	setLeverageInput,
 	setIsolatedMarginTradeInputs,
 	setIsolatedTradePreview,
 	setIsolatedMarginFee,

@@ -78,6 +78,19 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
+        name: "sUSD",
+        type: "uint256",
+      },
+    ],
+    name: "MaxKeeperFeeUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
         name: "minMargin",
         type: "uint256",
       },
@@ -264,6 +277,27 @@ const _abi = [
         type: "bytes32",
       },
     ],
+    name: "liquidationPremiumMultiplier",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    payable: false,
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    constant: true,
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "_marketKey",
+        type: "bytes32",
+      },
+    ],
     name: "makerFee",
     outputs: [
       {
@@ -349,6 +383,21 @@ const _abi = [
       },
     ],
     name: "maxFundingVelocity",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    payable: false,
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    constant: true,
+    inputs: [],
+    name: "maxKeeperFee",
     outputs: [
       {
         internalType: "uint256",
@@ -732,6 +781,11 @@ const _abi = [
             name: "offchainPriceDivergence",
             type: "uint256",
           },
+          {
+            internalType: "uint256",
+            name: "liquidationPremiumMultiplier",
+            type: "uint256",
+          },
         ],
         internalType: "struct IPerpsV2MarketSettings.Parameters",
         name: "",
@@ -841,6 +895,26 @@ const _abi = [
       },
       {
         internalType: "uint256",
+        name: "_liquidationPremiumMultiplier",
+        type: "uint256",
+      },
+    ],
+    name: "setLiquidationPremiumMultiplier",
+    outputs: [],
+    payable: false,
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    constant: false,
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "_marketKey",
+        type: "bytes32",
+      },
+      {
+        internalType: "uint256",
         name: "_makerFee",
         type: "uint256",
       },
@@ -926,6 +1000,21 @@ const _abi = [
       },
     ],
     name: "setMaxFundingVelocity",
+    outputs: [],
+    payable: false,
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    constant: false,
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_sUSD",
+        type: "uint256",
+      },
+    ],
+    name: "setMaxKeeperFee",
     outputs: [],
     payable: false,
     stateMutability: "nonpayable",
@@ -1246,6 +1335,11 @@ const _abi = [
             name: "offchainPriceDivergence",
             type: "uint256",
           },
+          {
+            internalType: "uint256",
+            name: "liquidationPremiumMultiplier",
+            type: "uint256",
+          },
         ],
         internalType: "struct IPerpsV2MarketSettings.Parameters",
         name: "_parameters",
@@ -1422,7 +1516,7 @@ const _abi = [
     stateMutability: "view",
     type: "function",
   },
-] as const;
+];
 
 export class PerpsV2MarketSettings__factory {
   static readonly abi = _abi;

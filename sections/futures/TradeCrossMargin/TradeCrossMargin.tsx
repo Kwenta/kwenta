@@ -15,7 +15,6 @@ import {
 	selectCrossMarginOrderPrice,
 	selectFuturesSupportedNetwork,
 	selectCrossMarginTransferOpen,
-	selectFuturesType,
 	selectLeverageSide,
 	selectOrderType,
 	selectShowCrossMarginOnboard,
@@ -43,7 +42,6 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 	const dispatch = useAppDispatch();
 
 	const leverageSide = useAppSelector(selectLeverageSide);
-	const selectedAccountType = useAppSelector(selectFuturesType);
 	const { freeMargin } = useAppSelector(selectCrossMarginBalanceInfo);
 	const orderType = useAppSelector(selectOrderType);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
@@ -78,10 +76,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 				<CreateAccount onShowOnboard={() => dispatch(setShowCrossMarginOnboard(true))} />
 			) : (
 				<>
-					<TradePanelHeader
-						accountType={selectedAccountType}
-						onManageBalance={() => dispatch(setOpenModal('futures_cross_deposit'))}
-					/>
+					<TradePanelHeader />
 
 					<MarginInfoBox />
 					<SegmentedControl

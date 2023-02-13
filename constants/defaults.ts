@@ -39,11 +39,11 @@ export const DEFAULT_NP_LEVERAGE_ADJUSTMENT: number = 1;
 export const DEFAULT_LEADERBOARD_ROWS = 20;
 
 // for perps v2
-export const DEFAULT_PRICE_IMPACT_DELTA = '500000000000000000';
+export const DEFAULT_PRICE_IMPACT_DELTA = '0.5';
 export const DEFAULT_DELAYED_EXECUTION_BUFFER = 30;
 export const DEFAULT_DELAYED_CANCEL_BUFFER = 30;
 
-export const CROSS_MARGIN_ENABLED = false;
+export const CROSS_MARGIN_ENABLED = true;
 
 export const DEFAULT_FUTURES_MARGIN_TYPE = CROSS_MARGIN_ENABLED
 	? 'cross_margin'

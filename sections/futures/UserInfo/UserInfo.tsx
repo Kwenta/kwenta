@@ -17,7 +17,8 @@ import { fetchTradesForSelectedMarket } from 'state/futures/actions';
 import {
 	selectFuturesType,
 	selectMarketAsset,
-	selectOpenOrders,
+	selectOpenAdvancedOrders,
+	selectOpenDelayedOrders,
 	selectPosition,
 	selectQueryStatuses,
 	selectUsersTradesForMarket,
@@ -54,7 +55,8 @@ const UserInfo: React.FC = () => {
 	const statues = useAppSelector(selectQueryStatuses);
 	const tradesQuery = statues.trades;
 
-	const openOrders = useAppSelector(selectOpenOrders);
+	const openOrders = useAppSelector(selectOpenDelayedOrders);
+	const advancedOrders = useAppSelector(selectOpenAdvancedOrders);
 	const accountType = useAppSelector(selectFuturesType);
 	const trades = useAppSelector(selectUsersTradesForMarket);
 
@@ -118,7 +120,7 @@ const UserInfo: React.FC = () => {
 			{
 				name: FuturesTab.ORDERS,
 				label: 'Orders',
-				badge: openOrders?.length,
+				badge: openOrders?.length + advancedOrders.length,
 				active: activeTab === FuturesTab.ORDERS,
 				icon: <OpenPositionsIcon />,
 				onClick: () =>
@@ -150,7 +152,7 @@ const UserInfo: React.FC = () => {
 					}),
 			},
 		],
-		[activeTab, router, marketAsset, openOrders?.length, accountType]
+		[activeTab, router, marketAsset, openOrders?.length, advancedOrders?.length, accountType]
 	);
 
 	useEffect(() => {

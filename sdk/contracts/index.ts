@@ -6,7 +6,7 @@ import ERC20ABI from '../contracts/abis/ERC20.json';
 import MultipleMerkleDistributorABI from '../contracts/abis/MultipleMerkleDistributor.json';
 import RewardEscrowABI from '../contracts/abis/RewardEscrow.json';
 import SupplyScheduleABI from '../contracts/abis/SupplySchedule.json';
-import CrossMarginBaseSettingsABI from './abis/CrossMarginBaseSettings.json';
+import CrossMarginSettingsABI from './abis/CrossMarginSettings.json';
 import ExchangeRatesABI from './abis/ExchangeRates.json';
 import FuturesMarketDataABI from './abis/FuturesMarketData.json';
 import FuturesMarketSettingsABI from './abis/FuturesMarketSettings.json';
@@ -20,7 +20,7 @@ import SynthRedeemerABI from './abis/SynthRedeemer.json';
 import { ADDRESSES } from './constants';
 import {
 	CrossMarginAccountFactory__factory,
-	CrossMarginBaseSettings__factory,
+	CrossMarginSettings__factory,
 	ExchangeRates__factory,
 	Exchanger__factory,
 	FuturesMarketData__factory,
@@ -110,11 +110,8 @@ export const getContractsByNetwork = (
 					provider
 			  )
 			: undefined,
-		CrossMarginBaseSettings: ADDRESSES.CrossMarginBaseSettings[networkId]
-			? CrossMarginBaseSettings__factory.connect(
-					ADDRESSES.CrossMarginBaseSettings[networkId],
-					provider
-			  )
+		CrossMarginSettings: ADDRESSES.CrossMarginSettings[networkId]
+			? CrossMarginSettings__factory.connect(ADDRESSES.CrossMarginSettings[networkId], provider)
 			: undefined,
 		// TODO: Replace these when we move away from wagmi hooks
 		KwentaArrakisVault: ADDRESSES.KwentaArrakisVault[networkId]
@@ -158,11 +155,8 @@ export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 		SynthRedeemer: ADDRESSES.SynthRedeemer[networkId]
 			? new EthCallContract(ADDRESSES.SynthRedeemer[networkId], SynthRedeemerABI)
 			: undefined,
-		CrossMarginBaseSettings: ADDRESSES.CrossMarginBaseSettings[networkId]
-			? new EthCallContract(
-					ADDRESSES.CrossMarginBaseSettings[networkId],
-					CrossMarginBaseSettingsABI
-			  )
+		CrossMarginSettings: ADDRESSES.CrossMarginSettings[networkId]
+			? new EthCallContract(ADDRESSES.CrossMarginSettings[networkId], CrossMarginSettingsABI)
 			: undefined,
 		ExchangeRates: ADDRESSES.ExchangeRates[networkId]
 			? new EthCallContract(ADDRESSES.ExchangeRates[networkId], ExchangeRatesABI)

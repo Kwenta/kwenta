@@ -28,86 +28,192 @@ import type {
 
 export interface CrossMarginAccountFactoryInterface extends utils.Interface {
   functions: {
-    "addressResolver()": FunctionFragment;
+    "canUpgrade()": FunctionFragment;
+    "events()": FunctionFragment;
     "implementation()": FunctionFragment;
-    "marginAsset()": FunctionFragment;
-    "marginBaseSettings()": FunctionFragment;
     "newAccount()": FunctionFragment;
-    "ops()": FunctionFragment;
-    "version()": FunctionFragment;
+    "owner()": FunctionFragment;
+    "ownerToAccount(address)": FunctionFragment;
+    "removeUpgradability()": FunctionFragment;
+    "settings()": FunctionFragment;
+    "transferOwnership(address)": FunctionFragment;
+    "updateAccountOwner(address,address)": FunctionFragment;
+    "upgradeAccountImplementation(address)": FunctionFragment;
+    "upgradeEvents(address)": FunctionFragment;
+    "upgradeSettings(address)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "addressResolver"
+      | "canUpgrade"
+      | "events"
       | "implementation"
-      | "marginAsset"
-      | "marginBaseSettings"
       | "newAccount"
-      | "ops"
-      | "version"
+      | "owner"
+      | "ownerToAccount"
+      | "removeUpgradability"
+      | "settings"
+      | "transferOwnership"
+      | "updateAccountOwner"
+      | "upgradeAccountImplementation"
+      | "upgradeEvents"
+      | "upgradeSettings"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "addressResolver",
+    functionFragment: "canUpgrade",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "events", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "implementation",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "marginAsset",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "marginBaseSettings",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "newAccount",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "ops", values?: undefined): string;
-  encodeFunctionData(functionFragment: "version", values?: undefined): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "ownerToAccount",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeUpgradability",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "settings", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "transferOwnership",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateAccountOwner",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "upgradeAccountImplementation",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "upgradeEvents",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "upgradeSettings",
+    values: [PromiseOrValue<string>]
+  ): string;
 
-  decodeFunctionResult(
-    functionFragment: "addressResolver",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "canUpgrade", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "events", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "implementation",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "marginAsset",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "marginBaseSettings",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "newAccount", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "ops", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "version", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "ownerToAccount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeUpgradability",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "settings", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateAccountOwner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "upgradeAccountImplementation",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "upgradeEvents",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "upgradeSettings",
+    data: BytesLike
+  ): Result;
 
   events: {
-    "NewAccount(address,address)": EventFragment;
+    "AccountImplementationUpgraded(address)": EventFragment;
+    "EventsUpgraded(address)": EventFragment;
+    "NewAccount(address,address,bytes32)": EventFragment;
+    "OwnershipTransferred(address,address)": EventFragment;
+    "SettingsUpgraded(address)": EventFragment;
   };
 
+  getEvent(
+    nameOrSignatureOrTopic: "AccountImplementationUpgraded"
+  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EventsUpgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewAccount"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SettingsUpgraded"): EventFragment;
 }
 
+export interface AccountImplementationUpgradedEventObject {
+  implementation: string;
+}
+export type AccountImplementationUpgradedEvent = TypedEvent<
+  [string],
+  AccountImplementationUpgradedEventObject
+>;
+
+export type AccountImplementationUpgradedEventFilter =
+  TypedEventFilter<AccountImplementationUpgradedEvent>;
+
+export interface EventsUpgradedEventObject {
+  events: string;
+}
+export type EventsUpgradedEvent = TypedEvent<
+  [string],
+  EventsUpgradedEventObject
+>;
+
+export type EventsUpgradedEventFilter = TypedEventFilter<EventsUpgradedEvent>;
+
 export interface NewAccountEventObject {
-  owner: string;
+  creator: string;
   account: string;
+  version: string;
 }
 export type NewAccountEvent = TypedEvent<
-  [string, string],
+  [string, string, string],
   NewAccountEventObject
 >;
 
 export type NewAccountEventFilter = TypedEventFilter<NewAccountEvent>;
+
+export interface OwnershipTransferredEventObject {
+  user: string;
+  newOwner: string;
+}
+export type OwnershipTransferredEvent = TypedEvent<
+  [string, string],
+  OwnershipTransferredEventObject
+>;
+
+export type OwnershipTransferredEventFilter =
+  TypedEventFilter<OwnershipTransferredEvent>;
+
+export interface SettingsUpgradedEventObject {
+  settings: string;
+}
+export type SettingsUpgradedEvent = TypedEvent<
+  [string],
+  SettingsUpgradedEventObject
+>;
+
+export type SettingsUpgradedEventFilter =
+  TypedEventFilter<SettingsUpgradedEvent>;
 
 export interface CrossMarginAccountFactory extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -136,101 +242,286 @@ export interface CrossMarginAccountFactory extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    addressResolver(overrides?: CallOverrides): Promise<[string]>;
+    canUpgrade(overrides?: CallOverrides): Promise<[boolean]>;
+
+    events(overrides?: CallOverrides): Promise<[string]>;
 
     implementation(overrides?: CallOverrides): Promise<[string]>;
-
-    marginAsset(overrides?: CallOverrides): Promise<[string]>;
-
-    marginBaseSettings(overrides?: CallOverrides): Promise<[string]>;
 
     newAccount(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    ops(overrides?: CallOverrides): Promise<[string]>;
+    owner(overrides?: CallOverrides): Promise<[string]>;
 
-    version(overrides?: CallOverrides): Promise<[string]>;
+    ownerToAccount(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    removeUpgradability(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    settings(overrides?: CallOverrides): Promise<[string]>;
+
+    transferOwnership(
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    updateAccountOwner(
+      _oldOwner: PromiseOrValue<string>,
+      _newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    upgradeAccountImplementation(
+      _implementation: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    upgradeEvents(
+      _events: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    upgradeSettings(
+      _settings: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
-  addressResolver(overrides?: CallOverrides): Promise<string>;
+  canUpgrade(overrides?: CallOverrides): Promise<boolean>;
+
+  events(overrides?: CallOverrides): Promise<string>;
 
   implementation(overrides?: CallOverrides): Promise<string>;
-
-  marginAsset(overrides?: CallOverrides): Promise<string>;
-
-  marginBaseSettings(overrides?: CallOverrides): Promise<string>;
 
   newAccount(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  ops(overrides?: CallOverrides): Promise<string>;
+  owner(overrides?: CallOverrides): Promise<string>;
 
-  version(overrides?: CallOverrides): Promise<string>;
+  ownerToAccount(
+    arg0: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  removeUpgradability(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  settings(overrides?: CallOverrides): Promise<string>;
+
+  transferOwnership(
+    newOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  updateAccountOwner(
+    _oldOwner: PromiseOrValue<string>,
+    _newOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  upgradeAccountImplementation(
+    _implementation: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  upgradeEvents(
+    _events: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  upgradeSettings(
+    _settings: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
-    addressResolver(overrides?: CallOverrides): Promise<string>;
+    canUpgrade(overrides?: CallOverrides): Promise<boolean>;
+
+    events(overrides?: CallOverrides): Promise<string>;
 
     implementation(overrides?: CallOverrides): Promise<string>;
 
-    marginAsset(overrides?: CallOverrides): Promise<string>;
-
-    marginBaseSettings(overrides?: CallOverrides): Promise<string>;
-
     newAccount(overrides?: CallOverrides): Promise<string>;
 
-    ops(overrides?: CallOverrides): Promise<string>;
+    owner(overrides?: CallOverrides): Promise<string>;
 
-    version(overrides?: CallOverrides): Promise<string>;
+    ownerToAccount(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    removeUpgradability(overrides?: CallOverrides): Promise<void>;
+
+    settings(overrides?: CallOverrides): Promise<string>;
+
+    transferOwnership(
+      newOwner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateAccountOwner(
+      _oldOwner: PromiseOrValue<string>,
+      _newOwner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    upgradeAccountImplementation(
+      _implementation: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    upgradeEvents(
+      _events: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    upgradeSettings(
+      _settings: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {
-    "NewAccount(address,address)"(
-      owner?: PromiseOrValue<string> | null,
-      account?: null
+    "AccountImplementationUpgraded(address)"(
+      implementation?: null
+    ): AccountImplementationUpgradedEventFilter;
+    AccountImplementationUpgraded(
+      implementation?: null
+    ): AccountImplementationUpgradedEventFilter;
+
+    "EventsUpgraded(address)"(events?: null): EventsUpgradedEventFilter;
+    EventsUpgraded(events?: null): EventsUpgradedEventFilter;
+
+    "NewAccount(address,address,bytes32)"(
+      creator?: PromiseOrValue<string> | null,
+      account?: PromiseOrValue<string> | null,
+      version?: null
     ): NewAccountEventFilter;
     NewAccount(
-      owner?: PromiseOrValue<string> | null,
-      account?: null
+      creator?: PromiseOrValue<string> | null,
+      account?: PromiseOrValue<string> | null,
+      version?: null
     ): NewAccountEventFilter;
+
+    "OwnershipTransferred(address,address)"(
+      user?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
+    ): OwnershipTransferredEventFilter;
+    OwnershipTransferred(
+      user?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
+    ): OwnershipTransferredEventFilter;
+
+    "SettingsUpgraded(address)"(settings?: null): SettingsUpgradedEventFilter;
+    SettingsUpgraded(settings?: null): SettingsUpgradedEventFilter;
   };
 
   estimateGas: {
-    addressResolver(overrides?: CallOverrides): Promise<BigNumber>;
+    canUpgrade(overrides?: CallOverrides): Promise<BigNumber>;
+
+    events(overrides?: CallOverrides): Promise<BigNumber>;
 
     implementation(overrides?: CallOverrides): Promise<BigNumber>;
-
-    marginAsset(overrides?: CallOverrides): Promise<BigNumber>;
-
-    marginBaseSettings(overrides?: CallOverrides): Promise<BigNumber>;
 
     newAccount(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    ops(overrides?: CallOverrides): Promise<BigNumber>;
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    version(overrides?: CallOverrides): Promise<BigNumber>;
+    ownerToAccount(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    removeUpgradability(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    settings(overrides?: CallOverrides): Promise<BigNumber>;
+
+    transferOwnership(
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    updateAccountOwner(
+      _oldOwner: PromiseOrValue<string>,
+      _newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    upgradeAccountImplementation(
+      _implementation: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    upgradeEvents(
+      _events: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    upgradeSettings(
+      _settings: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    addressResolver(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    canUpgrade(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    events(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     implementation(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    marginAsset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    marginBaseSettings(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     newAccount(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    ops(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    version(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    ownerToAccount(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    removeUpgradability(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    settings(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    transferOwnership(
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateAccountOwner(
+      _oldOwner: PromiseOrValue<string>,
+      _newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    upgradeAccountImplementation(
+      _implementation: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    upgradeEvents(
+      _events: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    upgradeSettings(
+      _settings: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
   };
 }

@@ -28,48 +28,125 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export declare namespace IMarginBaseTypes {
-  export type NewPositionStruct = {
-    marketKey: PromiseOrValue<BytesLike>;
-    marginDelta: PromiseOrValue<BigNumberish>;
+export declare namespace IPerpsV2MarketConsolidated {
+  export type DelayedOrderStruct = {
+    isOffchain: PromiseOrValue<boolean>;
     sizeDelta: PromiseOrValue<BigNumberish>;
+    priceImpactDelta: PromiseOrValue<BigNumberish>;
+    targetRoundId: PromiseOrValue<BigNumberish>;
+    commitDeposit: PromiseOrValue<BigNumberish>;
+    keeperDeposit: PromiseOrValue<BigNumberish>;
+    executableAtTime: PromiseOrValue<BigNumberish>;
+    intentionTime: PromiseOrValue<BigNumberish>;
+    trackingCode: PromiseOrValue<BytesLike>;
   };
 
-  export type NewPositionStructOutput = [string, BigNumber, BigNumber] & {
-    marketKey: string;
-    marginDelta: BigNumber;
+  export type DelayedOrderStructOutput = [
+    boolean,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    string
+  ] & {
+    isOffchain: boolean;
     sizeDelta: BigNumber;
+    priceImpactDelta: BigNumber;
+    targetRoundId: BigNumber;
+    commitDeposit: BigNumber;
+    keeperDeposit: BigNumber;
+    executableAtTime: BigNumber;
+    intentionTime: BigNumber;
+    trackingCode: string;
+  };
+
+  export type PositionStruct = {
+    id: PromiseOrValue<BigNumberish>;
+    lastFundingIndex: PromiseOrValue<BigNumberish>;
+    margin: PromiseOrValue<BigNumberish>;
+    lastPrice: PromiseOrValue<BigNumberish>;
+    size: PromiseOrValue<BigNumberish>;
+  };
+
+  export type PositionStructOutput = [
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber
+  ] & {
+    id: BigNumber;
+    lastFundingIndex: BigNumber;
+    margin: BigNumber;
+    lastPrice: BigNumber;
+    size: BigNumber;
   };
 }
 
-export interface CrossMarginBaseInterface extends utils.Interface {
+export declare namespace IAccount {
+  export type OrderStruct = {
+    marketKey: PromiseOrValue<BytesLike>;
+    marginDelta: PromiseOrValue<BigNumberish>;
+    sizeDelta: PromiseOrValue<BigNumberish>;
+    targetPrice: PromiseOrValue<BigNumberish>;
+    gelatoTaskId: PromiseOrValue<BytesLike>;
+    orderType: PromiseOrValue<BigNumberish>;
+    maxDynamicFee: PromiseOrValue<BigNumberish>;
+    priceImpactDelta: PromiseOrValue<BigNumberish>;
+  };
+
+  export type OrderStructOutput = [
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    string,
+    number,
+    BigNumber,
+    BigNumber
+  ] & {
+    marketKey: string;
+    marginDelta: BigNumber;
+    sizeDelta: BigNumber;
+    targetPrice: BigNumber;
+    gelatoTaskId: string;
+    orderType: number;
+    maxDynamicFee: BigNumber;
+    priceImpactDelta: BigNumber;
+  };
+}
+
+export interface CrossMarginAccountInterface extends utils.Interface {
   functions: {
+    "ADDRESS_RESOLVER()": FunctionFragment;
     "ETH()": FunctionFragment;
-    "activeMarketKeys(uint256)": FunctionFragment;
+    "MARGIN_ASSET()": FunctionFragment;
+    "OPS()": FunctionFragment;
+    "VERSION()": FunctionFragment;
+    "calculateTradeFee(int256,address,uint256)": FunctionFragment;
     "cancelOrder(uint256)": FunctionFragment;
     "checker(uint256)": FunctionFragment;
     "committedMargin()": FunctionFragment;
     "deposit(uint256)": FunctionFragment;
-    "depositAndDistribute(uint256,(bytes32,int256,int256)[])": FunctionFragment;
-    "distributeMargin((bytes32,int256,int256)[])": FunctionFragment;
+    "events()": FunctionFragment;
+    "execute(uint8[],bytes[])": FunctionFragment;
     "executeOrder(uint256)": FunctionFragment;
+    "factory()": FunctionFragment;
     "freeMargin()": FunctionFragment;
+    "futuresMarketManager()": FunctionFragment;
     "gelato()": FunctionFragment;
-    "getNumberOfInternalPositions()": FunctionFragment;
+    "getDelayedOrder(bytes32)": FunctionFragment;
+    "getOrder(uint256)": FunctionFragment;
     "getPosition(bytes32)": FunctionFragment;
-    "initialize()": FunctionFragment;
     "initialize(address,address,address,address)": FunctionFragment;
-    "marginAsset()": FunctionFragment;
-    "marginBaseSettings()": FunctionFragment;
-    "marketKeyIndex(bytes32)": FunctionFragment;
-    "ops()": FunctionFragment;
     "orderId()": FunctionFragment;
-    "orders(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
-    "placeOrder(bytes32,int256,int256,uint256,uint8)": FunctionFragment;
-    "placeOrderWithFeeCap(bytes32,int256,int256,uint256,uint8,uint256)": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
-    "rescueERC20(address,uint256)": FunctionFragment;
+    "placeOrder(bytes32,int256,int256,uint256,uint8,uint128)": FunctionFragment;
+    "placeOrderWithFeeCap(bytes32,int256,int256,uint256,uint8,uint128,uint256)": FunctionFragment;
+    "settings()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "validOrder(uint256)": FunctionFragment;
     "withdraw(uint256)": FunctionFragment;
@@ -78,42 +155,56 @@ export interface CrossMarginBaseInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "ADDRESS_RESOLVER"
       | "ETH"
-      | "activeMarketKeys"
+      | "MARGIN_ASSET"
+      | "OPS"
+      | "VERSION"
+      | "calculateTradeFee"
       | "cancelOrder"
       | "checker"
       | "committedMargin"
       | "deposit"
-      | "depositAndDistribute"
-      | "distributeMargin"
+      | "events"
+      | "execute"
       | "executeOrder"
+      | "factory"
       | "freeMargin"
+      | "futuresMarketManager"
       | "gelato"
-      | "getNumberOfInternalPositions"
+      | "getDelayedOrder"
+      | "getOrder"
       | "getPosition"
-      | "initialize()"
-      | "initialize(address,address,address,address)"
-      | "marginAsset"
-      | "marginBaseSettings"
-      | "marketKeyIndex"
-      | "ops"
+      | "initialize"
       | "orderId"
-      | "orders"
       | "owner"
       | "placeOrder"
       | "placeOrderWithFeeCap"
-      | "renounceOwnership"
-      | "rescueERC20"
+      | "settings"
       | "transferOwnership"
       | "validOrder"
       | "withdraw"
       | "withdrawEth"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "ADDRESS_RESOLVER",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "ETH", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "activeMarketKeys",
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "MARGIN_ASSET",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "OPS", values?: undefined): string;
+  encodeFunctionData(functionFragment: "VERSION", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "calculateTradeFee",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "cancelOrder",
@@ -131,37 +222,39 @@ export interface CrossMarginBaseInterface extends utils.Interface {
     functionFragment: "deposit",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(functionFragment: "events", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "depositAndDistribute",
-    values: [PromiseOrValue<BigNumberish>, IMarginBaseTypes.NewPositionStruct[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "distributeMargin",
-    values: [IMarginBaseTypes.NewPositionStruct[]]
+    functionFragment: "execute",
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BytesLike>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "executeOrder",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(functionFragment: "factory", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "freeMargin",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "futuresMarketManager",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "gelato", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "getNumberOfInternalPositions",
-    values?: undefined
+    functionFragment: "getDelayedOrder",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getOrder",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getPosition",
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "initialize()",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "initialize(address,address,address,address)",
+    functionFragment: "initialize",
     values: [
       PromiseOrValue<string>,
       PromiseOrValue<string>,
@@ -169,29 +262,13 @@ export interface CrossMarginBaseInterface extends utils.Interface {
       PromiseOrValue<string>
     ]
   ): string;
-  encodeFunctionData(
-    functionFragment: "marginAsset",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "marginBaseSettings",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "marketKeyIndex",
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(functionFragment: "ops", values?: undefined): string;
   encodeFunctionData(functionFragment: "orderId", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "orders",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "placeOrder",
     values: [
       PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
@@ -206,17 +283,11 @@ export interface CrossMarginBaseInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
     ]
   ): string;
-  encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rescueERC20",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
+  encodeFunctionData(functionFragment: "settings", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
@@ -234,9 +305,19 @@ export interface CrossMarginBaseInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "ADDRESS_RESOLVER",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "ETH", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "activeMarketKeys",
+    functionFragment: "MARGIN_ASSET",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "OPS", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "VERSION", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "calculateTradeFee",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -249,65 +330,37 @@ export interface CrossMarginBaseInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "depositAndDistribute",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "distributeMargin",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "events", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "executeOrder",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "factory", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "freeMargin", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "gelato", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getNumberOfInternalPositions",
+    functionFragment: "futuresMarketManager",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "gelato", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getDelayedOrder",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getOrder", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getPosition",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "initialize()",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "initialize(address,address,address,address)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "marginAsset",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "marginBaseSettings",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "marketKeyIndex",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "ops", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "orderId", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "orders", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "placeOrder", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "placeOrderWithFeeCap",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "rescueERC20",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "settings", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -321,22 +374,24 @@ export interface CrossMarginBaseInterface extends utils.Interface {
 
   events: {
     "Deposit(address,uint256)": EventFragment;
+    "EthWithdraw(address,uint256)": EventFragment;
     "FeeImposed(address,uint256)": EventFragment;
+    "Initialized(uint8)": EventFragment;
     "OrderCancelled(address,uint256)": EventFragment;
     "OrderFilled(address,uint256,uint256,uint256)": EventFragment;
-    "OrderPlaced(address,uint256,bytes32,int256,int256,uint256,uint8)": EventFragment;
+    "OrderPlaced(address,uint256,bytes32,int256,int256,uint256,uint8,uint128,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "Rescued(address,uint256)": EventFragment;
     "Withdraw(address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EthWithdraw"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FeeImposed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OrderCancelled"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OrderFilled"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OrderPlaced"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Rescued"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
 }
 
@@ -348,6 +403,17 @@ export type DepositEvent = TypedEvent<[string, BigNumber], DepositEventObject>;
 
 export type DepositEventFilter = TypedEventFilter<DepositEvent>;
 
+export interface EthWithdrawEventObject {
+  user: string;
+  amount: BigNumber;
+}
+export type EthWithdrawEvent = TypedEvent<
+  [string, BigNumber],
+  EthWithdrawEventObject
+>;
+
+export type EthWithdrawEventFilter = TypedEventFilter<EthWithdrawEvent>;
+
 export interface FeeImposedEventObject {
   account: string;
   amount: BigNumber;
@@ -358,6 +424,13 @@ export type FeeImposedEvent = TypedEvent<
 >;
 
 export type FeeImposedEventFilter = TypedEventFilter<FeeImposedEvent>;
+
+export interface InitializedEventObject {
+  version: number;
+}
+export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
+
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface OrderCancelledEventObject {
   account: string;
@@ -391,16 +464,28 @@ export interface OrderPlacedEventObject {
   sizeDelta: BigNumber;
   targetPrice: BigNumber;
   orderType: number;
+  priceImpactDelta: BigNumber;
+  maxDynamicFee: BigNumber;
 }
 export type OrderPlacedEvent = TypedEvent<
-  [string, BigNumber, string, BigNumber, BigNumber, BigNumber, number],
+  [
+    string,
+    BigNumber,
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    number,
+    BigNumber,
+    BigNumber
+  ],
   OrderPlacedEventObject
 >;
 
 export type OrderPlacedEventFilter = TypedEventFilter<OrderPlacedEvent>;
 
 export interface OwnershipTransferredEventObject {
-  previousOwner: string;
+  user: string;
   newOwner: string;
 }
 export type OwnershipTransferredEvent = TypedEvent<
@@ -410,14 +495,6 @@ export type OwnershipTransferredEvent = TypedEvent<
 
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
-
-export interface RescuedEventObject {
-  token: string;
-  amount: BigNumber;
-}
-export type RescuedEvent = TypedEvent<[string, BigNumber], RescuedEventObject>;
-
-export type RescuedEventFilter = TypedEventFilter<RescuedEvent>;
 
 export interface WithdrawEventObject {
   user: string;
@@ -430,12 +507,12 @@ export type WithdrawEvent = TypedEvent<
 
 export type WithdrawEventFilter = TypedEventFilter<WithdrawEvent>;
 
-export interface CrossMarginBase extends BaseContract {
+export interface CrossMarginAccount extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: CrossMarginBaseInterface;
+  interface: CrossMarginAccountInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -457,12 +534,22 @@ export interface CrossMarginBase extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    ADDRESS_RESOLVER(overrides?: CallOverrides): Promise<[string]>;
+
     ETH(overrides?: CallOverrides): Promise<[string]>;
 
-    activeMarketKeys(
-      arg0: PromiseOrValue<BigNumberish>,
+    MARGIN_ASSET(overrides?: CallOverrides): Promise<[string]>;
+
+    OPS(overrides?: CallOverrides): Promise<[string]>;
+
+    VERSION(overrides?: CallOverrides): Promise<[string]>;
+
+    calculateTradeFee(
+      _sizeDelta: PromiseOrValue<BigNumberish>,
+      _market: PromiseOrValue<string>,
+      _advancedOrderFee: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[string]>;
+    ): Promise<[BigNumber] & { fee: BigNumber }>;
 
     cancelOrder(
       _orderId: PromiseOrValue<BigNumberish>,
@@ -481,15 +568,12 @@ export interface CrossMarginBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    depositAndDistribute(
-      _amount: PromiseOrValue<BigNumberish>,
-      _newPositions: IMarginBaseTypes.NewPositionStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+    events(overrides?: CallOverrides): Promise<[string]>;
 
-    distributeMargin(
-      _newPositions: IMarginBaseTypes.NewPositionStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    execute(
+      commands: PromiseOrValue<BigNumberish>[],
+      inputs: PromiseOrValue<BytesLike>[],
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     executeOrder(
@@ -497,66 +581,46 @@ export interface CrossMarginBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    factory(overrides?: CallOverrides): Promise<[string]>;
+
     freeMargin(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    futuresMarketManager(overrides?: CallOverrides): Promise<[string]>;
 
     gelato(overrides?: CallOverrides): Promise<[string]>;
 
-    getNumberOfInternalPositions(
+    getDelayedOrder(
+      _marketKey: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<
+      [IPerpsV2MarketConsolidated.DelayedOrderStructOutput] & {
+        order: IPerpsV2MarketConsolidated.DelayedOrderStructOutput;
+      }
+    >;
+
+    getOrder(
+      _orderId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[IAccount.OrderStructOutput]>;
 
     getPosition(
       _marketKey: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        id: BigNumber;
-        fundingIndex: BigNumber;
-        margin: BigNumber;
-        lastPrice: BigNumber;
-        size: BigNumber;
+      [IPerpsV2MarketConsolidated.PositionStructOutput] & {
+        position: IPerpsV2MarketConsolidated.PositionStructOutput;
       }
     >;
 
-    "initialize()"(
+    initialize(
+      _owner: PromiseOrValue<string>,
+      _settings: PromiseOrValue<string>,
+      _events: PromiseOrValue<string>,
+      _factory: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    "initialize(address,address,address,address)"(
-      _marginAsset: PromiseOrValue<string>,
-      _addressResolver: PromiseOrValue<string>,
-      _marginBaseSettings: PromiseOrValue<string>,
-      _ops: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    marginAsset(overrides?: CallOverrides): Promise<[string]>;
-
-    marginBaseSettings(overrides?: CallOverrides): Promise<[string]>;
-
-    marketKeyIndex(
-      arg0: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    ops(overrides?: CallOverrides): Promise<[string]>;
 
     orderId(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    orders(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber, BigNumber, BigNumber, string, number, BigNumber] & {
-        marketKey: string;
-        marginDelta: BigNumber;
-        sizeDelta: BigNumber;
-        targetPrice: BigNumber;
-        gelatoTaskId: string;
-        orderType: number;
-        maxDynamicFee: BigNumber;
-      }
-    >;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -566,6 +630,7 @@ export interface CrossMarginBase extends BaseContract {
       _sizeDelta: PromiseOrValue<BigNumberish>,
       _targetPrice: PromiseOrValue<BigNumberish>,
       _orderType: PromiseOrValue<BigNumberish>,
+      _priceImpactDelta: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -575,22 +640,15 @@ export interface CrossMarginBase extends BaseContract {
       _sizeDelta: PromiseOrValue<BigNumberish>,
       _targetPrice: PromiseOrValue<BigNumberish>,
       _orderType: PromiseOrValue<BigNumberish>,
+      _priceImpactDelta: PromiseOrValue<BigNumberish>,
       _maxDynamicFee: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    renounceOwnership(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    rescueERC20(
-      tokenAddress: PromiseOrValue<string>,
-      tokenAmount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+    settings(overrides?: CallOverrides): Promise<[string]>;
 
     transferOwnership(
-      newOwner: PromiseOrValue<string>,
+      _newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -610,12 +668,22 @@ export interface CrossMarginBase extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  ADDRESS_RESOLVER(overrides?: CallOverrides): Promise<string>;
+
   ETH(overrides?: CallOverrides): Promise<string>;
 
-  activeMarketKeys(
-    arg0: PromiseOrValue<BigNumberish>,
+  MARGIN_ASSET(overrides?: CallOverrides): Promise<string>;
+
+  OPS(overrides?: CallOverrides): Promise<string>;
+
+  VERSION(overrides?: CallOverrides): Promise<string>;
+
+  calculateTradeFee(
+    _sizeDelta: PromiseOrValue<BigNumberish>,
+    _market: PromiseOrValue<string>,
+    _advancedOrderFee: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<string>;
+  ): Promise<BigNumber>;
 
   cancelOrder(
     _orderId: PromiseOrValue<BigNumberish>,
@@ -634,15 +702,12 @@ export interface CrossMarginBase extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  depositAndDistribute(
-    _amount: PromiseOrValue<BigNumberish>,
-    _newPositions: IMarginBaseTypes.NewPositionStruct[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  events(overrides?: CallOverrides): Promise<string>;
 
-  distributeMargin(
-    _newPositions: IMarginBaseTypes.NewPositionStruct[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  execute(
+    commands: PromiseOrValue<BigNumberish>[],
+    inputs: PromiseOrValue<BytesLike>[],
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   executeOrder(
@@ -650,64 +715,38 @@ export interface CrossMarginBase extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  factory(overrides?: CallOverrides): Promise<string>;
+
   freeMargin(overrides?: CallOverrides): Promise<BigNumber>;
+
+  futuresMarketManager(overrides?: CallOverrides): Promise<string>;
 
   gelato(overrides?: CallOverrides): Promise<string>;
 
-  getNumberOfInternalPositions(overrides?: CallOverrides): Promise<BigNumber>;
+  getDelayedOrder(
+    _marketKey: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<IPerpsV2MarketConsolidated.DelayedOrderStructOutput>;
+
+  getOrder(
+    _orderId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<IAccount.OrderStructOutput>;
 
   getPosition(
     _marketKey: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-      id: BigNumber;
-      fundingIndex: BigNumber;
-      margin: BigNumber;
-      lastPrice: BigNumber;
-      size: BigNumber;
-    }
-  >;
+  ): Promise<IPerpsV2MarketConsolidated.PositionStructOutput>;
 
-  "initialize()"(
+  initialize(
+    _owner: PromiseOrValue<string>,
+    _settings: PromiseOrValue<string>,
+    _events: PromiseOrValue<string>,
+    _factory: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
-
-  "initialize(address,address,address,address)"(
-    _marginAsset: PromiseOrValue<string>,
-    _addressResolver: PromiseOrValue<string>,
-    _marginBaseSettings: PromiseOrValue<string>,
-    _ops: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  marginAsset(overrides?: CallOverrides): Promise<string>;
-
-  marginBaseSettings(overrides?: CallOverrides): Promise<string>;
-
-  marketKeyIndex(
-    arg0: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  ops(overrides?: CallOverrides): Promise<string>;
 
   orderId(overrides?: CallOverrides): Promise<BigNumber>;
-
-  orders(
-    arg0: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<
-    [string, BigNumber, BigNumber, BigNumber, string, number, BigNumber] & {
-      marketKey: string;
-      marginDelta: BigNumber;
-      sizeDelta: BigNumber;
-      targetPrice: BigNumber;
-      gelatoTaskId: string;
-      orderType: number;
-      maxDynamicFee: BigNumber;
-    }
-  >;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -717,6 +756,7 @@ export interface CrossMarginBase extends BaseContract {
     _sizeDelta: PromiseOrValue<BigNumberish>,
     _targetPrice: PromiseOrValue<BigNumberish>,
     _orderType: PromiseOrValue<BigNumberish>,
+    _priceImpactDelta: PromiseOrValue<BigNumberish>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -726,22 +766,15 @@ export interface CrossMarginBase extends BaseContract {
     _sizeDelta: PromiseOrValue<BigNumberish>,
     _targetPrice: PromiseOrValue<BigNumberish>,
     _orderType: PromiseOrValue<BigNumberish>,
+    _priceImpactDelta: PromiseOrValue<BigNumberish>,
     _maxDynamicFee: PromiseOrValue<BigNumberish>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  renounceOwnership(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  rescueERC20(
-    tokenAddress: PromiseOrValue<string>,
-    tokenAmount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  settings(overrides?: CallOverrides): Promise<string>;
 
   transferOwnership(
-    newOwner: PromiseOrValue<string>,
+    _newOwner: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -761,12 +794,22 @@ export interface CrossMarginBase extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    ADDRESS_RESOLVER(overrides?: CallOverrides): Promise<string>;
+
     ETH(overrides?: CallOverrides): Promise<string>;
 
-    activeMarketKeys(
-      arg0: PromiseOrValue<BigNumberish>,
+    MARGIN_ASSET(overrides?: CallOverrides): Promise<string>;
+
+    OPS(overrides?: CallOverrides): Promise<string>;
+
+    VERSION(overrides?: CallOverrides): Promise<string>;
+
+    calculateTradeFee(
+      _sizeDelta: PromiseOrValue<BigNumberish>,
+      _market: PromiseOrValue<string>,
+      _advancedOrderFee: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<BigNumber>;
 
     cancelOrder(
       _orderId: PromiseOrValue<BigNumberish>,
@@ -785,14 +828,11 @@ export interface CrossMarginBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    depositAndDistribute(
-      _amount: PromiseOrValue<BigNumberish>,
-      _newPositions: IMarginBaseTypes.NewPositionStruct[],
-      overrides?: CallOverrides
-    ): Promise<void>;
+    events(overrides?: CallOverrides): Promise<string>;
 
-    distributeMargin(
-      _newPositions: IMarginBaseTypes.NewPositionStruct[],
+    execute(
+      commands: PromiseOrValue<BigNumberish>[],
+      inputs: PromiseOrValue<BytesLike>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -801,62 +841,38 @@ export interface CrossMarginBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    factory(overrides?: CallOverrides): Promise<string>;
+
     freeMargin(overrides?: CallOverrides): Promise<BigNumber>;
+
+    futuresMarketManager(overrides?: CallOverrides): Promise<string>;
 
     gelato(overrides?: CallOverrides): Promise<string>;
 
-    getNumberOfInternalPositions(overrides?: CallOverrides): Promise<BigNumber>;
+    getDelayedOrder(
+      _marketKey: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<IPerpsV2MarketConsolidated.DelayedOrderStructOutput>;
+
+    getOrder(
+      _orderId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<IAccount.OrderStructOutput>;
 
     getPosition(
       _marketKey: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        id: BigNumber;
-        fundingIndex: BigNumber;
-        margin: BigNumber;
-        lastPrice: BigNumber;
-        size: BigNumber;
-      }
-    >;
+    ): Promise<IPerpsV2MarketConsolidated.PositionStructOutput>;
 
-    "initialize()"(overrides?: CallOverrides): Promise<void>;
-
-    "initialize(address,address,address,address)"(
-      _marginAsset: PromiseOrValue<string>,
-      _addressResolver: PromiseOrValue<string>,
-      _marginBaseSettings: PromiseOrValue<string>,
-      _ops: PromiseOrValue<string>,
+    initialize(
+      _owner: PromiseOrValue<string>,
+      _settings: PromiseOrValue<string>,
+      _events: PromiseOrValue<string>,
+      _factory: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    marginAsset(overrides?: CallOverrides): Promise<string>;
-
-    marginBaseSettings(overrides?: CallOverrides): Promise<string>;
-
-    marketKeyIndex(
-      arg0: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    ops(overrides?: CallOverrides): Promise<string>;
-
     orderId(overrides?: CallOverrides): Promise<BigNumber>;
-
-    orders(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber, BigNumber, BigNumber, string, number, BigNumber] & {
-        marketKey: string;
-        marginDelta: BigNumber;
-        sizeDelta: BigNumber;
-        targetPrice: BigNumber;
-        gelatoTaskId: string;
-        orderType: number;
-        maxDynamicFee: BigNumber;
-      }
-    >;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -866,6 +882,7 @@ export interface CrossMarginBase extends BaseContract {
       _sizeDelta: PromiseOrValue<BigNumberish>,
       _targetPrice: PromiseOrValue<BigNumberish>,
       _orderType: PromiseOrValue<BigNumberish>,
+      _priceImpactDelta: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -875,20 +892,15 @@ export interface CrossMarginBase extends BaseContract {
       _sizeDelta: PromiseOrValue<BigNumberish>,
       _targetPrice: PromiseOrValue<BigNumberish>,
       _orderType: PromiseOrValue<BigNumberish>,
+      _priceImpactDelta: PromiseOrValue<BigNumberish>,
       _maxDynamicFee: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
-
-    rescueERC20(
-      tokenAddress: PromiseOrValue<string>,
-      tokenAmount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    settings(overrides?: CallOverrides): Promise<string>;
 
     transferOwnership(
-      newOwner: PromiseOrValue<string>,
+      _newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -918,6 +930,15 @@ export interface CrossMarginBase extends BaseContract {
       amount?: null
     ): DepositEventFilter;
 
+    "EthWithdraw(address,uint256)"(
+      user?: PromiseOrValue<string> | null,
+      amount?: null
+    ): EthWithdrawEventFilter;
+    EthWithdraw(
+      user?: PromiseOrValue<string> | null,
+      amount?: null
+    ): EthWithdrawEventFilter;
+
     "FeeImposed(address,uint256)"(
       account?: PromiseOrValue<string> | null,
       amount?: null
@@ -926,6 +947,9 @@ export interface CrossMarginBase extends BaseContract {
       account?: PromiseOrValue<string> | null,
       amount?: null
     ): FeeImposedEventFilter;
+
+    "Initialized(uint8)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
 
     "OrderCancelled(address,uint256)"(
       account?: PromiseOrValue<string> | null,
@@ -949,14 +973,16 @@ export interface CrossMarginBase extends BaseContract {
       keeperFee?: null
     ): OrderFilledEventFilter;
 
-    "OrderPlaced(address,uint256,bytes32,int256,int256,uint256,uint8)"(
+    "OrderPlaced(address,uint256,bytes32,int256,int256,uint256,uint8,uint128,uint256)"(
       account?: PromiseOrValue<string> | null,
       orderId?: null,
       marketKey?: null,
       marginDelta?: null,
       sizeDelta?: null,
       targetPrice?: null,
-      orderType?: null
+      orderType?: null,
+      priceImpactDelta?: null,
+      maxDynamicFee?: null
     ): OrderPlacedEventFilter;
     OrderPlaced(
       account?: PromiseOrValue<string> | null,
@@ -965,20 +991,19 @@ export interface CrossMarginBase extends BaseContract {
       marginDelta?: null,
       sizeDelta?: null,
       targetPrice?: null,
-      orderType?: null
+      orderType?: null,
+      priceImpactDelta?: null,
+      maxDynamicFee?: null
     ): OrderPlacedEventFilter;
 
     "OwnershipTransferred(address,address)"(
-      previousOwner?: PromiseOrValue<string> | null,
+      user?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
     OwnershipTransferred(
-      previousOwner?: PromiseOrValue<string> | null,
+      user?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
-
-    "Rescued(address,uint256)"(token?: null, amount?: null): RescuedEventFilter;
-    Rescued(token?: null, amount?: null): RescuedEventFilter;
 
     "Withdraw(address,uint256)"(
       user?: PromiseOrValue<string> | null,
@@ -991,10 +1016,20 @@ export interface CrossMarginBase extends BaseContract {
   };
 
   estimateGas: {
+    ADDRESS_RESOLVER(overrides?: CallOverrides): Promise<BigNumber>;
+
     ETH(overrides?: CallOverrides): Promise<BigNumber>;
 
-    activeMarketKeys(
-      arg0: PromiseOrValue<BigNumberish>,
+    MARGIN_ASSET(overrides?: CallOverrides): Promise<BigNumber>;
+
+    OPS(overrides?: CallOverrides): Promise<BigNumber>;
+
+    VERSION(overrides?: CallOverrides): Promise<BigNumber>;
+
+    calculateTradeFee(
+      _sizeDelta: PromiseOrValue<BigNumberish>,
+      _market: PromiseOrValue<string>,
+      _advancedOrderFee: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1015,15 +1050,12 @@ export interface CrossMarginBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    depositAndDistribute(
-      _amount: PromiseOrValue<BigNumberish>,
-      _newPositions: IMarginBaseTypes.NewPositionStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
+    events(overrides?: CallOverrides): Promise<BigNumber>;
 
-    distributeMargin(
-      _newPositions: IMarginBaseTypes.NewPositionStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    execute(
+      commands: PromiseOrValue<BigNumberish>[],
+      inputs: PromiseOrValue<BytesLike>[],
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     executeOrder(
@@ -1031,46 +1063,38 @@ export interface CrossMarginBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    factory(overrides?: CallOverrides): Promise<BigNumber>;
+
     freeMargin(overrides?: CallOverrides): Promise<BigNumber>;
+
+    futuresMarketManager(overrides?: CallOverrides): Promise<BigNumber>;
 
     gelato(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getNumberOfInternalPositions(overrides?: CallOverrides): Promise<BigNumber>;
+    getDelayedOrder(
+      _marketKey: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getOrder(
+      _orderId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getPosition(
       _marketKey: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "initialize()"(
+    initialize(
+      _owner: PromiseOrValue<string>,
+      _settings: PromiseOrValue<string>,
+      _events: PromiseOrValue<string>,
+      _factory: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    "initialize(address,address,address,address)"(
-      _marginAsset: PromiseOrValue<string>,
-      _addressResolver: PromiseOrValue<string>,
-      _marginBaseSettings: PromiseOrValue<string>,
-      _ops: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    marginAsset(overrides?: CallOverrides): Promise<BigNumber>;
-
-    marginBaseSettings(overrides?: CallOverrides): Promise<BigNumber>;
-
-    marketKeyIndex(
-      arg0: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    ops(overrides?: CallOverrides): Promise<BigNumber>;
 
     orderId(overrides?: CallOverrides): Promise<BigNumber>;
-
-    orders(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1080,6 +1104,7 @@ export interface CrossMarginBase extends BaseContract {
       _sizeDelta: PromiseOrValue<BigNumberish>,
       _targetPrice: PromiseOrValue<BigNumberish>,
       _orderType: PromiseOrValue<BigNumberish>,
+      _priceImpactDelta: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1089,22 +1114,15 @@ export interface CrossMarginBase extends BaseContract {
       _sizeDelta: PromiseOrValue<BigNumberish>,
       _targetPrice: PromiseOrValue<BigNumberish>,
       _orderType: PromiseOrValue<BigNumberish>,
+      _priceImpactDelta: PromiseOrValue<BigNumberish>,
       _maxDynamicFee: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    renounceOwnership(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    rescueERC20(
-      tokenAddress: PromiseOrValue<string>,
-      tokenAmount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
+    settings(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
-      newOwner: PromiseOrValue<string>,
+      _newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1125,10 +1143,20 @@ export interface CrossMarginBase extends BaseContract {
   };
 
   populateTransaction: {
+    ADDRESS_RESOLVER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     ETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    activeMarketKeys(
-      arg0: PromiseOrValue<BigNumberish>,
+    MARGIN_ASSET(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    OPS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    VERSION(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    calculateTradeFee(
+      _sizeDelta: PromiseOrValue<BigNumberish>,
+      _market: PromiseOrValue<string>,
+      _advancedOrderFee: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1149,15 +1177,12 @@ export interface CrossMarginBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    depositAndDistribute(
-      _amount: PromiseOrValue<BigNumberish>,
-      _newPositions: IMarginBaseTypes.NewPositionStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+    events(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    distributeMargin(
-      _newPositions: IMarginBaseTypes.NewPositionStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    execute(
+      commands: PromiseOrValue<BigNumberish>[],
+      inputs: PromiseOrValue<BytesLike>[],
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     executeOrder(
@@ -1165,11 +1190,23 @@ export interface CrossMarginBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    factory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     freeMargin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    futuresMarketManager(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     gelato(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getNumberOfInternalPositions(
+    getDelayedOrder(
+      _marketKey: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getOrder(
+      _orderId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1178,37 +1215,15 @@ export interface CrossMarginBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "initialize()"(
+    initialize(
+      _owner: PromiseOrValue<string>,
+      _settings: PromiseOrValue<string>,
+      _events: PromiseOrValue<string>,
+      _factory: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
-
-    "initialize(address,address,address,address)"(
-      _marginAsset: PromiseOrValue<string>,
-      _addressResolver: PromiseOrValue<string>,
-      _marginBaseSettings: PromiseOrValue<string>,
-      _ops: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    marginAsset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    marginBaseSettings(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    marketKeyIndex(
-      arg0: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    ops(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     orderId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    orders(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1218,6 +1233,7 @@ export interface CrossMarginBase extends BaseContract {
       _sizeDelta: PromiseOrValue<BigNumberish>,
       _targetPrice: PromiseOrValue<BigNumberish>,
       _orderType: PromiseOrValue<BigNumberish>,
+      _priceImpactDelta: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1227,22 +1243,15 @@ export interface CrossMarginBase extends BaseContract {
       _sizeDelta: PromiseOrValue<BigNumberish>,
       _targetPrice: PromiseOrValue<BigNumberish>,
       _orderType: PromiseOrValue<BigNumberish>,
+      _priceImpactDelta: PromiseOrValue<BigNumberish>,
       _maxDynamicFee: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    renounceOwnership(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    rescueERC20(
-      tokenAddress: PromiseOrValue<string>,
-      tokenAmount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+    settings(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transferOwnership(
-      newOwner: PromiseOrValue<string>,
+      _newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

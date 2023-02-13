@@ -27,11 +27,11 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface CrossMarginBaseSettingsInterface extends utils.Interface {
+export interface CrossMarginSettingsInterface extends utils.Interface {
   functions: {
+    "MAX_BPS()": FunctionFragment;
     "limitOrderFee()": FunctionFragment;
     "owner()": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
     "setLimitOrderFee(uint256)": FunctionFragment;
     "setStopOrderFee(uint256)": FunctionFragment;
     "setTradeFee(uint256)": FunctionFragment;
@@ -44,9 +44,9 @@ export interface CrossMarginBaseSettingsInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "MAX_BPS"
       | "limitOrderFee"
       | "owner"
-      | "renounceOwnership"
       | "setLimitOrderFee"
       | "setStopOrderFee"
       | "setTradeFee"
@@ -57,15 +57,12 @@ export interface CrossMarginBaseSettingsInterface extends utils.Interface {
       | "treasury"
   ): FunctionFragment;
 
+  encodeFunctionData(functionFragment: "MAX_BPS", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "limitOrderFee",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "setLimitOrderFee",
     values: [PromiseOrValue<BigNumberish>]
@@ -93,15 +90,12 @@ export interface CrossMarginBaseSettingsInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "treasury", values?: undefined): string;
 
+  decodeFunctionResult(functionFragment: "MAX_BPS", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "limitOrderFee",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "setLimitOrderFee",
     data: BytesLike
@@ -156,7 +150,7 @@ export type LimitOrderFeeChangedEventFilter =
   TypedEventFilter<LimitOrderFeeChangedEvent>;
 
 export interface OwnershipTransferredEventObject {
-  previousOwner: string;
+  user: string;
   newOwner: string;
 }
 export type OwnershipTransferredEvent = TypedEvent<
@@ -199,12 +193,12 @@ export type TreasuryAddressChangedEvent = TypedEvent<
 export type TreasuryAddressChangedEventFilter =
   TypedEventFilter<TreasuryAddressChangedEvent>;
 
-export interface CrossMarginBaseSettings extends BaseContract {
+export interface CrossMarginSettings extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: CrossMarginBaseSettingsInterface;
+  interface: CrossMarginSettingsInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -226,13 +220,11 @@ export interface CrossMarginBaseSettings extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    MAX_BPS(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     limitOrderFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
 
     setLimitOrderFee(
       _fee: PromiseOrValue<BigNumberish>,
@@ -266,13 +258,11 @@ export interface CrossMarginBaseSettings extends BaseContract {
     treasury(overrides?: CallOverrides): Promise<[string]>;
   };
 
+  MAX_BPS(overrides?: CallOverrides): Promise<BigNumber>;
+
   limitOrderFee(overrides?: CallOverrides): Promise<BigNumber>;
 
   owner(overrides?: CallOverrides): Promise<string>;
-
-  renounceOwnership(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   setLimitOrderFee(
     _fee: PromiseOrValue<BigNumberish>,
@@ -306,11 +296,11 @@ export interface CrossMarginBaseSettings extends BaseContract {
   treasury(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
+    MAX_BPS(overrides?: CallOverrides): Promise<BigNumber>;
+
     limitOrderFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<string>;
-
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     setLimitOrderFee(
       _fee: PromiseOrValue<BigNumberish>,
@@ -351,11 +341,11 @@ export interface CrossMarginBaseSettings extends BaseContract {
     LimitOrderFeeChanged(fee?: null): LimitOrderFeeChangedEventFilter;
 
     "OwnershipTransferred(address,address)"(
-      previousOwner?: PromiseOrValue<string> | null,
+      user?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
     OwnershipTransferred(
-      previousOwner?: PromiseOrValue<string> | null,
+      user?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
 
@@ -372,13 +362,11 @@ export interface CrossMarginBaseSettings extends BaseContract {
   };
 
   estimateGas: {
+    MAX_BPS(overrides?: CallOverrides): Promise<BigNumber>;
+
     limitOrderFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
 
     setLimitOrderFee(
       _fee: PromiseOrValue<BigNumberish>,
@@ -413,13 +401,11 @@ export interface CrossMarginBaseSettings extends BaseContract {
   };
 
   populateTransaction: {
+    MAX_BPS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     limitOrderFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
 
     setLimitOrderFee(
       _fee: PromiseOrValue<BigNumberish>,

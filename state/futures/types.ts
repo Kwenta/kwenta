@@ -75,7 +75,8 @@ export type FuturesTransactionType =
 	| 'close_cross_margin'
 	| 'submit_cross_order'
 	| 'cancel_cross_margin_order'
-	| 'withdraw_keeper_balance';
+	| 'withdraw_keeper_balance'
+	| 'create_cross_margin_account';
 
 export type FuturesTransaction = {
 	type: FuturesTransactionType;
@@ -135,13 +136,14 @@ export type FuturesAccountData = {
 };
 
 export type IsolatedAccountData = FuturesAccountData & {
-	openOrders?: DelayedOrderWithDetails<string>[];
+	delayedOrders: DelayedOrderWithDetails<string>[];
 };
 
 export type CrossMarginAccountData = FuturesAccountData & {
 	account: string;
 	balanceInfo: CrossMarginBalanceInfo<string>;
-	openOrders: CrossMarginOrder<string>[];
+	delayedOrders: DelayedOrderWithDetails<string>[];
+	advancedOrders: CrossMarginOrder<string>[];
 };
 
 // TODO: Separate in some way by network and wallet
@@ -180,6 +182,7 @@ export type CrossMarginState = {
 	marginDelta: string;
 	orderType: CrossMarginOrderType;
 	orderFeeCap: string;
+	leverageInput: string;
 	selectedLeverageByAsset: Partial<Record<FuturesMarketKey, string>>;
 	leverageSide: PositionSide;
 	selectedMarketKey: FuturesMarketKey;

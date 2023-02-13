@@ -2,7 +2,7 @@ import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { Contract as EthCallContract } from 'ethcall';
 import { BigNumber, ContractTransaction, ethers } from 'ethers';
-import { formatBytes32String, parseBytes32String } from 'ethers/lib/utils';
+import { defaultAbiCoder, formatBytes32String, parseBytes32String } from 'ethers/lib/utils';
 import request, { gql } from 'graphql-request';
 import { orderBy } from 'lodash';
 import KwentaSDK from 'sdk';
@@ -14,11 +14,11 @@ import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
 import { BPS_CONVERSION, DEFAULT_DESIRED_TIMEDELTA } from 'sdk/constants/futures';
 import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { getContractsByNetwork, getPerpsV2MarketMulticall } from 'sdk/contracts';
-import CrossMarginBaseABI from 'sdk/contracts/abis/CrossMarginBase.json';
+import CrossMarginAccountABI from 'sdk/contracts/abis/CrossMarginAccount.json';
 import FuturesMarketABI from 'sdk/contracts/abis/FuturesMarket.json';
-import FuturesMarketInternal from 'sdk/contracts/FuturesMarketInternal';
+import PerpsV2MarketInternal from 'sdk/contracts/PerpsV2MarketInternalV2';
 import {
-	CrossMarginBase__factory,
+	CrossMarginAccount__factory,
 	PerpsV2MarketData,
 	PerpsV2Market__factory,
 } from 'sdk/contracts/types';
@@ -40,6 +40,7 @@ import {
 	PositionDetail,
 	PositionSide,
 	ModifyPositionOptions,
+	AccountExecuteFunctions,
 } from 'sdk/types/futures';
 import { PricesMap } from 'sdk/types/prices';
 import {
@@ -64,7 +65,7 @@ export default class FuturesService {
 	private sdk: KwentaSDK;
 	public markets: FuturesMarket[] | undefined;
 	public internalFuturesMarkets: Partial<
-		Record<NetworkId, { [marketAddress: string]: FuturesMarketInternal }>
+		Record<NetworkId, { [marketAddress: string]: PerpsV2MarketInternal }>
 	> = {};
 
 	constructor(sdk: KwentaSDK) {
@@ -78,7 +79,7 @@ export default class FuturesService {
 	private getInternalFuturesMarket(marketAddress: string, marketKey: FuturesMarketKey) {
 		let market = this.internalFuturesMarkets[this.sdk.context.networkId]?.[marketAddress];
 		if (market) return market;
-		market = new FuturesMarketInternal(this.sdk.context.provider, marketKey, marketAddress);
+		market = new PerpsV2MarketInternal(this.sdk.context.provider, marketKey, marketAddress);
 		this.internalFuturesMarkets = {
 			[this.sdk.context.networkId]: {
 				...this.internalFuturesMarkets[this.sdk.context.networkId],
@@ -396,13 +397,13 @@ export default class FuturesService {
 		return response ? calculateVolumes(response) : {};
 	}
 
-	public async getCrossMarginAccounts(walletAddress?: string | null) {
+	public async getCrossMarginAccounts(walletAddress?: string | null): Promise<string[]> {
 		const address = walletAddress ?? this.sdk.context.walletAddress;
 		return await queryCrossMarginAccounts(this.sdk, address);
 	}
 
 	public async getCrossMarginBalanceInfo(walletAddress: string, crossMarginAddress: string) {
-		const crossMarginAccountContract = CrossMarginBase__factory.connect(
+		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.provider
 		);
@@ -423,21 +424,21 @@ export default class FuturesService {
 		};
 	}
 
-	public async getCrossMarginOpenOrders(account: string) {
-		const crossMarginBaseMultiCall = new EthCallContract(account, CrossMarginBaseABI);
-		const crossMarginBaseContract = CrossMarginBase__factory.connect(
+	public async getAdvancedOrders(account: string) {
+		const crossMarginAccountMultiCall = new EthCallContract(account, CrossMarginAccountABI);
+		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
 			account,
 			this.sdk.context.provider
 		);
 
 		const orders = [];
 
-		const orderIdBigNum = await crossMarginBaseContract.orderId();
+		const orderIdBigNum = await crossMarginAccountContract.orderId();
 		const orderId = orderIdBigNum.toNumber();
 
 		const orderCalls = Array(orderId)
 			.fill(0)
-			.map((_, i) => crossMarginBaseMultiCall.orders(i));
+			.map((_, i) => crossMarginAccountMultiCall.orders(i));
 		const contractOrders = (await this.sdk.context.multicallProvider.all(orderCalls)) as any;
 		for (let i = 0; i < orderId; i++) {
 			const contractOrder = contractOrders[i];
@@ -453,13 +454,13 @@ export default class FuturesService {
 	}
 
 	public async getCrossMarginSettings() {
-		const crossMarginBaseSettings = this.sdk.context.multicallContracts.CrossMarginBaseSettings;
-		if (!crossMarginBaseSettings) throw new Error(UNSUPPORTED_NETWORK);
+		const crossMarginSettings = this.sdk.context.multicallContracts.CrossMarginSettings;
+		if (!crossMarginSettings) throw new Error(UNSUPPORTED_NETWORK);
 
 		const [tradeFee, limitOrderFee, stopOrderFee] = await this.sdk.context.multicallProvider.all([
-			crossMarginBaseSettings.tradeFee(),
-			crossMarginBaseSettings.limitOrderFee(),
-			crossMarginBaseSettings.stopOrderFee(),
+			crossMarginSettings.tradeFee(),
+			crossMarginSettings.limitOrderFee(),
+			crossMarginSettings.stopOrderFee(),
 		]);
 		return {
 			tradeFee: tradeFee ? wei(tradeFee.toNumber() / BPS_CONVERSION) : wei(0),
@@ -591,7 +592,7 @@ export default class FuturesService {
 
 	public async depositCrossMargin(crossMarginAddress: string, amount: Wei) {
 		// TODO: Store on instance
-		const crossMarginAccountContract = CrossMarginBase__factory.connect(
+		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.signer
 		);
@@ -600,7 +601,7 @@ export default class FuturesService {
 
 	public async withdrawCrossMargin(crossMarginAddress: string, amount: Wei) {
 		// TODO: Store on instance
-		const crossMarginAccountContract = CrossMarginBase__factory.connect(
+		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.signer
 		);
@@ -693,12 +694,14 @@ export default class FuturesService {
 	}
 
 	public async submitCrossMarginOrder(
-		market: FuturesMarketKey,
+		marketAddress: string,
 		crossMarginAddress: string,
 		order: {
 			type: CrossMarginOrderType;
 			sizeDelta: Wei;
 			marginDelta: Wei;
+			priceImpactDelta: Wei;
+			timeDelta?: Wei;
 			advancedOrderInputs?: {
 				price: Wei;
 				feeCap: Wei;
@@ -706,40 +709,54 @@ export default class FuturesService {
 			};
 		}
 	) {
-		const crossMarginAccountContract = CrossMarginBase__factory.connect(
+		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.signer
 		);
 		if (order.type === 'market') {
-			const newPosition = [
-				{
-					marketKey: formatBytes32String(market),
-					marginDelta: order.marginDelta.toBN(),
-					sizeDelta: order.sizeDelta.toBN(),
-				},
-			];
+			const commands = [];
+			const inputs = [];
 
-			return await crossMarginAccountContract.distributeMargin(newPosition);
+			if (order.marginDelta.gt(0)) {
+				commands.push(AccountExecuteFunctions.PERPS_V2_MODIFY_MARGIN);
+				inputs.push(
+					defaultAbiCoder.encode(['address', 'uint256'], [marketAddress, order.marginDelta.toBN()])
+				);
+			}
+			if (order.sizeDelta.abs().gt(0)) {
+				commands.push(AccountExecuteFunctions.PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER);
+
+				inputs.push(
+					defaultAbiCoder.encode(
+						['address', 'int256', 'uint256'],
+						[marketAddress, order.sizeDelta.toBN(), order.priceImpactDelta.toBN()]
+					)
+				);
+			}
+
+			return await crossMarginAccountContract.execute(commands, inputs);
 		}
-		if ((order.type === 'limit' || order.type === 'stop_market') && !order.advancedOrderInputs) {
-			throw new Error('Missing inputs for advanced order');
-		}
+		// TODO: Waiting for advanced orders to be implemented again on the smart contract
+		throw new Error('Advanced orders not supported');
+		// if ((order.type === 'limit' || order.type === 'stop_market') && !order.advanced1OrderInputs) {
+		// 	throw new Error('Missing inputs for advanced order');
+		// }
 
-		const enumType = order.type === 'limit' ? 0 : 1;
+		// const enumType = order.type === 'limit' ? 0 : 1;
 
-		return this.sdk.transactions.createContractTxn(
-			crossMarginAccountContract,
-			'placeOrderWithFeeCap',
-			[
-				formatBytes32String(market),
-				order.marginDelta.toBN(),
-				order.sizeDelta.toBN(),
-				order.advancedOrderInputs?.price.toBN() ?? '0',
-				enumType,
-				order.advancedOrderInputs?.feeCap.toBN() ?? '0',
-			],
-			{ value: order.advancedOrderInputs?.keeperEthDeposit.toBN() ?? '0' }
-		);
+		// return this.sdk.transactions.createContractTxn(
+		// 	crossMarginAccountContract,
+		// 	'placeOrderWithFeeCap',
+		// 	[
+		// 		formatBytes32String(market),
+		// 		order.marginDelta.toBN(),
+		// 		order.sizeDelta.toBN(),
+		// 		order.advancedOrderInputs?.price.toBN() ?? '0',
+		// 		enumType,
+		// 		order.advancedOrderInputs?.feeCap.toBN() ?? '0',
+		// 	],
+		// 	{ value: order.advancedOrderInputs?.keeperEthDeposit.toBN() ?? '0' }
+		// );
 	}
 
 	public async closeCrossMarginPosition(
@@ -750,7 +767,7 @@ export default class FuturesService {
 			side: PositionSide;
 		}
 	) {
-		const crossMarginAccountContract = CrossMarginBase__factory.connect(
+		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.signer
 		);
@@ -787,7 +804,7 @@ export default class FuturesService {
 	}
 
 	public async cancelCrossMarginOrder(crossMarginAddress: string, orderId: string) {
-		const crossMarginAccountContract = CrossMarginBase__factory.connect(
+		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.signer
 		);
@@ -797,7 +814,7 @@ export default class FuturesService {
 	}
 
 	public async withdrawAccountKeeperBalance(crossMarginAddress: string, amount: Wei) {
-		const crossMarginAccountContract = CrossMarginBase__factory.connect(
+		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.signer
 		);

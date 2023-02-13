@@ -20,9 +20,10 @@ import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
 import {
 	selectIsCancellingOrder,
 	selectIsExecutingOrder,
-	selectIsolatedMarginOpenOrders,
+	selectOpenDelayedOrders,
 	selectMarketAsset,
 	selectMarkets,
+	selectOpenAdvancedOrders,
 } from 'state/futures/selectors';
 import { DelayedOrderWithDetails } from 'state/futures/types';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -48,7 +49,8 @@ const OpenOrdersTable: React.FC = () => {
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 	// TODO: Requires changes to bring back support for cross margin
-	const openOrders = useAppSelector(selectIsolatedMarginOpenOrders);
+	const openDelayedOrders = useAppSelector(selectOpenDelayedOrders);
+	const openAdvancedOrders = useAppSelector(selectOpenAdvancedOrders);
 	const futuresMarkets = useAppSelector(selectMarkets);
 	const isCancelling = useAppSelector(selectIsCancellingOrder);
 	const isExecuting = useAppSelector(selectIsExecutingOrder);
@@ -57,7 +59,7 @@ const OpenOrdersTable: React.FC = () => {
 	const [selectedOrder, setSelectedOrder] = useState<DelayedOrderWithDetails | undefined>();
 
 	const rowsData = useMemo(() => {
-		const ordersWithCancel = openOrders
+		const ordersWithCancel = openDelayedOrders
 			.map((o) => {
 				const market = futuresMarkets.find((m) => m.market === o.marketAddress);
 				const timer = countdownTimers ? countdownTimers[o.marketKey] : null;
@@ -125,7 +127,7 @@ const OpenOrdersTable: React.FC = () => {
 					: -1;
 			});
 		return ordersWithCancel;
-	}, [openOrders, futuresMarkets, marketAsset, countdownTimers, dispatch]);
+	}, [openDelayedOrders, futuresMarkets, marketAsset, countdownTimers, dispatch]);
 
 	useInterval(
 		() => {

@@ -49,7 +49,7 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 	},
 	PerpsV2MarketSettings: {
 		10: '0xd442Dc2Ac1f3cA1C86C8329246e47Ca0C91D0471',
-		420: '0x14fA3376E2ffa41708A0636009A35CAE8D8E2bc7',
+		420: '0xcE6F78bbc9080891b6732D27e5Ca7e866594F927',
 	},
 	Pyth: {
 		10: '0xff1a0f4744e8582DF1aE09D5611b887B6a12925C',
@@ -69,13 +69,17 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 	SynthSwap: {
 		10: '0x6d6273f52b0C8eaB388141393c1e8cfDB3311De6',
 	},
-	CrossMarginAccountFactory: {
-		10: '0x8e43BF1910ad1461EEe0Daca10547c7e6d9D2f36',
-		420: '0x9320170B37eDEb4f41cb6E5A8F82B984aD9c44eE',
+	CrossMarginAccount: {
+		420: '0xD67Db3cc05f626A3B7ac59A161589e2Bb2Bfd1E0',
 	},
-	CrossMarginBaseSettings: {
-		10: '0x8954C7b1417E3De398c7F33520EbAe142929Ba2A',
-		420: '0x8d1CB3f153D4646b64A447809e1Ce7714d41C6B4',
+	CrossMarginAccountFactory: {
+		420: '0xF84CcAD694ad8F37495b25D3Dd11edAd33d69Fb2',
+	},
+	CrossMarginEvents: {
+		420: '0x769A0246AFECba504389D0D295CaE4bC951daa8e',
+	},
+	CrossMarginSettings: {
+		420: '0xa5Aac6b5De821E631C7Ad01f978e32e80a8461c7',
 	},
 	KwentaArrakisVault: {
 		10: '0x56dEa47c40877c2aaC2a689aC56aa56cAE4938d2',

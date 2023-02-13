@@ -29,12 +29,12 @@ import stakingReducer from './staking/reducer';
 import statsReducer from './stats/reducer';
 import walletReducer from './wallet/reducer';
 
-const LOG_REDUX = process.env.NODE_ENV !== 'production';
+const LOG_REDUX = false;
 
 const persistConfig = {
 	key: 'root1',
 	storage,
-	version: 7,
+	version: 8,
 	blacklist: ['app', 'wallet'],
 	migrate: createMigrate(migrations, { debug: true }),
 };
@@ -83,5 +83,6 @@ export type AppThunk<ReturnType = void> = ThunkAction<
 >;
 
 export const persistor = persistStore(store);
+persistor.purge();
 
 export default store;

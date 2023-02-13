@@ -136,7 +136,7 @@ const _abi = [
     stateMutability: "view",
     type: "function",
   },
-] as const;
+];
 
 export class SynthUtil__factory {
   static readonly abi = _abi;

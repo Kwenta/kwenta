@@ -4,25 +4,28 @@
 
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
-import type { FuturesMarket, FuturesMarketInterface } from "../FuturesMarket";
+import type {
+  PerpsV2MarketViews,
+  PerpsV2MarketViewsInterface,
+} from "../PerpsV2MarketViews";
 
 const _abi = [
   {
     inputs: [
       {
         internalType: "address",
-        name: "_resolver",
+        name: "_marketState",
         type: "address",
       },
       {
-        internalType: "bytes32",
-        name: "_baseAsset",
-        type: "bytes32",
+        internalType: "address",
+        name: "_owner",
+        type: "address",
       },
       {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
+        internalType: "address",
+        name: "_resolver",
+        type: "address",
       },
     ],
     payable: false,
@@ -53,271 +56,41 @@ const _abi = [
     inputs: [
       {
         indexed: false,
-        internalType: "int256",
-        name: "funding",
-        type: "int256",
+        internalType: "address",
+        name: "oldOwner",
+        type: "address",
       },
       {
         indexed: false,
-        internalType: "uint256",
-        name: "index",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "timestamp",
-        type: "uint256",
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
       },
     ],
-    name: "FundingRecomputed",
+    name: "OwnerChanged",
     type: "event",
   },
   {
     anonymous: false,
     inputs: [
       {
-        indexed: true,
-        internalType: "bytes32",
-        name: "trackingCode",
-        type: "bytes32",
-      },
-      {
         indexed: false,
-        internalType: "bytes32",
-        name: "baseAsset",
-        type: "bytes32",
-      },
-      {
-        indexed: false,
-        internalType: "bytes32",
-        name: "marketKey",
-        type: "bytes32",
-      },
-      {
-        indexed: false,
-        internalType: "int256",
-        name: "sizeDelta",
-        type: "int256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "fee",
-        type: "uint256",
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
       },
     ],
-    name: "FuturesTracking",
+    name: "OwnerNominated",
     type: "event",
   },
   {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "int256",
-        name: "marginDelta",
-        type: "int256",
-      },
-    ],
-    name: "MarginTransferred",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "currentRoundId",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "int256",
-        name: "sizeDelta",
-        type: "int256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "targetRoundId",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "commitDeposit",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "keeperDeposit",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "bytes32",
-        name: "trackingCode",
-        type: "bytes32",
-      },
-    ],
-    name: "NextPriceOrderRemoved",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "int256",
-        name: "sizeDelta",
-        type: "int256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "targetRoundId",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "commitDeposit",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "keeperDeposit",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "bytes32",
-        name: "trackingCode",
-        type: "bytes32",
-      },
-    ],
-    name: "NextPriceOrderSubmitted",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "id",
-        type: "uint256",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "liquidator",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "int256",
-        name: "size",
-        type: "int256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "price",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "fee",
-        type: "uint256",
-      },
-    ],
-    name: "PositionLiquidated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "id",
-        type: "uint256",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "margin",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "int256",
-        name: "size",
-        type: "int256",
-      },
-      {
-        indexed: false,
-        internalType: "int256",
-        name: "tradeSize",
-        type: "int256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "lastPrice",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "fundingIndex",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "fee",
-        type: "uint256",
-      },
-    ],
-    name: "PositionModified",
-    type: "event",
+    constant: false,
+    inputs: [],
+    name: "acceptOwnership",
+    outputs: [],
+    payable: false,
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     constant: true,
@@ -398,7 +171,7 @@ const _abi = [
     outputs: [
       {
         internalType: "bytes32",
-        name: "",
+        name: "key",
         type: "bytes32",
       },
     ],
@@ -428,45 +201,6 @@ const _abi = [
     type: "function",
   },
   {
-    constant: false,
-    inputs: [
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "cancelNextPriceOrder",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [],
-    name: "closePosition",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "trackingCode",
-        type: "bytes32",
-      },
-    ],
-    name: "closePositionWithTracking",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     constant: true,
     inputs: [],
     name: "currentFundingRate",
@@ -482,18 +216,44 @@ const _abi = [
     type: "function",
   },
   {
-    constant: false,
-    inputs: [
+    constant: true,
+    inputs: [],
+    name: "currentFundingVelocity",
+    outputs: [
       {
-        internalType: "address",
-        name: "account",
-        type: "address",
+        internalType: "int256",
+        name: "",
+        type: "int256",
       },
     ],
-    name: "executeNextPriceOrder",
-    outputs: [],
     payable: false,
-    stateMutability: "nonpayable",
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    constant: true,
+    inputs: [
+      {
+        internalType: "int256",
+        name: "sizeDelta",
+        type: "int256",
+      },
+    ],
+    name: "fillPrice",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "price",
+        type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "invalid",
+        type: "bool",
+      },
+    ],
+    payable: false,
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -516,7 +276,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "index",
         type: "uint256",
       },
     ],
@@ -560,21 +320,6 @@ const _abi = [
     ],
     payable: false,
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "liquidatePosition",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -651,7 +396,7 @@ const _abi = [
     outputs: [
       {
         internalType: "bytes32",
-        name: "",
+        name: "key",
         type: "bytes32",
       },
     ],
@@ -710,35 +455,30 @@ const _abi = [
     type: "function",
   },
   {
-    constant: false,
-    inputs: [
+    constant: true,
+    inputs: [],
+    name: "marketState",
+    outputs: [
       {
-        internalType: "int256",
-        name: "sizeDelta",
-        type: "int256",
+        internalType: "contract IPerpsV2MarketState",
+        name: "",
+        type: "address",
       },
     ],
-    name: "modifyPosition",
-    outputs: [],
     payable: false,
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
   },
   {
     constant: false,
     inputs: [
       {
-        internalType: "int256",
-        name: "sizeDelta",
-        type: "int256",
-      },
-      {
-        internalType: "bytes32",
-        name: "trackingCode",
-        type: "bytes32",
+        internalType: "address",
+        name: "_owner",
+        type: "address",
       },
     ],
-    name: "modifyPositionWithTracking",
+    name: "nominateNewOwner",
     outputs: [],
     payable: false,
     stateMutability: "nonpayable",
@@ -746,39 +486,13 @@ const _abi = [
   },
   {
     constant: true,
-    inputs: [
+    inputs: [],
+    name: "nominatedOwner",
+    outputs: [
       {
         internalType: "address",
         name: "",
         type: "address",
-      },
-    ],
-    name: "nextPriceOrders",
-    outputs: [
-      {
-        internalType: "int128",
-        name: "sizeDelta",
-        type: "int128",
-      },
-      {
-        internalType: "uint128",
-        name: "targetRoundId",
-        type: "uint128",
-      },
-      {
-        internalType: "uint128",
-        name: "commitDeposit",
-        type: "uint128",
-      },
-      {
-        internalType: "uint128",
-        name: "keeperDeposit",
-        type: "uint128",
-      },
-      {
-        internalType: "bytes32",
-        name: "trackingCode",
-        type: "bytes32",
       },
     ],
     payable: false,
@@ -819,6 +533,11 @@ const _abi = [
         name: "sizeDelta",
         type: "int256",
       },
+      {
+        internalType: "enum IPerpsV2MarketBaseTypes.OrderType",
+        name: "orderType",
+        type: "uint8",
+      },
     ],
     name: "orderFee",
     outputs: [
@@ -839,39 +558,61 @@ const _abi = [
   },
   {
     constant: true,
-    inputs: [
+    inputs: [],
+    name: "owner",
+    outputs: [
       {
         internalType: "address",
         name: "",
         type: "address",
       },
     ],
+    payable: false,
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    constant: true,
+    inputs: [
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
     name: "positions",
     outputs: [
       {
-        internalType: "uint64",
-        name: "id",
-        type: "uint64",
-      },
-      {
-        internalType: "uint64",
-        name: "lastFundingIndex",
-        type: "uint64",
-      },
-      {
-        internalType: "uint128",
-        name: "margin",
-        type: "uint128",
-      },
-      {
-        internalType: "uint128",
-        name: "lastPrice",
-        type: "uint128",
-      },
-      {
-        internalType: "int128",
-        name: "size",
-        type: "int128",
+        components: [
+          {
+            internalType: "uint64",
+            name: "id",
+            type: "uint64",
+          },
+          {
+            internalType: "uint64",
+            name: "lastFundingIndex",
+            type: "uint64",
+          },
+          {
+            internalType: "uint128",
+            name: "margin",
+            type: "uint128",
+          },
+          {
+            internalType: "uint128",
+            name: "lastPrice",
+            type: "uint128",
+          },
+          {
+            internalType: "int128",
+            name: "size",
+            type: "int128",
+          },
+        ],
+        internalType: "struct IPerpsV2MarketBaseTypes.Position",
+        name: "",
+        type: "tuple",
       },
     ],
     payable: false,
@@ -885,6 +626,16 @@ const _abi = [
         internalType: "int256",
         name: "sizeDelta",
         type: "int256",
+      },
+      {
+        internalType: "uint256",
+        name: "tradePrice",
+        type: "uint256",
+      },
+      {
+        internalType: "enum IPerpsV2MarketBaseTypes.OrderType",
+        name: "orderType",
+        type: "uint8",
       },
       {
         internalType: "address",
@@ -920,7 +671,7 @@ const _abi = [
         type: "uint256",
       },
       {
-        internalType: "enum IFuturesMarketBaseTypes.Status",
+        internalType: "enum IPerpsV2MarketBaseTypes.Status",
         name: "status",
         type: "uint8",
       },
@@ -960,21 +711,6 @@ const _abi = [
     inputs: [],
     name: "rebuildCache",
     outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [],
-    name: "recomputeFunding",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "lastIndex",
-        type: "uint256",
-      },
-    ],
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
@@ -1036,56 +772,6 @@ const _abi = [
     type: "function",
   },
   {
-    constant: false,
-    inputs: [
-      {
-        internalType: "int256",
-        name: "sizeDelta",
-        type: "int256",
-      },
-    ],
-    name: "submitNextPriceOrder",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "int256",
-        name: "sizeDelta",
-        type: "int256",
-      },
-      {
-        internalType: "bytes32",
-        name: "trackingCode",
-        type: "bytes32",
-      },
-    ],
-    name: "submitNextPriceOrderWithTracking",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "int256",
-        name: "marginDelta",
-        type: "int256",
-      },
-    ],
-    name: "transferMargin",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     constant: true,
     inputs: [],
     name: "unrecordedFunding",
@@ -1105,26 +791,17 @@ const _abi = [
     stateMutability: "view",
     type: "function",
   },
-  {
-    constant: false,
-    inputs: [],
-    name: "withdrawAllMargin",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
 ];
 
-export class FuturesMarket__factory {
+export class PerpsV2MarketViews__factory {
   static readonly abi = _abi;
-  static createInterface(): FuturesMarketInterface {
-    return new utils.Interface(_abi) as FuturesMarketInterface;
+  static createInterface(): PerpsV2MarketViewsInterface {
+    return new utils.Interface(_abi) as PerpsV2MarketViewsInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): FuturesMarket {
-    return new Contract(address, _abi, signerOrProvider) as FuturesMarket;
+  ): PerpsV2MarketViews {
+    return new Contract(address, _abi, signerOrProvider) as PerpsV2MarketViews;
   }
 }

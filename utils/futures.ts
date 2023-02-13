@@ -4,6 +4,7 @@ import { TFunction } from 'i18next';
 import { Dictionary } from 'lodash';
 
 import {
+	DelayedOrder,
 	FuturesMarket,
 	FuturesMarketAsset,
 	FuturesMarketKey,
@@ -619,4 +620,28 @@ export const unserializeTrades = (trades: FuturesTrade<string>[]): FuturesTrade<
 
 export const unserializeFundingRates = (rates: FundingRate<string>[]): FundingRate[] => {
 	return rates.map((r) => ({ ...r, fundingRate: r.fundingRate ? wei(r.fundingRate) : null }));
+};
+
+export const formatDelayedOrders = (orders: DelayedOrder[], markets: FuturesMarket[]) => {
+	return orders
+		.filter((o) => o.size.abs().gt(0))
+		.reduce((acc, o) => {
+			const market = markets.find((m) => m.market === o.marketAddress);
+			if (!market) return acc;
+
+			acc.push({
+				...o,
+				marketKey: market.marketKey,
+				asset: market.asset,
+				market: getMarketName(market.asset),
+				executableAtTimestamp:
+					market && o.isOffchain // Manual fix for an incorrect
+						? o.submittedAtTimestamp +
+						  (o.isOffchain
+								? market.settings.offchainDelayedOrderMinAge * 1000
+								: market.settings.minDelayTimeDelta * 1000)
+						: o.executableAtTimestamp,
+			});
+			return acc;
+		}, [] as DelayedOrderWithDetails[]);
 };

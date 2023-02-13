@@ -2,28 +2,23 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "_version",
-        "type": "string"
-      },
-      {
         "internalType": "address",
-        "name": "_marginAsset",
+        "name": "_owner",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "_addressResolver",
+        "name": "_settings",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "_marginBaseSettings",
+        "name": "_events",
         "type": "address"
       },
       {
-        "internalType": "address payable",
-        "name": "_ops",
+        "internalType": "address",
+        "name": "_implementation",
         "type": "address"
       }
     ],
@@ -31,27 +26,152 @@
     "type": "constructor"
   },
   {
+    "inputs": [],
+    "name": "AccountDoesNotExist",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      }
+    ],
+    "name": "AccountFailedToFetchVersion",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      }
+    ],
+    "name": "AccountFailedToInitialize",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "CallerMustBeAccount",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "CannotUpgrade",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "OnlyOneAccountPerAddress",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "implementation",
+        "type": "address"
+      }
+    ],
+    "name": "AccountImplementationUpgraded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "events",
+        "type": "address"
+      }
+    ],
+    "name": "EventsUpgraded",
+    "type": "event"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
         "indexed": true,
         "internalType": "address",
-        "name": "owner",
+        "name": "creator",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
         "type": "address"
       },
       {
         "indexed": false,
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "version",
+        "type": "bytes32"
       }
     ],
     "name": "NewAccount",
     "type": "event"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "settings",
+        "type": "address"
+      }
+    ],
+    "name": "SettingsUpgraded",
+    "type": "event"
+  },
+  {
     "inputs": [],
-    "name": "addressResolver",
+    "name": "canUpgrade",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "events",
     "outputs": [
       {
         "internalType": "address",
@@ -67,32 +187,6 @@
     "name": "implementation",
     "outputs": [
       {
-        "internalType": "contract MarginBase",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "marginAsset",
-    "outputs": [
-      {
-        "internalType": "contract IERC20",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "marginBaseSettings",
-    "outputs": [
-      {
         "internalType": "address",
         "name": "",
         "type": "address"
@@ -106,8 +200,8 @@
     "name": "newAccount",
     "outputs": [
       {
-        "internalType": "address",
-        "name": "",
+        "internalType": "address payable",
+        "name": "accountAddress",
         "type": "address"
       }
     ],
@@ -116,10 +210,29 @@
   },
   {
     "inputs": [],
-    "name": "ops",
+    "name": "owner",
     "outputs": [
       {
-        "internalType": "address payable",
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "ownerToAccount",
+    "outputs": [
+      {
+        "internalType": "address",
         "name": "",
         "type": "address"
       }
@@ -129,15 +242,92 @@
   },
   {
     "inputs": [],
-    "name": "version",
+    "name": "removeUpgradability",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "settings",
     "outputs": [
       {
-        "internalType": "string",
+        "internalType": "address",
         "name": "",
-        "type": "string"
+        "type": "address"
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_oldOwner",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "updateAccountOwner",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_implementation",
+        "type": "address"
+      }
+    ],
+    "name": "upgradeAccountImplementation",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_events",
+        "type": "address"
+      }
+    ],
+    "name": "upgradeEvents",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_settings",
+        "type": "address"
+      }
+    ],
+    "name": "upgradeSettings",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]

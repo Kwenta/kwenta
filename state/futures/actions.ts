@@ -25,7 +25,6 @@ import {
 } from 'sdk/types/futures';
 import {
 	calculateCrossMarginFee,
-	getMarketName,
 	getTradeStatusMessage,
 	serializePotentialTrade,
 } from 'sdk/utils/futures';
@@ -48,6 +47,7 @@ import { computeMarketFee } from 'utils/costCalculations';
 import { stipZeros } from 'utils/formatters/number';
 import {
 	calculateMarginDelta,
+	formatDelayedOrders,
 	marketOverrides,
 	orderPriceInvalidLabel,
 	serializeCmBalanceInfo,
@@ -66,6 +66,7 @@ import { refetchWithComparator } from 'utils/queries';
 import {
 	handleCrossMarginPreviewError,
 	handleIsolatedMarginPreviewError,
+	setCrossMarginAccount,
 	setCrossMarginFees,
 	setCrossMarginLeverageForAsset,
 	setCrossMarginMarginDelta,
@@ -75,7 +76,7 @@ import {
 	setCrossMarginTradeInputs,
 	setCrossMarginTradePreview,
 	setIsolatedMarginFee,
-	setIsolatedMarginLeverageInput,
+	setLeverageInput,
 	setIsolatedMarginTradeInputs,
 	setIsolatedTradePreview,
 	setLeverageSide,
@@ -86,7 +87,6 @@ import {
 	selectCrossMarginAccount,
 	selectCrossMarginMarginDelta,
 	selectCrossMarginOrderPrice,
-	selectCrossMarginSelectedLeverage,
 	selectCrossMarginSettings,
 	selectCrossMarginTradeFees,
 	selectCrossMarginTradeInputs,
@@ -188,18 +188,6 @@ export const fetchCrossMarginSettings = createAsyncThunk<
 		throw err;
 	}
 });
-
-export const fetchFuturesPositionsForType = createAsyncThunk<void, void, ThunkConfig>(
-	'futures/fetchFuturesPositionsForType',
-	async (_, { dispatch, getState }) => {
-		const { futures } = getState();
-		if (futures.selectedType === 'cross_margin') {
-			dispatch(fetchCrossMarginPositions());
-		} else {
-			dispatch(fetchIsolatedMarginPositions());
-		}
-	}
-);
 
 export const fetchCrossMarginPositions = createAsyncThunk<
 	{ positions: FuturesPosition<string>[]; account: string; network: NetworkId } | undefined,
@@ -371,27 +359,8 @@ export const fetchIsolatedOpenOrders = createAsyncThunk<
 	const marketAddresses = markets.map((market) => market.market);
 
 	const orders: DelayedOrder[] = await sdk.futures.getDelayedOrders(wallet, marketAddresses);
-	const nonzeroOrders = orders
-		.filter((o) => o.size.abs().gt(0))
-		.reduce((acc, o) => {
-			const market = markets.find((m) => m.market === o.marketAddress);
-			if (!market) return acc;
+	const nonzeroOrders = formatDelayedOrders(orders, markets);
 
-			acc.push({
-				...o,
-				marketKey: market.marketKey,
-				asset: market.asset,
-				market: getMarketName(market.asset),
-				executableAtTimestamp:
-					market && o.isOffchain // Manual fix for an incorrect
-						? o.submittedAtTimestamp +
-						  (o.isOffchain
-								? market.settings.offchainDelayedOrderMinAge * 1000
-								: market.settings.minDelayTimeDelta * 1000)
-						: o.executableAtTimestamp,
-			});
-			return acc;
-		}, [] as DelayedOrderWithDetails[]);
 	return {
 		networkId: network,
 		orders: serializeDelayedOrders(nonzeroOrders),
@@ -401,7 +370,8 @@ export const fetchIsolatedOpenOrders = createAsyncThunk<
 
 export const fetchCrossMarginOpenOrders = createAsyncThunk<
 	| {
-			orders: FuturesOrder<string>[];
+			advancedOrders: FuturesOrder<string>[];
+			delayedOrders: DelayedOrderWithDetails<string>[];
 			account: string;
 			network: NetworkId;
 	  }
@@ -412,13 +382,21 @@ export const fetchCrossMarginOpenOrders = createAsyncThunk<
 	const account = selectCrossMarginAccount(getState());
 	const supportedNetwork = selectFuturesSupportedNetwork(getState());
 	const network = selectNetwork(getState());
+	const markets = selectMarkets(getState());
+
+	const marketAddresses = markets.map((market) => market.market);
+
 	if (!account || !supportedNetwork) return;
 	try {
-		const orders = await sdk.futures.getCrossMarginOpenOrders(account);
+		const orders = await sdk.futures.getAdvancedOrders(account);
+		const delayedOrders = await sdk.futures.getDelayedOrders(account, marketAddresses);
+		const nonzeroOrders = formatDelayedOrders(delayedOrders, markets);
+
 		return {
 			account,
 			network,
-			orders: serializeFuturesOrders(orders),
+			delayedOrders: serializeDelayedOrders(nonzeroOrders),
+			advancedOrders: serializeFuturesOrders(orders),
 		};
 	} catch (err) {
 		notifyError('Failed to fetch open orders', err);
@@ -513,8 +491,8 @@ export const editCrossMarginSize = (size: string, currencyType: 'usd' | 'native'
 	dispatch,
 	getState
 ) => {
-	const leverage = selectCrossMarginSelectedLeverage(getState());
 	const assetRate = selectMarketPrice(getState());
+	const marginDelta = selectCrossMarginMarginDelta(getState());
 	const orderPrice = selectCrossMarginOrderPrice(getState());
 	const isAdvancedOrder = selectIsAdvancedOrder(getState());
 	const price = isAdvancedOrder && Number(orderPrice) > 0 ? wei(orderPrice) : assetRate;
@@ -522,7 +500,6 @@ export const editCrossMarginSize = (size: string, currencyType: 'usd' | 'native'
 		dispatch(
 			setCrossMarginTradeInputs({
 				...ZERO_STATE_CM_TRADE_INPUTS,
-				leverage: leverage.toString(),
 			})
 		);
 		dispatch(setCrossMarginTradePreview(null));
@@ -530,6 +507,7 @@ export const editCrossMarginSize = (size: string, currencyType: 'usd' | 'native'
 	}
 	const nativeSize = currencyType === 'native' ? size : wei(size).div(price).toString();
 	const usdSize = currencyType === 'native' ? price.mul(size).toString() : size;
+	const leverage = marginDelta?.gt(0) ? wei(usdSize).div(marginDelta.abs()) : '0';
 
 	dispatch(
 		setCrossMarginTradeInputs({
@@ -543,28 +521,8 @@ export const editCrossMarginSize = (size: string, currencyType: 'usd' | 'native'
 
 const stageCrossMarginSizeChange = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/stageCrossMarginSizeChange',
-	async (_, { dispatch, getState }) => {
+	async (_, { dispatch }) => {
 		dispatch(calculateCrossMarginFees());
-		const tradeInputs = selectCrossMarginTradeInputs(getState());
-		const fees = selectCrossMarginTradeFees(getState());
-		const rate = selectMarketPrice(getState());
-		const price = selectCrossMarginOrderPrice(getState());
-		const leverage = selectCrossMarginSelectedLeverage(getState());
-		const position = selectPosition(getState());
-
-		const marginDelta = tradeInputs.nativeSize.gt(0)
-			? await calculateMarginDelta(
-					{
-						susdSizeDelta: tradeInputs.susdSizeDelta,
-						nativeSizeDelta: tradeInputs.nativeSizeDelta,
-						price: price ? wei(price) : rate,
-						leverage: leverage,
-					},
-					fees,
-					position
-			  )
-			: wei(0);
-		dispatch(setCrossMarginMarginDelta(marginDelta.toString()));
 		debouncedPrepareCrossMarginTradePreview(dispatch);
 	}
 );
@@ -607,14 +565,14 @@ export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'nati
 	) {
 		dispatch(setIsolatedMarginTradeInputs(ZERO_STATE_CM_TRADE_INPUTS));
 		dispatch(setIsolatedTradePreview(null));
-		dispatch(setIsolatedMarginLeverageInput('0'));
+		dispatch(setLeverageInput('0'));
 		return;
 	}
 
 	const nativeSize = currencyType === 'native' ? size : wei(size).div(assetRate).toString();
 	const usdSize = currencyType === 'native' ? stipZeros(assetRate.mul(size).toString()) : size;
 	const leverage = wei(usdSize).div(position?.remainingMargin);
-	dispatch(setIsolatedMarginLeverageInput(leverage.toNumber().toFixed(2)));
+	dispatch(setLeverageInput(leverage.toNumber().toFixed(2)));
 
 	dispatch(
 		setIsolatedMarginTradeInputs({
@@ -826,7 +784,6 @@ export const prepareCrossMarginTradePreview = createAsyncThunk<void, void, Thunk
 		const assetPrice = selectMarketPrice(getState());
 		const orderPrice = selectCrossMarginOrderPrice(getState());
 		const marginDelta = selectCrossMarginMarginDelta(getState());
-
 		try {
 			dispatch(
 				fetchCrossMarginTradePreview({
@@ -850,6 +807,49 @@ export const prepareIsolatedMarginTradePreview = createAsyncThunk<void, void, Th
 );
 
 // Contract Mutations
+
+export const createCrossMarginAccount = createAsyncThunk<
+	{ account: string; wallet: string; network: NetworkId } | undefined,
+	void,
+	ThunkConfig
+>(
+	'futures/createCrossMarginAccount',
+	async (_, { getState, dispatch, extra: { sdk }, rejectWithValue }) => {
+		const wallet = selectWallet(getState());
+		const supportedNetwork = selectFuturesSupportedNetwork(getState());
+		const network = selectNetwork(getState());
+		if (!wallet || !supportedNetwork) return undefined;
+		const accounts = getState().futures.crossMargin.accounts;
+
+		// Already have an accoutn fetched and persisted for this address
+		if (accounts[network][wallet]) {
+			notifyError('There is already an account associated with this wallet');
+			rejectWithValue('Account already created');
+		}
+
+		try {
+			const accounts = await sdk.futures.getCrossMarginAccounts();
+			// Check for existing account on the contract as only one account per user
+			if (accounts[0]) {
+				dispatch(setCrossMarginAccount({ account: accounts[0], wallet: wallet, network }));
+				return;
+			}
+
+			dispatch(
+				setTransaction({
+					status: TransactionStatus.AwaitingExecution,
+					type: 'create_cross_margin_account',
+					hash: null,
+				})
+			);
+			const tx = await sdk.futures.createCrossMarginAccount();
+			await monitorAndAwaitTransaction(dispatch, tx);
+			dispatch(fetchCrossMarginAccount());
+		} catch (err) {
+			dispatch(handleTransactionError(err.message));
+		}
+	}
+);
 
 export const depositCrossMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 	'futures/depositCrossMargin',
@@ -1095,7 +1095,7 @@ export const closeIsolatedMarginPosition = createAsyncThunk<void, void, ThunkCon
 export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/submitCrossMarginOrder',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
-		const marketKey = selectMarketKey(getState());
+		const marketInfo = selectMarketInfo(getState());
 		const account = selectCrossMarginAccount(getState());
 		const tradeInputs = selectCrossMarginTradeInputs(getState());
 		const marginDelta = selectCrossMarginMarginDelta(getState());
@@ -1103,9 +1103,10 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 		const orderType = selectOrderType(getState());
 		const orderPrice = selectCrossMarginOrderPrice(getState());
 		const { keeperEthDeposit } = selectCrossMarginTradeFees(getState());
+		const priceImpact = selectIsolatedPriceImpact(getState());
 
 		try {
-			if (!marketKey) throw new Error('Market info not found');
+			if (!marketInfo) throw new Error('Market info not found');
 			if (!account) throw new Error('No cross margin account found');
 
 			dispatch(
@@ -1115,10 +1116,11 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 					hash: null,
 				})
 			);
-			const tx = await sdk.futures.submitCrossMarginOrder(marketKey, account, {
+			const tx = await sdk.futures.submitCrossMarginOrder(marketInfo.market, account, {
 				type: orderType as CrossMarginOrderType, // TODO: A better way handle isolated and cross margin order types
 				sizeDelta: tradeInputs.nativeSizeDelta,
 				marginDelta: marginDelta,
+				priceImpactDelta: priceImpact,
 				advancedOrderInputs: {
 					keeperEthDeposit,
 					feeCap,

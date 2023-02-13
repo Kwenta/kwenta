@@ -631,6 +631,21 @@ const _abi = [
   },
   {
     constant: true,
+    inputs: [],
+    name: "fundingRateLastRecomputed",
+    outputs: [
+      {
+        internalType: "int128",
+        name: "",
+        type: "int128",
+      },
+    ],
+    payable: false,
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    constant: true,
     inputs: [
       {
         internalType: "uint256",
@@ -1234,7 +1249,7 @@ const _abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
-] as const;
+];
 
 export class PerpsV2Market__factory {
   static readonly abi = _abi;

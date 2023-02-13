@@ -7,6 +7,7 @@ import {
 	getFuturesPositions,
 	getFuturesTrades,
 } from 'queries/futures/subgraph';
+import { ZERO_ADDRESS } from 'sdk/constants/global';
 
 export const queryAccountsFromSubgraph = async (
 	sdk: KwentaSDK,
@@ -28,25 +29,16 @@ export const queryAccountsFromSubgraph = async (
 	return response?.crossMarginAccounts.map((cm: { id: string }) => cm.id) || [];
 };
 
-const queryAccountFromLogs = async (sdk: KwentaSDK, address: string | null): Promise<string[]> => {
-	const { CrossMarginAccountFactory } = sdk.context.contracts;
-	if (!CrossMarginAccountFactory) return [];
-	const accountFilter = CrossMarginAccountFactory.filters.NewAccount(address);
-	if (accountFilter) {
-		const logs = await CrossMarginAccountFactory.queryFilter(accountFilter);
-		if (logs.length) {
-			return logs.map((l) => l.args?.[1]);
-		}
-	}
-	return [];
-};
-
 export const queryCrossMarginAccounts = async (
 	sdk: KwentaSDK,
 	walletAddress: string
 ): Promise<string[]> => {
-	const accounts = await queryAccountFromLogs(sdk, walletAddress);
-	return accounts;
+	// TODO: Contract should be updating to support one to many
+	const account = await sdk.context.contracts.CrossMarginAccountFactory?.ownerToAccount(
+		walletAddress
+	);
+	if (!account || account === ZERO_ADDRESS) return [];
+	return [account];
 };
 
 export const queryTrades = async (

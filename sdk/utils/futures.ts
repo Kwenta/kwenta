@@ -392,7 +392,6 @@ export const formatPotentialTrade = (
 	leverageSide: PositionSide
 ) => {
 	const { fee, liqPrice, margin, price, size, status } = preview;
-
 	return {
 		fee: wei(fee),
 		liqPrice: wei(liqPrice),

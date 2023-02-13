@@ -50,11 +50,17 @@ export const selectMarketsQueryStatus = (state: RootState) => state.futures.quer
 export const selectCMAccountQueryStatus = (state: RootState) =>
 	state.futures.queryStatuses.crossMarginAccount;
 
-export const selectIsolatedLeverageInput = (state: RootState) =>
-	state.futures.isolatedMargin.leverageInput;
+export const selectLeverageInput = createSelector(
+	(state: RootState) => state.futures,
+	selectFuturesType,
+	(futures, type) => futures[accountType(type)].leverageInput
+);
 
 export const selectCrossMarginMarginDelta = (state: RootState) =>
 	wei(state.futures.crossMargin.marginDelta || 0);
+
+export const selectMarginDeltaInputValue = (state: RootState) =>
+	state.futures.crossMargin.marginDelta;
 
 export const selectFuturesSupportedNetwork = (state: RootState) =>
 	state.wallet.networkId === 10 || state.wallet.networkId === 420;
@@ -86,6 +92,14 @@ export const selectIsolatedAccountData = createSelector(
 	(wallet, network, supportedNetwork, isolatedMargin) => {
 		return wallet && supportedNetwork ? isolatedMargin.accounts[network][wallet] : null;
 	}
+);
+
+export const selectAccountData = createSelector(
+	selectFuturesType,
+	selectCrossMarginAccountData,
+	selectIsolatedAccountData,
+	(type, crossAccountData, isolatedAccountData) =>
+		type === 'cross_margin' ? crossAccountData : isolatedAccountData
 );
 
 export const selectCMDepositApproved = createSelector(selectCrossMarginAccountData, (account) => {
@@ -138,7 +152,7 @@ export const selectMarketInfo = createSelector(
 
 export const selectIsolatedPriceImpact = createSelector(
 	(state: RootState) => state.futures.isolatedMargin.priceImpact,
-	(priceImpact) => wei(priceImpact, 0)
+	(priceImpact) => wei(priceImpact)
 );
 
 export const selectOrderType = createSelector(
@@ -611,13 +625,13 @@ export const selectCrossMarginOpenOrders = createSelector(
 	selectMarketAsset,
 	selectCrossMarginAccountData,
 	(asset, account) => {
-		const orders = account ? unserializeFuturesOrders(account.openOrders) : [];
+		const orders = account ? unserializeFuturesOrders(account.advancedOrders) : [];
 		return orders.filter((o) => o.asset === asset);
 	}
 );
 
-export const selectIsolatedMarginOpenOrders = createSelector(selectIsolatedAccountData, (account) =>
-	unserializeDelayedOrders(account?.openOrders ?? [])
+export const selectOpenDelayedOrders = createSelector(selectAccountData, (account) =>
+	unserializeDelayedOrders(account?.delayedOrders ?? [])
 );
 
 export const selectTradePreview = createSelector(
@@ -668,18 +682,17 @@ export const selectPositionStatus = createSelector(
 	}
 );
 
-export const selectOpenOrders = createSelector(
+export const selectOpenAdvancedOrders = createSelector(
 	selectCrossMarginOpenOrders,
-	selectIsolatedMarginOpenOrders,
 	selectFuturesType,
-	(crossOrders, isolatedOrder, futuresType) => {
-		return futuresType === 'cross_margin' ? crossOrders : isolatedOrder;
+	(crossOrders, futuresType) => {
+		return futuresType === 'cross_margin' ? crossOrders : [];
 	}
 );
 
 export const selectOpenOrder = createSelector(
 	selectCrossMarginOpenOrders,
-	selectIsolatedMarginOpenOrders,
+	selectOpenDelayedOrders,
 	selectFuturesType,
 	selectMarketKey,
 	(crossOrders, isolatedOrder, futuresType, marketKey) => {
@@ -752,6 +765,7 @@ export const selectOpenInterest = createSelector(selectMarkets, (futuresMarkets)
 		wei(0)
 	)
 );
+
 export const selectPositionHistory = createSelector(
 	selectFuturesType,
 	selectCrossMarginAccountData,
@@ -786,33 +800,16 @@ export const selectPositionHistoryForSelectedTrader = createSelector(
 );
 
 export const selectUsersTradesForMarket = createSelector(
-	selectFuturesType,
-	selectFuturesAccount,
 	selectMarketAsset,
-	selectCrossMarginAccountData,
-	selectIsolatedAccountData,
-	(type, account, asset, crossAccountData, isolatedAccountData) => {
-		let trades;
-		if (type === 'cross_margin') {
-			trades = unserializeTrades(crossAccountData?.trades ?? []);
-		} else if (account) {
-			trades = unserializeTrades(isolatedAccountData?.trades ?? []);
-		}
+	selectAccountData,
+	(asset, accountData) => {
+		const trades = unserializeTrades(accountData?.trades ?? []);
 		return trades?.filter((t) => t.asset === formatBytes32String(asset)) ?? [];
 	}
 );
 
-export const selectAllUsersTrades = createSelector(
-	selectFuturesType,
-	selectCrossMarginAccountData,
-	selectIsolatedAccountData,
-	(type, crossAccountData, isolatedAccountData) => {
-		if (type === 'cross_margin') {
-			return unserializeTrades(crossAccountData?.trades ?? []);
-		} else {
-			return unserializeTrades(isolatedAccountData?.trades ?? []);
-		}
-	}
+export const selectAllUsersTrades = createSelector(selectAccountData, (accountData) =>
+	unserializeTrades(accountData?.trades ?? [])
 );
 
 export const selectCancellingOrder = (state: RootState) =>

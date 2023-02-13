@@ -8,10 +8,10 @@ import Button from 'components/Button';
 import FuturesIcon from 'components/Nav/FuturesIcon';
 import { NumberDiv } from 'components/Text/NumberLabel';
 import { EXTERNAL_LINKS } from 'constants/links';
-import { FuturesAccountType } from 'queries/futures/subgraph';
 import { setOpenModal } from 'state/app/reducer';
 import {
 	selectCrossMarginBalanceInfo,
+	selectFuturesType,
 	selectHasRemainingMargin,
 	selectPosition,
 } from 'state/futures/selectors';
@@ -20,12 +20,7 @@ import { selectWallet } from 'state/wallet/selectors';
 import { BorderedPanel, YellowIconButton, PillButtonSpan } from 'styles/common';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 
-type Props = {
-	accountType: FuturesAccountType;
-	onManageBalance: () => void;
-};
-
-export default function TradePanelHeader({ accountType, onManageBalance }: Props) {
+export default function TradePanelHeader() {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
@@ -35,9 +30,16 @@ export default function TradePanelHeader({ accountType, onManageBalance }: Props
 	const { freeMargin } = useAppSelector(selectCrossMarginBalanceInfo);
 	const hasMargin = useAppSelector(selectHasRemainingMargin);
 	const wallet = useAppSelector(selectWallet);
+	const accountType = useAppSelector(selectFuturesType);
 
 	const balance =
 		accountType === 'isolated_margin' ? position?.remainingMargin ?? zeroBN : freeMargin;
+
+	const onPressDeposit = () => {
+		accountType === 'isolated_margin'
+			? dispatch(setOpenModal('futures_isolated_transfer'))
+			: dispatch(setOpenModal('futures_cross_deposit'));
+	};
 
 	if (!wallet) {
 		return (
@@ -83,7 +85,7 @@ export default function TradePanelHeader({ accountType, onManageBalance }: Props
 					</FAQLink>
 				)}
 			</Title>
-			<BalanceRow onClick={onManageBalance}>
+			<BalanceRow onClick={onPressDeposit}>
 				<NumberDiv contrast="strong">{formatDollars(balance ?? zeroBN)}</NumberDiv>
 				<BalanceButton>
 					<StyledPillButtonSpan>

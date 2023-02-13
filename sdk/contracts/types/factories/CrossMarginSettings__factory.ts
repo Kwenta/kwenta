@@ -5,13 +5,18 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  CrossMarginBaseSettings,
-  CrossMarginBaseSettingsInterface,
-} from "../CrossMarginBaseSettings";
+  CrossMarginSettings,
+  CrossMarginSettingsInterface,
+} from "../CrossMarginSettings";
 
 const _abi = [
   {
     inputs: [
+      {
+        internalType: "address",
+        name: "_owner",
+        type: "address",
+      },
       {
         internalType: "address",
         name: "_treasury",
@@ -35,6 +40,11 @@ const _abi = [
     ],
     stateMutability: "nonpayable",
     type: "constructor",
+  },
+  {
+    inputs: [],
+    name: "DuplicateFee",
+    type: "error",
   },
   {
     inputs: [
@@ -71,7 +81,7 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "previousOwner",
+        name: "user",
         type: "address",
       },
       {
@@ -125,6 +135,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "MAX_BPS",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "limitOrderFee",
     outputs: [
       {
@@ -147,13 +170,6 @@ const _abi = [
       },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "renounceOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -260,21 +276,17 @@ const _abi = [
     stateMutability: "view",
     type: "function",
   },
-] as const;
+];
 
-export class CrossMarginBaseSettings__factory {
+export class CrossMarginSettings__factory {
   static readonly abi = _abi;
-  static createInterface(): CrossMarginBaseSettingsInterface {
-    return new utils.Interface(_abi) as CrossMarginBaseSettingsInterface;
+  static createInterface(): CrossMarginSettingsInterface {
+    return new utils.Interface(_abi) as CrossMarginSettingsInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): CrossMarginBaseSettings {
-    return new Contract(
-      address,
-      _abi,
-      signerOrProvider
-    ) as CrossMarginBaseSettings;
+  ): CrossMarginSettings {
+    return new Contract(address, _abi, signerOrProvider) as CrossMarginSettings;
   }
 }

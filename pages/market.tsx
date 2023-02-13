@@ -1,9 +1,7 @@
 import { useRouter } from 'next/router';
 import { useEffect, FC, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import Error from 'components/ErrorView';
 import Loader from 'components/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Connector from 'containers/Connector';
@@ -17,14 +15,18 @@ import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
 import FuturesUnsupportedNetwork from 'sections/futures/Trade/FuturesUnsupported';
 import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
 import TransferIsolatedMarginModal from 'sections/futures/Trade/TransferIsolatedMarginModal';
-import TradeCrossMargin from 'sections/futures/TradeCrossMargin';
+import DepositWithdrawCrossMargin from 'sections/futures/TradeCrossMargin/DepositWithdrawCrossMargin';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { setOpenModal } from 'state/app/reducer';
 import { selectOpenModal } from 'state/app/selectors';
-import { clearTradeInputs, fetchCrossMarginAccount } from 'state/futures/actions';
+import { clearTradeInputs } from 'state/futures/actions';
 import { usePollMarketFuturesData } from 'state/futures/hooks';
-import { setMarketAsset, setShowCrossMarginOnboard } from 'state/futures/reducer';
+import {
+	setFuturesAccountType,
+	setMarketAsset,
+	setShowCrossMarginOnboard,
+} from 'state/futures/reducer';
 import {
 	selectCMAccountQueryStatus,
 	selectCrossMarginAccount,
@@ -50,6 +52,7 @@ const Market: MarketComponent = () => {
 	const setCurrentMarket = useAppSelector(selectMarketAsset);
 	const showOnboard = useAppSelector(selectShowCrossMarginOnboard);
 	const openModal = useAppSelector(selectOpenModal);
+	const accountType = useAppSelector(selectFuturesType);
 
 	const resetTradeState = useCallback(() => {
 		dispatch(clearTradeInputs());
@@ -64,6 +67,16 @@ const Market: MarketComponent = () => {
 			router.events.off('routeChangeStart', handleRouteChange);
 		};
 	}, [router.events, resetTradeState]);
+
+	const routerAccountType =
+		router.query.accountType === 'cross_margin' ? 'cross_margin' : 'isolated_margin';
+
+	useEffect(() => {
+		if (router.isReady && accountType !== routerAccountType) {
+			dispatch(setFuturesAccountType(routerAccountType));
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [router.isReady, routerAccountType]);
 
 	useEffect(() => {
 		resetTradeState();
@@ -107,13 +120,17 @@ const Market: MarketComponent = () => {
 					onDismiss={() => dispatch(setOpenModal(null))}
 				/>
 			)}
+			{(openModal === 'futures_cross_deposit' || openModal === 'futures_cross_withdraw') && (
+				<DepositWithdrawCrossMargin
+					defaultTab="deposit"
+					onDismiss={() => dispatch(setOpenModal(null))}
+				/>
+			)}
 		</>
 	);
 };
 
 function TradePanelDesktop() {
-	const { t } = useTranslation();
-	const dispatch = useAppDispatch();
 	const router = useRouter();
 	const isL2 = useIsL2();
 	const { walletAddress } = Connector.useContainer();
@@ -135,21 +152,6 @@ function TradePanelDesktop() {
 		return <Loader />;
 	}
 
-	if (accountType === 'cross_margin') {
-		return queryStatus.status === FetchStatus.Error && !crossMarginAccount ? (
-			<div>
-				<Error
-					message={t('futures.market.trade.cross-margin.account-query-failed')}
-					retryButton={{
-						onClick: () => dispatch(fetchCrossMarginAccount()),
-						label: 'Retry',
-					}}
-				/>
-			</div>
-		) : (
-			<TradeCrossMargin />
-		);
-	}
 	return <TradeIsolatedMargin />;
 }
 
