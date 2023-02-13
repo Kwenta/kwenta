@@ -73,10 +73,15 @@ export const selectLpTokenValue = createSelector(
 
 export const selectEarnApy = createSelector(
 	selectLpTokenValue,
-	selectYieldPerDay,
 	selectKwentaPrice,
-	(lpTokenValue, yieldPerDay, kwentaPrice) =>
+	(state: RootState) => state.earn.rewardRate,
+	(state: RootState) => state.earn.totalSupply,
+	(lpTokenValue, kwentaPrice, rewardRate, totalSupply) =>
 		lpTokenValue.gt(0)
-			? toWei(yieldPerDay).mul(kwentaPrice).mul(toWei('365')).div(lpTokenValue)
+			? toWei(rewardRate)
+					.div(totalSupply)
+					.mul(PERIOD_IN_SECONDS.ONE_YEAR)
+					.mul(kwentaPrice)
+					.div(lpTokenValue)
 			: zeroBN
 );
