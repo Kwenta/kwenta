@@ -135,7 +135,7 @@ export type FuturesAccountData = {
 	positions?: FuturesPosition<string>[];
 	positionHistory?: FuturesPositionHistory<string>[];
 	trades?: FuturesTrade<string>[];
-	marginTransfers?: MarginTransfer<string>[];
+	marginTransfers?: MarginTransfer[];
 };
 
 export type IsolatedAccountData = FuturesAccountData & {

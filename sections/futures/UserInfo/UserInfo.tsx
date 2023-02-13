@@ -11,7 +11,6 @@ import UploadIcon from 'assets/svg/futures/upload-icon.svg';
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
 import ROUTES from 'constants/routes';
-import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
 import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
 import { fetchTradesForSelectedMarket } from 'state/futures/actions';
 import {
@@ -51,8 +50,9 @@ const UserInfo: React.FC = () => {
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const position = useAppSelector(selectPosition);
 	const walletAddress = useAppSelector(selectWallet);
-	const statues = useAppSelector(selectQueryStatuses);
-	const tradesQuery = statues.trades;
+	const statuses = useAppSelector(selectQueryStatuses);
+	const tradesQuery = statuses.trades;
+	const marginTransfersQuery = statuses.trades;
 
 	const openOrders = useAppSelector(selectOpenOrders);
 	const accountType = useAppSelector(selectFuturesType);
@@ -66,12 +66,6 @@ const UserInfo: React.FC = () => {
 	const [showShareModal, setShowShareModal] = useState(false);
 	const [hasOpenPosition, setHasOpenPosition] = useState(false);
 	const [openProfitCalcModal, setOpenProfitCalcModal] = useState(false);
-
-	// TODO: Move to sdk / redux
-	const marginTransfersQuery = useGetFuturesMarginTransfers();
-	const marginTransfers = useMemo(() => marginTransfersQuery?.data ?? [], [
-		marginTransfersQuery.data,
-	]);
 
 	const tabQuery = useMemo(() => {
 		if (router.query.tab) {
@@ -95,8 +89,7 @@ const UserInfo: React.FC = () => {
 
 	const refetchTrades = useCallback(() => {
 		dispatch(fetchTradesForSelectedMarket);
-		marginTransfersQuery.refetch();
-	}, [dispatch, marginTransfersQuery]);
+	}, [dispatch]);
 
 	useEffect(() => {
 		refetchTrades();
@@ -208,9 +201,8 @@ const UserInfo: React.FC = () => {
 			</TabPanel>
 			<TabPanel name={FuturesTab.TRANSFERS} activeTab={activeTab}>
 				<Transfers
-					marginTransfers={marginTransfers}
-					isLoading={marginTransfersQuery.isLoading}
-					isLoaded={marginTransfersQuery.isFetched}
+					isLoading={marginTransfersQuery.status === FetchStatus.Loading}
+					isLoaded={marginTransfersQuery.status === FetchStatus.Success}
 				/>
 			</TabPanel>
 

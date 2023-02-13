@@ -56,7 +56,6 @@ import {
 	serializeDelayedOrders,
 	serializeFuturesOrders,
 	serializeFuturesVolumes,
-	serializeMarginTransfers,
 	serializeMarkets,
 	serializePositionHistory,
 	serializeTrades,
@@ -329,7 +328,7 @@ export const fetchDailyVolumes = createAsyncThunk<FuturesVolumes<string>, void, 
 
 export const fetchMarginTransfers = createAsyncThunk<
 	| {
-			marginTransfers: MarginTransfer<string>[];
+			marginTransfers: MarginTransfer[];
 			wallet: string;
 			network: NetworkId;
 			accountType: FuturesAccountType;
@@ -348,7 +347,7 @@ export const fetchMarginTransfers = createAsyncThunk<
 				? await sdk.futures.getCrossMarginTransfers()
 				: await sdk.futures.getIsolatedMarginTransfers();
 		return {
-			marginTransfers: serializeMarginTransfers(transfers),
+			marginTransfers: transfers,
 			wallet: wallet.walletAddress,
 			network: network,
 			accountType: futures.selectedType,

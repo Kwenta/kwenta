@@ -13,7 +13,6 @@ import {
 	FuturesPositionHistory,
 	FuturesTrade,
 	FuturesVolumes,
-	MarginTransfer,
 	PositionSide,
 } from 'sdk/types/futures';
 import { PricesMap } from 'sdk/types/prices';
@@ -430,22 +429,6 @@ export const unserializeFuturesVolumes = (volumes: FuturesVolumes<string>) => {
 		};
 		return acc;
 	}, {});
-};
-
-export const serializeMarginTransfers = (transfers: MarginTransfer[]) => {
-	return transfers.map((t) => ({
-		...t,
-		size: t.size.toString(),
-		amount: t.amount.toString(),
-	}));
-};
-
-export const unserializeMarginTransfers = (transfers: MarginTransfer<string>[]) => {
-	return transfers.map((t) => ({
-		...t,
-		size: wei(t.size),
-		amount: wei(t.amount),
-	}));
 };
 
 export const serializeCrossMarginTradeInputs = (

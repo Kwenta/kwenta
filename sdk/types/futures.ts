@@ -357,14 +357,12 @@ export type FuturesTrade<T = Wei> = {
 	accountType: FuturesAccountType;
 };
 
-export type MarginTransfer<T = Wei> = {
+export type MarginTransfer = {
 	timestamp: number;
 	account: string;
-	size: T;
+	size: number;
 	txHash: string;
 	action: string;
-	amount: string;
-	isPositive: boolean;
 	market?: string;
 	asset?: FuturesMarketAsset;
 };

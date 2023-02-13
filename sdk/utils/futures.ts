@@ -567,19 +567,14 @@ export const mapMarginTransfers = (
 			txHash,
 		}: FuturesMarginTransferResult): MarginTransfer => {
 			const sizeWei = new Wei(size);
-			const cleanSize = sizeWei.div(ETH_UNIT).abs();
-			const isPositive = sizeWei.gt(0);
-			const amount = `${isPositive ? '+' : '-'}${formatDollars(cleanSize)}`;
 			const numTimestamp = wei(timestamp).toNumber();
 
 			return {
 				timestamp: numTimestamp,
 				account,
 				market,
-				size,
-				action: isPositive ? 'deposit' : 'withdraw',
-				amount,
-				isPositive,
+				size: sizeWei.div(ETH_UNIT).toNumber(),
+				action: sizeWei.gt(0) ? 'deposit' : 'withdraw',
 				asset: parseBytes32String(asset) as FuturesMarketAsset,
 				txHash,
 			};
@@ -593,18 +588,13 @@ export const mapCrossMarginTransfers = (
 	return marginTransfers?.map(
 		({ timestamp, account, size, txHash }: CrossMarginAccountTransferResult): MarginTransfer => {
 			const sizeWei = new Wei(size);
-			const cleanSize = sizeWei.div(ETH_UNIT).abs();
-			const isPositive = sizeWei.gt(0);
-			const amount = `${isPositive ? '+' : '-'}${formatDollars(cleanSize)}`;
 			const numTimestamp = wei(timestamp).toNumber();
 
 			return {
 				timestamp: numTimestamp,
 				account,
-				size,
-				action: isPositive ? 'deposit' : 'withdraw',
-				amount,
-				isPositive,
+				size: sizeWei.div(ETH_UNIT).toNumber(),
+				action: sizeWei.gt(0) ? 'deposit' : 'withdraw',
 				txHash,
 			};
 		}
