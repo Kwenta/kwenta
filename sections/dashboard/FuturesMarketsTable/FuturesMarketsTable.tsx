@@ -272,6 +272,7 @@ const FuturesMarketsTable: FC = () => {
 					onTableRowClick={(row) => {
 						router.push(ROUTES.Markets.MarketPair(row.original.asset, accountType));
 					}}
+					sortBy={[{ id: 'dailyVolume', desc: true }]}
 					columns={[
 						{
 							Header: () => (
@@ -350,7 +351,7 @@ const FuturesMarketsTable: FC = () => {
 									</TableHeader>
 								</div>
 							),
-							accessor: '24h-change',
+							accessor: 'dailyVolume',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
 									<div>
@@ -372,6 +373,15 @@ const FuturesMarketsTable: FC = () => {
 									</div>
 								);
 							},
+							sortable: true,
+							sortType: useMemo(
+								() => (rowA: any, rowB: any) => {
+									const rowOne = rowA.original.volume;
+									const rowTwo = rowB.original.volume;
+									return rowOne > rowTwo ? 1 : -1;
+								},
+								[]
+							),
 							width: 120,
 						},
 					]}
