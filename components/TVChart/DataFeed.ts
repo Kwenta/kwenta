@@ -57,6 +57,23 @@ const splitBaseQuote = (symbolName: string) => {
 	return { base, quote };
 };
 
+const getPriceScale = (asset: string | null) => {
+	switch (asset) {
+		case 'BTC':
+			return 1;
+		case 'BNB':
+		case 'ETH':
+		case 'XAU':
+			return 100;
+		case 'DOGE':
+		case 'FTM':
+		case 'AUD':
+			return 10000;
+		default:
+			return 1000;
+	}
+};
+
 const fetchCombinedCandles = async (
 	base: string,
 	quote: string,
@@ -194,16 +211,18 @@ const DataFeedFactory = (
 		resolveSymbol: (symbolName: string, onSymbolResolvedCallback: (val: any) => any) => {
 			const { base, quote } = splitBaseQuote(symbolName);
 
+			const asset = getDisplayAsset(base);
+
 			var symbol_stub = {
 				name: symbolName,
-				description: `${getDisplayAsset(base)} / ${getDisplayAsset(quote)} (Oracle)`,
+				description: `${asset} / ${getDisplayAsset(quote)} (Oracle)`,
 				type: 'crypto',
 				session: '24x7',
 				timezone: 'Etc/UTC',
 				ticker: symbolName,
 				exchange: '',
 				minmov: 1,
-				pricescale: 10000,
+				pricescale: getPriceScale(asset),
 				has_intraday: true,
 				intraday_multipliers: supportedResolutions,
 				supported_resolution: supportedResolutions,
