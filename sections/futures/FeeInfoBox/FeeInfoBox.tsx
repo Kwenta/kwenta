@@ -8,6 +8,7 @@ import LinkArrowIcon from 'assets/svg/app/link-arrow.svg';
 import NotEligibleIcon from 'assets/svg/app/not-eligible.svg';
 import HelpIcon from 'assets/svg/app/question-mark.svg';
 import InfoBox, { DetailedInfo } from 'components/InfoBox/InfoBox';
+import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import { Body } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
@@ -124,45 +125,6 @@ const FeeInfoBox: React.FC = () => {
 				}),
 				keyNode: formatPercent(crossMarginTradeFeeRate),
 			},
-			'Trading Reward': {
-				value: '',
-				compactBox: true,
-				spaceBeneath: true,
-				keyNode: (
-					<CompactBox
-						$isEligible={isRewardEligible}
-						onClick={() => router.push(ROUTES.Dashboard.Stake)}
-					>
-						<div>
-							<div>{t('dashboard.stake.tabs.trading-rewards.trading-reward')}</div>
-							<p>
-								{isRewardEligible ? (
-									<div className="badge badge-yellow">
-										{t('dashboard.stake.tabs.trading-rewards.eligible')}
-										<EligibleIcon style={{ paddingLeft: '2px' }} />
-									</div>
-								) : (
-									<div className="badge badge-red">
-										{t('dashboard.stake.tabs.trading-rewards.not-eligible')}
-										<NotEligibleIcon />
-									</div>
-								)}
-							</p>
-						</div>
-						<div>
-							<RewardCopy>
-								<Trans
-									i18nKey={`dashboard.stake.tabs.trading-rewards.stake-to-${
-										isRewardEligible ? 'earn' : 'start'
-									}`}
-									components={[<Body variant="bold" />]}
-								/>
-							</RewardCopy>
-							<StyledLinkArrowIcon />
-						</div>
-					</CompactBox>
-				),
-			},
 			'Total Fee': {
 				value: formatDollars(crossMarginFees.total, {
 					minDecimals: crossMarginFees.total.lt(0.01) ? 4 : 2,
@@ -201,6 +163,43 @@ const FeeInfoBox: React.FC = () => {
 						},
 					},
 					onClick: () => setFeesExpanded(!feesExpanded),
+				},
+				'Trading Reward': {
+					value: '',
+					compactBox: true,
+					spaceBeneath: true,
+					keyNode: (
+						<CompactBox
+							$isEligible={isRewardEligible}
+							onClick={() => router.push(ROUTES.Dashboard.Stake)}
+						>
+							<FlexDivRow style={{ marginBottom: '8px' }}>
+								<div>{t('dashboard.stake.tabs.trading-rewards.trading-reward')}</div>
+								{isRewardEligible ? (
+									<div className="badge badge-yellow">
+										{t('dashboard.stake.tabs.trading-rewards.eligible')}
+										<EligibleIcon style={{ paddingLeft: '2px' }} />
+									</div>
+								) : (
+									<div className="badge badge-red">
+										{t('dashboard.stake.tabs.trading-rewards.not-eligible')}
+										<NotEligibleIcon />
+									</div>
+								)}
+							</FlexDivRow>
+							<FlexDivRowCentered>
+								<RewardCopy>
+									<Trans
+										i18nKey={`dashboard.stake.tabs.trading-rewards.stake-to-${
+											isRewardEligible ? 'earn' : 'start'
+										}`}
+										components={[<Body variant="bold" inline={true} />]}
+									/>
+								</RewardCopy>
+								<StyledLinkArrowIcon />
+							</FlexDivRowCentered>
+						</CompactBox>
+					),
 				},
 			};
 		}
@@ -246,6 +245,7 @@ const StyledHelpIcon = styled(HelpIcon)`
 
 const StyledLinkArrowIcon = styled(LinkArrowIcon)`
 	cursor: pointer;
+	fill: ${(props) => props.theme.colors.selectedTheme.text.label};
 `;
 
 const RewardCopy = styled(Body)`
@@ -253,7 +253,7 @@ const RewardCopy = styled(Body)`
 `;
 
 const CompactBox = styled.div<{ $isEligible: boolean }>`
-	color: ${(props) => props.theme.colors.selectedTheme.rewardTitle};
+	color: ${(props) => props.theme.colors.selectedTheme.text.value};
 	font-size: 13px;
 	padding-left: 8px;
 	cursor: pointer;
