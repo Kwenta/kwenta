@@ -52,7 +52,7 @@ const UserInfo: React.FC = () => {
 	const walletAddress = useAppSelector(selectWallet);
 	const statuses = useAppSelector(selectQueryStatuses);
 	const tradesQuery = statuses.trades;
-	const marginTransfersQuery = statuses.trades;
+	const marginTransfersQuery = statuses.marginTransfers;
 
 	const openOrders = useAppSelector(selectOpenOrders);
 	const accountType = useAppSelector(selectFuturesType);
