@@ -320,7 +320,7 @@ const futuresSlice = createSlice({
 
 		// margin transfers
 		builder.addCase(fetchMarginTransfers.pending, (futuresState) => {
-			futuresState.queryStatuses.dailyVolumes = LOADING_STATUS;
+			futuresState.queryStatuses.marginTransfers = LOADING_STATUS;
 		});
 		builder.addCase(fetchMarginTransfers.fulfilled, (futuresState, { payload }) => {
 			futuresState.queryStatuses.marginTransfers = SUCCESS_STATUS;
