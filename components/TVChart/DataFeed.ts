@@ -60,7 +60,6 @@ const splitBaseQuote = (symbolName: string) => {
 const getPriceScale = (asset: string | null) => {
 	switch (asset) {
 		case 'BTC':
-			return 1;
 		case 'BNB':
 		case 'ETH':
 		case 'XAU':
