@@ -331,12 +331,12 @@ export const fetchMarginTransfers = createAsyncThunk<
 			marginTransfers: MarginTransfer[];
 			wallet: string;
 			network: NetworkId;
-			accountType: FuturesAccountType;
+			type: FuturesAccountType;
 	  }
 	| undefined,
 	void,
 	ThunkConfig
->('futures/fetchCrossMarginTransfers', async (_, { getState, extra: { sdk } }) => {
+>('futures/fetchMarginTransfers', async (_, { getState, extra: { sdk } }) => {
 	const { wallet, futures } = getState();
 	const supportedNetwork = selectFuturesSupportedNetwork(getState());
 	const network = selectNetwork(getState());
@@ -350,11 +350,11 @@ export const fetchMarginTransfers = createAsyncThunk<
 			marginTransfers: transfers,
 			wallet: wallet.walletAddress,
 			network: network,
-			accountType: futures.selectedType,
+			type: futures.selectedType,
 		};
 	} catch (err) {
 		logError(err);
-		notifyError('Failed to fetch isolated margin positions', err);
+		notifyError('Failed to fetch margin transfers', err);
 		throw err;
 	}
 });

@@ -60,8 +60,7 @@ export type FuturesQueryStatuses = {
 	positionHistory: QueryStatus;
 	trades: QueryStatus;
 	selectedTraderPositionHistory: QueryStatus;
-	isolatedMarginTransfers: QueryStatus;
-	crossMarginTransfers: QueryStatus;
+	marginTransfers: QueryStatus;
 };
 
 export type FuturesTransactionType =
