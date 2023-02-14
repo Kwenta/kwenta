@@ -4,29 +4,30 @@ import styled from 'styled-components';
 
 import ColoredPrice from 'components/ColoredPrice';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
-import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { selectMarginTransfers } from 'state/futures/selectors';
+import { selectMarginTransfers, selectQueryStatuses } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
+import { FetchStatus } from 'state/types';
 import { ExternalLink } from 'styles/common';
 import { timePresentation } from 'utils/formatters/date';
 import { formatDollars } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';
 
-type TransferProps = {
-	isLoading: boolean;
-	isLoaded: boolean;
-};
-
-const Transfers: FC<TransferProps> = ({ isLoading, isLoaded }) => {
+const Transfers: FC = () => {
 	const { t } = useTranslation();
 	const { switchToL2 } = useNetworkSwitcher();
 
 	const isL2 = useIsL2();
 	const marginTransfers = useAppSelector(selectMarginTransfers);
-	const columnsDeps = useMemo(() => [marginTransfers], [marginTransfers]);
+	const {
+		marginTransfers: { status: marginTransfersStatus },
+	} = useAppSelector(selectQueryStatuses);
+	const columnsDeps = useMemo(() => [marginTransfers, marginTransfersStatus], [
+		marginTransfers,
+		marginTransfersStatus,
+	]);
 
 	return (
 		<Table
@@ -44,8 +45,7 @@ const Transfers: FC<TransferProps> = ({ isLoading, isLoaded }) => {
 					sortType: 'basic',
 					Cell: (cellProps: any) => {
 						const formatOptions = {
-							minDecimals: DEFAULT_CRYPTO_DECIMALS,
-							isAssetPrice: true,
+							minDecimals: 0,
 						};
 
 						return (
@@ -55,6 +55,7 @@ const Transfers: FC<TransferProps> = ({ isLoading, isLoaded }) => {
 									change: cellProps.row.original.action === 'deposit' ? 'up' : 'down',
 								}}
 							>
+								{cellProps.row.original.action === 'deposit' ? '+' : ''}
 								{formatDollars(cellProps.row.original.size, formatOptions)}
 							</ColoredPrice>
 						);
@@ -87,7 +88,7 @@ const Transfers: FC<TransferProps> = ({ isLoading, isLoaded }) => {
 			]}
 			data={marginTransfers}
 			columnsDeps={columnsDeps}
-			isLoading={isLoading && !isLoaded}
+			isLoading={marginTransfers.length === 0 && marginTransfersStatus === FetchStatus.Loading}
 			noResultsMessage={
 				!isL2 ? (
 					<TableNoResults>

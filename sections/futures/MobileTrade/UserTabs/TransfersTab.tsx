@@ -1,22 +1,25 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Table, { TableHeader, TableNoResults } from 'components/Table';
-import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
 import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
+import { selectMarginTransfers, selectQueryStatuses } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { FetchStatus } from 'state/types';
 import { timePresentation } from 'utils/formatters/date';
 
 const TransfersTab: React.FC = () => {
-	const marginTransfersQuery = useGetFuturesMarginTransfers();
-	const marginTransfers = React.useMemo(() => marginTransfersQuery?.data ?? [], [
-		marginTransfersQuery.data,
-	]);
-
-	const { isLoading, isFetched: isLoaded } = marginTransfersQuery;
+	const marginTransfers = useAppSelector(selectMarginTransfers);
+	const {
+		marginTransfers: { status: marginTransfersStatus },
+	} = useAppSelector(selectQueryStatuses);
 
 	const { t } = useTranslation();
-	const columnsDeps = React.useMemo(() => [marginTransfers], [marginTransfers]);
+	const columnsDeps = useMemo(() => [marginTransfers, marginTransfersStatus], [
+		marginTransfers,
+		marginTransfersStatus,
+	]);
 
 	return (
 		<div>
@@ -56,7 +59,7 @@ const TransfersTab: React.FC = () => {
 				]}
 				data={marginTransfers}
 				columnsDeps={columnsDeps}
-				isLoading={isLoading && !isLoaded}
+				isLoading={marginTransfers.length === 0 && marginTransfersStatus === FetchStatus.Loading}
 				noResultsMessage={
 					marginTransfers?.length === 0 ? (
 						<TableNoResults>

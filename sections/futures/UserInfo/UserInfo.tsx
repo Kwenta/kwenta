@@ -50,16 +50,14 @@ const UserInfo: React.FC = () => {
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const position = useAppSelector(selectPosition);
 	const walletAddress = useAppSelector(selectWallet);
-	const statuses = useAppSelector(selectQueryStatuses);
-	const tradesQuery = statuses.trades;
-	const marginTransfersQuery = statuses.marginTransfers;
+	const { trades: tradesQuery } = useAppSelector(selectQueryStatuses);
 
 	const openOrders = useAppSelector(selectOpenOrders);
 	const accountType = useAppSelector(selectFuturesType);
 	const trades = useAppSelector(selectUsersTradesForMarket);
 
 	useFetchAction(fetchTradesForSelectedMarket, {
-		dependencies: [walletAddress, accountType, marketAsset, position?.position?.size.toString()],
+		dependencies: [walletAddress, accountType, position?.position?.size.toString()],
 		disabled: !walletAddress,
 	});
 
@@ -200,10 +198,7 @@ const UserInfo: React.FC = () => {
 				/>
 			</TabPanel>
 			<TabPanel name={FuturesTab.TRANSFERS} activeTab={activeTab}>
-				<Transfers
-					isLoading={marginTransfersQuery.status === FetchStatus.Loading}
-					isLoaded={marginTransfersQuery.status === FetchStatus.Success}
-				/>
+				<Transfers />
 			</TabPanel>
 
 			{openProfitCalcModal && (
