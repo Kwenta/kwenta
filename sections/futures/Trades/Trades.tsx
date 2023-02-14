@@ -7,7 +7,6 @@ import LinkIcon from 'assets/svg/app/link-blue.svg';
 import Card from 'components/Card';
 import { GridDivCenteredRow } from 'components/layout/grid';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
-import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { ETH_UNIT } from 'constants/network';
 import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
@@ -83,9 +82,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
 							const formatOptions = {
-								sign: '$',
-								minDecimals: DEFAULT_CRYPTO_DECIMALS,
-								isAssetPrice: true,
+								suggestDecimals: true,
 							};
 							return <>{formatDollars(cellProps.value, formatOptions)}</>;
 						},
@@ -97,7 +94,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						accessor: 'amount',
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<>{formatCryptoCurrency(cellProps.value)}</>
+							<>{formatCryptoCurrency(cellProps.value, { suggestDecimals: true })}</>
 						),
 						width: 90,
 						sortable: true,

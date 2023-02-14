@@ -991,29 +991,6 @@ export const modifyIsolatedPosition = createAsyncThunk<
 	}
 );
 
-export const modifyIsolatedPositionEstimateGas = createAsyncThunk<
-	void,
-	ModifyIsolatedPositionInputs,
-	ThunkConfig
->(
-	'futures/modifyIsolatedPositionEstimateGas',
-	async ({ sizeDelta, delayed, offchain }, { getState, dispatch, extra: { sdk } }) => {
-		const marketInfo = selectMarketInfo(getState());
-		const priceImpact = selectIsolatedPriceImpact(getState());
-		if (!marketInfo) throw new Error('Market info not found');
-		estimateGasInteralAction(
-			() =>
-				sdk.futures.modifyIsolatedMarginPosition(marketInfo.market, wei(sizeDelta), priceImpact, {
-					delayed,
-					offchain,
-					estimationOnly: true,
-				}),
-			'modify_isolated',
-			{ getState, dispatch }
-		);
-	}
-);
-
 export const cancelDelayedOrder = createAsyncThunk<void, CancelDelayedOrderInputs, ThunkConfig>(
 	'futures/cancelDelayedOrder',
 	async ({ marketAddress, isOffchain }, { getState, dispatch, extra: { sdk } }) => {
@@ -1226,7 +1203,7 @@ export const withdrawAccountKeeperBalance = createAsyncThunk<void, Wei, ThunkCon
 	}
 );
 
-const estimateGasInteralAction = async (
+export const estimateGasInteralAction = async (
 	gasLimitEstimate: () => Promise<BigNumber>,
 	type: FuturesTransactionType,
 	config: {
