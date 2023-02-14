@@ -50,6 +50,7 @@ const LegacyLink = () => {
 				variant="flat"
 				size="sm"
 				noOutline={true}
+				textTransform="none"
 				onClick={() => window.open(EXTERNAL_LINKS.Trade.V1, '_blank', 'noopener noreferrer')}
 			>
 				{t('dashboard.overview.futures-positions-table.legacy-link')}
