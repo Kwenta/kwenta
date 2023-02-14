@@ -101,11 +101,15 @@ const DelayedOrderConfirmationModal: FC = () => {
 			{
 				label: t('futures.market.user.position.modal.estimated-fill'),
 				tooltipContent: t('futures.market.trade.delayed-order.description'),
-				value: formatDollars(potentialTradeDetails?.price ?? zeroBN, { isAssetPrice: true }),
+				value: formatDollars(potentialTradeDetails?.price ?? zeroBN, {
+					suggestDecimals: true,
+				}),
 			},
 			{
 				label: t('futures.market.user.position.modal.liquidation-price'),
-				value: formatDollars(potentialTradeDetails?.liqPrice ?? zeroBN, { isAssetPrice: true }),
+				value: formatDollars(potentialTradeDetails?.liqPrice ?? zeroBN, {
+					suggestDecimals: true,
+				}),
 			},
 			{
 				label: t('futures.market.user.position.modal.time-delay'),

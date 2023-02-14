@@ -112,7 +112,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 					price: formatCurrency(selectedPriceCurrency.name, basePriceRate, {
 						sign: '$',
 						minDecimals: getMinDecimals(market.asset),
-						isAssetPrice: true,
+						suggestDecimals: true,
 					}),
 					change: formatPercent(
 						basePriceRate && pastPrice?.rate
@@ -159,7 +159,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 						? formatCurrency(selectedPriceCurrency.name, selectedBasePriceRate, {
 								sign: '$',
 								minDecimals: getMinDecimals(marketAsset),
-								isAssetPrice: true,
+								suggestDecimals: true,
 						  })
 						: undefined,
 					change: mobile
