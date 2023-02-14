@@ -62,3 +62,5 @@ export const Body = () => {
 		</div>
 	);
 };
+
+export const NumericValue = () => {};

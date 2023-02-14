@@ -36,7 +36,35 @@ const newTheme = {
 			neutral: '',
 		},
 	},
-	badge: {},
+	badge: {
+		yellow: {
+			text: common.palette.neutral.n900,
+			background: common.palette.yellow.y500,
+			dark: {
+				background: common.palette.yellow.y1000,
+				text: common.palette.yellow.y500,
+				border: common.palette.alpha.white10,
+			},
+		},
+		gray: {
+			text: common.palette.neutral.n900,
+			background: common.palette.neutral.n50,
+			dark: {
+				background: common.palette.neutral.n100,
+				text: common.palette.neutral.n900,
+				border: common.palette.alpha.white10,
+			},
+		},
+		red: {
+			text: common.palette.neutral.n900,
+			background: common.palette.red.r300,
+			dark: {
+				background: common.palette.alpha.red10,
+				text: common.palette.red.r300,
+				border: common.palette.alpha.white10,
+			},
+		},
+	},
 };
 
 const darkTheme = {
