@@ -1,7 +1,7 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { Contract as EthCallContract } from 'ethcall';
-import { BigNumber, ContractTransaction, ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { formatBytes32String, parseBytes32String } from 'ethers/lib/utils';
 import request, { gql } from 'graphql-request';
 import { orderBy } from 'lodash';
