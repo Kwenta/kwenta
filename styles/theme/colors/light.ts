@@ -36,7 +36,33 @@ const newTheme = {
 			neutral: common.palette.neutral,
 		},
 	},
-	badge: {},
+	pill: {
+		yellow: {
+			color: common.palette.yellow.y500,
+			background: common.palette.yellow.y1000,
+			border: common.palette.alpha.white10,
+			outline: {
+				color: common.palette.yellow.y500,
+				border: common.palette.yellow.y500,
+			},
+			hover: {
+				background: common.palette.yellow.y500,
+				text: common.palette.neutral.n900,
+			},
+		},
+		gray: {
+			hover: {
+				background: '',
+				text: '',
+			},
+		},
+		red: {
+			hover: {
+				background: '',
+				text: '',
+			},
+		},
+	},
 };
 
 const lightTheme = {

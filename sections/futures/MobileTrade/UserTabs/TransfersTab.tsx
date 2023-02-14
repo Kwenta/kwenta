@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Table, { TableHeader, TableNoResults } from 'components/Table';
+import { Body } from 'components/Text';
 import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
 import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
 import { timePresentation } from 'utils/formatters/date';
@@ -38,7 +39,7 @@ const TransfersTab: React.FC = () => {
 						accessor: 'amount',
 						sortType: 'basic',
 						Cell: (cellProps: any) => (
-							<StyledAmountCell isPositive={cellProps.row.original.isPositive}>
+							<StyledAmountCell $isPositive={cellProps.row.original.isPositive}>
 								{cellProps.value}
 							</StyledAmountCell>
 						),
@@ -71,7 +72,7 @@ const TransfersTab: React.FC = () => {
 	);
 };
 
-const DefaultCell = styled.p`
+const DefaultCell = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
@@ -79,17 +80,13 @@ const StyledActionCell = styled(DefaultCell)`
 	text-transform: capitalize;
 `;
 
-const StyledTitle = styled.p`
+const StyledTitle = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 16px;
-	margin: 0;
 `;
 
-const StyledAmountCell = styled(DefaultCell)<{ isPositive: boolean }>`
-	color: ${(props: any) =>
-		props.isPositive
-			? props.theme.colors.selectedTheme.green
-			: props.theme.colors.selectedTheme.red};
+const StyledAmountCell = styled(DefaultCell)<{ $isPositive: boolean }>`
+	color: ${(props) => props.theme.colors.selectedTheme[props.$isPositive ? 'green' : 'red']};
 `;
 
 export default TransfersTab;

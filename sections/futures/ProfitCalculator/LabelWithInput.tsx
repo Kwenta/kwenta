@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { memo } from 'react';
 import styled from 'styled-components';
 
 import NumericInput from 'components/Input/NumericInput';
+import { Body } from 'components/Text';
 
 type LabelWithInputProps = {
 	disabled?: boolean;
@@ -14,32 +15,25 @@ type LabelWithInputProps = {
 	defaultValue?: any;
 };
 
-const LabelWithInput: React.FC<LabelWithInputProps> = ({
-	id,
-	right,
-	value,
-	onChange,
-	disabled,
-	labelText,
-	placeholder,
-	defaultValue,
-}) => (
-	<>
-		<LabelText>{labelText}</LabelText>
-		<NumericInput
-			id={id}
-			right={right}
-			value={value}
-			disabled={disabled}
-			onChange={onChange}
-			placeholder={placeholder}
-			defaultValue={defaultValue}
-			style={{ display: '', flex: '', width: '100%' }}
-		/>
-	</>
+const LabelWithInput: React.FC<LabelWithInputProps> = memo(
+	({ id, right, value, onChange, disabled, labelText, placeholder, defaultValue }) => (
+		<>
+			<LabelText>{labelText}</LabelText>
+			<NumericInput
+				id={id}
+				right={right}
+				value={value}
+				disabled={disabled}
+				onChange={onChange}
+				placeholder={placeholder}
+				defaultValue={defaultValue}
+				style={{ display: '', flex: '', width: '100%' }}
+			/>
+		</>
+	)
 );
 
-const LabelText = styled.p`
+const LabelText = styled(Body)`
 	width: 100.91px;
 	height: 12px;
 	left: 479px;

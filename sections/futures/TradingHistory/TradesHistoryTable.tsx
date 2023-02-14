@@ -12,7 +12,6 @@ import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
 import { FuturesTrade } from 'sdk/types/futures';
 import { selectMarketKey } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { NumericValue } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
 
 type TradesHistoryTableProps = {
@@ -216,35 +215,20 @@ const TableAlignment = css`
 `;
 
 const StyledTable = styled(Table)<{ mobile?: boolean }>`
-	border: 0px;
+	border: none;
 
 	${(props) =>
-		!props.mobile &&
 		css`
-			height: 695px;
+			height: ${props.mobile ? 242 : 695}px;
 		`}
 
-	${(props) =>
-		props.mobile &&
-		css`
-			height: 242px;
-		`}
-
-	.table-row {
+	.table-row, .table-body-row {
 		${TableAlignment}
-	}
-	.table-body-row {
-		${TableAlignment}
-		padding: 0;
-	}
-
-	.table-body-row {
 		padding: 0;
 	}
 `;
 
-const PriceValue = styled(NumericValue)`
-	font-size: 13px;
+const PriceValue = styled(Body).attrs({ mono: true })`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	padding-left: 5px;
 `;

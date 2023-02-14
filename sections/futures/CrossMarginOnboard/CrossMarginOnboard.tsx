@@ -282,20 +282,6 @@ const Intro = styled.div`
 	margin-bottom: 30px;
 `;
 
-export const BalanceContainer = styled(FlexDivRowCentered)`
-	margin-bottom: 8px;
-	p {
-		margin: 0;
-	}
-`;
-
-export const BalanceText = styled.p`
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	span {
-		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	}
-`;
-
 const Complete = styled.div`
 	padding: 40px;
 	text-align: center;

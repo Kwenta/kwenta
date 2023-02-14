@@ -67,10 +67,6 @@ const OptionDetailsContainer = styled(SingleValueContainer)<{ $isSelected: boole
 	justify-content: space-between;
 	gap: 5px;
 
-	p {
-		margin: 0;
-	}
-
 	.price {
 		font-family: ${(props) => props.theme.fonts.mono};
 		color: ${(props) => props.theme.colors.selectedTheme.gray};

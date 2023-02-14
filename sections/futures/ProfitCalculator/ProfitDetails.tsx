@@ -1,8 +1,9 @@
 import { wei } from '@synthetixio/wei';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
+import { Body } from 'components/Text';
 import { PositionSide } from 'sdk/types/futures';
 
 function textColor(props: any) {
@@ -101,14 +102,16 @@ const Details = styled.div`
 	margin-right: 15px;
 `;
 
-const RowText = styled.p`
+const RowText = styled(Body)`
 	display: inline-block;
 
-	color: ${(props) => textColor(props)};
+	${(props) => css`
+		color: ${textColor(props)};
+		text-align: ${props.className === 'row-name' ? 'left' : 'right'};
+	`}
 
 	font-size: 12px;
 	line-height: 10px;
-	text-align: ${(props) => (props.className === 'row-name' ? 'left' : 'right')};
 `;
 
 const StyledProfitDetails = styled.div`

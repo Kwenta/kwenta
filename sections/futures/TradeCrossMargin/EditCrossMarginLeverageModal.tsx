@@ -11,6 +11,7 @@ import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import Loader from 'components/Loader';
 import Spacer from 'components/Spacer';
+import { Body } from 'components/Text';
 import { NumberDiv } from 'components/Text/NumberLabel';
 import { ORDER_PREVIEW_ERRORS_I18N, previewErrorI18n } from 'queries/futures/constants';
 import { setOpenModal } from 'state/app/reducer';
@@ -67,7 +68,7 @@ export default function EditLeverageModal({ editMode }: DepositMarginModalProps)
 	const submitting = useAppSelector(selectSubmittingFuturesTx);
 	const maxLeverage = useAppSelector(selectMaxLeverage);
 
-	const [leverage, setLeverage] = useState<number>(
+	const [leverage, setLeverage] = useState(
 		editMode === 'existing_position' && position?.position
 			? Number(position.position.leverage.toNumber().toFixed(2))
 			: Number(Number(selectedLeverage).toFixed(2))
@@ -253,8 +254,7 @@ const MaxPosContainer = styled(FlexDivRowCentered)`
 	}
 `;
 
-const Label = styled.p`
-	font-size: 13px;
+const Label = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 

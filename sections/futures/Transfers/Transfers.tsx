@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Table, { TableHeader, TableNoResults } from 'components/Table';
+import { Body } from 'components/Text';
 import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
@@ -92,7 +93,7 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }) 
 
 export default Transfers;
 
-const DefaultCell = styled.p`
+const DefaultCell = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
@@ -100,10 +101,9 @@ const StyledActionCell = styled(DefaultCell)`
 	text-transform: capitalize;
 `;
 
-const StyledTitle = styled.p`
+const StyledTitle = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 16px;
-	margin: 0;
 `;
 
 const StyledExternalLink = styled(ExternalLink)`

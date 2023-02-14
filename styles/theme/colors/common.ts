@@ -73,9 +73,9 @@ export const palette = {
 		gold: 'linear-gradient(180deg, #BE9461 0%, #9C6C3C 100%)',
 	},
 	alpha: {
-		white1: 'rgb(250,250,250,0.01)',
-		white5: 'rgb(250,250,250,0.5)',
-		white10: 'rgb(250,250,250,0.1)',
+		white1: 'rgb(255,255,255,0.01)',
+		white5: 'rgb(255,255,255,0.5)',
+		white10: 'rgb(255,255,255,0.1)',
 		red10: 'rgb(241,43,43,0.1)',
 		green10: 'rgb(127,212,130,0.1)',
 		lightButton: 'linear-gradient(180deg, #EEEEEE 0%, #E0E0E0 100%)',

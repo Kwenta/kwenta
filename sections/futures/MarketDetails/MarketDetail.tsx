@@ -2,6 +2,7 @@ import { ReactElement, memo, FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { Body } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
@@ -37,7 +38,7 @@ const MarketDetail: FC<MarketDetailProps> = memo(({ mobile, dataKey, color, valu
 			content={t(`exchange.market-details-card.tooltips.${contentSuffix}`)}
 		>
 			<WithCursor cursor="help">
-				<p className="heading">{dataKey}</p>
+				<Body className="heading">{dataKey}</Body>
 				<span className={`value ${color || ''} ${pausedClass}`}>{value}</span>
 			</WithCursor>
 		</MarketDetailsTooltip>

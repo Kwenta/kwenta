@@ -10,6 +10,7 @@ import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
+import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import { getDisplayAsset } from 'sdk/utils/futures';
@@ -117,7 +118,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 									return conditionalRender<Cell['balance']>(
 										cellProps.row.original.balance,
 										<AmountCol>
-											<p>{formatNumber(cellProps.row.original.balance ?? 0)}</p>
+											<Body>{formatNumber(cellProps.row.original.balance ?? 0)}</Body>
 										</AmountCol>
 									);
 								},
@@ -327,7 +328,7 @@ const StyledValue = styled.div`
 	grid-row: 2;
 `;
 
-const DefaultCell = styled.p`
+const DefaultCell = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 

@@ -13,6 +13,7 @@ import Button from 'components/Button';
 import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import { GridDivCenteredCol } from 'components/layout/grid';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import { Body } from 'components/Text';
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
@@ -186,8 +187,7 @@ const StyledMenu = styled.div`
 	}
 `;
 
-const StyledMenuItem = styled.p`
-	font-family: ${(props) => props.theme.fonts.bold};
+const StyledMenuItem = styled(Body).attrs({ weight: 'bold' })`
 	cursor: pointer;
 	width: 90px;
 	font-size: 15px;

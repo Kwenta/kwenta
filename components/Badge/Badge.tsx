@@ -1,18 +1,26 @@
+import { FC } from 'react';
 import styled, { css } from 'styled-components';
 
-const Badge = styled.span<{ color: 'yellow' | 'red' | 'gray' }>`
+type BadgeProps = {
+	color?: 'yellow' | 'red' | 'gray';
+};
+
+const Badge: FC<BadgeProps> = ({ color = 'yellow' }) => {
+	return <BaseBadge $color={color} />;
+};
+
+const BaseBadge = styled.div<{ $color: 'yellow' | 'red' | 'gray' }>`
 	text-transform: uppercase;
-	padding: 1.6px 3px 1px 3px;
+	padding: 2px 6px;
 	text-align: center;
 	${(props) => css`
 		font-family: ${props.theme.fonts.black};
-		color: ${props.theme.colors.selectedTheme.badge[props.color].text};
-		background: ${props.theme.colors.selectedTheme.badge[props.color].background};
+		color: ${props.theme.colors.selectedTheme.badge[props.$color].text};
+		background: ${props.theme.colors.selectedTheme.badge[props.$color].background};
 	`}
 	border-radius: 100px;
-	margin-left: 5px;
 	line-height: unset;
-	font-size: 10px;
+	font-size: 12px;
 	font-variant: all-small-caps;
 	opacity: 1;
 	user-select: none;

@@ -1,5 +1,7 @@
 import { useState, useRef, memo, FC, useCallback } from 'react';
 
+import { Body } from 'components/Text';
+
 import { BaseTooltip, ToolTipWrapper } from './BaseTooltip';
 
 // Import this tooltip to a new component and customize
@@ -54,7 +56,7 @@ const Tooltip: FC<TooltipProps> = memo((props) => {
 			{props.children}
 			{activeMouse && isVisible && (
 				<BaseTooltip {...position} {...props} style={props.style}>
-					<p>{props.content}</p>
+					<Body>{props.content}</Body>
 				</BaseTooltip>
 			)}
 		</ToolTipWrapper>

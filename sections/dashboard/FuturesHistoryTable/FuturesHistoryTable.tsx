@@ -11,6 +11,7 @@ import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import FuturesIcon from 'components/Nav/FuturesIcon';
 import Table, { TableNoResults } from 'components/Table';
+import { Body } from 'components/Text';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { ETH_UNIT } from 'constants/network';
 import { NO_VALUE } from 'constants/placeholder';
@@ -39,7 +40,7 @@ import { getDisplayAsset, getMarketName, isDecimalFour, MarketKeyByAsset } from 
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
 
 const conditionalRender = <T,>(prop: T, children: ReactElement) =>
-	_.isNil(prop) ? <p>{NO_VALUE}</p> : children;
+	_.isNil(prop) ? <Body>{NO_VALUE}</Body> : children;
 
 const FuturesHistoryTable: FC = () => {
 	const [selectedTrade, setSelectedTrade] = useState<FuturesTrade>();

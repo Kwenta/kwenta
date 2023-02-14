@@ -1,13 +1,12 @@
-/* eslint-disable no-console */
 import React from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { Body } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { CapitalizedText, NumericValue } from 'styles/common';
 import { formatCurrency, formatPercent } from 'utils/formatters/number';
 
 import OpenInterestBar from './OpenInterestBar';
@@ -49,7 +48,7 @@ const SkewInfo: React.FC = () => {
 	return (
 		<SkewContainer>
 			<SkewHeader>
-				<SkewTooltip isNumber preset="bottom-right" content={data.shortText ?? 0}>
+				<SkewTooltip preset="bottom-right" content={data.shortText ?? 0}>
 					<WithCursor cursor="help">
 						<SkewValue>{formatPercent(data.short, { minDecimals: 0 })}</SkewValue>
 					</WithCursor>
@@ -59,7 +58,7 @@ const SkewInfo: React.FC = () => {
 						<SkewLabel>{t('futures.market.history.skew-label')}</SkewLabel>
 					</WithCursor>
 				</SkewTooltip>
-				<SkewTooltip isNumber preset="bottom-rigth" content={data.longText ?? 0}>
+				<SkewTooltip preset="bottom-rigth" content={data.longText ?? 0}>
 					<WithCursor cursor="help">
 						<SkewValue>{formatPercent(data.long, { minDecimals: 0 })}</SkewValue>
 					</WithCursor>
@@ -76,21 +75,11 @@ const WithCursor = styled.div<{ cursor: 'help' }>`
 	cursor: ${(props) => props.cursor};
 `;
 
-const SkewTooltip = styled(Tooltip).attrs({ width: '310px', height: 'auto' })<{
-	isNumber?: boolean;
-}>`
+const SkewTooltip = styled(Tooltip).attrs({ width: '310px', height: 'auto' })`
 	left: -30px;
 	z-index: 2;
 	padding: 10px;
 	color: red;
-
-	p,
-	span {
-		font-size: 13px;
-		font-family: ${(props) =>
-			props.isNumber ? props.theme.fonts.mono : props.theme.fonts.regular};
-		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	}
 `;
 
 const SkewContainer = styled.div`
@@ -111,20 +100,7 @@ const SkewContainer = styled.div`
 
 	p,
 	span {
-		margin: 0;
 		text-align: left;
-	}
-
-	.heading {
-		font-size: 13px;
-		color: ${(props) => props.theme.colors.selectedTheme.gray};
-		width: 292px;
-	}
-
-	.value {
-		font-family: ${(props) => props.theme.fonts.mono};
-		font-size: 13px;
-		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
 `;
 
@@ -135,15 +111,13 @@ const SkewHeader = styled.div`
 	margin-bottom: 5px;
 `;
 
-const SkewLabel = styled(CapitalizedText)`
+const SkewLabel = styled(Body).attrs({ as: 'span' })`
+	text-transform: capitalize;
 	text-align: center;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	font-size: 13px;
 `;
 
-const SkewValue = styled(NumericValue)`
+const SkewValue = styled(Body).attrs({ mono: true })`
 	text-align: center;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	font-size: 13px;
-	font-family: ${(props) => props.theme.fonts.mono};
 `;
