@@ -11,7 +11,6 @@ import ColoredPrice from 'components/ColoredPrice';
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableHeader } from 'components/Table';
-import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import { FuturesMarketAsset } from 'sdk/types/futures';
@@ -119,8 +118,7 @@ const FuturesMarketsTable: FC = () => {
 								accessor: 'price',
 								Cell: (cellProps: CellProps<typeof data[number]>) => {
 									const formatOptions = {
-										minDecimals: DEFAULT_CRYPTO_DECIMALS,
-										isAssetPrice: true,
+										suggestDecimals: true,
 									};
 									return (
 										<ColoredPrice priceInfo={cellProps.row.original.priceInfo}>
@@ -297,7 +295,7 @@ const FuturesMarketsTable: FC = () => {
 												currencyKey="sUSD"
 												price={cellProps.row.original.price}
 												sign="$"
-												formatOptions={{ minDecimals: DEFAULT_CRYPTO_DECIMALS, isAssetPrice: true }}
+												formatOptions={{ suggestDecimals: true }}
 											/>
 										</MarketContainer>
 									</div>

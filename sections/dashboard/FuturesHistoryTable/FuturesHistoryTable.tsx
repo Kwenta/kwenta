@@ -11,7 +11,6 @@ import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import FuturesIcon from 'components/Nav/FuturesIcon';
 import Table, { TableNoResults } from 'components/Table';
-import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { ETH_UNIT } from 'constants/network';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
@@ -34,7 +33,7 @@ import { FetchStatus } from 'state/types';
 import { selectNetwork } from 'state/wallet/selectors';
 import { formatShortDateWithoutYear } from 'utils/formatters/date';
 import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
-import { getDisplayAsset, getMarketName, isDecimalFour, MarketKeyByAsset } from 'utils/futures';
+import { getDisplayAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
 
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
 
@@ -160,7 +159,7 @@ const FuturesHistoryTable: FC = () => {
 								Cell: (cellProps: CellProps<FuturesTrade>) => {
 									return conditionalRender(
 										cellProps.row.original.size,
-										<>{formatCryptoCurrency(cellProps.value)}</>
+										<>{formatCryptoCurrency(cellProps.value, { suggestDecimals: true })}</>
 									);
 								},
 								width: 100,
@@ -169,12 +168,9 @@ const FuturesHistoryTable: FC = () => {
 								Header: <div>{t('dashboard.history.futures-history-table.price')}</div>,
 								accessor: 'price',
 								Cell: (cellProps: CellProps<FuturesTrade>) => {
-									const formatOptions = isDecimalFour(cellProps.row.original.asset)
-										? { sign: '$', minDecimals: DEFAULT_CRYPTO_DECIMALS }
-										: { sign: '$' };
 									return conditionalRender(
 										cellProps.row.original.price,
-										<>{formatDollars(cellProps.value, formatOptions)}</>
+										<>{formatDollars(cellProps.value, { suggestDecimals: true })}</>
 									);
 								},
 								width: 120,
@@ -189,7 +185,7 @@ const FuturesHistoryTable: FC = () => {
 											<PNL normal>--</PNL>
 										) : (
 											<PNL negative={cellProps.value.lt(wei(0))}>
-												{formatDollars(cellProps.value)}
+												{formatDollars(cellProps.value, { suggestDecimals: true })}
 											</PNL>
 										)
 									);
@@ -309,7 +305,7 @@ const FuturesHistoryTable: FC = () => {
 									return conditionalRender(
 										cellProps.row.original.price,
 										<div>
-											<div>{formatCryptoCurrency(cellProps.value)}</div>
+											<div>{formatCryptoCurrency(cellProps.value, { suggestDecimals: true })}</div>
 											<div>{formatDollars(cellProps.row.original.price ?? 0)}</div>
 										</div>
 									);
@@ -326,7 +322,7 @@ const FuturesHistoryTable: FC = () => {
 											<PNL normal>--</PNL>
 										) : (
 											<PNL negative={cellProps.value.lt(wei(0))}>
-												{formatDollars(cellProps.value)}
+												{formatDollars(cellProps.value, { suggestDecimals: true })}
 											</PNL>
 										)
 									);
