@@ -12,18 +12,6 @@ export type FuturesOpenInterest = {
 	};
 };
 
-export type MarginTransfer = {
-	timestamp: number;
-	account: string;
-	size: Wei;
-	txHash: string;
-	action: string;
-	amount: string;
-	isPositive: boolean;
-	market?: string;
-	asset?: FuturesMarketAsset;
-};
-
 export type Participant = {
 	username: string;
 	address: string;
