@@ -145,7 +145,7 @@ export const queryIsolatedMarginTransfers = async (sdk: KwentaSDK, account: stri
 	const response = await request(sdk.futures.futuresGqlEndpoint, ISOLATED_MARGIN_FRAGMENT, {
 		walletAddress: account,
 	});
-	return response ? mapMarginTransfers(response.isolatedMarginAccountTransfers) : [];
+	return response ? mapMarginTransfers(response.futuresMarginTransfers) : [];
 };
 
 export const queryCrossMarginTransfers = async (sdk: KwentaSDK, account: string) => {
