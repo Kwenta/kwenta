@@ -8,12 +8,20 @@ type BodyProps = {
 	fontSize?: number;
 	mono?: boolean;
 	color?: 'title' | 'value' | 'body';
+	inline?: boolean;
 };
 
 const Body: React.FC<BodyProps> = memo(
-	({ size = 'small', variant = 'regular', fontSize, mono, ...props }) => {
+	({ size = 'small', variant = 'regular', fontSize, mono, inline, ...props }) => {
 		return (
-			<StyledBody $size={size} $variant={variant} $fontSize={fontSize} $mono={mono} {...props} />
+			<StyledBody
+				$size={size}
+				$variant={variant}
+				$fontSize={fontSize}
+				$mono={mono}
+				$inline={inline}
+				{...props}
+			/>
 		);
 	}
 );
@@ -23,6 +31,7 @@ const StyledBody = styled.p<{
 	$variant?: BodyProps['variant'];
 	$fontSize?: number;
 	$mono?: boolean;
+	$inline?: boolean;
 }>`
 	line-height: 1.4;
 	margin: 0;
@@ -64,6 +73,12 @@ const StyledBody = styled.p<{
 		props.$fontSize &&
 		css`
 			font-size: ${props.$fontSize}px;
+		`}
+	
+	${(props) =>
+		props.$inline &&
+		css`
+			display: inline;
 		`}
 `;
 
