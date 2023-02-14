@@ -11,12 +11,7 @@ import { DAY_PERIOD, KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { getFuturesAggregateStats } from 'queries/futures/subgraph';
 import { FuturesAccountType } from 'queries/futures/types';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
-import {
-	BPS_CONVERSION,
-	CROSS_MARGIN_FRAGMENT,
-	DEFAULT_DESIRED_TIMEDELTA,
-	ISOLATED_MARGIN_FRAGMENT,
-} from 'sdk/constants/futures';
+import { BPS_CONVERSION, DEFAULT_DESIRED_TIMEDELTA } from 'sdk/constants/futures';
 import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { getContractsByNetwork, getPerpsV2MarketMulticall } from 'sdk/contracts';
 import CrossMarginBaseABI from 'sdk/contracts/abis/CrossMarginBase.json';
@@ -29,7 +24,12 @@ import {
 } from 'sdk/contracts/types';
 import { IPerpsV2MarketConsolidated } from 'sdk/contracts/types/PerpsV2Market';
 import { IPerpsV2MarketSettings } from 'sdk/contracts/types/PerpsV2MarketData';
-import { queryCrossMarginAccounts, queryPositionHistory, queryTrades } from 'sdk/queries/futures';
+import {
+	queryCrossMarginAccounts,
+	queryCrossMarginTransfers,
+	queryPositionHistory,
+	queryTrades,
+} from 'sdk/queries/futures';
 import { NetworkOverrideOptions } from 'sdk/types/common';
 import {
 	CrossMarginOrderType,
@@ -57,11 +57,9 @@ import {
 	getFuturesEndpoint,
 	getMarketName,
 	getReasonFromCode,
-	mapCrossMarginTransfers,
 	mapFuturesOrderFromEvent,
 	mapFuturesPosition,
 	mapFuturesPositions,
-	mapMarginTransfers,
 	mapTrades,
 	marketsForNetwork,
 } from 'sdk/utils/futures';
@@ -408,18 +406,12 @@ export default class FuturesService {
 		walletAddress?: string | null
 	): Promise<MarginTransfer[]> {
 		const address = walletAddress ?? this.sdk.context.walletAddress;
-		const response = await request(this.futuresGqlEndpoint, ISOLATED_MARGIN_FRAGMENT, {
-			walletAddress: address,
-		});
-		return response ? mapMarginTransfers(response.futuresMarginTransfers) : [];
+		return queryCrossMarginTransfers(this.sdk, address);
 	}
 
 	public async getCrossMarginTransfers(walletAddress?: string | null): Promise<MarginTransfer[]> {
 		const address = walletAddress ?? this.sdk.context.walletAddress;
-		const response = await request(this.futuresGqlEndpoint, CROSS_MARGIN_FRAGMENT, {
-			walletAddress: address,
-		});
-		return response ? mapCrossMarginTransfers(response.crossMarginAccountTransfers) : [];
+		return queryCrossMarginTransfers(this.sdk, address);
 	}
 
 	public async getCrossMarginAccounts(walletAddress?: string | null) {
