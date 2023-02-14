@@ -2,12 +2,14 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import ColoredPrice from 'components/ColoredPrice';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
 import { selectMarginTransfers, selectQueryStatuses } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { timePresentation } from 'utils/formatters/date';
+import { formatDollars } from 'utils/formatters/number';
 
 const TransfersTab: React.FC = () => {
 	const marginTransfers = useAppSelector(selectMarginTransfers);
@@ -38,13 +40,25 @@ const TransfersTab: React.FC = () => {
 					},
 					{
 						Header: <TableHeader>{t('futures.market.user.transfers.table.amount')}</TableHeader>,
-						accessor: 'amount',
+						accessor: 'size',
 						sortType: 'basic',
-						Cell: (cellProps: any) => (
-							<StyledAmountCell isPositive={cellProps.row.original.isPositive}>
-								{cellProps.value}
-							</StyledAmountCell>
-						),
+						Cell: (cellProps: any) => {
+							const formatOptions = {
+								minDecimals: 0,
+							};
+
+							return (
+								<ColoredPrice
+									priceInfo={{
+										price: cellProps.row.original.size,
+										change: cellProps.row.original.action === 'deposit' ? 'up' : 'down',
+									}}
+								>
+									{cellProps.row.original.action === 'deposit' ? '+' : ''}
+									{formatDollars(cellProps.row.original.size, formatOptions)}
+								</ColoredPrice>
+							);
+						},
 						sortable: true,
 						width: 50,
 					},
@@ -86,13 +100,6 @@ const StyledTitle = styled.p`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 16px;
 	margin: 0;
-`;
-
-const StyledAmountCell = styled(DefaultCell)<{ isPositive: boolean }>`
-	color: ${(props: any) =>
-		props.isPositive
-			? props.theme.colors.selectedTheme.green
-			: props.theme.colors.selectedTheme.red};
 `;
 
 export default TransfersTab;
