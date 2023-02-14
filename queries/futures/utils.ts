@@ -1,23 +1,14 @@
 import { BigNumber } from '@ethersproject/bignumber';
 import { ContractsMap, NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
-import { utils } from 'ethers';
 
 import { ETH_UNIT } from 'constants/network';
 import { chain } from 'containers/Connector/config';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
-import { FuturesMarketAsset } from 'sdk/types/futures';
-import { formatDollars } from 'utils/formatters/number';
 
 import { SECONDS_PER_DAY, FUTURES_ENDPOINTS, MAIN_ENDPOINTS } from './constants';
-import { CrossMarginAccountTransferResult, FuturesMarginTransferResult } from './subgraph';
-import {
-	FuturesOpenInterest,
-	FuturesOneMinuteStat,
-	FundingRateUpdate,
-	MarginTransfer,
-} from './types';
+import { FuturesOpenInterest, FuturesOneMinuteStat, FundingRateUpdate } from './types';
 
 export const getFuturesEndpoint = (networkId: NetworkId): string => {
 	return FUTURES_ENDPOINTS[networkId] || FUTURES_ENDPOINTS[chain.optimism.id];
@@ -178,61 +169,4 @@ export const getReasonFromCode = (
 		default:
 			return 'unknown';
 	}
-};
-
-export const mapMarginTransfers = (
-	marginTransfers: FuturesMarginTransferResult[]
-): MarginTransfer[] => {
-	return marginTransfers?.map(
-		({
-			timestamp,
-			account,
-			market,
-			size,
-			asset,
-			txHash,
-		}: FuturesMarginTransferResult): MarginTransfer => {
-			const sizeWei = new Wei(size);
-			const cleanSize = sizeWei.div(ETH_UNIT).abs();
-			const isPositive = sizeWei.gt(0);
-			const amount = `${isPositive ? '+' : '-'}${formatDollars(cleanSize)}`;
-			const numTimestamp = wei(timestamp).toNumber();
-
-			return {
-				timestamp: numTimestamp,
-				account,
-				market,
-				size,
-				action: isPositive ? 'deposit' : 'withdraw',
-				amount,
-				isPositive,
-				asset: utils.parseBytes32String(asset) as FuturesMarketAsset,
-				txHash,
-			};
-		}
-	);
-};
-
-export const mapCrossMarginTransfers = (
-	marginTransfers: CrossMarginAccountTransferResult[]
-): MarginTransfer[] => {
-	return marginTransfers?.map(
-		({ timestamp, account, size, txHash }: CrossMarginAccountTransferResult): MarginTransfer => {
-			const sizeWei = new Wei(size);
-			const cleanSize = sizeWei.div(ETH_UNIT).abs();
-			const isPositive = sizeWei.gt(0);
-			const amount = `${isPositive ? '+' : '-'}${formatDollars(cleanSize)}`;
-			const numTimestamp = wei(timestamp).toNumber();
-
-			return {
-				timestamp: numTimestamp,
-				account,
-				size,
-				action: isPositive ? 'deposit' : 'withdraw',
-				amount,
-				isPositive,
-				txHash,
-			};
-		}
-	);
 };

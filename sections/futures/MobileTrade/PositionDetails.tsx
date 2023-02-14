@@ -2,8 +2,9 @@ import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 import UploadIcon from 'assets/svg/futures/upload-icon.svg';
+import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
 import { SectionHeader, SectionSeparator, SectionTitle } from 'sections/futures/mobile';
-import { selectPosition } from 'state/futures/selectors';
+import { selectFuturesType, selectPosition } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { resetButtonCSS } from 'styles/common';
 
@@ -12,6 +13,7 @@ import ShareModal from '../ShareModal';
 
 const PositionDetails = () => {
 	const position = useAppSelector(selectPosition);
+	const accountType = useAppSelector(selectFuturesType);
 
 	const [showShareModal, setShowShareModal] = useState(false);
 
@@ -29,11 +31,15 @@ const PositionDetails = () => {
 					</IconButton>
 				</SectionHeader>
 				<PositionCard />
+				<FuturesPositionsTable accountType={accountType} showCurrentMarket={false} />
 			</PositionDetailsContainer>
 			{showShareModal && <ShareModal position={position} setShowShareModal={setShowShareModal} />}
 		</>
 	) : (
-		<SectionSeparator />
+		<>
+			<SectionSeparator />
+			<FuturesPositionsTable accountType={accountType} showCurrentMarket={false} />
+		</>
 	);
 };
 
