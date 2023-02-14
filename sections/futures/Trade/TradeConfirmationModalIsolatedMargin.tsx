@@ -1,7 +1,7 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 
 import { setOpenModal } from 'state/app/reducer';
-import { modifyIsolatedPosition, modifyIsolatedPositionEstimateGas } from 'state/futures/actions';
+import { modifyIsolatedPosition } from 'state/futures/actions';
 import {
 	selectIsModifyingIsolatedPosition,
 	selectTradePreview,
@@ -18,16 +18,6 @@ export default function TradeConfirmationModalIsolatedMargin() {
 	const potentialTradeDetails = useAppSelector(selectTradePreview);
 	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
 	const submitting = useAppSelector(selectIsModifyingIsolatedPosition);
-
-	useEffect(() => {
-		dispatch(
-			modifyIsolatedPositionEstimateGas({
-				sizeDelta: nativeSizeDelta,
-				delayed: false,
-				offchain: false,
-			})
-		);
-	}, [nativeSizeDelta, dispatch]);
 
 	const onDismiss = useCallback(() => {
 		dispatch(setOpenModal(null));

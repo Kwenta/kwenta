@@ -36,7 +36,7 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 				accountType={'isolated_margin'}
 			/>
 			{pricesConnectionError && (
-				<Error message="Failed to connect to price feed. Please try disabling any add blockers and refresh." />
+				<Error message="Failed to connect to price feed. Please try disabling any ad blockers and refresh." />
 			)}
 
 			{!isMobile && <MarketInfoBox />}

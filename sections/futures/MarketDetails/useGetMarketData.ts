@@ -62,11 +62,11 @@ const useGetMarketData = (mobile?: boolean) => {
 		if (mobile) {
 			return {
 				[MarketDataKey.marketPrice]: {
-					value: markPrice ? formatDollars(markPrice.price) : NO_VALUE,
+					value: markPrice ? formatDollars(markPrice.price, { suggestDecimals: true }) : NO_VALUE,
 					color: getColorFromPriceInfo(markPrice),
 				},
 				[MarketDataKey.indexPrice]: {
-					value: indexPrice ? formatDollars(indexPrice.price) : NO_VALUE,
+					value: indexPrice ? formatDollars(indexPrice.price, { suggestDecimals: true }) : NO_VALUE,
 				},
 				[MarketDataKey.dailyChange]: {
 					value:
@@ -97,11 +97,11 @@ const useGetMarketData = (mobile?: boolean) => {
 		} else {
 			return {
 				[MarketDataKey.marketPrice]: {
-					value: markPrice ? formatDollars(markPrice.price) : NO_VALUE,
+					value: markPrice ? formatDollars(markPrice.price, { suggestDecimals: true }) : NO_VALUE,
 					color: getColorFromPriceInfo(markPrice),
 				},
 				[MarketDataKey.indexPrice]: {
-					value: indexPrice ? formatDollars(indexPrice.price) : NO_VALUE,
+					value: indexPrice ? formatDollars(indexPrice.price, { suggestDecimals: true }) : NO_VALUE,
 				},
 				[MarketDataKey.dailyChange]: {
 					value:

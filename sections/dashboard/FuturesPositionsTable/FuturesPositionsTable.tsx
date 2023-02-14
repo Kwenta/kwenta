@@ -12,7 +12,6 @@ import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
-import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
@@ -91,7 +90,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					market,
 					position: position.position,
 					description,
-					avgEntryPrice: thisPositionHistory?.entryPrice,
+					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
 				};
 			})
 			.filter(
@@ -251,8 +250,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								accessor: 'avgEntryPrice',
 								Cell: (cellProps: CellProps<any>) => {
 									const formatOptions = {
-										minDecimals: DEFAULT_CRYPTO_DECIMALS,
-										isAssetPrice: true,
+										suggestDecimals: true,
 									};
 									return cellProps.row.original.avgEntryPrice === undefined ? (
 										<DefaultCell>{NO_VALUE}</DefaultCell>
@@ -277,8 +275,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								accessor: 'liquidationPrice',
 								Cell: (cellProps: CellProps<any>) => {
 									const formatOptions = {
-										minDecimals: DEFAULT_CRYPTO_DECIMALS,
-										isAssetPrice: true,
+										suggestDecimals: true,
 									};
 									return (
 										<Currency.Price
