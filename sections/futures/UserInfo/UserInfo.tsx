@@ -57,7 +57,7 @@ const UserInfo: React.FC = () => {
 	const trades = useAppSelector(selectUsersTradesForMarket);
 
 	useFetchAction(fetchTradesForSelectedMarket, {
-		dependencies: [walletAddress, accountType, position?.position?.size.toString()],
+		dependencies: [walletAddress, accountType, marketAsset, position?.position?.size.toString()],
 		disabled: !walletAddress,
 	});
 
