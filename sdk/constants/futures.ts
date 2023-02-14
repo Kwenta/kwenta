@@ -295,7 +295,7 @@ export const ISOLATED_MARGIN_FRAGMENT = gql`
 			where: { account: $walletAddress }
 			orderBy: timestamp
 			orderDirection: desc
-			first: 10000
+			first: 1000
 		) {
 			id
 			timestamp
@@ -314,7 +314,7 @@ export const CROSS_MARGIN_FRAGMENT = gql`
 			where: { abstractAccount: $walletAddress }
 			orderBy: timestamp
 			orderDirection: desc
-			first: 10000
+			first: 1000
 		) {
 			id
 			timestamp
