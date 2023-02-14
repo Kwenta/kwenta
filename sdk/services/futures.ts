@@ -1,7 +1,7 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { Contract as EthCallContract } from 'ethcall';
-import { BigNumber, ContractTransaction, ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { formatBytes32String, parseBytes32String } from 'ethers/lib/utils';
 import request, { gql } from 'graphql-request';
 import { orderBy } from 'lodash';
@@ -631,28 +631,29 @@ export default class FuturesService {
 		sizeDelta: Wei,
 		priceImpactDelta: Wei,
 		options?: ModifyPositionOptions<T>
-	): TxReturn<T> {
+	) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
-		const root = options?.estimationOnly ? market.estimateGas : market;
 
-		return options?.delayed && options?.offchain
-			? (root.submitOffchainDelayedOrderWithTracking(
-					sizeDelta.toBN(),
-					priceImpactDelta.toBN(),
-					KWENTA_TRACKING_CODE
-			  ) as any)
-			: options?.delayed
-			? (root.submitDelayedOrderWithTracking(
-					sizeDelta.toBN(),
-					priceImpactDelta.toBN(),
-					wei(DEFAULT_DESIRED_TIMEDELTA).toBN(),
-					KWENTA_TRACKING_CODE
-			  ) as any)
-			: (root.modifyPositionWithTracking(
-					sizeDelta.toBN(),
-					priceImpactDelta.toBN(),
-					KWENTA_TRACKING_CODE
-			  ) as any);
+		if (options?.delayed && options.offchain) {
+			return this.sdk.transactions.createContractTxn(
+				market,
+				'submitOffchainDelayedOrderWithTracking',
+				[sizeDelta.toBN(), priceImpactDelta.toBN(), KWENTA_TRACKING_CODE]
+			);
+		} else if (options?.delayed) {
+			return this.sdk.transactions.createContractTxn(market, 'submitDelayedOrderWithTracking', [
+				sizeDelta.toBN(),
+				priceImpactDelta.toBN(),
+				wei(DEFAULT_DESIRED_TIMEDELTA).toBN(),
+				KWENTA_TRACKING_CODE,
+			]);
+		} else {
+			return this.sdk.transactions.createContractTxn(market, 'modifyPositionWithTracking', [
+				sizeDelta.toBN(),
+				priceImpactDelta.toBN(),
+				KWENTA_TRACKING_CODE,
+			]);
+		}
 	}
 
 	public async cancelDelayedOrder(marketAddress: string, account: string, isOffchain: boolean) {
@@ -806,7 +807,3 @@ export default class FuturesService {
 		]);
 	}
 }
-
-type TxReturn<T extends boolean = false> = Promise<
-	T extends true ? BigNumber : ContractTransaction
->;
