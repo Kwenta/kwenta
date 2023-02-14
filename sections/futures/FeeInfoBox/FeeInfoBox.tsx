@@ -183,7 +183,7 @@ const FeeInfoBox: React.FC = () => {
 								) : (
 									<div className="badge badge-red">
 										{t('dashboard.stake.tabs.trading-rewards.not-eligible')}
-										<NotEligibleIcon />
+										<NotEligibleIcon style={{ paddingLeft: '2px' }} />
 									</div>
 								)}
 							</FlexDivRow>
