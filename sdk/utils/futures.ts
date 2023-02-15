@@ -461,9 +461,7 @@ export const calculateCrossMarginFee = (
 };
 
 export const getPythNetworkUrl = (networkId: NetworkId) => {
-	return networkId === 420
-		? 'https://api.synthetix.io/pyth-testnet/api'
-		: 'https://api.synthetix.io/pyth-mainnet/api';
+	return networkId === 420 ? 'https://xc-testnet.pyth.network' : 'https://xc-mainnet.pyth.network';
 };
 
 export const normalizePythId = (id: string) => (id.startsWith('0x') ? id : '0x' + id);
