@@ -29,7 +29,7 @@ const useGetFuturesFee = (
 				},
 				{
 					timestamp: true,
-					feesCrossMarginAccounts: true,
+					feesSynthetix: true,
 				}
 			);
 			return response;
