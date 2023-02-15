@@ -38,7 +38,7 @@ const newTheme = {
 	},
 	pill: {
 		yellow: {
-			color: common.palette.yellow.y500,
+			text: common.palette.yellow.y500,
 			background: common.palette.yellow.y1000,
 			border: common.palette.alpha.white10,
 			outline: {
@@ -47,19 +47,37 @@ const newTheme = {
 			},
 			hover: {
 				background: common.palette.yellow.y500,
+				border: common.palette.alpha.white10,
 				text: common.palette.neutral.n900,
 			},
 		},
 		gray: {
+			text: common.palette.neutral.n70,
+			background: common.palette.neutral.n700,
+			border: common.palette.neutral.n70,
+			outline: {
+				text: common.palette.neutral.n900,
+				background: common.palette.neutral.n20,
+				border: common.palette.neutral.n20,
+			},
 			hover: {
-				background: '',
-				text: '',
+				background: common.palette.neutral.n70,
+				border: common.palette.alpha.white10,
+				text: common.palette.neutral.n900,
 			},
 		},
 		red: {
+			color: common.palette.red.r300,
+			background: common.palette.alpha.red10,
+			border: common.palette.red.r300,
+			outline: {
+				text: common.palette.red.r300,
+				border: common.palette.red.r300,
+			},
 			hover: {
-				background: '',
-				text: '',
+				background: common.palette.red.r500,
+				border: common.palette.alpha.white10,
+				text: common.palette.neutral.n900,
 			},
 		},
 	},
