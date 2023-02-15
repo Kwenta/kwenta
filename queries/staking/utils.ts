@@ -33,7 +33,7 @@ export type FuturesFeeForAccountProps = {
 
 export type FuturesFeeProps = {
 	timestamp: string;
-	feesCrossMarginAccounts: BigNumber;
+	feesSynthetix: BigNumber;
 };
 
 export type ClaimParams = [number, string, string, string[], number];
