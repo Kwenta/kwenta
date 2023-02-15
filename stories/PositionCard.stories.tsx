@@ -9,6 +9,10 @@ import {
 	Subtitle,
 } from 'sections/futures/PositionCard/PositionCard';
 
+export default {
+	title: 'Futures/PositionCard',
+};
+
 export const Default = () => {
 	return (
 		<Container>
