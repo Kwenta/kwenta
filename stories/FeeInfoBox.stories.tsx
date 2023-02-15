@@ -1,10 +1,18 @@
+import { ComponentMeta } from '@storybook/react';
 import { useReducer } from 'react';
 
 import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox';
 
 export default {
 	title: 'Futures/FeeInfoBox',
-};
+	decorators: [
+		(Story) => (
+			<div style={{ width: 334 }}>
+				<Story />
+			</div>
+		),
+	],
+} as ComponentMeta<any>;
 
 export const Default = () => {
 	return (

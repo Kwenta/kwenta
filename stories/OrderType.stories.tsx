@@ -12,5 +12,6 @@ export const Default: ComponentStory<typeof SegmentedControl> = (args) => (
 		selectedIndex={0}
 		values={['Market', 'Limit', 'Stop']}
 		onChange={() => {}}
+		styleType="check"
 	/>
 );
