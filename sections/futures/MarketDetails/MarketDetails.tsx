@@ -147,7 +147,7 @@ const OpenInterestShortDetail = memo(() => {
 	);
 });
 
-const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
+export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	flex: 1;
 	gap: 26px;
 	height: 55px;
@@ -161,7 +161,6 @@ const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	justify-content: space-between;
 	align-items: start;
 
-	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 10px;
 	box-sizing: border-box;
 
@@ -171,36 +170,32 @@ const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 		}
 	`}
 
-	p,
-	span {
-		margin: 0;
-		text-align: left;
-	}
+	${(props) => css`
+		border: ${props.theme.colors.selectedTheme.border};
 
-	.heading,
-	.value {
+		.heading {
+			color: ${props.theme.colors.selectedTheme.text.label};
+		}
+
+		.value {
+			color: ${props.theme.colors.selectedTheme.text.value};
+		}
+
+		.green {
+			color: ${props.theme.colors.selectedTheme.green};
+		}
+
+		.red {
+			color: ${props.theme.colors.selectedTheme.red};
+		}
+
+		.paused {
+			color: ${props.theme.colors.selectedTheme.gray};
+		}
+	`}
+
+	.heading, .value {
 		white-space: nowrap;
-	}
-
-	.heading {
-		color: ${(props) => props.theme.colors.selectedTheme.text.label};
-	}
-
-	.value {
-		font-family: ${(props) => props.theme.fonts.mono};
-		color: ${(props) => props.theme.colors.selectedTheme.text.value};
-	}
-
-	.green {
-		color: ${(props) => props.theme.colors.selectedTheme.green};
-	}
-
-	.red {
-		color: ${(props) => props.theme.colors.selectedTheme.red};
-	}
-
-	.paused {
-		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
 
 	${(props) =>

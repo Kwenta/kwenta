@@ -396,7 +396,7 @@ const AverageEntryPriceRow = memo(() => {
 
 export default PositionCard;
 
-const Container = styled.div`
+export const Container = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 30px 1fr 30px 1fr;
 	background-color: transparent;
@@ -412,11 +412,11 @@ const Container = styled.div`
 	`}
 `;
 
-const DataCol = styled(FlexDivCol)`
+export const DataCol = styled(FlexDivCol)`
 	justify-content: space-between;
 `;
 
-const DataColDivider = styled.div`
+export const DataColDivider = styled.div`
 	width: 1px;
 	background-color: #2b2a2a;
 	margin: 0 15px;
@@ -428,7 +428,7 @@ const DataColDivider = styled.div`
 	`}
 `;
 
-const InfoRow = styled.div`
+export const InfoRow = styled.div`
 	display: flex;
 	justify-content: space-between;
 	line-height: 16px;
@@ -446,7 +446,7 @@ const InfoRow = styled.div`
 	}
 `;
 
-const Subtitle = styled(Body)`
+export const Subtitle = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.text.label};
 	text-transform: capitalize;
 `;
@@ -460,7 +460,7 @@ const PositionCardTooltip = styled(Tooltip).attrs({ preset: 'fixed', height: 'au
 	padding: 10px;
 `;
 
-const StyledValue = styled(Body).attrs({ mono: true })`
+export const StyledValue = styled(Body).attrs({ mono: true })`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	text-align: end;
 	${Container}#closed & {
@@ -468,7 +468,7 @@ const StyledValue = styled(Body).attrs({ mono: true })`
 	}
 `;
 
-const PositionValue = styled.span<{ side?: PositionSide }>`
+export const PositionValue = styled.span<{ side?: PositionSide }>`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 13px;
 	text-transform: uppercase;

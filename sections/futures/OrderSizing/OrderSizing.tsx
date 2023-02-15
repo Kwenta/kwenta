@@ -175,7 +175,7 @@ const MaxButton = styled.button`
 	cursor: pointer;
 `;
 
-const InputButton = styled.button`
+export const InputButton = styled.button`
 	height: 22px;
 	padding: 3px 2px 4px 10px;
 	border: none;
