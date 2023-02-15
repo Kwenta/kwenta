@@ -161,9 +161,9 @@ const StyledMenu = styled.div`
 	border: 1px solid rgba(255, 255, 255, 0.1);
 	z-index: 10;
 	border-radius: 6px;
-	width: 120px;
+	max-width: 150px;
 	margin: auto;
-	padding: 10px 0px;
+	padding: 10px 15px;
 	margin-top: 35px;
 	display: flex;
 	flex-direction: column;
@@ -189,7 +189,7 @@ const StyledMenu = styled.div`
 const StyledMenuItem = styled.p`
 	font-family: ${(props) => props.theme.fonts.bold};
 	cursor: pointer;
-	width: 90px;
+	width: 100%;
 	font-size: 15px;
 	height: 30px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};

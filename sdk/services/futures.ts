@@ -24,7 +24,13 @@ import {
 } from 'sdk/contracts/types';
 import { IPerpsV2MarketConsolidated } from 'sdk/contracts/types/PerpsV2Market';
 import { IPerpsV2MarketSettings } from 'sdk/contracts/types/PerpsV2MarketData';
-import { queryCrossMarginAccounts, queryPositionHistory, queryTrades } from 'sdk/queries/futures';
+import {
+	queryCrossMarginAccounts,
+	queryCrossMarginTransfers,
+	queryIsolatedMarginTransfers,
+	queryPositionHistory,
+	queryTrades,
+} from 'sdk/queries/futures';
 import { NetworkOverrideOptions } from 'sdk/types/common';
 import {
 	CrossMarginOrderType,
@@ -40,6 +46,7 @@ import {
 	PositionDetail,
 	PositionSide,
 	ModifyPositionOptions,
+	MarginTransfer,
 } from 'sdk/types/futures';
 import { PricesMap } from 'sdk/types/prices';
 import {
@@ -394,6 +401,18 @@ export default class FuturesService {
 			}
 		);
 		return response ? calculateVolumes(response) : {};
+	}
+
+	public async getIsolatedMarginTransfers(
+		walletAddress?: string | null
+	): Promise<MarginTransfer[]> {
+		const address = walletAddress ?? this.sdk.context.walletAddress;
+		return queryIsolatedMarginTransfers(this.sdk, address);
+	}
+
+	public async getCrossMarginTransfers(walletAddress?: string | null): Promise<MarginTransfer[]> {
+		const address = walletAddress ?? this.sdk.context.walletAddress;
+		return queryCrossMarginTransfers(this.sdk, address);
 	}
 
 	public async getCrossMarginAccounts(walletAddress?: string | null) {
