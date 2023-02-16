@@ -262,7 +262,7 @@
 				"title": "Start trading today",
 				"button": "View Exchange"
 			},
-			"copyright": "© 2022 kwenta, All Rights Reserved.",
+			"copyright": "© 2023 kwenta, All Rights Reserved.",
 			"about-kwenta": {
 				"title": "About Kwenta",
 				"docs": "Docs",
@@ -272,10 +272,10 @@
 			},
 			"use-kwenta": {
 				"title": "Use KWENTA",
-				"how-to": "How to use Kwenta",
-				"perps": "Perpetuals",
+				"perps": "Perpetual Futures",
 				"spot": "Spot Trading",
-				"legacy": "Legacy Exchange"
+				"legacy": "Legacy Exchange",
+				"perps-v1": "Legacy Perpetuals"
 			},
 			"community": {
 				"title": "Community",
