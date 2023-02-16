@@ -33,7 +33,8 @@ const newTheme = {
 		number: {
 			positive: common.palette.green.g800,
 			negative: common.palette.red.r700,
-			neutral: common.palette.neutral,
+			neutral: common.palette.neutral.n900,
+			preview: common.palette.yellow.y800,
 		},
 	},
 	pill: {

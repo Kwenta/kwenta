@@ -33,7 +33,8 @@ const newTheme = {
 		number: {
 			positive: common.palette.green.g500,
 			negative: common.palette.red.r300,
-			neutral: '',
+			neutral: common.palette.neutral.n0,
+			preview: common.palette.yellow.y500,
 		},
 	},
 	badge: {

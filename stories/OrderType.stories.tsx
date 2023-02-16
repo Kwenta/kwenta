@@ -4,6 +4,13 @@ import SegmentedControl from 'components/SegmentedControl';
 
 export default {
 	title: 'Futures/OrderType',
+	decorators: [
+		(Story) => (
+			<div style={{ width: 334 }}>
+				<Story />
+			</div>
+		),
+	],
 } as ComponentMeta<typeof SegmentedControl>;
 
 export const Default: ComponentStory<typeof SegmentedControl> = (args) => (

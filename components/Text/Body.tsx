@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import styled, { css } from 'styled-components';
 
-type BodyProps = React.HTMLAttributes<HTMLParagraphElement> & {
+export type BodyProps = React.HTMLAttributes<HTMLParagraphElement> & {
 	size?: 'xsmall' | 'small' | 'medium' | 'large';
 	weight?: 'regular' | 'bold' | 'black';
 	className?: string;
