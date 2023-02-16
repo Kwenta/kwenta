@@ -42,7 +42,8 @@ const newTheme = {
 			background: common.palette.yellow.y1000,
 			border: common.palette.alpha.white10,
 			outline: {
-				color: common.palette.yellow.y500,
+				background: 'transparent',
+				text: common.palette.yellow.y500,
 				border: common.palette.yellow.y500,
 			},
 			hover: {
@@ -67,10 +68,11 @@ const newTheme = {
 			},
 		},
 		red: {
-			color: common.palette.red.r300,
+			text: common.palette.red.r300,
 			background: common.palette.alpha.red10,
 			border: common.palette.red.r300,
 			outline: {
+				background: 'transparent',
 				text: common.palette.red.r300,
 				border: common.palette.red.r300,
 			},

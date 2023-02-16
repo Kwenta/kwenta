@@ -10,3 +10,21 @@ export default {
 const Template: ComponentStory<typeof Pill> = (args) => <Pill {...args}>Button</Pill>;
 
 export const Default = Template.bind({});
+
+export const Red = Template.bind({});
+
+Red.args = {
+	color: 'red',
+};
+
+export const Gray = Template.bind({});
+
+Gray.args = {
+	color: 'gray',
+};
+
+export const Outline = Template.bind({});
+
+Outline.args = {
+	outline: true,
+};
