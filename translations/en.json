@@ -69,7 +69,7 @@
 		},
 		"assets": {
 			"title": "UNIQUE MARKETS",
-			"description": "Backed by Chainlink Oracles",
+			"description": "Backed by Chainlink and Pyth Oracles",
 			"forex": "Forex",
 			"crypto": "Cryptocurrencies",
 			"commodity": "Commodities",
