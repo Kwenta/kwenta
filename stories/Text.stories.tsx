@@ -1,3 +1,5 @@
+import { wei } from '@synthetixio/wei';
+
 import Spacer from 'components/Spacer';
 import * as Text from 'components/Text';
 
@@ -63,4 +65,6 @@ export const Body = () => {
 	);
 };
 
-export const NumericValue = () => {};
+export const NumericValue = () => {
+	return <Text.NumericValue value={wei(10)} />;
+};

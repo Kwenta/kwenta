@@ -27,12 +27,12 @@ const newTheme = {
 		},
 	},
 	text: {
-		primary: '',
-		secondary: '',
-		tertiary: '',
+		primary: common.palette.neutral.n0,
+		secondary: common.palette.neutral.n70,
+		tertiary: common.palette.neutral,
 		number: {
-			positive: '',
-			negative: '',
+			positive: common.palette.green.g500,
+			negative: common.palette.red.r300,
 			neutral: '',
 		},
 	},
