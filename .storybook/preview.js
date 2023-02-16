@@ -5,8 +5,6 @@ import { themes } from '../styles/theme';
 import '../styles/main.css';
 import { getDesignTokens } from 'utils/theme';
 import * as NextImage from 'next/image';
-import { Provider as ReduxProvider } from 'react-redux';
-import { store } from 'state/store';
 
 const OriginalNextImage = NextImage.default;
 
