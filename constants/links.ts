@@ -34,7 +34,7 @@ export const EXTERNAL_LINKS = {
 		FeeReclamation: 'https://docs.kwenta.io/resources/fee-reclamation',
 		HowToTrade: 'https://docs.kwenta.io/products/futures',
 		Governance:
-			'https://app.radicle.xyz/seeds/maple.radicle.garden/rad:git:hnrkq1oex148yz4zi9tm7spfnjaryyuc93yay/tree/master/sections/2.md',
+			'https://app.radicle.xyz/seeds/maple.radicle.garden/rad:git:hnrkq1oex148yz4zi9tm7spfnjaryyuc93yay/tree/master/sections/1.md',
 		DaoRoles:
 			'https://app.radicle.xyz/seeds/maple.radicle.garden/rad:git:hnrkq1oex148yz4zi9tm7spfnjaryyuc93yay/tree/master/sections/2.md',
 		HowToUse: 'https://docs.kwenta.io/onboard/how-to-start-using-kwenta',
