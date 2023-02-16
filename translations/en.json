@@ -523,7 +523,7 @@
 					"title": "Trading Rewards",
 					"mobile-title": "Rewards",
 					"pending-for-rewards": "Pending...",
-					"trading-rewards-tooltip": "Only trades made using a Kwenta Cross Margin account are eligible for trading rewards.",
+					"trading-rewards-tooltip": "All trades on Perps V2 are eligible for trading rewards.",
 					"spot-fee-paid": "Spot Fee Paid: Epoch {{EpochPeriod}}",
 					"future-fee-paid": "Futures Fees Paid: Ep. {{EpochPeriod}}",
 					"future-fee-paid-mobile": "Futures Fees Paid",
