@@ -8,7 +8,6 @@ import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right-tg.svg';
 import CaretDownGrayIcon from 'assets/svg/app/caret-down-gray-slim.svg';
 import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg';
 import DiscordLogo from 'assets/svg/social/discord.svg';
-import MirrorLogo from 'assets/svg/social/mirror.svg';
 import Button from 'components/Button';
 import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import { GridDivCenteredCol } from 'components/layout/grid';
@@ -88,12 +87,6 @@ const Header = memo(() => {
 			label: t('homepage.nav.socials.twitter'),
 			onClick: () => window.open(EXTERNAL_LINKS.Social.Twitter, '_blank'),
 			icon: <TwitterLogo />,
-		},
-		{
-			id: 'mirror',
-			label: t('homepage.nav.socials.mirror'),
-			onClick: () => window.open(EXTERNAL_LINKS.Social.Mirror, '_blank'),
-			icon: <MirrorLogo />,
 		},
 	];
 

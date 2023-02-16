@@ -192,7 +192,6 @@ export const SmallGoldenHeader = styled(Text.Body).attrs({ variant: 'bold' })`
 	color: ${(props) => props.theme.colors.common.primaryYellow};
 	text-transform: uppercase;
 	text-align: center;
-	letter-spacing: 0.65em;
 	margin-bottom: 10px;
 	cursor: default;
 	${media.lessThan('sm')`
@@ -209,7 +208,6 @@ export const WhiteHeader = styled.div`
 	font-variant: all-small-caps;
 	text-transform: uppercase;
 	text-align: center;
-	letter-spacing: 6px;
 	cursor: default;
 	${media.lessThan('sm')`
 		font-size: 32px;
