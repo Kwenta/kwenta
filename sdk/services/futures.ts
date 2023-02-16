@@ -115,22 +115,27 @@ export default class FuturesService {
 		if (!PerpsV2MarketData || !PerpsV2MarketSettings || !SystemStatus || !ExchangeRates) {
 			throw new Error(UNSUPPORTED_NETWORK);
 		}
-		const [markets, globals] = await this.sdk.context.multicallProvider.all([
+		const futuresData: Array<
+			PerpsV2MarketData.MarketSummaryStructOutput[] | PerpsV2MarketData.FuturesGlobalsStructOutput
+		> = await this.sdk.context.multicallProvider.all([
 			PerpsV2MarketData.allProxiedMarketSummaries(),
 			PerpsV2MarketData.globals(),
 		]);
 
-		const filteredMarkets = (markets as PerpsV2MarketData.MarketSummaryStructOutput[]).filter(
-			(m) => {
-				const marketKey = parseBytes32String(m.key) as FuturesMarketKey;
-				const market = enabledMarkets.find((market) => {
-					return marketKey === market.key;
-				});
-				return !!market;
-			}
-		);
+		const { markets, globals } = {
+			markets: futuresData[0] as PerpsV2MarketData.MarketSummaryStructOutput[],
+			globals: futuresData[1] as PerpsV2MarketData.FuturesGlobalsStructOutput,
+		};
 
-		const marketKeys = filteredMarkets.map((m: any) => {
+		const filteredMarkets = markets.filter((m) => {
+			const marketKey = parseBytes32String(m.key) as FuturesMarketKey;
+			const market = enabledMarkets.find((market) => {
+				return marketKey === market.key;
+			});
+			return !!market;
+		});
+
+		const marketKeys = filteredMarkets.map((m) => {
 			return m.key;
 		});
 
@@ -475,11 +480,18 @@ export default class FuturesService {
 		const crossMarginBaseSettings = this.sdk.context.multicallContracts.CrossMarginBaseSettings;
 		if (!crossMarginBaseSettings) throw new Error(UNSUPPORTED_NETWORK);
 
-		const [tradeFee, limitOrderFee, stopOrderFee] = await this.sdk.context.multicallProvider.all([
+		const fees: Array<BigNumber> = await this.sdk.context.multicallProvider.all([
 			crossMarginBaseSettings.tradeFee(),
 			crossMarginBaseSettings.limitOrderFee(),
 			crossMarginBaseSettings.stopOrderFee(),
 		]);
+
+		const { tradeFee, limitOrderFee, stopOrderFee } = {
+			tradeFee: fees[0],
+			limitOrderFee: fees[1],
+			stopOrderFee: fees[2],
+		};
+
 		return {
 			tradeFee: tradeFee ? wei(tradeFee.toNumber() / BPS_CONVERSION) : wei(0),
 			limitOrderFee: limitOrderFee ? wei(limitOrderFee.toNumber() / BPS_CONVERSION) : wei(0),
