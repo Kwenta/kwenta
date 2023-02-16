@@ -16,6 +16,7 @@ import {
 	FuturesOrder as CrossMarginOrder,
 	FuturesMarketKey,
 	FuturesMarketAsset,
+	MarginTransfer,
 } from 'sdk/types/futures';
 import { QueryStatus } from 'state/types';
 
@@ -59,6 +60,7 @@ export type FuturesQueryStatuses = {
 	positionHistory: QueryStatus;
 	trades: QueryStatus;
 	selectedTraderPositionHistory: QueryStatus;
+	marginTransfers: QueryStatus;
 };
 
 export type FuturesTransactionType =
@@ -132,6 +134,7 @@ export type FuturesAccountData = {
 	positions?: FuturesPosition<string>[];
 	positionHistory?: FuturesPositionHistory<string>[];
 	trades?: FuturesTrade<string>[];
+	marginTransfers?: MarginTransfer[];
 };
 
 export type IsolatedAccountData = FuturesAccountData & {

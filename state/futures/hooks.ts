@@ -11,6 +11,7 @@ import {
 	fetchCrossMarginOpenOrders,
 	fetchSharedFuturesData,
 	fetchIsolatedOpenOrders,
+	fetchMarginTransfers,
 } from './actions';
 import {
 	selectCrossMarginAccount,
@@ -40,6 +41,7 @@ export const usePollMarketFuturesData = () => {
 		disabled: !networkSupportsCrossMargin || selectedAccountType === 'isolated_margin',
 	});
 	useFetchAction(fetchStakingData, { dependencies: [networkId, wallet] });
+	useFetchAction(fetchMarginTransfers, { dependencies: [networkId, wallet, selectedAccountType] });
 	usePollAction('fetchSharedFuturesData', fetchSharedFuturesData, {
 		dependencies: [networkId],
 		intervalTime: 60000,

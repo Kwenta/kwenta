@@ -1,23 +1,28 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import ColoredPrice from 'components/ColoredPrice';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { Body } from 'components/Text';
-import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
 import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
+import { selectMarginTransfers, selectQueryStatuses } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { FetchStatus } from 'state/types';
 import { timePresentation } from 'utils/formatters/date';
+import { formatDollars } from 'utils/formatters/number';
 
 const TransfersTab: React.FC = () => {
-	const marginTransfersQuery = useGetFuturesMarginTransfers();
-	const marginTransfers = React.useMemo(() => marginTransfersQuery?.data ?? [], [
-		marginTransfersQuery.data,
-	]);
-
-	const { isLoading, isFetched: isLoaded } = marginTransfersQuery;
+	const marginTransfers = useAppSelector(selectMarginTransfers);
+	const {
+		marginTransfers: { status: marginTransfersStatus },
+	} = useAppSelector(selectQueryStatuses);
 
 	const { t } = useTranslation();
-	const columnsDeps = React.useMemo(() => [marginTransfers], [marginTransfers]);
+	const columnsDeps = useMemo(() => [marginTransfers, marginTransfersStatus], [
+		marginTransfers,
+		marginTransfersStatus,
+	]);
 
 	return (
 		<div>
@@ -36,13 +41,25 @@ const TransfersTab: React.FC = () => {
 					},
 					{
 						Header: <TableHeader>{t('futures.market.user.transfers.table.amount')}</TableHeader>,
-						accessor: 'amount',
+						accessor: 'size',
 						sortType: 'basic',
-						Cell: (cellProps: any) => (
-							<StyledAmountCell $isPositive={cellProps.row.original.isPositive}>
-								{cellProps.value}
-							</StyledAmountCell>
-						),
+						Cell: (cellProps: any) => {
+							const formatOptions = {
+								minDecimals: 0,
+							};
+
+							return (
+								<ColoredPrice
+									priceInfo={{
+										price: cellProps.row.original.size,
+										change: cellProps.row.original.action === 'deposit' ? 'up' : 'down',
+									}}
+								>
+									{cellProps.row.original.action === 'deposit' ? '+' : ''}
+									{formatDollars(cellProps.row.original.size, formatOptions)}
+								</ColoredPrice>
+							);
+						},
 						sortable: true,
 						width: 50,
 					},
@@ -57,7 +74,7 @@ const TransfersTab: React.FC = () => {
 				]}
 				data={marginTransfers}
 				columnsDeps={columnsDeps}
-				isLoading={isLoading && !isLoaded}
+				isLoading={marginTransfers.length === 0 && marginTransfersStatus === FetchStatus.Loading}
 				noResultsMessage={
 					marginTransfers?.length === 0 ? (
 						<TableNoResults>
@@ -83,10 +100,6 @@ const StyledActionCell = styled(DefaultCell)`
 const StyledTitle = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 16px;
-`;
-
-const StyledAmountCell = styled(DefaultCell)<{ $isPositive: boolean }>`
-	color: ${(props) => props.theme.colors.selectedTheme[props.$isPositive ? 'green' : 'red']};
 `;
 
 export default TransfersTab;

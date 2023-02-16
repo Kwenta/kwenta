@@ -7,7 +7,7 @@ import { GridContainer } from 'sections/earn/grid';
 import { claimRewards, fetchEarnTokenPrices } from 'state/earn/actions';
 import { selectEarnApy, selectEarnedRewards, selectYieldPerDay } from 'state/earn/selectors';
 import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks';
-import { formatPercent, toWei, truncateNumbers } from 'utils/formatters/number';
+import { formatPercent, truncateNumbers } from 'utils/formatters/number';
 
 import GridData from './GridData';
 
@@ -48,7 +48,7 @@ const StakeGrid = () => {
 			</GridData>
 			<GridData
 				title={t('dashboard.stake.tabs.staking.annual-percentage-rate')}
-				value={formatPercent(earnApy.div(toWei('100')), { minDecimals: 2 })}
+				value={formatPercent(earnApy, { minDecimals: 2 })}
 			/>
 			<TimeRemainingData />
 		</GridContainer>

@@ -42,6 +42,7 @@ import {
 	fetchTradesForSelectedMarket,
 	fetchAllTradesForAccount,
 	fetchIsolatedOpenOrders,
+	fetchMarginTransfers,
 } from './actions';
 import {
 	CrossMarginState,
@@ -82,6 +83,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		positionHistory: DEFAULT_QUERY_STATUS,
 		selectedTraderPositionHistory: DEFAULT_QUERY_STATUS,
 		trades: DEFAULT_QUERY_STATUS,
+		marginTransfers: DEFAULT_QUERY_STATUS,
 	},
 	transactionEstimations: {} as TransactionEstimations,
 	crossMargin: {
@@ -313,6 +315,24 @@ const futuresSlice = createSlice({
 			futuresState.queryStatuses.dailyVolumes = {
 				status: FetchStatus.Error,
 				error: 'Failed to fetch volume data',
+			};
+		});
+
+		// margin transfers
+		builder.addCase(fetchMarginTransfers.pending, (futuresState) => {
+			futuresState.queryStatuses.marginTransfers = LOADING_STATUS;
+		});
+		builder.addCase(fetchMarginTransfers.fulfilled, (futuresState, { payload }) => {
+			futuresState.queryStatuses.marginTransfers = SUCCESS_STATUS;
+			if (payload) {
+				const { wallet, network, type, marginTransfers } = payload;
+				futuresState[accountType(type)].accounts[network][wallet].marginTransfers = marginTransfers;
+			}
+		});
+		builder.addCase(fetchMarginTransfers.rejected, (futuresState) => {
+			futuresState.queryStatuses.marginTransfers = {
+				status: FetchStatus.Error,
+				error: 'Failed to fetch margin transfers',
 			};
 		});
 

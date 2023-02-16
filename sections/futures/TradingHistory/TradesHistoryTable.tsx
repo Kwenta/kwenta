@@ -5,7 +5,6 @@ import styled, { css } from 'styled-components';
 
 import Table, { TableHeader } from 'components/Table';
 import { Body } from 'components/Text';
-import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import { blockExplorer } from 'containers/Connector/Connector';
 import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
@@ -140,7 +139,9 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 							Header: <TableHeader>{t('futures.market.history.price-label')}</TableHeader>,
 							accessor: TableColumnAccessor.Price,
 							Cell: (cellProps: CellProps<any>) => {
-								const formatOptions = { minDecimals: DEFAULT_CRYPTO_DECIMALS, isAssetPrice: true };
+								const formatOptions = {
+									suggestDecimals: true,
+								};
 
 								return (
 									<PriceValue>

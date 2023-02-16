@@ -83,12 +83,12 @@ const MarketNameRow = memo(() => {
 		<InfoRow>
 			<Subtitle>{marketShortName}</Subtitle>
 			<ColoredPrice priceInfo={marketPriceInfo}>
-				{formatDollars(marketPrice, { minDecimals, isAssetPrice: true })}
+				{formatDollars(marketPrice, { minDecimals, suggestDecimals: true })}
 				{
 					<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
 						{formatDollars(previewData.fillPrice ?? zeroBN, {
 							minDecimals,
-							isAssetPrice: true,
+							suggestDecimals: true,
 						})}
 					</PreviewArrow>
 				}
@@ -332,13 +332,13 @@ const LiquidationPriceRow = memo(() => {
 					<>
 						{formatDollars(positionDetails?.liquidationPrice ?? zeroBN, {
 							minDecimals,
-							isAssetPrice: true,
+							suggestDecimals: true,
 						})}
 						{
 							<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
 								{formatDollars(previewData?.liquidationPrice ?? zeroBN, {
 									minDecimals,
-									isAssetPrice: true,
+									suggestDecimals: true,
 								})}
 							</PreviewArrow>
 						}
@@ -375,13 +375,13 @@ const AverageEntryPriceRow = memo(() => {
 					<>
 						{formatDollars(positionHistory?.entryPrice ?? zeroBN, {
 							minDecimals,
-							isAssetPrice: true,
+							suggestDecimals: true,
 						})}
 						{
 							<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
 								{formatDollars(previewData.avgEntryPrice ?? zeroBN, {
 									minDecimals,
-									isAssetPrice: true,
+									suggestDecimals: true,
 								})}
 							</PreviewArrow>
 						}

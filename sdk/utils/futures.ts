@@ -9,6 +9,8 @@ import {
 	FuturesOrderType as SubgraphOrderType,
 	FuturesPositionResult,
 	FuturesTradeResult,
+	FuturesMarginTransferResult,
+	CrossMarginAccountTransferResult,
 } from 'queries/futures/subgraph';
 import {
 	FUTURES_ENDPOINTS,
@@ -39,6 +41,7 @@ import {
 	PositionSide,
 	PostTradeDetailsResponse,
 	PotentialTradeStatus,
+	MarginTransfer,
 } from 'sdk/types/futures';
 import { CrossMarginSettings } from 'state/futures/types';
 import { formatCurrency, formatDollars, zeroBN } from 'utils/formatters/number';
@@ -546,6 +549,53 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 				pnl: new Wei(pnl, 18, true),
 				feesPaid: new Wei(feesPaid, 18, true),
 				orderType: mapOrderType(orderType),
+			};
+		}
+	);
+};
+
+export const mapMarginTransfers = (
+	marginTransfers: FuturesMarginTransferResult[]
+): MarginTransfer[] => {
+	return marginTransfers?.map(
+		({
+			timestamp,
+			account,
+			market,
+			size,
+			asset,
+			txHash,
+		}: FuturesMarginTransferResult): MarginTransfer => {
+			const sizeWei = new Wei(size);
+			const numTimestamp = wei(timestamp).toNumber();
+
+			return {
+				timestamp: numTimestamp,
+				account,
+				market,
+				size: sizeWei.div(ETH_UNIT).toNumber(),
+				action: sizeWei.gt(0) ? 'deposit' : 'withdraw',
+				asset: parseBytes32String(asset) as FuturesMarketAsset,
+				txHash,
+			};
+		}
+	);
+};
+
+export const mapCrossMarginTransfers = (
+	marginTransfers: CrossMarginAccountTransferResult[]
+): MarginTransfer[] => {
+	return marginTransfers?.map(
+		({ timestamp, account, size, txHash }: CrossMarginAccountTransferResult): MarginTransfer => {
+			const sizeWei = new Wei(size);
+			const numTimestamp = wei(timestamp).toNumber();
+
+			return {
+				timestamp: numTimestamp,
+				account,
+				size: sizeWei.div(ETH_UNIT).toNumber(),
+				action: sizeWei.gt(0) ? 'deposit' : 'withdraw',
+				txHash,
 			};
 		}
 	);

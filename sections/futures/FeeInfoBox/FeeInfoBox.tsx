@@ -309,14 +309,15 @@ const StyledHelpIcon = styled(HelpIcon)`
 
 const StyledLinkArrowIcon = styled(LinkArrowIcon)`
 	cursor: pointer;
+	fill: ${(props) => props.theme.colors.selectedTheme.text.label};
 `;
 
-const RewardCopy = styled(Body).attrs({ weight: 'bold' })`
+const RewardCopy = styled(Body).attrs({ weight: 'bold', inline: true })`
 	color: ${(props) => props.theme.colors.selectedTheme.text.label};
 `;
 
 const CompactBox = styled.div<{ $isEligible: boolean }>`
-	color: ${(props) => props.theme.colors.selectedTheme.rewardTitle};
+	color: ${(props) => props.theme.colors.selectedTheme.text.value};
 	font-size: 13px;
 	padding-left: 8px;
 	cursor: pointer;

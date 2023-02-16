@@ -2,7 +2,7 @@ import { FC, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import TabButton from 'components/Button/TabButton';
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import { DesktopOnlyView } from 'components/Media';
 import { TabPanel } from 'components/Tab';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
@@ -41,13 +41,6 @@ const Markets: FC = () => {
 					))}
 				</TabButtonsContainer>
 			</DesktopOnlyView>
-			<MobileOrTabletView>
-				<TabButtonsContainer mobile>
-					{MARKETS_TABS.map(({ name, label, active, onClick }) => (
-						<TabButton key={name} title={label} active={active} onClick={onClick} />
-					))}
-				</TabButtonsContainer>
-			</MobileOrTabletView>
 
 			<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
 				<FuturesMarketsTable />

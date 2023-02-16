@@ -11,7 +11,6 @@ import ColoredPrice from 'components/ColoredPrice';
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableHeader } from 'components/Table';
-import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import { FuturesMarketAsset } from 'sdk/types/futures';
@@ -119,8 +118,7 @@ const FuturesMarketsTable: FC = () => {
 								accessor: 'price',
 								Cell: (cellProps: CellProps<typeof data[number]>) => {
 									const formatOptions = {
-										minDecimals: DEFAULT_CRYPTO_DECIMALS,
-										isAssetPrice: true,
+										suggestDecimals: true,
 									};
 									return (
 										<ColoredPrice priceInfo={cellProps.row.original.priceInfo}>
@@ -274,6 +272,7 @@ const FuturesMarketsTable: FC = () => {
 					onTableRowClick={(row) => {
 						router.push(ROUTES.Markets.MarketPair(row.original.asset, accountType));
 					}}
+					sortBy={[{ id: 'dailyVolume', desc: true }]}
 					columns={[
 						{
 							Header: () => (
@@ -299,7 +298,7 @@ const FuturesMarketsTable: FC = () => {
 												currencyKey="sUSD"
 												price={cellProps.row.original.price}
 												sign="$"
-												formatOptions={{ minDecimals: DEFAULT_CRYPTO_DECIMALS, isAssetPrice: true }}
+												formatOptions={{ suggestDecimals: true }}
 											/>
 										</MarketContainer>
 									</div>
@@ -352,7 +351,7 @@ const FuturesMarketsTable: FC = () => {
 									</TableHeader>
 								</div>
 							),
-							accessor: '24h-change',
+							accessor: 'dailyVolume',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
 									<div>
@@ -374,6 +373,15 @@ const FuturesMarketsTable: FC = () => {
 									</div>
 								);
 							},
+							sortable: true,
+							sortType: useMemo(
+								() => (rowA: any, rowB: any) => {
+									const rowOne = rowA.original.volume;
+									const rowTwo = rowB.original.volume;
+									return rowOne > rowTwo ? 1 : -1;
+								},
+								[]
+							),
 							width: 120,
 						},
 					]}
@@ -438,6 +446,7 @@ const MarketContainer = styled.div`
 `;
 
 const StyledMobileTable = styled(StyledTable)`
+	margin-top: 4px;
 	border-radius: initial;
 	border-top: none;
 	border-left: none;

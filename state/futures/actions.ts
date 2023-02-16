@@ -19,6 +19,7 @@ import {
 	FuturesPotentialTradeDetails,
 	FuturesTrade,
 	FuturesVolumes,
+	MarginTransfer,
 	OrderEnumByType,
 	PositionSide,
 	PotentialTradeStatus,
@@ -324,6 +325,39 @@ export const fetchDailyVolumes = createAsyncThunk<FuturesVolumes<string>, void, 
 		return serializeFuturesVolumes(volumes);
 	}
 );
+
+export const fetchMarginTransfers = createAsyncThunk<
+	| {
+			marginTransfers: MarginTransfer[];
+			wallet: string;
+			network: NetworkId;
+			type: FuturesAccountType;
+	  }
+	| undefined,
+	void,
+	ThunkConfig
+>('futures/fetchMarginTransfers', async (_, { getState, extra: { sdk } }) => {
+	const { wallet, futures } = getState();
+	const supportedNetwork = selectFuturesSupportedNetwork(getState());
+	const network = selectNetwork(getState());
+	if (!wallet.walletAddress || !supportedNetwork) return;
+	try {
+		const transfers =
+			futures.selectedType === 'cross_margin'
+				? await sdk.futures.getCrossMarginTransfers()
+				: await sdk.futures.getIsolatedMarginTransfers();
+		return {
+			marginTransfers: transfers,
+			wallet: wallet.walletAddress,
+			network: network,
+			type: futures.selectedType,
+		};
+	} catch (err) {
+		logError(err);
+		notifyError('Failed to fetch margin transfers', err);
+		throw err;
+	}
+});
 
 export const fetchDashboardFuturesData = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/fetchDashboardFuturesData',
@@ -916,6 +950,7 @@ export const depositIsolatedMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 			dispatch(setOpenModal(null));
 			dispatch(refetchPosition('isolated_margin'));
 			dispatch(fetchBalances());
+			dispatch(fetchMarginTransfers());
 		} catch (err) {
 			dispatch(handleTransactionError(err.message));
 			throw err;
@@ -941,6 +976,7 @@ export const withdrawIsolatedMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 			dispatch(refetchPosition('isolated_margin'));
 			dispatch(setOpenModal(null));
 			dispatch(fetchBalances());
+			dispatch(fetchMarginTransfers());
 		} catch (err) {
 			dispatch(handleTransactionError(err.message));
 			throw err;
@@ -988,29 +1024,6 @@ export const modifyIsolatedPosition = createAsyncThunk<
 			dispatch(handleTransactionError(err.message));
 			throw err;
 		}
-	}
-);
-
-export const modifyIsolatedPositionEstimateGas = createAsyncThunk<
-	void,
-	ModifyIsolatedPositionInputs,
-	ThunkConfig
->(
-	'futures/modifyIsolatedPositionEstimateGas',
-	async ({ sizeDelta, delayed, offchain }, { getState, dispatch, extra: { sdk } }) => {
-		const marketInfo = selectMarketInfo(getState());
-		const priceImpact = selectIsolatedPriceImpact(getState());
-		if (!marketInfo) throw new Error('Market info not found');
-		estimateGasInteralAction(
-			() =>
-				sdk.futures.modifyIsolatedMarginPosition(marketInfo.market, wei(sizeDelta), priceImpact, {
-					delayed,
-					offchain,
-					estimationOnly: true,
-				}),
-			'modify_isolated',
-			{ getState, dispatch }
-		);
 	}
 );
 
@@ -1226,7 +1239,7 @@ export const withdrawAccountKeeperBalance = createAsyncThunk<void, Wei, ThunkCon
 	}
 );
 
-const estimateGasInteralAction = async (
+export const estimateGasInteralAction = async (
 	gasLimitEstimate: () => Promise<BigNumber>,
 	type: FuturesTransactionType,
 	config: {
@@ -1298,6 +1311,7 @@ const submitCMTransferTransaction = async (
 		dispatch(setOpenModal(null));
 		dispatch(refetchPosition('cross_margin'));
 		dispatch(fetchBalances());
+		dispatch(fetchMarginTransfers());
 		return tx;
 	} catch (err) {
 		logError(err);

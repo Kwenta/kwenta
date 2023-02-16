@@ -1,3 +1,5 @@
+import { gql } from 'graphql-request';
+
 import { FuturesMarketAsset, FuturesMarketConfig, FuturesMarketKey } from 'sdk/types/futures';
 
 export const FUTURES_ENDPOINT_OP_MAINNET = `https://subgraph.satsuma-prod.com/${process.env.NEXT_PUBLIC_SATSUMA_API_KEY}/kwenta/optimism-perps/api`;
@@ -285,3 +287,40 @@ export const BPS_CONVERSION = 10000;
 export const DEFAULT_DESIRED_TIMEDELTA = 0;
 
 export const AGGREGATE_ASSET_KEY = '0x';
+
+// subgraph fragments
+export const ISOLATED_MARGIN_FRAGMENT = gql`
+	query userFuturesMarginTransfers($walletAddress: String!) {
+		futuresMarginTransfers(
+			where: { account: $walletAddress }
+			orderBy: timestamp
+			orderDirection: desc
+			first: 1000
+		) {
+			id
+			timestamp
+			account
+			market
+			size
+			asset
+			txHash
+		}
+	}
+`;
+
+export const CROSS_MARGIN_FRAGMENT = gql`
+	query userCrossMarginTransfers($walletAddress: String!) {
+		crossMarginAccountTransfers(
+			where: { abstractAccount: $walletAddress }
+			orderBy: timestamp
+			orderDirection: desc
+			first: 1000
+		) {
+			id
+			timestamp
+			account
+			size
+			txHash
+		}
+	}
+`;

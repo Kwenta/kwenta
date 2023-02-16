@@ -607,6 +607,22 @@ export const selectFuturesPortfolio = createSelector(
 	}
 );
 
+export const selectMarginTransfers = createSelector(
+	selectWallet,
+	selectNetwork,
+	selectFuturesType,
+	selectMarketAsset,
+	(state: RootState) => state.futures,
+	(wallet, network, type, asset, futures) => {
+		if (!wallet) return [];
+		const account = futures[accountType(type)].accounts[network][wallet];
+		const marginTransfers = account?.marginTransfers ?? [];
+		return marginTransfers.filter(
+			(o) => accountType(type) === 'isolatedMargin' && o.asset === asset
+		);
+	}
+);
+
 export const selectCrossMarginOpenOrders = createSelector(
 	selectMarketAsset,
 	selectCrossMarginAccountData,
