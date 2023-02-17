@@ -100,6 +100,19 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						sortable: true,
 					},
 					{
+						Header: <TableHeader>{t('futures.market.user.trades.table.pnl')}</TableHeader>,
+						accessor: 'pnl',
+						sortType: 'basic',
+						Cell: (cellProps: CellProps<FuturesTrade>) => {
+							const formatOptions = {
+								suggestDecimals: true,
+							};
+							return <>{formatDollars(cellProps.value, formatOptions)}</>;
+						},
+						width: 90,
+						sortable: true,
+					},
+					{
 						Header: <TableHeader>{t('futures.market.user.trades.table.fees')}</TableHeader>,
 						sortType: 'basic',
 						accessor: 'feesPaid',

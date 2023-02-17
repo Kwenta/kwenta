@@ -23,6 +23,7 @@ export type FuturesMarket<T = Wei> = {
 	asset: FuturesMarketAsset;
 	assetHex: string;
 	currentFundingRate: T;
+	currentFundingVelocity: T;
 	currentRoundId: T;
 	feeRates: {
 		makerFee: T;
