@@ -119,4 +119,7 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 		10: '0xf486A72E8c8143ACd9F65A104A16990fDb38be14',
 		420: '0x74c0A3bD10634759DC8B4CA7078C8Bf85bFE1271',
 	},
+	TradingRewardsPerpsV2: {
+		10: '0x2787CC20e5ECb4BF1bfB79eAE284201027683179',
+	},
 };

@@ -138,6 +138,12 @@ export const getContractsByNetwork = (
 		MultipleMerkleDistributor: ADDRESSES.TradingRewards[networkId]
 			? MultipleMerkleDistributor__factory.connect(ADDRESSES.TradingRewards[networkId], provider)
 			: undefined,
+		MultipleMerkleDistributorPerpsV2: ADDRESSES.TradingRewardsPerpsV2[networkId]
+			? MultipleMerkleDistributor__factory.connect(
+					ADDRESSES.TradingRewardsPerpsV2[networkId],
+					provider
+			  )
+			: undefined,
 		veKwentaToken: ADDRESSES.veKwentaToken[networkId]
 			? ERC20__factory.connect(ADDRESSES.veKwentaToken[networkId], provider)
 			: undefined,
