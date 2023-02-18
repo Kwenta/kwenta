@@ -188,6 +188,29 @@ export const claimMultipleRewards = createAsyncThunk<void, void, ThunkConfig>(
 	}
 );
 
+export const claimMultipleRewardsPerpsV2 = createAsyncThunk<void, void, ThunkConfig>(
+	'staking/claimMultipleRewardsPerpsV2',
+	async (_, { dispatch, getState, extra: { sdk } }) => {
+		const {
+			staking: { claimableRewards },
+		} = getState();
+
+		const { hash } = await sdk.kwentaToken.claimMultipleRewardsPerpsV2(claimableRewards);
+
+		monitorTransaction({
+			txHash: hash,
+			onTxConfirmed: () => {
+				dispatch({ type: 'staking/setClaimRewardsStatus', payload: FetchStatus.Success });
+				dispatch(fetchStakingData());
+				dispatch(fetchClaimableRewards());
+			},
+			onTxFailed: () => {
+				dispatch({ type: 'staking/setClaimRewardsStatus', payload: FetchStatus.Error });
+			},
+		});
+	}
+);
+
 export const stakeEscrow = createAsyncThunk<void, BigNumber, ThunkConfig>(
 	'staking/stakeEscrow',
 	async (amount, { dispatch, extra: { sdk } }) => {

@@ -448,6 +448,20 @@ export default class KwentaTokenService {
 		]);
 	}
 
+	public async claimMultipleRewardsPerpsV2(claimableRewards: ClaimParams[]) {
+		const { MultipleMerkleDistributorPerpsV2 } = this.sdk.context.contracts;
+
+		if (!MultipleMerkleDistributorPerpsV2) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
+		}
+
+		return this.sdk.transactions.createContractTxn(
+			MultipleMerkleDistributorPerpsV2,
+			'claimMultiple',
+			[claimableRewards]
+		);
+	}
+
 	private performStakeAction(
 		action: 'stake' | 'unstake',
 		amount: string | BigNumber,
