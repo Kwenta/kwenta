@@ -7,10 +7,8 @@ import { FlexDivCentered, FlexDivCol } from 'components/layout/flex';
 import PreviewArrow from 'components/PreviewArrow';
 import { Body } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
-import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { PositionSide } from 'sdk/types/futures';
 import { setOpenModal } from 'state/app/reducer';
 import { selectOpenModal } from 'state/app/selectors';
@@ -27,10 +25,9 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { PillButtonDiv } from 'styles/common';
 import media from 'styles/media';
-import { isFiatCurrency } from 'utils/currencies';
 import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 import { formatNumber } from 'utils/formatters/number';
-import { getMarketName, isDecimalFour } from 'utils/futures';
+import { getMarketName } from 'utils/futures';
 
 import EditLeverageModal from '../TradeCrossMargin/EditCrossMarginLeverageModal';
 
@@ -69,29 +66,18 @@ const PositionCard = memo(() => {
 const MarketNameRow = memo(() => {
 	const marketPriceInfo = useAppSelector(selectMarketPriceInfo);
 	const marketAsset = useAppSelector(selectMarketAsset);
-	const marketKey = useAppSelector(selectMarketKey);
 	const marketPrice = useAppSelector(selectSkewAdjustedPrice);
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const marketShortName = getMarketName(marketAsset);
 	const previewData = useAppSelector(selectPreviewData);
-	const minDecimals =
-		isFiatCurrency(selectedPriceCurrency.name) && isDecimalFour(marketKey)
-			? DEFAULT_CRYPTO_DECIMALS
-			: undefined;
 
 	return (
 		<InfoRow>
 			<Subtitle>{marketShortName}</Subtitle>
 			<ColoredPrice priceInfo={marketPriceInfo}>
-				{formatDollars(marketPrice, { minDecimals, suggestDecimals: true })}
-				{
-					<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
-						{formatDollars(previewData.fillPrice ?? zeroBN, {
-							minDecimals,
-							suggestDecimals: true,
-						})}
-					</PreviewArrow>
-				}
+				{formatDollars(marketPrice, { suggestDecimals: true })}
+				<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
+					{formatDollars(previewData.fillPrice ?? zeroBN, { suggestDecimals: true })}
+				</PreviewArrow>
 			</ColoredPrice>
 		</InfoRow>
 	);
@@ -110,10 +96,8 @@ const PositionSideRow = memo(() => {
 			</PositionCardTooltip>
 			<div data-testid="position-card-side-value">
 				{positionDetails ? (
-					<PositionValue
-						side={positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
-					>
-						{positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
+					<PositionValue side={positionDetails.side}>
+						{positionDetails.side}
 						{previewData.positionSide !== positionDetails.side && (
 							<PreviewArrow
 								showPreview={
@@ -287,11 +271,9 @@ const LeverageRow = memo(() => {
 					{positionDetails ? (
 						<>
 							{formatNumber(positionDetails?.leverage ?? zeroBN) + 'x'}
-							{
-								<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
-									{formatNumber(previewData?.leverage ?? zeroBN) + 'x'}
-								</PreviewArrow>
-							}
+							<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
+								{formatNumber(previewData?.leverage ?? zeroBN) + 'x'}
+							</PreviewArrow>
 						</>
 					) : (
 						NO_VALUE
@@ -312,13 +294,6 @@ const LiquidationPriceRow = memo(() => {
 	const position = useAppSelector(selectPosition);
 	const previewData = useAppSelector(selectPreviewData);
 	const positionDetails = position?.position;
-	const marketKey = useAppSelector(selectMarketKey);
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-
-	const minDecimals =
-		isFiatCurrency(selectedPriceCurrency.name) && isDecimalFour(marketKey)
-			? DEFAULT_CRYPTO_DECIMALS
-			: undefined;
 
 	return (
 		<InfoRow>
@@ -330,18 +305,10 @@ const LiquidationPriceRow = memo(() => {
 			<StyledValue>
 				{positionDetails ? (
 					<>
-						{formatDollars(positionDetails?.liquidationPrice ?? zeroBN, {
-							minDecimals,
-							suggestDecimals: true,
-						})}
-						{
-							<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
-								{formatDollars(previewData?.liquidationPrice ?? zeroBN, {
-									minDecimals,
-									suggestDecimals: true,
-								})}
-							</PreviewArrow>
-						}
+						{formatDollars(positionDetails?.liquidationPrice ?? zeroBN, { suggestDecimals: true })}
+						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
+							{formatDollars(previewData?.liquidationPrice ?? zeroBN, { suggestDecimals: true })}
+						</PreviewArrow>
 					</>
 				) : (
 					NO_VALUE
@@ -356,14 +323,7 @@ const AverageEntryPriceRow = memo(() => {
 	const position = useAppSelector(selectPosition);
 	const previewData = useAppSelector(selectPreviewData);
 	const positionDetails = position?.position;
-	const marketKey = useAppSelector(selectMarketKey);
 	const positionHistory = useAppSelector(selectSelectedMarketPositionHistory);
-
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const minDecimals =
-		isFiatCurrency(selectedPriceCurrency.name) && isDecimalFour(marketKey)
-			? DEFAULT_CRYPTO_DECIMALS
-			: undefined;
 
 	return (
 		<InfoRow>
@@ -373,18 +333,10 @@ const AverageEntryPriceRow = memo(() => {
 			<StyledValue>
 				{positionDetails ? (
 					<>
-						{formatDollars(positionHistory?.entryPrice ?? zeroBN, {
-							minDecimals,
-							suggestDecimals: true,
-						})}
-						{
-							<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
-								{formatDollars(previewData.avgEntryPrice ?? zeroBN, {
-									minDecimals,
-									suggestDecimals: true,
-								})}
-							</PreviewArrow>
-						}
+						{formatDollars(positionHistory?.entryPrice ?? zeroBN, { suggestDecimals: true })}
+						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
+							{formatDollars(previewData.avgEntryPrice ?? zeroBN, { suggestDecimals: true })}
+						</PreviewArrow>
 					</>
 				) : (
 					NO_VALUE
