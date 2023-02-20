@@ -5,8 +5,8 @@ import styled, { css } from 'styled-components';
 
 import SortDownIcon from 'assets/svg/app/caret-down.svg';
 import SortUpIcon from 'assets/svg/app/caret-up.svg';
-import Spinner from 'assets/svg/app/loader.svg';
 import { GridDivCenteredRow } from 'components/layout/grid';
+import Loader from 'components/Loader';
 import { Body } from 'components/Text';
 
 import Pagination from './Pagination';
@@ -186,7 +186,7 @@ export const Table: FC<TableProps> = memo(
 							</div>
 						))}
 						{isLoading ? (
-							<StyledSpinner />
+							<Loader />
 						) : (
 							page.length > 0 && (
 								<TableBody className="table-body" {...getTableBodyProps()}>
@@ -230,11 +230,6 @@ export const Table: FC<TableProps> = memo(
 
 const TableContainer = styled.div`
 	overflow-x: auto;
-`;
-
-const StyledSpinner = styled(Spinner)`
-	display: block;
-	margin: 30px auto;
 `;
 
 const TableBody = styled.div`

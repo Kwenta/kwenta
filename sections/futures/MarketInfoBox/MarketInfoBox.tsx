@@ -23,7 +23,6 @@ const AvailableMarginRow = memo(() => {
 	return (
 		<InfoBoxRow
 			title="Available Margin"
-			dataTestId=""
 			value={formatDollars(availableMargin, { currencyKey: undefined })}
 			valueNode={
 				<PreviewArrow showPreview={previewTradeData.showPreview && !potentialTrade?.showStatus}>
@@ -52,7 +51,6 @@ const BuyingPowerRow = memo(() => {
 					</PreviewArrow>
 				)
 			}
-			dataTestId=""
 			disabled={marketSuspended}
 		/>
 	);
@@ -73,7 +71,6 @@ const MarginUsageRow = memo(() => {
 					{formatPercent(previewTradeData?.marginUsage)}
 				</PreviewArrow>
 			}
-			dataTestId=""
 			disabled={marketSuspended}
 		/>
 	);

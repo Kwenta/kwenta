@@ -22,7 +22,7 @@ import {
 import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices } from 'state/prices/selectors';
 import { FetchStatus } from 'state/types';
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 import { getMarketName, getSynthDescription, isDecimalFour, MarketKeyByAsset } from 'utils/futures';
 
 import MarketsDropdownIndicator, { DropdownLoadingIndicator } from './MarketsDropdownIndicator';
@@ -144,8 +144,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 					key: MarketKeyByAsset[marketAsset],
 					description: getSynthDescription(marketAsset, synthsMap, t),
 					price: mobile
-						? formatCurrency('sUSD', selectedBasePriceRate, {
-								sign: '$',
+						? formatDollars(selectedBasePriceRate, {
 								minDecimals: getMinDecimals(marketAsset),
 								suggestDecimals: true,
 						  })

@@ -7,6 +7,7 @@ import EligibleIcon from 'assets/svg/app/eligible.svg';
 import LinkArrowIcon from 'assets/svg/app/link-arrow.svg';
 import NotEligibleIcon from 'assets/svg/app/not-eligible.svg';
 import HelpIcon from 'assets/svg/app/question-mark.svg';
+import Badge from 'components/Badge';
 import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox';
 import { Body } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
@@ -91,11 +92,8 @@ const FeeRow = memo(() => {
 	return (
 		<InfoBoxRow
 			title="Fee"
-			value={formatDollars(isolatedMarginFee, {
-				minDecimals: isolatedMarginFee.lt(0.01) ? 4 : 2,
-			})}
+			value={formatDollars(isolatedMarginFee, { suggestDecimals: true })}
 			keyNode={<MarketCostTooltip />}
-			dataTestId=""
 		/>
 	);
 });
@@ -106,11 +104,8 @@ const ProtocolFeeRow = memo(() => {
 	return (
 		<InfoBoxRow
 			title="Protocol Fee"
-			value={formatDollars(crossMarginFees.staticFee, {
-				minDecimals: crossMarginFees.staticFee.lt(0.01) ? 4 : 2,
-			})}
+			value={formatDollars(crossMarginFees.staticFee, { suggestDecimals: true })}
 			keyNode={<MarketCostTooltip />}
-			dataTestId=""
 		/>
 	);
 });
@@ -132,9 +127,7 @@ const LimitStopFeeRow = memo(() => {
 			title="Limit / Stop Fee"
 			{...(crossMarginFees.limitStopOrderFee.gt(0) && orderFeeRate
 				? {
-						value: formatDollars(crossMarginFees.limitStopOrderFee, {
-							minDecimals: crossMarginFees.limitStopOrderFee.lt(0.01) ? 4 : 2,
-						}),
+						value: formatDollars(crossMarginFees.limitStopOrderFee, { suggestDecimals: true }),
 						keyNode: formatPercent(orderFeeRate),
 				  }
 				: { value: '' })}
@@ -149,11 +142,8 @@ const CrossMarginFeeRow = memo(() => {
 	return (
 		<InfoBoxRow
 			title="Cross Margin Fee"
-			value={formatDollars(crossMarginFees.crossMarginFee, {
-				minDecimals: crossMarginFees.crossMarginFee.lt(0.01) ? 4 : 2,
-			})}
+			value={formatDollars(crossMarginFees.crossMarginFee, { suggestDecimals: true })}
 			keyNode={formatPercent(crossMarginTradeFeeRate)}
-			dataTestId=""
 		/>
 	);
 });
@@ -174,7 +164,6 @@ const TradingRewardRow = memo(() => {
 			title="Trading Reward"
 			compactBox
 			spaceBeneath
-			dataTestId=""
 			value=""
 			keyNode={
 				<CompactBox
@@ -185,15 +174,15 @@ const TradingRewardRow = memo(() => {
 						<div>{t('dashboard.stake.tabs.trading-rewards.trading-reward')}</div>
 						<div>
 							{isRewardEligible ? (
-								<div className="badge badge-yellow">
+								<Badge color="yellow">
 									{t('dashboard.stake.tabs.trading-rewards.eligible')}
 									<EligibleIcon style={{ paddingLeft: '2px' }} />
-								</div>
+								</Badge>
 							) : (
-								<div className="badge badge-red">
+								<Badge color="red">
 									{t('dashboard.stake.tabs.trading-rewards.not-eligible')}
 									<NotEligibleIcon />
-								</div>
+								</Badge>
 							)}
 						</div>
 					</div>
@@ -221,7 +210,6 @@ const TotalFeeRow = memo(() => {
 			value={formatDollars(crossMarginFees.total, {
 				minDecimals: crossMarginFees.total.lt(0.01) ? 4 : 2,
 			})}
-			dataTestId=""
 		/>
 	);
 });
@@ -238,7 +226,6 @@ const KeeperDepositRow = memo(() => {
 					? formatCurrency('ETH', crossMarginFees.keeperEthDeposit, { currencyKey: 'ETH' })
 					: NO_VALUE
 			}
-			dataTestId=""
 		/>
 	);
 });
@@ -259,7 +246,6 @@ const TotalFeesRow = memo(() => {
 			expandable
 			expanded={expanded}
 			onToggleExpand={toggleExpanded}
-			dataTestId=""
 		>
 			<ExecutionFeeRow />
 			<EstimatedTradeFeeRow />
@@ -275,7 +261,6 @@ const ExecutionFeeRow = memo(() => {
 			title="Execution Fee"
 			value={!!marketInfo?.keeperDeposit ? formatDollars(marketInfo.keeperDeposit) : NO_VALUE}
 			keyNode={<ExecutionFeeTooltip />}
-			dataTestId=""
 		/>
 	);
 });
@@ -288,13 +273,8 @@ const EstimatedTradeFeeRow = memo(() => {
 	return (
 		<InfoBoxRow
 			title={`Est. Trade Fee (${formatPercent(makerFee)} / ${formatPercent(takerFee)})`}
-			value={
-				!!commitDeposit
-					? formatDollars(commitDeposit, { minDecimals: commitDeposit.lt(0.01) ? 4 : 2 })
-					: NO_VALUE
-			}
+			value={!!commitDeposit ? formatDollars(commitDeposit, { suggestDecimals: true }) : NO_VALUE}
 			keyNode={<MarketCostTooltip />}
-			dataTestId=""
 		/>
 	);
 });
@@ -323,31 +303,8 @@ const CompactBox = styled.div<{ $isEligible: boolean }>`
 	cursor: pointer;
 	margin-top: 16px;
 
-	.badge {
-		font-family: ${(props) => props.theme.fonts.black};
-		padding: 0px 6px;
-		border-radius: 100px;
-		font-variant: all-small-caps;
-	}
-
-	.badge-red {
-		color: ${(props) => props.theme.colors.selectedTheme.badge.red.text};
-		background: ${(props) => props.theme.colors.selectedTheme.badge.red.background};
-		min-width: 100px;
-	}
-
-	.badge-yellow {
-		color: ${(props) => props.theme.colors.selectedTheme.badge.yellow.text};
-		background: ${(props) => props.theme.colors.selectedTheme.badge.yellow.background};
-		min-width: 70px;
-	}
-
 	${(props) =>
 		`border-left: 3px solid 
-				${
-					props.$isEligible
-						? props.theme.colors.selectedTheme.badge.yellow.background
-						: props.theme.colors.selectedTheme.badge.red.background
-				};
+				${props.theme.colors.selectedTheme.badge[props.$isEligible ? 'yellow' : 'red'].background};
 		`}
 `;

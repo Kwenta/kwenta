@@ -28,7 +28,6 @@ const PriceImpactRow = () => {
 		<InfoBoxRow
 			title={t('exchange.currency-card.price-impact')}
 			value={slippagePercent.lt(0) ? formatPercent(slippagePercent) : NO_VALUE}
-			dataTestId=""
 		/>
 	);
 };
@@ -40,12 +39,7 @@ const FeeCostRow = () => {
 	return (
 		<InfoBoxRow
 			title={t('common.summary.fee-cost')}
-			value={
-				feeCost != null
-					? formatDollars(feeCost, { minDecimals: feeCost.lt(0.01) ? 4 : 2 })
-					: NO_VALUE
-			}
-			dataTestId=""
+			value={!!feeCost ? formatDollars(feeCost, { suggestDecimals: true }) : NO_VALUE}
 		/>
 	);
 };
@@ -61,7 +55,6 @@ const FeeRow = () => {
 		<InfoBoxRow
 			title={t('exchange.summary-info.fee')}
 			value=""
-			dataTestId=""
 			valueNode={
 				<div style={{ display: 'flex' }}>
 					{formatPercent(baseFeeRate ?? zeroBN)}
@@ -130,7 +123,6 @@ const GasPriceRow = () => {
 					: t('common.summary.gas-prices.gas-price')
 			}
 			value={gasPrice != null ? gasPriceItem : NO_VALUE}
-			dataTestId=""
 		/>
 	);
 };
