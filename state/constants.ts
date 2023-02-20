@@ -5,11 +5,6 @@ export const ZERO_STATE_TRADE_INPUTS = {
 	susdSize: '',
 };
 
-export const ZERO_STATE_CM_TRADE_INPUTS = {
-	...ZERO_STATE_TRADE_INPUTS,
-	leverage: '1',
-};
-
 export const ZERO_CM_FEES = {
 	staticFee: '0',
 	crossMarginFee: '0',
@@ -18,7 +13,7 @@ export const ZERO_CM_FEES = {
 	total: '0',
 };
 
-export const ZERO_STATE_CM_ACCOUNT = {
+export const ZERO_STATE_ACCOUNT = {
 	position: undefined,
 	balanceInfo: {
 		freeMargin: '0',

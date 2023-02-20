@@ -38,7 +38,7 @@ import {
 	updateTransactionStatus,
 } from 'state/app/reducer';
 import { fetchBalances } from 'state/balances/actions';
-import { ZERO_CM_FEES, ZERO_STATE_CM_TRADE_INPUTS } from 'state/constants';
+import { ZERO_CM_FEES, ZERO_STATE_TRADE_INPUTS } from 'state/constants';
 import { serializeWeiObject } from 'state/helpers';
 import { selectLatestEthPrice } from 'state/prices/selectors';
 import { AppDispatch, AppThunk, RootState } from 'state/store';
@@ -537,7 +537,7 @@ export const editCrossMarginSize = (size: string, currencyType: 'usd' | 'native'
 	if (!size || Number(size) === 0 || assetRate.eq(0)) {
 		dispatch(
 			setCrossMarginTradeInputs({
-				...ZERO_STATE_CM_TRADE_INPUTS,
+				...ZERO_STATE_TRADE_INPUTS,
 			})
 		);
 		dispatch(setCrossMarginTradePreview(null));
@@ -601,7 +601,7 @@ export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'nati
 		!position?.remainingMargin ||
 		position?.remainingMargin.eq(0)
 	) {
-		dispatch(setIsolatedMarginTradeInputs(ZERO_STATE_CM_TRADE_INPUTS));
+		dispatch(setIsolatedMarginTradeInputs(ZERO_STATE_TRADE_INPUTS));
 		dispatch(setIsolatedTradePreview(null));
 		dispatch(setLeverageInput('0'));
 		return;

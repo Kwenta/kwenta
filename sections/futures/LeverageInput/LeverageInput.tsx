@@ -17,7 +17,7 @@ import {
 	selectMaxLeverage,
 	selectPosition,
 	selectFuturesType,
-	selectCrossMarginBalanceInfo,
+	selectCrossMarginMarginDelta,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { floorNumber, truncateNumbers, zeroBN } from 'utils/formatters/number';
@@ -34,11 +34,11 @@ const LeverageInput: FC = memo(() => {
 	const marketPrice = useAppSelector(selectMarketPrice);
 	const leverageInput = useAppSelector(selectLeverageInput);
 	const futuresType = useAppSelector(selectFuturesType);
-	const { freeMargin } = useAppSelector(selectCrossMarginBalanceInfo);
+	const crossMarginMarginDelta = useAppSelector(selectCrossMarginMarginDelta);
 
 	const availableMargin = useMemo(() => {
-		return futuresType === 'isolated_margin' ? position?.remainingMargin : freeMargin;
-	}, [position?.remainingMargin, freeMargin, futuresType]);
+		return futuresType === 'isolated_margin' ? position?.remainingMargin : crossMarginMarginDelta;
+	}, [position?.remainingMargin, crossMarginMarginDelta, futuresType]);
 
 	const onLeverageChange = useCallback(
 		(newLeverage: string) => {

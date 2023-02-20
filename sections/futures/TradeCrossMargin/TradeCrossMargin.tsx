@@ -7,7 +7,7 @@ import { CROSS_MARGIN_ORDER_TYPES } from 'constants/futures';
 import { FuturesOrderType } from 'sdk/types/futures';
 import { setOpenModal } from 'state/app/reducer';
 import { changeLeverageSide, editTradeOrderPrice } from 'state/futures/actions';
-import { setOrderType, setShowCrossMarginOnboard } from 'state/futures/reducer';
+import { setOrderType } from 'state/futures/reducer';
 import {
 	selectCMAccountQueryStatus,
 	selectCrossMarginAccount,
@@ -73,7 +73,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 				<CrossMarginUnsupported />
 			) : (walletAddress && !crossMarginAddress && queryStatus.status !== FetchStatus.Idle) ||
 			  showOnboard ? (
-				<CreateAccount onShowOnboard={() => dispatch(setShowCrossMarginOnboard(true))} />
+				<CreateAccount />
 			) : (
 				<>
 					<TradePanelHeader />

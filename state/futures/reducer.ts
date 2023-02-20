@@ -16,8 +16,7 @@ import {
 	LOADING_STATUS,
 	SUCCESS_STATUS,
 	ZERO_CM_FEES,
-	ZERO_STATE_CM_ACCOUNT,
-	ZERO_STATE_CM_TRADE_INPUTS,
+	ZERO_STATE_ACCOUNT,
 	ZERO_STATE_TRADE_INPUTS,
 } from 'state/constants';
 import { accountType } from 'state/helpers';
@@ -52,7 +51,6 @@ import {
 	FuturesState,
 	InputCurrencyDenomination,
 	IsolatedAccountData,
-	IsolatedMarginTradeInputs,
 	TradeSizeInputs,
 	TransactionEstimationPayload,
 	TransactionEstimations,
@@ -99,7 +97,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		leverageInput: '0',
 		selectedLeverageByAsset: {},
 		showCrossMarginOnboard: false,
-		tradeInputs: ZERO_STATE_CM_TRADE_INPUTS,
+		tradeInputs: ZERO_STATE_TRADE_INPUTS,
 		fees: ZERO_CM_FEES,
 		tradePreview: null,
 		marginDelta: '0',
@@ -138,13 +136,8 @@ const futuresSlice = createSlice({
 			state[accountType(state.selectedType)].selectedMarketAsset = action.payload;
 			state[accountType(state.selectedType)].selectedMarketKey =
 				MarketKeyByAsset[action.payload as FuturesMarketAsset];
-			if (state.selectedType === 'cross_margin') {
-				state.crossMargin.selectedMarketAsset = action.payload;
-				state.crossMargin.tradeInputs = ZERO_STATE_CM_TRADE_INPUTS;
-			} else {
-				state.isolatedMargin.selectedMarketAsset = action.payload;
-				state.isolatedMargin.tradeInputs = ZERO_STATE_TRADE_INPUTS;
-			}
+			state[accountType(state.selectedType)].tradeInputs = ZERO_STATE_TRADE_INPUTS;
+			state[accountType(state.selectedType)].selectedMarketAsset = action.payload;
 		},
 		setOrderType: (state, action) => {
 			state[accountType(state.selectedType)].orderType = action.payload;
@@ -182,10 +175,7 @@ const futuresSlice = createSlice({
 		) => {
 			state.crossMargin.orderPrice.invalidLabel = action.payload;
 		},
-		setIsolatedMarginTradeInputs: (
-			state,
-			action: PayloadAction<IsolatedMarginTradeInputs<string>>
-		) => {
+		setIsolatedMarginTradeInputs: (state, action: PayloadAction<TradeSizeInputs<string>>) => {
 			state.isolatedMargin.tradeInputs = action.payload;
 		},
 		setSelectedInputDenomination: (state, action: PayloadAction<InputCurrencyDenomination>) => {
@@ -236,7 +226,7 @@ const futuresSlice = createSlice({
 					...state.crossMargin.accounts[network],
 					[wallet]: {
 						account: account,
-						...ZERO_STATE_CM_ACCOUNT,
+						...ZERO_STATE_ACCOUNT,
 					},
 				};
 			}
@@ -512,7 +502,7 @@ const futuresSlice = createSlice({
 					...futuresState.crossMargin.accounts[network],
 					[wallet]: {
 						account: account,
-						...ZERO_STATE_CM_ACCOUNT,
+						...ZERO_STATE_ACCOUNT,
 					},
 				};
 			}
@@ -687,7 +677,7 @@ const getOrCreateAccount = (
 		} else {
 			const account = {
 				account: context.cmAccount,
-				...ZERO_STATE_CM_ACCOUNT,
+				...ZERO_STATE_ACCOUNT,
 			};
 			futuresState.crossMargin.accounts[context.network] = {
 				...futuresState.crossMargin.accounts[context.network],
@@ -701,7 +691,7 @@ const getOrCreateAccount = (
 		} else {
 			futuresState.isolatedMargin.accounts[context.network] = {
 				...futuresState.isolatedMargin.accounts[context.network],
-				[context.wallet]: { ...ZERO_STATE_CM_ACCOUNT },
+				[context.wallet]: { ...ZERO_STATE_ACCOUNT },
 			};
 			return futuresState.isolatedMargin.accounts[context.network][context.wallet];
 		}

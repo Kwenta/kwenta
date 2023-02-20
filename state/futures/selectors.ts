@@ -20,10 +20,9 @@ import {
 	unserializeCrossMarginSettings,
 	unserializeFuturesVolumes,
 	unserializeGasEstimate,
-	unserializeIsolatedMarginTradeInputs,
+	unserializeTradeInputs,
 	unserializeMarkets,
 	unserializeDelayedOrders,
-	unserializeCrossMarginTradeInputs,
 	updatePositionUpnl,
 	unserializePositionHistory,
 	unserializeTrades,
@@ -468,7 +467,7 @@ export const selectCrossMarginTradeInputs = createSelector(
 	selectLeverageSide,
 	(state: RootState) => state.futures.crossMargin.tradeInputs,
 	(side, tradeInputs) => {
-		const inputs = unserializeCrossMarginTradeInputs(tradeInputs);
+		const inputs = unserializeTradeInputs(tradeInputs);
 		const deltas = {
 			susdSizeDelta: side === PositionSide.LONG ? inputs.susdSize : inputs.susdSize.neg(),
 			nativeSizeDelta: side === PositionSide.LONG ? inputs.nativeSize : inputs.nativeSize.neg(),
@@ -484,9 +483,11 @@ export const selectCrossMarginTradeInputs = createSelector(
 
 export const selectIsolatedMarginTradeInputs = createSelector(
 	selectLeverageSide,
-	(state: RootState) => state.futures.isolatedMargin.tradeInputs,
+	(state: RootState) => {
+		return state.futures.isolatedMargin.tradeInputs;
+	},
 	(side, tradeInputs) => {
-		const inputs = unserializeIsolatedMarginTradeInputs(tradeInputs);
+		const inputs = unserializeTradeInputs(tradeInputs);
 		const deltas = {
 			susdSizeDelta: side === PositionSide.LONG ? inputs.susdSize : inputs.susdSize.neg(),
 			nativeSizeDelta: side === PositionSide.LONG ? inputs.nativeSize : inputs.nativeSize.neg(),
@@ -566,8 +567,8 @@ export const selectCrossMarginBalanceInfo = createSelector(
 
 export const selectNextPriceDisclaimer = createSelector(
 	selectMaxLeverage,
-	selectCrossMarginTradeInputs,
-	(maxLeverage, { leverage }) => {
+	selectLeverageInput,
+	(maxLeverage, leverage) => {
 		return wei(leverage || 0).gte(maxLeverage.sub(wei(1))) && wei(leverage || 0).lte(maxLeverage);
 	}
 );

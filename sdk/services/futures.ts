@@ -811,12 +811,10 @@ export default class FuturesService {
 		const commands = [];
 		const inputs = [];
 
-		commands.push(AccountExecuteFunctions.PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER);
+		// TODO: Change to delayed close when market contracts are upgraded
+		commands.push(AccountExecuteFunctions.PERPS_V2_CLOSE_POSITION);
 		inputs.push(
-			defaultAbiCoder.encode(
-				['address', 'int256', 'uint256'],
-				[marketAddress, position.size.toBN(), priceImpactDelta.toBN()]
-			)
+			defaultAbiCoder.encode(['address', 'uint256'], [marketAddress, priceImpactDelta.toBN()])
 		);
 
 		commands.push(AccountExecuteFunctions.PERPS_V2_WITHDRAW_ALL_MARGIN);

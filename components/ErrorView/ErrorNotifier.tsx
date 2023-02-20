@@ -48,6 +48,7 @@ export default function ErrorNotifier() {
 	);
 }
 
+// TODO: Format more errors, especially transaction failures
 const formatError = (message: string) => {
 	if (!message) return '';
 	if (message.includes('insufficient funds for intrinsic transaction cost'))

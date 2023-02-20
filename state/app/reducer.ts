@@ -44,7 +44,7 @@ const appSlice = createSlice({
 			if (isUserDeniedError(action.payload)) {
 				state.transaction = undefined;
 			} else {
-				notifyError(action.payload);
+				notifyError('Transaction failed', new Error(action.payload));
 				if (state.transaction) {
 					state.transaction.status = TransactionStatus.Failed;
 					state.transaction.error = action.payload;

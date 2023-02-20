@@ -4,6 +4,7 @@ import { DEFAULT_DELAYED_LEVERAGE_CAP, ISOLATED_MARGIN_ORDER_TYPES } from 'const
 import { changeLeverageSide } from 'state/futures/actions';
 import { setOrderType } from 'state/futures/reducer';
 import {
+	selectFuturesAccount,
 	selectFuturesType,
 	selectLeverageSide,
 	selectOrderType,
@@ -18,6 +19,7 @@ import MarginInput from '../MarginInput';
 import MarketInfoBox from '../MarketInfoBox';
 import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
+import CreateAccount from '../TradeCrossMargin/CreateAccount';
 import CrossMarginInfoBox from '../TradeCrossMargin/CrossMarginInfoBox';
 import ManagePosition from './ManagePosition';
 import TradePanelHeader from './TradePanelHeader';
@@ -34,6 +36,9 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 	const accountType = useAppSelector(selectFuturesType);
 	const orderType = useAppSelector(selectOrderType);
 	const pricesConnectionError = useAppSelector(selectPricesConnectionError);
+	const account = useAppSelector(selectFuturesAccount);
+
+	if (accountType === 'cross_margin' && !account) return <CreateAccount />;
 
 	return (
 		<div>

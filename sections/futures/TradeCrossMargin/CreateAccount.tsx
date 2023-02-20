@@ -4,21 +4,21 @@ import styled from 'styled-components';
 import CrossMarginIconDark from 'assets/svg/futures/cross-margin-icon-dark.svg';
 import CrossMarginIconLight from 'assets/svg/futures/cross-margin-icon-light.svg';
 import Button from 'components/Button';
-import { useAppSelector } from 'state/hooks';
+import { setShowCrossMarginOnboard } from 'state/futures/reducer';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { selectCurrentTheme } from 'state/preferences/selectors';
 import { BorderedPanel } from 'styles/common';
 
 import CrossMarginFAQ from '../CrossMarginOnboard/CrossMarginFAQ';
 
-type Props = {
-	onShowOnboard: () => void;
-};
-
-export default function CreateAccount({ onShowOnboard }: Props) {
+export default function CreateAccount() {
 	const { t } = useTranslation();
 	const currentTheme = useAppSelector(selectCurrentTheme);
+	const dispatch = useAppDispatch();
 
 	const Icon = currentTheme === 'dark' ? CrossMarginIconDark : CrossMarginIconLight;
+
+	const onShowOnboard = () => dispatch(setShowCrossMarginOnboard(true));
 
 	return (
 		<>

@@ -21,9 +21,8 @@ import {
 	CrossMarginBalanceInfo,
 	CrossMarginSettings,
 	CrossMarginTradeFees,
-	CrossMarginTradeInputs,
+	TradeSizeInputs,
 	DelayedOrderWithDetails,
-	IsolatedMarginTradeInputs,
 	TransactionEstimation,
 	futuresPositionKeys,
 	FundingRate,
@@ -432,29 +431,14 @@ export const unserializeFuturesVolumes = (volumes: FuturesVolumes<string>) => {
 	}, {});
 };
 
-export const serializeCrossMarginTradeInputs = (
-	tradeInputs: CrossMarginTradeInputs
-): CrossMarginTradeInputs<string> => {
+export const serializeTradeInputs = (tradeInputs: TradeSizeInputs): TradeSizeInputs<string> => {
 	return {
-		...tradeInputs,
 		nativeSize: tradeInputs.nativeSize.toString(),
 		susdSize: tradeInputs.susdSize.toString(),
 	};
 };
 
-export const unserializeCrossMarginTradeInputs = (
-	tradeInputs: CrossMarginTradeInputs<string>
-): CrossMarginTradeInputs => {
-	return {
-		...tradeInputs,
-		nativeSize: wei(tradeInputs.nativeSize || 0),
-		susdSize: wei(tradeInputs.susdSize || 0),
-	};
-};
-
-export const unserializeIsolatedMarginTradeInputs = (
-	tradeInputs: IsolatedMarginTradeInputs<string>
-): IsolatedMarginTradeInputs => {
+export const unserializeTradeInputs = (tradeInputs: TradeSizeInputs<string>): TradeSizeInputs => {
 	return {
 		nativeSize: wei(tradeInputs.nativeSize || 0),
 		susdSize: wei(tradeInputs.susdSize || 0),
