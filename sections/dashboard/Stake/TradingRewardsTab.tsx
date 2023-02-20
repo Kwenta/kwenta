@@ -23,7 +23,7 @@ import {
 } from 'queries/staking/utils';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { claimMultipleRewards, claimMultipleRewardsPerpsV2 } from 'state/staking/actions';
+import { claimMultipleRewards } from 'state/staking/actions';
 import { selectEpochPeriod, selectResetTime, selectTotalRewards } from 'state/staking/selectors';
 import media from 'styles/media';
 import { formatTruncatedDuration } from 'utils/formatters/date';
@@ -71,7 +71,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 		const claimDisabled = useMemo(() => totalRewards.lte(0), [totalRewards]);
 
 		const handleClaim = useCallback(() => {
-			dispatch(claimMultipleRewardsPerpsV2());
+			dispatch(claimMultipleRewards());
 		}, [dispatch]);
 
 		const ratio = useMemo(() => {

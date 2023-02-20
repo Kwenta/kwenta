@@ -379,10 +379,13 @@ export default class KwentaTokenService {
 	}
 
 	public async getClaimableRewards(epochPeriod: number) {
-		const { MultipleMerkleDistributor } = this.sdk.context.multicallContracts;
+		const {
+			MultipleMerkleDistributor,
+			MultipleMerkleDistributorPerpsV2,
+		} = this.sdk.context.multicallContracts;
 		const { walletAddress } = this.sdk.context;
 
-		if (!MultipleMerkleDistributor) {
+		if (!MultipleMerkleDistributor || MultipleMerkleDistributorPerpsV2) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
@@ -437,29 +440,20 @@ export default class KwentaTokenService {
 	}
 
 	public async claimMultipleRewards(claimableRewards: ClaimParams[]) {
-		const { MultipleMerkleDistributor } = this.sdk.context.contracts;
-
-		if (!MultipleMerkleDistributor) {
-			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
-		}
-
-		return this.sdk.transactions.createContractTxn(MultipleMerkleDistributor, 'claimMultiple', [
-			claimableRewards,
-		]);
-	}
-
-	public async claimMultipleRewardsPerpsV2(claimableRewards: ClaimParams[]) {
-		const { MultipleMerkleDistributorPerpsV2 } = this.sdk.context.contracts;
-
-		if (!MultipleMerkleDistributorPerpsV2) {
-			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
-		}
-
-		return this.sdk.transactions.createContractTxn(
+		const {
+			BatchClaimer,
+			MultipleMerkleDistributor,
 			MultipleMerkleDistributorPerpsV2,
-			'claimMultiple',
-			[claimableRewards]
-		);
+		} = this.sdk.context.contracts;
+
+		if (!BatchClaimer || !MultipleMerkleDistributor || MultipleMerkleDistributorPerpsV2) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
+		}
+
+		return this.sdk.transactions.createContractTxn(BatchClaimer, 'claimMultiple', [
+			[MultipleMerkleDistributorPerpsV2],
+			[claimableRewards],
+		]);
 	}
 
 	private performStakeAction(
