@@ -8,7 +8,6 @@ import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right-tg.svg';
 import CaretDownGrayIcon from 'assets/svg/app/caret-down-gray-slim.svg';
 import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg';
 import DiscordLogo from 'assets/svg/social/discord.svg';
-import MirrorLogo from 'assets/svg/social/mirror.svg';
 import Button from 'components/Button';
 import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import { GridDivCenteredCol } from 'components/layout/grid';
@@ -89,12 +88,6 @@ const Header = memo(() => {
 			onClick: () => window.open(EXTERNAL_LINKS.Social.Twitter, '_blank'),
 			icon: <TwitterLogo />,
 		},
-		{
-			id: 'mirror',
-			label: t('homepage.nav.socials.mirror'),
-			onClick: () => window.open(EXTERNAL_LINKS.Social.Mirror, '_blank'),
-			icon: <MirrorLogo />,
-		},
 	];
 
 	return (
@@ -161,9 +154,9 @@ const StyledMenu = styled.div`
 	border: 1px solid rgba(255, 255, 255, 0.1);
 	z-index: 10;
 	border-radius: 6px;
-	width: 120px;
+	max-width: 150px;
 	margin: auto;
-	padding: 10px 0px;
+	padding: 10px 15px;
 	margin-top: 35px;
 	display: flex;
 	flex-direction: column;
@@ -189,7 +182,7 @@ const StyledMenu = styled.div`
 const StyledMenuItem = styled.p`
 	font-family: ${(props) => props.theme.fonts.bold};
 	cursor: pointer;
-	width: 90px;
+	width: 100%;
 	font-size: 15px;
 	height: 30px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};

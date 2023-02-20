@@ -19,6 +19,7 @@ import {
 	FuturesPotentialTradeDetails,
 	FuturesTrade,
 	FuturesVolumes,
+	MarginTransfer,
 	OrderEnumByType,
 	PositionSide,
 	PotentialTradeStatus,
@@ -111,6 +112,7 @@ import {
 	selectCrossMarginBalanceInfo,
 } from './selectors';
 import {
+	AccountContext,
 	CancelDelayedOrderInputs,
 	CrossMarginBalanceInfo,
 	CrossMarginSettings,
@@ -313,6 +315,41 @@ export const fetchDailyVolumes = createAsyncThunk<FuturesVolumes<string>, void, 
 	}
 );
 
+export const fetchMarginTransfers = createAsyncThunk<
+	| {
+			marginTransfers: MarginTransfer[];
+			context: AccountContext;
+	  }
+	| undefined,
+	void,
+	ThunkConfig
+>('futures/fetchMarginTransfers', async (_, { getState, extra: { sdk } }) => {
+	const { wallet, futures } = getState();
+	const supportedNetwork = selectFuturesSupportedNetwork(getState());
+	const network = selectNetwork(getState());
+	const cmAccount = selectCrossMarginAccount(getState());
+	if (!wallet.walletAddress || !supportedNetwork) return;
+	try {
+		const transfers =
+			futures.selectedType === 'cross_margin'
+				? await sdk.futures.getCrossMarginTransfers()
+				: await sdk.futures.getIsolatedMarginTransfers();
+		return {
+			marginTransfers: transfers,
+			context: {
+				wallet: wallet.walletAddress,
+				network: network,
+				type: futures.selectedType,
+				cmAccount,
+			},
+		};
+	} catch (err) {
+		logError(err);
+		notifyError('Failed to fetch margin transfers', err);
+		throw err;
+	}
+});
+
 export const fetchDashboardFuturesData = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/fetchDashboardFuturesData',
 	async (_, { dispatch }) => {
@@ -470,6 +507,7 @@ export const fetchCrossMarginTradePreview = createAsyncThunk<
 			}
 			return serializePotentialTrade(preview);
 		} catch (err) {
+			notifyError('Failed to generate trade preview', err);
 			dispatch(handleCrossMarginPreviewError(err.message));
 			return null;
 		}
@@ -511,11 +549,11 @@ export const editCrossMarginSize = (size: string, currencyType: 'usd' | 'native'
 
 	dispatch(
 		setCrossMarginTradeInputs({
-			leverage: leverage.toString(),
 			susdSize: usdSize,
 			nativeSize: nativeSize,
 		})
 	);
+	dispatch(setLeverageInput(leverage.toString()));
 	dispatch(stageCrossMarginSizeChange());
 };
 
@@ -703,6 +741,7 @@ export const fetchTradesForSelectedMarket = createAsyncThunk<
 		const accountType = selectFuturesType(getState());
 		const account = selectFuturesAccount(getState());
 		const futuresSupported = selectFuturesSupportedNetwork(getState());
+
 		if (!futuresSupported || !wallet || !account) return;
 		const trades = await sdk.futures.getTradesForMarket(marketAsset, wallet, accountType);
 		return { trades: serializeTrades(trades), networkId, account, accountType, wallet };
@@ -916,6 +955,7 @@ export const depositIsolatedMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 			dispatch(setOpenModal(null));
 			dispatch(refetchPosition('isolated_margin'));
 			dispatch(fetchBalances());
+			dispatch(fetchMarginTransfers());
 		} catch (err) {
 			dispatch(handleTransactionError(err.message));
 			throw err;
@@ -941,6 +981,7 @@ export const withdrawIsolatedMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 			dispatch(refetchPosition('isolated_margin'));
 			dispatch(setOpenModal(null));
 			dispatch(fetchBalances());
+			dispatch(fetchMarginTransfers());
 		} catch (err) {
 			dispatch(handleTransactionError(err.message));
 			throw err;
@@ -988,29 +1029,6 @@ export const modifyIsolatedPosition = createAsyncThunk<
 			dispatch(handleTransactionError(err.message));
 			throw err;
 		}
-	}
-);
-
-export const modifyIsolatedPositionEstimateGas = createAsyncThunk<
-	void,
-	ModifyIsolatedPositionInputs,
-	ThunkConfig
->(
-	'futures/modifyIsolatedPositionEstimateGas',
-	async ({ sizeDelta, delayed, offchain }, { getState, dispatch, extra: { sdk } }) => {
-		const marketInfo = selectMarketInfo(getState());
-		const priceImpact = selectIsolatedPriceImpact(getState());
-		if (!marketInfo) throw new Error('Market info not found');
-		estimateGasInteralAction(
-			() =>
-				sdk.futures.modifyIsolatedMarginPosition(marketInfo.market, wei(sizeDelta), priceImpact, {
-					delayed,
-					offchain,
-					estimationOnly: true,
-				}),
-			'modify_isolated',
-			{ getState, dispatch }
-		);
 	}
 );
 
@@ -1142,13 +1160,15 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 export const closeCrossMarginPosition = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/closeCrossMarginPosition',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
-		const marketKey = selectMarketKey(getState());
+		const marketInfo = selectMarketInfo(getState());
 		const position = selectPosition(getState());
 		const crossMarginAccount = selectCrossMarginAccount(getState());
+		const priceImpact = selectIsolatedPriceImpact(getState());
 
 		try {
 			if (!position?.position) throw new Error('No position to close');
 			if (!crossMarginAccount) throw new Error('No cross margin account');
+			if (!marketInfo) throw new Error('Missing market info');
 
 			dispatch(
 				setTransaction({
@@ -1157,10 +1177,15 @@ export const closeCrossMarginPosition = createAsyncThunk<void, void, ThunkConfig
 					hash: null,
 				})
 			);
-			const tx = await sdk.futures.closeCrossMarginPosition(marketKey, crossMarginAccount, {
-				size: position.position.size,
-				side: position.position?.side,
-			});
+			const tx = await sdk.futures.closeCrossMarginPosition(
+				marketInfo.market,
+				crossMarginAccount,
+				{
+					size: position.position.size,
+					side: position.position?.side,
+				},
+				priceImpact
+			);
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(setOpenModal(null));
 			dispatch(refetchPosition('cross_margin'));
@@ -1228,7 +1253,7 @@ export const withdrawAccountKeeperBalance = createAsyncThunk<void, Wei, ThunkCon
 	}
 );
 
-const estimateGasInteralAction = async (
+export const estimateGasInteralAction = async (
 	gasLimitEstimate: () => Promise<BigNumber>,
 	type: FuturesTransactionType,
 	config: {
@@ -1300,6 +1325,7 @@ const submitCMTransferTransaction = async (
 		dispatch(setOpenModal(null));
 		dispatch(refetchPosition('cross_margin'));
 		dispatch(fetchBalances());
+		dispatch(fetchMarginTransfers());
 		return tx;
 	} catch (err) {
 		logError(err);

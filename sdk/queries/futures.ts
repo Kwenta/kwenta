@@ -7,7 +7,9 @@ import {
 	getFuturesPositions,
 	getFuturesTrades,
 } from 'queries/futures/subgraph';
+import { CROSS_MARGIN_FRAGMENT, ISOLATED_MARGIN_FRAGMENT } from 'sdk/constants/futures';
 import { ZERO_ADDRESS } from 'sdk/constants/global';
+import { mapCrossMarginTransfers, mapMarginTransfers } from 'sdk/utils/futures';
 
 export const queryAccountsFromSubgraph = async (
 	sdk: KwentaSDK,
@@ -129,4 +131,18 @@ export const queryPositionHistory = (sdk: KwentaSDK, account: string) => {
 			exitPrice: true,
 		}
 	);
+};
+
+export const queryIsolatedMarginTransfers = async (sdk: KwentaSDK, account: string) => {
+	const response = await request(sdk.futures.futuresGqlEndpoint, ISOLATED_MARGIN_FRAGMENT, {
+		walletAddress: account,
+	});
+	return response ? mapMarginTransfers(response.futuresMarginTransfers) : [];
+};
+
+export const queryCrossMarginTransfers = async (sdk: KwentaSDK, account: string) => {
+	const response = await request(sdk.futures.futuresGqlEndpoint, CROSS_MARGIN_FRAGMENT, {
+		walletAddress: account,
+	});
+	return response ? mapCrossMarginTransfers(response.crossMarginAccountTransfers) : [];
 };

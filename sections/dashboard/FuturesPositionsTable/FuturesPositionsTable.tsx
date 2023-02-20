@@ -7,12 +7,11 @@ import styled, { useTheme } from 'styled-components';
 
 import LinkArrow from 'assets/svg/app/link-arrow.svg';
 import MarketBadge from 'components/Badge/MarketBadge';
+import Button from 'components/Button';
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
-import { Body } from 'components/Text';
-import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
@@ -29,6 +28,7 @@ import {
 	selectPositionHistory,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
+import media from 'styles/media';
 import { formatNumber } from 'utils/formatters/number';
 import { getSynthDescription } from 'utils/futures';
 
@@ -39,12 +39,31 @@ type FuturesPositionTableProps = {
 	showCurrentMarket?: boolean;
 };
 
+const LegacyLink = () => {
+	const { t } = useTranslation();
+	const theme = useTheme();
+	return (
+		<ButtonContainer>
+			<Button
+				fullWidth
+				variant="flat"
+				size="sm"
+				noOutline={true}
+				textTransform="none"
+				onClick={() => window.open(EXTERNAL_LINKS.Trade.V1, '_blank', 'noopener noreferrer')}
+			>
+				{t('dashboard.overview.futures-positions-table.legacy-link')}
+				<StyledArrow fill={theme.colors.selectedTheme.text.value} />
+			</Button>
+		</ButtonContainer>
+	);
+};
+
 const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	accountType,
 	showCurrentMarket = true,
 }) => {
 	const { t } = useTranslation();
-	const theme = useTheme();
 	const { synthsMap } = Connector.useContainer();
 	const router = useRouter();
 	const { switchToL2 } = useNetworkSwitcher();
@@ -71,7 +90,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					market,
 					position: position.position,
 					description,
-					avgEntryPrice: thisPositionHistory?.entryPrice,
+					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
 				};
 			})
 			.filter(
@@ -96,6 +115,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 		<>
 			<DesktopOnlyView>
 				<div>
+					<LegacyLink />
 					<Table
 						data={data}
 						showPagination
@@ -230,8 +250,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								accessor: 'avgEntryPrice',
 								Cell: (cellProps: CellProps<any>) => {
 									const formatOptions = {
-										minDecimals: DEFAULT_CRYPTO_DECIMALS,
-										isAssetPrice: true,
+										suggestDecimals: true,
 									};
 									return cellProps.row.original.avgEntryPrice === undefined ? (
 										<DefaultCell>{NO_VALUE}</DefaultCell>
@@ -256,8 +275,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								accessor: 'liquidationPrice',
 								Cell: (cellProps: CellProps<any>) => {
 									const formatOptions = {
-										minDecimals: DEFAULT_CRYPTO_DECIMALS,
-										isAssetPrice: true,
+										suggestDecimals: true,
 									};
 									return (
 										<Currency.Price
@@ -273,15 +291,10 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 							},
 						]}
 					/>
-					<StyledBody>
-						<a target="_blank" rel="noopener noreferrer" href={EXTERNAL_LINKS.Trade.V1}>
-							{t('dashboard.overview.futures-positions-table.legacy-link')}{' '}
-							<StyledArrow fill={theme.colors.selectedTheme.text.value} />
-						</a>
-					</StyledBody>
 				</div>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
+				<LegacyLink />
 				<OpenPositionsHeader>
 					<div>{t('dashboard.overview.futures-positions-table.mobile.market')}</div>
 					<OpenPositionsRightHeader>
@@ -308,28 +321,23 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						))
 					)}
 				</div>
-				<StyledBody>
-					<a target="_blank" rel="noopener noreferrer" href={EXTERNAL_LINKS.Trade.V1}>
-						{t('dashboard.overview.futures-positions-table.legacy-link')}{' '}
-						<StyledArrow fill={theme.colors.selectedTheme.text.value} />
-					</a>
-				</StyledBody>
 			</MobileOrTabletView>
 		</>
 	);
 };
 
-const StyledBody = styled(Body)`
-	margin-top: 8px;
-	text-align: center;
-	text-decoration: underline;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+const ButtonContainer = styled.div`
+	margin: 8px 0px 16px;
+
+	${media.lessThan('md')`
+		margin: 8px 15px 16px;
+	`};
 `;
 
 const StyledArrow = styled(LinkArrow)`
 	margin-left: 2px;
+	width: 9px;
+	height: 9px;
 `;
 
 const PnlContainer = styled.div`

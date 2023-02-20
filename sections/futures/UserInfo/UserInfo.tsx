@@ -11,7 +11,6 @@ import UploadIcon from 'assets/svg/futures/upload-icon.svg';
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
 import ROUTES from 'constants/routes';
-import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
 import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
 import { fetchTradesForSelectedMarket } from 'state/futures/actions';
 import {
@@ -52,8 +51,7 @@ const UserInfo: React.FC = () => {
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const position = useAppSelector(selectPosition);
 	const walletAddress = useAppSelector(selectWallet);
-	const statues = useAppSelector(selectQueryStatuses);
-	const tradesQuery = statues.trades;
+	const { trades: tradesQuery } = useAppSelector(selectQueryStatuses);
 
 	const openOrders = useAppSelector(selectOpenDelayedOrders);
 	const advancedOrders = useAppSelector(selectOpenAdvancedOrders);
@@ -61,19 +59,13 @@ const UserInfo: React.FC = () => {
 	const trades = useAppSelector(selectUsersTradesForMarket);
 
 	useFetchAction(fetchTradesForSelectedMarket, {
-		dependencies: [walletAddress, accountType, position?.position?.size.toString()],
+		dependencies: [walletAddress, accountType, marketAsset, position?.position?.size.toString()],
 		disabled: !walletAddress,
 	});
 
 	const [showShareModal, setShowShareModal] = useState(false);
 	const [hasOpenPosition, setHasOpenPosition] = useState(false);
 	const [openProfitCalcModal, setOpenProfitCalcModal] = useState(false);
-
-	// TODO: Move to sdk / redux
-	const marginTransfersQuery = useGetFuturesMarginTransfers();
-	const marginTransfers = useMemo(() => marginTransfersQuery?.data ?? [], [
-		marginTransfersQuery.data,
-	]);
 
 	const tabQuery = useMemo(() => {
 		if (router.query.tab) {
@@ -97,8 +89,7 @@ const UserInfo: React.FC = () => {
 
 	const refetchTrades = useCallback(() => {
 		dispatch(fetchTradesForSelectedMarket);
-		marginTransfersQuery.refetch();
-	}, [dispatch, marginTransfersQuery]);
+	}, [dispatch]);
 
 	useEffect(() => {
 		refetchTrades();
@@ -209,11 +200,7 @@ const UserInfo: React.FC = () => {
 				/>
 			</TabPanel>
 			<TabPanel name={FuturesTab.TRANSFERS} activeTab={activeTab}>
-				<Transfers
-					marginTransfers={marginTransfers}
-					isLoading={marginTransfersQuery.isLoading}
-					isLoaded={marginTransfersQuery.isFetched}
-				/>
+				<Transfers />
 			</TabPanel>
 
 			{openProfitCalcModal && (

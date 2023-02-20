@@ -12,7 +12,6 @@ import {
 	selectCrossMarginBalanceInfo,
 	selectCrossMarginMarginDelta,
 	selectCrossMarginOrderPrice,
-	selectCrossMarginSelectedLeverage,
 	selectCrossMarginTradeFees,
 	selectMarketInfo,
 	selectOrderType,
@@ -24,13 +23,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { PillButtonSpan } from 'styles/common';
-import {
-	formatCurrency,
-	formatDollars,
-	formatNumber,
-	formatPercent,
-	zeroBN,
-} from 'utils/formatters/number';
+import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 import EditLeverageModal from './EditCrossMarginLeverageModal';
 import ManageKeeperBalanceModal from './ManageKeeperBalanceModal';
@@ -54,7 +47,6 @@ function MarginInfoBox({ editingLeverage }: Props) {
 	const orderType = useAppSelector(selectOrderType);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
 	const openModal = useAppSelector(selectOpenModal);
-	const selectedLeverage = useAppSelector(selectCrossMarginSelectedLeverage);
 
 	const { crossMarginFee } = useAppSelector(selectCrossMarginTradeFees);
 
@@ -194,33 +186,6 @@ function MarginInfoBox({ editingLeverage }: Props) {
 								),
 						  }
 						: null,
-					Leverage: {
-						value: (
-							<>
-								{formatNumber(
-									editingLeverage
-										? position?.position?.leverage ?? selectedLeverage
-										: selectedLeverage,
-									{
-										maxDecimals: 2,
-									}
-								)}
-								x
-								{!editingLeverage && (
-									<PillButtonSpan
-										onClick={() => dispatch(setOpenModal('futures_edit_input_leverage'))}
-									>
-										Edit
-									</PillButtonSpan>
-								)}
-							</>
-						),
-						valueNode: (
-							<PreviewArrow showPreview={showPreview && !!editingLeverage} loading={isLoading}>
-								{formatNumber(previewTradeData.leverage || 0) + 'x'}
-							</PreviewArrow>
-						),
-					},
 				}}
 				disabled={marketInfo?.isSuspended}
 			/>

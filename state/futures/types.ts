@@ -1,3 +1,4 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
 
 import { FuturesAccountType } from 'queries/futures/types';
@@ -16,6 +17,7 @@ import {
 	FuturesOrder as CrossMarginOrder,
 	FuturesMarketKey,
 	FuturesMarketAsset,
+	MarginTransfer,
 } from 'sdk/types/futures';
 import { QueryStatus } from 'state/types';
 
@@ -24,11 +26,7 @@ export type TradeSizeInputs<T = Wei> = {
 	susdSize: T;
 };
 
-export type CrossMarginTradeInputs<T = Wei> = TradeSizeInputs<T> & {
-	leverage: string;
-};
-
-export type CrossMarginTradeInputsWithDelta<T = Wei> = CrossMarginTradeInputs<T> & {
+export type CrossMarginTradeInputsWithDelta<T = Wei> = TradeSizeInputs<T> & {
 	nativeSizeDelta: T;
 	susdSizeDelta: T;
 };
@@ -59,6 +57,7 @@ export type FuturesQueryStatuses = {
 	positionHistory: QueryStatus;
 	trades: QueryStatus;
 	selectedTraderPositionHistory: QueryStatus;
+	marginTransfers: QueryStatus;
 };
 
 export type FuturesTransactionType =
@@ -128,11 +127,19 @@ type FuturesNetwork = number;
 
 export type InputCurrencyDenomination = 'usd' | 'native';
 
+export type AccountContext = {
+	type: FuturesAccountType;
+	network: NetworkId;
+	wallet: string;
+	cmAccount?: string;
+};
+
 export type FuturesAccountData = {
 	position?: FuturesPosition<string>;
 	positions?: FuturesPosition<string>[];
 	positionHistory?: FuturesPositionHistory<string>[];
 	trades?: FuturesTrade<string>[];
+	marginTransfers?: MarginTransfer[];
 };
 
 export type IsolatedAccountData = FuturesAccountData & {

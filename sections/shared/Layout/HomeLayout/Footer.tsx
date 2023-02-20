@@ -49,24 +49,24 @@ const Footer = memo(() => {
 			title: t('homepage.footer.use-kwenta.title'),
 			links: [
 				{
-					key: 'how-to',
-					title: t('homepage.footer.use-kwenta.how-to'),
-					link: EXTERNAL_LINKS.Docs.DocsRoot,
-				},
-				{
-					key: 'preps',
+					key: 'perps',
 					title: t('homepage.footer.use-kwenta.perps'),
-					link: EXTERNAL_LINKS.Docs.Perpetuals,
+					link: EXTERNAL_LINKS.Trade.PerpsV2,
 				},
 				{
 					key: 'spot',
 					title: t('homepage.footer.use-kwenta.spot'),
-					link: EXTERNAL_LINKS.Docs.Spot,
+					link: EXTERNAL_LINKS.Trade.Spot,
 				},
 				{
 					key: 'legacy',
 					title: t('homepage.footer.use-kwenta.legacy'),
 					link: EXTERNAL_LINKS.Trading.Legacy,
+				},
+				{
+					key: 'perps-v1',
+					title: t('homepage.footer.use-kwenta.perps-v1'),
+					link: EXTERNAL_LINKS.Trading.PerpsV1,
 				},
 			],
 		},

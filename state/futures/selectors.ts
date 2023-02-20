@@ -621,6 +621,22 @@ export const selectFuturesPortfolio = createSelector(
 	}
 );
 
+export const selectMarginTransfers = createSelector(
+	selectWallet,
+	selectNetwork,
+	selectFuturesType,
+	selectMarketAsset,
+	(state: RootState) => state.futures,
+	(wallet, network, type, asset, futures) => {
+		if (!wallet) return [];
+		const account = futures[accountType(type)].accounts[network][wallet];
+		const marginTransfers = account?.marginTransfers ?? [];
+		return marginTransfers.filter(
+			(o) => accountType(type) === 'isolatedMargin' && o.asset === asset
+		);
+	}
+);
+
 export const selectCrossMarginOpenOrders = createSelector(
 	selectMarketAsset,
 	selectCrossMarginAccountData,
@@ -830,13 +846,11 @@ export const selectHasRemainingMargin = createSelector(
 export const selectMaxUsdInputAmount = createSelector(
 	selectFuturesType,
 	selectPosition,
-	selectCrossMarginBalanceInfo,
 	selectMaxLeverage,
-	(futuresType, position, balance, maxLeverage) => {
+	selectMarginDeltaInputValue,
+	(futuresType, position, maxLeverage, marginDelta) => {
 		const margin =
-			futuresType === 'cross_margin'
-				? balance.freeMargin.add(position?.remainingMargin ?? '0')
-				: position?.remainingMargin ?? wei(0);
+			futuresType === 'cross_margin' ? wei(marginDelta || 0) : position?.remainingMargin ?? wei(0);
 
 		return maxLeverage.mul(margin);
 	}

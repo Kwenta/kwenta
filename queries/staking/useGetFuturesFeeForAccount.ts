@@ -24,7 +24,7 @@ const useGetFuturesFeeForAccount = (
 						account: account,
 						timestamp_gt: start,
 						timestamp_lt: end,
-						accountType: 'cross_margin',
+						accountType: 'isolated_margin',
 					},
 					orderDirection: 'desc',
 					orderBy: 'timestamp',

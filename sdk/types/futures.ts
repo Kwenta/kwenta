@@ -367,3 +367,12 @@ export enum AccountExecuteFunctions {
 	PERPS_V2_CANCEL_OFFCHAIN_DELAYED_ORDER = 6,
 	PERPS_V2_CLOSE_POSITION = 7,
 }
+export type MarginTransfer = {
+	timestamp: number;
+	account: string;
+	size: number;
+	txHash: string;
+	action: string;
+	market?: string;
+	asset?: FuturesMarketAsset;
+};

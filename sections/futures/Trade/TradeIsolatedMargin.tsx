@@ -18,6 +18,7 @@ import MarginInput from '../MarginInput';
 import MarketInfoBox from '../MarketInfoBox';
 import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
+import CrossMarginInfoBox from '../TradeCrossMargin/CrossMarginInfoBox';
 import ManagePosition from './ManagePosition';
 import TradePanelHeader from './TradePanelHeader';
 
@@ -38,10 +39,11 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 		<div>
 			<TradePanelHeader />
 			{pricesConnectionError && (
-				<Error message="Failed to connect to price feed. Please try disabling any add blockers and refresh." />
+				<Error message="Failed to connect to price feed. Please try disabling any ad blockers and refresh." />
 			)}
 
-			{!isMobile && <MarketInfoBox />}
+			{!isMobile &&
+				(accountType === 'isolated_margin' ? <MarketInfoBox /> : <CrossMarginInfoBox />)}
 
 			{position?.position && position.position.leverage.gte(DEFAULT_DELAYED_LEVERAGE_CAP) && (
 				<SegmentedControl

@@ -42,14 +42,18 @@ import {
 	fetchTradesForSelectedMarket,
 	fetchAllTradesForAccount,
 	fetchIsolatedOpenOrders,
+	fetchMarginTransfers,
 } from './actions';
 import {
+	AccountContext,
+	CrossMarginAccountData,
 	CrossMarginState,
 	CrossMarginTradeFees,
-	CrossMarginTradeInputs,
 	FuturesState,
 	InputCurrencyDenomination,
+	IsolatedAccountData,
 	IsolatedMarginTradeInputs,
+	TradeSizeInputs,
 	TransactionEstimationPayload,
 	TransactionEstimations,
 } from './types';
@@ -82,6 +86,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		positionHistory: DEFAULT_QUERY_STATUS,
 		selectedTraderPositionHistory: DEFAULT_QUERY_STATUS,
 		trades: DEFAULT_QUERY_STATUS,
+		marginTransfers: DEFAULT_QUERY_STATUS,
 	},
 	transactionEstimations: {} as TransactionEstimations,
 	crossMargin: {
@@ -165,7 +170,7 @@ const futuresSlice = createSlice({
 		setFuturesMarkets: (state, action: PayloadAction<FuturesMarket<string>[]>) => {
 			state.markets = action.payload;
 		},
-		setCrossMarginTradeInputs: (state, action: PayloadAction<CrossMarginTradeInputs<string>>) => {
+		setCrossMarginTradeInputs: (state, action: PayloadAction<TradeSizeInputs<string>>) => {
 			state.crossMargin.tradeInputs = action.payload;
 		},
 		setCrossMarginOrderPrice: (state, action: PayloadAction<string>) => {
@@ -314,6 +319,25 @@ const futuresSlice = createSlice({
 			futuresState.queryStatuses.dailyVolumes = {
 				status: FetchStatus.Error,
 				error: 'Failed to fetch volume data',
+			};
+		});
+
+		// margin transfers
+		builder.addCase(fetchMarginTransfers.pending, (futuresState) => {
+			futuresState.queryStatuses.marginTransfers = LOADING_STATUS;
+		});
+		builder.addCase(fetchMarginTransfers.fulfilled, (futuresState, { payload }) => {
+			futuresState.queryStatuses.marginTransfers = SUCCESS_STATUS;
+			if (payload) {
+				const { context, marginTransfers } = payload;
+				const account = getOrCreateAccount(futuresState, context);
+				account.marginTransfers = marginTransfers;
+			}
+		});
+		builder.addCase(fetchMarginTransfers.rejected, (futuresState) => {
+			futuresState.queryStatuses.marginTransfers = {
+				status: FetchStatus.Error,
+				error: 'Failed to fetch margin transfers',
 			};
 		});
 
@@ -650,4 +674,36 @@ const findWalletForAccount = (
 		return value.account === account;
 	});
 	return entry ? entry[0] : undefined;
+};
+
+// TODO: Use this pattern throughout
+const getOrCreateAccount = (
+	futuresState: FuturesState,
+	context: AccountContext
+): IsolatedAccountData | CrossMarginAccountData => {
+	if (context.cmAccount && context.type === 'cross_margin') {
+		if (futuresState.crossMargin.accounts[context.network]?.[context.wallet]) {
+			return futuresState.crossMargin.accounts[context.network][context.wallet];
+		} else {
+			const account = {
+				account: context.cmAccount,
+				...ZERO_STATE_CM_ACCOUNT,
+			};
+			futuresState.crossMargin.accounts[context.network] = {
+				...futuresState.crossMargin.accounts[context.network],
+				[context.wallet]: account,
+			};
+			return futuresState.crossMargin.accounts[context.network][context.wallet];
+		}
+	} else {
+		if (futuresState.isolatedMargin.accounts[context.network]?.[context.wallet]) {
+			return futuresState.isolatedMargin.accounts[context.network][context.wallet];
+		} else {
+			futuresState.isolatedMargin.accounts[context.network] = {
+				...futuresState.isolatedMargin.accounts[context.network],
+				[context.wallet]: { ...ZERO_STATE_CM_ACCOUNT },
+			};
+			return futuresState.isolatedMargin.accounts[context.network][context.wallet];
+		}
+	}
 };
