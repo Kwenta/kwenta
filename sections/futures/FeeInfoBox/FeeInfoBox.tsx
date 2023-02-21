@@ -167,13 +167,13 @@ const FeeInfoBox: React.FC = () => {
 				'Trading Reward': {
 					value: '',
 					compactBox: true,
-					spaceBeneath: true,
+					spaceBeneath: false,
 					keyNode: (
 						<CompactBox
 							$isEligible={isRewardEligible}
 							onClick={() => router.push(ROUTES.Dashboard.Stake)}
 						>
-							<FlexDivRow style={{ marginBottom: '8px' }}>
+							<FlexDivRow style={{ marginBottom: '5px' }}>
 								<div>{t('dashboard.stake.tabs.trading-rewards.trading-reward')}</div>
 								{isRewardEligible ? (
 									<div className="badge badge-yellow">
@@ -255,13 +255,13 @@ const RewardCopy = styled(Body)`
 const CompactBox = styled.div<{ $isEligible: boolean }>`
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
 	font-size: 13px;
-	padding-left: 8px;
+	padding-left: 10px;
 	cursor: pointer;
-	margin-top: 16px;
+	margin-top: 10px;
 
 	.badge {
 		font-family: ${(props) => props.theme.fonts.black};
-		padding: 0px 6px;
+		padding: 0px 5px;
 		border-radius: 100px;
 		font-variant: all-small-caps;
 	}
@@ -279,7 +279,7 @@ const CompactBox = styled.div<{ $isEligible: boolean }>`
 	}
 
 	${(props) =>
-		`border-left: 3px solid 
+		`border-left: 2px solid 
 				${
 					props.$isEligible
 						? props.theme.colors.selectedTheme.badge.yellow.background
