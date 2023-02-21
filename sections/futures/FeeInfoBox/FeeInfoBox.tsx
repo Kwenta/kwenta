@@ -264,6 +264,7 @@ const CompactBox = styled.div<{ $isEligible: boolean }>`
 		padding: 0px 5px;
 		border-radius: 100px;
 		font-variant: all-small-caps;
+		display: table-cell;
 	}
 
 	.badge-red {
