@@ -261,10 +261,9 @@ const CompactBox = styled.div<{ $isEligible: boolean }>`
 
 	.badge {
 		font-family: ${(props) => props.theme.fonts.black};
-		padding: 0px 5px;
+		padding: 1px 5px;
 		border-radius: 100px;
 		font-variant: all-small-caps;
-		display: table-cell;
 	}
 
 	.badge-red {
