@@ -173,7 +173,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 								window.open(EXTERNAL_LINKS.Docs.TradingRewardsV2, '_blank', 'noopener noreferrer')
 							}
 						>
-							Learn More
+							{t('dashboard.stake.tabs.trading-rewards.learn-more')}
 						</Button>
 					</CardGridContainer>
 				</MobileHiddenView>
@@ -181,9 +181,9 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 					<CardGridContainer>
 						<CardGrid>
 							<CustomStyledTooltip
-								preset="bottom"
 								width="260px"
 								height="auto"
+								left="15px !important"
 								content={t('dashboard.stake.tabs.trading-rewards.trading-rewards-tooltip')}
 							>
 								<WithCursor cursor="help">
@@ -200,10 +200,19 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 							</div>
 							{showEstimatedValue ? (
 								<>
-									<div>
-										<Title>{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}</Title>
-										<LogoText yellow>{truncateNumbers(wei(estimatedReward), 4)}</LogoText>
-									</div>
+									<CustomStyledTooltip
+										width="260px"
+										height="auto"
+										right="0px !important"
+										content={t('dashboard.stake.tabs.trading-rewards.estimated-info')}
+									>
+										<WithCursor cursor="help">
+											<Title>{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}</Title>
+											<LogoText yellow isToolTip={true}>
+												{truncateNumbers(wei(estimatedReward), 4)}
+											</LogoText>
+										</WithCursor>
+									</CustomStyledTooltip>
 									<div>
 										<Title>
 											{t('dashboard.stake.tabs.trading-rewards.estimated-reward-share-mobile', {
@@ -215,13 +224,16 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 								</>
 							) : null}
 						</CardGrid>
-						{showEstimatedValue ? (
-							<FlexDivRow>
-								<PeriodLabel>
-									{t('dashboard.stake.tabs.trading-rewards.estimated-info')}
-								</PeriodLabel>
-							</FlexDivRow>
-						) : null}
+						<Button
+							fullWidth
+							variant="flat"
+							size="sm"
+							onClick={() =>
+								window.open(EXTERNAL_LINKS.Docs.TradingRewardsV2, '_blank', 'noopener noreferrer')
+							}
+						>
+							{t('dashboard.stake.tabs.trading-rewards.learn-more')}
+						</Button>
 					</CardGridContainer>
 				</MobileOnlyView>
 			</SplitContainer>
@@ -229,20 +241,10 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 	}
 );
 
-const PeriodLabel = styled.div`
-	font-size: 13px;
-	line-height: 20px;
-	display: flex;
-	align-items: center;
-	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
-
 const CustomStyledTooltip = styled(Tooltip)`
 	padding: 10px;
 	${media.lessThan('md')`
 		width: 310px;
-		left: -5px;
 	`}
 `;
 
