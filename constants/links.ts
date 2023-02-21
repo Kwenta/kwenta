@@ -46,6 +46,7 @@ export const EXTERNAL_LINKS = {
 		Faq: 'https://docs.kwenta.io/resources/faq',
 		CrossMarginFaq: 'https://docs.kwenta.io/products/futures/cross-margin-accounts',
 		Staking: 'https://docs.kwenta.io/using-kwenta/staking-kwenta',
+		TradingRewardsV2: 'https://mirror.xyz/kwenta.eth/7k-5UYXXcCNJ_DRRWvYBsK5zDm5UA945My4QrInhxoI',
 	},
 	Optimism: {
 		Home: 'https://optimism.io/',

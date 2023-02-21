@@ -28,6 +28,7 @@ import { selectEpochPeriod, selectResetTime, selectTotalRewards } from 'state/st
 import media from 'styles/media';
 import { formatTruncatedDuration } from 'utils/formatters/date';
 import { formatDollars, formatPercent, truncateNumbers, zeroBN } from 'utils/formatters/number';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 const TradingRewardsTab: FC<TradingRewardProps> = memo(
 	({ period = 0, start = 0, end = Math.floor(Date.now() / 1000) }) => {
@@ -153,13 +154,16 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 								</>
 							) : null}
 						</CardGrid>
-						{showEstimatedValue ? (
-							<FlexDivRow>
-								<PeriodLabel>
-									{t('dashboard.stake.tabs.trading-rewards.estimated-info')}
-								</PeriodLabel>
-							</FlexDivRow>
-						) : null}
+						<Button
+							fullWidth
+							variant="flat"
+							size="sm"
+							onClick={() =>
+								window.open(EXTERNAL_LINKS.Docs.TradingRewardsV2, '_blank', 'noopener noreferrer')
+							}
+						>
+							Learn More
+						</Button>
 					</CardGridContainer>
 				</MobileHiddenView>
 				<MobileOnlyView>
