@@ -31,7 +31,7 @@ type Cell = {
 };
 
 const conditionalRender = <T,>(prop: T, children: ReactElement) =>
-	!prop ? <DefaultCell>{NO_VALUE}</DefaultCell> : children;
+	!prop ? <Body>{NO_VALUE}</Body> : children;
 
 type SynthBalancesTableProps = {
 	exchangeTokens: {
@@ -326,10 +326,6 @@ const StyledValue = styled.div`
 	font-size: 12px;
 	grid-column: 2;
 	grid-row: 2;
-`;
-
-const DefaultCell = styled(Body)`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const StyledText = styled.div`

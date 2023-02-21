@@ -213,9 +213,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								accessor: 'leverage',
 								Cell: (cellProps: CellProps<any>) => {
 									return (
-										<DefaultCell>
-											{formatNumber(cellProps.row.original.position.leverage ?? 0)}x
-										</DefaultCell>
+										<Body>{formatNumber(cellProps.row.original.position.leverage ?? 0)}x</Body>
 									);
 								},
 								width: 90,
@@ -254,7 +252,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 										suggestDecimals: true,
 									};
 									return cellProps.row.original.avgEntryPrice === undefined ? (
-										<DefaultCell>{NO_VALUE}</DefaultCell>
+										<Body>{NO_VALUE}</Body>
 									) : (
 										<Currency.Price
 											currencyKey="sUSD"
@@ -363,10 +361,6 @@ const StyledValue = styled.div`
 	font-size: 12px;
 	grid-column: 2;
 	grid-row: 2;
-`;
-
-const DefaultCell = styled(Body)`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
 const TableHeader = styled.div`

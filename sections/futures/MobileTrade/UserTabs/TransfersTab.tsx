@@ -36,7 +36,7 @@ const TransfersTab: React.FC = () => {
 					{
 						Header: <TableHeader>{t('futures.market.user.transfers.table.action')}</TableHeader>,
 						accessor: 'action',
-						Cell: (cellProps: any) => <StyledActionCell>{cellProps.value}</StyledActionCell>,
+						Cell: (cellProps: any) => <ActionCell>{cellProps.value}</ActionCell>,
 						width: 50,
 					},
 					{
@@ -66,9 +66,7 @@ const TransfersTab: React.FC = () => {
 					{
 						Header: <TableHeader>{t('futures.market.user.transfers.table.date')}</TableHeader>,
 						accessor: 'timestamp',
-						Cell: (cellProps: any) => (
-							<DefaultCell>{timePresentation(cellProps.value, t)}</DefaultCell>
-						),
+						Cell: (cellProps: any) => <Body>{timePresentation(cellProps.value, t)}</Body>,
 						width: 50,
 					},
 				]}
@@ -78,7 +76,7 @@ const TransfersTab: React.FC = () => {
 				noResultsMessage={
 					marginTransfers?.length === 0 ? (
 						<TableNoResults>
-							<StyledTitle>{t('futures.market.user.transfers.table.no-results')}</StyledTitle>
+							<Body size="large">{t('futures.market.user.transfers.table.no-results')}</Body>
 						</TableNoResults>
 					) : undefined
 				}
@@ -89,17 +87,8 @@ const TransfersTab: React.FC = () => {
 	);
 };
 
-const DefaultCell = styled(Body)`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-`;
-
-const StyledActionCell = styled(DefaultCell)`
+const ActionCell = styled(Body)`
 	text-transform: capitalize;
-`;
-
-const StyledTitle = styled(Body)`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	font-size: 16px;
 `;
 
 export default TransfersTab;

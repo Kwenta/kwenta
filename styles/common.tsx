@@ -266,9 +266,4 @@ export const YellowIconButton = styled.div`
 	transition: all 0.1s ease-in-out;
 	cursor: pointer;
 	color: ${(props) => props.theme.colors.selectedTheme.yellow};
-	/* svg {
-		path {
-			fill: ${(props) => props.theme.colors.selectedTheme.yellow};
-		}
-	} */
 `;

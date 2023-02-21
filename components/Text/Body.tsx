@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components';
 export type BodyProps = React.HTMLAttributes<HTMLParagraphElement> & {
 	size?: 'xsmall' | 'small' | 'medium' | 'large';
 	weight?: 'regular' | 'bold' | 'black';
+	color?: 'primary' | 'secondary' | 'tertiary';
 	className?: string;
 	fontSize?: number;
 	mono?: boolean;
@@ -12,31 +13,39 @@ export type BodyProps = React.HTMLAttributes<HTMLParagraphElement> & {
 };
 
 const Body: React.FC<BodyProps> = memo(
-	({ size = 'medium', weight = 'regular', fontSize, mono, capitalized, inline, ...props }) => {
-		return (
-			<StyledBody
-				$size={size}
-				$weight={weight}
-				$fontSize={fontSize}
-				$mono={mono}
-				$capitalized={capitalized}
-				$inline={inline}
-				{...props}
-			/>
-		);
-	}
+	({
+		size = 'medium',
+		weight = 'regular',
+		color = 'primary',
+		fontSize,
+		mono,
+		capitalized,
+		inline,
+		...props
+	}) => (
+		<StyledBody
+			$size={size}
+			$weight={weight}
+			$fontSize={fontSize}
+			$mono={mono}
+			$capitalized={capitalized}
+			$inline={inline}
+			$color={color}
+			{...props}
+		/>
+	)
 );
 
-const sizeMap = {
-	xsmall: 10,
-	small: 12,
-	medium: 13,
-	large: 15,
-} as const;
+const sizeMap = { xsmall: 10, small: 12, medium: 13, large: 15 } as const;
+
+const getFontFamily = (weight: NonNullable<BodyProps['weight']>, mono?: boolean) => {
+	return mono ? (weight !== 'regular' ? 'monoBold' : 'mono') : weight;
+};
 
 const StyledBody = styled.p<{
 	$size: NonNullable<BodyProps['size']>;
 	$weight: NonNullable<BodyProps['weight']>;
+	$color: NonNullable<BodyProps['color']>;
 	$fontSize?: number;
 	$mono?: boolean;
 	$capitalized?: boolean;
@@ -44,37 +53,19 @@ const StyledBody = styled.p<{
 }>`
 	line-height: 1.2;
 	margin: 0;
-	color: ${(props) => props.theme.colors.selectedTheme.text.value};
 
 	${(props) => css`
+		color: ${props.theme.colors.selectedTheme.newTheme.text[props.$color]};
 		font-size: ${props.$fontSize ?? sizeMap[props.$size]}px;
-		${
-			props.$weight === 'bold' &&
-			css`
-				font-family: ${props.theme.fonts.bold};
-			`
-		}
-
-		${
-			props.$mono &&
-			css`
-				font-family: ${props.$weight !== 'regular'
-					? props.theme.fonts.monoBold
-					: props.theme.fonts.mono};
-			`
-		}
-		${
-			props.$capitalized &&
-			css`
-				font-variant: all-small-caps;
-			`
-		}
-		${
-			props.$inline &&
-			css`
-				display: inline;
-			`
-		}
+		font-family: ${getFontFamily(props.$weight, props.$mono)};
+		${props.$capitalized &&
+		css`
+			font-variant: all-small-caps;
+		`}
+		${props.$inline &&
+		css`
+			display: inline;
+		`}
 	`}
 `;
 
