@@ -131,7 +131,7 @@ const CustomStyledTooltip = styled(Tooltip)`
 	`}
 `;
 
-const WithCursor = styled.div<{ cursor: 'help' }>`
+const WithCursor = styled.div<{ cursor: 'help' | 'pointer' }>`
 	cursor: ${(props) => props.cursor};
 `;
 
