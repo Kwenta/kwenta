@@ -12,6 +12,7 @@ import { SplitContainer } from 'components/layout/grid';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import { Body, LogoText } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
+import { EXTERNAL_LINKS } from 'constants/links';
 import Connector from 'containers/Connector';
 import useGetFile from 'queries/files/useGetFile';
 import useGetFuturesFee from 'queries/staking/useGetFuturesFee';
@@ -28,7 +29,6 @@ import { selectEpochPeriod, selectResetTime, selectTotalRewards } from 'state/st
 import media from 'styles/media';
 import { formatTruncatedDuration } from 'utils/formatters/date';
 import { formatDollars, formatPercent, truncateNumbers, zeroBN } from 'utils/formatters/number';
-import { EXTERNAL_LINKS } from 'constants/links';
 
 const TradingRewardsTab: FC<TradingRewardProps> = memo(
 	({ period = 0, start = 0, end = Math.floor(Date.now() / 1000) }) => {
@@ -139,10 +139,21 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 							</div>
 							{showEstimatedValue ? (
 								<>
-									<div>
-										<Title>{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}</Title>
-										<LogoText yellow>{truncateNumbers(wei(estimatedReward), 4)}</LogoText>
-									</div>
+									<CustomStyledTooltip
+										preset="bottom"
+										width="260px"
+										height="auto"
+										content={t('dashboard.stake.tabs.trading-rewards.estimated-info')}
+									>
+										<WithCursor cursor="help">
+											<Title>{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}</Title>
+											<Value inline={true}>
+												<LogoText yellow isToolTip={true}>
+													{truncateNumbers(wei(estimatedReward), 4)}
+												</LogoText>
+											</Value>
+										</WithCursor>
+									</CustomStyledTooltip>
 									<div>
 										<Title>
 											{t('dashboard.stake.tabs.trading-rewards.estimated-reward-share', {
