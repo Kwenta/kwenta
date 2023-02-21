@@ -43,7 +43,7 @@ const BuyingPowerRow = memo(() => {
 	return (
 		<InfoBoxRow
 			title="Buying Power"
-			value={formatDollars(buyingPower, { currencyKey: undefined })}
+			value={formatDollars(buyingPower)}
 			valueNode={
 				previewTradeData?.buyingPower && (
 					<PreviewArrow showPreview={previewTradeData.showPreview && !potentialTrade?.showStatus}>

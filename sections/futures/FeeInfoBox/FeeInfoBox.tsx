@@ -1,5 +1,5 @@
 import router from 'next/router';
-import React, { memo, useMemo, useReducer } from 'react';
+import React, { memo, useCallback, useMemo, useReducer } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -159,6 +159,10 @@ const TradingRewardRow = memo(() => {
 		[walletAddress, stakedKwentaBalance, stakedEscrowedKwentaBalance]
 	);
 
+	const goToStaking = useCallback(() => {
+		router.push(ROUTES.Dashboard.Stake);
+	}, []);
+
 	return (
 		<InfoBoxRow
 			title="Trading Reward"
@@ -166,34 +170,30 @@ const TradingRewardRow = memo(() => {
 			spaceBeneath
 			value=""
 			keyNode={
-				<CompactBox
-					$isEligible={isRewardEligible}
-					onClick={() => router.push(ROUTES.Dashboard.Stake)}
-				>
+				<CompactBox $isEligible={isRewardEligible} onClick={goToStaking}>
 					<div>
 						<div>{t('dashboard.stake.tabs.trading-rewards.trading-reward')}</div>
 						<div>
-							{isRewardEligible ? (
-								<Badge color="yellow">
-									{t('dashboard.stake.tabs.trading-rewards.eligible')}
+							<Badge color={isRewardEligible ? 'yellow' : 'red'}>
+								{t(
+									`dashboard.stake.tabs.trading-rewards.${isRewardEligible ? '' : 'not-'}eligible`
+								)}
+								{isRewardEligible ? (
 									<EligibleIcon style={{ paddingLeft: '2px' }} />
-								</Badge>
-							) : (
-								<Badge color="red">
-									{t('dashboard.stake.tabs.trading-rewards.not-eligible')}
+								) : (
 									<NotEligibleIcon />
-								</Badge>
-							)}
+								)}
+							</Badge>
 						</div>
 					</div>
 					<div>
-						<RewardCopy>
+						<Body weight="bold" color="secondary" inline>
 							{t(
 								`dashboard.stake.tabs.trading-rewards.stake-to-${
 									isRewardEligible ? 'earn' : 'start'
 								}`
 							)}
-						</RewardCopy>
+						</Body>
 						<StyledLinkArrowIcon />
 					</div>
 				</CompactBox>
@@ -261,6 +261,7 @@ const ExecutionFeeRow = memo(() => {
 			title="Execution Fee"
 			value={!!marketInfo?.keeperDeposit ? formatDollars(marketInfo.keeperDeposit) : NO_VALUE}
 			keyNode={<ExecutionFeeTooltip />}
+			isSubItem
 		/>
 	);
 });
@@ -275,6 +276,7 @@ const EstimatedTradeFeeRow = memo(() => {
 			title={`Est. Trade Fee (${formatPercent(makerFee)} / ${formatPercent(takerFee)})`}
 			value={!!commitDeposit ? formatDollars(commitDeposit, { suggestDecimals: true }) : NO_VALUE}
 			keyNode={<MarketCostTooltip />}
+			isSubItem
 		/>
 	);
 });
@@ -292,19 +294,15 @@ const StyledLinkArrowIcon = styled(LinkArrowIcon)`
 	fill: ${(props) => props.theme.colors.selectedTheme.text.label};
 `;
 
-const RewardCopy = styled(Body).attrs({ weight: 'bold', inline: true })`
-	color: ${(props) => props.theme.colors.selectedTheme.text.label};
-`;
-
 const CompactBox = styled.div<{ $isEligible: boolean }>`
-	color: ${(props) => props.theme.colors.selectedTheme.text.value};
 	font-size: 13px;
 	padding-left: 8px;
 	cursor: pointer;
 	margin-top: 16px;
 
-	${(props) =>
-		`border-left: 3px solid 
-				${props.theme.colors.selectedTheme.badge[props.$isEligible ? 'yellow' : 'red'].background};
+	${(props) => `
+		color: ${props.theme.colors.selectedTheme.text.value};
+		border-left: 3px solid 
+			${props.theme.colors.selectedTheme.badge[props.$isEligible ? 'yellow' : 'red'].background};
 		`}
 `;
