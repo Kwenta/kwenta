@@ -403,7 +403,6 @@ export default class KwentaTokenService {
 		const responses: EpochData[] = await Promise.all(
 			fileNames.map(async (fileName, index) => {
 				const response = await client.get(fileName);
-
 				const period = isOldDistributor
 					? index >= 5
 						? index >= 10
@@ -411,7 +410,6 @@ export default class KwentaTokenService {
 							: index + 1
 						: index
 					: index + TRADING_REWARDS_CUTOFF_EPOCH;
-
 				return { ...response.data, period };
 			})
 		);

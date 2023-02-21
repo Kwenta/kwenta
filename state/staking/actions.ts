@@ -170,12 +170,8 @@ export const fetchClaimableRewards = createAsyncThunk<
 		totalRewards: totalRewardsV2,
 	} = await sdk.kwentaToken.getClaimableRewards(epochPeriod, false);
 
-	const claimableRewards = [];
-	claimableRewards.push(claimableRewardsV1);
-	claimableRewards.push(claimableRewardsV2);
-
 	return {
-		claimableRewards,
+		claimableRewards: [claimableRewardsV1, claimableRewardsV2],
 		totalRewards: totalRewardsV1.add(totalRewardsV2).toString(),
 	};
 });
