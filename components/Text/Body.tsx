@@ -57,7 +57,7 @@ const StyledBody = styled.p<{
 	${(props) => css`
 		color: ${props.theme.colors.selectedTheme.newTheme.text[props.$color]};
 		font-size: ${props.$fontSize ?? sizeMap[props.$size]}px;
-		font-family: ${getFontFamily(props.$weight, props.$mono)};
+		font-family: ${props.theme.fonts[getFontFamily(props.$weight, props.$mono)]};
 		${props.$capitalized &&
 		css`
 			font-variant: all-small-caps;
