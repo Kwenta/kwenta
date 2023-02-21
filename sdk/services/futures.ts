@@ -180,7 +180,7 @@ export default class FuturesService {
 				asset: parseBytes32String(asset) as FuturesMarketAsset,
 				assetHex: asset,
 				currentFundingRate: wei(currentFundingRate).div(24),
-				currentFundingVelocity: wei(currentFundingVelocity).div(24),
+				currentFundingVelocity: wei(currentFundingVelocity).div(24 * 24),
 				currentRoundId: wei(currentRoundIds[i], 0),
 				feeRates: {
 					makerFee: wei(feeRates.makerFee),
