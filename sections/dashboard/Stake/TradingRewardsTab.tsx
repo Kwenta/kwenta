@@ -256,6 +256,7 @@ const CardGridContainer = styled(StakingCard)`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
+	height: 240px;
 `;
 
 const Value = styled(Body).attrs({ variant: 'bold', mono: true })`
