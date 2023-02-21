@@ -4,7 +4,9 @@ import { FC, FunctionComponent, memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import KwentaYellowIcon from 'assets/svg/brand/logo-yellow.svg';
 import Badge from 'components/Badge';
+import { FlexDivRow } from 'components/layout/flex';
 import LabelContainer from 'components/Nav/DropDownLabel';
 import Select from 'components/Select';
 import { DropdownIndicator, IndicatorSeparator } from 'components/Select/Select';
@@ -42,7 +44,7 @@ const Nav: FC = memo(() => {
 		link,
 		isActive,
 	}: ReactSelectOptionProps) => {
-		if (i18nLabel === 'header.nav.markets' || i18nLabel === 'header.nav.leaderboard') {
+		if (i18nLabel === 'header.nav.leaderboard') {
 			return (
 				<MenuInside isDropDown isActive={isActive}>
 					{t(i18nLabel)}
@@ -77,7 +79,14 @@ const Nav: FC = memo(() => {
 					if (!links) {
 						return (
 							<Link key={url} href={url}>
-								<MenuInside isActive={isActive}>{t(i18nLabel)}</MenuInside>
+								<MenuInside isActive={isActive}>
+									<FlexDivRow>
+										{t(i18nLabel)}
+										{i18nLabel === 'header.nav.markets' ? (
+											<KwentaYellowIcon height={20} width={20} style={{ paddingLeft: 5 }} />
+										) : null}
+									</FlexDivRow>
+								</MenuInside>
 							</Link>
 						);
 					}
