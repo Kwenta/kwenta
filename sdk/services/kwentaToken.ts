@@ -8,7 +8,7 @@ import KwentaSDK from 'sdk';
 import { ETH_COINGECKO_ADDRESS, KWENTA_ADDRESS } from 'constants/currency';
 import { DEFAULT_NUMBER_OF_FUTURES_FEE } from 'constants/defaults';
 import { FLEEK_BASE_URL, FLEEK_STORAGE_BUCKET } from 'queries/files/constants';
-import { EPOCH_START, WEEK } from 'queries/staking/utils';
+import { EPOCH_START, TRADING_REWARDS_CUTOFF_EPOCH, WEEK } from 'queries/staking/utils';
 import { ContractName } from 'sdk/contracts';
 import { formatTruncatedDuration } from 'utils/formatters/date';
 import { zeroBN } from 'utils/formatters/number';
@@ -388,8 +388,10 @@ export default class KwentaTokenService {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
-		const periods = Array.from(new Array(Number(epochPeriod) + 1), (_, i) => i);
-		const adjustedPeriods = isOldDistributor ? periods.slice(0, -1) : periods.slice(-1);
+		const periods = Array.from(new Array(Number(epochPeriod)), (_, i) => i);
+		const adjustedPeriods = isOldDistributor
+			? periods.slice(0, TRADING_REWARDS_CUTOFF_EPOCH)
+			: periods.slice(TRADING_REWARDS_CUTOFF_EPOCH);
 
 		const fileNames = adjustedPeriods.map(
 			(i) =>
@@ -401,13 +403,15 @@ export default class KwentaTokenService {
 		const responses: EpochData[] = await Promise.all(
 			fileNames.map(async (fileName, index) => {
 				const response = await client.get(fileName);
+
 				const period = isOldDistributor
 					? index >= 5
 						? index >= 10
 							? index + 2
 							: index + 1
 						: index
-					: index;
+					: index + TRADING_REWARDS_CUTOFF_EPOCH;
+
 				return { ...response.data, period };
 			})
 		);
@@ -447,10 +451,7 @@ export default class KwentaTokenService {
 		return { claimableRewards, totalRewards };
 	}
 
-	public async claimMultipleRewards(
-		claimableRewardsV1: ClaimParams[],
-		claimableRewardsV2: ClaimParams[]
-	) {
+	public async claimMultipleRewards(claimableRewards: ClaimParams[][]) {
 		const {
 			BatchClaimer,
 			MultipleMerkleDistributor,
@@ -463,7 +464,7 @@ export default class KwentaTokenService {
 
 		return this.sdk.transactions.createContractTxn(BatchClaimer, 'claimMultiple', [
 			[MultipleMerkleDistributor.address, MultipleMerkleDistributorPerpsV2.address],
-			[claimableRewardsV1, claimableRewardsV2],
+			claimableRewards,
 		]);
 	}
 
