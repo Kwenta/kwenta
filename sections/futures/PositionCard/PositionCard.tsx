@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components';
 import ColoredPrice from 'components/ColoredPrice';
 import { FlexDivCentered, FlexDivCol } from 'components/layout/flex';
 import PreviewArrow from 'components/PreviewArrow';
-import { Body } from 'components/Text';
+import { Body, NumericValue } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
@@ -180,9 +180,7 @@ const NetFundingRow = memo(() => {
 				<SubtitleWithCursor>{t('futures.market.position-card.net-funding')}</SubtitleWithCursor>
 			</PositionCardTooltip>
 			{positionDetails ? (
-				<StyledValue className={netFunding.gt(0) ? 'green' : netFunding.lt(0) ? 'red' : ''}>
-					{netFundingText}
-				</StyledValue>
+				<NumericValue value={netFunding}>{netFundingText}</NumericValue>
 			) : (
 				<StyledValue>{NO_VALUE}</StyledValue>
 			)}
@@ -210,9 +208,7 @@ const UnrealizedPNLRow = memo(() => {
 				<SubtitleWithCursor>{t('futures.market.position-card.u-pnl')}</SubtitleWithCursor>
 			</PositionCardTooltip>
 			{positionDetails ? (
-				<StyledValue className={pnl.gt(0) ? 'green' : pnl.lt(0) ? 'red' : ''}>
-					{pnlText}
-				</StyledValue>
+				<NumericValue value={pnl}>{pnlText}</NumericValue>
 			) : (
 				<StyledValue>{NO_VALUE}</StyledValue>
 			)}

@@ -10,22 +10,24 @@ type NumericValueProps = BodyProps & {
 	colored?: boolean;
 };
 
-const NumericValue: FC<NumericValueProps> = memo(({ value, preview, ...props }) => {
+const NumericValue: FC<NumericValueProps> = memo(({ value, preview, colored, ...props }) => {
 	const color = useMemo(() => {
 		if (preview) {
 			return 'preview';
-		} else if (wei(value).gt(0)) {
-			return 'positive';
-		} else if (wei(value).lt(0)) {
-			return 'negative';
+		} else if (colored) {
+			if (wei(value).gt(0)) {
+				return 'positive';
+			} else if (wei(value).lt(0)) {
+				return 'negative';
+			}
 		} else {
 			return 'neutral';
 		}
-	}, [value, preview]);
+	}, [preview, colored, value]);
 
 	return (
 		<NumberBody mono $color={color} {...props}>
-			{value.toString()}
+			{props.children ?? value.toString()}
 		</NumberBody>
 	);
 });
