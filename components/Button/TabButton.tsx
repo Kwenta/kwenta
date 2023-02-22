@@ -27,7 +27,9 @@ const TabButton: React.FC<TabButtonProps> = React.memo(
 			<div>
 				<div className="title-container">
 					{titleIcon}
-					<Body className="title">{title}</Body>
+					<Body className="title" weight="bold">
+						{title}
+					</Body>
 					{!!badge && <div className="badge">{badge}</div>}
 				</div>
 

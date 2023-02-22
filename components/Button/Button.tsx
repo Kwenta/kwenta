@@ -85,9 +85,7 @@ const BaseButton = styled.button<BaseButtonProps>`
 	text-transform: ${(props) => props.textTransform ?? 'capitalize'};
 	outline: none;
 	white-space: nowrap;
-	color: ${(props) =>
-		(props.textColor && props.theme.colors.selectedTheme.button.text[props.textColor]) ||
-		props.theme.colors.selectedTheme.button.text.primary};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text[props.textColor ?? 'primary']};
 	transition: all 0.1s ease-in-out;
 	${border}
 	&:hover {
@@ -134,7 +132,7 @@ const BaseButton = styled.button<BaseButtonProps>`
 			}
 		`}
 
-	font-family: ${(props) => (props.$mono ? props.theme.fonts.mono : props.theme.fonts.bold)};
+	font-family: ${(props) => props.theme.fonts[props.$mono ? 'mono' : 'bold']};
 
 	${(props) =>
 		props.$variant === 'secondary' &&
