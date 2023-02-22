@@ -180,7 +180,9 @@ const NetFundingRow = memo(() => {
 				<SubtitleWithCursor>{t('futures.market.position-card.net-funding')}</SubtitleWithCursor>
 			</PositionCardTooltip>
 			{positionDetails ? (
-				<NumericValue value={netFunding}>{netFundingText}</NumericValue>
+				<NumericValue colored value={netFunding}>
+					{netFundingText}
+				</NumericValue>
 			) : (
 				<StyledValue>{NO_VALUE}</StyledValue>
 			)}
@@ -208,7 +210,9 @@ const UnrealizedPNLRow = memo(() => {
 				<SubtitleWithCursor>{t('futures.market.position-card.u-pnl')}</SubtitleWithCursor>
 			</PositionCardTooltip>
 			{positionDetails ? (
-				<NumericValue value={pnl}>{pnlText}</NumericValue>
+				<NumericValue colored value={pnl}>
+					{pnlText}
+				</NumericValue>
 			) : (
 				<StyledValue>{NO_VALUE}</StyledValue>
 			)}
@@ -239,9 +243,9 @@ const RealizedPNLRow = memo(() => {
 				<SubtitleWithCursor>{t('futures.market.position-card.r-pnl')}</SubtitleWithCursor>
 			</PositionCardTooltip>
 			{positionDetails ? (
-				<StyledValue className={realizedPnl.gt(0) ? 'green' : realizedPnl < zeroBN ? 'red' : ''}>
+				<NumericValue colored value={realizedPnl}>
 					{realizedPnlText}
-				</StyledValue>
+				</NumericValue>
 			) : (
 				<StyledValue>{NO_VALUE}</StyledValue>
 			)}

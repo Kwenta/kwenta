@@ -66,5 +66,5 @@ export const Body = () => {
 };
 
 export const NumericValue = () => {
-	return <Text.NumericValue value={wei(10)} />;
+	return <Text.NumericValue colored value={wei(10)} />;
 };
