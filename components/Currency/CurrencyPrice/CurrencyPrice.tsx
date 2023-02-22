@@ -28,6 +28,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
 		conversionRate,
 		showCurrencyKey,
 		formatOptions,
+		side,
 		truncate = false,
 		...rest
 	}) => {
@@ -39,7 +40,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
 		}
 
 		return (
-			<Container {...rest}>
+			<Container $side={side} {...rest}>
 				<span className="price">
 					{formatCurrency(
 						currencyKey,

@@ -49,16 +49,10 @@ const StyledButton = styled(Button).attrs({ size: 'small' })<{
 }>`
 	height: initial;
 	display: flex;
-	flex-direction: ${(props) => (props.$vertical ? 'column' : 'row')};
 	align-items: center;
-	border-radius: ${(props) => (props.isRounded ? '100px' : '8px')};
 	padding-top: 10px;
 	padding-bottom: 10px;
 	justify-content: center;
-	background-color: ${(props) =>
-		props.active
-			? props.theme.colors.selectedTheme.tab.background.active
-			: props.theme.colors.selectedTheme.tab.background.inactive};
 
 	p {
 		text-align: left;
@@ -70,60 +64,64 @@ const StyledButton = styled(Button).attrs({ size: 'small' })<{
 		align-items: center;
 	}
 
-	.title {
-		text-align: center;
-		color: ${(props) =>
-			props.active
+	${(props) => css`
+		flex-direction: ${props.$vertical ? 'column' : 'row'};
+		border-radius: ${props.isRounded ? '100px' : '8px'};
+		background-color: ${props.theme.colors.selectedTheme.tab.background[
+			props.active ? 'active' : 'inactive'
+		]};
+
+		.title {
+			text-align: center;
+			color: ${props.active
 				? props.theme.colors.selectedTheme.button.text.primary
 				: props.theme.colors.selectedTheme.gray};
-	}
-
-	.detail {
-		color: ${(props) => props.theme.colors.selectedTheme[props.active ? 'gold' : 'gray']};
-		margin-top: 4px;
-		font-size: 18px;
-	}
-
-	.badge {
-		height: 16px;
-		width: fit-content;
-		min-width: 16px;
-		padding-left: 4px;
-		padding-right: 4px;
-		margin-left: 7px;
-		font-size: 13px;
-		color: ${(props) => props.theme.colors.selectedTheme.black};
-		background-color: ${(props) => props.theme.colors.selectedTheme.button.tab.badge.background};
-		border-radius: 4px;
-	}
-
-	svg {
-		margin-right: ${(props) => (props.$vertical ? '0' : '7px')};
-		path {
-			${(props) =>
-				css`
-					${props.$nofill ? 'stroke' : 'fill'}: ${props.active
-						? props.theme.colors.selectedTheme.button.text.primary
-						: props.theme.colors.selectedTheme.gray};
-				`}
 		}
-	}
 
-	&:disabled {
-		background-color: transparent;
-		p {
-			color: ${(props) => props.theme.colors.selectedTheme.button.tab.disabled.text};
-		}
-		svg {
-			path {
-				fill: ${(props) => props.theme.colors.selectedTheme.button.tab.disabled.text};
-			}
+		.detail {
+			color: ${props.theme.colors.selectedTheme[props.active ? 'gold' : 'gray']};
+			margin-top: 4px;
+			font-size: 18px;
 		}
 
 		.badge {
-			display: none;
+			height: 16px;
+			width: fit-content;
+			min-width: 16px;
+			padding-left: 4px;
+			padding-right: 4px;
+			margin-left: 7px;
+			font-size: 13px;
+			color: ${props.theme.colors.selectedTheme.black};
+			background-color: ${props.theme.colors.selectedTheme.button.tab.badge.background};
+			border-radius: 4px;
 		}
-	}
+
+		svg {
+			margin-right: ${props.$vertical ? '0' : '7px'};
+			path {
+				${props.$nofill ? 'stroke' : 'fill'}: ${props.active
+					? props.theme.colors.selectedTheme.button.text.primary
+					: props.theme.colors.selectedTheme.gray};
+			}
+		}
+
+		&:disabled {
+			background-color: transparent;
+			p {
+				color: ${props.theme.colors.selectedTheme.button.tab.disabled.text};
+			}
+			svg {
+				path {
+					fill: ${props.theme.colors.selectedTheme.button.tab.disabled.text};
+				}
+			}
+
+			.badge {
+				display: none;
+			}
+		}
+	`}
 `;
 
 export default TabButton;
