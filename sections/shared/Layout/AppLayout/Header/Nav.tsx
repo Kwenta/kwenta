@@ -126,6 +126,7 @@ const Nav: FC = memo(() => {
 const CustomStyledTooltip = styled(Tooltip)`
 	padding: 10px;
 	text-align: left;
+	text-transform: none;
 	${media.lessThan('md')`
 		width: 310px;
 	`}
