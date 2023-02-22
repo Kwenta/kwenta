@@ -150,7 +150,7 @@ export const fetchClaimableRewards = createAsyncThunk<
 	{
 		claimableRewards: Awaited<
 			ReturnType<KwentaSDK['kwentaToken']['getClaimableRewards']>
-		>['claimableRewards'];
+		>['claimableRewards'][];
 		totalRewards: string;
 	},
 	void,
@@ -160,9 +160,20 @@ export const fetchClaimableRewards = createAsyncThunk<
 		staking: { epochPeriod },
 	} = getState();
 
-	const { claimableRewards, totalRewards } = await sdk.kwentaToken.getClaimableRewards(epochPeriod);
+	const {
+		claimableRewards: claimableRewardsV1,
+		totalRewards: totalRewardsV1,
+	} = await sdk.kwentaToken.getClaimableRewards(epochPeriod, true);
 
-	return { claimableRewards, totalRewards: totalRewards.toString() };
+	const {
+		claimableRewards: claimableRewardsV2,
+		totalRewards: totalRewardsV2,
+	} = await sdk.kwentaToken.getClaimableRewards(epochPeriod, false);
+
+	return {
+		claimableRewards: [claimableRewardsV1, claimableRewardsV2],
+		totalRewards: totalRewardsV1.add(totalRewardsV2).toString(),
+	};
 });
 
 export const claimMultipleRewards = createAsyncThunk<void, void, ThunkConfig>(

@@ -4,6 +4,7 @@ import { Contract, ethers } from 'ethers';
 
 import ERC20ABI from '../contracts/abis/ERC20.json';
 import MultipleMerkleDistributorABI from '../contracts/abis/MultipleMerkleDistributor.json';
+import MultipleMerkleDistributorPerpsV2ABI from '../contracts/abis/MultipleMerkleDistributorPerpsV2.json';
 import RewardEscrowABI from '../contracts/abis/RewardEscrow.json';
 import SupplyScheduleABI from '../contracts/abis/SupplySchedule.json';
 import CrossMarginBaseSettingsABI from './abis/CrossMarginBaseSettings.json';
@@ -43,6 +44,7 @@ import {
 	StakingRewards__factory,
 	VeKwentaRedeemer__factory,
 	Pyth__factory,
+	BatchClaimer__factory,
 } from './types';
 
 type ContractFactory = {
@@ -138,6 +140,15 @@ export const getContractsByNetwork = (
 		MultipleMerkleDistributor: ADDRESSES.TradingRewards[networkId]
 			? MultipleMerkleDistributor__factory.connect(ADDRESSES.TradingRewards[networkId], provider)
 			: undefined,
+		MultipleMerkleDistributorPerpsV2: ADDRESSES.TradingRewardsPerpsV2[networkId]
+			? MultipleMerkleDistributor__factory.connect(
+					ADDRESSES.TradingRewardsPerpsV2[networkId],
+					provider
+			  )
+			: undefined,
+		BatchClaimer: ADDRESSES.BatchClaimer[networkId]
+			? BatchClaimer__factory.connect(ADDRESSES.BatchClaimer[networkId], provider)
+			: undefined,
 		veKwentaToken: ADDRESSES.veKwentaToken[networkId]
 			? ERC20__factory.connect(ADDRESSES.veKwentaToken[networkId], provider)
 			: undefined,
@@ -196,6 +207,12 @@ export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 			: undefined,
 		MultipleMerkleDistributor: ADDRESSES.TradingRewards[networkId]
 			? new EthCallContract(ADDRESSES.TradingRewards[networkId], MultipleMerkleDistributorABI)
+			: undefined,
+		MultipleMerkleDistributorPerpsV2: ADDRESSES.TradingRewardsPerpsV2[networkId]
+			? new EthCallContract(
+					ADDRESSES.TradingRewardsPerpsV2[networkId],
+					MultipleMerkleDistributorPerpsV2ABI
+			  )
 			: undefined,
 		vKwentaToken: ADDRESSES.vKwentaToken[networkId]
 			? new EthCallContract(ADDRESSES.vKwentaToken[networkId], ERC20ABI)
