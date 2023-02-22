@@ -201,6 +201,8 @@ const exchangeSlice = createSlice({
 			state.txProvider = action.payload.txProvider;
 			state.allowance = action.payload.allowance;
 			state.oneInchQuoteError = false;
+			state.approvalStatus = FetchStatus.Idle;
+			state.isSubmitting = false;
 		});
 	},
 });

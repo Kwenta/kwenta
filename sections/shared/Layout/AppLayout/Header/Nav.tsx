@@ -4,13 +4,17 @@ import { FC, FunctionComponent, memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import KwentaYellowIcon from 'assets/svg/brand/logo-yellow.svg';
 import Badge from 'components/Badge';
+import { FlexDivRow } from 'components/layout/flex';
 import LabelContainer from 'components/Nav/DropDownLabel';
 import Select from 'components/Select';
 import { DropdownIndicator, IndicatorSeparator } from 'components/Select/Select';
+import Tooltip from 'components/Tooltip/Tooltip';
 import { selectMarketAsset } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { linkCSS } from 'styles/common';
+import media from 'styles/media';
 
 import { DESKTOP_NAV_LINKS, Badge as BadgeType } from './constants';
 
@@ -42,7 +46,7 @@ const Nav: FC = memo(() => {
 		link,
 		isActive,
 	}: ReactSelectOptionProps) => {
-		if (i18nLabel === 'header.nav.markets' || i18nLabel === 'header.nav.leaderboard') {
+		if (i18nLabel === 'header.nav.leaderboard') {
 			return (
 				<MenuInside isDropDown isActive={isActive}>
 					{t(i18nLabel)}
@@ -77,7 +81,25 @@ const Nav: FC = memo(() => {
 					if (!links) {
 						return (
 							<Link key={url} href={url}>
-								<MenuInside isActive={isActive}>{t(i18nLabel)}</MenuInside>
+								<MenuInside isActive={isActive}>
+									{i18nLabel === 'header.nav.markets' ? (
+										<CustomStyledTooltip
+											preset="bottom"
+											width="260px"
+											height="auto"
+											content={t('dashboard.stake.tabs.trading-rewards.trading-rewards-tooltip')}
+										>
+											<WithCursor cursor="pointer">
+												<FlexDivRow>
+													{t(i18nLabel)}
+													<KwentaYellowIcon height={20} width={20} style={{ paddingLeft: 5 }} />
+												</FlexDivRow>
+											</WithCursor>
+										</CustomStyledTooltip>
+									) : (
+										t(i18nLabel)
+									)}
+								</MenuInside>
 							</Link>
 						);
 					}
@@ -101,8 +123,22 @@ const Nav: FC = memo(() => {
 	);
 });
 
+const CustomStyledTooltip = styled(Tooltip)`
+	padding: 10px;
+	text-align: left;
+	text-transform: none;
+	${media.lessThan('md')`
+		width: 310px;
+	`}
+`;
+
+const WithCursor = styled.div<{ cursor: 'help' | 'pointer' }>`
+	cursor: ${(props) => props.cursor};
+`;
+
 const MenuLinks = styled.ul`
 	display: flex;
+	padding-top: 2px;
 `;
 
 const NavLabel = styled.div`

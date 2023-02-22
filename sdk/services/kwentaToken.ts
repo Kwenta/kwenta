@@ -8,6 +8,7 @@ import KwentaSDK from 'sdk';
 import { ETH_COINGECKO_ADDRESS, KWENTA_ADDRESS } from 'constants/currency';
 import { DEFAULT_NUMBER_OF_FUTURES_FEE } from 'constants/defaults';
 import { FLEEK_BASE_URL, FLEEK_STORAGE_BUCKET } from 'queries/files/constants';
+import { EPOCH_START, TRADING_REWARDS_CUTOFF_EPOCH, WEEK } from 'queries/staking/utils';
 import { ContractName } from 'sdk/contracts';
 import { formatTruncatedDuration } from 'utils/formatters/date';
 import { zeroBN } from 'utils/formatters/number';
@@ -174,7 +175,6 @@ export default class KwentaTokenService {
 			vKwentaBalance,
 			vKwentaAllowance,
 			kwentaAllowance,
-			epochPeriod,
 			veKwentaBalance,
 			veKwentaAllowance,
 		]: BigNumber[] = await this.sdk.context.multicallProvider.all([
@@ -188,7 +188,6 @@ export default class KwentaTokenService {
 			vKwentaToken.balanceOf(walletAddress),
 			vKwentaToken.allowance(walletAddress, vKwentaRedeemer.address),
 			KwentaToken.allowance(walletAddress, KwentaStakingRewards.address),
-			MultipleMerkleDistributor.distributionEpoch(),
 			veKwentaToken.balanceOf(walletAddress),
 			veKwentaToken.allowance(walletAddress, veKwentaRedeemer.address),
 		]);
@@ -204,7 +203,7 @@ export default class KwentaTokenService {
 			vKwentaBalance: wei(vKwentaBalance),
 			vKwentaAllowance: wei(vKwentaAllowance),
 			kwentaAllowance: wei(kwentaAllowance),
-			epochPeriod: Number(epochPeriod) - 2,
+			epochPeriod: Math.floor((Math.floor(Date.now() / 1000) - EPOCH_START[10]) / WEEK),
 			veKwentaBalance: wei(veKwentaBalance),
 			veKwentaAllowance: wei(veKwentaAllowance),
 		};
@@ -378,29 +377,39 @@ export default class KwentaTokenService {
 		return this.performStakeAction('unstake', amount, { escrow: true });
 	}
 
-	public async getClaimableRewards(epochPeriod: number) {
-		const { MultipleMerkleDistributor } = this.sdk.context.multicallContracts;
+	public async getClaimableRewards(epochPeriod: number, isOldDistributor: boolean = true) {
+		const {
+			MultipleMerkleDistributor,
+			MultipleMerkleDistributorPerpsV2,
+		} = this.sdk.context.multicallContracts;
 		const { walletAddress } = this.sdk.context;
 
-		if (!MultipleMerkleDistributor) {
+		if (!MultipleMerkleDistributor || !MultipleMerkleDistributorPerpsV2) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
-		const periods = Array.from(new Array(Number(epochPeriod) + 1), (_, i) => i);
+		const periods = Array.from(new Array(Number(epochPeriod)), (_, i) => i);
+		const adjustedPeriods = isOldDistributor
+			? periods.slice(0, TRADING_REWARDS_CUTOFF_EPOCH)
+			: periods.slice(TRADING_REWARDS_CUTOFF_EPOCH);
 
-		const fileNames = periods
-			.slice(0, -1)
-			.map(
-				(i) =>
-					`trading-rewards-snapshots/${
-						this.sdk.context.networkId === 420 ? `goerli-` : ''
-					}epoch-${i}.json`
-			);
+		const fileNames = adjustedPeriods.map(
+			(i) =>
+				`trading-rewards-snapshots/${
+					this.sdk.context.networkId === 420 ? `goerli-` : ''
+				}epoch-${i}.json`
+		);
 
 		const responses: EpochData[] = await Promise.all(
 			fileNames.map(async (fileName, index) => {
 				const response = await client.get(fileName);
-				const period = index >= 5 ? (index >= 10 ? index + 2 : index + 1) : index;
+				const period = isOldDistributor
+					? index >= 5
+						? index >= 10
+							? index + 2
+							: index + 1
+						: index
+					: index + TRADING_REWARDS_CUTOFF_EPOCH;
 				return { ...response.data, period };
 			})
 		);
@@ -418,7 +427,11 @@ export default class KwentaTokenService {
 			.filter((x): x is ClaimParams => !!x);
 
 		const claimed: boolean[] = await this.sdk.context.multicallProvider.all(
-			rewards.map((reward) => MultipleMerkleDistributor.isClaimed(reward[0], reward[4]))
+			rewards.map((reward) =>
+				isOldDistributor
+					? MultipleMerkleDistributor.isClaimed(reward[0], reward[4])
+					: MultipleMerkleDistributorPerpsV2.isClaimed(reward[0], reward[4])
+			)
 		);
 
 		const { totalRewards, claimableRewards } = rewards.reduce(
@@ -436,14 +449,19 @@ export default class KwentaTokenService {
 		return { claimableRewards, totalRewards };
 	}
 
-	public async claimMultipleRewards(claimableRewards: ClaimParams[]) {
-		const { MultipleMerkleDistributor } = this.sdk.context.contracts;
+	public async claimMultipleRewards(claimableRewards: ClaimParams[][]) {
+		const {
+			BatchClaimer,
+			MultipleMerkleDistributor,
+			MultipleMerkleDistributorPerpsV2,
+		} = this.sdk.context.contracts;
 
-		if (!MultipleMerkleDistributor) {
+		if (!BatchClaimer || !MultipleMerkleDistributor || !MultipleMerkleDistributorPerpsV2) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
-		return this.sdk.transactions.createContractTxn(MultipleMerkleDistributor, 'claimMultiple', [
+		return this.sdk.transactions.createContractTxn(BatchClaimer, 'claimMultiple', [
+			[MultipleMerkleDistributor.address, MultipleMerkleDistributorPerpsV2.address],
 			claimableRewards,
 		]);
 	}
