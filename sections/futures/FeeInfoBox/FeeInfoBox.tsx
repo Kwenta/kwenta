@@ -9,6 +9,7 @@ import NotEligibleIcon from 'assets/svg/app/not-eligible.svg';
 import HelpIcon from 'assets/svg/app/question-mark.svg';
 import Badge from 'components/Badge';
 import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox';
+import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import { Body } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
@@ -167,26 +168,21 @@ const TradingRewardRow = memo(() => {
 		<InfoBoxRow
 			title="Trading Reward"
 			compactBox
-			spaceBeneath
 			value=""
 			keyNode={
 				<CompactBox $isEligible={isRewardEligible} onClick={goToStaking}>
-					<div>
+					<FlexDivRow style={{ marginBottom: '5px' }}>
 						<div>{t('dashboard.stake.tabs.trading-rewards.trading-reward')}</div>
-						<div>
-							<Badge color={isRewardEligible ? 'yellow' : 'red'}>
-								{t(
-									`dashboard.stake.tabs.trading-rewards.${isRewardEligible ? '' : 'not-'}eligible`
-								)}
-								{isRewardEligible ? (
-									<EligibleIcon style={{ paddingLeft: '2px' }} />
-								) : (
-									<NotEligibleIcon />
-								)}
-							</Badge>
-						</div>
-					</div>
-					<div>
+						<Badge color={isRewardEligible ? 'yellow' : 'red'}>
+							{t(`dashboard.stake.tabs.trading-rewards.${isRewardEligible ? '' : 'not-'}eligible`)}
+							{isRewardEligible ? (
+								<EligibleIcon style={{ paddingLeft: '2px' }} />
+							) : (
+								<NotEligibleIcon />
+							)}
+						</Badge>
+					</FlexDivRow>
+					<FlexDivRowCentered>
 						<Body weight="bold" color="secondary" inline>
 							{t(
 								`dashboard.stake.tabs.trading-rewards.stake-to-${
@@ -195,7 +191,7 @@ const TradingRewardRow = memo(() => {
 							)}
 						</Body>
 						<StyledLinkArrowIcon />
-					</div>
+					</FlexDivRowCentered>
 				</CompactBox>
 			}
 		/>
@@ -296,13 +292,13 @@ const StyledLinkArrowIcon = styled(LinkArrowIcon)`
 
 const CompactBox = styled.div<{ $isEligible: boolean }>`
 	font-size: 13px;
-	padding-left: 8px;
+	padding-left: 10px;
 	cursor: pointer;
-	margin-top: 16px;
+	margin-top: 10px;
 
 	${(props) => `
 		color: ${props.theme.colors.selectedTheme.text.value};
-		border-left: 3px solid 
+		border-left: 2px solid 
 			${props.theme.colors.selectedTheme.badge[props.$isEligible ? 'yellow' : 'red'].background};
 		`}
 `;

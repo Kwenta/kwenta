@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { ComponentType, memo } from 'react';
 import styled, { css } from 'styled-components';
 
 export type BodyProps = React.HTMLAttributes<HTMLParagraphElement> & {
@@ -10,6 +10,7 @@ export type BodyProps = React.HTMLAttributes<HTMLParagraphElement> & {
 	mono?: boolean;
 	capitalized?: boolean;
 	inline?: boolean;
+	as?: keyof JSX.IntrinsicElements | ComponentType<any>;
 };
 
 const Body: React.FC<BodyProps> = memo(

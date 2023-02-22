@@ -12,6 +12,7 @@ import { SplitContainer } from 'components/layout/grid';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import { Body, LogoText } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
+import { EXTERNAL_LINKS } from 'constants/links';
 import Connector from 'containers/Connector';
 import useGetFile from 'queries/files/useGetFile';
 import useGetFuturesFee from 'queries/staking/useGetFuturesFee';
@@ -138,10 +139,21 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 							</div>
 							{showEstimatedValue ? (
 								<>
-									<div>
-										<Title>{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}</Title>
-										<LogoText yellow>{truncateNumbers(wei(estimatedReward), 4)}</LogoText>
-									</div>
+									<CustomStyledTooltip
+										preset="bottom"
+										width="260px"
+										height="auto"
+										content={t('dashboard.stake.tabs.trading-rewards.estimated-info')}
+									>
+										<WithCursor cursor="help">
+											<Title>{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}</Title>
+											<Value inline={true}>
+												<LogoText yellow isToolTip={true}>
+													{truncateNumbers(wei(estimatedReward), 4)}
+												</LogoText>
+											</Value>
+										</WithCursor>
+									</CustomStyledTooltip>
 									<div>
 										<Title>
 											{t('dashboard.stake.tabs.trading-rewards.estimated-reward-share', {
@@ -153,22 +165,25 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 								</>
 							) : null}
 						</CardGrid>
-						{showEstimatedValue ? (
-							<FlexDivRow>
-								<PeriodLabel>
-									{t('dashboard.stake.tabs.trading-rewards.estimated-info')}
-								</PeriodLabel>
-							</FlexDivRow>
-						) : null}
+						<Button
+							fullWidth
+							variant="flat"
+							size="small"
+							onClick={() =>
+								window.open(EXTERNAL_LINKS.Docs.TradingRewardsV2, '_blank', 'noopener noreferrer')
+							}
+						>
+							{t('dashboard.stake.tabs.trading-rewards.learn-more')}
+						</Button>
 					</CardGridContainer>
 				</MobileHiddenView>
 				<MobileOnlyView>
 					<CardGridContainer>
 						<CardGrid>
 							<CustomStyledTooltip
-								preset="bottom"
 								width="260px"
 								height="auto"
+								left="15px !important"
 								content={t('dashboard.stake.tabs.trading-rewards.trading-rewards-tooltip')}
 							>
 								<WithCursor cursor="help">
@@ -185,10 +200,19 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 							</div>
 							{showEstimatedValue ? (
 								<>
-									<div>
-										<Title>{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}</Title>
-										<LogoText yellow>{truncateNumbers(wei(estimatedReward), 4)}</LogoText>
-									</div>
+									<CustomStyledTooltip
+										width="260px"
+										height="auto"
+										right="0px !important"
+										content={t('dashboard.stake.tabs.trading-rewards.estimated-info')}
+									>
+										<WithCursor cursor="help">
+											<Title>{t('dashboard.stake.tabs.trading-rewards.estimated-rewards')}</Title>
+											<LogoText yellow isToolTip={true}>
+												{truncateNumbers(wei(estimatedReward), 4)}
+											</LogoText>
+										</WithCursor>
+									</CustomStyledTooltip>
 									<div>
 										<Title>
 											{t('dashboard.stake.tabs.trading-rewards.estimated-reward-share-mobile', {
@@ -200,13 +224,16 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 								</>
 							) : null}
 						</CardGrid>
-						{showEstimatedValue ? (
-							<FlexDivRow>
-								<PeriodLabel>
-									{t('dashboard.stake.tabs.trading-rewards.estimated-info')}
-								</PeriodLabel>
-							</FlexDivRow>
-						) : null}
+						<Button
+							fullWidth
+							variant="flat"
+							size="small"
+							onClick={() =>
+								window.open(EXTERNAL_LINKS.Docs.TradingRewardsV2, '_blank', 'noopener noreferrer')
+							}
+						>
+							{t('dashboard.stake.tabs.trading-rewards.learn-more')}
+						</Button>
 					</CardGridContainer>
 				</MobileOnlyView>
 			</SplitContainer>
@@ -214,20 +241,10 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 	}
 );
 
-const PeriodLabel = styled.div`
-	font-size: 13px;
-	line-height: 20px;
-	display: flex;
-	align-items: center;
-	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
-
 const CustomStyledTooltip = styled(Tooltip)`
 	padding: 10px;
 	${media.lessThan('md')`
 		width: 310px;
-		left: -5px;
 	`}
 `;
 
@@ -239,6 +256,7 @@ const CardGridContainer = styled(StakingCard)`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
+	height: 240px;
 `;
 
 const Value = styled(Body).attrs({ weight: 'bold', mono: true })`

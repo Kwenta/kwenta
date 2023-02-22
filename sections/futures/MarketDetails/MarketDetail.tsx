@@ -39,7 +39,9 @@ const MarketDetail: FC<MarketDetailProps> = memo(({ mobile, dataKey, color, valu
 		>
 			<WithCursor cursor="help">
 				<Body className="heading">{dataKey}</Body>
-				<span className={`value ${color || ''} ${pausedClass}`}>{value}</span>
+				<Body as="span" className={`value ${color || ''} ${pausedClass}`}>
+					{value}
+				</Body>
 			</WithCursor>
 		</MarketDetailsTooltip>
 	);

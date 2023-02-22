@@ -7,6 +7,7 @@ import Body, { BodyProps } from './Body';
 type NumericValueProps = BodyProps & {
 	value: WeiSource;
 	preview?: boolean;
+	colored?: boolean;
 };
 
 const NumericValue: FC<NumericValueProps> = memo(({ value, preview, ...props }) => {
