@@ -5,7 +5,9 @@ import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
 import MobileMenuArrow from 'assets/svg/app/mobile-menu-arrow.svg';
+import KwentaYellowIcon from 'assets/svg/brand/logo-yellow.svg';
 import FullScreenModal from 'components/FullScreenModal';
+import { FlexDivRowCentered } from 'components/layout/flex';
 import ROUTES from 'constants/routes';
 import Links from 'sections/dashboard/Links';
 import Logo from 'sections/shared/Layout/Logo';
@@ -74,7 +76,12 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
 										isActive={router.asPath.includes(link)}
 										onClick={onDismiss}
 									>
-										{t(i18nLabel)}
+										<FlexDivRowCentered>
+											{t(i18nLabel)}
+											{i18nLabel === 'header.nav.markets' ? (
+												<KwentaYellowIcon height={18} width={18} style={{ marginLeft: 5 }} />
+											) : null}
+										</FlexDivRowCentered>
 										<MobileMenuArrow />
 									</MenuButton>
 								</Link>
