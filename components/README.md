@@ -25,6 +25,7 @@ This list tracks features needed to complete the component refactor, as well as 
 - [ ] Do a pass through of all text-related components in the codebase, and make sure they use the new components. Also, add new props for use cases that aren't covered with the current implementation.
 - [ ] Consider making `value` prop on `NumericValue` optional.
 - [ ] Completely restructure the `ProfitCalculator` component.
+- [ ] Add reusable `Label` component under `Text`. It should also support tooltip descriptions.
 
 ## Guidelines
 

@@ -184,7 +184,7 @@ const TradingRewardRow = memo(() => {
 							{isRewardEligible ? (
 								<EligibleIcon viewBox="0 0 8 8" style={{ paddingLeft: '2px' }} />
 							) : (
-								<NotEligibleIcon />
+								<NotEligibleIcon width="12" height="12" viewBox="-1.5 -0.5 9 9" />
 							)}
 						</Badge>
 					</FlexDivRow>
