@@ -37,6 +37,8 @@ const BaseBadge = styled.span<{
 	font-variant: all-small-caps;
 	opacity: 1;
 	user-select: none;
+	display: flex;
+	align-items: center;
 `;
 
 export default Badge;

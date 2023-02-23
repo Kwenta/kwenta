@@ -1,6 +1,6 @@
 import router from 'next/router';
 import React, { memo, useCallback, useMemo, useReducer } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import EligibleIcon from 'assets/svg/app/eligible.svg';
@@ -182,19 +182,20 @@ const TradingRewardRow = memo(() => {
 						<Badge color={isRewardEligible ? 'yellow' : 'red'}>
 							{t(`dashboard.stake.tabs.trading-rewards.${isRewardEligible ? '' : 'not-'}eligible`)}
 							{isRewardEligible ? (
-								<EligibleIcon style={{ paddingLeft: '2px' }} />
+								<EligibleIcon viewBox="0 0 8 8" style={{ paddingLeft: '2px' }} />
 							) : (
 								<NotEligibleIcon />
 							)}
 						</Badge>
 					</FlexDivRow>
 					<FlexDivRowCentered>
-						<Body weight="bold" color="secondary" inline>
-							{t(
-								`dashboard.stake.tabs.trading-rewards.stake-to-${
+						<Body color="secondary">
+							<Trans
+								i18nKey={`dashboard.stake.tabs.trading-rewards.stake-to-${
 									isRewardEligible ? 'earn' : 'start'
-								}`
-							)}
+								}`}
+								components={[<Body weight="bold" inline />]}
+							/>
 						</Body>
 						<StyledLinkArrowIcon />
 					</FlexDivRowCentered>
