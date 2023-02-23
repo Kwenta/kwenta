@@ -50,6 +50,7 @@ export const STAKING_REWARDS_RATIO = 0.6;
 export const TRADING_REWARDS_RATIO = 0.05;
 export const STAKING_HIGH_GAS_LIMIT = BigNumber.from('400000');
 export const STAKING_LOW_GAS_LIMIT = BigNumber.from('200000');
+export const TRADING_REWARDS_CUTOFF_EPOCH = 13;
 
 const SUPPLY_RATE = wei(1).sub(wei(DECAY_RATE));
 
