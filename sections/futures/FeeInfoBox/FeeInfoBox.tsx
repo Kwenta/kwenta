@@ -71,7 +71,7 @@ export const CrossMarginFeeInfoBox = memo(() => {
 			<ProtocolFeeRow />
 			<LimitStopFeeRow />
 			<CrossMarginFeeRow />
-			<TotalFeeRow />
+			<CrossMarginTotalFeeRow />
 			{(orderType === 'limit' || orderType === 'stop_market') && <KeeperDepositRow />}
 		</FeeInfoBoxContainer>
 	);
@@ -205,7 +205,7 @@ const TradingRewardRow = memo(() => {
 	);
 });
 
-const TotalFeeRow = memo(() => {
+const CrossMarginTotalFeeRow = memo(() => {
 	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
 	return (
 		<InfoBoxRow

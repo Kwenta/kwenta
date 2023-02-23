@@ -10,7 +10,7 @@ import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
-import { Body, NumericValue } from 'components/Text';
+import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import { getDisplayAsset } from 'sdk/utils/futures';
