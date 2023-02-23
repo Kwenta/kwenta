@@ -1,11 +1,16 @@
+import { formatBytes32String } from 'ethers/lib/utils.js';
 import { gql } from 'graphql-request';
 
 import { FuturesMarketAsset, FuturesMarketConfig, FuturesMarketKey } from 'sdk/types/futures';
+
+export const KWENTA_TRACKING_CODE = formatBytes32String('KWENTA');
 
 export const FUTURES_ENDPOINT_OP_MAINNET = `https://api.thegraph.com/subgraphs/name/tburm/optimism-perps`;
 
 export const FUTURES_ENDPOINT_OP_GOERLI =
 	'https://api.thegraph.com/subgraphs/name/tburm/optimism-goerli-perps';
+
+export const MAIN_ENDPOINT_MAINNET = `https://gateway.thegraph.com/api/${process.env.NEXT_PUBLIC_THEGRAPH_API_KEY}/subgraphs/id/HLy7PdmPJuVGjjmPNz1vW5RCCRpqzRWony2fSn7UKpf9`;
 
 export const MAIN_ENDPOINT_OP_MAINNET =
 	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-main';
@@ -19,6 +24,7 @@ export const FUTURES_ENDPOINTS: Record<number, string> = {
 };
 
 export const MAIN_ENDPOINTS: Record<number, string> = {
+	1: MAIN_ENDPOINT_MAINNET,
 	10: MAIN_ENDPOINT_OP_MAINNET,
 	420: MAIN_ENDPOINT_OP_GOERLI,
 };
