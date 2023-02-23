@@ -121,7 +121,7 @@ const Footer = memo(() => {
 							<ListTitle>{title}</ListTitle>
 							{links.map(({ key, title, link }) => (
 								<StyledLink key={key} href={link} target="_blank">
-									<Body>{title}</Body>
+									<Body fontSize={18}>{title}</Body>
 								</StyledLink>
 							))}
 						</ListContainer>
@@ -138,7 +138,13 @@ const Footer = memo(() => {
 
 const StyledLink = styled.a`
 	cursor: pointer;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	p {
+		line-height: 1.5;
+		margin: 18px 0;
+		${media.lessThan('sm')`
+			font-size: 15px;
+		`};
+	}
 `;
 
 const CopyRight = styled.div`

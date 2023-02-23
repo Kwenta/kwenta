@@ -23,3 +23,4 @@ This list tracks features needed to complete the component refactor, as well as 
 - [ ] Upgrade `react-table` to `@tanstack/react-table`. It's more recent and has better typings. We'll have to do a little bit of work though, to deal with breaking changes between the versions and make sure we improve on the render performance of the `Table` component.
 - [ ] Finish implementing the `Text.Display` component.
 - [ ] Do a pass through of all text-related components in the codebase, and make sure they use the new components. Also, add new props for use cases that aren't covered with the current implementation.
+- [ ] Consider making `value` prop on `NumericValue` optional.

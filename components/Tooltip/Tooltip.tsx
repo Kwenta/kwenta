@@ -19,6 +19,7 @@ type TooltipProps = {
 	style?: React.CSSProperties;
 	position?: string;
 	visible?: boolean;
+	mono?: boolean;
 };
 
 const Tooltip: FC<TooltipProps> = memo((props) => {
@@ -56,7 +57,7 @@ const Tooltip: FC<TooltipProps> = memo((props) => {
 			{props.children}
 			{activeMouse && isVisible && (
 				<BaseTooltip {...position} {...props} style={props.style}>
-					<Body>{props.content}</Body>
+					<Body mono={props.mono}>{props.content}</Body>
 				</BaseTooltip>
 			)}
 		</ToolTipWrapper>

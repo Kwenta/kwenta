@@ -48,7 +48,7 @@ const SkewInfo: React.FC = () => {
 	return (
 		<SkewContainer>
 			<SkewHeader>
-				<SkewTooltip preset="bottom-right" content={data.shortText ?? 0}>
+				<SkewTooltip preset="bottom-right" content={data.shortText ?? 0} mono>
 					<WithCursor cursor="help">
 						<SkewValue>{formatPercent(data.short, { minDecimals: 0 })}</SkewValue>
 					</WithCursor>
@@ -58,7 +58,7 @@ const SkewInfo: React.FC = () => {
 						<SkewLabel>{t('futures.market.history.skew-label')}</SkewLabel>
 					</WithCursor>
 				</SkewTooltip>
-				<SkewTooltip preset="bottom-rigth" content={data.longText ?? 0}>
+				<SkewTooltip preset="bottom-right" content={data.longText ?? 0} mono>
 					<WithCursor cursor="help">
 						<SkewValue>{formatPercent(data.long, { minDecimals: 0 })}</SkewValue>
 					</WithCursor>
