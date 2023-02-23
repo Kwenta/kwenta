@@ -18,30 +18,25 @@ function pnlText(type: number, stat: any) {
 
 export const StatWithContainer: React.FC<StatWithContainerProps> = ({ label, stat, type }) => {
 	return (
-		<>
-			<StatContainer>
-				<StatLabel>{label}</StatLabel>
-				<Stat colorNum={type}>{pnlText(type, stat)}</Stat>
-			</StatContainer>
-		</>
+		<StatContainer>
+			<StatLabel>{label}</StatLabel>
+			<Stat colorNum={type}>{pnlText(type, stat)}</Stat>
+		</StatContainer>
 	);
 };
 
-const Stat = styled.div<{ colorNum: any }>`
-	font-size: 15px;
-	line-height: 15px;
-	margin: -7.5px 0px 0px 12px;
+const Stat = styled(Body).attrs({ size: 'large' })<{ colorNum: any }>`
 	color: ${(props) => textColor(props)};
 `;
 
 const StatLabel = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	margin-left: 12px;
+	margin-top: 4px;
 `;
 
 const StatContainer = styled.div`
 	width: auto;
-	height: 59px;
+	padding: 15px;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	box-sizing: border-box;
 	border-radius: 6px;

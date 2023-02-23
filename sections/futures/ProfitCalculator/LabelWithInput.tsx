@@ -33,16 +33,9 @@ const LabelWithInput: React.FC<LabelWithInputProps> = memo(
 	)
 );
 
-const LabelText = styled(Body)`
-	width: 100.91px;
+const LabelText = styled(Body).attrs({ size: 'small' })`
 	height: 12px;
-	left: 479px;
-	top: 329px;
-	margin-left: 12.1px;
-	font-size: 12px;
-	line-height: 12px;
-
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+	margin: 8px 12px;
 `;
 
 export default LabelWithInput;

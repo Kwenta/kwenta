@@ -35,95 +35,101 @@ const ProfitDetails: React.FC<ProfitDetailsProps> = ({
 
 	return (
 		<>
-			<StyledProfitDetails>
+			<ProfitDetailsContainer>
 				{/* ENTRY ORDER */}
-				<RowName>
-					<RowText className="row-name">
+				<ProfitDetailsRow>
+					<RowText>
 						{t('futures.modals.profit-calculator.profit-details.row-name.entry-price')}
 					</RowText>
-				</RowName>
-				<Details style={{ justifySelf: 'right' }}>
-					<RowText className={leverageSide}>{`${entryOrderDetails}`}</RowText>
-					<RowText style={{ marginLeft: '2px' }}>{`,`}</RowText>
-					<RowText style={{ marginLeft: '10px' }}>
-						{t('futures.modals.profit-calculator.profit-details.details.market')}
-					</RowText>
-				</Details>
+					<Details>
+						<RowText className={leverageSide}>{`${entryOrderDetails}`}</RowText>
+						<RowText style={{ marginLeft: '2px' }}>{`,`}</RowText>
+						<RowText style={{ marginLeft: '10px' }}>
+							{t('futures.modals.profit-calculator.profit-details.details.market')}
+						</RowText>
+					</Details>
+				</ProfitDetailsRow>
 				{/* TAKE PROFIT */}
-				<RowName>
-					<RowText className="row-name">
+				<ProfitDetailsRow>
+					<RowText>
 						{t('futures.modals.profit-calculator.profit-details.row-name.take-profit')}
 					</RowText>
-				</RowName>
-				<Details style={{ justifySelf: 'right' }}>
-					<RowText>{t('futures.modals.profit-calculator.profit-details.details.sell')}</RowText>
-					<RowText style={{ marginRight: '10px', marginLeft: '10px' }} className="gray-font-color">
-						{t('futures.modals.profit-calculator.profit-details.details.at')}
-					</RowText>
-					<RowText>{exitPrice !== '' ? '$' + wei(exitPrice).toNumber().toFixed(2) : ''}</RowText>
-				</Details>
+					<Details>
+						<RowText>{t('futures.modals.profit-calculator.profit-details.details.sell')}</RowText>
+						<RowText
+							style={{ marginRight: '10px', marginLeft: '10px' }}
+							className="gray-font-color"
+						>
+							{t('futures.modals.profit-calculator.profit-details.details.at')}
+						</RowText>
+						<RowText>{exitPrice !== '' ? '$' + wei(exitPrice).toNumber().toFixed(2) : ''}</RowText>
+					</Details>
+				</ProfitDetailsRow>
 				{/* STOP LOSS */}
-				<RowName>
-					<RowText className="row-name">
+				<ProfitDetailsRow>
+					<RowText>
 						{t('futures.modals.profit-calculator.profit-details.row-name.stop-loss')}
 					</RowText>
-				</RowName>
-				<Details style={{ justifySelf: 'right' }}>
-					<RowText>{t('futures.modals.profit-calculator.profit-details.details.sell')}</RowText>
-					<RowText style={{ marginRight: '10px', marginLeft: '10px' }} className="gray-font-color">
-						{t('futures.modals.profit-calculator.profit-details.details.at')}
-					</RowText>
-					<RowText>{stopLoss !== '' ? '$' + wei(stopLoss).toNumber().toFixed(2) : ''}</RowText>
-				</Details>
+					<Details>
+						<RowText>{t('futures.modals.profit-calculator.profit-details.details.sell')}</RowText>
+						<RowText
+							style={{ marginRight: '10px', marginLeft: '10px' }}
+							className="gray-font-color"
+						>
+							{t('futures.modals.profit-calculator.profit-details.details.at')}
+						</RowText>
+						<RowText>{stopLoss !== '' ? '$' + wei(stopLoss).toNumber().toFixed(2) : ''}</RowText>
+					</Details>
+				</ProfitDetailsRow>
 				{/* SIZE */}
-				<RowName>
-					<RowText className="row-name">
-						{t('futures.modals.profit-calculator.profit-details.row-name.size')}
-					</RowText>
-				</RowName>
-				<Details style={{ justifySelf: 'right' }}>
-					<RowText style={{ marginRight: '10px' }}>
-						{marketAssetPositionSize !== ''
-							? wei(marketAssetPositionSize).toNumber().toFixed(2)
-							: ''}
-					</RowText>
-					<RowText className="gray-font-color">{marketName}</RowText>
-				</Details>
-			</StyledProfitDetails>
+				<ProfitDetailsRow>
+					<RowText>{t('futures.modals.profit-calculator.profit-details.row-name.size')}</RowText>
+					<Details>
+						<RowText style={{ marginRight: '10px' }}>
+							{marketAssetPositionSize !== ''
+								? wei(marketAssetPositionSize).toNumber().toFixed(2)
+								: ''}
+						</RowText>
+						<RowText className="gray-font-color">{marketName}</RowText>
+					</Details>
+				</ProfitDetailsRow>
+			</ProfitDetailsContainer>
 		</>
 	);
 };
 
-const RowName = styled.div`
-	margin-left: 15px;
-`;
+const Details = styled.div``;
 
-const Details = styled.div`
-	margin-right: 15px;
-`;
-
-const RowText = styled(Body)`
+const RowText = styled(Body).attrs({ size: 'small' })`
 	display: inline-block;
 
 	${(props) => css`
 		color: ${textColor(props)};
 		text-align: ${props.className === 'row-name' ? 'left' : 'right'};
 	`}
-
-	font-size: 12px;
-	line-height: 10px;
 `;
 
-const StyledProfitDetails = styled.div`
-	display: grid;
-	grid-gap: 0rem;
-	grid-template-columns: repeat(2, 1fr);
-
-	border: ${(props) => props.theme.colors.selectedTheme.border};
-	box-sizing: border-box;
-	border-radius: 6px;
-
+const ProfitDetailsContainer = styled.div`
 	margin-top: 20px;
+	padding: 18px 20px;
+	box-sizing: border-box;
+	border: ${(props) => props.theme.colors.selectedTheme.border};
+	border-radius: 6px;
+`;
+
+const ProfitDetailsRow = styled.div`
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	&:not(:first-of-type) {
+		padding-top: 12px;
+	}
+
+	&:not(:last-of-type) {
+		padding-bottom: 12px;
+		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+	}
 `;
 
 export default ProfitDetails;

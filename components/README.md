@@ -24,3 +24,9 @@ This list tracks features needed to complete the component refactor, as well as 
 - [ ] Finish implementing the `Text.Display` component.
 - [ ] Do a pass through of all text-related components in the codebase, and make sure they use the new components. Also, add new props for use cases that aren't covered with the current implementation.
 - [ ] Consider making `value` prop on `NumericValue` optional.
+- [ ] Completely restructure the `ProfitCalculator` component.
+
+## Guidelines
+
+- [ ] Avoid using `Styled` as a prefix to the names of styled components. Instead, prefer names that describe the function of the component. This makes it easier to understand the component's function at first glance. It also makes it easier to refactor or replace the component when necessary.
+- [ ] Avoid using absolute positioning unless necessary. This helps avoid z-index conflicts and makes it easier for components to be adapted to multiple screen sizes.
