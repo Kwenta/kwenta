@@ -1,3 +1,4 @@
+import { ComponentStory } from '@storybook/react';
 import { wei } from '@synthetixio/wei';
 
 import Spacer from 'components/Spacer';
@@ -6,6 +7,10 @@ import * as Text from 'components/Text';
 export default {
 	title: 'Components/Text',
 	component: Text.Body,
+};
+
+export const Default: ComponentStory<typeof Text.Body> = (args) => {
+	return <Text.Body {...args}>Sample text</Text.Body>;
 };
 
 export const LogoText = () => {
