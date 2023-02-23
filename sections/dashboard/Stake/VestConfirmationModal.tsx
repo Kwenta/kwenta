@@ -44,7 +44,7 @@ const VestConfirmationModal: React.FC<Props> = ({ onDismiss, totalFee, handleVes
 			<Spacer height={5} />
 
 			<BalanceContainer>
-				<BalanceText $gold>
+				<BalanceText>
 					<Trans
 						i18nKey="dashboard.stake.tabs.escrow.modal.confirm-text"
 						values={{ totalFee: truncateNumbers(totalFee, 4) }}
@@ -78,9 +78,9 @@ const BalanceContainer = styled(FlexDivRowCentered)`
 	margin-bottom: 8px;
 `;
 
-const BalanceText = styled(Body)<{ $gold?: boolean }>`
+const BalanceText = styled(Body)`
 	${(props) => css`
-		color: ${props.theme.colors.selectedTheme[props.$gold ? 'yellow' : 'gray']};
+		color: ${props.theme.colors.selectedTheme.yellow};
 		span {
 			color: ${props.theme.colors.selectedTheme.button.text.primary};
 		}

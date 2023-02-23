@@ -78,7 +78,7 @@ Monospace.args = {
 export const Tab = () => {
 	return (
 		<TabGroup>
-			<TabButton title="Futures Positions" detail="$12,392.92" badge={3} active />
+			<TabButton title="Futures Positions" detail="$12,392.92" badgeCount={3} active />
 			<TabButton title="Shorts" detail="$0" disabled />
 			<TabButton title="Spot Balances" detail="$0" disabled />
 		</TabGroup>

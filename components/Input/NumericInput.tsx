@@ -1,6 +1,8 @@
 import { FC, memo, useCallback } from 'react';
 import styled, { css } from 'styled-components';
 
+import Spacer from 'components/Spacer';
+
 type NumericInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> & {
 	value: string;
 	onChange: (e: React.ChangeEvent<HTMLInputElement>, value: string) => void;
@@ -34,12 +36,12 @@ const NumericInput: FC<NumericInputProps> = memo(
 	}) => {
 		const handleChange = useCallback(
 			(e: React.ChangeEvent<HTMLInputElement>) => {
-				const standardizedNum = e.target.value.replace(/,/g, '.').replace(/[e+-]/gi, '');
+				// const standardizedNum = e.target.value.replace(/,/g, '.').replace(/[e+-]/gi, '');
 				// Consider switching to this:
-				// const standardizedNum = value
-				// .replace(/[^0-9.,]/g, '')
-				// .replace(/,/g, '.')
-				// .substring(0, 4);
+				const standardizedNum = e.target.value
+					.replace(/[^0-9.,]/g, '')
+					.replace(/,/g, '.')
+					.substring(0, 4);
 				// TODO: make regex only accept valid numbers, so we don't need to check again.
 				if (isNaN(Number(standardizedNum))) return;
 				const valueIsAboveMax = max !== 0 && Number(standardizedNum) > max;
@@ -58,7 +60,12 @@ const NumericInput: FC<NumericInputProps> = memo(
 				$length={value.length}
 				className={className}
 			>
-				{left && <div className="left">{left}</div>}
+				{left && (
+					<>
+						{left}
+						<Spacer width={4} />
+					</>
+				)}
 				<input
 					data-testid={dataTestId}
 					value={value}
@@ -72,7 +79,12 @@ const NumericInput: FC<NumericInputProps> = memo(
 					}}
 					{...props}
 				/>
-				{right && <div className="right">{right}</div>}
+				{right && (
+					<>
+						<Spacer width={4} />
+						{right}
+					</>
+				)}
 			</InputContainer>
 		);
 	}
@@ -126,14 +138,6 @@ const InputContainer = styled.div<{
 		::placeholder {
 			color: ${(props) => props.theme.colors.selectedTheme.input.placeholder};
 		}
-	}
-
-	.left {
-		margin-right: 4px;
-	}
-
-	.right {
-		margin-left: 4px;
 	}
 
 	${(props) =>

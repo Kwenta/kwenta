@@ -8,7 +8,7 @@ import Button from './Button';
 export type TabButtonProps = {
 	title: string;
 	detail?: string;
-	badge?: number;
+	badgeCount?: number;
 	icon?: any;
 	active?: boolean;
 	titleIcon?: ReactNode;
@@ -21,7 +21,7 @@ export type TabButtonProps = {
 };
 
 const TabButton: React.FC<TabButtonProps> = React.memo(
-	({ title, detail, badge, icon, titleIcon, vertical, nofill, ...props }) => (
+	({ title, detail, badgeCount, icon, titleIcon, vertical, nofill, ...props }) => (
 		<StyledButton $vertical={vertical} $nofill={nofill} noOutline {...props}>
 			{!!icon && <div>{icon}</div>}
 			<div>
@@ -30,7 +30,7 @@ const TabButton: React.FC<TabButtonProps> = React.memo(
 					<Body className="title" weight="bold">
 						{title}
 					</Body>
-					{!!badge && <div className="badge">{badge}</div>}
+					{!!badgeCount && <div className="badge">{badgeCount}</div>}
 				</div>
 
 				{detail && (

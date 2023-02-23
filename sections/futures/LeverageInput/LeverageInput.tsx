@@ -47,7 +47,7 @@ const LeverageInput: FC = memo(() => {
 		(newLeverage: string) => {
 			const remainingMargin = position?.remainingMargin ?? zeroBN;
 			const newTradeSize =
-				marketPrice.eq(0) || remainingMargin.eq(0)
+				newLeverage === '' || marketPrice.eq(0) || remainingMargin.eq(0)
 					? ''
 					: wei(newLeverage).mul(remainingMargin).div(marketPrice).toString();
 			const floored = floorNumber(newTradeSize, 4);

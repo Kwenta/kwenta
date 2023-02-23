@@ -151,7 +151,7 @@ const UserInfo: React.FC = memo(() => {
 						<TabButton
 							key={name}
 							title={label}
-							badge={badge}
+							badgeCount={badge}
 							active={active}
 							disabled={disabled}
 							onClick={onClick}
