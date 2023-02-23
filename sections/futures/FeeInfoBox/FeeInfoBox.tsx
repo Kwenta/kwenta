@@ -72,7 +72,6 @@ export const CrossMarginFeeInfoBox = memo(() => {
 			<LimitStopFeeRow />
 			<CrossMarginFeeRow />
 			<TotalFeeRow />
-			<TradingRewardRow />
 			{(orderType === 'limit' || orderType === 'stop_market') && <KeeperDepositRow />}
 		</FeeInfoBoxContainer>
 	);
@@ -82,7 +81,14 @@ export const IsolatedMarginFeeInfoBox = memo(() => {
 	const orderType = useAppSelector(selectOrderType);
 	return (
 		<FeeInfoBoxContainer>
-			{orderType === 'delayed' || orderType === 'delayed_offchain' ? <TotalFeesRow /> : <FeeRow />}
+			{orderType === 'delayed' || orderType === 'delayed_offchain' ? (
+				<>
+					<TotalFeesRow />
+					<TradingRewardRow />
+				</>
+			) : (
+				<FeeRow />
+			)}
 		</FeeInfoBoxContainer>
 	);
 });
