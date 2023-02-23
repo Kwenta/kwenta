@@ -135,9 +135,9 @@ const PositionSizeRow = memo(() => {
 				{positionDetails ? (
 					<>
 						{`${formatNumber(positionDetails.size ?? 0, {
-							minDecimals: positionDetails.size.abs().lt(0.01) ? 4 : 2,
+							suggestDecimals: true,
 						})} (${formatDollars(positionDetails.notionalValue?.abs() ?? zeroBN, {
-							minDecimals: positionDetails.notionalValue?.abs()?.lt(0.01) ? 4 : 2,
+							suggestDecimals: true,
 						})})`}
 						<PreviewArrow
 							showPreview={
