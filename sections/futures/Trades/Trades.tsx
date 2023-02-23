@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components';
 
 import LinkIcon from 'assets/svg/app/link-blue.svg';
 import Card from 'components/Card';
+import ColoredPrice from 'components/ColoredPrice';
 import { GridDivCenteredRow } from 'components/layout/grid';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { ETH_UNIT } from 'constants/network';
@@ -105,9 +106,20 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
 							const formatOptions = {
-								suggestDecimals: true,
+								maxDecimals: 2,
 							};
-							return <>{formatDollars(cellProps.value, formatOptions)}</>;
+							return cellProps.value.eq(0) ? (
+								'--'
+							) : (
+								<ColoredPrice
+									priceInfo={{
+										price: cellProps.value,
+										change: cellProps.value.gt(0) ? 'up' : 'down',
+									}}
+								>
+									{formatDollars(cellProps.value, formatOptions)}
+								</ColoredPrice>
+							);
 						},
 						width: 90,
 						sortable: true,

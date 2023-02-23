@@ -185,7 +185,7 @@ const FuturesHistoryTable: FC = () => {
 											<PNL normal>--</PNL>
 										) : (
 											<PNL negative={cellProps.value.lt(wei(0))}>
-												{formatDollars(cellProps.value, { suggestDecimals: true })}
+												{formatDollars(cellProps.value, { maxDecimals: 2 })}
 											</PNL>
 										)
 									);
