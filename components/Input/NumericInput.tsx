@@ -36,8 +36,6 @@ const NumericInput: FC<NumericInputProps> = memo(
 	}) => {
 		const handleChange = useCallback(
 			(e: React.ChangeEvent<HTMLInputElement>) => {
-				// const standardizedNum = e.target.value.replace(/,/g, '.').replace(/[e+-]/gi, '');
-				// Consider switching to this:
 				const standardizedNum = e.target.value
 					.replace(/[^0-9.,]/g, '')
 					.replace(/,/g, '.')

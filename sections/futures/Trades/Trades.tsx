@@ -25,9 +25,7 @@ import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
 import { TradeStatus } from '../types';
 import TimeDisplay from './TimeDisplay';
 
-type TradesProps = {};
-
-const Trades: React.FC<TradesProps> = memo(() => {
+const Trades: React.FC = memo(() => {
 	const { t } = useTranslation();
 	const { switchToL2 } = useNetworkSwitcher();
 	const marketAsset = useAppSelector(selectMarketAsset);
