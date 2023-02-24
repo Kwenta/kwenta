@@ -7,17 +7,17 @@ const newTheme = {
 			long: {
 				color: common.palette.green.g500,
 				active: {
-					background: common.palette.green.g500,
-					border: common.palette.green.g600,
-					color: common.palette.neutral.n900,
+					background: common.palette.green.g900,
+					border: common.palette.green.g700,
+					color: common.palette.neutral.n0,
 				},
 			},
 			short: {
 				color: common.palette.red.r300,
 				active: {
-					background: common.palette.red.r400,
-					border: common.palette.red.r500,
-					color: common.palette.neutral.n900,
+					background: common.palette.red.r900,
+					border: common.palette.red.r700,
+					color: common.palette.neutral.n0,
 				},
 			},
 			background: common.palette.alpha.darkButton,
