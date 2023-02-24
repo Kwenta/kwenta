@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
 import Select from 'components/Select';
-import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
@@ -22,7 +21,7 @@ import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices } from 'state/prices/selectors';
 import { FetchStatus } from 'state/types';
 import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
-import { getMarketName, getSynthDescription, isDecimalFour, MarketKeyByAsset } from 'utils/futures';
+import { getMarketName, getSynthDescription, MarketKeyByAsset } from 'utils/futures';
 
 import MarketsDropdownIndicator, { DropdownLoadingIndicator } from './MarketsDropdownIndicator';
 import MarketsDropdownOption from './MarketsDropdownOption';

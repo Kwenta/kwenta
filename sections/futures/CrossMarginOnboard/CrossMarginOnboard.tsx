@@ -11,7 +11,6 @@ import ErrorView from 'components/ErrorView';
 import { notifyError } from 'components/ErrorView/ErrorNotifier';
 import InputBalanceLabel from 'components/Input/InputBalanceLabel';
 import NumericInput from 'components/Input/NumericInput';
-import { FlexDivRowCentered } from 'components/layout/flex';
 import Loader from 'components/Loader';
 import ProgressSteps from 'components/ProgressSteps';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
