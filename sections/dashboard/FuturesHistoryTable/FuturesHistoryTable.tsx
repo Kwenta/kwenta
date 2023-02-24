@@ -1,5 +1,4 @@
 import { wei } from '@synthetixio/wei';
-import { utils as ethersUtils } from 'ethers';
 import * as _ from 'lodash/fp';
 import Link from 'next/link';
 import { FC, useMemo, ReactElement, useState } from 'react';
@@ -21,16 +20,13 @@ import { FuturesMarketAsset, FuturesTrade } from 'sdk/types/futures';
 import TradeDrawer from 'sections/futures/MobileTrade/drawers/TradeDrawer';
 import PositionType from 'sections/futures/PositionType';
 import { TradeStatus } from 'sections/futures/types';
-import { fetchAllTradesForAccount } from 'state/futures/actions';
 import {
 	selectAllUsersTrades,
-	selectFuturesAccount,
 	selectFuturesType,
 	selectQueryStatuses,
 } from 'state/futures/selectors';
-import { useAppSelector, useFetchAction } from 'state/hooks';
+import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
-import { selectNetwork } from 'state/wallet/selectors';
 import { formatShortDateWithoutYear } from 'utils/formatters/date';
 import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
 import { getDisplayAsset, getMarketName, MarketKeyByAsset } from 'utils/futures';
@@ -48,29 +44,20 @@ const FuturesHistoryTable: FC = () => {
 	const { switchToL2 } = useNetworkSwitcher();
 
 	const accountType = useAppSelector(selectFuturesType);
-	const account = useAppSelector(selectFuturesAccount);
-	const network = useAppSelector(selectNetwork);
 	const trades = useAppSelector(selectAllUsersTrades);
 	const { trades: tradesQueryStatus } = useAppSelector(selectQueryStatuses);
-
-	useFetchAction(fetchAllTradesForAccount, {
-		dependencies: [account, network],
-		disabled: !account,
-	});
 
 	const mappedHistoricalTrades = useMemo(
 		() =>
 			trades.map((trade) => {
-				const parsedAsset = ethersUtils.parseBytes32String(trade.asset) as FuturesMarketAsset;
 				return {
 					...trade,
-					asset: parsedAsset,
-					displayAsset: getDisplayAsset(parsedAsset),
-					market: getMarketName(parsedAsset),
+					displayAsset: getDisplayAsset(trade.asset),
+					market: getMarketName(trade.asset),
 					price: Number(trade.price?.div(ETH_UNIT)),
 					size: Number(trade.size.div(ETH_UNIT).abs()),
-					timestamp: Number(trade.timestamp.mul(1000)),
-					date: formatShortDateWithoutYear(new Date(trade.timestamp.mul(1000).toNumber())),
+					timestamp: trade.timestamp * 1000,
+					date: formatShortDateWithoutYear(new Date(trade.timestamp * 1000)),
 					pnl: trade.pnl.div(ETH_UNIT),
 					feesPaid: trade.feesPaid.div(ETH_UNIT),
 					id: trade.txnHash,
@@ -87,6 +74,7 @@ const FuturesHistoryTable: FC = () => {
 					<StyledTable
 						data={isL2 ? mappedHistoricalTrades : []}
 						showPagination
+						pageSize={16}
 						isLoading={tradesQueryStatus.status === FetchStatus.Loading}
 						noResultsMessage={
 							!isL2 ? (

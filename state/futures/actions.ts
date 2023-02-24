@@ -807,7 +807,7 @@ export const fetchAllTradesForAccount = createAsyncThunk<
 		const account = selectFuturesAccount(getState());
 		const futuresSupported = selectFuturesSupportedNetwork(getState());
 		if (!futuresSupported || !wallet || !account) return;
-		const trades = await sdk.futures.getAllTrades(wallet, accountType);
+		const trades = await sdk.futures.getAllTrades(wallet, accountType, 10000);
 		return { trades: serializeTrades(trades), networkId, account, accountType, wallet };
 	} catch (err) {
 		notifyError('Failed to fetch futures trades', err);

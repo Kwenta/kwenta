@@ -1,9 +1,9 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
-import { formatBytes32String } from 'ethers/lib/utils';
 
 import { DEFAULT_LEVERAGE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import { APP_MAX_LEVERAGE, DEFAULT_MAX_LEVERAGE } from 'constants/futures';
+import { ETH_UNIT } from 'constants/network';
 import { TransactionStatus } from 'sdk/types/common';
 import { FuturesPosition, PositionSide } from 'sdk/types/futures';
 import { unserializePotentialTrade } from 'sdk/utils/futures';
@@ -30,7 +30,7 @@ import {
 	unserializeFuturesOrders,
 } from 'utils/futures';
 
-import { MarkPrices, futuresPositionKeys } from './types';
+import { FuturesAction, FuturesPortfolio, MarkPrices, futuresPositionKeys } from './types';
 
 export const selectFuturesType = (state: RootState) => state.futures.selectedType;
 
@@ -814,7 +814,7 @@ export const selectUsersTradesForMarket = createSelector(
 		} else if (account) {
 			trades = unserializeTrades(isolatedAccountData?.trades ?? []);
 		}
-		return trades?.filter((t) => t.asset === formatBytes32String(asset)) ?? [];
+		return trades?.filter((t) => t.asset === asset) ?? [];
 	}
 );
 
@@ -828,6 +828,67 @@ export const selectAllUsersTrades = createSelector(
 		} else {
 			return unserializeTrades(isolatedAccountData?.trades ?? []);
 		}
+	}
+);
+
+export const selectUserPortfolioValues = createSelector(
+	selectAllUsersTrades,
+	selectMarginTransfers,
+	(trades, transfers) => {
+		const tradeActions = trades.map(({ account, timestamp, asset, margin }) => ({
+			account,
+			timestamp: timestamp,
+			asset,
+			margin,
+			size: 0,
+		}));
+
+		const transferActions = transfers.map(({ account, timestamp, asset, size }) => ({
+			account,
+			timestamp,
+			asset,
+			size,
+			margin: zeroBN,
+		}));
+
+		const actions = [...tradeActions, ...transferActions]
+			.filter((action): action is FuturesAction => !!action)
+			.sort((a, b) => a.timestamp - b.timestamp);
+
+		const accountHistory = actions.reduce((acc, action) => {
+			if (acc.length === 0) {
+				const newTotal = action.margin.gt(0) ? action.margin.div(ETH_UNIT).toNumber() : action.size;
+				const lastAction = {
+					account: action.account,
+					timestamp: action.timestamp,
+					assets: {
+						[action.asset]: newTotal,
+					},
+					total: newTotal,
+				};
+				return [lastAction];
+			} else {
+				const lastAction = acc[acc.length - 1];
+				const newAssets = {
+					...lastAction.assets,
+					[action.asset]: action.margin.gt(0)
+						? action.margin.div(ETH_UNIT).toNumber()
+						: lastAction.assets[action.asset] + action.size,
+				};
+				const newTotal = Object.entries(newAssets).reduce((acc, asset) => acc + asset[1], 0);
+
+				const newAction = {
+					...lastAction,
+					timestamp: action.timestamp,
+					assets: newAssets,
+					total: newTotal,
+				};
+				const replacePrevious = newAction.timestamp === lastAction.timestamp;
+
+				return [...acc.slice(0, acc.length - (replacePrevious ? 1 : 0)), newAction];
+			}
+		}, [] as FuturesPortfolio[]);
+		return accountHistory.map(({ timestamp, total }) => ({ timestamp, total }));
 	}
 );
 

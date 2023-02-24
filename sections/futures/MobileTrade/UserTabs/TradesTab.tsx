@@ -50,7 +50,7 @@ const TradesTab: React.FC = () => {
 				market: getMarketName(parsedAsset),
 				price: Number(trade.price?.div(ETH_UNIT)),
 				size: Number(trade.size.div(ETH_UNIT).abs()),
-				timestamp: Number(trade.timestamp.mul(1000)),
+				timestamp: trade.timestamp * 1000,
 				pnl: trade.pnl.div(ETH_UNIT),
 				feesPaid: trade.feesPaid.div(ETH_UNIT),
 				id: trade.txnHash,

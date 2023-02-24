@@ -44,6 +44,23 @@ export type FundingRate<T = Wei> = {
 	fundingRate: T | null;
 };
 
+export type FuturesAction = {
+	account: string;
+	timestamp: number;
+	asset: FuturesMarketAsset;
+	margin: Wei;
+	size: number;
+};
+
+export type FuturesPortfolio = {
+	account: string;
+	timestamp: number;
+	assets: {
+		[asset: string]: number;
+	};
+	total: number;
+};
+
 export type FuturesQueryStatuses = {
 	markets: QueryStatus;
 	crossMarginBalanceInfo: QueryStatus;
